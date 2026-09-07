@@ -1,16 +1,18 @@
 #!/usr/bin/env node
 /**
- * Чистка описания прошлого по сроку.
+ * The prune of the archive by the term.
  *
- * Запись живёт назначенный деревом срок, дальше снимается из дерева и остаётся в истории
- * системы контроля версий — достать её оттуда можно по имени файла, оно же единственный
- * указатель каталога.
+ * A record lives for the term the tree has set, then it is removed from the tree and stays in the
+ * history of the version control system — it can be got back from there by the file name, which is
+ * also the only pointer of the directory.
  *
- * Сухой прогон — умолчание. Команда сносит разбор просьбы — единственную запись слов
- * владельца, — и снос называется явно: `--apply`. Перечень снимаемого печатается в обоих
- * случаях одинаково, чтобы решение принималось по тому же списку, который потом уедет.
+ * A dry run is the default. The command removes the grill of the request — the only record of the
+ * owner's words — and the removal is named explicitly: `--apply`. The list of what is removed is
+ * printed the same way in both cases, so that the decision is made by the same list that will
+ * then leave.
  *
- * Срок и отбор берутся у `archive-age.mjs` — того же модуля, по которому краснеет проверка.
+ * The term and the selection are taken from `archive-age.mjs` — the same module the check goes red
+ * by.
  */
 import { execFileSync } from 'node:child_process';
 

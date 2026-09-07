@@ -1,36 +1,36 @@
-// rt-kit v0.25.0 · checks/spec-proposed.mjs · dcb83f20e6ab · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/spec-proposed.mjs · 51b46032f1fe · правится надстройкой, не здесь
 /**
- * Договорённости, ждущие переезда в спек домена.
+ * Product agreements waiting to move into the domain spec.
  *
- * Договорённость, по которой код уже написан, вливается в спек домена, а её директория
- * удаляется. Оставленная в главной ветке, она читается как предложенное и не выкаченное — то
- * есть как ложь о работающем месяц приложении.
+ * A product agreement the code is already written by merges into the domain spec, and its directory
+ * is removed. Left in the main branch, it reads as proposed and not rolled out — that is, as a lie
+ * about an application that has been running for a month.
  *
- * Второй вопрос к ней — возраст. Привязка в договорённости стареет молча: объявление, на которое
- * она показывает, переезжает вместе с соседней работой, а сверять договорённость с кодом никто
- * не станет, пока она не вольётся. Три такие пролежали месяц, и промах нашёлся ровно при
- * вливании — то есть в тот час, когда чинить его дороже всего.
+ * The second question to it is age. A binding in a product agreement grows stale silently: the
+ * declaration it points at moves along with neighbouring work, and nobody will check the agreement
+ * against the code until it is merged. Three such lay for a month, and the miss was found exactly
+ * at the merge — that is, at the hour when fixing it costs the most.
  *
- * Ни то, ни другое падением не делается: на середине работы часть тестов уже есть, а сама работа
- * законно идёт неделями — красная сверка отбивала бы пуш каждой ветки, включая ту, которая
- * договорённость и дописывает.
+ * Neither of the two is made a failure: in the middle of the work part of the tests already exist,
+ * and the work itself lawfully runs for weeks — a red audit would refuse the push of every branch,
+ * including the one that is finishing the agreement.
  */
 import { execFileSync } from 'node:child_process';
 
 import { ROOT } from './rt-kit-checks.config.mjs';
 import { SPECS_DIR } from './spec-common.mjs';
 
-/** За сколько суток без правок договорённость считается залежавшейся. */
+/** After how many days without edits a product agreement counts as stale. */
 const STALE_PROPOSED_DAYS = 30;
 
-/** Сутки в миллисекундах — считать возраст удобнее в них. */
+/** A day in milliseconds — age is easier to count in them. */
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
- * Каталоги договорённостей со счётом их сценариев.
+ * The directories of product agreements with the count of their scenarios.
  *
- * Готовой считается та, у которой все сценарии закрыты тестами: пока хоть один помечен «Не
- * покрыто», фича не дописана.
+ * Ready is the one whose scenarios are all closed by tests: while at least one is marked "not
+ * covered", the feature is not finished.
  */
 export function proposedGroups(scenarios, references) {
     const proposed = new Map();
@@ -57,15 +57,15 @@ export function proposedGroups(scenarios, references) {
 }
 
 /**
- * Дата последнего коммита у каждого каталога договорённости.
+ * The date of the last commit for every product agreement directory.
  *
- * Один проход по истории вместо вызова на каталог: лог идёт новыми вперёд, поэтому первая
- * встреченная дата каталога и есть последняя. Каталог, которого в истории ещё нет, приехал этой
- * же веткой и старым быть не может.
+ * One pass over the history instead of a call per directory: the history goes newest first, so the
+ * first date met for a directory is its last one. A directory not yet in the history arrived by
+ * this very branch and cannot be old.
  *
- * Возраст меряется историей, а не временем файла на диске: свежий чекаут делает все каталоги
- * одновременными, а дня в тексте договорённости нет вовсе. Тот же довод стоит у возраста записей
- * описания прошлого.
+ * Age is measured by the history, not by the file time on disk: a fresh checkout makes all the
+ * directories simultaneous, and there is no day in the text of the agreement at all. The same
+ * reason stands behind the age of archive records.
  */
 function lastCommits(dirs) {
     if (dirs.length === 0) {
@@ -107,7 +107,10 @@ function lastCommits(dirs) {
     return dates;
 }
 
-/** Договорённости, лежащие без правок дольше срока: путь и возраст в сутках, старые впереди. */
+/**
+ * Product agreements lying without edits longer than the term: the path and the age in days,
+ * the oldest first.
+ */
 export function staleProposed(dirs, now = Date.now()) {
     const dates = lastCommits(dirs);
 

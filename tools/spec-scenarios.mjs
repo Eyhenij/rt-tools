@@ -1,7 +1,7 @@
-// rt-kit v0.25.0 · checks/spec-scenarios.mjs · 3d186af94895 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/spec-scenarios.mjs · 6a4ddb5b141a · правится надстройкой, не здесь
 /**
- * Сценарии домена и уровень их привязки: что сценарий обещает, каким тестом это покрыто и не
- * выключен ли тест переменной окружения.
+ * The scenarios of a domain and the level of their binding: what a scenario promises, by which test
+ * it is covered and whether the test is not switched off by an environment variable.
  */
 import {
     ACTOR,
@@ -17,7 +17,7 @@ import {
     walk,
 } from './spec-common.mjs';
 
-// ── 4. Сценарии и уровень привязки ────────────────────────────────────────────
+// ── 4. Scenarios and the level of binding ──────────────────────────────────────
 
 function parseScenarios(file) {
     const lines = read(file).split('\n');
@@ -52,8 +52,8 @@ function parseScenarios(file) {
         if (!current) {
             return;
         }
-        // Тело сценария целиком: по нему видно, назван ли в сценарии человек вообще. Местоимению
-        // в обещании иначе не с чем сверяться.
+        // The body of the scenario whole: by it one sees whether a person is named in the scenario
+        // at all. A pronoun in the promise has nothing else to check itself against.
         current.body += ` ${line.trim()}`;
         if (UNCOVERED.test(line)) {
             current.uncovered = true;
@@ -61,7 +61,7 @@ function parseScenarios(file) {
         if (PARTIAL.test(line)) {
             current.partial = true;
         }
-        // «Тогда» и его продолжения с отступом — то, что сценарий обещает
+        // «Тогда» and its continuations with an indent — what the scenario promises
         if (PROMISE.test(line)) {
             inPromise = true;
             current.promise += ` ${line.trim()}`;
@@ -80,26 +80,26 @@ function parseScenarios(file) {
 }
 
 /**
- * Человек, названный местоимением, — тот же человек: «он видит тост об отказе» обещает экран
- * ровно так же, как «гость видит тост об отказе». Местоимение требуется подлежащим при самом
- * глаголе восприятия: свободная связка ловит ещё и «он» о запросе, сеансе и счётчике, у которых
- * глагол восприятия стоит в другой половине строки.
+ * A person named by a pronoun is the same person: «он видит тост об отказе» promises a screen
+ * exactly the same way as «гость видит тост об отказе». The pronoun is demanded as the subject at
+ * the verb of perception itself: a free link catches «он» about a request, a session and a counter
+ * as well, where the verb of perception stands in the other half of the line.
  */
 const PRONOUN_PERCEIVES = /(^|[^а-яё])(он|она|они)\s+(?:не\s+)?(?:вид(?:ит|ят)|чита(?:ет|ют)|смотр(?:ит|ят))/i;
 
 /**
- * Обещан ли сценарием экран. Признак читается только из «Тогда»: «Дано» описывает
- * обстановку, «Когда» — повод, а обещание пользователю стоит именно здесь.
+ * Whether a screen is promised by the scenario. The sign is read only from «Тогда»: «Дано»
+ * describes the setting, «Когда» the occasion, and the promise to the user stands exactly here.
  *
- * Человек и глагол восприятия требуются вместе, потому что порознь оба ошибаются.
- * «Показывается» без человека стоит и там, где показывается запись в базе, а человек без
- * восприятия — в каждом втором сценарии приёма заявки. Признак нарочно молчалив: сценарий,
- * чьё «Тогда» человека не называет, под него не подпадает вовсе.
+ * A person and a verb of perception are demanded together, because apart both of them err.
+ * «Показывается» without a person stands where a record in the database is shown too, and a person
+ * without perception stands in every second scenario of taking in a request. The sign is silent on
+ * purpose: a scenario whose «Тогда» names no person does not fall under it at all.
  *
- * Второе условие — местоимение при глаголе восприятия, и человек при этом назван в теле
- * сценария. Оба нужны: свободная связка прибавляет обещания, где «он» — о запросе и счётчике, а
- * без имени человека в теле признак ловит «домен решает, есть ли тревога; тогда он смотрит на
- * прошлый час».
+ * The second condition is a pronoun at the verb of perception, with a person named in the body of
+ * the scenario at that. Both are needed: a free link adds promises where «он» is about a request
+ * and a counter, and without the name of a person in the body the sign catches «домен решает, есть
+ * ли тревога; тогда он смотрит на прошлый час».
  */
 function promisesScreen(promise, body = '') {
     if (ACTOR.test(promise) && PERCEIVES.test(promise)) {
@@ -110,13 +110,14 @@ function promisesScreen(promise, body = '') {
 }
 
 /**
- * Константы, собранные из окружения, вместе с теми, что собраны из них. Ими выключают
- * сквозной тест целиком: без `BASE_URL` или пары входа он не исполняется ни разу.
- * Цепочка раскрывается, пока есть что раскрывать: `HAS_ADMIN_SESSION` собран из двух
- * других констант, а не из `process.env` напрямую.
+ * The constants assembled from the environment, together with those assembled from them. By them
+ * an end-to-end test is switched off whole: without `BASE_URL` or the sign-in pair it never runs.
+ * The chain is unfolded while there is something to unfold: `HAS_ADMIN_SESSION` is assembled from
+ * two other constants, not from `process.env` directly.
  */
 function environmentSwitches(root) {
-    // Объявление верхнего уровня: с отступом стоят локальные, и они гасят не тест, а случай
+    // A top-level declaration: the local ones stand with an indent, and they put out a case, not
+    // the test
     const declaration = /^const\s+([A-Za-z_]\w*)\s*(?::[^=]+)?=\s*([^;]+);/gm;
     const assignments = [];
     for (const file of walk(root, (name) => name.endsWith('.ts'))) {
@@ -142,12 +143,12 @@ function environmentSwitches(root) {
 }
 
 /**
- * Упоминания сценария в тестах: где стоит, идёт ли тест путём пользователя и не выключен ли
- * он переменной окружения.
+ * Mentions of the scenario in tests: where it stands, whether the test goes the way of the user and
+ * whether it is switched off by an environment variable.
  *
- * Выключатель по состоянию стенда («у объекта меньше двух помещений») — это пропуск случая,
- * и покрытие он не отменяет. Выключатель по переменной отменяет: тест с ним в обычном
- * прогоне значится пропущенным, а сводка без этого читала бы его покрытием.
+ * A switch by the state of the stand («the object has fewer than two rooms») is a skip of a case,
+ * and it does not cancel the coverage. A switch by a variable does cancel it: a test with one in an
+ * ordinary run counts as skipped, and without this the digest would read it as coverage.
  */
 function collectReferences() {
     const references = new Map();
@@ -197,15 +198,15 @@ function collectReferences() {
                     }
                 });
 
-            // Выключатель стоит первой строкой тела, то есть ниже заголовка теста с
-            // идентификатором: состояние теста читается, когда файл разобран целиком
+            // The switch stands as the first line of the body, that is below the title of the test
+            // with the identifier: the state of the test is read when the file is taken apart whole
             found.forEach(({ id, test: own, place }) => remember(id, { place, screen: Boolean(e2eRoot), off: Boolean(own?.off) }));
         }
 
-        // Наборы сценариев на shell. Так проверяются исполняемые файлы — гарды, проверки,
-        // умолчания: они не на TypeScript, и набор к ним пишут на том же языке, что и их
-        // самих. Выключателей здесь нет: пропустить сценарий в таком наборе нечем, поэтому
-        // достаточно найти идентификатор.
+        // Scenario suites in shell. That is how executable files are checked — guards, checks,
+        // defaults: they are not in TypeScript, and a suite for them is written in the same
+        // language as themselves. There are no switches here: there is nothing to skip a scenario
+        // with in such a suite, so finding the identifier is enough.
         for (const file of walk(root, (name) => name.endsWith('.test.sh'))) {
             read(file)
                 .split('\n')

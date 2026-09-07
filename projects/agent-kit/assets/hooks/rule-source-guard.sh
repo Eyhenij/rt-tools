@@ -1,26 +1,28 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/write-targets.sh, hooks/guard-note.sh
-# Гард места правки: слой правил чинится там, где сломано, а не там, где виден.
+# Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/write-targets.sh, hooks/guard-note.sh
+# Guard of the place of the edit: the rules layer is fixed where it is broken, not where it is seen.
 #
-# Слой правил правит тот же исполнитель, которым слой правил управляет, и разницы между
-# «исполняю правило» и «правлю правило» в дереве не видно ничем: разложенная копия лежит рядом
-# с обычными файлами и правится так же. Правка доходит до диска и не доходит до места, где
-# промах чинится: в дереве она видна, в пакете её нет, а через месяц раскладка отказывает по
-# правленому файлу целиком — и цену платит тот, кто в этот день правил соседний ресурс.
+# The rules layer is edited by the same executor the rules layer governs, and nothing in the tree
+# shows the difference between "I follow a rule" and "I edit a rule": the laid-out copy lies next to
+# ordinary files and is edited the same way. The edit reaches the disk and does not reach the place
+# where the miss is fixed: in the tree it is visible, in the package it is absent, and a month later
+# the layout refuses over the edited file as a whole — and the price is paid by whoever edits a
+# neighbouring resource that day.
 #
-# Знал об этом только `sync --check`, и говорил он на следующей раскладке, то есть в чужой
-# ветке и чужим ходом. Гард говорит в минуту правки и называет адрес: источник пакета, если
-# дерево его держит, иначе — надстройку.
+# Only `sync --check` knew about this, and it spoke at the next layout, that is, in someone else's
+# branch and on someone else's turn. The guard speaks at the minute of the edit and names the
+# address: the package source, if the tree holds it, otherwise the override.
 #
-# ЧТО СУДИТСЯ. Файл, который правят, несёт шапку раскладки: `rt-kit v<версия> · <ресурс> ·
-# <дайджест>`. Ресурс из неё и есть адрес: `<источники>/<ресурс>` в дереве пакета,
-# `.claude/rt-kit/overrides/<ресурс>` у потребителя.
+# WHAT IS JUDGED. The file being edited carries the layout header: `rt-kit v<version> · <resource> ·
+# <digest>`. The resource from it is the address: `<sources>/<resource>` in the package tree,
+# `.claude/rt-kit/overrides/<resource>` at a consumer.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет `jq`, битый ввод, чужой инструмент, файла нет, шапки в нём нет,
-# не git-репозиторий — правка РАЗРЕШАЕТСЯ. Сломанный гард не имеет права заклинить работу.
+# FAIL-OPEN: no `jq`, broken input, a foreign tool, no file, no header in it, not a git repository —
+# the edit is ALLOWED. A broken guard has no right to jam work.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is written by the shared deny tail, not by the
+# guard itself.
 RT_GUARD_NAME=rule-source-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -53,9 +55,9 @@ deny() {
     exit 0
 }
 
-# Цели записи разбирает общий помощник: тот же признак нужен гарду экзамена, и разойдясь, две
-# копии пропустили бы разные формы записи. Файла нет — остаётся молчаливое умолчание, чтобы гард
-# не сломался на неполной раскладке.
+# The write targets are parsed by a shared helper: the exam guard needs the same sign, and once they
+# diverged, two copies would let through different forms of writing. No file — a silent default
+# remains, so that the guard does not break on an incomplete layout.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/write-targets.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/write-targets.sh" 2>/dev/null
@@ -70,14 +72,15 @@ case "$tool" in
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool)
         cmd="$(rt_hook_cmd)"
         [ -z "$cmd" ] && exit 0
-        # Здесь берётся не общий признак записи, а цель, названная в команде прямо:
-        # перенаправление, `tee`, правка на месте, копирование поверх. Общий признак широк
-        # намеренно — в нём и имя интерпретатора, — и запуск разложенной проверки читался бы
-        # как правка её самой. Отбитие на чтении стоит дороже пропуска: гард, мешающий читать,
-        # выключают в первый же день.
+        # What is taken here is not the general sign of writing, but the target named in the
+        # command outright: a redirection, `tee`, an in-place edit, a copy over the top. The
+        # general sign is broad on purpose — it holds the interpreter name too — and a run of a
+        # laid-out check would read as an edit of the check itself. A refusal on reading costs
+        # more than a miss: a guard that gets in the way of reading is switched off on the very
+        # first day.
         #
-        # Снятие копии сюда не входит намеренно: снятый файл раскладка кладёт заново, и так
-        # чинят копию, которую переписал форматтер.
+        # Removing a copy is deliberately not included here: the layout puts a removed file back,
+        # and that is how a copy the formatter rewrote gets fixed.
         candidates="$(printf '%s' "$cmd" | rt_write_targets)"
         ;;
     *) exit 0 ;;
@@ -86,8 +89,8 @@ esac
 
 root="${CLAUDE_PROJECT_DIR:-.}"
 
-# Каталог источников пакета в этом дереве. Есть он только у дерева, которое пакет и везёт; у
-# потребителя источника нет вовсе, и адрес правки у него один — надстройка.
+# The directory of package sources in this tree. Only the tree that carries the package has one; a
+# consumer has no source at all, and has a single address for an edit — the override.
 sources=""
 if rt_needs rt_kit_sources_dir rule-source-guard; then
     sources="$(rt_kit_sources_dir 2>/dev/null)"
@@ -101,18 +104,20 @@ while IFS= read -r candidate; do
     esac
     [ -f "$candidate" ] || continue
 
-    # Шапка стоит в начале файла, но не первой строкой: у сценария её отодвигает `#!`, у
-    # правила — заголовок с именем и родом ресурса. Десяти строк хватает обоим, а читать файл
-    # целиком нельзя: гард стоит на каждой правке.
+    # The header stands at the beginning of the file, but not on the first line: in a script `#!`
+    # pushes it down, in a rule the title with the name and the kind of the resource does. Ten
+    # lines are enough for both, and the whole file must not be read: the guard stands on every
+    # edit.
     resource="$(head -12 "$candidate" 2>/dev/null | sed -nE 's/.*rt-kit v[^ ]+ · ([^ ]+) · [0-9a-f]+.*/\1/p' | head -1)"
     [ -z "$resource" ] && continue
 
-    # Файл в конфликте пропускается наравне со снятым. Разрешение конфликта содержания копии не
-    # меняет — раскладка кладёт её заново, — а отбитый здесь исполнитель остаётся с наполовину
-    # слитой веткой и без законного хода: источник править нечего, надстройка конфликта не
-    # снимает. Признаков два, и хватает любого: запись индекса о неслитом файле и маркеры
-    # слияния в самом файле — второй нужен там, где слияние ведёт не git, а сторонний
-    # инструмент, оставляющий маркеры без записи в индексе.
+    # A file in conflict is skipped on a par with a removed one. Resolving a conflict does not
+    # change the content of the copy — the layout puts it back — while an executor refused here is
+    # left with a half-merged branch and no lawful move: there is nothing to edit in the source,
+    # and an override does not lift the conflict. There are two signs, and either is enough: an
+    # index record about an unmerged file, and merge markers in the file itself — the second is
+    # needed where the merge is led not by git but by an outside tool that leaves markers without
+    # an index record.
     if [ -n "$(git -C "$root" ls-files -u -- "$candidate" 2>/dev/null)" ] \
         || grep -qE '^(<<<<<<< |>>>>>>> )' "$candidate" 2>/dev/null; then
         continue

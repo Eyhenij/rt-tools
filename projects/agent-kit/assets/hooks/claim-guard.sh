@@ -1,37 +1,39 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
-# Гард утверждения: сказанное владельцу о состоянии дерева несёт команду, показавшую это. Stop.
+# The claim guard: what is said to the owner about the state of the tree carries the command that
+# showed it. Stop.
 #
-# Зачем именно так. Правило текстов само говорит, что ответ владельцу не читает ни одна
-# проверка: за файл отвечает гейт, за ответ — автор, и цену ошибки в ответе платит владелец.
-# Восемь разборов подряд про одно и то же — готовым названо лежащее на диске, снятыми названы
-# только локальные ветки, проверенным назван набор уже конвейерного, состоянием дерева названа
-# отставшая локальная ссылка. Каждый раз в правило дописывалась статья, и каждый раз промах
-# повторялся: текст читают в начале захода, а утверждение говорят в конце.
+# Why exactly this way. The rule of texts itself says that no check reads the reply to the owner:
+# a file is answered for by the gate, a reply by its author, and the price of a mistake in a reply
+# is paid by the owner. Eight analyses in a row about one and the same thing — what lay on the disk
+# was called ready, only local branches were called removed, a set narrower than the pipeline was
+# called checked, a local reference that had fallen behind was called the state of the tree. Each
+# time an article was added to the rule, and each time the miss repeated: the text is read at the
+# start of the session, and the claim is said at its end.
 #
-# Что судится: текст, сказанный владельцу за этот ход. Вывод инструмента и записанное в файл
-# сюда не входят — их читают гейт и сверки.
+# What is judged: the text said to the owner within this turn. Tool output and what was written
+# into a file do not go here — those are read by the gate and by the checks.
 #
-# Как судится: у каждого слова-утверждения назван свой род команды. Утверждение о зелёном
-# наборе подтверждает прогон набора, о запушенном — вызов пуша, о снятом — вызов удаления.
-# Команда ищется в этом же ходе: состояние дерева меняется, и вывод прошлого хода о нынешнем
-# уже не говорит.
+# How it is judged: each claim word has a command kind of its own named for it. A claim about a
+# green set is confirmed by a run of the set, about a pushed branch by a push call, about a removed
+# one by a delete call. The command is looked for within this same turn: the state of the tree
+# changes, and the output of a past turn no longer speaks about the present one.
 #
-# Чего гард не судит. Неверный вывод: об образце, судимом по одному его файлу, и о пути, которым
-# человек не пойдёт, машине судить нечем — там нет ни слова-утверждения, ни команды, с которой
-# сверять. Эти случаи держит правило ведения работы, и это известная граница гарда, а не
-# обещание.
+# What the guard does not judge. A wrong conclusion: about a pattern judged by one of its files,
+# and about a path a person will not take, a machine has nothing to judge by — there is neither a
+# claim word there nor a command to check against. Those cases are held by the work-conduct rule,
+# and that is a known boundary of the guard, not a promise.
 #
-# Не судится и чужое слово: цитата в кавычках, вопрос экзаменатора, пересказ чужого текста,
-# строка кода и предложение в условном наклонении утверждением о дереве не являются. Отбитые
-# за них ходы обходятся дороже пропущенных: гард, отбивающий цитату, учит не проверять дерево,
-# а не писать кавычек. Поэтому перед разбором из сказанного вынимаются кавычки, код, строки
-# цитирования и предложения со словом условия.
+# Someone else's word is not judged either: a quotation in quotes, an examiner's question, a
+# retelling of someone else's text, a line of code and a sentence in the conditional are not claims
+# about the tree. Turns refused for them cost more than the ones let through: a guard that refuses
+# a quotation teaches not to check the tree but not to write quotes. So before the parse, quotes,
+# code, quoting lines and sentences with a word of condition are taken out of what was said.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: при любой ошибке, нехватке `jq`, отсутствии записи хода или пустом
-# тексте ход РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права заклинить разговор.
+# FAIL-OPEN: on any error, a missing `jq`, no turn record or empty text the turn is ALLOWED
+# (exit 0). A broken guard has no right to jam the conversation.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is written by the shared deny tail, not by the guard.
 RT_GUARD_NAME=claim-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -42,7 +44,7 @@ input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
-# Повторный заход по тому же ходу не судится: гард сказал своё один раз и отпускает.
+# A repeat pass over the same turn is not judged: the guard said its piece once and lets go.
 active="$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/null)"
 [ "$active" = "true" ] && exit 0
 
@@ -50,13 +52,15 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 [ -z "$transcript" ] && exit 0
 [ -f "$transcript" ] || exit 0
 
-# Текст ответа ложится в запись хода не раньше, чем хост позовёт хук: гард, прочитавший файл
-# первым, судит ход, у которого сказанного нет вовсе, — и молчит, будучи неотличим от гарда,
-# который посмотрел и пропустил. Ждём его появления, и не дождавшись — возвращаем ход: пустая
-# запись означает не «владельцу ничего не сказано», а «прочитать нечего».
+# The text of the reply lands in the turn record no earlier than the host calls the hook: a guard
+# that read the file first judges a turn that has nothing said in it at all — and stays silent,
+# indistinguishable from a guard that looked and let it through. We wait for it to appear, and
+# failing to see it, we return the turn: an empty record means not "nothing was said to the owner"
+# but "there is nothing to read".
 #
-# Отказ этот принадлежит одному гарду нарочно. Текст судят трое, и печатай они свои объекты
-# подряд, вывод перестал бы разбираться целиком — то есть отбой пропал бы весь.
+# This refusal belongs to one guard on purpose. Three of them judge the text, and were they to
+# print their objects one after another, the output would stop being parsed whole — that is, the
+# refusal would be lost entirely.
 if ! rt_turn_has_text "$transcript"; then
     reason="BLOCKED by claim-guard: запись хода не отдала ни одного текста ответа, и судить сказанное владельцу нечем.
 
@@ -80,8 +84,8 @@ ${deny_tail_text}"
     exit 0
 fi
 
-# Ход — всё, что записано после последней настоящей реплики владельца: ответ инструмента
-# приходит той же ролью и репликой не считается.
+# A turn is everything recorded after the owner's last real reply: a tool answer comes in under
+# the same role and does not count as a reply.
 turn="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
     def is_input:
         .type == "user"
@@ -105,9 +109,9 @@ said="$(printf '%s' "$turn" | jq -r '.said // ""' 2>/dev/null)"
 ran="$(printf '%s' "$turn" | jq -r '.ran // ""' 2>/dev/null)"
 [ -z "$said" ] && exit 0
 
-# Чужое слово вынимается до разбора. Строка цитирования и блок кода уходят целиком, кавычки и
-# код в строке гасятся пробелом, а предложения со словом условия отбрасываются: «прогнал бы» и
-# «если бы линт был зелёным» о состоянии дерева не говорят ничего.
+# Someone else's word is taken out before the parse. A quoting line and a code block go whole,
+# quotes and inline code are blanked with a space, and sentences with a word of condition are
+# dropped: "would have run" and "if the lint were green" say nothing about the state of the tree.
 judged="$(printf '%s\n' "$said" \
     | awk 'BEGIN { code = 0 }
         /^[[:space:]]*```/ { code = !code; next }
@@ -118,10 +122,11 @@ judged="$(printf '%s\n' "$said" \
 [ -z "$judged" ] && exit 0
 said="$judged"
 
-# Карта утверждений: что сказано о дереве | чем это показывают | что назвать в отказе.
+# The claims map: what is said about the tree | what shows it | what to name in the refusal.
 #
-# Слово берётся в той форме, в какой его говорят владельцу. Будущее время сюда не идёт:
-# «проверю» и «запущу» утверждениями не являются — они обещание, и врать им нечем.
+# The word is taken in the form it is said to the owner in. The future tense does not go here:
+# "I will check" and "I will start" are not claims — they are a promise, and there is nothing in
+# them to lie with.
 claims=(
     'проверено|прогнал[а]?|тесты (зелёные|прошли)|линт(ер)? (зелёный|прошёл|чистый)|сборка (зелёная|прошла)|набор зелёный|проверки зелёные|спеки зелёные|всё зелен(о|ое)§nx (test|lint|build|run|affected|run-many)|npm (run|test)|pnpm (run|exec|test)|jest|vitest|playwright|check:|run\.sh§команду набора — прогон тестов, линта или сборки'
     'запушен[аоы]?|запушил[а]?|пуш прошёл|ветка уехала§git push§`git push`'
@@ -129,9 +134,10 @@ claims=(
     '(ветки|ветка|файлы|файл|папка|каталог)[^.]{0,40}(снят|удал|почищ|вычищ)|снят[оыа] с§git branch|git push .*--delete|git rm|gh api|rm §команду удаления — `git branch -d`, `git push --delete` или `git rm`'
     'прогон (зелёный|прошёл|кончился)|конвейер зелёный|проверки на PR зелёные§gh run§`gh run list` или `gh run view`'
     '(работа|правка|задача) готова|можно вливать|PR открыт|черновик снят§gh pr §`gh pr create`, `gh pr view` или `gh pr ready`'
-    # Ожидание чужого шага — тоже утверждение о состоянии, и врать ему есть чем: прогон бывает
-    # зелёным час, бывает не встав вовсе. Сказанное без команды оставляет готовую работу
-    # черновиком, и владелец узнаёт об этом последним — дважды за сутки так и вышло.
+    # Waiting for someone else's step is a claim about the state too, and there is something in it
+    # to lie with: a run is green for an hour, and sometimes never starts at all. Said without a
+    # command, it leaves finished work a draft, and the owner learns of it last — that is exactly
+    # how it went twice in one day.
     'жд[уёя][^.]{0,20}прогон|дожида[ею][^.]{0,20}прогон|прогон[^.]{0,20}(ещё идёт|не встал|не кончился|не дошёл)|черновик[^.]{0,30}(не снимаю|сниму|снимется)§gh run|gh pr checks|check-runs|check:board|board\.mjs§команду о прогоне — `gh run list`, `gh pr checks` или сверку очереди работ'
     'задача заведена|задача (в|переведена в) колонк|колонка переведена§gh issue|gh api|task:new|task:move|board\.mjs§команду очереди работ — заведение задачи или перевод колонки'
     '(в дереве|в репозитории|здесь|такого файла|такой команды)[^.]{0,30}(нет|не бывает)|не заводили|нигде не встречается§grep|rg |ls |find |git ls-files|git grep|git log|cat §команду поиска — `grep`, `git ls-files` или обход каталога'
@@ -157,8 +163,8 @@ for row in "${claims[@]}"; do
 
 Гард судит один ход: следующий заход не отбивается."
 
-    # Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
-    # а причина отказа остаётся прежней.
+    # The shared deny tail: the two lawful moves. The file may not be laid out — then there is no
+    # tail, and the reason for the refusal stays as it was.
     # shellcheck disable=SC1090
     [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
         && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null

@@ -1,23 +1,23 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-schema-drift.mjs · 380eff42ceb4 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-schema-drift.mjs · be0a04baec31 · правится надстройкой, не здесь
 /**
- * Проверка того, что миграции и `prisma/schema.prisma` описывают одну и ту же базу.
+ * The check that the migrations and `prisma/schema.prisma` describe one and the same database.
  *
- * Расхождение между ними не видит ни линт, ни сборка: оно живёт не в коде, а между
- * схемой и SQL. Так в главную ветку уехала миграция, создававшая два индекса,
- * которых схема не объявляла, — выкатка упала уже в конвейере.
+ * Neither the linter nor the build sees a divergence between them: it lives not in the code but
+ * between the schema and the SQL. That is how a migration creating two indexes the schema did not
+ * declare went into the main branch — the rollout fell already in the pipeline.
  *
- * Меряются именно миграции, а не база того, кто запускает проверку. База
- * разработчика законно несёт след любой недоделанной ветки: одна такая держала
- * пуш чужой правки четырьмя таблицами и восемью колонками, которых в схеме
- * главной ветки нет, — при том что миграции со схемой сходились.
+ * What is measured is the migrations, not the database of whoever runs the check. A developer's
+ * database lawfully carries the trace of any unfinished branch: one such held the push of someone
+ * else's edit with four tables and eight columns that the schema of the main branch does not
+ * have — while the migrations and the schema agreed.
  *
- * Поэтому миграции накатываются на одноразовую теневую базу и сравнивается она.
- * Теневая база заводится на каждый прогон и сносится после: оставленная между
- * прогонами, она сама накопит след ветки с миграцией, и проверка снова начнёт
- * судить о состоянии машины вместо репозитория.
+ * So the migrations are applied to a one-off shadow database, and it is that one which is
+ * compared. The shadow database is started for every run and torn down after: left between runs,
+ * it will itself accumulate the trace of a branch with a migration, and the check will again start
+ * judging the state of the machine instead of the repository.
  *
- * Ненулевой код возврата и объяснение расхождения.
+ * A non-zero return code and an explanation of the divergence.
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
@@ -25,16 +25,16 @@ import { join } from 'node:path';
 import process from 'node:process';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
-/** Суффикс теневой базы: по нему видно, что сносится именно она, а не чья-то рабочая */
+/** The suffix of the shadow database: by it one sees that it is the shadow being torn down, not somebody's working base */
 const SHADOW_SUFFIX = '_gate_shadow';
 
 /**
- * Признаки боевой базы — те же, что у `sql-guard`. Схема на проде меняется только
- * выкаткой, и проверка туда не ходит ни читать, ни писать.
+ * The signs of the production database — the same as in `sql-guard`. The schema in production
+ * changes only by a rollout, and the check goes there neither to read nor to write.
  */
 const PRODUCTION_MARKS = CONFIG.productionMarks ?? [];
 
-/** Сервер жив, но базы нет; сервера нет вовсе — оба означают «проверять негде» */
+/** The server is alive but the database is not there; there is no server at all — both mean "nowhere to check" */
 const SERVER_DOWN_CODES = ['ECONNREFUSED', 'ENOTFOUND', 'EHOSTUNREACH', 'ETIMEDOUT'];
 
 function databaseUrl() {
@@ -59,7 +59,7 @@ function databaseUrl() {
         : '';
 }
 
-/** Адрес теневой базы и адрес служебной, из которой она заводится и сносится */
+/** The address of the shadow database and the address of the service one it is started and torn down from */
 function shadowAddresses(url) {
     const parsed = new URL(url);
     const name = decodeURIComponent(parsed.pathname.replace(/^\//, ''));
@@ -68,36 +68,38 @@ function shadowAddresses(url) {
     const shadow = new URL(url);
     shadow.pathname = `/${encodeURIComponent(shadowName)}`;
 
-    // Завести и снести базу можно только из другой базы того же сервера; `postgres`
-    // есть всегда, а рабочая для этого не годится — снос идёт при живых к ней
-    // подключениях.
+    // A database can be started and torn down only from another database of the same server;
+    // `postgres` is always there, and the working one will not do for this — the teardown happens
+    // while connections to it are alive.
     const service = new URL(url);
     service.pathname = '/postgres';
 
     return { shadowName, shadowUrl: shadow.toString(), serviceUrl: service.toString() };
 }
 
-// Код, которым проверка объявляет, что смотреть было не на что. Прежде каждый такой выход был
-// нулём: строка о пропуске уходила в вывод, а в сводке гейта пуша ноль стоял рядом с
-// пройденными проверками и ничем от них не отличался — набор читался как проверенный целиком.
-// Число знает и гард пуша: он называет пропущенное вслух, не отбивая пуш, потому что проверка,
-// которой нечего смотреть, поломкой не является.
+// The code by which the check declares that there was nothing to look at. Formerly every such exit
+// was a zero: the line about the skip went to the output, and in the digest of the push gate the
+// zero stood next to the checks that had passed and differed from them in nothing — the set read
+// as checked in full. The push guard knows the number too: it names what was skipped out loud
+// without refusing the push, because a check with nothing to look at is not a breakage.
 const SKIP = Number(process.env.RT_SKIP_CODE ?? 7);
 
 /**
- * Тронула ли ветка хранилище — схему либо каталог миграций.
+ * Whether the branch touched the storage — the schema or the migrations directory.
  *
- * Пропуск проверки законен ровно до этой черты. База на машине разработчика бывает погашена
- * буднично, и отбивать за это пуш документации не за что; но ветка, правившая миграции, без
- * прогона цепочки уезжает в главную вслепую — и падает не у неё, а на выкатке. Так и упал прод:
- * пять полей появились в схеме без миграций, часть страниц стала отвечать «не найдено», полчаса
- * недоступности, чинили откатом. Гейт при этом был зелёным: проверка вернула код пропуска.
+ * Skipping the check is lawful exactly up to this line. A database on a developer's machine is shut
+ * down as a matter of routine, and there is nothing in that to refuse a push of documentation for;
+ * but a branch that edited the migrations goes into main blind without a run of the chain — and
+ * falls not there but at the rollout. That is how production fell: five fields appeared in the
+ * schema without migrations, some pages started answering "not found", half an hour of downtime,
+ * fixed by a rollback. The gate was green all the while: the check returned the skip code.
  *
- * Смотрятся обе стороны — незакоммиченное в рабочем дереве и вклад ветки от главной. Одного
- * вклада мало: правка, ещё не попавшая в коммит, уходит тем же пушем следом.
+ * Both sides are looked at — what is uncommitted in the working tree and the branch's contribution
+ * from main. The contribution alone is not enough: an edit that has not reached a commit yet goes
+ * out with the same push right after.
  *
- * ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет git, нет главной ветки, вызов упал — считается, что не тронула.
- * Проверка, отбивающая пуш по своей слепоте, хуже пропуска: чинить в ней нечего.
+ * FAIL-OPEN: no git, no main branch, the call fell — it counts as not touched. A check that refuses
+ * a push out of its own blindness is worse than a skip: there is nothing in it to fix.
  */
 function touchedStorage() {
     const paths = [CONFIG.schemaFile, CONFIG.migrationsDir].filter(Boolean);
@@ -111,8 +113,8 @@ function touchedStorage() {
         return out.status === 0 ? (out.stdout ?? '') : '';
     };
 
-    // Главная ветка берётся удалённой ссылкой: локальная — снимок последнего подтягивания, и
-    // вклад, посчитанный от неё, врёт ровно в ту сторону, где проверка молчит.
+    // The main branch is taken by the remote ref: the local one is a snapshot of the last pull, and
+    // a contribution counted from it lies exactly in the direction where the check stays silent.
     const main = CONFIG.mainBranch ?? 'main';
     const base = [`origin/${main}`, main].find((ref) => git(['rev-parse', '--verify', '--quiet', ref]).trim()) ?? '';
 
@@ -130,16 +132,16 @@ function prisma(args, url) {
 }
 
 async function withServiceClient(serviceUrl, run) {
-    // Клиент базы подтягивается на месте, а не импортом сверху: дерево без хранилища этого
-    // пакета в зависимостях не держит, и статический импорт ронял бы проверку до того, как она
-    // успеет сказать, что сверять здесь нечего.
+    // The database client is pulled in on the spot, not by an import at the top: a tree without
+    // storage does not keep this package in its dependencies, and a static import would drop the
+    // check before it managed to say that there is nothing here to audit.
     const pg = (await import('pg')).default;
     const client = new pg.Client({ connectionString: serviceUrl });
     try {
         await client.connect();
     } catch (error) {
-        // Погашенный докер — обычное состояние машины, а не повод не дать запушить
-        // документацию.
+        // Docker shut down is an ordinary state of the machine, not a reason to keep documentation
+        // from being pushed.
         if (SERVER_DOWN_CODES.includes(error?.code)) {
             return unavailable('база недоступна');
         }
@@ -154,10 +156,11 @@ async function withServiceClient(serviceUrl, run) {
 }
 
 /**
- * Ответ на «проверять негде»: пропуск либо отказ — смотря тронула ли ветка хранилище.
+ * The answer to "nowhere to check": a skip or a refusal — depending on whether the branch touched
+ * the storage.
  *
- * Отказ называет, чем поднять базу. Сказанное только «негде» исполнитель читает как разрешение:
- * поднимать её он не обязан, а гейт зелёный.
+ * The refusal names what to raise the database with. "Nowhere" said on its own the executor reads
+ * as a permission: raising it is not his duty, and the gate is green.
  */
 function unavailable(why) {
     if (!touchedStorage()) {
@@ -180,9 +183,10 @@ function unavailable(why) {
 }
 
 async function main() {
-    // Незаданное имя спрашивается отдельно от несуществующего файла. Склеенное с корнем, пустое
-    // имя даёт сам корень — а он есть всегда, и проверка шла дальше, будто схема на месте.
-    // Дерево без хранилища так и говорит: имени нет, сверять нечего.
+    // A name that is not set is asked about separately from a file that does not exist. Glued to
+    // the root, an empty name gives the root itself — and the root is always there, so the check
+    // went on as if the schema were in place. A tree without storage says just that: there is no
+    // name, there is nothing to audit.
     if (!CONFIG.schemaFile) {
         console.log('check-schema-drift: имя файла схемы не задано — сверять нечего');
 
@@ -209,12 +213,12 @@ async function main() {
     const { shadowName, shadowUrl, serviceUrl } = shadowAddresses(url);
 
     return withServiceClient(serviceUrl, async (client) => {
-        // Идентификатор в кавычках: имя базы выведено из адреса, а не из текста запроса
+        // The identifier is quoted: the database name comes from the address, not from the text of the query
         const quoted = `"${shadowName.replace(/"/g, '""')}"`;
         await client.query(`DROP DATABASE IF EXISTS ${quoted}`);
 
         try {
-            // Базу заводит сам `migrate deploy`: своей команды создания не нужно
+            // `migrate deploy` starts the database itself: no creation command of our own is needed
             const deploy = prisma(['migrate', 'deploy'], shadowUrl);
             if (deploy.status !== 0) {
                 console.error('check-schema-drift: миграции не накатываются на чистую базу\n');
@@ -223,7 +227,7 @@ async function main() {
                 return 1;
             }
 
-            // `--exit-code`: 0 — расхождений нет, 2 — есть, прочее — сбой самой команды
+            // `--exit-code`: 0 — no divergences, 2 — there are some, anything else — a failure of the command itself
             const diff = prisma(
                 ['migrate', 'diff', '--from-config-datasource', '--to-schema', CONFIG.schemaFile, '--exit-code'],
                 shadowUrl
@@ -238,10 +242,10 @@ async function main() {
                 return 1;
             }
             if (diff.status !== 0) {
-                // Ни «сошлось», ни «разошлось» — сама команда сравнения не отработала. Пропуск
-                // здесь неотличим от сошедшихся миграций, и именно им проверка молчала о пустом
-                // имени схемы: с ним она звала сравнение без обязательного довода, а отказ
-                // читался зелёным гейтом.
+                // Neither "agreed" nor "diverged" — the comparison command itself did not work. A
+                // skip here is indistinguishable from migrations that agreed, and it was by exactly
+                // that the check stayed silent about an empty schema name: with it the check called
+                // the comparison without a required argument, and the refusal read as a green gate.
                 console.error('check-schema-drift: сравнение не отработало\n');
                 console.error(`${diff.stdout ?? ''}${diff.stderr ?? ''}`);
 
@@ -260,12 +264,12 @@ async function main() {
 main().then(
     (code) => process.exit(code),
     (error) => {
-        // Сломанная обвязка — не пропуск, а отказ. «Проверять негде» проверка говорит сама и
-        // раньше: нет схемы, нет адреса, адрес боевой, сервер не отвечает — всё это законные
-        // выходы нулём, и каждый назван своей строкой. Сюда доходит то, чего она не предвидела,
-        // и молчаливый ноль здесь означает «гейт зелен, потому что сверять не получилось».
-        // Отличить его от «сверено и сошлось» нечем: за таким нулём проверка простояла
-        // выключенной, пока её не позвали руками.
+        // A broken harness is not a skip but a refusal. "Nowhere to check" the check says itself and
+        // earlier: no schema, no address, a production address, the server does not answer — all of
+        // these are lawful exits with a zero, and each is named by a line of its own. What reaches
+        // here is what the check did not foresee, and a silent zero here means "the gate is green
+        // because the audit did not work out". There is nothing to tell it from "audited and
+        // agreed": behind such a zero the check stood switched off until it was called by hand.
         console.error(`check-schema-drift: проверка не отработала — ${error?.message ?? error}\n`);
         console.error(
             'Это отказ самой проверки, а не расхождение схемы. Почини обвязку: недостающий пакет ставится в корень,\n' +

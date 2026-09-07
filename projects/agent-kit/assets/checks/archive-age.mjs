@@ -1,21 +1,24 @@
 /**
- * Возраст записей описания прошлого.
+ * The age of archive records.
  *
- * Каталог набирает по записи на каждую закрытую работу и не отдаёт обратно ничего: папку
- * задачи разбирает паттерн закрытия работы, и запись оттуда переживает всё дерево. Срок
- * назначает дерево ключом настройки; пакет умолчания не даёт — установка новой версии не
- * вправе начать сносить чужой архив, а снимается там разбор просьбы, которого нет больше нигде.
+ * The directory gains a record for every closed piece of work and gives nothing back: the task
+ * folder is taken apart by the work-closing pattern, and the record from it outlives the whole
+ * tree. The term is set by the tree with a settings key; the package gives no default — installing
+ * a new version has no right to start removing someone else's archive, and what gets removed there
+ * is the grill of the request, kept nowhere else.
  *
- * Отбор живёт здесь один на двоих: команда чистки снимает по нему, проверка по нему же
- * краснеет. Разойдясь, они говорили бы о каталоге разное, а заметить это нечем — чистка молча
- * оставляла бы то, на что проверка молча не смотрит.
+ * The selection lives here once for both: the prune command removes by it, the check goes red by
+ * the same one. Having drifted apart, they would say different things about the directory, and
+ * there is nothing to notice that by — the prune would silently leave what the check silently does
+ * not look at.
  *
- * Возраст меряется датой последнего коммита файла. Время файла на диске не годится: свежий
- * чекаут делает все записи одновременными, и чистка на чужой машине не сняла бы ни одной.
- * Шапка записи не годится тоже — день слияния стоит в ней не всегда и не всюду одинаково.
+ * Age is measured by the date of the file's last commit. The file time on disk is no good: a fresh
+ * checkout makes all the records simultaneous, and a prune on another machine would remove none.
+ * The record header is no good either — the day of the merge does not always stand in it, and not
+ * everywhere in the same way.
  *
- * Запись, которой в истории ещё нет, считается сегодняшней: она приехала этой же веткой и
- * перестоять не могла.
+ * A record not yet in the history counts as today's: it arrived by this very branch and could not
+ * have overstayed.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync } from 'node:fs';
@@ -23,35 +26,37 @@ import { join } from 'node:path';
 
 import { CONFIG } from './rt-kit-checks.config.mjs';
 
-/** Каталог описания прошлого — без завершающей косой черты: её несёт настройка. */
+/** The archive directory — without a trailing slash: the setting carries it. */
 export const ARCHIVE_DIR = CONFIG.archiveDir.replace(/\/$/, '');
 
 /**
- * Срок хранения записи в сутках. `null` — срок не назначен, и тогда молчат обе стороны:
- * проверка не краснеет, чистка не снимает. Дерево называет своё число ключом настройки.
+ * The retention term of a record in days. `null` — no term is set, and then both sides stay silent:
+ * the check does not go red, the prune removes nothing. The tree names its own number by a
+ * settings key.
  */
 export const RETENTION_DAYS = CONFIG.archiveRetentionDays ?? null;
 
 /**
- * Запас проверки в сутках сверх срока.
+ * The margin of the check in days over the term.
  *
- * Чистка снимает в минуту пуша, а проверка в конвейере считает возраст в минуту прогона —
- * минутами позже, при очереди на раннере часами. Возраст меряется до минуты, и за это время
- * следующая запись пересекает порог: три прогона одного захода покраснели так, ни один не по
- * правке ветки. Проверка поэтому требует позже, чем чистка снимает; всё, что она называет,
- * чистка по-прежнему снимает — отбор один, разница в запасе.
+ * The prune removes at the minute of the push, and the check in the pipeline counts the age at the
+ * minute of the run — minutes later, and with a queue on the runner hours later. Age is measured
+ * down to the minute, and in that time the next record crosses the threshold: three runs of one
+ * session went red that way, none of them by an edit of the branch. So the check demands later than
+ * the prune removes; everything it names the prune still removes — the selection is one, the
+ * difference is in the margin.
  */
 export const CHECK_GRACE_DAYS = 1;
 
-/** Сутки в миллисекундах — считать возраст удобнее в них. */
+/** A day in milliseconds — age is easier to count in them. */
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
- * Дата последнего коммита у каждой записи каталога.
+ * The date of the last commit for every record of the directory.
  *
- * Один проход по истории вместо вызова на файл: на трёх сотнях записей это разница между
- * секундой и полуминутой. Лог идёт новыми вперёд, поэтому первая встреченная дата файла и есть
- * последняя.
+ * One pass over the history instead of a call per file: on three hundred records that is the
+ * difference between a second and half a minute. The history goes newest first, so the first date
+ * met for a file is its last one.
  */
 function lastCommitDates(root) {
     const log = execFileSync('git', ['log', '--format=%cI', '--name-only', '--', ARCHIVE_DIR], {
@@ -83,11 +88,11 @@ function lastCommitDates(root) {
 }
 
 /**
- * Записи каталога с их возрастом в сутках.
+ * The records of the directory with their age in days.
  *
- * @param root Корень дерева.
- * @param now Момент отсчёта — передаётся, чтобы проверка и чистка судили по одному времени.
- * @returns Записи: путь, дата последнего коммита и возраст в сутках.
+ * @param root The tree root.
+ * @param now The reference moment — passed so that the check and the prune judge by one time.
+ * @returns Records: the path, the date of the last commit and the age in days.
  */
 export function archiveRecords(root, now = new Date()) {
     if (!existsSync(join(root, ARCHIVE_DIR))) {
@@ -109,9 +114,9 @@ export function archiveRecords(root, now = new Date()) {
 }
 
 /**
- * Записи, перестоявшие срок. Срок не назначен — перестоявших нет ни одной.
+ * Records that have overstayed the term. No term set — none have overstayed.
  *
- * @param graceDays Запас сверх срока в сутках: чистка зовёт без него, проверка — с ним.
+ * @param graceDays The margin over the term in days: the prune calls without it, the check with it.
  */
 export function staleRecords(root, now = new Date(), graceDays = 0) {
     if (RETENTION_DAYS === null) {

@@ -1,26 +1,27 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/deny-tail.sh
-# Гард перезапуска прогона: упавшее задание не перезапускается, пока его журнал не прочитан.
+# Requires: hooks/deny-tail.sh
+# Guard of the rerun: a fallen run is not rerun until its log has been read.
 #
-# Красное на прогоне бывает двух родов, и со стороны списка они выглядят одинаково: отказ
-# хостинга на шаге подготовки — раннер не скачал действие, ответ `429` — и дефект самой ветки.
-# Первый лечится перезапуском, второй перезапуском не лечится вовсе: та же ветка падает тем же
-# местом, и круг повторяется, пока кто-нибудь не откроет журнал. Три прогона одного дня так и
-# перезапускались подряд.
+# Red on a run comes in two kinds, and from the side of the list they look the same: a refusal of
+# the hosting at the preparation step — the runner did not download the action, an answer of `429`
+# — and a defect of the branch itself. The first is cured by a rerun, the second is not cured by a
+# rerun at all: the same branch falls in the same place, and the circle repeats until someone opens
+# the log. Three runs of one day were rerun one after another exactly that way.
 #
-# Гард судит ПОРЯДОК, а не причину падения: журнал раньше перезапуска. Что в журнале написано,
-# он не читает и читать не может — красное по существу судит человек.
+# The guard judges the ORDER, not the reason for the fall: the log before the rerun. What is written
+# in the log it does not read and cannot read — red on its merits is judged by a person.
 #
-# Признак чтения — вызов за тот же ход, показывающий журнал этого задания: номер задания в
-# команде тот же, что и в перезапуске. Номер сверяется, потому что прочитанный журнал соседнего
-# задания о нашем не говорит ничего, а по списку прогонов они стоят рядом.
+# The sign of reading is a call on the same turn that shows the log of this run: the run number in
+# the command is the same as in the rerun. The number is compared, because a read log of a
+# neighbouring run says nothing about ours, and in the list of runs they stand next to each other.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет `jq`, нет записи хода, номер задания в команде не назван, вызов не
-# похож на перезапуск — пропуск. Гард без номера судить не берётся: перезапуск последнего
-# упавшего прогона зовут и без него, а угадывать, о каком задании речь, значит отбивать наугад.
+# FAIL-OPEN: no `jq`, no turn record, no run number named in the command, the call does not look
+# like a rerun — pass. Without a number the guard does not undertake to judge: a rerun of the last
+# fallen run is called without one too, and guessing which run is meant would mean refusing blindly.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is written by the shared deny tail, not by the
+# guard itself.
 RT_GUARD_NAME=rerun-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -33,7 +34,7 @@ command -v jq >/dev/null 2>&1 || exit 0
 
 tool="$(rt_hook_tool)"
 case "$tool" in
-    # Терминал среды и универсальный исполнитель кладут команду в то же поле.
+    # The environment terminal and the universal executor put the command into the same field.
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
     *) exit 0 ;;
 esac
@@ -41,22 +42,22 @@ esac
 cmd="$(rt_hook_cmd)"
 [ -z "$cmd" ] && exit 0
 
-# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
-# Имя клиента хостинга дерево называет само: у каждого вида оно своё, а угаданное не совпадает
-# ни с чем.
+# The tree profile: first the package default, and over it the project override, if there is one.
+# The name of the hosting client is named by the tree itself: each kind has its own, and a guessed
+# one matches nothing.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
 
-# Вызов перезапуска: слово перезапуска отдельным словом рядом со словом прогона.
+# The rerun call: the rerun word as a separate word next to the word for a run.
 host_cli="${RT_HOST_CLI:-gh}"
 printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}${host_cli}([[:space:]]|\$)" || exit 0
 printf '%s' "$cmd" | grep -qE '(^|[[:space:]])(run|workflow)([[:space:]]|$)' || exit 0
 printf '%s' "$cmd" | grep -qE '(^|[[:space:]])rerun([[:space:]]|$)' || exit 0
 
-# Номер задания. Не назван — гард молчит: судить не о чем.
+# The run number. Not named — the guard stays silent: there is nothing to judge.
 run_id="$(printf '%s' "$cmd" | grep -oE '(^|[[:space:]])[0-9]{6,}([[:space:]]|$)' | tr -d ' ' | head -1)"
 [ -z "$run_id" ] && exit 0
 
@@ -64,8 +65,8 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 [ -z "$transcript" ] && exit 0
 [ -f "$transcript" ] || exit 0
 
-# Читался ли журнал ЭТОГО задания за тот же ход. Ход — вызовы после последней реплики владельца:
-# журнал, прочитанный вчера, о сегодняшнем состоянии прогона не говорит ничего.
+# Was the log of THIS run read on the same turn. The turn is the calls after the owner's last
+# remark: a log read yesterday says nothing about today's state of the run.
 seen="$(jq -s -r --arg id "$run_id" '
     [.[] | select(.type == "assistant") | (.message.content // [])[] | select(.type == "tool_use")
        | ((.input.command // "") | tostring)] as $used
@@ -77,8 +78,8 @@ seen="$(jq -s -r --arg id "$run_id" '
 
 reason="BLOCKED by rerun-guard: перезапуск задания ${run_id} без прочитанного журнала. Красное на прогоне бывает двух родов, и в списке они выглядят одинаково: отказ хостинга на шаге подготовки лечится перезапуском, дефект ветки — не лечится им вовсе, и круг повторяется, пока журнал не открыт. Прочитай журнал этого задания — ${host_cli} run view ${run_id} --log-failed — и повтори вызов. Гард судит порядок, а не причину падения: что в журнале написано, судишь ты."
 
-# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
-# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
+# The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null

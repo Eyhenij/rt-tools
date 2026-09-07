@@ -1,22 +1,23 @@
 #!/usr/bin/env bash
-# Запись для гарда хранилища: что считается записью, что из неё заведомо разрушительно, куда
-# идут миграции и по чему запрос адресует строки.
+# The write part of the storage guard: what counts as a write, what in it is destructive for
+# certain, where migrations go and by what a query addresses rows.
 #
-# Строки `# rt-hook:` здесь нет намеренно: событие и образец вызова объявляет сам гард, а
-# помощник рядом хуком не регистрируется и в одиночку ничего не решает.
+# There is deliberately no `# rt-hook:` line here: the event and the call pattern are declared by
+# the guard itself, while a helper next to it registers no hook and decides nothing on its own.
 
-# Глаголы ищутся в сегментах ВЫЗОВА, а не по всей строке: иначе слово из шаблона поиска в
-# соседнем звене цепочки объявляло записью читающую команду.
+# The verbs are looked for in the segments of the CALL, not over the whole line: otherwise a word
+# from a search pattern in a neighbouring link of the chain declared a reading command a write.
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 sql_detect_write() {
     is_write=""
     write_scope="$segments"
-    # `copy … from` и `select … into` — запись, не называющая ни одного привычного глагола.
+    # `copy … from` and `select … into` are a write that names not one of the usual verbs.
     printf '%s' "$write_scope" | grep -qE '(^|[^[:alnum:]_])(delete|update|insert|truncate|drop|alter|create|grant|revoke|copy)([^[:alnum:]_]|$)|\\copy|into[[:space:]]+[a-z_"]' \
         && is_write="yes"
-    # Конвейер из источника в клиент — та же доставка файла, только без флага: содержимое
-    # `cat fix.sql | psql …` гарду не видно, значит это запись по определению.
+    # A pipeline from a source into the client is the same file delivery, only without a flag: the
+    # content of `cat fix.sql | psql …` is not visible to the guard, so this is a write by
+    # definition.
     while IFS= read -r seg; do
         [ -z "$seg" ] && continue
         printf '%s' "$seg" | grep -qE '(^|[^[:alnum:]_.-])(cat|head|tail|gzcat|zcat|gunzip|echo|printf|curl|wget)([[:space:]]|$)' \
@@ -25,34 +26,36 @@ sql_detect_write() {
 $(client_segments)
 PIPE_EOF
 
-    # Команды prisma меняют базу, не называя ни одного SQL-глагола: `migrate reset` пересоздаёт
-    # её целиком, `db push` подгоняет схему под модель, `db execute` льёт произвольный файл.
+    # prisma commands change the database without naming a single SQL verb: `migrate reset`
+    # recreates it whole, `db push` fits the schema to the model, `db execute` pours in an
+    # arbitrary file.
     printf '%s' "$write_scope" | grep -qE 'prisma[[:space:]]+(migrate[[:space:]]+(reset|deploy|dev)|db[[:space:]]+(push|execute))' \
         && is_write="yes"
 
-    # Глагол в командной строке — не единственный способ довезти SQL до сервера. Файл (`-f`,
-    # `--file`, `< dump.sql`) и `pg_restore` не называют ни одного, поэтому раньше проходили
-    # мимо всех трёх уровней: доставка файла в клиент на боевой базе завершалась нулём
-    # без единого вопроса, а `pg_restore` не мог сработать в принципе, хотя `--clean` сносит
-    # содержимое. Содержимое файла гарду недоступно — значит это запись по определению.
+    # A verb on the command line is not the only way to get SQL to the server. A file (`-f`,
+    # `--file`, `< dump.sql`) and `pg_restore` name none, so they used to pass by all three levels:
+    # delivering a file into the client on the production database ended with zero without a single
+    # question, and `pg_restore` could not fire in principle, although `--clean` wipes the content.
+    # The content of the file is unavailable to the guard — so this is a write by definition.
     printf '%s' "$flat" | grep -qE '(^|[^[:alnum:]_.-])pg_restore([^[:alnum:]_.-]|$)' \
         && is_write="yes"
-    # У `pg_dump` тот же `-f` означает файл ВЫВОДА: это чтение, и записью его считать нельзя —
-    # иначе штатное снятие дампа с боевой базы отклонялось, хотя текст отказа сам его советует.
+    # For `pg_dump` the same `-f` means the OUTPUT file: this is a read, and it must not be counted
+    # as a write — otherwise a routine dump of the production database was rejected, although the
+    # text of the refusal advises it itself.
     #
-    # Исключение действует ПОСЕГМЕНТНО. Пока оно проверялось по всей команде, одного упоминания
-    # `pg_dump` где угодно в цепочке хватало, чтобы `-f` перестал считаться записью во всех
-    # остальных вызовах: `pg_dump … > /dev/null && psql -d app -f /tmp/x.sql` проходил молча.
+    # The exception acts PER SEGMENT. While it was checked over the whole command, one mention of
+    # `pg_dump` anywhere in the chain was enough for `-f` to stop counting as a write in all the
+    # other calls: `pg_dump … > /dev/null && psql -d app -f /tmp/x.sql` passed silently.
     while IFS= read -r seg; do
         [ -z "$seg" ] && continue
-        # Граница слова обязательна: `-f /tmp/pg_dump-restore.sql` — это заливка дампа, а не
-        # его снятие, и подстрочное совпадение снимало с неё обе защиты разом.
+        # The word boundary is mandatory: `-f /tmp/pg_dump-restore.sql` is loading a dump, not
+        # taking one, and a substring match removed both protections from it at once.
         if printf '%s' "$seg" | grep -qE '(^|[^[:alnum:]_.-])pg_dump(all)?([^[:alnum:]_.-]|$)'; then
             continue
         fi
-        # Хвост сегмента после имени клиента: `-f` у `docker compose` (боевой compose-файл
-        # называется нестандартно, без флага не поднимается) стоит ДО `psql` и к запросу
-        # отношения не имеет.
+        # The tail of the segment after the client name: the `-f` of `docker compose` (the
+        # production compose file is named non-standardly and does not come up without the flag)
+        # stands BEFORE `psql` and has nothing to do with the query.
         seg_tail="$(printf '%s' "$seg" | perl -0pe 's{^.*?(?<![[:alnum:]_./-])(psql|pg_restore|prisma)(?=\s|$)}{$1}s' 2>/dev/null)"
         [ -z "$seg_tail" ] && seg_tail="$seg"
         if printf '%s' "$seg_tail" | grep -qE '(^|[[:space:]])(-f|--file)([[:space:]]|=)|<[[:space:]]*[^[:space:]|<]+\.(sql|dump)'; then
@@ -64,7 +67,7 @@ $segments
 EOF
 }
 
-# --- заведомо разрушительное ------------------------------------------------------------
+# --- destructive for certain ------------------------------------------------------------
 verdict() {
     if [ -n "$soft" ]; then
         ask "Запрос помечен маркером destructive-ok, но остаётся разрушительным: $1 Подтверди выполнение, если это осознанно."
@@ -87,31 +90,31 @@ sql_check_destructive() {
         verdict "\`prisma migrate reset\` / \`db push\` пересоздаёт базу и теряет её содержимое (${context})."
     fi
 
-    # `pg_restore --clean` перед загрузкой удаляет существующие объекты — то же очищение
-    # таблиц, только чужими руками. Без `--clean` это обычная догрузка, она идёт общим путём.
+    # `pg_restore --clean` deletes the existing objects before loading — the same emptying of
+    # tables, only by someone else's hands. Without `--clean` it is an ordinary top-up, and it goes
+    # the common path.
     if printf '%s' "$flat" | grep -q 'pg_restore' && printf '%s' "$flat" | grep -qE '(^|[[:space:]])(--clean|-c|--create)([[:space:]]|=|$)'; then
         verdict "\`pg_restore --clean\` удаляет объекты базы перед загрузкой дампа (${context})."
     fi
 }
 
-# Штатное применение миграций разрушительным не считается. Раньше здесь стоял безусловный
-# `ask` со словами «убедись, что DATABASE_URL указывает на локальную базу» — гард
-# перекладывал на человека ровно ту работу, которую умеет сделать сам. На локальной базе
-# миграции гоняются постоянно, и вопрос на каждую не добавляет безопасности: гард, который
-# спрашивает по десятому разу, перестают читать вместе с тем единственным вопросом, который
-# был важен.
+# A routine application of migrations does not count as destructive. There used to stand an
+# unconditional `ask` here with the words "make sure DATABASE_URL points at the local database" —
+# the guard shifted onto a person exactly the work it can do itself. On a local database migrations
+# are run all the time, and a question on each adds no safety: a guard that asks for the tenth time
+# stops being read together with that one question that mattered.
 #
-# Поэтому адрес РАЗРЕШАЕТСЯ, а не угадывается: сначала inline-префикс самой команды, затем
-# переменная окружения, затем `.env` рабочего каталога.
+# So the address is RESOLVED, not guessed: first the inline prefix of the command itself, then the
+# environment variable, then the `.env` of the working directory.
 unquote() {
     sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//"
 }
 
 resolve_database_url() {
-    # Искать по `$flat` нельзя: он приведён к нижнему регистру, и `DATABASE_URL=` в нём
-    # не встречается никогда — правило молча брало бы адрес из `.env`, игнорируя явно
-    # указанный в команде. Разбирается исходная строка, а `$flat` остаётся запасным
-    # вариантом с регистронезависимым поиском.
+    # Searching by `$flat` is not allowed: it is brought to lower case, and `DATABASE_URL=` never
+    # occurs in it — the rule would silently take the address from `.env`, ignoring the one named
+    # explicitly in the command. The original line is parsed, and `$flat` stays the fallback with a
+    # case-insensitive search.
     inline="$(printf '%s' "${cmd:-}" | grep -oE '[Dd][Aa][Tt][Aa][Bb][Aa][Ss][Ee]_[Uu][Rr][Ll]=[^[:space:]]+' | tail -n1)"
     [ -z "$inline" ] && inline="$(printf '%s' "$flat" | grep -oiE 'database_url=[^[:space:]]+' | tail -n1)"
     if [ -n "$inline" ]; then
@@ -122,10 +125,10 @@ resolve_database_url() {
         printf '%s' "$DATABASE_URL" | unquote
         return
     fi
-    # Подъём по дереву, а не только рабочий каталог: агент работает в git worktree под
-    # `.claude/worktrees/<ветка>/`, где своего `.env` нет, а у основного чекаута — есть,
-    # и он лежит ровно выше по пути. Без подъёма гард не разрешил бы адрес ни разу
-    # именно там, где миграции и гоняются.
+    # Climbing up the tree, not only the working directory: the agent works in a git worktree under
+    # `.claude/worktrees/<branch>/`, where there is no `.env` of its own, while the main checkout
+    # has one, and it lies exactly higher up the path. Without the climb the guard would not have
+    # resolved the address once, exactly where the migrations are run.
     dir="$hook_cwd"
     depth=0
     while [ -n "$dir" ] && [ "$dir" != '/' ] && [ "$depth" -lt 8 ]; do
@@ -145,21 +148,22 @@ resolve_database_url() {
 sql_check_migrations() {
     if printf '%s' "$flat" | grep -qE 'prisma[[:space:]]+migrate[[:space:]]+(deploy|dev)'; then
         migrate_target="$(resolve_database_url)"
-        # Боевой адрес проверяется ДО разбора по видам: туннель к бою тоже висит на петлевом
-        # адресе, только на своём порту, и общее правило «петлевой значит локальный» пропустило бы
-        # миграцию на бой.
+        # The production address is checked BEFORE the parse by kinds: a tunnel to production also
+        # hangs on a loopback address, only on a port of its own, and the common rule "loopback
+        # means local" would have let a migration through to production.
         if [ -n "$PROD_DSN" ] && printf '%s' "$migrate_target" | grep -qE "$PROD_DSN"; then
             deny "BLOCKED: применение миграций к БОЕВОЙ базе (${context}). Адрес базы ведёт на бой. Схема на бою меняется выкаткой: она сама зовёт применение миграций одноразовым контейнером до старта приложения. Руками этого делать нельзя — гард обойти нельзя."
         fi
         case "$migrate_target" in
             *@localhost:*|*@127.0.0.1:*|*@postgres:*|*@host.docker.internal:*)
-                # Локальная база — штатная работа. Разбор завершается здесь, иначе ниже
-                # сработает общее правило про запись в базу и вопрос всё равно будет задан:
-                # `migrate deploy` помечен записью выше по тексту.
+                # A local database is routine work. The parse ends here, otherwise the common rule
+                # about writing to the database fires below and the question is asked anyway:
+                # `migrate deploy` is marked a write higher up the text.
                 #
-                # Но выйти можно, только если запись в команде ОДНА — сама миграция. В цепочке
-                # `prisma migrate deploy && psql -c "delete …"` ранний выход снял бы проверку со
-                # второго звена, а это ровно тот обход, ради которого гард и написан.
+                # But it can be exited only if there is ONE write in the command — the migration
+                # itself. In the chain `prisma migrate deploy && psql -c "delete …"` an early exit
+                # would remove the check from the second link, and that is exactly the bypass the
+                # guard is written for.
                 other_write=""
                 printf '%s' "$write_scope" \
                     | grep -qE '(^|[^[:alnum:]_])(delete|update|insert|truncate|drop|alter|create|grant|revoke|copy)([^[:alnum:]_]|$)|\\copy|into[[:space:]]+[a-z_"]' \
@@ -183,31 +187,32 @@ MIGRATE_PIPE_EOF
     fi
 }
 
-# --- delete/update: смотрим на адресацию ------------------------------------------------
+# --- delete/update: looking at the addressing -------------------------------------------
 sql_check_addressing() {
     if printf '%s' "$flat" | grep -qE '(^|[^[:alnum:]_])(delete[[:space:]]+from|update)([^[:alnum:]_]|$)'; then
         if ! printf '%s' "$flat" | grep -q 'where'; then
             verdict "DELETE/UPDATE без WHERE затрагивает всю таблицу (${context})."
         fi
 
-        # Адресация ищется ТОЛЬКО в хвосте после последнего `where`. Пока смотрели на весь
-        # запрос, присваивание в SET засчитывалось за адресацию: `UPDATE bookings SET
-        # "propertyId" = 'p1' WHERE source = 'site'` выглядел адресным, хотя задевал все прямые
-        # заявки объекта — ровно то, от чего гард и защищает.
-        # Регистр здесь сохраняется, в отличие от `flat`: колонки Prisma пишутся в camelCase, и
-        # приведённый к нижнему регистру `bookingid` уже не отличить от слова `paid`.
+        # The addressing is looked for ONLY in the tail after the last `where`. While the whole
+        # query was looked at, an assignment in SET counted as addressing: `UPDATE bookings SET
+        # "propertyId" = 'p1' WHERE source = 'site'` looked addressed, although it touched every
+        # direct request for the property — exactly what the guard protects from.
+        # The case is kept here, unlike in `flat`: Prisma columns are written in camelCase, and
+        # `bookingid` brought to lower case is no longer distinguishable from the word `paid`.
         where_tail="$(printf '%s' "$sql" | tr '\n\t' '  ' | sed -E 's/.*[Ww][Hh][Ee][Rr][Ee]/where/')"
 
-        # Имя колонки требуется целиком: `id`, `booking_id`, `"bookingId"`. Прежний шаблон
-        # `[a-z_]*id` принимал за идентификатор `paid` и `valid`.
+        # The column name is required whole: `id`, `booking_id`, `"bookingId"`. The former pattern
+        # `[a-z_]*id` took `paid` and `valid` for an identifier.
         if ! printf '%s' "$where_tail" | grep -qE '(^|[^[:alnum:]_"])"?(id|[A-Za-z_]+_id|[a-zA-Z]+Id)"?[[:space:]]*(=|[Ii][Nn][[:space:]]*\()'; then
             verdict "DELETE/UPDATE адресует строки не по идентификатору (${context}) — условие может совпасть шире, чем задумано."
         fi
 
-        # Гард видит имя колонки, но не схему: `propertyId` и `session_id` — внешние ключи, и
-        # запрос по ним адресный только на вид. `DELETE … WHERE "propertyId" = 'p1'` сносит все
-        # брони объекта. Отличить это от первичного ключа без схемы нельзя, поэтому решение
-        # остаётся за пользователем — но предупреждение должно быть прямым, а не общим.
+        # The guard sees the column name but not the schema: `propertyId` and `session_id` are
+        # foreign keys, and a query by them is addressed only in appearance. `DELETE … WHERE
+        # "propertyId" = 'p1'` wipes every booking of the property. Telling this from a primary key
+        # without the schema is impossible, so the decision stays with the user — but the warning
+        # must be direct, not general.
         if ! printf '%s' "$where_tail" | grep -qE '(^|[^[:alnum:]_"])"?id"?[[:space:]]*(=|[Ii][Nn][[:space:]]*\()'; then
             ask "Условие адресует строки по ВНЕШНЕМУ ключу, а не по первичному (${context}): $(printf '%s' "$where_tail" | head -c 200). Под него попадут ВСЕ строки, связанные с этой сущностью, — например \`WHERE \"propertyId\" = …\` заденет все брони объекта, включая демонстрационные. Если нужны конкретные строки, сперва выбери их SELECT-ом и перечисли в \`WHERE id IN (…)\`."
         fi

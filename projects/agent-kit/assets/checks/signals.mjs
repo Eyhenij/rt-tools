@@ -1,20 +1,20 @@
 /**
- * Наборы признаков единообразия: что дерево объявило своим и что при этом читается.
+ * The sign bundles of uniformity: what the tree declared as its own and what is read alongside it.
  *
- * Признак не лежит в коде проверки. Пакет режет признаки по своим пакетам — у кита свои, у
- * хранилища свои, — а дерево называет в настройке проверок те, что берёт. Набор, который дерево
- * не назвало, не читается вовсе: признак о готовом из пакета, которого в дереве нет, отвечает
- * ложно ровно так же, как имя чужого приложения.
+ * A sign does not lie in the check code. The package cuts the signs by its own packages — the kit
+ * has its own, the storage has its own — and the tree names in the checks settings the ones it
+ * takes. A bundle the tree did not name is not read at all: a sign about ready-made code from a
+ * package the tree does not have answers falsely exactly as the name of a foreign application does.
  *
- * Тот же список читает гард на правке. Общий файл — единственное, чем гард на оболочке и
- * проверка на JS могут быть связаны: расходиться им нельзя, иначе правка проходит гард и падает
- * на гейте.
+ * The same list is read by the guard on an edit. The shared file is the only thing that can tie the
+ * shell guard and the JS check together: they may not drift apart, otherwise an edit passes the
+ * guard and falls at the gate.
  */
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-/** Наборы лежат рядом с этим файлом: он и сам ресурс пакета, и раскладывается вместе с ними. */
+/** The bundles lie next to this file: it is a package resource itself and is laid out with them. */
 export const BUNDLES_DIR = join(dirname(fileURLToPath(import.meta.url)), 'signals');
 
 export function bundleNames() {
@@ -29,10 +29,10 @@ export function bundleNames() {
 }
 
 /**
- * Разбор набора: шапка раскладки снимается до JSON.
+ * Parsing a bundle: the layout header is stripped before the JSON.
  *
- * Раскладка ставит её первой строкой и комментирует незнакомое расширение решёткой — в JSON
- * комментария нет, и без снятия разбор падает на первом же символе.
+ * The layout puts it as the first line and comments an unknown extension out with a hash — JSON has
+ * no comment, and without stripping it the parse falls on the very first character.
  */
 function parseSignals(text) {
     return JSON.parse(text.replace(/^#[^\n]*\n/, '')).signals ?? [];
@@ -48,25 +48,29 @@ function readBundle(name) {
     return parseSignals(readFileSync(path, 'utf8'));
 }
 
-/** Признак, ищущий нативный тег: `<input\\b`, `<textarea\\b`, `<select\\b`. */
+/** A sign that looks for a native tag: `<input\\b`, `<textarea\\b`, `<select\\b`. */
 const NATIVE_TAG = /^<([a-z]+)\\b$/;
 
-/** Спецзнаки выражения в имени директивы: имя приходит из настройки дерева, а не из кода. */
+/**
+ * Expression special characters in a directive name: the name comes from the tree settings,
+ * not from the code.
+ */
 function escaped(name) {
     return name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /**
- * Директивы своей дизайн-системы вычёркиваются из признаков нативных тегов.
+ * The directives of the tree's own design system are struck out of the native-tag signs.
  *
- * Источник вида в дереве бывает не один: панель владельца собирается набором кита, публичный
- * сайт — своей системой, и закон о единообразии разводит их по приложениям. Директива такой
- * системы стоит на нативном теге ровно так же, как директива кнопки кита, — и признак кнопки её
- * уже вырезает своим `strip`, а признаки поля, области текста и списка не вырезают ничего: форма,
- * собранная из готового своего, числится расхождением целиком, пять полей из пяти.
+ * A tree can have more than one source of look: the owner panel is assembled from the kit set, the
+ * public site from its own system, and the law on application uniformity separates them by
+ * application. A directive of such a system stands on a native tag exactly as a kit button
+ * directive does — and the button sign already cuts it out with its `strip`, while the signs of the
+ * field, the text area and the list cut out nothing: a form assembled from one's own ready-made
+ * counts as a discrepancy entirely, five fields out of five.
  *
- * Список директив называет дерево — ключом `reuse.kitDirectives`. Не назвало — не вырезается
- * ничего, и дерево с одним источником вида ведёт себя как прежде.
+ * The list of directives is named by the tree — by the key `reuse.kitDirectives`. If it named none,
+ * nothing is cut out, and a tree with a single source of look behaves as before.
  */
 export function withKitDirectives(signals, directives) {
     const names = (directives ?? []).filter(Boolean).map(escaped);
@@ -89,19 +93,19 @@ export function withKitDirectives(signals, directives) {
 }
 
 /**
- * Признаки объявленных наборов, а поверх них — свои признаки дерева.
+ * The signs of the declared bundles, and on top of them the tree's own signs.
  *
- * Совпавший ключ замещает пакетный: дерево вправе сказать о своём готовом точнее, чем пакет,
- * который его не видел. Файла своих признаков может не быть — это не отказ: пропуск дешевле
- * остановки работы, и объявляют его раньше, чем заводят.
+ * A matching key replaces the package one: the tree has the right to speak of its own ready-made
+ * more precisely than a package that has not seen it. The file of own signs may be absent — that is
+ * not a refusal: a skip is cheaper than stopping the work, and it is declared before it is created.
  *
- * А вот пустой итог — отказ. Проверка стоит в гейте пуша и отвечает «расхождений 0 в 0
- * признаках» с нулевым кодом: она объявляет успех, не прочитав ни одного файла, и отличить это
- * от честного нуля по выводу нельзя — число признаков стоит в той же строке, что и число
- * расхождений, и читается как подробность. При переезде с редакции, где признаки лежали в самой
- * проверке, настройка не заведена ещё ни у кого: первый же прогон после обновления врёт молча у
- * всех потребителей сразу. Судится итог, а не список наборов: дерево, ведущее только свои
- * признаки, наборов пакета не берёт законно.
+ * An empty result, though, is a refusal. The check stands in the push gate and answers
+ * "discrepancies 0 out of 0 signs" with a zero exit code: it declares success without having read a
+ * single file, and by the output that cannot be told from an honest zero — the number of signs
+ * stands in the same line as the number of discrepancies and reads as a detail. When moving from an
+ * edition where the signs lay in the check itself, no one has the setting yet: the very first run
+ * after the upgrade lies silently for every consumer at once. The result is judged, not the list of
+ * bundles: a tree that keeps only its own signs lawfully takes no package bundles.
  */
 export function loadSignals(config, root) {
     const declared = config.bundles ?? [];

@@ -1,175 +1,182 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/rt-kit-checks.config.mjs · 7fb10d2acdf6 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/rt-kit-checks.config.mjs · 8b7cba0cb85d · правится надстройкой, не здесь
 /**
- * Настройки проверок: что считать исходниками, куда не ходить и где лежат списки долгов.
+ * Check settings: what counts as sources, where not to go and where the debt lists lie.
  *
- * Проверки везёт пакет, а корни и имена — своё у каждого дерева: где-то `apps` и `libs`,
- * где-то `projects`. Держать их в каждом скрипте отдельно значило бы править девять файлов
- * ради одного переименования, и девятый забывался бы молча.
+ * The package ships the checks, and the roots and names belong to each tree: `apps` and `libs`
+ * in one, `projects` in another. Keeping them apart in every script would mean editing nine
+ * files for one rename, and the ninth would be forgotten silently.
  *
- * Умолчания здесь, надстройка — `.claude/rt-kit/checks.json` в дереве проекта. Нет файла —
- * действуют умолчания; есть — его ключи ложатся поверх, по одному, а не целиком: проект,
- * назвавший только корни, не теряет список пропускаемых каталогов.
+ * The defaults are here, the override is `.claude/rt-kit/checks.json` in the project tree. No
+ * file — the defaults hold; a file — its keys lie over them one by one, not as a whole: a
+ * project that named only the roots does not lose the list of skipped directories.
  *
- * Слияние идёт по вложенным ключам: дерево, назвавшее один ключ борды, сохраняет остальные.
- * Пока слияние было одноуровневым, вложенный объект замещался целиком, и такое дерево видело
- * отказ «нет токена бота» — то есть читало неполный конфиг как неполадку машины.
+ * The merge goes by nested keys: a tree that named one board key keeps the rest. While the merge
+ * was one level deep, a nested object was replaced whole, and such a tree saw the refusal "no bot
+ * token" — that is, it read an incomplete config as a broken machine.
  *
- * Глубже вложенных объектов слияние не идёт: список, названный деревом, замещает умолчание
- * целиком. Дописывать в список нельзя — иначе `skippedDirs`, из которого дерево что-то убрало,
- * приезжал бы обратно, и убрать оттуда стало бы невозможно вовсе.
+ * Deeper than nested objects the merge does not go: a list named by the tree replaces the default
+ * whole. A list cannot be appended to — otherwise `skippedDirs`, from which the tree removed
+ * something, would come back, and removing from it would become impossible at all.
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-/** Корень дерева: проверки лежат в его `tools/`, поэтому на уровень выше. */
+/** The tree root: the checks lie in its `tools/`, hence one level up. */
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 const CONFIG_PATH = '.claude/rt-kit/checks.json';
 
 const DEFAULTS = {
-    /** Где лежит код, который проверки читают. */
+    /** Where the code the checks read lies. */
     sourceRoots: ['apps', 'libs'],
-    /** Куда не ходить никогда: сборка, зависимости, порождённое. */
+    /** Where never to go: the build, the dependencies, the generated. */
     skippedDirs: ['node_modules', 'dist', '.git', '.nx', 'tmp', 'coverage', 'worktrees', 'gen', 'generated'],
-    /** Где лежат тексты проекта. */
+    /** Where the project texts lie. */
     docsDir: 'docs',
-    /** Отложенное: про него проверки молчат — оно описывает прошлое, а не дерево. */
+    /** What is set aside: the checks stay silent about it — it describes the past, not the tree. */
     archiveDir: 'docs/archive/',
     /**
-     * Сколько суток живёт запись описания прошлого. `null` — срок не назначен, и тогда молчат
-     * обе стороны: сверка не краснеет, чистка не снимает. Умолчания у срока нет намеренно —
-     * пакет, назначивший его за дерево, начал бы сносить чужой архив в день установки, а
-     * снимается там разбор просьбы, которого нет больше нигде.
+     * How many days a record of the archive lives. `null` — no term is set, and then both sides
+     * stay silent: the audit does not redden, the cleanup does not remove. The term has no default
+     * on purpose — a package that set it for the tree would start tearing down someone else's
+     * archive on the day of installation, and what is removed there is the grill of a request,
+     * which exists nowhere else.
      */
     archiveRetentionDays: null,
     /**
-     * Каталоги, чей указатель сверяется с содержимым: обзорный документ в них перечисляет
-     * записи таблицей, и читатель ищет по ней, а не обходом. Пусто — сверки указателя нет.
+     * Directories whose index is audited against the content: the overview document in them lists
+     * the records in a table, and the reader searches by it, not by walking. Empty — there is no
+     * index audit.
      */
     indexedDirs: ['docs/archive/'],
     /**
-     * Каталоги, где лежат исходники переносимых текстов. Такой текст называет адреса того
-     * дерева, куда он ложится, а не того, где написан, — и сверять его с этим деревом значит
-     * краснеть на каждый пример. Разложенную копию проверка узнаёт по шапке сама; сюда
-     * вносится только исходник. Пусто — переносимых текстов дерево не держит.
+     * Directories where the sources of portable texts lie. Such a text names the addresses of the
+     * tree it is laid out into, not of the one where it is written — and auditing it against this
+     * tree means reddening at every example. The check recognises a laid-out copy by its header
+     * itself; only the source is entered here. Empty — the tree keeps no portable texts.
      */
     portableDirs: [],
     /**
-     * Признаки единообразия: какие наборы дерево берёт и где лежат его собственные.
+     * The signs of reuse: which bundles the tree takes and where its own lie.
      *
-     * Наборы режутся по пакетам, чьё готовое они называют, и дерево объявляет только те, что
-     * ставит: признак о готовом из пакета, которого в дереве нет, отвечает ложно. Пусто —
-     * признаков нет вовсе, и гард с проверкой об этом говорят, а не молчат.
+     * Bundles are cut by the packages whose ready-made code they name, and the tree declares only
+     * those it installs: a sign about ready-made code from a package the tree does not have
+     * answers falsely. Empty — there are no signs at all, and the guard and the check say so
+     * rather than stay silent.
      */
     reuse: { bundles: [], signals: '' },
-    /** Где лежат спеки доменов; пусто — их в дереве нет, и сверка спеков не запускается. */
+    /** Where the domain specs lie; empty — the tree has none, and the spec audit is not run. */
     specsDir: 'docs/specs',
     tasksDir: 'docs/tasks',
-    /** Куда сложены списки принятых долгов. */
+    /** Where the lists of accepted debts are put. */
     allowlistDir: 'tools',
     /**
-     * Каталоги, которые переписывает генератор целиком: контракт, клиент хранилища, разложенное
-     * из пакета. Спорить с генератором о длине файла и о повторе некому.
+     * Directories a generator rewrites whole: the contract, the storage client, what is laid out
+     * from the package. There is nobody to argue with a generator about file length and repeats.
      */
     generatedDirs: [],
     /**
-     * Предел длины файла для кода и обвязки. Родов у него по-прежнему не два десятка, а два:
-     * код и текст слоя правил. Спорить о числе на каждой правке нечему — оба числа стоят
-     * здесь и меняются работой, а не по ходу.
+     * The file length limit for code and its harness. It still has not two dozen kinds but two:
+     * code and the text of the rules layer. There is nothing to argue the number over at every
+     * edit — both numbers stand here and change by a piece of work, not along the way.
      */
     fileSizeLimit: 500,
     /**
-     * Предел длины текста слоя правил — закона, правила, паттерна, холодной части и их
-     * источников. Он ниже предела кода вдвое, и это не строгость ради строгости: текст, не
-     * влезающий на экран целиком, дописывают в конец, не перечитав начала, — так в одном файле
-     * и оказываются два ответа на один вопрос. У кода от этого спасает линтер, у текста —
-     * только это число. Пересчитан по английскому тексту слоя: та же статья по-английски занимает
-     * на десятую больше строк и знаков при меньшей цене в токенах, и прежние 300 строк отбивали
-     * правило, которое по-русски проходило.
+     * The length limit for the text of the rules layer — a law, a rule, a pattern, a cold part and
+     * their sources. It is half the code limit, and this is not strictness for its own sake: a text
+     * that does not fit on one screen gets appended to at the end without rereading the beginning —
+     * that is how one file comes to hold two answers to one question. Code is saved from this by
+     * the linter, text — only by this number. Recounted against the English text of the layer: the
+     * same article in English takes a tenth more lines and characters at a lower price in tokens,
+     * and the former 300 lines refused a rule that passed in Russian.
      */
     proseSizeLimit: 330,
     /**
-     * Предел веса текста слоя правил — в знаках. Строки меряют, сколько текста помещается на
-     * экран; веса они не меряют вовсе: правило о заявках занимает 282 строки при 13 595 знаках,
-     * а правило поставки — 272 строки при 21 508. Сжатие слоя срезает знаки и оставляет число
-     * переносов прежним, поэтому строковый предел достигнутого не закрепляет, и текст отрастает
-     * обратно молча.
+     * The weight limit for the text of the rules layer — in characters. Lines measure how much
+     * text fits on a screen; weight they do not measure at all: the rule about PRs takes 282 lines
+     * at 13,595 characters, and the delivery rule 272 lines at 21,508. Compressing the layer cuts
+     * characters and leaves the number of wraps as it was, so the line limit does not fix what has
+     * been reached, and the text grows back silently.
      *
-     * Число назначено по сжатому слою: самое тяжёлое правило весило 21 508 знаков по-русски, и
-     * предел стоял чуть выше него; по-английски тот же текст длиннее на десятую в знаках, и
-     * предел пересчитан с тем же запасом. Ниже ставить нельзя — это потребовало бы резать заново то, что уже прошло
-     * сжатие; выше незачем — тогда он ничего не закрепляет. Ноль выключает проверку веса вовсе:
-     * дерево, не назвавшее числа, судится по-прежнему одними строками.
+     * The number is set by the compressed layer: the heaviest rule weighed 21,508 characters in
+     * Russian, and the limit stood a little above it; in English the same text is a tenth longer in
+     * characters, and the limit is recounted with the same margin. It cannot be set lower — that
+     * would require cutting anew what has already been compressed; higher makes no sense — then it
+     * fixes nothing. Zero turns the weight check off entirely: a tree that named no number is
+     * judged by lines alone, as before.
      */
     proseCharLimit: 24000,
     /**
-     * Корни, под которыми лежит текст слоя правил, и его источники. Файл отсюда судится
-     * пределом текста, всё остальное — пределом кода. Пусто — предел один на всё дерево.
+     * The roots under which the text of the rules layer and its sources lie. A file from here is
+     * judged by the text limit, everything else by the code limit. Empty — one limit for the whole
+     * tree.
      */
     proseRoots: [],
     /**
-     * Слова левой колонки словаря дерева: те, что оно завело сверх пакетных восьми. Пакетные
-     * остаются умолчанием, названное деревом ложится сверх них — иначе дерево заводит вторую
-     * проверку рядом, и два набора образцов на одно требование расходятся молча.
+     * The words of the left column of the tree's glossary: those it added beyond the package's
+     * eight. The package ones stay the default, what the tree named lies over them — otherwise the
+     * tree starts a second check alongside, and two sets of patterns for one requirement diverge
+     * silently.
      *
-     * Запись: `{ "pattern": "<образец>", "fix": "<чем заменить>" }`. Образец читается как
-     * регулярное выражение и сверяется без учёта регистра.
+     * An entry: `{ "pattern": "<pattern>", "fix": "<what to replace it with>" }`. The pattern is
+     * read as a regular expression and matched without regard to case.
      */
     prose: { glossaryBans: [] },
     /**
-     * Внешние пакеты, чьи перечисления считаются наравне с либами: своё перечисление под уже
-     * объявленный там набор — такая же копия, как и между двумя либами. Каждая запись — имя
-     * пакета и каталог объявлений внутри него; каталог ищется разрешением модуля, а не путём в
-     * `node_modules`: пакет, объявленный зависимостью подпроекта, в корне дерева не лежит вовсе,
-     * и зашитый путь на такой раскладке верным не бывает никогда. Пусто — внешние наборы не
-     * считаются.
+     * External packages whose enums count on a par with libs: an enum of one's own for a set
+     * already declared there is the same copy as one between two libs. Each entry is a package name
+     * and the directory of declarations inside it; the directory is found by module resolution, not
+     * by a path into `node_modules`: a package declared as a dependency of a subproject does not lie
+     * at the tree root at all, and a hard-coded path is never right on such a layout. Empty —
+     * external sets do not count.
      */
     externalEnums: [],
-    /** Корни сквозных тестов; пусто — их в дереве нет. */
+    /** The roots of the end-to-end tests; empty — the tree has none. */
     e2eRoots: ['apps/site-e2e', 'apps/admin-e2e'],
-    /** Корни бэкенда: у него нет ни компонентов, ни шаблонов, и часть признаков к нему не применяется. */
+    /** The backend roots: it has neither components nor templates, and some signs do not apply to it. */
     backendRoots: ['libs/api/', 'apps/api/'],
-    /** Схема хранилища и её миграции; пусто — хранилища в дереве нет. */
+    /** The storage schema and its migrations; empty — the tree has no storage. */
     schemaFile: 'prisma/schema.prisma',
     migrationsDir: 'prisma/migrations',
-    /** Каталог, под которым лежат семьи либ: `<корень>/<семья>/<домен>/<слой>`. */
+    /** The directory under which the lib families lie: `<root>/<family>/<domain>/<layer>`. */
     libsRoot: 'libs',
-    /** Семьи фронтовых либ: `<корень либ>/<семья>/<домен>/<слой>`. */
+    /** The families of front-end libs: `<libs root>/<family>/<domain>/<layer>`. */
     families: ['site', 'admin'],
-    /** Семья бэкенда под тем же корнем: у её доменов своя лесенка слоёв. */
+    /** The backend family under the same root: its domains have a layer ladder of their own. */
     apiFamily: 'api',
-    /** Область алиасов импорта: `@область/<семья>/<домен>/<слой>` в `tsconfig.base.json`. */
+    /** The scope of import aliases: `@scope/<family>/<domain>/<layer>` in `tsconfig.base.json`. */
     importScope: '@app',
     /**
-     * Приставка селекторов, обязательная фронтовым либам. Слово принадлежит дереву: названное
-     * умолчанием, оно краснело бы на каждой либе первого же дерева, у которого приставка своя.
-     * Пусто — приставка не судится вовсе.
+     * The selector prefix required of front-end libs. The word belongs to the tree: named as a
+     * default, it would redden at every lib of the first tree whose prefix is its own. Empty — the
+     * prefix is not judged at all.
      */
     libPrefix: '',
     /**
-     * Теги либ, чей список зависимостей обязан оставаться пустым: их барель уезжает в бандл
-     * бэкенда, а сборка идёт без tree-shaking. Имена тегов — слова дерева, поэтому умолчание
-     * пусто: названное здесь требовало бы описания границ под либу, которой в дереве нет.
+     * The tags of libs whose dependency list must stay empty: their barrel goes into the backend
+     * bundle, and the build runs without tree-shaking. Tag names are the tree's own words, so the
+     * default is empty: naming one here would require a boundary description for a lib the tree
+     * does not have.
      */
     noDependencyTags: [],
     /**
-     * Как в этом дереве зовётся барель. Собственный файл в нём законен, вне его — реэкспорт.
-     * Дерево, которое публикует пакеты, называет здесь и их публичный вход.
+     * What a barrel is called in this tree. A file of its own is lawful inside it, outside it a
+     * re-export. A tree that publishes packages names their public entry here as well.
      */
     barrelFiles: ['index.ts'],
     /**
-     * Признаки боевого хранилища: порт, адрес, имя домена. Проверки туда не ходят ни читать,
-     * ни писать — схема на проде меняется выкаткой. Пусто — признаков нет, и адрес боевым
-     * не считается никогда.
+     * The signs of the production storage: a port, an address, a domain name. The checks go there
+     * neither to read nor to write — the schema in production changes by a rollout. Empty — there
+     * are no signs, and an address is never counted as production.
      */
     productionMarks: [],
     /**
-     * Гейт пуша против конвейера. `pipelineFile` — файл, из которого берутся имена шагов;
-     * пусто или файла нет — сверки нет вовсе. `stepPattern` — чем имя шага оттуда достаётся;
-     * умолчание записано под GitHub Actions. `steps` — чем каждое имя закрыто: строка набора
-     * либо `{ "skip": "<причина>" }`. Необъявленный шаг отбивает пуш.
+     * The push gate against the pipeline. `pipelineFile` — the file the step names are taken from;
+     * empty or missing — there is no audit at all. `stepPattern` — how a step name is pulled out of
+     * it; the default is written for GitHub Actions. `steps` — what covers each name: a command
+     * line of the set or `{ "skip": "<reason>" }`. An undeclared step refuses the push.
      */
     pushGate: {
         pipelineFile: '',
@@ -177,51 +184,53 @@ const DEFAULTS = {
         steps: {},
     },
     /**
-     * Выкатка. `workflow` — файл рабочего потока, которым прод выкатывают; пусто — сверка
-     * прода молчит вслух. `mainBranch` — ветка, с которой прод сравнивают.
+     * The rollout. `workflow` — the workflow file production is rolled out by; empty — the
+     * production audit says out loud that it stays silent. `mainBranch` — the branch production is
+     * compared with.
      *
-     * Спрашивается именно последняя успешная выкатка, а не последний прогон главной ветки:
-     * там, где выкатку запускают рукой, прогон главной о проде не говорит ничего, и прод,
-     * отставший на сотни коммитов, не виден ничему.
+     * What is asked for is the last successful rollout, not the last run of the main branch: where
+     * a rollout is started by hand, a run of main says nothing about production, and production
+     * that has fallen hundreds of commits behind is visible to nothing.
      */
     deploy: {
         workflow: '',
         mainBranch: 'main',
     },
     /**
-     * Работа, которую одним заходом не закрыть. `label` — метка такой карточки; `plansDir` —
-     * каталог, где живут линии работ. Метка и запись в линии сверяются в обе стороны: одна без
-     * другой лжёт молча, потому что исполнитель открывает карточку раньше, чем линию, а
-     * планирует по линии.
+     * Work that cannot be closed in one session. `label` — the label of such a card; `plansDir` —
+     * the directory where the plans of such work live. The label and the entry in the plan are
+     * audited both ways: one without the other lies silently, because the executor opens the card
+     * before the plan and plans by the plan.
      *
-     * Не названо любое из двух — связь не судится вовсе: отличить многозаходную карточку от
-     * обычной станет нечем, а каталог линий у каждого дерева свой.
+     * Either of the two not named — the link is not judged at all: there will be nothing to tell a
+     * many-session card from an ordinary one, and the plans directory is each tree's own.
      */
     longWork: {
         label: '',
         plansDir: '',
     },
-    /** Очередь работ: владелец, репозиторий, борда и учётная запись машинной работы. */
+    /** The work queue: the owner, the repository, the board and the machine account. */
     board: {
         owner: '',
         repo: '',
         projectId: '',
-        /** Ключ задач: даёт ветку `<ключ>-<номер>-<slug>` и заголовок `[<ключ>-<номер>]`. */
+        /** The task key: gives the branch `<key>-<number>-<slug>` and the title `[<key>-<number>]`. */
         taskKey: '',
         bot: '',
         tokenPath: '',
         reviewer: '',
         /**
-         * Метка карточки эпика. По ней сверка находит эпики и сверяет их связь с задачами в обе
-         * стороны. Слово у каждого дерева своё, общего умолчания нет: не названа — связь не
-         * судится вовсе, потому что отличить карточку эпика от обычной задачи станет нечем.
+         * The label of an epic card. By it the audit finds epics and audits their link with tasks
+         * both ways. The word is each tree's own, there is no common default: not named — the link
+         * is not judged at all, because there will be nothing to tell an epic card from an ordinary
+         * task.
          */
         epicLabel: '',
         /**
-         * Метки, которыми в очереди работ помечен груз — присланные деревьями разборы и
-         * предложения. Задачами они не судятся вовсе: заголовка с номером, исполнителя и места
-         * на борде у них нет и не будет. Слово у каждого дерева своё, общего умолчания нет:
-         * пусто — сверка судит как прежде.
+         * The labels marking cargo in the work queue — the incident analyses and proposals sent by
+         * trees. They are not judged as tasks at all: they have no title with a number, no executor
+         * and no place on the board, and never will. The word is each tree's own, there is no
+         * common default: empty — the audit judges as before.
          */
         cargoLabels: [],
     },
@@ -241,11 +250,11 @@ function readOverrides() {
 }
 
 /**
- * Слияние надстройки с умолчанием по вложенным ключам.
+ * Merging the override with the default by nested keys.
  *
- * Объект сливается ключ за ключом, всё остальное — замещается: список, названный деревом,
- * приходит целиком, потому что «дописать в список» и «убрать из списка» — разные действия, а
- * различить их в JSON нечем.
+ * An object is merged key by key, everything else is replaced: a list named by the tree comes
+ * whole, because "append to the list" and "remove from the list" are different actions, and there
+ * is nothing in JSON to tell them apart.
  */
 const mergeDeep = (base, over) => {
     const isPlain = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -260,15 +269,16 @@ const mergeDeep = (base, over) => {
     return merged;
 };
 
-/** Настройки этого дерева: умолчания пакета, поверх них — то, что назвал проект. */
+/** The settings of this tree: the package defaults, and over them what the project named. */
 export const CONFIG = mergeDeep(DEFAULTS, readOverrides());
 
-/** Путь к списку принятых долгов по имени проверки: `dupes` → `tools/dupes-allowlist.json`. */
+/** The path to the list of accepted debts by check name: `dupes` → `tools/dupes-allowlist.json`. */
 export const allowlistOf = (name) => join(CONFIG.allowlistDir, `${name}-allowlist.json`);
 
 /**
- * Список долгов; нет файла — пустой. Заводить его руками не требуется: проверка, встреченная
- * впервые, покажет всё найденное как новое, и это честнее, чем молчать из-за отсутствия файла.
+ * The debt list; no file — an empty one. It need not be created by hand: a check met for the first
+ * time will show everything it found as new, and that is more honest than staying silent because a
+ * file is missing.
  */
 export const readAllowlist = (name) => {
     const path = join(ROOT, allowlistOf(name));
@@ -278,29 +288,29 @@ export const readAllowlist = (name) => {
     try {
         return JSON.parse(readFileSync(path, 'utf8'));
     } catch (error) {
-        // Нечитаемая настройка — это не пустой список, и молчать о ней нельзя: проверка,
-        // прочитавшая пустоту вместо перечня, назовёт долгом всё дерево разом.
+        // An unreadable setting is not an empty list, and it cannot be passed over in silence: a
+        // check that read emptiness instead of a list will call the whole tree a debt at once.
         console.error(`${allowlistOf(name)}: список известного не прочитан — не разбирается как JSON: ${error.message}`);
         process.exit(1);
     }
 };
 
 /**
- * Разбор списка принятого: запись отвечает за себя сама.
+ * Parsing the list of what is accepted: an entry answers for itself.
  *
- * Причина, написанная прозой на весь список, за отдельную строку не отвечает: список пустеет и
- * наполняется, а причина остаётся прежней — строка, внесённая позже, выглядит покрытой ею. Так
- * и вышло у четырёх списков дерева: шапка говорила о разобранном долге, а под ней лежало
- * принятое, которого в тот день ещё не было.
+ * A reason written in prose for the whole list does not answer for a single line: the list empties
+ * and fills, and the reason stays as it was — a line entered later looks covered by it. That is
+ * what happened to four lists of the tree: the header spoke of a debt already taken apart, and
+ * under it lay what had been accepted, which did not exist on that day yet.
  *
- * Поэтому форма одна на все списки: сторона — объект, где ключ говорит, что принято, а
- * значение несёт причину и номер задачи, которой запись внесена. Стороны называет зовущий:
- * у большинства списков это `accepted` и `debt`, у иных свои имена, а разбор у всех один. Номер — это дорога
- * к разговору, в котором заглушить разрешили: без него запись объясняет сама себя, а спросить
- * о ней некого.
+ * So the form is one for all lists: a side is an object where the key says what is accepted, and
+ * the value carries the reason and the number of the task the entry was made by. The sides are
+ * named by the caller: for most lists these are `accepted` and `debt`, others have names of their
+ * own, and the parsing is the same for all. The number is the road to the conversation where the
+ * silencing was allowed: without it the entry explains itself, and there is nobody to ask about it.
  *
- * Отказ называет файл и саму запись: список читают не целиком, а по строке, и «где-то здесь
- * неверная запись» стоит того же, что и молчание.
+ * The refusal names the file and the entry itself: a list is read not whole but line by line, and
+ * "somewhere here is a wrong entry" is worth the same as silence.
  */
 export const parseAllowlist = (name, sides = ['accepted', 'debt']) => {
     const file = allowlistOf(name);
@@ -344,12 +354,12 @@ export const parseAllowlist = (name, sides = ['accepted', 'debt']) => {
 };
 
 /**
- * Заготовка списка принятого для режима пересъёмки: прежние записи сохраняются целиком, а
- * новые приходят с пустой причиной и пустым номером задачи.
+ * A draft of the accepted list for the re-record mode: the former entries are kept whole, and the
+ * new ones come with an empty reason and an empty task number.
  *
- * Пустые поля здесь намеренны. Пересъёмка — это помощник, а не разрешение: заглушить проверку
- * можно только словом владельца, и записать его должен человек. Разбор такую запись отбивает,
- * поэтому список, снятый пересъёмкой и не заполненный, дальше гейта не проходит.
+ * The empty fields here are deliberate. Re-recording is a helper, not a permission: a check can be
+ * silenced only by the owner's word, and a person must write it down. The parsing refuses such an
+ * entry, so a list taken by re-recording and left unfilled does not get past the gate.
  */
 export const baselineOf = (keys, parsed, side = 'debt') => {
     const entryOf = (key) => parsed.debt?.get(key) ?? parsed.accepted?.get(key) ?? { reason: '', task: '' };
@@ -363,7 +373,7 @@ export const baselineOf = (keys, parsed, side = 'debt') => {
     return JSON.stringify(side === 'accepted' ? { accepted: filled } : { accepted: rest, debt: filled }, null, 4);
 };
 
-/** Есть ли в дереве то, без чего проверке нечего делать. Нет — она выходит с нулём и говорит это. */
+/** Whether the tree has what a check has nothing to do without. No — it exits with zero and says so. */
 export const skipUnless = (present, what) => {
     if (present) {
         return false;

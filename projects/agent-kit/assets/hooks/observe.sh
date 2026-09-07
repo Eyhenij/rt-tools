@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
-# Запись наблюдений о слое правил. НЕ гард: объявления `rt-hook:` у него нет, к событиям агента
-# он не подключается. Его источают гарды — тем же приёмом, каким гейт источает карту.
+# Recording observations about the rules layer. NOT a guard: it has no `rt-hook:` declaration and it
+# hooks into no agent event. The guards source it — the same way the gate sources the map.
 #
-# Зачем он есть. Правки в тексты пакета шли из головы того, кто их пишет: чем из разложенного
-# пользуются каждый день, чем не пользовались ни разу и обо что спотыкаются по второму кругу,
-# пакету было неизвестно. Часть данных при этом уже собиралась и выбрасывалась — запись загрузок
-# жила во временном каталоге и гибла со сжатием контекста.
+# Why it exists. Edits to the package texts came out of the head of whoever writes them: what of the
+# laid-out is used every day, what was never used once and what people stumble over a second time
+# was unknown to the package. Part of the data was already being gathered and thrown away — the
+# record of loads lived in a temporary directory and died with the compaction of the context.
 #
-# ЧТО ЗАПИСЫВАЕТСЯ. Только имена ресурсов пакета и счётчики: имя правила или гарда, род события,
-# род файла, версия пакета и признак сессии. Ни путей дерева, ни имён его доменов, ни имени
-# самого дерева — и держится это не памятью зовущего, а `rt_observe_clean`: значение со слэшем
-# не пишется вовсе. Наблюдение уезжает потом в чужой репозиторий, и запрет называть чужое дерево
-# обязан держаться конструкцией.
+# WHAT IS RECORDED. Only the names of package resources and counters: the name of a rule or a guard,
+# the kind of event, the kind of file, the package version and the sign of a session. No tree paths,
+# no names of its domains, no name of the tree itself — and this rests not on the caller's memory
+# but on `rt_observe_clean`: a value with a slash is not written at all. An observation later
+# travels into someone else's repository, and the ban on naming a foreign tree has to rest on the
+# construction.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ. Наблюдение — побочная работа гарда, и любая её поломка молча пропускает
-# действие: недоступный каталог, отсутствие `date`, полный диск. Гард, упавший на записи
-# наблюдения, останавливал бы работу ради статистики.
+# FAIL-OPEN. An observation is a guard's side work, and any breakage of it silently lets the action
+# through: an unavailable directory, a missing `date`, a full disk. A guard that fell over on
+# recording an observation would stop work for the sake of statistics.
 
-# Значение, годное к записи. Путь не выносится ни при каких обстоятельствах, остальное чистится
-# до имени и обрезается: длинное значение в наблюдении не значит ничего, кроме утечки.
+# A value fit for recording. A path is not carried out under any circumstances, the rest is cleaned
+# down to a name and trimmed: a long value in an observation means nothing but a leak.
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 rt_observe_clean() {
@@ -28,35 +29,36 @@ rt_observe_clean() {
     printf '%s' "$1" | LC_ALL=C tr -cd 'A-Za-z0-9._:-' | cut -c1-48
 }
 
-# Признак сессии: считается по её имени и обратно не восстанавливается. Нужен, чтобы сводка
-# знала число заходов, а не только число событий.
+# The sign of a session: it is computed from the session name and cannot be restored back. It is
+# needed so that the digest knows the number of sessions, not only the number of events.
 rt_observe_session() {
     printf '%s' "$1" | cksum 2>/dev/null | cut -d' ' -f1
 }
 
-# Версия пакета, разложившего этот файл. Стоит в шапке, которую ставит раскладка; в исходниках
-# пакета шапки нет, и там версия — `dev`.
+# The version of the package that laid this file out. It stands in the header put there by the
+# layout; in the package sources there is no header, and the version there is `dev`.
 rt_observe_version() {
     local found
     found="$(sed -n 's/^# rt-kit v\([^ ]*\) .*/\1/p' "${BASH_SOURCE[0]}" 2>/dev/null | head -1)"
     printf '%s' "${found:-dev}"
 }
 
-# Каталог наблюдений этого дерева. Пустая строка — записи не будет.
+# The observations directory of this tree. An empty string — there will be no record.
 rt_observe_dir() {
     local root="${CLAUDE_PROJECT_DIR:-.}" config
     config="$root/.claude/rt-kit.json"
-    # Выключатель дерева гасит запись целиком, а не частями: пакет стоит и у тех, о ком мы не
-    # знаем. Нечитаемая настройка выключателем не считается — иначе сломанный JSON тихо
-    # выключал бы наблюдения, и понять это было бы нечем.
+    # The tree's switch kills the recording whole, not in parts: the package is installed by those
+    # we know nothing about too. An unreadable setting does not count as switching off — otherwise
+    # broken JSON would quietly switch the observations off, and there would be nothing to see it
+    # by.
     if [ -f "$config" ] && command -v jq >/dev/null 2>&1; then
         [ "$(jq -r 'if .observe == false then "off" else "on" end' "$config" 2>/dev/null)" = "off" ] && return 0
     fi
     printf '%s' "$root/.claude/rt-kit/observations"
 }
 
-# Одно наблюдение: род события и пары `ключ=значение`. Ключ `sid` хешируется, остальные
-# чистятся. Пустое значение поля не заводит.
+# One observation: the kind of event and `key=value` pairs. The `sid` key is hashed, the rest are
+# cleaned. An empty value creates no field.
 #
 #   rt_note gate-deny res=styling-bem kind=scss sid="$sid"
 rt_note() {

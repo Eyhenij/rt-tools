@@ -1,46 +1,47 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
-# Гард поставки. PreToolUse на заведении ветки, пуше и открытии заявки на слияние.
+# Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
+# Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
 #
-# Закон о поставке требует трёх вещей, которых обычно не проверяет ничто: правка начинается с
-# задачи, видимой в очереди работ; задача, ветка и PR несут один номер; у задачи есть
-# исполнитель. Держатся они памятью — и не удерживаются: задачи стоят вне очереди, исполнитель
-# не проставлен, а большинство влитых заявок приходит с веток, за которыми задачи не стояло
-# вовсе.
+# The delivery law demands three things nothing usually checks: an edit starts from a task visible
+# in the work queue; the task, the branch and the PR carry one number; the task has an assignee.
+# They are held by memory — and they do not hold: tasks stand outside the queue, the assignee is
+# not set, and most merged PRs come from branches that had no task behind them at all.
 #
-# Гард стоит в трёх точках, и в каждой требует того, что в этот момент исправимо:
+# The guard stands at three points, and at each of them it demands what is fixable at that moment:
 #
-#   заведение ветки — имя с номером разбирается на месте; имя без номера пропускается:
-#       локальная ветка под пробу законна, в главную она не поедет, потому что заявка с неё
-#       не откроется;
-#   пуш — подпись машинного коммита ещё переписывается на месте; после пуша её чинит только
-#       силовая отправка;
-#   открытие заявки — ветка обязана нести номер, заголовок обязан начинаться с того же номера,
-#       а задача — быть открытой, стоять в очереди работ и иметь исполнителя.
+#   creating a branch — a name with a number is parsed on the spot; a name without a number is let
+#       through: a local branch for a trial is lawful, it will not travel into the main branch,
+#       because no PR opens from it;
+#   the push — the signature of a machine commit is still rewritten on the spot; after the push
+#       only a force push fixes it;
+#   opening a PR — the branch must carry a number, the title must start with the same number, and
+#       the task must be open, stand in the work queue and have an assignee.
 #
-# Два яруса. Формат — номер в имени ветки, номер в заголовке, их совпадение — читается из
-# текста команды и работает всегда. Состояние задачи требует сети: нет её, нет помощника или
-# нет токена — ярус пропускается, потому что проверять нечем.
+# Two tiers. The format — the number in the branch name, the number in the title, their match — is
+# read from the command text and always works. The state of the task needs the network: no network,
+# no client or no token — the tier is skipped, because there is nothing to check with.
 #
-# Что здесь чем зовётся, знает профиль дерева:
-#   rt_task_branch_ok    — форма имени ветки под задачу;
-#   rt_task_branch_number — номер задачи из этого имени: приставкой бывает и род правки;
-#   RT_TASK_TITLE_RE     — форма номера в заголовке заявки;
-#   rt_task_state        — состояние задачи одним объектом (existsize, open, onBoard, assigned,
-#                          numbered); молчание значит «спросить некого»;
-#   RT_TASK_NEW_CMD      — чем заводится задача;
-#   RT_BOARD_CHECK_CMD   — чем сверяется очередь работ;
-#   RT_TASK_BOT          — учётная запись, которую ставят исполнителем; ею же открывается заявка;
-#   RT_PULL_TOKEN_VAR    — переменная, которой вызову подставляют её токен;
-#   RT_PULL_TOKEN_HINT   — готовая подстановка этого токена, целиком;
-#   RT_COMMIT_EMAIL      — почта, которой подписан машинный коммит; её же левой частью он и
-#                          опознаётся.
-# Отказ называет и то, что не так, и чем это чинится: отказ без действия обходят, а не исполняют.
+# What is called what here is known by the tree profile:
+#   rt_task_branch_ok    — the form of a branch name for a task;
+#   rt_task_branch_number — the task number out of that name: the prefix can be the kind of edit too;
+#   RT_TASK_TITLE_RE     — the form of the number in the PR title;
+#   rt_task_state        — the state of the task as one object (existsize, open, onBoard, assigned,
+#                          numbered); silence means "there is nobody to ask";
+#   RT_TASK_NEW_CMD      — what a task is created with;
+#   RT_BOARD_CHECK_CMD   — what the work queue is audited with;
+#   RT_TASK_BOT          — the account put as the assignee; the PR is opened by it as well;
+#   RT_PULL_TOKEN_VAR    — the variable through which its token is substituted into the call;
+#   RT_PULL_TOKEN_HINT   — the ready-made substitution of that token, whole;
+#   RT_COMMIT_EMAIL      — the address a machine commit is signed with; by its left part the commit
+#                          is recognised as well.
+# The refusal names both what is wrong and what fixes it: a refusal without an action is bypassed,
+# not carried out.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, нет разборщика, битый ввод, нет профиля — пропуск.
+# FAIL-OPEN: not a repository, no parser, broken input, no profile — let through.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is written by the shared deny tail, not by the
+# guard itself.
 RT_GUARD_NAME=git-guard-delivery
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -54,7 +55,7 @@ command -v jq >/dev/null 2>&1 || exit 0
 tool="$(rt_hook_tool)"
 sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
 case "$tool" in
-    # Терминал среды и универсальный исполнитель кладут команду в то же поле.
+    # The environment terminal and the universal executor put the command in the same field.
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
     *) exit 0 ;;
 esac
@@ -62,8 +63,8 @@ esac
 cmd="$(rt_hook_cmd)"
 [ -z "$cmd" ] && exit 0
 
-# Универсальный исполнитель передаёт настоящую команду вложенной строкой. Разбирать надо её,
-# а не обёртку.
+# The universal executor passes the real command as a nested string. It is that string that has to
+# be parsed, not the wrapper.
 if [ "$tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&1; then
     inner="$(printf '%s' "$cmd" | perl -0ne '
         if (/--command(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(.+))/s) {
@@ -80,18 +81,18 @@ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
 root="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null)}"
 
-# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
-# Объявленная в надстройке функция замещает умолчание целиком и вправе позвать его обратно
-# суффиксом `_default`. Нет ни того ни другого — хук пропускает: пустой гард лучше гарда,
-# отбивающего наугад.
+# The tree profile: first the package default, and the project override on top of it, if there is
+# one. A function declared in the override replaces the default whole and may call it back through
+# the `_default` suffix. Neither one nor the other — the hook lets through: an empty guard is
+# better than a guard that refuses at random.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "$root/.claude/rt-kit/defaults/project.sh" "$root/.claude/rt-kit/project.sh"; do
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
 
-# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
-# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# A word about a missing profile function: a hook that left silently is indistinguishable from a
+# working one. The file may be not laid out — then the previous behaviour stays, the silent one.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
 command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
@@ -102,39 +103,43 @@ title_re="${RT_TASK_TITLE_RE:-^\[[A-Za-z]+-[0-9]+\][[:space:]]+[^[:space:]]}"
 task_new="${RT_TASK_NEW_CMD:-npm run task:new}"
 board_check="${RT_BOARD_CHECK_CMD:-npm run check:board}"
 task_move="${RT_TASK_MOVE_CMD:-npm run task:move}"
-# Первая колонка очереди работ — та, из которой задача уходит, когда её берут. Умолчания у неё
-# нет: имена колонок дерево называет своими словами, а выдуманное имя не совпало бы ни с чем и
-# молча выключило бы проверку.
+# The first column of the work queue is the one a task leaves when it is taken. It has no default:
+# a tree names its columns in its own words, and an invented name would match nothing and would
+# silently switch the check off.
 backlog_column="${RT_BOARD_BACKLOG:-}"
 task_bot="${RT_TASK_BOT:-}"
-# Личность вызова приходит окружением, а не словом в строке: из текста команды видно только то,
-# подставлен ли токен явно. Дерево, не назвавшее переменной, автора заявки не судит вовсе —
-# у него может не быть отдельной машинной записи.
+# The identity of the call arrives through the environment, not as a word in the line: from the
+# command text only one thing is visible — whether the token is substituted explicitly. A tree that
+# named no variable does not judge the PR author at all — it may have no separate machine account.
 pull_token_var="${RT_PULL_TOKEN_VAR:-}"
 pull_token_hint="${RT_PULL_TOKEN_HINT:-}"
-# Раздел, который тело заявки обязано нести с минуты открытия. Кнопку слияния нажимает человек
-# на хостинге, куда гард не достаёт: всё, чем требование там держится, — то, что владелец увидел
-# на странице. Заголовок раздела пишется языком заявки, поэтому образец называет дерево, а не
-# пакет: чужих слов пакет не знает, и выдуманное умолчание не совпало бы ни с чем.
+# The section the PR body must carry from the minute it opens. The merge button is pressed by a
+# person on the hosting, where the guard does not reach: everything the requirement holds by there
+# is what the owner saw on the page. The section heading is written in the language of the PR, so
+# the pattern is named by the tree, not by the package: the package does not know someone else's
+# words, and an invented default would match nothing.
 pull_body_section="${RT_PULL_BODY_SECTION:-}"
 commit_email="${RT_COMMIT_EMAIL:-}"
 tasks_dir="${RT_TASKS_DIR:-}"
 archive_dir="${RT_ARCHIVE_DIR:-}"
 main_branch="${RT_MAIN_BRANCH:-main}"
 
-# Обход требования: строка с причиной. Причину видит тот, кто вливает, поэтому обход разрешён;
-# без причины это молчаливый пропуск. Порог в три знака — тот же, что у гарда документа.
+# The bypass of the requirement: a line with a reason. The reason is seen by whoever merges, so the
+# bypass is allowed; without a reason it is a silent skip. The threshold of three characters is the
+# same as in the document guard.
 #
-# Строка обхода стоит в начале строки — своей в теле PR или комментария в конце команды — и
-# подстановки не принимает. Иначе текст, который объясняет, как называется обход, неотличим от
-# самого обхода: тело PR со строкой-примером снимало требование само.
+# The bypass line stands at the start of a line — its own in the PR body, or of a comment at the end
+# of the command — and takes no substitutions. Otherwise the text explaining what the bypass is
+# called is indistinguishable from the bypass itself: a PR body with a sample line lifted the
+# requirement by itself.
 folder_skip_re='(^|#)[[:space:]]*Task-folder-skip:[[:space:]]*[^[:space:]<"'"'"'][^[:space:]"'"'"']{2,}'
 
 deny() {
-    # Отказ гарда — наблюдение: гард, отбивающий чаще прочих, говорит, какое место поставки раз
-    # за разом делают не так. Текст отказа туда не идёт: в нём номера задач и имена веток дерева.
+    # A guard refusal is an observation: the guard that refuses more often than the rest says which
+    # place of the delivery is done wrong time after time. The refusal text does not go there: it
+    # holds the task numbers and the branch names of the tree.
 
-    # Хвост отказа: два законных хода и форма обхода вторым параметром.
+    # The refusal tail: the two lawful moves and the form of the bypass as the second parameter.
     # shellcheck disable=SC1090
     [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
     reason="$1"
@@ -145,9 +150,10 @@ deny() {
     exit 0
 }
 
-# Несошедшиеся условия копятся и называются разом: отказ по первому промаху заставляет чинить их
-# по одному — правка основания, повтор, заголовок, снова повтор, задача, — хотя всё несошедшееся
-# известно уже на первом круге. Готовность к поставке — одно состояние, и называется оно целиком.
+# Conditions that did not come together pile up and are named all at once: a refusal on the first
+# miss makes them fixed one at a time — the base, a repeat, the title, another repeat, the task —
+# although everything that did not come together is known already on the first round. Readiness for
+# delivery is one state, and it is named whole.
 faults=''
 
 fault() {
@@ -155,20 +161,22 @@ fault() {
 }— $1"
 }
 
-# Условия о папке задачи вынесены соседним файлом: у папки свой предмет, свой обход и своя
-# запись в архиве, а вместе с разбором команды и очередью работ они переросли предел длины.
-# Подключается он после `deny` и `fault` — обе зовутся изнутри.
+# The conditions about the task folder are moved out into a neighbouring file: the folder has a
+# subject of its own, a bypass of its own and a record of its own in the archive, and together with
+# the command parsing and the work queue they outgrew the length limit. It is sourced after `deny`
+# and `fault` — both are called from inside it.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/git-guard-delivery-folder.sh" ] && . "$rt_hooks_dir/git-guard-delivery-folder.sh" 2>/dev/null
 
-# Конфликтующая своя заявка: тот же приём, что у папки и подписи. Зовётся помощник до всех ярусов
-# ниже и судит не готовность этой работы, а право брать следующую: пока отданное конфликтует, его
-# чинят первым действием хода. Нет помощника — ярус не судится, а работа идёт дальше.
+# A conflicting PR of one's own: the same technique as with the folder and the signature. The helper
+# is called before all the tiers below and judges not the readiness of this work but the right to
+# take the next one: while what was handed over conflicts, it is fixed by the first action of the
+# turn. No helper — the tier is not judged, and the work goes on.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/git-guard-delivery-conflict.sh" ] && . "$rt_hooks_dir/git-guard-delivery-conflict.sh" 2>/dev/null
 command -v rt_delivery_conflict >/dev/null 2>&1 && rt_delivery_conflict
 
-# Отказ по накопленному. Пусто — вызывающая сторона идёт дальше.
+# The refusal on what has piled up. Empty — the calling side goes on.
 deny_faults() {
     [ -z "$faults" ] && return 0
     deny "BLOCKED: работа к поставке не готова. Несошедшееся названо целиком — чтобы чинить его
@@ -180,9 +188,10 @@ ${faults}"
 check_task() {
     number="$1"
     where="$2"
-    # Колонку спрашивают там, где она уже должна быть переставлена. На заведении ветки её ещё
-    # не двигали — паттерн работы переставляет колонку следующей командой, — и требование здесь
-    # отбивало бы первую же команду работы вместе с той, которая его и снимает.
+    # The column is asked about where it should already have been moved. At branch creation it has
+    # not been moved yet — the work pattern moves the column with the next command — and the
+    # requirement here would refuse the very first command of the work together with the one that
+    # lifts it.
     judge_column="${3:-нет}"
     rt_needs rt_task_state git-guard-delivery || return 0
     state="$(cd "$root" && rt_task_state "$number" 2>/dev/null)" || return 0
@@ -199,9 +208,10 @@ check_task() {
     printf '%s' "$state" | jq -e '.numbered' >/dev/null 2>&1 \
         || fault "заголовок задачи #${number} не начинается с её номера — одну работу придётся узнавать по тексту названия. Поправь заголовок и сверь очередь — ${board_check}."
 
-    # Колонка задачи. Ответ очереди работ отдаёт её давно, и не читал её никто: колонку судила
-    # только сверка очереди, то есть уже после того, как PR открыт. Задача, оставшаяся в первой
-    # колонке, читается по очереди как невзятая — работа при этом сделана и выложена.
+    # The task column. The work queue answer has been giving it for a long time, and nobody read it:
+    # the column was judged only by the queue audit, that is, already after the PR is opened. A task
+    # left in the first column reads through the queue as not taken — while the work is done and put
+    # out.
     if [ -n "$backlog_column" ] && [ "$judge_column" = "да" ]; then
         column="$(printf '%s' "$state" | jq -r '.status // empty' 2>/dev/null)"
         [ "$column" = "$backlog_column" ] \
@@ -211,7 +221,7 @@ check_task() {
     return 0
 }
 
-# --- заведение ветки ---------------------------------------------------------------------
+# --- creating a branch -------------------------------------------------------------------
 branch_arg=''
 if printf '%s' "$cmd" | grep -qE '(^|[;&|[:space:]])git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]'; then
     branch_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+([^[:space:];&|]+).*/\4/p' | head -1)"
@@ -220,22 +230,23 @@ if printf '%s' "$cmd" | grep -qE '(^|[;&|[:space:]])git[[:space:]]+(checkout([[:
 fi
 
 if [ -n "$branch_arg" ]; then
-    # Имя, притворяющееся веткой под задачу, но не совпадающее с формой, — это промах в имени,
-    # а не осознанная беззадачная ветка. Ловится до первого коммита.
-    # Номер вынимает профиль: со своей регуляркой ветка `feat/88-slug` номера не давала вовсе.
+    # A name pretending to be a branch for a task but not matching the form is a miss in the name,
+    # not a deliberate task-less branch. Caught before the first commit.
+    # The number is extracted by the profile: with its own regex the branch `feat/88-slug` gave no
+    # number at all.
     number_arg="$(rt_task_branch_number "$branch_arg")"
     if [ -n "$number_arg" ]; then
         rt_task_branch_ok "$branch_arg" \
             || deny "BLOCKED: имя ветки «${branch_arg}» не той формы, что принята здесь. Номер у ветки тот же, что у задачи и у заголовка заявки на слияние."
         check_task "$number_arg" "ветка «${branch_arg}»"
 
-        # Условия поставки, известные уже здесь, проверяются здесь. После того как работа
-        # сделана, основание чинится слиянием с разбором конфликта, а подпись коммитов —
-        # переписыванием ветки; в начале работы обе стоят одну команду.
+        # The delivery conditions already known here are checked here. After the work is done, the
+        # base is fixed by a merge with conflict resolution, and the commit signature by rewriting
+        # the branch; at the start of the work both cost one command.
         #
-        # Основание: вершина главной ветки обязана лежать в том, от чего растёт новая ветка.
-        # Проверяется названное основание, а не вершина рабочей копии: иначе команда, которой
-        # основание берут свежим — `git checkout -b <ветка> origin/<главная>`, — запрещалась бы.
+        # The base: the tip of the main branch must lie in what the new branch grows from. The named
+        # base is checked, not the tip of the working copy: otherwise the command that takes the
+        # base fresh — `git checkout -b <branch> origin/<main>` — would be forbidden.
         base_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\4/p' | head -1)"
         base_ref="${base_arg:-HEAD}"
         if git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
@@ -245,9 +256,10 @@ if [ -n "$branch_arg" ]; then
             fault "ветка вырастет из основания, в котором нет вершины «${main_branch}» — она ушла вперёд на ${behind:-несколько} коммитов. Возьми свежее основание: git fetch origin && git checkout -b ${branch_arg} origin/${main_branch}."
         fi
 
-        # Второй ярус: локальная ссылка на главную ветку сама могла протухнуть, и тогда молчание
-        # первого яруса значит «основание не старше моей ссылки», а не «основание свежее».
-        # Ответа нет — ярус молчит, как и везде, где гард ходит в сеть.
+        # The second tier: the local reference to the main branch could itself have gone stale, and
+        # then the silence of the first tier means "the base is not older than my reference", not
+        # "the base is fresh". No answer — the tier stays silent, as everywhere the guard goes to
+        # the network.
         remote_head="$(GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=5 GIT_TERMINAL_PROMPT=0 \
             git ls-remote origin "refs/heads/${main_branch}" 2>/dev/null | cut -f1)"
         local_head="$(git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" 2>/dev/null)"
@@ -255,9 +267,9 @@ if [ -n "$branch_arg" ]; then
             fault "твоя ссылка origin/${main_branch} отстала от удалённой — ${local_head:0:8} против ${remote_head:0:8}. Ветка вырастет из вчерашнего дерева, и увидит это владелец на открытии заявки. Подтяни и повтори: git fetch origin."
         fi
 
-        # Подпись: почта машинной записи объявлена деревом, а рабочая копия её не знает —
-        # значит первый же коммит уедет за чужой подписью, и чинить это придётся после пуша
-        # силовой отправкой.
+        # The signature: the address of the machine account is declared by the tree, and the working
+        # copy does not know it — which means the very first commit will travel under someone else's
+        # signature, and after the push that is fixed only by a force push.
         if [ -n "$commit_email" ]; then
             tree_email="$(git config user.email 2>/dev/null)"
             [ -n "$tree_email" ] && [ "$tree_email" != "$commit_email" ] \
@@ -266,41 +278,41 @@ if [ -n "$branch_arg" ]; then
 
         deny_faults
     fi
-    # Ветка без номера законна и живёт локально: заявка с неё не откроется.
+    # A branch without a number is lawful and lives locally: no PR opens from it.
     exit 0
 fi
 
-# --- подпись машинного коммита ------------------------------------------------------------
-# Предмет живёт помощником рядом — `git-guard-delivery-signature.sh`: гард дорос до предела
-# длины, и подпись среди его предметов самая отдельная. Нет помощника — подпись не судится, а
-# работа идёт дальше: это тот же отказ в пользу работы, что и у остальных условий.
+# --- the machine commit signature ----------------------------------------------------------
+# The subject lives in a helper next door — `git-guard-delivery-signature.sh`: the guard grew up to
+# the length limit, and the signature is the most separate of its subjects. No helper — the
+# signature is not judged, and the work goes on: the same fail-open as with the other conditions.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/git-guard-delivery-signature.sh" ] \
     && . "$rt_hooks_dir/git-guard-delivery-signature.sh" 2>/dev/null
 command -v rt_delivery_signature >/dev/null 2>&1 && rt_delivery_signature
 
-# --- снятие черновика ----------------------------------------------------------------------
-# Предмет живёт помощником рядом — `git-guard-delivery-draft.sh`, тем же приёмом, что и подпись.
-# Нет помощника — снятие черновика не судится, а работа идёт дальше.
+# --- leaving draft ---------------------------------------------------------------------------
+# The subject lives in a helper next door — `git-guard-delivery-draft.sh`, by the same technique as
+# the signature. No helper — leaving draft is not judged, and the work goes on.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/git-guard-delivery-draft.sh" ] \
     && . "$rt_hooks_dir/git-guard-delivery-draft.sh" 2>/dev/null
 command -v rt_delivery_draft_ready >/dev/null 2>&1 && rt_delivery_draft_ready
 
-# --- слияние заявки ----------------------------------------------------------------------
+# --- merging a PR --------------------------------------------------------------------------
 #
-# Второй рубеж того же условия, что стоит на открытии заявки: он ловит слияние, идущее командой.
-# Команду ищем от начала строки или после разделителя, а не где угодно в тексте. Иначе гард
-# отбивает сообщение, где `gh pr merge` просто упомянут в кавычках, — так он и сработал на
-# правке этого же текста. Полностью подстроку в кавычках так не отсечь, но случайное упоминание
-# внутри слова или пути мимо уже не пройдёт.
+# The second line of the same condition that stands at the opening of a PR: it catches a merge going
+# by command. We look for the command from the start of the line or after a separator, not anywhere
+# in the text. Otherwise the guard refuses a message where `gh pr merge` is merely mentioned in
+# quotes — that is how it fired on an edit of this very text. A quoted substring cannot be cut off
+# entirely this way, but an accidental mention inside a word or a path no longer gets through.
 if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(gh[[:space:]]+pr[[:space:]]+merge|glab[[:space:]]+mr[[:space:]]+merge|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+update)([[:space:]]|\$)"; then
     rt_delivery_merge_folder
 fi
 
-# --- открытие заявки на слияние ----------------------------------------------------------
-# Команду ищем от начала строки или после разделителя — по той же причине, что и слияние:
-# упоминание в кавычках командой не является.
+# --- opening a PR --------------------------------------------------------------------------
+# We look for the command from the start of the line or after a separator — for the same reason as
+# with the merge: a mention in quotes is not a command.
 printf '%s' "$cmd" \
     | grep -qE "${RT_CMD_BOUND}(gh[[:space:]]+pr[[:space:]]+create|glab[[:space:]]+mr[[:space:]]+create|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+create)([[:space:]]|\$)" \
     || exit 0
@@ -308,8 +320,8 @@ printf '%s' "$cmd" \
 branch="$(git branch --show-current 2>/dev/null)"
 [ -z "$branch" ] && exit 0   # открепившийся HEAD — не про этот случай
 
-# Локальная ветка без номера законна, а заявка с неё — уже нет: правка, доезжающая до главной
-# ветки, начинается с задачи. Это единственное место, где беззадачная ветка упирается.
+# A local branch without a number is lawful, and a PR from it is not: an edit that travels to the
+# main branch starts from a task. This is the only place where a task-less branch runs into a wall.
 rt_task_branch_ok "$branch" \
     || deny "BLOCKED: заявка с ветки «${branch}», за которой не стоит задачи. Правка начинается с задачи, видимой в очереди работ: заведи её — ${task_new} — и перенеси работу в ветку с её номером."
 
@@ -327,10 +339,10 @@ fi
 if [ -n "$title" ]; then
     printf '%s' "$title" | grep -qE "$title_re" \
         || fault "заголовок заявки не начинается с номера задачи. В списке заявок тела не видно, а строка связи живёт именно там — без номера в заголовке PR с задачей не сопоставить."
-    # Номер вынимается из той части заголовка, которую признала сама форма, а не второй
-    # регуляркой рядом. Своя регулярка знает только пакетную форму: дерево, замостившее форму
-    # своей, получало пустой номер — и сверка номера заголовка с номером ветки молча не
-    # выполнялась вовсе, выглядя при этом сошедшейся.
+    # The number is extracted from the part of the title the form itself recognised, not by a second
+    # regex next to it. The own regex knows only the package form: a tree that paved the form over
+    # with its own got an empty number — and the check of the title number against the branch number
+    # silently did not run at all, while looking as if it had come together.
     title_matched="$(printf '%s' "$title" | grep -oE "$title_re" | head -1)"
     title_number="$(printf '%s' "$title_matched" | grep -oE '[A-Za-z]+-[0-9]+' | head -1 | sed -E 's/^[A-Za-z]+-//')"
     if [ -n "$number" ] && [ -n "$title_number" ]; then
@@ -339,27 +351,28 @@ if [ -n "$title" ]; then
     fi
 fi
 
-# Главная ветка влита до открытия PR: иначе ревьювер видит чужую правку вперемешку со своей, а
-# проверки идут от устаревшего основания.
+# The main branch is merged in before the PR opens: otherwise the reviewer sees someone else's edit
+# mixed in with his own, and the checks run from an outdated base.
 #
-# Ярусов два. Первый читает локальную вершину и работает без сети. Второй спрашивает удалённую
-# ссылку: без него молчание значит лишь «локальная ссылка не старше ветки», а читается как
-# «главная влита». Нет ответа сети — пропуск молча; предел ожидания задаётся переменными git,
-# внешний `timeout` есть не на всякой машине.
+# There are two tiers. The first reads the local tip and works without the network. The second asks
+# the remote reference: without it, silence means only "the local reference is not older than the
+# branch", while it reads as "the main branch is merged in". No answer from the network — a silent
+# skip; the waiting limit is set by git variables, an external `timeout` is not on every machine.
 if git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
     && ! git merge-base --is-ancestor "origin/${main_branch}" HEAD 2>/dev/null; then
     behind="$(git rev-list --count "HEAD..origin/${main_branch}" 2>/dev/null)"
     fault "«${main_branch}» ушла вперёд на ${behind:-несколько} коммитов, а в ветку не влита. PR от разошедшейся ветки показывает ревьюверу правку вперемешку с чужой, а проверки на нём идут от устаревшего основания. Влей и повтори: git fetch origin && git merge origin/${main_branch} — порядок и разбор конфликта в паттерне git-workflow-merge."
 fi
 
-# Второй ярус: локальная ссылка сама могла протухнуть. Ответа нет — ярус молчит.
+# The second tier: the local reference could itself have gone stale. No answer — the tier stays
+# silent.
 remote_main="$(GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=5 GIT_TERMINAL_PROMPT=0 \
     git ls-remote origin "refs/heads/${main_branch}" 2>/dev/null | cut -f1)"
 local_main="$(git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" 2>/dev/null)"
 if [ -n "$remote_main" ] && [ -n "$local_main" ] && [ "$remote_main" != "$local_main" ]; then
-    # Возраст ссылки — то, чего исполнитель не видит вовсе, и именно он отличает «ветка
-    # отстала» от «я не знаю, отстала ли». Формат `stat` на BSD и на GNU разный, поэтому
-    # спрашиваются оба, а не угадывается система.
+    # The age of the reference is what the executor does not see at all, and it is exactly what
+    # tells "the branch is behind" from "I do not know whether it is behind". The `stat` format
+    # differs on BSD and on GNU, so both are asked instead of guessing the system.
     fetch_head="$(git rev-parse --git-dir 2>/dev/null)/FETCH_HEAD"
     fetched_at="$(stat -f %m "$fetch_head" 2>/dev/null || stat -c %Y "$fetch_head" 2>/dev/null)"
     age=''
@@ -369,23 +382,25 @@ if [ -n "$remote_main" ] && [ -n "$local_main" ] && [ "$remote_main" != "$local_
     fault "твоя ссылка origin/${main_branch} отстала от удалённой — ${local_main:0:8} против ${remote_main:0:8}.${age} Гард сравнивает ветку с тем, что лежит в дереве, поэтому молчание первого яруса значит «ссылка не старше ветки», а не «главная ветка влита». Влей и повтори: git fetch origin && git merge origin/${main_branch}."
 fi
 
-# Личность вызова. Клиент хостинга держит две записи — залогиненную и ту, чей токен стоит в
-# окружении вызова; какая откроет заявку, из команды видно только по явной подстановке. Промах
-# всплывает на назначении ревьювера: автор заявки её ревьювером не бывает, а автора не сменить.
+# The identity of the call. The hosting client holds two accounts — the logged-in one and the one
+# whose token stands in the call environment; which of them opens the PR is visible from the command
+# only through an explicit substitution. The miss surfaces on assigning the reviewer: the author of
+# a PR is never its reviewer, and the author cannot be changed.
 #
-# Проверяется текст команды. Дерево, не назвавшее переменной токена, требования не получает.
+# The command text is checked. A tree that named no token variable gets no requirement.
 if [ -n "$pull_token_var" ] \
     && ! printf '%s' "$cmd" | grep -qE "(^|[;&|(]|&&|\|\||[[:space:]])${pull_token_var}="; then
     fault "заявка открывается без токена машинной записи: в команде нет подстановки «${pull_token_var}». Открытая залогиненной записью, она выйдет от владельца — ревьювером его тогда не назначить, и чинится это только переоткрытием.${pull_token_hint:+ Подставь токен: ${pull_token_hint} …}"
 fi
 
-# Второй ярус той же личности: кто на самом деле придёт по этому токену. Подстановка говорит
-# о намерении, а не о результате: она читала файл, которого на машине нет, пустую строку клиент
-# принял за незаданный токен, и заявка вышла от владельца при верной с виду команде.
+# The second tier of the same identity: who actually arrives under this token. A substitution speaks
+# of the intent, not of the result: it read a file that is not on the machine, the client took an
+# empty string for an unset token, and the PR came out from the owner under a command that looked
+# right.
 #
-# У хостинга спрашивает дерево, а не пакет: хостинг, клиент и путь к токену у каждого свои.
-# Пустой ответ означает «спросить не удалось»: вызов пропускается, и об этом сообщается —
-# молчаливый пропуск неотличим от сошедшейся сверки.
+# The hosting is asked by the tree, not by the package: the hosting, the client and the path to the
+# token are each their own. An empty answer means "asking did not work out": the call is let through,
+# and this is reported — a silent skip is indistinguishable from a check that came together.
 if [ -n "$task_bot" ] && command -v rt_pull_token_login >/dev/null 2>&1; then
     token_login="$(rt_pull_token_login 2>/dev/null)"
     if [ -z "$token_login" ]; then
@@ -395,11 +410,12 @@ if [ -n "$task_bot" ] && command -v rt_pull_token_login >/dev/null 2>&1; then
     fi
 fi
 
-# Тело заявки несёт раздел об оставшемся шаге с минуты открытия: без него владелец вливает
-# заявку кнопкой, пока идёт прогон. Тело приходит доводом либо файлом, оба читаются здесь; файл
-# к моменту разбора уже написан. Нет ни того ни другого — требования нет: заявка без тела
-# проверяется строкой выше. Флаг узнаётся только отдельным словом: хвост имени ветки `-b`
-# в доводе основания читался как флаг тела, и телом становилось следующее слово команды.
+# The PR body carries the section about the remaining step from the minute it opens: without it the
+# owner merges the PR by the button while the run is still going. The body arrives either as an
+# argument or as a file, both are read here; by the time of the parse the file is already written.
+# Neither one nor the other — there is no requirement: a PR without a body is checked by the line
+# above. The flag is recognised only as a separate word: the tail `-b` of a branch name in the base
+# argument read as the body flag, and the next word of the command became the body.
 if [ -n "$pull_body_section" ]; then
     body=''
     if command -v perl >/dev/null 2>&1; then
@@ -423,13 +439,14 @@ fi
 
 check_task "$number" "заявка с ветки «${branch}»" да
 
-# Папка задачи разбирается до открытия заявки, а не после одобрения: владелец вливает, как
-# только видит зелёное, и закрывающему коммиту места не остаётся — трижды подряд папка уехала в
-# главную неразобранной. Замысел после уборки гард хода работы берёт из истории ветки.
+# The task folder is taken apart before the PR opens, not after the approval: the owner merges as
+# soon as he sees green, and no room is left for a closing commit — three times in a row the folder
+# travelled into the main branch without being taken apart. After the cleanup the progress guard
+# takes the plan from the branch history.
 rt_delivery_open_folder
 
-# Всё несошедшееся названо здесь, разом: до этой строки собирались условия, каждое из которых
-# прежде отбивало вызов в одиночку.
+# Everything that did not come together is named here, all at once: up to this line the conditions
+# were being collected, each of which used to refuse the call on its own.
 deny_faults
 
 exit 0

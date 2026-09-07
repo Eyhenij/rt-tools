@@ -1,6 +1,6 @@
 /**
- * Связь задачи с эпиком. Живёт своим файлом: сверка очереди работ и без неё стоит у предела
- * длины, а читают эти две проверки порознь.
+ * The link between a task and an epic. Lives in a file of its own: the work queue audit stands at
+ * the length limit even without it, and these two checks are read separately.
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -9,17 +9,18 @@ import { TASK_KEY } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 /**
- * Метка карточки эпика. Не названа — связь не судится: отличить карточку эпика от обычной
- * задачи станет нечем.
+ * The label of an epic card. Not named — the link is not judged: there would be nothing left to
+ * tell an epic card from an ordinary task by.
  */
 const EPIC_LABEL = CONFIG.board?.epicLabel ?? '';
 
 /**
- * Строки состава эпика — те, что стоят в таблице с колонкой «Задача».
+ * The rows of the epic makeup — those standing in the table with the task column.
  *
- * Замысел эпика держит и другие таблицы: источники находок, состав семей, счёт пунктов. Номера,
- * взятые из всего текста и даже из всех таблиц, делали бы задачей эпика всё, что он упомянул, —
- * прошлый эпик, из находок которого он вырос, разбор, задачу соседнего дерева.
+ * The epic plan holds other tables too: the sources of findings, the makeup of families, the count
+ * of items. Numbers taken from the whole text, and even from all the tables, would make an epic
+ * task out of everything it mentioned — the previous epic its findings grew from, a review, a task
+ * of a neighbouring tree.
  */
 function planRows(plan) {
     const rows = [];
@@ -31,8 +32,8 @@ function planRows(plan) {
             continue;
         }
         if (!inside) {
-            // Граница слова здесь не годится: `\b` знает только латиницу, и с кириллицей она не
-            // совпадает никогда — проверка молчала бы на любом замысле.
+            // A word boundary is no good here: `\b` knows only Latin letters and never matches
+            // Cyrillic — the check would stay silent on any plan.
             inside = /\|[^|]*Задача/.test(line);
             continue;
         }
@@ -42,27 +43,28 @@ function planRows(plan) {
 }
 
 /**
- * Связь задачи с эпиком, прочитанная в обе стороны.
+ * The link between a task and an epic, read in both directions.
  *
- * Задача, заведённая под эпик, называет его в теле, а замысел эпика называет её со своей
- * стороны. Односторонняя привязка выглядит целой ровно так же, как двусторонняя: читатель
- * приходит то от замысла эпика, то от его карточки, и вторая сторона существует только для одного из
- * них. Держалась она подражанием — пока тело писали с образца соседней задачи того же эпика,
- * строка ехала вместе с формой, а задача, заведённая посреди работы находкой, писалась не с
- * образца.
+ * A task created under an epic names it in its body, and the epic plan names the task from its own
+ * side. A one-sided binding looks whole exactly as a two-sided one does: the reader comes now from
+ * the epic plan, now from its card, and the second side exists only for one of them. It held by
+ * imitation — while a body was written from the sample of a neighbouring task of the same epic, the
+ * line travelled with the shape, and a task created in the middle of work out of a finding was not
+ * written from a sample.
  *
- * Путь к замыслу берётся из тела карточки эпика: называть его она обязана и так, а настройка
- * каталога завела бы второй источник правды. Путём считается написание с каталогом — голое имя
- * файла в теле встречается прозой и уводило бы проверку на первое же упоминание. Замысла нет на
- * диске — это своё расхождение: карточка ссылается в пустоту.
+ * The path to the plan is taken from the body of the epic card: it has to name it anyway, and a
+ * directory setting would create a second source of truth. A path counts as a spelling with a
+ * directory — a bare file name in the body occurs in prose and would lead the check to the very
+ * first mention. A plan absent from disk is a discrepancy of its own: the card points into
+ * emptiness.
  *
- * Судится только открытое, как и вся остальная сверка: закрытая задача эпика — история, и
- * строку о ней нечем закрыть.
+ * Only what is open is judged, as in the rest of the audit: a closed task of an epic is history,
+ * and there is nothing to close a line about it with.
  */
 export function checkEpicLinks(open, report) {
-    // Метка не названа — карточку эпика отличить от обычной задачи нечем, и проверка молчит.
-    // Молчит именно так, а не «эпиков нет»: дерево без эпиков и дерево, не назвавшее метки,
-    // здесь неразличимы.
+    // The label is not named — there is nothing to tell an epic card from an ordinary task by, and
+    // the check stays silent. Silent exactly so, not "there are no epics": a tree without epics and
+    // a tree that has not named the label are indistinguishable here.
     if (!EPIC_LABEL) {
         return;
     }
@@ -70,9 +72,9 @@ export function checkEpicLinks(open, report) {
     const byNumber = new Map(open.map((issue) => [issue.number, issue]));
     const epics = open.filter((issue) => (issue.labels ?? []).some((label) => label.name === EPIC_LABEL));
     const listedBy = new Map();
-    // Эпики, состав которых прочитать не вышло. Их задачи обратной стороной не судятся: о
-    // непрочитанном замысле уже сказано своей строкой, и четыре строки «задачи нет в замысле»
-    // рядом с ней говорят о том же промахе ещё раз, называя виноватыми чужие задачи.
+    // Epics whose makeup could not be read. Their tasks are not judged from the other side: an
+    // unread plan has already been reported by a line of its own, and four lines "the task is not in
+    // the plan" beside it speak of the same miss again, naming other tasks as guilty.
     const unreadable = new Set();
 
     for (const epic of epics) {
@@ -105,8 +107,8 @@ export function checkEpicLinks(open, report) {
         }
     }
 
-    // Обратная сторона: тело назвало эпик, а замысел эпика этой задачи не знает. Читается
-    // это как задача под эпиком, но «взять следующую» её не отдаст никогда.
+    // The other side: the body named the epic, and the epic plan does not know this task. It reads
+    // as a task under an epic, but "take the next one" will never hand it out.
     const epicNumbers = new Set(epics.map((issue) => issue.number));
     for (const issue of open) {
         if (epicNumbers.has(issue.number)) {

@@ -1,31 +1,30 @@
 #!/usr/bin/env node
 /**
- * Проверка того, что набор гейта пуша не уже набора конвейера.
+ * The check that the set of the push gate is not narrower than the set of the pipeline.
  *
- * Гейт пуша — обещание, что пуш не приедет красным. Пока его набор уже набора
- * конвейера, обещание шире того, что гейт проверяет, и неверно оно молча: ни
- * гейт, ни его вывод не говорят, чего в нём нет. Дважды подряд правка, прошедшая
- * гейт целиком, была отбита конвейером — и оба раза зелёный гейт был прочитан
- * как «локально всё зелено».
+ * The push gate is a promise that the push will not arrive red. While its set is narrower than the
+ * set of the pipeline, the promise is wider than what the gate checks, and it is wrong silently:
+ * neither the gate nor its output says what is missing from it. Twice in a row an edit that passed
+ * the gate whole was refused by the pipeline — and both times the green gate was read as
+ * «everything is green locally».
  *
- * Файл конвейера машиной не толкуется: команды там произвольны, а часть шагов
- * локально неисполнима вовсе — кэш, выгрузка следов, вход в реестр. Отсюда
- * берутся только ИМЕНА шагов, а чем каждое из них закрывается в гейте,
- * объявляет дерево. Необъявленное имя краснеет: дыра видна на месте, а не
- * выводится сверкой двух списков глазами.
+ * The pipeline file is not interpreted by a machine: the commands there are arbitrary, and part of
+ * the steps cannot be run locally at all — the cache, uploading traces, signing in to the registry.
+ * Only the NAMES of the steps are taken from there, and what each of them is closed by in the gate
+ * is declared by the tree. An undeclared name turns red: the hole is seen on the spot and is not
+ * deduced by comparing two lists with the eyes.
  *
- * Объявление бывает двух родов. Строка — та самая команда, которую печатает
- * `rt_push_checks` профиля; она сверяется с его выводом, потому что объявление
- * без исполнения — та же дыра. Исключение — причина, по которой шага в гейте
- * нет; пустая причина исключением не считается: она единственное, чем
- * постоянная дыра отличается от забытой строки. Причина, называющая задачу,
- * судится ещё и на живость этой задачи: отсрочка со сроком и отсрочка без срока
- * выглядят одинаково, пока номер никто не спросил.
+ * A declaration comes in two kinds. A line is the very command the `rt_push_checks` of the profile
+ * prints; it is checked against its output, because a declaration without a run is the same hole.
+ * An exception is the reason why the step is not in the gate; an empty reason does not count as an
+ * exception: it is the only thing by which a permanent hole differs from a forgotten line. A reason
+ * naming a task is judged on the liveness of that task as well: a deferral with a deadline and a
+ * deferral without one look alike while nobody has asked about the number.
  *
- * Дерево без файла конвейера сверки не получает: проверка, падающая там, где
- * конвейера нет, отбивала бы работу вместо промаха.
+ * A tree without a pipeline file gets no comparison: a check falling where there is no pipeline
+ * would refuse the work instead of a miss.
  *
- * Ненулевой код возврата и перечень расхождений.
+ * A non-zero exit code and the list of discrepancies.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
@@ -36,12 +35,13 @@ import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 const GATE = CONFIG.pushGate ?? {};
 const PIPELINE = GATE.pipelineFile ?? '';
 const DECLARED = GATE.steps ?? {};
-/** Ключ задач дерева: по нему номер в причине отличается от версии, порта и года. */
+/** The task key of the tree: by it a number in a reason differs from a version, a port and a year. */
 const TASK_KEY = CONFIG.board?.taskKey ?? '';
 
 /**
- * Профиль дерева ищется той же цепочкой, что и у гарда пуша: умолчание пакета, поверх него
- * надстройка проекта. Разойдись они — проверка судила бы не тот набор, который гоняет гард.
+ * The profile of the tree is looked for by the same chain as at the push guard: the package
+ * default, and the override of the project on top of it. Were they to diverge, the check would
+ * judge a set other than the one the guard runs.
  */
 const PROFILES = ['.claude/rt-kit/defaults/project.sh', '.claude/rt-kit/project.sh'];
 
@@ -51,8 +51,9 @@ if (!PIPELINE || !existsSync(join(ROOT, PIPELINE))) {
 }
 
 /**
- * Имена шагов конвейера. Образец задаёт дерево: у каждого хостинга своя форма записи, и
- * угадывать её за все три пакет не берётся. Умолчание — форма GitHub Actions.
+ * The names of the pipeline steps. The template is set by the tree: every hosting has its own form
+ * of writing, and the package does not undertake to guess it for all three. The default is the
+ * GitHub Actions form.
  */
 const stepPattern = new RegExp(GATE.stepPattern ?? '^\\s*-\\s*name:\\s*(.+?)\\s*$');
 
@@ -65,11 +66,12 @@ function pipelineSteps() {
 }
 
 /**
- * Набор гейта берётся у профиля его же оболочкой, а не переписывается сюда: два списка одного
- * набора расходятся молча, и расходиться начинают в тот день, когда правят один из них.
+ * The set of the gate is taken from the profile by its own shell, not rewritten here: two lists of
+ * one set diverge silently, and they start diverging the day one of them is edited.
  *
- * Профиля нет, функции в нём нет или оболочка отказала — набор неизвестен, и тогда проверка
- * судит только полноту объявлений: сверять строки не с чем.
+ * There is no profile, no function in it, or the shell refused — the set is unknown, and then the
+ * check judges only the completeness of the declarations: there is nothing to compare the lines
+ * against.
  */
 function gateChecks() {
     const present = PROFILES.filter((path) => existsSync(join(ROOT, path)));
@@ -90,8 +92,9 @@ rt_push_checks ""`;
 }
 
 /**
- * Номера задач, названные причиной. Ключ дерева обязателен: без него «663» неотличимо от порта,
- * года и номера редакции, и проверка спрашивала бы очередь работ обо всём подряд.
+ * The task numbers named by a reason. The key of the tree is mandatory: without it «663» is
+ * indistinguishable from a port, a year and an edition number, and the check would ask the work
+ * queue about everything in a row.
  */
 function taskNumbers(reason) {
     if (!TASK_KEY) {
@@ -101,9 +104,9 @@ function taskNumbers(reason) {
 }
 
 /**
- * Очередь работ ищется разрешением модуля, а не собирается здесь: у каждого хостинга она своя, и
- * дерево, у которого её нет, судится как прежде. Ярус тот же, что у гарда поставки: есть чем
- * спросить — спрашивает, нет — молчит.
+ * The work queue is looked for by module resolution, not assembled here: every hosting has its own,
+ * and a tree that has none is judged as before. The tier is the same as at the delivery guard:
+ * there is something to ask with — it asks, there is not — it stays silent.
  */
 async function boardModule() {
     if (!TASK_KEY) {
@@ -120,7 +123,7 @@ async function boardModule() {
 const steps = pipelineSteps();
 const checks = gateChecks();
 const problems = [];
-/** Задачи, названные причинами исключений: спрашиваются пачкой после разбора всех шагов. */
+/** The tasks named by the reasons of exceptions: asked in one batch after all the steps are read. */
 const deferrals = [];
 
 for (const step of steps) {
@@ -156,7 +159,7 @@ for (const step of steps) {
     }
 }
 
-/** Строка о шаге, которого в конвейере нет, — устаревшая: иначе объявления копят мёртвое. */
+/** A line about a step the pipeline does not have is stale: otherwise declarations pile up the dead. */
 const known = new Set(steps);
 for (const step of Object.keys(DECLARED)) {
     if (!known.has(step)) {
@@ -165,9 +168,9 @@ for (const step of Object.keys(DECLARED)) {
 }
 
 /**
- * Мёртвый номер в причине делает исключение бессрочным, не сказав об этом ни строкой. Первый же
- * отказ сети кончает опрос целиком: спрашивать остальные незачем, а падать проверке, которую
- * гоняют в самолёте, — тем более.
+ * A dead number in a reason makes the exception open-ended without saying so by a single line. The
+ * very first refusal of the network ends the whole polling: there is no point asking the rest, and
+ * still less point in falling for a check that is run on a plane.
  */
 const board = deferrals.length > 0 ? await boardModule() : null;
 if (board) {

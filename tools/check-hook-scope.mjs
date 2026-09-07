@@ -1,25 +1,27 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-hook-scope.mjs · 882cb7623e00 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-hook-scope.mjs · a01e5f872c14 · правится надстройкой, не здесь
 /**
- * Сверка объявления гарда с тем, что разбирает его тело.
+ * The audit of a guard declaration against what its body branches on.
  *
- * Гард несёт своё событие и образец вызова сам — строкой `# rt-hook:` во второй строке файла; по
- * ней его подписывают в настройке агента. Тело при этом умеет больше, чем объявлено: разбирает
- * имя инструмента, которого в образце нет, — и до этой ветки вызов не доходит никогда. Снаружи
- * гард выглядит работающим: путь назван, файл разложен, набор сценариев зелёный, потому что зовёт
- * гард напрямую с подставленным вводом и объявления не читает вовсе.
+ * A guard carries its own event and call pattern itself — by the `# rt-hook:` line in the second
+ * line of the file; the agent settings subscribe it by that line. The body meanwhile can do more
+ * than is declared: it branches on a tool name absent from the pattern — and the call never reaches
+ * that branch. From outside the guard looks like it works: the path is named, the file is laid out,
+ * the scenario set is green, because it calls the guard directly with substituted input and does
+ * not read the declaration at all.
  *
- * Хуже того, расхождение читается как промах дерева. Дерево, подписавшее гард шире объявления,
- * получает отказ сверки раскладки и сужает подписку до объявления — вместе с расхождением снимая
- * работавшее покрытие. Чинится это в пакете, а платит за него дерево.
+ * Worse, the discrepancy reads as a miss of the tree. A tree that subscribed the guard wider than
+ * its declaration gets a refusal from the layout audit and narrows the subscription down to the
+ * declaration — removing the coverage that worked along with the discrepancy. This is fixed in the
+ * package, and the tree pays for it.
  *
- * Что сверяется: имена инструментов из веток `case` по имени инструмента против образца
- * объявления. Комментарии и тексты отказов не читаются: имя инструмента упоминают и там, а
- * судится то, на что гард ветвится.
+ * What is checked: tool names from the `case` branches on the tool name against the pattern of the
+ * declaration. Comments and refusal texts are not read: a tool name is mentioned there too, and
+ * what is judged is what the guard branches on.
  *
- * FAIL-OPEN: каталога хуков нет — сверять нечего, нулевой код.
+ * FAIL-OPEN: there is no hooks directory — nothing to check, zero code.
  *
- * Ненулевой код возврата и перечень расхождений.
+ * A non-zero exit code and the list of discrepancies.
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -27,13 +29,13 @@ import { join } from 'node:path';
 const ROOT = process.cwd();
 const HOOKS = join(ROOT, '.claude/hooks');
 
-/** Объявление гарда: событие и образец вызова. */
+/** The declaration of a guard: the event and the call pattern. */
 const DECLARATION = /^#\s*rt-hook:\s*(\S+)(?:[ \t]+(\S.*))?$/m;
 
-/** Ветка `case` по имени инструмента: `Bash | mcp__webstorm__execute_tool)`. */
+/** A `case` branch on a tool name: `Bash | mcp__webstorm__execute_tool)`. */
 const TOOL_CASE = /^[ \t]*([A-Za-z_][\w-]*(?:__[\w-]+)*(?:[ \t]*\|[ \t]*[A-Za-z_][\w-]*(?:__[\w-]+)*)*)\)/;
 
-/** Имена инструментов, на которые ветвится тело гарда. */
+/** The tool names the guard body branches on. */
 function branchedTools(text) {
     const lines = text.split('\n');
     const tools = new Set();
@@ -60,7 +62,7 @@ function branchedTools(text) {
         if (branch) {
             for (const name of branch[1].split('|')) {
                 const tool = name.trim();
-                // Звёздочка — ветка «всё остальное», именем инструмента она не является.
+                // The asterisk is the "everything else" branch, and it is not a tool name.
                 if (tool && tool !== '*') {
                     tools.add(tool);
                 }
@@ -71,13 +73,14 @@ function branchedTools(text) {
     return [...tools];
 }
 
-/** Покрывает ли образец объявления это имя инструмента. */
+/** Whether the pattern of the declaration covers this tool name. */
 function covers(matcher, tool) {
     try {
         return new RegExp(`^(?:${matcher})$`).test(tool);
     } catch {
-        // Образец, который не разобрать, — своё расхождение, и молчать о нём нельзя: имя
-        // инструмента под ним не совпадёт ни с чем, а выглядит объявление написанным.
+        // A pattern that cannot be parsed is a discrepancy of its own, and it may not be passed
+        // over in silence: a tool name under it will match nothing, while the declaration looks
+        // written.
         return false;
     }
 }

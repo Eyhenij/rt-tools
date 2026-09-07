@@ -1,31 +1,30 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-state-next.mjs · 914134a1ab08 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-state-next.mjs · 358c314ae92e · правится надстройкой, не здесь
 /**
- * Сверка того, что раздел состояния называет следующее движение.
+ * The check that the section of a state names the next move.
  *
- * Раздел, обрывающийся на последнем приёме, читается как конец работы: исполнитель
- * доводит обязательное действие до конца, дочитывает раздел, следующего движения в
- * нём не находит — и отдаёт ход отчётом о сделанном. Так кончились два хода: один
- * на записанном замысле, второй на закрытом разборе просьбы. Сверка состояний этого
- * не видит: она сравнивает имена разделов с перечнем и внутрь не смотрит.
+ * A section breaking off at the last step reads as the end of the work: the executor brings the
+ * mandatory action to the end, reads the section through, finds no next move in it — and hands the
+ * turn over with a report of what was done. Two turns ended that way: one on a written plan, the
+ * second on a closed grill. The check of the states does not see this: it compares the names of the
+ * sections with the list and does not look inside.
  *
- * Читаются четыре текста:
- *   перечень — таблица состояний в правиле ведения работы: имя и ведущий паттерн;
- *   разделы  — заголовки вида «State `имя`» либо «Состояние `имя`» в этих паттернах;
- *   правило  — оно же: в нём стоит утверждение о границе состояния;
- *   карта и закон — там же стоит то же утверждение, если дерево их разложило.
+ * Four texts are read:
+ *   the list     — the table of states in the rule of work conduct: the name and the leading pattern;
+ *   the sections — headings of the form «State `name`» or «Состояние `имя`» in those patterns;
+ *   the rule     — the same one: the statement about the boundary of a state stands in it;
+ *   the map and the law — the same statement stands there, if the tree has laid them out.
  *
- * Строка следующего движения узнаётся по зачину, а называет своё: единая дословная
- * строка читается как шаблон и перестаёт замечаться на третьем разделе. Поэтому
- * повтор хвоста считается расхождением наравне с его отсутствием.
+ * The line of the next move is recognised by its opening and names its own: one word-for-word line
+ * reads as a template and stops being noticed by the third section. That is why a repeated tail
+ * counts as a discrepancy on a par with its absence.
  *
- * FAIL-OPEN: правила ведения работы в дереве нет — сверять нечего, нулевой код.
- * Пустая таблица состояний отказом считается: она означает не «нечего сверять», а
- * «перечень сломан». Ведущий паттерн, которого в дереве нет, здесь не судится — его
- * называет сверка состояний, и два отказа об одном промахе читаются как две
- * претензии.
+ * FAIL-OPEN: there is no rule of work conduct in the tree — nothing to check, a zero code. An empty
+ * table of states counts as a refusal: it means not «there is nothing to check» but «the list is
+ * broken». A leading pattern that is not in the tree is not judged here — it is named by the check
+ * of the states, and two refusals about one miss read as two claims.
  *
- * Ненулевой код возврата и перечень расхождений.
+ * A non-zero exit code and the list of discrepancies.
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -33,10 +32,10 @@ import { join } from 'node:path';
 const ROOT = process.cwd();
 const RULE = join(ROOT, '.claude/skills/task-flow/SKILL.md');
 /**
- * Правило хода захода: граница состояния живёт там, а не в правиле ведения работы.
- * Разделились они, когда правило ведения работы вышло за предел длины: ход работы
- * остался в одном, выходы хода уехали в другое. Дерево, где разложено только первое,
- * судится по нему одному — второго файла у него нет.
+ * The rule of the conduct of a turn: the boundary of a state lives there, not in the rule of work
+ * conduct. They split apart when the rule of work conduct went past the length limit: the course of
+ * the work stayed in one, the exits of a turn moved into the other. A tree where only the first is
+ * laid out is judged by it alone — it has no second file.
  */
 const TURN_RULE = join(ROOT, '.claude/skills/turn-conduct/SKILL.md');
 const SKILLS = join(ROOT, '.claude/skills');
@@ -44,26 +43,28 @@ const MAP = join(ROOT, '.claude/rt-kit/defaults/turn-map.md');
 const LAW = join(ROOT, 'docs/constitution/work-conduct.md');
 
 /**
- * Зачин строки: по нему её находят, а хвост у каждого раздела свой. Имён два: английское везёт
- * пакет, русское держит паттерн дерева, который ещё не переведён.
+ * The opening of the line: by it the line is found, while the tail of every section is its own.
+ * There are two names: the English one is brought by the package, the Russian one is held by a
+ * pattern of the tree that is not translated yet.
  */
 const MARKERS = ['**Next move:**', '**Следующее движение:**'];
 const MARKER = MARKERS[0];
 const markerOf = (line) => MARKERS.find((one) => line.startsWith(one));
 
-/** Утверждение о границе состояния. Стоит в правиле, в карте и в законе теми же словами. */
+/** The statement about the boundary of a state. Stands in the rule, the map and the law in the same words. */
 /**
- * Строка о границе состояния. Имён два: английское везёт пакет, русское держат правило, карта и
- * закон дерева, которые ещё не переведены. Хватает любого из двух.
+ * The line about the boundary of a state. There are two names: the English one is brought by the
+ * package, the Russian one is held by the rule, the map and the law of the tree, which are not
+ * translated yet. Either of the two is enough.
  */
 const BOUNDARIES = ['A transition from state to state', 'Переход из состояния в состояние'];
 const BOUNDARY = BOUNDARIES[0];
 const hasBoundary = (text) => BOUNDARIES.some((one) => text.includes(one));
 
-/** Короче этого хвост движения не называет: зачин без движения — та же пустота. */
+/** Shorter than this the tail names no move: an opening without a move is the same emptiness. */
 const MIN_TAIL = 20;
 
-/** Имя состояния и паттерн, который его ведёт, — из таблицы правила. */
+/** The name of the state and the pattern that leads it — from the table of the rule. */
 function statesFromRule(text) {
     const states = [];
 
@@ -92,7 +93,7 @@ function statesFromRule(text) {
     return states;
 }
 
-/** Разделы состояний паттерна: имя, заголовок целиком и найденные в разделе строки движения. */
+/** The state sections of a pattern: the name, the whole heading and the move lines found in the section. */
 function sectionsOf(pattern) {
     const file = join(SKILLS, pattern, 'SKILL.md');
 

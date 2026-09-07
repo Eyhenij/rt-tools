@@ -1,27 +1,30 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/hook-input.sh · f589a875e5d8 · правится надстройкой, не здесь
-# Общее чтение ввода хука. НЕ гард: объявления `rt-hook:` у него нет, к событиям агента он не
-# подключается. Его источают сами гарды — тем же приёмом, каким они источают общий хвост отказа.
+# rt-kit v0.25.0 · hooks/hook-input.sh · 232aaeecdc5f · правится надстройкой, не здесь
+# Shared reading of the hook input. NOT a guard: it has no `rt-hook:` declaration and does not
+# subscribe to the agent events. The guards source it themselves — by the same technique they source
+# the shared refusal tail.
 #
-# Зачем он есть. Ввод приходит одним объектом, и каждому гарду из него нужны те же поля: имя
-# инструмента, командная строка, путь правки, рабочий каталог. Пока каждый доставал их сам, один
-# вызов агента стоил больше сотни разборов одного и того же текста — по шесть-семь на гард,
-# восемнадцать гардов на событие. Разбор стоит шесть миллисекунд, запуск оболочки — пять.
+# Why it exists. The input arrives as one object, and every guard needs the same fields from it: the
+# tool name, the command line, the edit path, the working directory. While each of them pulled these
+# out on its own, one agent call cost more than a hundred parses of one and the same text — six or
+# seven per guard, eighteen guards per event. A parse costs six milliseconds, a shell start — five.
 #
-# Как это работает. Диспетчер разбирает ввод однажды и кладёт поля в окружение. Гард спрашивает
-# их отсюда: есть в окружении — берёт готовое, нет — разбирает сам. Второе — это прямой вызов:
-# так гарды зовут наборы сценариев, и работать они обязаны и без диспетчера.
+# How it works. The dispatcher parses the input once and puts the fields into the environment. The
+# guard asks for them here: present in the environment — it takes what is ready, absent — it parses
+# itself. The second is the direct call: that is how the guards are called by the scenario suites,
+# and they must work without the dispatcher too.
 #
-# ПОЧЕМУ ЧТЕНИЕ ПОТОКА — ОТДЕЛЬНАЯ КОМАНДА, А НЕ ЗНАЧЕНИЕ. Подстановка команд исполняется в
-# подоболочке, и всё, что она запомнила, умирает вместе с ней: первый вызов вычитал бы поток, а
-# второй получил бы пустоту — и гард пропустил бы вызов, который обязан был отбить. Поэтому поток
-# читается командой `rt_hook_read`, кладущей ввод в переменную текущей оболочки, а не функцией,
-# возвращающей его через подстановку.
+# WHY READING THE STREAM IS A SEPARATE COMMAND AND NOT A VALUE. Command substitution runs in a
+# subshell, and everything it remembered dies with it: the first call would read the stream out, and
+# the second would get emptiness — and the guard would let through a call it was obliged to refuse.
+# So the stream is read by the command `rt_hook_read`, which puts the input into a variable of the
+# current shell, not by a function that returns it through substitution.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет разборщика, битый ввод, пустое поле — пустая строка. Сломанное
-# чтение не имеет права заклинить работу: гард на пустом поле выходит нулём.
+# FAIL-OPEN, IN FAVOUR OF WORK: no parser, broken input, an empty field — an empty string. Broken
+# reading has no right to jam the work: on an empty field the guard exits with zero.
 
-# Читает ввод в `RT_HOOK_INPUT`, если его там ещё нет. Зовётся командой, а не подстановкой.
+# Reads the input into `RT_HOOK_INPUT`, if it is not there yet. Called as a command, not as a
+# substitution.
 rt_hook_read() {
     [ -n "${RT_HOOK_INPUT:-}" ] && return 0
 
@@ -30,15 +33,17 @@ rt_hook_read() {
     return 0
 }
 
-# Поле ввода по имени переменной и пути в объекте: `rt_hook_field RT_HOOK_TOOL '.tool_name'`.
-# Переменная окружения главнее разбора — её кладёт диспетчер, разобравший ввод один раз.
+# An input field by variable name and path in the object: `rt_hook_field RT_HOOK_TOOL '.tool_name'`.
+# The environment variable outranks parsing — it is put there by the dispatcher, which parsed the
+# input once.
 rt_hook_field() {
     local name="$1" path="$2"
 
-    # Готовому верят только по признаку разбора, а не по тому, что переменная объявлена. Пустая
-    # переменная в окружении означает «поля нет», и без признака она неотличима от «поле есть и
-    # оно пустое»: гард переставал разбирать ввод и пропускал вызовы, которые обязан был отбить.
-    # Наборы поймали это шестнадцатью провалами — окружение прогона несло пустые значения.
+    # What is ready is trusted only by the sign of parsing, not by the fact that the variable is
+    # declared. An empty variable in the environment means "there is no field", and without the sign
+    # it is indistinguishable from "the field is there and it is empty": the guard stopped parsing
+    # the input and let through calls it was obliged to refuse. The suites caught this with sixteen
+    # failures — the run environment carried empty values.
     if [ "${RT_HOOK_PARSED:-}" = '1' ] && [ -n "${!name+x}" ]; then
         printf '%s' "${!name}"
         return 0
@@ -48,55 +53,59 @@ rt_hook_field() {
     printf '%s' "$RT_HOOK_INPUT" | jq -r "${path} // empty" 2>/dev/null
 }
 
-# НАЧАЛО ВЫЗОВА В КОМАНДНОЙ СТРОКЕ. Приставка образца, которым гард узнаёт свой вызов: команда
-# стоит в начале строки, за разделителем — и после любого числа присваиваний переменных
-# окружения перед её именем.
+# THE START OF A CALL IN THE COMMAND LINE. The prefix of the pattern by which a guard recognises its
+# own call: the command stands at the start of the line, after a separator — and after any number of
+# environment variable assignments before its name.
 #
-# Присваивания входят сюда потому, что вызов с ними — обычная форма, и часть набора требует её
-# прямо: личность вызова, открывающего заявку, видна из команды только явной подстановкой
-# токена. Признак, не знавший о присваиваниях, на этой форме слепнул молча — он не отказывал и
-# не предупреждал, он не считал вызов вызовом, и весь предмет гарда оставался несудимым. Так
-# прошли мимо своих гардов пуш, открытие заявки, снятие черновика и слияние: коммит с чужой
-# подписью уехал в главную ветку, а запрет на слияние агентом снимался подстановкой токена.
+# Assignments belong here because a call with them is the ordinary form, and part of the suite
+# demands it outright: the identity of the call that opens a PR is visible from the command only by
+# an explicit substitution of the token. A sign that knew nothing of assignments went blind on this
+# form silently — it did not refuse and did not warn, it did not count the call as a call, and the
+# whole subject of the guard stayed unjudged. That is how the push, the opening of a PR, taking off
+# the draft and the merge went past their own guards: a commit with a foreign signature went into
+# the main branch, and the ban on a merge by the agent was lifted by substituting the token.
 #
-# Значение присваивания бывает трёх видов: без пробелов, подстановкой `$( … )` и в кавычках.
-# Раньше принимался только первый, а заявки открывают командой `GH_TOKEN=$(cat <файл>) gh pr
-# create …` — путь в подстановке содержит пробел, и гард поставки такую команду не проверял:
-# ни номер ветки, ни тело заявки, ни разбор папки задачи. Молчание гарда неотличимо от
-# разрешения.
+# The value of an assignment comes in three kinds: without spaces, as a substitution `$( … )` and in
+# quotes. Before, only the first was accepted, while PRs are opened by the command
+# `GH_TOKEN=$(cat <file>) gh pr create …` — the path in the substitution holds a space, and the
+# delivery guard did not check such a command: neither the branch number, nor the body of the PR,
+# nor the taking apart of the task folder. The silence of a guard is indistinguishable from a
+# permission.
 #
-# Подстановка берётся до первой закрывающей скобки, строка в кавычках — до закрывающей кавычки
-# того же вида. Вложенные скобки и кавычки образец не разбирает: признак остаётся образцом, а не
-# разборщиком оболочки. Ошибаться признак должен в сторону лишнего срабатывания: гард, не
-# распознавший вызов, молчит и выглядит исправным; сработавший лишний раз виден сразу и правится.
+# A substitution is taken up to the first closing bracket, a quoted string — up to the closing quote
+# of the same kind. Nested brackets and quotes the pattern does not parse: the sign stays a pattern,
+# not a shell parser. The sign must err on the side of firing too often: a guard that did not
+# recognise a call stays silent and looks sound; one that fired an extra time is visible at once and
+# gets fixed.
 #
-# Само по себе присваивание вызовом не считается: за ним обязано стоять имя команды.
+# An assignment by itself does not count as a call: a command name must stand after it.
 #
-# Каталог перед именем — та же команда. Клиент, у которого своё имя занято псевдонимом оболочки,
-# зовут полным путём, и признак, знавший только голое имя, такой вызов не узнавал вовсе: гард
-# выходил нулём, а молчание его неотличимо от разрешения. Так заявки и уехали открытыми не
-# машинной записью. Часть пути не переходит через пробел, поэтому она остаётся внутри одного
-# слова и лишнего к вызову не приклеивает.
+# A directory before the name is the same command. A client whose own name is taken by a shell alias
+# is called by the full path, and a sign that knew only the bare name did not recognise such a call
+# at all: the guard exited with zero, and its silence is indistinguishable from a permission. That
+# is how PRs went out opened not by the machine record. A path part does not cross a space, so it
+# stays inside one word and glues nothing extra to the call.
 #
-# Объявлено это одним местом, а не литералом в каждом гарде: разойдясь, копии чинятся по одной
-# и молчат о том, что остальные остались слепыми.
+# This is declared in a SINGLE place, not as a literal in every guard: having diverged, the copies
+# are fixed one at a time and say nothing about the rest staying blind.
 RT_CMD_BOUND='(^|[;&|(]|&&|\|\|)[[:space:]]*([A-Za-z_][A-Za-z0-9_]*=([^[:space:]]*|\$\([^)]*\)|"[^"]*"|'"'"'[^'"'"']*'"'"')[[:space:]]+)*([^[:space:]]*/)?'
 
-# Поля, которые спрашивают все гарды.
+# The fields that all guards ask for.
 rt_hook_tool() { rt_hook_field RT_HOOK_TOOL '.tool_name'; }
 rt_hook_cmd() { rt_hook_field RT_HOOK_CMD '.tool_input.command'; }
 rt_hook_file() { rt_hook_field RT_HOOK_FILE '.tool_input.file_path'; }
 rt_hook_cwd() { rt_hook_field RT_HOOK_CWD '.cwd'; }
 
-# ЖДЁТ ПОСЛЕДНИЙ ТЕКСТ ХОДА В ЗАПИСИ. Гарды завершения судят то, что сказано владельцу, а запись
-# хода на этот момент бывает неполна: текст ответа ложится в файл не раньше, чем хост позовёт
-# хук, и гард читает ход, у которого текста нет вовсе. Молчит он при этом честно — и снаружи
-# неотличим от гарда, который посмотрел и пропустил. Ровно так ход, поставивший работу в
-# зависимость от слова владельца, ушёл мимо трёх гардов сразу, а тот же ход, поданный им
-# повторно, был отбит.
+# WAITS FOR THE LAST TEXT OF THE TURN IN THE RECORD. The guards of the ending judge what was said
+# to the owner, while the record of the turn at that moment happens to be incomplete: the text of
+# the reply lands in the file no earlier than the host calls the hook, and the guard reads a turn
+# that has no text at all. It stays silent honestly — and from the outside it is indistinguishable
+# from a guard that looked and let through. Exactly so a turn that put the work into dependence on
+# the word of the owner went past three guards at once, while the same turn, fed to them a second
+# time, was refused.
 #
-# Ждём короткими попытками: файл дописывается за миллисекунды, а ход и без того кончается не
-# мгновенно. Дождались — ноль; текста так и нет — единица, и решает уже гард.
+# We wait in short attempts: the file is written up in milliseconds, and a turn does not end
+# instantly anyway. Waited it out — zero; still no text — one, and the guard decides from there.
 rt_turn_has_text() {
     local transcript="$1" tries="${2:-20}" got
 

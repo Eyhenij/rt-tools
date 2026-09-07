@@ -1,10 +1,10 @@
-// rt-kit v0.25.0 · checks/board-titles.github.mjs · 10156d9cad8e · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/board-titles.github.mjs · cfa3789bc692 · правится надстройкой, не здесь
 /**
- * Открытые задачи, чьи заголовки сильно совпали.
+ * Open tasks whose titles overlap heavily.
  *
- * Отдельным файлом, а не внутри сверки очереди: у очереди свой предмет — задачи, колонки и
- * заявки, — а здесь сравнивают слова заголовков между собой. Вместе они переросли предел длины
- * файла, и делить их по предмету дешевле, чем по числу строк.
+ * In a file of its own, not inside the queue audit: the queue has its own subject — tasks, columns
+ * and PRs — while here the words of the titles are compared with each other. Together they outgrew
+ * the file length limit, and splitting them by subject is cheaper than by line count.
  */
 
 function titleWords(title) {
@@ -19,25 +19,27 @@ function titleWords(title) {
     ];
 }
 
-/** Доля общих слов, начиная с которой две задачи стоит посмотреть глазами. */
+/** The share of common words from which two tasks are worth looking at by eye. */
 const TITLE_OVERLAP = 0.6;
-/** Меньше трёх общих слов совпадением не считается: два длинных слова совпадают у любой пары. */
+/** Fewer than three common words is not an overlap: two long words match in any pair. */
 const TITLE_COMMON_MIN = 3;
-/** Больше скольких задач в группе — это серия эпика, а не дубль. */
+/** Above how many tasks in a group it is a series of an epic, not a duplicate. */
 const TITLE_GROUP_MAX = 4;
 
 /**
- * Открытые задачи, чьи заголовки сильно совпали.
+ * Open tasks whose titles overlap heavily.
  *
- * Печатается строкой сводки, а не отказом: серия однотипных задач эпика — законное состояние
- * очереди, и отказ отбивал бы работу на каждой такой серии. Дубль же по отдельности исправен —
- * у обеих задач номер, исполнитель и колонка, — и не находит его ничто: разошлись они словами
- * заголовка, а совпадают дефектом и признаком закрытия.
+ * Printed as a summary line, not as a refusal: a series of same-shaped tasks of an epic is a lawful
+ * state of the queue, and a refusal would refuse the work on every such series. A duplicate, taken
+ * on its own, is sound — both tasks have a number, an executor and a column — and nothing finds it:
+ * they drifted apart by the words of the title, and they match by the defect and the sign of
+ * closing.
  */
 export function similarTitles(open) {
     const words = new Map(open.map((issue) => [issue.number, titleWords(issue.title)]));
-    // Задачи сводятся в группы, а не в пары: серия однотипных задач эпика — законное состояние
-    // очереди, и парами она даёт по строке на каждое сочетание, то есть заглушает сама себя.
+    // Tasks are gathered into groups, not into pairs: a series of same-shaped tasks of an epic is
+    // a lawful state of the queue, and in pairs it gives a line per combination, that is, it drowns
+    // itself out.
     const groups = [];
 
     for (const issue of open) {
@@ -58,8 +60,8 @@ export function similarTitles(open) {
         groups.push([issue]);
     }
 
-    // Группа больше предела — это серия однотипных задач, а не дубль: у эпика их бывает
-    // полтора десятка, и строка о них говорит только то, что эпик существует.
+    // A group larger than the limit is a series of same-shaped tasks, not a duplicate: an epic can
+    // have a dozen and a half of them, and a line about them says only that the epic exists.
     for (const group of groups.filter((one) => one.length > 1 && one.length <= TITLE_GROUP_MAX)) {
         const numbers = group.map((issue) => `#${issue.number}`).join(', ');
         console.log(`check-board: ${numbers} — заголовки сильно совпадают, посмотри, не одна ли это работа: ` + `«${group[0].title}»`);

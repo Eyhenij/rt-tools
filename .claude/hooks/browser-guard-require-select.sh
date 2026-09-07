@@ -1,27 +1,28 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/browser-guard-require-select.sh · c7fbbe5bdbd3 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/browser-guard-require-select.sh · 5988d0c128ef · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__.*
-# Требует: hooks/deny-tail.sh
-# Гард свежести выбора браузера. PreToolUse на всех остальных вызовах расширения.
+# Requires: hooks/deny-tail.sh
+# Guard of the freshness of the browser choice. PreToolUse on all the other extension calls.
 #
-# ЗАЧЕМ ОН ЕСТЬ — отказ, из которого он вырос: расширение действует на тот браузер, который
-# считает активным сейчас, и этот выбор ПЛЫВЁТ. Выбор, сделанный в начале сессии, не держится:
-# после долгого перерыва на работу без браузера следующий же вызов открыл вкладку в другом
-# профиле — молча. Гард на самом выборе такого не ловит: в этот момент выбор никто не вызывает,
-# а тот, что был сделан раньше, был верным.
+# WHY IT EXISTS — the failure it grew out of: the extension acts on the browser it holds to be
+# active right now, and that choice DRIFTS. A choice made at the start of the session does not hold:
+# after a long break for work without the browser, the very next call opened a tab in another
+# profile — silently. A guard on the choice itself catches nothing of the kind: at that moment
+# nobody calls the choice, and the one made earlier was right.
 #
-# Поэтому гард про СВЕЖЕСТЬ, а не про «выбирали ли вообще»:
-#   - гард выбора ставит метку на каждом принятом выборе;
-#   - каждый прошедший здесь вызов метку обновляет, поэтому непрерывная работа идёт свободно;
-#   - как только метка старше окна, следующий вызов отбивается и требует выбрать заново.
-#     Перерыв — это ровно то, когда выбор уплывает, поэтому перерыв гард и взводит.
+# That is why the guard is about FRESHNESS, not about "was a choice made at all":
+#   - the choice guard puts down a mark on every accepted choice;
+#   - every call that passes here refreshes the mark, so continuous work goes freely;
+#   - as soon as the mark is older than the window, the next call is refused and demands choosing
+#     again. A break is exactly when the choice drifts, so it is the break that arms the guard.
 #
-# Выбор — один дешёвый повторяемый вызов, и повторить его стоит несравнимо меньше, чем попасть
-# не в тот браузер.
+# The choice is one cheap repeatable call, and repeating it costs incomparably less than landing in
+# the wrong browser.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: помощник не назвал профиль — пропуск.
+# FAIL-OPEN: the helper did not name a profile — pass.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is written by the shared deny tail, not by the
+# guard itself.
 RT_GUARD_NAME=browser-guard-require-select
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -34,7 +35,7 @@ device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/de
 [ -z "$device_id" ] && exit 0
 
 tool="$(rt_hook_tool)"
-# У перечисления, переключения и самого выбора свои гарды.
+# Listing, switching and the choice itself have guards of their own.
 case "$tool" in
     *list_connected_browsers|*switch_browser|*select_browser) exit 0 ;;
 esac
@@ -44,18 +45,19 @@ ttl=300
 sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
 marker="${TMPDIR:-/tmp}/claude-browser-guard/${sid}"
 
-# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть. Файл
-# может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
+# The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
 command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
 
-# Причина отказа идёт полем ответа, а не в поток ошибок.
+# The reason for the refusal goes as a field of the answer, not into the error stream.
 #
-# Сказанного в поток ошибок исполнитель не видит: до него доходит «No stderr output» без единого слова
-# о том, что случилось, и подряд падающие вызовы браузера читаются как поломка расширения. Получаса на
-# поиск того, что гард уже знает и говорит, — цена одного выбранного канала.
+# What is said into the error stream the executor does not see: "No stderr output" reaches him
+# without a single word about what happened, and browser calls failing one after another read as a
+# breakage of the extension. Half an hour spent looking for what the guard already knows and says is
+# the price of one chosen channel.
 deny() {
     reason="$1 $(rt_deny_tail)"
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \

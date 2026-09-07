@@ -1,32 +1,34 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|NotebookEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
-# Гард пары «правка и её документ». PreToolUse.
+# Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
+# Guard of the pair "an edit and its document". PreToolUse.
 #
-# Расхождение кода с текстом беззвучно. Ни линтер, ни сборка, ни тесты не читают правила,
-# спеки и README, поэтому текст, описывающий прежнее устройство, живёт дальше и выглядит
-# действующей справкой — тем убедительнее, чем он старше. Ловится это только чтением, и ловит
-# обычно владелец, а не проверка.
+# A divergence of the code from the text is soundless. Neither the linter, nor the build, nor the
+# tests read the rules, the specs and the READMEs, so a text describing the previous arrangement
+# lives on and looks like a working reference — the more convincingly, the older it is. It is
+# caught only by reading, and it is usually the owner who catches it, not a check.
 #
-# Гард требует ровно тех пар, где связь механическая и спорить не о чем:
+# The guard demands exactly those pairs where the link is mechanical and there is nothing to argue
+# about:
 #
-#   правило и его спутник      — когда правится раздел с утверждениями, а не «Ловушки»;
-#   заведение и удаление либы  — README этой либы;
-#   переезд файла между либами — README обеих;
-#   остальные пары             — их называет профиль дерева, функция `rt_docs_pair_for <файл>`.
+#   a rule and its companion    — when the section with the statements is edited, not "Pitfalls";
+#   creating and removing a lib — the README of that lib;
+#   moving a file between libs  — the READMEs of both;
+#   the rest of the pairs       — named by the tree profile, the function `rt_docs_pair_for <file>`.
 #
-# Отдельно — законы. Совпал ли код с законом, машина не знает: правка файла, на который закон
-# ссылается якорем, поэтому не отклоняется, а выносится вопросом владельцу. Тем же вопросом
-# встречается и правка самого закона — как на месте, так и надстройкой над ним: закон описывает
-# договорённость о продукте, и менять её молча гард не даёт.
+# Apart from them — the laws. Whether the code came together with a law, a machine does not know:
+# an edit of a file a law points to by an anchor is therefore not rejected but put to the owner as
+# a question. The same question meets an edit of the law itself — both in place and through an
+# override over it: a law describes a product agreement, and the guard does not let it be changed
+# silently.
 #
-# Обход — строка `Docs-skip: <причина>` в теле коммита. Причина остаётся в истории и видна при
-# разборе ветки; пустая не принимается.
+# The bypass is the line `Docs-skip: <reason>` in the commit body. The reason stays in the history
+# and is visible when the branch is reviewed; an empty one is not accepted.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, нет разборщика, битый ввод, пустой список файлов —
-# пропуск.
+# FAIL-OPEN: not a repository, no parser, broken input, an empty list of files — let through.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is written by the shared deny tail, not by the
+# guard itself.
 RT_GUARD_NAME=docs-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -58,17 +60,17 @@ $(rt_deny_tail "строка \`Docs-skip: <причина>\` в теле ком�
     exit 0
 }
 
-# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
-# Объявленная в надстройке функция замещает умолчание целиком и вправе позвать его обратно
-# суффиксом `_default`.
+# The tree profile: first the package default, and the project override on top of it, if there is
+# one. A function declared in the override replaces the default whole and may call it back through
+# the `_default` suffix.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
 
-# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
-# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# A word about a missing profile function: a hook that left silently is indistinguishable from a
+# working one. The file may be not laid out — then the previous behaviour stays, the silent one.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
 command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
@@ -77,16 +79,17 @@ laws_dir="${RT_LAWS_DIR:-docs/constitution}"
 lib_marker="${RT_LIB_MARKER:-project.json}"
 overrides_dir="${RT_OVERRIDES_DIR:-.claude/rt-kit/overrides}"
 
-# ── Правка закона спрашивает владельца ────────────────────────────────────────
+# ── An edit of a law asks the owner ───────────────────────────────────────────
 #
-# Спутник рядом с законом — привязка статей к коду, она устаревает при каждом переименовании и
-# правится свободно. Спрашивается только сам текст закона.
+# The companion next to a law is the binding of the articles to the code; it goes stale on every
+# rename and is edited freely. Only the text of the law itself is asked about.
 #
-# Путей к тексту закона два, и ходят чаще вторым. Разложенный закон на месте не правится вовсе:
-# правка теряется на следующей раскладке, а сама раскладка на неё отказывает, — поэтому правят
-# надстройку, и файл закона переписывает раскладка. Гард, знающий один каталог законов, сторожит
-# ровно тот путь, которым к закону и не ходят: чем сложнее надстройка дерева, тем реже закон
-# правят на месте. Спрашивается и надстройка — по содержанию это правка закона, а не обвязки.
+# There are two paths to the text of a law, and the second is walked more often. A laid-out law is
+# not edited in place at all: the edit is lost on the next layout, and the layout itself refuses it
+# — so the override is edited, and the file of the law is rewritten by the layout. A guard that
+# knows one laws directory watches exactly the path by which nobody goes to a law: the more
+# involved the tree's override, the more rarely a law is edited in place. The override is asked
+# about too — by its content it is an edit of the law, not of the wrapping.
 case "$tool" in
     Edit | Write | MultiEdit | NotebookEdit | mcp__webstorm__create_new_file)
         target="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.filePath // .tool_input.path // .tool_input.pathInProject // empty' 2>/dev/null)"
@@ -104,9 +107,9 @@ case "$tool" in
         ;;
 esac
 
-# ── Коммит ────────────────────────────────────────────────────────────────────
+# ── The commit ────────────────────────────────────────────────────────────────
 
-# Терминал среды и универсальный исполнитель кладут команду в то же поле.
+# The environment terminal and the universal executor put the command in the same field.
 case "$tool" in
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
     *) exit 0 ;;
@@ -114,8 +117,8 @@ esac
 
 cmd="$(rt_hook_cmd)"
 
-# Универсальный исполнитель передаёт настоящую команду вложенной строкой. Разбирать надо её,
-# иначе имя команды стоит сразу за кавычкой и ни одно правило до него не дотягивается.
+# The universal executor passes the real command as a nested string. It is that string that has to
+# be parsed, otherwise the command name stands right after a quote and no rule reaches it.
 if [ "$tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&1; then
     inner="$(printf '%s' "$cmd" | perl -0ne '
         if (/--command(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(.+))/s) {
@@ -130,13 +133,14 @@ case "$cmd" in
     *) exit 0 ;;
 esac
 
-# Причина обхода остаётся в истории, поэтому обход законен. Пустая строка обходом не считается:
-# «Docs-skip:» без причины — это тот же молчаливый пропуск, только с двоеточием.
+# The reason for the bypass stays in the history, so the bypass is lawful. An empty line does not
+# count as a bypass: "Docs-skip:" without a reason is the same silent skip, only with a colon.
 #
-# Строка начинает строку — свою в теле коммита или комментарий в конце команды — и подстановки
-# не принимает. То же условие, что у обхода при слиянии: иначе текст, который ОБЪЯСНЯЕТ обход,
-# снимает требование сам собой. Тело коммита о правке гарда как раз называет эту строку, и без
-# привязки к началу гард пропускал бы такой коммит молча.
+# The line starts a line — its own in the commit body, or a comment at the end of the command — and
+# takes no substitutions. The same condition as for the bypass at the merge: otherwise a text that
+# EXPLAINS the bypass lifts the requirement all by itself. A commit body about an edit of the guard
+# names exactly this line, and without the binding to the start the guard would let such a commit
+# through silently.
 if printf '%s' "$cmd" | grep -qiE '(^|#)[[:space:]]*Docs-skip:[[:space:]]*[^[:space:]<"'"'"'][^[:space:]"'"'"']{2,}'; then
     exit 0
 fi
@@ -146,8 +150,8 @@ workdir="$(rt_hook_cwd)"
 cd "$workdir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
-# `-a` берёт все отслеживаемые правки, `--amend` — ещё и файлы переписываемого коммита.
-# Считать всегда по индексу значило бы проверять не тот набор, который уедет в историю.
+# `-a` takes all tracked edits, `--amend` takes the files of the rewritten commit as well. Always
+# counting by the index would mean checking a set other than the one that travels into the history.
 changes=''
 source_mode='index'
 case "$cmd" in
@@ -164,15 +168,16 @@ esac
 changes="$(printf '%s\n' "$changes" | grep -v '^[[:space:]]*$')"
 [ -z "$changes" ] && exit 0
 
-# Пути коммита без статусов. Переименование подаётся тремя полями — берём обе стороны.
+# The paths of the commit without the statuses. A rename comes as three fields — we take both sides.
 paths="$(printf '%s\n' "$changes" | awk -F'\t' '{ for (i = 2; i <= NF; i++) if ($i != "") print $i }' | sort -u)"
 
 has_path() { printf '%s\n' "$paths" | grep -qxF "$1"; }
 
-# Содержимое таким, каким оно уедет в коммит. Источник тот же, по которому собран список
-# правок: `-a` заберёт рабочее дерево, обычный коммит — индекс. Читать индекс всегда нельзя —
-# при `-a` там лежит прежняя редакция, и гард держал бы коммит, который расхождение и чинит;
-# читать рабочее дерево всегда тоже нельзя — неподготовленная правка в коммит не попадёт.
+# The content as it will travel into the commit. The source is the same one the list of edits was
+# collected by: `-a` takes the working tree, an ordinary commit takes the index. Always reading the
+# index is not allowed — under `-a` the previous edition lies there, and the guard would hold the
+# very commit that fixes the divergence; always reading the working tree is not allowed either — an
+# unstaged edit will not get into the commit.
 content_of() {
     if [ "$source_mode" = 'worktree' ]; then
         cat "$1" 2>/dev/null
@@ -185,16 +190,16 @@ problems=''
 add() { problems="${problems}
   • $1"; }
 
-# ── 1. Правило и его спутник ──────────────────────────────────────────────────
+# ── 1. A rule and its companion ───────────────────────────────────────────────
 #
-# Утверждения правила ключуются своим текстом, и переформулировка без правки спутника рвёт
-# связь молча. Сверка спеков это ловит, но гоняется в гейте пуша — здесь та же пара
-# встречается коммитом раньше, пока правка ещё в голове у автора.
+# The statements of a rule are keyed by their own text, and a rewording without an edit of the
+# companion breaks the link silently. The spec audit catches this, but it is run at the push gate —
+# here the same pair meets a commit earlier, while the edit is still in the author's head.
 #
-# Раздел с утверждениями — единственное, что связано со спутником; правка «Ловушек» или
-# таблицы «Где это лежит» его не трогает, поэтому сравнивается только этот раздел.
-# Имя раздела двойное: английское у правила пакета, русское у правила, написанного деревом до
-# перевода слоя. Конец диапазона — любой заголовок, не начинающийся с их первой буквы.
+# The section with the statements is the only thing linked to the companion; an edit of "Pitfalls"
+# or of the "Where it lives" table does not touch it, so only this section is compared. The name of
+# the section is double: English in a package rule, Russian in a rule written by the tree before the
+# layer was translated. The end of the range is any heading not starting with their first letter.
 STATEMENTS='/^## (How the law applies here|Как закон применяется здесь)$/,/^## [^КH]/'
 statements_of() { content_of "$1" | awk "$STATEMENTS"; }
 
@@ -210,26 +215,27 @@ for rule in $(printf '%s\n' "$paths" | grep -E '/SKILL\.md$'); do
     fi
 done
 
-# ── 2. Пары, которые называет дерево ──────────────────────────────────────────
+# ── 2. The pairs the tree names ───────────────────────────────────────────────
 #
-# Контракт и спек домена, гард и его сценарии — что именно, знает профиль: связь у каждого
-# дерева своя, а механика одна.
+# The contract and the domain spec, a guard and its scenarios — which exactly, the profile knows:
+# every tree has a link of its own, and the mechanics are one.
 if rt_needs rt_docs_pair_for docs-guard; then
     while IFS= read -r file; do
         [ -z "$file" ] && continue
 
-        # Файл, положенный раскладкой, пары не требует: автор у него в дереве-потребителе один —
-        # пакет, и документ о нём лежит там же. Иначе первая же раскладка требует обход на весь
-        # свой объём, а обход, объявленный на сотню файлов, снимает требование и с будущих правок
-        # этих файлов вручную. Признак — шапка раскладки: она стоит в каждом разложенном файле и
-        # отличает его надёжнее любого перечня путей.
+        # A file put in place by the layout demands no pair: it has one author in a consuming tree
+        # — the package, and the document about it lies there as well. Otherwise the very first
+        # layout demands a bypass over its whole volume, and a bypass declared over a hundred files
+        # lifts the requirement from future hand edits of those files too. The sign is the layout
+        # header: it stands in every laid-out file and tells it apart more reliably than any list
+        # of paths.
         if [ -f "$file" ] && head -12 "$file" 2>/dev/null | grep -qE 'rt-kit v[^ ]+ · [^ ]+ · [0-9a-f]+'; then
             continue
         fi
 
         want="$(rt_docs_pair_for "$file" 2>/dev/null)"
         [ -z "$want" ] && continue
-        # Пара считается приехавшей, если хоть один файл коммита подходит под образец.
+        # The pair counts as arrived if at least one file of the commit fits the pattern.
         printf '%s\n' "$paths" | grep -qE "$want" && continue
         add "\`$file\` правится без документа — тем же коммитом ждёт \`$want\`"
     done <<EOF
@@ -237,7 +243,7 @@ $paths
 EOF
 fi
 
-# ── 3. Либа и её README ───────────────────────────────────────────────────────
+# ── 3. A lib and its README ───────────────────────────────────────────────────
 
 lib_root() {
     dir="${1%/*}"
@@ -257,16 +263,16 @@ want_readme() {
     need_readme="$need_readme $root"
 }
 
-# Заведение и удаление либы: README — единственное место, где написано, что в ней лежит и кто
-# её зовёт, и раскладку она переживает только вместе с правкой этого текста.
+# Creating and removing a lib: the README is the only place where it is written what lies in it and
+# who calls it, and it survives the layout only together with an edit of that text.
 while IFS="$(printf '\t')" read -r status first second; do
     case "$status" in
         A* | D*)
             case "$first" in */"$lib_marker") want_readme "${first%/"$lib_marker"}" ;; esac
             ;;
         R*)
-            # Переезд файла меняет обе стороны: у одной либы он пропал из состава, у другой
-            # появился.
+            # A move of a file changes both sides: from one lib it disappeared, in the other it
+            # appeared.
             from="$(lib_root "$first")" && to="$(lib_root "$second")"
             if [ -n "$from" ] && [ -n "$to" ] && [ "$from" != "$to" ]; then
                 want_readme "$from"
@@ -278,8 +284,8 @@ done <<EOF
 $changes
 EOF
 
-# Переезд, поданный парой «удалено там, добавлено тут»: переименованием считается не всё, что
-# им является, — правка содержимого при переносе сбивает поиск.
+# A move given as the pair "deleted there, added here": not everything that is a rename counts as
+# one — an edit of the content while moving throws the search off.
 moved_added="$(printf '%s\n' "$changes" | awk -F'\t' '$1 ~ /^A/ { n = split($2, p, "/"); print p[n] "\t" $2 }' | sort -u)"
 moved_deleted="$(printf '%s\n' "$changes" | awk -F'\t' '$1 ~ /^D/ { n = split($2, p, "/"); print p[n] "\t" $2 }' | sort -u)"
 if [ -n "$moved_added" ] && [ -n "$moved_deleted" ]; then
@@ -309,14 +315,15 @@ ${problems}
 Текст правится в той же ветке, что и код: документ, разошедшийся с деревом, выглядит действующей справкой и уводит следующего читателя. Если правка документа здесь действительно не нужна — назови причину строкой \`Docs-skip: <причина>\` в теле коммита, она останется в истории."
 fi
 
-# ── 4. Законы ─────────────────────────────────────────────────────────────────
+# ── 4. The laws ───────────────────────────────────────────────────────────────
 #
-# Отклонять нечего: сошлась ли правка с законом, видно только чтением. Но место, где статья
-# закона исполняется, названо якорем, и правка ровно этого файла — единственный момент, когда
-# сверку ещё дёшево сделать.
+# There is nothing to reject: whether the edit came together with a law is visible only by reading.
+# But the place where an article of a law is carried out is named by an anchor, and an edit of
+# exactly that file is the only moment when the audit is still cheap to do.
 #
-# Слоёв законов два: общий в корне, закон приложения — в каталоге под ним. Образец принимает
-# оба, иначе правка предметного закона считалась бы правкой мимо законов.
+# There are two layers of laws: the shared one in the root, an application law in a directory under
+# it. The pattern accepts both, otherwise an edit of a subject law would count as an edit past the
+# laws.
 if [ -d "$laws_dir" ] && ! printf '%s\n' "$paths" | grep -qE "^${laws_dir}/([^/]+/)?[^/]+\.md$"; then
     touched=''
     for anchor in $(grep -ohE '`[A-Za-z0-9_./@-]+\.(ts|mjs|html|scss|prisma|proto|json)(:[A-Za-z0-9_#.-]+)?`' "$laws_dir"/*.implementation.md 2>/dev/null \

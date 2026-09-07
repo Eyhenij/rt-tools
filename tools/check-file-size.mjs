@@ -1,33 +1,32 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-file-size.mjs · 1c7f995418d3 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-file-size.mjs · b5be474ce260 · правится надстройкой, не здесь
 /**
- * Проверка того, что файл не длиннее предела.
+ * The check that a file is no longer than the limit.
  *
- * Файл, который не влезает на экран целиком, читают по частям, и правку в нём
- * делают, не увидев остального. У кода длину стережёт линтер; здесь — всё, до
- * чего он не доходит: проза, стили, шаблоны, обвязка разработки и сами гарды.
+ * A file that does not fit on the screen whole is read in parts, and an edit in it is made without
+ * having seen the rest. For code the linter watches the length; here is everything it does not
+ * reach: prose, styles, templates, the development harness and the guards themselves.
  *
- * Судятся `.md`, `.scss`, `.html`, `.js`, `.mjs` и `.sh`. Данные не судятся
- * вовсе: словарь локали и настройка сборки читаются поиском, а не подряд, и
- * делить их не на что. Код на языке, где длину стережёт линтер, тоже не
- * судится — два отказа на один файл читаются как две разные претензии.
+ * Judged are `.md`, `.scss`, `.html`, `.js`, `.mjs` and `.sh`. Data is not judged at all: a locale
+ * dictionary and a build setting are read by search, not in a row, and there is nothing to split
+ * them into. Code in a language where the linter watches the length is not judged either — two
+ * refusals on one file read as two different claims.
  *
- * Строки считаются все, включая пустые и комментарии, и тем же способом, каким
- * их считает линтер: по числу разрывов плюс один. Файл, кончающийся переводом
- * строки, поэтому весит на строку больше, чем показывает `wc -l`, — зато у обеих
- * проверок дерева одно понятие длины.
+ * All lines are counted, empty ones and comments included, and the same way the linter counts
+ * them: by the number of breaks plus one. A file ending with a line break therefore weighs one
+ * line more than `wc -l` shows — but both checks of the tree have one notion of length.
  *
- * Описание прошлого из счёта выведено: архив по устройству перечисляет то, чего
- * в дереве уже нет, а папка задачи умирает со слиянием. Сгенерированное выведено
- * каталогом: его переписывает генератор целиком, и спорить с ним о длине некому.
+ * The archive is taken out of the count: by its make-up it lists what is no longer in the tree,
+ * and a task folder dies with the merge. What is generated is taken out by directory: the
+ * generator rewrites it whole, and there is no one there to argue with it about length.
  *
- * Накопленное к моменту заведения проверки лежит в списке известного и отказом
- * не считается: гейт падает на НОВОМ длинном файле, а старое остаётся видимым
- * числом в сводке. Принятое и долг там различаются: принятое дерево делить не
- * собирается, на долг заведена работа. Строка снимается вместе с делением своего
- * файла, и проверка сама говорит, какую строку пора убрать.
+ * What piled up by the moment the check was started lies in the known list and does not count as a
+ * refusal: the gate falls on a NEW long file, while the old stays a visible number in the digest.
+ * Accepted and debt differ there: what is accepted the tree is not going to split, for a debt work
+ * has been started. A line is removed together with the splitting of its file, and the check
+ * itself says which line it is time to take away.
  *
- * Ненулевой код возврата и перечень расхождений.
+ * A non-zero exit code and the list of discrepancies.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
@@ -36,40 +35,41 @@ import { join } from 'node:path';
 import { allowlistOf, baselineOf, CONFIG, ROOT, parseAllowlist } from './rt-kit-checks.config.mjs';
 
 const ALLOWLIST = allowlistOf('file-size');
-/** Пределов два: код и текст слоя правил. Какой из них применён, каждая строка отказа называет. */
+/** There are two limits: code and the text of the rules layer; each refusal line names which one. */
 const LIMIT = CONFIG.fileSizeLimit;
 const PROSE_LIMIT = CONFIG.proseSizeLimit ?? CONFIG.fileSizeLimit;
 /**
- * Второй предел текста — в знаках. Строки меряют, сколько текста помещается на экран, но веса
- * не меряют вовсе: правило о заявках занимает 282 строки при 13 595 знаках, а правило поставки —
- * 272 строки при 21 508. Сжатие слоя срезает знаки, а число переносов оставляет прежним, и
- * строковый предел достигнутого не закрепляет. Дерево, не назвавшее этого числа, судится
- * по-прежнему одними строками.
+ * The second limit of text is in characters. Lines measure how much text fits on the screen, but do
+ * not measure the weight at all: the rule about PRs takes 282 lines at 13 595 characters, and the
+ * delivery rule 272 lines at 21 508. Squeezing the layer cuts characters and leaves the number of
+ * breaks as it was, so the line limit does not fix what has been reached. A tree that has not named
+ * this number is judged by lines alone, as before.
  */
 const PROSE_CHARS = CONFIG.proseCharLimit ?? 0;
-/** Корни текста слоя правил; дерево, их не назвавшее, судится одним пределом. */
+/** The roots of the rules-layer text; a tree that has not named them is judged by one limit. */
 const PROSE_ROOTS = CONFIG.proseRoots ?? [];
 
-/** Предел для файла и имя предела для отказа: по корню, а не по расширению — код лежит и в `.md`. */
+/** The limit for a file and its name for a refusal: by root, not by extension — code lies in `.md` too. */
 function limitOf(path) {
     return PROSE_ROOTS.some((root) => root && path.startsWith(root))
         ? { limit: PROSE_LIMIT, title: 'предел текста' }
         : { limit: LIMIT, title: 'предел кода' };
 }
 
-/** Роды файлов, которых не читает линтер. Код остаётся за ним. */
+/** The kinds of files the linter does not read. Code stays with it. */
 const JUDGED = ['.md', '.scss', '.html', '.js', '.mjs', '.sh'];
 
-/** Описание прошлого, папка задачи и то, что переписывает генератор. */
+/** The archive, the task folder and what the generator rewrites. */
 const SKIPPED_PREFIXES = [CONFIG.archiveDir, `${CONFIG.tasksDir}/`, ...CONFIG.generatedDirs];
 
 /**
- * Дерево спрашивается у системы контроля версий: иначе каталоги с точки не видны, а сборка видна.
+ * The tree is asked of the version control system: otherwise directories with a dot are not seen,
+ * while the build is.
  *
- * Снятое из рабочего дерева отсеивается здесь, а не в счётчиках: система контроля версий помнит
- * файл, пока снос не заведён в историю, а прочитать его нечем — проверка падала трассировкой
- * `ENOENT` и читалась как сломанная, хотя сломан был только незаведённый снос. Счётчиков два, и
- * охрана при каждом разошлась бы.
+ * What was taken out of the working tree is sifted out here, not in the counters: version control
+ * remembers a file until the removal is entered into the history, and there is nothing to read it
+ * with — the check fell with an `ENOENT` trace and read as broken, though only the unrecorded
+ * removal was broken. There are two counters, and the protection at each of them would diverge.
  */
 function trackedFiles() {
     return execFileSync('git', ['ls-files'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1024 * 1024 * 32 })
@@ -86,25 +86,25 @@ function judged(path) {
     return JUDGED.some((extension) => path.endsWith(extension));
 }
 
-/** Тем же способом, каким считает линтер: число разрывов плюс один. */
+/** The same way the linter counts: the number of breaks plus one. */
 function lineCount(path) {
     return readFileSync(join(ROOT, path), 'utf8').split('\n').length;
 }
 
-/** Спутник — таблица связи, а не проза: компаньон правила и перечень сценариев спека. */
+/** A companion is a table of links, not prose: the companion of a rule and the scenario list of a spec. */
 function companion(path) {
     return path.endsWith('/implementation.md') || path.endsWith('/scenarios.md');
 }
 
-/** Знаки, а не байты: кириллица весит по два байта, и байтовый счёт судил бы язык, а не текст. */
+/** Characters, not bytes: Cyrillic weighs two bytes, and a byte count would judge the language, not the text. */
 function charCount(path) {
     return readFileSync(join(ROOT, path), 'utf8').length;
 }
 
 /**
- * Список известного читается отдельно от общего читателя: у этой проверки нет файла — это
- * не пустой список, а нечитаемая настройка, и молчать о ней нельзя. Пустой список законен
- * ровно один раз — в дереве, где длинных файлов нет вовсе.
+ * The known list is read apart from the common reader: this check has no file — that is not an
+ * empty list but an unreadable setting, and staying silent about it is not allowed. An empty list
+ * is lawful exactly once — in a tree where there are no long files at all.
  */
 const allowlist = parseAllowlist('file-size');
 const { accepted, debt } = allowlist;
@@ -121,14 +121,16 @@ for (const path of tracked) {
         tooLong.set(path, lines);
     }
 
-    // Вес судится только у текста слоя правил и только там, где дерево назвало число: у кода
-    // длину стережёт ещё и линтер, а у прозы — одни эти два предела.
+    // Weight is judged only for the text of the rules layer and only where the tree has named the
+    // number: for code the length is watched by the linter as well, and for prose by these two
+    // limits alone.
     //
-    // Спутники из счёта веса выведены. Компаньон правила и перечень сценариев — таблицы связи:
-    // заголовок привязки дословно повторяет утверждение, потому что связь идёт по его тексту, и
-    // резать там нечего, не порвав саму связь. Вес такого файла растёт с числом утверждений, а
-    // не с многословием: у правила поставки семьдесят шесть привязок на 24 326 знаков, из них
-    // пояснений всего 5 729. Строковый предел на них остаётся — он ловит другое.
+    // Companions are taken out of the weight count. The companion of a rule and the scenario list
+    // are tables of links: the heading of a binding repeats the statement word for word, because
+    // the link goes by its text, and there is nothing to cut there without tearing the link itself.
+    // The weight of such a file grows with the number of statements, not with wordiness: the
+    // delivery rule has seventy-six bindings at 24 326 characters, of which the explanations are
+    // only 5 729. The line limit on them stays — it catches something else.
     if (PROSE_CHARS > 0 && PROSE_ROOTS.length > 0 && limitOf(path).title === 'предел текста' && !companion(path)) {
         const chars = charCount(path);
         if (chars > PROSE_CHARS) {
@@ -143,18 +145,18 @@ if (process.argv.includes('--baseline')) {
 }
 
 const fresh = [...tooLong].filter(([path]) => !known.has(path));
-/** Строка на файл, которого в дереве нет, — устаревшая: иначе список копит мёртвое. */
+/** A line about a file that is not in the tree is stale: otherwise the list piles up the dead. */
 const gone = [...known.keys()].filter((path) => !existsSync(join(ROOT, path)));
 /**
- * Файл поделили, а строку оставили: список перестал бы отвечать за то, что в нём стоит.
- * Тяжёлый по знакам файл под предел строк не подпадает, и без второй проверки его запись
- * читалась бы устаревшей — долг нельзя было бы ни записать, ни оставить.
+ * The file was split and the line was left: the list would stop answering for what stands in it.
+ * A file heavy by characters does not fall under the line limit, and without the second check its
+ * record would read as stale — a debt could be neither written down nor left.
  */
 const shrunk = [...known.keys()].filter(
     (path) => !tooLong.has(path) && !overweight.has(path) && existsSync(join(ROOT, path))
 );
 
-/** Тяжёлое по знакам судится тем же списком известного: один долг на файл, а не два. */
+/** What is heavy by characters is judged by the same known list: one debt per file, not two. */
 const heavy = [...overweight].filter(([path]) => !known.has(path) && !tooLong.has(path));
 
 const problems = [
@@ -176,9 +178,10 @@ if (problems.length > 0) {
 
 const limits = PROSE_ROOTS.length > 0 ? `предел кода ${LIMIT}, предел текста ${PROSE_LIMIT}` : `предел ${LIMIT}`;
 /**
- * Предел веса называется только там, где дерево задало и число, и корни текста: вес судится у
- * прозы слоя правил, а дерево, её корней не назвавшее, судится одним числом строк — и вторая
- * цифра в сводке говорила бы о проверке, которая там не работает.
+ * The weight limit is named only where the tree has set both the number and the roots of the text:
+ * weight is judged for the prose of the rules layer, and a tree that has not named its roots is
+ * judged by the number of lines alone — a second figure in the digest would speak of a check that
+ * does not work there.
  */
 const weight = PROSE_CHARS > 0 && PROSE_ROOTS.length > 0 ? `, предел веса текста ${PROSE_CHARS} знаков` : '';
 

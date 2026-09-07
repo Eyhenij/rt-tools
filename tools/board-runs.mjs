@@ -1,15 +1,15 @@
-// rt-kit v0.25.0 · checks/board-runs.github.mjs · e2bff95ff156 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/board-runs.github.mjs · 7a1873d9ab83 · правится надстройкой, не здесь
 /**
- * Состояние прогонов и выкатки у хостинга: что встало на вершине, чем кончилось и на сколько
- * прод отстал от главной ветки.
+ * The state of the runs and of the rollout at the hosting: what stands on the head, how it ended
+ * and by how much production has fallen behind the main branch.
  *
- * Отдельным файлом, а не внутри работы с очередью: у очереди свой предмет — задачи, колонки и
- * заявки, — а здесь спрашивают конвейер. Вместе они переросли предел длины файла, и делить их
- * по предмету дешевле, чем по числу строк: правку прогонов и правку очереди делают разные
- * работы.
+ * A file of its own, not inside the work with the queue: the queue has a subject of its own —
+ * tasks, columns and PRs — while here the pipeline is asked. Together they outgrew the limit of
+ * file length, and splitting them by subject is cheaper than by the number of lines: an edit of the
+ * runs and an edit of the queue are done by different works.
  *
- * Нет сети или нет токена — вызовы бросают `OfflineError`, как и остальная работа с хостингом:
- * невозможность спросить расхождением не считается.
+ * No network or no token — the calls throw `OfflineError`, like the rest of the work with the
+ * hosting: an inability to ask does not count as a discrepancy.
  */
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -17,15 +17,15 @@ import { join } from 'node:path';
 import { OWNER, REPO, gh } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
-/** Файл конвейера этого дерева; его нет — путей он не слушает вовсе. */
+/** The pipeline file of this tree; there is none — then it listens to no paths at all. */
 const PIPELINE = CONFIG.pushGate?.pipelineFile ?? '';
 export const HAS_PIPELINE = PIPELINE !== '' && existsSync(join(ROOT, PIPELINE));
 
 /**
- * Сколько прогонов завелось на этой вершине.
+ * How many runs have started on this head.
  *
- * Спрашивается вершина, а не ветка: прогон промежуточного коммита о состоянии вершины не
- * говорит ничего, а список прогонов ветки отдаёт их вперемешку.
+ * The head is asked about, not the branch: a run of an intermediate commit says nothing about the
+ * state of the head, and the list of the runs of a branch hands them back mixed together.
  */
 export function runsOnHead(sha, options) {
     const answer = gh(['api', `repos/${OWNER}/${REPO}/actions/runs?head_sha=${sha}&per_page=1`, '--jq', '.total_count'], options);
@@ -33,14 +33,14 @@ export function runsOnHead(sha, options) {
 }
 
 /**
- * Коммит последней успешной выкатки и то, на сколько от него ушла главная ветка.
+ * The commit of the last successful rollout and by how much the main branch has gone away from it.
  *
- * Спрашивается сама выкатка, а не последний прогон главной ветки. Там, где выкатку запускают
- * рукой, слияние прода не двигает вовсе, и прогон главной о нём не говорит ничего: прод
- * отставал на 476 коммитов, а сверка молчала. Судится только завершённая успехом выкатка —
- * идущая ещё может кончиться чем угодно.
+ * The rollout itself is asked about, not the last run of the main branch. Where the rollout is
+ * started by hand, a merge does not move production at all, and a run of the main branch says
+ * nothing about it: production was 476 commits behind while the check stayed silent. Only a rollout
+ * finished with success is judged — one still going may end with anything.
  *
- * Возвращает `null`, если выкаток не было ни одной: это не расхождение, а нечего сравнивать.
+ * Returns `null` if there were no rollouts at all: that is not a discrepancy but nothing to compare.
  */
 export function deployLag(workflow, mainBranch, options) {
     const runs = gh(
@@ -67,15 +67,15 @@ export function deployLag(workflow, mainBranch, options) {
 }
 
 /**
- * Чем кончилась последняя выкатка: `success`, `failure`, `running` либо `none`, если её не
- * запускали ни разу.
+ * How the last rollout ended: `success`, `failure`, `running` or `none`, if it was never started.
  *
- * Спрашивается отдельно от отставания прода. Отставание считается по последней УСПЕШНОЙ выкатке,
- * и две разные беды выглядят через него одинаково: выкатку не запускали и выкатка упала. Ведут
- * они к разному — первую запускают, вторую читают журналом и чинят, — а четыре слияния подряд
- * уехали поверх поломки, которую принёс первый, и прод простоял почти два часа.
+ * It is asked about apart from the lag of production. The lag is counted by the last SUCCESSFUL
+ * rollout, and two different troubles look the same through it: the rollout was not started and the
+ * rollout fell. They lead to different things — the first one is started, the second is read by its
+ * logs and repaired — and four merges in a row went out on top of a breakage the first one brought,
+ * and production stood idle for almost two hours.
  *
- * Идущая выкатка расхождением не считается: она ещё может кончиться успехом.
+ * A rollout still going does not count as a discrepancy: it may yet end with success.
  */
 export function lastDeploy(workflow, options) {
     const runs = gh(
@@ -101,11 +101,12 @@ export function lastDeploy(workflow, options) {
 }
 
 /**
- * Чем кончились прогоны на этой вершине: `success`, если все завершились успехом, `running`,
- * если хоть один ещё идёт, `failure` — если хоть один упал. Прогонов нет вовсе — `none`.
+ * How the runs on this head ended: `success` if all of them finished with success, `running` if at
+ * least one is still going, `failure` if at least one fell. There are no runs at all — `none`.
  *
- * Цвет спрашивается отдельно от факта: факт отвечает на вопрос «событие дошло», цвет — на
- * вопрос «работу можно отдавать». Второй вопрос задаётся там, где готовое стоит черновиком.
+ * The colour is asked about apart from the fact: the fact answers the question «the event arrived»,
+ * the colour the question «the work can be handed over». The second question is asked where what is
+ * ready stands as a draft.
  */
 export function verdictOnHead(sha, options) {
     const answer = gh(
@@ -123,29 +124,30 @@ export function verdictOnHead(sha, options) {
     return String(answer).trim();
 }
 
-/** Когда вершина легла в ветку — по времени коммита у хостинга, а не по местным часам ветки. */
+/** When the head landed in the branch — by the commit time at the hosting, not by the local clock. */
 export function headCommittedAt(sha, options) {
     const answer = gh(['api', `repos/${OWNER}/${REPO}/commits/${sha}`, '--jq', '.commit.committer.date'], options);
     return Date.parse(String(answer).trim());
 }
 
 /**
- * Прогоны вершины, вытесненные из очереди конвейера.
+ * The runs of the head pushed out of the queue of the pipeline.
  *
- * Группа очереди бережёт идущий прогон и не бережёт ждущего: хостинг держит в группе один
- * ждущий, и следующий встающий вытесняет прежний. Вытесненный завершается отменой и в списке
- * неотличим от упавшего, хотя ветку не проверял ни строчкой.
+ * The group of the queue keeps a running run and does not keep a waiting one: the hosting holds one
+ * waiting run in a group, and the next one to come in pushes the previous one out. The one pushed
+ * out finishes as cancelled and in the list is indistinguishable from a fallen one, though it did
+ * not check the branch by a single line.
  *
- * Отличает их число заданий. Отмена — общее слово для двух случаев: у прогона, остановленного
- * на ходу, задания есть и журналы у них читаются; у вытесненного из очереди их ноль, потому что
- * он не начинался. Замером по семи отменённым прогонам дерева: шесть с нулём заданий и один
- * остановленный на ходу с одним.
+ * They are told apart by the number of steps. Cancellation is a word shared by two cases: a run
+ * stopped mid-way has steps and their logs can be read; one pushed out of the queue has zero of
+ * them, because it never started. By a measurement over seven cancelled runs of the tree: six with
+ * zero steps and one stopped mid-way with one.
  *
- * Число заданий спрашивается отдельным вызовом и только у отменённых: спрошенное у каждого
- * прогона стоило бы вызова на прогон при каждой сверке.
+ * The number of steps is asked by a call of its own and only for the cancelled ones: asked for
+ * every run it would cost a call per run at every check.
  *
- * Зелёный прогон на той же вершине снимает ответ целиком — вытесненный за ним уже перезапущен,
- * и говорить о нём нечего.
+ * A green run on the same head takes the answer away whole — the one pushed out behind it has
+ * already been restarted, and there is nothing to say about it.
  */
 export function evictedOnHead(sha, options) {
     const answer = gh(
@@ -168,7 +170,7 @@ export function evictedOnHead(sha, options) {
         .map((run) => run.id);
 }
 
-/** Сколько заданий завелось у прогона. Ноль означает, что он не начинался вовсе. */
+/** How many steps a run has started. Zero means it never started at all. */
 function jobCount(id, options) {
     const answer = gh(['api', `repos/${OWNER}/${REPO}/actions/runs/${id}/jobs?per_page=1`, '--jq', '.total_count'], options);
     return Number(String(answer).trim());

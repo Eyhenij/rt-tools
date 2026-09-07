@@ -1,8 +1,8 @@
 /**
- * Барели и реэкспорты: что либа отдаёт наружу и чем это отличается от собственного объявления.
+ * Barrels and re-exports: what a lib gives outward and how that differs from an own declaration.
  *
- * Имя не начинается с `check-`: перебором таких имён умолчание пакета собирает набор гейта
- * пуша, и помощник с ним гейт стал бы гонять как отдельную проверку.
+ * The name does not begin with `check-`: by walking such names the package default assembles the
+ * push gate set, and a helper with one would be run by the gate as a check of its own.
  */
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -10,13 +10,13 @@ import { join } from 'node:path';
 import { BARREL_FILES, IGNORED_DIRS, isDir, report } from './lib-common.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
-/** Барель собирает наружу собственные файлы либы, и только они в нём законны */
+/** A barrel collects the lib's own files outward, and only they are lawful in it */
 const isBarrel = (path) => BARREL_FILES.some((name) => path.endsWith(`/${name}`));
 
-/** Файл той же либы адресуется относительным путём, чужая либа — алиасом */
+/** A file of the same lib is addressed by a relative path, a foreign lib by an alias */
 const isOwnFile = (module) => module.startsWith('.');
 
-/** `export { X } from '…'` и `import { X } …` вместе с `export { X };` */
+/** `export { X } from '…'` and `import { X } …` together with `export { X };` */
 const REEXPORT_FROM = /^export\s+(?:type\s+)?\{([^}]*)\}\s*from\s*'([^']+)';/gm;
 const BARE_EXPORT = /^export\s+(?:type\s+)?\{([^}]*)\};/gm;
 const IMPORTED_NAMES = /^import\s+(?:type\s+)?\{([^}]*)\}\s*from\s*'([^']+)';/gm;
@@ -33,7 +33,7 @@ const namesIn = (list) =>
         )
         .filter(Boolean);
 
-/** Файлы либ, кроме спек: реэкспорт в спеке бессмыслен, а обходить их дешевле */
+/** The files of the libs, except tests: a re-export in a test is meaningless, and skipping is cheaper */
 function collectSourceFiles() {
     const files = [];
     const walk = (dir) => {
@@ -56,17 +56,17 @@ function collectSourceFiles() {
 }
 
 /**
- * Символ, объявленный в другой либе, наружу не проходит.
+ * A symbol declared in another lib does not pass outward.
  *
- * Реэкспорт заводится тогда, когда потребителю не хватает прав на либу-источник,
- * и протаскивает её через соседа мимо границы тегов: по графу зависимостей
- * выходит, что слой её не видит. Ни линт, ни сборка реэкспорт от собственного
- * объявления не отличают.
+ * A re-export is created when the consumer lacks the rights to the source lib,
+ * and it drags the lib through a neighbour past the tag boundary: by the dependency
+ * graph it comes out that the layer does not see it. Neither lint nor the build tells
+ * a re-export from an own declaration.
  *
- * В бареле проверяются только чужие либы: собственные файлы он и собирает.
- * Пока барель пропускался целиком, чужой символ проходил через него молча —
- * так `common/util` отдавала работу с датами всему бэкенду через слой `util`
- * домена Postgres.
+ * In a barrel only foreign libs are checked: its own files are what it collects.
+ * While the barrel was skipped whole, a foreign symbol passed through it silently —
+ * that is how `common/util` gave date handling to the whole backend through the `util`
+ * layer of the Postgres domain.
  */
 function checkReexports() {
     for (const file of collectSourceFiles()) {

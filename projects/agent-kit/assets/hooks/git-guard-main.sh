@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/deny-tail.sh, hooks/guard-note.sh
-# Гард главной ветки. PreToolUse на вызове коммита.
+# Requires: hooks/deny-tail.sh, hooks/guard-note.sh
+# Guard of the main branch. PreToolUse on a commit call.
 #
-# Коммит в главную ветку минует ветку, PR и разбор, а поставка построена на них целиком —
-# правило `git-workflow`. Прямой коммит туда почти всегда промах: «остался на главной после
-# слияния предыдущего PR».
+# A commit into the main branch bypasses the branch, the PR and the review, while delivery is built
+# on them entirely — rule `git-workflow`. A direct commit there is almost always a miss: "stayed on
+# main after merging the previous PR".
 #
-# Имя главной ветки не зашито строкой: сначала спрашивается указатель удалённого репозитория,
-# затем пробуются существующие `origin/main` и `origin/master`, и лишь в конце берётся `main`.
+# The name of the main branch is not hard-wired as a string: first the pointer of the remote
+# repository is asked, then the existing `origin/main` and `origin/master` are tried, and only at
+# the end `main` is taken.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, нет гита, открепившийся HEAD, битый ввод — пропуск.
-# Сломанный гард не должен мешать работать.
+# FAIL-OPEN: not a repository, no git, a detached HEAD, broken input — pass. A broken guard must not
+# get in the way of work.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is written by the shared deny tail, not by the
+# guard itself.
 RT_GUARD_NAME=git-guard-main
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -24,8 +26,8 @@ input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 
 tool="$(rt_hook_tool)"
-# Терминал среды разработки исполняет ту же командную строку и кладёт её в то же поле. Пока
-# гард проверял только оболочку, весь его смысл обходился сменой инструмента.
+# The terminal of the development environment runs the same command line and puts it into the same
+# field. While the guard judged the shell alone, its whole point was bypassed by switching tools.
 case "$tool" in
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
     *) exit 0 ;;
@@ -33,9 +35,9 @@ esac
 
 cmd="$(rt_hook_cmd)"
 
-# Универсальный исполнитель среды передаёт настоящую команду вложенной строкой. Разбирать надо
-# её, а не обёртку: иначе имя команды стоит сразу за кавычкой и ни одно правило до него не
-# дотягивается.
+# The universal executor of the environment passes the real command as a nested string. It is the
+# one to parse, not the wrapper: otherwise the command name stands right after a quote and no rule
+# reaches it.
 if [ "$tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&1; then
     inner="$(printf '%s' "$cmd" | perl -0ne '
         if (/--command(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(.+))/s) {
@@ -44,18 +46,19 @@ if [ "$tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&
     ' 2>/dev/null)"
     [ -n "$inner" ] && cmd="$inner"
 fi
-# Глагол ищется в позиции команды, а не подстрокой в строке.
+# The verb is looked for in the command position, not as a substring in the line.
 #
-# Голый поиск «git commit» промахивается в обе стороны. Мимо него уходит вызов, у которого между
-# `git` и глаголом стоит ключ — `git -c user.name=… commit`, `git -C <дерево> commit`, — и ровно
-# так коммитят машинной учётной записью. В него же попадает строка, где эти два слова стоят
-# рядом по другому поводу: `git log --grep 'git commit'`, разбор чужого вывода, текст сообщения.
-# Отбой на чтении истории стоит дороже пропуска: гард, мешающий читать, выключают в первый день.
+# A bare search for "git commit" misses in both directions. A call with an option between `git` and
+# the verb slips past it — `git -c user.name=… commit`, `git -C <tree> commit` — and that is exactly
+# how one commits under the machine account. And it catches a line where these two words stand next
+# to each other for another reason: `git log --grep 'git commit'`, parsing someone else's output,
+# the text of a message. A refusal on reading the history costs more than a miss: a guard that gets
+# in the way of reading is switched off on the first day.
 #
-# Разбор простой: у каждого слова `git` в строке пропускаются ключи — сами по себе и вместе со
-# значением, если ключ его берёт, — и первое слово без дефиса и есть глагол. Слов `git` в строке
-# бывает несколько (`git add . && git commit`), поэтому печатаются глаголы всех, а судится
-# список целиком.
+# The parsing is simple: for every word `git` in the line the options are skipped — on their own and
+# together with a value, if the option takes one — and the first word without a dash is the verb.
+# There can be several `git` words in a line (`git add . && git commit`), so the verbs of all of
+# them are printed and the list is judged as a whole.
 if command -v awk >/dev/null 2>&1; then
     verbs="$(printf '%s\n' "$cmd" | awk '
         {
@@ -76,16 +79,17 @@ if command -v awk >/dev/null 2>&1; then
     ' 2>/dev/null)"
     printf '%s\n' "$verbs" | grep -qx 'commit' || exit 0
 else
-    # Разборщика нет — остаётся прежний признак: он врёт в обе стороны, но гард без него не
-    # судит вовсе.
+    # No parser — the former sign remains: it lies in both directions, but without it the guard
+    # judges nothing at all.
     case "$cmd" in
         *git\ commit*) ;;
         *) exit 0 ;;
     esac
 fi
 
-# Коммит выполнится в рабочем каталоге вызова, поэтому и ветку смотрим там же; корень проекта
-# — запасной вариант, и он важен для отдельного рабочего дерева, где ветка своя.
+# The commit will run in the working directory of the call, so the branch is looked at there too;
+# the project root is the fallback, and it matters for a separate working tree with a branch of its
+# own.
 workdir="$(rt_hook_cwd)"
 [ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
 cd "$workdir" 2>/dev/null || exit 0
@@ -110,8 +114,8 @@ fi
 
 reason="Отбито: коммит прямо в «${default}». Работа едет через ветку и PR — правило git-workflow. Заведи ветку отдельным вызовом и коммить в неё: подготовленные изменения при этом сохранятся. Если коммит в ${default} действительно нужен — спроси владельца, сам не обходи."
 
-# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
-# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
+# The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null

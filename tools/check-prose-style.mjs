@@ -1,35 +1,37 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-prose-style.mjs · f61a6ee06d83 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-prose-style.mjs · 68781fd4f08d · правится надстройкой, не здесь
 /**
- * Проверка слога: канцелярит и обороты, которых в этом дереве не пишут.
+ * The check of style: officialese and turns of phrase that are not written in this tree.
  *
- * Правило о текстах требует простых слов, а проверки на это не было: формулировочные
- * договорённости закон оставлял автору целиком, и держались они памятью того, кто пишет.
- * Держались плохо — владелец читает написанное и видит машинный слог там, где договорённость
- * требует человеческого.
+ * The rule about texts requires plain words, and there was no check for that: the law left the
+ * wording agreements entirely to the author, and they held by the memory of whoever writes. They
+ * held badly — the owner reads what is written and sees machine style where the agreement requires
+ * a human one.
  *
- * Ловится не стиль вообще, а перечисленные признаки, и каждый назван вместе с заменой: список
- * запретов без замены читается как запрет писать, и автор обходит его, а не правит текст.
+ * What is caught is not style in general but the listed signs, and each is named together with its
+ * replacement: a list of bans without replacements reads as a ban on writing, and the author
+ * bypasses it instead of fixing the text.
  *
- * Чего проверка не видит и видеть не будет: связности, повторов мысли, верности утверждения.
- * Абзац из коротких предложений с чистыми словами проходит её целиком, ничего при этом не
- * значая. Это её граница, а не обещание.
+ * What the check does not see and will not see: coherence, a thought said twice, the truth of a
+ * statement. A paragraph of short sentences with clean words passes it whole while meaning nothing
+ * by that. This is its boundary, not its promise.
  *
- * Ненулевой код возврата и перечень находок: файл, строка, что нашли, чем заменить.
+ * A non-zero return code and a list of findings: the file, the line, what was found, what to
+ * replace it with.
  *
- * Границы слова пишутся оглядкой на буквы, а не `\b`: он считается по ASCII, кириллица под `\w`
- * не подпадает, и образец с ним молча не срабатывает ни разу.
+ * Word boundaries are written with a look at letters, not `\b`: it counts by ASCII, Cyrillic does
+ * not fall under `\w`, and a pattern with it silently never fires once.
  */
 import { readFileSync } from 'node:fs';
 
 import { CONFIG } from './rt-kit-checks.config.mjs';
 
-/** Предел длины предложения в словах. Дальше читатель теряет начало. */
+/** The sentence length limit in words. Beyond it the reader loses the beginning. */
 const WORDS_LIMIT = 40;
 
 /**
- * Признаки канцелярита. Каждый — образец и то, чем его заменить: без замены находка
- * читается как запрет писать.
+ * The signs of officialese. Each is a pattern and what to replace it with: without a replacement
+ * a finding reads as a ban on writing.
  */
 const MARKS = [
     [/(?<![а-яёА-ЯЁ])является(?![а-яёА-ЯЁ])/giu, 'сказать глаголом: «это», «работает», «стоит»'],
@@ -43,11 +45,11 @@ const MARKS = [
     [/(?<![а-яёА-ЯЁ])на основании(?![а-яёА-ЯЁ])/giu, '«по»'],
     [/(?<![а-яёА-ЯЁ])посредством(?![а-яёА-ЯЁ])/giu, '«через», «командой», «вызовом»'],
     [/(?<![а-яёА-ЯЁ])данн(ый|ая|ое)(?![а-яёА-ЯЁ])/giu, '«этот» или ничего'],
-    // Форма «данные» бывает и существительным, и заменить его нечем: данные стенда — это данные.
-    // Проверяется она поэтому по тому, что стоит следом: местоимением она читается перед словом,
-    // которое сама и определяет. Перечень корней короткий намеренно — распознаётся то, что
-    // встречалось, а ложный отказ здесь дороже пропуска: проверка стоит в наборе гейта пуша, и
-    // красное на слове, которому нет замены, останавливает работу целиком.
+    // The form «данные» is also a noun, and there is nothing to replace it with: the data of a
+    // stand is data. So it is checked by what stands after it: as a pronoun it reads before the
+    // word it qualifies itself. The list of stems is deliberately short — what is recognised is
+    // what has been met, and a false refusal here costs more than a miss: the check stands in the
+    // set of the push gate, and red on a word that has no replacement stops the work entirely.
     [
         /(?<![а-яёА-ЯЁ])данные\s+(требовани|услови|значени|обстоятельств|сведени|фактор|параметр|вопрос|правил|подход|принцип|случа)[а-яё]*/giu,
         '«эти» или ничего',
@@ -63,13 +65,14 @@ const MARKS = [
 ];
 
 /**
- * Признаки канцелярита в английском тексте. Слой правил пишется по-английски, и русский набор
- * на нём молчит: образец с кириллической границей не совпадает ни с одним латинским словом.
+ * The signs of officialese in English text. The rules layer is written in English, and the Russian
+ * set stays silent on it: a pattern with a Cyrillic boundary matches no Latin word at all.
  *
- * Оба набора судят каждую строку, и язык файла не определяется: русский образец на английской
- * строке не совпадает, английский на русской — тоже, а определение языка по каталогу или по
- * буквам добавило бы ветвление ради ничего. Граница слова — латинская буква, по той же причине,
- * что и кириллическая выше: `\b` с апострофом и дефисом ведёт себя по-своему.
+ * Both sets judge every line, and the language of the file is not determined: a Russian pattern
+ * does not match on an English line, nor an English one on a Russian line, and determining the
+ * language by the directory or by the letters would add branching for nothing. The word boundary is
+ * a Latin letter, for the same reason as the Cyrillic one above: `\b` behaves in its own way with
+ * an apostrophe and a hyphen.
  */
 const MARKS_EN = [
     [/(?<![A-Za-z])in order to(?![A-Za-z])/giu, '«to»'],
@@ -94,7 +97,7 @@ const MARKS_EN = [
     [/(?<![A-Za-z])a number of(?![A-Za-z])/giu, '«some», «several», or the number'],
 ];
 
-/** Слова левой колонки словаря: они не пишутся и не произносятся нигде. */
+/** The words of the left column of the glossary: they are neither written nor said anywhere. */
 const GLOSSARY_BANS = [
     [/(?<![а-яёА-ЯЁ])таск[аиуе](?![а-яёА-ЯЁ])/giu, 'задача'],
     [/(?<![а-яёА-ЯЁ])тикет[а-яё]*(?![а-яёА-ЯЁ])/giu, 'задача'],
@@ -107,11 +110,12 @@ const GLOSSARY_BANS = [
 ];
 
 /**
- * Слова дерева сверх пакетных: они читаются из настройки проверок и ложатся в тот же набор.
+ * The tree's words beyond the package ones: they are read from the check settings and fall into the
+ * same set.
  *
- * Дерево дописывает свою половину таблицы «Not written here» надстройкой словаря, и без этого её не
- * судило ничто: набор был зашит в код. Дерево заводило свою проверку рядом — второй набор
- * образцов на одно требование, и разойтись они могли молча.
+ * A tree writes its own half of the "Not written here" table by a glossary override, and without
+ * this nothing judged that half: the set was hard-coded. A tree used to start a check of its own
+ * alongside — a second set of patterns for one requirement, and they could diverge silently.
  */
 const TREE_BANS = (CONFIG.prose?.glossaryBans ?? [])
     .filter((one) => one && typeof one.pattern === 'string' && typeof one.fix === 'string')
@@ -119,7 +123,7 @@ const TREE_BANS = (CONFIG.prose?.glossaryBans ?? [])
         try {
             return [new RegExp(one.pattern, 'giu'), one.fix];
         } catch {
-            // Негодный образец не роняет проверку целиком: остальные слова судятся по-прежнему.
+            // An unfit pattern does not drop the whole check: the rest of the words are judged as before.
             return null;
         }
     })
@@ -128,17 +132,17 @@ const TREE_BANS = (CONFIG.prose?.glossaryBans ?? [])
 const CODE_FENCE = /^\s*```/;
 
 /**
- * Заголовки, которые совпадают с образцом канцелярита, но прозой не являются: это имена
- * обязательных разделов спека, и набор разделов требует их дословно.
+ * Headings that match a pattern of officialese but are not prose: these are the names of the
+ * mandatory spec sections, and the section set requires them word for word.
  *
- * Перечислены поимённо, а не сняты правилом: слово «данные» в предложении канцеляритом быть не
- * перестаёт — «данные требования» ловится по-прежнему. Без этого исключения ни один новый спек
- * не написать вовсе: набор разделов требует заголовок, а проверка слога его отбивает, и оба
- * требования верны каждое по-своему.
+ * They are listed by name rather than lifted by a rule: the word «данные» in a sentence does not
+ * stop being officialese — «данные требования» is still caught. Without this exception no new spec
+ * could be written at all: the section set requires the heading, and the style check refuses it,
+ * and both requirements are right each in its own way.
  */
 const HEADING_EXCEPTIONS = new Set(['Данные']);
 
-/** Заголовок, чьё имя названо исключением: судить в нём нечего — это имя раздела, а не фраза. */
+/** A heading whose name is named as an exception: there is nothing to judge in it — it is a section name, not a phrase. */
 function isExemptHeading(line) {
     const heading = line.match(/^\s*#{1,6}\s+(.+?)\s*$/);
 
@@ -146,19 +150,20 @@ function isExemptHeading(line) {
 }
 
 /**
- * Цитата закона: блок цитаты, введённый строкой с адресом закона.
+ * A quotation of a law: a quote block introduced by a line with the address of a law.
  *
- * Слова, которые проверка отбивает, стоят в самих законах десятками. Процитировав статью
- * дословно, работа упирается в отказ: правь цитату — соврёшь, не правь — не запушишь. Судится
- * поэтому только своё письмо, а чужой текст в цитате остаётся как есть.
+ * The words the check refuses stand in the laws themselves by the dozen. Having quoted an article
+ * word for word, the work runs into a refusal: fix the quotation and you lie, leave it and you
+ * cannot push. So only one's own writing is judged, and someone else's text in a quotation stays as
+ * it is.
  *
- * Признак узкий нарочно: не всякая цитата, а введённая адресом закона. Иначе блок цитаты стал бы
- * местом, куда прячут своё письмо от проверки.
+ * The sign is deliberately narrow: not any quotation, but one introduced by the address of a law.
+ * Otherwise a quote block would become the place where one's own writing is hidden from the check.
  */
 const LAW_ADDRESS = /docs\/constitution\/[A-Za-z0-9_./-]+\.md/;
 const QUOTE = /^\s*>/;
 
-/** Строки вне блоков кода и вне цитат закона: там лежат чужие слова, и слог там не судится. */
+/** Lines outside code blocks and outside quotations of laws: someone else's words lie there, and style is not judged there. */
 function proseLines(text) {
     const out = [];
     let inFence = false;
@@ -176,7 +181,7 @@ function proseLines(text) {
             if (inLawQuote) return;
         } else {
             inLawQuote = false;
-            // Вводит цитату та строка, что стоит перед ней и называет адрес закона.
+            // The line that introduces a quotation is the one before it that names the address of a law.
             if (line.trim() !== '') introducesLaw = LAW_ADDRESS.test(line);
         }
 
@@ -186,7 +191,7 @@ function proseLines(text) {
     return out;
 }
 
-/** Находки одной строки: образец, что нашли, чем заменить. */
+/** The findings of one line: the pattern, what was found, what to replace it with. */
 function findingsIn(line) {
     const found = [];
     [...MARKS, ...MARKS_EN, ...GLOSSARY_BANS, ...TREE_BANS].forEach(([re, fix]) => {
@@ -196,7 +201,7 @@ function findingsIn(line) {
     return found;
 }
 
-/** Слишком длинное предложение: читатель теряет начало раньше, чем автор доходит до конца. */
+/** A sentence that is too long: the reader loses the beginning before the author reaches the end. */
 function longSentences(line) {
     return line
         .split(/(?<=[.!?])\s+/)

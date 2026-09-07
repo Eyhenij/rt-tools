@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/task-context-load.sh · 83d28ea26683 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/task-context-load.sh · d912ac1eba63 · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
-# Требует: hooks/profile-check.sh
-# SessionStart: состояние незаконченной работы уезжает в контекст на каждом запуске сессии.
+# Requires: hooks/profile-check.sh
+# SessionStart: the state of unfinished work goes into the context at every start of a session.
 #
-# Памятью это не держится по той же причине, что и словарь: замысел читают перед правкой
-# файла, а разговор с владельцем начинается с вопроса — и заход отвечает, не зная, что работа
-# уже наполовину сделана. Здесь замысел и ход работы приходят до первой реплики, и владельцу
-# не приходится пересказывать то, что уже записано.
+# It is not held by memory for the same reason as the glossary: the plan is read before a file is
+# edited, and a conversation with the owner starts with a question — and the session answers without
+# knowing that the work is already half done. Here the plan and the progress arrive before the first
+# reply, and the owner does not have to retell what is already written down.
 #
-# Разбор просьбы (`grill.md`) отдаётся путём, а не текстом: он неизменен, объёмен и нужен
-# реже остальных.
+# The grill (`grill.md`) is given as a path, not as text: it does not change, it is bulky and it is
+# needed less often than the rest.
 #
-# FAIL-OPEN: нет `jq`, не git-репозиторий, нет папки задачи — выходим молча. Сессия важнее
-# контекста.
+# FAIL-OPEN: no `jq`, not a git repository, no task folder — we exit silently. The session matters
+# more than the context.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
@@ -25,15 +25,15 @@ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 branch="$(git branch --show-current 2>/dev/null)"
 [ -z "$branch" ] && exit 0
 
-# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
+# The tree profile: first the package default, and over it the project override, if there is one.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "$ROOT/.claude/rt-kit/defaults/project.sh" "$ROOT/.claude/rt-kit/project.sh"; do
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
 
-# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
-# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# A word about a missing profile function: a hook that exited silently is indistinguishable from a
+# working one. The file may not be laid out — then the former behaviour stays, the silent one.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
 command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
@@ -50,15 +50,18 @@ emit() {
     jq -Rs '{hookSpecificOutput:{hookEventName:"SessionStart",additionalContext:.}}' 2>/dev/null
 }
 
-# Ветка под задачу без папки — работа идёт мимо. Сессию не рвём: SessionStart, отбивающий
-# запуск, оставляет владельца без агента вовсе, а правку кода поймает `task-flow-guard`.
+# A branch under a task without a folder — the work goes past the rule. We do not tear the session:
+# a SessionStart that refuses the start leaves the owner without an agent at all, while a code edit
+# will be caught by `task-flow-guard`.
 if [ ! -d "$DIR" ]; then
-    # Папки нет по двум разным причинам, и говорить о них надо разное. Первая — работа шла мимо
-    # правила. Вторая — папку разобрала сама ветка последним коммитом перед заявкой: это законный
-    # исход, и указание собрать её заново уводит заход с хвоста работы обратно в её начало.
+    # The folder is missing for two different reasons, and different things have to be said about
+    # them. The first — the work went past the rule. The second — the folder was taken apart by the
+    # branch itself with the last commit before the PR: that is a lawful outcome, and an instruction
+    # to build it again takes the session from the tail of the work back to its beginning.
     #
-    # Различает их история ветки: снос папки её же коммитом после общего предка с главной. Ход
-    # работы к этой минуте уехал вместе с папкой, и состояние держат заявка и передача захода.
+    # The branch history tells them apart: the folder removed by a commit of the branch after the
+    # common ancestor with the main one. The progress by that minute has gone with the folder, and
+    # the state is held by the PR and the session handover.
     main_branch="${RT_MAIN_BRANCH:-main}"
     base="$(git merge-base "origin/${main_branch}" HEAD 2>/dev/null || git merge-base "$main_branch" HEAD 2>/dev/null)"
     dropped=''
@@ -81,19 +84,21 @@ if [ ! -d "$DIR" ]; then
             printf 'Branch `%s` is named after a task, and `%s/` is missing: there is nowhere to write the progress,\n' "$branch" "$DIR"
             printf 'and the next session will start by questioning the owner.\n\n'
             printf 'Build it from the template:\n\n    cp -r %s/_template %s\n\n' "$TASKS_DIR" "$DIR"
-            # Папка бывает названа не именем ветки: этапы одной большой задачи идут отдельными
-            # ветками при одной общей папке. Названная поимённо папка — единственное, по чему
-            # заход её найдёт; иначе он читает отказ как «записей нет» и отвечает владельцу из
-            # кода, минуя всё, что в этих записях решено.
+            # The folder happens to be named not by the branch name: the stages of one large task
+            # go as separate branches with one shared folder. A folder named by name is the only
+            # thing by which the session will find it; otherwise it reads the refusal as "there are
+            # no records" and answers the owner from the code, bypassing everything decided in those
+            # records.
             others="$(find "$TASKS_DIR" -mindepth 1 -maxdepth 1 -type d ! -name '_template' 2>/dev/null | sort)"
             if [ -n "$others" ]; then
                 printf 'The tasks directory meanwhile holds:\n\n%s\n\n' "$others"
                 printf 'Stages of one task go as separate branches with a shared folder: before\n'
                 printf 'concluding that there are no records, look into the folders named above.\n\n'
             fi
-            # О соседнем ресурсе — условно и по имени: пакет не знает, разложен ли он здесь,
-            # а сказанное безусловно приходит в контекст каждой сессии и врёт про дерево тем
-            # увереннее, что печатает это сам инструмент.
+            # About a neighbouring resource — conditionally and by name: the package does not know
+            # whether it is laid out here, and what is said unconditionally arrives in the context
+            # of every session and lies about the tree all the more confidently because the tool
+            # prints it itself.
             if [ -f "$rt_hooks_dir/task-flow-guard.sh" ]; then
                 printf 'Until then, an application code edit is refused by guard `task-flow-guard`. The rule — skill `task-flow`.\n'
             else
@@ -104,8 +109,8 @@ if [ ! -d "$DIR" ]; then
     exit 0
 fi
 
-# Порог объёма. Ход работы растёт с каждым заходом, и на десятом заходе целиком он стоит
-# дороже, чем даёт. Перевалив порог, отдаём «Где стоим» и последние записи.
+# The size threshold. The progress grows with every session, and by the tenth session it costs more
+# in full than it gives. Past the threshold we give "Where we stand" and the latest entries.
 LIMIT=40000
 size=0
 for file in "$PLAN" "$PROGRESS"; do
@@ -139,7 +144,7 @@ done
         if [ "$size" -le "$LIMIT" ]; then
             cat "$PROGRESS"
         else
-            # Раздел «Где стоим» перезаписывается каждым заходом и переживает любой объём.
+            # The "Where we stand" section is rewritten by every session and survives any size.
             LC_ALL=C awk '/^## Где стоим/{f=1} f&&/^## /&&!/^## Где стоим/{exit} f' "$PROGRESS"
             printf '\n<cut for size. The latest entries:>\n\n'
             tail -40 "$PROGRESS"

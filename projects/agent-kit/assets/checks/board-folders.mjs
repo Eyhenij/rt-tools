@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /**
- * Ветки задач, не увёзшие свою папку ни одним коммитом, — часть сверки очереди работ.
+ * Task branches that have not carried their folder in by a single commit — a part of the work queue
+ * audit.
  *
- * Вынесено отдельным файлом потому, что сама сверка доросла до предела длины: предметов в ней
- * много, а этот стоит наособицу — он единственный читает местный репозиторий и обходится без
- * сети и без хостинга.
+ * Moved into a file of its own because the audit itself has grown to the length limit: it has many
+ * subjects, and this one stands apart — it is the only one that reads the local repository and does
+ * without the network and without the hosting.
  */
 import { execFileSync } from 'node:child_process';
 
@@ -12,16 +13,17 @@ import { TASK_KEY } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 /**
- * Гард замысла спрашивает папку с диска, поэтому незакоммиченная пропускает правки всю работу, а
- * отказ приходит в самом конце: страж выхода хода берёт признак отданной работы из истории
- * ветки, а там папки нет. Чинить в ту минуту уже нечем — папка разобрана своими руками, а
- * собранная заново даёт два лишних коммита в готовой заявке.
+ * The plan guard asks the folder from the disk, so an uncommitted one lets edits through for the
+ * whole of the work, and the refusal comes at the very end: the turn exit guard takes the sign of
+ * handed-over work from the branch history, and there is no folder there. At that minute there is
+ * nothing left to fix with — the folder was taken apart by one's own hands, and one assembled anew
+ * gives two extra commits in a ready PR.
  *
- * Судится история ветки, а не её вершина: папку разбирают последним коммитом до открытия
- * заявки, и у доведённой работы вершина папки не несёт законно.
+ * The branch history is judged, not its tip: the folder is taken apart by the last commit before
+ * the PR is opened, and the tip of finished work lawfully carries no folder.
  *
- * Читается местным репозиторием, без сети: ветки чужих машин отсюда не видны, и о них эта
- * проверка не говорит ничего.
+ * Read from the local repository, without the network: branches of other machines are not visible
+ * from here, and this check says nothing about them.
  */
 export function checkBranchFolders(report, mainBranch) {
     const git = (args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
@@ -33,13 +35,15 @@ export function checkBranchFolders(report, mainBranch) {
         return;
     }
 
-    // Ветка без номера задачи законна и живёт локально — под пробу и разбор; папки ей не
-    // положено, и требовать её значило бы отбивать работу, которая в главную не поедет.
+    // A branch without a task number is lawful and lives locally — for a trial and a grill; it is
+    // due no folder, and demanding one would mean refusing work that will not go into the main
+    // branch.
     const numbered = new RegExp(`^${TASK_KEY}-\\d+-`);
 
     for (const branch of branches.map((one) => one.trim()).filter((one) => numbered.test(one))) {
         try {
-            // Вклад ветки пуст — судить нечего: папку кладут первым же коммитом, а не заведением.
+            // The branch contribution is empty — nothing to judge: a folder is put in by the very
+            // first commit, not by creating it.
             if (!git(['log', '--format=%h', '-1', `${mainBranch}..${branch}`]).trim()) {
                 continue;
             }

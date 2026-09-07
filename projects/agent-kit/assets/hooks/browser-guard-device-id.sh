@@ -1,26 +1,27 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse mcp__claude-in-chrome__select_browser
 # rt-hook: PostToolUse mcp__claude-in-chrome__select_browser
-# Требует: hooks/deny-tail.sh
-# Гард выбора браузера. Работает на двух событиях: до вызова и после него.
+# Requires: hooks/deny-tail.sh
+# Guard of the browser choice. It works on two events: before the call and after it.
 #
-# До вызова запрещает любой профиль, кроме закреплённого. Чужой профиль ведёт в браузер, где нет
-# сессий этого проекта.
+# Before the call it forbids any profile but the pinned one. A foreign profile leads into a browser
+# that has none of this project's sessions.
 #
-# После вызова ставит метку сессии, если ответ подтверждает подключение. Гард свежести читает
-# возраст этой метки и по нему разрешает дальнейшую работу с браузером.
+# After the call it puts down a session mark, if the answer confirms the connection. The freshness
+# guard reads the age of that mark and by it allows further work with the browser.
 #
-# Почему метка ставится после вызова. Раньше она ставилась до вызова, при совпадении признака,
-# то есть на попытке выбора. Если закреплённый профиль отключён, вызов возвращает отказ, а метка
-# уже есть — и гард свежести пропускает состав вкладок, переход и снимок экрана в тот браузер,
-# который расширение считает активным. Ошибку заметил владелец, а не гард. Метка до вызова
-# подтверждает только запрос профиля, а не подключение к нему.
+# Why the mark is put down after the call. It used to be put down before the call, on a match of the
+# sign, that is, on the attempt to choose. If the pinned profile is switched off, the call returns a
+# refusal while the mark is already there — and the freshness guard lets through the tab listing, a
+# navigation and a screenshot into whatever browser the extension holds to be active. The mistake
+# was noticed by the owner, not by a guard. A mark before the call confirms only the request for a
+# profile, not the connection to it.
 #
-# При ошибке гард пропускает: помощник не назвал профиль — вызов разрешён. Ответ без признаков
-# подключения метку не ставит; работа не останавливается — следующий вызов запретит гард
-# свежести и потребует выбрать профиль заново.
+# On an error the guard passes: the helper did not name a profile — the call is allowed. An answer
+# without signs of a connection puts down no mark; work does not stop — the next call will be
+# forbidden by the freshness guard, which will demand choosing the profile again.
 
-# Имя гарда для наблюдений: его пишет общий хвост отказа.
+# The guard's name for the observations: it is written by the shared deny tail.
 RT_GUARD_NAME=browser-guard-device-id
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -29,8 +30,8 @@ RT_GUARD_NAME=browser-guard-device-id
 rt_hook_read
 input="$RT_HOOK_INPUT"
 
-# Идентификатор сессии передаётся помощнику: без него сообщение о ненастроенном дереве
-# помечается датой и приходит раз в сутки, а не раз за заход.
+# The session id is passed to the helper: without it the message about an unconfigured tree is
+# marked by the date and arrives once a day, not once per session.
 sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
 
 device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" "$sid")"
@@ -40,21 +41,22 @@ requested="$(printf '%s' "$input" | jq -r '.tool_input.deviceId // empty' 2>/dev
 event="$(printf '%s' "$input" | jq -r '.hook_event_name // empty' 2>/dev/null)"
 
 if [ "$event" = "PostToolUse" ]; then
-    # Ответ вызова приводится к строке: он приходит объектом, строкой или списком блоков, и
-    # разбирать каждую форму отдельно дорого. Проверяется текст — в нём есть и признак профиля,
-    # и слово об отказе.
+    # The answer of the call is brought to a string: it arrives as an object, a string or a list of
+    # blocks, and parsing each form separately is expensive. The text is checked — it holds both
+    # the profile sign and the word about a refusal.
     answer="$(printf '%s' "$input" | jq -r '.tool_response // empty | if type == "string" then . else tojson end' 2>/dev/null)"
 
-    # Отказ выбора: подключения не было, метка не ставится. Слова отказа перечислены на двух
-    # языках: помощник отвечает на своём, дерево выводит текст на русском.
+    # A refusal of the choice: there was no connection, no mark is put down. The words of refusal
+    # are listed in two languages: the helper answers in its own, the tree prints its text in
+    # Russian.
     case "$answer" in
         *'"error"'* | *'"isError":true'* | *"failed"* | *"not found"* | *"not connected"* | *"не найден"* | *"отключ"*)
             exit 0
             ;;
     esac
 
-    # Пустой ответ подключением не считается: по нему ничего не проверить, а метка утверждала
-    # бы, что профиль подключён.
+    # An empty answer does not count as a connection: there is nothing to check by it, while a
+    # mark would claim that the profile is connected.
     [ -z "$answer" ] && exit 0
 
     marker_dir="${TMPDIR:-/tmp}/claude-browser-guard"
@@ -62,11 +64,11 @@ if [ "$event" = "PostToolUse" ]; then
     exit 0
 fi
 
-# До вызова проверяется только признак профиля; метка здесь не ставится.
+# Before the call only the profile sign is checked; no mark is put down here.
 [ "$requested" = "$device_id" ] && exit 0
 
-# Общий хвост отказа: два допустимых шага и допустимая форма обхода, если она есть. Файл может
-# быть не разложен — тогда хвоста нет, причина отказа остаётся.
+# The shared deny tail: two lawful moves and the lawful form of bypass, if there is one. The file
+# may not be laid out — then there is no tail, and the reason for the refusal stays.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null

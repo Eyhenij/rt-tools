@@ -1,42 +1,43 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/rule-article.sh · fe9f4559b79c · правится надстройкой, не здесь
-# Разбор признака применимости у статьи правила. Помощник: своего события не объявляет, его
-# подключает тот, кому нужен текст статьи, — гейт правил в своём отказе.
+# rt-kit v0.25.0 · hooks/rule-article.sh · 4df1cb899ad4 · правится надстройкой, не здесь
+# Parsing the applicability sign of a rule article. A helper: it declares no event of its own, and
+# is sourced by whoever needs the text of an article — the rules gate in its refusal.
 #
-# Правило весит от двадцати до шестидесяти килобайт, а под конкретную правку подпадает одна его
-# статья. Отказ, зовущий правило целиком, платит за решение полной ценой правила — и учит не
-# тому: дешевле не читать лишнего, то есть работать хуже разведанным.
+# A rule weighs from twenty to sixty kilobytes, while one of its articles covers a particular edit.
+# A refusal that calls the whole rule pays the full price of the rule for the decision — and teaches
+# the wrong thing: it is cheaper to read nothing extra, that is, to work less well explored.
 #
-# Признак стоит при самой статье: карта гейта знает путь и правило, но не знает, какая из двух
-# десятков статей про этот путь. Статья знает о себе всё.
+# The sign stands at the article itself: the gate map knows the path and the rule, but does not know
+# which of two dozen articles is about that path. An article knows everything about itself.
 #
-#   - **Заголовок статьи.** Текст статьи, как обычно.
+#   - **The article heading.** The text of the article, as usual.
 #     <!-- rt-when: *.scss *.css -->
 #
-# Комментарий не виден в собранной разметке и не мешает читать статью; образцы разделены
-# пробелом и сверяются с путём правки самой оболочкой, а не поиском по словам: поиск называет не
-# ту статью и молчит об этом.
+# The comment is not visible in the assembled markup and does not get in the way of reading the
+# article; the patterns are separated by a space and are matched against the edit path by the shell
+# itself, not by a word search: a search names the wrong article and says nothing about it.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: статья без признака законна, правило без единого признака — тоже. Не
-# нашлось ни одной подошедшей статьи — печатается пусто, и зовущий остаётся при прежнем отказе.
+# FAIL-OPEN: an article without a sign is lawful, and so is a rule without a single sign. If not one
+# fitting article was found — nothing is printed, and the caller is left with the refusal it had.
 
-# Статьи правила, чей признак совпал с путём правки. Доводы: файл правила, путь правки.
-# Печатает текст подошедших статей целиком, по статье, разделяя их пустой строкой.
+# The articles of a rule whose sign matched the edit path. Arguments: the rule file, the edit path.
+# Prints the text of the fitting articles whole, article by article, separated by an empty line.
 rt_rule_articles() {
     rule_file="$1"
     edited="$2"
     [ -f "$rule_file" ] || return 0
     [ -n "$edited" ] || return 0
 
-    # Статьи выбираются в два прохода: сперва номера строк, где стоят признаки, и сами образцы,
-    # затем — текст той статьи, чей образец совпал. Сопоставление делает оболочка: `case` знает
-    # правила путей, а разборщик текста — нет.
+    # The articles are picked in two passes: first the line numbers where the signs stand and the
+    # patterns themselves, then the text of the article whose pattern matched. The matching is done
+    # by the shell: `case` knows the rules of paths, a text parser does not.
     while IFS=' ' read -r line patterns; do
         [ -n "$line" ] || continue
         hit=''
-        # Образцы разбираются под выключенным раскрытием имён: `*.scss` в цикле развернулось бы
-        # в имена файлов рабочего каталога, и статья выбиралась бы по тому, где стоял вызов.
-        # Разделитель задаётся здесь же — внешний мог быть переопределён тем, кто нас позвал.
+        # The patterns are parsed with name expansion switched off: `*.scss` in the loop would
+        # expand into the file names of the working directory, and the article would be picked by
+        # where the call stood. The separator is set right here — an outer one could have been
+        # redefined by whoever called us.
         set -f
         old_ifs="$IFS"
         IFS=' '
@@ -50,8 +51,8 @@ rt_rule_articles() {
             case "$edited" in
                 $pattern) hit=1; break ;;
             esac
-            # Образец без каталога сверяется и с именем файла: статья говорит «про такие файлы»,
-            # а правка приходит полным путём.
+            # A pattern without a directory is matched against the file name too: an article says
+            # "about files like these", while an edit arrives as a full path.
             # shellcheck disable=SC2254
             case "${edited##*/}" in
                 $pattern) hit=1; break ;;
@@ -64,24 +65,25 @@ $(rt_rule_article_marks "$rule_file")
 EOF
 }
 
-# Признаки правила: строка «номер строки — образцы». Отдельной функцией, потому что её же зовёт
-# сверка полноты текстов: правило, у которого признак записан не той формой, тихо остаётся без
-# статьи в отказе, и заметить это нечем.
+# The signs of a rule: a line of "line number — patterns". A function of its own, because the
+# completeness check of the texts calls the same one: a rule whose sign is written in the wrong form
+# quietly stays without an article in the refusal, and there is nothing to notice that by.
 rt_rule_article_marks() {
     [ -f "$1" ] || return 0
     grep -n 'rt-when:' "$1" 2>/dev/null \
         | sed -e 's/^\([0-9]*\):.*rt-when:[[:space:]]*/\1 /' -e 's/[[:space:]]*-->.*$//'
 }
 
-# Текст статьи, внутри которой стоит строка с признаком. Статья начинается ближайшим сверху
-# пунктом списка верхнего уровня и кончается перед следующим таким пунктом или перед строкой без
-# отступа: продолжение статьи всегда идёт с отступом.
-# Заголовок статьи — её жирная первая фраза. Отказ гейта называет статьи ею, а не пересказывает
-# их телом: правило заход грузит следом, и тело придёт в контекст вторым разом. У правила текстов
-# отказ печатал 4 134 знака одиннадцатью статьями, их заголовки — 718.
+# The text of the article inside which the line with the sign stands. An article begins at the
+# nearest top-level list item above and ends before the next such item or before a line without
+# indentation: the continuation of an article always goes with indentation.
+# The heading of an article is its bold first phrase. The gate refusal names articles by it and does
+# not retell them by their body: the session loads the rule next, and the body would come into the
+# context a second time. For the rule about texts the refusal printed 4,134 characters in eleven
+# articles, their headings — 718.
 #
-# Заголовок при этом не украшение: по нему идёт привязка утверждения к коду, и он же называет
-# статью в отказе так, что её видно в правиле глазами.
+# The heading is no ornament: the binding of a statement to code goes by it, and it also names the
+# article in the refusal so that it can be found in the rule by eye.
 rt_rule_article_heads() {
     rule_file="$1"
     edited="$2"

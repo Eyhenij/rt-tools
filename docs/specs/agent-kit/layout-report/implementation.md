@@ -6,6 +6,7 @@
 - **Разбор называет замещённые надстройками разделы поимённо — ресурс и заголовок.** — `projects/agent-kit/src/lib/commands.ts:replacedLines`
 - **Дерево без надстроек о замещённом молчит.** — `projects/agent-kit/src/lib/commands.ts:replacedLines`
 - **Сводка называет местные значения, которых ждут взятые хуки.** — `projects/agent-kit/src/lib/commands.ts:localValueLines`
+- **Ключ шапки местного значения читается на обоих языках.** — `projects/agent-kit/src/lib/commands.ts:LOCAL_VALUE`
 - **Надстройка, не подобранная ни к одному ресурсу, называется вместе с причиной.** — `projects/agent-kit/src/lib/snapshot.ts:overridesOf`
 - **Файл вне рода ресурсов надстройкой не считается.** — `projects/agent-kit/src/lib/snapshot.ts:treeSnapshot`
 - **Долг привязок считается по разложенному телу правила, а не по пакетной редакции.** — `projects/agent-kit/src/lib/sync.ts:mergedBody`

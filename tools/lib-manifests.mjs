@@ -1,10 +1,11 @@
-// rt-kit v0.25.0 · checks/lib-manifests.mjs · 8523c7ccb6ba · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/lib-manifests.mjs · 5ff4c7323e7a · правится надстройкой, не здесь
 /**
- * Сама либа: обязательные файлы, имя проекта, приставка селекторов, тег и алиас импорта —
- * всё, чем `project.json` и `tsconfig.base.json` обязаны совпадать с путём либы на диске.
+ * The lib itself: the mandatory files, the project name, the selector prefix, the tag and the
+ * import alias — everything `project.json` and `tsconfig.base.json` must match the lib path on
+ * disk by.
  *
- * Имя не начинается с `check-`: перебором таких имён умолчание пакета собирает набор гейта
- * пуша, и помощник с ним гейт стал бы гонять как отдельную проверку.
+ * The name does not begin with `check-`: by walking such names the package default assembles the
+ * push gate set, and a helper with one would be run by the gate as a check of its own.
  */
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -30,9 +31,10 @@ function checkLib(libPath, { requirePrefix = true } = {}) {
     if (project.sourceRoot !== `${libPath}/src`) {
         report(libPath, `sourceRoot «${project.sourceRoot}» не совпадает с путём`);
     }
-    // Приставка — про селекторы компонентов, а у бэкенда компонентов нет. Само слово принадлежит
-    // дереву: у каждого оно своё, и зашитое здесь краснело бы на всех либах первого же дерева,
-    // назвавшего свои селекторы иначе. Дерево, не назвавшее приставки, этой проверки не получает.
+    // The prefix is about component selectors, and the backend has no components. The word itself
+    // belongs to the tree: everyone has their own, and one hard-coded here would go red on every lib
+    // of the first tree that named its selectors otherwise. A tree that has not named a prefix does
+    // not get this check.
     if (requirePrefix && LIB_PREFIX && project.prefix !== LIB_PREFIX) {
         report(libPath, `prefix «${project.prefix}» вместо обязательного «${LIB_PREFIX}»`);
     }

@@ -1,23 +1,25 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-profile-drift.mjs · 9bc72a7850b6 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-profile-drift.mjs · 70320076aea1 · правится надстройкой, не здесь
 /**
- * Сверка надстроек профиля с таблицами компаньонов.
+ * Comparing the overrides of the profile with the tables of the companions.
  *
- * Правило говорит одно, а дерево работает по-другому — и оба места законны. Расхождение
- * объявляется переменной профиля, а читатель ищет его в компаньоне правила, где перечислено, чем
- * здесь зовётся сказанное правилом. Пока эти два места никто не сравнивает, компаньон обещает
- * пакетное умолчание там, где дерево давно работает по-своему: правило требовало одной формы
- * заголовка заявки, дерево замещало её переменной, и гард, читавший форму, номера не доставал
- * вовсе — сверка номера молча не выполнялась, выглядя сошедшейся.
+ * The rule says one thing and the tree works another way — and both places are lawful. The
+ * divergence is declared by a variable of the profile, while the reader looks for it in the
+ * companion of the rule, where it is listed what the words of the rule are called here. While
+ * nobody compares these two places, the companion promises the package default where the tree has
+ * long worked its own way: the rule demanded one form of the title of a PR, the tree replaced it
+ * with a variable, and the guard that read the form did not pull the number out at all — the check
+ * of the number silently did not run and looked as if it had come out right.
  *
- * Что сверяется: имя каждой переменной профиля, чьё значение разошлось с умолчанием пакета,
- * против текстов компаньонов правил. Значение не сверяется ни с чем: сказать, верно ли оно,
- * машине нечем, а назвать замещённое в компаньоне — можно.
+ * What is compared: the name of every variable of the profile whose value has diverged from the
+ * package default, against the texts of the companions of the rules. The value is compared with
+ * nothing: a machine has nothing to tell whether it is right with, while naming what is replaced
+ * in the companion — that can be done.
  *
- * FAIL-OPEN: нет профиля, нет умолчаний, нет каталога правил — сверять нечего, нулевой код.
- * Дерево вправе не держать ни того, ни другого.
+ * FAIL-OPEN: no profile, no defaults, no directory of rules — there is nothing to compare, a zero
+ * code. The tree is entitled to keep neither of them.
  *
- * Ненулевой код возврата и перечень расхождений.
+ * A non-zero exit code and the list of discrepancies.
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
@@ -28,13 +30,13 @@ const PROFILE = join(ROOT, '.claude/rt-kit/project.sh');
 const DEFAULTS = join(ROOT, '.claude/rt-kit/defaults/project.sh');
 const RULES = join(ROOT, '.claude/skills');
 
-/** Присвоение верхнего уровня: `RT_ИМЯ='значение'` либо `RT_ИМЯ="значение"`. */
+/** A top-level assignment: `RT_NAME='value'` or `RT_NAME="value"`. */
 const ASSIGN = /^(RT_[A-Z0-9_]+)=(.*)$/;
 
-/** Умолчание пакета: `RT_ИМЯ="${RT_ИМЯ:-значение}"` — значение берётся из подстановки. */
+/** The package default: `RT_NAME="${RT_NAME:-value}"` — the value is taken from the substitution. */
 const FALLBACK = /^RT_[A-Z0-9_]+="\$\{RT_[A-Z0-9_]+:-(.*)\}"$/;
 
-/** Значение без окружающих кавычек: сравниваются строки, а не их запись. */
+/** The value without the surrounding quotes: strings are compared, not the way they are written. */
 function unquote(text) {
     const trimmed = text.trim();
     const paired = trimmed.length > 1 && (trimmed.startsWith("'") || trimmed.startsWith('"')) && trimmed.endsWith(trimmed[0]);
@@ -42,7 +44,7 @@ function unquote(text) {
     return paired ? trimmed.slice(1, -1) : trimmed;
 }
 
-/** Карта «имя переменной → значение» по присвоениям верхнего уровня. */
+/** The map «name of the variable → value» by top-level assignments. */
 function valuesOf(path) {
     const values = new Map();
 
@@ -59,7 +61,7 @@ function valuesOf(path) {
     return values;
 }
 
-/** Тексты всех компаньонов правил дерева, склеенные в один: ищется в них имя, а не место. */
+/** The texts of all the companions of the tree, glued into one: a name is searched in them, not a place. */
 function companionsText() {
     if (!existsSync(RULES)) {
         return null;
@@ -82,13 +84,14 @@ function companionsText() {
 }
 
 /**
- * Набор гейта пуша, собранный оболочкой: с надстройкой дерева и без неё.
+ * The set of the push gate assembled by the shell: with the override of the tree and without it.
  *
- * Собирается вызовом, а не чтением текста: набор — функция, и она смотрит на дерево — есть ли
- * настройка раскладки, лежит ли конфиг оформления, исполним ли набор сценариев. Прочитанный
- * текстом, он назвал бы командами то, чего в этом дереве нет вовсе.
+ * It is assembled by a call, not by reading the text: the set is a function, and it looks at the
+ * tree — is there a setting of the layout, does a styling config lie there, is the scenario suite
+ * runnable. Read as text, it would name as commands what is not in this tree at all.
  *
- * Пусто — собрать нечем: нет оболочки, нет функции, отказ вызова. Сверять тогда нечего.
+ * Empty — there is nothing to assemble it with: no shell, no function, a refused call. Then there
+ * is nothing to compare.
  */
 function gateSet(withProfile) {
     const source = withProfile ? `. '${DEFAULTS}'; . '${PROFILE}';` : `. '${DEFAULTS}';`;
@@ -101,10 +104,11 @@ function gateSet(withProfile) {
 }
 
 /**
- * Проверки, названные в наборе, — по имени файла, а не по всей строке команды.
+ * The checks named in the set — by the name of the file, not by the whole line of the command.
  *
- * Строка целиком сверке не годится: дерево вправе позвать ту же проверку другим запускателем или
- * с другим доводом, и расхождением это не является. Пропажа самой проверки — является.
+ * The whole line is no good for the comparison: the tree is entitled to call the same check by
+ * another launcher or with another argument, and that is not a divergence. The loss of the check
+ * itself is one.
  */
 function checksIn(lines) {
     const names = new Set();
@@ -119,14 +123,15 @@ function checksIn(lines) {
 }
 
 /**
- * Проверки, которые умолчание пакета зовёт, а набор дерева — нет.
+ * The checks that the package default calls and the set of the tree does not.
  *
- * Набор гейта собирается умолчанием и надстройкой, и надстройка вправе объявить функцию заново.
- * Выкушенная так проверка ничем не отличима от проверки, которой в дереве нет вовсе: гейт зелен,
- * потому что её никто не звал, а сводка раскладки о наборе не знает ничего — она сличает
- * переменные, а тут заменена функция.
+ * The set of the gate is assembled by the default and the override, and the override is entitled to
+ * declare the function anew. A check bitten out that way is indistinguishable from a check that is
+ * not in the tree at all: the gate is green because nobody called it, and the digest of the layout
+ * knows nothing about the set — it matches variables, and here a function is replaced.
  *
- * Отказ в пользу работы: собрать набор нечем — строк нет, и сверка идёт дальше своим делом.
+ * A refusal in favour of the work: there is nothing to assemble the set with — there are no lines,
+ * and the comparison goes on with its own business.
  */
 function cutFromGate() {
     const packaged = gateSet(false);

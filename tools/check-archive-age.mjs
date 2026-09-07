@@ -1,25 +1,25 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-archive-age.mjs · 73f25ffe8a9b · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-archive-age.mjs · 40955b081f9e · правится надстройкой, не здесь
 /**
- * Сверка срока хранения описания прошлого.
+ * The audit of the retention term of the archive.
  *
- * Одной чистки хватает ровно на срок: каталог набирает по записи на каждую закрытую работу, и
- * первая уцелевшая перестаивает снова. Без сверки срок держался бы памятью того, кто помнит
- * про команду чистки, — то есть не держался бы вовсе.
+ * One prune lasts exactly for the term: the directory gains a record for every closed piece of
+ * work, and the first survivor overstays again. Without the audit the term would be held by the
+ * memory of whoever remembers the prune command — that is, it would not be held at all.
  *
- * Сверка не чистит: снос — решение, а не следствие проверки. Она называет перестоявшие записи
- * и команду, которой их снимают.
+ * The audit does not prune: removal is a decision, not a consequence of a check. It names the
+ * records that have overstayed and the command that removes them.
  *
- * Сверка требует позже, чем чистка снимает: у неё запас в сутки сверх срока. Чистка идёт в
- * минуту пуша, сверка в конвейере — минутами или часами позже, и без запаса следующая запись
- * пересекала порог между ними.
+ * The audit demands later than the prune removes: it has a margin of a day over the term. The prune
+ * runs at the minute of the push, the audit in the pipeline minutes or hours later, and without the
+ * margin the next record crossed the threshold between them.
  *
- * FAIL-OPEN: срок деревом не назначен — сверять нечего, нулевой код. Умолчания у срока нет
- * намеренно: пакет, назначивший его за дерево, начал бы сносить чужой архив в день установки.
- * Каталога нет — то же самое. Пустой каталог отказом не считается: он означает, что всё снято
- * по сроку.
+ * FAIL-OPEN: the tree has set no term — nothing to check, zero code. The term has no default
+ * deliberately: a package that set it for the tree would start removing someone else's archive on
+ * the day of the install. No directory — the same. An empty directory does not count as a refusal:
+ * it means everything has been removed by the term.
  *
- * Ненулевой код возврата и перечень перестоявших записей.
+ * A non-zero exit code and the list of records that have overstayed.
  */
 import { ARCHIVE_DIR, CHECK_GRACE_DAYS, RETENTION_DAYS, archiveRecords, staleRecords } from './archive-age.mjs';
 import { ROOT } from './rt-kit-checks.config.mjs';
