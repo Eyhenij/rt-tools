@@ -172,7 +172,7 @@ rm -rf "$tree"
 tree="$(fixture_observed_tree '')"
 said="$(CLAUDE_PROJECT_DIR="$tree" RT_GUARD_NAME=proba-guard \
     bash -c '. "$1/deny-tail.sh" 2>/dev/null; rt_deny_tail ""' _ "$HOOKS")"
-report "SC-AK-811 — текст хвоста на месте" "$(printf '%s' "$said" | grep -c 'Ходов отсюда два')" "1"
+report "SC-AK-811 — текст хвоста на месте" "$(printf '%s' "$said" | grep -c 'Two moves from here')" "1"
 rm -rf "$tree"
 
 gate_session_cleanup

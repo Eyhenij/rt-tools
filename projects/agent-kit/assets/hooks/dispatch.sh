@@ -115,7 +115,7 @@ EOF
             # is indistinguishable from a refusal on the merits, and there is nothing to fix: nobody
             # knows which file is broken. So the dispatcher names it itself, otherwise nothing says
             # anything about a broken branch.
-            printf 'Гард %s вышел с кодом %s и ничего не напечатал: похоже, файл сломан.\n' \
+            printf 'The guard %s exited with code %s and printed nothing: the file looks broken.\n' \
                 "$(basename "$branch")" "$code"
         fi
         exit "$code"

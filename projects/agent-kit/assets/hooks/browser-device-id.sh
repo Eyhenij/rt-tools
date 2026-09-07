@@ -29,7 +29,7 @@ if [ ! -f "$file" ]; then
     marker="$marker_dir/silent-$key"
     if [ ! -f "$marker" ]; then
         mkdir -p "$marker_dir" 2>/dev/null && : >"$marker" 2>/dev/null
-        echo "Профиль браузера этому дереву не назван: нет ни RT_BROWSER_DEVICE_ID, ни .claude/rt-kit/browser-device-id. Браузерные гарды поэтому пропускают всё подряд — это не разрешение ехать, а повод остановиться и сказать владельцу." >&2
+        echo "No browser profile is named for this tree: neither RT_BROWSER_DEVICE_ID nor .claude/rt-kit/browser-device-id. The browser guards therefore let everything through — that is not permission to drive on but a reason to stop and tell the owner." >&2
     fi
     exit 0
 fi

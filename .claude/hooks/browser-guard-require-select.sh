@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/browser-guard-require-select.sh · 5988d0c128ef · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/browser-guard-require-select.sh · cfa8684a5232 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__.*
 # Requires: hooks/deny-tail.sh
 # Guard of the freshness of the browser choice. PreToolUse on all the other extension calls.
@@ -66,7 +66,7 @@ deny() {
 }
 
 if [ ! -f "$marker" ]; then
-    deny "В этой сессии браузер не выбран. Вызови выбор браузера с профилем ${device_id} до любого другого вызова."
+    deny "No browser is selected in this session. Call the browser selection with the profile ${device_id} before any other call."
 fi
 
 now="$(date +%s)"
@@ -75,7 +75,7 @@ age=$(( now - stamped ))
 
 if [ "$age" -gt "$ttl" ]; then
     rm -f "$marker" 2>/dev/null
-    deny "Последний выбор браузера был ${age} с назад (предел ${ttl} с) — на таких перерывах активный браузер расширения уплывает, и это может быть уже не закреплённый профиль. Вызови выбор с профилем ${device_id} заново и повтори."
+    deny "The last browser selection was ${age} s ago (the limit is ${ttl} s) — over such a break the active browser of the extension drifts away, and it may no longer be the pinned profile. Call the selection with the profile ${device_id} anew and repeat."
 fi
 
 : >"$marker" 2>/dev/null

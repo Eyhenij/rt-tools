@@ -129,7 +129,7 @@ missing="$(printf '%s' "$added" | RT_QA_DECORATIVE="$decorative" RT_QA_COMPONENT
 
 [ -z "$missing" ] && exit 0
 
-reason="BLOCKED: интерактивные элементы без якоря для тестов в ${path##*/}: ${missing}. Тесты адресуют элементы только через этот атрибут: классы оформления меняются вместе с вёрсткой, а поиск по роли и тексту ломается на переводах — оба вида выбора делают сквозные тесты хрупкими. Проставь якорь через дефис по смыслу элемента; повторяющиеся элементы списка носят ОДИН якорь и различаются атрибутами данных. Если элемент чисто декоративный и тест его никогда не тронет — поставь атрибут пропуска НА САМ ЭТОТ ТЕГ, соседние элементы правки при этом продолжают проверяться."
+reason="BLOCKED: interactive elements without a test anchor in ${path##*/}: ${missing}. Tests address elements only through this attribute: styling classes change together with the markup, and a search by role and text breaks on translations — both kinds of selection make end-to-end tests brittle. Set the anchor through a dash by the meaning of the element; repeating elements of a list carry ONE anchor and differ by data attributes. If an element is purely decorative and a test will never touch it — put the skip attribute ON THAT VERY TAG, the neighbouring elements of the edit keep being checked."
 
 # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has
 # one. The file may not be laid out — then there is no tail, and the reason for the refusal stays
@@ -138,12 +138,12 @@ reason="BLOCKED: интерактивные элементы без якоря �
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
 command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail "атрибут пропуска на самом декоративном теге")"
+deny_tail_text="$(rt_deny_tail "the skip attribute on the decorative tag itself")"
 [ -n "$deny_tail_text" ] && reason="${reason}
 
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Интерактивный элемент без якоря для тестов."}}\n'
+    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"An interactive element without a test anchor."}}\n'
 
 exit 0

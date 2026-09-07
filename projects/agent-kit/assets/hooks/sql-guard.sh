@@ -126,7 +126,7 @@ sql_check_addressing
 # An unknown connection is no reason to pass silently: the target of the query is not recognised,
 # and it may turn out to be the production database under another identifier.
 if [ "$conn_known" = "" ] && [ -n "$conn" ]; then
-    ask "Запись в базу через ПОДКЛЮЧЕНИЕ, НЕИЗВЕСТНОЕ ГАРДУ (id ${conn}). Гард знает локальное подключение и боевое; это — ни то, ни другое, поэтому убедись, что запрос уходит не на прод. Если подключение постоянное, впиши его id в PROD_CONNECTIONS или LOCAL_CONNECTIONS в .claude/hooks/sql-guard.sh."
+    ask "A write into the database through a CONNECTION UNKNOWN TO THE GUARD (id ${conn}). The guard knows the local connection and the production one; this is neither, so make sure the request does not go to production. If the connection is permanent, write its id into PROD_CONNECTIONS or LOCAL_CONNECTIONS in .claude/hooks/sql-guard.sh."
 fi
 
-ask "Запись в базу (${context}). Проверь, что затронуты только ожидаемые строки, и подтверди."
+ask "A write into the database (${context}). Check that only the expected rows are touched, and confirm."

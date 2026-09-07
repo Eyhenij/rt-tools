@@ -29,8 +29,8 @@
 # The deny tail as a string. The first parameter is the lawful form of bypass, if the refusal has
 # one; empty means there is no lawful form at all, and this is said outright.
 #
-#   reason="BLOCKED: <причина>. $(rt_deny_tail 'строка `Docs-skip: <причина>` в теле коммита')"
-#   reason="BLOCKED: <причина>. $(rt_deny_tail)"
+#   reason="BLOCKED: <reason>. $(rt_deny_tail 'the line `Docs-skip: <причина>` in the commit body')"
+#   reason="BLOCKED: <reason>. $(rt_deny_tail)"
 rt_deny_tail() {
     # shellcheck disable=SC1090
     [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/guard-note.sh" ] \
@@ -38,9 +38,9 @@ rt_deny_tail() {
     command -v rt_guard_note >/dev/null 2>&1 && rt_guard_note
 
     if [ -n "$1" ]; then
-        printf 'Ходов отсюда два: починить названное и повторить вызов — либо принести владельцу цену обхода и ждать его слова. Законная форма обхода: %s. Молча мимо гарда правка не кладётся: он отбивает один вызов, а обойдённый снимает требование со всего дерева и молчит об этом.' "$1"
+        printf 'Two moves from here: fix what is named and repeat the call, or bring the owner the price of a bypass and wait for their word. The lawful form of bypass: %s. An edit is not laid past the guard in silence: it refuses one call, and a bypassed one lifts the requirement from the whole tree and says nothing about it.' "$1"
         return 0
     fi
 
-    printf 'Ходов отсюда два: починить названное и повторить вызов — либо принести владельцу цену обхода и ждать его слова. Законной формы обхода у этого отказа нет. Молча мимо гарда правка не кладётся: он отбивает один вызов, а обойдённый снимает требование со всего дерева и молчит об этом.'
+    printf 'Two moves from here: fix what is named and repeat the call, or bring the owner the price of a bypass and wait for their word. There is no lawful form of bypass for this refusal. An edit is not laid past the guard in silence: it refuses one call, and a bypassed one lifts the requirement from the whole tree and says nothing about it.'
 }

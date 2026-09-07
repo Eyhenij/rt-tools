@@ -51,7 +51,7 @@ deny() {
 
     reason="$1 $(rt_deny_tail "$2")"
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Гард места правки."}}\n'
+        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The guard of the place of the edit."}}\n'
     exit 0
 }
 
@@ -124,12 +124,12 @@ while IFS= read -r candidate; do
     fi
 
     if [ -n "$sources" ] && [ -f "$root/$sources/$resource" ]; then
-        deny "BLOCKED by rule-source-guard: «${candidate#"$root"/}» разложен пакетом, и правка на его месте теряется на следующей раскладке — а до тех пор раскладка отказывает по этому файлу целиком, и цену платит тот, кто в этот день правит соседний ресурс. Ресурс — «${resource}». Правь источник: ${sources}/${resource} — потом собери пакет и разложи." \
-            "правка, верная только этому дереву, идёт в надстройку .claude/rt-kit/overrides/${resource} — она сливается по разделу «## » и раскладку переживает"
+        deny "BLOCKED by rule-source-guard: «${candidate#"$root"/}» is laid out by the package, and an edit in its place is lost on the next layout — and until then the layout refuses this file whole, and the price is paid by whoever edits a neighbouring resource that day. The resource is «${resource}». Edit the source: ${sources}/${resource} — then build the package and lay it out." \
+            "an edit true only to this tree goes to the override .claude/rt-kit/overrides/${resource} — it merges by the section «## » and outlives the layout"
     fi
 
-    deny "BLOCKED by rule-source-guard: «${candidate#"$root"/}» разложен пакетом @rt-tools/agent-kit, и правка на его месте теряется на следующей раскладке. Ресурс — «${resource}». Правь надстройку: .claude/rt-kit/overrides/${resource} — она сливается по разделу «## » и раскладку переживает." \
-        "то, что верно любому дереву, правится в самом пакете и приезжает сюда новой редакцией"
+    deny "BLOCKED by rule-source-guard: «${candidate#"$root"/}» is laid out by the package @rt-tools/agent-kit, and an edit in its place is lost on the next layout. The resource is «${resource}». Edit the override: .claude/rt-kit/overrides/${resource} — it merges by the section «## » and outlives the layout." \
+        "what is true of any tree is edited in the package itself and arrives here by a new edition"
 done <<EOF
 $candidates
 EOF

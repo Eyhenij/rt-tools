@@ -41,15 +41,15 @@ tool="$(rt_hook_tool)"
 command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
 
 deny() {
-    echo "$1 Води браузер закреплённым расширением: выбери профиль ${device_id} и работай его инструментами. $(rt_deny_tail)" >&2
+    echo "$1 Drive the browser by the pinned extension: select the profile ${device_id} and work by its tools. $(rt_deny_tail)" >&2
     exit 2
 }
 
 case "$tool" in
     mcp__playwright__*)
-        deny "Второй драйвер браузера в этом проекте не используется — в его профиле вход не сделан." ;;
+        deny "The second browser driver is not used in this project — no sign-in was made in its profile." ;;
     mcp__chrome-devtools__*)
-        deny "Третий драйвер браузера в этом проекте не используется — закреплённый профиль он не спрашивает." ;;
+        deny "The third browser driver is not used in this project — it does not ask for the pinned profile." ;;
 esac
 
 # The IDE terminal launches the same drivers with the same command line.
@@ -73,16 +73,16 @@ fi
 # A run of end-to-end specs is the lawful route, and it is never refused.
 case "$cmd" in
     *playwright\ open*|*playwright\ codegen*|*playwright\ screenshot*|*playwright\ cr*)
-        deny "Вождение браузера из командной строки драйвера обходит закреплённый профиль." ;;
+        deny "Driving the browser from the driver command line bypasses the pinned profile." ;;
 esac
 
 case "$cmd" in
     *open\ http*|*open\ -a\ *Chrome*|*open\ -a\ *chrome*)
-        deny "Открытие адреса средствами системы поднимает браузер по умолчанию, а не закреплённый профиль." ;;
+        deny "Opening an address by the means of the system raises the default browser, not the pinned profile." ;;
     *osascript*Chrome*|*osascript*chrome*)
-        deny "Управление браузером сценарием автоматизации обходит закреплённый профиль." ;;
+        deny "Driving the browser by an automation script bypasses the pinned profile." ;;
     *chrome-cli*)
-        deny "Эта утилита обходит закреплённый профиль." ;;
+        deny "This utility bypasses the pinned profile." ;;
 esac
 
 # The browser binary — and only in the command position.
@@ -92,10 +92,10 @@ esac
 # itself on the day it appeared. Hence the anchor at the command boundary and the demand for a
 # word that looks like an executable, not a flag value.
 printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(/[^[:space:]]*/)?(google-chrome|chromium)([[:space:]]|\$)" \
-    && deny "Прямой запуск бинарника браузера обходит закреплённый профиль."
+    && deny "A direct launch of the browser binary bypasses the pinned profile."
 
 printf '%s' "$cmd" | grep -qF 'Google Chrome.app/Contents/MacOS' \
-    && deny "Прямой запуск бинарника браузера обходит закреплённый профиль."
+    && deny "A direct launch of the browser binary bypasses the pinned profile."
 
 # Entry points of browser libraries — what a browser is raised with from code. Listed are both
 # the launch verb and the verb of attaching to an already raised one: the second bypasses the
@@ -109,7 +109,7 @@ launch='(chromium|firefox|webkit|browserType|puppeteer|chromeLauncher)[[:space:]
 # is merely looked for.
 if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(node|bun|deno|python3?)([[:space:]]+-[^[:space:]]+)*[[:space:]]+(-e|--eval|-c|-p|--print)[[:space:]]" \
     && printf '%s' "$cmd" | grep -qE "$launch"; then
-    deny "Браузер, поднятый библиотекой из кода довода, закреплённый профиль не спрашивает."
+    deny "A browser raised by a library from the code of the argument does not ask for the pinned profile."
 fi
 
 # Files the command runs with an interpreter. Package manager wrappers are stripped: under them
@@ -128,7 +128,7 @@ for file in $launched; do
         path="${base}${file}"
         [ -f "$path" ] || continue
         if head -c 200000 "$path" 2>/dev/null | grep -qE "$launch"; then
-            deny "Браузер, поднятый библиотекой изнутри ${file}, закреплённый профиль не спрашивает."
+            deny "A browser raised by a library from inside ${file} does not ask for the pinned profile."
         fi
         break
     done

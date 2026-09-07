@@ -65,7 +65,7 @@ deny() {
 }
 
 if [ ! -f "$marker" ]; then
-    deny "В этой сессии браузер не выбран. Вызови выбор браузера с профилем ${device_id} до любого другого вызова."
+    deny "No browser is selected in this session. Call the browser selection with the profile ${device_id} before any other call."
 fi
 
 now="$(date +%s)"
@@ -74,7 +74,7 @@ age=$(( now - stamped ))
 
 if [ "$age" -gt "$ttl" ]; then
     rm -f "$marker" 2>/dev/null
-    deny "Последний выбор браузера был ${age} с назад (предел ${ttl} с) — на таких перерывах активный браузер расширения уплывает, и это может быть уже не закреплённый профиль. Вызови выбор с профилем ${device_id} заново и повтори."
+    deny "The last browser selection was ${age} s ago (the limit is ${ttl} s) — over such a break the active browser of the extension drifts away, and it may no longer be the pinned profile. Call the selection with the profile ${device_id} anew and repeat."
 fi
 
 : >"$marker" 2>/dev/null

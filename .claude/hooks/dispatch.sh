@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/dispatch.sh · 90d580857a93 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/dispatch.sh · 96e5dc2b218c · правится надстройкой, не здесь
 # The dispatcher of agent events. NOT a guard: it has no `rt-hook:` declaration — on the contrary,
 # it reads such declarations in the others. In the agent settings it stands alone on an event
 # instead of a list.
@@ -116,7 +116,7 @@ EOF
             # is indistinguishable from a refusal on the merits, and there is nothing to fix: nobody
             # knows which file is broken. So the dispatcher names it itself, otherwise nothing says
             # anything about a broken branch.
-            printf 'Гард %s вышел с кодом %s и ничего не напечатал: похоже, файл сломан.\n' \
+            printf 'The guard %s exited with code %s and printed nothing: the file looks broken.\n' \
                 "$(basename "$branch")" "$code"
         fi
         exit "$code"

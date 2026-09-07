@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/browser-device-id.sh · 2577526b3380 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/browser-device-id.sh · 62bd6cbd3992 · правится надстройкой, не здесь
 # Local value: .claude/rt-kit/browser-device-id — without it the browser guards let any profile through
 # Shared helper: prints the id of the pinned browser profile.
 #
@@ -30,7 +30,7 @@ if [ ! -f "$file" ]; then
     marker="$marker_dir/silent-$key"
     if [ ! -f "$marker" ]; then
         mkdir -p "$marker_dir" 2>/dev/null && : >"$marker" 2>/dev/null
-        echo "Профиль браузера этому дереву не назван: нет ни RT_BROWSER_DEVICE_ID, ни .claude/rt-kit/browser-device-id. Браузерные гарды поэтому пропускают всё подряд — это не разрешение ехать, а повод остановиться и сказать владельцу." >&2
+        echo "No browser profile is named for this tree: neither RT_BROWSER_DEVICE_ID nor .claude/rt-kit/browser-device-id. The browser guards therefore let everything through — that is not permission to drive on but a reason to stop and tell the owner." >&2
     fi
     exit 0
 fi

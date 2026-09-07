@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/profile-check.sh · 36de3ff0dc1d · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/profile-check.sh · b80040d09e3a · правится надстройкой, не здесь
 # A missing profile function, said out loud. NOT a guard: it has no `rt-hook:` declaration and hooks
 # into no agent event. The guards source it themselves — the same way the gate sources the map and
 # the guards source the observation record.
@@ -36,9 +36,9 @@ rt_needs() {
     rt_needs_key="${3:-$(date +%Y%m%d 2>/dev/null || printf 'nosession')}"
     rt_needs_mark="$(rt_needs_mark_dir)/rt-kit-needs-$1-$rt_needs_key"
     if [ ! -f "$rt_needs_mark" ]; then
-        printf '%s: нет функции %s — её определяют в .claude/rt-kit/project.sh, а умолчание везёт пакет в .claude/rt-kit/defaults/project.sh\n' \
-            "${2:-хук}" "$1" >&2
-        printf 'проверка не работает, действие пропущено\n' >&2
+        printf '%s: no function %s — it is defined in .claude/rt-kit/project.sh, and the default is carried by the package in .claude/rt-kit/defaults/project.sh\n' \
+            "${2:-hook}" "$1" >&2
+        printf 'the check does not work, the action is let through\n' >&2
         : >"$rt_needs_mark" 2>/dev/null || true
     fi
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/prose-style-guard.sh · 5f836cd1ba06 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/prose-style-guard.sh · 246735b312ed · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit
 # Requires: checks/check-prose-style.mjs, hooks/deny-tail.sh
 # Prose guard: officialese and words that are not written in this tree do not reach the file.
@@ -57,15 +57,15 @@ done
 
 tmp="$(mktemp -t prose)" || exit 0
 printf '%s\n' "$added" > "$tmp"
-found="$(node "$check" "$tmp" 2>&1 | grep -- '—' | sed 's|.*proba*[^:]*:|  строка |' | head -8)"
+found="$(node "$check" "$tmp" 2>&1 | grep -- '—' | sed 's|.*proba*[^:]*:|  line |' | head -8)"
 rm -f "$tmp"
 [ -z "$found" ] && exit 0
 
-reason="BLOCKED by prose-style-guard: в новом тексте канцелярит или слово, которого в этом дереве не пишут.
+reason="BLOCKED by prose-style-guard: the new text carries officialese or a word not written in this tree.
 
 ${found}
 
-Правь текст, а не обходи находку: замена названа у каждой. Слог — правило о текстах, и проверка видит перечисленные признаки, а не стиль вообще: чистый по ней абзац может быть плохим, но грязный плохой точно."
+Edit the text instead of bypassing the finding: a replacement is named at each of them. Wording is a rule about texts, and the check sees the listed signs, not style at large: a paragraph clean by it may still be bad, a dirty one is bad for certain."
 
 # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
 # The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
@@ -79,5 +79,5 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"prose-style-guard: канцелярит в новом тексте."}}\n'
+    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"prose-style-guard: officialese in the new text."}}\n'
 exit 0

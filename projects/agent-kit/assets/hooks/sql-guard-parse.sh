@@ -33,9 +33,9 @@ normalize() {
             } elsif ($ch eq q{"} || $ch eq q{'"'"'}) {
                 $quote = $ch; $out .= $ch;
             } elsif ($ch eq "\n" || $ch eq ";") {
-                $out .= "\x01";              # граница независимых команд
+                $out .= "\x01";              # the boundary of independent commands
             } elsif ($ch eq "|") {
-                $out .= "\x02";              # граница звена конвейера
+                $out .= "\x02";              # the boundary of a pipeline link
             } elsif ($ch eq "&") {
                 $out .= "\x01";
             } else {
@@ -179,7 +179,7 @@ addr_segments() {
 sql_collect_segments() {
     segments="$(client_segments)"
     if [ -z "$segments" ]; then
-        if [ -n "$conn" ] || [ "$context" != "команда psql/prisma" ]; then
+        if [ -n "$conn" ] || [ "$context" != "a psql/prisma command" ]; then
             segments="$flat"
         else
             # A command where the client name met only in the arguments of reading tools delivers

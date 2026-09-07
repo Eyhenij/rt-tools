@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/docs-guard.sh · adc9b12982e7 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/docs-guard.sh · ba48d6678b4f · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|NotebookEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Guard of the pair "an edit and its document". PreToolUse.
@@ -51,13 +51,13 @@ decide() {
         if command -v rt_deny_tail >/dev/null 2>&1; then
             reason="$2
 
-$(rt_deny_tail "строка \`Docs-skip: <причина>\` в теле коммита; пустая причина не принимается")"
+$(rt_deny_tail "the line \`Docs-skip: <reason>\` in the commit body; an empty reason is not accepted")"
         fi
     fi
 
     jq -n --arg d "$1" --arg r "$reason" \
         '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:$d,permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Документ едет тем же коммитом."}}\n'
+        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The document goes by the same commit."}}\n'
     exit 0
 }
 
@@ -97,11 +97,11 @@ case "$tool" in
         case "$target" in
             */"$laws_dir"/*.implementation.md | "$laws_dir"/*.implementation.md) exit 0 ;;
             */"$laws_dir"/*.md | "$laws_dir"/*.md)
-                decide ask "Правка закона: \`${target##*/}\`. Закон описывает договорённость о продукте, а не устройство кода, — назови владельцу, что и почему меняешь, и дождись ответа. Если правка уже согласована, подтверди вызов."
+                decide ask "An edit of a law: \`${target##*/}\`. A law describes an agreement about the product, not the layout of the code — name to the owner what you are changing and why, and wait for the answer. If the edit is already agreed, confirm the call."
                 ;;
             */"$overrides_dir"/laws/*.implementation.md | "$overrides_dir"/laws/*.implementation.md) exit 0 ;;
             */"$overrides_dir"/laws/*.md | "$overrides_dir"/laws/*.md)
-                decide ask "Правка закона надстройкой: \`${target##*/}\`. Разложенный файл переписывает раскладка, поэтому правка надстройки — это правка самого закона: назови владельцу, что и почему меняешь, и дождись ответа. Если правка уже согласована, подтверди вызов."
+                decide ask "An edit of a law by an override: \`${target##*/}\`. A laid-out file is rewritten by the layout, so an edit of the override is an edit of the law itself: name to the owner what you are changing and why, and wait for the answer. If the edit is already agreed, confirm the call."
                 ;;
         esac
         exit 0
@@ -212,7 +212,7 @@ for rule in $(printf '%s\n' "$paths" | grep -E '/SKILL\.md$'); do
     has_path "$companion" && continue
 
     if [ "$(statements_of "$rule")" != "$(git show "HEAD:$rule" 2>/dev/null | awk "$STATEMENTS")" ]; then
-        add "утверждения \`$rule\` правятся без спутника — добавь в коммит \`$companion\`"
+        add "the statements of \`$rule\` are edited without the companion — add \`$companion\` to the commit"
     fi
 done
 
@@ -238,7 +238,7 @@ if rt_needs rt_docs_pair_for docs-guard; then
         [ -z "$want" ] && continue
         # The pair counts as arrived if at least one file of the commit fits the pattern.
         printf '%s\n' "$paths" | grep -qE "$want" && continue
-        add "\`$file\` правится без документа — тем же коммитом ждёт \`$want\`"
+        add "\`$file\` is edited without its document — the same commit awaits \`$want\`"
     done <<EOF
 $paths
 EOF
@@ -306,14 +306,14 @@ fi
 
 for root in $need_readme; do
     [ -d "$root" ] || continue   # либу удалили целиком — править в ней нечего
-    has_path "$root/README.md" || add "состав либы \`$root\` изменился без правки \`$root/README.md\`"
+    has_path "$root/README.md" || add "the content of the lib \`$root\` changed without an edit of \`$root/README.md\`"
 done
 
 if [ -n "$problems" ]; then
-    decide deny "BLOCKED: коммит правит код, но не документ, который его описывает.
+    decide deny "BLOCKED: the commit edits code but not the document that describes it.
 ${problems}
 
-Текст правится в той же ветке, что и код: документ, разошедшийся с деревом, выглядит действующей справкой и уводит следующего читателя. Если правка документа здесь действительно не нужна — назови причину строкой \`Docs-skip: <причина>\` в теле коммита, она останется в истории."
+Text is edited in the same branch as the code: a document that has drifted from the tree looks like a current reference and leads the next reader astray. If an edit of the document really is not needed here — name the reason by the line \`Docs-skip: <reason>\` in the commit body, it stays in the history."
 fi
 
 # ── 4. The laws ───────────────────────────────────────────────────────────────
@@ -334,10 +334,10 @@ if [ -d "$laws_dir" ] && ! printf '%s\n' "$paths" | grep -qE "^${laws_dir}/([^/]
     done
 
     if [ -n "$touched" ]; then
-        decide ask "Правка задевает места, где исполняются статьи законов:
+        decide ask "The edit touches the places where articles of laws are carried out:
 ${touched}
 
-Законы лежат в \`${laws_dir}/\`, привязка — в спутниках рядом. Прочитай закон и скажи владельцу, сошлась ли с ним правка: если правка его уточняет или ему противоречит, закон правится в этой же ветке, но только с его ведома. Если закон не изменился — подтверди вызов."
+The laws lie in \`${laws_dir}/\`, the binding — in the companions next to them. Read the law and tell the owner whether the edit agrees with it: if the edit refines it or contradicts it, the law is edited in this same branch, but only with their knowledge. If the law has not changed — confirm the call."
     fi
 fi
 

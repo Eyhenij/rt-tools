@@ -71,12 +71,12 @@ seen="$(jq -s -r --arg id "$run_id" '
     [.[] | select(.type == "assistant") | (.message.content // [])[] | select(.type == "tool_use")
        | ((.input.command // "") | tostring)] as $used
     | (($used | join("\n")) | test("run[[:space:]]+view[^\\n]*" + $id + "|" + $id + "[^\\n]*--log")) as $read
-    | if $read then "читал" else "не-читал" end
+    | if $read then "read" else "not-read" end
 ' "$transcript" 2>/dev/null)"
 
-[ "$seen" = "читал" ] && exit 0
+[ "$seen" = "read" ] && exit 0
 
-reason="BLOCKED by rerun-guard: перезапуск задания ${run_id} без прочитанного журнала. Красное на прогоне бывает двух родов, и в списке они выглядят одинаково: отказ хостинга на шаге подготовки лечится перезапуском, дефект ветки — не лечится им вовсе, и круг повторяется, пока журнал не открыт. Прочитай журнал этого задания — ${host_cli} run view ${run_id} --log-failed — и повтори вызов. Гард судит порядок, а не причину падения: что в журнале написано, судишь ты."
+reason="BLOCKED by rerun-guard: a rerun of the run ${run_id} without its output read. Red on a run comes in two kinds, and in the list they look the same: a hosting refusal on the preparation step is cured by a rerun, a defect of the branch is not cured by it at all, and the circle repeats until the output is opened. Read the output of this run — ${host_cli} run view ${run_id} --log-failed — and repeat the call. The guard judges the order, not the cause of the fall: what is written in the output you judge yourself."
 
 # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
 # The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
@@ -90,5 +90,5 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"rerun-guard: журнал задания за этот ход не читался."}}\n'
+    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"rerun-guard: the output of the run was not read in this turn."}}\n'
 exit 0

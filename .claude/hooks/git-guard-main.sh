@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/git-guard-main.sh · 8c95a5406671 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/git-guard-main.sh · 2184a5a63357 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, hooks/guard-note.sh
 # Guard of the main branch. PreToolUse on a commit call.
@@ -113,7 +113,7 @@ fi
 
 [ "$branch" = "$default" ] || exit 0
 
-reason="Отбито: коммит прямо в «${default}». Работа едет через ветку и PR — правило git-workflow. Заведи ветку отдельным вызовом и коммить в неё: подготовленные изменения при этом сохранятся. Если коммит в ${default} действительно нужен — спроси владельца, сам не обходи."
+reason="Refused: a commit straight into «${default}». Work travels through a branch and a PR — the rule git-workflow. Create a branch by a separate call and commit into it: the staged changes stay in place. If a commit into ${default} really is needed — ask the owner, do not bypass it yourself."
 
 # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
 # The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
@@ -127,6 +127,6 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Коммит в главную ветку отбит. Заведи ветку."}}\n'
+    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"A commit into the main branch is refused. Create a branch."}}\n'
 
 exit 0

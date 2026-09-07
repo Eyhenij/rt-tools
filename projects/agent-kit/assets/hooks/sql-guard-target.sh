@@ -41,7 +41,7 @@ sql_resolve_target() {
     # recognised connection decides, and if it is unknown, the branch below asks the user.
     is_scratch=""
     addr_other=""
-    if [ -z "$conn" ] && [ "$context" != "запрос через подключение редактора (обёртка исполнителя)" ]; then
+    if [ -z "$conn" ] && [ "$context" != "a request through the connection of the editor (the wrapper of the executor)" ]; then
         while IFS= read -r seg; do
             [ -z "$seg" ] && continue
             if [ -n "$PROD_DSN" ] && printf '%s' "$seg" | grep -qE "$PROD_DSN"; then
@@ -99,7 +99,7 @@ sql_pass_scratch() {
 #   psql -l / --version / --help       — a connection check without a query
 sql_check_prod() {
     if [ -n "$is_prod" ] && [ -n "$is_write" ]; then
-        deny "BLOCKED: запись в БОЕВОЕ хранилище (${context}). Адрес ведёт на бой — оттуда данные не восстанавливаются ничем, кроме копии. Схема на бою меняется миграцией через выкатку, данные — через панель владельца. Если правка данных на бою действительно нужна, её делает владелец руками, предварительно сняв копию; гард обойти нельзя."
+        deny "BLOCKED: a write into the PRODUCTION storage (${context}). The address leads to production — data is restored from there by nothing but a copy. The schema in production is changed by a migration through the rollout, the data — through the panel of the owner. If an edit of production data really is needed, the owner makes it by hand, having taken a copy first; the guard cannot be bypassed."
     fi
 
     if [ -n "$is_prod" ]; then
@@ -136,7 +136,7 @@ $segments
 EOF
 
         if [ -n "$unproven" ]; then
-            deny "BLOCKED: вызов клиента БД против БОЕВОЙ базы (${context}). На проде разрешено только доказанное чтение — \`pg_dump\` без \`--clean\`, одиночный SELECT через \`-c\`, либо \`-l\`/\`--version\`. Всё остальное отклоняется, даже если гард просто не разобрал команду: содержимое файлов (\`-f\`, \`< dump.sql\`), \`\\copy\` и восстановление дампа ему не видны. Если нужен разбор данных боевой базы — снимай дамп и работай с локальной копией."
+            deny "BLOCKED: a call of the database client against the PRODUCTION database (${context}). In production only a proven read is allowed — \`pg_dump\` without \`--clean\`, a single SELECT through \`-c\`, or \`-l\`/\`--version\`. Everything else is refused, even when the guard simply did not parse the command: the content of files (\`-f\`, \`< dump.sql\`), \`\\copy\` and restoring a dump are invisible to it. If an analysis of production data is needed — take a dump and work with a local copy."
         fi
     fi
 }

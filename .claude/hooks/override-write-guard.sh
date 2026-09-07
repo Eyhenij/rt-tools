@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/override-write-guard.sh · 724a1054e0c8 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/override-write-guard.sh · 5df68f8880cf · правится надстройкой, не здесь
 # rt-hook: PreToolUse Write|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, hooks/guard-note.sh
 # Guard against wiping out an override: writing over is not the same as editing.
@@ -43,7 +43,7 @@ deny() {
 
     reason="$1 $(rt_deny_tail "$2")"
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Гард затирания надстройки."}}\n'
+        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The override overwrite guard."}}\n'
     exit 0
 }
 
@@ -101,8 +101,8 @@ while IFS= read -r candidate; do
     sections="$(grep -c '^## ' "$candidate" 2>/dev/null || printf '0')"
     resource="${relative#"$overrides_dir"/}"
 
-    deny "BLOCKED by override-write-guard: «${relative}» — надстройка этого дерева, и в ней уже лежит ${lines} строк, разделов «## » — ${sections}. Запись целиком уносит все разделы, которых эта правка не касалась, и на их место молча возвращается пакетный текст ресурса «${resource}»: раскладка после этого сходится, проверки зелёные, а сказанного деревом о себе больше нет. Правь по месту — правкой раздела, а не записью файла." \
-        "новый раздел дописывается в конец: надстройка сливается с пакетным ресурсом по заголовку «## », и пакетный текст замещается только теми разделами, которые дерево назвало"
+    deny "BLOCKED by override-write-guard: «${relative}» is an override of this tree, and it already holds ${lines} lines, sections «## » — ${sections}. A whole-file write carries away every section this edit did not touch, and the package text of the resource «${resource}» silently returns in their place: the layout matches after that, the checks are green, and what the tree said about itself is gone. Edit in place — by an edit of a section, not by a write of the file." \
+        "a new section is appended at the end: the override merges with the package resource by the heading «## », and the package text is replaced only by the sections the tree named"
 done <<EOF
 $candidates
 EOF

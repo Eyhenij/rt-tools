@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/browser-guard-device-id.sh · b0bba3f0c2f6 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/browser-guard-device-id.sh · a3abccd73040 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__select_browser
 # rt-hook: PostToolUse mcp__claude-in-chrome__select_browser
 # Requires: hooks/deny-tail.sh
@@ -75,5 +75,5 @@ fi
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
 command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
 
-echo "Профиль «${requested}» не тот, что закреплён за проектом. Бери ${device_id} — единственный профиль, где сделан вход. $(rt_deny_tail)" >&2
+echo "The profile «${requested}» is not the one pinned to the project. Take ${device_id} — the only profile where the sign-in was made. $(rt_deny_tail)" >&2
 exit 2

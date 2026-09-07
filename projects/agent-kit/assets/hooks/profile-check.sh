@@ -35,9 +35,9 @@ rt_needs() {
     rt_needs_key="${3:-$(date +%Y%m%d 2>/dev/null || printf 'nosession')}"
     rt_needs_mark="$(rt_needs_mark_dir)/rt-kit-needs-$1-$rt_needs_key"
     if [ ! -f "$rt_needs_mark" ]; then
-        printf '%s: нет функции %s — её определяют в .claude/rt-kit/project.sh, а умолчание везёт пакет в .claude/rt-kit/defaults/project.sh\n' \
-            "${2:-хук}" "$1" >&2
-        printf 'проверка не работает, действие пропущено\n' >&2
+        printf '%s: no function %s — it is defined in .claude/rt-kit/project.sh, and the default is carried by the package in .claude/rt-kit/defaults/project.sh\n' \
+            "${2:-hook}" "$1" >&2
+        printf 'the check does not work, the action is let through\n' >&2
         : >"$rt_needs_mark" 2>/dev/null || true
     fi
 

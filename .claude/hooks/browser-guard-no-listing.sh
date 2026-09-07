@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/browser-guard-no-listing.sh · 5fad5756e9a8 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/browser-guard-no-listing.sh · ebeed41f172c · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__(list_connected_browsers|switch_browser)
 # Requires: hooks/deny-tail.sh
 # Guard against listing and switching browsers. PreToolUse.
@@ -29,5 +29,5 @@ device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/de
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
 command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
 
-echo "Не перечисляй и не переключай браузеры. Вызови выбор браузера с профилем ${device_id} — единственным, где сделан вход. $(rt_deny_tail)" >&2
+echo "Do not list and do not switch browsers. Call the browser selection with the profile ${device_id} — the only one where the sign-in was made. $(rt_deny_tail)" >&2
 exit 2

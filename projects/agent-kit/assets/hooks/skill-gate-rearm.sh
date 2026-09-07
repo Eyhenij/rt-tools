@@ -29,6 +29,6 @@ rm -f "${TMPDIR:-/tmp}/claude-skill-gate/${sid}.loaded" 2>/dev/null
 # the gate answers that they were not — and the session spends a turn finding out which of the two
 # is right. A turn was spent that way four times in one session. The line removes the contradiction:
 # the rule text is no longer in the context, which is why it is asked for again.
-jq -n '{hookSpecificOutput:{hookEventName:"SessionStart",additionalContext:"Гейт правил взведён заново: сжатие контекста вынесло из него сам текст правил, и каждая область спросит своё правило ещё раз. Прежняя загрузка не считается — грузи правило и работай дальше."}}' 2>/dev/null
+jq -n '{hookSpecificOutput:{hookEventName:"SessionStart",additionalContext:"The rules gate is armed anew: the compaction carried the text of the rules themselves out of the session, and every area will ask for its rule once more. The former loading does not count — load the rule and work on."}}' 2>/dev/null
 
 exit 0

@@ -22,7 +22,7 @@ sql_read_request() {
         mcp__webstorm__execute_sql_query)
             sql="$(printf '%s' "$input" | jq -r '.tool_input.queryText // empty' 2>/dev/null)"
             conn="$(printf '%s' "$input" | jq -r '.tool_input.connectionId // empty' 2>/dev/null)"
-            context="запрос через подключение редактора"
+            context="a request through the connection of the editor"
             ;;
         # The IDE terminal executes the same command line and puts it into the same field as Bash:
         # without this branch the whole guard was bypassed by changing the tool.
@@ -65,7 +65,7 @@ sql_read_request() {
             if [ -n "$inner_sql" ]; then
                 sql="$inner_sql"
                 conn="$inner_conn"
-                context="запрос через подключение редактора (обёртка исполнителя)"
+                context="a request through the connection of the editor (the wrapper of the executor)"
             else
 
             # A command that delivers nothing anywhere is not subject to parsing — even if the
@@ -114,7 +114,7 @@ sql_read_request() {
             fi
 
             sql="$cmd"
-            context="команда psql/prisma"
+            context="a psql/prisma command"
             fi
             ;;
         *) exit 0 ;;
