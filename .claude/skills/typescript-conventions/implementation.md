@@ -30,15 +30,15 @@
 (жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает
 то, чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
 
-- **Род объявления виден по префиксу имени, и это держат три правила линтера.** — `tools/eslint-rules/rules/require-interface-prefix.ts:RULE_NAME` — с ним заодно `require-type-prefix` и `require-enum-prefix`, отказ на всех `.ts`. Накопленное к дню включения ими и найдено: приставки нет у 341 псевдонима типа, у 17 перечислений и у 10 интерфейсов.
-- **Источник, за которым следят, назван суффиксом.** — `tools/eslint-rules/rules/require-source-suffix-for-subjects.ts:REQUIRED_SUFFIX` — отказ линтера; нарушений в дереве нет.
-- **Суффикс имени файла находит в нём обещанное объявление.** — **Не проверяется ничем.** Имя файла с объявлением внутри не сверяет ни линтер, ни сборка: файл `*.service.ts` без службы законен для обоих.
-- **Файл не длиннее 500 строк, и считаются все строки — пустые и комментарии тоже.** — Для `.ts` — `max-lines` в `eslint.config.mjs`, считаются все строки; одноимённое правило набора sonarjs выключено — оно считает только код. Тексты и стили держит `tools/check-file-size.mjs:LIMIT` тем же числом.
-- **Тип берётся из того пакета, где объявлен.** — `tsconfig.base.json:paths` — алиасы пакетов; импорт мимо них отбивает `@nx/enforce-module-boundaries`, относительный путь через `projects/*` не проходит.
-- **Значение, объявленное одной стороной обмена, второй стороной не пересчитывается, а берётся у первой.** — `tools/cargo-mark.mjs:treeSlug` — признак дерева берётся у пакета тем же вызовом, каким его считает отправка; своя копия счёта уже разошлась с пакетной молча.
-- **Значение из закрытого набора приходит перечислением `E<Имя>`, а не строкой или числом в месте использования.** — **Не проверяется ничем.** Линтер судит имя перечисления, но не то, что набор объявлен перечислением, а не строками на местах
-- **Отметка об устаревании ставится вместе с обходом потребителей.** — **Не проверяется ничем.** Отметка — комментарий, и обход потребителей машине не виден. Образец — снятый набор `.c-button`: карта перехода на `.rtui-btn` осталась в `projects/ui-kit/src/styles/TOKENS.md`.
-- **Двухступенчатое приведение `as unknown as` запрещено правилом линтера.** — `eslint.config.mjs:no-restricted-syntax` — отбор по узлу разбора, спеки из-под запрета выведены тем же блоком.
+- **The kind of a declaration shows in the name prefix, and three linter rules hold that.** — `tools/eslint-rules/rules/require-interface-prefix.ts:RULE_NAME` — с ним заодно `require-type-prefix` и `require-enum-prefix`, отказ на всех `.ts`. Накопленное к дню включения ими и найдено: приставки нет у 341 псевдонима типа, у 17 перечислений и у 10 интерфейсов.
+- **A watched source is named by a suffix.** — `tools/eslint-rules/rules/require-source-suffix-for-subjects.ts:REQUIRED_SUFFIX` — отказ линтера; нарушений в дереве нет.
+- **The file name suffix finds the promised declaration inside.** — **Не проверяется ничем.** Имя файла с объявлением внутри не сверяет ни линтер, ни сборка: файл `*.service.ts` без службы законен для обоих.
+- **A file is no longer than 500 lines, and all lines count — blank ones and comments too.** — Для `.ts` — `max-lines` в `eslint.config.mjs`, считаются все строки; одноимённое правило набора sonarjs выключено — оно считает только код. Тексты и стили держит `tools/check-file-size.mjs:LIMIT` тем же числом.
+- **A type is taken from the package where it is declared.** — `tsconfig.base.json:paths` — алиасы пакетов; импорт мимо них отбивает `@nx/enforce-module-boundaries`, относительный путь через `projects/*` не проходит.
+- **A value declared by one side of an exchange is not recomputed by the other side but taken from the first.** — `tools/cargo-mark.mjs:treeSlug` — признак дерева берётся у пакета тем же вызовом, каким его считает отправка; своя копия счёта уже разошлась с пакетной молча.
+- **A value from a closed set arrives as an enum `E<Name>`, not as a string or a number at the place of use.** — **Не проверяется ничем.** Линтер судит имя перечисления, но не то, что набор объявлен перечислением, а не строками на местах
+- **A deprecation mark is set together with a walk over the consumers.** — **Не проверяется ничем.** Отметка — комментарий, и обход потребителей машине не виден. Образец — снятый набор `.c-button`: карта перехода на `.rtui-btn` осталась в `projects/ui-kit/src/styles/TOKENS.md`.
+- **The two-step cast `as unknown as` is forbidden by a linter rule.** — `eslint.config.mjs:no-restricted-syntax` — отбор по узлу разбора, спеки из-под запрета выведены тем же блоком.
 
 ## Что ещё стоит знать при чтении кода
 

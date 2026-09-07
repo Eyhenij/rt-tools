@@ -5,85 +5,88 @@ law: frontend-application
 description: Rule under the frontend-application law. Load when editing any *.component.ts and its template. Names the order of decorator properties, import grouping, template conventions and the mandatory qa-dataid. Ready-made code is in pattern component-structure-new.
 ---
 
-# Файл компонента — как это устроено здесь
+# Component file — how it works here
 
-Правило под закон `docs/constitution/frontend-application.md`. Закон говорит, что должно быть
-верно; здесь — как устроен сам файл компонента и его шаблон. Состояние и потоки —
-`angular-patterns`, стили — `styling-bem`, окружение браузера — `platform-access`, слой
-обращения к серверу — `api-layer`. Все пять под одним законом.
+Rule under the law `docs/constitution/frontend-application.md`. The law says what must be true; here
+— how the component file itself and its template are arranged. State and streams —
+`angular-patterns`, styles — `styling-bem`, the browser environment — `platform-access`, the server
+access layer — `api-layer`. All five under one law.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                           | Здесь                                                                        |
-| ---------------------------------- | ---------------------------------------------------------------------------- |
-| компонент                          | `<префикс>-<имя>` — префикс один на все приложения дерева                    |
-| готовое, а не вычисление в шаблоне | `computed()`; там, где значение приходит из контекста шаблона, — чистый пайп |
-| якорь для проверки                 | атрибут `qa-dataid` в kebab-case по смыслу элемента                          |
-| корень разметки                    | `:host` с классом блока от `host: { class: '<префикс>-<имя>' }`              |
+| In the law                                       | Here                                                                        |
+| ------------------------------------------------ | --------------------------------------------------------------------------- |
+| component                                        | `<prefix>-<name>` — one prefix for all applications of the tree             |
+| a ready value, not a computation in the template | `computed()`; where the value comes from the template context — a pure pipe |
+| an anchor for a check                            | the `qa-dataid` attribute in kebab-case by the meaning of the element       |
+| markup root                                      | `:host` with the block class from `host: { class: '<prefix>-<name>' }`      |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the first
+tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход правки компонента: где решается разметка, где — привязка, и что ставится на каждый
-интерактивный элемент.
+The flow of editing a component: where the markup is decided, where the binding is, and what is put
+on every interactive element.
 
 ```mermaid
 flowchart TD
-    A[Правится компонент] --> B[Селектор элементный, класс блока на хосте]
-    B --> C{В шаблоне нужен вычисленный вид}
-    C -->|Да| D[Значение считается в классе, шаблон методов не зовёт]
-    C -->|Нет| E[Разметка пишется как есть]
-    D --> F{Есть интерактивный элемент}
+    A[A component is edited] --> B[The selector is an element, the block class is on the host]
+    B --> C{The template needs a computed view}
+    C -->|Yes| D[The value is computed in the class, the template calls no methods]
+    C -->|No| E[The markup is written as is]
+    D --> F{There is an interactive element}
     E --> F
-    F -->|Да| G[Ставится якорь для спек, а доступность — отдельными атрибутами]
-    F -->|Нет| H[Готово]
-    G --> I{Один компонент в обеих ветках условия}
-    I -->|Да| J[Это условная привязка: ветки сводятся в одну]
-    I -->|Нет| H
+    F -->|Yes| G[An anchor for specs is set, and accessibility — by separate attributes]
+    F -->|No| H[Done]
+    G --> I{One component in both branches of a condition}
+    I -->|Yes| J[That is a conditional binding: the branches are merged into one]
+    I -->|No| H
     J --> H
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Шаблон не зовёт методов.** Правило линтера банит `{{ getTotal() }}` и `@if
-(computeFlag())`, чтения сигналов не трогает.
-- **Каждый интерактивный элемент несёт `qa-dataid`.** Это единственный якорь спек: классы BEM
-  меняются вместе с вёрсткой, а поиск по роли и тексту ломается на локалях перевода.
-- **Компоненту разрешён только элементный селектор.** Правило линтера требует у компонента
-  элемент с приставкой дерева и именем через дефис, у директивы — атрибут и имя одним словом.
-  Приём, который вешается на чужой тег, пишется директивой с самого начала: у компонента с
-  селектором-атрибутом линт краснеет уже после того, как написаны все три файла и стили.
-- **Класс блока висит на хосте, а не на обёртке внутри шаблона.** Лишняя обёртка вокруг всех
-  детей — это раскладка, и ей место на `:host`.
+- **The template calls no methods.** The linter rule bans `{{ getTotal() }}` and `@if
+  (computeFlag())`, signal reads it does not touch.
+- **Every interactive element carries `qa-dataid`.** It is the only anchor of the specs: BEM classes
+  change with the layout, and a search by role and text breaks on translation locales.
+- **A component is allowed only an element selector.** The linter rule demands from a component an
+  element with the tree prefix and a hyphenated name, from a directive — an attribute and a one-word
+  name. A technique that hangs on a foreign tag is written as a directive from the start: with a
+  component on an attribute selector the lint turns red only after all three files and the styles
+  are written.
+- **The block class hangs on the host, not on a wrapper inside the template.** An extra wrapper
+  around all the children is layout, and its place is on `:host`.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Порядок свойств декоратора, группировку импортов и самозакрывающиеся теги не проверяет ничто —
-они держатся чтением соседнего файла. Проверки на прямое обращение к окружению браузера тоже
-нет — это `Q-FA-1` в законе.
+The order of decorator properties, import grouping and self-closing tags are checked by nothing —
+they are held by reading the neighbouring file. There is no check for a direct call to the browser
+environment either — that is `Q-FA-1` in the law.
 
-## Паттерны
+## Patterns
 
-- `component-structure-new` — готовый файл компонента и договорённости шаблона.
+- `component-structure-new` — a ready-made component file and the template conventions.
 
-## Ловушки
+## Pitfalls
 
-- **`href="#id"` в разметке не работает.** Сборка одна на все локали, в разметке стоит
-  `<base href="/">`, и браузер разрешает фрагмент относительно базы: вместо прокрутки
-  получается полная навигация с перезагрузкой. Прокрутка — через роутер:
-  `<a [routerLink]="[]" fragment="booking">`.
-- **Один и тот же компонент в обеих ветках `@if` — это условная привязка.** Две ветки с
-  разными входами пересоздают компонент и теряют его состояние.
-- **Кит, который рисуется в оверлее, из хоста вызывающего не адресуется:** его разметка лежит
-  вне хоста, и `[qa-dataid="x"] button` до кнопок не дотянется. Такие кнопки носят собственные
-  якоря прямо в шаблоне кита, а гард каталог зависимостей не проверяет.
-- **`qa-dataid` не заменяет `aria-label` и роли:** доступность отдельно, якорь отдельно. И не
-  снимается при правке вёрстки — на него завязаны спеки.
-- Готовое из кита не пишется заново: своя разметка с `role="alert"`, `<table>`,
-  `role="dialog"`, `role="tablist"` или `role="tooltip"` означает, что мимо `<префикс>-message`,
-  `<префикс>-table`, `<префикс>-dialog`, `<префикс>-tabs` или `<префикс>-tooltip` прошли. Правило целиком — `reuse-first`.
+- **`href="#id"` in markup does not work.** The build is one for all locales, the markup holds
+  `<base href="/">`, and the browser resolves the fragment against the base: instead of a scroll you
+  get a full navigation with a reload. Scrolling — through the router: `<a [routerLink]="[]"
+  fragment="booking">`.
+- **The same component in both branches of an `@if` is a conditional binding.** Two branches with
+  different inputs recreate the component and lose its state.
+- **A kit that draws in an overlay is not addressed from the caller's host:** its markup lies
+  outside the host, and `[qa-dataid="x"] button` does not reach the buttons. Such buttons carry
+  their own anchors right in the kit template, and the guard does not check the dependency
+  catalogue.
+- **`qa-dataid` does not replace `aria-label` and roles:** accessibility separately, the anchor
+  separately. And it is not removed when the layout is edited — the specs hang on it.
+- What the kit has ready is not written anew: own markup with `role="alert"`, `<table>`,
+  `role="dialog"`, `role="tablist"` or `role="tooltip"` means that `<prefix>-message`,
+  `<prefix>-table`, `<prefix>-dialog`, `<prefix>-tabs` or `<prefix>-tooltip` were bypassed. The rule
+  whole — `reuse-first`.

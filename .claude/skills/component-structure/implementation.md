@@ -33,10 +33,10 @@
 (жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает
 то, чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
 
-- **Шаблон не зовёт методов.** — `projects/ui-kit/src/lib/ui-kit/buttons/unified-button/rtui-button.component.ts:modifiers` — запись модификаторов собирается вычисляемым и привязывается один раз. Линтером не держится: `@angular-eslint/template/no-call-expression` в `eslint.config.mjs` выключен, пока замечание в шаблоне нечем погасить точечно.
-- **Каждый интерактивный элемент несёт `qa-dataid`.** — `projects/ui-kit-v2/src/testing/rt-kit-testing.ts:qa` — искалка по якорю; сами якоря стоят в шаблонах второго кита, в первом их нет ни в одном.
-- **Компоненту разрешён только элементный селектор.** — **Не проверяется ничем.** Правила линтера на род селектора в конфиге нет; все компоненты обоих китов объявлены элементными, и нарушение поймает разбор.
-- **Класс блока висит на хосте, а не на обёртке внутри шаблона.** — `tools/eslint-rules/rules/require-host-bem-block.ts:RULE_NAME` — правило объявлено замечанием, но роняет прогон наравне с отказом — у цели `lint` стоит `maxWarnings: 0`. В первом ките класс хоста стоит не везде: 39 несогласий, за ними задача #113.
+- **The template calls no methods.** — `projects/ui-kit/src/lib/ui-kit/buttons/unified-button/rtui-button.component.ts:modifiers` — запись модификаторов собирается вычисляемым и привязывается один раз. Линтером не держится: `@angular-eslint/template/no-call-expression` в `eslint.config.mjs` выключен, пока замечание в шаблоне нечем погасить точечно.
+- **Every interactive element carries `qa-dataid`.** — `projects/ui-kit-v2/src/testing/rt-kit-testing.ts:qa` — искалка по якорю; сами якоря стоят в шаблонах второго кита, в первом их нет ни в одном.
+- **A component is allowed only an element selector.** — **Не проверяется ничем.** Правила линтера на род селектора в конфиге нет; все компоненты обоих китов объявлены элементными, и нарушение поймает разбор.
+- **The block class hangs on the host, not on a wrapper inside the template.** — `tools/eslint-rules/rules/require-host-bem-block.ts:RULE_NAME` — правило объявлено замечанием, но роняет прогон наравне с отказом — у цели `lint` стоит `maxWarnings: 0`. В первом ките класс хоста стоит не везде: 39 несогласий, за ними задача #113.
 
 ## Что ещё стоит знать при чтении кода
 

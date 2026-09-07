@@ -4,96 +4,97 @@ kind: rule
 law: frontend-application
 description: Rule under the frontend-application law. Load when an edit touches the global object or the runtime — window, globalThis, PLATFORM_ID, localStorage. Names the DI tokens and the pitfalls of server-side page rendering. Does not apply under libs/api and apps/api. Pattern platform-access-di.
 ---
-<!-- rt-kit v0.25.0 · rules/platform-access.md · 5e7cd989619b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/platform-access.md · 28138749f60c · правится надстройкой, не здесь -->
 
-# Окружение браузера — как это устроено здесь
+# Browser environment — how it works here
 
-Правило под закон `docs/constitution/frontend-application.md`. Закон говорит, что должно быть
-верно; здесь — чем в этом дереве заменяется прямое обращение к глобальному объекту. Состояние
-— `angular-patterns`, файл компонента — `component-structure`, стили — `styling-bem`, слой
-обращения к серверу — `api-layer`. Все пять под одним законом.
+Rule under the law `docs/constitution/frontend-application.md`. The law says what must be true; here
+— what replaces a direct call to the global object in this tree. State — `angular-patterns`, the
+component file — `component-structure`, styles — `styling-bem`, the server access layer —
+`api-layer`. All five under one law.
 
-Правило про фронт: `libs/api/**` и `apps/api/**` — это NestJS, там своя среда, и ничего из
-перечисленного не применяется.
+The rule is about the front end: `libs/api/**` and `apps/api/**` are NestJS, the environment there
+is its own, and nothing of the listed applies.
 
-## Как это называется здесь
+## What it is called here
 
-| Прямое обращение                         | Здесь                                              |
-| ---------------------------------------- | -------------------------------------------------- |
-| `globalThis.open(...)`, `window.open()`  | `inject(WINDOW).open(...)`                         |
-| `globalThis.crypto.randomUUID()`         | `inject(WINDOW).crypto.randomUUID()`               |
-| `isPlatformBrowser(inject(PLATFORM_ID))` | `inject(PlatformService).isPlatformBrowser`        |
-| `document.defaultView`                   | `inject(WINDOW)`                                   |
-| прямой `document`                        | `inject(DOCUMENT)` из `@angular/common` — как было |
-| инициализация DOM после отрисовки        | `afterNextRender()`                                |
+| Direct call                              | Here                                                  |
+| ---------------------------------------- | ----------------------------------------------------- |
+| `globalThis.open(...)`, `window.open()`  | `inject(WINDOW).open(...)`                            |
+| `globalThis.crypto.randomUUID()`         | `inject(WINDOW).crypto.randomUUID()`                  |
+| `isPlatformBrowser(inject(PLATFORM_ID))` | `inject(PlatformService).isPlatformBrowser`           |
+| `document.defaultView`                   | `inject(WINDOW)`                                      |
+| direct `document`                        | `inject(DOCUMENT)` from `@angular/common` — as before |
+| DOM initialisation after rendering       | `afterNextRender()`                                   |
 
-`WINDOW`, `PlatformService` и `StorageService` приходят из `@rt-tools/core`.
+`WINDOW`, `PlatformService` and `StorageService` come from `@rt-tools/core`.
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the first
+tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход обращения к среде исполнения: чем берётся глобальный объект, где проверяется среда и что
-делается в файле без внедрения зависимостей.
+The flow of reaching the runtime: how the global object is taken, where the environment is checked
+and what is done in a file without dependency injection.
 
 ```mermaid
 flowchart TD
-    A[Коду нужен глобальный объект или среда] --> B{Где он лежит}
-    B -->|Класс с внедрением зависимостей| C[Глобальный объект приходит токеном, а не берётся напрямую]
-    B -->|Чистая функция| D[Окно принимается параметром: внедрения там нет]
-    C --> E{Нужно знать, где исполняется код}
+    A[Code needs the global object or the environment] --> B{Where it lies}
+    B -->|A class with dependency injection| C[The global object comes by a token, not taken directly]
+    B -->|A pure function| D[The window is taken as a parameter: there is no injection there]
+    C --> E{It matters where the code runs}
     D --> E
-    E -->|Да| F[Спрашивается служба платформы, а не наличие имени в окружении]
-    E -->|Нет| G[Работа идёт]
+    E -->|Yes| F[The platform service is asked, not the presence of a name in the environment]
+    E -->|No| G[Work goes on]
     F --> G
-    G --> H{Класс создаётся на подъёме приложения}
-    H -->|Да| I[Проверяется и отдача страницы сервером: линтер этого не видит]
-    H -->|Нет| J[Готово]
+    G --> H{The class is created at application startup}
+    H -->|Yes| I[Server-side page rendering is checked too: the linter does not see it]
+    H -->|No| J[Done]
     I --> J
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Глобальный объект приходит токеном `WINDOW`, а не берётся напрямую.** Тип уточняется
-  приведением к `Window & typeof globalThis`: конструкторы вроде `IntersectionObserver`
-  объявлены на глобальном объекте, а не на интерфейсе `Window`.
-- **Среда проверяется через `PlatformService`, а не через `typeof window`.** Проверка по
-  наличию глобала верна случайно и ломается на первой же среде, где глобал подставлен.
-- **Прямое обращение к глобальному объекту отбивает линтер.** Шестнадцать имён окружения
-  браузера запрещены на фронтовых деревьях; три места, где прямой доступ осознан, выведены
-  из-под запрета списком в конфиге, а не отключением в строке.
+- **The global object comes by the `WINDOW` token, not taken directly.** The type is narrowed by a
+  cast to `Window & typeof globalThis`: constructors like `IntersectionObserver` are declared on the
+  global object, not on the `Window` interface.
+- **The environment is checked through `PlatformService`, not through `typeof window`.** A check by
+  the presence of a global is right by accident and breaks on the first environment where the global
+  is stubbed.
+- **A direct call to the global object is refused by the linter.** Sixteen browser environment names
+  are banned on the front-end trees; the three places where direct access is deliberate are taken
+  out from under the ban by a list in the config, not by a disable on the line.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Запрет действует на имена, а не на пути к ним: `this.#document.defaultView` линтер пропускает,
-потому что глобального имени в такой строке нет. Такое обращение законно — окно там уже пришло
-внедрением, — но и настоящий обход выглядел бы так же, и увидеть его можно только чтением.
+The ban acts on names, not on paths to them: the linter lets `this.#document.defaultView` through,
+because there is no global name in such a line. Such a call is lawful — the window there already
+came by injection — but a real bypass would look the same, and it can be seen only by reading.
 
-Прямой доступ остаётся в трёх местах, и это осознанно: встроенный скрипт против мелькания темы
-в `apps/site/src/index.html` (работает до подъёма приложения), обработчик отказа подъёма в
-`apps/*/src/main.ts`, и код внутри `page.evaluate` в сквозных спеках — он исполняется в
-странице, вне DI. Новое место в этот список не добавляется без явного согласования владельца.
+Direct access remains in three places, and deliberately: the inline script against theme flicker in
+`apps/site/src/index.html` (it runs before the application starts), the startup failure handler in
+`apps/*/src/main.ts`, and the code inside `page.evaluate` in the end-to-end specs — it runs in the
+page, outside DI. A new place is not added to this list without the owner's explicit agreement.
 
-## Паттерны
+## Patterns
 
-- `platform-access-di` — готовые инжекты, приведение типа, чистые функции, проверка среды.
+- `platform-access-di` — ready-made injects, the type cast, pure functions, the environment check.
 
-## Ловушки
+## Pitfalls
 
-- **Фабрика токена бросает `Window is not available`, если у документа нет `defaultView`.**
-  Под отдачей страницы сервером `defaultView` есть, и инжект полем класса в root-сервисе
-  безопасен, но сервис, обязанный работать без DOM вообще, берёт окно внутри метода под
-  проверкой среды.
-- **После правки, добавляющей `WINDOW` в сервис, который создаётся на подъёме, нужна не только
-  сборка, но и поднятый сервер отдачи страниц.** Сайт — настоящий SSR, и падение видно только
-  там.
-- **Вокруг хранилища проверка среды не нужна:** `StorageService` и так уходит в память вне
-  браузера, и лишний `if (!isBrowser)` вокруг чтения и записи — мёртвый код.
-- **В `*.logic.ts` и `*.util.ts` нет DI:** окно принимается параметром, а инжектит его
-  вызывающий компонент.
-- **Подготавливать состояние сквозной спеки записью в хранилище нельзя:** спека проходит те же
-  шаги, что и пользователь.
+- **The token factory throws `Window is not available` if the document has no `defaultView`.** Under
+  server-side page rendering `defaultView` exists, and an inject as a class field in a root service
+  is safe, but a service that must work without a DOM at all takes the window inside a method under
+  an environment check.
+- **After an edit that adds `WINDOW` to a service created at startup, not only the build is needed
+  but also a running page-rendering server.** The site is real SSR, and the failure shows only
+  there.
+- **No environment check is needed around storage:** `StorageService` falls back to memory outside
+  the browser anyway, and an extra `if (!isBrowser)` around a read and a write is dead code.
+- **There is no DI in `*.logic.ts` and `*.util.ts`:** the window is taken as a parameter, and the
+  calling component injects it.
+- **Preparing the state of an end-to-end spec by writing to storage is not allowed:** the spec walks
+  the same steps as the user.
