@@ -1,305 +1,334 @@
-# Ведение работы командами
+# Leading the work by commands
 
-**Статус:** действует · **Ревизия:** 2026-08-17 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `work-conduct`, `delivery`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-17 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `work-conduct`, `delivery`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Три движения работы пакет везёт командами, а не одними словами: заведение задачи с постановкой
-её в очередь работ, закрытие захода и запрет уносить папку задачи в главную ветку. Все три
-забываются по одному, и забытое видно только тому, кто пришёл следом.
+Three movements of the work the package carries as commands, not as words alone: creating a task
+together with putting it into the work queue, closing the session and the ban on carrying the task
+folder into the main branch. All three are forgotten one at a time, and what is forgotten is visible
+only to whoever comes next.
 
-Поддомен называет, что при этом обязано быть верно: чем подтверждается заведённая задача, что
-делает закрытие захода с веткой и передачей и почему папка задачи разбирается до слияния, а не
-после.
+The subdomain names what must be true at that: what a created task is confirmed by, what the closing
+of a session does to the branch and to the handover, and why the task folder is taken apart before
+the merge, not after.
 
-## Терминология
+## Terminology
 
-- **Работа по правилу** — работа, у которой заведены задача, ветка под её номером и папка задачи;
-  команда узнаёт её по имени ветки и папке, а не по слову исполнителя.
-- **Шаг работы** — именованное действие ведения работы; номер шага один на весь путь от разведки
-  до разбора папки задачи.
-- **Закрытие захода** — последние действия захода: главная ветка приведена к удалённой, влитые
-  ветки сняты, передача написана.
-- **Влитая ветка** — локальная ветка, все коммиты которой уже есть в главной.
-- **Мёртвое отслеживание** — локальная ссылка на удалённую ветку, которой в удалённом больше нет.
-- **Первая колонка** — колонка очереди работ, из которой задачу забирают в работу. Имя ей даёт
-  дерево.
-- **Состояние PR** — то, что очередь работ отвечает о нём одним ответом: есть ли он, черновик ли
-  и есть ли у него разбор.
-- **Разбор PR** — запрошенный ревьювер либо оставленный отзыв, и то и другое не от автора PR.
+- **Work by the rule** — work that has a task, a branch under its number and a task folder created;
+  the command recognises it by the name of the branch and by the folder, not by a word of the
+  executor.
+- **A step of the work** — a named action of leading the work; the number of a step is one for the
+  whole way from the exploration to the taking apart of the task folder.
+- **The closing of a session** — the last actions of a session: the main branch brought to the remote
+  one, the merged branches removed, the handover written.
+- **A merged branch** — a local branch all of whose commits are already in the main one.
+- **A dead tracking** — a local reference to a remote branch that is no longer in the remote.
+- **The first column** — the column of the work queue a task is taken into work from. The name is
+  given to it by the tree.
+- **The state of a PR** — what the work queue answers about it by one answer: whether it exists,
+  whether it is a draft and whether it has a review.
+- **A review of a PR** — a requested reviewer or a left opinion, both not from the author of the PR.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости   | В строке запуска                          |
-| ------------------ | ----------------------------------------- |
-| заведение задачи   | команда заведения задачи в очереди работ  |
-| закрытие захода    | команда закрытия захода                   |
-| требование о папке | отказ гарда на слиянии, с причиной обхода |
-| колонка задачи     | отказ гарда поставки с именем колонки     |
-| разбор PR          | отказ гарда на снятии черновика           |
+| In the agreement            | In the launch line                                               |
+| --------------------------- | ---------------------------------------------------------------- |
+| creating a task             | the command of creating a task in the work queue                 |
+| closing a session           | the command of closing a session                                 |
+| the requirement of a folder | a refusal of the guard at a merge, with the reason of the bypass |
+| the column of a task        | a refusal of the delivery guard with the name of the column      |
+| a review of a PR            | a refusal of the guard at the lifting of the draft               |
 
-## Правила
+## Rules
 
-- **У каждого состояния работы есть раздел в том паттерне, который его ведёт.** Клетка таблицы
-  называет обязательное действие, а раздел говорит, как оно делается и почему ход на этом не
-  кончается. Состояние без раздела читается как конец работы: исполнитель дочитывает паттерн,
-  следующего движения в нём нет, и он пишет отчёт.
-- **Раздел про состояние вне перечня — такое же расхождение, как состояние без раздела.**
-  Переименованное состояние иначе оставляет прежний раздел, и тот выглядит действующим.
-- **Папка задачи не уезжает в главную ветку.** Открытие заявки отбивается, пока ветка везёт
-  папку своей задачи; на слиянии то же условие остаётся вторым рубежом. После слияния разобрать
-  её уже некому: работа перешла к следующей задаче, а заявка, которой папку убрали бы тем же
-  коммитом, закрыта.
-- **Проверяется то, что уедет в главную ветку, а не то, что лежит на машине.** Если папку
-  удалили в рабочем дереве, но не закоммитили, проверка бы прошла, а папка всё равно уехала бы
-  вместе с веткой.
-- **Ветка, разобравшая папку, добавляет запись в каталог архива.** Иначе требование выполняют
-  удалением: снести папку проще, чем разобрать, а слова владельца записаны только в ней. Что
-  именно перенесли, требование не проверяет — это смотрит владелец на ревью.
-- **Уборка стоит до открытия заявки, а не после одобрения.** Кнопку слияния нажимает человек на
-  странице хостинга, куда гард не достаёт, и вливает он, как только видит зелёное: закрывающему
-  коммиту места после одобрения не остаётся. Замысла после уборки на диске нет, и признак
-  отданной работы гард хода работы берёт из истории ветки.
-- **Обход требования пишут с причиной, и он читается без сети.** Строку обхода ищут в тексте
-  команды, а если очередь работ доступна — ещё и в теле PR. Если оставить только сетевой путь,
-  без сети гард отобьёт слияние, причина которого написана в этом же PR. Пустая причина
-  обходом не считается.
-- **Открытый PR, чья ветка везёт папку своей задачи, — расхождение сверки.** Гард судит
-  папку на открытии заявки, но открыть её можно и мимо гарда — из браузера, где хуков нет
-  вовсе: сверка договаривает то, чего гард не увидел. После слияния та же строка чинится уже
-  отдельной задачей. Судится ветка PR, а не рабочее дерево.
-- **Строка обхода начинает строку и подстановки не принимает.** Иначе обход снимает
-  собственное описание: текст, называющий строку обхода, от неё неотличим, а называет её и
-  тело PR о правке гарда, и сам отказ гарда. Приёмка такого признака осталась зелёной там,
-  где обязана была покраснеть, — в теле стояла строка-пример.
-- **Обход снимает отказ, но не убирает строку из сверки.** Если бы он гасил и проверку, через
-  месяц им пользовались бы вместо разбора: PR открыт, папка лежит, и никто не жалуется.
-- **Папку ищут по имени ветки целиком, вместе с косой.** Имя вида `chore/312-slug` законно, и
-  папка под ним лежит во вложенном каталоге.
-- **Дерево, не задавшее каталог задач, требования не получает.** Вести работу папкой — выбор
-  дерева, а не пакета.
-- **Задача, оставшаяся в первой колонке очереди работ, к поставке не готова.** По очереди она
-  читается как невзятая, хотя работа по ней сделана и выложена; отказ называет колонку и команду
-  перевода.
-- **Колонка спрашивается там, где её уже должны были переставить.** На заведении ветки её ещё не
-  двигали: требование там отбивало бы первую же команду работы вместе с той, которая его и
-  снимает.
-- **Имя первой колонки называет дерево, и без него колонка не судится.** Колонки каждое дерево
-  зовёт своими словами, а выдуманное умолчание не совпало бы ни с чем и молча выключило бы
-  проверку.
-- **Черновик не снимается, пока у PR нет разбора.** Ни запрошенного ревьювера, ни оставленного
-  отзыва — снятый черновик читается как «можно вливать», а вливать некому.
-- **Черновик не снимается и с PR, который не сливается.** Зелёный прогон говорит «не сломано»,
-  сливаемость — «кнопку можно нажать», и владельцу нужно второе: у конфликтующего PR кнопка
-  заблокирована хостингом, а снятый черновик зовёт её нажать. Сливаемость приходит тем же
-  ответом, что ревьювер и отзыв, — отдельного вызова требование не заводит.
-- **Молчание о сливаемости снятия не задерживает.** Дерево, чей помощник очереди работ такого
-  поля не отдаёт, работает как прежде: поля нет — требования нет. Иначе правка пакета отбивала
-  бы снятие черновика у каждого, кто помощника ещё не поправил.
-- **Ссылка на PR при снятии черновика необязательна.** Без неё клиент хостинга берёт PR текущей
-  ветки — это самая короткая форма вызова, и требование снималось бы одним пробелом. Ссылкой
-  бывает и номер, и адрес, и имя ветки.
-- **Возврат PR в черновик требования не получает.** Он делает ровно то, чего требование и
-  добивается: снимает с работы вид готовой.
-- **Номер PR в отказе берётся из ответа очереди работ, а не из команды.** Названный адресом или
-  именем ветки, PR обязан остаться узнаваемым; номер пишется с решёткой, имя и адрес — в
-  кавычках, потому что решётка перед адресом читается как опечатка.
-- **Автор в разборе своего PR не считается.** Запрос разбора на самого себя хостинг принимает
-  молча и не создаёт — разбор при этом выглядит запрошенным.
-- **Состояние PR спрашивается тем же помощником очереди работ, что и состояние задачи.**
-  Разойдясь, гард и сверка стали бы по-разному понимать «у PR есть разбор».
-- **Ответ с меткой «сети не было» состоянием не является.** По нему не отличить PR, которого нет,
-  от PR, о котором не спросили, — и приговор о разборе по такому ответу был бы выдуман.
-- **Ярус, которому нужен ответ очереди работ, без ответа молчит.** Нет узла, нет помощника, нет
-  сети — требования нет: проверка, падающая в самолёте, отбивает работу вместо промаха.
-- **Заход закрывается одной командой.** Три движения — главная ветка, влитые ветки, передача —
-  порознь забываются по одному, и чаще всех забывается последнее: передача пишется тогда, когда
-  окно уже полное.
-- **Команда закрытия захода сперва узнаёт, ведётся ли работа по правилу.** От этого зависит,
-  куда встанет рабочее дерево: у работы по правилу ветка после влитого PR не нужна, у работы
-  вне правила она и есть место, где работа продолжится.
-- **У работы по правилу с влитым PR локальная главная двигается до удалённой без перехода на
-  неё.** Следующий заход начинается с главной ветки, приведённой к удалённой, а не с ветки,
-  которой больше нет в очереди работ. Рабочее дерево при этом не трогается: переход отбивается,
-  когда в нём лежит правка файла, которого в отстающей локальной ещё нет, — а лежит она там по
-  слову самой команды, велевшей шагом раньше её не трогать.
-- **Влитость ветки судится от удалённой ссылки, а не от локальной главной.** Локальная отстаёт
-  молча, и влитая ветка при ней числится невлитой: уборка кончается списком невлитого, которого
-  нет, а снести эти ветки команда всё равно не даст.
-- **Во всех прочих случаях главная ветка вливается в текущую.** Работа вне правила и работа по
-  правилу с ещё не влитым PR ведут себя одинаково: ветка остаётся местом, где работа
-  продолжится, а расхождение с главной разбирается сейчас.
-- **Незакоммиченная правка останавливает закрытие захода до первого действия.** Смена ветки
-  уносит правку в другую ветку или отбивается на полпути; исполнителю называется, что именно не
-  закоммичено.
-- **Снимаются только влитые локальные ветки.** Невлитая называется вслух вместе с числом
-  коммитов мимо главной и остаётся: снести её дешевле, чем восстановить, а её коммитов нет больше
-  нигде.
-- **Мёртвые отслеживания снимаются тем же вызовом.** Иначе перечень веток растёт именами,
-  которых в удалённом нет уже месяцами, и в нём перестаёт быть видно живое.
-- **Передача пишется последней и кладётся вне дерева.** К этому моменту известно, что стало с
-  главной веткой и какие ветки сняты, — с этого и начинается следующий заход. В историю она не
-  едет: рядом с ходом работы завелась бы вторая запись об одном и том же.
-- **Имя главной ветки и каталог передачи команда берёт из профиля дерева.** Зашитые в команду,
-  они врут в первом же дереве, которое держит главную ветку под другим именем.
-- **Закрытие захода не трогает поставку.** PR не мержится, ветка не пушится: уборка вслепую
-  законна, движение поставки — нет.
-- **Заведение задачи кончается ответом очереди работ, а не выводом команды.** После четвёртого
-  шага команда спрашивает очередь по номеру и печатает прочитанное; напечатанный номер значит
-  «вызов прошёл», а не «задача видна тому, кто по ней работает».
-- **Задача, которой нет в очереди работ, кончает команду заведения ненулевым кодом.** Работой она
-  не обеспечена: по ней никто не придёт, и молчание тут дороже отказа.
-- **Задача без исполнителя названа отдельной строкой.** Ничья задача стоит в очереди невидимой для
-  того, кто её делает.
-- **Неспрошенная очередь работ подтверждением не является.** Не спросив её, команда не говорит о
-  ней ничего: называет, что спросить не удалось, и кончается ненулевым кодом.
-- **Ответ очереди складывается в строки чистой функцией.** Решение о том, что напечатать и чем
-  кончиться, отделено от вызовов сети: иначе оно проверяется только живой очередью работ.
-- **Вытесненный из очереди конвейера прогон на вершине открытой заявки — расхождение сверки.**
-  Группа очереди бережёт идущий прогон и не бережёт ждущего: хостинг держит в группе один
-  ждущий, и следующий встающий вытесняет прежний. Ветка за таким прогоном не проверялась ни
-  строчкой, а по очереди работ выглядит проверенной — прогон на вершине есть, и сверка считает
-  именно факт.
-- **Вытеснение узнаётся по числу заданий прогона, а не по слову отмены.** Отмена — общее слово
-  для двух случаев: у прогона, остановленного на ходу, задания есть и журналы у них читаются; у
-  вытесненного из очереди их ноль, потому что он не начинался. Замером по семи отменённым
-  прогонам дерева признак сошёлся: шесть вытесненных с нулём заданий и один остановленный на
-  ходу с одним.
-- **Число заданий спрашивается только у отменённых прогонов вершины.** Оно приходит отдельным
-  вызовом, и спрошенное у каждого прогона стоило бы вызова на прогон при каждой сверке.
-- **Строка вытеснения называет обе команды и в том порядке, в каком их зовут** — сперва чтение
-  прогона, потом его перезапуск. Перезапуск отбивает гард, пока за тот же ход не читался журнал
-  этого задания, и порядок в строке выполняет требование сам: исполнитель зовёт написанное и не
-  упирается в отказ на втором шаге.
-- **Вытеснение судится раньше цвета и раньше отсутствия прогона.** Иначе одна вершина получает
-  две строки об одном. Зелёный прогон на той же вершине строку снимает: вытесненный за ним уже
-  перезапущен.
-- **Метка многозаходной работы сверяется с записью в линии работ в обе стороны.** Одна без другой
-  лжёт молча: исполнитель открывает карточку раньше, чем линию, а планирует по линии. Карточка без
-  записи обещает многозаходность, которой линия не знает; запись без метки оставляет карточку
-  выглядеть работой на один заход, и следующий заход берёт её, рассчитывая закрыть за раз.
-- **Записью в линии считается строка, где стоят и слово метки, и номер задачи.** Голое упоминание
-  номера не годится: линия называет все свои задачи, и большинство из них однозаходные — обратная
-  сторона краснела бы на каждой.
-- **Упавшая выкатка называется отдельно от отставшего прода.** Отставание считается по последней
-  УСПЕШНОЙ выкатке, и «не запускали» с «упала» выглядят через него одинаково, а ведут к разному:
-  первую запускают, вторую читают журналом и чинят. Четыре слияния подряд уехали поверх поломки,
-  которую принёс первый, и прод простоял почти два часа.
-- **Идущая выкатка расхождением не считается.** Она ещё может кончиться успехом, и отбитый по ней
-  ход платит за состояние, которого через минуту не будет.
-- **Дерево, не назвавшее метки или каталога линий, получает молчание, а не отказ.** Отличить
-  многозаходную карточку от обычной станет нечем, а каталог линий у каждого дерева свой.
+- **Every state of the work has a section in the pattern that leads it.** The cell of the table names
+  the mandatory action, and the section says how it is done and why the turn does not end at it. A
+  state without a section reads as the end of the work: the executor reads the pattern to the end,
+  there is no next move in it, and they write a report.
+- **A section about a state outside the list is the same divergence as a state without a section.** A
+  renamed state otherwise leaves the former section, and that one looks in force.
+- **The task folder does not go away into the main branch.** The opening of a request is refused
+  while the branch carries the folder of its task; at the merge the same condition stays the second
+  line. After the merge there is nobody to take it apart: the work has moved to the next task, and
+  the request that would have removed the folder by the same commit is closed.
+- **What is checked is what will go into the main branch, not what lies on the machine.** If the
+  folder was deleted in the working tree but not committed, the check would pass, and the folder
+  would go away together with the branch all the same.
+- **A branch that took the folder apart adds a record to the directory of the archive.** Otherwise
+  the requirement is met by deleting: removing the folder is easier than taking it apart, and the
+  words of the owner are written down only in it. What exactly was moved the requirement does not
+  check — that is looked at by the owner at the review.
+- **The tidying stands before the opening of the request, not after the approval.** The merge button
+  is pressed by a person on the page of the hosting, where the guard does not reach, and they merge as
+  soon as they see green: there is no place left for a closing commit after the approval. There is no
+  plan on the disk after the tidying, and the sign of handed-in work the guard of the progress of the
+  work takes from the history of the branch.
+- **The bypass of the requirement is written with a reason, and it is read without a network.** The
+  line of the bypass is looked for in the text of the command, and, if the work queue is available,
+  also in the body of the PR. If only the network way were left, without a network the guard would
+  refuse the merge whose reason is written in that same PR. An empty reason is no bypass.
+- **An open PR whose branch carries the folder of its task is a divergence of the check.** The guard
+  judges the folder at the opening of the request, but it can be opened past the guard too — from a
+  browser, where there are no hooks at all: the check says what the guard did not see. After the
+  merge the same line is fixed already by a separate task. What is judged is the branch of the PR, not
+  the working tree.
+- **The line of the bypass begins the line and accepts no substitutions.** Otherwise the bypass lifts
+  its own description: a text naming the line of the bypass is indistinguishable from it, and it is
+  named both by the body of a PR about an edit of the guard and by the refusal of the guard itself.
+  The acceptance of such a sign stayed green where it had to turn red — a sample line stood in the
+  body.
+- **The bypass lifts the refusal, but does not remove the line from the check.** If it put out the
+  check too, in a month it would be used instead of the taking apart: the PR is open, the folder lies
+  there, and nobody complains.
+- **The folder is looked for by the name of the branch whole, together with the slash.** A name of the
+  shape `chore/312-slug` is lawful, and the folder under it lies in a nested directory.
+- **A tree that set no directory of tasks gets no requirement.** Leading the work by a folder is a
+  choice of the tree, not of the package.
+- **A task left in the first column of the work queue is not ready for delivery.** By the queue it
+  reads as untaken, although the work on it is done and laid out; the refusal names the column and
+  the command of the move.
+- **The column is asked about where it should already have been moved.** At the creating of a branch
+  it has not been moved yet: a requirement there would refuse the very first command of the work
+  together with the one that lifts it.
+- **The name of the first column is named by the tree, and without it the column is not judged.** Each
+  tree calls the columns by its own words, and an invented default would coincide with nothing and
+  would switch the check off silently.
+- **The draft is not lifted while the PR has no review.** Neither a requested reviewer nor a left
+  opinion — a lifted draft reads as "it can be merged", and there is nobody to merge it.
+- **The draft is not lifted from a PR that does not merge either.** A green run says "not broken",
+  mergeability says "the button can be pressed", and the owner needs the second: at a conflicting PR
+  the button is locked by the hosting, and a lifted draft calls to press it. Mergeability arrives by
+  the same answer as the reviewer and the opinion — the requirement creates no call of its own.
+- **Silence about mergeability does not hold up the lifting.** A tree whose helper of the work queue
+  gives no such field works as before: there is no field — there is no requirement. Otherwise an edit
+  of the package would refuse the lifting of the draft at everyone who has not fixed their helper yet.
+- **A reference to the PR at the lifting of the draft is not mandatory.** Without it the hosting
+  client takes the PR of the current branch — that is the shortest shape of the call, and the
+  requirement would be lifted by one space. A reference happens to be a number, an address and a name
+  of a branch.
+- **Returning a PR into a draft gets no requirement.** It does exactly what the requirement is after:
+  it takes the look of readiness off the work.
+- **The number of the PR in the refusal is taken from the answer of the work queue, not from the
+  command.** Named by an address or by the name of a branch, the PR must stay recognisable; the number
+  is written with a hash, the name and the address in quotes, because a hash before an address reads
+  as a typo.
+- **The author does not count as a review of their own PR.** A request of a review on oneself the
+  hosting accepts silently and does not create — and the review looks requested at that.
+- **The state of a PR is asked of the same helper of the work queue as the state of a task.** Having
+  diverged, the guard and the check would understand "the PR has a review" differently.
+- **An answer with the mark "there was no network" is not a state.** By it a PR that does not exist
+  cannot be told from a PR nobody asked about — and a verdict about the review by such an answer would
+  be invented.
+- **A tier that needs an answer of the work queue stays silent without an answer.** There is no node,
+  there is no helper, there is no network — there is no requirement: a check that falls in an
+  aeroplane refuses the work instead of a miss.
+- **A session is closed by one command.** Three movements — the main branch, the merged branches, the
+  handover — are forgotten one at a time when apart, and the last is forgotten most often: the
+  handover is written when the window is already full.
+- **The command of closing a session first finds out whether the work is led by the rule.** On this
+  depends where the working tree will stand: at work by the rule the branch after a merged PR is not
+  needed, at work outside the rule it is the very place the work will go on in.
+- **At work by the rule with a merged PR the local main is moved to the remote one without a switch to
+  it.** The next session starts with the main branch brought to the remote one, not with a branch that
+  is no longer in the work queue. The working tree is not touched at that: a switch is refused when an
+  edit of a file lies in it that is not yet in the lagging local one — and it lies there by the word of
+  the same command, which a step earlier ordered not to touch it.
+- **The merged state of a branch is judged from the remote reference, not from the local main.** The
+  local one lags silently, and at it a merged branch counts as unmerged: the tidying ends with a list
+  of the unmerged that does not exist, and the command will not let those branches be removed anyway.
+- **In all the other cases the main branch is merged into the current one.** Work outside the rule and
+  work by the rule with a PR not yet merged behave the same: the branch stays the place the work will
+  go on in, and the divergence with the main one is taken apart now.
+- **An uncommitted edit stops the closing of the session before the first action.** A change of the
+  branch carries the edit into another branch or is refused halfway; the executor is told what exactly
+  is not committed.
+- **Only merged local branches are removed.** An unmerged one is named aloud together with the number
+  of commits past the main one and stays: removing it is cheaper than restoring it, and its commits
+  are nowhere else.
+- **The dead trackings are removed by the same call.** Otherwise the list of the branches grows with
+  names that have not been in the remote for months, and the live ones stop being visible in it.
+- **The handover is written last and put outside the tree.** By this moment it is known what became of
+  the main branch and which branches were removed — and the next session starts with this. It does not
+  go into the history: next to the progress of the work a second record about one and the same would
+  be created.
+- **The name of the main branch and the directory of the handover the command takes from the profile
+  of the tree.** Nailed into the command, they lie in the first tree that keeps its main branch under
+  another name.
+- **The closing of a session does not touch the delivery.** The PR is not merged, the branch is not
+  pushed: tidying blindly is lawful, a movement of the delivery is not.
+- **The creating of a task ends with an answer of the work queue, not with the output of the
+  command.** After the fourth step the command asks the queue by the number and prints what it read; a
+  printed number means "the call went through", not "the task is visible to whoever works on it".
+- **A task that is not in the work queue ends the command of creating with a non-zero code.** It is
+  not provided with work: nobody will come for it, and silence here costs more than a refusal.
+- **A task without an executor is named by a line of its own.** A nobody's task stands in the queue
+  invisible to whoever does it.
+- **A work queue that was not asked is no confirmation.** Not having asked it, the command says nothing
+  about it: it names that the asking did not succeed and ends with a non-zero code.
+- **The answer of the queue is put together into lines by a pure function.** The decision about what to
+  print and what to end with is separated from the calls of the network: otherwise it is checked only
+  by a live work queue.
+- **A run at the tip of an open request pushed out of the queue of the pipeline is a divergence of the
+  check.** The group of the queue keeps the run in progress and does not keep the waiting one: the
+  hosting holds one waiting run in the group, and the next one that comes pushes the former out. The
+  branch behind such a run was not checked by a single line, and by the work queue it looks checked —
+  there is a run at the tip, and the check counts exactly the fact.
+- **The pushing out is recognised by the number of the jobs of the run, not by the word of the
+  cancellation.** A cancellation is a shared word for two cases: at a run stopped mid-way the jobs
+  exist and their journals are read; at one pushed out of the queue there are zero of them, because it
+  never began. By a measurement over seven cancelled runs of the tree the sign came out even: six
+  pushed out with zero jobs and one stopped mid-way with one.
+- **The number of the jobs is asked only of the cancelled runs of the tip.** It arrives by a call of
+  its own, and asked of every run it would cost a call per run at every check.
+- **The line of the pushing out names both commands and in the order they are called** — first the
+  reading of the run, then its restart. The restart is refused by the guard while the journal of that
+  job was not read during the same turn, and the order in the line meets the requirement by itself: the
+  executor calls what is written and does not run into a refusal at the second step.
+- **The pushing out is judged before the colour and before the absence of a run.** Otherwise one tip
+  gets two lines about one thing. A green run at the same tip removes the line: the pushed-out one
+  behind it is already restarted.
+- **The mark of multi-session work is checked against the record in the line of the works both ways.**
+  One without the other lies silently: the executor opens the card before the line, and plans by the
+  line. A card without a record promises a multi-session nature the line knows nothing of; a record
+  without a mark leaves the card looking like work for one session, and the next session takes it
+  counting on closing it at once.
+- **What counts as a record in the line is a row where both the word of the mark and the number of the
+  task stand.** A bare mention of a number does not do: the line names all its tasks, and most of them
+  are single-session — the reverse side would turn red at every one.
+- **A rollout that fell is named apart from a production that lags.** The lag is counted by the last
+  SUCCESSFUL rollout, and "was not launched" and "fell" look the same through it, while they lead to
+  different things: the first is launched, the second is read by the journal and fixed. Four merges in
+  a row went away on top of a breakage the first one brought, and production stood for almost two
+  hours.
+- **A rollout in progress does not count as a divergence.** It may still end in success, and a turn
+  refused by it pays for a state that will be gone in a minute.
+- **A tree that named no mark or no directory of the lines gets silence, not a refusal.** There will be
+  nothing to tell a multi-session card from an ordinary one by, and the directory of the lines is its
+  own at every tree.
 
-## Что не входит
+## What is out of scope
 
-- Цвет прогона на вершине: упавший и идущий видны на странице PR сами, а сверка называет только
-  отсутствие и вытеснение из очереди.
-- Группа очереди конвейера и её настройки: раннер один, и группа бережёт его от двух прогонов
-  сразу. Группа по ветке сняла бы вытеснение и вернула бы то, ради чего группу заводили.
-- Автоматический перезапуск вытесненного прогона: рабочий поток, ловящий отменённые прогоны,
-  зацикливается на занятой очереди. Жмёт исполнитель — по строке сверки.
-- Причина, по которой событие до хостинга не дошло: она на его стороне, и списком прогонов
-  «не завёлся» от «не создан» не отличить.
-- Полнота передачи — её судит владелец, как и полноту разбора.
-- Перевод колонки самим гардом: правка очереди работ в разборе команды падала бы вместе со
-  связью и отбивала бы работу вместо промаха. Гард колонку называет, переставляет исполнитель.
-- Полнота работы на снятии черновика: закрыты ли этапы замысла, машине не видно.
-- Мерж PR, пуш и открытие PR закрытием захода: это поставка, и вслепую она не делается.
-- Восстановление работы по написанной передаче: порядок держит паттерн, а не команда.
+- The colour of the run at the tip: a fallen one and one in progress are visible on the page of the PR
+  themselves, and the check names only the absence and the pushing out of the queue.
+- The group of the queue of the pipeline and its settings: the runner is one, and the group keeps it
+  from two runs at once. A group by branch would remove the pushing out and would bring back the very
+  thing the group was created for.
+- The automatic restart of a pushed-out run: a workflow catching cancelled runs loops on a busy queue.
+  It is pressed by the executor — by the line of the check.
+- The reason an event did not reach the hosting: it is on its side, and by the list of the runs "did
+  not start" cannot be told from "was not created".
+- The completeness of the handover — it is judged by the owner, like the completeness of the taking
+  apart.
+- The moving of the column by the guard itself: an edit of the work queue inside the parse of a command
+  would fall together with the connection and would refuse the work instead of a miss. The guard names
+  the column, the executor moves it.
+- The completeness of the work at the lifting of the draft: whether the stages of the plan are closed a
+  machine cannot see.
+- Merging a PR, a push and opening a PR by the closing of a session: that is delivery, and it is not
+  done blindly.
+- Restoring the work by a written handover: the order is held by the pattern, not by the command.
 
-## Контракт
+## Contract
 
-Поверхность — две команды строки запуска и гарды поставки: на слиянии, на открытии PR и на
-снятии черновика. Заведение задачи делает четыре шага —
-заводит запись, ставит номер в её заголовок, добавляет её в очередь работ и назначает начальную
-колонку, — а пятым спрашивает очередь по номеру и печатает прочитанное. Закрытие захода сперва
-узнаёт, ведётся ли работа по правилу, и только потом трогает ветки.
+The surface is two commands of the launch line and the delivery guards: at a merge, at the opening of
+a PR and at the lifting of a draft. The creating of a task makes four steps — it creates a record,
+puts the number into its title, adds it to the work queue and assigns the starting column — and by the
+fifth it asks the queue by the number and prints what it read. The closing of a session first finds
+out whether the work is led by the rule, and only then touches the branches.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: ответ — код возврата и текст, а не именованные коды.
+Not applicable: the answer is an exit code and text, not named codes.
 
-| Что случилось                       | Код | Что говорит                                    |
-| ----------------------------------- | --- | ---------------------------------------------- |
-| задачи нет в очереди работ          | `1` | номер и то, что работой она не обеспечена      |
-| задача без исполнителя              | `1` | отдельной строкой: ничья задача невидима       |
-| очередь работ спросить не удалось   | `1` | что спросить не удалось, и почему это не ответ |
-| незакоммиченная правка при закрытии | `1` | что именно не закоммичено                      |
-| невлитая ветка при закрытии         | `0` | имя ветки и число коммитов мимо главной        |
-| ветка везёт папку своей задачи      | —   | путь папки и строку обхода с причиной          |
-| вершина открытого PR без прогона    | `1` | вершину, её возраст и чем вернуть событие      |
-| зелёный прогон при PR-черновике     | `1` | вершину и то, чем черновик снимается           |
-| задача стоит в первой колонке       | —   | её колонку и команду перевода                  |
-| черновик снимается у PR без разбора | —   | что разбора нет и что надо назначить ревьювера |
+| What happened                                | Code | What it says                                                       |
+| -------------------------------------------- | ---- | ------------------------------------------------------------------ |
+| the task is not in the work queue            | `1`  | the number and that it is not provided with work                   |
+| a task without an executor                   | `1`  | by a line of its own: a nobody's task is invisible                 |
+| the work queue could not be asked            | `1`  | that the asking did not succeed, and why this is no answer         |
+| an uncommitted edit at the closing           | `1`  | what exactly is not committed                                      |
+| an unmerged branch at the closing            | `0`  | the name of the branch and the number of commits past the main one |
+| the branch carries the folder of its task    | —    | the path of the folder and the line of the bypass with a reason    |
+| the tip of an open PR without a run          | `1`  | the tip, its age and what to bring the event back with             |
+| a green run at a PR that is a draft          | `1`  | the tip and what the draft is lifted by                            |
+| the task stands in the first column          | —    | its column and the command of the move                             |
+| the draft is lifted at a PR without a review | —    | that there is no review and that a reviewer must be assigned       |
 
-Отказ гарда слияния кода возврата команды не имеет: он отбивает вызов до его исполнения.
+The refusal of the guard of the merge has no exit code of the command: it refuses the call before it
+is carried out.
 
-## Данные
+## Data
 
-Своего хранилища нет. Состояние читается из системы контроля версий и из очереди работ; передача
-захода кладётся вне дерева, каталог называет профиль дерева.
+There is no storage of its own. The state is read from the version control system and from the work
+queue; the handover of the session is put outside the tree, the directory is named by the profile of
+the tree.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: экранов нет.
+Not applicable: there are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: вывод команд одноязычный.
+Not applicable: the output of the commands is single-language.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Имя главной ветки, каталог задач и каталог передачи команда берёт из профиля дерева. Дерево, не
-задавшее каталог задач, требования о папке не получает вовсе: вести работу папкой — выбор дерева,
-а не пакета.
+The name of the main branch, the directory of the tasks and the directory of the handover the command
+takes from the profile of the tree. A tree that set no directory of tasks gets no requirement about a
+folder at all: leading the work by a folder is a choice of the tree, not of the package.
 
-## Решения
+## Decisions
 
-- **Заведённая задача подтверждается ответом очереди работ, а не выводом команды.** Команда
-  отвечает за свои вызовы: напечатанный номер значит «вызов прошёл», а не «задача видна тому, кто
-  по ней работает».
-- **Ответ очереди складывается в строки чистой функцией.** Решение о том, что напечатать и чем
-  кончиться, отделено от вызовов сети: иначе оно проверяется только живой очередью работ.
-- **Заход закрывается одной командой, а не тремя движениями.** Порознь они забываются по одному, и
-  чаще всех забывается передача: она пишется тогда, когда окно уже полное.
-- **Требование о папке стоит на слиянии, а не на открытии PR.** Пока идёт разбор, замысел лежит
-  на диске: правки по замечаниям идут в ту же ветку. На открытии PR остаётся напоминание.
-- **Обход читается без сети.** Единственный сетевой путь отбивал бы без сети то самое слияние,
-  причина которого написана в этом же PR.
-- **Обход снимает отказ, но не гасит строку сверки.** Иначе через месяц им пользовались бы вместо
-  разбора: PR открыт, папка лежит, и никто не жалуется.
-- **Отсутствие прогона называет сверка, а не гард снятия черновика.** Гард судит один ход и при
-  вершине без прогона отпускает работу: прогон мог просто ещё не встать, и отбивать на этом
-  значило бы останавливать заход посреди работы. Сверка спрашивает состояние очереди целиком, и
-  сказать «прогона нет второй час» может только она.
-- **Свежей вершине даётся десять минут.** Отвергнуто: судить сразу после пуша — сверка, позванная
-  следом за ним, краснела бы на здоровой ветке, и первым же движением её отучились бы читать.
+- **A created task is confirmed by an answer of the work queue, not by the output of the command.** The
+  command answers for its own calls: a printed number means "the call went through", not "the task is
+  visible to whoever works on it".
+- **The answer of the queue is put together into lines by a pure function.** The decision about what to
+  print and what to end with is separated from the calls of the network: otherwise it is checked only
+  by a live work queue.
+- **A session is closed by one command, not by three movements.** Apart they are forgotten one at a
+  time, and the handover is forgotten most often: it is written when the window is already full.
+- **The requirement about the folder stands at the merge, not at the opening of the PR.** While the
+  review goes, the plan lies on the disk: the edits by the remarks go into the same branch. At the
+  opening of the PR a reminder stays.
+- **The bypass is read without a network.** A single network way would refuse, without a network, the
+  very merge whose reason is written in that same PR.
+- **The bypass lifts the refusal but does not put out the line of the check.** Otherwise in a month it
+  would be used instead of the taking apart: the PR is open, the folder lies there, and nobody
+  complains.
+- **The absence of a run is named by the check, not by the guard of the lifting of the draft.** The
+  guard judges one turn and at a tip without a run lets the work go: the run may simply not have
+  started yet, and refusing at that would mean stopping the session in the middle of the work. The
+  check asks the state of the queue whole, and only it can say "there has been no run for a second
+  hour".
+- **A fresh tip is given ten minutes.** Rejected: judging right after the push — a check called right
+  after it would turn red on a healthy branch, and by the very first movement people would unlearn
+  reading it.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом.
+The open questions of the domain are shared, and they live in the spec next to it.
 
-## История изменений
+## History of changes
 
-- 2026-08-17 — поддомен выделен из спека домена, переросшего предел длины. Правила, сценарии и
-  привязки ведения работы командами переехали сюда прежними: номера сценариев не
-  пересчитывались.
-- 2026-08-18 — сверка очереди работ спрашивает прогон на вершине каждого открытого PR: вершина,
-  за которой прогон не встал, перестала быть неотличимой от зелёной. Тем же вопросом сверка
-  называет готовую работу, оставленную черновиком, — четыре таких PR простояли двое суток.
-- 2026-08-24 — сверка называет прогон, вытесненный из очереди конвейера: он завершается отменой
-  и в списке неотличим от упавшего, хотя ветку не проверял ни строчкой. Признаком служит число
-  заданий прогона.
+- 2026-08-17 — the subdomain was split out of the domain spec, which had outgrown the length limit.
+  The rules, scenarios and bindings of leading the work by commands moved here as they were: the
+  scenario numbers were not recounted.
+- 2026-08-18 — the check of the work queue asks about the run at the tip of every open PR: a tip
+  behind which a run did not start stopped being indistinguishable from a green one. By the same
+  question the check names ready work left as a draft — four such PRs stood for two days.
+- 2026-08-24 — the check names a run pushed out of the queue of the pipeline: it ends with a
+  cancellation and in the list is indistinguishable from a fallen one, although it checked the branch
+  by not a single line. The sign is the number of the jobs of the run.

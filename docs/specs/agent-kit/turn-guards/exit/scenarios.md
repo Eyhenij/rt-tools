@@ -1,365 +1,380 @@
-# Сценарии: страж выходов хода
+# Scenarios: the guard of the exits of a turn
 
-Поддомен домена «Гарды завершения хода». Здесь сценарии одного гарда — того, что судит
-завершение хода: чем ход кончается законно, что его концом не бывает и какие ярусы называют вид
-остановки по имени. Остальные гарды завершения хода — в перечне сценариев домена рядом.
+A subdomain of the domain "The guards of the end of a turn". Here are the scenarios of one guard —
+the one that judges the end of a turn: what a turn lawfully ends with, what is never its end and
+which tiers name the kind of the stop by name. The other guards of the end of a turn are in the list
+of the scenarios of the domain next to it.
 
-### SC-AK-647 — отдача работы без начала следующей ход не кончает
+### SC-AK-647 — handing in the work without beginning the next one does not end the turn
 
-Дано за ход открыта заявка, а по следующей работе не сделано ничего
-Когда страж выходов судит завершение хода
-Тогда ход возвращается: отдача завершает прошлую работу, а не ход
+Given a request was opened over the turn, and nothing was done on the next work
+When the guard of the exits judges the end of the turn
+Then the turn is given back: the handing in ends the past work, not the turn
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-648 — заведённая следующая задача ход отпускает
+### SC-AK-648 — a created next task releases the turn
 
-Дано после открытия заявки позвана команда заведения задачи
-Когда страж выходов судит завершение хода
-Тогда ход проходит: по следующей работе сделано действие, а не сказано
+Given the command of creating a task was called after the opening of the request
+When the guard of the exits judges the end of the turn
+Then the turn passes: on the next work an action was done, not said
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-649 — заведённая ветка следующей работы ход отпускает
+### SC-AK-649 — a created branch of the next work releases the turn
 
-Дано после открытия заявки заведена ветка следующей задачи
-Когда страж выходов судит завершение хода
-Тогда ход проходит: заведение ветки — первый шаг по следующей работе
+Given the branch of the next task was created after the opening of the request
+When the guard of the exits judges the end of the turn
+Then the turn passes: creating the branch is the first step on the next work
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-650 — ход без открытия заявки этим ярусом не судится
+### SC-AK-650 — a turn without an opening of a request is not judged by this tier
 
-Дано за ход заявка не открывалась
-Когда страж выходов судит завершение хода
-Тогда ярус отдачи молчит: судить нечего, работают прежние признаки
+Given no request was opened over the turn
+When the guard of the exits judges the end of the turn
+Then the tier of the handing in stays silent: there is nothing to judge, the former signs work
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-651 — отказ об отдаче называет команду заведения следующей
+### SC-AK-651 — the refusal about the handing in names the command of creating the next one
 
-Дано ход кончился открытием заявки
-Когда страж выходов отбивает завершение хода
-Тогда отказ называет команду, которой заводится следующая работа
+Given the turn ended with the opening of a request
+When the guard of the exits refuses the end of the turn
+Then the refusal names the command the next work is created by
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-652 — работа была, а последним действием стало чтение — ход не кончается
+### SC-AK-652 — there was work, and the last action became a reading — the turn does not end
 
-Дано за ход был коммит, а последней командой стало чтение истории
-Когда страж выходов судит завершение хода
-Тогда ход возвращается: последним действием хода бывает только работа
+Given there was a commit over the turn, and the last command became a reading of the history
+When the guard of the exits judges the end of the turn
+Then the turn is given back: the last action of a turn is only ever work
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-653 — ход, кончившийся правкой файла, отпускается
+### SC-AK-653 — a turn that ended with an edit of a file is released
 
-Дано за ход было чтение, а последним действием стала правка файла
-Когда страж выходов судит завершение хода
-Тогда ход проходит: работа стоит последней
+Given there was a reading over the turn, and the last action became an edit of a file
+When the guard of the exits judges the end of the turn
+Then the turn passes: the work stands last
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-654 — заведение ветки разведкой не считается
+### SC-AK-654 — creating a branch does not count as exploration
 
-Дано последним действием хода стало заведение ветки следующей работы
-Когда страж выходов судит завершение хода
-Тогда ход проходит: заведение ветки меняет дерево, в отличие от переключения на неё
+Given the last action of the turn became the creating of the branch of the next work
+When the guard of the exits judges the end of the turn
+Then the turn passes: creating a branch changes the tree, unlike switching to it
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-655 — переключение на ветку разведкой остаётся
+### SC-AK-655 — switching to a branch stays exploration
 
-Дано за ход был коммит, а последней командой стало переключение на другую ветку
-Когда страж выходов судит завершение хода
-Тогда ход возвращается: переключение — подготовка, а не работа
+Given there was a commit over the turn, and the last command became a switch to another branch
+When the guard of the exits judges the end of the turn
+Then the turn is given back: a switch is a preparation, not work
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-296 — ход, в котором по работе не сделано ничего, не закрывается
+### SC-AK-296 — a turn in which nothing was done on the work does not close
 
-Дано работа стоит в состоянии, из которого её двигает исполнитель
-Когда ход кончается, а за него не было ни правки, ни команды, меняющей дерево
-Тогда страж возвращает ход и называет следующий шаг из хода работы
+Given the work stands in a state it is moved from by the executor
+When the turn ends, and over it there was neither an edit nor a command changing the tree
+Then the guard gives the turn back and names the next step from the progress of the work
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-297 — правка файла ход отпускает
+### SC-AK-297 — an edit of a file releases the turn
 
-Дано за ход правился файл
-Когда ход кончается
-Тогда страж молчит: работа шла
+Given a file was edited over the turn
+When the turn ends
+Then the guard stays silent: the work went on
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-298 — команда, меняющая дерево, ход отпускает
+### SC-AK-298 — a command changing the tree releases the turn
 
-Дано за ход шла команда, меняющая дерево или его состояние
-Когда ход кончается
-Тогда страж молчит
+Given a command changing the tree or its state went over the turn
+When the turn ends
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-299 — вопрос владельцу ход отпускает
+### SC-AK-299 — a question to the owner releases the turn
 
-Дано за ход владельцу задан вопрос инструментом опроса
-Когда ход кончается
-Тогда страж молчит: вопрос — законный выход хода
+Given a question was put to the owner over the turn by the tool of asking
+When the turn ends
+Then the guard stays silent: a question is a lawful exit of a turn
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-300 — отказ гарда кончает ход
+### SC-AK-300 — a refusal of a guard ends the turn
 
-Дано за ход правку отбил гард
-Когда ход кончается
-Тогда страж молчит: отбитая правка либо делается после выполнения условия, либо не делается вовсе
+Given an edit was refused by a guard over the turn
+When the turn ends
+Then the guard stays silent: a refused edit is either done after the condition is met or not done at
+all
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-301 — написанная передача захода кончает ход
+### SC-AK-301 — a written handover of a session ends the turn
 
-Дано за ход написана передача захода
-Когда ход кончается
-Тогда страж молчит: окно кончилось, и это законный выход
+Given the handover of the session was written over the turn
+When the turn ends
+Then the guard stays silent: the window has ended, and this is a lawful exit
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-302 — сказанная владельцем остановка ход отпускает
+### SC-AK-302 — a stop said by the owner releases the turn
 
-Дано владелец сказал остановиться своей репликой
-Когда ход кончается
-Тогда страж молчит
+Given the owner said to stop by their own remark
+When the turn ends
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-303 — остановка, объявленная исполнителем, ход не отпускает
+### SC-AK-303 — a stop declared by the executor does not release the turn
 
-Дано об остановке сказал сам исполнитель, а владелец — нет
-Когда ход кончается
-Тогда страж возвращает ход: остановку объявлял бы тот, кому она в эту минуту удобна
+Given the stop was said by the executor themselves, and the owner did not
+When the turn ends
+Then the guard gives the turn back: the stop would be declared by whoever finds it convenient in
+that minute
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-304 — в отданной работе ход закрывается
+### SC-AK-304 — at handed-in work the turn closes
 
-Дано работа объявлена отданной
-Когда ход кончается
-Тогда страж молчит: дальше её двигает владелец
+Given the work is declared handed in
+When the turn ends
+Then the guard stays silent: further on it is moved by the owner
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-305 — во влитой работе ход закрывается
+### SC-AK-305 — at merged work the turn closes
 
-Дано работа объявлена влитой
-Когда ход кончается
-Тогда страж молчит
+Given the work is declared merged
+When the turn ends
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-306 — повторный заход по тому же ходу не судится
+### SC-AK-306 — a repeated pass over the same turn is not judged
 
-Дано страж уже отбил этот ход
-Когда ход кончается снова
-Тогда страж молчит: иначе ход не кончится никогда
+Given the guard already refused this turn
+When the turn ends again
+Then the guard stays silent: otherwise the turn would never end
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-307 — работа без хода работы не судится
+### SC-AK-307 — work without a progress of the work is not judged
 
-Дано папки задачи по имени ветки нет
-Когда ход кончается
-Тогда страж молчит: состояние объявлять негде, и отбивать не за что
+Given there is no task folder under the name of the branch
+When the turn ends
+Then the guard stays silent: there is nowhere to declare the state, and nothing to refuse for
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-308 — ход работы без объявленного состояния не судится
+### SC-AK-308 — a progress of the work without a declared state is not judged
 
-Дано ход работы лежит, а строки состояния в нём нет
-Когда ход кончается
-Тогда страж молчит
+Given the progress of the work lies there, and there is no line of the state in it
+When the turn ends
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-309 — закрытый этап без команды проверки ход не закрывает
+### SC-AK-309 — a closed stage without the command of the check does not close the turn
 
-Дано номер этапа в ходе работы вырос против того, что лежит в истории ветки
-Когда ход кончается, а команда, которой этот этап проверяется, за него не запускалась
-Тогда страж возвращает ход и называет незапущенные команды
+Given the number of the stage in the progress of the work grew against what lies in the history of
+the branch
+When the turn ends, and the command this stage is checked by was not run over it
+Then the guard gives the turn back and names the commands that were not run
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-310 — запущенная команда проверки ход отпускает
+### SC-AK-310 — a run command of the check releases the turn
 
-Дано номер этапа вырос, и команда его проверки за ход запускалась
-Когда ход кончается
-Тогда страж молчит
+Given the number of the stage grew, and the command of its check was run over the turn
+When the turn ends
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-311 — при прежнем номере этапа команда проверки не спрашивается
+### SC-AK-311 — at an unchanged number of the stage the command of the check is not asked about
 
-Дано номер этапа в ходе работы не менялся
-Когда ход кончается
-Тогда страж о проверке не спрашивает: подтверждать нечего
+Given the number of the stage in the progress of the work did not change
+When the turn ends
+Then the guard does not ask about the check: there is nothing to confirm
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-625 — взятая работа без папки задачи ход не кончает
+### SC-AK-625 — a taken work without a task folder does not end the turn
 
-Дано ветка по номеру задачи заведена, а каталога задачи при ней в дереве нет
-Когда страж выходов судит завершение хода
-Тогда ход возвращается: работа объявлена взятой и не начата ни строкой
+Given the branch under the number of the task is created, and there is no directory of the task at
+it in the tree
+When the guard of the exits judges the end of the turn
+Then the turn is given back: the work is declared taken and not begun by a single line
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-626 — перевод колонки взятую работу началом не делает
+### SC-AK-626 — moving the column does not make the taken work a beginning
 
-Дано за ход позвана команда перевода задачи в колонку работы, а каталога задачи при ветке нет
-Когда страж выходов судит завершение хода
-Тогда ход возвращается: команды заведения работы её началом не считаются
+Given the command of moving the task into the column of the work was called over the turn, and there
+is no directory of the task at the branch
+When the guard of the exits judges the end of the turn
+Then the turn is given back: the commands of creating the work do not count as its beginning
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-627 — слово владельца об остановке отпускает и взятую работу
+### SC-AK-627 — a word of the owner about a stop releases taken work too
 
-Дано владелец сказал остановиться, а каталога задачи при ветке нет
-Когда страж выходов судит завершение хода
-Тогда ход проходит: законные выходы хода судятся раньше этого яруса
+Given the owner said to stop, and there is no directory of the task at the branch
+When the guard of the exits judges the end of the turn
+Then the turn passes: the lawful exits of a turn are judged before this tier
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-628 — собранная папка задачи ярус снимает
+### SC-AK-628 — a gathered task folder lifts the tier
 
-Дано каталог задачи при ветке собран
-Когда страж выходов судит завершение хода
-Тогда ход проходит: заполненность замысла машине не видна, и признаком служит каталог
+Given the directory of the task at the branch is gathered
+When the guard of the exits judges the end of the turn
+Then the turn passes: the fullness of the plan is invisible to a machine, and the sign is the
+directory
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-629 — ветка без номера задачи этим ярусом не судится
+### SC-AK-629 — a branch without a number of a task is not judged by this tier
 
-Дано имя ветки не сходится с образцом `<КЛЮЧ>-<номер>-`
-Когда страж выходов судит завершение хода
-Тогда ярус взятой работы молчит: под пробу заводят и такие ветки
+Given the name of the branch does not match the sample `<KEY>-<number>-`
+When the guard of the exits judges the end of the turn
+Then the tier of the taken work stays silent: branches like that are created for a probe too
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-630 — ход из одного переключения и подтягивания не закрывается
+### SC-AK-630 — a turn of one switch and one pull does not close
 
-Дано за ход были только переключение ветки и подтягивание главной
-Когда страж выходов судит завершение хода
-Тогда ход возвращается: разведка работой не считается, сколько бы её ни было
+Given over the turn there were only a switch of the branch and a pull of the main one
+When the guard of the exits judges the end of the turn
+Then the turn is given back: exploration does not count as work, however much of it there was
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-631 — чтение заявок клиентом хостинга ход не кончает
+### SC-AK-631 — reading the requests by the client of the hosting does not end the turn
 
-Дано за ход был позван перечень открытых заявок и больше ничего
-Когда страж выходов судит завершение хода
-Тогда ход возвращается: читающий вызов клиента хостинга работой не считается
+Given the list of the open requests was called over the turn and nothing else
+When the guard of the exits judges the end of the turn
+Then the turn is given back: a reading call of the client of the hosting does not count as work
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-632 — чтение вперемешку с работой ход отпускает
+### SC-AK-632 — a reading mixed together with work releases the turn
 
-Дано составная команда сложила переключение ветки и запуск сверки
-Когда страж выходов судит завершение хода
-Тогда ход проходит: части команды судятся по одной, и меняющая её часть остаётся работой
+Given a compound command put together a switch of the branch and a launch of a check
+When the guard of the exits judges the end of the turn
+Then the turn passes: the parts of the command are judged one by one, and the part that changes it
+stays work
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-633 — читающая часть коммит не отменяет
+### SC-AK-633 — a reading part does not cancel a commit
 
-Дано за ход были чтение состояния дерева и коммит
-Когда страж выходов судит завершение хода
-Тогда ход проходит: соседство с чтением работу работой быть не перестаёт
+Given over the turn there were a reading of the state of the tree and a commit
+When the guard of the exits judges the end of the turn
+Then the turn passes: nearness to a reading does not stop work from being work
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-634 — открытие заявки чтением не считается
+### SC-AK-634 — opening a request does not count as a reading
 
-Дано за ход была открыта заявка черновиком
-Когда страж выходов судит завершение хода
-Тогда ход проходит: пишущий вызов клиента хостинга в образец разведки не входит
+Given a request was opened as a draft over the turn
+When the guard of the exits judges the end of the turn
+Then the turn passes: a writing call of the client of the hosting is not in the sample of
+exploration
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-639 — ход, кончившийся ожиданием прогона, не закрывается
+### SC-AK-639 — a turn that ended with waiting for a run does not close
 
-Дано за ход были правка и пуш, а последним действием стал цикл до готовности прогона
-Когда страж выходов судит завершение хода
-Тогда ход возвращается: ожидание чужого шага концом хода не бывает
+Given over the turn there were an edit and a push, and the last action became a loop until the run
+is ready
+When the guard of the exits judges the end of the turn
+Then the turn is given back: waiting for someone else's step is never the end of a turn
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-640 — слежение за прогоном концом хода не бывает
+### SC-AK-640 — watching a run is never the end of a turn
 
-Дано последним действием хода стал вызов слежения за прогоном
-Когда страж выходов судит завершение хода
-Тогда ход возвращается: работа осталась там же, где стояла
+Given the last action of the turn became a call of watching a run
+When the guard of the exits judges the end of the turn
+Then the turn is given back: the work stayed where it stood
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-641 — ожидание в середине хода ход отпускает
+### SC-AK-641 — waiting in the middle of a turn releases the turn
 
-Дано ожидание стояло в середине хода, а после него был коммит
-Когда страж выходов судит завершение хода
-Тогда ход проходит: судится последнее действие, а запуск работы в фоне работой остаётся
+Given the waiting stood in the middle of the turn, and after it there was a commit
+When the guard of the exits judges the end of the turn
+Then the turn passes: what is judged is the last action, and a launch of work in the background
+stays work
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-642 — отказ об ожидании называет следующий шаг
+### SC-AK-642 — the refusal about the waiting names the next step
 
-Дано ход кончился ожиданием, а в ходе работы записан следующий шаг
-Когда страж выходов отбивает завершение хода
-Тогда отказ называет этот шаг: сказанное «работа не кончена» исполнитель перечитывает сам
+Given the turn ended with a waiting, and the next step is written in the progress of the work
+When the guard of the exits refuses the end of the turn
+Then the refusal names that step: a said "the work is not finished" the executor rereads themselves
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-574 — снятая папка задачи пустой ход не кончает
+### SC-AK-574 — a removed task folder does not end an empty turn
 
-Дано папка задачи снята коммитом ветки, а за ход не было ни правки, ни команды, меняющей дерево
-Когда страж выходов судит завершение хода
-Тогда ход возвращается: снятая папка означает середину отдачи, а не её конец
+Given the task folder is removed by a commit of the branch, and over the turn there was neither an
+edit nor a command changing the tree
+When the guard of the exits judges the end of the turn
+Then the turn is given back: a removed folder means the middle of the handing in, not its end
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-575 — при снятой папке открытие заявки ход отпускает
+### SC-AK-575 — at a removed folder the opening of a request releases the turn
 
-Дано папка задачи снята коммитом ветки, а за ход позван клиент хостинга о заявке
-Когда страж выходов судит завершение хода
-Тогда ход проходит: работа отдана
+Given the task folder is removed by a commit of the branch, and over the turn the client of the
+hosting was called about a request
+When the guard of the exits judges the end of the turn
+Then the turn passes: the work is handed in
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-576 — при снятой папке правка дерева ход отпускает
+### SC-AK-576 — at a removed folder an edit of the tree releases the turn
 
-Дано папка задачи снята коммитом ветки, а за ход правился файл
-Когда страж выходов судит завершение хода
-Тогда ход проходит по второму признаку
+Given the task folder is removed by a commit of the branch, and a file was edited over the turn
+When the guard of the exits judges the end of the turn
+Then the turn passes by the second sign
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-693 — запись во временный каталог работой не считается
+### SC-AK-693 — a write into the temporary directory does not count as work
 
-Дано за ход тело будущей заявки было записано во временный каталог захода
-Когда страж выходов судит завершение хода
-Тогда ход возвращается: запись мимо рабочего дерева его не меняет
+Given the body of a future request was written into the temporary directory of the session over the
+turn
+When the guard of the exits judges the end of the turn
+Then the turn is given back: a write past the working tree does not change it
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-694 — отвод потока ошибок работой не считается
+### SC-AK-694 — a diversion of the error stream does not count as work
 
-Дано за ход была позвана команда, у которой перенаправлён только поток ошибок
-Когда страж выходов судит завершение хода
-Тогда ход возвращается: отвод потока ошибок дерева не касается
+Given a command only whose error stream is redirected was called over the turn
+When the guard of the exits judges the end of the turn
+Then the turn is given back: a diversion of the error stream does not touch the tree
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-695 — команда из перечня с перенаправлением ход отпускает по-прежнему
+### SC-AK-695 — a command from the list with a redirection releases the turn as before
 
-Дано за ход была позвана команда из перечня работы, и вход ей подан перенаправлением
-Когда страж выходов судит завершение хода
-Тогда ход проходит: работой её делает сама команда, а не стрелка при ней
+Given a command from the list of the work was called over the turn, and its input was given by a
+redirection
+When the guard of the exits judges the end of the turn
+Then the turn passes: it is made work by the command itself, not by the arrow at it
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
