@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/task-context-load.sh · d912ac1eba63 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/task-context-load.sh · cf1eea1b4dba · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # Requires: hooks/profile-check.sh
 # SessionStart: the state of unfinished work goes into the context at every start of a session.
@@ -145,7 +145,7 @@ done
             cat "$PROGRESS"
         else
             # The "Where we stand" section is rewritten by every session and survives any size.
-            LC_ALL=C awk '/^## Где стоим/{f=1} f&&/^## /&&!/^## Где стоим/{exit} f' "$PROGRESS"
+            LC_ALL=C awk '/^## (Where we stand|Где стоим)/{f=1} f&&/^## /&&!/^## (Where we stand|Где стоим)/{exit} f' "$PROGRESS"
             printf '\n<cut for size. The latest entries:>\n\n'
             tail -40 "$PROGRESS"
             printf '\n<read in full: %s>\n' "$PROGRESS"

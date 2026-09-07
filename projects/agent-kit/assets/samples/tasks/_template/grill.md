@@ -5,7 +5,7 @@ prints them. Eight characters are not enough: a mark with a short key is refused
 «такой записи у дерева нет». This file leaves for the archive, and after the folder is taken apart
 the keys live only here.>
 
-## Просьба владельца
+## The owner request
 
 > <verbatim, in the owner's language, without retelling>
 

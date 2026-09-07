@@ -65,14 +65,14 @@ has_line 'род сжатия назван в заголовке' "$(compact_in 
 # Работа вне папки задачи: состояние взять неоткуда, но ветка и дерево известны. Передача без
 # состояния лучше отсутствующей — заход после сжатия хотя бы знает, где он.
 mv "$TASK/progress.md" "$TASK/progress.off"
-has_file_line 'работа вне папки задачи передачу тоже получает' "$(compact_in auto)" 'Папки задачи у этой ветки нет'
+has_file_line 'работа вне папки задачи передачу тоже получает' "$(compact_in auto)" 'This branch has no task folder'
 mv "$TASK/progress.off" "$TASK/progress.md"
 
 # Раздел передачи один: второе сжатие переписывает прежний, а не дописывает второй.
 run_hook "$(compact_in auto)"
 run_hook "$(compact_in auto)"
 report 'второе сжатие раздел не удваивает' \
-    "$(grep -c '^## Передача захода' "$PROGRESS" 2>/dev/null)" 1
+    "$(grep -c '^## Handover of the session' "$PROGRESS" 2>/dev/null)" 1
 report 'раздел «Где стоим» остаётся на месте' \
     "$(grep -c '^## Где стоим' "$PROGRESS" 2>/dev/null)" 1
 
@@ -86,7 +86,7 @@ printf '%s' "$(compact_in auto)" | LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 "$HOOKS/h
 report 'SC-AK-804: под локалью с национальными настройками «Где стоим» остаётся' \
     "$(grep -c '^## Где стоим' "$PROGRESS" 2>/dev/null)" 1
 report 'SC-AK-804: под той же локалью передача ложится разделом' \
-    "$(grep -c '^## Передача захода' "$PROGRESS" 2>/dev/null)" 1
+    "$(grep -c '^## Handover of the session' "$PROGRESS" 2>/dev/null)" 1
 # Ход работы с папкой задачи файла вне дерева не заводит вовсе: второй записи об одном и том же
 # не бывает.
 run_hook "$(compact_in auto)"
@@ -120,9 +120,26 @@ if [ -f "$DETACHED" ]; then
 else
     report 'на отсоединённой голове передача пишется' 'нет' 'есть'
 fi
-detached_line 'передача называет голову вместо имени ветки' 'отсоединённая голова'
-detached_line 'передача говорит, как её искать' 'по последней записи каталога'
+detached_line 'передача называет голову вместо имени ветки' 'a detached head'
+detached_line 'передача говорит, как её искать' 'by the last record of the directory'
 rm -rf "$DREPO"
+
+# SC-AK-910 — ключи хода работы читаются под английским именем: образец папки задачи в пакете
+# английский, а папки дерева до перевода русские, и передача собирается одинаково с обоих.
+ENGLISH_PROGRESS='# Progress
+
+## Where we stand
+
+- **State:** `этап-идёт`
+- **Stage:** 2 of 5 — the hook
+- **Next step:** the scenarios of the hook
+- **PR:** #1396, a draft'
+RUSSIAN_PROGRESS="$PROGRESS_TEXT"
+PROGRESS_TEXT="$ENGLISH_PROGRESS"
+has_line 'SC-AK-910 — состояние из английского ключа попадает в передачу' "$(compact_in auto)" 'этап-идёт'
+has_line 'SC-AK-910 — этап из английского ключа попадает в передачу' "$(compact_in auto)" '2 of 5'
+has_line 'SC-AK-910 — следующий шаг из английского ключа попадает в передачу' "$(compact_in auto)" 'the scenarios of the hook'
+PROGRESS_TEXT="$RUSSIAN_PROGRESS"
 
 # Незакоммиченное берётся из дерева, а не из хода работы: оно там устаревает первым.
 printf 'проба\n' > "$REPO/probe.txt"

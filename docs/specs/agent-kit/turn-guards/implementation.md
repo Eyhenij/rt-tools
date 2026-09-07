@@ -27,6 +27,7 @@
 - **Ход, открывший заявку, не кончается, пока состояние отданной работы не спрошено командой.** — `projects/agent-kit/assets/hooks/waiting-turn-guard.sh:ready_re` — признак берётся из команд хода; сценарий SC-AK-583
 - **Шаг закрытия работы взятием следующей задачи не считается.** — `projects/agent-kit/assets/hooks/waiting-turn-guard.sh:taken_re` — перечень того, чем взятие бывает; путь правки судится образцом `taken_path_re`; сценарий SC-AK-812
 - **Этап, объявленный закрытым, подтверждается выводом команды.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:stage_was`
+- **Ключи хода работы и замысла читаются под двумя именами, английским и русским.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:stage_now` — этап; состояние и следующий шаг — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:next_step`; сценарий SC-AK-911
 - **Приём, записанный прозой, страж не читает.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:contract`
 - **Размер окна берётся из настройки дерева, а не из записи захода.** — `projects/agent-kit/assets/defaults/project.sh:RT_WINDOW_TOKENS`
 - **Порог сжатия задан деревом теми же числами, что и пороги стража.** — `projects/agent-kit/src/lib/thresholds.ts:readThresholds`

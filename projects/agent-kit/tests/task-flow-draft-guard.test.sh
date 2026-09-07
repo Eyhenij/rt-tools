@@ -118,6 +118,13 @@ exit_code_of "пустой вход пропускается" ''
 exit_code_of "неразбираемый вход пропускается" 'не json'
 exit_code_of "чтение файла гарду безразлично" "$(jq -n --arg d "$REPO" '{session_id:"tests",tool_name:"Read",tool_input:{file_path:"a.ts"},cwd:$d}')"
 
+# SC-AK-908 — строки замысла читаются под английским именем наравне с русским: образцы папки
+# задачи в пакете английские, а папки дерева до перевода остаются русскими.
+printf '# Plan\n\n**Behaviour:** unchanged — a move of the rules layer. Confirmed by the owner.\n' > "$TASK/plan.md"
+t "SC-AK-908 — английская строка о неизменном поведении принята" "$CODE" PASS
+printf '# Plan\n\n**Draft:** `docs/specs/x/proposed/y/`\n' > "$TASK/plan.md"
+t "SC-AK-908 — английская строка договорённости принята" "$CODE" PASS
+
 # Не репозиторий вовсе — пропуск: гард судит по ветке, а её тут нет.
 BARE="$(mktemp -d)"
 mkdir -p "$BARE/libs/site/x/ui/src/lib"

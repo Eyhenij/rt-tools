@@ -8,7 +8,7 @@
 # written afterwards, it retells a decision already made instead of checking it.
 #
 # The guard demands one thing and exactly one: the plan names the agreement with the line
-# `**Драфт:** \`path\``, and what is named exists. The task folder, the plan itself and the
+# `**Draft:** \`path\``, and what is named exists. The task folder, the plan itself and the
 # declared state are demanded by `task-flow-guard`, and before its refusals this guard judges
 # nothing: no plan on disk — it stays silent.
 #
@@ -16,7 +16,7 @@
 # one file, dropping the agreement demand also dropped the demand for the task folder and the
 # plan — that is, everything the guard was made for.
 #
-# There is a deliberate way out: the line `**Поведение:** не меняется — <reason>` in the plan
+# There is a deliberate way out: the line `**Behaviour:** unchanged — <reason>` in the plan
 # lifts the agreement demand. An empty reason is not accepted, same as with `Docs-skip:`.
 #
 # The whole rule — the `task-flow` rule.
@@ -58,7 +58,7 @@ deny() { rt_task_flow_deny "$@"; }
 
 # The bypass line: the behaviour does not change, no product agreement is needed. The reason must
 # be there — without it the bypass becomes the default.
-if grep -qE '^\*\*Поведение:\*\*[[:space:]]*не меняется[[:space:]]*—[[:space:]]*\S' "$plan" 2>/dev/null; then
+if grep -qE '^\*\*(Behaviour|Поведение):\*\*[[:space:]]*(unchanged|не меняется)[[:space:]]*—[[:space:]]*\S' "$plan" 2>/dev/null; then
     exit 0
 fi
 
@@ -69,12 +69,12 @@ fi
 # way agreements are written along with the check that the work follows the plan: a tree with
 # the second way drops the guard entirely and is left without the only machine check under the
 # rule.
-draft="$(sed -n 's/^\*\*Драфт:\*\*[[:space:]]*`\([^`]*\)`.*/\1/p' "$plan" 2>/dev/null | head -1)"
-[ -z "$draft" ] && draft="$(sed -n 's/^\*\*Спек:\*\*[[:space:]]*`\([^`]*\)`.*/\1/p' "$plan" 2>/dev/null | head -1)"
+draft="$(sed -nE 's/^\*\*(Draft|Драфт):\*\*[[:space:]]*`([^`]*)`.*/\2/p' "$plan" 2>/dev/null | head -1)"
+[ -z "$draft" ] && draft="$(sed -nE 's/^\*\*(Spec|Спек):\*\*[[:space:]]*`([^`]*)`.*/\2/p' "$plan" 2>/dev/null | head -1)"
 
 if [ -z "$draft" ]; then
-    deny "BLOCKED by task-flow: no product agreement is named in '${tasks_dir}/${branch}/plan.md'. Name it by one of two lines: '**Драфт:** \`path\`' — a separate document in docs/specs/<домен>/proposed/<фича>/, or '**Спек:** \`path\`' — the domain spec the agreement is written into directly. The rule is task-flow." \
-        "the line '**Поведение:** не меняется — <причина владельца>' in the plan; an empty reason is not accepted"
+    deny "BLOCKED by task-flow: no product agreement is named in '${tasks_dir}/${branch}/plan.md'. Name it by one of two lines: '**Draft:** \`path\`' — a separate document in docs/specs/<domain>/proposed/<feature>/, or '**Spec:** \`path\`' — the domain spec the agreement is written into directly. The rule is task-flow." \
+        "the line '**Behaviour:** unchanged — <the owner reason>' in the plan; an empty reason is not accepted"
 fi
 
 case "$draft" in

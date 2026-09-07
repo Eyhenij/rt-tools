@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when returning to unfinished work in a new session. What is already in the context, what not to ask the owner, how to edit "Where we stand", how to record a decision along the way and a stage revision. Not for starting work — that is pattern task-flow-start.
 ---
-<!-- rt-kit v0.25.0 · patterns/task-flow-resume.md · 81803ca8ab9a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/task-flow-resume.md · aa0bfcb122bf · правится надстройкой, не здесь -->
 
 # Returning to unfinished work
 
@@ -99,15 +99,15 @@ The "Where we stand" section is **rewritten**, not appended — it is the first 
 reads, and the only thing that survives trimming by size:
 
 ```markdown
-## Где стоим
+## Where we stand
 
-- **Состояние:** `этап-идёт`
-- **Этап:** 3 из 6 — гард и хук запуска
-- **Сделано:** закон заведён, папка задачи и образец написаны
-- **Следующий шаг:** сценарии обоих хуков, затем подключение в настройках
-- **Незакоммиченное:** всё, ветка пока без коммитов
-- **Ждём владельца:** нет
-- **PR:** ещё не открыт
+- **State:** `этап-идёт`
+- **Stage:** 3 of 6 — the guard and the startup hook
+- **Done:** the law is created, the task folder and the sample are written
+- **Next step:** the scenarios of both hooks, then wiring them into the settings
+- **Uncommitted:** everything, the branch has no commits yet
+- **Waiting for the owner:** nothing
+- **PR:** not opened yet
 ```
 
 The PR line is mandatory from the minute the stages are over: between opening the PR and the merge a

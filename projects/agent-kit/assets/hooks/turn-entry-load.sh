@@ -61,7 +61,7 @@ if [ -n "$progress" ] && [ -r "$progress" ]; then
     # different Cyrillic headings equal, and the entry would read the first heading it met as the
     # handover section.
     section="$(LC_ALL=C awk '
-        $0 == "## Передача захода" { skip = 1; next }
+        $0 == "## Handover of the session" || $0 == "## Передача захода" { skip = 1; next }
         skip && /^## / { skip = 0 }
         skip { print }
     ' "$progress" 2>/dev/null)"
@@ -71,7 +71,7 @@ handoff=''
 [ -n "$branch" ] && handoff="$ROOT/$handoff_dir/$branch.md"
 
 if [ -n "$section" ]; then
-    printf 'HANDOVER OF THE PREVIOUS SESSION — the "Передача захода" section of `%s/%s/progress.md`, in full below.\n\n' "$tasks_dir" "$branch"
+    printf 'HANDOVER OF THE PREVIOUS SESSION — the handover section of `%s/%s/progress.md`, in full below.\n\n' "$tasks_dir" "$branch"
     printf 'It was written by the previous session and describes the minute it was put together. Everything\n'
     printf 'it says about the tree is checked against the tree: a command of this turn outranks what was written yesterday.\n\n'
     printf '%s\n\n' "$section"
@@ -86,7 +86,7 @@ fi
 if [ -r "$map" ]; then
     printf 'TURN MAP — the work states and what a turn ends with. In full below.\n\n'
     printf 'It is a digest of the work-conduct rule, not the rule itself: the rule explains, the map\n'
-    printf 'names. A session reads its own state in the "Где стоим" section of the progress.\n\n'
+    printf 'names. A session reads its own state in the section of the progress that says where the work stands.\n\n'
     cat "$map" 2>/dev/null
     printf '\n'
 fi

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/task-new.github.mjs · 1e55fbf3191d · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/task-new.github.mjs · ba3f33c6a977 · правится надстройкой, не здесь
 /**
  * Creating the task an edit starts with.
  *
@@ -202,7 +202,9 @@ function adoptDraft() {
         return;
     }
     const before = readFileSync(plan, 'utf8');
-    const after = before.replace(/^\*\*Задача:\*\*.*$/m, `**Задача:** ${TASK_KEY}-${number} · **Ветка:** ${branch}`);
+    // The key is read under two names: the package sample is English, and a tree folder created
+    // before the layer was translated is Russian. It is written in English.
+    const after = before.replace(/^\*\*(?:Task|Задача):\*\*.*$/m, `**Task:** ${TASK_KEY}-${number} · **Branch:** ${branch}`);
     if (after !== before) {
         writeFileSync(plan, after);
         console.log(`The header of the plan is filled in: docs/tasks/${branch}/plan.md`);

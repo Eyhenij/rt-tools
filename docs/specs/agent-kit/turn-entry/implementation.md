@@ -5,6 +5,7 @@
 
 - **Передача захода пишется перед сжатием контекста, а не рукой исполнителя.** — `projects/agent-kit/assets/hooks/handoff-write.sh:target`
 - **Хук передачи ничего от себя не добавляет.** — `projects/agent-kit/assets/hooks/handoff-write.sh:line_of`
+- **Ключи хода работы читаются под двумя именами, английским и русским.** — `projects/agent-kit/assets/hooks/handoff-write.sh:line_of` — состояние, этап и следующий шаг; раздел «где стоим» — `projects/agent-kit/assets/hooks/task-context-load.sh:LIMIT`; сценарии SC-AK-909, SC-AK-910
 - **Написанное хуком — нижняя граница передачи.** — `projects/agent-kit/assets/hooks/handoff-write.sh:handoff_dir`
 - **Хук передачи сжатие не отбивает.** — `projects/agent-kit/assets/hooks/handoff-write.sh:trigger`
 - **Передача прошлого захода приходит в контекст на запуске, а не кладётся в чат рукой.** — `projects/agent-kit/assets/hooks/turn-entry-load.sh:handoff`

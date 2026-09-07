@@ -325,6 +325,14 @@ exit_code_of "пустой вход пропускается" ''
 exit_code_of "неразбираемый вход пропускается" 'не json'
 exit_code_of "чтение файла гарду безразлично" "$(jq -n --arg d "$REPO" '{session_id:"tests",tool_name:"Read",tool_input:{file_path:"a.ts"},cwd:$d}')"
 
+# SC-AK-908 — ключи папки задачи читаются под английским именем: образец пакета английский,
+# папки дерева до перевода — русские, и гард принимает оба.
+printf '# Progress\n\n## Where we stand\n\n- **State:** `этап-идёт`\n' > "$TASK/progress.md"
+t "SC-AK-908 — английский ключ состояния читается" "$CODE" PASS
+printf '# Progress\n\n## Where we stand\n\n- **State:** `задача-взята`\n' > "$TASK/progress.md"
+t "SC-AK-908 — и состояние вне правки кода отбивается по нему же" "$CODE" deny
+state_is 'этап-идёт'
+
 # Не репозиторий вовсе — пропуск: гард судит по ветке, а её тут нет.
 BARE="$(mktemp -d)"
 mkdir -p "$BARE/libs/site/x/ui/src/lib"

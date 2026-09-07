@@ -379,6 +379,21 @@ expect_stop "SC-AK-629 — ветка без номера задачи этим 
         '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}')" PASS
 rm -rf "$PROBE"
 
+# SC-AK-911 — ключи хода работы и замысла читаются под английским именем: образцы папки задачи
+# в пакете английские, папки дерева до перевода русские, и страж судит обе одинаково.
+printf '# Progress\n\n## Where we stand\n\n- **State:** `%s`\n- **Next step:** finish the guard\n' \
+    'замысел-записан' > "$TASK/progress.md"
+printf '# Plan\n\n## Stages\n\n### The guard edit\n\n- **What is done:** a probe\n' > "$TASK/plan.md"
+expect_stop "SC-AK-911 — английский ключ состояния ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'npm run task:new -- --title проба')")")" BLOCK
+expect_reason "SC-AK-911 — отказ называет первый этап английского замысла" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" 'The guard edit'
+printf '# Progress\n\n## Where we stand\n\n- **State:** `%s`\n- **Next step:** finish the guard\n' \
+    'этап-идёт' > "$TASK/progress.md"
+expect_stop "SC-AK-911 — начатый этап под английским ключом отпускается" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
+rm -f "$TASK/plan.md"
+
 state_is 'этап-идёт'
 exit_code_of() {
     printf '%s' "$2" | "$HOOKS/turn-exit-guard.sh" >/dev/null 2>&1

@@ -93,55 +93,55 @@ progress=""
 # and the state must not be invented for it: the handover then holds what the tree knows.
 line_of() {
     [ -f "$progress" ] || return 0
-    sed -n "s/^[[:space:]]*[-*][[:space:]]*\*\*$1:\*\*[[:space:]]*\(.*\)/\1/p" "$progress" 2>/dev/null | head -1
+    sed -nE "s/^[[:space:]]*[-*][[:space:]]*\*\*($1):\*\*[[:space:]]*(.*)/\2/p" "$progress" 2>/dev/null | head -1
 }
 
-state="$(line_of 'Состояние')"
-stage="$(line_of 'Этап')"
-next_step="$(line_of 'Следующий шаг')"
+state="$(line_of 'State|Состояние')"
+stage="$(line_of 'Stage|Этап')"
+next_step="$(line_of 'Next step|Следующий шаг')"
 pull="$(line_of 'PR')"
 
 uncommitted="$(git status --short 2>/dev/null | head -20)"
-[ -z "$uncommitted" ] && uncommitted='нет'
+[ -z "$uncommitted" ] && uncommitted='none'
 
 ahead="$(git log --oneline origin/main..HEAD 2>/dev/null | head -20)"
-[ -z "$ahead" ] && ahead='нет коммитов сверх главной'
+[ -z "$ahead" ] && ahead='no commits over the main branch'
 
 target="$root/$handoff_dir/$handoff_name.md"
 
 # The heading of the section in the progress: the previous handover is found by it.
-section='## Передача захода'
+section='## Handover of the session'
 
 # The handover is assembled into a temporary file: the section and the fallback path write one and
 # the same thing, and no second assembly is made for the second place.
 scratch="$(mktemp 2>/dev/null)" || exit 0
 
 {
-    printf 'Собрана хуком перед сжатием контекста (%s).\n\n' "$trigger"
-    printf '**Рабочее дерево:** %s\n' "$root"
+    printf 'Put together by a hook before the compaction of the context (%s).\n\n' "$trigger"
+    printf '**Working tree:** %s\n' "$root"
     if [ -n "$branch" ]; then
-        printf '**Ветка:** %s\n\n' "$branch"
+        printf '**Branch:** %s\n\n' "$branch"
     else
-        printf '**Ветка:** имени нет — отсоединённая голова %s\n\n' "$head_name"
+        printf '**Branch:** no name — a detached head %s\n\n' "$head_name"
     fi
 
     if [ -n "$state" ]; then
-        printf '### Где стоим на минуту сжатия\n\n'
-        printf -- '- **Состояние:** %s\n' "$state"
-        [ -n "$stage" ] && printf -- '- **Этап:** %s\n' "$stage"
-        [ -n "$next_step" ] && printf -- '- **Следующий шаг:** %s\n' "$next_step"
+        printf '### Where we stand at the minute of the compaction\n\n'
+        printf -- '- **State:** %s\n' "$state"
+        [ -n "$stage" ] && printf -- '- **Stage:** %s\n' "$stage"
+        [ -n "$next_step" ] && printf -- '- **Next step:** %s\n' "$next_step"
         [ -n "$pull" ] && printf -- '- **PR:** %s\n' "$pull"
-        printf '\nХод работы целиком — `%s/%s/progress.md`; замысел рядом с ним.\n\n' "$tasks_dir" "$branch"
+        printf '\nThe progress in full — `%s/%s/progress.md`; the plan lies next to it.\n\n' "$tasks_dir" "$branch"
     elif [ -z "$branch" ]; then
-        printf '### Где стоим на минуту сжатия\n\nИмени у головы нет, папки задачи при ней тоже: состояние работы взять неоткуда. Читающая сторона ищет передачу по имени ветки, а не найдя его — по последней записи каталога.\n\n'
+        printf '### Where we stand at the minute of the compaction\n\nThe head has no name and no task folder next to it: there is nowhere to take the state of the work from. The reading side looks for the handover by the branch name, and failing that — by the last record of the directory.\n\n'
     else
-        printf '### Где стоим на минуту сжатия\n\nПапки задачи у этой ветки нет: состояние работы взять неоткуда.\n\n'
+        printf '### Where we stand at the minute of the compaction\n\nThis branch has no task folder: there is nowhere to take the state of the work from.\n\n'
     fi
 
-    printf '### Незакоммиченное\n\n```\n%s\n```\n\n' "$uncommitted"
-    printf '### Коммиты сверх главной\n\n```\n%s\n```\n\n' "$ahead"
-    printf 'Написана хуком перед сжатием контекста. Всё, что здесь стоит, проверяется деревом:\n'
-    printf 'передача пересказывает записанное и описывает минуту, когда её собрали.\n'
+    printf '### Uncommitted\n\n```\n%s\n```\n\n' "$uncommitted"
+    printf '### Commits over the main branch\n\n```\n%s\n```\n\n' "$ahead"
+    printf 'Written by a hook before the compaction of the context. Everything standing here is checked\n'
+    printf 'against the tree: a handover retells what was written and describes the minute it was put together.\n'
 } > "$scratch" 2>/dev/null
 
 [ -s "$scratch" ] || exit 0
@@ -155,9 +155,9 @@ if [ -n "$progress" ] && [ -f "$progress" ]; then
     # of the handover section — and cutting out the previous section removed the work state along
     # with it. The miss is visible only where the locale is declared: for an executor with `C.UTF-8`
     # the suite is green, on the pipeline run — red.
-    LC_ALL=C awk -v mark="$section" '
-        $0 == mark { skip = 1; next }
-        skip && /^## / && $0 != mark { skip = 0 }
+    LC_ALL=C awk -v mark="$section" -v old='## Передача захода' '
+        $0 == mark || $0 == old { skip = 1; next }
+        skip && /^## / && $0 != mark && $0 != old { skip = 0 }
         !skip { print }
     ' "$progress" > "$kept" 2>/dev/null || { rm -f "$scratch" "$kept"; exit 0; }
 

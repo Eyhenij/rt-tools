@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/turn-exit-guard.sh · 22b3bd4b0ea8 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/turn-exit-guard.sh · 871e766b381e · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/turn-exit-patterns.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
@@ -94,7 +94,7 @@ progress=""
 state=""
 if [ -n "$branch" ] && [ -f "$root/$tasks_dir/$branch/progress.md" ]; then
     progress="$root/$tasks_dir/$branch/progress.md"
-    state="$(sed -n 's/^[[:space:]]*[-*][[:space:]]*\*\*Состояние:\*\*[[:space:]]*`\([^`]*\)`.*/\1/p' "$progress" 2>/dev/null | head -1)"
+    state="$(sed -nE 's/^[[:space:]]*[-*][[:space:]]*\*\*(State|Состояние):\*\*[[:space:]]*`([^`]*)`.*/\2/p' "$progress" 2>/dev/null | head -1)"
 fi
 
 # Work that has reached these two states has already waited out someone else's step: from here on
@@ -120,7 +120,7 @@ Creating the task, the branch, the column and the folder does not count as that 
 
 The first stage of the plan: ${first_stage}
 
-Begin it in this same turn and rewrite the state to '- **Состояние:** \`этап-идёт\`'. The owner said to stop — then write so: the guard reads their word, not a retelling.
+Begin it in this same turn and rewrite the state to '- **State:** \`этап-идёт\`'. The owner said to stop — then write so: the guard reads their word, not a retelling.
 
 The guard judges one turn: the next session is not refused."
 
@@ -154,8 +154,8 @@ archived=false
 # The next step out of the progress is what the guard names in the refusal: an executor told only
 # "the work is not finished" re-reads the same line himself.
 next_step=""
-[ -n "$progress" ] && next_step="$(sed -n 's/^[[:space:]]*[-*][[:space:]]*\*\*Следующий шаг:\*\*[[:space:]]*\(.*\)/\1/p' "$progress" 2>/dev/null | head -1)"
-[ -z "$next_step" ] && next_step="what stands in the section «Где стоим» of the progress"
+[ -n "$progress" ] && next_step="$(sed -nE 's/^[[:space:]]*[-*][[:space:]]*\*\*(Next step|Следующий шаг):\*\*[[:space:]]*(.*)/\2/p' "$progress" 2>/dev/null | head -1)"
+[ -z "$next_step" ] && next_step="what stands in the section «Where we stand» of the progress"
 
 # The patterns of work, of exploration, of waiting and of the handover lie in a neighbouring file:
 # the guard outgrew the length limit, and patterns with their reasons read apart from the tiers.
@@ -351,8 +351,8 @@ fi
 stage_now=""
 stage_was=""
 if [ -n "$progress" ]; then
-    stage_now="$(sed -n 's/^[[:space:]]*[-*][[:space:]]*\*\*Этап:\*\*[[:space:]]*\([0-9][0-9]*\).*/\1/p' "$progress" 2>/dev/null | head -1)"
-    stage_was="$(git -C "$root" show "HEAD:$tasks_dir/$branch/progress.md" 2>/dev/null | sed -n 's/^[[:space:]]*[-*][[:space:]]*\*\*Этап:\*\*[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -1)"
+    stage_now="$(sed -nE 's/^[[:space:]]*[-*][[:space:]]*\*\*(Stage|Этап):\*\*[[:space:]]*([0-9][0-9]*).*/\2/p' "$progress" 2>/dev/null | head -1)"
+    stage_was="$(git -C "$root" show "HEAD:$tasks_dir/$branch/progress.md" 2>/dev/null | sed -nE 's/^[[:space:]]*[-*][[:space:]]*\*\*(Stage|Этап):\*\*[[:space:]]*([0-9][0-9]*).*/\2/p' | head -1)"
 fi
 
 if [ -n "$progress" ] && [ -n "$stage_now" ] && [ -n "$stage_was" ] && [ "$stage_now" -gt "$stage_was" ] 2>/dev/null; then
@@ -361,7 +361,7 @@ if [ -n "$progress" ] && [ -n "$stage_now" ] && [ -n "$stage_was" ] && [ "$stage
     contract="$(awk -v n="$stage_was" '
         $0 ~ "^### " n "\\." { inside = 1; next }
         /^### / { inside = 0 }
-        inside && /\*\*Чем проверяется:\*\*/ { print }
+        inside && /\*\*(Verified by|Чем проверяется):\*\*/ { print }
     ' "$plan" 2>/dev/null)"
     missing=""
     while IFS= read -r cmd; do

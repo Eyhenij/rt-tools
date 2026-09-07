@@ -1,14 +1,14 @@
 # Plan
 
-**Задача:** <KEY>-<number> · **Ветка:** <branch>
-**Драфт:** `<path to the product agreement>`
-**Поведение:** меняется
+**Task:** <KEY>-<number> · **Branch:** <branch>
+**Draft:** `<path to the product agreement>`
+**Behaviour:** changes
 
 A tree that writes the agreement straight into the domain spec names it instead of the draft:
-`**Спек:** `<path to the spec>``.
+`**Spec:** `<path to the spec>``.
 
 Work that does not touch application code needs no agreement — then instead of the draft line
-stands `**Поведение:** не меняется — <the owner's reason>`; an empty reason is not accepted.
+stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is not accepted.
 
 After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
 along the way.
@@ -36,7 +36,7 @@ what is named here is read twice — before the work and after it.>
 
 - **What is done:** <in one phrase>
 - **Readiness sign:** <what must become true>
-- **Чем проверяется:** `<command>` — <what in its output means "it matched">
+- **Verified by:** `<command>` — <what in its output means "it matched">
 
 The command is written in backticks: the turn exit guard reads it and does not let out a turn in
 which the stage is declared closed and the command was not run. An acceptance written in prose

@@ -91,7 +91,7 @@ if [ ! -f "$progress" ]; then
     deny "BLOCKED by task-flow: there is no progress — '${tasks_dir}/${branch}/progress.md'. The state of the work is declared in it, and without it there is no seeing whether the work reached editing code. Assemble the task folder from the sample (cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}), then repeat. The rule is task-flow."
 fi
 
-state="$(sed -n 's/^[[:space:]]*[-*][[:space:]]*\*\*Состояние:\*\*[[:space:]]*`\([^`]*\)`.*/\1/p' "$progress" 2>/dev/null | head -1)"
+state="$(sed -nE 's/^[[:space:]]*[-*][[:space:]]*\*\*(State|Состояние):\*\*[[:space:]]*`([^`]*)`.*/\2/p' "$progress" 2>/dev/null | head -1)"
 
 # The mandatory action of the state. The refusal names it in full: an executor told only "wrong
 # state" rewrites the state line instead of taking the step.
@@ -109,7 +109,7 @@ state_action() {
 }
 
 if [ -z "$state" ]; then
-    deny "BLOCKED by task-flow: no state of the work is declared in '${tasks_dir}/${branch}/progress.md'. Write into the section «Где стоим» the line '- **Состояние:** \`<имя>\`' — a name from the list of states of the rule — then repeat. Code is edited in the states 'этап-идёт', 'этапы-кончились', 'работа-отдана' and 'разбор-кончился'. The rule is task-flow."
+    deny "BLOCKED by task-flow: no state of the work is declared in '${tasks_dir}/${branch}/progress.md'. Write into the section «Where we stand» the line '- **State:** \`<name>\`' — a name from the list of states of the rule — then repeat. Code is edited in the states 'этап-идёт', 'этапы-кончились', 'работа-отдана' and 'разбор-кончился'. The rule is task-flow."
 fi
 
 case "$state" in
@@ -117,7 +117,7 @@ case "$state" in
     # a run happens to be red and a review comes with remarks, and the fix goes into the same branch.
     этап-идёт | этапы-кончились | работа-отдана | разбор-кончился) ;;
     просьба-не-разобрана | разбор-закрыт | договорённость-записана | задача-взята | замысел-записан | папка-разобрана | влито)
-        deny "BLOCKED by task-flow: the progress declares the state '${state}', and code is not edited in it. The mandatory action of this state is $(state_action "$state"). The work has reached editing code — rewrite the state line in '${tasks_dir}/${branch}/progress.md' to '- **Состояние:** \`этап-идёт\`'. The rule is task-flow."
+        deny "BLOCKED by task-flow: the progress declares the state '${state}', and code is not edited in it. The mandatory action of this state is $(state_action "$state"). The work has reached editing code — rewrite the state line in '${tasks_dir}/${branch}/progress.md' to '- **State:** \`этап-идёт\`'. The rule is task-flow."
         ;;
     *)
         deny "BLOCKED by task-flow: '${tasks_dir}/${branch}/progress.md' declares the state '${state}', and there is no such name in the list. The name is taken from the list of states of the rule — a word of one own says nothing about the entry, the exit or the mandatory action. The rule is task-flow."

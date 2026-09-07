@@ -201,7 +201,9 @@ function adoptDraft() {
         return;
     }
     const before = readFileSync(plan, 'utf8');
-    const after = before.replace(/^\*\*Задача:\*\*.*$/m, `**Задача:** ${TASK_KEY}-${number} · **Ветка:** ${branch}`);
+    // The key is read under two names: the package sample is English, and a tree folder created
+    // before the layer was translated is Russian. It is written in English.
+    const after = before.replace(/^\*\*(?:Task|Задача):\*\*.*$/m, `**Task:** ${TASK_KEY}-${number} · **Branch:** ${branch}`);
     if (after !== before) {
         writeFileSync(plan, after);
         console.log(`The header of the plan is filled in: docs/tasks/${branch}/plan.md`);

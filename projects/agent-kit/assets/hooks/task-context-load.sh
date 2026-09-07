@@ -144,7 +144,7 @@ done
             cat "$PROGRESS"
         else
             # The "Where we stand" section is rewritten by every session and survives any size.
-            LC_ALL=C awk '/^## Где стоим/{f=1} f&&/^## /&&!/^## Где стоим/{exit} f' "$PROGRESS"
+            LC_ALL=C awk '/^## (Where we stand|Где стоим)/{f=1} f&&/^## /&&!/^## (Where we stand|Где стоим)/{exit} f' "$PROGRESS"
             printf '\n<cut for size. The latest entries:>\n\n'
             tail -40 "$PROGRESS"
             printf '\n<read in full: %s>\n' "$PROGRESS"

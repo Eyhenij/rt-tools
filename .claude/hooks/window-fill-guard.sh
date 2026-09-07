@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/window-fill-guard.sh · 6ab404a6ddc8 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/window-fill-guard.sh · ae4afcaa7f5e · правится надстройкой, не здесь
 # rt-hook: PostToolUse .*
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh
 # rt-hook: PreToolUse .*
@@ -143,7 +143,7 @@ if [ "$event" = "PostToolUse" ]; then
     elif [ -n "$compact_pct" ]; then
         text="WINDOW FILL ${pct}% (${fill_k}k of ${window_k}k). There is no stopping point to choose: at ${compact_pct}% the tool compacts the context itself, the hook writes the handover by then, and the work goes on in this same session. The stop threshold ${stop_pct}% is the insurance in case the compaction does not come. Work on."
     else
-        text="WINDOW FILL ${pct}% (${fill_k}k of ${window_k}k). It is time to choose the stopping point: from ${stop_pct}% only closing the session is left. Bring the current step to a state the next session continues from, rewrite «Где стоим» in the progress, write the handover and give the owner the path to it — the pattern task-flow-handoff."
+        text="WINDOW FILL ${pct}% (${fill_k}k of ${window_k}k). It is time to choose the stopping point: from ${stop_pct}% only closing the session is left. Bring the current step to a state the next session continues from, rewrite «Where we stand» in the progress, write the handover and give the owner the path to it — the pattern task-flow-handoff."
     fi
 
     jq -n --arg t "$text" \
@@ -187,7 +187,7 @@ esac
 reason="BLOCKED by window-fill-guard: window fill ${pct}% (${fill_k}k of ${window_k}k), the stop threshold is ${stop_pct}%. The session works no further — it closes.
 
 What is left to do in this session:
-1. Rewrite the section «Где стоим» in the progress and add a session entry — what was done, what confirms it, what did not work out.
+1. Rewrite the section «Where we stand» in the progress and add a session entry — what was done, what confirms it, what did not work out.
 2. Commit what is checked: what is not committed does not survive the break.
 3. Write the handover into ${handoff_dir}/ and give the owner the path to it — what goes into it is said by the pattern task-flow-handoff.
 

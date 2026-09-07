@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of work from the owner's request to the merge. Load at the start of any work, when editing task folders and product agreements, and when returning to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. End of a turn — turn-conduct.
 ---
-<!-- rt-kit v0.25.0 · rules/task-flow.md · ecdb32152ccf · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/task-flow.md · ce5e06635a88 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -46,7 +46,7 @@ The unit of work is a state, not a step. A state has an entry, a mandatory actio
 until the action is done the work stays in the same state.
 
 The state is declared in the "Where we stand" section of the progress by the machine-readable line
-``- **Состояние:** `этап-идёт` `` and is rewritten with it.
+``- **State:** `этап-идёт` `` and is rewritten with it.
 
 | State | Entry | Mandatory action | Pattern |
 | --- | --- | --- | --- |
@@ -136,7 +136,7 @@ flowchart TD
   the branch history.
 - **The agreement is required by the edit paths, not by an appraisal of the task.** `apps/**` and
   `libs/**` are the sign; rules, texts, tooling and dependencies fall outside it. The bypass is the
-  line `**Поведение:** не меняется — <причина владельца>` in the plan; an empty reason is not
+  line `**Behaviour:** unchanged — <the reason of the owner>` in the plan; an empty reason is not
   accepted.
 - **What needs the owner's word is taken from a list, not appraised on the spot.** The appraisal
   "this is safe" is assigned by whoever finds it convenient.
