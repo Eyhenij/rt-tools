@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/task-flow-draft-guard.sh · f0baea4b4b75 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/task-flow-draft-guard.sh · 84d166419e05 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/task-flow-context.sh, hooks/task-flow-guard.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: no code is written before the product agreement.
@@ -74,8 +74,8 @@ draft="$(sed -n 's/^\*\*Драфт:\*\*[[:space:]]*`\([^`]*\)`.*/\1/p' "$plan" 2
 [ -z "$draft" ] && draft="$(sed -n 's/^\*\*Спек:\*\*[[:space:]]*`\([^`]*\)`.*/\1/p' "$plan" 2>/dev/null | head -1)"
 
 if [ -z "$draft" ]; then
-    deny "BLOCKED by task-flow: в '${tasks_dir}/${branch}/plan.md' не названа договорённость о продукте. Назови её одной из двух строк: '**Драфт:** \`путь\`' — отдельный документ в docs/specs/<домен>/proposed/<фича>/, либо '**Спек:** \`путь\`' — спек домена, в который договорённость пишется прямо. Правило — скил task-flow." \
-        "строка '**Поведение:** не меняется — <причина владельца>' в замысле; пустая причина не принимается"
+    deny "BLOCKED by task-flow: no product agreement is named in '${tasks_dir}/${branch}/plan.md'. Name it by one of two lines: '**Драфт:** \`path\`' — a separate document in docs/specs/<домен>/proposed/<фича>/, or '**Спек:** \`path\`' — the domain spec the agreement is written into directly. The rule is task-flow." \
+        "the line '**Поведение:** не меняется — <причина владельца>' in the plan; an empty reason is not accepted"
 fi
 
 case "$draft" in
@@ -117,4 +117,4 @@ case "$draft" in
         ;;
 esac
 
-deny "BLOCKED by task-flow: замысел называет договорённость '${draft}', а её на диске нет и в истории ветки не было. Заведи её с образца (docs/specs/_template) или поправь путь в '${tasks_dir}/${branch}/plan.md'. Правило — скил task-flow."
+deny "BLOCKED by task-flow: the plan names the agreement '${draft}', and it is neither on disk nor in the history of the branch. Create it from the sample (docs/specs/_template) or fix the path in '${tasks_dir}/${branch}/plan.md'. The rule is task-flow."

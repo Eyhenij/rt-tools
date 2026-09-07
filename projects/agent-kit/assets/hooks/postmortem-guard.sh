@@ -99,13 +99,13 @@ if [ -n "$(find "$root/$notes_dir" -name '*.md' -newermt '-1 day' 2>/dev/null | 
     exit 0
 fi
 
-reason="BLOCKED by postmortem-guard: в ответе признан промах, а записи о происшествии в \`$notes_dir/\` за сегодня нет. Происшествие — заход, в котором исполнитель сделал не то, а слой правил этого не отбил, — записывается в тот же заход: назавтра механизм промаха пересказывается уже приглаженно, и правило из него не выводится.
+reason="BLOCKED by postmortem-guard: a miss is admitted in the reply, and there is no record of the incident in \`$notes_dir/\` for today. An incident — a session in which the executor did the wrong thing and the rules layer did not refuse it — is written down in that same session: by the next day the mechanism of the miss is retold already smoothed over, and no rule comes out of it.
 
-Запись называет: механизм промаха по шагам, что было доступно до него, чем ловилось и что из этого ушло в слой правил. Без последней строки это жалоба, а не разбор.
+The record names: the mechanism of the miss step by step, what was available before it, what caught it and what of this went into the rules layer. Without the last line it is a complaint, not an analysis.
 
-    $notes_dir/<год>-<месяц>-<день>-<короткое имя>.md
+    $notes_dir/<year>-<month>-<day>-<short name>.md
 
-Гард судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
 # The shared refusal tail: two lawful moves. The file may not be laid out — then there is no
 # tail, and the reason for the refusal stays as it was.
@@ -119,6 +119,6 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-    || printf '{"decision":"block","reason":"postmortem-guard: признан промах — запиши разбор происшествия."}\n'
+    || printf '{"decision":"block","reason":"postmortem-guard: a miss is admitted — write the analysis of the incident."}\n'
 
 exit 0

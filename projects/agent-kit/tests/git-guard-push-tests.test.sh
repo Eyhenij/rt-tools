@@ -48,15 +48,15 @@ ways_says="$(CLAUDE_PROJECT_DIR="$WAYS" input_cmd 'git push origin RT-1701-ways'
     | CLAUDE_PROJECT_DIR="$WAYS" "$HOOKS/git-guard-push-tests.sh" 2>/dev/null \
     | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' 2>/dev/null)"
 case "$ways_says" in
-    *'Ходов отсюда три'*) report "SC-AK-851 — отказ называет три хода" да да ;;
+    *'Three moves from here'*) report "SC-AK-851 — отказ называет три хода" да да ;;
     *) report "SC-AK-851 — отказ называет три хода" "нет" да ;;
 esac
 case "$ways_says" in
-    *'починить саму проверку'*) report "SC-AK-851 — среди них починка самой проверки" да да ;;
+    *'fix the check itself'*) report "SC-AK-851 — среди них починка самой проверки" да да ;;
     *) report "SC-AK-851 — среди них починка самой проверки" "нет" да ;;
 esac
 case "$ways_says" in
-    *'Спорное в список известного не вносится'*) report "SC-AK-851 — список известного назван неверным вариантом" да да ;;
+    *'What is in dispute is not added to the known list'*) report "SC-AK-851 — список известного назван неверным вариантом" да да ;;
     *) report "SC-AK-851 — список известного назван неверным вариантом" "нет" да ;;
 esac
 rm -rf "$WAYS"

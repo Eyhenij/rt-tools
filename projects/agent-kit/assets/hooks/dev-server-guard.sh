@@ -40,7 +40,7 @@ case "$tool" in
             file="$(printf '%s' "$input" | jq -r '.tool_input.filePath // empty' 2>/dev/null)"
             case "$file" in
                 */package.json|package.json)
-                    echo "Запуск скрипта прямо из манифеста: гард видит только файл и строку, а не сам скрипт, поэтому не может отличить подъём сервера от сборки. Приложения уже подняты владельцем — если нужна сборка или тест, запусти их командой в терминале." >&2
+                    echo "A launch of a script straight from the manifest: the guard sees only the file and the line, not the script itself, so it cannot tell raising a server from a build. The applications are already raised by the owner — if a build or a test is needed, run them by a command in the terminal." >&2
                     exit 2 ;;
             esac
             exit 0
@@ -48,7 +48,7 @@ case "$tool" in
         # The word "start" without a boundary also caught "restart", which raises no server.
         case "$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]')" in
             *serve*|*dev*|start*|*\ start*|*:start*)
-                echo "Конфигурация «${name}» похожа на подъём сервера разработки, а приложения уже подняты владельцем — проверяй их. Если конфигурация делает другое, запусти это командой: по имени гард содержимого не видит." >&2
+                echo "The configuration «${name}» looks like raising a development server, and the applications are already raised by the owner — check those. If the configuration does something else, run it by a command: by the name alone the guard does not see the content." >&2
                 exit 2 ;;
         esac
         exit 0 ;;
@@ -92,9 +92,9 @@ command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
 
 deny() {
     if [ -n "$stands" ]; then
-        echo "$1 Приложения уже подняты владельцем: ${stands} — проверяй их. Свой экземпляр не поднимай; если порт не отвечает, скажи владельцу, а не запускай второй. $(rt_deny_tail)" >&2
+        echo "$1 The applications are already raised by the owner: ${stands} — check those. Do not raise an instance of your own; if a port does not answer, tell the owner instead of launching a second one. $(rt_deny_tail)" >&2
     else
-        echo "$1 Приложения уже подняты владельцем — проверяй их. Свой экземпляр не поднимай; если порт не отвечает, скажи владельцу, а не запускай второй. $(rt_deny_tail)" >&2
+        echo "$1 The applications are already raised by the owner — check those. Do not raise an instance of your own; if a port does not answer, tell the owner instead of launching a second one. $(rt_deny_tail)" >&2
     fi
     exit 2
 }
@@ -108,24 +108,24 @@ RUNNER='((npx|pnpm|yarn|bun|npm)([[:space:]]+(exec|run|dlx))?[[:space:]]+)?'
 BOUND="$RT_CMD_BOUND"
 
 printf '%s' "$cmd" | grep -qE "${BOUND}${RUNNER}(nx|ng)[[:space:]]+(run[[:space:]]+[^[:space:]]*:)?(serve|dev)" \
-    && deny "Запуск ещё одного сервера разработки через каркас."
+    && deny "A launch of one more development server through the framework."
 
 # Requiring a space right after the name broke the match on a colon: the guard let through scripts
 # like "serve:site" — that is, exactly the commands it is written for.
 printf '%s' "$cmd" | grep -qE "${BOUND}(npm|pnpm|yarn|bun)([[:space:]]+run)?[[:space:]]+(dev|start|serve)([:._-][A-Za-z0-9:._-]*)?([[:space:]]|\$)" \
-    && deny "Запуск ещё одного сервера разработки через пакетный раннер."
+    && deny "A launch of one more development server through the package runner."
 
 # The subcommand is mandatory: while it was optional, the bare name of the bundler fell under the
 # rule — that is, any one-liner where it occurs inside the text.
 printf '%s' "$cmd" | grep -qE "${BOUND}${RUNNER}vite([[:space:]]+(dev|serve|preview))?[[:space:]]*(\$|[;&|\"'])" \
-    && deny "Запуск ещё одного сервера разработки."
+    && deny "A launch of one more development server."
 printf '%s' "$cmd" | grep -qE "${BOUND}${RUNNER}(next|astro|nuxt)[[:space:]]+(dev|start|preview)([[:space:]]|\$)" \
-    && deny "Запуск ещё одного сервера разработки."
+    && deny "A launch of one more development server."
 
 # Static files served over a build are the same second instance. Every name sits under the shared
 # anchor of the command start: without it a package listing and a search through documents read as
 # a start.
 printf '%s' "$cmd" | grep -qE "${BOUND}(python3?[[:space:]]+-m[[:space:]]+http\.server|${RUNNER}(http-server|live-server|serve)([[:space:]]|\$))" \
-    && deny "Подъём статического сервера поверх сборки — тот же второй экземпляр."
+    && deny "Raising a static server on top of a build — the same second instance."
 
 exit 0

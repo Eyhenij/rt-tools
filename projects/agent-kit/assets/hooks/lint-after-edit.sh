@@ -247,13 +247,13 @@ if [ "$path_gap" = 1 ]; then
     [ -z "$gap_key" ] && gap_key="$(date +%Y%m%d 2>/dev/null || printf 'nosession')"
     gap_mark="${TMPDIR:-/tmp}/rt-kit-lint-path-gap-$gap_key"
     if [ ! -f "$gap_mark" ]; then
-        printf 'линтер по следам правки: команда профиля не назвала правленый файл. Она либо
+        printf 'the linter on the trail of an edit: the command of the profile did not name the
 ' >&2
-        printf 'обходит всё дерево, либо не проверяет ничего, а выглядит и в том и в другом
+        printf 'edited file. It either walks the whole tree or checks nothing at all, and in both
 ' >&2
-        printf 'случае как чистый линтер. Путь подставляется при печати команды — образец
+        printf 'cases looks like a clean linter. The path is substituted when the command is
 ' >&2
-        printf 'стоит в умолчании профиля, функция rt_lint_for.
+        printf 'printed — the sample stands in the default of the profile, the function rt_lint_for.
 ' >&2
         : >"$gap_mark" 2>/dev/null || true
     fi
@@ -265,9 +265,9 @@ fi
 report="$(printf '%s' "$report" | head -c 6000)"
 
 if [ "$covered" -eq 1 ]; then
-    tail_line="Пуш всё равно не пройдёт, пока набор красный."
+    tail_line="The push will not pass anyway while the suite is red."
 else
-    tail_line="Почини их сейчас: этот линтер в гейт пуша не входит, и отложенное замечание уедет в главную ветку молча."
+    tail_line="Fix them now: this linter is not part of the push gate, and a postponed finding travels into the main branch in silence."
 fi
 
 case "$mode:$command_text" in
@@ -275,17 +275,17 @@ case "$mode:$command_text" in
     # by a change of its place, and without this line the reader looks for a miss in text that
     # nobody changed.
     move:*"git mv "*)
-        head_line="ЛИНТЕР (${linters}) НАШЁЛ ЗАМЕЧАНИЯ ПОСЛЕ ПЕРЕНОСА. Перенос меняет либу, а вместе с ней границы: импорт, законный на прежнем месте, на новом может быть запрещён." ;;
+        head_line="THE LINTER (${linters}) FOUND ISSUES AFTER A MOVE. A move changes the lib, and with it the boundaries: an import lawful in the former place may be forbidden in the new one." ;;
     move:*)
-        head_line="ЛИНТЕР (${linters}) НАШЁЛ ЗАМЕЧАНИЯ ПОСЛЕ ЗАПИСИ КОМАНДОЙ:" ;;
+        head_line="THE LINTER (${linters}) FOUND ISSUES AFTER A WRITE BY A COMMAND:" ;;
     *)
-        head_line="ЛИНТЕР (${linters}) НАШЁЛ ЗАМЕЧАНИЯ:" ;;
+        head_line="THE LINTER (${linters}) FOUND ISSUES:" ;;
 esac
 
 ctx="${head_line}
 ${report}
 
-Почини их до конца задачи — правятся ВСЕ замечания в затронутом файле, и новые, и лежавшие раньше: накопленные нарушения глушат сигнал о свежих. ${tail_line}"
+Fix them before the task ends — ALL the issues in the touched file are fixed, the new ones and those that lay there before: accumulated violations drown the signal about fresh ones. ${tail_line}"
 
 jq -n --arg c "$ctx" '{hookSpecificOutput:{hookEventName:"PostToolUse",additionalContext:$c}}' 2>/dev/null
 

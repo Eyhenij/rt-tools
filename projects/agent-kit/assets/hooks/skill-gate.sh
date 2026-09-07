@@ -182,8 +182,8 @@ command -v rt_note >/dev/null 2>&1 && rt_note gate-deny "res=$req" "kind=$kind" 
 # The fallback move is named in the refusal itself: a rule created in this same branch is unknown
 # to the rules registry — it is assembled at session start, while the gate reads the disk. Without
 # this line the next session looks for a bypass by trial and usually finds the wrong one.
-fallback="Если инструмент такого имени не знает, правило завели после начала сессии — прочитай ${rules_dir}/${req}/SKILL.md и спутник рядом с ним."
-reason="Отбито гейтом правил: загрузи правило «${req}» инструментом Skill и повтори действие. ${fallback} Для этой области это происходит один раз за сессию."
+fallback="If the tool does not know such a name, the rule was created after the session began — read ${rules_dir}/${req}/SKILL.md and the companion next to it."
+reason="Refused by the rules gate: load the rule «${req}» by the tool Skill and repeat the action. ${fallback} For this area it happens once per session."
 
 # A rule names its law in one word, while there are two layers of laws: the shared one lies at the
 # root, the application law in a directory under it. The path is looked for, not assembled from
@@ -195,7 +195,7 @@ if [ -n "$law" ]; then
     law_path="$laws_dir/${law}.md"
     [ -f "$root/$law_path" ] || law_path="$laws_dir/application/${law}.md"
     [ -f "$root/$law_path" ] \
-        && reason="Отбито гейтом правил: загрузи правило «${req}» инструментом Skill — оно применяет закон ${law_path} к этому дереву — и повтори действие. ${fallback} Для этой области это происходит один раз за сессию."
+        && reason="Refused by the rules gate: load the rule «${req}» by the tool Skill — it applies the law ${law_path} to this tree — and repeat the action. ${fallback} For this area it happens once per session."
 fi
 
 # The article this edit falls under. A rule weighs from twenty to sixty kilobytes, and a refusal
@@ -210,17 +210,17 @@ fi
 if [ "$kind" != "command" ] && [ "$kind" != "browser" ] && command -v rt_rule_article_heads >/dev/null 2>&1; then
     article="$(rt_rule_article_heads "$root/$rules_dir/${req}/SKILL.md" "$target" 2>/dev/null)"
     if [ -n "$article" ]; then
-        reason="Отбито гейтом правил. Под эту правку подпадают статьи правила «${req}»:
+        reason="Refused by the rules gate. This edit falls under the articles of the rule «${req}»:
 
 ${article}
 
-Текст этих статей придёт в контекст вместе с правилом, и пересказывать его здесь значило бы платить за один текст дважды: загрузи правило «${req}» инструментом Skill и повтори действие. ${fallback} Для этой области это происходит один раз за сессию."
+The text of these articles arrives with the rule itself, and retelling it here would mean paying for one text twice: load the rule «${req}» by the tool Skill and repeat the action. ${fallback} For this area it happens once per session."
     fi
 fi
 
 # What will be needed further along this same command. The line stands after all the text
 # branches: there are three of them, and each rewrites the reason whole.
-[ -n "$ahead" ] && reason="${reason} Дальше по этой команде потребуются: ${ahead}."
+[ -n "$ahead" ] && reason="${reason} Further along this same command these will be needed: ${ahead}."
 
 # The companion is called by a sentence of its own and for all kinds of refusal at once. Before,
 # it was named only as a fallback move — "if the tool does not know such a name" — and a reader
@@ -231,7 +231,7 @@ fi
 companion="$rules_dir/${req}/implementation.md"
 [ -f "$root/$companion" ] && reason="${reason}
 
-Спутник правила — ${companion} — читается вместе с ним: правило говорит, что должно быть верно, а спутник — чем это верно здесь и что здесь названо невозможным. Инструментом он не грузится, его читают файлом."
+The companion of the rule — ${companion} — is read together with it: the rule says what must be true, the companion — by what that is true here and what is named impossible here. It is not loaded by the tool, it is read as a file."
 
 # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
 # The file may not be laid out — then there is no tail, and the reason for the refusal stays as it
@@ -246,6 +246,6 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Загрузи правило %s и повтори."}}\n' "$req"
+    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Load the rule %s and repeat."}}\n' "$req"
 
 exit 0

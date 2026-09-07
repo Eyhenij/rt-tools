@@ -69,7 +69,7 @@ TEXT="$REPO/docs/note.md"
 T="$(transcript "$(say "$REPO/docs/handoff.md")" "$(edited "$CODE")")"
 expect_stop "SC-AK-775 — правка кода после пути к файлу отбита" "$(input_stop "$T")" BLOCK
 expect_reason "SC-AK-775 — отказ называет правленный файл" "$(input_stop "$T")" "$CODE"
-expect_reason "SC-AK-775 — отказ называет, чем была реплика" "$(input_stop "$T")" "путь к файлу"
+expect_reason "SC-AK-775 — отказ называет, чем была реплика" "$(input_stop "$T")" "a path to a file"
 
 # SC-AK-776 — просьба владельца ход отпускает
 T="$(transcript "$(say 'доделай второй этап замысла и открой заявку')" "$(edited "$CODE")")"
@@ -78,7 +78,7 @@ expect_stop "SC-AK-776 — правка кода после просьбы пр�
 # SC-AK-777 — одно слово просьбой не считается
 T="$(transcript "$(say 'продолжай')" "$(edited "$CODE")")"
 expect_stop "SC-AK-777 — одно слово отбито" "$(input_stop "$T")" BLOCK
-expect_reason "SC-AK-777 — отказ называет род реплики" "$(input_stop "$T")" "одно слово"
+expect_reason "SC-AK-777 — отказ называет род реплики" "$(input_stop "$T")" "one word"
 
 # SC-AK-778 — судится код приложения, а не всякая правка
 T="$(transcript "$(say "$REPO/docs/handoff.md")" "$(edited "$TEXT")")"
@@ -91,7 +91,7 @@ expect_stop "SC-AK-778 — ход без правки проходит" "$(input
 # SC-AK-779 — прерывание владельца просьбой не бывает
 T="$(transcript "$(say '[Request interrupted by user]')" "$(edited "$CODE")")"
 expect_stop "SC-AK-779 — правка кода после прерывания отбита" "$(input_stop "$T")" BLOCK
-expect_reason "SC-AK-779 — отказ называет прерывание" "$(input_stop "$T")" "прерывание"
+expect_reason "SC-AK-779 — отказ называет прерывание" "$(input_stop "$T")" "an interruption"
 
 # SC-AK-780 — повторный заход по тому же ходу не судится
 T="$(transcript "$(say "$REPO/docs/handoff.md")" "$(edited "$CODE")")"

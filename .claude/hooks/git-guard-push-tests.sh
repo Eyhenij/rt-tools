@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/git-guard-push-tests.sh · a6fe373b31b7 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/git-guard-push-tests.sh · 9db981889a32 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh
 # The guard of the checks before a push. PreToolUse on the push call.
@@ -232,11 +232,11 @@ tail_out="$(printf '%s' "$output" | tail -n 40 | tr -d '\000')"
 # the same text orders fixing code nobody touched: a refusal once taken apart lay wholly in
 # documents untouched by any commit of the branch. The verifiability law says a broken check does
 # not stop the work, and until this line there was no such option in the refusal.
-reason="BLOCKED: пуш без зелёного локального прогона. «${failed}» упала — почини и пушь снова, обходить гард нельзя. Пуш — вход в конвейер, и красное отсюда проверяется уже на проде.
+reason="BLOCKED: a push without a green local run. «${failed}» failed — fix it and push again, the guard must not be bypassed. A push is the entry into the pipeline, and red from here is checked already in production.
 
-Ходов отсюда три: починить названное и повторить вызов; починить саму проверку, если ошибается она, — разобрать отказы поимённо, показать разбор владельцу и поправить проверку; либо принести владельцу цену обхода и ждать его слова. Спорное в список известного не вносится: он хранит принятое, а не результаты сломанной проверки.
+Three moves from here: fix what is named and repeat the call; fix the check itself, if it is the one that is wrong — take the refusals apart one by one, show the analysis to the owner and correct the check; or bring the owner the price of a bypass and wait for their word. What is in dispute is not added to the known list: it holds what was accepted, not the results of a broken check.
 
-Хвост вывода:
+The tail of the output:
 
 ${tail_out}"
 

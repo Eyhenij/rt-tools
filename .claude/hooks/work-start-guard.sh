@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/work-start-guard.sh · eb24cb0eb8d7 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/work-start-guard.sh · 6364e25f539a · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/profile-check.sh
 # Work-start guard: a turn that edited application code does not end unless the owner asked for
@@ -135,12 +135,12 @@ words="$(printf '%s' "$asked" | tr -s '[:space:]' '\n' | grep -c '[^[:space:]]' 
 
 case "$first" in
     # A service note about an interruption: there is no request of its own in it.
-    '[Request interrupted'*) kind="прерывание" ;;
+    '[Request interrupted'*) kind="an interruption" ;;
     *)
         if [ "$words" -le 1 ] 2>/dev/null; then
             case "$first" in
-                */*) kind="путь к файлу" ;;
-                *) kind="одно слово" ;;
+                */*) kind="a path to a file" ;;
+                *) kind="one word" ;;
             esac
         else
             kind=""
@@ -151,13 +151,13 @@ esac
 # There is a request in the turn: the work was ordered, and the guard lets go.
 [ -z "$kind" ] && exit 0
 
-reason="BLOCKED by work-start-guard: за ход правился код приложения — «${touched}», — а последняя реплика владельца просьбой не была: ${kind}.
+reason="BLOCKED by work-start-guard: application code was edited in this turn — «${touched}» — while the last message of the owner was not a request: ${kind}.
 
-Заход работу не начинает сам. Передача прошлого захода, состояние задачи из хука запуска и назначенный эпик говорят, что делать, если работать, и молчат о том, работать ли. Строка с адресом называет файл, а не действие: прочитанная как поручение, она даёт заходу задание, которого владелец не давал.
+A session does not start work by itself. The handover of the previous session, the task state from the startup hook and the assigned epic say what to do if working, and stay silent about whether to work. A line with an address names a file, not an action: read as an order, it gives the session work the owner never ordered.
 
-Ход отсюда один: назови владельцу состояние работы и спроси, продолжать ли, — и дождись ответа. Сделанное этим ходом не откатывается само: скажи, что уже правлено.
+There is one move from here: name the state of the work to the owner and ask whether to go on — and wait for the answer. What was done in this turn does not roll itself back: say what is already edited.
 
-Гард судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
 # The shared deny tail: the two lawful moves. The file may not be laid out — then there is no
 # tail, and the reason for the refusal stays the same.
@@ -170,6 +170,6 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-    || printf '{"decision":"block","reason":"work-start-guard: код правился, а просьбы владельца в этом ходе не было."}\n'
+    || printf '{"decision":"block","reason":"work-start-guard: code was edited, and there was no request from the owner in this turn."}\n'
 
 exit 0

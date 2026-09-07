@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/proposal-guard.sh · 75b2ba2d832e · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/proposal-guard.sh · 05cdc265e18b · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh
 # Proposal guard: a turn in which the owner said to write or send a proposal to the rules layer
@@ -125,15 +125,15 @@ else
     fi
 fi
 
-reason="BLOCKED by proposal-guard: владелец сказал завести или отправить предложение слою правил, а отправки в этом ходе не было. Написанное и не отправленное лежит в дереве неотличимо от отправленного: своей записи в слое правил у него нет, и владелец читает работу сделанной, пока не спросит прямо.
+reason="BLOCKED by proposal-guard: the owner said to create or send a proposal to the rules layer, and no sending happened in this turn. What is written and not sent lies in the tree indistinguishable from what was sent: it has no record of its own in the rules layer, and the owner reads the work as done until they ask outright.
 
-Предложение пишется файлом в \`$proposals_dir/\` и уезжает в тот же ход:
+A proposal is written as a file in \`$proposals_dir/\` and leaves in the same turn:
 
     $propose_cmd
 
-Сухой прогон отправкой не является: он показывает, что уехало бы, и следа наружу не оставляет. Отправка пишет отметки в файлы предложений и делает дерево грязным — при открытом PR они ложатся вторым коммитом в ту же ветку, и это их место, а не повод отложить.
+A dry run is not a sending: it shows what would have left and leaves no trace outward. The sending writes marks into the proposal files and makes the tree dirty — with an open PR they land as a second commit in the same branch, and that is their place, not a reason to postpone.
 
-Гард судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
 # The shared deny tail: the two lawful moves. The file may not be laid out — then there is no
 # tail, and the reason for the refusal stays the same.
@@ -147,6 +147,6 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-    || printf '{"decision":"block","reason":"proposal-guard: владелец просил предложение — отправь его командой пакета."}\n'
+    || printf '{"decision":"block","reason":"proposal-guard: the owner asked for a proposal — send it by the command of the package."}\n'
 
 exit 0

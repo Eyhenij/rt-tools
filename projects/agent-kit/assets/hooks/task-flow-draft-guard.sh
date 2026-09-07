@@ -73,8 +73,8 @@ draft="$(sed -n 's/^\*\*Драфт:\*\*[[:space:]]*`\([^`]*\)`.*/\1/p' "$plan" 2
 [ -z "$draft" ] && draft="$(sed -n 's/^\*\*Спек:\*\*[[:space:]]*`\([^`]*\)`.*/\1/p' "$plan" 2>/dev/null | head -1)"
 
 if [ -z "$draft" ]; then
-    deny "BLOCKED by task-flow: в '${tasks_dir}/${branch}/plan.md' не названа договорённость о продукте. Назови её одной из двух строк: '**Драфт:** \`путь\`' — отдельный документ в docs/specs/<домен>/proposed/<фича>/, либо '**Спек:** \`путь\`' — спек домена, в который договорённость пишется прямо. Правило — скил task-flow." \
-        "строка '**Поведение:** не меняется — <причина владельца>' в замысле; пустая причина не принимается"
+    deny "BLOCKED by task-flow: no product agreement is named in '${tasks_dir}/${branch}/plan.md'. Name it by one of two lines: '**Драфт:** \`path\`' — a separate document in docs/specs/<домен>/proposed/<фича>/, or '**Спек:** \`path\`' — the domain spec the agreement is written into directly. The rule is task-flow." \
+        "the line '**Поведение:** не меняется — <причина владельца>' in the plan; an empty reason is not accepted"
 fi
 
 case "$draft" in
@@ -116,4 +116,4 @@ case "$draft" in
         ;;
 esac
 
-deny "BLOCKED by task-flow: замысел называет договорённость '${draft}', а её на диске нет и в истории ветки не было. Заведи её с образца (docs/specs/_template) или поправь путь в '${tasks_dir}/${branch}/plan.md'. Правило — скил task-flow."
+deny "BLOCKED by task-flow: the plan names the agreement '${draft}', and it is neither on disk nor in the history of the branch. Create it from the sample (docs/specs/_template) or fix the path in '${tasks_dir}/${branch}/plan.md'. The rule is task-flow."

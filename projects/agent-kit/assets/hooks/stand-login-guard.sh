@@ -74,18 +74,18 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg re "$asked_re"
 
 [ "$verdict" = "asked" ] || exit 0
 
-reason="BLOCKED by stand-login-guard: исполнитель просит владельца войти или ввести пароль. Стенд, вход и учётные записи для проверки готовит агент. Препятствие перед просьбой — поле не принимает ввод, чужое расширение в браузере, отключившийся профиль — снимает агент.
+reason="BLOCKED by stand-login-guard: the executor asks the owner to sign in or to enter a password. The stand, the sign-in and the accounts for checking are prepared by the agent. An obstacle before the asking — a field that does not accept input, a foreign extension in the browser, a profile that dropped out — is removed by the agent.
 
-Как снять препятствие самостоятельно:
+How to remove the obstacle by yourself:
 
-    подставить значение инструментом формы по ссылке на элемент
-    выключить мешающее расширение в профиле браузера
-    поднять стенд на другом адресе
-    войти парой из засева местной базы вместо боевой учётной записи
+    substitute the value by the form tool through a reference to the element
+    switch off the interfering extension in the browser profile
+    raise the stand on another address
+    sign in with a pair from the seed of the local database instead of a production account
 
-У владельца просят режим работы, а не ввод: обычный режим вместо автоматического; вход в нём делает агент и возвращает автоматический режим тем же ходом.
+What is asked of the owner is the mode of work, not input: the ordinary mode instead of the automatic one; the sign-in in it is done by the agent, and the automatic mode is returned by the same turn.
 
-Гард проверяет один ход: следующий заход не блокируется."
+The guard checks one turn: the next session is not blocked."
 
 # The shared deny tail: two lawful moves. The file may not be laid out — then there is no tail, and
 # the reason for the refusal stays.
@@ -99,6 +99,6 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-    || printf '{"decision":"block","reason":"stand-login-guard: вход на стенд делает агент, а не владелец."}\n'
+    || printf '{"decision":"block","reason":"stand-login-guard: the sign-in to the stand is done by the agent, not by the owner."}\n'
 
 exit 0

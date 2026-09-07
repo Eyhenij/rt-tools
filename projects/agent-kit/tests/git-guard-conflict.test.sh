@@ -47,7 +47,7 @@ CLEAN="$(conflict_tree '')"
 dlv "SC-AK-786 — заведение ветки под задачу отбито" "$STUCK" \
     'git checkout -b RT-1531-next origin/main' deny
 dlv_reason "SC-AK-786 — отказ называет, что именно берётся" "$STUCK" \
-    'git checkout -b RT-1531-next origin/main' 'заведение ветки под задачу'
+    'git checkout -b RT-1531-next origin/main' 'creating a branch for a task'
 dlv_reason "SC-AK-786 — отказ называет конфликтующую заявку" "$STUCK" \
     'git checkout -b RT-1531-next origin/main' '#1529 RT-1527-probe'
 dlv "SC-AK-872 — заведение ветки с флагом перед -b отбито так же" "$STUCK" \
@@ -56,12 +56,12 @@ dlv "SC-AK-872 — заведение ветки с флагом перед -b �
 # SC-AK-787 — заведение задачи
 dlv "SC-AK-787 — заведение задачи отбито" "$STUCK" 'npm run task:new -- --title x' deny
 dlv_reason "SC-AK-787 — отказ называет заведение задачи" "$STUCK" \
-    'npm run task:new -- --title x' 'заведение задачи'
+    'npm run task:new -- --title x' 'creating a task'
 
 # SC-AK-788 — перевод колонки в работу
 dlv "SC-AK-788 — перевод колонки в работу отбит" "$STUCK" 'npm run task:move 1531 in-progress' deny
 dlv_reason "SC-AK-788 — отказ называет перевод колонки" "$STUCK" \
-    'npm run task:move 1531 in-progress' 'перевод колонки в работу'
+    'npm run task:move 1531 in-progress' 'moving the column into work'
 
 # SC-AK-788 — перевод в другую колонку концом работы и есть: он не отбивается
 dlv "SC-AK-788 — перевод колонки в разбор проходит" "$STUCK" 'npm run task:move 1527 in-review' PASS
@@ -69,7 +69,7 @@ dlv "SC-AK-788 — перевод колонки в разбор проходи�
 # SC-AK-789 — открытие заявки
 dlv "SC-AK-789 — открытие заявки отбито" "$STUCK" 'gh pr create --title "x" --body y' deny
 dlv_reason "SC-AK-789 — отказ называет открытие заявки" "$STUCK" \
-    'gh pr create --title "x" --body y' 'открытие заявки'
+    'gh pr create --title "x" --body y' 'opening a request'
 
 # SC-AK-790 — починкой конфликта работа не берётся, и отбивать её нечем
 dlv "SC-AK-790 — подтягивание проходит" "$STUCK" 'git fetch origin' PASS

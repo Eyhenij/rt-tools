@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/reuse-first-guard.sh · 64f50f428fcd · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/reuse-first-guard.sh · c803dc18d4fe · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh
 # The "nothing is written from scratch" guard. PreToolUse on an edit of code and markup.
@@ -328,17 +328,17 @@ EOF
 # lets the edit through — there is nothing to stop the work over an unconfigured tree for — but it
 # says what this is configured with.
 if [ "$signals_seen" = 0 ]; then
-    printf '%s\n' 'reuse-first-guard: признаков нет — объявите наборы ключом `reuse.bundles` в настройке проверок' >&2
+    printf '%s\n' 'reuse-first-guard: no signs — declare the bundles by the key `reuse.bundles` in the checks config' >&2
     exit 0
 fi
 
 [ -z "$found" ] && exit 0
 
-reason="BLOCKED: это уже написано. Файл: ${path##*/}
+reason="BLOCKED: this is already written. File: ${path##*/}
 ${found}
 
-Порядок действий: 1) открой готовое — барель кита или базовый класс — и используй его; 2) найди в дереве экран, где этот случай уже собран, и повтори сборку; 3) если готового правда не хватает — расширяй его на месте, у готового, а не клонируй рядом: клон забирает правки на себя и расходится с оригиналом с первой же.
-Свой примитив, своя основа и свои инлайновые стили заводятся только с явного одобрения владельца, и спрашивается это до первого написанного файла. Разовое исключение помечается маркером отступления в той же строке, с объяснением, чего именно нет в готовом. Переименованием файла это не обходится."
+The order of moves: 1) open the ready-made — the barrel of the kit or the base class — and use it; 2) find in the tree a screen where this case is already assembled, and repeat that assembly; 3) if the ready-made really is not enough — extend it in place, at the ready-made, instead of cloning it alongside: a clone takes the edits onto itself and drifts from the original from the very first one.
+A primitive of one's own, a base of one's own and inline styles of one's own are created only with the explicit approval of the owner, and it is asked before the first file is written. A one-off exception is marked by a departure marker on the same line, with an explanation of what exactly the ready-made lacks. Renaming the file does not bypass this."
 
 # The shared refusal tail: the two lawful moves and the lawful form of the bypass, if the refusal
 # has one. The file may be not laid out — then there is no tail, and the reason for the refusal
@@ -347,12 +347,12 @@ ${found}
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
 command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail "маркер отступления в той же строке, с объяснением, чего именно нет в готовом")"
+deny_tail_text="$(rt_deny_tail "a departure marker on the same line, with an explanation of what exactly the ready-made lacks")"
 [ -n "$deny_tail_text" ] && reason="${reason}
 
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Написано своё там, где готовое уже есть."}}\n'
+    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Something of its own is written where the ready-made already exists."}}\n'
 
 exit 0

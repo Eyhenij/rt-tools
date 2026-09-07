@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/conscience-guard.sh · f2524885d4ae · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/conscience-guard.sh · cc32b18ed206 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: agents/conscience.md, hooks/roles.sh, hooks/deny-tail.sh
 # Guard of conscience: a turn in which the conscience role found a repeat of an analysed miss does
@@ -71,26 +71,26 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
                      then (map(if type == "object" then (.text // "") else tostring end) | join("\n"))
                      else tostring end] | join("\n"))
           else "" end ] as $flow
-    | ($flow | map(test("СОВЕСТЬ:[[:space:]]*повтор")) | index(true)) as $found
-    | if $found == null then "нет-находки"
+    | ($flow | map(test("(СОВЕСТЬ|CONSCIENCE):[[:space:]]*(повтор|repeat)")) | index(true)) as $found
+    | if $found == null then "no-finding"
       else ($flow[($found + 1):] | join("\n")
-            | if test("postmortems|разбор происшествия|СОВЕСТЬ: разобрано") then "разобрано" else "висит" end)
+            | if test("postmortems|разбор происшествия|analysis of the incident|(СОВЕСТЬ|CONSCIENCE): (разобрано|analysed)") then "analysed" else "standing" end)
       end
 ' 2>/dev/null)"
 
-[ "$verdict" = "висит" ] || exit 0
+[ "$verdict" = "standing" ] || exit 0
 
-detail="$(tail -n 400 "$transcript" 2>/dev/null | grep -m1 -A3 'СОВЕСТЬ:[[:space:]]*повтор' | tr -d '\\"' | head -4)"
+detail="$(tail -n 400 "$transcript" 2>/dev/null | grep -m1 -A3 -E '(СОВЕСТЬ|CONSCIENCE):[[:space:]]*(повтор|repeat)' | tr -d '\\"' | head -4)"
 
-reason="BLOCKED by conscience-guard: совесть нашла в этом ходе повтор разобранного промаха, и по нему не сделано ничего.
+reason="BLOCKED by conscience-guard: the conscience found in this turn a repeat of a miss already analysed, and nothing was done about it.
 
 ${detail}
 
-Ход не кончается на находке. Сделай одно из трёх этим же ходом: поправь работу, заведи разбор происшествия, если механизм новый, или назови повтор владельцу словами — что повторяется и чем это кончилось в прошлый раз.
+A turn does not end at the finding. Do one of three things in this same turn: fix the work, create an analysis of the incident if the mechanism is new, or name the repeat to the owner in words — what repeats and how it ended last time.
 
-Находка неверна — так и скажи владельцу: ложная находка тоже стоит хода, и молчанием она не чинится.
+The finding is wrong — then say so to the owner: a false finding also costs a turn, and silence does not fix it.
 
-Гард судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
 # The shared deny tail: two lawful moves. The file may not be laid out — then there is no tail, and
 # the refusal reason stays as it is.
@@ -104,6 +104,6 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-    || printf '{"decision":"block","reason":"conscience-guard: найден повтор разобранного промаха — разбери его или назови владельцу."}\n'
+    || printf '{"decision":"block","reason":"conscience-guard: a repeat of an analysed miss is found — analyse it or name it to the owner."}\n'
 
 exit 0

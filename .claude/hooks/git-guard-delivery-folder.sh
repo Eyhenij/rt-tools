@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/git-guard-delivery-folder.sh · f7f9bc3216cc · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/git-guard-delivery-folder.sh · 8745631b868a · правится надстройкой, не здесь
 # Delivery conditions about the task folder. NOT a guard: it has no `rt-hook:` declaration and it
 # hooks into no agent event. The delivery guard sources it — the same way it sources the refusal
 # tail and the observation record.
@@ -52,7 +52,7 @@ rt_delivery_open_folder() {
     _folder="$tasks_dir/$branch"
     _lying="$(rt_folder_in_branch "$_folder")"
     if [ -n "$_lying" ]; then
-        fault "в ветке лежит папка задачи «${_lying}» — заявка открывается после уборки, а не до неё. Перенеси в «${archive_dir:-архив}» то, что объясняет принятые решения, остальное удали, закоммить последним коммитом и повтори. Если работа вливается частями, поставь в команду комментарий «# Task-folder-skip: <причина>»."
+        fault "the branch carries the task folder «${_lying}» — a request is opened after the tidying, not before it. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit it by the last commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <причина>» into the command."
         return 0
     fi
 
@@ -63,7 +63,7 @@ rt_delivery_open_folder() {
 
     _gained="$(git diff --name-only --diff-filter=A "$_base" HEAD -- "$archive_dir" 2>/dev/null | head -1)"
     [ -z "$_gained" ] \
-        && fault "папку задачи удалили, но в «${archive_dir}» ветка ничего не добавила. Удалить проще, чем разобрать, — и вместе с папкой пропадает разбор просьбы, единственная запись слов владельца. Перенеси то, что объясняет принятые решения, одним файлом с понятным именем и повтори."
+        && fault "the task folder was deleted, but the branch added nothing to «${archive_dir}». Deleting is cheaper than taking apart — and together with the folder the analysis of the request is gone, the only record of the words of the owner. Move what explains the decisions taken as one file with a telling name and repeat."
 }
 
 # Condition for leaving draft: the same subject between opening and merging. The owner reads a PR
@@ -83,7 +83,7 @@ rt_delivery_ready_folder() {
 
     _lying="$(rt_folder_in_branch "$tasks_dir/$_branch")"
     [ -n "$_lying" ] \
-        && fault "в ветке лежит папка задачи «${_lying}» — снятый черновик читается как «можно вливать», а вливать её туда нельзя. Кнопку нажимает человек на хостинге, и до его руки папка уедет в главную. Перенеси в «${archive_dir:-архив}» то, что объясняет принятые решения, остальное удали, закоммить и повтори. Если работа вливается частями, поставь в команду комментарий «# Task-folder-skip: <причина>»."
+        && fault "the branch carries the task folder «${_lying}» — a lifted draft reads as «ready to merge», and merging it there is not allowed. The button is pressed by a person on the hosting, and the folder reaches main before their hand does. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <причина>» into the command."
 }
 
 # Condition for the merge: the same subject as a second line. It catches a merge going by command —
@@ -111,7 +111,7 @@ rt_delivery_merge_folder() {
 
     _lying="$(rt_folder_in_branch "$_folder")"
     [ -n "$_lying" ] \
-        && deny "BLOCKED: в ветке осталась папка задачи «${_lying}» — она уедет в главную. Разобрать её потом будет некому: работа перейдёт к следующей задаче, а эта заявка закроется. Перенеси в «${archive_dir:-архив}» то, что объясняет принятые решения, остальное удали и повтори. Если работа вливается частями, поставь в тело заявки строку «Task-folder-skip: <причина>»."
+        && deny "BLOCKED: the task folder «${_lying}» is left in the branch — it will travel into main. There will be nobody to take it apart later: the work moves on to the next task, and this request closes. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest and repeat. If the work is merged in parts, put the line «Task-folder-skip: <причина>» into the body of the request."
 
     [ -n "$archive_dir" ] || exit 0
     _base="$(git merge-base "$main_branch" HEAD 2>/dev/null)"
@@ -120,7 +120,7 @@ rt_delivery_merge_folder() {
 
     _gained="$(git diff --name-only --diff-filter=A "$_base" HEAD -- "$archive_dir" 2>/dev/null | head -1)"
     [ -z "$_gained" ] \
-        && deny "BLOCKED: папку задачи удалили, но в «${archive_dir}» ветка ничего не добавила. Удалить проще, чем разобрать, — и вместе с папкой пропадает разбор просьбы, единственная запись слов владельца. Перенеси то, что объясняет принятые решения, одним файлом с понятным именем и повтори."
+        && deny "BLOCKED: the task folder was deleted, but the branch added nothing to «${archive_dir}». Deleting is cheaper than taking apart — and together with the folder the analysis of the request is gone, the only record of the words of the owner. Move what explains the decisions taken as one file with a telling name and repeat."
 
     exit 0
 }

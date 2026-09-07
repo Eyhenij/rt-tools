@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/git-guard-delivery-conflict.sh · b0e16d7c7b84 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/git-guard-delivery-conflict.sh · 5dcf3b97e674 · правится надстройкой, не здесь
 # A conflicting PR of one's own, for the delivery guard: while at least one handed-over piece of
 # work is marked conflicting, a new one is not taken.
 #
@@ -41,7 +41,7 @@ rt_delivery_conflict() {
     # to the network, and paying for it on every shell command is not allowed.
     taking=''
     case "$cmd" in
-        *"${task_new}"*) taking='заведение задачи' ;;
+        *"${task_new}"*) taking='creating a task' ;;
     esac
     # Moving the column is judged together with the name of the work column: a move into review and
     # into closed is the end of the work, not its beginning.
@@ -49,18 +49,18 @@ rt_delivery_conflict() {
         case "$cmd" in
             *"${task_move}"*)
                 case "$cmd" in
-                    *"${RT_BOARD_INPROGRESS_KEY:-in-progress}"*) taking='перевод колонки в работу' ;;
+                    *"${RT_BOARD_INPROGRESS_KEY:-in-progress}"*) taking='moving the column into work' ;;
                 esac
                 ;;
         esac
     fi
     if [ -z "$taking" ] \
         && printf '%s' "$cmd" | grep -qE '(^|[;&|[:space:]])git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[A-Za-z]+-[0-9]+'; then
-        taking='заведение ветки под задачу'
+        taking='creating a branch for a task'
     fi
     if [ -z "$taking" ] \
         && printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(gh[[:space:]]+pr[[:space:]]+create|glab[[:space:]]+mr[[:space:]]+create)([[:space:]]|\$)"; then
-        taking='открытие заявки'
+        taking='opening a request'
     fi
     [ -z "$taking" ] && return 0
 
@@ -78,11 +78,11 @@ ${stuck}
 EOF
     [ -z "$listed" ] && return 0
 
-    deny "BLOCKED: ${taking} при своей конфликтующей заявке. Отданное конфликтует с главной веткой, и влить его человек не может:
+    deny "BLOCKED: ${taking} while a conflicting request of your own stands. What was handed over conflicts with the main branch, and a person cannot merge it:
 
 ${listed}
 
-Конфликт приезжает чужим слиянием, без единого действия автора заявки: она стоит, пока её не догонят. Новая работа его не чинит — она прибавляет к очереди ещё одну ветку, которая растёт из той же главной и отстанет так же.
+The conflict arrives by someone else's merge, without a single action by the author of the request: it stands until it is caught up with. New work does not fix it — it adds one more branch to the queue, growing from the same main and falling behind the same way.
 
-Ход отсюда один: подтянуть главную, влить её в названную ветку, разобрать конфликт и отправить — и только потом брать новую работу. Что чем чинится — паттерн git-workflow-freshness."
+There is one move from here: pull the main branch, merge it into the named branch, resolve the conflict and send it — and only then take new work. What is fixed by what — the pattern git-workflow-freshness."
 }

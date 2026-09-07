@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/handoff-entry-guard.sh · 0beb92283fae · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/handoff-entry-guard.sh · ecd3ce39d6ab · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit
 # Requires: rules/task-flow.md, hooks/deny-tail.sh
 # Handover entry guard: a session started from a handover edits no file until the work-conduct rule
@@ -49,21 +49,21 @@ verdict="$(jq -s -r --arg rule "$rule" '
        | ((.name // "") + " " + ((.input.skill // .input.command // "") | tostring))] as $used
     | (($said | join("\n")) | test("handoff|передач[аи][[:space:]]+захода")) as $from_handoff
     | (($used | join("\n")) | test("Skill[[:space:]]+" + $rule + "|skills/" + $rule)) as $loaded
-    | if ($from_handoff and ($loaded | not)) then "нет-правила" else "ладно" end
+    | if ($from_handoff and ($loaded | not)) then "no-rule" else "fine" end
 ' "$transcript" 2>/dev/null)"
 
-[ "$verdict" = "нет-правила" ] || exit 0
+[ "$verdict" = "no-rule" ] || exit 0
 
-reason="BLOCKED by handoff-entry-guard: заход начат с передачи, а правило ведения работы за него не загружено.
+reason="BLOCKED by handoff-entry-guard: the session began from a handover, and the rule of work conduct is not loaded for it.
 
-Передача написана прошлым заходом, лежит вне дерева и не читается ни одной проверкой: всё, что в ней стоит, проверяется деревом. Порядок входа — четыре шага:
+The handover was written by the previous session, lies outside the tree and is read by no check: everything standing in it is verified against the tree. The order of entry is four steps:
 
-    1. правило ведения работы и паттерн возвращения — первым движением;
-    2. ветка и состояние работы читаются в дереве, а не в передаче;
-    3. числа из передачи пересчитываются на текущем коммите;
-    4. следующий шаг берётся из хода работы.
+    1. the rule of work conduct and the pattern of returning — by the first move;
+    2. the branch and the state of the work are read in the tree, not in the handover;
+    3. the numbers from the handover are recomputed on the current commit;
+    4. the next step is taken from the progress.
 
-Загрузи правило и повтори правку."
+Load the rule and repeat the edit."
 
 # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
 # The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
@@ -77,5 +77,5 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"handoff-entry-guard: правило ведения работы не загружено."}}\n'
+    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"handoff-entry-guard: the rule of work conduct is not loaded."}}\n'
 exit 0
