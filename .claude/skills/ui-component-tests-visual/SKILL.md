@@ -90,8 +90,9 @@ chosen file, an opened panel are reached by a press in `play`.
 **Two settings are needed there, not one, and this is measured rather than reasoned.** The
 context's `locale` moves `navigator.language` and the request header but does not touch the format
 of a native date field: that one the browser draws in the language of its own launch. On one
-date-picker story: without settings `03/15/2026` and `09:30 AM`, with `locale` alone the same,
-with the launch language `15.03.2026` and `09:30`. The timezone is the other way round — it obeys
+date-picker story: without settings the month came first and the clock was twelve-hour, with
+`locale` alone the same, with the launch language `15.03.2026` and `09:30`. The timezone is the
+other way round — it obeys
 the context, and a debug-protocol session sets it too, while the language it does not.
 
 ## The sweep over all the stories — before the references are taken
