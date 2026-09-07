@@ -122,16 +122,18 @@ interface IButtonIconCase {
             @case ('presets') {
                 <app-story-presets caption="Взаимодействие в обоих наборах">
                     <ng-template>
-                        <app-story-grid [rows]="appearances" [columns]="states" [columnLabel]="stateLabel">
-                            <ng-template let-appearance let-state="col">
-                                <button
-                                    rtButton
-                                    label="Сохранить"
-                                    aria-label="Сохранить"
-                                    [appearance]="appearance"
-                                    [attr.data-story-state]="state.state"></button>
-                            </ng-template>
-                        </app-story-grid>
+                        @for (appearance of appearances; track appearance) {
+                            <app-story-row [caption]="appearance" [items]="states" [itemLabel]="stateLabel">
+                                <ng-template let-state>
+                                    <button
+                                        rtButton
+                                        label="Сохранить"
+                                        aria-label="Сохранить"
+                                        [appearance]="appearance"
+                                        [attr.data-story-state]="state.state"></button>
+                                </ng-template>
+                            </app-story-row>
+                        }
                     </ng-template>
                 </app-story-presets>
             }

@@ -98,15 +98,17 @@ interface IIconButtonFlagCase {
             @case ('presets') {
                 <app-story-presets caption="Взаимодействие в обоих наборах">
                     <ng-template>
-                        <app-story-grid [rows]="variants" [columns]="states" [columnLabel]="stateLabel">
-                            <ng-template let-variant let-state="col">
-                                <rt-icon-button
-                                    icon="pencil"
-                                    [ariaLabel]="variant"
-                                    [variant]="variant"
-                                    [attr.data-story-state]="state.state" />
-                            </ng-template>
-                        </app-story-grid>
+                        @for (variant of variants; track variant) {
+                            <app-story-row [caption]="variant" [items]="states" [itemLabel]="stateLabel">
+                                <ng-template let-state>
+                                    <rt-icon-button
+                                        icon="pencil"
+                                        [ariaLabel]="variant"
+                                        [variant]="variant"
+                                        [attr.data-story-state]="state.state" />
+                                </ng-template>
+                            </app-story-row>
+                        }
                     </ng-template>
                 </app-story-presets>
             }

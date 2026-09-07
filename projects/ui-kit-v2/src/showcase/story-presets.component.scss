@@ -29,12 +29,29 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        padding: var(--rt-space-16);
+
+        // Отступ у половины меньше, чем у пары тем: там внутри стоит ряд из шести кнопок без
+        // подписей, здесь — матрица состояний, и 64 пикселя с каждой стороны уносят последнее
+        // состояние на вторую строку.
+        padding: var(--rt-space-6);
         border: 1px solid var(--rt-color-border-subtle);
         border-radius: var(--rt-radius-md);
         background-color: var(--rt-color-bg-page);
         color: var(--rt-color-text-primary);
         gap: var(--rt-space-12);
+    }
+
+    // Ряд внутри половины идёт тем же шагом, что и она сама: общий шаг ряда рассчитан на
+    // ширину страницы, а в половине разрывает матрицу состояний пополам — и обе половины
+    // показывают тогда не матрицу, а её первые три ячейки.
+    &__pane .app-story-row__items {
+        gap: var(--rt-space-6);
+    }
+
+    // Последний ряд внутри половины отдаёт свой нижний отступ: он рассчитан на расстояние
+    // между рядами страницы, а у дна половины даёт пустую полосу в треть её высоты.
+    &__pane > :last-child {
+        margin-block-end: 0;
     }
 
     &__label {
