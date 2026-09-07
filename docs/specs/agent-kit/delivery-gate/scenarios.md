@@ -58,8 +58,7 @@ Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
 Given a pipeline step is declared an exception, and the reason at it is empty
 When the check of the completeness of the gate set runs
-Then it demands a reason and gives back a non-zero code: an empty reason does not count as an
-exception
+Then it demands a reason and gives back a non-zero code: an empty reason is no exception
 
 Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
@@ -75,8 +74,7 @@ Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
 Given there is no pipeline file in the tree
 When the check of the completeness of the gate set runs
-Then it stays silent and gives back a zero code: falling where there is no pipeline means refusing
-work
+Then it stays silent and gives back a zero code: falling where there is no pipeline refuses work
 
 Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
@@ -145,8 +143,8 @@ Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 Given the contribution of the branch carries a commit of the machine record with a foreign mail
 When a commit call goes — an ordinary one or one rewriting the last
 Then the guard refuses it by the same refusal as at the send: the miss is made at the commit and
-before the send manages to land in several commits in a row. A right signature holds up no commit,
-and a mention of the command inside a string does not count as a call
+lands in several commits in a row before the send. A right signature holds up no commit, and a
+mention of the command inside a string is no call
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
@@ -162,8 +160,7 @@ Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
 Given the layout setting lies in the tree
 When the default prints the push gate set
-Then the layout audit stands in it as the first line: it refuses within seconds, and before it a
-divergence of the laid-out from the package refused nothing
+Then the layout audit stands first in it: it refuses within seconds, and before a divergence passed
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
@@ -171,8 +168,7 @@ Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
 Given there is no layout setting in the tree
 When the default prints the push gate set
-Then there is no audit in it: a tree without the setting installs no package, and there is nothing to
-call there
+Then there is no audit in it: without the setting no package is installed and nobody to call
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
@@ -249,8 +245,7 @@ Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
 Given the base named by the command is yesterday's, and the working copy stands on a lagging tip
 When a branch with a task number is created
-Then the creation is refused and what to take a base from the main branch with is named; a base the
-tree does not know is not judged at all
+Then the creation is refused and how to take a fresh base is named; an unknown base is not judged
 
 Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
@@ -258,8 +253,7 @@ Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
 Given the remote tip of the main branch went ahead of the local reference to it
 When a branch with a task number is created
-Then the creation is refused, both sides of the divergence are named and what the reference is pulled
-by
+Then the creation is refused: both sides of the divergence and how to pull the reference are named
 
 Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
@@ -310,8 +304,7 @@ Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
 Given the journal of the fallen job was not read during the turn
 When a call to restart that job goes
-Then the call is refused, and the refusal names the job together with the command the journal is read
-by
+Then the call is refused, and the refusal names the job and the command the journal is read by
 
 Covered: `projects/agent-kit/tests/rerun-guard.test.sh`.
 
@@ -327,8 +320,7 @@ Covered: `projects/agent-kit/tests/rerun-guard.test.sh`.
 
 Given during the turn the journal of another job was read
 When a call to restart ours goes
-Then it is refused: in the list of runs the jobs stand side by side, and a foreign journal says
-nothing about ours
+Then it is refused: the jobs stand side by side in the run list, and a foreign journal says nothing
 
 Covered: `projects/agent-kit/tests/rerun-guard.test.sh`.
 
@@ -336,8 +328,8 @@ Covered: `projects/agent-kit/tests/rerun-guard.test.sh`.
 
 Given there is no job number in the restart command
 When the command comes to the guard
-Then it passes: a restart of the last fallen one is called without a number too, and guessing the job
-means refusing at random
+Then it passes: a restart of the last fallen one is called without a number too, and a guessed job
+refuses at random
 
 Covered: `projects/agent-kit/tests/rerun-guard.test.sh`.
 
@@ -362,8 +354,7 @@ Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
 Given the body of the request lies in a file named by an argument of the call
 When the guard judges the opening of the request
-Then it reads the file from the disk and demands the section the same way as in a body passed as a
-string
+Then it reads the file from the disk and demands the section as in a body passed as a string
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
@@ -379,8 +370,7 @@ Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
 Given the reason of the exception names a task that is not in the work queue
 When the check of the completeness of the push gate set runs
-Then it refuses and names the number: a deferral with a term and a deferral without one look the same
-while nobody has asked about the number
+Then it refuses and names the number: a deferral with a term and one without look the same
 
 Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
@@ -410,8 +400,7 @@ Then it says that the gate set is not the pipeline set, and names where to see i
 
 Given a second push goes in the same session
 When the guard runs the set
-Then it stays silent about the difference: on every push the line would repeat dozens of times per
-session
+Then it stays silent about the difference: on every push the line would repeat dozens of times
 
 Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
@@ -436,14 +425,11 @@ Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
 Given the branch is named `feat/88-add-select-button` — a shape lawful by the profile of the tree
 When the delivery guard takes apart the creation of this branch
 Then it gets the task number from the profile and judges the branch on a par with `RT-88-slug`: an
-expression of its own knew one prefix, left the number empty, and the shape check at the creation
-never fired on such a branch once
+expression of its own knew one prefix and never fired on such a branch
 
-Given a request is opened from the branch `feat/88-add-select-button`, and the title holds the number
-89
+Given a request is opened from the branch `feat/88-add-select-button`, the title holding 89
 When the guard checks the number of the title against the number of the branch
-Then it refuses the divergence: before, this block was skipped silently, looking as if it came
-together
+Then it refuses the divergence: before, the block was skipped silently and looked agreed
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
@@ -452,8 +438,8 @@ Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 Given a commit is called with keys between the command and the verb, and next to it goes a read of
 the history with the word `commit` in an argument
 When the main branch guard takes the command apart
-Then the commit is refused, and the read of the history and the search over the tree are let through:
-a bare substring search missed in both directions
+Then the commit is refused, and the read of the history and the search are let through: a bare
+substring search missed both ways
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
@@ -462,8 +448,7 @@ Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 Given the gate set is green, red or not found
 When the push goes
 Then a line of the kind `push-gate` with the outcome — `green`, `red` or `no-checks` — lands in the
-observations of the tree, and silence stops meaning both "everything is green" and "there was nothing
-to check"
+observations, and silence stops meaning both "everything is green" and "there was nothing to check"
 
 Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
@@ -480,11 +465,10 @@ Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 ### SC-AK-872 — creating a branch is recognised with a flag between the verb and -b too
 
 Given the branch is created by the line `git checkout -q -b` or `git switch -q -c`
-When it is taken apart by the delivery guard, the request conflict guard, the push set guard, the
-waiting guard and the watchman of the turn exits
-Then each judges it the same way as the shape without the flag: the branch name and the base are
-checked, a conflict with an open request is refused, the push of a new branch is let through, the
-work taken is noticed
+When it is taken apart by the delivery, request conflict, push set and waiting guards and the
+watchman of the turn exits
+Then each judges it as the shape without the flag: the name and the base are checked, a conflict with
+an open request is refused, the push of a new branch passes, the work taken is noticed
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`,
 `projects/agent-kit/tests/git-guard-conflict.test.sh`,
@@ -497,13 +481,12 @@ Covered: `projects/agent-kit/tests/git-guards.test.sh`,
 Given the tree named the mails of its people in the profile, and the contribution of the branch holds
 a commit with a foreign mail
 When the delivery guard judges the send
-Then it refuses it and names the commit with its mail: before, only a commit that named itself by the
-machine record was judged, and a record the tree did not declare passed silently
+Then it refuses it and names the commit with its mail: before, only a commit naming itself by the
+machine record was judged, and an undeclared record passed silently
 
 Given the mails of the people are not named in the profile
 When the delivery guard judges the same send
-Then it stays silent: demanding a known signature of every commit would mean refusing work a person
-did with their own hands
+Then it stays silent: demanding a known signature of every commit would refuse work done by hand
 
 ### SC-AK-884 — a branch name with the tail -b in the base argument does not count as a request body
 
@@ -511,7 +494,6 @@ Given the body of the request lies in a file, and the base is named by a branch 
 `-b`
 When the guard judges the opening of the request — with arguments after the name and with the name as
 the last word
-Then it reads the body from the file and stays silent about the section; a file without the section at
-the same name is refused
+Then it reads the body from the file and stays silent about the section; a file without it refuses
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.

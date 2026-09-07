@@ -1,17 +1,17 @@
-# Привязка — страж выходов хода
+# The binding — the guard of the exits of a turn
 
-Утверждение спека и место, где оно исполняется. Связь идёт по тексту утверждения: снятое
-утверждение снимается вместе со своей строкой.
+A statement of the spec and the place where it is carried out. The link goes by the text of the
+statement: a removed statement is removed together with its line.
 
-| Правило                                                        | Где исполняется                                                                                                                                         |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Последним действием хода бывает только работа.                 | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:ended_working` — правка файла либо меняющая часть последней команды хода                            |
-| Ответ владельцу действием не работает.                         | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:ended_working` — судятся вызовы инструментов, текст ответа действием не считается вовсе             |
-| Разведка работой не считается.                                 | `projects/agent-kit/assets/hooks/turn-exit-patterns.sh:read_re` — читающие подкоманды системы контроля версий и клиента хостинга                        |
-| Перенаправление вывода работой не считается.                   | `projects/agent-kit/assets/hooks/turn-exit-patterns.sh:work_re` — стрелки в образце работы нет: признаком остаются правка файла и перечисленные команды |
-| Ожидание чужого шага концом хода не бывает.                    | `projects/agent-kit/assets/hooks/turn-exit-patterns.sh:wait_re` — цикл до готовности прогона, слежение за ним, вызов сна                                |
-| Отданная работа кончает ход только вместе с начатой следующей. | `projects/agent-kit/assets/hooks/turn-exit-patterns.sh:handover_re` — хвост хода после открытия заявки сверяется с образцом начала следующей работы     |
-| Взятая задача без папки задачи ход не кончает.                 | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:task_key` — ветка сверяется с образцом ключа задач, признаком служит отсутствие каталога задачи     |
-| Закрытый этап подтверждается командой проверки того же хода.   | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:stage_was` — номер этапа сравнивается с историей ветки, команда берётся из строки замысла           |
-| Законные выходы судятся раньше всех ярусов.                    | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:released` — вопрос владельцу, отказ гарда, написанная передача и слово владельца об остановке       |
-| Части составной команды судятся по одной.                      | `projects/agent-kit/assets/hooks/turn-exit-patterns.sh:part_re` — команда делится по соединителям, и каждая часть судится отдельно                      |
+| Rule                                                                      | Where it is carried out                                                                                                                                                               |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The last action of a turn is only ever work.                              | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:ended_working` — an edit of a file or the changing part of the last command of the turn                                           |
+| An answer to the owner does not work as an action.                        | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:ended_working` — the calls of the tools are judged, the text of the answer does not count as an action at all                     |
+| Exploration does not count as work.                                       | `projects/agent-kit/assets/hooks/turn-exit-patterns.sh:read_re` — the reading subcommands of the version control system and of the hosting client                                     |
+| A redirection of the output does not count as work.                       | `projects/agent-kit/assets/hooks/turn-exit-patterns.sh:work_re` — there is no arrow in the sample of work: the signs stay an edit of a file and the listed commands                   |
+| Waiting for someone else's step is never the end of a turn.               | `projects/agent-kit/assets/hooks/turn-exit-patterns.sh:wait_re` — a loop until the run is ready, watching it, a call of a sleep                                                       |
+| Handed-in work ends a turn only together with the next one begun.         | `projects/agent-kit/assets/hooks/turn-exit-patterns.sh:handover_re` — the tail of the turn after the opening of the request is compared with the sample of the start of the next work |
+| A task taken without a task folder does not end the turn.                 | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:task_key` — the branch is compared with the sample of the key of the tasks, the sign is the absence of the directory of the task  |
+| A closed stage is confirmed by the command of the check of the same turn. | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:stage_was` — the number of the stage is compared with the history of the branch, the command is taken from the line of the plan   |
+| The lawful exits are judged before all the tiers.                         | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:released` — a question to the owner, a refusal of a guard, a written handover and a word of the owner about a stop                |
+| The parts of a compound command are judged one by one.                    | `projects/agent-kit/assets/hooks/turn-exit-patterns.sh:part_re` — the command is split by the joiners, and every part is judged apart                                                 |
