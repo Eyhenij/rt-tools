@@ -65,7 +65,7 @@ function checkSpecHeadings(file, text) {
     );
 
     REQUIRED_HEADINGS.filter((required) => !headings.has(required)).forEach((required) =>
-        report(file, `нет обязательного раздела \`${required}\``)
+        report(file, `no mandatory section \`${required}\``)
     );
 }
 
@@ -88,7 +88,7 @@ const laws = new Map();
 for (const file of walk(CONSTITUTION_DIR, (name) => name.endsWith('.md'))) {
     const name = file.slice(file.lastIndexOf('/') + 1, -'.md'.length);
     if (laws.has(name)) {
-        report(file, `закон с таким именем уже есть — \`${laws.get(name)}\`; имена законов уникальны на оба слоя`);
+        report(file, `a law of that name already exists — \`${laws.get(name)}\`; law names are unique across both layers`);
         continue;
     }
     laws.set(name, file);
@@ -131,10 +131,10 @@ for (const domain of domains) {
         if (exists(`${dir}/proposed`) && !exists(`${dir}/spec.md`)) {
             continue;
         }
-        const what = dir === base ? 'домен' : 'поддомен';
+        const what = dir === base ? 'the domain' : 'the subdomain';
         ['spec.md', 'scenarios.md']
             .filter((name) => !exists(`${dir}/${name}`))
-            .forEach((name) => report(dir, `нет файла \`${name}\` — ${what} описан наполовину`));
+            .forEach((name) => report(dir, `no file \`${name}\` — ${what} is described by half`));
     }
 
     // Feature specs from `proposed/` are checked on a par with the domain spec: they are the
@@ -172,7 +172,7 @@ for (const domain of domains) {
 
     for (const [dir, prefixes] of prefixesOf) {
         if (prefixes.size > 1) {
-            report(dir, `в спеке больше одного префикса сценариев: ${[...prefixes].sort().join(', ')}`);
+            report(dir, `the spec carries more than one scenario prefix: ${[...prefixes].sort().join(', ')}`);
         }
         // A product agreement is numbered together with the spec it will merge into: the
         // identifiers survive the move, and the prefix does not become taken because of it
@@ -182,7 +182,7 @@ for (const domain of domains) {
         for (const prefix of prefixes) {
             const owner = prefixOwners.get(prefix);
             if (owner && owner !== base) {
-                report(dir, `префикс \`SC-${prefix}\` уже занят — \`${owner}\`; по номеру не видно, чей сценарий`);
+                report(dir, `the prefix \`SC-${prefix}\` is already taken — \`${owner}\`; by the number there is no seeing whose scenario it is`);
                 continue;
             }
             prefixOwners.set(prefix, base);
@@ -209,10 +209,10 @@ for (const file of walk(CONSTITUTION_DIR, (name) => name.endsWith('.md'))) {
     const text = read(file);
     const lines = text.split('\n').map((line) => line.trimEnd());
     LAW_HEADINGS.filter((names) => !names.some((heading) => lines.includes(heading))).forEach((names) =>
-        report(file, `нет раздела \`${names[0]}\` (либо \`${names[1]}\`)`)
+        report(file, `no section \`${names[0]}\` (or \`${names[1]}\`)`)
     );
     if (/`[\w./-]+\.(ts|mjs|js|sh|scss|html|json|proto|conf|yml|md)[:`]/.test(text)) {
-        report(file, 'закон называет файл проекта — путям и привязкам место в правиле, а не здесь');
+        report(file, 'the law names a project file — paths and bindings belong in a rule, not here');
     }
 }
 
@@ -250,9 +250,9 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
     if (kind === 'pattern') {
         const rule = (head.match(/^rule:\s*(\S+)/m) || [])[1];
         if (!rule) {
-            report(file, 'паттерн не объявил правило — допиши `rule:` в шапку');
+            report(file, 'the pattern declared no rule — add `rule:` to the header');
         } else if (!exists(`.claude/skills/${rule}/SKILL.md`)) {
-            report(file, `паттерн объявил правило \`${rule}\`, а скила с таким именем нет`);
+            report(file, `the pattern declared the rule \`${rule}\`, and there is no rule of that name`);
         } else {
             patterned.add(rule);
         }
@@ -265,9 +265,9 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
 
     const law = (head.match(/^law:\s*(\S+)/m) || [])[1];
     if (!law) {
-        report(file, 'правило не объявило закон — допиши `law:` в шапку');
+        report(file, 'the rule declared no law — add `law:` to the header');
     } else if (!laws.has(law)) {
-        report(file, `правило объявило закон \`${law}\`, а закона с таким именем нет ни в одном слое`);
+        report(file, `the rule declared the law \`${law}\`, and there is no law of that name in any layer`);
     } else {
         ruled.add(law);
     }
@@ -275,7 +275,7 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
 
     const name = nameOf(head);
     if (name && name !== file.slice('.claude/skills/'.length, -'/SKILL.md'.length)) {
-        report(file, `имя в шапке (\`${name}\`) не совпадает с каталогом скила`);
+        report(file, `the name in the header (\`${name}\`) does not match the directory of the rule`);
     }
 }
 
@@ -290,7 +290,7 @@ const isProposedLaw = (file) => /^\*\*Статус:\*\*\s*предложен/m.t
 // itself, which is read at every edit.
 [...laws]
     .filter(([law, file]) => !ruled.has(law) && !isProposedLaw(file))
-    .forEach(([, file]) => report(file, 'у закона нет ни одного правила — заведи скил с `law:` на него'));
+    .forEach(([, file]) => report(file, 'the law has no rule at all — create one with `law:` pointing at it'));
 
 /**
  * The names of the patterns the tree skipped at layout: the `skip` key in the project settings.
@@ -339,7 +339,7 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
         continue;
     }
 
-    report(file, 'у правила нет ни одного паттерна — заведи скил с `rule:` на него');
+    report(file, 'the rule has no pattern at all — create one with `rule:` pointing at it');
 }
 
 checkTracedAnchors();
@@ -347,7 +347,7 @@ checkTracedAnchors();
 for (const scenario of scenarios) {
     const seen = byId.get(scenario.id);
     if (seen) {
-        report(`${scenario.file}:${scenario.line}`, `идентификатор ${scenario.id} уже занят (${seen.file}:${seen.line})`);
+        report(`${scenario.file}:${scenario.line}`, `the identifier ${scenario.id} is already taken (${seen.file}:${seen.line})`);
         continue;
     }
     byId.set(scenario.id, scenario);
@@ -362,7 +362,7 @@ for (const scenario of byId.values()) {
     const places = references.get(scenario.id) ?? [];
     const hasTest = places.length > 0;
     if (scenario.uncovered && hasTest) {
-        report(`${scenario.file}:${scenario.line}`, `${scenario.id} помечен «Не покрыто», но тест на него есть (${places[0].place})`);
+        report(`${scenario.file}:${scenario.line}`, `${scenario.id} is marked «Не покрыто», and there is a test for it (${places[0].place})`);
         continue;
     }
     if (scenario.uncovered) {
@@ -370,7 +370,7 @@ for (const scenario of byId.values()) {
         continue;
     }
     if (!hasTest) {
-        report(`${scenario.file}:${scenario.line}`, `${scenario.id} не упомянут ни в одном тесте и не помечен «Не покрыто»`);
+        report(`${scenario.file}:${scenario.line}`, `${scenario.id} is mentioned in no test and is not marked «Не покрыто»`);
         continue;
     }
     if (scenario.partial) {
@@ -383,8 +383,8 @@ for (const scenario of byId.values()) {
         const off = places.some(({ screen }) => screen);
         report(
             `${scenario.file}:${scenario.line}`,
-            `${scenario.id} обещает то, что человек видит, а ${off ? 'сквозной тест на него выключен переменной окружения' : 'проверяет его только юнит'} ` +
-                `(${places[0].place}) — либо тест идёт путём пользователя, либо сценарию нужна отметка «Покрытие: частичное»`
+            `${scenario.id} promises what a person sees, and ${off ? 'the end-to-end test for it is switched off by an environment variable' : 'only a unit test checks it'} ` +
+                `(${places[0].place}) — either the test goes the path of the user, or the scenario needs the mark «Покрытие: частичное»`
         );
         continue;
     }
@@ -393,39 +393,39 @@ for (const scenario of byId.values()) {
 
 for (const [id, places] of references) {
     if (!byId.has(id)) {
-        report(places[0].place, `тест ссылается на ${id}, а такого сценария в \`${SPECS_DIR}\` нет`);
+        report(places[0].place, `the test refers to ${id}, and \`${SPECS_DIR}\` carries no such scenario`);
     }
 }
 
 if (problems.length > 0) {
-    console.error(`check-specs: расхождений ${problems.length}\n`);
+    console.error(`check-specs: divergences ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
-    console.error('\nПравила работы со спеками — скил `spec-driven`.');
+    console.error('\nThe rules of working with specs are `spec-driven`.');
     process.exit(1);
 }
 
 console.log(
-    `check-specs: доменов ${domains.length}, сценариев ${byId.size} — ` +
-        `покрыто ${covered}, частично ${partial.length}, без тестов ${uncovered.length}`
+    `check-specs: domains ${domains.length}, scenarios ${byId.size} — ` +
+        `covered ${covered}, partial ${partial.length}, without tests ${uncovered.length}`
 );
 
 const debts = [...partial, ...uncovered];
 if (debts.length > 0) {
-    console.log('\nДолги — покрытие неполное:');
-    partial.forEach((scenario) => console.log(`  частично  ${scenario.id} — ${scenario.title} (${scenario.file}:${scenario.line})`));
-    uncovered.forEach((scenario) => console.log(`  нет теста ${scenario.id} — ${scenario.title} (${scenario.file}:${scenario.line})`));
+    console.log('\nDebts — the coverage is not complete:');
+    partial.forEach((scenario) => console.log(`  partial   ${scenario.id} — ${scenario.title} (${scenario.file}:${scenario.line})`));
+    uncovered.forEach((scenario) => console.log(`  no test   ${scenario.id} — ${scenario.title} (${scenario.file}:${scenario.line})`));
 }
 
 const proposed = proposedGroups(byId.values(), references);
 
 const ripe = [...proposed].filter(([, group]) => group.total > 0 && group.total === group.ready);
 if (ripe.length > 0) {
-    console.log('\nПора вливать — сценарии закрыты тестами, договорённость ждёт переезда в спек домена:');
-    ripe.forEach(([dir, group]) => console.log(`  ${dir} — сценариев ${group.total}`));
+    console.log('\nTime to merge — the scenarios are closed by tests, the agreement awaits the move into the domain spec:');
+    ripe.forEach(([dir, group]) => console.log(`  ${dir} — scenarios ${group.total}`));
 }
 
 const stale = staleProposed([...proposed.keys()]);
 if (stale.length > 0) {
-    console.log('\nЖдёт дольше месяца — привязка в договорённости стареет вместе с кодом, на который показывает:');
-    stale.forEach((record) => console.log(`  ${record.dir} — ${Math.floor(record.ageDays)} суток без правок`));
+    console.log('\nWaiting longer than a month — the binding in the agreement ages together with the code it points at:');
+    stale.forEach((record) => console.log(`  ${record.dir} — ${Math.floor(record.ageDays)} days without edits`));
 }

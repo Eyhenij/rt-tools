@@ -205,7 +205,7 @@ function longSentences(line) {
     return line
         .split(/(?<=[.!?])\s+/)
         .filter((sentence) => sentence.trim().split(/\s+/).length > WORDS_LIMIT)
-        .map((sentence) => [`${sentence.trim().split(/\s+/).length} слов в предложении`, `делить: предел ${WORDS_LIMIT}`]);
+        .map((sentence) => [`${sentence.trim().split(/\s+/).length} words in a sentence`, `split it: the limit is ${WORDS_LIMIT}`]);
 }
 
 export function checkProse(text) {
@@ -220,10 +220,10 @@ if (files.length > 0) {
         checkProse(readFileSync(file, 'utf8')).map((p) => `  ${file}:${p.line} — «${p.what}» → ${p.fix}`)
     );
     if (problems.length > 0) {
-        console.error(`check-prose-style: находок ${problems.length}\n`);
+        console.error(`check-prose-style: findings ${problems.length}\n`);
         problems.forEach((p) => console.error(p));
-        console.error('\nСлог — правило о текстах. Проверка видит перечисленные признаки и только их.');
+        console.error('\nWording is the rule about texts. The check sees the listed signs and only them.');
         process.exit(1);
     }
-    console.log(`check-prose-style: проверено файлов ${files.length}, находок нет`);
+    console.log(`check-prose-style: files checked ${files.length}, no findings`);
 }
