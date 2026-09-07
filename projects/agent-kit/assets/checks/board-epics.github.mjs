@@ -80,12 +80,12 @@ export function checkEpicLinks(open, report) {
     for (const epic of epics) {
         const planPath = String(epic.body ?? '').match(/(?:^|[\s(`])([\w.-]+(?:\/[\w.-]+)+\.md)/)?.[1] ?? null;
         if (planPath === null) {
-            report(`#${epic.number}: карточка эпика не называет путь к замыслу — состав эпика читать негде`);
+            report(`#${epic.number}: the epic card names no path to the plan — there is nowhere to read what the epic holds`);
             unreadable.add(epic.number);
             continue;
         }
         if (!existsSync(join(ROOT, planPath))) {
-            report(`#${epic.number}: замысла эпика «${planPath}» нет на диске — карточка ссылается в пустоту`);
+            report(`#${epic.number}: the epic plan «${planPath}» is not on disk — the card points into emptiness`);
             unreadable.add(epic.number);
             continue;
         }
@@ -101,7 +101,7 @@ export function checkEpicLinks(open, report) {
             const body = String(byNumber.get(number).body ?? '');
             if (!new RegExp(`(?:#|${TASK_KEY}-)${epic.number}\\b`).test(body)) {
                 report(
-                    `#${number}: замысел эпика #${epic.number} задачу называет, а её тело эпика — нет. Допиши строку «Задача эпика #${epic.number}, замысел — ${planPath}»`
+                    `#${number}: the plan of the epic #${epic.number} names the task, and its body does not name the epic. Add the line «Задача эпика #${epic.number}, замысел — ${planPath}»`
                 );
             }
         }
@@ -119,7 +119,7 @@ export function checkEpicLinks(open, report) {
             continue;
         }
         if (listedBy.get(issue.number) !== Number(named)) {
-            report(`#${issue.number}: тело называет эпик #${named}, а в его замысле задачи нет — «взять следующую» её не отдаст`);
+            report(`#${issue.number}: the body names the epic #${named}, and its plan does not carry the task — «take the next one» will not give it out`);
         }
     }
 }

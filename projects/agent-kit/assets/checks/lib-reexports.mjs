@@ -80,7 +80,7 @@ function checkReexports() {
             if (ownFilesAllowed && isOwnFile(module)) {
                 continue;
             }
-            report(file, `реэкспорт из \`${module}\`: ${namesIn(list).join(', ')} — потребитель импортирует их у источника`);
+            report(file, `a re-export from \`${module}\`: ${namesIn(list).join(', ')} — the consumer imports them from the source`);
         }
 
         const imported = new Map();
@@ -92,7 +92,7 @@ function checkReexports() {
                 if (ownFilesAllowed && isOwnFile(imported.get(name))) {
                     continue;
                 }
-                report(file, `реэкспорт \`${name}\` из \`${imported.get(name)}\` — потребитель импортирует его у источника`);
+                report(file, `a re-export of \`${name}\` from \`${imported.get(name)}\` — the consumer imports it from the source`);
             }
         }
     }

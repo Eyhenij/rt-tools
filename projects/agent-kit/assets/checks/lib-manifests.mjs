@@ -15,7 +15,7 @@ import { ROOT } from './rt-kit-checks.config.mjs';
 function checkLib(libPath, { requirePrefix = true } = {}) {
     for (const file of REQUIRED_FILES) {
         if (!existsSync(join(ROOT, libPath, file))) {
-            report(libPath, `нет файла ${file}`);
+            report(libPath, `no file ${file}`);
         }
     }
 
@@ -25,24 +25,24 @@ function checkLib(libPath, { requirePrefix = true } = {}) {
 
     const project = readJson(`${libPath}/project.json`);
     if (project.name !== projectName(libPath)) {
-        report(libPath, `имя проекта «${project.name}» не совпадает с путём, ожидается «${projectName(libPath)}»`);
+        report(libPath, `the project name «${project.name}» does not match the path, expected «${projectName(libPath)}»`);
     }
     if (project.sourceRoot !== `${libPath}/src`) {
-        report(libPath, `sourceRoot «${project.sourceRoot}» не совпадает с путём`);
+        report(libPath, `sourceRoot «${project.sourceRoot}» does not match the path`);
     }
     // The prefix is about component selectors, and the backend has no components. The word itself
     // belongs to the tree: everyone has their own, and one hard-coded here would go red on every lib
     // of the first tree that named its selectors otherwise. A tree that has not named a prefix does
     // not get this check.
     if (requirePrefix && LIB_PREFIX && project.prefix !== LIB_PREFIX) {
-        report(libPath, `prefix «${project.prefix}» вместо обязательного «${LIB_PREFIX}»`);
+        report(libPath, `prefix «${project.prefix}» instead of the mandatory «${LIB_PREFIX}»`);
     }
 
     const tags = project.tags ?? [];
     if (tags.length !== 1) {
-        report(libPath, `тегов ${tags.length}, а должен быть ровно один: ${projectTag(libPath)}`);
+        report(libPath, `tags ${tags.length}, and there must be exactly one: ${projectTag(libPath)}`);
     } else if (tags[0] !== projectTag(libPath)) {
-        report(libPath, `тег «${tags[0]}» не совпадает с путём, ожидается «${projectTag(libPath)}»`);
+        report(libPath, `the tag «${tags[0]}» does not match the path, expected «${projectTag(libPath)}»`);
     }
 }
 
@@ -52,9 +52,9 @@ function checkAliases(libs) {
         const alias = importAlias(libPath);
         const target = `./${libPath}/src/index.ts`;
         if (!paths[alias]) {
-            report(libPath, `в tsconfig.base.json нет алиаса ${alias}`);
+            report(libPath, `tsconfig.base.json has no alias ${alias}`);
         } else if (paths[alias][0] !== target) {
-            report(libPath, `алиас ${alias} указывает на ${paths[alias][0]}, а не на ${target}`);
+            report(libPath, `the alias ${alias} points at ${paths[alias][0]}, not at ${target}`);
         }
     }
 }

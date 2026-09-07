@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/board-folders.mjs · 371f2c08d1d5 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/board-folders.mjs · ff43d352c59d · правится надстройкой, не здесь
 /**
  * Task branches that have not carried their folder in by a single commit — a part of the work queue
  * audit.
@@ -55,8 +55,8 @@ export function checkBranchFolders(report, mainBranch) {
             continue;
         }
         report(
-            `${branch}: папка задачи ни разу не уехала в ветку — закоммить ${CONFIG.tasksDir}/${branch}/, ` +
-                `иначе отказ придёт на выходе хода, когда чинить будет нечем`
+            `${branch}: the task folder never travelled into the branch — commit ${CONFIG.tasksDir}/${branch}/, ` +
+                `otherwise the refusal arrives at the exit of a turn, when there is nothing left to fix`
         );
     }
 }

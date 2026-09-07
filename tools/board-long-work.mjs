@@ -1,4 +1,4 @@
-// rt-kit v0.25.0 · checks/board-long-work.github.mjs · 09b18b28b02f · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/board-long-work.github.mjs · fb78baae4ff5 · правится надстройкой, не здесь
 /**
  * Work that cannot be closed in one session: the card label against the entry in the work plan.
  *
@@ -60,7 +60,7 @@ export function checkLongWork(open, report) {
 
     const rows = markedRows();
     if (rows === null) {
-        report(`каталога линий работ «${PLANS_DIR}» нет на диске — многозаходную работу сверять не с чем`);
+        report(`the directory of work plans «${PLANS_DIR}» is not on disk — there is nothing to check multi-session work against`);
 
         return;
     }
@@ -86,7 +86,7 @@ export function checkLongWork(open, report) {
     for (const number of labelled) {
         if (!written.has(number)) {
             report(
-                `#${number}: помечена как «${LONG_LABEL}», а в линиях работ «${PLANS_DIR}» такой строки нет — планируют по линии, а не по карточке`
+                `#${number}: marked as «${LONG_LABEL}», and the work plans «${PLANS_DIR}» carry no such line — the planning goes by the plan, not by the card`
             );
         }
     }
@@ -96,7 +96,7 @@ export function checkLongWork(open, report) {
     const byNumber = new Set(open.map((issue) => issue.number));
     for (const number of written) {
         if (byNumber.has(number) && !labelled.has(number)) {
-            report(`#${number}: линия работ «${whereWritten.get(number)}» знает её многозаходной, а метки «${LONG_LABEL}» на карточке нет`);
+            report(`#${number}: the work plan «${whereWritten.get(number)}» knows it as multi-session, and the card carries no label «${LONG_LABEL}»`);
         }
     }
 }

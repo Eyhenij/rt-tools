@@ -54,8 +54,8 @@ export function checkBranchFolders(report, mainBranch) {
             continue;
         }
         report(
-            `${branch}: папка задачи ни разу не уехала в ветку — закоммить ${CONFIG.tasksDir}/${branch}/, ` +
-                `иначе отказ придёт на выходе хода, когда чинить будет нечем`
+            `${branch}: the task folder never travelled into the branch — commit ${CONFIG.tasksDir}/${branch}/, ` +
+                `otherwise the refusal arrives at the exit of a turn, when there is nothing left to fix`
         );
     }
 }

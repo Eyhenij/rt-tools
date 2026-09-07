@@ -44,7 +44,7 @@ try {
     SIGNALS = loadSignals(CONFIG.reuse ?? {}, ROOT);
 } catch (failure) {
     console.error(`check-reuse: ${failure.message}`);
-    console.error('\nПравило единообразия — скил `reuse-first`.');
+    console.error('\nThe rule of uniformity is `reuse-first`.');
     process.exit(1);
 }
 
@@ -150,18 +150,18 @@ const problems = [
     // of showing it does not. Replacing one's own paragraph of a refusal with a ready-made component
     // of the same screen closes the sign and leaves the violation in place — thirteen templates were
     // repaired that way at once. The output line is a measurement, not an instruction.
-    ...fresh.map((finding) => `${finding.key} — готовое (если место показа верно): ${finding.instead}`),
-    ...stale.map((key) => `${key}: значится в ${ALLOWLIST}, а в дереве такого расхождения больше нет — строку поправить или убрать`),
+    ...fresh.map((finding) => `${finding.key} — the ready-made (if the place of use is right): ${finding.instead}`),
+    ...stale.map((key) => `${key}: listed in ${ALLOWLIST}, and the tree carries no such divergence any more — fix the line or remove it`),
 ];
 
 if (problems.length > 0) {
-    console.error(`check-reuse: расхождений ${problems.length}\n`);
+    console.error(`check-reuse: divergences ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
-    console.error('\nПравило единообразия — скил `reuse-first`.');
+    console.error('\nThe rule of uniformity is `reuse-first`.');
     process.exit(1);
 }
 
 const places = findings.reduce((sum, finding) => sum + Number(finding.key.match(/×(\d+)/)[1]), 0);
 console.log(
-    `check-reuse: мест, где готовое обошли, ${places} в ${findings.length} признаках — принято ${findings.length - debt.size}, долг ${debt.size}, новых нет`
+    `check-reuse: places where the ready-made was bypassed: ${places} in ${findings.length} signs — accepted ${findings.length - debt.size}, debt ${debt.size}, no new ones`
 );

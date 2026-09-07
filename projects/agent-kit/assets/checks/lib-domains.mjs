@@ -44,8 +44,8 @@ function checkDomainIsFilled(domainPath, libs) {
     if (libs.length > 1 && filled.length === 1) {
         report(
             domainPath,
-            `заполнен один слой — \`${filled[0].slice(domainPath.length + 1)}\`: домен от слота этим не отличить. ` +
-                'Либо содержимое переезжает в существующую либу, либо домен вносится строкой с причиной в `singleLayerDomains`'
+            `one layer is filled — \`${filled[0].slice(domainPath.length + 1)}\`: a domain cannot be told from a slot by that. ` +
+                'Either the content moves into an existing lib, or the domain is entered by a line with a reason in `singleLayerDomains`'
         );
     }
 }
@@ -58,12 +58,12 @@ function collectDomainLibs(domainPath, isCommon) {
     const missing = expected.filter((layer) => !actual.includes(layer));
     const extra = actual.filter((layer) => !expected.includes(layer));
     if (missing.length > 0) {
-        report(domainPath, `нет слоёв: ${missing.join(', ')}`);
+        report(domainPath, `no layers: ${missing.join(', ')}`);
     }
     if (extra.length > 0) {
         report(
             domainPath,
-            `лишние каталоги: ${extra.join(', ')}${extra.includes('shell') && isCommon ? ' (у общего домена shell не бывает: он не роутится)' : ''}`
+            `extra directories: ${extra.join(', ')}${extra.includes('shell') && isCommon ? ' (a common domain never has shell: it is not routed)' : ''}`
         );
     }
 
@@ -76,7 +76,7 @@ function collectDomainLibs(domainPath, isCommon) {
         } else {
             const screens = dirsIn(featurePath).filter((screen) => isLib(`${featurePath}/${screen}`));
             if (screens.length === 0) {
-                report(featurePath, 'у фичевого домена `feature` — каталог с либой на экран, здесь ни одной');
+                report(featurePath, 'in a feature domain `feature` is a directory with a lib per screen, here there is none');
             }
             libs.push(...screens.map((screen) => `${featurePath}/${screen}`));
         }
@@ -109,12 +109,12 @@ function collectApiDomainLibs() {
         const missing = API_DOMAIN_LAYERS.filter((layer) => !actual.includes(layer));
         const extra = actual.filter((layer) => !API_DOMAIN_LAYERS.includes(layer));
         if (missing.length > 0) {
-            report(domainPath, `нет слоёв: ${missing.join(', ')}`);
+            report(domainPath, `no layers: ${missing.join(', ')}`);
         }
         if (extra.length > 0) {
             report(
                 domainPath,
-                `лишние каталоги: ${extra.join(', ')}${extra.includes('shell') || extra.includes('ui') ? ' (у бэкенда ui и shell не бывает)' : ''}`
+                `extra directories: ${extra.join(', ')}${extra.includes('shell') || extra.includes('ui') ? ' (the backend never has ui and shell)' : ''}`
             );
         }
 
@@ -129,7 +129,7 @@ function collectApiDomainLibs() {
             } else {
                 const services = dirsIn(featurePath).filter((service) => isLib(`${featurePath}/${service}`));
                 if (services.length === 0) {
-                    report(featurePath, '`feature` — либа или каталог с либой на proto-сервис, здесь ни того ни другого');
+                    report(featurePath, '`feature` is a lib or a directory with a lib per proto service, here there is neither');
                 }
                 domainLibs.push(...services.map((service) => `${featurePath}/${service}`));
             }

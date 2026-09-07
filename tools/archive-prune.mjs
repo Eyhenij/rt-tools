@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/archive-prune.mjs · bc55a8cfe5ff · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/archive-prune.mjs · aa0193a492f1 · правится надстройкой, не здесь
 /**
  * The prune of the archive by the term.
  *
@@ -21,7 +21,7 @@ import { RETENTION_DAYS, archiveRecords, staleRecords } from './archive-age.mjs'
 import { ROOT } from './rt-kit-checks.config.mjs';
 
 if (RETENTION_DAYS === null) {
-    console.log('archive-prune: срок хранения описания прошлого деревом не назначен — снимать нечего');
+    console.log('archive-prune: the tree set no retention term for the record of the past — there is nothing to remove');
     process.exit(0);
 }
 
@@ -30,20 +30,20 @@ const stale = staleRecords(ROOT);
 const total = archiveRecords(ROOT).length;
 
 if (stale.length === 0) {
-    console.log(`archive-prune: записей ${total}, перестоявших срок в ${RETENTION_DAYS} суток нет`);
+    console.log(`archive-prune: records ${total}, none has outstood the term of ${RETENTION_DAYS} days`);
     process.exit(0);
 }
 
-console.log(`archive-prune: перестояло ${stale.length} из ${total} при сроке в ${RETENTION_DAYS} суток`);
+console.log(`archive-prune: ${stale.length} of ${total} outstood the term of ${RETENTION_DAYS} days`);
 
 for (const record of stale) {
-    console.log(`  ${record.name} — ${Math.floor(record.ageDays)} суток, последний коммит ${record.committed.slice(0, 10)}`);
+    console.log(`  ${record.name} — ${Math.floor(record.ageDays)} days, the last commit ${record.committed.slice(0, 10)}`);
 }
 
 if (!apply) {
-    console.log('\nЭто сухой прогон: не снято ничего. Снос идёт доводом --apply.');
+    console.log('\nThis is a dry run: nothing was removed. The removal goes by the argument --apply.');
     process.exit(0);
 }
 
 execFileSync('git', ['rm', '--quiet', '--', ...stale.map((record) => record.path)], { cwd: ROOT, stdio: 'inherit' });
-console.log(`\nСнято записей: ${stale.length}. Они остаются в истории — найти их можно по имени файла.`);
+console.log(`\nRecords removed: ${stale.length}. They stay in the history — they can be found by the file name.`);

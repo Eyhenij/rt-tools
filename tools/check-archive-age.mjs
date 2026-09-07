@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-archive-age.mjs · 40955b081f9e · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-archive-age.mjs · 63cf83236d24 · правится надстройкой, не здесь
 /**
  * The audit of the retention term of the archive.
  *
@@ -25,7 +25,7 @@ import { ARCHIVE_DIR, CHECK_GRACE_DAYS, RETENTION_DAYS, archiveRecords, staleRec
 import { ROOT } from './rt-kit-checks.config.mjs';
 
 if (RETENTION_DAYS === null) {
-    console.log('check-archive-age: срок хранения описания прошлого деревом не назначен — сверять нечего');
+    console.log('check-archive-age: the tree set no retention term for the record of the past — there is nothing to check');
     process.exit(0);
 }
 
@@ -33,15 +33,15 @@ const total = archiveRecords(ROOT).length;
 const stale = staleRecords(ROOT, new Date(), CHECK_GRACE_DAYS);
 
 if (stale.length > 0) {
-    console.error(`check-archive-age: расхождений ${stale.length}`);
+    console.error(`check-archive-age: divergences ${stale.length}`);
 
     for (const record of stale) {
-        console.error(`  ${record.path}: ${Math.floor(record.ageDays)} суток при сроке в ${RETENTION_DAYS} и запасе в ${CHECK_GRACE_DAYS}`);
+        console.error(`  ${record.path}: ${Math.floor(record.ageDays)} days at a term of ${RETENTION_DAYS} and a grace of ${CHECK_GRACE_DAYS}`);
     }
 
-    console.error(`\nЗапись живёт ${RETENTION_DAYS} суток и снимается: \`node tools/archive-prune.mjs --apply\`.`);
-    console.error('Снятая остаётся в истории — найти её можно по имени файла.');
+    console.error(`\nA record lives ${RETENTION_DAYS} days and is then removed: \`node tools/archive-prune.mjs --apply\`.`);
+    console.error('A removed one stays in the history — it can be found by the file name.');
     process.exit(1);
 }
 
-console.log(`check-archive-age: записей ${total} в ${ARCHIVE_DIR}, ни одна не перестояла срок в ${RETENTION_DAYS} суток`);
+console.log(`check-archive-age: records ${total} in ${ARCHIVE_DIR}, none outstood the term of ${RETENTION_DAYS} days`);

@@ -61,8 +61,8 @@ printf '{"accepted":{},"debt":{"elem foot @ apps/web/a.html":{"reason":"фикс
 report "классы: долг в списке не отбивает" "$(styles_code)" 0
 printf '<div rtBlock="card"><b rtElem="foot"></b></div>\n' > "$STYLES_TREE/apps/web/b.html"
 report "SC-AK-271 — разросшийся долг отбивает" "$(styles_code)" 1
-report "SC-AK-271 — назван разросшимся и с добавившимся файлом" "$(styles_says 'долг разросся.*b\.html')" 1
-report "SC-AK-271 — строку убрать не советует" "$(styles_says 'строку убрать')" 0
+report "SC-AK-271 — назван разросшимся и с добавившимся файлом" "$(styles_says 'the debt has grown.*b\.html')" 1
+report "SC-AK-271 — строку убрать не советует" "$(styles_says 'remove the line')" 0
 report "SC-AK-271 — новой строки не предлагает" "$(styles_says 'правила нет ни в одном файле стилей')" 0
 
 # SC-AK-272 — сократившийся перечень называется сократившимся
@@ -70,14 +70,14 @@ printf '{"accepted":{},"debt":{"elem foot @ apps/web/a.html, apps/web/b.html":{"
     > "$STYLES_TREE/tools/styles-allowlist.json"
 rm "$STYLES_TREE/apps/web/b.html"
 report "SC-AK-272 — сокращение долга не отбивает" "$(styles_code)" 0
-report "SC-AK-272 — названо сокращением и файлом" "$(styles_says 'долг сократился.*b\.html')" 1
-report "SC-AK-272 — строку убрать не советует" "$(styles_says 'строку убрать')" 0
+report "SC-AK-272 — названо сокращением и файлом" "$(styles_says 'the debt has shrunk.*b\.html')" 1
+report "SC-AK-272 — строку убрать не советует" "$(styles_says 'remove the line')" 0
 
 # SC-AK-273 — строка о подкреплённом классе по-прежнему убирается
 printf '.card {\n    &__head {\n        color: red;\n    }\n\n    &__foot {\n        color: red;\n    }\n}\n' \
     > "$STYLES_TREE/apps/web/screen.scss"
 report "SC-AK-273 — подкреплённый класс отбивает строкой списка" "$(styles_code)" 1
-report "SC-AK-273 — сказано убрать строку" "$(styles_says 'строку убрать')" 1
+report "SC-AK-273 — сказано убрать строку" "$(styles_says 'remove the line')" 1
 
 # SC-AK-274 — правило, собранное вложенностью, читается объявлением
 #

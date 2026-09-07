@@ -117,13 +117,13 @@ saved_issues="$STUB_ISSUES"
 saved_board="$STUB_BOARD"
 export STUB_BOARD='{"data":{"node":{"items":{"pageInfo":{"hasNextPage":false,"endCursor":null},"nodes":[{"id":"item-1","status":{"name":"In review","optionId":"r"},"content":{"__typename":"Issue","number":700}},{"id":"item-2","status":{"name":"In review","optionId":"r"},"content":{"__typename":"Issue","number":702}}]}}}}'
 export STUB_ISSUES='[{"number":700,"title":"[RT-700] Письма владельцу уходят молча","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]},{"number":702,"title":"[RT-702] Письма владельцу уходят молча мимо очереди","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]}]'
-report "SC-AK-733 — совпавшие заголовки названы" "$(board_says '#700, #702 — заголовки сильно совпадают')" 1
+report "SC-AK-733 — совпавшие заголовки названы" "$(board_says '#700, #702 — the titles overlap heavily')" 1
 # Отказом это не считается: строка стоит в сводке, а не среди расхождений.
 report "SC-AK-733 — расхождением это не считается" "$(board_run | sed -n '/расхождений/,$p' | grep -c 'сильно совпадают')" 0
 
 # Разные работы в сводку не идут: совпадения слов у них нет.
 export STUB_ISSUES='[{"number":700,"title":"[RT-700] Письма владельцу уходят молча","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]},{"number":702,"title":"[RT-702] Кнопка сохранения теряет фокус","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]}]'
-report "SC-AK-733 — разные заголовки молчат" "$(board_says 'заголовки сильно совпадают')" 0
+report "SC-AK-733 — разные заголовки молчат" "$(board_says 'the titles overlap heavily')" 0
 
 export STUB_ISSUES="$saved_issues"
 export STUB_BOARD="$saved_board"
@@ -157,7 +157,7 @@ EPIC_CONFIG="${BOARD_CONFIG/\"taskKey\":\"RT\"/\"epicLabel\":\"epic\",\"taskKey\
 board_config "$EPIC_CONFIG"
 
 report "SC-AK-751 — замысел задачу называет, а её тело эпика — нет" \
-    "$(board_says '#702: замысел эпика #700 задачу называет')" 1
+    "$(board_says '#702: the plan of the epic #700 names the task')" 1
 report "SC-AK-751 — названа строка, которой это чинится" "$(board_says 'Задача эпика #700, замысел — docs/plans/epic.md')" 1
 
 # Обе стороны на месте — сверка молчит.
@@ -167,16 +167,16 @@ report "SC-AK-751 — двусторонняя привязка молчит" "$
 # Обратная сторона: тело эпик называет, а линия работ эпика этой задачи не знает.
 printf '%s\n' '# Замысел эпика' '' '| № | Задача |' '| - | ------ |' > "$BOARD_TREE/docs/plans/epic.md"
 report "SC-AK-751 — тело называет эпик, а в замысле задачи нет" \
-    "$(board_says '#702: тело называет эпик #700, а в его замысле задачи нет')" 1
+    "$(board_says '#702: the body names the epic #700, and its plan does not carry the task')" 1
 
 # Карточка эпика без пути к замыслу — состав читать негде.
 export STUB_ISSUES="$(printf '[{"number":700,"title":"[RT-700] Эпик","state":"OPEN","assignees":[{"login":"probe"}],"labels":[{"name":"epic"}],"body":"Возможность без замысла"},{"number":702,"title":"[RT-702] Задача","state":"OPEN","assignees":[{"login":"probe"}],"labels":[],"body":"Повод"}]')"
-report "SC-AK-751 — карточка без пути к замыслу названа" "$(board_says '#700: карточка эпика не называет путь к замыслу')" 1
+report "SC-AK-751 — карточка без пути к замыслу названа" "$(board_says '#700: the epic card names no path to the plan')" 1
 
 # Путь есть, а файла нет: карточка ссылается в пустоту.
 export STUB_ISSUES="$(epic_issues 'Повод')"
 rm -f "$BOARD_TREE/docs/plans/epic.md"
-report "SC-AK-751 — замысла нет на диске" "$(board_says 'нет на диске — карточка ссылается в пустоту')" 1
+report "SC-AK-751 — замысла нет на диске" "$(board_says 'is not on disk — the card points into emptiness')" 1
 
 board_config "$BOARD_CONFIG"
 export STUB_ISSUES="$saved_issues"

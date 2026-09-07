@@ -40,11 +40,11 @@ layers_config ''
 report "SC-AK-264 — приставка не названа: проверка молчит" "$(layers_says 'prefix «')" 0
 report "SC-AK-267 — тегов без зависимостей нет: описания границ не требуется" \
     "$(layers_says 'не описан ни в одном файле границ')" 0
-report "SC-AK-266 — умолчание барелем зовёт только index" "$(layers_says 'public-api\.ts: реэкспорт')" 1
+report "SC-AK-266 — умолчание барелем зовёт только index" "$(layers_says 'public-api\.ts: a re-export')" 1
 
 layers_config ',"libPrefix":"vm","barrelFiles":["index.ts","public-api.ts"]'
-report "SC-AK-265 — чужая приставка названа" "$(layers_says 'prefix «own» вместо обязательного «vm»')" 1
-report "SC-AK-266 — названный барель собственный файл пропускает" "$(layers_says 'public-api\.ts: реэкспорт')" 0
+report "SC-AK-265 — чужая приставка названа" "$(layers_says 'prefix «own» instead of the mandatory «vm»')" 1
+report "SC-AK-266 — названный барель собственный файл пропускает" "$(layers_says 'public-api\.ts: a re-export')" 0
 
 rm -rf "$LAYERS_TREE"
 

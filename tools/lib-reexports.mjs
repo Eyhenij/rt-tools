@@ -1,4 +1,4 @@
-// rt-kit v0.25.0 · checks/lib-reexports.mjs · ba3ba2a1b77f · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/lib-reexports.mjs · dd8dea358d52 · правится надстройкой, не здесь
 /**
  * Barrels and re-exports: what a lib gives outward and how that differs from an own declaration.
  *
@@ -81,7 +81,7 @@ function checkReexports() {
             if (ownFilesAllowed && isOwnFile(module)) {
                 continue;
             }
-            report(file, `реэкспорт из \`${module}\`: ${namesIn(list).join(', ')} — потребитель импортирует их у источника`);
+            report(file, `a re-export from \`${module}\`: ${namesIn(list).join(', ')} — the consumer imports them from the source`);
         }
 
         const imported = new Map();
@@ -93,7 +93,7 @@ function checkReexports() {
                 if (ownFilesAllowed && isOwnFile(imported.get(name))) {
                     continue;
                 }
-                report(file, `реэкспорт \`${name}\` из \`${imported.get(name)}\` — потребитель импортирует его у источника`);
+                report(file, `a re-export of \`${name}\` from \`${imported.get(name)}\` — the consumer imports it from the source`);
             }
         }
     }

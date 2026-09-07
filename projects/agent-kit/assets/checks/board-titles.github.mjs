@@ -63,6 +63,6 @@ export function similarTitles(open) {
     // have a dozen and a half of them, and a line about them says only that the epic exists.
     for (const group of groups.filter((one) => one.length > 1 && one.length <= TITLE_GROUP_MAX)) {
         const numbers = group.map((issue) => `#${issue.number}`).join(', ');
-        console.log(`check-board: ${numbers} — заголовки сильно совпадают, посмотри, не одна ли это работа: ` + `«${group[0].title}»`);
+        console.log(`check-board: ${numbers} — the titles overlap heavily, look whether this is one work: ` + `«${group[0].title}»`);
     }
 }

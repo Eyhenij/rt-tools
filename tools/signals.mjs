@@ -1,4 +1,4 @@
-// rt-kit v0.25.0 · checks/signals.mjs · e4e94c5cb5d4 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/signals.mjs · 922abe9d3752 · правится надстройкой, не здесь
 /**
  * The sign bundles of uniformity: what the tree declared as its own and what is read alongside it.
  *
@@ -42,8 +42,8 @@ function parseSignals(text) {
 function readBundle(name) {
     const path = join(BUNDLES_DIR, `${name}.json`);
     if (!existsSync(path)) {
-        const known = bundleNames().join(', ') || 'ни одного';
-        throw new Error(`набор признаков «${name}» при пакете не найден; есть: ${known}`);
+        const known = bundleNames().join(', ') || 'none';
+        throw new Error(`the bundle of signs «${name}» is not found at the package; there are: ${known}`);
     }
 
     return parseSignals(readFileSync(path, 'utf8'));
@@ -121,11 +121,11 @@ export function loadSignals(config, root) {
     }
 
     if (byKey.size === 0) {
-        const known = bundleNames().join(', ') || 'ни одного';
+        const known = bundleNames().join(', ') || 'none';
         throw new Error(
-            `признаков не объявлено ни одного: ни набора в «reuse.bundles», ни своего файла признаков. ` +
-                `Проверка прошла бы, не прочитав ни одного файла, и зелёный ответ означал бы только это. ` +
-                `Наборы при пакете: ${known}; свои признаки называются полем «reuse.signals».`
+            `not a single sign is declared: neither a bundle in «reuse.bundles» nor a signs file of the tree. ` +
+                `The check would pass without reading a single file, and a green answer would mean only that. ` +
+                `The bundles at the package: ${known}; signs of the tree are named by the field «reuse.signals».`
         );
     }
 

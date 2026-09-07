@@ -219,7 +219,7 @@ for (const [name, files] of [...usedIn].sort(([first], [second]) => first.locale
         name,
         files: new Set(files),
         key: `elem ${name} @ ${where}`,
-        text: `rtElem="${name}" — правила нет ни в одном файле стилей: ${where}`,
+        text: `rtElem="${name}" — there is no rule in any style file: ${where}`,
     });
 }
 
@@ -254,27 +254,27 @@ for (const finding of findings) {
 
     const { added, gone } = changedFiles(finding, line);
     if (added.length > 0) {
-        problems.push(`elem ${finding.name}: долг разросся — класс появился ещё в ${added.join(', ')}; снять его оттуда`);
+        problems.push(`elem ${finding.name}: the debt has grown — the class appeared also in ${added.join(', ')}; remove it from there`);
     } else if (gone.length > 0) {
         notes.push(
-            `elem ${finding.name}: долг сократился — класса больше нет в ${gone.join(', ')}; перечень в строке списка можно поправить`
+            `elem ${finding.name}: the debt has shrunk — the class is no longer in ${gone.join(', ')}; the list in the entry can be fixed`
         );
     }
 }
 
 for (const key of known) {
     if (!matchedKeys.has(key)) {
-        problems.push(`${key}: значится в ${ALLOWLIST}, но класс уже подкреплён правилом — строку убрать`);
+        problems.push(`${key}: listed in ${ALLOWLIST}, but the class is already backed by a rule — remove the line`);
     }
 }
 
 if (problems.length > 0) {
-    console.error(`check-styles: расхождений ${problems.length}\n`);
+    console.error(`check-styles: divergences ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
     process.exit(1);
 }
 
 notes.forEach((note) => console.log(`  ${note}`));
 console.log(
-    `check-styles: классов без правила ${findings.length}, из них принято ${findings.length - debt.size}, долг ${debt.size} — новых нет`
+    `check-styles: classes without a rule ${findings.length}, of them accepted ${findings.length - debt.size}, debt ${debt.size} — no new ones`
 );

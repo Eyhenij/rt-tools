@@ -34,7 +34,7 @@ import { ROOT, allowlistOf, skipUnless } from './rt-kit-checks.config.mjs';
 // tsconfig.base.json" — that is, a breakage instead of the answer "this layout is not here".
 skipUnless(
     LIB_ROOTS.some((root) => isDir(root)) && existsSync(join(ROOT, 'tsconfig.base.json')),
-    `раскладки либ ${LIB_ROOTS.join(', ')} или файла tsconfig.base.json`
+    `the layout of the libs ${LIB_ROOTS.join(', ')} or the file tsconfig.base.json`
 );
 
 const domainLibs = collectAllDomainLibs();
@@ -42,7 +42,7 @@ const apiLibs = collectApiDomainLibs();
 const flatLibs = collectFlatLibs();
 const strays = collectStrayLibs([...domainLibs, ...apiLibs]);
 
-strays.forEach((path) => report(path, `либа вне доменной сетки и не значится в ${allowlistOf('lib-layers')}`));
+strays.forEach((path) => report(path, `the lib is outside the domain grid and is not listed in ${allowlistOf('lib-layers')}`));
 domainLibs.forEach((libPath) => checkLib(libPath));
 apiLibs.forEach((libPath) => checkLib(libPath, { requirePrefix: false }));
 flatLibs.forEach((libPath) => checkLib(libPath, { requirePrefix: false }));
@@ -53,11 +53,11 @@ checkReexports();
 await checkCoreLibs();
 
 if (problems.length > 0) {
-    console.error(`check-lib-layers: расхождений ${problems.length}\n`);
+    console.error(`check-lib-layers: divergences ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
     process.exit(1);
 }
 
 console.log(
-    `check-lib-layers: ${domainLibs.length} либ доменной сетки фронта, ${apiLibs.length} бэкенда и ${flatLibs.length} плоских, расхождений нет`
+    `check-lib-layers: ${domainLibs.length} libs of the front domain grid, ${apiLibs.length} of the backend and ${flatLibs.length} flat ones, no divergences`
 );

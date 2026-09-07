@@ -86,7 +86,7 @@ function covers(matcher, tool) {
 
 function main() {
     if (!existsSync(HOOKS)) {
-        console.log('check-hook-scope: каталога хуков в дереве нет — сверять нечего');
+        console.log('check-hook-scope: the tree has no directory of hooks — there is nothing to check');
 
         return 0;
     }
@@ -103,25 +103,25 @@ function main() {
         const matcher = declared[2].trim();
         for (const tool of branchedTools(text)) {
             if (!covers(matcher, tool)) {
-                faults.push(`${file}: тело ветвится на «${tool}», а объявление его не называет`);
+                faults.push(`${file}: the body branches on «${tool}», and the declaration does not name it`);
             }
         }
     }
 
     if (faults.length > 0) {
-        console.log(`check-hook-scope: расхождений ${faults.length}\n`);
+        console.log(`check-hook-scope: divergences ${faults.length}\n`);
 
         for (const fault of faults) {
             console.log(`  ${fault}`);
         }
 
-        console.log('\nВетка тела, которой нет в объявлении, не исполняется ни разу: под этим именем гард');
-        console.log('не зовут. Объявление правится в источнике пакета, а не в разложенной копии.');
+        console.log('\nA branch of the body that is not in the declaration never runs: the guard is not called');
+        console.log('under that name. The declaration is edited in the source of the package, not in the laid-out copy.');
 
         return 1;
     }
 
-    console.log('check-hook-scope: объявления гардов покрывают то, на что ветвятся их тела — сошлось');
+    console.log('check-hook-scope: the declarations of the guards cover what their bodies branch on — it matches');
 
     return 0;
 }

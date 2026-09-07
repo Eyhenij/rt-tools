@@ -1,4 +1,4 @@
-// rt-kit v0.25.0 · checks/board-titles.github.mjs · cfa3789bc692 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/board-titles.github.mjs · d4bbb610db83 · правится надстройкой, не здесь
 /**
  * Open tasks whose titles overlap heavily.
  *
@@ -64,6 +64,6 @@ export function similarTitles(open) {
     // have a dozen and a half of them, and a line about them says only that the epic exists.
     for (const group of groups.filter((one) => one.length > 1 && one.length <= TITLE_GROUP_MAX)) {
         const numbers = group.map((issue) => `#${issue.number}`).join(', ');
-        console.log(`check-board: ${numbers} — заголовки сильно совпадают, посмотри, не одна ли это работа: ` + `«${group[0].title}»`);
+        console.log(`check-board: ${numbers} — the titles overlap heavily, look whether this is one work: ` + `«${group[0].title}»`);
     }
 }

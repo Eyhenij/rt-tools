@@ -20,7 +20,7 @@ import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
  */
 function checkBoundaries(libs) {
     if (!isDir(BOUNDARIES_DIR)) {
-        report(BOUNDARIES_DIR, 'каталога с файлами границ нет');
+        report(BOUNDARIES_DIR, 'there is no directory with boundary files');
 
         return;
     }
@@ -38,9 +38,9 @@ function checkBoundaries(libs) {
         });
 
         if (owners.length === 0) {
-            report(libPath, `тег ${tag} не описан ни в одном файле ${BOUNDARIES_DIR}/`);
+            report(libPath, `the tag ${tag} is described in no file of ${BOUNDARIES_DIR}/`);
         } else if (owners.length > 1) {
-            report(libPath, `тег ${tag} описан ${owners.length} раза: ${owners.join(', ')}`);
+            report(libPath, `the tag ${tag} is described ${owners.length} times: ${owners.join(', ')}`);
         }
     }
 }
@@ -80,18 +80,18 @@ function checkNoDependencyLibs() {
             const opensAt = rest.indexOf('[', listAt);
             const closesAt = rest.indexOf(']', opensAt);
             if (listAt === -1 || opensAt === -1 || closesAt === -1) {
-                report(`${BOUNDARIES_DIR}/${name}`, `у ${tag} не найден список зависимостей`);
+                report(`${BOUNDARIES_DIR}/${name}`, `${tag} has no list of dependencies`);
                 continue;
             }
 
             const dependencies = rest.slice(opensAt + 1, closesAt).trim();
             if (dependencies.length > 0) {
-                report(`${BOUNDARIES_DIR}/${name}`, `${tag} ни от кого не зависит, а его список непуст: ${dependencies}`);
+                report(`${BOUNDARIES_DIR}/${name}`, `${tag} depends on nobody, and its list is not empty: ${dependencies}`);
             }
         }
 
         if (!described) {
-            report(BOUNDARIES_DIR, `тег ${tag} не описан ни в одном файле границ`);
+            report(BOUNDARIES_DIR, `the tag ${tag} is described in no boundary file`);
         }
     }
 }
@@ -116,7 +116,7 @@ async function checkCoreLibs() {
     // tree where boundaries are declared differently with a breakage.
     const boundaries = join(ROOT, 'eslint/boundaries/index.mjs');
     if (!existsSync(boundaries)) {
-        console.log('пропущено: свода границ eslint/boundaries/index.mjs в дереве нет');
+        console.log('skipped: the tree has no boundary digest eslint/boundaries/index.mjs');
 
         return;
     }
@@ -136,7 +136,7 @@ async function checkCoreLibs() {
             }
             report(
                 `${BOUNDARIES_DIR}/${family}-core.config.mjs`,
-                `${tag} видит ${dependency}: основанию семейства доступны только scope:common-util и scope:${family}-common-*-util`
+                `${tag} sees ${dependency}: the base of a family may reach only scope:common-util and scope:${family}-common-*-util`
             );
         }
     }
