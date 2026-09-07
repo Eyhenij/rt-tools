@@ -40,4 +40,4 @@
 - **Сводка сжатия настоящей репликой владельца не бывает.** — `projects/agent-kit/assets/hooks/proposal-guard.sh:is_input`
 - **Ход, в котором исполнитель просит владельца войти или ввести пароль, не заканчивается.** — `projects/agent-kit/assets/hooks/stand-login-guard.sh:asked_re` — набор образцов просьбы; сценарий SC-AK-840
 - **Просьба переключить режим работы разрешена.** — `projects/agent-kit/assets/hooks/stand-login-guard.sh:asked_re` — слово о режиме в набор не входит; сценарий SC-AK-841
-- **Граница набора образцов названа.** — `projects/agent-kit/assets/hooks/stand-login-guard.sh:Граница` — сказано в шапке гарда; не проверяется: чего гард не распознаёт, то и не проверяет
+- **Граница набора образцов названа.** — `projects/agent-kit/assets/hooks/stand-login-guard.sh:boundary` — сказано в шапке гарда; не проверяется: чего гард не распознаёт, то и не проверяет
