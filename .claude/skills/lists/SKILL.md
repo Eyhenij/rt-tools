@@ -4,7 +4,7 @@ kind: rule
 law: lists
 description: Rule under the lists law. Load when editing a list screen (libs/admin/*/feature/list), the kit table and pagination. Names the order of blocks, what the list is assembled from, where the query lives and what the kit already has. Ready-made screen code is in pattern admin-lists-screen.
 ---
-<!-- rt-kit v0.25.0 · rules/lists.md · a7cca3cfaea9 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/lists.md · 59c0a8700cb2 · правится надстройкой, не здесь -->
 
 # List screen — how it works here
 
@@ -122,54 +122,59 @@ debt `Q-L-4`.
 - The toolbar and the pagination carry no classes of their own: the gap is set by `<prefix>-page`.
 - The title stands in its own `<header>`, not inside the toolbar.
 
-## Чем экран говорит с общей страницей списка
+## How a screen talks to the shared list page
 
-Раздел этого дерева. У пакета такого посредника нет: там тулбар и переключатель страниц
-объявляет сам экран, а здесь между экраном и китом стоит общий вид страницы, одна на все
-разделы. Статьи ниже — про эту границу, и стоят они отдельным разделом затем, чтобы правка
-пакетных статей приезжала сюда сама.
+A section of this tree. The package has no such intermediary: there the toolbar and the page
+switcher are declared by the screen itself, while here a shared page view, one for all sections,
+stands between the screen and the kit. The articles below are about that boundary, and they stand
+as a separate section so that an edit of the package articles travels here by itself.
 
-- **Отбор и свои кнопки экран кладёт в слоты общей страницы, а не передаёт ей входами.**
-  Зашитый в страницу отбор одинаков у всех разделов по принуждению: разделу, которому нужен
-  другой, положить его некуда, и страница обрастает входом на каждый новый вид отбора, который
-  когда-нибудь понадобится.
-- **Слотов у страницы три: левая часть тулбара, правая и место над таблицей.** Слева — то, что
-  меняет выборку; справа — действия над списком целиком; над таблицей — то, что относится ко
-  всему списку сразу. Сказанное о всём списке, поставленное строкой в сам список, читается как
-  одна из записей.
-- **Незанятый слот на экране не появляется вовсе.** Пустая половина тулбара и пустая полоса над
-  таблицей читаются поломкой разметки, а не свободным местом.
-- **Обновление списка и настройку столбцов рисует страница, а кнопки раздела встают левее их.**
-  Они есть у всех разделов и одинаковы; розданные разделам, они разойдутся подписью,
-  значком и местом, и человек ищет их у края тулбара на каждом разделе.
-- **Чтение, страницу, её размер и настройку столбцов страница спрашивает у хоста, а не отдаёт
-  наружу событиями.** Событие на каждое действие растёт числом с каждым новым действием, а
-  забытое подключение видно только на собранном экране.
-- **Хостом раздел объявляет себя одной строкой провайдера, а отвечает за него общая основа
-  механики.** Внедрение ищет то, что объявил сам экран, — основа селектора не имеет и объявить
-  себя за него не может; но своего ответа экран не пишет ни одного.
-- **Якоря проверки на общей странице собираются из префикса, который называет экран.**
-  Одинаковые якоря на разных разделах не отвечают на вопрос, чей элемент нашла проверка: спека,
-  открывшая не тот раздел, находит тот же якорь и проходит зелёной. Префикс — то же слово, что
-  у таблицы раздела.
-- **Якоря самой таблицы и её строк собираются там же, где якоря страницы.** Записанные строкой
-  в шаблоне каждого экрана, они расходятся с префиксом молча: имя правится в одном месте, а
-  спека соседнего раздела остаётся зелёной, потому что находит прежнее.
-- **Заголовок принимает подсказку, и раздел без подсказки показывает одно название.** Пустое
-  место, оставленное под подсказку, сдвигает заголовок на разделах, где её нет.
-- **Таблицу экран объявляет тегом кита, а не атрибутом на нативной `<table>`.** Обе формы
-  собираются и обе показывают строки, поэтому промах молчит: атрибутная теряет оверлей чтения и
-  карточки узкого экрана целиком — кит рисует их узлами, которые детьми `<table>` не бывают, и
-  на чужой разметке не рисует вовсе. Цена тега — роль таблицы: у своего элемента её нет, роли
-  строк и ячеек ставит CDK, а роли таблицы у него не бывает, и ставит её сам кит.
-- **Пустой список показывает вид пустоты, а не фразу на месте строк.** Фраза внутри таблицы
-  читается как одна из записей, и пустой раздел от не догрузившегося не отличается ничем.
-  Вид даёт кит и только когда чтение кончилось: пока оно идёт, на месте строк скелетоны.
-- **Вид пустоты называет, откуда записи приходят, отдельной строкой.** «Записей нет» отвечает
-  на вопрос «сломано ли», но не на вопрос «что мне сделать»; вторую строку раздел называет за
-  себя, потому что у разных разделов записи приносит разное. Одной фразой через двоеточие это
-  не пишется: кит рисует заголовок и описание разными узлами и разным начертанием.
-- **Страница списка прокручивается вместе со всей страницей, а не своей зоной.** Каркас к
-  высоте окна не прибит: в прибитом режиме кит обрезает зону содержимого и ждёт прокрутку от
-  каждой зоны внутри, а страница списка её не заводит — строки и переключатель страниц уходят
-  за нижний край и достать их нечем.
+- **The filter and its own buttons the screen puts into the slots of the shared page, not passes
+  to it as inputs.** A filter nailed into the page is the same for every section by compulsion: a
+  section that needs a different one has nowhere to put it, and the page grows an input for every
+  new kind of filter that may ever be needed.
+- **The page has three slots: the left part of the toolbar, the right one and the place above the
+  table.** On the left is what changes the selection; on the right, actions over the list as a
+  whole; above the table, what concerns the whole list at once. What is said about the whole list,
+  put as a row into the list itself, reads as one of the records.
+- **An unoccupied slot does not appear on the screen at all.** An empty half of the toolbar and an
+  empty strip above the table read as broken markup, not as free space.
+- **Refreshing the list and the column settings are drawn by the page, and the section buttons
+  stand to their left.** They exist on every section and are the same; handed out to sections,
+  they drift in label, icon and place, and a person hunts for them at the toolbar edge on every
+  section.
+- **The read, the page, its size and the column settings the page asks of the host, rather than
+  giving them outward as events.** An event per action grows in number with every new action,
+  while a forgotten wiring shows only on the assembled screen.
+- **A section declares itself the host by one provider line, and the shared mechanics base answers
+  for it.** Injection looks for what the screen itself declared — the base has no selector and
+  cannot declare itself in its stead; yet the screen writes not one answer of its own.
+- **The check anchors on the shared page are assembled from a prefix named by the screen.**
+  Identical anchors on different sections do not answer whose element the check found: a spec that
+  opened the wrong section finds the same anchor and passes green. The prefix is the same word as
+  the section table uses.
+- **The anchors of the table itself and of its rows are assembled where the page anchors are.**
+  Written as a string in the template of each screen, they drift from the prefix silently: the
+  name is fixed in one place, and the spec of a neighbouring section stays green because it finds
+  the former one.
+- **The heading accepts a hint, and a section without a hint shows a single name.** Space left for
+  a hint shifts the heading on the sections that have none.
+- **The screen declares the table by the kit tag, not by an attribute on a native `<table>`.**
+  Both forms build and both show rows, so the miss stays silent: the attribute form loses the
+  reading overlay and the narrow-screen cards entirely — the kit draws them as nodes that are
+  never children of `<table>`, and on foreign markup it does not draw them at all. The price of
+  the tag is the table role: an own element has none, the row and cell roles are set by CDK, which
+  has no table role, and the kit sets it itself.
+- **An empty list shows an emptiness view, not a phrase in place of the rows.** A phrase inside
+  the table reads as one of the records, and an empty section is indistinguishable from one that
+  did not finish loading. The view is given by the kit and only once the read is over: while it
+  goes, skeletons stand in place of the rows.
+- **The emptiness view names where the records come from, as a separate line.** «No records»
+  answers the question whether it is broken, but not the question what to do; the second line the
+  section names for itself, because different sections have their records brought by different
+  things. It is not written as one phrase through a colon: the kit draws the heading and the
+  description as different nodes and in different type.
+- **The list page scrolls together with the whole page, not by a zone of its own.** The frame is
+  not nailed to the window height: in the nailed mode the kit clips the content zone and expects
+  scrolling from every zone inside, and the list page starts none — the rows and the page switcher
+  go past the bottom edge with nothing to reach them by.
