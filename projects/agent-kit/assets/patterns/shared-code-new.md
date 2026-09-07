@@ -5,29 +5,29 @@ rule: shared-code
 description: Pattern of rule shared-code. Load when a new setting number, shared function or shared type is added that the site, the admin and the backend must understand the same way. Where to put it, how to declare it, how to check a string against the set and how to make sure no copy stayed in the old place.
 ---
 
-# Новое общее заводится так
+# This is how new shared code is declared
 
-Паттерн правила `shared-code`. Что при этом должно быть верно — закон
+Pattern of the rule `shared-code`. What must be true — the law
 `docs/constitution/shared-code.md`.
 
-## Когда брать
+## When to use
 
-- Появилось число-настройка: предел, размер, длительность.
-- Появилась функция без фреймворка, нужная обеим сторонам.
-- Значение приходит строкой и должно быть сверено с конечным набором.
+- A setting number appeared: a limit, a size, a duration.
+- A function without a framework appeared that both sides need.
+- A value arrives as a string and must be checked against a finite set.
 
-## Куда класть
+## Where to put it
 
-| Что                                   | Куда                                            |
-| ------------------------------------- | ----------------------------------------------- |
-| число или функция без фреймворка      | `libs/common/util`, файл по предмету            |
-| готовый тип или набор значений        | берётся из `@rt-tools/utils`, не переписывается |
-| токен DI, общий двум фронтовым семьям | `libs/common/platform`                          |
+| What                                        | Where                                              |
+| ------------------------------------------- | -------------------------------------------------- |
+| a number or a function without a framework  | `libs/common/util`, a file by subject              |
+| a ready-made type or value set              | taken from `@rt-tools/utils`, not rewritten        |
+| a DI token shared by the two frontend families | `libs/common/platform`                          |
 
-Файл выбирается по предмету: `const/list.const.ts`, `functions/list-selection.util.ts`.
-Дальше — строка в барель `libs/common/util/src/index.ts`.
+The file is chosen by subject: `const/list.const.ts`, `functions/list-selection.util.ts`. Then —
+a line in the barrel `libs/common/util/src/index.ts`.
 
-## Число объявляется один раз и без довода
+## A number is declared once and without an argument
 
 ```typescript
 export const DEFAULT_PAGE_SIZE: number = 20;
@@ -38,13 +38,13 @@ export const DEFAULT_PAGE_SIZE: number = 20;
 ✓ export function listPageOf(query: ListQuery | undefined): IListPage
 ```
 
-Пока умолчание передаётся доводом, домен вправе назвать своё число — так у промокодов
-появилось `25` против `20` у остальных списков.
+While the default is passed as an argument, a domain may name its own number — that is how promo
+codes got `25` against `20` for the rest of the lists.
 
-## Строка сверяется с набором, а не приводится к типу
+## A string is checked against the set, not cast to a type
 
-Приведение принимает любую строку. Сверку делает общая пара функций, а что делать с промахом,
-решает вызывающий.
+A cast accepts any string. The check is done by the shared pair of functions, and what to do with
+a miss is decided by the caller.
 
 ```typescript
 const operator: TFilterOperatorType | null = listFilterOperatorOf(filter.operatorType);
@@ -57,30 +57,31 @@ if (!operator) {
 const direction: TListSortOrderType = listSortOrderOf(rawDirection) ?? EListSortOrder.ASC;
 ```
 
-Сервер отбивает запрос, экран берёт умолчание. Общий маппер здесь не годится: он подал бы
-промах умолчанием, и клиент получил бы отбор, которого не просил.
+The server refuses the request, the screen takes the default. The shared mapper is no good here:
+it would hand out the miss as the default, and the client would get a filter it never asked for.
 
-`typeCast.getAsType` для этого тоже не годится — значение вне набора он пишет в консоль и
-возвращает строкой `'unknown'`.
+`typeCast.getAsType` is no good for this either — a value outside the set it writes to the
+console and returns as the string `'unknown'`.
 
-## Проверить, что копия не осталась
+## Check that no copy stayed
 
 ```bash
 npm run check:dupes
 ```
 
-Проверка падает на четырёх признаках: одно имя из двух либ, два перечисления с одинаковым
-набором членов, число-настройка под одним именем в двух либах, перечисление, повторяющее набор
-из `@rt-tools/utils`.
+The check fails on four signs: one name from two libs, two enumerations with the same set of
+members, a setting number under one name in two libs, an enumeration repeating a set from
+`@rt-tools/utils`.
 
-Накопленное лежит в `tools/dupes-allowlist.json` под ключом `debt` и отказом не считается.
-Список только сокращается: новая строка в нём означает, что повтор завели уже после проверки.
+What accumulated lies in `tools/dupes-allowlist.json` under the key `debt` and does not count as
+a refusal. The list only shrinks: a new line in it means the repeat was created after the check.
 
-## Частые промахи
+## Common misses
 
-- Своё перечисление с теми же членами, что уже есть в `@rt-tools/utils`, — копия, даже если
-  имена разошлись.
-- Умолчание, переданное доводом, — домен назовёт своё число, и разъезд будет молчаливым.
-- Ту же логику, написанную заново под другим именем, проверка не ловит и ловить не будет —
-  такой повтор находит только тот, кто читает правку.
-- Строковая настройка и таблица соответствий не учитываются вовсе — долг `Q-S-2`.
+- An own enumeration with the same members that `@rt-tools/utils` already has — a copy, even
+  when the names diverge.
+- A default passed as an argument — the domain will name its own number, and the drift will be
+  silent.
+- The same logic written anew under another name is not caught by the check and will not be —
+  such a repeat is found only by whoever reads the edit.
+- A string setting and a mapping table are not counted at all — debt `Q-S-2`.

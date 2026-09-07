@@ -5,17 +5,17 @@ rule: entity-conventions
 description: Pattern of rule entity-conventions. Load when assembling or editing the record create-and-edit panel — the ready-made route in the ro outlet, inheriting the shared base, runMutation, the unsaved edits guard, header and footer, leaving for a linked record. Not for the store — pattern entity-store.
 ---
 
-# Панель правки записи
+# The record edit panel
 
-Паттерн правила `entity-conventions`. Что при этом должно быть верно — закон
+Pattern of the rule `entity-conventions`. What must be true — the law
 `docs/constitution/entity-editing.md`.
 
-## Когда брать
+## When to use
 
-- Заводится или правится панель создания и правки записи.
-- Появляется панель без записи — настройки таблицы, лента событий.
+- A panel that creates and edits a record is created or edited.
+- A panel without a record appears — table settings, an event feed.
 
-## Панель объявляется маршрутом в аутлете `ro`
+## The panel is declared by a route in the `ro` outlet
 
 ```typescript
 {
@@ -25,36 +25,37 @@ description: Pattern of rule entity-conventions. Load when assembling or editing
 }
 ```
 
-Так панель переживает перезагрузку, передаётся ссылкой и попадает в историю браузера.
-Программного открытия через сервис в админке нет.
+This way the panel survives a reload, is passed by link and lands in the browser history. There
+is no programmatic opening through a service in the admin.
 
-**Команда открытия идёт от текущего маршрута, а не от корня.** Аутлет объявлен внутри маршрутов
-домена, поэтому экран зовёт открытие относительно себя:
+**The opening command goes from the current route, not from the root.** The outlet is declared
+inside the domain's routes, so the screen calls the opening relative to itself:
 
 ```typescript
 void this.#router.navigate([{ outlets: { ro: [EDIT_PATH, id] } }], { relativeTo: this.#route });
 ```
 
-Без указания текущего маршрута команда уходит в корень приложения: панель не открывается,
-исключения нет, вывод браузера чист — промах виден только глазами и только тому, кто открыл этот
-экран. Вторая его половина тише: база панели закрывает её от родителя текущего маршрута, и
-панель, открытая от корня, не закрывается вовсе.
+Without the current route the command goes to the application root: the panel does not open,
+there is no exception, the browser output is clean — the miss is seen only by eye and only by
+whoever opened this screen. Its second half is quieter: the panel base closes it against the
+parent of the current route, and a panel opened from the root does not close at all.
 
-Панель, которую открывают из шапки, объявляется константой и подмешивается в `children` каждой
-доменной ветки — аутлет стоит в шаблоне хрома, а хром надевает `shell` каждого домена:
+A panel opened from the header is declared as a constant and mixed into the `children` of every
+domain branch — the outlet stands in the chrome template, and the chrome is put on by the
+`shell` of every domain:
 
 ```typescript
 export const ACTIVITY_ASIDE_ROUTES: Route[] = [{ path: 'activity', outlet: 'ro', component: ActivityFeedAsideComponent }];
 ```
 
-## Экран наследует общую основу
+## The screen inherits the shared base
 
-`RtRouteAsideComponent<T>` держит `entity`, `entityId`, `isCreateMode`, `submitting`,
-`resolving`, `submitError`, открытие панели по маршруту, уход с адреса и всю механику записи.
-Имена из основы не переименовываются: `booking`, `feed`, `slug` вместо `entity` ломают то самое
-единообразие, ради которого основа заведена.
+`RtRouteAsideComponent<T>` holds `entity`, `entityId`, `isCreateMode`, `submitting`,
+`resolving`, `submitError`, opening the panel by route, leaving the address and the whole
+mechanics of saving. Names from the base are not renamed: `booking`, `feed`, `slug` instead of
+`entity` break the very uniformity the base was set up for.
 
-## Запись идёт через `runMutation`
+## Saving goes through `runMutation`
 
 ```typescript
 protected save(): void {
@@ -70,14 +71,14 @@ protected save(): void {
 }
 ```
 
-Занятость, гашение прежней ошибки, тост об успехе и закрытие панели держит основа. `errorText`
-— функция: причина отказа известна только после него. Поток мутации обязан отдать значение или
-ошибку — пустой поток гасит панель навсегда.
+The busy state, clearing the previous error, the success toast and closing the panel are held by
+the base. `errorText` is a function: the reason of the refusal is known only after it. The
+mutation stream must give a value or an error — an empty stream freezes the panel forever.
 
-## Гард несохранённых правок
+## The unsaved-edits guard
 
-Ставит сама панель, и он встаёт на все четыре пути закрытия: кнопку в шапке, кнопку в футере,
-нажатие мимо панели и Esc.
+Set by the panel itself, and it stands on all four closing paths: the button in the header, the
+button in the footer, a press outside the panel and Esc.
 
 ```typescript
 protected readonly panelForm: Signal<NgForm | undefined> = viewChild(NgForm);
@@ -91,60 +92,61 @@ constructor() {
 }
 ```
 
-`viewChild` на поле с `#` Angular не принимает — поле объявляется `protected`.
+Angular does not accept `viewChild` on a `#` field — the field is declared `protected`.
 
-## Шапка и футер
+## Header and footer
 
 ```html
-<<префикс>-aside-header [title]="title()" [overline]="overline()" [loading]="resolving()" (dismiss)="onClose()">
+<<prefix>-aside-header [title]="title()" [overline]="overline()" [loading]="resolving()" (dismiss)="onClose()">
     <ng-container asideActions>
-        <!-- доменные действия иконками; больше двух — под одну кнопку меню -->
+        <!-- domain actions as icons; more than two — under one menu button -->
     </ng-container>
-</<префикс>-aside-header>
+</<prefix>-aside-header>
 ```
 
-Заголовок называет действие, имя записи идёт надстрочником. В футере две зоны и не больше двух
-кнопок: `asideDismiss` — закрытие, `asidePrimary` — запись. Доменные глаголы в футер не
-ставятся: подтверждение, отказ, снятие с публикации — иконки в шапке.
+The title names the action, the record name goes as the overline. The footer has two zones and no
+more than two buttons: `asideDismiss` — closing, `asidePrimary` — saving. Domain verbs do not go
+into the footer: confirming, rejecting, unpublishing — icons in the header.
 
-Подписи кнопок закреплены, панель их не выбирает:
+The button captions are fixed, the panel does not choose them:
 
-| Кнопка                               | Подпись                                           |
-| ------------------------------------ | ------------------------------------------------- |
-| запись при создании                  | «Создать»                                         |
-| запись при правке                    | «Сохранить»                                       |
-| закрытие панели, которая записывает  | «Закрыть и не сохранять» (`uiCloseWithoutSaving`) |
-| закрытие панели только для просмотра | «Закрыть»                                         |
+| Button                             | Caption                                           |
+| ---------------------------------- | ------------------------------------------------- |
+| saving on create                   | «Создать»                                         |
+| saving on edit                     | «Сохранить»                                       |
+| closing a panel that saves         | «Закрыть и не сохранять» (`uiCloseWithoutSaving`) |
+| closing a view-only panel          | «Закрыть»                                         |
 
-Кнопка записи стоит у противоположного края от кнопки закрытия, а пока идёт запрос —
-показывает спиннер и не нажимается: занятость берётся из `submitting()` основы, своего флага
-панель не заводит. Шапка и футер при прокрутке остаются на месте — прокручивается только зона
-содержимого.
+The save button stands at the edge opposite the close button, and while the request runs it
+shows a spinner and cannot be pressed: the busy state comes from the base's `submitting()`, the
+panel keeps no flag of its own. The header and the footer stay in place on scroll — only the
+content zone scrolls.
 
-## Уход на связанную запись
+## Leaving for a related record
 
 ```html
 <a rtElem="related" qa-dataid="promo-code-property-link" [href]="propertyHref()" (click)="openProperty($event)">
-    {{ 'propertyOpenLink' | transloco }} <<префикс>-icon name="arrow-right" size="sm" />
+    {{ 'propertyOpenLink' | transloco }} <<prefix>-icon name="arrow-right" size="sm" />
 </a>
 ```
 
-Адрес даёт `relatedUrl(commands)`, уход — `openRelated(commands)`. `routerLink` здесь не
-годится: директива навигирует сама, `preventDefault` её не останавливает, и вопрос о
-несохранённых правках она обходит.
+The address is given by `relatedUrl(commands)`, the leaving — by `openRelated(commands)`.
+`routerLink` is no good here: the directive navigates itself, `preventDefault` does not stop it,
+and it bypasses the question about unsaved edits.
 
-## Частые промахи
+## Common misses
 
-- Свой `router.navigate` в панели: абсолютные команды меняют только первичную ветку, аутлет
-  остаётся в адресе, и роутер отклоняет навигацию молча.
-- Скелетоны по `busy()`, а не по `resolving()`: `busy` включает и запись, и на сохранении поля
-  превратились бы в скелетоны.
-- Своё «не найдено» на панели: ненайденная запись уводит с адреса силами основы.
-- Свои отступы поверх общей основы: они дают разную ширину полей на разных панелях и срезают
-  обводку фокуса у края прокрутки.
-- Панель, остающаяся открытой после успеха, не сбросила нетронутость (`markAsPristine`) —
-  вопрос о правках задаётся сразу после записи.
-- Отключённые поля ввода вместо данных: запись, которую только смотрят, показывается готовым
-  списком свойств кита — `<префикс>-detail-list`, `<префикс>-info-item`. Своя разметка на `<dl>`
-  идёт последней и только как разовое отступление: она и есть отход от общего вида, а решает
-  его владелец, — перечень, ставящий её первой, учит обходить готовое раньше, чем спросить.
+- An own `router.navigate` in the panel: absolute commands change only the primary branch, the
+  outlet stays in the address, and the router rejects the navigation silently.
+- Skeletons by `busy()`, not by `resolving()`: `busy` includes saving too, and on save the fields
+  would turn into skeletons.
+- An own "not found" on the panel: a record that is not found leaves the address by the base's
+  own means.
+- Own spacing on top of the shared base: it gives different field widths on different panels and
+  cuts off the focus outline at the edge of the scroll area.
+- A panel that stays open after success did not reset pristineness (`markAsPristine`) — the
+  question about edits is asked right after saving.
+- Disabled inputs instead of data: a record that is only viewed is shown by the kit's ready-made
+  property list — `<prefix>-detail-list`, `<prefix>-info-item`. Own markup on `<dl>` goes last
+  and only as a one-off deviation: it is the departure from the shared look, and the owner
+  decides it — a list that puts it first teaches to bypass the ready-made before asking.

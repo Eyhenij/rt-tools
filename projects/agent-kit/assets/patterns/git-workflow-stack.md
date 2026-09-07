@@ -5,122 +5,128 @@ rule: git-workflow
 description: Pattern of rule git-workflow. Load when pieces of work follow one another or more than two branches already stand on one base — chained branching from the previous one, the PR base, merging bottom-up, re-merging main on an actual conflict. One conflict — pattern git-workflow-merge.
 ---
 
-# Стопка заявок из одного основания
+# A stack of PRs from one base
 
-Паттерн правила `git-workflow`. Что при этом должно быть верно — закон
-`docs/constitution/delivery.md`. Разбор одного конфликта — паттерн `git-workflow-merge`,
-открытие одной заявки — `git-workflow-pr`.
+Pattern of the rule `git-workflow`. What must be true — the law
+`docs/constitution/delivery.md`. Resolving one conflict — pattern `git-workflow-merge`,
+opening one PR — `git-workflow-pr`.
 
-**Вызовы здесь даны клиентом GitHub.** Дерево на другом хостинге читает их как форму, а команду
-берёт у своего клиента: имена полей и подкоманд у клиентов разные, а спрашиваемое — одно.
-Соответствие называет редакция правила поставки, разложенная в этом дереве.
+**The calls here are given with the GitHub client.** A tree on another host reads them as the
+form and takes the command from its own client: field and subcommand names differ between
+clients, and what is asked is one. The match is named by the edition of the delivery rule laid
+out in that tree.
 
-## Когда брать
+## When to use
 
-- Из одного основания заведено больше двух веток, и все ждут слияния.
-- За заход сделано несколько работ, и они лежат в дереве невыложенными.
-- Решается, в каком порядке отдавать накопленное владельцу.
+- More than two branches are created from one base, and all wait for a merge.
+- Several works were done in one session, and they lie in the tree unpublished.
+- It is decided in which order to hand the accumulated over to the owner.
 
-## Череда: ветвиться от предыдущей, а не от главной
+## A chain: branch from the previous one, not from main
 
-Стопка из одного основания — то, чего надо избежать. Работы, идущие подряд, ветвятся подряд:
+A stack from one base is what to avoid. Works that go one after another branch one after
+another:
 
 ```bash
-# первая работа череды — от главной, как обычно
+# the first work of the chain — from main, as usual
 git checkout -b <КЛЮЧ>-<номер>-<slug> origin/main
 
-# каждая следующая — от предыдущей ветки, а не от origin/main
+# each next one — from the previous branch, not from origin/main
 git checkout -b <КЛЮЧ>-<следующий>-<slug> <КЛЮЧ>-<номер>-<slug>
 ```
 
-Правка предыдущей лежит тогда в общем предке, и сводить два разных изменения одного файла не
-приходится вовсе. Расхождение всплывает при ветвлении — у того, у кого обе правки свои и под
-рукой, — а не при слиянии, у владельца, у которого нет ни одной.
+The previous edit then lies in the common ancestor, and two different changes of one file never
+have to be reconciled at all. The divergence surfaces at branching — at the one who has both
+edits as their own and at hand — not at the merge, at the owner, who has neither.
 
-От главной ветвится первая работа череды и всякая, которая предыдущей не касается: череда — это
-про соседние работы, а не про все подряд.
+From main branch the first work of the chain and any work that does not touch the previous one:
+a chain is about neighbouring works, not about all in a row.
 
-## Заявка череды стоит на предыдущей ветке
+## A chain PR stands on the previous branch
 
 ```bash
 gh pr create --base <предыдущая ветка> --title '[<КЛЮЧ>-<номер>] <что сделано>' --body-file <файл>
 ```
 
-Основанием главная не ставится: разбор тогда показывает свою правку вперемешку со всем, что под
-ней. Влитую нижнюю хостинг переносит сам — базой её заявки-наследницы становится главная.
+Main is not set as the base: the review then shows the own edit mixed with all under it. The
+host retargets a merged lower one itself — its heir PR's base becomes main.
 
-Порядок вливания стоит в теле каждой заявки строкой «стоит на #<номер>, вливать после него»:
-владелец вливает по списку, а родство веток по списку не видно.
+The merge order stands in every PR body as the line "stands on #<number>, merge after it": the
+owner merges by the list, and branch kinship is invisible in the list.
 
-**Конвейер дерева проверяется на то, слушает ли он заявку с таким основанием.** Событие заявки
-хостинг шлёт с фильтром по базе, и дерево, оставившее в фильтре одну главную ветку, всей череде
-прогонов не даёт вовсе: заявка стоит зелёно-пустой, а вернуть событие нечем — ни новый коммит,
-ни перезакрытие заявки базы не меняют. Спрашивается это до того, как череду заводить: у
-настройки конвейера, а не у страницы заявки, где отсутствие прогона выглядит так же, как его
-ожидание.
+**The tree's pipeline is checked for whether it listens to a PR with such a base.** The host
+sends the PR event with a base filter, and a tree that left only the main branch in the filter
+gives the whole chain no runs at all: the PR stands green-and-empty, and there is nothing to
+bring the event back — neither a new commit nor reclosing the PR changes the base. This is asked
+before the chain is created: from the pipeline settings, not from the PR page, where a missing
+run looks the same as waiting for one.
 
 ```bash
-# порядок череды целиком — снизу вверх
+# the whole chain order — bottom-up
 gh pr list --state open --json number,headRefName,baseRefName \
     --jq '.[] | "\(.number)\t\(.headRefName)\tна \(.baseRefName)"'
 ```
 
-## Чего в череде не делают
+## What is not done in a chain
 
-- **Историю нижней ветки не переписывают.** Ни `rebase`, ни силовая отправка: вершина верхней
-  становится достижимой из её основания, и хостинг закрывает заявку верхней как слитую — при том
-  что в главной её правок нет. Отставшая нижняя чинится вливанием главной в неё и дальше вверх.
-- **Череду не вливают из середины.** Влитая не по порядку тащит за собой всё, что под ней, — и
-  разбор той работы уже не состоится.
-- **Готовые ветки не копят.** Череда не отменяет того, что единица работы — влитая заявка: она
-  лишь делает безопасной ту длину, которая всё же накопилась.
+- **The lower branch's history is not rewritten.** Neither `rebase` nor a force push: the upper
+  one's tip becomes reachable from its base, and the host closes the upper PR as merged — though
+  main has none of its edits. A lagging lower one is fixed by merging main into it and onward
+  upward.
+- **A chain is not merged from the middle.** One merged out of order drags along everything
+  under it — and the review of that work never happens.
+- **Ready branches are not hoarded.** A chain does not cancel that the unit of work is a merged
+  PR: it only makes safe the length that has piled up anyway.
 
-## Единица работы — влитая заявка, а не открытая
+## The unit of work is a merged PR, not an open one
 
-Открытый черновик работой не является: кнопка слияния у него заблокирована, в главной ветке его
-правок нет, и очередь работ им не сокращается. Восемнадцать открытых черновиков и ни одного
-влитого — это ноль сделанного, сколько бы времени на них ни ушло.
+An open draft is not work: its merge button is locked, main has none of its edits, and the work
+queue is not shortened by it. Eighteen open drafts and not one merged is zero done, however much
+time went into them.
 
-Отсюда порядок: одна работа доводится до слияния, потом берётся следующая. Не наоборот.
+Hence the order: one work is brought to the merge, then the next is taken. Not the other way
+round.
 
-## Цена стопки растёт квадратично
+## The price of a stack grows quadratically
 
-Ветки одного основания, дописывающие в одни и те же тексты, роняют друг друга при каждом
-слиянии: влитая первая устаревает остальные, влитая вторая — все, кроме двух, и так до конца.
-Открыв все разом, исполнитель назначает себе порядка половины квадрата их числа вливаний
-главной — и делает их он, а слияния нажимает человек в своём темпе.
+Branches of one base that append to the same texts bring each other down at every merge: the
+first merged makes the rest stale, the second merged — all but two, and so to the end. Opening
+all at once, the executor assigns themselves about half the square of their number in merges of
+main — and they do them, while a person presses the merges at their own pace.
 
-Считается это до открытия, а не после: закрыть лишние заявки дешевле, чем вести их, но время на
-их тела к тому часу уже потрачено.
+This is counted before opening, not after: closing surplus PRs is cheaper than keeping them, but
+the time spent on their bodies is gone by then.
 
-## Главная вливается по факту конфликта, а не по расписанию
+## Main is merged in on an actual conflict, not on a schedule
 
-Отставшая ветка и конфликтующая — разное. Отставшую хостинг вливает сам: правки разных мест
-одного файла сводятся без человека. Конфликтует только та, где обе стороны тронули одни строки.
+A lagging branch and a conflicting one are different things. A lagging one the host merges
+itself: edits of different places in one file are reconciled without a person. Only the one
+where both sides touched the same lines conflicts.
 
-Поэтому после чужого слияния главная вливается не во все открытые ветки, а в те, о которых
-хостинг сказал, что они конфликтуют. Спрашивается это одним вызовом на всю стопку:
+So after someone else's merge, main is merged not into all open branches but into those the host
+said conflict. This is asked with one call for the whole stack:
 
 ```bash
 gh pr list --state open --json number,headRefName,mergeable \
     --jq '.[] | select(.mergeable == "CONFLICTING") | "\(.number)\t\(.headRefName)"'
 ```
 
-Ответ `UNKNOWN` означает, что хостинг ещё считает, а не что конфликта нет: вызов повторяется
-через несколько секунд. Вливание «на всякий случай» — это и есть та квадратичная цена, и
-платится она за состояние, которого чаще всего нет.
+The answer `UNKNOWN` means the host is still counting, not that there is no conflict: the call
+is repeated after a few seconds. Merging "just in case" is that very quadratic price, and it is
+paid for a state that most often is not there.
 
-## Стопка без заявок отстаёт молча
+## A stack without PRs lags silently
 
-Вызов выше знает только открытые заявки. Стопка локальных веток заявок не имеет вовсе: спросить
-о ней нечего, а отстаёт она целиком — веток много, вершина одна, и смотрят обычно на неё.
+The call above knows only open PRs. A stack of local branches has no PRs at all: there is
+nothing to ask about it, and it lags whole — many branches, one tip, and that is the one usually
+looked at.
 
-Цена растёт со временем. Пока заявок нет, вершина главной вливается в нижнюю ветку, и дальше
-каждая следующая вбирает предыдущую одним слиянием. После открытия та же правка стоит стольких
-обновлённых заявок, сколько веток в стопке, — и гард поставки до тех пор не даст открыть ни
-одной: он требует вершину главной предком ветки.
+The price grows with time. While there are no PRs, main's tip is merged into the lowest branch,
+and then each next one absorbs the previous by one merge. After opening, the same edit costs as
+many updated PRs as there are branches in the stack — and until then the delivery guard will not
+let a single one open: it demands main's tip as an ancestor of the branch.
 
-Признак читается без сети, одной командой на ветку:
+The sign is read offline, one command per branch:
 
 ```bash
 for br in $(git branch --format='%(refname:short)' --list '<КЛЮЧ>-*'); do
@@ -128,40 +134,39 @@ for br in $(git branch --format='%(refname:short)' --list '<КЛЮЧ>-*'); do
 done
 ```
 
-Стопка из сорока одной ветки так отстала на восемнадцать коммитов разом, и ни одна заявка по ней
-не открылась бы.
+A stack of forty-one branches lagged eighteen commits at once that way, and not one PR from it
+would have opened.
 
-## Указателю, куда дописывают все, объявляется сложение
+## An index everyone appends to is declared a union
 
-Список закрытых работ, оглавление спеков, перечень задач — файлы, куда каждая ветка добавляет
-строку в конец. Они конфликтуют на пустом месте у каждой ветки стопки, и разрешение у них одно:
-нужны обе стороны целиком. Объявляется это один раз, в `.gitattributes`:
+The list of closed works, the spec table of contents, the task list — files where every branch
+adds a line at the end. They conflict out of nothing on every branch of the stack, and their
+resolution is one: both sides are needed whole. This is declared once, in `.gitattributes`:
 
 ```
 docs/archive/README.md merge=union
 ```
 
-Сложение ставится только на указатели, где правка всегда добавляющая. На текст, который
-переписывают, оно оставит в файле обе редакции.
+The union is set only on indexes where an edit is always an addition. On text that gets
+rewritten it leaves both versions in the file.
 
-**Сложение сторон метку сливаемости не снимает, и вливать главную по ней нельзя.** Хостинг
-считает сливаемость своим приёмом и настроек слияния не читает: ветка, тронувшая сложенный
-указатель, помечается конфликтующей всё равно. Спрошенная у него стопка отвечает «конфликтует»
-целиком, и вливание по этому ответу — то же вливание во все ветки, что и без сложения: раздел
-ниже велит вливать главную по факту конфликта, а факт этот хостинг называет про каждую ветку
-стопки. Пятнадцать заявок разом простояли так за один заход. Проверяется одной командой: то же
-слияние без драйвера даёт конфликтный маркер, с драйвером идёт чисто — значит метку держит
-указатель, а не правка.
+**The union of sides does not clear the mergeability mark, and main must not be merged in by
+it.** The host counts mergeability by its own technique and does not read merge settings: a
+branch that touched a unioned index is marked conflicting all the same. A stack asked from it
+answers "conflicting" whole, and merging by that answer is the same merging into all branches
+as without the union: the section on an actual conflict tells to merge main in on the fact, and
+the host names that fact for every branch of the stack. Fifteen PRs stood like that at once in
+one session. Checked with one command: the same merge without the driver gives a conflict
+marker, with the driver it goes clean — so the mark is held by the index, not by the edit.
 
-**Указатель, куда дописывает каждая ветка стопки, из стопки убирается, а не складывается.**
-Сложение — починка проявления: конфликта нет, метка есть, вливать по-прежнему приходится.
-Спрашивается это до заведения веток: отвечает ли указатель на вопрос, которого не закрывает
-обход каталога. Не отвечает — он снимается, и площадь пересечения стопки падает до настоящих
-общих файлов.
+**An index every branch of the stack appends to is removed from the stack, not unioned.** The
+union fixes the symptom: there is no conflict, there is a mark, merging is still needed. This is
+asked before the branches are created: does the index answer a question that a directory walk
+does not close. If not — it is removed, and the stack's overlap drops to the real shared files.
 
-## Порядок вливания задаётся заранее и называется владельцу
+## The merge order is set in advance and named to the owner
 
-Порядок считается до открытия заявок — по тому, кто какие файлы правит:
+The order is counted before the PRs open — by who edits which files:
 
 ```bash
 for b in $(git branch --list '<префикс>-*' --format='%(refname:short)'); do
@@ -169,17 +174,16 @@ for b in $(git branch --list '<префикс>-*' --format='%(refname:short)'); 
 done | sort | uniq -c | sort -rn | head
 ```
 
-Ветки, правящие один и тот же файл, идут подряд: разведённые чужими слияниями, они соберут
-конфликт там, где подряд его бы не было. Порядок называется владельцу в теле заявки — кнопки
-нажимает он, а о родстве веток не знает.
+Branches editing the same file go one after another: parted by someone else's merges, they will
+gather a conflict where in a row there would be none. The order is named to the owner in the PR
+body — they press the buttons, and they do not know the branch kinship.
 
-## Волна веток проверяется пробным слиянием
+## A wave of branches is checked by a trial merge
 
-Ветка, лежащая невлитой рядом с соседками, зелена сама по себе: линт, тесты, сборки и сверки
-она проходит одна. Сталкивается она с ними тем, чего на отдельной ветке не видит ни одна
-проверка — тот же следующий свободный номер сценария, тот же заведённый новым файл, та же
-правленная строка отметки. После слияния первые два чинятся уже в главной и стоят отдельной
-работы.
+A branch lying unmerged next to its neighbours is green on its own: lint, tests, builds and
+audits it passes alone. It collides with them on what no check sees on a single branch — the
+same next free scenario number, the same newly created file, the same edited mark line. After
+the merge the first two are fixed already in main and cost a separate work.
 
 ```bash
 git fetch origin
@@ -189,18 +193,18 @@ npm run check:all
 git checkout - && git branch -D probe-merge
 ```
 
-Ветка пробы удаляется, а находки и порядок слияния записываются туда, где живёт замысел линии
-работ: пробное слияние отвечает на «что столкнётся», а не заменяет собой отдачу.
+The trial branch is deleted, and the findings and the merge order are written where the epic
+plan lives: a trial merge answers "what will collide", it does not replace the handover.
 
-## Частые промахи
+## Common misses
 
-- Открыты все заявки разом, потому что ветки были готовы. Готовность ветки не говорит о том, что
-  её пора отдавать: отдаётся столько, сколько владелец успевает влить.
-- Главная влита во все открытые ветки после каждого чужого слияния. Половина этих вливаний не
-  меняла ничего: ветки не конфликтовали, а сливаемость у них не спрашивали.
-- Состояние стопки выведено из своего дерева, а не спрошено у хостинга. Локально влитая главная
-  о сливаемости не говорит: между вливанием и взглядом владельца главная уходит вперёд.
-- Стопка отдана без порядка. Владелец вливает в порядке списка, то есть в порядке номеров, — и
-  две ветки одного файла попадают друг на друга ровно тогда, когда между ними встала третья.
-- Время потрачено на тела заявок, а не на доведение первой до слияния. Тело нужно тому, кто
-  заявку читает; у заявки, до которой очередь дойдёт через сутки, читателя сегодня нет.
+- All PRs opened at once because the branches were ready. A branch's readiness does not say it
+  is time to hand it over: as much is handed over as the owner has time to merge.
+- Main merged into all open branches after every foreign merge. Half of these merges changed
+  nothing: the branches did not conflict, and their mergeability was not asked.
+- The state of the stack derived from one's own tree, not asked from the host. Locally merged
+  main says nothing about mergeability: between the merge and the owner's look main moves ahead.
+- The stack handed over without an order. The owner merges in list order, that is, by number —
+  and two branches of one file land on each other exactly when a third stood between them.
+- Time spent on PR bodies instead of bringing the first to the merge. The body is needed by
+  whoever reads the PR; a PR whose turn comes in a day has no reader today.

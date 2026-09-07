@@ -5,37 +5,37 @@ rule: doc-style
 description: Pattern of rule doc-style. Load when writing a task in the work queue, a PR description and a chat reply to the owner. Samples of "so" and "not so" for each of the three texts and the words that get replaced in them. The shape of a status reply is named by rule status-report.
 ---
 
-# Задача, описание заявки и ответ владельцу
+# A task, a PR description and a reply to the owner
 
-Паттерн правила `doc-style`. Три текста читает человек со стороны: он помнит продукт и не
-читал ни одного правила слоя. Здесь — как они пишутся; что при этом должно быть верно, говорит
-раздел «Тексты для человека» самого правила.
+Pattern of the rule `doc-style`. Three texts are read by a person from outside: they remember
+the product and have not read a single rule of the layer. Here — how they are written; what must
+be true is said by the "Texts for a person" section of the rule itself.
 
-## Когда брать
+## When to use
 
-- Заводится задача в очереди работ.
-- Пишется описание заявки на слияние.
-- Пишется ответ владельцу в чате — кроме ответа о состоянии работы: его форму называет правило
-  `status-report`.
+- A task is created in the work queue.
+- A PR description is written.
+- A chat reply to the owner is written — except a reply about the work state: its shape is
+  named by the rule `status-report`.
 
-## Слова, которые заменяются
+## Words that get replaced
 
-Левая колонка — слова слоя правил. Они верны внутри слоя и пусты для того, кто в него не
-заглядывает.
+The left column holds the words of the rules layer. They are right inside the layer and empty to
+whoever does not look into it.
 
-| Слово слоя         | Чем сказать владельцу                                      |
-| ------------------ | ---------------------------------------------------------- |
-| заявка на слияние  | правка, которая ждёт вашего слова                          |
-| прогон, набор      | проверки; «проверки прошли», «проверки красные»            |
-| гард, гейт         | что именно не пустило и почему                             |
-| договорённость     | о чём договорились по этому экрану                         |
-| объём правки       | что меняется на экране и где                               |
-| раскладка ресурсов | обновление правил на машине                                |
+| Layer word        | What to say to the owner                                   |
+| ----------------- | ---------------------------------------------------------- |
+| PR                | the change that waits for your word                        |
+| run, suite        | checks; "the checks passed", "the checks are red"          |
+| guard, gate       | what exactly did not let it through, and why               |
+| agreement         | what was agreed about this screen                          |
+| change size       | what changes on the screen and where                       |
+| resource layout   | updating the rules on the machine                          |
 
-## Задача
+## Task
 
-Заголовок называет предмет, тело — что человек не может сделать. Красная проверка стоит в теле
-последней строкой: она говорит, где смотреть, и не говорит, зачем чинить.
+The title names the subject, the body — what the person cannot do. The red check stands in the
+body as the last line: it says where to look and does not say why to fix it.
 
 ```text
 ✗ Сквозная спека берёт пункт заглушкой, а прогон на вершине не доходит до выкатки
@@ -43,10 +43,10 @@ description: Pattern of rule doc-style. Load when writing a task in the work que
   Красная проверка — сквозной набор, шаг «отчёты».
 ```
 
-## Описание заявки
+## PR description
 
-Первый абзац — что меняется для человека. Дальше — чем это подтверждено. Имена файлов уместны
-в конце, а не вместо первого абзаца.
+The first paragraph — what changes for the person. Then — what confirms it. File names belong at
+the end, not in place of the first paragraph.
 
 ```text
 ✗ Ярус личности вызова получил второй признак, набор гейта зелёный
@@ -54,10 +54,10 @@ description: Pattern of rule doc-style. Load when writing a task in the work que
   спрашивается, кто приходит по токену. Проверки прошли, 26 сценариев.
 ```
 
-## Ответ в чате
+## Chat reply
 
-Отвечает на заданный вопрос первым предложением. Утверждение о дереве идёт вместе с командой и
-её выводом — этого требует правило `status-report`, и в чате оно верно так же.
+Answers the question asked in the first sentence. A statement about the tree goes together with
+the command and its output — the rule `status-report` requires it, and in chat it holds the same.
 
 ```text
 ✗ Работа отдана, красное въехало в главную, откат прикрыт гардом
@@ -65,29 +65,29 @@ description: Pattern of rule doc-style. Load when writing a task in the work que
   — упал не на этой правке, вывод: 76 из 76 сценариев не поднялись, витрина лежит.
 ```
 
-## Язык текста
+## The language of the text
 
-Слой правил написан по-английски, а три текста для человека — на языке владельца. Заход,
-который только что читал правило, пишет задачу словами и языком правила; адресат проверяется
-до первой строки — вместе со слогом.
+The rules layer is written in English, and the three texts for a person in the owner's language.
+A session that has just read a rule writes the task in the rule's words and language; the
+addressee is checked before the first line — together with the register.
 
 ```text
 ✗ [RT-1849] Prose, glossary and description checks only count Cyrillic
 ✓ [RT-1849] Проверки слога, словаря и описаний считают только кириллицу
 
-✗ - **A path named in a document exists.** (статья правила, написанная в теле задачи)
+✗ - **A path named in a document exists.** (a rule article written into the task body)
 ✓ Пути, названные в задаче, проверяет команда `npm run check:docs`; она красная на двух.
 ```
 
-Язык владельца — тот, на котором он пишет в чате и в карточках. Владелец, пишущий
-по-английски, получает английскую задачу, и это не промах: промах — текст на языке, которого
-адресат не выбирал.
+The owner's language is the one they write in chat and on cards. An owner writing in English
+gets an English task, and that is no miss: the miss is a text in a language the addressee did
+not choose.
 
-## Ловушки
+## Pitfalls
 
-- **Короче не значит понятнее.** Текст словами слоя выходит на треть короче и бесполезен тому,
-  кто решает, срочная это работа или нет.
-- **«Не X, а Y» выглядит объяснением и ничего не объясняет.** Владелец узнаёт, чего не было, и
-  не узнаёт, что есть.
-- **Слово «готово» без числа читается как проверенный факт.** Число — номер прогона, сколько
-  сценариев из скольких, время проверки.
+- **Shorter does not mean clearer.** A text in the layer's words comes out a third shorter and
+  is useless to whoever decides whether the work is urgent.
+- **"Not X but Y" looks like an explanation and explains nothing.** The owner learns what was
+  not there and does not learn what is.
+- **The word "done" without a number reads as a verified fact.** The number is the run id, how
+  many scenarios out of how many, the time of the check.
