@@ -121,7 +121,11 @@ description: Pattern of rule git-workflow. Load for … Not for … — that is 
 ---
 ```
 
-Sections: `## When to use` · ready-made code · `## How the article itself is written
+Sections: `## When to use` · ready-made code · `## Common misses`. A pattern has no binding:
+the check does not audit it, because there is nothing to check ready-made code against but
+itself.
+
+## How the article itself is written
 
 **An argument at an article names the structure on which it is true.** An argument ages with
 what caused it: the ban on writing into someone else's settings stood on JSON merging silently
@@ -141,10 +145,6 @@ nothing to check it by machine" ages with what was used for checking: the work q
 not read the PR body — and that was written down as "nobody reads it", although the delivery
 guard parses the same command line and judges the title by it. The named tool gives the next
 edit a point to count from.
-
-## Common misses`. A pattern has no binding:
-the check does not audit it, because there is nothing to check ready-made code against but
-itself.
 
 ## Description: three hundred characters and one question
 
