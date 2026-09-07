@@ -29,3 +29,46 @@
 ### 2026-09-07
 
 - Ветка заведена от главной, колонка задачи двинута, папка задачи собрана.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools
+**Branch:** RT-1857-tree-own-english
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 2 из 5 — Свои правила и их компаньоны
+- **Next step:** компаньоны правил — двадцать девять файлов, около двух тысяч строк
+- **PR:** ещё не открыт
+
+The progress in full — `docs/tasks/RT-1857-tree-own-english/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M package.json
+```
+
+### Commits over the main branch
+
+```
+942f5329f docs(rt:agent-kit): компаньон файла компонента написан по-английски
+5722df107 docs(rt:agent-kit): компаньоны реактивности экрана и структуры кода написаны по-английски
+3831f864a docs(rt:agent-kit): компаньон ведения работы написан по-английски
+23fc7c636 docs(rt:agent-kit): компаньоны отчёта о состоянии и ведения хода написаны по-английски
+151396615 docs(rt:agent-kit): компаньоны зависимостей и доступа к среде написаны по-английски
+ce490f0c8 feat(rt:agent-kit): раздел привязок и вердикт компаньона читаются под двумя именами
+884087524 docs(rt:agent-kit): компаньоны входа, выкатки и автономной работы написаны по-английски
+2a5002876 docs(rt:agent-kit): ход работы RT-1857 — этап надстроек закрыт, компаньоны взяты в этап 2
+68db1a0e4 docs(rt:agent-kit): надстройка списочного экрана написана по-английски — этап надстроек закрыт
+b9065c285 docs(rt:agent-kit): пять надстроек паттернов написаны по-английски
+8213d1dc8 docs(rt:agent-kit): надстройки списков и холодной части ведения работы написаны по-английски
+64a026d39 docs(rt:agent-kit): восемь надстроек дерева написаны по-английски
+8959afd19 docs(rt:agent-kit): папка задачи RT-1857 заведена
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
