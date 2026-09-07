@@ -5,94 +5,97 @@ rule: task-flow
 description: Pattern of rule task-flow. Load when returning to unfinished work in a new session. What is already in the context, what not to ask the owner, how to edit "Where we stand", how to record a decision along the way and a stage revision. Not for starting work — that is pattern task-flow-start.
 ---
 
-# Возвращение к незаконченной работе
+# Returning to unfinished work
 
-Паттерн правила `task-flow`. Что при этом должно быть верно — закон
+Pattern of the rule `task-flow`. What must be true meanwhile — the law
 `docs/constitution/work-conduct.md`.
 
-**Требует:** `hooks/task-context-load.sh`
+**Requires:** `hooks/task-context-load.sh`
 
-## Когда брать
+## When to use
 
-- Сессия начата на ветке `<КЛЮЧ>-*`, работа в ней уже шла.
-- Работа прерывается — надо оставить её так, чтобы следующий заход поднял без владельца.
+- A session is begun on a branch `<КЛЮЧ>-*`, and work in it was already going.
+- The work is interrupted — it has to be left so that the next session picks it up without the
+  owner.
 
-## Что уже пришло в контекст
+## What has already come into the context
 
-Хук `task-context-load.sh` на запуске сессии отдал замысел и ход работы целиком, а разбор
-просьбы — путём. Перечитывать их файлами не нужно; `grill.md` читается, когда в ходе работы
-всплыло решение, причина которого неясна.
+The hook `task-context-load.sh` gave the plan and the progress whole at session start, and the grill
+of the request — by path. They need not be re-read as files; `grill.md` is read when a decision
+whose reason is unclear surfaces in the progress.
 
-Пришло предупреждение «РАБОТА БЕЗ ПАПКИ ЗАДАЧИ» — работа шла мимо: папка собирается с
-образца, а `progress.md` заполняется по тому, что видно в дереве и в истории ветки, а не по
-расспросам владельца.
+The warning `РАБОТА БЕЗ ПАПКИ ЗАДАЧИ` came — the work went past the folder. The folder is assembled
+from the template, and `progress.md` is filled by what is seen in the tree and in the branch
+history, not by questioning the owner.
 
-Пришло «РАБОТА ЗАКРЫВАЕТСЯ» — папку разобрала сама ветка перед заявкой, и собирать её заново не
-надо: состояние работы читается у заявки и в передаче захода. Понадобилась правка кода по
-замечаниям разбора — папка восстанавливается на время правки, а разбор повторяется тем же
-коммитом.
+`РАБОТА ЗАКРЫВАЕТСЯ` came — the branch itself took the folder apart before the PR, and it is not
+assembled again: the work state is read at the PR and in the session handover. A code edit after
+review remarks became needed — the folder is restored for the time of the edit, and the taking-apart
+is repeated by the same commit.
 
-## Признак этапа проверяется прогоном, а не перечислением по чтению
+## A stage sign is checked by a run, not by a list made by reading
 
-Пересчитанное глазами расходится с тем, что есть: читая проверку, исполнитель насчитал четыре
-выхода пропуском, а их было пять — пятый лежал за отдельной функцией внутри обвязки клиента
-базы и в перечень не попал. Нашёлся он прогоном, и спасла работу именно та строка замысла,
-которая требовала проверить каждый случай командой.
+What is counted by eye diverges from what is there. Reading the check, the executor counted four
+exits by skip, and there were five — the fifth lay behind a separate function inside the database
+client wrapper and did not get into the list. It was found by a run, and what saved the work was
+exactly the plan line that demanded checking every case by a command.
 
-Отсюда форма признака: он называет команду и то, что в её выводе означает «сошлось», — а не
-перечень, собранный чтением. Перечень годится, чтобы понять, где смотреть; закрытым этап
-делает вывод команды.
+Hence the form of the sign: it names a command and what in its output means "matches" — not a list
+gathered by reading. A list is good for knowing where to look; a stage is closed by command output.
 
-## Чего не делать
+## What not to do
 
-- **Не спрашивать владельца о том, что записано.** Ради этого всё и заведено.
-- **Не начинать заново то, что отмечено сделанным.** Отметка стоит в ходе работы; сомнение в
-  ней проверяется деревом — сборкой, тестами, чтением файла, — а не вопросом.
-- **Не выводить записанное заново из кода.** Запрет на вопрос этого не покрывает: решение,
-  выведенное из кода и поданное находкой, обходится дороже лишнего вопроса — владельцу
-  предлагают принять заново то, что он уже принял, и список вариантов звучит убедительнее
-  записи, которой он не видит. Прежде чем выводить, ищут в разборе просьбы, в ходе работы и в
-  замысле.
-- **Не править замысел.** С ним сверяют результат; пересмотр идёт записью в ходе работы.
+- **Do not ask the owner about what is recorded.** That is what all of this is for.
+- **Do not start over what is marked done.** The mark stands in the progress; doubt about it is
+  checked by the tree — a build, tests, reading the file — not by a question.
+- **Do not re-derive the recorded from the code.** The ban on questions does not cover this: a
+  decision derived from the code and served as a finding costs more than a spare question. The owner
+  is offered to accept anew what they already accepted, and a list of options sounds more convincing
+  than a record they do not see. Before deriving, the grill, the progress and the plan are searched.
+- **Do not edit the plan.** The result is checked against it; a revision goes as an entry in the
+  progress.
 
-## Вход из передачи захода
+## Entry from a session handover
 
-Передача написана прошлым заходом и лежит вне дерева. Её читают как задание — и берутся за
-работу мимо правила: состояние не сверено, правило не загружено, числа взяты на веру. Отличие
-входа из передачи от обычного захода одно: всё, что в ней написано, проверяется деревом, потому
-что писалась она вчера.
+The handover was written by a past session and lies outside the tree. It is read as an assignment —
+and the work is taken up past the rule: the state is not checked, the rule is not loaded, the
+numbers are taken on trust. The entry from a handover differs from an ordinary session in one thing:
+everything written in it is checked against the tree, because it was written yesterday.
 
-Порядок короткий, четыре шага:
+The order is short, four steps:
 
-1. **Правило ведения работы и этот паттерн — первым движением**, до первой реплики владельцу.
-2. **Ветка и состояние работы читаются в дереве**, а не в передаче: `git branch --show-current`
-   и строка состояния в ходе работы. Разошлось с передачей — верно дерево.
-3. **Числа из передачи пересчитываются** на текущем коммите. Оценка «работы вдвое больше» при
-   пересчёте не подтвердилась ни разу.
-4. **Следующий шаг берётся из хода работы**, а не из раздела передачи о нём: ход работы
-   коммитится, передача — нет, и разойтись они успевают за один заход.
+1. **The work-conduct rule and this pattern — as the first move**, before the first line to the
+   owner.
+2. **The branch and the work state are read in the tree**, not in the handover: `git branch
+   --show-current` and the state line in the progress. Diverged from the handover — the tree is
+   right.
+3. **The numbers from the handover are recounted** on the current commit. The estimate "twice as
+   much work" was never confirmed by a recount.
+4. **The next step is taken from the progress**, not from the handover's section about it: the
+   progress is committed, the handover is not, and they manage to diverge within one session.
 
-Чего в передаче нет и не будет: слов владельца — они в разборе просьбы; решений с причинами —
-они в ходе работы; замысла — он на диске. Передача пересказывает, а не заменяет.
+What is not in the handover and never will be: the owner's words — they are in the grill; decisions
+with reasons — they are in the progress; the plan — it is on disk. The handover retells, it does not
+replace.
 
-## Вход в заход: строка состояния сверяется с деревом
+## Entering the session: the state line is checked against the tree
 
-Сверить «Где стоим» с деревом. Запись описывает день, когда её сделали:
+Check "Where we stand" against the tree. The record describes the day it was made:
 
 ```bash
 git status --short
 git log --oneline origin/main..HEAD
 ```
 
-Разошлось — «Где стоим» правится сразу, до работы: следующий заход поверит записи, а не
-дереву. Строка состояния правится вместе с ним: гард читает её, и оставленная от прошлого
-захода она либо отбивает законную правку, либо пропускает работу, которая до правки кода ещё
-не дошла.
+Diverged — "Where we stand" is fixed at once, before the work: the next session will trust the
+record, not the tree. The state line is fixed together with it: the guard reads it, and left over
+from the past session it either refuses a lawful edit or lets through work that has not yet reached
+the code edit.
 
-## Состояние `этап-идёт`: этап делается и отмечается в ходе работы
+## State `этап-идёт`: the stage is done and marked in the progress
 
-Раздел «Где стоим» **перезаписывается**, а не дописывается — это первое, что читает следующий
-заход, и единственное, что переживает обрезку по объёму:
+The "Where we stand" section is **rewritten**, not appended — it is the first thing the next session
+reads, and the only thing that survives trimming by size:
 
 ```markdown
 ## Где стоим
@@ -106,34 +109,34 @@ git log --oneline origin/main..HEAD
 - **PR:** ещё не открыт
 ```
 
-Строка про PR обязательна с той минуты, как этапы кончились: между открытием PR и
-слиянием проходит день и больше, и заход обрывается там чаще всего. Без неё следующий заход
-читает «этап последний, всё зелено» и об открытом PR узнаёт только из истории ветки или у
-владельца — то есть ровно тем пересказом, ради отмены которого всё и заведено:
+The PR line is mandatory from the minute the stages are over: between opening the PR and the merge a
+day or more passes, and that is where a session breaks off most often. Without it the next session
+reads "the last stage, all green" and learns of the open PR only from the branch history or from the
+owner — exactly the retelling all of this was set up to cancel:
 
 ```markdown
 - **PR:** #1396, ждёт разбора · отвечено 3 замечания из 5 · не сделано: снятие черновика
 ```
 
-С открытием PR состояние становится `работа-отдана`, и обязательное действие у него другое —
-следующая задача, а не ожидание разбора. Объявить его на диске к этой минуте уже нечем: ход
-работы уехал вместе с папкой, и хвост работы ведёт паттерн `task-flow-close`.
+With the PR opened the state becomes `работа-отдана`, and its mandatory action is different — the
+next task, not waiting for review. By that minute there is nothing left to declare it with on disk:
+the progress left with the folder, and the tail of the work is led by pattern `task-flow-close`.
 
-Решение, принятое по ходу, — вместе с причиной и с тем, что было альтернативой:
+A decision taken along the way — with the reason and with what the alternative was:
 
 ```markdown
 - **2026-08-07. Гард судит по путям правки, а не по замыслу задачи.** Оценку «меняет ли
   поведение» назначал бы тот, кому она мешает. Альтернатива — строка в замысле — отвергнута.
 ```
 
-Пересмотр этапа — туда же, а не правкой замысла:
+A stage revision — to the same place, not by editing the plan:
 
 ```markdown
 - **2026-08-07. Этап 4 заменён: роли заводятся обе, а не одна.** Владелец решил при разборе;
   прежний этап в замысле оставлен видимым.
 ```
 
-Запись захода отмечает сделанное и то, чем это подтверждено:
+The session entry marks what was done and what confirms it:
 
 ```markdown
 ### 2026-08-07
@@ -142,65 +145,67 @@ git log --oneline origin/main..HEAD
 - Доэтапное, не этой работы: сверка очереди перечисляет шесть закрытых задач вне борды.
 ```
 
-**Следующее движение:** отмеченный этап тем же ходом сменяется следующим. Этапы кончились —
-тот же ход гонит набор, вливает договорённость, приводит тексты и разбирает папку задачи; PR
-открывается за убранной работой.
+**Next move:** the marked stage gives way to the next in the same turn. The stages are over — the
+same turn runs the suite, merges the agreement, brings the texts up to date and takes the task
+folder apart; the PR opens behind work already cleaned up.
 
-## Состояние `работа-отдана`: следующая задача берётся тем же движением
+## State `работа-отдана`: the next task is taken by the same move
 
-Задача закрыта, PR открыт и ждёт владельца — заход на этом не кончается. Отданное на разбор
-ждёт человека, а не машину: пока эпик не кончился, следующая его задача берётся сразу, тем же
-движением, которым предыдущая ушла на разбор.
+The task is closed, the PR is open and waits for the owner — the session does not end on it. What is
+handed in for review waits for a person, not a machine: while the epic is not over, its next task is
+taken at once, by the same move with which the previous one went to review.
 
-Берётся, а не выбирается: порядок назначен на планировании и лежит в замысле эпика. Выбор,
-предложенный владельцу при назначенном порядке, — просьба назначить его заново.
+Taken, not chosen: the order was assigned at planning and lies in the epic plan. A choice offered to
+the owner under an assigned order is a request to assign it anew.
 
-У работы вне эпика замысла с порядком нет, и следующая берётся из очереди работ — тем же
-движением и с тем же запретом на выбор вслух: очередь спрашивается командой, а не памятью о том,
-что заводил сам исполнитель. Пусто в очереди — это утверждение о дереве, и подтверждается оно
-выводом команды.
+Work outside an epic has no plan with an order, and the next is taken from the work queue — by the
+same move and with the same ban on choosing aloud. The queue is asked by a command, not by memory of
+what the executor created themselves. An empty queue is a statement about the tree, and it is backed
+by command output.
 
 ```bash
-# что назначено следующим — читается в замысле эпика, а не спрашивается
-# состояние задач — в очереди работ: замысел о закрытом не знает
+# what is assigned next — read in the epic plan, not asked
+# the state of the tasks — in the work queue: the plan does not know what is closed
 ```
 
-Останавливает заход только предел заполнения окна — тогда идёт передача, паттерн
-`task-flow-handoff`. Кончившийся эпик поводом остановиться не бывает: работа берётся вне его —
-из очереди работ, — а владельцу тем же ходом называется, что кончился именно эпик, а не одна его
-задача. Он называется вместе со взятой работой, а не вместо неё.
+Only the window fill limit stops the session — then comes the handover, pattern `task-flow-handoff`.
+A finished epic is never a reason to stop. Work is taken outside it — from the work queue — and the
+owner is told in the same turn that it is the epic that ended, not one of its tasks. It is named
+together with the taken work, not instead of it.
 
-**Следующее движение:** по следующей задаче делается действие — заведена задача, ветка или
-папка. Ход кончается после него, а не после слов о нём.
+**Next move:** an action is done on the next task — a task, a branch or a folder is created. The
+turn ends after it, not after words about it.
 
-## Частые промахи
+## Common misses
 
-- **Заход, кончившийся ничем, тоже записывается.** Иначе следующий пойдёт той же дорогой:
-  «пробовали так — не вышло, потому что» стоит одной строки и экономит целый заход.
-- **Незакоммиченное называется явно.** Работа живёт в дереве неделями; строка «что лежит
-  несохранённым и почему» — единственное, по чему это видно, пока PR нет.
-- **Подтверждение — вывод команды или замер, а не пересказ.** «Проверил, работает» через
-  заход неотличимо от «казалось, что работает».
-- **Число из передачи и из «Где стоим» пересчитывается перед тем, как попасть в любой новый
-  текст.** Не только перед делением работы: перенесённое в разбор просьбы или в ход работы, оно
-  читается следующими заходами как замер и не проверяется больше никем. Передача описывает
-  день, когда её писали, лежит вне дерева, и не читает её ни одна проверка. Счёт, взятый
-  непересчитанным, разошёлся с деревом на восемь и нашёлся сценарием подсчёта, а не чтением; та
-  же цена у оценки «работы вдвое больше предыдущей» — на текущем коммите объёмы оказались почти
-  равны. Пересчёт стоит одной команды, и в текст едет своё число.
-- **Доэтапное отделяется от своего.** Красное, найденное по дороге и не этой работой
-  сделанное, помечается таковым сразу: иначе следующий заход примет его за свою поломку.
-- **Разбор, написанный этим заходом, требованием для него не становится.** Запись объясняет
-  механизм, а исполняется он тем же, чем исполнялось прежнее, — вниманием того, кто ведёт ход:
-  через один ход после записи механизм повторился в той же форме. Поэтому разбор кончается не
-  текстом, а тем, что из него вышло: правкой ресурса, гардом или предложением с адресом. Заход,
-  дописавший разбор и вернувшийся к работе прежним, платит за него дважды.
-- **Число находок, написанное словом, устаревает к следующему абзацу.** Счёт растёт заходами, а
-  слово стоит на месте: «семь» простояло над восемью перечисленными до самого итога и поехало бы
-  дальше — в отчёт и в замысел эпика. Пишется либо перечень без числа, либо число, посчитанное
-  тем же ходом, каким пишется итог.
-- **Красный набор на ветке, не тронувшей ни строки кода, спрашивается у соседних заходов раньше,
-  чем у своей правки.** Стенд у прогонов один на машину: соседний заход, поднявший его под себя,
-  роняет чужой набор, и падение выглядит поломкой среды. Прочитанное так, оно заводит второй
-  заход на то же место — чинить то, что не ломалось. Порядок обратный: сперва читаются соседние
-  заходы и занятые порты, и только потом своя правка.
+- **A session that ended in nothing is recorded too.** Otherwise the next one walks the same road:
+  "we tried this — it did not work, because" costs one line and saves a whole session.
+- **The uncommitted is named outright.** Work lives in the tree for weeks; the line "what lies
+  unsaved and why" is the only thing that makes it visible while there is no PR.
+- **Confirmation is command output or a measurement, not a retelling.** "Checked, it works" a
+  session later cannot be told from "it seemed to work".
+- **A number from the handover and from "Where we stand" is recounted before it gets into any new
+  text.** Not only before splitting the work. Carried into the grill or the progress, it is read by
+  the next sessions as a measurement and checked by nobody else. The handover describes the day it
+  was written, lies outside the tree, and no check reads it. A count taken unrecounted diverged from
+  the tree by eight and was found by a counting script, not by reading. The estimate "twice as much
+  work as the previous" costs the same — on the current commit the volumes were almost equal. A
+  recount costs one command, and the text gets its own number.
+- **Pre-existing red is kept apart from one's own.** Red found along the way and not made by this
+  work is marked as such at once: otherwise the next session takes it for its own breakage.
+- **An analysis written by this session does not become a requirement for it.** The record explains
+  the mechanism, and it is carried out by the same thing as the previous one — the attention of
+  whoever leads the turn. One turn after the record the mechanism repeated in the same form. So an
+  analysis ends not with text but with what came out of it: an edit of a resource, a guard or a
+  proposal with an address. A session that appended an analysis and returned to work unchanged pays
+  for it twice.
+- **A findings count written as a word goes stale by the next paragraph.** The count grows by
+  sessions, and the word stays put. "Seven" stood over eight listed ones up to the summary itself
+  and would have gone further — into the report and into the epic plan. Either a list without a
+  number is written, or a number counted in the same turn as the summary.
+- **A red suite on a branch that touched not one line of code is asked of the neighbouring sessions
+  before one's own edit.** The stand for the runs is one per machine. A neighbouring session that
+  raised it for itself drops someone else's suite, and the failure looks like a broken environment.
+  Read so, it sends a second session to the same place — to fix what never broke. The order is the
+  reverse: first the neighbouring sessions and the busy ports are read, and only then one's own
+  edit.
