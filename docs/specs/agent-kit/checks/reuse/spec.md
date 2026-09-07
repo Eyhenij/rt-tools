@@ -1,126 +1,136 @@
-# Признаки единообразия
+# The uniformity signs
 
-**Статус:** действует · **Ревизия:** 2026-08-30 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `reuse-first`, `verifiability`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-30 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `reuse-first`, `verifiability`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Сплошная проверка единообразия и гард на правке судят одно и то же — обошли готовое или нет, — и
-читают одни и те же признаки. Признаков к этому дню пятнадцать сценариев, и файл сценариев
-домена перерос предел вместе с ними: поддомен отделён затем, чтобы перечень домена читался, а
-этот рос своим порядком.
+The sweeping uniformity check and the guard on an edit judge one and the same thing — whether the
+ready-made was bypassed or not — and read the same signs. By this day the signs have fifteen
+scenarios, and the scenario file of the domain outgrew the limit along with them: the subdomain is
+split off so that the list of the domain reads and this one grows in its own order.
 
-Предмет поддомена — сами признаки: чем они объявлены, кто их получает и что признак считает
-совпадением. Остальные проверки домена — длина файлов, повторы, объявления классов — остаются в
-родителе.
+The subject of the subdomain is the signs themselves: what they are declared by, who gets them and
+what a sign counts as a match. The other checks of the domain — file length, repeats, class
+declarations — stay in the parent.
 
-## Терминология
+## Terminology
 
-- **Признак** — правило вида «в тексте есть такое-то, значит готовое обошли», вместе с тем, чем
-  это заменить.
-- **Набор признаков** — признаки одного пакета мастерской, объявленные одним файлом.
-- **Объявленный набор** — набор, который дерево назвало своим в настройке проверок.
-- **Свои признаки** — признаки самого дерева, объявленные им у себя и приезжающие поверх
-  объявленных наборов.
+- **A sign** — a rule of the shape "the text holds such and such, so the ready-made was bypassed",
+  together with what to replace it by.
+- **A sign bundle** — the signs of one workshop package declared by one file.
+- **A declared bundle** — a bundle the tree named as its own in the setting of the checks.
+- **Own signs** — the signs of the tree itself, declared by it at home and arriving on top of the
+  declared bundles.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Наружу поддомен не выходит: у проверки нет экранов. Её отказ читает тот, кто настраивает дерево.
+The subdomain does not come outward: the check has no screens. Its refusal is read by whoever sets
+the tree up.
 
-## Правила
+## Rules
 
-- **Признак единообразия живёт данными, а не кодом проверки.** Проверка и гард читают одни и те
-  же объявленные файлы: расхождение между ними становится невозможным по устройству, а не по
-  внимательности.
-- **Набор признаков режется по пакетам rt-tools.** У каждого пакета свой файл, и в нём только то,
-  что везёт он сам: имена его компонентов, его основ и его директив.
-- **Дерево получает признаки тех пакетов, которые назвало.** Не названный набор не читается вовсе:
-  признак о готовом из пакета, которого в дереве нет, отвечает ложно.
-- **Дерево дописывает признаки, а не правит чужие.** Свои признаки приезжают поверх объявленных
-  наборов; совпавший ключ замещает пакетный, новый дописывается.
-- **Проверка, не получившая ни одного признака, отказывает, а не отвечает нулём.** Зелёный ответ
-  без единого прочитанного файла неотличим от честного нуля: число признаков стоит в той же
-  строке, что и число расхождений, и читается как подробность. Судится итог, а не список
-  наборов: дерево, ведущее только свои признаки, наборов пакета не берёт законно.
-- **Директивы своей дизайн-системы дерева вырезаются из признаков нативных тегов.** Источник вида
-  в дереве бывает не один: панель владельца собирается набором кита, публичный сайт — своей
-  системой, и закон о единообразии разводит их по приложениям. Директива такой системы стоит на
-  нативном теге так же, как директива кнопки кита; признак кнопки её уже вырезает, а поле, область
-  текста и список не вырезают ничего — форма, собранная из готового своего, числится расхождением
-  целиком. Список директив называет дерево; не назвало — не вырезается ничего, и дерево с одним
-  источником вида ведёт себя как прежде.
-- **Папка источника готового выводится из-под признака отдельно от набора.** Дерево, которое
-  готовое само и пишет, до этого выбирало между шумом на каждом своём файле и молчанием везде:
-  набор о готовом наборе компонентов обращён к потребителю, а внутри самого набора обход готового
-  не ловило ничто. Признак несёт обратный образец пути рядом с прямым, и читают его одинаково
-  сплошная проверка и гард на правке.
-- **Признак, называющий глобаль, судит положение имени, а не подстроку.** Имя внутри строки в
-  кавычках, обращение через поле объекта и своё объявление с тем же именем глобалью не бывают:
-  первое — текст, второе — предписанный правилом внедрённый токен, третье — предметное имя,
-  переименованию не подлежащее.
+- **A uniformity sign lives as data, not as the code of the check.** The check and the guard read
+  the same declared files: a divergence between them becomes impossible by construction, not by
+  attentiveness.
+- **A sign bundle is cut by the rt-tools packages.** Each package has a file of its own, and it
+  holds only what that package carries: the names of its components, of its bases and of its
+  directives.
+- **A tree gets the signs of the packages it named.** A bundle that is not named is not read at all:
+  a sign about the ready-made from a package the tree does not have answers falsely.
+- **A tree appends signs, it does not edit foreign ones.** Own signs arrive on top of the declared
+  bundles; a matching key replaces the package one, a new one is appended.
+- **A check that got not a single sign refuses, it does not answer zero.** A green answer without a
+  single file read is indistinguishable from an honest zero: the number of signs stands in the same
+  line as the number of divergences and reads as a detail. What is judged is the total, not the list
+  of bundles: a tree that keeps only its own signs lawfully takes no package bundles.
+- **The directives of the tree's own design system are cut out of the signs of native tags.** There
+  is not always one source of appearance in a tree: the owner panel is assembled from a kit set, the
+  public site from a system of its own, and the uniformity law splits them by application. A
+  directive of such a system stands on a native tag the same way a kit button directive does; the
+  button sign already cuts it out, while a field, a text area and a list cut nothing out — a form
+  assembled from one's own ready-made counts as a divergence whole. The list of directives is named
+  by the tree; it did not name one — nothing is cut out, and a tree with one source of appearance
+  behaves as before.
+- **The source folder of the ready-made is taken out from under a sign apart from the bundle.** A
+  tree that writes the ready-made itself had to choose until now between noise on every file of its
+  own and silence everywhere: a bundle about a ready-made component set is addressed to a consumer,
+  and inside the bundle itself nothing caught a bypass of the ready-made. A sign carries a reverse
+  path sample next to the direct one, and the sweeping check and the guard on an edit read it the
+  same way.
+- **A sign naming a global judges the position of the name, not a substring.** A name inside a
+  quoted string, an access through a field of an object and a declaration of one's own with the same
+  name are never a global: the first is text, the second is the injected token the rule prescribes,
+  the third is a subject name that is not to be renamed.
 
-## Что не входит
+## What is out of scope
 
-- Гард на правке: он судит добавленный текст, и его статьи стоят в родительском спеке рядом с
-  остальными гардами проверок.
-- Перечень принятого и долга: он общий у проверок домена и живёт в родителе.
+- The guard on an edit: it judges the added text, and its articles stand in the parent spec next to
+  the other guards of the checks.
+- The list of the accepted and of the debt: it is shared by the checks of the domain and lives in the
+  parent.
 
-## Контракт
+## Contract
 
-Поверхность — файлы наборов при пакете и файл своих признаков дерева. Читают их двое: сплошная
-проверка и гард на правке; поля у признака одни и те же, и расходиться им нельзя.
+The surface is the bundle files at the package and the file of the tree's own signs. Two read them:
+the sweeping check and the guard on an edit; the fields of a sign are the same, and they must not
+diverge.
 
-### Коды отказов
+### Refusal codes
 
-- `1` — признаков не осталось ни одного: ни набора, ни своих. Отказ называет наборы при пакете и
-  ключ, которым они объявляются.
-- `1` — названный набор при пакете не найден: отказ называет имя набора и те, что есть.
-- `0` — файл своих признаков назван, но не найден: работа идёт дальше, пропуск дешевле остановки.
+- `1` — not a single sign is left: neither a bundle nor own ones. The refusal names the bundles at
+  the package and the key they are declared by.
+- `1` — the named bundle is not found at the package: the refusal names the name of the bundle and
+  those that are there.
+- `0` — the file of one's own signs is named but not found: the work goes on, a skip is cheaper than
+  a stop.
 
-## Данные
+## Data
 
-Своих данных поддомен не держит: признаки лежат файлами наборов при пакете и файлом своих
-признаков дерева, а перечень принятого и долга — общий у проверок домена.
+The subdomain keeps no data of its own: the signs lie as bundle files at the package and as the file
+of the tree's own signs, and the list of the accepted and of the debt is shared by the checks of the
+domain.
 
-## Экраны и состояния
+## Screens and states
 
-Экранов нет.
+There are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Отказ пишется на языке дерева.
+The refusal is written in the language of the tree.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо: признаки одни на всё дерево.
+Not applicable: the signs are one set for the whole tree.
 
-## Решения
+## Decisions
 
-- **Судится итог, а не список наборов.** Дерево, ведущее только свои признаки, наборов пакета не
-  берёт законно, и отказ по пустому списку наборов отбивал бы его на ровном месте.
-- **Положение имени вместо подстроки.** Тридцать семь мест в одном дереве попали под признак
-  глобали, и ложны были все тридцать семь: строка в кавычках, предметная переменная и обращение
-  через внедрённый токен — то самое, что предписывает правило доступа к среде.
+- **The total is judged, not the list of bundles.** A tree that keeps only its own signs lawfully
+  takes no package bundles, and a refusal over an empty list of bundles would refuse it for nothing.
+- **The position of a name instead of a substring.** Thirty-seven places in one tree fell under the
+  global sign, and all thirty-seven were false: a quoted string, a subject variable and an access
+  through an injected token — the very thing the rule on access to the environment prescribes.
 
-## История изменений
+## History of changes
 
-- 2026-08-30 — поддомен выделен из спека проверок: файл сценариев перерос предел длины, а признаки
-  растут своим порядком.
+- 2026-08-30 — the subdomain was split off from the checks spec: the scenario file outgrew the length
+  limit, and the signs grow in their own order.
 
-## Открытые вопросы
+## Open questions
 
-- Область действия набора — сегодня она выражается только тем, берёт дерево набор целиком или не
-  берёт вовсе. Признак про окно браузера не задаётся коду, который разметки не отдаёт, и это
-  выражено отсечением серверных корней у самого признака, а не свойством набора.
+- The scope of a bundle — today it is expressed only by whether the tree takes the bundle whole or
+  does not take it at all. The sign about the browser window is not asked of code that gives out no
+  markup, and that is expressed by cutting off the server roots at the sign itself, not by a property
+  of the bundle.
