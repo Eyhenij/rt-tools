@@ -77,7 +77,7 @@ profile "RT_MAIN_BRANCH='main'"
 companion 'Главная ветка здесь — `main`.'
 report "SC-AK-767 — повтор умолчания расхождением не считается" "$(code)" 0
 case "$(said)" in
-    *'замещено 0'*) report "SC-AK-767 — и в замещённые не попадает" да да ;;
+    *'overridden 0'*) report "SC-AK-767 — и в замещённые не попадает" да да ;;
     *) report "SC-AK-767 — и в замещённые не попадает" "$(said)" да ;;
 esac
 

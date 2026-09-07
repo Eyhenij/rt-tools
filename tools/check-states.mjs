@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-states.mjs · af59492dbe8f · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-states.mjs · 552df7380d10 · правится надстройкой, не здесь
 /**
  * The audit of the list of work states against the pattern sections that lead them.
  *
@@ -87,14 +87,14 @@ function sectionsOf(pattern) {
 }
 
 if (!existsSync(RULE)) {
-    console.log('check-states: правила ведения работы в дереве нет — сверять нечего');
+    console.log('check-states: the tree has no rule of work conduct — there is nothing to check');
     process.exit(0);
 }
 
 const states = statesFromRule(readFileSync(RULE, 'utf8'));
 
 if (states.length === 0) {
-    console.error('check-states: в правиле ведения работы не нашлось таблицы состояний');
+    console.error('check-states: the rule of work conduct carries no table of states');
     process.exit(1);
 }
 
@@ -110,12 +110,12 @@ for (const state of states) {
     const sections = seen.get(state.pattern);
 
     if (sections === null) {
-        problems.push(`состояние \`${state.name}\`: ведущий паттерн \`${state.pattern}\` в дереве не разложен`);
+        problems.push(`the state \`${state.name}\`: the leading pattern \`${state.pattern}\` is not laid out in the tree`);
         continue;
     }
 
     if (!sections.has(state.name)) {
-        problems.push(`состояние \`${state.name}\`: в паттерне \`${state.pattern}\` нет раздела «State \`${state.name}\`» ни «Состояние \`${state.name}\`»`);
+        problems.push(`the state \`${state.name}\`: the pattern \`${state.pattern}\` carries neither the section «State \`${state.name}\`» nor «Состояние \`${state.name}\`»`);
     }
 }
 
@@ -126,20 +126,20 @@ for (const [pattern, sections] of seen) {
 
     for (const name of sections) {
         if (!known.has(name)) {
-            problems.push(`паттерн \`${pattern}\`: раздел про \`${name}\`, а такого состояния в перечне нет`);
+            problems.push(`the pattern \`${pattern}\`: a section about \`${name}\`, and there is no such state in the list`);
         }
     }
 }
 
 if (problems.length > 0) {
-    console.error(`check-states: расхождений ${problems.length}`);
+    console.error(`check-states: divergences ${problems.length}`);
 
     for (const problem of problems) {
         console.error(`  ${problem}`);
     }
 
-    console.error('\nПеречень состояний — правило `task-flow`, разделы — паттерны при нём.');
+    console.error('\nThe list of states is the rule `task-flow`, the sections are the patterns next to it.');
     process.exit(1);
 }
 
-console.log(`check-states: состояний ${states.length}, у каждого есть раздел в ведущем паттерне`);
+console.log(`check-states: states ${states.length}, each has a section in its leading pattern`);

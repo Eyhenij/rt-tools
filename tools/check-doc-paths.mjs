@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-doc-paths.mjs · fbdd08ea2edc · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-doc-paths.mjs · e91840ae9811 · правится надстройкой, не здесь
 /**
  * The check that the addresses named in the documentation exist.
  *
@@ -77,7 +77,7 @@ const PATH_IN_BACKTICKS = /`([^`\n]+?)`/g;
 
 const problems = [];
 const indexProblems = [];
-const report = (doc, line, path) => problems.push(`${doc}:${line}: нет файла \`${path}\``);
+const report = (doc, line, path) => problems.push(`${doc}:${line}: no file \`${path}\``);
 
 function collectDocs(dir = '.') {
     const entries = readdirSync(join(ROOT, dir), { withFileTypes: true });
@@ -267,11 +267,11 @@ function checkIndex(dir) {
     [...stored]
         .filter((name) => !named.has(name))
         .sort()
-        .forEach((name) => indexProblems.push(`${index}: запись \`${name}\` лежит в каталоге, но в таблице не названа`));
+        .forEach((name) => indexProblems.push(`${index}: the record \`${name}\` lies in the directory and is not named in the table`));
     [...named]
         .filter((name) => !stored.has(name))
         .sort()
-        .forEach((name) => indexProblems.push(`${index}: строка \`${name}\` названа в таблице, но записи в каталоге нет`));
+        .forEach((name) => indexProblems.push(`${index}: the line \`${name}\` is named in the table, and there is no record in the directory`));
 }
 
 function checkDoc(doc, allowed) {
@@ -306,10 +306,10 @@ function reportIndex() {
         return;
     }
 
-    console.error(`\nуказатель разошёлся с каталогом, расхождений ${indexProblems.length}\n`);
+    console.error(`\nthe index diverged from the directory, divergences ${indexProblems.length}\n`);
     indexProblems.forEach((problem) => console.error(`  ${problem}`));
     console.error(
-        '\nЗапись называется в таблице указателя тем же изменением, которым кладётся:\nчитатель ищет по указателю, а не обходом каталога.'
+        '\nA record is named in the table of the index by the same change that lays it down:\nthe reader searches by the index, not by walking the directory.'
     );
 }
 
@@ -323,16 +323,16 @@ docs.forEach((doc) => checkDoc(doc, allowedPaths));
 INDEXED_DIRS.forEach((dir) => checkIndex(dir));
 
 if (problems.length > 0) {
-    console.error(`check-doc-paths: расхождений ${problems.length}\n`);
+    console.error(`check-doc-paths: divergences ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
     // There are three ways out, and the third is named: the known list holds what is accepted, not
     // the results of a broken check. The former text offered to enter everything doubtful into the
     // list — it taught the bypass the verifiability law forbids; one review gave 51 false refusals
     // out of 264, every one of them on an address that exists.
     console.error(
-        `\nХодов отсюда три: поправить устаревший адрес; внести имя в ${ALLOWLIST}, если документ` +
-            `\nописывает ещё не созданное; починить саму проверку, если ошибается она, — разобрать` +
-            `\nотказы поимённо и показать разбор владельцу. Спорное в список не вносится.`
+        `\nThree moves from here: fix the stale address; enter the name into ${ALLOWLIST} if the document` +
+            `\ndescribes what is not created yet; fix the check itself, if it is the one that is wrong — take` +
+            `\nthe refusals apart one by one and show the analysis to the owner. What is in dispute is not listed.`
     );
 }
 
@@ -342,4 +342,4 @@ if (problems.length > 0 || indexProblems.length > 0) {
     process.exit(1);
 }
 
-console.log(`check-doc-paths: проверено документов ${docs.length}, расхождений нет`);
+console.log(`check-doc-paths: documents checked ${docs.length}, no divergences`);

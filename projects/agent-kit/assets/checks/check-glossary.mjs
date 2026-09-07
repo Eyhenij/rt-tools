@@ -121,14 +121,14 @@ function main() {
     try {
         glossary = readFileSync(join(ROOT, GLOSSARY), 'utf8');
     } catch {
-        console.log(`check-glossary: словаря нет по адресу ${GLOSSARY} — сверять нечем`);
+        console.log(`check-glossary: there is no glossary at ${GLOSSARY} — there is nothing to check with`);
 
         return Number(process.env.RT_SKIP_CODE ?? 7);
     }
 
     const { words, byReader } = forbiddenWords(glossary);
     if (!words.length && !byReader.length) {
-        console.log('check-glossary: раздела запретных слов в словаре нет — сверять нечем');
+        console.log('check-glossary: the glossary carries no section of banned words — there is nothing to check with');
 
         return Number(process.env.RT_SKIP_CODE ?? 7);
     }
@@ -159,19 +159,19 @@ function main() {
     const news = found.filter((one) => fresh.includes(one.key));
 
     if (news.length) {
-        console.error(`check-glossary: расхождений ${news.length}`);
+        console.error(`check-glossary: divergences ${news.length}`);
         for (const one of news) {
-            console.error(`  ${one.file}:${one.line} — «${one.word}»: слово стоит в разделе запретных слов словаря`);
+            console.error(`  ${one.file}:${one.line} — «${one.word}»: the word stands in the section of banned words of the glossary`);
         }
-        console.error('  либо слово меняется на принятое здесь, либо словарь перестаёт его запрещать');
+        console.error('  either the word is changed to the one accepted here, or the glossary stops banning it');
 
         return 1;
     }
 
-    console.log(`check-glossary: запретных слов ${words.length}, читано документов ${readableFiles().length}, расхождений нет`);
+    console.log(`check-glossary: banned words ${words.length}, documents read ${readableFiles().length}, no divergences`);
     if (byReader.length) {
         // Silence about a search that cannot be done would read as coverage: nothing judges these.
-        console.log(`  поиском не судятся, остаются требованием к читателю: ${byReader.join(', ')}`);
+        console.log(`  not judged by search, they stay a requirement to the reader: ${byReader.join(', ')}`);
     }
 
     return 0;

@@ -26,13 +26,13 @@ OTHER="    alpha: 'первая',\n    beta: 'вторая',\n    gamma: 'тре
 
 table_in alpha STATE_LABELS "$(printf "$SIX")"
 table_in beta STATUS_LABELS "$(printf "$SIX")"
-report "SC-AK-596 — точная копия таблицы названа" "$(dupes_says 'одна таблица соответствий')" 1
+report "SC-AK-596 — точная копия таблицы названа" "$(dupes_says 'one table of matches')" 1
 
 table_in beta STATUS_LABELS "$(printf "$SIX_ONE_APART")"
-report "SC-AK-597 — копия, разошедшаяся на пару, названа" "$(dupes_says 'разошедшаяся на 1 из 6 пар')" 1
+report "SC-AK-597 — копия, разошедшаяся на пару, названа" "$(dupes_says 'diverged on 1 of 6 pairs')" 1
 
 table_in beta STATUS_LABELS "$(printf "$OTHER")"
-report "SC-AK-598 — две разные таблицы повтором не считаются" "$(dupes_says 'одна таблица соответствий')" 0
+report "SC-AK-598 — две разные таблицы повтором не считаются" "$(dupes_says 'one table of matches')" 0
 
 rm -rf "$DUPES_TREE"
 

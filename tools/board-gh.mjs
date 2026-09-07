@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/board-gh.github.mjs · 71976187a217 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/board-gh.github.mjs · 9d6f7bdaeef7 · правится надстройкой, не здесь
 /**
  * The call to the hosting client: how it is found, what it is signed with and what counts as a
  * temporary refusal.
@@ -104,7 +104,7 @@ export function gh(args, { token } = {}) {
         } catch (error) {
             const stderr = String(error.stderr ?? error.message ?? '');
             if (error.code === 'ENOENT' || isOffline(stderr)) {
-                throw new OfflineError(stderr.trim() || 'gh недоступен');
+                throw new OfflineError(stderr.trim() || 'gh is unavailable');
             }
             // The rule demands moving the column by the same motion as the work, and the hosting
             // answered with unavailability for an hour straight: without a repeat the executor
@@ -115,7 +115,7 @@ export function gh(args, { token } = {}) {
                 waited *= 2;
                 continue;
             }
-            const failure = new Error(stderr.trim() || `gh ${args[0]} завершился с ошибкой`);
+            const failure = new Error(stderr.trim() || `gh ${args[0]} finished with an error`);
             failure.stderr = stderr;
             throw failure;
         }

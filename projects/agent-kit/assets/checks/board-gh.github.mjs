@@ -103,7 +103,7 @@ export function gh(args, { token } = {}) {
         } catch (error) {
             const stderr = String(error.stderr ?? error.message ?? '');
             if (error.code === 'ENOENT' || isOffline(stderr)) {
-                throw new OfflineError(stderr.trim() || 'gh недоступен');
+                throw new OfflineError(stderr.trim() || 'gh is unavailable');
             }
             // The rule demands moving the column by the same motion as the work, and the hosting
             // answered with unavailability for an hour straight: without a repeat the executor
@@ -114,7 +114,7 @@ export function gh(args, { token } = {}) {
                 waited *= 2;
                 continue;
             }
-            const failure = new Error(stderr.trim() || `gh ${args[0]} завершился с ошибкой`);
+            const failure = new Error(stderr.trim() || `gh ${args[0]} finished with an error`);
             failure.stderr = stderr;
             throw failure;
         }

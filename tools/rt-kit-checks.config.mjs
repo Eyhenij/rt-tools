@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/rt-kit-checks.config.mjs · 8b7cba0cb85d · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/rt-kit-checks.config.mjs · 40e1a10d5d4a · правится надстройкой, не здесь
 /**
  * Check settings: what counts as sources, where not to go and where the debt lists lie.
  *
@@ -244,7 +244,7 @@ function readOverrides() {
     try {
         return JSON.parse(readFileSync(path, 'utf8'));
     } catch (error) {
-        console.error(`${CONFIG_PATH} — не разбирается как JSON: ${error.message}`);
+        console.error(`${CONFIG_PATH} — does not parse as JSON: ${error.message}`);
         process.exit(1);
     }
 }
@@ -290,7 +290,7 @@ export const readAllowlist = (name) => {
     } catch (error) {
         // An unreadable setting is not an empty list, and it cannot be passed over in silence: a
         // check that read emptiness instead of a list will call the whole tree a debt at once.
-        console.error(`${allowlistOf(name)}: список известного не прочитан — не разбирается как JSON: ${error.message}`);
+        console.error(`${allowlistOf(name)}: the known list was not read — it does not parse as JSON: ${error.message}`);
         process.exit(1);
     }
 };
@@ -328,20 +328,20 @@ export const parseAllowlist = (name, sides = ['accepted', 'debt']) => {
         }
         if (Array.isArray(entries) || typeof entries !== 'object' || entries === null) {
             refuse(
-                `«${side}» записан не объектом — у записи нет места ни для причины, ни для номера задачи. ` +
-                    `Форма: {"${side}": {"<ключ>": {"reason": "<почему>", "task": "${key || 'КЛЮЧ'}-<номер>"}}}`,
+                `«${side}» is written not as an object — the entry has room for neither a reason nor a task number. ` +
+                    `The form: {"${side}": {"<key>": {"reason": "<why>", "task": "${key || 'KEY'}-<number>"}}}`,
             );
         }
         const parsed = new Map();
         for (const [entry, value] of Object.entries(entries)) {
             if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-                refuse(`«${entry}» записан без причины — рядом с записью стоят «reason» и «task»`);
+                refuse(`«${entry}» is written without a reason — «reason» and «task» stand next to an entry`);
             }
             if (typeof value.reason !== 'string' || value.reason.trim() === '') {
-                refuse(`у «${entry}» пустая причина — заглушённое без причины через месяц не отличить от забытого`);
+                refuse(`«${entry}» has an empty reason — what is silenced without a reason is indistinguishable from an oversight a month later`);
             }
             if (typeof value.task !== 'string' || !taskForm.test(value.task)) {
-                refuse(`у «${entry}» нет номера задачи вида «${key || 'КЛЮЧ'}-<номер>» — спросить о записи будет некого`);
+                refuse(`«${entry}» has no task number of the form «${key || 'KEY'}-<number>» — there will be nobody to ask about the entry`);
             }
             parsed.set(entry, { reason: value.reason, task: value.task });
         }
@@ -365,7 +365,7 @@ export const baselineOf = (keys, parsed, side = 'debt') => {
     const entryOf = (key) => parsed.debt?.get(key) ?? parsed.accepted?.get(key) ?? { reason: '', task: '' };
     const fresh = keys.filter((key) => !parsed.keys.has(key));
     if (fresh.length > 0) {
-        console.error(`новых записей ${fresh.length} — у каждой заполняются «reason» и «task», иначе разбор списка отбивает прогон`);
+        console.error(`new entries ${fresh.length} — «reason» and «task» are filled in for each, otherwise the parsing of the list refuses the run`);
     }
     const filled = Object.fromEntries(keys.map((key) => [key, entryOf(key)]));
     const rest = Object.fromEntries([...(parsed.accepted ?? new Map())].filter(([key]) => !keys.includes(key)));
@@ -378,6 +378,6 @@ export const skipUnless = (present, what) => {
     if (present) {
         return false;
     }
-    console.log(`пропущено: в дереве нет ${what}`);
+    console.log(`skipped: the tree has no ${what}`);
     process.exit(0);
 };

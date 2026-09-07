@@ -273,7 +273,7 @@ for (const [name, libs] of [...exportsByName.entries()].sort()) {
         continue;
     }
     const where = [...libs].sort().join(', ');
-    findings.push({ key: `export ${name} @ ${where}`, text: `${name} экспортируется из ${libs.size} либ: ${where}` });
+    findings.push({ key: `export ${name} @ ${where}`, text: `${name} is exported from ${libs.size} libs: ${where}` });
 }
 
 for (const [name, libs] of [...settingsByName.entries()].sort()) {
@@ -281,7 +281,7 @@ for (const [name, libs] of [...settingsByName.entries()].sort()) {
         continue;
     }
     const where = [...libs].sort().join(', ');
-    findings.push({ key: `setting ${name} @ ${where}`, text: `${name} объявлена в ${libs.size} либах: ${where}` });
+    findings.push({ key: `setting ${name} @ ${where}`, text: `${name} is declared in ${libs.size} libs: ${where}` });
 }
 
 for (const [value, places] of [...namesByValue.entries()].sort()) {
@@ -293,7 +293,7 @@ for (const [value, places] of [...namesByValue.entries()].sort()) {
         .map((place) => `${place.name} @ ${place.lib}`)
         .sort()
         .join(' ~ ');
-    findings.push({ key: `value ${value} @ ${where}`, text: `значение ${value} объявлено в ${libs.size} либах: ${where}` });
+    findings.push({ key: `value ${value} @ ${where}`, text: `the value ${value} is declared in ${libs.size} libs: ${where}` });
 }
 
 /**
@@ -324,8 +324,8 @@ for (let i = 0; i < tables.length; i++) {
         }
         const key = `table ${[`${first.name} @ ${first.lib}`, `${second.name} @ ${second.lib}`].sort().join(' ~ ')}`;
         const apart = larger - same;
-        const tail = apart === 0 ? 'одна таблица соответствий' : `одна таблица соответствий, разошедшаяся на ${apart} из ${larger} пар`;
-        findings.push({ key, text: `${first.name} (${first.lib}) и ${second.name} (${second.lib}) — ${tail}` });
+        const tail = apart === 0 ? 'one table of matches' : `one table of matches, diverged on ${apart} of ${larger} pairs`;
+        findings.push({ key, text: `${first.name} (${first.lib}) and ${second.name} (${second.lib}) — ${tail}` });
     }
 }
 
@@ -341,7 +341,7 @@ for (let i = 0; i < enums.length; i++) {
         const key = `enum ${[`${first.name} @ ${first.lib}`, `${second.name} @ ${second.lib}`].sort().join(' ~ ')}`;
         findings.push({
             key,
-            text: `${first.name} (${first.lib}) и ${second.name} (${second.lib}) — один набор членов: ${[...first.members].sort().join(', ')}`,
+            text: `${first.name} (${first.lib}) and ${second.name} (${second.lib}) — one set of members: ${[...first.members].sort().join(', ')}`,
         });
     }
 }
@@ -356,13 +356,13 @@ if (process.argv.includes('--baseline')) {
 
 const problems = [
     ...fresh.map((finding) => finding.text),
-    ...staleKeys.map((key) => `${key}: значится в ${ALLOWLIST}, но повтора больше нет — строку убрать`),
+    ...staleKeys.map((key) => `${key}: listed in ${ALLOWLIST}, and the duplication is gone — remove the line`),
 ];
 
 if (problems.length > 0) {
-    console.error(`check-dupes: расхождений ${problems.length}\n`);
+    console.error(`check-dupes: divergences ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
     process.exit(1);
 }
 
-console.log(`check-dupes: повторов ${findings.length}, из них принято ${findings.length - debt.size}, долг ${debt.size} — новых нет`);
+console.log(`check-dupes: duplications ${findings.length}, of them accepted ${findings.length - debt.size}, debt ${debt.size} — no new ones`);

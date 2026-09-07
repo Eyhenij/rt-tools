@@ -146,29 +146,29 @@ function cutFromGate() {
 
 function main() {
     if (!existsSync(PROFILE) || !existsSync(DEFAULTS)) {
-        console.log('check-profile-drift: профиля дерева или умолчаний пакета нет — сверять нечего');
+        console.log('check-profile-drift: there is no tree profile or package defaults — there is nothing to check');
 
         return 0;
     }
 
     const companions = companionsText();
     if (companions === null) {
-        console.log('check-profile-drift: компаньонов правил в дереве нет — сверять не с чем');
+        console.log('check-profile-drift: the tree has no companions of rules — there is nothing to check against');
 
         return 0;
     }
 
     const cut = cutFromGate();
     if (cut.length > 0) {
-        console.log(`check-profile-drift: набор гейта пуша не зовёт проверок умолчания: ${cut.length}\n`);
+        console.log(`check-profile-drift: the push gate set does not call checks of the default: ${cut.length}\n`);
 
         for (const name of cut) {
             console.log(`  ${name}`);
         }
 
-        console.log('\nНабор гейта собирается умолчанием пакета и надстройкой дерева. Проверка, выкушенная');
-        console.log('надстройкой, ничем не отличима от проверки, которой в дереве нет: гейт зелен потому,');
-        console.log('что её никто не звал. Верни её в набор либо объясни отказ в компаньоне правила поставки.');
+        console.log('\nThe gate set is assembled from the package default and the tree override. A check sifted');
+        console.log('out by the override is indistinguishable from a check the tree does not have: the gate is');
+        console.log('green because nobody called it. Return it to the set or explain the refusal in the companion of the delivery rule.');
 
         return 1;
     }
@@ -179,20 +179,20 @@ function main() {
     const unnamed = overridden.filter(([name]) => !companions.includes(name));
 
     if (unnamed.length > 0) {
-        console.log(`check-profile-drift: замещено ${overridden.length}, не названо компаньоном ${unnamed.length}\n`);
+        console.log(`check-profile-drift: overridden ${overridden.length}, not named by a companion ${unnamed.length}\n`);
 
         for (const [name, value] of unnamed) {
             console.log(`  ${name} = ${value.length > 60 ? `${value.slice(0, 57)}…` : value}`);
         }
 
-        console.log('\nЗамещённое читают в компаньоне правила: там перечислено, чем здесь зовётся сказанное');
-        console.log('правилом. Не названное там, оно оставляет читателю пакетное умолчание вместо того, по');
-        console.log('чему дерево работает на самом деле.');
+        console.log('\nWhat is overridden is read in the companion of the rule: it lists what the rule says');
+        console.log('is called here. Left unnamed there, it leaves the reader the package default instead of');
+        console.log('what the tree actually works by.');
 
         return 1;
     }
 
-    console.log(`check-profile-drift: замещено ${overridden.length}, все названы компаньонами — сошлось`);
+    console.log(`check-profile-drift: overridden ${overridden.length}, all named by companions — it matches`);
 
     return 0;
 }

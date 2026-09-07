@@ -99,7 +99,7 @@ const EXITS = [
 
 function main() {
     if (!existsSync(MAP)) {
-        console.log('check-turn-map: карты хода в дереве нет — сверять нечего');
+        console.log('check-turn-map: the tree has no turn map — there is nothing to check');
 
         return 0;
     }
@@ -109,18 +109,18 @@ function main() {
     const faults = [];
 
     if (bytes > LIMIT_BYTES) {
-        faults.push(`карта выросла: ${bytes} байт при пределе ${LIMIT_BYTES}`);
+        faults.push(`the map has grown: ${bytes} bytes at a limit of ${LIMIT_BYTES}`);
     }
 
     const inMap = statesOf(text, { listed: true });
 
     if (inMap.length === 0) {
-        faults.push('в карте нет ни одного состояния — таблица сломана');
+        faults.push('the map carries no state at all — the table is broken');
     }
 
     for (const state of inMap) {
         if (!state.rest[0]) {
-            faults.push(`${state.name}: в карте нет обязательного действия`);
+            faults.push(`${state.name}: the map carries no mandatory action`);
         }
     }
 
@@ -131,38 +131,38 @@ function main() {
 
         for (const state of ruleNames) {
             if (!mapNames.has(state)) {
-                faults.push(`${state}: состояние объявлено правилом и забыто в карте`);
+                faults.push(`${state}: the state is declared by the rule and forgotten in the map`);
             }
         }
 
         for (const state of mapNames) {
             if (!ruleNames.has(state)) {
-                faults.push(`${state}: состояние стоит в карте, а правило его не объявляет`);
+                faults.push(`${state}: the state stands in the map, and the rule does not declare it`);
             }
         }
     }
 
     for (const names of EXITS) {
         if (!names.some((name) => text.includes(name))) {
-            faults.push(`выход хода «${names[0]}» в карте не назван`);
+            faults.push(`the turn exit «${names[0]}» is not named in the map`);
         }
     }
 
     if (faults.length > 0) {
-        console.log(`check-turn-map: расхождений ${faults.length}, размер ${bytes} байт при пределе ${LIMIT_BYTES}\n`);
+        console.log(`check-turn-map: divergences ${faults.length}, size ${bytes} bytes at a limit of ${LIMIT_BYTES}\n`);
 
         for (const fault of faults) {
             console.log(`  ${fault}`);
         }
 
-        console.log('\nКарта короче правила — этим она и полезна. Выросшая, она съедает то окно, ради');
-        console.log('которого её кладут в контекст. Правится она в ресурсе пакета, а не в разложенной копии.');
+        console.log('\nThe map is shorter than the rule — that is what makes it useful. Grown, it eats the very');
+        console.log('window it is put into the context for. It is edited in the package resource, not in the laid-out copy.');
 
         return 1;
     }
 
     console.log(
-        `check-turn-map: ${inMap.length} состояний, ${EXITS.length} выхода хода, ` + `${bytes} байт при пределе ${LIMIT_BYTES} — сошлось`
+        `check-turn-map: ${inMap.length} states, ${EXITS.length} turn exits, ` + `${bytes} bytes at a limit of ${LIMIT_BYTES} — it matches`
     );
 
     return 0;

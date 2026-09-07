@@ -46,7 +46,7 @@ const TASK_KEY = CONFIG.board?.taskKey ?? '';
 const PROFILES = ['.claude/rt-kit/defaults/project.sh', '.claude/rt-kit/project.sh'];
 
 if (!PIPELINE || !existsSync(join(ROOT, PIPELINE))) {
-    console.log('check-push-gate: пропущено — файла конвейера в дереве нет');
+    console.log('check-push-gate: skipped — the tree has no pipeline file');
     process.exit(0);
 }
 
@@ -131,7 +131,7 @@ for (const step of steps) {
 
     if (declaration === undefined) {
         problems.push(
-            `шаг конвейера «${step}» не объявлен: закрой его строкой набора в pushGate.steps ` + 'либо объяви исключением с причиной'
+            `the pipeline step «${step}» is not declared: close it by a line of the set in pushGate.steps ` + 'or declare it an exclusion with a reason'
         );
         continue;
     }
@@ -139,7 +139,7 @@ for (const step of steps) {
     if (typeof declaration === 'object' && declaration !== null) {
         const reason = String(declaration.skip ?? '').trim();
         if (!reason) {
-            problems.push(`шаг конвейера «${step}» объявлен исключением без причины — пустая причина не считается`);
+            problems.push(`the pipeline step «${step}» is declared an exclusion without a reason — an empty reason does not count`);
             continue;
         }
         for (const number of taskNumbers(reason)) {
@@ -150,12 +150,12 @@ for (const step of steps) {
 
     const line = String(declaration).trim();
     if (!line) {
-        problems.push(`шаг конвейера «${step}» объявлен пустой строкой — назови команду либо объяви исключение`);
+        problems.push(`the pipeline step «${step}» is declared by an empty line — name the command or declare an exclusion`);
         continue;
     }
 
     if (checks && !checks.some((check) => check.includes(line))) {
-        problems.push(`шаг конвейера «${step}» объявлен строкой «${line}», а набор гейта её не печатает`);
+        problems.push(`the pipeline step «${step}» is declared by the line «${line}», and the gate set does not print it`);
     }
 }
 
@@ -163,7 +163,7 @@ for (const step of steps) {
 const known = new Set(steps);
 for (const step of Object.keys(DECLARED)) {
     if (!known.has(step)) {
-        problems.push(`объявление «${step}» устарело — такого шага в ${PIPELINE} нет`);
+        problems.push(`the declaration «${step}» is stale — there is no such step in ${PIPELINE}`);
     }
 }
 
@@ -182,19 +182,19 @@ if (board) {
             break;
         }
         if (state && state.exists === false) {
-            problems.push(`шаг конвейера «${step}» отложен до задачи ${TASK_KEY}-${number}, а такой задачи в очереди работ нет — отсрочка бессрочная`);
+            problems.push(`the pipeline step «${step}» is postponed until the task ${TASK_KEY}-${number}, and there is no such task in the work queue — the postponement is perpetual`);
         }
     }
 }
 
 if (problems.length > 0) {
-    console.error(`check-push-gate: расхождений ${problems.length}\n`);
+    console.error(`check-push-gate: divergences ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
-    console.error('\nНабор гейта пуша не бывает уже набора конвейера — правило поставки.');
+    console.error('\nThe push gate set is never narrower than the pipeline set — the rule of delivery.');
     process.exit(1);
 }
 
 const skipped = Object.values(DECLARED).filter((value) => typeof value === 'object' && value !== null).length;
 console.log(
-    `check-push-gate: шагов конвейера ${steps.length}, закрыто набором ${steps.length - skipped}, ` + `объявлено исключениями ${skipped}`
+    `check-push-gate: pipeline steps ${steps.length}, closed by the set ${steps.length - skipped}, ` + `declared as exclusions ${skipped}`
 );

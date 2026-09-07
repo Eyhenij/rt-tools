@@ -51,8 +51,8 @@ const PROSE_ROOTS = CONFIG.proseRoots ?? [];
 /** The limit for a file and its name for a refusal: by root, not by extension — code lies in `.md` too. */
 function limitOf(path) {
     return PROSE_ROOTS.some((root) => root && path.startsWith(root))
-        ? { limit: PROSE_LIMIT, title: 'предел текста' }
-        : { limit: LIMIT, title: 'предел кода' };
+        ? { limit: PROSE_LIMIT, title: 'the limit for prose' }
+        : { limit: LIMIT, title: 'the limit for code' };
 }
 
 /** The kinds of files the linter does not read. Code stays with it. */
@@ -107,7 +107,7 @@ function charCount(path) {
  */
 const allowlist = parseAllowlist('file-size');
 const { accepted, debt } = allowlist;
-const known = new Map([...[...accepted.keys()].map((path) => [path, 'принято']), ...[...debt.keys()].map((path) => [path, 'долг'])]);
+const known = new Map([...[...accepted.keys()].map((path) => [path, 'accepted']), ...[...debt.keys()].map((path) => [path, 'debt'])]);
 
 const tooLong = new Map();
 const tracked = trackedFiles().filter(judged);
@@ -130,7 +130,7 @@ for (const path of tracked) {
     // The weight of such a file grows with the number of statements, not with wordiness: the
     // delivery rule has seventy-six bindings at 24 326 characters, of which the explanations are
     // only 5 729. The line limit on them stays — it catches something else.
-    if (PROSE_CHARS > 0 && PROSE_ROOTS.length > 0 && limitOf(path).title === 'предел текста' && !companion(path)) {
+    if (PROSE_CHARS > 0 && PROSE_ROOTS.length > 0 && limitOf(path).title === 'the limit for prose' && !companion(path)) {
         const chars = charCount(path);
         if (chars > PROSE_CHARS) {
             overweight.set(path, chars);
@@ -159,32 +159,32 @@ const shrunk = [...known.keys()].filter(
 const heavy = [...overweight].filter(([path]) => !known.has(path) && !tooLong.has(path));
 
 const problems = [
-    ...heavy.map(([path, chars]) => `${path}: ${chars} знаков, предел веса текста ${PROSE_CHARS} — резать довод, а не дописывать строку в ${ALLOWLIST}`),
+    ...heavy.map(([path, chars]) => `${path}: ${chars} characters, the weight limit for prose is ${PROSE_CHARS} — cut the argument instead of adding a line to ${ALLOWLIST}`),
     ...fresh.map(([path, lines]) => {
         const { limit, title } = limitOf(path);
-        return `${path}: ${lines} строк, ${title} ${limit} — делить, а не дописывать строку в ${ALLOWLIST}`;
+        return `${path}: ${lines} lines, ${title} ${limit} — split it instead of adding a line to ${ALLOWLIST}`;
     }),
-    ...gone.map((path) => `${path}: строка в ${ALLOWLIST} устарела — файла в дереве нет`),
-    ...shrunk.map((path) => `${path}: значится в ${ALLOWLIST}, но уже короче предела — строку убрать`),
+    ...gone.map((path) => `${path}: the line in ${ALLOWLIST} is stale — there is no such file in the tree`),
+    ...shrunk.map((path) => `${path}: listed in ${ALLOWLIST}, and it is already shorter than the limit — remove the line`),
 ];
 
 if (problems.length > 0) {
-    console.error(`check-file-size: расхождений ${problems.length}\n`);
+    console.error(`check-file-size: divergences ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
-    console.error('\nПредел длины файла — правило о языке для кода и правило о текстах для прозы.');
+    console.error('\nThe file length limit is the rule about the language for code and the rule about texts for prose.');
     process.exit(1);
 }
 
-const limits = PROSE_ROOTS.length > 0 ? `предел кода ${LIMIT}, предел текста ${PROSE_LIMIT}` : `предел ${LIMIT}`;
+const limits = PROSE_ROOTS.length > 0 ? `the limit for code ${LIMIT}, the limit for prose ${PROSE_LIMIT}` : `the limit ${LIMIT}`;
 /**
  * The weight limit is named only where the tree has set both the number and the roots of the text:
  * weight is judged for the prose of the rules layer, and a tree that has not named its roots is
  * judged by the number of lines alone — a second figure in the digest would speak of a check that
  * does not work there.
  */
-const weight = PROSE_CHARS > 0 && PROSE_ROOTS.length > 0 ? `, предел веса текста ${PROSE_CHARS} знаков` : '';
+const weight = PROSE_CHARS > 0 && PROSE_ROOTS.length > 0 ? `, the weight limit for prose ${PROSE_CHARS} characters` : '';
 
 console.log(
-    `check-file-size: проверено ${tracked.length} файлов, ${limits}${weight}, длиннее предела ${tooLong.size}, ` +
-        `из них принято ${accepted.size}, долг ${debt.size} — новых нет`
+    `check-file-size: checked ${tracked.length} files, ${limits}${weight}, longer than the limit ${tooLong.size}, ` +
+        `of them accepted ${accepted.size}, debt ${debt.size} — no new ones`
 );

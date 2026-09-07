@@ -39,27 +39,27 @@ gate_profile 'npm run lint'
 # SC-AK-118 — дерево без файла конвейера сверку не получает
 gate_config '{"pushGate":{"pipelineFile":".github/workflows/nope.yml"}}'
 report "SC-AK-118 — конвейера нет: проверка молчит" "$(gate_code)" 0
-report "SC-AK-118 — сказано, почему пропущено" "$(gate_says 'файла конвейера в дереве нет')" 1
+report "SC-AK-118 — сказано, почему пропущено" "$(gate_says 'the tree has no pipeline file')" 1
 
 # SC-AK-114 — необъявленный шаг конвейера отбивает пуш
 gate_config '{"pushGate":{"pipelineFile":".github/workflows/ci.yml","steps":{"Lint":"npm run lint"}}}'
 report "SC-AK-114 — необъявленный шаг отбит" "$(gate_code)" 1
-report "SC-AK-114 — отказ называет шаг" "$(gate_says 'шаг конвейера «Build» не объявлен')" 1
+report "SC-AK-114 — отказ называет шаг" "$(gate_says 'the pipeline step «Build» is not declared')" 1
 
 # SC-AK-115 — объявленное исключение пуш не отбивает
 gate_config '{"pushGate":{"pipelineFile":".github/workflows/ci.yml","steps":{"Lint":"npm run lint","Build":{"skip":"дольше секунд, гоняется конвейером"}}}}'
 report "SC-AK-115 — исключение с причиной не отбивает" "$(gate_code)" 0
-report "SC-AK-115 — исключение сосчитано" "$(gate_says 'объявлено исключениями 1')" 1
+report "SC-AK-115 — исключение сосчитано" "$(gate_says 'declared as exclusions 1')" 1
 
 # SC-AK-116 — исключение без причины расхождением остаётся
 gate_config '{"pushGate":{"pipelineFile":".github/workflows/ci.yml","steps":{"Lint":"npm run lint","Build":{"skip":"  "}}}}'
 report "SC-AK-116 — пустая причина отбита" "$(gate_code)" 1
-report "SC-AK-116 — отказ требует причину" "$(gate_says 'исключением без причины')" 1
+report "SC-AK-116 — отказ требует причину" "$(gate_says 'an exclusion without a reason')" 1
 
 # SC-AK-117 — объявленная строка, которой нет в наборе, краснеет
 gate_config '{"pushGate":{"pipelineFile":".github/workflows/ci.yml","steps":{"Lint":"npm run lint","Build":"npm run build"}}}'
 report "SC-AK-117 — строка вне набора отбита" "$(gate_code)" 1
-report "SC-AK-117 — отказ называет строку" "$(gate_says 'набор гейта её не печатает')" 1
+report "SC-AK-117 — отказ называет строку" "$(gate_says 'the gate set does not print it')" 1
 
 # Та же настройка при наборе, который эту строку печатает, расхождением не является.
 gate_profile 'npm run lint
@@ -68,7 +68,7 @@ report "SC-AK-117 — строка в наборе принята" "$(gate_code)
 
 # Объявление шага, которого в конвейере нет, — устаревшее: иначе список копит мёртвое.
 gate_config '{"pushGate":{"pipelineFile":".github/workflows/ci.yml","steps":{"Lint":"npm run lint","Build":"npm run build","Gone":"npm run gone"}}}'
-report "гейт: устаревшее объявление названо" "$(gate_says 'объявление «Gone» устарело')" 1
+report "гейт: устаревшее объявление названо" "$(gate_says 'the declaration «Gone» is stale')" 1
 
 # --- SC-AK-707…709 — живость задачи, названной причиной исключения ---------------------------
 #
@@ -90,7 +90,7 @@ report "SC-AK-707 — живая задача в причине проходит
 # SC-AK-708 — мёртвый номер делает отсрочку бессрочной
 gate_config '{"board":{"taskKey":"RT"},"pushGate":{"pipelineFile":".github/workflows/ci.yml","steps":{"Lint":"npm run lint","Build":{"skip":"до RT-664"}}}}'
 report "SC-AK-708 — мёртвая задача в причине отбита" "$(gate_code)" 1
-report "SC-AK-708 — отказ называет номер" "$(gate_says 'отложен до задачи RT-664')" 1
+report "SC-AK-708 — отказ называет номер" "$(gate_says 'postponed until the task RT-664')" 1
 
 # Отказ очереди работ проверку не роняет: гоняют её и без сети.
 printf '%s\n' 'export function taskState() {' "    throw new Error('нет сети');" '}' > "$GATE_TREE/tools/board.mjs"
@@ -157,7 +157,7 @@ dupes_says() {
     (cd "$DUPES_TREE" && node tools/check-dupes.mjs 2>&1)
 }
 
-report "SC-AK-244 — набор из пакета подпроекта найден" "$(dupes_says | grep -c 'один набор членов')" 1
+report "SC-AK-244 — набор из пакета подпроекта найден" "$(dupes_says | grep -c 'one set of members')" 1
 report "SC-AK-244 — отказа чтения каталога нет" "$(dupes_says | grep -c 'ENOENT')" 0
 
 # SC-AK-245 — пакета нет вовсе: сверка своих повторов идёт, отказа нет.

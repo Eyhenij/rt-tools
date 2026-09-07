@@ -60,7 +60,7 @@ function debt() {
 
 function main() {
     if (!existsSync(SKILLS)) {
-        console.log('check-descriptions: каталога скилов нет — сверять нечего');
+        console.log('check-descriptions: there is no directory of rules — there is nothing to check');
 
         return 0;
     }
@@ -90,7 +90,7 @@ function main() {
         }
 
         if (Object.hasOwn(accepted, name)) {
-            owed.push(`${name}: ${description.length} знаков — ${accepted[name]}`);
+            owed.push(`${name}: ${description.length} characters — ${accepted[name]}`);
             continue;
         }
 
@@ -98,25 +98,25 @@ function main() {
     }
 
     for (const line of owed) {
-        console.log(`  долг ${line}`);
+        console.log(`  debt ${line}`);
     }
 
     if (over.length > 0) {
         over.sort((first, second) => second.length - first.length);
-        console.log(`check-descriptions: длиннее предела ${over.length} из ${counted}, предел ${LIMIT} знаков\n`);
+        console.log(`check-descriptions: longer than the limit ${over.length} of ${counted}, the limit is ${LIMIT} characters\n`);
 
         for (const item of over) {
-            console.log(`  ${item.name}: ${item.length} знаков, лишних ${item.length - LIMIT}`);
+            console.log(`  ${item.name}: ${item.length} characters, ${item.length - LIMIT} over`);
         }
 
-        console.log('\nОписание отвечает на один вопрос — брать это правило или нет. Перечисление разделов');
-        console.log('и пересказ статей приходят вторым разом вместе с самим правилом.');
-        console.log('Оставленное намеренно называется в .claude/rt-kit/description-debt.json с причиной.');
+        console.log('\nA description answers one question — load this rule or not. A list of sections');
+        console.log('and a retelling of the articles arrive a second time together with the rule itself.');
+        console.log('What is left longer on purpose is named in .claude/rt-kit/description-debt.json with a reason.');
 
         return 1;
     }
 
-    console.log(`check-descriptions: описаний ${counted}, все в пределе ${LIMIT} знаков` + (owed.length > 0 ? `, принятого долга ${owed.length}` : ''));
+    console.log(`check-descriptions: descriptions ${counted}, all within the limit of ${LIMIT} characters` + (owed.length > 0 ? `, accepted debt ${owed.length}` : ''));
 
     return 0;
 }
