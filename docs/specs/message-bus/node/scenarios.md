@@ -1,117 +1,123 @@
-# Сценарии — узел и поставка
+# Scenarios — the node and the delivery
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной, а закрытый со стороны приёмника, но не со стороны экрана —
-пометку «Покрытие: частичное».
+The identifier goes at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason, and one closed from the side of the intake
+but not from the side of the screen carries the mark "Coverage: partial".
 
-Сценарии, чьё «Тогда» называет человека и то, что он видит, закрываются сквозной спекой. Рядом с
-ними идут замеры в браузере и живой проход на узле; заменой сквозной спеки они не считаются.
+Scenarios whose "Then" names a person and what they get on the screen are closed by an end-to-end
+spec. Next to them go measurements in the browser and a live pass on the node; they do not count as a
+replacement of the end-to-end spec.
 
-### SC-MB-86 — груз доезжает до приёмника по имени
+### SC-MB-86 — the cargo arrives at the intake by the name
 
-Дано дерево настроено на адрес приёмника именем
-Когда прогон отправки шлёт сводку
-Тогда приёмник отвечает принятым, а запись месяца видна в админке
+Given the tree is set to the address of the intake by the name
+When the run of the sending sends a digest
+Then the intake answers with a taken-in, and the record of the month is visible in the admin
+application
 
-Не покрыто: проверяется прогоном отправки с живого дерева на живой узел.
+Not covered: it is checked by a run of the sending from a live tree to a live node.
 
-### SC-MB-87 — обращение по открытому протоколу уводится на защищённое
+### SC-MB-87 — a request over the open protocol is led away to the protected one
 
-Дано приёмник поднят на узле
-Когда запрос приходит по открытому протоколу
-Тогда он уводится на защищённое соединение, а не отбивается отказом
+Given the intake is raised on the node
+When a request comes over the open protocol
+Then it is led away to the protected connection, not refused
 
-Не покрыто: проверяется запросом к живому узлу.
+Not covered: it is checked by a request to the live node.
 
-### SC-MB-88 — браузер принимает сертификат приёмника
+### SC-MB-88 — the browser accepts the certificate of the intake
 
-Дано админка открывается по имени
-Когда человек заходит на неё браузером
-Тогда соединение защищено, и предупреждения о сертификате нет
+Given the admin application opens by the name
+When a person goes to it by a browser
+Then the connection is protected, and there is no warning about the certificate
 
-Не покрыто: проверяется браузером на живом узле.
+Not covered: it is checked by a browser on the live node.
 
-### SC-MB-89 — приёмник поднимается сам после перезапуска узла
+### SC-MB-89 — the intake comes up by itself after a restart of the node
 
-Дано узел перезагружен
-Когда он поднялся
-Тогда база, приёмник и проксировщик работают без единой команды человека
+Given the node is rebooted
+When it has come up
+Then the database, the intake and the proxy work without a single command of a person
 
-Не покрыто: проверяется перезагрузкой живого узла.
+Not covered: it is checked by a reboot of the live node.
 
-### SC-MB-90 — груз переживает пересоздание контейнеров
+### SC-MB-90 — the cargo outlives the recreating of the containers
 
-Дано в приёмнике лежит принятый груз
-Когда выкатка пересоздаёт контейнеры
-Тогда груз, деревья и токены остаются на месте
+Given taken-in cargo lies in the intake
+When a rollout recreates the containers
+Then the cargo, the trees and the tokens stay in place
 
-Не покрыто: проверяется выкаткой на живой узел.
+Not covered: it is checked by a rollout onto the live node.
 
-### SC-MB-91 — узел поднимает образ того коммита, который выкатывали
+### SC-MB-91 — the node raises the image of the commit that was rolled out
 
-Дано выкатка собрала образ коммита
-Когда узел поднял состав прода
-Тогда работающий контейнер помечен sha этого коммита, а не подвижной меткой
+Given the rollout built the image of the commit
+When the node raised the composition of production
+Then the working container is marked by the sha of that commit, not by a moving tag
 
-Не покрыто: проверяется выводом узла после выкатки.
+Not covered: it is checked by the output of the node after a rollout.
 
-### SC-MB-92 — миграции накатаны раньше, чем приёмник начал отвечать
+### SC-MB-92 — the migrations are rolled before the intake started answering
 
-Дано выкатка везёт миграцию хранилища
-Когда состав прода поднимается
-Тогда приёмник начинает отвечать уже после того, как накат закончился удачей
+Given the rollout carries a migration of the storage
+When the composition of production comes up
+Then the intake starts answering only after the rolling ended in success
 
-Не покрыто: проверяется порядком контейнеров в составе прода.
+Not covered: it is checked by the order of the containers in the composition of production.
 
-### SC-MB-93 — выкатка объявляет себя удавшейся только после ответа пробы
+### SC-MB-93 — the rollout declares itself successful only after the answer of the probe
 
-Дано состав прода поднят
-Когда выкатка спрашивает пробу живости
-Тогда удачей она кончается лишь при ответе пробы, а молчание считает отказом
+Given the composition of production is raised
+When the rollout asks the probe of liveness
+Then it ends in success only at an answer of the probe, and counts silence a refusal
 
-Не покрыто: проверяется прогоном выкатки.
+Not covered: it is checked by a run of the rollout.
 
-### SC-MB-94 — чистка оставляет три последних sha и не трогает чужого
+### SC-MB-94 — the cleaning keeps the three last sha and does not touch what is foreign
 
-Дано на узле лежат образы приёмника нескольких выкаток, база и проксировщик
-Когда чистка отработала
-Тогда остаются три последних sha приёмника, а база и проксировщик не тронуты
+Given the images of the intake of several rollouts, the database and the proxy lie on the node
+When the cleaning has worked
+Then the three last sha of the intake stay, and the database and the proxy are not touched
 
-Не покрыто: проверяется прогоном чистки на узле вхолостую.
+Not covered: it is checked by a run of the cleaning on the node idle.
 
-### SC-MB-95 — загруженный дамп возвращает свод и годность токенов
+### SC-MB-95 — a loaded dump brings back the digest and the validity of the tokens
 
-Дано снят дамп хранилища, а после него хранилище потеряно
-Когда дамп загружен обратно
-Тогда админка показывает прежний груз, а дерево со своим токеном шлёт без повторной выдачи
+Given a dump of the storage was taken, and after it the storage was lost
+When the dump is loaded back
+Then the admin application shows the former cargo, and a tree with its token sends without a
+repeated issuing
 
-Не покрыто: проверяется пробой на узле — `dump.sh probe` загружает дамп в одноразовую базу
-рядом и сверяет с боевой счёт строк и отпечаток каждой таблицы; расхождение называет таблицу.
+Not covered: it is checked by the probe on the node — `dump.sh probe` loads the dump into a one-off
+database next to it and checks against the live one the count of the rows and the fingerprint of every
+table; a divergence names the table.
 
-### SC-MB-286 — дамп снимается по расписанию, и на узле живут семь последних
+### SC-MB-286 — the dump is taken by the schedule, and the seven last ones live on the node
 
-Дано выкатка дошла до узла
-Когда читается расписание пользователя узла
-Тогда в нём одна строка выгрузки дампа, а чужие строки на месте; после восьмой выгрузки в
-каталоге дампов семь файлов, и выкатка каталог не трогает
+Given the rollout reached the node
+When the schedule of the user of the node is read
+Then there is one line of the unloading of the dump in it, and the foreign lines are in place; after
+the eighth unloading there are seven files in the directory of the dumps, and the rollout does not
+touch the directory
 
-Не покрыто: расписание читается на узле командой `crontab -l`; предел хранимых дампов и слияние
-строки расписания прогнаны на копии состава прода и подмене расписания.
+Not covered: the schedule is read on the node by the command `crontab -l`; the limit of the kept dumps
+and the merging of the line of the schedule were run on a copy of the composition of production and on
+a substituted schedule.
 
-### SC-MB-107 — сборка без клиента хранилища отказывает и называет команду
+### SC-MB-107 — a build without the client of the storage refuses and names the command
 
-Дано каталога клиента хранилища в дереве нет
-Когда зовётся сборка приёмника
-Тогда сборка останавливается и печатает строку с каталогом и командой, которой он заводится
+Given there is no directory of the client of the storage in the tree
+When the build of the intake is called
+Then the build stops and prints a line with the directory and the command it is created by
 
-### SC-MB-108 — наполовину сгенерированный клиент считается пропажей
+### SC-MB-108 — a client generated by half counts as a loss
 
-Дано каталог клиента есть, но входного файла в нём нет
-Когда зовётся сборка приёмника
-Тогда сборка отказывает так же, как при отсутствующем каталоге
+Given the directory of the client exists, but there is no entry file in it
+When the build of the intake is called
+Then the build refuses the same way as at an absent directory
 
-### SC-MB-109 — при живом клиенте проверка молчит
+### SC-MB-109 — at a live client the check stays silent
 
-Дано клиент хранилища на месте
-Когда зовётся сборка приёмника
-Тогда проверка не печатает ничего и сборка идёт своим ходом
+Given the client of the storage is in place
+When the build of the intake is called
+Then the check prints nothing and the build goes its own way

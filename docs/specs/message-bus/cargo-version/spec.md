@@ -1,209 +1,220 @@
-# Столбец, отбор и порядок по версии выпуска
+# The column, the filter and the order by the version of the release
 
-**Статус:** действует · **Ревизия:** 2026-08-22 · **Префикс сценариев:** `SC-MB`
-**Зависимости:** нет
-**Законы:** `lists`, `reuse-first`, `frontend-application`
-**Процедуры:** нет — операции объявлены контроллерами приёмника
+**Status:** in force · **Revision:** 2026-08-22 · **Scenario prefix:** `SC-MB`
+**Depends on:** none
+**Laws:** `lists`, `reuse-first`, `frontend-application`
+**Procedures:** none — the operations are declared by the controllers of the intake
 
-Поддомен домена «приёмник груза»: чем список груза сужается до одного выпуска и как версии в
-нём упорядочены. Стоит рядом с поддоменом о правке состояния деревом — тот говорит, кто версию
-пишет, этот — что с ней видит человек. Общее — терминология домена, сквозные требования и
-решения — лежит в спеке домена.
+A subdomain of the domain "the intake of the cargo": what a list of the cargo is narrowed to one
+release by and how the versions in it are ordered. It stands next to the subdomain about the edit of a
+state by a tree — that one says who writes the version, this one what a person gets of it. What is
+shared — the terminology of the domain, the cross-cutting requirements and the decisions — lies in the
+spec of the domain.
 
-Договорённость въехала своим поддоменом, а не вливанием в спек чтения принятого: вместе они
-перерастали предел длины — у того 499 строк при пределе 500. Тем же приёмом въехала
-договорённость о правке состояния деревом. Сценарии переехали прежними номерами.
+The agreement arrived as a subdomain of its own, not by a merge into the spec of the reading of what
+was taken in: together they outgrew the length limit — that one has 499 lines at a limit of 500. By
+the same technique the agreement about the edit of a state by a tree arrived. The scenarios moved with
+their former numbers.
 
-## Зачем
+## Why
 
-Версия выпуска у записи есть, и панель её показывает. Списку она не видна вовсе: человек,
-которому нужно, что уехало версией `0.10.0`, открывает записи по одной и запоминает, где уже
-был. Отбор по состоянию, заведённый соседней работой, отвечает на вопрос «что уже выпущено» и
-молчит о том, каким выпуском.
+A record has a version of the release, and the panel shows it. To the list it is not visible at all: a
+person who needs what went away with the version `0.10.0` opens the records one by one and remembers
+where they have already been. The filter by state, created by the neighbouring work, answers the
+question "what is already released" and stays silent about which release it was.
 
-Столбца мало без отбора: выпущенных записей в списке столько же, сколько выпусков за всё время,
-и глазами по столбцу человек читает то же, что читал бы без него. Отбора мало без порядка:
-соседние выпуски встают вперемешку, и «что нового в последнем» собирается по строкам.
+A column is not enough without a filter: there are as many released records in a list as there were
+releases over all the time, and by the eyes over the column a person reads the same as they would read
+without it. A filter is not enough without an order: neighbouring releases stand mixed together, and
+"what is new in the last one" is gathered by rows.
 
-## Терминология
+## Terminology
 
-Словарь домена целиком — в спеке домена. Здесь только то, что заводит эта работа:
+The vocabulary of the domain whole is in the spec of the domain. Here only what this work creates:
 
-| Термин               | Что это                                                                                      |
-| -------------------- | -------------------------------------------------------------------------------------------- |
-| Отбор по версии      | Условие, сужающее список раздела до записей одной версии выпуска. Стоит третьим в тулбаре    |
-| Встретившиеся версии | Значения версии, стоящие хоть у одной записи раздела. Их отдаёт своя операция приёмника      |
-| Без версии           | Пункт отбора, сужающий список до записей, у которых версии нет: починенное, но не выпущенное |
-| Порядок по номерам   | Порядок версий числами частей, а не буквами строки: `0.9.0` идёт перед `0.10.0`              |
+| Term                     | What it is                                                                                                                        |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| The filter by version    | A condition narrowing the list of a section to the records of one version of the release. It stands third in the toolbar          |
+| The versions that met    | The values of the version standing at at least one record of the section. They are given by an operation of the intake of its own |
+| Without a version        | An item of the filter narrowing the list to the records that have no version: what is fixed but not released                      |
+| The order by the numbers | The order of the versions by the numbers of the parts, not by the letters of the string: `0.9.0` goes before `0.10.0`             |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости | На экране                                                                 |
-| ---------------- | ------------------------------------------------------------------------- |
-| отбор по версии  | третий выбор в левой части полосы над списком, правее отбора по состоянию |
-| без версии       | пункт «без версии» — второй в списке выбора, сразу за «всеми версиями»    |
-| столбец версии   | столбец «В какой версии», стоящий за столбцом состояния                   |
+| In the agreement          | On the screen                                                                                      |
+| ------------------------- | -------------------------------------------------------------------------------------------------- |
+| the filter by version     | the third choice in the left part of the strip above the list, to the right of the filter by state |
+| without a version         | the item "без версии" — the second in the list of the choice, right after "все версии"             |
+| the column of the version | the column "В какой версии", standing after the column of the state                                |
 
-## Правила
+## Rules
 
-**Столбец.**
+**The column.**
 
-- **Версия выпуска видна столбцом у разборов и у предложений.** Панель показывает её одной
-  записи за раз, а вопрос «что уехало этим выпуском» задают списку.
-- **Столбец версии стоит за столбцом состояния и входит в набор по умолчанию.** Состояние и
-  версия читаются вместе — «выпущено, 0.10.0», — и разведённые они отвечают на половину вопроса
-  каждый.
-- **У записи без версии ячейка пуста.** Прочерк, «нет» и «—» читаются как значение, а версии у
-  такой записи не было вовсе.
-- **Столбец версии остаётся в настройке столбцов наравне с прочими.** Человек выключает его тем
-  же движением, что и любой другой: своего правила у него нет.
+- **The version of the release is visible as a column at the analyses and at the proposals.** The panel
+  shows it for one record at a time, and the question "what went away with this release" is put to the
+  list.
+- **The column of the version stands after the column of the state and is in the set by default.** The
+  state and the version are read together — "released, 0.10.0" — and set apart they answer half the
+  question each.
+- **At a record without a version the cell is empty.** A dash, "no" and "—" read as a value, while such
+  a record had no version at all.
+- **The column of the version stays in the setting of the columns on a par with the rest.** A person
+  switches it off by the same movement as any other one: it has no rule of its own.
 
-**Отбор.**
+**The filter.**
 
-- **Отбор по версии кладёт в страницу раздел, а не страница знает его сама.** Тем же приёмом,
-  каким там стоят отбор по дереву и отбор по состоянию.
-- **Отбор по версии стоит третьим в полосе, правее отбора по состоянию.** Порядок отборов идёт
-  от общего к частному: дерево, состояние, версия.
-- **Отбор по версии есть у разделов разборов и предложений и только у них.** У записи месяца
-  версии нет вовсе.
-- **Отбор перечисляет встретившиеся версии, а не все возможные.** Список версий приёмник
-  собирает по самим записям: набора версий, объявленного заранее, не существует — их называет
-  дерево при выпуске.
-- **Первым пунктом отбора стоят «все версии», вторым — «без версии».** Первый снимает отбор,
-  второй сужает список до починенного, но не выпущенного: это вопрос, на который состояние
-  отвечает лишь наполовину — «готово» ставят и тогда, когда выпуск ещё не собран.
-- **Отбор по версии живёт в адресе раздела наравне со страницей, размером, порядком и прочими
-  отборами.** Снятый в адресе не стоит.
-- **Отбор по версии складывается с отбором по дереву и с отбором по состоянию.** Три отбора
-  сужают список тремя условиями, а не заменяют друг друга.
-- **Выбранная версия сбрасывает список на первую страницу.** У суженного списка прежней
-  страницы может не быть вовсе.
-- **Версия, которой в списке версий нет, приёмнику посылается как есть и отдаёт пустой список.**
-  Набор версий открыт: версия, встречавшаяся вчера и вычищенная сегодня, — обычное дело, и
-  отказ на неё читался бы как поломка.
-- **Список, пустой по отбору версии, объясняет это отбором.** Тем же приёмом, каким он
-  объясняет пустоту по дереву и по состоянию.
+- **The filter by version is put into the page by the section, the page does not know it itself.** By
+  the same technique the filter by tree and the filter by state stand there.
+- **The filter by version stands third in the strip, to the right of the filter by state.** The order of
+  the filters goes from the general to the particular: the tree, the state, the version.
+- **The filter by version is at the sections of the analyses and of the proposals and only at them.** A
+  record of a month has no version at all.
+- **The filter lists the versions that met, not all the possible ones.** The list of the versions the
+  intake gathers by the records themselves: there is no set of the versions declared in advance — they
+  are named by the tree at a release.
+- **The first item of the filter is "все версии", the second "без версии".** The first lifts the filter,
+  the second narrows the list to what is fixed but not released: this is a question the state answers
+  only by half — "ready" is put also when the release is not built yet.
+- **The filter by version lives in the address of the section on a par with the page, the size, the
+  order and the other filters.** A lifted one does not stand in the address.
+- **The filter by version adds up with the filter by tree and with the filter by state.** The three
+  filters narrow the list by three conditions, they do not replace one another.
+- **A chosen version resets the list to the first page.** A narrowed list may have no former page at
+  all.
+- **A version that is not in the list of the versions is sent to the intake as it is and gives back an
+  empty list.** The set of the versions is open: a version that met yesterday and was cleaned away
+  today is an ordinary thing, and a refusal on it would read as a breakage.
+- **A list empty by the filter of the version explains that by the filter.** By the same technique it
+  explains the emptiness by tree and by state.
 
-**Порядок.**
+**The order.**
 
-- **Версия выпуска — сортируемое поле у разборов и у предложений.** Порядок человек меняет
-  заголовком столбца версии.
-- **Порядок по версии идёт номерами частей, а не буквами строки.** `0.9.0` стоит перед
-  `0.10.0`; алфавит ставит их наоборот, и список читается сломанным.
-- **Версия, не разобравшаяся номерами, встаёт в конец порядка, а между собой такие идут по
-  алфавиту.** Форму версии приёмник не навязывает — это правило спека правки состояния, и
-  отказ на `hotfix-3` терял бы запись целиком.
-- **Записи без версии в порядке по версии идут последними при возрастании и первыми при
-  убывании.** Пустота — не наименьшая версия, а её отсутствие; смешанная с числами, она
-  занимает верх списка при каждом открытии.
-- **Второй ключ порядка остаётся прежним — идентификатор записи.**
+- **The version of the release is a sortable field at the analyses and at the proposals.** The person
+  changes the order by the heading of the column of the version.
+- **The order by version goes by the numbers of the parts, not by the letters of the string.** `0.9.0`
+  stands before `0.10.0`; the alphabet puts them the other way round, and the list reads as broken.
+- **A version that was not taken apart by numbers stands at the end of the order, and among themselves
+  such ones go by the alphabet.** The intake does not impose the form of the version — that is a rule
+  of the spec of the edit of a state, and a refusal on `hotfix-3` would lose the record whole.
+- **The records without a version in the order by version go last at an ascending order and first at a
+  descending one.** Emptiness is not the smallest version but its absence; mixed with the numbers, it
+  takes the top of the list at every opening.
+- **The second key of the order stays the former one — the identifier of the record.**
 
-## Что не входит
+## What is out of scope
 
-- **Множественный выбор версий.** Слово владельца о соседней работе действует и здесь: одно
-  значение за раз.
-- **Предел на число версий в отборе.** Слово владельца: отдаются все встретившиеся. Предел
-  заводится тогда, когда список станет длинным, а не заранее.
-- **Разбор формы версии на приёме груза.** Приёмник форму не навязывает: правило стоит в спеке
-  правки состояния, и эта работа его не отменяет. Номера читаются при чтении списка.
-- **Сравнение версий между собой по правилам семантического версионирования целиком.** Предрелизные
-  метки и сборочные суффиксы в порядок не вводятся: части читаются числами слева направо,
-  остальное уходит в хвост.
-- **Показ версии в строке списка сверх столбца.** Ни подписи под другой ячейкой, ни значка.
-- **Отбор по версии у раздела сводок.** У записи месяца версии нет.
+- **A multiple choice of versions.** The word of the owner about the neighbouring work works here too:
+  one value at a time.
+- **A limit on the number of the versions in the filter.** The word of the owner: all the ones that met
+  are given. A limit is created when the list becomes long, not in advance.
+- **Taking the form of the version apart at the intake of the cargo.** The intake does not impose the
+  form: the rule stands in the spec of the edit of a state, and this work does not cancel it. The
+  numbers are read at the reading of the list.
+- **Comparing the versions to one another by the rules of semantic versioning whole.** The prerelease
+  marks and the build suffixes are not brought into the order: the parts are read as numbers from left
+  to right, the rest goes into the tail.
+- **Showing the version in a row of the list on top of the column.** Neither a label under another cell
+  nor a sign.
+- **The filter by version at the section of the digests.** A record of a month has no version.
 
-## Контракт
+## Contract
 
-Работа заводит одну операцию и прибавляет параметр выборки двум прежним.
+The work creates one operation and adds a parameter of the selection to two former ones.
 
-| Операция                | Что делает                                                            |
-| ----------------------- | --------------------------------------------------------------------- |
-| GET /api/cargo/versions | отдаёт встретившиеся версии выпуска — по роду груза, для отбора       |
-| GET /api/postmortems    | страница разборов; принимает версию выпуска либо признак «без версии» |
-| GET /api/proposals      | страница предложений; принимает то же                                 |
+| Operation               | What it does                                                                                  |
+| ----------------------- | --------------------------------------------------------------------------------------------- |
+| GET /api/cargo/versions | gives back the versions of the release that met — by the kind of the cargo, for the filter    |
+| GET /api/postmortems    | a page of the analyses; it accepts the version of the release or the sign "without a version" |
+| GET /api/proposals      | a page of the proposals; it accepts the same                                                  |
 
-Параметр версии складывается с параметром дерева и параметром состояния. Поле версии
-прибавляется к набору сортируемых у обеих операций чтения списка.
+The parameter of the version adds up with the parameter of the tree and with the parameter of the
+state. The field of the version is added to the set of the sortable ones at both operations of the
+reading of a list.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: приёмник отвечает кодом ответа HTTP, а не именованными кодами домена. Где чтение
-обязано отказать вместо молчания:
+Not applicable: the intake answers with a code of the answer of HTTP, not with named codes of the
+domain. Where the reading is obliged to refuse instead of staying silent:
 
-| Код | Когда                                                                                   |
-| --- | --------------------------------------------------------------------------------------- |
-| 400 | параметр версии пришёл не строкой либо длиннее предела — с именем параметра             |
-| 400 | род груза в запросе версий не назван либо назван словом вне набора — с именем параметра |
-| 401 | у запроса нет входа человека — прежнее правило поддомена, работой не меняется           |
+| Code | When                                                                                                                                     |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| 400  | the parameter of the version came not as a string or longer than the limit — with the name of the parameter                              |
+| 400  | the kind of the cargo in the request of the versions is not named or is named by a word outside the set — with the name of the parameter |
+| 401  | the request has no entry of a person — the former rule of the subdomain, not changed by the work                                         |
 
-Версия, которой в записях нет, отказом не отбивается: список отвечает пустой страницей. Род груза
-в запросе версий, наоборот, обязателен и умолчания не имеет: подставленный молча, он показал бы в
-отборе одного раздела версии другого.
+A version that is not in the records is not refused: the list answers with an empty page. The kind of
+the cargo in the request of the versions, on the contrary, is mandatory and has no default: substituted
+silently, it would show in the filter of one section the versions of another.
 
-## Данные
+## Data
 
-Своих таблиц и колонок работа не заводит: версия уже лежит колонкой у разбора и у предложения.
+The work creates no tables and no columns of its own: the version already lies as a column at an
+analysis and at a proposal.
 
-Индекс под колонку версии заводится миграцией — по нему идут и отбор, и порядок, и сбор
-встретившихся версий. Прежняя заметка спека правки состояния прямо называет его работой этой
-задачи: до неё он был бы поставлен вслепую.
+An index under the column of the version is created by a migration — by it go the filter, the order and
+the gathering of the versions that met. The former note of the spec of the edit of a state names it
+directly as the work of this task: before it, it would have been put blindly.
 
-## Экраны и состояния
+## Screens and states
 
-| Экран                | Состояния                                                                         |
-| -------------------- | --------------------------------------------------------------------------------- |
-| Разборы происшествий | список не сужен · сужен версией · сужен «без версии» · сужен тремя отборами сразу |
-| Предложения          | те же четыре                                                                      |
-| Столбец версии       | версия · пусто у невыпущенной записи · столбец выключен человеком                 |
-| Тулбар раздела       | три отбора рядом слева · все на одной строке · перенесены на узком экране         |
+| Screen                    | States                                                                                                               |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| The incident analyses     | the list is not narrowed · narrowed by version · narrowed by "without a version" · narrowed by three filters at once |
+| The proposals             | the same four                                                                                                        |
+| The column of the version | a version · empty at a record that is not released · the column is switched off by the person                        |
+| The toolbar of a section  | three filters next to each other on the left · all on one line · wrapped on a narrow screen                          |
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Подписи отбора и столбца берутся из словаря приложения теми же ключами, что и подпись строки
-панели «В какой версии»: одно место объявления на все показы.
+The labels of the filter and of the column are taken from the dictionary of the application by the same
+keys as the label of the row of the panel "В какой версии": one place of declaration for all the
+showings.
 
 ### SEO
 
-Админка стоит за входом и поисковикам не отдаётся вовсе.
+The admin application stands behind the entry and is not given to the search engines at all.
 
-### Мобильная раскладка
+### Mobile layout
 
-Три отбора на узком экране переносятся, а не режутся. Подтверждается замером, а не взглядом:
-третий отбор — ровно то место, где полоса перестаёт помещаться.
+The three filters on a narrow screen wrap, they are not cut. It is confirmed by a measurement, not by a
+look: the third filter is exactly the place where the strip stops fitting.
 
-### Мультиобъектность
+### Several objects
 
-Отбор по версии сужает показанное, а не доступ, и складывается с отбором по дереву. Версии
-собираются по всем деревьям сразу: одна и та же версия у двух деревьев — одно значение отбора.
+The filter by version narrows what is shown, not the access, and it adds up with the filter by tree.
+The versions are gathered over all the trees at once: one and the same version at two trees is one
+value of the filter.
 
-## Решения
+## Decisions
 
-- **Столбец виден сразу, а не выключен по умолчанию.** Слово владельца: состояние и версия
-  читаются парой. Отвергнуто: выключенный столбец — тогда порядок по версии включается двумя
-  действиями, потому что заголовка нет, пока столбец выключен.
-- **Порядок идёт номерами версии.** Слово владельца. Отвергнуто: порядок строкой — он дешевле и
-  работает индексом напрямую, но ставит `0.10.0` перед `0.9.0`, и человек читает такой список
-  сломанным.
-- **В отборе стоит «без версии».** Слово владельца: им находят починенное, но не выпущенное.
-  Отвергнуто: искать такие записи отбором по состоянию «готово» — состояние отвечает на другой
-  вопрос и молчит о том, собран ли выпуск.
-- **Операция отдаёт все встретившиеся версии без предела.** Слово владельца: версий у пакета
-  десятки. Отвергнуто: верхние двадцать — старую версию через отбор уже не найти.
-- **Версия вне числовой формы уходит в конец порядка, а не отбивается.** Не решение этой работы:
-  правило «Формы версии приёмник не разбирает» стоит в спеке правки состояния, и отказ на такую
-  строку терял бы запись дерева целиком.
+- **The column is visible at once, it is not switched off by default.** The word of the owner: the state
+  and the version are read as a pair. Rejected: a switched-off column — then the order by version is
+  switched on by two actions, because there is no heading while the column is switched off.
+- **The order goes by the numbers of the version.** The word of the owner. Rejected: the order by the
+  string — it is cheaper and works by the index directly, but it puts `0.10.0` before `0.9.0`, and a
+  person reads such a list as broken.
+- **There is "без версии" in the filter.** The word of the owner: by it what is fixed but not released is
+  found. Rejected: looking for such records by the filter of the state "ready" — the state answers
+  another question and stays silent about whether the release is built.
+- **The operation gives back all the versions that met, without a limit.** The word of the owner: the
+  package has dozens of versions. Rejected: the top twenty — an old version can no longer be found by
+  the filter.
+- **A version outside the number form goes to the end of the order, it is not refused.** Not a decision
+  of this work: the rule "The intake does not take the form of the version apart" stands in the spec of
+  the edit of a state, and a refusal on such a string would lose the record of the tree whole.
 
-## Открытые вопросы
+## Open questions
 
-- **Q-32. Что делать, когда версий станет больше, чем помещается в выбор.** Набор открыт и
-  растёт с каждым выпуском; выбор одного значения из сотни читается хуже, чем из десяти.
-  Решается тогда, когда список вырастет, — вместе с замером, который это покажет.
+- **Q-32. What to do when there are more versions than fit into the choice.** The set is open and grows
+  with every release; a choice of one value out of a hundred reads worse than out of ten. It is decided
+  when the list grows — together with the measurement that shows it.
 
-## История изменений
+## History of changes
 
-| Дата       | Что изменилось                                                              |
-| ---------- | --------------------------------------------------------------------------- |
-| 2026-08-21 | Договорённость записана до кода: столбец, отбор и порядок по версии выпуска |
-| 2026-08-21 | Коды отказов назвали отбой запроса версий без рода груза: он обязателен     |
+| Date       | What changed                                                                                                    |
+| ---------- | --------------------------------------------------------------------------------------------------------------- |
+| 2026-08-21 | The agreement was written before the code: the column, the filter and the order by the version of the release   |
+| 2026-08-21 | The refusal codes named the refusal of a request of the versions without the kind of the cargo: it is mandatory |
