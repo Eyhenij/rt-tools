@@ -1,31 +1,31 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-doc-paths.mjs · b50287475daa · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-doc-paths.mjs · e91840ae9811 · правится надстройкой, не здесь
 /**
- * Проверка того, что адреса, названные в документации, существуют.
+ * The check that the addresses named in the documentation exist.
  *
- * Документ, ссылающийся на исчезнувший файл, хуже отсутствующего: он выглядит
- * действующей справкой и уводит читателя в каталог, которого нет. Накапливается
- * это молча — перекладка дерева правит код и ломает текст, а текст никто не
- * собирает.
+ * A document referring to a file that has disappeared is worse than a missing one: it looks like
+ * a working reference and takes the reader into a directory that is not there. This accumulates
+ * silently — a rearrangement of the tree fixes the code and breaks the text, and nobody collects
+ * the text.
  *
- * Считаются только адреса в обратных кавычках и вне блоков кода: в блоках лежат
- * команды и вывод, где путь до собранного — результат сборки, а не файл
- * репозитория. Шаблоны (`*`, `<…>`, `{…}`) пропускаются: это форма адреса, а не адрес.
+ * Only addresses in backticks and outside code blocks count: the blocks hold commands and output,
+ * where a path to something built is the result of a build, not a file of the repository. Patterns
+ * (`*`, `<…>`, `{…}`) are skipped: that is the form of an address, not an address.
  *
- * Адрес бывает трёх родов, и все три судятся одинаково: укоренённый в дереве путь,
- * голое имя файла и каталог. Каталогами занята половина таблиц «Где это лежит», и
- * проверка, знающая только строку с расширением, их не видит вовсе.
+ * An address comes in three kinds, and all three are judged alike: a path rooted in the tree, a
+ * bare file name and a directory. Half of the "Where this lies" tables are taken by directories,
+ * and a check that knows only a string with an extension does not see them at all.
  *
- * Документы, которые по устройству говорят о несуществующем — планы будущего, архив
- * и папки задач, — из проверки выведены. Там же переносимый текст: его адреса
- * принадлежат тому дереву, куда правило ложится, и в этом они примеры, а не ссылки.
+ * Documents that by their nature speak of what does not exist — plans of the future, the archive
+ * and task folders — are taken out of the check. So is portable text: its addresses belong to the
+ * tree the rule is laid out into, and in that they are examples, not links.
  *
- * Вторым заходом сверяется полнота указателя каталога: обзорный документ перечисляет
- * записи таблицей, и читатель ищет по ней, а не обходом. Это обратная сторона той же
- * договорённости — не только адрес из текста ведёт в файл, но и файл назван в тексте,
- * по которому его ищут.
+ * On a second pass the completeness of a directory index is audited: the overview document lists
+ * the records in a table, and the reader searches by it, not by walking. This is the reverse side
+ * of the same agreement — not only does an address in a text lead to a file, but a file is named
+ * in the text people look for it by.
  *
- * Ненулевой код возврата и перечень расхождений.
+ * A non-zero return code and a list of divergences.
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
@@ -34,48 +34,50 @@ import { join, posix } from 'node:path';
 import { allowlistOf, CONFIG, ROOT, parseAllowlist } from './rt-kit-checks.config.mjs';
 
 const ALLOWLIST = allowlistOf('doc-paths');
-// `worktrees` — копии репозитория под каталогом агента: их документы описывают раскладку
-// своей ветки, а проверка ищет адреса в дереве текущей. Одна брошенная копия дала 73
-// расхождения и красный сквозной прогон на ветке, которая её не заводила.
+// `worktrees` — copies of the repository under the agent's directory: their documents describe the
+// layout of their own branch, while the check looks for addresses in the tree of the current one.
+// One abandoned copy gave 73 divergences and a red end-to-end run on a branch that did not start it.
 const SKIPPED_DIRS = CONFIG.skippedDirs;
 /**
- * Архив описывает раскладку, бывшую на момент записи. Править в нём адреса — значит
- * переписывать историю задним числом, поэтому он выведен из проверки целиком.
+ * The archive describes the layout as it was at the moment of writing. Fixing addresses in it means
+ * rewriting history after the fact, so it is taken out of the check entirely.
  */
 const ARCHIVE_DIR = CONFIG.archiveDir;
 /**
- * Папка задачи описывает ход работы, и снятое она называет по имени: раздел находок
- * перечисляет ровно то, чего в дереве нет. Отличить такое упоминание от ссылки машине
- * нечем, а живёт папка до слияния — поэтому она выведена из проверки, как архив.
+ * A task folder describes the progress, and what has been removed it names by name: the findings
+ * section lists exactly what is not in the tree. A machine has nothing to tell such a mention from
+ * a link by, and the folder lives until the merge — so it is taken out of the check, like the
+ * archive.
  */
 const TASKS_DIR = CONFIG.tasksDir.endsWith('/') ? CONFIG.tasksDir : `${CONFIG.tasksDir}/`;
 /**
- * Каталоги, чей указатель сверяется с содержимым. Каталог, выведенный из проверки адресов,
- * иначе не судит ничто: запись, приехавшая слиянием соседней ветки, остаётся неназванной, а
- * читатель ищет по указателю. Сверенный руками указатель расходится снова через сутки.
+ * Directories whose index is audited against the content. Nothing else judges a directory taken out
+ * of the address check: a record that arrived by a merge of a neighbouring branch stays unnamed,
+ * while the reader searches by the index. An index audited by hand diverges again within a day.
  */
 const INDEXED_DIRS = (CONFIG.indexedDirs ?? []).map((dir) => (dir.endsWith('/') ? dir : `${dir}/`));
 /**
- * Исходники переносимых текстов: правило, которое ложится в другое дерево, называет адреса
- * того дерева. Разложенная копия узнаётся по шапке, а исходник шапки не несёт — её ставит
- * раскладка, — поэтому его каталог называется настройкой.
+ * The sources of portable texts: a rule that is laid out into another tree names the addresses of
+ * that tree. A laid-out copy is recognised by its header, and the source carries no header — the
+ * layout puts it there — so its directory is named by a setting.
  */
 const PORTABLE_DIRS = (CONFIG.portableDirs ?? []).map((dir) => (dir.endsWith('/') ? dir : `${dir}/`));
-/** Шапка разложенного файла: версия пакета, ресурс и сумма тела. */
+/** The header of a laid-out file: the package version, the resource and the sum of the body. */
 const STAMP_LINE = /rt-kit\s+v\S+\s+·\s+\S+\s+·\s+[0-9a-f]{12}/;
-/** Шапка встаёт первой строкой тела, а тело начинается после вступления скила. */
+/** The header stands as the first line of the body, and the body starts after the skill's intro. */
 const STAMP_LOOKAHEAD = 12;
-/** Расширения, по которым голое имя считается файлом, а не именем сущности */
+/** The extensions by which a bare name counts as a file and not as the name of a record */
 const EXTENSIONS = 'ts|mts|cts|js|mjs|cjs|json|jsonc|scss|css|html|proto|conf|ya?ml|sh|md|sql|txt|xml|svg|webp|png|ico|env|Dockerfile|lock';
 /**
- * Берётся любая строка в кавычках: каталог расширения не несёт, и требовать его в самой
- * выборке значило бы не видеть половину таблиц «Где это лежит». Отсев — в `looksLikePath`.
+ * Any string in backticks is taken: a directory carries no extension, and requiring one in the
+ * selection itself would mean not seeing half of the "Where this lies" tables. The sifting is in
+ * `looksLikePath`.
  */
 const PATH_IN_BACKTICKS = /`([^`\n]+?)`/g;
 
 const problems = [];
 const indexProblems = [];
-const report = (doc, line, path) => problems.push(`${doc}:${line}: нет файла \`${path}\``);
+const report = (doc, line, path) => problems.push(`${doc}:${line}: no file \`${path}\``);
 
 function collectDocs(dir = '.') {
     const entries = readdirSync(join(ROOT, dir), { withFileTypes: true });
@@ -96,28 +98,27 @@ function collectDocs(dir = '.') {
 }
 
 /**
- * Документы, которые в репозиторий не попадут: личный черновик, лежащий в дереве и
- * закрытый настройкой неотслеживаемого. Проверка судит репозиторий, а не рабочий стол того,
- * кто её запустил: мёртвая ссылка в чужом черновике держала гейт пуша, хотя ни в одну ветку
- * этот файл не едет.
+ * Documents that will not reach the repository: a personal draft lying in the tree and covered by
+ * the ignore settings. The check judges the repository, not the desk of whoever started it: a dead
+ * link in someone's draft held the push gate, though that file goes into no branch at all.
  */
 function droppedByGit(docs) {
     if (docs.length === 0) {
         return new Set();
     }
 
-    // `--stdin` вместо аргументов: список длиннее ограничения командной строки
+    // `--stdin` instead of arguments: the list is longer than the command line limit
     const ignored = spawnSync('git', ['check-ignore', '--stdin'], {
         cwd: ROOT,
         encoding: 'utf8',
         input: docs.join('\n'),
     });
 
-    // Нет git — судить нечем, и проверка остаётся строже нужного
+    // No git — there is nothing to judge by, and the check stays stricter than needed
     return new Set((ignored.stdout ?? '').split('\n').filter(Boolean));
 }
 
-/** Верхний уровень дерева: по нему узнаётся адрес, укоренённый в репозитории */
+/** The top level of the tree: an address rooted in the repository is recognised by it */
 const ROOTED_IN = new Set(
     readdirSync(ROOT, { withFileTypes: true })
         .filter((entry) => entry.isDirectory() && !SKIPPED_DIRS.includes(entry.name))
@@ -125,10 +126,10 @@ const ROOTED_IN = new Set(
 );
 
 /**
- * Дерево спрашивается у системы контроля версий, а не обходом каталогов: каталоги агента и
- * конвейера начинаются с точки, и обход мимо них проходит молча — всё, что в них лежит,
- * читалось бы как несуществующее. Неотслеживаемое берётся вместе с отслеживаемым: файл,
- * заведённый этой же веткой и ещё не добавленный, существует ничуть не меньше.
+ * The tree is asked of the version control system, not walked directory by directory: the agent's
+ * and the pipeline's directories start with a dot, and a walk passes them by silently — everything
+ * lying in them would read as non-existent. The untracked is taken together with the tracked: a
+ * file started by this very branch and not yet added exists no less.
  */
 function treeOfRepo() {
     const listed = spawnSync('git', ['ls-files', '--cached', '--others', '--exclude-standard'], {
@@ -158,10 +159,11 @@ function treeOfRepo() {
 const TREE = treeOfRepo();
 
 /**
- * Адрес ли это вообще. Отсекается всё, что описывает форму, а не адрес: шаблоны, сетевые
- * ссылки, имена пакетов, флаги и привязка «путь:символ» — её судит сверка спеков. Дальше
- * кандидат бывает двух родов: укоренённый в дереве и голое имя. Голым именем зовут и файл, и
- * каталог — оба ищутся по дереву, потому что адрес у них один, а написан он коротко.
+ * Whether this is an address at all. Everything describing a form rather than an address is cut
+ * off: patterns, network links, package names, flags and the binding "path:symbol" — that one is
+ * judged by the spec audit. After that a candidate comes in two kinds: rooted in the tree and a
+ * bare name. A bare name is used for both a file and a directory — both are looked for across the
+ * tree, because their address is one and the same, only written short.
  */
 function looksLikePath(candidate) {
     if (/[*<>{}$|\s()[\]'",;=]|\.\.\.|…/.test(candidate)) {
@@ -170,11 +172,11 @@ function looksLikePath(candidate) {
     if (/^(https?:|@|~|\/|-)/.test(candidate) || candidate.includes(':')) {
         return false;
     }
-    // Каталог, который проверка не обходит, она и не судит: там чужое, сборка и служебное
+    // A directory the check does not walk it does not judge either: what lies there is foreign code, the build and service files
     if (SKIPPED_DIRS.some((dir) => candidate.startsWith(`${dir}/`))) {
         return false;
     }
-    // Начинается с точки и стоит без каталога — род файла, а не файл
+    // Starts with a dot and stands without a directory — a kind of file, not a file
     if (/^\.[^/]+$/.test(candidate)) {
         return false;
     }
@@ -183,19 +185,19 @@ function looksLikePath(candidate) {
 }
 
 /**
- * Есть ли такой адрес в дереве. Укоренённый спрашивается у файловой системы: он назван
- * целиком, и промах в нём — промах. Голое имя ищется по дереву целиком — и среди файлов, и
- * среди каталогов: имя каталога в обзорном документе либы означает каталог рядом, а не
- * каталог в корне.
+ * Whether such an address is in the tree. A rooted one is asked of the file system: it is named in
+ * full, and a miss in it is a miss. A bare name is looked for across the whole tree — among files
+ * and among directories: a directory name in a lib's overview document means a directory next to
+ * it, not a directory at the root.
  */
 function existsInTree(candidate, fromDir = '') {
     const bare = candidate.replace(/\/$/, '');
 
     /**
-     * Относительный адрес принадлежит каталогу документа, а не корню дерева: `../routes.ts` из
-     * `libs/x/shell/src/shell/README.md` — это `libs/x/shell/src/routes.ts`. Без разрешения от
-     * каталога такой адрес ищется по дереву строкой и не находится никогда, то есть проверка
-     * краснеет на каждой ссылке, написанной так, как её пишут в разметке.
+     * A relative address belongs to the document's directory, not to the tree root: `../routes.ts`
+     * from `libs/x/shell/src/shell/README.md` is `libs/x/shell/src/routes.ts`. Without resolving
+     * from the directory such an address is looked for across the tree as a string and is never
+     * found, that is, the check reddens at every link written the way links are written in markup.
      */
     if (/^\.{1,2}(\/|$)/.test(bare)) {
         const resolved = posix.normalize(posix.join(fromDir, bare));
@@ -217,10 +219,11 @@ function existsInTree(candidate, fromDir = '') {
 }
 
 /**
- * Переносимый текст: разложенный пакетом — по шапке, его исходник — по каталогу из настройки.
- * Адреса в нём принадлежат тому дереву, куда правило ложится: `libs/common/util` в дереве,
- * которое зовёт свои корни иначе, — не мёртвая ссылка, а пример. Судить их здесь значит
- * краснеть на полтораста строк, ни одна из которых не чинится правкой этого дерева.
+ * A portable text: one laid out by the package is known by its header, its source by the directory
+ * from the settings. The addresses in it belong to the tree the rule is laid out into:
+ * `libs/common/util` in a tree that calls its roots otherwise is not a dead link but an example.
+ * Judging them here means reddening at a hundred and fifty lines, not one of which is fixed by an
+ * edit of this tree.
  */
 function isPortable(doc) {
     if (PORTABLE_DIRS.some((dir) => doc.startsWith(dir))) {
@@ -232,15 +235,15 @@ function isPortable(doc) {
         .some((line) => STAMP_LINE.test(line));
 }
 
-/** Из проверки адресов выведены документы, которые по устройству говорят о несуществующем. */
+/** Documents that by their nature speak of what does not exist are taken out of the address check. */
 const isSkipped = (doc) => doc.startsWith(ARCHIVE_DIR) || doc.startsWith(TASKS_DIR) || isPortable(doc);
 
 /**
- * Полнота указателя каталога: у каждой записи каталога есть строка в таблице, у каждой
- * строки — запись. Записью считается первое имя в обратных кавычках строки таблицы: во
- * второй колонке стоит проза, и брать оттуда было бы нечего. Каталог берётся у системы
- * контроля версий той же выборкой, что и дерево: черновик, закрытый настройкой
- * неотслеживаемого, в репозиторий не едет и указателю не нужен.
+ * The completeness of a directory index: every record of the directory has a line in the table,
+ * every line has a record. The record is the first name in backticks of a table line: the second
+ * column holds prose, and there would be nothing to take from there. The directory is asked of the
+ * version control system by the same selection as the tree: a draft covered by the ignore settings
+ * does not reach the repository and is not needed in the index.
  */
 function checkIndex(dir) {
     const index = `${dir}README.md`;
@@ -264,11 +267,11 @@ function checkIndex(dir) {
     [...stored]
         .filter((name) => !named.has(name))
         .sort()
-        .forEach((name) => indexProblems.push(`${index}: запись \`${name}\` лежит в каталоге, но в таблице не названа`));
+        .forEach((name) => indexProblems.push(`${index}: the record \`${name}\` lies in the directory and is not named in the table`));
     [...named]
         .filter((name) => !stored.has(name))
         .sort()
-        .forEach((name) => indexProblems.push(`${index}: строка \`${name}\` названа в таблице, но записи в каталоге нет`));
+        .forEach((name) => indexProblems.push(`${index}: the line \`${name}\` is named in the table, and there is no record in the directory`));
 }
 
 function checkDoc(doc, allowed) {
@@ -297,16 +300,16 @@ function checkDoc(doc, allowed) {
     });
 }
 
-/** Расхождение указателя печатается своим списком: чинится оно строкой в таблице, а не молчанием. */
+/** An index divergence is printed as a list of its own: it is fixed by a line in the table, not by silence. */
 function reportIndex() {
     if (indexProblems.length === 0) {
         return;
     }
 
-    console.error(`\nуказатель разошёлся с каталогом, расхождений ${indexProblems.length}\n`);
+    console.error(`\nthe index diverged from the directory, divergences ${indexProblems.length}\n`);
     indexProblems.forEach((problem) => console.error(`  ${problem}`));
     console.error(
-        '\nЗапись называется в таблице указателя тем же изменением, которым кладётся:\nчитатель ищет по указателю, а не обходом каталога.'
+        '\nA record is named in the table of the index by the same change that lays it down:\nthe reader searches by the index, not by walking the directory.'
     );
 }
 
@@ -320,16 +323,16 @@ docs.forEach((doc) => checkDoc(doc, allowedPaths));
 INDEXED_DIRS.forEach((dir) => checkIndex(dir));
 
 if (problems.length > 0) {
-    console.error(`check-doc-paths: расхождений ${problems.length}\n`);
+    console.error(`check-doc-paths: divergences ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
-    // Вариантов три, и третий назван: список известного хранит принятое, а не результаты
-    // сломанной проверки. Прежний текст предлагал вносить в список всё спорное — учил обходу,
-    // который закон о проверяемости запрещает; один разбор дал 51 ложный отказ из 264, каждый
-    // на существующий адрес.
+    // There are three ways out, and the third is named: the known list holds what is accepted, not
+    // the results of a broken check. The former text offered to enter everything doubtful into the
+    // list — it taught the bypass the verifiability law forbids; one review gave 51 false refusals
+    // out of 264, every one of them on an address that exists.
     console.error(
-        `\nХодов отсюда три: поправить устаревший адрес; внести имя в ${ALLOWLIST}, если документ` +
-            `\nописывает ещё не созданное; починить саму проверку, если ошибается она, — разобрать` +
-            `\nотказы поимённо и показать разбор владельцу. Спорное в список не вносится.`
+        `\nThree moves from here: fix the stale address; enter the name into ${ALLOWLIST} if the document` +
+            `\ndescribes what is not created yet; fix the check itself, if it is the one that is wrong — take` +
+            `\nthe refusals apart one by one and show the analysis to the owner. What is in dispute is not listed.`
     );
 }
 
@@ -339,4 +342,4 @@ if (problems.length > 0 || indexProblems.length > 0) {
     process.exit(1);
 }
 
-console.log(`check-doc-paths: проверено документов ${docs.length}, расхождений нет`);
+console.log(`check-doc-paths: documents checked ${docs.length}, no divergences`);

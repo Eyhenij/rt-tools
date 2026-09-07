@@ -1,40 +1,42 @@
 #!/usr/bin/env bash
 # rt-hook: PostToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file
-# Требует: hooks/profile-check.sh
-# Линтер по следам правки. PostToolUse.
+# Requires: hooks/profile-check.sh
+# The linter in the footsteps of an edit. PostToolUse.
 #
-# Два входа. Правка файла — линтуется один изменённый файл. Команда оболочки — линтуется то,
-# что она записала: перенос меняет либу, а вместе с ней и границы, и импорт, законный на прежнем
-# месте, на новом уже запрещён; запись перенаправлением, дозаписью или интерпретатором меняет
-# сам файл, и линтера он прежде не получал вовсе. Ровно так запрещённый импорт уезжает в общую
-# либу молча, а правленая проверка выходит из-под форматтера: правило сработало бы — но его
-# никто не запустил.
+# Two entries. A file edit — the one changed file is linted. A shell command — what it wrote is
+# linted: a move changes the lib, and with it the boundaries, and an import lawful in the old
+# place is already forbidden in the new one; a write by redirect, by append or by an interpreter
+# changes the file itself, and before that it never got a linter at all. That is exactly how a
+# forbidden import leaves for the shared lib silently, and an edited check slips out from under
+# the formatter: the rule would have fired — but nobody ran it.
 #
-# Что команда пишет и куда, знает профиль дерева, и знает он это одним способом для всех: тот
-# же признак читает гейт правил.
+# What a command writes and where, the tree profile knows, and it knows it in one way for all:
+# the rules gate reads the same sign.
 #
-# Полный набор гоняет гард на пуше, но это конец работы: к моменту, когда правило срабатывает,
-# поверх нарушения лежит десяток правок, и разбор превращается в археологию. Здесь тот же
-# линтер, но по затронутым файлам — секунды, сразу после действия, пока контекст ещё свой.
+# The full suite is run by the guard on push, but that is the end of the work: by the time the
+# rule fires, a dozen edits lie on top of the violation, and the analysis turns into archaeology.
+# Here is the same linter, but over the touched files — seconds, right after the action, while
+# the context is still one's own.
 #
-# Замечания возвращаются добавленным контекстом, а не отказом: действие уже применено, и
-# незаконченный промежуточный файл имеет право быть красным. Чинить их надо до конца задачи —
-# все, включая лежавшие в файле раньше.
+# Findings come back as added context, not as a refusal: the action is already applied, and an
+# unfinished intermediate file has the right to be red. They must be fixed before the end of the
+# task — all of them, including those that lay in the file before.
 #
-# Что здесь чем зовётся, знает профиль дерева:
-#   rt_lint_for      — чем линтуется этот файл;
-#   rt_shell_writes  — пишет ли эта команда;
-#   rt_shell_paths   — какие пути она записала;
-#   rt_is_app_code   — где лежит код, к которому линтеры вообще относятся;
-#   RT_LINT_SKIP_RE  — что из него исключено;
-#   rt_push_checks   — что гоняет гейт пуша. По нему же решается, догонит ли замечание позже:
-#                      линтер, которого в гейте нет, ловит только этот хук.
-# Нет профиля или нет функции — хук молчит.
+# What is called what here, the tree profile knows:
+#   rt_lint_for      — what this file is linted with;
+#   rt_shell_writes  — whether this command writes;
+#   rt_shell_paths   — which paths it wrote;
+#   rt_is_app_code   — where the code the linters apply to at all lives;
+#   RT_LINT_SKIP_RE  — what is excluded from it;
+#   rt_push_checks   — what the push gate runs. It also decides whether a finding catches up
+#                      later: a linter that is not in the gate is caught only by this hook.
+# No profile or no function — the hook stays silent.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ и молча: нет линтера, файл вне дерева, зелёный результат — пустой вывод.
+# FAIL-OPEN and silent: no linter, a file outside the tree, a green result — empty output.
 
-# Сколько файлов линтуется за один перенос. Переезд либы трогает десятки файлов, и прогон по
-# каждому превратил бы хук в минутную паузу; на нарушение границы хватает первых.
+# How many files are linted per move. A lib move touches dozens of files, and a run over each
+# would turn the hook into a minute-long pause; the first ones are enough for a boundary
+# violation.
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
@@ -52,8 +54,9 @@ case "$tool" in
     *) exit 0 ;;
 esac
 
-# Отсев до всякой работы: хук висит на каждой команде оболочки, а пишет из них меньшинство.
-# Пустая команда отсеивается здесь же — признак записи у неё спрашивать не о чем.
+# Screening before any work: the hook hangs on every shell command, and a minority of them
+# write. An empty command is screened out right here — there is nothing to ask it the write sign
+# about.
 command_text=""
 if [ "$mode" = "move" ]; then
     command_text="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
@@ -65,22 +68,22 @@ workdir="$(rt_hook_cwd)"
 cd "$workdir" 2>/dev/null || exit 0
 [ -f package.json ] || exit 0
 
-# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
+# The tree profile: the package default first, the project override on top of it if there is one.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
 
-# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
-# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# A word about a missing profile function: a hook that exited silently cannot be told from a
+# working one. The file may not be laid out — then the old behaviour, the silent one, stays.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
 command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
 rt_needs rt_lint_for lint-after-edit || exit 0
 
-# Признак записи спрашивается после профиля: до него функций ещё нет. Дерево, которое признака
-# не объявило, остаётся при прежнем поведении — разбирается один перенос.
+# The write sign is asked after the profile: before it there are no functions yet. A tree that
+# has not declared the sign keeps the old behaviour — a single move is parsed.
 if [ "$mode" = "move" ] && rt_needs rt_shell_writes lint-after-edit; then
     case "$command_text" in
         *"git mv "*) ;;
@@ -88,20 +91,20 @@ if [ "$mode" = "move" ] && rt_needs rt_shell_writes lint-after-edit; then
     esac
 fi
 
-# --- какие файлы проверяем -------------------------------------------------------------
+# --- which files are checked -----------------------------------------------------------
 
-# Пути назначения всех переносов в команде. Команда бывает составной, поэтому режется по
-# разделителям, и каждый кусок разбирается отдельно.
+# The destination paths of all moves in the command. A command can be compound, so it is cut by
+# separators, and each piece is parsed on its own.
 collect_moved() {
-    # Перевод строки в конце обязателен: чтение без него теряет последний кусок, а команда
-    # чаще всего состоит ровно из одного.
+    # The trailing newline is mandatory: reading without it loses the last piece, and a command
+    # most often consists of exactly one.
     printf '%s\n' "$1" | tr ';&\n' '\n\n\n' | while IFS= read -r segment; do
         case "$segment" in
             *"git mv "*) ;;
             *) continue ;;
         esac
 
-        # shellcheck disable=SC2086 # разбиение по пробелам здесь и нужно
+        # shellcheck disable=SC2086 # splitting by spaces is exactly what is wanted here
         set -- ${segment#*git mv }
         args=''
         for arg in "$@"; do
@@ -118,7 +121,7 @@ collect_moved() {
         dest=''
         for arg in "$@"; do dest="$arg"; done
 
-        # Назначение — каталог: имя файла остаётся прежним, меняется только путь.
+        # The destination is a directory: the file name stays as it was, only the path changes.
         if [ -d "$dest" ]; then
             for arg in "$@"; do
                 [ "$arg" = "$dest" ] && continue
@@ -130,7 +133,7 @@ collect_moved() {
     done
 }
 
-# Каталог разворачивается в лежащие в нём файлы: перенос умеет двигать целые слои.
+# A directory is expanded into the files lying in it: a move can shift whole layers.
 expand() {
     if [ -d "$1" ]; then
         find "$1" -type f \( -name '*.ts' -o -name '*.html' -o -name '*.scss' \) 2>/dev/null
@@ -142,16 +145,16 @@ expand() {
 if [ "$mode" = "edit" ]; then
     path="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
     [ -z "$path" ] && exit 0
-    # Путь от корня дерева приводится к абсолютному один раз, чтобы образцы не двоились.
+    # A path from the tree root is made absolute once, so that the patterns do not double.
     case "$path" in
         /*) ;;
         *) path="${CLAUDE_PROJECT_DIR:-.}/$path" ;;
     esac
     candidates="$(expand "$path")"
 else
-    # Перенос разворачивает каталог: он двигает целые слои. Запись — нет: пишут всегда в файл,
-    # а каталог в команде записи — это рабочий каталог, и развёрнутый он отдаёт линтеру половину
-    # дерева. Поэтому у записанных путей берутся только существующие файлы.
+    # A move expands a directory: it shifts whole layers. A write does not: writes always go to
+    # a file, and a directory in a write command is the working directory, and expanded it hands
+    # the linter half of the tree. So of the written paths only existing files are taken.
     written=""
     if rt_needs rt_shell_paths lint-after-edit; then
         written="$(rt_shell_paths "$command_text" 2>/dev/null | while IFS= read -r path; do
@@ -164,7 +167,7 @@ fi
 
 [ -z "$candidates" ] && exit 0
 
-# --- отсев того, что линтерами дерева не покрыто ----------------------------------------
+# --- screening out what the tree's linters do not cover ---------------------------------
 
 lintable() {
     if rt_needs rt_is_app_code lint-after-edit; then
@@ -177,8 +180,8 @@ lintable() {
     return 0
 }
 
-# Имя линтера в команде — первое слово, которое не запускатель. Оно идёт в заголовок и по нему
-# же ищется гейт пуша.
+# The linter name in the command is the first word that is not a launcher. It goes into the
+# heading, and the push gate is searched by it too.
 linter_name() {
     printf '%s' "$1" | awk '{
         for (i = 1; i <= NF; i++) {
@@ -188,7 +191,7 @@ linter_name() {
     }'
 }
 
-# --- прогон -----------------------------------------------------------------------------
+# --- the run ----------------------------------------------------------------------------
 
 push_checks="$(rt_needs rt_push_checks lint-after-edit && rt_push_checks 2>/dev/null)"
 
@@ -207,10 +210,10 @@ while IFS= read -r file; do
     [ -z "$lint" ] && continue
     checked=$((checked + 1))
 
-    # Команда, в которой нет пути правленого файла, читается как чистый линтер, а делает одно из
-    # двух: обходит всё дерево или не проверяет ничего. Отличить её от честного прогона по всему
-    # набору нечем, поэтому здесь слово, а не отбой; сказанное один раз за заход — как и слово о
-    # нехватке функции профиля.
+    # A command without the path of the edited file reads as a clean linter, and does one of two
+    # things: walks the whole tree or checks nothing. There is nothing to tell it from an honest
+    # run over the whole suite, so here is a word, not a refusal; said once per session — like
+    # the word about a missing profile function.
     case "$lint" in
         *"$file"*) ;;
         *) path_gap=1 ;;
@@ -218,7 +221,8 @@ while IFS= read -r file; do
 
     out="$(eval "$lint" 2>&1)" && continue
 
-    # Линтера нет или он упал сам по себе — это не замечание к файлу, молчим.
+    # There is no linter, or it crashed on its own — that is not a finding about the file, we
+    # stay silent.
     printf '%s' "$out" | grep -qiE 'command not found|could not determine executable|Cannot find module' && continue
 
     linter="$(linter_name "$lint")"
@@ -236,20 +240,20 @@ done <<EOF
 $candidates
 EOF
 
-# Отметка живёт в каталоге временных файлов: на каждую правку та же строка повторялась бы за
-# заход десятки раз и перестала бы читаться.
+# The mark lives in the temporary files directory: on every edit the same line would repeat
+# dozens of times per session and would stop being read.
 if [ "$path_gap" = 1 ]; then
     gap_key="$(printf '%s' "$input" | jq -r '.session_id // empty' 2>/dev/null)"
     [ -z "$gap_key" ] && gap_key="$(date +%Y%m%d 2>/dev/null || printf 'nosession')"
     gap_mark="${TMPDIR:-/tmp}/rt-kit-lint-path-gap-$gap_key"
     if [ ! -f "$gap_mark" ]; then
-        printf 'линтер по следам правки: команда профиля не назвала правленый файл. Она либо
+        printf 'the linter on the trail of an edit: the command of the profile did not name the
 ' >&2
-        printf 'обходит всё дерево, либо не проверяет ничего, а выглядит и в том и в другом
+        printf 'edited file. It either walks the whole tree or checks nothing at all, and in both
 ' >&2
-        printf 'случае как чистый линтер. Путь подставляется при печати команды — образец
+        printf 'cases looks like a clean linter. The path is substituted when the command is
 ' >&2
-        printf 'стоит в умолчании профиля, функция rt_lint_for.
+        printf 'printed — the sample stands in the default of the profile, the function rt_lint_for.
 ' >&2
         : >"$gap_mark" 2>/dev/null || true
     fi
@@ -257,30 +261,31 @@ fi
 
 [ -z "$report" ] && exit 0
 
-# Длинный вывод режем: важен факт и первые нарушения, остальное видно при полном прогоне.
+# Long output is cut: the fact and the first violations matter, the rest is visible in a full run.
 report="$(printf '%s' "$report" | head -c 6000)"
 
 if [ "$covered" -eq 1 ]; then
-    tail_line="Пуш всё равно не пройдёт, пока набор красный."
+    tail_line="The push will not pass anyway while the suite is red."
 else
-    tail_line="Почини их сейчас: этот линтер в гейт пуша не входит, и отложенное замечание уедет в главную ветку молча."
+    tail_line="Fix them now: this linter is not part of the push gate, and a postponed finding travels into the main branch in silence."
 fi
 
 case "$mode:$command_text" in
-    # Перенос назван отдельно: замечание после него объясняется не правкой файла, а сменой его
-    # места, и без этой строки читатель ищет промах в тексте, которого никто не менял.
+    # A move is named separately: a finding after it is explained not by an edit of the file but
+    # by a change of its place, and without this line the reader looks for a miss in text that
+    # nobody changed.
     move:*"git mv "*)
-        head_line="ЛИНТЕР (${linters}) НАШЁЛ ЗАМЕЧАНИЯ ПОСЛЕ ПЕРЕНОСА. Перенос меняет либу, а вместе с ней границы: импорт, законный на прежнем месте, на новом может быть запрещён." ;;
+        head_line="THE LINTER (${linters}) FOUND ISSUES AFTER A MOVE. A move changes the lib, and with it the boundaries: an import lawful in the former place may be forbidden in the new one." ;;
     move:*)
-        head_line="ЛИНТЕР (${linters}) НАШЁЛ ЗАМЕЧАНИЯ ПОСЛЕ ЗАПИСИ КОМАНДОЙ:" ;;
+        head_line="THE LINTER (${linters}) FOUND ISSUES AFTER A WRITE BY A COMMAND:" ;;
     *)
-        head_line="ЛИНТЕР (${linters}) НАШЁЛ ЗАМЕЧАНИЯ:" ;;
+        head_line="THE LINTER (${linters}) FOUND ISSUES:" ;;
 esac
 
 ctx="${head_line}
 ${report}
 
-Почини их до конца задачи — правятся ВСЕ замечания в затронутом файле, и новые, и лежавшие раньше: накопленные нарушения глушат сигнал о свежих. ${tail_line}"
+Fix them before the task ends — ALL the issues in the touched file are fixed, the new ones and those that lay there before: accumulated violations drown the signal about fresh ones. ${tail_line}"
 
 jq -n --arg c "$ctx" '{hookSpecificOutput:{hookEventName:"PostToolUse",additionalContext:$c}}' 2>/dev/null
 

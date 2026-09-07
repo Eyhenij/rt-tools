@@ -60,9 +60,9 @@ export STUB_ISSUES='[{"number":700,"title":"[RT-700] Задача","state":"OPEN
 
 # SC-AK-794 — дерево метки не назвало: судится как прежде
 cargo_config "$PLAIN"
-report "SC-AK-794 — без названной метки груз судится задачей" "$(cargo_says '#837: задачи нет на борде')" 1
-report "SC-AK-794 — и заголовком тоже" "$(cargo_says '#837: заголовок не начинается')" 1
-report "SC-AK-794 — и исполнителем" "$(cargo_says '#837: у задачи нет исполнителя')" 1
+report "SC-AK-794 — без названной метки груз судится задачей" "$(cargo_says '#837: the task is not on the board')" 1
+report "SC-AK-794 — и заголовком тоже" "$(cargo_says '#837: the title does not start')" 1
+report "SC-AK-794 — и исполнителем" "$(cargo_says '#837: the task has no assignee')" 1
 
 # SC-AK-795 — метка названа: ни одной строки о записи груза
 cargo_config "$LABELLED"
@@ -71,15 +71,15 @@ report "SC-AK-795 — расхождений не осталось" "$(cargo_cod
 
 # SC-AK-795 — отсев берёт метку, а не всё подряд: соседняя задача судится как прежде
 export STUB_ISSUES='[{"number":700,"title":"Задача без номера","state":"OPEN","assignees":[],"labels":[]},{"number":837,"title":"предложение: гард ожидания","state":"OPEN","assignees":[],"labels":[{"name":"agent-kit-feedback"}]}]'
-report "SC-AK-795 — задача без метки судится как прежде" "$(cargo_says '#700: заголовок не начинается')" 1
+report "SC-AK-795 — задача без метки судится как прежде" "$(cargo_says '#700: the title does not start')" 1
 report "SC-AK-795 — и о грузе по-прежнему молчок" "$(cargo_says '#837')" 0
 
 # SC-AK-796 — отсеянное названо числом
-report "SC-AK-796 — число отсеянных записей названо" "$(cargo_says 'записей груза в очереди 1')" 1
+report "SC-AK-796 — число отсеянных записей названо" "$(cargo_says 'cargo records in the queue 1')" 1
 
 # SC-AK-796 — отсеивать нечего: строки нет вовсе
 export STUB_ISSUES='[{"number":700,"title":"[RT-700] Задача","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]}]'
-report "SC-AK-796 — без груза строки о нём нет" "$(cargo_says 'записей груза в очереди')" 0
+report "SC-AK-796 — без груза строки о нём нет" "$(cargo_says 'cargo records in the queue')" 0
 
 rm -rf "$CARGO_TREE"
 

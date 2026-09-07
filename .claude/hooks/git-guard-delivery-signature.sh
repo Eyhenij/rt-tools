@@ -1,72 +1,78 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/git-guard-delivery-signature.sh · 43a934c30b36 · правится надстройкой, не здесь
-# Подпись машинного коммита для гарда поставки: чей это коммит, той ли почтой он подписан и что
-# делать, если нет.
+# rt-kit v0.25.0 · hooks/git-guard-delivery-signature.sh · fb6d7a7a5daa · правится надстройкой, не здесь
+# The signature of a machine commit for the delivery guard: whose commit it is, whether it is signed
+# with the right mail and what to do if it is not.
 #
-# Строки `# rt-hook:` здесь нет намеренно: событие и образец вызова объявляет сам гард, а
-# помощник рядом хуком не регистрируется и в одиночку ничего не решает. Он зовётся из гарда и
-# пользуется его же переменными — командой, объявленной почтой, именем главной ветки — и его
-# отказом.
+# There is deliberately no `# rt-hook:` line here: the event and the call pattern are declared by the
+# guard itself, and a helper next to it is not registered as a hook and decides nothing alone. It is
+# called from the guard and uses the guard variables — the command, the declared mail, the name of
+# the main branch — and its refusal.
 #
-# Вынесен он отсюда потому, что гард дорос до предела длины: предметов в нём пять, и подпись
-# среди них самая отдельная — своя точка проверки, свои условия молчания, свой отказ.
+# It was moved out of there because the guard grew to the length limit: it holds five subjects, and
+# the signature is the most separate of them — a check point of its own, conditions of silence of
+# its own, a refusal of its own.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
-# Начало вызова помощник берёт оттуда же, откуда все гарды. Источается он и здесь, хотя зовущий
-# гард это уже сделал: пустой образец превратил бы признак в поиск слова по всей строке, то есть
-# в отказ на каждом упоминании команды.
+# The helper takes the start of a call from the same place as every guard. It is sourced here too,
+# although the calling guard has already done it: an empty pattern would turn the sign into a search
+# for a word over the whole line, that is, into a refusal on every mention of the command.
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
 rt_delivery_signature() {
-# --- подпись машинного коммита ------------------------------------------------------------
+# --- the signature of a machine commit ----------------------------------------------------
 #
-# Служебный адрес хостинга состоит из числа, логина и домена, а сопоставляется по числу: логин
-# рядом с ним не сверяет никто. Коммит с чужим числом хостинг припишет постороннему человеку, и
-# изнутри это выглядит верным — имя учётной записи в истории то самое. Так одиннадцать коммитов
-# и уехали в главную ветку за чужой подписью; нашёл это владелец, читая историю глазами.
+# The service address of the hosting consists of a number, a login and a domain, and is matched by
+# the number: nobody checks the login next to it. A commit with a foreign number is ascribed by the
+# hosting to an outside person, and from the inside this looks right — the account name in the
+# history is the very one. That is how eleven commits went into the main branch under a foreign
+# signature; the owner found it, reading the history by eye.
 #
-# Точек две — коммит и пуш, и судят они одно: подпись коммитов, уже лежащих во вкладе ветки.
-# Текст самой команды при этом не разбирается ни там, ни там: почта задаётся её переменными, и
-# разбор ловил бы ту же строку, которая и так перед глазами у набравшего её.
+# There are two points — the commit and the push, and they judge one thing: the signature of commits
+# already lying in the contribution of the branch. The text of the command itself is parsed at
+# neither of them: the mail is set by its variables, and parsing would catch the same line that is
+# already before the eyes of whoever typed it.
 #
-# Коммит добавлен потому, что промах делается на нём и до пуша успевает лечь в несколько коммитов
-# подряд: каждый следующий берёт адрес у предыдущего. Отбитый на коммите промах чинится
-# переписыванием последнего коммита тем же ходом; отбитый на пуше — переписыванием истории, а
-# права на него у исполнителя может не быть вовсе. Первый коммит ветки при этом проходит: судить
-# нечего, вклад пуст.
+# The commit was added because the miss is made at it and before the push it manages to settle into
+# several commits in a row: each next one takes the address from the previous. A miss refused at the
+# commit is fixed by rewriting the last commit in the same move; one refused at the push — by
+# rewriting the history, and the executor may have no right to that at all. The first commit of the
+# branch passes: there is nothing to judge, the contribution is empty.
 #
-# Судится коммит, НАЗВАВШИЙСЯ машинной записью: её логин стоит именем автора либо левой частью
-# почты. Опознавать по самой почте нельзя — она в таком коммите как раз и неверна, а требовать
-# машинную подпись от каждого коммита значило бы отбивать работу, сделанную человеком своими
-# руками в том же дереве.
+# What is judged is a commit that CALLED ITSELF the machine record: its login stands as the author
+# name or as the left part of the mail. Recognising it by the mail itself is impossible — in such a
+# commit it is exactly the mail that is wrong, and demanding a machine signature from every commit
+# would refuse work done by a person with their own hands in the same tree.
 #
-# Логин читается из объявленной почты, а не объявляется вторым свойством: два объявления одного
-# логина разошлись бы молча. Исполнителем задачи он тоже не бывает — в дереве, где хостинг
-# ограничил машинную запись, исполнителем ставят человека, а коммит остаётся машинным.
+# The login is read from the declared mail, it is not declared as a second trait: two declarations
+# of one login would diverge silently. It is not the executor of the task either — in a tree where
+# the hosting has restricted the machine record, a person is set as the executor, and the commit
+# stays a machine one.
 #
-# Вызов пуша узнаётся по двум признакам сразу — начало вызова перед словом `git` и слово `push`
-# отдельным словом. Одной подстрокой «git push» его не поймать: помощник учётных данных и
-# заголовок запроса ставятся ключами `-c` между ними. Начало вызова считает присваивания
-# переменных частью команды: пуш подписанного коммита набирают с подстановкой токена, и признак
-# без них пропускал ровно тот вызов, ради которого этот помощник и заведён.
-# Пробный пуш не отправляет ничего, и подпись у него не спрашивают. Отложенная правка — тоже:
-# `git stash push` кладёт правку в тайник этой же машины, поэтому тайник вырезается из строки, а
-# признак считается по остатку.
-# Коммит узнаётся тем же приёмом: слово `commit` отдельным словом при вызове git. Пробный
-# коммит здесь не отличают — своего `--dry-run` он не знает.
+# A push call is recognised by two signs at once — the start of a call before the word `git` and the
+# word `push` as a separate word. It cannot be caught by the single substring "git push": the
+# credentials helper and the request header are put between them by `-c` keys. The start of a call
+# counts variable assignments as part of the command: a push of a signed commit is typed with the
+# token substituted, and the sign without them let through exactly the call this helper was made
+# for. A dry-run push sends nothing, and its signature is not asked for. A deferred edit likewise:
+# `git stash push` puts the edit into the stash of this same machine, so the stash is cut out of the
+# line and the sign is counted over the remainder.
+# A commit is recognised by the same technique: the word `commit` as a separate word in a git call.
+# A dry-run commit is not told apart here — it knows no `--dry-run` of its own.
 if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git([[:space:]]|\$)" \
     && { { printf '%s' "$cmd" | sed -E 's/git[[:space:]]+stash[[:space:]]+push/git stash/g' | grep -qE '(^|[[:space:]])push([[:space:]]|$)' \
         && ! printf '%s' "$cmd" | grep -q -- '--dry-run'; } \
         || printf '%s' "$cmd" | grep -qE '(^|[[:space:]])commit([[:space:]]|$)'; }; then
-    # Два условия молчания. Дерево, не назвавшее почты машинной записи, требования не получает:
-    # своей машинной записи у пакета нет, а выдуманная отбивала бы работу в чужом дереве.
-    # Вершины главной ветки нет — вклад считать не от чего.
+    # Two conditions of silence. A tree that has not named the mail of the machine record gets no
+    # requirement: the package has no machine record of its own, and an invented one would refuse
+    # work in someone else's tree. No tip of the main branch — there is nothing to count the
+    # contribution from.
     #
-    # Судится вклад ветки, а не вся история: влитое в главную этой веткой уже не чинится, и
-    # отказ за него отбивал бы работу вместо промаха.
+    # The contribution of the branch is judged, not the whole history: what this branch has already
+    # merged into the main one is no longer fixable, and a refusal for it would refuse work instead
+    # of a miss.
     if [ -n "$commit_email" ] \
         && git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1; then
-        # Левая часть служебного адреса: `<число>+<логин>` либо просто логин.
+        # The left part of the service address: `<number>+<login>` or just the login.
         bot_login="${commit_email%%@*}"
         bot_login="${bot_login##*+}"
 
@@ -82,14 +88,15 @@ if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git([[:space:]]|\$)" \
 $(git log --format='%h%x09%an%x09%ae' "origin/${main_branch}..HEAD" 2>/dev/null)
 EOF
 
-        # Коммит под записью, которой дерево не объявляло, прежде проходил молча: помощник
-        # судил только коммит, назвавшийся машинной записью, а пять коммитов подряд под чужим
-        # логином в это условие не попадали вовсе. Дыра шире той, которую помощник закрывает.
+        # A commit under a record the tree has not declared used to pass silently: the helper
+        # judged only a commit that called itself the machine record, and five commits in a row
+        # under a foreign login did not fall under that condition at all. The hole is wider than the
+        # one the helper closes.
         #
-        # Включает эту половину дерево, назвав почты людей ключом профиля: без него требовать
-        # известной подписи от каждого коммита значило бы отбивать работу, сделанную человеком
-        # своими руками. Назвало — известны машинная запись и перечисленные люди, всё прочее
-        # отбивается.
+        # This half is switched on by the tree, by naming the mails of people in a profile key:
+        # without it, demanding a known signature from every commit would refuse work done by a
+        # person with their own hands. Named — then the machine record and the listed people are
+        # known, and everything else is refused.
         unknown=''
         if [ -n "${RT_HUMAN_EMAILS:-}" ]; then
             while IFS="$(printf '\t')" read -r short author email; do
@@ -107,16 +114,16 @@ EOF
         fi
 
         [ -n "$unknown" ] \
-            && deny "BLOCKED: коммит вклада подписан записью, которой дерево не объявляло. Известны машинная запись ${commit_email} и почты людей, названные профилем; всё прочее хостинг припишет тому, чей это адрес, а изнутри истории промах не виден. Расходятся: ${unknown}. Перепиши подпись до пуша, после него это чинит только силовая отправка:
-    последний коммит — GIT_AUTHOR_EMAIL=\"${commit_email}\" GIT_COMMITTER_EMAIL=\"${commit_email}\" git commit --amend --no-edit --reset-author
-    весь вклад ветки — git filter-branch -f --env-filter 'GIT_AUTHOR_EMAIL=\"${commit_email}\"; GIT_COMMITTER_EMAIL=\"${commit_email}\"' origin/${main_branch}..HEAD"
+            && deny "BLOCKED: a commit of the contribution is signed by an account the tree never declared. Known are the machine account ${commit_email} and the emails of people named by the profile; everything else the hosting attributes to whoever owns that address, and from inside the history the miss is invisible. Diverging: ${unknown}. Rewrite the signature before the push, after it only a force push fixes this:
+    the last commit — GIT_AUTHOR_EMAIL=\"${commit_email}\" GIT_COMMITTER_EMAIL=\"${commit_email}\" git commit --amend --no-edit --reset-author
+    the whole contribution of the branch — git filter-branch -f --env-filter 'GIT_AUTHOR_EMAIL=\"${commit_email}\"; GIT_COMMITTER_EMAIL=\"${commit_email}\"' origin/${main_branch}..HEAD"
 
         [ -n "$strangers" ] \
-            && deny "BLOCKED: машинный коммит подписан не той почтой, что объявлена деревом. Хостинг сопоставляет служебный адрес по числу в нём, и коммит с чужим числом он припишет постороннему человеку — изнутри промах не виден, потому что имя учётной записи рядом верное. Расходятся: ${strangers}. Объявлено: ${commit_email} — почта берётся оттуда, а не набирается по памяти. Перепиши подпись до пуша, после него это чинит только силовая отправка:
-    последний коммит — GIT_AUTHOR_NAME=\"${bot_login}\" GIT_AUTHOR_EMAIL=\"${commit_email}\" GIT_COMMITTER_NAME=\"${bot_login}\" GIT_COMMITTER_EMAIL=\"${commit_email}\" git commit --amend --no-edit --reset-author
-    весь вклад ветки — git filter-branch -f --env-filter 'GIT_AUTHOR_EMAIL=\"${commit_email}\"; GIT_COMMITTER_EMAIL=\"${commit_email}\"' origin/${main_branch}..HEAD"
+            && deny "BLOCKED: a machine commit is signed by an email other than the one the tree declared. The hosting matches a service address by the number in it, and a commit with a foreign number it attributes to an outside person — from inside the miss is invisible, because the name of the account next to it is right. Diverging: ${strangers}. Declared: ${commit_email} — the email is taken from there, not typed from memory. Rewrite the signature before the push, after it only a force push fixes this:
+    the last commit — GIT_AUTHOR_NAME=\"${bot_login}\" GIT_AUTHOR_EMAIL=\"${commit_email}\" GIT_COMMITTER_NAME=\"${bot_login}\" GIT_COMMITTER_EMAIL=\"${commit_email}\" git commit --amend --no-edit --reset-author
+    the whole contribution of the branch — git filter-branch -f --env-filter 'GIT_AUTHOR_EMAIL=\"${commit_email}\"; GIT_COMMITTER_EMAIL=\"${commit_email}\"' origin/${main_branch}..HEAD"
     fi
 fi
-# Своего выхода у этой точки нет: пуш бывает и составной командой, а второе её звено судят
-# разделы ниже.
+# This point has no exit of its own: a push happens to be a compound command too, and its second
+# link is judged by the sections below.
 }

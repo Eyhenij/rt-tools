@@ -98,15 +98,15 @@ The "Where we stand" section is **rewritten**, not appended — it is the first 
 reads, and the only thing that survives trimming by size:
 
 ```markdown
-## Где стоим
+## Where we stand
 
-- **Состояние:** `этап-идёт`
-- **Этап:** 3 из 6 — гард и хук запуска
-- **Сделано:** закон заведён, папка задачи и образец написаны
-- **Следующий шаг:** сценарии обоих хуков, затем подключение в настройках
-- **Незакоммиченное:** всё, ветка пока без коммитов
-- **Ждём владельца:** нет
-- **PR:** ещё не открыт
+- **State:** `этап-идёт`
+- **Stage:** 3 of 6 — the guard and the startup hook
+- **Done:** the law is created, the task folder and the sample are written
+- **Next step:** the scenarios of both hooks, then wiring them into the settings
+- **Uncommitted:** everything, the branch has no commits yet
+- **Waiting for the owner:** nothing
+- **PR:** not opened yet
 ```
 
 The PR line is mandatory from the minute the stages are over: between opening the PR and the merge a

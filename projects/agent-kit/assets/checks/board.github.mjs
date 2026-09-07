@@ -1,22 +1,19 @@
 #!/usr/bin/env node
 /**
- * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
+ * Shared work with the work queue: the project board, the tasks and their state.
  *
- * Один и тот же вопрос — «задача N в порядке?» — задают трое: команда заведения
- * задачи (tools/task-new.mjs), сверка очереди (tools/check-board.mjs) и гард
- * поставки (.claude/hooks/git-guard-delivery.sh). Пока ответ на него был записан
- * готовыми строками в паттерне, каждый из них отвечал по-своему: тикет заводился
- * без добавления на борду, и две задачи так и простояли вне очереди.
+ * One question — "is task N in order?" — is asked by three callers: the task creation command
+ * (tools/task-new.mjs), the queue audit (tools/check-board.mjs) and the delivery guard
+ * (.claude/hooks/git-guard-delivery.sh). While the answer stood as ready-made lines in a pattern,
+ * each answered its own way: two tasks were created outside the board that way.
  *
- * Борда к репозиторию не привязана — `projectsV2` у него пуст, — поэтому тикет
- * попадает на неё только явным вызовом, а не сам.
+ * The board is not bound to the repository — its `projectsV2` is empty — so a task lands on it
+ * only by an explicit call. The guard calls this file as a command: `node tools/board.mjs task
+ * <number>` prints the task state as one line of JSON; `move <number> <column>` moves its column,
+ * also `npm run task:move`.
  *
- * Гард зовёт этот файл как команду: `node tools/board.mjs task <номер>` печатает
- * состояние задачи одной строкой JSON. Колонку задачи двигает второй режим —
- * `node tools/board.mjs move <номер> <колонка>`, он же `npm run task:move`.
- *
- * Нет сети или нет токена — это не расхождение, а невозможность проверить:
- * функции возвращают `null`, командный режим печатает `{"offline":true}`.
+ * No network or no token is not a discrepancy but an inability to check: the functions return
+ * `null`, the command mode prints `{"offline":true}`.
  */
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -24,58 +21,59 @@ import { join } from 'node:path';
 import { OfflineError, botToken, gh, ghJson, graphql } from './board-gh.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
-// Наружу клиент уезжает отсюда прежним именем: его зовут у борды три соседних модуля и команды
-// дерева, и переписывать их ради переезда объявления значило бы платить за деление файла дважды.
+// The client leaves here under its old name: three neighbouring modules and the tree's commands
+// call it from the board module, and rewriting them for the moved declaration would mean paying
+// for the file split twice.
 export { OfflineError, botToken, gh, ghJson, graphql };
 
 /**
- * Адрес борды и её колонки живут в `.claude/rt-kit/checks.json`: идентификаторы проекта, поля
- * и вариантов выдаёт сам GitHub при заведении борды, и угадать их нельзя. Пустое значение
- * означает, что дерево борду не завело, — тогда работа с ней отказывается вслух, а не молча
- * правит чужую.
+ * The board address and its columns live in `.claude/rt-kit/checks.json`: the identifiers of the
+ * project, the fields and the options are issued by GitHub itself when the board is created, and
+ * they cannot be guessed. An empty value means the tree has not created a board — then work with
+ * it refuses out loud instead of silently editing someone else's.
  */
 const BOARD = CONFIG.board ?? {};
 
 export const OWNER = BOARD.owner ?? '';
 export const REPO = BOARD.repo ?? '';
 export const PROJECT_ID = BOARD.projectId ?? '';
-/** Поле «Status» борды — колонка, в которой задача стоит сейчас */
+/** The board's "Status" field — the column the task stands in now */
 export const STATUS_FIELD_ID = BOARD.statusFieldId ?? '';
 /**
- * Колонки борды под своими короткими именами. Ход работы читается по ним, а не по
- * тому, есть ли у задачи ветка: ветки на борде не видно вовсе.
+ * The board columns under their short names. The progress is read by them, not by whether the
+ * task has a branch: branches are not visible on the board at all.
  */
 export const STATUS_OPTIONS = BOARD.statusOptions ?? {};
-/** Колонка вновь заведённой задачи */
+/** The column of a newly created task */
 export const BACKLOG_OPTION_ID = STATUS_OPTIONS.backlog?.id ?? '';
-/** Колонка задачи, взятой в работу, и задачи, PR по которой ждёт разбора */
+/** The column of a task taken into work, and of a task whose PR waits for review */
 export const IN_PROGRESS_STATUS = 'in-progress';
 export const IN_REVIEW_STATUS = 'in-review';
-/** Учётная запись машинной работы — та же, от которой идут коммиты */
+/** The machine account — the same one the commits come from */
 export const BOT = BOARD.bot ?? '';
 /**
- * Ключ задач: даёт ветку `<КЛЮЧ>-<номер>-<slug>` и заголовок `[<КЛЮЧ>-<номер>]`.
+ * The task key: gives the branch `<KEY>-<number>-<slug>` and the title `[<KEY>-<number>]`.
  *
- * Единственное в форме имени, что дерево выбирает само, — и потому единственное, что закон о
- * поставке разрешает настраивать. Назвать его дерево обязано: из пустого ключа собирается
- * `[-317]`, и такой заголовок не совпадает ни с чем. Отказ поимённый, потому что молчание
- * здесь дороже: сверка очереди не падает, а помечает каждую задачу неправильно названной, и
- * настоящее расхождение тонет среди этих строк.
+ * The only thing in the name form that the tree chooses itself — and so the only thing the
+ * delivery law allows to configure. The tree must name it: an empty key assembles into `[-317]`,
+ * and such a title matches nothing. The refusal is by name, because silence costs more here: the
+ * queue audit does not fail but marks every task as wrongly named, and the real discrepancy drowns
+ * among those lines.
  */
 export const TASK_KEY = BOARD.taskKey ?? '';
 if (PROJECT_ID && !TASK_KEY) {
     console.error(
-        'board: ключ задач не назван — задать его ключом `board.taskKey` в .claude/rt-kit/checks.json.\n' +
-            'Из него собираются заголовок задачи `[<КЛЮЧ>-<номер>]` и имя ветки `<КЛЮЧ>-<номер>-<краткое-имя>`.'
+        'board: the task key is not named — set it by the key `board.taskKey` in .claude/rt-kit/checks.json.\n' +
+            'The task title `[<KEY>-<number>]` and the branch name `<KEY>-<number>-<short-name>` are assembled from it.'
     );
     process.exit(1);
 }
-/** Кого запрашивают на разбор: без ревьювера PR не попадает во входящие владельца. */
+/** Who is requested for review: without a reviewer the PR does not reach the owner's inbox. */
 export const REVIEWER = BOARD.reviewer ?? '';
 /**
- * Тикеты, стоящие на борде, и элементы борды, тикетами не являющиеся. У каждого тикета —
- * его элемент борды и колонка: переставить задачу можно только по идентификатору элемента,
- * а не по номеру тикета, и берётся он здесь же, чтобы не спрашивать борду дважды.
+ * Tasks standing on the board, and board items that are not tasks. Each task has its board item
+ * and column: a task can be moved only by the item identifier, not by the task number, and it is
+ * taken right here so as not to ask the board twice.
  */
 export function fetchBoard(options) {
     const items = new Map();
@@ -95,7 +93,7 @@ export function fetchBoard(options) {
             if (content.__typename === 'Issue') {
                 items.set(content.number, { itemId: node.id, status: node.status?.name ?? null });
             } else {
-                foreign.push(content.__typename === 'PullRequest' ? `PR #${content.number}` : `черновик «${content.title}»`);
+                foreign.push(content.__typename === 'PullRequest' ? `PR #${content.number}` : `a draft «${content.title}»`);
             }
         }
         if (!page.pageInfo.hasNextPage) {
@@ -106,17 +104,17 @@ export function fetchBoard(options) {
 }
 
 /**
- * Перевод задачи в другую колонку. Состояние задачи на борде — единственное, по чему
- * видно ход работы: ветку и открытый PR борда сама не читает.
+ * Moving a task to another column. The task's state on the board is the only thing the progress
+ * is visible by: the board does not read the branch or the open PR itself.
  */
 export function moveTask(number, status, options) {
     const option = STATUS_OPTIONS[status];
     if (!option) {
-        throw new Error(`неизвестная колонка «${status}» — есть ${Object.keys(STATUS_OPTIONS).join(', ')}`);
+        throw new Error(`an unknown column «${status}» — there are ${Object.keys(STATUS_OPTIONS).join(', ')}`);
     }
     const item = fetchBoard(options).items.get(number);
     if (!item) {
-        throw new Error(`задачи #${number} нет на борде — заводится она командой npm run task:new`);
+        throw new Error(`the task #${number} is not on the board — it is created by the command npm run task:new`);
     }
     graphql(
         `mutation { updateProjectV2ItemFieldValue(input: {projectId: "${PROJECT_ID}", itemId: "${item.itemId}", fieldId: "${STATUS_FIELD_ID}", value: {singleSelectOptionId: "${option.id}"}}) { projectV2Item { id } } }`,
@@ -126,19 +124,21 @@ export function moveTask(number, status, options) {
 }
 
 /**
- * Чьими глазами снято состояние: `machine` — вызов шёл с токеном машинной записи, `client` —
- * от того, под кем залогинен клиент хостинга. Задачу читают токеном, заявку — без него, и по
- * одному выводу это неразличимо: дерево, где машинная запись ограничена хостингом, получало
- * картину человека и считало её проверенной. Логин здесь не печатается — за ним пришлось бы
- * ходить в сеть вторым запросом, а гарды читают ответ и без неё.
+ * Whose eyes the state was taken with: `machine` — the call went with the machine account's
+ * token, `client` — as whoever the hosting client is logged in as. A task is read with the token,
+ * a PR without it, and from the output alone this cannot be told apart: a tree whose machine
+ * account was restricted by the hosting got a person's picture and took it as checked. The login
+ * is not printed here — it would take a second network request, and the guards read the answer
+ * without it.
  */
 export function viewerOf(options) {
     return options?.token ? 'machine' : 'client';
 }
 
 export function fetchIssues(state, options) {
-    // Тело берётся вместе со списком, а не поштучным вызовом на задачу: связь с эпиком читается
-    // как раз в нём, а четыреста вызовов вида «покажи одну задачу» стоили бы дороже всей сверки.
+    // The body is taken together with the list, not by a call per task: the link to an epic is
+    // read exactly there, and four hundred calls of the kind "show one task" would cost more than
+    // the whole audit.
     return ghJson(
         ['issue', 'list', '--state', state, '--limit', '400', '--json', 'number,title,state,assignees,labels,body'],
         options,
@@ -157,16 +157,17 @@ export function fetchIssue(number, options) {
 }
 
 /**
- * Состояние заявки в терминах поставки: существует, черновик ли она и есть ли у неё разбор —
- * запрошенный ревьювер либо уже оставленный отзыв.
+ * The PR state in delivery terms: whether it exists, whether it is a draft and whether it has a
+ * review — a requested reviewer or a review already left.
  *
- * Ревьювера до этой правки не спрашивал никто: он жил прозой в паттерне о коммите и PR, и
- * запрос разбора на самого себя хостинг принимает молча — разбор при этом выглядит
- * запрошенным, а его нет.
+ * Before this edit nobody asked about the reviewer: it lived as prose in the pattern about the
+ * commit and the PR, and the hosting silently accepts a review request to oneself — the review
+ * then looks requested, and there is none.
  */
 export function pullState(ref, options) {
-    // Ссылка на заявку необязательна: клиент хостинга без неё берёт заявку текущей ветки, и
-    // это самая короткая форма вызова. Требовать номер значило бы молча пропускать её.
+    // The PR reference is optional: without it the hosting client takes the PR of the current
+    // branch, and that is the shortest form of the call. Requiring a number would mean silently
+    // skipping it.
     const target = ref === undefined || ref === null || `${ref}`.trim() === '' ? [] : [`${ref}`.trim()];
     let pull;
     try {
@@ -191,17 +192,18 @@ export function pullState(ref, options) {
         author: pull.author?.login ?? null,
         reviewers,
         reviewed: reviewers.filter((login) => login !== (pull.author?.login ?? null)).length > 0,
-        // Конфликт приезжает чужим слиянием, без единого действия автора заявки. Судится только
-        // прямое «конфликтует»: `UNKNOWN` означает, что хостинг ещё считает, и читать его как
-        // конфликт значило бы отбивать работу на каждой свежей вершине.
+        // A conflict arrives through someone else's merge, without a single action by the PR
+        // author. Only a direct "conflicting" is judged: `UNKNOWN` means the hosting is still
+        // computing, and reading it as a conflict would mean refusing work on every fresh head.
         conflicting: pull.mergeable === 'CONFLICTING',
     };
 }
 
 /**
- * На сколько коммитов ветка заявки позади главной. Гард судит основание в минуту открытия, а
- * заявка стоит днями: влитого за это время не видит ни он, ни зелёный прогон. Сравнить нечем —
- * ноль: сверка без доступа отбивала бы работу вместо промаха; без сети летит отказ, как везде.
+ * How many commits the PR branch is behind main. The guard judges the base at the minute of
+ * opening, and a PR stands for days: what was merged in that time is seen neither by it nor by a
+ * green run. Nothing to compare with — zero: an audit without access would refuse work instead
+ * of a miss; without network the refusal is thrown, as everywhere.
  */
 export function behindMain(branch, mainBranch, options) {
     if (!OWNER || !REPO || !branch || !mainBranch) {
@@ -221,8 +223,8 @@ export function behindMain(branch, mainBranch, options) {
     }
 }
 
-/** Вершина берётся вместе с остальным: по ней судят и папку задачи, и прогон, а спросить её
- * потом значило бы второй вызов на каждый PR. */
+/** The head is taken together with the rest: both the task folder and the run are judged by it,
+ * and asking for it later would mean a second call per PR. */
 export function fetchOpenPulls(options) {
     return ghJson(
         ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body,mergeable,baseRefName'],
@@ -231,17 +233,16 @@ export function fetchOpenPulls(options) {
 }
 
 /**
- * Свои открытые заявки, помеченные конфликтующими. Спрашивается это в минуту, когда берётся
- * новая работа: пока отданное конфликтует, влить его человек не может, и каждая следующая
- * заявка прибавляет к очереди ещё одну, которую придётся догонять.
+ * Own open PRs marked as conflicting. Asked at the minute new work is taken: while what was
+ * handed over conflicts, a person cannot merge it, and every next PR adds one more to the queue.
  *
- * Свои — значит открытые машинной записью дерева. Дерево, её не назвавшее, не спрашивается
- * вовсе: `@me` отвечал бы учётной записью, под которой залогинен клиент хостинга, а это чаще
- * всего владелец, и его заявки исполнителю не чинить.
+ * Own means opened by the tree's machine account. A tree that has not named it is not asked at
+ * all: `@me` would answer with the account the hosting client is logged in as — most often the
+ * owner, whose PRs are not the executor's to fix.
  *
- * Судится только прямое `CONFLICTING`. `UNKNOWN` означает, что хостинг ещё считает сливаемость
- * — он пересчитывает её после каждой правки главной ветки, — и читать его как конфликт значило
- * бы отбивать работу на каждой свежей вершине.
+ * Only a direct `CONFLICTING` is judged. `UNKNOWN` means the hosting is still computing
+ * mergeability — it recomputes it after every edit of the main branch — and reading it as a
+ * conflict would refuse work on every fresh head.
  */
 export function conflictingPulls(options) {
     if (!BOT) {
@@ -256,9 +257,9 @@ export function conflictingPulls(options) {
         .map((pull) => ({ number: pull.number ?? null, branch: pull.headRefName ?? '' }));
 }
 
-/** `[<КЛЮЧ>-<номер>]` в начале заголовка — единственная форма номера в названиях */
+/** `[<KEY>-<number>]` at the start of the title — the only form of the number in names */
 export const TITLE_NUMBER = new RegExp(`^\\[${TASK_KEY}-(\\d+)\\]\\s+\\S`);
-/** `<КЛЮЧ>-<номер>-<slug>` — имя ветки, отведённой под задачу */
+/** `<KEY>-<number>-<slug>` — the name of the branch set aside for the task */
 export const BRANCH_NUMBER = new RegExp(`^${TASK_KEY}-(\\d+)-[a-z0-9][a-z0-9-]*$`);
 
 export function numberFromTitle(title) {
@@ -267,42 +268,41 @@ export function numberFromTitle(title) {
 }
 
 /**
- * Номер задачи по имени папки. Ключ впереди необязателен: имя ветки вида `chore/312-slug`
- * тоже законно, и папка под ним называется голым числом. Если сверка не распознает в имени
- * номер, папка будет лежать среди текущих сколько угодно — одну такую нашли грепом, а не
- * проверкой.
+ * The task number by the folder name. The key in front is optional: a branch name of the kind
+ * `chore/312-slug` is lawful too, and the folder under it is named by the bare number. If the
+ * audit does not recognise a number in the name, the folder will lie among the current ones for
+ * any length of time — one such was found by grep, not by a check.
  */
 export function numberFromTaskDir(name) {
-    // Ключ подставляем, только если дерево его задало: из пустого получилось бы `^(?:-)?`, и
-    // папка с ключом в имени вообще перестала бы распознаваться.
+    // The key is substituted only if the tree has set it: an empty one would give `^(?:-)?`, and
+    // a folder with the key in its name would stop being recognised at all.
     const prefix = TASK_KEY ? `(?:${TASK_KEY}-)?` : '';
     const match = new RegExp(`^${prefix}(\\d+)-`).exec(name ?? '');
     return match ? Number(match[1]) : null;
 }
 
 /**
- * Папки задач, включая вложенные. Путь повторяет имя ветки целиком, вместе с косой, поэтому
- * папка ветки `chore/312-slug` лежит на втором уровне — обход только по верхнему её не видит.
+ * Task folders, including nested ones. The path repeats the branch name in full, slash included,
+ * so the folder of branch `chore/312-slug` lies on the second level — a walk over the top level
+ * alone does not see it.
  *
- * Вглубь спускаемся ровно на один уровень: в имени ветки одна косая, а всё, что глубже, папкой
- * задачи уже не будет — зато туда попал бы архив, если дерево держит его внутри.
+ * We descend exactly one level: a branch name has one slash, and anything deeper is no longer a
+ * task folder — but the archive would get in there, if the tree keeps it inside.
  */
-/** Шапка раскладки: по ней разложенную копию узнаёт и гард места правки. */
+/** The layout header: by it the laid-out copy is recognised, and so is the edit-place guard. */
 const STAMP = /^<!-- rt-kit v[^\n]*-->\n/m;
 
 /**
- * Снять с копий образца шапку раскладки.
+ * Remove the layout header from copies of the template.
  *
- * Образец разложен пакетом и шапку несёт по праву: его кладёт и обновляет раскладка. Копия под
- * задачу — уже текст проекта, тем же доводом, каким пакет кладёт без шапки черновик компаньона:
- * с первой правки сверять в ней нечего.
+ * The template carries the header by right: the layout puts it there and updates it. A copy under
+ * a task is already the project's text, by the same argument by which the companion draft is laid
+ * out without a header: from the first edit there is nothing to audit in it. Left in the copy, the
+ * header refuses the very first edit of the grill and sends one to edit the package template
+ * instead. It was removed by three lines by hand, anew with every piece of work.
  *
- * Оставленная в копии, шапка отбивает первую же правку разбора просьбы — то есть первое движение
- * любой работы, — и отказ уводит править образец пакета вместо копии под задачу. Снималась она
- * тремя строками руками, каждой работой заново.
- *
- * Возвращает имена файлов, с которых шапка снята: по ним сценарий и судит, что снятие работает,
- * а вызывающий — что папка собрана.
+ * Returns the names of the files the header was removed from: by them the scenario judges that
+ * the removal works, and the caller that the folder is assembled.
  */
 export function unstampFolder(folder) {
     const cleaned = [];
@@ -356,9 +356,9 @@ export function numberFromBranch(branch) {
 }
 
 /**
- * Состояние задачи в терминах закона: существует, стоит в очереди работ, у неё есть
- * исполнитель, она ещё не закрыта. Закрытая означает, что ветка под неё уже въехала
- * в главную, а у задачи ветка одна.
+ * The task state in the law's terms: it exists, it stands in the work queue, it has an executor,
+ * it is not yet closed. Closed means the branch under it has already gone into main, and a task
+ * has one branch.
  */
 export function taskState(number, options) {
     const issue = fetchIssue(number, options);
@@ -381,52 +381,52 @@ export function taskState(number, options) {
 }
 
 /**
- * Ответ очереди работ о заведённой задаче, сложенный в строки, и приговор: обеспечена работа
- * или нет.
+ * The work queue's answer about a created task, folded into lines, and the verdict: secured or not.
  *
- * Отделено от вызовов сети намеренно. Заведение кончается не выводом команды, а ответом
- * очереди, и решение о том, что напечатать и чем кончиться, — это то самое место, где
- * шестнадцать задач подряд прошли как успешные, не попав в очередь ни одна. Внутри вызовов
- * сети оно проверяется только живой бордой, то есть не проверяется никогда.
+ * Separated from the network calls on purpose. Creation ends not with the command output but with
+ * the queue's answer, and the decision of what to print and how to end is exactly where sixteen
+ * tasks in a row passed as successful without one reaching the queue. Inside the network calls it
+ * is checked only by a live board, that is, never.
  *
- * `state` — то, что вернул `taskState`, либо `{ offline: <причина> }`, если спросить не удалось.
+ * `state` — what `taskState` returned, or `{ offline: <reason> }` if asking failed.
  */
 export function describeTaskState(number, state) {
     if (state?.offline) {
         return {
             ok: false,
             lines: [
-                `в очереди работ: спросить не удалось — ${state.offline}`,
-                'состояние очереди неизвестно, и заведённым это не считается',
+                `in the work queue: could not be asked — ${state.offline}`,
+                'the state of the queue is unknown, and that does not count as created',
             ],
         };
     }
     if (!state?.exists) {
-        return { ok: false, lines: [`задачи #${number} у хостинга нет — заведение не состоялось`] };
+        return { ok: false, lines: [`the hosting has no task #${number} — the creation did not happen`] };
     }
     if (!state.onBoard) {
         return {
             ok: false,
-            lines: [`в очереди работ: НЕТ`, 'задача, которой нет в очереди, работой не обеспечена — по ней никто не придёт'],
+            lines: [`in the work queue: NO`, 'a task that is not in the queue is backed by no work — nobody will come for it'],
         };
     }
 
-    const column = state.status ? `колонка «${state.status}»` : 'колонки нет';
+    const column = state.status ? `the column «${state.status}»` : 'there is no column';
     if (!state.assigned) {
         return {
             ok: false,
-            lines: [`в очереди работ: ${column}, исполнителя нет`, 'ничья задача стоит в очереди невидимой для того, кто её делает'],
+            lines: [`in the work queue: ${column}, no assignee`, 'a task belonging to nobody stands in the queue invisible to whoever does it'],
         };
     }
-    return { ok: true, lines: [`в очереди работ: ${column}, исполнитель ${state.assignees.join(', ')}`] };
+    return { ok: true, lines: [`in the work queue: ${column}, assignee ${state.assignees.join(', ')}`] };
 }
 
 const isEntryPoint = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
-// Токен машинной записи подставляется и здесь, как в переводе колонки. Без него клиент идёт от
-// того, под кем залогинен, а в ходе гарда он не залогинен ни под кем: хостинг отвечает, что
-// репозитория нет вовсе, чтение задачи возвращает пустоту, и «спросить было нечем» становится
-// неотличимо от «задачи не существует». Гард поставки на таком ответе отбивал открытие заявки
-// пятью взаимоисключающими причинами разом — задачи нет, задача закрыта, задачи нет в очереди.
+// The machine account's token is substituted here too, as in the column move. Without it the
+// client goes as whoever is logged in, and during a guard's turn nobody is logged in: the hosting
+// answers that the repository does not exist at all, reading the task returns nothing, and "there
+// was nothing to ask with" becomes indistinguishable from "the task does not exist". On such an
+// answer the delivery guard refused opening a PR with five mutually exclusive reasons at once —
+// no task, the task is closed, the task is not in the queue.
 if (isEntryPoint && process.argv[2] === 'task') {
     try {
         process.stdout.write(`${JSON.stringify(taskState(Number(process.argv[3]), { token: botToken() ?? undefined }))}\n`);
@@ -442,9 +442,10 @@ if (isEntryPoint && process.argv[2] === 'task') {
 
 if (isEntryPoint && process.argv[2] === 'pr') {
     try {
-        // Токена здесь нет намеренно: полям разбора нужен доступ к учётным записям организации,
-        // которого машинной записи не давали, и запрос с ним отказывает по правам целиком.
-        // Клиент без токена идёт от того, под кем залогинен, и у человека отвечает.
+        // There is no token here on purpose: the review fields need access to the organisation's
+        // accounts, which the machine account was not given, and a request with it is refused on
+        // rights entirely. A client without a token goes as whoever is logged in, and for a person
+        // it answers.
         process.stdout.write(`${JSON.stringify(pullState(process.argv[3]))}\n`);
     } catch (error) {
         if (error instanceof OfflineError) {
@@ -456,9 +457,9 @@ if (isEntryPoint && process.argv[2] === 'pr') {
     }
 }
 
-// Свои конфликтующие заявки одной строкой JSON: `{"conflicting":[{"number":…,"branch":…}]}`.
-// Зовёт её гард поставки перед тем, как пустить взятие новой работы. Дерево без машинной записи
-// отвечает пустым списком: спрашивать не о ком.
+// Own conflicting PRs as one line of JSON: `{"conflicting":[{"number":…,"branch":…}]}`.
+// The delivery guard calls it before letting new work be taken. A tree without a machine account
+// answers with an empty list: there is nobody to ask about.
 if (isEntryPoint && process.argv[2] === 'conflicts') {
     try {
         process.stdout.write(`${JSON.stringify({ conflicting: conflictingPulls({ token: botToken() ?? undefined }) ?? [] })}\n`);
@@ -472,26 +473,26 @@ if (isEntryPoint && process.argv[2] === 'conflicts') {
     }
 }
 
-// Перевод колонки правит борду. Токен машинной записи здесь необязателен: не назвавшее его
-// дерево правит борду учётной записью, под которой залогинен клиент хостинга. Требование
-// токена держало бы очередь работ у дерева, машинной записи не заводившего, и у дерева, чью
-// запись ограничил хостинг. Отсутствие связи при этом — по-прежнему отказ, а не пропуск:
-// непереставленная задача молча остаётся в прежней колонке, и расхождение всплывает только
-// сверкой очереди.
+// The column move edits the board. The machine account's token is optional here: a tree that has
+// not named it edits the board as the account the hosting client is logged in as. Requiring the
+// token would hold the work queue back from a tree that created no machine account, and from a
+// tree whose account the hosting restricted. No connection is still a refusal, not a skip: a task
+// left unmoved silently stays in its old column, and the discrepancy surfaces only through the
+// queue audit.
 if (isEntryPoint && process.argv[2] === 'move') {
     const number = Number(process.argv[3]);
     const status = process.argv[4];
     if (!Number.isInteger(number) || !status) {
-        console.error(`board: нужен номер задачи и колонка — node tools/board.mjs move 263 ${IN_PROGRESS_STATUS}`);
+        console.error(`board: a task number and a column are needed — node tools/board.mjs move 263 ${IN_PROGRESS_STATUS}`);
         process.exit(1);
     }
     const token = botToken() ?? undefined;
     try {
         const moved = moveTask(number, status, { token });
-        console.log(`#${number}: ${moved.from ?? 'вне колонок'} → ${moved.to}`);
+        console.log(`#${number}: ${moved.from ?? 'outside the columns'} → ${moved.to}`);
     } catch (error) {
-        const reason = error instanceof OfflineError ? `нет связи с GitHub: ${error.message}` : String(error.message ?? error);
-        console.error(`board: задача #${number} осталась на прежнем месте — ${reason}`);
+        const reason = error instanceof OfflineError ? `no connection to GitHub: ${error.message}` : String(error.message ?? error);
+        console.error(`board: the task #${number} stayed in its former place — ${reason}`);
         process.exit(1);
     }
 }

@@ -1,26 +1,29 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
-# Требует: hooks/deny-tail.sh
-# Гард предложения: ход, в котором владелец сказал завести или отправить предложение слою правил,
-# не заканчивается, пока отправки не было. Stop.
+# Requires: hooks/deny-tail.sh
+# Proposal guard: a turn in which the owner said to write or send a proposal to the rules layer
+# does not end until the sending has happened. Stop.
 #
-# Зачем именно так. Написанное и не отправленное лежит в дереве неотличимо от отправленного:
-# своей записи в слое правил у него нет, и владелец читает работу сделанной, пока не спросит
-# прямо. Отправка при этом неудобна ровно в одном месте — она пишет отметки в файлы предложений и
-# делает дерево грязным, — и этим доводом исполнитель закрывает молчание правил.
+# Why this way. What is written and not sent lies in the tree indistinguishable from what was
+# sent: it has no record of its own in the rules layer, and the owner reads the work as done until
+# they ask directly. Sending is inconvenient in exactly one place — it writes marks into the
+# proposal files and makes the tree dirty — and with that argument the executor closes the
+# silence of the rules.
 #
-# Ловится просьба образцами, а не пониманием смысла: оценку «владелец просил отправить» назначал
-# бы тот, кому она мешает. Глагол обязателен: «разбери пропозалы» — работа над уже приехавшими, и
-# отправкой она не кончается. Слово «предложение» само по себе не считается тоже — оно ходит в
-# каждом втором ходе о другом, и рядом с ним нужно слово о слое правил или о пакете.
+# The request is caught by samples, not by understanding the meaning: the appraisal "the owner
+# asked to send" would be assigned by whoever it hinders. The verb is mandatory: "go through the
+# proposals" is work on what has already arrived, and it does not end with sending. The word
+# "proposal" alone does not count either — it appears in every second turn about something else,
+# and next to it a word about the rules layer or about the package is needed.
 #
-# Отправкой считается вызов команды пакета без сухого прогона, сделанный в том же ходе: сухой
-# прогон показывает, что уехало бы, ничего не заводит и следа наружу не оставляет.
+# Sending is a call of the package command without a dry run, made in the same turn: a dry run
+# shows what would leave, creates nothing and leaves no trace outside.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: при любой ошибке, нехватке `jq`, отсутствии записи хода и повторном
-# заходе ход РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права заклинить разговор.
+# FAIL-OPEN: on any error, missing `jq`, missing turn transcript and a repeated pass, the turn is
+# ALLOWED (exit 0). A broken guard has no right to jam the conversation.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is written by the shared deny tail, not by the
+# guard itself.
 RT_GUARD_NAME=proposal-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -32,7 +35,7 @@ input="$RT_HOOK_INPUT"
 
 command -v jq >/dev/null 2>&1 || exit 0
 
-# Повторный заход по тому же ходу не судится: гард сказал своё один раз и отпускает.
+# A repeated pass over the same turn is not judged: the guard has said its word once and lets go.
 active="$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/null)"
 [ "$active" = "true" ] && exit 0
 
@@ -40,37 +43,41 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 [ -z "$transcript" ] && exit 0
 [ -f "$transcript" ] || exit 0
 
-# Каталог предложений у дерева свой. Заданный пустым — отказ дерева от требования: дереву, не
-# берущему переносимый слой правил, гард не навязывается. Каталога нет на диске — то же самое:
-# дерево механизмом не пользуется, и стража ему не навязывают. Судить по одной переменной значило
-# бы требовать отправки там, где отправлять нечем и некуда.
+# The proposals directory is the tree's own. Set to empty, it is the tree's opt-out from the
+# requirement: a tree that does not take the portable rules layer gets no guard imposed on it. No
+# directory on disk — the same: the tree does not use the mechanism, and the guard is not imposed
+# on it. Judging by one variable alone would demand sending where there is nothing to send with
+# and nowhere to send to.
 root="${CLAUDE_PROJECT_DIR:-.}"
 proposals_dir="${RT_PROPOSALS_DIR-.claude/rt-kit/proposals}"
 [ -z "$proposals_dir" ] && exit 0
 [ -d "$root/$proposals_dir" ] || exit 0
 
-# Просьба владельца. Набор открыт и пополняется правкой: полнота его — открытый вопрос
-# договорённости, а не обещание.
+# The owner's request. The set is open and grows by editing: its completeness is an open question
+# of the agreement, not a promise.
 #
-# Латиница читается наравне: заход, который владелец ведёт по-английски, отличается от русского
-# словами, а требование в нём то же. Своей ветки ей не заводится — обе пары стоят в одном
-# образце, иначе одну из них правили бы, забывая про вторую.
+# Latin script is read on equal terms: a session the owner conducts in English differs from a
+# Russian one by its words, and the requirement in it is the same. It gets no branch of its own —
+# both pairs stand in one sample, otherwise one of them would be edited while the other is
+# forgotten.
 asked_re='(завед|напиш|отправ|пошл|зашл|отошл|выгруз|send|file|open|submit|raise|report)[а-яёa-z]*[^.!?]{0,40}(пропозал|предложени|proposal)|(пропозал|предложени|proposal)[а-яёa-z]*[^.!?]{0,40}(завед|напиш|отправ|пошл|зашл|отошл|выгруз|send|file|open|submit|raise|report)'
 
-# Сосед, без которого слово «предложение» не считается просьбой о слое правил.
+# The neighbour without which the word "proposal" does not count as a request about the rules
+# layer.
 context_re='пропозал|слою правил|слоя правил|слой правил|пакет|agent-kit|наверх|proposal|rule layer|upstream|package'
 
-# Ход — это всё, что записано после последнего настоящего ввода владельца. Ответ инструмента
-# приходит той же ролью, поэтому строки с `tool_result` вводом не считаются.
+# A turn is everything recorded after the owner's last real input. A tool result arrives under
+# the same role, so lines with `tool_result` are not counted as input.
 #
-# Сводка сжатия — тоже не ввод, хотя приходит ролью владельца и ответом инструмента не является.
-# Она пересказывает ходы, которые уже кончились, и просьба, исполненная вчера, читается в ней как
-# сказанная сейчас: ход, где о предложениях не было сказано ни слова, отбивался на пересказе
-# чужой просьбы — каталог предложений при этом был пуст, и отправлять было нечего вовсе. По
-# словам сводка от речи владельца неотличима и богаче её, потому что пересказывает всю сессию
-# разом; узнаётся она признаком записи, а не текстом.
+# A compaction summary is not input either, although it arrives under the owner's role and is not
+# a tool result. It retells turns that have already ended, and a request fulfilled yesterday reads
+# in it as said now: a turn in which not a word was said about proposals was refused on a retelling
+# of someone else's request — the proposals directory was empty at the time, and there was nothing
+# to send at all. By its words the summary is indistinguishable from the owner's speech and richer
+# than it, because it retells the whole session at once; it is recognised by a mark on the record,
+# not by the text.
 #
-# Хвост в 400 строк: запись хода растёт всю сессию, а судится только последний ход.
+# A 400-line tail: the transcript grows all session long, and only the last turn is judged.
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg asked "$asked_re" --arg ctx "$context_re" '
     def is_input:
         .type == "user"
@@ -88,8 +95,8 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg asked "$asked_
     | (if $i == null then [] else .[$i:] end) as $turn
     | (if $i == null then "" else ($turn[0] | text_of) end) as $said
     | [$turn[] | select(.type == "assistant") | (.message.content // [])[] | select(.type == "tool_use")] as $uses
-    # Признак нечувствителен к регистру флагом, а не приведением: приведение знает только
-    # латиницу, и «Отправь Пропозал» с большой буквы проходило бы мимо набора образцов молча.
+    # The sign is case-insensitive by a flag, not by lowercasing: lowercasing knows Latin script
+    # only, and a capitalised "Send the Proposal" in Cyrillic would pass the sample set silently.
     | (($said | test($asked; "i")) and ($said | test($ctx; "i"))) as $wanted
     | ($uses | map(
           ((.name // "") | test("^Bash$"))
@@ -101,10 +108,11 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg asked "$asked_
 
 [ "$verdict" = "owe" ] || exit 0
 
-# Команда отправки называется той, которая в этом дереве исполняется. Дерево, поставившее пакет
-# зависимостью, зовёт бинарь из зависимостей; дерево, где пакет живёт исходниками, бинаря не
-# имеет вовсе — там зовут собранный bin. Названная наугад команда стоит исполнителю хода: отказ
-# читается как указание, и вызов `npx agent-kit` отвечает в таком дереве отказом установки.
+# The sending command is named as the one that runs in this tree. A tree that installed the
+# package as a dependency calls the binary from its dependencies; a tree where the package lives
+# as sources has no binary at all — there the built bin is called. A command named at random
+# costs the executor a turn: the refusal reads as an instruction, and a `npx agent-kit` call in
+# such a tree answers with an installation refusal.
 if [ -x "$root/node_modules/.bin/agent-kit" ]; then
     propose_cmd="npx agent-kit propose"
 else
@@ -116,18 +124,18 @@ else
     fi
 fi
 
-reason="BLOCKED by proposal-guard: владелец сказал завести или отправить предложение слою правил, а отправки в этом ходе не было. Написанное и не отправленное лежит в дереве неотличимо от отправленного: своей записи в слое правил у него нет, и владелец читает работу сделанной, пока не спросит прямо.
+reason="BLOCKED by proposal-guard: the owner said to create or send a proposal to the rules layer, and no sending happened in this turn. What is written and not sent lies in the tree indistinguishable from what was sent: it has no record of its own in the rules layer, and the owner reads the work as done until they ask outright.
 
-Предложение пишется файлом в \`$proposals_dir/\` и уезжает в тот же ход:
+A proposal is written as a file in \`$proposals_dir/\` and leaves in the same turn:
 
     $propose_cmd
 
-Сухой прогон отправкой не является: он показывает, что уехало бы, и следа наружу не оставляет. Отправка пишет отметки в файлы предложений и делает дерево грязным — при открытом PR они ложатся вторым коммитом в ту же ветку, и это их место, а не повод отложить.
+A dry run is not a sending: it shows what would have left and leaves no trace outward. The sending writes marks into the proposal files and makes the tree dirty — with an open PR they land as a second commit in the same branch, and that is their place, not a reason to postpone.
 
-Гард судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
-# Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
-# а причина отказа остаётся прежней.
+# The shared deny tail: the two lawful moves. The file may not be laid out — then there is no
+# tail, and the reason for the refusal stays the same.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
@@ -138,6 +146,6 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-    || printf '{"decision":"block","reason":"proposal-guard: владелец просил предложение — отправь его командой пакета."}\n'
+    || printf '{"decision":"block","reason":"proposal-guard: the owner asked for a proposal — send it by the command of the package."}\n'
 
 exit 0

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # rt-hook: PostToolUse Skill
-# Запись о загруженном правиле. PostToolUse на инструменте `Skill`.
+# The record of a loaded rule. PostToolUse on the `Skill` tool.
 #
-# Гейт обязан знать, загружено правило или нет, а спросить об этом ему некого: инструмент о
-# своих прошлых вызовах не рассказывает. Поэтому загрузка записывается здесь, по сессии.
+# The gate has to know whether a rule is loaded or not, and it has nobody to ask: the tool does not
+# tell about its past calls. So the load is recorded here, per session.
 #
-# Хук только наблюдает: он всегда пропускает и ничего не отбивает.
+# The hook only observes: it always passes and refuses nothing.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
@@ -22,8 +22,8 @@ dir="${TMPDIR:-/tmp}/claude-skill-gate"
 mkdir -p "$dir" 2>/dev/null || exit 0
 printf '%s\n' "$skill" >> "$dir/${sid}.loaded" 2>/dev/null
 
-# Та же загрузка вторым адресом — в наблюдения дерева. Запись выше живёт до сжатия контекста и
-# гибнет вместе с ним: она отвечает гейту на вопрос «загружено ли», и больше ни на что.
+# The same load at a second address — the tree's observations. The record above lives until context
+# compaction and dies with it: it answers the gate's question "is it loaded", and nothing else.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null

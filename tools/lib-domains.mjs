@@ -1,11 +1,11 @@
-// rt-kit v0.25.0 · checks/lib-domains.mjs · 5edef10b4a79 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/lib-domains.mjs · cd05170c467a · правится надстройкой, не здесь
 /**
- * Доменная сетка: какие каталоги считаются доменами, из каких слоёв состоит каждая их форма и
- * какие либы в них лежат. Отсюда же выходят либы, оказавшиеся вне сетки, и плоские либы
- * бэкенда — обе группы дальше проверяются наравне с доменными.
+ * The domain grid: which directories count as domains, which layers each of their forms is made of
+ * and which libs lie in them. From here also come the libs that ended up outside the grid and the
+ * flat libs of the backend — both groups are checked further on a par with the domain ones.
  *
- * Имя не начинается с `check-`: перебором таких имён умолчание пакета собирает набор гейта
- * пуша, и помощник с ним гейт стал бы гонять как отдельную проверку.
+ * The name does not start with `check-`: by walking such names the package default assembles the
+ * set of the push gate, and a helper with one the gate would run as a check of its own.
  */
 import {
     API_DOMAIN_LAYERS,
@@ -29,13 +29,13 @@ import {
 } from './lib-common.mjs';
 
 /**
- * Домен ли это. Домен заводится под предмет, и предмет виден по тому, что заполнен у
- * домена не один слой: экраны и состояние, запросы и механика, выход к чужому и то,
- * что мы отдаём. Заполнен ровно один — это слот, который заполнит следующая задача, и
- * от домена он не отличим ничем, кроме намерения.
+ * Whether this is a domain. A domain is started for a subject, and the subject is seen by more
+ * than one layer of the domain being filled: the screens and the state, the requests and the
+ * mechanics, the way out to a stranger and what we hand over. Exactly one is filled — that is a
+ * slot the next task will fill, and it differs from a domain by nothing but the intention.
  *
- * Домен вносится строкой в список исключений вместе с причиной, и причина бывает
- * настоящей: сборка PDF со своими шрифтами не едет ни в чей чужой граф зависимостей.
+ * A domain is entered as a line into the list of exceptions together with a reason, and the reason
+ * is sometimes real: a PDF build with fonts of its own travels into nobody else's dependency graph.
  */
 function checkDomainIsFilled(domainPath, libs) {
     if (isSingleLayerDomain(domainPath)) {
@@ -45,13 +45,13 @@ function checkDomainIsFilled(domainPath, libs) {
     if (libs.length > 1 && filled.length === 1) {
         report(
             domainPath,
-            `заполнен один слой — \`${filled[0].slice(domainPath.length + 1)}\`: домен от слота этим не отличить. ` +
-                'Либо содержимое переезжает в существующую либу, либо домен вносится строкой с причиной в `singleLayerDomains`'
+            `one layer is filled — \`${filled[0].slice(domainPath.length + 1)}\`: a domain cannot be told from a slot by that. ` +
+                'Either the content moves into an existing lib, or the domain is entered by a line with a reason in `singleLayerDomains`'
         );
     }
 }
 
-/** Собирает пути всех либ домена и попутно проверяет состав его слоёв */
+/** Collects the paths of all the libs of a domain and checks the make-up of its layers on the way */
 function collectDomainLibs(domainPath, isCommon) {
     const expected = isCommon ? COMMON_DOMAIN_LAYERS : FEATURE_DOMAIN_LAYERS;
     const actual = dirsIn(domainPath);
@@ -59,12 +59,12 @@ function collectDomainLibs(domainPath, isCommon) {
     const missing = expected.filter((layer) => !actual.includes(layer));
     const extra = actual.filter((layer) => !expected.includes(layer));
     if (missing.length > 0) {
-        report(domainPath, `нет слоёв: ${missing.join(', ')}`);
+        report(domainPath, `no layers: ${missing.join(', ')}`);
     }
     if (extra.length > 0) {
         report(
             domainPath,
-            `лишние каталоги: ${extra.join(', ')}${extra.includes('shell') && isCommon ? ' (у общего домена shell не бывает: он не роутится)' : ''}`
+            `extra directories: ${extra.join(', ')}${extra.includes('shell') && isCommon ? ' (a common domain never has shell: it is not routed)' : ''}`
         );
     }
 
@@ -77,7 +77,7 @@ function collectDomainLibs(domainPath, isCommon) {
         } else {
             const screens = dirsIn(featurePath).filter((screen) => isLib(`${featurePath}/${screen}`));
             if (screens.length === 0) {
-                report(featurePath, 'у фичевого домена `feature` — каталог с либой на экран, здесь ни одной');
+                report(featurePath, 'in a feature domain `feature` is a directory with a lib per screen, here there is none');
             }
             libs.push(...screens.map((screen) => `${featurePath}/${screen}`));
         }
@@ -89,13 +89,13 @@ function collectDomainLibs(domainPath, isCommon) {
 }
 
 /**
- * Домены бэкенда: `<корень либ>/<семья бэкенда>/<домен>` с четырьмя слоями. `feature` бывает и либой,
- * и каталогом с либой на proto-сервис — по тому же правилу, по которому у
- * фичевого домена фронта `feature/<экран>`.
+ * The domains of the backend: `<libs root>/<backend family>/<domain>` with four layers. `feature`
+ * is both a lib and a directory with a lib per proto service — by the same rule by which a
+ * feature domain of the frontend has `feature/<screen>`.
  *
- * Пустой слой — не дефект: `api` пуст у домена, который ни с кем чужим не
- * говорит, `data-access` — у того, что не касается базы. Слой всё равно заводится
- * либой, иначе граница домена объявлена не полностью.
+ * An empty layer is not a defect: `api` is empty at a domain that speaks with no stranger,
+ * `data-access` at one that does not touch the database. The layer is started as a lib all the
+ * same, otherwise the boundary of the domain is declared incompletely.
  */
 function collectApiDomainLibs() {
     const libs = [];
@@ -110,12 +110,12 @@ function collectApiDomainLibs() {
         const missing = API_DOMAIN_LAYERS.filter((layer) => !actual.includes(layer));
         const extra = actual.filter((layer) => !API_DOMAIN_LAYERS.includes(layer));
         if (missing.length > 0) {
-            report(domainPath, `нет слоёв: ${missing.join(', ')}`);
+            report(domainPath, `no layers: ${missing.join(', ')}`);
         }
         if (extra.length > 0) {
             report(
                 domainPath,
-                `лишние каталоги: ${extra.join(', ')}${extra.includes('shell') || extra.includes('ui') ? ' (у бэкенда ui и shell не бывает)' : ''}`
+                `extra directories: ${extra.join(', ')}${extra.includes('shell') || extra.includes('ui') ? ' (the backend never has ui and shell)' : ''}`
             );
         }
 
@@ -130,7 +130,7 @@ function collectApiDomainLibs() {
             } else {
                 const services = dirsIn(featurePath).filter((service) => isLib(`${featurePath}/${service}`));
                 if (services.length === 0) {
-                    report(featurePath, '`feature` — либа или каталог с либой на proto-сервис, здесь ни того ни другого');
+                    report(featurePath, '`feature` is a lib or a directory with a lib per proto service, here there is neither');
                 }
                 domainLibs.push(...services.map((service) => `${featurePath}/${service}`));
             }
@@ -143,7 +143,7 @@ function collectApiDomainLibs() {
     return libs.sort();
 }
 
-/** Все либы доменной сетки обоих семейств */
+/** All the libs of the domain grid of both families */
 function collectAllDomainLibs() {
     const libs = [];
 
@@ -166,7 +166,7 @@ function collectAllDomainLibs() {
     return libs.sort();
 }
 
-/** Каждая либа на диске должна быть либой доменной сетки или значиться в allowlist */
+/** Every lib on the disk must be a lib of the domain grid or be listed in the allowlist */
 function collectStrayLibs(knownLibs) {
     const strays = [];
     const walk = (path) => {
@@ -177,7 +177,7 @@ function collectStrayLibs(knownLibs) {
             if (!knownLibs.includes(path) && !isIgnoredLib(path)) {
                 strays.push(path);
             }
-            // либа старой раскладки может держать внутри себя новые слои — обход продолжается
+            // a lib of the old layout may hold new layers inside itself — the walk goes on
             if (!isLegacyLib(path)) {
                 return;
             }
@@ -190,11 +190,11 @@ function collectStrayLibs(knownLibs) {
 }
 
 /**
- * Плоские либы бэкенда: `<корень либ>/<семья бэкенда>/<домен>`. Лесенки слоёв у них нет по
- * устройству — домен это одна либа, — но всё остальное проверяется наравне с
- * доменной сеткой. До сужения исключение по этому корню снимало с них и состав
- * файлов, и тег, и алиас: новая либа заводилась без `vitest.config.mts`, и
- * `nx test` по ней молча не гонял ни одной спеки.
+ * The flat libs of the backend: `<libs root>/<backend family>/<domain>`. They have no ladder of
+ * layers by their make-up — a domain is one lib — but everything else is checked on a par with
+ * the domain grid. Before the narrowing, the exception on this root took off from them the
+ * make-up of the files, the tag and the alias too: a new lib was started without
+ * `vitest.config.mts`, and `nx test` silently ran not a single test over it.
  */
 function collectFlatLibs() {
     return [...(allowlist.flatLibRoots?.keys() ?? [])]

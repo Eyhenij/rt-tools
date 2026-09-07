@@ -1,35 +1,38 @@
 #!/usr/bin/env bash
 # rt-hook: PostToolUse .*
-# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
+# Requires: hooks/profile-check.sh, hooks/deny-tail.sh
 # rt-hook: PreToolUse .*
-# Заполнение окна: заход доводится до логической точки заранее, а не обрывается на середине.
+# Window fill: the session is brought to a logical point in advance, not cut off in the middle.
 #
-# Зачем именно так. Место, где исполнитель помнит ход работы, ограничено, и заполнив его, он
-# теряет не последнее действие, а всю картину разом. Изнутри захода этот предел не виден ничем:
-# ни одна проверка дерева его не показывает, а сжатие контекста срабатывает, когда доводить
-# работу до точки уже нечем.
+# Why exactly this way. The place where the executor remembers the progress of the work is limited,
+# and having filled it, the executor loses not the last action but the whole picture at once. From
+# inside the session this limit is visible by nothing: no check of the tree shows it, and context
+# compaction fires when there is nothing left to bring the work to a point with.
 #
-# Гард стоит на двух событиях сразу — разводить его по двум файлам значило бы держать два
-# разбора одной записи и два места, где правится один порог:
-#   PostToolUse — на первом пороге отдаёт напоминание: пора выбирать точку остановки;
-#   PreToolUse  — на втором отбивает всё, кроме записи хода работы, передачи и команд поставки.
-# Место между порогами и есть то, на что закрывается заход: дописать ход работы, написать
-# передачу, закоммитить проверенное.
+# The guard stands on two events at once — splitting it over two files would mean keeping two
+# parses of one record and two places where one threshold is edited:
+#   PostToolUse — at the first threshold it gives a reminder: time to choose a stopping point;
+#   PreToolUse  — at the second it refuses everything but writing the progress, the handover
+#                 and the delivery commands.
+# The space between the thresholds is what the session closes on: finish the progress, write the
+# handover, commit what has been checked.
 #
-# Там, где дерево объявило порог сжатия ниже порога остановки, напоминание говорит обратное:
-# точку остановки выбирать не надо, потому что заход через порог пройдёт сам — сжатие придёт
-# первым, передачу к тому времени напишет свой хук, и работа продолжится тем же заходом. Отбой
-# при этом остаётся: он превращается из конца захода в страховку на случай, когда сжатие не
-# пришло. Напоминание, зовущее закрывать заход там, где закрывать его не надо, — это остановка
-# работы без причины, и стоит она ровно того же, что и отбой.
+# Where the tree has declared the compaction threshold below the stopping threshold, the reminder
+# says the opposite: there is no need to choose a stopping point, because the session will pass the
+# threshold by itself — compaction comes first, a hook of its own will have written the handover by
+# then, and the work goes on within the same session. The refusal stays at that: it turns from the
+# end of the session into insurance for the case when compaction did not come. A reminder that
+# calls for closing the session where it need not be closed is a stop of the work without a reason,
+# and it costs exactly as much as a refusal.
 #
-# Размер окна берётся из настройки дерева. Из записи захода он не выводится: модель записана
-# там без пометки о расширенном окне, и заход на широкое окно от захода на узкое неотличим.
+# The size of the window is taken from the tree setting. It is not derived from the session record:
+# the model is recorded there without a mark about an extended window, and a session on a wide
+# window is indistinguishable from a session on a narrow one.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет размера окна, нет записи захода, нет разборщика, битый разбор —
-# работа РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права заклинить работу.
+# FAIL-OPEN: no window size, no session record, no parser, a broken parse — the work is ALLOWED
+# (exit 0). A broken guard has no right to jam the work.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is written by the shared deny tail, not by the guard.
 RT_GUARD_NAME=window-fill-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -41,16 +44,16 @@ input="$RT_HOOK_INPUT"
 
 command -v jq >/dev/null 2>&1 || exit 0
 
-# Профиль дерева: размер окна, пороги, каталоги задач и передачи. Дерево, не задавшее размера
-# окна, стража не получает — считать долю не от чего.
+# The tree profile: the window size, the thresholds, the directories of tasks and of the handover.
+# A tree that has not set the window size gets no guard — there is nothing to count the share from.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
 
-# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
-# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# A word about a missing profile function: a hook that exited silently is indistinguishable from a
+# working one. The file may not be laid out — then the former, silent behaviour stays.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
 command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
@@ -64,14 +67,16 @@ esac
 warn_pct="${RT_WINDOW_WARN_PCT:-40}"
 stop_pct="${RT_WINDOW_STOP_PCT:-50}"
 
-# Доля, на которой контекст сжимает сам инструмент. Объявлена деревом — заход через порог
-# проходит сам: сжатие приходит первым, передачу к тому моменту уже написал свой хук, и работа
-# идёт дальше тем же заходом. Не объявлена — прежний порядок: заход кончается передачей.
+# The share at which the tool compacts the context itself. Declared by the tree — the session
+# passes the threshold by itself: compaction comes first, a hook of its own has written the
+# handover by then, and the work goes on within the same session. Not declared — the former order:
+# the session ends with a handover.
 #
-# От этого зависит текст напоминания, а не отказ. Отбой на пороге остановки остаётся в обоих
-# случаях: он и есть страховка на случай, когда сжатие не пришло — настройка снята, версия
-# другая, сжатие отказало. Отобрав отбой у дерева, объявившего сжатие, страж пустил бы такой
-# заход до предела окна, где работа теряется целиком.
+# The text of the reminder depends on this, not the refusal. The refusal at the stopping threshold
+# stays in both cases: it is the insurance for when compaction did not come — the setting was
+# removed, the version is another, compaction failed. Taking the refusal away from a tree that
+# declared compaction, the guard would let such a session run to the limit of the window, where the
+# work is lost whole.
 compact_pct="${CLAUDE_AUTOCOMPACT_PCT_OVERRIDE:-}"
 case "$compact_pct" in
     '' | *[!0-9]*) compact_pct='' ;;
@@ -86,11 +91,12 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 [ -n "$transcript" ] || exit 0
 [ -f "$transcript" ] || exit 0
 
-# Заполнение — это последняя запись ответа с расходом: вход, разовая запись в кэш, прочитанное
-# из кэша и вывод. Сумма по всем записям тут не годится вовсе — прочитанное из кэша повторяется
-# в каждой из них, и сумма выходит в разы больше окна.
+# The fill is the last usage record of a reply: the input, the one-off write into the cache, what
+# was read from the cache and the output. A sum over all the records will not do at all here — what
+# was read from the cache repeats in each of them, and the sum comes out several times the window.
 #
-# Хвост в 200 строк: запись захода растёт весь заход, а нужна из неё одна последняя строка.
+# A tail of 200 lines: the session record grows all session, and one last line of it is what is
+# needed.
 fill="$(tail -n 200 "$transcript" 2>/dev/null | jq -s -r '
     [.[] | select(.type == "assistant") | .message.usage | select(. != null)]
     | last
@@ -108,13 +114,13 @@ pct=$((fill * 100 / window))
 fill_k=$((fill / 1000))
 window_k=$((window / 1000))
 
-# --- первый порог: напоминание, работа не отбивается -------------------------------------
+# --- the first threshold: a reminder, the work is not refused ----------------------------
 
 if [ "$event" = "PostToolUse" ]; then
     [ "$pct" -ge "$warn_pct" ] || exit 0
 
-    # Напоминание повторяется не на каждом вызове, а на каждой следующей ступени в пять
-    # процентов: иначе оно занимает то самое место, которое бережёт.
+    # The reminder repeats not on every call but on each next step of five per cent: otherwise it
+    # takes up the very place it saves.
     step=$(((pct / 5) * 5))
     session="$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null)"
     mark_dir="${TMPDIR:-/tmp}/claude-window-fill"
@@ -129,14 +135,14 @@ if [ "$event" = "PostToolUse" ]; then
 
     if [ "$pct" -ge "$stop_pct" ]; then
         if [ -n "$compact_pct" ]; then
-            text="ЗАПОЛНЕНИЕ ОКНА ${pct}% (${fill_k}k из ${window_k}k) — заход закрывается сейчас. Сжатие объявлено на ${compact_pct}% и не пришло: порог остановки ${stop_pct}% пройден, а контекст прежний. Всё, кроме записи хода работы, передачи и команд поставки, уже отбивается — закрывай заход и скажи владельцу, что сжатие не сработало."
+            text="WINDOW FILL ${pct}% (${fill_k}k of ${window_k}k) — the session closes now. The compaction was announced at ${compact_pct}% and did not come: the stop threshold ${stop_pct}% is passed and the context is the same. Everything but writing the progress, the handover and the commands of delivery is already refused — close the session and tell the owner the compaction did not work."
         else
-            text="ЗАПОЛНЕНИЕ ОКНА ${pct}% (${fill_k}k из ${window_k}k) — заход закрывается сейчас. Всё, кроме записи хода работы, передачи и команд поставки, уже отбивается."
+            text="WINDOW FILL ${pct}% (${fill_k}k of ${window_k}k) — the session closes now. Everything but writing the progress, the handover and the commands of delivery is already refused."
         fi
     elif [ -n "$compact_pct" ]; then
-        text="ЗАПОЛНЕНИЕ ОКНА ${pct}% (${fill_k}k из ${window_k}k). Точку остановки выбирать не надо: на ${compact_pct}% инструмент сожмёт контекст сам, передачу к тому времени напишет хук, и работа пойдёт дальше этим же заходом. Порог остановки ${stop_pct}% — страховка на случай, если сжатие не придёт. Работай дальше."
+        text="WINDOW FILL ${pct}% (${fill_k}k of ${window_k}k). There is no stopping point to choose: at ${compact_pct}% the tool compacts the context itself, the hook writes the handover by then, and the work goes on in this same session. The stop threshold ${stop_pct}% is the insurance in case the compaction does not come. Work on."
     else
-        text="ЗАПОЛНЕНИЕ ОКНА ${pct}% (${fill_k}k из ${window_k}k). Пора выбирать точку остановки: с ${stop_pct}% останется только закрыть заход. Доведи текущий шаг до состояния, с которого следующий заход продолжит, перепиши «Где стоим» в ходе работы, напиши передачу и отдай владельцу путь к ней — паттерн task-flow-handoff."
+        text="WINDOW FILL ${pct}% (${fill_k}k of ${window_k}k). It is time to choose the stopping point: from ${stop_pct}% only closing the session is left. Bring the current step to a state the next session continues from, rewrite «Where we stand» in the progress, write the handover and give the owner the path to it — the pattern task-flow-handoff."
     fi
 
     jq -n --arg t "$text" \
@@ -144,7 +150,7 @@ if [ "$event" = "PostToolUse" ]; then
     exit 0
 fi
 
-# --- второй порог: работа отбивается, закрытие захода пропускается ------------------------
+# --- the second threshold: work is refused, closing the session passes --------------------
 
 [ "$event" = "PreToolUse" ] || exit 0
 [ "$pct" -ge "$stop_pct" ] || exit 0
@@ -155,19 +161,20 @@ cmd="$(rt_hook_cmd)"
 
 allowed=0
 case "$tool" in
-    # Разговор с владельцем и чтение того, что правится при закрытии.
+    # The conversation with the owner and reading what is edited at the closing.
     AskUserQuestion | TodoWrite | Read | SendUserFile)
         allowed=1
         ;;
     Edit | Write | MultiEdit | mcp__webstorm__create_new_file)
-        # Ход работы и передача. Остальное — работа, а её заход уже не начинает.
+        # The progress and the handover. The rest is work, and the session no longer starts it.
         case "$path" in
             "$tasks_dir"/* | */"$tasks_dir"/* | "$handoff_dir"/* | */"$handoff_dir"/* | */scratchpad/*) allowed=1 ;;
         esac
         ;;
     Bash | mcp__webstorm__execute_terminal_command)
-        # Поставка и сверки: коммит, пуш, PR, колонка задачи, состояние дерева. Список
-        # дописывается профилем дерева — клиент хостинга и имена команд у каждого свои.
+        # Delivery and checks: commit, push, PR, the task column, the state of the tree. The list
+        # is added to by the tree profile — the hosting client and the command names differ from
+        # tree to tree.
         if rt_needs rt_handoff_allowed_cmd window-fill-guard && rt_handoff_allowed_cmd "$cmd"; then
             allowed=1
         fi
@@ -176,21 +183,22 @@ esac
 
 [ "$allowed" -eq 1 ] && exit 0
 
-reason="BLOCKED by window-fill-guard: заполнение окна ${pct}% (${fill_k}k из ${window_k}k), порог остановки ${stop_pct}%. Заход дальше не работает — он закрывается.
+reason="BLOCKED by window-fill-guard: window fill ${pct}% (${fill_k}k of ${window_k}k), the stop threshold is ${stop_pct}%. The session works no further — it closes.
 
-Что осталось сделать этим заходом:
-1. Перепиши раздел «Где стоим» в ходе работы и добавь запись захода — что сделано, чем подтверждено, что не вышло.
-2. Закоммить проверенное: незакоммиченное не переживёт перерыв.
-3. Напиши передачу в ${handoff_dir}/ и отдай владельцу путь к ней — что в неё входит, говорит паттерн task-flow-handoff.
+What is left to do in this session:
+1. Rewrite the section «Where we stand» in the progress and add a session entry — what was done, what confirms it, what did not work out.
+2. Commit what is checked: what is not committed does not survive the break.
+3. Write the handover into ${handoff_dir}/ and give the owner the path to it — what goes into it is said by the pattern task-flow-handoff.
 
-Что после порога проходит:
-- правка ${tasks_dir}/** и ${handoff_dir}/**, чтение любого файла, вопрос владельцу;
-- команда, начинающаяся со слова поставки или сверки: git, клиент хостинга, перевод колонки, npm run check:*.
+What passes after the threshold:
+- an edit of ${tasks_dir}/** and ${handoff_dir}/**, a read of any file, a question to the owner;
+- a command starting with a word of delivery or verification: git, the client of the hosting, moving a column, npm run check:*.
 
-Команда судится по началу строки: вход в каталог перед ней снимает совпадение, и отбит будет тот же коммит, который прошёл бы без него. Начинай команду с самого слова поставки."
+A command is judged by the start of the line: entering a directory before it removes the match, and the very commit that would have passed without it is refused. Start the command with the word of delivery itself."
 
-# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
-# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
+# The file may not be laid out — then there is no tail, and the reason for the refusal stays as it
+# was.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
@@ -202,6 +210,6 @@ ${deny_tail_text}"
 
 jq -n --arg r "$reason" \
     '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"window-fill-guard: окно заполнено, заход закрывается передачей."}}\n'
+    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"window-fill-guard: the window is full, the session closes with a handover."}}\n'
 
 exit 0

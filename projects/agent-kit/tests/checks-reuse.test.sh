@@ -40,7 +40,7 @@ config_kit() {
 config_with '[]'
 ts_in probe 'export const nothing = 1;'
 report "SC-AK-813 — пустой набор признаков отбивает прогон" "$(code_of)" 1
-report "SC-AK-813 — отказ называет наборы при пакете" "$(says 'Наборы при пакете: .*core')" 1
+report "SC-AK-813 — отказ называет наборы при пакете" "$(says 'The bundles at the package: .*core')" 1
 
 config_with '["core"]'
 report "SC-AK-813 — объявленный набор прогон пропускает" "$(code_of)" 0

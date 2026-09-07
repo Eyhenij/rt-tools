@@ -58,25 +58,25 @@ printf '# Замысел\n\n**Поведение:** не меняется — п
 
 rm -f "$TASK/progress.md"
 t "SC-AK-295 — папка без хода работы правку не пропускает" "$CODE" deny
-expect_reason "и отбивается именно за ход работы" task-flow-guard.sh "$(edit_in "$CODE")" 'нет хода работы'
+expect_reason "и отбивается именно за ход работы" task-flow-guard.sh "$(edit_in "$CODE")" 'there is no progress'
 
 printf '# Ход работы\n\n## Где стоим\n\n- **Этап:** 1 из 2\n' > "$TASK/progress.md"
 t "SC-AK-288 — состояние не объявлено, и артефакт отказ не снимает" "$CODE" deny
-expect_reason "и отбивается именно за необъявленное состояние" task-flow-guard.sh "$(edit_in "$CODE")" 'не объявлено состояние'
+expect_reason "и отбивается именно за необъявленное состояние" task-flow-guard.sh "$(edit_in "$CODE")" 'no state of the work is declared'
 
 # Замысел, лежащий на диске, требования дойти до правки кода не снимает: судится объявленный
 # переход, а не наличие файлов.
 state_is 'замысел-записан'
 t "SC-AK-294 — обход договорённости требования о состоянии не снимает" "$CODE" deny
 expect_reason "SC-AK-289 — отказ называет обязательное действие состояния" task-flow-guard.sh \
-    "$(edit_in "$CODE")" 'делать первый этап'
+    "$(edit_in "$CODE")" 'do the first stage'
 
 state_is 'влито'
 t "SC-AK-292 — состояние закрытой работы отбивается" "$CODE" deny
 
 state_is 'работа-сделана-как-то-так'
 t "SC-AK-293 — имя вне перечня состоянием не считается" "$CODE" deny
-expect_reason "и отбивается именно за имя вне перечня" task-flow-guard.sh "$(edit_in "$CODE")" 'такого в перечне нет'
+expect_reason "и отбивается именно за имя вне перечня" task-flow-guard.sh "$(edit_in "$CODE")" 'there is no such name in the list'
 
 state_is 'этап-идёт'
 t "SC-AK-290 — в состоянии идущего этапа правка проходит" "$CODE" PASS
@@ -96,7 +96,7 @@ t "SC-AK-742 — замысел без договорённости этим г�
 
 rm -f "$TASK/plan.md"
 t "замысла нет — правка отбивается" "$CODE" deny
-expect_reason "и отбивается именно за замысел" task-flow-guard.sh "$(edit_in "$CODE")" 'нет замысла'
+expect_reason "и отбивается именно за замысел" task-flow-guard.sh "$(edit_in "$CODE")" 'there is no plan'
 
 printf '# Замысел\n\n**Поведение:** не меняется — переезд слоя. Подтверждено владельцем.\n' > "$TASK/plan.md"
 t "замысел на месте — правка проходит" "$CODE" PASS
@@ -110,12 +110,12 @@ git -C "$REPO" -c user.name=probe -c user.email=probe@example.com -c commit.gpgs
 # --- имя ветки ---------------------------------------------------------------------------
 git -C "$REPO" checkout -q -b probe-without-number 2>/dev/null
 t "ветка без номера задачи отбивается" "$CODE" deny
-expect_reason "и отбивается именно за имя ветки" task-flow-guard.sh "$(edit_in "$CODE")" 'текущая ветка'
+expect_reason "и отбивается именно за имя ветки" task-flow-guard.sh "$(edit_in "$CODE")" 'the current branch is'
 
 # Приставка рода правки с номером имя ветки проходит: дальше гард спрашивает уже про замысел, и
 # отказ обязан говорить про него, а не про ветку. Иначе исполнитель чинит не то.
 git -C "$REPO" checkout -q -b fix/2-probe 2>/dev/null
-expect_reason "имя ветки принято — спрос идёт про замысел" task-flow-guard.sh "$(edit_in "$CODE")" 'нет замысла'
+expect_reason "имя ветки принято — спрос идёт про замысел" task-flow-guard.sh "$(edit_in "$CODE")" 'there is no plan'
 git -C "$REPO" checkout -q RT-1-probe 2>/dev/null
 
 # --- вторая дверь: та же правка командой оболочки ------------------------------------------
@@ -324,6 +324,14 @@ exit_code_of() {
 exit_code_of "пустой вход пропускается" ''
 exit_code_of "неразбираемый вход пропускается" 'не json'
 exit_code_of "чтение файла гарду безразлично" "$(jq -n --arg d "$REPO" '{session_id:"tests",tool_name:"Read",tool_input:{file_path:"a.ts"},cwd:$d}')"
+
+# SC-AK-908 — ключи папки задачи читаются под английским именем: образец пакета английский,
+# папки дерева до перевода — русские, и гард принимает оба.
+printf '# Progress\n\n## Where we stand\n\n- **State:** `этап-идёт`\n' > "$TASK/progress.md"
+t "SC-AK-908 — английский ключ состояния читается" "$CODE" PASS
+printf '# Progress\n\n## Where we stand\n\n- **State:** `задача-взята`\n' > "$TASK/progress.md"
+t "SC-AK-908 — и состояние вне правки кода отбивается по нему же" "$CODE" deny
+state_is 'этап-идёт'
 
 # Не репозиторий вовсе — пропуск: гард судит по ветке, а её тут нет.
 BARE="$(mktemp -d)"

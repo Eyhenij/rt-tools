@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 /**
- * Вызов клиента хостинга: как его находят, чем подписывают и что считается временным отказом.
+ * The call to the hosting client: how it is found, what it is signed with and what counts as a
+ * temporary refusal.
  *
- * Отделено от работы с очередью работ потому, что предмет здесь другой — не задача и не колонка,
- * а сам вызов: где взять исполняемый файл, каким токеном его подписать, что читать как «сети
- * нет» и что повторить. Вместе с очередью это переросло предел длины файла.
+ * Separated from the work with the work queue because the subject here is another one — not a task
+ * and not a column, but the call itself: where to get the executable, which token to sign it with,
+ * what to read as "there is no network" and what to repeat. Together with the queue this outgrew
+ * the file length limit.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
@@ -16,8 +18,8 @@ const BOARD = CONFIG.board ?? {};
 const BOT_TOKEN_FILE = BOARD.tokenPath ? BOARD.tokenPath.replace(/^~/, homedir()) : '';
 
 /**
- * `gh` у владельца подменён обёрткой менеджера паролей, и вызов по имени уходит в неё.
- * Поэтому сначала пробуется настоящий исполняемый файл, и только потом имя из PATH.
+ * The owner's `gh` is substituted by a password manager wrapper, and a call by name goes into it.
+ * So the real executable is tried first, and only then the name from PATH.
  */
 function ghBinary() {
     if (process.env.GH_BIN) {
@@ -28,14 +30,14 @@ function ghBinary() {
 }
 
 /**
- * Токен машинной записи лежит вне репозитория и в вывод не попадает. Его отсутствие — не отказ:
- * дерево, не назвавшее токена в `board.tokenPath`, работает с очередью учётной записью, под
- * которой залогинен клиент хостинга.
+ * The machine account token lies outside the repository and does not get into the output. Its
+ * absence is not a refusal: a tree that has not named a token in `board.tokenPath` works with the
+ * queue under the account the hosting client is signed in as.
  *
- * Подставляют токен чтение задачи, перевод колонки и список своих спорящих заявок. Чтение
- * заявки идёт без него намеренно: полям разбора нужны права на учётные записи организации,
- * которых машинной записи не давали, и запрос с токеном отказывает целиком. Чьими глазами снят
- * ответ, говорит поле `viewer` в нём.
+ * The token is supplied by reading a task, moving a column and listing one's own PRs in dispute.
+ * Reading a PR goes without it deliberately: the review fields need rights to the organisation
+ * accounts, which the machine account was not given, and a request with the token is refused
+ * entirely. Whose eyes the answer was taken by is told by the `viewer` field in it.
  */
 export function botToken() {
     if (!existsSync(BOT_TOKEN_FILE)) {
@@ -48,9 +50,9 @@ export function botToken() {
 export class OfflineError extends Error {}
 
 /**
- * Отказ сети от отказа по существу отличается только текстом: `gh` на оба отвечает
- * ненулевым кодом. Сюда попадает то, после чего проверять нечем, — а не то, что
- * проверено и оказалось не так.
+ * A network refusal differs from a refusal on the merits only by its text: `gh` answers
+ * both with a non-zero code. What lands here is what leaves nothing to check by — not
+ * what was checked and turned out wrong.
  */
 function isOffline(stderr) {
     return /dial tcp|no such host|network is unreachable|timeout|TLS handshake|connection refused|Bad credentials|authentication|not logged/i.test(
@@ -59,25 +61,26 @@ function isOffline(stderr) {
 }
 
 /**
- * Отказ, который проходит сам: хостинг ответил, но не смог.
+ * A refusal that passes by itself: the hosting answered but could not.
  *
- * Отличается от отказа по существу тем, что повтор его снимает: пятисотые коды, шлюз и его
- * таймаут. Отказ по праву, по несуществующей записи и по незнакомой колонке сюда не попадают —
- * они не пройдут и на третий раз, а ждать заставят.
+ * It differs from a refusal on the merits in that a repeat lifts it: the five-hundred codes, the
+ * gateway and its timeout. A refusal by right, by a non-existent record and by an unknown column do
+ * not land here — they will not pass on the third try either, and would make one wait.
  */
 function isUnavailable(stderr) {
     return /HTTP 50[0234]\b|Bad Gateway|Service Unavailable|Gateway Time-?out|Server Error/i.test(stderr);
 }
 
-/** Сколько раз пробовать вызов, который отбит недоступностью хостинга. */
+/** How many times to try a call refused by the hosting being unavailable. */
 const TRIES = 3;
 
 /**
- * Пауза перед следующей попыткой, вдвое длиннее прежней. Синхронная: вызов хостинга здесь тоже
- * синхронный, и уводить его в обещание пришлось бы вместе со всеми, кто его зовёт.
+ * The pause before the next attempt, twice as long as the previous one. Synchronous: the hosting
+ * call here is synchronous too, and moving it into a promise would mean moving everyone who calls
+ * it along with it.
  *
- * Число берётся из окружения ради проб: своей паузы им не нужно, а ждать три секунды на каждый
- * сценарий они не обязаны.
+ * The number is taken from the environment for the sake of the tests: they need no pause of their
+ * own, and are not obliged to wait three seconds for every scenario.
  */
 const PAUSE_MS = Number(process.env.RT_GH_RETRY_MS ?? 1000) || 0;
 
@@ -100,17 +103,18 @@ export function gh(args, { token } = {}) {
         } catch (error) {
             const stderr = String(error.stderr ?? error.message ?? '');
             if (error.code === 'ENOENT' || isOffline(stderr)) {
-                throw new OfflineError(stderr.trim() || 'gh недоступен');
+                throw new OfflineError(stderr.trim() || 'gh is unavailable');
             }
-            // Правило требует двигать колонку тем же движением, что и работу, а хостинг отвечал
-            // недоступностью час подряд: без повтора исполнитель либо крутит вызов руками, либо
-            // оставляет колонку отставшей — и находит это сверка уже после открытия заявки.
+            // The rule demands moving the column by the same motion as the work, and the hosting
+            // answered with unavailability for an hour straight: without a repeat the executor
+            // either turns the call by hand or leaves the column behind — and the audit finds that
+            // only after the PR is opened.
             if (isUnavailable(stderr) && attempt < TRIES) {
                 pause(waited);
                 waited *= 2;
                 continue;
             }
-            const failure = new Error(stderr.trim() || `gh ${args[0]} завершился с ошибкой`);
+            const failure = new Error(stderr.trim() || `gh ${args[0]} finished with an error`);
             failure.stderr = stderr;
             throw failure;
         }

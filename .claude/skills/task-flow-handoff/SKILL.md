@@ -4,7 +4,7 @@ kind: pattern
 rule: turn-conduct
 description: Pattern of rule turn-conduct. Load when the session runs into window fill — choosing the stopping point, writing the progress, the shape of the handover and what the owner does with it. Not for returning to work in a new session — that is pattern task-flow-resume.
 ---
-<!-- rt-kit v0.25.0 · patterns/task-flow-handoff.md · e02590c83567 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/task-flow-handoff.md · f754b3f8ed1e · правится надстройкой, не здесь -->
 
 # Closing a session on window fill
 
@@ -62,7 +62,7 @@ What was checked is committed at once, not stored up until the end of the task. 
 
 ### The handover
 
-It is placed as the section `## Передача захода` in the task's progress — the same file where "Where
+It is placed as the section `## Handover of the session` in the task's progress — the same file where "Where
 we stand" stands. It is committed and goes into the branch, so the handover survives a move to
 another machine: work broken off by window fill is picked up where it goes on. The executor commits
 and pushes the section, in the same turn as the rest of the work record.

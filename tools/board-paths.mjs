@@ -1,8 +1,9 @@
-// rt-kit v0.25.0 · checks/board-paths.github.mjs · 59b32cb13c66 · правится надстройкой, не здесь
-// Пути, которых не слушает конвейер, и заявка, чей вклад целиком под ними.
+// rt-kit v0.25.0 · checks/board-paths.github.mjs · 7c7a8bfe33bf · правится надстройкой, не здесь
+// The paths the pipeline does not listen to, and a PR whose contribution lies entirely under them.
 //
-// Вынесено из сверки очереди отдельным модулем: разбор образцов конвейера к состоянию борды
-// отношения не имеет и читается сам по себе, а сверка от него росла быстрее предела длины.
+// Moved out of the queue audit into a module of its own: parsing the pipeline patterns has nothing
+// to do with the state of the work queue and reads on its own, while the audit was growing past the
+// length limit because of it.
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -13,12 +14,12 @@ const PIPELINE = CONFIG.pushGate?.pipelineFile ?? '';
 const HAS_PIPELINE = PIPELINE !== '' && existsSync(join(ROOT, PIPELINE));
 
 /**
- * Пути, которых конвейер не слушает: `paths-ignore` у его событий.
+ * The paths the pipeline does not listen to: the `paths-ignore` of its events.
  *
- * Разбирается построчно, а не разборщиком разметки: у проверки его нет, а список — плоский
- * перечень строк под одним ключом. Ключей в файле бывает несколько — по событию, — и все они
- * складываются в один набор: ветка, чей вклад целиком лежит под ними, прогона не создаёт ни на
- * одном событии.
+ * Parsed line by line, not by a markup parser: the check has none, and the list is a flat
+ * enumeration of lines under one key. There can be several keys in the file — one per event — and
+ * they all add up into one set: a branch whose contribution lies entirely under them creates no run
+ * on any event.
  */
 export function ignoredPaths() {
     if (!HAS_PIPELINE) {
@@ -50,10 +51,13 @@ export function ignoredPaths() {
 
 const IGNORED_PATHS = ignoredPaths();
 
-/** Знаки образца, у которых в выражении своё значение: кроме звёздочек, они значат себя. */
+/**
+ * Pattern characters that have a meaning of their own in an expression: apart from the asterisks,
+ * they stand for themselves.
+ */
 const escapeForRegExp = (value) => value.replace(/[.+?^${}()|[\]\\-]/g, '\\$&');
 
-/** Подпадает ли путь под образец конвейера: `**` — любой хвост, `*` — кусок имени. */
+/** Whether a path falls under a pipeline pattern: `**` is any tail, `*` a piece of a name. */
 function underPattern(path, pattern) {
     const body = pattern
         .split('**')
@@ -64,14 +68,15 @@ function underPattern(path, pattern) {
 }
 
 /**
- * Вклад заявки целиком лежит под путями, которых конвейер не слушает.
+ * The contribution of a PR lies entirely under the paths the pipeline does not listen to.
  *
- * Такой ветке прогона не будет никогда, и требовать его — то же, что требовать его у ветки без
- * единого коммита: признак верен по букве и лжёт по существу, а действие, которое он советует,
- * не исполнимо. Красная строка при этом стоит рядом с настоящими расхождениями и учит
- * пропускать сверку целиком.
+ * Such a branch will never have a run, and demanding one is the same as demanding it of a branch
+ * without a single commit: the sign is true by the letter and lies on the merits, and the action it
+ * advises cannot be carried out. Meanwhile the red line stands next to real discrepancies and
+ * teaches one to skip the audit whole.
  *
- * Состав не прочитать — отвечаем «нет»: молчать наугад дороже одной лишней строки.
+ * The makeup cannot be read — we answer "no": staying silent at random costs more than one extra
+ * line.
  */
 export function onlyIgnoredPaths(pull, options) {
     if (!IGNORED_PATHS.length) {

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse AskUserQuestion
-# Требует: hooks/deny-tail.sh
+# Requires: hooks/deny-tail.sh
 # PreToolUse guard for AskUserQuestion.
 #
 # The browser choice is already made and pinned in browser-device-id.sh — asking again is noise, and the
@@ -18,7 +18,8 @@
 #
 # FAIL-OPEN when browser-device-id.sh prints nothing.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is recorded by the shared deny tail, not by the
+# guard itself.
 RT_GUARD_NAME=browser-guard-no-asking
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -35,8 +36,8 @@ questions="$(printf '%s' "$input" | jq -r '[.tool_input.questions[]? | .question
 
 printf '%s' "$questions" | grep -qiE 'deviceid|device id|(which|what|pick|choose|select)[^.]{0,25}\bbrowser\b|\bbrowser\b[^.]{0,25}(profile|to use)|как(ой|ую|им|ого)[^.]{0,15}браузер|брауз[а-я]*[^.]{0,20}(использовать|выбрать|выбор|нужен|запустить)' || exit 0
 
-# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть. Файл
-# может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
+# The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null

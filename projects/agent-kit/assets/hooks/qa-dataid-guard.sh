@@ -1,31 +1,32 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file
-# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
-# Гард якоря для сквозных тестов. PreToolUse на правке разметки.
+# Requires: hooks/profile-check.sh, hooks/deny-tail.sh
+# Anchor guard for end-to-end tests. PreToolUse on a markup edit.
 #
-# Спеки адресуют элементы только через этот атрибут. Классы оформления меняются вместе с
-# вёрсткой, а поиск по роли и тексту ломается на переводах — приложение живёт во многих
-# локалях. Оба вида выбора делают сквозные тесты хрупкими, поэтому якорь один и ставится
-# по умолчанию, а не дописывается потом: элемент без атрибута попадает в тест только после
-# того, как кто-то заметит его отсутствие.
+# Specs address elements only through this attribute. Styling classes change together with the
+# layout, and lookup by role and text breaks on translations — the application lives in many
+# locales. Both kinds of selection make end-to-end tests brittle, so there is one anchor and it is
+# set by default, not added later: an element without the attribute gets into a test only after
+# someone notices it is missing.
 #
-# Правило инвертировано: интерактивным считается ЛЮБОЙ составной тег (компонент) и любой тег с
-# привязкой события, кроме помеченных декоративными. Перечислять интерактивные поимённо не
-# выходит — компонентов в ките больше сотни, и список устаревает молча: забытый в нём
-# компонент проходит без якоря.
+# The rule is inverted: ANY compound tag (a component) and any tag with an event binding counts
+# as interactive, except those marked decorative. Listing the interactive ones by name does not
+# work — the kit has over a hundred components, and the list goes stale silently: a component
+# forgotten in it passes without an anchor.
 #
-# Осознанный выход: атрибут пропуска НА САМОМ ТЕГЕ. Маркер, который ищется во всей правке,
-# выключал бы проверку целиком — декоративная ссылка уносила бы с собой кнопку отправки из той
-# же правки.
+# A deliberate way out: the skip attribute ON THE TAG ITSELF. A marker searched for across the
+# whole edit would switch the check off entirely — a decorative link would take the submit button
+# from the same edit along with it.
 #
-# Что здесь чем зовётся, знает профиль дерева:
-#   RT_QA_SKIP_RE      — пути, где якорь не требуется: витрина, корневая разметка, тесты;
-#   RT_QA_COMPONENT_RE — по какому имени тег опознаётся компонентом этого дерева;
-#   rt_qa_decorative   — имена тегов, которые тест не нажимает.
+# What is called what here is known by the tree profile:
+#   RT_QA_SKIP_RE      — paths where the anchor is not required: the showcase, root markup, tests;
+#   RT_QA_COMPONENT_RE — by which name a tag is recognised as a component of this tree;
+#   rt_qa_decorative   — tag names a test does not click.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет разборщика, битый ввод, чужой инструмент — пропуск.
+# FAIL-OPEN: no parser, broken input, someone else's tool — pass.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is written by the shared deny tail, not by the
+# guard itself.
 RT_GUARD_NAME=qa-dataid-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -39,15 +40,15 @@ command -v perl >/dev/null 2>&1 || exit 0
 
 tool="$(rt_hook_tool)"
 case "$tool" in
-    # Инструмент среды заводит файл теми же двумя данными, только называет их иначе — без этой
-    # ветки разметка заводилась мимо всех проверок.
+    # The IDE tool creates a file from the same two pieces of data, only names them differently —
+    # without this branch markup was created past all the checks.
     Edit | Write | MultiEdit | mcp__webstorm__create_new_file) ;;
     *) exit 0 ;;
 esac
 
 path="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
-# Путь из среды приходит относительным корню дерева, а все образцы ниже написаны от каталога
-# приложения. Приводим к одному виду один раз, чтобы правила не двоились.
+# The path from the IDE arrives relative to the tree root, while all the samples below are
+# written from the application directory. Bring it to one form once, so the rules do not double.
 case "$path" in
     /*) ;;
     ?*) path="${CLAUDE_PROJECT_DIR:-.}/$path" ;;
@@ -57,22 +58,22 @@ case "$path" in
     *) exit 0 ;;
 esac
 
-# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
+# The tree profile: first the package default, over it the project override, if there is one.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
 
-# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
-# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# A word about a missing profile function: a hook that exited silently is indistinguishable from
+# a working one. The file may not be laid out — then the old behaviour remains, the silent one.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
 command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
 
-# Разметка приложения живёт там же, где его код. Без этой положительной проверки гард
-# распространялся на любой файл разметки на диске — черновик вне дерева отклонялся требованием
-# проставить якоря.
+# The application's markup lives where its code lives. Without this positive check the guard
+# would extend to any markup file on disk — a draft outside the tree was refused with a demand to
+# set anchors.
 if rt_needs rt_is_app_code qa-dataid-guard; then
     rt_is_app_code "$path" || exit 0
 fi
@@ -81,8 +82,8 @@ if [ -n "${RT_QA_SKIP_RE:-}" ] && printf '%s' "$path" | grep -qE "$RT_QA_SKIP_RE
     exit 0
 fi
 
-# Проверяется только НОВЫЙ текст: то, что уже лежало в файле, эта правка не заводила, и
-# требовать якорь у чужой строки — значит отбивать правку соседней.
+# Only the NEW text is checked: what already lay in the file was not created by this edit, and
+# demanding an anchor from someone else's line means refusing the edit of a neighbouring one.
 added="$(printf '%s' "$input" | jq -r '
     [ .tool_input.content?, .tool_input.text?, .tool_input.new_string?, (.tool_input.edits[]?.new_string) ]
     | map(select(. != null)) | join("\n")
@@ -92,27 +93,28 @@ added="$(printf '%s' "$input" | jq -r '
 decorative="$(rt_needs rt_qa_decorative qa-dataid-guard && rt_qa_decorative 2>/dev/null)"
 component_re="${RT_QA_COMPONENT_RE:--}"
 
-# Открывающие теги разбираются ЦЕЛИКОМ: тег занимает несколько строк, и якорь часто стоит не в
-# первой из них — построчная проверка врала бы.
+# Opening tags are parsed WHOLE: a tag spans several lines, and the anchor often stands not in
+# the first of them — a line-by-line check would lie.
 missing="$(printf '%s' "$added" | RT_QA_DECORATIVE="$decorative" RT_QA_COMPONENT_RE="$component_re" perl -0777 -ne '
-    # Комментарии вырезаются до разбора: в них часто лежит разметка-пример («было <button …>,
-    # заменено на переход»). Без этого правка отклонялась из-за элемента, которого в дереве
-    # документа не будет, а обойти отказ можно было только испортив текст самого комментария.
+    # Comments are cut out before parsing: they often hold sample markup ("was <button …>,
+    # replaced with a navigation"). Without this an edit was refused because of an element that
+    # will not be in the document tree, and the refusal could be bypassed only by spoiling the
+    # text of the comment itself.
     s/<!--.*?-->//gs;
-    # Декоративное и структурное: тест такое не нажимает и по нему не проверяет состояние.
-    # Всё остальное считается интерактивным по умолчанию — кит растёт, и умолчание должно быть
-    # в сторону якоря, а не в сторону тишины. Попадание в список НЕ выдаёт индульгенцию: тег с
-    # привязкой события проверяется наравне с прочими.
+    # Decorative and structural: a test does not click these and does not check state by them.
+    # Everything else counts as interactive by default — the kit grows, and the default must lean
+    # towards the anchor, not towards silence. Being in the list is NOT an indulgence: a tag with
+    # an event binding is checked on equal terms with the rest.
     my %decorative = map { $_ => 1 } split /\s+/, ($ENV{RT_QA_DECORATIVE} // "");
     my $component = $ENV{RT_QA_COMPONENT_RE} || "-";
     my %seen;
     while (/<([a-zA-Z][\w-]*)((?:[^<>"\x27]|"[^"]*"|\x27[^\x27]*\x27)*)>/gs) {
         my ($tag, $attrs) = ($1, $2);
-        # Структурные теги каркаса узла документа не порождают: поставленный на них якорь не
-        # найдёт ни один выбор теста. Требовать его — значит требовать неработающего.
+        # Structural framework tags produce no document node: an anchor set on them will not be
+        # found by any test selection. Demanding it means demanding what does not work.
         next if $tag =~ /^(ng-container|ng-template|ng-content)$/;
         next if $attrs =~ /\bqa-dataid\b/;
-        # Осознанный отказ помечается на самом теге, а не где-то в той же правке.
+        # A deliberate opt-out is marked on the tag itself, not somewhere in the same edit.
         next if $attrs =~ /\bqa-skip\b/;
         my $interactive =
                $attrs =~ /\(\s*[a-zA-Z][\w.:-]*\s*\)\s*=/
@@ -127,20 +129,21 @@ missing="$(printf '%s' "$added" | RT_QA_DECORATIVE="$decorative" RT_QA_COMPONENT
 
 [ -z "$missing" ] && exit 0
 
-reason="BLOCKED: интерактивные элементы без якоря для тестов в ${path##*/}: ${missing}. Тесты адресуют элементы только через этот атрибут: классы оформления меняются вместе с вёрсткой, а поиск по роли и тексту ломается на переводах — оба вида выбора делают сквозные тесты хрупкими. Проставь якорь через дефис по смыслу элемента; повторяющиеся элементы списка носят ОДИН якорь и различаются атрибутами данных. Если элемент чисто декоративный и тест его никогда не тронет — поставь атрибут пропуска НА САМ ЭТОТ ТЕГ, соседние элементы правки при этом продолжают проверяться."
+reason="BLOCKED: interactive elements without a test anchor in ${path##*/}: ${missing}. Tests address elements only through this attribute: styling classes change together with the markup, and a search by role and text breaks on translations — both kinds of selection make end-to-end tests brittle. Set the anchor through a dash by the meaning of the element; repeating elements of a list carry ONE anchor and differ by data attributes. If an element is purely decorative and a test will never touch it — put the skip attribute ON THAT VERY TAG, the neighbouring elements of the edit keep being checked."
 
-# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
-# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has
+# one. The file may not be laid out — then there is no tail, and the reason for the refusal stays
+# the same.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
 command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail "атрибут пропуска на самом декоративном теге")"
+deny_tail_text="$(rt_deny_tail "the skip attribute on the decorative tag itself")"
 [ -n "$deny_tail_text" ] && reason="${reason}
 
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Интерактивный элемент без якоря для тестов."}}\n'
+    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"An interactive element without a test anchor."}}\n'
 
 exit 0

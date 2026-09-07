@@ -1,4 +1,4 @@
-<!-- rt-kit v0.25.0 · samples/tasks/_template/grill.md · 7026cdfaa37c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · samples/tasks/_template/grill.md · 1a7a0c16ca1d · правится надстройкой, не здесь -->
 # Grill
 
 <Work begun from cargo that arrived names its records here — by full keys, as the intake reading
@@ -6,7 +6,7 @@ prints them. Eight characters are not enough: a mark with a short key is refused
 «такой записи у дерева нет». This file leaves for the archive, and after the folder is taken apart
 the keys live only here.>
 
-## Просьба владельца
+## The owner request
 
 > <verbatim, in the owner's language, without retelling>
 

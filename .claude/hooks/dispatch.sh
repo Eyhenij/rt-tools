@@ -1,24 +1,27 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/dispatch.sh · d7958983d858 · правится надстройкой, не здесь
-# Диспетчер событий агента. НЕ гард: объявления `rt-hook:` у него нет — наоборот, он читает
-# такие объявления у остальных. В настройке агента он стоит один на событие вместо списка.
+# rt-kit v0.25.0 · hooks/dispatch.sh · 96e5dc2b218c · правится надстройкой, не здесь
+# The dispatcher of agent events. NOT a guard: it has no `rt-hook:` declaration — on the contrary,
+# it reads such declarations in the others. In the agent settings it stands alone on an event
+# instead of a list.
 #
-# Зачем он есть. Агент зовёт каждый гард своим процессом и каждому подаёт один и тот же ввод.
-# Гардов на вызове инструмента восемнадцать, и каждый разбирает ввод заново — по шесть-семь
-# вызовов разборщика. Замер этого дерева: восемьсот двадцать шесть миллисекунд на вызов, из
-# которых восемьдесят пять — запуск оболочек, а остальное — повторный разбор одного текста.
+# Why it exists. The agent calls every guard in a process of its own and feeds each of them the same
+# input. There are eighteen guards on a tool call, and each parses the input anew — six or seven
+# calls of the parser. The measurement of this tree: eight hundred and twenty-six milliseconds per
+# call, of which eighty-five are the starting of shells, and the rest is repeated parsing of one
+# text.
 #
-# Что он делает. Читает ввод один раз, разбирает его один раз, кладёт поля в окружение и зовёт
-# ветки события по порядку. Первый ненулевой код возврата отдаётся агенту вместе с выводом
-# гарда — остальные ветки не зовутся: отказ и раньше кончал вызов на первом же гарде.
+# What it does. It reads the input once, parses it once, puts the fields into the environment and
+# calls the branches of the event in order. The first non-zero return code is given to the agent
+# together with the output of the guard — the remaining branches are not called: a refusal ended the
+# call at the very first guard before as well.
 #
-# Чего он не делает. Он не судит ничего сам и ни одного гарда не заменяет: файлы остаются как
-# были, меняется точка входа. Событие и образец вызова гард несёт сам, строкой `# rt-hook:` в
-# своей шапке, и карта собирается из них — список, выписанный отдельно, разошёлся бы с набором
-# файлов на первом же добавленном.
+# What it does not do. It judges nothing itself and replaces no guard: the files stay as they were,
+# the entry point changes. The event and the call pattern are carried by the guard itself, by the
+# `# rt-hook:` line in its header, and the map is assembled from them — a list written out
+# separately would diverge from the set of files at the very first one added.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет события в доводе, нет каталога гардов, нет разборщика — выход нулём.
-# Сломанный диспетчер не имеет права заклинить работу.
+# FAIL-OPEN, IN FAVOUR OF WORK: no event in the argument, no guards directory, no parser — exit with
+# zero. A broken dispatcher has no right to jam the work.
 
 set -u
 
@@ -31,15 +34,15 @@ event="${1:-}"
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0
 
-# Разбор один на все ветки: четыре поля одним вызовом разборщика вместо шести на каждый гард.
-# Значения приходят уже закавыченными для оболочки — `@sh` в разборщике для того и сделан:
-# командная строка держит и кавычки, и переводы строк, и подставить её иначе нельзя.
+# One parse for all the branches: four fields by one call of the parser instead of six per guard.
+# The values arrive already quoted for the shell — that is what `@sh` in the parser is made for: the
+# command line holds both quotes and newlines, and there is no other way to substitute it.
 assignments="$(printf '%s' "$input" | jq -r '@sh "RT_HOOK_TOOL=\(.tool_name // "") RT_HOOK_CMD=\(.tool_input.command // "") RT_HOOK_FILE=\(.tool_input.file_path // "") RT_HOOK_CWD=\(.cwd // "") RT_HOOK_SOURCE=\(.source // "")"' 2>/dev/null)"
 if [ -n "$assignments" ]; then
     eval "$assignments" 2>/dev/null || true
     export RT_HOOK_TOOL RT_HOOK_CMD RT_HOOK_FILE RT_HOOK_CWD RT_HOOK_SOURCE
-    # Признак разбора: по нему ветки отличают готовое поле от пустой переменной, случайно
-    # оказавшейся в окружении прогона. Без него пустое значение читается как «поля нет».
+    # The sign of parsing: by it the branches tell a ready field from an empty variable that ended
+    # up in the run environment by chance. Without it an empty value reads as "there is no field".
     export RT_HOOK_PARSED=1
 fi
 export RT_HOOK_INPUT="$input"
@@ -47,9 +50,10 @@ export RT_HOOK_INPUT="$input"
 branches="$(grep -l '^# rt-hook:' "$here"/*.sh 2>/dev/null | sort)"
 [ -z "$branches" ] && exit 0
 
-# Объявлений у файла бывает несколько: гард, стоящий и на вызове инструмента, и на завершении
-# хода, называет оба события своими строками. Читалось прежде только первое — и вторая ветка не
-# звалась ни разу, молча: снаружи это неотличимо от гарда, который посмотрел и пропустил.
+# A file happens to have several declarations: a guard standing both on a tool call and on the end
+# of a turn names both events by lines of its own. Before, only the first was read — and the second
+# branch was never called, silently: from the outside that is indistinguishable from a guard that
+# looked and let through.
 collected=""
 for branch in $branches; do
     matched=0
@@ -59,15 +63,15 @@ for branch in $branches; do
         branch_event="${declaration%% *}"
         [ "$branch_event" = "$event" ] || continue
 
-        # Образец вызова: его нет вовсе — гард зовётся на любом; есть — сверяется целиком, а
-        # не куском. Звёздочка и точка со звёздочкой значат одно: любой вызов.
+        # The call pattern: there is none at all — the guard is called on any; there is one — it is
+        # matched in full, not by a piece. A star and a dot with a star mean the same: any call.
         #
-        # Предмет сверки зависит от события. У вызова инструмента это имя инструмента; у входа в
-        # сессию имени инструмента нет, и образец там называет род запуска — `startup`,
-        # `resume`, `compact`, `clear`. Сверка с пустым именем не совпадала ни разу, и через
-        # диспетчер не вызывался ни один хук входа: заход начинался без свода законов, без
-        # словаря, без состояния работы и без передачи прошлого захода — с нулевым кодом и
-        # пустым выводом.
+        # The subject of the match depends on the event. For a tool call it is the tool name; at the
+        # entry into a session there is no tool name, and the pattern there names the kind of start
+        # — `startup`, `resume`, `compact`, `clear`. A match against an empty name never coincided,
+        # and not a single entry hook was called through the dispatcher: the session began without
+        # the body of laws, without the glossary, without the work state and without the handover of
+        # the previous session — with a zero code and empty output.
         matcher="${declaration#"$branch_event"}"
         matcher="${matcher#"${matcher%%[![:space:]]*}"}"
         subject="${RT_HOOK_TOOL:-}"
@@ -82,14 +86,15 @@ for branch in $branches; do
 $(sed -n 's/^# rt-hook:[[:space:]]*//p' "$branch" 2>/dev/null)
 EOF
 
-    # Совпало хоть одно объявление — ветка зовётся один раз. Два объявления одного события в
-    # одном файле звали бы гард дважды на один ввод, и второй вызов судил бы то же самое.
+    # At least one declaration matched — the branch is called once. Two declarations of one event in
+    # one file would call the guard twice on one input, and the second call would judge the same
+    # thing.
     [ "$matched" = 1 ] || continue
 
-    # Поток ошибок ветки собирается отдельно, а не отбрасывается: на удачном ходу он шум и
-    # наружу не идёт, а на отказе он и есть причина. Гард, печатающий свой отказ туда, приходил к
-    # исполнителю строкой о сломанном файле — при целом файле и понятном тексте, которого никто
-    # не видел. За один заход так пропало два отказа подряд.
+    # The error stream of a branch is collected separately, not discarded: on a successful turn it
+    # is noise and does not go out, and on a refusal it is the reason itself. A guard that prints
+    # its refusal there reached the executor as a line about a broken file — with the file whole and
+    # the text plain, which nobody saw. In one session two refusals in a row were lost that way.
     branch_err="$(mktemp 2>/dev/null)"
     if [ -n "$branch_err" ]; then
         branch_out="$(printf '%s' "$input" | bash "$branch" 2>"$branch_err")"
@@ -107,22 +112,25 @@ EOF
         elif [ -n "$said_err" ]; then
             printf '%s\n' "$said_err"
         else
-            # Ветка вышла ненулём и не сказала ничего ни одним потоком. Снаружи это неотличимо от
-            # отказа по делу, а починить нечего: какой файл сломан, не знает никто. Имя диспетчер
-            # поэтому называет сам, иначе о сломанной ветке не говорит ничто.
-            printf 'Гард %s вышел с кодом %s и ничего не напечатал: похоже, файл сломан.\n' \
+            # The branch exited non-zero and said nothing by either stream. From the outside that
+            # is indistinguishable from a refusal on the merits, and there is nothing to fix: nobody
+            # knows which file is broken. So the dispatcher names it itself, otherwise nothing says
+            # anything about a broken branch.
+            printf 'The guard %s exited with code %s and printed nothing: the file looks broken.\n' \
                 "$(basename "$branch")" "$code"
         fi
         exit "$code"
     fi
 
-    # Отбой ветки приходит не кодом возврата, а решением в выводе: гарды завершения хода
-    # печатают его и выходят нулём. Не остановившись здесь, диспетчер склеил бы этот объект с
-    # выводом следующей ветки — а склеенное не разбирается, и отбой пропадает целиком.
-    # Форм отказа при нулевом коде две: решение о блокировке у гардов завершения хода и решение
-    # о запрете вызова у гардов правки. Вторая не опознавалась вовсе — отказ уезжал в общий
-    # собранный вывод и склеивался с выводом соседней ветки, а склеенное не разбирается: гард,
-    # вызванный сам по себе, отвечал запретом, а через диспетчер отказ пропадал целиком.
+    # A refusal from a branch comes not as a return code but as a decision in the output: the guards
+    # of the end of a turn print it and exit with zero. Without stopping here, the dispatcher would
+    # glue this object to the output of the next branch — and what is glued together is not parsed,
+    # so the refusal is lost entirely. There are two forms of a refusal under a zero code: the block
+    # decision of the guards of the end of a turn and the call-denied decision of the guards of an
+    # edit. The second was not recognised at all — the refusal went into the shared collected output
+    # and was glued to the output of a neighbouring branch, and what is glued together is not
+    # parsed: a guard called on its own answered with a denial, while through the dispatcher the
+    # refusal was lost entirely.
     if [ -n "$branch_out" ] && printf '%s' "$branch_out" | jq -e '
         .decision == "block" or .hookSpecificOutput.permissionDecision == "deny"
     ' >/dev/null 2>&1; then
@@ -134,7 +142,7 @@ EOF
 "
 done
 
-# Ни одна ветка не отбила: отдаётся то, что они напечатали, — подсказки и сводки.
+# Not one branch refused: what they printed is given out — hints and digests.
 [ -n "${collected:-}" ] && printf '%s' "$collected"
 
 exit 0

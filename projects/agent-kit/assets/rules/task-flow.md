@@ -45,7 +45,7 @@ The unit of work is a state, not a step. A state has an entry, a mandatory actio
 until the action is done the work stays in the same state.
 
 The state is declared in the "Where we stand" section of the progress by the machine-readable line
-``- **Состояние:** `этап-идёт` `` and is rewritten with it.
+``- **State:** `этап-идёт` `` and is rewritten with it.
 
 | State | Entry | Mandatory action | Pattern |
 | --- | --- | --- | --- |
@@ -135,7 +135,7 @@ flowchart TD
   the branch history.
 - **The agreement is required by the edit paths, not by an appraisal of the task.** `apps/**` and
   `libs/**` are the sign; rules, texts, tooling and dependencies fall outside it. The bypass is the
-  line `**Поведение:** не меняется — <причина владельца>` in the plan; an empty reason is not
+  line `**Behaviour:** unchanged — <the reason of the owner>` in the plan; an empty reason is not
   accepted.
 - **What needs the owner's word is taken from a list, not appraised on the spot.** The appraisal
   "this is safe" is assigned by whoever finds it convenient.

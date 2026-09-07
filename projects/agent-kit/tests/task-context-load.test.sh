@@ -105,4 +105,27 @@ case "$(said "$tree")" in
     *) report "SC-AK-754 — ветка без своей папки судится прежним отказом" "$(said "$tree")" да ;;
 esac
 
+# SC-AK-909. Ход работы перерос порог, а раздел «где стоим» назван по-английски: хук режет
+# запись по разделу и под этим именем тоже — иначе на большой папке состояние из захода уходит.
+tree="$(tree_on RT-8-english-keys)"
+mkdir -p "$tree/docs/tasks/RT-8-english-keys"
+{
+    printf '# Progress\n\n## Where we stand\n\n- **State:** `этап-идёт`\n- **Next step:** stage two\n\n'
+    printf '## Sessions\n\n'
+    i=0
+    while [ "$i" -lt 900 ]; do
+        printf -- '- a line of an old session that has long outgrown the size threshold of the hook\n'
+        i=$((i + 1))
+    done
+} > "$tree/docs/tasks/RT-8-english-keys/progress.md"
+out="$(said "$tree")"
+case "$out" in
+    *'**State:** `этап-идёт`'*) report "SC-AK-909 — английский раздел «где стоим» пережил порог" да да ;;
+    *) report "SC-AK-909 — английский раздел «где стоим» пережил порог" "$out" да ;;
+esac
+case "$out" in
+    *'cut for size'*) report "SC-AK-909 — запись при этом урезана" да да ;;
+    *) report "SC-AK-909 — запись при этом урезана" "$out" да ;;
+esac
+
 suite_result "загрузка хода работы"

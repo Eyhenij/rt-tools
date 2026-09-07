@@ -52,7 +52,7 @@ printf '# Словарь\n\n## Так не пишем\n\n- **таска, тик�
 printf '# Домен\n\nСпека рядом с исходником.\n' > "$GL_TREE/docs/specs/domain.md"
 git -C "$GL_TREE" add -A 2>/dev/null
 report "SC-AK-691 — слово с уточнением расхождением не считается" "$(glossary_code)" 0
-report "SC-AK-691 — и названо вслух" "$(glossary_says 'поиском не судятся')" 1
+report "SC-AK-691 — и названо вслух" "$(glossary_says 'not judged by search')" 1
 
 # SC-AK-692 — словарь, описание прошлого и папка задачи из поиска выведены.
 printf '# Запись\n\nТаска закрыта.\n' > "$GL_TREE/docs/archive/RT-1-x.md"

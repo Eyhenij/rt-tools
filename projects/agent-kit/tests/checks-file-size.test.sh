@@ -48,33 +48,33 @@ report "длина: короткий файл проходит" "$(size_code)" 0
 # SC-AK-103 — файл длиннее предела отбивается, и отказ называет путь, длину и предел
 size_file long.md 20
 report "SC-AK-103 — длинный файл отбит" "$(size_code)" 1
-report "SC-AK-103 — отказ называет путь и предел" "$(size_says 'long\.md: 21 строк, предел кода 10')" 1
+report "SC-AK-103 — отказ называет путь и предел" "$(size_says 'long\.md: 21 lines, the limit for code 10')" 1
 
 # SC-AK-108 — длина считается как у линтера: число разрывов плюс один
 # Файл из двадцати строк, кончающийся переводом, весит двадцать одну — на строку больше `wc -l`.
-report "SC-AK-108 — длина равна числу разрывов плюс один" "$(size_says ': 21 строк')" 1
+report "SC-AK-108 — длина равна числу разрывов плюс один" "$(size_says ': 21 lines')" 1
 
 # SC-AK-104 — накопленное названо и не отбивает
 printf '{"accepted":{"long.md":{"reason":"фикстура набора","task":"RT-900"}},"debt":{}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
 git -C "$SIZE_TREE" add -A
 report "SC-AK-104 — принятое не отбивает" "$(size_code)" 0
-report "SC-AK-104 — сводка называет принятое" "$(size_says 'принято 1')" 1
+report "SC-AK-104 — сводка называет принятое" "$(size_says 'accepted 1')" 1
 
 # SC-AK-105 — долг назван отдельно от принятого
 size_file debt.md 20
 printf '{"accepted":{"long.md":{"reason":"фикстура набора","task":"RT-900"}},"debt":{"debt.md":{"reason":"фикстура набора","task":"RT-900"}}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
 git -C "$SIZE_TREE" add -A
 report "SC-AK-105 — долг не отбивает" "$(size_code)" 0
-report "SC-AK-105 — долг назван своим числом" "$(size_says 'принято 1, долг 1')" 1
+report "SC-AK-105 — долг назван своим числом" "$(size_says 'accepted 1, debt 1')" 1
 
 # SC-AK-106 — строка перечня, у которой нет файла, отбивает
 printf '{"accepted":{"long.md":{"reason":"фикстура набора","task":"RT-900"},"gone.md":{"reason":"фикстура набора","task":"RT-900"}},"debt":{"debt.md":{"reason":"фикстура набора","task":"RT-900"}}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
 report "SC-AK-106 — устаревшая строка отбита" "$(size_code)" 1
-report "SC-AK-106 — отказ говорит, что файла нет" "$(size_says 'gone\.md: строка .* устарела')" 1
+report "SC-AK-106 — отказ говорит, что файла нет" "$(size_says 'gone\.md: the line .* is stale')" 1
 
 # Поделённый файл строку в перечне не сохраняет: иначе перечень перестаёт отвечать за состав.
 printf '{"accepted":{"long.md":{"reason":"фикстура набора","task":"RT-900"},"short.md":{"reason":"фикстура набора","task":"RT-900"}},"debt":{"debt.md":{"reason":"фикстура набора","task":"RT-900"}}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
-report "длина: поделённый файл требует снять строку" "$(size_says 'short\.md: значится .* короче предела')" 1
+report "длина: поделённый файл требует снять строку" "$(size_says 'short\.md: listed .* shorter than the limit')" 1
 
 # SC-AK-107 — данные, описание прошлого, папка задачи и сгенерированное не судятся
 printf '{"accepted":{"long.md":{"reason":"фикстура набора","task":"RT-900"}},"debt":{"debt.md":{"reason":"фикстура набора","task":"RT-900"}}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
@@ -97,7 +97,7 @@ git -C "$SIZE_TREE" add -A
 # Перечня нет — это не пустой список: проверка молчать о нечитаемой настройке не вправе.
 printf 'не JSON\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
 report "длина: нечитаемый перечень отбивает" "$(size_code)" 1
-report "длина: отказ называет, где перечень" "$(size_says 'список известного не прочитан')" 1
+report "длина: отказ называет, где перечень" "$(size_says 'the known list was not read')" 1
 
 # --- SC-AK-520, SC-AK-521 — два предела ---------------------------------------------------------
 #
@@ -110,7 +110,7 @@ rm -rf "${SIZE_TREE:?}/long.md" "${SIZE_TREE:?}/debt.md" "${SIZE_TREE:?}/locale.
 size_file prose/rule.md 20
 size_file code/tool.mjs 20
 git -C "$SIZE_TREE" add -A
-report "SC-AK-520 — текст судится своим пределом" "$(size_says 'prose/rule\.md: 21 строк, предел текста 10')" 1
+report "SC-AK-520 — текст судится своим пределом" "$(size_says 'prose/rule\.md: 21 lines, the limit for prose 10')" 1
 report "SC-AK-520 — код тем же числом не судится" "$(size_says 'code/tool\.mjs')" 0
 
 # --- SC-AK-658…661 — предел веса --------------------------------------------------------------
@@ -129,7 +129,7 @@ mkdir -p "$SIZE_TREE/prose"
 # Спутник тяжелее предела: таблица связи, где заголовок дословно повторяет утверждение.
 { for i in 1 2 3 4 5; do printf 'я%.0s' $(seq 1 100); printf '\n'; done; } > "$SIZE_TREE/prose/implementation.md"
 git -C "$SIZE_TREE" add -A
-report "SC-AK-658 — тяжёлый текст назван по весу" "$(size_says 'prose/heavy\.md: [0-9]+ знаков, предел веса текста 200')" 1
+report "SC-AK-658 — тяжёлый текст назван по весу" "$(size_says 'prose/heavy\.md: [0-9]+ characters, the weight limit for prose is 200')" 1
 report "SC-AK-659 — лёгкий текст той же длины молчит" "$(size_says 'prose/light\.md')" 0
 report "SC-AK-660 — спутник из счёта веса выведен" "$(size_says 'prose/implementation\.md')" 0
 # Тяжёлый по знакам файл записан долгом: строк у него меньше предела, и без второй проверки
@@ -137,7 +137,7 @@ report "SC-AK-660 — спутник из счёта веса выведен" "$
 printf '{"accepted":{},"debt":{"prose/heavy.md":{"reason":"фикстура набора","task":"RT-900"}}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
 git -C "$SIZE_TREE" add -A
 report "SC-AK-861 — долг тяжёлого по знакам файла не отбивает" "$(size_code)" 0
-report "SC-AK-861 — запись долга не названа устаревшей" "$(size_says 'prose/heavy\.md: значится .* короче предела')" 0
+report "SC-AK-861 — запись долга не названа устаревшей" "$(size_says 'prose/heavy\.md: listed .* shorter than the limit')" 0
 printf '{"accepted":{},"debt":{}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
 git -C "$SIZE_TREE" add -A
 # Дерево, числа не назвавшее, судится по-прежнему одними строками.
@@ -153,7 +153,7 @@ printf '{"fileSizeLimit":40,"allowlistDir":"tools","archiveDir":"docs/archive/",
     > "$SIZE_TREE/.claude/rt-kit/checks.json"
 git -C "$SIZE_TREE" add -A
 report "SC-AK-521 — без корней текста предел один" "$(size_code)" 0
-report "SC-AK-521 — сводка называет одно число" "$(size_says 'предел 40, длиннее предела 0')" 1
+report "SC-AK-521 — сводка называет одно число" "$(size_says 'the limit 40, longer than the limit 0')" 1
 
 rm -rf "$SIZE_TREE"
 

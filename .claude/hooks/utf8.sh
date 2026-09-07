@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/utf8.sh · 337010eaa553 · правится надстройкой, не здесь
-# Локаль исполнения гарда. Подключается первой строкой тела: `. "<каталог гардов>/utf8.sh"`.
+# rt-kit v0.25.0 · hooks/utf8.sh · b038f9712c13 · правится надстройкой, не здесь
+# The locale a guard runs in. Sourced as the first line of the body: `. "<guards directory>/utf8.sh"`.
 #
-# Образцы гардов написаны словами того языка, на котором говорит дерево, и совпадение с ними
-# зависит от локали процесса. В локали C складывание регистра работает только для латиницы:
-# «В дереве этого нет» под образцом `(в дереве|здесь)…` не находится вовсе, гард выходит нулём
-# и пропускает ход, который обязан был вернуть. Счёт `{0,30}` там же считает байты, а не буквы,
-# и буква вне латиницы весит два.
+# Guard patterns are written in the words of the language the tree speaks, and matching against
+# them depends on the process locale. In the C locale case folding works only for Latin letters:
+# «В дереве этого нет» is not found under the pattern `(в дереве|здесь)…` at all, the guard exits
+# with zero and lets through the turn it was bound to return. The `{0,30}` count there counts bytes,
+# not letters, and a non-Latin letter weighs two.
 #
-# Заметить это на своей машине нечем: терминал разработчика идёт в UTF-8, а служба, запускающая
-# ту же работу, наследует пустую локаль. Три сценария так и падали в конвейере, проходя на
-# машине, где их писали.
+# There is nothing to notice this with on one's own machine: the developer's terminal runs in UTF-8,
+# while the service that runs the same work inherits an empty locale. Three scenarios failed in the
+# pipeline exactly so, passing on the machine where they were written.
 #
-# FAIL-OPEN: локали UTF-8 в системе не нашлось — ничего не объявляется, и гард работает как
-# прежде. Отобрать у него работу из-за отсутствия локали хуже, чем оставить прежнее поведение.
+# FAIL-OPEN: no UTF-8 locale found in the system — nothing is declared, and the guard works as
+# before. Taking its work away over a missing locale is worse than keeping the old behaviour.
 
 rt_use_utf8_locale() {
     case "${LC_ALL:-${LC_CTYPE:-${LANG:-}}}" in

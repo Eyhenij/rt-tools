@@ -50,11 +50,11 @@ says() {
 report "SC-AK-539 — запись поверх нажитой надстройки отбивается" \
     "$(decision "$(write_in .claude/rt-kit/overrides/rules/probe.md)")" deny
 report "SC-AK-539 — отказ называет размер того, что затрут" \
-    "$(says "$(write_in .claude/rt-kit/overrides/rules/probe.md)" '8 строк')" 1
+    "$(says "$(write_in .claude/rt-kit/overrides/rules/probe.md)" '8 lines')" 1
 report "SC-AK-539 — и число разделов" \
-    "$(says "$(write_in .claude/rt-kit/overrides/rules/probe.md)" 'разделов «## » — 3')" 1
+    "$(says "$(write_in .claude/rt-kit/overrides/rules/probe.md)" 'sections «## » — 3')" 1
 report "SC-AK-539 — и говорит про слияние по разделу" \
-    "$(says "$(write_in .claude/rt-kit/overrides/rules/probe.md)" 'сливается с пакетным ресурсом по заголовку')" 1
+    "$(says "$(write_in .claude/rt-kit/overrides/rules/probe.md)" 'merges with the package resource by the heading')" 1
 
 report "SC-AK-540 — правка надстройки по месту проходит" \
     "$(decision "$(edit_in .claude/rt-kit/overrides/rules/probe.md)")" PASS

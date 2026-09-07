@@ -1,22 +1,22 @@
 #!/usr/bin/env bash
-# Состояние роли слоя правил. НЕ гард: объявления `rt-hook:` у него нет, к событиям агента он не
-# подключается. Его источают гарды, стоящие при ролях, — тем же приёмом, каким гейт источает
-# карту, а гарды — профиль дерева.
+# The state of a rules-layer role. NOT a guard: it has no `rt-hook:` declaration and hooks into no
+# agent event. The guards that stand at roles source it — the same way the gate sources the map and
+# the guards source the tree profile.
 #
-# Зачем он есть. Роль, при которой стоит гард, зовётся не по усмотрению исполнителя: гард держит
-# работу, пока роль не сказала своё. Выключить её было нечем — отказ от файла роли в настройке
-# убирал роль и оставлял гард, и дереву, которому роль в эту минуту мешает, оставалось вырезать
-# гард из настроек руками. Теперь дерево называет выключенные роли одним списком, а гард при
-# такой роли выходит молча.
+# Why it exists. A role with a guard at it is not called at the executor's discretion: the guard
+# holds the work until the role has had its say. There was nothing to switch it off with — dropping
+# the role file in the settings removed the role and left the guard, and a tree that the role gets
+# in the way of at this minute was left to cut the guard out of the settings by hand. Now the tree
+# names the disabled roles in one list, and the guard at such a role leaves silently.
 #
-# Выключается обязательность вызова, а не сама роль: файл роли остаётся разложенным, и позвать
-# её руками можно в любую минуту.
+# What is disabled is the mandatory call, not the role itself: the role file stays laid out, and it
+# can be called by hand at any minute.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ наоборот: всё, чего не хватило, читается как «роль включена». Нет `jq`,
-# нет настройки, настройка не разбирается — гард работает, как работал. Сломанное чтение,
-# гасящее роль, выключало бы слой правил молча, и заметить это было бы нечем.
+# FAIL-OPEN the other way round: everything that was missing reads as "the role is on". No `jq`, no
+# settings, settings that do not parse — the guard works as it did. A broken read that muted a role
+# would switch the rules layer off silently, and there would be nothing to notice it with.
 
-# Выключена ли роль. Успех — выключена.
+# Is the role disabled. Success — disabled.
 #
 #   rt_role_off strict-teacher && exit 0
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true

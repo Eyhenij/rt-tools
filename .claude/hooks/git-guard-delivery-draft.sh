@@ -1,45 +1,50 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/git-guard-delivery-draft.sh · e47eeab2a7ed · правится надстройкой, не здесь
-# Снятие черновика для гарда поставки: есть ли у заявки разбор, не конфликтует ли она и той ли
-# записью открыта.
+# rt-kit v0.25.0 · hooks/git-guard-delivery-draft.sh · 84a48f2eaa4e · правится надстройкой, не здесь
+# Leaving draft, for the delivery guard: does the PR have a review, does it conflict, and was it
+# opened by the right account.
 #
-# Строки `# rt-hook:` здесь нет намеренно: событие и образец вызова объявляет сам гард, а
-# помощник рядом хуком не регистрируется и в одиночку ничего не решает. Он зовётся из гарда и
-# пользуется его же переменными — командой, корнем дерева, машинной записью — и его отказом.
+# There is deliberately no `# rt-hook:` line here: the event and the call pattern are declared by
+# the guard itself, while a helper next to it registers as no hook and decides nothing on its own.
+# It is called from the guard and uses the guard's own variables — the command, the tree root, the
+# machine account — and the guard's refusal.
 #
-# Вынесен он отсюда потому, что гард дорос до предела длины: снятие черновика среди его
-# предметов самое отдельное — своя точка проверки, свой сетевой ярус, свои три отказа.
+# It was moved out because the guard grew to the length limit: leaving draft is the most separate
+# of its subjects — its own check point, its own network tier, its own three refusals.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
 rt_delivery_draft_ready() {
-    # --- снятие черновика --------------------------------------------------------------------
+    # --- leaving draft ----------------------------------------------------------------------
     #
-    # Ревьювера до этой правки не спрашивал никто. Он стоял прозой в правиле, а хостинг запрос
-    # разбора на самого себя принимает молча и не создаёт: разбор при этом выглядит запрошенным.
-    # Раньше снятия черновика спросить негде — до открытия заявки ревьювера нет вовсе, — а само
-    # снятие и есть тот ход, которым работа объявляется готовой.
+    # Before this edit nobody asked for a reviewer. He stood as prose in the rule, while the
+    # hosting accepts a review request on oneself silently and creates none: the review looks
+    # requested all the same. There is nowhere to ask earlier than leaving draft — before the PR
+    # is opened there is no reviewer at all — and leaving draft is itself the move that declares
+    # the work ready.
     #
-    # Ярус сетевой, и молчит он так же, как ярус состояния задачи: нет ответа — нет требования.
+    # The tier is a network one, and it stays silent the same way as the task state tier: no
+    # answer — no demand.
     #
-    # Возврат заявки в черновик под требование не подпадает: он делает ровно то, чего гард и
-    # добивается, — снимает с работы вид готовой.
+    # Returning a PR to draft does not fall under the demand: it does exactly what the guard is
+    # after — it takes the look of readiness off the work.
     if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(gh[[:space:]]+pr[[:space:]]+ready|glab[[:space:]]+mr[[:space:]]+update[^|;&]*--ready)([[:space:]]|\$)" \
         && ! printf '%s' "$cmd" | grep -q -- '--undo'; then
-        # Ссылка на заявку необязательна: без неё клиент берёт заявку текущей ветки, и это самая
-        # короткая форма вызова. Требовать номер значило бы снимать всё требование одним пробелом.
-        # Поэтому берётся первый довод, каким бы он ни был — номер, адрес или имя ветки, — а его
-        # отсутствие означает «спроси про текущую ветку».
+        # A reference to the PR is optional: without it the client takes the PR of the current
+        # branch, and that is the shortest form of the call. Demanding a number would mean lifting
+        # the whole demand with a single space. So the first argument is taken, whatever it is —
+        # a number, an address or a branch name — and its absence means "ask about the current
+        # branch".
         pull_ref="$(printf '%s' "$cmd" | sed -nE 's/.*(gh[[:space:]]+pr[[:space:]]+ready|glab[[:space:]]+mr[[:space:]]+update)[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\2/p' | head -1)"
         if rt_needs rt_pull_state git-guard-delivery; then
             pull="$(cd "$root" && rt_pull_state "$pull_ref" 2>/dev/null)" || pull=''
             if [ -n "$pull" ] && printf '%s' "$pull" | jq -e '.exists' >/dev/null 2>&1; then
-                # Номер берётся из ответа, а если его там нет — из самой команды: заявка,
-                # названная адресом или именем ветки, в отказе должна остаться узнаваемой.
+                # The number is taken from the answer, and if it is not there — from the command
+                # itself: a PR named by an address or a branch name must stay recognisable in the
+                # refusal.
                 pull_name="$(printf '%s' "$pull" | jq -r '.number // empty' 2>/dev/null)"
-                # Номер пишется с решёткой, а имя ветки или адрес — в кавычках: решётка перед
-                # адресом читается как опечатка, а не как ссылка на заявку.
+                # A number is written with a hash, and a branch name or an address in quotes: a
+                # hash before an address reads as a typo, not as a reference to a PR.
                 [ -z "$pull_name" ] && pull_name="$pull_ref"
                 case "$pull_name" in
                     '') ;;
@@ -47,31 +52,33 @@ rt_delivery_draft_ready() {
                     *) pull_name=" #${pull_name}" ;;
                 esac
                 printf '%s' "$pull" | jq -e '.reviewed' >/dev/null 2>&1 \
-                    || fault "у заявки${pull_name} нет разбора: ревьювер не запрошен и отзыва никто не оставлял. Снятый черновик читается как «можно вливать», а вливать некому — назначь ревьювера и повтори."
+                    || fault "the request${pull_name} has no review: no reviewer was requested and nobody left a review. A lifted draft reads as «ready to merge», and there is nobody to merge — set a reviewer and repeat."
 
-                # Конфликт приезжает в отданную заявку чужим слиянием, без единого действия её
-                # автора: основание, проверенное на открытии, к моменту снятия черновика уже
-                # вчерашнее. Снятый черновик читается как «можно вливать», а вливать нечего —
-                # владелец открывает заявку и находит там конфликт. Молчание при неизвестной
-                # сливаемости остаётся: хостинг считает её заново после каждой правки главной ветки,
-                # и «ещё не посчитано» — не «конфликтует».
+                # A conflict arrives into a handed-over PR through someone else's merge, without
+                # a single action by its author: the base checked at opening is yesterday's by the
+                # time draft is left. A PR out of draft reads as "ready to merge", and there is
+                # nothing to merge — the owner opens the PR and finds a conflict there. Silence on
+                # unknown mergeability stays: the hosting recomputes it after every edit of the
+                # main branch, and "not computed yet" is not "conflicts".
                 printf '%s' "$pull" | jq -e '.conflicting' >/dev/null 2>&1 \
-                    && fault "заявка${pull_name} конфликтует с главной веткой. Влей её в свою ветку, разбери конфликт и повтори: снятый черновик читается как «можно вливать», а слить эту заявку нельзя."
+                    && fault "the request${pull_name} conflicts with the main branch. Merge it into your branch, resolve the conflict and repeat: a lifted draft reads as «ready to merge», and this request cannot be merged."
 
-                # Автор заявки. На открытии судить было нечем, кроме текста команды: личность вызова
-                # приходит окружением. Здесь она уже названа хостингом, и это последний ход, где
-                # промах ещё исправим — после снятия черновика заявку вливают, а переоткрыть влитую
-                # нельзя. Дерево, не назвавшее машинной записи, автора не судит.
+                # The author of the PR. At opening there was nothing to judge by but the text of
+                # the command: the identity of the call comes from the environment. Here it is
+                # already named by the hosting, and this is the last move where the miss is still
+                # fixable — after draft is left the PR gets merged, and a merged one cannot be
+                # reopened. A tree that named no machine account does not judge the author.
                 if [ -n "$task_bot" ]; then
                     pull_author="$(printf '%s' "$pull" | jq -r '.author // empty' 2>/dev/null)"
                     [ -n "$pull_author" ] && [ "$pull_author" != "$task_bot" ] \
-                        && fault "заявку${pull_name} открыла запись «${pull_author}», а не машинная «${task_bot}». Автор заявки её ревьювером не бывает, и разбор ей назначить нечем. Автора не сменить — закрой заявку и открой заново${pull_token_hint:+, подставив токен: ${pull_token_hint} …}."
+                        && fault "the request${pull_name} was opened by the account «${pull_author}», not the machine one «${task_bot}». The author of a request is never its reviewer, and there is nothing to assign the review to. The author cannot be changed — close the request and open it anew${pull_token_hint:+, substituting the token: ${pull_token_hint} …}."
                 fi
             fi
         fi
 
-        # Папка задачи: тот же предмет, что на открытии и на слиянии, третьим рубежом. Условие
-        # местное — оно читает ветку, а не хостинг, — и потому стоит вне сетевого яруса выше.
+        # The task folder: the same subject as at opening and at the merge, as a third line. The
+        # condition is local — it reads the branch, not the hosting — and therefore stands outside
+        # the network tier above.
         command -v rt_delivery_ready_folder >/dev/null 2>&1 && rt_delivery_ready_folder
 
         deny_faults

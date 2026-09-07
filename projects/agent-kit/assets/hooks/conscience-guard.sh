@@ -1,25 +1,27 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
-# Требует: agents/conscience.md, hooks/roles.sh, hooks/deny-tail.sh
-# Гард совести: ход, в котором роль совести нашла повтор разобранного промаха, не заканчивается,
-# пока повтор не разобран или не назван владельцу.
+# Requires: agents/conscience.md, hooks/roles.sh, hooks/deny-tail.sh
+# Guard of conscience: a turn in which the conscience role found a repeat of an analysed miss does
+# not end until the repeat has been dealt with or named to the owner.
 #
-# Зачем именно так. Разбор происшествия объясняет механизм промаха, но читает его только тот, кто
-# открывает каталог сам. Промах, о котором надо напомнить, — ровно тот, о котором исполнитель в
-# эту минуту не помнит, поэтому вызов роли не оставляют на его усмотрение: он не случится там,
-# где нужнее всего.
+# Why exactly so. An incident analysis explains the mechanism of a miss, but it is read only by
+# whoever opens the directory himself. The miss that has to be recalled is exactly the one the
+# executor does not remember at this minute, so calling the role is not left to his discretion: it
+# would not happen where it is needed most.
 #
-# Роль отвечает первой строкой: «СОВЕСТЬ: повтор» либо «СОВЕСТЬ: чисто». Гард судит последний
-# ответ за ход и ничего не знает о том, верна ли находка: это решает исполнитель, и его решение
-# — работа следующего хода, а не молчание этого.
+# The role answers with its first line: «СОВЕСТЬ: повтор» or «СОВЕСТЬ: чисто». The guard judges the
+# last answer of the turn and knows nothing about whether the finding is right: that is decided by
+# the executor, and his decision is the work of the next turn, not the silence of this one.
 #
-# Ход отпускается, когда после находки исполнитель сделал хоть что-то по ней: завёл разбор
-# происшествия, поправил работу или назвал повтор владельцу. Проверяется это по тому же ходу.
+# The turn is released when, after the finding, the executor did at least something about it:
+# started an incident analysis, corrected the work or named the repeat to the owner. This is checked
+# on the same turn.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет `jq`, нет записи хода, роль молчит или отвечает не по форме — ход
-# разрешается. Сломанная совесть не имеет права заклинить разговор.
+# FAIL-OPEN: no `jq`, no turn record, the role stays silent or answers out of form — the turn is
+# ALLOWED. A broken conscience has no right to jam the conversation.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is written by the shared deny tail, not by the
+# guard itself.
 RT_GUARD_NAME=conscience-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -30,9 +32,9 @@ input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
-# Роль, выключенная деревом, гарда не держит: список выключенных лежит в настройке дерева, а
-# читает его помощник рядом. Нечитаемая настройка выключением не считается — гард работает как
-# прежде.
+# A role switched off by the tree does not hold the guard: the list of the switched-off ones lies in
+# the tree setting, and a helper next to it reads that list. An unreadable setting does not count as
+# switching off — the guard works as before.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/roles.sh" ] && . "$rt_hooks_dir/roles.sh" 2>/dev/null
@@ -45,8 +47,8 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 [ -z "$transcript" ] && exit 0
 [ -f "$transcript" ] || exit 0
 
-# Ход — всё, что записано после последней настоящей реплики владельца. Ответ инструмента
-# приходит той же ролью, поэтому строки с `tool_result` репликой не считаются.
+# The turn is everything recorded after the owner's last real remark. A tool answer arrives under
+# the same role, so lines with `tool_result` do not count as a remark.
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
     def is_input:
         .type == "user"
@@ -68,29 +70,29 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
                      then (map(if type == "object" then (.text // "") else tostring end) | join("\n"))
                      else tostring end] | join("\n"))
           else "" end ] as $flow
-    | ($flow | map(test("СОВЕСТЬ:[[:space:]]*повтор")) | index(true)) as $found
-    | if $found == null then "нет-находки"
+    | ($flow | map(test("(СОВЕСТЬ|CONSCIENCE):[[:space:]]*(повтор|repeat)")) | index(true)) as $found
+    | if $found == null then "no-finding"
       else ($flow[($found + 1):] | join("\n")
-            | if test("postmortems|разбор происшествия|СОВЕСТЬ: разобрано") then "разобрано" else "висит" end)
+            | if test("postmortems|разбор происшествия|analysis of the incident|(СОВЕСТЬ|CONSCIENCE): (разобрано|analysed)") then "analysed" else "standing" end)
       end
 ' 2>/dev/null)"
 
-[ "$verdict" = "висит" ] || exit 0
+[ "$verdict" = "standing" ] || exit 0
 
-detail="$(tail -n 400 "$transcript" 2>/dev/null | grep -m1 -A3 'СОВЕСТЬ:[[:space:]]*повтор' | tr -d '\\"' | head -4)"
+detail="$(tail -n 400 "$transcript" 2>/dev/null | grep -m1 -A3 -E '(СОВЕСТЬ|CONSCIENCE):[[:space:]]*(повтор|repeat)' | tr -d '\\"' | head -4)"
 
-reason="BLOCKED by conscience-guard: совесть нашла в этом ходе повтор разобранного промаха, и по нему не сделано ничего.
+reason="BLOCKED by conscience-guard: the conscience found in this turn a repeat of a miss already analysed, and nothing was done about it.
 
 ${detail}
 
-Ход не кончается на находке. Сделай одно из трёх этим же ходом: поправь работу, заведи разбор происшествия, если механизм новый, или назови повтор владельцу словами — что повторяется и чем это кончилось в прошлый раз.
+A turn does not end at the finding. Do one of three things in this same turn: fix the work, create an analysis of the incident if the mechanism is new, or name the repeat to the owner in words — what repeats and how it ended last time.
 
-Находка неверна — так и скажи владельцу: ложная находка тоже стоит хода, и молчанием она не чинится.
+The finding is wrong — then say so to the owner: a false finding also costs a turn, and silence does not fix it.
 
-Гард судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
-# Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
-# а причина отказа остаётся прежней.
+# The shared deny tail: two lawful moves. The file may not be laid out — then there is no tail, and
+# the refusal reason stays as it is.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
@@ -101,6 +103,6 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-    || printf '{"decision":"block","reason":"conscience-guard: найден повтор разобранного промаха — разбери его или назови владельцу."}\n'
+    || printf '{"decision":"block","reason":"conscience-guard: a repeat of an analysed miss is found — analyse it or name it to the owner."}\n'
 
 exit 0

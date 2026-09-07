@@ -1,27 +1,27 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-descriptions.mjs · 540ba0bbcad1 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-descriptions.mjs · 451cb99f968b · правится надстройкой, не здесь
 /**
- * Сверка длины описаний правил и паттернов.
+ * The audit of the length of rule and pattern descriptions.
  *
- * Описание едет в системный промпт каждого захода — все, сколько их есть в дереве, — и
- * платит их заход, чем бы ни занимался. Тем оно и отличается от тела правила: тело
- * исполнитель читает сам и платит за это ходом, описание приходит даром. Даром — пока
- * оно короткое.
+ * A description travels into the system prompt of every session — all of them, as many as
+ * the tree has — and that session pays for them whatever it is doing. That is how it differs
+ * from the body of the rule: the body the executor reads itself and pays for it with a turn,
+ * while the description comes free. Free — as long as it is short.
  *
- * Растёт оно само: описание пишут вслед за правилом и пересказывают в нём содержимое.
- * Ни одна проверка длины не считала, и на дереве, где эта сверка заводилась, сорок
- * описаний из семидесяти четырёх переросли предел.
+ * It grows by itself: a description is written after the rule and retells its content.
+ * No check counted the length, and in the tree where this audit was created forty
+ * descriptions out of seventy-four had outgrown the limit.
  *
- * Отвечает описание на один вопрос — брать это правило или нет. Всё, что отвечает на
- * вопрос «а что там внутри», приходит вторым разом вместе с самим правилом.
+ * A description answers one question — take this rule or not. Everything that answers the
+ * question "and what is inside" comes a second time together with the rule itself.
  *
- * FAIL-OPEN: каталога скилов в дереве нет — сверять нечего, нулевой код.
+ * FAIL-OPEN: there is no skills directory in the tree — nothing to check, zero code.
  *
- * Описание длиннее предела, оставленное намеренно, называется в перечне принятого долга
- * рядом — по имени скила, с причиной. Молчаливое превышение и осознанное выглядят
- * одинаково, поэтому второе называется списком.
+ * A description longer than the limit, left deliberately, is named in the list of accepted
+ * debt next to it — by the skill name, with a reason. A silent excess and a deliberate one
+ * look the same, so the second is named in a list.
  *
- * Ненулевой код возврата и перечень превысивших с числами.
+ * A non-zero exit code and the list of those over the limit with the numbers.
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -31,21 +31,22 @@ const SKILLS = join(ROOT, '.claude/skills');
 const DEBT = join(ROOT, '.claude/rt-kit/description-debt.json');
 
 /**
- * Предел длины описания в знаках.
+ * The limit of a description length in characters.
  *
- * Считаются знаки, а не байты: байт о цене окна не говорит, а кириллица делает его в
- * полтора раза больше знака. Триста — число владельца, назначенное от первого замера.
+ * Characters are counted, not bytes: a byte says nothing about the cost of the window, and
+ * Cyrillic makes it one and a half times bigger than a character. Three hundred is the owner's
+ * number, set from the first measurement.
  */
 const LIMIT = 300;
 
-/** Описание из шапки: строка `description:` до конца строки. */
+/** The description from the header: the `description:` line up to the end of the line. */
 function descriptionOf(text) {
     const match = /^description:\s*(.+)$/m.exec(text);
 
     return match === null ? null : match[1].trim();
 }
 
-/** Перечень принятого долга: имя скила → причина. Нет файла — долга нет. */
+/** The list of accepted debt: skill name → reason. No file — no debt. */
 function debt() {
     if (!existsSync(DEBT)) {
         return {};
@@ -60,7 +61,7 @@ function debt() {
 
 function main() {
     if (!existsSync(SKILLS)) {
-        console.log('check-descriptions: каталога скилов нет — сверять нечего');
+        console.log('check-descriptions: there is no directory of rules — there is nothing to check');
 
         return 0;
     }
@@ -90,7 +91,7 @@ function main() {
         }
 
         if (Object.hasOwn(accepted, name)) {
-            owed.push(`${name}: ${description.length} знаков — ${accepted[name]}`);
+            owed.push(`${name}: ${description.length} characters — ${accepted[name]}`);
             continue;
         }
 
@@ -98,25 +99,25 @@ function main() {
     }
 
     for (const line of owed) {
-        console.log(`  долг ${line}`);
+        console.log(`  debt ${line}`);
     }
 
     if (over.length > 0) {
         over.sort((first, second) => second.length - first.length);
-        console.log(`check-descriptions: длиннее предела ${over.length} из ${counted}, предел ${LIMIT} знаков\n`);
+        console.log(`check-descriptions: longer than the limit ${over.length} of ${counted}, the limit is ${LIMIT} characters\n`);
 
         for (const item of over) {
-            console.log(`  ${item.name}: ${item.length} знаков, лишних ${item.length - LIMIT}`);
+            console.log(`  ${item.name}: ${item.length} characters, ${item.length - LIMIT} over`);
         }
 
-        console.log('\nОписание отвечает на один вопрос — брать это правило или нет. Перечисление разделов');
-        console.log('и пересказ статей приходят вторым разом вместе с самим правилом.');
-        console.log('Оставленное намеренно называется в .claude/rt-kit/description-debt.json с причиной.');
+        console.log('\nA description answers one question — load this rule or not. A list of sections');
+        console.log('and a retelling of the articles arrive a second time together with the rule itself.');
+        console.log('What is left longer on purpose is named in .claude/rt-kit/description-debt.json with a reason.');
 
         return 1;
     }
 
-    console.log(`check-descriptions: описаний ${counted}, все в пределе ${LIMIT} знаков` + (owed.length > 0 ? `, принятого долга ${owed.length}` : ''));
+    console.log(`check-descriptions: descriptions ${counted}, all within the limit of ${LIMIT} characters` + (owed.length > 0 ? `, accepted debt ${owed.length}` : ''));
 
     return 0;
 }

@@ -14,4 +14,5 @@
 - **Обход требования договорённости — строка о неизменном поведении с причиной владельца.** — `projects/agent-kit/assets/hooks/task-flow-draft-guard.sh:plan`
 - **Правка, положенная командой оболочки, судится наравне с правкой инструментом.** — `projects/agent-kit/assets/hooks/task-flow-context.sh:rt_tf_cmd`
 - **Снятие пути, которого в истории нет, правкой продукта не считается.** — `projects/agent-kit/assets/hooks/task-flow-context.sh:rt_tf_removes`
+- **Ключи папки задачи читаются под двумя именами, английским и русским.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:state` — состояние; договорённость и неизменное поведение — `projects/agent-kit/assets/hooks/task-flow-draft-guard.sh:draft`; сценарий SC-AK-908
 - **Разложенный слой правил судится наравне с кодом приложения.** — `projects/agent-kit/assets/hooks/task-flow-context.sh:rt_tf_laid_out`

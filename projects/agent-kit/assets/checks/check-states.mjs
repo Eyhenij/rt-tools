@@ -1,31 +1,32 @@
 #!/usr/bin/env node
 /**
- * Сверка перечня состояний работы с разделами паттернов, которые их ведут.
+ * The audit of the list of work states against the pattern sections that lead them.
  *
- * Состояние без ведущего текста читается как конец работы: исполнитель дочитывает
- * паттерн до последнего раздела, следующего движения в нём нет, и ход кончается
- * отчётом. Так простояло состояние «замысел записан» — оно встречалось один раз,
- * клеткой таблицы, и дыру нашло происшествие, а не проверка. Разбор —
- * запись «2026-08-21-turn-ended-at-the-written-plan» в приёме.
+ * A state without a leading text reads as the end of the work: the executor reads the
+ * pattern down to the last section, there is no next motion in it, and the turn ends
+ * with a report. That is how the state "the plan is written" stood — it occurred once,
+ * as a table cell, and the hole was found by an incident, not by a check. The analysis
+ * is the record "2026-08-21-turn-ended-at-the-written-plan" in the intake.
  *
- * Сверяются два множества в обе стороны:
- *   перечень — таблица состояний в правиле ведения работы: имя и ведущий паттерн;
- *   разделы  — заголовки вида «State `имя`» либо «Состояние `имя`» в паттернах: английское
- *              имя везёт пакет, русское держит паттерн дерева, который ещё не переведён.
+ * Two sets are checked against each other in both directions:
+ *   the list — the table of states in the work-conduct rule: the name and the leading pattern;
+ *   sections — headings of the form "State `name`", in English or in the Russian wording: the
+ *              English name is carried by the package, the Russian one is held by a tree
+ *              pattern that has not been translated yet.
  *
- * Состояние без раздела — расхождение. Раздел про состояние вне перечня — тоже:
- * переименованное состояние иначе оставляет прежний раздел, и тот выглядит
- * действующим.
+ * A state without a section is a discrepancy. A section about a state outside the list
+ * is one too: otherwise a renamed state leaves its former section behind, and that one
+ * looks current.
  *
- * Ведущий паттерн берётся из самой таблицы, а не из имён файлов: раздел, лежащий
- * не в том паттерне, который назначен, читателя до себя не доводит — он открывает
- * назначенный.
+ * The leading pattern is taken from the table itself, not from file names: a section
+ * lying in a pattern other than the assigned one does not bring the reader to itself —
+ * the reader opens the assigned one.
  *
- * FAIL-OPEN: правила ведения работы в дереве нет — сверять нечего, нулевой код.
- * Пустая таблица состояний отказом считается: она означает не «нечего сверять», а
- * «перечень сломан».
+ * FAIL-OPEN: there is no work-conduct rule in the tree — nothing to check, zero code.
+ * An empty table of states counts as a refusal: it means not "nothing to check" but
+ * "the list is broken".
  *
- * Ненулевой код возврата и перечень расхождений.
+ * A non-zero exit code and the list of discrepancies.
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -34,7 +35,7 @@ const ROOT = process.cwd();
 const RULE = join(ROOT, '.claude/skills/task-flow/SKILL.md');
 const SKILLS = join(ROOT, '.claude/skills');
 
-/** Имя состояния и паттерн, который его ведёт, — из таблицы правила. */
+/** The state name and the pattern that leads it — from the table of the rule. */
 function statesFromRule(text) {
     const states = [];
 
@@ -63,7 +64,7 @@ function statesFromRule(text) {
     return states;
 }
 
-/** Состояния, про которые в паттерне есть раздел. Заголовок любого уровня. */
+/** The states a pattern has a section about. A heading of any level. */
 function sectionsOf(pattern) {
     const file = join(SKILLS, pattern, 'SKILL.md');
 
@@ -85,14 +86,14 @@ function sectionsOf(pattern) {
 }
 
 if (!existsSync(RULE)) {
-    console.log('check-states: правила ведения работы в дереве нет — сверять нечего');
+    console.log('check-states: the tree has no rule of work conduct — there is nothing to check');
     process.exit(0);
 }
 
 const states = statesFromRule(readFileSync(RULE, 'utf8'));
 
 if (states.length === 0) {
-    console.error('check-states: в правиле ведения работы не нашлось таблицы состояний');
+    console.error('check-states: the rule of work conduct carries no table of states');
     process.exit(1);
 }
 
@@ -108,12 +109,12 @@ for (const state of states) {
     const sections = seen.get(state.pattern);
 
     if (sections === null) {
-        problems.push(`состояние \`${state.name}\`: ведущий паттерн \`${state.pattern}\` в дереве не разложен`);
+        problems.push(`the state \`${state.name}\`: the leading pattern \`${state.pattern}\` is not laid out in the tree`);
         continue;
     }
 
     if (!sections.has(state.name)) {
-        problems.push(`состояние \`${state.name}\`: в паттерне \`${state.pattern}\` нет раздела «State \`${state.name}\`» ни «Состояние \`${state.name}\`»`);
+        problems.push(`the state \`${state.name}\`: the pattern \`${state.pattern}\` carries neither the section «State \`${state.name}\`» nor «Состояние \`${state.name}\`»`);
     }
 }
 
@@ -124,20 +125,20 @@ for (const [pattern, sections] of seen) {
 
     for (const name of sections) {
         if (!known.has(name)) {
-            problems.push(`паттерн \`${pattern}\`: раздел про \`${name}\`, а такого состояния в перечне нет`);
+            problems.push(`the pattern \`${pattern}\`: a section about \`${name}\`, and there is no such state in the list`);
         }
     }
 }
 
 if (problems.length > 0) {
-    console.error(`check-states: расхождений ${problems.length}`);
+    console.error(`check-states: divergences ${problems.length}`);
 
     for (const problem of problems) {
         console.error(`  ${problem}`);
     }
 
-    console.error('\nПеречень состояний — правило `task-flow`, разделы — паттерны при нём.');
+    console.error('\nThe list of states is the rule `task-flow`, the sections are the patterns next to it.');
     process.exit(1);
 }
 
-console.log(`check-states: состояний ${states.length}, у каждого есть раздел в ведущем паттерне`);
+console.log(`check-states: states ${states.length}, each has a section in its leading pattern`);

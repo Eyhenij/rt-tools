@@ -76,7 +76,7 @@ write_law
 
 # SC-AK-447 — у каждого раздела состояния есть строка следующего движения
 report "SC-AK-447 — полное дерево проходит" "$(next_code)" 0
-report "SC-AK-447 — вывод называет число разделов" "$(next_says 'разделов состояния 2')" 1
+report "SC-AK-447 — вывод называет число разделов" "$(next_says 'state sections 2')" 1
 
 # SC-AK-449 — строка находится по зачину, а не по дословному совпадению: хвосты у разделов
 # разные, и оба раздела при этом считаются описанными.
@@ -86,7 +86,7 @@ report "SC-AK-449 — разные хвосты после общего зачи
 sed -i.bak 's/^\*\*Следующее движение:\*\* находки ложатся.*/Находки ложатся в разбор./' \
     "$NEXT_TREE/.claude/skills/сцена/SKILL.md"
 report "SC-AK-448 — раздел без строки отбит" "$(next_code)" 1
-report "SC-AK-448 — отказ называет состояние и паттерн" "$(next_says '`первое` в паттерне `сцена`')" 1
+report "SC-AK-448 — отказ называет состояние и паттерн" "$(next_says '`первое` in the pattern `сцена`')" 1
 report "SC-AK-448 — отказ называет заголовок раздела" "$(next_says 'разведка идёт до первого вопроса')" 1
 write_pattern
 
@@ -94,33 +94,33 @@ write_pattern
 sed -i.bak 's/^\*\*Следующее движение:\*\* замысел коммитится.*/**Следующее движение:** находки ложатся в разбор, и тем же ходом уходит первый вопрос./' \
     "$NEXT_TREE/.claude/skills/сцена/SKILL.md"
 report "SC-AK-450 — списанный хвост отбит" "$(next_code)" 1
-report "SC-AK-450 — отказ называет оба раздела" "$(next_says 'слово в слово то же, что у `первое`')" 1
+report "SC-AK-450 — отказ называет оба раздела" "$(next_says 'word for word the same as at `первое`')" 1
 write_pattern
 
 # SC-AK-451 — зачин без движения за ним отбивается
 sed -i.bak 's/^\*\*Следующее движение:\*\* замысел коммитится.*/**Следующее движение:** дальше./' \
     "$NEXT_TREE/.claude/skills/сцена/SKILL.md"
 report "SC-AK-451 — зачин без движения отбит" "$(next_code)" 1
-report "SC-AK-451 — отказ говорит, чего не хватает" "$(next_says 'зачин есть, а движение за ним не названо')" 1
+report "SC-AK-451 — отказ говорит, чего не хватает" "$(next_says 'the opening is there, and no move is named after it')" 1
 write_pattern
 
 # SC-AK-453 — правило без утверждения о границе отбивается той же проверкой
 sed -i.bak 's/^Переход из состояния в состояние ходом.*/Переход между состояниями ходом не кончается./' \
     "$NEXT_TREE/.claude/skills/task-flow/SKILL.md"
 report "SC-AK-453 — правило без статьи отбито" "$(next_code)" 1
-report "SC-AK-453 — отказ называет правило, а не разделы" "$(next_says 'правило хода захода о границе состояния молчит')" 1
+report "SC-AK-453 — отказ называет правило, а не разделы" "$(next_says 'the rule of turn conduct says nothing about the boundary of a state')" 1
 write_rule
 
 # SC-AK-454 — карта хода говорит о переходе то же, что и правило
 printf '# Карта хода\n\nСпособов четыре.\n' > "$NEXT_TREE/.claude/rt-kit/defaults/turn-map.md"
 report "SC-AK-454 — карта без строки о границе отбита" "$(next_code)" 1
-report "SC-AK-454 — отказ называет карту" "$(next_says 'карта хода о границе состояния молчит')" 1
+report "SC-AK-454 — отказ называет карту" "$(next_says 'the turn map says nothing about the boundary of a state')" 1
 write_map
 
 # SC-AK-455 — закон о ведении работы называет границу состояния статьёй
 printf '# Закон о ведении работы\n\nСтатей тут нет.\n' > "$NEXT_TREE/docs/constitution/work-conduct.md"
 report "SC-AK-455 — закон без статьи отбит" "$(next_code)" 1
-report "SC-AK-455 — отказ называет закон" "$(next_says 'закон о ведении работы о границе состояния молчит')" 1
+report "SC-AK-455 — отказ называет закон" "$(next_says 'the law on work conduct says nothing about the boundary of a state')" 1
 write_law
 
 # Карты и закона в дереве может не быть вовсе — тогда сверять их нечем, и проверка молчит.
@@ -133,20 +133,20 @@ write_law
 printf '# Ведение работы\n\nПереход из состояния в состояние ходом не кончается.\n' \
     > "$NEXT_TREE/.claude/skills/task-flow/SKILL.md"
 report "SC-AK-457 — перечень без таблицы отбит" "$(next_code)" 1
-report "SC-AK-457 — отказ говорит, что перечень сломан" "$(next_says 'не нашлось таблицы состояний')" 1
+report "SC-AK-457 — отказ говорит, что перечень сломан" "$(next_says 'carries no table of states')" 1
 write_rule
 
 # SC-AK-456 — дерево без правила ведения работы проверку проходит
 rm -r "$NEXT_TREE/.claude/skills/task-flow"
 report "SC-AK-456 — дерева без правила проверка не судит" "$(next_code)" 0
-report "SC-AK-456 — молчание объяснено" "$(next_says 'сверять нечего')" 1
+report "SC-AK-456 — молчание объяснено" "$(next_says 'there is nothing to check')" 1
 write_rule
 
 # Ведущий паттерн, которого в дереве нет, здесь не судится: его называет сверка состояний, и
 # два отказа об одном промахе читаются как две претензии.
 rm -r "$NEXT_TREE/.claude/skills/сцена"
 report "следующее движение: неразложенный паттерн не судится" "$(next_code)" 1
-report "следующее движение: отказ про разделы, а не про паттерн" "$(next_says 'ни одного раздела состояния не нашлось')" 1
+report "следующее движение: отказ про разделы, а не про паттерн" "$(next_says 'not a single state section was found')" 1
 write_pattern
 
 # SC-AK-907 — заголовок раздела и зачин строки читаются под английским именем: паттерн пакета
@@ -163,7 +163,7 @@ cat > "$NEXT_TREE/.claude/skills/сцена/SKILL.md" <<'EOF'
 **Next move:** the plan is committed, and the first stage begins in the same turn.
 EOF
 report "SC-AK-907 — английские заголовок и зачин проходят" "$(next_code)" 0
-report "SC-AK-907 — вывод считает оба раздела" "$(next_says 'разделов состояния 2')" 1
+report "SC-AK-907 — вывод считает оба раздела" "$(next_says 'state sections 2')" 1
 write_pattern
 
 # SC-AK-458 — проверка стоит своей строкой в наборе гейта пуша

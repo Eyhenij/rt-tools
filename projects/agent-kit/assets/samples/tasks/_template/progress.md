@@ -1,13 +1,13 @@
 # Progress
 
-## Где стоим
+## Where we stand
 
 Rewritten by every session, not appended to.
 
-- **Состояние:** `<name from the state list of rule task-flow>`
-- **Этап:** <number> of <total> — <name>
+- **State:** `<name from the state list of rule task-flow>`
+- **Stage:** <number> of <total> — <name>
 - **Done:** <briefly>
-- **Следующий шаг:** <what is done first in the new session>
+- **Next step:** <what is done first in the new session>
 - **Uncommitted:** <what lies in the tree outside the index>
 - **Waiting for the owner:** <what exactly, or "no">
 - **PR:** <number and state, or "not open yet">
