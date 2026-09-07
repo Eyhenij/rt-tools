@@ -2,52 +2,50 @@
 name: rt-tools-storybook
 kind: rule
 law: verifiability
-description: Правило этого дерева про витрину: обёртка Test*Component, типизация истории, декораторы окружения, контролы, договор о покрытии состояний во второй витрине. Брать при заведении или правке любой истории и страницы документации витрины. Паттерн rt-tools-storybook-story.
+description: This tree's rule about the showcase: the Test*Component wrapper, story typing, environment decorators, controls, the state-coverage contract in the second showcase. Take it when creating or editing any story or showcase page. The pattern is rt-tools-storybook-story.
 ---
 
 # Storybook
 
-Правило под «Закон о проверяемости», раздел «Демонстрация видимого состояния». Текст ниже
-написан по-английски и приведётся к одному языку отдельным проходом; статьи — здесь.
+A rule under the "Law on verifiability", the section about showing a visible state.
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Витрина у каждого кита своя, и общего между ними нет ничего.** Ни настройки, ни порта, ни
-  договорённостей об именах: киты разведены намеренно, и приём, снятый с одного, на втором
-  оказывается неверным молча.
-- **История целит в обёртку, а не в компонент кита.** Вход компонента сигнальный, и привязать к
-  нему изменяемое значение витрины нечем; обёртка держит демонстрационное состояние и не едет
-  в пакет.
-- **Компонент покрыт, когда каждая ось входов показана всеми значениями сразу.** Существующий
-  контрол, которым до значения можно доехать, покрытием не является: расхождение, видное на
-  сочетании, не видит ни автор правки, ни ревьюер.
-- **Оси перемножаются только там, где видно влияют друг на друга.** Полный декартов продукт
-  отвергнут: у кнопки это тысяча с лишним ячеек.
-- **Ось, которую показать нельзя, объявляется с причиной.** Молчаливый пропуск выглядит ровно
-  как покрытие.
-- **История, рисующая пустой набор, покрытием не считается.** Сначала правдоподобные данные,
-  потом матрица.
-- **Сетку рисует общая обвязка показа, а не разметка каждой истории.** Иначе одно и то же
-  показывается семьюдесятью способами и расходится при первой правке.
-- **Провайдер, без которого компонент не поднимается, стоит в `preview.ts`, а не декоратором
-  одной истории.** Локальный декоратор чинит ту историю, где его написали, и оставляет матрицу
-  того же компонента падать — дефект при этом наполовину известен и всё равно повторяется.
-- **История уровня шаблонов показывает целый экран, и договор о покрытии к ней не относится
-  тоже.** У экрана нет ни осей входов, ни состояний в смысле компонента: он собран из готовых
-  компонентов кита и показывает, как из них складывается страница — отступы, порядок блоков,
-  панели, открытые адресом. Требовать от него `Playground`, `States` и `Themes` не с чего, а
-  вместо них он показывает те виды, в которых бывает сам: список с записями, пустой список,
-  отказ чтения. Уровень стоит в `storySort` последним, файлы лежат в
-  `src/showcase/templates/`, обёртка — рядом со своей историей, в `stories/component/`.
-- **Демонстрационное состояние, которым истории одного экрана и различаются, объявляется
-  декоратором истории, а не в `preview.ts`.** Статья о провайдере говорит о другом: там —
-  инжектор, без которого компонент не поднимается вовсе, и объявленный у одной истории он
-  оставляет падать все остальные. Здесь наоборот: у такого объявления есть умолчание, экран
-  поднимается и без него, а история именно им и отличается от соседней.
+- **Each kit has a showcase of its own, and they share nothing.** No config, no port, no naming
+  conventions: the kits are kept apart deliberately, and a technique taken from one turns out
+  wrong on the other silently.
+- **A story targets the wrapper, not the kit's component.** The component's input is a signal, and
+  there is nothing to bind the showcase's changeable value to it with; the wrapper holds the
+  demonstration state and does not travel into the package.
+- **A component is covered when every input axis is shown at every value at once.** An existing
+  control one could reach a value by is not coverage: a divergence visible on a combination is
+  seen neither by the author of the edit nor by the reviewer.
+- **Axes are crossed only where they visibly affect one another.** The full cartesian product is
+  rejected: on a button that is over a thousand cells.
+- **An axis that cannot be shown is declared with a reason.** A silent gap looks exactly like
+  coverage.
+- **A story that draws an empty collection is not coverage.** First plausible data, then the
+  matrix.
+- **The grid is drawn by the shared showing harness, not by the markup of every story.**
+  Otherwise the same thing is shown in seventy ways and diverges at the first edit.
+- **A provider without which the component does not come up stands in `preview.ts`, not as one
+  story's decorator.** A local decorator fixes the story it was written in and leaves the matrix
+  of that same component failing — the defect is then half known and repeats anyway.
+- **A template-level story shows a whole screen, and the coverage contract does not apply to it
+  either.** A screen has neither input axes nor states in the component's sense: it is assembled
+  from the kit's ready-made components and shows how a page comes out of them — the paddings, the
+  order of the blocks, the panels opened by an address. There is nothing to demand `Playground`,
+  `States` and `Themes` from it for, and instead it shows the looks it has itself: a list with
+  records, an empty list, a read refusal. The level stands last in `storySort`, the files lie in
+  `src/showcase/templates/`, and the wrapper is next to its story, in `stories/component/`.
+- **The demonstration state one screen's stories differ by is declared by a story decorator, not
+  in `preview.ts`.** The article about a provider speaks of something else: there it is the
+  injector without which the component does not come up at all, and declared on one story it
+  leaves all the others failing. Here it is the other way round: such a declaration has a default,
+  the screen comes up without it, and a story differs from its neighbour by exactly that.
 
-**Two kits, two independent showcases.** They share no config, no port and no
-conventions beyond `@storybook/angular` itself. Check which package you are in
-before copying anything across.
+**Two kits, two independent showcases.** They share no config, no port and no conventions beyond
+`@storybook/angular` itself. Check which package you are in before copying anything across.
 
 |                  | `@rt-tools/ui-kit`            | `@rt-tools/ui-kit-v2`                                    |
 | ---------------- | ----------------------------- | -------------------------------------------------------- |
@@ -69,24 +67,24 @@ pnpm run storybook          # nx run @rt-tools/ui-kit:storybook — port 6006
 pnpm run build-storybook    # dist/storybook/@rt-tools/ui-kit
 ```
 
-## Что уже даёт `preview.ts`
+## What `preview.ts` already gives
 
-`projects/ui-kit-v2/.storybook/preview.ts` объявляет это глобально, и повторять их декоратором
-истории не надо:
+`projects/ui-kit-v2/.storybook/preview.ts` declares this globally, and there is no need to repeat
+it by a story decorator:
 
-| что                                        | зачем                                                                                                     |
+| what                                       | what for                                                                                                  |
 | ------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
-| `provideZonelessChangeDetection()`         | кит собран без зоны                                                                                       |
-| `provideHttpClient()`                      | им ходит за спрайтом `rt-icon`                                                                            |
-| `provideRouter([])`                        | ссылки кита требуют маршрутизатор в инжекторе                                                             |
-| `provideRtStorage()`                       | службы кита, помнящие выбор пользователя                                                                  |
-| `provideRtIDBStorage()`                    | настройки колонок таблица держит в IndexedDB и внедряет службу полем: без провайдера таблица не поднимается вовсе — `NG0201` и пустая разметка вместо строк |
-| `provideRtIcons('/icons')`                 | адрес набора значков                                                                                      |
-| `provideRtKitLabels({ translator, locale })` | подписи кита — русский набор лежит рядом с витриной, в `showcase-labels.ru.ts`                            |
-| `registerLocaleData(localeRu)`             | не провайдер, а вызов на уровне модуля: без него любой `DatePipe` падает `Missing locale data for "ru"` и рисует пустоту вместо ленты |
+| `provideZonelessChangeDetection()`         | the kit is built without a zone                                                                           |
+| `provideHttpClient()`                      | `rt-icon` goes for its sprite by it                                                                       |
+| `provideRouter([])`                        | the kit's links demand a router in the injector                                                           |
+| `provideRtStorage()`                       | the kit's services that remember the user's choice                                                        |
+| `provideRtIDBStorage()`                    | the table keeps the column settings in IndexedDB and injects the service as a field: without the provider the table does not come up at all — `NG0201` and empty markup instead of rows |
+| `provideRtIcons('/icons')`                 | the address of the icon set                                                                               |
+| `provideRtKitLabels({ translator, locale })` | the kit's labels — the Russian set lies next to the showcase, in `showcase-labels.ru.ts`                 |
+| `registerLocaleData(localeRu)`             | not a provider but a module-level call: without it any `DatePipe` fails with `Missing locale data for "ru"` and draws emptiness instead of the feed |
 
-Список полный. Провайдер, понадобившийся ради одной истории, дописывается сюда, а не остаётся в
-её декораторе: следующая матрица того же компонента поднимается уже без него.
+The list is complete. A provider needed for the sake of one story is appended here rather than left
+in its decorator: the next matrix of that same component comes up without it already.
 
 - Icons are served by `staticDirs` from `src/assets/icons` to `/icons`; `rt-icon`
   fetches them over HTTP and inlines a sprite.
@@ -94,28 +92,27 @@ pnpm run build-storybook    # dist/storybook/@rt-tools/ui-kit
   sets in an application, so the showcase renders what a consumer gets.
 - Sidebar order is fixed by `storySort`: `Foundation` (Design Tokens: Overview,
   Colors, Semantic, Spacing, Theming) → `Atoms` → `Molecules` → `Organisms` → `Templates` → the rest.
-- **Заголовок истории начинается уровнем атомарного дизайна, а не общим разделом.** Уровней
-  четыре — атомы, молекулы, организмы, шаблоны, — и между уровнем и именем компонента стоит
-  необязательная предметная группа: кнопки, поля формы, навигация, данные, файлы, окно, боковая
-  панель, таблица, переписка, рабочий стол, каркас. Дочерняя часть стоит в группе своего
-  родителя и на его уровне: шапка окна — рядом с окном, пункт меню — рядом с меню. Общего корня
-  над уровнями нет, порядок разделов задаёт `storySort` — по алфавиту молекулы встали бы перед
-  организмами.
-- **Имя эталона снимка — слаг заголовка, поэтому уровень переносится вместе с ним.** Перекладка
-  заголовка без переименования эталонов оставляет 445 файлов, которым не отвечает ни одна
-  история: прогон снимает всё заново, а сверка каталога краснеет на каждый.
+- **A story title starts with the atomic design level, not with a shared section.** There are four
+  levels — atoms, molecules, organisms, templates — and between the level and the component name
+  stands an optional subject group: buttons, form fields, navigation, data, files, dialog, side
+  panel, table, correspondence, desktop, frame. A child part stands in its parent's group and at
+  its level: a dialog's header next to the dialog, a menu item next to the menu. There is no shared
+  root above the levels, and the order of sections is set by `storySort` — alphabetically molecules
+  would stand before organisms.
+- **A snapshot reference's name is the title's slug, so the level moves together with it.**
+  Relaying the title without renaming the references leaves 445 files no story answers to: the run
+  re-takes everything, and the directory audit turns red on each.
 
 ## State-coverage contract
 
-Under law `docs/constitution/verifiability.md` (section «Демонстрация видимого
-состояния») and ADR `docs/adr/0002-ui-kit-v2-state-coverage.md`. A component is
-covered when **every input axis is shown at every value**, not when a control
-exists that could reach it.
+Under law `docs/constitution/verifiability.md` (the section about showing a visible state) and ADR
+`docs/adr/0002-ui-kit-v2-state-coverage.md`. A component is covered when **every input axis is
+shown at every value**, not when a control exists that could reach it.
 
 Required per component — a missing entry is a defect, not a preference:
 
 | Story / page       | What it must show                                                                                                                                                                                                                                         |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Overview` (MDX)   | Purpose, when to use / when not to use, axis tables, states table, accessibility, theming, related components, and a hand-written input/output table. `compodoc` is deliberately off — `tools/verify-ui-kit-v2-docs.cjs` is what keeps that table honest. |
 | `Playground`       | The single arg-driven story (today's `Default`, renamed).                                                                                                                                                                                                 |
 | one story per axis | Every value of that axis, laid out at once and labelled.                                                                                                                                                                                                  |
@@ -132,29 +129,31 @@ Rules that decide what goes in a matrix:
 - **A story that renders an empty collection is not coverage.** Ten stories
   currently pass an empty array and paint nothing (`UI-KIT-V2-ISSUES.md` §2.3);
   seed a realistic fixture instead.
-- **История уровня основ живёт при обвязке показа, а не в папке компонента, и договор о
-  покрытии к ней не относится.** Она показывает приём, общий для всего кита, — у неё нет ни
-  осей входов, ни состояний, и требовать от неё `Playground`, `States` и `Themes` не с чего.
-  Заголовок начинается разделом Foundation, файл лежит в `src/showcase/stories/`, обёртка — рядом,
-  в `component/`. Foundation-страницы при этом остаются в `projects/ui-kit-v2/docs/`: MDX
-  Angular не поднимает, и живой компонент показать со страницы нечем.
-- **Обёртка, переопределяющая своё свойство компонента, снимает инкапсуляцию.** Компонент
-  объявляет свойство на корне своего блока, а корень рисуется шаблоном кита — правило с
-  атрибутом инкапсуляции до него не доходит вовсе, и переопределение молча ничего не меняет.
+- **A foundation-level story lives next to the showing harness rather than in a component's
+  folder, and the coverage contract does not apply to it.** It shows a technique shared by the
+  whole kit — it has neither input axes nor states, and there is nothing to demand `Playground`,
+  `States` and `Themes` from it for. The title starts with the Foundation section, the file lies in
+  `src/showcase/stories/`, and the wrapper next to it, in `component/`. The Foundation pages at
+  that stay in `projects/ui-kit-v2/docs/`: Angular does not raise MDX, and there is nothing to show
+  a live component from a page with.
+- **A wrapper that overrides the component's own property removes the encapsulation.** The
+  component declares the property on its block's root, and the root is drawn by the kit's template
+  — a rule with the encapsulation attribute never reaches it, and the override silently changes
+  nothing.
 
 ## Gotchas
 
-- **Демонстрационные данные выдумываются, а не берутся с машины, на которой их писали.** Имя
-  человека, адрес его почты, название его заведения попадают в показ незаметно — рука пишет то,
-  что перед глазами, — а витрину читает всякий, кто берёт пакет, и в эталоне снимка это имя
-  лежит картинкой, которую грепом не найти. Выдуманное имя стоит ровно столько же и не
-  принадлежит никому.
-- **Настройку витрины не проверяет ни линтер, ни тайпчек пакета — только её сборка.**
-  `.storybook` исключена из ESLint, а `main.ts` вдобавок несёт `/* eslint-disable */`;
-  `nx run @rt-tools/ui-kit-v2:typecheck` эту папку не видит вовсе. `process.env.RT_SNAPSHOT_RUN`
-  вместо `process.env['RT_SNAPSHOT_RUN']` прошло `check:all` целиком и отказало только на
-  `pnpm run build-storybook:ui-kit-v2`. Правка в `.storybook/` подтверждается сборкой витрины,
-  а не общим прогоном проверок.
+- **Demonstration data is invented rather than taken from the machine it was written on.** A
+  person's name, their mail address, the name of their establishment get into the showing
+  unnoticed — the hand writes what is before the eyes — and the showcase is read by everyone who
+  takes the package, while in a snapshot reference that name lies as a picture no grep will find.
+  An invented name costs exactly the same and belongs to nobody.
+- **The showcase config is checked by neither the linter nor the package typecheck — only by its
+  build.** `.storybook` is excluded from ESLint, and `main.ts` additionally carries
+  `/* eslint-disable */`; `nx run @rt-tools/ui-kit-v2:typecheck` does not see that folder at all.
+  `process.env.RT_SNAPSHOT_RUN` instead of `process.env['RT_SNAPSHOT_RUN']` passed `check:all`
+  whole and was refused only by `pnpm run build-storybook:ui-kit-v2`. An edit in `.storybook/` is
+  confirmed by a showcase build, not by a sweeping run of the checks.
 - `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/` uses a misspelled
   `strories/` folder. It is matched by the `../src/**` glob and works; leave it
   unless you are deliberately renaming it (both the stylelint ignore and any
@@ -165,7 +164,7 @@ Rules that decide what goes in a matrix:
 - `console.log` in a wrapper needs an explicit `// eslint-disable-next-line no-console`
   (`no-console` is `error` repo-wide).
 
-## Паттерны
+## Patterns
 
-- `rt-tools-storybook-story` — готовая история: обёртка, типизация, контролы, матрица состояний,
-  параметры снимка второй витрины.
+- `rt-tools-storybook-story` — a ready-made story: the wrapper, the typing, the controls, the
+  state matrix, the snapshot parameters of the second showcase.

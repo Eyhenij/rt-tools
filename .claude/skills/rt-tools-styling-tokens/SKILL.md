@@ -2,7 +2,7 @@
 name: rt-tools-styling-tokens
 kind: pattern
 rule: rt-tools-styling
-description: A pattern of the rule rt-tools-styling. Take it when a styling token is started or removed, when theme handles are edited, when the dark theme and the contrast are sorted out and when the kit's styling layer is built. Not for narrow-screen thresholds and cascade layers — those are articles of the rule itself.
+description: A pattern of the rule rt-tools-styling. Take it when a styling token is started or removed, when theme handles are edited, when the dark theme and the contrast are sorted out and when the styling layer is built. Not for narrow-screen thresholds and cascade layers.
 ---
 
 # Tokens, themes and the styling layer — the ready-made order
