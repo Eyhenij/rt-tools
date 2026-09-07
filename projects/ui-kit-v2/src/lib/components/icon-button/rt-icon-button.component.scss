@@ -22,13 +22,26 @@
             --rt-icon-button-circle-radius: var(--rt-radius-full);
             --rt-icon-button-square-radius: var(--rt-radius-md);
 
-            /* Промежуточные формы заданы долей стороны, а не ступенью шкалы: кнопка
-               бывает от 32 до 64 пикселей, и на меньшей абсолютный радиус в 20 пикселей
-               уже даёт круг — четыре формы схлопнулись бы в три. */
-            --rt-icon-button-rounded-sm-radius: 22%;
-            --rt-icon-button-rounded-lg-radius: 35%;
+            /* Промежуточные формы делят расстояние от квадрата до круга на три равные
+               части, а не берут свою долю стороны. Доля, взятая сама по себе, промахивается
+               мимо квадрата: у него радиус в 8 пикселей, а это от четверти стороны на
+               кнопке в 32 пикселя до восьмой на кнопке в 64 — ближняя ступень сливается с
+               ним на одних размерах и отрывается на других. Отсчёт от самого квадрата
+               держит шаг ровным на всём ряду: 8 → 12 → 16 → 20 на кнопке в 40 пикселей. */
+            --rt-icon-button-rounded-sm-radius: calc(var(--rt-icon-button-square-radius) + (50% - var(--rt-icon-button-square-radius)) / 3);
+            --rt-icon-button-rounded-lg-radius: calc(
+                var(--rt-icon-button-square-radius) + (50% - var(--rt-icon-button-square-radius)) * 2 / 3
+            );
             --rt-icon-button-indicator-radius: var(--rt-radius-full);
             --rt-icon-button-focus-shadow: var(--rt-shadow-focus-ring);
+
+            /* Тень покоя — ручка для потребителя, как `--rt-btn-shadow` у обычной кнопки; у
+               кнопки-значка её не было вовсе, и приподнять её было нечем. По умолчанию тени
+               нет: у первого кита её нет ни у одной кнопки — подъём там несёт круглая кнопка
+               действия, а не кнопка. Дающему ей значение: кольцо фокуса ниже объявляет
+               `box-shadow` целиком и тень покоя на это время снимает — списком они встанут
+               только тогда, когда покой перестанет быть `none`. */
+            --rt-icon-button-shadow: var(--rt-shadow-none);
             --rt-icon-button-transition-duration: var(--rt-duration-fast);
 
             position: relative;
@@ -40,9 +53,12 @@
             padding: 0;
             border: 0;
             background: transparent;
+            box-shadow: var(--rt-icon-button-shadow);
             color: var(--rt-icon-button-color);
             cursor: pointer;
-            transition: background-color var(--rt-icon-button-transition-duration) ease;
+            transition:
+                background-color var(--rt-icon-button-transition-duration) ease,
+                box-shadow var(--rt-icon-button-transition-duration) ease;
 
             &--sm {
                 --rt-icon-button-size: var(--rt-control-height-sm);
