@@ -1,21 +1,22 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/handoff-entry-guard.sh · e47552bdc09a · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/handoff-entry-guard.sh · 0beb92283fae · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit
-# Требует: rules/task-flow.md, hooks/deny-tail.sh
-# Гард входа из передачи: заход, начатый с передачи, не правит файлов, пока не загружено правило
-# ведения работы.
+# Requires: rules/task-flow.md, hooks/deny-tail.sh
+# Handover entry guard: a session started from a handover edits no file until the work-conduct rule
+# is loaded.
 #
-# Передача написана прошлым заходом, лежит вне дерева и не читается ни одной проверкой. Её
-# читают как задание — и берутся за работу мимо правила: состояние не сверено с деревом, числа
-# взяты на веру, порядок входа исполняется по памяти. Порядок, записанный только словами,
-# исполняется, пока о нём помнят.
+# The handover was written by the previous session, lies outside the tree and is read by no check.
+# It gets read as an assignment, and work begins past the rule: the state is not checked against the
+# tree, the numbers are taken on trust, the entry order is followed from memory. An order written
+# only in words is followed as long as someone remembers it.
 #
-# Заход узнаётся по первой реплике владельца: в ней назван путь к передаче либо её текст.
-# Загрузка правила — по вызову инструмента правил за тот же заход.
+# The session is recognised by the owner's first message: it names the handover path or carries its
+# text. The rule load is recognised by a call of the rules tool in the same session.
 #
-# FAIL-OPEN: нет `jq`, нет записи хода, передачи в реплике нет → пропуск.
+# FAIL-OPEN: no `jq`, no transcript, no handover in the message → pass.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is recorded by the shared deny tail, not by the
+# guard itself.
 RT_GUARD_NAME=handoff-entry-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -36,7 +37,8 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 [ -z "$transcript" ] && exit 0
 [ -f "$transcript" ] || exit 0
 
-# Имя правила ведения работы у дерева своё, но каталог передач общий: гард смотрит оба признака.
+# The work-conduct rule has its own name in each tree, but the handover directory is shared: the
+# guard looks at both signs.
 rule="${RT_TASK_FLOW_RULE:-task-flow}"
 
 verdict="$(jq -s -r --arg rule "$rule" '
@@ -63,8 +65,8 @@ reason="BLOCKED by handoff-entry-guard: заход начат с передач�
 
 Загрузи правило и повтори правку."
 
-# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
-# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
+# The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null

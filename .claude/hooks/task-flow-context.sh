@@ -1,40 +1,42 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/task-flow-context.sh · 479ec5133667 · правится надстройкой, не здесь
-# Общий разбор для гардов хода работы. НЕ гард: объявления `rt-hook:` у него нет, к событиям
-# агента он не подключается. Его источают сами гарды — тем же приёмом, каким они источают общий
-# хвост отказа.
+# rt-kit v0.25.0 · hooks/task-flow-context.sh · a92867fc942f · правится надстройкой, не здесь
+# Shared parsing for the work-conduct guards. NOT a guard: it has no `rt-hook:` declaration and
+# is not attached to any agent event. The guards themselves source it — the same way they source
+# the shared refusal tail.
 #
-# Зачем он есть. Требования к ходу работы стоят двумя гардами — папка задачи с замыслом и
-# состоянием отдельно, договорённость о продукте отдельно, — а разбор у обоих один и тот же:
-# какой путь пишет вызов, код ли это приложения, в какой ветке идёт правка и где лежит папка
-# задачи. Разложенный вторым разом, этот разбор расходится молча: правка одного гарда чинит
-# половину случаев, и видно это только там, где второй промолчал.
+# Why it exists. The work-conduct requirements are kept by two guards — the task folder with the
+# plan and the state by one, the product agreement by the other — and both parse the same things:
+# which path the call writes, whether it is application code, in which branch the edit goes and
+# where the task folder lies. Laid out twice, this parsing drifts silently: an edit to one guard
+# fixes half of the cases, and that shows only where the other guard kept silent.
 #
-# ЧТО ОН ДЕЛАЕТ. Читает ввод, поднимает профиль дерева, вынимает из вызова пути, отбирает среди
-# них первый путь кода приложения, переходит в рабочий каталог правки и называет ветку, корень,
-# каталог папок задач, саму папку и замысел в ней.
+# WHAT IT DOES. Reads the input, loads the tree profile, takes the paths out of the call, picks
+# the first application-code path among them, moves into the working directory of the edit and
+# names the branch, the root, the task folders directory, the folder itself and the plan in it.
 #
-# ЧЕГО ОН НЕ ДЕЛАЕТ. Он ничего не судит и ничего не отбивает: имя ветки, наличие папки, состояние
-# работы и договорённость — дело самих гардов, и отказ печатает тот, чьё это требование.
+# WHAT IT DOES NOT DO. It judges nothing and refuses nothing: the branch name, the presence of
+# the folder, the work state and the agreement are the business of the guards themselves, and the
+# refusal is printed by the one whose requirement it is.
 #
-# FAIL-OPEN: нет jq, не git-репозиторий, битый ввод, чужой инструмент, нет функции профиля →
-# ответ «судить нечего». Сломанный разбор не должен мешать работать.
+# FAIL-OPEN: no jq, not a git repository, broken input, a foreign tool, no profile function →
+# the answer is "nothing to judge". Broken parsing must not get in the way of work.
 
-# Разбор вызова. Возвращает 0 и ставит переменные, если правка касается кода приложения в ветке
-# с историей; иначе — ненулевой код, и гард выходит молча.
+# Parsing the call. Returns 0 and sets the variables if the edit touches application code in a
+# branch with history; otherwise a non-zero code, and the guard exits silently.
 #
-#   RT_TF_PATH        — путь кода приложения, из-за которого гард вообще судит
-#   RT_TF_BRANCH      — текущая ветка рабочего каталога правки
-#   RT_TF_ROOT        — корень рабочего дерева
-#   RT_TF_TASKS_DIR   — каталог папок задач, как он назван в дереве
-#   RT_TF_MAIN_BRANCH — главная ветка дерева
-#   RT_TF_DIR         — папка этой задачи
-#   RT_TF_PLAN        — замысел в ней
-# Разложенный слой правил судится наравне с кодом приложения. Путями кода он не покрыт нигде —
-# лежит в каталоге законов, в каталоге агента и среди проверок, — и полторы сотни его файлов
-# легли без единого отклика гарда; отбил он двумя ходами позже, на записи в папку задачи. Признак
-# тот же, по которому слой находит гейт правил: шапка раскладки в начале файла. Ресурс пакета, из
-# которого раскладка идёт, шапки не несёт и судится по-прежнему своим путём.
+#   RT_TF_PATH        — the application-code path because of which the guard judges at all
+#   RT_TF_BRANCH      — the current branch of the edit's working directory
+#   RT_TF_ROOT        — the root of the working tree
+#   RT_TF_TASKS_DIR   — the task folders directory, as the tree names it
+#   RT_TF_MAIN_BRANCH — the main branch of the tree
+#   RT_TF_DIR         — the folder of this task
+#   RT_TF_PLAN        — the plan in it
+# The laid-out rules layer is judged on a par with application code. No code path covers it — it
+# lies in the laws directory, in the agent directory and among the checks — and a hundred and
+# fifty of its files landed without a single response from the guard; it refused two turns later,
+# on a write into the task folder. The sign is the same one by which the layer finds the rules
+# gate: the layout header at the top of the file. The package resource the layout comes from
+# carries no header and is still judged by its path.
 rt_tf_laid_out() {
     [ -f "$1" ] || return 1
     head -n 3 "$1" 2>/dev/null | grep -q 'rt-kit v[^[:space:]]* ·'
@@ -53,8 +55,8 @@ rt_task_flow_context() {
     [ -z "$RT_HOOK_INPUT" ] && return 1
     command -v jq >/dev/null 2>&1 || return 1
 
-    # Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
-    # Читается до разбора пути: пути из команды оболочки вынимает как раз профиль.
+    # The tree profile: the package default first, the project override on top of it if there is
+    # one. Read before the path parsing: it is the profile that takes paths out of a shell command.
     for rt_tf_profile in \
         "$rt_tf_hooks_dir/../rt-kit/defaults/project.sh" \
         "$rt_tf_hooks_dir/../defaults/project.sh" \
@@ -64,8 +66,8 @@ rt_task_flow_context() {
         [ -f "$rt_tf_profile" ] && . "$rt_tf_profile" 2>/dev/null
     done
 
-    # Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
-    # быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+    # A word about a missing profile function: a hook that exited silently cannot be told from a
+    # working one. The file may not be laid out — then the old behaviour, the silent one, stays.
     # shellcheck disable=SC1090
     [ -f "$rt_tf_hooks_dir/profile-check.sh" ] && . "$rt_tf_hooks_dir/profile-check.sh"
     command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
@@ -73,23 +75,23 @@ rt_task_flow_context() {
     rt_tf_tool="$(rt_hook_tool)"
     rt_tf_candidates=""
     case "$rt_tf_tool" in
-        # Инструмент редактора заводит файл теми же двумя данными, только называет их иначе —
-        # без этой ветки правка шла бы мимо гарда сменой инструмента.
+        # The editor tool creates a file with the same two pieces of data, only under different
+        # names — without this branch an edit would pass the guard by switching the tool.
         Edit | Write | MultiEdit | mcp__webstorm__create_new_file)
             rt_tf_candidates="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
             ;;
-        # Второй ярус: та же правка, положенная командой оболочки. Без него отказ гарда обходится
-        # сменой не инструмента, а способа записи — перенаправлением, `sed -i`, интерпретатором с
-        # heredoc.
+        # The second tier: the same edit, made by a shell command. Without it the guard's refusal
+        # is bypassed by switching not the tool but the way of writing — a redirect, `sed -i`, an
+        # interpreter with a heredoc.
         #
-        # Терминал среды исполняет ту же командную строку и кладёт её в то же поле: без этих двух
-        # имён гард стоял бы объявленным на них и молча пропускал — состояние хуже необъявленного,
-        # потому что снаружи выглядит закрытым.
+        # The IDE terminal runs the same command line and puts it into the same field: without
+        # these two names the guard would stand declared on them and let them through silently —
+        # a state worse than undeclared, because from outside it looks closed.
         Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool)
             rt_tf_cmd="$(rt_hook_cmd)"
             [ -z "$rt_tf_cmd" ] && return 1
-            # Универсальный исполнитель прячет настоящую команду во вложенной строке: без её
-            # разбора путь стоит за кавычкой, и до него не дотягивается ни один образец.
+            # The universal runner hides the real command in a nested string: without parsing it
+            # the path stands behind a quote, and no pattern reaches it.
             if [ "$rt_tf_tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&1; then
                 rt_tf_inner="$(printf '%s' "$rt_tf_cmd" | perl -0ne '
                     if (/--command(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(.+))/s) {
@@ -98,22 +100,24 @@ rt_task_flow_context() {
                 ' 2>/dev/null)"
                 [ -n "$rt_tf_inner" ] && rt_tf_cmd="$rt_tf_inner"
             fi
-            # Команда заведения задачи не судится вовсе. Она пишет папку задачи и карточку в
-            # очереди работ, а текст её несёт тело задачи целиком: цитата со знаком «больше»
-            # подходит под признак записи, путь к коду в прозе тела — под признак пути. Отбитая,
-            # она отбивается тем самым гардом, который печатает её в тексте своего отказа, и
-            # завести задачу становится нечем — ни с ветки закрытой задачи, ни с главной. Имя
-            # команды берётся у профиля дерева: своя копия разошлась бы с ним молча.
+            # The task creation command is not judged at all. It writes the task folder and the
+            # card in the work queue, and its text carries the whole task body: a quote with the
+            # "greater than" sign matches the write sign, a code path in the body's prose matches
+            # the path sign. Refused, it is refused by the very guard that prints it in the text
+            # of its refusal, and there is nothing left to create a task with — neither from the
+            # branch of a closed task nor from the main one. The command name comes from the tree
+            # profile: a copy of its own would drift from it silently.
             case "$rt_tf_cmd" in
                 *"${RT_TASK_NEW_CMD:-npm run task:new}"*) return 1 ;;
             esac
-            # Снятие перестоявших записей о законченных работах не судится тоже. Записи стареют
-            # по календарю, и проверка срока краснеет сама, без правки в ветке; в ветке, куда
-            # работу привозят слияниями, папки задачи нет и не должно быть, а без замысла правка
-            # не кладётся — заявка остаётся красной, и выхода из этой пары у исполнителя нет.
-            # Имя команды берёт профиль дерева: не назвало — вывода нет, и всё как прежде.
-            # Сверяется вся команда целиком, а не вхождение: в связке через `&&` рядом со
-            # снятием стоит что угодно, и вывод по вхождению стал бы дырой шириной в оболочку.
+            # Pruning stale records of finished work is not judged either. Records age by the
+            # calendar, and the age check turns red by itself, without an edit in the branch; in
+            # the branch where work arrives by merges there is no task folder and must not be,
+            # and without a plan the edit is not written — the PR stays red, and the executor has
+            # no way out of this pair. The tree profile names the command: not named — no
+            # exemption, and everything is as before. The whole command is compared, not a
+            # substring: in a chain through `&&` anything at all stands next to the pruning, and a
+            # substring exemption would become a hole as wide as the shell.
             if [ -n "${RT_ARCHIVE_PRUNE_CMD:-}" ]; then
                 rt_tf_bare="$(printf '%s' "$rt_tf_cmd" | tr -s '[:space:]' ' ' | sed 's/^ //; s/ $//')"
                 [ "$rt_tf_bare" = "$RT_ARCHIVE_PRUNE_CMD" ] && return 1
@@ -127,32 +131,34 @@ rt_task_flow_context() {
     esac
     [ -z "$rt_tf_candidates" ] && return 1
 
-    # Признак «правка меняет поведение» — путь, а не оценка на глаз: оценку назначает тот, кому
-    # она мешает, и порог плывёт. Где живёт код приложения, знает профиль: правила, тексты,
-    # обвязка и зависимости под требование не попадают — иначе разбор задачи нельзя было бы
-    # вести до заведения ветки.
+    # The sign "the edit changes behaviour" is a path, not a judgement by eye: a judgement is
+    # made by whoever it hinders, and the threshold drifts. Where application code lives, the
+    # profile knows: rules, texts, tooling and dependencies do not fall under the requirement —
+    # otherwise the grill of a task could not be conducted before the branch is created.
     rt_needs rt_is_app_code task-flow-guard || return 1
 
-    # Удаление отличается от записи одним: снимаемого может не быть в истории вовсе. Свой
-    # временный каталог под корнем приложений правкой продукта не бывает — снимать его,
-    # восстанавливая ради этого замысел на диске, значит исполнять требование, написанное про
-    # другое действие. Отслеживаемый путь судится по-прежнему: снятый файл кода меняет поведение
-    # так же, как переписанный.
+    # Removal differs from a write in one thing: what is removed may not be in history at all. A
+    # temporary directory of one's own under the applications root is never a product edit —
+    # removing it, and restoring the plan on disk for that, means carrying out a requirement
+    # written about a different action. A tracked path is judged as before: a removed code file
+    # changes behaviour just as a rewritten one does.
     rt_tf_removes=0
     case "${rt_tf_cmd:-}" in
         *"rm "*) rt_tf_removes=1 ;;
     esac
-    # Каталог правки: ветка и история смотрятся ниже, а спросить историю нужно уже здесь.
+    # The directory of the edit: the branch and the history are looked at below, but history has
+    # to be asked already here.
     rt_tf_askdir="$(rt_hook_cwd)"
     [ -z "$rt_tf_askdir" ] && rt_tf_askdir="${CLAUDE_PROJECT_DIR:-.}"
 
-    # Судится каждый названный путь: команда пишет столько файлов, сколько в ней стоит, и одного
-    # под требованием довольно, чтобы отбить её целиком.
+    # Every named path is judged: a command writes as many files as stand in it, and one under
+    # the requirement is enough to refuse it whole.
     RT_TF_PATH=""
     while IFS= read -r rt_tf_candidate; do
         [ -z "$rt_tf_candidate" ] && continue
-        # Снятие того, чего в истории нет, — не правка продукта, а уборка за собой. Спрашивается
-        # путь, как он назван в команде: приклеенный корень уводит вопрос в чужое дерево.
+        # Removing what is not in history is not a product edit but cleaning up after oneself.
+        # The path is asked as it is named in the command: a glued-on root takes the question
+        # into a foreign tree.
         if [ "$rt_tf_removes" = 1 ] && git -C "$rt_tf_askdir" rev-parse --is-inside-work-tree >/dev/null 2>&1 &&
             ! git -C "$rt_tf_askdir" ls-files --error-unmatch -- "$rt_tf_candidate" >/dev/null 2>&1; then
             continue
@@ -170,7 +176,7 @@ $rt_tf_candidates
 EOF
     [ -z "$RT_TF_PATH" ] && return 1
 
-    # Ветку смотрим там, где пойдёт правка: у worktree она своя.
+    # The branch is looked at where the edit will go: a worktree has one of its own.
     rt_tf_workdir="$(rt_hook_cwd)"
     [ -z "$rt_tf_workdir" ] && rt_tf_workdir="${CLAUDE_PROJECT_DIR:-.}"
     cd "$rt_tf_workdir" 2>/dev/null || return 1
@@ -182,7 +188,7 @@ EOF
     RT_TF_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
     [ -z "$RT_TF_ROOT" ] && return 1
 
-    # Каталог папок задач: у дерева он свой, но имя обычно общее.
+    # The task folders directory: each tree has its own, but the name is usually shared.
     RT_TF_TASKS_DIR="${RT_TASKS_DIR:-docs/tasks}"
     RT_TF_MAIN_BRANCH="${RT_MAIN_BRANCH:-main}"
     RT_TF_DIR="$RT_TF_ROOT/$RT_TF_TASKS_DIR/$RT_TF_BRANCH"
@@ -191,9 +197,10 @@ EOF
     return 0
 }
 
-# Отказ гарда хода работы: причина первым параметром, законная форма обхода — вторым. Хвост
-# дописывается здесь, а не в каждом тексте: пропущенный в одном месте, он читается как «у этого
-# отказа ходов нет». Хвост может быть не разложен — тогда его нет, а причина остаётся прежней.
+# The refusal of a work-conduct guard: the reason as the first parameter, the lawful form of
+# bypass as the second. The tail is appended here, not in every text: missed in one place, it
+# reads as "this refusal has no moves". The tail may not be laid out — then there is none, and
+# the reason stays as it was.
 rt_task_flow_deny() {
     rt_tf_reason="$1"
     if command -v rt_deny_tail >/dev/null 2>&1; then
