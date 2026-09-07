@@ -213,8 +213,13 @@
        внутри flex-баров контрол без ограничения растягивается на всю строку. */
     --rt-input-max-width: var(--rt-control-max-width);
 
+    /* Скругление контрола — назначение, а не ступень на месте. Кнопка, поле ввода и
+       всё, что стоит с ними в строке, берут его отсюда: набор оформления живёт слоем
+       назначений и до ступени, взятой компонентом напрямую, не достаёт. */
+    --rt-radius-control: var(--rt-radius-lg);
+
     /* Radius / spacing / border */
-    --rt-input-radius: var(--rt-radius-lg);
+    --rt-input-radius: var(--rt-radius-control);
     --rt-input-padding-x: var(--rt-space-4);
     --rt-input-padding-y: var(--rt-space-0);
     --rt-input-border-width: var(--rt-border-width-thin);

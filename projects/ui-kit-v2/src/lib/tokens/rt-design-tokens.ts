@@ -330,6 +330,7 @@ export type TRtDesignTokenName =
     | '--rt-profile-row-inset'
     | '--rt-profile-theme-icon-padding'
     | '--rt-radius-2xl'
+    | '--rt-radius-control'
     | '--rt-radius-full'
     | '--rt-radius-lg'
     | '--rt-radius-md'
@@ -778,6 +779,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-profile-row-inset',
     '--rt-profile-theme-icon-padding',
     '--rt-radius-2xl',
+    '--rt-radius-control',
     '--rt-radius-full',
     '--rt-radius-lg',
     '--rt-radius-md',

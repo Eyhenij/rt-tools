@@ -141,4 +141,11 @@ export const material = [
         name: `--rt-color-stepper-track`,
         value: `var(--rt-mat-neutral-30)`,
     },
+    {
+        lead: `    /* Кнопка и поле первого кита скруглены заметно сильнее: 1.5rem против 10px.
+       Значение снято числом — ссылки на токены первого кита во второй кит не едут. */`,
+        space: true,
+        name: `--rt-radius-control`,
+        value: `1.5rem`,
+    },
 ];
