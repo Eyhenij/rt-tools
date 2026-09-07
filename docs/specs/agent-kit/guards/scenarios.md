@@ -1,452 +1,479 @@
-# Сценарии — гарды хода и гейт правил
+# Scenarios — the turn guards and the rules gate
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной. Префикс общий на домен, и номера при переезде в поддомен не
-пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier stands at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason. The prefix is shared by the domain, and the
+numbers were not recounted on the move into the subdomain: the number ties a scenario to a test title.
 
-### SC-AK-22 — вопрос владельцу без чтения правил ход не заканчивает
+### SC-AK-22 — a question to the owner without reading the rules does not end a turn
 
-Дано за ход правила и законы не читались Когда ход кончается репликой с вопросом Тогда гард возвращает ход
-исполнителю и называет, что читается до вопроса
+Given the rules and the laws were not read during the turn When the turn ends with a reply holding a
+question Then the guard gives the turn back to the executor and names what is read before a question
 
-### SC-AK-23 — прочитанное правило вопрос разрешает
+### SC-AK-23 — a rule that was read allows a question
 
-Дано за тот же ход загружено правило Когда ход кончается репликой с вопросом Тогда гард пропускает
+Given a rule was loaded during the same turn When the turn ends with a reply holding a question Then
+the guard lets it through
 
-### SC-AK-24 — поиск по правилам считается чтением наравне с загрузкой
+### SC-AK-24 — a search over the rules counts as reading on a par with loading
 
-Дано за ход шёл поиск по каталогу конституции, а правило не загружалось Когда ход кончается репликой с вопросом
-Тогда гард пропускает
+Given a search over the constitution directory went during the turn, and no rule was loaded When the
+turn ends with a reply holding a question Then the guard lets it through
 
-### SC-AK-25 — повторный заход по тому же ходу не судится
+### SC-AK-25 — a repeated pass over the same turn is not judged
 
-Дано гард уже вернул этот ход один раз Когда ход кончается снова Тогда гард пропускает
+Given the guard already gave this turn back once When the turn ends again Then the guard lets it
+through
 
-### SC-AK-26 — сломанный гард разговора работу не останавливает
+### SC-AK-26 — a broken conversation guard does not stop the work
 
-Дано записи хода на месте нет Когда ход кончается репликой с вопросом Тогда гард пропускает
+Given there is no record of the turn in place When the turn ends with a reply holding a question Then
+the guard lets it through
 
-### SC-AK-35 — гард окна молчит до порога напоминания
+### SC-AK-35 — the window guard stays silent up to the reminder threshold
 
-Дано заполнение окна ниже порога напоминания Когда заход делает вызов инструмента Тогда гард молчит
+Given the fill of the window is below the reminder threshold When the session makes a tool call Then
+the guard stays silent
 
-### SC-AK-36 — на пороге напоминания заход получает подсказку
+### SC-AK-36 — at the reminder threshold the session gets a hint
 
-Дано заполнение окна выше порога напоминания и ниже порога остановки Когда вызов инструмента завершился Тогда
-гард говорит долю заполнения и велит выбирать точку остановки
+Given the fill of the window is above the reminder threshold and below the stop threshold When a tool
+call is finished Then the guard says the share of the fill and orders picking a stopping point
 
-### SC-AK-37 — напоминание повторяется по ступеням
+### SC-AK-37 — the reminder repeats by steps
 
-Дано напоминание для этой ступени заполнения уже прозвучало Когда завершился следующий вызов инструмента Тогда
-гард молчит
+Given the reminder for this step of the fill has already sounded When the next tool call is finished
+Then the guard stays silent
 
-### SC-AK-38 — после порога остановки работа отбивается
+### SC-AK-38 — after the stop threshold the work is refused
 
-Дано заполнение окна выше порога остановки Когда заход правит код приложения Тогда гард отказывает и называет,
-чем заход закрывается
+Given the fill of the window is above the stop threshold When the session edits application code Then
+the guard refuses and names what the session is closed by
 
-### SC-AK-39 — закрытие захода после порога остановки проходит
+### SC-AK-39 — closing the session after the stop threshold passes
 
-Дано заполнение окна выше порога остановки Когда заход правит ход работы, пишет передачу или зовёт команду
-поставки Тогда гард пропускает
+Given the fill of the window is above the stop threshold When the session edits the course of the
+work, writes a handover or calls a delivery command Then the guard lets it through
 
-### SC-AK-40 — дерево без размера окна стража не получает
+### SC-AK-40 — a tree without a window size gets no watchman
 
-Дано размер окна в настройке дерева не задан Когда заполнение окна выше любого порога Тогда гард пропускает
-молча
+Given the size of the window is not set in the setting of the tree When the fill of the window is
+above any threshold Then the guard lets it through silently
 
-### SC-AK-41 — сломанный гард окна работу не останавливает
+### SC-AK-41 — a broken window guard does not stop the work
 
-Дано записи захода на месте нет Когда заход делает вызов инструмента Тогда гард пропускает
+Given there is no record of the session in place When the session makes a tool call Then the guard
+lets it through
 
-### SC-AK-42 — гард с двумя объявлениями доезжает до настройки обоими
+### SC-AK-42 — a guard with two declarations reaches the setting by both
 
-Дано гард объявил два события агента Когда собирается готовый кусок настройки Тогда оба события в ней есть, и
-каждое зовёт диспетчер со своим именем: путь самого гарда там не стоит — ветки диспетчер собирает по объявлениям
-в шапках
+Given a guard declared two events of the agent When the ready piece of the setting is assembled Then
+both events are in it, and each calls the dispatcher by its own name: the path of the guard itself
+does not stand there — the dispatcher gathers the branches by the declarations in the headers
 
-### SC-AK-88 — хук говорит, какой функции профиля ему не хватает
+### SC-AK-88 — the hook says which profile function it is missing
 
-Дано в профиле дерева нет функции, которую хук зовёт до всякого поведения Когда хук срабатывает Тогда он
-называет имя функции и файл, где её определяют, вместо молчаливого выхода
+Given the tree profile holds no function the hook calls before any behaviour When the hook fires Then
+it names the name of the function and the file it is defined in, instead of leaving silently
 
-Покрыто: `projects/agent-kit/tests/profile-check.test.sh`.
+Covered: `projects/agent-kit/tests/profile-check.test.sh`.
 
-### SC-AK-89 — о нехватке говорится один раз за сессию
+### SC-AK-89 — what is missing is said once per session
 
-Дано функции профиля нет, и хук сработал за сессию не впервые Когда хук срабатывает снова Тогда сообщения о
-нехватке нет: оно сказано один раз
+Given there is no profile function, and the hook fired during the session not for the first time When
+the hook fires again Then there is no message about what is missing: it was said once
 
-Покрыто: `projects/agent-kit/tests/profile-check.test.sh`.
+Covered: `projects/agent-kit/tests/profile-check.test.sh`.
 
-### SC-AK-90 — нехватка функции профиля действие не отбивает
+### SC-AK-90 — a missing profile function refuses no action
 
-Дано функции профиля нет, а хук сторожит правку Когда правка идёт Тогда хук её пропускает: он сообщает о своей
-неполноте, а не судит правку
+Given there is no profile function, and the hook watches an edit When the edit goes Then the hook lets
+it through: it reports its own incompleteness, it does not judge the edit
 
-Покрыто: `projects/agent-kit/tests/profile-check.test.sh`.
+Covered: `projects/agent-kit/tests/profile-check.test.sh`.
 
-### SC-AK-91 — разбор состояния перечисляет недостающие функции профиля
+### SC-AK-91 — the state report lists the missing profile functions
 
-Дано разложены хуки, зовущие функции профиля, и часть из них профиль не определяет Когда идёт разбор состояния
-раскладки Тогда он перечисляет ожидаемые функции и называет неопределённые
+Given the hooks calling profile functions are laid out, and part of them the profile does not define
+When the report of the state of the layout runs Then it lists the expected functions and names the
+undefined ones
 
-Не покрыто: вывод разбора состояния прогоном не сверяется — проверен запуском на этом дереве.
+Not covered: the output of the state report is not checked by a run — it was checked by running it on
+this tree.
 
-### SC-AK-342 — заход с передачей без правила правку не ведёт
+### SC-AK-342 — a session with a handover and without the rule leads no edit
 
-Дано первая реплика владельца называет передачу захода, а правило ведения работы не загружено Когда правится
-файл Тогда гард отбивает правку и называет четыре шага входа
+Given the first reply of the owner names a session handover, and the rule of conducting work is not
+loaded When a file is edited Then the guard refuses the edit and names the four steps of the entry
 
-Покрыто: `projects/agent-kit/tests/handoff-entry-guard.test.sh`.
+Covered: `projects/agent-kit/tests/handoff-entry-guard.test.sh`.
 
-### SC-AK-343 — загруженное правило вход открывает
+### SC-AK-343 — a loaded rule opens the entry
 
-Дано правило ведения работы за этот заход загружено Когда правится файл Тогда гард молчит
+Given the rule of conducting work is loaded during this session When a file is edited Then the guard
+stays silent
 
-Покрыто: `projects/agent-kit/tests/handoff-entry-guard.test.sh`.
+Covered: `projects/agent-kit/tests/handoff-entry-guard.test.sh`.
 
-### SC-AK-344 — заход без передачи гардом не судится
+### SC-AK-344 — a session without a handover is not judged by the guard
 
-Дано о передаче в репликах владельца не сказано Когда правится файл Тогда гард молчит: судить не за что
+Given the replies of the owner say nothing about a handover When a file is edited Then the guard stays
+silent: there is nothing to judge
 
-Покрыто: `projects/agent-kit/tests/handoff-entry-guard.test.sh`.
+Covered: `projects/agent-kit/tests/handoff-entry-guard.test.sh`.
 
-### SC-AK-345 — передача, вставленная текстом, ловится тоже
+### SC-AK-345 — a handover inserted as text is caught too
 
-Дано передача дана не путём, а текстом Когда правится файл без загруженного правила Тогда гард отбивает правку
+Given the handover is given not by a path but as text When a file is edited without a loaded rule Then
+the guard refuses the edit
 
-Покрыто: `projects/agent-kit/tests/handoff-entry-guard.test.sh`.
+Covered: `projects/agent-kit/tests/handoff-entry-guard.test.sh`.
 
-### SC-AK-346 — чтение правила файлом засчитывается наравне с загрузкой
+### SC-AK-346 — reading a rule as a file counts on a par with loading
 
-Дано правило прочитано командой, а не инструментом правил Когда правится файл Тогда гард молчит: путь к правилу
-тот же
+Given the rule was read by a command, not by the rules tool When a file is edited Then the guard stays
+silent: the path to the rule is the same
 
-Покрыто: `projects/agent-kit/tests/handoff-entry-guard.test.sh`.
+Covered: `projects/agent-kit/tests/handoff-entry-guard.test.sh`.
 
-### SC-AK-410 — отказ называет два законных хода и форму обхода
+### SC-AK-410 — the refusal names two lawful moves and the shape of a bypass
 
-Дано гард отбивает вызов, и у отказа есть законная форма обхода Когда отказ доходит до читателя Тогда в нём
-названы оба законных хода — починить названное либо принести владельцу цену обхода — и названа сама форма
-обхода; отказ без законной формы говорит об этом прямо
+Given the guard refuses a call, and the refusal has a lawful shape of a bypass When the refusal reaches
+the reader Then both lawful moves are named in it — fix what is named or bring the owner the price of a
+bypass — and the shape of the bypass itself is named; a refusal without a lawful shape says so outright
 
-Покрыто: `projects/agent-kit/tests/docs-guard.test.sh`.
+Covered: `projects/agent-kit/tests/docs-guard.test.sh`.
 
-### SC-AK-559 — вызов с присваиванием перед командой судится наравне с голым
+### SC-AK-559 — a call with an assignment before the command is judged on a par with a bare one
 
-Дано команда набрана с присваиванием переменной окружения перед именем — той формой, которой требует проверка
-личности вызова Когда её судит гард, узнающий свой вызов по началу команды Тогда вызов узнан и предмет гарда
-судится; присваивание, за которым имени команды нет, вызовом не считается, а упоминание команды в кавычках им не
-становится
+Given the command is typed with an assignment of an environment variable before the name — the shape
+the check of the identity of a call demands When it is judged by a guard that recognises its own call
+by the start of the command Then the call is recognised and the subject of the guard is judged; an
+assignment with no command name after it does not count as a call, and a mention of the command in
+quotes does not become one
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-668 — слово интерпретатора в теле документа тела не открывает
+### SC-AK-668 — the word of an interpreter inside the body of a document opens no body
 
-Дано команда пишет документ телом heredoc, и в тексте документа стоит слово `bash` рядом с путём под каталогом
-кода Когда гард разбирает пути команды Тогда путь из текста целью записи не считается: судится заголовок
-команды, а тело принадлежит той команде, которая его открыла
+Given a command writes a document as a heredoc body, and the text of the document holds the word
+`bash` next to a path under the code directory When the guard takes the paths of the command apart Then
+the path from the text does not count as the target of a write: the header of the command is judged,
+and the body belongs to the command that opened it
 
-### SC-AK-669 — интерпретатор в заголовке тело по-прежнему открывает
+### SC-AK-669 — an interpreter in the header still opens the body
 
-Дано команда вызывает интерпретатор, и путь записи стоит в теле heredoc Когда гард разбирает пути команды Тогда
-путь из тела считается целью записи: интерпретатору код приходит именно телом
+Given a command calls an interpreter, and the path of the write stands in the heredoc body When the
+guard takes the paths of the command apart Then the path from the body counts as the target of a write:
+code arrives to an interpreter exactly as a body
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
 
-### SC-AK-675 — стрелка в тексте команды перенаправлением не считается
+### SC-AK-675 — an arrow in the text of a command does not count as a redirection
 
-Дано команда печатает таблицу, и в её тексте стоит стрелка — `->`, `=>` или закрывающая скобка комментария
-разметки Когда гард разбирает команду Тогда команда пишущей не объявляется: знак в стрелке тот же, что у записи
-в файл, но в оболочке стрелка не значит ничего
+Given a command prints a table, and its text holds an arrow — `->`, `=>` or the closing bracket of a
+markup comment When the guard takes the command apart Then the command is not declared a writing one:
+the sign in an arrow is the same as at a write into a file, but in the shell an arrow means nothing
 
-### SC-AK-676 — цитата разметки записью не считается
+### SC-AK-676 — a markup quote does not count as a write
 
-Дано команда печатает строку, начинающуюся со знака цитаты и слова словами Когда гард разбирает команду Тогда
-команда пишущей не объявляется: цель настоящего перенаправления выглядит как путь, а не как слово
+Given a command prints a line starting with a quote mark and a word in words When the guard takes the
+command apart Then the command is not declared a writing one: the target of a real redirection looks
+like a path, not like a word
 
-### SC-AK-677 — настоящая запись видна во всех формах цели
+### SC-AK-677 — a real write is visible in every shape of the target
 
-Дано команда пишет в файл — голым именем, целью в кавычках, целью в переменной, дозаписью или телом документа
-Когда гард разбирает команду Тогда команда объявляется пишущей: сужение цели ослабило бы гард, не будь этих форм
-названы
+Given a command writes into a file — by a bare name, by a target in quotes, by a target in a variable,
+by appending or by the body of a document When the guard takes the command apart Then the command is
+declared a writing one: narrowing the target would weaken the guard, had these shapes not been named
 
-Покрыто: `projects/agent-kit/tests/defaults.test.sh`.
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
-### SC-AK-749 — цель записи берётся у команды, а не у слова в её тексте
+### SC-AK-749 — the target of a write is taken from the command, not from a word in its text
 
-Дано кусок команды пишет одним лишь перенаправлением, а в его тексте стоит имя чужого файла —
-аргументом или содержимым Когда гард разбирает команду Тогда путём назначения объявляется только
-цель записи: имя, названное в тексте, правкой этого файла не считается, а отказ по нему кончает
-ход и обойти его нечем. Правка по месту, копирование, перенос и интерпретатор разбираются
-по-прежнему: у них путь стоит в самой команде и не в одном месте
+Given a piece of a command writes by a redirection alone, and its text holds the name of a foreign
+file — as an argument or as content When the guard takes the command apart Then only the target of the
+write is declared a destination path: a name named in the text does not count as an edit of that file,
+and a refusal over it ends the turn with nothing to bypass it by. An edit in place, a copy, a move and
+an interpreter are taken apart as before: for them the path stands in the command itself and not in one
+place
 
-Покрыто: `projects/agent-kit/tests/defaults.test.sh`.
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
-### SC-AK-750 — объявленное своё действие работой не считается
+### SC-AK-750 — a declared action of one's own does not count as work
 
-Дано ход не сделал ни одной правки и не позвал ни одной команды, а следующее действие назвал
-словами — «дальше беру», «следующим шагом», «затем сделаю» Когда гард ожидания судит конец хода
-Тогда ход не закрывается, и отказ называет само объявление: пустоты за обещанием не видно
-никому. Ход, где за теми же словами стоит вызов, проходит — там объявление сказано по ходу
-работы, а не вместо неё
+Given the turn made not a single edit and called not a single command, and named the next action in
+words — "next I take", "as the next step", "then I will do" When the waiting guard judges the end of
+the turn Then the turn does not close, and the refusal names the declaration itself: the emptiness
+behind a promise is visible to nobody. A turn where a call stands behind the same words passes — there
+the declaration is said in the course of the work, not instead of it
 
-Покрыто: `projects/agent-kit/tests/waiting-turn-guard.test.sh`.
+Covered: `projects/agent-kit/tests/waiting-turn-guard.test.sh`.
 
-### SC-AK-689 — набор, копящий счёт проверок, отдаёт его кодом возврата
+### SC-AK-689 — a suite that accumulates a count of checks gives it back by the exit code
 
-Дано набор сценариев зовёт общий счётчик проверок и не зовёт строку итога Когда разбор ресурсов проходит по
-наборам Тогда он называет этот набор поимённо: его провалы на цвет прогона не влияют
+Given a scenario suite calls the shared counter of checks and does not call the line of the total When
+the resource review walks the suites Then it names that suite by name: its failures affect the colour
+of the run in no way
 
-Покрыто: `projects/agent-kit/tests/syntax.test.sh`.
+Covered: `projects/agent-kit/tests/syntax.test.sh`.
 
-### SC-AK-703 — замысел эпика читается наравне с законами
+### SC-AK-703 — an epic plan is read on a par with the laws
 
-Дано за ход читался замысел, переживающий одну задачу, а правило не загружалось Когда ход кончается репликой с
-вопросом Тогда гард пропускает: решение, связывающее задачи эпика, лежит там, а не в правилах
+Given during the turn a plan outliving one task was read, and no rule was loaded When the turn ends
+with a reply holding a question Then the guard lets it through: the decision tying the tasks of an epic
+lies there, not in the rules
 
-Покрыто: `projects/agent-kit/tests/grill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
-### SC-AK-704 — описание прошлого читается наравне с законами
+### SC-AK-704 — the archive is read on a par with the laws
 
-Дано за ход шёл поиск по каталогу описания прошлого, а правило не загружалось Когда ход кончается репликой с
-вопросом Тогда гард пропускает
+Given a search over the archive directory went during the turn, and no rule was loaded When the turn
+ends with a reply holding a question Then the guard lets it through
 
-Покрыто: `projects/agent-kit/tests/grill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
-### SC-AK-705 — подсказка отказа называет все каталоги, чтение которых он считает
+### SC-AK-705 — the hint of the refusal names every directory whose reading it counts
 
-Дано ход кончается вопросом, а за ход не читалось ничего Когда гард возвращает ход Тогда его подсказка называет
-и каталог замыслов, и каталог описания прошлого: снятый отказ поиском по неполному списку каталогов стоил
-второго отказа подряд
+Given the turn ends with a question, and nothing was read during the turn When the guard gives the turn
+back Then its hint names both the directory of the plans and the directory of the archive: a refusal
+lifted by a search over an incomplete list of directories cost a second refusal in a row
 
-Покрыто: `projects/agent-kit/tests/grill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
-### SC-AK-710 — разложенный слой правил судится наравне с кодом приложения
+### SC-AK-710 — the laid-out rules layer is judged on a par with application code
 
-Дано правится файл, несущий шапку раскладки, а замысла у ветки нет Когда гард замысла судит правку Тогда он
-отбивает: путями кода слой правил не покрыт нигде, и полторы сотни его файлов ложились без единого отклика. Тот
-же путь без шапки остаётся обвязкой и требования не получает
+Given a file carrying the layout header is edited, and the branch has no plan When the plan guard
+judges the edit Then it refuses: the rules layer is covered by the code paths nowhere, and a hundred
+and fifty of its files landed without a single response. The same path without the header stays harness
+and gets no demand
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
 
-### SC-AK-721 — папка задачи находится по имени ветки
+### SC-AK-721 — the task folder is found by the name of the branch
 
-Дано в каталоге задач лежит папка, названная именем текущей ветки Когда сессия запускается Тогда ход работы
-уезжает в контекст: замысел и состояние приходят до первой реплики
+Given the tasks directory holds a folder named by the name of the current branch When the session
+starts Then the course of the work travels into the context: the plan and the state arrive before the
+first reply
 
-### SC-AK-722 — папка под другим именем называется поимённо
+### SC-AK-722 — a folder under another name is named by name
 
-Дано папки по имени ветки нет, а в каталоге задач лежит папка под другим именем Когда сессия запускается Тогда
-отказ остаётся отказом и вдобавок называет найденную папку: этапы одной задачи идут отдельными ветками при общей
-папке, и по имени ветки она не находится
+Given there is no folder by the name of the branch, and the tasks directory holds a folder under
+another name When the session starts Then the refusal stays a refusal and in addition names the folder
+found: the stages of one task go as separate branches at a shared folder, and by the name of the branch
+it is not found
 
-### SC-AK-723 — пустой каталог задач не перечисляется
+### SC-AK-723 — an empty tasks directory is not listed
 
-Дано каталог задач пуст Когда сессия запускается Тогда отказ прежний, слово в слово: называть нечего
+Given the tasks directory is empty When the session starts Then the refusal is the former one, word for
+word: there is nothing to name
 
-Покрыто: `projects/agent-kit/tests/task-context-load.test.sh`.
+Covered: `projects/agent-kit/tests/task-context-load.test.sh`.
 
-### SC-AK-909 — английский раздел «где стоим» переживает порог размера
+### SC-AK-909 — the English "where we stand" section survives the size threshold
 
-Дано ход работы перерос порог размера, а раздел озаглавлен «## Where we stand» Когда сессия
-запускается Тогда состояние из этого раздела приходит в контекст, а остальная запись урезана:
-на большой папке иначе уходило бы из захода само состояние
+Given the course of the work outgrew the size threshold, and the section is headed "## Where we stand"
+When the session starts Then the state from that section arrives in the context, and the rest of the
+record is trimmed: on a large folder the state itself would otherwise leave the session
 
-Покрыто: `projects/agent-kit/tests/task-context-load.test.sh`.
+Covered: `projects/agent-kit/tests/task-context-load.test.sh`.
 
-### SC-AK-756 — чтением правил считается правило области работы
+### SC-AK-756 — the rule of the area of the work counts as reading the rules
 
-Дано в ходу правился файл, для которого гейт правил называет своё правило, а прочитано было
-другое Когда ход кончается вопросом владельцу Тогда гард отбивает: прочитанное на заданный
-вопрос не отвечает. Правило области — прочитанное файлом или загруженное — отказ снимает, а ход
-без правок судится прежним признаком: любое чтение слоя правил
+Given during the turn a file was edited for which the rules gate names its own rule, and another one
+was read When the turn ends with a question to the owner Then the guard refuses: what was read does not
+answer the question asked. The rule of the area — read as a file or loaded — lifts the refusal, and a
+turn without edits is judged by the former sign: any reading of the rules layer
 
-Покрыто: `projects/agent-kit/tests/grill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
-### SC-AK-754 — разобранная папка задачи читается как закрывающаяся работа
+### SC-AK-754 — a task folder taken apart reads as work that is closing
 
-Дано папку задачи разобрала сама ветка коммитом после общего предка с главной Когда сессия
-запускается Тогда хук говорит, что работа закрывается, и указания собрать папку заново не даёт:
-состояние держат заявка и передача захода. Ветка, которая своей папки не заводила вовсе,
-судится прежним отказом
+Given the branch itself took the task folder apart by a commit after the common ancestor with main When
+the session starts Then the hook says the work is closing and gives no instruction to assemble the
+folder anew: the state is held by the request and by the session handover. A branch that created no
+folder of its own at all is judged by the former refusal
 
-Покрыто: `projects/agent-kit/tests/task-context-load.test.sh`.
+Covered: `projects/agent-kit/tests/task-context-load.test.sh`.
 
-### SC-AK-910 — передача собирается с английских ключей хода работы
+### SC-AK-910 — the handover is assembled from the English keys of the course of the work
 
-Дано ход работы называет состояние, этап и следующий шаг строками «- **State:**», «- **Stage:**»
-и «- **Next step:**» Когда приходит сжатие контекста Тогда все три попадают в передачу так же,
-как с русских ключей
+Given the course of the work names the state, the stage and the next step by the lines "- **State:**",
+"- **Stage:**" and "- **Next step:**" When the compaction of the context arrives Then all three get
+into the handover the same way as from the owner's-language keys
 
-Покрыто: `projects/agent-kit/tests/handoff-write.test.sh`.
+Covered: `projects/agent-kit/tests/handoff-write.test.sh`.
 
-### SC-AK-724 — файл, записанный перенаправлением, линтуется
+### SC-AK-724 — a file written by a redirection is linted
 
-Дано команда оболочки пишет в файл кода перенаправлением Когда правка применена Тогда линтер идёт по записанному
-пути: запись оболочкой меняет тот же файл, что и правка инструментом
+Given a shell command writes into a code file by a redirection When the edit is applied Then the linter
+goes by the written path: a write by the shell changes the same file an edit by a tool does
 
-### SC-AK-725 — файл, записанный интерпретатором, линтуется
+### SC-AK-725 — a file written by an interpreter is linted
 
-Дано путь записи стоит в теле команды интерпретатора, а не в строке её вызова Когда правка применена Тогда
-линтер идёт по нему же: признак записи читается тем же способом, что и гейтом правил
+Given the path of the write stands in the body of an interpreter command, not in the line of its call
+When the edit is applied Then the linter goes by it too: the sign of a write is read the same way as by
+the rules gate
 
-### SC-AK-727 — каталог в команде записи не разворачивается
+### SC-AK-727 — a directory in a write command is not expanded
 
-Дано команда записи называет и каталог — рабочий, а не цель записи Когда правка применена Тогда линтер идёт
-только по записанным файлам: развёрнутый каталог отдал бы ему половину дерева
+Given the write command names a directory too — the working one, not the target of the write When the
+edit is applied Then the linter goes only over the written files: an expanded directory would hand it
+half the tree
 
-### SC-AK-726 — чтение линтера не зовёт
+### SC-AK-726 — a read does not call the linter
 
-Дано команда оболочки ничего не пишет Когда она отработала Тогда хук уходит молча: иначе линтер гонялся бы на
-каждый поиск по дереву
+Given a shell command writes nothing When it has finished Then the hook leaves silently: otherwise the
+linter would be run on every search over the tree
 
-Покрыто: `projects/agent-kit/tests/lint-after-edit.test.sh`.
+Covered: `projects/agent-kit/tests/lint-after-edit.test.sh`.
 
-### SC-AK-728 — отказ стража окна называет форму вызова
+### SC-AK-728 — the refusal of the window watchman names the shape of the call
 
-Дано порог остановки пройден, и заход делает то, что после него не проходит Когда страж отбивает вызов Тогда
-отказ называет не только требование, но и формы, которые проходят, и говорит, что команда судится по началу
-строки: вход в каталог перед ней снимает совпадение
+Given the stop threshold is passed, and the session does what does not pass after it When the watchman
+refuses the call Then the refusal names not only the demand but the shapes that pass, and says that the
+command is judged by the start of the line: entering a directory before it removes the match
 
-Покрыто: `projects/agent-kit/tests/window-fill-guard.test.sh`.
+Covered: `projects/agent-kit/tests/window-fill-guard.test.sh`.
 
-### SC-AK-734 — отказ гейта называет, что потребуется дальше
+### SC-AK-734 — the refusal of the gate names what will be needed further
 
-Дано команда пишет файлы разных родов, и правил под них требуется несколько Когда гейт отбивает вызов Тогда он
-требует одно правило, как и требовал, и называет те, что потребуются дальше по этой же команде: перечень
-требований читался бы как «загрузи три», а длину пути заход не видел вовсе
+Given a command writes files of different kinds, and several rules are needed for them When the gate
+refuses the call Then it demands one rule, as it demanded, and names those that will be needed further
+by this same command: a list of demands would read as "load three", and the length of the path the
+session did not see at all
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-735 — половина гарда разговора объявлена своим ресурсом
+### SC-AK-735 — half of the conversation guard is declared by a resource of its own
 
-Дано вопрос владельцу задаётся инструментом, а законы и правила за ход не читались Когда вызов идёт через
-ресурс, объявляющий это событие Тогда он отбивается тем же телом и тем же отказом, что и завершение хода; тело
-потеряно — вызов пропускается, а дерево, у которого инструмент вопроса занят своим гардом, отменяет одну
-половину и оставляет другую
+Given the question to the owner is asked by a tool, and the laws and the rules were not read during the
+turn When the call goes through the resource declaring this event Then it is refused by the same body
+and the same refusal as the closing of a turn; the body is lost — the call is let through, and a tree
+whose question tool is taken by a guard of its own cancels one half and keeps the other
 
-Покрыто: `projects/agent-kit/tests/grill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
-### SC-AK-736 — договорённость называется и спеком домена
+### SC-AK-736 — the agreement is named by a domain spec too
 
-Дано дерево пишет договорённость прямо в спек домена, а каталога «предложено» у него нет Когда гард хода работы
-читает замысел Тогда он принимает строку, называющую спек, наравне со строкой об отдельном документе: названный
-спек обязан существовать, а замысел без обеих строк отбивается прежним отказом
+Given the tree writes the agreement straight into a domain spec, and it has no "proposed" directory
+When the guard of the course of the work reads the plan Then it accepts a line naming a spec on a par
+with a line about a separate document: the named spec must exist, and a plan without both lines is
+refused by the former refusal
 
-### SC-AK-737 — команда заведения задачи гардом хода работы не судится
+### SC-AK-737 — the task creation command is not judged by the guard of the course of the work
 
-Дано команда заведения задачи несёт тело задачи, а в нём — цитата и путь к коду Когда гард хода работы разбирает
-вызов Тогда он пропускает её: правкой кода она не считается, а под оба его признака подходит целиком — и отбивает
-её тот самый гард, который сам же печатает её в тексте своего отказа. Правка кода той же оболочкой отбивается
-по-прежнему
+Given the task creation command carries the body of the task, and it holds a quote and a path to code
+When the guard of the course of the work takes the call apart Then it lets it through: it does not
+count as an edit of code, while it fits both of its signs whole — and it is refused by the very guard
+that prints it in the text of its own refusal. An edit of code by the same shell is refused as before
 
-### SC-AK-879 — снятие перестоявших записей о законченных работах гардом хода работы не судится
+### SC-AK-879 — removing overstayed records about finished work is not judged by the guard of the course of the work
 
-Дано дерево назвало профилем команду снятия, а ветка работу привозит слияниями и папки задачи не
-держит Когда гард хода работы разбирает вызов Тогда он пропускает команду снятия целиком:
-записи стареют по календарю, и проверка срока краснеет без единой правки в ветке. Сверяется вся
-команда, а не вхождение — снятие в связке с правкой кода отбивается, и дерево, команду не
-назвавшее, ведёт себя как прежде
+Given the tree named the removal command in its profile, and the branch brings the work by merges and
+holds no task folders When the guard of the course of the work takes the call apart Then it lets the
+removal command through whole: the records age by the calendar, and the time check turns red without a
+single edit in the branch. The whole command is checked, not an occurrence — a removal in a bundle with
+an edit of code is refused, and a tree that named no command behaves as before
 
-### SC-AK-740 — снятие неотслеживаемого пути правкой продукта не считается
+### SC-AK-740 — removing an untracked path does not count as an edit of the product
 
-Дано команда снимает свой временный каталог под корнем приложений, а истории у него нет Когда гард хода работы
-разбирает вызов Тогда он пропускает её: восстанавливать замысел ради уборки за собой значит исполнять
-требование, написанное про другое действие. Снятие пути, лежащего в истории, отбивается по-прежнему — снятый
-файл кода меняет поведение так же, как переписанный
+Given a command removes its own temporary directory under the applications root, and it has no history
+When the guard of the course of the work takes the call apart Then it lets it through: restoring a plan
+for the sake of tidying up after oneself means carrying out a demand written about another action.
+Removing a path lying in the history is refused as before — a removed code file changes the behaviour
+the same way a rewritten one does
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
 
-### SC-AK-741 — собранное дерево правила не требует
+### SC-AK-741 — a built tree demands no rule
 
-Дано путь лежит под каталогом сборки или зависимостей — он пришёл из команды, которая артефакт запускает, а не
-правит Когда гейт правил выбирает правило Тогда он молчит: и карта, и слои поверх неё. Тот же путь под
-исходниками требует своё правило по-прежнему — под артефактом лежат те же имена каталогов, и ветка выхода стоит
-первой
+Given the path lies under the build or the dependencies directory — it came from a command that runs an
+artefact, not edits it When the rules gate picks a rule Then it stays silent: both the map and the tiers
+on top of it. The same path under the sources demands its own rule as before — under an artefact lie the
+same directory names, and the exit branch stands first
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-747 — по отданной работе не сделано ни одного из двух действий
+### SC-AK-747 — not one of two actions is done about handed-in work
 
-Дано ход, в котором открыта заявка, а состояние отданной работы не спрошено и следующая задача
-не взята
-Когда гард ожидания судит конец хода
-Тогда отказ называет оба действия сразу: взятая следующая уносит признак открытой заявки с
-собой, и второе требование после неё не прозвучит уже никогда
+Given a turn in which a request is opened, and the state of the handed-in work is not asked and the next
+task is not taken
+When the waiting guard judges the end of the turn
+Then the refusal names both actions at once: the next one taken carries the sign of an open request away
+with it, and the second demand after it will never sound again
 
-Покрыто: `projects/agent-kit/tests/waiting-turn-guard.test.sh`.
+Covered: `projects/agent-kit/tests/waiting-turn-guard.test.sh`.
 
-### SC-AK-748 — работа, оставшаяся в рабочем дереве, ход не кончает
+### SC-AK-748 — work left in the working tree does not end a turn
 
-Дано ветка ушла вперёд своей удалённой ссылки, за ход была работа, а заявки при ней не открывали
-Когда страж выходов судит конец хода
-Тогда он отбивает ход и называет число неотданных коммитов; ветка вровень с удалённой и ход с
-открытой заявкой проходят
+Given the branch went ahead of its remote reference, there was work during the turn, and no request was
+opened at it
+When the watchman of the exits judges the end of the turn
+Then it refuses the turn and names the number of unhanded commits; a branch level with the remote one
+and a turn with an open request pass
 
-Покрыто: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-773 — просьба о предложении ловится и латиницей, а дерево без каталога не судится
+### SC-AK-773 — a request for a proposal is caught in Latin too, and a tree without the directory is not judged
 
-Дано владелец просит предложение по-английски — глагол рядом со словом о предложении и соседом о
-слое правил Когда гард предложения судит конец хода Тогда он требует отправки так же, как на
-русском; отправка тем же ходом требование снимает, слово без соседа не судится, а дерево, у
-которого каталога предложений нет на диске, стража не получает вовсе
+Given the owner asks for a proposal in English — a verb next to the word about a proposal and a
+neighbour about the rules layer When the proposal guard judges the end of the turn Then it demands the
+send the same way as in the owner's language; a send in the same turn lifts the demand, a word without a
+neighbour is not judged, and a tree that has no proposals directory on the disk gets no watchman at all
 
-Покрыто: `projects/agent-kit/tests/proposal-guard.test.sh`.
+Covered: `projects/agent-kit/tests/proposal-guard.test.sh`.
 
-### SC-AK-804 — раздел хода работы переживает сжатие под локалью с национальными настройками
+### SC-AK-804 — the section of the course of the work survives the compaction under a locale with national settings
 
-Дано в ходе работы стоят раздел о состоянии и прежний раздел передачи, а оболочка объявила
-локаль с национальными настройками
-Когда сжатие захода кладёт новую передачу разделом
-Тогда прежняя передача заменяется одной новой, а раздел о состоянии остаётся на месте
+Given the course of the work holds the section about the state and the former handover section, and the
+shell declared a locale with national settings
+When the compaction of the session puts a new handover as a section
+Then the former handover is replaced by one new one, and the section about the state stays in place
 
-Покрыто: `projects/agent-kit/tests/handoff-write.test.sh`.
+Covered: `projects/agent-kit/tests/handoff-write.test.sh`.
 
-### SC-AK-885 — команда линтера без пути правленого файла названа
+### SC-AK-885 — a linter command without the path of the edited file is named
 
-Дано профиль дерева печатает команду линтера, в которой пути правленого файла нет
-Когда хук линтера по следам правки исполняет её
-Тогда он говорит в поток ошибок, что команда файла не назвала, и называет, где стоит образец
-подстановки пути: работа при этом не останавливается — обход всего дерева от пустого прогона по
-одному этому признаку не отличить
+Given the tree profile prints a linter command in which the path of the edited file is absent
+When the linter hook on the trail of the edit runs it
+Then it says into the error stream that the command named no file, and names where the sample of the
+path substitution stands: the work is not stopped at that — a walk over the whole tree is
+indistinguishable from an empty run by this sign alone
 
-Дано в том же заходе правится второй файл
-Когда хук исполняет ту же команду
-Тогда он молчит: строка на каждую правку повторялась бы за заход десятки раз
+Given a second file is edited in the same session
+When the hook runs the same command
+Then it stays silent: a line on every edit would repeat dozens of times per session
 
-Дано команда линтера путь называет
-Когда хук её исполняет
-Тогда он не говорит ничего
+Given the linter command does name the path
+When the hook runs it
+Then it says nothing
 
-Покрыто: `projects/agent-kit/tests/lint-after-edit.test.sh`.
+Covered: `projects/agent-kit/tests/lint-after-edit.test.sh`.
 
-### SC-AK-844 — присваивание перед вызовом вызова не прячет
+### SC-AK-844 — an assignment before a call hides no call
 
-Дано команда открытия заявки стоит за присваиванием, значение которого — подстановка, строка в
-кавычках или слово без пробелов
-Когда гард проверяет командную строку
-Тогда вызов распознан во всех трёх формах, в том числе за разделителем и полным путём, а
-упоминание той же команды в кавычках и поиск по дереву вызовом не считаются
+Given the request opening command stands after an assignment whose value is a substitution, a string in
+quotes or a word without spaces
+When the guard checks the command line
+Then the call is recognised in all three shapes, including after a separator and a full path, while a
+mention of the same command in quotes and a search over the tree do not count as calls
 
-Покрыто: `projects/agent-kit/tests/cmd-bound.test.sh`.
+Covered: `projects/agent-kit/tests/cmd-bound.test.sh`.
 
-### SC-AK-849 — файл, положенный раскладкой, пары не требует
+### SC-AK-849 — a file put by the layout demands no pair
 
-Дано в коммит идёт файл с шапкой раскладки, у которого профиль называет пару
-Когда гард документов проверяет коммит
-Тогда он пропускает: автор такого файла в дереве-потребителе один — пакет, и документ о нём лежит
-там же. Тот же файл без шапки пары по-прежнему требует
+Given a file with the layout header goes into a commit, and the profile names a pair for it
+When the documents guard checks the commit
+Then it lets it through: such a file has one author in a consumer tree — the package, and the document
+about it lies there too. The same file without the header still demands a pair
 
-Покрыто: `projects/agent-kit/tests/docs-guard.test.sh`.
+Covered: `projects/agent-kit/tests/docs-guard.test.sh`.
 
-### SC-AK-857 — интерпретатор проверяется по телу, а не по имени
+### SC-AK-857 — an interpreter is checked by its body, not by its name
 
-Дано команда вызывает интерпретатор и подаёт ему путь файла первым доводом
-Когда гейт решает, пишет ли она
-Тогда записью она не считается; интерпретатор с документом на входе, с кодом доводом и правка по
-месту записью остаются
+Given a command calls an interpreter and gives it the path of a file as the first argument
+When the gate decides whether it writes
+Then it does not count as a write; an interpreter with a document at the input, with code as an
+argument and an edit in place stay writes
 
-Покрыто: `projects/agent-kit/tests/defaults.test.sh`.
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
