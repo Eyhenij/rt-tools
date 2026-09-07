@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-specs.mjs · c09999047047 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-specs.mjs · d988b251a91e · правится надстройкой, не здесь
 /**
  * The check that a domain spec has not diverged from the code.
  *
@@ -29,7 +29,7 @@
  *    path the promised `NotFound` was thrown by nobody.
  *
  * 4. THE LEVEL OF A BINDING. A scenario whose test goes a way other than the user's, or checks
- *    part of what was promised, is marked `Покрытие: частичное` and goes into the debts, not
+ *    part of what was promised, is marked `Coverage: partial` and goes into the debts, not
  *    into the coverage. Otherwise a green digest means less than it seems.
  *
  * 5. A DEAD BINDING. The presence of a symbol is not enough: a symbol declared and called by
@@ -65,7 +65,9 @@ function checkSpecHeadings(file, text) {
             .map((line) => line.trimEnd())
     );
 
-    REQUIRED_HEADINGS.filter((required) => !headings.has(required)).forEach((required) =>
+    // A section is mandatory under either of its names, and the refusal names the first — the one a
+    // new spec is written by.
+    REQUIRED_HEADINGS.filter((names) => !names.some((name) => headings.has(name))).forEach(([required]) =>
         report(file, `no mandatory section \`${required}\``)
     );
 }
@@ -78,7 +80,7 @@ const byId = new Map();
  * The names of the laws and the path to each. There are two layers: the common one lies at the
  * root of `docs/constitution/`, the application laws in `application/` under it. The name is taken
  * without the directory, because a law is named the same everywhere: neither `law:` in a rule's
- * front matter nor `**Законы:**` in a spec knows which layer it is in, and a move between layers
+ * front matter nor `**Laws:**` in a spec knows which layer it is in, and a move between layers
  * rewrites none of those lines.
  *
  * Hence the requirement: law names are unique across the whole constitution tree. Two files with
@@ -224,8 +226,12 @@ for (const file of walk(CONSTITUTION_DIR, (name) => name.endsWith('.md'))) {
 // wrote before the layer was translated. The one that stands in the file is taken.
 const RULE_HEADINGS = ['## How the law applies here', '## Как закон применяется здесь'];
 const ruleHeadingOf = (text) => RULE_HEADINGS.find((heading) => text.split('\n').some((line) => line.trimEnd() === heading)) ?? RULE_HEADINGS[0];
-/** The companion section of a rule where the bindings lie; its other tables name the tree's names. */
-const MAP_HEADING = '## Где исполняются статьи';
+/**
+ * The companion section of a rule where the bindings lie; its other tables name the tree's names.
+ * Two names again: the companion is written by the tree, and a tree translates its companions one
+ * rule at a time.
+ */
+const MAP_HEADING = ['## Where the articles are carried out', '## Где исполняются статьи'];
 
 /**
  * The front matter of a skill — the first block between `---`. Only it is read: the pattern that
@@ -284,7 +290,7 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
 // bind it to, and requiring a rule would force starting one with anchors into places that do not
 // exist. The sign stands as a status line in the law itself, not as a list of exceptions next to
 // the check.
-const isProposedLaw = (file) => /^\*\*Статус:\*\*\s*предложен/m.test(read(file));
+const isProposedLaw = (file) => /^\*\*(?:Status:\*\*\s*proposed|Статус:\*\*\s*предложен)/m.test(read(file));
 
 // The reverse sides of the link. A law without a rule reads as an agreement this project does not
 // apply; a rule without a pattern leaves ready-made code where it does not belong — in the rule
@@ -363,7 +369,7 @@ for (const scenario of byId.values()) {
     const places = references.get(scenario.id) ?? [];
     const hasTest = places.length > 0;
     if (scenario.uncovered && hasTest) {
-        report(`${scenario.file}:${scenario.line}`, `${scenario.id} is marked «Не покрыто», and there is a test for it (${places[0].place})`);
+        report(`${scenario.file}:${scenario.line}`, `${scenario.id} is marked «Not covered», and there is a test for it (${places[0].place})`);
         continue;
     }
     if (scenario.uncovered) {
@@ -371,7 +377,7 @@ for (const scenario of byId.values()) {
         continue;
     }
     if (!hasTest) {
-        report(`${scenario.file}:${scenario.line}`, `${scenario.id} is mentioned in no test and is not marked «Не покрыто»`);
+        report(`${scenario.file}:${scenario.line}`, `${scenario.id} is mentioned in no test and is not marked «Not covered»`);
         continue;
     }
     if (scenario.partial) {

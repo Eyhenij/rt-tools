@@ -34,3 +34,4 @@
 - **Договорённость, ждущая своего домена дольше месяца, называется отдельным разделом вывода.** — `projects/agent-kit/assets/checks/spec-proposed.mjs:STALE_PROPOSED_DAYS` — порог в сутках; сценарий `SC-AK-807`
 - **Возраст договорённости берётся из истории, а не со времени файла на диске.** — `projects/agent-kit/assets/checks/spec-proposed.mjs:lastCommits` — один проход по истории каталога спеков; сценарий `SC-AK-807`
 - **Отказом это не делается.** — `projects/agent-kit/assets/checks/spec-proposed.mjs:staleProposed` — раздел печатается после перечня расхождений и кода возврата не меняет; сценарий `SC-AK-808`
+- **Ключ раздела спека читается под двумя именами — английским и языком владельца.** — `projects/agent-kit/assets/checks/spec-common.mjs:REQUIRED_HEADINGS` — список пар и чтение раздела по любому из имён в `sectionOf`; сценарии `SC-AK-912`, `SC-AK-913`, `SC-AK-914`

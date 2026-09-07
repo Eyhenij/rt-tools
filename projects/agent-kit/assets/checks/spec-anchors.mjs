@@ -69,8 +69,8 @@ function ruleHeadOf(bulletText) {
  * The key of the link is the text of the rule itself, not a separate identifier: then a wording
  * edit cannot be made while forgetting the binding — the line stops being found.
  *
- * The section heading arrives as an argument: for a spec it is `## Правила`, for a law
- * `## Статьи`. One word in two meanings was split apart exactly here: "rule" is the layer between
+ * The section heading arrives as an argument: for a spec it is `## Rules`, for a law
+ * `## Articles`. One word in two meanings was split apart exactly here: "rule" is the layer between
  * a law and a pattern, and inside a law live articles.
  */
 /**
@@ -91,18 +91,21 @@ function ruleHeadOf(bulletText) {
  */
 function rowsOfMap(specFile, mapFile, mapHeading) {
     const text = read(mapFile);
-    if (!mapHeading) {
+    if (!mapHeading || (Array.isArray(mapHeading) && !mapHeading.length)) {
         return text.split('\n');
     }
     const section = sectionOf(text, mapHeading);
     if (!section.length) {
-        report(mapFile, `there is no section \`${mapHeading}\` — the bindings of the rule have nowhere to lie`);
+        // The section is read under either of its names, and the refusal names the first — the one
+        // a new companion is written by.
+        const named = Array.isArray(mapHeading) ? mapHeading[0] : mapHeading;
+        report(mapFile, `there is no section \`${named}\` — the bindings of the rule have nowhere to lie`);
     }
 
     return section;
 }
 
-function checkRuleImplementation(specFile, text, mapFile, heading = '## Правила', mapHeading = '') {
+function checkRuleImplementation(specFile, text, mapFile, heading = ['## Rules', '## Правила'], mapHeading = '') {
     const lines = sectionOf(text, heading);
     const bullets = bulletsOf(lines);
     if (!bullets.length) {
@@ -115,7 +118,7 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
             : first
               ? `, the first one is \`${first.trim().slice(0, 60)}\``
               : '';
-        report(specFile, `the section \`${heading}\` carries no item at all${instead}`);
+        report(specFile, `the section \`${Array.isArray(heading) ? heading[0] : heading}\` carries no item at all${instead}`);
 
         return;
     }
@@ -138,8 +141,9 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
             continue;
         }
         const head = cells[1].replace(/\s+/g, ' ').trim();
-        // The table header: for a spec the column is called «Правило», for a law «Статья».
-        if (!head || head === 'Правило' || head === 'Статья' || /^-+$/.test(head)) {
+        // The table header: for a spec the column is called «Rule», for a law «Article»; a
+        // companion written before the layer was translated names them in the owner's language.
+        if (!head || ['Rule', 'Article', 'Правило', 'Статья'].includes(head) || /^-+$/.test(head)) {
             continue;
         }
         const cell = cells[2].trim();
@@ -161,7 +165,7 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
             report(
                 mapFile,
                 `a statement without a binding: «${head.slice(0, 60)}…» — add a line with \`file:symbol\`, ` +
-                    'a verdict «Не исполняется» with a reason, or move the statement into «Открытые вопросы» of the law as Q-<letter>-<number>'
+                    'a verdict «Not carried out» with a reason, or move the statement into «Open questions» of the law as Q-<letter>-<number>'
             );
             continue;
         }
@@ -169,8 +173,8 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
         if (!row.anchors.length && !row.verdict) {
             report(
                 mapFile,
-                `the statement «${head.slice(0, 60)}…» has an empty binding — put \`файл:символ\` ` +
-                    'or the verdict «Не исполняется», «Не применимо», «Не проверяется» with a reason'
+                `the statement «${head.slice(0, 60)}…» has an empty binding — put \`file:symbol\` ` +
+                    'or the verdict «Not carried out», «Not applicable», «Not checked» with a reason'
             );
         }
         for (const [, path, symbol] of row.anchors) {
@@ -285,7 +289,7 @@ function checkTracedAnchors() {
             report(
                 mapFile,
                 `the binding leads into dead code: \`${symbol}\` is declared in \`${path}\` and met nowhere else — ` +
-                    'either the statement is carried out elsewhere, or its place is in «Открытые вопросы» of the law as Q-<letter>-<number>'
+                    'either the statement is carried out elsewhere, or its place is in «Open questions» of the law as Q-<letter>-<number>'
             );
         }
     }
@@ -302,7 +306,7 @@ function checkTracedAnchors() {
  * Hence the `**Законы:**` line in the header and an audit of both sides: a law named in the
  * text but not declared, and a declared law that does not exist.
  */
-const SPEC_LAWS = /^\*\*Законы:\*\*\s*(.+)$/;
+const SPEC_LAWS = /^\*\*(?:Laws|Законы):\*\*\s*(.+)$/;
 /**
  * A link to a law anywhere in the spec text — by it the second side of the link is counted.
  * The layer in the path is optional: application laws lie in `application/` and are named
@@ -313,7 +317,7 @@ const LAW_REFERENCE = new RegExp(`\`${CONSTITUTION_DIR}/(?:application/)?([a-z-]
 function checkSpecLaws(file, text, laws) {
     const line = text.split('\n').find((candidate) => SPEC_LAWS.test(candidate));
     if (!line) {
-        report(file, 'the header carries no line `**Законы:**` — there is no seeing which laws the domain applies');
+        report(file, 'the header carries no line `**Laws:**` — there is no seeing which laws the domain applies');
 
         return;
     }
@@ -321,13 +325,13 @@ function checkSpecLaws(file, text, laws) {
     const declared = new Set([...line.match(SPEC_LAWS)[1].matchAll(BACKTICKED)].map(([, name]) => name));
     for (const name of declared) {
         if (!laws.has(name)) {
-            report(file, `the line \`**Законы:**\` names \`${name}\`, and there is no law of that name in any layer`);
+            report(file, `the line \`**Laws:**\` names \`${name}\`, and there is no law of that name in any layer`);
         }
     }
 
     for (const [, name] of text.matchAll(LAW_REFERENCE)) {
         if (!declared.has(name)) {
-            report(file, `the law \`${name}\` is named in the text and is not declared in the line \`**Законы:**\``);
+            report(file, `the law \`${name}\` is named in the text and is not declared in the line \`**Laws:**\``);
         }
     }
 }
