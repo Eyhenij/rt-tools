@@ -1,209 +1,223 @@
-# Наблюдения
+# Observations
 
-**Статус:** действует · **Ревизия:** 2026-09-05 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `observability`, `work-conduct`, `delivery`, `frontend-application`, `verifiability`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-09-05 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `observability`, `work-conduct`, `delivery`, `frontend-application`, `verifiability`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Пакет стоит в нескольких деревьях, и то, чем в нём пользуются, известно только каждому дереву про
-себя. Поддомен называет, чем дерево узнаёт это о себе: наблюдение пишет гард, сводка отвечает за
-отрезок дней, снимок надстроек говорит, что дерево заместило и от чего отказалось, а признак
-дерева различает деревья, не называя их.
+The package stands in several trees, and what is used in it is known only to each tree about
+itself. The subdomain names what a tree learns this about itself by: an observation is written by a
+guard, the digest answers for a stretch of days, the snapshot of overrides says what the tree
+replaced and what it refused, and the tree sign tells trees apart without naming them.
 
-Что из узнанного уезжает наружу и как — предложения, слово посреди работы, отправка груза,
-заведение дерева в приёме и отметка записей — соседний поддомен «Груз наружу» рядом. Наружу не
-уходит ничего, чего не отправил человек командой: ни один гард в сеть не ходит.
+What of the learned goes outward and how — proposals, a word mid-work, sending the cargo, creating
+a tree in the intake and marking the records — is the neighbouring subdomain "Cargo outward" next
+to it. Nothing goes outward that a person did not send by a command: not one guard goes into the
+network.
 
-## Терминология
+## Terminology
 
-- **Наблюдение** — одна строка о событии слоя правил: правило загружено, гейт отбил правку,
-  гард отказал, сверка раскладки нашла расхождение. Пишет гард, живёт в дереве.
-- **Признак дерева** — короткое значение, различающее деревья в наблюдении; адрес дерева по нему
-  не восстанавливается.
-- **Версия схемы записи** — номер формата строки наблюдения; меняется тогда, когда меняется
-  состав её полей.
-- **Сводка** — что наблюдения говорят за отрезок дней: чем пользовались, чем не пользовались ни
-  разу, обо что спотыкались.
-- **Снимок надстроек** — состояние дерева на момент запроса: какие разделы каких ресурсов пакета
-  оно замещает, дописывает и снимает.
-- **Род правки надстройки** — одно из трёх: замещение раздела пакета, дописывание своего раздела,
-  снятие раздела.
-- **Свой раздел** — раздел надстройки, которого в ресурсе пакета нет; его заголовок придумало
-  дерево.
+- **An observation** — one line about an event of the rules layer: a rule loaded, the gate refused
+  an edit, a guard refused, the layout check found a divergence. Written by a guard, lives in the
+  tree.
+- **A tree sign** — a short value telling trees apart in an observation; the tree address is not
+  recovered from it.
+- **The version of the record schema** — the number of the format of an observation line; it changes
+  when the composition of its fields changes.
+- **A digest** — what the observations say for a stretch of days: what was used, what was not used
+  once, what was stumbled over.
+- **A snapshot of the overrides** — the state of the tree at the moment of the request: which
+  sections of which package resources it replaces, appends to and removes.
+- **The kind of an override edit** — one of three: replacing a package section, appending a section
+  of one's own, removing a section.
+- **A section of one's own** — a section of an override that the package resource does not have; its
+  heading was invented by the tree.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости | В строке запуска                      |
+| In the agreement | In the launch line                    |
 | ---------------- | ------------------------------------- |
-| сводка           | `agent-kit stats [--days N] [--json]` |
+| the digest       | `agent-kit stats [--days N] [--json]` |
 
-## Правила
+## Rules
 
-- **Наблюдение записывается в дерево, а не во временный каталог.** Запись, живущая до
-  перезагрузки машины и обнуляемая сжатием контекста, статистикой за два-три дня не бывает.
-- **Наблюдение не называет из дерева ничего, кроме рода файла.** В строке стоят имя ресурса
-  пакета, род события, род файла, версия пакета и короткий признак сессии. Пути, имена доменов и
-  имя самого дерева в наблюдение не попадают ни при каких событиях.
-- **Запись наблюдений выключается настройкой дерева.** Ключ настройки выключает её целиком, а не
-  частями: пакет стоит и у тех, о ком мы не знаем, и запись без ведома дерева недопустима.
-- **Гард, не сумевший записать наблюдение, пропускает действие.** Наблюдение — побочная работа
-  гарда, и её поломка не имеет права остановить работу: правило отказа в пользу работы действует
-  здесь так же, как в самом гарде.
-- **Сводка называет и то, чем ни разу не пользовались.** Правило, разложенное в дерево и не
-  загруженное за отрезок ни разу, стоит в сводке отдельной строкой. Мёртвый ресурс иначе
-  неотличим от работающего, а сокращать текст правил так же ценно, как дополнять.
-- **Гард, не отбивший за отрезок ни разу, стоит в сводке отдельной строкой.** Счётчики говорят,
-  кто отбивал, и молчат о том, кто стоял и не понадобился: из перечня защит такого гарда никто
-  не вычеркнет, а молчащий гард и ненужный выглядят одинаково ровно до разбора. Считается это
-  той же разностью, что и незагруженное правило, и по той же причине — в самих наблюдениях
-  молчащего гарда нет по определению.
-- **Гардом сводка считает того, кто заявил своё имя для наблюдений.** Хук без заявки в
-  наблюдениях не появится ни при каком отрезке, и молчащим он назывался бы неверно: он молчит не
-  потому, что не понадобился. Заявка добровольна и точна — хук, который своё отбитие считает сам,
-  её не ставит, и второе событие о том же в счёт не идёт.
-- **Отбой гарда записывает общий хвост отказа, а не сам гард.** Написанная в гарде, запись стояла
-  в пяти гардах из тридцати, и сводка отвечала по этой пятой части. Хвост — единственное место,
-  через которое проходит каждый отказ: правило требует называть при отказе два законных хода, и
-  гард, отказывающий мимо хвоста, нарушает его раньше, чем теряет счёт.
-- **Перечень гардов сводка спрашивает у дерева, а не у пакета.** Свои гарды дерева лежат в том
-  же каталоге и пишут наблюдения наравне с пакетными; перечень от пакета не назвал бы ни одного
-  из них.
-- **Молчание гарда отказом не делается.** Гард, не понадобившийся за три дня, законен, и красная
-  сводка отбивала бы работу ради статистики.
-- **Сводка отвечает за отрезок дней, а не за всё время.** Отрезок называется доводом запуска;
-  без довода берётся три дня.
-- **Наблюдения старше срока хранения снимаются сводкой.** Каталог, который только растёт, через
-  год перестают открывать.
-- **Надстройка считается состоянием, а не событием.** Снимок берётся раскладкой в момент
-  запроса, а не собирается по записям о том, когда надстройку завели. Событие при раскладке
-  завело бы второй источник той же правды, а история «когда завели» не меняет ни одного решения:
-  надстройка живёт месяцами.
-- **Снимок надстроек называет ресурс, раздел и род правки, а не содержимое правки.** Текст
-  дописанного дерево пишет само, и в нём стоят его домены, пути и имена — то самое, чего
-  наблюдение не выносит наружу ни при каких событиях.
-- **Заголовок своего раздела наружу не уезжает.** Заголовок раздела пакета одинаков везде, где
-  стоит слой правил, и назвать его можно; заголовок, придуманный деревом, — его слова. Свои
-  разделы уезжают числом и родом правки, без имён.
-- **Снимок называет невыбранное наравне с надстроенным.** Отказ дерева от ресурса — такой же
-  ответ о тексте пакета, как правка его раздела, и без него мёртвый ресурс неотличим от того, о
-  котором дерево не знало.
-- **Наблюдение несёт признак дерева, и адрес дерева по нему не восстанавливается.** Без признака
-  повторившееся у двоих неотличимо от разового; с именем дерева наружу уехало бы то, что
-  принадлежит одному дереву.
-- **Признак дерева одинаков у всех, кто работает с одним репозиторием.** Считаются деревья, а не
-  машины и не люди: две рабочие копии одного репозитория — одно дерево, и правило, разложенное в
-  него однажды, не считается дважды.
-- **Дерево без удалённого репозитория называет свой признак настройкой.** Иначе все такие деревья
-  слились бы в одно, и число деревьев в сводке стало бы неправдой молча.
-- **Строка наблюдения несёт версию схемы записи.** Версия пакета отвечает на другой вопрос: поля
-  меняются реже, чем выходит редакция, и по номеру редакции не видно, чем строку разбирать.
-- **Строки неизвестной версии схемы считаются отдельно и называются числом.** Отказ сводки был бы
-  хуже: наблюдения за отрезок уже собраны, и выбросить их молча — потерять отрезок целиком.
-- **Исходы гейта пуша сводка считает отдельно от отбоев гардов.** Отбои отвечают на один вопрос
-  из трёх — сколько пушей гейт остановил. Гейт, у которого набор не нашёлся ни разу, и гейт, у
-  которого всё зелено, в отбоях выглядят одинаково: и тот и другой молчат.
+- **An observation is written into the tree, not into a temporary directory.** A record living until
+  the machine reboots and zeroed by a context squeeze is never statistics over two or three days.
+- **An observation names nothing of the tree except the kind of the file.** The line holds the name
+  of the package resource, the kind of the event, the kind of the file, the package version and a
+  short sign of the session. Paths, domain names and the name of the tree itself do not get into an
+  observation at any event.
+- **The writing of observations is switched off by a setting of the tree.** The setting key switches
+  it off whole, not in parts: the package stands with those we know nothing about too, and writing
+  without the tree's knowledge is not allowed.
+- **A guard that could not write an observation lets the action through.** An observation is a side
+  job of the guard, and its breakage has no right to stop the work: the rule of refusing in favour
+  of the work acts here the same as in the guard itself.
+- **The digest names what was not used once, too.** A rule laid out into the tree and not loaded
+  once over the stretch stands in the digest as a line of its own. Otherwise a dead resource is
+  indistinguishable from a working one, and shortening the text of the rules is as valuable as
+  adding to it.
+- **A guard that did not refuse once over the stretch stands in the digest as a line of its own.**
+  The counters say who refused and stay silent about who stood and was not needed: nobody will strike
+  such a guard out of the list of defences, and a silent guard and a needless one look the same right
+  up to the review. This is counted by the same difference as an unloaded rule, and for the same
+  reason — in the observations themselves a silent guard is absent by definition.
+- **The digest counts as a guard whoever declared their name for the observations.** A hook without a
+  declaration will not appear in the observations at any stretch, and it would be called silent
+  wrongly: it is silent not because it was not needed. The declaration is voluntary and exact — a
+  hook that counts its own refusal itself does not make it, and a second event about the same does
+  not count.
+- **A guard's refusal is recorded by the shared refusal tail, not by the guard itself.** Written in
+  the guard, the record stood in five guards out of thirty, and the digest answered for that fifth
+  part. The tail is the only place every refusal passes through: the rule demands naming two lawful
+  moves at a refusal, and a guard refusing past the tail breaks it before it loses the count.
+- **The list of guards the digest asks of the tree, not of the package.** The tree's own guards lie
+  in the same directory and write observations on a par with the package ones; a list from the
+  package would name not one of them.
+- **The silence of a guard is not made a refusal.** A guard not needed for three days is lawful, and
+  a red digest would refuse the work for the sake of statistics.
+- **The digest answers for a stretch of days, not for all time.** The stretch is named by an argument
+  of the launch; without the argument three days are taken.
+- **Observations older than the keeping time are removed by the digest.** A directory that only grows
+  stops being opened in a year.
+- **An override is counted as a state, not as an event.** The snapshot is taken by the layout at the
+  moment of the request, it is not put together from records of when the override was created. An
+  event at the layout would create a second source of the same truth, and the history "when it was
+  created" changes not one decision: an override lives for months.
+- **The snapshot of the overrides names the resource, the section and the kind of the edit, not the
+  content of the edit.** The text of what is appended the tree writes itself, and in it stand its
+  domains, paths and names — the very thing an observation does not carry outward at any event.
+- **The heading of a section of one's own does not go outward.** The heading of a package section is
+  the same everywhere the rules layer stands, and it can be named; a heading invented by the tree is
+  its words. Sections of one's own go as a number and a kind of edit, without names.
+- **The snapshot names the unchosen on a par with the overridden.** A tree's refusal of a resource is
+  the same answer about the package text as an edit of its section, and without it a dead resource is
+  indistinguishable from one the tree knew nothing about.
+- **An observation carries a tree sign, and the tree address is not recovered from it.** Without the
+  sign what repeated at two trees is indistinguishable from a one-off; with the name of the tree,
+  what belongs to one tree would go outward.
+- **The tree sign is the same for everyone working with one repository.** Trees are counted, not
+  machines and not people: two working copies of one repository are one tree, and a rule laid out
+  into it once is not counted twice.
+- **A tree without a remote repository names its sign by a setting.** Otherwise all such trees would
+  merge into one, and the number of trees in the digest would become untrue silently.
+- **An observation line carries the version of the record schema.** The package version answers a
+  different question: the fields change more rarely than an edition comes out, and by the number of
+  the edition it is not visible what to parse the line with.
+- **Lines of an unknown schema version are counted apart and named by a number.** A refusal of the
+  digest would be worse: the observations over the stretch are already gathered, and throwing them
+  out silently means losing the whole stretch.
+- **The outcomes of the push gate the digest counts apart from the refusals of the guards.** The
+  refusals answer one question of three — how many pushes the gate stopped. A gate whose suite was
+  not found once and a gate where everything is green look the same in the refusals: both stay
+  silent.
 
-## Что не входит
+## What is out of scope
 
-- Сетевая телеметрия и фоновая отправка: наружу уходит только отправленное командой.
-- Сведение наблюдений из нескольких машин в одно место: наблюдения живут в дереве той машины,
-  где работали; собирает их отправка, а не общее хранилище.
-- **Замер времени захода и расхода токенов.** Названо владельцем прямо.
-- **Новые роды событий и гарды, заведённые ради наблюдения.** Наблюдение источают гарды, которые
-  уже ловят своё.
-- **Личная, машинная ступень выключателя поверх настройки дерева.** Команда одна, и настройки
-  дерева хватает.
-- **Содержимое надстройки.** Наружу уезжает, что раздел заменён, а не чем.
-- **Всё, что уезжает наружу.** Предложения, отправка, заведение дерева и отметка — поддомен
-  «Груз наружу» рядом.
+- Network telemetry and background sending: only what was sent by a command goes outward.
+- Gathering observations from several machines into one place: observations live in the tree of the
+  machine they worked on; the sending collects them, not a shared storage.
+- **Measuring the session time and the token cost.** Named by the owner outright.
+- **New kinds of events and guards created for the sake of observation.** Observations are given off
+  by the guards that already catch their own business.
+- **A personal, per-machine step of the switch on top of the tree setting.** The command is one, and
+  the tree setting is enough.
+- **The content of an override.** What goes outward is that a section was replaced, not what with.
+- **Everything that goes outward.** Proposals, sending, creating a tree and marking are the
+  neighbouring subdomain "Cargo outward".
 
-## Контракт
+## Contract
 
-Сводка сводит наблюдения за отрезок дней и тем же видом отдаёт их машиночитаемо — этим её
-прикладывают к предложению. Она выходит нулём, когда работа сделана или делать было нечего.
+The digest brings together the observations over a stretch of days and gives them back
+machine-readably in the same shape — that is what a proposal is accompanied by. It exits with zero
+when the work is done or there was nothing to do.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: ответ — код возврата и текст, а не именованные коды.
+Not applicable: the answer is an exit code and text, not named codes.
 
-| Что случилось                          | Код | Что говорит                                |
-| -------------------------------------- | --- | ------------------------------------------ |
-| нет настройки пакета в дереве          | `1` | начать с заведения настройки               |
-| наблюдений за отрезок нет вовсе        | `0` | что записи не велось, и как она включается |
-| запись наблюдений выключена настройкой | `0` | что выключена, и каким ключом              |
+| What happened                              | Code | What it says                                       |
+| ------------------------------------------ | ---- | -------------------------------------------------- |
+| there is no package setting in the tree    | `1`  | to start with creating the setting                 |
+| there are no observations over the stretch | `0`  | that no record was kept, and how it is switched on |
+| the writing is switched off by the setting | `0`  | that it is off, and by which key                   |
 
-## Данные
+## Data
 
-**Наблюдение** — одна строка на событие, в файле по дню:
+**An observation** — one line per event, in a file per day:
 
-| Поле      | Что в нём                                                                           |
-| --------- | ----------------------------------------------------------------------------------- |
-| время     | момент события                                                                      |
-| род       | что случилось: загрузка правила, отбитие гейтом, отказ гарда, расхождение раскладки |
-| ресурс    | имя правила или гарда — имя ресурса пакета, и только оно                            |
-| род файла | расширение или известный род слоя правил; пути нет                                  |
-| версия    | версия пакета, разложившего ресурс                                                  |
-| сессия    | короткий признак, по которому считаются заходы; из имени сессии не восстановим      |
+| Field            | What is in it                                                                                  |
+| ---------------- | ---------------------------------------------------------------------------------------------- |
+| time             | the moment of the event                                                                        |
+| kind             | what happened: a rule loaded, a refusal by the gate, a refusal of a guard, a layout divergence |
+| resource         | the name of the rule or the guard — the name of the package resource, and only it              |
+| the kind of file | the extension or a known kind of the rules layer; there is no path                             |
+| version          | the version of the package that laid the resource out                                          |
+| session          | a short sign the sessions are counted by; the session name is not recovered from it            |
 
-## Экраны и состояния
+## Screens and states
 
-Экранов у пакета нет: сводку человек читает строками вывода.
+The package has no screens: the digest a person reads as lines of output.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: вывод строки запуска одноязычный.
+Not applicable: the output of the launch line is single-language.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Наблюдения одного дерева в другое не попадают: они живут там, где работали, и различается это
-настройкой — включена ли запись, какой срок хранения. Признак дерева одинаков у всех, кто
-работает с одним репозиторием, и адрес дерева по нему не восстанавливается.
+The observations of one tree do not get into another: they live where they worked, and this is told
+apart by a setting — whether the writing is on, what the keeping time is. The tree sign is the same
+for everyone working with one repository, and the tree address is not recovered from it.
 
-## Решения
+## Decisions
 
-- **Наблюдения пишут существующие гарды, а не новый наблюдатель рядом.** Отдельный гард
-  повторял бы разбор входа и расходился бы с гейтом молча — а событие «гейт отбил» знает только
-  сам гейт. Отвергнуто: гард-наблюдатель поверх остальных.
-- **Слово «наблюдение» вместо «журнал».** Словарь дерева запрещает второе прямо.
-- **Надстройки считаются состоянием — допущение исполнителя.** Меню владельцем не отвечено.
-  Довод: снимок берётся раскладкой, надстройка живёт месяцами, и история «когда завели» ни одного
-  решения не меняет. Отменяется одной правкой договорённости.
-- **Признак дерева считается от адреса удалённого репозитория — допущение исполнителя.** Он
-  одинаков у всех, кто работает с этим репозиторием, то есть считает деревья, а не машины. От
-  того, кто знает список адресов команды, он дерево не прячет, и в закрытом приёме это принято
-  намеренно: прячется дерево от посторонних, а не от своих.
-- **Наблюдение о происшествии — допущение исполнителя.** Владелец запретил заводить новые роды
-  событий и править гарды ради них, и просил собирать признания промаха. Гард происшествия их уже
-  ловит; ему недостаёт одной строки записи тем же приёмом, что стоит в соседних гардах.
-- **Версия схемы записи отдельно от версии пакета.** Совпасть они не обязаны: поля меняются реже,
-  чем выходит редакция, и по номеру редакции не видно, чем строку разбирать. Отвергнуто: считать
-  схему по версии пакета.
-- **Строки неизвестной версии схемы считаются, а не отбивают сводку.** Отказ инструмента
-  наблюдения не имеет права остановить работу, ради которой его завели. Отвергнуто: отказ сводки
-  на незнакомой версии.
-- **Наблюдения из нескольких машин в одно место не сводятся.** Они по-прежнему живут в дереве той
-  машины, где работали, а приём собирает груз, а не наблюдения.
+- **The observations are written by the existing guards, not by a new observer next to them.** A
+  separate guard would repeat the parse of the input and would diverge from the gate silently — and
+  the event "the gate refused" is known only to the gate itself. Rejected: an observer guard on top
+  of the rest.
+- **The word "observation" instead of "log".** The tree glossary forbids the second outright.
+- **The overrides are counted as a state — an assumption of the executor.** The menu was not answered
+  by the owner. The argument: the snapshot is taken by the layout, an override lives for months, and
+  the history "when it was created" changes not one decision. Cancelled by one edit of the agreement.
+- **The tree sign is counted from the address of the remote repository — an assumption of the
+  executor.** It is the same for everyone working with this repository, that is, it counts trees, not
+  machines. From whoever knows the list of the team's addresses it hides no tree, and in a closed
+  intake this is accepted on purpose: the tree is hidden from outsiders, not from one's own.
+- **An observation about an incident — an assumption of the executor.** The owner forbade creating
+  new kinds of events and editing guards for their sake, and asked to gather admissions of a miss.
+  The incident guard already catches them; it lacks one line of the record by the same technique
+  that stands in the neighbouring guards.
+- **The version of the record schema apart from the version of the package.** They are not obliged to
+  coincide: the fields change more rarely than an edition comes out, and by the number of the edition
+  it is not visible what to parse the line with. Rejected: counting the schema by the package
+  version.
+- **Lines of an unknown schema version are counted, they do not refuse the digest.** A refusal of the
+  observation tool has no right to stop the work it was created for. Rejected: a refusal of the
+  digest at an unfamiliar version.
+- **Observations from several machines are not brought together into one place.** They still live in
+  the tree of the machine they worked on, and the intake gathers the cargo, not the observations.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом.
+The open questions of the domain are shared, and they live in the spec next to it.
 
-## История изменений
+## History of changes
 
-- 2026-09-05 — поддомен груза наружу выделен из этого спека, переросшего предел длины.
-  Правила, сценарии и привязки предложений, отправки, заведения дерева и отметки переехали в
-  него прежними: номера сценариев не пересчитывались.
-- 2026-08-17 — поддомен выделен из спека домена, переросшего предел длины. Правила, сценарии и
-  привязки наблюдений и груза переехали сюда прежними: номера сценариев не пересчитывались.
+- 2026-09-05 — the subdomain of the cargo outward was split out of this spec, which had outgrown the
+  length limit. The rules, scenarios and bindings of proposals, sending, creating a tree and marking
+  moved into it as they were: the scenario numbers were not recounted.
+- 2026-08-17 — the subdomain was split out of the domain spec, which had outgrown the length limit.
+  The rules, scenarios and bindings of the observations and the cargo moved here as they were: the
+  scenario numbers were not recounted.
