@@ -1,59 +1,61 @@
-# angular-patterns — как это устроено здесь
+# angular-patterns — how it is arranged here
 
-Имена этого дерева при правиле `SKILL.md` рядом. Отдельный файл потому, что правило говорит
-приёмом и переносится между репозиториями целиком, а всё, что ниже, верно только здесь и
-устаревает при каждом переименовании.
+The names of this tree, next to the rule `SKILL.md` beside it. A file of its own because the rule
+speaks by technique and travels between repositories whole, while everything below is true only
+here and goes stale at every rename.
 
-Фронтового приложения здесь нет: дерево публикует библиотеки, и «экран» для него — витрина и
-спека. Всё, что правило говорит про состояние и потоки, действует ровно так же, но владельцем
-подписки оказывается компонент или служба кита, а не страница.
+There is no frontend application here: the tree publishes libraries, and a «screen» for it is the
+showcase and a spec. Everything the rule says about state and streams holds exactly the same, but
+the owner of a subscription turns out to be a kit component or service, not a page.
 
-Единственное приложение дерева — приёмник груза — на NestJS, и это правило на него не действует
-вовсе: сигнального API и `inject()` там нет, зависимости приходят конструктором.
+The only application of the tree — the cargo intake — is on NestJS, and this rule does not apply to
+it at all: there is no signal API and no `inject()` there, and the dependencies arrive by the
+constructor.
 
-## Как это называется здесь
+## What it is called here
 
-- **В правиле** — Здесь
-- **реактивное значение** — `signal()`, у входов и выходов — `input()`, `output()`, `model()`
-- **производное значение** — `computed()`
-- **источник действия** — поле с суффиксом `Source`: `#refreshSource = new Subject<void>()`
-- **гашение подписки** — `takeUntilDestroyed()` в трубе перед `.subscribe()`
-- **уборка при уничтожении** — `inject(DestroyRef).onDestroy(...)`, а не метод жизненного цикла
-- **общая основа стора** — `BaseStoreService` и `BaseAsyncStoreService` из `@rt-tools/store`
-- **шина сообщений стора** — `dispatch(...)` и `onDispatch(...)` той же основы
+- **In the rule** — Here
+- **a reactive value** — `signal()`, and for inputs and outputs `input()`, `output()`, `model()`
+- **a derived value** — `computed()`
+- **an action source** — a field with the suffix `Source`: `#refreshSource = new Subject<void>()`
+- **quenching a subscription** — `takeUntilDestroyed()` in the pipe before `.subscribe()`
+- **cleanup on destruction** — `inject(DestroyRef).onDestroy(...)`, not a lifecycle method
+- **the shared store base** — `BaseStoreService` and `BaseAsyncStoreService` from `@rt-tools/store`
+- **the store message bus** — `dispatch(...)` and `onDispatch(...)` of the same base
 
-## Где это лежит
+## Where it lives
 
-- **основы стора** — `projects/store/src/lib/base-store.service.ts` и `base-async-store.service.ts`
-- **правило суффикса источника** — `tools/eslint-rules/rules/require-source-suffix-for-subjects.ts`
-- **правило гашения подписки** — `tools/eslint-rules/rules/require-take-until-destroyed.ts`
-- **службы кита, живущие дольше экрана** — `projects/ui-kit-v2/src/lib/platform/` — тема, точки перелома, шина оповещений
+- **the store bases** — `projects/store/src/lib/base-store.service.ts` and `base-async-store.service.ts`
+- **the source suffix rule** — `tools/eslint-rules/rules/require-source-suffix-for-subjects.ts`
+- **the subscription quenching rule** — `tools/eslint-rules/rules/require-take-until-destroyed.ts`
+- **the kit services that outlive a screen** — `projects/ui-kit-v2/src/lib/platform/` — the theme, the breakpoints, the notification bus
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-Первая колонка — статья дословно, как она написана в разделе «Как закон применяется здесь»
-(жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает
-то, чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
+The first column is the article verbatim, as it is written in the section «How the law applies
+here» (the bold part of the item). An article without a line and a line without an article are a
+divergence: the rule promises what the tree does not have, or the tree holds what the rule is
+silent about.
 
-- **A subscription is declared once, not in the action method.** — **Не проверяется ничем.** Своего правила линтера на подписку в методе здесь нет. Долгоживущие подписки объявляются при создании владельца — `projects/ui-kit-v2/src/lib/platform/theme.service.ts`.
-- **A subscription dies with its owner.** — `tools/eslint-rules/rules/require-take-until-destroyed.ts:RULE_NAME` — отказ на любой `.subscribe()` без завершающего оператора в трубе; 0 нарушений в дереве, единственное отступление подписано комментарием у ручки Redux DevTools.
-- **An action source carries the suffix `Source` in its name.** — `tools/eslint-rules/rules/require-source-suffix-for-subjects.ts:REQUIRED_SUFFIX` — отказ на поле-источник без суффикса; наблюдаемое, поднятое из него через `asObservable()`, суффикса не носит.
-- **A service call inside `computed` does not become a dependency.** — **Не проверяется ничем.** Ни сборка, ни линтер вызова метода внутри производного значения не видят: значение остаётся таким, каким было в момент первого счёта. Держится разбором.
-- **A list store inherits the shared base.** — `projects/store/src/lib/base-store.service.ts:BaseStoreService` и `base-async-store.service.ts` рядом — записи, состояние загрузки, обновление части состояния и шина сообщений уже там.
+- **A subscription is declared once, not in the action method.** — **Not checked.** There is no linter rule of its own against a subscription in a method here. Long-lived subscriptions are declared at the creation of the owner — `projects/ui-kit-v2/src/lib/platform/theme.service.ts`.
+- **A subscription dies with its owner.** — `tools/eslint-rules/rules/require-take-until-destroyed.ts:RULE_NAME` — a refusal on any `.subscribe()` without a terminating operator in the pipe; 0 violations in the tree, and the single deviation is signed by a comment at the Redux DevTools handle.
+- **An action source carries the suffix `Source` in its name.** — `tools/eslint-rules/rules/require-source-suffix-for-subjects.ts:REQUIRED_SUFFIX` — a refusal on a source field without the suffix; an observable raised from it through `asObservable()` does not carry the suffix.
+- **A service call inside `computed` does not become a dependency.** — **Not checked.** Neither the build nor the linter sees a method call inside a derived value: the value stays as it was at the moment of the first computation. It is held by review.
+- **A list store inherits the shared base.** — `projects/store/src/lib/base-store.service.ts:BaseStoreService` and `base-async-store.service.ts` next to it — the records, the loading state, updating a part of the state and the message bus are already there.
 
-## Что ещё стоит знать при чтении кода
+## What else is worth knowing when reading the code
 
-- Производное значение объявляется вычисляемым, а не эффектом: эффект, кладущий значение в
-  реактивное поле, отстаёт от источника, и заметно это не сразу.
-- Геттеров в компонентах здесь нет — пересчёт на каждую перерисовку, цена которого не видна ни
-  в одном месте кода.
-- Оба правила про потоки не смотрят на файлы спек: в `eslint.config.mjs` собственные правила
-  этого дерева объявлены с исключением `**/*.spec.ts`, витрины и показа.
-- Стенд спек зоннезависимый, поэтому перерисовка в спеке двигается явно —
-  `fixture.detectChanges()`, а для содержимого в перекрытии ещё и `ApplicationRef.tick()`.
+- A derived value is declared as computed, not as an effect: an effect that puts a value into a
+  reactive field lags behind the source, and that is not noticed at once.
+- There are no getters in components here — a recomputation on every redraw whose cost is visible
+  nowhere in the code.
+- Both stream rules do not look at spec files: in `eslint.config.mjs` the tree own rules are
+  declared with an exception for `**/*.spec.ts`, the showcase and the demos.
+- The spec stand is zoneless, so a redraw in a spec is moved explicitly —
+  `fixture.detectChanges()`, and for content in an overlay also `ApplicationRef.tick()`.
 
-## Чем это проверяется
+## What this is checked by
 
-- `pnpm exec nx lint @rt-tools/<пакет>` — оба правила про потоки и остальной набор.
-- `pnpm exec nx test @rt-tools/store` — спеки основ стора: состояние, шина, обновление части
-  состояния.
+- `pnpm exec nx lint @rt-tools/<package>` — both stream rules and the rest of the set.
+- `pnpm exec nx test @rt-tools/store` — the specs of the store bases: the state, the bus, updating
+  a part of the state.

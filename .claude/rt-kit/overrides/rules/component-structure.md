@@ -1,19 +1,20 @@
-## Присланное содержимое строится узлами
+## Content that arrived from outside is built as nodes
 
-Текст, приехавший со стороны, показывается деревом узлов, которое построил разбор, а не
-строкой, вклеенной в разметку. Обхода у этого нет: строка, отданная странице, — это исполнение
-присланного в браузере того, кто смотрит.
+Text that arrived from outside is shown as a tree of nodes built by a parser, not as a string
+glued into the markup. There is no way around this: a string handed to the page is the execution
+of what arrived in the browser of whoever is looking.
 
-- **Разбор присланного текста живёт чистой функцией, а компонент рисует её узлы.** Решение о
-  том, что в тексте разметка, а что — видимые знаки, проверяется вызовом; компонент остаётся
-  тонким и своего ветвления не заводит.
-- **Перечень понимаемой разметки закрыт и зашит в компоненте.** Вход у такого компонента один —
-  сам текст: настраивать нечего, значит нечем и ослабить. Забытый вход тихо открывал бы больше,
-  чем задумано.
-- **Незнакомое разбору остаётся видимым текстом, а не вычищается.** Вычистка — обещание,
-  которое держится настройкой; узел, которого разбор не строит, в страницу не попадает и без
-  неё. Сырой HTML, картинки и адреса чужих схем поэтому видны знаками, как приехали.
-- **Ссылка ведёт наружу только знакомой схемой.** Адрес схемы, исполняющей код, выглядит
-  ссылкой и срабатывает нажатием: схемы отбираются перечнем, а не отсеиваются по опасности.
-- **Показ присланного текста собирается один раз на все разделы, которые его показывают.**
-  Собранные порознь, они расходятся видом по одному, и замечает это читатель, а не проверка.
+- **Parsing the arrived text lives as a pure function, and the component draws its nodes.** The
+  decision about what in the text is markup and what is visible characters is checked by a call;
+  the component stays thin and starts no branching of its own.
+- **The list of understood markup is closed and nailed inside the component.** Such a component
+  has one input — the text itself: there is nothing to configure, so there is nothing to weaken
+  either. A forgotten input would silently open more than intended.
+- **What the parser does not know stays visible text and is not cleaned away.** Cleaning is a
+  promise held by a setting; a node the parser does not build never reaches the page without one
+  anyway. Raw HTML, images and addresses of foreign schemes are therefore visible as characters,
+  as they arrived.
+- **A link leads outward only by a known scheme.** The address of a scheme that executes code
+  looks like a link and fires on a click: schemes are chosen by a list, not sifted by danger.
+- **The display of arrived text is assembled once for every section that shows it.** Assembled
+  apart, they drift in appearance one by one, and it is the reader who notices, not a check.

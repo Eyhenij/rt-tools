@@ -1,38 +1,38 @@
 #!/usr/bin/env node
 /**
- * Переставляет импорты, разъехавшиеся по двум пакетам: `@rt-tools/utils` остался без фреймворка,
- * а всё, чему фреймворк нужен, уехало в `@rt-tools/core`.
+ * It moves the imports that drifted apart into two packages: `@rt-tools/utils` was left without the
+ * framework, and everything that needs the framework left for `@rt-tools/core`.
  *
- * Обратной совместимости у этого переезда нет и быть не может: реэкспорт переехавшего вернул бы
- * Angular в граф зависимостей `utils` и отменил бы весь переезд. Поэтому каждый потребитель правит
- * импорты у себя, и делает это инструмент, а не руки: имён три десятка, и объявление, где рядом
- * стоят переехавшее и оставшееся, руками делится не всегда.
+ * This move has no backward compatibility and cannot have any: a re-export of what moved would bring
+ * Angular back into the dependency graph of `utils` and cancel the whole move. So every consumer
+ * edits the imports at home, and a tool does it rather than hands: there are three dozen names, and a
+ * declaration where what moved stands next to what stayed is not always split by hand.
  *
- * О приложении инструмент не знает ничего: его единственное знание о предмете — таблица ниже.
+ * The tool knows nothing about the application: its only knowledge of the subject is the table below.
  *
- *     node tools/migrate-utils-imports.mjs <каталог> [--dry]
+ *     node tools/migrate-utils-imports.mjs <directory> [--dry]
  */
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-/** Пакет, откуда имена уехали, и пакет, куда они приехали. */
+/** The package the names left and the package they arrived in. */
 const FROM = '@rt-tools/utils';
 const TO = '@rt-tools/core';
 
 /**
- * Имена, уехавшие из `utils` в `core`. Значение — имя в новом пакете: у перечисления положений оно
- * другое, потому что переименование приехало следом за переездом. Таблица, повторившая старое имя,
- * дала бы объявление, которое собирается адресом и падает именем.
+ * The names that left `utils` for `core`. The value is the name in the new package: at the
+ * enumeration of positions it is different, because the renaming arrived after the move. A table
+ * repeating the old name would give a declaration that builds by address and falls by name.
  */
 const MOVED = new Map([
-    // директивы
+    // the directives
     ['RtEscapeKeyDirective', 'RtEscapeKeyDirective'],
     ['RtIconOutlinedDirective', 'RtIconOutlinedDirective'],
     ['RtNavigationDirective', 'RtNavigationDirective'],
     ['RtScrollDirective', 'RtScrollDirective'],
     ['RtScrollToElementDirective', 'RtScrollToElementDirective'],
     ['RtTabQueryParamDirective', 'RtTabQueryParamDirective'],
-    // пайпы
+    // the pipes
     ['BreakStringPipe', 'BreakStringPipe'],
     ['EmptyToDashPipe', 'EmptyToDashPipe'],
     ['EntityToStringPipe', 'EntityToStringPipe'],
@@ -43,7 +43,7 @@ const MOVED = new Map([
     ['NotEqualPipe', 'NotEqualPipe'],
     ['SanitizePipe', 'SanitizePipe'],
     ['TernaryPipe', 'TernaryPipe'],
-    // службы и их настройка
+    // the services and their settings
     ['BreakpointService', 'BreakpointService'],
     ['Breakpoints', 'Breakpoints'],
     ['IBreakpoints', 'IBreakpoints'],
@@ -54,7 +54,7 @@ const MOVED = new Map([
     ['ANDROID', 'ANDROID'],
     ['IOS', 'IOS'],
     ['UNKNOWN', 'UNKNOWN'],
-    // признак окружения, проверки значений, перекрытие и провайдер
+    // the environment sign, the value checks, the overlay and the provider
     ['NAVIGATOR', 'NAVIGATOR'],
     ['arraysNotEmptyValidator', 'arraysNotEmptyValidator'],
     ['checkIsMatchingValues', 'checkIsMatchingValues'],
@@ -64,16 +64,16 @@ const MOVED = new Map([
     ['provideRtUtils', 'provideRtUtils'],
 ]);
 
-/** Расширения файлов кода. Разметку и стили инструмент не читает: импортов в них нет. */
+/** The code file extensions. The tool does not read markup and styles: they hold no imports. */
 const CODE = new Set(['.ts', '.tsx', '.mts', '.cts', '.js', '.jsx', '.mjs', '.cjs']);
 
-/** Каталоги, куда обход не заходит: собранное и установленное правится своим источником. */
+/** The directories the walk does not enter: what is built and what is installed is edited by its own source. */
 const SKIP = new Set(['node_modules', 'dist', 'coverage', '.git', '.angular', '.nx', 'tmp']);
 
 /**
- * Объявление, называющее имена в фигурных скобках, — импорт или реэкспорт, со словом `type` перед
- * скобками или без. Звёздочный и умолчательный импорт сюда не попадают: разделить их нечем, и
- * инструмент называет их отдельно.
+ * A declaration naming names in braces — an import or a re-export, with the word `type` before the
+ * braces or without. A star and a default import do not fall here: there is nothing to split them
+ * by, and the tool names them apart.
  */
 const NAMED = new RegExp(
     String.raw`(?<head>\b(?:import|export)\s+(?:type\s+)?)\{(?<names>[^}]*)\}(?<mid>\s*from\s*)(?<quote>['"])` +
@@ -82,18 +82,18 @@ const NAMED = new RegExp(
     'g'
 );
 
-/** Звёздочный и умолчательный импорт из того же пакета: делится он только руками. */
+/** A star and a default import from the same package: it is split only by hand. */
 const WHOLE = new RegExp(
     String.raw`\bimport\s+(?:\*\s+as\s+\w+|\w+)\s+from\s*['"]` + FROM.replace('/', String.raw`\/`) + String.raw`['"]`,
     'g'
 );
 
-/** Именованный импорт из пакета назначения, уже стоящий в файле: в него дописывают, а не заводят второй. */
+/** A named import from the destination package already standing in the file: it is appended to rather than a second one created. */
 const EXISTING_TO = new RegExp(
     String.raw`\bimport\s+\{(?<names>[^}]*)\}\s*from\s*(?<quote>['"])` + TO.replace('/', String.raw`\/`) + String.raw`\k<quote>`
 );
 
-/** Разбор одного имени в скобках: `type Имя as Своё` — три части, любая из первых двух может отсутствовать. */
+/** The reading of one name in braces: `type Name as Own` — three parts, either of the first two may be missing. */
 function parseName(raw) {
     const text = raw.trim();
     const typed = /^type\s+/.test(text);
@@ -103,7 +103,7 @@ function parseName(raw) {
     return { text, typed, source: source.trim(), alias: alias?.trim() };
 }
 
-/** Имя, каким оно поедет в новый пакет: переименование приезжает вместе с адресом. */
+/** The name as it will travel into the new package: the renaming arrives together with the address. */
 function renamed(name) {
     const target = MOVED.get(name.source);
     const head = name.typed ? 'type ' : '';
@@ -116,10 +116,10 @@ function renamed(name) {
 }
 
 /**
- * Переписанный текст файла и счёт того, что с ним сделано.
+ * The rewritten text of the file and a count of what was done to it.
  *
- * Объявление без переехавших имён не трогается вовсе: инструмент зовут на дереве целиком, и файл,
- * которого правка не касается, обязан остаться байт в байт прежним.
+ * A declaration without moved names is not touched at all: the tool is called on the whole tree, and
+ * a file the edit does not concern must stay byte for byte as it was.
  */
 function rewrite(text) {
     let moved = 0;
@@ -157,9 +157,9 @@ function rewrite(text) {
 }
 
 /**
- * Имена из поделённого объявления кладутся в импорт из пакета назначения. Уже стоящий в файле
- * дополняется: второе объявление того же адреса собирается, но линтер потребителя чаще всего
- * считает его дублем — и правку, сделанную инструментом, приходится доправлять руками.
+ * The names from a split declaration are put into an import from the destination package. One
+ * already standing in the file is added to: a second declaration of the same address builds, but a
+ * consumer's linter most often counts it a duplicate — and the tool's edit has to be edited by hand.
  */
 function place(text, added) {
     const existing = EXISTING_TO.exec(text);
@@ -176,8 +176,8 @@ function place(text, added) {
         );
     }
 
-    // Своим объявлением — сразу за тем, из которого имена вынули: рядом с ним читателю видно, что
-    // это одна правка, а не два несвязанных импорта.
+    // By a declaration of its own — right after the one the names were taken out of: next to it the
+    // reader sees that this is one edit rather than two unconnected imports.
     const anchor = new RegExp(String.raw`^.*from\s*['"]` + FROM.replace('/', String.raw`\/`) + String.raw`['"].*$`, 'm');
     const line = anchor.exec(text);
     const ending = line[0].trimEnd().endsWith(';') ? ';' : '';
@@ -185,7 +185,7 @@ function place(text, added) {
     return text.replace(anchor, `${line[0]}\nimport { ${added.join(', ')} } from '${TO}'${ending}`);
 }
 
-/** Обход каталога: файлы кода, кроме собранного и установленного. */
+/** The walk of a directory: the code files, except what is built and what is installed. */
 function walk(dir) {
     return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
         if (entry.isDirectory()) {
@@ -203,10 +203,10 @@ const dry = args.includes('--dry');
 const root = args.find((one) => !one.startsWith('--'));
 
 if (args.includes('--help') || !root) {
-    console.log('node tools/migrate-utils-imports.mjs <каталог> [--dry]');
-    console.log(`Переставляет импорты переехавшего из ${FROM} в ${TO}.`);
-    console.log('  <каталог>  что обойти; собранное и установленное пропускается');
-    console.log('  --dry      сказать, что изменилось бы, и ничего не записать');
+    console.log('node tools/migrate-utils-imports.mjs <directory> [--dry]');
+    console.log(`It moves the imports of what left ${FROM} for ${TO}.`);
+    console.log('  <directory>  what to walk; what is built and what is installed is skipped');
+    console.log('  --dry        say what would change and write nothing');
     process.exit(args.includes('--help') ? 0 : 1);
 }
 
@@ -241,15 +241,15 @@ for (const file of walk(root)) {
         writeFileSync(file, after.text);
     }
 
-    console.log(`${file}: переставлено ${after.moved}, поделено ${after.split}`);
+    console.log(`${file}: moved ${after.moved}, split ${after.split}`);
 }
 
-// Итог печатается последним: читают его прогоном, а список ручного разбора длиннее его на каждый
-// такой файл — и, встав ниже, он оставил бы итог там, где его никто не ищет.
+// The total is printed last: it is read by the run, and the list for a manual sorting out is longer
+// than it by every such file — standing below, it would leave the total where nobody looks for it.
 if (whole.length) {
-    console.log(`делится только руками — импорт пакета целиком (${whole.length}):`);
+    console.log(`split only by hand — a whole-package import (${whole.length}):`);
     whole.forEach((file) => console.log(`  ${file}`));
     console.log('');
 }
 
-console.log(`${dry ? 'сухой прогон: ' : ''}файлов ${files}, объявлений переставлено ${moved}, поделено ${split}`);
+console.log(`${dry ? 'a dry run: ' : ''}files ${files}, declarations moved ${moved}, split ${split}`);

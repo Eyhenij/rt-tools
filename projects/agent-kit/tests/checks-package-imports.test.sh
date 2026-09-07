@@ -77,7 +77,7 @@ reset
 neighbour '@rt-tools/utils' '0.4.0' 'esm/index.d.ts' 'export declare function debounce(): void;\nexport interface IPageModel { page: number; }\n'
 package 'kit' '@rt-tools/kit' '"@rt-tools/utils":"^0.4.0"' "import { debounce, IPageModel } from '@rt-tools/utils';\n" 'a.ts'
 probe "SC-AK-893 — сошедшиеся импорты проходят" "$(code)" 0
-probe "SC-AK-893 — итог называет пары с соседом" "$(contains "$(says)" 'пар с соседом 1')" 'есть'
+probe "SC-AK-893 — итог называет пары с соседом" "$(contains "$(says)" 'pairs with a neighbour 1')" 'есть'
 
 # --- SC-AK-894 — символа у опубликованного соседа нет: красная, с именами -----------------------
 reset
@@ -86,9 +86,9 @@ neighbour '@rt-tools/utils' '0.4.0' 'esm/index.d.ts' 'export declare function de
 package 'kit' '@rt-tools/kit' '"@rt-tools/utils":"^0.4.0"' "import { EListSortOrder, debounce } from '@rt-tools/utils';\n" 'a.ts'
 out="$(says)"
 probe "SC-AK-894 — недостающий символ отбивается" "$(code)" 1
-probe "SC-AK-894 — отказ называет пакет, символ и версию соседа" "$(contains "$out" '@rt-tools/kit: импортирует EListSortOrder из @rt-tools/utils')" 'есть'
-probe "SC-AK-894 — версия соседа — наибольшая под диапазон" "$(contains "$out" '@rt-tools/utils@0.4.0 его нет')" 'есть'
-probe "SC-AK-894 — имеющийся символ не называется" "$(contains "$out" 'импортирует debounce')" 'нет'
+probe "SC-AK-894 — отказ называет пакет, символ и версию соседа" "$(contains "$out" '@rt-tools/kit: it imports EListSortOrder from @rt-tools/utils')" 'есть'
+probe "SC-AK-894 — версия соседа — наибольшая под диапазон" "$(contains "$out" '@rt-tools/utils@0.4.0 does not hold it')" 'есть'
+probe "SC-AK-894 — имеющийся символ не называется" "$(contains "$out" 'it imports debounce')" 'нет'
 
 # --- SC-AK-895 — многострочный импорт, `type` и `as` читаются по имени у соседа ------------------
 reset
@@ -119,13 +119,13 @@ neighbour '@rt-tools/utils' '0.3.2' 'esm/index.d.ts' 'export declare function de
 package 'kit' '@rt-tools/kit' '"@rt-tools/utils":"^0.4.0"' "import { debounce } from '@rt-tools/utils';\n" 'a.ts'
 out="$(says)"
 probe "SC-AK-898 — диапазон без версии в реестре отбивается" "$(code)" 1
-probe "SC-AK-898 — отказ называет диапазон" "$(contains "$out" 'под диапазон @rt-tools/utils@^0.4.0 в реестре нет ни одной версии')" 'есть'
+probe "SC-AK-898 — отказ называет диапазон" "$(contains "$out" 'under the range @rt-tools/utils@^0.4.0 the registry holds not one version')" 'есть'
 reset
 neighbour '@rt-tools/utils' '0.4.0' 'esm/index.d.ts' 'export declare function debounce(): void;\n'
 package 'kit' '@rt-tools/kit' '' "import { debounce } from '@rt-tools/utils';\n" 'a.ts'
 out="$(says)"
 probe "SC-AK-898 — сосед не назван в манифесте — отбивается" "$(code)" 1
-probe "SC-AK-898 — отказ называет пропажу в манифесте" "$(contains "$out" 'в манифесте соседа не называет')" 'есть'
+probe "SC-AK-898 — отказ называет пропажу в манифесте" "$(contains "$out" 'does not name it in its manifest')" 'есть'
 
 # --- SC-AK-899 — реестр не ответил: проверка проходит и говорит об этом -------------------------
 reset
@@ -137,7 +137,7 @@ chmod +x "$fake/npm"
 out="$(RT_PROJECTS_DIR="$projects" PATH="$fake:$PATH" node "$check" 2>&1)"
 RT_PROJECTS_DIR="$projects" PATH="$fake:$PATH" node "$check" > /dev/null 2>&1
 probe "SC-AK-899 — без ответа реестра проверка проходит" "$?" 0
-probe "SC-AK-899 — о пропуске сказано" "$(contains "$out" 'реестр не ответил')" 'есть'
+probe "SC-AK-899 — о пропуске сказано" "$(contains "$out" 'the registry did not answer')" 'есть'
 
 # --- SC-AK-900 — символ ждёт публикации соседа: гейт терпит, конвейер публикации — нет ---------
 reset
@@ -147,12 +147,12 @@ mkdir -p "$projects/core/src/lib" && printf 'export function setInputs(): void {
 package 'kit' '@rt-tools/kit' '"@rt-tools/core":"^0.4.0"' "import { Bus, setInputs } from '@rt-tools/core';\n" 'a.ts'
 out="$(says)"
 probe "SC-AK-900 — символ из исходников соседа проверку не роняет" "$(code)" 0
-probe "SC-AK-900 — о нём сказано, что он ждёт публикации соседа" "$(contains "$out" 'setInputs из @rt-tools/core')" 'есть'
-probe "SC-AK-900 — итог считает ждущих" "$(contains "$out" 'ждут публикации соседа 1')" 'есть'
+probe "SC-AK-900 — о нём сказано, что он ждёт публикации соседа" "$(contains "$out" 'setInputs from @rt-tools/core')" 'есть'
+probe "SC-AK-900 — итог считает ждущих" "$(contains "$out" "waiting for the neighbour's publication 1")" 'есть'
 RT_PROJECTS_DIR="$projects" RT_PUBLISHED_DIR="$published" node "$check" --strict > /dev/null 2>&1
 probe "SC-AK-900 — в строгом режиме тот же символ отбивается" "$?" 1
 out="$(RT_PROJECTS_DIR="$projects" RT_PUBLISHED_DIR="$published" node "$check" --strict --package @rt-tools/kit 2>&1)"
-probe "SC-AK-900 — строгий отказ называет символ" "$(contains "$out" 'импортирует setInputs из @rt-tools/core')" 'есть'
+probe "SC-AK-900 — строгий отказ называет символ" "$(contains "$out" 'it imports setInputs from @rt-tools/core')" 'есть'
 
 # --- SC-AK-901 — суд одного пакета и импорт в комментарии ------------------------------------
 reset

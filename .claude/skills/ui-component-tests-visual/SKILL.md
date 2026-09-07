@@ -2,32 +2,33 @@
 name: ui-component-tests-visual
 kind: pattern
 rule: ui-component-tests
-description: Паттерн правила ui-component-tests. Брать при заведении истории ради снимка, при разборе упавшего снимка витрины и при обходе всех историй: параметры наведения, недетерминированное в кадре, порядок пересъёмки эталонов.
+description: A pattern of the rule ui-component-tests. Take it when a story is created for the sake of a snapshot, when a fallen showcase snapshot is sorted out and when all the stories are swept. The hover parameters, what is undetermined in the frame, re-taking the references.
 ---
 
-# Визуальный снимок — готовый код
+# The visual snapshot — ready-made code
 
-Снимок каждой истории первого кита сверяется с эталоном рядом, в
-`projects/ui-kit/.storybook/__snapshots__/`. Обвязка — `projects/ui-kit/.storybook/test-runner.ts`.
-Форма самой истории — правило `rt-tools-storybook`.
+The snapshot of every story of the first kit is matched against the reference next to it, in
+`projects/ui-kit/.storybook/__snapshots__/`. The harness is
+`projects/ui-kit/.storybook/test-runner.ts`. The shape of the story itself — the rule
+`rt-tools-storybook`.
 
-## Когда брать
+## When to use
 
-- Состоянию, которого нет в кадре, заводится своя история.
-- Прогон снимков упал, и надо понять, своё это расхождение или чужое.
-- Эталоны снимаются впервые либо пересъёмываются.
+- A state that is not in the frame gets a story of its own.
+- The snapshot run fell, and it has to be understood whether the divergence is one's own.
+- The references are taken for the first time, or re-taken.
 
-Эталоны сняты на этой же машине, на которой гоняется конвейер, — поэтому порог сравнения держится
-у нуля и мелкая правка не проходит молча. Смена машины или версии браузера означает пересъёмку
-всех эталонов, а не разбор расхождений.
+The references were taken on the same machine the pipeline runs on, so the comparison threshold is
+held at zero and a small edit does not pass silently. A change of machine or of browser version
+means re-taking all the references rather than sorting out divergences.
 
-## Состояние, которого нет в кадре
+## A state that is not in the frame
 
-Своя история заводится состоянию, до которого снимок сам не доходит: подсказка, кнопка под
-наведением, содержимое в перекрытии, ветка после выбора файла.
+A story of its own is created for a state the snapshot does not reach by itself: a tooltip, a button
+under the pointer, content in an overlay, the branch after a file is chosen.
 
-**Наведение** — параметром истории, настоящим указателем. Событие, разыгранное из истории, до
-кадра не доживает: полный снимок перекладывает страницу заново.
+**Hover** — by a story parameter, with a real pointer. An event played out from the story does not
+live to the frame: a whole-page snapshot lays the page out anew.
 
 ```typescript
 export const CopyButtonOnHover: Story = {
@@ -36,8 +37,9 @@ export const CopyButtonOnHover: Story = {
 };
 ```
 
-**Перекрытие** — открывается нажатием в `play`, а кадр под него задаётся параметром: содержимое
-вне потока страницы полный снимок не достраивает, попап выше кадра просто обрезается.
+**An overlay** — opened by a press in `play`, and the frame for it is set by a parameter. Content
+outside the page flow a whole-page snapshot does not build up, and a popup above the frame is simply
+cut off.
 
 ```typescript
 export const SelectorPopup: Story = {
@@ -46,7 +48,7 @@ export const SelectorPopup: Story = {
         const trigger: HTMLElement | null = canvasElement.querySelector('[cdkoverlayorigin]');
 
         if (!trigger) {
-            throw new Error('Кнопка, открывающая попап, в истории не отрисована');
+            throw new Error('The button that opens the popup is not drawn in the story');
         }
 
         await userEvent.click(trigger);
@@ -55,95 +57,100 @@ export const SelectorPopup: Story = {
 };
 ```
 
-**Разметка приходит не в тот же кадр, что история.** Поиск узла в `play` оборачивается ожиданием:
+**The markup does not arrive in the same frame as the story.** A search for a node in `play` is
+wrapped in a wait:
 
 ```typescript
 const cell: HTMLElement = await waitFor(findCell);
 ```
 
-**Начальное состояние не задаётся входом.** Значения истории приходят обёртке позже её `ngOnInit`,
-и посчитанное в крючке состояние считается по умолчанию поля. Пустой список, выбранный файл,
-открытая панель достигаются нажатием в `play`.
+**The initial state is not set by an input.** The story's values reach the wrapper later than its
+`ngOnInit`, and a state computed in the hook is counted by the field's default. An empty list, a
+chosen file, an opened panel are reached by a press in `play`.
 
-## Недетерминированное в кадр не попадает
+## What is undetermined does not get into the frame
 
-- случайные данные — зерном генератора в `preview.ts`, не вызовом на месте;
-- картинки — байтами в адресе, не загрузкой из сети; тип в адресе должен совпадать с байтами,
-  иначе в кадре остаётся пустая рамка;
-- анимации каркаса идут не через CSS и объявлением нулевой длительности не останавливаются —
-  обвязка доводит их до конца перед снимком;
-- шрифт значков лежит при витрине и отдаётся ею самой, а не едет из чужой сети; значок до его
-  загрузки держит себя невидимым, поэтому обвязка сама зовёт загрузку семейств и отказывает,
-  если они не встали.
+- random data — by a generator seed in `preview.ts`, not by a call on the spot;
+- pictures — by bytes in the address, not by a load from the network; the type in the address must
+  match the bytes, otherwise an empty frame is left in the shot;
+- the skeleton animations do not go through CSS and do not stop at a declared zero duration — the
+  harness drives them to the end before the shot;
+- the icon font lies next to the showcase and is served by it rather than travelling from a foreign
+  network; an icon keeps itself invisible until it is loaded, so the harness itself calls the
+  loading of the families and refuses if they did not come up.
 
-## Обход всех историй — до съёмки эталонов
+## The sweep over all the stories — before the references are taken
 
-Обход отвечает на вопрос, который не задаёт ни один прогон: есть ли в кадре хоть что-нибудь.
-Идёт он по поднятой витрине и **до** первой съёмки эталонов — после съёмки он проверял бы уже
-закреплённое.
+The sweep answers the question no run asks: is there anything at all in the frame. It goes over the
+raised showcase and **before** the first taking of the references — after the taking it would be
+checking what is already pinned.
 
 ```bash
-pnpm run storybook:ui-kit-v2   # витрина поднимается отдельно и остаётся поднятой
-pnpm run test:stories:v2       # обход: tools/story-sweep-v2.mjs
+pnpm run storybook:ui-kit-v2   # the showcase is raised apart and stays raised
+pnpm run test:stories:v2       # the sweep: tools/story-sweep-v2.mjs
 ```
 
-Что он делает: берёт список историй у самой витрины (`GET <адрес>/index.json`), открывает
-каждую и смотрит две вещи — площадь показа и консоль.
+What it does: it takes the list of stories from the showcase itself (`GET <address>/index.json`),
+opens each one and looks at two things — the showing area and the console.
 
-- **Площадь.** Корень показа `[data-story-root]`, а при нулевой высоте корня — самый крупный
-  нарисованный узел внутри показа и внутри контейнера перекрытий. Тост и нижний лист стоят вне
-  потока, и корень над ними схлопывается: без этой оговорки они читались бы пустыми.
-- **Консоль важнее площади.** `NG0201` — провайдера нет в инжекторе витрины, `NG0950` — хозяин
-  не задал обязательный вход: разметка при этом рисует пустоту, снаружи неотличимую от матрицы,
-  которой нечего показать. Площадь у обломка бывает и ненулевой.
-- **Шум витрины отсеян поимённо.** `NG04002` про `iframe.html` приходит в каждую историю:
-  маршрутизатор витрины объявлен пустым набором маршрутов. Всё остальное — отказ.
+- **The area.** The showing root is `[data-story-root]`, and at a zero root height — the largest
+  drawn node inside the showing and inside the overlay container. A toast and a bottom sheet stand
+  outside the flow, and the root above them collapses: without that reservation they would read as
+  empty.
+- **The console matters more than the area.** `NG0201` means a provider is not in the showcase's
+  injector, `NG0950` means the owner did not set a mandatory input. The markup then draws emptiness,
+  which from outside is indistinguishable from a matrix with nothing to show. A wreck's area happens
+  to be non-zero too.
+- **The showcase's noise is sifted out by name.** `NG04002` about `iframe.html` arrives in every
+  story: the showcase's router is declared with an empty set of routes. Everything else is a refusal.
 
-PR зелёный не значит «показано верно»: он значит «есть что смотреть». Кадры после этого
-смотрят глазами, и только потом снимают эталоны.
+A green PR does not mean "shown rightly": it means "there is something to look at". After that the
+frames are looked at by eye, and only then are the references taken.
 
-## Разбор упавшего прогона
+## Sorting out a fallen run
 
-1. **Доля расхождения и область** — прежде картинки. Сдвиг в пиксель и пропавший блок на глаз
-   неотличимы.
-2. **Своё расхождение или чужое.** Расхождение в истории, которой правка не касалась, значит
-   утечку между историями либо правку общего слоя.
-3. **Пересъёмка — по одному эталону.** Файл удаляется, прогон снимает его заново; пересъёмка
-   всего разом стирает и то расхождение, которого не ждали.
-4. **«Couldn't find story … after HMR»** — след горячей перезагрузки: витрина перезапускается,
-   код не правится.
+1. **The share of the divergence and the area** — before the picture. A shift by a pixel and a
+   vanished block are indistinguishable by eye.
+2. **One's own divergence or a foreign one.** A divergence in a story the edit did not touch means a
+   leak between stories or an edit of a shared layer.
+3. **Re-taking — one reference at a time.** The file is deleted, and the run takes it anew;
+   re-taking everything at once erases the divergence that was not expected as well.
+4. **"Couldn't find story … after HMR"** — a trace of the hot reload: the showcase is restarted, the
+   code is not edited.
 
-Разница между двумя эталонами читается вырезкой одной области из обоих файлов и увеличением —
-разовым сценарием во временном каталоге, в репозиторий он не едет.
+The difference between two references is read by cutting one area out of both files and enlarging it
+— by a one-off script in a temporary directory; it does not travel into the repository.
 
-## Замер вместо взгляда
+## A measurement instead of a look
 
-Когда снимок сказал «стало другим», что именно поехало, отвечает замер вычисленных значений:
-кегль, высота, отступ, скругление, цвет. Приём и ловушки — паттерн `browser-verification-measure`;
-узкий экран и работа с драйвером витрины — `browser-verification`, файл `implementation.md`.
+When the snapshot said "it became different", what exactly drifted is answered by a measurement of
+computed values: the font size, the height, the padding, the rounding, the colour. The technique and
+the traps — the pattern `browser-verification-measure`; the narrow screen and work with the
+showcase's driver — `browser-verification`, the file `implementation.md`.
 
-## Ловушки
+## Traps
 
-Каждая проверена на этой машине; все выглядят как сломанная обвязка, а сломано другое.
+Each is checked on this machine; they all look like a broken harness, while what is broken is
+something else.
 
-- **`storybook-addon-pseudo-states` не грузится в Node.** На верхнем уровне он трогает `Element`,
-  и импорт падает с `Element is not defined`. Прогон читает `main.ts` в Node, чтобы найти файлы
-  историй, ошибку проглатывает — и остаётся без страницы: **все** 124 файла падают на
-  `Cannot read properties of undefined (reading 'goto')`. Поэтому `main.ts` не подключает аддон,
-  когда стоит `RT_SNAPSHOT_RUN=1`, а ставит её команда прогона. Витрине аддон нужен: состояния
-  рисуются в браузере, и поднимать её с этой переменной нельзя — hover, focus и active пропадут
-  из кадра, а эталон закрепит не то состояние.
-- **Флаг `-t` ломает окружение прогона ровно так же.** Отбор по имени истории не работает — ни у
-  второй витрины, ни у первой. Точечная пересъёмка отбирает **файлы историй по пути**
-  (позиционный образец Jest), а не истории по имени.
-- **Образец пути уходит в оболочку как есть.** Скобки и вертикальная черта в нём роняют запуск
-  (`syntax error near unexpected token`): прогон строит команду строкой. Образец пишется простым
-  куском пути — `tag`, `components/button`.
-- **Отсутствующий эталон не досъёмывается молча.** Обвязка второй витрины отказывает: библиотека
-  сверки по умолчанию дописала бы файл и прошла зелёной, то есть прогон был бы зелен ровно
-  потому, что сверять было не с чем.
-- **Эталон без истории роняет прогон.** Переименовал историю — эталон осиротел и стал вечно
-  зелёным, потому что его никто не открывает. Ловит это сверка каталога с реестром снятого,
-  а не сам `test-storybook`.
-- **Указатель переживает переход между историями.** Наведение из одной приходит в снимок
-  следующей: история без наведения увозит указатель в угол.
+- **`storybook-addon-pseudo-states` does not load in Node.** At the top level it touches `Element`,
+  and the import falls with `Element is not defined`. The run reads `main.ts` in Node to find the
+  story files, swallows the error — and is left without a page: **all** 124 files fall with
+  `Cannot read properties of undefined (reading 'goto')`. So `main.ts` does not attach the addon when
+  `RT_SNAPSHOT_RUN=1` is set, and the run command sets it. The showcase needs the addon: the states
+  are drawn in the browser, and raising it with this variable is not allowed — hover, focus and
+  active would leave the frame, and the reference would pin the wrong state.
+- **The flag `-t` breaks the run's environment exactly the same way.** A selection by story name does
+  not work — neither at the second showcase nor at the first. A pointed re-take selects **story files
+  by path** (Jest's positional sample), not stories by name.
+- **The path sample goes into the shell as it is.** Brackets and a vertical bar in it drop the launch
+  (`syntax error near unexpected token`): the run builds the command as a string. The sample is
+  written as a plain piece of a path — `tag`, `components/button`.
+- **A missing reference is not taken up silently.** The second showcase's harness refuses: the
+  comparison library would by default append the file and pass green, that is, the run would be green
+  exactly because there was nothing to compare with.
+- **A reference without a story drops the run.** A renamed story leaves its reference orphaned and
+  forever green, because nobody opens it. This is caught by matching the directory against the
+  registry of what was taken, not by `test-storybook` itself.
+- **The pointer outlives the move between stories.** Hover from one arrives in the snapshot of the
+  next: a story without hover carries the pointer away into a corner.

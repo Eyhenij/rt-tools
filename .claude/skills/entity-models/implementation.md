@@ -1,67 +1,72 @@
-# entity-models — что здесь своё
+# entity-models — what is this tree's own
 
-Имена и привязки этого дерева при правиле `SKILL.md` рядом.
+The names and bindings of this tree, next to the rule `SKILL.md`.
 
-Моделей записей у админки три — разбор происшествия, предложение и запись месяца, — и все три
-объявлены неймспейсом с двумя уровнями: строка списка и запись целиком. Модель вошедшего стоит
-особняком: сущностью она не приходится — ни списка, ни правки, ни уровней у неё быть не может.
+The admin panel has three record models — an incident review, a proposal and a month record —
+and all three are declared as a namespace with two levels: the list row and the whole record.
+The model of the signed-in person stands apart: it is no entity — it can have neither a list,
+nor editing, nor levels.
 
-Контракт здесь не protobuf. Приёмник — контроллеры Nest поверх HTTP, `.proto` в дереве нет ни
-одного, и сгенерированной стороны контракта нет тоже: то, что обе стороны читают одинаково,
-объявлено руками в общей либе `libs/message-bus-common`. Из-за этого статья про псевдоним
-сгенерированного типа здесь читается иначе, чем написана, и это расхождение записано строкой.
+The contract here is not protobuf. The receiver is Nest controllers over HTTP, there is not one
+`.proto` in the tree, and there is no generated contract side either: what both sides read alike
+is declared by hand in the shared lib `libs/message-bus-common`. Because of that the article
+about the alias of a generated type reads here differently from how it is written, and the
+divergence is written down as a line.
 
-## Как это называется здесь
+## What it is called here
 
-- **В правиле** — Здесь
-- **`Api` — псевдоним типа из `@<область>/common/proto`** — тип из `@rt/message-bus-common` — объявлен руками, генератора нет
-- **`State`, `Draft`, `Short`** — `State` и `Short` у всех трёх записей груза; `Draft` нет ни у одной — груз не правится
-- **`I<Сущность>`** — `IPostmortem`, `IProposal`, `IMonthRecord` — неймспейс с уровнями; вошедший вне их
-- **маппер-наследник `BaseMapper`** — он же: `BaseMapper<M>` из `@rt-tools/utils`
-- **`this.typeCast`** — `TypeCastHelper` — поле `typeCast` самого `BaseMapper`
-- **типы страницы, порядка и отбора** — их здесь две редакции: `@rt-tools/utils` для кита и `@rt/message-bus-common` для контракта
+- **In the rule** — Here
+- **`Api` — an alias of a type from `@<scope>/common/proto`** — a type from `@rt/message-bus-common` — declared by hand, there is no generator
+- **`State`, `Draft`, `Short`** — `State` and `Short` on all three cargo records; `Draft` on none — cargo is not edited
+- **`I<Entity>`** — `IPostmortem`, `IProposal`, `IMonthRecord` — a namespace with levels; the signed-in person is outside them
+- **a mapper inheriting `BaseMapper`** — the same: `BaseMapper<M>` from `@rt-tools/utils`
+- **`this.typeCast`** — `TypeCastHelper` — the `typeCast` field of `BaseMapper` itself
+- **the page, order and filter types** — there are two editions of them here: `@rt-tools/utils` for the kit and `@rt/message-bus-common` for the contract
 
-## Где это лежит
+## Where it lives
 
-- **основа маппера** — `projects/utils/src/lib/helpers/base.mapper.ts`
-- **приведение типов** — `projects/utils/src/lib/helpers/type-cast.helper.ts`
-- **типы выборки для кита** — `projects/utils/src/lib/interfaces/list.interface.ts`
-- **типы страницы контракта** — `libs/message-bus-common/src/lib/page.ts`
-- **форма груза** — `projects/agent-kit/src/lib/cargo.ts` — её объявляет отправляющая сторона
-- **что приёмник добавляет от себя** — `libs/message-bus-common/src/lib/cargo.ts`
-- **модель вошедшего** — `libs/message-bus-admin/auth/util/src/lib/session.model.ts`
-- **модели записей груза** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.model.ts`, `.../proposals/util/src/lib/proposal.model.ts`, `.../summaries/util/src/lib/month-record.model.ts`
-- **мапперы записей груза** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts`, `.../proposals/util/src/lib/proposal.mapper.ts`, `.../summaries/util/src/lib/month-record.mapper.ts`
+- **the mapper base** — `projects/utils/src/lib/helpers/base.mapper.ts`
+- **the type cast** — `projects/utils/src/lib/helpers/type-cast.helper.ts`
+- **the selection types for the kit** — `projects/utils/src/lib/interfaces/list.interface.ts`
+- **the contract page types** — `libs/message-bus-common/src/lib/page.ts`
+- **the cargo shape** — `projects/agent-kit/src/lib/cargo.ts` — declared by the sending side
+- **what the receiver adds of its own** — `libs/message-bus-common/src/lib/cargo.ts`
+- **the model of the signed-in person** — `libs/message-bus-admin/auth/util/src/lib/session.model.ts`
+- **the cargo record models** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.model.ts`, `.../proposals/util/src/lib/proposal.model.ts`, `.../summaries/util/src/lib/month-record.model.ts`
+- **the cargo record mappers** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts`, `.../proposals/util/src/lib/proposal.mapper.ts`, `.../summaries/util/src/lib/month-record.mapper.ts`
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-Первая колонка — статья дословно, как она написана в разделе «Как закон применяется здесь»
-(жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает то,
-чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
+The first column is the article verbatim, as it is written in the section "How the law applies
+here" (the bold part of the item). An article without a line and a line without an article are a
+divergence: the rule promises what the tree does not have, or the tree holds what the rule is
+silent about.
 
-- **An entity has two sides, and both lie in the namespace `I<Entity>`.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.model.ts:IPostmortem` — `Api` и `State` на каждом из двух уровней. Вошедший вне правила: `libs/message-bus-admin/auth/util/src/lib/session.model.ts:IAdminSession` — одна сторона, приёмник отдаёт имя, админка его же и показывает.
-- **The contract side is not written by hand — it is declared as an alias.** — Здесь иначе: генератора контракта нет, и сторона контракта написана руками — `libs/message-bus-common/src/lib/page.ts:IPage`. Молча разойтись она не может: объявление одно на обе стороны, и приёмник с админкой читают тот же файл, а не свою копию.
-- **A mapper inheriting `BaseMapper` stands between the sides, and screens read only `State`.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts:PostmortemMapper` — по паре мапперов на запись, строка списка и запись целиком порознь; экран видит только `State`, время в нём уже датой, а не строкой.
-- **Empty is expressed by an empty string or zero, not by a missing field.** — `libs/message-bus-common/src/lib/page.ts:pageAsked` — разбор выборки подставляет умолчание, а не оставляет поле пустым. В `IPageAsked` единственное поле с `null` — признак дерева, и `null` там значит «не сужено», а не «нет значения».
-- **A cast goes through `this.typeCast`, not through `??`.** — `libs/message-bus-admin/summaries/util/src/lib/month-record.mapper.ts:MonthRecordMapper` — приведение полей записи месяца идёт полем `typeCast` основы (`projects/utils/src/lib/helpers/type-cast.helper.ts:TypeCastHelper`). Проверки на это в дереве нет, держится разбором.
-- **The page, order and filter types are taken from `@rt-tools/utils`.** — Здесь их две редакции, и обе законны: `projects/utils/src/lib/interfaces/list.interface.ts:IPageModel` — то, что читает переключатель страниц кита; `libs/message-bus-common/src/lib/page.ts:TPageDirection` — контракт приёмника. Третьей заводить нельзя: перевод между этими двумя и есть работа маппера.
+- **An entity has two sides, and both lie in the namespace `I<Entity>`.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.model.ts:IPostmortem` — `Api` and `State` on each of the two levels. The signed-in person is outside the rule: `libs/message-bus-admin/auth/util/src/lib/session.model.ts:IAdminSession` — one side, the receiver gives the name and the admin panel shows that same name.
+- **The contract side is not written by hand — it is declared as an alias.** — Here it is otherwise: there is no contract generator, and the contract side is written by hand — `libs/message-bus-common/src/lib/page.ts:IPage`. It cannot diverge silently: the declaration is one for both sides, and the receiver and the admin panel read that same file, not a copy of their own.
+- **A mapper inheriting `BaseMapper` stands between the sides, and screens read only `State`.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts:PostmortemMapper` — a pair of mappers per record, the list row and the whole record apart; the screen sees only `State`, and time in it is already a date, not a string.
+- **Empty is expressed by an empty string or zero, not by a missing field.** — `libs/message-bus-common/src/lib/page.ts:pageAsked` — parsing the selection substitutes a default instead of leaving the field empty. In `IPageAsked` the only field with `null` is the tree trait, and `null` there means "not narrowed", not "no value".
+- **A cast goes through `this.typeCast`, not through `??`.** — `libs/message-bus-admin/summaries/util/src/lib/month-record.mapper.ts:MonthRecordMapper` — the fields of the month record are cast by the `typeCast` field of the base (`projects/utils/src/lib/helpers/type-cast.helper.ts:TypeCastHelper`). There is no check for this in the tree, it is held by reading.
+- **The page, order and filter types are taken from `@rt-tools/utils`.** — There are two editions of them here, and both are lawful: `projects/utils/src/lib/interfaces/list.interface.ts:IPageModel` — what the kit's page switcher reads; `libs/message-bus-common/src/lib/page.ts:TPageDirection` — the receiver's contract. A third one may not be started: translating between these two is exactly the mapper's work.
 
-## Что ещё стоит знать при чтении кода
+## What else is worth knowing when reading the code
 
-- Форма груза объявлена в публикуемом пакете (`projects/agent-kit/src/lib/cargo.ts`), а не в
-  общей либе: пакет уходит в реестр, и импорт внутренней либы уехал бы в описания его типов и
-  сломал бы установку. Приёмник берёт форму оттуда напрямую и реэкспортом не подменяет.
-- `getAsType` умолчания не принимает: значение вне набора он пишет в консоль и возвращает
-  строкой `'unknown'`. Строковое поле с конечным набором значений сверяется с набором явно.
-- Модель админки и модель приёмника — разные, даже когда поля совпадают. Общий тип на две
-  стороны означал бы, что админка тянет поля хранилища.
+- The cargo shape is declared in the published package (`projects/agent-kit/src/lib/cargo.ts`),
+  not in the shared lib: the package goes to the registry, and an import of an internal lib
+  would ride into its type descriptions and break the installation. The receiver takes the shape
+  from there directly and does not substitute it by a re-export.
+- `getAsType` accepts no default: a value outside the set it writes to the console and returns
+  as the string `'unknown'`. A string field with a closed set of values is checked against the
+  set explicitly.
+- The admin panel model and the receiver model are different, even when the fields match. A type
+  shared by the two sides would mean the admin panel drags in the storage fields.
 
-## Чем это проверяется
+## What this is checked by
 
-- `pnpm exec nx test @rt-tools/utils` — спеки основы маппера и приведения типов.
-- `pnpm exec nx test message-bus-common` — спеки разбора выборки и формы груза: это и есть
-  сторона контракта, объявленная руками.
-- `pnpm exec nx test message-bus-admin-postmortems-util` и соседние два — спеки мапперов: время,
-  уровни и то, что поля контракта до экрана не доезжают.
-- Гейт правил требует это правило на моделях и мапперах админки и на общих моделях — ветка в
-  `.claude/rt-kit/gate-map.sh`.
+- `pnpm exec nx test @rt-tools/utils` — the specs of the mapper base and of the type cast.
+- `pnpm exec nx test message-bus-common` — the specs of parsing the selection and of the cargo
+  shape: that is exactly the contract side, declared by hand.
+- `pnpm exec nx test message-bus-admin-postmortems-util` and the two next to it — the mapper
+  specs: time, levels and the fact that contract fields never reach the screen.
+- The rule gate demands this rule on the admin panel models and mappers and on the shared
+  models — a branch in `.claude/rt-kit/gate-map.sh`.

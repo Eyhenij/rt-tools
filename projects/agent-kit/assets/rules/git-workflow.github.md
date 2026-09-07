@@ -157,7 +157,7 @@ flowchart TD
   before.
 - **A conflicting open PR is a work queue audit discrepancy.** The conflict arrives with someone
   else's merge and is invisible in the list: the host shows the mark only inside the PR.
-- **A document goes in the same commit as the edit.** The bypass is the line `Docs-skip: <причина>`
+- **A document goes in the same commit as the edit.** The bypass is the line `Docs-skip: <reason>`
   in the commit body; an empty reason is not accepted.
 - **The commit subject is checked against the format on the spot.** A subject parsed by type and
   scope is read as a list, free text — only whole.

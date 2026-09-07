@@ -266,12 +266,50 @@ The whole layer after the task 10 is 1 450 197 bytes against 1 468 014 after the
 the work is 57 987 bytes: a refusal of a hook does not enter the entry and is paid only in the minute
 of the refusal.
 
-## The eighth measurement: the documents of the tree
+## The eighth measurement: the tree's own
+
+Taken on 7 September 2026 by the task RT-1857 over the own layer of this tree: the overrides, its own
+rules with the companions of all the rules, its own hooks, its own checks, the gate map, the profile
+and the memo. The bytes and the lines with the Cyrillic — before and after the translation.
+
+| The own layer |     Bytes | Lines with the Cyrillic |
+| ------------- | --------: | ----------------------: |
+| Russian       | 1 512 943 |                   6 350 |
+| English       | 1 234 124 |                     154 |
+
+| The part of the layer                | Files | Bytes before | Bytes after |
+| ------------------------------------ | ----: | -----------: | ----------: |
+| The overrides                        |    17 |       49 876 |      33 482 |
+| Its own rules and all the companions |    59 |      817 632 |     649 631 |
+| Its own hooks                        |     2 |       30 675 |      23 460 |
+| Its own checks                       |    61 |      562 280 |     485 784 |
+| The map, the profile, the memo       |     3 |       52 480 |      41 767 |
+
+**The tree's own is lighter by 18% in bytes.** The prose, the comments, the texts of the refusals and
+of the digests together with the expectations of the sets are translated; the code is not touched. All
+twelve rules of the linter of the tree and their probes are translated by the same session — 142
+probes are green. The gate after the translation calls the same rules: reconciled by a call on
+thirty-four paths, the output coincided line by line.
+
+The Cyrillic is left deliberately, and all of it is a quotation of a foreign line this task has
+nothing to edit by: the names of the states of the work, the keys of the sections of the specs
+(`## Правила`, `## Сценарии`, the mark `Не покрыто:`), the heading of the section of the request
+«Оставшийся шаг», the names of the sections of the admin application of the intake, the name of the
+step of the pipeline «Убрать за прогоном», the headings of `CONTEXT.md`, the section of the handles of
+the consumer in the description of the tokens, the sections of the showcase «Входы», the Russian
+samples in the alternations of two names at the guard of a draft, at the guard of the mark of the
+cargo and at the check of the boundary of the package. The rule is one: a quotation is edited by the
+same edit as its source, and the sources lie outside the footprint of this task.
+
+The whole layer after the task 11 is 1 282 196 bytes against 1 450 197 after the task 10. The entry
+into the work is 55 521 bytes against 57 987: its own rule `ui-component-tests` is loaded on demand,
+and into the entry go the descriptions of the rules, and they became shorter.
+
+## The ninth measurement: the documents of the tree
 
 Taken on 7 September 2026 by the task RT-1858 over the two hundred and three specs of
 `docs/specs/`, the twenty-five plans of `docs/plans/` and the two decisions of `docs/adr/`, by the
-bytes of the files before and after the translation. It stands eighth, not ninth as the plan of the
-task said: the task 11 of the epic, RT-1857, is not merged and has laid no measurement of its own.
+bytes of the files before and after the translation.
 
 | The documents of the tree | Files |  Bytes ru |  Bytes en | The difference |
 | ------------------------- | ----: | --------: | --------: | -------------: |

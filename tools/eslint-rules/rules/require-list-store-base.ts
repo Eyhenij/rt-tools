@@ -3,12 +3,12 @@ import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 type TMessageIds = 'missingBase';
 type TOptions = [];
 
-// Доступно в ESLint-конфигах как "@nx/workspace-require-list-store-base".
+// In the ESLint configs it is available as "@nx/workspace-require-list-store-base".
 export const RULE_NAME: string = 'require-list-store-base';
 
 const BASE_CLASS_NAME: string = 'AdminListStoreBase';
 
-/** Вход за списком один — `readPage`: по нему списочный стор и узнаётся */
+/** There is one entry for a list — `readPage`: a list store is recognised by it */
 const LIST_CALL_NAME: string = 'readPage';
 
 export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = ESLintUtils.RuleCreator(() => __filename)<TOptions, TMessageIds>({

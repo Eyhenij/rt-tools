@@ -99,6 +99,9 @@ const ANCHOR = /`([\w./-]+\.[A-Za-z]{2,10}):(#?\p{L}[\p{L}\p{N}_-]*|#?_[\w-]*|\d
  * The end of the word is found by a negative lookahead, not by `\b`: JavaScript knows only Latin
  * as a word boundary, and after a Cyrillic letter there is none at all — the verdict was not
  * recognised once.
+ *
+ * The verdict has two names: an English one in a companion written after the layer was translated,
+ * a Russian one in a companion written before it. Either is enough.
  */
 const VERDICT =
     /^\s*(?:\*\*)?(?:Not (?:carried out|applicable|checked)|Не (?:исполняется|применимо|проверяется))(?![\p{L}\p{N}_])/u;

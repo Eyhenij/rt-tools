@@ -1,4 +1,4 @@
-<!-- rt-kit v0.25.0 · pitfalls/git-workflow.github.md · 81d19deaf702 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · pitfalls/git-workflow.github.md · 4d82e2e97f29 · правится надстройкой, не здесь -->
 # Delivery — cold part
 
 Pitfalls: traps already stepped on in a tree on GitHub. Loaded not with the rule but on demand —
@@ -268,9 +268,10 @@ a guard.
   broken command and is cured by the directory: the path to it is named from the root, and it is
   called from there.
 
-## Ловушки этой машины
+## Traps of this machine
 
-- **Раннер на этой машине не один: рядом стоит очередь другого дерева.** Её прогон занимает
-  процессор целиком, и задание этого дерева встаёт в очередь или теряет связь на подготовке — до
-  первого своего шага, с одной строкой в журнале. Читается это как отказ раннера, а лечится
-  перезапуском: разбирать по коду прогона там нечего, кода ещё нет.
+- **The runner on this machine is not alone: the queue of another tree stands next to it.** Its
+  run takes the processor whole, and this tree's pipeline step queues up or loses the connection during
+  preparation — before its first own step, with a single line in the journal. This reads as a
+  runner failure and is cured by a restart: there is nothing to analyse by the run's code, the
+  code is not there yet.

@@ -3,11 +3,11 @@ import { RuleTester } from '@typescript-eslint/rule-tester';
 import { rule, RULE_NAME } from './require-host-bem-block';
 
 /**
- * RuleTester для `require-host-bem-block`: парсер — `@typescript-eslint/parser`,
- * фрагменты содержат @Component-декораторы для проверки всех 5 нарушений.
+ * The RuleTester of `require-host-bem-block`: the parser is `@typescript-eslint/parser`, and the
+ * pieces hold @Component decorators to check all five violations.
  *
  * Coverage:
- *  - valid: правильный host:{class:BEM_BLOCK}, не-@Component декораторы skip.
+ *  - valid: a sound host:{class:BEM_BLOCK}; decorators other than @Component are skipped.
  *  - invalid: missing host, missing class, string literal, wrong identifier, complex value.
  */
 const ruleTester: RuleTester = new RuleTester({
@@ -18,7 +18,7 @@ const ruleTester: RuleTester = new RuleTester({
 
 ruleTester.run(RULE_NAME, rule, {
     valid: [
-        // 1. Канонический host:{class:BEM_BLOCK}.
+        // 1. The canonical host:{class:BEM_BLOCK}.
         {
             name: 'valid-1-canonical',
             code: `
@@ -31,7 +31,7 @@ ruleTester.run(RULE_NAME, rule, {
                 class CcContainerComponent {}
             `,
         },
-        // 2. Объект с другими ключами + class:BEM_BLOCK.
+        // 2. An object with other keys plus class:BEM_BLOCK.
         {
             name: 'valid-2-with-extra-host-keys',
             code: `
@@ -44,7 +44,7 @@ ruleTester.run(RULE_NAME, rule, {
                 class FooComponent {}
             `,
         },
-        // 3. Не-@Component декоратор не трогаем.
+        // 3. A decorator other than @Component is not touched.
         {
             name: 'valid-3-non-component-decorator',
             code: `
@@ -52,7 +52,7 @@ ruleTester.run(RULE_NAME, rule, {
                 class SomeService {}
             `,
         },
-        // 4. @Directive тоже не трогаем (rule только про @Component).
+        // 4. @Directive is not touched either — the rule is about @Component alone.
         {
             name: 'valid-4-directive-skipped',
             code: `
@@ -62,7 +62,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
     ],
     invalid: [
-        // 5. @Component без host.
+        // 5. @Component without host.
         {
             name: 'invalid-1-missing-host',
             code: `
@@ -71,7 +71,7 @@ ruleTester.run(RULE_NAME, rule, {
             `,
             errors: [{ messageId: 'missingHost' }],
         },
-        // 6. host без class.
+        // 6. host without class.
         {
             name: 'invalid-2-missing-class-key',
             code: `
@@ -125,7 +125,7 @@ ruleTester.run(RULE_NAME, rule, {
             `,
             errors: [{ messageId: 'complexValue' }],
         },
-        // 10. @Component() без аргументов.
+        // 10. @Component() without arguments.
         {
             name: 'invalid-6-empty-component',
             code: `
@@ -134,7 +134,7 @@ ruleTester.run(RULE_NAME, rule, {
             `,
             errors: [{ messageId: 'missingHost' }],
         },
-        // 11. host как identifier (не статически разобрать class).
+        // 11. host as an identifier: the class key cannot be read statically.
         {
             name: 'invalid-7-host-as-identifier',
             code: `

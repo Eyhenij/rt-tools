@@ -1,36 +1,36 @@
-# turn-entry — что здесь своё
+# turn-entry — what is its own here
 
-Имена и привязки этого дерева при правиле `SKILL.md` рядом.
+The names and bindings of this tree, next to the rule `SKILL.md` beside it.
 
-## Как это называется здесь
+## What it is called here
 
-- **В правиле** — Здесь
-- **каталог передач** — `.claude/handoff/` — вне истории, файл на ветку; каталог задаёт `RT_HANDOFF_DIR` профиля
-- **карта хода** — `.claude/rt-kit/defaults/turn-map.md` — ресурс рода умолчаний, разложенный пакетом
-- **хук входа** — `.claude/hooks/turn-entry-load.sh`, объявлен в `.claude/settings.json`
-- **проверка карты** — `tools/check-turn-map.mjs`, команда `pnpm run check:turn-map`
+- **In the rule** — Here
+- **the handover directory** — `.claude/handoff/` — outside history, a file per branch; the directory is set by `RT_HANDOFF_DIR` of the profile
+- **the turn map** — `.claude/rt-kit/defaults/turn-map.md` — a resource of the defaults kind, laid out by the package
+- **the entry hook** — `.claude/hooks/turn-entry-load.sh`, declared in `.claude/settings.json`
+- **the map check** — `tools/check-turn-map.mjs`, the command `pnpm run check:turn-map`
 
-## Где это лежит
+## Where it lives
 
-- **хук входа** — `.claude/hooks/turn-entry-load.sh`
-- **текст карты** — `.claude/rt-kit/defaults/turn-map.md`
-- **проверка карты** — `tools/check-turn-map.mjs`
-- **сценарии хука** — `projects/agent-kit/tests/turn-entry-load.test.sh`
-- **хук, пишущий передачу** — `.claude/hooks/handoff-write.sh`
+- **the entry hook** — `.claude/hooks/turn-entry-load.sh`
+- **the map text** — `.claude/rt-kit/defaults/turn-map.md`
+- **the map check** — `tools/check-turn-map.mjs`
+- **the hook scenarios** — `projects/agent-kit/tests/turn-entry-load.test.sh`
+- **the hook that writes the handover** — `.claude/hooks/handoff-write.sh`
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-- **The past session's handover comes into the context by the same launch as the work state.** — `.claude/hooks/turn-entry-load.sh:handoff` — стоит в той же группе хуков старта, что и загрузка состояния работы
-- **The handover is taken by the name of the current branch.** — `.claude/hooks/turn-entry-load.sh:branch` — имя файла собирается из ветки, а не выбирается из каталога
-- **No handover — the entry is silent about it.** — `.claude/hooks/turn-entry-load.sh:handoff_dir` — блок печати стоит под проверкой читаемости файла
-- **The turn map comes by the same launch and lies as a file of its own, not pulled out of the rule.** — `.claude/hooks/turn-entry-load.sh:map` — путь к ресурсу умолчаний, разбора правила в хуке нет вовсе
+- **The past session's handover comes into the context by the same launch as the work state.** — `.claude/hooks/turn-entry-load.sh:handoff` — stands in the same group of startup hooks as the loading of the work state
+- **The handover is taken by the name of the current branch.** — `.claude/hooks/turn-entry-load.sh:branch` — the file name is assembled from the branch, not picked from the directory
+- **No handover — the entry is silent about it.** — `.claude/hooks/turn-entry-load.sh:handoff_dir` — the printing block stands under a check that the file is readable
+- **The turn map comes by the same launch and lies as a file of its own, not pulled out of the rule.** — `.claude/hooks/turn-entry-load.sh:map` — the path to the defaults resource; there is no parsing of the rule in the hook at all
 - **The map is shorter than the rule, and its limit is set by the tree's check.** — `tools/check-turn-map.mjs:LIMIT_BYTES`
-- **A state declared by the rule and forgotten in the map is a divergence.** — `tools/check-turn-map.mjs:statesOf` — имена сверяются с таблицей правила в обе стороны
-- **Text that travels into the context is written as a list, not a table.** — `tools/check-turn-map.mjs:statesOf` — читает обе формы: строку списка и строку таблицы; список разбирается только в карте, потому что в правиле тем же видом записаны паттерны
-- **The entry is served on all four launches, not only after compaction.** — `.claude/hooks/turn-entry-load.sh:rt-hook` — строка объявления в шапке называет все четыре запуска, раскладка переносит её в настройки
-- **The entry hook does not refuse the launch.** — `.claude/hooks/turn-entry-load.sh:exit` — все ветки кончаются нулём, вывод пуст, когда читать нечего
+- **A state declared by the rule and forgotten in the map is a divergence.** — `tools/check-turn-map.mjs:statesOf` — the names are reconciled with the rule table both ways
+- **Text that travels into the context is written as a list, not a table.** — `tools/check-turn-map.mjs:statesOf` — reads both forms: a list line and a table line; the list is parsed only in the map, because in the rule the patterns are written in the same form
+- **The entry is served on all four launches, not only after compaction.** — `.claude/hooks/turn-entry-load.sh:rt-hook` — the declaration line in the header names all four launches, and the layout carries it into the settings
+- **The entry hook does not refuse the launch.** — `.claude/hooks/turn-entry-load.sh:exit` — every branch ends with zero, and the output is empty when there is nothing to read
 
-## Чего из правила здесь нет
+## What of the rule is not here
 
-Всё исполняется. Проверка карты стоит в наборе гейта пуша рядом со сверкой состояний, сценарии
-хука — в общем прогоне наборов пакета.
+Everything is carried out. The map check stands in the push gate set next to the state audit, and
+the hook scenarios stand in the common run of the package suites.

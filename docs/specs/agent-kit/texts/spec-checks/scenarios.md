@@ -114,6 +114,14 @@ When the check of the specs goes
 Then it stays silent about it, and a row of the same shape in the table of the bindings it judges as
 before
 
+### SC-AK-912 — the section of the bindings is read under the English name on a par with the Russian
+
+Given the companion of a rule headed the section of the bindings "Where the articles are carried out"
+When the check of the specs goes
+Then the bindings of it are read, and it declares no absence of the section
+
+Covered: `projects/agent-kit/tests/checks-specs.test.sh`.
+
 ### SC-AK-57 — the companion of a rule without the section of the bindings is refused
 
 Given there is no section "Where the articles are carried out" in the companion of the rule
@@ -294,7 +302,7 @@ Then the refusal names the line the list ended at, or the first line of the sect
 
 Covered: `projects/agent-kit/tests/checks-specs.test.sh`.
 
-### SC-AK-912 — a mandatory section of a spec is read under the English name
+### SC-AK-913 — a mandatory section of a spec is read under the English name
 
 Given the spec is written in English and carries the heading "## Rules" instead of "## Правила"
 When the check of the specs goes
@@ -302,18 +310,10 @@ Then the section counts as in place, its items are read, and nothing is said abo
 
 Covered: `projects/agent-kit/tests/checks-specs.test.sh`.
 
-### SC-AK-913 — the mark of the uncovered is read under the English name
+### SC-AK-914 — the mark of the uncovered is read under the English name
 
 Given the scenario carries the mark "Not covered:" with a reason
 When the check of the specs goes
 Then the scenario counts as deliberately uncovered on a par with the Russian mark
-
-Covered: `projects/agent-kit/tests/checks-specs.test.sh`.
-
-### SC-AK-914 — the section of the bindings of a companion is read under the English name
-
-Given the companion of a rule carries the heading "## Where the articles are carried out"
-When the check of the specs goes
-Then the bindings are read, and nothing is said about a missing section
 
 Covered: `projects/agent-kit/tests/checks-specs.test.sh`.

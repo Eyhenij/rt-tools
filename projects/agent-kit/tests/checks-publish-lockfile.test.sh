@@ -64,31 +64,31 @@ workflow publish-core.yml core '' 'pnpm install --lockfile-only && break' да
 workflow publish-store.yml store '' 'pnpm install --lockfile-only' да
 
 probe 'SC-AK-902 — пересборка после публикации с заявкой расхождением не считается' '0' "$(code)"
-probe 'число проверенных конвейеров названо' 'да' "$(said 'конвейеров публикации 2')"
+probe 'число проверенных конвейеров названо' 'да' "$(said 'publishing pipelines 2')"
 
 workflow publish-utils.yml utils '' ''
 
 probe 'конвейер без пересборки отбит' '1' "$(code)"
 probe 'и назван по имени файла' 'да' "$(said 'publish-utils.yml')"
-probe 'причиной названа следующая публикация' 'да' "$(said 'следующая публикация')"
+probe 'причиной названа следующая публикация' 'да' "$(said 'the next publication will stop on a frozen install')"
 
 rm -f "$dir"/*.yml
 workflow publish-core.yml core 'pnpm install --lockfile-only' ''
 
 probe 'пересборка до публикации отбита' '1' "$(code)"
-probe 'и сказано, что версии в реестре ещё нет' 'да' "$(said 'в реестре ещё нет')"
+probe 'и сказано, что версии в реестре ещё нет' 'да' "$(said 'is not in the registry yet')"
 
 rm -f "$dir"/*.yml
 workflow publish-core.yml core '' 'pnpm install --lockfile-only'
 
 probe 'пересборка без своей заявки отбита' '1' "$(code)"
-probe 'и сказано, что замок останется на раннере' 'да' "$(said 'останется на раннере')"
+probe 'и сказано, что замок останется на раннере' 'да' "$(said 'will stay on the runner')"
 
 rm -f "$dir"/*.yml
 printf 'name: CI\njobs:\n    build:\n        steps:\n            - run: pnpm test\n' > "$dir/ci.yml"
 
 probe 'конвейер, не поднимающий версии, не судится' '1' "$(code)"
-probe 'и сказано, что судить нечего' 'да' "$(said 'судить нечего')"
+probe 'и сказано, что судить нечего' 'да' "$(said 'there is nothing to judge')"
 
 printf '\nпроверки: замок в конвейере публикации: %d ok, %d провалов\n' "$ok" "$bad"
 [ "$bad" -eq 0 ]

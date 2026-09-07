@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Общая обвязка наборов по проверкам этого дерева. Подключается через
+# The shared harness of the sets over this tree's checks. It is attached by
 # `. "$(dirname "${BASH_SOURCE[0]}")/lib.sh"`.
 #
-# Зачем наборы существуют: проверки дерева читают его файлы и отвечают кодом возврата, а
-# прогоняются они на самом дереве — то есть на одном наборе входов, который сегодня зелёный.
-# Что проверка ловит на входе, которого в дереве нет, не знает никто: сломанная строка в ней
-# молчит ровно до того дня, когда такой вход появится.
+# Why the sets exist: the tree's checks read its files and answer with an exit code, and they are run
+# on the tree itself — that is, on one set of inputs which is green today. What a check catches on an
+# input the tree does not hold nobody knows: a broken line in it stays silent exactly until the day
+# such an input appears.
 #
-# Проверяется здесь МЕХАНИКА проверки на одноразовом дереве, а не состояние этого репозитория.
+# What is checked here is the MECHANICS of a check on a one-off tree, not the state of this repository.
 
 TOOLS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
@@ -20,13 +20,13 @@ report() {
         [ -n "$VERBOSE" ] && printf '  ok   %-58s %s\n' "$1" "$2"
     else
         FAILED=$((FAILED + 1))
-        printf '  FAIL %-58s получили %s, ждали %s\n' "$1" "$2" "$3"
+        printf '  FAIL %-58s got %s, expected %s\n' "$1" "$2" "$3"
     fi
     return 0
 }
 
-# Одноразовое дерево с проверками этого репозитория: сами проверки читают корень от своего
-# файла, поэтому в фикстуру они копируются, а не зовутся отсюда. Печатает путь.
+# A one-off tree with this repository's checks: the checks themselves read the root from their own
+# file, so they are copied into the fixture rather than called from here. It prints the path.
 fixture_tree() {
     local dir
     dir="$(mktemp -d)"
@@ -37,6 +37,6 @@ fixture_tree() {
 }
 
 suite_result() {
-    printf '%s: %d ok, %d провалов\n' "$1" "$PASSED" "$FAILED"
+    printf '%s: %d ok, %d failures\n' "$1" "$PASSED" "$FAILED"
     [ "$FAILED" -eq 0 ]
 }

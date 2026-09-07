@@ -1,82 +1,87 @@
-# navigation — что здесь своё
+# navigation — what is this tree's own
 
-Имена и привязки этого дерева при правиле `SKILL.md` рядом.
+The names and bindings of this tree, next to the rule `SKILL.md`.
 
-Меню админки здесь плоское: один список пунктов, один уровень, панелей второго уровня нет.
-Разделов четыре — разборы происшествий, предложения, сводки деревьев и приглашения, — и каждый
-объявлен одной записью декларации и своими маршрутами. Стоят они верхним рядом страницы, который
-рисует кит; левой колонки с плитками в оболочке нет. Прав в админке нет вовсе — ни ролей, ни
-пресетов, — поэтому от двухслойного гейтинга правила здесь работает только один слой: вошёл или
-нет.
+The admin panel menu here is flat: one list of items, one level, no second-level panels. There
+are four sections — incident reviews, proposals, tree summaries and invitations — and each is
+declared by one declaration entry and by routes of its own. They stand in the page's top row,
+drawn by the kit; there is no left column with tiles in the shell. There are no rights in the
+admin panel at all — neither roles nor presets — so of the rule's two-layer gating only one layer
+works here: signed in or not.
 
-## Как это называется здесь
+## What it is called here
 
-- **В правиле** — Здесь
-- **декларация пунктов** — `ADMIN_MENU` в `menu.declaration.ts`, тип пункта — `IAdminMenuItem`
-- **пункт меню** — запись `{ title, path, icon }`; `icon` — `IRtIcon.Name` из кита
-- **раздел с панелью** — здесь такого нет: меню одноуровневое
-- **панель второго уровня** — здесь такого нет: у ряда кита её открывает пункт с колонками, а колонок ни у одного пункта нет
-- **признак непросмотренного** — здесь такого нет
-- **флаг «экрана ещё нет» (`disabled`)** — здесь такого нет: пункт заводится вместе со своим экраном
-- **оболочка админки** — `AdminContainerComponent` поверх `rt-container` из кита
-- **шапка приложения** — `AdminHeaderComponent`: название приложения словом и ряд кита рядом
-- **отрисовка меню** — `rt-page-header` в зоне шапки каркаса, а не плитки в левой колонке
-- **подсветка текущего раздела** — `routerLinkActive` внутри ряда кита: пункт несёт адрес, а горит тот, чей адрес открыт
-- **попап профиля** — шаблон шапки, который рисует ряд кита: имя вошедшего, тема, язык, выход
+- **In the rule** — Here
+- **the item declaration** — `ADMIN_MENU` in `menu.declaration.ts`, the item type — `IAdminMenuItem`
+- **a menu item** — the record `{ title, path, icon }`; `icon` is `IRtIcon.Name` from the kit
+- **a section with a panel** — there is no such thing here: the menu has one level
+- **a second-level panel** — there is no such thing here: in the kit's row it is opened by an item with columns, and no item has columns
+- **the unseen sign** — there is no such thing here
+- **the flag "the screen does not exist yet" (`disabled`)** — there is no such thing here: an item is started together with its screen
+- **the admin panel shell** — `AdminContainerComponent` over `rt-container` from the kit
+- **the application header** — `AdminHeaderComponent`: the application name as a word and the kit's row next to it
+- **the menu rendering** — `rt-page-header` in the frame's header zone, not tiles in the left column
+- **highlighting the current section** — `routerLinkActive` inside the kit's row: an item carries an address, and the one whose address is open lights up
+- **the profile popup** — the header template drawn by the kit's row: the signed-in person's name, the theme, the language, signing out
 
-## Где это лежит
+## Where it lives
 
-- **декларация меню** — `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts`
-- **оболочка с меню** — `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts`
-- **адреса разделов груза** — `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts`, `.../proposals/shell/src/lib/proposals.routes.ts`, `.../summaries/shell/src/lib/summaries.routes.ts`
-- **адреса раздела приглашений** — `libs/message-bus-admin/invites/shell/src/lib/invites.routes.ts` — список и панель создания в аутлете `ro`
-- **адреса приложения** — `apps/message-bus-admin/src/app/app.routes.ts`
-- **адреса домена входа** — `libs/message-bus-admin/auth/shell/src/lib/auth.routes.ts`
-- **каркас страницы из кита** — `projects/ui-kit-v2/src/lib/components/container/rt-container.component.ts` и его директивы
-- **шапка админки** — `libs/message-bus-admin/common/container/ui/src/lib/header/admin-header.component.ts`
-- **сквозные спеки адресов** — `apps/message-bus-admin-e2e/src/sign-in.spec.ts`, `apps/message-bus-admin-e2e/src/shell.spec.ts`, `apps/message-bus-admin-e2e/src/shell.narrow.spec.ts`
-- **верхний ряд из кита** — `projects/ui-kit-v2/src/lib/components/page-header/`
+- **the menu declaration** — `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts`
+- **the shell with the menu** — `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts`
+- **the addresses of the cargo sections** — `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts`, `.../proposals/shell/src/lib/proposals.routes.ts`, `.../summaries/shell/src/lib/summaries.routes.ts`
+- **the addresses of the invitations section** — `libs/message-bus-admin/invites/shell/src/lib/invites.routes.ts` — the list and the creation panel in the `ro` outlet
+- **the application addresses** — `apps/message-bus-admin/src/app/app.routes.ts`
+- **the addresses of the sign-in domain** — `libs/message-bus-admin/auth/shell/src/lib/auth.routes.ts`
+- **the page frame from the kit** — `projects/ui-kit-v2/src/lib/components/container/rt-container.component.ts` and its directives
+- **the admin panel header** — `libs/message-bus-admin/common/container/ui/src/lib/header/admin-header.component.ts`
+- **the end-to-end address specs** — `apps/message-bus-admin-e2e/src/sign-in.spec.ts`, `apps/message-bus-admin-e2e/src/shell.spec.ts`, `apps/message-bus-admin-e2e/src/shell.narrow.spec.ts`
+- **the top row from the kit** — `projects/ui-kit-v2/src/lib/components/page-header/`
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-Первая колонка — статья дословно, как она написана в разделе «Как закон применяется здесь»
-(жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает то,
-чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
+The first column is the article verbatim, as it is written in the section "How the law applies
+here" (the bold part of the item). An article without a line and a line without an article are a
+divergence: the rule promises what the tree does not have, or the tree holds what the rule is
+silent about.
 
-- **An item is declared once and serves as the source of both the menu and route gating.** — `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:ADMIN_MENU` — источник меню. Гейтинга маршрутов по нему нет: закрытая ветка закрыта одним гвардом на всех разделах сразу, и делить их нечем — прав в админке нет. Адрес при этом объявлен единожды и читается обеими сторонами: `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts:POSTMORTEMS_ROUTE` — константа маршрута, её же берёт пункт меню.
-- **The declaration imports no `shell`.** — `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:IAdminMenuItem` — импорт в файле ровно один, `IRtIcon` из кита. Держится границами: `common/container/util` помечен `type:util` и ребра на `type:shell` не имеет — `eslint/boundaries/`.
-- **Gating has two layers: the user right and the section flag.** — Слой здесь один — вход: `apps/message-bus-admin/src/app/app.routes.ts:appRoutes` закрывает гвардом всё, кроме экрана входа. Ни прав, ни флага «экрана ещё нет» в дереве нет: пункт без экрана не заводится вовсе. Проверено нажатием: `apps/message-bus-admin-e2e/src/sign-in.spec.ts` — прямой адрес раздела без входа ведёт на вход, а после входа человек попадает туда, куда шёл.
-- **Domain data comes into the header by a token, not by an import.** — Здесь иначе: `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts:AdminContainerComponent` берёт вошедшего прямым импортом стора домена входа. Токена под это нет — домен, дающий шапке данные, ровно один, и второй ответ на «кто вошёл» разошёлся бы с первым. Токен заводится, когда в шапку понадобится второй домен.
+- **An item is declared once and serves as the source of both the menu and route gating.** — `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:ADMIN_MENU` — the source of the menu. There is no route gating by it: the closed branch is closed by one guard over all sections at once, and there is nothing to divide them by — the admin panel has no rights. The address is nevertheless declared once and read by both sides: `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts:POSTMORTEMS_ROUTE` — the route constant, and the menu item takes that same one.
+- **The declaration imports no `shell`.** — `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:IAdminMenuItem` — there is exactly one import in the file, `IRtIcon` from the kit. It is held by the boundaries: `common/container/util` is marked `type:util` and has no edge to `type:shell` — `eslint/boundaries/`.
+- **Gating has two layers: the user right and the section flag.** — There is one layer here — sign-in: `apps/message-bus-admin/src/app/app.routes.ts:appRoutes` closes everything except the sign-in screen with a guard. There are neither rights nor a flag "the screen does not exist yet" in the tree: an item without a screen is not started at all. Checked by a click: `apps/message-bus-admin-e2e/src/sign-in.spec.ts` — a direct section address without sign-in leads to the sign-in, and after signing in a person lands where they were going.
+- **Domain data comes into the header by a token, not by an import.** — Here it is otherwise: `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts:AdminContainerComponent` takes the signed-in person by a direct import of the sign-in domain store. There is no token for this — the domain that gives the header its data is exactly one, and a second answer to "who signed in" would diverge from the first. A token is started when the header needs a second domain.
 
-## Что ещё стоит знать при чтении кода
+## What else is worth knowing when reading the code
 
-- Экран входа стоит вне оболочки, а не разделом внутри неё: меню и шапку невошедшему
-  показывать нечего. Отсюда и порядок в `app.routes.ts` — сперва `authRoutes`, потом закрытая
-  ветка.
-- Пустой раздел, стоявший в меню до первого настоящего, снят вместе с ним: пункт без предмета
-  жил в общем домене оболочки, потому что домен из шести слоёв под пустой экран дал бы шесть
-  либ, которые нечем наполнить.
-- Панель настройки столбцов — четвёртый адрес в аутлете `ro`, и раздела в нём нет: настраиваемую
-  таблицу панель кита берёт из своего реестра, а не из адреса. Берётся она из либы оболочки
-  (`libs/message-bus-admin/common/container/feature/src/lib/admin-columns-aside.ts`), а не
-  импортируется маршрутами напрямую: динамический импорт кита из первой сборки утаскивает в неё
-  весь кит, и сборка отбивается пределом веса.
-- Пункт и его экран заводятся одной правкой. Пункт, заведённый вперёд экрана, отличается от
-  снятого только тем, что человек попадает в пустоту, — недоступных пунктов кит админке не
-  рисует.
-- Подсветку текущего раздела оболочка не считает вовсе: прежде она держала производное по
-  событиям роутера, и это был второй ответ на вопрос об адресе. Пункт отдаёт ряду кита адрес, а
-  горит тот, чей адрес открыт, — решает это маршрутизатор внутри кита.
-- Узкую раскладку ряда заводит кит: на узком экране инлайн-ряд прячется целиком, а те же четыре
-  пункта открываются кнопкой. Своей узкой раскладки шапка админки не пишет.
+- The sign-in screen stands outside the shell rather than as a section inside it: there is
+  nothing to show the menu and the header to someone not signed in. Hence the order in
+  `app.routes.ts` — first `authRoutes`, then the closed branch.
+- The empty section that stood in the menu before the first real one is removed together with
+  it: an item without a subject lived in the shell's shared domain, because a domain of six
+  layers under an empty screen would have given six libs with nothing to fill them with.
+- The column settings panel is the fourth address in the `ro` outlet, and it has no section: the
+  kit panel takes the configurable table from its own registry rather than from the address. It
+  is taken from the shell lib
+  (`libs/message-bus-admin/common/container/feature/src/lib/admin-columns-aside.ts`) rather than
+  imported by the routes directly: a dynamic import of the kit from the first build drags the
+  whole kit into it, and the build is refused by the weight limit.
+- An item and its screen are started by one edit. An item started ahead of its screen differs
+  from a removed one only in that a person lands in emptiness — the kit draws no unavailable
+  items for the admin panel.
+- The shell does not compute the highlighting of the current section at all: it used to hold a
+  derived value over the router events, and that was a second answer to the question about the
+  address. The item hands the kit's row an address, and the one whose address is open lights up —
+  that is decided by the router inside the kit.
+- The row's narrow layout is started by the kit: on a narrow screen the inline row hides whole,
+  and the same four items open by a button. The admin panel header writes no narrow layout of its
+  own.
 
-## Чем это проверяется
+## What this is checked by
 
-- `pnpm exec nx build message-bus-admin` — отложенная загрузка разделов ломается на неверном
-  барреле раньше, чем на неверном адресе.
-- `pnpm exec nx lint message-bus-admin` — правила границ ловят импорт `shell` в декларацию.
-- `pnpm exec nx run message-bus-admin-e2e:e2e` — сквозной набор: раздел открывается прямой
-  ссылкой, переживает перезагрузку и возвращается тем же после закрытой панели; подсветка пункта,
-  попап профиля и узкая раскладка ряда проверяются там же.
-- Гейт правил требует это правило на декларации меню, на оболочке и на любом файле адресов
-  админки — ветка в `.claude/rt-kit/gate-map.sh`.
+- `pnpm exec nx build message-bus-admin` — the deferred loading of sections breaks on a wrong
+  barrel earlier than on a wrong address.
+- `pnpm exec nx lint message-bus-admin` — the boundary rules catch an import of `shell` into the
+  declaration.
+- `pnpm exec nx run message-bus-admin-e2e:e2e` — the end-to-end suite: a section opens by a
+  direct link, survives a reload and comes back the same after a closed panel; the item
+  highlighting, the profile popup and the row's narrow layout are checked there too.
+- The rule gate demands this rule on the menu declaration, on the shell and on any address file
+  of the admin panel — a branch in `.claude/rt-kit/gate-map.sh`.

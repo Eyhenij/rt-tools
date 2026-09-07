@@ -85,7 +85,7 @@ grill_with_keys
 T="$(transcript "$(say 'закрывай')" "$(ran 'gh pr create --draft --base main')")"
 expect_stop "SC-MB-281 — отдача без отметки отбита" "$(input_stop "$T")" BLOCK
 expect_reason "SC-MB-281 — отказ называет ключ записи" "$(input_stop "$T")" "$KEY"
-expect_reason "SC-MB-281 — отказ требует приём починки" "$(input_stop "$T")" "приём починки"
+expect_reason "SC-MB-281 — отказ требует приём починки" "$(input_stop "$T")" "the fix travels with the move"
 
 # SC-MB-261, SC-MB-281 — отметка тем же ходом отпускает
 T="$(transcript "$(say 'закрывай')" "$(ran 'gh pr create --draft --base main')" \

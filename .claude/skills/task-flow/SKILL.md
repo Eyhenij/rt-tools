@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of work from the owner's request to the merge. Load at the start of any work, when editing task folders and product agreements, and when returning to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. End of a turn — turn-conduct.
 ---
-<!-- rt-kit v0.25.0 · rules/task-flow.md · ce5e06635a88 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/task-flow.md · c30d521918d7 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -249,7 +249,7 @@ flowchart TD
   invitation. The branch content is judged, not the working tree.
 - **A branch that removed the folder must add a record to the archive.** Removing is cheaper than
   taking apart, and the grill leaves first — the only record of the owner's words.
-- **The bypass is the line `Task-folder-skip: <причина>` in the PR or in the command itself.** An
+- **The bypass is the line `Task-folder-skip: <reason>` in the PR or in the command itself.** An
   empty reason is no bypass, and the bypass lifts the refusal but does not silence the work queue
   audit line.
 

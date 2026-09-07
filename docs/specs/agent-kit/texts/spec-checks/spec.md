@@ -87,6 +87,10 @@ layer" next to it.
   section stands in the sample of the companion, and its absence means a file rewritten by hand,
   whose bindings are checked by nothing; to read the whole file instead of it silently means bringing
   the original defect back.
+- **The heading of the section of the bindings and the verdict «not carried out» are read under two names, English and Russian.** The companions of the tree are translated by a task of
+  their own and one at a time, and the check is run over them all at once: one name would mean it
+  is red at half the rules until the translation is over. Either of the two names is enough; the
+  refusal about a missing section names the English one.
 - **A subheading inside the section does not end the list of items, a table does, and the refusal
   about an empty section names what stands instead of the items.** The section is cut off by the
   level of the heading, and a `#` line in it is always deeper — a spec of a big domain groups the

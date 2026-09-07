@@ -10,12 +10,12 @@ rt-tools is an Angular library providing utility types, functions, and UI compon
 
 ```bash
 # Install dependencies (pnpm is required).
-# Постустановка заодно генерирует клиент хранилища: он лежит вне истории, и без него
-# приёмник не собирается на свежем чекауте.
+# The post-install also generates the storage client: it lies outside history, and without it
+# the receiver does not build on a fresh checkout.
 pnpm install
 
-# Пересобрать один клиент хранилища — после правки схемы, а также когда сборка приёмника
-# остановилась строкой о его пропаже: она называет эту команду сама
+# Rebuild one storage client — after an edit of the schema, and also when the receiver's build
+# stopped with a line about its absence: it names this command itself
 pnpm run prisma:generate
 
 # Build the library
@@ -36,15 +36,15 @@ pnpm run prettier
 # Run all checks (lint, test, build)
 pnpm run check:all
 
-# Поднять приложения на своей машине.
-# База нужна только приёмнику; админка проксирует /api на порт 3000, а без приёмника
-# показывает пустые списки и отказ чтения — это её честное состояние, а не поломка.
-pnpm run serve:db      # контейнер базы, порт 55432
-pnpm run serve:api     # приёмник, порт 3000, местная база
-pnpm run serve:admin   # админка, порт 4200
+# Raise the applications on one's own machine. The database is needed only by the receiver;
+# the admin panel proxies /api to port 3000, and without the receiver it shows empty lists and a
+# read refusal — that is its honest state rather than a breakage.
+pnpm run serve:db      # the database container, port 55432
+pnpm run serve:api     # the receiver, port 3000, the local database
+pnpm run serve:admin   # the admin panel, port 4200
 
-# Стенд сквозного набора: прод-сборки на портах 3310 и 4310 со своей засеянной базой.
-# Рабочих портов не занимает — на нём смотрят то, чего в рабочей базе нет
+# The end-to-end suite's stand: production builds on ports 3310 and 4310 with a seeded database
+# of their own. It takes no working ports — on it one looks at what the working database lacks
 pnpm run serve:stand
 
 # Run Storybook

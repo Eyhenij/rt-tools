@@ -41,7 +41,7 @@ not exist.
 | ---------------------------------- | ------------------------------------------------------------------------------ |
 | the closing of a record            | `npm run cargo:close -- --state fixed --proposal …`                            |
 | the entry of the publisher         | the pair of an account of the service, the same as at the reading of the cargo |
-| the sign of a record in the intake | the line `в приёме <sign>` in the output of the reading of the cargo           |
+| the sign of a record in the intake | the line `in the intake <sign>` in the output of the reading of the cargo      |
 
 ## Rules
 

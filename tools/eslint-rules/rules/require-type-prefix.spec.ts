@@ -1,10 +1,10 @@
 /**
- * Spec для `require-type-prefix`.
+ * The spec of `require-type-prefix`.
  *
- * Parser: `@typescript-eslint/parser`. Раннер: Vitest.
+ * Parser: `@typescript-eslint/parser`. The runner is Vitest.
  *
- * Coverage параллелен `require-interface-prefix.spec.ts`, заменён на `type X = ...`.
- * Приставка рода здесь `T`: `I` занята интерфейсом, `E` — перечислением.
+ * What is covered runs parallel to `require-interface-prefix.spec.ts`, with `type X = ...` in place.
+ * The kind sign here is `T`: `I` is taken by the interface, `E` by the enum.
  */
 import { RuleTester } from '@typescript-eslint/rule-tester';
 

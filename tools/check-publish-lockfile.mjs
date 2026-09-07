@@ -1,22 +1,24 @@
 #!/usr/bin/env node
 /**
- * Пересобирает ли конвейер публикации замок зависимостей после публикации и кладёт ли его заявкой.
+ * Does the publication pipeline rebuild the dependency lock after publishing and open a request with it.
  *
- * Зачем это есть. Конвейер публикации поднимает версию пакета и версии, которыми пакеты называют
- * друг друга, а замок оставлял прежним. Расхождение молчит до следующей публикации: она ставит
- * зависимости из замороженного замка, видит там прежние версии и падает — причём падает не тот
- * выпуск, который расхождение завёл. Целая череда выпусков встала так, и каждый разблокировали
- * замком, пересобранным руками.
+ * Why this exists. The publication pipeline raises the package's version and the versions by which
+ * the packages name one another, and left the lock as it was. The divergence stays silent until the
+ * next publication: it installs the dependencies from the frozen lock, sees the former versions there
+ * and falls — and the release that falls is not the one that created the divergence. A whole series
+ * of releases stopped that way, and each was unblocked by a lock rebuilt by hand.
  *
- * Где пересборка стоит, судится тоже. Поставленная до публикации, она просит у реестра версию,
- * которую подъём только что вписал зависимым пакетам, — а в реестре её ещё нет, и первый же
- * выпуск ядра встал на этом. Поэтому пересборка идёт после шага публикации, а за ней стоит свой
- * шаг заявки: без него пересобранный замок остаётся на раннере.
+ * Where the rebuild stands is judged too. Put before the publication, it asks the registry for the
+ * version the raise has just written into the dependent packages — and the registry does not hold it
+ * yet, and the very first release of the core stopped on that. So the rebuild goes after the
+ * publication step, and behind it stands a request step of its own: without it the rebuilt lock stays
+ * on the runner.
  *
- * Судятся сами файлы конвейеров, а не прогон: прогон бывает раз в несколько недель и только у
- * владельца, а конвейер заводят копией соседнего — и седьмой выпадет из починенных шести молча.
+ * The pipeline files themselves are judged rather than a run: a run happens once in several weeks and
+ * only at the owner's, while a pipeline is created as a copy of a neighbouring one — and the seventh
+ * will silently fall out of the six that were fixed.
  *
- * Ненулевой код возврата и перечень конвейеров с расхождением.
+ * A non-zero exit code and a list of the pipelines with a divergence.
  */
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -24,19 +26,19 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
-/** Каталог конвейеров переопределяется переменной: набор проб судит дерево-фикстуру, а не своё. */
+/** The pipelines directory is overridden by a variable: the probe set judges a fixture tree, not its own. */
 const DIR = process.env.RT_WORKFLOWS_DIR || join(ROOT, '.github/workflows');
 
-/** Признак публикующего конвейера: он поднимает версию пакета своим скриптом. */
+/** The sign of a publishing pipeline: it raises the package's version by a script of its own. */
 const RAISES_VERSION = /^\s*node update-version[\w-]*\.cjs /m;
 
-/** Пересборка замка. Форма вызова у неё одна, и искать её по имени скрипта нечем. */
+/** The lock rebuild. It has one call shape, and there is nothing to find it by a script name. */
 const RESYNC = /^\s*pnpm install --lockfile-only\b/m;
 
-/** Шаг публикации: команда упаковки пакета — единственное, что зовёт реестр на запись. */
+/** The publication step: the package-packing command is the only thing that calls the registry for writing. */
 const PUBLISHES = /^\s*run: pnpm run packagr[\w:-]*\s*$/m;
 
-/** Шаг, который кладёт заявку. Ищется каждый: у конвейера их два — о версии и о замке. */
+/** The step that opens a request. Each one is looked for: a pipeline has two — about the version and about the lock. */
 const COMMITS = /^\s*- uses: EndBug\/add-and-commit/gm;
 
 const problems = [];
@@ -58,34 +60,34 @@ for (const name of files) {
     const resync = RESYNC.exec(text);
 
     if (!resync) {
-        problems.push(`${name}: версию поднимает, а замок зависимостей не пересобирает — следующая публикация встанет на замороженной установке`);
+        problems.push(`${name}: it raises the version and does not rebuild the dependency lock — the next publication will stop on a frozen install`);
         continue;
     }
 
     const publish = PUBLISHES.exec(text);
 
     if (publish && resync.index < publish.index) {
-        problems.push(`${name}: замок пересобирается до публикации — версии, вписанной зависимым пакетам, в реестре ещё нет, и разрешить её нечем`);
+        problems.push(`${name}: the lock is rebuilt before the publication — the version written into the dependent packages is not in the registry yet, and there is nothing to resolve it by`);
         continue;
     }
 
     const commitsAfter = [...text.matchAll(COMMITS)].filter((match) => match.index > resync.index);
 
     if (commitsAfter.length === 0) {
-        problems.push(`${name}: после пересборки замка нет шага, кладущего заявку, — пересобранный замок останется на раннере`);
+        problems.push(`${name}: after the lock rebuild there is no step opening a request — the rebuilt lock will stay on the runner`);
     }
 }
 
 if (judged === 0) {
-    console.error(`check-publish-lockfile: в «${DIR}» нет ни одного конвейера, поднимающего версию, — судить нечего`);
+    console.error(`check-publish-lockfile: «${DIR}» holds not one pipeline raising a version — there is nothing to judge`);
     process.exit(1);
 }
 
 if (problems.length === 0) {
-    console.log(`check-publish-lockfile: конвейеров публикации ${judged}, все пересобирают замок после публикации и кладут его заявкой`);
+    console.log(`check-publish-lockfile: publishing pipelines ${judged}, all rebuild the lock after the publication and open a request with it`);
     process.exit(0);
 }
 
-console.error(`check-publish-lockfile: конвейеров публикации ${judged}, с расхождением ${problems.length}\n`);
+console.error(`check-publish-lockfile: publishing pipelines ${judged}, with a divergence ${problems.length}\n`);
 problems.forEach((line) => console.error(line));
 process.exit(1);

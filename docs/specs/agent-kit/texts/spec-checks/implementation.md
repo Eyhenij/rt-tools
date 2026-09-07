@@ -21,6 +21,7 @@ whole.
 - **A divergence of the pointer is printed as a list of its own with an argument of its own.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:reportIndex`
 - **What count as bindings are the rows of one table of the companion, not every row that looks like a row of a table.** — `projects/agent-kit/assets/checks/spec-anchors.mjs:rowsOfMap`
 - **The companion of a rule without the section of the bindings is a refusal, not silence.** — `projects/agent-kit/assets/checks/spec-anchors.mjs:rowsOfMap`
+- **The heading of the section of the bindings and the verdict «not carried out» are read under two names, English and Russian.** — `projects/agent-kit/assets/checks/check-specs.mjs:MAP_HEADINGS` — the heading; the verdict — `projects/agent-kit/assets/checks/spec-common.mjs:VERDICT`; scenario SC-AK-912
 - **A subheading inside the section does not end the list of items, a table does, and the refusal about an empty section names what stands instead of the items.** — `projects/agent-kit/assets/checks/spec-common.mjs:bulletsOf`
 - **What counts as a symbol of an anchor is any letter, not only a Latin one.** — `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`
 - **A name in an anchor is written as it is declared in code, the hash included.** — `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`

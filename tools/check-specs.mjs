@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-specs.mjs · d988b251a91e · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-specs.mjs · 778bef15a92f · правится надстройкой, не здесь
 /**
  * The check that a domain spec has not diverged from the code.
  *
@@ -229,9 +229,11 @@ const ruleHeadingOf = (text) => RULE_HEADINGS.find((heading) => text.split('\n')
 /**
  * The companion section of a rule where the bindings lie; its other tables name the tree's names.
  * Two names again: the companion is written by the tree, and a tree translates its companions one
- * rule at a time.
+ * rule at a time. The one that stands in the file is taken.
  */
-const MAP_HEADING = ['## Where the articles are carried out', '## Где исполняются статьи'];
+const MAP_HEADINGS = ['## Where the articles are carried out', '## Где исполняются статьи'];
+const mapHeadingOf = (text) =>
+    MAP_HEADINGS.find((heading) => text.split('\n').some((line) => line.trimEnd() === heading)) ?? MAP_HEADINGS[0];
 
 /**
  * The front matter of a skill — the first block between `---`. Only it is read: the pattern that
@@ -278,7 +280,9 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
     } else {
         ruled.add(law);
     }
-    checkRuleImplementation(file, text, `${dirname(file)}/implementation.md`, ruleHeadingOf(text), MAP_HEADING);
+    const mapFile = `${dirname(file)}/implementation.md`;
+
+    checkRuleImplementation(file, text, mapFile, ruleHeadingOf(text), mapHeadingOf(read(mapFile)));
 
     const name = nameOf(head);
     if (name && name !== file.slice('.claude/skills/'.length, -'/SKILL.md'.length)) {
