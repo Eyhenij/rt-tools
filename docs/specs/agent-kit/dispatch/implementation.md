@@ -1,20 +1,20 @@
-# Привязка — диспетчер событий агента
+# Binding — the dispatcher of the agent's events
 
-Утверждение спека и место, где оно исполняется. Связь идёт по тексту утверждения: снятое
-утверждение снимается вместе со своей строкой.
+A statement of the spec and the place where it is carried out. The link goes by the text of the
+statement: a removed statement is removed together with its line.
 
-- **Событие агента зовёт диспетчер, а не список гардов.** — `projects/agent-kit/src/lib/hooks-map.ts:hooksSection`
-- **Образец вызова несёт шапка самого гарда, а сверяет его диспетчер.** — `projects/agent-kit/src/lib/hooks-map.ts:bindingsOf` — объявление читается из шапки; сверяет его `projects/agent-kit/assets/hooks/dispatch.sh`.
-- **Образец сверяется с именем инструмента целиком, а не куском.** — Не проверяется машиной: сверка идёт выражением оболочки в `projects/agent-kit/assets/hooks/dispatch.sh`, и якоря на символ у неё нет. Держит это сценарий SC-AK-523.
-- **У файла читаются все объявления события, а не первое.** — `projects/agent-kit/assets/hooks/dispatch.sh:matched` — объявления перебираются, совпавшая ветка зовётся один раз; сценарий SC-AK-577
-- **Отбой ветки приходит решением в выводе наравне с кодом возврата.** — `projects/agent-kit/assets/hooks/dispatch.sh:branch_out` — вывод ветки читается разборщиком, и на решении об отбое обход останавливается; сценарий SC-AK-578
-- **Отказ ветки отдаётся агенту как есть, и ветки за ним не зовутся.** — Не проверяется машиной: это порядок обхода в `projects/agent-kit/assets/hooks/dispatch.sh`. Держит это сценарий SC-AK-524.
-- **Гард, позванный напрямую, работает как прежде.** — `projects/agent-kit/assets/hooks/hook-input.sh:rt_hook_field` — поле спрашивается у окружения, разбор идёт только без него.
-- **Поток ввода читается командой, а не подстановкой.** — `projects/agent-kit/assets/hooks/hook-input.sh:rt_hook_read`
-- **Сломанный диспетчер работу не заклинивает.** — Не проверяется машиной: это ранние выходы в `projects/agent-kit/assets/hooks/dispatch.sh`. Держит это сценарий SC-AK-525.
-- **Разложенное, которому нужна запись в настройке агента, доезжает до неё.** — `projects/agent-kit/src/lib/hooks-map.ts:bindDispatch` — зовётся из `projects/agent-kit/src/lib/sync.ts:runSync`; сценарии SC-AK-05, SC-AK-682
-- **Запись в настройку агента только прибавляет.** — `projects/agent-kit/src/lib/hooks-map.ts:bindDispatch` — сценарии SC-AK-683, SC-AK-684
-- **Отказ гарда завершения проверяется на связке с диспетчером, а не только на самом гарде.** — `projects/agent-kit/tests/dispatch.test.sh:real_input` — настоящий страж выходов кладётся в фикстуру диспетчера и зовётся через него; сценарии SC-AK-700, SC-AK-701
-- **Ветка, вышедшая ненулём и не сказавшая ничего, названа по имени.** — `projects/agent-kit/assets/hooks/dispatch.sh:branch_out` — имя берётся у самого файла ветки; сценарий SC-AK-833
-- **Предмет сверки выбирается по событию: имя инструмента там, где оно есть, род запуска — где его нет.** — `projects/agent-kit/assets/hooks/dispatch.sh:subject` — род запуска приходит полем разбора наравне с именем инструмента; сценарий SC-AK-856
-- **Отказ, сказанный в поток ошибок, доходит до исполнителя.** — `projects/agent-kit/assets/hooks/dispatch.sh:branch_err` — поток собирается отдельным файлом и печатается, когда вывод ветки пуст; сценарий SC-AK-860
+- **An event of the agent is called by the dispatcher, not by a list of guards.** — `projects/agent-kit/src/lib/hooks-map.ts:hooksSection`
+- **The call sample is carried by the header of the guard itself, and the dispatcher checks it.** — `projects/agent-kit/src/lib/hooks-map.ts:bindingsOf` — the declaration is read from the header; it is checked by `projects/agent-kit/assets/hooks/dispatch.sh`.
+- **The sample is checked against the name of the tool whole, not against a piece.** — Not checked by a machine: the check goes by a shell expression in `projects/agent-kit/assets/hooks/dispatch.sh`, and it has no anchor on a symbol. This is held by the scenario SC-AK-523.
+- **All the event declarations of a file are read, not the first one.** — `projects/agent-kit/assets/hooks/dispatch.sh:matched` — the declarations are walked, a matched branch is called once; scenario SC-AK-577
+- **The refusal of a branch arrives as a decision in the output on a par with the exit code.** — `projects/agent-kit/assets/hooks/dispatch.sh:branch_out` — the output of a branch is read by the parser, and on a refusal decision the walk stops; scenario SC-AK-578
+- **The refusal of a branch is given to the agent as it is, and the branches after it are not called.** — Not checked by a machine: this is the order of the walk in `projects/agent-kit/assets/hooks/dispatch.sh`. This is held by the scenario SC-AK-524.
+- **A guard called directly works as before.** — `projects/agent-kit/assets/hooks/hook-input.sh:rt_hook_field` — the field is asked of the environment, the parse goes only without it.
+- **The input stream is read by a command, not by a substitution.** — `projects/agent-kit/assets/hooks/hook-input.sh:rt_hook_read`
+- **A broken dispatcher does not jam the work.** — Not checked by a machine: these are the early exits in `projects/agent-kit/assets/hooks/dispatch.sh`. This is held by the scenario SC-AK-525.
+- **What is laid out and needs a record in the setting of the agent reaches it.** — `projects/agent-kit/src/lib/hooks-map.ts:bindDispatch` — called from `projects/agent-kit/src/lib/sync.ts:runSync`; scenarios SC-AK-05, SC-AK-682
+- **A record in the setting of the agent only adds.** — `projects/agent-kit/src/lib/hooks-map.ts:bindDispatch` — scenarios SC-AK-683, SC-AK-684
+- **The refusal of a closing guard is checked on the link with the dispatcher, not on the guard alone.** — `projects/agent-kit/tests/dispatch.test.sh:real_input` — the real watchman of the exits is put into the fixture of the dispatcher and called through it; scenarios SC-AK-700, SC-AK-701
+- **A branch that left with a non-zero code and said nothing is named by name.** — `projects/agent-kit/assets/hooks/dispatch.sh:branch_out` — the name is taken from the file of the branch itself; scenario SC-AK-833
+- **The subject of the check is picked by the event: the tool name where there is one, the kind of the start where there is none.** — `projects/agent-kit/assets/hooks/dispatch.sh:subject` — the kind of the start arrives as a parse field on a par with the tool name; scenario SC-AK-856
+- **A refusal said into the error stream reaches the executor.** — `projects/agent-kit/assets/hooks/dispatch.sh:branch_err` — the stream is gathered into a separate file and printed when the output of the branch is empty; scenario SC-AK-860

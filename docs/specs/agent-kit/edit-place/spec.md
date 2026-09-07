@@ -1,191 +1,205 @@
-# Место правки
+# The place of an edit
 
-**Статус:** действует · **Ревизия:** 2026-08-23 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `verifiability`, `work-conduct`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-23 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `verifiability`, `work-conduct`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Слой правил правит тот же исполнитель, которым слой правил управляет, и разницы между
-«исполняю правило» и «правлю правило» в дереве не видно ничем: разложенная копия лежит рядом с
-обычными файлами и правится так же. Правка доходит до диска и не доходит до места, где промах
-чинится.
+The rules layer is edited by the same executor the rules layer governs, and the difference between "I
+carry out a rule" and "I edit a rule" is visible in the tree by nothing: a laid-out copy lies next to
+the ordinary files and is edited the same way. The edit reaches the disk and does not reach the place
+where the miss is fixed.
 
-Поддомен называет, где чинится каждый род текста слоя правил — источник пакета, надстройка
-дерева, свой файл дерева, — и что происходит с правкой, положенной не туда. Раскладка сама —
-соседний поддомен: там предмет другой, там кладут, а здесь судят место правки.
+The subdomain names where every kind of rules-layer text is fixed — the package source, the override
+of the tree, a file of the tree's own — and what happens to an edit put in the wrong place. The
+layout itself is a neighbouring subdomain: the subject there is different, there files are put, and
+here the place of an edit is judged.
 
-## Терминология
+## Terminology
 
-- **Разложенная копия** — файл, положенный пакетом; узнаётся по шапке `rt-kit v<версия> ·
-<ресурс> · <дайджест>` в начале.
-- **Источник** — файл ресурса в дереве, которое пакет везёт; у дерева-потребителя источника нет.
-- **Надстройка** — файл дерева в каталоге надстроек, сливающийся с пакетным ресурсом по
-  заголовку раздела `## `.
-- **Затирание** — запись файла целиком поверх существующего: инструмент записи,
-  перенаправление, `tee` без дописывания, копирование поверх. Дописывание в конец затиранием не
-  считается.
+- **A laid-out copy** — a file put by the package; it is recognised by the header
+  `rt-kit v<version> · <resource> · <digest>` at the start.
+- **A source** — the resource file in the tree the package is carried by; a consumer tree has no
+  source.
+- **An override** — a file of the tree in the overrides directory, merging with the package resource
+  by the heading of a `## ` section.
+- **Overwriting** — writing a file whole over an existing one: the write tool, a redirection, `tee`
+  without appending, copying over. Appending at the end does not count as overwriting.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Интерфейса у этих гардов нет: их видит только исполнитель — текстом отказа в своём ходе.
+These guards have no interface: only the executor sees them — as the text of a refusal in their own
+turn.
 
-## Правила
+## Rules
 
-- **Правка разложенной копии отбивается в минуту правки, а не на следующей раскладке.** Знал об
-  этом один `sync --check`, и говорил он в чужой ветке и чужим ходом: раскладка отказывает по
-  правленому файлу целиком, и цену платит тот, кто в этот день правит соседний ресурс.
-- **Отказ называет ресурс и адрес, где правка держится.** Адрес зависит от того, держит ли
-  дерево источник: у дерева пакета это источник, у потребителя — надстройка. Отказ без адреса
-  оставляет исполнителя перед тем же выбором, из-за которого правка легла не туда.
-- **Каталог источников спрашивается у профиля дерева, а не угадывается по имени.** Дерево, где
-  пакет лежит иначе, получило бы адрес несуществующего файла — то есть указание, по которому
-  заводят новый файл рядом.
-- **Гард судит запись, а не инструмент.** Та же правка командой оболочки теряется на раскладке
-  так же, как правка инструментом.
-- **Цель записи берётся у команды прямо, а не общим признаком записи.** Общий признак широк
-  намеренно — в нём и имя интерпретатора, — и запуск разложенной проверки читался бы как правка
-  её самой. Отбитие на чтении стоит дороже пропуска: гард, мешающий читать, выключают в первый
-  же день.
-- **Тело интерпретатора без записи своих путей не отдаёт.** Внутри тела разбирать чужой язык
-  нечем, и берётся оттуда всё похожее на путь; тело, в котором нет ни одного вызова записи, при
-  этом отдавало пути наравне с тем, которое пишет. Команда, подключившая разложенный помощник и
-  напечатавшая его ответ, запрещалась как правка этого помощника — за один заход трижды подряд,
-  и ни один вызов ничего не писал. Тело, которое пишет, отдаёт свои пути целиком: путь и вызов
-  записи стоят там разными строками, и связать их нечем.
-- **Заглушённый вывод признаком записи не бывает и внутри тела.** Перенаправление в пустое
-  устройство и в поток ошибок снимается до разбора — тем же приёмом, каким его снимает признак
-  записи оболочкой. Иначе тело, которое ничего не пишет, снова отдаёт все свои пути: команда с
-  правкой одного файла и запуском проверки рядом запрещалась по пути этой проверки.
-- **Снятие разложенной копии проходит.** Снятый файл раскладка кладёт заново, и так чинят
-  копию, которую переписал форматтер.
-- **Запись целиком поверх непустой надстройки отбивается отдельным отказом.** Надстройка
-  накапливается разделами из разных веток и заходов, а положенная целиком уносит все, которых
-  эта правка не касалась: на их место молча возвращается пакетный текст, раскладка сходится, и
-  проверки зелёные.
-- **Отказ о затирании называет размер того, что затрут.** Число строк и число разделов
-  отличают надстройку в три строки от нажитой за полгода, а без них отказ читается как запрет
-  на приём.
-- **Дописывание в конец и правка по месту проходят.** Они ничего не уносят: прежние разделы
-  остаются там же, где были.
-- **Пустая надстройка и ненаписанная кладутся целиком.** Затирать в них нечего, и отказ был бы
-  запретом на заведение.
-- **Копию образца под работу собирает команда, и шапку она снимает.** Пока копию делали `cp -r`
-  по строке, напечатанной командой в подсказку, шапка уезжала в неё и отбивала первую же правку
-  разбора просьбы — то есть первое движение любой работы, — а отказ уводил править образец
-  пакета вместо копии. Снималась она тремя строками руками, каждой работой заново. Довод тот же,
-  каким пакет кладёт без шапки черновик компаньона: с первой правки это текст проекта, и сверять
-  в нём нечего. Сам образец шапку по-прежнему несёт и обновляется раскладкой.
+- **An edit of a laid-out copy is refused at the minute of the edit, not at the next layout.** One
+  `sync --check` knew about it, and it spoke in a foreign branch and in a foreign turn: the layout
+  refuses over the edited file whole, and the price is paid by whoever edits a neighbouring resource
+  that day.
+- **The refusal names the resource and the address where the edit is held.** The address depends on
+  whether the tree holds the source: at the package tree it is the source, at a consumer it is the
+  override. A refusal without an address leaves the executor before the same choice the edit landed in
+  the wrong place over.
+- **The directory of the sources is asked of the tree profile, it is not guessed by the name.** A tree
+  where the package lies differently would get the address of a non-existent file — that is, an
+  instruction by which a new file is created next to it.
+- **The guard judges the write, not the tool.** The same edit by a shell command is lost at the layout
+  the same way an edit by a tool is.
+- **The target of the write is taken from the command outright, not by a general sign of a write.**
+  The general sign is wide on purpose — it holds the name of the interpreter too — and running a
+  laid-out check would read as an edit of the check itself. A refusal on a read costs more than a
+  miss: a guard that gets in the way of reading is switched off on the very first day.
+- **The body of an interpreter without a write gives out none of its paths.** Inside the body there is
+  nothing to parse a foreign language with, and everything looking like a path is taken from there; a
+  body holding not a single write call gave out its paths on a par with one that writes. A command
+  that loaded a laid-out helper and printed its answer was forbidden as an edit of that helper —
+  three times in a row in one session, and not one call wrote anything. A body that does write gives
+  out its paths whole: the path and the write call stand there on different lines, and there is
+  nothing to link them by.
+- **Muted output is never a sign of a write, inside a body either.** A redirection into the empty
+  device and into the error stream is removed before the parse — by the same technique the shell write
+  sign removes it. Otherwise a body that writes nothing gives out all its paths again: a command with
+  an edit of one file and a run of a check next to it was forbidden by the path of that check.
+- **Removing a laid-out copy passes.** A removed file the layout puts anew, and that is how a copy the
+  formatter rewrote is fixed.
+- **Writing whole over a non-empty override is refused by a refusal of its own.** An override
+  accumulates sections from different branches and sessions, and put whole it carries away all of them
+  that this edit did not touch: the package text silently comes back in their place, the layout comes
+  together, and the checks are green.
+- **The refusal about overwriting names the size of what would be wiped.** The number of lines and the
+  number of sections tell an override of three lines from one gained over half a year, and without
+  them the refusal reads as a ban on the technique.
+- **Appending at the end and editing in place pass.** They carry nothing away: the former sections
+  stay where they were.
+- **An empty override and an unwritten one are put whole.** There is nothing to overwrite in them, and
+  a refusal would be a ban on creating one.
+- **The copy of a sample for the work is assembled by a command, and the command removes the header.**
+  While the copy was made by `cp -r` along a line the command printed into a hint, the header travelled
+  into it and refused the very first edit of the request analysis — that is, the first move of any work
+  — and the refusal led to editing the sample of the package instead of the copy. It was removed by
+  three lines by hand, anew with every piece of work. The argument is the same one the package puts the
+  draft of a companion by without a header: from the first edit this is the text of the project, and
+  there is nothing to check in it. The sample itself still carries a header and is updated by the
+  layout.
 
-- **Разложенный файл прячется от форматтера, и это стережёт проверка.** Гард места правки судит
-  вызов исполнителя, а форматтер работает крючком системы контроля версий — то есть правит файл
-  уже в индексе, без единого вызова, и до него гард не достаёт. Держится это списком исключений
-  форматтера, и список отстаёт молча: вид разложенного файла совпадает с видом форматтера
-  случайно, пока в пакете не поправят строку.
-- **Судятся все файлы с шапкой раскладки, а не перечень каталогов.** Признак у них один, и
-  список каталогов в проверке повторял бы список исключений с другой стороны — расходились бы
-  они молча.
-- **Проверка своя дереву, а не пакетная.** Она читает список исключений именно этого форматтера,
-  а у дерева-потребителя форматтер может быть другой или его может не быть вовсе.
-- **Файл в конфликте гард пропускает наравне со снятым.** Разрешение конфликта содержания
-  копии не меняет — раскладка кладёт её заново, — а отбитый на нём исполнитель остаётся с
-  наполовину слитой веткой и без законного хода: править в источнике нечего, а надстройка
-  конфликта не снимает.
+- **A laid-out file hides from the formatter, and a check watches this.** The guard of the place of an
+  edit judges a call of the executor, while the formatter works as a hook of the version control
+  system — that is, it edits a file already in the index, without a single call, and the guard does
+  not reach it. This is held by the exception list of the formatter, and the list falls behind
+  silently: the look of a laid-out file matches the look of the formatter by chance, until a line in
+  the package is edited.
+- **All the files with the layout header are judged, not a list of directories.** They have one sign,
+  and a list of directories in the check would repeat the exception list from the other side — they
+  would diverge silently.
+- **The check is the tree's own, not the package's.** It reads the exception list of exactly this
+  formatter, and a consumer tree may have another formatter or none at all.
+- **A file in conflict the guard lets through on a par with a removed one.** Resolving a conflict does
+  not change the content of the copy — the layout puts it anew — and an executor refused over it is
+  left with a half-merged branch and without a lawful move: there is nothing to edit in the source, and
+  an override does not remove a conflict.
 
-## Состояния
+## States
 
-| Состояние правки                    | Что видит исполнитель                                     |
-| ----------------------------------- | --------------------------------------------------------- |
-| свой файл дерева                    | ничего: гарды молчат                                      |
-| разложенная копия, есть источник    | отказ с адресом источника и надстройкой как второй формой |
-| разложенная копия, источника нет    | отказ с адресом надстройки                                |
-| нажитая надстройка, запись целиком  | отказ с размером затираемого                              |
-| нажитая надстройка, правка по месту | ничего                                                    |
+| The state of the edit               | What the executor sees                                                        |
+| ----------------------------------- | ----------------------------------------------------------------------------- |
+| a file of the tree's own            | nothing: the guards stay silent                                               |
+| a laid-out copy, there is a source  | a refusal with the address of the source and the override as the second shape |
+| a laid-out copy, there is no source | a refusal with the address of the override                                    |
+| a gained override, a write whole    | a refusal with the size of what would be wiped                                |
+| a gained override, an edit in place | nothing                                                                       |
 
-## Что не входит
+## What is out of scope
 
-- Раскладка сама: класть файлы — соседний поддомен, здесь судится место правки.
-- Слияние надстройки с пакетным ресурсом: гард знает, что оно идёт по разделу, и говорит об
-  этом, а делает его раскладка.
-- Правка, пришедшая не от исполнителя: форматтер дерева и крючки системы контроля версий идут
-  мимо событий агента, и гардам они не видны.
+- The layout itself: putting files is a neighbouring subdomain, here the place of an edit is judged.
+- The merge of an override with the package resource: the guard knows it goes by section and says so,
+  and it is done by the layout.
+- An edit that came not from the executor: the formatter of the tree and the hooks of the version
+  control system go past the events of the agent, and the guards do not see them.
 
-## Контракт
+## Contract
 
-Поверхность — события агента: правка файла и вызов оболочки. Ответ гарда — либо пропуск, либо
-отказ с адресом, где эта правка держится.
+The surface is the events of the agent: editing a file and calling the shell. The answer of the guard
+is either a pass or a refusal with the address where this edit is held.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: гард отбивает вызов до его исполнения, и кода возврата команды у такого отказа нет.
+Not applicable: the guard refuses a call before it is carried out, and such a refusal has no command
+exit code.
 
-| Что случилось                             | Чем кончается | Что говорит                                  |
-| ----------------------------------------- | ------------- | -------------------------------------------- |
-| правка файла с шапкой раскладки           | отказ вызова  | ресурс и адрес: источник либо надстройка     |
-| запись целиком поверх непустой надстройки | отказ вызова  | размер затираемого и способ править по месту |
-| чтение, поиск, снятие копии               | пропуск       | ничего                                       |
-| нет разборщика, битый ввод, файла нет     | пропуск       | ничего: сломанный гард работу не заклинивает |
+| What happened                            | How it ends      | What it says                                             |
+| ---------------------------------------- | ---------------- | -------------------------------------------------------- |
+| an edit of a file with the layout header | the call refused | the resource and the address: source or override         |
+| a write whole over a non-empty override  | the call refused | the size of what would be wiped and how to edit in place |
+| a read, a search, removing a copy        | a pass           | nothing                                                  |
+| no parser, broken input, no file         | a pass           | nothing: a broken guard does not jam the work            |
 
-## Данные
+## Data
 
-Своего хранилища нет: шапка читается из первых строк правимого файла, каталог источников — из
-профиля дерева, каталог надстроек — из окружения либо умолчанием пакета.
+There is no storage of its own: the header is read from the first lines of the edited file, the
+directory of the sources from the tree profile, the directory of the overrides from the environment
+or by the default of the package.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: экранов нет.
+Not applicable: there are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: тексты отказов одноязычны.
+Not applicable: the refusal texts are single-language.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Гарды одни на все деревья, а адрес правки зависит от дерева: у того, которое пакет везёт, есть
-источник, у потребителя — только надстройка. Дерево, не назвавшее каталога источников, получает
-второй адрес, а не выдуманный первый.
+The guards are one set for all trees, and the address of an edit depends on the tree: the one the
+package is carried by has a source, a consumer has only an override. A tree that named no directory
+of sources gets the second address, not an invented first one.
 
-## Решения
+## Decisions
 
-- **Гардов заведено два, а не один.** Предметы разные: один судит, тот ли это файл, другой —
-  тот ли это способ записи. Слитые в один, они делили бы разбор входа и расходились бы текстами
-  отказов молча. Отвергнуто: одна ветка на оба случая.
-- **Шапка ищется в первых строках, а не по всему файлу.** Гард стоит на каждой правке, и цена
-  чтения файла целиком — на каждой. Двенадцати строк хватает обоим отодвигающим её случаям:
-  строке запуска у сценария и заголовку у правила.
-- **Затирание отбивается по непустоте файла, а не по его содержимому.** Разобрать, что именно
-  унесёт запись, можно только прочитав то, что положат, — а этого гарду не дают. Отвергнуто:
-  сравнение разделов до и после.
-- **Дописывание в конец пропущено.** Раздел, встающий в конец, прежних не трогает; отбив его
-  заодно, гард запретил бы законный приём и был бы выключен целиком.
+- **Two guards were created, not one.** The subjects differ: one judges whether this is the right
+  file, the other whether this is the right way of writing. Merged into one, they would share the
+  parse of the input and would diverge in their refusal texts silently. Rejected: one branch for both
+  cases.
+- **The header is looked for in the first lines, not across the whole file.** The guard stands at
+  every edit, and the price of reading a file whole is at every one. Twelve lines are enough for both
+  cases that push it down: the launch line at a scenario suite and the heading at a rule.
+- **Overwriting is refused by the non-emptiness of the file, not by its content.** Taking apart what
+  exactly the write would carry away is possible only by reading what will be put — and the guard is
+  not given that. Rejected: comparing the sections before and after.
+- **Appending at the end is let through.** A section standing at the end touches none of the former
+  ones; refusing it along the way, the guard would forbid a lawful technique and would be switched off
+  whole.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-EP-1` — форматтер дерева правит разложенную копию мимо гарда: он работает не командой
-  агента, а крючком системы контроля версий. Держится это поимённым списком в настройке
-  форматтера, и список отстаёт молча.
+- `Q-EP-1` — the formatter of the tree edits a laid-out copy past the guard: it works not by a command
+  of the agent but as a hook of the version control system. This is held by a list of names in the
+  setting of the formatter, and the list falls behind silently.
 
-- `Q-EP-2` — правило «разложенным считается файл по пути раскладки» гардом места правки не
-  исполняется: он судит по шапке и отбивает всякий файл, где она встретилась. Пути раскладки у
-  него нет — для рода образцов он собирается из настройки дерева, а для правил раскладка ресурс
-  переименовывает, и общего способа собрать адрес не существует. Копия образца папки задачи
-  из-под этого выведена своим приёмом — команда снимает шапку при сборке, — а прочие роды копий,
-  включая копию образца спека домена, остаются.
+- `Q-EP-2` — the rule "what lies on the layout path counts as laid out" is not carried out by the
+  guard of the place of an edit: it judges by the header and refuses every file the header was met in.
+  It has no layout path — for the kind of samples it is assembled from the setting of the tree, and for
+  the rules the layout renames the resource, and there is no general way to assemble the address. The
+  copy of the task folder sample is taken out from under this by a technique of its own — the command
+  removes the header at the assembly — and the other kinds of copies, including the copy of the domain
+  spec sample, stay.
 
-## История изменений
+## History of changes
 
-- 2026-08-24 — копию образца под работу собирает команда и снимает с неё шапку; расхождение
-  правила о пути раскладки с гардом записано вопросом `Q-EP-2`.
-- 2026-08-23 — поддомен заведён: сценарии о месте правки переехали из поддомена раскладки,
-  переросшего предел длины. Номера не пересчитывались.
+- 2026-08-24 — the copy of a sample for the work is assembled by a command and the header is removed
+  from it; the divergence of the rule about the layout path with the guard is written down as the
+  question `Q-EP-2`.
+- 2026-08-23 — the subdomain was created: the scenarios about the place of an edit moved from the
+  layout subdomain, which had outgrown the length limit. The numbers were not recounted.

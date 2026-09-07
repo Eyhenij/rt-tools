@@ -1,187 +1,194 @@
-# Сценарии — место правки
+# Scenarios — the place of an edit
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной. Префикс общий на домен, и номера при переезде в поддомен не
-пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier stands at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason. The prefix is shared by the domain, and the
+numbers were not recounted on the move into the subdomain: the number ties a scenario to a test
+title.
 
-### SC-AK-534 — правка разложенной копии отбивается на её месте
+### SC-AK-534 — an edit of a laid-out copy is refused on its place
 
-Дано файл несёт шапку раскладки
-Когда его правят
-Тогда гард отказывает, называет ресурс и адрес, где эта правка держится: правка на месте
-теряется на следующей раскладке, а до тех пор раскладка отказывает по этому файлу целиком
+Given the file carries the layout header
+When it is edited
+Then the guard refuses, names the resource and the address where this edit is held: an edit in place
+is lost at the next layout, and until then the layout refuses over this file whole
 
-Покрыто: `projects/agent-kit/tests/rule-source-guard.test.sh`.
+Covered: `projects/agent-kit/tests/rule-source-guard.test.sh`.
 
-### SC-AK-535 — свой файл дерева гард не трогает
+### SC-AK-535 — the guard does not touch a file of the tree's own
 
-Дано файл шапки раскладки не несёт
-Когда его правят
-Тогда гард молчит
+Given the file carries no layout header
+When it is edited
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/rule-source-guard.test.sh`.
+Covered: `projects/agent-kit/tests/rule-source-guard.test.sh`.
 
-### SC-AK-536 — та же правка командой оболочки судится наравне
+### SC-AK-536 — the same edit by a shell command is judged on a par
 
-Дано разложенная копия правится не инструментом, а записью из команды
-Когда команда идёт
-Тогда гард отказывает; чтение той же копии проходит
+Given a laid-out copy is edited not by a tool but by a write from a command
+When the command goes
+Then the guard refuses; a read of the same copy passes
 
-Покрыто: `projects/agent-kit/tests/rule-source-guard.test.sh`.
+Covered: `projects/agent-kit/tests/rule-source-guard.test.sh`.
 
-### SC-AK-537 — снятие разложенной копии проходит
+### SC-AK-537 — removing a laid-out copy passes
 
-Дано разложенную копию снимают командой
-Когда команда идёт
-Тогда гард молчит: снятый файл раскладка кладёт заново, и так чинят копию, которую переписал
-форматтер
+Given a laid-out copy is removed by a command
+When the command goes
+Then the guard stays silent: a removed file the layout puts anew, and that is how a copy the
+formatter rewrote is fixed
 
-Покрыто: `projects/agent-kit/tests/rule-source-guard.test.sh`.
+Covered: `projects/agent-kit/tests/rule-source-guard.test.sh`.
 
-### SC-AK-801 — правка разложенной копии телом интерпретатора отбивается
+### SC-AK-801 — an edit of a laid-out copy by the body of an interpreter is refused
 
-Дано путь разложенной копии стоит внутри кода, который команда передаёт интерпретатору телом
-либо доводом
-Когда команда идёт
-Тогда гард отказывает: снаружи такая команда выглядит запуском, а правит она копию
+Given the path of a laid-out copy stands inside code the command passes to the interpreter as a body
+or as an argument
+When the command goes
+Then the guard refuses: from outside such a command looks like a run, and it edits the copy
 
-Покрыто: `projects/agent-kit/tests/rule-source-guard.test.sh`.
+Covered: `projects/agent-kit/tests/rule-source-guard.test.sh`.
 
-### SC-AK-802 — судится тело интерпретатора, а не вся команда
+### SC-AK-802 — the body of the interpreter is judged, not the whole command
 
-Дано интерпретатору передан код без путей разложенных копий, а рядом в той же составной команде
-запускается разложенная проверка
-Когда команда идёт
-Тогда гард молчит: цели записи берутся из тела, и запуск разложенного правкой не считается
+Given the interpreter is passed code without paths of laid-out copies, and next to it in the same
+compound command a laid-out check is run
+When the command goes
+Then the guard stays silent: the targets of the write are taken from the body, and running the
+laid-out does not count as an edit
 
-Покрыто: `projects/agent-kit/tests/rule-source-guard.test.sh`.
+Covered: `projects/agent-kit/tests/rule-source-guard.test.sh`.
 
-### SC-AK-538 — адрес правки зависит от того, держит ли дерево источник
+### SC-AK-538 — the address of the edit depends on whether the tree holds the source
 
-Дано дерево называет каталог источников пакета
-Когда правится разложенная копия
-Тогда отказ посылает в источник, а надстройку называет законной формой для того, что верно
-только этому дереву
+Given the tree names the directory of the package sources
+When a laid-out copy is edited
+Then the refusal sends into the source and names the override as the lawful shape for what is true
+only of this tree
 
-Покрыто: `projects/agent-kit/tests/rule-source-guard.test.sh`.
+Covered: `projects/agent-kit/tests/rule-source-guard.test.sh`.
 
-### SC-AK-539 — запись поверх нажитой надстройки отбивается
+### SC-AK-539 — a write over a gained override is refused
 
-Дано надстройка дерева непуста
-Когда её пишут целиком
-Тогда гард отказывает, называет размер того, что затрут, — строки и число разделов — и говорит,
-что надстройка сливается с пакетным ресурсом по заголовку раздела
+Given the override of the tree is non-empty
+When it is written whole
+Then the guard refuses, names the size of what would be wiped — the lines and the number of sections
+— and says that the override merges with the package resource by the heading of a section
 
-Покрыто: `projects/agent-kit/tests/override-write-guard.test.sh`.
+Covered: `projects/agent-kit/tests/override-write-guard.test.sh`.
 
-### SC-AK-540 — правка по месту и пустая надстройка проходят
+### SC-AK-540 — an edit in place and an empty override pass
 
-Дано надстройку правят по месту, либо её ещё нет, либо она пуста
-Когда идёт правка
-Тогда гард молчит: уносить нечего
+Given the override is edited in place, or it is not there yet, or it is empty
+When the edit goes
+Then the guard stays silent: there is nothing to carry away
 
-Покрыто: `projects/agent-kit/tests/override-write-guard.test.sh`.
+Covered: `projects/agent-kit/tests/override-write-guard.test.sh`.
 
-### SC-AK-541 — то же затирание командой оболочки судится наравне
+### SC-AK-541 — the same overwriting by a shell command is judged on a par
 
-Дано надстройка затирается не инструментом, а перенаправлением, копированием или отдачей в файл
-Когда команда идёт
-Тогда гард отказывает
+Given the override is overwritten not by a tool but by a redirection, a copy or a hand-off into a
+file
+When the command goes
+Then the guard refuses
 
-Покрыто: `projects/agent-kit/tests/override-write-guard.test.sh`.
+Covered: `projects/agent-kit/tests/override-write-guard.test.sh`.
 
-### SC-AK-542 — дописывание в конец проходит
+### SC-AK-542 — appending at the end passes
 
-Дано в надстройку дописывают раздел, а не кладут её целиком
-Когда команда идёт
-Тогда гард молчит: прежние разделы остаются на месте
+Given a section is appended into the override instead of putting it whole
+When the command goes
+Then the guard stays silent: the former sections stay in place
 
-Покрыто: `projects/agent-kit/tests/override-write-guard.test.sh`.
+Covered: `projects/agent-kit/tests/override-write-guard.test.sh`.
 
-### SC-AK-573 — копия образца собирается без шапки раскладки
+### SC-AK-573 — the copy of a sample is assembled without the layout header
 
-Дано образец папки задачи разложен и несёт шапку
-Когда команда заведения задачи собирает копию под работу
-Тогда шапки в копии нет, и снятие называет файлы, с которых она ушла
+Given the sample of the task folder is laid out and carries a header
+When the task creation command assembles the copy for the work
+Then there is no header in the copy, and the removal names the files it left
 
-Покрыто: `projects/agent-kit/tests/task-folder-stamp.test.sh`.
+Covered: `projects/agent-kit/tests/task-folder-stamp.test.sh`.
 
-### SC-AK-570 — снимается только шапка и только у разметки
+### SC-AK-570 — only the header is removed and only from markup
 
-Дано в папке лежат файл со своим текстом проекта и файл не-разметки
-Когда снятие идёт по каталогу
-Тогда оба остаются как были, а повторный вызов не находит ничего
+Given the folder holds a file with the project's own text and a non-markup file
+When the removal goes over the directory
+Then both stay as they were, and a repeated call finds nothing
 
-Покрыто: `projects/agent-kit/tests/task-folder-stamp.test.sh`.
+Covered: `projects/agent-kit/tests/task-folder-stamp.test.sh`.
 
-### SC-AK-571 — снятие на несуществующем каталоге молчит
+### SC-AK-571 — the removal on a non-existent directory stays silent
 
-Дано каталога нет
-Когда снятие зовётся
-Тогда оно отвечает пустым списком, а не падает: сборку папки это не роняет
+Given there is no directory
+When the removal is called
+Then it answers with an empty list instead of falling: this does not take the assembly of the folder
+down
 
-Покрыто: `projects/agent-kit/tests/task-folder-stamp.test.sh`.
+Covered: `projects/agent-kit/tests/task-folder-stamp.test.sh`.
 
-### SC-AK-572 — сам образец шапку несёт
+### SC-AK-572 — the sample itself carries the header
 
-Дано образец папки задачи разложен пакетом
-Когда его читают
-Тогда шапка на месте: снятие в копии имеет смысл ровно потому, что в образце она стоит
+Given the sample of the task folder is laid out by the package
+When it is read
+Then the header is in place: the removal in the copy makes sense exactly because it stands in the
+sample
 
-Покрыто: `projects/agent-kit/tests/task-folder-stamp.test.sh`.
+Covered: `projects/agent-kit/tests/task-folder-stamp.test.sh`.
 
-## Разложенный файл и форматтер
+## A laid-out file and the formatter
 
-### SC-AK-805 — файл с шапкой раскладки, видимый форматтеру, называется поимённо
+### SC-AK-805 — a file with the layout header visible to the formatter is named by name
 
-Дано файл с шапкой раскладки не попадает ни под один образец списка исключений форматтера
-Когда проверка зовётся
-Тогда она называет этот файл и отказывает
+Given a file with the layout header falls under no sample of the exception list of the formatter
+When the check is called
+Then it names that file and refuses
 
-Не покрыто: у проверок дерева в `tools/` тестов нет — принимаются они внесением нарушения
-руками. Проверено на месте: строка словаря вынута из списка исключений, проверка назвала этот
-файл и вернула код один; строка возвращена — проверка снова молчит.
+Not covered: the checks of the tree in `tools/` have no tests — they are accepted by introducing a
+breach by hand. Checked on the spot: the dictionary line was taken out of the exception list, the
+check named that file and returned code one; the line was returned — the check stays silent again.
 
-### SC-AK-806 — спрятанные от форматтера файлы проверку не роняют
+### SC-AK-806 — files hidden from the formatter do not take the check down
 
-Дано каждый файл с шапкой раскладки попадает под образец списка
-Когда проверка зовётся
-Тогда она печатает их число и молчит
+Given every file with the layout header falls under a sample of the list
+When the check is called
+Then it prints their number and stays silent
 
-Не покрыто: тем же приёмом, что и сценарий выше. Проверено на месте: на дереве этой ветки
-проверка нашла 190 файлов с шапкой раскладки и вернула ноль. До правки списка шесть из них
-форматтеру были видны — она назвала их поимённо.
+Not covered: by the same technique as the scenario above. Checked on the spot: on the tree of this
+branch the check found 190 files with the layout header and returned zero. Before the list was
+edited, six of them were visible to the formatter — it named them by name.
 
-### SC-AK-834 — файл в конфликте пропускается наравне со снятым
+### SC-AK-834 — a file in conflict is let through on a par with a removed one
 
-Дано разложенная копия несёт маркеры слияния
-Когда её правят — инструментом правки или командой оболочки
-Тогда гард места правки пропускает вызов, а со снятым конфликтом отбивает его прежним порядком:
-разрешение конфликта содержания копии не меняет, и раскладка кладёт её заново
+Given a laid-out copy carries merge markers
+When it is edited — by the edit tool or by a shell command
+Then the guard of the place of an edit lets the call through, and with the conflict removed it
+refuses it in the former order: resolving a conflict does not change the content of the copy, and the
+layout puts it anew
 
-Покрыто: `projects/agent-kit/tests/rule-source-guard.test.sh`.
+Covered: `projects/agent-kit/tests/rule-source-guard.test.sh`.
 
-### SC-AK-858 — тело интерпретатора без записи путей не отдаёт
+### SC-AK-858 — the body of an interpreter without a write gives out no paths
 
-Дано команда вызывает интерпретатор и подаёт ему тело, в котором разложенный файл только читается
-Когда гард проверяет команду
-Тогда правка проходит; тело с вызовом записи запрещается по-прежнему, в том числе когда путь стоит
-в нём строкой выше самой записи
+Given a command calls an interpreter and gives it a body in which a laid-out file is only read
+When the guard checks the command
+Then the edit passes; a body with a write call is forbidden as before, including where the path
+stands in it a line above the write itself
 
-Покрыто: `projects/agent-kit/tests/rule-source-guard.test.sh`.
+Covered: `projects/agent-kit/tests/rule-source-guard.test.sh`.
 
-### SC-AK-864 — целью записи считается адрес вызова, а не всякое слово с чертой
+### SC-AK-864 — the target of a write counts as the address of the call, not as every word with a slash
 
-Дано в теле, переданном интерпретатору, стоит адрес разложенной копии — но не целью записи, а
-образцом поиска или строкой сравнения, — и тело при этом пишет другой файл
-Когда команда идёт
-Тогда гард молчит: пути берутся со строк записи, а не со всего тела. Прежде правка одного файла
-запрещалась по имени другого, который сценарий даже не открывал, и отказ обходился сменой формы
-команды, а не сменой действия
+Given the body passed to the interpreter holds the address of a laid-out copy — but not as the target
+of a write, as a search sample or a comparison string — and the body writes another file at that
+When the command goes
+Then the guard stays silent: the paths are taken from the write lines, not from the whole body.
+Before, an edit of one file was forbidden by the name of another the script did not even open, and
+the refusal was bypassed by changing the shape of the command, not the action
 
-Дано адрес разложенной копии присвоен переменной, и она стоит первым доводом вызова записи
-Когда команда идёт
-Тогда гард отказывает: присвоение и вызов разбираются парой, иначе запись через переменную
-теряется
+Given the address of a laid-out copy is assigned to a variable, and it stands as the first argument
+of the write call
+When the command goes
+Then the guard refuses: the assignment and the call are taken apart as a pair, otherwise a write
+through a variable is lost
 
-Покрыто: `projects/agent-kit/tests/rule-source-guard.test.sh`.
+Covered: `projects/agent-kit/tests/rule-source-guard.test.sh`.
