@@ -5,92 +5,95 @@ law: frontend-application
 description: Rule under the frontend-application law. Load when editing the api layer of a frontend domain — the facade, the service and the mappers next to them. Names the facade-and-service pair, the single query input of a list and the shared page converter. Pattern api-layer-pair.
 ---
 
-# Обращение к серверу — как это устроено здесь
+# Server access — how it works here
 
-Правило под закон `docs/constitution/frontend-application.md`. Закон говорит, что должно быть
-верно; здесь — из чего сложен слой обращения к серверу. Состояние — `angular-patterns`, файл
-компонента — `component-structure`, стили — `styling-bem`, окружение браузера —
-`platform-access`. Все пять под одним законом.
+Rule under the law `docs/constitution/frontend-application.md`. The law says what must be true; here
+— what the server access layer is made of. State — `angular-patterns`, the component file —
+`component-structure`, styles — `styling-bem`, the browser environment — `platform-access`. All five
+under one law.
 
-Правило про обе фронтовые семьи: `libs/admin/*/api/**` и `libs/site/*/api/**`. На бэкенде слово
-`api` означает выход к чужому сервису и устроено иначе — там `typescript-conventions`.
+The rule is about both front-end families: `libs/admin/*/api/**` and `libs/site/*/api/**`. On the
+backend the word `api` means an exit to a foreign service and is arranged differently — there it is
+`typescript-conventions`.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе         | Здесь                                                                          |
-| ---------------- | ------------------------------------------------------------------------------ |
-| страница записей | `IPageModel` — `pageNumber`, `pageSize`, `totalCount`                          |
-| выборка списка   | `IList.Query.State` — страница, порядок, условия отбора, строка поиска         |
-| ответ списка     | `data`, `pageModel`, `sortModel`, `filterModel`, `searchTerm`                  |
-| путь запроса     | экран → стор → `<Сущность>ApiService` → `<Сущность>ApiFacade` → клиент Connect |
+| In the law      | Here                                                                         |
+| --------------- | ---------------------------------------------------------------------------- |
+| page of records | `IPageModel` — `pageNumber`, `pageSize`, `totalCount`                        |
+| list query      | `IList.Query.State` — page, order, filter conditions, search string          |
+| list response   | `data`, `pageModel`, `sortModel`, `filterModel`, `searchTerm`                |
+| request path    | screen → store → `<Entity>ApiService` → `<Entity>ApiFacade` → Connect client |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the first
+tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход похода домена за данными: пара классов, границы типов между ними и развилка между списком
-и одиночной записью.
+The flow of a domain fetching data: the pair of classes, the type boundaries between them and the
+fork between a list and a single record.
 
 ```mermaid
 flowchart TD
-    A[Домену нужны данные] --> B{Что за домен}
-    B -->|Своя сущность| C[Заводится своя пара: фасад и сервис]
-    B -->|Чужая сущность| D[Зовётся её пара, своя не заводится]
-    C --> E{Что читается}
-    E -->|Список| F[Один вход: выборка целиком]
-    E -->|Одна запись| G[Вход — её признак]
-    F --> H[Ответ кладётся в общий конвертер целиком]
-    H --> I[В ответе стоит применённая выборка, а не запрошенная]
-    G --> J[Фасад отдаёт контракт, сервис переводит в состояние домена]
+    A[A domain needs data] --> B{What kind of domain}
+    B -->|Its own entity| C[Its own pair is created: a facade and a service]
+    B -->|A foreign entity| D[Its pair is called, no own one is created]
+    C --> E{What is read}
+    E -->|A list| F[One input: the whole query]
+    E -->|One record| G[The input is its identifier]
+    F --> H[The response goes into the shared converter whole]
+    H --> I[The response holds the applied query, not the requested one]
+    G --> J[The facade returns the contract, the service translates into the domain state]
     I --> J
-    J --> K{Данные приходят разом}
-    K -->|Да| L[Пара отдаёт поток]
-    K -->|Нет, живой срез| M[Серверный стрим — объявленное исключение]
-    L --> N[Готово]
+    J --> K{The data arrives at once}
+    K -->|Yes| L[The pair returns a stream]
+    K -->|No, a live slice| M[A server stream — a declared exception]
+    L --> N[Done]
     M --> N
     D --> N
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Домен ходит за данными парой классов: фасад зовёт процедуру, сервис переводит модели.**
-  Один класс на оба дела означал бы, что подмена источника тянет за собой перевод.
-- **Фасад знает только контракт, сервис отдаёт только `State`.** Тип из контракта до стора и
-  шаблона не доходит.
-- **У списка один вход — выборка.** Объект, к которому привязан список, тип фида, состояние
-  подписки — такие же условия отбора, и лежат они в `filterModel`.
-- **Ответ списка ложится в общий конвертер целиком.** Контракт отдаёт страницу в той же форме,
-  что и модель, и промежуточного объекта в сервисе не остаётся.
-- **Поля порядка и отбора — перечисления домена, а не голая строка.** Голая строка означает,
-  что имя, по которому сервер не сортирует, компилируется и падает запросом.
-- **Пара отдаёт поток, а не ожидание.** Основа списочного стора работает потоками, и промисный
-  сервис в неё не ложится.
+- **A domain fetches data by a pair of classes: the facade calls the procedure, the service
+  translates the models.** One class for both jobs would mean that replacing the source drags the
+  translation along.
+- **The facade knows only the contract, the service returns only `State`.** A type from the contract
+  does not reach the store and the template.
+- **A list has one input — the query.** The object the list is bound to, the feed type, the
+  subscription state — those are filter conditions like any other, and they lie in `filterModel`.
+- **The list response goes into the shared converter whole.** The contract returns the page in the
+  same shape as the model, and no intermediate object remains in the service.
+- **Order and filter fields are domain enums, not a bare string.** A bare string means that a name
+  the server does not sort by compiles and fails as a request.
+- **The pair returns a stream, not a promise.** The base of the list store works with streams, and a
+  promise service does not fit into it.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Общей выборкой ходят только те списки, которым сервер отдаёт страницу — признак `page_model` в
-ответе процедуры. Заявки и объекты приходят целиком: процедуры со страницей у них пока нет, и
-это долги `Q-L-5` и `Q-L-7`, а не другая форма слоя.
+Only the lists the server returns a page for go by the shared query — the `page_model` sign in the
+procedure response. Requests and objects arrive whole: they have no procedure with a page yet, and
+those are debts `Q-L-5` and `Q-L-7`, not another shape of the layer.
 
-Сторы, которые ещё держат прежнюю сигнатуру, зовут поток через `firstValueFrom` и несут над
-классом комментарий с тем, когда мост уйдёт. Новый стор моста не заводит.
+Stores that still hold the previous signature call the stream through `firstValueFrom` and carry a
+comment above the class saying when the bridge goes away. A new store does not create a bridge.
 
-## Паттерны
+## Patterns
 
-- `api-layer-pair` — готовые фасад, сервис и перевод выборки.
+- `api-layer-pair` — a ready-made facade, service and query translation.
 
-## Ловушки
+## Pitfalls
 
-- **Выборка в ответе — применённая, а не запрошенная.** Порядок по умолчанию и отброшенное
-  сервером условие экран иначе не увидит.
-- **Одна пара — одна сущность.** У объекта, его прежних адресов и подписок на календари свои
-  пары, хотя процедуры лежат в одном proto-сервисе.
-- **Метод, которого у домена нет, не объявляется.** Список читают все, правят не все.
-- **Серверный стрим — исключение из правила про поток:** живой срез показателей и лента входящих
-  записей приходят асинхронным итератором, и заворачивать его некуда.
-- Своей копии общих мапперов страницы, порядка и отбора домен не заводит — второй экземпляр
-  ловит `npm run check:dupes`.
+- **The query in the response is the applied one, not the requested one.** Otherwise the screen will
+  not see the default order and a condition the server dropped.
+- **One pair — one entity.** An object, its previous addresses and its calendar subscriptions have
+  pairs of their own, although the procedures lie in one proto service.
+- **A method the domain does not have is not declared.** Everyone reads the list, not everyone
+  edits.
+- **A server stream is the exception to the rule about the stream:** the live slice of metrics and
+  the feed of incoming records arrive as an async iterator, and there is nothing to wrap it into.
+- A domain does not create its own copy of the shared page, order and filter mappers — the second
+  instance is caught by `npm run check:dupes`.

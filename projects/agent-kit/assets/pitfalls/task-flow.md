@@ -1,246 +1,262 @@
-# Ведение работы — холодная часть
+# Work conduct — cold part
 
-Ловушки и поведение по разборам происшествий. Грузится не вместе с правилом, а по требованию:
-при обычном решении она не нужна — она нужна тому, кто разбирает промах или спорит с гардом.
+Pitfalls and behaviour from incident analyses. Loaded not with the rule but on demand: an ordinary
+decision does not need it — it is for whoever investigates a miss or argues with a guard.
 
-Правило — `task-flow`; статьи, которыми держится закон, стоят там.
+The rule is `task-flow`; the articles that hold the law stand there.
 
-## Ловушки
+## Pitfalls
 
-- **Задача, отобранная в эпик по своему телу, бывает закрыта до начала работы.** Между заведением
-  задачи и её взятием проходят недели, и всё это время дерево правится соседними работами: у двух
-  задач одного эпика по три части из четырёх оказались сделанными — тело описывало дерево
-  месячной давности. Отбор поэтому начинается с чтения кода, а разбор просьбы называет, что из
-  тела задачи в дереве ещё верно.
+- **A task picked into an epic by its body can be closed before the work starts.** Weeks pass
+  between creating a task and taking it, and all that time the tree is edited by neighbouring work:
+  two tasks of one epic had three parts out of four already done — the body described the tree of a
+  month ago. So selection starts with reading the code, and the grill names what of the task body is
+  still true in the tree.
 
-- **Разрешение владельца, оставленное в репозитории, теряется на каждой новой ветке.** Оно
-  записано в файл ветки, а следующая ветка отводится от главной и его не несёт: гард запрещает
-  разрешённую работу столько раз, сколько веток заведут до слияния. Отказ называет файл и молчит
-  о том, что запись принадлежит ветке. Пока разрешение живёт в репозитории, номер дописывается в
-  каждую новую ветку.
-- **Имя чужого дерева в файлы репозитория не пишется, а путь к образцу — пишется.** Обе вещи
-  живут рядом с передачей захода именно поэтому: там законен полный путь, а в репозитории —
-  только ссылка без имени.
-- **Строка «Ждём владельца» в ходе работы живёт дольше причины, по которой её написали.** Она
-  лежит на диске, приходит в контекст следующим заходом и читается как действующее состояние —
-  поэтому снимается тем же ходом, которым владелец ответил. Иначе ожидание подтверждает себя
-  само: три указания владельца подряд не пересилили одной строки на диске.
+- **An owner's permission left in the repository is lost on every new branch.** It is written into a
+  file of the branch, and the next branch is taken from main and does not carry it: the guard
+  forbids the permitted work as many times as branches are created before the merge. The refusal
+  names the file and is silent about the record belonging to the branch. While the permission lives
+  in the repository, the number is appended in every new branch.
+- **The name of another tree is not written into repository files, but the path to a sample is.**
+  Both things live next to the session handover for exactly that reason: a full path is lawful
+  there, and in the repository — only a reference without the name.
+- **The line "Waiting for the owner" in the progress outlives the reason it was written for.** It
+  lies on disk, enters the context in the next session and reads as the current state — so it is
+  removed in the same turn in which the owner answered. Otherwise the wait confirms itself: three
+  owner's instructions in a row did not outweigh one line on disk.
 
-- **Папка называется именем ветки, один в один.** Хук запуска ищет её по
-  `git branch --show-current`, и папка, названная иначе, не находится ничем: работа идёт с
-  пустым контекстом, а владельца просят пересказать то, что уже записано.
-- **Разбор просьбы задним числом не переписывается.** Пересказ незаметно подгоняется под уже
-  сделанное, и сверять результат становится не с чем. Решение, изменённое по ходу, дописывается
-  в ход работы, а не правится в разборе.
-- **Договорённость о продукте не кладётся в папку задачи.** Папка умирает с мержем, а
-  договорённость обязана его пережить: её сценарии получают номера в общей нумерации домена,
-  и на них ссылаются заголовки тестов. Обратное тоже верно — ход работы не кладётся в
-  `proposed/`: спек, в котором завелись шаги, снова становится планом и умирает после мержа.
-- **У меню нет строки «вопрос не тот».** Меню годится там, где выбор закрыт; пока постановка
-  вопроса не подтверждена, владельцу нечем её отвергнуть — он выбирает из вариантов неверной
-  посылки. Если настройки требуют меню, к каждому вопросу добавляется свободный вариант. Три
-  вопроса ушли одним меню, у одного постановка была ложной: уместность вопроса сперва проверяют
-  по репликам владельца.
-- **Субагент вопросов владельцу не задаёт.** Ни роли, ни конвейер до него не достучатся —
-  они возвращают текст главному агенту. Поэтому разбор ведёт главный агент, а роли стоят по
-  обе стороны от него.
-- **Если дефект чинится правкой одного общего числа, спроси владельца, тем ли способом ты его
-  чинишь.** Замер показывает, что дефект ушёл, — но не то, что причину вылечили. В одной
-  задаче так ушли две правки подряд: сначала подняли общее число у соседнего узла, потом
-  перенесли узел в другое место разметки. Обе владелец отверг, а нужный способ назвал сам.
-  Спрашивают до правки, а не показывают замер после.
-- **Путь, предложенный человеку, судится числом его шагов и тем, чем ему для этого надо
-  владеть.** Со стороны кода вариант выглядит дешёвым — «меньше путей», «строку запуска не
-  трогаем», — а человеку он стоит захода на сервер: рекомендуемым так стояла выдача токена, за
-  которой владельцу надо было идти по ssh в работающий контейнер. Цена называется со стороны
-  того, кто пойдёт; пересказ порядка без неё владелец читает как одобрение.
-- **Эпик по теме читается до того, как решается раскладка.** Замысел эпика держит решения,
-  которые пережили десяток задач, и разведка по коду их не находит: снятое решение следа в
-  дереве не оставляет. Домен, заведённый генератором и снесённый через полчаса, стоял в замысле
-  прямым запретом — но замысел открыли уже после того, как он был заведён во второй раз.
-- **Работа, которая разбирает чужую папку задачи, разбирает и свою — одним коммитом.** Свою
-  папку она заводит наравне со всеми, и круг, которым исключение оправдывали, закрывается
-  порядком разбора: последний коммит снимает обе. Однажды такой разбор оставил свою папку, и на
-  неё пришлось заводить третью задачу. Как разобрать две папки — паттерн `task-flow-archive`.
-- **Слово для нового понятия берётся из `docs/GLOSSARY.md` или заводится там же.** Третий файл
-  папки задачи называется `progress.md`, а не `journal.md`, ровно поэтому: журнал в этом
-  дереве один, и он другой.
-- **Черновик папки задачи называется тем же коротким именем, что и будущая ветка.** Команда
-  заведения ищет черновик по нему и, не найдя, молча собирает папку с образца: работа при этом
-  идёт дальше, а разбор просьбы остаётся лежать в брошенном каталоге, и следующий заход
-  расспрашивает владельца заново. Имя черновику дают словами просьбы, а ветке — терминологией
-  договорённости; те же слова, да не те же.
+- **The folder is named after the branch, one to one.** The startup hook looks for it by `git branch
+  --show-current`, and a folder named otherwise is found by nothing: the work goes on with an empty
+  context, and the owner is asked to retell what is already written.
+- **The grill is not rewritten after the fact.** The retelling gets quietly fitted to what has
+  already been done, and there is nothing left to check the result against. A decision changed along
+  the way is appended to the progress, not edited in the grill.
+- **The product agreement is not placed in the task folder.** The folder dies with the merge, and
+  the agreement has to outlive it: its scenarios get numbers in the domain's shared numbering, and
+  test titles refer to them. The reverse holds too — the progress is not placed in `proposed/`: a
+  spec in which steps appeared becomes a plan again and dies after the merge.
+- **A menu has no line "wrong question".** A menu fits where the choice is closed; until the framing
+  of the question is confirmed, the owner has nothing to reject it with — they choose among the
+  options of a false premise. If the settings demand a menu, a free option is added to every
+  question. Three questions went out as one menu, one of them with a false framing: whether a
+  question fits is first checked against the owner's replies.
+- **A subagent asks the owner no questions.** Neither a role nor the pipeline reaches them — they
+  return text to the main agent. So the grill is led by the main agent, with the roles standing on
+  both sides of it.
+- **If a defect is fixed by editing one shared number, ask the owner whether you are fixing it the
+  right way.** A measurement shows the defect is gone — not that the cause was cured. In one task
+  two edits went this way in a row: first a shared number on a neighbouring node was raised, then
+  the node was moved to another place in the markup. The owner rejected both and named the needed
+  way himself. Ask before the edit, do not show the measurement after.
+- **A path offered to a person is judged by the number of their steps and by what they must have to
+  walk it.** From the code side an option looks cheap — "fewer paths", "the launch line is
+  untouched" — while for a person it costs a visit to the server: issuing a token stood as
+  recommended, and for it the owner would have had to go over ssh into a running container. The
+  price is named from the side of the one who will walk it; a retelling of the order without it the
+  owner reads as approval.
+- **The epic on the theme is read before the layout is decided.** The epic plan holds decisions that
+  survived a dozen tasks, and code exploration does not find them: a withdrawn decision leaves no
+  trace in the tree. A domain created by the generator and torn down half an hour later stood in the
+  plan as an explicit ban — but the plan was opened only after it had been created a second time.
+- **Work that takes apart someone else's task folder takes apart its own too — in one commit.** It
+  creates its own folder like everyone else, and the circle used to justify the exception is closed
+  by the order of the take-apart: the last commit removes both. Once such a take-apart left its own
+  folder, and a third task had to be created for it. How to take two folders apart — pattern
+  `task-flow-archive`.
+- **The word for a new notion is taken from `docs/GLOSSARY.md` or added there.** The third file of
+  the task folder is called `progress.md`, not `journal.md`, for exactly that reason: there is one
+  journal in this tree, and it is a different one.
+- **The task folder draft is named with the same short name as the future branch.** The creation
+  command looks for the draft by it and, not finding it, silently assembles the folder from the
+  template: the work goes on, while the grill stays lying in an abandoned directory, and the next
+  session questions the owner anew. The draft got its name from the words of the request, the branch
+  from the terminology of the agreement; the same words, yet not the same.
 
-- **Ожидание одной части этапа остановкой этапа не бывает.** Части, которые от ожидаемого не
-  зависят, делаются тем же ходом: сказать «стоит приёмка» и не тронуть остальное — это
-  остановка всей работы по причине, действующей на её десятую часть. Правило говорит про
-  задачу, и «стоит одна часть» прочитывается по нему как «стоит работа» — при пяти частях этапа
-  ждала одна.
+- **Waiting on one part of a stage is never a stop of the stage.** The parts that do not depend on
+  what is awaited are done in the same turn: to say "acceptance is pending" and touch nothing else
+  is a stop of the whole work for a reason that applies to a tenth of it. The rule speaks of the
+  task, and "one part is pending" is read by it as "the work is pending" — of five parts of a stage,
+  one was waiting.
 
-- **Строка с путём поручением не бывает.** Адрес называет файл, а не действие; прочитанный как
-  задание, он даёт заходу работу, которой владелец не просил. То же с любой репликой без
-  глагола: спросить, что с этим делать, дешевле, чем написать полсотни файлов мимо просьбы.
+- **A line with a path is never an assignment.** An address names a file, not an action; read as an
+  instruction, it gives the session work the owner did not ask for. The same with any line without a
+  verb: asking what to do with it is cheaper than writing fifty files past the request.
 
-- **Признак готовности этапа пишется о своей половине вывода, а не обо всём выводе.** Проверка
-  считает всё дерево, а этап правит его часть: «вывод без единой строки долга» не сходится не
-  потому, что этап не сделан, а потому, что три строки принадлежат невлитой соседней ветке.
-  Признак называет свои строки и своё число, а сказанное обо всём выводе держится до первого
-  соседа.
+- **A stage's readiness sign is written about its own half of the output, not about the whole
+  output.** The check counts the whole tree, and the stage edits a part of it: "output without a
+  single debt line" fails not because the stage is not done but because three lines belong to an
+  unmerged neighbouring branch. The sign names its own lines and its own number, and a statement
+  about the whole output holds until the first neighbour.
 
-- **Копия образца папки задачи несёт шапку раскладки, и первая же правка отбивается гардом.**
-  Копия под задачу выглядит разложенным файлом, и отказ называет адрес источника пакета — уводит
-  править образец вместо копии. Команда заведения задачи снимает шапку сама, копирование руками
-  — нет. Такая копия правится только записью заново.
-- **Имя проекта в признаке готовности этапа спрашивается у сборщика, а не пишется по памяти.**
-  На неизвестное имя сборщик отвечает «задач не запущено» и выходит нулём: команда признака не
-  прогнала ни одной пробы и промолчала так же, как зелёный прогон. Видно это только по числу
-  прогнанных задач, а его никто не читает.
+- **A copy of the task folder template carries the layout header, and the very first edit is refused
+  by the guard.** The copy for the task looks like a laid-out file, and the refusal names the
+  package source address — it leads to editing the template instead of the copy. The task creation
+  command strips the header itself; copying by hand does not. Such a copy is fixed only by writing
+  it anew.
+- **The project name in a stage's readiness sign is asked from the builder, not written from
+  memory.** To an unknown name the builder answers that nothing was run and exits zero: the sign's
+  command ran not a single test and kept silent exactly like a green run. This shows only by the
+  count of what was run, and nobody reads it.
 
-- **Этап, закрытый без пуша, гоняет проверки гейта своим последним движением.** Признак этапа
-  зовёт свои команды и общих не знает, а гейт краснеет только на отправке: ветка без пушей копит
-  красное до первой из них, и промах уезжает на два этапа от места, где его сделали.
+- **A stage closed without a push runs the gate checks as its last motion.** A stage's sign calls
+  its own commands and knows no shared ones, and the gate turns red only on the push: a branch
+  without pushes accumulates red until the first one, and the miss travels two stages away from
+  where it was made.
 
-- **У признака закрытия спрашивают, может ли исполнитель подтвердить его сам.** Признак,
-  требующий человека — пароля, кнопки в чужой панели, взгляда владельца, — останавливает работу
-  на последнем шаге: сделано всё, а сказать «закрыто» нечем. Спрашивается это при разборе
-  просьбы.
+- **A closing sign is asked whether the executor can confirm it alone.** A sign that requires a
+  person — a password, a button in someone else's panel, the owner's look — stops the work at the
+  last step: everything is done, and there is nothing to say "closed" with. This is asked during the
+  grill.
 
-- **Признак закрытия проверяет исход у той стороны, которая его хранит, а не ответ вызова.**
-  Вызов отвечает о себе: ушёл, принят, код нулевой — и всё это верно при том, что записанного
-  нет. Восемь задач подряд считали отметку работающей по ответу команды, а она не двигала
-  ничего.
+- **A closing sign checks the outcome at the side that stores it, not the answer of the call.** The
+  call answers about itself: sent, accepted, exit code zero — and all of that is true while nothing
+  is recorded. Eight tasks in a row counted the mark as working by the command's answer, and it
+  moved nothing.
 
-- **Своё временное кладётся вне дерева кода — иначе его снятие судится как правка приложения.**
-  Признак записи считает записью и удаление, и это в нём нарочно: снятое без замысла не
-  оставляет следа. Отличить свой временный каталог от каталога домена признаку нечем — путь у
-  обоих под тем же корнем, — и гард требует замысла за уборку черновика. Каталог называет
-  профиль дерева, и лежит он вне дерева кода.
+- **One's own temporary files go outside the code tree — otherwise their removal is judged as an
+  edit of the application.** The write sign counts a deletion as a write, and that is on purpose:
+  something removed without a plan leaves no trace. The sign has nothing to tell one's own temporary
+  directory from a domain directory — both paths sit under the same root — and the guard demands a
+  plan for cleaning up a draft. The directory is named by the tree's profile, and it lies outside
+  the code tree.
 
-- **Тело задачи, написанное вперёд замысла, называет способ, и способ стареет раньше дефекта.**
-  Задачу серии заводят за недели до взятия; к этому дню предложенный способ бывает уже неверен:
-  пакет уже умеет то, что задача звала написать, названного места в дереве нет. Работа поэтому
-  начинается с чтения файла, к которому задача относится, а не с исполнения её тела. Расхождение
-  меняет способ, но не цель.
+- **A task body written ahead of the plan names the method, and the method goes stale before the
+  defect.** A task of a series is created weeks before it is taken; by that day the proposed method
+  can already be wrong: the package already does what the task called to write, the named place in
+  the tree is gone. So work starts with reading the file the task refers to, not with executing its
+  body. A discrepancy changes the method, but not the goal.
 
-- **Работа, упершаяся в разрешение, доводится до конца без той части, которую разрешение
-  открывает.** Прогон и разбор кончатся сами, а отбитое разрешение не кончится никогда: ход,
-  объявивший ожидание, останавливает работу целиком. Делается всё, что от разрешения не зависит;
-  непройденное пишется в тело заявки, где его читает ревьювер.
+- **Work that ran into a permission is carried to the end without the part the permission opens.** A
+  run and a review end on their own, while a refused permission never ends: a turn that declared a
+  wait stops the work whole. Everything that does not depend on the permission is done; what was not
+  passed is written into the PR body, where the reviewer reads it.
 
-- **Слово владельца об устройстве — постановка, а не решение.** Названное им обычно уже живёт
-  в дереве под этим самым словом: у него есть имя на экране, раздел в спеке и поле в модели, и
-  сверка стоит одного поиска. Истолкованное по ближайшему коду, слово выглядит исполненной
-  просьбой ровно до приёмки: правка при этом влита, а владельцу вместо поля в приложении
-  досталась работа в чужой консоли. Разошлось прочтение с деревом — спрашивается владелец, и
-  спрашивается до правки.
+- **The owner's word about how something is arranged is a framing, not a decision.** What they named
+  usually already lives in the tree under that very word: it has a name on screen, a section in the
+  spec and a field in the model, and checking costs one search. Interpreted by the nearest code, the
+  word looks like a fulfilled request right up to acceptance: the edit is merged by then, and the
+  owner got work in someone else's console instead of a field in the application. Did the reading
+  diverge from the tree — the owner is asked, and asked before the edit.
 
-- **Указание работать по ходу — это указание делать его шаги, включая меняющие историю.**
-  Отметка этапа, отправка ветки и открытие заявки предписаны ходом, отдельного слова на каждый
-  не нужно. Общий запрет дерева на действие без просьбы, прочитанный буквально, даёт указание,
-  исполненное наполовину. Граница одна: прямое слово владельца о самом шаге — «ветку не
-  отправляй» действует, сколько бы раз ход её ни предписывал.
+- **An instruction to work by the flow is an instruction to do its steps, including those that
+  change history.** Marking a stage, pushing the branch and opening the PR are prescribed by the
+  flow; no separate word for each is needed. The tree's general ban on acting without a request,
+  read literally, yields an instruction carried out by half. There is one boundary: the owner's
+  direct word about the step itself — "do not push the branch" holds however many times the flow
+  prescribes it.
 
 
-- **Очередь работ эпиком не кончается.** Занятый другими исполнителями или законченный эпик
-  означает следующую задачу из очереди, а не остановку: «свободных задач эпика нет» ответом на
-  «чем заняться» не бывает, потому что отвечает на этот вопрос не эпик, а очередь. Спрашивается
-  она командой, а не вспоминается по передаче: утверждение переданного текста описывает то
-  дерево и тот день, в котором его писали.
-- **Шаг закрытия работы за взятие следующей задачи не считается.** Перевод закрываемой задачи в
-  колонку разбора и снятие её папки — обязательные шаги закрытия, и оба случаются тем же ходом,
-  которым открывается заявка. Ход, в котором больше ничего нет, работу не двигает, сколько бы
-  команд в нём ни стояло.
-- **Черновик папки без номера теряется молча.** Он лежит вне истории, и его не видят ни борда,
-  ни сверка очереди, ни следующий заход. Порог брошенного разбора эту потерю не ловит: работа
-  проигрывает соседним поручениям в тот же час, а неделя проходит потом.
-- **Стопка веток стоит дороже, и цена у неё названная.** Заявка в соседнюю ветку не запускает
-  конвейер, объявленный на базу главной; слияние базовой ветки закрывает заявку следующей как
-  слитую, хотя её правок в главной нет; конфликт от чужого слияния разрешается в каждой ветке
-  стопки заново. Расстановка, выбранная молча, собирает всю цену и не показывает ни одной её
-  части. Задачи, идущие одна из другой по коду, законно живут ветками от главной, пока правка
-  следующей не опирается на код предыдущей.
+- **The work queue does not end with the epic.** An epic occupied by other executors or finished
+  means the next task from the queue, not a stop: "no free tasks in the epic" is never an answer to
+  "what to do", because it is the queue that answers that question, not the epic. It is asked by the
+  command, not recalled from the handover: a statement in the handed-over text describes the tree
+  and the day it was written in.
+- **A closing step of the work does not count as taking the next task.** Moving the task being
+  closed to the review column and removing its folder are mandatory closing steps, and both happen
+  in the same turn that opens the PR. A turn with nothing else in it does not move the work, however
+  many commands it holds.
+- **A folder draft without a number is lost silently.** It lies outside history, and neither the
+  board, nor the work queue audit, nor the next session sees it. The abandoned-grill threshold does
+  not catch this loss: the work loses to neighbouring assignments within the hour, and the week
+  passes afterwards.
+- **A stack of branches costs more, and its price is named.** A PR into a neighbouring branch does
+  not start the pipeline declared for the main base; merging the base branch closes the next PR as
+  merged although its edits are not in main; a conflict from someone else's merge is resolved anew
+  in every branch of the stack. An arrangement chosen silently collects the whole price and shows
+  none of its parts. Tasks that follow one another in code lawfully live as branches from main, as
+  long as the next edit does not rest on the code of the previous one.
 
-- **Находка посреди этапа ощущается частью текущей работы, когда предмет соседний.** Своего
-  признака у этого нет: до первой правки находки в дереве нет, а после неё файлы соседней работы
-  от файлов своей не отличаются. Поэтому сверяется перечень условий выхода замысла, а не ощущение.
-  Однажды такую правку остановил посторонний отказ по роду файла, а не сверка с замыслом: без него
-  она уехала бы в чужую ветку, и раздельного отката у двух работ не было бы.
+- **A find in the middle of a stage feels like part of the current work when the subject is
+  adjacent.** It has no sign of its own: before the first edit the find is not in the tree, and
+  after it the files of neighbouring work do not differ from one's own. So the plan's list of exit
+  conditions is checked, not the feeling. Once such an edit was stopped by an unrelated refusal by
+  file kind, not by a check against the plan: without it, it would have gone into someone else's
+  branch, and the two pieces of work would have had no separate rollback.
 
-## Поведение исполнителя — по разборам происшествий
+## Executor behaviour — from incident analyses
 
-Переезжает из правила следующей задачей эпика.
+Moves out of the rule in the next task of the epic.
 
-## Что стояло в статьях
+## What stood in the articles
 
-Случаи и числа, стоявшие прежде при статьях правила. Решения по правке на них не стоят: они
-нужны тому, кто разбирает промах или спорит с гардом.
-- **Папка задачи под любую работу.** Прежде правило судило по числу заходов: работа в один
-  коммит помещалась в тело PR и папки не заводила. За один заход это исключение дважды стало
-  поводом обойти отказ гарда вместо того, чтобы завести папку и пойти дальше.
-- **Разбор папки до открытия PR.** Прежде уборка стояла после одобрения. Трижды подряд папка
-  уехала в главную ветку неразобранной, и разобрать её было уже некому: работа перешла к
-  следующей задаче, а PR закрылся.
-- **Шапка раскладки в копии образца.** Оставленная в копии, она отбивает первую же правку
-  разбора просьбы, а отказ уводит править образец пакета вместо копии под задачу.
-- **Расхождение, не найденное чтением образца целиком, находит владелец** — на приёмке всей
-  работой, а не отдельной правкой.
-- **Папка, уехавшая в главную ветку.** Три раза подряд папка закрытой задачи так и уехала
-  неразобранной, в последний раз их набралось пять.
-- **Этап, вставший из-за одной своей части.** Этап состоял из пяти частей, одна ждала поднятых
-  владельцем серверов — встали все пять. Остальные четыре от ожидаемого не зависели ничем.
+Cases and numbers that used to stand next to the rule's articles. No edit decision rests on them:
+they are for whoever investigates a miss or argues with a guard.
+- **A task folder for any work.** Before, the rule judged by the number of sessions: work fitting in
+  one commit went into the PR body and created no folder. In one session that exception twice became
+  a reason to bypass a guard's refusal instead of creating the folder and moving on.
+- **Taking the folder apart before opening the PR.** Before, the cleanup stood after approval. Three
+  times in a row the folder went into the main branch untouched, and there was nobody left to take
+  it apart: the work had moved to the next task, and the PR was closed.
+- **The layout header in a copy of the template.** Left in the copy, it refuses the very first edit
+  of the grill, and the refusal leads to editing the package template instead of the copy for the
+  task.
+- **A discrepancy not found by reading the template whole is found by the owner** — at acceptance of
+  the whole work, not of a single edit.
+- **A folder that went into the main branch.** Three times in a row the folder of a closed task went
+  there not taken apart; the last time there were five of them.
+- **A stage stalled because of one of its parts.** The stage had five parts, one waited for servers
+  the owner had to raise — all five stalled. The other four did not depend on the awaited thing at
+  all.
 
-- **Замысел эпика, положенный каждым заходом заново, теряет решения предыдущих.** Имя, адрес и
-  способ, названные владельцем по ходу, живут там же, где состав и порядок задач.
-- **Чтение обхода из самой команды работает и без сети.** Строка `Task-folder-skip:` читается и
-  из тела заявки, и из текста вызова: второй путь остаётся, когда хостинг недоступен.
-- **Черновик без номера — единственная папка, которой в истории нет.** Заводить её туда нечего,
-  пока нет имени.
-- **На борде эпик из десяти задач выглядит одной.** Заведённые по одной, они прячут объём:
-  владелец видит карточку, а не десять.
-- **Разбор закрытой работы ведёт роль разбора закрытой задачи.** Дерево, её не разложившее,
-  ведёт разбор само.
-- **Перечень состояний нужен владельцу в начале работы.** Без него после шести вопросов не видно
-  ни того, что будет дальше, ни сколько всего впереди.
-- **Хвост отданной работы — четыре шага:** открыть заявку, дождаться прогона, снять черновик,
-  попросить влить. Состояния на диске у них уже нет.
-- **Разбор из одной строки проходит гард так же, как разбор на сто.** Образец разбора
-  перечисляет шесть обязательных вопросов таблицей, и пустая таблица проходит наравне с
-  заполненной.
-- **Отказ гарда разговора исполняется задним числом.** Владелец видит незаданный вопрос вместе с
-  отбитым ходом: прозаический вопрос — не вызов инструмента, и раньше поймать его нечем. Гард
-  отмечает пропуск, но не отменяет его.
-- **Обход требования папки нужен там, где работа вливается частями.** Тогда её до конца не
-  разбирают, а причина остаётся в заявке.
-- **Строка состояния точнее всякого обещания.** Её видно в файле, её читает страж, за ней стоит
-  перечень с обязательным действием — и потому переведённая вперёд она не выдаёт себя ничем.
-- **Ход работы, живущий в рабочем дереве, не виден никому.** Владелец видит ветку без единого
-  следа того, что в ней делается, а следующий заход находит пустоту вместо «Где стоим». Это
-  второе следствие незакоммиченной папки, и оно тише первого: отказа не приходит вовсе.
-- **Шапка раскладки, оставленная в копии образца, отбивает первую же правку разбора просьбы.**
-  Отказ при этом уводит править образец пакета вместо копии под задачу.
-- **Правка по замечаниям идёт без замысла на диске.** Папка разобрана коммитом ветки раньше
-  открытия заявки, и состояния у работы с этой минуты нет: судит её история ветки.
-- **Граница состояния выглядит законченным куском лучше всякой вехи.** Отчёт о взятой задаче
-  владельцу неотличим от остановки: номер, ветка и колонка названы, и всё названное правда.
-- **Заявка на чужом языке.** В дереве, где заявки пишутся на другом языке, чужой заголовок
-  дважды уехал на хостинг, и оба раза до него добрались глазами.
-- **Вопрос, утонувший в отчёте.** Владелец трижды переспрашивал, почему работа стоит.
-- **Чужой эпик в списке очереди.** Дважды подряд следующей брали первую задачу чужого эпика:
-  по списку она выглядит своей.
+- **An epic plan written anew by each session loses the decisions of the previous ones.** The name,
+  the address and the method named by the owner along the way live in the same place as the set and
+  order of tasks.
+- **Reading the skip from the command itself works without the network too.** The
+  `Task-folder-skip:` line is read both from the PR body and from the call text: the second road
+  remains when the hosting is unreachable.
+- **A draft without a number is the only folder absent from history.** There is nothing to put there
+  until there is a name.
+- **On the board an epic of ten tasks looks like one.** Created one by one, they hide the volume:
+  the owner sees a card, not ten.
+- **The review of closed work is led by the closed-task review role.** A tree that has not laid it
+  out leads the review itself.
+- **The owner needs the list of states at the start of the work.** Without it, after six questions
+  neither what comes next nor how much lies ahead is visible.
+- **The tail of handed-over work is four steps:** open the PR, wait for the run, lift the draft, ask
+  for a merge. They have no state on disk any more.
+- **A one-line grill passes the guard the same as a hundred-line one.** The grill template lists the
+  six mandatory questions as a table, and an empty table passes on a par with a filled one.
+- **The conversation guard's refusal is carried out after the fact.** The owner sees the unasked
+  question together with the refused turn: a prose question is not a tool call, and there is nothing
+  to catch it earlier. The guard marks the miss but does not undo it.
+- **The folder requirement skip is needed where the work merges in parts.** Then it is not taken
+  apart until the end, and the reason stays in the PR.
+- **The state line is more precise than any promise.** It is visible in the file, the guard reads
+  it, behind it stands a list with a mandatory action — which is why, moved ahead, it gives itself
+  away by nothing.
+- **Progress living in the working tree is visible to nobody.** The owner sees a branch without a
+  single trace of what is done in it, and the next session finds emptiness instead of "Where we
+  stand". This is the second consequence of an uncommitted folder, and it is quieter than the first:
+  no refusal comes at all.
+- **The layout header left in a copy of the template refuses the very first edit of the grill.** The
+  refusal then leads to editing the package template instead of the copy for the task.
+- **Edits after review remarks go without a plan on disk.** The folder is taken apart by a commit of
+  the branch before the PR opens, and from that minute the work has no state: the branch history
+  judges it.
+- **A state boundary looks like a finished piece better than any milestone.** A reply to the owner
+  about a taken task is indistinguishable from a stop: the number, the branch and the column are
+  named, and everything named is true.
+- **A PR in the wrong language.** In a tree where PRs are written in another language, a foreign
+  title went to the hosting twice, and both times it was caught by eye.
+- **A question drowned in the reply.** The owner asked three times why the work was standing.
+- **Someone else's epic in the queue list.** Twice in a row the first task of someone else's epic
+  was taken next: in the list it looks like one's own.
 
-- **Некоммиченная папка задачи отказывает там, где чинить уже нечего.** Гард спрашивает её с
-  диска, поэтому все правки проходят без отказа, а признак отданной работы берётся из истории
-  ветки. Отказ приходит на открытии заявки — когда папка разобрана своими руками: замысел снят,
-  и собирать его приходится по памяти. Владелец при этом всю работу видит ветку без следа того,
-  что в ней делается.
-- **Прогон, поставленный первым шагом закрытия, съедает окно захода.** Он стоит дороже всех
-  остальных шагов вместе: потративший его упирался в порог заполнения на четырёх строках
-  привязки — на работе, которая шла бы минуту, будь она первой.
-- **Разрешение работать вне назначенного эпика принадлежит рабочему дереву, а не ветке.**
-  Записанное в файл репозитория, оно уезжает вместе с веткой: из соседней его не видно, и гард
-  эпика отбивает ровно ту работу, которую владелец разрешил. Место ему рядом с передачей захода.
-  Перечень заполняет исполнитель, а разрешает владелец: номер, вписанный себе, — не разрешение.
-- **Задача, вынесенная в другой эпик, снимается из состава прежнего тем же ходом.** Вынос — два
-  движения, и сделанное наполовину оставляет задачу в двух составах сразу: эпик выглядит
-  незакрытым при всех сделанных работах. Итог вписывается там же, где правится состав:
-  отложенный, он пишется по памяти о том, сколько задач было, а не сколько осталось.
+- **An uncommitted task folder refuses where there is nothing left to fix.** The guard asks for it
+  from disk, so every edit passes without refusal, and the sign of handed-over work is taken from
+  the branch history. The refusal comes at opening the PR — when the folder has been taken apart by
+  hand: the plan is gone, and it has to be assembled from memory. All that while the owner sees a
+  branch without a trace of what is done in it.
+- **A run placed as the first closing step eats the session window.** It costs more than all the
+  other steps together: the one who spent it hit the fill threshold on four binding lines — on work
+  that would have taken a minute had it come first.
+- **Permission to work outside the assigned epic belongs to the working tree, not to the branch.**
+  Written into a repository file, it leaves with the branch: from a neighbouring one it is
+  invisible, and the epic guard refuses exactly the work the owner permitted. Its place is next to
+  the session handover. The list is filled by the executor and permitted by the owner: a number
+  written in by oneself is not a permission.
+- **A task moved to another epic is removed from the previous one's set in the same turn.** The move
+  is two motions, and done by half it leaves the task in two sets at once: the epic looks unclosed
+  with all its work done. The total is written where the set is edited: postponed, it is written
+  from memory of how many tasks there were, not how many remain.

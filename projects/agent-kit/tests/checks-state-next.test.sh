@@ -163,7 +163,7 @@ rm -rf "$GATE_TREE"
 # SC-AK-452 — правило, карта и закон пакета говорят о границе одними словами: признак, который
 # проверка ищет, живёт в самих ресурсах, и разойдясь с ними, она перестаёт что-либо значить.
 report "SC-AK-452 — правило пакета говорит о границе" \
-    "$(grep -c 'Переход из состояния в состояние' "$ASSETS/rules/turn-conduct.md")" 1
+    "$(grep -cE 'A transition from state to state|Переход из состояния в состояние' "$ASSETS/rules/turn-conduct.md")" 1
 report "SC-AK-454 — карта пакета говорит о границе" \
     "$(grep -c 'A transition from state to state' "$ASSETS/defaults/turn-map.md")" 1
 report "SC-AK-455 — закон пакета говорит о границе" \

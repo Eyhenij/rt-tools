@@ -5,95 +5,95 @@ law: navigation
 description: Rule under the navigation law. Load when editing the menu declaration, libs/admin/common/container/**, apps/admin/src/app/app.routes.ts and any libs/admin/**/*.routes.ts. Names the menu declaration, panel columns and groups, gating and address nesting. Ready-made code is in pattern admin-nav-item.
 ---
 
-# Навигация админки — как это устроено здесь
+# Admin navigation — how it works here
 
-Правило под закон `docs/constitution/navigation.md`. Закон говорит, как пользователь
-находит раздел и попадает в него; здесь — из чего меню собрано в этом дереве и как
-выглядит. Про вид говорит правило: закон о нём молчит намеренно.
+Rule under the law `docs/constitution/navigation.md`. The law says how the user finds a section and
+gets into it; here — what the menu is assembled from in this tree and how it looks. The look is
+spoken of by the rule: the law is silent about it on purpose.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                 | Здесь                                                                   |
-| ------------------------ | ----------------------------------------------------------------------- |
-| пункт меню               | запись в декларации `admin-nav.items.ts`                                |
-| раздел с панелью         | пункт с колонками; своего адреса не имеет                               |
-| панель второго уровня    | попап `rt-page-header` из пакета кита, разложенный колонками и группами |
-| признак непросмотренного | точка, приходит предикатом по идентификатору пункта                     |
-| флаг «экрана ещё нет»    | `disabled` в декларации                                                 |
+| In the law               | Here                                                                            |
+| ------------------------ | ------------------------------------------------------------------------------- |
+| menu item                | an entry in the `admin-nav.items.ts` declaration                                |
+| section with a panel     | an item with columns; has no address of its own                                 |
+| second-level panel       | the `rt-page-header` popup from the kit package, laid out in columns and groups |
+| unread sign              | a dot, comes as a predicate by the item id                                      |
+| the "no screen yet" flag | `disabled` in the declaration                                                   |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the first
+tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход заведения раздела: одна декларация на пункт и маршрут, два слоя гейтинга и путь данных в
-шапку.
+The flow of creating a section: one declaration per item and route, two layers of gating and the
+data path into the header.
 
 ```mermaid
 flowchart TD
-    A[Заводится раздел] --> B[Пункт объявляется один раз: он же источник меню и гейтинга маршрутов]
-    B --> C{Раздел чем закрыт}
-    C -->|Правом пользователя| D[Право стоит в декларации пункта]
-    C -->|Флагом раздела| E[Пункт объявляется без своего экрана, с подсказкой почему]
-    C -->|Ничем| F[Пункт открыт всем, кто вошёл]
-    D --> G[Маршрут закрывается тем же объявлением, а не своим списком]
+    A[A section is created] --> B[The item is declared once: it is the source of both the menu and route gating]
+    B --> C{What closes the section}
+    C -->|A user right| D[The right stands in the item declaration]
+    C -->|A section flag| E[The item is declared without a screen of its own, with a hint why]
+    C -->|Nothing| F[The item is open to everyone signed in]
+    D --> G[The route is closed by the same declaration, not by a list of its own]
     E --> G
     F --> G
-    G --> H{Шапке нужны данные домена}
-    H -->|Да| I[Приходят токеном: декларация не импортирует оболочку приложения]
-    H -->|Нет| J[Готово]
+    G --> H{The header needs domain data}
+    H -->|Yes| I[It comes by a token: the declaration does not import the application shell]
+    H -->|No| J[Done]
     I --> J
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Пункт объявляется один раз и служит источником и меню, и гейтинга маршрутов.** Второе
-  объявление рядом с маршрутами разошлось бы с первым, и получилось бы «пункта не видно, а
-  страница открывается».
-- **Декларация не импортирует ни один `shell`.** Иначе граф `shell → container/feature → shell`
-  замкнётся и проверка раскладки встанет.
-- **Гейтинг двухслойный: право пользователя и флаг раздела.** Пункт с флагом объявляется без
-  прав и без адреса — право открывает экран, а экрана нет; виден он при этом всем.
-- **Данные домена приходят в шапку токеном, а не импортом.** Интерфейс и `InjectionToken` живут
-  в `container/util`, связывает их с реализацией композиционный корень.
+- **An item is declared once and serves as the source of both the menu and route gating.** A second
+  declaration next to the routes would drift from the first, and the result would be "the item is
+  not visible, but the page opens".
+- **The declaration imports no `shell`.** Otherwise the graph `shell → container/feature → shell`
+  closes into a cycle and the layout check stops.
+- **Gating has two layers: the user right and the section flag.** An item with a flag is declared
+  without rights and without an address — a right opens the screen, and there is no screen; it is
+  visible to everyone all the while.
+- **Domain data comes into the header by a token, not by an import.** The interface and the
+  `InjectionToken` live in `container/util`; the composition root ties them to the implementation.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-В меню стоят семнадцать пунктов второго уровня и раздел «Финансы», у которых экрана пока нет:
-они выкачены недоступными, потому что исчезнувший пункт неотличим от того, которого никогда
-не было.
+The menu holds seventeen second-level items and the "Finance" section that have no screen yet: they
+are rolled out as unavailable, because a vanished item cannot be told from one that never existed.
 
-Отрисовка самой шапки живёт в `rt-page-header` из `@rt-tools/ui-kit-v2`. Проект её не пишет и
-не может нарушить: он объявляет пункты, а рисует их кит. Китом заданы:
+The rendering of the header itself lives in `rt-page-header` from `@rt-tools/ui-kit-v2`. The project
+does not write it and cannot break it: it declares the items, and the kit draws them. The kit sets:
 
-- подсказка у недоступного пункта и `aria-disabled` вместо нативного `disabled`;
-- подсветка раздела по префиксу адреса;
-- открытие панели второго уровня наведением, а на касании — нажатием;
-- раскладка панели колонками, внутри колонки — группами с подписью; если первая группа в
-  колонке без заголовка, её пункты начинаются от верха панели;
-- ширина панели по числу колонок, а не по длине подписей, и её помещаемость от своего
-  раздела до правого края экрана;
-- указатель раскрытия у раздела с панелью и его отсутствие у раздела без неё;
-- отдельная мобильная раскладка: меню сворачивается в кнопку, раскрывается теми же разделами
-  и группами и прокручивается, когда пункты не помещаются по высоте.
+- the hint on an unavailable item and `aria-disabled` instead of the native `disabled`;
+- section highlighting by address prefix;
+- opening the second-level panel on hover, and on touch — by a tap;
+- the panel layout in columns, inside a column — in groups with a caption; if the first group in a
+  column has no heading, its items start from the top of the panel;
+- the panel width by the number of columns, not by the length of captions, and its fit from its own
+  section to the right edge of the screen;
+- the expand pointer on a section with a panel and its absence on a section without one;
+- a separate mobile layout: the menu collapses into a button, expands with the same sections and
+  groups and scrolls when the items do not fit in height.
 
-Ничего из этого правило к коду проекта не привязывает: привязывать нечего.
+None of this the rule binds to project code: there is nothing to bind.
 
-## Паттерны
+## Patterns
 
-- `admin-nav-item` — завести пункт меню и его маршрут: декларация, права, флаг, вложение
-  адреса, подпись во всех локалях.
+- `admin-nav-item` — create a menu item and its route: the declaration, rights, the flag, address
+  nesting, the caption in all locales.
 
-## Ловушки
+## Pitfalls
 
-- Обработчика нажатия у недоступного пункта нет вовсе: `aria-disabled` нажатие не отбивает.
-- Ветка, куда забыли подмешать константу ro-маршрута, отличается только тем, что кнопка в
-  шапке на ней ничего не открывает.
-- Группы внутри раскрытого раздела на узком экране отдельно не сворачиваются, поэтому в
-  множестве раскрытых лежат только идентификаторы разделов.
-- Ширина панели считается числом колонок, а не содержимым; числа задаются токенами `--rt-*`,
-  сырые значения запрещены правилом стилей.
-- Переезд адреса трогает ссылки и спеки e2e — они ходят по адресам.
+- An unavailable item has no click handler at all: `aria-disabled` does not refuse a click.
+- A branch where the ro-route constant was not merged in differs only in that the button in the
+  header opens nothing on it.
+- Groups inside an expanded section on a narrow screen do not collapse separately, so the set of
+  expanded ones holds only section ids.
+- The panel width is computed by the number of columns, not by the content; the numbers are set by
+  `--rt-*` tokens, raw values are forbidden by the styling rule.
+- An address move touches links and the e2e specs — they walk by addresses.

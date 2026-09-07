@@ -4,295 +4,307 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing specs, laws and any skill. Names the three layers — law, rule, pattern — the mandatory sections, the binding to code and the link between scenarios and tests. Patterns spec-driven-domain, spec-driven-rule.
 ---
-<!-- rt-kit v0.25.0 · rules/spec-driven.md · e048ac146232 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/spec-driven.md · d24f7f6d8e0f · правится надстройкой, не здесь -->
 
-# Документация проекта — как это устроено здесь
+# Project documentation — how it works here
 
-Правило под закон `docs/constitution/project-documentation.md`. Закон говорит, что должно
-быть верно про тексты; здесь — из каких слоёв они сложены в этом дереве и что сверяет машина.
-Формулировки — правило `doc-style` под тем же законом.
+Rule under the law `docs/constitution/project-documentation.md`. The law says what must be true
+about texts; here — which layers they are built from in this tree and what the machine checks.
+Wording is the rule `doc-style` under the same law.
 
-**Холодная часть:** `pitfalls.md` рядом — ловушки, грабли, на которые уже наступали.
-Грузится по требованию, а не вместе с правилом.
+**Cold part:** `pitfalls.md` next to it — traps already stepped on. Loaded on demand, not together
+with the rule.
 
-## Как это называется здесь
+## What it is called here
 
 ```
-ЗАКОН      docs/constitution/<закон>.md              — верен для любого приложения этого класса
-           docs/constitution/application/<закон>.md  — закон приложения: деньги, локали, доступ
-           о проекте не знает ничего: ни путей, ни имён файлов, ни привязок
+LAW        docs/constitution/<law>.md              — true for any application of this class
+           docs/constitution/application/<law>.md  — an application law: payments, locales, access
+           knows nothing of the project: no paths, no file names, no bindings
 
-  ├─ ПРАВИЛО    .claude/skills/<правило>/SKILL.md   (kind: rule, law: <закон>)
-  │             привязывает закон к этому проекту; несколько правил на закон
-  │             .claude/skills/<правило>/implementation.md — привязка к коду
-  │             .claude/skills/<правило>/pitfalls.md — холодная часть: грузится по требованию
+  ├─ RULE       .claude/skills/<rule>/SKILL.md   (kind: rule, law: <law>)
+  │             binds the law to this project; several rules per law
+  │             .claude/skills/<rule>/implementation.md — binding to code
+  │             .claude/skills/<rule>/pitfalls.md — cold part: loaded on demand
   │
-  │  └─ ПАТТЕРН  .claude/skills/<правило>-<что>/SKILL.md   (kind: pattern, rule: <правило>)
-  │              готовый код и конкретные приёмы; минимум один на правило
+  │  └─ PATTERN  .claude/skills/<rule>-<what>/SKILL.md   (kind: pattern, rule: <rule>)
+  │              ready-made code and concrete techniques; at least one per rule
   │
-  └─ СПЕК ДОМЕНА  docs/specs/<домен>/
-                  как работает домен; объявляет законы, которые применяет
+  └─ DOMAIN SPEC  docs/specs/<domain>/
+                  how the domain works; declares the laws it applies
 
-СКИЛ БЕЗ ЗАКОНА  .claude/skills/<имя>/SKILL.md   (ни kind: rule, ни kind: pattern)
-                 стоит рядом с лестницей, а не в ней: он не про то, что должно быть
-                 верно в продукте, а про то, как здесь делается работа
+SKILL WITHOUT A LAW  .claude/skills/<name>/SKILL.md   (neither kind: rule nor kind: pattern)
+                     stands next to the ladder, not in it: not about what must be true
+                     in the product, but about how work is done here
 ```
 
-Ссылки идут только снизу вверх: закон не ссылается ни на правило, ни на спек, ни на файл.
+Links go only upward: a law refers neither to a rule, nor to a spec, nor to a file.
 
-Скил без закона — третий случай, и он законный. Витрина, генератор, работа с чужим сервисом,
-заведение самого скила: над таким нет утверждения о продукте, а значит нет и закона. Выдумывать
-ему закон, чтобы уложить в лестницу, нельзя — закон, у которого одно правило и ни одной статьи о
-продукте, разъезжается с остальными при первой же правке. Как такой скил заводится — скил
-`write-a-skill`.
+A skill without a law is the third case, and it is legitimate. The showcase, a generator, work with
+a third-party service, creating the skill itself: there is no statement about the product above such
+a thing, so there is no law either. Inventing a law for it to fit the ladder is not allowed — a law
+with one rule and not a single article about the product drifts from the rest at the first edit. How
+such a skill is created — skill `write-a-skill`.
 
-| В законе                        | Здесь                                                                                                |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| набор разделов                  | `REQUIRED_HEADINGS` для спека, «Статьи» для закона                                                   |
-| утверждение документа           | пункт `## Правила` в спеке, `## Статьи` в законе, `## Как закон применяется здесь` в правиле         |
-| место, где оно исполняется      | строка в `implementation.md` рядом: `` `файл:символ` ``                                              |
-| обещанное поведение             | сценарий `SC-<ПРЕФИКС>-<НОМЕР>` в `docs/specs/<домен>/scenarios.md`                                  |
-| открытый вопрос                 | `Q-<буква закона>-<номер>` в разделе «Открытые вопросы» закона; на него ссылаются из задачи и коммитов, номер после закрытия не переиспользуется |
-| законы, которые применяет домен | строка `**Законы:**` в шапке спека, именами в кавычках                                               |
+| In the law                        | Here                                                                                                 |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| set of sections                   | `REQUIRED_HEADINGS` for a spec, "Articles" for a law                                                 |
+| a statement of a document         | an item of `## Правила` in a spec, `## Статьи` in a law, `## Как закон применяется здесь` in a rule |
+| the place where it is carried out | a line in `implementation.md` next to it: `` `file:symbol` ``                                       |
+| promised behaviour                | scenario `SC-<PREFIX>-<NUMBER>` in `docs/specs/<domain>/scenarios.md`                                |
+| open question                     | `Q-<law letter>-<number>` in the law's "Open questions" section; tasks and commits refer to it, and the number is not reused after closing |
+| laws a domain applies             | the `**Законы:**` line in the spec header, names in quotes                                           |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the first
+tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход заведения текста: какой слой пишется, чем утверждение привязывается к коду и что происходит
-со сценарием после выкатки.
+The flow of creating a text: which layer is written, how a statement is bound to code and what
+happens to a scenario after the rollout.
 
 ```mermaid
 flowchart TD
-    A[Пишется текст о продукте или о работе] --> B{О чём он}
-    B -->|Что должно быть верно, без имён| C[Закон: обязателен раздел статей, путей в нём нет]
-    B -->|Каким приёмом это держится здесь| D[Правило: объявляет свой закон, имена — в компаньоне рядом]
-    B -->|Готовый код и приём| E[Паттерн: объявляет своё правило]
-    B -->|Как работает домен| F[Спек домена: объявляет законы, которые применяет]
-    D --> G{У утверждения есть место в коде}
+    A[A text about the product or the work is written] --> B{What it is about}
+    B -->|What must be true, without names| C[Law: the articles section is mandatory, no paths in it]
+    B -->|By which technique it is kept here| D[Rule: declares its law, names in the companion next to it]
+    B -->|Ready-made code and technique| E[Pattern: declares its rule]
+    B -->|How a domain works| F[Domain spec: declares the laws it applies]
+    D --> G{The statement has a place in code}
     F --> G
-    G -->|Да| H[Ставится строка привязки; связь сверяется в обе стороны]
-    G -->|Нет| I[Это намерение: уходит в открытые вопросы, а не в правила]
-    H --> J{Заводится сценарий}
-    J -->|Да| K[Номер выдаётся новый и повторно не используется; заголовок теста правится тем же изменением]
-    J -->|Нет| L[Готово]
+    G -->|Yes| H[A binding line is placed; the link is checked both ways]
+    G -->|No| I[It is an intention: goes to open questions, not to rules]
+    H --> J{A scenario is created}
+    J -->|Yes| K[The number is issued new and never reused; the test title is edited by the same change]
+    J -->|No| L[Done]
     C --> L
     E --> L
     K --> L
     I --> L
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Набор разделов спека задан заранее, и отсутствие раздела — отказ.** «Не применимо» —
-  законный ответ, отсутствие раздела — нет: сквозные требования вспоминаются постфактум
-  именно тогда, когда для них не заведено места.
-- **Каждое утверждение привязано к месту в коде, и связь сверяется в обе стороны.** Ключ
-  связи — сам текст утверждения, поэтому переформулировать его, забыв про привязку, нельзя.
-- **Первая колонка компаньона — текст статьи, скопированный, а не пересказанный.** Ключ связи —
-  сам текст: строка, написанная по смыслу, разрывает связь, оставаясь на вид заполненной. Проверка
-  считает статьи без адреса и о статье с чужим адресом не знает ничего.
-- **Привязка не ведёт в код, который никто не зовёт:** нигде не зовущийся символ — не место.
-- **Привязка «не исполняется» переезжает вместе со своей статьёй.** Иначе строка компаньона
-  держит в горячей части статью, за которой не стоит ничего: снятая одна, она оставляет привязку
-  без пункта, и сверка краснеет. Переезжают обе стороны разом.
-- **Таблица процедур сверяется с декораторами в обе стороны, право — вместе с именем.** Иначе
-  процедура, которую домен обслуживает, но забыл описать, видна только в декораторе, а право,
-  разошедшееся со спеком, — нигде.
-- **Код отказа принимается, только если он в домене бросается.** Коды выписывались по замыслу, и
-  на одном пути обещанный отказ не бросал никто.
-- **Префикс сценариев в спеке один, и по всему дереву он занят им одним.** Второй префикс внутри
-  спека означает, что предмет описан дважды; занятый чужим — что по номеру не видно, чей это
-  сценарий. Договорённость о продукте нумеруется вместе со спеком, в который вольётся, и занятым
-  префикс от неё не становится.
-- **Номер сценария выдаётся один раз и повторно не используется.** Новый берёт следующий
-  свободный, а не вставляется в середину и не занимает номер удалённого — на месте удалённого
-  номер остаётся пустым. Номер связывает сценарий с тестом, и отданный второй раз он оставляет
-  старую ссылку верной на вид; пересчёт подряд дёшев обманчиво — тесты зелёные и до, и после.
-- **Сценарий и заголовок его теста правятся одним изменением.** Изменилось обещание — номер тот
-  же, а заголовок теста правится тем же коммитом; удалён сценарий — удаляется и тест.
-  Разъехавшись, они оставляют прогон зелёным, хотя проверяет он уже не то.
-- **Поддомен спрашивается наравне с доменом.** Те же обязательные разделы, тот же компаньон
-  рядом, та же связь сценариев с тестами. Домен, у которого половина поддоменов описана, а
-  половина заведена пустыми каталогами, зелёным не бывает.
-- **У закона обязателен раздел «Статьи», а кроме них он держит только открытые вопросы.**
-  Истории правок и доводов о выбранном когда-то варианте в законе нет: историю держит система
-  контроля версий, а довод с отвергнутой альтернативой — свойство работы, и место ему в
-  «Ловушках» правила. Закрытый вопрос из закона уходит, а пустой раздел ради заголовка
-  проверку всё равно проходил.
-- **Предложенный закон правила не требует.** Договорённость, записанную раньше кода,
-  привязывать не к чему, а требование правила заставило бы завести его с якорями в
-  несуществующие места. Признак стоит строкой статуса в самом законе, а не в списке исключений
-  рядом с проверкой.
-- **Закон, назвавший файл проекта, — отказ.** Путям и привязкам место в правиле, иначе закон
-  нельзя ни прочитать без знания дерева, ни применить на другом приложении.
-- **Описание правила не длиннее трёхсот знаков и отвечает на один вопрос — брать это правило
-  или нет.** Описание едет в системный промпт каждого захода целиком, и платит его заход, чем бы
-  ни занимался: тем оно и отличается от тела правила, которое исполнитель читает сам. Растёт оно
-  само — его пишут вслед за правилом и пересказывают в нём содержимое, — а пересказ приходит
-  вторым разом вместе с самим правилом. Считает длину проверка описаний; оставленное длиннее
-  предела называется в перечне принятого долга поимённо, с причиной.
+- **The set of spec sections is fixed in advance, and a missing section is a refusal.** "Not
+  applicable" is a legitimate answer, a missing section is not: cross-cutting requirements get
+  remembered after the fact exactly when no place was made for them.
+- **Every statement is bound to a place in code, and the link is checked both ways.** The key of the
+  link is the statement text itself, so it cannot be reworded with the binding forgotten.
+- **The first column of the companion is the article text copied, not retold.** The key of the link
+  is the text itself: a line written by meaning breaks the link while looking filled in. The check
+  counts articles without an address and knows nothing of an article with a wrong address.
+- **A binding does not lead into code nobody calls:** a symbol called nowhere is not a place.
+- **A "not carried out" binding moves together with its article.** Otherwise the companion line
+  keeps in the hot part an article with nothing behind it: removed alone, it leaves the binding
+  without an item, and the audit turns red. Both sides move at once.
+- **The procedure table is checked against the decorators both ways, the permission together with
+  the name.** Otherwise a procedure the domain serves but forgot to describe is visible only in the
+  decorator, and a permission that drifted from the spec — nowhere.
+- **A refusal code is accepted only if the domain throws it.** Codes were written out from the
+  design, and on one path nobody threw the promised refusal.
+- **A spec has one scenario prefix, and across the whole tree it is taken by that spec alone.** A
+  second prefix inside a spec means the subject is described twice; a prefix taken by another means
+  the number does not show whose scenario it is. A product agreement is numbered together with the
+  spec it will merge into, and the prefix does not become taken by it.
+- **A scenario number is issued once and never reused.** A new one takes the next free number; it is
+  not inserted in the middle and does not take a deleted one — the deleted number's place stays
+  empty. The number ties the scenario to its test, and issued a second time it leaves the old
+  reference right on the surface; renumbering in sequence is deceptively cheap — the tests are green
+  both before and after.
+- **A scenario and the title of its test are edited by one change.** The promise changed — the
+  number stays, and the test title is edited by the same commit; the scenario deleted — the test is
+  deleted too. Having drifted apart, they leave the run green while it checks something else.
+- **A subdomain is asked the same as a domain.** The same mandatory sections, the same companion
+  next to it, the same link between scenarios and tests. A domain with half its subdomains described
+  and half created as empty directories is never green.
+- **A law has a mandatory "Articles" section, and beyond it holds only open questions.** A law
+  carries no history of edits and no arguments for an option chosen once: version control holds the
+  history, and an argument with a rejected alternative is a trait of the work, and its place is the
+  rule's "Pitfalls". A closed question leaves the law, and an empty section kept for its heading
+  passed the check anyway.
+- **A proposed law requires no rule.** An agreement written down before the code has nothing to bind
+  to, and demanding a rule would force creating one with anchors into places that do not exist. The
+  sign stands as a status line in the law itself, not in an exceptions list next to the check.
+- **A law that names a project file is a refusal.** Paths and bindings belong in a rule; otherwise
+  the law can neither be read without knowing the tree nor applied to another application.
+- **A rule description is no longer than three hundred characters and answers one question — load
+  this rule or not.** The description goes whole into the system prompt of every session, and the
+  session pays for it whatever it works on: that is what tells it from the rule body, which the
+  executor reads by itself. It grows on its own — it is written after the rule and retells its
+  content — and the retelling arrives a second time together with the rule itself. The descriptions
+  check counts the length; what is left longer than the limit is named in the accepted-debt list by
+  name, with a reason.
 
-- **Правило объявляет закон, под который написано.** Правило без закона — набор приёмов, из
-  которого не видно, что именно должно быть верно.
-- **Слоёв законов два, а имя закона одно на оба.** Общий лежит в корне конституции, закон
-  приложения — в `application/`; ни `law:`, ни `**Законы:**` слоя не называют, поэтому имена
-  законов уникальны по всему дереву конституции.
-- **Расхождение правила и его компаньона решается в пользу правила.** Компаньон называет имена
-  дерева и привязки статей, а не отменяет их: прочитанный старше правила, он становится местом,
-  где требование снимается молча и без разбора. Предметность доводом тут не бывает — компаньон
-  предметнее всегда, на то он и компаньон. Найденное расхождение называется владельцу и чинится
-  в том тексте, который отстал, а работа до этого идёт по правилу.
-- **Утверждение компаньона о состоянии внешней службы проверяется командой, которую он сам
-  называет.** Ограничение соседа снимается вместе с чужой настройкой, а текст о нём остаётся
-  стоять в настоящем времени и после снятия выглядит верным: действующее от снятого отличает
-  только вызов. Компаньон поэтому пишет способ спросить, а не снимок ответа, — и велеть по
-  такому снимку обратное тому, что говорит правило, он не вправе.
-- **У правила бывает третий файл, и в него уходит то, что при решении не читают.** Ловушки и
-  поведение по разборам происшествий нужны не тому, кто принимает обычное решение, а тому, кто
-  разбирает промах или спорит с гардом, — а грузятся они вместе с правилом каждый раз и растут
-  быстрее статей. Такой текст уезжает в `pitfalls.md` рядом, правило называет его строкой в
-  шапке, и грузится он по требованию. Отказ гейта о холодной части молчит: он зовёт правило, а о
-  третьем файле говорит само правило.
+- **A rule declares the law it is written under.** A rule without a law is a set of techniques that
+  does not show what exactly must be true.
+- **There are two layers of laws, and a law name is one for both.** The shared one lies in the
+  constitution root, an application law in `application/`; neither `law:` nor `**Законы:**` names
+  the layer, so law names are unique across the whole constitution tree.
+- **A divergence between a rule and its companion is resolved in favour of the rule.** The companion
+  names the tree's names and the bindings of the articles; it does not cancel them: read above the
+  rule, it becomes the place where a requirement is lifted silently and without review. Concreteness
+  is no argument here — the companion is always more concrete, that is what it is for. A divergence
+  found is named to the owner and fixed in the text that fell behind, and until then the work goes
+  by the rule.
+- **A companion's statement about the state of an external service is checked by the command the
+  companion itself names.** A neighbour's limit is lifted together with someone else's setting,
+  while the text about it stays in the present tense and looks right after the lifting: only a call
+  tells the current from the lifted. So the companion writes the way to ask, not a snapshot of the
+  answer — and it has no right to order, on such a snapshot, the opposite of what the rule says.
+- **A rule may have a third file, and what is not read when deciding goes there.** Pitfalls and
+  behaviour from incident analyses are needed not by whoever makes an ordinary decision but by
+  whoever reviews a miss or argues with a guard — yet they load with the rule every time and grow
+  faster than the articles. Such text leaves for `pitfalls.md` next to it, the rule names it with a
+  line in its header, and it loads on demand. The gate refusal is silent about the cold part: it
+  calls the rule, and the rule itself speaks of the third file.
 
-- **Спек объявляет законы, которые применяет, и связь сверяется в обе стороны.** Закон,
-  названный в тексте спека, обязан стоять в шапке: иначе по закону не узнать, какие домены
-  на нём стоят.
-- **Переносимый текст говорит о соседнем ресурсе условно и называет его по имени.** Что
-  разложено в дереве, а что нет, знает список раскладки, а не текст ресурса. Сказанное
-  безусловно — «правку кода до этого отбивает гард» — приходит в контекст каждой сессии и врёт
-  про дерево, где того гарда не разложили; поправить это дерево не может ничем, если у ресурса
-  нет надстройки. Требование ресурса к ресурсу при этом объявляется строкой в шапке, а не
-  выводится из такой фразы.
-- **Статья правила говорит о своей применимости сама, строкой признака при себе.** Отказ гейта
-  зовёт правило целиком, а под конкретную правку подпадает одна его статья: платить за решение
-  полной ценой правила — значит учить не читать лишнего, то есть работать хуже разведанным.
-  Признак стоит при статье, а не в карте гейта: карта знает путь и правило, но не знает, какая
-  из двух десятков статей про этот путь.
+- **A spec declares the laws it applies, and the link is checked both ways.** A law named in the
+  spec text must stand in the header: otherwise the law gives no way to learn which domains stand on
+  it.
+- **Portable text speaks of a neighbouring resource conditionally and names it by name.** What is
+  laid out in the tree and what is not is known to the layout list, not to the resource text. Said
+  unconditionally — "a guard refuses a code edit before that" — it enters the context of every
+  session and lies about a tree where that guard was not laid out; the tree has no way to fix that
+  if the resource has no override. A resource's requirement of a resource is declared by a line in
+  the header, not derived from such a phrase.
+- **An article of a rule speaks of its own applicability itself, by a sign line at its side.** A
+  gate refusal calls the whole rule, while one of its articles covers the specific edit: paying the
+  rule's full price for a decision means teaching to skip reading, that is to work worse than what
+  was explored. The sign stands at the article, not in the gate map: the map knows the path and the
+  rule, not which of two dozen articles is about that path.
 
     ```markdown
-    - **Заголовок статьи.** Текст статьи, как обычно.
+    - **Article title.** Article text, as usual.
       <!-- rt-when: *.scss *.css -->
     ```
 
-    Образцы разделены пробелом и сверяются с путём правки как образцы оболочки, а не поиском по
-    словам: поиск называет не ту статью и молчит об этом. Образец без каталога сверяется и с
-    именем файла, а комментарий в собранной разметке не виден.
+    The globs are separated by a space and matched against the edit path as shell globs, not by
+    word search: a word search names the wrong article and stays silent about it. A glob without
+    a directory is also matched against the file name, and the comment is invisible in the
+    assembled markup.
 
-- **Статья без признака законна, и правило без единого признака — тоже.** Признак ставится тем
-  статьям, чьё правило отбивает на правке файла; остальные размечаются по мере того, как их
-  отбития попадут в сводку. Отсутствие признака означает «эту статью по пути правки не
-  выбирают», а не промах: требовать его у всех значило бы размечать наугад.
+- **An article without a sign is legitimate, and so is a rule without a single sign.** A sign is
+  given to the articles whose rule refuses on a file edit; the rest are marked as their refusals
+  reach the digest. A missing sign means "this article is not selected by the edit path", not a
+  miss: demanding it from all would mean marking at random.
 
-- **Паттерн находится по полю `rule:`, а не по приставке имени.** Приставку имени несут не все
-  паттерны, и поиск по имени правила таких не видит: сверка ищет их полем, человек — разделом
-  «Паттерны» самого правила. Счёт паттернов, собранный приставками, выходит меньше настоящего, а
-  число потом уезжает в деление работы.
-- **Решение из спека уходит в слой, а не в описание прошлого.** Что сверяется у спека, машина
-  знает; куда девается принятое решение — не знает и не узнает: отличить действующее требование
-  от рассказа о состоявшемся может только тот, кто спросит «останется ли это верным завтра».
-  Держится это шагом разбора закрытой работы и признаком отбора, записанным там заранее.
-- **Имя в якоре записывается так, как объявлено в коде.** Приватное поле класса стоит с
-  решёткой, и записанное без неё имя называет не тот символ: проверка остаётся зелёной, а
-  читателю по строке привязки не видно, приватный это метод или соседний с ним обычный. Прежняя
-  форма при этом законна — имя без решётки помнится наравне с ним самим.
-- **Якорь сверяется по сырому тексту файла, и комментарий засчитывается наравне с кодом.**
-  Существование символа проверка ищет словом по всему файлу, не вычищая комментарии, а живость
-  считает только у объявленного в коде. Имя, стоящее в одном лишь пояснении, проходит мимо обеих
-  сторон: якорем утверждения оказывается слово из комментария, тогда как объявление рядом
-  называется иначе.
+- **A pattern is found by the `rule:` field, not by the name prefix.** Not every pattern carries the
+  name prefix, and a search by rule name does not see those: the audit finds them by the field, a
+  person by the rule's own "Patterns" section. A count of patterns gathered by prefixes comes out
+  below the true one, and the number then goes into splitting the work.
+- **A decision from a spec goes to the layer, not to the archive.** What a spec is checked against
+  the machine knows; where an accepted decision goes it does not know and will not: only whoever
+  asks "will this still be true tomorrow" can tell a current requirement from an account of what
+  happened. This is held by the closed-work review step and the selection sign written there in
+  advance.
+- **A name in an anchor is written as declared in code.** A private class field stands with a hash,
+  and the name written without it names the wrong symbol: the check stays green, and the reader
+  cannot tell from the binding line whether this is the private method or the ordinary one next to
+  it. The former form stays legitimate — the name without the hash is remembered alongside the name
+  itself.
+- **An anchor is checked against the raw text of the file, and a comment counts the same as code.**
+  The check looks for the symbol's existence by word across the whole file without stripping
+  comments, and counts liveness only for what is declared in code. A name standing in an explanation
+  alone slips past both sides: the statement's anchor turns out to be a word from a comment, while
+  the declaration next to it is called differently.
 
-- **Проверка, прибитая к имени ресурса, ломается на его делении, и знать об этом надо до правки.**
-  Имя правила и имя паттерна стоят не только в текстах, но и в проверках дерева, в пробах их наборов
-  и в таблицах состояний. Деление поэтому начинается с поиска имени по всему дереву: иначе красное
-  приходит по одной проверке за прогон — так деление одного правила уронило три.
+- **A check nailed to a resource name breaks when the resource is split, and this has to be known
+  before the edit.** A rule name and a pattern name stand not only in texts but in the tree's
+  checks, in the probes of their suites and in the state tables. So a split starts with a search for
+  the name across the whole tree: otherwise red arrives one check per run — that is how splitting
+  one rule took down three.
 
-## Форма сжатой статьи
+## The shape of a compressed article
 
-Правило грузится в заход целиком и платит за это каждый заход, чем бы он ни занимался. Замер
-называет, где вес: в двадцати девяти грузимых правилах 289 440 знаков, раздел статей — 45% из
-них, а внутри раздела утверждения занимают 19%, доводы при них — 81%. Режется поэтому довод, а
-не утверждение: снятое утверждение меняет правило, снятый довод — только его цену.
+A rule loads whole into a session and pays for it every session, whatever the session works on. A
+measurement names where the weight is: 289 440 characters in twenty-nine loaded rules, the articles
+section is 45% of them, and inside the section statements take 19%, their arguments 81%. So the
+argument is cut, not the statement: a removed statement changes the rule, a removed argument only
+its price.
 
-У абзаца при статье три исхода, и выбирают между ними одним вопросом: **что этот текст нужен
-сделать — принять решение, не отменить его или разобрать промах?**
+A paragraph at an article has three outcomes, chosen by one question: **what is this text needed for
+— to make a decision, to keep it from being reversed, or to review a miss?**
 
-| Текст нужен, чтобы…                                          | Исход                          |
-| ------------------------------------------------------------- | ------------------------------ |
-| принять решение по правке: что считается верным, где граница | остаётся при статье дословно   |
-| не отменить решение через месяц: почему именно так           | сворачивается до одной строки  |
-| разобрать промах или спорить с гардом                        | уезжает в холодную часть целиком |
+| The text is needed to…                                          | Outcome                        |
+| --------------------------------------------------------------- | ------------------------------ |
+| decide on the edit: what counts as right, where the boundary is | stays at the article verbatim  |
+| not reverse the decision in a month: why exactly so             | folds to one line              |
+| review a miss or argue with a guard                             | leaves for the cold part whole |
 
-- **При статье остаётся утверждение и то, без чего оно читается неверно.** Граница, исключение,
-  признак применимости, имя того, кто это стережёт. Проверяется отниманием: снятый кусок меняет
-  ответ на вопрос «так делать или нет» — значит он не лишний.
-- **Довод сворачивается до одной строки: цена промаха, а не его история.** «Иначе прогон зелёный,
-  а проверяет он уже не то» — это довод. Когда это случилось, сколько раз подряд и в какой ветке
-  — уже история, и её место в холодной части.
-- **В холодную часть уезжает разбор происшествия целиком, вместе с числами и отвергнутыми
-  вариантами.** Она грузится по требованию — тем, кто разбирает промах, — и растёт свободно:
-  цену за неё платит один заход из сотни, а не каждый.
-- **Холодная часть держит объяснение, а не требование.** Утверждения, которого нет в правиле, в
-  ней не бывает: правило, чьё требование живёт в холодной части, обещает то, чего грузящий его
-  заход не увидит. Проверяется тем же вопросом наоборот — по холодной части нельзя принять ни
-  одного решения, которого не принять по правилу.
-- **Сжатие судится в пересказе, а не в исходнике.** Статья, сжатая верно, пересказывается тем же
-  решением: тот, кто прочёл только её, правит так же, как читавший прежнюю. Разошлись — снято
-  лишнее, и снятое возвращается при статье, а не в холод.
-- **Правило без холодной части законно, и заводится она первым же уехавшим абзацем.** Пустой
-  `pitfalls.md` рядом — обещание, а не механизм: в замере из двадцати девяти правил у четверых
-  самых тяжёлых холодной части нет вовсе, и весь их разбор происшествий грузится каждый заход.
+- **What stays at the article is the statement and what it reads wrong without.** The boundary, the
+  exception, the applicability sign, the name of whoever guards it. Tested by subtraction: a removed
+  piece changes the answer to "do it this way or not" — then it is not surplus.
+- **An argument folds to one line: the price of the miss, not its history.** "Otherwise the run is
+  green while it checks something else" is an argument. When it happened, how many times in a row
+  and in which branch is history, and its place is the cold part.
+- **An incident analysis leaves for the cold part whole, with its numbers and rejected options.**
+  The cold part loads on demand — for whoever reviews a miss — and grows freely: one session in a
+  hundred pays for it, not every one.
+- **The cold part holds explanation, not requirement.** A statement absent from the rule never lives
+  there: a rule whose requirement lives in the cold part promises what the session loading it will
+  not see. Tested by the same question reversed — no decision can be made by the cold part that
+  cannot be made by the rule.
+- **Compression is judged by retelling, not in the source.** An article compressed right is retold
+  by the same decision: whoever read only it edits the same way as whoever read the former one. They
+  diverged — surplus was removed, and it comes back at the article, not to the cold part.
+- **A rule without a cold part is legitimate, and the first paragraph that leaves creates one.** An
+  empty `pitfalls.md` next to it is a promise, not a mechanism: in the measurement of twenty-nine
+  rules, four of the heaviest have no cold part at all, and their whole incident analysis loads
+  every session.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Закон, которого не применяет ни один спек, отказом не считается: законы про устройство кода,
-поставку и проверяемость доменов не касаются вовсе. Порядок «сначала описание, потом код»
-держится договорённостью: закон о документации проекта такого требования не несёт, и открытого
-вопроса под него в нём не заведено.
+A law no spec applies does not count as a refusal: the laws on code structure, delivery and
+verifiability do not touch domains at all. The order "description first, code second" is held by
+agreement: the project-documentation law carries no such requirement, and no open question for it is
+opened there.
 
-Таблицы состояний экрана не сверяются ничем. `check:specs` знает сценарии против заголовков
-тестов, правила против якорей, процедуры против декораторов и коды отказа против бросков — строка
-таблицы состояний не привязана ни к чему и проходит зелёной, даже когда код в названное состояние
-не попадает. Состояние «проверка не загрузилась» стояло в таблицах двух доменов раньше, чем код
-научился в него приходить, и всё это время читалось описанием работающего.
+Screen state tables are checked by nothing. `check:specs` knows scenarios against test titles, rules
+against anchors, procedures against decorators and refusal codes against throws — a state table row
+is bound to nothing and passes green even when the code never reaches the named state. The state
+"the check did not load" stood in the tables of two domains before the code learned to reach it, and
+all that time read as a description of something working.
 
-Смысл сценария с соседним не сверяется ничем: проверка судит номер. Два сценария, обещающих одно
-и то же разными словами, для неё разные, и второй числится непроверяемым, сколько проживёт.
+The meaning of a scenario is checked against its neighbour by nothing: the check judges the number.
+Two scenarios promising the same thing in different words are different to it, and the second counts
+as unverifiable for as long as it lives.
 
-Полноту разметки статей признаком применимости не считает ничто. Правило, у которого признака
-нет ни у одной статьи, отбивает прежним текстом — и от размеченного отличается только тем, что
-исполнитель читает его целиком; ни одна проверка об этом не говорит. Судит это сводка
-наблюдений: правило, которое чаще прочего отбивает на правке файла, и есть первое, что
-размечают.
+The completeness of marking articles with an applicability sign is counted by nothing. A rule with a
+sign on none of its articles refuses with the old text — and differs from a marked one only in that
+the executor reads it whole; no check says so. The observations digest judges it: the rule that
+refuses on a file edit more often than the others is the first to be marked.
 
-Полноту разделов у самого закона, правила и паттерна здесь не проверяет ничто. Статьи о том,
-что текст судится не слабее своей копии, что невыбранная редакция судится наравне с выбранной и
-что набор разделов объявлен отдельно от образца, исполняются там, где эти тексты пишут, — в
-наборе того пакета, который их везёт. В дереве-потребителе лежат разложенные копии, и краснеть
-у него на чужом промахе проверка не должна. Согласие двух текстов ищется чтением.
+Section completeness of the law, the rule and the pattern themselves is checked by nothing here. The
+articles saying that a text is judged no more leniently than its copy, that an unchosen edition is
+judged the same as the chosen one and that the set of sections is declared apart from the sample are
+carried out where these texts are written — in the suite of the package that ships them. A consumer
+tree holds laid-out copies, and its check must not turn red on someone else's miss. Agreement of two
+texts is looked for by reading.
 
-Форму сжатой статьи не проверяет ничто, и проверки на неё не будет: машине видно число знаков,
-но не то, принимается ли по сжатой статье прежнее решение. Довод, вырезанный вместе с границей
-утверждения, короче правильного и проходит любой счёт знаков. Стережёт это один предел длины
-текста: он говорит, что правило переросло, и молчит, что именно резать. Судится сжатие
-пересказом — тем, кто правит по сжатой статье следующим.
+The shape of a compressed article is checked by nothing, and there will be no check for it: the
+machine sees the character count, not whether the compressed article still yields the former
+decision. An argument cut out together with the statement's boundary is shorter than the right one
+and passes any character count. One thing guards this — the text length limit: it says the rule has
+outgrown, and is silent about what to cut. Compression is judged by retelling — by whoever edits by
+the compressed article next.
 
-Долю довода в правиле не считает ничто. Замер, на котором стоит форма, сделан разовым проходом
-и в дерево не поехал: он отвечает на «где вес», а не на «сошлось ли».
+The share of argument in a rule is counted by nothing. The measurement the shape stands on was made
+in a one-off pass and did not go into the tree: it answers "where the weight is", not "does it add
+up".
 
-## Паттерны
+## Patterns
 
-- `spec-driven-domain` — заведение и правка спека домена, сценарии, привязка.
-- `spec-driven-rule` — заведение закона, правила и паттерна.
-- `spec-driven-sweep` — сплошной разбор привязки домена, проходы и их разбор.
+- `spec-driven-domain` — creating and editing a domain spec, scenarios, binding.
+- `spec-driven-rule` — creating a law, a rule and a pattern.
+- `spec-driven-sweep` — a full review of a domain's binding, passes and their review.
 
-## Ловушки
+## Pitfalls
 
-- **Строка требования к соседнему ресурсу не проверяется ничем, и промах в ней виден только
-  счётом.** Правило без неё выглядит целым: разделы на месте, привязки сходятся, набор полноты
-  зелёный. Считается она одной командой по каталогу правил, и расхождение читается сразу — сколько
-  правил объявило требования и сколько ссылается на соседний ресурс прозой.
+- **The line requiring a neighbouring resource is checked by nothing, and a miss in it shows only by
+  counting.** A rule without it looks whole: sections in place, bindings match, the completeness
+  suite green. It is counted by one command over the rules directory, and the divergence reads at
+  once — how many rules declared requirements and how many refer to a neighbouring resource in
+  prose.

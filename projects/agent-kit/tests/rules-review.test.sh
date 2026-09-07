@@ -23,11 +23,13 @@ sections_for() {
     case "$1" in
         laws) printf '## (Articles|Статьи)\n' ;;
         rules)
-            printf '## Как это называется здесь\n## Где это лежит\n## Ход\n'
-            printf '## Как закон применяется здесь\n## Чего из закона здесь нет\n## Паттерны\n'
+            printf '## (What it is called here|Как это называется здесь)\n## (Where it lives|Где это лежит)\n## (Flow|Ход)\n'
+            printf '## (How the law applies here|Как закон применяется здесь)\n## (What of the law is not here|Чего из закона здесь нет)\n## (Patterns|Паттерны)\n'
             ;;
-        pitfalls) printf '## Ловушки\n' ;;
-        patterns) printf '## (When to use|Когда брать)\n' ;;
+        pitfalls) printf '## (Pitfalls|Ловушки)
+' ;;
+        patterns) printf '## (When to use|Когда брать)
+' ;;
         skills) printf '## Когда брать\n' ;;
     esac
 }
@@ -78,7 +80,7 @@ fi
 # Граф хода спрашивается у всех правил, а не у ветвящихся: раздел стоит в наборе рода, и его
 # отсутствие набор называет строкой на файл — тем же обходом, что и остальные разделы.
 report "SC-AK-230 — граф хода стоит в наборе разделов правила" \
-    "$(sections_for rules | grep -c '^## Ход$')" 1
+    "$(sections_for rules | grep -cF '## (Flow|Ход)')" 1
 
 # Образец рода корпусу не хозяин: раздел, который объявляет он один, расхождением не считается.
 report "SC-AK-226 — раздел из образца в наборе не спрашивается" \
@@ -90,7 +92,7 @@ report "SC-AK-226 — раздел из образца в наборе не сп
 template_gaps=''
 while IFS= read -r want; do
     [ -n "$want" ] || continue
-    grep -qxF "$want" "$ASSETS/templates/rule.md" || template_gaps="$template_gaps $want"
+    grep -qxE "$want" "$ASSETS/templates/rule.md" || template_gaps="$template_gaps $want"
 done <<< "$(sections_for rules)"
 if [ -z "${template_gaps// /}" ]; then
     report "SC-AK-226 — образец правила несёт объявленный набор" PASS PASS
@@ -194,7 +196,7 @@ cp "$ASSETS/rules/doc-style.md" "$probe/rules/doc-style.md"
 cp "$ASSETS/pitfalls/doc-style.md" "$probe/pitfalls/doc-style.md"
 cp "$ASSETS/patterns/doc-style-write.md" "$probe/patterns/doc-style-write.md"
 
-grep -vxF '## Ловушки' "$ASSETS/pitfalls/doc-style.md" > "$probe/pitfalls/doc-style.md"
+grep -vxE '## (Pitfalls|Ловушки)' "$ASSETS/pitfalls/doc-style.md" > "$probe/pitfalls/doc-style.md"
 report "SC-AK-217 — снятый раздел холодной части найден" \
     "$(missing_sections "$probe" pitfalls | grep -c 'Ловушки')" 1
 

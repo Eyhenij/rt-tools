@@ -4,127 +4,129 @@ kind: rule
 law: code-structure
 description: Rule under the code-structure law. Load when editing any .ts except a component, service, directive, pipe, guard or interceptor — strict typing, access modifiers, file names, prefixes, no casting in a mapper. Pattern ts-procedure.
 ---
-<!-- rt-kit v0.25.0 · rules/typescript-conventions.md · 36f82053c812 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/typescript-conventions.md · 09d9b5fd6153 · правится надстройкой, не здесь -->
 
-# Устройство кода — как это устроено здесь
+# Code structure — how it works here
 
-Правило под закон `docs/constitution/code-structure.md`. Закон говорит, что должно быть верно
-про объявления; здесь — как это записано в этом дереве.
+Rule under the law `docs/constitution/code-structure.md`. The law says what must be true about
+declarations; here — how that is written in this tree.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                    | Здесь                                                     |
-| --------------------------- | --------------------------------------------------------- |
-| признак рода в имени        | префикс: `I` у интерфейса, `E` у перечисления, `T` у типа |
-| источник, за которым следят | суффикс `$` у наблюдаемого и `Source` у субъекта          |
-| приватное поле              | `#field`, а не `private field`                            |
-| процедура бэкенда           | класс с меткой `@ConnectProcedure()`, один на процедуру   |
+| In the law                    | Here                                                                 |
+| ----------------------------- | -------------------------------------------------------------------- |
+| the kind sign in the name     | a prefix: `I` on an interface, `E` on an enum, `T` on a type         |
+| a watched source              | the `$` suffix on an observable and `Source` on a subject            |
+| a private field               | `#field`, not `private field`                                        |
+| a backend procedure           | a class with the `@ConnectProcedure()` decorator, one per procedure  |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the
+first tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход объявления символа: чем задаётся имя, откуда берётся тип и что делается со снятым
-объявлением.
+The flow of declaring a symbol: what sets the name, where the type comes from and what is done
+with a removed declaration.
 
 ```mermaid
 flowchart TD
-    A[Объявляется символ] --> B[Род виден по префиксу имени, а суффикс файла обещает, что в нём лежит]
-    B --> C{Тип уже объявлен где-то}
-    C -->|Да| D[Берётся из того пакета, где объявлен: своя копия разойдётся с оригиналом молча]
-    C -->|Нет| E[Объявляется здесь]
-    D --> F{Значение приходит не в том виде}
+    A[A symbol is declared] --> B[The kind shows in the name prefix, and the file suffix promises what lies inside]
+    B --> C{The type is already declared somewhere}
+    C -->|Yes| D[Taken from the package where it is declared: an own copy diverges from the original silently]
+    C -->|No| E[Declared here]
+    D --> F{The value arrives in the wrong shape}
     E --> F
-    F -->|Да| G[Приведение идёт названным способом; двухступенчатое запрещено]
-    F -->|Нет| H{Объявление снимается}
+    F -->|Yes| G[The cast goes by the named way; a two-step one is forbidden]
+    F -->|No| H{The declaration is removed}
     G --> H
-    H -->|Да| I[Отметка об устаревании ставится вместе с обходом всех потребителей]
-    H -->|Нет| J[Файл держится в пределах длины, сложность спрашивается у плагина, а не вспоминается]
+    H -->|Yes| I[The deprecation mark is set together with a walk over all consumers]
+    H -->|No| J[The file stays within the length limit, complexity is asked from the plugin, not recalled]
     I --> J
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Род объявления виден по префиксу имени, и это держат три правила линтера.** У интерфейса,
-  у типа и у перечисления свои; все три подняты для всех `.ts`.
+- **The kind of a declaration shows in the name prefix, and three linter rules hold that.** The
+  interface, the type and the enum each have their own; all three are raised for all `.ts`.
       <!-- rt-when: *.ts -->
 
-- **Источник, за которым следят, назван суффиксом.** Субъект и наблюдаемое, поднятое из него,
-  различаются в месте использования, а не переходом к объявлению.
+- **A watched source is named by a suffix.** The subject and the observable raised from it differ
+  at the place of use, not by jumping to the declaration.
       <!-- rt-when: *.ts -->
 
-- **Суффикс имени файла находит в нём обещанное объявление.** Список суффиксов закрыт: слово,
-  которого в нём нет, суффиксом не считается, и такой файл правило не судит.
+- **The file name suffix finds the promised declaration inside.** The list of suffixes is closed:
+  a word not in it does not count as a suffix, and the rule does not judge such a file.
       <!-- rt-when: *.ts -->
 
-- **Файл не длиннее 500 строк, и считаются все строки — пустые и комментарии тоже.** Файл,
-  который не влезает на экран целиком, читают по частям, и правку в нём делают, не увидев
-  остального. Для `.ts` это держит правило линтера; файлы обвязки — сценарии и скрипты — до
-  него не доходят и судятся отдельной проверкой дерева. Накопленное к дню включения
-  перечислено поимённо, и строка оттуда снимается вместе с делением своего файла.
+- **A file is no longer than 500 lines, and all lines count — blank ones and comments too.** A
+  file that does not fit on one screen whole is read in parts, and an edit in it is made without
+  seeing the rest. For `.ts` a linter rule holds this; harness files — scenarios and scripts — do
+  not reach it and are judged by a separate check of the tree. What had accumulated by the day of
+  enabling is listed by name, and a line leaves that list together with the split of its file.
       <!-- rt-when: *.ts -->
 
-- **Значение из закрытого набора приходит перечислением `E<Имя>`, а не строкой или числом в
-  месте использования.** Ключ переводимого поля, имя вкладки, слот обложки, вид записи — всё
-  это наборы: их называют форма, стор, разметка и сравнение черновиков, и написанное на месте
-  значение ни находится по дереву, ни правится разом. Перечисление живёт в слое `util` того
-  домена, чей это набор, а общее нескольким приложениям — в общей либе. Одиночный адрес,
-  разделитель и знак-подпись перечислением не становятся: закрытого набора у них нет, и они
-  объявляются константой файла с говорящим именем.
+- **A value from a closed set arrives as an enum `E<Name>`, not as a string or a number at the
+  place of use.** The key of a translatable field, a tab name, a cover slot, a record kind — all
+  these are sets: the form, the store, the markup and the draft comparison name them, and a value
+  written in place is neither found across the tree nor edited in one go. The enum lives in the
+  `util` layer of the domain that owns the set, and what is shared by several applications — in
+  the shared lib. A single address, a separator and a signature sign do not become an enum: they
+  have no closed set, and they are declared as a file constant with a telling name.
       <!-- rt-when: *.ts -->
 
-- **Тип берётся из того пакета, где объявлен.** Своя копия чужого типа расходится с оригиналом
-  молча, а компилируется из них только одна.
+- **A type is taken from the package where it is declared.** An own copy of a foreign type
+  diverges from the original silently, and only one of them compiles.
       <!-- rt-when: *.ts -->
 
-- **Значение, объявленное одной стороной обмена, второй стороной не пересчитывается, а берётся
-  у первой.** Два счёта одного значения расходятся молча: признак дерева считали и отправка, и
-  отметка — каждая своей копией, — копии разошлись, и отметка не нашла ни одной своей записи ни
-  разу. Обе стороны при этом отвечали как обычно, и промах нашёлся только с третьей стороны:
-  чтением того, что легло на самом деле.
+- **A value declared by one side of an exchange is not recomputed by the other side but taken
+  from the first.** Two computations of one value diverge silently: the tree trait was computed by
+  both the send and the mark — each with its own copy — the copies diverged, and the mark never
+  once found a single record of its own. Both sides answered as usual all the while, and the miss
+  was found only from a third side: by reading what actually landed.
       <!-- rt-when: *.ts -->
 
-- **Двухступенчатое приведение `as unknown as` запрещено правилом линтера.** Вместо него —
-  честный тип, сужение проверкой или чтение поля формой (`Reflect.get`); место, где иначе
-  нельзя, помечается точечным отключением с причиной в той же строке.
+- **The two-step cast `as unknown as` is forbidden by a linter rule.** Instead — an honest type,
+  narrowing by a check or reading the field by shape (`Reflect.get`); a place where nothing else
+  works is marked with a spot disable and the reason on the same line.
       <!-- rt-when: *.ts -->
 
-- **Отметка об устаревании ставится вместе с обходом потребителей.** Все правила
-  `eslint-plugin-sonarjs` подняты до отказа разом, и пометка на типе красит каждое место, где
-  его ещё зовут: один `@deprecated` на файл дал семнадцать замечаний в чужих доменах.
+- **A deprecation mark is set together with a walk over the consumers.** All rules of
+  `eslint-plugin-sonarjs` are raised to refusal at once, and a mark on a type paints every place
+  that still calls it: one `@deprecated` per file gave seventeen findings in foreign domains.
       <!-- rt-when: *.ts -->
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Одноступенчатое приведение остаётся непроверенным — это `Q-CS-4` в законе: из семидесяти
-шести приведений восемь обязательны, и общий запрет отбивал бы их.
+A one-step cast stays unchecked — that is `Q-CS-4` in the law: of seventy-six casts eight are
+mandatory, and a blanket ban would refuse them.
 
-Тесты из-под запрета выведены целиком: рукописный двойник базы — принятый здесь приём, и
-запрет пришлось бы обходить в каждом из тридцати пяти.
+Tests are taken out from under the ban entirely: a hand-written database double is an accepted
+technique here, and the ban would have to be bypassed in each of the thirty-five.
 
-Правило имён файлов судит обещание, а не его отсутствие: `menu.items.ts` и `sign-in.ts` под
-него не подпадают вовсе — это `Q-CS-3` в законе. Из двух принятых здесь форм перевода
-сущности — класс на фронте и чистые функции на бэкенде — правило принимает обе: оно судит
-имя, а не устройство, и что форм две, остаётся вопросом `Q-S-1` в законе об общем коде.
+The file-name rule judges a promise, not its absence: `menu.items.ts` and `sign-in.ts` do not
+fall under it at all — that is `Q-CS-3` in the law. Of the two mapper forms accepted here — a
+class on the front end and pure functions on the backend — the rule accepts both: it judges the
+name, not the structure, and that there are two forms remains the question `Q-S-1` in the
+shared-code law.
 
-На `libs/api/**` и `apps/api/**` правило действует целиком, а вот сигнальный API и `inject`
-туда не относятся: там NestJS с конструкторным DI.
+On `libs/api/**` and `apps/api/**` the rule applies whole, but the signal API and `inject` do
+not belong there: that is NestJS with constructor DI.
 
-## Паттерны
+## Patterns
 
-- `ts-procedure` — завести процедуру Connect на бэкенде: класс, метка, право, регистрация.
+- `ts-procedure` — create a Connect procedure on the backend: class, decorator, right,
+  registration.
 
-## Ловушки
+## Pitfalls
 
-- **Пределы сложности функции спрашивают у плагина, а не вспоминают.** Там, где дерево подняло
-  правила `sonarjs` разом, до отказа, числа ветвлений и вложенности приходят умолчаниями
-  плагина и своей строкой в конфиге не записаны: они меняются вместе с его версией, а выглядят
-  как договорённость дерева. За одну задачу их спрашивали трижды, каждый раз заново, и дважды
-  называли по памяти — оба раза мимо.
+- **Function complexity limits are asked from the plugin, not recalled.** Where the tree raised
+  the `sonarjs` rules at once, to refusal, the branching and nesting numbers come as plugin
+  defaults and are not written by a line of their own in the config: they change with its
+  version while looking like a tree agreement. Over one task they were asked three times, each
+  time anew, and twice named from memory — both times wrong.
 
     ```bash
     node -e 'const s = require("eslint-plugin-sonarjs");
@@ -132,17 +134,17 @@ flowchart TD
             console.log(n, JSON.stringify(s.rules[n].meta.defaultOptions));'
     ```
 
-- Приведение через `as Type` в маппере запрещено, но не стережётся ничем: оно принимает любое
-  значение и компилируется. Вместо него — `this.typeCast`.
-- Неиспользуемый параметр убирается, а не переименовывается: подчёркивание перед именем прячет
-  замечание, но параметр остаётся в сигнатуре.
-- Агрегат Prisma своим типом не аннотируется: сгенерированный тип у него шире, чем результат
-  выборки, и аннотация врёт.
-- Своё правило линтера включается вместе с переводом всех, кого оно ловит: включённое поверх
-  накопленного даёт красный прогон на файлах, которых правка не касалась.
-- `#field` виден только внутри класса и не принимается `viewChild` — там поле объявляется
-  `protected`.
-- Логическое присваивание чтением приватного поля линтер не считает: там, где `??=` —
-  единственное обращение к полю, правило неиспользуемых приватных членов отвечает «is defined
-  but never used». Поле живое, а сообщение говорит обратное, и прочитавший отказ идёт снимать
-  объявление. Замена — явный ранний выход и присваивание следом.
+- A cast through `as Type` in a mapper is forbidden but watched by nothing: it accepts any value
+  and compiles. Instead — `this.typeCast`.
+- An unused parameter is removed, not renamed: an underscore before the name hides the finding,
+  but the parameter stays in the signature.
+- A Prisma aggregate is not annotated with its own type: its generated type is wider than the
+  query result, and the annotation lies.
+- A linter rule of one's own is enabled together with converting everyone it catches: enabled on
+  top of what has accumulated, it gives a red run on files the edit did not touch.
+- `#field` is visible only inside the class and is not accepted by `viewChild` — there the field
+  is declared `protected`.
+- The linter does not count a logical assignment as a read of a private field: where `??=` is the
+  only access to the field, the unused-private-members rule answers "is defined but never used".
+  The field is live, and the message says the opposite, and whoever read the refusal goes to
+  remove the declaration. The replacement — an explicit early return and an assignment after it.

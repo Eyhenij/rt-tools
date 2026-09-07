@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-specs.mjs · 943afd917d74 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-specs.mjs · 19558a6e7673 · правится надстройкой, не здесь
 /**
  * Проверка того, что спек домена не разошёлся с кодом.
  *
@@ -219,7 +219,10 @@ for (const file of walk(CONSTITUTION_DIR, (name) => name.endsWith('.md'))) {
 
 // Правило — скил с `kind: rule` в шапке. Оно и знает о проекте: имена, пути, связи. Привязка
 // его утверждений к коду живёт в `implementation.md` рядом со скилом.
-const RULE_HEADING = '## Как закон применяется здесь';
+// У раздела два имени: английское у правила пакета, русское у правила, которое дерево написало
+// до перевода слоя. Берётся то, которое стоит в файле.
+const RULE_HEADINGS = ['## How the law applies here', '## Как закон применяется здесь'];
+const ruleHeadingOf = (text) => RULE_HEADINGS.find((heading) => text.split('\n').some((line) => line.trimEnd() === heading)) ?? RULE_HEADINGS[0];
 /** Раздел компаньона правила, где лежат привязки; остальные его таблицы называют имена дерева. */
 const MAP_HEADING = '## Где исполняются статьи';
 
@@ -268,7 +271,7 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
     } else {
         ruled.add(law);
     }
-    checkRuleImplementation(file, text, `${dirname(file)}/implementation.md`, RULE_HEADING, MAP_HEADING);
+    checkRuleImplementation(file, text, `${dirname(file)}/implementation.md`, ruleHeadingOf(text), MAP_HEADING);
 
     const name = nameOf(head);
     if (name && name !== file.slice('.claude/skills/'.length, -'/SKILL.md'.length)) {
@@ -315,7 +318,7 @@ const skippedPatterns = () => {
  */
 // Флага `m` здесь нет намеренно: с ним `$` означает конец строки, и раздел кончается на первом
 // же переводе строки — пустым. Начало заголовка поэтому ищется своей парой, а не якорем.
-const PATTERNS_HEADING = /(?:^|\n)## Паттерны\n([\s\S]*?)(?=\n## |$)/;
+const PATTERNS_HEADING = /(?:^|\n)## (?:Patterns|Паттерны)\n([\s\S]*?)(?=\n## |$)/;
 const patternsNamedBy = (text) => [...(text.match(PATTERNS_HEADING)?.[1] ?? '').matchAll(/^-\s+`([\w-]+)`/gm)].map(([, found]) => found);
 
 const skipped = skippedPatterns();

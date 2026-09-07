@@ -4,245 +4,258 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing any .md including specs, and also code comments, commit bodies and PR descriptions. Names the path check, the pairs of an edit and its document, and what nothing checks in this tree. Ready-made wording is in pattern doc-style-write.
 ---
-<!-- rt-kit v0.25.0 · rules/doc-style.md · 7a7c2f815120 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/doc-style.md · 030d65433647 · правится надстройкой, не здесь -->
 
-# Тексты проекта — как это устроено здесь
+# Project texts — how it works here
 
-Правило под закон `docs/constitution/project-documentation.md`. Закон говорит, что должно
-быть верно про тексты; здесь — чем это проверяется в этом дереве и что остаётся за автором.
-Устройство спеков и слоёв документации — правило `spec-driven` под тем же законом; здесь
-только формулировки.
+Rule under the law `docs/constitution/project-documentation.md`. The law says what must be true
+about texts; here — what checks it in this tree and what stays with the author. The structure of
+specs and documentation layers is the rule `spec-driven` under the same law; here only wording.
 
-**Холодная часть:** `pitfalls.md` рядом — ловушки, грабли, на которые уже наступали.
-Грузится по требованию, а не вместе с правилом.
+**Cold part:** `pitfalls.md` next to it — traps already stepped on. Loaded on demand, not
+together with the rule.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                           | Здесь                                                                                                              |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| документ                           | любой `.md` вне `docs/archive/`, плюс комментарии в коде, тела коммитов и описания PR                              |
-| путь, названный в документе        | строка с расширением в обратных кавычках — её и ищет проверка                                                      |
-| правка, которую документ описывает | пара из `docs-guard`: правило и его зеркало, `.proto` и спек, хук и его сценарии, переезд файла и README обеих либ |
-| описание прошлого                  | `docs/archive/` — из проверки путей выведено целиком                                                               |
+| In the law                      | Here                                                                                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| document                        | any `.md` outside `docs/archive/`, plus code comments, commit bodies and PR descriptions                                              |
+| a path named in a document      | a string with an extension in backticks — that is what the check looks for                                                            |
+| the change a document describes | a pair from `docs-guard`: a rule and its mirror, a `.proto` and a spec, a hook and its scenarios, a moved file and both libs' READMEs |
+| description of the past         | `docs/archive/` — excluded from the path check entirely                                                                               |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the
+first tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход правки текста: что проверяется до записи, где развилка между новым словом и уже занятым, и
-что делается со снятым именем.
+The flow of editing a text: what is checked before writing, where the fork is between a new
+word and one already taken, and what is done with a dropped name.
 
 ```mermaid
 flowchart TD
-    A[Пишется текст проекта] --> B{Нужно слово для нового понятия}
-    B -->|Да| C{Оно есть в словаре}
-    C -->|Да| D[Берётся оттуда в том же значении]
-    C -->|Нет| E[Заводится в словаре той же правкой либо заменяется простым]
-    B -->|Нет| F{В тексте называется путь или имя файла}
+    A[A project text is written] --> B{A word is needed for a new concept}
+    B -->|Yes| C{It is in the glossary}
+    C -->|Yes| D[Taken from there in the same meaning]
+    C -->|No| E[Added to the glossary by the same change, or replaced with a plain word]
+    B -->|No| F{The text names a path or a file name}
     D --> F
     E --> F
-    F -->|Да| G[Путь проверяется командой: названный, но несуществующий читается как указание]
-    F -->|Нет| H{В тексте стоит число или утверждение о проверке}
+    F -->|Yes| G[The path is checked by a command: named but missing reads as an instruction]
+    F -->|No| H{The text holds a number or a claim about a check}
     G --> H
-    H -->|Число| I[Пересчитывается командой в том же изменении либо не пишется вовсе]
-    H -->|Проверка| J[Запускается, а не пересказывается]
-    H -->|Ни то ни другое| K[Документ едет тем же коммитом, что и правка, которую описывает]
+    H -->|Number| I[Recomputed by a command in the same change, or not written at all]
+    H -->|Check| J[Run, not retold]
+    H -->|Neither| K[The document goes in the same commit as the change it describes]
     I --> K
     J --> K
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Путь, названный в документе, существует.** Ссылка на переехавший файл читается как
-  действующее указание, и следующий читатель заводит снятое заново. Судятся документы,
-  которые едут в репозиторий: личный черновик, закрытый `.gitignore` или
-  `.git/info/exclude`, проверка не читает — мёртвая ссылка в нём держала гейт пуша, хотя ни
-  в одну ветку этот файл не попадёт.
+- **A path named in a document exists.** A link to a moved file reads as a current instruction,
+  and the next reader recreates what was removed. Only documents that go into the repository are
+  judged: a personal draft covered by `.gitignore` or `.git/info/exclude` is not read by the
+  check — a dead link in one held the push gate although the file would never reach any branch.
   <!-- rt-when: *.md -->
 
-- **Голое имя и каталог судятся наравне с полным путём.** Имя без каталога ищется по всему
-  дереву, каталог — среди каталогов; дерево спрашивается у системы контроля версий, иначе
-  каталоги, начинающиеся с точки, не видны и всё, что в них лежит, читалось бы как
-  несуществующее. Половина строк в таблицах «Где это лежит» — как раз каталоги.
+- **A bare name and a directory are judged the same as a full path.** A name without a directory
+  is searched across the whole tree, a directory among directories; the tree is asked from
+  version control, otherwise dot-directories are invisible and everything in them would read as
+  missing. Half the lines in the "Where it lives" tables are directories.
   <!-- rt-when: *.md -->
 
-- **Описание прошлого из проверки путей выведено целиком.** Архив по устройству называет
-  файлы, которых уже нет, и правкой это не лечится. Папка задачи выведена по той же причине:
-  раздел находок в ходе работы перечисляет ровно то, чего в дереве нет.
+- **The description of the past is excluded from the path check entirely.** By design the
+  archive names files that no longer exist, and no edit cures that. The task folder is excluded
+  for the same reason: the findings section of its progress lists exactly what the tree lacks.
   <!-- rt-when: *.md -->
 
-- **Переносимый текст из сверки адресов выведен, как архив.** Закон, правило и паттерн написаны
-  для любого дерева этого класса, и адреса в них принадлежат тому дереву, куда текст ложится:
-  `libs/common/util` там, где корни зовутся иначе, — пример, а не мёртвая ссылка. Разложенную
-  копию проверка узнаёт по шапке раскладки, исходник — по каталогу, названному в настройке; без
-  этого сверка краснеет на полторы сотни строк, ни одна из которых не чинится здесь.
+- **Portable text is excluded from the address check, like the archive.** A law, a rule and a
+  pattern are written for any tree of this class, and the addresses in them belong to the tree
+  the text lands in: `libs/common/util` where the roots are named differently is an example, not
+  a dead link. The check recognises a laid-out copy by its layout header and a source by the
+  directory named in the settings; without that the check turns red on a hundred and fifty lines,
+  none of which can be fixed here.
   <!-- rt-when: *.md -->
 
-- **Указатель каталога сверяется с его содержимым обеими сторонами.** Записи каталог набирает
-  быстрее, чем читают его указатель, и промах не виден ни в сборке, ни в браузере: запись,
-  приехавшая слиянием соседней ветки, просто не попадает в таблицу. Сверенный руками указатель
-  расходится снова через сутки.
+- **A directory index is checked against its contents from both sides.** A directory gains
+  entries faster than its index is read, and the miss shows neither in the build nor in the
+  browser: an entry that arrived by merging a neighbouring branch simply does not make the table.
+  An index reconciled by hand drifts again within a day.
   <!-- rt-when: *.md -->
 
-- **Указатель заводится каталогу, который читают по нему, а не обходом.** Каталог, где имя файла
-  собрано из номера задачи и имени ветки, ищется своим именем, и перечень отвечает на один
-  вопрос — какие записи здесь лежат, — на который отвечает обход. Цена у него при этом полная:
-  строку в конец дописывает каждая закрытая работа, и каждая ветка получает от хостинга метку
-  конфликта. Список каталогов со сверкой указателя объявляет дерево, и пустой список — законное
-  его состояние.
+- **An index is kept for a directory people read through it, not by walking it.** A directory
+  whose file names are built from the task number and branch name is searched by that name, and
+  the list answers one question — which entries are here — that a walk answers too. Its cost is
+  full nonetheless: every closed piece of work appends a line at the end, and every branch gets a
+  conflict marker from the host. The tree declares the list of indexed directories, and an empty
+  list is a legitimate state.
 
-- **Запись указателя называется именем файла в обратных кавычках.** Сверка полноты читает
-  первое такое имя в строке таблицы и другой формы не знает: строка, где запись названа одной
-  ссылкой с заголовком, для неё пуста — записи в ней нет, и о недостающих она молчит. Читателю
-  при этом видно всё, и промах держится ровно поэтому. Ссылка с заголовком законна и ставится
-  в той же строке при имени.
+- **An index entry is named by its file name in backticks.** The completeness check reads the
+  first such name in a table row and knows no other form: a row where the entry is named by a
+  single link with a title is empty to it — there is no entry, and it says nothing about what is
+  missing. The reader sees everything, which is exactly why the miss survives. A link with a
+  title is legitimate and goes in the same row next to the name.
   <!-- rt-when: *.md -->
 
-- **Имя, названное затем, чтобы сказать «его нет», стоит в списке исключений поимённо.**
-  Отличить такое упоминание от ссылки машине нечем, а текст без него теряет смысл: правило и
-  замысел предупреждают именно о снятом. Туда же — то, что появляется только после сборки,
-  имена веток и правила линтеров: выглядят адресом, адресом не являются.
+- **A name mentioned only to say "it is gone" is listed in the exceptions by name.** A machine
+  has no way to tell such a mention from a link, and the text loses its meaning without it: the
+  rule and the plan warn precisely about what was removed. The same goes for what appears only
+  after a build, branch names and linter rules: they look like an address and are not one.
   <!-- rt-when: *.md -->
 
-- **Файл, положенный раскладкой, пары не требует.** Автор у него в дереве-потребителе один —
-  пакет, и документ о нём лежит там же. Требование пары читает шапку раскладки: она стоит в
-  каждом разложенном файле и отличает его от написанного здесь надёжнее любого перечня путей.
-  Иначе первая же раскладка требует обход на весь свой объём, а обход, объявленный на сотню
-  файлов, снимает требование и с будущих правок этих файлов вручную.
+- **A file placed by the layout needs no pair.** In a consumer tree it has one author — the
+  package — and the document about it lives there too. The pair requirement reads the layout
+  header: it stands in every laid-out file and tells it from what is written here more reliably
+  than any path list. Otherwise the first layout demands a bypass for its whole volume, and a
+  bypass declared for a hundred files lifts the requirement from future manual edits of those
+  files as well.
   <!-- rt-when: *.md -->
 
-- **Документ едет в том же коммите, что и правка, которую он описывает.** Обход — строка
-  `Docs-skip: <причина>` в теле коммита; пустая причина не принимается.
+- **A document goes in the same commit as the change it describes.** The bypass is the line
+  `Docs-skip: <reason>` in the commit body; an empty reason is not accepted.
   <!-- rt-when: *.md -->
 
-- **Документ не длиннее предела длины.** Текст, который не влезает на экран целиком, дописывают
-  в конец, не перечитав начала, — так в одном документе и оказываются два ответа на один вопрос.
-  Предел у текста свой, ниже, чем у кода, и считается так же — все строки; выросший спек
-  делится на поддомены, а не переносит границу. Два числа вместо одного заведены потому, что
-  тексту порог нужен раньше: у кода длину стережёт ещё и линтер, а у прозы — только это число. Описание прошлого из счёта выведено: архив по устройству
-  перечисляет то, чего в дереве уже нет, а папка задачи умирает со слиянием.
+- **A document is no longer than the length limit.** A text that does not fit on one screen gets
+  appended to without rereading the beginning — that is how one document ends up with two answers
+  to one question. Text has its own limit, lower than code, counted the same way — all lines; a
+  spec that has outgrown it is split into subdomains, the boundary is not moved. Two numbers
+  instead of one exist because text needs its threshold earlier: code length is also watched by
+  the linter, prose only by this number. The description of the past is excluded from the count:
+  by design the archive lists what the tree no longer has, and the task folder dies with the
+  merge.
   <!-- rt-when: *.md -->
 
-- **Файл, уезжающий в описание прошлого, называет в шапке свой прежний адрес.** Записи архива
-  ссылались на него, пока он был живым, и после переезда эти ссылки ведут в пустоту: проверка
-  путей архив не читает вовсе, поэтому промах не краснеет никогда. Найти переехавшее нечем —
-  имя записи архива с прежним адресом не совпадает, и поиск по нему её не показывает. Одна
-  строка в шапке дешевле правки всех ссылающихся записей и прошлого не трогает.
+- **A file leaving for the description of the past names its former address in its header.**
+  Archive records referenced it while it was alive, and after the move those references lead
+  nowhere: the path check does not read the archive at all, so the miss never turns red. There is
+  no way to find what moved — the archive record's name does not match the old address, and a
+  search by it does not show it. One line in the header is cheaper than editing every referencing
+  record and does not touch the past.
   <!-- rt-when: *.md -->
 
-- **Словарь правится там, откуда он собирается, а не там, где читается.** Он уезжает в контекст
-  каждой сессии целиком и оттого читается обычным документом дерева, а собран он раскладкой, как
-  всякий ресурс с шапкой: правка на месте живёт до следующей раскладки и пропадает молча, а до
-  тех пор раскладка отказывает по словарю целиком. Адрес надстройки называет компаньон правила, и
-  вводная, которую печатает хук запуска, выводит его из шапки сама.
+- **The glossary is edited where it is assembled, not where it is read.** It goes into the
+  context of every session whole and therefore reads as an ordinary tree document, but it is
+  assembled by the layout like every resource with a header: an in-place edit lives until the next
+  layout and vanishes silently, and until then the layout refuses the whole glossary. The
+  companion of the rule names the override address, and the intro printed by the startup hook
+  derives it from the header itself.
   <!-- rt-when: *.md -->
 
-- **Раздел надстройки замещает одноимённый раздел набора целиком, а не дописывает в него.** Своё
-  слово поэтому кладётся в свой раздел, названный иначе, чем любой из разделов набора: положенное
-  в одноимённый, оно уносит с собой весь пакетный раздел, и потеря видна только тому, кто помнит,
-  что там стояло.
+- **An override section replaces the package section of the same name entirely; it does not
+  append to it.** So the tree's own words go into their own section, named unlike any section of
+  the set: put into a section of the same name, they carry the whole package section away, and
+  the loss is visible only to someone who remembers what stood there.
   <!-- rt-when: *.md -->
 
-- **Словарь работы и язык экрана — два разных словаря.** Слово, которым слой правил зовёт своё
-  понятие, для человека за экраном ничего не значит: он не читал ни одного правила и читать не
-  будет. Термин словаря в подписи кнопки, колонки или пустого состояния — это внутреннее слово,
-  показанное наружу; слово для человека выбирает тот, кто с ним говорит, и берёт он его из языка
-  предметной области, а не из левой колонки словаря.
+- **The working glossary and the screen language are two different vocabularies.** The word the
+  rules layer uses for its concept means nothing to the person behind the screen: they have not
+  read a single rule and will not. A glossary term in a button label, a column or an empty state
+  is an internal word shown outward; the word for a person is chosen by whoever speaks to them,
+  and it comes from the language of the domain, not from the glossary's left column.
   <!-- rt-when: *.md -->
 
-- **Текст, называющий состояние машины, устаревает без единой правки в дереве.** Ловушка о том,
-  что на машине установлено, верна в день, когда её пишут, и становится неправдой сама собой —
-  ни одна сверка этого не видит: они читают дерево, а состарилась машина. Утверждение о машине
-  пишется способом её спросить: команда и то, с чем сверять ответ, вместо снимка ответа.
+- **A text naming the state of a machine goes stale without a single edit in the tree.** A trap
+  about what is installed on the machine is true on the day it is written and becomes false by
+  itself — no check sees it: they read the tree, and it is the machine that aged. A statement
+  about the machine is written as the way to ask it: the command and what to compare its answer
+  with, instead of a snapshot of the answer.
   <!-- rt-when: *.md -->
 
-- **У записи описания прошлого есть срок, и после него запись снимается.** Каталог набирает по
-  записи на каждую закрытую работу и не отдаёт обратно ничего. Снятая остаётся в истории —
-  достают её тем же именем файла, которым ищут живую. Срок называет дерево ключом настройки;
-  умолчания у него нет, потому что снимается там разбор просьбы, которого нет больше нигде.
-  Проверка требует на сутки позже, чем чистка снимает: возраст считается по минуте коммита, а
-  между чисткой в минуту пуша и прогоном в конвейере проходят минуты или часы — без запаса
-  очередная запись пересекала порог между ними, и прогон краснел не по правке ветки.
+- **A record in the description of the past has an expiry, and after it the record is removed.**
+  The directory gains a record per closed piece of work and gives nothing back. A removed record
+  stays in history — retrieved by the same file name used to find a live one. The tree names the
+  expiry with a settings key; there is no default, because what gets removed there is the grill,
+  which exists nowhere else. The check demands a day later than the cleanup removes: age is
+  counted by the commit minute, and between cleanup at push time and the pipeline run pass
+  minutes or hours — without the margin the next record crossed the threshold between them, and
+  the run turned red for something other than the branch's change.
   <!-- rt-when: *.md -->
 
-- **Ссылка на запись описания прошлого в живом тексте живёт ровно до её срока.** Проверка
-  адресов архив не читает вовсе, поэтому мёртвая ссылка краснеет не в нём, а в том тексте,
-  который сослался. Живой текст называет решение словами, а не адресом записи.
+- **A link to a record of the past in a live text lives exactly until the record's expiry.** The
+  address check does not read the archive at all, so the dead link turns red not there but in the
+  text that referenced it. A live text names the decision in words, not by the record's address.
   <!-- rt-when: *.md -->
 
-- **Схема правится тем же изменением, что и текст, который она изображает.** Разойдясь, схема и
-  проза остаются читаемыми обе, и первым это замечает тот, кто пошёл по схеме: она короче, её
-  читают вместо текста, и расхождение уводит работу целиком. Ни одна проверка этого не видит —
-  схема набрана словами и от текста рядом отличима только чтением.
+- **A diagram is edited by the same change as the text it depicts.** Once they diverge, the
+  diagram and the prose both remain readable, and the first to notice is whoever followed the
+  diagram: it is shorter, it is read instead of the text, and the divergence derails the work
+  entirely. No check sees this — the diagram is set in words and can be told from the text next
+  to it only by reading.
   <!-- rt-when: *.md -->
 
-## Тексты для человека
+## Texts for a person
 
-- **У текста есть адресат, и слог выбирается по нему, а не по тому, что писалось до него.**
-  Правила, законы и спеки читает тот, кто работает внутри слоя правил; задачу, заявку и ответ в
-  чате — человек снаружи. Текст, написанный сразу после правки спеки, наследует её слог: изнутри
-  он выглядит точным, а для читателя снаружи пуст. Адресат проверяется до первой строки.
+- **A text has an addressee, and the register is chosen by them, not by what was written just
+  before.** Rules, laws and specs are read by whoever works inside the rules layer; a task, a PR
+  and a chat reply — by a person outside. A text written right after editing a spec inherits the
+  spec's register: from the inside it looks precise, to the reader outside it is empty. The
+  addressee is checked before the first line.
   <!-- rt-when: задача, описание заявки, ответ владельцу -->
 
-Задачу в очереди, описание заявки и ответ в чате читает владелец. Он помнит продукт и не читал
-ни одного правила слоя: слова слоя для него пустые. Форма ответа о состоянии работы — правило
-`status-report`; здесь язык, каким написаны все три текста.
+A task in the queue, a PR description and a chat reply are read by the owner. They remember the
+product and have not read a single rule of the layer: the layer's words are empty to them. The
+form of a status reply is the rule `status-report`; here is the language all three texts are
+written in.
 
-- **Текст для владельца пишется словами продукта, а не словами слоя правил.** Что человек видит,
-  что у него не работает, что с этим сделали. Заявка, прогон, набор, объём правки,
-  договорённость — это слова слоя; в тексте для владельца они заменяются на те, которыми зовёт
-  их он сам. Иначе он читает текст о своей же работе и не узнаёт в нём ни одного экрана.
+- **A text for the owner is written in the words of the product, not the words of the rules
+  layer.** What the person sees, what does not work for them, what was done about it. PR, run,
+  suite, change size, agreement — those are the layer's words; in a text for the owner they are
+  replaced with the ones the owner uses. Otherwise they read a text about their own work and do
+  not recognise a single screen in it.
   <!-- rt-when: задача, описание заявки, ответ владельцу -->
 
-- **Из задачи видно, что сломалось у человека, а не только где красная проверка.** Задача,
-  описанная именами файлов и номерами проверок, не даёт решить, срочная она или нет: цена
-  промаха видна по тому, чего человек не может сделать.
+- **A task shows what broke for the person, not only where the check is red.** A task described
+  by file names and check numbers gives no way to decide whether it is urgent: the cost of the
+  miss shows in what the person cannot do.
   <!-- rt-when: задача, описание заявки, ответ владельцу -->
 
-- **Страдательный залог и метафоры в этих текстах не пишутся.** «Работа отдана» и «красное
-  въехало» звучат весомо и не называют ни действия, ни того, кто его сделал. Владелец решает по
-  ним, что делать дальше, и решать ему не по чему.
+- **Passive voice and metaphors are not written in these texts.** "The work has been handed
+  over" and "red got in" sound weighty and name neither the action nor who did it. The owner
+  decides by them what to do next, and has nothing to decide by.
   <!-- rt-when: задача, описание заявки, ответ владельцу -->
 
-- **У слоя правил и у текста для владельца разные языки, и граница между ними проходит по
-  адресату.** Закон, правило, паттерн, скил, отказ проверки, словарь и документы дерева
-  пишутся по-английски: их читает заход, и английский текст стоит ему на пятую часть дешевле
-  при тех же статьях. Задача в очереди, описание заявки, тело коммита и ответ в чате пишутся
-  на языке владельца: он их читает, а слой правил — нет. Текст, написанный на языке другой
-  стороны, — промах того же рода, что слово слоя в задаче: адресат его не прочтёт.
+- **The rules layer and the text for the owner have different languages, and the boundary between
+  them runs by addressee.** A law, a rule, a pattern, a skill, a check refusal, the glossary and
+  the tree's documents are written in English: a session reads them, and English text costs it a
+  fifth less with the same articles. A task in the queue, a PR description, a commit body and a
+  chat reply are written in the owner's language: the owner reads them, and the rules layer does
+  not. A text written in the other side's language is a miss of the same kind as a layer word in
+  a task: its addressee will not read it.
   <!-- rt-when: любой текст -->
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Ни одна из формулировочных договорённостей не проверяется: одна фраза на правило, простые
-слова, отсутствие утверждений о будущем, свежесть числа в тексте. Две последние закон прямо
-оставляет автору: открытый вопрос пишется теми же словами, что и обещание, а дата и номер —
-такие же числа, как то, что пересчитывают.
+None of the wording agreements is checked: one sentence per rule, plain words, no claims about
+the future, freshness of a number in the text. The last two the law leaves with the author
+explicitly: an open question is written in the same words as a promise, and a date and an id are
+numbers like the ones that get recomputed.
 
-Ответ владельцу не читает ни одна проверка, а промахи в нём те же, что в тексте дерева:
-выдуманный факт, поданный наравне с проверенным, и оценка чужого решения вместо исполнения.
-Ловит их только владелец — то есть уже прочитав. Правило действует на ответ так же, как на файл;
-разница в том, что за файл отвечает гейт, а за ответ — автор.
+No check reads the reply to the owner, and the misses in it are the same as in tree text: an
+invented fact served alongside a verified one, and an appraisal of someone else's decision
+instead of carrying it out. Only the owner catches them — that is, having already read. The rule
+applies to a reply the same as to a file; the difference is that the gate answers for the file
+and the author for the reply.
 
-На комментарии в коде правило распространяется, но гейтом не требуется: он зовёт его только
-на `.md`. Расширять требование на каждый `.ts` значило бы шуметь на каждой правке, поэтому
-здесь оно держится памятью автора — и цена этого видна: слова из левой колонки словаря живут
-в комментариях хуков и `tools/*.mjs` десятками строк, включая текст отказа, который гард
-печатает агенту.
+The rule extends to code comments but the gate does not demand it: it calls the rule only on
+`.md`. Extending the requirement to every `.ts` would mean noise on every edit, so here it is
+held by the author's memory — and the cost of that shows: words from the glossary's left column
+live in hook comments and `tools/*.mjs` by the dozen, including the refusal text the guard prints
+to the agent.
 
-## Паттерны
+## Patterns
 
-- `doc-style-write` — как формулировать: примеры «так» и «не так», правила для комментариев.
-- `doc-style-sweep` — разбор документа, накопившего список работ, на действующее и закрытое.
-- `doc-style-human` — форма задачи, описания заявки и ответа владельцу: образцы «так» и «не так».
-- `doc-style-trace` — обратный проход: закрытые задачи против текстов, поиск того, чего не
-  написали.
+- `doc-style-write` — how to word: "do" and "don't" examples, rules for comments.
+- `doc-style-sweep` — sorting a document that has accumulated a work list into current and closed.
+- `doc-style-human` — the form of a task, a PR description and a reply to the owner: "do" and
+  "don't" samples.
+- `doc-style-trace` — the reverse pass: closed tasks against texts, looking for what was not
+  written.
 
-## Скил без закона
+## Skills without a law
 
 - `archive-record` — запись о закрытой работе: что в неё пишется, чем она находится без
   перечня и чего в ней не пишут.
