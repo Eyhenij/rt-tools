@@ -3,11 +3,13 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 5 из 6 — Замыслы и решение
-- **Done:** этапы 1–4 закрыты — проверки спеков читают ключи под двумя именами; все спеки
-  `docs/specs/` переведены целиком, кириллица осталась только в цитатах русских подписей экрана,
-  имён состояний и данных тестов
-- **Next step:** перевести двадцать пять замыслов `docs/plans/` и одно решение `docs/adr/`
+- **Stage:** 6 из 6 — Замер, исключения и закрытие эпика
+- **Done:** этапы 1–5 закрыты — проверки спеков читают ключи под двумя именами; все спеки
+  `docs/specs/`, двадцать пять замыслов `docs/plans/` и оба решения `docs/adr/` переведены
+  целиком, кириллица осталась только в цитатах русских подписей экрана, имён состояний и
+  данных тестов
+- **Next step:** записать замер в девятый раздел `docs/plans/rules-layer-language.md`,
+  перечислить исключения поимённо, прогнать `pnpm run check:all` и закрыть эпик словом владельцу
 - **Uncommitted:** нет
 - **Waiting for the owner:** нет
 - **PR:** ещё не открыт
@@ -38,6 +40,11 @@
   десятью поддоменами, `docs/specs/ui-kit/` с двумя, предложения `docs/specs/core/` и
   `docs/specs/store/`. `npm run check:specs` — код 0; `node tools/check-doc-paths.mjs` —
   501 документ, расхождений нет; `node tools/check-file-size.mjs` — длиннее предела 0.
+- Этап 5 сделан: двадцать пять замыслов `docs/plans/` и решение `docs/adr/0002-…` переведены;
+  решение `0001-…` было по-английски с самого начала. Кириллица осталась в одном файле —
+  цитаты русского содержимого витрины в `ui-kit-v2-labels-from-app.md`. `npm run check:specs`
+  — код 0; `node tools/check-doc-paths.mjs` — 501 документ, расхождений нет; `node tools/check-file-size.mjs`
+  — длиннее предела 0.
 
 ## Handover of the session
 
@@ -49,8 +56,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 3 из 6 — Спеки приёмника
-- **Next step:** перевести тридцать девять файлов `docs/specs/message-bus/` вместе с компаньонами
+- **Stage:** 5 из 6 — Замыслы и решение
+- **Next step:** перевести двадцать пять замыслов `docs/plans/` и одно решение `docs/adr/`
 - **PR:** ещё не открыт
 
 The progress in full — `docs/tasks/RT-1858-tree-docs-english/progress.md`; the plan lies next to it.
@@ -58,25 +65,14 @@ The progress in full — `docs/tasks/RT-1858-tree-docs-english/progress.md`; the
 ### Uncommitted
 
 ```
- M docs/specs/message-bus/admin/spec.md
- M docs/specs/message-bus/cargo-state/implementation.md
- M docs/specs/message-bus/cargo-state/scenarios.md
- M docs/specs/message-bus/cargo-state/spec.md
- M docs/specs/message-bus/cargo-triage/implementation.md
- M docs/specs/message-bus/cargo-triage/scenarios.md
- M docs/specs/message-bus/cargo-triage/spec.md
- M docs/specs/message-bus/intake/implementation.md
- M docs/specs/message-bus/intake/scenarios.md
- M docs/specs/message-bus/intake/spec.md
- M docs/specs/message-bus/publisher-cargo-close/implementation.md
- M docs/specs/message-bus/publisher-cargo-close/scenarios.md
- M docs/specs/message-bus/publisher-cargo-close/spec.md
  M package.json
 ```
 
 ### Commits over the main branch
 
 ```
+c0551d56a docs(rt:ui-kit): спеки китов, ядра и хранилища переведены на английский
+27dd19ac1 docs(rt:message-bus): спеки приёмника переведены на английский
 035cd6a75 docs(rt:message-bus): корень домена и шесть поддоменов приёмника по-английски
 cfcfaceec docs(rt:agent-kit): спеки ведения работы и выходов хода по-английски
 9a50ffaf9 docs(rt:agent-kit): спеки гардов завершения хода по-английски

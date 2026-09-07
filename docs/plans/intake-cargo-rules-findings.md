@@ -1,37 +1,37 @@
-# Память приёма о разобранном грузе: находки о слое правил
+# The memory of the intake about the taken-apart cargo: the findings about the rules layer
 
-Копились по ходу эпика RT-907 (`docs/plans/intake-cargo-lifecycle.md`), который кончился.
+They accumulated along the epic RT-907 (`docs/plans/intake-cargo-lifecycle.md`), which is over.
 
-## Разобрано 29 августа 2026 года задачей RT-1569
+## Taken apart on 29 August 2026 by the task RT-1569
 
-Двадцать пунктов восьми задач сведены с нынешними ресурсами. Закрытыми оказались десять:
+Twenty items of eight tasks were reconciled with the present resources. Ten turned out closed:
 
-| Пункт                                                 | Чем закрыт                                                                               |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| проверка, пропустившая себя, отвечает нулём           | пропуск объявляется кодом возврата, а не строкой вывода — задача RT-1202                 |
-| раздел об оставшемся шаге дописывается перед просьбой | он стоит в теле заявки с минуты открытия — задача RT-1207                                |
-| ждущий прогон вытесняется из очереди конвейера        | ловушка правила поставки: своя группа на ветку, общая — только у шагов со стендом        |
-| журнал изменений упирается в общий предел длины       | предел срабатывает при росте текста, а не на пуше — задача RT-1204                       |
-| номер сценария занимают две невлитые ветки            | свободный номер ищется во всех ветках — задача RT-1205                                   |
-| предел длины спека сработал на пуше                   | порядок закрытия работы меряет спек длиной тем же ходом, что и вливание                  |
-| вход в состояние назван только клеткой таблицы        | паттерн разбора называет вход двумя признаками и говорит, что ждать нечего               |
-| гард вытаскивает пути из текста правки                | выемка путей отбрасывает тела документов; тело интерпретатора остаётся при своей команде |
-| готовые вызовы зовут пакет из реестра                 | компаньон правила о разборе груза называет команды этого дерева и объясняет отказ        |
-| односторонний обмен выглядит рабочим                  | сторона обмена, которой нет, называется прямо — задача RT-1208                           |
+| Item                                                                | What it is closed by                                                                                                   |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| a check that skipped itself answers with a zero                     | the skip is declared by the code of the return, not by a line of the output — the task RT-1202                         |
+| the section about the remaining step is appended before the request | it stands in the body of the request from the minute it opens — the task RT-1207                                       |
+| a waiting run is driven out of the queue of the pipeline            | a pitfall of the rule of the delivery: a group of its own per branch, a common one only at the steps with a stand      |
+| the journal of the changes runs into the common length limit        | the limit goes off at the growth of the text, not at the push — the task RT-1204                                       |
+| a scenario number is taken by two unmerged branches                 | a free number is looked for across all the branches — the task RT-1205                                                 |
+| the length limit of a spec went off at the push                     | the order of the closing of the work measures the spec by the length by the same turn as the merging                   |
+| the entry into a state is named by a cell of a table alone          | the pattern of the taking apart names the entry by two signs and says that there is nothing to wait for                |
+| the guard pulls the paths out of the text of the edit               | the taking out of the paths throws away the bodies of documents; the body of the interpreter stays at its own command  |
+| the ready-made calls call the package from the registry             | the companion of the rule about the taking apart of the cargo names the commands of this tree and explains the refusal |
+| a one-sided exchange looks working                                  | the side of the exchange that does not exist is named openly — the task RT-1208                                        |
 
-Десять внесены правкой ресурсов той же задачей:
+Ten were brought in by an edit of the resources by the same task:
 
-| Пункт                                            | Куда легло                                                                                 |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| имя проекта в признаке этапа не сверено          | ловушка правила ведения работы: имя спрашивается у сборщика, а не пишется по памяти        |
-| этап, закрытый без пуша, копит красное           | ловушка там же: проверки гейта гоняются последним движением этапа                          |
-| признак закрытия требует входа человека          | ловушка там же: у признака спрашивают, может ли исполнитель подтвердить его сам            |
-| вывод закрытого эпика держится на ответе вызова  | ловушка там же: признак проверяет исход у той стороны, которая его хранит                  |
-| команда вне репозитория затирает файл вывода     | ловушка правила поставки: файл вывода собирается в дереве, записанное читается до отправки |
-| проза в строке требования становится требованием | абзац в паттерне заведения правила: требование — идентификатор ресурса либо ничего         |
-| вердикт пустой привязки нужен дословный          | там же, в промахах: три принимаемых слова названы прямо                                    |
-| состояние экрана читается следующей строкой      | раздел в паттерне сквозных спек: состояние ждётся опросом, а не паузой                     |
-| два счёта одного значения расходятся молча       | статья правила об устройстве кода: значение берётся у той стороны, что его объявила        |
-| строка таблицы читается сверкой как процедура    | ловушка компаньона правила о договорённости — имена этого дерева                           |
+| Item                                                              | Where it landed                                                                                                                   |
+| ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| the name of the project in a sign of a stage is not checked       | a pitfall of the rule of the conduct of the work: the name is asked from the builder, not written by memory                       |
+| a stage closed without a push accumulates the red                 | a pitfall there too: the checks of the gate are run by the last movement of the stage                                             |
+| a sign of the closing demands the entry of a person               | a pitfall there too: a sign is asked whether the executor can confirm it themselves                                               |
+| the conclusion about a closed epic stands on the answer of a call | a pitfall there too: a sign checks the outcome at the side that keeps it                                                          |
+| a command outside the repository wipes the file of the output     | a pitfall of the rule of the delivery: the file of the output is gathered in the tree, what is written is read before the sending |
+| prose in the line of a requirement becomes a requirement          | a paragraph in the pattern of the creation of a rule: a requirement is an identifier of a resource or nothing                     |
+| the verdict of an empty binding is needed verbatim                | there too, in the misses: the three accepted words are named openly                                                               |
+| the state of the screen is read by the next line                  | a section in the pattern of the end-to-end specs: the state is waited for by a polling, not by a pause                            |
+| two counts of one value diverge silently                          | an article of the rule about the structure of the code: the value is taken at the side that declared it                           |
+| a row of a table is read by the checking as a procedure           | a pitfall of the companion of the rule about the agreement — the names of this tree                                               |
 
-Неразобранного по этому эпику не осталось.
+Nothing unsorted is left by this epic.

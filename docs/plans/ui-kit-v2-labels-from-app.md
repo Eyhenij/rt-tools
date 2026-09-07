@@ -1,55 +1,57 @@
-# Подписи `@rt-tools/ui-kit-v2` переезжают приложению
+# The labels of `@rt-tools/ui-kit-v2` move to the application
 
-## Контекст
+## The context
 
-Кит везёт собственные подписи вшитыми: `src/lib/i18n/rt-kit-translations.ts` — 131 ключ
-восемью языками, 1077 строк, раскладываются `provideRtKitTranslations()`. Достают их 43 папки
-компонентов — 197 мест, из них 147 прямо в шаблонах через `| transloco`.
+The kit carries its own labels sewn in: `src/lib/i18n/rt-kit-translations.ts` — 131 keys in eight
+languages, 1077 lines, laid out by `provideRtKitTranslations()`. They are reached by 43 folders of
+components — 197 places, of them 147 straight in the templates through `| transloco`.
 
-Язык при этом решает не приложение, а активная локаль Transloco. В витрине она `en`, и
-собственные подписи кита встают вперемешку с русским демонстрационным содержимым: «Cancel»
-рядом с «Отклонить заявку», «Drop the files to attach them» — рядом с «Отпустите, чтобы
-приложить». Смесь видна во всех трёх сделанных волнах покрытия.
+The language at that is decided not by the application but by the active locale of Transloco. In the
+showcase it is `en`, and the kit's own labels stand mixed with the Russian demonstration content:
+"Cancel" next to «Отклонить заявку», "Drop the files to attach them" — next to «Отпустите, чтобы
+приложить». The mixture is visible in all three done waves of the coverage.
 
-Подписи — ответственность приложения. Кит не знает ни языка продукта, ни его словаря, ни того,
-как продукт называет свои сущности; держать восемь словарей внутри пакета значит навязывать
-потребителю и набор языков, и формулировки, и Transloco как способ доставки.
+The labels are the responsibility of the application. The kit knows neither the language of the
+product, nor its vocabulary, nor how the product names its entities; to keep eight vocabularies inside
+the package means to impose on the consumer both the set of the languages, and the wordings, and
+Transloco as the way of the delivery.
 
-Задача #271. Вскрыто проходом глазами по волне 3 линии покрытия состояний — она закрыта и лежит
-записью о закрытой линии покрытия состояний (PR #270); из дерева она снята по сроку
-хранения и лежит в истории.
+The task #271. Uncovered by a walk with the eyes over the wave 3 of the line of the coverage of the
+states — it is closed and lies as a record about the closed line of the coverage of the states (PR
+#270); it is removed from the tree by the term of the keeping and lies in the history.
 
-## Принятые решения
+## The accepted decisions
 
-1. **Кит берёт подписи функцией-переводчиком из токена.** Ключи остаются его, словари —
-   приложения. Отвергнуто: подпись входом на каждый ключ (у чата это 24 новых входа, всего
-   сотни, и потребитель передаёт их в разметке каждого места).
-2. **Английский набор остаётся внутри кита умолчанием.** Не как локализация, а как умолчание
-   токена: среди 131 ключа много `aria`-подписей, и пустая там означает кнопку без имени для
-   скринридера. Приложение перекрывает частично — переданные ключи ложатся поверх.
-3. **Семь остальных языков удаляются из пакета** (`de`, `hi`, `ko`, `ru`, `th`, `zh-Hans`,
-   `zh-Hant`). Раз формулировки — ответственность приложения, то и переводы тоже. Кому нужны —
-   возьмёт из истории git.
+1. **The kit takes the labels by a translator function from a token.** The keys stay its own, the
+   vocabularies are the application's. Rejected: a label as an input per key (at the chat that is 24
+   new inputs, hundreds in all, and the consumer passes them in the markup of every place).
+2. **The English set stays inside the kit as a default.** Not as a localisation but as a default of
+   the token: among the 131 keys there are many `aria` labels, and an empty one there means a button
+   without a name for a screen reader. The application overrides partially — the passed keys lie over.
+3. **The seven remaining languages are deleted from the package** (`de`, `hi`, `ko`, `ru`, `th`,
+   `zh-Hans`, `zh-Hant`). Since the wordings are the responsibility of the application, so are the
+   translations. Whoever needs them will take them from the git history.
 
-## Что считается сделанным
+## What counts as done
 
-- В `projects/ui-kit-v2/src/lib/**` нет ни одного импорта из `@jsverse/transloco`.
-- `@jsverse/transloco` убран из `peerDependencies` кита.
-- В пакете остаётся один словарь — английский, и он объявлен умолчанием, а не языком.
-- Приложение, не давшее ничего, получает работающий кит на английских подписях; приложение,
-  давшее свою функцию, получает свои — включая те, что меняются со сменой языка на ходу.
+- In `projects/ui-kit-v2/src/lib/**` there is not a single import from `@jsverse/transloco`.
+- `@jsverse/transloco` is removed from the `peerDependencies` of the kit.
+- One vocabulary is left in the package — the English one, and it is declared a default, not a language.
+- An application that gave nothing gets a working kit on the English labels; an application that gave
+  a function of its own gets its own — including those that change at a change of the language on the
+  fly.
 
 ---
 
-## Устройство
+## The device
 
-Три вещи в `src/lib/i18n/`:
+Three things in `src/lib/i18n/`:
 
-| что                 | зачем                                                                                    |
-| ------------------- | ---------------------------------------------------------------------------------------- |
-| `RT_KIT_TRANSLATOR` | `Signal<TRtKitTranslator>` — то, что даёт приложение. Умолчание читает английский набор  |
-| `RT_KIT_LABELS`     | `Signal<TRtKitLabelMap>` — производная карта всех ключей, root-scoped: строится один раз |
-| `RT_KIT_LOCALE`     | `Signal<string>` — активная локаль; ею кит форматирует даты. Умолчание `'en'`            |
+| what                | what for                                                                                     |
+| ------------------- | -------------------------------------------------------------------------------------------- |
+| `RT_KIT_TRANSLATOR` | `Signal<TRtKitTranslator>` — what the application gives. The default reads the English set   |
+| `RT_KIT_LABELS`     | `Signal<TRtKitLabelMap>` — the derived map of all the keys, root-scoped: it is built once    |
+| `RT_KIT_LOCALE`     | `Signal<string>` — the active locale; the kit formats the dates by it. The default is `'en'` |
 
 ```typescript
 export type TRtKitLabelKey = keyof typeof RT_KIT_LABELS_EN;
@@ -57,10 +59,11 @@ export type TRtKitLabelParams = Readonly<Record<string, string | number>>;
 export type TRtKitTranslator = (key: TRtKitLabelKey, params?: TRtKitLabelParams) => string;
 ```
 
-Функция сигнальная не сама по себе — сигналом объявлен **токен**: при смене языка приложение
-меняет функцию, `RT_KIT_LABELS` пересчитывается, и все шаблоны перерисовываются.
+The function is not signal by itself — it is the **token** that is declared a signal: at a change of
+the language the application changes the function, `RT_KIT_LABELS` is recounted, and all the templates
+are redrawn.
 
-**Компонент читает карту целиком, а не ключ по одному:**
+**A component reads the map whole, not a key one at a time:**
 
 ```typescript
 protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
@@ -70,52 +73,53 @@ protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 <button [attr.aria-label]="t().uiClose"></button>
 ```
 
-Одно поле на компонент вместо N, полная реактивность без `pure: false`, а ключ проверяется
-типом карты — опечатка не доживает до рантайма. Пайп отвергнут: `pure` не перевычислится при
-смене языка (аргумент тот же), `impure` вызывался бы на каждую проверку в 147 местах, включая
-списки чата и таблицы.
+One field per component instead of N, full reactivity without `pure: false`, and the key is checked by
+the type of the map — a typo does not live to the runtime. A pipe is rejected: `pure` will not
+recompute at a change of the language (the argument is the same), `impure` would be called at every
+check in 147 places, including the lists of the chat and the tables.
 
-**Пять ключей с подстановкой** (`uiBaseline`, `uiDownloadFile`, `uiPageOf`, `uiRangeOf`,
-`uiSectionInProgress`) карте не годятся — им нужны параметры. Для них
-`rtKitLabel(key, params)`, где `params` — сигнал или значение; возвращает `Signal<string>`.
-Приём уже применён в `rt-stat-tile`.
+**Five keys with a substitution** (`uiBaseline`, `uiDownloadFile`, `uiPageOf`, `uiRangeOf`,
+`uiSectionInProgress`) do not fit the map — they need parameters. For them there is
+`rtKitLabel(key, params)`, where `params` is a signal or a value; it gives back `Signal<string>`. The
+technique is already applied in `rt-stat-tile`.
 
-## Что ломается у потребителя
+## What breaks at the consumer
 
-- **`provideRtKitTranslations()` исчезает.** Вместо него — `provideRtKitLabels(...)`,
-  принимающий функцию-переводчик и локаль.
-- **Семи словарей в пакете больше нет.**
-- **`RtRouteAsideBase.successKey` становится `successText`.** Сейчас база зовёт
-  `transloco.translate(opts.successKey)` — то есть переводит **ключ приложения**, не свой.
-  Приложение переводит сам и передаёт готовый текст: чужие ключи кита не касаются.
-- **`@jsverse/transloco` уходит из peer-зависимостей.** Приложение, которое им пользуется,
-  ничего не теряет — оно и отдаёт функцию, обёрнутую вокруг `translateSignal`.
+- **`provideRtKitTranslations()` disappears.** Instead of it there is `provideRtKitLabels(...)`, taking
+  a translator function and a locale.
+- **The seven vocabularies are no longer in the package.**
+- **`RtRouteAsideBase.successKey` becomes `successText`.** Now the base calls
+  `transloco.translate(opts.successKey)` — that is, it translates **a key of the application**, not its
+  own. The application translates it itself and passes the ready text: foreign keys do not concern the
+  kit.
+- **`@jsverse/transloco` leaves the peer dependencies.** An application that uses it loses nothing — it
+  is the one giving the function wrapped around `translateSignal`.
 
 ---
 
-## Порядок работ
+## The order of the works
 
-Пачками, чтобы каждая проверялась отдельно.
+By batches, so that each is checked apart.
 
-1. **Ядро i18n.** Английский набор → `rt-kit-labels.en.ts`; токены и `provideRtKitLabels` →
-   `rt-kit-labels.providers.ts`; `rtKitLabel()` для подстановок. Семь словарей и
-   `provideRtKitTranslations` удаляются. Спека провайдеров переписывается.
-2. **Обвязка спек.** `src/testing/rt-kit-testing.ts` перестаёт поднимать Transloco: вместо
-   загрузчика — умолчание токена либо подменная функция.
-3. **Компоненты с подстановкой** (5 мест): `pagination`, `download-link`, `page-header`,
-   `stat-tile`, плюс `container` с его `successKey`.
-4. **Компоненты по одному-двум ключам** — хвост из 30 папок.
-5. **Компоненты с плотной разметкой**: `chat` (25), `workspace-details` (23), `page-header`
-   (16), `pagination` (14), `field` (12), `aside/unsaved-dialog`, `counter`,
-   `table/settings-aside`.
-6. **`rt-chat` и локаль** — `RT_KIT_LOCALE` вместо `langChanges$`.
-7. **Витрина.** `preview.ts` теряет `provideTransloco` и загрузчик; демонстрационные подписи
-   задаются функцией-переводчиком с русским набором — тогда витрина перестаёт быть двуязычной.
-8. **`package.json`** — `@jsverse/transloco` из `peerDependencies`.
-9. **Документация**: `README.md` кита, `CONTEXT.md` затронутых папок, страницы `Overview.mdx`,
-   где подписи объявлены входами, `CHANGELOG.md` — раздел `BREAKING CHANGES`.
+1. **The core of the i18n.** The English set → `rt-kit-labels.en.ts`; the tokens and
+   `provideRtKitLabels` → `rt-kit-labels.providers.ts`; `rtKitLabel()` for the substitutions. The seven
+   vocabularies and `provideRtKitTranslations` are deleted. The spec of the providers is rewritten.
+2. **The harness of the specs.** `src/testing/rt-kit-testing.ts` stops raising Transloco: instead of
+   the loader there is the default of the token or a substituted function.
+3. **The components with a substitution** (5 places): `pagination`, `download-link`, `page-header`,
+   `stat-tile`, plus `container` with its `successKey`.
+4. **The components by one or two keys** — the tail of 30 folders.
+5. **The components with dense markup**: `chat` (25), `workspace-details` (23), `page-header` (16),
+   `pagination` (14), `field` (12), `aside/unsaved-dialog`, `counter`, `table/settings-aside`.
+6. **`rt-chat` and the locale** — `RT_KIT_LOCALE` instead of `langChanges$`.
+7. **The showcase.** `preview.ts` loses `provideTransloco` and the loader; the demonstration labels are
+   set by a translator function with a Russian set — then the showcase stops being bilingual.
+8. **`package.json`** — `@jsverse/transloco` out of `peerDependencies`.
+9. **The documentation**: the `README.md` of the kit, the `CONTEXT.md` of the touched folders, the
+   pages `Overview.mdx` where the labels are declared as inputs, the `CHANGELOG.md` — the section
+   `BREAKING CHANGES`.
 
-## Проверка
+## The check
 
 ```bash
 pnpm run check:all
@@ -123,8 +127,8 @@ pnpm exec nx run @rt-tools/ui-kit-v2:typecheck
 pnpm exec nx verify @rt-tools/ui-kit-v2
 pnpm run build-storybook:ui-kit-v2
 pnpm run agent-kit:check
-grep -rn "@jsverse/transloco" projects/ui-kit-v2/src/lib   # должно быть пусто
+grep -rn "@jsverse/transloco" projects/ui-kit-v2/src/lib   # must be empty
 ```
 
-Затем глазами: витрина на одном языке, ни одной английской подписи среди русского содержимого.
-Смотреть при **активной** вкладке — панельные истории держатся на кадрах анимации.
+Then by the eyes: the showcase in one language, not a single English label among the Russian content.
+To be looked at with the tab **active** — the panel stories hold on the frames of the animation.
