@@ -1,9 +1,9 @@
-<!-- rt-kit v0.25.0 · defaults/turn-map.md · 38453d0f57e3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · defaults/turn-map.md · d9a448690485 · правится надстройкой, не здесь -->
 # Turn map
 
 This is not the rule but its short digest: the rule explains, the map names. The full text is
-skill `task-flow`; it also names the pattern that leads each state. What a turn ends with is
-skill `turn-conduct` under the same law.
+rule `task-flow`; it also names the pattern that leads each state. What a turn ends with is
+rule `turn-conduct` under the same law.
 
 The work state is declared by a line in the "Где стоим" section of the progress. Until the
 mandatory action is done, the work stays in the same state.

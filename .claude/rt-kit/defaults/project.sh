@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · defaults/project.sh · 42938526e64f · правится надстройкой, не здесь
-# Профиль дерева: чем здесь проверяется правка и что считается переизобретением.
+# rt-kit v0.25.0 · defaults/project.sh · c444dfed641c · правится надстройкой, не здесь
+# Tree profile: what checks an edit here and what counts as reinvention.
 #
-# Умолчание пакета. Всё, что общего у деревьев этой мастерской, живёт здесь: запускатель Nx,
-# линтер кода, линтер стилей, набор образцов переизобретения. Своё дерево дописывает
-# надстройкой — `.claude/rt-kit/project.sh`: она грузится второй, объявляет ту же функцию
-# заново и вправе позвать отсюда её же с суффиксом `_default`.
+# The package default. Everything the trees of this workshop have in common lives here: the Nx
+# runner, the code linter, the style linter, the set of reinvention samples. A tree adds its own by
+# an override — `.claude/rt-kit/project.sh`: it loads second, declares the same function anew and
+# may call the same one from here with the `_default` suffix.
 #
-# Каждая функция вправе промолчать. Молчание значит «правила на это нет», и хук пропускает.
+# Every function may stay silent. Silence means "there is no rule for this", and the hook lets it
+# through.
 
-# Запускатель пакетов — по локфайлу, а не по договорённости: деревья с pnpm и с npm лежат в
-# одной мастерской, и зашитый здесь `npm` в первом же из них печатал бы команду, которой нет.
+# The package runner — by the lockfile, not by agreement: trees with pnpm and with npm lie in one
+# workshop, and an `npm` hardwired here would, in the first of them, print a command that does not
+# exist.
 rt_runner() {
     root="${CLAUDE_PROJECT_DIR:-.}"
     if [ -f "$root/pnpm-lock.yaml" ]; then
@@ -22,47 +24,51 @@ rt_runner() {
     fi
 }
 
-# Где подняты приложения. Идёт в текст отказа, когда кто-то поднимает второй экземпляр.
-# Порты у каждого дерева свои, поэтому умолчание молчит: назвать чужой порт хуже, чем не назвать.
+# Where the applications are up. Goes into the refusal text when someone raises a second instance.
+# Ports differ from tree to tree, so the default stays silent: naming someone else's port is worse
+# than naming none.
 RT_STANDS="${RT_STANDS:-}"
 
-# Где лежат проверки дерева и набор сценариев его гардов. Проверку, которой в дереве нет, гейт
-# пуша не зовёт: список печатается по тому, что лежит на диске.
+# Where the tree's checks and the scenario set of its guards lie. A check the tree does not have is
+# not called by the push gate: the list is printed from what lies on disk.
 RT_CHECKS_DIR="${RT_CHECKS_DIR:-tools}"
 RT_HOOKS_TESTS="${RT_HOOKS_TESTS:-.claude/hooks/tests/run.sh}"
 
-# Команды, которые обязаны пройти перед пушем. По одной на строку; первая упавшая отбивает пуш.
-# Линтер стилей отдельной строкой: линтер кода файлы стилей не читает вовсе.
+# The commands that must pass before a push. One per line; the first one that fails refuses the
+# push. The style linter on a separate line: the code linter does not read style files at all.
 #
-# Первый параметр — база: ветка, относительно которой считается вклад. Пустая означает, что
-# удалённого нет, и тогда гоняется всё: набор строже нужного безопасен, набор уже нужного — нет.
+# The first parameter is the base: the branch against which the contribution is counted. Empty means
+# there is no remote, and then everything runs: a set stricter than needed is safe, a set narrower
+# than needed is not.
 #
-# Сборка идёт наравне с линтом и спеками. Линтер типов не читает, а спеки читают только то, что
-# кто-то ввёз в них импортом: ошибка типов в непокрытом коде доживает до сборки образа, то есть
-# до слияния. Стоит это мало — дальше работает кэш прогонщика.
+# The build runs alongside the lint and the specs. The linter does not read types, and the specs
+# read only what someone brought into them by an import: a type error in uncovered code lives until
+# the image build, that is, until the merge. It costs little — beyond that the runner cache works.
 #
-# Заведённая проверка встаёт сюда, а не только в общий прогон, который никто не зовёт сам:
-# новая строка в её списке известного уезжает в главную ветку молча, а список при этом читается
-# как действующая охрана.
+# A newly created check goes here, not only into the general run that nobody calls by themselves. A
+# new line in its list of known cases leaves for the main branch silently, while the list is read as
+# a working guard.
 #
-# Сверка раскладки идёт первой строкой и по двум причинам. Она стоит секунды, поэтому отбивает
-# раньше, чем начнётся долгий прогон. И до неё расхождение разложенного с пакетом не отбивало
-# ничего: правка, положенная в разложенную копию мимо источника, ничего не ломает в день, когда
-# её делают, а всплывает на чужой работе — раскладка отказывает по правленому файлу целиком и не
-# кладёт ни одного другого. Признак — сама настройка раскладки: дерево без неё пакета не ставит,
-# и звать в нём нечего.
-# Тронула ли ветка только тексты. Нулевой код — только тексты, иначе — код.
+# The layout audit goes as the first line, for two reasons. It costs seconds, so it refuses before
+# the long run begins. And before it, a drift of the laid-out copy from the package refused nothing.
+# An edit put into the laid-out copy past the source breaks nothing on the day it is made, and
+# surfaces on someone else's work: the layout refuses on the whole edited file and lays down not one
+# other. The sign is the layout settings themselves: a tree without them does not install the
+# package, and there is nothing to call in it.
 #
-# Признак нужен тому дереву, которое дописало в набор гейта тяжёлый шаг: стенд, снимки витрин,
-# сборку образов. Без него такой шаг идёт подряд, чем бы ветка ни была, и пуш коммита, менявшего
-# одну строку в таблице markdown, занимает минуты — за которые владелец успевает прочитать его
-# как зависший и отбить. Правило поставки требует того же от конвейера: ветка, не тронувшая ни
-# строки кода, не поднимает стенда, не снимает кадров и не собирает образов.
+# Whether the branch touched only texts. Zero code — only texts, otherwise — code.
 #
-# Текстовой считается ветка, у которой каждый задетый файл — либо `.md`, либо лежит под каталогом
-# текстов. Всё остальное, включая обвязку и настройки, считается кодом: признак обязан ошибаться
-# в сторону лишнего прогона, а не пропущенного. Пустая база означает, что сравнивать не с чем, —
-# тогда признак молчит и гоняется всё.
+# The sign is needed by the tree that added a heavy step to the gate set: a stand, showcase
+# snapshots, image builds. Without it such a step runs every time, whatever the branch is, and the
+# push of a commit that changed one line in a markdown table takes minutes. In those minutes the
+# owner manages to read it as hung and refuse it. The delivery rule demands the same from the
+# pipeline: a branch that touched not one line of code raises no stand, takes no frames and builds
+# no images.
+#
+# A branch counts as textual when every touched file is either `.md` or lies under the texts
+# directory. Everything else, including the harness and settings, counts as code: the sign must err
+# towards an extra run, not a missed one. An empty base means there is nothing to compare with —
+# then the sign stays silent and everything runs.
 rt_push_docs_only_default() {
     [ -z "$1" ] && return 1
     changed="$(git diff --name-only "$1"...HEAD 2>/dev/null)"
@@ -83,8 +89,9 @@ rt_push_checks_default() {
     fi
     [ -f "$root/stylelint.config.js" ] && printf '%s\n' "$runner stylelint \"**/*.scss\" --max-warnings 0"
 
-    # Сценарии гардов — такой же код, как всё остальное: на них держится и разбор ветки, и
-    # уверенность, что обвязка ещё работает. Прогон занимает секунды: он ничего не собирает.
+    # The guard scenarios are the same code as everything else: both the branch review and the
+    # confidence that the harness still works rest on them. The run takes seconds: it builds
+    # nothing.
     [ -x "$root/$RT_HOOKS_TESTS" ] && printf '%s\n' "bash $RT_HOOKS_TESTS"
 
     for check in check-doc-paths check-specs check-file-size check-dupes check-styles \
@@ -96,25 +103,26 @@ rt_push_checks_default() {
     return 0
 }
 
-# Какой документ обязан ехать тем же коммитом, что и этот файл. Печатает образец пути или молчит.
+# Which document must travel by the same commit as this file. Prints a path pattern or stays silent.
 rt_docs_pair_for_default() {
     case "$1" in
-        # Тест — не описание кода: он его проверяет.
+        # A test is not a description of the code: it checks it.
         *.spec.ts) return 0 ;;
-        # Контракт правится вместе со спеком домена: разошедшись, они врут оба.
+        # The contract is edited together with the domain spec: having drifted apart, both lie.
         *.proto) printf '%s' 'docs/specs/.*/spec\.md' ;;
-        # Правило и его спутник здесь не называются: их пару держит сам гард, и держит точнее —
-        # он сверяет раздел с утверждениями, а не факт правки файла.
-        # Хук и набор его сценариев: гард разбирает текст команд, и уточнение шаблона обычно
-        # смещает границу, а не сужает.
+        # A rule and its sidecar are not named here: their pair is held by the guard itself, and
+        # held more precisely — it checks the section against the statements, not the fact of a file
+        # edit. A hook and its scenario set: the guard parses the text of commands, and a refinement
+        # of the pattern usually shifts the border rather than narrows it.
         .claude/hooks/*.sh) printf '%s' '.claude/hooks/tests/.*' ;;
     esac
 }
 
-# Чем линтуется этот файл сразу после правки. Печатает команду или молчит.
+# What this file is linted with right after the edit. Prints a command or stays silent.
 #
-# Путь подставляется здесь, а не оставляется позиционным параметром: хук исполняет напечатанное
-# вычислением строки, и `$1` в нём разрешился бы в параметр самого хука, то есть в пустоту.
+# The path is substituted here rather than left as a positional parameter: the hook executes what is
+# printed by evaluating the string, and `$1` in it would resolve to the hook's own parameter, that
+# is, to nothing.
 rt_lint_for_default() {
     runner="$(rt_runner)"
     case "$1" in
@@ -123,49 +131,52 @@ rt_lint_for_default() {
     esac
 }
 
-# Каталог папок задач. Пусто — ведения работы папкой в дереве нет, и гард замысла молчит.
-# Каталог текстов проекта: по нему признак состава правки отличает текстовую ветку от кодовой.
+# The directory of task folders. Empty — there is no conduct of work by a folder in the tree, and
+# the plan guard stays silent. The directory of the project's texts: by it the edit composition sign
+# tells a text branch from a code branch.
 RT_DOCS_DIR="${RT_DOCS_DIR:-docs}"
 
 RT_TASKS_DIR="${RT_TASKS_DIR:-docs/tasks}"
 
-# Каталог записей о законченных работах. Туда переносят то, что объясняет решения закрытой
-# задачи. Гард поставки требует, чтобы ветка, удалившая папку задачи, что-то сюда добавила:
-# удалить проще, чем разобрать, а слова владельца больше нигде не записаны.
+# The directory of records about finished work. What explains the decisions of a closed task is
+# moved there. The delivery guard demands that a branch which removed a task folder add something
+# here: removing is easier than taking apart, and the owner's words are written nowhere else.
 RT_ARCHIVE_DIR="${RT_ARCHIVE_DIR:-docs/archive}"
 
-# Размер окна захода в токенах и пороги стража. Пусто — стража нет: считать долю не от чего, а
-# выведенный из записи захода размер врал бы — модель записана там без пометки о расширенном
-# окне. Дерево задаёт его в настройке агента, переменной окружения того же имени.
+# The size of the session window in tokens and the guard thresholds. Empty — there is no guard:
+# there is nothing to count the share from, and a size derived from the session record would lie —
+# the model is written there without a mark about the extended window. The tree sets it in the agent
+# settings, by an environment variable of the same name.
 #
-# Теми же двумя числами задаётся порог, на котором инструмент сжимает контекст сам, — а значит и
-# порог, на котором пишется передача захода. В настройке агента им отвечает пара: размер окна
-# автосжатия и доля в процентах, при которой оно приходит. Разъехавшись, они дают заход, который
-# либо сжимается до того, как передача написана, либо доживает до предела окна. Сведены они или
-# нет — говорит разбор состояния раскладки; здесь у пакета своих значений нет, потому что окно
-# принадлежит дереву, а не ему.
+# The same two numbers set the threshold at which the tool compacts the context itself — and so the
+# threshold at which the session handover is written. In the agent settings they are answered by a
+# pair: the autocompaction window size and the percentage share at which it comes. Having drifted
+# apart, they give a session that either compacts before the handover is written or lives up to the
+# window limit. Whether they are aligned is told by the layout status review; here the package has
+# no values of its own, because the window belongs to the tree, not to it.
 #
-# Сведёнными считаются не совпавшие числа, а разведённые. Порог сжатия обязан стоять НИЖЕ порога
-# остановки: первым срабатывает то, что заход продолжает, а не то, что его останавливает.
-# Совпавшая пара — гонка, и выигрывает её страж: он стоит на вызове инструмента, а сжатие
-# приходит между ходами. Ровно так заход и вставал на пороге вместо того, чтобы продолжиться
-# сжатым, — при том что сверка обе стороны считала настроенными.
+# Aligned means not matching numbers but spread ones. The compaction threshold must stand BELOW the
+# stop threshold: what continues the session fires first, not what stops it. A matching pair is a
+# race, and the guard wins it: it stands on the tool call, while compaction comes between turns.
+# Exactly so the session halted at the threshold instead of continuing compacted — while the audit
+# counted both sides as configured.
 #
-# Насколько ниже — своё число дерева: сжатие идёт не мгновенно, и разница в один процент
-# требование «ниже» удовлетворяет, а работу не спасает. Запас объявляется, а не выводится
-# разницей.
+# How much lower is the tree's own number: compaction is not instant, and a difference of one
+# percent satisfies the "below" requirement without saving the work. The margin is declared, not
+# derived from the difference.
 RT_WINDOW_TOKENS="${RT_WINDOW_TOKENS:-}"
 RT_WINDOW_WARN_PCT="${RT_WINDOW_WARN_PCT:-40}"
 RT_WINDOW_STOP_PCT="${RT_WINDOW_STOP_PCT:-50}"
 RT_WINDOW_MARGIN_PCT="${RT_WINDOW_MARGIN_PCT:-5}"
 
-# Куда кладётся передача захода. Вне дерева: состояние работы живёт в ходе работы и коммитится,
-# а передача его пересказывает для вставки в новый заход и в историю не едет.
+# Where the session handover is put. Outside the tree: the work state lives in the progress and is
+# committed, while the handover retells it for pasting into a new session and does not travel into
+# history.
 RT_HANDOFF_DIR="${RT_HANDOFF_DIR:-.claude/handoff}"
 
-# Команды, которые проходят после порога остановки: ими заход закрывается. Отбить их значило бы
-# отобрать у него единственный способ закончиться. Вызов считается по началу строки или сразу за
-# разделителем — упоминание команды в тексте командой не считается.
+# The commands that pass after the stop threshold: the session closes with them. Refusing them would
+# take away its only way to end. A call counts by the start of the line or right after a separator —
+# a mention of a command in text does not count as a command.
 rt_handoff_allowed_cmd_default() {
     case "$1" in
         git\ * | *[\;\&\|]\ *git\ * | *\$\(git\ *) return 0 ;;
@@ -176,43 +187,46 @@ rt_handoff_allowed_cmd_default() {
     return 1
 }
 
-# Где лежат тексты, которые читают до вопроса владельцу: законы, правила и договорённости о
-# продукте. По ним гард разговора судит, читалось ли за ход хоть что-то, и их же называет в
-# подсказке. Пусто у законов и правил разом — дерево этого требования не получает: читать
-# нечего.
+# Where the texts read before a question to the owner lie: laws, rules and product agreements. By
+# them the conversation guard judges whether anything at all was read during the turn, and it names
+# them in the hint. Empty for laws and rules at once — the tree does not get this requirement: there
+# is nothing to read.
 RT_LAWS_DIR="${RT_LAWS_DIR:-docs/constitution}"
 RT_RULES_DIR="${RT_RULES_DIR:-.claude/skills}"
 RT_SPECS_DIR="${RT_SPECS_DIR:-docs/specs}"
 
-# Каталог замыслов, переживающих одну задачу: порядок задач эпика лежит там, а не в правилах.
+# The directory of plans that outlive one task: the order of an epic's tasks lies there, not in the
+# rules.
 RT_PLANS_DIR="${RT_PLANS_DIR:-docs/plans}"
 
-# Главная ветка. Гарду она нужна, чтобы найти общего предка и понять, что ветка сделала с
-# папкой задачи и с архивом. Если общего предка нет, сравнивать не с чем — проверка молчит.
+# The main branch. The guard needs it to find the common ancestor and understand what the branch did
+# with the task folder and with the archive. If there is no common ancestor, there is nothing to
+# compare with — the check stays silent.
 RT_MAIN_BRANCH="${RT_MAIN_BRANCH:-main}"
 
-# Имя клиента хостинга в строке запуска. По нему гард перезапуска узнаёт вызов: у каждого вида
-# хостинга свой клиент, и угаданное имя не совпадает ни с чем. Умолчание записано под самый
-# распространённый вид; дерево с другим хостингом называет своё.
+# The name of the hosting client in the launch line. By it the restart guard recognises the call:
+# each kind of hosting has its own client, and a guessed name matches nothing. The default is
+# written for the most common kind; a tree with other hosting names its own.
 RT_HOST_CLI="${RT_HOST_CLI:-gh}"
 
-# Тело PR по его номеру. Обход требования пишут в PR, а в команде слияния его нет — там только
-# номер. Пустой ответ значит «спросить не у кого»: тогда обход ищется только в тексте команды.
+# The PR body by its number. A bypass of a requirement is written in the PR, and the merge command
+# does not carry it — only the number is there. An empty reply means "nobody to ask": then the
+# bypass is looked for only in the command text.
 rt_report_body_default() {
     command -v gh >/dev/null 2>&1 || return 1
     gh pr view "$1" --json body -q '.body' 2>/dev/null
 }
 
-# Код приложения ли это. Успех — да, и тогда правка требует замысла на диске.
+# Whether this is application code. Success — yes, and then the edit demands a plan on disk.
 #
-# Признак — путь, а не оценка на глаз: оценку назначает тот, кому она мешает, и порог плывёт.
-# Правила, тексты, обвязка и зависимости под требование не попадают — иначе разбор задачи
-# нельзя было бы вести до заведения ветки.
+# The sign is the path, not a judgement by eye: the judgement is made by the one it hinders, and the
+# threshold drifts. Rules, texts, the harness and dependencies do not fall under the requirement —
+# otherwise the grill of a task could not be conducted before the branch is created.
 #
-# Судится путь относительно корня дерева: каталог со словом `projects` в имени встречается и
-# вне репозитория, а правка файла вне корня замыслом этой ветки не распоряжается вовсе. Гарды
-# отдают сюда абсолютный путь целиком, и образец по подстроке совпадал бы с домашним каталогом
-# агента ровно так же, как с кодом дерева.
+# The path is judged relative to the tree root. A directory with the word `projects` in its name
+# occurs outside the repository too, and an edit of a file outside the root does not dispose of this
+# branch's plan at all. The guards hand the whole absolute path here, and a substring pattern would
+# match the agent's home directory exactly as it matches the tree's code.
 rt_is_app_code_default() {
     root="${CLAUDE_PROJECT_DIR:-$PWD}"
     case "$1" in
@@ -226,136 +240,147 @@ rt_is_app_code_default() {
     esac
 }
 
-# Разбор команды оболочки — пишет ли она и какие пути называет — живёт соседним файлом:
-# вдвоём с ним профиль перерастал предел длины, а читают эти две функции порознь.
+# Parsing a shell command — whether it writes and which paths it names — lives in a neighbouring
+# file: together with it the profile outgrew the length limit, and these two functions are read
+# apart.
 # shellcheck disable=SC1090
 [ -f "$(dirname "${BASH_SOURCE[0]}")/shell.sh" ] && . "$(dirname "${BASH_SOURCE[0]}")/shell.sh"
 
-# Имя ветки, с которой разрешено открывать заявку на слияние: в имени стоит номер задачи.
-# Приставка — либо род правки, либо метка очереди работ: обе формы носят номер, а он и нужен.
+# The name of a branch from which a PR may be opened: the task number stands in the name. The prefix
+# is either the kind of edit or the work queue label: both forms carry the number, and that is what
+# is needed.
 #
-# Хвост после номера — строчными и через дефис. Имя ветки читают глазами в списке и набирают
-# руками, а регистр в нём различает две ветки, отличающиеся только им, — и та, что нужна, при
-# переключении находится не с первого раза.
+# The tail after the number is lowercase and hyphenated. A branch name is read by eye in a list and
+# typed by hand, and case in it distinguishes two branches that differ only by it — and the one
+# needed is not found at the first switch.
 rt_task_branch_ok_default() {
     printf '%s' "$1" \
         | grep -qE '^([A-Z]+-)?[0-9]+-[a-z0-9][a-z0-9-]*$|^(feat|fix|refactor|docs|chore|style|perf|test|build|ci)/[0-9]+-[a-z0-9][a-z0-9-]*$'
 }
 
-# Номер задачи из имени ветки. Второй вопрос к тому же имени: форма отвечает «годится ли»,
-# а это — «какой он», и свести их в одно нельзя: одна возвращает код, другой строку.
+# The task number from the branch name. A second question to the same name: the form answers "is it
+# fit", this one — "what is it", and they cannot be folded into one: one returns a code, the other a
+# string.
 #
-# Формы те же, что знает проверка формы выше: приставкой стоит либо ключ задач через дефис,
-# либо род правки через косую черту, либо её нет вовсе. Разойдясь с ней, разбор оставит форму
-# законной, а номер пустым — и сверка номера ветки с номером заголовка заявки пропустится молча,
-# выглядя при этом сошедшейся.
+# The forms are the same the form check above knows: the prefix is either the task key with a
+# hyphen, or the kind of edit with a slash, or there is none at all. Having drifted from it, the
+# parse would leave the form lawful and the number empty — and the check of the branch number
+# against the PR title number would be skipped silently while looking matched.
 #
-# Хвост после номера здесь не судится намеренно: `RT-9_guest` — это промах в разделителе, а не
-# осознанно беззадачная ветка, и номер из неё вынуть надо, чтобы форму имени было с чем сверить.
-# Требование дефиса оставляло такое имя без номера, и гард пропускал его как ветку под пробу.
+# The tail after the number is deliberately not judged here. `RT-9_guest` is a miss in the
+# separator, not a deliberately taskless branch, and the number has to be taken out of it so that
+# the name form has something to be checked against. Requiring the hyphen left such a name without a
+# number, and the guard let it through as a trial branch.
 rt_task_branch_number_default() {
     printf '%s' "$1" | sed -nE 's#^([A-Za-z]+[-/])?([0-9]+).*#\2#p'
 }
 
-# Адрес боевого хранилища: образец, по которому его узнают в командной строке — порт туннеля,
-# хост, домен. Любая запись по нему отбивается совсем, и опт-аут не действует. Умолчание
-# молчит: чужой адрес здесь опаснее неназванного — он отбивал бы работу с локальной базой.
+# The address of the production storage: the pattern by which it is recognised on the command line —
+# the tunnel port, the host, the domain. Any write by it is refused outright, and the opt-out does
+# not apply. The default stays silent: someone else's address here is more dangerous than an unnamed
+# one — it would refuse work with the local database.
 RT_PROD_DSN="${RT_PROD_DSN:-}"
 
-# Подключения среды разработки в лицо: по одному тексту запроса бой от локальной копии не
-# отличить, база выбирается идентификатором подключения. Идентификаторы локальны для машины.
+# The dev environment connections by sight: by the query text alone production cannot be told from a
+# local copy, the database is chosen by the connection identifier. The identifiers are local to the
+# machine.
 RT_PROD_CONNECTIONS="${RT_PROD_CONNECTIONS:-}"
 RT_LOCAL_CONNECTIONS="${RT_LOCAL_CONNECTIONS:-}"
 
-# Порты одноразовых баз: по ним вопрос не задаётся. Не назван — исключения нет вовсе.
+# The ports of one-off databases: no question is asked about them. Not named — there is no exception
+# at all.
 RT_SCRATCH_PORT_RE="${RT_SCRATCH_PORT_RE:-}"
 
-# Форма номера в заголовке заявки на слияние. Тот же номер стоит у задачи и у ветки.
+# The form of the number in the PR title. The same number stands on the task and on the branch.
 RT_TASK_TITLE_RE="${RT_TASK_TITLE_RE:-^\[[A-Za-z]+-[0-9]+\][[:space:]]+[^[:space:]]}"
 
-# Чем заводится задача и чем сверяется очередь работ. Идут в текст отказа гарда поставки:
-# отказ без действия обходят, а не исполняют.
+# What creates a task and what audits the work queue. They go into the refusal text of the delivery
+# guard: a refusal without an action is bypassed, not carried out.
 RT_TASK_NEW_CMD="${RT_TASK_NEW_CMD:-npm run task:new}"
 RT_BOARD_CHECK_CMD="${RT_BOARD_CHECK_CMD:-npm run check:board}"
 
-# Чем снимаются перестоявшие срок записи о законченных работах. Гард хода работы эту команду не
-# судит: записи стареют по календарю, и шаг срока краснеет сам, без единой правки в ветке, — в
-# том числе в ветке, куда работу привозят слияниями и папки задачи не заводят вовсе. Требовать
-# под такую уборку замысел значило бы оставлять заявку красной без выхода. Пусто — команда не
-# названа, и вывода из-под гарда нет.
+# What removes the archive records that outstayed their term. The progress guard does not judge this
+# command. Records age by the calendar, and the term step goes red by itself, without a single edit
+# in the branch. That includes a branch into which work is brought by merges and where no task
+# folders are created at all. Demanding a plan for such a cleanup would leave the PR red with no way
+# out. Empty — the command is not named, and there is no exit from under the guard.
 RT_ARCHIVE_PRUNE_CMD="${RT_ARCHIVE_PRUNE_CMD:-}"
 
-# Учётная запись, которую ставят исполнителем и которой открывают заявку. Умолчание молчит: у
-# каждого дерева она своя, а у иного её нет вовсе.
+# The account that is set as the assignee and that opens the PR. The default stays silent: every
+# tree has its own, and some have none at all.
 RT_TASK_BOT="${RT_TASK_BOT:-}"
 
-# Почты людей, которые коммитят в это дерево своими руками, через пробел. Назвав их, дерево
-# включает вторую половину проверки подписи: известны машинная запись и эти люди, всё прочее
-# отбивается. Пусто — судится только коммит, назвавшийся машинной записью, и коммит под чужой
-# записью проходит молча.
+# The emails of the people who commit into this tree by hand, separated by spaces. By naming them
+# the tree turns on the second half of the signature check: the machine account and these people are
+# known, everything else is refused. Empty — only a commit that called itself the machine account is
+# judged, and a commit under someone else's account passes silently.
 RT_HUMAN_EMAILS="${RT_HUMAN_EMAILS:-}"
 
-# Чем вызову подставляют токен машинной записи и как эта подстановка выглядит целиком. Клиент
-# хостинга держит две записи сразу — залогиненную и ту, чей токен стоит в окружении вызова, — и
-# из текста команды видно только явную подстановку. Оба умолчания молчат: дерево без отдельной
-# машинной записи автора заявки не судит вовсе.
+# What substitutes the machine account token into a call and how that substitution looks in full.
+# The hosting client holds two accounts at once — the logged-in one and the one whose token stands
+# in the call environment — and only the explicit substitution is visible from the command text.
+# Both defaults stay silent: a tree without a separate machine account does not judge the PR author
+# at all.
 RT_PULL_TOKEN_VAR="${RT_PULL_TOKEN_VAR:-}"
 RT_PULL_TOKEN_HINT="${RT_PULL_TOKEN_HINT:-}"
 
-# Кто придёт к хостингу по этому токену. Подстановка в команде говорит только о намерении: она
-# читает файл, а файла на машине может не быть — тогда значение пустое, клиент отвечает от
-# залогиненной записи, и заявка выходит от владельца при верной с виду команде. Спросить это
-# стоит одного вызова, но как спрашивать, знает только дерево: хостинг, клиент и путь к токену
-# у каждого свои. Умолчание молчит: дерево, не объявившее функции, второго яруса не получает.
+# Who will come to the hosting by this token. The substitution in the command speaks only of intent:
+# it reads a file, and the file may be missing on the machine. Then the value is empty, the client
+# answers from the logged-in account, and the PR comes out from the owner with a command that looks
+# right. Asking this costs one call, but only the tree knows how to ask: the hosting, the client and
+# the token path are each tree's own. The default stays silent: a tree that did not declare the
+# function does not get the second tier.
 #
-# Контракт: печатает логин, под которым уйдёт пишущий вызов. Пустой вывод означает «спросить не
-# удалось» — гард пропускает вызов и сообщает об этом.
+# The contract: prints the login under which the writing call will go. Empty output means "could not
+# ask" — the guard lets the call through and reports it.
 rt_pull_token_login() { :; }
 
-# Раздел, который тело заявки обязано нести с минуты открытия: решение о слиянии принимается на
-# её странице, где переписки нет вовсе, и сказанного вслух там не остаётся. Умолчание молчит —
-# заголовок пишется языком заявки, а чужих слов пакет не знает: не названный деревом, раздел не
-# судится вовсе.
+# The section the PR body must carry from the minute it is opened: the merge decision is made on its
+# page, where there is no conversation at all, and what was said aloud does not remain there. The
+# default stays silent — the heading is written in the PR's language, and the package does not know
+# foreign words: a section not named by the tree is not judged at all.
 RT_PULL_BODY_SECTION="${RT_PULL_BODY_SECTION:-}"
 
-# Команда перевода задачи между колонками очереди работ и имя первой колонки — той, из которой
-# задача уходит, когда её берут в работу. Имя без умолчания: колонки дерево называет своими
-# словами, а выдуманное не совпало бы ни с чем и молча выключило бы проверку колонки.
+# The command that moves a task between the columns of the work queue, and the name of the first
+# column — the one the task leaves when it is taken into work. The name has no default: the tree
+# names the columns in its own words, and an invented one would match nothing and silently turn off
+# the column check.
 RT_TASK_MOVE_CMD="${RT_TASK_MOVE_CMD:-npm run task:move}"
 RT_BOARD_BACKLOG="${RT_BOARD_BACKLOG:-}"
 
-# Почта, которой подписан коммит машинной учётной записи. Целым значением, а не образцом:
-# служебный адрес хостинга состоит из числа, логина и домена, а сопоставляется по числу — логин
-# рядом с ним не сверяет никто. Образец «число, плюс, логин» прошёл бы с чужим числом, то есть
-# ровно с тем промахом, ради которого гард поставки подпись и читает.
+# The email the machine account's commit is signed with. As a whole value, not a pattern: the
+# hosting's service address consists of a number, a login and a domain, and is matched by the number
+# — nobody checks the login next to it. A "number, plus, login" pattern would pass with someone
+# else's number, that is, with exactly the miss for which the delivery guard reads the signature.
 #
-# Отсюда же он берёт логин машинной записи — левой частью адреса, до собаки и после плюса.
-# Вторым свойством логин не объявляется: два объявления одного имени разошлись бы молча.
-# Исполнитель задачи для этого не годится — там, где хостинг ограничил машинную запись,
-# исполнителем ставят человека, а коммит остаётся машинным.
+# From here it also takes the machine account's login — the left part of the address, before the at
+# sign and after the plus. The login is not declared as a second property: two declarations of one
+# name would drift apart silently. The task assignee is not fit for this — where the hosting has
+# restricted the machine account, a person is set as the assignee, and the commit stays the
+# machine's.
 #
-# Умолчание молчит, и тогда подпись не судится: своей машинной записи у пакета нет, а выдуманная
-# отбивала бы работу в чужом дереве.
+# The default stays silent, and then the signature is not judged: the package has no machine account
+# of its own, and an invented one would refuse work in someone else's tree.
 RT_COMMIT_EMAIL="${RT_COMMIT_EMAIL:-}"
 
-# Состояние задачи одним объектом: exists, open, onBoard, assigned, numbered. Спрашивает
-# помощника очереди работ — того же, которым пользуются сверка и команда заведения, чтобы
-# гард и очередь одинаково понимали «задача в порядке». Нет узла, нет помощника, нет сети —
-# молчание, и ярус состояния пропускается: проверять нечем.
+# The task state as one object: exists, open, onBoard, assigned, numbered. Asks the work queue
+# helper — the same one the audit and the create command use, so that the guard and the queue
+# understand "the task is in order" alike. No node, no helper, no network — silence, and the state
+# tier is skipped: there is nothing to check with.
 rt_task_state_default() {
     command -v node >/dev/null 2>&1 || return 1
     [ -f "${RT_BOARD_HELPER:-tools/board.mjs}" ] || return 1
     state="$(node "${RT_BOARD_HELPER:-tools/board.mjs}" task "$1" 2>/dev/null)" || return 1
     [ -z "$state" ] && return 1
-    # Ответ с меткой «сети не было» состоянием не бывает: по нему нельзя отличить задачу,
-    # которой нет, от задачи, о которой не спросили.
+    # A reply marked "there was no network" is never a state: by it a task that does not exist
+    # cannot be told from a task that was not asked about.
     printf '%s' "$state" | jq -e 'has("offline") | not' >/dev/null 2>&1 || return 1
     printf '%s' "$state"
 }
 
-# Состояние заявки одним объектом: exists, draft, author, reviewers, reviewed. Спрашивает того
-# же помощника очереди работ, что и состояние задачи, — чтобы гард и сверка одинаково понимали
-# «у заявки есть разбор». Нет узла, нет помощника, нет сети — молчание, и ярус пропускается.
+# The PR state as one object: exists, draft, author, reviewers, reviewed. Asks the same work queue
+# helper as the task state — so that the guard and the audit understand "the PR has a review" alike.
+# No node, no helper, no network — silence, and the tier is skipped.
 rt_pull_state_default() {
     command -v node >/dev/null 2>&1 || return 1
     [ -f "${RT_BOARD_HELPER:-tools/board.mjs}" ] || return 1
@@ -365,11 +390,10 @@ rt_pull_state_default() {
     printf '%s' "$state"
 }
 
-# Свои открытые заявки, помеченные конфликтующими, — по строке на заявку: «#номер ветка».
-# Спрашивает того же помощника очереди работ, что и два соседа выше. Пусто на выходе значит
-# «конфликтующих нет», отказ кода возврата — «спросить некого», и ярус гарда пропускается:
-# отбивать работу на молчании сети значило бы останавливать её всякий раз, когда её не с чем
-# сверить.
+# One's own open PRs marked as conflicting — one line per PR: "#number branch". Asks the same work
+# queue helper as the two neighbours above. Empty output means "no conflicting ones", a failing exit
+# code — "nobody to ask", and the guard tier is skipped: refusing work on the silence of the network
+# would stop it every time there is nothing to check it against.
 rt_conflicting_pulls_default() {
     command -v node >/dev/null 2>&1 || return 1
     command -v jq >/dev/null 2>&1 || return 1
@@ -380,12 +404,13 @@ rt_conflicting_pulls_default() {
     printf '%s' "$state" | jq -r '.conflicting[]? | "#\(.number) \(.branch)"'
 }
 
-# Что в этом дереве считается переизобретением. По строке «образец<таб>чем заменить».
-# Образцы узкие намеренно: гард сверяет только НОВЫЙ текст, и широкий образец отбивал бы
-# правку, которая ничего нового не заводит.
+# What counts as reinvention in this tree. One line per "pattern<tab>replacement". The patterns are
+# narrow on purpose: the guard checks only NEW text, and a wide pattern would refuse an edit that
+# creates nothing new.
 rt_reinvented_in_default() {
-    # Четыре поля через табуляцию: над чем, образец, образец отмены, чем заменить. Пустое поле
-    # пишется пустым — их читают по одному, и схлопывание третьего уносило совет в отмену.
+    # Four tab-separated fields: what over, the pattern, the cancel pattern, the replacement. An
+    # empty field is written empty — they are read one by one, and collapsing the third carried the
+    # advice into the cancel.
     case "$1" in
         *.ts)
             printf '%s\t%s\t%s\t%s\n' 'added' 'get [a-zA-Z]+\(\)[[:space:]]*(:|\{)' '' 'computed(): производное значение сигналом, а не геттером'
@@ -396,27 +421,28 @@ rt_reinvented_in_default() {
     esac
 }
 
-# Где лежат наборы признаков единообразия — они раскладываются рядом с проверками, а раскладка
-# проверок у каждого дерева своя. Читают их и гард на правке, и сплошная сверка.
+# Where the uniformity signal sets lie — they are laid out next to the checks, and the layout of
+# checks is each tree's own. Both the guard on an edit and the full audit read them.
 RT_REUSE_SIGNALS_DIR="${RT_REUSE_SIGNALS_DIR:-tools/signals}"
 
-# Где якорь для спек не требуется. Витрина, корневая разметка и сборка — общее у всех деревьев;
-# своё дерево дописывает надстройкой.
+# Where an anchor for the specs is not required. The showcase, the root markup and the build are
+# common to all trees; a tree adds its own by an override.
 RT_QA_SKIP_RE="${RT_QA_SKIP_RE:-/node_modules/|/dist/|\.stories\.html\$|/src/index\.html\$}"
 
-# По какому имени тег опознаётся компонентом этого дерева. Умолчание — составной тег: имя с
-# дефисом принадлежит компоненту, а не разметке, и это верно везде, где есть свои компоненты.
+# By which name a tag is recognised as a component of this tree. The default is a compound tag: a
+# hyphenated name belongs to a component, not to markup, and that is true wherever there are
+# components of one's own.
 RT_QA_COMPONENT_RE="${RT_QA_COMPONENT_RE:--}"
 
-# Теги, которые спека не нажимает: оформление, разметка страницы, индикаторы. Перечисляются
-# именами через пробел. Умолчание молчит: у каждого кита свои, а чужое имя здесь глушило бы
-# проверку на теге, которого в этом дереве нет.
+# The tags the spec does not press: styling, page markup, indicators. Listed by name, separated by
+# spaces. The default stays silent: every kit has its own, and a foreign name here would silence the
+# check on a tag this tree does not have.
 rt_qa_decorative_default() {
     return 0
 }
 
-# Умолчания под общими именами. Надстройка проекта объявит любое из них заново — и позовёт
-# отсюда то же имя с суффиксом `_default` для всего, чего не назвала сама.
+# Defaults under the shared names. The project override will declare any of them anew — and call the
+# same name from here with the `_default` suffix for everything it did not name itself.
 rt_push_checks() { rt_push_checks_default "$@"; }
 rt_push_docs_only() { rt_push_docs_only_default "$@"; }
 
@@ -426,9 +452,10 @@ rt_task_branch_ok() { rt_task_branch_ok_default "$@"; }
 rt_task_branch_number() { rt_task_branch_number_default "$@"; }
 rt_reinvented_in() { rt_reinvented_in_default "$@"; }
 rt_is_app_code() { rt_is_app_code_default "$@"; }
-# Каталог источников пакета правил в этом дереве, от корня. Пусто — дерево пакета не везёт, и
-# адрес правки у него один: надстройка. Дерево, которое пакет и разрабатывает, называет каталог
-# сам — иначе гард места правки посылал бы его в надстройку вместо источника.
+# The directory of the rules package sources in this tree, from the root. Empty — the tree does not
+# carry the package, and it has one edit address: the override. The tree that develops the package
+# itself names the directory — otherwise the edit-place guard would send it to the override instead
+# of the source.
 rt_kit_sources_dir_default() { printf ''; }
 
 rt_shell_writes() { rt_shell_writes_default "$@"; }

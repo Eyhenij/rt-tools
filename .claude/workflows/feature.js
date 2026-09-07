@@ -1,20 +1,20 @@
-// rt-kit v0.25.0 · workflows/feature.js · 6c5f37021aa7 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · workflows/feature.js · 79a5087f5ca7 · правится надстройкой, не здесь
 export const meta = {
     name: 'feature',
-    description: 'План от PM, реализация по шагам, веер проверок QA и приёмка по исходному запросу',
-    whenToUse: 'Крупная правка, которая заденет несколько слоёв: контракт, хранилище, приложения, переводы',
+    description: 'A plan from the PM, implementation step by step, a fan of QA checks and acceptance against the original request',
+    whenToUse: 'A large edit that will touch several layers: the contract, the storage, the applications, the translations',
     phases: [
-        { title: 'План', detail: 'PM разбивает задачу на шаги с признаками готовности' },
-        { title: 'Реализация', detail: 'по шагу за раз — рабочее дерево одно на всех' },
-        { title: 'Проверка', detail: 'QA веером: тесты, сборка, браузер, состязательный разбор' },
-        { title: 'Приёмка', detail: 'PM сверяет сделанное с исходным запросом' },
+        { title: 'Plan', detail: 'the PM splits the task into steps with readiness signs' },
+        { title: 'Implementation', detail: 'one step at a time — the working tree is shared by all' },
+        { title: 'Check', detail: 'QA as a fan: tests, build, browser, adversarial review' },
+        { title: 'Acceptance', detail: 'the PM checks what was done against the original request' },
     ],
 };
 
-// Задача приходит строкой в args; без неё сценарий бессмыслен.
+// The task arrives as a string in args; without it the scenario is meaningless.
 const task = typeof args === 'string' ? args : (args?.task ?? '');
 if (!task) {
-    throw new Error('Нужна задача: передай её строкой в args');
+    throw new Error('A task is needed: pass it as a string in args');
 }
 
 const PLAN = {
@@ -31,13 +31,13 @@ const PLAN = {
                 required: ['title', 'scope', 'done'],
                 properties: {
                     title: { type: 'string' },
-                    scope: { type: 'string', description: 'что входит и что НЕ входит' },
-                    done: { type: 'string', description: 'проверяемый признак готовности' },
+                    scope: { type: 'string', description: 'what is included and what is NOT' },
+                    done: { type: 'string', description: 'a checkable readiness sign' },
                 },
             },
         },
         risks: { type: 'array', items: { type: 'string' } },
-        acceptance: { type: 'array', items: { type: 'string' }, description: 'критерии приёмки по исходному запросу' },
+        acceptance: { type: 'array', items: { type: 'string' }, description: 'acceptance criteria from the original request' },
     },
 };
 
@@ -55,7 +55,7 @@ const FINDINGS = {
                 properties: {
                     what: { type: 'string' },
                     where: { type: 'string' },
-                    evidence: { type: 'string', description: 'вывод команды или замер, а не пересказ' },
+                    evidence: { type: 'string', description: 'command output or a measurement, not a retelling' },
                     severity: { type: 'string', enum: ['blocker', 'major', 'minor'] },
                     preExisting: { type: 'boolean' },
                 },
@@ -65,54 +65,54 @@ const FINDINGS = {
     },
 };
 
-phase('План');
+phase('Plan');
 const plan = await agent(
-    `Задача от пользователя:\n\n${task}\n\nРазбери её и верни план. Шагов не больше шести; ` +
-        `каждый — самостоятельная правка с проверяемым признаком готовности.`,
-    { agentType: 'project-manager', label: 'план', schema: PLAN }
+    `The task from the user:\n\n${task}\n\nBreak it down and return a plan. No more than six steps; ` +
+        `each one is a self-contained edit with a checkable readiness sign.`,
+    { agentType: 'project-manager', label: 'plan', schema: PLAN }
 );
-log(`План: ${plan.steps.length} шаг(ов), рисков ${plan.risks.length}`);
+log(`Plan: ${plan.steps.length} step(s), ${plan.risks.length} risk(s)`);
 
-// Шаги идут по очереди, а не веером: рабочее дерево одно, и параллельные
-// правки одних и тех же файлов затирали бы друг друга.
-phase('Реализация');
+// The steps go one after another, not as a fan: the working tree is one, and parallel
+// edits of the same files would overwrite each other.
+phase('Implementation');
 const done = [];
 for (const [index, step] of plan.steps.entries()) {
     const result = await agent(
-        `Задача целиком: ${task}\n\nТвой шаг ${index + 1} из ${plan.steps.length}: ${step.title}\n` +
-            `Границы: ${step.scope}\nПризнак готовности: ${step.done}\n\n` +
-            `Уже сделано на предыдущих шагах:\n${done.join('\n') || '— ничего'}\n\n` +
-            `Соблюдай правила дерева из CLAUDE.md и .claude/skills. Перед правкой файла загрузи ` +
-            `подходящее правило через инструмент Skill — иначе гейт правил заблокирует правку. ` +
-            `Никаких git-команд. Верни коротко: какие файлы изменил и чем подтверждается признак готовности.`,
-        { label: `шаг ${index + 1}: ${step.title}`, phase: 'Реализация' }
+        `The whole task: ${task}\n\nYour step ${index + 1} of ${plan.steps.length}: ${step.title}\n` +
+            `Boundaries: ${step.scope}\nReadiness sign: ${step.done}\n\n` +
+            `Already done on the previous steps:\n${done.join('\n') || '— nothing'}\n\n` +
+            `Follow the tree's rules from CLAUDE.md and .claude/skills. Before editing a file, load ` +
+            `the matching rule through the Skill tool — otherwise the rules gate will block the edit. ` +
+            `No git commands. Return briefly: which files you changed and what confirms the readiness sign.`,
+        { label: `step ${index + 1}: ${step.title}`, phase: 'Implementation' }
     );
-    done.push(`${step.title}: ${result ?? 'шаг не выполнен'}`);
+    done.push(`${step.title}: ${result ?? 'step not done'}`);
 }
 
-// Здесь барьер оправдан: приёмке нужны все находки разом, а измерения
-// независимы и честно параллелятся.
-phase('Проверка');
+// Here the barrier is justified: acceptance needs all findings at once, and the measurements
+// are independent and honestly run in parallel.
+phase('Check');
 const LENSES = [
-    { key: 'тесты', prompt: 'Прогони юнит-тесты и e2e по затронутому. Отдели новые падения от доэтапных.' },
-    { key: 'сборка', prompt: 'Прогони сборки затронутых приложений и линтеры. Доэтапные ошибки помечай как доэтапные.' },
+    { key: 'tests', prompt: 'Run the unit tests and the e2e over what was touched. Separate new failures from pre-existing ones.' },
+    { key: 'build', prompt: 'Run the builds of the touched applications and the linters. Mark pre-existing errors as pre-existing.' },
     {
-        key: 'браузер',
-        prompt: 'Проверь результат в браузере замерами: вычисленные стили, геометрия, контраст. Серверы разработки уже подняты — свой не поднимай.',
+        key: 'browser',
+        prompt: 'Check the result in the browser by measurements: computed styles, geometry, contrast. The dev servers are already up — do not start your own.',
     },
     {
-        key: 'разбор',
-        prompt: 'Состязательно разбери правку: граничные значения, вторая локаль, тёмная тема, узкий экран, отвалившийся сервер, отдача страницы сервером.',
+        key: 'review',
+        prompt: 'Review the edit adversarially: boundary values, the second locale, the dark theme, a narrow screen, a server that went down, server-side page rendering.',
     },
 ];
 const reports = (
     await parallel(
         LENSES.map(
             (lens) => () =>
-                agent(`Задача, которую выполняли: ${task}\n\nЧто сделано:\n${done.join('\n')}\n\n${lens.prompt}`, {
+                agent(`The task that was carried out: ${task}\n\nWhat was done:\n${done.join('\n')}\n\n${lens.prompt}`, {
                     agentType: 'qa-engineer',
                     label: `qa: ${lens.key}`,
-                    phase: 'Проверка',
+                    phase: 'Check',
                     schema: FINDINGS,
                 })
         )
@@ -121,15 +121,15 @@ const reports = (
 
 const findings = reports.flatMap((report) => report.findings);
 const blockers = findings.filter((finding) => finding.severity === 'blocker' && !finding.preExisting);
-log(`Находок ${findings.length}, из них блокеров ${blockers.length}`);
+log(`Findings: ${findings.length}, of them blockers: ${blockers.length}`);
 
-phase('Приёмка');
+phase('Acceptance');
 const verdict = await agent(
-    `Исходный запрос пользователя:\n\n${task}\n\nКритерии приёмки:\n${plan.acceptance.join('\n')}\n\n` +
-        `Что сделано:\n${done.join('\n')}\n\nНаходки проверяющих:\n${JSON.stringify(findings, null, 1)}\n\n` +
-        `Вынеси вердикт: что принято, что нет и почему. Отдельно назови, что из исходного запроса ` +
-        `осталось незакрытым или тихо сузилось.`,
-    { agentType: 'project-manager', label: 'приёмка', phase: 'Приёмка' }
+    `The user's original request:\n\n${task}\n\nAcceptance criteria:\n${plan.acceptance.join('\n')}\n\n` +
+        `What was done:\n${done.join('\n')}\n\nFindings of the reviewers:\n${JSON.stringify(findings, null, 1)}\n\n` +
+        `Give a verdict: what is accepted, what is not and why. Name separately what from the original request ` +
+        `was left unclosed or quietly narrowed.`,
+    { agentType: 'project-manager', label: 'acceptance', phase: 'Acceptance' }
 );
 
 return { plan, done, findings, blockers, verdict };

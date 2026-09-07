@@ -1,64 +1,64 @@
 ---
-name: <имя-правила>
+name: <rule-name>
 kind: rule
-law: <закон>
-description: Правило под закон «<Название закона>». Брать при <когда> — <каким приёмом это делается>. Готовый код — в паттернах <имена>.
+law: <law>
+description: Rule under the law "<Law title>". Load when <when> — <by which technique it is done>. Ready-made code — in patterns <names>.
 ---
-<!-- rt-kit v0.25.0 · templates/rule.md · 1fa13dac52f8 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · templates/rule.md · 8a59601860bf · правится надстройкой, не здесь -->
 
-# <О чём закон> — каким приёмом
+# <What the law is about> — by which technique
 
-Правило под закон `docs/constitution/<закон>.md`. Закон говорит, что должно быть верно; здесь — каким
-приёмом это делается. Чем это названо в этом дереве и где лежит — `implementation.md` рядом:
-правило переносится между репозиториями, имена — нет.
+Rule under the law `docs/constitution/<law>.md`. The law says what must be true; here — by which
+technique it is done. What it is called in this tree and where it lies — `implementation.md`
+next to it: the rule moves between repositories, the names do not.
 
-**Холодная часть:** `pitfalls.md` рядом — <ловушки и поведение по разборам, если они у правила
-есть>. Строка стоит только у правила, которое такой файл завело: у остального её нет вовсе.
+**Cold part:** `pitfalls.md` next to it — <pitfalls and behaviour from analyses, if the rule has
+them>. The line stands only at a rule that started such a file: the rest have none at all.
 
-## Как это называется здесь
+## What it is called here
 
-<Таблица «в законе — здесь»: закон говорит без имён, дерево называет свои. Правка, по которой
-правило узнаётся, стоит в его `description`: гейт зовёт правило по этому признаку.>
+<A table "in the law — here": the law speaks without names, the tree names its own. The edit by
+which the rule is recognised stands in its `description`: the gate calls the rule by this sign.>
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+moves between repositories, the layout does not, and a path named in the rule lies in the first
+tree that holds its code differently.
 
-## Ход
+## Flow
 
-Граф изображает тот же ход, что описан прозой ниже: с чего исполнитель начинает, где развилка и
-чем каждая ветка кончается. Узлы называют шаги и условия, а не файлы: адреса живут в
-`implementation.md` рядом, и в графе переносимого текста им места нет.
+The graph shows the same course as the prose below describes: where the executor starts, where
+the fork is and how each branch ends. Nodes name steps and conditions, not files: addresses live
+in `implementation.md` next to it, and the graph of a portable text has no place for them.
 
 ```mermaid
 flowchart TD
-    A[<с чего начинается>] --> B{<условие>}
-    B -->|<да>| C[<что делается>]
-    B -->|<нет>| D[<что делается иначе>]
+    A[<where it starts>] --> B{<condition>}
+    B -->|<yes>| C[<what is done>]
+    B -->|<no>| D[<what is done otherwise>]
 ```
 
-Правится он тем же изменением, что и проза: разойдясь, обе стороны остаются читаемыми как
-действующие, и первым это замечает тот, кто пошёл по графу.
+It is edited by the same change as the prose: having diverged, both sides stay readable as
+current, and the first to notice is whoever followed the graph.
 
-## Как закон применяется здесь
+## How the law applies here
 
-Каждый пункт начинается жирной статьёй, и у каждой статьи есть строка в `implementation.md`
-рядом. Утверждение, которому места в коде не нашлось, сюда не ставится: оно уходит прозой в
-«Ловушки» или статьёй в закон.
+Every item starts with a bold article, and every article has a line in `implementation.md` next
+to it. A statement that found no place in the code is not put here: it goes as prose into the
+"Pitfalls" or as an article into the law.
 
-- **<Статья одной фразой.>** <Что сломается иначе — не больше двух предложений.>
+- **<The article in one sentence.>** <What breaks otherwise — at most two sentences.>
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-<Что закон требует, а это дерево не проверяет ничем. Раздел читается глазами и не сверяется
-ничем — устаревшая неправда живёт в нём сколько угодно, поэтому перечитывается он целиком при
-каждой правке правила.>
+<What the law demands and this tree checks with nothing. The section is read by eye and audited
+by nothing — a stale untruth lives in it as long as it likes, so it is reread in full at every
+edit of the rule.>
 
-## Паттерны
+## Patterns
 
-- `<имя-правила>-<что>` — <когда брать>.
+- `<rule-name>-<what>` — <when to use>.
 
-Ловушек здесь нет: они живут в холодной части — `pitfalls.md` рядом, по образцу холодной
-части. Правило кончается паттернами.
+There are no pitfalls here: they live in the cold part — `pitfalls.md` next to it, by the sample
+of the cold part. The rule ends with the patterns.

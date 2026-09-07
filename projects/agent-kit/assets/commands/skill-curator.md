@@ -3,119 +3,123 @@ description: Review of a closed task through the eyes of the tree's rules — wh
 argument-hint: '[empty | <what to look at first>]'
 ---
 
-Запусти агента `skill-curator` на разбор только что закрытой задачи. Акцент от пользователя:
+Launch the `skill-curator` agent on the review of the task just closed. The user's emphasis:
 `$ARGUMENTS`
 
-Вызывается **сразу за открытием PR** — тем же ходом, которым работа отдана на разбор. Агент
-ничего не правит: он приносит готовые формулировки, а решение вставлять их принимает
-пользователь.
+Called **right after the PR is opened** — in the same turn in which the work is handed in for
+review. The agent edits nothing: it brings ready-made wording, and the decision to insert it is
+made by the user.
 
-**Запуск фоновый, и ход на нём не кончается.** Пока агент работает, берётся следующая задача:
-он ничего не спрашивает и быстрее от ожидания не идёт. Шаги 1 и 2 делаются до запуска — пока
-задача ещё в голове; шаги 4–6 принимают вернувшийся ответ одним ходом и возвращают исполнителя
-к прежней работе.
+**The launch is in the background, and the turn does not end on it.** While the agent works, the
+next task is taken: it asks nothing and goes no faster for being waited on. Steps 1 and 2 are
+done before the launch — while the task is still in mind; steps 4–6 receive the returned reply in
+one turn and bring the executor back to the previous work.
 
-## 1. Найди список загруженного
+## 1. Find the list of what was loaded
 
-Гейт правил пишет его по одному файлу на сессию:
+The rules gate writes it, one file per session:
 
 ```bash
 ls -t "${TMPDIR}claude-skill-gate/"*.loaded | head -5
 ```
 
-Нужен файл **текущей** сессии: её идентификатор стоит в пути скретчпада из системного
-приглашения. Брать самый свежий по времени вслепую нельзя — параллельная сессия в другом окне
-обгонит твою, и разбор уедет на чужую задачу.
+You need the file of the **current** session: its identifier stands in the scratchpad path from
+the system prompt. Taking the newest by time blind is not allowed — a parallel session in another
+window overtakes yours, and the review goes to someone else's task.
 
-Запись обнуляется при сжатии контекста, поэтому список покрывает последний отрезок сессии. Если
-знаешь, что грузилось раньше, — допиши это в сводку словами, а не выдавай список за полный.
+The record is reset at context compaction, so the list covers the last stretch of the session.
+If you know what was loaded earlier — add it to the summary in words, do not pass the list off as
+complete.
 
-## 2. Собери сводку
+## 2. Assemble the summary
 
-Без неё разбор выродится в пересказ правил: агент не видел ни задачи, ни того, где ты
-спотыкался. В сводке:
+Without it the review degenerates into a retelling of the rules: the agent saw neither the task
+nor where you stumbled. In the summary:
 
-- **что делали** — задача одной фразой, объём числами (файлов, коммитов, ветка);
-- **что пошло не так** — по пунктам, и это главная часть. Каждый: что сломалось, чем ловилось
-  (или почему не поймалось ничем), нашёл ты сам или проверка;
-- **что было под рукой** — какие правила грузились и что каждое дало: где сработало, где
-  промолчало, где увело не туда. Правило, которое загрузилось и не пригодилось, — такая же
-  находка, как недостающее;
-- **грабли окружения** — правило линтера, ограничение инструмента, поведение стенда, на которые
-  наткнулись и которых нет ни в одном правиле.
+- **what was done** — the task in one sentence, the volume in numbers (files, commits, branch);
+- **what went wrong** — item by item, and this is the main part. Each: what broke, what caught
+  it (or why nothing caught it), whether you found it yourself or a check did;
+- **what was at hand** — which rules were loaded and what each gave: where it worked, where it
+  stayed silent, where it led astray. A rule that was loaded and was of no use is as much a
+  finding as a missing one;
+- **environment traps** — a linter rule, a tool limitation, a stand behaviour that you ran into
+  and that is in no rule.
 
-Честность здесь дороже полноты: «нашёл разбор, а не я» и «пункт был помечен сделанным по работе,
-которой не было» — ровно то, из чего получаются правила. Приглаженная сводка даёт приглаженный
-разбор.
+Honesty here is worth more than completeness: "the review found it, not me" and "the item was
+marked done by work that did not happen" are exactly what rules are made of. A smoothed summary
+gives a smoothed review.
 
-## 3. Запусти агента в фон и вернись к работе
+## 3. Launch the agent in the background and return to work
 
-Инструментом `Agent`, `subagent_type: 'skill-curator'`. В промпт — путь к `.loaded` и сводку
-целиком.
+With the `Agent` tool, `subagent_type: 'skill-curator'`. Into the prompt — the path to `.loaded`
+and the summary in full.
 
-Ход на этом не кончается: пока агент работает, берётся следующая задача. Ответ придёт
-уведомлением, и тогда идут шаги 4–6 — один ход, после которого исполнитель возвращается к тому,
-что делал.
+The turn does not end on this: while the agent works, the next task is taken. The reply arrives
+as a notification, and then come steps 4–6 — one turn, after which the executor returns to what
+they were doing.
 
-## 4. Положи находки в папку задачи
+## 4. Put the findings into the task folder
 
-Ответ роли живёт в переписке и умирает вместе с ней, поэтому он сразу ложится на диск — рядом с
-ходом работы, в папку задачи. Пишешь его ты, не роль: файлов она не пишет вовсе.
-
-```bash
-cat > docs/tasks/<ветка>/curator.md    # заголовок блока — «## <адрес> · <ресурс>»
-```
-
-Адрес у каждого блока роль уже поставила — «пакет», «компаньон» или «дерево». Твоё дело — не
-потерять его и не переписать текст своими словами.
-
-Папка задачи умирает со слиянием, а находки должны пережить весь эпик: владелец читает их
-разом, когда эпик кончился. Поэтому при разборе папки файл находок не удаляется, а переезжает к
-замыслу эпика — паттерн закрытия работы. Работа вне эпика показывает находки владельцу сразу.
-
-## 5. Отправь сводку наблюдений — и только её
+The role's reply lives in the conversation and dies with it, so it goes to disk at once — next to
+the progress, in the task folder. You write it, not the role: it writes no files at all.
 
 ```bash
-npx agent-kit propose --dry-run     # что уехало бы
-npx agent-kit propose               # отправить груз в приём
+cat > docs/tasks/<branch>/curator.md    # block heading — «## <адрес> · <ресурс>»
 ```
 
-Груз уезжает при каждом прогоне: сводка наблюдений со снимком надстроек, разборы происшествий и
-предложения, лежащие в каталоге предложений. Сводка — факт: чем пользовались, чем не
-пользовались ни разу, что дерево переопределило. Она уезжает всегда и слова владельца не ждёт.
+The role has already set the address of every block — «пакет», «компаньон» or «дерево». Your part
+is not to lose it and not to rewrite the text in your own words.
 
-**Находки разбора в каталог предложений сами не ложатся, и потому не уезжают.** Предложение —
-заготовка правки чужого дерева, и часть заготовок отпадает при первом же чтении; уехавшая без
-разбора, она становится работой того, кто её не заказывал. В каталог предложений переносится
-только то, что владелец назвал верным, — и тогда же уезжает.
+The task folder dies with the merge, and the findings must outlive the whole epic: the owner
+reads them at once, when the epic is over. So when the folder is taken apart, the findings file is
+not deleted but moves to the epic plan — the work-closing pattern. Work outside an epic shows the
+findings to the owner at once.
 
-Отправка отказывает, если адрес этого дерева нашёлся в сводке или в тексте предложения — путь,
-имя корня, чужой репозиторий. Это не придирка: груз уезжает наружу целиком. Правь текст, а не
-обходи проверку. Разбор происшествия проверкой не накрыт: он по устройству называет файлы
-дерева, где промах случился.
+## 5. Send the observation digest — and only it
 
-## 6. Отдай находки владельцу — по концу эпика
+```bash
+npx agent-kit propose --dry-run     # what would have gone
+npx agent-kit propose               # send the cargo to the intake
+```
 
-Покажи находки **как есть**: роль пишет готовый текст для вставки, и пересказ его портит. По
-каждой скажи своё — согласен или нет и почему; правило, с которым ты не согласен, вставлять не
-надо.
+The cargo goes out at every run: the observation digest with a snapshot of the overrides, the
+incident analyses and the proposals lying in the proposals directory. The digest is fact: what
+was used, what was never used, what the tree overrode. It always goes and does not wait for the
+owner's word.
 
-Работа в эпике показывает их не сразу: находки копятся у замысла эпика и читаются разом, когда
-эпик кончился, — так владелец видит повторяющееся, а не разрозненные заметки. Названное им
-верным переносится в каталог предложений и уезжает шагом 5.
+**The review findings do not land in the proposals directory by themselves, and so do not go.**
+A proposal is a draft of an edit to a foreign tree, and some drafts fall away at the first
+reading; gone without review, it becomes the work of someone who did not order it. Only what the
+owner has named right moves to the proposals directory — and goes at that moment.
 
-У каждого предложения агент ставит пометку «пакет», «компаньон» или «дерево»: тексты приезжают
-из `@rt-tools/agent-kit`, и правка разложенного файла на месте теряется на следующем
-`agent-kit sync`. Пометку оставляй в тексте предложения — решает по ней человек.
+The send refuses if an address of this tree is found in the digest or in the proposal text — a
+path, a root name, a foreign repository. This is not nitpicking: the cargo goes outside in full.
+Fix the text, do not bypass the check. An incident analysis is not covered by the check: by
+design it names the tree files where the miss happened.
 
-Куда что идёт:
+## 6. Hand the findings to the owner — at the end of the epic
 
-- **пакет** — правка ресурса в `@rt-tools/agent-kit`; сюда же попадает всё, что верно любому
-  дереву мастерской;
-- **компаньон** — `implementation.md` рядом с правилом: имена этого дерева и привязка статей;
-- **дерево** — надстройка: `.claude/rt-kit/overrides/<идентификатор>` для текстов,
-  `.claude/rt-kit/gate-map.sh` и `project.sh` для карты и профиля.
+Show the findings **as they are**: the role writes ready-made text for insertion, and retelling
+spoils it. On each, say your own view — agree or not and why; a rule you disagree with does not
+need inserting.
 
-Правило и его компаньон меняются вместе: расхождение между ними хуже отсутствия правила. Новое
-правило требует ещё и записи в карте гейта, иначе его никто не загрузит, — а после правки карты
-или хука обязателен прогон их сценариев целиком.
+Work in an epic does not show them at once: the findings accumulate at the epic plan and are read
+at once, when the epic is over — so the owner sees what repeats, not scattered notes. What they
+named right moves to the proposals directory and goes in step 5.
+
+On every proposal the agent puts the mark «пакет», «компаньон» or «дерево»: the texts arrive from
+`@rt-tools/agent-kit`, and an in-place edit of a laid-out file is lost on the next
+`agent-kit sync`. Leave the mark in the proposal text — a person decides by it.
+
+Where each goes:
+
+- **пакет** — an edit of a resource in `@rt-tools/agent-kit`; here also lands everything true
+  for any tree of the workshop;
+- **компаньон** — `implementation.md` next to the rule: the names of this tree and the binding
+  of articles;
+- **дерево** — an override: `.claude/rt-kit/overrides/<identifier>` for texts,
+  `.claude/rt-kit/gate-map.sh` and `project.sh` for the map and the profile.
+
+A rule and its companion change together: a divergence between them is worse than no rule. A new
+rule also needs an entry in the gate map, otherwise nobody loads it — and after editing the map
+or a hook, a full run of their scenarios is mandatory.
