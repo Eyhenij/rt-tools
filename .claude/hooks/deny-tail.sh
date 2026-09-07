@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/deny-tail.sh · 98439a807f7c · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/deny-tail.sh · b6a7fe3fc0c7 · правится надстройкой, не здесь
 # The shared deny tail. NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event.
 # The guards source it themselves — the same way they source the observation record and the word
 # about a missing profile function.
@@ -30,7 +30,7 @@
 # The deny tail as a string. The first parameter is the lawful form of bypass, if the refusal has
 # one; empty means there is no lawful form at all, and this is said outright.
 #
-#   reason="BLOCKED: <reason>. $(rt_deny_tail 'the line `Docs-skip: <причина>` in the commit body')"
+#   reason="BLOCKED: <reason>. $(rt_deny_tail 'the line `Docs-skip: <reason>` in the commit body')"
 #   reason="BLOCKED: <reason>. $(rt_deny_tail)"
 rt_deny_tail() {
     # shellcheck disable=SC1090

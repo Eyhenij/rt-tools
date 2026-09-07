@@ -51,7 +51,7 @@ rt_delivery_open_folder() {
     _folder="$tasks_dir/$branch"
     _lying="$(rt_folder_in_branch "$_folder")"
     if [ -n "$_lying" ]; then
-        fault "the branch carries the task folder «${_lying}» — a request is opened after the tidying, not before it. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit it by the last commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <причина>» into the command."
+        fault "the branch carries the task folder «${_lying}» — a request is opened after the tidying, not before it. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit it by the last commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <reason>» into the command."
         return 0
     fi
 
@@ -82,7 +82,7 @@ rt_delivery_ready_folder() {
 
     _lying="$(rt_folder_in_branch "$tasks_dir/$_branch")"
     [ -n "$_lying" ] \
-        && fault "the branch carries the task folder «${_lying}» — a lifted draft reads as «ready to merge», and merging it there is not allowed. The button is pressed by a person on the hosting, and the folder reaches main before their hand does. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <причина>» into the command."
+        && fault "the branch carries the task folder «${_lying}» — a lifted draft reads as «ready to merge», and merging it there is not allowed. The button is pressed by a person on the hosting, and the folder reaches main before their hand does. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <reason>» into the command."
 }
 
 # Condition for the merge: the same subject as a second line. It catches a merge going by command —
@@ -110,7 +110,7 @@ rt_delivery_merge_folder() {
 
     _lying="$(rt_folder_in_branch "$_folder")"
     [ -n "$_lying" ] \
-        && deny "BLOCKED: the task folder «${_lying}» is left in the branch — it will travel into main. There will be nobody to take it apart later: the work moves on to the next task, and this request closes. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest and repeat. If the work is merged in parts, put the line «Task-folder-skip: <причина>» into the body of the request."
+        && deny "BLOCKED: the task folder «${_lying}» is left in the branch — it will travel into main. There will be nobody to take it apart later: the work moves on to the next task, and this request closes. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest and repeat. If the work is merged in parts, put the line «Task-folder-skip: <reason>» into the body of the request."
 
     [ -n "$archive_dir" ] || exit 0
     _base="$(git merge-base "$main_branch" HEAD 2>/dev/null)"

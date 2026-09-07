@@ -242,7 +242,7 @@ fi
 
 reason="$head A question whose answer is already written down is not asked of the owner — the rule of work conduct. Run a search by the words of the subject and answer from what is found; ask only what the documents do not cover:
 
-    grep -rn -i \"<слово темы>\" $laws_dir $rules_dir $specs_dir $plans_dir $archive_dir
+    grep -rn -i \"<a word of the subject>\" $laws_dir $rules_dir $specs_dir $plans_dir $archive_dir
 
 The guard judges one turn: the next session is not refused."
 

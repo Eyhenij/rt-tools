@@ -29,7 +29,7 @@
 # The deny tail as a string. The first parameter is the lawful form of bypass, if the refusal has
 # one; empty means there is no lawful form at all, and this is said outright.
 #
-#   reason="BLOCKED: <reason>. $(rt_deny_tail 'the line `Docs-skip: <причина>` in the commit body')"
+#   reason="BLOCKED: <reason>. $(rt_deny_tail 'the line `Docs-skip: <reason>` in the commit body')"
 #   reason="BLOCKED: <reason>. $(rt_deny_tail)"
 rt_deny_tail() {
     # shellcheck disable=SC1090

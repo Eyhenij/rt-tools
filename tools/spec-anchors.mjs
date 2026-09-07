@@ -1,4 +1,4 @@
-// rt-kit v0.25.0 · checks/spec-anchors.mjs · deedcaa29cd0 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/spec-anchors.mjs · 854b33b42c7d · правится надстройкой, не здесь
 /**
  * The binding of a rule to code and the laws a spec applies.
  *
@@ -161,8 +161,8 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
         if (!row) {
             report(
                 mapFile,
-                `a statement without a binding: «${head.slice(0, 60)}…» — add a line with \`файл:символ\`, ` +
-                    'a verdict «Не исполняется» with a reason, or move the statement into «Открытые вопросы» of the law as Q-<буква>-<номер>'
+                `a statement without a binding: «${head.slice(0, 60)}…» — add a line with \`file:symbol\`, ` +
+                    'a verdict «Не исполняется» with a reason, or move the statement into «Открытые вопросы» of the law as Q-<letter>-<number>'
             );
             continue;
         }
@@ -286,7 +286,7 @@ function checkTracedAnchors() {
             report(
                 mapFile,
                 `the binding leads into dead code: \`${symbol}\` is declared in \`${path}\` and met nowhere else — ` +
-                    'either the statement is carried out elsewhere, or its place is in «Открытые вопросы» of the law as Q-<буква>-<номер>'
+                    'either the statement is carried out elsewhere, or its place is in «Открытые вопросы» of the law as Q-<letter>-<number>'
             );
         }
     }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/turn-exit-guard.sh · 871e766b381e · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/turn-exit-guard.sh · fadf2f95744d · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/turn-exit-patterns.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
@@ -332,7 +332,7 @@ if [ "$archived" != "true" ] && [ -z "$progress" ] && [ -n "$branch" ] && [ ! -d
 
 A created branch means the state «задача-взята», and it has one mandatory action — write the plan. A turn ending here leaves the work announced and not begun: the number is named, the column is moved, and on disk there is neither the analysis of the request nor the stages. The commands creating the branch and moving the column do not replace it — such a turn is filled with exactly those.
 
-    npm run task:new -- <номер>   # если папки нет вовсе
+    npm run task:new -- <number>   # if there is no folder at all
 
 Assemble \`$tasks_dir/$branch/\` and write the plan in this same turn.
 
@@ -394,8 +394,8 @@ Handed-over work ends a turn only together with the next one begun — an action
 
 Everything that happened before the request was opened was done on the handed-over task and says nothing about the next one.
 
-    npm run task:new -- <заголовок>            # завести следующую
-    git checkout -b <КЛЮЧ>-<номер>-<slug>      # взять её в работу
+    npm run task:new -- <title>              # create the next one
+    git checkout -b <KEY>-<number>-<slug>    # take it into work
 
 Do the first step of the next work in this same turn. The owner said to stop — then write so: the guard reads their word, not a retelling.
 

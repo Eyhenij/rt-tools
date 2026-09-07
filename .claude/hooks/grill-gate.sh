@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/grill-gate.sh · 64b7bc808ee0 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/grill-gate.sh · 89092beafc10 · правится надстройкой, не здесь
 # Requires: hooks/deny-tail.sh
 # rt-hook: Stop
 # The conversation guard: the owner is not asked a question until the laws and rules have been read
@@ -243,7 +243,7 @@ fi
 
 reason="$head A question whose answer is already written down is not asked of the owner — the rule of work conduct. Run a search by the words of the subject and answer from what is found; ask only what the documents do not cover:
 
-    grep -rn -i \"<слово темы>\" $laws_dir $rules_dir $specs_dir $plans_dir $archive_dir
+    grep -rn -i \"<a word of the subject>\" $laws_dir $rules_dir $specs_dir $plans_dir $archive_dir
 
 The guard judges one turn: the next session is not refused."
 

@@ -64,7 +64,7 @@ export const TASK_KEY = BOARD.taskKey ?? '';
 if (PROJECT_ID && !TASK_KEY) {
     console.error(
         'board: the task key is not named — set it by the key `board.taskKey` in .claude/rt-kit/checks.json.\n' +
-            'The task title `[<КЛЮЧ>-<номер>]` and the branch name `<КЛЮЧ>-<номер>-<краткое-имя>` are assembled from it.'
+            'The task title `[<KEY>-<number>]` and the branch name `<KEY>-<number>-<short-name>` are assembled from it.'
     );
     process.exit(1);
 }

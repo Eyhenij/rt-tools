@@ -347,7 +347,7 @@ try {
     for (const pull of pulls) {
         const titleNumber = numberFromTitle(pull.title);
         if (titleNumber === null) {
-            report(`PR #${pull.number}: the title does not start with [${TASK_KEY}-<номер>] — «${pull.title}»`);
+            report(`PR #${pull.number}: the title does not start with [${TASK_KEY}-<number>] — «${pull.title}»`);
             continue;
         }
         if (!closesNumbers(pull.body).includes(titleNumber)) {
@@ -388,7 +388,7 @@ try {
             const folder = folderInBranch(pull.headRefName, options);
             if (folder !== null) {
                 report(
-                    `PR #${pull.number}: ветка везёт папку задачи «${folder}/» — заявка открывается после уборки. Разбери её этим же PR или поставь в тело строку «Task-folder-skip: <причина>»`
+                    `PR #${pull.number}: the branch carries the task folder «${folder}/» — the request opens after the folder is taken apart. Take it apart by this same PR or put the line «Task-folder-skip: <reason>» into the body`
                 );
             }
         }

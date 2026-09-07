@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/waiting-turn-guard.sh · fbe0815367e0 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/waiting-turn-guard.sh · 4b3d044410ae · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh
 # Waiting guard: a turn that tells the owner about someone else's step does not end until it holds
@@ -231,7 +231,7 @@ Saying «беру следующую задачу» is not the same as taking it
 The first action about the next task is done in this same turn — creating the task, the branch or the folder:
 
     npm run task:new -- --title '<Что не так>' --slug <slug>
-    git checkout -b <КЛЮЧ>-<номер>-<slug>
+    git checkout -b <KEY>-<number>-<slug>
 
 The end of a run is learned from the return of a background command, not from a look at the page.
 

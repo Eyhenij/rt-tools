@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-board.github.mjs · 6c6e01020637 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-board.github.mjs · 10c8d7530ca2 · правится надстройкой, не здесь
 /**
  * Audit of the work queue against what the delivery law requires of a task and its PR.
  *
@@ -348,7 +348,7 @@ try {
     for (const pull of pulls) {
         const titleNumber = numberFromTitle(pull.title);
         if (titleNumber === null) {
-            report(`PR #${pull.number}: the title does not start with [${TASK_KEY}-<номер>] — «${pull.title}»`);
+            report(`PR #${pull.number}: the title does not start with [${TASK_KEY}-<number>] — «${pull.title}»`);
             continue;
         }
         if (!closesNumbers(pull.body).includes(titleNumber)) {
@@ -389,7 +389,7 @@ try {
             const folder = folderInBranch(pull.headRefName, options);
             if (folder !== null) {
                 report(
-                    `PR #${pull.number}: ветка везёт папку задачи «${folder}/» — заявка открывается после уборки. Разбери её этим же PR или поставь в тело строку «Task-folder-skip: <причина>»`
+                    `PR #${pull.number}: the branch carries the task folder «${folder}/» — the request opens after the folder is taken apart. Take it apart by this same PR or put the line «Task-folder-skip: <reason>» into the body`
                 );
             }
         }

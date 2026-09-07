@@ -230,7 +230,7 @@ Saying «беру следующую задачу» is not the same as taking it
 The first action about the next task is done in this same turn — creating the task, the branch or the folder:
 
     npm run task:new -- --title '<Что не так>' --slug <slug>
-    git checkout -b <КЛЮЧ>-<номер>-<slug>
+    git checkout -b <KEY>-<number>-<slug>
 
 The end of a run is learned from the return of a background command, not from a look at the page.
 

@@ -104,7 +104,7 @@ collect_moved() {
             *) continue ;;
         esac
 
-        # shellcheck disable=SC2086 # разбиение по пробелам здесь и нужно
+        # shellcheck disable=SC2086 # splitting by spaces is exactly what is wanted here
         set -- ${segment#*git mv }
         args=''
         for arg in "$@"; do

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/lint-after-edit.sh · 8237af97d615 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/lint-after-edit.sh · 470b9558ee09 · правится надстройкой, не здесь
 # rt-hook: PostToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file
 # Requires: hooks/profile-check.sh
 # The linter in the footsteps of an edit. PostToolUse.
@@ -105,7 +105,7 @@ collect_moved() {
             *) continue ;;
         esac
 
-        # shellcheck disable=SC2086 # разбиение по пробелам здесь и нужно
+        # shellcheck disable=SC2086 # splitting by spaces is exactly what is wanted here
         set -- ${segment#*git mv }
         args=''
         for arg in "$@"; do
