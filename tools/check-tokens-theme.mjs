@@ -22,8 +22,8 @@
  *    The component's own property is lawful at that — the component is tuned by it.
  * 5. An override of a scale step by the dark theme: the scale is unchanging, the theme is held by the
  *    assignments.
- * 6. A pair «the text colour and its background» below the threshold 4.5:1 — in either of the two
- *    themes.
+ * 6. A pair «the text colour and its background» below the threshold 4.5:1 — in any of the four
+ *    looks: the light theme, the dark one, the material preset and the preset under the dark theme.
  * 7. A divergence of the list of pairs from the measurement table in `Colors.mdx`: no two lists about
  *    one and the same thing are created without a matching.
  *
@@ -50,6 +50,15 @@ const THRESHOLD = 4.5;
 
 const LIGHT_MIXIN = 'rt-theme-light-tokens';
 const DARK_MIXIN = 'rt-theme-dark-tokens';
+const PRESET_MIXIN = 'rt-preset-material-tokens';
+
+/**
+ * The four looks a pair is measured in. The material preset is a second layer of assignments, and
+ * the dark theme is stronger than it: a name the dark theme answers keeps the dark colour in the
+ * material set too, and a name it stays silent about takes the preset's. So the fourth look is not
+ * a repetition of the second — it is the only place where those two rules meet.
+ */
+const LOOKS = ['light', 'dark', 'material', 'material dark'];
 
 /** A declaration with an optional mark of a shared colour on the same line. */
 const DECLARATION_RE = /^[ \t]*(--rt-[a-z0-9-]+)[ \t]*:[ \t]*([^;]+);[ \t]*(?:\/\* rt-theme-shared:[ \t]*([^*]*?)[ \t]*\*\/)?/gm;
@@ -106,10 +115,14 @@ function scssFiles(dir) {
 const primitives = declarations(read(`${STYLES}/_primitives.scss`));
 const light = declarations(mixinBody(read(`${STYLES}/_semantic.scss`), LIGHT_MIXIN));
 const dark = declarations(mixinBody(read(`${STYLES}/_theme-dark.scss`), DARK_MIXIN));
+const preset = declarations(mixinBody(read(`${STYLES}/_preset-material.scss`), PRESET_MIXIN));
 
-/** A name's value in a theme: the dark over the light, the scale under both. */
-const valueOf = (name, theme) =>
-    (theme === 'dark' ? dark.get(name)?.value : undefined) ?? light.get(name)?.value ?? primitives.get(name)?.value;
+/** A name's value in a look: the dark over the preset, the preset over the light, the scale under all. */
+const valueOf = (name, look) =>
+    (look.includes('dark') ? dark.get(name)?.value : undefined) ??
+    (look.includes('material') ? preset.get(name)?.value : undefined) ??
+    light.get(name)?.value ??
+    primitives.get(name)?.value;
 
 /** The reference chain of a value: only a whole reference, a compound value does not count as a chain. */
 const linkOf = (value) => value.match(SINGLE_VAR_RE)?.[1];
@@ -315,14 +328,14 @@ const docLines = doc.split('\n');
 const measured = [];
 
 for (const pair of pairs) {
-    for (const theme of ['light', 'dark']) {
+    for (const theme of LOOKS) {
         const page = colorOf('--rt-color-bg-page', theme);
         const backdrop = colorOf(pair.bg, theme);
         const ink = colorOf(pair.text, theme);
         if (!backdrop || !ink) {
             add(
                 `a pair without a colour ${pair.text} on ${pair.bg}`,
-                `${pair.text} on ${pair.bg} — the colour does not resolve to a code in either theme: the list of pairs named a name the layer does not declare`
+                `${pair.text} on ${pair.bg} — the colour does not resolve to a code in the ${theme} look: the list of pairs named a name the layer does not declare`
             );
             break;
         }
@@ -332,7 +345,7 @@ for (const pair of pairs) {
         if (ratio < THRESHOLD) {
             add(
                 `contrast ${pair.text} on ${pair.bg} in the ${theme}`,
-                `${pair.text} on ${pair.bg} in the ${theme} theme — ${ratio.toFixed(2)}:1 at the threshold ${THRESHOLD}:1`
+                `${pair.text} on ${pair.bg} in the ${theme} look — ${ratio.toFixed(2)}:1 at the threshold ${THRESHOLD}:1`
             );
         }
     }
@@ -384,6 +397,6 @@ console.log(
         `${acceptedOf('a dark block ') + acceptedOf('a scale step in the dark ')}`
 );
 console.log(
-    `check-tokens-theme: contrast pairs ${pairs.length} in two themes, the threshold ${THRESHOLD}:1 — ` +
+    `check-tokens-theme: contrast pairs ${pairs.length} in ${LOOKS.length} looks, the threshold ${THRESHOLD}:1 — ` +
         `below the threshold ${acceptedOf('contrast ')}, and all are accepted by the list`
 );
