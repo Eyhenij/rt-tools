@@ -2,288 +2,312 @@
 name: agent-kit
 description: The portable rules layer of the agent — laws, rules, hooks and checks shipped by the package and adjusted by the tree through overrides. Load when a file with the rt-kit header is edited, the package is upgraded or the layout audit refuses. The shape of a new skill — write-a-skill.
 ---
-<!-- rt-kit v0.25.0 · skills/agent-kit.md · 2c95c81d8405 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · skills/agent-kit.md · 9a795a2f2206 · правится надстройкой, не здесь -->
 
-# Переносимый слой правил
+# The portable rules layer
 
-Законы, правила, паттерны, хуки, проверки и роли везёт пакет; дерево берёт их раскладкой и
-настраивает надстройками. Разложенный файл несёт шапку и правке не подлежит — правится либо
-пакет, либо надстройка.
+Laws, rules, patterns, hooks, checks and roles are shipped by the package; the tree takes them
+by layout and adjusts them with overrides. A laid-out file carries a header and is not edited —
+either the package or the override is edited.
 
-**Холодная часть:** `pitfalls.md` рядом — ловушки, грабли, на которые уже наступали. Грузится по
-требованию, а не вместе со скилом.
+**Cold part:** `pitfalls.md` next to it — pitfalls, traps already stepped on. Loaded on demand,
+not together with the skill.
 
-## Когда брать
+## When to use
 
-- В файле, который собираешься править, стоит шапка
-  `rt-kit v<версия> · <ресурс> · <сумма> · правится надстройкой, не здесь`.
-- Обновился пакет, или `sync --check` отказал в гейте пуша.
-- Своё поведение надо дописать поверх пакетного: гард, карта гейта, набор проверок.
-- Пакет ставится в дерево, где хуки и проверки уже свои.
+- The file you are about to edit carries the header
+  `rt-kit v<version> · <resource> · <checksum> · правится надстройкой, не здесь`.
+- The package was updated, or `sync --check` refused in the push gate.
+- Your own behaviour has to be added on top of the package one: a guard, the gate map, the
+  set of checks.
+- The package is installed into a tree whose hooks and checks are already its own.
 
-## Где что настраивается
+## Where what is set up
 
-| Что меняешь                                    | Куда правка                                            |
-| ---------------------------------------------- | ------------------------------------------------------ |
-| какое правило гейт требует под какой файл      | `.claude/rt-kit/gate-map.sh` — своя `skill_for`        |
-| порты, адреса, линтеры, форма ветки, инвентарь | `.claude/rt-kit/project.sh` — свои `rt_*`              |
-| пути и идентификаторы, которыми живут проверки | `.claude/rt-kit/checks.json`                           |
-| какие признаки единообразия дерево берёт       | `checks.json`, ключи `reuse.bundles` и `reuse.signals` |
-| раздел разложенного текста                     | `.claude/rt-kit/overrides/<идентификатор ресурса>`     |
-| что брать, а от чего отказаться                | `.claude/rt-kit.json`, ключи `only` и `skip`           |
-| какие роли зовутся не обязательно, а руками    | `.claude/rt-kit.json`, ключ `rolesOff`                 |
-| что у дерева есть: хранилище, админка, пакеты  | `.claude/rt-kit.json`, ключ `has`                      |
-| сам механизм — гард, проверка, текст правила   | ресурс в пакете                                        |
+| What you change                                   | Where the edit goes                                     |
+| ------------------------------------------------- | ------------------------------------------------------- |
+| which rule the gate demands for which file        | `.claude/rt-kit/gate-map.sh` — your own `skill_for`     |
+| ports, addresses, linters, branch form, inventory | `.claude/rt-kit/project.sh` — your own `rt_*`           |
+| paths and identifiers the checks live by          | `.claude/rt-kit/checks.json`                            |
+| which uniformity signs the tree takes             | `checks.json`, keys `reuse.bundles` and `reuse.signals` |
+| a section of a laid-out text                      | `.claude/rt-kit/overrides/<resource identifier>`        |
+| what to take and what to drop                     | `.claude/rt-kit.json`, keys `only` and `skip`           |
+| which roles are called by hand, not mandatorily   | `.claude/rt-kit.json`, key `rolesOff`                   |
+| what the tree has: storage, admin, packages       | `.claude/rt-kit.json`, key `has`                        |
+| the mechanism itself — guard, check, rule text    | the resource in the package                             |
 
-Надстройка объявляет функцию заново и вправе позвать умолчание тем же именем с суффиксом
-`_default`. Слияние текста идёт по разделам `## `: совпавший заголовок замещает, новый
-дописывается, пустой снимает раздел пакета.
+An override redeclares the function and may call the default by the same name with the
+`_default` suffix. Text merges by `## ` sections: a matching heading replaces, a new one is
+appended, an empty one lifts the package section.
 
-Готовый пример на каждую строку этой таблицы — скил `agent-kit-extend`: как выглядит сама
-правка, чем она проверяется и чем кончается, если положить её не туда.
+A ready-made sample for every row of this table is the skill `agent-kit-extend`: how the edit
+itself looks, what checks it and how it ends if put in the wrong place.
 
-## Порядок
+## Order
 
-Раскладка кладёт всё или ничего: отказ хотя бы по одному файлу не пишет ничего — половина
-разложенного хуже целого. Правится либо надстройка здесь, либо сам ресурс — а это работа того
-дерева, где пакет живёт исходниками, и здесь о ней не сказано ничего.
+The layout puts everything or nothing: a refusal on even one file writes nothing — half a
+layout is worse than a whole one. Either the override here or the resource itself is edited —
+and that is the work of the tree where the package lives as sources; nothing is said about it
+here.
 
-**Раскладка — правка дерева, а не служебный вызов:** она переписывает сотни ведомых файлов
-разом, и работа поэтому оформляется до `sync`, по тем же правилам, что и любая другая.
+**A layout is an edit of the tree, not a service call:** it rewrites hundreds of tracked files at
+once, so the work is set up before `sync`, by the same rules as any other.
 
-**Подъём версии пакета и раскладка едут одним изменением.** Сверка раскладки стоит в гейте
-пуша: редакция, поднятая без раскладки, красит главную ветку и запирает дерево целиком.
+**The package version bump and the layout go in one change.** The layout audit stands in the
+push gate: an edition bumped without a layout turns the main branch red and locks the whole tree.
 
-**Объявление хука раскладка кладёт вместе с самим хуком.** Хук вызывается по записи в настройке
-агента, и разложенный без неё снаружи неотличим от работающего. Раскладка дописывает запись на
-каждое событие, которого в настройке нет, и сообщает об этом. Правка только добавляет: записи не
-переписываются и не снимаются, снятое деревом не возвращается, а настройку, которую не разобрать
-как JSON, пакет не трогает — печатает готовый кусок для записи рукой.
+**The layout puts the hook declaration together with the hook itself.** A hook is called by an
+entry in the agent settings, and one laid out without it is indistinguishable from the outside
+from a working one. The layout appends an entry for every event missing from the settings and
+reports it. The edit only adds: entries are neither rewritten nor removed, what the tree removed
+does not come back, and settings that cannot be parsed as JSON the package does not touch — it
+prints a ready-made piece to enter by hand.
 
-**Держит это гард места правки, а не память.** Правку файла с шапкой раскладки он отбивает в
-минуту правки и называет адрес: источник, если дерево его держит, иначе надстройку. Правит копию
-не только рука: форматтер дерева переписывает разложенный файл по-своему, и раскладка читает это
-ровно как правку руками. Снятие копии гард пропускает — снятый файл раскладка кладёт заново.
+**This is held by the edit-location guard, not by memory.** It refuses an edit of a file with the
+layout header at the minute of the edit and names the address: the source, if the tree holds
+it, otherwise the override. The copy is edited not only by hand: the tree formatter rewrites a
+laid-out file its own way, and the layout reads that exactly as a hand edit. Removing the copy
+the guard lets through — a removed file the layout puts anew.
 
-**Надстройка правится по разделу, а не кладётся целиком.** Разделы в неё дописывают разные ветки
-и разные заходы, и положенная целиком она уносит все, которых эта правка не касалась. Держит это
-второй гард — он отбивает запись поверх непустой надстройки и называет размер того, что затрут.
-Дописывание в конец и правка по месту проходят.
+**An override is edited by section, not put in full.** Sections are added to it by different
+branches and different sessions, and put in full it carries away all that this edit did not
+touch. This is held by the second guard — it refuses a write over a non-empty override and names
+the size of what would be wiped. Appending at the end and editing in place pass.
 
-## Команды
+## Commands
 
 ```bash
-npx agent-kit doctor        # что разложено, что отстало, что лежит от отказанного
-npx agent-kit sync          # разложить
-npx agent-kit sync --check  # ничего не писать, отказать при расхождении
-npx agent-kit stats         # чем пользовались, чем ни разу, обо что спотыкались
-npx agent-kit enroll --code <код>  # завести дерево в приёме и положить его токен
-npx agent-kit propose       # отправить груз в приём: сводку, предложения и разборы
-npx agent-kit adopt [файлы] # отдать пакету свой файл, лежащий на его пути
+npx agent-kit doctor        # what is laid out, what lags, what lies from a dropped resource
+npx agent-kit sync          # lay out
+npx agent-kit sync --check  # write nothing, refuse on a divergence
+npx agent-kit stats         # what was used, what never, what people stumbled on
+npx agent-kit enroll --code <code>  # enrol the tree in the intake and put its token
+npx agent-kit propose       # send the cargo to the intake: the digest, proposals and analyses
+npx agent-kit adopt [files] # hand the package your own file lying on its path
 ```
 
-Отдача откладывает прежнее содержимое рядом, с пометкой `.before-rt-kit`, и освобождает путь под
-раскладку; без имён отдаются все чужие файлы разом.
+Adoption sets the former content aside next to it, marked `.before-rt-kit`, and frees the path
+for the layout; without names all foreign files are handed over at once.
 
-Часть команд слоя исполняет агент, а не программа: `/feedback` кладёт слово о правилах блоком в
-файл предложений, `/skill-curator` разбирает закрытую задачу, `/next-session` закрывает заход.
+Some commands of the layer are run by the agent, not by the program: `/feedback` puts a remark
+about the rules as a block into the proposals file, `/skill-curator` reviews a closed task,
+`/next-session` closes the session.
 
-Команд правки самого пакета здесь нет: они зовутся там, где лежат его ресурсы.
+There are no commands for editing the package itself here: they are called where its resources
+lie.
 
-## Подъём версии
+## Version bump
 
-Совпавший заголовок замещает раздел пакета целиком, и всё, что пакет дописал в такой раздел новой
-версией, пропадает молча: раскладка сходится, заголовки совпадают, а утверждений нет. Сверка
-заголовков ловит переименование раздела, а не пополнение, — других свидетелей у потери не бывает.
+A matching heading replaces the package section in full, and everything the package added to such
+a section in a new version vanishes silently: the layout matches, the headings match, and the
+statements are gone. The heading audit catches a renamed section, not an extended one — the loss
+has no other witnesses.
 
-Порядок подъёма поэтому из трёх шагов, и первый идёт до установки.
+So the bump takes three steps, and the first goes before the installation.
 
-1. **Снимок прежней редакции ресурсов.** Установка стирает её без следа, и сравнить потом не с
-   чем.
+1. **A snapshot of the former edition of the resources.** The installation wipes it without a
+   trace, and there is nothing to compare with afterwards.
 
     ```bash
-    cp -r node_modules/@rt-tools/agent-kit/assets /tmp/agent-kit-assets-<прежняя версия>
+    cp -r node_modules/@rt-tools/agent-kit/assets /tmp/agent-kit-assets-<former version>
     ```
 
-2. **Установка и раскладка.** Обычным порядком. Раскладка кладёт ту редакцию, которая
-   **установлена**, а не ту, что объявило дерево: установленная остаётся от соседней ветки и
-   ложится целиком, молча, с тем же успешным выходом. Расхождение точного номера раскладка
-   отбивает сама; починка — поставить зависимости и повторить вызов.
-3. **Сверка замещённых разделов по снимку.** Какие разделы замещены, называет `doctor` — строкой
-   «замещено надстройками разделов» и перечнем «ресурс · заголовок». Каждый из них читается в
-   снимке и в новой редакции: что пакет дописал, дописывается в надстройку руками.
+2. **Installation and layout.** The usual way. The layout puts the edition that is
+   **installed**, not the one the tree declared: the installed one is left over from a
+   neighbouring branch and lands in full, silently, with the same successful exit. A mismatch of
+   the exact number the layout refuses by itself; the fix is to install dependencies and repeat
+   the call.
+3. **An audit of the replaced sections against the snapshot.** Which sections are replaced is
+   named by `doctor` — with the line "замещено надстройками разделов" and a list of
+   "resource · heading". Each is read in the snapshot and in the new edition: what the package
+   added is added to the override by hand.
 
-Ни `doctor`, ни `sync --check` сами этого не сверяют: прежней редакции у них нет.
+Neither `doctor` nor `sync --check` audits this itself: they have no former edition.
 
-По каждому названному разделу сверяются статьи, а не заголовки: заголовок как раз и совпал,
-этим раздел замещён. Готовая пара команд — в холодной части рядом.
+For every named section the articles are compared, not the headings: the heading is exactly
+what matched, that is what replaced the section. A ready-made pair of commands is in the cold
+part next to it.
 
-Дальше решение обычное: раздел, ради которого надстройка заводилась, остаётся замещённым, а
-раздел, чья причина ушла с исправленной редакцией, снимается.
+Then the decision is the usual one: the section the override was started for stays replaced,
+and the section whose reason left with the fixed edition is lifted.
 
-## Что пакет везёт, а что остаётся дереву
+## What the package ships and what stays with the tree
 
-Пакет ставят чужие деревья, и везёт он им только то, что они исполняют. Ресурс, у которого в
-чужом дереве нет предмета или некому его позвать, ресурсом пакета не бывает — он живёт своим
-ресурсом того дерева, где предмет есть.
+The package is installed by foreign trees, and it ships them only what they carry out. A
+resource that has no subject in a foreign tree, or nobody there to call it, is never a package
+resource — it lives as the tree's own resource where the subject exists.
 
-Признак — не оценка, а два вопроса к ресурсу:
+The sign is not an appraisal but two questions to the resource:
 
-| Вопрос                                          | «Нет» означает                                 |
-| ----------------------------------------------- | ---------------------------------------------- |
-| Есть ли у потребителя то, о чём ресурс говорит? | предмета нет: заполнить компаньон нечем        |
-| Есть ли у потребителя кому его позвать?         | исполнителя нет: команда у него не запускается |
+| Question                                          | "No" means                                       |
+| ------------------------------------------------- | ------------------------------------------------ |
+| Does the consumer have what the resource speaks of? | no subject: nothing to fill the companion with |
+| Does the consumer have someone to call it?        | no executor: the command does not run there      |
 
-Ответ «нет» хотя бы на один — ресурс остаётся дереву, которое пакет пишет.
+"No" to even one — the resource stays with the tree that writes the package.
 
-**Перечень отменяемого границу не закрывает.** Строка в `skip` говорит «мне этого не надо» и
-снимает раскладку у себя; ресурс при этом остаётся в пакете и продолжает ехать всем остальным.
-Убирается он из самого пакета, а не из своей раскладки.
+**The list of dropped resources does not close the boundary.** A line in `skip` says "I do not
+need this" and lifts the layout at home; the resource stays in the package and keeps going to
+everyone else. It is removed from the package itself, not from your own layout.
 
-**Своё правило дерева объявляется наравне с пакетным:** та же форма, тот же закон сверху,
-компаньон рядом и своя ветка в карте гейта. Читателю не должно быть видно, чем оно младше.
+**The tree's own rule is declared on a par with the package one:** the same shape, the same law
+above, a companion next to it and its own branch in the gate map. The reader must not see that
+it is younger.
 
-Что при этом должно быть верно, записано договорённостью в том дереве, которое пакет пишет:
-там же живёт и проверка, которая границу держит. Чужому дереву судить ресурсы пакета нечего,
-поэтому проверка сюда не едет.
+What must be true at that is written as an agreement in the tree that writes the package: the
+check that holds the boundary lives there too. A foreign tree has no business judging the
+package resources, so the check does not go here.
 
-## Обратная связь наверх
+## Feedback upwards
 
-Слой правил правится не по памяти, а по тому, как им пользовались. Держится это тремя вещами.
+The rules layer is edited not from memory but by how it was used. This is held by three things.
 
-**Наблюдения** пишут сами гарды — в `.claude/rt-kit/observations/`, файлом на день. В строке имя
-ресурса пакета, род события, род правки, версия и признак сессии; путей дерева и его имени там
-нет. Выключаются ключом `"observe": false` в конфиге.
+**Observations** are written by the guards themselves — into `.claude/rt-kit/observations/`, a
+file per day. A line holds the package resource name, the kind of event, the kind of edit, the
+version and a session sign; no tree paths and no tree name are there. Switched off by the key
+`"observe": false` in the config.
 
-**Сводка** — `agent-kit stats`. Самая ценная её строка не «чем пользовались», а **что разложено
-и не загружено ни разу**: правило, которого никто не открыл, ничем себя не выдаёт.
+**The digest** is `agent-kit stats`. Its most valuable line is not "what was used" but **what is
+laid out and never loaded**: a rule nobody opened gives itself away by nothing.
 
-**Цена** — `agent-kit cost`. Сводка говорит, чем пользовались; цена — сколько это стоило: вес
-входа в работу, вес одного правила и вес всего слоя. Считается не файл, а то, что заход получает.
-Число сравнимо только со снятым той же командой.
+**The cost** is `agent-kit cost`. The digest says what was used; the cost — what it cost: the
+weight of entering work, the weight of one rule and the weight of the whole layer. Counted is
+not the file but what the session receives. The number is comparable only with one taken by the
+same command.
 
-**Предложения** приходят двумя путями: разбор закрытой задачи — командой `/skill-curator` —
-приносит их пачкой, а слово, сказанное посреди работы, кладёт командой `/feedback` сам агент. Оба
-пишут в один файл дня и в одной форме; в сеть не ходит ни один — увозит их отправка.
+**Proposals** come by two roads: the review of a closed task — by the `/skill-curator` command —
+brings them in a batch, and a remark made in the middle of work is put by the agent itself with
+the `/feedback` command. Both write into one file of the day and in one form; neither goes to
+the network — the send carries them away.
 
-Каждая запись несёт четыре строки: **место** — куда правка встаёт в ресурсе, **повод** — что
-пошло не так без неё, **ближайшее** — точная цитата строки ресурса, к которой это ближе всего, и
-**чем закрывается** — какие надстройки дерева снимаются, когда правка приедет редакцией пакета.
+Every record carries four lines: **place** — where the edit goes in the resource, **reason** —
+what went wrong without it, **closest** — the exact quote of the resource line this is closest
+to, and **what it closes** — which overrides of the tree are lifted when the edit arrives as a
+package edition.
 
-Третья строка — единственная, которую проверяет машина: цитата ищется в ресурсе, и ненайденная
-отбивает блок. Ближайшего нет вовсе — так и пишется: «нет». Отбитый блок остаётся лежать с
-отметкой «отбито» и причиной: видно, что разбор был и почему он не стал правкой.
+The third line is the only one the machine checks: the quote is searched for in the resource,
+and one not found refuses the block. There is nothing close at all — write exactly that: «нет».
+A refused block stays lying with the mark «отбито» and the reason: it is visible that the review
+took place and why it did not become an edit.
 
-Четвёртая пишется затем, что предложение уезжает наружу, а надстройка остаётся лежать здесь:
-без неё она замещает уже исправленный раздел навсегда. Снимать нечего — так и пишется; пустой
-четвёртая строка не бывает.
+The fourth is written because the proposal goes outside while the override stays lying here:
+without it, it replaces an already fixed section forever. There is nothing to lift — write
+exactly that; the fourth line is never empty.
 
-Та же связь ставится и на саму надстройку — комментарием разметки в её разделе:
+The same link is put on the override itself — as a markup comment in its section:
 
-    <!-- rt-proposed: rules/task-flow.md · «статья целиком, как в предложении» · 2026-09-03 -->
+    <!-- rt-proposed: rules/task-flow.md · «the article in full, as in the proposal» · 2026-09-03 -->
 
-Записи предложений в день обновления никто не открывает: на них ничто не указывает. Пометка не
-видна в собранном тексте, переживает слияние по заголовкам и читается машиной: раскладка
-перечисляет разделы, чья статья в новой редакции уже есть. Снимает их человек — в раздел могли
-дописать и другое. Раздел без пометки считается постоянным.
+Nobody opens the proposal records on the day of the update: nothing points to them. The mark is
+invisible in the assembled text, survives the merge by headings and is read by the machine: the
+layout lists the sections whose article already exists in the new edition. A person lifts them —
+something else may have been added to the section. A section without a mark counts as permanent.
 
-Каждому предложению ставится адрес: «пакет», «компаньон» или «дерево». Выгружаются они файлом в
-`.claude/rt-kit/proposals/` (форма — шаблон `proposal.md`), а `agent-kit propose` увозит в приём
-те, что адресованы пакету, вместе со сводкой и разборами происшествий. Адрес дерева в сводке или
-в тексте предложения отбивает отправку целиком.
+Every proposal gets an address: «пакет», «компаньон» or «дерево». They are dumped into a file in
+`.claude/rt-kit/proposals/` (the form is the template `proposal.md`), and `agent-kit propose`
+carries to the intake those addressed to the package, together with the digest and the incident
+analyses. A tree address in the digest or in the proposal text refuses the send in full.
 
-Приём — закрытая служба: сводка говорит о рабочих привычках команды, и в открытой очереди работ
-это выложено всему свету. Адрес приёма объявляется ключом `intake` в конфиге дерева, токен —
-ключом `token`, и лежит он вне дерева.
+The intake is a closed service: the digest speaks of the team's working habits, and in an open
+work queue that is laid out for all to see. The intake address is declared by the key `intake`
+in the tree config, the token by the key `token`, and it lies outside the tree.
 
-Оба значения приходят от владельца приёма, а не придумываются потребителем: адрес он называет, а
-токен выдаёт одноразовым кодом приглашения — код заводит дерево в приёме и кладёт токен в файл
-ключа `token`. До приглашения отправка отказывает по устройству, а не по недонастройке.
+Both values come from the intake owner and are not invented by the consumer: the address they
+name, the token they issue as a one-off invitation code — the code enrols the tree in the intake
+and puts the token into the file of the key `token`. Before the invitation the send refuses by
+design, not by misconfiguration.
 
-**Признак дерева считает отправитель, а не человек.** Он выводится из адреса репозитория, и
-запись в приёме заводится именно им: дерево, заведённое своим словом, приёмник не узнаёт. Что
-уедет и под каким признаком, печатает прогон вхолостую.
+**The tree sign is computed by the sender, not by a person.** It is derived from the repository
+address, and the intake record is created by exactly it: a tree enrolled under its own word the
+intake does not recognise. What would go and under which sign is printed by the dry run.
 
-**Отметка об отправке — след для человека, а не хранилище состояния.** Чистое дерево после
-отправки значит, что весь груз в приёме уже лежал, а не что отправка не сработала.
+**The mark of a send is a trace for a person, not a store of state.** A clean tree after a send
+means the whole cargo already lay in the intake, not that the send did not work.
 
-Разбирают их там, где лежат правимые ресурсы и видно всех потребителей сразу, — а сюда
-приезжает ответ приёма о том, сколько записей легло.
+They are reviewed where the editable resources lie and all consumers are visible at once — and
+what arrives here is the intake's reply about how many records landed.
 
-**Имя файла предложения в текстах дерева не называется.** Читателю чужого дерева оно не даёт
-ничего, а ссылка на каталог с машины автора ведёт в пустоту и красит проверку путей. Текст
-репозитория говорит, кому предложение отправлено и о чём оно; ресурс пакета называть можно.
+**The proposal file name is not named in tree texts.** It gives a reader of a foreign tree
+nothing, and a link to a directory on the author's machine leads nowhere and turns the path check
+red. Repository text says whom the proposal was sent to and what it is about; the package
+resource may be named.
 
-Предложение работу не выправляет. Оно лежит текстом, читается глазами и в контекст сам собой не
-приходит. Закрытым оно считается, только войдя в ресурс пакета: до этого на него не ссылаются как
-на действующее требование и не считают дырку закрытой.
+A proposal does not straighten the work. It lies as text, is read by eye and does not come into
+the context by itself. It counts as closed only once it has entered a package resource: until
+then it is not referred to as a current requirement and the hole is not counted closed.
 
-**Слово владельца о предложении — «отправь», «заведи», «напиши пропозал» и любая другая форма
-того же — исполняется отправкой в тот же ход.** Сухой прогон отправкой не считается: он
-показывает, что было бы отправлено, и следа наружу не оставляет. Отметки, которые отправка
-оставляет в дереве, ложатся вторым коммитом в ту же ветку. Это проверяет гард предложения на
-завершении хода.
+**The owner's word about a proposal — "send it", "file it", "write a proposal" and any other form
+of the same — is carried out by a send in the same turn.** A dry run does not count as a send: it
+shows what would be sent and leaves no trace outside. The marks the send leaves in the tree land
+as a second commit in the same branch. This is checked by the proposal guard at the end of the
+turn.
 
-## Установка туда, где уже всё своё
+## Installation where everything is already your own
 
-1. `init`, затем `skip` на всё, что дерево держит само; пустая раскладка — законное начало.
-2. Снимок того, что говорят проверки дерева, до единой правки: он и есть мерило.
-3. Ресурс за ресурсом: пакетную редакцию довести до здешней, предметность вынести в
-   надстройку, снять отказ, разложить, прогнать сценарии и сверить снимок.
-4. Разложенное поверх своего пакет не пишет: файл без шапки для него чужой. Отдаётся он
-   командой `adopt` — прежнее содержимое ложится рядом с пометкой `.before-rt-kit`.
-5. Ресурс, у которого здешняя редакция богаче пакетной по существу, в раскладку не берётся.
-   Признак — статья, которой в пакетной редакции нет и не может быть: она выводится из предмета
-   дерева. Он уходит в `skip`, а наверх едет предложение снять его из пакета.
-6. Свои сценарии отданного файла переписываются под пакетное поведение либо снимаются: чинить
-   пакетную редакцию на месте нельзя, её адрес — источник пакета или надстройка.
+1. `init`, then `skip` on everything the tree holds itself; an empty layout is a lawful start.
+2. A snapshot of what the tree's checks say, before a single edit: it is the measure.
+3. Resource by resource: bring the package edition up to the local one, move the subject matter
+   into an override, lift the drop, lay out, run the scenarios and compare with the snapshot.
+4. The package does not write a layout over your own: a file without a header is foreign to
+   it. It is handed over with the `adopt` command — the former content lands next to it, marked
+   `.before-rt-kit`.
+5. A resource whose local edition is richer than the package one in substance is not taken into
+   the layout. The sign is an article that the package edition lacks and cannot have: it follows
+   from the tree's subject. It goes into `skip`, and a proposal to remove it from the package
+   goes upwards.
+6. Your own scenarios of a handed-over file are rewritten for the package behaviour or removed:
+   fixing the package edition in place is not allowed, its address is the package source or the
+   override.
 
-## Свойства дерева
+## Tree traits
 
-Часть правил пакета верна только там, где есть хранилище, админка или приложение. Дерево
-перечисляет, что у него есть, ключом `has`; ресурс называет нужное ему свойство приставкой в
-имени — `observability.needs-app.md`, — и дереву, которое такого свойства не назвало, не
-кладётся вовсе: ни он сам, ни черновик его компаньона.
+Some package rules are true only where there is a storage, an admin or an application. The tree
+lists what it has by the key `has`; a resource names the trait it needs by a prefix in its name —
+`observability.needs-app.md` — and to a tree that did not name such a trait it is not put at
+all: neither itself nor the draft of its companion.
 
 ```json
 { "has": ["packages", "app"] }
 ```
 
-- **Молчание требованию не отвечает.** Дерево с пустым `has` не получает ни одного помеченного
-  ресурса: положенный наугад, он вернётся пустым компаньоном, заполнить который нечем.
-- **Требование — не вид.** Вид выбирается один; свойств у дерева сразу несколько.
+- **Silence does not answer a requirement.** A tree with an empty `has` gets not one marked
+  resource: put at a guess, it comes back as an empty companion with nothing to fill it.
+- **A requirement is not a kind.** A kind is chosen once; a tree has several traits at once.
 
-## Выключенная роль
+## Disabled role
 
-Роль, при которой стоит гард, зовётся не по усмотрению исполнителя: гард держит работу, пока роль
-не сказала своё. Дерево, которому она мешает, называет её ключом `rolesOff` — именем файла роли.
+A role with a guard next to it is not called at the executor's discretion: the guard holds the
+work until the role has had its say. A tree it gets in the way of names it by the key `rolesOff`
+— by the role file name.
 
 ```json
 { "rolesOff": ["strict-teacher"] }
 ```
 
-- **Выключается обязательность вызова, а не роль.** Файл роли остаётся разложенным, и позвать её
-  руками можно в любую минуту. Список читают сами гарды — помощником, лежащим рядом с ними.
-- **От отказа ключом `skip` это отличается тем, что ничего не убирает.** Отказ не кладёт файл
-  роли вовсе: звать становится некого, а гард при ней остаётся лежать и продолжает отбивать.
-  Здесь наоборот — роль на месте, молчит гард.
+- **What is switched off is the mandatory call, not the role.** The role file stays laid out, and
+  it can be called by hand at any minute. The list is read by the guards themselves — through a
+  helper lying next to them.
+- **It differs from dropping by the `skip` key in that it removes nothing.** A drop does not put
+  the role file at all: there is nobody left to call, and the guard next to it stays and keeps
+  refusing. Here it is the other way round — the role is in place, the guard is silent.
 
-## Ловушки раскладки
+## Layout pitfalls
 
-- **Словарь — такой же разложенный ресурс, как правило.** Хук запуска кладёт его в контекст
-  целиком, до первой реплики, и оттого он выглядит обычным документом дерева; шапка у него есть,
-  но читается служебной строкой. Новое слово идёт в надстройку словаря, своим разделом.
+- **The glossary is as much a laid-out resource as a rule.** The startup hook puts it into the
+  context in full, before the first reply, and so it looks like an ordinary tree document; it has
+  a header, but it reads as a service line. A new word goes into the glossary override, as a
+  section of its own.
 
-- **Запись файла командой оболочки проверяется по всем путям, названным в её теле.** Гейт
-  вынимает пути из текста команды и читает тело документа целиком, если в команде есть имя
-  интерпретатора; строка импорта разложенного модуля тогда требует второе правило, а требуется
-  за раз одно — два отказа подряд, и каждый теряет написанное тело. Инструмент правки
-  проверяется одним своим путём; перенаправление оболочки — для того, что файлом дерева не станет.
-- **Своё, стоящее рядом с разложенным, повторяет его механику молча.** Разбор списка известного,
-  корни исходников и снимок долга даёт модуль настройки проверок; второй такой же разбор в своей
-  проверке не видит ни сверка раскладки, ни проверка повторов. Перед тем как завести своё, смотрят,
-  что экспортирует модуль настройки проверок.
-- **Правило, загруженное инструментом, бывает показано не целиком, и обрыв ничем не помечен.**
-  Длинный файл приходит в контекст обрезанным по строке, а обрыв приходится на хвост — туда, где
-  разделы надстройки дописаны в конец. Показанные строки сверяются с длиной файла одной командой;
-  расходятся — файл дочитывается чтением.
+- **A file write by a shell command is checked on all paths named in its body.** The gate takes
+  the paths out of the command text and reads the document body in full if the command holds an
+  interpreter name; an import line of a laid-out module then demands a second rule, and one is
+  demanded at a time — two refusals in a row, and each loses the written body. The edit tool is
+  checked by its one path; a shell redirect is for what does not become a tree file.
+- **Your own thing standing next to the laid-out repeats its mechanics silently.** Parsing the
+  list of the known, the source roots and the debt snapshot is given by the checks config
+  module; a second such parser in your own check is seen by neither the layout audit nor the
+  duplicate check. Before starting your own, look at what the checks config module exports.
+- **A rule loaded by a tool may be shown not in full, and the cut is marked by nothing.** A long
+  file comes into the context cut at a line, and the cut falls on the tail — where the override
+  sections are appended at the end. The shown lines are compared with the file length by one
+  command; if they differ, the file is read to the end.

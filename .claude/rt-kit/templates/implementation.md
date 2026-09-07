@@ -1,45 +1,46 @@
-<!-- rt-kit v0.25.0 · templates/implementation.md · dd150d162001 · правится надстройкой, не здесь -->
-# <имя-правила> — что здесь своё
+<!-- rt-kit v0.25.0 · templates/implementation.md · b78312a57cce · правится надстройкой, не здесь -->
+# <rule-name> — what is this tree's own
 
-Имена и привязки этого дерева при правиле `SKILL.md` рядом.
+Names and bindings of this tree under the rule `SKILL.md` next to it.
 
-Правило говорит приёмом и называет пути, общие для деревьев мастерской, — их переписывать
-здесь не надо. Сюда идёт только то, чего пакет знать не может: как названы вещи именно в этом
-репозитории, и в каком его файле каждая статья правила исполняется.
+The rule speaks by technique and names the paths shared by the workshop's trees — there is no
+need to rewrite them here. Only what the package cannot know goes here: what things are called in
+this very repository, and in which of its files each article of the rule is carried out.
 
-Пока в файле стоит `<!-- заполняет проект -->`, правило считается неразвёрнутым: `agent-kit
-sync --check` отказывает, а агент читает указание, у которого здесь нет адресата.
+While `<!-- filled in by the project -->` stands in the file, the rule counts as not deployed:
+`agent-kit sync --check` refuses, and the agent reads an instruction that has no addressee here.
 
-## Как это называется здесь
+## What it is called here
 
-Только то, что расходится с правилом: ключ задач, адрес борды, префикс компонентов, имя
-владеющей сущности, валюта хранения, набор областей коммита. Строку, которая просто повторяет
-правило, сюда не переносят — она устареет отдельно от него.
+Only what differs from the rule: the task key, the board address, the component prefix, the name
+of the owning entity, the storage currency, the set of commit scopes. A line that merely repeats
+the rule is not carried here — it would go stale separately from it.
 
-| В правиле         | Здесь                                       |
-| ----------------- | ------------------------------------------- |
-| <понятие правила> | <имя в этом коде> <!-- заполняет проект --> |
+| In the rule      | Here                                              |
+| ---------------- | ------------------------------------------------- |
+| <rule notion>    | <name in this code> <!-- filled in by the project --> |
 
-## Где это лежит
+## Where it lies
 
-| Что        | Где                                |
-| ---------- | ---------------------------------- |
-| <механизм> | `<путь>` <!-- заполняет проект --> |
+| What        | Where                                      |
+| ----------- | ------------------------------------------ |
+| <mechanism> | `<path>` <!-- filled in by the project --> |
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-Первая колонка — статья дословно, как она написана в разделе «Как закон применяется здесь»
-(жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает то,
-чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
+The first column is the article verbatim, as written in the section "How the law applies here"
+(the bold part of the item). An article without a line and a line without an article is a
+discrepancy: the rule promises what the tree does not have, or the tree holds what the rule is
+silent about.
 
-| Статья            | Где исполняется                             |
-| ----------------- | ------------------------------------------- |
-| <статья дословно> | `<путь>:<символ>` <!-- заполняет проект --> |
+| Article            | Where it is carried out                             |
+| ------------------ | --------------------------------------------------- |
+| <article verbatim> | `<path>:<symbol>` <!-- filled in by the project --> |
 
-## Что ещё стоит знать при чтении кода
+## What else is worth knowing when reading the code
 
-- <Что видно только изнутри этого дерева: почему приём выглядит здесь именно так.>
+- <What is visible only from inside this tree: why the technique looks exactly so here.>
 
-## Чем это проверяется
+## What checks it
 
-- <Команда, которая ловит нарушение, — и что именно она ловит.>
+- <The command that catches a violation — and what exactly it catches.>
