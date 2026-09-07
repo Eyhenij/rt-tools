@@ -47,7 +47,7 @@ The gate has no interface: only the executor sees it — as the text of a refusa
 - **A sign invisible in the path is judged by the text of the edit.** Access to the runtime
   environment is visible only in the content, and a gate that knows one path skips it silently.
 - **A layer that has nothing to read the text of the edit with lets the action go.** The parse of the
-  input is a side job of the gate, and its breakage has no right to stop an edit.
+  input is a side duty of the gate, and its breakage has no right to stop an edit.
 - **The gate calls the file of the layers in its own shell, not as a separate process.** A layer
   answers by the same variables as the domain choice; a separate process would give them back through
   the disk.
@@ -110,7 +110,7 @@ exit code.
 | What happened                                    | How it ends      | What it says                                               |
 | ------------------------------------------------ | ---------------- | ---------------------------------------------------------- |
 | an edit without the rule loaded                  | the call refused | the name of the rule, the law under it and how to load it  |
-| a layer has nothing to read the text of the edit | a pass           | nothing: the side job of the gate stays silent             |
+| a layer has nothing to read the text of the edit | a pass           | nothing: the side duty of the gate stays silent            |
 | a path outside the tree                          | a pass           | nothing: the rules of the tree judge the files of the tree |
 
 ## Data

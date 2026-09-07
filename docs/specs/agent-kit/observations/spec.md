@@ -53,7 +53,7 @@ network.
   it off whole, not in parts: the package stands with those we know nothing about too, and writing
   without the tree's knowledge is not allowed.
 - **A guard that could not write an observation lets the action through.** An observation is a side
-  job of the guard, and its breakage has no right to stop the work: the rule of refusing in favour
+  duty of the guard, and its breakage has no right to stop the work: the rule of refusing in favour
   of the work acts here the same as in the guard itself.
 - **The digest names what was not used once, too.** A rule laid out into the tree and not loaded
   once over the stretch stands in the digest as a line of its own. Otherwise a dead resource is

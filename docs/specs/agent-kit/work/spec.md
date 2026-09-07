@@ -186,7 +186,7 @@ the merge, not after.
   its own, and asked of every run it would cost a call per run at every check.
 - **The line of the pushing out names both commands and in the order they are called** — first the
   reading of the run, then its restart. The restart is refused by the guard while the journal of that
-  job was not read during the same turn, and the order in the line meets the requirement by itself: the
+  step was not read during the same turn, and the order in the line meets the requirement by itself: the
   executor calls what is written and does not run into a refusal at the second step.
 - **The pushing out is judged before the colour and before the absence of a run.** Otherwise one tip
   gets two lines about one thing. A green run at the same tip removes the line: the pushed-out one

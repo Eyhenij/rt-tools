@@ -25,7 +25,7 @@ an empty binding; named second is the same config by the line it gets into the i
 - **The dump is taken and loaded by one command each.** — `deploy/dump.sh:DUMPS`
 - **A loaded dump brings back both the digest and the validity of the issued tokens.** — `deploy/dump.sh:compose`
 - **The loading of a dump is checked on a one-off database next to it, not on the live one.** — `deploy/dump.sh:probe` — the fingerprint is counted by `fingerprint`, the name of the one-off database is `PROBE_NAME`; scenario SC-MB-95
-- **The dump is taken by a schedule once a day, and the schedule is set by the rollout.** — `.github/workflows/deploy.yml:crontab` — the line of the job lies in `deploy/dump.crontab`; scenario SC-MB-286
+- **The dump is taken by a schedule once a day, and the schedule is set by the rollout.** — `.github/workflows/deploy.yml:crontab` — the line of the schedule lies in `deploy/dump.crontab`; scenario SC-MB-286
 - **The seven last dumps live on the node, and they outlive a rollout.** — `deploy/dump.sh:KEEP_DUMPS` — the protection of the directory of the dumps is held by `.github/workflows/deploy.yml:dumps`; scenario SC-MB-286
 - **The address of the intake in the settings of a tree is the name, not the local machine.** — `.claude/rt-kit.json:intake`
 - **The build of the intake refuses when there is no client of the storage.** — `apps/message-bus/src/build/storage-client.check.mjs:storageClientFailure`

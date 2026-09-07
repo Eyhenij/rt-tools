@@ -35,7 +35,7 @@ of the machine — landed as an override of the tree.
 | 6 · the commands of the tree are called from the root                  | brought in: a pitfall of the cold part of the rule of the delivery                                                    |
 | 7 · what one comes back to a run by                                    | fell away: the order changed — between two messages to the owner the executor does not wait at all                    |
 | 8 · an absence of a run is never green                                 | closed: the pitfall about a tip without a run and about what it is called                                             |
-| 9 · a refusal of the runner at the preparation is not about the edit   | closed: the pitfall about a refusal of a job before its first own step                                                |
+| 9 · a refusal of the runner at the preparation is not about the edit   | closed: the pitfall about a refusal of a step before its first own step                                               |
 | 10 · the gate judges all the paths of a command                        | closed: the paths are taken at the writing pieces, and a redirection gives one goal of the write                      |
 | 11 · the line about the account of the machine work                    | closed: the line of the companion is right, the order is described by the section about the machine account           |
 | 12 · the pulling goes by the same token                                | closed: the substitution of the token is named by the companion of the tree                                           |
@@ -163,7 +163,7 @@ law was not edited.
     technique the law about the checkability names the reason of a red pipeline.
 16. **A gap: a successful answer of a command.** The article of the law about the rereading of the
     result by a query of its own is not laid out into a single rule of the family.
-17. **A gap: a service is counted up by a fulfilled job.** The rule goes only as far as "who answers on
+17. **A gap: a service is counted up by a fulfilled step of the pipeline.** The rule goes only as far as "who answers on
     the port".
 18. **A gap: the observation of the work.** Neither the kind of an event, nor the place of a write, nor
     the check on the carrying-out side is named by the family.

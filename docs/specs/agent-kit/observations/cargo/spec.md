@@ -321,7 +321,7 @@ month" is its own for each, and a tree can neither read nor mark someone else's 
 
 - **The role of the closed-work review stays non-writing.** Rejected: giving it a writing tool — that
   would lift the ban the role was created for.
-- **The cargo goes into a closed intake, not into a work queue and not by a merge request.** The
+- **The cargo goes into a closed intake, not into a work queue and not by a PR.** The
   digest speaks of the working habits of the team, and in an open queue that is laid out for all the
   world; and the edit of a rule's text is made by whoever sees the other consumers — an agent from a
   foreign tree would write it blind. Rejected: a record in the package work queue; an automatic merge

@@ -300,35 +300,35 @@ real push standing in the same command next to the stash is recognised as before
 
 Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
-### SC-AK-411 — a restart of a job without a read journal is refused
+### SC-AK-411 — a restart of a step without a read journal is refused
 
-Given the journal of the fallen job was not read during the turn
-When a call to restart that job goes
-Then the call is refused, and the refusal names the job and the command the journal is read by
+Given the journal of the fallen step was not read during the turn
+When a call to restart that step goes
+Then the call is refused, and the refusal names the step and the command the journal is read by
 
 Covered: `projects/agent-kit/tests/rerun-guard.test.sh`.
 
 ### SC-AK-412 — a restart after a read journal passes
 
-Given during the same turn the journal of this job was read
+Given during the same turn the journal of this step was read
 When a restart call goes
 Then it passes: the guard judges the order, not the cause of the fall
 
 Covered: `projects/agent-kit/tests/rerun-guard.test.sh`.
 
-### SC-AK-413 — the journal of a neighbouring job opens no restart
+### SC-AK-413 — the journal of a neighbouring step opens no restart
 
-Given during the turn the journal of another job was read
+Given during the turn the journal of another step was read
 When a call to restart ours goes
 Then it is refused: the jobs stand side by side in the run list, and a foreign journal says nothing
 
 Covered: `projects/agent-kit/tests/rerun-guard.test.sh`.
 
-### SC-AK-414 — a restart without a job number is not judged
+### SC-AK-414 — a restart without a number of a step is not judged
 
-Given there is no job number in the restart command
+Given there is no number of a step in the restart command
 When the command comes to the guard
-Then it passes: a restart of the last fallen one is called without a number too, and a guessed job
+Then it passes: a restart of the last fallen one is called without a number too, and a guessed step
 refuses at random
 
 Covered: `projects/agent-kit/tests/rerun-guard.test.sh`.

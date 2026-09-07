@@ -180,16 +180,16 @@ refuses the push.
   surplus run, not towards a missed one, and at an empty base it stays silent — then the whole set is
   run.
 
-- **A fallen job is not restarted while its journal is not read.** Red comes in two kinds, and in the
+- **A fallen step of the pipeline is not restarted while its journal is not read.** Red comes in two kinds, and in the
   list of runs they look the same: a refusal of the hosting on the preparation step is cured by a
   restart, a defect of the branch is not cured by it at all, and the round repeats until the journal
   is opened. The guard judges the order — the journal before the restart — not the cause of the fall:
   what is written in the journal a person judges.
-- **The journal of that very job counts as read.** In the list of runs the jobs stand side by side,
+- **The journal of that very step counts as read.** In the list of the runs the steps stand side by side,
   and the journal of a neighbouring one says nothing about ours. The number in the reading is checked
   against the number in the restart.
-- **A restart without a named job number is not judged.** A restart of the last fallen one is called
-  without a number too; guessing which job is meant means refusing at random.
+- **A restart without a named number of a step is not judged.** A restart of the last fallen one is called
+  without a number too; guessing which step is meant means refusing at random.
 - **The verb of a command is looked for in its position, not as a substring across the whole line.**
   A bare search for "git commit" misses in both directions: a call with a key between the command and
   the verb goes past — `git -c user.name=… commit` — and reading the history with the word `commit`
