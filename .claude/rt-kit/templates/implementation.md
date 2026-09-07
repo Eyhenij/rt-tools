@@ -1,5 +1,5 @@
-<!-- rt-kit v0.25.0 · templates/implementation.md · b78312a57cce · правится надстройкой, не здесь -->
-# <rule-name> — what is this tree's own
+<!-- rt-kit v0.25.0 · templates/implementation.md · 5539a41f6a7f · правится надстройкой, не здесь -->
+# <имя-правила> — what is this tree's own
 
 Names and bindings of this tree under the rule `SKILL.md` next to it.
 
@@ -7,7 +7,7 @@ The rule speaks by technique and names the paths shared by the workshop's trees 
 need to rewrite them here. Only what the package cannot know goes here: what things are called in
 this very repository, and in which of its files each article of the rule is carried out.
 
-While `<!-- filled in by the project -->` stands in the file, the rule counts as not deployed:
+While `<!-- заполняет проект -->` stands in the file, the rule counts as not deployed:
 `agent-kit sync --check` refuses, and the agent reads an instruction that has no addressee here.
 
 ## What it is called here
@@ -18,15 +18,15 @@ the rule is not carried here — it would go stale separately from it.
 
 | In the rule      | Here                                              |
 | ---------------- | ------------------------------------------------- |
-| <rule notion>    | <name in this code> <!-- filled in by the project --> |
+| <rule notion>    | <name in this code> <!-- заполняет проект --> |
 
-## Where it lies
+## Where it lives
 
 | What        | Where                                      |
 | ----------- | ------------------------------------------ |
-| <mechanism> | `<path>` <!-- filled in by the project --> |
+| <mechanism> | `<path>` <!-- заполняет проект --> |
 
-## Where the articles are carried out
+## Где исполняются статьи
 
 The first column is the article verbatim, as written in the section "How the law applies here"
 (the bold part of the item). An article without a line and a line without an article is a
@@ -35,7 +35,7 @@ silent about.
 
 | Article            | Where it is carried out                             |
 | ------------------ | --------------------------------------------------- |
-| <article verbatim> | `<path>:<symbol>` <!-- filled in by the project --> |
+| <статья дословно> | `<путь>:<символ>` <!-- заполняет проект --> |
 
 ## What else is worth knowing when reading the code
 

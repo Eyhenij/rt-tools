@@ -4,7 +4,7 @@ kind: rule
 law: <law>
 description: Rule under the law "<Law title>". Load when <when> — <by which technique it is done>. Ready-made code — in patterns <names>.
 ---
-<!-- rt-kit v0.25.0 · templates/rule.md · 6a468ab00837 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · templates/rule.md · 8a59601860bf · правится надстройкой, не здесь -->
 
 # <What the law is about> — by which technique
 
@@ -20,13 +20,13 @@ them>. The line stands only at a rule that started such a file: the rest have no
 <A table "in the law — here": the law speaks without names, the tree names its own. The edit by
 which the rule is recognised stands in its `description`: the gate calls the rule by this sign.>
 
-## Where it lies
+## Where it lives
 
 In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
 moves between repositories, the layout does not, and a path named in the rule lies in the first
 tree that holds its code differently.
 
-## Course
+## Flow
 
 The graph shows the same course as the prose below describes: where the executor starts, where
 the fork is and how each branch ends. Nodes name steps and conditions, not files: addresses live
