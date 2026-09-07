@@ -5,94 +5,97 @@ rule: git-workflow
 description: Pattern of rule git-workflow. Load for creating a task and a branch, commit and push — creating a task with a list label, moving across board lists, merging two tasks into one, working as the machine account, skipping the document requirement. Opening an MR — pattern git-workflow-pr.
 ---
 
-# Ветка, коммит и MR
+# Branch, commit and MR
 
-Паттерн правила `git-workflow`. Что при этом должно быть верно — закон
+Pattern of the rule `git-workflow`. What must be true meanwhile — the law
 `docs/constitution/delivery.md`.
 
-## Когда брать
+## When to use
 
-- Заводится задача, с которой начинается правка.
-- Заводится ветка под задачу.
-- Готовится коммит или пуш.
-- Работа перешла на следующий шаг, и задача переставляется в другой список доски.
+- A task is being created, and the edit starts from it.
+- A branch is being created for a task.
+- A commit or a push is being prepared.
+- The work moved to the next step, and the task moves to another list of the board.
 
-## Сначала задача на доске, потом ветка
+## First the task on the board, then the branch
 
-Заведение состоит из четырёх шагов: issue, номер в его заголовке, исполнитель, метка первого
-списка доски. Доска показывает те issue, чью метку знает, — поэтому четвёртый шаг сам не
-случается, и задача без него заведена, но в очереди работ её нет.
+Creation is four steps: the issue, the number in its title, the assignee, the label of the
+board's first list. The board shows the issues whose label it knows — so the fourth step does not
+happen by itself, and without it the task is created, but it is not in the work queue.
 
-Все четыре делает одна команда дерева, а не рука: делить их значит забывать последний.
+All four are done by one tree command, not by hand: splitting them means forgetting the last.
 
-**Команду, которой нет, паттерн не заменяет вызовами клиента.** Дерево, взявшее пакет впервые,
-получает файлы проверок, но не записи о них в своём манифесте: раскладка правит ресурсы, а
-манифест потребителя ей не принадлежит. Ходов отсюда два: завести команду тем же ходом либо
-повторить все её шаги поимённо по перечню выше. Обход вызовами клиента выглядит исполнением до
-последнего шага перечня: он забывается первым, потому что предыдущие уже дали видимый
-результат.
+**A command that does not exist is not replaced by client calls in the pattern.** A tree that
+takes the package for the first time gets the check files, but not the entries about them in its
+manifest: the layout edits resources, and the consumer's manifest does not belong to it. Two ways
+from here: create the command in the same turn, or repeat all its steps by name from the list
+above. A bypass by client calls looks like execution up to the last step of the list: it is
+forgotten first, because the previous ones have already given a visible result.
 
 ```bash
 npm run task:new -- --title 'Письма владельцу не уходят молча' \
     --label bug --label area:api --slug mail-owner-silence < описание.md
 ```
 
-Тело читается со стандартного ввода, `--slug` необязателен и идёт только в подсказку с именем
-ветки. Автор и исполнитель — учётная запись машинной работы; токен команда читает сама, из
-файла вне репозитория.
+The body is read from standard input, `--slug` is optional and goes only into the hint with the
+branch name. Author and assignee — the machine account; the command reads the token itself, from
+a file outside the repository.
 
-Скрипт под этой командой заводит проект — пакет её не везёт. Что он делает вызовами `glab`:
+The script under this command is created by the project — the package does not ship it. What it
+does by `glab` calls:
 
 ```bash
 glab issue create --title '[<КЛЮЧ>-<номер>] …' --label bug --label 'status::backlog' \
     --assignee <бот> --description-file -
-glab issue update <номер> --title '[<КЛЮЧ>-<номер>] …'   # номер известен только после создания
+glab issue update <номер> --title '[<КЛЮЧ>-<номер>] …'   # the number is known only after creation
 ```
 
-Метка списка ставится при заведении, а не после: issue без неё лежит вне доски, и увидеть её
-можно только поиском по проекту.
+The list label is set at creation, not after: an issue without it lies outside the board, and it
+can be seen only by a search over the project.
 
-Заведение кончается не выводом команды, а ответом очереди работ. Команда спрашивает её сама и
-печатает прочитанное — присутствие на доске, список, исполнителя; отсутствие кончает её ненулевым
-кодом. В комментарий, в тело PR и в замысел идёт этот ответ, а не напечатанный номер: номер
-говорит «вызов прошёл», а не «задача видна тому, кто по ней работает».
+Creation ends not with the command's output but with the work queue's answer. The command asks
+it itself and prints what it read — presence on the board, the list, the assignee; absence ends
+it with a non-zero code. That answer goes into the comment, the MR description and the plan, not
+the printed number: the number says "the call went through", not "the task is visible to whoever
+works on it".
 
-Заведения, идущие подряд, проверяются не по последнему, а сверкой очереди целиком: промах у них
-общий, и по одной задаче он не виден.
+Creations that go one after another are checked not by the last one but by an audit of the whole
+queue: their miss is shared, and by one task it is invisible.
 
-Чем сверить, что очередь работ в порядке:
+What to check the work queue with:
 
 ```bash
 npm run check:board
 ```
 
-Она смотрит только открытое: метку списка, номер и исполнителя у каждой открытой задачи, а у
-каждого открытого MR — номер в заголовке, строку `Closes`, открытую задачу за ним и то, что
-второго MR с тем же номером нет. Имя ветки не судит: у открытого MR его не переименовать.
+It looks only at what is open: the list label, the number and the assignee of every open task,
+and for every open MR — the number in the title, the `Closes` line, the open task behind it and
+that there is no second MR with the same number. It does not judge the branch name: an open MR
+cannot have it renamed.
 
-## Две задачи, которые чинятся одной правкой
+## Two tasks fixed by one edit
 
-Если по ходу выяснилось, что правка закрывает и соседнюю задачу, — это одна задача, а не две.
-Слить их можно, пока правка не въехала в главную ветку:
+If it turned out along the way that the edit closes the neighbouring task too — that is one task,
+not two. They can be merged while the edit has not reached the main branch:
 
 ```bash
-# то, чего в поглотившей задаче не было, дописывается в её описание
+# what the absorbing task lacked is appended to its description
 glab issue update <поглотившая> --description "$(cat тело.md)"
-# поглощённая закрывается как дубликат, со ссылкой на поглотившую
+# the absorbed one is closed as a duplicate, with a link to the absorbing one
 glab issue note <поглощённая> --message 'Дубликат #<поглотившая>: чинится той же правкой.'
 glab issue close <поглощённая>
 ```
 
-Закрытая как дубликат уходит из очереди работ, а её номер остаётся в истории — этим GitLab
-отличается от хостингов, где задачу можно стереть. Ссылка на поглотившую обязательна: без неё
-закрытая задача читается как сделанная, а сделана она не была.
+One closed as a duplicate leaves the work queue, and its number stays in the history — by this
+GitLab differs from hosts where a task can be erased. The link to the absorbing one is mandatory:
+without it the closed task reads as done, and it was not done.
 
-После слияния ветки поглощения нет: она въехала, и откатывается целиком.
+After the branch is merged there is no absorbing: it went in, and it is reverted whole.
 
-## Ветка заводится отдельным вызовом
+## The branch is created by a separate call
 
-Гард главной ветки разбирает текст команды и смотрит ветку на момент запуска, поэтому
-составная команда отклоняется целиком — ветки в ней ещё нет:
+The main branch guard parses the command text and looks at the branch at launch, so a compound
+command is rejected whole — the branch does not exist in it yet:
 
 ```bash
 ✗ git checkout -b <КЛЮЧ>-85-guest-token && git commit -m 'feat(admin): …'
@@ -100,40 +103,41 @@ glab issue close <поглощённая>
 ✓ git commit -F -
 ```
 
-Имя — `<КЛЮЧ>-<номер задачи>-<короткий-slug>`, slug строчными латинскими через дефис. Гард
-поставки разбирает его на месте и отбивает промах в форме до первого коммита, а по номеру
-спрашивает доску: задача должна существовать, быть открытой, стоять в очереди и иметь
-исполнителя.
+The name — `<КЛЮЧ>-<номер задачи>-<короткий-slug>`, the slug in lowercase Latin letters joined by
+hyphens. The delivery guard parses it on the spot and refuses a miss in the form before the first
+commit, and by the number it asks the board: the task must exist, be open, stand in the queue and
+have an assignee.
 
-Имя без номера (`feat/…`, `fix/…`) законно, пока ветка живёт локально — под пробу и разбор.
-MR с неё не откроется: правка, доезжающая до главной ветки, начинается с задачи.
+A name without a number (`feat/…`, `fix/…`) is legitimate while the branch lives locally — for a
+trial and an analysis. No MR opens from it: an edit that reaches the main branch starts with a
+task.
 
-## Список задачи двигается вместе с работой
+## The task list moves together with the work
 
-Ветка заведена — задача уже не в первом списке, а в работе. MR открыт — она ждёт разбора.
-Оба перевода делает одна команда, вторым вызовом сразу за тем, который его вызвал:
+Branch created — the task is no longer in the first list but in progress. MR opened — it awaits
+review. Both moves are done by one command, as a second call right after the one that caused it:
 
 ```bash
-npm run task:move -- 86 in-progress   # сразу после git checkout -b <КЛЮЧ>-86-…
-npm run task:move -- 86 in-review     # сразу после glab mr create
+npm run task:move -- 86 in-progress   # right after git checkout -b <КЛЮЧ>-86-…
+npm run task:move -- 86 in-review     # right after glab mr create
 ```
 
-Списки доски — это метки, поэтому перевод обязан снять прежнюю:
+Board lists are labels, so the move must remove the previous one:
 
 ```bash
 glab issue update 86 --label 'status::in-progress' --unlabel 'status::backlog'
 ```
 
-Перевод, не снявший прежнюю метку, оставляет задачу в двух списках сразу, и очередь читается
-неверно — в обоих местах она выглядит настоящей.
+A move that did not remove the previous label leaves the task in two lists at once, and the queue
+reads wrong — in both places it looks real.
 
-Перевод не откладывается на потом: очередь работ читают между шагами, а не после них.
+The move is not put off for later: the work queue is read between steps, not after them.
 
-## Коммит подписывается учётной записью машинной работы
+## The commit is signed by the machine account
 
-Токен читается в переменную и не печатается; автор и коммиттер задаются переменными той же
-команды. `git config` не годится — конфиг общий с основным деревом и переписал бы подпись
-владельцу:
+The token is read into a variable and not printed; author and committer are set by variables of
+the same command. `git config` will not do — the config is shared with the main tree and would
+rewrite the signature to the owner:
 
 ```bash
 TOKEN=$(tr -d '\n' < ~/.config/<дерево>-bot-token)
@@ -143,9 +147,9 @@ GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<почта бота>" \
     git commit -F -
 ```
 
-Заголовок — `type(scope): description`. Типы: `feat`, `fix`, `refactor`, `docs`, `style`,
-`test`, `chore`, `perf`. Области — свои у дерева, они перечислены в `implementation.md`. Точка
-в конце заголовка не принимается.
+The subject — `type(scope): description`. Types: `feat`, `fix`, `refactor`, `docs`, `style`,
+`test`, `chore`, `perf`. Scopes are the tree's own, listed in `implementation.md`. A full stop
+at the end of the subject is not accepted.
 
 ```
 feat(site): availability calendar with season prices
@@ -153,28 +157,30 @@ fix(api): reject overlapping booking dates
 chore(deploy): docker-compose for vps
 ```
 
-## Документ едет тем же коммитом
+## The document goes in the same commit
 
-`docs-guard` требует пару и называет её сам. Обход — строка в теле, причина обязательна:
+`docs-guard` demands the pair and names it itself. The bypass — a line in the body, the reason
+is mandatory:
 
 ```
 Docs-skip: правка только в тестах хука, зеркала у него нет
 ```
 
-## Частые промахи
+## Common misses
 
-- **Сверка сразу после добавления отвечает «нет», когда карточка уже стоит.** Очередь работ отдаёт
-  новый элемент не в ту же секунду, в какую его завели, а последний шаг читает её следующим
-  вызовом. Ответ на это — перечитать очередь целиком, а не завести карточку второй раз: две записи
-  об одной задаче снимает только администратор. Сама команда заведения при этом требует правки:
-  состояние читается сразу за мутацией, без повтора, и ложный отказ здесь дороже задержки.
-- Метка списка не поставлена при заведении: задача есть, а на доске её нет. Доска показывает
-  только то, чью метку знает.
-- Перевод по списку не снял прежнюю метку: задача стоит в двух списках сразу.
-- `glab` не видит проект: у токена область `read_api` вместо `api`. Команды правки при этом
-  отвечают успехом и не делают ничего.
-- `git add` с несколькими путями не добавляет ничего, если хоть один путь не существует:
-  команда обрывается на первом промахе целиком. Следующий `git commit --amend` при этом уносит
-  в коммит всё, что осталось в индексе. Состав коммита читается `git show --stat` сразу после
-  него, а не на разборе MR.
-- Правка владельца ни токена, ни переменных не берёт — они только для машинной работы.
+- **An audit right after adding answers "no" when the card already stands.** The work queue gives
+  out a new item not in the same second it was created, and the last step reads it by the next
+  call. The answer to this is to reread the whole queue, not to create the card a second time: two
+  records about one task are removed only by an administrator. The creation command itself needs
+  an edit here: the state is read right after the mutation, without a retry, and a false refusal
+  here costs more than a delay.
+- The list label was not set at creation: the task exists, and it is not on the board. The board
+  shows only what carries a label it knows.
+- A move across lists did not remove the previous label: the task stands in two lists at once.
+- `glab` does not see the project: the token's scope is `read_api` instead of `api`. Editing
+  commands then answer with success and do nothing.
+- `git add` with several paths adds nothing if even one path does not exist: the command breaks
+  off whole at the first miss. The next `git commit --amend` then carries into the commit
+  everything left in the index. The commit contents are read by `git show --stat` right after it,
+  not at MR review.
+- The owner's edit takes neither the token nor the variables — they are only for machine work.

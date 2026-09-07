@@ -5,63 +5,67 @@ rule: deploy-flow
 description: Pattern of rule deploy-flow. Load for a manual production restart — after editing .env.prod, when investigating a rollout, when starting a container on the server. Ready-made commands with the image tag by sha and what to check the result against. Migrations — pattern git-workflow-migration.
 ---
 
-# Ручной перезапуск прода
+# A manual production restart
 
-Паттерн правила `deploy-flow`. Что при этом должно быть верно — закон
+Pattern of the rule `deploy-flow`. What must be true meanwhile — the law
 `docs/constitution/delivery.md`.
 
-## Когда брать
+## When to use
 
-- Правился `.env.prod` и контейнер надо поднять заново.
-- Разбирается, что именно сейчас выкачено.
-- Контейнер поднимается на сервере руками, мимо выкатки по мержу.
+- `.env.prod` was edited, and the container must be brought up again.
+- It is being analysed what exactly is rolled out now.
+- A container is brought up on the server by hand, past the rollout by merge.
 
-## Команда обязана нести sha
+## The command must carry the sha
 
-`.github/workflows/deploy.yml` выкатывает образы по sha коммита. Без переменной `docker
-compose` подставляет умолчание `latest`, а `latest` в реестре отстаёт от главной ветки — прод
-молча откатывается на старый образ и при этом отвечает:
+`.github/workflows/deploy.yml` rolls out images by the commit sha. Without the variable
+`docker compose` substitutes the default `latest`, and `latest` in the registry lags behind the
+main branch — production silently rolls back to the old image and keeps answering:
 
 ```bash
 IMAGE_TAG='<sha>' docker compose -f docker-compose.prod.yml --env-file .env.prod pull migrate api ssr web
 IMAGE_TAG='<sha>' docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --no-build --remove-orphans
 ```
 
-## Sha берётся до перезапуска
+## The sha is taken before the restart
 
-У выкаченного контейнера или у последнего мержа в главную ветку:
+From the rolled-out container or from the last merge into the main branch:
 
 ```bash
 docker inspect <контейнер> --format '{{.Config.Image}}'
 ```
 
-## Сверка идёт по логу, а не по коду ответа
+## The check goes by the log, not by the response code
 
-Подмена образа видна только по пропавшим строкам нового кода: сводка `startup` с
-`integrations` из логов исчезает, хотя `API is running` остаётся на месте. После перезапуска —
-тот же `inspect` и наличие ожидаемых строк в логе.
+A substituted image is visible only by the missing lines of the new code: the `startup` digest
+with `integrations` disappears from the logs, while `API is running` stays in place. After the
+restart — the same `inspect` and the presence of the expected lines in the log.
 
-## Откат: тот же вызов с прежним sha
+## Rollback: the same call with the previous sha
 
-Откат — не отдельный механизм, а тот же подъём по sha, только взятому на шаг назад. Прежний sha
-берётся у реестра, где чистка оставляет три последних, — глубже отката нет:
+A rollback is not a separate mechanism but the same startup by sha, only taken one step back. The
+previous sha is taken from the registry, where the cleanup keeps the last three — there is no
+rollback deeper:
 
 ```bash
 docker image ls '<реестр>/<образ>' --format '{{.Tag}}\t{{.CreatedAt}}' | sort -k2 -r | head -3
 IMAGE_TAG='<прежний sha>' docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --no-build
 ```
 
-Откат возвращает прежний образ, но не прежнюю схему хранилища: миграция, уехавшая с новой
-версией, остаётся применённой, и прежний образ работает с изменённой схемой. Правка схемы
-поэтому и делится на совместимую и несовместимую — паттерн миграции.
+A rollback returns the previous image, but not the previous storage schema: a migration that
+left with the new version stays applied, and the previous image works with the changed schema.
+That is why a schema edit is split into compatible and incompatible — the migration pattern.
 
-Откаченный прод сходится с главной веткой не сразу: главная везёт правку, которой на проде уже
-нет. Строкой очереди работ это не видно вовсе, и владельцу называется словами, вместе с sha, на
-который откатились.
+A rolled-back production does not converge with the main branch at once: main carries an edit
+that production no longer has. By a work queue line this is not visible at all, and it is named
+to the owner in words, together with the sha rolled back to.
 
-## Частые промахи
+## Common misses
 
-- Вывод «прод жив, значит выкатилось» — код ответа подмену образа не показывает.
-- Переменные окружения, секреты и записи имён ставятся **до** мержа: мерж выкатывает сразу,
-  и ветка, зависящая от новой переменной, встаёт на проде до того, как переменную заведут.
-- Заход на сервер по ssh в автоматическом режиме режется правилом — нужен обычный режим.
+- The conclusion "production is alive, so it rolled out" — the response code does not show a
+  substituted image.
+- Environment variables, secrets and name records are set **before** the merge: the merge rolls
+  out at once, and a branch that depends on a new variable lands on production before the
+  variable is created.
+- Entering the server over ssh in the automatic mode is cut by a rule — the normal mode is
+  needed.
