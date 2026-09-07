@@ -27,7 +27,7 @@ sections_for() {
             printf '## Как закон применяется здесь\n## Чего из закона здесь нет\n## Паттерны\n'
             ;;
         pitfalls) printf '## Ловушки\n' ;;
-        patterns) printf '## Когда брать\n' ;;
+        patterns) printf '## (When to use|Когда брать)\n' ;;
         skills) printf '## Когда брать\n' ;;
     esac
 }
@@ -54,12 +54,12 @@ missing_sections() {
     done <<< "$(sections_for "$kind")"
 }
 
-# Завершающий раздел паттерна о промахах: два законных имени, и оба означают одно.
+# Завершающий раздел паттерна о промахах: по два имени на каждом языке, и все означают одно.
 missing_pitfalls() {
     local root="$1" file
     for file in "$root"/patterns/*.md; do
         [ -e "$file" ] || continue
-        grep -qxE '## (Частые промахи|Ловушки)' "$file" || printf '%s :: раздел о промахах\n' "${file##*/}"
+        grep -qxE '## (Common misses|Pitfalls|Частые промахи|Ловушки)' "$file" || printf '%s :: раздел о промахах\n' "${file##*/}"
     done
 }
 
@@ -202,7 +202,7 @@ report "SC-AK-217 — снятый раздел холодной части на
 report "SC-AK-519 — «Ловушки» у правила не спрашиваются" \
     "$(missing_sections "$probe" rules | grep -c 'Ловушки')" 0
 
-grep -vxF '## Частые промахи' "$ASSETS/patterns/doc-style-write.md" > "$probe/patterns/doc-style-write.md"
+grep -vxE '## (Common misses|Частые промахи)' "$ASSETS/patterns/doc-style-write.md" > "$probe/patterns/doc-style-write.md"
 report "SC-AK-217 — снятый раздел о промахах найден" \
     "$(missing_pitfalls "$probe" | grep -c 'промахах')" 1
 
