@@ -1,30 +1,31 @@
 #!/usr/bin/env bash
-# Запись отбоя гарда. НЕ гард: объявления `rt-hook:` у него нет, к событиям агента он не
-# подключается. Его источает общий хвост отказа — единственное место, через которое проходит
-# каждый отказ.
+# The record of a guard refusal. NOT a guard: it has no `rt-hook:` declaration and hooks into no
+# agent event. The shared deny tail sources it — the one place every refusal passes through.
 #
-# Зачем он есть. Запись отбоя стояла в самом гарде пятью строками: подключение записи, проверка
-# наличия функции, вызов с именем и признаком сессии. Написать их в каждом гарде не вышло — из
-# тридцати их написали в пяти, и сводка наблюдений отвечала по этой пятой части: гард, который
-# отбивать умеет, а записывать нет, не значится в ней ни отбивавшим, ни молчащим, и вопрос «стоял
-# и не работал» по нему не задать вовсе.
+# Why it exists. The refusal record stood inside the guard itself as five lines: sourcing the
+# record, checking the function exists, the call with the name and the session id. Writing them in
+# every guard did not work out — of thirty guards, five had them, and the observation digest
+# answered by that fifth: a guard that can refuse but cannot record is listed in it neither as
+# refusing nor as silent, and the question "it stood there and did not work" cannot be asked about
+# it at all.
 #
-# КАК ГАРД ЗАЯВЛЯЕТ О СЕБЕ. Одной строкой `RT_GUARD_NAME=<имя>` у себя вверху. Заявка добровольна
-# и точна: хук, который своё отбитие считает сам — как гейт правил, — её не ставит, и второй раз
-# то же событие в счёт не идёт.
+# HOW A GUARD DECLARES ITSELF. By one line `RT_GUARD_NAME=<name>` at its top. The declaration is
+# voluntary and exact: a hook that counts its own refusals by itself — like the rules gate — does
+# not set it, and the same event is not counted a second time.
 #
-# ЧТО ЗАПИСЫВАЕТСЯ. Имя гарда и признак сессии. Чистит значения и решает, писать ли вообще, сама
-# запись наблюдений; здесь только сборка вызова.
+# WHAT IS RECORDED. The guard name and the session id. Cleaning the values and deciding whether to
+# write at all is done by the observation record itself; here only the call is assembled.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ. Записи может не быть вовсе — файла нет, дерево выключило наблюдения,
-# каталог недоступен. Гард, упавший на записи отбоя, останавливал бы работу ради статистики.
+# FAIL-OPEN. There may be no record at all — no file, the tree switched observations off, the
+# directory is unavailable. A guard that fell over on recording a refusal would stop work for the
+# sake of statistics.
 
-# Отбой гарда в наблюдения. Имя берётся из `RT_GUARD_NAME`, признак сессии — из ввода хука;
-# без имени не пишется ничего.
+# A guard refusal into the observations. The name is taken from `RT_GUARD_NAME`, the session id
+# from the hook input; without a name nothing is written.
 rt_guard_note() {
     local rt_gn_dir rt_gn_sid rt_gn_name
-    # Умолчание, а не голое чтение: гард бывает написан с обрывом на необъявленной переменной, и
-    # запись, читающая её голой, роняет такой гард целиком — на каждом вызове, а не на отказе.
+    # A default, not a bare read: a guard may be written to abort on an undeclared variable, and a
+    # record that reads it bare brings such a guard down whole — on every call, not on a refusal.
     rt_gn_name="${RT_GUARD_NAME:-}"
     [ -n "$rt_gn_name" ] || return 0
 

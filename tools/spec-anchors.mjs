@@ -1,10 +1,10 @@
-// rt-kit v0.25.0 · checks/spec-anchors.mjs · 4704e3711dc4 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/spec-anchors.mjs · 854b33b42c7d · правится надстройкой, не здесь
 /**
- * Привязка правила к коду и законы, которые применяет спек.
+ * The binding of a rule to code and the laws a spec applies.
  *
- * Правило живёт в спеке, привязка — в компаньоне рядом; ключ связи — сам текст правила.
- * Здесь же разбирается мёртвая привязка: символ, объявленный в своём файле и больше нигде не
- * встречающийся, местом исполнения правила не считается.
+ * The rule lives in the spec, the binding in the companion next to it; the key of the link is the
+ * text of the rule itself. Dead bindings are handled here too: a symbol declared in its own file
+ * and met nowhere else is not counted as the place where the rule is carried out.
  */
 import {
     ANCHOR,
@@ -21,41 +21,41 @@ import {
     walk,
 } from './spec-common.mjs';
 
-// ── 1. Якоря правил ────────────────────────────────────────────────────────────
+// ── 1. Rule anchors ────────────────────────────────────────────────────────────
 
 const escapeForRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\-]/g, '\\$&');
 
 /**
- * Символ ищется как слово: подстрока дала бы ложное совпадение на префиксе.
+ * The symbol is searched as a word: a substring would give a false match on a prefix.
  *
- * Границы слова считаются буквой любого алфавита, а не `\b`: он в JavaScript знает буквой
- * только латиницу, и `\bСемья\b` не совпадает ни разу — привязка на русском слове читалась
- * как ведущая в файл, где этого слова нет, при том что слово стоит там первой же строкой.
+ * Word boundaries are letters of any alphabet, not `\b`: in JavaScript that one knows only Latin
+ * letters, and `\bСемья\b` never matches — a binding on a Russian word read as leading into a file
+ * where the word is absent, while the word stands there on the very first line.
  */
 function fileHasSymbol(path, symbol) {
-    // Номер строки словом не ищется: он не имя, а место. Сходится он тогда, когда в файле
-    // столько строк есть, — иначе привязка на разметку читалась бы как ведущая в пустоту.
+    // A line number is not searched as a word: it is a place, not a name. It matches when the file
+    // has that many lines — otherwise a binding on markup would read as leading into nothing.
     if (/^\d+$/.test(symbol)) {
         const line = Number(symbol);
 
         return line > 0 && line <= read(path).split('\n').length;
     }
 
-    // Дефис здесь не экранируется: вне класса символов он ничего не значит, а под флагом `u`
-    // лишнее экранирование — уже отказ разбора. Общий экранировщик его защищает, потому что
-    // рассчитан и на класс тоже, и `task-flow` роняло всю сверку целиком.
+    // The hyphen is not escaped here: outside a character class it means nothing, and under the `u`
+    // flag a needless escape is a parse failure. The shared escaper protects it because it is meant
+    // for a class too, and `task-flow` brought the whole audit down.
     const word = symbol.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     return new RegExp(`(?<![\\p{L}\\p{N}_])${word}(?![\\p{L}\\p{N}_])`, 'u').test(read(path));
 }
 
 /**
- * Привязки, у которых остаётся выяснить, зовёт ли символ хоть кто-нибудь. Копятся
- * в один список и разбираются одним проходом по исходникам: обходить `apps` и
- * `libs` на каждую из пятисот привязок было бы полтысячи обходов.
+ * Bindings for which it remains to find out whether anyone calls the symbol. They pile up
+ * into one list and are handled by one pass over the sources: walking `apps` and `libs`
+ * for each of five hundred bindings would be five hundred walks.
  */
 const traced = [];
 
-/** Жирное начало пункта — ключ, по которому правило находит свою строку привязки. */
+/** The bold start of a bullet is the key by which the rule finds its binding line. */
 function ruleHeadOf(bulletText) {
     const bold = bulletText.match(/\*\*(.+?)\*\*/s);
 
@@ -63,30 +63,32 @@ function ruleHeadOf(bulletText) {
 }
 
 /**
- * Правила живут в `spec.md`, привязка к коду — в `implementation.md` рядом. Разделены
- * потому, что спек описывает продукт и читается без знания устройства, а привязка
- * устаревает при каждом переименовании.
+ * Rules live in `spec.md`, the binding to code in `implementation.md` next to it. They are
+ * separated because the spec describes the product and is read without knowing the internals,
+ * while the binding goes stale on every rename.
  *
- * Ключ связи — сам текст правила, а не отдельный идентификатор: тогда правку формулировки
- * невозможно сделать, забыв про привязку, — строка перестанет находиться.
+ * The key of the link is the text of the rule itself, not a separate identifier: then a wording
+ * edit cannot be made while forgetting the binding — the line stops being found.
  *
- * Заголовок раздела приходит доводом: у спека это `## Правила`, у закона — `## Статьи`.
- * Одно слово в двух смыслах развели именно здесь: «правило» — слой между законом и скилом,
- * а внутри закона живут статьи.
+ * The section heading arrives as an argument: for a spec it is `## Правила`, for a law
+ * `## Статьи`. One word in two meanings was split apart exactly here: "rule" is the layer between
+ * a law and a pattern, and inside a law live articles.
  */
 /**
- * Строки таблицы привязок компаньона.
+ * The rows of the companion's binding table.
  *
- * Компаньон правила держит три таблицы: чем вещи правила названы в этом дереве, где лежат
- * механизмы и где исполняется каждая статья. Привязки — только третья, и берётся она по имени
- * раздела, а не по месту в файле. Пока читался весь файл, строки первых двух попадали в список
- * наравне с настоящими и тут же объявлялись расхождением: статьи с таким текстом в правиле нет
- * и быть не может. Две трети перечня в дереве были ими, и правильно дописанная строка «Где это
- * лежит» отвечала отказом.
+ * A rule's companion holds three tables: what the rule's things are called in this tree, where
+ * the mechanisms lie and where each article is carried out. Bindings are only the third one, and
+ * it is taken by section name, not by position in the file. While the whole file was read, rows
+ * of the first two landed in the list alongside the real ones and were at once declared a
+ * discrepancy: there is no article with such text in the rule and cannot be. Two thirds of the
+ * listing in the tree were these, and a correctly added "Where it lies" row was answered with
+ * a refusal.
  *
- * У компаньона спека домена раздела нет: там таблица одна, и сужать нечего — такой зовёт без
- * имени раздела. У правила раздел стоит в образце компаньона, поэтому его отсутствие — отказ:
- * молча прочесть вместо него весь файл значило бы вернуть тот же дефект.
+ * A domain spec's companion has no such section: the table there is the only one, and there is
+ * nothing to narrow — such a caller comes without a section name. For a rule the section stands
+ * in the companion template, so its absence is a refusal: silently reading the whole file instead
+ * would bring the same defect back.
  */
 function rowsOfMap(specFile, mapFile, mapHeading) {
     const text = read(mapFile);
@@ -95,7 +97,7 @@ function rowsOfMap(specFile, mapFile, mapHeading) {
     }
     const section = sectionOf(text, mapHeading);
     if (!section.length) {
-        report(mapFile, `нет раздела \`${mapHeading}\` — привязкам правила негде лежать`);
+        report(mapFile, `there is no section \`${mapHeading}\` — the bindings of the rule have nowhere to lie`);
     }
 
     return section;
@@ -105,37 +107,39 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
     const lines = sectionOf(text, heading);
     const bullets = bulletsOf(lines);
     if (!bullets.length) {
-        // Отказ называет, что стоит в разделе вместо пунктов: без этого автор переставляет
-        // разметку наугад — таблица перед списком и подзаголовки давали один и тот же отказ.
+        // The refusal names what stands in the section instead of bullets: without that the author
+        // shuffles markup at random — a table before the list and subheadings gave one and the
+        // same refusal.
         const first = lines.find((line) => line.trim());
         const instead = bullets.stoppedAt
-            ? `, список кончился на строке \`${bullets.stoppedAt.trim().slice(0, 60)}\``
+            ? `, the list ended at the line \`${bullets.stoppedAt.trim().slice(0, 60)}\``
             : first
-              ? `, первым стоит \`${first.trim().slice(0, 60)}\``
+              ? `, the first one is \`${first.trim().slice(0, 60)}\``
               : '';
-        report(specFile, `в разделе \`${heading}\` нет ни одного пункта${instead}`);
+        report(specFile, `the section \`${heading}\` carries no item at all${instead}`);
 
         return;
     }
 
     if (!exists(mapFile)) {
-        report(specFile, `нет файла \`${mapFile.split('/').pop()}\` рядом — правилам не к чему привязаться`);
+        report(specFile, `there is no file \`${mapFile.split('/').pop()}\` next to it — the statements have nothing to bind to`);
 
         return;
     }
 
     const rows = new Map();
     for (const line of rowsOfMap(specFile, mapFile, mapHeading)) {
-        // Привязка записывается двумя формами, и читаются обе. Таблица — прежняя; список — та,
-        // ради которой из компаньонов уходят пробелы выравнивания: форматтер добивает столбцы до
-        // общей ширины, и в компаньонах дерева это 120 017 знаков из 328 738, то есть 37%.
-        // Связь при этом не меняется: она идёт по тексту утверждения, а не по форме строки.
+        // A binding is written in two forms, and both are read. The table is the old one; the list
+        // is the one for whose sake alignment spaces leave the companions: the formatter pads the
+        // columns to a common width, and in the tree's companions that is 120 017 characters out
+        // of 328 738, that is 37%. The link does not change with it: it goes by the text of the
+        // statement, not by the shape of the line.
         const cells = line.match(/^\|([^|]+)\|([^|]*)\|\s*$/) ?? line.match(/^-\s+\*\*(.+?)\*\*\s+—\s+(.*)$/);
         if (!cells) {
             continue;
         }
         const head = cells[1].replace(/\s+/g, ' ').trim();
-        // Шапка таблицы: у спека колонка называется «Правило», у закона — «Статья».
+        // The table header: for a spec the column is called «Правило», for a law «Статья».
         if (!head || head === 'Правило' || head === 'Статья' || /^-+$/.test(head)) {
             continue;
         }
@@ -150,15 +154,15 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
     for (const bullet of bullets) {
         const head = ruleHeadOf(bullet.text);
         if (!head) {
-            report(specFile, `правило без жирного начала: «${bullet.text.replace(/^-\s+/, '').slice(0, 60)}…»`);
+            report(specFile, `a statement without a bold opening: «${bullet.text.replace(/^-\s+/, '').slice(0, 60)}…»`);
             continue;
         }
         const row = rows.get(head);
         if (!row) {
             report(
                 mapFile,
-                `правило без привязки: «${head.slice(0, 60)}…» — допиши строку с \`файл:символ\`, ` +
-                    'вердиктом «Не исполняется» с причиной либо перенеси правило в «Открытые вопросы» закона как Q-<буква>-<номер>'
+                `a statement without a binding: «${head.slice(0, 60)}…» — add a line with \`file:symbol\`, ` +
+                    'a verdict «Не исполняется» with a reason, or move the statement into «Открытые вопросы» of the law as Q-<letter>-<number>'
             );
             continue;
         }
@@ -166,44 +170,44 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
         if (!row.anchors.length && !row.verdict) {
             report(
                 mapFile,
-                `у правила «${head.slice(0, 60)}…» пустая привязка — поставь \`файл:символ\` ` +
-                    'либо вердикт «Не исполняется», «Не применимо», «Не проверяется» с причиной'
+                `the statement «${head.slice(0, 60)}…» has an empty binding — put \`файл:символ\` ` +
+                    'or the verdict «Не исполняется», «Не применимо», «Не проверяется» with a reason'
             );
         }
         for (const [, path, symbol] of row.anchors) {
             if (!exists(path)) {
-                report(mapFile, `привязка ведёт в никуда: нет файла \`${path}\``);
+                report(mapFile, `the binding leads nowhere: there is no file \`${path}\``);
             } else if (!fileHasSymbol(path, symbol)) {
-                report(mapFile, `привязка не сходится: в \`${path}\` нет \`${symbol}\``);
+                report(mapFile, `the binding does not match: \`${path}\` carries no \`${symbol}\``);
             } else {
                 traced.push({ mapFile, path, symbol });
             }
         }
     }
 
-    // Обратная сторона: строка, под которой правила больше нет, — след переименования.
-    // Без неё привязка копится и начинает описывать несуществующие обещания
+    // The reverse side: a row under which there is no rule any more is the trace of a rename.
+    // Without this the binding piles up and starts describing promises that do not exist
     for (const [head, row] of rows) {
         if (!row.used) {
-            report(mapFile, `привязка без пункта: «${head.slice(0, 60)}…» — в \`${specFile}\` такого пункта нет`);
+            report(mapFile, `a binding without an item: «${head.slice(0, 60)}…» — \`${specFile}\` carries no such item`);
         }
     }
 }
 
-// ── 5. Мёртвые привязки ───────────────────────────────────────────────────────
+// ── 5. Dead bindings ──────────────────────────────────────────────────────────
 
 /**
- * Код без комментариев. Символ, названный в пояснении, никто не зовёт, а пояснений у мёртвого
- * кода как раз обычно больше, чем у живого.
+ * Code without comments. A symbol named in an explanation is called by nobody, and dead code
+ * usually has more explanations than live code does.
  */
 const codeOf = (text) => text.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:`'"])\/\/.*$/gm, '$1');
 
 const DECLARATION_MODIFIERS = '(?:export|declare|abstract|public|private|protected|static|readonly|override|async|accessor)';
 
 /**
- * Объявлен ли символ здесь. Проверка идёт только по объявлениям: привязка к
- * чужому полю (`HttpStatus.SERVICE_UNAVAILABLE`), ключу словаря или содержимому
- * строки законна и встречается ровно один раз по своей природе.
+ * Whether the symbol is declared here. The check goes by declarations only: a binding to
+ * someone else's field (`HttpStatus.SERVICE_UNAVAILABLE`), a dictionary key or the contents
+ * of a string is lawful and by its nature is met exactly once.
  */
 function fileDeclaresSymbol(code, symbol) {
     const escaped = escapeForRegExp(symbol);
@@ -215,9 +219,9 @@ function fileDeclaresSymbol(code, symbol) {
 }
 
 /**
- * Файлы, в которых встречается каждый символ. Дефис берётся в токен целиком ради
- * атрибутов разметки, а части такого токена добавляются отдельно: иначе
- * `resolving` внутри `data-resolving` перестал бы находиться.
+ * The files in which each symbol is met. A hyphen is taken into the token whole for the sake
+ * of markup attributes, and the parts of such a token are added separately: otherwise
+ * `resolving` inside `data-resolving` would stop being found.
  */
 function symbolOwners() {
     const owners = new Map();
@@ -232,9 +236,10 @@ function symbolOwners() {
 
     for (const file of SOURCE_ROOTS.flatMap((root) => walk(root, (name) => name.endsWith('.ts') || name.endsWith('.html')))) {
         const text = file.endsWith('.ts') ? codeOf(read(file)) : read(file);
-        // Решётка входит в токен: приватное поле класса объявлено с ней, и якорь на него иначе
-        // не попадал бы в перечень владельцев ни разу. Имя без решётки помнится наравне с ним
-        // самим — привязки прежней формы остаются зелёными, и переходить разом не приходится.
+        // The hash is part of the token: a private class field is declared with it, and an anchor
+        // on it would otherwise never land in the owners listing. The name without the hash is
+        // remembered alongside the name itself — bindings of the old form stay green, and there is
+        // no need to switch all at once.
         for (const [token] of text.matchAll(/#?[A-Za-z_][\w-]*/g)) {
             remember(token, file);
             if (token.startsWith('#')) {
@@ -250,8 +255,8 @@ function symbolOwners() {
 }
 
 /**
- * Символ, объявленный в своём файле и больше нигде не встречающийся, ничего не
- * исполняет: правило, привязанное к нему, описывает намерение.
+ * A symbol declared in its own file and met nowhere else carries nothing out: a rule bound
+ * to it describes an intention.
  */
 function checkTracedAnchors() {
     const code = new Map();
@@ -270,8 +275,8 @@ function checkTracedAnchors() {
 
     const owners = symbolOwners();
     for (const { mapFile, path, symbol } of declared) {
-        // Граница слова ставится только там, где она есть: перед решёткой её нет, и образец с
-        // ней давал бы ноль вхождений у всякого приватного имени.
+        // A word boundary is placed only where one exists: there is none before a hash, and a
+        // pattern with it would give zero occurrences for every private name.
         const bound = symbol.startsWith('#')
             ? `${escapeForRegExp(symbol)}\\b`
             : `\\b${escapeForRegExp(symbol)}\\b`;
@@ -280,35 +285,36 @@ function checkTracedAnchors() {
         if (here + elsewhere < 2) {
             report(
                 mapFile,
-                `привязка ведёт в мёртвый код: \`${symbol}\` объявлен в \`${path}\` и больше нигде не встречается — ` +
-                    'либо правило исполняется в другом месте, либо ему место в «Открытых вопросах» закона как Q-<буква>-<номер>'
+                `the binding leads into dead code: \`${symbol}\` is declared in \`${path}\` and met nowhere else — ` +
+                    'either the statement is carried out elsewhere, or its place is in «Открытые вопросы» of the law as Q-<letter>-<number>'
             );
         }
     }
 }
 
-// ── 1a. Законы, которые применяет спек ────────────────────────────────────────
+// ── 1a. The laws a spec applies ───────────────────────────────────────────────
 
 /**
- * Связь «закон — правило» и «правило — паттерн» сверяется в обе стороны, а спек до сих пор
- * говорил только о домене. Закон при этом он применял: ссылки на `docs/constitution/…`
- * лежали внутри строки зависимостей и посреди текста, и по закону нельзя было узнать, какие
- * домены на нём стоят, — только грепом.
+ * The link "law — rule" and "rule — pattern" is audited both ways, while a spec so far spoke
+ * only of its domain. Yet it applied a law: links to `docs/constitution/…` lay inside the
+ * dependencies line and in the middle of the text, and from a law there was no way to learn
+ * which domains stand on it — only by grep.
  *
- * Отсюда строка `**Законы:**` в шапке и сверка обеих сторон: закон, названный в тексте, но не
- * объявленный, и объявленный закон, которого нет.
+ * Hence the `**Законы:**` line in the header and an audit of both sides: a law named in the
+ * text but not declared, and a declared law that does not exist.
  */
 const SPEC_LAWS = /^\*\*Законы:\*\*\s*(.+)$/;
 /**
- * Ссылка на закон где угодно в тексте спека — по ней считается вторая сторона связи. Слой в
- * пути необязателен: законы приложения лежат в `application/`, а называются так же.
+ * A link to a law anywhere in the spec text — by it the second side of the link is counted.
+ * The layer in the path is optional: application laws lie in `application/` and are named
+ * the same way.
  */
 const LAW_REFERENCE = new RegExp(`\`${CONSTITUTION_DIR}/(?:application/)?([a-z-]+)\\.md\``, 'g');
 
 function checkSpecLaws(file, text, laws) {
     const line = text.split('\n').find((candidate) => SPEC_LAWS.test(candidate));
     if (!line) {
-        report(file, 'в шапке нет строки `**Законы:**` — не видно, какие законы домен применяет');
+        report(file, 'the header carries no line `**Законы:**` — there is no seeing which laws the domain applies');
 
         return;
     }
@@ -316,13 +322,13 @@ function checkSpecLaws(file, text, laws) {
     const declared = new Set([...line.match(SPEC_LAWS)[1].matchAll(BACKTICKED)].map(([, name]) => name));
     for (const name of declared) {
         if (!laws.has(name)) {
-            report(file, `в строке \`**Законы:**\` назван \`${name}\`, а закона с таким именем нет ни в одном слое`);
+            report(file, `the line \`**Законы:**\` names \`${name}\`, and there is no law of that name in any layer`);
         }
     }
 
     for (const [, name] of text.matchAll(LAW_REFERENCE)) {
         if (!declared.has(name)) {
-            report(file, `закон \`${name}\` назван в тексте, но не объявлен в строке \`**Законы:**\``);
+            report(file, `the law \`${name}\` is named in the text and is not declared in the line \`**Законы:**\``);
         }
     }
 }

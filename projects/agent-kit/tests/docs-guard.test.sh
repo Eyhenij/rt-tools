@@ -114,7 +114,7 @@ e "надстройка над правилом" '.claude/rt-kit/overrides/rules
 
 expect_reason "вопрос о надстройке называет закон" docs-guard.sh \
     "$(input_edit "$REPO/.claude/rt-kit/overrides/laws/delivery.md" '## Ловушки')" \
-    'правка самого закона'
+    'an edit of the law itself'
 
 # SC-AK-410. Отказ доезжает до читателя вместе с хвостом: два законных хода и законная форма
 # обхода. Проверяется на живом отказе, а не по исходнику гарда — хвост, собранный в переменную и
@@ -122,10 +122,10 @@ expect_reason "вопрос о надстройке называет закон"
 stage libs/common/proto/proto/x/v1/x.proto
 expect_reason "SC-AK-410 — отказ называет два законных хода" docs-guard.sh \
     "$(input_cmd 'git commit -m "feat(proto): x"' Bash "$REPO")" \
-    'Ходов отсюда два'
+    'Two moves from here'
 expect_reason "SC-AK-410 — отказ называет законную форму обхода" docs-guard.sh \
     "$(input_cmd 'git commit -m "feat(proto): x"' Bash "$REPO")" \
-    'Законная форма обхода: строка'
+    'The lawful form of bypass: the line'
 
 # --- отказ в пользу работы -----------------------------------------------------------------------
 printf '' | "$HOOKS/docs-guard.sh" >/dev/null 2>&1

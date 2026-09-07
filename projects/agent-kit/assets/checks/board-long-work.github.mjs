@@ -1,13 +1,13 @@
 /**
- * Работа, которую одним заходом не закрыть: метка карточки против записи в линии работ.
+ * Work that cannot be closed in one session: the card label against the entry in the work plan.
  *
- * Своим файлом по той же причине, что и связь с эпиком: сверка очереди работ и без них стоит у
- * предела длины, а читают эти проверки порознь.
+ * In a file of its own for the same reason as the epic link: the work queue audit stands at the
+ * length limit even without them, and these checks are read separately.
  *
- * Помечена такая работа в двух местах, и одна метка без другой лжёт молча: исполнитель открывает
- * карточку раньше, чем линию работ, а планирует по линии. Карточка без записи обещает
- * многозаходность, которой линия не знает; запись без метки оставляет карточку выглядеть работой
- * на один заход — и следующий заход берёт её, рассчитывая закрыть за раз.
+ * Such work is marked in two places, and one mark without the other lies silently: the executor
+ * opens the card before the work plan, and plans by the plan. A card without an entry promises
+ * several sessions the plan does not know about; an entry without a label leaves the card looking
+ * like work for one session — and the next session takes it expecting to close it in one go.
  */
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -16,14 +16,14 @@ import { TASK_KEY } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 /**
- * Метка многозаходной карточки и каталог линий работ. Не названо любое из двух — связь не
- * судится вовсе: отличить многозаходную карточку от обычной станет нечем, а каталог линий у
- * каждого дерева свой.
+ * The label of a multi-session card and the directory of work plans. Either of the two not named —
+ * the link is not judged at all: there would be nothing to tell a multi-session card from an
+ * ordinary one by, and every tree has its own directory of plans.
  */
 const LONG_LABEL = CONFIG.longWork?.label ?? '';
 const PLANS_DIR = CONFIG.longWork?.plansDir ?? '';
 
-/** Строки линий работ, где стоит слово метки: только они считаются записью о многозаходности. */
+/** Work plan lines carrying the label word: only they count as an entry about several sessions. */
 function markedRows() {
     const dir = join(ROOT, PLANS_DIR);
     if (!existsSync(dir)) {
@@ -43,14 +43,14 @@ function markedRows() {
 }
 
 /**
- * Связь метки с линией работ, прочитанная в обе стороны.
+ * The link between the label and the work plan, read in both directions.
  *
- * Записью считается строка, где стоят и слово метки, и номер задачи. Голое упоминание номера не
- * годится: линия работ называет все свои задачи, и большинство из них однозаходные — обратная
- * сторона краснела бы на каждой.
+ * An entry is a line carrying both the label word and the task number. A bare mention of the number
+ * is no good: a work plan names all of its tasks, and most of them take one session — the other
+ * side would go red on every one.
  *
- * Судится только открытое, как и вся остальная сверка: закрытая задача — история, и строку о ней
- * нечем закрыть.
+ * Only what is open is judged, as in the rest of the audit: a closed task is history, and there is
+ * nothing to close a line about it with.
  */
 export function checkLongWork(open, report) {
     if (!LONG_LABEL || !PLANS_DIR) {
@@ -59,13 +59,13 @@ export function checkLongWork(open, report) {
 
     const rows = markedRows();
     if (rows === null) {
-        report(`каталога линий работ «${PLANS_DIR}» нет на диске — многозаходную работу сверять не с чем`);
+        report(`the directory of work plans «${PLANS_DIR}» is not on disk — there is nothing to check multi-session work against`);
 
         return;
     }
 
-    // Номера, названные в помеченных строках. Ключ задачи и решётка читаются оба: линия пишется
-    // человеком, и форма номера в ней от строки к строке разная.
+    // The numbers named in the marked lines. Both the task key and the hash are read: a plan is
+    // written by a person, and the shape of a number in it differs from line to line.
     const written = new Set();
     const whereWritten = new Map();
     for (const row of rows) {
@@ -85,17 +85,17 @@ export function checkLongWork(open, report) {
     for (const number of labelled) {
         if (!written.has(number)) {
             report(
-                `#${number}: помечена как «${LONG_LABEL}», а в линиях работ «${PLANS_DIR}» такой строки нет — планируют по линии, а не по карточке`
+                `#${number}: marked as «${LONG_LABEL}», and the work plans «${PLANS_DIR}» carry no such line — the planning goes by the plan, not by the card`
             );
         }
     }
 
-    // Обратная сторона: линия знает работу многозаходной, а карточка выглядит работой на один
-    // заход — и следующий заход берёт её, рассчитывая закрыть за раз.
+    // The other side: the plan knows the work takes several sessions, while the card looks like
+    // work for one — and the next session takes it expecting to close it in one go.
     const byNumber = new Set(open.map((issue) => issue.number));
     for (const number of written) {
         if (byNumber.has(number) && !labelled.has(number)) {
-            report(`#${number}: линия работ «${whereWritten.get(number)}» знает её многозаходной, а метки «${LONG_LABEL}» на карточке нет`);
+            report(`#${number}: the work plan «${whereWritten.get(number)}» knows it as multi-session, and the card carries no label «${LONG_LABEL}»`);
         }
     }
 }

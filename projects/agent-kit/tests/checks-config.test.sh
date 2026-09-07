@@ -108,20 +108,20 @@ answer_for() {
 
 ON_BOARD='{"exists":true,"onBoard":true,"status":"Backlog","assigned":true,"assignees":["bot"]}'
 report "SC-AK-152 — ответ очереди: задача в очереди" "$(answer_for "$ON_BOARD" | cut -d' ' -f1)" 'ok'
-report "SC-AK-152 — ответ очереди: названа колонка" "$(answer_for "$ON_BOARD" | grep -c 'колонка «Backlog»')" '1'
-report "SC-AK-152 — ответ очереди: назван исполнитель" "$(answer_for "$ON_BOARD" | grep -c 'исполнитель bot')" '1'
+report "SC-AK-152 — ответ очереди: названа колонка" "$(answer_for "$ON_BOARD" | grep -c 'the column «Backlog»')" '1'
+report "SC-AK-152 — ответ очереди: назван исполнитель" "$(answer_for "$ON_BOARD" | grep -c 'assignee bot')" '1'
 
 OFF_BOARD='{"exists":true,"onBoard":false,"status":null,"assigned":true,"assignees":["bot"]}'
 report "SC-AK-153 — задача вне очереди: приговор" "$(answer_for "$OFF_BOARD" | cut -d' ' -f1)" 'нет'
-report "SC-AK-153 — задача вне очереди: сказано вслух" "$(answer_for "$OFF_BOARD" | grep -c 'в очереди работ: НЕТ')" '1'
+report "SC-AK-153 — задача вне очереди: сказано вслух" "$(answer_for "$OFF_BOARD" | grep -c 'in the work queue: NO')" '1'
 
 NO_ASSIGNEE='{"exists":true,"onBoard":true,"status":"Backlog","assigned":false,"assignees":[]}'
 report "SC-AK-154 — задача без исполнителя: приговор" "$(answer_for "$NO_ASSIGNEE" | cut -d' ' -f1)" 'нет'
-report "SC-AK-154 — задача без исполнителя: сказано вслух" "$(answer_for "$NO_ASSIGNEE" | grep -c 'исполнителя нет')" '1'
+report "SC-AK-154 — задача без исполнителя: сказано вслух" "$(answer_for "$NO_ASSIGNEE" | grep -c 'no assignee')" '1'
 
 report "SC-AK-155 — очередь не спрошена: приговор" "$(answer_for '{"offline":"нет связи"}' | cut -d' ' -f1)" 'нет'
 report "SC-AK-155 — очередь не спрошена: причина названа" "$(answer_for '{"offline":"нет связи"}' | grep -c 'нет связи')" '1'
-report "SC-AK-155 — задачи нет вовсе" "$(answer_for '{"exists":false}' | grep -c 'заведение не состоялось')" '1'
+report "SC-AK-155 — задачи нет вовсе" "$(answer_for '{"exists":false}' | grep -c 'the creation did not happen')" '1'
 
 rm -f "$TREE/tools/board.mjs"
 
@@ -148,13 +148,13 @@ report "SC-AK-400 — годная запись разобрана: долг" "$
 report "SC-AK-400 — ключи считаются вместе" "$(parse_of good "$GOOD" | grep -c '"keys":\["две копии перечисления","третья копия"\]')" '1'
 
 NO_REASON='{"accepted":{"две копии перечисления":{"reason":"  ","task":"RT-807"}}}'
-report "SC-AK-401 — пустая причина отбита" "$(parse_of noreason "$NO_REASON" | grep -c 'пустая причина')" '1'
+report "SC-AK-401 — пустая причина отбита" "$(parse_of noreason "$NO_REASON" | grep -c 'has an empty reason')" '1'
 report "SC-AK-401 — отказ называет запись" "$(parse_of noreason "$NO_REASON" | grep -c 'две копии перечисления')" '1'
 
 NO_TASK='{"accepted":{"две копии перечисления":{"reason":"киты кода не делят"}}}'
-report "SC-AK-402 — запись без номера задачи отбита" "$(parse_of notask "$NO_TASK" | grep -c 'нет номера задачи')" '1'
+report "SC-AK-402 — запись без номера задачи отбита" "$(parse_of notask "$NO_TASK" | grep -c 'has no task number')" '1'
 FOREIGN_TASK='{"accepted":{"две копии перечисления":{"reason":"киты кода не делят","task":"807"}}}'
-report "SC-AK-402 — номер не той формы отбит" "$(parse_of foreign "$FOREIGN_TASK" | grep -c 'нет номера задачи')" '1'
+report "SC-AK-402 — номер не той формы отбит" "$(parse_of foreign "$FOREIGN_TASK" | grep -c 'has no task number')" '1'
 
 # Сторона, названная в перечне разбора, приходит разобранной: прежде сбор плоских либ читал её
 # мимо разбора и получал пустоту молча.
@@ -173,10 +173,10 @@ report "SC-AK-595 — отказ о стороне не объектом пок�
     "$(parse_of flatform '{"accepted":["строка"]}' | grep -c 'reason')" '1'
 
 FLAT='{"accepted":["две копии перечисления"]}'
-report "SC-AK-403 — перечень без причин отбит" "$(parse_of flat "$FLAT" | grep -c 'записан не объектом')" '1'
+report "SC-AK-403 — перечень без причин отбит" "$(parse_of flat "$FLAT" | grep -c 'is written not as an object')" '1'
 report "SC-AK-403 — отказ называет файл" "$(parse_of flat "$FLAT" | grep -c 'tools/flat-allowlist.json')" '1'
 STRING_VALUE='{"accepted":{"две копии перечисления":"киты кода не делят"}}'
-report "SC-AK-403 — причина без номера задачи отбита" "$(parse_of strval "$STRING_VALUE" | grep -c 'записан без причины')" '1'
+report "SC-AK-403 — причина без номера задачи отбита" "$(parse_of strval "$STRING_VALUE" | grep -c 'is written without a reason')" '1'
 
 # Списка нет вовсе — разбор отдаёт пустое и работу не отбивает: проверка, встреченная впервые,
 # показывает всё найденное новым, и это честнее, чем молчать из-за отсутствия файла.
@@ -199,7 +199,7 @@ report "список: замещается целиком" "$(value_of skippedDi
 
 # --- битая надстройка называется, а не проглатывается -------------------------------------------
 printf 'не json\n' > "$TREE/.claude/rt-kit/checks.json"
-broken="$(node --input-type=module -e "import('${TREE}/tools/rt-kit-checks.config.mjs')" 2>&1 | grep -c 'не разбирается как JSON')"
+broken="$(node --input-type=module -e "import('${TREE}/tools/rt-kit-checks.config.mjs')" 2>&1 | grep -c 'does not parse as JSON')"
 report "битая надстройка названа" "$broken" 1
 rm -f "$TREE/.claude/rt-kit/checks.json"
 

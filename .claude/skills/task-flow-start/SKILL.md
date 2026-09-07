@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
-<!-- rt-kit v0.25.0 · patterns/task-flow-start.md · 84fc755d3b5f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/task-flow-start.md · 90055ae949d2 · правится надстройкой, не здесь -->
 
 # Starting the work
 
@@ -234,7 +234,7 @@ cp docs/tasks/_template/progress.md docs/tasks/<КЛЮЧ>-<номер>-<slug>/pr
 In the progress the first line declares the state — from this minute the guard reads it:
 
 ```markdown
-- **Состояние:** `задача-взята`
+- **State:** `задача-взята`
 ```
 
 Until a state in which code is edited is declared, the guard refuses the edit and names the
@@ -248,22 +248,22 @@ A created folder does not end the turn: not one written file is in it yet.
 The guard reads it:
 
 ```markdown
-**Задача:** <КЛЮЧ>-282 · **Ветка:** <КЛЮЧ>-282-task-flow
-**Драфт:** `docs/specs/bookings/proposed/aside-header/`
-**Поведение:** меняется
+**Task:** <КЛЮЧ>-282 · **Branch:** <КЛЮЧ>-282-task-flow
+**Draft:** `docs/specs/bookings/proposed/aside-header/`
+**Behaviour:** changes
 ```
 
 A tree with no "proposed" directory names the agreement by the domain spec itself — there it is
 written straight into it, and nothing has to move at the closing of the work:
 
 ```markdown
-**Спек:** `docs/specs/bookings/spec.md`
+**Spec:** `docs/specs/bookings/spec.md`
 ```
 
 Work that does not touch `apps/**` and `libs/**` needs no agreement:
 
 ```markdown
-**Поведение:** не меняется — переезд слоя, снаружи не видно. Подтверждено владельцем.
+**Behaviour:** unchanged — a move of the layer, invisible from outside. Подтверждено владельцем.
 ```
 
 An empty reason is not accepted.
@@ -277,8 +277,8 @@ The plan is committed — the work moves into the first stage at once, without g
 state line is rewritten to `этап-идёт`, and from there the work is led by the resume pattern.
 
 ```markdown
-- **Состояние:** `этап-идёт`
-- **Этап:** 1 из 3 — <название первого этапа из замысла>
+- **State:** `этап-идёт`
+- **Stage:** 1 из 3 — <название первого этапа из замысла>
 ```
 
 The turn does not end on this boundary. A written plan looks like a finished piece: the stages are

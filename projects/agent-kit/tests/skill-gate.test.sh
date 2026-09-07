@@ -205,7 +205,7 @@ MD
 expect_reason "SC-AK-498 — отказ на правке стилей несёт текст статьи" skill-gate.sh     "$(input_edit "$TREE/libs/site/x/ui/src/lib/a.component.scss")"     'Оформление берётся ступенью'
 
 gate_session_reset
-expect_reason "SC-AK-499 — правило целиком остаётся вторым ходом" skill-gate.sh     "$(input_edit "$TREE/libs/site/x/ui/src/lib/a.component.scss")"     'загрузи правило «styling-bem»'
+expect_reason "SC-AK-499 — правило целиком остаётся вторым ходом" skill-gate.sh     "$(input_edit "$TREE/libs/site/x/ui/src/lib/a.component.scss")"     'load the rule «styling-bem»'
 
 # SC-AK-706 — спутник правила назван в отказе безусловно
 #
@@ -231,7 +231,7 @@ expect_no_reason "SC-AK-657 — тела статьи в отказе нет" sk
 # Правило без размеченных статей отбивает прежним текстом: под правку кода в этом правиле-пробе
 # признака нет ни у одной статьи.
 gate_session_reset
-expect_reason "SC-AK-500 — неразмеченное правило отбивает прежним текстом" skill-gate.sh     "$(input_edit "$TREE/libs/site/x/util/src/lib/a.ts")"     'Отбито гейтом правил: загрузи правило'
+expect_reason "SC-AK-500 — неразмеченное правило отбивает прежним текстом" skill-gate.sh     "$(input_edit "$TREE/libs/site/x/util/src/lib/a.ts")"     'Refused by the rules gate: load the rule'
 
 # --- вторая дверь: тот же файл, записанный командой -----------------------------------------
 #
@@ -294,7 +294,7 @@ gate_session_reset
 gate_session_reset
 expect_reason "SC-AK-734 — отказ называет следующее правило" skill-gate.sh \
     "$(input_cmd 'printf x > libs/site/x/ui/src/lib/a.component.scss; printf y > docs/adr/0002-x.md' Bash)" \
-    'Дальше по этой команде потребуются'
+    'Further along this same command these will be needed'
 gate_session_reset
 
 # --- отказ в пользу работы --------------------------------------------------------------

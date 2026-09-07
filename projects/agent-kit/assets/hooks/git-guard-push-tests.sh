@@ -1,31 +1,32 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
-# Гард проверок перед пушем. PreToolUse на вызове пуша.
+# Requires: hooks/profile-check.sh, hooks/deny-tail.sh
+# The guard of the checks before a push. PreToolUse on the push call.
 #
-# Пуш — это вход в конвейер: слияние в главную ветку запускает выкатку, и всё, что не
-# проверено локально, проверяется уже на проде. Сюда дважды подряд уезжают правки, зелёные в
-# выборочном прогоне и красные в конвейере: один раз прогонялись только сквозные спеки, другой
-# — только затронутый проект.
+# A push is the entry into the pipeline: a merge into the main branch starts the rollout, and
+# everything not checked locally gets checked on production already. Edits go out this way twice in
+# a row, green in a selective run and red in the pipeline: one time only the end-to-end specs were
+# run, the other only the affected project.
 #
-# Гард не верит на слово: он сам гоняет то, что перечислил профиль дерева, и пускает пуш только
-# при нулевом коде возврата. Если прогонщик кэширует результат, набор на неизменившемся дереве
-# занимает секунды, а после правки гоняется заново.
+# The guard does not take it on trust: it runs what the tree profile listed itself, and lets the
+# push through only on a zero return code. If the runner caches the result, the set takes seconds
+# on an unchanged tree, and after an edit it is run anew.
 #
-# Что гонять, знает профиль: функция `rt_push_checks <база>` — по команде на строку. База —
-# ветка, относительно которой считается вклад; пустая означает, что удалённого нет. Функция
-# зовётся из каталога, откуда идёт пуш, и вправе решать по нему сама: шаг, проверки которого в
-# дереве нет, она просто не печатает. Нет профиля или нет функции — гард пропускает: список
-# проверок пакет выдумать не может.
+# What to run is known by the profile: the function `rt_push_checks <base>` — one command per line.
+# The base is the branch the contribution is counted against; empty means there is no remote. The
+# function is called from the directory the push goes from and may decide by it itself: a step
+# whose checks the tree does not have it simply does not print. There is no profile or no function
+# — the guard passes: the package cannot invent the list of checks.
 #
-# База берётся у удалённого, а не у локальной главной ветки: локальная отстаёт или расходится
-# молча. Это уже случалось — локальная стояла на слиянии, стёртом из истории силовым пушем, и
-# набор от неё посчитался бы не тот. Нет сети или нет удалённого — база пустая, и профиль
-# откатывается на полный прогон: гейт может оказаться строже нужного, но НИКОГДА не слабее.
+# The base is taken from the remote, not from the local main branch: the local one falls behind or
+# diverges silently. That has happened already — the local one stood at a merge wiped from the
+# history by a force push, and the set counted against it would have been the wrong one. There is
+# no network or no remote — the base is empty, and the profile falls back to a full run: the gate
+# may turn out stricter than needed, but NEVER weaker.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, битый ввод, нет профиля — пропуск.
+# FAIL-OPEN: not a repository, broken input, no profile — pass.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is written by the shared deny tail, not by the guard.
 RT_GUARD_NAME=git-guard-push-tests
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -37,48 +38,51 @@ input="$RT_HOOK_INPUT"
 
 tool="$(rt_hook_tool)"
 case "$tool" in
-    # Терминал среды и универсальный исполнитель кладут команду в то же поле.
+    # The environment terminal and the universal runner put the command into the same field.
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
     *) exit 0 ;;
 esac
 
 cmd="$(rt_hook_cmd)"
 
-# Вызов пуша узнаётся по двум признакам сразу — команда `git` в начале строки или за
-# разделителем и слово `push` отдельным словом. Тем же приёмом, что у гарда поставки: одной
-# подстрокой «git push» пуш не поймать — помощник учётных данных и заголовок запроса ставятся
-# ключами `-c` между ними, и ровно этой формой здесь и пушат. Пока признаком была подстрока,
-# весь набор гейта на таком пуше не гонялся вовсе, а молчание гарда читалось как «зелено».
+# A push call is recognised by two signs at once — the `git` command at the start of the line or
+# after a separator, and the word `push` as a separate word. By the same technique as the delivery
+# guard: the substring "git push" alone does not catch a push — the credentials helper and the
+# request header are put between them by `-c` keys, and that is exactly the form pushed with here.
+# While the sign was a substring, the whole gate set was not run at all on such a push, and the
+# silence of the guard read as "green".
 printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git([[:space:]]|\$)" || exit 0
 
-# Отложенная правка пушем не бывает: `git stash push` кладёт правку в тайник этой же машины и
-# наружу не отправляет ничего. Слово `push` в ней стоит отдельным, и без этой строки гард гонял
-# на ней весь набор, а потом отбивал вызов на первой красной проверке — то есть отбивал команду,
-# которая ничего никуда не отправляет. Тайник вырезается из строки, и признак считается по
-# остатку: в составной команде рядом с ним может стоять и настоящий пуш.
+# A stashed edit is never a push: `git stash push` puts the edit into the stash of this same
+# machine and sends nothing outside. The word `push` in it stands separate, and without this line
+# the guard ran the whole set on it and then refused the call on the first red check — that is, it
+# refused a command that sends nothing anywhere. The stash is cut out of the line, and the sign is
+# counted on the remainder: in a compound command a real push may stand next to it.
 probe="$(printf '%s' "$cmd" | sed -E 's/git[[:space:]]+stash[[:space:]]+push/git stash/g')"
 printf '%s' "$probe" | grep -qE '(^|[[:space:]])push([[:space:]]|$)' || exit 0
 
-# Пробный пуш ничего не отправляет: гонять ради него весь набор незачем.
+# A dry-run push sends nothing: there is no point running the whole set for it.
 case "$cmd" in
     *--dry-run*) exit 0 ;;
 esac
 
-# Переключение ветки в той же команде отбивается целиком.
+# A branch switch in the same command is refused whole.
 #
-# Гард — это разбор команды ДО её запуска: набор он гоняет в том дереве, какое лежит сейчас.
-# Составная «переключиться и запушить» проходит гейт по ПРЕЖНЕЙ ветке — молча, проверяя не то.
-# Отказа при этом нет, и зелёный набор читается как проверка того, что уходит на хостинг.
-# Поймано это было случайно: гейт отбил пуш красной проверкой длины файла, которого в пушимой
-# ветке нет вовсе — он смотрел ветку, с которой в этой же команде уходили.
+# The guard is a parse of the command BEFORE it runs: it runs the set in the tree that lies there
+# now. A compound "switch and push" passes the gate on the FORMER branch — silently, checking the
+# wrong thing. There is no refusal at that, and a green set reads as a check of what goes to the
+# hosting. This was caught by chance: the gate refused a push on a red check of file length for a
+# file that is not in the pushed branch at all — it was looking at the branch the same command was
+# leaving.
 #
-# Судится переключение на существующую ветку. Заведение новой (`checkout -b`, `switch -c`)
-# сюда не попадает: у свежей ветки дерево то же самое, что и было.
+# What is judged is a switch to an existing branch. Creating a new one (`checkout -b`, `switch -c`)
+# does not fall here: a fresh branch has the same tree as it had.
 if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git[[:space:]]+(checkout|switch)[[:space:]]+" &&
     ! printf '%s' "$cmd" | grep -qE 'git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)([[:space:]]|$)'; then
-    reason="BLOCKED: переключение ветки и пуш одной командой. Набор гейта гоняется в том дереве, какое лежит на момент разбора команды, — то есть по ПРЕЖНЕЙ ветке, а не по той, что уходит на хостинг. Зелёный набор при этом читается как проверка ушедшего, хотя проверял он другое. Раздели вызовы: сперва переключись, затем отдельной командой пушь."
-    # Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
-    # Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+    reason="BLOCKED: switching the branch and pushing by one command. The gate set runs on the tree that lies there at the minute the command is parsed — that is, on the FORMER branch, not the one that leaves for the hosting. A green set then reads as a check of what left, though it checked something else. Split the calls: switch first, then push by a separate command."
+    # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has
+    # one. The file may not be laid out — then there is no tail, and the reason for the refusal
+    # stays as it was.
     # shellcheck disable=SC1090
     [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
         && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
@@ -89,7 +93,7 @@ if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git[[:space:]]+(checkout|switch
 ${deny_tail_text}"
 
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Переключение ветки и пуш одной командой."}}\n'
+        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Switching the branch and pushing by one command."}}\n'
     exit 0
 fi
 
@@ -99,27 +103,27 @@ cd "$workdir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 [ -f package.json ] || exit 0
 
-# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
-# Объявленная в надстройке функция замещает умолчание целиком и вправе позвать его обратно
-# суффиксом `_default`. Нет ни того ни другого — хук пропускает: пустой гард лучше гарда,
-# отбивающего наугад.
+# The tree profile: first the package default, over it the project override, if there is one. A
+# function declared in the override replaces the default whole and may call it back by the
+# `_default` suffix. There is neither — the hook passes: an empty guard is better than a guard
+# that refuses at random.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
 
-# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
-# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# A word about a missing profile function: a hook that exited silently is indistinguishable from a
+# working one. The file may not be laid out — then the former, silent behaviour stays.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
 command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
 
-# Строка наблюдения на каждый исход. Гард, пишущий только отбои, отвечает на один вопрос из
-# трёх: сколько пушей он остановил. «Набор прогнан и зелёный» и «набора не нашлось» выглядят в
-# записи одинаково — молчанием, — и гейт, не гонявший ни одной проверки за неделю, неотличим от
-# гейта, у которого всё зелено. Пишется это той же записью наблюдений, что и отбои гардов, и
-# гаснет тем же выключателем дерева.
+# An observation line on every outcome. A guard that writes only refusals answers one question out
+# of three: how many pushes it stopped. "The set was run and is green" and "no set was found" look
+# the same in the record — as silence — and a gate that has not run a single check in a week is
+# indistinguishable from a gate where everything is green. This is written into the same
+# observations record as guard refusals, and goes out by the same tree switch.
 rt_push_gate_note() {
     local outcome="$1" sid
     # shellcheck disable=SC1090
@@ -145,10 +149,11 @@ if git fetch --quiet origin "$main_branch" 2>/dev/null && git rev-parse --verify
     base="origin/$main_branch"
 fi
 
-# Код, которым проверка объявляет, что смотреть было не на что: ни «сошлось», ни «расхождение».
-# Прежде такая проверка говорила о себе строкой вывода и выходила нулём — в наборе этот ноль
-# стоял рядом с пройденными и ничем от них не отличался, а сводка читалась как проверенная
-# целиком. Пуш он не отбивает: проверка, которой нечего смотреть, поломкой не является.
+# The code by which a check declares that there was nothing to look at: neither "it matched" nor
+# "a divergence". Before, such a check said so by a line of output and exited with zero — in the
+# set that zero stood next to the passed ones and differed from them in nothing, while the summary
+# read as checked whole. It does not refuse the push: a check with nothing to look at is not a
+# breakage.
 rt_skip_code="${RT_SKIP_CODE:-7}"
 
 failed=""
@@ -173,37 +178,42 @@ done <<EOF
 $(rt_push_checks "$base")
 EOF
 
-# Пропущенное называется вслух и тогда, когда набор прошёл: молчание о нём и есть та самая
-# неотличимость, ради которой код заведён. Пуш при этом идёт — отказа здесь нет.
-# Функция профиля есть, а печатать ей в этом дереве нечего: исход тот же, что и без неё, —
-# набора не нашлось, и молчание о нём читалось бы как зелёный прогон.
+# What was skipped is named aloud even when the set passed: silence about it is exactly the
+# indistinguishability this code was created for. The push goes through at that — there is no
+# refusal here.
+# The profile function is there, but it has nothing to print in this tree: the outcome is the same
+# as without it — no set was found, and silence about that would read as a green run.
 if [ "$ran" -eq 0 ]; then
     rt_push_gate_note no-checks
     exit 0
 fi
 
 if [ -z "$failed" ] && [ -n "$skipped" ]; then
-    printf 'гейт пуша: набор прошёл, но эти проверки смотреть было не на что:\n%s\n' "$skipped" >&2
+    printf 'the push gate: the set passed, but these checks had nothing to look at:\n%s\n' "$skipped" >&2
 fi
 
-# Чем набор гейта уже набора конвейера — сказанное один раз за сессию.
+# How the gate set is narrower than the pipeline set — said once per session.
 #
-# Правило поставки требует, чтобы гейт не был уже конвейера, а собрать это требование нечем:
-# файл конвейера у каждого дерева свой, и вывести из него шаги набора пакет не может. Молчание
-# при этом читается как «проверено всё»: расхождение узнаётся из красного конвейера после
-# заявки, когда правка уже отдана человеку.
+# The delivery rule demands that the gate not be narrower than the pipeline, and there is nothing
+# to assemble that requirement from: the pipeline file differs from tree to tree, and the package
+# cannot derive the steps of the set from it. Silence at that reads as "everything is checked": the
+# divergence is learnt from a red pipeline after the PR, when the edit has already been handed to a
+# person.
 #
-# Отметка живёт в каталоге временных файлов, как у слова о нехватке функции профиля: на каждый
-# пуш та же строка повторялась бы за заход десятки раз и перестала бы читаться.
+# The mark lives in the temporary files directory, as with the word about a missing profile
+# function: on every push the same line would repeat dozens of times per session and would stop
+# being read.
 gap_key="$(printf '%s' "$input" | jq -r '.session_id // empty' 2>/dev/null)"
 [ -z "$gap_key" ] && gap_key="$(date +%Y%m%d 2>/dev/null || printf 'nosession')"
 gap_mark="${TMPDIR:-/tmp}/rt-kit-push-gate-gap-$gap_key"
 if [ ! -f "$gap_mark" ]; then
-    printf 'гейт пуша: набор гейта — не набор конвейера. Сборка образов, снимки показа и проверка
+    printf 'the push gate: the gate set is not the pipeline set. Image builds, showcase snapshots and
 ' >&2
-    printf 'собранных пакетов в него не входят: что в нём стоит, показывает разбор состояния
+    printf 'the check of assembled packages are not part of it: what stands in it is shown by the
 ' >&2
-    printf '(agent-kit doctor, раздел «набор перед пушем»), — прогони недостающее до заявки.
+    printf 'state review (agent-kit doctor, the section on the set before a push) — run what is
+' >&2
+    printf 'missing before the request.
 ' >&2
     : >"$gap_mark" 2>/dev/null || true
 fi
@@ -215,23 +225,25 @@ fi
 
 rt_push_gate_note red
 
-# Хвост вывода, а не весь: у прогонщика он длинный, а нужна причина отказа.
+# The tail of the output, not all of it: the runner prints a long one, and what is needed is the
+# reason for the refusal.
 tail_out="$(printf '%s' "$output" | tail -n 40 | tr -d '\000')"
-# Красное бывает двух родов, и гард их не различает: он проверяет только код возврата. Когда
-# падает проверка кода, «почини и пушь снова» верно. Когда ошибается сама проверка, тот же текст
-# велит чинить код, которого никто не трогал: разобранный однажды отказ целиком лежал в
-# документах, не тронутых ни одним коммитом ветки. Закон о проверяемости говорит, что сломанная
-# проверка работу не останавливает, и до этой строки такого варианта в отказе не было.
-reason="BLOCKED: пуш без зелёного локального прогона. «${failed}» упала — почини и пушь снова, обходить гард нельзя. Пуш — вход в конвейер, и красное отсюда проверяется уже на проде.
+# Red comes in two kinds, and the guard does not tell them apart: it checks only the return code.
+# When a check of the code fails, "fix it and push again" is right. When the check itself is wrong,
+# the same text orders fixing code nobody touched: a refusal once taken apart lay wholly in
+# documents untouched by any commit of the branch. The verifiability law says a broken check does
+# not stop the work, and until this line there was no such option in the refusal.
+reason="BLOCKED: a push without a green local run. «${failed}» failed — fix it and push again, the guard must not be bypassed. A push is the entry into the pipeline, and red from here is checked already in production.
 
-Ходов отсюда три: починить названное и повторить вызов; починить саму проверку, если ошибается она, — разобрать отказы поимённо, показать разбор владельцу и поправить проверку; либо принести владельцу цену обхода и ждать его слова. Спорное в список известного не вносится: он хранит принятое, а не результаты сломанной проверки.
+Three moves from here: fix what is named and repeat the call; fix the check itself, if it is the one that is wrong — take the refusals apart one by one, show the analysis to the owner and correct the check; or bring the owner the price of a bypass and wait for their word. What is in dispute is not added to the known list: it holds what was accepted, not the results of a broken check.
 
-Хвост вывода:
+The tail of the output:
 
 ${tail_out}"
 
-# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
-# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
+# The file may not be laid out — then there is no tail, and the reason for the refusal stays as it
+# was.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
@@ -242,6 +254,6 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Проверки перед пушем не прошли."}}\n'
+    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The checks before the push did not pass."}}\n'
 
 exit 0

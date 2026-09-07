@@ -1,30 +1,32 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/stand-login-guard.sh · 680d426642ae · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/stand-login-guard.sh · 347ce5324879 · правится надстройкой, не здесь
 # rt-hook: Stop
-# Требует: hooks/deny-tail.sh
-# Гард входа на стенд. Событие Stop. Не даёт завершить ход, в котором исполнитель просит
-# владельца войти на стенд или ввести пароль.
+# Requires: hooks/deny-tail.sh
+# Guard of signing in to the stand. The Stop event. It does not let a turn end in which the executor
+# asks the owner to sign in to the stand or to type a password.
 #
-# Зачем. Стенд, вход и учётные записи для проверки готовит агент. Это требование держалось только на
-# памяти исполнителя и не сработало: за один заход просьба «войди сам» или «введи пароль»
-# прозвучала четыре раза подряд, каждый раз с новой причиной — поле не принимает ввод, в браузере
-# стоит чужое расширение, профиль отключился. Причина настоящая, поэтому просьба выглядит
-# уместной; но снимать препятствие всё равно должен агент.
+# Why. The stand, the sign-in and the accounts for checking are prepared by the agent. That demand
+# rested only on the executor's memory and did not hold: in one session the request "sign in
+# yourself" or "type the password" sounded four times in a row, each time with a new reason — the
+# field does not take input, a foreign extension is installed in the browser, the profile switched
+# off. The reason is real, so the request looks fitting; but the obstacle must be removed by the
+# agent all the same.
 #
-# Гард стоит на завершении хода, а не на вызове инструмента: просьба пишется текстом ответа, и
-# до конца хода её не видно.
+# The guard stands at the end of the turn, not at a tool call: the request is written as the text of
+# the reply, and until the turn ends it is not visible.
 #
-# Граница. Гард проверяет набор образцов: глагол просьбы рядом со словом о пароле, входе или
-# форме. Просьбу другими словами или через меню вариантов гард не распознаёт. Набор пополняется
-# правкой; его полнота не гарантируется.
+# The boundary. The guard checks a set of patterns: a verb of asking next to a word about a
+# password, a sign-in or a form. A request in other words, or through a menu of options, the guard
+# does not recognise. The set grows by an edit; its completeness is not guaranteed.
 #
-# Что разрешено: просьба переключить обычный режим работы вместо автоматического. Ввод делает
-# агент, у владельца просят только режим — гард различает эти просьбы.
+# What is allowed: asking to switch to the ordinary mode of work instead of the automatic one. The
+# typing is done by the agent, only the mode is asked of the owner — the guard tells these requests
+# apart.
 #
-# При ошибке гард пропускает: при сбое, отсутствии записи хода и повторном заходе ход
-# разрешается. Сломанный гард не должен блокировать разговор.
+# On an error the guard passes: on a failure, a missing turn record and a repeated call the turn is
+# ALLOWED. A broken guard must not block the conversation.
 
-# Имя гарда для наблюдений: его пишет общий хвост отказа.
+# The guard's name for the observations: it is written by the shared deny tail.
 RT_GUARD_NAME=stand-login-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -36,7 +38,7 @@ input="$RT_HOOK_INPUT"
 
 command -v jq >/dev/null 2>&1 || exit 0
 
-# Повторный заход по тому же ходу не проверяется: гард сообщает отказ один раз.
+# A repeated call on the same turn is not judged: the guard says its refusal once.
 active="$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/null)"
 [ "$active" = "true" ] && exit 0
 
@@ -44,16 +46,17 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 [ -z "$transcript" ] && exit 0
 [ -f "$transcript" ] || exit 0
 
-# Образцы просьбы. Первая группа — просьба сделать ввод за агента, вторая — просьба войти
-# самому. Слово о режиме работы в набор не входит: его просить разрешено.
+# The patterns of the request. The first group is a request to type instead of the agent, the
+# second a request to sign in oneself. A word about the mode of work is not in the set: asking for
+# it is allowed.
 asked_re='(введи|введите|набери|наберите|вбей|вбейте|заполни|заполните|подставь|вставь)[^.!?\n]{0,40}(пароль|учётн|учетн|логин|креды|форму входа)'
 asked_re="$asked_re"'|(войди|войдите|залогинься|залогиньтесь|авторизуйся|авторизуйтесь)[^.!?\n]{0,40}(сам|сами|рукой|руками|за меня|вместо меня|пожалуйста)?'
 asked_re="$asked_re"'|(нужно|надо|прошу)[^.!?\n]{0,20}(чтобы ты|чтобы вы)?[^.!?\n]{0,20}(ввёл|ввел|ввели|вошёл|вошел|вошли)[^.!?\n]{0,30}(пароль|вход|систему)'
 
-# Ход — всё, что записано после последнего настоящего ввода владельца. Ответ инструмента
-# приходит с той же ролью, поэтому строки с `tool_result` вводом не считаются.
+# The turn is everything recorded after the owner's last real input. A tool answer arrives under the
+# same role, so lines with `tool_result` do not count as input.
 #
-# Читаются последние 400 строк: запись растёт весь заход, а проверяется только последний ход.
+# The last 400 lines are read: the record grows all session long, and only the last turn is judged.
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg re "$asked_re" '
     def is_input:
         .type == "user"
@@ -65,28 +68,28 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg re "$asked_re"
     (map(is_input) | rindex(true)) as $i
     | (if $i == null then . else .[$i + 1:] end) as $turn
     | [$turn[] | select(.type == "assistant") | (.message.content // [])[] | select(.type == "text") | .text] as $texts
-    # Регистр игнорируется флагом, а не приведением к нижнему: приведение работает только для
-    # латиницы, и «Введи пароль» с заглавной буквы не совпало бы с образцом.
+    # Case is ignored by a flag, not by lowercasing: lowercasing works only for the Latin alphabet,
+    # and a request written with a capital letter would not match the pattern.
     | if (($texts | join("\n")) | test($re; "i")) then "asked" else "pass" end
 ' 2>/dev/null)"
 
 [ "$verdict" = "asked" ] || exit 0
 
-reason="BLOCKED by stand-login-guard: исполнитель просит владельца войти или ввести пароль. Стенд, вход и учётные записи для проверки готовит агент. Препятствие перед просьбой — поле не принимает ввод, чужое расширение в браузере, отключившийся профиль — снимает агент.
+reason="BLOCKED by stand-login-guard: the executor asks the owner to sign in or to enter a password. The stand, the sign-in and the accounts for checking are prepared by the agent. An obstacle before the asking — a field that does not accept input, a foreign extension in the browser, a profile that dropped out — is removed by the agent.
 
-Как снять препятствие самостоятельно:
+How to remove the obstacle by yourself:
 
-    подставить значение инструментом формы по ссылке на элемент
-    выключить мешающее расширение в профиле браузера
-    поднять стенд на другом адресе
-    войти парой из засева местной базы вместо боевой учётной записи
+    substitute the value by the form tool through a reference to the element
+    switch off the interfering extension in the browser profile
+    raise the stand on another address
+    sign in with a pair from the seed of the local database instead of a production account
 
-У владельца просят режим работы, а не ввод: обычный режим вместо автоматического; вход в нём делает агент и возвращает автоматический режим тем же ходом.
+What is asked of the owner is the mode of work, not input: the ordinary mode instead of the automatic one; the sign-in in it is done by the agent, and the automatic mode is returned by the same turn.
 
-Гард проверяет один ход: следующий заход не блокируется."
+The guard checks one turn: the next session is not blocked."
 
-# Общий хвост отказа: два допустимых шага. Файл может быть не разложен — тогда хвоста нет,
-# причина отказа остаётся.
+# The shared deny tail: two lawful moves. The file may not be laid out — then there is no tail, and
+# the reason for the refusal stays.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
@@ -97,6 +100,6 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-    || printf '{"decision":"block","reason":"stand-login-guard: вход на стенд делает агент, а не владелец."}\n'
+    || printf '{"decision":"block","reason":"stand-login-guard: the sign-in to the stand is done by the agent, not by the owner."}\n'
 
 exit 0

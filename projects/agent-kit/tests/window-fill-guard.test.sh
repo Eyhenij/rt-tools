@@ -41,7 +41,7 @@ input_window() {
 expect_hint_window() {
     local label="$1" json="$2" want="$3" got
     if printf '%s' "$json" | "$HOOKS/window-fill-guard.sh" 2>/dev/null \
-        | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null | grep -q 'ЗАПОЛНЕНИЕ ОКНА'; then
+        | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null | grep -q 'WINDOW FILL'; then
         got="ЕСТЬ"
     else
         got="НЕТ"
@@ -107,9 +107,9 @@ expect_hint_text() {
 
 # SC-AK-475 — страж напоминает до порога сжатия
 CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=45 \
-    expect_hint_text "сжатие объявлено — напоминание зовёт работать" "$(input_window "$WARN" PostToolUse c1)" 'Работай дальше'
+    expect_hint_text "сжатие объявлено — напоминание зовёт работать" "$(input_window "$WARN" PostToolUse c1)" 'Work on'
 CLAUDE_AUTOCOMPACT_PCT_OVERRIDE='' \
-    expect_hint_text "сжатия нет — напоминание зовёт закрывать заход" "$(input_window "$WARN" PostToolUse c2)" 'выбирать точку остановки'
+    expect_hint_text "сжатия нет — напоминание зовёт закрывать заход" "$(input_window "$WARN" PostToolUse c2)" 'to choose the stopping point'
 
 # SC-AK-476 — между порогом сжатия и порогом остановки страж работу не отбивает
 CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=45 \
@@ -119,12 +119,12 @@ CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=45 \
 CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=45 \
     expect_window "сжатие не пришло — страховка сработала" "$(input_window "$STOP" PreToolUse c4 Edit "$CODE")" DENY
 CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=45 \
-    expect_hint_text "отказ называет несработавшее сжатие" "$(input_window "$STOP" PostToolUse c5)" 'не пришло'
+    expect_hint_text "отказ называет несработавшее сжатие" "$(input_window "$STOP" PostToolUse c5)" 'did not come'
 
 # Порог сжатия, объявленный не ниже порога остановки, стражем не читается: разводит их сверка,
 # а страж на такой паре ведёт себя как без сжатия вовсе.
 CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50 \
-    expect_hint_text "сжатие вровень с остановкой — прежний текст" "$(input_window "$WARN" PostToolUse c6)" 'выбирать точку остановки'
+    expect_hint_text "сжатие вровень с остановкой — прежний текст" "$(input_window "$WARN" PostToolUse c6)" 'to choose the stopping point'
 
 # SC-AK-728 — отказ называет форму вызова, а не только требование
 # Список разрешённых команд стоит в профиле дерева, а вызов судится по началу строки: требование
@@ -132,7 +132,7 @@ CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50 \
 expect_reason "отказ называет команды, которые проходят" window-fill-guard.sh \
     "$(input_window "$STOP" PreToolUse s5 Edit "$CODE")" 'git'
 expect_reason "отказ говорит, что судит по началу строки" window-fill-guard.sh \
-    "$(input_window "$STOP" PreToolUse s5 Edit "$CODE")" 'вход в каталог'
+    "$(input_window "$STOP" PreToolUse s5 Edit "$CODE")" 'entering a directory'
 
 # --- отказ в пользу работы -----------------------------------------------------------------
 # SC-AK-40 — дерево без размера окна стража не получает

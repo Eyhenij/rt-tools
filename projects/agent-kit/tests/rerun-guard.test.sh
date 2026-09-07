@@ -41,7 +41,7 @@ r "SC-AK-413 — журнал соседнего задания перезапу
 expect_reason "SC-AK-411 — отказ называет задание и чтение журнала" rerun-guard.sh \
     "$(cmd_in 'gh run rerun 17123456 --failed' "$EMPTY")" 'run view 17123456 --log-failed'
 expect_reason "SC-AK-411 — отказ называет два законных хода" rerun-guard.sh \
-    "$(cmd_in 'gh run rerun 17123456 --failed' "$EMPTY")" 'Ходов отсюда два'
+    "$(cmd_in 'gh run rerun 17123456 --failed' "$EMPTY")" 'Two moves from here'
 
 # --- отказ в пользу работы -----------------------------------------------------------------
 # Номера в команде нет — судить не о чем: перезапуск последнего упавшего зовут и без него, а

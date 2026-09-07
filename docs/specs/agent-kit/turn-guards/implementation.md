@@ -27,6 +27,7 @@
 - **Ход, открывший заявку, не кончается, пока состояние отданной работы не спрошено командой.** — `projects/agent-kit/assets/hooks/waiting-turn-guard.sh:ready_re` — признак берётся из команд хода; сценарий SC-AK-583
 - **Шаг закрытия работы взятием следующей задачи не считается.** — `projects/agent-kit/assets/hooks/waiting-turn-guard.sh:taken_re` — перечень того, чем взятие бывает; путь правки судится образцом `taken_path_re`; сценарий SC-AK-812
 - **Этап, объявленный закрытым, подтверждается выводом команды.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:stage_was`
+- **Ключи хода работы и замысла читаются под двумя именами, английским и русским.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:stage_now` — этап; состояние и следующий шаг — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:next_step`; сценарий SC-AK-911
 - **Приём, записанный прозой, страж не читает.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:contract`
 - **Размер окна берётся из настройки дерева, а не из записи захода.** — `projects/agent-kit/assets/defaults/project.sh:RT_WINDOW_TOKENS`
 - **Порог сжатия задан деревом теми же числами, что и пороги стража.** — `projects/agent-kit/src/lib/thresholds.ts:readThresholds`
@@ -40,4 +41,4 @@
 - **Сводка сжатия настоящей репликой владельца не бывает.** — `projects/agent-kit/assets/hooks/proposal-guard.sh:is_input`
 - **Ход, в котором исполнитель просит владельца войти или ввести пароль, не заканчивается.** — `projects/agent-kit/assets/hooks/stand-login-guard.sh:asked_re` — набор образцов просьбы; сценарий SC-AK-840
 - **Просьба переключить режим работы разрешена.** — `projects/agent-kit/assets/hooks/stand-login-guard.sh:asked_re` — слово о режиме в набор не входит; сценарий SC-AK-841
-- **Граница набора образцов названа.** — `projects/agent-kit/assets/hooks/stand-login-guard.sh:Граница` — сказано в шапке гарда; не проверяется: чего гард не распознаёт, то и не проверяет
+- **Граница набора образцов названа.** — `projects/agent-kit/assets/hooks/stand-login-guard.sh:boundary` — сказано в шапке гарда; не проверяется: чего гард не распознаёт, то и не проверяет

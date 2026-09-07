@@ -1,12 +1,12 @@
 /**
- * Контракт спека против того, что объявлено в коде: таблица процедур — против декораторов,
- * коды отказов — против точек броска.
+ * The spec contract against what the code declares: the procedure table against the decorators,
+ * the refusal codes against the throw points.
  */
 import { BACKTICKED, PROCEDURE_ROOTS, bulletsOf, read, report, sectionOf, walk } from './spec-common.mjs';
 
-// ── 2. Контракт против декораторов ────────────────────────────────────────────
+// ── 2. The contract against the decorators ────────────────────────────────────
 
-/** Корни либ, чьи процедуры домен обслуживает; объявлены в шапке спека. */
+/** The lib roots whose procedures the domain serves; declared in the spec header. */
 function procedureRootsOf(text) {
     const line = text.split('\n').find((candidate) => PROCEDURE_ROOTS.test(candidate));
     if (!line) {
@@ -20,7 +20,7 @@ function procedureRootsOf(text) {
     return [...value.matchAll(BACKTICKED)].map(([, path]) => path);
 }
 
-/** Что объявлено в самих процедурах: метод контракта и право на него. */
+/** What the procedures themselves declare: the contract method and the right to it. */
 function declaredProcedures(roots) {
     const found = new Map();
     for (const root of roots) {
@@ -45,7 +45,7 @@ function declaredProcedures(roots) {
     return found;
 }
 
-/** Строки таблицы «Контракта»: первая ячейка — процедура, вторая — право. */
+/** Rows of the "Contract" table: the first cell is the procedure, the second is the right. */
 function contractRows(text) {
     const rows = [];
     for (const [index, line] of sectionOf(text, '## Контракт').entries()) {
@@ -64,12 +64,12 @@ function contractRows(text) {
             continue;
         }
         const permission = (cells[1].match(/`([^`]+)`/) || [])[1] || cells[1];
-        // Строка с кодом отказа во второй ячейке процедурой не считается. Раздел «Контракта»
-        // держит две разные таблицы: список процедур с правами и список кодов отказа с поводами,
-        // — и по форме строки они неотличимы, обе несут значение в кавычках первой ячейкой.
-        // Пока разбор брал любую, спек с объявленными процедурами получал свою таблицу кодов
-        // прочитанной как список процедур: каждая её строка становилась процедурой, которой в
-        // домене нет.
+        // A row with a refusal code in the second cell does not count as a procedure. The
+        // "Contract" section holds two different tables: the list of procedures with rights and
+        // the list of refusal codes with reasons — and by the shape of a row they are
+        // indistinguishable, both carry a value in backticks in the first cell. While the parse
+        // took any of them, a spec with declared procedures got its own table of codes read as a
+        // list of procedures: every row of it became a procedure the domain does not have.
         if (/^\d{3}$/.test(permission.trim())) {
             continue;
         }
@@ -81,7 +81,7 @@ function contractRows(text) {
 
 function checkContract(file, text, roots) {
     if (roots === null) {
-        report(file, 'в шапке нет строки `**Процедуры:**` — нечем сверить таблицу «Контракта» с декораторами');
+        report(file, 'the header carries no line `**Процедуры:**` — there is nothing to check the table of «Контракт» against the decorators with');
 
         return;
     }
@@ -92,14 +92,14 @@ function checkContract(file, text, roots) {
     for (const row of rows) {
         const found = declared.get(row.short.toLowerCase());
         if (!found) {
-            report(file, `в «Контракте» есть \`${row.name}\`, но процедуры с таким методом в ${roots.join(', ')} нет`);
+            report(file, `«Контракт» carries \`${row.name}\`, and there is no procedure with such a method in ${roots.join(', ')}`);
             continue;
         }
         described.add(row.short.toLowerCase());
         if (found.permission && row.permission !== found.permission) {
             report(
                 file,
-                `право у \`${row.name}\` разошлось: в спеке «${row.permission}», ` + `в \`${found.file}\` объявлено «${found.permission}»`
+                `the permission of \`${row.name}\` diverged: in the spec «${row.permission}», ` + `in \`${found.file}\` it is declared «${found.permission}»`
             );
         }
     }
@@ -108,29 +108,29 @@ function checkContract(file, text, roots) {
         if (!described.has(key)) {
             report(
                 file,
-                `процедура \`${found.service}.${found.method}\` (${found.file}) домену принадлежит, ` + 'но в таблице «Контракта» её нет'
+                `the procedure \`${found.service}.${found.method}\` (${found.file}) belongs to the domain, ` + 'and the table of «Контракт» does not carry it'
             );
         }
     }
 }
 
-// ── 3. Коды отказов ───────────────────────────────────────────────────────────
+// ── 3. Refusal codes ──────────────────────────────────────────────────────────
 
 function checkRefusalCodes(file, text, roots) {
     const section = sectionOf(text, '### Коды отказов');
     const bullets = bulletsOf(section);
     /**
-     * «Не применимо» — законный ответ и здесь. Домен, у которого есть процедуры,
-     * но нет ни одного `Code.X`, иначе не описывался вовсе: пустой раздел
-     * проверка отвергает, а любой выписанный код отвергает тем более — бросать
-     * его в домене некому. Так живёт проверка живости: отказ она подаёт кодом
-     * ответа, а не отказом процедуры.
+     * "Not applicable" is a lawful answer here too. A domain that has procedures but not a single
+     * `Code.X` could not be described otherwise at all: the check rejects an empty section, and it
+     * rejects any written-out code all the more — there is no one in the domain to throw it. This
+     * is how the liveness check lives: it gives its refusal by an answer code, not by a procedure
+     * refusal.
      */
-    // Без `\b`: кириллица не входит в `\w`, и границы слова после «применимо» не возникает
+    // Without `\b`: Cyrillic is not part of `\w`, so no word boundary arises after the word
     const notApplicable = section.some((line) => /^Не применимо/.test(line.trim()));
     if (!bullets.length) {
         if (!notApplicable) {
-            report(file, 'в разделе `### Коды отказов` нет ни одного кода и нет ответа «Не применимо»');
+            report(file, 'the section `### Коды отказов` carries no code at all and no answer «Не применимо»');
         }
 
         return;
@@ -149,11 +149,11 @@ function checkRefusalCodes(file, text, roots) {
     for (const bullet of bullets) {
         const code = (bullet.text.match(/`([A-Za-z]\w*)`/) || [])[1];
         if (!code) {
-            report(file, `в «Кодах отказов» строка без кода в кавычках: «${bullet.text.slice(0, 60)}…»`);
+            report(file, `«Коды отказов» carries a line without a code in quotes: «${bullet.text.slice(0, 60)}…»`);
             continue;
         }
         if (!thrown.has(code)) {
-            report(file, `код отказа \`${code}\` в домене нигде не бросается — либо он не отсюда, либо путь его не даёт`);
+            report(file, `the refusal code \`${code}\` is thrown nowhere in the domain — either it is not from here, or the path does not give it`);
         }
     }
 }

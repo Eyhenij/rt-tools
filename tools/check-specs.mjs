@@ -1,50 +1,49 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-specs.mjs · 19558a6e7673 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-specs.mjs · c09999047047 · правится надстройкой, не здесь
 /**
- * Проверка того, что спек домена не разошёлся с кодом.
+ * The check that a domain spec has not diverged from the code.
  *
- * Первая редакция сверяла только идентификаторы сценариев против заголовков
- * тестов. Разбор роем нашёл в спеке возрастом в один день одиннадцать
- * расхождений с кодом, и проверка была зелёной на всех: совпадение
- * идентификатора не говорит ни о том, что правило где-то исполняется, ни о том,
- * что тест проверяет обещанное. Отсюда пять механизмов ниже — каждый сверяет
- * текст с фактом, а не с другим текстом.
+ * The first edition audited only the scenario identifiers against test titles. A swarm review
+ * found eleven divergences from the code in a spec one day old, and the check was green on all
+ * of them: a matching identifier says neither that a rule is carried out somewhere nor that the
+ * test checks what was promised. Hence the five mechanisms below — each audits a text against a
+ * fact, not against another text.
  *
- * 1. ПРИВЯЗКА ПРАВИЛА К КОДУ. Живёт в `implementation.md` рядом со спеком:
- *    таблица «правило → `файл:символ`». Сверяется в обе стороны — правило без
- *    строки и строка без правила, — и требует, чтобы файл был, а символ в нём
- *    встречался. Правило шире своей привязки так не напишешь: «потолок суммы на
- *    приёме заявки» не прошло бы, потому что символ живёт в процедуре решения
- *    владельца, а четырём незаведённым механикам скидок привязки не нашлось бы
- *    вовсе. Ключ связи — сам текст правила, поэтому переформулировать его, забыв
- *    поправить привязку, нельзя. Правило без привязки — намерение, и писать его
- *    надо как открытый вопрос закона — `Q-<буква закона>-<номер>`.
+ * 1. THE BINDING OF A RULE TO CODE. Lives in `implementation.md` next to the spec: the table
+ *    "rule → `file:symbol`". Audited both ways — a rule without a line and a line without a
+ *    rule — and it requires the file to be there and the symbol to occur in it. A rule wider
+ *    than its binding cannot be written this way: "the ceiling of the sum at the intake of a
+ *    request" would not have passed, because the symbol lives in the procedure of the owner's
+ *    decision, and four discount mechanics that were never started would have found no binding
+ *    at all. The key of the link is the text of the rule itself, so it cannot be reworded while
+ *    the binding is left unfixed. A rule without a binding is an intention, and it is written as
+ *    an open question of a law — `Q-<law letter>-<number>`.
  *
- * 2. КОНТРАКТ ПРОТИВ ДЕКОРАТОРОВ. Таблица процедур сверяется с тем, что
- *    объявлено в `*.procedure.ts` домена: `@RequiresPermission` / `@PublicProcedure`
- *    и дескриптор метода. В обе стороны — иначе процедура, которую домен
- *    обслуживает, но забыл описать, остаётся видна только в декораторе.
+ * 2. THE CONTRACT AGAINST THE DECORATORS. The table of procedures is audited against what is
+ *    declared in the domain's `*.procedure.ts`: `@RequiresPermission` / `@PublicProcedure` and
+ *    the method descriptor. Both ways — otherwise a procedure the domain serves but forgot to
+ *    describe stays visible only in the decorator.
  *
- * 3. КОД ОТКАЗА С ТОЧКОЙ БРОСКА. Код принимается, только если `Code.X`
- *    действительно бросается где-то в либах домена. Коды выписывались по
- *    замыслу, и на одном пути обещанного `NotFound` не бросал никто.
+ * 3. A REFUSAL CODE WITH A THROW SITE. A code is accepted only if `Code.X` is really thrown
+ *    somewhere in the libs of the domain. The codes were written out by the plan, and on one
+ *    path the promised `NotFound` was thrown by nobody.
  *
- * 4. УРОВЕНЬ ПРИВЯЗКИ. Сценарий, чей тест идёт не тем путём, что пользователь,
- *    или проверяет часть обещанного, помечается `Покрытие: частичное` и уходит в
- *    долги, а не в покрытие. Иначе зелёная сводка означает меньше, чем кажется.
+ * 4. THE LEVEL OF A BINDING. A scenario whose test goes a way other than the user's, or checks
+ *    part of what was promised, is marked `Покрытие: частичное` and goes into the debts, not
+ *    into the coverage. Otherwise a green digest means less than it seems.
  *
- * 5. МЁРТВАЯ ПРИВЯЗКА. Наличия символа мало: объявленный и никем не позванный
- *    символ проходил проверку насквозь. Так пять правил про правку сущности
- *    оказались привязаны к механике общей основы асайда, которую не зовёт ни один
- *    экран. Символ, объявленный в файле и больше нигде не встречающийся, местом
- *    исполнения правила не считается.
+ * 5. A DEAD BINDING. The presence of a symbol is not enough: a symbol declared and called by
+ *    nobody passed the check straight through. That is how five rules about editing a record
+ *    turned out to be bound to a mechanism of the shared aside base that no screen calls. A
+ *    symbol declared in a file and occurring nowhere else does not count as the place where a
+ *    rule is carried out.
  *
- * Каждый механизм живёт своим модулем рядом: привязки и законы — `spec-anchors.mjs`,
- * контракт и коды отказов — `spec-contract.mjs`, сценарии и покрытие — `spec-scenarios.mjs`,
- * общее чтение дерева — `spec-common.mjs`. Здесь остаётся прогон: он обходит домены и
- * складывает найденное в один перечень.
+ * Each mechanism lives in a module of its own alongside: bindings and laws — `spec-anchors.mjs`,
+ * the contract and the refusal codes — `spec-contract.mjs`, scenarios and coverage —
+ * `spec-scenarios.mjs`, the common reading of the tree — `spec-common.mjs`. What is left here is
+ * the run: it walks the domains and puts what it found into one list.
  *
- * Ненулевой код возврата и перечень расхождений.
+ * A non-zero return code and a list of divergences.
  */
 import { readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -56,7 +55,7 @@ import { checkContract, checkRefusalCodes, procedureRootsOf } from './spec-contr
 import { proposedGroups, staleProposed } from './spec-proposed.mjs';
 import { collectReferences, parseScenarios, promisesScreen } from './spec-scenarios.mjs';
 
-// ── прогон ────────────────────────────────────────────────────────────────────
+// ── run ───────────────────────────────────────────────────────────────────────
 
 function checkSpecHeadings(file, text) {
     const headings = new Set(
@@ -67,7 +66,7 @@ function checkSpecHeadings(file, text) {
     );
 
     REQUIRED_HEADINGS.filter((required) => !headings.has(required)).forEach((required) =>
-        report(file, `нет обязательного раздела \`${required}\``)
+        report(file, `no mandatory section \`${required}\``)
     );
 }
 
@@ -76,32 +75,33 @@ const scenarios = [];
 const byId = new Map();
 
 /**
- * Имена законов и путь к каждому. Слоёв два: общий лежит в корне `docs/constitution/`, законы
- * приложения — в `application/` под ним. Имя берётся без каталога, потому что называют закон
- * везде одинаково: ни `law:` в шапке правила, ни `**Законы:**` в спеке не знают, в каком он
- * слое, и переезд между слоями не переписывает ни одну из этих строк.
+ * The names of the laws and the path to each. There are two layers: the common one lies at the
+ * root of `docs/constitution/`, the application laws in `application/` under it. The name is taken
+ * without the directory, because a law is named the same everywhere: neither `law:` in a rule's
+ * front matter nor `**Законы:**` in a spec knows which layer it is in, and a move between layers
+ * rewrites none of those lines.
  *
- * Отсюда требование: имена законов уникальны по всему дереву конституции. Два файла с одним
- * именем в разных слоях назывались бы одной строкой `law:`, и правило досталось бы тому, кого
- * обошли первым.
+ * Hence the requirement: law names are unique across the whole constitution tree. Two files with
+ * one name in different layers would be named by the same `law:` line, and the rule would go to
+ * whichever of them was walked first.
  */
 const laws = new Map();
 for (const file of walk(CONSTITUTION_DIR, (name) => name.endsWith('.md'))) {
     const name = file.slice(file.lastIndexOf('/') + 1, -'.md'.length);
     if (laws.has(name)) {
-        report(file, `закон с таким именем уже есть — \`${laws.get(name)}\`; имена законов уникальны на оба слоя`);
+        report(file, `a law of that name already exists — \`${laws.get(name)}\`; law names are unique across both layers`);
         continue;
     }
     laws.set(name, file);
 }
 
 /**
- * Директории, описывающие предмет: сам домен и его поддомены. Поддомен заводится, когда домен
- * вырос настолько, что читать его целиком ради одной подробности дороже, чем найти её; устроен
- * он так же — три файла и свой префикс сценариев.
+ * The directories that describe a subject: the domain itself and its subdomains. A subdomain is
+ * started when a domain has grown so large that reading it whole for one detail costs more than
+ * finding that detail; it is arranged the same way — three files and a scenario prefix of its own.
  *
- * `proposed/` предметом не является: это договорённость о продукте до кода, и её сценарии живут
- * в нумерации того спека, в который она вольётся.
+ * `proposed/` is not a subject: it is a product agreement written before the code, and its
+ * scenarios live in the numbering of the spec it will merge into.
  */
 function collectSpecDirs(base) {
     const found = [base];
@@ -121,30 +121,30 @@ function collectSpecDirs(base) {
     return found;
 }
 
-/** Префикс сценариев принадлежит одному спеку по всему дереву. */
+/** A scenario prefix belongs to one spec across the whole tree. */
 const prefixOwners = new Map();
 
 for (const domain of domains) {
     const base = `${SPECS_DIR}/${domain}`;
     for (const dir of collectSpecDirs(base)) {
-        // Спек, у которого есть только `proposed/`, ещё не существует: его самого нет, пока
-        // фича не выкачена
+        // A spec that has only `proposed/` does not exist yet: it itself is absent until the
+        // feature is rolled out
         if (exists(`${dir}/proposed`) && !exists(`${dir}/spec.md`)) {
             continue;
         }
-        const what = dir === base ? 'домен' : 'поддомен';
+        const what = dir === base ? 'the domain' : 'the subdomain';
         ['spec.md', 'scenarios.md']
             .filter((name) => !exists(`${dir}/${name}`))
-            .forEach((name) => report(dir, `нет файла \`${name}\` — ${what} описан наполовину`));
+            .forEach((name) => report(dir, `no file \`${name}\` — ${what} is described by half`));
     }
 
-    // Спеки фич из `proposed/` проверяются наравне со спеком домена: они и есть
-    // договорённость, по которой пишется код, а не черновик. Три сверки с кодом к
-    // ним не применяются — кода, с которым сверять, ещё нет
+    // Feature specs from `proposed/` are checked on a par with the domain spec: they are the
+    // product agreement the code is written by, not a draft. The three audits against the code
+    // do not apply to them — there is no code yet to audit against
     for (const specFile of walk(base, (name) => name === 'spec.md')) {
         const text = read(specFile);
         checkSpecHeadings(specFile, text);
-        // Законы спек объявляет и в `proposed/`: договорённость о продукте есть до кода
+        // A spec declares its laws in `proposed/` as well: the product agreement exists before the code
         checkSpecLaws(specFile, text, laws);
         if (specFile.includes('/proposed/')) {
             continue;
@@ -157,11 +157,11 @@ for (const domain of domains) {
 
     const found = walk(base, (name) => name === 'scenarios.md').flatMap(parseScenarios);
 
-    // Префикс принадлежит домену вместе с его поддоменами, а не отдельному каталогу. Домен
-    // делится тогда, когда его спек перерос предел длины, и сценарии переезжают в поддомены
-    // прежними: номер — единственное, чем сценарий связан с заголовком теста, и своя нумерация
-    // у каждого поддомена означала бы пересчёт всех номеров разом. Два префикса в одном спеке
-    // по-прежнему означают, что предмет описан дважды.
+    // The prefix belongs to the domain together with its subdomains, not to a separate directory.
+    // A domain is split when its spec has outgrown the length limit, and the scenarios move into
+    // the subdomains unchanged: the number is the only thing binding a scenario to a test title,
+    // and a numbering of its own for each subdomain would mean recounting every number at once.
+    // Two prefixes in one spec still mean the subject is described twice.
     const prefixesOf = new Map();
     for (const scenario of found) {
         const dir = dirname(scenario.file);
@@ -173,17 +173,17 @@ for (const domain of domains) {
 
     for (const [dir, prefixes] of prefixesOf) {
         if (prefixes.size > 1) {
-            report(dir, `в спеке больше одного префикса сценариев: ${[...prefixes].sort().join(', ')}`);
+            report(dir, `the spec carries more than one scenario prefix: ${[...prefixes].sort().join(', ')}`);
         }
-        // Договорённость о продукте нумеруется вместе со спеком, в который вольётся:
-        // идентификаторы переезд переживают, и занятым префикс от неё не становится
+        // A product agreement is numbered together with the spec it will merge into: the
+        // identifiers survive the move, and the prefix does not become taken because of it
         if (dir.includes('/proposed/')) {
             continue;
         }
         for (const prefix of prefixes) {
             const owner = prefixOwners.get(prefix);
             if (owner && owner !== base) {
-                report(dir, `префикс \`SC-${prefix}\` уже занят — \`${owner}\`; по номеру не видно, чей сценарий`);
+                report(dir, `the prefix \`SC-${prefix}\` is already taken — \`${owner}\`; by the number there is no seeing whose scenario it is`);
                 continue;
             }
             prefixOwners.set(prefix, base);
@@ -193,43 +193,44 @@ for (const domain of domains) {
     scenarios.push(...found);
 }
 
-// Закон о проекте не знает ничего: ни путей, ни имён файлов, ни привязок. Он только
-// объявляет статьи, а всё остальное — дело правил, которые на него ссылаются. Поэтому
-// спутника с привязкой у закона нет и быть не может: файл с путями `libs/...`, лежащий
-// рядом с законом, привязал бы закон к этому проекту.
+// A law knows nothing about the project: no paths, no file names, no bindings. It only declares
+// articles, and everything else is the business of the rules that refer to it. So a law has no
+// sidecar with bindings and cannot have one: a file with `libs/...` paths lying next to a law
+// would bind the law to this project.
 //
-// «Открытые вопросы» отсюда сняты: проверка видела заголовок, а не вопросы под ним, и
-// пустой раздел проходил её так же, как заполненный. Закон, у которого всё решено, писал
-// эту строку ради самой строки.
+// "Open questions" is taken out from here: the check saw the heading and not the questions under
+// it, and an empty section passed it just as a filled one did. A law with everything settled wrote
+// that line for the sake of the line.
 //
-// У раздела два имени: английское у закона пакета, русское у закона, который дерево написало
-// раньше перевода слоя. Оба означают одно, и проверка принимает любое.
+// The section has two names: an English one in a package law, a Russian one in a law the tree
+// wrote before the layer was translated. Both mean one thing, and the check accepts either.
 const LAW_HEADINGS = [['## Articles', '## Статьи']];
 
 for (const file of walk(CONSTITUTION_DIR, (name) => name.endsWith('.md'))) {
     const text = read(file);
     const lines = text.split('\n').map((line) => line.trimEnd());
     LAW_HEADINGS.filter((names) => !names.some((heading) => lines.includes(heading))).forEach((names) =>
-        report(file, `нет раздела \`${names[0]}\` (либо \`${names[1]}\`)`)
+        report(file, `no section \`${names[0]}\` (or \`${names[1]}\`)`)
     );
     if (/`[\w./-]+\.(ts|mjs|js|sh|scss|html|json|proto|conf|yml|md)[:`]/.test(text)) {
-        report(file, 'закон называет файл проекта — путям и привязкам место в правиле, а не здесь');
+        report(file, 'the law names a project file — paths and bindings belong in a rule, not here');
     }
 }
 
-// Правило — скил с `kind: rule` в шапке. Оно и знает о проекте: имена, пути, связи. Привязка
-// его утверждений к коду живёт в `implementation.md` рядом со скилом.
-// У раздела два имени: английское у правила пакета, русское у правила, которое дерево написало
-// до перевода слоя. Берётся то, которое стоит в файле.
+// A rule is a skill with `kind: rule` in its front matter. It is the one that knows about the
+// project: names, paths, links. The binding of its statements to the code lives in
+// `implementation.md` next to the skill.
+// The section has two names: an English one in a package rule, a Russian one in a rule the tree
+// wrote before the layer was translated. The one that stands in the file is taken.
 const RULE_HEADINGS = ['## How the law applies here', '## Как закон применяется здесь'];
 const ruleHeadingOf = (text) => RULE_HEADINGS.find((heading) => text.split('\n').some((line) => line.trimEnd() === heading)) ?? RULE_HEADINGS[0];
-/** Раздел компаньона правила, где лежат привязки; остальные его таблицы называют имена дерева. */
+/** The companion section of a rule where the bindings lie; its other tables name the tree's names. */
 const MAP_HEADING = '## Где исполняются статьи';
 
 /**
- * Шапка скила — первый блок между `---`. Читается только она: паттерн, который учит заводить
- * правило, показывает шапку правила примером в фенсе, и поиск по всему тексту принял бы этот
- * пример за настоящее объявление.
+ * The front matter of a skill — the first block between `---`. Only it is read: the pattern that
+ * teaches how to start a rule shows a rule's front matter as an example in a fence, and a search
+ * over the whole text would take that example for a real declaration.
  */
 function frontMatterOf(text) {
     const found = text.match(/^---\n([\s\S]*?)\n---/);
@@ -237,7 +238,7 @@ function frontMatterOf(text) {
     return found ? found[1] : '';
 }
 
-/** Правила и паттерны, найденные в дереве скилов: по ним считаются обе стороны связи. */
+/** The rules and patterns found in the skills tree: both sides of the link are counted by them. */
 const ruled = new Set();
 const patterned = new Set();
 const nameOf = (head) => (head.match(/^name:\s*(\S+)/m) || [])[1] || '';
@@ -250,9 +251,9 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
     if (kind === 'pattern') {
         const rule = (head.match(/^rule:\s*(\S+)/m) || [])[1];
         if (!rule) {
-            report(file, 'паттерн не объявил правило — допиши `rule:` в шапку');
+            report(file, 'the pattern declared no rule — add `rule:` to the header');
         } else if (!exists(`.claude/skills/${rule}/SKILL.md`)) {
-            report(file, `паттерн объявил правило \`${rule}\`, а скила с таким именем нет`);
+            report(file, `the pattern declared the rule \`${rule}\`, and there is no rule of that name`);
         } else {
             patterned.add(rule);
         }
@@ -265,9 +266,9 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
 
     const law = (head.match(/^law:\s*(\S+)/m) || [])[1];
     if (!law) {
-        report(file, 'правило не объявило закон — допиши `law:` в шапку');
+        report(file, 'the rule declared no law — add `law:` to the header');
     } else if (!laws.has(law)) {
-        report(file, `правило объявило закон \`${law}\`, а закона с таким именем нет ни в одном слое`);
+        report(file, `the rule declared the law \`${law}\`, and there is no law of that name in any layer`);
     } else {
         ruled.add(law);
     }
@@ -275,28 +276,29 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
 
     const name = nameOf(head);
     if (name && name !== file.slice('.claude/skills/'.length, -'/SKILL.md'.length)) {
-        report(file, `имя в шапке (\`${name}\`) не совпадает с каталогом скила`);
+        report(file, `the name in the header (\`${name}\`) does not match the directory of the rule`);
     }
 }
 
-// Предложенный закон правила не требует: договорённость записана раньше кода, привязывать её
-// не к чему, и требование правила заставило бы завести его с якорями в несуществующие места.
-// Признак стоит строкой статуса в самом законе, а не списком исключений рядом с проверкой.
+// A proposed law requires no rule: the agreement is written before the code, there is nothing to
+// bind it to, and requiring a rule would force starting one with anchors into places that do not
+// exist. The sign stands as a status line in the law itself, not as a list of exceptions next to
+// the check.
 const isProposedLaw = (file) => /^\*\*Статус:\*\*\s*предложен/m.test(read(file));
 
-// Обратные стороны связи. Закон без правила читается как договорённость, которую этот проект
-// не применяет; правило без паттерна оставляет готовый код там, где ему не место, — в самом
-// правиле, которое читается при каждой правке.
+// The reverse sides of the link. A law without a rule reads as an agreement this project does not
+// apply; a rule without a pattern leaves ready-made code where it does not belong — in the rule
+// itself, which is read at every edit.
 [...laws]
     .filter(([law, file]) => !ruled.has(law) && !isProposedLaw(file))
-    .forEach(([, file]) => report(file, 'у закона нет ни одного правила — заведи скил с `law:` на него'));
+    .forEach(([, file]) => report(file, 'the law has no rule at all — create one with `law:` pointing at it'));
 
 /**
- * Имена паттернов, которые дерево при раскладке пропустило: ключ `skip` в настройке проекта.
+ * The names of the patterns the tree skipped at layout: the `skip` key in the project settings.
  *
- * Пропуск — выбор дерева, а не забытая работа: правило о процедурах бэкенда ложится и в дерево,
- * где бэкенда нет вовсе. Требовать там паттерн значит требовать завести файл, которому нечего
- * сказать, — и единственным способом позеленеть становится снятие пропуска.
+ * A skip is the tree's choice, not forgotten work: the rule about backend procedures is laid out
+ * into a tree that has no backend at all. Requiring a pattern there means requiring a file with
+ * nothing to say — and the only way to go green becomes lifting the skip.
  */
 const skippedPatterns = () => {
     const path = '.claude/rt-kit.json';
@@ -313,11 +315,13 @@ const skippedPatterns = () => {
 };
 
 /**
- * Раздел «Паттерны» самого правила — единственное место, где связь видна без файла паттерна:
- * пропущенного файла в дереве нет, и поле `rule:` в нём спросить не у кого.
+ * The "Patterns" section of the rule itself is the only place where the link is visible without a
+ * pattern file: a skipped file is not in the tree, and there is nobody to ask for the `rule:`
+ * field in it.
  */
-// Флага `m` здесь нет намеренно: с ним `$` означает конец строки, и раздел кончается на первом
-// же переводе строки — пустым. Начало заголовка поэтому ищется своей парой, а не якорем.
+// The `m` flag is deliberately absent here: with it `$` means the end of a line, and the section
+// ends at the very first newline — empty. So the start of the heading is found by a pair of its
+// own, not by an anchor.
 const PATTERNS_HEADING = /(?:^|\n)## (?:Patterns|Паттерны)\n([\s\S]*?)(?=\n## |$)/;
 const patternsNamedBy = (text) => [...(text.match(PATTERNS_HEADING)?.[1] ?? '').matchAll(/^-\s+`([\w-]+)`/gm)].map(([, found]) => found);
 
@@ -336,7 +340,7 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
         continue;
     }
 
-    report(file, 'у правила нет ни одного паттерна — заведи скил с `rule:` на него');
+    report(file, 'the rule has no pattern at all — create one with `rule:` pointing at it');
 }
 
 checkTracedAnchors();
@@ -344,7 +348,7 @@ checkTracedAnchors();
 for (const scenario of scenarios) {
     const seen = byId.get(scenario.id);
     if (seen) {
-        report(`${scenario.file}:${scenario.line}`, `идентификатор ${scenario.id} уже занят (${seen.file}:${seen.line})`);
+        report(`${scenario.file}:${scenario.line}`, `the identifier ${scenario.id} is already taken (${seen.file}:${seen.line})`);
         continue;
     }
     byId.set(scenario.id, scenario);
@@ -359,7 +363,7 @@ for (const scenario of byId.values()) {
     const places = references.get(scenario.id) ?? [];
     const hasTest = places.length > 0;
     if (scenario.uncovered && hasTest) {
-        report(`${scenario.file}:${scenario.line}`, `${scenario.id} помечен «Не покрыто», но тест на него есть (${places[0].place})`);
+        report(`${scenario.file}:${scenario.line}`, `${scenario.id} is marked «Не покрыто», and there is a test for it (${places[0].place})`);
         continue;
     }
     if (scenario.uncovered) {
@@ -367,21 +371,21 @@ for (const scenario of byId.values()) {
         continue;
     }
     if (!hasTest) {
-        report(`${scenario.file}:${scenario.line}`, `${scenario.id} не упомянут ни в одном тесте и не помечен «Не покрыто»`);
+        report(`${scenario.file}:${scenario.line}`, `${scenario.id} is mentioned in no test and is not marked «Не покрыто»`);
         continue;
     }
     if (scenario.partial) {
         partial.push(scenario);
         continue;
     }
-    // Обещание, данное пользователю, закрывается тестом, идущим его путём. Юнит проверяет
-    // тот же расчёт мимо экрана: он верен и покрытием сценария не является
+    // A promise given to the user is closed by a test that goes the user's way. A unit test checks
+    // the same computation past the screen: it is right and it is not coverage of the scenario
     if (promisesScreen(scenario.promise, scenario.body) && !places.some(({ screen, off }) => screen && !off)) {
         const off = places.some(({ screen }) => screen);
         report(
             `${scenario.file}:${scenario.line}`,
-            `${scenario.id} обещает то, что человек видит, а ${off ? 'сквозной тест на него выключен переменной окружения' : 'проверяет его только юнит'} ` +
-                `(${places[0].place}) — либо тест идёт путём пользователя, либо сценарию нужна отметка «Покрытие: частичное»`
+            `${scenario.id} promises what a person sees, and ${off ? 'the end-to-end test for it is switched off by an environment variable' : 'only a unit test checks it'} ` +
+                `(${places[0].place}) — either the test goes the path of the user, or the scenario needs the mark «Покрытие: частичное»`
         );
         continue;
     }
@@ -390,39 +394,39 @@ for (const scenario of byId.values()) {
 
 for (const [id, places] of references) {
     if (!byId.has(id)) {
-        report(places[0].place, `тест ссылается на ${id}, а такого сценария в \`${SPECS_DIR}\` нет`);
+        report(places[0].place, `the test refers to ${id}, and \`${SPECS_DIR}\` carries no such scenario`);
     }
 }
 
 if (problems.length > 0) {
-    console.error(`check-specs: расхождений ${problems.length}\n`);
+    console.error(`check-specs: divergences ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
-    console.error('\nПравила работы со спеками — скил `spec-driven`.');
+    console.error('\nThe rules of working with specs are `spec-driven`.');
     process.exit(1);
 }
 
 console.log(
-    `check-specs: доменов ${domains.length}, сценариев ${byId.size} — ` +
-        `покрыто ${covered}, частично ${partial.length}, без тестов ${uncovered.length}`
+    `check-specs: domains ${domains.length}, scenarios ${byId.size} — ` +
+        `covered ${covered}, partial ${partial.length}, without tests ${uncovered.length}`
 );
 
 const debts = [...partial, ...uncovered];
 if (debts.length > 0) {
-    console.log('\nДолги — покрытие неполное:');
-    partial.forEach((scenario) => console.log(`  частично  ${scenario.id} — ${scenario.title} (${scenario.file}:${scenario.line})`));
-    uncovered.forEach((scenario) => console.log(`  нет теста ${scenario.id} — ${scenario.title} (${scenario.file}:${scenario.line})`));
+    console.log('\nDebts — the coverage is not complete:');
+    partial.forEach((scenario) => console.log(`  partial   ${scenario.id} — ${scenario.title} (${scenario.file}:${scenario.line})`));
+    uncovered.forEach((scenario) => console.log(`  no test   ${scenario.id} — ${scenario.title} (${scenario.file}:${scenario.line})`));
 }
 
 const proposed = proposedGroups(byId.values(), references);
 
 const ripe = [...proposed].filter(([, group]) => group.total > 0 && group.total === group.ready);
 if (ripe.length > 0) {
-    console.log('\nПора вливать — сценарии закрыты тестами, договорённость ждёт переезда в спек домена:');
-    ripe.forEach(([dir, group]) => console.log(`  ${dir} — сценариев ${group.total}`));
+    console.log('\nTime to merge — the scenarios are closed by tests, the agreement awaits the move into the domain spec:');
+    ripe.forEach(([dir, group]) => console.log(`  ${dir} — scenarios ${group.total}`));
 }
 
 const stale = staleProposed([...proposed.keys()]);
 if (stale.length > 0) {
-    console.log('\nЖдёт дольше месяца — привязка в договорённости стареет вместе с кодом, на который показывает:');
-    stale.forEach((record) => console.log(`  ${record.dir} — ${Math.floor(record.ageDays)} суток без правок`));
+    console.log('\nWaiting longer than a month — the binding in the agreement ages together with the code it points at:');
+    stale.forEach((record) => console.log(`  ${record.dir} — ${Math.floor(record.ageDays)} days without edits`));
 }

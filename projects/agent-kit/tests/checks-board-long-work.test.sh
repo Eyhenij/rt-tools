@@ -70,18 +70,18 @@ BASE='"tasksDir":"docs/tasks","board":{"owner":"probe","repo":"tree","projectId"
 lw_config "{$BASE,\"longWork\":{\"label\":\"долгая\",\"plansDir\":\"docs/plans\"}}"
 export STUB_ISSUES='[{"number":700,"title":"[RT-700] Задача","state":"OPEN","assignees":[{"login":"probe"}],"labels":[{"name":"долгая"}]}]'
 printf '# Линия\n\nОбычная строка про RT-700.\n' > "$LW_TREE/docs/plans/линия.md"
-report "SC-AK-823 — метка без записи в линии названа" "$(lw_says 'помечена как «долгая», а в линиях работ')" 1
+report "SC-AK-823 — метка без записи в линии названа" "$(lw_says 'marked as «долгая», and the work plans')" 1
 
 printf '# Линия\n\n- долгая: RT-700 — тянется несколько заходов\n' > "$LW_TREE/docs/plans/линия.md"
-report "SC-AK-823 — метка с записью расхождением не считается" "$(lw_says 'помечена как «долгая»')" 0
+report "SC-AK-823 — метка с записью расхождением не считается" "$(lw_says 'marked as «долгая»')" 0
 
 # Обратная сторона: линия знает работу долгой, а карточка выглядит работой на один заход.
 export STUB_ISSUES='[{"number":700,"title":"[RT-700] Задача","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]}]'
-report "SC-AK-823 — запись без метки названа" "$(lw_says 'знает её многозаходной, а метки')" 1
+report "SC-AK-823 — запись без метки названа" "$(lw_says 'knows it as multi-session, and the card carries no label')" 1
 
 # Однозаходные задачи линии обратной стороной не судятся: строки без слова метки не читаются.
 printf '# Линия\n\n| Порядок | Задача |\n| --- | --- |\n| 1 | RT-700 |\n' > "$LW_TREE/docs/plans/линия.md"
-report "SC-AK-823 — строка линии без слова метки записью не считается" "$(lw_says 'знает её многозаходной')" 0
+report "SC-AK-823 — строка линии без слова метки записью не считается" "$(lw_says 'knows it as multi-session')" 0
 
 # Дерево, не назвавшее метки, получает молчание, а не отказ.
 lw_config "{$BASE}"
@@ -95,14 +95,14 @@ lw_config "{$BASE,\"deploy\":{\"workflow\":\"deploy.yml\",\"mainBranch\":\"main\
 export STUB_ISSUES='[]'
 export STUB_DEPLOY_OK='{"sha":"aaaaaaaabbbbbbbbccccccccdddddddd","at":"2026-08-30T10:00:00Z"}'
 export STUB_DEPLOY_LAST='{"status":"completed","conclusion":"failure","sha":"eeeeeeeeffffffff11111111222222","at":"2026-08-30T12:00:00Z","url":"https://host/run/9"}'
-report "SC-AK-824 — упавшая выкатка названа своей строкой" "$(lw_says 'выкатка «deploy.yml» упала')" 1
+report "SC-AK-824 — упавшая выкатка названа своей строкой" "$(lw_says 'the rollout «deploy.yml» failed')" 1
 report "SC-AK-824 — и названа ссылкой на прогон" "$(lw_says 'https://host/run/9')" 1
 
 export STUB_DEPLOY_LAST='{"status":"in_progress","conclusion":null,"sha":"eeeeeeeeffffffff11111111222222","at":"2026-08-30T12:00:00Z","url":"https://host/run/9"}'
-report "SC-AK-824 — идущая выкатка расхождением не считается" "$(lw_says 'упала')" 0
+report "SC-AK-824 — идущая выкатка расхождением не считается" "$(lw_says 'failed')" 0
 
 export STUB_DEPLOY_LAST=''
-report "SC-AK-824 — выкатки не было ни разу: об упавшей не говорится" "$(lw_says 'упала')" 0
+report "SC-AK-824 — выкатки не было ни разу: об упавшей не говорится" "$(lw_says 'failed')" 0
 
 rm -rf "$LW_TREE"
 

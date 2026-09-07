@@ -1,26 +1,27 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Write|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/deny-tail.sh, hooks/guard-note.sh
-# Гард затирания надстройки: запись поверх — не то же самое, что правка.
+# Requires: hooks/deny-tail.sh, hooks/guard-note.sh
+# Guard against wiping out an override: writing over is not the same as editing.
 #
-# Надстройка дерева сливается с ресурсом пакета по разделу «## »: раздел, который дерево
-# переписало, замещает пакетный, а остальные приходят из пакета. Файл надстройки поэтому
-# накапливается — разделы в него дописывают разные ветки и разные заходы, — и выглядит он как
-# обычный текст, который можно положить целиком.
+# The tree's override merges with the package resource by `## ` section: a section the tree has
+# rewritten replaces the package one, and the rest come from the package. That is why the override
+# file accumulates — sections are appended to it by different branches and different sessions — and
+# it looks like ordinary text that can be put down whole.
 #
-# Положенный целиком, он уносит с собой все разделы, которых эта правка не касалась. Пропажу не
-# видно ничем: раскладка сходится, проверки зелёные, а пакетный раздел молча вернулся на место
-# того, что дерево о себе говорило. Заметит это тот, кто через месяц удивится, почему правило
-# снова требует чужих имён.
+# Put down whole, it carries away every section this edit did not touch. There is nothing to see the
+# loss by: the layout converges, the checks are green, and the package section has quietly returned
+# to the place of what the tree said about itself. It is noticed by whoever wonders a month later
+# why the rule again demands foreign names.
 #
-# ЧТО СУДИТСЯ. Запись файла целиком поверх существующей непустой надстройки: инструмент записи,
-# перенаправление `>`, `tee` без дописывания, копирование поверх. Дописывание в конец — `>>`,
-# `tee -a` — и правка по месту проходят: они ничего не уносят.
+# WHAT IS JUDGED. Writing a file whole over an existing non-empty override: the writing tool, a `>`
+# redirection, `tee` without appending, a copy over the top. Appending to the end — `>>`, `tee -a` —
+# and an in-place edit pass: they carry nothing away.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет `jq`, битый ввод, чужой инструмент, файла нет, файл пуст —
-# правка РАЗРЕШАЕТСЯ. Сломанный гард не имеет права заклинить работу.
+# FAIL-OPEN: no `jq`, broken input, a foreign tool, no file, an empty file — the edit is ALLOWED. A
+# broken guard has no right to jam work.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is written by the shared deny tail, not by the
+# guard itself.
 RT_GUARD_NAME=override-write-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -41,12 +42,13 @@ deny() {
 
     reason="$1 $(rt_deny_tail "$2")"
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Гард затирания надстройки."}}\n'
+        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The override overwrite guard."}}\n'
     exit 0
 }
 
-# Цели записи поверх, названные командой прямо. Дописывание сюда не входит: `>>` прячется до
-# разбора и обратно не разворачивается, `tee` берётся только без довода о дописывании.
+# The targets of writing over, named by the command outright. Appending is not included here: `>>`
+# is hidden before the parsing and is not unfolded back, and `tee` is taken only without the
+# appending argument.
 rt_overwrite_targets() {
     tr "\"'\`" '   ' \
         | sed -E 's/>>/\
@@ -98,8 +100,8 @@ while IFS= read -r candidate; do
     sections="$(grep -c '^## ' "$candidate" 2>/dev/null || printf '0')"
     resource="${relative#"$overrides_dir"/}"
 
-    deny "BLOCKED by override-write-guard: «${relative}» — надстройка этого дерева, и в ней уже лежит ${lines} строк, разделов «## » — ${sections}. Запись целиком уносит все разделы, которых эта правка не касалась, и на их место молча возвращается пакетный текст ресурса «${resource}»: раскладка после этого сходится, проверки зелёные, а сказанного деревом о себе больше нет. Правь по месту — правкой раздела, а не записью файла." \
-        "новый раздел дописывается в конец: надстройка сливается с пакетным ресурсом по заголовку «## », и пакетный текст замещается только теми разделами, которые дерево назвало"
+    deny "BLOCKED by override-write-guard: «${relative}» is an override of this tree, and it already holds ${lines} lines, sections «## » — ${sections}. A whole-file write carries away every section this edit did not touch, and the package text of the resource «${resource}» silently returns in their place: the layout matches after that, the checks are green, and what the tree said about itself is gone. Edit in place — by an edit of a section, not by a write of the file." \
+        "a new section is appended at the end: the override merges with the package resource by the heading «## », and the package text is replaced only by the sections the tree named"
 done <<EOF
 $candidates
 EOF

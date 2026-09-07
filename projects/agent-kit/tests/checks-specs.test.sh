@@ -45,14 +45,14 @@ spec_dir docs/specs/alpha 'Альфа' AL
 
 # SC-AK-27 — поддомен без обязательного раздела виден сверке
 mkdir -p "$SPEC_TREE/docs/specs/alpha/inner"
-report "SC-AK-27 — пустой поддомен назван" "$(specs_says 'поддомен описан наполовину')" 2
+report "SC-AK-27 — пустой поддомен назван" "$(specs_says 'the subdomain is described by half')" 2
 spec_dir docs/specs/alpha/inner 'Альфа изнутри' IN
-report "SC-AK-27 — описанный поддомен молчит" "$(specs_says 'поддомен описан наполовину')" 0
-report "SC-AK-27 — свой префикс поддомену законен" "$(specs_says 'больше одного префикса')" 0
+report "SC-AK-27 — описанный поддомен молчит" "$(specs_says 'the subdomain is described by half')" 0
+report "SC-AK-27 — свой префикс поддомену законен" "$(specs_says 'more than one scenario prefix')" 0
 
 # SC-AK-29 — префикс, занятый чужим спеком, — расхождение
 spec_dir docs/specs/beta 'Бета' AL
-report "SC-AK-29 — занятый префикс назван" "$(specs_says 'префикс .* уже занят')" 1
+report "SC-AK-29 — занятый префикс назван" "$(specs_says 'the prefix .* is already taken')" 1
 rm -rf "$SPEC_TREE/docs/specs/beta"
 
 # SC-AK-30 — договорённость префикс своего домена не занимает
@@ -62,25 +62,25 @@ spec_body 'Договорённость' AL > "$SPEC_TREE/docs/specs/alpha/propo
 # как ссылка на сценарий, которого здесь нет.
 printf '# Сценарии\n\n### SC-%s-09 — предложенный\n\nДано раз\nКогда два\nТогда три\n' AL \
     > "$SPEC_TREE/docs/specs/alpha/proposed/feature/scenarios.md"
-report "SC-AK-30 — договорённость префикс не занимает" "$(specs_says 'префикс .* уже занят')" 0
+report "SC-AK-30 — договорённость префикс не занимает" "$(specs_says 'the prefix .* is already taken')" 0
 rm -rf "$SPEC_TREE/docs/specs/alpha/proposed"
 
 # SC-AK-28 — предложенный закон правила не требует
 printf '# Закон\n\n**Статус:** действует\n\n## Статьи\n\n- **Раз.** Два.\n' \
     > "$SPEC_TREE/docs/constitution/acting.md"
-report "SC-AK-28 — действующий закон без правила назван" "$(specs_says 'нет ни одного правила')" 1
+report "SC-AK-28 — действующий закон без правила назван" "$(specs_says 'has no rule at all')" 1
 printf '# Закон\n\n**Статус:** предложено\n\n## Статьи\n\n- **Раз.** Два.\n' \
     > "$SPEC_TREE/docs/constitution/acting.md"
-report "SC-AK-28 — предложенный закон правила не требует" "$(specs_says 'нет ни одного правила')" 0
+report "SC-AK-28 — предложенный закон правила не требует" "$(specs_says 'has no rule at all')" 0
 
 # SC-AK-906 — раздел статей закона читается под двумя именами. Закон пакета несёт английское,
 # закон, написанный деревом до перевода слоя, — русское; без обоих проверка называет пропуск.
 printf '# Law\n\n**Статус:** действует\n\n## Articles\n\n- **One.** Two.\n' \
     > "$SPEC_TREE/docs/constitution/acting.md"
-report "SC-AK-906 — английское имя раздела статей принято" "$(specs_says 'нет раздела .*Articles')" 0
+report "SC-AK-906 — английское имя раздела статей принято" "$(specs_says 'no section .*Articles')" 0
 printf '# Закон\n\n**Статус:** действует\n\n## Правила\n\n- **Раз.** Два.\n' \
     > "$SPEC_TREE/docs/constitution/acting.md"
-report "SC-AK-906 — закон без раздела статей под любым именем назван" "$(specs_says 'нет раздела .*Articles.*Статьи')" 1
+report "SC-AK-906 — закон без раздела статей под любым именем назван" "$(specs_says 'no section .*Articles.*Статьи')" 1
 printf '# Закон\n\n**Статус:** предложено\n\n## Статьи\n\n- **Раз.** Два.\n' \
     > "$SPEC_TREE/docs/constitution/acting.md"
 
@@ -103,20 +103,20 @@ companion() {
 }
 
 companion 'с разделом'
-report "SC-AK-56 — строка описательной таблицы привязкой не считается" "$(specs_says 'привязка без пункта: «механизм')" 0
-report "SC-AK-56 — привязка из таблицы привязок читается" "$(specs_says 'правило без привязки: «Раз')" 0
+report "SC-AK-56 — строка описательной таблицы привязкой не считается" "$(specs_says 'a binding without an item: «механизм')" 0
+report "SC-AK-56 — привязка из таблицы привязок читается" "$(specs_says 'a statement without a binding: «Раз')" 0
 
 # SC-AK-57 — компаньон правила без раздела привязок отбивается
 companion 'без раздела'
-report "SC-AK-57 — отсутствие раздела названо" "$(specs_says 'нет раздела .*Где исполняются статьи')" 1
-report "SC-AK-57 — строка описательной таблицы привязкой всё равно не стала" "$(specs_says 'привязка без пункта: «механизм')" 0
+report "SC-AK-57 — отсутствие раздела названо" "$(specs_says 'there is no section .*Где исполняются статьи')" 1
+report "SC-AK-57 — строка описательной таблицы привязкой всё равно не стала" "$(specs_says 'a binding without an item: «механизм')" 0
 
 # SC-AK-58 — у компаньона спека домена раздел не требуется: там таблица одна
 rm -rf "$SPEC_TREE/.claude/skills/acting-rule"
 printf '# Привязка\n\n| Правило | Где исполняется |\n| --- | --- |\n| Не применимо. | `tools/check-specs.mjs:checkSpecHeadings` |\n' \
     > "$SPEC_TREE/docs/specs/alpha/implementation.md"
-report "SC-AK-58 — компаньон спека без раздела читается" "$(specs_says 'нет раздела .*Где исполняются статьи')" 0
-report "SC-AK-58 — его привязка нашлась" "$(specs_says 'правило без привязки')" 0
+report "SC-AK-58 — компаньон спека без раздела читается" "$(specs_says 'there is no section .*Где исполняются статьи')" 0
+report "SC-AK-58 — его привязка нашлась" "$(specs_says 'a statement without a binding')" 0
 
 # --- SC-AK-662…664 — привязка списком ---------------------------------------------------------
 #
@@ -131,19 +131,19 @@ printf -- '---\nname: acting-rule\nkind: rule\nlaw: acting\n---\n\n# Прави�
 # Обе статьи привязаны строками списка.
 printf '# Компаньон\n\n## Где исполняются статьи\n\n- **Раз.** — `tools/check-specs.mjs:checkSpecHeadings`\n- **Три.** — `tools/spec-common.mjs:REQUIRED_HEADINGS`\n' \
     > "$SPEC_TREE/.claude/skills/acting-rule/implementation.md"
-report "SC-AK-662 — привязка строкой списка читается" "$(specs_says 'правило без привязки')" 0
-report "SC-AK-662 — лишней привязки при этом не появилось" "$(specs_says 'привязка без пункта')" 0
+report "SC-AK-662 — привязка строкой списка читается" "$(specs_says 'a statement without a binding')" 0
+report "SC-AK-662 — лишней привязки при этом не появилось" "$(specs_says 'a binding without an item')" 0
 
 # Смешанный компаньон: одна статья таблицей, другая списком. Перевод идёт файл за файлом, и
 # половина дерева какое-то время стоит в прежней форме.
 printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `tools/check-specs.mjs:checkSpecHeadings` |\n\n- **Три.** — `tools/spec-common.mjs:REQUIRED_HEADINGS`\n' \
     > "$SPEC_TREE/.claude/skills/acting-rule/implementation.md"
-report "SC-AK-663 — смешанный компаньон читается целиком" "$(specs_says 'правило без привязки')" 0
+report "SC-AK-663 — смешанный компаньон читается целиком" "$(specs_says 'a statement without a binding')" 0
 
 # Строка списка без якоря судится как пустая клетка таблицы: связь есть, адреса нет.
 printf '# Компаньон\n\n## Где исполняются статьи\n\n- **Раз.** — просто слова\n- **Три.** — `tools/spec-common.mjs:REQUIRED_HEADINGS`\n' \
     > "$SPEC_TREE/.claude/skills/acting-rule/implementation.md"
-report "SC-AK-664 — строка списка без якоря названа пустой привязкой" "$(specs_says 'у правила «Раз.*пустая привязка')" 1
+report "SC-AK-664 — строка списка без якоря названа пустой привязкой" "$(specs_says 'the statement «Раз.*has an empty binding')" 1
 rm -rf "$SPEC_TREE/.claude/skills/acting-rule"
 
 # --- SC-AK-612 — приватное имя в якоре ------------------------------------------------------
@@ -156,7 +156,7 @@ printf -- '---\nname: acting-rule\nkind: rule\nlaw: acting\n---\n\n# Прави�
     > "$SPEC_TREE/.claude/skills/acting-rule/SKILL.md"
 printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `tools/check-specs.mjs:#hidden` |\n' \
     > "$SPEC_TREE/.claude/skills/acting-rule/implementation.md"
-report "SC-AK-612 — якорь с решёткой пустым не считается" "$(specs_says 'правило без привязки: «Раз')" 0
+report "SC-AK-612 — якорь с решёткой пустым не считается" "$(specs_says 'a statement without a binding: «Раз')" 0
 rm -rf "$SPEC_TREE/.claude/skills/acting-rule"
 
 # --- SC-AK-242 и SC-AK-243 — вердикт вместо адреса ------------------------------------------
@@ -176,10 +176,10 @@ verdict_row() {
 }
 
 verdict_row '**Не исполняется.** Службы, о которой говорит статья, дерево не держит вовсе.'
-report "SC-AK-242 — вердикт с причиной принят" "$(specs_says 'пустая привязка')" 0
+report "SC-AK-242 — вердикт с причиной принят" "$(specs_says 'has an empty binding')" 0
 
 verdict_row '**Не исполняется.**'
-report "SC-AK-243 — вердикт без причины не принят" "$(specs_says 'пустая привязка')" 1
+report "SC-AK-243 — вердикт без причины не принят" "$(specs_says 'has an empty binding')" 1
 
 rm -rf "$SPEC_TREE/.claude/skills/verdict-rule"
 
@@ -194,10 +194,10 @@ printf -- '---\nname: skipped-rule\nkind: rule\nlaw: acting\n---\n\n# Прави
     > "$SPEC_TREE/.claude/skills/skipped-rule/SKILL.md"
 printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `tools/check-specs.mjs:checkSpecHeadings` |\n' \
     > "$SPEC_TREE/.claude/skills/skipped-rule/implementation.md"
-report "SC-AK-241 — правило без паттерна названо" "$(specs_says 'нет ни одного паттерна')" 1
+report "SC-AK-241 — правило без паттерна названо" "$(specs_says 'has no pattern at all')" 1
 
 printf '{ "skip": ["patterns/skipped-rule-do.md"] }\n' > "$SPEC_TREE/.claude/rt-kit.json"
-report "SC-AK-241 — пропущенный паттерн правило не краснит" "$(specs_says 'нет ни одного паттерна')" 0
+report "SC-AK-241 — пропущенный паттерн правило не краснит" "$(specs_says 'has no pattern at all')" 0
 
 rm -rf "$SPEC_TREE/.claude/skills/skipped-rule" "$SPEC_TREE/.claude/rt-kit.json"
 # --- SC-AK-238…240 — символом якоря считается любая буква ------------------------------------
@@ -217,26 +217,26 @@ printf '# Роль\n\nНаходка называет два места досл
 printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Три. | `.claude/skills/reading-rule/role.md:дословно` |\n' \
     > "$SPEC_TREE/.claude/skills/reading-rule/implementation.md"
 report "SC-AK-238, SC-AK-239 — якорь на русском слове читается как привязка" \
-    "$(specs_says 'у правила «Три')" 0
+    "$(specs_says 'the statement «Три')" 0
 report "SC-AK-238 — правило с таким якорем непривязанным не считается" \
-    "$(specs_says 'правило без привязки: «Три')" 0
+    "$(specs_says 'a statement without a binding: «Три')" 0
 # Слово в файле стоит первой же строкой: жалоба на его отсутствие означает, что искали
 # границами `\b`, которые кириллицу не видят.
 report "SC-AK-238 — слово якоря в файле находится" \
-    "$(specs_says 'привязка не сходится')" 0
+    "$(specs_says 'the binding does not match')" 0
 
 # Символ с дефисом: разбор символа не должен ронять сверку целиком — под строгим флагом лишнее
 # экранирование дефиса само по себе отказ, и падает при этом весь прогон, а не одна строка.
 printf '# Роль\n\nПравило task-flow ведёт ход работы.\n' > "$SPEC_TREE/.claude/skills/reading-rule/role.md"
 printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Три. | `.claude/skills/reading-rule/role.md:task-flow` |\n' \
     > "$SPEC_TREE/.claude/skills/reading-rule/implementation.md"
-report "SC-AK-238 — символ с дефисом сверку не роняет" "$(specs_says 'у правила «Три')" 0
-report "SC-AK-238 — символ с дефисом в файле находится" "$(specs_says 'привязка не сходится')" 0
+report "SC-AK-238 — символ с дефисом сверку не роняет" "$(specs_says 'the statement «Три')" 0
+report "SC-AK-238 — символ с дефисом в файле находится" "$(specs_says 'the binding does not match')" 0
 
 # SC-AK-240 — путь остаётся латинским: он адрес в дереве, а не слово текста.
 printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Три. | `.claude/skills/reading-rule/роль.md:дословно` |\n' \
     > "$SPEC_TREE/.claude/skills/reading-rule/implementation.md"
-report "SC-AK-240 — путь не латиницей парой не считается" "$(specs_says 'у правила «Три')" 1
+report "SC-AK-240 — путь не латиницей парой не считается" "$(specs_says 'the statement «Три')" 1
 
 rm -rf "$SPEC_TREE/.claude/skills/reading-rule"
 
@@ -248,7 +248,7 @@ rm -rf "$SPEC_TREE/.claude/skills/reading-rule"
 
 printf '# Сценарии\n\n### SC-%s-1 — однозначный\n\nДано раз\nКогда два\nТогда три\n' AL \
     > "$SPEC_TREE/docs/specs/alpha/scenarios.md"
-one_digit="$(printf 'SC-%s-1 не упомянут' AL)"
+one_digit="$(printf 'SC-%s-1 is mentioned in no test' AL)"
 report "SC-AK-65 — сценарий с однозначным номером виден сверке" "$(specs_says "$one_digit")" 1
 
 mkdir -p "$SPEC_TREE/libs/alpha"
@@ -297,7 +297,7 @@ screen_scenario() {
         > "$SPEC_TREE/libs/screen/screen.spec.ts"
 }
 
-screen_promise="$(printf 'SC-%s-01 обещает то, что человек видит' SR)"
+screen_promise="$(printf 'SC-%s-01 promises what a person sees' SR)"
 
 screen_scenario 'Дано гость открыл список
 Когда приходит отказ
@@ -329,9 +329,9 @@ printf '<div class="rt-badge">\n    <span>метка</span>\n</div>\n' > "$SPEC_
 printf '.rt-badge {\n    display: flex;\n}\n' > "$SPEC_TREE/.claude/skills/anchor-rule/view.scss"
 printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `.claude/skills/anchor-rule/view.scss:.rt-badge` |\n| Три. | `.claude/skills/anchor-rule/view.html:1` |\n' \
     > "$SPEC_TREE/.claude/skills/anchor-rule/implementation.md"
-report "SC-AK-867 — якорь именем класса пустым не считается" "$(specs_says 'правило без привязки: «Раз')" 0
-report "SC-AK-867 — якорь номером строки пустым не считается" "$(specs_says 'правило без привязки: «Три')" 0
-report "SC-AK-867 — обе привязки сходятся" "$(specs_says 'привязка не сходится')" 0
+report "SC-AK-867 — якорь именем класса пустым не считается" "$(specs_says 'a statement without a binding: «Раз')" 0
+report "SC-AK-867 — якорь номером строки пустым не считается" "$(specs_says 'a statement without a binding: «Три')" 0
+report "SC-AK-867 — обе привязки сходятся" "$(specs_says 'the binding does not match')" 0
 rm -rf "$SPEC_TREE/.claude/skills/anchor-rule"
 
 # --- SC-AK-807, SC-AK-808 — договорённость, ждущая своего домена дольше месяца ---------------
@@ -395,15 +395,15 @@ spec_dir_at docs/specs/old 'Старый' OL
 age_proposed old ancient OL
 age_commit '2026-01-01T12:00:00 +0000' 'договорённость лежит с зимы'
 
-report "SC-AK-807 — договорённость старше месяца названа" "$(age_says 'Ждёт дольше месяца')" 1
-report "SC-AK-807 — назван её каталог" "$(age_says 'docs/specs/old/proposed/ancient — [0-9]+ суток')" 1
+report "SC-AK-807 — договорённость старше месяца названа" "$(age_says 'Waiting longer than a month')" 1
+report "SC-AK-807 — назван её каталог" "$(age_says 'docs/specs/old/proposed/ancient — [0-9]+ days')" 1
 
 spec_dir_at docs/specs/fresh 'Свежий' FR
 age_proposed fresh recent FR
 age_commit "$(date -u '+%Y-%m-%dT%H:%M:%S +0000')" 'свежая договорённость'
 
-report "SC-AK-808 — свежая договорённость в раздел не попадает" "$(age_says 'docs/specs/fresh/proposed/recent — [0-9]+ суток')" 0
-report "SC-AK-808 — старая по-прежнему названа" "$(age_says 'docs/specs/old/proposed/ancient — [0-9]+ суток')" 1
+report "SC-AK-808 — свежая договорённость в раздел не попадает" "$(age_says 'docs/specs/fresh/proposed/recent — [0-9]+ days')" 0
+report "SC-AK-808 — старая по-прежнему названа" "$(age_says 'docs/specs/old/proposed/ancient — [0-9]+ days')" 1
 
 rm -rf "$AGE_TREE"
 
@@ -422,13 +422,13 @@ rules_of() {
 
 # SC-AK-889 — подзаголовок внутри раздела список правил не кончает
 rules_of gamma 'Гамма' GA '### Первая группа\n\n- **Раз.** Два.\n\n### Вторая группа\n\n- **Три.** Четыре.\n'
-report "SC-AK-889 — раздел с подзаголовками не назван пустым" "$(specs_says 'gamma/spec.md: в разделе .*Правила.* нет ни одного пункта')" 0
-report "SC-AK-889 — пункт после подзаголовка прочитан" "$(specs_says 'gamma/implementation.md: правило без привязки: «Три')" 1
+report "SC-AK-889 — раздел с подзаголовками не назван пустым" "$(specs_says 'gamma/spec.md: the section .*Правила.* carries no item at all')" 0
+report "SC-AK-889 — пункт после подзаголовка прочитан" "$(specs_says 'gamma/implementation.md: a statement without a binding: «Три')" 1
 
 # SC-AK-890 — таблица кончает список, и отказ называет, что стоит вместо пунктов
 rules_of delta 'Дельта' DE '| Поддомен | О чём |\n| --- | --- |\n| [Раз](raz/spec.md) | два |\n\n- **Раз.** Два.\n'
-report "SC-AK-890 — таблица перед списком названа в отказе" "$(specs_says 'delta/spec.md: в разделе .*Правила.* нет ни одного пункта, список кончился на строке .\| Поддомен')" 1
-report "SC-AK-890 — раздел без пунктов называет первую строку" "$(specs_says 'alpha/spec.md: в разделе .*Правила.* нет ни одного пункта, первым стоит .Не применимо')" 1
+report "SC-AK-890 — таблица перед списком названа в отказе" "$(specs_says 'delta/spec.md: the section .*Правила.* carries no item at all, the list ended at the line .\| Поддомен')" 1
+report "SC-AK-890 — раздел без пунктов называет первую строку" "$(specs_says 'alpha/spec.md: the section .*Правила.* carries no item at all, the first one is .Не применимо')" 1
 
 rm -rf "$SPEC_TREE"
 

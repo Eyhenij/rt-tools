@@ -1,40 +1,40 @@
 #!/usr/bin/env node
 /**
- * Проверка того, что образец не написан второй раз.
+ * A check that a pattern is not written a second time.
  *
- * Повтор заводится молча: домен пишет своё перечисление статусов, потому что
- * чужое лежит в либе, которая ему не видна, — и дальше два набора расходятся
- * по одному значению за раз. Ни линт, ни сборка, ни тесты этого не видят:
- * каждая копия сама по себе исправна.
+ * A duplicate appears silently: a domain writes its own enumeration of statuses because
+ * someone else's lies in a lib it cannot see — and from then on the two sets drift apart
+ * one value at a time. Neither lint, nor the build, nor the tests see this: each copy
+ * on its own is sound.
  *
- * Ловится двумя признаками:
+ * It is caught by these signs:
  *
- *   1. Одно имя экспортировано из двух разных либ. Имя совпадает не случайно —
- *      его выбирали под одно и то же понятие.
- *   2. Два перечисления с одинаковым набором членов под разными именами.
- *      Имя разошлось, а понятие осталось одно.
- *   3. Настройка под одним именем объявлена в двух либах. Экспорта у неё нет,
- *      поэтому первый признак её не видел: `DEFAULT_PAGE_SIZE` разошёлся на
- *      шесть объявлений, и одно из них успело стать `25` против `20` у
- *      остальных. Считаются только имена вида `SCREAMING_SNAKE_CASE` — форма,
- *      которой в этом коде записывают настройки, а не местные переменные.
- *   4. Перечисление, повторяющее набор из внешнего пакета. Наборы `@rt-tools/utils`
- *      читаются из его `.d.ts` наравне с либами: копия оператора условия и
- *      направления порядка лежала на бэкенде дословно, а признак 2 сравнивал
- *      только либы между собой и до `node_modules` не доходил.
+ *   1. One name exported from two different libs. The name is not the same by chance —
+ *      it was chosen for one and the same notion.
+ *   2. Two enumerations with the same set of members under different names.
+ *      The name drifted, the notion stayed one.
+ *   3. A setting under one name declared in two libs. It has no export, so the first
+ *      sign did not see it: `DEFAULT_PAGE_SIZE` drifted into six declarations, and one
+ *      of them had already become `25` against `20` in the others. Only names of the
+ *      form `SCREAMING_SNAKE_CASE` count — the form in which this code writes settings,
+ *      not local variables.
+ *   4. An enumeration repeating a set from an external package. The sets of `@rt-tools/utils`
+ *      are read from its `.d.ts` alongside the libs: a copy of the condition operator and of
+ *      the sort direction lay on the backend verbatim, while sign 2 compared only libs
+ *      with each other and never reached `node_modules`.
  *
- * Сравнение членов идёт по нижнему регистру без подчёркиваний, поэтому
- * `NOT_EQUALS` контракта и `NotEquals` приложения считаются одним членом.
+ * Members are compared in lower case without underscores, so `NOT_EQUALS` of the contract
+ * and `NotEquals` of the application count as one member.
  *
- * Ключ повтора несёт и список либ: без него третья копия уже известного имени
- * проходила молча — состав менялся, а ключ оставался прежним.
+ * The duplicate key carries the list of libs too: without it a third copy of an already
+ * known name passed silently — the set changed, the key stayed the same.
  *
- * Накопленное к моменту заведения проверки лежит в tools/dupes-allowlist.json
- * и отказом не считается: гейт падает на НОВОМ повторе, а старое остаётся
- * видимым числом в сводке. Разбор долга идёт отдельными задачами — иначе
- * проверку пришлось бы заводить вместе с правкой сорока мест.
+ * What had piled up by the time the check was created lies in tools/dupes-allowlist.json
+ * and is not counted as a refusal: the gate fails on a NEW duplicate, and the old ones stay
+ * visible as a number in the summary. The debt is handled by separate tasks — otherwise
+ * the check would have to be created together with an edit of forty places.
  *
- * Ненулевой код возврата и перечень расхождений.
+ * A non-zero exit code and the list of discrepancies.
  */
 import { createRequire } from 'node:module';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
@@ -44,17 +44,18 @@ import { allowlistOf, baselineOf, CONFIG, ROOT, parseAllowlist } from './rt-kit-
 
 const ALLOWLIST = allowlistOf('dupes');
 /**
- * Где ищутся повторы. Корни берутся из настройки: зашитое имя молча не находило ни одного файла
- * у дерева, которое держит код иначе, и проверка зеленела на пустом обходе.
+ * Where duplicates are looked for. The roots come from the settings: a hard-coded name silently
+ * found not a single file in a tree that keeps its code differently, and the check went green
+ * on an empty walk.
  */
 const SOURCE_ROOTS = CONFIG.sourceRoots;
 /**
- * `gen` и `generated` — контракт и клиент Prisma: их объявления и есть источник, с
- * которым сверяются остальные. Считать их копией значит требовать правки того, что
- * пересобирается генератором.
+ * `gen` and `generated` are the contract and the Prisma client: their declarations are the
+ * source the rest is compared against. Counting them as a copy would mean demanding an edit
+ * of what the generator rebuilds.
  */
 const SKIPPED_DIRS = CONFIG.skippedDirs;
-/** Минимум членов, при котором совпадение набора перечислений о чём-то говорит */
+/** The minimum of members at which a matching enumeration set says something */
 const MIN_ENUM_MEMBERS = 2;
 
 const allowlist = parseAllowlist('dupes');
@@ -78,15 +79,17 @@ function collectFiles(dir) {
 }
 
 /**
- * Каталог объявлений внешнего пакета — разрешением модуля, а не путём в `node_modules`.
+ * The declarations directory of an external package — by module resolution, not by a path
+ * in `node_modules`.
  *
- * Точек разрешения несколько: корень дерева и каждый его подпроект, объявивший этот пакет
- * зависимостью. Пакет подпроекта в корне не лежит вовсе, и разрешение от корня его не находит;
- * менеджер при этом вправе держать рядом несколько версий сразу, и обход хранилища по образцу
- * пути выбрал бы ту, которую никто не ставит.
+ * There are several resolution points: the root of the tree and each of its subprojects that
+ * declared this package as a dependency. A subproject's package does not lie in the root at all,
+ * and resolution from the root does not find it; the package manager meanwhile may keep several
+ * versions side by side, and walking the store by a path pattern would pick the one nobody
+ * installs.
  *
- * Не нашлось — `null`, и внешние наборы просто не считаются: дерево без этого пакета должно
- * получать сверку своих повторов, а не отказ чтения каталога.
+ * Not found — `null`, and external sets are simply not counted: a tree without this package
+ * must get an audit of its own duplicates, not a refusal to read the directory.
  */
 function resolveExternalDir({ package: name, dir }) {
     for (const from of [ROOT, ...holdersOf(name)]) {
@@ -97,14 +100,14 @@ function resolveExternalDir({ package: name, dir }) {
                 return found;
             }
         } catch {
-            // Эта точка пакета не видит — пробуется следующая.
+            // This point does not see the package — the next one is tried.
         }
     }
 
     return null;
 }
 
-/** Подпроекты, объявившие пакет зависимостью: их манифесты и есть точки разрешения. */
+/** Subprojects that declared the package as a dependency: their manifests are the resolution points. */
 function holdersOf(name) {
     const found = [];
     for (const root of SOURCE_ROOTS) {
@@ -127,7 +130,7 @@ function holdersOf(name) {
     return found;
 }
 
-/** Корень либы: путь до каталога `src`. Повтор внутри одной либы повтором не считается */
+/** The root of a lib: the path up to the `src` directory. A duplicate inside one lib is not a duplicate */
 function libOf(path) {
     const parts = path.split('/');
     const at = parts.indexOf('src');
@@ -138,58 +141,59 @@ const EXPORT_RE = /^export (?:const|function|interface|enum|type|class|abstract 
 const ENUM_RE = /export (?:declare )?enum (\w+)\s*\{([^}]*)\}/g;
 const MEMBER_RE = /(\w+)\s*=/g;
 /**
- * Настройка-число: имя в верхнем регистре и значение из одних чисел — предел,
- * размер, длительность. Строки и таблицы соответствий сюда не подпадают
- * намеренно: `LOG_CONTEXT` объявлен в восьми либах, и у каждой он свой по смыслу,
- * а совпадение имени числа означает совпадение понятия.
+ * A numeric setting: an upper-case name and a value made of digits only — a limit,
+ * a size, a duration. Strings and lookup tables are deliberately left out:
+ * `LOG_CONTEXT` is declared in eight libs, and in each one it means its own thing,
+ * while a matching name of a number means a matching notion.
  */
 const SETTING_RE = /^(?:export )?const ([A-Z][A-Z0-9_]*)\s*(?::\s*number\s*)?=\s*\d[\d\s*+\-/_.]*;/gm;
 /**
- * Настройка-строка и настройка-список. Сверяются по значению, а не по имени: одно имя
- * значит здесь разное — `BEM_BLOCK` объявлен в тридцати шести либах, `LOG_CONTEXT` в
- * десяти, и у каждой либы своё. Одинаковое значение под разными именами — наоборот,
- * почти всегда одно понятие, записанное дважды: имя события правки, код отказа о повторе,
- * набор принимаемых типов вложений.
+ * A string setting and a list setting. They are compared by value, not by name: one name
+ * means different things here — `BEM_BLOCK` is declared in thirty-six libs, `LOG_CONTEXT`
+ * in ten, and each lib has its own. The same value under different names is the opposite:
+ * almost always one notion written twice — the name of an edit event, the refusal code
+ * about a duplicate, the set of accepted attachment types.
  */
 const STRING_SETTING_RE =
     /^(?:export )?const ([A-Z][A-Z0-9_]*)\s*(?::[^=]*)?=\s*('[^']*'|"[^"]*"|`[^`]*`|\[[^\]]*\])\s*(?:as const\s*)?;/gm;
-/** Таблица соответствий: перевод статуса в контракт, колонки в поля сортировки, ключи подписей */
+/** A lookup table: status into contract, columns into sort fields, label keys */
 const TABLE_RE = /^(?:export )?const ([A-Z][A-Z0-9_]*)\s*(?::[^=]*)?=\s*\{([^}]*?)\}\s*(?:as const\s*)?;/gms;
 const PAIR_RE = /([\w'"[\].]+)\s*:\s*([^,\n]+)/g;
 /**
- * Значение короче этого о совпадении понятий не говорит: пустая строка, дефис и `id`
- * совпадают у всех подряд.
+ * A value shorter than this says nothing about matching notions: an empty string, a hyphen
+ * and `id` match everywhere.
  */
 const MIN_VALUE_LENGTH = 4;
-/** Минимум пар, при котором совпадение таблиц о чём-то говорит */
+/** The minimum of pairs at which matching tables say something */
 const MIN_TABLE_PAIRS = 2;
 /**
- * Доля совпавших пар, начиная с которой таблицы считаются одной. Полное равенство слепо ровно
- * там, где копия разошлась с оригиналом на строку, — а это и есть тот случай, ради которого
- * копии сводят. Порог высокий: таблицы одного домена делят по две-три пары без всякого родства.
+ * The share of matching pairs from which tables count as one. Full equality is blind exactly
+ * where a copy drifted from the original by one line — and that is the very case for which
+ * copies are merged. The threshold is high: tables of one domain share two or three pairs
+ * without any kinship.
  */
 const MIN_TABLE_SHARE = 0.8;
 
 /**
- * Пакеты, чьи наборы считаются наравне с либами. Своё перечисление под уже
- * объявленный там набор — такая же копия, как и между двумя либами.
+ * Packages whose sets count alongside the libs. An enumeration of one's own under a set
+ * already declared there is the same copy as one between two libs.
  *
- * Имя пакета и каталог внутри него объявляет дерево; путь в `node_modules` здесь не
- * зашивается. Пакет, объявленный зависимостью подпроекта, в корневом `node_modules` не лежит
- * вовсе — менеджер держит его в своём хранилище, — и проверка кончалась отказом чтения
- * каталога, не дойдя до сверки ни разу.
+ * The package name and the directory inside it are declared by the tree; the path in
+ * `node_modules` is not hard-coded here. A package declared as a subproject dependency does not
+ * lie in the root `node_modules` at all — the package manager keeps it in its store — and the
+ * check ended with a refusal to read the directory without reaching the audit even once.
  */
 const EXTERNAL_ENUM_SOURCES = CONFIG.externalEnums ?? [];
 
 const exportsByName = new Map();
 const settingsByName = new Map();
 const enums = [];
-/** Строковые настройки и списки под ключом значения: `значение → [{ имя, либа }]` */
+/** String settings and lists keyed by value: `value → [{ name, lib }]` */
 const namesByValue = new Map();
-/** Таблицы соответствий: набор пар под ключом, имя и либа рядом */
+/** Lookup tables: the set of pairs under a key, with the name and the lib next to it */
 const tables = [];
 
-/** Значение без кавычек и пробелов; список — отсортированным набором членов */
+/** The value without quotes and spaces; a list — as a sorted set of members */
 function valueOf(raw) {
     if (raw.startsWith('[')) {
         const items = [...raw.matchAll(/'([^']*)'|"([^"]*)"|`([^`]*)`/g)].map((item) => item[1] ?? item[2] ?? item[3]);
@@ -269,7 +273,7 @@ for (const [name, libs] of [...exportsByName.entries()].sort()) {
         continue;
     }
     const where = [...libs].sort().join(', ');
-    findings.push({ key: `export ${name} @ ${where}`, text: `${name} экспортируется из ${libs.size} либ: ${where}` });
+    findings.push({ key: `export ${name} @ ${where}`, text: `${name} is exported from ${libs.size} libs: ${where}` });
 }
 
 for (const [name, libs] of [...settingsByName.entries()].sort()) {
@@ -277,7 +281,7 @@ for (const [name, libs] of [...settingsByName.entries()].sort()) {
         continue;
     }
     const where = [...libs].sort().join(', ');
-    findings.push({ key: `setting ${name} @ ${where}`, text: `${name} объявлена в ${libs.size} либах: ${where}` });
+    findings.push({ key: `setting ${name} @ ${where}`, text: `${name} is declared in ${libs.size} libs: ${where}` });
 }
 
 for (const [value, places] of [...namesByValue.entries()].sort()) {
@@ -289,12 +293,12 @@ for (const [value, places] of [...namesByValue.entries()].sort()) {
         .map((place) => `${place.name} @ ${place.lib}`)
         .sort()
         .join(' ~ ');
-    findings.push({ key: `value ${value} @ ${where}`, text: `значение ${value} объявлено в ${libs.size} либах: ${where}` });
+    findings.push({ key: `value ${value} @ ${where}`, text: `the value ${value} is declared in ${libs.size} libs: ${where}` });
 }
 
 /**
- * Доля совпавших пар считается от большей таблицы: от меньшей таблица из двух пар, целиком
- * лежащая внутри таблицы из двадцати, читалась бы полной копией.
+ * The share of matching pairs is counted from the larger table: from the smaller one, a table
+ * of two pairs lying entirely inside a table of twenty would read as a full copy.
  */
 const tableOverlap = (first, second) => {
     let same = 0;
@@ -320,8 +324,8 @@ for (let i = 0; i < tables.length; i++) {
         }
         const key = `table ${[`${first.name} @ ${first.lib}`, `${second.name} @ ${second.lib}`].sort().join(' ~ ')}`;
         const apart = larger - same;
-        const tail = apart === 0 ? 'одна таблица соответствий' : `одна таблица соответствий, разошедшаяся на ${apart} из ${larger} пар`;
-        findings.push({ key, text: `${first.name} (${first.lib}) и ${second.name} (${second.lib}) — ${tail}` });
+        const tail = apart === 0 ? 'one table of matches' : `one table of matches, diverged on ${apart} of ${larger} pairs`;
+        findings.push({ key, text: `${first.name} (${first.lib}) and ${second.name} (${second.lib}) — ${tail}` });
     }
 }
 
@@ -337,7 +341,7 @@ for (let i = 0; i < enums.length; i++) {
         const key = `enum ${[`${first.name} @ ${first.lib}`, `${second.name} @ ${second.lib}`].sort().join(' ~ ')}`;
         findings.push({
             key,
-            text: `${first.name} (${first.lib}) и ${second.name} (${second.lib}) — один набор членов: ${[...first.members].sort().join(', ')}`,
+            text: `${first.name} (${first.lib}) and ${second.name} (${second.lib}) — one set of members: ${[...first.members].sort().join(', ')}`,
         });
     }
 }
@@ -352,13 +356,13 @@ if (process.argv.includes('--baseline')) {
 
 const problems = [
     ...fresh.map((finding) => finding.text),
-    ...staleKeys.map((key) => `${key}: значится в ${ALLOWLIST}, но повтора больше нет — строку убрать`),
+    ...staleKeys.map((key) => `${key}: listed in ${ALLOWLIST}, and the duplication is gone — remove the line`),
 ];
 
 if (problems.length > 0) {
-    console.error(`check-dupes: расхождений ${problems.length}\n`);
+    console.error(`check-dupes: divergences ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
     process.exit(1);
 }
 
-console.log(`check-dupes: повторов ${findings.length}, из них принято ${findings.length - debt.size}, долг ${debt.size} — новых нет`);
+console.log(`check-dupes: duplications ${findings.length}, of them accepted ${findings.length - debt.size}, debt ${debt.size} — no new ones`);

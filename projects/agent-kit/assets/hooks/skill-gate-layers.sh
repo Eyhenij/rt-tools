@@ -1,30 +1,30 @@
 #!/usr/bin/env bash
-# Слои гейта правил: требования, которые приходят ПОВЕРХ доменного.
+# Layers of the rules gate: requirements that come ON TOP of the domain one.
 #
-# Доменное правило выбирается один раз по пути файла — у правки один предмет, и правило под него
-# одно. Слоёв поверх него полтора десятка: доступ к среде исполнения виден только в тексте
-# правки, наблюдаемость приходит вместе с доменом, а не вместо него, проза и ведение работы
-# судят тот же файл вторым признаком. Вместе они не помещаются в карту гейта, которую читают
-# целиком, — поэтому лежат здесь.
+# The domain rule is chosen once by the file path — an edit has one subject, and there is one
+# rule for it. There are a dozen and a half layers on top of it: access to the runtime is visible
+# only in the text of the edit, observability comes together with the domain rather than instead
+# of it, prose and work conduct judge the same file by a second sign. Together they do not fit
+# into the gate map, which is read whole — so they live here.
 #
-# Подключается из `skill-gate.sh` в его же оболочке: читает `$input`, `$target` и `$req` и
-# дописывает имена правил в `$req`. Отдельным процессом слои возвращали бы то же самое через
-# диск.
+# Sourced from `skill-gate.sh` in its own shell: it reads `$input`, `$target` and `$req` and
+# appends rule names to `$req`. As a separate process the layers would return the same thing
+# through the disk.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нечем разобрать вход — слой молчит. Разбор входа здесь побочная
-# работа, и её поломка не имеет права остановить правку.
+# FAIL-OPEN: nothing to parse the input with — the layer is silent. Parsing the input is side
+# work here, and its breakage has no right to stop the edit.
 #
-# Адреса дерева слои не знают: где у него бэкенд, витрина и сквозные тесты, говорит само дерево
-# — функцией `skill_layer_skip <правило> <цель>` в своей карте гейта. Нет её — слой действует
-# везде, где подошёл его признак.
+# The layers do not know the tree's addresses: where its backend, showcase and end-to-end tests
+# are is said by the tree itself — by the function `skill_layer_skip <rule> <target>` in its gate
+# map. Without it a layer acts everywhere its sign matched.
 
-# Уже названное вторым разом не требуется: отказ, перечисляющий одно правило дважды, читается
-# как два разных требования.
+# What is already named is not required a second time: a refusal listing one rule twice reads as
+# two different requirements.
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
-# Собранное дерево кодом не бывает: путь к артефакту приходит из команды, которая его запускает.
-# Карта гейта такой путь уже пропускает, и слои обязаны молчать вместе с ней — иначе выход из
-# карты снимает одно требование и оставляет полтора десятка других.
+# A built tree is never code: the path to an artifact arrives from the command that runs it. The
+# gate map already lets such a path through, and the layers must stay silent along with it —
+# otherwise leaving the map lifts one requirement and leaves a dozen and a half others.
 case "$target" in
     */node_modules/* | */dist/* | */build/* | */.nx/* | */coverage/*) return 0 ;;
 esac
@@ -36,15 +36,16 @@ rt_layer_add() {
     req="${req:+$req }$1"
 }
 
-# Дерево вправе снять слой с места, где признак законен: прямое обращение к среде исполнения на
-# бэкенде, чтение окружения в обвязке, заведение файла в сквозных тестах.
+# The tree may lift a layer from a place where the sign is lawful: a direct call to the runtime
+# on the backend, reading the environment in the harness, creating a file in end-to-end tests.
 rt_layer_allowed() {
     command -v skill_layer_skip >/dev/null 2>&1 || return 0
     skill_layer_skip "$1" "$2" && return 1
     return 0
 }
 
-# Текст правки читается один раз на все слои: разбор входа стоит дороже самих признаков.
+# The edit text is read once for all layers: parsing the input costs more than the signs
+# themselves.
 rt_layer_payload=""
 if command -v jq >/dev/null 2>&1; then
     rt_layer_payload="$(printf '%s' "$input" \
@@ -52,15 +53,16 @@ if command -v jq >/dev/null 2>&1; then
                  | map(select(. != null)) | join("\n")' 2>/dev/null)"
 fi
 
-# Спека проверяет поведение, а не заводит его: там нужен `testing`, и слои поведения её обходят.
+# A spec checks behaviour rather than creating it: `testing` is needed there, and the behaviour
+# layers skip it.
 rt_layer_is_spec=1
 case "$target" in *.spec.ts) rt_layer_is_spec=0 ;; esac
 
-# --- слой по тексту: обращение к среде исполнения ---------------------------------------------
+# --- layer by text: a call to the runtime -----------------------------------------------------
 #
-# Путь говорит, ЧТО за файл, а обращение к глобальному объекту видно только в содержимом: гейт,
-# знающий один путь, пропускает его молча. Значение, полученное внедрением, признаком не
-# считается — это уже зависимость, а не прямое обращение.
+# The path says WHAT file it is, while a call to the global object is visible only in the
+# content: a gate that knows the path alone lets it through silently. A value obtained by
+# injection does not count as a sign — that is already a dependency, not a direct call.
 if [ -n "$rt_layer_payload" ] && [ "$rt_layer_is_spec" = 1 ]; then
     case "$target" in
         */main.ts|*/main.server.ts|*/server.ts|*/index.html) ;;
@@ -73,11 +75,11 @@ if [ -n "$rt_layer_payload" ] && [ "$rt_layer_is_spec" = 1 ]; then
     esac
 fi
 
-# --- слой по тексту: наблюдаемость ------------------------------------------------------------
+# --- layer by text: observability -------------------------------------------------------------
 #
-# Чтение переменной окружения и есть тот момент, когда заводится новая необязательная
-# возможность. Сводка старта перечисляет их руками, и забывшая дописать себя не попадёт ни в
-# один из трёх списков — на проде она выглядит не выключенной, а несуществующей.
+# Reading an environment variable is exactly the moment a new optional capability is created.
+# The startup digest lists them by hand, and one that forgot to add itself will not land in any
+# of the three lists — on production it looks not switched off but non-existent.
 if [ -n "$rt_layer_payload" ] && [ "$rt_layer_is_spec" = 1 ]; then
     case "$target" in
         *.ts)
@@ -88,11 +90,11 @@ if [ -n "$rt_layer_payload" ] && [ "$rt_layer_is_spec" = 1 ]; then
     esac
 fi
 
-# --- слой по тексту: общий код ----------------------------------------------------------------
+# --- layer by text: shared code ---------------------------------------------------------------
 #
-# Заводимое число-настройка и заводимое перечисление — тот момент, когда рядом с уже общим
-# появляется копия. Каждая копия сама по себе исправна, и ни линт, ни сборка второй не видят.
-# Спеки не в счёт: там значения местные, это фикстуры.
+# A newly created numeric setting and a newly created enumeration are the moment a copy appears
+# next to what is already shared. Each copy is sound on its own, and neither the linter nor the
+# build sees the second one. Specs do not count: values there are local, they are fixtures.
 if [ -n "$rt_layer_payload" ] && [ "$rt_layer_is_spec" = 1 ]; then
     case "$target" in
         *.ts)
@@ -104,11 +106,11 @@ if [ -n "$rt_layer_payload" ] && [ "$rt_layer_is_spec" = 1 ]; then
     esac
 fi
 
-# --- слой по пути: классы Angular -------------------------------------------------------------
+# --- layer by path: Angular classes -----------------------------------------------------------
 #
-# Компонент и стор — тоже классы: сигнальный API входов, обнаружение изменений и место подписки
-# живут в `angular-patterns`, а первым слоем эти файлы уходят в устройство компонента и в
-# соглашения языка, где ничего этого нет.
+# A component and a store are classes too: the signal input API, change detection and where a
+# subscription lives are in `angular-patterns`, while as the first layer these files go to the
+# component structure and to the language conventions, where none of that is.
 if [ "$rt_layer_is_spec" = 1 ]; then
     case "$target" in
         *.component.ts|*.store.ts)
@@ -117,36 +119,36 @@ if [ "$rt_layer_is_spec" = 1 ]; then
     esac
 fi
 
-# --- слой по пути: проза ----------------------------------------------------------------------
+# --- layer by path: prose ---------------------------------------------------------------------
 #
-# Формат спека держит `spec-driven`, а как формулировать — `doc-style`, и нужен он не только
-# спекам. Список известного у проверки — та же проза: его поле объясняет, что перечисленное
-# отказом не считается, а сверка текстов читает только `.md`.
+# The spec format is held by `spec-driven`, and how to word things by `doc-style`, and it is
+# needed not only by specs. A check's known list is the same prose: its field explains why what
+# is listed does not count as a refusal, and the text audit reads only `.md`.
 #
-# Хозяйство самого агента слой обходит: правило на него — оно само, и карта гейта решает про
-# эти файлы целиком. Слой, наложенный поверх, требовал бы правило там, где карта его нарочно
-# не назвала.
+# The agent's own housekeeping the layer skips: the rule for it is itself, and the gate map
+# decides about these files whole. A layer laid on top would demand a rule where the map left it
+# unnamed on purpose.
 case "$target" in
     */.claude/*) ;;
     *.md|*-allowlist.json) rt_layer_allowed doc-style "$target" && rt_layer_add doc-style ;;
 esac
 
-# --- слой по пути: ведение работы -------------------------------------------------------------
+# --- layer by path: work conduct --------------------------------------------------------------
 #
-# Папка задачи, договорённость о продукте до кода и замысел эпика — первые файлы, которые
-# заводятся в работе. Требование ловит на них того, кто пошёл мимо порядка: «пришла новая
-# задача» инструментом не является, и поймать это больше нечем.
+# The task folder, the product agreement before the code and the epic plan are the first files
+# created in work. The requirement catches on them whoever went past the order: "a new task has
+# arrived" is not a tool, and there is nothing else to catch it with.
 case "$target" in
     */docs/tasks/*|*/docs/specs/*/proposed/*|*/docs/plans/*)
         rt_layer_allowed task-flow "$target" && rt_layer_add task-flow
         ;;
 esac
 
-# --- слой по заведению файла ------------------------------------------------------------------
+# --- layer by file creation -------------------------------------------------------------------
 #
-# Ничего не пишется с нуля, и спрашивается это там, где решение и принимается, — на заведении
-# нового файла: у правки существующего опора уже выбрана, а требовать правило на каждую строку
-# значит сделать его фоном.
+# Nothing is written from scratch, and this is asked where the decision is made — at the
+# creation of a new file: an edit of an existing one has its foundation already chosen, and
+# demanding the rule on every line would turn it into background.
 case "$target" in
     */docs/*) ;;
     *.spec.ts|*.stories.ts) ;;
@@ -155,9 +157,9 @@ case "$target" in
         ;;
 esac
 
-# Куда встаёт заведённая проверка и какой формы у неё список известного — утверждения `testing`,
-# и нужны они ровно в момент заведения: у существующей проверки и место в гейте, и форма списка
-# уже выбраны.
+# Where a newly created check goes and what shape its known list has are statements of
+# `testing`, and they are needed exactly at the moment of creation: an existing check has both
+# its place in the gate and the shape of its list already chosen.
 case "$target" in
     */check-*.mjs|*-allowlist.json)
         [ -f "$target" ] || { rt_layer_allowed testing "$target" && rt_layer_add testing; }

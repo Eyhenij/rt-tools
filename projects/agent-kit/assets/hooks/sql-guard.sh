@@ -1,46 +1,50 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_sql_query|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/deny-tail.sh
-# Гард пишущих запросов к хранилищу. PreToolUse.
+# Requires: hooks/deny-tail.sh
+# Guard of writing queries to the storage. PreToolUse.
 #
-# Правка данных — единственное действие, которое нельзя откатить правкой кода. Удаление по
-# маске однажды уносит вместе с пробными записями настоящие: маска совпадает шире, чем ожидал
-# автор запроса, и узнаётся это уже по восстановлению из копии.
+# An edit of data is the only action that cannot be undone by an edit of code. A delete by mask
+# one day takes the real records away along with the trial ones: the mask matches wider than the
+# query author expected, and this is learned only from the restore out of a copy.
 #
-# Отсюда правило: строки адресуются по первичному ключу. Перечисление идентификаторов
-# затрагивает ровно столько строк, сколько их перечислено, и промах виден до выполнения; отбор
-# по подстроке не виден никогда.
+# Hence the rule: rows are addressed by primary key. A list of identifiers touches exactly as
+# many rows as are listed, and a miss is visible before execution; a selection by substring is
+# never visible.
 #
-# Три уровня:
-#   отказ    — снос, очистка, правка схемы, удаление и обновление без условия или с условием
-#              не по идентификатору;
-#   вопрос   — остальная запись: адресная правка и вставка, решение за владельцем;
-#   пропуск  — чтение.
+# Three levels:
+#   refusal  — drop, truncate, schema edit, delete and update without a condition or with a
+#              condition not by identifier;
+#   question — the rest of writing: an addressed edit and an insert, the decision is the owner's;
+#   pass     — reading.
 #
-# Каждый предмет разбора живёт своим помощником рядом: запрос из ввода — `sql-guard-request.sh`,
-# приведение команды к одному виду и нарезка на сегменты — `sql-guard-parse.sh`, адресат вместе
-# с правилами боевой базы — `sql-guard-target.sh`, признак записи, разрушительное, миграции и
-# адресация строк — `sql-guard-write.sh`. Здесь остаётся порядок: он зовёт их и решает.
+# Each subject of the parsing lives in a helper of its own next door: the query out of the input
+# — `sql-guard-request.sh`, bringing the command to one form and cutting it into segments —
+# `sql-guard-parse.sh`, the target together with the rules of the production database —
+# `sql-guard-target.sh`, the sign of writing, the destructive, migrations and row addressing —
+# `sql-guard-write.sh`. What stays here is the order: it calls them and decides.
 #
-# Боевое хранилище отдельно: его адреса и подключения перечисляет профиль дерева —
-#   RT_PROD_DSN          — образец адреса боевой базы: порт туннеля, хост, домен;
-#   RT_PROD_CONNECTIONS  — идентификаторы боевых подключений среды разработки;
-#   RT_LOCAL_CONNECTIONS — они же у локальных: опознанное локальное подключение сильнее любой
-#                          текстовой догадки;
-#   RT_SCRATCH_PORT_RE   — порты одноразовых баз, по которым вопрос не задаётся.
-# По боевому адресу любая запись отказывается без опт-аута: бой правится миграцией через
-# выкатку, а не запросом из редактора.
+# The production storage is separate: its addresses and connections are listed by the tree
+# profile —
+#   RT_PROD_DSN          — the pattern of the production database address: tunnel port, host,
+#                          domain;
+#   RT_PROD_CONNECTIONS  — identifiers of the IDE's production connections;
+#   RT_LOCAL_CONNECTIONS — the same for local ones: a recognised local connection outweighs any
+#                          textual guess;
+#   RT_SCRATCH_PORT_RE   — ports of throwaway databases, for which no question is asked.
+# At a production address any write is refused without an opt-out: production is edited by a
+# migration through the rollout, not by a query from the editor.
 #
-# Опт-аут для остальных случаев: маркер `destructive-ok` в тексте запроса вместе с объяснением,
-# почему адресация по идентификатору не подходит, понижает отказ до вопроса. Последнее слово
-# остаётся за владельцем — гард лишь не пропускает такое молча.
+# The opt-out for the remaining cases: the `destructive-ok` marker in the query text together
+# with an explanation of why addressing by identifier does not fit lowers the refusal to a
+# question. The last word stays with the owner — the guard only does not let it through silently.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет разборщика, битый ввод, чужой инструмент — пропуск. Без `perl`
-# вырезать текст сообщений коммитов нечем, поэтому команды работы с историей в этом случае
-# пропускаются целиком — иначе слова «drop» и «update» в описании коммита читались бы как
-# запрос. Доставки запроса внутри такой команды не бывает, так что цена послабления нулевая.
+# FAIL-OPEN: no parser, broken input, foreign tool — pass. Without `perl` there is nothing to cut
+# commit message text out with, so in that case commands that work with history are passed
+# entirely — otherwise the words "drop" and "update" in a commit description would read as a
+# query. A query is never delivered inside such a command, so the concession costs nothing.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Own name in the observations: the refusal is written by the shared refusal tail, not by the
+# guard itself.
 RT_GUARD_NAME=sql-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -53,22 +57,22 @@ command -v jq >/dev/null 2>&1 || exit 0
 
 tool="$(rt_hook_tool)"
 
-# Рабочий каталог нужен одному правилу — разрешению адреса миграции: `DATABASE_URL`
-# обычно не назван в команде и лежит в `.env` рядом с проектом.
+# The working directory is needed by one rule — resolving the migration address: `DATABASE_URL`
+# is usually not named in the command and lies in `.env` next to the project.
 hook_cwd="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
 [ -z "$hook_cwd" ] && hook_cwd="${CLAUDE_PROJECT_DIR:-.}"
 
-# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
-# Умолчание ищется и рядом с самим хуком: уезжают они вместе.
+# The tree profile: first the package default, on top of it the project override, if there is
+# one. The default is also looked for next to the hook itself: they travel together.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
 
-# Помощники лежат рядом с гардом и уезжают в дерево вместе с ним. Нет хотя бы одного —
-# разбирать команду нечем, и гард пропускает ход: отказ в пользу работы здесь тот же, что и
-# при отсутствии `jq`.
+# The helpers lie next to the guard and travel into the tree with it. If even one is missing,
+# there is nothing to parse the command with, and the guard passes the move: the fail-open here
+# is the same as when `jq` is absent.
 for helper in sql-guard-request.sh sql-guard-parse.sh sql-guard-target.sh sql-guard-write.sh; do
     [ -f "$rt_hooks_dir/$helper" ] || exit 0
     # shellcheck disable=SC1090
@@ -77,8 +81,9 @@ done
 
 PROD_DSN="${RT_PROD_DSN:-}"
 
-# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть. Файл
-# может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# The shared refusal tail: two lawful moves and the lawful form of bypass, when the refusal has
+# one. The file may not be laid out — then there is no tail, and the reason for the refusal stays
+# as it was.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
@@ -117,11 +122,11 @@ sql_check_destructive
 sql_check_migrations
 sql_check_addressing
 
-# --- остальная запись: решает пользователь ----------------------------------------------
-# Неизвестное подключение — не повод пропустить молча: адресат запроса не опознан, и им
-# может оказаться боевая база под другим идентификатором.
+# --- the rest of writing: the user decides -------------------------------------------------
+# An unknown connection is no reason to pass silently: the target of the query is not recognised,
+# and it may turn out to be the production database under another identifier.
 if [ "$conn_known" = "" ] && [ -n "$conn" ]; then
-    ask "Запись в базу через ПОДКЛЮЧЕНИЕ, НЕИЗВЕСТНОЕ ГАРДУ (id ${conn}). Гард знает локальное подключение и боевое; это — ни то, ни другое, поэтому убедись, что запрос уходит не на прод. Если подключение постоянное, впиши его id в PROD_CONNECTIONS или LOCAL_CONNECTIONS в .claude/hooks/sql-guard.sh."
+    ask "A write into the database through a CONNECTION UNKNOWN TO THE GUARD (id ${conn}). The guard knows the local connection and the production one; this is neither, so make sure the request does not go to production. If the connection is permanent, write its id into PROD_CONNECTIONS or LOCAL_CONNECTIONS in .claude/hooks/sql-guard.sh."
 fi
 
-ask "Запись в базу (${context}). Проверь, что затронуты только ожидаемые строки, и подтверди."
+ask "A write into the database (${context}). Check that only the expected rows are touched, and confirm."

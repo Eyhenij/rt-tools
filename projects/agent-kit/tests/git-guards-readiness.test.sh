@@ -53,11 +53,11 @@ git -C "$BOTH" checkout -q RT-90-both 2>/dev/null
 BOTH_CMD='gh pr create --title "Сделано" --body x'
 dlv "SC-AK-366 — заявка с двумя несошедшимися условиями отбита" "$BOTH" "$BOTH_CMD" deny
 dlv_reason "SC-AK-366 — отказ начинается с неготовности к поставке" "$BOTH" "$BOTH_CMD" \
-    'работа к поставке не готова'
+    'the work is not ready for delivery'
 dlv_reason "SC-AK-366 — в том же отказе стоит заголовок заявки" "$BOTH" "$BOTH_CMD" \
-    'заголовок заявки не начинается с номера задачи'
+    'the title of the request does not start with the number of the task'
 dlv_reason "SC-AK-366 — и в нём же влитость главной ветки" "$BOTH" "$BOTH_CMD" \
-    'ушла вперёд на 1'
+    'has moved ahead by 1'
 rm -rf "$BOTH"
 
 # --- колонка очереди работ ------------------------------------------------------------------------
@@ -85,7 +85,7 @@ COLUMN_CMD='gh pr create --title "[RT-91] Сделано" --body x'
 
 BACKLOG="$(task_repo 'Backlog' 'Backlog')"
 dlv "SC-AK-367 — задача, оставшаяся в первой колонке, отбивает заявку" "$BACKLOG" "$COLUMN_CMD" deny
-dlv_reason "SC-AK-367 — отказ называет колонку" "$BACKLOG" "$COLUMN_CMD" 'стоит в колонке «Backlog»'
+dlv_reason "SC-AK-367 — отказ называет колонку" "$BACKLOG" "$COLUMN_CMD" 'stands in the column «Backlog»'
 dlv_reason "SC-AK-367 — и чем её переставить" "$BACKLOG" "$COLUMN_CMD" 'npm run task:move'
 rm -rf "$BACKLOG"
 
@@ -114,7 +114,7 @@ dlv "SC-AK-370 — ветка от основания без вершины гл
     'git checkout -b RT-93-new' deny
 dlv "SC-AK-370 — то же через switch" "$BEHIND" 'git switch -c RT-93-new' deny
 dlv_reason "SC-AK-370 — отказ называет отставание числом" "$BEHIND" 'git checkout -b RT-93-new' \
-    'нет вершины «main».*вперёд на 1'
+    'does not carry the tip of «main».*ahead by 1'
 dlv_reason "SC-AK-370 — и чем берётся свежее основание" "$BEHIND" 'git checkout -b RT-93-new' \
     'git fetch origin'
 # Ветка под пробу без номера этого требования не получает: она живёт локально, и заявка с неё
@@ -139,9 +139,9 @@ printf 'RT_COMMIT_EMAIL="%s"\n' "$BOT_MAIL" > "$MAIL/.claude/rt-kit/project.sh"
 dlv "SC-AK-372 — чужая почта рабочей копии отбивает заведение ветки" "$MAIL" \
     'git checkout -b RT-97-new' deny
 dlv_reason "SC-AK-372 — отказ называет почту рабочей копии" "$MAIL" 'git checkout -b RT-97-new' \
-    'как «owner@example.com»'
+    'as «owner@example.com»'
 dlv_reason "SC-AK-372 — и объявленную деревом" "$MAIL" 'git checkout -b RT-97-new' \
-    'машинной записи «424242'
+    'machine account «424242'
 
 printf 'RT_COMMIT_EMAIL=""\n' > "$MAIL/.claude/rt-kit/project.sh"
 dlv "SC-AK-373 — дерево, не назвавшее почты, заведение ветки не судит" "$MAIL" \
@@ -174,7 +174,7 @@ EOF
 NO_REVIEW="$(ready_repo "printf '%s' '{\"exists\":true,\"draft\":true,\"reviewed\":false}';")"
 dlv "SC-AK-374 — заявка без разбора черновик не снимает" "$NO_REVIEW" 'gh pr ready 917' deny
 dlv_reason "SC-AK-374 — отказ называет заявку и нехватку разбора" "$NO_REVIEW" 'gh pr ready 917' \
-    'у заявки #917 нет разбора'
+    'the request #917 has no review'
 dlv "SC-AK-374 — тот же отказ у второго клиента хостинга" "$NO_REVIEW" \
     'glab mr update 917 --ready' deny
 # Прочие команды клиента снятием черновика не являются.
@@ -190,7 +190,7 @@ rm -rf "$REVIEWED"
 CONFLICT="$(ready_repo "printf '%s' '{\"exists\":true,\"number\":917,\"draft\":true,\"reviewed\":true,\"conflicting\":true}';")"
 dlv "SC-AK-423 — конфликтующая заявка черновик не снимает" "$CONFLICT" 'gh pr ready 917' deny
 dlv_reason "SC-AK-423 — отказ называет заявку и конфликт" "$CONFLICT" 'gh pr ready 917' \
-    'заявка #917 конфликтует'
+    'the request #917 conflicts'
 rm -rf "$CONFLICT"
 
 # Дерево, чей помощник о сливаемости молчит вовсе, работает как прежде: поля нет — требования
@@ -219,7 +219,7 @@ rm -rf "$MISSING"
 BARE="$(ready_repo "printf '%s' '{\"exists\":true,\"number\":917,\"draft\":true,\"reviewed\":false}';")"
 dlv "SC-AK-383 — снятие черновика без ссылки на заявку отбито" "$BARE" 'gh pr ready' deny
 dlv_reason "SC-AK-383 — отказ тот же, что и с номером" "$BARE" 'gh pr ready' \
-    'у заявки #917 нет разбора'
+    'the request #917 has no review'
 dlv "SC-AK-383 — то же у второго клиента хостинга" "$BARE" 'glab mr update --ready' deny
 
 # Заявку называют адресом и именем ветки не реже, чем номером: разбирать их — работа клиента,
@@ -228,7 +228,7 @@ dlv "SC-AK-384 — заявка, названная адресом, судитс
     'gh pr ready https://github.com/o/r/pull/917' deny
 dlv "SC-AK-384 — и заявка, названная именем ветки" "$BARE" 'gh pr ready RT-98-ready' deny
 dlv_reason "SC-AK-384 — номер в отказе берётся из ответа, а не из команды" "$BARE" \
-    'gh pr ready RT-98-ready' 'у заявки #917 нет разбора'
+    'gh pr ready RT-98-ready' 'the request #917 has no review'
 
 # Возврат в черновик делает ровно то, чего гард добивается, — снимает с работы вид готовой.
 dlv "SC-AK-385 — возврат заявки в черновик проходит" "$BARE" 'gh pr ready 917 --undo' PASS
@@ -240,7 +240,7 @@ rm -rf "$BARE"
 # перед именем ветки или адресом она читается как опечатка.
 NAMELESS="$(ready_repo "printf '%s' '{\"exists\":true,\"draft\":true,\"reviewed\":false}';")"
 dlv_reason "SC-AK-384 — без номера в ответе в отказ идёт довод команды" "$NAMELESS" \
-    'gh pr ready RT-98-ready' 'у заявки «RT-98-ready» нет разбора'
+    'gh pr ready RT-98-ready' 'the request «RT-98-ready» has no review'
 rm -rf "$NAMELESS"
 
 # --- основание, названное в самой команде ---------------------------------------------------------
@@ -295,7 +295,7 @@ git -C "$STALE_REF" update-ref refs/remotes/origin/main "$WAS_REF" 2>/dev/null
 dlv "SC-AK-388 — отставшая локальная ссылка отбивает заведение ветки" "$STALE_REF" \
     'git checkout -b RT-103-new' deny
 dlv_reason "SC-AK-388 — отказ называет обе стороны расхождения" "$STALE_REF" \
-    'git checkout -b RT-103-new' 'ссылка origin/main отстала от удалённой'
+    'git checkout -b RT-103-new' 'ref origin/main lags behind the remote one'
 dlv_reason "SC-AK-388 — и чем она подтягивается" "$STALE_REF" \
     'git checkout -b RT-103-new' 'git fetch origin'
 rm -rf "$STALE_REF" "$BARE_REMOTE"
@@ -319,7 +319,7 @@ dlv "SC-AK-390 — задача в первой колонке заведени�
 dlv "SC-AK-390 — а открытие заявки той же задачей отбивается" "$COLUMN_BOTH" \
     'gh pr create --title "[RT-91] Сделано" --body x' deny
 dlv_reason "SC-AK-390 — и отбивается именно колонкой" "$COLUMN_BOTH" \
-    'gh pr create --title "[RT-91] Сделано" --body x' 'стоит в колонке «Backlog»'
+    'gh pr create --title "[RT-91] Сделано" --body x' 'stands in the column «Backlog»'
 rm -rf "$COLUMN_BOTH"
 
 suite_result "готовность к поставке"

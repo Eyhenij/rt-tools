@@ -1,10 +1,10 @@
 /**
- * Общее для всех предметов сверки спеков: что считается доменом, чем читается дерево и чем
- * режется документ на разделы и пункты.
+ * What is shared by every subject of the spec audit: what counts as a domain, how the tree is
+ * read and how a document is cut into sections and bullets.
  *
- * Модуль назван не `check-*`, и это не украшение: умолчание пакета собирает набор гейта пуша
- * перебором имён `check-<что>.mjs` в каталоге проверок, и помощник с таким именем гейт стал бы
- * гонять как отдельную проверку.
+ * The module is not named `check-*`, and that is not decoration: the package default assembles the
+ * push gate set by walking the names `check-<what>.mjs` in the checks directory, and a helper with
+ * such a name the gate would run as a check of its own.
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -14,86 +14,89 @@ import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 const SPECS_DIR = CONFIG.specsDir;
 const CONSTITUTION_DIR = 'docs/constitution';
 /**
- * Каталоги под `docs/specs`, доменами не являющиеся: шаблон содержит образцы с
- * плейсхолдерами, и обязательных разделов у них нет.
+ * Directories under `docs/specs` that are not domains: the template holds samples with
+ * placeholders, and it has no mandatory sections.
  */
 const NOT_DOMAINS = ['_template'];
 /**
- * Где ищутся тесты. Берётся из настройки дерева, а не из кода: зашитые здесь корни молча не
- * находили ни одного теста у дерева, которое держит код иначе, — и каждый сценарий выглядел
- * непокрытым, притом что тест на него был.
+ * Where tests are searched for. Taken from the setting of the tree, not from the code: roots
+ * hardwired here silently found no test at all in a tree that keeps its code differently — and
+ * every scenario looked uncovered while the test for it stood right there.
  */
 const TEST_ROOTS = CONFIG.sourceRoots;
-/** Где ищется вызов символа из привязки. */
+/** Where the call of a symbol from a binding is searched for. */
 const SOURCE_ROOTS = [...CONFIG.sourceRoots, ...(CONFIG.schemaFile ? [CONFIG.schemaFile.split('/')[0]] : [])];
 const SKIPPED_DIRS = CONFIG.skippedDirs;
 
 /**
- * `### SC-BK-03 — заявка на занятые даты`
+ * `### SC-BK-03 — a request for dates already taken`
  *
- * Номер принимается от одной цифры до трёх. Заголовок, не подошедший под шаблон, сценария не
- * заводит и отказа не даёт: дерево, пронумеровавшее сценарии с единицы, теряло бы первые
- * девять из них молча — ни в покрытии, ни в долгах, при зелёной сверке.
+ * The number is accepted from one digit to three. A heading that did not match the template starts
+ * no scenario and gives no refusal: a tree that numbered its scenarios from one would lose the
+ * first nine of them silently — neither in coverage nor in debts, with a green audit.
  */
 const SCENARIO_HEADING = /^###\s+(SC-([A-Z]{2,4})-(\d{1,3}))\s+—\s+(.+?)\s*$/;
-/** Отметка осознанно непокрытого сценария; причина обязательна */
+/** The mark of a knowingly uncovered scenario; the reason is mandatory */
 const UNCOVERED = /^Не покрыто:\s*\S/;
-/** Тест есть, но проверяет не всё обещанное или идёт другим путём */
+/** The test exists, but checks not everything promised or goes another way */
 const PARTIAL = /^Покрытие:\s*частичное\s*—\s*\S/;
-/** Упоминание сценария в заголовке теста; номер той же длины, что и в заголовке сценария */
+/** A mention of the scenario in the title of a test; the number is as long as in the heading */
 const SCENARIO_REFERENCE = /\bSC-[A-Z]{2,4}-\d{1,3}\b/g;
-/** Строка обещания сценария; её продолжения идут с отступом */
+/** The promise line of a scenario; its continuations go with an indent */
 const PROMISE = /^Тогда\s+\S/;
 /**
- * Человек перед экраном и его восприятие. Границы слова не ставятся: `\b` в JavaScript
- * считает буквой только латиницу, и `\bгость\b` не совпал бы ни разу.
+ * A person in front of the screen and their perception. Word boundaries are not set: `\b` in
+ * JavaScript counts only Latin letters as letters, and `\bгость\b` would not match once.
  */
 const ACTOR = /(гост[ьяию]|владел(?:ец|ьца|ьцу|ьцем)|сотрудник\w*|оператор\w*|пользовател\w+)/i;
 const PERCEIVES = /(вид(?:ит|ят|но)|чита(?:ет|ют)|смотр(?:ит|ят))/i;
-/** Сквозные тесты: только они идут тем же путём, что пользователь */
+/** End-to-end tests: only they go the same way the user does */
 const E2E_ROOTS = CONFIG.e2eRoots;
 
 /**
- * Якорь правила: `путь/к/файлу.ts:символ` в обратных кавычках. Расширение до восьми
- * букв — иначе `schema.prisma` не считается путём, и правило про умолчание колонки
- * выглядит как правило без якоря. Заглавные и десять букв нужны ради `api.Dockerfile`:
- * без них правило про режим исполнения образа считалось правилом с пустой привязкой,
- * а привязать его больше не к чему — режим объявлен ровно там.
+ * The anchor of a rule: `path/to/file.ts:symbol` in backticks. The extension goes up to eight
+ * letters — otherwise `schema.prisma` does not count as a path, and the rule about the default of
+ * a column looks like a rule without an anchor. Capitals and ten letters are needed for
+ * `api.Dockerfile`: without them the rule about the run mode of the image counted as a rule with
+ * an empty binding, and there is nothing else left to bind it to — the mode is declared exactly
+ * there.
  *
- * Символ — любая буква, а не только латинская: тексты, которые исполняет модель, написаны
- * своим языком, и латиницей в них называется ровно то, что утверждения не держит — имя поля
- * шапки, имя инструмента. Привязанное к имени поля утверждение остаётся зелёным, когда текст
- * переписан целиком. Алфавит не перечисляется диапазонами: перечисленные молча не покрывают
- * соседнего, и промах выглядит отсутствием привязки. Путь при этом остаётся латинским — он
- * адрес в дереве, а не слово текста.
+ * The symbol is any letter, not only a Latin one: the texts a model executes are written in their
+ * own language, and Latin in them names exactly what holds no statement — the name of a header
+ * field, the name of a tool. A statement bound to the name of a field stays green when the text is
+ * rewritten whole. The alphabet is not listed by ranges: the listed ones silently do not cover the
+ * neighbouring one, and the miss looks like an absent binding. The path stays Latin all the same —
+ * it is an address in the tree, not a word of the text.
  *
- * Решётка перед именем законна: приватное поле класса объявлено с ней, и записанное без неё имя
- * называет метод не тем именем, каким он объявлен. Проверка при этом остаётся зелёной — граница
- * слова перед решёткой есть, — поэтому промах не краснеет ни разу и виден только чтением.
+ * A hash before the name is lawful: a private field of a class is declared with it, and the name
+ * written without it calls the method by a name it was not declared with. The check stays green
+ * meanwhile — there is a word boundary before the hash — so the miss never turns red and is seen
+ * only by reading.
  */
-// Символом привязки бывает и номер строки, и имя класса с точкой впереди: в разметке
-// привязываться больше не к чему — ни метода, ни поля у элемента нет. Прежде такая привязка
-// образцу не совпадала, и сверка говорила, что привязки нет вовсе; заход уходил на то, чтобы
-// переписать верную таблицу привязок.
+// The symbol of a binding is also a line number or a class name with a dot in front: in markup
+// there is nothing else to bind to — an element has neither a method nor a field. Before, such a
+// binding did not match the template, and the audit said there was no binding at all; a session
+// went on rewriting a table of bindings that was right.
 const ANCHOR = /`([\w./-]+\.[A-Za-z]{2,10}):(#?\p{L}[\p{L}\p{N}_-]*|#?_[\w-]*|\d+|\.[\p{L}\p{N}_-]+)`/gu;
 /**
- * Явный вердикт вместо якоря: статья, которой в дереве исполняться негде. Так бывает
- * законно — правило говорит о службе, которой дерево не держит, или о движении человека,
- * до которого проверке не дотянуться: кнопку слияния нажимают в браузере, где хуков нет
- * вовсе. Якорь такой статье можно поставить только в файл, который её не исполняет, —
- * проверка примет, а читателю совратёт.
+ * An explicit verdict instead of an anchor: an article that has nowhere to be carried out in the
+ * tree. That happens lawfully — the rule speaks of a service the tree does not keep, or of a human
+ * movement the check cannot reach: the merge button is pressed in the browser, where there are no
+ * hooks at all. An anchor for such an article can only be put into a file that does not carry it
+ * out — the check would accept it, and the reader would be lied to.
  *
- * Принимается вердикт с причиной, а не одно слово: пустой он становится способом закрыть
- * любую строку, и таблица за месяц превращается в список отговорок. Порог длины — та же
- * мера, что у обхода гарда документов: причина короче его причиной не считается.
+ * A verdict with a reason is accepted, not a single word: an empty one becomes a way to close any
+ * line, and in a month the table turns into a list of excuses. The length threshold is the same
+ * measure as the bypass of the document guard: a reason shorter than that does not count as a
+ * reason.
  *
- * Конец слова ищется отрицательным просмотром, а не `\b`: границей слова JavaScript знает
- * только латиницу, и после кириллической буквы её нет вовсе — вердикт не опознавался ни
- * разу.
+ * The end of the word is found by a negative lookahead, not by `\b`: JavaScript knows only Latin
+ * as a word boundary, and after a Cyrillic letter there is none at all — the verdict was not
+ * recognised once.
  */
 const VERDICT = /^\s*(?:\*\*)?Не (?:исполняется|применимо|проверяется)(?![\p{L}\p{N}_])/u;
 const VERDICT_MIN = 40;
-/** Строка шапки, объявляющая либы, чьи процедуры домен обслуживает */
+/** The header line declaring the libs whose procedures the domain serves */
 const PROCEDURE_ROOTS = /^\*\*Процедуры:\*\*\s*(.+)$/;
 const BACKTICKED = /`([^`]+)`/g;
 
@@ -146,7 +149,7 @@ function walk(dir, accept) {
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
 const exists = (path) => existsSync(join(ROOT, path));
 
-/** Директории доменов: `docs/specs/<домен>`, кроме шаблона. */
+/** The directories of domains: `docs/specs/<domain>`, except the template. */
 function collectDomains() {
     try {
         return readdirSync(join(ROOT, SPECS_DIR), { withFileTypes: true })
@@ -158,9 +161,9 @@ function collectDomains() {
 }
 
 /**
- * Строки раздела: от его заголовка до следующего заголовка того же или более
- * высокого уровня. Подразделы в раздел входят — «Коды отказов» разбираются
- * отдельно, но остаются частью «Контракта».
+ * The lines of a section: from its heading to the next heading of the same or a higher level.
+ * Subsections belong to the section — the refusal codes are taken apart separately, but stay part
+ * of the contract.
  */
 function sectionOf(text, heading) {
     const level = heading.match(/^#+/)[0].length;
@@ -180,12 +183,13 @@ function sectionOf(text, heading) {
 }
 
 /**
- * Пункты списка верхнего уровня вместе с их продолжениями.
+ * The bullets of a top-level list together with their continuations.
  *
- * Заголовок внутри раздела список не кончает: раздел уже отрезан по уровню заголовка, и строка
- * `#` в нём всегда глубже — подзаголовок, которым спек большого домена группирует правила.
- * Таблица список кончает по-прежнему; строка, на которой он кончился, отдаётся свойством
- * `stoppedAt`, чтобы отказ о пустом разделе назвал, что в нём стоит вместо пунктов.
+ * A heading inside the section does not end the list: the section is already cut by the level of
+ * its heading, and a `#` line in it is always deeper — a subheading by which the spec of a large
+ * domain groups its rules. A table ends the list as before; the line it ended on is handed over in
+ * the `stoppedAt` property, so that the refusal about an empty section names what stands in it
+ * instead of bullets.
  */
 function bulletsOf(lines) {
     const bullets = [];

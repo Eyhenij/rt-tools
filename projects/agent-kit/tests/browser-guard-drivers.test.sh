@@ -56,7 +56,7 @@ printf '%s\n' \
     > "$TMP/drive.mjs"
 
 say "SC-AK-760 — запуск скрипта, поднимающего браузер, отбит" "node $TMP/drive.mjs" DENY
-reason "SC-AK-760 — отказ называет файл" "node $TMP/drive.mjs" "изнутри.*drive\.mjs"
+reason "SC-AK-760 — отказ называет файл" "node $TMP/drive.mjs" "from inside.*drive\.mjs"
 
 # Тот же файл под обёрткой менеджера пакетов: под ней стоит тот же интерпретатор.
 say "SC-AK-760 — обёртка менеджера пакетов не прячет запуск" "pnpm exec tsx $TMP/drive.mjs" DENY

@@ -61,7 +61,7 @@ What was checked is committed at once, not stored up until the end of the task. 
 
 ### The handover
 
-It is placed as the section `## Передача захода` in the task's progress — the same file where "Where
+It is placed as the section `## Handover of the session` in the task's progress — the same file where "Where
 we stand" stands. It is committed and goes into the branch, so the handover survives a move to
 another machine: work broken off by window fill is picked up where it goes on. The executor commits
 and pushes the section, in the same turn as the rest of the work record.

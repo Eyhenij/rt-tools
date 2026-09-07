@@ -1,38 +1,42 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/write-targets.sh · dda782e0c66b · правится надстройкой, не здесь
-# Цели записи, названные командой оболочки прямо: перенаправление, `tee`, правка на месте,
-# копирование поверх, а у интерпретатора — пути из его тела. Печатает по одной в строке.
+# rt-kit v0.25.0 · hooks/write-targets.sh · 688744ddce52 · правится надстройкой, не здесь
+# Write targets named by the shell command outright: redirection, `tee`, an in-place edit, a copy
+# over the top, and for an interpreter — the paths from its body. Prints one per line.
 #
-# Строки `# rt-hook:` здесь нет намеренно: это помощник, а не хук. Он ничего не решает сам и
-# зовётся оттуда, где судят правку файла, — гардом места правки и гардом экзамена. Общий он
-# потому, что признак записи у обоих один и тот же: разойдясь, две копии пропустили бы разные
-# формы записи, и заметить это было бы нечем.
+# There is deliberately no `# rt-hook:` line here: this is a helper, not a hook. It decides nothing
+# by itself and is called from where an edit of a file is judged — by the guard of the place of the
+# edit and by the exam guard. It is shared because the sign of a write is one and the same for both:
+# having diverged, two copies would let through different forms of a write, and there would be
+# nothing to notice it by.
 #
-# Общий признак записи здесь не берётся намеренно — он широк, в нём и имя интерпретатора, и
-# запуск разложенной проверки читался бы как правка её самой. Снятие копии сюда тоже не входит:
-# снятый файл раскладка кладёт заново, и так чинят копию, которую переписал форматтер.
+# The shared sign of a write is deliberately not taken here — it is wide, it holds the name of the
+# interpreter too, and running a laid-out check would read as an edit of the check itself. Taking a
+# copy is not included either: a copied file is put in place again by the layout, and that is how a
+# copy overwritten by the formatter is fixed.
 #
-# Интерпретатор с кодом в доводе или в теле — особый случай, и без него у гардов была дыра
-# ровно в ту сторону, которой правят чаще всего. Путь записи стоит там внутри кода — в вызове
-# записи файла, — и ни одним из образцов выше не ловится: команда снаружи выглядит запуском
-# интерпретатора, а не записью. Разложенную копию так правили молча, и ловила это уже раскладка
-# — на сборке, когда правка написана целиком и переносить её приходится руками.
+# An interpreter with code in an argument or in a body is a special case, and without it the guards
+# had a hole exactly in the direction in which edits are made most often. The write path stands
+# there inside the code — in the call that writes the file — and is caught by none of the patterns
+# above: from the outside the command looks like running an interpreter, not like a write. A
+# laid-out copy was edited that way silently, and it was the layout that caught it — at the build,
+# when the edit is written in full and has to be carried over by hand.
 #
-# Разбирать чужой язык нечем, и здесь не разбирают: из тела берётся всё путеподобное, а решает
-# по нему зовущий — гард места правки отбивает лишь то, что несёт шапку раскладки. Цена названа
-# прямо: чтение файла интерпретатором судится наравне с записью в него. Читают в оболочке
-# другим — `cat`, `grep`, `sed -n`, — а интерпретатор, которому назвали путь разложенной копии,
-# почти всегда её и правит.
+# There is nothing to parse someone else's language with, and it is not parsed here: everything
+# path-like is taken from the body, and the caller decides by it — the guard of the place of the
+# edit refuses only what carries the layout header. The price is named outright: reading a file by
+# an interpreter is judged on a par with writing into it. In the shell one reads by other means —
+# `cat`, `grep`, `sed -n` — while an interpreter given the path of a laid-out copy almost always
+# edits it.
 
 rt_write_targets() {
     rt_wt_text="$(cat)"
 
-    # Перенаправление в пустое устройство и в поток ошибок снимается до разбора — тем же приёмом,
-    # каким его снимает признак записи оболочкой. Без этого заглушённый вывод внутри тела
-    # интерпретатора читается признаком записи, и тело, которое ничего не пишет, снова отдаёт все
-    # свои пути: команда с правкой одного файла и запуском проверки рядом запрещалась по пути
-    # этой проверки. Настоящая запись рядом с заглушённым потоком остаётся видной: снимается
-    # перенаправление, а не команда целиком.
+    # Redirection to the empty device and to the error stream is removed before parsing — by the
+    # same technique the shell write sign removes it. Without this a muted output inside the body of
+    # an interpreter reads as a sign of a write, and a body that writes nothing again gives away all
+    # its paths: a command with an edit of one file and a run of a check next to it was forbidden by
+    # the path of that check. A real write next to a muted stream stays visible: the redirection is
+    # removed, not the whole command.
     rt_wt_text="$(printf '%s' "$rt_wt_text" \
         | sed -E 's#(&|[0-9]*)>>?[[:space:]]*/dev/(null|stderr)##g; s#[0-9]*>&[0-9-]##g')"
 
@@ -47,11 +51,11 @@ rt_write_targets() {
                 s/(^|.*[[:space:]])(cp|mv|install)[[:space:]]+([^[:space:]]+[[:space:]]+)+([^[:space:]|&;]+).*/\4/p
             '
 
-        # Тело интерпретатора: код приходит доводом `-c`, доводом `-e` либо телом heredoc, и
-        # путь записи стоит внутри него. Берётся именно тело, а не вся команда: составная
-        # строка, в которой heredoc пишет один файл, а рядом запускается проверка, отдала бы
-        # путь этой проверки как цель записи — и запуск разложенной проверки снова читался бы
-        # правкой её самой.
+        # The body of the interpreter: the code comes as a `-c` argument, an `-e` argument or a
+        # heredoc body, and the write path stands inside it. It is exactly the body that is taken,
+        # not the whole command: a compound line in which a heredoc writes one file while a check is
+        # run next to it would give away the path of that check as a write target — and running a
+        # laid-out check would again read as an edit of the check itself.
         printf '%s\n' "$rt_wt_text" | awk '
             function emit(s,   n, i, parts) {
                 n = split(s, parts, /[^A-Za-z0-9_.@\/-]+/)
@@ -59,8 +63,8 @@ rt_write_targets() {
                     if (parts[i] ~ /\// && parts[i] ~ /\.[A-Za-z0-9]+$/) { print parts[i] }
                 }
             }
-            # Путь, присвоенный переменной. Он стоит отдельной строкой от вызова записи, и без
-            # этой пары запись через переменную не поймать вовсе.
+            # A path assigned to a variable. It stands on a line separate from the write call, and
+            # without this pair a write through a variable cannot be caught at all.
             function note_var(s,   name, path) {
                 if (match(s, /[A-Za-z_][A-Za-z0-9_]*[ \t]*=[ \t]*[\047\"][^\047\"]*\/[^\047\"]*[\047\"]/)) {
                     path = substr(s, RSTART, RLENGTH)
@@ -71,8 +75,9 @@ rt_write_targets() {
                     if (path ~ /\.[A-Za-z0-9]+$/) { varpath[name] = path }
                 }
             }
-            # Цель записи — первый довод вызова записи. Он и есть адрес, который сценарий
-            # открывает; всё остальное на той же строке — образцы поиска, подстановки и данные.
+            # The write target is the first argument of the write call. It is the address the
+            # script opens; everything else on the same line is search patterns, substitutions and
+            # data.
             function emit_calls(s,   rest, arg, name) {
                 rest = s
                 while (match(rest, /(open|writeFileSync|writeFile|appendFileSync|appendFile|write_text|write_bytes|copyfile|copy2|rename|symlink|mkdir|makedirs)[ \t]*\(/)) {
@@ -90,11 +95,11 @@ rt_write_targets() {
                     }
                 }
             }
-            # Пишет ли тело хоть что-нибудь. Тело, в котором нет ни одного вызова записи, своих
-            # путей не отдаёт: команда, подключившая разложенный помощник и напечатавшая его
-            # ответ, запрещалась как правка этого помощника — за один заход трижды подряд.
-            # Внутри тела, которое пишет, пути по-прежнему берутся все: путь и вызов записи
-            # стоят там разными строками, и связать их нечем.
+            # Whether the body writes anything at all. A body with not a single write call does
+            # not give away its paths: a command that sourced a laid-out helper and printed its
+            # answer was forbidden as an edit of that helper — three times in a row in one session.
+            # Inside a body that does write, all paths are still taken: the path and the write call
+            # stand there on different lines, and there is nothing to tie them together with.
             function writes(s) {
                 return s ~ /open[ \t]*\([^)]*[\047\"](w|a|r\+|w\+|a\+)[\047\"]/ \
                     || s ~ /writeFileSync|writeFile|appendFile|write_text|write_bytes|\.write\(|\.save\(|savefig|to_csv|json\.dump|\.dump\(/ \
@@ -103,16 +108,16 @@ rt_write_targets() {
                     || s ~ /(^|[|;&(]|[ \t])(tee|cp|mv|rm|touch|install|truncate)([ \t]|$)/
             }
             function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }
-            # Пути берутся со строк записи, а не со всего тела.
+            # Paths are taken from the write lines, not from the whole body.
             #
-            # Прежде тело, которое хоть что-нибудь пишет, отдавало все свои путеподобные слова
-            # разом: адрес, названный в теле образцом поиска или строкой сравнения, читался целью
-            # записи, и правка одного файла запрещалась по имени другого, который сценарий даже
-            # не открывал. Обходился такой отказ сменой формы команды, а не сменой действия, —
-            # то есть требование он снимал, а не держал.
+            # Before, a body that writes anything at all gave away all its path-like words at once:
+            # an address named in the body as a search pattern or a comparison string read as a
+            # write target, and an edit of one file was forbidden by the name of another, which the
+            # script did not even open. Such a refusal was bypassed by changing the form of the
+            # command, not the action — that is, it lifted the requirement instead of holding it.
             #
-            # Путь, присвоенный переменной, при этом не теряется: пара «присвоение — строка
-            # записи» разбирается отдельно.
+            # A path assigned to a variable is not lost by this: the pair "assignment — write line"
+            # is parsed separately.
             function flush_body(   i) {
                 if (wrote) {
                     for (i = 1; i <= lines; i++) { note_var(line[i]) }
@@ -134,13 +139,13 @@ rt_write_targets() {
                 next
             }
             {
-                # Код доводом: всё, что стоит за `-c` или `-e` у интерпретатора.
+                # Code as an argument: everything that stands after `-c` or `-e` of an interpreter.
                 if ($0 ~ /(^|[|;&(]|[ \t])(python3?|node|ruby|perl|php|deno|bun)([ \t]|$)/ \
                     && match($0, /[ \t]-[ce][ \t]/)) {
                     rest = substr($0, RSTART + RLENGTH)
                     if (writes(rest)) { note_var(rest); emit(rest); emit_calls(rest) }
                 }
-                # Тело heredoc: путь записи интерпретатора стоит именно там.
+                # The heredoc body: the write path of the interpreter stands exactly there.
                 if (match($0, /<<-?[ \t]*[\047\"]?[A-Za-z_][A-Za-z0-9_]*/)) {
                     t = substr($0, RSTART, RLENGTH)
                     sub(/^<<-?[ \t]*[\047\"]?/, "", t)

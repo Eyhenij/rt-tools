@@ -1,30 +1,34 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-glossary.mjs · 06bbaaa4f3e0 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-glossary.mjs · 3db80211aa92 · правится надстройкой, не здесь
 /**
- * Слова, которых здесь не пишут: раздел «Так не пишем» словаря против дерева.
+ * The words not written here: the section «Not written here» of the glossary against the tree.
  *
- * Раздел лежал без единой проверки, и ровно поэтому расхождение росло годами: словарь звал
- * службу одним словом, дерево — другим, и обе стороны выглядели действующими. Правило прямо
- * велит брать слово из словаря или заводить его там же, а не краснело ничто — сверка адресов
- * читает пути, сверка спеков читает сценарии, а словарь не читает никто.
+ * The section lay without a single check, and exactly for that the divergence grew for years: the
+ * glossary called a service by one word, the tree by another, and both sides looked to be in force.
+ * The rule plainly orders to take the word from the glossary or to start it there, and nothing
+ * turned red — the address check reads paths, the spec check reads scenarios, and nobody reads the
+ * glossary.
  *
- * Проверка едет пакетом, а не пишется деревом: раздел «Так не пишем» везёт он же, и дерево,
- * которое словарь получило, а проверки на него нет, живёт ровно с той дырой, ради которой она
- * заведена. Слова при этом принадлежат словарю: пакет их не перечисляет, а читает из раздела.
- * Общее для проверок — разбор списка известного и список пропускаемых каталогов — приезжает
- * модулем настройки проверок, а не пишется здесь заново.
+ * The check travels with the package and is not written by the tree: the section «Not written here»
+ * is brought by the same package, and a tree that got the glossary and has no check over it lives
+ * with exactly the hole the check was started for. The words meanwhile belong to the glossary: the
+ * package does not list them but reads them from the section. What is common to the checks — the
+ * parsing of the known list and the list of skipped directories — arrives as the module of the
+ * check settings and is not written here anew.
  *
- * Ищется левая колонка пар «слева запретное — справа принятое», и не вся: слово со скобочным
- * уточнением («приём (о службе)») поиском не судится вовсе. Уточнение и означает, что запрещено
- * одно значение из двух, а различить их в строке машине нечем: «операция приёма» законна, а
- * «приём принимает груз» — нет, и обе строки для поиска одинаковы. Такое слово остаётся
- * требованием к читателю; проверка о нём говорит вслух, чтобы молчание не читалось как охват.
+ * The left column of the pairs «forbidden on the left — accepted on the right» is searched for, and
+ * not all of it: a word with a bracketed clarification («приём (о службе)») is not judged by search
+ * at all. The clarification means exactly that one meaning of two is forbidden, and a machine has
+ * nothing to tell them apart in a line with: «операция приёма» is lawful and «приём принимает груз»
+ * is not, and both lines are the same for the search. Such a word stays a demand on the reader; the
+ * check says it out loud, so that silence is not read as coverage.
  *
- * Сам словарь из поиска выведен: в нём запретное слово стоит по делу — тем и живёт левая
- * колонка. Выведено и описание прошлого: оно по устройству называет то, чего в дереве уже нет.
+ * The glossary itself is taken out of the search: a forbidden word stands in it for the cause —
+ * that is what the left column lives by. The archive is taken out too: by its make-up it names what
+ * is no longer in the tree.
  *
- * Ненулевой код возврата и перечень мест; накопленное к дню заведения проверки перечислено
- * поимённо, с причиной и номером задачи.
+ * A non-zero exit code and the list of places; what piled up by the day the check was started is
+ * listed by name, with a reason and the number of a task.
  */
 import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
@@ -35,26 +39,28 @@ import { CONFIG, ROOT, baselineOf, parseAllowlist } from './rt-kit-checks.config
 
 const GLOSSARY = 'docs/GLOSSARY.md';
 /**
- * Раздел запретных слов. Имён два: английское везёт пакет, русское держит дерево, чей словарь
- * свой и ещё не переведён. Новая редакция пакета не вправе оставить такое дерево без сверки.
+ * The section of forbidden words. There are two names: the English one is brought by the package,
+ * the Russian one is held by a tree whose glossary is its own and not translated yet. A new edition
+ * of the package is not entitled to leave such a tree without the check.
  */
 const SECTIONS = ['## Not written here', '## Так не пишем'];
-/** Пара словаря: `- **слева** — справа`. Слева бывает несколько слов через запятую. */
+/** A pair of the glossary: `- **left** — right`. On the left there may be several words by comma. */
 const PAIR = /^-\s+\*\*(.+?)\*\*\s+—/;
-/** Скобочное уточнение при слове: запрещено одно значение из двух, и поиском их не развести. */
+/** A bracketed clarification at a word: one meaning of two is forbidden, and search cannot part them. */
 const HINT = /\([^)]*\)\s*$/;
 
 /**
- * Что проверка не читает.
+ * What the check does not read.
  *
- * Всякий словарь — здешний, его надстройка и источник в пакете — выведен по делу: левая колонка
- * тем и живёт, что называет запретное слово вслух. Описание прошлого и папки задач выведены по
- * устройству: первое перечисляет то, чего в дереве уже нет, вторая умирает со слиянием.
+ * Every glossary — the local one, its override and the source in the package — is taken out for the
+ * cause: the left column lives by naming the forbidden word out loud. The archive and the task
+ * folders are taken out by their make-up: the first lists what is no longer in the tree, the second
+ * dies with the merge.
  */
 const UNREAD = ['docs/archive/', 'docs/tasks/', 'CHANGELOG'];
 const GLOSSARY_NAME = /(^|\/)GLOSSARY\.md$/;
 
-/** Левая колонка раздела «Так не пишем»: слова, которых в дереве быть не должно. */
+/** The left column of the section of forbidden words: the words that must not be in the tree. */
 function forbiddenWords(text) {
     const lines = text.split('\n');
     const from = lines.findIndex((line) => SECTIONS.includes(line.trim()));
@@ -88,7 +94,7 @@ function forbiddenWords(text) {
     return { words, byReader };
 }
 
-/** Файлы дерева, которые проверка читает. Список берётся у системы контроля версий. */
+/** The files of the tree the check reads. The list is taken from the version control system. */
 function readableFiles() {
     const listed = spawnSync('git', ['ls-files', '--cached', '--others', '--exclude-standard'], {
         cwd: ROOT,
@@ -116,14 +122,14 @@ function main() {
     try {
         glossary = readFileSync(join(ROOT, GLOSSARY), 'utf8');
     } catch {
-        console.log(`check-glossary: словаря нет по адресу ${GLOSSARY} — сверять нечем`);
+        console.log(`check-glossary: there is no glossary at ${GLOSSARY} — there is nothing to check with`);
 
         return Number(process.env.RT_SKIP_CODE ?? 7);
     }
 
     const { words, byReader } = forbiddenWords(glossary);
     if (!words.length && !byReader.length) {
-        console.log('check-glossary: раздела запретных слов в словаре нет — сверять нечем');
+        console.log('check-glossary: the glossary carries no section of banned words — there is nothing to check with');
 
         return Number(process.env.RT_SKIP_CODE ?? 7);
     }
@@ -154,19 +160,19 @@ function main() {
     const news = found.filter((one) => fresh.includes(one.key));
 
     if (news.length) {
-        console.error(`check-glossary: расхождений ${news.length}`);
+        console.error(`check-glossary: divergences ${news.length}`);
         for (const one of news) {
-            console.error(`  ${one.file}:${one.line} — «${one.word}»: слово стоит в разделе запретных слов словаря`);
+            console.error(`  ${one.file}:${one.line} — «${one.word}»: the word stands in the section of banned words of the glossary`);
         }
-        console.error('  либо слово меняется на принятое здесь, либо словарь перестаёт его запрещать');
+        console.error('  either the word is changed to the one accepted here, or the glossary stops banning it');
 
         return 1;
     }
 
-    console.log(`check-glossary: запретных слов ${words.length}, читано документов ${readableFiles().length}, расхождений нет`);
+    console.log(`check-glossary: banned words ${words.length}, documents read ${readableFiles().length}, no divergences`);
     if (byReader.length) {
-        // Молчание о невыполнимом поиске читалось бы как охват: эти слова не судит ничто.
-        console.log(`  поиском не судятся, остаются требованием к читателю: ${byReader.join(', ')}`);
+        // Silence about a search that cannot be done would read as coverage: nothing judges these.
+        console.log(`  not judged by search, they stay a requirement to the reader: ${byReader.join(', ')}`);
     }
 
     return 0;

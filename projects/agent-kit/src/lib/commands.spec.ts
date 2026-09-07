@@ -11,6 +11,7 @@ import {
     accessSync,
     chmodSync,
     constants,
+    cpSync,
     existsSync,
     mkdirSync,
     mkdtempSync,
@@ -707,6 +708,22 @@ describe('doctor', () => {
         expect(said_).toContain('местные значения, которых ждут взятые хуки: 1');
         expect(said_).toContain('все на месте');
         expect(said_).not.toContain('нет значения');
+    });
+
+    // Ключ шапки читается на обоих языках: тексты пакета английские, а хуки дерева, заведённые
+    // до перевода, несут русский ключ — без второго имени сводка молчала бы о них.
+    it('SC-AK-729 — русский ключ шапки сводка читает наравне с английским', () => {
+        const dir: string = mkdtempSync(join(tmpdir(), 'agent-kit-assets-'));
+        cpSync(ASSETS, dir, { recursive: true });
+        const hook: string = join(dir, 'hooks', 'browser-device-id.sh');
+        writeFileSync(hook, readFileSync(hook, 'utf8').replace('# Local value:', '# Местное значение:'), 'utf8');
+        start(['hooks/browser-device-id.sh']);
+
+        const said_: string = said(doctor({ root, version: VERSION, assetsDir: dir }));
+        rmSync(dir, { recursive: true, force: true });
+
+        expect(said_).toContain('местные значения, которых ждут взятые хуки: 1');
+        expect(said_).toContain('нет значения .claude/rt-kit/browser-device-id');
     });
 
     // Ресурс чужого вида — не «не выбран»: проект от него не отказывался, его в этом дереве

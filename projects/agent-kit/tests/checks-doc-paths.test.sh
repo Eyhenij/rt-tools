@@ -26,56 +26,56 @@ doc() { printf '%s\n' "$2" > "$DOC_TREE/docs/$1"; git -C "$DOC_TREE" add -A; }
 
 # SC-AK-47 — голое имя файла судится наравне с путём
 doc a.md 'Файл `index.ts` есть, а `missing.ts` нет.'
-report "SC-AK-47 — голое имя, которого нет, названо" "$(docs_says 'нет файла .missing\.ts')" 1
-report "SC-AK-47 — голое имя, которое есть, молчит" "$(docs_says 'нет файла .index\.ts')" 0
+report "SC-AK-47 — голое имя, которого нет, названо" "$(docs_says 'no file .missing\.ts')" 1
+report "SC-AK-47 — голое имя, которое есть, молчит" "$(docs_says 'no file .index\.ts')" 0
 
 # SC-AK-48 — каталог судится наравне с путём
 doc b.md 'Каталог `projects/kit/src` есть, а `projects/kit/nowhere` нет.'
-report "SC-AK-48 — каталога нет — назван" "$(docs_says 'нет файла .projects/kit/nowhere')" 1
-report "SC-AK-48 — каталог есть — молчит" "$(docs_says 'нет файла .projects/kit/src')" 0
+report "SC-AK-48 — каталога нет — назван" "$(docs_says 'no file .projects/kit/nowhere')" 1
+report "SC-AK-48 — каталог есть — молчит" "$(docs_says 'no file .projects/kit/src')" 0
 
 # SC-AK-49 — дерево берётся у системы контроля версий: обход не видит каталогов с точкой
 doc c.md 'Гард `.claude/hooks/some-guard.sh` лежит в дереве.'
-report "SC-AK-49 — путь под каталогом с точкой найден" "$(docs_says 'нет файла .\.claude/hooks')" 0
+report "SC-AK-49 — путь под каталогом с точкой найден" "$(docs_says 'no file .\.claude/hooks')" 0
 
 # SC-AK-50 — папка задачи из сверки выведена, как архив
 printf 'Снятый `docs/tasks/nowhere.md` тут назван.\n' > "$DOC_TREE/docs/tasks/RT-1-x/progress.md"
 printf 'Снятый `docs/archive/nowhere.md` тут назван.\n' > "$DOC_TREE/docs/archive/old.md"
 git -C "$DOC_TREE" add -A
-report "SC-AK-50 — ход работы не судится" "$(docs_says 'нет файла .docs/tasks/nowhere')" 0
-report "SC-AK-50 — архив не судится" "$(docs_says 'нет файла .docs/archive/nowhere')" 0
+report "SC-AK-50 — ход работы не судится" "$(docs_says 'no file .docs/tasks/nowhere')" 0
+report "SC-AK-50 — архив не судится" "$(docs_says 'no file .docs/archive/nowhere')" 0
 
 # SC-AK-51 и SC-AK-52 — полнота указателя каталога сверяется обеими сторонами
 printf '# Архив\n\n| Запись | О чём |\n| --- | --- |\n' > "$DOC_TREE/docs/archive/README.md"
 git -C "$DOC_TREE" add -A
-report "SC-AK-51 — запись без строки названа" "$(docs_says 'лежит в каталоге, но в таблице не названа')" 1
+report "SC-AK-51 — запись без строки названа" "$(docs_says 'lies in the directory and is not named in the table')" 1
 printf '# Архив\n\n| Запись | О чём |\n| --- | --- |\n| `old.md` | о старом |\n| `gone.md` | о снятом |\n' \
     > "$DOC_TREE/docs/archive/README.md"
 git -C "$DOC_TREE" add -A
-report "SC-AK-51 — названная запись молчит" "$(docs_says 'лежит в каталоге, но в таблице не названа')" 0
-report "SC-AK-52 — строка без записи названа" "$(docs_says 'названа в таблице, но записи в каталоге нет')" 1
+report "SC-AK-51 — названная запись молчит" "$(docs_says 'lies in the directory and is not named in the table')" 0
+report "SC-AK-52 — строка без записи названа" "$(docs_says 'is named in the table, and there is no record in the directory')" 1
 
 # SC-AK-53 — дерево, не назвавшее ни одного указателя, сверки указателя не получает
 mkdir -p "$DOC_TREE/.claude/rt-kit"
 printf '{"indexedDirs":[]}\n' > "$DOC_TREE/.claude/rt-kit/checks.json"
 git -C "$DOC_TREE" add -A
-report "SC-AK-53 — без объявленных указателей сверки нет" "$(docs_says 'указатель разошёлся с каталогом')" 0
+report "SC-AK-53 — без объявленных указателей сверки нет" "$(docs_says 'the index diverged from the directory')" 0
 
 # SC-AK-54 — разложенный текст выведен из сверки по своей шапке
 doc laid.md '<!-- rt-kit v0.5.0 · rules/some.md · 0123456789ab · правится надстройкой, не здесь -->
 Правило зовёт `libs/common/util`, которого в этом дереве нет.'
-report "SC-AK-54 — адрес разложенного текста не судится" "$(docs_says 'нет файла .libs/common/util')" 0
+report "SC-AK-54 — адрес разложенного текста не судится" "$(docs_says 'no file .libs/common/util')" 0
 doc own.md 'Свой текст зовёт `libs/common/util`, которого нет.'
-report "SC-AK-54 — адрес своего текста судится" "$(docs_says 'нет файла .libs/common/util')" 1
+report "SC-AK-54 — адрес своего текста судится" "$(docs_says 'no file .libs/common/util')" 1
 
 # SC-AK-55 — исходник переносимого текста выведен по каталогу из настройки
 mkdir -p "$DOC_TREE/assets/rules"
 printf 'Исходник правила зовёт `prisma/schema.prisma`, которого нет.\n' > "$DOC_TREE/assets/rules/some.md"
 git -C "$DOC_TREE" add -A
-report "SC-AK-55 — неназванный каталог исходников судится" "$(docs_says 'нет файла .prisma/schema\.prisma')" 1
+report "SC-AK-55 — неназванный каталог исходников судится" "$(docs_says 'no file .prisma/schema\.prisma')" 1
 printf '{"indexedDirs":[],"portableDirs":["assets"]}\n' > "$DOC_TREE/.claude/rt-kit/checks.json"
 git -C "$DOC_TREE" add -A
-report "SC-AK-55 — названный каталог исходников не судится" "$(docs_says 'нет файла .prisma/schema\.prisma')" 0
+report "SC-AK-55 — названный каталог исходников не судится" "$(docs_says 'no file .prisma/schema\.prisma')" 0
 
 rm -rf "$DOC_TREE"
 

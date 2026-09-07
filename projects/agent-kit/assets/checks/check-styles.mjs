@@ -1,33 +1,32 @@
 #!/usr/bin/env node
 /**
- * Проверка того, что класс элемента BEM подкреплён правилом.
+ * The check that a BEM element class is backed by a rule.
  *
- * Класс без правила заводится молча: раскладка переезжает из файла экрана в
- * общий слой, а `rtElem` остаётся в шаблоне и больше ничему не соответствует.
- * Ни линт, ни сборка, ни браузер этого не показывают — лишний класс просто
- * ничего не делает, и разметка обрастает именами, за которыми ничего нет.
+ * A class without a rule appears silently: the layout moves from the screen's file into the
+ * shared layer, and `rtElem` stays in the template and corresponds to nothing any more. Neither
+ * the linter nor the build nor the browser shows this — a superfluous class simply does nothing,
+ * and the markup grows names with nothing behind them.
  *
- * Совпадение считается по имени элемента, а не по паре «блок — элемент»:
- * `rtElem` берёт имя блока у ближайшего предка с `rtBlock`, и повторить этот
- * разбор по тексту шаблона нечем. Из-за этого проверка пропускает класс, у
- * которого правило есть, но у чужого блока, — направление выбрано в сторону
- * ложных пропусков, а не ложных отказов.
+ * A match is counted by the element name, not by the pair "block — element": `rtElem` takes the
+ * block name from the nearest ancestor with `rtBlock`, and there is nothing to repeat that
+ * reasoning by over the text of the template. Because of this the check lets through a class that
+ * has a rule, but under a different block — the direction is chosen towards false misses rather
+ * than false refusals.
  *
- * Объявлением считается и то, что приехало подключённым пакетом: экран,
- * собранный из готового, своих объявлений не держит вовсе. Читается ровно тот
- * файл, который приложение назвало само, — обход односложный, и каталог
- * зависимостей в корни исходников не попадает.
+ * What arrived with a connected package counts as a declaration too: a screen assembled from
+ * ready-made code keeps no declarations of its own at all. Exactly the file the application named
+ * itself is read — the walk is one step deep, and the dependencies directory does not get into
+ * the source roots.
  *
- * Динамическое `[rtElem]` не считается: имя там известно только в рантайме.
+ * A dynamic `[rtElem]` does not count: the name there is known only at runtime.
  *
- * Накопленное к моменту заведения проверки лежит в tools/styles-allowlist.json
- * и отказом не считается: гейт падает на НОВОМ классе без правила, а старое
- * остаётся видимым числом в сводке. Строка списка опознаётся по имени класса:
- * перечень файлов при нём меняется от каждой правки разметки, и сверенный
- * целиком он делал бы прежнюю строку лишней, а тот же самый долг — новым
- * расхождением.
+ * What had accumulated by the moment the check was started lies in tools/styles-allowlist.json
+ * and does not count as a refusal: the gate falls on a NEW class without a rule, while the old
+ * stays a visible number in the digest. A line of the list is recognised by the class name: the
+ * list of files next to it changes with every edit of the markup, and audited whole it would make
+ * the former line superfluous and the very same debt a new divergence.
  *
- * Ненулевой код возврата и перечень расхождений.
+ * A non-zero return code and a list of divergences.
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -40,22 +39,22 @@ const SOURCE_ROOTS = CONFIG.sourceRoots;
 const SKIPPED_DIRS = CONFIG.skippedDirs;
 
 const ELEM_RE = /rtElem="([a-z0-9-]+)"/g;
-/** Объявление элемента: и вложенное `&__item`, и полное `.<блок>__item` */
+/** The declaration of an element: both a nested `&__item` and a full `.<block>__item` */
 const RULE_RE = /__([a-z0-9-]+)/g;
-/** Голова вложенности: строка, с которой начинается блок элемента */
+/** The head of the nesting: the line an element block starts with */
 const HEAD_RE = /^&__([a-z0-9-]+)/;
-/** Колено вложенности: `&-<хвост>` внутри блока элемента дописывает имя, а не заводит своё */
+/** A joint of the nesting: `&-<tail>` inside an element block appends to the name instead of starting its own */
 const TAIL_RE = /^&-([a-z0-9-]+)/;
-/** Подключение в файле стилей: `@use` и `@forward` берутся одним разбором */
+/** A connection in a style file: `@use` and `@forward` are taken by one parse */
 const USE_RE = /@(?:use|forward)\s+['"]([^'"]+)['"]/g;
-/** Строка списка известного: имя класса и перечень файлов при нём */
+/** A line of the known list: the class name and the list of files next to it */
 const KEY_RE = /^elem (\S+) @ (.*)$/;
 
 const allowlist = parseAllowlist('styles');
 const known = allowlist.keys;
 const debt = new Set(allowlist.debt.keys());
 
-/** Строки списка по имени класса: перечень файлов в ключ входит, но сверяется отдельно */
+/** The lines of the list by class name: the list of files is part of the key but is audited apart */
 const knownByName = new Map();
 for (const key of known) {
     const parsed = KEY_RE.exec(key);
@@ -81,8 +80,9 @@ function collectFiles(dir, extension) {
 }
 
 /**
- * Имя пакета и путь внутри него. Относительный и абсолютный спецификаторы пакетом не бывают;
- * приставки `pkg:` и `~` снимаются — ими зовут тот же пакет разные сборщики.
+ * The package name and the path inside it. A relative and an absolute specifier are never a
+ * package; the prefixes `pkg:` and `~` are stripped — different bundlers call the same package by
+ * them.
  */
 function packageOf(specifier) {
     const clean = specifier.replace(/^pkg:/, '').replace(/^~/, '');
@@ -99,10 +99,10 @@ function packageOf(specifier) {
 }
 
 /**
- * Файл пакета, названный подключением. Каталог ищется разрешением модуля от того места, где
- * подключение написано: пакет подпроекта в корне дерева не лежит вовсе, а менеджер вправе
- * держать рядом несколько версий сразу. Не нашлось — `null`: дерево без этого пакета получает
- * сверку своих объявлений, а не отказ чтения.
+ * The file of a package named by a connection. The directory is found by module resolution from
+ * the place where the connection is written: a subproject's package does not lie at the tree root
+ * at all, and the manager is free to keep several versions side by side. Not found — `null`: a
+ * tree without that package gets an audit of its own declarations, not a refusal to read.
  */
 function fileOfPackage(from, { name, rest }) {
     let manifest;
@@ -126,13 +126,13 @@ function fileOfPackage(from, { name, rest }) {
 }
 
 /**
- * Имена элементов, объявленных файлом стилей. Имя собирается из вложенности: `&__head { &-icon }`
- * объявляет `head-icon`, и колен у него бывает сколько угодно. Читая только то, что стоит после
- * `__` целиком, проверка числила долгом исправную вёрстку — правило работает, класс красит, а
- * снять его значило бы сломать экран.
+ * The names of the elements declared by a style file. The name is assembled from the nesting:
+ * `&__head { &-icon }` declares `head-icon`, and it can have any number of joints. Reading only
+ * what stands after `__` whole, the check counted sound markup as a debt — the rule works, the
+ * class paints, and removing it would mean breaking the screen.
  *
- * Хвост без головы именем не становится: `&-<хвост>`, стоящий вне блока элемента, принадлежит
- * чужому селектору, и приписать его было бы выдумыванием объявления.
+ * A tail without a head does not become a name: `&-<tail>` standing outside an element block
+ * belongs to a different selector, and ascribing it would be inventing a declaration.
  */
 function elementNames(text) {
     const names = new Set();
@@ -167,8 +167,9 @@ function elementNames(text) {
 }
 
 /**
- * Объявления из пакетов, подключённых самим приложением. Читается ровно названный файл:
- * подключения внутри него не разбираются — объявленным считается то, что приложение назвало.
+ * The declarations from the packages connected by the application itself. Exactly the named file
+ * is read: the connections inside it are not parsed — what the application named is what counts
+ * as declared.
  */
 function declarationsFromPackages(styleFiles) {
     const names = new Set();
@@ -218,7 +219,7 @@ for (const [name, files] of [...usedIn].sort(([first], [second]) => first.locale
         name,
         files: new Set(files),
         key: `elem ${name} @ ${where}`,
-        text: `rtElem="${name}" — правила нет ни в одном файле стилей: ${where}`,
+        text: `rtElem="${name}" — there is no rule in any style file: ${where}`,
     });
 }
 
@@ -228,9 +229,9 @@ if (process.argv.includes('--baseline')) {
 }
 
 /**
- * Чем перечень файлов у находки разошёлся со строкой списка: что добавилось и что ушло. Рост —
- * расхождение, сокращение — починка; одинаково их читать нельзя, а сверять ключ целиком значило
- * бы объявлять тот же долг новым.
+ * How the list of files of a finding has diverged from the line of the list: what was added and
+ * what went away. Growth is a divergence, shrinking is a repair; they cannot be read alike, and
+ * auditing the key whole would mean declaring the very same debt a new one.
  */
 function changedFiles(finding, line) {
     return {
@@ -253,27 +254,27 @@ for (const finding of findings) {
 
     const { added, gone } = changedFiles(finding, line);
     if (added.length > 0) {
-        problems.push(`elem ${finding.name}: долг разросся — класс появился ещё в ${added.join(', ')}; снять его оттуда`);
+        problems.push(`elem ${finding.name}: the debt has grown — the class appeared also in ${added.join(', ')}; remove it from there`);
     } else if (gone.length > 0) {
         notes.push(
-            `elem ${finding.name}: долг сократился — класса больше нет в ${gone.join(', ')}; перечень в строке списка можно поправить`
+            `elem ${finding.name}: the debt has shrunk — the class is no longer in ${gone.join(', ')}; the list in the entry can be fixed`
         );
     }
 }
 
 for (const key of known) {
     if (!matchedKeys.has(key)) {
-        problems.push(`${key}: значится в ${ALLOWLIST}, но класс уже подкреплён правилом — строку убрать`);
+        problems.push(`${key}: listed in ${ALLOWLIST}, but the class is already backed by a rule — remove the line`);
     }
 }
 
 if (problems.length > 0) {
-    console.error(`check-styles: расхождений ${problems.length}\n`);
+    console.error(`check-styles: divergences ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
     process.exit(1);
 }
 
 notes.forEach((note) => console.log(`  ${note}`));
 console.log(
-    `check-styles: классов без правила ${findings.length}, из них принято ${findings.length - debt.size}, долг ${debt.size} — новых нет`
+    `check-styles: classes without a rule ${findings.length}, of them accepted ${findings.length - debt.size}, debt ${debt.size} — no new ones`
 );

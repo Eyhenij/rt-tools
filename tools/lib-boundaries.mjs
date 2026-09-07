@@ -1,11 +1,11 @@
-// rt-kit v0.25.0 · checks/lib-boundaries.mjs · 7345e62ab2ab · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/lib-boundaries.mjs · 0ca76a6204fb · правится надстройкой, не здесь
 /**
- * Границы и теги: где либа описана как источник, чей список зависимостей обязан оставаться
- * пустым и что видно основанию семейства. Все три предмета читают одни и те же файлы
- * `eslint/boundaries/domains/`, и врозь их не разложить.
+ * Boundaries and tags: where a lib is described as a source, whose dependency list must stay empty
+ * and what the family base sees. All three subjects read the same files
+ * `eslint/boundaries/domains/`, and they cannot be laid out apart.
  *
- * Имя не начинается с `check-`: перебором таких имён умолчание пакета собирает набор гейта
- * пуша, и помощник с ним гейт стал бы гонять как отдельную проверку.
+ * The name does not begin with `check-`: by walking such names the package default assembles the
+ * push gate set, and a helper with one would be run by the gate as a check of its own.
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -14,14 +14,14 @@ import { BOUNDARIES_DIR, FAMILIES, isDir, projectTag, report } from './lib-commo
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 /**
- * Либа должна быть описана ровно одним `sourceTag` и ровно в одном файле границ:
- * описанная дважды либа означает два разных allowlist'а на неё, и какой победит —
- * вопрос порядка сборки. В чужих allowlist'ах тег, наоборот, встречается сколько
- * угодно раз: это перечисление тех, кому либа видна.
+ * A lib must be described by exactly one `sourceTag` and in exactly one boundaries file:
+ * a lib described twice means two different allowlists for it, and which one wins is a
+ * matter of the build order. In other allowlists the tag, on the contrary, occurs as many
+ * times as needed: that is the enumeration of those the lib is visible to.
  */
 function checkBoundaries(libs) {
     if (!isDir(BOUNDARIES_DIR)) {
-        report(BOUNDARIES_DIR, 'каталога с файлами границ нет');
+        report(BOUNDARIES_DIR, 'there is no directory with boundary files');
 
         return;
     }
@@ -39,20 +39,21 @@ function checkBoundaries(libs) {
         });
 
         if (owners.length === 0) {
-            report(libPath, `тег ${tag} не описан ни в одном файле ${BOUNDARIES_DIR}/`);
+            report(libPath, `the tag ${tag} is described in no file of ${BOUNDARIES_DIR}/`);
         } else if (owners.length > 1) {
-            report(libPath, `тег ${tag} описан ${owners.length} раза: ${owners.join(', ')}`);
+            report(libPath, `the tag ${tag} is described ${owners.length} times: ${owners.join(', ')}`);
         }
     }
 }
 
 /**
- * Либы, у которых список зависимостей обязан оставаться пустым. Барель такой либы
- * уезжает в бандл бэкенда, а сборка API идёт без tree-shaking: любая зависимость
- * расходится оттуда по всему графу.
+ * Libs whose dependency list must stay empty. The barrel of such a lib travels
+ * into the backend bundle, and the API build runs without tree-shaking: any dependency
+ * spreads from there across the whole graph.
  *
- * Теги называет дерево: имя тега — его собственное слово, и зашитое здесь требовало бы описания
- * границ под либу, которой в дереве нет вовсе. Пусто — таких либ дерево не держит.
+ * The tags are named by the tree: a tag name is its own word, and one hard-coded here would demand
+ * a boundaries description for a lib the tree does not have at all. Empty — the tree keeps no such
+ * libs.
  */
 const NO_DEPENDENCY_TAGS = CONFIG.noDependencyTags;
 
@@ -80,42 +81,43 @@ function checkNoDependencyLibs() {
             const opensAt = rest.indexOf('[', listAt);
             const closesAt = rest.indexOf(']', opensAt);
             if (listAt === -1 || opensAt === -1 || closesAt === -1) {
-                report(`${BOUNDARIES_DIR}/${name}`, `у ${tag} не найден список зависимостей`);
+                report(`${BOUNDARIES_DIR}/${name}`, `${tag} has no list of dependencies`);
                 continue;
             }
 
             const dependencies = rest.slice(opensAt + 1, closesAt).trim();
             if (dependencies.length > 0) {
-                report(`${BOUNDARIES_DIR}/${name}`, `${tag} ни от кого не зависит, а его список непуст: ${dependencies}`);
+                report(`${BOUNDARIES_DIR}/${name}`, `${tag} depends on nobody, and its list is not empty: ${dependencies}`);
             }
         }
 
         if (!described) {
-            report(BOUNDARIES_DIR, `тег ${tag} не описан ни в одном файле границ`);
+            report(BOUNDARIES_DIR, `the tag ${tag} is described in no boundary file`);
         }
     }
 }
 
 /**
- * Основание семейства видит `common/util` и слои `util` общих доменов своей
- * семьи. Всё сверх этого названо строкой здесь: основание зовут все домены, и
- * любая его зависимость становится общей для всей семьи.
+ * The family base sees `common/util` and the `util` layers of the shared domains of its
+ * own family. Everything beyond that is named by a line here: the base is called by every
+ * domain, and any dependency of it becomes shared by the whole family.
  */
 const CORE_EXCEPTIONS = {
-    // Транспорт Connect в admin-transport.provider.ts: дескриптор логина и токен транспорта
+    // The Connect transport in admin-transport.provider.ts: the sign-in descriptor and the
+    // transport token
     'scope:admin-core': ['scope:common-proto', 'scope:common-connect'],
 };
 
-/** `scope:<семья>-common-<домен>-util` — слой `util` общего домена той же семьи */
+/** `scope:<family>-common-<domain>-util` — the `util` layer of a shared domain of the same family */
 const isFamilyCommonUtil = (tag, family) => new RegExp(`^scope:${family}-common-[a-z0-9-]+-util$`).test(tag);
 
 async function checkCoreLibs() {
-    // Свод границ есть не у всякого дерева с доменной сеткой: он собирается отдельным файлом, и
-    // пока его отсутствие не обрабатывалось, проверка падала на импорте — то есть отвечала
-    // поломкой на дерево, где границы объявлены иначе.
+    // Not every tree with a domain grid has a boundaries index: it is assembled by a separate file,
+    // and while its absence was not handled the check fell on the import — that is, it answered a
+    // tree where boundaries are declared differently with a breakage.
     const boundaries = join(ROOT, 'eslint/boundaries/index.mjs');
     if (!existsSync(boundaries)) {
-        console.log('пропущено: свода границ eslint/boundaries/index.mjs в дереве нет');
+        console.log('skipped: the tree has no boundary digest eslint/boundaries/index.mjs');
 
         return;
     }
@@ -135,7 +137,7 @@ async function checkCoreLibs() {
             }
             report(
                 `${BOUNDARIES_DIR}/${family}-core.config.mjs`,
-                `${tag} видит ${dependency}: основанию семейства доступны только scope:common-util и scope:${family}-common-*-util`
+                `${tag} sees ${dependency}: the base of a family may reach only scope:common-util and scope:${family}-common-*-util`
             );
         }
     }

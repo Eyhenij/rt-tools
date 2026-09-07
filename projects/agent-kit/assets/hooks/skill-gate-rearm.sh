@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
 # rt-hook: SessionStart compact|clear
-# Взвод гейта заново. SessionStart(compact|clear).
+# Re-arming the gate. SessionStart(compact|clear).
 #
-# Гейт помнит загруженное правило по идентификатору сессии и дальше пропускает эту область
-# молча. Сжатие контекста и очистка выносят из контекста САМ ТЕКСТ правила, но идентификатор
-# сессии оставляют прежним — без этого хука гейт продолжал бы пропускать, пока агент работает
-# по пересказу вместо самого правила.
+# The gate remembers a loaded rule by the session id and from then on lets that area through
+# silently. Context compaction and clearing take the TEXT of the rule itself out of the context but
+# leave the session id as it was — without this hook the gate would keep letting through while the
+# agent works from a retelling instead of the rule itself.
 #
-# Снятие записи заставляет каждую область загрузить своё правило заново.
+# Removing the record makes every area load its rule again.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: любая ошибка пропускает. Хук удаляет временный файл и ничего не
-# отбивает.
+# FAIL-OPEN: any error passes. The hook removes a temporary file and refuses nothing.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
@@ -24,12 +23,12 @@ sid="$(printf '%s' "$input" | jq -r '.session_id // empty' 2>/dev/null)"
 
 rm -f "${TMPDIR:-/tmp}/claude-skill-gate/${sid}.loaded" 2>/dev/null
 
-# Взвод называется заходу словом.
+# The re-arming is told to the session in words.
 #
-# Молчащий взвод читается как поломка: сводка сжатия говорит, что правила уже загружались, а
-# гейт отвечает, что не загружались, — и заход тратит ход на выяснение, у кого из двоих правда.
-# Ход тратился так четырежды за одну сессию. Строка снимает противоречие: текста правил в
-# контексте больше нет, поэтому их и спрашивают заново.
-jq -n '{hookSpecificOutput:{hookEventName:"SessionStart",additionalContext:"Гейт правил взведён заново: сжатие контекста вынесло из него сам текст правил, и каждая область спросит своё правило ещё раз. Прежняя загрузка не считается — грузи правило и работай дальше."}}' 2>/dev/null
+# A silent re-arming reads as breakage: the compaction summary says the rules were already loaded,
+# the gate answers that they were not — and the session spends a turn finding out which of the two
+# is right. A turn was spent that way four times in one session. The line removes the contradiction:
+# the rule text is no longer in the context, which is why it is asked for again.
+jq -n '{hookSpecificOutput:{hookEventName:"SessionStart",additionalContext:"The rules gate is armed anew: the compaction carried the text of the rules themselves out of the session, and every area will ask for its rule once more. The former loading does not count — load the rule and work on."}}' 2>/dev/null
 
 exit 0

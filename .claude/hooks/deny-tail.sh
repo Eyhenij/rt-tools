@@ -1,35 +1,37 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/deny-tail.sh · 0a4a44b35f74 · правится надстройкой, не здесь
-# Общий хвост отказа. НЕ гард: объявления `rt-hook:` у него нет, к событиям агента он не
-# подключается. Его источают сами гарды — тем же приёмом, каким они источают запись наблюдений и
-# слово о нехватке функции профиля.
+# rt-kit v0.25.0 · hooks/deny-tail.sh · b6a7fe3fc0c7 · правится надстройкой, не здесь
+# The shared deny tail. NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event.
+# The guards source it themselves — the same way they source the observation record and the word
+# about a missing profile function.
 #
-# Зачем он есть. Отказ гарда называет промах и способ его снять, а что делать, когда снять не
-# выходит, не называет никто. Пустое место занимает третий ход, которого нет в правилах: обойти
-# молча — командой оболочки, соседним инструментом, правкой самого гарда. Так и было: за один час
-# отказ обошли дважды, и оба раза правка легла мимо гарда. Ходов законных два, и оба называются
-# прямо в тексте отказа, а не остаются на догадку читающего.
+# Why it exists. A guard's refusal names the miss and the way to lift it, and nobody names what to
+# do when lifting it does not work out. The empty place is taken by a third move that is in no rule:
+# bypass silently — by a shell command, by a neighbouring tool, by editing the guard itself. That is
+# what happened: within one hour a refusal was bypassed twice, and both times the edit landed past
+# the guard. There are two lawful moves, and both are named right in the refusal text instead of
+# being left to the reader's guess.
 #
-# ЧТО ГОВОРИТСЯ. Починить названное и повторить вызов — либо принести владельцу цену обхода и
-# ждать его слова. Там, где у обхода есть законная форма — строка в теле коммита, строка в
-# замысле, ключ команды, — она называется тем же хвостом: обход, о котором известно, что он
-# законен, ищут не мимо гарда, а по его же словам.
+# WHAT IS SAID. Fix what was named and repeat the call — or bring the owner the price of the bypass
+# and wait for their word. Where the bypass has a lawful form — a line in the commit body, a line
+# in the plan, a command flag — the same tail names it: a bypass known to be lawful is looked for by
+# the guard's own words, not past the guard.
 #
-# ЧЕГО ХВОСТ НЕ ДЕЛАЕТ. Он не судит, годится ли обход в этом случае: это решает владелец. И он не
-# заменяет причины отказа — она стоит перед ним и называет промах поимённо.
+# WHAT THE TAIL DOES NOT DO. It does not judge whether the bypass fits this case: the owner decides
+# that. And it does not replace the refusal reason — that stands before it and names the miss by
+# name.
 #
-# ЗАПИСЬ ОТБОЯ ИДЁТ ОТСЮДА ЖЕ. Хвост — единственное место, через которое проходит каждый отказ:
-# правило дерева требует называть два законных хода при любом отказе, и гард, который отказывает
-# мимо хвоста, нарушает его раньше, чем теряет счёт. Написанная в самом гарде, запись стояла в
-# пяти гардах из тридцати, и сводка отвечала по этой пятой части. Гард объявляет себя строкой
-# `RT_GUARD_NAME=<имя>` у себя вверху; не объявивший не пишет ничего — так своё отбитие считает
-# сам гейт правил.
+# THE REFUSAL RECORD GOES FROM HERE TOO. The tail is the one place every refusal passes through: the
+# tree's rule demands that the two lawful moves be named at every refusal, and a guard that refuses
+# past the tail breaks that rule before it loses count. Written inside the guard itself, the record
+# stood in five guards out of thirty, and the digest answered by that fifth. A guard declares itself
+# by the line `RT_GUARD_NAME=<name>` at its top; one that has not declared writes nothing — that is
+# how the rules gate counts its own refusals by itself.
 
-# Хвост отказа строкой. Первый параметр — законная форма обхода, если она у отказа есть; пусто —
-# значит законной формы нет вовсе, и говорится об этом прямо.
+# The deny tail as a string. The first parameter is the lawful form of bypass, if the refusal has
+# one; empty means there is no lawful form at all, and this is said outright.
 #
-#   reason="BLOCKED: <причина>. $(rt_deny_tail 'строка `Docs-skip: <причина>` в теле коммита')"
-#   reason="BLOCKED: <причина>. $(rt_deny_tail)"
+#   reason="BLOCKED: <reason>. $(rt_deny_tail 'the line `Docs-skip: <reason>` in the commit body')"
+#   reason="BLOCKED: <reason>. $(rt_deny_tail)"
 rt_deny_tail() {
     # shellcheck disable=SC1090
     [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/guard-note.sh" ] \
@@ -37,9 +39,9 @@ rt_deny_tail() {
     command -v rt_guard_note >/dev/null 2>&1 && rt_guard_note
 
     if [ -n "$1" ]; then
-        printf 'Ходов отсюда два: починить названное и повторить вызов — либо принести владельцу цену обхода и ждать его слова. Законная форма обхода: %s. Молча мимо гарда правка не кладётся: он отбивает один вызов, а обойдённый снимает требование со всего дерева и молчит об этом.' "$1"
+        printf 'Two moves from here: fix what is named and repeat the call, or bring the owner the price of a bypass and wait for their word. The lawful form of bypass: %s. An edit is not laid past the guard in silence: it refuses one call, and a bypassed one lifts the requirement from the whole tree and says nothing about it.' "$1"
         return 0
     fi
 
-    printf 'Ходов отсюда два: починить названное и повторить вызов — либо принести владельцу цену обхода и ждать его слова. Законной формы обхода у этого отказа нет. Молча мимо гарда правка не кладётся: он отбивает один вызов, а обойдённый снимает требование со всего дерева и молчит об этом.'
+    printf 'Two moves from here: fix what is named and repeat the call, or bring the owner the price of a bypass and wait for their word. There is no lawful form of bypass for this refusal. An edit is not laid past the guard in silence: it refuses one call, and a bypassed one lifts the requirement from the whole tree and says nothing about it.'
 }
