@@ -31,10 +31,10 @@
 - **Адресом конкретного дерева считается перечисленное, а не всё, что похоже на путь.** — `projects/agent-kit/tests/texts.test.sh:COMMON_SEGMENTS`
 - **Машинная половина краснеет только на считаемом.** — `projects/agent-kit/tests/rules-review.test.sh:suite_result`
 - **Проверка текстов пакета стоит в наборе, который гоняется перед пушем.** — `projects/agent-kit/src/lib/assets.spec.ts:expectGreen`
-- **Ревью читает семью целиком, а не файл по одному.** — `projects/agent-kit/assets/agents/rules-reviewer.md:Семья`
+- **Ревью читает семью целиком, а не файл по одному.** — `projects/agent-kit/assets/agents/rules-reviewer.md:family`
 - **Роль возвращает находки и ничего не правит.** — `projects/agent-kit/assets/agents/rules-reviewer.md:tools`
-- **Находка называет два места дословно и то, чем они расходятся.** — `projects/agent-kit/assets/agents/rules-reviewer.md:дословно`
-- **Пробел ищется чтением, а не счётом привязок.** — `projects/agent-kit/assets/agents/rules-reviewer.md:Пробел`
+- **Находка называет два места дословно и то, чем они расходятся.** — `projects/agent-kit/assets/agents/rules-reviewer.md:verbatim`
+- **Пробел ищется чтением, а не счётом привязок.** — `projects/agent-kit/assets/agents/rules-reviewer.md:gap`
 - **Ревью зовётся двумя способами: командой вручную и машинной половиной в гейте.** — `.claude/commands/rules-review.md:ARGUMENTS`
 - **Граф изображает ход правила и лежит в тексте самого правила.** — `projects/agent-kit/assets/templates/rule.md:mermaid`
 - **Граф заводится каждому правилу, а не только ветвящемуся.** — `projects/agent-kit/tests/rules-review.test.sh:sections_for`
