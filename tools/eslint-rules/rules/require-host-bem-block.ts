@@ -1,18 +1,16 @@
 import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 /**
- * Принуждает каждый `@Component`-декоратор иметь `host: { class: BEM_BLOCK }`.
+ * It demands that every `@Component` decorator hold `host: { class: BEM_BLOCK }`.
  *
- * Унифицирует host-class pattern для всего workspace: каждый компонент
- * декларирует свой BEM-блок через локальную const `BEM_BLOCK` и проставляет
- * её на host через `@Component({ ..., host: { class: BEM_BLOCK } })`. Это
- * закрывает дыру с `<ng-container rtBlock="...">`: контейнер разворачивается в
- * узел-комментарий, `BlockDirective` его пропускает, и класс блока не
- * применяется вовсе — разметка выглядит размеченной, а правил под ней нет.
+ * It makes the host class one for the whole tree: every component declares its BEM block by a
+ * local const `BEM_BLOCK` and puts it on the host through
+ * `@Component({ ..., host: { class: BEM_BLOCK } })`. That closes the hole with
+ * `<ng-container rtBlock="...">`: the container unfolds into a comment node, `BlockDirective`
+ * skips it, and the block class is not applied at all — the markup looks marked up while there
+ * are no rules under it.
  *
- * Эталон: `libs/common/ui/src/lib/components/container/vm-container.component.ts`.
- *
- * Доступно в ESLint-конфигах как `@nx/workspace-require-host-bem-block`.
+ * In the ESLint configs it is available as `@nx/workspace-require-host-bem-block`.
  */
 export const RULE_NAME: string = 'require-host-bem-block';
 
@@ -82,8 +80,8 @@ export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = createRule<TOpti
 
                 const arg: TSESTree.CallExpressionArgument | undefined = expr.arguments[0];
                 if (!arg || arg.type !== 'ObjectExpression') {
-                    // `@Component()` без аргументов либо с identifier/external const —
-                    // не можем статически разобрать host. Рапортуем как missingHost.
+                    // `@Component()` without arguments, or with an identifier or an external
+                    // const: the host cannot be read statically. Reported as missingHost.
                     context.report({ node, messageId: 'missingHost' });
                     return;
                 }
@@ -95,7 +93,7 @@ export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = createRule<TOpti
                 }
 
                 if (hostProp.value.type !== 'ObjectExpression') {
-                    // host: SOME_CONST или host: spread — нельзя статически проверить class:.
+                    // host: SOME_CONST or host: a spread — the class key cannot be checked statically.
                     context.report({ node: hostProp, messageId: 'missingClassKey' });
                     return;
                 }
@@ -121,7 +119,7 @@ export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = createRule<TOpti
                     }
                     return;
                 }
-                // TemplateLiteral, MemberExpression, CallExpression, BinaryExpression и т.п.
+                // TemplateLiteral, MemberExpression, CallExpression, BinaryExpression and the like.
                 context.report({ node: classProp, messageId: 'complexValue' });
             },
         };

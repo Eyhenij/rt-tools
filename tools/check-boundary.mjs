@@ -1,26 +1,29 @@
 #!/usr/bin/env node
 /**
- * Проверка того, что пакет правил везёт потребителю только исполнимое им.
+ * The check that the rules package carries a consumer only what the consumer can carry out.
  *
- * Пакет ставят чужие деревья. Ресурс, у которого в чужом дереве нет предмета или некому его
- * позвать, читается там как всякий другой: та же шапка, тот же закон сверху, то же место в
- * перечне. Исполнитель берёт его в работу и упирается в пустой компаньон — и это лучший исход;
- * худший — он заполняет компаньон догадкой.
+ * The package is installed by foreign trees. A resource that has no subject in a foreign tree, or
+ * nobody there to call it, reads there like any other: the same header, the same law above, the same
+ * place in the list. The executor takes it into work and runs into an empty companion — and that is
+ * the best outcome; the worst is that they fill the companion with a guess.
  *
- * Признак — два вопроса к ресурсу, и оба ищутся образцами в его тексте:
- *   предмета нет — ресурс говорит о приёме груза, его админке или разборе приехавшего;
- *   звать некому — ресурс сам пишет, что зовётся в репозитории пакета.
+ * The sign is two questions to the resource, and both are looked for by samples in its text:
+ *   there is no subject — the resource speaks of the cargo intake, its admin panel or the sorting
+ *   out of what arrived;
+ *   there is nobody to call it — the resource itself writes that it is called in the package's
+ *   repository.
  *
- * Отправляющая сторона под признак не идёт: форма груза, отправка и команда предложения — то,
- * ради чего пакет ставят. Слово «приём» у них стоит как адрес, куда груз уезжает, поэтому
- * образцы ловят обороты о работе принимающей стороны, а не само слово.
+ * The sending side does not fall under the sign: the shape of the cargo, the send and the proposal
+ * command are what the package is installed for. The word «intake» stands at them as an address the
+ * cargo goes to, so the samples catch phrases about the receiving side's work rather than the word
+ * itself.
  *
- * Перечень отменяемого этой проверкой не читается: строка в нём снимает раскладку здесь и
- * оставляет везение всем остальным, а судится тут состав пакета.
+ * The list of what is cancelled this check does not read: a line in it lifts the layout here and
+ * leaves the carrying to everybody else, while what is judged here is the package's content.
  *
- * FAIL-OPEN: ресурсов пакета в дереве нет — сверять нечего, нулевой код.
+ * FAIL-OPEN: there are no package resources in the tree — there is nothing to match, a zero code.
  *
- * Ненулевой код возврата и перечень ресурсов: по одному на строку, с причиной.
+ * A non-zero exit code and a list of the resources: one per line, with the reason.
  */
 import { readdirSync, readFileSync, existsSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
@@ -28,38 +31,51 @@ import { join, relative, resolve } from 'node:path';
 const ROOT = resolve(process.argv[2] ?? 'projects/agent-kit');
 
 /**
- * Известный долг: ресурсы не для везения, которые ещё лежат в пакете и переезжают своей задачей.
- * Держится он перечнем, а не молчанием проверки: без перечня она краснела бы до конца переезда
- * и отбивала бы пуш каждой ветки, включая те, что переезд и делают. Каждая строка называет,
- * куда ресурс уедет, и вычёркивается тем же изменением, которым он уезжает.
+ * The known debt: resources not for carrying that still lie in the package and move by a task of
+ * their own. It is held by a list rather than by the check's silence: without the list the check
+ * would stay red until the move is over and would refuse the push of every branch, including those
+ * that make the move. Every line names where the resource will go, and is struck out by the same
+ * change that moves it.
  */
 const DEBT = join(resolve('tools'), 'boundary-debt.json');
 
 /**
- * Судится то, что раскладка везёт: ресурсы и код. Описание пакета и его журнал изменений
- * потребителю не едут и о дереве пакета говорят законно — это их предмет.
+ * What the layout carries is judged: the resources and the code. The package's description and its
+ * changelog do not travel to a consumer and speak of the package's tree lawfully — that is their subject.
  */
 const CARRIED = ['assets', 'src'];
 const SKIP = new Set(['node_modules', 'dist', 'coverage']);
 
 /**
- * Образцы признака. Левое — что ищется в тексте ресурса, правое — какой из двух вопросов
- * ответил «нет». Образец берётся длинным намеренно: короткий ловит отправляющую сторону,
- * которая о приёме тоже говорит — как об адресе, а не как о своей работе.
+ * The samples of the sign. The left is what is looked for in a resource's text, the right is which of
+ * the two questions answered «no». A sample is taken long on purpose: a short one catches the sending
+ * side, which speaks of the intake too — as of an address rather than as of its own work.
+ *
+ * Every sample stands under two names, English and Russian: the package resources are written in
+ * English, and a text not yet translated is judged by the same sign.
  */
 const MARKS = [
-    ['админка приёма', 'предмета нет: админки приёма у потребителя не бывает'],
-    ['приёмник груза', 'предмета нет: приёмник живёт в одном дереве мастерской'],
-    ['разбор приехавшего груза', 'предмета нет: разбирает груз принимающая сторона'],
-    ['разбирается груз, приехавший в приём', 'предмета нет: разбирает груз принимающая сторона'],
-    ['команда отметки', 'предмета нет: отметки ставит принимающая сторона'],
-    ['Отметка состояния груза', 'предмета нет: отметки ставит принимающая сторона'],
-    ['Зовётся **в репозитории самого пакета**', 'звать некому: ресурс сам объявил себя работой дерева пакета'],
-    ['в чужом дереве команда бессмысленна', 'звать некому: ресурс сам это и объявил'],
-    ['в чужом дереве бессмысленна', 'звать некому: ресурс сам это и объявил'],
+    ["the intake's admin panel", 'there is no subject: a consumer has no intake admin panel'],
+    ['админка приёма', 'there is no subject: a consumer has no intake admin panel'],
+    ['the cargo receiver', 'there is no subject: the receiver lives in one tree of the workshop'],
+    ['приёмник груза', 'there is no subject: the receiver lives in one tree of the workshop'],
+    ['sorting out the arrived cargo', 'there is no subject: the cargo is sorted out by the receiving side'],
+    ['разбор приехавшего груза', 'there is no subject: the cargo is sorted out by the receiving side'],
+    ['the cargo that arrived in the intake is sorted out', 'there is no subject: the cargo is sorted out by the receiving side'],
+    ['разбирается груз, приехавший в приём', 'there is no subject: the cargo is sorted out by the receiving side'],
+    ['the mark command', 'there is no subject: the marks are set by the receiving side'],
+    ['команда отметки', 'there is no subject: the marks are set by the receiving side'],
+    ['The cargo state mark', 'there is no subject: the marks are set by the receiving side'],
+    ['Отметка состояния груза', 'there is no subject: the marks are set by the receiving side'],
+    ['Called **in the repository of the package itself**', "there is nobody to call it: the resource declared itself the work of the package tree"],
+    ['Зовётся **в репозитории самого пакета**', "there is nobody to call it: the resource declared itself the work of the package tree"],
+    ['in a foreign tree the command is meaningless', 'there is nobody to call it: the resource declared that itself'],
+    ['в чужом дереве команда бессмысленна', 'there is nobody to call it: the resource declared that itself'],
+    ['is meaningless in a foreign tree', 'there is nobody to call it: the resource declared that itself'],
+    ['в чужом дереве бессмысленна', 'there is nobody to call it: the resource declared that itself'],
 ];
 
-/** Все файлы ресурсов и кода пакета: судятся наравне — везёт их одна раскладка. */
+/** All the package's resource and code files: judged on a par — one layout carries them. */
 function filesOf(dir) {
     const found = [];
 
@@ -103,8 +119,8 @@ for (const file of CARRIED.flatMap((dir) => (existsSync(join(ROOT, dir)) ? files
 }
 
 /**
- * Паттерн наследует судьбу своего правила: он весь о том, как это правило исполняют, и
- * образцами ловится не всегда — готовые вызовы бывают короче любой оговорки.
+ * A pattern inherits the fate of its rule: it is wholly about how that rule is carried out, and it
+ * is not always caught by the samples — ready-made calls happen to be shorter than any reservation.
  */
 const namesOfRules = new Set(
     [...problems, ...carried]
@@ -124,7 +140,7 @@ if (namesOfRules.size > 0) {
                 const where = relative(process.cwd(), file);
 
                 (Object.hasOwn(debt, where) ? carried : problems).push(
-                    `  ${where} — паттерн правила \`${rule[1]}\`, которое не для везения`
+                    `  ${where} — a pattern of the rule \`${rule[1]}\`, which is not for carrying`
                 );
             }
         }
@@ -132,17 +148,17 @@ if (namesOfRules.size > 0) {
 }
 
 if (carried.length > 0) {
-    console.log(`check-boundary: известного долга ${carried.length} — переезжает своими задачами\n`);
+    console.log(`check-boundary: known debt ${carried.length} — moving by tasks of its own\n`);
     carried.forEach((line) => console.log(line));
     console.log('');
 }
 
 if (problems.length === 0) {
-    console.log('check-boundary: нового ресурса не для везения нет');
+    console.log('check-boundary: there is no new resource that is not for carrying');
     process.exit(0);
 }
 
-console.log(`check-boundary: ресурсов не для везения ${problems.length}\n`);
+console.log(`check-boundary: resources not for carrying ${problems.length}\n`);
 problems.forEach((line) => console.log(line));
-console.log('\nТакой ресурс живёт своим ресурсом дерева, а не отменяется перечнем. Правило — скил `agent-kit`.');
+console.log("\nSuch a resource lives as the tree's own resource rather than being cancelled by a list. The rule is the skill `agent-kit`.");
 process.exit(1);

@@ -20,6 +20,7 @@
 - **Расхождение указателя печатается своим списком со своим доводом.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:reportIndex`
 - **Привязками считаются строки одной таблицы компаньона, а не всякая строка, похожая на строку таблицы.** — `projects/agent-kit/assets/checks/spec-anchors.mjs:rowsOfMap`
 - **Компаньон правила без раздела привязок — отказ, а не молчание.** — `projects/agent-kit/assets/checks/spec-anchors.mjs:rowsOfMap`
+- **Заголовок раздела привязок и вердикт «не исполняется» читаются под двумя именами, английским и русским.** — `projects/agent-kit/assets/checks/check-specs.mjs:MAP_HEADINGS` — заголовок; вердикт — `projects/agent-kit/assets/checks/spec-common.mjs:VERDICT`; сценарий SC-AK-912
 - **Подзаголовок внутри раздела список пунктов не кончает, таблица кончает, и отказ о пустом разделе называет, что стоит вместо пунктов.** — `projects/agent-kit/assets/checks/spec-common.mjs:bulletsOf`
 - **Символом якоря считается любая буква, а не только латинская.** — `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`
 - **Имя в якоре записывается так, как объявлено в коде, решётку включая.** — `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`

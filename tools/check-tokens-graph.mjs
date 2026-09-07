@@ -1,30 +1,32 @@
 #!/usr/bin/env node
 /**
- * Проверка графа токенов второго кита: у имени ровно три состояния — объявлено слоем оформления,
- * названо ручкой потребителя, мёртвая ссылка.
+ * The check of the second kit's token graph: a name has exactly three states — declared by the
+ * styling layer, named a consumer's handle, a dead reference.
  *
- * Третьего состояния быть не должно, но именно оно и накопилось: тридцать три имени кит
- * употребляет, не объявляя ни в одном слое, и разделить их машине было нечем. Часть из них —
- * ручки: значение приходит от приложения, а до него работает запасное. Часть — промахи, которые
- * запасное значение делает невидимыми: правило работает, цвет неверен, и ошибка не отличается от
- * замысла. Ровно так отключённая кнопка осталась светло-серой на графите.
+ * The third state should not exist, and it is exactly what piled up: thirty-three names the kit uses
+ * without declaring in any layer, and there was nothing for a machine to tell them apart with. Some
+ * of them are handles: the value comes from the application, and until it does the fallback works.
+ * Some are misses the fallback value makes invisible: the rule works, the colour is wrong, and the
+ * error is no different from the intent. That is exactly how a disabled button stayed light grey on
+ * graphite.
  *
- * Что проверка судит:
+ * What the check judges:
  *
- * 1. Мёртвая ссылка — имя не объявлено и не названо ручкой.
- * 2. Запасное значение у имени, которое кит объявляет сам, — оно скрывает промах и переживает
- *    смену темы: переопределять нечего.
- * 3. Объявление общего имени на корне страницы из стилей компонента. Имя своего блока
- *    (`--rt-<блок>-*`) проходит: это третий слой, он у компонента и должен быть.
- * 4. Новое имя, столкнувшееся с первым китом. Сегодняшние совпадения приняты списком: чинить их
- *    значит трогать выпущенный первый кит, выведенный за границу линии.
- * 5. Расхождение перечня ручек с его человеческой половиной в `Theming.mdx`: двух перечней об
- *    одном и том же без сверки не заводится.
+ * 1. A dead reference — the name is not declared and not named a handle.
+ * 2. A fallback value at a name the kit declares itself — it hides a miss and outlives a change of
+ *    theme: there is nothing to override.
+ * 3. A declaration of a shared name on the page root from a component's styles. Its own block's name
+ *    (`--rt-<block>-*`) passes: that is the third layer, and a component must have it.
+ * 4. A new name colliding with the first kit. Today's collisions are accepted by the list: fixing
+ *    them means touching the published first kit, taken beyond the boundary of the line.
+ * 5. A divergence of the handle list from its human half in `Theming.mdx`: no two lists about one
+ *    and the same thing are created without a matching.
  *
- * Накопленное лежит в списке принятого, отказом не считается и видно числом; падает проверка на
- * НОВОМ месте. Список только убывает: запись, которой больше ничего не отвечает, роняет прогон.
+ * What has piled up lies in the accepted list, does not count as a refusal and is visible as a
+ * number; the check falls on a NEW place. The list only shrinks: a record nothing answers to any
+ * more drops the run.
  *
- * Ненулевой код возврата и перечень расхождений.
+ * A non-zero exit code and a list of the divergences.
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -34,7 +36,7 @@ import { allowlistOf, baselineOf, parseAllowlist } from './rt-kit-checks.config.
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
-/** Кит, чей граф судят, и кит, с чьими именами сверяют столкновения. */
+/** The kit whose graph is judged, and the kit whose names collisions are matched against. */
 const KIT = 'projects/ui-kit-v2/src';
 const OTHER_KIT = 'projects/ui-kit/src';
 const HANDLES_FILE = 'tools/tokens-handles.json';
@@ -43,7 +45,7 @@ const ALLOWLIST = allowlistOf('tokens-graph');
 
 const DECLARATION_RE = /^[ \t]*(--rt-[a-z0-9-]+)[ \t]*:/gm;
 const REFERENCE_RE = /var\(\s*(--rt-[a-z0-9-]+)\s*(,)?/g;
-/** Имя блока в имени токена: `--rt-dialog-width` → `dialog`. */
+/** The block's name inside a token name: `--rt-dialog-width` → `dialog`. */
 const BLOCK_RE = /^--rt-([a-z0-9]+)-/;
 
 function scssFiles(dir) {
@@ -83,29 +85,29 @@ const handleNames = new Set(Object.keys(handles));
 const findings = [];
 const add = (key, text) => findings.push({ key, text });
 
-/** 1. Мёртвая ссылка: не объявлено и не названо ручкой. */
+/** 1. A dead reference: not declared and not named a handle. */
 for (const name of [...new Set(references.map((reference) => reference.name))].sort()) {
     if (declared.has(name) || handleNames.has(name)) {
         continue;
     }
     const where = [...new Set(references.filter((reference) => reference.name === name).map((reference) => reference.path))];
-    add(`мёртвая ссылка ${name}`, `${name} — не объявлено ни одним слоем и не названо ручкой: ${where.join(', ')}`);
+    add(`a dead reference ${name}`, `${name} — declared by no layer and not named a handle: ${where.join(', ')}`);
 }
 
-/** 2. Запасное значение у имени, которое кит объявляет сам. */
+/** 2. A fallback value at a name the kit declares itself. */
 for (const reference of references) {
     if (reference.hasFallback && declared.has(reference.name)) {
         add(
-            `запасное значение ${reference.name} @ ${reference.path}`,
-            `${reference.name} в ${reference.path} — запасное значение стоит у токена, который кит объявляет сам: оно скрывает промах и переживает смену темы`
+            `a fallback value ${reference.name} @ ${reference.path}`,
+            `${reference.name} in ${reference.path} — a fallback value stands at a token the kit declares itself: it hides a miss and outlives a change of theme`
         );
     }
 }
 
 /**
- * 3. Объявление общего имени на корне страницы из стилей компонента. Разбор грубый — по тексту
- * правила от `:root` до закрывающей скобки, — и этого достаточно: вложенных правил внутри
- * такого блока в ките нет, а имя судится само по себе.
+ * 3. A declaration of a shared name on the page root from a component's styles. The reading is
+ * rough — by the rule's text from `:root` to the closing brace — and that is enough: there are no
+ * nested rules inside such a block in the kit, and a name is judged on its own.
  */
 for (const path of files.filter((file) => file.includes('/lib/'))) {
     const text = read(path);
@@ -117,31 +119,31 @@ for (const path of files.filter((file) => file.includes('/lib/'))) {
                 continue;
             }
             add(
-                `объявление на корне ${name} @ ${path}`,
-                `${name} объявлено на корне страницы из стилей компонента ${path}: общее имя заводится слоем оформления, а не компонентом`
+                `a declaration on the root ${name} @ ${path}`,
+                `${name} is declared on the page root from the component's styles ${path}: a shared name is created by the styling layer, not by a component`
             );
         }
     }
 }
 
-/** 4. Имя, употребляемое обоими китами. */
+/** 4. A name used by both kits. */
 if (existsSync(join(ROOT, OTHER_KIT))) {
     const otherNames = new Set(scssFiles(OTHER_KIT).flatMap((path) => [...read(path).matchAll(/(--rt-[a-z0-9-]+)/g)].map((m) => m[1])));
     for (const name of [...declared].filter((declaredName) => otherNames.has(declaredName)).sort()) {
-        add(`общее имя с первым китом ${name}`, `${name} — имя употребляют оба кита; побеждает тот файл стилей, который подключён позже`);
+        add(`a shared name with the first kit ${name}`, `${name} — the name is used by both kits; the style file connected later wins`);
     }
 }
 
-/** 5. Перечень ручек против его человеческой половины. */
+/** 5. The list of handles against its human half. */
 const theming = existsSync(join(ROOT, THEMING_DOC)) ? read(THEMING_DOC) : '';
 for (const name of [...handleNames].sort()) {
     if (!theming.includes(name)) {
-        add(`ручка вне ${THEMING_DOC}: ${name}`, `${name} названо ручкой в ${HANDLES_FILE}, но в ${THEMING_DOC} о нём ни слова`);
+    add(`a handle outside ${THEMING_DOC}: ${name}`, `${name} is named a handle in ${HANDLES_FILE}, but ${THEMING_DOC} says not a word about it`);
     }
 }
 for (const name of namesIn(theming, /`(--rt-[a-z0-9-]+)`/g)) {
     if (theming.includes('## Ручки потребителя') && !handleNames.has(name) && !declared.has(name)) {
-        add(`имя вне перечня ручек: ${name}`, `${name} названо в ${THEMING_DOC}, но ни объявлено китом, ни перечислено в ${HANDLES_FILE}`);
+        add(`a name outside the handle list: ${name}`, `${name} is named in ${THEMING_DOC}, but it is neither declared by the kit nor listed in ${HANDLES_FILE}`);
     }
 }
 
@@ -157,15 +159,15 @@ const problems = [
     ...findings.filter((finding) => !known.has(finding.key)).map((finding) => finding.text),
     ...[...known]
         .filter((key) => !seen.has(key))
-        .map((key) => `${key}: значится в ${ALLOWLIST}, но в стилях этого больше нет — строку убрать`),
+        .map((key) => `${key}: it stands in ${ALLOWLIST}, but the styles no longer hold it — remove the line`),
 ];
 
 if (problems.length > 0) {
-    console.error(`check-tokens-graph: расхождений ${problems.length}\n`);
+    console.error(`check-tokens-graph: divergences ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
     process.exit(1);
 }
 
 console.log(
-    `check-tokens-graph: объявлено ${declared.size}, ручек ${handleNames.size}, принято списком ${seen.size} — новых расхождений нет`
+    `check-tokens-graph: declared ${declared.size}, handles ${handleNames.size}, accepted by the list ${seen.size} — there are no new divergences`
 );

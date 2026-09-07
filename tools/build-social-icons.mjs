@@ -1,11 +1,12 @@
 /**
- * Собирает знаки соцсетей для набора второго кита: белый знак из `simple-icons` на скруглённой
- * плашке фирменного цвета сети. Запускается руками после смены версии пакета или списка сетей:
+ * It builds the social network marks for the second kit's set: a white mark from `simple-icons` on a
+ * rounded plate of the network's brand colour. It is run by hand after a change of the package's
+ * version or of the list of networks:
  *
  *   node tools/build-social-icons.mjs
  *
- * Файлы ложатся в `projects/ui-kit-v2/src/assets/icons/social-<сеть>.svg` и едут в репозиторий:
- * сборка пакета этот сценарий не зовёт и от `simple-icons` не зависит.
+ * The files land in `projects/ui-kit-v2/src/assets/icons/social-<network>.svg` and travel into the
+ * repository: the package build does not call this script and does not depend on `simple-icons`.
  */
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -17,16 +18,16 @@ import * as icons from 'simple-icons';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = join(ROOT, 'projects/ui-kit-v2/src/assets/icons');
 
-/** Сторона плашки в единицах viewBox: та же, что у остальных знаков набора. */
+/** The plate's side in viewBox units: the same as the rest of the set's marks. */
 const TILE = 24;
-/** Скругление плашки. */
+/** The plate's rounding. */
 const TILE_RADIUS = 5;
-/** Сторона знака внутри плашки: контур `simple-icons` нарисован в квадрате 24. */
+/** The mark's side inside the plate: the `simple-icons` outline is drawn in a square of 24. */
 const GLYPH = 14;
 
 /**
- * Сети по порядку карточки. Цвет знака белый, кроме KakaoTalk: у него по фирменным правилам
- * тёмный знак на жёлтом. Instagram вместо ровной заливки несёт свой градиент.
+ * The networks in the card's order. The mark's colour is white except KakaoTalk: by its brand
+ * rules it has a dark mark on yellow. Instagram carries its own gradient instead of a flat fill.
  */
 const NETWORKS = [
     { name: 'facebook', icon: icons.siFacebook },
@@ -47,8 +48,8 @@ function tile(name, icon, gradient) {
     if (!gradient) {
         return { defs: '', fill: `#${icon.hex}` };
     }
-    // Идентификатор с именем знака: спрайт страницы один на все символы, и второй градиент с
-    // тем же именем перекрыл бы первый.
+    // An identifier with the mark's name: the page's sprite is one for all the symbols, and a second
+    // gradient with the same name would cover the first.
     const id = `rt-icon-social-${name}-tile`;
     const stops = gradient
         .map((color, index) => `<stop offset="${Math.round((index / (gradient.length - 1)) * 100)}%" stop-color="${color}"/>`)
@@ -77,13 +78,13 @@ mkdirSync(OUT_DIR, { recursive: true });
 const files = [];
 for (const network of NETWORKS) {
     if (!network.icon) {
-        throw new Error(`build-social-icons: в simple-icons нет знака «${network.name}»`);
+        throw new Error(`build-social-icons: simple-icons has no mark «${network.name}»`);
     }
     const file = join(OUT_DIR, `social-${network.name}.svg`);
     writeFileSync(file, svgOf(network));
     files.push(file);
 }
-// Форматтер правит файлы на коммите; собранное приводится к тому же виду сразу, иначе
-// повторный запуск сценария даёт расхождение на неизменившихся знаках.
+// The formatter edits the files on commit; what is built is brought to the same shape at once,
+// otherwise a repeated run of the script gives a divergence on marks that did not change.
 execFileSync('pnpm', ['exec', 'prettier', '--write', '--log-level', 'silent', ...files], { cwd: ROOT, stdio: 'inherit' });
-console.log(`build-social-icons: собрано знаков ${NETWORKS.length} в ${OUT_DIR}`);
+console.log(`build-social-icons: marks built ${NETWORKS.length} in ${OUT_DIR}`);

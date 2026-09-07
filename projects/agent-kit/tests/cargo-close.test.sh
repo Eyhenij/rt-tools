@@ -25,24 +25,24 @@ close_code() {
 }
 
 # SC-MB-276 — состояние вне двух последних шагов отбивается до сети
-CLOSE_PATTERN='закрытием состояние .* не ставится'
+CLOSE_PATTERN='is not set by closing'
 report "SC-MB-276 — негодное состояние названо" "$(close_says --state in_work --proposal id-1)" 1
 report "SC-MB-276 — код возврата ненулевой" "$(close_code --state in_work --proposal id-1)" 1
-CLOSE_PATTERN='закрывают в: fixed, released'
+CLOSE_PATTERN='they close into: fixed, released'
 report "SC-MB-276 — названо, чем закрывают" "$(close_says --state in_work --proposal id-1)" 1
 
 # SC-MB-277 — вызов без записей отбивается до сети
-CLOSE_PATTERN='закрывать нечего'
+CLOSE_PATTERN='there is nothing to close'
 report "SC-MB-277 — пустой вызов назван" "$(close_says --state fixed)" 1
 report "SC-MB-277 — код возврата ненулевой" "$(close_code --state fixed)" 1
-CLOSE_PATTERN='признак печатает чтение груза'
+CLOSE_PATTERN='the sign is printed by the cargo read'
 report "SC-MB-277 — названо, откуда берётся признак записи" "$(close_says --state fixed)" 1
 
 # SC-MB-278 — сухой прогон показывает собранный пакет и никуда не стучится
-CLOSE_PATTERN='^СУХОЙ ПРОГОН — наружу не ушло ничего'
+CLOSE_PATTERN='^A DRY RUN — nothing left outward'
 report "SC-MB-278 — сухой прогон назван первой строкой" \
     "$(close_says --state fixed --proposal id-1 --fix 'статьёй правила' --dry-run)" 1
-CLOSE_PATTERN='разборов 1, предложений 2'
+CLOSE_PATTERN='analyses 1, proposals 2'
 report "SC-MB-278 — пакет разобран по родам" \
     "$(close_says --state fixed --postmortem id-1 --proposal id-2 --proposal id-3 --fix 'статьёй правила' --dry-run)" 1
 report "SC-MB-278 — код возврата нулевой" \
@@ -56,7 +56,7 @@ BARE_TREE="$(mktemp -d)"
 mkdir -p "$BARE_TREE/.claude"
 echo '{}' > "$BARE_TREE/.claude/rt-kit.json"
 
-CLOSE_PATTERN='пары учётной записи службы нет'
+CLOSE_PATTERN='there is no service account pair'
 report "SC-MB-279 — отсутствие пары названо" \
     "$( (cd "$BARE_TREE" && RT_ACCOUNT_NAME='' RT_ACCOUNT_PASSWORD='' RT_INTAKE='http://127.0.0.1:1' \
         node "$CLOSE" --state fixed --proposal id-1 --fix x 2>&1) | grep -cE "$CLOSE_PATTERN")" 1
@@ -90,11 +90,11 @@ FAKE_PORT="$(wait_for_port "$FAKE_PORT_FILE")" || {
     exit 1
 }
 
-CLOSE_PATTERN='переведено 1, уже стояло 0, отбито 1'
+CLOSE_PATTERN='moved 1, already stood 0, refused 1'
 report "SC-MB-280 — счёт назван строкой" \
     "$(RT_INTAKE=http://127.0.0.1:$FAKE_PORT close_says --state fixed --proposal id-1 --proposal id-2 --fix 'статьёй правила')" 1
 
-CLOSE_PATTERN='предложение id-2 — записи с таким признаком в приёме нет'
+CLOSE_PATTERN='proposal id-2 — the intake has no record with such a sign'
 report "SC-MB-280 — отбитая строка названа признаком и причиной" \
     "$(RT_INTAKE=http://127.0.0.1:$FAKE_PORT close_says --state fixed --proposal id-1 --proposal id-2 --fix 'статьёй правила')" 1
 

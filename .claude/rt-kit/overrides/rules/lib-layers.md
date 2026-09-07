@@ -1,22 +1,22 @@
-## Круги импортов внутри пакета
+## Import cycles inside the package
 
-Проверка — `npm run check:cycles`. Она читает относительные импорты всех файлов под
-`projects/` и называет каждый круг участниками, от файла к файлу.
+The check is `npm run check:cycles`. It reads the relative imports of every file under
+`projects/` and names each cycle by its members, from file to file.
 
-- **Круг заводится через баррель каталога.** Файл берёт соседа не прямо, а из `index.ts`
-  рядом, а тот собирает и его самого. Разрывается это прямым импортом файла: `from './index'`
-  меняется на `from './table-column.interface'`.
-- **Ни сборка, ни линтер круг не судят.** Сборщик разрывает его сам и отдаёт одному из
-  участников недособранный модуль; всплывает это у потребителя — символ, прочитанный на
-  старте, оказывается пустым.
-- **Взаимная рекурсия двух функций барелем не лечится.** Две функции глубокого сравнения зовут
-  друг друга по существу, и порознь они круг в любом случае: обе живут в одном модуле, а
-  прежние адреса символов остаются тонкими реэкспортами.
-- **Компонент, который берут родителем через `inject`, заменяется токеном.** Подпункт бокового
-  меню инжектил сам компонент меню, а меню объявляло подпункт в своих импортах; токен в файле
-  типов разводит обоих.
-- **Типы, которые нужны обеим сторонам, переезжают в свой файл.** Настройка кита называла вид
-  кнопки типами из файла её компонента — круг из одних типов сборка переживает, но живёт он до
-  первой правки, которая добавит к нему значение.
-- **Проверка стоит в наборе гейта пуша и в конвейере.** Круг, снятый разово, возвращается
-  первой же правкой рядом, и заметить это нечем.
+- **A cycle starts through a directory barrel.** A file takes its neighbour not directly but from
+  the `index.ts` next to it, and that one collects the file itself as well. It is broken by a
+  direct file import: `from './index'` becomes `from './table-column.interface'`.
+- **Neither the build nor the linter judges a cycle.** The bundler breaks it itself and hands one
+  of the members a half-assembled module; it surfaces at the consumer — a symbol read at startup
+  turns out empty.
+- **Mutual recursion of two functions is not cured by a barrel.** Two deep-comparison functions
+  call each other in essence, and apart they are a cycle in any case: both live in one module,
+  and the former addresses of the symbols stay thin re-exports.
+- **A component taken as a parent through `inject` is replaced by a token.** A side-menu subitem
+  injected the menu component itself, and the menu declared the subitem among its imports; a
+  token in the types file separates the two.
+- **Types both sides need move to a file of their own.** The kit config named the button
+  appearance by types from its component file — a cycle of types alone survives the build, but it
+  lives only until the first edit that adds a value to it.
+- **The check stands in the push gate set and in the pipeline.** A cycle removed once comes back
+  with the first edit nearby, and there is nothing to notice it with.

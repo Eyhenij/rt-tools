@@ -97,8 +97,13 @@ printf -- '---\nname: acting-rule\nkind: rule\nlaw: acting\n---\n\n# Прави�
 companion() {
     {
         printf '# Компаньон\n\n## Где это лежит\n\n| Что | Где |\n| --- | --- |\n| механизм | `tools/check-specs.mjs` |\n\n'
-        [ "$1" = 'без раздела' ] ||
-            printf '## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `tools/check-specs.mjs:checkSpecHeadings` |\n'
+        case "$1" in
+            'без раздела') ;;
+            'английский раздел')
+                printf '## Where the articles are carried out\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `tools/check-specs.mjs:checkSpecHeadings` |\n' ;;
+            *)
+                printf '## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `tools/check-specs.mjs:checkSpecHeadings` |\n' ;;
+        esac
     } > "$SPEC_TREE/.claude/skills/acting-rule/implementation.md"
 }
 
@@ -106,16 +111,22 @@ companion 'с разделом'
 report "SC-AK-56 — строка описательной таблицы привязкой не считается" "$(specs_says 'a binding without an item: «механизм')" 0
 report "SC-AK-56 — привязка из таблицы привязок читается" "$(specs_says 'a statement without a binding: «Раз')" 0
 
+# SC-AK-912 — раздел привязок читается под английским именем наравне с русским: компаньоны дерева
+# переводятся задачей о своём, а написанные до перевода остаются русскими.
+companion 'английский раздел'
+report "SC-AK-912 — английский раздел привязок читается" "$(specs_says 'a statement without a binding: «Раз')" 0
+report "SC-AK-912 — и отсутствия раздела при нём не объявляется" "$(specs_says 'there is no section')" 0
+
 # SC-AK-57 — компаньон правила без раздела привязок отбивается
 companion 'без раздела'
-report "SC-AK-57 — отсутствие раздела названо" "$(specs_says 'there is no section .*Где исполняются статьи')" 1
+report "SC-AK-57 — отсутствие раздела названо" "$(specs_says 'there is no section .*articles are carried out')" 1
 report "SC-AK-57 — строка описательной таблицы привязкой всё равно не стала" "$(specs_says 'a binding without an item: «механизм')" 0
 
 # SC-AK-58 — у компаньона спека домена раздел не требуется: там таблица одна
 rm -rf "$SPEC_TREE/.claude/skills/acting-rule"
 printf '# Привязка\n\n| Правило | Где исполняется |\n| --- | --- |\n| Не применимо. | `tools/check-specs.mjs:checkSpecHeadings` |\n' \
     > "$SPEC_TREE/docs/specs/alpha/implementation.md"
-report "SC-AK-58 — компаньон спека без раздела читается" "$(specs_says 'there is no section .*Где исполняются статьи')" 0
+report "SC-AK-58 — компаньон спека без раздела читается" "$(specs_says 'there is no section .*articles are carried out')" 0
 report "SC-AK-58 — его привязка нашлась" "$(specs_says 'a statement without a binding')" 0
 
 # --- SC-AK-662…664 — привязка списком ---------------------------------------------------------

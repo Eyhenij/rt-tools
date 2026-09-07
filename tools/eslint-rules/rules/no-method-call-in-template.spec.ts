@@ -1,9 +1,9 @@
 /**
- * RuleTester для `no-method-call-in-template`: парсер —
- * `@angular-eslint/template-parser`, каждый `code`-фрагмент — Angular HTML-сниппет.
- * Правило резолвит соседний `*.component.ts` с диска, поэтому suite пишет реальную
- * fixture-компоненту во временную папку и указывает каждому кейсу `filename` на
- * `*.component.html` рядом с ней. Раннер: Vitest.
+ * The RuleTester for `no-method-call-in-template`: the parser is
+ * `@angular-eslint/template-parser`, and every `code` piece is a snippet of Angular markup.
+ * The rule resolves the neighbouring `*.component.ts` from the disk, so the suite writes a real
+ * fixture component into a temporary directory and points every case's `filename` at the
+ * `*.component.html` next to it. The runner is Vitest.
  */
 import { RuleTester } from '@typescript-eslint/rule-tester';
 import * as fs from 'node:fs';

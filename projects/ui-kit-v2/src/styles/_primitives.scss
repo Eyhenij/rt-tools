@@ -1,8 +1,8 @@
-/* Собрано генератором `tools/build-tokens-v2.mjs` из `tokens.source.mjs` — правится там, не здесь:
-   правка на месте теряется на следующей сборке, и её называет `pnpm run check:tokens-build`. */
+/* Built by the generator `tools/build-tokens-v2.mjs` from `tokens.source.mjs` — edited there, not here:
+   an edit on the spot is lost on the next build, and `pnpm run check:tokens-build` names it. */
 
-/* Ступени шкал — значения, из которых слой назначений выбирает. Единственное место кита, где
-   код цвета и размер числом законны по определению. */
+/* The scale steps — the values the assignment layer chooses from. The only place in the kit where
+   a colour code and a size as a number are lawful by definition. */
 
 :root {
     /* Neutral scale — серая, без цветности.

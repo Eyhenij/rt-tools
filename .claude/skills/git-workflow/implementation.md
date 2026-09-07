@@ -1,219 +1,224 @@
-# git-workflow — как это устроено здесь
+# git-workflow — how it is arranged here
 
-Имена этого дерева при правиле `SKILL.md` рядом. Отдельный файл потому, что правило говорит
-приёмом и переносится между репозиториями целиком, а всё, что ниже, верно только здесь и
-устаревает при каждом переименовании.
+The names of this tree, next to the rule `SKILL.md`. A separate file because the rule speaks by
+technique and travels between repositories whole, while everything below is true only here and
+goes stale at every renaming.
 
-Главное отличие от общего случая: слияние в главную ветку здесь ничего не выкатывает. Дерево
-публикует пакеты, и публикация — отдельный ручной запуск рабочего потока, а не следствие
-слияния.
+The main difference from the general case: merging into the main branch rolls nothing out here.
+The tree publishes packages, and publishing is a separate manual run of a workflow rather than a
+consequence of a merge.
 
-## Как это называется здесь
+## What it is called here
 
-- **В правиле** — Здесь
-- **главная ветка** — `main`
-- **очередь работ** — доска проекта на GitHub; задача — это issue на ней
-- **колонка задачи** — поле `Status`: «In progress» при заведении ветки, «In review» при открытии PR
-- **первая колонка** — «📋 Backlog» — туда команда заведения ставит новую задачу, оттуда её забирают в работу
-- **команда перевода колонки** — `npm run task:move <номер> <короткое имя колонки>`: `npm run task:move 899 in-progress`
-- **короткое имя колонки** — ключ в `board.statusOptions` файла `.claude/rt-kit/checks.json`; полное имя лежит там же, рядом
-- **ключ задач** — `RT` — назван в `.claude/rt-kit/checks.json`, ключом `board.taskKey`
-- **заголовок задачи** — `[RT-<номер задачи>] <Что не так>`: `[RT-88] Add select button component`
-- **имя ветки** — `RT-<номер задачи>-<краткое имя>`: `RT-88-add-select-button`
-- **род правки** — `feat`, `fix`, `refactor`, `docs`, `chore`, `style`, `perf`, `test`, `build`, `ci`
-- **строка связи с задачей** — `Closes #<номер>` в теле PR
-- **учётная запись машинной работы** — `rt-tools-dev` — ею подписан коммит, ею заводится задача и открывается PR; ревьювером она не бывает
-- **подстановка токена в вызов** — `.claude/rt-kit/project.sh:RT_PULL_TOKEN_VAR` — `GH_TOKEN`; готовая строка для отказа гарда — там же, `RT_PULL_TOKEN_HINT`
-- **раздел тела заявки об оставшемся шаге** — `.claude/rt-kit/project.sh:RT_PULL_BODY_SECTION` — заголовок «Оставшийся шаг»: гард поставки требует его в теле каждой заявки
+- **In the rule** — Here
+- **the main branch** — `main`
+- **the work queue** — the project board on GitHub; a task is an issue on it
+- **the task column** — the `Status` field: «In progress» when the branch is started, «In review» when the PR is opened
+- **the first column** — «📋 Backlog» — the creating command puts a new task there, and from there it is taken into work
+- **the column move command** — `npm run task:move <number> <short column name>`: `npm run task:move 899 in-progress`
+- **a short column name** — a key in `board.statusOptions` of the file `.claude/rt-kit/checks.json`; the full name lies there too, next to it
+- **the task key** — `RT` — named in `.claude/rt-kit/checks.json`, by the key `board.taskKey`
+- **the task title** — `[RT-<task number>] <What is wrong>`: `[RT-88] Add select button component`
+- **the branch name** — `RT-<task number>-<short name>`: `RT-88-add-select-button`
+- **the kind of edit** — `feat`, `fix`, `refactor`, `docs`, `chore`, `style`, `perf`, `test`, `build`, `ci`
+- **the line linking to the task** — `Closes #<number>` in the PR body
+- **the machine work account** — `rt-tools-dev` — a commit is signed by it, a task is created and a PR is opened by it; it is never a reviewer
+- **the token substitution into a call** — `.claude/rt-kit/project.sh:RT_PULL_TOKEN_VAR` — `GH_TOKEN`; the ready-made line for the guard's refusal is there too, `RT_PULL_TOKEN_HINT`
+- **the request body section about the remaining step** — `.claude/rt-kit/project.sh:RT_PULL_BODY_SECTION` — the heading «Оставшийся шаг»: the delivery guard demands it in the body of every request
 
-## Где это лежит
+## Where it lives
 
-- **токен машинной учётной записи** — `~/.config/rt-tools-bot-token` — вне дерева, в историю не попадает
-- **активная запись клиента хостинга** — запись владельца; спрашивается `gh auth status` — строка «Active account: true» стоит у одной записи. Машинная запись подставляется на вызов переменной `GH_TOKEN` и активной не делается: вход под неё уводит все соседние сессии на машине
-- **работа с доской** — `.claude/skills/git-workflow/scripts/board.sh`
-- **сбор состояния ветки перед PR** — `.claude/skills/git-workflow/scripts/gather-context.sh`
-- **формы описания PR и журнала** — `.claude/skills/git-workflow/REFERENCE.md`
-- **гард главной ветки, поставки, пуша** — `.claude/hooks/git-guard-main.sh`, `git-guard-delivery.sh`, `git-guard-push-tests.sh`
-- **гард пары «правка и её документ»** — `.claude/hooks/docs-guard.sh`
-- **профиль дерева для гардов** — `.claude/rt-kit/project.sh`
-- **проверка заголовка коммита** — `commitlint.config.cjs`, вызывается хуком гита из `.husky/commit-msg`
+- **the machine account token** — `~/.config/rt-tools-bot-token` — outside the tree, it never gets into the history
+- **the active account of the hosting client** — the owner's account; it is asked by `gh auth status` — the line "Active account: true" stands next to one account. The machine account is substituted into a call by the `GH_TOKEN` variable and is not made active: signing in under it takes every neighbouring session on the machine along
+- **working with the board** — `.claude/skills/git-workflow/scripts/board.sh`
+- **gathering the branch state before a PR** — `.claude/skills/git-workflow/scripts/gather-context.sh`
+- **the forms of the PR description and of the changelog** — `.claude/skills/git-workflow/REFERENCE.md`
+- **the main branch, delivery and push guards** — `.claude/hooks/git-guard-main.sh`, `git-guard-delivery.sh`, `git-guard-push-tests.sh`
+- **the guard of the pair "an edit and its document"** — `.claude/hooks/docs-guard.sh`
+- **the tree profile for the guards** — `.claude/rt-kit/project.sh`
+- **the commit subject check** — `commitlint.config.cjs`, called by a git hook from `.husky/commit-msg`
 
-## Что переносится в новое рабочее дерево
+## What is carried over into a new working tree
 
-`git worktree add --detach <путь> origin/main` разворачивает индекс и больше ничего. Руками
-копируется:
+`git worktree add --detach <path> origin/main` unfolds the index and nothing more. Copied by hand:
 
-- **`.env`** — ключи, которыми живут скрипты дерева
-- **`.claude/settings.local.json`** — локальные разрешения; без них заход спрашивает подтверждение на каждую команду
-- **`.claude/rt-kit/browser-device-id`** — закреплённый идентификатор устройства браузера — новый не заводится и не спрашивается
+- **`.env`** — the keys the tree's scripts live by
+- **`.claude/settings.local.json`** — the local permissions; without them the session asks for confirmation on every command
+- **`.claude/rt-kit/browser-device-id`** — the pinned browser device identifier — a new one is neither started nor asked for
 
-Следом `pnpm install` в новом дереве: `node_modules` рабочие деревья не делят.
+Then `pnpm install` in the new tree: working trees do not share `node_modules`.
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-Первая колонка — статья дословно, как она написана в разделе «Как закон применяется здесь»
-(жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает
-то, чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
+The first column is the article verbatim, as it is written in the section "How the law applies
+here" (the bold part of the item). An article without a line and a line without an article are a
+divergence: the rule promises what the tree does not have, or the tree holds what the rule is
+silent about.
 
-- **A commit into the main branch is refused by the guard.** — `.claude/hooks/git-guard-main.sh:default` — имя главной ветки берётся у удалённой ссылки и сверяется с текущей; зарегистрирован в `.claude/settings.json` на вызов оболочки.
-- **A branch without a task number opens no PR.** — `.claude/rt-kit/project.sh:rt_task_branch_ok` — форма `RT-<номер>-<имя>`; зовёт её `.claude/hooks/git-guard-delivery.sh`.
-- **The next work's branch is taken from the previous one while the chain is unbroken.** — **Не проверяется ничем.** Гард поставки судит форму имени ветки и свежесть основания, а родство соседних веток ему не видно. Ветка от предыдущей и ветка от главной для него одинаковы. Держится порядком паттерна `git-workflow-stack`.
-- **A PR in a chain has the previous branch as its base, not main.** — **Не проверяется ничем.** Основание заявки читается у хостинга, а какое из двух верно, знает только тот, кто ветвился. У работы, не связанной с предыдущей, база — главная, и это законно.
-- **A chain is merged bottom-up, and the order stands in every PR body.** — **Не проверяется ничем.** Сверка очереди читает тело заявки как текст; отличить названный порядок от его отсутствия ей нечем.
-- **The lower branch of a chain does not rewrite history — neither `rebase` nor a force push.** — `.claude/hooks/git-guard-delivery.sh:cmd` — силовая отправка отбивается разбором командной строки; `rebase` в ветке, под которой стоит другая, не судится ничем.
-- **A divergence inside a chain is resolved by the one who branches.** — **Не проверяется ничем.** Кто разрешил расхождение, в истории не записано: слияние выглядит одинаково, чьей бы рукой оно ни сделано.
-- **On a machine with several runners, any path from the home directory is shared.** — **Не проверяется ничем.** Ни гард, ни сверка не знают, сколько раннеров стоит на машине: список заданий у хостинга один, а машина у них общая только по факту. Держится статьёй и именами по проекту в настройке конвейера
-- **The working tree is not emptied for a tool run.** — **Не проверяется ничем.** Прятанье от законного переключения ветки формой команды не отличается: обе снимают правки с рабочей копии, и какая из них ради прогона, а какая ради работы, машине не видно
-- **The main branch is merged into the task branch before the PR opens.** — `.claude/hooks/git-guard-delivery.sh:remote_main` — вершина главной ветки спрашивается у удалённой ссылки и сверяется с предками текущей; расхождение называется числом коммитов.
-- **Unmet delivery conditions are named in one refusal.** — `.claude/hooks/git-guard-delivery.sh:deny_faults` — накопитель `fault` собирает их по ходу разбора, а печатает одним отказом уже перед выходом.
-- **A condition known at the start of work is asked at the start.** — `.claude/hooks/git-guard-delivery.sh:branch_arg` — на `git checkout -b` и `git switch -c` спрашиваются вершина главной ветки у хостинга в основании и `git config user.email` против `RT_COMMIT_EMAIL`. Флаги между глаголом и `-b` образец принимает.
-- **The base judged is the one named by the command, not the tip of the working copy.** — `.claude/hooks/git-guard-delivery.sh:base_ref` — вторым доводом команды заведения ветки; названного основания нет — судится вершина рабочей копии, неизвестного дереву — не судится ничего.
-- **A branch without a task number gets no delivery conditions.** — `.claude/hooks/git-guard-delivery.sh:branch_arg` — имя без формы `RT-<номер>` выводит гард нулём, не спросив ни основания, ни подписи.
-- **A task left in the first column opens no PR.** — `.claude/rt-kit/project.sh:RT_BOARD_BACKLOG` — «📋 Backlog»; читает её `.claude/hooks/git-guard-delivery.sh:check_task` на открытии PR; на заведении ветки колонка не спрашивается.
-- **The draft is not lifted from a branch that does not merge.** — `.claude/hooks/git-guard-delivery-draft.sh:conflicting` — сливаемость приходит тем же ответом, что ревьювер и отзыв; поля нет — требования нет.
-- **One's own open PRs are reread in three places: before a push, on taking a task and after every known merge.** — `tools/board.mjs:behindMain` вместе с `tools/check-board.mjs` называют отставшие и конфликтующие заявки; между прогонами сверки это держится порядком паттерна `git-workflow-stack`.
-- **One's own conflicting PR is fixed by the turn's first action, and no new work is taken before that.** — `.claude/hooks/git-guard-delivery-conflict.sh:rt_delivery_conflict` — помощник гарда поставки отбивает четыре команды взятия работы, пока `tools/board.mjs:conflictingPulls` называет хоть одну свою открытую заявку конфликтующей.
-- **A conflicting open PR is a work queue audit discrepancy.** — `tools/check-board.mjs:checkConflicting` — судится только прямое «конфликтует»; непосчитанная сливаемость строки не даёт.
-- **An index that branches only append lines to is declared a union of both sides.** — Не проверяется: настройку слияния не читает ни одна сверка дерева, а хостинг её не читает вовсе. Объявление лежит в `.gitattributes` — таблице записей описания прошлого и таблице доменов договорённостей.
-- **An edit brought to a commit is brought to the host in the same turn.** — Не исполняется: рабочее дерево исполнителя не видит ни одна проверка. Держится этой статьёй.
-- **The draft is not lifted while the PR has no review.** — `.claude/hooks/git-guard-delivery-draft.sh:rt_pull_state` — состояние PR приходит от `tools/board.mjs`, разбором считается запрошенный ревьювер либо оставленный отзыв не от автора.
-- **The task key is set once, and all three name forms derive from it.** — `.claude/rt-kit/checks.json:taskKey` — оттуда его берут и заведение задачи, и гард поставки, и сверка очереди.
-- **An unset key refuses work with the queue on the spot.** — `tools/board.mjs:TASK_KEY` — пустое значение кончает первый же вызов отказом с указанием, где ключ задаётся.
-- **A created task is confirmed by the work queue's answer, not by the creation command's output.** — `tools/task-new.mjs:describeTaskState` — пятым шагом команда спрашивает борду по номеру и печатает присутствие, колонку и исполнителя; расхождение кончает её ненулевым кодом.
-- **The visibility of what was created is checked by the side it is meant for.** — `tools/task-new.mjs:describeTaskState` — пятый шаг спрашивает борду отдельным вызовом, а не читает ответ заведения; для заявки того же нет — её видимость называется владельцу номером и проверяется им. Чьими глазами снят ответ, печатает поле `viewer` — `tools/board.mjs:viewerOf`: `machine` у чтения задачи с токеном, `client` у чтения заявки.
-- **A refusal is read before it is bypassed by a second way.** — Не проверяется машиной: обход отказа неотличим от вызова, который с самого начала шёл вторым способом. Признак спрашивается у хостинга — `/opt/homebrew/bin/gh api rate_limit`: у ограниченной записи там ноль.
-- **The branch number and the PR title number are checked on the spot, the task state — by the board.** — `.claude/hooks/git-guard-delivery.sh:check_task` читает номер из имени ветки и сверяет его с номером в заголовке PR. Второй ярус — `npm run check:board`, он же показывает исполнителя и колонку.
-- **The task column moves in the same motion as the work.** — `.claude/skills/git-workflow/scripts/board.sh:cmd_status` — вызов сразу за заведением ветки и сразу за открытием PR.
-- **The board holds tasks, not PRs about them.** — `tools/check-board.mjs:foreign` — строка на каждую карточку PR. Заводит их встроенное правило борды «Auto-add to project», выключается оно только в интерфейсе, накопившееся снимает `deleteProjectV2Item`.
-- **A lagging column is found by the queue audit, not by eye.** — `tools/check-board.mjs:IN_REVIEW` — колонка судится по открытым PR в обе стороны: PR при задаче не в разборе и разбор без открытого PR.
-- **A branch with an open PR lags behind main silently.** — `tools/board.mjs:behindMain` — сравнение главной ветки с головой каждой открытой заявки; строку печатает `tools/check-board.mjs`.
-- **The link between a task and an epic is read by the audit both ways.** — `tools/board-epics.mjs:checkEpicLinks` — состав эпика читается в замысле, названном телом его карточки, а тело каждой задачи — у хостинга; расхождение называется в обе стороны, без метки эпика проверка молчит.
-- **Tasks fixed by one edit are merged before the merge.** — Не проверяется ничем: слияние двух задач в одну машине неотличимо от закрытия второй. Держится разбором — поглощённая дописывается в первую и уходит с борды до слияния PR.
-- **Work that one session cannot close is marked in two places, and they are audited.** — `projects/agent-kit/assets/checks/board-long-work.github.mjs:checkLongWork` — обе стороны: метка карточки без строки в линии и строка без метки. Имя метки и каталог линий названы ключом `longWork` в `.claude/rt-kit/checks.json`; не названо любое из двух — связь не судится вовсе. Сценарий SC-AK-823
-- **The tip of an open PR without a run is seen by the work queue audit.** — `tools/check-board.mjs:checkHeadRun` — прогоны на вершине спрашиваются, пока в дереве лежит названный настройкой файл конвейера; свежей вершине даётся десять минут.
-- **A PR whose base is not the main branch is checked by the same set as a PR into main.** — `.github/workflows/ci.yml:on` — условие запуска здесь объявлено на заявку без отбора по базе, поэтому каждая заявка стопки прогон получает. Статья приехала от дерева, где отбор по базе стоит; **не проверяется ничем** то, что отбор не появится позже: заведённый однажды, он снимет проверку со всей стопки молча.
-- **A run pushed out of the pipeline queue gets a separate audit line.** — `tools/check-board.mjs:checkEvicted` — признак берётся числом заданий прогона: `tools/board-runs.mjs:evictedOnHead` спрашивает его только у отменённых, а зелёный прогон на той же вершине строку снимает.
-- **A draft with a green run on its tip is an audit discrepancy.** — `tools/check-board.mjs:checkReadyDraft` — цвет прогона спрашивается только у черновика: зелёный при нём значит, что работа готова, а кнопка слияния у владельца заблокирована.
-- **One's own drafts are judged all at once, not only the checked-out branch's.** — `.claude/hooks/git-guard-draft-ready.sh:judge_abandoned` — список открытых черновиков спрашивается по имени машинной записи из `.claude/rt-kit/checks.json`; папка чужой ветки читается по `origin/<ветка>`, а её отсутствие — по `carries_folder`.
-- **Opening a PR is refused while the branch carries its task folder.** — `.claude/hooks/git-guard-delivery-folder.sh:rt_delivery_open_folder` — ярус на `gh pr create`; второй рубеж на `gh pr merge` — `rt_delivery_merge_folder`. Каталог задач `docs/tasks`, каталог архива `docs/archive`, главная `main`.
-- **A document goes in the same commit as the edit.** — `.claude/rt-kit/project.sh:rt_docs_pair_for` — пары этого дерева: описание компонента второго кита рядом с ним и описание набора токенов при правке самих токенов; сторожит их `.claude/hooks/docs-guard.sh`.
-- **The commit subject is checked against the format on the spot.** — `commitlint.config.cjs:rules` — набор `@commitlint/config-angular` плюс правило `subject-russian`: описание пишется по-русски. Зовёт его хук гита из `.husky/commit-msg`, то есть судит он руку; коммит конвейера мимо хука идёт, и язык там держат сами шаблоны выпуска. Случаи — `projects/agent-kit/tests/tree-commit-language.test.sh`.
-- **Before a push all linters are run, not one.** — `.claude/rt-kit/project.sh:rt_push_checks` — линт, типы и спеки по задетому, затем отдельно линтер стилей: линтер кода файлы стилей не читает вовсе. Зовёт набор `.claude/hooks/git-guard-push-tests.sh`.
-- **The build is in the set on a par with lint and unit tests.** — `.claude/rt-kit/project.sh:rt_push_checks` — сборка стоит в том же наборе: ошибка типов в непокрытом коде до неё не краснеет нигде.
-- **The gate set calls the package default instead of listing it line by line.** — `.claude/rt-kit/project.sh:rt_push_checks` — своя функция профиля зовёт `rt_push_checks_default` и дописывает к нему проверки дерева; отсеянное называется поимённо в ней же.
-- **The final set before a push is read from the state review, not assembled in the head.** — `projects/agent-kit/src/lib/push-gate.ts:pushGateLines` — раздел печатает `pnpm exec agent-kit doctor`. В этом дереве под заголовком «умолчание печатало, а в наборе нет» стоят три строки — это замены своими вариантами тех же проверок, а не снятие охраны.
-- **The push gate set is never narrower than the pipeline set.** — `tools/check-push-gate.mjs:pipelineSteps` против `pushGate` в `.claude/rt-kit/checks.json`; сама проверка стоит строкой в `rt_push_checks`. Сколько шагов конвейера чем закрыто, печатает она же при каждом прогоне — числа здесь не переписываются.
-- **An exclusion reason naming a task is judged on whether that task is alive.** — `tools/check-push-gate.mjs:taskNumbers` — номер вынимается по ключу задач из `.claude/rt-kit/checks.json`, а живость спрашивается у `tools/board.mjs:taskState`; нет сети или доступа — опрос кончается молча.
-- **The layout audit stands in the push gate set on a par with lint and the build.** — `.claude/rt-kit/project.sh:rt_push_checks` — первой строкой набора стоит `pnpm run agent-kit:check`: пакет правил лежит в этом же дереве, поэтому сверка сперва пересобирает его и только потом читает собранное. Умолчание пакета печатает свою форму — `projects/agent-kit/assets/defaults/project.sh:rt_push_checks_default`.
-- **After merging main in, the check set is revised by what the branch now carries.** — Не проверяется ничем: гард видит набор, но не знает, что именно принесло вливание. Держится чеклистом перед публикацией PR.
-- **The main branch is taken by the remote ref — in words and in actions.** — `.claude/hooks/git-guard-push-tests.sh:main_branch` — база берётся у удалённой ссылки, а не у локальной вершины. Само утверждение владельцу этим не стережётся: сетевой вызов в разборе команды падал бы вместе со связью. Шаги закрытия захода — подтягивание главной, счёт влитого и невлитого — ссылку берут ту же, и не стережёт их ничто: команда читается заходом, а не проверкой
-- **A code edit is handed to a person by an open PR, not by a pushed branch.** — Не проверяется ничем: гард поставки судит открытие PR, но не его отсутствие — работы, которая кончилась пушем и не дошла до PR, он не видит вовсе. Держится этой статьёй и записью памяти о поставке.
-- **What is not ready to merge opens as a draft — `gh pr create --draft`.** — Не проверяется ничем: гард видит вызов `gh pr create` и его ключи, но не знает, закрыты ли этапы замысла. Держится статьёй и паттерном `git-workflow-commit`.
-- **The PR body is written in the turn the PR opens, and next to the sample.** — **Не проверяется ничем.** Тело живёт в файле, который исчезает после вызова, и ни одна сверка его не читает. Сверка очереди находит только последствие — заявку без строки связи с задачей.
-- **The draft is lifted by a separate call — `gh pr ready <номер>`.** — Сам вызов гардом не требуется: полноту работы машине не видно, и признак здесь — второе сообщение владельцу из паттерна `task-flow-close`. Судится он в другую сторону — `.claude/hooks/git-guard-delivery-draft.sh:pull_ref` отбивает снятие черновика у PR без разбора.
-- **The PR merge is pressed by a person, not by the work's executor.** — `.claude/hooks/git-guard-delivery-folder.sh:rt_folder_in_branch` — на вызове `gh pr merge` гард судит папку задачи; сам запрет проверкой не закрыт и не будет: владелец сливает кнопкой в браузере, где хуков нет вовсе.
-- **The identity of the call opening a PR is guarded by the delivery guard, not by the executor's memory.** — `.claude/hooks/git-guard-delivery.sh:pull_token_var` — подстановка `GH_TOKEN` ищется в тексте команды открытия заявки; автор заявки спрашивается у `tools/board.mjs:pullState` на снятии черновика и сверяется с `RT_TASK_BOT`. Обе строки объявлены профилем дерева.
-- **The PR author cannot be its reviewer.** — `tools/board.mjs:pullState` — из ревьюверов PR вычёркивается его автор, и запрос разбора на самого себя разбором не считается. Спрашивается это на снятии черновика; в прочих точках держится статьёй и разделом о машинной записи ниже.
-- **The host client call goes from the tree, and a command chain does not check the outcome.** — **Не проверяется ничем.** Каталог, из которого позван клиент, гардам не виден: они читают текст команды, а не рабочий каталог вызова. Держится чтением тела заявки обратно тем же ходом
-- **PR labels, assignee and reviewer are set by `gh api` calls, not by `gh pr edit`:** — Не проверяется ничем: гард судит вызов открытия PR, а не то, чем потом правят его поля. Держится статьёй — на репозитории со старой бордой `gh pr edit` до правки не доходит вовсе.
-- **The board is edited by a GraphQL query by the board id, not by the owner's name.** — `.claude/skills/git-workflow/scripts/board.sh:resolve_project` — идентификатор берётся у самой борды, а не собирается из имени владельца.
-- **The machine commit's email is copied from the companion, not typed from memory.** — `.claude/rt-kit/project.sh:RT_COMMIT_EMAIL` — та же строка, что в разделе о подписи ниже; `.claude/hooks/git-guard-delivery.sh` отбивает пуш, если коммит вклада ветки назвался машинной записью с другим адресом.
-- **The identity of the machine account is confirmed by the host's answer, not by recognising a string:** — Не проверяется ничем: гард сверяет строку со строкой и о хостинге не спрашивает вовсе — сетевой вызов падал бы вместе со связью. Держится командой из раздела о подписи ниже, при заведении записи и при смене её адреса.
-- **Guard scenarios set the git settings themselves, not take them from the machine.** — `projects/agent-kit/tests/git-guards.test.sh:gpgsign` — автор, почта и подпись передаются флагами `-c` прямо в команду, а не наследуются от общего конфига машины.
-- **Every commit of the branch's contribution is signed by the machine account, and the push set checks it.** — `.claude/rt-kit/project.sh:RT_HUMAN_EMAILS` — почты людей этого дерева; коммит под записью вне списка отбивает `.claude/hooks/git-guard-delivery-signature.sh:rt_delivery_signature`
-- **Every commit of the branch's contribution is signed by the machine account, and the push set checks it.** — **Не проверяется здесь.** Гейт пуша дерева судит подпись каждого коммита вклада; пакетный гард поставки смотрит только коммит, назвавшийся машинной записью
-- **The PR state is reread from the host right after publishing.** — **Не проверяется ничем.** Код возврата у молча пропущенного запроса тот же, что у сделанного; держится паттерном заявки
-- **The author of an open PR and whether it has a reviewer are audited by the work queue.** — **Не проверяется здесь.** `tools/check-board.mjs` спрашивает у хостинга колонку, прогон и сливаемость открытых заявок, а автора и ревьювера пока не судит — это названо отдельной работой
-- **The host client's active account is chosen per machine, not per tree; the machine account is substituted per call, never made active.** — **Не проверяется ничем.** Вход в клиент меняет состояние машины, а гарды судят вызовы дерева. Держится статьёй; активная запись спрашивается `gh auth status`.
-- **Reviewers are asked by a REST call, not by the client's selection.** — **Не проверяется ничем.** Выборка клиента собирается запросом GraphQL и падает под токеном машинной записи целиком; выбор способа держится этой статьёй
-- **A wave of branches off one main is checked by a trial merge, not one by one:** — **Не проверяется ничем.** Проверка судит одну ветку, а столкновение живёт между ветками, и до слияния его не видит ничто. Держится паттерном `git-workflow-stack`.
+- **A commit into the main branch is refused by the guard.** — `.claude/hooks/git-guard-main.sh:default` — the main branch name is taken from the remote ref and matched against the current one; registered in `.claude/settings.json` on a shell call.
+- **A branch without a task number opens no PR.** — `.claude/rt-kit/project.sh:rt_task_branch_ok` — the form `RT-<number>-<name>`; it is called by `.claude/hooks/git-guard-delivery.sh`.
+- **The next work's branch is taken from the previous one while the chain is unbroken.** — **Not checked by anything.** The delivery guard judges the shape of the branch name and the freshness of the base, and the kinship of neighbouring branches is invisible to it. A branch off the previous one and a branch off main are the same to it. Held by the order of the pattern `git-workflow-stack`.
+- **A PR in a chain has the previous branch as its base, not main.** — **Not checked by anything.** The base of a request is read from the host, and which of the two is right is known only by whoever branched. For work unrelated to the previous one the base is main, and that is lawful.
+- **A chain is merged bottom-up, and the order stands in every PR body.** — **Not checked by anything.** The queue audit reads the request body as text; it has nothing to tell a named order from its absence.
+- **The lower branch of a chain does not rewrite history — neither `rebase` nor a force push.** — `.claude/hooks/git-guard-delivery.sh:cmd` — a force push is refused by parsing the command line; a `rebase` in a branch with another one under it is judged by nothing.
+- **A divergence inside a chain is resolved by the one who branches.** — **Not checked by anything.** Who resolved a divergence is not written down in the history: a merge looks the same by whichever hand it was made.
+- **On a machine with several runners, any path from the home directory is shared.** — **Not checked by anything.** Neither a guard nor an audit knows how many runners stand on the machine: the host has one list of pipeline steps, and the machine is shared by them only in fact. Held by the article and by per-project names in the pipeline settings
+- **The working tree is not emptied for a tool run.** — **Not checked by anything.** Stashing is indistinguishable by the shape of the command from a lawful branch switch: both take the edits off the working copy, and which of them is for a run and which for the work is invisible to a machine
+- **The main branch is merged into the task branch before the PR opens.** — `.claude/hooks/git-guard-delivery.sh:remote_main` — the tip of the main branch is asked of the remote ref and matched against the current branch's ancestors; the divergence is named by a number of commits.
+- **Unmet delivery conditions are named in one refusal.** — `.claude/hooks/git-guard-delivery.sh:deny_faults` — the accumulator `fault` gathers them along the parsing and prints them as one refusal only before the exit.
+- **A condition known at the start of work is asked at the start.** — `.claude/hooks/git-guard-delivery.sh:branch_arg` — on `git checkout -b` and `git switch -c` the tip of the main branch at the host is asked of the base, and `git config user.email` is asked against `RT_COMMIT_EMAIL`. Flags between the verb and `-b` the sample accepts.
+- **The base judged is the one named by the command, not the tip of the working copy.** — `.claude/hooks/git-guard-delivery.sh:base_ref` — by the second argument of the branch-creating command; with no named base the tip of the working copy is judged, with one unknown to the tree nothing is judged.
+- **A branch without a task number gets no delivery conditions.** — `.claude/hooks/git-guard-delivery.sh:branch_arg` — a name without the form `RT-<number>` takes the guard out with zero, asking neither about the base nor about the signature.
+- **A task left in the first column opens no PR.** — `.claude/rt-kit/project.sh:RT_BOARD_BACKLOG` — «📋 Backlog»; it is read by `.claude/hooks/git-guard-delivery.sh:check_task` on opening a PR; on creating a branch the column is not asked.
+- **The draft is not lifted from a branch that does not merge.** — `.claude/hooks/git-guard-delivery-draft.sh:conflicting` — mergeability arrives in the same answer as the reviewer and the review; with no field there is no requirement.
+- **One's own open PRs are reread in three places: before a push, on taking a task and after every known merge.** — `tools/board.mjs:behindMain` together with `tools/check-board.mjs` name the lagging and the conflicting requests; between audit runs this is held by the order of the pattern `git-workflow-stack`.
+- **One's own conflicting PR is fixed by the turn's first action, and no new work is taken before that.** — `.claude/hooks/git-guard-delivery-conflict.sh:rt_delivery_conflict` — the delivery guard's helper refuses four work-taking commands while `tools/board.mjs:conflictingPulls` names at least one of one's own open requests as conflicting.
+- **A conflicting open PR is a work queue audit discrepancy.** — `tools/check-board.mjs:checkConflicting` — only an outright "conflicts" is judged; mergeability not yet counted gives no line.
+- **An index that branches only append lines to is declared a union of both sides.** — Not checked: the merge setting is read by no audit of the tree, and the host does not read it at all. The declaration lies in `.gitattributes` — the table of the records of the past and the table of the agreement domains.
+- **An edit brought to a commit is brought to the host in the same turn.** — Not carried out: the executor's working tree is seen by no check. Held by this article.
+- **The draft is not lifted while the PR has no review.** — `.claude/hooks/git-guard-delivery-draft.sh:rt_pull_state` — the PR state arrives from `tools/board.mjs`, and a requested reviewer or a review left by someone other than the author counts as a review.
+- **The task key is set once, and all three name forms derive from it.** — `.claude/rt-kit/checks.json:taskKey` — from there it is taken by the task creation, by the delivery guard and by the queue audit.
+- **An unset key refuses work with the queue on the spot.** — `tools/board.mjs:TASK_KEY` — an empty value ends the very first call with a refusal saying where the key is set.
+- **A created task is confirmed by the work queue's answer, not by the creation command's output.** — `tools/task-new.mjs:describeTaskState` — as its fifth step the command asks the board by the number and prints the presence, the column and the assignee; a divergence ends it with a non-zero code.
+- **The visibility of what was created is checked by the side it is meant for.** — `tools/task-new.mjs:describeTaskState` — the fifth step asks the board by a separate call rather than reading the creation's answer; for a request there is no such thing — its visibility is named to the owner by the number and checked by them. Whose eyes the answer was taken by is printed by the field `viewer` — `tools/board.mjs:viewerOf`: `machine` on reading a task with a token, `client` on reading a request.
+- **A refusal is read before it is bypassed by a second way.** — Not checked by a machine: bypassing a refusal is indistinguishable from a call that went the second way from the start. The sign is asked of the host — `/opt/homebrew/bin/gh api rate_limit`: a limited account has zero there.
+- **The branch number and the PR title number are checked on the spot, the task state — by the board.** — `.claude/hooks/git-guard-delivery.sh:check_task` reads the number from the branch name and matches it against the number in the PR title. The second tier is `npm run check:board`, which also shows the assignee and the column.
+- **The task column moves in the same motion as the work.** — `.claude/skills/git-workflow/scripts/board.sh:cmd_status` — the call right after the branch is created and right after the PR is opened.
+- **The board holds tasks, not PRs about them.** — `tools/check-board.mjs:foreign` — a line per PR card. They are created by the board's built-in rule "Auto-add to project", it is switched off only in the interface, and what has accumulated is removed by `deleteProjectV2Item`.
+- **A lagging column is found by the queue audit, not by eye.** — `tools/check-board.mjs:IN_REVIEW` — the column is judged by the open PRs both ways: a PR whose task is not in review and a review without an open PR.
+- **A branch with an open PR lags behind main silently.** — `tools/board.mjs:behindMain` — a comparison of the main branch with the head of every open request; the line is printed by `tools/check-board.mjs`.
+- **The link between a task and an epic is read by the audit both ways.** — `tools/board-epics.mjs:checkEpicLinks` — the contents of an epic are read in the plan named by its card's body, and the body of every task at the host; a divergence is named both ways, and without an epic label the check stays silent.
+- **Tasks fixed by one edit are merged before the merge.** — Not checked by anything: merging two tasks into one is indistinguishable to a machine from closing the second. Held by reading — the absorbed one is appended to the first and leaves the board before the PR merge.
+- **Work that one session cannot close is marked in two places, and they are audited.** — `projects/agent-kit/assets/checks/board-long-work.github.mjs:checkLongWork` — both sides: a card label without a line in the work line and a line without a label. The label name and the directory of the lines are named by the key `longWork` in `.claude/rt-kit/checks.json`; with either of the two unnamed the link is not judged at all. Scenario SC-AK-823
+- **The tip of an open PR without a run is seen by the work queue audit.** — `tools/check-board.mjs:checkHeadRun` — the runs on the tip are asked for while the file of the pipeline named by the settings lies in the tree; a fresh tip is given ten minutes.
+- **A PR whose base is not the main branch is checked by the same set as a PR into main.** — `.github/workflows/ci.yml:on` — the start condition here is declared on a request without a filter by base, so every request of a chain gets a run. The article arrived from a tree where the filter by base stands; **not checked by anything** is that the filter will not appear later: started once, it takes the check off the whole chain silently.
+- **A run pushed out of the pipeline queue gets a separate audit line.** — `tools/check-board.mjs:checkEvicted` — the sign is taken from the number of the run's jobs: `tools/board-runs.mjs:evictedOnHead` asks for it only on cancelled ones, and a green run on that same tip removes the line.
+- **A draft with a green run on its tip is an audit discrepancy.** — `tools/check-board.mjs:checkReadyDraft` — the colour of the run is asked for only on a draft: green on it means the work is ready, while the merge button is blocked for the owner.
+- **One's own drafts are judged all at once, not only the checked-out branch's.** — `.claude/hooks/git-guard-draft-ready.sh:judge_abandoned` — the list of open drafts is asked for by the machine account name from `.claude/rt-kit/checks.json`; a foreign branch's folder is read by `origin/<branch>`, and its absence by `carries_folder`.
+- **Opening a PR is refused while the branch carries its task folder.** — `.claude/hooks/git-guard-delivery-folder.sh:rt_delivery_open_folder` — the tier on `gh pr create`; the second line on `gh pr merge` is `rt_delivery_merge_folder`. The task directory is `docs/tasks`, the archive directory `docs/archive`, the main branch `main`.
+- **A document goes in the same commit as the edit.** — `.claude/rt-kit/project.sh:rt_docs_pair_for` — the pairs of this tree: a second-kit component's description next to it and the token set description on an edit of the tokens themselves; they are watched by `.claude/hooks/docs-guard.sh`.
+- **The commit subject is checked against the format on the spot.** — `commitlint.config.cjs:rules` — the bundle `@commitlint/config-angular` plus the rule `subject-russian`: the description is written in Russian. It is called by a git hook from `.husky/commit-msg`, that is, it judges the hand; a pipeline commit goes past the hook, and the language there is held by the release templates themselves. The cases are `projects/agent-kit/tests/tree-commit-language.test.sh`.
+- **Before a push all linters are run, not one.** — `.claude/rt-kit/project.sh:rt_push_checks` — lint, types and specs over the affected, then the styles linter separately: the code linter does not read styles files at all. The set is called by `.claude/hooks/git-guard-push-tests.sh`.
+- **The build is in the set on a par with lint and unit tests.** — `.claude/rt-kit/project.sh:rt_push_checks` — the build stands in the same set: a type error in uncovered code turns red nowhere before it.
+- **The gate set calls the package default instead of listing it line by line.** — `.claude/rt-kit/project.sh:rt_push_checks` — the profile's own function calls `rt_push_checks_default` and appends the tree's checks to it; what is sifted out is named by name in it too.
+- **The final set before a push is read from the state review, not assembled in the head.** — `projects/agent-kit/src/lib/push-gate.ts:pushGateLines` — the section is printed by `pnpm exec agent-kit doctor`. In this tree, under the heading about what the default printed and the set lacks, there stand three lines — those are replacements of the same checks by variants of one's own, not a removal of the guard.
+- **The push gate set is never narrower than the pipeline set.** — `tools/check-push-gate.mjs:pipelineSteps` against `pushGate` in `.claude/rt-kit/checks.json`; the check itself stands as a line in `rt_push_checks`. How many pipeline steps are closed by what it prints on every run — the numbers here are not rewritten.
+- **An exclusion reason naming a task is judged on whether that task is alive.** — `tools/check-push-gate.mjs:taskNumbers` — the number is taken out by the task key from `.claude/rt-kit/checks.json`, and the liveness is asked of `tools/board.mjs:taskState`; with no network or no access the poll ends silently.
+- **The layout audit stands in the push gate set on a par with lint and the build.** — `.claude/rt-kit/project.sh:rt_push_checks` — the first line of the set is `pnpm run agent-kit:check`: the rules package lies in this same tree, so the audit first rebuilds it and only then reads the built output. The package default prints its own form — `projects/agent-kit/assets/defaults/project.sh:rt_push_checks_default`.
+- **After merging main in, the check set is revised by what the branch now carries.** — Not checked by anything: the guard sees the set but does not know what exactly the merge brought. Held by the checklist before publishing the PR.
+- **The main branch is taken by the remote ref — in words and in actions.** — `.claude/hooks/git-guard-push-tests.sh:main_branch` — the base is taken from the remote ref rather than from the local tip. The statement to the owner is not guarded by this: a network call inside the parsing of a command would fall together with the connection. The session-closing steps — pulling main in, counting what is merged and what is not — take that same ref, and nothing guards them: the command is read by the session, not by a check
+- **A code edit is handed to a person by an open PR, not by a pushed branch.** — Not checked by anything: the delivery guard judges the opening of a PR but not its absence — work that ended with a push and never reached a PR it does not see at all. Held by this article and by the memory record about delivery.
+- **What is not ready to merge opens as a draft — `gh pr create --draft`.** — Not checked by anything: the guard sees the call `gh pr create` and its keys, but does not know whether the plan's stages are closed. Held by the article and by the pattern `git-workflow-commit`.
+- **The PR body is written in the turn the PR opens, and next to the sample.** — **Not checked by anything.** The body lives in a file that disappears after the call, and no audit reads it. The queue audit finds only the consequence — a request without a line linking to the task.
+- **The draft is lifted by a separate call — `gh pr ready <номер>`.** — The call itself is not demanded by a guard: the completeness of the work is invisible to a machine, and the sign here is the second message to the owner from the pattern `task-flow-close`. It is judged the other way round — `.claude/hooks/git-guard-delivery-draft.sh:pull_ref` refuses lifting the draft from a PR without a review.
+- **The PR merge is pressed by a person, not by the work's executor.** — `.claude/hooks/git-guard-delivery-folder.sh:rt_folder_in_branch` — on the call `gh pr merge` the guard judges the task folder; the ban itself is closed by no check and will not be: the owner merges by a button in the browser, where there are no hooks at all.
+- **The identity of the call opening a PR is guarded by the delivery guard, not by the executor's memory.** — `.claude/hooks/git-guard-delivery.sh:pull_token_var` — the substitution of `GH_TOKEN` is looked for in the text of the request-opening command; the request author is asked of `tools/board.mjs:pullState` on lifting the draft and matched against `RT_TASK_BOT`. Both strings are declared by the tree profile.
+- **The PR author cannot be its reviewer.** — `tools/board.mjs:pullState` — the PR's author is struck out of its reviewers, and a review request on oneself does not count as a review. This is asked on lifting the draft; at the other points it is held by the article and by the section about the machine account below.
+- **The host client call goes from the tree, and a command chain does not check the outcome.** — **Not checked by anything.** The directory the client was called from is invisible to the guards: they read the text of the command, not the working directory of the call. Held by reading the request body back in the same turn
+- **PR labels, assignee and reviewer are set by `gh api` calls, not by `gh pr edit`:** — Not checked by anything: the guard judges the PR-opening call, not what its fields are edited by afterwards. Held by the article — on a repository with the old board `gh pr edit` never reaches the edit at all.
+- **The board is edited by a GraphQL query by the board id, not by the owner's name.** — `.claude/skills/git-workflow/scripts/board.sh:resolve_project` — the identifier is taken from the board itself rather than assembled from the owner's name.
+- **The machine commit's email is copied from the companion, not typed from memory.** — `.claude/rt-kit/project.sh:RT_COMMIT_EMAIL` — the same string as in the section about the signature below; `.claude/hooks/git-guard-delivery.sh` refuses a push if a commit of the branch's contribution named itself the machine account with a different address.
+- **The identity of the machine account is confirmed by the host's answer, not by recognising a string:** — Not checked by anything: the guard matches a string against a string and does not ask the host at all — a network call would fall together with the connection. Held by the command from the section about the signature below, when the account is created and when its address changes.
+- **Guard scenarios set the git settings themselves, not take them from the machine.** — `projects/agent-kit/tests/git-guards.test.sh:gpgsign` — the author, the mail and the signing are passed by `-c` flags straight into the command rather than inherited from the machine's shared config.
+- **Every commit of the branch's contribution is signed by the machine account, and the push set checks it.** — `.claude/rt-kit/project.sh:RT_HUMAN_EMAILS` — the mails of this tree's people; a commit under an account outside the list is refused by `.claude/hooks/git-guard-delivery-signature.sh:rt_delivery_signature`
+- **Every commit of the branch's contribution is signed by the machine account, and the push set checks it.** — **Not checked here.** The tree's push gate judges the signature of every commit of the contribution; the package delivery guard looks only at a commit that named itself the machine account
+- **The PR state is reread from the host right after publishing.** — **Not checked by anything.** The return code of a silently skipped request is the same as of one that was made; held by the request pattern
+- **The author of an open PR and whether it has a reviewer are audited by the work queue.** — **Not checked here.** `tools/check-board.mjs` asks the host for the column, the run and the mergeability of open requests, and does not yet judge the author and the reviewer — that is named as separate work
+- **The host client's active account is chosen per machine, not per tree; the machine account is substituted per call, never made active.** — **Not checked by anything.** Signing into the client changes the state of the machine, while the guards judge the tree's calls. Held by the article; the active account is asked by `gh auth status`.
+- **Reviewers are asked by a REST call, not by the client's selection.** — **Not checked by anything.** The client's selection is assembled by a GraphQL query and falls whole under the machine account token; the choice of way is held by this article
+- **A wave of branches off one main is checked by a trial merge, not one by one:** — **Not checked by anything.** A check judges one branch, while a collision lives between branches, and before a merge nothing sees it. Held by the pattern `git-workflow-stack`.
 
-## Что ещё стоит знать при чтении кода
+## What else is worth knowing when reading the code
 
-- Слияние PR — только обычным слиянием: сжатое слияние в репозитории выключено.
-- **`lint-staged` переформатирует файлы прямо в коммите.** Замена по шаблону, написанная под
-  однострочный биндинг, после первого коммита промахивается: форматтер уже разложил его на
-  несколько строк, и следующая такая же правка срабатывает не везде. Массовая правка шаблонов
-  либо идёт до первого коммита целиком, либо повторяется по факту — а не считается сделанной по
-  числу совпадений.
-- Файлы к коммиту добавляются явными путями. Сторонние инструменты добавляют в индекс сами,
-  поэтому перед каждым коммитом читается, что в индексе на самом деле.
-- Голый вызов `git` или `gh` на этой машине может уйти в оболочку выбора учётной записи;
-  надёжный вызов — с приставкой `command`.
-- **`gh` залогинен учётной записью владельца, и сам по себе от машинной не работает.** Всё, что
-  должно идти от неё — заведение задачи, открытие PR, перевод колонки, — зовётся с токеном
-  в окружении вызова:
+- A PR is merged only by an ordinary merge: squash merges are switched off in the repository.
+- **`lint-staged` reformats files right inside the commit.** A pattern replacement written for a
+  one-line binding misses after the first commit: the formatter has already laid it out over
+  several lines, and the next identical edit fires not everywhere. A mass edit of templates
+  either goes whole before the first commit or is repeated by the fact — rather than counted as
+  done by the number of matches.
+- Files are added to a commit by explicit paths. Foreign tools add to the index themselves, so
+  before every commit what is actually in the index is read.
+- A bare call of `git` or `gh` on this machine may go into an account-picking shell; the reliable
+  call is with the `command` prefix.
+- **`gh` is signed in under the owner's account and by itself does not work from the machine
+  one.** Everything that must go from it — creating a task, opening a PR, moving the column — is
+  called with the token in the call's environment:
 
     ```bash
     GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh pr create …
     ```
 
-    `gh auth login` под машинной учётной записью не делается: он затрёт вход владельца в
-    `hosts.yml`. Токен читается в окружение вызова и не печатается.
+    `gh auth login` under the machine account is not done: it would wipe the owner's sign-in in
+    `hosts.yml`. The token is read into the call's environment and is not printed.
 
-- **Прежняя машинная запись была ограничена хостингом, и работа переехала на новую.**
-  `rt-tools-agent` с 14 августа 2026 года отвечала «не найдено» всем, кроме себя: задачи и PR,
-  заведённые её токеном, для владельца и для сверок не существовали, и задачи приходилось
-  заводить записью владельца. С 18 августа работа идёт от `rt-tools-dev` — её профиль виден
-  всем, она стоит исполнителем задач, и обход с чужим исполнителем снят. Проверяется тем же
-  вызовом: `gh api users/rt-tools-dev` отвечает профилем, а не «не найдено».
+- **The former machine account was limited by the host, and the work moved to a new one.**
+  `rt-tools-agent` answered "not found" to everyone but itself from 14 August 2026: the tasks and
+  PRs created by its token did not exist for the owner or for the audits, and tasks had to be
+  created under the owner's account. Since 18 August the work goes from `rt-tools-dev` — its
+  profile is visible to all, it stands as the assignee of tasks, and the workaround with a
+  foreign assignee is gone. Checked by the same call: `gh api users/rt-tools-dev` answers with a
+  profile rather than "not found".
 
-- **PR открывает машинная запись, а не запись владельца.** Свой PR исполнитель открывает сам:
-  у заявки, открытой владельцем, ревьювера не бывает вовсе — автор не может быть ревьювером, а
-  разбор требует гард снятия черновика. Открывается заявка токеном машинной записи:
+- **A PR is opened by the machine account, not by the owner's.** The executor opens their own PR
+  themselves: a request opened by the owner never has a reviewer at all — an author cannot be a
+  reviewer, and a review is demanded by the draft-lifting guard. The request is opened by the
+  machine account's token:
 
     ```bash
     GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh pr create --draft --base main \
-        --head <ветка> --title '<заголовок>' --body-file <файл>
+        --head <branch> --title '<title>' --body-file <file>
     ```
 
-    Исполнитель ставится ей же, ревьювером — владелец; оба вызова `gh api` идут тем же токеном.
-    Заявка, открытая не той записью, чинится только переоткрытием: автора у неё не сменить.
+    The assignee is set to it as well, the reviewer to the owner; both `gh api` calls go with that
+    same token. A request opened by the wrong account is fixed only by reopening: its author
+    cannot be changed.
 
-- **Невидимость PR машинной записью была свойством прежней записи, а не машинной работы
-  вообще.** `rt-tools-agent` открывала заявку успешно, а владельцу хостинг отвечал «не найдено»
-  и на неё, и на профиль самой записи — так один PR был открыт, не увиден и закрыт вручную. С
-  переездом на `rt-tools-dev` 18 августа 2026 года ограничение снято: заявка #1008, открытая ею,
-  видна владельцу и в списке, и по номеру. Утверждение о видимости не запоминается, а
-  спрашивается — вызовами от владельца, без токена:
+- **A PR being invisible to the machine account was a property of the former account, not of
+  machine work in general.** `rt-tools-agent` opened a request successfully, while the host
+  answered the owner "not found" both about it and about the account's own profile — that is how
+  one PR was opened, never seen and closed by hand. With the move to `rt-tools-dev` on 18 August
+  2026 the limitation is gone: request #1008, opened by it, is visible to the owner both in the
+  list and by number. A statement about visibility is not remembered but asked — by calls from the
+  owner, without a token:
 
     ```bash
-    /opt/homebrew/bin/gh pr list --json number,author     # заявка машинной записи стоит в списке
-    /opt/homebrew/bin/gh pr view <номер> --json author    # отвечает автором, а не отказом
+    /opt/homebrew/bin/gh pr list --json number,author     # the machine account's request stands in the list
+    /opt/homebrew/bin/gh pr view <number> --json author   # answers with an author, not with a refusal
     ```
 
-    `gh pr create --draft` работает у обеих записей: черновик — свойство заявки, а не учётной
-    записи.
+    `gh pr create --draft` works under both accounts: a draft is a property of the request, not of
+    the account.
 
-- **Очередь работ этой записью не правится вовсе, и токен для неё дерево больше не называет.**
-  Квота на язык запросов у машинной записи не исчерпана, а равна нулю, — борда же живёт только
-  там. Отвечает хостинг текстом про исчерпанный предел, и он читается как временный, хотя
-  проходящим не считается:
+- **The work queue is not edited by this account at all, and the tree no longer names a token for
+  it.** The machine account's query-language quota is not exhausted but equal to zero — while the
+  board lives only there. The host answers with a text about an exhausted limit, and it reads as
+  temporary, though it does not count as passing:
 
     ```bash
     GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh api rate_limit --jq '.resources.graphql'
     ```
 
-    Поэтому ключа `board.tokenPath` в `.claude/rt-kit/checks.json` больше нет: сверка очереди,
-    перевод колонки и заведение задачи идут учётной записью, под которой залогинен `gh`, то есть
-    владельцем. Вернётся запись — ключ называется снова, и обвязка возьмёт её без правок.
-    Подписи коммита это не касается: она читается на машине, из `RT_COMMIT_EMAIL`, и сети не
-    спрашивает.
+    So the key `board.tokenPath` in `.claude/rt-kit/checks.json` is gone: the queue audit, the
+    column move and the task creation go under the account `gh` is signed in as, that is, the
+    owner's. Should the account come back, the key is named again, and the harness takes it
+    without edits. This does not concern the commit signature: it is read on the machine, from
+    `RT_COMMIT_EMAIL`, and asks the network for nothing.
 
-- **Пуш идёт тем же токеном, а не тем, что отдаёт связка ключей.** Помощник `osxkeychain`
-  отвечает учётной записью от чужого дерева, и пуш падает на `403` с именем, которого здесь
-  быть не должно. Адрес удалённого репозитория токеном не переписывается — он лёг бы открытым
-  текстом в `.git/config`:
+- **The send to the host goes with that same token, not with the one the keychain gives out.** The
+  `osxkeychain` helper answers with an account from a foreign tree, and the send falls on `403`
+  with a name that should not be here. The remote repository address is not rewritten with the
+  token — it would lie in `.git/config` in plain text:
 
     ```bash
     git -c credential.helper= \
         -c credential.helper='!f() { echo username=x-access-token; echo "password=$(cat ~/.config/rt-tools-bot-token)"; }; f' \
-        push -u origin <ветка>
+        push -u origin <branch>
     ```
 
-- **Подпись коммита задаётся переменными самой команды**, а не `git config user.*`: конфиг общий
-  и переписал бы подпись владельцу. Подписи в дереве нет — `commit.gpgsign` включён, а ключ
-  лежит за менеджером паролей, поэтому машинный коммит идёт с `-c commit.gpgsign=false`:
+- **The commit signature is set by the command's own variables**, not by `git config user.*`: the
+  config is shared and would rewrite the owner's signature. There is no signing in the tree —
+  `commit.gpgsign` is on while the key lies behind the password manager, so a machine commit goes
+  with `-c commit.gpgsign=false`:
 
     ```bash
     GIT_AUTHOR_NAME="rt-tools-dev" GIT_AUTHOR_EMAIL="317887029+rt-tools-dev@users.noreply.github.com" \
@@ -221,58 +226,61 @@
         git -c commit.gpgsign=false commit -F -
     ```
 
-    **Почта копируется отсюда, а не набирается по памяти.** Хостинг сопоставляет служебный адрес
-    по числу в нём, логин рядом не сверяет никто, и коммит с чужим числом уезжает подписанным
-    посторонним человеком — изнутри промах не виден вовсе. Так одиннадцать коммитов ушло в
-    главную ветку, и чинилось это переписыванием истории. Ту же строку держит профиль дерева
-    ключом `RT_COMMIT_EMAIL`, и гард поставки отбивает пуш при расхождении.
+    **The mail is copied from here, not typed from memory.** The host matches a service address by
+    the number in it, nobody checks the login next to it, and a commit with a foreign number
+    leaves signed by an outside person — from the inside the miss is invisible at all. That is how
+    eleven commits went into the main branch, and it was fixed by rewriting the history. The tree
+    profile holds that same string by the key `RT_COMMIT_EMAIL`, and the delivery guard refuses a
+    send on a divergence.
 
-    **Личность записи подтверждается ответом хостинга, а не тем, что строка выглядит знакомой** —
-    промах выглядел знакомо. Спрашивается токеном самой записи, и логин с числом приходят одним
-    ответом:
+    **The identity of the account is confirmed by the host's answer, not by a string looking
+    familiar** — the miss looked familiar. It is asked with the account's own token, and the login
+    and the number arrive in one answer:
 
     ```bash
     GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) gh api user --jq '.login, .id'   # rt-tools-dev, 317887029
     ```
 
-    Ответ о себе годится всегда, а поиск по числу — только для незаблокированной записи: у
-    прежней `gh api user/314674161` отвечал «не найдено» любым токеном, включая её собственный.
-    Поэтому число сверяется ответом о себе, а не поиском по номеру.
+    An answer about oneself is always good, and a search by number only for an unblocked account:
+    for the former one `gh api user/314674161` answered "not found" under any token, including its
+    own. So the number is checked by the answer about oneself, not by a search by number.
 
-- Журнал изменений при выпуске собирается из заголовков коммитов: выпущенные разделы не
-  переписываются, дописывается только неизданный. Едет он отдельным коммитом после пуша ветки.
-- **Карточки PR заводит встроенное правило борды «Auto-add to project», и выключается оно
-  только в интерфейсе.** Через API правила проекта не правятся вовсе — ни `gh project`, ни
-  GraphQL их не меняют, — поэтому накопившееся снимается вызовом, а источник закрывает человек.
-  Что стоит на борде сейчас:
+- On a release the changelog is assembled from commit subjects: released sections are not
+  rewritten, only the unreleased one is appended to. It travels as a separate commit after the
+  branch has left for the host.
+- **PR cards are created by the board's built-in rule "Auto-add to project", and it is switched
+  off only in the interface.** Through the API the project rules are not edited at all — neither
+  `gh project` nor GraphQL changes them — so what has accumulated is removed by a call, while a
+  person closes the source. What stands on the board right now:
 
     ```bash
-    /opt/homebrew/bin/gh api graphql -f query='{ node(id: "<идентификатор борды>") {
+    /opt/homebrew/bin/gh api graphql -f query='{ node(id: "<board identifier>") {
         ... on ProjectV2 { workflows(first: 20) { nodes { name enabled } } } } }'
     ```
 
-    Накопившиеся карточки снимаются по одной, идентификатор элемента берётся у самой борды:
+    The accumulated cards are removed one by one, and the item identifier is taken from the board
+    itself:
 
     ```bash
     /opt/homebrew/bin/gh api graphql -f query='mutation { deleteProjectV2Item(input:
-        {projectId: "<борда>", itemId: "<элемент>"}) { deletedItemId } }'
+        {projectId: "<board>", itemId: "<item>"}) { deletedItemId } }'
     ```
 
-    Десять таких карточек висели с апреля; после снятия `npm run check:board` по этой строке
-    молчит.
+    Ten such cards hung there since April; after the removal `npm run check:board` is silent on
+    that line.
 
-- Планы работ живут в репозитории — `docs/plans/<тема>.md` рядом с `docs/adr/`, и едут тем же
-  коммитом, что и работа, которую описывают.
+- The work plans live in the repository — `docs/plans/<topic>.md` next to `docs/adr/`, and they
+  travel in the same commit as the work they describe.
 
-## Чем это проверяется
+## What this is checked by
 
-- Гарды сами: `git-guard-main.sh` на коммите, `git-guard-delivery.sh` на заведении ветки и
-  открытии PR, `git-guard-push-tests.sh` на пуше.
-- От кого пойдёт вызов — до вызова, а не по автору уже открытого PR:
+- The guards themselves: `git-guard-main.sh` on a commit, `git-guard-delivery.sh` on creating a
+  branch and opening a PR, `git-guard-push-tests.sh` on a send to the host.
+- Whom the call will go from — before the call, not by the author of an already open PR:
 
     ```bash
     GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh api user -q '.login'   # rt-tools-dev
     ```
 
-- `pnpm run check:affected` — то же, что гоняет гард пуша, только руками.
-- `scripts/board.sh list` — сверка колонок с открытыми PR.
+- `pnpm run check:affected` — the same as the send guard runs, only by hand.
+- `scripts/board.sh list` — the audit of the columns against the open PRs.

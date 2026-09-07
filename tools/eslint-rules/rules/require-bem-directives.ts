@@ -1,18 +1,18 @@
 import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 /**
- * Кастомное Angular-template-правило, которое формализует BEM-only-разделы
- * `frontend/CLAUDE.md` (раздел «Стили / BEM») и memory `feedback_always_use_bem_directives`.
+ * The tree's own rule for Angular templates: it puts into machine form what the rule
+ * `styling-bem` demands — the classes on an element are set by directives, not by hand.
  *
- * Запрещает:
- *  1. `class="..."` (статический атрибут).
- *  2. `[class]="..."` биндинг (КРОМЕ pipe-формы `… | concatClasses`).
+ * It forbids:
+ *  1. `class="..."` — a static attribute.
+ *  2. the binding `[class]="..."` — EXCEPT the pipe form `… | concatClasses`.
  *  3. `[class.foo]="..."` boolean class binding.
  *  4. `[ngClass]="..."`.
  *
- * Требует использование `rtBlock` / `rtElem` / `[rtMod]` из `@rt-tools/core`.
+ * It demands `rtBlock`, `rtElem` and `[rtMod]` from `@rt-tools/core`.
  *
- * Доступно в ESLint-конфигах как `@nx/workspace-require-bem-directives`.
+ * In the ESLint configs it is available as `@nx/workspace-require-bem-directives`.
  */
 export const RULE_NAME: string = 'require-bem-directives';
 
@@ -30,9 +30,9 @@ interface IBoundAttributeValue {
 interface IBoundAttributeNode {
     readonly name: string;
     /**
-     * Числовой enum `BindingType` из `@angular/compiler`. Сериализуется
-     * template-parser'ом в поле `__originalType` (нативный `.type` затирается
-     * строкой `"BoundAttribute"` для совместимости с ESLint AST). Значения:
+     * The numeric enum `BindingType` from `@angular/compiler`. The template parser serializes
+     * it into the field `__originalType`: the native `.type` is overwritten with the string
+     * `"BoundAttribute"` for compatibility with the ESLint AST. The values:
      *
      *  - 0 — `BindingType.Property` (`[disabled]=`, `[class]=`, `[ngClass]=`)
      *  - 1 — `BindingType.Attribute` (`[attr.aria-label]=`)
@@ -43,26 +43,26 @@ interface IBoundAttributeNode {
     readonly value: IBoundAttributeValue | null;
 }
 
-/** Значение `__originalType` для биндингов вида `[class.foo]=`. */
+/** The value of `__originalType` for the bindings of the form `[class.foo]=`. */
 const BINDING_TYPE_CLASS: number = 2;
 
 const createRule: ReturnType<typeof ESLintUtils.RuleCreator> = ESLintUtils.RuleCreator(() => __filename);
 
-/** Имя pipe'а — escape hatch'а. Только `… | concatClasses` допустим в `[class]=`. */
+/** The name of the escape hatch pipe. Only `… | concatClasses` is lawful in `[class]=`. */
 const ALLOWED_PIPE_NAME: string = 'concatClasses';
 
 /**
- * Type guard: проверяет, является ли AST-узел `BindingPipe` с именем `concatClasses`.
- * Распаковывает `ParenthesizedExpression` (вокруг pipe-выражения в скобках,
- * например `[class]="(['a', 'b'] | concatClasses)"`).
+ * A type guard: is the AST node a `BindingPipe` named `concatClasses`. It unwraps a
+ * `ParenthesizedExpression` — around a pipe expression in brackets, for example
+ * `[class]="(['a', 'b'] | concatClasses)"`.
  *
- * Не импортируем класс `BindingPipe` напрямую — обходимся duck-typing по
- * `constructor.name`, чтобы не тянуть транзитивный `@angular-eslint/bundled-angular-compiler`
- * в `tsconfig.lint.json`.
+ * The class `BindingPipe` is not imported directly: the check goes by `constructor.name`, so as
+ * not to drag the transitive `@angular-eslint/bundled-angular-compiler` into
+ * `tsconfig.lint.json`.
  */
 function isAllowedConcatPipe(ast: unknown): boolean {
     let current: unknown = ast;
-    // Распаковываем (… | concatClasses) → BindingPipe.
+    // Unwrapping (… | concatClasses) → BindingPipe.
     while (
         current !== null &&
         typeof current === 'object' &&
@@ -87,16 +87,16 @@ export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = createRule<TOpti
         type: 'problem',
         docs: {
             description:
-                'Запрещает любые формы прямой работы со CSS-классами в Angular-шаблонах ' +
-                "(class=, [class]=, [class.foo]=, [ngClass]=) кроме escape hatch'а " +
-                '[class]="… | concatClasses". Требует rtBlock/rtElem/[rtMod] из @rt-tools/core.',
+                'Forbids every form of working with CSS classes directly in Angular templates ' +
+                '(class=, [class]=, [class.foo]=, [ngClass]=) except the escape hatch ' +
+                '[class]="… | concatClasses". Demands rtBlock/rtElem/[rtMod] from @rt-tools/core.',
         },
         schema: [],
         messages: {
             nakedClass:
                 'Naked class="…" attribute is not allowed. ' +
                 'Use rtBlock/rtElem/[rtMod] directives from @rt-tools/core ' +
-                '(see frontend/CLAUDE.md § Стили/BEM).',
+                '(see the rule styling-bem).',
             boundClass:
                 '[class]="…" binding is not allowed except for the concatClasses pipe ' +
                 'form: [class]="x | concatClasses". ' +
@@ -110,11 +110,11 @@ export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = createRule<TOpti
     },
     defaultOptions: [],
     create(context: Readonly<TSESLint.RuleContext<TMessageIds, TOptions>>): TSESLint.RuleListener {
-        // NOTE: template-parser visitor-узлы (`TextAttribute`, `BoundAttribute`, `BindingPipe`)
-        // не соответствуют TSESTree.* — это узлы AST `@angular/compiler`. ESLint-узел
-        // приводим к `TSESTree.Node` локально только для сигнатуры `context.report`, при этом
-        // фактический шаблон-парсер прокидывает свой sourceSpan, и ESLint штатно использует
-        // template-parser conversions через `loc`-fallback.
+        // NOTE: the template parser's visitor nodes (`TextAttribute`, `BoundAttribute`,
+        // `BindingPipe`) do not match TSESTree.* — they are nodes of the `@angular/compiler` AST.
+        // The ESLint node is cast to `TSESTree.Node` locally, only for the signature of
+        // `context.report`; the template parser passes its own sourceSpan, and ESLint uses the
+        // template-parser conversions through the `loc` fallback as usual.
         function reportNode(node: unknown, messageId: TMessageIds): void {
             context.report({
                 node: node as TSESTree.Node,
@@ -134,15 +134,15 @@ export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = createRule<TOpti
                 const attrName: string = attr.name;
                 const originalType: number = attr.__originalType;
 
-                // `[class.foo]=` — class-binding (`__originalType === 2`). Имя — суффикс
-                // после `class.` (например, `active` или `invite-registration__hint--visible`).
+                // `[class.foo]=` is a class binding (`__originalType === 2`). The name is the
+                // suffix after `class.` — for example `active` or `record-panel__hint--visible`.
                 if (originalType === BINDING_TYPE_CLASS) {
                     reportNode(node, 'boundClassDot');
                     return;
                 }
 
-                // `[class]=` — Property-биндинг (`__originalType === 0`) с name === `"class"`.
-                // Разрешён только pipe-escape-hatch `… | concatClasses`.
+                // `[class]=` is a property binding (`__originalType === 0`) with name === `"class"`.
+                // Only the pipe escape hatch `… | concatClasses` is allowed.
                 if (attrName === 'class') {
                     const rootAst: unknown = attr.value?.ast;
                     if (isAllowedConcatPipe(rootAst)) {
@@ -151,7 +151,7 @@ export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = createRule<TOpti
                     reportNode(node, 'boundClass');
                     return;
                 }
-                // `ngClass` покрыт более специфичным селектором выше — здесь skip.
+                // `ngClass` is covered by the more specific selector above — skipped here.
             },
         };
     },

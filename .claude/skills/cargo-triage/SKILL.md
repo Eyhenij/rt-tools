@@ -2,211 +2,228 @@
 name: cargo-triage
 kind: rule
 law: work-conduct
-description: Правило под «Закон о ведении работы». Брать, когда разбирается груз, приехавший в приём, — разборы происшествий и предложения от деревьев. Называет, чем груз читается и когда у записи появляются отметки о починке и выпуске. Паттерн cargo-triage-mark.
+description: A rule under the "Law on work conduct". Take it when the cargo that arrived in the intake is sorted out — incident analyses and proposals from trees. It names what the cargo is read by and when a record gets the marks of a fix and of a release. The pattern is cargo-triage-mark.
 ---
 
-# Разбор приехавшего груза — как это устроено здесь
+# Sorting out the arrived cargo — how it is arranged here
 
-Правило под закон `docs/constitution/work-conduct.md`. Закон говорит, что работа ведётся так,
-чтобы её состояние переживало заход; здесь — как это держится для чужой работы, приехавшей
-грузом. Своя работа идёт правилом `task-flow` под тем же законом, и одно продолжает другое:
-взятие отчёта в работу заводит задачу, а с задачи начинается тот ход.
+A rule under the law `docs/constitution/work-conduct.md`. The law says that work is conducted so
+that its state outlives a session; here — how that is held for someone else's work that arrived as
+cargo. One's own work goes by the rule `task-flow` under the same law, and one continues the
+other: taking a report into work creates a task, and that flow starts from a task.
 
-**Требует:** `.claude/hooks/cargo-mark-guard.sh`
+**Requires:** `.claude/hooks/cargo-mark-guard.sh`
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                               | Здесь                                                                       |
-| -------------------------------------- | --------------------------------------------------------------------------- |
-| работа, о которой сказал кто-то другой | груз: разбор происшествия и предложение, приехавшие в приём от дерева       |
-| состояние работы, пережившее заход     | состояние записи груза: новое, в работе, готово, выпущено                   |
-| отметка о сделанном                    | вызов команды отметки — она переводит записи и пишет приём починки и версию |
-| чем груз забирают                      | вызов команды чтения — она входит парой службы и отдаёт записи с их ключами |
-| место, где состояние читают            | ответ команды чтения; человеку то же показывает админка приёма             |
-| ответ на «чем исправлено»              | приём починки: статья правила, гард, проверка, правка кода                  |
-| ответ на «где искать фикс»             | версия выпуска: строка, которой дерево назвало выпуск                       |
+| In the law                                | Here                                                                             |
+| ----------------------------------------- | ---------------------------------------------------------------------------------- |
+| work somebody else spoke about            | cargo: an incident analysis and a proposal that arrived in the intake from a tree |
+| the state of work that outlived a session | the state of a cargo record: new, in work, done, released                         |
+| a mark about what was done                | a call of the mark command — it moves records and writes the fix and the version  |
+| what the cargo is taken by                | a call of the read command — it signs in as a service pair and gives the records with their keys |
+| the place where the state is read         | the read command's answer; the same is shown to a person by the intake's admin panel |
+| the answer to "what it was fixed by"      | the fix: a rule's article, a guard, a check, a code edit                          |
+| the answer to "where to look for the fix" | the release version: the string the tree named the release by                     |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом: адрес приёма, чем зовётся команда отметки
-и как называются состояния в её доводах. Пути живут там, а не здесь: правило переносится между
-репозиториями, а адрес приёма и имя команды у каждого дерева свои.
+In this tree — the table in `implementation.md` next to it: the intake address, what the mark
+command is called and how the states are named in its arguments. Paths live there, not here: the
+rule travels between repositories, while the intake address and the command name are each tree's
+own.
 
-## Ход
+## Flow
 
-Ход одной записи груза от приезда до выпуска: где ставится каждая отметка и что делается
-раньше неё.
+The flow of one cargo record from arrival to release: where every mark is set and what is done
+before it.
 
 ```mermaid
 flowchart TD
-    A[Запись груза приехала в приём] --> B[Команда чтения забирает записи: отбор по «новое», порядком приезда]
-    B --> C{Работа по записи будет}
-    C -->|Нет| D[Состояние не двигается: состояния отказа набором не заведено]
-    C -->|Да| E[Заводится задача, и тем же ходом запись переводится в «в работе»]
-    E --> F[Работа идёт обычным ходом: ветка, папка задачи, замысел]
-    F --> G{Правка влита в главную ветку}
-    G -->|Нет| F
-    G -->|Да| H[Запись переводится в «готово», и с переходом едет приём починки]
-    H --> I{Редакция с починкой опубликована}
-    I -->|Нет| I
-    I -->|Да| J[Публикующий переводит запись в «выпущено» и называет версию]
+    A[A cargo record arrived in the intake] --> B[The read command takes the records: filtered by "new", in arrival order]
+    B --> C{There will be work on the record}
+    C -->|No| D[The state does not move: no refusal state is started in the set]
+    C -->|Yes| E[A task is created, and in the same turn the record moves to "in work"]
+    E --> F[The work goes the usual way: a branch, a task folder, a plan]
+    F --> G{The edit is merged into the main branch}
+    G -->|No| F
+    G -->|Yes| H[The record moves to "done", and the fix travels with the move]
+    H --> I{The edition with the fix is published}
+    I -->|No| I
+    I -->|Yes| J[Whoever publishes moves the record to "released" and names the version]
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Груз забирается из приёма командой, а не глазами в админке.** Разбирает груз исполнитель, и
-  то, чего он не может прочитать, он не разбирает: пока чтение было открыто одному человеку, две
-  с лишним сотни записей простояли новыми, и отметить их было нечем — команда отметки знала
-  только то, что ещё лежало у дерева на диске. Админка остаётся человеку и отвечает на другой
-  вопрос: как груз выглядит в целом.
-- **В очереди работ груз не заводится.** Сводка говорит о рабочих привычках команды, и в
-  открытой очереди работ это выложено всему свету. Записи, заведённые прежним порядком, из
-  очереди никуда не денутся, но новых там не заводят.
-- **Груз, стоящий в очереди с прежних времён, задачей не судится.** Заголовка с номером,
-  исполнителя и места на борде у него нет и не будет: сверка очереди печатала на каждую такую
-  запись по три строки — восемнадцать строк на семь записей, — и настоящее расхождение среди
-  них не читалось. Узнаётся груз меткой, которую называет само дерево: у каждого она своя, а
-  выдуманное умолчание не совпало бы ни с чем и молча выключило бы отсев. Отсеянное сверка
-  называет числом — молчаливый отсев неотличим от сверки, у которой метка названа с опечаткой.
-- **Разбор начинается с неразобранного.** Список сужается отбором по состоянию «новое» и идёт
-  порядком приезда. Без отбора разобранное и нетронутое стоят вперемешку — то самое состояние,
-  ради ухода от которого состояния и заведены.
-- **Что уже разобрано, спрашивается у приёма, а не вспоминается.** Состояние переживает заход,
-  память исполнителя — нет: разобрав груз сегодня, завтра начинают с нуля. Спрашивается оно тем
-  же чтением, которым груз забирают, — вторым вызовом с другим отбором, а не запросом к
-  хранилищу.
-- **Взять отчёт в работу — значит завести по нему задачу.** Отметка «в работе» без задачи
-  говорит, что запись кто-то взял, и молчит о том, где эта работа идёт; задача без отметки
-  оставляет запись среди неразобранных, и следующий заход разбирает её заново.
-- **Задача и отметка идут одним ходом.** Отложенная отметка не ставится: между заведением
-  задачи и следующим шагом проходит день, и к этому дню исполнитель помнит задачу, а не запись
-  груза.
-- **Одна правка — одна задача, сколько бы записей груза её ни вызвало.** Записи, чинящиеся
-  вместе, отмечаются одной пачкой и одной задачей: делится то, что придётся откатывать порознь.
-- **«Готово» ставится, когда правка влита в главную ветку.** Не когда заявка открыта и не когда
-  прогон зелёный: до слияния правки в дереве нет, а отметка утверждает, что она есть.
-- **Переход в «готово» идёт шагом состояния `влито`, а не памятью исполнителя.** Это
-  единственное состояние работы, где слияние уже случилось, а ход о задаче ещё идёт: закрытие
-  стоит раньше слияния, и отметка там утверждала бы то, чего в главной ветке нет, а после хода
-  о задаче не помнит никто. За один разбор так зависли сорок шесть записей — правки в главной
-  ветке, состояние прежнее.
-- **С переходом в «готово» едет приём починки.** Он отвечает на «чем», а не на «где»: статья
-  правила, гард, проверка, правка кода. Ссылка на задачу отвечает на «где», и приёмом починки
-  её не считают. Без текста переход отбивается построчно — список снова показал бы состояние,
-  у которого нет ответа на «чем».
-- **Запись соседнего дерева закрывает издатель редакции, а не её отправитель.** Отправитель о
-  выпуске не знает: правка входит в пакет не у него, а токеном соседа никто не владеет — и без
-  второго пути чужие записи стоят в «новом» и тогда, когда давно лежат в редакции. Ходит этот
-  путь только вперёд и только по двум последним шагам: «в работе» означает взятую дереву работу,
-  и ставит его дерево. Запись при закрытии называется признаком из чтения, а не ключом
-  отправителя: ключ уникален у своего дерева, а не в приёме.
-- **«Выпущено» ставится тем, кто публикует редакцию, и тем же движением, что и публикация.**
-  У него версия под рукой; отложенный до следующего захода выпуск отмечается по памяти или не
-  отмечается вовсе.
-- **Между «готово» и «выпущено» стоит редакция.** Потребитель получает фикс только после
-  раскладки у себя, и два состояния разведены ровно поэтому.
-- **Обе стороны разбора идут командами, и закрыты они по-разному.** Чтение — входом учётной
-  записи службы: разбирать приходится весь груз о ресурсах, а шлют его несколько деревьев.
-  Отметка — токеном своего дерева: двигать состояния соседа не вправе никто, и утёкший токен
-  по-прежнему не открывает ничьего чтения.
-- **Пара учётной записи службы лежит вне репозитория.** Тем же приёмом, что и токен дерева:
-  положенная в дерево, она уезжает в историю и в каждую его копию, а отозвать её оттуда нечем.
-- **Ключ записывается полным и уезжает в описание прошлого вместе с разбором просьбы.** Папка
-  задачи разбирается до открытия заявки, а отметка ставится после слияния: к этой минуте ключ
-  живёт только в архиве. Записанный восемью знаками, он там и остаётся — команда отметки
-  принимает полный и на короткий отвечает «такой записи у дерева нет», а восстанавливать его
-  приходится сличением с чтением приёма.
-- **Ключ отметки берётся из того же чтения, а не считается по файлу на диске.** Посчитанный по
-  своему диску, он находит только то, что там ещё лежит: удалённый файл разбора и переписанный
-  текст предложения не отмечаются никогда, и запись о них висит новой, пока её кто-нибудь не
-  заметит глазами.
-- **Записи всего разбора едут одной пачкой.** Команда принимает несколько записей за вызов, и
-  вызов на каждую стоил бы столько же, сколько сам разбор.
-- **Ответ команды читается, а не подразумевается.** Он называет, сколько записей переведено,
-  сколько уже стояло в названном состоянии и какие строки отбиты. Отбитая строка означает, что
-  запись осталась там, где была, и разбирается она причиной отбоя, а не повтором того же
-  вызова.
-- **Версия выпуска называется одним номером, без имени пакета.** Колонка называет версию того
-  же пакета, что и сама запись, — второй раз повторённое имя в ней ничего не добавляет, а формы
-  этого повтора расходятся молча: `rt-agent-kit@0.17.0` и `@rt-tools/agent-kit 0.17.0` стояли в
-  приёме рядом и обе означали один выпуск. Отбить это приём не может — форму версии выбирает
-  каждое дерево своей, и общий запрет отбивал бы записи соседа; держится статья примером в
-  паттерне, откуда строку и берут.
-- **Разбор груза и сведение предложений — два разных шага.** Сведение делит пришедшее на
-  повторившееся и разовое и решает, что становится правкой; разбор груза отмечает состояние
-  каждой записи. Сведение зовут раз в несколько дней по отрезку, разбор — всякий раз, когда
-  работу берут.
+- **The cargo is taken from the intake by a command, not by eye in the admin panel.** The cargo is
+  sorted out by the executor, and what they cannot read they do not sort out: while the reading was
+  open to one person, over two hundred records stood as new, and there was nothing to mark them
+  with — the mark command knew only what still lay on the tree's disk. The admin panel stays with
+  the person and answers a different question: how the cargo looks as a whole.
+- **Cargo is not created in the work queue.** A digest speaks of the team's working habits, and in
+  an open work queue that is laid out for all to see. The records created by the former order will
+  not go anywhere from the queue, but new ones are not created there.
+- **Cargo standing in the queue from former times is not judged as a task.** It has no title with a
+  number, no assignee and no place on the board, and will have none: the queue audit printed three
+  lines per such record — eighteen lines for seven records — and a real discrepancy could not be
+  read among them. Cargo is recognised by a label the tree names itself: each has its own, and an
+  invented default would match nothing and silently switch the sifting off. What is sifted out the
+  audit names by a number — a silent sifting is indistinguishable from an audit whose label is
+  named with a typo.
+- **Sorting out starts with what is not sorted out.** The list is narrowed by a filter on the state
+  "new" and goes in arrival order. Without the filter what is sorted out and what is untouched
+  stand mixed together — the very state the states were started to get away from.
+- **What is already sorted out is asked of the intake rather than recalled.** The state outlives a
+  session, the executor's memory does not: having sorted out the cargo today, tomorrow one starts
+  from nothing. It is asked by the same read the cargo is taken by — a second call with a different
+  filter, not a query to the storage.
+- **To take a report into work means to create a task for it.** The mark "in work" without a task
+  says somebody took the record and stays silent about where that work goes; a task without the
+  mark leaves the record among what is not sorted out, and the next session sorts it out anew.
+- **The task and the mark go in one turn.** A deferred mark is not set: between creating the task
+  and the next step a day passes, and by that day the executor remembers the task, not the cargo
+  record.
+- **One edit — one task, however many cargo records called for it.** Records fixed together are
+  marked in one batch and by one task: what is split is what would have to be rolled back apart.
+- **"Done" is set when the edit is merged into the main branch.** Not when the request is opened
+  and not when the run is green: before the merge the edit is not in the tree, and the mark asserts
+  that it is.
+- **The move to "done" goes by the work state `влито`, not by the executor's memory.** That is the
+  only work state where the merge has already happened while the turn about the task is still
+  going: the closing stands before the merge, and a mark there would assert what is not in the main
+  branch, while after the turn nobody remembers the task. In one sorting out forty-six records hung
+  that way — the edits in the main branch, the state as before.
+- **The fix travels with the move to "done".** It answers "what by", not "where": a rule's article,
+  a guard, a check, a code edit. A link to the task answers "where", and it does not count as a
+  fix. Without the text the move is refused line by line — a list would again show a state with no
+  answer to "what by".
+- **A neighbouring tree's record is closed by the edition's publisher, not by its sender.** The
+  sender does not know about the release: the edit enters the package not at their place, and
+  nobody owns a neighbour's token — and without a second path foreign records stand in "new" even
+  when they have long lain in an edition. That path goes only forward and only over the last two
+  steps: "in work" means work taken by a tree, and the tree sets it. A record on closing is named
+  by a sign from the read, not by the sender's key: a key is unique in its own tree, not in the
+  intake.
+- **"Released" is set by whoever publishes the edition, and by the same motion as the
+  publication.** They have the version at hand; a release deferred to the next session is marked
+  from memory or not marked at all.
+- **Between "done" and "released" stands an edition.** A consumer gets the fix only after a layout
+  at their place, and the two states are kept apart for exactly that.
+- **Both sides of the sorting out go by commands, and they are closed differently.** The reading is
+  closed by a service account's sign-in: all the cargo about the resources has to be sorted out,
+  and several trees send it. The mark is closed by one's own tree's token: nobody has the right to
+  move a neighbour's states, and a leaked token still opens nobody's reading.
+- **The service account's pair lies outside the repository.** By the same technique as the tree
+  token: laid into the tree, it travels into the history and into every copy of it, and there is
+  nothing to revoke it from there with.
+- **A key is written down in full and travels into the description of the past together with the
+  grill of the request.** The task folder is sorted out before the request is opened, and the mark
+  is set after the merge: by that minute the key lives only in the archive. Written down as eight
+  characters, it stays that way there — the mark command accepts a full one and answers a short one
+  with "the tree has no such record", and restoring it takes matching it against a read of the
+  intake.
+- **The mark's key is taken from that same read rather than computed from a file on the disk.**
+  Computed from one's own disk, it finds only what still lies there: a removed analysis file and a
+  rewritten proposal text are never marked, and the record about them hangs as new until somebody
+  notices it by eye.
+- **The records of a whole sorting out travel in one batch.** The command accepts several records
+  per call, and a call per record would cost as much as the sorting out itself.
+- **The command's answer is read, not assumed.** It names how many records were moved, how many
+  already stood in the named state and which lines were refused. A refused line means the record
+  stayed where it was, and it is sorted out by the reason of the refusal, not by repeating the same
+  call.
+- **The release version is named by one number, without the package name.** The column names the
+  version of the same package as the record itself — a name repeated a second time in it adds
+  nothing, and the forms of that repetition diverge silently: `rt-agent-kit@0.17.0` and
+  `@rt-tools/agent-kit 0.17.0` stood in the intake next to each other and both meant one release.
+  The intake cannot refuse this — every tree chooses the version's form for itself, and a shared
+  ban would refuse a neighbour's records; the article is held by a sample in the pattern, which is
+  where the string is taken from.
+- **Sorting out the cargo and gathering the proposals are two different steps.** The gathering
+  divides what came in into what repeated and what was one-off and decides what becomes an edit;
+  the sorting out marks the state of every record. The gathering is called once every few days over
+  a stretch, the sorting out every time work is taken.
 
-## Разбор происшествия: что в нём и где он живёт
+## An incident analysis: what is in it and where it lives
 
-Происшествие — заход, в котором исполнитель сделал не то, а слой правил этого не отбил, и
-владелец заплатил заходом. Исправляемого кода за таким заходом не остаётся, и без записи он
-кончается извинением в переписке: назавтра механизм промаха пересказывается уже приглаженно —
-остаются выводы, а из выводов правило не выводится.
+An incident is a session in which the executor did the wrong thing, the rules layer did not refuse
+it, and the owner paid with a session. No fixable code is left after such a session, and without a
+record it ends in an apology in the correspondence: by the next day the mechanism of the miss is
+retold smoothed over — the conclusions stay, and a rule is not derived from conclusions.
 
-- **Разбор живёт в приёме, а на диске дерева — только до отправки.** Черновик пишется файлом в
-  каталог вне истории — его называет ключ настройки, — уезжает командой отправки и удаляется тем
-  же ходом. Две копии одной записи расходятся молча: правку читают в приёме, а на диске остаётся
-  та, что была написана в тот день, и какая из них верна, не видно ниоткуда.
-- **Запись делается в тот же заход, когда происшествие случилось.** Отложенная на день, она
-  пишется по памяти о выводах, а не о механизме.
-- **Разбор называет механизм по шагам, а не оценку исполнителя.** Что принято за данность,
-  откуда взято, чем подтверждено — последовательность, которую можно повторить. Из оценки
-  «был невнимателен» правило не выводится.
-- **Разбор называет, что было доступно до промаха.** Файлы, команды и уже прочитанное, где ответ
-  лежал: отсюда видно, промах это или нехватка данных.
-- **Разбор называет, чем ловилось.** Какая проверка сработала, какая промолчала, какая сработала
-  поздно.
-- **Разбор называет, что из этого ушло в слой правил.** Предложение или правка закона, правила,
-  паттерна. Запись без этой строки — жалоба, а не разбор.
-- **Имя записи называет промах, а не задачу.** `<год>-<месяц>-<день>-<короткое имя>`: задача
-  закроется, а промах повторится на другой. Это же имя приём берёт ключом записи.
-- **Дефект в коде разбором происшествия не закрывается.** У него есть спека, и объясняет его она.
-- **Правок задним числом у разбора нет.** Запись правится, только если описывала произошедшее
-  неверно; уехавшая в приём — тем более: там она уже чужая работа.
+- **The analysis lives in the intake, and on the tree's disk only until the send.** A draft is
+  written as a file into a directory outside the history — a settings key names it — travels away
+  by the send command and is removed in the same turn. Two copies of one record diverge silently:
+  an edit is read in the intake, while on the disk stays the one written that day, and which of
+  them is right is visible from nowhere.
+- **The record is made in the same session the incident happened in.** Deferred by a day, it is
+  written from a memory of the conclusions rather than of the mechanism.
+- **The analysis names the mechanism step by step, not an appraisal of the executor.** What was
+  taken for granted, where it came from, what confirmed it — a sequence that can be repeated. From
+  the appraisal "was inattentive" no rule is derived.
+- **The analysis names what was available before the miss.** The files, the commands and what had
+  already been read where the answer lay: from here it is visible whether this is a miss or a lack
+  of data.
+- **The analysis names what it was caught by.** Which check fired, which stayed silent, which fired
+  late.
+- **The analysis names what of this went into the rules layer.** A proposal or an edit of a law, a
+  rule, a pattern. A record without that line is a complaint, not an analysis.
+- **The record's name names the miss, not the task.** `<year>-<month>-<day>-<short name>`: the task
+  will close, and the miss will repeat on another. The intake takes that same name as the record's
+  key.
+- **A defect in the code is not closed by an incident analysis.** It has a spec, and the spec
+  explains it.
+- **An analysis has no edits after the fact.** A record is edited only if it described what
+  happened wrongly; one that travelled into the intake all the more so: there it is already
+  somebody else's work.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Что груз разобран, машине не видно, и проверки на это не будет: признака «прочитал и решил» у
-исполнителя не существует. Решение «работы по записи не будет» следа не оставляет вовсе, а вызов
-чтения без разбора ничем не отличается от вызова после него.
+That the cargo was sorted out is invisible to a machine, and there will be no check for it: the
+executor has no sign of "read and decided". The decision "there will be no work on this record"
+leaves no trace at all, and a read call without a sorting out is no different from a call after one.
 
-**Отдача работы — другое дело, и её судит гард.** След у неё есть, и он машиночитаемый: образец
-папки задачи требует называть ключи записей груза в разборе просьбы полностью. Гард отметки груза
-читает их оттуда и не выпускает ход, который отдал работу по записи, пока состояние записи в
-приёме не переведено. Судится один момент, а не всякий ход: гард, спрашивающий отметку на каждом
-ходу, отбивал бы саму работу. Сухой прогон отметкой не считается — он следа наружу не оставляет.
+**Handing over work is another matter, and a guard judges it.** It leaves a trace, and a
+machine-readable one: the task folder's sample demands that the keys of the cargo records be named
+in full in the grill of the request. The cargo mark guard reads them from there and does not let
+out a turn that handed over the work on a record while the record's state in the intake is not
+moved. One moment is judged, not every turn: a guard asking for a mark on every turn would refuse
+the work itself. A dry run does not count as a mark — it leaves no trace outward.
 
-Взятия в работу гард не судит, и это не послабление: состояние «в работе» ставит своей записи то
-дерево, которому она принадлежит, а чужую запись двигает только закрытие издателем — оно
-принимает «готово» и «выпущено», потому что «в работе» говорит о работе, которую ведёт дерево.
-Груз приезжает от соседей, и требование отметить взятие чужой записи было бы требованием сделать
-невозможное. У отдачи работы такой развилки нет: оба пути ведут в «готово».
+Taking work on the guard does not judge, and that is not a concession: the state "in work" is set
+on its own record by the tree it belongs to, and a foreign record is moved only by the publisher's
+closing — it accepts "done" and "released", because "in work" speaks of work a tree conducts. The
+cargo arrives from neighbours, and demanding a mark for taking a foreign record would be demanding
+the impossible. Handing over work has no such fork: both paths lead to "done".
 
-Держится остальное двумя вещами, и обе видны в самом приёме. Первая — запись, у которой правка
-влита, а состояние прежнее: она называет пропущенный шаг сама, как только на список посмотрят
-отбором. Вторая — число записей в «новом»: растущее означает, что разбор не идёт вовсе.
+The rest is held by two things, and both are visible in the intake itself. The first is a record
+whose edit is merged while the state is as before: it names the skipped step itself as soon as the
+list is looked at with a filter. The second is the number of records in "new": a growing one means
+the sorting out is not going at all.
 
-Запись, по которой работы не будет, отметить нечем: состояния отказа набор не знает. «Новое»
-оставляет её среди неразобранных навсегда, «в работе» лжёт. Это открытый вопрос договорённости,
-а не умолчание правила: разбирается такая запись каждый раз заново, пока владелец не решил.
+A record there will be no work on has nothing to be marked with: the set knows no refusal state.
+"New" leaves it among what is not sorted out forever, "in work" lies. That is an open question of
+the agreement rather than a default of the rule: such a record is sorted out anew every time until
+the owner decides.
 
-## Паттерны
+## Patterns
 
-- `cargo-triage-mark` — готовые вызовы: сухой прогон, отметка пачкой, приём починки и версия
-  выпуска, разбор отбитой строки.
+- `cargo-triage-mark` — the ready-made calls: a dry run, a mark in a batch, the fix and the release
+  version, sorting out a refused line.
 
-## Ловушки
+## Pitfalls
 
-- **Отметка, отложенная «на потом», не ставится.** Между решением и следующим ходом проходит
-  день, и запись груза к этому дню помнит только приём. Отмечают тем же ходом, которым решили.
-- **Сухой прогон отметкой не считается.** Он показывает, что уехало бы, и следа наружу не
-  оставляет: запись остаётся в прежнем состоянии, а исполнитель уходит с ощущением сделанного.
-- **«Готово» по открытой заявке — отметка о том, чего в дереве нет.** Между открытием и
-  слиянием проходит день и больше, а заявку ещё и закрывают без слияния.
-- **Приём починки, написанный пересказом разбора, отвечает не на тот вопрос.** Запись груза уже
-  несёт то, что было не так; отметка говорит, что с этим сделали, — и читают её как раз затем,
-  чтобы понять, стоит ли чинить у себя.
-- **Ответ команды с нулём переведённых читается как отказ, а не как успех.** Строка «переведено
-  0, уже стояло 3» означает, что этот разбор не двинул ничего: либо записи отмечены раньше,
-  либо ключи названы не те.
+- **A mark deferred "for later" is not set.** Between the decision and the next turn a day passes,
+  and by that day only the intake remembers the cargo record. It is marked in the same turn as the
+  decision.
+- **A dry run does not count as a mark.** It shows what would have travelled and leaves no trace
+  outward: the record stays in its former state, and the executor leaves with a feeling of having
+  done it.
+- **"Done" on an open request is a mark about what is not in the tree.** Between the opening and
+  the merge a day and more pass, and a request is also closed without a merge.
+- **A fix written as a retelling of the analysis answers the wrong question.** The cargo record
+  already carries what was wrong; the mark says what was done about it — and it is read exactly to
+  understand whether it is worth fixing at one's own place.
+- **The command's answer with zero moved reads as a refusal, not as a success.** The line "moved 0,
+  already stood 3" means this sorting out moved nothing: either the records were marked earlier, or
+  the keys were named wrongly.

@@ -1,177 +1,177 @@
 {
   "files": {
     "projects/agent-kit/CHANGELOG.md": {
-      "reason": "журнал изменений собирается командой выпуска: адреса в нём описывают день записи, править их нельзя, а сверять нечем",
+      "reason": "the changelog is gathered by the release command: the addresses in it describe the day of the record, they are not edited, and there is nothing to match them against",
       "task": "RT-362"
     },
     "projects/core/CHANGELOG.md": {
-      "reason": "журнал изменений собирается командой выпуска: адреса в нём описывают день записи, править их нельзя, а сверять нечем",
+      "reason": "the changelog is gathered by the release command: the addresses in it describe the day of the record, they are not edited, and there is nothing to match them against",
       "task": "RT-362"
     },
     "projects/store/CHANGELOG.md": {
-      "reason": "журнал изменений собирается командой выпуска: адреса в нём описывают день записи, править их нельзя, а сверять нечем",
+      "reason": "the changelog is gathered by the release command: the addresses in it describe the day of the record, they are not edited, and there is nothing to match them against",
       "task": "RT-362"
     },
     "projects/ui-kit-v2/CHANGELOG.md": {
-      "reason": "журнал изменений собирается командой выпуска: адреса в нём описывают день записи, править их нельзя, а сверять нечем",
+      "reason": "the changelog is gathered by the release command: the addresses in it describe the day of the record, they are not edited, and there is nothing to match them against",
       "task": "RT-362"
     },
     "projects/ui-kit/CHANGELOG.md": {
-      "reason": "журнал изменений собирается командой выпуска: адреса в нём описывают день записи, править их нельзя, а сверять нечем",
+      "reason": "the changelog is gathered by the release command: the addresses in it describe the day of the record, they are not edited, and there is nothing to match them against",
       "task": "RT-362"
     },
     "projects/utils/CHANGELOG.md": {
-      "reason": "журнал изменений собирается командой выпуска: адреса в нём описывают день записи, править их нельзя, а сверять нечем",
+      "reason": "the changelog is gathered by the release command: the addresses in it describe the day of the record, they are not edited, and there is nothing to match them against",
       "task": "RT-362"
     }
   },
   "paths": {
     "projects/agent-kit/assets/agents/rules-reviewer.md": {
-      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-703"
     },
     "projects/agent-kit/assets/commands/rules-review.md": {
-      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-703"
     },
     "assets/agents/rules-reviewer.md": {
-      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-703"
     },
     "assets/commands/rules-review.md": {
-      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-703"
     },
     "rt/require-take-until-destroyed": {
-      "reason": "имя правила линтера, а не адрес в дереве",
+      "reason": "the name of a linter rule, not an address in the tree",
       "task": "RT-362"
     },
     "rt/require-source-suffix-for-subjects": {
-      "reason": "имя правила линтера, а не адрес в дереве",
+      "reason": "the name of a linter rule, not an address in the tree",
       "task": "RT-362"
     },
     "rt/require-host-bem-block": {
-      "reason": "имя правила линтера, а не адрес в дереве",
+      "reason": "the name of a linter rule, not an address in the tree",
       "task": "RT-362"
     },
     "rt/require-bem-directives": {
-      "reason": "имя правила линтера, а не адрес в дереве",
+      "reason": "the name of a linter rule, not an address in the tree",
       "task": "RT-362"
     },
     "rt/require-mod-directive-import": {
-      "reason": "имя правила линтера, а не адрес в дереве",
+      "reason": "the name of a linter rule, not an address in the tree",
       "task": "RT-362"
     },
     "rt/no-host-selector": {
-      "reason": "имя правила линтера, а не адрес в дереве",
+      "reason": "the name of a linter rule, not an address in the tree",
       "task": "RT-362"
     },
     "rt-tools/no-hardcoded-design-tokens": {
-      "reason": "имя правила линтера, а не адрес в дереве",
+      "reason": "the name of a linter rule, not an address in the tree",
       "task": "RT-384"
     },
     "provideRtIcons('/icons')": {
-      "reason": "кусок кода, приведённый в тексте примером, а не адрес",
+      "reason": "a piece of code given in the text as a sample, not an address",
       "task": "RT-362"
     },
     "provideRtIcons('/my/icons')": {
-      "reason": "кусок кода, приведённый в тексте примером, а не адрес",
+      "reason": "a piece of code given in the text as a sample, not an address",
       "task": "RT-362"
     },
     "aria-valuemin/max/now": {
-      "reason": "атрибут разметки, а не адрес",
+      "reason": "a markup attribute, not an address",
       "task": "RT-362"
     },
     "aria-valuenow/min/max": {
-      "reason": "атрибут разметки, а не адрес",
+      "reason": "a markup attribute, not an address",
       "task": "RT-362"
     },
     "feat/ui-kit-v2": {
-      "reason": "имя ветки, а не адрес",
+      "reason": "a branch name, not an address",
       "task": "RT-362"
     },
     "chore/312-slug": {
-      "reason": "имя ветки, а не адрес",
+      "reason": "a branch name, not an address",
       "task": "RT-362"
     },
     "tokens.css": {
-      "reason": "файл появляется только после сборки, и в дереве его нет никогда",
+      "reason": "the file appears only after the build, and the tree never holds it",
       "task": "RT-362"
     },
     "styles/tokens.css": {
-      "reason": "файл появляется только после сборки, и в дереве его нет никогда",
+      "reason": "the file appears only after the build, and the tree never holds it",
       "task": "RT-362"
     },
     "index.html": {
-      "reason": "файл появляется только после сборки, и в дереве его нет никогда",
+      "reason": "the file appears only after the build, and the tree never holds it",
       "task": "RT-362"
     },
     "iframe.html": {
-      "reason": "файл появляется только после сборки, и в дереве его нет никогда",
+      "reason": "the file appears only after the build, and the tree never holds it",
       "task": "RT-362"
     },
     "documentation.json": {
-      "reason": "файл появляется только после сборки, и в дереве его нет никогда",
+      "reason": "the file appears only after the build, and the tree never holds it",
       "task": "RT-362"
     },
     "hosts.yml": {
-      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-362"
     },
     "dd/dd": {
-      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-362"
     },
     "image/file-uploader": {
-      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-362"
     },
     "docs/ColorSchemes.mdx": {
-      "reason": "имя ветки, а не адрес",
+      "reason": "a branch name, not an address",
       "task": "RT-362"
     },
     "docs/tasks/RT-334-archive-closed-task-folders/": {
-      "reason": "имя ветки, а не адрес",
+      "reason": "a branch name, not an address",
       "task": "RT-362"
     },
     ".claude/rt-kit/overrides/skills/agent-kit.md": {
-      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-362"
     },
     ".claude/rt-kit/observations/": {
-      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-396"
     },
     ".claude/rt-kit/proposals/": {
-      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-396"
     },
     "src/lib/i18n/rt-kit-translations.ts": {
-      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-362"
     },
     "date-format.ts": {
-      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-362"
     },
     "safe-comparator.ts": {
-      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-697"
     },
     "libs/common/util": {
-      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-697"
     },
     "patterns/git-workflow-commit.md": {
-      "reason": "имя ресурса пакета правил без суффикса площадки: в дереве он лежит тремя вариантами — .github, .gitlab, .azure, — и адреса без суффикса не существует ни в одном дереве",
+      "reason": "the name of a rules package resource without the platform suffix: the tree holds it in three variants — .github, .gitlab, .azure — and an address without the suffix exists in no tree",
       "task": "RT-1188"
     },
     "feat/88-add-select-button": {
-      "reason": "имя ветки в примере отказа: сверка адресов читает его путём, а веткой такого вида как раз и называется работа, номер которой гард берёт из имени",
+      "reason": "a branch name in a refusal sample: the address matching reads it as a path, while a branch of exactly this shape is what work is named by, and the guard takes its number from the name",
       "task": "RT-279"
     },
     "feat/88-slug": {
-      "reason": "имя ветки в примере отказа: сверка адресов читает его путём, а веткой такого вида как раз и называется работа, номер которой гард берёт из имени",
+      "reason": "a branch name in a refusal sample: the address matching reads it as a path, while a branch of exactly this shape is what work is named by, and the guard takes its number from the name",
       "task": "RT-279"
     }
   }

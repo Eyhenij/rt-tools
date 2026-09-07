@@ -1,32 +1,32 @@
 import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 /**
- * Требует, чтобы суффикс имени файла нашёл в нём обещанное объявление.
+ * It demands that the file name suffix find inside the file the declaration it promises.
  *
- * Суффикс — единственное, по чему читатель узнаёт род файла, не открывая его: списки
- * импортов, деревья каталогов и сообщения об ошибках показывают имя, а не содержимое.
- * Файл `*.service.ts` без внедряемого класса и `*.model.ts` с одним ключом внедрения
- * обещают не то, что несут, и найти это можно только чтением.
+ * The suffix is the only thing by which a reader learns the kind of a file without opening it:
+ * import lists, directory trees and error messages show the name, not the content. A
+ * `*.service.ts` without an injectable class and a `*.model.ts` with an injection key alone
+ * promise what they do not carry, and that is found only by reading.
  *
- * Судится обещание, а не его отсутствие: суффикс, которого нет в таблице ниже, суффиксом
- * здесь не считается вовсе. Имена вроде `menu.items.ts` — это два слова одного имени, и
- * требовать от них объявления не с чего.
+ * The promise is judged, not its absence: a suffix that is not in the table below does not count
+ * as a suffix here at all. Names like `menu.items.ts` are two words of one name, and there is
+ * nothing to demand a declaration from them by.
  *
- * У части родов принято две формы записи, и обе законны. Перевод сущности на фронте —
- * класс поверх общей основы, на бэкенде — набор чистых функций; правило принимает обе,
- * потому что судит имя, а не устройство. Что этих форм две — отдельный вопрос `Q-S-1` в
- * законе об общем коде.
+ * Some kinds have two accepted forms of writing, and both are lawful. Translating an entity on
+ * the front end is a class over a shared base, on the backend a set of pure functions; the rule
+ * accepts both, because it judges the name rather than the structure. That there are two such
+ * forms is the separate question `Q-S-1` in the shared-code law.
  *
- * Доступно в ESLint-конфигах как `@nx/workspace-require-suffix-declaration`.
+ * In the ESLint configs it is available as `@nx/workspace-require-suffix-declaration`.
  */
 export const RULE_NAME: string = 'require-suffix-declaration';
 
 type TMessageIds = 'missingDeclaration';
 type TOptions = [];
 
-/** Что суффикс обещает: метка, имя объявления, род объявления или вызов конструктора. */
+/** What the suffix promises: a mark, a declaration name, a declaration kind or a constructor call. */
 interface ISuffixPromise {
-    /** Чем это называется в сообщении — родительный падеж: «в файле нет <чего>» */
+    /** What it is called in the message: «the file holds no <this>» */
     readonly promised: string;
     readonly decorators?: readonly string[];
     readonly named?: RegExp;
@@ -36,38 +36,45 @@ interface ISuffixPromise {
 }
 
 /**
- * Закрытый список: суффикс попадает сюда, когда обещание у него одно и его видно из
- * дерева разбора. Одиночные слова в именах — `summary`, `items`, `order` — сюда не
- * заводятся; строка добавляется тогда, когда слово стало родом файла, а не его частью.
+ * A closed list: a suffix lands here when its promise is single and visible from the parse tree.
+ * Single words in names — `summary`, `items`, `order` — are not put here; a line is added when
+ * the word has become the kind of the file rather than a part of its name.
  */
 const PROMISES: Readonly<Record<string, ISuffixPromise>> = {
-    component: { promised: 'метки `@Component`', decorators: ['Component'] },
-    directive: { promised: 'метки `@Directive`', decorators: ['Directive'] },
-    pipe: { promised: 'метки `@Pipe`', decorators: ['Pipe'] },
-    module: { promised: 'метки модуля', decorators: ['Module', 'NgModule'] },
-    procedure: { promised: 'метки `@ConnectProcedure`', decorators: ['ConnectProcedure'] },
-    service: { promised: 'ни метки `@Injectable`, ни класса с именем на `Service`', decorators: ['Injectable'], named: /Service$/ },
-    store: { promised: 'объявления с именем на `Store`', named: /Store$/ },
-    facade: { promised: 'объявления с именем на `Facade`', named: /Facade$/ },
-    guard: { promised: 'объявления с именем на `Guard`', named: /Guard$/ },
-    interceptor: { promised: 'объявления с `Interceptor` в имени', named: /Interceptor/ },
-    resolver: { promised: 'ни объявления с именем на `Resolver`, ни функции `resolve…`', named: /(Resolver$|^resolve)/ },
-    // Перевод сущности: класс-маппер либо объявление с направлением в имени —
+    component: { promised: 'a `@Component` mark', decorators: ['Component'] },
+    directive: { promised: 'a `@Directive` mark', decorators: ['Directive'] },
+    pipe: { promised: 'a `@Pipe` mark', decorators: ['Pipe'] },
+    module: { promised: 'a module mark', decorators: ['Module', 'NgModule'] },
+    procedure: { promised: 'a `@ConnectProcedure` mark', decorators: ['ConnectProcedure'] },
+    service: {
+        promised: 'either an `@Injectable` mark or a class named ending in `Service`',
+        decorators: ['Injectable'],
+        named: /Service$/,
+    },
+    store: { promised: 'a declaration named ending in `Store`', named: /Store$/ },
+    facade: { promised: 'a declaration named ending in `Facade`', named: /Facade$/ },
+    guard: { promised: 'a declaration named ending in `Guard`', named: /Guard$/ },
+    interceptor: { promised: 'a declaration with `Interceptor` in the name', named: /Interceptor/ },
+    resolver: { promised: 'either a declaration named ending in `Resolver` or a function `resolve…`', named: /(Resolver$|^resolve)/ },
+    // Translating an entity: a mapper class or a declaration with the direction in the name —
     // `propertyToProto`, `activityKeyFromProto`, `publicOrganizationOf`, `EVENT_TYPE_TO_DB`
-    mapper: { promised: 'ни класса-маппера, ни объявления перевода', named: /(Mapper$|(^|[a-z_])(to|from|of)([A-Z_0-9]|$))/i },
-    token: { promised: 'ключа внедрения', constructed: ['InjectionToken'] },
-    routes: { promised: 'объявления с типом `Route` или `Routes`', typed: /^Routes?$/ },
-    model: { promised: 'ни одного объявления типа', kinds: ['interface', 'type', 'enum', 'class', 'namespace'] },
-    enum: { promised: 'ни одного перечисления', kinds: ['enum'] },
-    const: { promised: 'ни одной постоянной', kinds: ['const'] },
-    logic: { promised: 'ни одной функции', kinds: ['function'] },
-    util: { promised: 'ни одной функции', kinds: ['function'] },
-    queries: { promised: 'ни одной функции', kinds: ['function'] },
-    validate: { promised: 'ни одной функции', kinds: ['function'] },
-    helper: { promised: 'ни функции, ни класса', kinds: ['function', 'class'] },
+    mapper: {
+        promised: 'either a mapper class or a declaration of a translation',
+        named: /(Mapper$|(^|[a-z_])(to|from|of)([A-Z_0-9]|$))/i,
+    },
+    token: { promised: 'an injection key', constructed: ['InjectionToken'] },
+    routes: { promised: 'a declaration of the type `Route` or `Routes`', typed: /^Routes?$/ },
+    model: { promised: 'a single type declaration', kinds: ['interface', 'type', 'enum', 'class', 'namespace'] },
+    enum: { promised: 'a single enum', kinds: ['enum'] },
+    const: { promised: 'a single constant', kinds: ['const'] },
+    logic: { promised: 'a single function', kinds: ['function'] },
+    util: { promised: 'a single function', kinds: ['function'] },
+    queries: { promised: 'a single function', kinds: ['function'] },
+    validate: { promised: 'a single function', kinds: ['function'] },
+    helper: { promised: 'either a function or a class', kinds: ['function', 'class'] },
 };
 
-/** `promo-codes.store.ts` → `store`; `sign-in.ts` → пусто */
+/** `promo-codes.store.ts` → `store`; `sign-in.ts` → empty */
 function suffixOf(filename: string): string {
     const name: string = filename.slice(filename.lastIndexOf('/') + 1).replace(/\.ts$/, '');
     const at: number = name.lastIndexOf('.');
@@ -86,7 +93,7 @@ export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = ESLintUtils.Rule
         schema: [],
         messages: {
             missingDeclaration:
-                'Суффикс `.{{suffix}}.ts` обещает {{promised}} — в файле этого нет. Либо объяви обещанное, либо переименуй файл: имя читают вместо содержимого.',
+                'The suffix `.{{suffix}}.ts` promises {{promised}} — the file holds none. Either declare what is promised or rename the file: the name is read instead of the content.',
         },
     },
     defaultOptions: [],
@@ -153,7 +160,7 @@ export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = ESLintUtils.Rule
                     return;
                 }
                 remember('const', node.id.name);
-                // Стрелка в постоянной — такая же функция: `const isReady = () => …`
+                // An arrow in a constant is the same function: `const isReady = () => …`
                 if (node.init?.type === 'ArrowFunctionExpression' || node.init?.type === 'FunctionExpression') {
                     kinds.add('function');
                 }

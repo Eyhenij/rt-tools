@@ -1,16 +1,16 @@
-/* Собрано генератором `tools/build-tokens-v2.mjs` из `tokens.source.mjs` — правится там, не здесь:
-   правка на месте теряется на следующей сборке, и её называет `pnpm run check:tokens-build`. */
+/* Built by the generator `tools/build-tokens-v2.mjs` from `tokens.source.mjs` — edited there, not here:
+   an edit on the spot is lost on the next build, and `pnpm run check:tokens-build` names it. */
 
-/* Материальный набор — второй слой назначений: кит, нарисованный видом первого кита.
+/* The material preset — a second layer of assignments: the kit drawn in the look of the first kit.
 
-   Ступени шкалы он не трогает: переписанная ступень перекрасила бы заодно и тёмную тему,
-   которая ссылается на те же ступени. Значения приходят из материальных ступеней шкалы.
+   It does not touch the scale steps: a rewritten step would repaint the dark theme as well,
+   and the dark theme refers to those same steps. The values come from the material steps of the scale.
 
-   Тело вынесено в @mixin по той же причине, что у тёмной темы: набор нужен не только на
-   `:root`, но и на отдельном контейнере — иначе два набора нельзя показать рядом.
+   The body is taken into a @mixin for the same reason as the dark theme's: the preset is needed not
+   only on `:root` but on a separate container too — otherwise two presets cannot be shown side by side.
 
-   Правило набора объявлено до тёмной темы нарочно: у корневых признаков одинаковая
-   специфичность, и порядок в файле — единственное, чем тёмная тема выигрывает у набора. */
+   The preset rule is declared before the dark theme on purpose: the root signs have equal
+   specificity, and the order in the file is the only thing by which the dark theme wins over the preset. */
 
 @mixin rt-preset-material-tokens {
     /* Подложки */

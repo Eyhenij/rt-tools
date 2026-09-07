@@ -1,12 +1,12 @@
-/* Собрано генератором `tools/build-tokens-v2.mjs` из `tokens.source.mjs` — правится там, не здесь:
-   правка на месте теряется на следующей сборке, и её называет `pnpm run check:tokens-build`. */
+/* Built by the generator `tools/build-tokens-v2.mjs` from `tokens.source.mjs` — edited there, not here:
+   an edit on the spot is lost on the next build, and `pnpm run check:tokens-build` names it. */
 
-/* Назначения светлой темы.
+/* The light theme's assignments.
 
-   Тело вынесено в @mixin по той же причине, что и у тёмной темы: набор нужен не
-   только на `:root`, но и на отдельном контейнере. Без этого светлую половину
-   пары «светлая ↔ тёмная» нельзя показать, пока приложение стоит в тёмной теме, —
-   контейнер унаследует тёмные значения, и обе половины покажут одно и то же. */
+   The body is carried into an @mixin for the same reason as the dark theme's: the set is needed not
+   only on `:root` but on a separate container too. Without that the light half of the
+   pair «light ↔ dark» cannot be shown while the application stands in the dark theme —
+   the container would inherit the dark values, and both halves would show the same. */
 
 @mixin rt-theme-light-tokens {
     /* Background */
@@ -394,9 +394,9 @@
     @include rt-theme-light-tokens;
 }
 
-/* На тач-устройствах инпут не меньше 16px: WebKit (весь iOS, включая Chrome)
-   зумит страницу при фокусе на поле с font-size < 16px — отсюда горизонтальный
-   сдвиг вёрстки. Десктоп сохраняет плотный 14px. */
+/* On touch devices an input is not smaller than 16px: WebKit (all of iOS, Chrome included)
+   zooms the page on focusing a field with font-size < 16px — hence the horizontal
+   shift of the layout. The desktop keeps the dense 14px. */
 @media (pointer: coarse) {
     :root {
         --rt-input-font-size: var(--rt-text-md);
