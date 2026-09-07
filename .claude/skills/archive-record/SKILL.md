@@ -1,89 +1,95 @@
 ---
 name: archive-record
-description: Запись о закрытой работе в описании прошлого — что в неё пишется, чем она находится без перечня, чем она не является. Брать при разборе папки закрытой задачи и при правке любого файла в docs/archive/. Скил этого дерева; «зачем» — правила doc-style и task-flow.
+description: A record about closed work in the description of the past — what goes into it, how it is found without an index, what it is not. Take it when sorting out a closed task folder and when editing any file in docs/archive/. A skill of this tree; the "why" is in the rules doc-style and task-flow.
 ---
 
-# Запись о закрытой работе
+# A record about closed work
 
-Скил этого дерева, не из пакета. Он не повторяет `task-flow` — там сказано, когда папка задачи
-разбирается и что из неё уезжает. Здесь — как выглядит сама запись и как её потом находят.
+A skill of this tree, not from the package. It does not repeat `task-flow` — there it is said
+when a task folder is sorted out and what leaves it. Here is what the record itself looks like and
+how it is found afterwards.
 
-## Когда брать
+## When to use
 
-- Папка закрытой задачи разбирается, и её содержимое едет в описание прошлого.
-- Правится любой файл в `docs/archive/`.
-- Надо найти, чем держалось старое решение, которое мешает новому.
+- A closed task's folder is being sorted out, and its content leaves for the description of the
+  past.
+- Any file in `docs/archive/` is edited.
+- One has to find what held an old decision that gets in the way of a new one.
 
-## Имя файла — единственный указатель
+## The file name is the only index
 
-Перечня записей в этом дереве нет: он ронял в конфликт каждую ветку, которая его дописывала.
-Поэтому имя несёт всё, чем запись ищут.
+There is no index of records in this tree: it took every branch that appended to it into a
+conflict. So the name carries everything a record is found by.
 
 ```
-RT-<номер задачи>-<slug ветки>.md
+RT-<task number>-<branch slug>.md
 ```
 
-Имя совпадает с именем ветки, которой работа делалась, и от него есть дорога к заявке, к
-обсуждению правки и к коммитам. Закрытый эпик приезжает под своим именем с суффиксом
-`-line` и без номера: он переживает несколько задач.
+The name matches the name of the branch the work was done in, and from it there is a road to the
+request, to the discussion of the edit and to the commits. A closed epic arrives under its own
+name with the suffix `-line` and without a number: it outlives several tasks.
 
 ```bash
-ls docs/archive/ | grep -i <слово>          # по теме
-ls docs/archive/RT-1130-*                   # по номеру задачи
-grep -rl "<что было сделано>" docs/archive/ # по содержанию
+ls docs/archive/ | grep -i <word>          # by subject
+ls docs/archive/RT-1130-*                  # by task number
+grep -rl "<what was done>" docs/archive/   # by content
 ```
 
-## Что в запись пишется
+## What goes into a record
 
-Третьей строкой — номер задачи, номер заявки и день слияния. Дальше — то, что объясняет
-состоявшееся решение:
+On the third line — the task number, the request number and the day of the merge. Then what
+explains the decision that took place:
 
-- разбор просьбы: ответы владельца его словами, восстановить их больше неоткуда;
-- решения по ходу с доводами — то место, где дело разошлось с замыслом;
-- цена решения: что за него заплатили и чем это вылезло.
+- the grill of the request: the owner's answers in their own words, there is nowhere else to
+  restore them from;
+- the decisions along the way with their arguments — the place where the matter diverged from the
+  plan;
+- the price of the decision: what was paid for it and how that came out.
 
-Одна работа — один файл, а не папка из трёх: описание прошлого читают глазами.
+One work — one file, not a folder of three: the description of the past is read by eye.
 
-## Что в запись не пишется
+## What does not go into a record
 
-- **Замысел.** После выкатки на вопрос «что собирались сделать» отвечает код, на «как
-  работает» — спек домена.
-- **Ход работы без решений.** «Где стоим» умирает вместе с папкой задачи.
-- **Правки задним числом.** Запись правится только вместе с признанием, что описывала неверно,
-  — а не потому, что дерево с тех пор изменилось.
+- **The plan.** After the rollout the question "what was intended" is answered by the code, "how
+  it works" by the domain spec.
+- **The progress of the work without the decisions.** "Where we stand" dies together with the task
+  folder.
+- **Edits after the fact.** A record is edited only together with an admission that it described
+  things wrongly — not because the tree has changed since.
 
-## Запись живёт неделю
+## A record lives a week
 
-Срок назначен владельцем: запись старше недели снимается из дерева и остаётся в истории.
-Достают её оттуда тем же именем файла, которым ищут живую.
+The term is set by the owner: a record older than a week is removed from the tree and stays in the
+history. It is taken out of there by the same file name it is found by while alive.
 
 ```bash
-node tools/archive-prune.mjs            # сухой прогон: называет перестоявшие, не трогает ни одной
-node tools/archive-prune.mjs --apply    # снимает их
-node tools/check-archive-age.mjs        # краснеет, если перестоявшие остались
+node tools/archive-prune.mjs            # a dry run: it names what has overstayed and touches none
+node tools/archive-prune.mjs --apply    # it removes them
+node tools/check-archive-age.mjs        # turns red if what has overstayed is still there
 ```
 
-Сухой прогон — умолчание не из осторожности вообще, а потому, что команда сносит разбор
-просьбы: слов владельца нет больше нигде.
+The dry run is the default not out of caution in general, but because the command removes the
+grill of the request: the owner's words are nowhere else.
 
-Проверка стоит в наборе гейта пуша и шагом конвейера. Отбор у неё и у команды один — модуль
-`tools/archive-age.mjs`; там же и число суток.
+The check stands in the push gate set and as a pipeline step. The selection is one for it and for
+the command — the module `tools/archive-age.mjs`; the number of days is there too.
 
-## На запись описания прошлого не ссылаются
+## A record of the past is not linked to
 
-Ссылка на неё живёт ровно до её срока, а проверка адресов архив не читает вовсе: мёртвая
-ссылка краснеет не в нём, а в том тексте, который сослался. Первая же чистка сломала две
-такие ссылки — в замысле и в компаньоне правила.
+A link to it lives exactly until its term, and the address check does not read the archive at all:
+a dead link turns red not there but in the text that referred to it. The very first pruning broke
+two such links — in a plan and in a rule's companion.
 
-Живой текст называет решение своими словами: «линия закрыта», «решение принято тогда-то».
-Запись остаётся местом, куда приходят за подробностями, — по имени, а не по ссылке.
+A live text names the decision in its own words: "the line is closed", "the decision was taken
+then and then". The record stays the place people come to for the details — by name, not by a
+link.
 
-## Ловушки
+## Pitfalls
 
-- **Запись — не указание к действию.** Пути и имена в ней верны на день переезда; описание
-  прошлого выведено из сверки адресов целиком, поэтому мёртвая ссылка в нём не краснеет
-  никогда.
-- **Файл, уезжающий в описание прошлого, называет в шапке свой прежний адрес.** Записи
-  ссылались на него, пока он был живым, а поиск по прежнему имени их не покажет.
-- **Разобрать дороже, чем снести, и первым уходит разбор просьбы.** Он единственный, чего нет
-  больше нигде.
+- **A record is not an instruction to act.** The paths and names in it are true on the day of the
+  move; the description of the past is taken out of the address audit entirely, so a dead link in
+  it never turns red.
+- **A file leaving for the description of the past names its former address in its header.**
+  Records referred to it while it was alive, and a search by the former name will not show them.
+- **Sorting out costs more than removing, and the grill of the request leaves first.** It is the
+  only thing that is nowhere else.
