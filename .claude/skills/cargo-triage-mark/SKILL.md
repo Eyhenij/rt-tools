@@ -126,7 +126,7 @@ npm run cargo:close -- --state released --proposal <sign in the intake> --releas
 
 A record's sign in the intake is not the mark key: by the latter a tree moves its own record, by the
 former the publisher closes a foreign one. It is printed by the cargo read — as the line
-`в приёме <sign>` next to the record.
+`in the intake <sign>` next to the record.
 
 Closing sets only `fixed` and `released` and only forward: `in_work` means work taken by a tree, and
 the tree sets it.
@@ -136,8 +136,8 @@ the tree sets it.
 The call answers with three numbers and a list:
 
 ```
-переведено 2, уже стояло 1, отбито 1
-  строка 3: <ключ> — записи у дерева нет
+marked: moved 2, already stood 1, refused 1
+  proposal <key> — the tree has no such record
 ```
 
 - **Moved 0, already stood N** — this sorting out moved nothing: either the records were marked

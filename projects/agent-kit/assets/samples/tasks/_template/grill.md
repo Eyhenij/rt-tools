@@ -2,7 +2,7 @@
 
 <Work begun from cargo that arrived names its records here — by full keys, as the intake reading
 prints them. Eight characters are not enough: a mark with a short key is refused with the line
-«такой записи у дерева нет». This file leaves for the archive, and after the folder is taken apart
+«the tree has no such record». This file leaves for the archive, and after the folder is taken apart
 the keys live only here.>
 
 ## The owner request
