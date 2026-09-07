@@ -1,174 +1,186 @@
-# Вход в админку
+# The entry into the admin application
 
-**Статус:** действует · **Ревизия:** 2026-08-21 · **Префикс сценариев:** `SC-MB`
-**Зависимости:** нет
-**Законы:** `frontend-application`, `reuse-first`
-**Процедуры:** нет — операции объявлены контроллерами приёмника
+**Status:** in force · **Revision:** 2026-08-21 · **Scenario prefix:** `SC-MB`
+**Depends on:** none
+**Laws:** `frontend-application`, `reuse-first`
+**Procedures:** none — the operations are declared by the controllers of the intake
 
-Поддомен домена «приёмник груза»: чем человек представляется приёмнику и как заводится его
-учётная запись. Что он читает после входа — поддомен рядом:
-`docs/specs/message-bus/admin/`.
+A subdomain of the domain "the intake of the cargo": what a person introduces themselves to the
+intake by and how their account is created. What they read after the entry — the subdomain next to
+it: `docs/specs/message-bus/admin/`.
 
-## Зачем
+## Why
 
-Служба уезжает в интернет. Знающая одни лишь токены деревьев, она отдавала бы принятое всякому,
-кто дошёл до её адреса, и не отвечала бы на вопрос, кто читал. Отсюда вход человека: имя,
-пароль и кука, которой браузер представляется дальше.
+The service goes out into the internet. Knowing the tokens of the trees alone, it would give what
+was taken in to anyone who reached its address and would not answer the question of who read it.
+Hence the entry of a person: a name, a password and the cookie the browser introduces itself by
+further on.
 
-Учётные записи при этом заводит тот, у кого есть доступ к узлу, — админки учёток у службы нет
-вовсе, и это решение, а не недоделка.
+The accounts at that are created by whoever has access to the node — the service has no admin
+application of the accounts at all, and that is a decision, not an unfinished piece of work.
 
-## Терминология
+## Terminology
 
-Словарь домена целиком — в спеке домена. Здесь только то, что живёт во входе:
+The vocabulary of the domain whole is in the spec of the domain. Here only what lives in the entry:
 
-| Термин         | Что это                                                                                |
-| -------------- | -------------------------------------------------------------------------------------- |
-| Учётная запись | Имя и пароль одного человека. Заводится командой строки запуска                        |
-| Вход           | Состояние, в котором приёмник знает, кто спрашивает. Живёт сроком и обрывается выходом |
-| Срок входа     | Время, после которого вход перестаёт приниматься и человек представляется заново       |
+| Term                  | What it is                                                                                          |
+| --------------------- | --------------------------------------------------------------------------------------------------- |
+| An account            | The name and the password of one person. It is created by a command of the launch line              |
+| The entry             | The state in which the intake knows who is asking. It lives by a term and is broken off by the exit |
+| The term of the entry | The time after which the entry stops being accepted and a person introduces themselves anew         |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости | На экране                                                               |
-| ---------------- | ----------------------------------------------------------------------- |
-| вход             | экран с двумя полями и кнопкой; других экранов до него человек не видит |
-| отказ пары       | одна строка под формой: пара не принята, а что именно — не сказано      |
+| In the agreement      | On the screen                                                                   |
+| --------------------- | ------------------------------------------------------------------------------- |
+| the entry             | a screen with two fields and a button; a person sees no other screens before it |
+| a refusal of the pair | one line under the form: the pair is not accepted, and what exactly is not said |
 
-## Правила
+## Rules
 
-**Вход и учётная запись.**
+**The entry and the account.**
 
-- **Груза без входа не отдаёт ни одна операция.** Отдачу самого приложения вход не сторожит:
-  без груза оно пусто, а закрытая статика требует проксировщика, которого у работы нет.
-- **Человек представляется именем учётной записи и паролем.** Второго способа входа нет: почты у
-  службы нет вовсе, а общий на всех токен не отвечает на вопрос, кто читал, и его смена выбивает
-  сразу всех.
-- **Браузер несёт вход кукой, недоступной скриптам, и посылает её только своему адресу.** Значение
-  входа, лежащее там, куда дотягивается скрипт страницы, утекает вместе с любой чужой строкой на
-  ней; кука с запретом чтения скриптом и с запретом отправки по чужому переходу не утекает и не
-  подделывается чужой страницей.
-- **Приёмник держит только хеш пароля.** Снятый дамп базы доступа не даёт: по хешу пароль не
-  восстанавливается.
-- **Отказ входа не называет, что именно не сошлось, и отвечает за то же время.** Разные ответы на
-  неизвестное имя и на неверный пароль перебирают имена учётных записей за того, кто их подбирает;
-  разное время ответа отвечает на тот же вопрос молча, поэтому неизвестное имя сверяется с
-  заглушкой хеша, а не отвергается сразу.
-- **Пароль не попадает ни в журнал, ни в ответ, ни в адрес.** Журнал читают, чтобы понять, что
-  сломалось; пароль, попавший в строку журнала, живёт там столько же, сколько сам журнал.
-- **Неудачная попытка входа записывается в журнал с именем учётной записи.** Иначе подбор пароля
-  неотличим от тишины, а первым признаком становится чужое чтение груза.
-- **Неудачные попытки подряд удлиняют ответ.** Служба стоит в интернете, и перебор, отвечающий с
-  той же скоростью, ограничен только сетью. Учётная запись при этом не запирается: запертую
-  запись отпирать некому — админки учёток нет.
-- **Вход живёт сроком и по его истечении перестаёт приниматься.** Человек представляется заново;
-  вечный вход переживает и потерянную машину, и ушедшего человека.
-- **Входов у одной записи бывает несколько, и выход обрывает тот, которым пришли.** Два браузера
-  — два входа; выход, обрывающий все, выбивает человека там, где он ничего не делал.
-- **Токен дерева админки не открывает, а вход человека не открывает приёма груза.** Два способа
-  представиться живут порознь: иначе утёкший с дерева токен читает весь груз всех деревьев.
-- **Каждая операция объявляет свой способ доступа явно.** Умолчание «открыто, пока не закрыли»
-  открывает наружу всякую новую операцию, о которой автор не подумал; умолчание здесь обратное, и
-  открытость называется в самой операции.
-- **Учётная запись заводится, меняет пароль и отключается командой строки запуска.** Заведение из
-  веба — это ещё экран, право на него и вопрос, кем заводится первая запись; команды у приёмника
-  уже есть, а утёкший пароль иначе закрывать нечем вовсе.
-- **Имя учётной записи занято одним человеком, и в нём не различается регистр.** Команда
-  отказывает на занятом имени вместо того, чтобы завести вторую запись: `Иван` рядом с `иван`
-  означает, что вход перестал отвечать, кто именно вошёл.
-- **Отключённая запись входа не заводит, а её прежние входы перестают приниматься.** Отключение,
-  оставляющее живой вход, значит «нельзя войти снова», а не «доступ закрыт».
-- **Имя учётной записи уникально по приведённому виду.** Ограничение хранилища, а не проверка
-  чтением: две команды заведения, запущенные подряд, проверку чтением не разведут.
-- **Пароль лежит только хешем.** Ни колонки под сам пароль, ни его копии в журнале нет ни на
-  одном пути.
-- **Служба говорит при старте, что учётных записей нет ни одной.** Свежий узел иначе выглядит
-  поломкой входа: любая пара отбивается тем же отказом, и отличить «ты ошибся» от «заводить
-  некого» нечем.
-- **Человек, отправленный с адреса раздела на вход, после входа попадает туда, куда шёл.** Иначе
-  ссылка на раздел работает только у того, кто уже вошёл.
+- **Not a single operation gives the cargo without an entry.** The giving out of the application
+  itself the entry does not guard: without the cargo it is empty, and closed statics demand a proxy
+  the work has none of.
+- **A person introduces themselves by the name of an account and a password.** There is no second way
+  of the entry: the service has no mail at all, and a token common to all does not answer the
+  question of who read, while its change knocks everybody out at once.
+- **The browser carries the entry by a cookie unavailable to scripts and sends it only to its own
+  address.** The value of the entry lying where a script of the page reaches leaks away together with
+  any foreign line on it; a cookie with the reading by a script forbidden and the sending by a
+  foreign transition forbidden neither leaks nor is forged by a foreign page.
+- **The intake holds only the hash of the password.** A dump of the base that was taken gives no
+  access: the password is not restored from the hash.
+- **A refusal of the entry does not name what exactly did not match, and answers in the same time.**
+  Different answers to an unknown name and to a wrong password go through the names of the accounts
+  for whoever is guessing them; a different time of the answer answers the same question silently, so
+  an unknown name is checked against a stub of a hash, it is not rejected at once.
+- **The password gets neither into the journal, nor into the answer, nor into the address.** The
+  journal is read to understand what broke; a password that got into a row of the journal lives there
+  as long as the journal itself.
+- **An unsuccessful attempt of the entry is written into the journal with the name of the account.**
+  Otherwise the guessing of a password cannot be told from silence, and the first sign of it becomes a
+  foreign reading of the cargo.
+- **Unsuccessful attempts in a row lengthen the answer.** The service stands in the internet, and a
+  run-through answering at the same speed is limited only by the network. The account at that is not
+  locked: there is nobody to unlock a locked record — there is no admin application of the accounts.
+- **The entry lives by a term and stops being accepted at its expiry.** A person introduces themselves
+  anew; an everlasting entry outlives both a lost machine and a person who left.
+- **One record has several entries, and the exit breaks off the one that was come by.** Two browsers
+  mean two entries; an exit breaking off all of them knocks a person out where they did nothing.
+- **A token of a tree does not open the admin application, and the entry of a person does not open the
+  intake of the cargo.** The two ways of introducing oneself live apart: otherwise a token that leaked
+  from a tree reads the whole cargo of all the trees.
+- **Every operation declares its way of access openly.** The default "open until it is closed" opens
+  outward every new operation the author did not think about; the default here is the reverse, and
+  openness is named in the operation itself.
+- **An account is created, changes its password and is switched off by a command of the launch line.**
+  Creating from the web is one more screen, the right to it and the question of who creates the first
+  record; the intake already has the commands, and a leaked password otherwise has nothing to be
+  closed by at all.
+- **The name of an account is taken by one person, and the case is not told apart in it.** The command
+  refuses at a taken name instead of creating a second record: `Иван` next to `иван` means the entry
+  stopped answering who exactly entered.
+- **A record that is switched off creates no entry, and its former entries stop being accepted.** A
+  switching off that leaves a live entry means "one cannot enter again", not "the access is closed".
+- **The name of an account is unique by the brought-to form.** A constraint of the storage, not a
+  check by reading: two commands of creating started in a row are not told apart by a check by reading.
+- **The password lies only as a hash.** There is neither a column under the password itself nor a copy
+  of it in the journal on any path.
+- **The service says at the start that there is not a single account.** A fresh node otherwise looks
+  like a breakage of the entry: any pair is refused by the same refusal, and there is nothing to tell
+  "you were wrong" from "there is nobody to create" by.
+- **A person sent to the entry from the address of a section lands after the entry where they were
+  going.** Otherwise a link to a section works only for whoever has already entered.
 
-## Что не входит
+## What is out of scope
 
-- **Заведение учётных записей из интерфейса и экран учёток.** Записи заводит команда строки
-  запуска; человека без доступа к узлу завести нечем.
-- **Восстановление пароля почтой.** Почты у службы нет вовсе.
-- **Роли и права внутри админки.** Слово владельца: вошедший видит всё.
-- **Требования к самому паролю.** Записи заводит тот, у кого есть доступ к узлу.
-- **Второй способ входа.** Ни почты, ни внешнего опознания у службы нет.
+- **The creating of accounts from the interface and a screen of the accounts.** The records are created
+  by a command of the launch line; a person without access to the node has nothing to be created by.
+- **The restoring of a password by mail.** The service has no mail at all.
+- **Roles and rights inside the admin application.** The word of the owner: whoever entered sees
+  everything.
+- **The requirements of the password itself.** The records are created by whoever has access to the node.
+- **A second way of the entry.** The service has neither mail nor an external recognition.
 
-## Контракт
+## Contract
 
-| Операция              | Что делает                           |
-| --------------------- | ------------------------------------ |
-| POST /api/auth/login  | принимает имя и пароль, заводит вход |
-| POST /api/auth/logout | обрывает тот вход, которым пришли    |
-| GET /api/auth/session | говорит, кто вошёл и жив ли вход     |
+| Operation             | What it does                                    |
+| --------------------- | ----------------------------------------------- |
+| POST /api/auth/login  | accepts a name and a password, creates an entry |
+| POST /api/auth/logout | breaks off the entry that was come by           |
+| GET /api/auth/session | says who entered and whether the entry is alive |
 
-Вход браузер несёт кукой, недоступной скриптам; заголовком его не передаёт ни одна операция.
+The browser carries the entry by a cookie unavailable to scripts; not a single operation passes it by
+a header.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: приёмник отвечает кодом ответа HTTP, а не именованными кодами домена. Где вход
-обязан отказать вместо молчания:
+Not applicable: the intake answers with a code of the answer of HTTP, not with named codes of the
+domain. Where the entry is obliged to refuse instead of staying silent:
 
-| Что случилось                            | Код   | Что говорит                                             |
-| ---------------------------------------- | ----- | ------------------------------------------------------- |
-| имени или пароля в запросе нет           | `400` | какого поля не хватает                                  |
-| имя или пароль не сошлись                | `401` | что пара не принята; что именно не сошлось — не говорит |
-| входа нет, он просрочен или запись снята | `401` | что операция требует входа                              |
+| What happened                                                | Code  | What it says                                                |
+| ------------------------------------------------------------ | ----- | ----------------------------------------------------------- |
+| there is no name or password in the request                  | `400` | which field is missing                                      |
+| the name or the password did not match                       | `401` | that the pair is not accepted; what exactly it does not say |
+| there is no entry, it has expired or the record is taken off | `401` | that the operation demands an entry                         |
 
-## Данные
+## Data
 
-| Сущность       | Что в ней                                                                   |
-| -------------- | --------------------------------------------------------------------------- |
-| Учётная запись | имя, хеш пароля, признак отключения, дата заведения, время последнего входа |
-| Вход           | учётная запись, время заведения, время истечения, пометка о выходе          |
+| Entity     | What is in it                                                                                                            |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------ |
+| An account | the name, the hash of the password, the sign of being switched off, the date of the creating, the time of the last entry |
+| An entry   | the account, the time of the creating, the time of the expiry, the mark about the exit                                   |
 
-## Экраны и состояния
+## Screens and states
 
-| Экран | Состояния                                           |
-| ----- | --------------------------------------------------- |
-| Вход  | пустая форма · отправка · отказ пары · отказ службы |
+| Screen    | States                                                                         |
+| --------- | ------------------------------------------------------------------------------ |
+| The entry | an empty form · the sending · a refusal of the pair · a refusal of the service |
 
-Таблицу состояний не сверяет ничто: состояние, в которое код не умеет приходить, читается здесь
-описанием работающего. Подтверждаются состояния сценариями.
+The table of the states is checked by nothing: a state the code does not know how to come into reads
+here as a description of something working. The states are confirmed by scenarios.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Язык один — русский. Подписи экрана входа лежат в словаре приложения, а не в разметке.
+The language is one — Russian. The labels of the screen of the entry lie in the dictionary of the
+application, not in the markup.
 
 ### SEO
 
-Не применимо: экран входа поисковикам ничего не обещает, а всё остальное стоит за ним.
+Not applicable: the screen of the entry promises nothing to the search engines, and everything else
+stands behind it.
 
-### Мобильная раскладка
+### Mobile layout
 
-Форма входа на узком экране не режется: два поля и кнопка встают колонкой.
+The form of the entry on a narrow screen is not cut: the two fields and the button stand as a column.
 
-### Мультиобъектность
+### Several objects
 
-Учётная запись принадлежит службе, а не дереву: вошедший видит груз всех деревьев, и прав
-внутри админки нет.
+An account belongs to the service, not to a tree: whoever entered gets the cargo of all the trees, and
+there are no rights inside the admin application.
 
-## Решения
+## Decisions
 
-- **Вход паролем, а учётные записи заводит команда строки запуска.** Служба уезжает в интернет —
-  вход нужен; заведение из веба — это экран, право и вопрос о первой записи. Цена: человека без
-  доступа к узлу завести нечем.
-- **Вход несёт кука, недоступная скриптам.** Админка и приём отдаются с одного имени, поэтому
-  второго источника у куки нет. Отвергнуто: заголовок с токеном — он требует держать значение
-  там, куда дотягивается скрипт страницы.
+- **The entry is by a password, and the accounts are created by a command of the launch line.** The
+  service goes out into the internet — an entry is needed; creating from the web is a screen, a right
+  and the question about the first record. The price: a person without access to the node has nothing
+  to be created by.
+- **The entry is carried by a cookie unavailable to scripts.** The admin application and the intake are
+  given out from one name, so the cookie has no second source. Rejected: a header with a token — it
+  demands keeping the value where a script of the page reaches.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом.
+The open questions of the domain are shared, and they live in the spec next to it.
 
-## История изменений
+## History of changes
 
-- 2026-08-21 — поддомен выделен из спека чтения принятого, переросшего предел длины. Правила
-  входа, сценарии `SC-MB-33`…`SC-MB-45`, `SC-MB-56`…`SC-MB-61`, `SC-MB-79` и `SC-MB-80`, их
-  привязки, операции входа, коды его отказов и обе свои сущности переехали сюда прежними:
-  номера сценариев не пересчитывались.
+- 2026-08-21 — the subdomain was split out of the spec of the reading of what was taken in, which had
+  outgrown the length limit. The rules of the entry, the scenarios `SC-MB-33`…`SC-MB-45`,
+  `SC-MB-56`…`SC-MB-61`, `SC-MB-79` and `SC-MB-80`, their bindings, the operations of the entry, the
+  codes of its refusals and both entities of its own moved here as they were: the scenario numbers
+  were not recounted.

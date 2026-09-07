@@ -1,312 +1,320 @@
-# Сценарии — приём груза
+# Scenarios — the intake of the cargo
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной, а закрытый со стороны приёмника, но не со стороны экрана —
-пометку «Покрытие: частичное».
+The identifier goes at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason, and one closed from the side of the intake
+but not from the side of the screen carries the mark "Coverage: partial".
 
-Сценарии, чьё «Тогда» называет человека и то, что он видит, закрываются сквозной спекой. Рядом с
-ними идут замеры в браузере и живой проход на узле; заменой сквозной спеки они не считаются.
+Scenarios whose "Then" names a person and what they get on the screen are closed by an end-to-end
+spec. Next to them go measurements in the browser and a live pass on the node; they do not count as a
+replacement of the end-to-end spec.
 
-### SC-MB-1 — первая сводка месяца заводит запись
+### SC-MB-1 — the first digest of a month creates the record
 
-Дано у дерева нет записи за текущий месяц
-Когда приезжает сводка по годному токену
-Тогда запись месяца заводится, ответ несёт месяц и дерево, а код ответа говорит о заведении
+Given the tree has no record for the current month
+When a digest arrives by a valid token
+Then the record of the month is created, the answer carries the month and the tree, and the code of the
+answer speaks of a creating
 
-### SC-MB-2 — второй прогон замещает сводку, а не складывает её с прежней
+### SC-MB-2 — the second run replaces the digest, it does not add it to the former one
 
-Дано запись месяца этого дерева несёт счётчики первого прогона
-Когда приезжает вторая сводка с меньшими числами
-Тогда в записи стоят числа второй сводки, второй записи не заводится, а код говорит об обновлении
+Given the record of the month of this tree carries the counters of the first run
+When a second digest with smaller numbers arrives
+Then the numbers of the second digest stand in the record, no second record is created, and the code
+speaks of an update
 
-### SC-MB-3 — месяц берётся по часам приёмника
+### SC-MB-3 — the month is taken by the clock of the intake
 
-Дано дерево стоит в поясе, где месяц уже сменился, а у приёмника ещё нет
-Когда приезжает сводка
-Тогда она ложится в запись того месяца, который идёт у приёмника
+Given the tree stands in a zone where the month has already changed, and at the intake it has not yet
+When a digest arrives
+Then it lands in the record of the month that goes at the intake
 
-### SC-MB-4 — отправка без токена дерева отбивается
+### SC-MB-4 — a sending without a token of a tree is refused
 
-Дано запрос приёма не несёт токена дерева
-Когда он приходит на любую операцию приёма
-Тогда приёмник отказывает и говорит, что операция требует токен дерева
+Given the request of the intake carries no token of a tree
+When it comes to any operation of the intake
+Then the intake refuses and says that the operation demands a token of a tree
 
-### SC-MB-5 — отозванный токен перестаёт приниматься
+### SC-MB-5 — a revoked token stops being accepted
 
-Дано токен дерева отозван
-Когда по нему приезжает груз
-Тогда приёмник отказывает, и в отказе не сказано, какой именно токен не принят
+Given the token of the tree is revoked
+When cargo arrives by it
+Then the intake refuses, and it is not said in the refusal which token exactly is not accepted
 
-### SC-MB-6 — груз по отозванному токену остаётся читаемым
+### SC-MB-6 — the cargo by a revoked token stays readable
 
-Дано токен дерева отозван, а записи, приехавшие по нему, лежат
-Когда читается список деревьев
-Тогда дерево названо вместе с датой последнего прогона, а его записи не удалены
+Given the token of the tree is revoked, and the records that arrived by it lie there
+When the list of the trees is read
+Then the tree is named together with the date of the last run, and its records are not deleted
 
-### SC-MB-7 — незнакомый род груза отбивается
+### SC-MB-7 — an unknown kind of cargo is refused
 
-Дано груз назвался родом, которого приёмник не принимает
-Когда он приезжает
-Тогда приёмник отказывает и перечисляет роды, которые принимает
+Given the cargo named itself by a kind the intake does not take in
+When it arrives
+Then the intake refuses and lists the kinds it takes in
 
-### SC-MB-8 — груз без обязательного поля отбивается с названием поля
+### SC-MB-8 — cargo without a mandatory field is refused with the name of the field
 
-Дано в грузе нет поля, обязательного для его рода
-Когда он приезжает
-Тогда приёмник отказывает и называет, какого поля не хватает и у какого рода
+Given there is no field in the cargo that is mandatory for its kind
+When it arrives
+Then the intake refuses and names which field is missing and at which kind
 
-### SC-MB-9 — признак дерева, не сошедшийся с токеном, отбивает приём
+### SC-MB-9 — a sign of a tree that did not match the token refuses the intake
 
-Дано в грузе стоит признак чужого дерева, а токен принадлежит своему
-Когда груз приезжает
-Тогда приёмник отказывает, и запись чужого дерева не дописывается
+Given the sign of a foreign tree stands in the cargo, and the token belongs to its own
+When the cargo arrives
+Then the intake refuses, and the record of the foreign tree is not appended to
 
-### SC-MB-10 — груз тяжелее предела не принимается
+### SC-MB-10 — cargo heavier than the limit is not taken in
 
-Дано груз весит больше объявленного настройкой предела
-Когда он приезжает
-Тогда приёмник отказывает и называет предел; вес приехавшего — когда запрос объявил его сам
+Given the cargo weighs more than the limit declared by the setting
+When it arrives
+Then the intake refuses and names the limit; the weight of what arrived — when the request declared it
+itself
 
-### SC-MB-11 — груз незнакомой версии схемы принимается и помечается ею
+### SC-MB-11 — cargo of an unknown version of the schema is taken in and marked by it
 
-Дано груз назвался версией схемы записи, которой приёмник не знает
-Когда он приезжает
-Тогда он принимается, а версия сохраняется при записи как приехала
+Given the cargo named itself by a version of the schema of the record the intake does not know
+When it arrives
+Then it is taken in, and the version is kept at the record as it arrived
 
-### SC-MB-12 — поля сводки хранятся как приехали
+### SC-MB-12 — the fields of the digest are kept as they arrived
 
-Дано в сводке стоит поле, которого приёмник не знает
-Когда сводка приезжает
-Тогда груз принят целиком, и незнакомое поле лежит в записи месяца
+Given a field the intake does not know stands in the digest
+When the digest arrives
+Then the cargo is taken in whole, and the unknown field lies in the record of the month
 
-### SC-MB-13 — негодная запись отбивает свою операцию целиком
+### SC-MB-13 — an unfit record refuses its operation whole
 
-Дано в списке из пяти предложений одно не прошло проверку формы
-Когда список приезжает одной операцией
-Тогда не принято ни одно предложение, а запись месяца остаётся какой была
+Given one out of a list of five proposals did not pass the check of the form
+When the list arrives by one operation
+Then not a single proposal is taken in, and the record of the month stays as it was
 
-### SC-MB-14 — разбор происшествия приезжает текстом целиком
+### SC-MB-14 — an incident analysis arrives as text whole
 
-Дано разбор происшествия называет файлы дерева, где промах случился
-Когда он приезжает
-Тогда он принят целиком, и проверка на адрес дерева его не отбивает
+Given an incident analysis names the files of the tree where the miss happened
+When it arrives
+Then it is taken in whole, and the check for the address of the tree does not refuse it
 
-### SC-MB-15 — повторно приехавший разбор обновляет прежний
+### SC-MB-15 — an analysis that arrived a second time updates the former one
 
-Дано разбор с этим именем от этого дерева уже лежит
-Когда он приезжает с исправленным текстом
-Тогда прежняя запись обновляется, второй не заводится, а дата обновления сдвигается
+Given an analysis with this name from this tree already lies there
+When it arrives with a corrected text
+Then the former record is updated, no second one is created, and the date of the update moves
 
-### SC-MB-16 — уже приехавшее предложение второй раз не заводится
+### SC-MB-16 — a proposal that already arrived is not created a second time
 
-Дано дерево прислало файл предложений целиком, и часть из них уже лежит
-Когда предложения приезжают
-Тогда к записи месяца добавляются только те, чьего текста в ней не было
+Given the tree sent the file of the proposals whole, and a part of them already lies there
+When the proposals arrive
+Then only those whose text was not in it are added to the record of the month
 
-### SC-MB-17 — проба живости отвечает без токена
+### SC-MB-17 — the probe of liveness answers without a token
 
-Дано у запроса нет токена дерева
-Когда он приходит на пробу живости
-Тогда приёмник отвечает, что служба поднята
+Given the request has no token of a tree
+When it comes to the probe of liveness
+Then the intake answers that the service is raised
 
-### SC-MB-18 — проба живости не называет ни редакции, ни состава
+### SC-MB-18 — the probe of liveness names neither the edition nor the composition
 
-Дано проба живости отвечает
-Когда её ответ читается целиком
-Тогда в нём нет ни номера редакции, ни имён составных частей службы
+Given the probe of liveness answers
+When its answer is read whole
+Then there is neither the number of the edition nor the names of the parts of the service in it
 
-### SC-MB-19 — заведение дерева печатает токен один раз
+### SC-MB-19 — the creating of a tree prints the token once
 
-Дано дерева с таким именем ещё нет
-Когда его заводит команда приложения
-Тогда токен напечатан один раз, а в хранилище лежит только его хеш
+Given there is no tree with such a name yet
+When it is created by the command of the application
+Then the token is printed once, and only its hash lies in the storage
 
-### SC-MB-20 — недоступное хранилище отвечает отказом, а не молчанием
+### SC-MB-20 — an unavailable storage answers with a refusal, not with silence
 
-Дано хранилище приёмника недоступно
-Когда груз приезжает
-Тогда приёмник отказывает и говорит, что прогон следует повторить
+Given the storage of the intake is unavailable
+When cargo arrives
+Then the intake refuses and says that the run should be repeated
 
-### SC-MB-21 — предложения и разборы копятся, а не замещаются
+### SC-MB-21 — the proposals and the analyses pile up, they are not replaced
 
-Дано в записи месяца лежат предложения первого прогона
-Когда второй прогон привозит сводку и новое предложение
-Тогда прежние предложения на месте, а новое добавлено к ним
+Given the proposals of the first run lie in the record of the month
+When the second run brings a digest and a new proposal
+Then the former proposals are in place, and the new one is added to them
 
-### SC-MB-22 — предложения, приехавшие раньше сводки, заводят запись месяца
+### SC-MB-22 — the proposals that arrived before the digest create the record of the month
 
-Дано записи за текущий месяц у дерева нет
-Когда первой операцией прогона приезжают предложения
-Тогда запись месяца заводится ими же, а отказа о ненайденной сводке нет
+Given the tree has no record for the current month
+When the proposals arrive by the first operation of the run
+Then the record of the month is created by them, and there is no refusal about a digest that was not
+found
 
-### SC-MB-23 — одновременные прогоны не роняют друг друга
+### SC-MB-23 — simultaneous runs do not fell each other
 
-Дано два прогона одного дерева приезжают одновременно и записи месяца ещё нет
-Когда оба заводят её
-Тогда запись одна, оба ответа успешные, и в ней стоит сводка того, кто пришёл вторым
+Given two runs of one tree arrive at once and there is no record of the month yet
+When both create it
+Then the record is one, both answers are successful, and the digest of whoever came second stands in it
 
-### SC-MB-24 — запись месяца помнит время последнего прогона
+### SC-MB-24 — the record of a month remembers the time of the last run
 
-Дано запись месяца заведена вчерашним прогоном
-Когда приезжает сегодняшний
-Тогда время последнего прогона в записи — сегодняшнее
+Given the record of the month was created by yesterday's run
+When today's arrives
+Then the time of the last run in the record is today's
 
-### SC-MB-25 — новый токен замещает прежний
+### SC-MB-25 — a new token replaces the former one
 
-Дано у дерева есть годный токен
-Когда команда выдаёт новый
-Тогда новый принимается, прежний помечен отозванным, а печатается новый токен один раз
+Given the tree has a valid token
+When the command issues a new one
+Then the new one is accepted, the former one is marked as revoked, and the new token is printed once
 
-### SC-MB-26 — признак дерева называется при заведении
+### SC-MB-26 — the sign of a tree is named at the creating
 
-Дано дерево заводится командой
-Когда команде не назван признак дерева
-Тогда дерево не заводится, и команда говорит, что признак обязателен
+Given a tree is created by the command
+When the sign of the tree is not named to the command
+Then the tree is not created, and the command says that the sign is mandatory
 
-### SC-MB-27 — заведение дерева с занятым именем отбивается
+### SC-MB-27 — the creating of a tree with a taken name is refused
 
-Дано дерево с этим именем уже заведено
-Когда команда заводит его снова
-Тогда дерево не заводится, прежний токен цел, и команда называет причину
+Given a tree with this name is already created
+When the command creates it anew
+Then the tree is not created, the former token is whole, and the command names the reason
 
-### SC-MB-28 — токен дерева не открывает выдачу токенов
+### SC-MB-28 — a token of a tree does not open the issuing of tokens
 
-Дано у запроса годный токен дерева
-Когда он приходит на операцию, которой у приёмника нет, — выдачу или отзыв токена
-Тогда такой операции не находится: токены заводятся только командами
+Given the request has a valid token of a tree
+When it comes to an operation the intake does not have — the issuing or the revocation of a token
+Then no such operation is found: the tokens are created only by the commands
 
-### SC-MB-29 — проба живости молчит при недоступном хранилище
+### SC-MB-29 — the probe of liveness stays silent at an unavailable storage
 
-Дано хранилище приёмника недоступно
-Когда приходит проба живости
-Тогда она отвечает отказом, а не «поднята»
+Given the storage of the intake is unavailable
+When the probe of liveness comes
+Then it answers with a refusal, not with "raised"
 
-### SC-MB-30 — отказ записывается в журнал без токена и текста груза
+### SC-MB-30 — a refusal is written into the journal without the token and the text of the cargo
 
-Дано груз отбит проверкой формы
-Когда запись об отказе попадает в журнал
-Тогда в ней есть род груза и признак дерева и нет ни токена, ни текста груза
+Given the cargo is refused by the check of the form
+When the record about the refusal gets into the journal
+Then the kind of the cargo and the sign of the tree are in it and there is neither the token nor the
+text of the cargo
 
-### SC-MB-31 — пустая сводка заводит запись месяца
+### SC-MB-31 — an empty digest creates the record of a month
 
-Дано за отрезок у дерева нет ни одного наблюдения, а надстройки есть
-Когда сводка приезжает с нулевыми счётчиками
-Тогда запись месяца заводится, и снимок надстроек в ней стоит
+Given over the stretch the tree has not a single observation, and there are overrides
+When the digest arrives with zero counters
+Then the record of the month is created, and the snapshot of the overrides stands in it
 
-### SC-MB-32 — версия схемы груза обязательна
+### SC-MB-32 — the version of the schema of the cargo is mandatory
 
-Дано в запросе приёма не названа версия схемы груза
-Когда он приезжает
-Тогда приёмник отказывает и говорит, что версия обязательна
+Given the version of the schema of the cargo is not named in the request of the intake
+When it arrives
+Then the intake refuses and says that the version is mandatory
 
-### SC-MB-81 — ответ приёма называет принятое и уже лежавшее
+### SC-MB-81 — the answer of the intake names what was taken in and what already lay there
 
-Дано в грузе три предложения, из которых два уже приезжали
-Когда груз приезжает
-Тогда ответ говорит, что легло одно и что два уже лежали
+Given there are three proposals in the cargo, of which two already arrived
+When the cargo arrives
+Then the answer says that one landed and that two already lay there
 
-### SC-MB-82 — предложение длиннее предела строки индекса принимается
+### SC-MB-82 — a proposal longer than the limit of a row of an index is taken in
 
-Дано текст предложения идёт в килобайтах
-Когда оно приезжает
-Тогда оно ложится записью, а хранилище не отказывает на размере ограничения
+Given the text of the proposal goes in kilobytes
+When it arrives
+Then it lands as a record, and the storage does not refuse by the size of the constraint
 
-### SC-MB-83 — одинаковый текст от двух деревьев лежит двумя записями
+### SC-MB-83 — the same text from two trees lies as two records
 
-Дано два дерева прислали предложение с одним и тем же текстом
-Когда приезжает второе из них
-Тогда оно ложится своей записью: признак уникален в пределах дерева, а не хранилища
+Given two trees sent a proposal with one and the same text
+When the second of them arrives
+Then it lands as a record of its own: the sign is unique within the tree, not within the storage
 
-### SC-MB-84 — отправитель печатает принятое и уже лежавшее
+### SC-MB-84 — the sender prints what was taken in and what already lay there
 
-Дано приём ответил, что легло одно предложение и два уже лежали
-Когда команда отправки печатает, чем кончился прогон
-Тогда в строке о предложениях стоят оба числа, а не одно слово «принято»
+Given the intake answered that one proposal landed and two already lay there
+When the command of the sending prints what the run ended with
+Then both numbers stand in the line about the proposals, not one word "taken in"
 
-### SC-MB-85 — то же предложение в новом месяце второй записью не становится
+### SC-MB-85 — the same proposal in a new month does not become a second record
 
-Дано предложение этого дерева уже приехало в прошлом месяце
-Когда оно приезжает снова, и запись месяца теперь другая
-Тогда второй записи не заводится, а ответ называет его уже лежавшим
+Given the proposal of this tree already arrived in the past month
+When it arrives again, and the record of the month is now another one
+Then no second record is created, and the answer names it as one that already lay there
 
-### SC-MB-169 — приезд, изменивший текст разбора, возвращает его в «новое»
+### SC-MB-169 — an arrival that changed the text of an analysis brings it back into "new"
 
-Дано разбор стоит в работе
-Когда дерево прислало его же с другим текстом
-Тогда состояние разбора — новое, а текст — присланный
+Given the analysis stands in progress
+When the tree sent the same one with another text
+Then the state of the analysis is new, and the text is the one that was sent
 
-### SC-MB-170 — приезд без правки текста состояния не трогает
+### SC-MB-170 — an arrival without an edit of the text does not touch the state
 
-Дано разбор стоит в работе
-Когда дерево прислало его же с тем же текстом
-Тогда состояние разбора — по-прежнему в работе
+Given the analysis stands in progress
+When the tree sent the same one with the same text
+Then the state of the analysis is still in progress
 
-## Дерево заводит себя по приглашению
+## A tree creates itself by an invitation
 
-### SC-MB-117 — обращение с годным приглашением заводит дерево и отдаёт токен
+### SC-MB-117 — a request with a valid invitation creates the tree and gives back the token
 
-Дано владелец выдал приглашение на имя «Дерево», и оно ещё годно
-Когда дерево шлёт обращение с этим приглашением и своим признаком
-Тогда заводится дерево с именем из приглашения и признаком из обращения, а ответом уходит токен
+Given the owner issued an invitation on the name "Дерево", and it is still valid
+When the tree sends a request with that invitation and with its sign
+Then a tree with the name from the invitation and the sign from the request is created, and the token
+goes away as the answer
 
-### SC-MB-118 — приглашение гаснет первым же удачным обращением
+### SC-MB-118 — the invitation goes out by the very first successful request
 
-Дано приглашение уже погашено удачным обращением
-Когда то же обращение приходит второй раз
-Тогда отказ, и второго дерева не заводится
+Given the invitation is already used up by a successful request
+When the same request comes a second time
+Then a refusal, and no second tree is created
 
-### SC-MB-119 — просроченное приглашение не принимается
+### SC-MB-119 — an expired invitation is not accepted
 
-Дано срок годности приглашения истёк, и им не пользовались
-Когда дерево шлёт обращение с ним
-Тогда отказ тем же ответом, что и на ненайденное приглашение
+Given the term of validity of the invitation has run out, and it was not used
+When the tree sends a request with it
+Then a refusal by the same answer as at an invitation that was not found
 
-### SC-MB-120 — отозванное приглашение не принимается
+### SC-MB-120 — a revoked invitation is not accepted
 
-Дано владелец отозвал приглашение до того, как им воспользовались
-Когда дерево шлёт обращение с ним
-Тогда отказ, и запись об отзыве остаётся видна в админке
+Given the owner revoked the invitation before it was used
+When the tree sends a request with it
+Then a refusal, and the record of the revocation stays visible in the admin application
 
-### SC-MB-121 — четыре негодных состояния отвечают одинаково
+### SC-MB-121 — the four unfit states answer the same way
 
-Дано приглашения нет вовсе, оно погашено, просрочено и отозвано
-Когда по каждому приходит обращение
-Тогда ответы совпадают до последнего поля: по разнице не видно, какие коды заведены
+Given there is no invitation at all, it is used up, it is expired and it is revoked
+When a request comes by each of them
+Then the answers coincide down to the last field: by the difference there is no seeing which codes are
+created
 
-### SC-MB-122 — заведённый признак обращением не перезаводится
+### SC-MB-122 — a sign that is already created is not recreated by a request
 
-Дано дерево с таким признаком уже заведено
-Когда приходит обращение с годным приглашением и тем же признаком
-Тогда отказ, прежний токен остаётся годным, нового не выдаётся
+Given a tree with such a sign is already created
+When a request with a valid invitation and with the same sign comes
+Then a refusal, the former token stays valid, no new one is issued
 
-### SC-MB-123 — имя берётся из приглашения, а не из обращения
+### SC-MB-123 — the name is taken from the invitation, not from the request
 
-Дано приглашение выдано на имя «Дерево», а обращение называет другое имя
-Когда обращение проходит
-Тогда заведённое дерево зовётся именем из приглашения
+Given the invitation was issued on the name "Дерево", and the request names another name
+When the request passes
+Then the created tree is called by the name from the invitation
 
-### SC-MB-124 — обращений с одного ключа клиента больше предела
+### SC-MB-124 — more requests from one key of a client than the limit
 
-Дано с одного ключа клиента пришло больше обращений, чем позволено за окно
-Когда приходит следующая
-Тогда отказ по частоте, и ни одной записи от неё не заводится
+Given more requests came from one key of a client than is allowed over the window
+When the next one comes
+Then a refusal by the frequency, and not a single record is created by it
 
-### SC-MB-125 — ни код, ни токен не попадают в наблюдения
+### SC-MB-125 — neither the code nor the token gets into the observations
 
-Дано обращение прошло и токен выдан
-Когда читается запись наблюдения об этом
-Тогда в ней есть событие и признак дерева, но ни кода приглашения, ни токена
+Given the request passed and the token is issued
+When the record of the observation about it is read
+Then the event and the sign of the tree are in it, but neither the code of the invitation nor the token
 
-### SC-MB-126 — пакет отбивает адрес приёма без TLS
+### SC-MB-126 — the package refuses an address of the intake without TLS
 
-Дано адрес приёма объявлен без TLS и не указывает на локальную машину
-Когда зовётся заведение
-Тогда пакет отказывает до обращения в сеть и называет причину
+Given the address of the intake is declared without TLS and does not point at the local machine
+When the creating is called
+Then the package refuses before going to the network and names the reason
 
-### SC-MB-127 — пакет не перезаписывает лежащий токен молча
+### SC-MB-127 — the package does not overwrite a token that lies there silently
 
-Дано у дерева уже лежит токен в файле, названном настройкой
-Когда заведение зовётся второй раз
-Тогда пакет отказывает и называет, чем перезаписать намеренно
+Given a token already lies at the tree in the file named by the setting
+When the creating is called a second time
+Then the package refuses and names what to overwrite it by on purpose
 
-## Вход и учётная запись
+## The entry and an account

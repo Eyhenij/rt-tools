@@ -1,137 +1,137 @@
-# Сценарии — вход в админку
+# Scenarios — the entry into the admin application
 
-Идентификатор ставится в начало заголовка теста через тире. Номера продолжают общую нумерацию
-домена и при переезде между поддоменами не меняются.
+The identifier goes at the start of the test title, followed by a dash. The numbers continue the
+common numbering of the domain and do not change at a move between subdomains.
 
-Пока сценарий не покрыт, он несёт пометку «Не покрыто» с причиной. Сценарии, чьё «Тогда»
-называет человека и то, что он видит, закрываются сквозной спекой.
+While a scenario is not covered, it carries the mark "Not covered" with a reason. The scenarios whose
+"Then" names a person and what they see are closed by an end-to-end spec.
 
-### SC-MB-33 — вход по годной паре открывает админку
+### SC-MB-33 — an entry by a fit pair opens the admin application
 
-Дано учётная запись заведена командой строки запуска
-Когда владелец называет её имя и пароль на экране входа
-Тогда вход заводится, и владелец видит раздел разборов происшествий
+Given an account is created by a command of the launch line
+When the owner names its name and password on the screen of the entry
+Then the entry is created, and the owner sees the section of the incident analyses
 
-### SC-MB-34 — неверный пароль отбивается, не называя причины
+### SC-MB-34 — a wrong password is refused without naming the reason
 
-Дано учётная запись заведена
-Когда владелец называет верное имя и неверный пароль
-Тогда вход не заводится, а отказ не говорит, что именно не сошлось
+Given an account is created
+When the owner names the right name and a wrong password
+Then the entry is not created, and the refusal does not say what exactly did not match
 
-### SC-MB-35 — неизвестное имя отбивается тем же ответом
+### SC-MB-35 — an unknown name is refused by the same answer
 
-Дано учётной записи с таким именем нет
-Когда её имя называют на экране входа
-Тогда ответ дословно тот же, что и при неверном пароле
+Given there is no account with such a name
+When its name is named on the screen of the entry
+Then the answer is word for word the same as at a wrong password
 
-### SC-MB-36 — операция админки без входа отбивается
+### SC-MB-36 — an operation of the admin application without an entry is refused
 
-Дано входа у запроса нет
-Когда он приходит на любую операцию чтения груза
-Тогда приёмник отказывает и говорит, что операция требует входа
+Given the request has no entry
+When it arrives at any operation of the reading of the cargo
+Then the intake refuses and says that the operation demands an entry
 
-### SC-MB-37 — просроченный вход перестаёт приниматься
+### SC-MB-37 — an expired entry stops being accepted
 
-Дано срок входа истёк
-Когда по нему приходит чтение списка разборов
-Тогда чтение отбивается, а владелец видит экран входа
+Given the term of the entry expired
+When the reading of the list of the analyses arrives by it
+Then the reading is refused, and the owner sees the screen of the entry
 
-закрывается сквозной спекой вместе с экранами, задача #587
+it is closed by an end-to-end spec together with the screens, task #587
 
-### SC-MB-38 — выход обрывает вход сразу
+### SC-MB-38 — the exit breaks off the entry at once
 
-Дано владелец вошёл и нажал «Выйти»
-Когда по прежнему входу приходит чтение списка
-Тогда оно отбивается, хотя срок входа ещё не вышел
+Given the owner entered and pressed "Выйти"
+When the reading of a list arrives by the former entry
+Then it is refused, although the term of the entry has not run out yet
 
-### SC-MB-39 — токен дерева операций админки не открывает
+### SC-MB-39 — a token of a tree does not open the operations of the admin application
 
-Дано у дерева есть годный токен
-Когда он предъявляется чтению списка разборов
-Тогда чтение отбивается так же, как без входа
+Given a tree has a fit token
+When it is presented to the reading of the list of the analyses
+Then the reading is refused the same way as without an entry
 
-### SC-MB-40 — вход человека приёма груза не открывает
+### SC-MB-40 — the entry of a person does not open the intake of the cargo
 
-Дано владелец вошёл в админку
-Когда его вход предъявляется операции приёма груза
-Тогда приём отбивается: он спрашивает токен дерева, а не вход
+Given the owner entered the admin application
+When their entry is presented to an operation of the intake of the cargo
+Then the intake is refused: it asks for a token of a tree, not for an entry
 
-### SC-MB-41 — неудачная попытка входа записывается в журнал без пароля
+### SC-MB-41 — an unsuccessful attempt of the entry is written into the journal without the password
 
-Дано на экране входа названа неверная пара
-Когда попытка отбита
-Тогда в журнале стоит строка с именем учётной записи, а пароля в ней нет
+Given a wrong pair is named on the screen of the entry
+When the attempt is refused
+Then a row with the name of the account stands in the journal, and there is no password in it
 
-### SC-MB-42 — команда заводит учётную запись, а хранилище держит хеш
+### SC-MB-42 — the command creates an account, and the storage holds the hash
 
-Дано учётной записи с таким именем нет
-Когда владелец зовёт команду заведения и называет пароль
-Тогда запись заводится, а в хранилище лежит хеш, а не сам пароль
+Given there is no account with such a name
+When the owner calls the command of the creating and names a password
+Then the record is created, and the hash lies in the storage, not the password itself
 
-### SC-MB-43 — занятое имя учётной записи отбивает команду
+### SC-MB-43 — a taken name of an account refuses the command
 
-Дано запись с таким именем уже заведена
-Когда команда заведения зовётся с тем же именем
-Тогда она отказывает и второй записи не заводит
+Given a record with such a name is already created
+When the command of the creating is called with the same name
+Then it refuses and creates no second record
 
-### SC-MB-80 — неудачные попытки подряд удлиняют ответ
+### SC-MB-80 — unsuccessful attempts in a row lengthen the answer
 
-Дано по одной и той же паре отказано дважды подряд
-Когда приходит третья попытка
-Тогда ответ на неё приходит позже, чем на первую, а учётная запись остаётся действующей
+Given by one and the same pair it was refused twice in a row
+When a third attempt arrives
+Then the answer to it comes later than to the first, and the account stays in force
 
-## Разделы и адреса
+## The sections and the addresses
 
-### SC-MB-44 — прямой адрес раздела без входа ведёт на вход
+### SC-MB-44 — a direct address of a section without an entry leads to the entry
 
-Дано владелец не вошёл
-Когда он открывает адрес раздела разборов прямой ссылкой
-Тогда он видит экран входа, а не пустой раздел
+Given the owner has not entered
+When they open the address of the section of the analyses by a direct link
+Then they see the screen of the entry, not an empty section
 
-### SC-MB-45 — после входа человек попадает туда, куда шёл
+### SC-MB-45 — after the entry a person lands where they were going
 
-Дано владелец пришёл по ссылке на раздел разборов и был отправлен на вход
-Когда он называет годную пару
-Тогда он видит тот раздел, по ссылке на который пришёл
+Given the owner came by a link to the section of the analyses and was sent to the entry
+When they name a fit pair
+Then they see the section they came by the link to
 
-### SC-MB-56 — вход лежит в куке, недоступной скриптам
+### SC-MB-56 — the entry lies in a cookie unavailable to scripts
 
-Дано владелец вошёл в админку
-Когда страница спрашивает куки браузера скриптом
-Тогда значения входа среди них нет, а операции чтения груза при этом отвечают
+Given the owner entered the admin application
+When the page asks the browser for the cookies by a script
+Then the value of the entry is not among them, and the operations of the reading of the cargo answer
 
-### SC-MB-57 — выход обрывает тот вход, которым пришли
+### SC-MB-57 — the exit breaks off the entry that was come by
 
-Дано владелец вошёл в двух браузерах
-Когда он выходит в одном
-Тогда второй вход продолжает приниматься
+Given the owner entered in two browsers
+When they leave in one
+Then the second entry goes on being accepted
 
-### SC-MB-58 — отключённая запись не входит, и её прежние входы отбиваются
+### SC-MB-58 — a record that is switched off does not enter, and its former entries are refused
 
-Дано у учётной записи есть живой вход
-Когда её отключают командой строки запуска
-Тогда прежний вход перестаёт приниматься, а новый по её паре не заводится
+Given an account has a live entry
+When it is switched off by a command of the launch line
+Then the former entry stops being accepted, and a new one by its pair is not created
 
-### SC-MB-59 — смена пароля отбивает прежний
+### SC-MB-59 — a change of the password refuses the former one
 
-Дано пароль учётной записи сменён командой
-Когда владелец называет прежнюю пару
-Тогда вход не заводится, а по новой паре заводится
+Given the password of an account is changed by a command
+When the owner names the former pair
+Then the entry is not created, and by the new pair it is created
 
-### SC-MB-60 — имя учётной записи не различает регистра
+### SC-MB-60 — the name of an account does not tell the case apart
 
-Дано запись `admin` заведена
-Когда команда заводит запись `Admin`
-Тогда она отказывает, а вход по паре `Admin` принимается как по `admin`
+Given the record `admin` is created
+When the command creates the record `Admin`
+Then it refuses, and the entry by the pair `Admin` is accepted the same as by `admin`
 
-### SC-MB-61 — служба говорит при старте, что записей нет ни одной
+### SC-MB-61 — the service says at the start that there is not a single record
 
-Дано в хранилище нет ни одной учётной записи
-Когда приёмник поднимается
-Тогда он оставляет в журнале строку о том, что записей нет и чем они заводятся
+Given there is not a single account in the storage
+When the intake goes up
+Then it leaves in the journal a row saying that there are no records and what they are created by
 
-### SC-MB-79 — операция без объявленного доступа наружу не открывается
+### SC-MB-79 — an operation without a declared access does not open outward
 
-Дано в приёмнике заведена новая операция без объявления доступа
-Когда к ней приходит запрос без входа и без токена дерева
-Тогда она отбивается, а не отвечает
+Given a new operation without a declaration of the access is created in the intake
+When a request without an entry and without a token of a tree arrives at it
+Then it is refused, it does not answer

@@ -3,11 +3,12 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 из 6 — Спеки приёмника
-- **Done:** этапы 1 и 2 закрыты — проверки спеков читают ключи под двумя именами; домен
-  `docs/specs/agent-kit/` переведён целиком, кириллица осталась только в цитатах русских ключей
-  и имён состояний
-- **Next step:** перевести тридцать девять файлов `docs/specs/message-bus/` вместе с компаньонами
+- **Stage:** 4 из 6 — Киты, ядро, хранилище
+- **Done:** этапы 1–3 закрыты — проверки спеков читают ключи под двумя именами; домены
+  `docs/specs/agent-kit/` и `docs/specs/message-bus/` переведены целиком, кириллица осталась
+  только в цитатах русских подписей экрана и имён состояний
+- **Next step:** перевести пятьдесят семь файлов `docs/specs/ui-kit-v2/`, `docs/specs/ui-kit/`,
+  `docs/specs/core/` и `docs/specs/store/` вместе с компаньонами
 - **Uncommitted:** нет
 - **Waiting for the owner:** нет
 - **PR:** ещё не открыт
@@ -29,6 +30,11 @@
 - Этап 2 сделан: сто пять файлов `docs/specs/agent-kit/` переведены вместе с компаньонами.
   `npm run check:specs` — код 0; `node tools/check-doc-paths.mjs` — 501 документ, расхождений
   нет; `node tools/check-file-size.mjs` — длиннее предела 0.
+- Этап 3 сделан: спеки `docs/specs/message-bus/` переведены целиком — корень и одиннадцать
+  поддоменов вместе с компаньонами и сценариями. Спек чтения принятого пришлось ужать:
+  перевод вышел на 538 строк при пределе 500, сокращены доводы при утверждениях и записи
+  истории. `npm run check:specs` — код 0; `node tools/check-doc-paths.mjs` — 501 документ,
+  расхождений нет; `node tools/check-file-size.mjs` — длиннее предела 0.
 
 ## Handover of the session
 
@@ -40,8 +46,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 2 из 6 — Спеки пакета правил
-- **Next step:** перевести сто пять файлов `docs/specs/agent-kit/` вместе с компаньонами
+- **Stage:** 3 из 6 — Спеки приёмника
+- **Next step:** перевести тридцать девять файлов `docs/specs/message-bus/` вместе с компаньонами
 - **PR:** ещё не открыт
 
 The progress in full — `docs/tasks/RT-1858-tree-docs-english/progress.md`; the plan lies next to it.
@@ -49,17 +55,27 @@ The progress in full — `docs/tasks/RT-1858-tree-docs-english/progress.md`; the
 ### Uncommitted
 
 ```
- M docs/specs/agent-kit/work-guard/implementation.md
- M docs/specs/agent-kit/work-guard/scenarios.md
- M docs/specs/agent-kit/work-guard/spec.md
- M docs/specs/agent-kit/work/spec.md
- M docs/tasks/RT-1858-tree-docs-english/progress.md
+ M docs/specs/message-bus/admin/spec.md
+ M docs/specs/message-bus/cargo-state/implementation.md
+ M docs/specs/message-bus/cargo-state/scenarios.md
+ M docs/specs/message-bus/cargo-state/spec.md
+ M docs/specs/message-bus/cargo-triage/implementation.md
+ M docs/specs/message-bus/cargo-triage/scenarios.md
+ M docs/specs/message-bus/cargo-triage/spec.md
+ M docs/specs/message-bus/intake/implementation.md
+ M docs/specs/message-bus/intake/scenarios.md
+ M docs/specs/message-bus/intake/spec.md
+ M docs/specs/message-bus/publisher-cargo-close/implementation.md
+ M docs/specs/message-bus/publisher-cargo-close/scenarios.md
+ M docs/specs/message-bus/publisher-cargo-close/spec.md
  M package.json
 ```
 
 ### Commits over the main branch
 
 ```
+035cd6a75 docs(rt:message-bus): корень домена и шесть поддоменов приёмника по-английски
+cfcfaceec docs(rt:agent-kit): спеки ведения работы и выходов хода по-английски
 9a50ffaf9 docs(rt:agent-kit): спеки гардов завершения хода по-английски
 91d3d010d docs(rt:agent-kit): спеки утверждений и передачи захода по-английски
 96ddefba0 docs(rt:agent-kit): спеки текстов слоя и сверки спеков по-английски
