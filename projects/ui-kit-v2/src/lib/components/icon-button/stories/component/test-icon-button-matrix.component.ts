@@ -129,7 +129,7 @@ export class TestRtIconButtonMatrixComponent {
 
     public readonly variants: readonly IRtIconButton.Variant[] = ['ghost', 'primary', 'secondary', 'danger', 'success', 'warning'];
     public readonly sizes: readonly IRtIconButton.Size[] = ['sm', 'md', 'lg', 'xl', '2xl'];
-    public readonly shapes: readonly IRtIconButton.Shape[] = ['square', 'circle'];
+    public readonly shapes: readonly IRtIconButton.Shape[] = ['square', 'rounded-sm', 'rounded-lg', 'circle'];
     public readonly states: readonly IStoryState[] = STORY_STATES;
     public readonly stateLabel: (value: IStoryState) => string = storyStateLabel;
 

@@ -21,6 +21,12 @@
         .rt-icon-button {
             --rt-icon-button-circle-radius: var(--rt-radius-full);
             --rt-icon-button-square-radius: var(--rt-radius-md);
+
+            /* Промежуточные формы заданы долей стороны, а не ступенью шкалы: кнопка
+               бывает от 32 до 64 пикселей, и на меньшей абсолютный радиус в 20 пикселей
+               уже даёт круг — четыре формы схлопнулись бы в три. */
+            --rt-icon-button-rounded-sm-radius: 22%;
+            --rt-icon-button-rounded-lg-radius: 35%;
             --rt-icon-button-indicator-radius: var(--rt-radius-full);
             --rt-icon-button-focus-shadow: var(--rt-shadow-focus-ring);
             --rt-icon-button-transition-duration: var(--rt-duration-fast);
@@ -60,6 +66,14 @@
 
             &--circle {
                 border-radius: var(--rt-icon-button-circle-radius);
+            }
+
+            &--rounded-sm {
+                border-radius: var(--rt-icon-button-rounded-sm-radius);
+            }
+
+            &--rounded-lg {
+                border-radius: var(--rt-icon-button-rounded-lg-radius);
             }
 
             &--square {

@@ -50,9 +50,12 @@ describe('RtIconButtonComponent', (): void => {
             }
         );
 
-        it.each<IRtIconButton.Shape>(['circle', 'square'])('форма %s выводит свой модификатор', (shape: IRtIconButton.Shape): void => {
-            expect(controlClasses(setup({ shape }))).toContain(`rt-icon-button--${shape}`);
-        });
+        it.each<IRtIconButton.Shape>(['square', 'rounded-sm', 'rounded-lg', 'circle'])(
+            'форма %s выводит свой модификатор',
+            (shape: IRtIconButton.Shape): void => {
+                expect(controlClasses(setup({ shape }))).toContain(`rt-icon-button--${shape}`);
+            }
+        );
 
         it('камелкейс модификатора превращается в дефис', (): void => {
             expect(controlClasses(setup({ indicator: true }))).toContain('rt-icon-button--has-indicator');

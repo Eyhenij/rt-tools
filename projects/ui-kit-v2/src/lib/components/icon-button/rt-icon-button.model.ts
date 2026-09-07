@@ -12,8 +12,12 @@ export namespace IRtIconButton {
     /** Размер квадрата кнопки. Маппинг на пиксели — в SCSS (`--rt-icon-button-size`). */
     export type Size = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
-    /** Форма границы кнопки. */
-    export type Shape = 'circle' | 'square';
+    /**
+     * Форма границы кнопки, от прямых углов к кругу.
+     * Промежуточные ступени заданы долей стороны, а не пикселями: кнопка бывает
+     * от 32 до 64 пикселей, и на меньшей абсолютный радиус даёт круг раньше срока.
+     */
+    export type Shape = 'square' | 'rounded-sm' | 'rounded-lg' | 'circle';
 
     /** HTML-тип нативного `<button>`. */
     export type Type = 'button' | 'submit';
