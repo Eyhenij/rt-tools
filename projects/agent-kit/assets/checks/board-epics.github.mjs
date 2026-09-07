@@ -32,9 +32,11 @@ function planRows(plan) {
             continue;
         }
         if (!inside) {
-            // A word boundary is no good here: `\b` knows only Latin letters and never matches
+            // The column has two names, English and the owner's: a tree translates its plans one at
+            // a time, and one name would take the untranslated epics out of the check silently. A
+            // word boundary is no good here either: `\b` knows only Latin letters and never matches
             // Cyrillic — the check would stay silent on any plan.
-            inside = /\|[^|]*Задача/.test(line);
+            inside = /\|[^|]*(?:Task|Задача)/.test(line);
             continue;
         }
         rows.push(line);
