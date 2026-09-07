@@ -1,18 +1,20 @@
 #!/usr/bin/env node
 /**
- * Закрытие записей груза издателем редакции: команда, которой закрывают чужие записи.
+ * Closing cargo records by the edition's publisher: the command that closes foreign records.
  *
- * Второй путь к состоянию записи, а не замена первому. Свою запись двигает приславшее дерево —
- * это команда отметки, и она остаётся; но предложение соседа входит в редакцию пакета здесь, и
- * перевести его в «выпущено» отправитель не может: он о выпуске не знает. Токена соседа у
- * издателя нет, и открывать им чужую запись нельзя — поэтому закрытие закрыто входом человека,
- * той же парой учётной записи службы, какой читается груз.
+ * A second road to a record's state rather than a replacement for the first. Its own record is
+ * moved by the tree that sent it — that is the mark command, and it stays; but a neighbour's
+ * proposal enters an edition of the package here, and the sender cannot move it into «released»:
+ * they do not know about the release. The publisher has no neighbour's token, and opening a foreign
+ * record with it is not allowed — so the closing is closed by a person's sign-in, by the same
+ * service account pair the cargo is read by.
  *
- * Запись называется признаком из приёма, а не ключом отправителя: имя файла и признак текста
- * уникальны у своего дерева, а не в приёме, и названный ключ нашёл бы у двух деревьев две
- * записи. Печатает этот признак чтение — строкой `в приёме <признак>`.
+ * A record is named by a sign from the intake rather than by the sender's key: a file name and a
+ * text sign are unique in their own tree, not in the intake, and a named key would find two records
+ * at two trees. That sign is printed by the read — by the line `in the intake <sign>`.
  *
- * Ненулевой код возврата у всего, что не легло: отбитая строка кончает команду ненулевым кодом.
+ * A non-zero exit code for everything that did not land: a refused line ends the command with a
+ * non-zero code.
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
@@ -29,23 +31,23 @@ const RELEASE_FLAG = '--release';
 const DRY_RUN_FLAG = '--dry-run';
 const STATE_FLAG = '--state';
 
-/** Состояния, которыми запись закрывают. Остальные ставит дерево: они говорят о его работе. */
+/** The states a record is closed with. The rest are set by the tree: they speak of its work. */
 const CLOSE_STATES = ['fixed', 'released'];
 
 const ROOT = resolve(process.cwd());
 const CONFIG = join(ROOT, '.claude/rt-kit.json');
 
-/** Причина отбоя словами человека: по каждой видно, что делать дальше. */
+/** The reason for a refusal in a person's words: by each it is visible what to do next. */
 const DENIAL_WORDS = {
-    missing: 'записи с таким признаком в приёме нет',
-    forbidden: 'закрытие ходит только вперёд и только в «fixed» либо «released»',
-    'no-fix-note': 'переход в починку без довода `--fix`',
-    'extra-fix-note': 'довод `--fix` приехал не с переходом в починку',
-    'no-release-version': 'переход в выпуск без довода `--release`',
-    'extra-release-version': 'довод `--release` приехал не с переходом в выпуск',
+    missing: 'the intake has no record with such a sign',
+    forbidden: 'closing goes only forward and only into «fixed» or «released»',
+    'no-fix-note': 'a move into the fix without the argument `--fix`',
+    'extra-fix-note': 'the argument `--fix` arrived not with a move into the fix',
+    'no-release-version': 'a move into the release without the argument `--release`',
+    'extra-release-version': 'the argument `--release` arrived not with a move into the release',
 };
 
-/** Значение довода: то, что стоит сразу за ним и само доводом не является. */
+/** An argument's value: what stands right after it and is not an argument itself. */
 function valueOf(argv, flag) {
     const at = argv.indexOf(flag);
     const next = at === -1 ? '' : (argv[at + 1] ?? '');
@@ -53,7 +55,7 @@ function valueOf(argv, flag) {
     return next.startsWith('--') ? '' : next;
 }
 
-/** Записи, названные доводами строки запуска: род у каждой свой, порядок — как их назвали. */
+/** The records named by the launch line's arguments: each has its kind, the order as named. */
 export function itemsOf(argv, state, attached = { fixNote: '', releaseVersion: '' }) {
     const items = [];
 
@@ -76,10 +78,10 @@ export function itemsOf(argv, state, attached = { fixNote: '', releaseVersion: '
 }
 
 /**
- * Пара учётной записи службы из файла, названного настройкой.
+ * The service account's pair from the file named by the settings.
  *
- * Тот же файл и тот же приём, что у чтения груза: читает и закрывает один человек, и вторая пара
- * под тем же входом означала бы вторую учётную запись, которой никто не заводил.
+ * The same file and the same technique as the cargo read: one person reads and closes, and a
+ * second pair under the same sign-in would mean a second account nobody created.
  */
 export function accountOf(where) {
     if (!where) {
@@ -97,7 +99,7 @@ export function accountOf(where) {
     return { name: (lines[0] ?? '').trim(), password: (lines[1] ?? '').trim() };
 }
 
-/** Что приём сказал словами: сообщение из ответа, а при неразборчивом — сам ответ. */
+/** What the intake said in words: the message from the answer, and for an unreadable one the answer itself. */
 function saidOf(text) {
     try {
         const said = JSON.parse(text);
@@ -108,7 +110,7 @@ function saidOf(text) {
     }
 }
 
-/** Значение куки входа из заголовков ответа: клиент их не хранит, и подставляется она руками. */
+/** The sign-in cookie's value from the answer's headers: the client does not keep them, and it is put in by hand. */
 function cookieOf(answer) {
     const set = answer.headers.getSetCookie ? answer.headers.getSetCookie() : [answer.headers.get('set-cookie') ?? ''];
 
@@ -123,7 +125,7 @@ function cookieOf(answer) {
     return '';
 }
 
-/** Вход учётной записью службы. Отказ — такой же ответ, как принятое. */
+/** A sign-in by the service account. A refusal is as much an answer as an accepted one. */
 export async function login(intake, account) {
     let answer;
 
@@ -143,7 +145,7 @@ export async function login(intake, account) {
     return { ok: answer.ok, status: answer.status, said: saidOf(text), cookie: answer.ok ? cookieOf(answer) : '' };
 }
 
-/** Запрос закрытия с кукой входа. Отказ — такой же ответ, как принятое. */
+/** A closing request with the sign-in cookie. A refusal is as much an answer as an accepted one. */
 export async function callClose(intake, cookie, body) {
     let answer;
 
@@ -178,46 +180,46 @@ export async function callClose(intake, cookie, body) {
     return { ok: answer.ok, status: answer.status, said: saidOf(text), accepted };
 }
 
-/** Пакет одной строкой: её читает человек перед тем, как отправить. */
+/** The batch in one line: a person reads it before sending. */
 function describe(items, state) {
     const postmortems = items.filter((one) => one.kind === 'postmortem').length;
 
-    return `в «${state}»: разборов ${postmortems}, предложений ${items.length - postmortems}`;
+    return `into «${state}»: analyses ${postmortems}, proposals ${items.length - postmortems}`;
 }
 
-/** Отбитая строка человеку: род, признак и причина словами. */
+/** A refused line for a person: the kind, the sign and the reason in words. */
 function deniedLine(kind, key, denial) {
-    return `  ${kind === 'postmortem' ? 'разбор' : 'предложение'} ${key} — ${DENIAL_WORDS[denial] ?? denial}`;
+    return `  ${kind === 'postmortem' ? 'analysis' : 'proposal'} ${key} — ${DENIAL_WORDS[denial] ?? denial}`;
 }
 
-/** Что не сошлось до сети: состояние, записи и вход. Всё, что можно отбить здесь, отбивается здесь. */
+/** What did not match before the network: the state, the records and the sign-in. All that can be refused here is refused here. */
 function refusalOf(options) {
     if (!CLOSE_STATES.includes(options.state)) {
         return [
-            `закрытием состояние «${options.state}» не ставится`,
-            `закрывают в: ${CLOSE_STATES.join(', ')} — остальные ставит само дерево, они говорят о его работе`,
+            `the state «${options.state}» is not set by closing`,
+            `they close into: ${CLOSE_STATES.join(', ')} — the rest the tree sets itself, they speak of its work`,
         ];
     }
 
     if (options.items.length === 0) {
         return [
-            'закрывать нечего: ни одной записи в доводах',
-            `запись называется \`${POSTMORTEM_FLAG} <признак в приёме>\` либо \`${PROPOSAL_FLAG} <признак в приёме>\``,
-            'признак печатает чтение груза — строкой «в приёме»; ключ отметки сюда не годится',
+            'there is nothing to close: not one record in the arguments',
+            `a record is named \`${POSTMORTEM_FLAG} <sign in the intake>\` or \`${PROPOSAL_FLAG} <sign in the intake>\``,
+            'the sign is printed by the cargo read — by the line «in the intake»; the mark key is no good here',
         ];
     }
 
     if (!options.account.name || !options.account.password) {
         return [
-            'пары учётной записи службы нет: закрытие осталось неотправленным',
-            'она лежит вне дерева, тем же приёмом, что и токен, — файлом, названным настройкой',
+            'there is no service account pair: the closing stayed unsent',
+            'it lies outside the tree, by the same technique as the token — as a file named by the settings',
         ];
     }
 
     return null;
 }
 
-/** Закрыть названные записи. */
+/** Close the named records. */
 export async function close(options) {
     const refused = refusalOf(options);
 
@@ -225,19 +227,19 @@ export async function close(options) {
         return { code: REFUSED, lines: refused };
     }
 
-    // Перечень печатается обоими прогонами, и разделены они не окончанием глагола, а первой
-    // строкой: «уехало» и «уехало бы» отличаются двумя буквами в хвосте, а строки под ними
-    // одинаковы до знака, и вывод сухого прогона читается сделанной работой
+    // The list is printed by both runs, and they are separated not by a verb ending but by the first
+    // line: a dry run and a real one differ by two letters at the tail, while the lines under them
+    // are the same to the character, and a dry run's output reads as done work
     const listed = `  ${describe(options.items, options.state)}`;
 
     if (options.dryRun) {
         return {
             code: 0,
             lines: [
-                'СУХОЙ ПРОГОН — наружу не ушло ничего, в приёме не закрыто ни одной записи',
-                `уехало бы в ${options.intake} под входом ${options.account.name}:`,
+                'A DRY RUN — nothing left outward, not one record is closed in the intake',
+                `it would have gone to ${options.intake} under the sign-in ${options.account.name}:`,
                 listed,
-                'закрывает это тот же вызов без `--dry-run`',
+                'this is closed by the same call without `--dry-run`',
             ],
         };
     }
@@ -245,13 +247,16 @@ export async function close(options) {
     const entered = await options.enter(options.intake, options.account);
 
     if (!entered.ok || !entered.cookie) {
-        return { code: REFUSED, lines: [`вход в ${options.intake} не принят: ${entered.status || 'молчание'} — ${entered.said}`] };
+        return {
+            code: REFUSED,
+            lines: [`the sign-in to ${options.intake} was not accepted: ${entered.status || 'silence'} — ${entered.said}`],
+        };
     }
 
     const closed = await options.call(options.intake, entered.cookie, { items: options.items });
 
     if (!closed.ok || !closed.accepted) {
-        return { code: REFUSED, lines: [`${options.intake} ответил ${closed.status || 'молчанием'} — ${closed.said}`] };
+        return { code: REFUSED, lines: [`${options.intake} answered ${closed.status || 'with silence'} — ${closed.said}`] };
     }
 
     const { changed, same, denied } = closed.accepted;
@@ -259,9 +264,9 @@ export async function close(options) {
     return {
         code: denied.length ? REFUSED : 0,
         lines: [
-            `ЗАКРЫТИЕ — уходит в ${options.intake} под входом ${options.account.name}:`,
+            `THE CLOSING — going to ${options.intake} under the sign-in ${options.account.name}:`,
             listed,
-            `закрыто: переведено ${changed}, уже стояло ${same}, отбито ${denied.length}`,
+            `closed: moved ${changed}, already stood ${same}, refused ${denied.length}`,
             ...denied.map((one) => deniedLine(one.kind, one.key, one.denial)),
         ],
     };

@@ -4,7 +4,7 @@ kind: pattern
 rule: lists
 description: Pattern of rule lists. Load when assembling or editing an admin list screen — the ready-made order of blocks, the <prefix>-table markup, row click, row menu with an actions column and a row predicate, sortable header, toolbar slots, failure toast.
 ---
-<!-- rt-kit v0.25.0 · patterns/admin-lists-screen.md · 8afe4a93eafc · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/admin-lists-screen.md · 82c8594c752d · правится надстройкой, не здесь -->
 
 # Assembling a list screen
 
@@ -145,13 +145,14 @@ The production build is mandatory: without `[<prefix>TableRowActionsRowType]` th
 - The title nested in the toolbar instead of its own `<header>`.
 - `qa-dataid` not set on the table, the row, the cells and the toolbar elements.
 
-## Слоты общей страницы и токен хоста
+## The slots of the shared page and the host token
 
-Раздел этого дерева. Между экраном и китом здесь стоит общий вид страницы `admin-list-page`:
-тулбар, заголовок, место под таблицу, отказ с повтором и переключатель страниц объявляет он, а
-не экран. Разделу остаётся положить в его слоты своё и назвать себя хостом.
+A section of this tree. Between the screen and the kit stands the shared page view
+`admin-list-page`: it declares the toolbar, the heading, the place for the table, the refusal with
+a retry and the page switcher — not the screen. What is left for the section is to put its own
+into the page slots and to name itself the host.
 
-Экран целиком — три вещи в декораторе и три в шаблоне:
+The whole screen is three things in the decorator and three in the template:
 
 ```typescript
 @Component({
@@ -164,13 +165,13 @@ export class AdminProposalsListComponent extends AdminListScreenBase<IProposal.S
     protected readonly title: string = adminLabel('sectionProposals');
     protected readonly hint: string = adminLabel('hintProposals');
     protected readonly qaPrefix: string = 'proposals';
-    /* стор, столбцы, поля порядка и признак таблицы — как и было */
+    /* the store, the columns, the order fields and the table sign — as they were */
 }
 ```
 
-Класс передаётся в провайдер вызовом, а не значением: провайдеры разбираются вместе с
-декоратором, когда имя класса ещё не связано, и переданное значением упало бы обращением к
-необъявленному.
+The class is passed to the provider by a call, not by value: providers are parsed together with
+the decorator, when the class name is not bound yet, and one passed by value would fall with a
+reference to something undeclared.
 
 ```html
 <admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
@@ -182,55 +183,58 @@ export class AdminProposalsListComponent extends AdminListScreenBase<IProposal.S
 </admin-list-page>
 ```
 
-Слотов три: `adminListToolbarLeft` — то, что меняет выборку; `adminListToolbarRight` — кнопки
-раздела; `adminListAboveTable` — то, что относится ко всему списку сразу. Незанятый слот на
-экране не появляется вовсе, и высоты он не занимает: замер на трёх разделах даёт промежуток
-между тулбаром и таблицей ровно в шаг колонки страницы.
+There are three slots: `adminListToolbarLeft` — what changes the selection; `adminListToolbarRight`
+— the section buttons; `adminListAboveTable` — what concerns the whole list at once. An unoccupied
+slot does not appear on the screen at all and takes no height: a measurement on three sections
+gives a gap between the toolbar and the table of exactly one page column step.
 
-**Таблица объявляется элементом кита, а не атрибутом на своей разметке.** У кита селектор один
-на две формы, и обе собираются: `<table rt-table>` даёт табличную семантику самим тегом, но
-скелетоны, оверлей чтения и карточки узкого экрана он рисует узлами, которые детьми `<table>`
-не бывают, — на этой форме их не видно вовсе. Элементная форма семантику получает ролью,
-которую кит ставит сам: `role="table"` на хосте, роли строк и ячеек — от CDK.
+**The table is declared as a kit element, not as an attribute on one's own markup.** The kit has
+one selector for two forms, and both build: `<table rt-table>` gives table semantics by the tag
+itself, but the skeletons, the reading overlay and the narrow-screen cards it draws as nodes that
+are never children of `<table>` — on that form they are not visible at all. The element form gets
+its semantics by a role the kit sets itself: `role="table"` on the host, the row and cell roles
+from CDK.
 
-**Якоря раздела собираются из его префикса, а не пишутся строкой у каждого элемента.** Префикс
-раздел называет один раз полем `qaPrefix`, из него общая основа даёт `qaTable()` и `qaRow()`, а
-ячейки собираются на месте — `[attr.qa-dataid]="qaPrefix + '-cell-tree'"`. Строки, написанные
-поимённо, расходятся с префиксом молча: спека, открывшая соседний раздел, находит по ним свой же
-якорь и проходит зелёной.
+**The section anchors are assembled from its prefix, not written as a string at each element.**
+The section names the prefix once by the field `qaPrefix`, from it the shared base gives
+`qaTable()` and `qaRow()`, and the cells are assembled in place —
+`[attr.qa-dataid]="qaPrefix + '-cell-tree'"`. Strings written out one by one drift from the prefix
+silently: a spec that opened a neighbouring section finds its own anchor by them and passes green.
 
-**Пустой список показывает вид пустоты, а не фразу на месте строк.** Вид даёт кит и только
-когда чтение кончилось: значок, заголовок и вторая строка о том, откуда записи приходят. Двумя
-строками, а не одной через двоеточие: кит рисует их разными узлами и разным начертанием.
+**An empty list shows an emptiness view, not a phrase in place of the rows.** The view is given by
+the kit and only once the read is over: an icon, a heading and a second line about where the
+records come from. In two lines, not one through a colon: the kit draws them as different nodes
+and in different type.
 
 ```typescript
-/* в общей основе — вторая строка одна на разделы груза, и отбор её меняет */
+/* in the shared base the second line is one for the cargo sections, and the filter changes it */
 protected readonly emptyDescription: Signal<string> = computed(() =>
     adminLabel(this.query().tree === '' ? 'listEmptyFrom' : 'listEmptyByFilterFrom'),
 );
 
-/* раздел, которому она не подходит, перебивает её своей */
+/* a section it does not suit overrides it with its own */
 protected override readonly emptyDescription: Signal<string> = computed(() => adminLabel('listEmptyInvitesFrom'));
 ```
 
-Заголовок вида — вход `[emptyMessage]`, вторая строка — `[emptyDescription]`, значок —
-`[emptyIcon]`. Скелетоны идущего чтения и тост отказа остаются как были: три состояния —
-пусто, идёт чтение, отказало — на экране различимы, и одно другим не подменяется.
+The view heading is the input `[emptyMessage]`, the second line is `[emptyDescription]`, the icon
+is `[emptyIcon]`. The skeletons of an ongoing read and the refusal toast stay as they were: three
+states — empty, reading, refused — are distinguishable on the screen, and one is not substituted
+for another.
 
-Тем же словом префикс знает страница: из него она собирает `<префикс>-hint`,
-`<префикс>-columns`, `<префикс>-refresh`, `<префикс>-fault` и `<префикс>-retry`. Сквозной набор
-берёт их помощником `pageQa`, а не строкой на месте.
+The page knows the prefix by the same word: from it the page assembles `<prefix>-hint`,
+`<prefix>-columns`, `<prefix>-refresh`, `<prefix>-fault` and `<prefix>-retry`. The end-to-end suite
+takes them by the helper `pageQa`, not by a string in place.
 
-### Частые промахи этого слоя
+### Frequent misses of this layer
 
-- Обновление или настройка столбцов, положенные разделом в правый слот, — их рисует страница, и
-  вторые такие же кнопки встанут рядом с первыми.
-- Вход или событие, добавленные странице ради нового действия, — действие спрашивается у хоста,
-  и объявляется оно один раз в модели хоста.
-- Ответ хоста, написанный в самом экране, — на всё отвечает общая основа списочного экрана;
-  экран только указывает на себя провайдером.
-- Якорь `list-*` на общей странице — он одинаков у всех разделов, и спека, открывшая не тот
-  раздел, находит его же.
-- Фраза «записей нет», написанная в шаблоне под `@if` по длине списка, — экран, собранный так,
-  показывает её и на идущем чтении, и после отказа: пустоту от них отличает кит, а не длина
-  массива.
+- Refresh or the column settings put by a section into the right slot — they are drawn by the
+  page, and second buttons like them will stand next to the first.
+- An input or an event added to the page for the sake of a new action — the action is asked of the
+  host, and it is declared once in the host model.
+- A host answer written in the screen itself — everything is answered by the shared list screen
+  base; the screen only points at itself by a provider.
+- An anchor `list-*` on the shared page — it is the same on every section, and a spec that opened
+  the wrong section finds that very one.
+- The phrase «no records» written in the template under `@if` by the list length — a screen
+  assembled that way shows it during an ongoing read and after a refusal too: emptiness is told
+  from them by the kit, not by an array length.

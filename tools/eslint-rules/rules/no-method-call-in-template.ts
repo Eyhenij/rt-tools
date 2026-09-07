@@ -3,23 +3,22 @@ import { existsSync, readFileSync, statSync } from 'node:fs';
 import * as ts from 'typescript';
 
 /**
- * Кастомное правило для Angular-шаблонов: банит **вызовы методов/функций** в
- * биндингах шаблона — perf foot-gun `{{ getTotal() }}` / `@if (computeFlag())`,
- * который перевыполняется на каждый цикл change-detection, — оставляя
- * **чтения сигналов** (`loading()`, `isLoaded()`, `input()` / `computed()`-члены)
- * нетронутыми.
+ * The tree's own rule for Angular templates: it bans **calls of methods and functions** in
+ * template bindings — the cost trap `{{ getTotal() }}` and `@if (computeFlag())`, which is
+ * recomputed on every change-detection cycle — and leaves **signal reads** (`loading()`,
+ * `isLoaded()`, the members of `input()` and `computed()`) untouched.
  *
- * Стоковое `@angular-eslint/template/no-call-expression` так не умеет: чтение
- * сигнала синтаксически — тот же `Call`-узел, что и вызов метода, поэтому на
- * `error` оно заваливает весь signals-first код. Это правило резолвит соседний
- * `*.component.ts`, узнаёт какие члены — сигналы, а какие — методы, и репортит
- * **только** вызовы, про которые может доказать, что цель — реальный метод.
+ * The stock `@angular-eslint/template/no-call-expression` cannot do that: a signal read is
+ * syntactically the same `Call` node as a method call, so at the `error` level it fails all the
+ * signals-first code at once. This rule resolves the neighbouring `*.component.ts`, learns which
+ * members are signals and which are methods, and reports **only** the calls it can prove to aim
+ * at a real method.
  *
- * Precision over recall by design — всё, что нельзя резолвить (member-вызовы на
- * других receiver'ах типа `store.items()`, унаследованные члены, отсутствующий
- * соседний файл) — оставляется как есть, чтобы не словить false positive.
+ * Precision over recall by design: everything that cannot be resolved — a member call on another
+ * receiver such as `store.items()`, an inherited member, a missing neighbouring file — is left as
+ * it is, so as not to report what is sound.
  *
- * Доступно в ESLint-конфигах как `@nx/workspace-no-method-call-in-template`.
+ * In the ESLint configs it is available as `@nx/workspace-no-method-call-in-template`.
  */
 export const RULE_NAME: string = 'no-method-call-in-template';
 
@@ -36,7 +35,7 @@ interface ICacheEntry {
     readonly members: IComponentMembers;
 }
 
-/** Минимальная duck-typed форма template-parser `Call`-узла, который инспектируем. */
+/** The smallest shape of the template parser's `Call` node the rule inspects. */
 interface ITemplateCallNode {
     readonly receiver?: ITemplateExprNode;
 }
@@ -48,9 +47,9 @@ interface ITemplateExprNode {
 }
 
 /**
- * Factory-функции, чей результат — signal-like член. Свойство, инициализированное
- * любой из них (или `<base>.required(...)` / `<x>.asReadonly()`), трактуется как
- * чтение сигнала в шаблоне, а не вызов метода.
+ * The factory functions whose result is a signal-like member. A property initialized by any of
+ * them — or by `<base>.required(...)` or `<x>.asReadonly()` — counts in the template as a signal
+ * read rather than a method call.
  */
 const SIGNAL_FACTORIES: ReadonlySet<string> = new Set<string>([
     'signal',
@@ -67,7 +66,7 @@ const SIGNAL_FACTORIES: ReadonlySet<string> = new Set<string>([
     'outputFromObservable',
 ]);
 
-/** Имена type-аннотаций, помечающие член как signal-like (без initializer'а). */
+/** The names of the type annotations marking a member as signal-like, with no initializer. */
 const SIGNAL_TYPES: ReadonlySet<string> = new Set<string>([
     'Signal',
     'WritableSignal',
@@ -81,10 +80,10 @@ const SIGNAL_TYPES: ReadonlySet<string> = new Set<string>([
 const HTML_SUFFIX: string = '.html';
 const TS_SUFFIX: string = '.ts';
 
-/** Per-`*.component.ts` кэш членов, инвалидируется по mtime файла. */
+/** The members cache per `*.component.ts`; it is dropped by the file's modification time. */
 const membersCache: Map<string, ICacheEntry> = new Map<string, ICacheEntry>();
 
-/** `foo.component.html` → `foo.component.ts`, или `null` если соседа нет. */
+/** `foo.component.html` → `foo.component.ts`, or `null` when there is no neighbour. */
 function resolveSiblingTsPath(htmlPath: string): string | null {
     if (!htmlPath.endsWith(HTML_SUFFIX)) {
         return null;
@@ -177,9 +176,9 @@ function parseComponentMembers(tsPath: string): IComponentMembers {
 }
 
 /**
- * Возвращает имя метода для репорта по template `Call`-узлу, либо `null` когда
- * вызов нужно оставить как есть: member-вызов на другом receiver'е
- * (`store.items()`), `$any(...)`, чтение сигнала или нерезолвленное имя.
+ * The method name to report by a template `Call` node, or `null` when the call is to be left as
+ * it is: a member call on another receiver (`store.items()`), `$any(...)`, a signal read or a
+ * name that was not resolved.
  */
 function getReportableMethodName(call: ITemplateCallNode, members: IComponentMembers): string | null {
     const receiver: ITemplateExprNode | undefined = call.receiver;
@@ -238,7 +237,7 @@ export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = ESLintUtils.Rule
         let boundEventDepth: number = 0;
 
         return {
-            // Имена visitor'ов должны совпадать с типами узлов template-parser AST.
+            // The visitor names must match the node types of the template parser's AST.
             BoundEvent(): void {
                 boundEventDepth++;
             },

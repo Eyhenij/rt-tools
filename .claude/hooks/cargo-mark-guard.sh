@@ -1,33 +1,34 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
-# Требует: hooks/deny-tail.sh
-# Гард отметки груза: ход, который взял запись груза в работу или отдал по ней работу, не
-# заканчивается, пока состояние записи в приёме не переведено. Stop.
+# Requires: hooks/deny-tail.sh
+# The cargo mark guard: a turn that took a cargo record into work or handed over the work on it
+# does not end while the record's state in the intake is not moved. Stop.
 #
-# Зачем именно так. Правило разбора груза требует двух отметок: «в работе» — тем же ходом, каким
-# по записи заводится задача, и «готово» — когда правка влита. Оба требования держались памятью
-# исполнителя и ровно поэтому не держались: за один заход по записям груза заводилось пять задач
-# и не ставилось ни одной отметки, а владелец видел приём, где двести записей стоят новыми при
-# сделанной работе.
+# Why exactly so. The rule of sorting out the cargo demands two marks: "in work" — by the same turn
+# that creates a task for the record, and "done" — when the edit is merged. Both requirements were
+# held by the executor's memory and for exactly that reason were not held: in one session five
+# tasks were created by cargo records and not one mark was set, and the owner saw an intake where
+# two hundred records stand new while the work is done.
 #
-# Само правило говорило, что проверки на это не будет. Верно это про разбор — решение «работы по
-# записи не будет» следа не оставляет, — и неверно про взятие в работу: у взятия след есть, и он
-# машиночитаемый. Образец папки задачи требует называть ключи записей груза в разборе просьбы
-# полностью, «как их печатает чтение приёма»; значит, связь «задача — запись» лежит на диске.
+# The rule itself said there would be no check for this. That is true about the sorting out — the
+# decision "there will be no work on the record" leaves no trace — and untrue about taking into
+# work: taking has a trace, and it is machine-readable. The task folder sample demands that the
+# keys of cargo records be named in the grill in full, "as the intake read prints them"; so the
+# link "task — record" lies on the disk.
 #
-# Судится один момент — отдача работы, — а не всякий ход. Гард, спрашивающий отметку на каждом
-# ходу, отбивал бы саму работу.
+# One moment is judged — the handing over of the work — rather than every turn. A guard asking for
+# a mark on every turn would refuse the work itself.
 #
-# Взятия в работу здесь нет намеренно, и это не послабление. Состояние «в работе» ставит своей
-# записи то дерево, которому она принадлежит; чужую запись двигает только закрытие издателем, а
-# оно принимает два состояния — «готово» и «выпущено», — потому что «в работе» говорит о работе,
-# которую ведёт дерево. Груз приезжает от соседей, и требование отметить взятие чужой записи
-# было бы требованием сделать невозможное: заход упирался бы в него на каждой задаче из груза.
-# Отдача работы такой развилки не имеет — там оба пути ведут в «готово».
+# There is no taking into work here on purpose, and that is no easing. The state "in work" is set
+# on its own record by the tree that owns it; a foreign record is moved only by the publisher's
+# closing, and that accepts two states — "done" and "released" — because "in work" speaks of work
+# the tree leads. The cargo arrives from neighbours, and a demand to mark the taking of a foreign
+# record would be a demand to do the impossible: a session would run into it on every task from
+# the cargo. Handing over the work has no such fork — both roads there lead into "done".
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет `jq`, нет записи хода, нет папки задачи, нет ключей в разборе
-# просьбы, нет команды отметки в профиле, повторный заход, любая своя ошибка — ход РАЗРЕШАЕТСЯ
-# (exit 0). Сломанный гард не имеет права заклинить работу.
+# A REFUSAL IN FAVOUR OF THE WORK: no `jq`, no turn record, no task folder, no keys in the grill,
+# no mark command in the profile, a repeated approach, any error of its own — the turn is ALLOWED
+# (exit 0). A broken guard has no right to jam the work.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
@@ -38,7 +39,7 @@ input="$RT_HOOK_INPUT"
 
 command -v jq >/dev/null 2>&1 || exit 0
 
-# Повторный заход по тому же ходу не судится: гард сказал своё один раз и отпускает.
+# A repeated approach on the same turn is not judged: the guard said its word once and lets go.
 active="$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/null)"
 [ "$active" = "true" ] && exit 0
 
@@ -49,15 +50,15 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 root="${CLAUDE_PROJECT_DIR:-.}"
 
-# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
+# The tree's profile: first the package default, over it the project's override, if there is one.
 for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" \
     "$root/.claude/rt-kit/defaults/project.sh" "$root/.claude/rt-kit/project.sh"; do
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
 
-# Команда отметки у дерева своя. Заданная пустой — отказ дерева от требования: дереву, которое
-# груза не возит, гард не навязывается.
+# The mark command is the tree's own. Set empty, it is the tree's refusal of the requirement: a
+# tree that carries no cargo is not forced into this guard.
 mark_cmd="${RT_CARGO_MARK_CMD-npm run cargo:mark}"
 [ -z "$mark_cmd" ] && exit 0
 
@@ -65,26 +66,27 @@ tasks_dir="${RT_TASKS_DIR:-docs/tasks}"
 branch="$(git -C "$root" branch --show-current 2>/dev/null)"
 [ -z "$branch" ] && exit 0
 
-# Ключи записей груза лежат в разборе просьбы папки задачи. Папка могла уже уехать разбором —
-# тогда её читает история ветки: отдача работы судится как раз после уборки.
+# The keys of cargo records lie in the grill of the task folder. The folder may already have left
+# by the taking apart — then the branch history reads it: handing over the work is judged exactly
+# after the clean-up.
 grill="$tasks_dir/$branch/grill.md"
 text="$(cat "$root/$grill" 2>/dev/null)"
 [ -z "$text" ] && text="$(git -C "$root" show "HEAD:$grill" 2>/dev/null)"
 [ -z "$text" ] && exit 0
 
-# Признак записи груза — то, чем её называет команда отметки: полный ключ отметки либо признак в
-# приёме. Восьми знаков не хватает, и короткий признак ключом не считается: отметка с ним
-# отбивается приёмом строкой «такой записи у дерева нет», и требовать его значило бы гонять
-# исполнителя за отказом.
+# The sign of a cargo record is what the mark command calls it by: the full mark key or the sign in
+# the intake. Eight characters are not enough, and a short sign does not count as a key: a mark
+# with it is refused by the intake with the line "the tree has no such record", and demanding it
+# would mean driving the executor after a refusal.
 keys="$(printf '%s' "$text" \
     | grep -ohE '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[0-9a-f]{64}|[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9-]+\.md' 2>/dev/null \
     | sort -u)"
 [ -z "$keys" ] && exit 0
 
-# Ход — это всё, что записано после последнего настоящего ввода владельца. Ответ инструмента
-# приходит той же ролью, поэтому строки с `tool_result` вводом не считаются.
+# A turn is everything written after the last real input of the owner. A tool's answer comes by the
+# same role, so lines with `tool_result` do not count as input.
 #
-# Хвост в 400 строк: запись хода растёт всю сессию, а судится только последний ход.
+# A tail of 400 lines: the turn record grows the whole session, and only the last turn is judged.
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg dir "$tasks_dir" --arg br "$branch" '
     def is_input:
         .type == "user"
@@ -96,11 +98,12 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg dir "$tasks_di
     | (if $i == null then . else .[$i + 1:] end) as $turn
     | [$turn[] | select(.type == "assistant") | (.message.content // [])[] | select(.type == "tool_use")] as $uses
     | ($uses | map((.input.command // "") + " " + (.input.file_path // ""))| join("\n")) as $said
-    # Отдача: за ход открыта заявка либо разобрана папка задачи.
+    # Handing over: over the turn a request was opened or the task folder taken apart.
     | ($said | test("pr create|pr ready|git rm[^\n]*" + $dir + "/" + $br)) as $gave
-    # Отметка: команда, двигающая состояние записи в приёме. Сухой прогон отметкой не считается —
-    # он показывает, что уехало бы, и следа наружу не оставляет; судится поэтому каждая команда
-    # порознь, а не склеенный текст хода: сухой прогон рядом с настоящей отметкой её не отменяет.
+    # The mark: a command that moves the record state in the intake. A dry run does not count as a
+    # mark — it shows what would have travelled and leaves no trace outward; so every command is
+    # judged apart rather than the glued text of the turn: a dry run next to a real mark does not
+    # cancel it.
     | ($uses | map((.input.command // ""))
         | map(select(test("cargo:mark|cargo:close|cargo:fixed|cargo-mark|cargo-close")))
         | map(select(test("--dry-run") | not)) | length > 0) as $marked
@@ -112,27 +115,27 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg dir "$tasks_di
 named="$(printf '%s' "$keys" | head -5 | sed 's/^/    /')"
 more="$(printf '%s' "$keys" | wc -l | tr -d ' ')"
 [ "$more" -gt 5 ] 2>/dev/null && named="${named}
-    … и ещё $((more - 5))"
+    … and $((more - 5)) more"
 
-reason="BLOCKED by cargo-mark-guard: ход отдал работу по записи груза, а состояние записи в приёме за этот же ход не переведено — оно осталось прежним.
+reason="BLOCKED by cargo-mark-guard: the turn handed over the work on a cargo record, and the record's state in the intake was not moved by that same turn — it stayed as it was.
 
-Отметка и работа идут одним ходом. Отложенная не ставится: между решением и следующим ходом проходит день, и к этому дню исполнитель помнит задачу, а не запись груза; запись остаётся среди неразобранных, и следующий заход разбирает её заново.
+The mark and the work go by one turn. A postponed one is not set: between the decision and the next turn a day passes, and by that day the executor remembers the task rather than the cargo record; the record stays among the unsorted, and the next session sorts it out anew.
 
-Записи этой работы — из разбора просьбы ${grill}:
+The records of this work — from the grill ${grill}:
 ${named}
 
-Перевести надо в «готово», и с переходом едет приём починки — чем недочёт исправлен, а не пересказ того, что было не так:
+It has to be moved into \"done\", and the fix travels with the move — what the miss was fixed by, not a retelling of what was wrong:
 
-    ${mark_cmd} -- --state fixed --fix '<чем исправлено>' --proposal <признак> --postmortem <признак>
+    ${mark_cmd} -- --state fixed --fix '<what it is fixed by>' --proposal <sign> --postmortem <sign>
 
-Чужая запись двигается закрытием издателя, своя — обычной отметкой; какая из них эта, говорит строка «дерево» в чтении груза.
+A foreign record is moved by the publisher's closing, one's own by the ordinary mark; which of them this is the line \"дерево\" in the cargo read says.
 
-Сухой прогон отметкой не считается: он показывает, что уехало бы, и следа наружу не оставляет.
+A dry run does not count as a mark: it shows what would have travelled and leaves no trace outward.
 
-Гард судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next approach is not refused."
 
-# Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
-# а причина отказа остаётся прежней.
+# The shared tail of a refusal: two lawful moves. The file may be not laid out — then there is no
+# tail, and the reason for the refusal stays as it was.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
 command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
@@ -142,6 +145,6 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-    || printf '{"decision":"block","reason":"cargo-mark-guard: запись груза взята или отдана — переведи её состояние в приёме."}\n'
+    || printf '{"decision":"block","reason":"cargo-mark-guard: a cargo record is taken or handed over — move its state in the intake."}\n'
 
 exit 0

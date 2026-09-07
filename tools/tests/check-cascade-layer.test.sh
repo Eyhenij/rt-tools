@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Сценарии проверки слоя каскада: что она ловит вокруг обёртки и чем нарочный вынос отличается
-# от промаха.
+# The scenarios of the cascade layer check: what it catches around the wrapper and what tells a
+# deliberate move out from a miss.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-echo "проверка слоя каскада"
+echo "the cascade layer check"
 
 WORK="$(fixture_tree)"
 cleanup() { rm -rf "$WORK"; }
@@ -16,7 +16,7 @@ STYLES="$WORK/projects/ui-kit-v2/src/styles"
 mkdir -p "$LIB" "$STYLES"
 printf '@layer rt-kit.vendor, rt-kit.base, rt-kit.components;\n' > "$STYLES/_layers.scss"
 
-# Файл стилей компонента: тело внутри обёртки, хвост — за ней.
+# A component's style file: the body inside the wrapper, the tail past it.
 probe_file() {
     printf '@layer rt-kit.components {\n    .rt-probe {\n        color: var(--rt-text);\n    }\n}\n%s' "$1" \
         > "$LIB/probe.component.scss"
@@ -24,64 +24,66 @@ probe_file() {
 
 verdict() {
     local label="$1" want="$2" got
-    if node "$WORK/tools/check-cascade-layer.mjs" >/dev/null 2>&1; then got="зелено"; else got="красно"; fi
+    if node "$WORK/tools/check-cascade-layer.mjs" >/dev/null 2>&1; then got="green"; else got="red"; fi
     report "$label" "$got" "$want"
 }
 
 says() {
     local label="$1" pattern="$2" got
-    if node "$WORK/tools/check-cascade-layer.mjs" 2>&1 | grep -qE "$pattern"; then got="есть"; else got="нет"; fi
-    report "$label" "$got" "есть"
+    if node "$WORK/tools/check-cascade-layer.mjs" 2>&1 | grep -qE "$pattern"; then got="yes"; else got="no"; fi
+    report "$label" "$got" "yes"
 }
 
-# --- обёртка -------------------------------------------------------------------------------
+# --- the wrapper ---------------------------------------------------------------------------
 probe_file ''
-verdict "обёрнутый файл без хвоста проходит" "зелено"
+verdict "a wrapped file without a tail passes" "green"
 
 printf '.rt-probe {\n    color: red;\n}\n' > "$LIB/probe.component.scss"
-verdict "файл без обёртки отбивается" "красно"
-says "и отказ называет обёртку" 'правила стоят вне слоя'
+verdict "a file without the wrapper is refused" "red"
+says "and the refusal names the wrapper" 'the rules stand outside the layer'
 
-# --- правило до обёртки --------------------------------------------------------------------
+# --- a rule before the wrapper -------------------------------------------------------------
 printf '.rt-early {\n    color: red;\n}\n@layer rt-kit.components {\n    .rt-probe {\n        color: red;\n    }\n}\n' \
     > "$LIB/probe.component.scss"
-verdict "правило до обёртки отбивается" "красно"
-says "и отказ называет его" 'до обёртки стоит'
+verdict "a rule before the wrapper is refused" "red"
+says "and the refusal names it" 'before the wrapper stands'
 
 printf "@use '../mixins';\n@layer rt-kit.components {\n    .rt-probe {\n        color: red;\n    }\n}\n" \
     > "$LIB/probe.component.scss"
-verdict "объявление sass до обёртки законно" "зелено"
+verdict "a sass declaration before the wrapper is lawful" "green"
 
-# --- правило после обёртки -----------------------------------------------------------------
+# --- a rule after the wrapper --------------------------------------------------------------
 probe_file '.rt-late {
     pointer-events: none;
 }
 '
-verdict "правило после обёртки без отметки отбивается" "красно"
-says "и отказ называет отметку" 'после обёртки стоит.*rt-layer-outside'
+verdict "a rule after the wrapper without the mark is refused" "red"
+says "and the refusal names the mark" 'after the wrapper stands.*rt-layer-outside'
 
-probe_file '/* rt-layer-outside: спорит с неслоевым правилом чужой библиотеки. */
+probe_file '/* rt-layer-outside: it argues with a non-layered rule of a foreign library. */
 .rt-late {
     pointer-events: none;
 }
 '
-verdict "правило после обёртки с отметкой проходит" "зелено"
-says "и вынесенное названо числом" 'вынесено из слоя с отметкой 1'
+verdict "a rule after the wrapper with the mark passes" "green"
+says "and what is moved out is named by a number" 'moved out of the layer with the mark 1'
 
-# Пояснение правилом не считается: иначе шапка файла после обёртки читалась бы как вынос.
-probe_file '/* Просто пояснение в конце файла. */
+# An explanation does not count as a rule: otherwise a file header after the wrapper would read as a
+# move out.
+probe_file '/* Just an explanation at the end of the file. */
 '
-verdict "пояснение после обёртки правилом не считается" "зелено"
+verdict "an explanation after the wrapper does not count as a rule" "green"
 
-# Отметка судится в хвосте, а не по всему файлу: слово внутри обёртки выноса не разрешает.
+# The mark is judged in the tail rather than over the whole file: a word inside the wrapper does not
+# allow a move out.
 printf '@layer rt-kit.components {\n    /* rt-layer-outside */\n    .rt-probe {\n        color: red;\n    }\n}\n.rt-late {\n    pointer-events: none;\n}\n' \
     > "$LIB/probe.component.scss"
-verdict "отметка внутри обёртки хвоста не оправдывает" "красно"
+verdict "the mark inside the wrapper does not justify the tail" "red"
 
-# --- порядок подслоёв ----------------------------------------------------------------------
+# --- the sublayer order --------------------------------------------------------------------
 probe_file ''
 printf '@layer rt-kit.base, rt-kit.components;\n' > "$STYLES/_layers.scss"
-verdict "порядок подслоёв без vendor отбивается" "красно"
-says "и отказ называет строку порядка" 'порядок подслоёв не объявлен'
+verdict "the sublayer order without vendor is refused" "red"
+says "and the refusal names the order line" 'the sublayer order is not declared'
 
-suite_result "проверка слоя каскада"
+suite_result "the cascade layer check"

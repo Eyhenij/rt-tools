@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Прогон всех наборов по проверкам этого дерева:
-# `bash tools/tests/run.sh` (с VERBOSE=1 — с каждым сценарием).
+# A run of all the sets over this tree's checks:
+# `bash tools/tests/run.sh` (with VERBOSE=1 — with every scenario).
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 failed=0
@@ -10,9 +10,9 @@ for suite in *.test.sh; do
 done
 
 if [ "$failed" -eq 0 ]; then
-    echo "ВСЕ НАБОРЫ ЗЕЛЁНЫЕ"
+    echo "ALL SETS ARE GREEN"
     exit 0
 fi
 
-echo "НАБОРОВ С ПРОВАЛАМИ: $failed"
+echo "SETS WITH FAILURES: $failed"
 exit 1

@@ -66,7 +66,7 @@ mark_code() {
 }
 
 # SC-AK-430 — незнакомое состояние отбивается до сети
-MARK_PATTERN='состояния .* не бывает'
+MARK_PATTERN='there is no state'
 report "SC-AK-430 — незнакомое состояние названо" "$(mark_says --state nowhere --postmortem x.md)" 1
 report "SC-AK-430 — код возврата ненулевой" "$(mark_code --state nowhere --postmortem x.md)" 1
 
@@ -80,37 +80,37 @@ import('./dist/agent-kit/lib/shipment.js').then((m) => {
     process.stdout.write(m.treeSlugOf(remote, ''));
 });
 " 2>/dev/null)"
-MARK_PATTERN="дерево ${PACKAGE_SLUG}:"
+MARK_PATTERN="tree ${PACKAGE_SLUG}:"
 report "SC-AK-558 — отметка называет тот же признак, что отправка" \
     "$(mark_says --state new --postmortem x.md --dry-run)" 1
 
 # SC-AK-431 — вызов без записей отбивается до сети
-MARK_PATTERN='отмечать нечего'
+MARK_PATTERN='there is nothing to mark'
 report "SC-AK-431 — пустой вызов назван" "$(mark_says --state new)" 1
 report "SC-AK-431 — код возврата ненулевой" "$(mark_code --state new)" 1
 
 # SC-AK-428 — сухой прогон показывает собранный пакет и никуда не стучится
-MARK_PATTERN='уехало бы в'
+MARK_PATTERN='it would have gone to'
 report "SC-AK-428 — сухой прогон называет адрес" "$(mark_says --state new --postmortem x.md --dry-run)" 1
-MARK_PATTERN='разборов 1, предложений 0'
+MARK_PATTERN='analyses 1, proposals 0'
 report "SC-AK-428 — пакет разобран по родам" "$(mark_says --state new --postmortem x.md --dry-run)" 1
 report "SC-AK-428 — код возврата нулевой" "$(mark_code --state new --postmortem x.md --dry-run)" 0
 
 # SC-AK-544 — сухой прогон объявляется первой строкой, а не окончанием глагола
-MARK_PATTERN='^СУХОЙ ПРОГОН — наружу не ушло ничего'
+MARK_PATTERN='^A DRY RUN — nothing left outward'
 report "SC-AK-544 — сухой прогон назван первой строкой" \
     "$(mark_says --state new --postmortem x.md --dry-run)" 1
-MARK_PATTERN='без `--dry-run`'
+MARK_PATTERN='without `--dry-run`'
 report "SC-AK-544 — назван и вызов, которым это отмечают" \
     "$(mark_says --state new --postmortem x.md --dry-run)" 1
 
 # SC-AK-427 — записи разных родов едут одним вызовом
-MARK_PATTERN='разборов 2, предложений 1'
+MARK_PATTERN='analyses 2, proposals 1'
 report "SC-AK-427 — пачка собрана целиком" \
     "$(mark_says --state new --postmortem a.md --postmortem b.md --proposal c --dry-run)" 1
 
 # SC-AK-427 — приложенное значение едет полем строки, а не своим вызовом
-MARK_PATTERN='в «fixed»'
+MARK_PATTERN='into «fixed»'
 report "SC-AK-427 — переход в починку собран" \
     "$(mark_says --state fixed --postmortem a.md --fix 'статья правила' --dry-run)" 1
 
@@ -128,7 +128,7 @@ report "SC-MB-207 — версия выпуска легла полем стро
     "$(RT_TREE_TOKEN=x mark_body --state released --postmortem a.md --release 'rt-agent-kit@0.11.0')" 1
 
 # SC-AK-429 — без токена дерева отметка отказывает до сети
-MARK_PATTERN='токена дерева нет'
+MARK_PATTERN='there is no tree token'
 report "SC-AK-429 — отсутствие токена названо" \
     "$(RT_TREE_TOKEN='' RT_INTAKE='http://127.0.0.1:1' mark_says --state new --postmortem a.md)" 1
 
@@ -150,11 +150,11 @@ http.createServer((req, res) => {
 FAKE_PID=$!
 FAKE_PORT="$(wait_for_port "$FAKE_PORT_FILE")" || { echo "двойник приёма не поднялся"; exit 1; }
 
-MARK_PATTERN='переведено 1, уже стояло 0, отбито 1'
+MARK_PATTERN='moved 1, already stood 0, refused 1'
 report "SC-AK-432 — счёт назван строкой" \
     "$(RT_INTAKE=http://127.0.0.1:$FAKE_PORT RT_TREE_TOKEN=x mark_says --state in_work --postmortem a.md --postmortem b.md)" 1
 
-MARK_PATTERN='разбор b.md — переход не разрешён порядком'
+MARK_PATTERN='analysis b.md — the move is not allowed by the order'
 report "SC-AK-432 — отбитая строка названа ключом и причиной" \
     "$(RT_INTAKE=http://127.0.0.1:$FAKE_PORT RT_TREE_TOKEN=x mark_says --state in_work --postmortem a.md --postmortem b.md)" 1
 

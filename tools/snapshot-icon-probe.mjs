@@ -1,27 +1,29 @@
 #!/usr/bin/env node
 /**
- * Проба обвязки снимков второй витрины: дожидается ли она нарисованных значков перед съёмкой.
+ * A probe of the second showcase's snapshot harness: does it wait for drawn icons before the shot.
  *
- * Зачем она есть. Значки едут по сети по одному — файл на каждое имя, которое попросила
- * разметка, — и до прихода символа `<use href="#…">` не рисует ничего. Кадр выходит без значков
- * и с поехавшей раскладкой ряда, а прогон при этом зелёный: эталон, закреплённый таким кадром,
- * дальше сходится сам с собой. Волновая пересъёмка закрепила так четыре кадра, и нашла это
- * повторная сверка, а не прогон.
+ * Why it exists. The icons travel over the network one at a time — a file per name the markup asked
+ * for — and until the symbol arrives `<use href="#…">` draws nothing. The frame comes out without
+ * icons and with the row's layout drifted, and the run is green at that: a reference pinned by such
+ * a frame then matches itself. A wave re-take pinned four frames that way, and a repeated matching
+ * found it rather than the run.
  *
- * Как она судит. Файлы значков придерживаются на подходе, и одна и та же история снимается
- * дважды: раз без ожидания значков, раз с ним. Кадры обязаны разойтись — это и значит, что ожидание
- * работает. Совпали — либо ожидание снято, либо на выбранной истории не осталось значков, и оба
- * случая одинаково плохи.
+ * How it judges. The icon files are held back on their approach, and one and the same story is shot
+ * twice: once without the icon wait, once with it. The frames must diverge — that is what it means
+ * that the wait works. They matched — either the wait is taken out or the chosen story has no icons
+ * left, and both cases are equally bad.
  *
- * История выбрана та, которой прежнее ожидание не видело вовсе: составная кнопка рисует шеврон
- * директивой кнопки, голым `<svg>` без хоста `rt-icon`, — а ожидание ходило по хостам и выходило
- * успехом на первой же строке. Проба поэтому и проверяет отдельно, что хостов на ней ноль:
- * история, обзаведшаяся хостом, судила бы уже не тот промах.
+ * The story chosen is the one the former wait did not see at all: the split button draws the chevron
+ * by the button's directive, as a bare `<svg>` without an `rt-icon` host — while the wait went over
+ * the hosts and came out successful on the first line. That is why the probe checks apart that there
+ * are zero hosts on it: a story that has got a host would be judging a different miss.
  *
- * Каждый кадр снимается в своей свежей странице, а не два подряд в одной: файлы придерживаются
- * на подходе, и второй кадр в той же странице пришёл бы уже по приехавшим символам.
+ * Every frame is taken in a fresh page of its own rather than two in a row in one: the files are
+ * held back on their approach, and the second frame in the same page would come by symbols that had
+ * already arrived.
  *
- * Витрину проба не поднимает: она идёт по уже поднятой, адрес берётся из STORYBOOK_URL.
+ * The probe raises no showcase: it goes over an already raised one, the address comes from
+ * STORYBOOK_URL.
  *
  *   STORYBOOK_URL=http://localhost:6007 node tools/snapshot-icon-probe.mjs
  */
@@ -29,49 +31,49 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-/** История, которой прежнее ожидание не видело: ноль хостов значка и семь нарисованных значков. */
+/** The story the former wait did not see: zero icon hosts and seven drawn icons. */
 const STORY = 'molecules-forms-splitbutton--states';
 
-/** Тот же размер кадра, что у обвязки, — его объявляет `src/showcase/story-snapshot.ts`. */
+/** The same frame size as the harness's — it is declared by `src/showcase/story-snapshot.ts`. */
 const VIEWPORT = { width: 1280, height: 720 };
 
-/** Та же пауза после глушения движения, что у обвязки. */
+/** The same pause after the motion is muted as the harness's. */
 const SETTLE_MS = 150;
 
 /**
- * На сколько придерживаются файлы значков.
+ * For how long the icon files are held back.
  *
- * Проба судит не скорость сети, а порядок: кадр без ожидания обязан уйти раньше символов. Задержка
- * поэтому берётся заведомо больше подготовки кадра и не зависит от загрузки машины — на занятой
- * подготовка только длиннее, а порядок тот же.
+ * The probe judges not the network's speed but the order: a frame without the wait must leave
+ * before the symbols. So the delay is taken knowingly larger than the frame's preparation and does
+ * not depend on the machine's load — on a busy one the preparation is only longer, the order the same.
  */
 const SPRITE_HOLD_MS = 2_000;
 
-/** Сколько пар снимать, прежде чем назвать совпадение отказом. */
+/** How many pairs to take before calling a match a refusal. */
 const MAX_PAIRS = 3;
 
-/** Поздняя граница ожидания значков в самой пробе — предел, а не мерило. */
+/** The late boundary of the icon wait in the probe itself — a limit, not a measure. */
 const ICONS_TIMEOUT_MS = 30_000;
 
 const URL = process.env.STORYBOOK_URL ?? 'http://localhost:6007';
 
-/** Модуль ожидания, который проба судит: вызов обязан стоять в нём, а не только работать. */
+/** The wait module the probe judges: the call must stand in it, not only work. */
 const WAIT_MODULE = 'projects/ui-kit-v2/.storybook/snapshot-wait.ts';
 
-/** Обвязка съёмки: она обязана звать ожидание до кадра. */
+/** The shot harness: it must call the wait before the frame. */
 const RUNNER = 'projects/ui-kit-v2/.storybook/test-runner.ts';
 
-/** Признак корня показа — тот же, по которому обвязка судит вставший показ. */
+/** The sign of the showing root — the same one the harness judges a settled showing by. */
 const ROOT_SELECTOR = '[data-story-root]';
 
 const digest = (buffer) => createHash('sha1').update(buffer).digest('hex').slice(0, 12);
 
 /**
- * Драйвер браузера приезжает зависимостью прогонщика снимков, а не манифестом дерева.
+ * The browser driver arrives as a dependency of the snapshot runner rather than by the tree's manifest.
  *
- * Строгая раскладка pnpm не кладёт его в корневой `node_modules`, поэтому импорт по имени здесь
- * не находит ничего. Второй путь — общий каталог связей pnpm, куда сложено транзитивное. Приём
- * повторён из пробы отрисовки первой витрины: общего модуля у проверок дерева нет.
+ * pnpm's strict layout does not put it into the root `node_modules`, so an import by name finds
+ * nothing here. The second road is pnpm's shared links directory, where the transitive is put. The
+ * technique is repeated from the first showcase's drawing probe: the tree's checks have no shared module.
  */
 async function loadChromium() {
     const candidates = ['playwright', join(process.cwd(), 'node_modules/.pnpm/node_modules/playwright/index.mjs')];
@@ -80,19 +82,21 @@ async function loadChromium() {
         try {
             return (await import(candidate)).chromium;
         } catch {
-            // Следующий путь.
+            // The next path.
         }
     }
 
-    console.error('\n  Драйвер браузера не найден ни по имени, ни в каталоге связей pnpm. Поставь зависимости: pnpm install\n');
+    console.error(
+        '\n  The browser driver is found neither by name nor in the pnpm links directory. Install the dependencies: pnpm install\n'
+    );
     process.exit(1);
 }
 
 /**
- * Снимает из исходника пояснения, оставляя один код.
+ * It removes the explanations from the source, leaving the code alone.
  *
- * Иначе вызов, закомментированный одной косой чертой, читается как живой: строка
- * `// await drawnIcons(page, …)` содержит искомые слова целиком, и поиск по тексту её находит.
+ * Otherwise a call commented out by one slash reads as live: the line `// await drawnIcons(page, …)`
+ * holds the sought words whole, and a search by text finds it.
  */
 function codeOnly(source) {
     return source
@@ -103,35 +107,35 @@ function codeOnly(source) {
 }
 
 /**
- * Судит саму обвязку: ждёт ли она значки и по тому ли признаку их ищет.
+ * It judges the harness itself: does it wait for the icons and does it look for them by the right sign.
  *
- * Замер в браузере говорит, что приём лечит промах, но молчит о том, применён ли он: снятый из
- * обвязки, он оставил бы пробу зелёной. Порядок вызовов читается текстом — способа спросить
- * обвязку изнутри нет, она исполняется прогонщиком витрины.
+ * A measurement in the browser says the technique cures the miss but stays silent about whether it
+ * is applied: taken out of the harness, it would leave the probe green. The order of the calls is
+ * read as text — there is no way to ask the harness from inside, it is run by the showcase runner.
  */
 function harnessWaitsForIcons() {
     const wait = codeOnly(readFileSync(join(process.cwd(), WAIT_MODULE), 'utf8'));
     const runner = codeOnly(readFileSync(join(process.cwd(), RUNNER), 'utf8'));
 
     if (!wait.includes('await drawnIcons(page')) {
-        return `в модуле ожидания «${WAIT_MODULE}» нет вызова ожидания значков`;
+        return `the wait module «${WAIT_MODULE}» has no call of the icon wait`;
     }
 
-    // Перебор по хостам `rt-icon` — тот самый промах: страницу, где значки рисует директива
-    // кнопки, он не видит вовсе и выпускает съёмку первой же строкой.
+    // Going over the `rt-icon` hosts is that very miss: a page where the button's directive draws
+    // the icons it does not see at all and lets the shot out on the first line.
     if (!wait.includes('RT_ICON_SYMBOL_ID_PREFIX')) {
-        return `ожидание в «${WAIT_MODULE}» ищет значок не по ссылке в набор — страница без хостов «rt-icon» снова пройдёт мимо него`;
+        return `the wait in «${WAIT_MODULE}» looks for an icon not by its reference into the set — a page without «rt-icon» hosts will pass it by again`;
     }
 
     const called = runner.indexOf('await quiet(page');
     const shot = runner.indexOf('await shoot(page');
 
     if (called < 0 || shot < 0) {
-        return `в обвязке «${RUNNER}» не нашлось пары «ожидание — съёмка»: проба больше не знает, что судить`;
+        return `the harness «${RUNNER}» has no pair «wait — shot» in it: the probe no longer knows what to judge`;
     }
 
     if (called > shot) {
-        return `в обвязке «${RUNNER}» ожидание стоит после съёмки, то есть не делает ничего`;
+        return `in the harness «${RUNNER}» the wait stands after the shot, that is, does nothing`;
     }
 
     return null;
@@ -141,9 +145,9 @@ const misplaced = harnessWaitsForIcons();
 
 if (misplaced !== null) {
     console.error(
-        `\n  Проба значков: ${misplaced}.\n` +
-            `  Кадр, снятый до прихода набора, выходит без значков и с поехавшей раскладкой ряда, а прогон\n` +
-            `  при этом зелёный: закреплённый таким кадром эталон дальше сходится сам с собой.\n`
+        `\n  The icon probe: ${misplaced}.\n` +
+            `  A frame taken before the set arrives comes out without icons and with the row's layout drifted, while the run\n` +
+            `  is green at that: a reference pinned by such a frame then matches itself.\n`
     );
     process.exit(1);
 }
@@ -152,7 +156,7 @@ const chromium = await loadChromium();
 const browser = await chromium.launch();
 
 try {
-    /** Подготовка страницы — та же, что делает обвязка, но без ожидания значков. */
+    /** The page is prepared as the harness does, but without the icon wait. */
     const prepare = async (page) => {
         await page.goto(`${URL}/iframe.html?id=${STORY}&viewMode=story`, { waitUntil: 'load' });
         await page.waitForSelector(ROOT_SELECTOR, { timeout: ICONS_TIMEOUT_MS });
@@ -165,7 +169,7 @@ try {
         await page.waitForTimeout(SETTLE_MS);
     };
 
-    /** Ожидание нарисованных значков — то же, что в обвязке. */
+    /** The wait for drawn icons — the same as in the harness. */
     const drawn = async (page) => {
         await page.waitForFunction(
             () =>
@@ -182,8 +186,8 @@ try {
         const context = await browser.newContext({ viewport: { ...VIEWPORT } });
         const page = await context.newPage();
 
-        // Набор придерживается на подходе: без задержки он приезжает раньше подготовки кадра, и
-        // проба судила бы скорость машины вместо порядка вызовов.
+        // The set is held back on its approach: without the delay it arrives before the frame's
+        // preparation, and the probe would judge the machine's speed instead of the order of the calls.
         await context.route('**/icons/*.svg', async (route) => {
             await new Promise((resolve) => setTimeout(resolve, SPRITE_HOLD_MS));
             await route.continue();
@@ -218,17 +222,17 @@ try {
 
         if (late.hosts > 0) {
             console.error(
-                `\n  Проба значков: история «${STORY}» обзавелась ${late.hosts} хостами «rt-icon».\n` +
-                    `  Промах, который проба стережёт, был именно в странице без хостов: выбери другую историю,\n` +
-                    `  где значок рисует директива кнопки, — иначе проба судит не тот случай.\n`
+                `\n  The icon probe: the story «${STORY}» has got ${late.hosts} «rt-icon» hosts.\n` +
+                    `  The miss the probe guards was exactly in a page without hosts: choose another story\n` +
+                    `  where the button's directive draws the icon — otherwise the probe judges the wrong case.\n`
             );
             process.exit(1);
         }
 
         if (late.uses === 0) {
             console.error(
-                `\n  Проба значков: на истории «${STORY}» не осталось значков вовсе — судить нечего.\n` +
-                    `  Выбери историю, которая рисует значок ссылкой в набор.\n`
+                `\n  The icon probe: the story «${STORY}» has no icons left at all — there is nothing to judge.\n` +
+                    `  Choose a story that draws an icon by a reference into the set.\n`
             );
             process.exit(1);
         }
@@ -240,16 +244,16 @@ try {
 
     if (diverged === null) {
         console.error(
-            `\n  Проба значков: снято пар ${taken}, и в каждой кадр до ожидания совпал с кадром после — все ${sample.digest}.\n` +
-                `  Это значит, что ожидание значков больше ничего не меняет: либо оно снято из модуля\n` +
-                `  «${WAIT_MODULE}», либо набор приезжает раньше, чем его успевают придержать.\n`
+            `\n  The icon probe: pairs taken ${taken}, and in each the frame before the wait matched the frame after — all ${sample.digest}.\n` +
+                `  That means the icon wait no longer changes anything: either it is taken out of the module\n` +
+                `  «${WAIT_MODULE}», or the set arrives faster than it can be held back.\n`
         );
         process.exit(1);
     }
 
     console.log(
-        `Проба значков: пар снято ${taken}, разошлась ${diverged.pair}-я — кадр до ожидания ${diverged.early}, после — ${diverged.late}. ` +
-            `Значков на странице ${diverged.uses}, хостов «rt-icon» ноль. Ожидание работает.`
+        `The icon probe: pairs taken ${taken}, the ${diverged.pair}-th diverged — the frame before the wait ${diverged.early}, after ${diverged.late}. ` +
+            `Icons on the page ${diverged.uses}, «rt-icon» hosts zero. The wait works.`
     );
 } finally {
     await browser.close();

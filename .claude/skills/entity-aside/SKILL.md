@@ -4,7 +4,7 @@ kind: pattern
 rule: entity-conventions
 description: Pattern of rule entity-conventions. Load when assembling or editing the record create-and-edit panel — the ready-made route in the ro outlet, inheriting the shared base, runMutation, the unsaved edits guard, header and footer, leaving for a linked record. Not for the store — pattern entity-store.
 ---
-<!-- rt-kit v0.25.0 · patterns/entity-aside.md · ffb4aa896d57 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/entity-aside.md · 05314ce277ff · правится надстройкой, не здесь -->
 
 # The record edit panel
 
@@ -152,31 +152,33 @@ and it bypasses the question about unsaved edits.
   and only as a one-off deviation: it is the departure from the shared look, and the owner
   decides it — a list that puts it first teaches to bypass the ready-made before asking.
 
-## Кнопка футера, которой в каком-то состоянии быть не должно
+## A footer button that must not exist in some state
 
-Раздел этого дерева. Кнопки доходят до зон футера проекцией по атрибуту, и условный блок вокруг
-такой кнопки её теряет: узел внутри `@if` до слота не доходит вовсе, и в футере остаётся одна
-соседняя кнопка. Ни сборка, ни линтер условного блока не судят — видно это только на собранном
-экране, и нашёл это сквозной прогон, а не спека компонента.
+A section of this tree. Buttons reach the footer zones by projection over an attribute, and a
+conditional block around such a button loses it: a node inside `@if` does not reach the slot at
+all, and one neighbouring button is left in the footer. Neither the build nor the linter judges a
+conditional block — this is visible only on the assembled screen, and it was found by an
+end-to-end run, not by the component spec.
 
-Поэтому кнопка не прячется, а отключается:
+So the button is not hidden but disabled:
 
 ```html
 <button rt-button asidePrimary qa-dataid="invite-create-submit" type="button" [label]="submitLabel" [disabled]="issued() !== null" (click)="submit()"></button>
 ```
 
-Отключённая кнопка при этом остаётся ответом на вопрос «что здесь можно сделать»: пропавшая
-после удачной записи, она читается как поломка разметки.
+A disabled button stays an answer to the question «what can be done here»: gone after a successful
+write, it reads as broken markup.
 
-## Запись, которую только смотрят
+## A record that is only looked at
 
-Раздел этого дерева. Панель подробностей ничего не правит: свойства записи она показывает
-готовым из кита, а не своей разметкой. Рукописного списка определений здесь не бывает — `<dl>`
-не знает ни о ширине полей, ни о скелетонах чтения, и правится он в каждой панели отдельно.
+A section of this tree. The details panel edits nothing: it shows the record properties by a
+ready-made piece from the kit, not by markup of its own. A hand-written definition list does not
+happen here — `<dl>` knows neither about field widths nor about reading skeletons, and it is fixed
+in every panel separately.
 
-Собрана панель тремя частями кита: раздел `rt-aside-section` со своим заголовком, список
-свойств `rt-detail-list` и строка `rt-detail-row` — название, значение проекцией и скелетон на
-время чтения.
+The panel is assembled from three kit pieces: the section `rt-aside-section` with its own heading,
+the property list `rt-detail-list` and the row `rt-detail-row` — a name, a value by projection and
+a skeleton for the time of the read.
 
 ```html
 <rt-aside-section>
@@ -194,16 +196,17 @@ and it bypasses the question about unsaved edits.
 }
 ```
 
-Признак чтения приходит от асайда входом и уходит в каждую строку: скелетон рисует строка кита,
-а `rt-skeleton-wrapper` руками не оборачивается. Вход записи при этом принимает и пустоту —
-пока чтение идёт, записи ещё нет вовсе, а названия свойств уже стоят на месте.
+The reading sign comes to the aside as an input and goes into every row: the skeleton is drawn by
+the kit row, and `rt-skeleton-wrapper` is not wrapped by hand. The record input accepts emptiness
+too — while the read goes on there is no record yet at all, and the property names already stand
+in place.
 
-Раздел, показывающий содержимое записи, на время чтения скрывается целиком: прежнее
-содержимое принадлежит прежней записи, а слово «этого у записи нет» читается человеком как
-ответ, которого ещё не было.
+The section showing the record content hides whole for the time of the read: the former content
+belongs to the former record, and the words «the record does not have this» are read by a person
+as an answer that has not been given yet.
 
-Признаков у панели три уровня, и каждый свой: сама панель и её шапка носят метки раздела
-(`<раздел>-details-panel`, `<раздел>-details-header`), строка свойства — метку свойства, а
-название и значение внутри неё размечает кит (`detail-row-label`, `detail-row-value`). Метка
-кита `aside-header` одна на все шторки приложения, и спека, которой нужна шапка именно этой
-панели, зацепиться за неё не может.
+The panel has three levels of signs, each its own: the panel itself and its header carry section
+marks (`<section>-details-panel`, `<section>-details-header`), a property row carries the property
+mark, and the name and the value inside it are marked up by the kit (`detail-row-label`,
+`detail-row-value`). The kit mark `aside-header` is one for every drawer of the application, and a
+spec that needs the header of this very panel cannot hook onto it.

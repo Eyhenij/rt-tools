@@ -1,23 +1,23 @@
 import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 /**
- * Требует префикс `I` на top-level `interface`-объявлениях (`IUser`, `ITour`).
- * Интерфейсы внутри любого `TSModuleBlock` пропускаются — одна проверка покрывает
- * и flat-two-level namespace-конвенцию моделей (`namespace IMdm { interface Table {} }`
- * остаётся `Table`, не `ITable`), и declaration merging (`declare global { interface Window {} }`
- * расширяет lib.dom и ОБЯЗАН сохранить исходное имя).
+ * It demands the prefix `I` on top-level `interface` declarations (`IUser`, `ITour`).
+ * Interfaces inside any `TSModuleBlock` are skipped — one check covers both the flat two-level
+ * namespace convention of the models (`namespace IMdm { interface Table {} }` stays `Table`,
+ * not `ITable`) and declaration merging (`declare global { interface Window {} }` extends
+ * lib.dom and MUST keep the original name).
  *
- * Формат имени: строгий PascalCase без аббревиатур-капсом.
+ * The shape of the name: strict PascalCase, no all-caps abbreviations.
  *   ^I[A-Z][a-z]+([A-Z][a-z]+)*([0-9]+)?$
  *
  * - `IUser`, `IApi`, `IFooBar`, `IUser2024`  — valid
  * - `Iuser`, `I2User`, `I_User`, `I`         — invalid (`invalidFormat`)
- * - `IAPI`, `IURL`, `IUSER`                  — invalid (`invalidFormat` — аббревиатура капсом)
+ * - `IAPI`, `IURL`, `IUSER`                  — invalid (`invalidFormat` — an all-caps abbreviation)
  * - `User`, `FooBar`                         — invalid (`missingPrefix`)
  *
- * Без autofix — переименование существующих нарушений делается вручную (Rename Symbol).
+ * There is no autofix — an existing violation is renamed by hand (Rename Symbol).
  *
- * Доступно в ESLint-конфигах как `@nx/workspace-require-interface-prefix`.
+ * In the ESLint configs it is available as `@nx/workspace-require-interface-prefix`.
  */
 export const RULE_NAME: string = 'require-interface-prefix';
 

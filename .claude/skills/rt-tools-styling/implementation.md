@@ -1,29 +1,30 @@
-# rt-tools-styling — что здесь своё
+# rt-tools-styling — what is this tree's own
 
-Правило целиком принадлежит этому дереву: пакет приёма для него не везёт, и переносить
-отсюда в него нечего. Приём закона называет правило `styling-bem`, и своё у него лежит
-в `implementation.md` при нём.
+The rule belongs to this tree whole: the intake package does not carry it, and there is nothing to
+move from here into it. The law's technique is named by the rule `styling-bem`, and what is its
+own lies in the `implementation.md` next to it.
 
-## Как это называется здесь
+## What it is called here
 
-- **В правиле** — Здесь
-- **кит** — пакет компонентов под `projects/`: у каждого свои токены, темы и слои каскада
+- **In the rule** — Here
+- **a kit** — a component package under `projects/`: each has its own tokens, themes and cascade layers
 
-## Где это лежит
+## Where it lives
 
-- **токены и ручки тем** — `projects/*/src/styles/`
-- **слой оформления кита** — собирается сборкой пакета, руками не правится
-- **правило линтера стилей** — `stylelint.config.js`
+- **the tokens and theme handles** — `projects/*/src/styles/`
+- **the kit's styling layer** — assembled by the package build, not edited by hand
+- **the styles linter rule** — `stylelint.config.js`
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-Первая колонка — статья дословно, как она написана в разделе «Как закон применяется здесь»
-(жирная часть пункта). Оформление машина судит слабо: линтер стилей ловит класс без правила
-и запрещённые свойства, а согласие порога, живость токена и контраст темы — нет.
+The first column is the article verbatim, as it is written in the section "How the law applies
+here" (the bold part of the item). The machine judges styling weakly: the styles linter catches a
+class without a rule and forbidden properties, while the agreement of a threshold, the liveness of
+a token and a theme's contrast it does not.
 
-- **Узкий экран.** — Не проверяется машиной: держится чтением правила и замером в браузере
-- **Оформление берётся токеном.** — Не проверяется машиной: держится чтением правила и замером в браузере
-- **Между ступенью и местом стоит своё свойство компонента.** — Не проверяется машиной: держится чтением правила и замером в браузере
-- **Состояние сильнее оформления.** — Не проверяется машиной: держится чтением правила и замером в браузере
-- **Класс блока и директива блока.** — Не проверяется машиной: держится чтением правила и замером в браузере
-- **Правило кита живёт в слое каскада.** — `tools/check-cascade-layer.mjs:OUTSIDE_MARK` — обёртка файла, порядок подслоёв и хвост за закрывающей скобкой: правило после обёртки без отметки `rt-layer-outside` роняет проверку, а сами её сценарии гоняет `npm run test:checks`. Что вынесено именно спорное, судит проба `projects/ui-kit-v2/src/lib/components/aside/rt-aside-overlay.styles.spec.ts:split`
+- **The narrow screen.** — Not checked by a machine: held by reading the rule and by a measurement in the browser
+- **Styling is taken as a token.** — Not checked by a machine: held by reading the rule and by a measurement in the browser
+- **Between a step and a place stands the component's own property.** — Not checked by a machine: held by reading the rule and by a measurement in the browser
+- **State outweighs styling.** — Not checked by a machine: held by reading the rule and by a measurement in the browser
+- **The block class and the block directive.** — Not checked by a machine: held by reading the rule and by a measurement in the browser
+- **A kit rule lives in a cascade layer.** — `tools/check-cascade-layer.mjs:OUTSIDE_MARK` — the file's wrapper, the order of the sublayers and the tail past the closing brace. A rule after the wrapper without the mark `rt-layer-outside` fails the check, and its own scenarios are run by `npm run test:checks`. That exactly the disputed part was taken out is judged by the probe `projects/ui-kit-v2/src/lib/components/aside/rt-aside-overlay.styles.spec.ts:split`

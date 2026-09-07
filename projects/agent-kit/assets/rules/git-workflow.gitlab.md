@@ -149,7 +149,7 @@ flowchart TD
   readers: the executor opens the card before the epic plan, and plans by the plan. One mark without
   the other lies silently, so the queue audit judges the pair both ways. Only what legitimately does
   not split is marked: a mark of volume grants no right to split.
-- **A document goes in the same commit as the edit.** The bypass is the line `Docs-skip: <причина>`
+- **A document goes in the same commit as the edit.** The bypass is the line `Docs-skip: <reason>`
   in the commit body; an empty reason is not accepted.
 - **The commit subject is checked against the format on the spot.** A subject parsed by type and
   scope is read as a list, free text — only whole.

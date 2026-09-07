@@ -117,9 +117,9 @@ report "SC-AK-564 — второй раз имя файла не повторя�
     "$(pull_says '2026-08-24-probe\.md · 2026-08-24-probe\.md' --kind postmortem)" 0
 
 report "SC-AK-565 — состояние уезжает строкой запроса" \
-    "$(: > "$ASKED"; pull_says 'ЧТЕНИЕ' --kind proposal --state new >/dev/null; grep -cE 'state=new' "$ASKED")" 1
+    "$(: > "$ASKED"; pull_says 'THE READING' --kind proposal --state new >/dev/null; grep -cE 'state=new' "$ASKED")" 1
 report "SC-AK-565 — и дерево тоже" \
-    "$(: > "$ASKED"; pull_says 'ЧТЕНИЕ' --kind proposal --tree своё >/dev/null; grep -cE 'tree=' "$ASKED")" 1
+    "$(: > "$ASKED"; pull_says 'THE READING' --kind proposal --tree своё >/dev/null; grep -cE 'tree=' "$ASKED")" 1
 
 report "SC-AK-566 — обзор без текстов ключа не даёт" \
     "$(pull_says "$DIGEST" --kind proposal --brief)" 0
@@ -142,7 +142,7 @@ serve empty
 report "SC-AK-568 — пустая выборка отказом не считается" \
     "$(pull_code --kind proposal --state released)" "код:0"
 report "SC-AK-568 — и счёт она печатает" \
-    "$(pull_says 'всего 0' --kind proposal --state released)" 1
+    "$(pull_says 'in all 0' --kind proposal --state released)" 1
 
 stop
 

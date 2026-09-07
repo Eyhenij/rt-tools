@@ -1,19 +1,19 @@
-/* Собрано генератором `tools/build-tokens-v2.mjs` из `tokens.source.mjs` — правится там, не здесь:
-   правка на месте теряется на следующей сборке, и её называет `pnpm run check:tokens-build`. */
+/* Built by the generator `tools/build-tokens-v2.mjs` from `tokens.source.mjs` — edited there, not here:
+   an edit on the spot is lost on the next build, and `pnpm run check:tokens-build` names it. */
 
-/* Тёмная тема — переопределение назначений; ступени шкалы неизменны.
+/* The dark theme — an override of the assignments; the scale steps are unchanging.
 
-   Тело вынесено в @mixin, чтобы тот же набор переопределений можно было
-   применить не только на html-уровне (тема приложения), но и к локальному
-   контейнеру (side-by-side light/dark в Storybook) — без дублирования значений.
+   The body is carried into an @mixin so that the same set of overrides could be
+   applied not only at the html level (the application's theme) but to a local
+   container too (side-by-side light/dark in Storybook) — without duplicating the values.
 
-   База (`rt-theme-dark-tokens`) — тёплый графит для приложений и всех
-   CDK-overlay'ев (асайды/диалоги/меню рендерятся на уровне body, вне
-   host-классов шеллов — поэтому графит держим на :root, иначе overlay'и
-   не наследовали бы палитру).
+   The base (`rt-theme-dark-tokens`) is warm graphite for the applications and all the
+   CDK overlays (asides/dialogs/menus are rendered at the body level, outside the
+   shells' host classes — so the graphite is held on :root, otherwise the overlays
+   would not inherit the palette).
 
-   Значения ответов живут в источнике рядом со своим светлым назначением: забытая половина
-   пары видна там же, а не вылавливается сверкой двух файлов. */
+   The values of the answers live in the source next to their light assignment: a forgotten half of
+   a pair is visible right there rather than caught by matching two files. */
 
 @mixin rt-theme-dark-tokens {
     /* Background — тёплый графит */
