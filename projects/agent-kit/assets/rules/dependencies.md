@@ -5,88 +5,91 @@ law: delivery
 description: Rule under the delivery law. Load when editing package.json, the lockfile and the workspace settings, and when upgrading any package. Names the exact version number instead of a range and the waiting period for a new version. Pattern dependencies-upgrade.
 ---
 
-# Зависимости — как это устроено здесь
+# Dependencies — how it works here
 
-Правило под закон `docs/constitution/delivery.md`. Закон говорит, что должно быть верно;
-здесь — чем это названо в этом дереве, где лежит и что из закона у нас не применяется. Ветка,
-коммит и выкатка под тем же законом — правило `git-workflow`.
+Rule under the law `docs/constitution/delivery.md`. The law says what must be true; here — what it
+is called in this tree, where it lives and what of the law does not apply here. Branch, commit and
+rollout under the same law — rule `git-workflow`.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                     | Здесь                                                                                              |
-| ---------------------------- | -------------------------------------------------------------------------------------------------- |
-| объявление зависимости       | точный номер в `package.json` — `"prettier": "3.9.6"`; `^` и `~` в файле не встречаются ни разу    |
-| снимок установленного дерева | `pnpm-lock.yaml`; едет тем же коммитом, что и объявление                                           |
-| подмена чужой версии         | `overrides` в `pnpm-workspace.yaml` — там лежат подменённые транзитивные зависимости               |
-| выдержка новой версии        | `minimumReleaseAge`; пакет, нужный раньше срока, выписывается номером в `minimumReleaseAgeExclude` |
-| менеджер пакетов             | pnpm: `npm run` зовёт скрипты, установку делает `pnpm install`                                     |
+| In the law                        | Here                                                                                                         |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| a dependency declaration          | an exact number in `package.json` — `"prettier": "3.9.6"`; `^` and `~` do not occur in the file once         |
+| snapshot of the installed tree    | `pnpm-lock.yaml`; goes in the same commit as the declaration                                                 |
+| substitution of a foreign version | `overrides` in `pnpm-workspace.yaml` — the substituted transitive dependencies lie there                     |
+| waiting period of a new version   | `minimumReleaseAge`; a package needed before the term is written out by number in `minimumReleaseAgeExclude` |
+| package manager                   | pnpm: `npm run` calls the scripts, installation is done by `pnpm install`                                    |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the first
+tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход подъёма версии: где решается сама версия, где — граница переформатирования, и чем работа
-кончается.
+The flow of raising a version: where the version itself is decided, where the reformatting boundary
+lies, and what the work ends with.
 
 ```mermaid
 flowchart TD
-    A[Нужна новая версия пакета] --> B{Верхняя граница чем задана}
-    B -->|Есть peer-диапазоны у зависимых| C[Граница берётся из них, а не из последнего номера в реестре]
-    B -->|Нет| D[Берётся последняя выпущенная]
-    C --> E{Версия выпущена недавно}
+    A[A new package version is needed] --> B{What sets the upper bound}
+    B -->|Dependents have peer ranges| C[The bound is taken from them, not from the last number in the registry]
+    B -->|None| D[The last released one is taken]
+    C --> E{The version was released recently}
     D --> E
-    E -->|Да, и она нужна прямо сейчас| F[Выписывается отдельно, с названной причиной]
-    E -->|Да, но не срочно| G[Выдерживается: свежая версия отзывается чаще старой]
-    E -->|Нет| H[Записывается точным номером, без диапазона]
+    E -->|Yes, and it is needed right now| F[Written out separately, with the reason named]
+    E -->|Yes, but not urgent| G[It waits: a fresh version is withdrawn more often than an old one]
+    E -->|No| H[Written as an exact number, without a range]
     F --> H
-    H --> I{Обновился форматтер или линтер}
-    I -->|Да| J[Переформатируется только то, что линтер и проверяет; новые правила разбираются поимённо]
-    I -->|Нет| K[Снимок дерева пересобирается, набор гоняется целиком]
+    H --> I{The formatter or the linter was updated}
+    I -->|Yes| J[Only what the linter checks is reformatted; new rules are sorted out by name]
+    I -->|No| K[The tree snapshot is rebuilt, the suite is run whole]
     J --> K
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Версия пакета записана точным номером.** Из диапазона сегодня и через неделю поставится
-  разное, и откат правки это не исправит.
-- **Подменённые версии чужих зависимостей собраны в один список, и его пересматривают при
-  каждом обновлении.** Подмена, оставшаяся в списке после того, как основной пакет подняли,
-  незаметно откатывает его зависимость назад.
-- **Свежая версия сначала выдерживается, а нужная раньше срока выписывается отдельно.** Иначе
-  выпуск, который автор успел отозвать, попадёт в снимок.
-- **Переформатируется только то, чьё форматирование проверяет линтер.** Обновлённый форматтер
-  меняет все файлы, до которых дотянется, а `.md` и `.json` здесь не проверяет никто: правка в
-  них — просто шум, который придётся читать глазами.
-- **Пакет, который везёт оформление, поднимается своей задачей.** Вид ломается молча: ни
-  линтер, ни сборка, ни тесты не читают свойства оформления, а поломку видит человек за
-  экраном. Уехавший в общее обновление, такой подъём откатывается только вместе с чужими, и
-  связать поломку с ним стоит отдельной разведки; своя ветка откатывается одна.
+- **A package version is written as an exact number.** From a range, today and a week later
+  different things get installed, and reverting the edit does not fix that.
+- **Substituted versions of foreign dependencies are gathered in one list, and it is revisited at
+  every update.** A substitution left in the list after the main package was raised silently rolls
+  its dependency back.
+- **A fresh version waits first, and one needed before the term is written out separately.**
+  Otherwise a release its author managed to withdraw lands in the snapshot.
+- **Only what the linter checks the formatting of gets reformatted.** An updated formatter changes
+  every file it reaches, and `.md` and `.json` are checked by nobody here: an edit in them is just
+  noise that has to be read by eye.
+- **A package that carries styling is raised by a task of its own.** The look breaks silently:
+  neither the linter, nor the build, nor the tests read styling properties, and the person at the
+  screen sees the breakage. Gone into a shared update, such a raise is reverted only together with
+  the others, and tying the breakage to it costs a separate investigation; its own branch is
+  reverted alone.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Никто не сверяет, что объявленные версии совпадают со снимком: `--frozen-lockfile` стоит
-только в выкатке, а она идёт от пуша в главную ветку, то есть уже после мержа. Диапазоны тоже
-не проверяются: один `^` в `package.json` пройдёт все проверки дерева.
+Nobody checks that the declared versions match the snapshot: `--frozen-lockfile` stands only in the
+rollout, and it goes from a push to the main branch, that is, after the merge. Ranges are not
+checked either: one `^` in `package.json` passes every check of the tree.
 
-## Паттерны
+## Patterns
 
-- `dependencies-upgrade` — подъём версий, выбор верхней границы, разбор последствий обновления.
+- `dependencies-upgrade` — raising versions, choosing the upper bound, sorting out the consequences
+  of an update.
 
-## Ловушки
+## Pitfalls
 
-- **Диапазон пропускает версию, которой в реестре нет.** В объявление кита записали `^0.2.0`,
-  а снимок остался на прежней версии: объявление выглядело верным, но всё собиралось на 0.1.0,
-  где нужного размера у компонента нет вовсе, и главная ветка перестала собираться. Нашли это
-  через две недели — когда понадобилось дерево для сравнения, а сравнивать оказалось не с чем.
-- **Верхнюю границу задают peer-диапазоны, а не последний номер в реестре.** TypeScript
-  остался на 6.0.3 при вышедшей седьмой версии, потому что Angular объявляет `>=6.0 <6.1`.
-  `pnpm install` такую ошибку не ловит: `autoInstallPeers` молча доставляет недостающее.
-- **После обновления плагина линтера появляются правила, которых вчера не было.** eslint 10
-  добавил `no-useless-assignment`, `eslint-plugin-playwright` 2 — сразу три правила. Замечания
-  приходят на файлы, которых правка не касалась, и выглядят её последствиями.
-- Прогон тестов после обновления — правило `testing`: после смены версии Playwright браузер
-  надо поставить заново, и это не регрессия.
+- **A range lets through a version that is not in the registry.** `^0.2.0` was written into the kit
+  declaration, and the snapshot stayed on the previous version: the declaration looked right, but
+  everything was built on 0.1.0, where the component has no such size at all, and the main branch
+  stopped building. This was found two weeks later — when a tree was needed for comparison, and
+  there turned out to be nothing to compare with.
+- **The upper bound is set by peer ranges, not by the last number in the registry.** TypeScript
+  stayed on 6.0.3 with the seventh version out, because Angular declares `>=6.0 <6.1`. `pnpm
+  install` does not catch such a mistake: `autoInstallPeers` silently delivers what is missing.
+- **After a linter plugin update, rules appear that were not there yesterday.** eslint 10 added
+  `no-useless-assignment`, `eslint-plugin-playwright` 2 — three rules at once. The findings come on
+  files the edit did not touch and look like its consequences.
+- A test run after an update — rule `testing`: after a Playwright version change the browser has to
+  be installed anew, and that is not a regression.

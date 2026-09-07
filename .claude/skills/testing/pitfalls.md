@@ -1,100 +1,107 @@
-<!-- rt-kit v0.25.0 · pitfalls/testing.md · 5c1b996f71d6 · правится надстройкой, не здесь -->
-# Проверка — холодная часть
+<!-- rt-kit v0.25.0 · pitfalls/testing.md · b5d595f8cc4f · правится надстройкой, не здесь -->
+# Verification — cold part
 
-Ловушки: грабли, на которые уже наступали. Грузится не вместе с правилом, а по
-требованию — при обычном решении она не нужна.
+Pitfalls: traps already stepped on. Loaded not with the rule but on demand — an ordinary
+decision does not need it.
 
-Правило — `testing`; статьи, которыми держится закон, стоят там.
+The rule is `testing`; the articles that hold the law stand there.
 
-## Ловушки
+## Pitfalls
 
-- **Зелёный тест чистой функции молчит о ряде, которого рабочий путь не порождает.** Функция
-  верна на том, что ей подали, а подаёт ей ввод сам тест: ряд, собранный ради удобства
-  проверки, доказывает поведение на случае, которого в работе не бывает. Так стояли два зелёных
-  теста решения об оповещении, а предохранитель, ради которого решение писали, не сработал ни
-  разу. Форма ввода берётся с той границы, откуда решение зовут, — у процедуры, у службы, у
-  обработчика, — и сверяется с ней, а не выдумывается рядом с проверкой.
-- **Зелёный `nx test <проект>` не значит, что хоть один файл исполнялся.** Либа без своего
-  `vitest.config.mts` не запускает ничего — так тесты домена броней не запускались ни разу.
-  Либа с конфигом, но без единого `*.spec.ts`, проходит зелёной из-за `passWithNoTests: true`,
-  который обычно стоит в каждом конфиге дерева, и на глаз эти два случая неотличимы: в обоих
-  прогон успешен. Доля либ без единого теста меряется пересчётом ниже — в дереве, где его
-  завели впервые, она вышла почти в две трети. Перед правкой в
-  незнакомой либе проверяется, есть ли в ней хоть один `*.spec.ts`; если нет — первый
-  заводится этой же правкой, а не откладывается: откладывать здесь не с чего, долг уже
-  накоплен. Пересчёт: `for d in $(find libs -name vitest.config.mts -exec dirname {} \;); do
-[ -z "$(find "$d" -name '*.spec.ts')" ] && echo "$d"; done | wc -l`.
-- **Зелёная сводка покрытия не значит, что тесты проходят.** Сверка читает заголовки тестов и
-  сопоставляет их со сценариями спека; исполняется ли тест и чем он кончается — она не знает
-  вовсе, и падающий тест значится в ней покрытием. Три сценария одной панели падали и до правки
-  экрана, а нашлось это только прогоном. Перед правкой экрана его сквозные тесты гоняются один
-  раз до первой строки кода: иначе чужое падение читается как своя регрессия, а своё — как
-  чужое.
-- **«Executable doesn't exist» — состояние машины, а не дефект правки.** Установлен только
-  chromium, `firefox` и `webkit` падают всегда: гонять `--project=chromium`, узкий экран —
-  `--project=mobile-chrome`. Та же ошибка приходит после смены версии Playwright: браузер
-  ставится под конкретную версию, и после подъёма нужен повторный
-  `npx playwright install chromium`. Девять тестов так и упали, и это выглядело регрессией
-  обновления.
-- **Первому прогону сразу после установки браузера верить нельзя.** Два падения сквозного
-  набора не повторились ни при отдельном прогоне тех же тестов, ни при втором полном. Такой
-  прогон повторяют, а выводы делают по второму.
-- **Повторный прогон через гейт пуша повторяет весь набор, а не упавший тест.** Гейт гоняет то,
-  что перечислил профиль дерева, целиком и с нуля: у сквозного набора это минуты, и каждая
-  попытка пуша стоит их заново. Соседняя ловушка верна ровно до этого места: повторить дёшево —
-  через гейт уже нет, и «повторить» превращается в «пушить, пока не пройдёт». Полный набор
-  поэтому гоняется руками до вызова пуша, а гейт только подтверждает уже известное. Тест,
-  упавший в полном наборе и прошедший при отдельном прогоне, зелёным не считается: это
-  нестабильный тест, и он заводится задачей тем же ходом. Прогон до зелёного уносит признак
-  вместе с падением, и следующий заход встречает то же самое как новость — а отличить чужую
-  нестабильность от своей регрессии ему нечем: оба случая выглядят одинаково.
-- Сквозная спека, которой нужен вход, без учётных данных в окружении пропускается молча — в
-  отчёте она значится `skipped`, и прогон выглядит успешным. Имена переменных — при дереве.
-- **Справочник флоу вторых сценариев не заводит.** В `docs/E2E_<ДОМЕН>_FLOWS.md` кладут то,
-  чего в спеке домена нет и быть не должно: `qa-dataid` элементов, состояния разметки, ловушки
-  стенда. Обещанное поведение остаётся сценарием в `scenarios.md`: если списать его во второе
-  место, копии разойдутся молча — `npm run check:specs` этого не увидит.
-- `npx nx serve` проверкой не считается: это шаг из правила `browser-verification`, а не тест.
-- **Кадр, зависящий от загрузки машины, проверяет машину, а не вёрстку.** Ожидание отсчётом
-  времени этим и кончается: на свободной машине набор зелен целиком, на занятой падает, и какой
-  именно кадр не успел — дело случая. Лечится ожиданием события, а не удлинением отсчёта: шрифты
-  подняты, картинки нарисованы, движение остановлено, положение узла не менялось два кадра
-  подряд. Пока ожидание идёт по времени, «проверено снимками» означает «машина была свободна», и
-  перезапуск, давший зелёное, этого не отменяет, а прячет. Восемь кадров расходились с эталоном
-  на 0,15–0,74 % в задании конвейера и проходили на той же машине вне его.
-- **Стенд, поднятый предыдущим шагом, останавливается перед съёмкой.** Оставленный работать, он
-  соревнуется за машину с тем, что снимают, и делает исход прогона зависящим от того, чем занят
-  сосед. Нагрузка, которую задание создаёт себе само — соседняя витрина, только что законченная
-  сборка, — ничем не отличается от чужой.
-- **Свой стенд снимается перед тем, как звать набор.** Прогон переиспользует поднятое на его
-  портах, и стенд, оставленный для замера, отдаёт ему чужую сборку с чужими данными. Красное при
-  этом приходит не строкой про занятый порт, а десятком спек про экраны — то есть выглядит
-  дефектом правки: за один заход так покраснели сначала шесть новых тестов, потом гейт пуша, и
-  оба раза причиной был свой же стенд. Разобранный занятый порт эту сторону не закрывает: он про
-  чужой стенд, а этот — про свой.
-- **Разбор упавшего кадра начинается с чисел, а не с картинки расхождения.** Доля площади
-  говорит, сколько разошлось, и молчит о том, что именно: сдвиг всего кадра на пиксель,
-  переставленные строки и рябь на сглаженных уголках выглядят на картинке одинаково — «стало
-  другим». Читаются координаты разошедшихся точек и величина расхождения по каналу: сдвинутые
-  границы блоков — это раскладка, разошедшийся текст при неподвижных границах — это данные,
-  единица-две по каналу на кривых краях — это цвет. Три расхождения одного набора разобрались
-  ровно так, и ни одно из трёх не оказалось дефектом экрана.
-- **Ожидаемое значение теста не берётся из кода, который тест проверяет.** Вывезенное из
-  проверяемой либы, оно делает тест зелёным при любом значении: «колесо показывает пять строк»
-  сходится и тогда, когда строк стало три. Ожидаемое пишется числом в самой спеке рядом с
-  проверкой, а общий модуль сквозных спек держит приёмы — открыть, дождаться, снять со
-  страницы, — но не то, что от страницы ожидается.
-- **Красное, пришедшее без правки кода, разбирается со стороны времени.** Зелёный прогон той же
-  вершины часом раньше означает, что искать надо не в правке: срок годности образца, високосный
-  день, смена суток по всемирному времени, часовой пояс машины. Спека прождала двое суток и
-  покраснела сама — прогон пришёлся на четыре минуты позже срока, записанного в её образце.
+- **A green test of a pure function is silent about a series the working path never produces.**
+  The function is right on what it was given, and the input is given by the test itself: a series
+  assembled for the convenience of the check proves behaviour on a case that never occurs in
+  work. Two green tests of the notification decision stood this way, and the safeguard the
+  decision was written for never fired once. The input shape is taken from the boundary where
+  the decision is called — the procedure, the service, the handler — and checked against it, not
+  invented next to the test.
+- **A green `nx test <project>` does not mean a single file was executed.** A lib without its own
+  `vitest.config.mts` runs nothing — that is how the tests of the booking domain never ran once.
+  A lib with a config but without a single `*.spec.ts` passes green because of
+  `passWithNoTests: true`, which usually stands in every config of the tree, and by eye the two
+  cases are indistinguishable: in both the run succeeds. The share of libs without a single test
+  is measured by the count below — in the tree where it was first done, it came out at almost
+  two thirds. Before an edit in an unfamiliar lib, check whether it has at least one
+  `*.spec.ts`; if not, the first one is created by that same edit, not postponed: there is
+  nothing to postpone from, the debt is already accumulated. The count:
+  `for d in $(find libs -name vitest.config.mts -exec dirname {} \;); do
+  [ -z "$(find "$d" -name '*.spec.ts')" ] && echo "$d"; done | wc -l`.
+- **A green coverage summary does not mean the tests pass.** The audit reads test titles and
+  matches them to the spec's scenarios; whether a test executes and how it ends, it does not know
+  at all, and a failing test is listed in it as coverage. Three scenarios of one panel were
+  failing before the screen edit too, and that was found only by a run. Before editing a screen,
+  its end-to-end tests are run once before the first line of code: otherwise someone else's
+  failure reads as one's own regression, and one's own as someone else's.
+- **"Executable doesn't exist" is the state of the machine, not a defect of the edit.** Only
+  chromium is installed, `firefox` and `webkit` always fail: run `--project=chromium`, narrow
+  screen — `--project=mobile-chrome`. The same error comes after a Playwright version change: the
+  browser is installed for a specific version, and after a bump a repeated
+  `npx playwright install chromium` is needed. Nine tests failed this way, and it looked like a
+  regression of the upgrade.
+- **The first run right after installing the browser cannot be trusted.** Two failures of the
+  end-to-end set repeated neither in a separate run of the same tests nor in a second full one.
+  Such a run is repeated, and conclusions are drawn from the second.
+- **A rerun through the push gate repeats the whole set, not the failed test.** The gate runs
+  what the tree's profile listed, whole and from scratch: for the end-to-end set that is minutes,
+  and every push attempt costs them anew. The neighbouring pitfall holds exactly up to this
+  point: repeating is cheap — through the gate it no longer is, and "repeat" turns into "push
+  until it passes". So the full set is run by hand before the push call, and the gate only
+  confirms what is already known. A test that failed in the full set and passed in a separate
+  run does not count as green: it is a flaky test, and it is filed as a task in the same turn.
+  Running until green carries the sign away together with the failure, and the next session
+  meets the same thing as news — with nothing to tell someone else's flakiness from its own
+  regression: both cases look the same.
+- An end-to-end test that needs a login is skipped silently without credentials in the
+  environment — in the summary it is listed as `skipped`, and the run looks successful. The
+  variable names are with the tree.
+- **The flows reference creates no second scenarios.** `docs/E2E_<DOMAIN>_FLOWS.md` holds what is
+  not and must not be in the domain spec: the elements' `qa-dataid`, markup states, stand
+  pitfalls. Promised behaviour stays a scenario in `scenarios.md`: copied into a second place,
+  the copies diverge silently — `npm run check:specs` will not see it.
+- `npx nx serve` does not count as a check: it is a step from the `browser-verification` rule,
+  not a test.
+- **A frame that depends on machine load checks the machine, not the layout.** Waiting by a timer
+  ends exactly there: on a free machine the set is green whole, on a busy one it fails, and which
+  frame did not make it is a matter of chance. It is cured by waiting for an event, not by
+  lengthening the timer: fonts loaded, images painted, motion stopped, the node's position
+  unchanged for two frames in a row. While the wait goes by time, "checked by snapshots" means
+  "the machine was free", and a rerun that gave green does not cancel that but hides it. Eight
+  frames diverged from the reference by 0.15–0.74 % in the pipeline step and passed on the same
+  machine outside it.
+- **A stand raised by the previous step is stopped before the shoot.** Left running, it competes
+  for the machine with what is being shot and makes the run's outcome depend on what the
+  neighbour is busy with. Load the step creates for itself — a neighbouring showcase, a build
+  just finished — differs in nothing from someone else's.
+- **One's own stand is taken down before the set is called.** The run reuses what is raised on
+  its ports, and a stand left for measurement hands it someone else's build with someone else's
+  data. The red then comes not as a line about a busy port but as a dozen screen tests — that
+  is, it looks like a defect of the edit: in one session first six new tests turned red, then the
+  push gate, and both times the cause was one's own stand. The busy-port case already taken
+  apart does not close this side: it is about someone else's stand, and this one is about one's
+  own.
+- **Investigating a failed frame starts with the numbers, not with the diff picture.** The area
+  share says how much diverged and is silent about what: a whole-frame shift by a pixel,
+  reordered rows and ripple on antialiased corners look the same in the picture — "became
+  different". The coordinates of the diverged points and the size of the divergence per channel
+  are read: shifted block boundaries are layout, diverged text with boundaries in place is data,
+  one or two per channel on curved edges is colour. Three divergences of one set were taken
+  apart exactly so, and none of the three turned out to be a screen defect.
+- **A test's expected value is not taken from the code the test checks.** Imported from the lib
+  under test, it makes the test green at any value: "the wheel shows five rows" matches even
+  when the rows became three. The expected value is written as a number in the test itself next
+  to the check, and the shared module of the end-to-end tests holds the techniques — open, wait,
+  read off the page — but not what is expected of the page.
+- **Red that came without a code edit is investigated from the side of time.** A green run of the
+  same tip an hour earlier means the search is not in the edit: a fixture's expiry date, a leap
+  day, the day rolling over in universal time, the machine's time zone. A test waited two days
+  and turned red by itself — the run fell four minutes after the date written in its fixture.
 
-## Что стояло в статьях
+## What stood in the articles
 
-- **Сид и содержимое с автором.** Три выдуманные цитаты дожили до отдельной задачи и всё это
-  время выглядели отзывами настоящих людей.
-- **Растр браузера.** Расхождение гуляет по кадру, приходит примерно раз в четыре прогона и на
-  светлых экранах не показывается вовсе, поэтому читается случайным.
-- **Маска и ширина.** Кадр списка уезжал на пиксель целиком, включая столбцы, где не менялось
-  ничего.
+- **The seed and content with an author.** Three invented quotes lived until a separate task and
+  all that time looked like reviews by real people.
+- **The browser raster.** The divergence wanders over the frame, comes about once in four runs
+  and does not show on light screens at all, so it reads as random.
+- **The mask and the width.** The list frame shifted by a pixel whole, including the columns
+  where nothing changed.
 

@@ -210,7 +210,7 @@ describe('sync', () => {
         put('.claude/skills/testing/implementation.md', '# testing — что здесь своё\n\n## Где исполняются статьи\n');
         const packaged: string = said(sync(env, false));
 
-        put(join(OVERRIDES_DIR, TESTING), '## Как закон применяется здесь\n\n- **Своя статья дерева.** Текст.\n');
+        put(join(OVERRIDES_DIR, TESTING), '## How the law applies here\n\n- **Своя статья дерева.** Текст.\n');
         const merged: string = said(sync(env, false));
 
         expect(packaged).toContain('статей без адреса');
@@ -732,7 +732,7 @@ describe('list', () => {
     });
 
     it('называет заголовок закона: по именам выбирать нечем', () => {
-        expect(said(list(env))).toContain('Поставка');
+        expect(said(list(env))).toContain('Delivery');
     });
 
     it('различает выбранное, невыбранное и пропущенное', () => {

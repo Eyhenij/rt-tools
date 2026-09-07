@@ -1,50 +1,53 @@
-# Поставка — холодная часть
+# Delivery — cold part
 
-Ловушки: грабли, на которые уже наступали в дереве на Azure DevOps. Грузится не вместе с
-правилом, а по требованию — при обычном решении она не нужна.
+Pitfalls: traps already stepped on in a tree on Azure DevOps. Loaded not with the rule but on
+demand — an ordinary decision does not need it.
 
-Правило — `git-workflow`; статьи, которыми держится закон, стоят там.
+The rule is `git-workflow`; the articles that hold the law stand there.
 
-## Ловушки
+## Pitfalls
 
-- **Одна работа — одна задача, сколько бы файлов она ни задела.** Числа, за которым правка
-  становится вторым рабочим элементом, здесь нет: делится то, что придётся откатывать порознь.
-  Сплошная правка текстов дерева была заведена тремя задачами «по объёму» — пришлось стирать
-  два рабочих элемента, закрывать два PR и переносить коммиты по одному с двумя конфликтами.
-  Одна из трёх не дала коммита вовсе: правка тел уже заведённых задач веткой не бывает и задачей
-  под ветку тоже.
-- **Рабочий элемент заводится командой, а не вызовами подряд.** Доска показывает элементы своей
-  области и итерации, и заведённый мимо них в очереди работ не виден: со стороны это выглядит
-  так же, как незаведённый. Команда заведения ставит все поля разом — род, состояние,
-  исполнителя, область и итерацию, — и печатает готовую строку заведения ветки. Замеченный по
-  ходу дефект проходит тот же путь.
-- **Ветка заводится вторым вызовом, а не тем же.** Гард главной ветки отклоняет составную
-  «создать ветку и сразу коммитить» целиком: ветки в момент разбора ещё нет.
-- **Сторона конфликта бывает удалением, и «сохранить обе стороны» заводит второе объявление.**
-  Главная ветка снимает объявление, потому что символ переехал, — в конфликте это выглядит как
-  сторона, которая ничего не дописала. Разбирается чтением версии главной ветки целиком, а не по
-  хунку, и сверяется проверкой повторов: обе копии сами по себе исправны, сборка и линт зелёные.
-- **Учётная запись для пуша и автор PR выбираются отдельно.** Если пушить пришлось из-под другой
-  записи, на следующий вызов это не переносится: PR открывают токеном учётной записи машинной
-  работы, и от того, чьей записью он открыт, зависит, кого можно назначить ревьювером. Однажды
-  смена записи ради пуша утекла в публикацию — PR вышел от владельца.
-- **Невалидный файл конвейера виден прогоном нулевой длительности сразу после пуша.** Прогон
-  заводится и кончается на разборе файла, не начав ни одного задания: в списке он стоит
-  отказом, а внутри нет ни задания, ни лога — читается только длительность. Поэтому список
-  прогонов ветки смотрится тем же движением, что и пуш: `az pipelines runs list` по своей
-  ветке.
-- **`online` у агента на своей машине означает запущенный процесс, а не работающий конвейер.**
-  Две стороны сходятся отдельно: требования заданий и возможности самого агента в его пуле.
-  Пока пересечения нет, агент стоит `online` и не берёт ничего, а задания ждут размещённого
-  пула — по состоянию это выглядит настроенным. Владельцу называют выполненное задание с его
-  номером, а не строку состояния.
-- **Вход в реестр образов из агента, запущенного службой, отказывает молча.** Служба идёт без
-  сеанса пользователя, а клиент реестра уходит в системный помощник хранения ключей и получает
-  отказ во взаимодействии — задание падает до сборки. Свой каталог настроек с пустым помощником
-  не спасает: клиент переписывает пустое значение обратно сам. Готовые команды — паттерн
-  `git-workflow-docker`.
-- **Новое рабочее дерево получает только то, что лежит в индексе.** `git worktree add`
-  разворачивает коммит, а настройки, ключи, локальные разрешения и зависимости в коммит не
-  входят: свежее дерево выглядит готовым и упирается в нехватку не сразу, а на первом гарде,
-  которому нужен ключ. Что именно переносится руками, названо списком в компаньоне правила, и
-  список пополняется тем же движением, которым заводится новый файл вне индекса.
+- **One piece of work — one task, however many files it touches.** There is no number past which
+  an edit becomes a second work item: what is split is what would have to be rolled back
+  separately. A blanket edit of the tree's texts was filed as three tasks "by volume" — two work
+  items had to be deleted, two PRs closed, and commits moved one by one with two conflicts. One
+  of the three yielded no commit at all: editing the bodies of already filed tasks is never a
+  branch, nor a task for a branch.
+- **A work item is created by the command, not by calls in a row.** The board shows the items of
+  its own area and iteration, and one created past them is not visible in the work queue: from
+  outside it looks the same as one not created. The creation command sets all the fields at
+  once — type, state, assignee, area and iteration — and prints the ready-made branch creation
+  line. A defect noticed along the way goes the same route.
+- **The branch is created by a second call, not the same one.** The main-branch guard rejects the
+  compound "create a branch and commit at once" whole: at the moment of parsing the branch does
+  not exist yet.
+- **A side of a conflict can be a deletion, and "keep both sides" creates a second declaration.**
+  The main branch removes the declaration because the symbol moved — in the conflict this looks
+  like a side that added nothing. It is sorted out by reading the main branch's version whole,
+  not by hunk, and verified by the duplicates check: each copy alone is sound, build and lint
+  green.
+- **The account for the push and the author of the PR are chosen separately.** If the push had to
+  go from another account, that does not carry over to the next call: the PR is opened with the
+  machine account's token, and which account opens it decides who can be assigned as reviewer.
+  Once a switch of account for the push leaked into publication — the PR came out from the
+  owner.
+- **An invalid pipeline file shows as a zero-length run right after the push.** The run is created
+  and ends on parsing the file, without starting a single step: in the list it stands as a
+  failure, and inside it has neither a step nor output — only the duration is readable. So the
+  branch's run list is looked at with the same motion as the push: `az pipelines runs list` for
+  one's own branch.
+- **`online` on a self-hosted agent means a running process, not a working pipeline.** Two sides
+  match separately: the demands of the pipeline steps and the capabilities of the agent itself in
+  its pool. Until they intersect, the agent stands `online` and takes nothing, while the steps
+  wait for a hosted pool — by its state this looks configured. The owner is told the executed
+  step with its number, not the state line.
+- **Registry login from an agent started as a service fails silently.** The service runs without
+  a user session, and the registry client goes to the system keychain helper and gets an
+  interaction refusal — the step fails before the build. Its own settings directory with an empty
+  helper does not save it: the client writes the empty value back itself. Ready-made commands —
+  pattern `git-workflow-docker`.
+- **A new working tree gets only what lies in the index.** `git worktree add` unpacks a commit,
+  and settings, keys, local permissions and dependencies are not part of a commit: the fresh tree
+  looks ready and hits the shortage not at once but on the first guard that needs a key. What
+  exactly is carried over by hand is named as a list in the rule's companion, and the list grows
+  with the same motion that creates a new file outside the index.

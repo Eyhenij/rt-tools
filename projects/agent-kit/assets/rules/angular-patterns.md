@@ -5,98 +5,99 @@ law: frontend-application
 description: Rule under the frontend-application law. Load when editing any Angular class — a component, store, service, directive, pipe, guard or interceptor. Names the signal input API, OnPush, zoneless, inject and where a subscription lives. Pattern angular-patterns-state.
 ---
 
-# Реактивность экрана — как это устроено здесь
+# Screen reactivity — how it works here
 
-Правило под закон `docs/constitution/frontend-application.md`. Закон говорит, что должно быть
-верно; здесь — на чём это стоит в этом дереве. Раскладка файла компонента —
-`component-structure`, стили — `styling-bem`, окружение браузера — `platform-access`, слой
-обращения к серверу — `api-layer`. Все пять под одним законом.
+Rule under the law `docs/constitution/frontend-application.md`. The law says what must be true; here
+— what it stands on in this tree. The layout of the component file — `component-structure`, styles —
+`styling-bem`, the browser environment — `platform-access`, the layer that talks to the server —
+`api-layer`. All five under one law.
 
-Правило про фронт: `libs/api/**` и `apps/api/**` — это NestJS, там своя среда, и ничего из
-перечисленного не применяется.
+The rule is about the frontend: `libs/api/**` and `apps/api/**` are NestJS, with an environment of
+their own, and nothing listed applies there.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                                | Здесь                                                                                              |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| состояние, которое пересчитывается само | `signal()` и `computed()`; Angular без Zone.js (`provideZonelessChangeDetection()`)                |
-| вход и выход компонента                 | `input()`, `input.required()`, `output()`; `viewChild()`, `contentChild()` и их множественные пары |
-| перерисовка по требованию               | `ChangeDetectionStrategy.OnPush` — на каждом компоненте                                            |
-| владелец подписки                       | `takeUntilDestroyed(this.#destroyRef)`                                                             |
-| источник действия                       | `Subject` с суффиксом `Source` в имени поля                                                        |
+| In the law                   | Here                                                                                              |
+| ---------------------------- | ------------------------------------------------------------------------------------------------- |
+| state that recomputes itself | `signal()` and `computed()`; Angular without Zone.js (`provideZonelessChangeDetection()`)         |
+| component input and output   | `input()`, `input.required()`, `output()`; `viewChild()`, `contentChild()` and their plural pairs |
+| redraw on demand             | `ChangeDetectionStrategy.OnPush` — on every component                                             |
+| owner of a subscription      | `takeUntilDestroyed(this.#destroyRef)`                                                            |
+| action source                | a `Subject` with the suffix `Source` in the field name                                            |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the first
+tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход правки класса приложения: с чего исполнитель начинает, где развилка между производным
-значением и действием, и чем кончается каждая ветка.
+The flow of editing an application class: where the executor starts, where the fork is between a
+derived value and an action, and how each branch ends.
 
 ```mermaid
 flowchart TD
-    A[Правится класс приложения] --> B{Что заводится}
-    B -->|Значение, выводимое из другого| C[computed: следит за сигналами, а не зовёт сервис]
-    B -->|Действие пользователя| D[Источник действия с суффиксом Source]
-    B -->|Состояние списка| E[Наследуется общая основа списочного стора]
-    D --> F[Подписка объявлена один раз при заведении, а не в методе]
-    F --> G{Прежний запрос ещё идёт}
-    G -->|Ответ нужен последний| H[Поток переключается]
-    G -->|Нужны все| I[Поток склеивается по очереди]
-    H --> J[Подписка гасится вместе с владельцем]
+    A[An application class is edited] --> B{What is declared}
+    B -->|A value derived from another| C[computed: watches signals instead of calling a service]
+    B -->|A user action| D[An action source with the suffix Source]
+    B -->|List state| E[The shared list-store base is inherited]
+    D --> F[The subscription is declared once at setup, not in a method]
+    F --> G{The previous request is still running}
+    G -->|The last response is needed| H[The stream switches]
+    G -->|All are needed| I[The stream concatenates in order]
+    H --> J[The subscription dies with its owner]
     I --> J
-    C --> K[Готово]
+    C --> K[Done]
     E --> K
     J --> K
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Подписка объявляется один раз, а не в методе действия.** Метод толкает значение в
-  источник, а долгоживущая подписка со `switchMap`, `exhaustMap` или `concatMap` объявляется в
-  конструкторе, в `ngOnInit` или в инициализаторе поля.
-- **Подписка гасится вместе с владельцем.** `takeUntilDestroyed` ставится в тот же поток, где
-  объявлена подписка.
-- **Источник действия носит суффикс `Source` в имени.** Иначе поток и значение в коде
-  неотличимы, и `next` уходит не туда.
-- **Вызов сервиса внутри `computed` зависимостью не становится.** Производное значение следит
-  только за прочитанными сигналами, а обычный метод сигналом не является: значение остаётся
-  таким, каким было в момент первого счёта. Текущий язык, текущее владение, текущий признак
-  среды читаются сигналом службы — тогда производное пересобирается вместе с их сменой. Ни
-  сборка, ни линтер этого не видят.
-- **Списочный стор наследует общую основу.** Записи, страница, порядок, условия отбора, строка
-  поиска и конфиг выборки уже там, и наследнику остаются четыре строки.
+- **A subscription is declared once, not in the action method.** The method pushes a value into the
+  source, and the long-lived subscription with `switchMap`, `exhaustMap` or `concatMap` is declared
+  in the constructor, in `ngOnInit` or in a field initializer.
+- **A subscription dies with its owner.** `takeUntilDestroyed` goes into the same stream where the
+  subscription is declared.
+- **An action source carries the suffix `Source` in its name.** Otherwise the stream and the value
+  cannot be told apart in code, and `next` goes to the wrong place.
+- **A service call inside `computed` does not become a dependency.** A derived value watches only
+  the signals it read, and an ordinary method is not a signal: the value stays what it was at the
+  first computation. The current language, the current property, the current environment sign are
+  read from a service signal — then the derived value rebuilds with their change. Neither the build
+  nor the linter sees this.
+- **A list store inherits the shared base.** Records, page, order, filter conditions, search string
+  and query config are already there, and the heir is left with four lines.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Ни `OnPush`, ни сигнальный API входов, ни отсутствие геттеров в компонентах не проверяет
-ничто: `@Input()` и геттер компилируются и работают, а расхождение видно только чтением.
-Обращение к окружению браузера тоже не проверяется — это `Q-FA-1` в законе.
+Neither `OnPush`, nor the signal input API, nor the absence of getters in components is checked by
+anything: `@Input()` and a getter compile and work, and the divergence is seen only by reading.
+Access to the browser environment is not checked either — that is `Q-FA-1` in the law.
 
-## Паттерны
+## Patterns
 
-- `angular-patterns-state` — сигналы, производные значения, состояние сервиса, подписка.
+- `angular-patterns-state` — signals, derived values, service state, subscription.
 
-## Ловушки
+## Pitfalls
 
-- **Производное значение считается `computed`, а не эффектом.** `effect`, кладущий значение в
-  сигнал, — это ручной пересчёт, и он рано или поздно отстаёт от источника.
-- **Геттеров в компонентах нет.** Геттер пересчитывается на каждой перерисовке, и цена его не
-  видна ни в одном месте кода.
-- **Статический атрибут без значения задаёт входу пустую строку, а не умолчание.**
-  `<ng-template someControl>` даёт `''`, и вход с осмысленным умолчанием молча его теряет;
-  сигнальный вход с алиасом здесь ничем не отличается от `@Input()`. Вход, у которого умолчание
-  что-то значит, приводит пустую строку к нему сам — `transform` или проверка в `computed`.
-- **Подписка на каждый вызов метода не даёт выбрать, что делать с предыдущим запросом.**
-  Быстрые нажатия дают гонку ответов, и побеждает тот, что вернулся последним, а не тот, что
-  нажали последним.
-- Запрет подписки в методе идёт по имени `subscribe`, а не по типу: вызов с таким именем у
-  чего угодно считается подпиской, а `const fn = stream$.subscribe` без вызова — нет.
-  Разрешены конструктор, `ngOnInit`, инициализатор поля и всё, что объявлено вне класса;
-  запрещены остальные методы, включая приватные с `#`, геттеры и `ngAfterViewInit`.
-- Инициализация DOM после первой отрисовки — `afterNextRender()`, а не `ngAfterViewInit`:
-  сайт отдаётся сервером, и DOM там появляется позже.
-- `viewChild` на поле с `#` Angular не принимает — поле объявляется `protected`.
+- **A derived value is computed with `computed`, not with an effect.** An `effect` that puts a value
+  into a signal is a manual recomputation, and sooner or later it lags behind the source.
+- **There are no getters in components.** A getter is recomputed on every redraw, and its cost is
+  visible nowhere in the code.
+- **A static attribute without a value sets the input to an empty string, not to the default.**
+  `<ng-template someControl>` gives `''`, and an input with a meaningful default loses it silently.
+  A signal input with an alias is no different from `@Input()` here. An input whose default means
+  something coerces the empty string to it itself — a `transform` or a check in `computed`.
+- **A subscription on every method call gives no way to choose what to do with the previous
+  request.** Fast presses give a race of responses, and the one that returned last wins, not the one
+  pressed last.
+- The ban on a subscription in a method goes by the name `subscribe`, not by type: a call with that
+  name on anything counts as a subscription, and `const fn = stream$.subscribe` without a call does
+  not. Allowed are the constructor, `ngOnInit`, a field initializer and everything declared outside
+  the class; forbidden are the other methods, including private ones with `#`, getters and
+  `ngAfterViewInit`.
+- DOM initialization after the first render — `afterNextRender()`, not `ngAfterViewInit`: the site
+  is served by the server, and the DOM appears there later.
+- Angular does not accept `viewChild` on a `#` field — the field is declared `protected`.

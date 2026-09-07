@@ -4,110 +4,109 @@ kind: rule
 law: lib-imports
 description: Rule under the lib-imports law. Load when editing project manifests, build paths, linter boundaries, any barrel and the layout checks, and when deciding where a shared symbol lives. Patterns lib-layers-new, lib-layers-move.
 ---
-<!-- rt-kit v0.25.0 · rules/lib-layers.md · e006f6ed3912 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/lib-layers.md · cefd31947c7b · правится надстройкой, не здесь -->
 
-# Импорты между либами — как это устроено здесь
+# Imports between libs — how it works here
 
-Правило под закон `docs/constitution/lib-imports.md`. Закон говорит, кто кого видит; здесь —
-как это нарезано в этом дереве, чем названо и чего у нас нет.
+Rule under the law `docs/constitution/lib-imports.md`. The law says who sees whom; here — how it is
+cut in this tree, what it is called and what we do not have.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                         | Здесь                                                  |
-| -------------------------------- | ------------------------------------------------------ |
-| семья либ                        | `libs/site`, `libs/admin`, `libs/api`                  |
-| слой                             | `api`, `data-access`, `feature`, `shell`, `ui`, `util` |
-| право видеть либу                | тег в `eslint/boundaries/domains/<семья>.config.mjs`   |
-| общая всем трём приложениям либа | `libs/common/util`, тег `scope:common-util`            |
-| основание семейства              | `<семья>/core`; его тег входит в `ADMIN_UNIVERSAL`     |
-| барель                           | `src/index.ts` либы и `index.ts` каталога компонента   |
+| In the law                           | Here                                                                |
+| ------------------------------------ | ------------------------------------------------------------------- |
+| lib family                           | `libs/site`, `libs/admin`, `libs/api`                               |
+| layer                                | `api`, `data-access`, `feature`, `shell`, `ui`, `util`              |
+| the right to see a lib               | a tag in `eslint/boundaries/domains/<family>.config.mjs`            |
+| lib shared by all three applications | `libs/common/util`, tag `scope:common-util`                         |
+| family base                          | `<family>/core`; its tag is in `ADMIN_UNIVERSAL`                    |
+| barrel                               | `src/index.ts` of the lib and `index.ts` of the component directory |
 
-Фичевый домен фронта — шесть слоёв (`api`, `data-access`, `feature/<экран>`, `shell`, `ui`,
-`util`), общий домен — те же без `shell`. У бэкенда `ui` и `shell` нет: отдавать разметку и
-роутиться ему нечем.
+A feature domain of the frontend has six layers (`api`, `data-access`, `feature/<screen>`, `shell`,
+`ui`, `util`), a common domain the same without `shell`. The backend has no `ui` and no `shell`: it
+has nothing to serve markup with or to route by.
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the first
+tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход заведения общего символа: где он должен жить, что делать с недостающим правом импорта и чем
-проверяется граница.
+The flow of declaring a shared symbol: where it must live, what to do with a missing import right
+and how the boundary is checked.
 
 ```mermaid
 flowchart TD
-    A[Нужен общий символ] --> B{Он про предмет или про механику}
-    B -->|Предмет| C[Живёт в домене этого предмета]
-    B -->|Механика, общая нескольким доменам| D[Живёт в основании семейства, а не в новом домене]
-    C --> E{Импорт разрешён границами}
+    A[A shared symbol is needed] --> B{It is about the subject or the mechanics}
+    B -->|Subject| C[Lives in the domain of that subject]
+    B -->|Mechanics shared by several domains| D[Lives in the family base, not in a new domain]
+    C --> E{The import is allowed by the boundaries}
     D --> E
-    E -->|Да| F[Импортируется по алиасу либы]
-    E -->|Нет| G{Право законно}
-    G -->|Да| H[Дописывается строкой в настройке границ, с причиной]
-    G -->|Нет| I[Символ переезжает туда, откуда его видно обеим сторонам]
+    E -->|Yes| F[Imported by the lib alias]
+    E -->|No| G{The right is legitimate}
+    G -->|Yes| H[Added as a line in the boundaries config, with a reason]
+    G -->|No| I[The symbol moves where both sides can see it]
     H --> F
     I --> F
-    F --> J{Символ чужой}
-    J -->|Да| K[Наружу не реэкспортируется ни одной формой: барель отдаёт только своё]
-    J -->|Нет| L[Барель отдаёт его алиасом, а не относительным путём]
-    K --> M[Граница проверяется внесённым нарушением, а не зелёным прогоном]
+    F --> J{The symbol is foreign}
+    J -->|Yes| K[Not re-exported outward in any form: the barrel gives only its own]
+    J -->|No| L[The barrel gives it by alias, not by relative path]
+    K --> M[The boundary is checked by an introduced violation, not by a green run]
     L --> M
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Чужой символ не реэкспортируется ни одной из двух форм.** Запрещены и
-  `export { X } from '@<область>/…'`, и пара «импорт плюс `export { X };`»: вторая
-  выглядит как собственное объявление и глазами в ревью проходила.
-- **Строка с алиасом чужой либы в бареле — тот же реэкспорт.** Относительный путь в бареле
-  законен: он собирает наружу собственные файлы либы.
-- **Не хватает права — оно дописывается строкой в конфиге домена с комментарием.** Импорт,
-  который «просто заработал», означает, что тег ещё не сужен.
-- **У `libs/common/util` список зависимостей пуст, и Angular туда не попадает.** Либу
-  импортирует бэкенд, и фреймворк уехал бы в его бандл; токен DI, общий двум фронтовым
-  семьям, живёт в `common/platform`.
-- **Основание семейства видит только `util`.** Его зовут все домены семьи, и любая его
-  зависимость становится общей для всех сразу.
-- **Поведение, которого основанию семейства не видно, приходит к нему токеном.** Токен
-  объявляется в `util` общего домена, а `data-access` подставляет туда свою реализацию: так
-  основание зовёт её, не видя её либы. Расширение границ основания ради одного вызова
-  открывает эту либу всем доменам семьи сразу и обратно уже не сужается.
-- **Домен заводится под предмет, а не под механику.** Механика, общая нескольким доменам,
-  едет в либу, которой она уже видна: у фронта это основание семейства, у бэкенда — слой
-  `util`, перечисленный у каждого домена.
-- **Домен, у которого непуст один слой, значится строкой с причиной.** Иначе он неотличим от
-  слота: пустые слои есть и у того, и у другого, а барель лежит в обоих.
+- **A foreign symbol is not re-exported in either of the two forms.** Both `export { X } from
+  '@<scope>/…'` and the pair "import plus `export { X };`" are forbidden. The second looks like an
+  own declaration and passed review by eye.
+- **A line with a foreign lib alias in a barrel is the same re-export.** A relative path in a barrel
+  is legitimate: it collects the lib's own files outward.
+- **A missing right is added as a line in the domain config with a comment.** An import that "just
+  worked" means the tag is not narrowed yet.
+- **`libs/common/util` has an empty dependency list, and Angular does not get in.** The backend
+  imports the lib, and the framework would ride into its bundle; a DI token shared by the two
+  frontend families lives in `common/platform`.
+- **The family base sees only `util`.** Every domain of the family calls it, and any dependency of
+  it becomes shared by all at once.
+- **Behaviour the family base cannot see comes to it by a token.** The token is declared in the
+  `util` of the common domain, and `data-access` puts its implementation there: so the base calls it
+  without seeing its lib. Widening the base boundaries for one call opens that lib to every domain
+  of the family at once and never narrows back.
+- **A domain is started for a subject, not for mechanics.** Mechanics shared by several domains ride
+  into the lib that already sees them. On the frontend that is the family base, on the backend the
+  `util` layer listed with every domain.
+- **A domain with exactly one non-empty layer is listed as a line with a reason.** Otherwise it
+  cannot be told from a slot: both have empty layers, and a barrel lies in both.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Отклонение основания семейства от лесенки сегодня одно и названо в `CORE_EXCEPTIONS`
-проверки: `common/proto` и `common/connect` у `admin/core` ради транспорта Connect.
+Today the family base deviates from the ladder once, and it is named in `CORE_EXCEPTIONS` of the
+check: `common/proto` and `common/connect` for `admin/core`, for the sake of Connect transport.
 
-Полный набор слоёв требуется у всех, и пустой слой дефектом не считается: `api` пуст у
-домена, который ни с кем чужим не говорит. Судится только крайний случай — непуст ровно один
-слой; такой домен обычно один, и он стоит в списке исключений с
-причиной.
+The full set of layers is required of everyone, and an empty layer is not a defect: `api` is empty
+in a domain that talks to no one foreign. Only the edge case is judged — exactly one non-empty
+layer; such a domain is usually one, and it stands in the exceptions list with a reason.
 
-## Паттерны
+## Patterns
 
-- `lib-layers-new` — завести или удалить либу: генератор, теги, алиас, README.
-- `lib-layers-move` — перенести код между либами: порядок, границы, импорты, README обеих.
+- `lib-layers-new` — create or remove a lib: generator, tags, alias, README.
+- `lib-layers-move` — move code between libs: order, boundaries, imports, README of both.
 
-## Ловушки
+## Pitfalls
 
-- **Либа, которую никто не импортирует, не проверена ничем.** `nx lint` и `nx test` проверяют
-  её саму, а не договор с потребителем: потерянное поле в `*.State` ошибкой не считается, пока
-  нет вызывающего кода. Первый импортёр и есть первая проверка — слой моделей принимается
-  после `nx build` и живого прогона сценария, а не по зелёному `lint test`.
-- **Проверка принимается на нарушении, а не на зелёном прогоне.** Нарушение вносится руками,
-  прогон краснеет, правка снимается. У проверок в `tools/` тестов нет, и это единственная
-  приёмка.
-- `git rm -r` оставляет `node_modules/.vite` внутри удалённого каталога, и проверка продолжает
-  видеть его как домен без слоёв. Добивать `rm -rf`.
-- Образец, написанный второй раз, ловит `npm run check:dupes` — правило `shared-code`.
+- **A lib nobody imports is checked by nothing.** `nx lint` and `nx test` check the lib itself, not
+  its contract with the consumer: a lost field in `*.State` is not an error while there is no
+  calling code. The first importer is the first check — the models layer is accepted after `nx
+  build` and a live run of the scenario, not by a green `lint test`.
+- **A check is accepted on a violation, not on a green run.** The violation is introduced by hand,
+  the run turns red, the edit is reverted. The checks in `tools/` have no tests, and this is the
+  only acceptance.
+- `git rm -r` leaves `node_modules/.vite` inside the removed directory, and the check keeps seeing
+  it as a domain without layers. Finish with `rm -rf`.
+- A snippet written a second time is caught by `npm run check:dupes` — rule `shared-code`.
 
 ## Круги импортов внутри пакета
 

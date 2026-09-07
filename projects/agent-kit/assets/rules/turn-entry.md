@@ -5,103 +5,108 @@ law: work-conduct
 description: Rule under the work-conduct law. Load when editing the session entry hook, the turn map and the check over it, and when deciding what a session gets into its context before the first reply. The course of work itself — rule task-flow.
 ---
 
-# Вход в заход — как это устроено здесь
+# Session entry — how it works here
 
-Правило под закон `docs/constitution/work-conduct.md`. Закон говорит, что переданное прошлым
-заходом приходит в новый заход само и что порядок ведения работы приходит вместе с работой;
-здесь — чем это сделано в этом дереве. Сам ход работы — правило `task-flow` под тем же законом:
-там про состояния и их обязательные действия, здесь — про то, как они попадают в заход.
+Rule under the law `docs/constitution/work-conduct.md`. The law says that what the past session
+handed over comes into the new session by itself, and that the order of conducting work comes
+together with the work; here — how this is done in this tree. The course of work itself — rule
+`task-flow` under the same law: there, the states and their mandatory actions; here, how they get
+into the session.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                   | Здесь                                                                         |
-| -------------------------- | ----------------------------------------------------------------------------- |
-| вход в заход               | то, что хук старта кладёт в контекст до первой реплики                        |
-| переданное прошлым заходом | раздел «Передача захода» в ходе работы этой ветки, а у работы без папки задачи — файл по имени ветки в каталоге передач; пишет его хук перед сжатием контекста |
-| порядок ведения работы     | карта хода — состояния с обязательными действиями и четыре выхода хода        |
-| запуск                     | первый запуск, возобновление, сжатие контекста, очистка                       |
+| In the law | Here |
+| --- | --- |
+| session entry | what the startup hook puts into the context before the first reply |
+| what the past session handed over | the "Session handover" section in the progress of this branch; for work without a task folder — a file named after the branch in the handovers directory. The hook writes it before context compaction |
+| the order of conducting work | the turn map — the states with their mandatory actions and the four turn exits |
+| a launch | first launch, resume, context compaction, clear |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not.
 
-## Ход
+## Flow
 
-Ход подачи: что кладётся в контекст, в каком порядке и что делается с недостающим.
+The flow of the feed: what is put into the context, in what order, and what is done about what is
+missing.
 
 ```mermaid
 flowchart TD
-    A[Запуск захода] --> B{Есть раздел передачи в ходе работы этой ветки}
-    B -->|Да| C[Раздел кладётся в контекст целиком, файл вне дерева не читается]
-    B -->|Нет| B2{Есть файл передачи по имени ветки}
-    B2 -->|Да| C
-    B2 -->|Нет| D[О передаче не говорится ничего]
-    C --> E{Разложен ресурс карты хода}
+    A[Session launch] --> B{The progress of this branch has a handover section}
+    B -->|Yes| C[The section goes into the context whole; the file outside the tree is not read]
+    B -->|No| B2{There is a handover file named after the branch}
+    B2 -->|Yes| C
+    B2 -->|No| D[Nothing is said about a handover]
+    C --> E{The turn map resource is laid out}
     D --> E
-    E -->|Да| F[Карта кладётся следом: состояния, действия, четыре выхода]
-    E -->|Нет| G[О карте не говорится ничего]
-    F --> H[Хук выходит нулём: запуск не отбивается ни при каком исходе]
+    E -->|Yes| F[The map goes next: states, actions, four exits]
+    E -->|No| G[Nothing is said about a map]
+    F --> H[The hook exits with zero: the launch is refused on no outcome]
     G --> H
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Передача прошлого захода приходит в контекст тем же запуском, что и состояние работы.**
-  Написанная и не прочитанная, она равна ненаписанной: следующий заход о ней не знает и
-  начинает с пустого места — с того самого, ради чего её и писали.
-- **Передача берётся по имени текущей ветки.** Передач в каталоге столько, сколько было веток;
-  чужая, поданная как своя, описывает работу, которой в этом дереве нет.
-- **Передачи нет — вход об этом молчит.** Ветка, по которой заход ещё не закрывался, это
-  обычное начало работы, а не поломка: отказ на ней превращал бы каждый первый заход в разбор
-  хука.
-- **Карта хода приходит тем же запуском и лежит своим файлом, а не вынимается из правила.**
-  Разобранная на месте из таблицы правила, она ломается молча при первой правке разметки;
-  зашитая в хук — расходится с правилом без единой правки.
-- **Карта короче правила, и предел ей назначает проверка дерева.** Этим она и полезна:
-  выросшая до правила, она съедает то самое окно, ради которого её кладут в контекст, — и
-  заметить это нечем, потому что она продолжает приходить и продолжает быть верной.
-- **Текст, едущий в контекст, пишется списком, а не таблицей.** Форматтер добивает столбцы
-  таблицы пробелами до общей ширины, и эти пробелы уезжают в каждый заход, не значая ничего:
-  в словаре они составляли треть файла, а со строками-разделителями — сорок процентов. Перевод
-  тех же записей в список «- **термин** — что это» срезал вход на девять тысяч знаков, не тронув
-  ни одного слова. Таблица остаётся законной там, где столбцов больше двух и их сравнивают
-  глазами; проверки, читающие такой текст, знают обе формы.
-- **Состояние, объявленное правилом и забытое в карте, — расхождение.** Заход получает карту,
-  не находит в ней своего состояния и идёт читать правило: карта работает ровно до первого
-  нового состояния.
-- **Вход подаётся на всех четырёх запусках, а не только после сжатия.** Заход после обрыва и
-  заход после очистки начинают с того же пустого места, и разница между ними исполнителю не
-  видна вовсе.
-- **Хук входа запуск не отбивает.** Отказ любой его части — нечитаемый файл, отсутствующий
-  ресурс, чужие права — оставляет заход без части входа, но не без захода.
+- **The past session's handover comes into the context by the same launch as the work state.**
+  Written and not read, it equals unwritten: the next session knows nothing of it and starts from a
+  blank — the very blank it was written against.
+- **The handover is taken by the name of the current branch.** There are as many handovers in the
+  directory as there were branches; someone else's, served as one's own, describes work this tree
+  does not have.
+- **No handover — the entry is silent about it.** A branch on which no session has closed yet is an
+  ordinary start of work, not a breakage: a refusal there would turn every first session into an
+  investigation of the hook.
+- **The turn map comes by the same launch and lies as a file of its own, not pulled out of the
+  rule.** Parsed on the spot from the rule's table, it breaks silently at the first markup edit;
+  hard-wired into the hook, it drifts from the rule without a single edit.
+- **The map is shorter than the rule, and its limit is set by the tree's check.** That is what makes
+  it useful: grown to the size of the rule, it eats the very window it is put into the context for —
+  and there is nothing to notice this by, because it keeps arriving and keeps being right.
+- **Text that travels into the context is written as a list, not a table.** The formatter pads table
+  columns with spaces to a common width, and those spaces travel into every session meaning nothing:
+  in the glossary they made a third of the file, and with the separator rows — forty percent.
+  Turning the same entries into a list "- **term** — what it is" cut the entry by nine thousand
+  characters without touching a word. A table stays lawful where there are more than two columns and
+  they are compared by eye; the checks that read such text know both forms.
+- **A state declared by the rule and forgotten in the map is a divergence.** The session gets the
+  map, does not find its state in it and goes to read the rule: the map works exactly until the
+  first new state.
+- **The entry is served on all four launches, not only after compaction.** A session after a break
+  and a session after a clear start from the same blank, and the executor cannot see the difference
+  between them at all.
+- **The entry hook does not refuse the launch.** A failure of any part of it — an unreadable file, a
+  missing resource, someone else's permissions — leaves the session without part of the entry, but
+  not without the session.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Полноту самой передачи не проверяет ничто: хук подаёт то, что лежит, и о том, дописал ли
-исполнитель к черновику своё, судить машине нечем. Держится это паттерном закрытия захода.
+Nothing checks the completeness of the handover itself: the hook serves what lies there, and whether
+the executor added their own to the draft the machine has nothing to judge by. This is held by the
+session-closing pattern.
 
-Не проверяется и то, прочитал ли заход поданное. Вход кладётся в контекст, а что с ним делают
-дальше — свойство хода, а не файла.
+Whether the session read what was served is not checked either. The entry is put into the context,
+and what is done with it next is a trait of the turn, not of the file.
 
-## Паттерны
+## Patterns
 
-- `turn-entry-map` — что входит в карту, порядок подачи и живая проба хука.
-- `task-flow-handoff` — закрытие захода: точка остановки и форма передачи; паттерн соседнего
-  правила, но читается в паре с этим.
+- `turn-entry-map` — what goes into the map, the order of serving and a live trial of the hook.
+- `task-flow-handoff` — closing a session: the stopping point and the form of the handover; a
+  pattern of the neighbouring rule, but read in pair with this one.
 
-## Ловушки
+## Pitfalls
 
-- **Хук, подающий пустоту, неотличим от работающего.** Вход, у которого нет ни передачи, ни
-  карты, печатает ноль байт и возвращает ноль — ровно так же выглядит хук, который не запустился
-  вовсе. Проверяется это не глазами по контексту, а вызовом хука руками на дереве, где обе части
-  лежат.
-- **Передача пишется для машины, а не для владельца.** Обращение в ней — «спроси у него, чем
-  кончилась проба» — уходит в пустоту: к минуте, когда передачу читают, владельца в разговоре
-  ещё нет.
-- **Вопрос, записанный передачей, вопросом владельцу не становится.** Адресован он её автору —
-  тому же заходу, который его отложил, — и до владельца доходит только после сверки с ходом
-  работы: часть таких вопросов закрыта его шагом, и спрашивать по ним значит спрашивать про уже
-  назначенное. Унаследованный вопрос тем и опасен, что выглядит заданным раньше и потому
-  решённым: меню «зафиксировать, оставить или откатить» уходило владельцу дважды, притом что
-  отметка сделанного этапа и его фиксация в ветке — обычный шаг работы.
+- **A hook that serves emptiness cannot be told from a working one.** An entry with neither a
+  handover nor a map prints zero bytes and returns zero — exactly what a hook that never ran looks
+  like. This is checked not by eye over the context but by calling the hook by hand on a tree where
+  both parts lie.
+- **The handover is written for the machine, not for the owner.** An address in it — "ask him how
+  the trial ended" — goes into the void: by the minute the handover is read, the owner is not yet in
+  the conversation.
+- **A question recorded by a handover does not become a question to the owner.** It is addressed to
+  its author — the same session that postponed it — and reaches the owner only after a check against
+  the progress: some such questions are closed by its step, and asking them means asking about what
+  is already assigned. An inherited question is dangerous precisely because it looks asked earlier
+  and therefore settled: the menu "commit, keep or roll back" went to the owner twice, although
+  marking a done stage and committing it in the branch is an ordinary work step.

@@ -192,11 +192,11 @@ describe('propose', () => {
 
     it('SC-AK-231 — надстройка дерева уезжает вместе со сводкой', async () => {
         start();
-        put(`${OVERRIDES_DIR}/pitfalls/testing.md`, '## Ловушки\n\nСвой текст про ловушки.');
+        put(`${OVERRIDES_DIR}/pitfalls/testing.md`, '## Pitfalls\n\nСвой текст про ловушки.');
 
         await shipping();
 
-        expect(summarySent().overrides).toContainEqual({ resource: 'pitfalls/testing.md', section: '## Ловушки', kind: 'replace' });
+        expect(summarySent().overrides).toContainEqual({ resource: 'pitfalls/testing.md', section: '## Pitfalls', kind: 'replace' });
     });
 
     it('SC-AK-78 — наружу уезжает только адрес «пакет»', async () => {

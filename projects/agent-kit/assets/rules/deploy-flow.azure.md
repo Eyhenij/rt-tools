@@ -5,125 +5,135 @@ law: delivery
 description: Rule under the delivery law for a tree in Azure DevOps — the part about the rollout. Load when an edit goes to production — merge into the main branch, the pipeline, images and tags, storage migrations. Patterns git-workflow-migration, -restart, -docker, -secrets.
 ---
 
-# Выкатка — как это устроено здесь
+# Rollout — how it works here
 
-Правило под закон `docs/constitution/delivery.md` — та его часть, что про прод. Закон
-говорит, что должно быть верно; здесь — каким приёмом это держится в дереве, лежащем
-в Azure DevOps. Работа с очередью, ветка, коммит и заявка — правило `git-workflow` под тем же
-законом.
+Rule under the law `docs/constitution/delivery.md` — the part of it about production. The law
+says what must be true; here — by which technique it is held in a tree that lives in Azure DevOps.
+Working with the queue, the branch, the commit and the PR — the rule `git-workflow` under the
+same law.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                         | Здесь                                                    |
-| -------------------------------- | -------------------------------------------------------- |
-| попадание правки в главную ветку | слияние PR; чем запускается выкатка — слиянием или ручным запуском, — называет компаньон рядом                                                                                                                                                                           |
-| образ того коммита               | `IMAGE_TAG=<sha>` в командах `docker compose` на сервере                                                                                                                                                                               |
-| изменение хранилища              | миграция в `prisma/migrations/<метка>_<имя>/`                                                                                                                                                                                          |
+| In the law                            | Here                                                                                              |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| an edit reaching the main branch      | a PR merge; what starts the rollout — the merge or a manual run — is named by the companion next to it |
+| the image of that commit              | `IMAGE_TAG=<sha>` in the `docker compose` commands on the server                                  |
+| a storage change                      | a migration in `prisma/migrations/<метка>_<имя>/`                                                 |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the
+first tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход выкатки: что уезжает на прод, чем помечен образ и что делается со старыми.
+The flow of a rollout: what leaves for production, how the image is tagged and what is done with
+the old ones.
 
 ```mermaid
 flowchart TD
-    A[Слияние в главную ветку] --> B{Правка задела код}
-    B -->|Нет| C[Шаги сборки пропускаются по признаку состава правки]
-    B -->|Да| D[Образ собирается и метится sha того коммита]
-    D --> E{Хранилище меняется этой правкой}
-    E -->|Да| F[Цепочка миграций прогнана с пустого хранилища до слияния]
-    E -->|Нет| G[Образ выкатывается по sha, а не по метке «последний»]
+    A[Merge into the main branch] --> B{The edit touched code}
+    B -->|No| C[Build steps are skipped by the sign of the edit's makeup]
+    B -->|Yes| D[The image is built and tagged with the sha of that commit]
+    D --> E{The storage changes with this edit}
+    E -->|Yes| F[The migration chain was run from an empty storage before the merge]
+    E -->|No| G[The image is rolled out by sha, not by the tag "latest"]
     F --> G
-    G --> H[Старые образы снимаются, три последних sha остаются глубиной отката]
-    H --> I{Прод отвечает тем, что выкачено}
-    I -->|Нет| J[Разбор выкатки: перезапуск идёт по sha, а не по последней метке]
-    I -->|Да| K[Сверка очереди работ читает последний прогон главной ветки]
+    G --> H[Old images are removed, the last three sha stay as rollback depth]
+    H --> I{Production answers with what was rolled out}
+    I -->|No| J[Rollout analysis: the restart goes by sha, not by the latest tag]
+    I -->|Yes| K[The work queue audit reads the last run of the main branch]
     C --> K
     J --> K
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Конвейер судит по составу правки, а не гоняет всё подряд.** Шаги, которым нечего проверять,
-  пропускаются по признаку, посчитанному от главной ветки: ветка, не тронувшая ни строки кода,
-  не поднимает стенда, не снимает кадров и не собирает образов. Признак объявляется переменной
-  задания и считается один раз, а не переспрашивается в каждом условии. Пропущенный шаг виден в
-  прогоне пропущенным — молча выпавший читается как пройденный.
-- **Чем запускается выкатка, называет дерево, а не правило.** У одного дерева прод едет от
-  слияния, у другого — ручным запуском, и сказанное здесь безусловно врёт про второе: правило
-  приходит в контекст каждой сессии, и прочитавший его считает влитое выкаченным. Прод,
-  отставший от главной ветки на сотни коммитов, так и читался поломкой приложения. Строка стоит
-  в компаньоне рядом, вместе со способом спросить, что выкачено на самом деле.
-- **Выкатка идёт от слияния — переменные окружения, секреты и записи имён ставятся до него.**
-  Фильтры путей конвейера покрывают документы отдельно. Дерево с ручным запуском эту статью
-  читает иначе: там граница — сам запуск, и до него ставится то же самое.
-- **Признак режима объявлен в образе, а не только в составе прода.** Значение, заданное
-  составом, действует лишь на контейнер, поднятый этим составом; ручной прогон того же образа
-  идёт с пустым значением, а пусто здесь означает локалхост — со всеми отладочными
-  умолчаниями, которые он разрешает. Умолчание образа задаётся в самом образе.
-- **Образы выкатываются по sha коммита, а не по метке «последний».** Метка в реестре отстаёт
-  от главной ветки, и прод молча возвращается к прежней версии, продолжая отвечать.
-- **Выкатка убирает за собой старые образы, оставляя три последних sha.** Помеченный sha образ
-  висячим не бывает никогда, и чистка висячего его не касается: за полгода они съедают диск
-  сервера целиком. Три sha — это глубина отката, и меньше брать нельзя: поломка, замеченная
-  через две выкатки, откатывается уже некуда.
-- **Описание прода правится вместе с составом прода.** Устройство, путь запроса, гейты и
-  бэкапы описаны текстами вне слоёв правил, и ни линтер, ни сборка их не читают: расхождение
-  копится молча, а читают эти тексты как действующие. Пару стережёт гард документов.
-- **Правка конвейера прогоняется до слияния ручным запуском.** Конвейер запускается на любой
-  ветке, а задание выкатки прибито условием к главной: прогон ради проверки доходит до сборок и
-  там кончается. Прогон команд задания на своей машине его не покрывает: он проверяет команды,
-  а не файл конвейера, — верность самого файла читается только по списку прогонов после пуша.
-- **PR проверяется до слияния тем же конвейером, что и главная ветка.** Проверки и сборки
-  образов идут на конвейере проверки PR, выкатка — нет: её держит условие по главной ветке у
-  своего задания, а образ PR в реестр не уезжает.
-- **Расхождение прода с главной веткой видно сверкой очереди работ.** Рабочий элемент уходит из
-  очереди слиянием, но слияние — ещё не прод: отказавшая или незапущенная выкатка не трогает ни
-  элемент, ни его состояние, и заметить её неоткуда. Сверка спрашивает последнюю успешную выкатку и считает, на сколько от неё ушла главная
-  ветка. Прогон главной ветки для этого не годится: там, где выкатку запускают рукой, слияние
-  прод не двигает вовсе, и прогон о нём не говорит ничего — прод отставал на 476 коммитов, а
-  сверка молчала. Дерево, не назвавшее рабочего потока выкатки, сверки не получает, и она
-  говорит об этом вслух.
-- **Цепочка миграций прогоняется с пустого хранилища до слияния.** Порядок применения
-  лексикографический по имени каталога, а метку времени ставит момент создания: миграция из
-  ветки, начатой раньше, встаёт перед той, от которой зависит.
-- **Расхождение миграций со схемой меряется на теневом хранилище, а не на том, где работает
-  тот, кто пушит.** Оно законно несёт след любой недоделанной ветки, и сверка с ним держала бы
-  чужую правку. Гейт и выкатка зовут одну и ту же проверку — иначе «сошлось» станет значить в
-  двух местах разное.
-- **Пропуск сверки схемы законен, пока ветка не трогала хранилища.** Погашенная база — состояние
-  машины, а не повод отбить пуш документации; но ветка, правившая схему или миграции, без прогона
-  цепочки уезжает в главную вслепую, и падает не она, а выкатка. Проверка в такой ветке отказывает
-  и называет, чем базу поднять.
-- **Упавшая выкатка видна сверкой очереди работ отдельно от отставшего прода.** Слияние — ещё не
-  выкатка: отказавшая оставляет главную ветку впереди сервера, и слияния поверх уедут туда же.
-  Отставание считается по последней успешной выкатке и «не запускали» от «упала» не отличает.
+- **The pipeline judges by the makeup of the edit and does not run everything in a row.** Steps
+  with nothing to check are skipped by a sign computed from the main branch: a branch that touched
+  no line of code raises no stand, takes no frames and builds no images. The sign is declared as a
+  step variable and computed once, not re-asked in every condition. A skipped step is visible in
+  the run as skipped — one that silently dropped out reads as passed.
+- **What starts the rollout is named by the tree, not by the rule.** In one tree production
+  moves on a merge, in another on a manual run, and an unconditional statement here lies about the
+  second: the rule enters the context of every session, and whoever reads it takes the merged as
+  rolled out. Production hundreds of commits behind the main branch was read exactly that way, as
+  an application breakage. The line stands in the companion next to it, together with the way to
+  ask what is actually rolled out.
+- **The rollout goes from the merge — environment variables, secrets and name records are set
+  before it.** The pipeline's path filters cover documents separately. A tree with a manual run
+  reads this article differently: there the border is the run itself, and the same is set before
+  it.
+- **The mode sign is declared in the image, not only in the production stack.** A value set by
+  the stack acts only on a container raised by that stack; a manual run of the same image goes
+  with an empty value, and empty here means localhost — with all the debugging defaults it allows.
+  The image default is set in the image itself.
+- **Images are rolled out by commit sha, not by the tag "latest".** The tag in the registry lags
+  behind the main branch, and production silently falls back to the previous version while still
+  answering.
+- **The rollout cleans up old images after itself, keeping the last three sha.** An image tagged
+  with a sha is never dangling, and a dangling cleanup does not touch it: in half a year they eat
+  the server disk whole. Three sha is the rollback depth, and fewer cannot be taken: a breakage
+  noticed two rollouts later has nowhere left to roll back to.
+- **The description of production is edited together with the production stack.** The layout,
+  the request path, the gates and the backups are described in texts outside the rules layers, and
+  neither linter nor build reads them: the divergence piles up silently, and these texts are read
+  as current. The pair is watched by the documents guard.
+- **An edit to the pipeline is run before the merge with a manual run.** The pipeline starts on any
+  branch, while the rollout step is pinned by a condition to the main branch: a run for the sake
+  of checking reaches the builds and ends there. Running the step's commands on one's own machine
+  does not cover it: that checks the commands, not the pipeline file — the correctness of the file
+  itself is read only from the list of runs after the push.
+- **A PR is checked before the merge by the same pipeline as the main branch.** Checks and image
+  builds go on the PR check pipeline, the rollout does not: it is held by the main-branch
+  condition on its step, and a PR image does not leave for the registry.
+- **A divergence of production from the main branch is visible by the work queue audit.** A work
+  item leaves the queue by a merge, but a merge is not yet production: a failed or unstarted rollout
+  touches neither the item nor its state, and there is nowhere to notice it. The audit asks for
+  the last successful rollout and counts how far the main branch has gone from it. The main-branch
+  run is no use for that: where the rollout is started by hand, a merge does not move production
+  at all, and the run says nothing about it — production was 476 commits behind, and the audit was
+  silent. A tree that has not named its rollout workflow gets no audit, and it says so out loud.
+- **The migration chain is run from an empty storage before the merge.** The apply order is
+  lexicographic by directory name, and the timestamp is set at creation: a migration from a branch
+  started earlier lands before the one it depends on.
+- **The divergence of migrations from the schema is measured on a shadow storage, not on the one
+  the pusher works with.** That one lawfully carries the trace of any unfinished branch, and a
+  check against it would hold up someone else's edit. The gate and the rollout call one and the
+  same check — otherwise "matched" would mean different things in two places.
+- **Skipping the schema audit is lawful while the branch has not touched the storage.** A stopped
+  database is a state of the machine, not a reason to refuse a documentation push; but a branch
+  that edited the schema or the migrations leaves for main blind without a chain run, and it is not
+  the branch that falls but the rollout. In such a branch the check refuses and names how to bring
+  the database up.
+- **A failed rollout is visible by the work queue audit apart from lagging production.** A merge
+  is not yet a rollout: a failed one leaves the main branch ahead of the server, and merges on top
+  go the same way. The lag is counted from the last successful rollout and does not tell "not
+  started" from "failed".
 
-- **Проверка, стоящая в наборе гейта, отказывает, когда не сумела отработать.** «Проверять
-  негде» и «проверка сломана» — разные вещи: первое дерево называет само — нет предмета, не задан
-  адрес, служба не отвечает, — и каждый такой выход отдаёт ноль своей строкой. Второе —
-  недостающий пакет, пустое имя в настройке, непредвиденное исключение — отдаёт ненулевой код и
-  говорит, что сломалась сама проверка, а не предмет. Общий ноль на оба делает сломанную проверку
-  неотличимой от сошедшейся: сверка схемы с миграциями простояла так в наборе гейта, не сверяя
-  ничего, и прятала за своим нулём сразу три причины.
+- **A check standing in the gate set refuses when it could not do its work.** "Nowhere to check"
+  and "the check is broken" are different things: the first the tree names itself — no subject, no
+  address set, the service not answering — and each such exit returns zero with its own line. The
+  second — a missing package, an empty name in the settings, an unexpected exception — returns a
+  non-zero code and says that the check itself broke, not the subject. A shared zero for both makes
+  a broken check indistinguishable from a passed one: the schema-to-migrations audit stood like that
+  in the gate set, checking nothing, and hid three causes at once behind its zero.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Состояние прода машине не видно: сверка очереди работ спрашивает последний прогон главной
-ветки и судит по нему, а отвечает ли прод той сборкой, которую он выкатил, не спрашивает
-никто. Держится это тем, кто выкатывал.
+The state of production is not visible to the machine: the work queue audit asks for the last
+run of the main branch and judges by it, and nobody asks whether production answers with the
+build it rolled out. That is held by whoever rolled out.
 
-Полноту чистки реестра не считает ничто: сценарий оставляет три последних sha, и промах в
-его отборе виден только тогда, когда диск сервера кончился.
+Nothing counts the completeness of the registry cleanup: the script keeps the last three sha,
+and a miss in its selection shows only when the server disk has run out.
 
-## Паттерны
+## Patterns
 
-- `git-workflow-migration` — правка схемы хранилища и её миграций.
-- `git-workflow-restart` — ручной перезапуск прода.
-- `git-workflow-docker` — образы на своей машине: демон, реестр, сборка под платформу сервера.
-- `git-workflow-secrets` — ключи внешних служб: где лежат, как заводятся, что говорит их состояние.
+- `git-workflow-migration` — editing the storage schema and its migrations.
+- `git-workflow-restart` — a manual production restart.
+- `git-workflow-docker` — images on one's own machine: the daemon, the registry, building for
+  the server platform.
+- `git-workflow-secrets` — keys of external services: where they live, how they are created,
+  what their state says.

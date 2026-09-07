@@ -35,11 +35,11 @@
 (жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает
 то, чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
 
-- **Подписка объявляется один раз, а не в методе действия.** — **Не проверяется ничем.** Своего правила линтера на подписку в методе здесь нет. Долгоживущие подписки объявляются при создании владельца — `projects/ui-kit-v2/src/lib/platform/theme.service.ts`.
-- **Подписка гасится вместе с владельцем.** — `tools/eslint-rules/rules/require-take-until-destroyed.ts:RULE_NAME` — отказ на любой `.subscribe()` без завершающего оператора в трубе; 0 нарушений в дереве, единственное отступление подписано комментарием у ручки Redux DevTools.
-- **Источник действия носит суффикс `Source` в имени.** — `tools/eslint-rules/rules/require-source-suffix-for-subjects.ts:REQUIRED_SUFFIX` — отказ на поле-источник без суффикса; наблюдаемое, поднятое из него через `asObservable()`, суффикса не носит.
-- **Вызов сервиса внутри `computed` зависимостью не становится.** — **Не проверяется ничем.** Ни сборка, ни линтер вызова метода внутри производного значения не видят: значение остаётся таким, каким было в момент первого счёта. Держится разбором.
-- **Списочный стор наследует общую основу.** — `projects/store/src/lib/base-store.service.ts:BaseStoreService` и `base-async-store.service.ts` рядом — записи, состояние загрузки, обновление части состояния и шина сообщений уже там.
+- **A subscription is declared once, not in the action method.** — **Не проверяется ничем.** Своего правила линтера на подписку в методе здесь нет. Долгоживущие подписки объявляются при создании владельца — `projects/ui-kit-v2/src/lib/platform/theme.service.ts`.
+- **A subscription dies with its owner.** — `tools/eslint-rules/rules/require-take-until-destroyed.ts:RULE_NAME` — отказ на любой `.subscribe()` без завершающего оператора в трубе; 0 нарушений в дереве, единственное отступление подписано комментарием у ручки Redux DevTools.
+- **An action source carries the suffix `Source` in its name.** — `tools/eslint-rules/rules/require-source-suffix-for-subjects.ts:REQUIRED_SUFFIX` — отказ на поле-источник без суффикса; наблюдаемое, поднятое из него через `asObservable()`, суффикса не носит.
+- **A service call inside `computed` does not become a dependency.** — **Не проверяется ничем.** Ни сборка, ни линтер вызова метода внутри производного значения не видят: значение остаётся таким, каким было в момент первого счёта. Держится разбором.
+- **A list store inherits the shared base.** — `projects/store/src/lib/base-store.service.ts:BaseStoreService` и `base-async-store.service.ts` рядом — записи, состояние загрузки, обновление части состояния и шина сообщений уже там.
 
 ## Что ещё стоит знать при чтении кода
 

@@ -4,97 +4,99 @@ kind: rule
 law: entity-editing
 description: Rule under the entity-editing law. Load when editing any admin store and any panel that creates or edits a record. Names the shared base of the aside and of the list store, and that the aside opens by a route of its own. Patterns entity-aside, entity-store.
 ---
-<!-- rt-kit v0.25.0 · rules/entity-conventions.needs-admin.md · f28dd7934a29 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/entity-conventions.needs-admin.md · 0d25dce69297 · правится надстройкой, не здесь -->
 
-# Правка сущности — как это устроено здесь
+# Entity editing — how it works here
 
-Правило под закон `docs/constitution/entity-editing.md`. Закон говорит, как ведёт себя
-приложение при создании и правке записи; здесь — из чего это собрано в этом дереве и как
-выглядит. Про вид говорит правило: закон о нём молчит намеренно.
+Rule under the law `docs/constitution/entity-editing.md`. The law says how the application behaves
+when a record is created and edited; here — what that is assembled from in this tree and how it
+looks. The look is spoken of by the rule: the law is silent on it by design.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                      | Здесь                                                                    |
-| ----------------------------- | ------------------------------------------------------------------------ |
-| панель правки записи          | асайд; открывается маршрутом с `outlet: 'ro'`                            |
-| общая основа асайда           | `RtRouteAsideComponent<T>` — директива без селектора                     |
-| общая основа списочного стора | `BaseListStoreService`                                                   |
-| запись                        | `entity`, `entityId`, `isCreateMode` — имена от сущности, а не от домена |
-| обвязка записи                | `runMutation` в панели, `mutate` в сторе                                 |
-| нетронутость формы            | `pristineSignal(control)`                                                |
+| In the law                    | Here                                                                              |
+| ----------------------------- | --------------------------------------------------------------------------------- |
+| record edit panel             | an aside; opens by a route with `outlet: 'ro'`                                    |
+| shared base of the aside      | `RtRouteAsideComponent<T>` — a directive without a selector                       |
+| shared base of the list store | `BaseListStoreService`                                                            |
+| record                        | `entity`, `entityId`, `isCreateMode` — names from the entity, not from the domain |
+| save harness                  | `runMutation` in the panel, `mutate` in the store                                 |
+| form pristineness             | `pristineSignal(control)`                                                         |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the first
+tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход правки записи из панели: чем панель открывается, что происходит с мутацией и чем кончается
-уход с панели.
+The flow of editing a record from the panel: what opens the panel, what happens to the mutation and
+how leaving the panel ends.
 
 ```mermaid
 flowchart TD
-    A[Нужна панель создания или правки] --> B[Открывается маршрутом во вспомогательном аутлете]
-    B --> C[Запись читается по признаку из адреса полной моделью, а не берётся из списка]
-    C --> D[Панель наследует общую основу и отдаёт ей поток мутации]
-    D --> E{Мутация чем кончилась}
-    E -->|Значение| F[Список перечитывается, и только после этого работа считается сделанной]
-    E -->|Ошибка потока| G[Панель показывает отказ и остаётся открытой]
-    E -->|Пусто| H[Так не бывает: пустой поток гасит панель навсегда]
-    F --> I{Уход с панели}
+    A[A create or edit panel is needed] --> B[Opens by a route in the auxiliary outlet]
+    B --> C[The record is read by the id from the address as the full model, not taken from the list]
+    C --> D[The panel inherits the shared base and hands it the mutation stream]
+    D --> E{How the mutation ended}
+    E -->|A value| F[The list is re-read, and only then the work counts as done]
+    E -->|A stream error| G[The panel shows the refusal and stays open]
+    E -->|Empty| H[That does not happen: an empty stream freezes the panel forever]
+    F --> I{Leaving the panel}
     G --> I
-    I -->|Есть несохранённые правки| J[Гард спрашивает — на всех путях закрытия сразу]
-    I -->|Нет| K[Уход идёт общим переходом к связанной записи, а не своим маршрутом]
+    I -->|There are unsaved edits| J[The guard asks — on all closing paths at once]
+    I -->|No| K[Leaving goes by the shared transition to a related record, not by a route of its own]
     J --> K
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Асайд открывается маршрутом в аутлете `ro`, а не вызовом сервиса.** Программного открытия
-  через `RtAsideService.open()` в админке нет: так панель переживает перезагрузку, передаётся
-  ссылкой и попадает в историю браузера.
-- **Запись идёт через `runMutation`, и панель отдаёт основе поток мутации и ключи.** Занятость,
-  гашение прежней ошибки, тост об успехе и закрытие держит основа.
-- **Поток мутации обязан отдать значение или ошибку.** Пустой поток гасит панель навсегда:
-  она ждёт того или другого, а закрыть её владелец не может, пока идёт запись.
-- **Мутация завершается перечитанным списком, а не отправленным запросом.** Список,
-  перечитанный после закрытия, показал бы прежнее значение.
-- **Стор отвечает потоком: успех — значение, отказ — ошибка потока.** Булева ответа у сторов
-  админки не осталось: он терял и записанную запись, и причину отказа.
-- **Имена берутся от сущности, а не от домена.** `save`, `remove`, `load` — не
-  `createBooking`, `loadBookings`: имя домена уже в имени стора.
-- **Гард несохранённых правок ставит сама панель и на все четыре пути закрытия.** Проверять
-  один путь бессмысленно — Esc обойдёт то, что ловит кнопка. Четыре пути — кнопка в шапке,
-  кнопка в футере, нажатие мимо панели и Esc.
-- **Уход из панели идёт через `openRelated`, а не своим `router.navigate`.** Абсолютные
-  команды меняют только первичную ветку, аутлет `ro` остаётся в адресе, и роутер отклоняет
-  навигацию молча.
-- **Запись читается по идентификатору из адреса полной моделью, а не берётся из списка.**
-  Список отдаёт короткую.
+- **The aside opens by a route in the `ro` outlet, not by a service call.** There is no programmatic
+  opening through `RtAsideService.open()` in the admin. This way the panel survives a reload, is
+  passed by link and lands in the browser history.
+- **Saving goes through `runMutation`, and the panel hands the base the mutation stream and the
+  keys.** The busy state, clearing the previous error, the success toast and closing are held by the
+  base.
+- **The mutation stream must give a value or an error.** An empty stream freezes the panel forever:
+  it waits for one or the other, and the owner cannot close it while the save is running.
+- **A mutation ends with a re-read list, not with a sent request.** A list re-read after closing
+  would show the previous value.
+- **The store answers with a stream: success is a value, refusal is a stream error.** No boolean
+  answer is left in admin stores: it lost both the saved record and the reason of the refusal.
+- **Names come from the entity, not from the domain.** `save`, `remove`, `load` — not
+  `createBooking`, `loadBookings`: the domain name is already in the store name.
+- **The unsaved-edits guard is set by the panel itself, on all four closing paths.** Checking one
+  path is pointless — Esc bypasses what the button catches. The four paths are the button in the
+  header, the button in the footer, a press outside the panel and Esc.
+- **Leaving the panel goes through `openRelated`, not through an own `router.navigate`.** Absolute
+  commands change only the primary branch, the `ro` outlet stays in the address, and the router
+  rejects the navigation silently.
+- **The record is read by the identifier from the address as the full model, not taken from the
+  list.** The list gives the short one.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Чтение записи отдельной процедурой заведено не везде — долг `Q-M-3`. Файл стора называется
-`<сущность>.store.ts`; имя `<сущность>-store.service.ts` выводит его и из правила линтера, и
-из гейта скилов, и общие сторы заявок и объектов правятся без правил сущностей вовсе.
+Reading a record by a separate procedure is not set up everywhere — debt `Q-M-3`. The store file is
+called `<entity>.store.ts`; the name `<entity>-store.service.ts` takes it out of both the linter
+rule and the rule gate, and the shared stores of requests and objects are edited without the entity
+rules at all.
 
-## Паттерны
+## Patterns
 
-- `entity-aside` — собрать панель правки: маршрут, основа, `runMutation`, шапка и футер, гард.
-- `entity-store` — собрать стор сущности: наследник общей основы, `mutate`, ключи отказа.
+- `entity-aside` — assemble the edit panel: route, base, `runMutation`, header and footer, guard.
+- `entity-store` — assemble the entity store: heir of the shared base, `mutate`, refusal keys.
 
-## Ловушки
+## Pitfalls
 
-- Действие со своей занятостью через основу не идёт: опрос подписки держит свой `pollingId`,
-  потому что панель на минуту опроса не гасится.
-- Хвост с `EMPTY`, приклеенный к мутации, гасится `defaultIfEmpty`: иначе отказ приклеенного
-  потока превращает удачную запись в вечный спиннер.
-- `routerLink` в панели не годится: директива навигирует сама, `preventDefault` её не
-  останавливает, и вопрос о несохранённых правках она обходит.
-- `viewChild` на поле с `#` Angular не принимает — поле объявляется `protected`.
-- Скелетоны полей идут по `resolving()`, не по `busy()`: `busy` включает и запись, и чтение.
-- Панель, которая после успеха остаётся открытой, сбрасывает нетронутость сама.
-- Ветка, куда забыли подмешать константу ro-маршрута, отличается только тем, что кнопка в
-  шапке на ней ничего не открывает: сборка, линт и маршруты остальных веток при этом целы.
+- An action with a busy state of its own does not go through the base: subscription polling keeps
+  its own `pollingId`, because the panel is not frozen for the minute of polling.
+- A tail with `EMPTY` glued to a mutation is handled by `defaultIfEmpty`: otherwise a refusal of the
+  glued stream turns a successful save into an endless spinner.
+- `routerLink` in the panel is no good: the directive navigates itself, `preventDefault` does not
+  stop it, and it bypasses the question about unsaved edits.
+- Angular does not accept `viewChild` on a `#` field — the field is declared `protected`.
+- Field skeletons go by `resolving()`, not by `busy()`: `busy` covers both saving and reading.
+- A panel that stays open after success resets pristineness itself.
+- A branch where the ro-route constant was not mixed in differs only in that the header button opens
+  nothing there: the build, the lint and the routes of the other branches stay intact.

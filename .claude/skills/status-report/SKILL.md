@@ -4,95 +4,92 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law. Load when the owner asked where the work stands — "what is the status", "which epic", "what are you doing now". Names the shape of the reply — a paragraph about the epic and a table of its tasks — and what backs a cell about the tree. Pattern status-report-table.
 ---
-<!-- rt-kit v0.25.0 · rules/status-report.md · 1221d1336e71 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/status-report.md · 63f1906635db · правится надстройкой, не здесь -->
 
-# Ответ о состоянии работы
+# Status report — how it works here
 
-Правило под закон о ведении работы. Закон говорит, что состояние работы
-переживает заход и читается со стороны; здесь — в какой форме оно показывается владельцу,
-когда он спросил.
+Rule under the work-conduct law. The law says that the work state outlives the session and is read
+from the outside; here — in what shape it is shown to the owner when they asked.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                     | Здесь                                                              |
-| ---------------------------- | ------------------------------------------------------------------- |
-| состояние работы             | клетка «Состояние» в таблице ответа                                |
-| место, где состояние читают  | ответ владельцу и запись хода в папке задачи                        |
-| работа, о которой спросили   | абзац об эпике, под ним все его задачи по порядку и заведённые вне |
-| отметка о сделанном          | номер прогона, номер заявки, число сценариев — а не слово «готово»  |
-| чем состояние подтверждается | команда, запущенная тем же ходом, что и ответ                      |
+| In the law | Here |
+| --- | --- |
+| the work state | the "State" cell in the reply table |
+| the place where the state is read | the reply to the owner and the progress entry in the task folder |
+| the work asked about | a paragraph about the epic, under it all its tasks in order and those created outside it |
+| the mark of done work | a run number, a PR number, a count of scenarios — not the word "done" |
+| what backs the state | a command run by the same turn as the reply |
 
-## Где это лежит
+## Where it lives
 
-Готовые вызовы и образец заполненной таблицы — в паттерне `status-report-table` рядом. Здесь
-сказано, что в ответе обязано быть; чем это спрашивается у хостинга и у дерева — там.
+Ready-made calls and a sample of a filled table — in the pattern `status-report-table` next to it.
+Here is said what the reply must hold; how it is asked from the host and the tree — there.
 
-## Ход
+## Flow
 
-Ход одного ответа о состоянии: что спрашивается у дерева до первой строки ответа и в каком
-порядке это ложится владельцу.
+The flow of one status reply: what is asked from the tree before the first line of the reply and in
+what order it lands for the owner.
 
 ```mermaid
 flowchart TD
-    A[Владелец спросил, где работа] --> B[Состояние спрашивается командами: ветка, заявка, прогон, борда]
-    B --> C{Работа идёт под эпиком}
-    C -->|Да| D[Из замысла эпика берётся его порядок задач целиком]
-    C -->|Нет| E[Строка текущей задачи встаёт первой]
-    D --> F[Строка на каждую задачу эпика: номер по порядку, о чём она, состояние]
+    A[The owner asked where the work is] --> B[The state is asked by commands: branch, PR, run, board]
+    B --> C{The work runs under an epic}
+    C -->|Yes| D[The task order is taken whole from the epic plan]
+    C -->|No| E[The row of the current task goes first]
+    D --> F[A row per epic task: ordinal number, what it is about, state]
     F --> E
-    E --> G[Строка на каждую заведённую вне эпика]
-    G --> H[Клетка «Состояние» несёт число из вывода команды]
-    H --> I[Под таблицей — чего ждём от владельца и вызов, которым это снимается]
+    E --> G[A row per task created outside the epic]
+    G --> H[The State cell carries a number from a command's output]
+    H --> I[Under the table — what we wait for from the owner and the call that lifts it]
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Состояние работы показывается таблицей, а не прозой.** Пересказ владелец читает целиком,
-  чтобы найти одну строку, и в следующий раз не читает вовсе.
+- **The work state is shown as a table, not as prose.** A retelling the owner reads whole to find
+  one row, and next time does not read at all.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
-- **Сам эпик описывается текстом над таблицей, а не строкой в ней.** Колонки заведены под
-  задачу — номер, предмет, состояние, — и эпик, втиснутый в них, теряет то единственное, ради
-  чего он назван: зачем он и куда идёт. Абзац говорит это одной-двумя фразами и называет,
-  сколько в эпике задач и какая идёт сейчас.
+- **The epic itself is described by text above the table, not by a row in it.** The columns are made
+  for a task — number, subject, state — and an epic squeezed into them loses the one thing it is
+  named for: why it is and where it goes. The paragraph says this in one or two sentences and names
+  how many tasks the epic has and which one runs now.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
-- **Задачи эпика перечисляются все и в том порядке, в каком их назначил замысел.** Названы
-  только сделанная и следующая — владелец не видит ни сколько осталось, ни куда идёт работа, а
-  порядок эпика назначен заранее и держится до конца. У каждой строки — краткое описание,
-  своими словами и одной фразой: номер задачи о её предмете не говорит ничего.
+- **The epic's tasks are listed all, and in the order the plan assigned them.** With only the done
+  and the next one named, the owner sees neither how much is left nor where the work goes, while the
+  epic's order is assigned in advance and holds to the end. Each row has a short description, in
+  one's own words and one sentence: a task number says nothing about its subject.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
-- **Каждая клетка о состоянии дерева подпирается командой, запущенной тем же ходом.**
-  Утверждение без команды владелец читает как проверенный факт и о расхождении узнаёт
-  последним. Вывод называется числом — номером прогона, временем, сколько сценариев из
-  скольких; «всё зелёное» без числа не пишется.
+- **Every cell about the tree's state is backed by a command run by the same turn.** A statement
+  without a command the owner reads as a verified fact and learns of a divergence last. The output
+  is named by a number — the run number, the time, how many scenarios of how many; "all green"
+  without a number is not written.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
-- **Прогон подтверждает тот коммит, на котором он запускался.** Прогон старше вершины ветки
-  говорит о прошлом дереве, а прочитан будет как о нынешнем; вершина сверяется перед тем, как
-  номер прогона встанет в клетку.
+- **A run confirms the commit it ran on.** A run older than the branch tip speaks of a past tree and
+  will be read as of the present one; the tip is checked before the run number goes into the cell.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
-- **Заявка черновиком называется вслух вместе с тем, чего ждём.** У черновика слияние
-  заблокировано хостингом, и зелёная страница владельцу ничего не разрешает; молчание он
-  читает как поломку.
+- **A draft PR is called a draft aloud, together with what we wait for.** A draft's merge is locked
+  by the host, and a green page permits the owner nothing; silence they read as breakage.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
-- **Папка задачи, оставшаяся пустым шаблоном, — это «заведена, не начата».** Заведённая задача
-  с незаполненным разбором читается как работа в ходу и второй раз заводится заново.
+- **A task folder left as an empty template is "created, not started".** A created task with an
+  unfilled grill reads as work in progress and gets created a second time.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
-- **Под таблицей — не больше двух строк.** Чего ждём от владельца и вызов, которым это
-  снимается. Остальное владелец спросит сам, и спросит ровно то, что ему нужно.
+- **Under the table — no more than two lines.** What we wait for from the owner and the call that
+  lifts it. The rest the owner asks themselves, and asks exactly what they need.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Ни одна из договорённостей о форме ответа не проверяется машиной: ответ владельцу в дерево не
-ложится, и читать его нечему. Держится это памятью отвечающего, а видно нарушение только
-владельцу — по тому, что он ищет в тексте строку и не находит.
+None of the agreements on the shape of the reply is checked by machine: the reply to the owner does
+not land in the tree, and there is nothing to read it. It is held by the memory of whoever replies,
+and a violation is visible only to the owner — by looking for a row in the text and not finding it.
 
-## Паттерны
+## Patterns
 
-- `status-report-table` — готовые вызовы для каждой клетки и образец заполненной таблицы.
+- `status-report-table` — ready-made calls for each cell and a sample of a filled table.

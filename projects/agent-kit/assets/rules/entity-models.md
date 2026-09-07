@@ -5,87 +5,90 @@ law: entity-models
 description: Rule under the entity-models law. Load when declaring or editing a record model and its mapper, when editing shared models and when editing the contract description. Names the model namespace and its levels. Pattern entity-models-new.
 ---
 
-# Модели сущностей — как это устроено здесь
+# Entity models — how it works here
 
-Правило под закон `docs/constitution/entity-models.md`. Закон говорит, сколько данных
-приложение запрашивает на каждом экране; здесь — как эта модель объявляется в этом дереве.
+Rule under the law `docs/constitution/entity-models.md`. The law says how much data the application
+requests on each screen; here — how that model is declared in this tree.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                 | Здесь                                                                |
-| ------------------------ | -------------------------------------------------------------------- |
-| сторона контракта        | `Api` — псевдоним сгенерированного типа из `@<область>/common/proto` |
-| то, чем пользуется экран | `State`, все поля `readonly`                                         |
-| то, что уходит на запись | `Draft`                                                              |
-| короткий уровень         | вложенный неймспейс `Short` с собственными `Api` и `State`           |
-| перевод                  | маппер-наследник `BaseMapper`, свой на каждый уровень                |
+| In the law           | Here                                                                |
+| -------------------- | ------------------------------------------------------------------- |
+| the contract side    | `Api` — an alias of the generated type from `@<scope>/common/proto` |
+| what the screen uses | `State`, all fields `readonly`                                      |
+| what goes to a write | `Draft`                                                             |
+| the short level      | the nested namespace `Short` with its own `Api` and `State`         |
+| translation          | a mapper inheriting `BaseMapper`, one per level                     |
 
-Все три стороны лежат в одном неймспейсе `I<Сущность>` и спутать их в импортах нечем.
+All three sides lie in one namespace `I<Entity>`, and there is nothing to confuse them by in
+imports.
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the first
+tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход заведения модели: две стороны сущности, кто из них пишется руками и где стоит перевод между
-ними.
+The flow of creating a model: the two sides of an entity, which of them is written by hand and where
+the translation between them stands.
 
 ```mermaid
 flowchart TD
-    A[Заводится модель записи] --> B[Обе стороны живут в одном неймспейсе имени сущности]
-    B --> C{Сторона контракта}
-    C -->|Объявляется псевдонимом сгенерированного типа| D[Руками не пишется: своя копия разойдётся молча]
-    D --> E[Между сторонами встаёт маппер-наследник общей основы]
-    E --> F{Значение пришло не в том виде}
-    F -->|Да| G[Приведение идёт способом маппера, а не подстановкой по умолчанию]
-    F -->|Нет| H[Экраны читают только сторону состояния]
+    A[A record model is created] --> B[Both sides live in one namespace named after the entity]
+    B --> C{The contract side}
+    C -->|Declared as an alias of the generated type| D[Not written by hand: an own copy diverges silently]
+    D --> E[A mapper inheriting the shared base stands between the sides]
+    E --> F{The value arrived in the wrong shape}
+    F -->|Yes| G[The cast goes by the mapper's way, not by a default substitution]
+    F -->|No| H[Screens read only the state side]
     G --> H
-    H --> I{Нужны страница, порядок или отбор}
-    I -->|Да| J[Типы берутся из общего набора: второго такого не заводится]
-    I -->|Нет| K[Пустое выражается пустой строкой или нулём, а не отсутствием поля]
+    H --> I{A page, order or filter is needed}
+    I -->|Yes| J[The types are taken from the shared set: no second one is created]
+    I -->|No| K[Empty is expressed by an empty string or zero, not by a missing field]
     J --> K
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **У сущности две стороны, и обе лежат в неймспейсе `I<Сущность>`.** `Api` повторяет
-  контракт, `State` нормализован и от смены контракта не зависит.
-- **Сторона контракта руками не пишется — она объявляется псевдонимом.** Своя копия разойдётся
-  с контрактом молча, а компилируется из них только одна.
-- **Между сторонами стоит маппер-наследник `BaseMapper`, и экраны читают только `State`.** Тип
-  из контракта в шаблон не попадает.
-- **Пустое выражается пустой строкой или нулём, а не отсутствием поля.** Необязательных
-  скаляров в контракте нет, поэтому `null` и `undefined` в `State` не заводятся; смысл нуля
-  объясняется комментарием рядом с полем.
-- **Приведение идёт через `this.typeCast`, а не через `??`.** Контракт отдаёт значения по
-  умолчанию, а не пустоту, и проверка на `undefined` здесь не ловит ничего.
-- **Типы страницы, порядка и отбора берутся из `@rt-tools/utils`.** Второго набора этих типов
-  в дереве нет: `rt-pagination` принимает `IPageModel` оттуда же.
+- **An entity has two sides, and both lie in the namespace `I<Entity>`.** `Api` repeats the
+  contract, `State` is normalised and does not depend on a contract change.
+- **The contract side is not written by hand — it is declared as an alias.** An own copy diverges
+  from the contract silently, and only one of them compiles.
+- **A mapper inheriting `BaseMapper` stands between the sides, and screens read only `State`.** A
+  type from the contract does not get into the template.
+- **Empty is expressed by an empty string or zero, not by a missing field.** There are no optional
+  scalars in the contract, so `null` and `undefined` are not introduced into `State`; the meaning of
+  zero is explained by a comment next to the field.
+- **A cast goes through `this.typeCast`, not through `??`.** The contract returns default values,
+  not emptiness, and a check for `undefined` catches nothing here.
+- **The page, order and filter types are taken from `@rt-tools/utils`.** There is no second set of
+  these types in the tree: `rt-pagination` accepts `IPageModel` from the same place.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Уровней нет ни у одной сущности, и контракт короткого сообщения не отдаёт — долги `Q-M-1` и
-`Q-M-2`. Новая сущность заводится сразу с уровнями.
+No entity has levels, and the contract does not return a short message — debts `Q-M-1` and `Q-M-2`.
+A new entity is created with levels from the start.
 
-Правка `.proto` не проверяется ничем: `buf lint` и `buf breaking` настроены, но не входят ни в
-`check:all`, ни в CI.
+An edit of `.proto` is checked by nothing: `buf lint` and `buf breaking` are configured but are part
+of neither `check:all` nor CI.
 
-## Паттерны
+## Patterns
 
-- `entity-models-new` — объявить модель и маппер: неймспейс, уровни, `typeCast`, перегенерация
-  контракта.
+- `entity-models-new` — declare a model and a mapper: the namespace, the levels, `typeCast`,
+  contract regeneration.
 
-## Ловушки
+## Pitfalls
 
-- `getAsType` умолчания не принимает: значение вне набора он пишет в консоль и возвращает
-  строкой `'unknown'`. Строковое поле с конечным набором значений сверяется с набором явно.
-- `as Type` в маппере запрещено — правило `typescript-conventions`.
-- Поле-сообщение необязательно всегда; обязательное поле модели им не заполнить без запасного
-  значения. Обратно, в запрос, `readonly`-массив не проходит: init-тип требует изменяемый.
-- Модель админки и модель сайта — разные. Общий тип на два приложения означал бы, что сайт
-  тянет поля админки.
-- Снятое поле контракта помечается `reserved` с номером и именем: номер, отданный новому полю,
-  ломает уже выкаченного клиента молча.
+- `getAsType` accepts no default: a value outside the set it writes to the console and returns as
+  the string `'unknown'`. A string field with a finite set of values is checked against the set
+  explicitly.
+- `as Type` in a mapper is forbidden — rule `typescript-conventions`.
+- A message field is always optional; a mandatory model field cannot be filled from it without a
+  fallback value. The other way, into a request, a `readonly` array does not pass: the init type
+  demands a mutable one.
+- The admin model and the site model are different. A shared type for two applications would mean
+  the site pulls admin fields.
+- A removed contract field is marked `reserved` with its number and name: a number given to a new
+  field silently breaks an already rolled-out client.

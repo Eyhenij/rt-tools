@@ -5,96 +5,99 @@ law: shared-code
 description: Rule under the shared-code law. Load when a value must be understood the same way by the site, the admin and the backend — a query limit, the set of condition operators, a field length, the shape of a list request and response. Pattern shared-code-new.
 ---
 
-# Общий код — как это устроено здесь
+# Shared code — how it works here
 
-Правило под закон `docs/constitution/shared-code.md`. Закон говорит, что общим быть обязано;
-здесь — откуда это берётся в этом дереве, чем названо и чего у нас нет.
+Rule under the law `docs/constitution/shared-code.md`. The law says what must be shared; here —
+where it comes from in this tree, what it is called and what we do not have.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                  | Здесь                                                                                         |
-| ------------------------- | --------------------------------------------------------------------------------------------- |
-| общий пакет               | `@rt-tools/utils` — собран без фреймворка, зависит от одного `tslib`, грузится под голым Node |
-| общая либа проекта        | `@<область>/common/util`; её тег входит в набор `UNIVERSAL` и виден всем трём приложениям     |
-| число-настройка           | `DEFAULT_PAGE_SIZE`, `MAX_PAGE_SIZE`                                                          |
-| набор значений            | `EFilterOperatorType`, `EListSortOrder`                                                       |
-| сверка значения с набором | `listSortOrderOf`, `listFilterOperatorOf`                                                     |
-| выборка списка            | `IPageModel`, `ISortModel`, `IFilterModel`, `IListState`                                      |
+| In the law                       | Here                                                                                            |
+| -------------------------------- | ----------------------------------------------------------------------------------------------- |
+| shared package                   | `@rt-tools/utils` — built without a framework, depends on `tslib` alone, loads under bare Node  |
+| shared lib of the project        | `@<scope>/common/util`; its tag is in the `UNIVERSAL` set and visible to all three applications |
+| a setting number                 | `DEFAULT_PAGE_SIZE`, `MAX_PAGE_SIZE`                                                            |
+| a value set                      | `EFilterOperatorType`, `EListSortOrder`                                                         |
+| checking a value against the set | `listSortOrderOf`, `listFilterOperatorOf`                                                       |
+| list query                       | `IPageModel`, `ISortModel`, `IFilterModel`, `IListState`                                        |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the first
+tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход заведения общего значения: где оно живёт, что считается копией и чем сверяются стороны.
+The flow of declaring a shared value: where it lives, what counts as a copy and what the sides check
+against.
 
 ```mermaid
 flowchart TD
-    A[Значение нужно обеим сторонам] --> B{Оно уже есть в общем наборе}
-    B -->|Да| C[Берётся оттуда: своё с теми же членами — копия, и она разойдётся молча]
-    B -->|Нет| D{Оно про предмет домена}
-    D -->|Да| E[Живёт в домене: перечисления полей порядка и отбора копией не считаются]
-    D -->|Нет| F[Живёт в общей либе и оттуда берётся обеими сторонами]
-    C --> G{Пришло значение вне набора}
+    A[Both sides need a value] --> B{It is already in the shared set}
+    B -->|Yes| C[Taken from there: an own one with the same members is a copy, and it drifts silently]
+    B -->|No| D{It is about the domain subject}
+    D -->|Yes| E[Lives in the domain: enumerations of order and filter fields are not copies]
+    D -->|No| F[Lives in the shared lib, and both sides take it from there]
+    C --> G{A value outside the set arrived}
     E --> G
     F --> G
-    G -->|Да| H[Сверяется общей парой функций, а разбирает промах вызывающий: политика у сторон разная]
-    G -->|Нет| I[Готово]
+    G -->|Yes| H[Checked by the shared pair of functions, and the caller handles the miss: the sides have different policies]
+    G -->|No| I[Done]
     H --> I
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Число-настройка лежит в `libs/common/util` и оттуда берётся обеими сторонами.** Умолчание
-  доводом не передаётся: пока довод есть, домен вправе назвать своё число, и у промокодов так
-  появилось `25` против `20` у остальных.
-- **Набор значений из `@rt-tools/utils` заново не объявляется.** Своё перечисление с теми же
-  членами считается копией, даже если имена разошлись.
-- **Значение из набора сверяется парой общих функций, а промах разбирает вызывающий.** Сервер
-  отбивает запрос `InvalidArgument`, экран берёт умолчание.
-- **Общим стал только маппер страницы.** У сторон разная политика на непонятное значение, и
-  общим может быть лишь то, где она одна: номер меньше единицы обе стороны читают как первую
-  страницу.
-- **Общая выборка держит форму запроса, а не набор условий.** Имена полей отбора объявляет сам
-  домен списком разрешённых, а в запрос к хранилищу их переводит его же выборка. Поэтому
-  условие вправе лечь на связанные строки, а не только на колонки самой записи, и отбор по
-  набору идентификаторов ей не запрещён: признак связанной записи — такое же поле набора, как
-  повод и объект. Общими здесь остаются разбор страницы, порядка и поиска, а не сам список
-  полей.
-- **Перечисления полей порядка и отбора домена копией не считаются.** `EActivitySortProperty`
-  и подобные повторяют имена, по которым сортирует сервер именно этого домена.
-- **Строковая настройка и таблица соответствий сверяются по значению, а не по имени.** Имя
-  здесь не ключ: `BEM_BLOCK` и `LOG_CONTEXT` объявлены десятками, и значения у них свои, а
-  один и тот же перевод статуса живёт под тремя разными именами.
-- **Копии, у которых общего места нет по границам импортов, сводятся в тот слой, который видят
-  обе стороны, а не в общий.** Общая либа приложения не видит значений хранилища, и ребро оттуда
-  развернуло бы зависимость: сведение «как положено» тут ломает границы, а не чинит копии. Место
-  такой копии — слой выхода того домена, чьё значение она переводит; заводить под это новую либу
-  не надо, нужный слой у домена обычно уже объявлен и пуст.
+- **A setting number lies in `libs/common/util`, and both sides take it from there.** A default is
+  not passed as an argument. While the argument exists, a domain may name its own number, and that
+  is how promo codes got `25` against `20` for the rest.
+- **A value set from `@rt-tools/utils` is not declared anew.** An own enumeration with the same
+  members counts as a copy, even when the names diverge.
+- **A value from the set is checked by the pair of shared functions, and the caller handles the
+  miss.** The server refuses the request with `InvalidArgument`, the screen takes the default.
+- **Only the page mapper became shared.** The sides have different policies on an unknown value, and
+  only what has one policy can be shared: a number below one both sides read as the first page.
+- **The shared query holds the shape of the request, not the set of conditions.** The names of
+  filter fields the domain declares itself as a list of allowed ones, and its own query translates
+  them into the storage request. So a condition may lie on related rows, not only on columns of the
+  record itself, and a filter by a set of identifiers is not forbidden to it. A sign of a related
+  record is a field of the set like the reason and the object. What stays shared here is the parsing
+  of page, order and search, not the list of fields itself.
+- **Enumerations of the order and filter fields of a domain are not copies.**
+  `EActivitySortProperty` and the like repeat the names by which the server of this very domain
+  sorts.
+- **A string setting and a mapping table are checked by value, not by name.** The name is not a key
+  here. `BEM_BLOCK` and `LOG_CONTEXT` are declared by the dozen, each with values of its own, and
+  one and the same status translation lives under three different names.
+- **Copies that have no shared place by the import boundaries are merged into the layer both sides
+  see, not into the shared one.** The shared lib of the application does not see storage values. An
+  edge from there would reverse the dependency. Merging "as prescribed" breaks the boundaries here
+  rather than fixing the copies. The place for such a copy is the exit layer of the domain whose
+  value it translates; no new lib is needed for it, the domain usually already has that layer
+  declared and empty.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Перевод сущности устроен по-разному: фронт переводит наследником `BaseMapper`, бэкенд —
-свободными функциями `xxxToProto` без общей основы. Это долг `Q-S-1`, а не выбор: новый код на
-бэкенде общей основы не заводит, но и своей второй не пишет.
+Entity translation is built differently: the frontend translates with an heir of `BaseMapper`, the
+backend with free functions `xxxToProto` without a shared base. That is debt `Q-S-1`, not a choice:
+new backend code does not start a shared base, but does not write a second one of its own either.
 
-Найденные совпадения строк и таблиц приняты долгом целиком: перевод статуса брони в контракт
-лежит тремя копиями, набор принимаемых вложений — двумя, имя события правки — тремя.
-Сокращать это — работа по доменам, и она заведена вопросом `Q-S-3`.
+The matches of strings and tables that were found are accepted as debt in full. The translation of a
+booking status into the contract lies in three copies, the set of accepted attachments in two, the
+name of the edit event in three. Cutting that down is work by domains, and it is filed as question
+`Q-S-3`.
 
-## Паттерны
+## Patterns
 
-- `shared-code-new` — как завести новое общее число, функцию или тип и не оставить копию.
+- `shared-code-new` — how to declare a new shared number, function or type and leave no copy.
 
-## Ловушки
+## Pitfalls
 
-- `typeCast.getAsType` для сверки с набором не годится: значение вне набора он пишет в консоль
-  и возвращает строкой `'unknown'`.
-- Накопленные повторы лежат в `tools/dupes-allowlist.json` под ключом `debt` и отказом не
-  считаются — гейт падает только на новом. Список только сокращается.
-- Ту же логику, написанную заново под другим именем, проверка не ловит, и такой проверки не
-  будет: две одинаковые по форме проверки из разных доменов копией не считаются. Заметить это
-  может только тот, кто читает правку, — так сказано и в законе.
+- `typeCast.getAsType` is no good for checking against a set: a value outside the set it writes to
+  the console and returns the string `'unknown'`.
+- Accumulated repeats lie in `tools/dupes-allowlist.json` under the key `debt` and do not count as a
+  refusal — the gate fails only on new ones. The list only shrinks.
+- The same logic written anew under another name is not caught by the check, and there will be no
+  such check: two checks of the same shape from different domains are not a copy. Only whoever reads
+  the edit can notice it — so says the law too.
