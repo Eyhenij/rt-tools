@@ -1,22 +1,22 @@
-# Привязка — гейт правил
+# The binding — the rules gate
 
-Утверждение спека и место, где оно исполняется. Связь идёт по тексту утверждения: снятое
-утверждение снимается вместе со своей строкой.
+A statement of the spec and the place where it is carried out. The link goes by the text of the
+statement: a removed statement is removed together with its line.
 
-- **Конфиг линтера требует правило под собой.** — `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`
-- **Проверка повторов требует правило, чьи признаки исполняет, и только его.** — `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`
-- **Заведение рабочего дерева грузит правило поставки.** — `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`
-- **Слои поверх доменного правила объявляются своим файлом, а не строками в гейте.** — `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_add`
-- **Слой требует правило дополнительно, а не вместо доменного.** — `projects/agent-kit/assets/hooks/skill-gate.sh:want`
-- **Признак, невидимый по пути, судится по тексту правки.** — `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_payload`
-- **Слой, которому нечем прочитать текст правки, отпускает действие.** — `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_is_spec`
-- **Файл слоёв гейт зовёт в своей оболочке, а не отдельным процессом.** — `projects/agent-kit/assets/hooks/skill-gate.sh:rt_hooks_dir`
-- **Карта гейта считает командой вызов, а не упоминание.** — `projects/agent-kit/assets/defaults/gate-map.sh:rt_gate_invokes`
-- **Перенаправление в пустое устройство и в поток ошибок записью не считается.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_writes_default`
-- **Стрелка в тексте команды перенаправлением не считается.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_writes_default` — сценарий `SC-AK-675`
-- **Цель перенаправления выглядит как путь, а не как слово словами.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_writes_default` — сценарии `SC-AK-676`, `SC-AK-677`
-- **Пути берутся из заголовка команды, а не из тела документа на месте.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_paths_default`
-- **Пути берутся у пишущего куска команды, а не у строки целиком.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_paths_default`
-- **Команда, публикующая тело задачи или заявки, требует правило слога.** — `projects/agent-kit/assets/defaults/gate-map.sh:doc-style-human` — сценарий SC-AK-850
-- **Судятся два признака сразу: вызов клиента и тело в доводах.** — `projects/agent-kit/assets/defaults/gate-map.sh:rt_gate_invokes` — сценарий SC-AK-850
-- **Интерпретатор проверяется по телу, а не по имени.** — `projects/agent-kit/assets/defaults/shell.sh:interp` — документ на входе и код доводом; сценарий `SC-AK-857`
+- **The config of the linter demands a rule under it.** — `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`
+- **The check of repeats demands the rule whose signs it carries out, and only it.** — `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`
+- **Creating a working tree loads the rule of delivery.** — `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`
+- **The layers on top of the domain rule are declared by a file of their own, not by lines in the gate.** — `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_add`
+- **A layer demands a rule in addition, not instead of the domain one.** — `projects/agent-kit/assets/hooks/skill-gate.sh:want`
+- **A sign invisible in the path is judged by the text of the edit.** — `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_payload`
+- **A layer that has nothing to read the text of the edit with lets the action go.** — `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_is_spec`
+- **The gate calls the file of the layers in its own shell, not as a separate process.** — `projects/agent-kit/assets/hooks/skill-gate.sh:rt_hooks_dir`
+- **The gate map counts as a command a call, not a mention.** — `projects/agent-kit/assets/defaults/gate-map.sh:rt_gate_invokes`
+- **A redirection into the empty device and into the error stream does not count as a write.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_writes_default`
+- **An arrow in the text of a command does not count as a redirection.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_writes_default` — scenario `SC-AK-675`
+- **The target of a redirection looks like a path, not like a word in words.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_writes_default` — scenarios `SC-AK-676`, `SC-AK-677`
+- **The paths are taken from the heading of the command, not from the body of a document in place.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_paths_default`
+- **The paths are taken at the writing piece of the command, not at the whole line.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_paths_default`
+- **A command publishing the body of a task or a request demands the rule of the wording.** — `projects/agent-kit/assets/defaults/gate-map.sh:doc-style-human` — scenario SC-AK-850
+- **Two signs are judged at once: the call of the client and the body in the arguments.** — `projects/agent-kit/assets/defaults/gate-map.sh:rt_gate_invokes` — scenario SC-AK-850
+- **An interpreter is checked by its body, not by its name.** — `projects/agent-kit/assets/defaults/shell.sh:interp` — a document at the input and code as an argument; scenario `SC-AK-857`

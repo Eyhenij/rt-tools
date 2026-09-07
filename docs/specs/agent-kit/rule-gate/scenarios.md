@@ -1,197 +1,201 @@
-# Сценарии — гейт правил
+# Scenarios — the rules gate
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной. Префикс общий на домен, и номера при переезде в поддомен не
-пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier goes at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason. The prefix is shared across the domain,
+and the numbers were not recounted at the move into the subdomain: the number ties the scenario to
+the test title.
 
-### SC-AK-45 — конфиг линтера требует правило под собой
+### SC-AK-45 — the config of the linter demands a rule under it
 
-Дано правится конфиг линтера кода или линтера стилей
-Когда гейт судит правку
-Тогда он требует правило про типы или про оформление
+Given the config of the code linter or of the style linter is edited
+When the gate judges the edit
+Then it demands the rule about types or about styling
 
-### SC-AK-46 — проверка повторов требует одно правило
+### SC-AK-46 — the check of repeats demands one rule
 
-Дано правится проверка повторов или её список исключений
-Когда гейт судит правку
-Тогда он требует одно правило, а не два подряд
+Given the check of repeats or its list of exceptions is edited
+When the gate judges the edit
+Then it demands one rule, not two in a row
 
-### SC-AK-92 — признак кода приложения не судит путь вне корня дерева
+### SC-AK-92 — the sign of application code does not judge a path outside the root of the tree
 
-Дано правится файл вне корня рабочего дерева, чей путь совпадает с образцом
-Когда признак кода приложения спрашивают об этом пути
-Тогда признака он не получает, и замысла ветки правка не требует
+Given a file outside the root of the working tree is edited, and its path matches the sample
+When the sign of application code is asked about this path
+Then it gets no sign, and the edit demands no plan of the branch
 
-Покрыто: `projects/agent-kit/tests/defaults.test.sh`.
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
-### SC-AK-93 — заведение рабочего дерева грузит правило поставки
+### SC-AK-93 — creating a working tree loads the rule of delivery
 
-Дано идёт команда заведения или снятия рабочего дерева
-Когда карту гейта спрашивают, какое правило под неё
-Тогда она называет правило поставки
+Given a command of creating or removing a working tree goes
+When the gate map is asked which rule is under it
+Then it names the rule of delivery
 
-Покрыто: `projects/agent-kit/tests/defaults.test.sh`.
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
-### SC-AK-99 — слой требует правило поверх доменного
+### SC-AK-99 — a layer demands a rule on top of the domain one
 
-Дано правка идёт в файл, у которого есть доменное правило, и в её тексте стоит признак слоя
-Когда гейт решает, чего потребовать
-Тогда он называет оба правила — доменное и правило слоя, — а не одно вместо другого
+Given the edit goes into a file that has a domain rule, and a sign of a layer stands in its text
+When the gate decides what to demand
+Then it names both rules — the domain one and the rule of the layer — not one instead of the other
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-100 — признак, невидимый по пути, судится по тексту
+### SC-AK-100 — a sign invisible in the path is judged by the text
 
-Дано путь файла о признаке не говорит, а в содержимом правки есть обращение к среде исполнения
-Когда гейт решает, чего потребовать
-Тогда правило слоя требуется, хотя путь его не назвал
+Given the path of the file says nothing about the sign, and in the content of the edit there is a
+call to the runtime environment
+When the gate decides what to demand
+Then the rule of the layer is demanded, although the path did not name it
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-101 — место, где признак разрешён, слоя не получает
+### SC-AK-101 — a place where the sign is allowed gets no layer
 
-Дано правка идёт в файл, которому прямой доступ к среде исполнения разрешён правилом
-Когда гейт решает, чего потребовать
-Тогда правило слоя не требуется, а доменное остаётся
+Given the edit goes into a file to which direct access to the runtime environment is allowed by a
+rule
+When the gate decides what to demand
+Then the rule of the layer is not demanded, and the domain one stays
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-102 — слой без разборщика входа отпускает правку
+### SC-AK-102 — a layer without a parser of the input lets the edit go
 
-Дано разобрать вход нечем
-Когда гейт зовёт слои
-Тогда правка проходит, а гейт завершается нулевым кодом
+Given there is nothing to parse the input with
+When the gate calls the layers
+Then the edit passes, and the gate ends with a zero code
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-109 — упоминание команды вызовом не считается
+### SC-AK-109 — a mention of a command does not count as a call
 
-Дано имя команды стоит внутри текста другой команды, а не в начале вызова
-Когда гейт решает, чего потребовать
-Тогда правило не требуется: командой считается вызов, а не упоминание
+Given the name of the command stands inside the text of another command, not at the start of a call
+When the gate decides what to demand
+Then no rule is demanded: what counts as a command is a call, not a mention
 
-Покрыто: `projects/agent-kit/tests/defaults.test.sh`, `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/defaults.test.sh`, `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-110 — слияние PR требует двух правил
+### SC-AK-110 — merging a PR demands two rules
 
-Дано идёт команда слияния PR
-Когда гейт решает, чего потребовать
-Тогда он называет правило поставки и правило ведения работы, а требует первое незагруженное
+Given a command of merging a PR goes
+When the gate decides what to demand
+Then it names the rule of delivery and the rule of the conduct of work, and demands the first
+unloaded one
 
-Покрыто: `projects/agent-kit/tests/defaults.test.sh`, `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/defaults.test.sh`, `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-111 — проверка через браузер требует правило под инструмент
+### SC-AK-111 — a check through the browser demands the rule under the tool
 
-Дано зовётся инструмент браузера, а не правится файл
-Когда гейт решает, чего потребовать
-Тогда он требует правило проверки через браузер
+Given a tool of the browser is called, and no file is edited
+When the gate decides what to demand
+Then it demands the rule of checking through the browser
 
-Покрыто: `projects/agent-kit/tests/defaults.test.sh`, `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/defaults.test.sh`, `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-249 — та же правка, положенная командой оболочки, отбивается
+### SC-AK-249 — the same edit put by a shell command is refused
 
-Дано гард отбивает правку файла инструментом, а та же правка идёт перенаправлением, дописыванием,
-`sed -i` или интерпретатором с heredoc
-Когда команда приходит гарду
-Тогда он отбивает её наравне с правкой инструментом: способ записи требования не снимает
+Given a guard refuses an edit of a file by a tool, and the same edit goes by a redirection, an
+appending, `sed -i` or an interpreter with a heredoc
+When the command comes to the guard
+Then it refuses it on a par with an edit by a tool: the way of writing lifts no requirement
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`,
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`,
 `projects/agent-kit/tests/reuse-guard.test.sh`.
 
-### SC-AK-250 — чтение и поиск по тому же пути гард не трогает
+### SC-AK-250 — reading and searching by the same path the guard does not touch
 
-Дано команда читает файл или ищет по каталогу, называя тот самый путь
-Когда команда приходит гарду
-Тогда он молчит: судится запись, а не всякое упоминание пути
+Given the command reads a file or searches over a directory, naming that very path
+When the command comes to the guard
+Then it stays silent: what is judged is a write, not every mention of a path
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`,
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`,
 `projects/agent-kit/tests/reuse-guard.test.sh`, `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-251 — та же команда из терминала среды судится наравне с оболочкой
+### SC-AK-251 — the same command from the terminal of the environment is judged on a par with the shell
 
-Дано команда записи приходит не оболочкой, а терминалом среды разработки
-Когда она приходит гарду
-Тогда он отбивает её так же: объявленное событие, которого тело не разбирает, хуже необъявленного —
-снаружи оно выглядит закрытым
+Given a command of a write comes not by the shell but by the terminal of the development environment
+When it comes to the guard
+Then it refuses it the same way: a declared event whose body it does not parse is worse than an
+undeclared one — from outside it looks closed
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`,
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`,
 `projects/agent-kit/tests/reuse-guard.test.sh`, `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-252 — вложенная команда универсального исполнителя разбирается до настоящей
+### SC-AK-252 — a nested command of a universal executor is parsed down to the real one
 
-Дано настоящая команда записи стоит вложенной строкой при `--command`
-Когда вызов приходит гарду
-Тогда разбирается вложенная строка, а не обёртка: иначе путь стоит за кавычкой и до него не
-дотягивается ни один образец
+Given the real command of a write stands as a nested line at `--command`
+When the call comes to the guard
+Then the nested line is parsed, not the wrapper: otherwise the path stands behind a quotation mark
+and not a single sample reaches it
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`,
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`,
 `projects/agent-kit/tests/reuse-guard.test.sh`, `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-253 — под запись командой гейт требует то же правило, что под правку файла
+### SC-AK-253 — for a write by a command the gate demands the same rule as for an edit of the file
 
-Дано файл, у которого по карте есть своё правило, записывается командой оболочки
-Когда команда приходит гейту правил
-Тогда он требует то же правило, что потребовал бы под правку этого файла инструментом
+Given a file that has a rule of its own by the map is written by a shell command
+When the command comes to the rules gate
+Then it demands the same rule it would demand for an edit of this file by a tool
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-254 — маркер отступления в самой команде снимает признак
+### SC-AK-254 — the marker of a departure in the command itself lifts the sign
 
-Дано команда кладёт в файл строку с маркером отступления и причиной
-Когда она приходит гарду единообразия
-Тогда он пропускает: осознанное отступление работает обеими дверями одинаково
+Given the command puts into a file a line with the marker of a departure and the reason
+When it comes to the guard of uniformity
+Then it lets it through: a deliberate departure works the same by both doors
 
-Покрыто: `projects/agent-kit/tests/reuse-guard.test.sh`.
+Covered: `projects/agent-kit/tests/reuse-guard.test.sh`.
 
-### SC-AK-255 — команда, пишущая за пределы дерева, правила не требует
+### SC-AK-255 — a command writing outside the tree demands no rule
 
-Дано команда записывает файл соседнего репозитория на той же машине
-Когда она приходит гейту правил
-Тогда он молчит: правила этого дерева действуют на файлы этого дерева
+Given the command writes a file of a neighbouring repository on the same machine
+When it comes to the rules gate
+Then it stays silent: the rules of this tree act on the files of this tree
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-260 — гард, подписанный не на то, что объявляет, находится сверкой
+### SC-AK-260 — a guard subscribed to something other than it declares is found by the check
 
-Дано образец в настройке агента разошёлся с объявлением гарда
-Когда идёт сверка раскладки
-Тогда она краснеет и называет обе стороны: гард с чужим образцом выглядит работающим, а ветка
-его тела, ради которой всё писалось, не исполняется ни разу
+Given the sample in the setting of the agent diverged from the declaration of the guard
+When the check of the layout goes
+Then it turns red and names both sides: a guard with a foreign sample looks working, while the
+branch of its body everything was written for is never carried out
 
-Покрыто: `projects/agent-kit/src/lib/hooks-map.spec.ts`.
+Covered: `projects/agent-kit/src/lib/hooks-map.spec.ts`.
 
-### SC-AK-261 — сошедшийся образец расхождением не считается
+### SC-AK-261 — a sample that came out even does not count as a divergence
 
-Дано образец в настройке агента совпадает с объявлением гарда
-Когда идёт сверка раскладки
-Тогда она молчит
+Given the sample in the setting of the agent coincides with the declaration of the guard
+When the check of the layout goes
+Then it stays silent
 
-Покрыто: `projects/agent-kit/src/lib/hooks-map.spec.ts`.
+Covered: `projects/agent-kit/src/lib/hooks-map.spec.ts`.
 
-### SC-AK-533 — пути берутся у пишущего куска команды, а не у строки целиком
+### SC-AK-533 — the paths are taken at the writing piece of the command, not at the whole line
 
-Дано команда, в которой запись одного файла стоит рядом с чтением другого
-Когда гейт правил выбирает правило под неё
-Тогда правило требуется только под записанный путь: прочитанный своего правила не приносит, и
-упоминание пути в теле документа целью записи не считается
+Given a command in which a write of one file stands next to a read of another
+When the rules gate picks the rule under it
+Then the rule is demanded only for the written path: the read one brings no rule of its own, and a
+mention of a path in the body of a document does not count as a target of a write
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-800 — своя редакция зависимостью не считается
+### SC-AK-800 — one's own edition does not count as a dependency
 
-Дано правка манифеста меняет строку `"version"` этого же пакета Когда гейт правил выбирает
-правило под неё Тогда правила о зависимостях он не требует: строка говорит о выпуске самого
-пакета, а не о чужой версии, которую он тянет. Чужая версия, правленная тем же коммитом, правило
-приносит по-прежнему
+Given an edit of the manifest changes the line `"version"` of this same package When the rules gate
+picks the rule under it Then it demands no rule about dependencies: the line speaks of the release of
+the package itself, not of a foreign version it pulls. A foreign version edited by the same commit
+brings the rule as before
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-850 — команда, публикующая тело задачи или заявки, требует правило слога
+### SC-AK-850 — a command publishing the body of a task or a request demands the rule of the wording
 
-Дано вызов клиента хостинга открывает заявку или заводит задачу и несёт тело — доводом либо
-файлом
-Когда гейт правил проверяет команду
-Тогда он требует правило слога и его паттерн о текстах для человека. Вызов без тела и упоминание
-такой команды в поиске правила не требуют: проверяются оба признака сразу
+Given a call of the hosting client opens a request or creates a task and carries a body — by an
+argument or by a file
+When the rules gate checks the command
+Then it demands the rule of the wording and its pattern about texts for a person. A call without a
+body and a mention of such a command in a search demand no rule: both signs are checked at once
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
