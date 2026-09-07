@@ -5,89 +5,90 @@ rule: git-workflow
 description: Pattern of rule git-workflow. Load when PRs are already open — leaving draft, handling a red run, bringing a chain to readiness, the order "finish what was handed over first, then take new work". Opening one PR — pattern git-workflow-pr; the chain order — git-workflow-stack.
 ---
 
-# Доведение заявки до готовности
+# Bringing a PR to readiness
 
-Паттерн правила `git-workflow`. Что при этом должно быть верно — закон
-`docs/constitution/delivery.md`. Открытие заявки — паттерн `git-workflow-pr`, порядок череды —
-`git-workflow-stack`, разбор одного конфликта — `git-workflow-merge`.
+Pattern of the rule `git-workflow`. What must be true — the law
+`docs/constitution/delivery.md`. Opening a PR — pattern `git-workflow-pr`, the chain order —
+`git-workflow-stack`, resolving one conflict — `git-workflow-merge`.
 
-## Когда брать
+## When to use
 
-- Заявка открыта черновиком, и прогон по ней кончился.
-- Открыто несколько заявок разом, и надо решить, что делать раньше — доводить их или брать
-  следующую задачу.
-- Прогон заявки красный, а правка в ветке зелёная у себя.
+- A PR is open as a draft, and its run has ended.
+- Several PRs are open at once, and it must be decided what comes first — finishing them or
+  taking the next task.
+- The PR's run is red, while the edit in the branch is green on its own.
 
-## Черновик — состояние работы, а не её вид
+## A draft is the state of the work, not its look
 
-Черновик говорит одно: работу нельзя вливать. Кнопка слияния у него заблокирована хостингом, и
-владелец, открывший список, видит не «сделано», а «делается». Заявка с зелёным прогоном и
-неснятым черновиком — сделанная работа, выглядящая незаконченной, и поправить это может только
-тот, кто её отдал.
+A draft says one thing: the work cannot be merged. The host locks its merge button, and the
+owner opening the list sees not "done" but "being done". A PR with a green run and a draft not
+lifted is done work that looks unfinished, and only the one who handed it over can fix that.
 
-Отсюда порядок: **черновик снимается тем же ходом, которым прочитан зелёный прогон.** Не
-следующим, не после соседней задачи.
+Hence the order: **the draft is lifted in the same turn in which the green run was read.** Not
+the next one, not after a neighbouring task.
 
 ```bash
 gh pr ready <номер>
 ```
 
-Снятие черновика — последний шаг отдачи работы, а не отдельное дело. Пока он не сделан, работа
-не отдана, сколько бы коммитов ни лежало в ветке.
+Lifting the draft is the last step of handing the work over, not a separate matter. Until it is
+done, the work is not handed over, however many commits lie in the branch.
 
-## Сначала довести отданное, потом брать новое
+## Finish the handed-over first, then take new work
 
-Открытая заявка — работа в полёте: её прогон стареет, её ветка отстаёт от главной, её тело
-описывает дерево на день написания. Всё это чинится дёшево сегодня и дорого через три задачи.
+An open PR is work in flight: its run ages, its branch lags behind main, its body describes the
+tree on the day it was written. All of this is cheap to fix today and expensive three tasks later.
 
-Очередь поэтому такая:
+So the queue is this:
 
-1. Прогоны открытых заявок прочитаны, черновики с зелёных сняты.
-2. Красные разобраны и починены.
-3. И только потом берётся следующая задача.
+1. The runs of the open PRs are read, drafts with green ones are lifted.
+2. The red ones are analysed and fixed.
+3. Only then is the next task taken.
 
-Взять новую задачу, оставив позади десяток заявок черновиками, — значит отчитаться о работе,
-которой у владельца нет: он видит список «делается», а не список «готово».
+Taking a new task while leaving a dozen PRs behind as drafts means reporting work the owner does
+not have: they see a list of "being done", not a list of "done".
 
-## Состояние читается разом
+## The state is read at once
 
-Чем оно читается и как разбирается каждое поле — паттерн `git-workflow-freshness`; здесь
-только то, что делают с прочитанным. Пустой прогон разбирается наравне с красным: у заявки
-череды база не главная ветка, и фильтр по базе такое событие до конвейера не пропускает.
+What it is read with and how each field is read — pattern `git-workflow-freshness`; here only
+what is done with what was read. An empty run is handled on a par with a red one: a chain PR's
+base is not the main branch, and the base filter does not let such an event through to the
+pipeline.
 
-## Красный прогон разбирается по шагу, а не по заявке
+## A red run is analysed by step, not by PR
 
 ```bash
 gh pr checks <номер>
 ```
 
-Ответ называет упавший прогон и ссылку на него. Дальше у хостинга спрашивается имя упавшего
-шага — `gh api` по этому прогону, отбором `select(.conclusion=="failure")` по его шагам.
+The answer names the failed run and a link to it. Then the host is asked the name of the failed
+step — `gh api` on that run, selecting `select(.conclusion=="failure")` over its steps.
 
-Имя шага и есть диагноз. Правка идёт в ту ветку череды, где причина возникла, а не в ту, где
-прогон покраснел: у череды красным становится всё, что стоит выше причины.
+The step name is the diagnosis. The fix goes into the chain branch where the cause arose, not
+the one where the run went red: in a chain everything above the cause goes red.
 
-## Правка причины — в нижнюю ветку, оттуда волной вверх
+## The cause is fixed in the lowest branch, then a wave upward
 
-Причина, общая для всей череды, чинится один раз в самой нижней ветке. Наверх она едет
-вливанием, а не перебазированием: перебазирование переписывает историю уже отданных веток, и
-хостинг закрывает заявки верхних как слитые, хотя в главной их правок нет.
+A cause shared by the whole chain is fixed once, in the lowest branch. It travels up by merging,
+not by rebasing: a rebase rewrites the history of branches already handed over, and the host
+closes the upper PRs as merged, though main has none of their edits.
 
-Волна идёт снизу вверх, по одной ветке, и каждый шаг — три отдельных вызова: переключение на
-следующую ветку череды, вливание предыдущей в неё, отправка. Одной строкой их не пишут: гард
-поставки такую команду отбивает, и правильно — набор проверок гоняется по тому дереву, какое
-лежит на момент разбора команды, то есть по прежней ветке.
+The wave goes bottom-up, one branch at a time, and each step is three separate calls: switching
+to the next chain branch, merging the previous one into it, pushing. They are not written as one
+line: the delivery guard refuses such a command, and rightly — the check set runs on the tree
+that lies there when the command is reviewed, that is, on the previous branch.
 
-Пропущенная посередине ветка оставляет свою заявку красной и ломает порядок вливания, поэтому
-волна проходит череду целиком.
+A branch skipped in the middle leaves its PR red and breaks the merge order, so the wave passes
+the whole chain.
 
-## Частые промахи
+## Common misses
 
-- Черновик не снят, потому что «ещё гоняется прогон». Прогон кончился час назад; читается его
-  состояние, а не память о том, что он шёл.
-- Взята следующая задача, а десяток заявок остался черновиками. Для владельца сделанного нет.
-- Красное чинится в той ветке, где покраснело. У череды это верхняя, а причина — в нижней, и
-  починка сверху оставляет красным всё под собой.
-- Причина разослана по веткам перебазированием. Отданные ветки переписаны, заявки закрыты как
-  слитые, правок в главной нет.
-- Пустой прогон принят за зелёный. Событие до конвейера не дошло, и заявка не проверена вовсе.
+- The draft is not lifted because "the run is still going". The run ended an hour ago; its state
+  is read, not the memory of it going.
+- The next task is taken, and a dozen PRs stayed drafts. For the owner nothing is done.
+- The red is fixed in the branch where it went red. In a chain that is the upper one, and the
+  cause is in the lower; a fix from above leaves everything under it red.
+- The cause is sent across branches by rebasing. The handed-over branches are rewritten, the PRs
+  closed as merged, main has no edits.
+- An empty run taken for a green one. The event never reached the pipeline, and the PR is not
+  checked at all.

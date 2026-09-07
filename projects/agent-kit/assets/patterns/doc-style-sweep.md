@@ -5,133 +5,136 @@ rule: doc-style
 description: Pattern of rule doc-style. Load when a document has accumulated a list of work and must be sorted into what still holds and what is closed. The selection sign, a pass over the statements, a check against the work queue, the fate of the file itself. New text — pattern doc-style-write.
 ---
 
-# Разбор документа, накопившего список работ
+# Sorting a document that has accumulated a work list
 
-Паттерн правила `doc-style`. Что при этом должно быть верно — закон
-`docs/constitution/project-documentation.md`, статья о том, что предстоящая работа
-перечислена в одном месте.
+Pattern of the rule `doc-style`. What must be true — the law
+`docs/constitution/project-documentation.md`, the article saying that upcoming work is listed
+in one place.
 
-## Когда брать
+## When to use
 
-- Документ перечисляет, что осталось сделать, а очередь работ перечисляет то же самое.
-- Файл вырос настолько, что его перестали читать целиком.
-- Планы лежат вперемешку: часть исполнена, часть нет, и по тексту это не различить.
+- A document lists what is left to do, and the work queue lists the same.
+- The file has grown so much that nobody reads it whole any more.
+- Plans lie mixed: some carried out, some not, and the text does not tell them apart.
 
-## Признак отбора — один, и он решается до первой правки
+## The selection sign is one, and it is decided before the first edit
 
-**Утверждение остаётся в документе, если править его никто не собирается.** Всё остальное —
-работа, и её место в очереди работ.
+**A statement stays in the document if nobody intends to change it.** Everything else is work,
+and its place is the work queue.
 
-| Что нашлось                                             | Куда                                                            |
-| ------------------------------------------------------- | --------------------------------------------------------------- |
-| дыра, которую будут чинить                              | задача; строка из документа уходит                              |
-| дыра, которую решено не чинить                          | остаётся, вместе с причиной                                     |
-| условный отказ («заведём, если случай окажется частым») | остаётся                                                        |
-| вывод разбора, не ставший правилом                      | остаётся                                                        |
-| описание сделанного                                     | удаляется без переноса: о нём говорят закрытые задачи и история |
-| утверждение, разошедшееся с деревом                     | удаляется как протухшее, а не переносится в задачу              |
+| What was found                                                        | Where it goes                                                  |
+| --------------------------------------------------------------------- | -------------------------------------------------------------- |
+| a hole that will be fixed                                             | a task; the line leaves the document                           |
+| a hole it was decided not to fix                                      | stays, together with the reason                                |
+| a conditional refusal ("we will add it if the case turns out common") | stays                                                          |
+| a conclusion of a review that did not become a rule                   | stays                                                          |
+| a description of what was done                                        | removed without transfer: closed tasks and history speak of it |
+| a statement that diverged from the tree                               | removed as stale, not transferred into a task                  |
 
-Спрашивать владельца об этом наборе не нужно — он записан здесь. Спрашивать стоит одно:
-судьбу самого файла, когда в нём не осталось ничего.
+There is no need to ask the owner about this set — it is written here. One thing is worth
+asking: the fate of the file itself, once nothing is left in it.
 
-## Обход идёт по утверждениям, а не по пунктам
+## The pass goes by statements, not by items
 
-Работа лежит и в прозе. Раздел «Экран заявок» перечислял недостающие якоря сплошным текстом,
-без единого маркера, и обход по `- ` его не увидел бы.
+Work lies in prose too. The "Requests screen" section listed missing anchors as running text,
+without a single bullet, and a pass over `- ` would not have seen it.
 
 ```bash
-# сколько чего в файле: пункты, абзацы, разделы
+# how much of what is in the file: items, paragraphs, sections
 grep -c '^- ' docs/BACKLOG.md
 grep -c '^## ' docs/BACKLOG.md
 ```
 
-Абзац судится тем же признаком, что и пункт.
+A paragraph is judged by the same sign as an item.
 
-## Номер задачи стоит в трёх местах
+## A task number stands in three places
 
-Прежде чем считать «пункты без задачи», надо знать все формы записи. В этом дереве их три:
+Before counting "items without a task", all the forms of writing it must be known. In this tree
+there are three:
 
 ```markdown
-## Раздел — #149 ← в заголовке
+## Section — #149 ← in the heading
 
-**Тикеты:** #163, #164 ← отдельной строкой у раздела или подраздела
+**Тикеты:** #163, #164 ← a separate line at the section or subsection
 
-- Пункт про дефект. #101 ← в конце пункта
+- An item about a defect. #101 ← at the end of the item
 ```
 
-Разбор, знающий одну форму, ошибается молча: «51 пункт без задачи» оказался шестью. **Число,
-полученное разбором текста, сверяется на выборке руками до того, как его называют.**
+A review that knows one form errs silently: "51 items without a task" turned out to be six. **A
+number obtained by parsing text is verified on a sample by hand before it is stated.**
 
-## Сверка с очередью работ
+## The check against the work queue
 
-У пункта есть задача — это ещё не значит, что задача несёт его содержание. Перед удалением
-меряется покрытие: сколько значимых слов пункта встречается в теле его задачи.
+An item has a task — that does not yet mean the task carries its content. Before removal the
+coverage is measured: how many of the item's significant words occur in the body of its task.
 
 ```bash
 /opt/homebrew/bin/gh issue list --state all --limit 400 --json number,title,body,state > /tmp/issues.json
 ```
 
-Пункт, покрытый телом наполовину и меньше, читается глазами и разводится на три исхода:
+An item covered by the body half or less is read by eye and sorted into three outcomes:
 
-- живое уточнение, которого в задаче нет, — дописать в тело;
-- другой дефект — завести своей задачей;
-- протухшее — удалить, **не** перенося. Иначе разбор занесёт в задачу ложь: «гард не проверяет
-  каталог кита» переносить было некуда, каталога уже не существовало.
+- a live detail the task lacks — appended to the body;
+- a different defect — filed as its own task;
+- stale — removed, **not** transferred. Otherwise the review puts a lie into the task: "the guard
+  does not check the kit directory" had nowhere to be transferred, the directory no longer
+  existed.
 
-**Наследование номера от заголовка — предположение, а не факт.** Пункт под заголовком с
-четырьмя номерами не принадлежит ни одному из них: привязка проверяется чтением.
+**Inheriting a number from the heading is an assumption, not a fact.** An item under a heading
+with four numbers belongs to none of them: the link is checked by reading.
 
-## Сделанность читается по дереву
+## Doneness is read from the tree
 
-Утверждение о том, что задача не сделана, стареет так же, как любое другое. Дважды за один
-разбор устаревшее было названо действующим: маркер непросмотренного уже вёз кит, а половина
-задачи про гейт скилов была сделана и покрыта сценариями.
+A statement that a task is not done ages like any other. Twice in one review something stale was
+named current: the unread marker was already shipped by the kit, and half of the task about the
+skills gate was done and covered by scenarios.
 
 ```bash
-# проверять то, о чём собираешься сказать «не сделано»
-grep -rn '<символ>' libs apps .claude/hooks
-grep -n '<имя>' node_modules/<пакет>/types/*.d.ts
+# check what you are about to call "not done"
+grep -rn '<symbol>' libs apps .claude/hooks
+grep -n '<name>' node_modules/<package>/types/*.d.ts
 ```
 
-## Доводы за отсрочку — это «чего это стоит»
+## Arguments for deferring are "what it costs"
 
-Раздел «что стоит отложить» переезжает не в архив, а **в тела тех задач, которых он
-касается**: там он и есть оценка цены. В файле он остаётся, только если отсрочка — решение
-владельца, а не предложение разбора. Признак — записанный ответ владельца с датой; нет
-его — значит, предложение.
+The "what is worth deferring" section moves not to the archive but **into the bodies of the
+tasks it concerns**: there it is the cost estimate. It stays in the file only if the deferral is
+the owner's decision, not the review's proposal. The sign is the owner's recorded answer with a
+date; without it — a proposal.
 
-## Ссылки на снятые разделы
+## Links to removed sections
 
-Задача, чьё тело говорит `**Источник:** <документ>, раздел «…»`, после разбора ведёт в
-пустоту, и проверка путей этого не видит: она читает файлы репозитория, а не тела задач.
-Строка снимается тем же заходом.
+A task whose body says `**Источник:** <document>, раздел «…»` leads into the void after the
+review, and the path check does not see it: it reads repository files, not task bodies. The
+line is removed in the same session.
 
-## Судьба файла
+## The fate of the file
 
-- Осталось незадачное — файл живёт, и его преамбула объявляет новый признак отбора.
-- Не осталось ничего, а документ описывал состоявшуюся работу — уезжает в `docs/archive/`.
-- Не осталось ничего, и это был список работ — удаляется.
+- Something non-task is left — the file lives, and its preamble declares the new selection sign.
+- Nothing is left, and the document described work that took place — it moves to
+  `docs/archive/`.
+- Nothing is left, and it was a work list — it is deleted.
 
-Разбор целиком — одна задача и одна ветка: делится то, что придётся откатывать порознь, а
-здесь откат общий. Правка кода, найденная по дороге, в эту ветку не идёт — иначе откат разбора
-унесёт починку.
+The whole review is one task and one branch: what splits is what would have to be reverted
+separately, and here the revert is shared. A code edit found along the way does not go into this
+branch — otherwise reverting the review carries the fix away.
 
-## Что чинится в дереве следом
+## What gets fixed in the tree next
 
-Документ — не единственное место, обещающее, что работа живёт в нём. Снятое имя вычищается
-одним грепом, включая описания агентов, скилы, README и комментарии в коде:
+The document is not the only place promising that the work lives in it. A removed name is purged
+by one grep, including agent descriptions, skills, READMEs and code comments:
 
 ```bash
 grep -rn 'BACKLOG' --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=archive .
 ```
 
-## Частые промахи
+## Common misses
 
-- Обход по маркированным пунктам: половина работы лежит прозой и переживает разбор.
-- «На это есть задача» без чтения её тела: пункт удалён, содержание потеряно.
-- Число пунктов названо владельцу до сверки на выборке.
-- Протухшее утверждение перенесено в задачу и стало действующим указанием.
-- Доводы за отсрочку оставлены в документе: он снова становится вторым списком работ.
-- Разбор поделён на несколько задач «по объёму» — признак деления не объём, а раздельный
-  откат.
-- Архив тронут: он описывает состояние на момент написания и под новые термины не правится.
+- A pass over bulleted items: half the work lies in prose and survives the review.
+- "There is a task for this" without reading its body: the item is removed, the content is lost.
+- The number of items stated to the owner before verifying on a sample.
+- A stale statement transferred into a task and turned into a current instruction.
+- Arguments for deferring left in the document: it becomes a second work list again.
+- The review split into several tasks "by size" — the sign for splitting is not size but a
+  separate revert.
+- The archive touched: it describes the state as of writing and is not edited for new terms.

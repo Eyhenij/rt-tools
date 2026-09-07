@@ -5,22 +5,23 @@ rule: typescript-conventions
 description: Pattern of rule typescript-conventions. Load when creating or editing a Connect procedure on the backend — the ready-made class with the method field and the handler, dependencies through the constructor, file and class names. Access to a procedure is described by the access rule of the tree.
 ---
 
-# Процедура Connect
+# A Connect procedure
 
-Паттерн правила `typescript-conventions`. Что при этом должно быть верно — закон
+Pattern of the rule `typescript-conventions`. What must be true — the law
 `docs/constitution/code-structure.md`.
 
-## Когда брать
+## When to use
 
-- Заводится новая процедура бэкенда.
-- Правится тело существующей.
-- Домен переезжает на вертикальную нарезку.
+- A new backend procedure is created.
+- The body of an existing one is edited.
+- A domain moves onto the vertical cut.
 
-## Одна процедура — один класс
+## One procedure — one class
 
-Файл `<процедура>.procedure.ts` в слое `feature` своего домена, класс `<Процедура>Procedure`,
-публичное поле `method` с дескриптором из контракта и публичный метод `handle` с телом.
-Зависимости приходят конструктором — на бэкенде DI нестовский, `inject()` там нет.
+The file `<procedure>.procedure.ts` in the `feature` layer of its domain, the class
+`<Procedure>Procedure`, a public field `method` with the descriptor from the contract and a
+public method `handle` with the body. Dependencies come through the constructor — on the backend
+the DI is NestJS's, there is no `inject()` there.
 
 ```typescript
 @Injectable()
@@ -41,26 +42,28 @@ export class PingProcedure implements IConnectProcedure<typeof HealthService.met
 }
 ```
 
-Объявление доступа обязательно, и оно ровно одно; чем оно объявляется, говорит правило
-доступа того дерева, где такое правило есть.
+The access declaration is mandatory, and there is exactly one; what declares it is said by the
+access rule of the tree that has such a rule.
 
-## Почему форма такая
+## Why this shape
 
-Прежняя — `register(router)` с телами в замыканиях внутри `router.service(...)` — делала
-обработчик недостижимым для спеки: наружу торчал только класс с методом `register`. А
-`router.service` заглушает каждый непереданный метод ответом `Unimplemented`, поэтому один
-proto-сервис не мог обслуживаться двумя доменами.
+The previous one — `register(router)` with bodies in closures inside `router.service(...)` — made
+the handler unreachable for a test: only a class with a `register` method stuck out. And
+`router.service` stubs every method not passed with an `Unimplemented` answer, so one proto
+service could not be served by two domains.
 
-Класс решает и то, и другое: `handle` зовётся спекой напрямую, а реестр кладёт процедуры
-поштучно через `router.rpc`.
+The class solves both: `handle` is called by the test directly, and the registry puts the
+procedures in one by one through `router.rpc`.
 
-## Частые промахи
+## Common misses
 
-- Третий суффикс: `*.rpc.ts` и `*.connect.ts` — прежние имена, они уходят вместе с последним
-  переехавшим доменом, и новых таких файлов не заводится.
-- `inject()` в классе процедуры: на бэкенде зависимости идут конструктором.
-- Тело в замыкании внутри регистрации роутера: спека до него не дотянется.
-- Процедура без объявления доступа: приложение не поднимется.
-- Приведение `as` в переводе моделей: на бэкенде оно запрещено так же, как в маппере фронта.
-- Свой тип у результата `groupBy` Prisma: он условный, собирается из аргументов вызова и с
-  выписанным руками не сходится. Там, где ключей единицы, идёт `count` на ключ в `Promise.all`.
+- A third suffix: `*.rpc.ts` and `*.connect.ts` are the previous names, they leave together with
+  the last domain moved, and no new such files are created.
+- `inject()` in a procedure class: on the backend dependencies go through the constructor.
+- The body in a closure inside the router registration: a test cannot reach it.
+- A procedure without an access declaration: the application does not start.
+- An `as` cast in model translation: on the backend it is forbidden the same as in a frontend
+  mapper.
+- An own type for the result of Prisma's `groupBy`: it is conditional, assembled from the call
+  arguments, and does not match one written out by hand. Where the keys are few, a `count` per
+  key goes in `Promise.all`.

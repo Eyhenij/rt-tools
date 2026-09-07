@@ -5,71 +5,71 @@ rule: git-workflow
 description: Pattern of rule git-workflow. Load for opening a PR and everything around it — title format, draft and leaving it, linking to the work item, the reviewer, a body sample, reading the PR state, the checklist. Creating the item and committing — pattern git-workflow-commit.
 ---
 
-# Заявка на слияние
+# The PR
 
-Паттерн правила `git-workflow`. Что при этом должно быть верно — закон
-`docs/constitution/delivery.md`. Заведение задачи, ветки и коммит — паттерн
+Pattern of the rule `git-workflow`. What must be true — the law
+`docs/constitution/delivery.md`. Creating the task, the branch and the commit — pattern
 `git-workflow-commit`.
 
-## Когда брать
+## When to use
 
-- Открывается PR по готовой ветке.
-- Правится заголовок, тело или метки уже открытого PR.
-- Снимается черновик, и работа отдаётся на разбор.
-- Читается состояние PR перед тем, как что-либо о нём сказать владельцу.
+- A PR is opened from a finished branch.
+- The title, body or labels of an already open PR are edited.
+- The draft is lifted, and the work is handed over for review.
+- The PR state is read before anything is said about it to the owner.
 
-## Номер элемента стоит в его заголовке и в заголовке PR
+## The work item number stands in its title and in the PR title
 
-Форма одна на оба — `[<номер>] <текст>`. Номер стоит в самом заголовке, а не только в теле: в
-списке PR тела не видно. Тот же номер несёт и имя ветки, поэтому элемент, ветка и PR читаются
-как одно.
+One form for both — `[<номер>] <текст>`. The number stands in the title itself, not only in the
+body: the PR list shows no bodies. The branch name carries the same number, so work item,
+branch and PR read as one.
 
-Элемент говорит, что не так; PR тем же номером отчитывается, что сделано:
+The work item says what is wrong; the PR, under the same number, says what was done:
 
 ```
 элемент  [86] Пустой адрес владельца — письма не уходят молча
 PR       [86] Письмо владельцу с незаполненным адресом попадает в логи
 ```
 
-Инфинитив в заголовок PR не переносится: «исправить» становится «исправлено», «вернуть» —
-«возвращено», «добавить» — «добавлено».
+The infinitive does not carry into the PR title: "fix" becomes "fixed", "restore" — "restored",
+"add" — "added".
 
-Тип и область — `fix(site):`, `docs(common):` — в заголовок PR не идут: это формат заголовка
-коммита, и там его сверяет `commitlint`.
+Type and scope — `fix(site):`, `docs(common):` — do not go into the PR title: that is the commit
+subject format, and `commitlint` checks it there.
 
-## Не готовое к слиянию открывается черновиком
+## What is not ready to merge opens as a draft
 
-Правка кода отдаётся человеку открытым PR: запушенная ветка ему не показывается нигде. Открытый
-PR при этом читается как приглашение влить, поэтому у незаконченной работы он открывается
-черновиком — завершение у черновика хостинг блокирует сам:
+A code edit is handed to a person by an open PR: a pushed branch is shown to them nowhere. An
+open PR reads as an invitation to merge, so unfinished work opens it as a draft — the host locks
+a draft's completion itself:
 
 ```bash
 AZURE_DEVOPS_EXT_PAT="$TOKEN" az repos pr create --draft true --title '[<КЛЮЧ>-86] …' \
     --description "$(cat тело.md)"
 ```
 
-Конвейер проверок у черновика по умолчанию не запускается: молчание прогона за зелёный прогон
-не принимается, и набор гоняется на своей машине либо запуском вручную.
+The check pipeline does not start on a draft by default: a run's silence is not taken for a
+green run, and the set is run on one's own machine or by a manual start.
 
-Черновиком идёт всё, что ждёт прогона конвейера, доработки или ответа на вопрос. Вопрос
-задаётся в самом PR, а не остаётся в голове исполнителя: человек читает PR, а не переписку
-захода.
+Everything waiting for a pipeline run, a rework or an answer to a question goes as a draft. The
+question is asked in the PR itself, not kept in the executor's head: a person reads the PR, not
+the session's conversation.
 
-Снимается черновик отдельным вызовом, и это тот самый ход, которым исполнитель говорит, что
-решение готово:
+The draft is lifted by a separate call, and that is the very turn in which the executor says the
+solution is ready:
 
 ```bash
 AZURE_DEVOPS_EXT_PAT="$TOKEN" az repos pr update --id 86 --draft false
 ```
 
-До снятия молчание исполнителя значит «ещё не готово», после — «можно вливать». Снятие
-черновика и просьба влить идут одним ходом: снятый черновик, о котором человеку не сказали,
-ждёт разбора ровно так же, как не снятый.
+Before the lifting the executor's silence means "not ready yet", after — "may be merged".
+Lifting the draft and asking to merge go in one turn: a lifted draft nobody told the person
+about waits for review just like one not lifted.
 
-## PR привязывается к элементу при создании
+## The PR is bound to the work item at creation
 
-Привязка задаётся флагом, а не правкой после: у токена может не быть права править чужой
-элемент, и вторая команда обойдётся молча, оставив PR ни с чем не связанным.
+The binding is set by a flag, not by an edit after: the token may lack the right to edit someone
+else's work item, and the second command goes by silently, leaving the PR bound to nothing.
 
 ```bash
 AZURE_DEVOPS_EXT_PAT="$TOKEN" az repos pr create \
@@ -79,11 +79,11 @@ AZURE_DEVOPS_EXT_PAT="$TOKEN" az repos pr create \
     --description 'Закрывает рабочий элемент 86.'
 ```
 
-Ревьювер — всегда владелец: без запроса разбора PR не показывается ему в очереди. Один PR
-закрывает элемент целиком — половину задачи одним PR не выкатывают: у задачи одна ветка, и
-работа, которая в неё не влезает, делится на задачи до того, как ветка заводится.
+The reviewer is always the owner: without a review request the PR does not show in their queue.
+One PR closes the work item whole — half a task is not rolled out by one PR: a task has one
+branch, and work that does not fit it is split into tasks before the branch is created.
 
-У уже открытого PR то же ставится правкой:
+On an already open PR the same is set by an edit:
 
 ```bash
 az repos pr work-item add --id 205 --work-items 86
@@ -91,14 +91,14 @@ az repos pr reviewer add --id 205 --reviewers <владелец>
 az repos pr update --id 205 --description "$(cat тело.md)"
 ```
 
-Правка описания переписывает его целиком. Тело перечитывается всякий раз, когда в ветку что-то
-влилось после публикации: PR утверждает про дерево, а дерево с тех пор изменилось.
+An edit of the description rewrites it whole. The body is reread whenever something merged into
+the branch after publishing: the PR states things about the tree, and the tree has changed since.
 
-## Образец тела PR
+## PR body sample
 
-Четыре раздела, и порядок между ними один: строка связи, что сделано, чем подтверждено,
-оставшийся шаг. Раздел, которому нечего сказать, пишется словами — пустой заголовок и снятый
-заголовок читаются одинаково, а значат разное.
+Four sections, and one order between them: the link line, what was done, what confirms it, the
+remaining step. A section with nothing to say says so in words — an empty heading and a removed
+heading read alike and mean different things.
 
 ```markdown
 Закрывает рабочий элемент 86.
@@ -118,8 +118,8 @@ az repos pr update --id 205 --description "$(cat тело.md)"
 черновик; до этого кнопка слияния заблокирована хостингом.
 ```
 
-Раздел «Оставшийся шаг» стоит последним и переписывается тем же вызовом, что и остальное тело,
-— в тот ход, которым снимается черновик:
+The "Remaining step" section stands last and is rewritten by the same call as the rest of the
+body — in the turn that lifts the draft:
 
 ```markdown
 ## Оставшийся шаг
@@ -127,98 +127,103 @@ az repos pr update --id 205 --description "$(cat тело.md)"
 Не осталось: прогон зелёный, черновик снят. Можно вливать.
 ```
 
-Стоит он там потому, что решение о слиянии принимается на этой странице, а не в переписке:
-сказанное владельцу вслух живёт до следующей реплики, а тело лежит у самой кнопки. Одно другого
-не отменяет — порядок обоих сообщений владельцу описывает паттерн закрытия работы.
+It stands there because the merge decision is made on that page, not in the conversation: what
+was said to the owner aloud lives until the next reply, and the body lies right by the button.
+One does not cancel the other — the order of both messages to the owner is described by the
+pattern for closing work.
 
-Проверить тело машиной нечем: ни одна сверка его не читает, а хостинг спрашивает только про
-заголовок. Держится образец тем, кто пишет тело, — как и слова вслух.
+There is nothing to check the body by machine: no audit reads it, and the host asks only about
+the title. The sample is held by whoever writes the body — like the words said aloud.
 
-## Состояние PR читается, а не додумывается
+## The PR state is read, not guessed
 
-Команды правки отвечают нулевым кодом и тогда, когда ничего не сделали. Поэтому после них PR
-перечитывают:
+The edit commands answer with a zero code even when they did nothing. So after them the PR is
+reread:
 
 ```bash
 az repos pr show --id 205 \
     --query '{author: createdBy.uniqueName, reviewers: reviewers[].uniqueName, work: workItemRefs[].id}'
 ```
 
-Владельцу называют то, что прочитали, а не то, что заказывали.
+The owner is told what was read, not what was ordered.
 
-Перечитывают его и по времени, а не только после вызовов, которые молча ничего не сделали:
-состояние PR читается перед тем, как что-либо о нём сказать. Между «прогон зелёный» и следующей
-фразой владелец успевает влить PR, и всё сказанное о нём после этого — про вчерашний день. Так
-владельцу и было предложено влить то, что он влил часом раньше.
+It is reread by time too, not only after calls that silently did nothing: the PR state is read
+before anything is said about it. Between "the run is green" and the next phrase the owner has
+time to merge the PR, and everything said about it after that is about yesterday. That is how
+the owner was offered to merge what they had merged an hour earlier.
 
-Открытый PR означает, что элемент ждёт разбора, — состояние переставляется тем же движением:
+An open PR means the work item awaits review — the state is moved in the same motion:
 
 ```bash
 npm run task:move -- 86 in-review
 ```
 
-## Что проверяется до публикации PR
+## What is checked before the PR is published
 
-Конвейер видит только отправленное, а отправляется оно пушем. Линтеры, юниты и сценарии хуков
-снимает гейт пуша — ниже то, чего он не знает.
+The pipeline sees only what was sent, and it is sent by a push. Linters, unit tests and hook
+scenarios are taken by the push gate — below is what it does not know.
 
-1. **Главная ветка влита в эту ветку** — `git fetch origin && git merge origin/main`.
-   Всё, что проверяется ниже, проверяется от этого основания: PR с разошедшейся ветки
-   показывает ревьюверу правку вперемешку с чужой. Порядок и разбор конфликта — паттерн
+1. **The main branch is merged into this branch** — `git fetch origin && git merge origin/main`.
+   Everything checked below is checked from this base: a PR from a diverged branch shows the
+   reviewer the edit mixed with someone else's. Order and conflict resolution — pattern
    `git-workflow-merge`.
-2. **В ветке только та правка, за которой её заводили** — `git diff main...HEAD --stat`. Чужой
-   домен в списке файлов означает, что правка расползлась, и её надо вернуть в свои границы.
-3. **Ни мока, ни подменённого ответа, ни отладочной строки** — `git diff main...HEAD` читается
-   целиком, а не по именам файлов. На прод они уезжают молча и портят настоящие данные.
-4. **Документ едет тем же коммитом.** Пару называет `docs-guard`, но спек домена и правку его
-   поведения он не знает — это остаётся за автором.
-5. **Проверки текстов и раскладки зелёные** — те, что дерево завело в `tools/`. Какие именно
-   есть здесь — `implementation.md` правила.
-6. **Все приложения дерева собираются** — `nx build` по каждому. Гейт пуша сборку не гоняет.
-7. **Видимый текст заведён во всех локалях перевода** — тестом полноты словарей, если дерево
-   переводится.
-8. **Правка вёрстки подтверждена замером**, а не взглядом, и снята при узком экране — паттерн
-   `browser-verification-measure`.
-9. **Правка разметки публичного сайта проверена на прод-сборке по всем локалям перевода** —
-   правило видимости в поиске того дерева, где оно есть.
-10. **PR привязан к рабочему элементу**, ревьювер и исполнитель стоят, а тело собрано по
-    образцу — разделы «Что сделано», «Чем подтверждено» и «Оставшийся шаг». Раздел оставшегося
-    шага к этому моменту говорит, что шагов не осталось: черновик снимается после разбора
-    папки, а не до него.
-11. **Заголовок PR несёт номер элемента и называет работу сделанной:** `[<номер>] <Что
-сделано>`, тем же номером, что стоит у элемента и в имени ветки.
-12. **Очередь работ сходится** — `npm run check:board`.
-13. **Состояние PR прочитано, а не выведено из кодов возврата.**
-14. **Набор взят из файла конвейера, а не собран по памяти.** Гейт пуша заведомо уже: он стоит
-    между командой и пушем, и всё, что дольше секунд, из него вынесено. Что гоняет конвейер,
-    написано в его файле — этот список и повторяется локально; зелёный гейт полнотой набора не
-    является.
-15. **Набор пересмотрен после вливания главной ветки.** Он выбирается по тому, что ветка везёт
-    теперь, а не по тому, что правил автор. Ветка, не тронувшая ни строки показа, прогоняет
-    снимки витрин: с момента вливания их гоняет конвейер на её коде, и красное придёт на её
-    PR.
+2. **The branch holds only the edit it was created for** — `git diff main...HEAD --stat`. A
+   foreign domain in the file list means the edit has spread, and it must be brought back within
+   its bounds.
+3. **No mock, no substituted response, no debug line** — `git diff main...HEAD` is read whole,
+   not by file names. They go to production silently and corrupt real data.
+4. **The document goes in the same commit.** `docs-guard` names the pair, but it does not know
+   the domain spec and an edit of its behaviour — that stays with the author.
+5. **Text and layout checks are green** — those the tree created in `tools/`. Which ones exist
+   here — the rule's `implementation.md`.
+6. **All applications of the tree build** — `nx build` for each. The push gate does not run the
+   build.
+7. **Visible text is entered in all translation locales** — by the dictionary completeness test,
+   if the tree is translated.
+8. **A layout edit is confirmed by a measurement**, not by a look, and captured on a narrow
+   screen — pattern `browser-verification-measure`.
+9. **A markup edit of the public site is checked on the production build in all translation
+   locales** — the search visibility rule of the tree that has one.
+10. **The PR is bound to the work item**, reviewer and assignee are set, and the body is
+    assembled by the sample — the sections "What was done", "What confirms it" and "Remaining
+    step". By this moment the remaining step section says no steps are left: the draft is
+    lifted after the folder is taken apart, not before.
+11. **The PR title carries the work item number and names the work done:** `[<номер>] <Что
+сделано>`, with the same number as the work item and the branch name.
+12. **The work queue matches** — `npm run check:board`.
+13. **The PR state is read, not derived from return codes.**
+14. **The set is taken from the pipeline file, not assembled from memory.** The push gate is
+    narrower by design: it stands between the command and the push, and everything longer than
+    seconds is taken out of it. What the pipeline runs is written in its file — that list is
+    repeated locally; a green gate is not completeness of the set.
+15. **The set is revised after merging the main branch in.** It is chosen by what the branch now
+    carries, not by what the author edited. A branch that touched no line of the showcase runs
+    the showcase snapshots: since the merge the pipeline runs them on its code, and the red
+    comes to its PR.
 
-Сразу после публикации элемент переводится в разбор, и сверка очереди прогоняется ещё раз: до
-открытия PR состояние она не судит, а после открытия расхождение видит.
+Right after publishing the work item is moved to review, and the queue audit is run once more:
+before the PR opens it does not judge the state, after the opening it sees the discrepancy.
 
-Сделанное рассуждением и сделанное замером в теле PR разводятся прямо: непроверенное,
-названное проверенным, ревьювер принимает за проверенное.
+What was done by reasoning and what was done by measurement are told apart plainly in the PR
+body: the unchecked named as checked, the reviewer takes as checked.
 
-**Раздел «Чем подтверждено» называет и то, что не гонялось.** Список одного прогнанного
-неотличим от полного набора, и ревьювер по нему решает, что можно не перепроверять. Цена ошибки
-здесь не красный конвейер, а доверие к разделу: однажды прочитанный как полнота, дальше он
-перепроверяется весь.
+**The "What confirms it" section names what was not run too.** A list of one run cannot be told
+from the full set, and by it the reviewer decides what need not be rechecked. The price of a
+mistake here is not a red pipeline but trust in the section: once read as complete, from then on
+it is rechecked whole.
 
-## Частые промахи
+## Common misses
 
-Промахи про заведение задачи, ветку и коммит — паттерн
+Misses about creating the task, the branch and the commit — pattern
 `git-workflow-commit`.
 
-- PR открыт без `--work-items`: связи нет, и по очереди работ не видно, за чем эта правка.
-- `AB#<номер>` в коммите принят за привязку PR: он связывает коммит, а очередь читает связь PR.
-- PR открыт без ревьювера: он не попадает во входящие владельца, и очередь стоит, выглядя
-  работающей.
-- `--delete-source-branch` забыт: ветки задач копятся в репозитории, и по списку веток больше
-  не видно, какая работа идёт сейчас.
-- Автозавершение включено до того, как прогнаны проверки до пуша: конвейер зелёный на том, что
-  он умеет, и слияние происходит без всего остального.
+- A PR opened without `--work-items`: there is no link, and the work queue does not show what
+  this edit is for.
+- `AB#<номер>` in a commit taken for the PR binding: it binds the commit, and the queue reads
+  the PR's link.
+- A PR opened without a reviewer: it never reaches the owner's inbox, and the queue stands
+  while looking as if it works.
+- `--delete-source-branch` forgotten: task branches pile up in the repository, and the branch
+  list no longer shows which work is going on now.
+- Auto-complete turned on before the checks before a push were run: the pipeline is green on
+  what it knows how to do, and the merge happens without all the rest.

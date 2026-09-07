@@ -5,194 +5,204 @@ rule: spec-driven
 description: Pattern of rule spec-driven. Load when creating or editing a domain spec in docs/specs — the mandatory sections, the scenario form, binding a rule to code, the order of work from spec to code. Not for creating a law, a rule or a pattern — that is pattern spec-driven-rule.
 ---
 
-# Спек домена
+# Domain spec
 
-Паттерн правила `spec-driven`. Что при этом должно быть верно — закон
+Pattern of the rule `spec-driven`. What must be true — the law
 `docs/constitution/project-documentation.md`.
 
-## Когда брать
+## When to use
 
-- Заводится новый домен или фича в `proposed/`.
-- Правится `.proto` — спеки задетых доменов едут той же веткой.
-- Замечено расхождение спека с кодом.
+- A new domain or a feature in `proposed/` is created.
+- A `.proto` is edited — the specs of the touched domains go in the same branch.
+- A divergence between a spec and the code was noticed.
 
-## Раскладка
+## Layout
 
 ```
-docs/specs/<домен>/
-    spec.md              — как домен работает
-    implementation.md    — таблица «правило → файл:символ»
-    scenarios.md         — сценарии SC-<ПРЕФИКС>-<НОМЕР>
-    <поддомен>/          — свой spec.md, implementation.md и scenarios.md
-    proposed/<фича>/     — только то, чего ещё нет
+docs/specs/<domain>/
+    spec.md              — how the domain works
+    implementation.md    — the table "rule → file:symbol"
+    scenarios.md         — scenarios SC-<PREFIX>-<NUMBER>
+    <subdomain>/         — its own spec.md, implementation.md and scenarios.md
+    proposed/<feature>/  — only what does not exist yet
 ```
 
-Шаблон — `docs/specs/_template/spec.md`, указатель с префиксами — `docs/specs/README.md`.
+The template is `docs/specs/_template/spec.md`, the index with prefixes is `docs/specs/README.md`.
 
-Поддомен спрашивается наравне с доменом: те же обязательные разделы, тот же компаньон рядом,
-та же связь сценариев с тестами. Домен, у которого половина поддоменов описана, а половина
-заведена пустыми каталогами, зелёным не бывает.
+A subdomain is asked the same as a domain: the same mandatory sections, the same companion next
+to it, the same link between scenarios and tests. A domain with half its subdomains described and
+half created as empty directories is never green.
 
-Работа, задевшая домен и его поддомен, пишет две договорённости, а не одну. Префикс сценариев у
-поддомена свой, а второго префикса одному спеку сверка не даёт: сценарии такой работы
-разъезжаются по двум нумерациям — по одной на каждый спек, в который вольются. Замысел называет
-обе, и вливаются они порознь, каждая в свой спек.
+Work that touched a domain and its subdomain writes two product agreements, not one. A subdomain
+has a scenario prefix of its own, and the audit gives no spec a second prefix: the scenarios of
+such work part into two numberings — one per spec they will merge into. The plan names both, and
+they merge apart, each into its own spec.
 
-## Обязательные разделы
+## Mandatory sections
 
-`## Зачем` · `## Терминология` с подразделом `### Как это называется в интерфейсе` ·
-`## Правила` · `## Что не входит` · `## Контракт` с подразделом `### Коды отказов` ·
-`## Данные` · `## Экраны и состояния` · `## Сквозные требования` с четырьмя подразделами
+`## Зачем` · `## Терминология` with the subsection `### Как это называется в интерфейсе` ·
+`## Правила` · `## Что не входит` · `## Контракт` with the subsection `### Коды отказов` ·
+`## Данные` · `## Экраны и состояния` · `## Сквозные требования` with four subsections
 `### Локали`, `### SEO`, `### Мобильная раскладка`, `### Мультиобъектность` · `## Решения` ·
 `## Открытые вопросы` · `## История изменений`.
 
-Текст заголовка сверяется дословно. «Не применимо» — законный ответ, отсутствие раздела — нет.
+The heading text is checked verbatim. "Not applicable" is a legitimate answer, a missing section
+is not.
 
-`## Решения` — временное место. Решение живёт в нём, пока не найден слой, которому оно
-принадлежит; найденный слой забирает его пунктом, а в спеке не остаётся ничего. Разросшийся
-раздел читается как признак незаведённого правила, а не как свойство сложного домена: делить
-такой спек по строкам бесполезно, потому что делится в нём не описание домена, а ненаписанное
-правило.
+`## Решения` is a temporary place. A decision lives in it until the layer it belongs to is found;
+the found layer takes it as an item, and nothing stays in the spec. A section that has grown reads
+as a sign of a rule not yet created, not as a trait of a complex domain: splitting such a spec by
+lines is useless, because what splits in it is not the description of the domain but the unwritten
+rule.
 
-**Заголовок записи раздела решений датой не называется.** Дата говорит, когда решение приняли, а
-раздел отвечает на «почему так, а не иначе»: по дате решение не отобрать и не найти, зато
-названная ею запись читается описанием прошлого и остаётся в спеке навсегда. Запись начинается с
-самого решения.
+**The heading of a decisions-section entry is not a date.** A date says when the decision was
+made, while the section answers "why so and not otherwise": a decision cannot be selected or
+found by date, yet an entry named by one reads as archive and stays in the spec forever. An entry
+starts with the decision itself.
 
-**Утверждение, стоящее в другом разделе того же спека, вторым пунктом правил не заводится.**
-Устройство записи живёт в разделе данных, порядок вызовов — в разделе контракта, причина
-существования домена — в разделе «Зачем»: все три говорят о том же, о чём говорило бы правило.
-Второй экземпляр расходится с первым молча, и заметить это нечем — сверка знает пункт правила
-против якоря, а два утверждения об одном не сравнивает никто. Решение при этом из раздела решений
-уезжает целиком: место, где требование живёт, найдено.
+**A statement standing in another section of the same spec is not created as a second rule
+item.** The structure of a record lives in the data section, the order of calls in the contract
+section, the reason the domain exists in the `## Зачем` section: all three say what the rule would
+say. The second copy diverges from the first silently, and there is nothing to notice it by — the
+audit knows a rule item against an anchor, and nobody compares two statements about one thing.
+The decision at that point leaves the decisions section whole: the place where the requirement
+lives is found.
 
-Шапка несёт статус, дату ревизии, префикс сценариев, зависимости от других доменов, строку
-`**Законы:**` — законы, которые домен применяет, — и строку `**Процедуры:**` — корни либ, чьи
-процедуры домен обслуживает.
+The header carries the status, the revision date, the scenario prefix, the dependencies on other
+domains, the `**Законы:**` line — the laws the domain applies — and the `**Процедуры:**` line —
+the lib roots whose procedures the domain serves.
 
 ```markdown
-**Зависимости:** `catalog` (состав заявки), `availability` (занятость дат)
+**Зависимости:** `catalog` (booking request contents), `availability` (date occupancy)
 **Законы:** `access`, `locales`, `lists`
-**Процедуры:** `libs/api/<домен>`
+**Процедуры:** `libs/api/<domain>`
 ```
 
-Закон, названный где-нибудь в тексте спека, обязан стоять в этой строке: связь сверяется в
-обе стороны.
+A law named anywhere in the spec text must stand in this line: the link is checked both ways.
 
-## Правило и его привязка
+## A rule and its binding
 
-Правило формулируется так, чтобы его можно было нарушить, и начинается с жирной фразы:
+A rule is worded so that it can be broken, and starts with a bold phrase:
 
 ```markdown
-- **Применяется одна максимальная скидка.** Сложение скидок даёт цену ниже себестоимости.
+- **One maximum discount is applied.** Adding discounts up gives a price below cost.
 ```
 
-Привязка живёт в `implementation.md` рядом, ключ связи — сам текст правила:
+The binding lives in `implementation.md` next to it, and the key of the link is the rule text
+itself:
 
 ```markdown
-| Правило                               | Где исполняется                                                    |
-| ------------------------------------- | ------------------------------------------------------------------ |
-| Применяется одна максимальная скидка. | `libs/api/<домен>/util/src/lib/quote.calculator.ts:calculateQuote` |
+| Rule                             | Where it is carried out                                            |
+| -------------------------------- | ------------------------------------------------------------------ |
+| One maximum discount is applied. | `libs/api/<domain>/util/src/lib/quote.calculator.ts:calculateQuote` |
 ```
 
-Правило, которому места в коде не нашлось, — намерение: ему место в «Открытых вопросах» как
-`Q-<буква закона>-<номер>`, а не формальный якорь.
+A rule that found no place in code is an intention: its place is "Open questions" as
+`Q-<law letter>-<number>`, not a formal anchor.
 
-## Сценарий
+## Scenario
 
 ```markdown
-### SC-BK-19 — подтверждение на занятые даты отбивается
+### SC-BK-19 — confirmation for occupied dates is refused
 
-Дано у объекта есть подтверждённая бронь на пересекающиеся даты
-Когда владелец подтверждает заявку
-Тогда отказ подаётся владельцу как занятые даты, а не как ошибка базы
+Given the property has a confirmed booking on overlapping dates
+When the owner confirms the booking request
+Then the refusal is shown to the owner as occupied dates, not as a database error
 ```
 
-**«Тогда» называет один исход.** Формулировка через «либо» описывает два устройства сразу, и
-какое из них работает, по сценарию не узнать: сценарий зелен при любом. Развилка описывается
-двумя сценариями с разным «Дано» — тогда смена поведения роняет ровно тот из них, который
-перестал быть верным, а не проходит молча.
+**"Then" names one outcome.** A wording through "either … or" describes two structures at once,
+and the scenario gives no way to learn which one works: it is green under either. A fork is
+described by two scenarios with different "Given" — then a change of behaviour fails exactly the
+one that stopped being true, instead of passing silently.
 
-Идентификатор ставится в начало заголовка теста, через тире. Сценарий без теста помечается
-`Не покрыто: <причина>`, сценарий с неполным тестом — `Покрытие: частичное — <чего не
-хватает>`.
+The identifier is put at the start of the test title, followed by a dash. A scenario without a
+test is marked `Не покрыто: <reason>`, a scenario with an incomplete test — `Покрытие: частичное
+— <what is missing>`.
 
-Сценарий, который проверить нечем в принципе, не заводится вовсе. Пометка о непокрытом говорит
-«теста ещё нет» и обещает, что он появится; там, где проверки не существует, обещания нет, а
-помеченный сценарий висит в наборе вечно, читается как долг и заставляет каждого следующего
-заново выяснять, не пора ли его закрыть. Правило, ради которого сценарий хотели завести,
-остаётся правилом: его держат строка в компаньоне и запись в истории изменений, и этого довольно.
+A scenario that cannot be checked by anything at all is not created. The "not covered" mark says
+"there is no test yet" and promises one will appear; where no check exists, there is no promise,
+and the marked scenario hangs in the suite forever, reads as debt and makes every next reader
+find out anew whether it is time to close it. The rule the scenario was meant for stays a rule:
+it is held by the line in the companion and the entry in the change history, and that is enough.
 
-Номер в идентификаторе живёт так:
+The number in the identifier lives like this:
 
-| Что случилось           | Что делается с номером                                                                               |
-| ----------------------- | ---------------------------------------------------------------------------------------------------- |
-| сценарий добавили       | берётся следующий свободный — наибольший выданный **во всех ветках** плюс один, а не дырка в середине |
-| обещание изменили       | номер тот же, заголовок теста правится тем же коммитом                                               |
-| сценарий удалили        | номер остаётся пустым и новому сценарию не отдаётся; тест удаляется вместе со сценарием              |
-| номера захотелось сжать | не пересчитываются: связь с тестами держит только номер, а прогон остаётся зелёным при обеих правках |
+| What happened             | What is done with the number                                                                                |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| a scenario was added      | the next free one is taken — the largest issued **across all branches** plus one, not a gap in the middle   |
+| the promise changed       | the number stays, the test title is edited by the same commit                                               |
+| a scenario was deleted    | the number stays empty and is not given to a new scenario; the test is deleted with the scenario            |
+| the numbers looked worth compacting | they are not renumbered: only the number ties them to the tests, and the run stays green under both edits |
 
-Номер записывается так же, как у соседей в этом же файле: сверка ищет его шаблоном, и номер,
-записанный иначе, не совпадёт ни в спеке, ни в заголовке теста.
+The number is written the same way as its neighbours' in the same file: the audit looks for it by
+a pattern, and a number written differently matches neither in the spec nor in the test title.
 
-**Свободный номер ищется во всех ветках, а не в одной главной.** Соседняя работа держит свои
-номера на диске и в главную ещё не въехала: шесть номеров так раздали дважды, и двигаться
-пришлось той работе, чья договорённость не влита. Номер — единственное, чем сценарий связан с
-тестом, и отданный второй раз он оставляет старую ссылку правильной на вид и ведущей не туда.
+**A free number is looked for across all branches, not in the main one alone.** Neighbouring work
+keeps its numbers on disk and has not reached main yet: six numbers were issued twice this way,
+and the work whose agreement was not merged had to move. The number is the only thing tying a
+scenario to its test, and issued a second time it leaves the old reference looking right and
+leading elsewhere.
 
-Спрашивается это командой дерева, если дерево её завело: она читает заголовки сценариев во всех
-ветках — своих и удалённых — и печатает первый свободный за наибольшим занятым. Имя команды
-называет компаньон правила.
+This is asked by a tree command, if the tree created one: it reads scenario headings across all
+branches — local and remote — and prints the first free number past the largest taken. The
+command's name is given by the rule's companion.
 
-## Порядок работы
+## Order of work
 
-1. Задача заводится сценариями: что станет верно, когда работа закончится.
-2. Спек домена (или `proposed/<фича>/`) правится **до** кода.
-3. Код пишется под сценарии, тесты называются их идентификаторами.
-4. `npm run check:specs` — до пуша.
-5. Приёмка идёт по сценариям, а не по пересказу правки.
+1. A task is created by scenarios: what will become true when the work is finished.
+2. The domain spec (or `proposed/<feature>/`) is edited **before** the code.
+3. The code is written to the scenarios, and the tests are named by their identifiers.
+4. `npm run check:specs` — before the push.
+5. Acceptance goes by the scenarios, not by a retelling of the edit.
 
-Правило, обещающее человеку видимый результат, подтверждается на работающем приложении, а не
-выводом из графа вызовов. Чтением подтверждаются заголовки, связь с привязками и форма данных;
-правило, которое подтвердить не на чем, уезжает открытым вопросом и утверждением не пишется.
+A rule promising a result a person sees is confirmed on the running application, not by
+inference from the call graph. Reading confirms headings, the link to bindings and the shape of
+data; a rule with nothing to confirm it on leaves as an open question and is not written as a
+statement.
 
-## Частые промахи
+## Common misses
 
-- Выросший домен делят на новые домены, а не на поддомены: новый домен приходится заводить в
-  указателе, сверять с кодом отдельно и объяснять, чем он соседу не поддомен, — а поддомен
-  остаётся в своём домене и наследует его контракт. Соседний домен заводится только тогда,
-  когда предмет живёт своей сущностью. Границу проводит владелец: деление переписывает номера
-  во всех заголовках тестов домена, и вернуть его назад тем же движением нельзя.
-- Счётчик правил или сценариев в указателе доменов: он пересчитывается при каждой правке
-  любого спека, и через год большая часть таких чисел молча описывает позавчерашний спек.
-  Указатель держит домен, префикс и одну строку «о чём».
-- `tasks.md` в спеке: шаги — артефакт сессии, им место в ветке или в описании PR.
-- Скопированная из контракта таблица полей: источник — `libs/common/proto/proto/<область>/v1/`,
-  и компилируется из двух только одна.
-- Колонки и индексы в спеке: они в `prisma/schema.prisma`, а в спеке остаётся правило, которое
-  ограничение выражает.
-- Место, где правило исполняется, внутри текста правила: оно меняется при первом рефакторинге,
-  и для него заведён `implementation.md`.
-- Пометка «Не покрыто» при существующем тесте — отказ: долг закрыли, а отметку не сняли.
-- Пометка «Не покрыто» читается дословно и с начала строки. Любое слово между ней и двоеточием
-  — «Не покрыто, и прогоном не покрывается вовсе: …» — и сценарий считается непомеченным вовсе,
-  а причина, ради которой пометку и писали, до PR не доезжает.
-- Закон, названный в тексте, но забытый в строке `**Законы:**`: по закону тогда не узнать,
-  какие домены на нём стоят.
-- Правка `.proto` без спеков задетых доменов: `docs-guard` отбивает такой коммит.
-- **Правило, выведенное из графа вызовов, ошибается беззвучно.** Читается оно так же уверенно,
-  как замеренное, и сверка привязки его пропускает — символ на месте, просто описывает он не то.
-  Два правила одного спека оказались перевёрнутыми: связь шла не между хранилищами, а через
-  слушающий их компонент, — и оба чуть не стали задачей на дефект, которого нет.
+- A grown domain is split into new domains instead of subdomains: a new domain has to be entered
+  in the index, audited against the code separately and explained as to why it is not a subdomain
+  of its neighbour — while a subdomain stays in its domain and inherits its contract. A
+  neighbouring domain is created only when the subject lives as an entity of its own. The
+  boundary is drawn by the owner: a split rewrites the numbers in all the domain's test titles,
+  and it cannot be put back by the same move.
+- A count of rules or scenarios in the domain index: it is recomputed at every edit of any spec,
+  and a year later most such numbers silently describe the spec of the day before yesterday. The
+  index holds the domain, the prefix and one line of "what it is about".
+- `tasks.md` in a spec: steps are a session artefact; their place is the branch or the PR
+  description.
+- A field table copied from the contract: the source is `libs/common/proto/proto/<area>/v1/`,
+  and only one of the two compiles.
+- Columns and indexes in a spec: they are in `prisma/schema.prisma`, and the spec keeps the rule
+  the constraint expresses.
+- The place where a rule is carried out inside the rule text: it changes at the first
+  refactoring, and `implementation.md` exists for it.
+- A `Не покрыто` mark with an existing test is a refusal: the debt was closed, and the mark was
+  not removed.
+- The `Не покрыто` mark is read verbatim and from the start of the line. Any word between it and
+  the colon — `Не покрыто, и прогоном не покрывается вовсе: …` — and the scenario counts as not
+  marked at all, and the reason the mark was written for never reaches the PR.
+- A law named in the text but forgotten in the `**Законы:**` line: then the law gives no way to
+  learn which domains stand on it.
+- A `.proto` edit without the specs of the touched domains: `docs-guard` refuses such a commit.
+- **A rule inferred from the call graph errs silently.** It reads as confidently as a measured
+  one, and the binding audit lets it through — the symbol is in place, it just describes the wrong
+  thing. Two rules of one spec turned out inverted: the link went not between the stores but
+  through the component listening to them — and both nearly became a task for a defect that does
+  not exist.
 
-- **Выросший домен делится на поддомены, а не на новые домены.** Новый домен пришлось бы
-  заводить в указателе, сверять с кодом отдельно и объяснять, чем он соседу не поддомен;
-  поддомен остаётся в своём домене и наследует его контракт. Соседний домен заводится только
-  тогда, когда предмет живёт своей сущностью.
-- **Наибольший выданный номер ищется по всему домену командой, а не глазами по хвосту файла.**
-  Номера в файле сценариев идут не по порядку: правки вставляли их к соседям по смыслу, и
-  последняя строка максимума не показывает. Шесть новых номеров из одиннадцати легли на занятые
-  — поймала это сверка спеков, а не чтение, и переписывать пришлось заодно заголовки тестов.
-- **Границу между доменами проводит владелец, а не автор очередной правки.** Автор видит свою
-  правку, а не то, чем предмет обрастёт: домен, заведённый по ходу дела, через месяц оказывается
-  половиной соседнего, и разводить их приходится вместе с номерами сценариев.
+- **A grown domain splits into subdomains, not into new domains.** A new domain would have to be
+  entered in the index, audited against the code separately and explained as to why it is not a
+  subdomain of its neighbour; a subdomain stays in its domain and inherits its contract. A
+  neighbouring domain is created only when the subject lives as an entity of its own.
+- **The largest issued number is looked for across the whole domain by a command, not by eye at
+  the tail of the file.** Numbers in the scenarios file are out of order: edits inserted them next
+  to their neighbours by meaning, and the last line does not show the maximum. Six new numbers out
+  of eleven landed on taken ones — the spec audit caught it, not reading, and the test titles had
+  to be rewritten along the way.
+- **The boundary between domains is drawn by the owner, not by the author of the next edit.** The
+  author sees their edit, not what the subject will grow into: a domain created along the way
+  turns out a month later to be half of its neighbour, and parting them means parting the scenario
+  numbers too.

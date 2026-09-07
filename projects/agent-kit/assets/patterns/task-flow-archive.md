@@ -5,89 +5,92 @@ rule: task-flow
 description: Pattern of rule task-flow. Load when the texts are up to date and the task folder is taken apart by the last commit before the PR opens. The move to the archive, the work queue audit, the rules review of the closed work and what to do with the findings.
 ---
 
-# Разбор папки задачи и разбор работы правилами
+# Taking the task folder apart and the rules review of the work
 
-Паттерн правила `task-flow`. Что при этом должно быть верно — закон
-`docs/constitution/work-conduct.md`. Что делается до этого — снятие черновика, вливание
-договорённости и приведение текстов — паттерн `task-flow-close`.
+Pattern of the rule `task-flow`. What must be true meanwhile — the law
+`docs/constitution/work-conduct.md`. What comes before it — lifting the draft, merging the agreement
+and bringing the texts up to date — pattern `task-flow-close`.
 
-## Когда брать
+## When to use
 
-- Договорённость влита, тексты домена приведены, и папка задачи разбирается последним
-  коммитом ветки — до открытия заявки, а не после одобрения.
-- Работа слита человеком, и её разбирают правилами.
-- Разбор вернул находки, и их надо куда-то положить.
+- The agreement is merged, the domain texts are up to date, and the task folder is taken apart by
+  the last commit of the branch — before the PR opens, not after approval.
+- The work is merged by a person, and it is reviewed by the rules.
+- The review returned findings, and they need a place.
 
-## Состояние `разбор-кончился`: папка задачи разбирается
+## State `разбор-кончился`: the task folder is taken apart
 
-Разбор здесь свой, а не чужой: имя состояния говорит о папке задачи, которую разбирают
-следующим шагом, — не о заявке, которую читает ревьювер, и не о просьбе владельца, с разбора
-которой работа начиналась. Слово одно на три дела, и на беглом чтении имя выглядит чужим шагом:
-исполнитель говорил владельцу, что ждёт разбора, и брался за следующую задачу, а готовая работа
-стояла лишний ход и возвращалась в работу рукой владельца.
+The taking-apart here is one's own step, not someone else's. The state name speaks of the task
+folder taken apart in the next step — not of the PR a reviewer reads, nor of the owner's request
+whose grill began the work. In the state's language one word covers all three, and on a skim the
+name looks like someone else's step. The executor told the owner they were waiting for review and
+took the next task, while finished work stood one turn too many and came back to work by the owner's
+hand.
 
-Ждать при этом состоянии нечего. Вход в него — два признака, оба читаются в дереве: набор
-зелёный и тексты приведены. Одобрение владельца входом не является, и работа, ждущая его при
-сошедшихся признаках, стоит зря.
+There is nothing to wait for in this state. Its entry is two signs, both read in the tree: the suite
+is green and the texts are up to date. The owner's approval is no entry, and work waiting for it
+with both signs met stands idle.
 
-Разбор идёт по трём исходам, а не по двум.
+The taking-apart goes by three outcomes, not two.
 
-**Первым отбирается действующее требование.** Всё, что останется верным и завтра, становится
-статьёй закона, пунктом правила или разделом паттерна — по тому, о чём оно говорит. Признак
-отбора один и записан здесь заранее: перестанет ли текст быть верным, если завтра всё
-переделать. Перестанет — это рассказ о состоявшемся; не перестанет — требование, и место ему в
-слое правил. Закон при этом в ветке не правится — его статья приносится владельцу текстом.
+**First, the standing requirement is picked out.** Everything that stays true tomorrow becomes an
+article of a law, a point of a rule or a section of a pattern — by what it speaks of. The sign is
+one and written here in advance: would the text stop being true if everything were redone tomorrow.
+It would — that is a story about what happened; it would not — that is a requirement, and its place
+is the rules layer. The law is not edited in the branch: its article goes to the owner as text.
 
-**Вторым отбирается рассказ о состоявшемся переезде.** Он уезжает в описание прошлого и
-называет для каждого перенесённого решения, куда оно ушло: иначе решение, ставшее правилом, и
-решение, потерянное при переносе, выглядят одинаково — записью, на которую никто не ссылается.
+**Second, the story of the move that happened is picked out.** It goes to the archive and names, for
+every decision moved out, where it went. Otherwise a decision that became a rule and a decision lost
+in the move look the same — a record nobody refers to.
 
-**Третьим удаляется остальное.**
+**Third, the rest is deleted.**
 
-Порядок именно такой: начав с переезда, исполнитель увозит вместе с ним и действующее — под
-конец работы это дешевле, чем разбирать.
+The order is exactly this: starting with the move, the executor carries the standing part away with
+it — at the end of the work that is cheaper than sorting.
 
-Целиком в архив не переносится: `docs/archive/` — место для записей о состоявшемся, которые
-кто-то читает, а не свалка ходов работы. Таблица ниже говорит о том, что осталось после
-первого отбора.
+Nothing moves to the archive whole: `docs/archive/` is a place for records of what happened that
+somebody reads, not a dump of progress files. The table below speaks of what is left after the first
+pick.
 
-| Файл            | Куда                                                                                                               |
-| --------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `grill.md`      | в `docs/archive/` — ответы владельца невосстановимы, и это единственная запись о том, почему задача поставлена так |
-| `progress.md`   | в `docs/archive/`, если в нём есть решения по ходу с причинами; иначе удаляется                                    |
-| `plan.md`       | удаляется — после выкатки на его вопрос отвечает код, а на «как работает» отвечает спек домена                     |
-| находки разбора | пишутся сразу рядом с замыслом эпика — не переезжают отсюда; работа вне эпика показывает их владельцу тем же ходом |
+| File | Where |
+| --- | --- |
+| `grill.md` | to `docs/archive/` — the owner's answers cannot be recovered, and this is the only record of why the task was set this way |
+| `progress.md` | to `docs/archive/` if it holds decisions along the way with reasons; otherwise deleted |
+| `plan.md` | deleted — after the rollout its question is answered by the code, and "how it works" by the domain spec |
+| review findings | written straight next to the epic plan — they do not move from here; work outside an epic shows them to the owner in the same turn |
 
-Находки в папке задачи не живут вовсе. Разбор идёт фоном, и когда он кончится, не знает никто:
-папка к этой минуте разобрана, а ветка бывает уже влита и снята. Оба срока назначает не
-исполнитель, поэтому переезд «из папки к замыслу эпика» держался бы на совпадении, которого может
-и не случиться. Тем же местом пользуется находка, замеченная не разбором, а по ходу работы.
+Findings do not live in the task folder at all. The review runs in the background, and nobody knows
+when it ends: by that minute the folder is taken apart, and the branch may already be merged and
+removed. Neither date is set by the executor, so a move "from the folder to the epic plan" would
+rest on a coincidence that may never come. A finding noticed not by the review but along the way
+uses the same place.
 
-Находки, вернувшиеся после того, как ветка ушла, едут веткой следующей задачи: пуш в снятую ветку
-её не обновляет, а заводит заново, и коммит остаётся вне главной. Следующая задача к этой минуте
-уже взята — её веткой уборка за предыдущей и едет, тем же порядком, каким разбирают чужую папку
-задачи. Эпик кончился и следующей задачи нет — находки уезжают своей задачей.
+Findings that came back after the branch left travel by the branch of the next task: a push into a
+removed branch does not update it but creates it anew, and the commit stays outside main. By that
+minute the next task is already taken — its branch carries the cleanup after the previous one, in
+the same order in which someone else's task folder is taken apart. The epic is over and there is no
+next task — the findings leave as a task of their own.
 
-Уезжающее складывается одним файлом с говорящим именем, а не папкой из трёх:
+What leaves is filed as one file with a telling name, not a folder of three:
 
 ```bash
 cat docs/tasks/<КЛЮЧ>-<номер>-<slug>/grill.md > docs/archive/<ЧТО_РЕШАЛИ>.md
 rm -r docs/tasks/<КЛЮЧ>-<номер>-<slug>
 ```
 
-Разбор идёт последним коммитом ветки, до открытия заявки: открытие с лежащей папкой отбивает
-гард поставки. Прежде уборка стояла после одобрения — считалось, что замысел нужен на диске всё
-время разбора. Но кнопку слияния нажимает человек на хостинге, куда гард не достаёт, и вливает
-он, как только видит зелёное. Замысла после
-уборки на диске нет намеренно, и правку по замечаниям гард хода работы пропускает по признаку
-из истории ветки.
+The taking-apart goes by the last commit of the branch, before the PR opens: opening with the folder
+in place is refused by the delivery guard. Before, the cleanup stood after approval — the plan was
+thought to be needed on disk for the whole review. But the merge button is pressed by a person on
+the host, where the guard does not reach, and they merge as soon as they see green. After the
+cleanup there is no plan on disk on purpose, and an edit after remarks is let through by the
+progress guard on the sign from the branch history.
 
-### Работа, разбирающая чужую папку, разбирает две
+### Work that takes apart someone else's folder takes apart two
 
-Своя папка у такой работы есть — она заводится наравне со всеми, исключения из этого нет. Обе
-снимаются последним коммитом, и порядок между ними один: сперва чужая, потом своя. Начав со
-своей, исполнитель теряет замысел на диске, а он ещё нужен — гард отбивает правку без него, а
-правка по замечаниям разбора идёт в ту же ветку.
+Such work has a folder of its own — it is created like everyone else's, no exception. Both are
+removed by the last commit, and the order between them is one: first someone else's, then one's own.
+Starting with one's own, the executor loses the plan on disk while it is still needed — the guard
+refuses an edit without it, and an edit after review remarks goes into the same branch.
 
 ```bash
 cat docs/tasks/<чужая>/grill.md > docs/archive/<ЧТО_РЕШАЛИ_ТАМ>.md
@@ -96,55 +99,56 @@ cat docs/tasks/<своя>/grill.md > docs/archive/<ЧТО_РЕШАЛИ_ЗДЕС�
 rm -r docs/tasks/<своя>
 ```
 
-Две записи в архиве, а не одна: работы разные, и решения в них разные. Сверка очереди работ
-после этого не называет ни одной папки — этим и проверяется, что разобраны обе.
+Two records in the archive, not one: the works differ, and so do the decisions in them. After this
+the work queue audit names no folder at all — that is how it is checked that both are taken apart.
 
-**Следующее движение:** разобранная папка уезжает в ветку тем же коммитом, следом сверяется
-очередь работ, и тем же ходом открывается заявка — паттерн `task-flow-close`.
+**Next move:** the taken-apart folder goes into the branch by the same commit, the work queue audit
+follows, and the same turn opens the PR — pattern `task-flow-close`.
 
-## Состояние `папка-разобрана`: сверка очереди работ
+## State `папка-разобрана`: the work queue audit
 
 ```bash
-npm run check:board   # папка закрытой задачи среди текущих, брошенные черновики
-npm run check:specs   # договорённость влита, привязки на месте
-npm run check:docs    # пути, названные в текстах, существуют
+npm run check:board   # a closed task's folder among the current ones, abandoned drafts
+npm run check:specs   # the agreement is merged, the bindings are in place
+npm run check:docs    # the paths named in the texts exist
 ```
 
-**Следующее движение:** расхождения, названные сверками, чинятся тем же ходом; чинить нечего —
-тот же ход открывает заявку черновиком и называет владельцу номер, паттерн `task-flow-close`.
+**Next move:** discrepancies named by the audits are fixed in the same turn; nothing to fix — the
+same turn opens the PR as a draft and names the number to the owner, pattern `task-flow-close`.
 
-## Состояние `влито`: работа разбирается правилами — фоном, следом за PR
+## State `влито`: the work is reviewed by the rules — in the background, right after the PR
 
-Шаг о слое правил, а не о продукте: что за эту работу грузилось, что помогло, чего не хватило и
-где текст правила разошёлся с деревом. Знает это только тот заход, который работу вёл, — через
-сутки не знает никто.
+A step about the rules layer, not about the product: what was loaded for this work, what helped,
+what was missing and where the text of a rule diverged from the tree. Only the session that led the
+work knows this — a day later nobody does.
 
-Ведёт разбор роль разбора закрытой задачи, если дерево её разложило; не разложившее ведёт его
-само, теми же вопросами. Файлов роль не правит — приносит готовые формулировки, а вставлять их
-решает владелец.
+The review is led by the closed-task review role, if the tree laid it out; a tree that did not leads
+it itself, by the same questions. The role edits no files — it brings ready-made wording, and the
+owner decides whether to put it in.
 
-**Запускается разбор в фоне, сразу за открытием PR, и ход на нём не кончается.** Роль ничего не
-спрашивает, пока работает, и быстрее от ожидания не идёт: следующая задача берётся тем же ходом,
-которым запущен разбор.
+**The review is launched in the background, right after the PR opens, and the turn does not end on
+it.** The role asks nothing while it works and goes no faster for being waited on. The next task is
+taken in the same turn that launched the review.
 
-Порядок один и переставлять его нельзя:
+The order is one and cannot be rearranged:
 
-1. **Сводка собирается до запуска** — пока задача ещё в голове. Что делали, что пошло не так,
-   что грузилось и что каждое правило дало, на какие грабли окружения наткнулись. Собранная
-   через две задачи, она пересказывает историю ветки вместо того, что было на самом деле.
-2. **Роль уходит в фон** — инструментом запуска роли, с путём к списку загруженного и сводкой
-   целиком. Ход продолжается следующей задачей.
-3. **Вернувшиеся находки принимают одним ходом** — записать и вернуться к прежнему. Разбор,
-   отложенный «до удобного момента», не случается вовсе: заход кончается раньше.
+1. **The digest is gathered before the launch** — while the task is still in mind. What was done,
+   what went wrong, what was loaded and what each rule gave, which pitfalls of the environment were
+   hit. Gathered two tasks later, it retells the branch history instead of what happened.
+2. **The role goes to the background** — by the role launch tool, with the path to the list of what
+   was loaded and the digest whole. The turn goes on with the next task.
+3. **The returned findings are accepted in one turn** — write them down and go back to what was
+   before. A review put off "until a convenient moment" never happens at all: the session ends
+   first.
 
-### Записи груза переводятся в «готово» тем же ходом
+### Cargo records are moved to "done" in the same turn
 
-Работа, начатая с приехавшего груза, кончается здесь, а не на разборе папки: до слияния правки в
-дереве нет, и отметка утверждала бы то, чего в главной ветке ещё не лежит. Это единственное
-состояние, где слияние уже случилось, а ход о задаче ещё идёт.
+Work begun from cargo that arrived ends here, not at the folder's taking-apart: before the merge the
+edit is not in the tree, and the mark would claim what does not yet lie in main. This is the only
+state where the merge has already happened while the turn about the task still goes on.
 
-Ключи берутся из описания прошлого — папки задачи на диске к этой минуте нет, — и подставляются
-полными, как их печатает чтение приёма:
+The keys are taken from the archive — the task folder is no longer on disk by this minute — and
+passed whole, as the intake read prints them:
 
 ```bash
 npm run cargo:mark -- --state fixed \
@@ -152,124 +156,127 @@ npm run cargo:mark -- --state fixed \
     --fix '<чем исправлено: статья правила, гард, проверка, правка кода>'
 ```
 
-Приём починки один на вызов, поэтому записи едут пачками по тому, чем закрыты, а не всей задачей
-разом. Ответ читается: «переведено 0» означает, что этот разбор не двинул ничего.
+One fix per call, so the records go in batches by what closed them, not by the whole task at once.
+The reply is read: "moved 0" means this review moved nothing.
 
-**Следующее движение:** пока роль разбирает, тот же ход занят следующей задачей; записи груза
-переводятся в «готово» этим же ходом, вернувшиеся находки принимаются одним ходом — записать и
-продолжить прежнее, а владельцу о них говорится, когда кончился эпик.
+**Next move:** while the role reviews, the same turn is busy with the next task. The cargo records
+are moved to "done" in this same turn, and the returned findings are accepted in one turn — write
+them down and go on with what was before. The owner hears of them when the epic is over.
 
-## Находки разбора ложатся к замыслу эпика и ждут владельца
+## Review findings land next to the epic plan and wait for the owner
 
-Ответ роли живёт в переписке и умирает вместе с ней, поэтому он сразу ложится на диск. Пишет
-его исполнитель: роль файлов не пишет.
+The role's reply lives in the conversation and dies with it, so it lands on disk at once. The
+executor writes it: the role writes no files.
 
-**Пишутся находки сразу в файл рядом с замыслом эпика, а не в папку задачи.** Разбор идёт
-фоном, и когда он кончится, не знает никто; папка задачи к этому времени бывает уже разобрана,
-а ветка влита и снята. Оба срока назначает не исполнитель, поэтому переезд «из папки к замыслу
-эпика» держится на совпадении, которого может и не случиться. Тем же местом пользуется находка,
-замеченная не разбором, а по ходу работы. Работа вне эпика показывает находки владельцу тем же
-ходом.
+**Findings are written straight into a file next to the epic plan, not into the task folder.** The
+review runs in the background, and nobody knows when it ends. By then the task folder may already be
+taken apart, and the branch merged and removed. Neither date is set by the executor, so a move "from
+the folder to the epic plan" rests on a coincidence that may never come. A finding noticed not by
+the review but along the way uses the same place. Work outside an epic shows the findings to the
+owner in the same turn.
 
-**Имя файла находок собирается из имени замысла, а не выдумывается заходом.** Файл — это
-`<имя замысла>-findings.md` рядом с самим замыслом: замысел `<тема>.md` копит находки в
-`<тема>-findings.md`. Имя, выбранное на месте, читается только тем заходом, который его дал:
-следующий ищет находки этого эпика перебором каталога замыслов и, не найдя, заводит второй
-файл о том же — а владелец читает один из двух. Постоянного места здесь мало: у каждого эпика
-свой файл, и находит его по имени тот, кто пришёл к замыслу, а не к каталогу. Форма файла —
-образец находок среди образцов пакета.
+**The findings file is named after the plan, not invented by the session.** The file is `<plan
+name>-findings.md` next to the plan itself: the plan `<theme>.md` gathers findings in
+`<theme>-findings.md`. A name chosen on the spot is read only by the session that gave it. The next
+one looks for this epic's findings by walking the plans directory and, not finding them, starts a
+second file on the same thing — and the owner reads one of two. A single fixed place is not enough
+here: each epic has its own file, found by name by whoever came to the plan, not to the directory.
+The form of the file — the findings template among the package templates.
 
-**Находки, вернувшиеся после того, как ветка ушла, едут веткой следующей задачи.** Пуш в снятую
-ветку её не обновляет, а заводит заново: коммит остаётся вне главной ветки и пропадает вместе
-с ней. Следующая задача к этому времени уже взята — её веткой уборка за предыдущей и едет.
-Эпик кончился и следующей задачи нет — находки уезжают своей задачей.
+**Findings that came back after the branch left travel by the branch of the next task.** A push into
+a removed branch does not update it but creates it anew: the commit stays outside main and
+disappears with it. By then the next task is already taken — its branch carries the cleanup after
+the previous one. The epic is over and there is no next task — the findings leave as a task of their
+own.
 
-**Накопительный файл находок делится до дописи, а не после.** Длина смотрится одной командой
-перед первой написанной строкой: раздел задачи занимает десятки строк, и предел длины документа
-он переходит молча. Гейт пуша показывает превышение, когда допись уже закоммичена, — тогда
-деление идёт задним числом, вместе с правкой ссылок на файл. Не влезает — заводится следующая
-часть, и раздел пишется сразу в неё.
+**The cumulative findings file is split before the append, not after.** The length is looked at with
+one command before the first written line. A task's section takes tens of lines, and it crosses the
+document length limit in silence. The push gate shows the excess when the append is already
+committed — then the split goes after the fact, together with editing every reference to the file.
+It does not fit — the next part is started, and the section is written straight into it.
 
-**Часть называется задачей, которая её завела, а не своим порядковым номером.** Имя —
-`<имя замысла>-findings-<КЛЮЧ>-<номер>.md`. Один эпик ведут несколько рабочих деревьев разом, и
-«следующая часть» каждое из них видит своей: две ветки заводят файл с одним именем, а
-столкновение обнаруживается только при вливании главной ветки — конфликтом на весь файл, где обе
-стороны верны и сложением не разрешаются. Номер задачи занят ею одной, и достаться двум деревьям
-он не может. Первая часть номера не несёт и задним числом не переименовывается: переименование
-правит ссылки во всех текстах, которые на неё смотрят, ради ровного ряда имён. Порядок между
-частями не нужен — находки друг друга не продолжают, и владелец читает их разом.
+**A part is named after the task that started it, not by its ordinal.** The name is `<plan
+name>-findings-<КЛЮЧ>-<номер>.md`. One epic is led by several working trees at once, and each of
+them sees "the next part" as its own. Two branches start a file under one name, and the clash shows
+only when main is merged in: a conflict over the whole file, where both sides are right and adding
+them up resolves nothing. A task number belongs to that task alone and cannot fall to two trees. The
+first part carries no number and is not renamed after the fact: a rename edits the references in
+every text that points at it, for the sake of an even row of names. No order between parts is needed
+— findings do not continue one another, and the owner reads them all at once.
 
-**Строка находки, закрытой другой работой, помечается номером той работы.** Починенная по
-частям находка со стороны списка неотличима от несделанной: оба её промаха были закрыты своими
-задачами и записаны предметно, каждый при своём поддомене, — а разбор ушёл на то, чтобы
-выяснить, что чинить нечего. Номер стоит в самой строке, и следующий читатель этого пути не
-проходит.
+**The line of a finding closed by other work is marked with that work's number.** From the list's
+side a finding fixed in parts cannot be told from one not done. Both of its misses were closed by
+tasks of their own and recorded by subject, each under its own subdomain — and the review went into
+finding out there was nothing to fix. The number stands in the line itself, and the next reader does
+not walk this path.
 
-**Пункт сборной находки проверяется на живость до того, как берётся в работу.** Мелочи,
-списанные в один пункт, не стареют вместе: из четырёх промахов живыми оказались два, один был
-закрыт другой работой, четвёртый не воспроизводился — и разведка этого заняла больше времени,
-чем сами правки. Сборная задача поэтому стоит ровно столько, сколько разведка её состава, и
-это говорится владельцу до того, как её берут.
+**An item of a combined finding is checked for being alive before it is taken into work.** Small
+things written off into one item do not age together. Of four misses two turned out alive, one was
+closed by other work, the fourth did not reproduce — and finding this out took longer than the edits
+themselves. A combined task therefore costs exactly as much as the exploration of its parts, and
+this is said to the owner before it is taken.
 
-**Наружу без слова владельца уезжает только сводка наблюдений.** Она говорит, чем пользовались
-и чем не пользовались ни разу, — это факт, и мнением он не станет. Предложение — другое дело:
-это заготовка правки чужого дерева, и часть заготовок отпадает при первом же чтении. Уехавшая
-без разбора, она становится работой того, кто её не заказывал.
+**Without the owner's word only the digest of observations leaves outward.** It says what was used
+and what was never used once — that is a fact, and it does not turn into an opinion. A proposal is
+another matter: it is a draft of an edit to someone else's tree, and some drafts fall away at the
+first reading. Sent unreviewed, it becomes the work of someone who did not order it.
 
-Порядок такой: находки копятся у замысла эпика → эпик кончился → владелец читает их разом и
-говорит, что из них верно → названное им оформляется предложением и уезжает. Чем отправляют —
-скил слоя правил, если дерево его разложило.
+The order is this. Findings gather at the epic plan → the epic is over → the owner reads them all at
+once and says which are right → what they named is shaped as a proposal and leaves. What sends it —
+the rules-layer skill, if the tree laid it out.
 
-У каждой находки называется адрес, и адресов три:
+Every finding names its address, and there are three:
 
-| Куда                       | Что туда идёт                                                            |
-| -------------------------- | ------------------------------------------------------------------------ |
-| слой правил — предложением | то, что верно любому дереву этого класса: статья, пункт правила, паттерн |
-| имена этого дерева         | то, что верно здесь: компаньон правила, профиль, карта гейта             |
-| надстройка над разложенным | то, что здесь звучит иначе, чем в пакете                                 |
+| Where | What goes there |
+| --- | --- |
+| the rules layer — as a proposal | what is true for any tree of this class: an article, a point of a rule, a pattern |
+| the names of this tree | what is true here: the rule's companion, the profile, the gate map |
+| an override over the laid-out file | what sounds different here than in the package |
 
-Без адреса правка ложится туда, где её видит автор, — то есть в своё дерево, — и общее оседает
-в одном месте, оставаясь неизвестным всем остальным.
+Without an address the edit lands where its author sees it — in their own tree — and the common part
+settles in one place, unknown to everyone else.
 
-**Разбор без правки закрытым не считается.** Из него выходит либо правка слоя правил, либо
-предложение наружу; не вышло ни того ни другого — это жалоба, и она повторится. Предложение, о
-котором владелец сказал вслух, уходит наружу в тот же ход: написанное и не отправленное лежит в
-дереве неотличимо от отправленного.
+**A review without an edit does not count as closed.** Out of it comes either an edit of the rules
+layer or a proposal outward; neither came — it is a complaint, and it will repeat. A proposal the
+owner spoke aloud about leaves outward in the same turn: written and not sent, it lies in the tree
+indistinguishable from a sent one.
 
-## Частые промахи
+## Common misses
 
-- **Папку разбирают до открытия заявки — потом о ней уже никто не вспомнит.** Сверка очереди
-  считает задачу закрытой по слиянию: после него за папку никто не отвечает — работа перешла к
-  следующей задаче, и находка достанется чужому заходу. Держит это гард поставки:
-  открытие заявки отбивается, пока папка лежит в ветке.
-- **Разбор папки идёт последним коммитом, после того как гейт пуша прошёл целиком.** Порядок
-  один: мерж главной ветки, вливание договорённости, приведение текстов домена, все линтеры и
-  проверки зелёные, разбор папки — и только потом заявка. Дешёвый шаг стоит раньше дорогого:
-  заход, потративший окно на прогон, упирался в порог заполнения на четырёх строках привязки, и
-  дописать их было уже нечем. Второй довод сильнее: прогон, стоящий после вливания, проверяет и
-  само вливание — иначе он смотрит то состояние дерева, которое в главную ветку не поедет.
-- **После разбора замысла на диске нет, и собирать папку заново не надо.** Правку по замечаниям
-  разбора и починку красного прогона гард хода работы пропускает по признаку из истории ветки:
-  папка, снятая её коммитом, и есть признак отданной работы. Собранная заново папка вернула бы
-  отказ гарда поставки на следующем же вызове.
-- **Если папку просто удалить, первым пропадёт `grill.md`.** Удалить проще, чем разобрать, а
-  слова владельца записаны только там, и восстановить их неоткуда. Поэтому гард требует, чтобы
-  ветка добавила запись в архив. Что именно перенесли, он не проверяет — это смотрит владелец
-  на ревью.
-- **Шаги закрытия с владельцем не согласуются — они перечислены здесь.** Разбор работы
-  правилами входит в закрытие так же, как вливание договорённости и разбор папки; владелец
-  решает не то, запускать ли его, а что делать с находками. Ход, кончившийся таким вопросом,
-  отбивает гард разговора: за ход правила не читались, а ответ стоит в них. Спрашивается только
-  то, чего в правилах нет.
-- **Блок готового кода в паттерне стареет от чужой правки.** Он не привязан ни к чему: сверка
-  спеков читает утверждения правила, а пример под ними не читает вовсе. Два поля, ставших
-  обязательными в чужой работе, сделали пример в соседнем паттерне несобираемым — сам он при
-  этом не изменился ни на знак и в след задачи не попал, потому что ни одного слова той работы
-  в нём нет. Паттерн находится по имени правленого символа, а не по теме работы.
-- **Замысел эпика правят только там, где вписывают «чем кончился».** Границы эпика и
-  порядок задач в нём при этом остаются прежними, а работа их уже нарушила: задача, решившая
-  читать спеки, оставила над собой границу «спеки — вторая очередь», и следующий исполнитель
-  прочитает её как действующую. Границы эпика перечитываются целиком тем же заходом, что и
-  итог работы.
-- **Архив не обновляется после выкатки.** Уехавшее туда описывает день переезда, и правится
-  оно только вместе с признанием, что описывало неверно.
+- **The folder is taken apart before the PR opens — later nobody remembers it.** The work queue
+  audit counts a task closed by the merge. After it nobody answers for the folder — the work has
+  moved to the next task, and the finding falls to someone else's session. The delivery guard holds
+  this: opening the PR is refused while the folder lies in the branch.
+- **The folder is taken apart by the last commit, after the push gate has passed whole.** The order
+  is one. Merge of main, merging the agreement, bringing the domain texts up to date, all linters
+  and checks green, taking the folder apart — and only then the PR. The cheap step stands before the
+  costly one: a session that spent its window on the run hit the fill threshold on four binding
+  lines, and there was nothing left to write them with. The second argument is stronger: a run that
+  stands after the merge checks the merge itself — otherwise it looks at a state of the tree that
+  will not reach main.
+- **No plan on disk after the taking-apart, and the folder is not assembled again.** An edit after
+  review remarks and a fix of a red run pass the progress guard on the sign from the branch history.
+  A folder removed by its commit is the sign of handed-in work. A folder assembled anew would bring
+  back the delivery guard's refusal on the very next call.
+- **If the folder is simply deleted, `grill.md` is the first to go.** Deleting is easier than taking
+  apart, and the owner's words are written only there, with nowhere to recover them from. So the
+  guard demands that the branch add a record to the archive. What exactly was moved it does not
+  check — the owner looks at that in review.
+- **The closing steps are not agreed with the owner — they are listed here.** The rules review of
+  the work is part of closing, as are merging the agreement and taking the folder apart. The owner
+  decides not whether to launch it but what to do with the findings. A turn that ended with such a
+  question is refused by the conversation guard: no rules were read in the turn, and the answer
+  stands in them. Only what the rules lack is asked.
+- **A ready-made code block in a pattern goes stale from someone else's edit.** It is bound to
+  nothing: the spec audit reads the rule's statements and does not read the sample under them at
+  all. Two fields made mandatory in someone else's work made the sample in a neighbouring pattern
+  unbuildable. The sample itself changed by not a character and got into no task footprint, because
+  not one word of that work is in it. The pattern is found by the name of the edited symbol, not by
+  the theme of the work.
+- **The epic plan is edited only where "how it ended" is written in.** The epic's boundaries and the
+  order of its tasks stay as they were, while the work has already broken them. A task that decided
+  to read the specs left above itself the boundary "specs — second turn", and the next executor
+  reads it as in force. The epic's boundaries are re-read whole by the same session as the outcome
+  of the work.
+- **The archive is not updated after the rollout.** What went there describes the day of the move,
+  and it is edited only together with an admission that it described it wrongly.

@@ -5,139 +5,143 @@ rule: task-flow
 description: Pattern of rule task-flow. Load when bringing work to readiness — merging the product agreement into the domain spec, bringing the domain texts up to date with what was done, opening the PR as a draft and leaving draft. Taking the task folder apart — pattern task-flow-archive.
 ---
 
-# Закрытие работы
+# Closing the work
 
-Паттерн правила `task-flow`. Что при этом должно быть верно — закон
+Pattern of the rule `task-flow`. What must be true meanwhile — the law
 `docs/constitution/work-conduct.md`.
 
-## Когда брать
+## When to use
 
-- Этапы замысла закрыты.
-- `npm run check:specs` перечислил договорённость в разделе «Пора вливать».
-- Спек меряется длиной сразу после вливания: выросший делится тем же коммитом.
-- Тексты домена приводятся к тому, что работа сделала.
-- Набор гейта прогнан целиком — после вливания и приведения текстов, а не до них.
-- Папка задачи разобрана, и заявка открывается черновиком.
-- Прогон на вершине зелёный, и с заявки снимается черновик.
+- The stages of the plan are closed.
+- `npm run check:specs` listed the agreement in its "time to merge" section.
+- The spec is measured for length right after the merge: one that has grown is split by the same
+  commit.
+- The domain texts are brought up to what the work did.
+- The gate suite is run whole — after the merge and the texts, not before them.
+- The task folder is taken apart, and the PR opens as a draft.
+- The run on the head is green, and the draft is lifted from the PR.
 
-Разбор самой папки сюда не относится — это паттерн `task-flow-archive`. Он стоит между
-прогоном набора и открытием заявки: заявка открывается уже за убранной работой.
+Taking the folder itself apart is not here — that is pattern `task-flow-archive`. It stands between
+the suite run and opening the PR: the PR opens behind work already cleaned up.
 
-**Прогон стоит после вливания договорённости и приведения текстов, а не перед ними.** Оба этих
-шага стоят минуты, а прогон — окно захода: заход, потративший его на прогон, упирался в порог
-заполнения на четырёх строках привязки, и дописать их было уже нечем. Второй довод сильнее
-первого — прогон, идущий после вливания, проверяет и само вливание; идущий до него, он смотрит
-то состояние дерева, которое в главную ветку не поедет.
+**The run stands after merging the agreement and bringing the texts up to date, not before them.**
+Both steps cost minutes, and the run costs the session window. A session that spent it on the run
+hit the fill threshold on four binding lines, and there was nothing left to write them with. The
+second argument is stronger than the first — a run that goes after the merge checks the merge
+itself; going before it, it looks at a state of the tree that will not reach main.
 
-## Состояние `этапы-кончились`: договорённость вливается в спек домена
+## State `этапы-кончились`: the agreement merges into the domain spec
 
-Одним из последних коммитов ветки, до открытия заявки. Код к этому моменту написан, поэтому
-привязки `файл:символ` известны — правило въезжает в спек домена сразу проверяемым.
+By one of the last commits of the branch, before the PR opens. By then the code is written, so the
+`file:symbol` bindings are known — the rule enters the domain spec checkable at once.
 
 ```bash
-npm run check:specs   # раздел «Пора вливать» называет готовые директории
+npm run check:specs   # the "time to merge" section names the ready directories
 ```
 
-**Спек меряется длиной тем же ходом.** Вливание — известное движение, растящее спек: одно
-довело его до 572 строк при пределе 500, и узнал об этом исполнитель отказом гарда пуша, то
-есть после коммита. Выросший делится на поддомены здесь же, а не на пуше.
+**The spec is measured for length in the same turn.** Merging is a known move that grows a spec. One
+merge took it to 572 lines against a limit of 500, and the executor learned of it from the push
+guard's refusal — after the commit. One that has grown is split into subdomains right here, not on
+the push.
 
-Порядок переезда:
+The order of the move:
 
-- правила из `proposed/<фича>/spec.md` дописываются в `spec.md` домена, в его разделы;
-- сценарии переезжают в `scenarios.md` домена **с прежними номерами**: на них ссылаются
-  заголовки тестов, и пересчёт рвёт сверку;
-- сценарии, у которых работа переписала обещание, правятся на месте: номер прежний, текст
-  новый, заголовок теста правится тем же коммитом. Работа, снимающая приём, переписывает уже
-  записанное обещание чаще, чем заводит новое, а список, перечисляющий одну допись, эту правку
-  не называет вовсе;
-- привязки из `proposed/<фича>/implementation.md` дописываются в `implementation.md` домена
-  и проставляются на код, который теперь есть;
-- законы, объявленные фичей в шапке, дописываются в шапку спека домена;
-- директория `proposed/<фича>/` удаляется, строка о фиче снимается из раздела «Что
-  предложено, но ещё не выкачено» в `docs/specs/README.md`;
-- домена ещё не было — `proposed/` заменяется полноценным спеком, и домен получает строку в
-  таблице `docs/specs/README.md`.
+- the rules from `proposed/<фича>/spec.md` are appended to the domain's `spec.md`, into its
+  sections;
+- the scenarios move to the domain's `scenarios.md` **with their old numbers**: test titles refer to
+  them, and renumbering breaks the audit;
+- scenarios whose promise the work rewrote are edited in place: the number stays, the text is new,
+  the test title is edited by the same commit. Work that removes a technique rewrites a written
+  promise more often than it adds a new one, and a list naming one append does not name this edit at
+  all;
+- the bindings from `proposed/<фича>/implementation.md` are appended to the domain's
+  `implementation.md` and set on the code that now exists;
+- the laws the feature declared in its header are appended to the header of the domain spec;
+- the `proposed/<фича>/` directory is deleted, and the line about the feature is removed from the
+  "proposed, not yet rolled out" section of `docs/specs/README.md`;
+- the domain did not exist yet — `proposed/` is replaced by a full spec, and the domain gets a row
+  in the table of `docs/specs/README.md`.
 
-Работа шла несколькими задачами — вливание идёт в последней из них. Какая последняя, видно в
-замысле эпика; закрытый эпик уезжает в описание прошлого или удаляется.
+The work went in several tasks — the merge goes in the last of them. Which one is last is seen in
+the epic plan; a closed epic leaves for the archive or is deleted.
 
 ```bash
-npm run check:specs   # после вливания: привязки на месте, сценарии не потерялись
+npm run check:specs   # after the merge: the bindings are in place, no scenario is lost
 ```
 
-**Следующее движение:** за влитой договорённостью тем же ходом идут тексты домена — правила,
-паттерны и разделы, которые работа задела.
+**Next move:** after the merged agreement, in the same turn, come the domain texts — the rules,
+patterns and sections the work touched.
 
-## Состояние `этапы-кончились`: тексты домена приводятся к сделанному
+## State `этапы-кончились`: the domain texts are brought up to what was done
 
-В спек уезжает только то, что записали до кода. Остальные тексты — правила, паттерны, законы
-приложения — после правки никто не перечитывает, и они продолжают описывать старое дерево.
-Следующий читатель принимает их за верные.
+Only what was written before the code goes into the spec. The other texts — rules, patterns,
+application laws — nobody re-reads after the edit, and they go on describing the old tree. The next
+reader takes them for true.
 
-Что перечитывать, берётся из раздела замысла, где названо, что работа задевает: там стоят
-спеки, законы и правила по её следу. К ним добавляется то, что всплыло по ходу. Всю
-конституцию и все правила читать не надо.
+What to re-read is taken from the plan section that names what the work touches: the specs, laws and
+rules along its footprint stand there. What surfaced along the way is added. The whole constitution
+and all the rules need not be read.
 
-| Род текста                        | Что с ним делается                                                                                       |
-| --------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| спек домена и его поддомены       | у новой фичи появляется правило, сценарий и привязка; из «Что не входит» убирается то, что теперь входит |
-| правило и его `implementation.md` | новое утверждение с привязкой `файл:символ`; снятое убирается вместе со строкой привязки                 |
-| паттерн                           | код, разошедшийся с деревом, правится; новый приём дописывается разделом                                 |
-| закон приложения и общий закон    | **файл не правится**: владельцу приносится текст статьи, работа идёт дальше без неё                      |
-| обзорный документ продукта        | новая фича дописывается строкой; строка о снятом правится                                                |
+| Kind of text | What is done with it |
+| --- | --- |
+| the domain spec and its subdomains | a new feature gets a rule, a scenario and a binding; what is now included leaves "What is not included" |
+| a rule and its `implementation.md` | a new statement with a `file:symbol` binding; a lifted one leaves together with its binding line |
+| a pattern | code that diverged from the tree is fixed; a new technique is appended as a section |
+| an application law and a general law | **the file is not edited**: the owner gets the text of the article, the work goes on without it |
+| the product overview document | a new feature is appended as a line; the line about a lifted one is edited |
 
-Устаревшее чаще всего лежит в трёх местах, и все три читаются целиком:
+What is stale lies most often in three places, and all three are read whole:
 
-- **«Чего из закона здесь нет» в правиле.** Сверка спеков этот раздел не читает, поэтому
-  неправда живёт в нём сколько угодно: правило три задачи подряд писало, что нужного механизма
-  в дереве нет, — а он был;
-- **«Что не входит» в спеке домена.** Туда писали границу задачи, а задача давно закрыта;
-- **«Где это лежит» в правиле.** Файлы переезжают, пути в таблице остаются.
+- **"What of the law is not here" in a rule.** The spec audit does not read this section, so an
+  untruth lives there as long as it likes. For three tasks in a row a rule wrote that the tree
+  lacked the needed mechanism — and it was there;
+- **"What is not included" in a domain spec.** A task boundary was written there, and the task is
+  long closed;
+- **"Where it lives" in a rule.** Files move, the paths in the table stay.
 
 ```bash
-# где правило и спеки говорят о том, что задевала работа
+# where the rule and the specs speak of what the work touched
 grep -rn -i "<слово работы>" <каталог правил>/*/SKILL.md docs/specs/*/spec.md
-# раздел, который не сверяется ничем, — читается глазами целиком
-grep -rn -A3 "Чего из закона здесь нет" <каталог правил>/<правило>/SKILL.md
+# the section nothing audits — read whole by eye
+grep -rn -A3 "What of the law is not here" <каталог правил>/<правило>/SKILL.md
 ```
 
-**Закон в ветке не правится.** Статья закона — договорённость с владельцем, и меняет её он.
-Работа с ней разошлась — пишется готовый текст статьи: в ход работы и в тело PR. Файл
-закона правится после ответа. С законами приложения так же: деньги, локали и доступ — та же
-договорённость, только про это приложение.
+**A law is not edited in the branch.** An article of a law is an agreement with the owner, and the
+owner changes it. The work diverged from it — the ready-made text of the article is written: into
+the progress and into the PR body. The law file is edited after the answer. The same with
+application laws: payments, locales and access are the same agreement, only about this application.
 
-Что сделали на этом шаге, пишется в тело PR: что перечитали, что изменили, а если ничего
-не изменили — почему. Форма раздела — паттерн `git-workflow-pr`.
+What was done at this step is written into the PR body: what was re-read, what was changed, and if
+nothing was changed — why. The form of the section — pattern `git-workflow-pr`.
 
-**Следующее движение:** приведённые тексты коммитятся, и тем же ходом разбирается папка
-задачи — последним коммитом ветки, паттерн `task-flow-archive`.
+**Next move:** the updated texts are committed, and in the same turn the task folder is taken apart
+— by the last commit of the branch, pattern `task-flow-archive`.
 
-## Состояние `папка-разобрана`: работа отдаётся заявкой
+## State `папка-разобрана`: the work is handed in by a PR
 
-Папка разобрана и запушена, за работой убрано — заявка открывается черновиком. С этой минуты
-работа ждёт владельца, а не машину, и заход на этом не кончается: следующая задача берётся тем
-же движением, паттерн `task-flow-resume`.
+The folder is taken apart and pushed, the work is cleaned up behind — the PR opens as a draft. From
+this minute the work waits for the owner, not for the machine, and the session does not end on it:
+the next task is taken by the same move, pattern `task-flow-resume`.
 
-**Готовность меряется рассказанностью, а не пройденностью.** Перечень того, что сделано к
-открытию, читается как список обязательных проверок, и границы у него не видно. Она есть:
-проверка, которую исполнитель не может пройти по причине вне работы — отбитое разрешение,
-недоступная среда, ключ у человека, — готовность не отменяет. Она попадает в «Не гонялось» и в
-«Оставшийся шаг», названная вместе с причиной; умолчание о ней читается как пройденная.
+**Readiness is measured by what is told, not by what has passed.** The list of what is done by the
+opening reads as a list of mandatory checks, and its boundary is not visible. It exists: a check the
+executor cannot pass for a reason outside the work — a refused permission, an unreachable
+environment, a key held by a person — does not cancel readiness. It goes into "Not run" and into
+"Remaining step", named together with the reason; silence about it reads as passed.
 
-Состояния на диске уже нет — ход работы уехал вместе с папкой. Это цена того, что уборка стоит
-до заявки: хвост из четырёх шагов — открыть заявку, дождаться прогона, снять черновик, попросить
-влить — держится этим паттерном, а не строкой в файле. Гард признаёт работу отданной по истории
-ветки: папка, снятая её коммитом, и есть признак.
+There is no state on disk any more — the progress left with the folder. This is the price of the
+cleanup standing before the PR. The tail of four steps — open the PR, wait for the run, lift the
+draft, ask to merge — is held by this pattern, not by a line in a file. The guard counts the work
+handed in by the branch history: a folder removed by its commit is the sign.
 
-### Раздел об оставшемся шаге пишется в теле заявки, а не дописывается потом
+### The section on the remaining step is written in the PR body, not appended later
 
-Он стоит там с минуты открытия. Сказанного вслух мало, и одним этим требование не держится:
-реплика живёт до следующей реплики, а решение о слиянии принимается на странице заявки — там
-переписки нет вовсе. Владелец вливает, как только видит зелёное, и заявка, открытая без раздела,
-уезжает в главную ветку раньше, чем раздел успевают дописать: так папка задачи однажды и уехала
-неразобранной, пока шёл прогон. Раздел стоит последним и говорит ровно одно: осталось ли что-то
-до слияния.
+It stands there from the minute of opening. Saying it aloud is not enough, and the requirement does
+not hold on that alone. A message lives until the next message, and the merge decision is taken on
+the PR page — there is no conversation there at all. The owner merges as soon as they see green, and
+a PR opened without the section goes into main before the section is appended. That is how a task
+folder once went unsorted while the run was going. The section stands last and says exactly one
+thing: is anything left before the merge.
 
 ```markdown
 ## Оставшийся шаг
@@ -146,7 +150,7 @@ grep -rn -A3 "Чего из закона здесь нет" <каталог пр
 черновик; до этого кнопка слияния заблокирована хостингом.
 ```
 
-Черновик снят — раздел переписывается тем же вызовом, которым правится тело:
+The draft is lifted — the section is rewritten by the same call that edits the body:
 
 ```markdown
 ## Оставшийся шаг
@@ -154,31 +158,33 @@ grep -rn -A3 "Чего из закона здесь нет" <каталог пр
 Не осталось: прогон зелёный, черновик снят. Можно вливать.
 ```
 
-Заголовок раздела и слова обоих образцов пишутся языком заявки, а не языком паттерна. Образцы
-набраны тем языком, которым написан сам паттерн, и переносятся целиком — порядок мыслей,
-формулировки и заголовок, заголовок последним: он выглядит частью формы, а не частью текста.
-То же верно и для двух сообщений владельцу ниже: они образцы того, **что** сказано, а не того,
-какими словами.
+The section heading and the words of both samples are written in the language of the PR, not the
+language of the pattern. The samples are set in the language of this tree's PRs and are carried over
+whole — the order of thoughts, the wording and the heading, the heading last. It looks like part of
+the form, not part of the text. The same holds for the two messages to the owner below: they are
+samples of **what** is said, not of which words.
 
-Пустым раздел не оставляется и не удаляется вовсе: отсутствие раздела и «шагов не осталось»
-читаются одинаково, а значат разное. Образец тела заявки целиком — в паттерне заведения коммита
-и заявки, если дерево его разложило.
+The section is neither left empty nor removed altogether: a missing section and "no steps left" read
+the same and mean different things. The full sample of a PR body — in the pattern for creating a
+commit and a PR, if the tree laid it out.
 
-Держит это гард поставки, а не память пишущего: он читает тело прямо из команды открытия —
-доводом оно передано или файлом — и отбивает вызов вместе с остальным несошедшимся. Образец
-заголовка при этом называет дерево, потому что заголовок пишется языком заявки, а пакет чужих
-слов не знает; не названный, раздел не судится вовсе. Сверка очереди работ тела по-прежнему не
-читает: промах ловится в минуту открытия, то есть там, где он ещё исправим одним вызовом.
+The delivery guard holds this, not the writer's memory: it reads the body straight from the opening
+command — passed as an argument or as a file — and refuses the call together with everything else
+that does not match. The heading sample is named by the tree, because the heading is written in the
+PR's language, and the package knows no foreign words; unnamed, the section is not judged at all.
+The work queue audit still does not read the body: the miss is caught at the minute of opening, that
+is, where one call still fixes it.
 
-Разница между разделом и сказанным вслух одна, и она вся: реплику владелец прочитает, только
-если вернётся в переписку, а раздел он видит там, куда смотрит, нажимая кнопку.
+The difference between the section and the spoken word is one, and it is all. The owner reads a
+message only if they return to the conversation, and the section they see where they look when
+pressing the button.
 
-### Два сообщения владельцу, и между ними — прогон
+### Two messages to the owner, and the run between them
 
-Оба обязательны, и порядок между ними один. Ни одно не заменяется другим: первое говорит, что
-работа отдана и чего она ждёт, второе — что она готова.
+Both are mandatory, and the order between them is one. Neither replaces the other: the first says
+the work is handed in and what it waits for, the second — that it is ready.
 
-Сразу после открытия заявки:
+Right after the PR opens:
 
 ```
 PR #<номер> открыт черновиком, папка задачи уже разобрана — за работой убрано. Жду прогона:
@@ -186,35 +192,36 @@ PR #<номер> открыт черновиком, папка задачи уж
 попрошу тебя влить. Следующая задача уже взята: #<номер>, ветка <имя ветки>.
 ```
 
-Последняя строка называет взятое, а не намерение взять, и это не оборот речи. Образец, который
-кончается обещанием, исполняется как обещание: заход произносит последнюю строку и на этом
-кончает ход — сообщение при этом выглядит полным, и пустоты за ним не видно ни владельцу, ни
-самому заходу. Образец, который кончается номером заведённой ветки, так исполнить нельзя: пока
-ветки нет, строку писать нечем. Разбор — `2026-08-16-next-task-said-not-taken.md`.
+The last line names what is taken, not an intent to take, and that is no figure of speech. A sample
+that ends with a promise is carried out as a promise: the session says the last line and ends the
+turn on it. The message looks complete, and nobody sees the emptiness behind it, neither the owner
+nor the session itself. A sample that ends with the number of a created branch cannot be carried out
+so: while there is no branch, there is nothing to write the line with. The incident analysis —
+`2026-08-16-next-task-said-not-taken.md`.
 
-Прогон зелёный, черновик снят:
+The run is green, the draft is lifted:
 
 ```
 PR #<номер> готов к слиянию: прогон зелёный, черновик снят. Влей его, пожалуйста.
 ```
 
-Черновик снимается перед вторым сообщением, а не после него: владелец, прочитав просьбу
-влить, идёт нажимать кнопку — у черновика она заблокирована, и ход возвращается к исполнителю
-ни за чем.
+The draft is lifted before the second message, not after it. The owner, having read the request to
+merge, goes to press the button — on a draft it is locked, and the turn comes back to the executor
+for nothing.
 
-Прогон красный — сообщение то же по форме, но говорит о красном и о том, что с ним делается;
-просьбы влить в нём нет. Просьба звучит один раз и только тогда, когда работа готова целиком:
-сказанная заранее, она перестаёт что-либо значить, и владелец возвращается к прежнему —
-вливать по зелёной странице.
+The run is red — the message is the same in form, but speaks of the red and of what is being done
+about it; there is no request to merge in it. The request sounds once and only when the work is
+ready whole: said ahead of time, it stops meaning anything, and the owner returns to the old way —
+merging by a green page.
 
-Между двумя сообщениями исполнитель не ждёт: работа отдана на разбор, и тем же движением
-берётся следующая задача. Возвращается он к заявке тем ходом, которым читает конец прогона.
+Between the two messages the executor does not wait: the work is handed in for review, and the next
+task is taken by the same move. They return to the PR by the turn that reads the end of the run.
 
-### Состояние работы стоит разделом в теле заявки
+### The work state stands as a section in the PR body
 
-Сказанного вслух мало, и одним этим требование не держится. Реплика живёт до следующей реплики,
-а решение о слиянии принимается на странице заявки — там переписки нет вовсе. Раздел стоит
-последним и говорит ровно одно: осталось ли что-то до слияния.
+Saying it aloud is not enough, and the requirement does not hold on that alone. A message lives
+until the next message, and the merge decision is taken on the PR page — there is no conversation
+there at all. The section stands last and says exactly one thing: is anything left before the merge.
 
 ```markdown
 ## Оставшийся шаг
@@ -223,7 +230,7 @@ PR #<номер> готов к слиянию: прогон зелёный, че
 черновик; до этого кнопка слияния заблокирована хостингом.
 ```
 
-Черновик снят — раздел переписывается тем же вызовом, которым правится тело:
+The draft is lifted — the section is rewritten by the same call that edits the body:
 
 ```markdown
 ## Оставшийся шаг
@@ -231,67 +238,72 @@ PR #<номер> готов к слиянию: прогон зелёный, че
 Не осталось: прогон зелёный, черновик снят. Можно вливать.
 ```
 
-Заголовок раздела и слова обоих образцов пишутся языком заявки, а не языком паттерна. Образцы
-набраны тем языком, которым написан сам паттерн, и переносятся целиком — порядок мыслей,
-формулировки и заголовок, заголовок последним: он выглядит частью формы, а не частью текста. То же верно и для двух сообщений
-владельцу выше: они образцы того, **что** сказано, а не того, какими словами.
+The section heading and the words of both samples are written in the language of the PR, not the
+language of the pattern. The samples are set in the language of this tree's PRs and are carried over
+whole — the order of thoughts, the wording and the heading, the heading last. It looks like part of
+the form, not part of the text. The same holds for the two messages to the owner above: they are
+samples of **what** is said, not of which words.
 
-Пустым раздел не оставляется и не удаляется вовсе: отсутствие раздела и «шагов не осталось»
-читаются одинаково, а значат разное. Образец тела заявки целиком — в паттерне заведения коммита
-и заявки, если дерево его разложило.
+The section is neither left empty nor removed altogether: a missing section and "no steps left" read
+the same and mean different things. The full sample of a PR body — in the pattern for creating a
+commit and a PR, if the tree laid it out.
 
-Открытая заявка перечитывается той записью, которая будет её вливать, а не той, что её открыла.
-Ответ хостинга автору говорит лишь, что вызов прошёл: право на открытие и видимость открытого —
-разные вещи, и вторая проверяется только со стороны читателя. Невидимая заявка ничем себя не
-выдаёт — она есть в ответе своему автору, у неё стоят метки, а очередь разбора у владельца просто
-пуста.
+An open PR is re-read by the account that will merge it, not by the one that opened it. The host's
+answer to the author says only that the call went through: the right to open and the visibility of
+what was opened are different things, and the second is checked only from the reader's side. An
+invisible PR gives itself away by nothing — it is in the answer to its author, it carries labels,
+and the owner's review queue is simply empty.
 
-Проверить это машиной нечем, и проверки не будет: тело заявки не читает ни одна сверка, а
-хостинг не спрашивает ни о чём, кроме заголовка. Требование держится тем же, чем и слова
-вслух, — тем, кто пишет тело. Разница между ними одна, и она вся: реплику владелец прочитает,
-только если вернётся в переписку, а раздел он видит там, куда смотрит, нажимая кнопку.
+There is nothing to check this by machine, and there will be no check: no audit reads the PR body,
+and the host asks about nothing but the title. The requirement is held by the same thing as the
+spoken word — by whoever writes the body. The difference between them is one, and it is all. The
+owner reads a message only if they return to the conversation, and the section they see where they
+look when pressing the button.
 
-### Правка по замечаниям идёт без замысла на диске
+### An edit after remarks goes without a plan on disk
 
-Разбор вернул замечания или прогон покраснел — чинится это в той же ветке. Замысла там больше
-нет, и собирать папку заново не надо: гард хода работы пропускает правку по признаку из истории
-ветки. Что именно чинится, берётся из замечания, а не из замысла.
+The review returned remarks, or the run went red — it is fixed in the same branch. The plan is no
+longer there, and the folder is not assembled again: the progress guard lets the edit through on the
+sign from the branch history. What exactly is fixed is taken from the remark, not from the plan.
 
-Главная ветка, влитая ради того, чтобы что-то посмотреть, — такая же правка, как влитая ради
-работы, и уезжает тем же ходом. Слияние, оставшееся в рабочей копии, либо пушится тем же ходом,
-либо не делается — иначе владелец видит прежнее состояние и решает по нему.
+Main merged in to look at something is the same edit as main merged in for the work, and it leaves
+by the same turn. A merge left in the working copy is either pushed in the same turn or not made —
+otherwise the owner sees the old state and decides by it.
 
-**Следующее движение:** прогон зелёный и замечаний нет — черновик снимается, и владельцу
-говорится, что работа готова.
+**Next move:** the run is green and there are no remarks — the draft is lifted, and the owner is
+told the work is ready.
 
-## Частые промахи
+## Common misses
 
-- **Тексты правятся до разбора папки:** список того, что перечитывать, лежит в замысле, а разбор
-  папки его удаляет.
-- **Запись раздела решений, повторяющая статью правила слово в слово, доводом при ней не
-  считается.** Правило приходит в контекст само, спек — только когда его открыли; пара расходится
-  молча. Такая запись уезжает целиком, даже если раздел пустеет; довод, в статье не сказанный,
-  дописывается в статью.
-- **Тело заявки остаётся старше разбора папки.** Разбор — последний коммит ветки, и он делает
-  неправдой всё, что тело обещало сделать до слияния. Ревьювер читает список оставшегося как
-  оставшееся, поэтому тело правится тем же ходом.
-- **Утверждение правила снимается вместе со строкой привязки.** Связь идёт по тексту: строка без
-  утверждения и утверждение без строки одинаково краснят сверку спеков.
-- **Раздел «Чего из закона здесь нет» читается глазами, греп тут не помогает.** Искать
-  приходится не то слово, которое ждёшь: правило ссылалось на статью, которой в законе нет, и по
-  слову своей темы эта строка находилась — а неправда была в другом.
-- **Сказать «сверено», не открыв файл, нельзя.** Правило читается целиком: устаревшее утверждение
-  стоит среди верных и ничем от них не отличается.
-- **Вливание после мержа не делается.** В главной ветке тогда лежит раздел «предложено, но не
-  выкачено» с тем, что работает месяц: беззвучная ложь, тем убедительнее, чем старше.
-- **Номера сценариев при вливании не пересчитываются.** Идентификатор — ключ связи с тестами, и
-  сдвиг рвёт сверку у соседей.
-- **«Что не входит» после вливания читается целиком, а не дописывается.** Границы фичи ложатся
-  рядом с границами домена: половина повторяет стоявшее другими словами, а строка «этого раздела
-  ещё нет» становится ложью той работой, которая её вливает. Сверка спеков туда не смотрит.
-- **Своя строка сверки очереди ищется по имени** — по номеру задачи и имени ветки: сверка
-  отвечает про всё дерево, и на одном закрытии чужих папок было восемь при одной своей.
-- **Пара «метка объёма и строка в замысле эпика» рвётся с двух сторон:** задача по следу закрытой
-  наследует метку без строки о заходах, а закрытый эпик уносит строку у всех, кто её несёт.
-- **Правило без привязки в спек домена не въезжает.** Кода, который его исполняет, нет — значит
-  это намерение, и место ему в открытых вопросах домена.
+- **The texts are edited before the folder is taken apart:** the list of what to re-read lies in the
+  plan, and the taking-apart deletes it.
+- **A decisions entry repeating a rule's article word for word is no reason next to it.** The rule
+  comes into the context by itself, the spec — only when opened; the pair diverges in silence. Such
+  an entry leaves whole, even if the section goes empty; a reason the article does not state is
+  appended to the article.
+- **The PR body stays older than the taking-apart.** The taking-apart is the last commit of the
+  branch, and it makes untrue everything the body promised to do before the merge. The reviewer
+  reads the list of what is left as what is left, so the body is edited in the same turn.
+- **A rule statement is lifted together with its binding line.** The link goes by text: a line
+  without a statement and a statement without a line redden the spec audit alike.
+- **The section "What of the law is not here" is read by eye, grep does not help here.** The word to
+  search for is not the one expected. A rule referred to an article the law does not have, and by
+  the word of its theme that line was found — while the untruth was elsewhere.
+- **"Audited" cannot be said without opening the file.** The rule is read whole: a stale statement
+  stands among true ones and differs from them by nothing.
+- **The merge is not done after the merge into main.** Main then holds a "proposed, not yet rolled
+  out" section with what has been working for a month: a silent lie, the more convincing the older.
+- **Scenario numbers are not renumbered at the merge.** The id is the key of the link to the tests,
+  and a shift breaks the audit for the neighbours.
+- **"What is not included" is read whole after the merge, not appended to.** The feature's
+  boundaries land next to the domain's. Half repeat what stood there in other words, and the line
+  "this section does not exist yet" becomes a lie by the very work that merges it. The spec audit
+  does not look there.
+- **One's own line of the work queue audit is found by name** — by the task number and the branch
+  name. The audit answers for the whole tree, and one closing had eight of someone else's folders
+  against one of its own.
+- **The pair "size label — line in the epic plan" breaks from both sides.** A task on the trail of a
+  closed one inherits the label without the line about sessions. A closed epic takes the line away
+  from everyone who carries it.
+- **A rule without a binding does not enter the domain spec.** There is no code carrying it out — so
+  it is an intent, and its place is the domain's open questions.

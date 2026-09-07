@@ -4,104 +4,106 @@ kind: pattern
 rule: lib-layers
 description: Pattern of rule lib-layers. Load when moving code or a symbol between libs — where to start, in which order to move domains, what to do with boundaries, imports and the README of both libs, and what to check with. Creating and removing a lib itself — pattern lib-layers-new.
 ---
-<!-- rt-kit v0.25.0 · patterns/lib-layers-move.md · 7c4018fe21dd · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/lib-layers-move.md · 314217994602 · правится надстройкой, не здесь -->
 
-# Перенести код между либами
+# Moving code between libs
 
-Паттерн правила `lib-layers`. Что при этом должно быть верно — закон
+Pattern of the rule `lib-layers`. What must be true — the law
 `docs/constitution/lib-imports.md`.
 
-## Когда брать
+## When to use
 
-- Символ переезжает из одной либы в другую.
-- Домен переносится в новую раскладку.
-- Общий код собирается из копий в одно место.
+- A symbol moves from one lib to another.
+- A domain is moved into a new layout.
+- Shared code is collected from copies into one place.
 
-## Начинать с `docs/plans/`
-
-```bash
-grep -rn "<имя либы>" docs/
-```
-
-Решение о том, куда переезжает код, часто уже принято и записано, а принятое заново с ним
-расходится. Перенос утилит списка из-за этого делался дважды: первая редакция положила их в
-`libs/common/util`, что запрещено первым же пунктом того самого плана, и её пришлось
-откатывать целиком.
-
-## Порядок задаёт граф зависимостей, а не список в плане
-
-Домен переносится после всех, от кого он зависит. Списки доменов в планах отсортированы по
-важности, и следование им в лоб заставляет временно расширять границы.
+## Start with `docs/plans/`
 
 ```bash
-grep -rn "@<область>/<семья>/<домен>" libs/ apps/ | sed 's/:.*//' | sort -u
+grep -rn "<lib name>" docs/
 ```
 
-Рёбра выписываются грепом по алиасам домена и сортируются топологически. Каждая временная
-строка в границах — это ослабленная механическая проверка, ради которой нарезка и затевалась.
+The decision about where the code moves is often already made and written down, and one made
+anew drifts from it. That is why the move of the list utilities was done twice: the first edition
+put them into `libs/common/util`, which the very first item of that same plan forbids, and it had
+to be rolled back whole.
 
-## Куда именно кладётся общее
+## The order is set by the dependency graph, not by the list in the plan
 
-Своя либа заводится тогда, когда ни одна существующая код не видит.
+A domain is moved after everyone it depends on. Domain lists in plans are sorted by importance,
+and following them head-on forces the boundaries to be widened for a while.
 
-| Кому нужно                             | Куда                                                        |
-| -------------------------------------- | ----------------------------------------------------------- |
-| бэкенду или обоим фронтам, без Angular | `libs/common/util`                                          |
-| только фронтам, тянет Angular          | `common/platform` — сервис и токен, `common/ui` — компонент |
-| предмету, у которого уже есть либа     | в неё: `site-routing`, `i18n`, `photo`, `captcha`           |
-| всем доменам одной семьи               | основание семейства `<семья>/core`                          |
-| всему бэкенду                          | тот слой `util`, что уже перечислен у каждого домена        |
+```bash
+grep -rn "@<scope>/<family>/<domain>" libs/ apps/ | sed 's/:.*//' | sort -u
+```
 
-Новых строк в границах при таком переезде не появляется — кроме права видеть контракт, если
-код его читает.
+The edges are written out by grepping the domain aliases and sorted topologically. Every
+temporary line in the boundaries is a weakened mechanical check — the one the cutting was started
+for.
 
-## После переезда
+## Where exactly the shared goes
 
-1. **README обеих либ.** У той, откуда файл ушёл, и у той, куда пришёл: README перечисляет, что
-   в либе лежит и кто её зовёт. Ни одна проверка эти тексты не читает.
-2. **Порядок импортов.** Переезд алиаса его ломает, и приходит это ошибкой `prettier/prettier`
-   из линта, а не из сборки:
+A lib of its own is created when no existing lib sees the code.
+
+| Who needs it                                    | Where                                                       |
+| ----------------------------------------------- | ----------------------------------------------------------- |
+| the backend or both frontends, without Angular  | `libs/common/util`                                          |
+| the frontends only, pulls Angular               | `common/platform` — a service and a token, `common/ui` — a component |
+| a subject that already has a lib                | into it: `site-routing`, `i18n`, `photo`, `captcha`         |
+| every domain of one family                      | the family base `<family>/core`                             |
+| the whole backend                               | the `util` layer already listed with every domain           |
+
+No new lines appear in the boundaries with such a move — except the right to see the contract,
+if the code reads it.
+
+## After the move
+
+1. **The README of both libs.** The one the file left and the one it came to: the README lists
+   what lies in the lib and who calls it. No check reads these texts.
+2. **Import order.** Moving an alias breaks it, and it arrives as a `prettier/prettier` error
+   from the lint, not from the build:
 
     ```bash
     npx nx lint <project> --fix
     ```
 
-    Флага `--fix` нет у `test` и `build`, поэтому в `run-many -t lint test` его передавать
-    нельзя — падает весь вызов.
+    `test` and `build` have no `--fix` flag, so it cannot be passed to `run-many -t lint test` —
+    the whole call fails.
 
-3. **Линт по всем затронутым проектам, а не по одному приложению.** Скрипт ошибается молча и не
-   так, как человек: строка импорта не переписывается, а исчезает целиком. При переносе утилит
-   списка так пропали импорты в шести файлах из восьми, и нашёл их прогон по списку проектов —
-   сборка одного приложения до этих файлов не дошла.
+3. **Lint over all touched projects, not over one application.** The script errs silently and
+   not the way a person does: the import line is not rewritten, it disappears whole. When the
+   list utilities were moved, imports vanished this way in six files out of eight, and the run
+   over the project list found them — the build of one application never reached these files.
 
     ```bash
-    npx nx run-many -t lint --projects=<список по изменённым файлам>
+    npx nx run-many -t lint --projects=<list by changed files>
     ```
 
-    Этот прогон — быстрый, по горячим следам переноса, и набором перед пушем он не бывает:
-    набор, собранный по изменённым файлам, пропускает то, до чего правка дошла связями. Перед
-    пушем идёт тот же набор, что гоняет конвейер, и теми же командами.
+    This run is quick, hot on the heels of the move, and it never serves as the set before the
+    push: a set assembled by changed files skips what the edit reached through dependencies.
+    Before the push goes the same set the pipeline runs, by the same commands.
 
-## Проверить
+## Check
 
 ```bash
 npm run check:layers
 npm run check:dupes
 ```
 
-Второе обязательно: перенос и есть тот момент, когда копия остаётся на старом месте.
+The second is mandatory: a move is the very moment when a copy stays in the old place.
 
-**Переехавшие маршруты проверяются экраном, сценарием целиком: открыть панель, закрыть её,
-вернуться назад браузером.** Адрес аутлета собирается на исполнении, и ни линтер, ни сборка, ни
-проверка раскладки в него не смотрят: панель, оставшаяся закрытой, ошибки не бросает и вывод
-браузера не пачкает. Три действия проверяют три разных места — открытие берёт команду от текущего
-маршрута, закрытие идёт от его родителя, возврат читает адрес из истории браузера, — и каждое из
-них после переезда ломается отдельно от двух других.
+**Moved routes are checked by the screen, by the whole scenario: open the panel, close it, go
+back with the browser.** The outlet address is assembled at runtime, and neither the linter, nor
+the build, nor the layout check looks into it: a panel that stayed closed throws no error and
+leaves the browser output clean. The three actions check three different places — opening takes
+the command from the current route, closing goes from its parent, going back reads the address
+from the browser history. After a move each of them breaks apart from the other two.
 
-## Частые промахи
+## Common misses
 
-- Новый адрес выбран без чтения `docs/plans/` — расходится с уже принятым решением.
-- Порядок переноса взят из списка в плане — приходится временно расширять границы.
-- README поправлен только у одной либы.
-- Линт прогнан по приложению, а не по списку затронутых проектов — пропавшие импорты не видно.
-- Копия осталась на старом месте, а `check:dupes` не гонялся.
+- A new address chosen without reading `docs/plans/` — drifts from the decision already made.
+- The move order taken from the list in the plan — the boundaries have to be widened for a while.
+- The README fixed in only one lib.
+- Lint run over the application, not over the list of touched projects — vanished imports are
+  not seen.
+- A copy left in the old place, and `check:dupes` not run.

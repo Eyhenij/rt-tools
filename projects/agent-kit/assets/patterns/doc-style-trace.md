@@ -5,107 +5,113 @@ rule: doc-style
 description: Pattern of rule doc-style. Load when the completeness of texts is checked from the side of the work — a reverse pass over closed tasks, the machine selection sign, what it does not see, three outcomes per task. Sorting one document — pattern doc-style-sweep.
 ---
 
-# Обратный проход: закрытые задачи против текстов
+# The reverse pass: closed tasks against texts
 
-Паттерн правила `doc-style`. Что при этом должно быть верно — закон
+Pattern of the rule `doc-style`. What must be true — the law
 `docs/constitution/project-documentation.md`.
 
-## Когда брать
+## When to use
 
-- Проверяется не то, верен ли текст, а то, есть ли он вообще.
-- Разбирается работа, закрытая до того, как в закрытие задачи вошёл шаг приведения текстов.
-- Волна разбора со стороны текста кончилась, а находок в ней вышло мало.
+- What is checked is not whether a text is right but whether it exists at all.
+- Work is reviewed that was closed before the step of bringing texts up to date entered the
+  closing of a task.
+- A wave of review from the side of the text has ended, and it yielded few findings.
 
-## Проход со стороны текста не находит того, чего не написали
+## A pass from the side of the text does not find what was not written
 
-Он читает написанное и судит каждое утверждение; утверждения, которого нет, в обходе нет
-тоже. Со стороны работы находок на порядок больше: в первой части семь находок из восьми
-легли туда, где текста не было вовсе, а не туда, где он устарел.
+It reads what is written and judges every statement; a statement that does not exist is not in
+the pass either. From the side of the work there are ten times more findings: in the first part
+seven findings out of eight landed where there was no text at all, not where it was stale.
 
-## Признак отбора — ветка внесла код и не тронула ни одного текста
+## The selection sign — the branch added code and touched no text
 
-Отбирается машиной и чтения не требует. Что ветка внесла на самом деле, отвечает история, а
-не папка задачи: папка разбирается при закрытии, и таблица следа задачи до главной ветки не
-доезжает вовсе.
-
-```bash
-git log --merges --format='%H %s' <главная ветка> | grep -E 'from [^/]+/<ключ задач>-[0-9]+-'
-git diff --name-only <мерж>^1 <мерж>
-```
-
-Признак считается вычитанием, а не двумя списками путей: код — всё, что не `.md`, текст —
-любой `.md` вне описания прошлого и папок задач. Списки, написанные руками, разошлись по обоим
-краям сразу, и разошлись молча.
-
-Список текстов пропустил самые читаемые тексты дерева: тот, что приходит в контекст каждой
-сессии целиком, и тот, что описывает устройство дерева. Три задачи, тронувшие ровно их, попали
-в выборку как бесследные — и во вторую часть прохода попали второй раз, уже как тронувшие
-текст.
-
-Список кода пропустил обвязку: гарды, конвейер и файлы выкатки в нём не значились, и две
-задачи, правившие только их, не попали ни в одну выборку вовсе. Нашлись они не признаком, а
-сверкой двух выборок между собой — её и стоит прогнать перед каждой следующей частью:
+Selected by the machine, no reading required. What the branch really added is answered by
+history, not by the task folder: the folder is taken apart at closing, and the task footprint
+table never reaches the main branch at all.
 
 ```bash
-comm -23 <список бесследных> <разобранные первой частью>       # кого не прочитал никто
-comm -12 <разобранные первой частью> <список тронувших текст>  # кого прочитали дважды
+git log --merges --format='%H %s' <main branch> | grep -E 'from [^/]+/<task key>-[0-9]+-'
+git diff --name-only <merge>^1 <merge>
 ```
 
-## Часть назначает самая узкая область задачи, и метки бывает нет вовсе
+The sign is computed by subtraction, not by two path lists: code is everything that is not
+`.md`, text is any `.md` outside the archive and the task folders. Hand-written lists diverged at
+both edges at once, and diverged silently.
 
-Выборка, которую признак отобрал, одним заходом не читается, и делится она по области —
-метке области у задачи. Меток у задачи бывает несколько; часть назначает самая узкая из них, а
-порядок сужения выбирается один раз на весь проход и записывается в замысел вместе с таблицей
-частей. При обратном порядке самые широкие области забрали бы себе все спорные задачи, и у
-узких не осталось бы почти ничего.
+The text list missed the most-read texts of the tree: the one that enters the context of every
+session whole, and the one that describes the tree's structure. Three tasks that touched exactly
+those made the sample as traceless — and made the second part of the pass a second time, now as
+having touched text.
 
-Задача без единой метки области не попадает ни в одну часть вовсе — ни по какому порядку
-сужения. Признак её отобрал, читать её некому, и видно это только пересчётом:
+The code list missed the plumbing: guards, the pipeline and the rollout files were not on it, and
+two tasks that edited only those made no sample at all. They were found not by the sign but by
+checking the two samples against each other — and that check is worth running before every next
+part:
 
 ```bash
-awk -F'\t' 'NR==FNR{k[$1]=1;next} k[$1] && $2==""{print}' <номера выборки> <задачи с метками>
+comm -23 <traceless list> <reviewed by the first part>       # whom nobody read
+comm -12 <reviewed by the first part> <list of those that touched text>  # who was read twice
 ```
 
-Такую задачу относят к части по предмету руками, и это решение записывается в разбор: иначе
-следующая часть пересчитает выборку и найдёт её снова непрочитанной.
+## The part is assigned by the narrowest area of the task, and sometimes there is no label at all
 
-## Исходов у задачи три, а не два
+The sample the sign selected cannot be read in one session, and it is split by area — the task's
+area label. A task can have several labels; the part is assigned by the narrowest, and the
+narrowing order is chosen once for the whole pass and written into the plan together with the
+table of parts. In the reverse order the widest areas would take all the disputed tasks, and
+almost nothing would be left for the narrow ones.
 
-| Исход            | Признак                                                                                                   |
-| ---------------- | --------------------------------------------------------------------------------------------------------- |
-| следа не требует | приём нигде не повторён: вёрстка своего экрана, разовая правка по просьбе владельца                       |
-| след есть        | утверждение о работе стоит в правиле, паттерне или спеке — в том числе внесённое отдельной задачей следом |
-| следа нет        | приём применён и нигде не описан — это и есть находка                                                     |
+A task without a single area label falls into no part at all — under any narrowing order. The
+sign selected it, nobody is there to read it, and this shows only by recounting:
 
-Приём, записанный отдельной задачей следом, промахом не является: работа сделана одной
-задачей, запись приёма заведена другой, и в очереди работ видны обе. Отличается это чтением
-соседних по времени задач той же области, а не признаком.
+```bash
+awk -F'\t' 'NR==FNR{k[$1]=1;next} k[$1] && $2==""{print}' <sample numbers> <tasks with labels>
+```
 
-Худшего случая признак не видит вовсе: ветка тронула соседний текст и обошла тот, который
-описывает её собственную работу. Такие задачи остаются следующей части прохода.
+Such a task is assigned to a part by subject, by hand, and the decision is written into the
+review: otherwise the next part recounts the sample and finds it unread again.
 
-## Граница «код не правится» и её единственное исключение
+## A task has three outcomes, not two
 
-Нашлось место, где неправ код, — заводится задача, проход идёт дальше. Кодом при этом не
-считается то, что описывает сверяемое правило: комментарий в шапке проверки и заголовок
-теста. Заголовок несёт идентификатор сценария, и без него новый сценарий значится непокрытым
-при живом тесте.
+| Outcome           | Sign                                                                                                                 |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------- |
+| needs no trace    | the technique is repeated nowhere: layout of its own screen, a one-off edit at the owner's request                   |
+| there is a trace  | a statement about the work stands in a rule, a pattern or a spec — including one added by a separate task afterwards |
+| there is no trace | the technique is applied and described nowhere — that is the finding                                                 |
 
-## Находка кладётся в тот слой, которому принадлежит
+A technique written down by a separate task afterwards is not a miss: the work was done by one
+task, the record of the technique was created by another, and both are visible in the work
+queue. This is told by reading the neighbouring tasks of the same area close in time, not by the
+sign.
 
-- приём повторён и решается в коде — утверждение правила с привязкой в именах дерева;
-- готовый код и порядок действий — паттерн;
-- обещание, которое видит человек, — сценарий спека домена с прежней нумерацией;
-- расхождение с договорённостью — текст статьи владельцу, файл закона не правится.
+The worst case the sign does not see at all: the branch touched a neighbouring text and bypassed
+the one describing its own work. Such tasks are left to the next part of the pass.
 
-## Частые промахи
+## The boundary "code is not edited" and its only exception
 
-- Состав части взят из прошлого захода, а не пересчитан признаком. Выборки живут в
-  скретчпаде сессии и умирают вместе с ней; в дерево они не кладутся — деление на части
-  свойство прохода, а не продукта. Пересчёт стоит двух команд выше и даёт тот же список, а
-  состав, принятый на слово, нечем сверить с соседними частями — именно сверкой находятся те,
-  кого не прочитал никто.
-- Задача судится по своей папке: её разобрали при закрытии, и следа там не осталось.
-- «След есть» по одному упоминанию: упоминание в соседнем правиле приёма не описывает.
-- Находка записана только в паттерн: правило читают перед каждой правкой, паттерн — по имени.
-- Признак пересчитан на новом списке путей без сверки на выборке руками.
+A place was found where the code is wrong — a task is filed, the pass goes on. What describes
+the audited rule does not count as code here: the comment in a check's header and the test
+title. The title carries the scenario identifier, and without it a new scenario shows as not
+covered while the test is alive.
+
+## A finding goes into the layer it belongs to
+
+- the technique is repeated and decided in code — a rule statement with a binding in the tree's
+  names;
+- ready-made code and an order of actions — a pattern;
+- a promise a person sees — a domain spec scenario with the existing numbering;
+- a divergence from the agreement — the article text to the owner, the law file is not edited.
+
+## Common misses
+
+- The composition of a part taken from the previous session, not recomputed by the sign.
+  Samples live in the session's scratchpad and die with it; they are not put into the tree — the
+  split into parts is a trait of the pass, not of the product. A recount costs the two commands
+  above and gives the same list, while a composition taken on trust cannot be checked against
+  the neighbouring parts — and it is that check that finds those nobody read.
+- A task is judged by its folder: it was taken apart at closing, and no trace was left there.
+- "There is a trace" by a single mention: a mention in a neighbouring rule does not describe the
+  technique.
+- A finding written only into a pattern: the rule is read before every edit, the pattern by
+  name.
+- The sign recomputed on a new path list without checking on a sample by hand.

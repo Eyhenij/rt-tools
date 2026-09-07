@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-state-next.mjs · 6440674152bb · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-state-next.mjs · 914134a1ab08 · правится надстройкой, не здесь
 /**
  * Сверка того, что раздел состояния называет следующее движение.
  *
@@ -11,7 +11,7 @@
  *
  * Читаются четыре текста:
  *   перечень — таблица состояний в правиле ведения работы: имя и ведущий паттерн;
- *   разделы  — заголовки вида «Состояние `имя`» в этих паттернах;
+ *   разделы  — заголовки вида «State `имя`» либо «Состояние `имя`» в этих паттернах;
  *   правило  — оно же: в нём стоит утверждение о границе состояния;
  *   карта и закон — там же стоит то же утверждение, если дерево их разложило.
  *
@@ -43,8 +43,13 @@ const SKILLS = join(ROOT, '.claude/skills');
 const MAP = join(ROOT, '.claude/rt-kit/defaults/turn-map.md');
 const LAW = join(ROOT, 'docs/constitution/work-conduct.md');
 
-/** Зачин строки: по нему её находят, а хвост у каждого раздела свой. */
-const MARKER = '**Следующее движение:**';
+/**
+ * Зачин строки: по нему её находят, а хвост у каждого раздела свой. Имён два: английское везёт
+ * пакет, русское держит паттерн дерева, который ещё не переведён.
+ */
+const MARKERS = ['**Next move:**', '**Следующее движение:**'];
+const MARKER = MARKERS[0];
+const markerOf = (line) => MARKERS.find((one) => line.startsWith(one));
 
 /** Утверждение о границе состояния. Стоит в правиле, в карте и в законе теми же словами. */
 /**
@@ -99,7 +104,7 @@ function sectionsOf(pattern) {
     let current = null;
 
     for (const line of readFileSync(file, 'utf8').split('\n')) {
-        const heading = line.match(/^#+\s+Состояние\s+`([^`]+)`/);
+        const heading = line.match(/^#+\s+(?:State|Состояние)\s+`([^`]+)`/);
 
         if (heading) {
             current = { name: heading[1], heading: line.replace(/^#+\s+/, ''), moves: [] };
@@ -107,8 +112,10 @@ function sectionsOf(pattern) {
             continue;
         }
 
-        if (current && line.startsWith(MARKER)) {
-            current.moves.push(line.slice(MARKER.length).trim());
+        const marker = current ? markerOf(line) : undefined;
+
+        if (marker) {
+            current.moves.push(line.slice(marker.length).trim());
         }
     }
 
@@ -150,7 +157,7 @@ for (const [pattern, sections] of patterns) {
         const where = `\`${section.name}\` в паттерне \`${pattern}\``;
 
         if (section.moves.length === 0) {
-            problems.push(`${where}: в разделе «${section.heading}» нет строки «${MARKER}»`);
+            problems.push(`${where}: в разделе «${section.heading}» нет строки «${MARKER}» — ни «${MARKERS[1]}»`);
             continue;
         }
 

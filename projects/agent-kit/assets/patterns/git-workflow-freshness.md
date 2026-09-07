@@ -5,83 +5,83 @@ rule: git-workflow
 description: Pattern of rule git-workflow. Load before a push, when taking a task and after every known merge — reading all your open PRs at once, telling lag apart from a conflict in files, checking the local head against the hosting.
 ---
 
-# Свежесть открытых заявок
+# Freshness of open PRs
 
-Паттерн правила `git-workflow`. Что при этом должно быть верно — закон
-`docs/constitution/delivery.md`. Разбор одного конфликта — паттерн `git-workflow-merge`,
-череда веток из одного основания — `git-workflow-stack`.
+Pattern of the rule `git-workflow`. What must be true — the law
+`docs/constitution/delivery.md`. Resolving one conflict — pattern `git-workflow-merge`, a chain
+of branches from one base — `git-workflow-stack`.
 
-## Когда брать
+## When to use
 
-Три места, и в каждом чтение обязательно:
+Three places, and in each the reading is mandatory:
 
-- перед пушем — вершина главной могла уйти, пока шла работа;
-- при взятии новой задачи — прежние заявки остались открытыми и о себе не напомнят;
-- после каждого слияния, о котором стало известно, — оно отставило все остальные разом.
+- before a push — main's tip may have moved while the work went on;
+- when taking a new task — the earlier PRs stayed open and will not remind of themselves;
+- after every merge that became known — it made all the others lag at once.
 
-## Что читается
+## What is read
 
-Одной командой по всем своим открытым заявкам, а не по той, чья ветка сейчас взята:
+By one command over all one's own open PRs, not the one whose branch is checked out now:
 
 ```bash
 /opt/homebrew/bin/gh pr list --author '<машинная запись>' --state open \
     --json number,headRefName,isDraft,mergeable,mergeStateStatus,statusCheckRollup
 ```
 
-| Поле                 | Что говорит                                                                       |
+| Field                | What it says                                                                      |
 | -------------------- | --------------------------------------------------------------------------------- |
-| `mergeable`          | `MERGEABLE` — кнопку нажать можно; `CONFLICTING` — нельзя; `UNKNOWN` — ещё не посчитано |
-| `mergeStateStatus`   | `BEHIND` — отстала от главной; `DIRTY` — спор в файлах; `BLOCKED` — ждёт разбора  |
-| `isDraft`            | черновик: кнопка слияния заблокирована хостингом при любом цвете прогона          |
-| `statusCheckRollup`  | прогон на вершине: пустой список — прогона нет вовсе, а не «зелено»               |
+| `mergeable`          | `MERGEABLE` — the button can be pressed; `CONFLICTING` — it cannot; `UNKNOWN` — not counted yet |
+| `mergeStateStatus`   | `BEHIND` — lags behind main; `DIRTY` — a dispute in files; `BLOCKED` — awaits review |
+| `isDraft`            | a draft: the host locks the merge button whatever the run's colour                |
+| `statusCheckRollup`  | the run on the tip: an empty list means no run at all, not "green"                |
 
-`UNKNOWN` означает «ещё не посчитано» и читается как «спросить снова через несколько секунд»,
-а не как «конфликтов нет».
+`UNKNOWN` means "not counted yet" and reads as "ask again in a few seconds", not as "no
+conflicts".
 
-## Спор в файлах отделяется от отставания
+## A dispute in files is told apart from lag
 
-Метка хостинга говорит одно — «нажать нельзя». Что именно чинить, отвечает слияние деревьев,
-и отвечает без сети:
+The host's mark says one thing — "cannot press". What exactly to fix is answered by a tree
+merge, and it answers offline:
 
 ```bash
 git fetch origin
 git merge-tree "$(git merge-base origin/main <ветка>)" origin/main <ветка> | grep -c '^<<<<<<<'
 ```
 
-Ноль — ветка просто отстала, и лечится это вливанием главной. Больше нуля — спор в файлах, и
-каждый разбирается по роду файла: паттерн `git-workflow-merge`.
+Zero — the branch merely lags, and merging main in cures it. Above zero — a dispute in files,
+and each is resolved by file kind: pattern `git-workflow-merge`.
 
-## Что делается с найденным
+## What is done with what was found
 
-| Найдено                                | Что делается                                                       |
+| Found                                  | What is done                                                       |
 | -------------------------------------- | ------------------------------------------------------------------ |
-| отстала, спора нет                     | главная вливается в ветку и отправляется тем же ходом              |
-| спор в файлах                          | разбор по роду файла, затем отправка                               |
-| прогона на вершине нет                 | вершина перезапускается или дожидается — цвета нет ни у той, ни у другой |
-| черновик при зелёном прогоне           | черновик снимается — у него кнопка слияния заблокирована           |
-| заявка открыта человеком, а не машиной | ревьювера ей уже не поставить: заводится заново машинной записью   |
+| lagging, no dispute                    | main is merged into the branch and pushed in the same turn         |
+| a dispute in files                     | resolution by file kind, then a push                               |
+| no run on the tip                      | the tip is rerun or waited for — neither one has a colour          |
+| a draft with a green run               | the draft is lifted — its merge button is locked                   |
+| the PR opened by a person, not by the machine | it can no longer get a reviewer: it is created anew by the machine account |
 
-Внутри одной ветки порядок один: влить главную → прогнать набор гейта → отправить → перечитать
-состояние у хостинга. Перечитывание — часть работы, а не отчёт о ней.
+Within one branch the order is one: merge main in → run the gate set → push → reread the state
+from the host. Rereading is part of the work, not a report on it.
 
-## Локальная вершина сверяется с той, что на хостинге
+## The local tip is checked against the one on the host
 
-Догнанная в рабочем дереве и не отправленная ветка работой не считается: человек видит прежнее
-состояние.
+A branch caught up in the working tree and not pushed does not count as work: a person sees the
+old state.
 
 ```bash
 git rev-parse HEAD
 /opt/homebrew/bin/gh pr view <номер> --json headRefOid --jq .headRefOid
 ```
 
-Разошлись — отправка не сделана, и это первое, что чинится.
+Diverged — the push is not done, and that is the first thing fixed.
 
-## Частые промахи
+## Common misses
 
-- Состояние заявки прочитано по памяти прошлого хода: между ходами человек влил соседнюю работу.
-- `UNKNOWN` прочитан как «конфликтов нет» — хостинг ещё считал.
-- Читалась заявка текущей ветки, а брошенные остались отставшими: спрашиваются все свои открытые.
-- Главная влита в рабочем дереве и не отправлена: снаружи это «не сделано ничего».
-- Отставание лечили разбором конфликта: спора в файлах не было вовсе, хватило бы вливания.
-- Спор разрешили выбором стороны целиком: род файла решает приём, и стороны у него разные.
-- Круг догоняния начат по окрику человека, а не сам: к этой минуте отстали уже все заявки.
+- The PR state read from memory of the previous turn: between turns a person merged a neighbouring work.
+- `UNKNOWN` read as "no conflicts" — the host was still counting.
+- The PR of the current branch was read, and the abandoned ones stayed lagging: all one's own open ones are asked.
+- Main merged in the working tree and not pushed: from outside that is "nothing done".
+- Lag was cured by resolving a conflict: there was no dispute in files at all, a merge would have sufficed.
+- A dispute resolved by choosing one side whole: the file kind decides the technique, and its sides differ.
+- The catch-up round started at a person's shout, not on its own: by that minute all PRs had already lagged.

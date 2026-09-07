@@ -4,39 +4,40 @@ kind: pattern
 rule: styling-bem
 description: Pattern of rule styling-bem. Load when assembling a section screen, a form, a panel or a dialog. Blocks of the shared layer, markup through rtBlock and rtElem, your own element in a foreign subtree, the sign that an edit goes to the wrong place. Kit component styles — pattern styling-bem-component.
 ---
-<!-- rt-kit v0.25.0 · patterns/styling-bem-layout.md · 4d25e80fd625 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/styling-bem-layout.md · 9ca221e21688 · правится надстройкой, не здесь -->
 
-# Экран на общем слое раскладки
+# A screen on the shared layout layer
 
-Паттерн правила `styling-bem`. Что при этом должно быть верно — закон
+Pattern of the rule `styling-bem`. What must be true — the law
 `docs/constitution/frontend-application.md`.
 
-## Когда брать
+## When to use
 
-- Собирается экран раздела, форма, содержимое панели или модального окна.
-- В файле стилей экрана появляется раскладка.
+- A section screen, a form, the content of a panel or of a modal window is being assembled.
+- Layout appears in the styles file of a screen.
 
-## Файл стилей экрана по умолчанию пустой
+## The styles file of a screen is empty by default
 
-Раскладка объявлена один раз в общем слое приложения (`apps/<app>/src/styles/`), а экран её
-только применяет. Блоков в админке четыре, у сайта один:
+The layout is declared once in the application's shared layer (`apps/<app>/src/styles/`), and
+the screen only applies it. The admin has four blocks, the site has one:
 
-| Блок                  | Что раскладывает                                                |
+| Block                 | What it lays out                                                |
 | --------------------- | --------------------------------------------------------------- |
-| `<префикс>-page`      | экран раздела: заголовок, тулбар, прокрутка, таблица, пагинация |
-| `<префикс>-form`      | форма с разделами-карточками и строками полей                   |
-| `<префикс>-panel`     | содержимое панели правки                                        |
-| `<префикс>-window`    | содержимое модального окна                                      |
-| `<префикс>-site-page` | колонка содержимого сайта: заголовок раздела и вводный абзац    |
+| `<prefix>-page`       | a section screen: title, toolbar, scrolling, table, pagination  |
+| `<prefix>-form`       | a form with card sections and rows of fields                    |
+| `<prefix>-panel`      | the content of the edit panel                                   |
+| `<prefix>-window`     | the content of a modal window                                   |
+| `<prefix>-site-page`  | the site's content column: section title and the intro paragraph |
 
-Блок вешается на хост, элементы получают классы от `rtBlock` в корне шаблона:
+The block goes on the host, the elements get their classes from `rtBlock` at the root of the
+template:
 
 ```typescript
-host: { class: '<префикс>-page' },
+host: { class: '<prefix>-page' },
 ```
 
 ```html
-<ng-container rtBlock="<префикс>-page">
+<ng-container rtBlock="<prefix>-page">
     <header rtElem="header">
         <div rtElem="header-main">
             <h1 rtElem="title">{{ 'bookingsTitle' | transloco }}</h1>
@@ -46,29 +47,33 @@ host: { class: '<префикс>-page' },
 </ng-container>
 ```
 
-`rtBlock` на `<ng-container>` класса не ставит — узел это комментарий. Второго носителя класса
-блока не нужно, и своей обёртки `<section>` тоже.
+`rtBlock` on `<ng-container>` sets no class — the node is a comment. A second carrier of the
+block class is not needed, nor a `<section>` wrapper of your own.
 
-## Свой элемент в чужом поддереве
+## Your own element in a foreign subtree
 
-Пара директив на одном элементе; класс блока при этом не ставится, только класс элемента:
+Both directives on one element; the block class is not set then, only the element class:
 
 ```html
-<div rtBlock="<префикс>-bookings-page" rtElem="confirm"></div>
+<div rtBlock="<prefix>-bookings-page" rtElem="confirm"></div>
 ```
 
-Класс получается `<префикс>-bookings-page__confirm`, а потомки внутри считаются от того же блока.
+The class comes out as `<prefix>-bookings-page__confirm`, and the descendants inside count from
+the same block.
 
-## Своё в файле экрана
+## What stays in the screen file
 
-Остаётся только то, что принадлежит одному этому экрану и в общий слой не просится — сетка
-календаря, карта на странице объекта, лента переписки. Рядом пишется, почему это не общее.
+Only what belongs to this one screen and does not ask for the shared layer — the calendar grid,
+the map on the property page, the conversation feed. Next to it, write why it is not shared.
 
-## Частые промахи
+## Common misses
 
-- `display: flex` с `gap` и `padding` на `:host` в файле экрана — это раскладка. Одинаковые с
-  виду экраны от неё расходятся: заголовок страницы объявлялся в одиннадцати компонентах тремя
-  разными кеглями.
-- `rtElem` без предка с `rtBlock`: отрисовка падает в рантайме, сборка и линт молчат.
-- Класс, у которого правило сняли, а `rtElem` в шаблоне остался: ловит `npm run check:styles`.
-- Элемент чужого блока в чужом поддереве: имя блока приходит инъекцией, и подмешать его нечем.
+- `display: flex` with `gap` and `padding` on `:host` in the screen file — that is layout.
+  Screens that look alike drift apart from it: the page title was declared in eleven components
+  in three different font sizes.
+- `rtElem` without an ancestor with `rtBlock`: rendering fails at runtime, the build and the
+  lint are silent.
+- A class whose rule was removed while `rtElem` stayed in the template: caught by
+  `npm run check:styles`.
+- An element of a foreign block in a foreign subtree: the block name arrives by injection, and
+  there is nothing to mix it in with.

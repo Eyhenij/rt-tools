@@ -4,72 +4,77 @@ kind: pattern
 rule: navigation
 description: Pattern of rule navigation. Load when creating an admin menu item, a section with a panel or a new section address — one declaration per item and route, the flag of a section without a screen, address nesting, a hint on an unavailable item. Not for the record edit panel — pattern entity-aside.
 ---
-<!-- rt-kit v0.25.0 · patterns/admin-nav-item.md · aabadd7a0018 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/admin-nav-item.md · b6d676def926 · правится надстройкой, не здесь -->
 
-# Пункт меню и адрес раздела
+# A menu item and a section address
 
-Паттерн правила `navigation`. Что при этом должно быть верно — закон
+Pattern of the rule `navigation`. What must be true — the law
 `docs/constitution/navigation.md`.
 
-## Когда брать
+## When to use
 
-- Заводится пункт меню админки или раздел с панелью.
-- Появляется новый экран, которому нужен адрес.
-- Пункт надо показать, пока экрана под ним нет.
+- An admin menu item or a section with a panel is created.
+- A new screen appears that needs an address.
+- An item has to be shown while there is no screen under it yet.
 
-## Одна декларация на пункт и маршрут
+## One declaration per item and route
 
-Декларация меню — данные: адреса, ключи словаря, права и флаг раздела. Живёт в
-`libs/admin/common/container/util` и служит и источником пунктов, и источником гейтинга
-маршрутов. Второе объявление рядом с маршрутами разошлось бы с первым, и получилось бы «пункта
-не видно, а страница открывается».
+The menu declaration is data: addresses, dictionary keys, rights and the section flag. It lives
+in `libs/admin/common/container/util` and serves as the source of both the items and the route
+gating. A second declaration next to the routes would drift from the first, and the result would
+be "the item is not visible, but the page opens".
 
-Декларация не импортирует ни один `shell`: иначе граф замкнётся и `npm run check:layers`
-встанет.
+The declaration imports no `shell`: otherwise the graph closes into a cycle and
+`npm run check:layers` stops.
 
-## Пункт без экрана
+## An item without a screen
 
-Объявляется **без прав и без адреса**: право открывает экран, а экрана нет. Виден он при этом
-всем. Появится экран — снимается флаг и добавляются права, больше в объявлении править нечего.
+Declared **without rights and without an address**: a right opens the screen, and there is no
+screen. It is visible to everyone all the while. When the screen appears, the flag is removed and
+the rights are added; nothing else in the declaration needs editing.
 
-Подпись видна, нажатие ничего не делает, подсказка объясняет почему. Носитель подсказки —
-обёртка вокруг кнопки, а сам пункт выключается `aria-disabled`, не нативным `disabled`:
-нативно отключённая кнопка не принимает фокус, и с клавиатуры объяснение недостижимо.
+The caption is visible, a press does nothing, the hint explains why. The carrier of the hint is
+a wrapper around the button, and the item itself is switched off by `aria-disabled`, not by the
+native `disabled`: a natively disabled button takes no focus, and from the keyboard the
+explanation is unreachable.
 
-К `aria-disabled` обязательно идёт парное правило стилей `[aria-disabled='true']` — браузер
-этот атрибут сам не рисует. Обработчика нажатия у такого пункта нет вовсе.
+`aria-disabled` always goes with a paired style rule `[aria-disabled='true']` — the browser does
+not draw this attribute itself. Such an item has no click handler at all.
 
-## Адрес повторяет раздел
+## The address repeats the section
 
-Всё, что стоит в разделе, лежит под его сегментом: экран из «Настроек» — под `/settings`.
-Вложение делается в `apps/admin/src/app/app.routes.ts` через `children` у сегмента раздела;
-`shell` домена монтируется внутрь. Своей либы под раздел не нужно.
+Everything that stands in a section lies under its segment: a screen from "Settings" — under
+`/settings`. The nesting is done in `apps/admin/src/app/app.routes.ts` through `children` of the
+section segment; the domain's `shell` is mounted inside. No lib of its own is needed for a
+section.
 
-Подсветка активного раздела считается префиксом адреса, и списка исключений для неё не
-заводится.
+Highlighting of the active section is counted by address prefix, and no list of exceptions is
+kept for it.
 
-## Данные домена приходят в шапку токеном
+## Domain data comes into the header by a token
 
-Счётчики непрочитанного объявляются интерфейсом и `InjectionToken` в
-`libs/admin/common/container/util`, а связывает токен с реализацией композиционный корень
-(`provideAdminEnvironment`). Права на чужую либу получает только корень — одной строкой в его
-конфиге границ.
+Unread counters are declared by an interface and an `InjectionToken` in
+`libs/admin/common/container/util`, and the composition root (`provideAdminEnvironment`) ties
+the token to the implementation. Only the root gets rights to a foreign lib — by one line in its
+boundaries config.
 
-Признак доходит до кита предикатом по идентификатору пункта, а не своим полем в декларации:
-раздел домена назван идентификатором своего пункта.
+The sign reaches the kit as a predicate by the item id, not as a field of its own in the
+declaration: a domain section is named by the id of its item.
 
-## Частые промахи
+## Common misses
 
-- Второе объявление прав рядом с маршрутами.
-- Раздел с панелью, которому дали свой адрес: адрес есть только у пунктов, а раздел виден,
-  если виден хотя бы один пункт внутри.
-- Обход одного верхнего ряда при поиске владельца адреса: разделы обходятся вместе с пунктами
-  их панелей, иначе вложенный экран остаётся без гейтинга.
-- Подсказка у доступного пункта: она дословно повторяет подпись рядом и не добавляет ничего.
-- `<префикс>PopoverTrigger` не поставлен явно: директива попапа по умолчанию открывается нажатием, и
-  два соседних элемента одного ряда ведут себя по-разному.
-- Переезд адреса без правки сквозных спек: они ходят по адресам, и прогон станет красным.
-- Иконка, подобранная «похожая»: отсутствующая добавляется в спрайт и в `<префикс>-icon-names.ts`.
+- A second declaration of rights next to the routes.
+- A section with a panel that was given an address of its own: only items have addresses, and a
+  section is visible if at least one item inside is visible.
+- Walking only the top row when looking for the owner of an address: sections are walked
+  together with the items of their panels, otherwise a nested screen is left without gating.
+- A hint on an available item: it repeats the caption next to it word for word and adds nothing.
+- `<prefix>PopoverTrigger` not set explicitly: the popup directive opens by press by default, and
+  two neighbouring elements of one row behave differently.
+- An address move without editing the end-to-end tests: they walk by addresses, and the run goes
+  red.
+- An icon picked as "similar": a missing one is added to the sprite and to
+  `<prefix>-icon-names.ts`.
 
 ## Подсветку даёт маршрутизатор, а не расчёт по адресу
 

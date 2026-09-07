@@ -4,175 +4,180 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when the main branch is merged into a task branch and a conflict is resolved — the merge order, handling by file kind, checking what was appended against the work queue, re-reading the body of the open PR. Branch and commit — pattern git-workflow-commit.
 ---
-<!-- rt-kit v0.25.0 · patterns/git-workflow-merge.md · 7583d3930741 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/git-workflow-merge.md · 6424e3b8fd97 · правится надстройкой, не здесь -->
 
-# Мерж главной ветки в ветку задачи
+# Merging the main branch into the task branch
 
-Паттерн правила `git-workflow`. Что при этом должно быть верно — закон
+Pattern of the rule `git-workflow`. What must be true — the law
 `docs/constitution/delivery.md`.
 
-**Вызовы здесь даны клиентом GitHub.** Дерево на другом хостинге читает их как форму, а команду
-берёт у своего клиента: имена полей и подкоманд у клиентов разные, а спрашиваемое — одно.
-Соответствие называет редакция правила поставки, разложенная в этом дереве.
+**The calls here are given with the GitHub client.** A tree on another host reads them as the
+form and takes the command from its own client: field and subcommand names differ between
+clients, and what is asked is one. The match is named by the edition of the delivery rule laid
+out in that tree.
 
-## Когда брать
+## When to use
 
-- PR отмечен конфликтующим, и его надо вернуть к сливаемому состоянию.
-- Главная ветка ушла вперёд, и ветку задачи надо подтянуть до проверок.
-- Коммит переносится черри-пиком.
+- The PR is marked conflicting, and it must be brought back to a mergeable state.
+- The main branch moved ahead, and the task branch must be caught up before the checks.
+- A commit is carried over by a cherry-pick.
 
-## Порядок
+## Order
 
 ```bash
 git fetch origin
 GIT_AUTHOR_NAME="<бот>" GIT_AUTHOR_EMAIL="<номер>+<бот>@users.noreply.github.com" \
 GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<номер>+<бот>@users.noreply.github.com" \
     git merge origin/main --no-edit
-git diff --name-only --diff-filter=U     # что встало конфликтом
+git diff --name-only --diff-filter=U     # what ended up in conflict
 ```
 
-Подпись стоит в самой команде: коммит слияния заводит она, а не отдельный `git commit`, и
-переставить его подпись потом нечем — ушедший за подписью человека мерж отбивается на отправке
-и чинится перебазированием на главную ветку.
+The signature stands in the command itself: that command creates the merge commit, not a
+separate `git commit`, and there is nothing to change its signature with later — a merge that
+left with a person's signature is refused at push and fixed by rebasing onto the main branch.
 
-Список конфликтов читается целиком до первого разрешения: род файла решает приём, и разные
-файлы одного мержа разрешаются по-разному.
+The conflict list is read whole before the first resolution: the file kind decides the
+technique, and different files of one merge are resolved differently.
 
-| Что встало конфликтом            | Как разрешается                                                                    |
-| -------------------------------- | ---------------------------------------------------------------------------------- |
-| код                              | ловушка правила `git-workflow` про сторону-удаление; после — `npm run check:dupes` |
-| сборка из описания               | собирается заново из описания после того, как описание разрешено: строки в такой файл пишет генератор, и соединённые руками стороны дают файл, которого он не выдаст |
-| спек в `docs/specs/`             | сохранением обеих сторон, если обе дописывали; снятый одной стороной раздел остаётся снятым — правило `spec-driven`; после — `npm run check:specs` |
-| компаньон правила рядом со скилом | сохранением обеих сторон — те же две дописи в одну таблицу; после — `npm run check:specs` |
-| список работ (`docs/BACKLOG.md`) | признаком отбора — паттерн `doc-style-sweep`                                       |
+| What ended up in conflict          | How it is resolved                                                                 |
+| ---------------------------------- | ---------------------------------------------------------------------------------- |
+| code                               | the `git-workflow` rule's pitfall about a deletion side; after — `npm run check:dupes` |
+| a build from a description         | rebuilt from the description after the description is resolved: a generator writes the lines of such a file, and sides joined by hand give a file it would never output |
+| a spec in `docs/specs/`            | by keeping both sides, if both appended; a section removed by one side stays removed — rule `spec-driven`; after — `npm run check:specs` |
+| a rule's companion next to the rule | by keeping both sides — the same two additions to one table; after — `npm run check:specs` |
+| the work list (`docs/BACKLOG.md`)  | by the selection sign — pattern `doc-style-sweep`                                  |
 
-## Коммит переносится черри-пиком
+## A commit is carried over by a cherry-pick
 
-Ветка, которой коммит должен был уехать, ушла: влилась, была снята хостингом или заведена не под
-ту задачу. Сам коммит при этом цел и лежит в отпавшей ветке.
+The branch the commit was meant to leave with is gone: merged, removed by the host or created
+under the wrong task. The commit itself is intact and lies in the fallen-off branch.
 
 ```bash
 GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<номер>+<бот>@users.noreply.github.com" \
     git cherry-pick <sha>
 ```
 
-Переменные подписи стоят на самой команде переноса. Черри-пик сохраняет автора коммита и ставит
-коммиттером того, кто его зовёт, — то есть человека; коммиттера читает набор проверок перед
-пушем, и чинится это уже перебазированием, а не правкой одного коммита.
+The signature variables stand on the carry-over command itself. A cherry-pick keeps the commit's
+author and sets as committer whoever calls it — that is, a person; the check set before a push
+reads the committer, and this is then fixed by a rebase, not by editing one commit.
 
-Отпавшая ветка снимается с обеих сторон тем же ходом — иначе она стоит в перечне как незакрытая
-работа.
+The fallen-off branch is removed on both sides in the same turn — otherwise it stands in the
+list as unclosed work.
 
-## Что дописала ветка, видно только от точки расхождения
+## What the branch appended is seen only from the divergence point
 
-Конфликтный маркер показывает место, а не правку: сторона ветки в нём — её допись вместе со
-всем, что лежало в файле до неё.
+A conflict marker shows the place, not the edit: the branch's side in it is its addition
+together with everything that lay in the file before it.
 
 ```bash
 git diff "$(git merge-base origin/main HEAD)" HEAD -- docs/BACKLOG.md
 ```
 
-## Дописанное веткой сверяется с очередью работ, а не переносится по умолчанию
+## What the branch appended is checked against the work queue, not carried over by default
 
-Раздел, который ветка дописала в список работ, к моменту мержа обычно уже стоит задачей:
-ветка живёт неделями, а замеченный по ходу дефект заводится задачей сразу. Перенести его
-второй раз — завести вторую запись об одной работе.
+The section the branch appended to the work list usually already stands as a task by merge
+time: a branch lives for weeks, and a defect noticed along the way is created as a task at once.
+Carrying it over a second time means creating a second record of one work.
 
 ```bash
 /opt/homebrew/bin/gh issue list --state all --limit 400 --search '<слова из раздела>' \
     --json number,title,state
 ```
 
-Задача несёт то же содержание — сторона ветки не переносится:
+The task carries the same content — the branch's side is not carried over:
 
 ```bash
 git checkout --theirs docs/BACKLOG.md && git add docs/BACKLOG.md
 ```
 
-В мерже `--theirs` — влитая главная ветка, а `--ours` — ветка задачи; при перебазировании
-стороны меняются местами. Взятая не та сторона стирает работу молча.
+In a merge `--theirs` is the merged-in main branch and `--ours` is the task branch; in a rebase
+the sides swap. The wrong side taken erases work silently.
 
-## Проверки после разрешения
+## Checks after the resolution
 
-**Конфликт в разложенном файле, который исполняется, разрешается тем же вызовом, каким
-обнаружен.** Маркеры в теле гарда — синтаксическая ошибка, а не расхождение текста: ветка падает,
-диспетчер отдаёт её код отказом, и следующего вызова оболочки уже не будет — вместе с ней
-отбиваются и остальные двери, названные в объявлении этого гарда. Исполняемый файл узнаётся
-строкой `# rt-hook:` в шапке; отложенное «поправлю потом» здесь означает заход, который нечем
-продолжить.
+**A conflict in a laid-out file that executes is resolved by the same call that found it.**
+Markers in a guard's body are a syntax error, not a text discrepancy: the branch falls, the
+dispatcher returns its code as a refusal, and there will be no next shell call — with it every
+other door named in that guard's declaration is refused too. An executable file is recognised by
+the line `# rt-hook:` in its header; a deferred "I'll fix it later" here means a session there is
+nothing to continue with.
 
-Конфликт в текстах кода не задевает, и зелёная сборка про него ничего не говорит:
+A conflict in texts does not touch the code, and a green build says nothing about it:
 
 ```bash
 grep -rn '^<<<<<<< \|^>>>>>>> ' --exclude-dir=node_modules --exclude-dir=.git .
 npm run check:docs && npm run check:specs && npm run check:dupes && npm run check:board
-bash .claude/hooks/tests/run.sh       # если конфликт задел хуки
+bash .claude/hooks/tests/run.sh       # if the conflict touched the hooks
 ```
 
-Коммит мержа подписывается ботом тем же способом, что и любой другой, — паттерн
-`git-workflow-commit`. После пуша состояние читается у самого PR, а не по своему дереву, —
-подробнее об этом паттерн `git-workflow-pr`:
+The merge commit is signed by the bot the same way as any other — pattern
+`git-workflow-commit`. After the push the state is read from the PR itself, not from one's own
+tree — more on this in pattern `git-workflow-pr`:
 
 ```bash
 /opt/homebrew/bin/gh pr view <номер> --json mergeable,mergeStateStatus
 ```
 
-## Тело открытого PR перечитывается после мержа
+## The body of the open PR is reread after the merge
 
-PR описывал дерево на день, когда его написали. Мерж главной ветки меняет то, о чём он
-утверждает: тело говорило, что оба дефекта заведены в `docs/BACKLOG.md`, а главная ветка этот
-список к тому времени разобрала. Правится тело вызовом REST — `gh pr edit` в этом репозитории
-отвечает отказом про Projects (classic) и до правки не доходит:
+The PR described the tree on the day it was written. Merging the main branch changes what it
+states: the body said both defects were entered in `docs/BACKLOG.md`, and by then the main
+branch had taken that list apart. The body is edited by a REST call — `gh pr edit` in this
+repository refuses about Projects (classic) and never reaches the edit:
 
 ```bash
 /opt/homebrew/bin/gh api -X PATCH repos/<владелец>/<репозиторий>/pulls/<номер> -f body="$(cat тело.md)"
 ```
 
-## Зелёный прогон стареет вместе с главной веткой
+## A green run ages together with the main branch
 
-Прогон говорит про то основание, на котором шёл. Пока он идёт, а заявка ждёт разбора, главная
-ветка живёт своей жизнью, и локальная ссылка об этом молчит: она описывает день, когда её
-подтянули. Перед тем как назвать заявку готовой к слиянию, отставание спрашивается у хранилища:
+A run speaks about the base it went on. While it goes and the PR awaits review, the main branch
+lives its own life, and the local ref is silent about it: it describes the day it was pulled.
+Before a PR is called ready to merge, the lag is asked from the host:
 
 ```bash
 /opt/homebrew/bin/gh api repos/<владелец>/<репозиторий>/compare/<главная>...<ветка> --jq .behind_by
 ```
 
-Ноль — заявка готова. Больше нуля — главная вливается, набор проверок пересматривается по тому,
-что ветка везёт теперь, и прогон идёт заново: зелёные задания прошлого прогона после вливания не
-значат ничего.
+Zero — the PR is ready. Above zero — main is merged in, the check set is revised by what the
+branch now carries, and the run goes anew: green steps of the past run mean nothing after the
+merge.
 
-## Чужие папки задач приезжают вместе с главной веткой
+## Other people's task folders arrive with the main branch
 
-Мерж главной ветки везёт всё, что в неё влилось, — включая папки задач соседних работ, если те
-уехали в главную неразобранными. В своей ветке они выглядят как своё: лежат в том же каталоге,
-названы тем же порядком, и разбирать их отсюда некому.
+A merge of the main branch carries everything merged into it — including the task folders of
+neighbouring works, if those went into main not taken apart. In one's own branch they look like
+one's own: they lie in the same directory, named in the same order, and there is nobody to take
+them apart from here.
 
-Кнопку слияния при этом нажимает человек, а там, где он это делает, хуков нет: гард, стерегущий
-разбор папки, до этого пути не достаёт. Поэтому сверка очереди работ гоняется сразу после мержа
-главной, а не перед пушем:
+The merge button is pressed by a person, and where they do it there are no hooks: the guard
+watching the folder's taking apart does not reach that path. So the work queue audit is run
+right after merging main, not before the push:
 
 ```bash
 npm run check:board
 ```
 
-Она называет папку, у которой нет открытой задачи, — это и есть приехавшая чужая. Своей рукой
-она не разбирается: снимает её тот, чья это работа, и делает это в своей ветке.
+It names a folder with no open task — that is the arrived foreign one. It is not taken apart by
+one's own hand: it is removed by whoever's work it is, in their own branch.
 
-## Частые промахи
+## Common misses
 
-- «Сохранить обе стороны» применено ко всем файлам одинаково: в спеке это верно, в коде и в
-  списке работ — нет.
-- Команда мержа взята без переменных подписи: коммит слияния подписан человеком, и отбивает его
-  набор пуша — на том шаге, где все проверки уже зелёные. Чинится это переписыванием ветки, а не
-  правкой одного коммита: за слиянием обычно уже лежат разрешения конфликтов.
-- Сторона ветки перенесена без сверки с очередью работ: одна работа стала двумя записями.
-- После разрешения прогнана сборка, а проверки текстов — нет: конфликта в них сборке не видно.
-- Тело PR оставлено прежним: ревьювер читает утверждение о дереве, которого больше нет.
-- Заявка названа готовой по зелёному прогону: задания шли от основания, которого в главной ветке
-  уже нет.
-- Раздел, снятый главной веткой, вернулся «сохранением обеих сторон»: в спеке два экземпляра
-  одного абзаца, и снятый читается как действующий.
-- Черри-пик взят без переменной коммиттера: автор у коммита прежний, коммиттер — человек, и отправку отбивает набор проверок.
-- Мерж ушёл за подписью человека: переменных в команде слияния не было, а строка о подписи
-  лежит ниже команды и читается уже после коммита.
+- "Keep both sides" applied to all files alike: in a spec it is right, in code and in the work
+  list it is not.
+- The merge command taken without the signature variables: the merge commit is signed by a
+  person, and the push set refuses it — at the step where all checks are already green. This is
+  fixed by rewriting the branch, not by editing one commit: conflict resolutions usually already
+  lie behind the merge.
+- The branch's side carried over without a check against the work queue: one work became two
+  records.
+- After the resolution the build was run, and the text checks were not: the build cannot see a
+  conflict in them.
+- The PR body left as it was: the reviewer reads a statement about a tree that no longer exists.
+- The PR called ready by a green run: the steps went from a base that is no longer in the main
+  branch.
+- A section removed by the main branch came back by "keeping both sides": the spec has two
+  copies of one paragraph, and the removed one reads as in force.
+- A cherry-pick taken without the committer variable: the commit's author is the old one, the committer is a person, and the check set refuses the push.
+- The merge left with a person's signature: there were no variables in the merge command, and
+  the line about the signature lies below the command and is read only after the commit.
