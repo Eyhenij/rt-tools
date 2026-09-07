@@ -4,20 +4,20 @@ kind: pattern
 rule: platform-access
 description: Pattern of rule platform-access. Load when the window, the document or an environment check enters the code — ready-made token injects, casting to Window & typeof globalThis, the window as a parameter of a pure function, DOM initialisation after the first render. Not under libs/api and apps/api.
 ---
-<!-- rt-kit v0.25.0 · patterns/platform-access-di.md · 160330af89f4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/platform-access-di.md · 1483daf56f8c · правится надстройкой, не здесь -->
 
-# Окно, документ и проверка среды
+# The window, the document and the environment check
 
-Паттерн правила `platform-access`. Что при этом должно быть верно — закон
+Pattern of the rule `platform-access`. What must be true — the law
 `docs/constitution/frontend-application.md`.
 
-## Когда брать
+## When to use
 
-- В компонент, сервис или директиву заходит `window`, `document` или проверка среды.
-- Появляется работа с DOM, которой нельзя случиться до первой отрисовки.
-- Чистой функции нужен доступ к окну.
+- `window`, `document` or an environment check enters a component, a service or a directive.
+- DOM work appears that must not happen before the first render.
+- A pure function needs access to the window.
 
-## Инжекты
+## Injects
 
 ```typescript
 import { DOCUMENT } from '@angular/common';
@@ -33,21 +33,22 @@ export class SomeService {
 }
 ```
 
-## Когда нужен `Window & typeof globalThis`
+## When `Window & typeof globalThis` is needed
 
-Интерфейс `Window` не описывает глобальные конструкторы и неймспейсы —
-`IntersectionObserver`, `ResizeObserver`, `google` из `@types/google.maps`. Токен отдаёт тот же
-самый объект, поэтому тип уточняется приведением, и рядом ставится комментарий с причиной:
+The `Window` interface does not describe the global constructors and namespaces —
+`IntersectionObserver`, `ResizeObserver`, `google` from `@types/google.maps`. The token returns
+the very same object, so the type is narrowed by a cast, and a comment with the reason is put
+next to it:
 
 ```typescript
-// Конструкторы вроде IntersectionObserver объявлены на globalThis, а не на
-// интерфейсе Window — токен отдаёт тот же объект, тип лишь уточняется.
+// Constructors like IntersectionObserver are declared on globalThis, not on the
+// Window interface — the token returns the same object, only the type is narrowed.
 readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
 ```
 
-## Чистая функция принимает окно параметром
+## A pure function takes the window as a parameter
 
-В `*.logic.ts` и `*.util.ts` нет DI, и глобал внутрь не тянется:
+There is no DI in `*.logic.ts` and `*.util.ts`, and the global is not pulled inside:
 
 ```typescript
 export function mapsReady(windowRef: Window & typeof globalThis): boolean {
@@ -55,9 +56,9 @@ export function mapsReady(windowRef: Window & typeof globalThis): boolean {
 }
 ```
 
-Инжектит его вызывающий компонент.
+The calling component injects it.
 
-## Проверка среды и первая отрисовка
+## The environment check and the first render
 
 ```typescript
 if (!this.#platform.isPlatformBrowser) {
@@ -67,19 +68,20 @@ if (!this.#platform.isPlatformBrowser) {
 
 ```typescript
 afterNextRender((): void => {
-    // работа с DOM, которой не должно быть до первой отрисовки
+    // DOM work that must not happen before the first render
 });
 ```
 
-`typeof window !== 'undefined'` не годится: проверка по наличию глобала верна случайно.
+`typeof window !== 'undefined'` is no good: a check by the presence of a global is right by
+accident.
 
-## Частые промахи
+## Common misses
 
-- `isPlatformBrowser(inject(PLATFORM_ID))` вместо `PlatformService`.
-- Проверка среды вокруг чтения и записи в хранилище: `StorageService` и так уходит в память
-  вне браузера, и такой `if` — мёртвый код.
-- `WINDOW` полем класса в сервисе, который обязан работать без DOM вообще: там окно берётся
-  внутри метода под проверкой среды.
-- Правка добавила `WINDOW` в сервис, создающийся на подъёме, а проверили одной сборкой: падение
-  видно только на поднятом сервере отдачи страниц.
-- Приведение без комментария: в мапперах приведение запрещено, и строка читается как нарушение.
+- `isPlatformBrowser(inject(PLATFORM_ID))` instead of `PlatformService`.
+- An environment check around a read and a write to storage: `StorageService` falls back to
+  memory outside the browser anyway, and such an `if` is dead code.
+- `WINDOW` as a class field in a service that must work without a DOM at all: there the window
+  is taken inside a method under an environment check.
+- An edit added `WINDOW` to a service created at startup, and it was checked by the build alone:
+  the failure shows only on a running page-rendering server.
+- A cast without a comment: in mappers a cast is forbidden, and the line reads as a violation.

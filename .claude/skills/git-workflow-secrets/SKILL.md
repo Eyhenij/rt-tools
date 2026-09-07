@@ -4,105 +4,112 @@ kind: pattern
 rule: deploy-flow
 description: Pattern of rule deploy-flow. Load when working with keys of external services — where they live, how the owner's key differs from the environment key, what each state of an integration row means and why a green probe does not promise a working feature.
 ---
-<!-- rt-kit v0.25.0 · patterns/git-workflow-secrets.md · 017deb5f857a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/git-workflow-secrets.md · 6c412d3da7e7 · правится надстройкой, не здесь -->
 
-# Ключи внешних служб
+# Keys of external services
 
-Паттерн правила `deploy-flow`. Что при этом должно быть верно — закон
+Pattern of the rule `deploy-flow`. What must be true meanwhile — the law
 `docs/constitution/delivery.md`.
 
-## Когда брать
+## When to use
 
-- Возможность, которая ходит наружу, молчит: не уходят письма, не обновляются переводы.
-- Заводится или меняется ключ внешней службы.
-- Разбирается, что именно выкачено и чего приложению не хватает для работы, — включая ключ,
-  который живёт в окружении и экрана не имеет.
+- A feature that goes outside is silent: mails do not leave, translations do not update.
+- A key of an external service is being created or changed.
+- It is being analysed what exactly is rolled out and what the application lacks to work —
+  including a key that lives in the environment and has no screen.
 
-## Секрет выкатки — не ключ внешней службы
+## A rollout secret is not a key of an external service
 
-Ключи из этого паттерна живут в хранилище или в составе прода, и читает их приложение. Секреты
-выкатки — ключ доступа к узлу, пароль реестра, адрес и токен приёма — приложением не читаются
-вовсе: их читает конвейер, лежат они в настройках репозитория, и хранилище о них не знает.
+The keys of this pattern live in the storage or in the production stack, and the application
+reads them. Rollout secrets — the node access key, the registry password, the intake address and
+token — are not read by the application at all: the pipeline reads them, they lie in the
+repository settings, and the storage knows nothing of them.
 
-Отсюда и разный ход при промахе. Ключ службы, которого не хватает, молчит на экране: возможность
-не работает, а приложение отвечает. Секрет выкатки, которого не хватает, роняет шаг конвейера, и
-до приложения дело не доходит вовсе — разбирают его в журнале задания, а не в браузере.
+Hence a different course on a miss. A missing service key is silent on the screen: the feature
+does not work, and the application answers. A missing rollout secret brings down a pipeline step,
+and the application is never reached at all — it is analysed in the step's log, not in the
+browser.
 
-Про то, как секрет выкатки заводится и чем проверяется его право, говорит паттерн работы с
-образами — `git-workflow-docker`, если дерево его разложило. Здесь остаётся граница: пришедший
-за секретом выкатки читает дальше не этот текст.
+How a rollout secret is created and what checks its rights is said by the pattern of working with
+images — `git-workflow-docker`, if the tree has laid it out. Here the border remains: whoever came
+for a rollout secret reads on not in this text.
 
-## Ключ, заводимый владельцем, живёт в хранилище, а не в окружении
+## A key created by the owner lives in the storage, not in the environment
 
-Такой ключ лежит строкой в хранилище, зашифрованной ключом шифрования секретов; рядом открытая
-подсказка из последних знаков и исход последней пробы. Читает его одна служба и отдаёт тем, кто
-ходит наружу.
+Such a key lies as a row in the storage, encrypted with the secrets encryption key; next to it an
+open hint of the last characters and the outcome of the last probe. One service reads it and
+gives it to those who go outside.
 
-**Запасного пути на окружение нет.** Одноимённая переменная в составе прода ничего не значит:
-приложение её не читает. Из окружения берётся один ключ — тот, которым шифруются все
-остальные. Его потеря делает записанные ключи нечитаемыми, и заводить их заново бесполезно,
-пока он не вернётся.
+**There is no fallback path to the environment.** A variable of the same name in the production
+stack means nothing: the application does not read it. One key is taken from the environment —
+the one that encrypts all the others. Losing it makes the recorded keys unreadable, and creating
+them anew is useless until it is back.
 
-Заводит такие ключи владелец сам, экраном интеграций. **Агент ключи не вводит:** ввод ключа
-доступа в поле ему запрещён независимо от того, кто просит.
+Such keys the owner creates themselves, on the integrations screen. **The agent does not enter
+keys:** entering an access key into a field is forbidden to it whoever asks.
 
-## Не всякий ключ внешней службы заводится владельцем
+## Not every key of an external service is created by the owner
 
-В хранилище живут ключи, которые владелец заводит сам и по-разному у каждого владения. Ключ,
-одинаковый для всего приложения, остаётся в окружении, и экрана интеграций у него нет.
+The storage holds keys the owner creates themselves and differently for each property. A key that
+is the same for the whole application stays in the environment, and it has no integrations
+screen.
 
-Половины такой пары — ключ бэкенда и ключ, вшитый в сборку, — лежат по разные стороны
-поставки, и заполнить можно ровно одну. Тогда возможность не выключена и не включена: виджет
-не рисуется, сервер ждёт токен. Приложение называет такое состояние сломанным и говорит о нём
-строкой лога и сводкой старта — что в ней стоит, описывает правило `observability`.
+The halves of such a pair — the backend key and the key baked into the build — lie on different
+sides of delivery, and exactly one can be filled. Then the feature is neither off nor on: the
+widget is not drawn, the server waits for a token. The application calls such a state broken and
+says so by a log line and the startup digest — what stands in it is described by the rule
+`observability`.
 
-Отсюда порядок разбора для ключа из окружения: он читается не экраном интеграций, а сводкой
-старта в логах контейнера — в каком из её списков стоит имя возможности.
+Hence the order of analysis for a key from the environment: it is read not on the integrations
+screen but in the startup digest in the container logs — in which of its lists the feature name
+stands.
 
-## Строка интеграции говорит пятью состояниями
+## An integration row speaks in five states
 
-Порядок разбора важен — состояние хранилища перекрывает всё остальное:
+The order of analysis matters — the storage state overrides everything else:
 
-| Что показано                         | Что это значит                                                         |
-| ------------------------------------ | ---------------------------------------------------------------------- |
-| состояние неизвестно                 | ответ ещё не пришёл; утверждать нечего                                 |
-| хранилище недоступно                 | ключа шифрования нет; заводить ключи нельзя, и владелец тут ни при чём |
-| не задан                             | строки секрета нет вовсе — ключ никогда не заводили                    |
-| расшифровать нечем                   | строка есть, а ключ шифрования сменился; заводить заново бесполезно    |
-| не проверен · работает · не работает | ключ записан; дальше судит проба                                       |
+| What is shown                         | What it means                                                              |
+| ------------------------------------- | -------------------------------------------------------------------------- |
+| state unknown                         | the answer has not come yet; nothing to claim                              |
+| storage unavailable                   | there is no encryption key; keys cannot be created, and the owner is not at fault |
+| not set                               | there is no secret row at all — the key was never created                  |
+| nothing to decrypt with               | the row exists, and the encryption key has changed; creating anew is useless |
+| unchecked · working · not working     | the key is recorded; from here the probe judges                            |
 
-Отсюда короткий путь разбора: молчит письмо или перевод — сначала открыть этот экран, а не
-логи. «Не задан» отвечает на вопрос целиком, и десять дней молчащей почты выяснились именно
-им, а не сервером.
+Hence the short path of analysis: a mail or a translation is silent — first open this screen, not
+the logs. "Not set" answers the question whole, and ten days of silent mail turned out to be
+exactly that, not the server.
 
-## Зелёная проба обещает меньше, чем кажется
+## A green probe promises less than it seems
 
-Проба спрашивает у службы то, что та отдаёт по ключу: список доменов, список моделей. Ни
-письма, ни запроса за деньги она не делает — но и работоспособности возможности не доказывает:
+The probe asks the service for what it gives out by the key: the list of domains, the list of
+models. It sends no mail and makes no paid request — but it does not prove the feature works
+either:
 
-- список моделей отдаётся и при пустом балансе, а сам запрос отвечает отказом по деньгам.
-  Строка при этом зелёная;
-- проба почты сверяет адрес отправителя со списком подтверждённых — но только если адрес уже
-  заполнен. При пустом адресе она отвечает «работает», а письма не уйдут.
+- the list of models is given out with an empty balance too, while the request itself is refused
+  for lack of funds. The row is green meanwhile;
+- the mail probe checks the sender address against the list of confirmed ones — but only if the
+  address is already filled. With an empty address it answers "working", and mails will not leave.
 
-Поэтому после ввода ключа проверяется сама возможность, а не строка: сохранить запись и
-убедиться, что предупреждение не пришло; дождаться первого обращения и увидеть письмо.
+So after entering a key the feature itself is checked, not the row: save a record and make sure
+the warning did not come; wait for the first enquiry and see the mail.
 
-## Переезд ключа из окружения в хранилище не делается миграцией
+## Moving a key from the environment into the storage is not done by a migration
 
-Секрет шифруется приложением, поэтому запросом к хранилищу его не перенести: миграция заводит
-таблицу и не трогает значения. Ключ, переведённый из окружения в настройки, обязан быть
-заведён владельцем в тот же день, что выкачена правка, — иначе возможность замолкает молча.
-Сверяется тем же экраном интеграций сразу после выкатки.
+The secret is encrypted by the application, so a query to the storage cannot move it: the
+migration creates the table and does not touch values. A key moved from the environment into the
+settings must be created by the owner on the same day the edit is rolled out — otherwise the
+feature goes silent silently. Checked on the same integrations screen right after the rollout.
 
-## Частые промахи
+## Common misses
 
-- **Искать ключ поиском по составу прода и делать вывод.** Значение там лежит, приложение его
-  не читает, а хвост из последних знаков совпадает с записанным в хранилище — совпадение
-  подсказки и переменной ничего не доказывает, кроме того, что владелец завёл тот же ключ.
-- **Идти в логи прежде экрана.** Логи скажут про отказ внешней службы, а экран — «не задан»;
-  второе точнее и стоит одного нажатия.
-- **Считать отсутствие ошибок признаком работы.** Ни почта, ни перевод не роняют запрос:
-  обращение сохранится, запись сохранится, а наружу ничего не уйдёт.
-- **Заводить ключ заново при «расшифровать нечем».** Это не про ключ, а про ключ шифрования;
-  новый ляжет рядом и тоже не прочитается.
+- **Looking for the key by a search over the production stack and drawing a conclusion.** The
+  value lies there, the application does not read it, and the tail of the last characters matches
+  the one recorded in the storage — a match of the hint and the variable proves nothing except
+  that the owner created the same key.
+- **Going to the logs before the screen.** The logs will tell about the external service's
+  refusal, and the screen — "not set"; the second is more precise and costs one click.
+- **Taking the absence of errors as a sign of work.** Neither mail nor translation brings the
+  request down: the enquiry is saved, the record is saved, and nothing leaves outside.
+- **Creating the key anew on "nothing to decrypt with".** This is not about the key but about
+  the encryption key; a new one will lie next to it and will not be read either.

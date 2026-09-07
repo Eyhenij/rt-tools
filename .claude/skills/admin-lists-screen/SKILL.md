@@ -4,143 +4,146 @@ kind: pattern
 rule: lists
 description: Pattern of rule lists. Load when assembling or editing an admin list screen — the ready-made order of blocks, the <prefix>-table markup, row click, row menu with an actions column and a row predicate, sortable header, toolbar slots, failure toast.
 ---
-<!-- rt-kit v0.25.0 · patterns/admin-lists-screen.md · 530a83e26068 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/admin-lists-screen.md · 8afe4a93eafc · правится надстройкой, не здесь -->
 
-# Собрать списочный экран
+# Assembling a list screen
 
-Паттерн правила `lists`. Что при этом должно быть верно — закон
+Pattern of the rule `lists`. What must be true — the law
 `docs/constitution/lists.md`.
 
-## Когда брать
+## When to use
 
-- Заводится новый экран со списком записей.
-- Правится существующий: столбцы, меню строки, тулбар, сортировка.
+- A new screen with a list of records is created.
+- An existing one is edited: columns, row menu, toolbar, sorting.
 
-## Порядок блоков
+## Order of blocks
 
-Раскладку даёт общий блок `<префикс>-page` из слоя приложения, а не стили экрана. Экран отвечает за
-порядок:
+The layout comes from the shared block `<prefix>-page` of the application layer, not from the
+screen's styles. The screen answers for the order:
 
 ```html
-<ng-container rtBlock="<префикс>-page">
+<ng-container rtBlock="<prefix>-page">
     <header rtElem="header">
-        <!-- div rtElem="header-main" c h1 rtElem="title" + p rtElem="hint" -->
-        <<префикс>-toolbar>
-        <!-- <префикс>ToolbarLeft / <префикс>ToolbarRight -->
+        <!-- div rtElem="header-main" with h1 rtElem="title" + p rtElem="hint" -->
+        <<prefix>-toolbar>
+        <!-- <prefix>ToolbarLeft / <prefix>ToolbarRight -->
         <div rtElem="scroll">
             <!-- overflow-x: auto -->
-            <<префикс>-table rtElem="table">
+            <<prefix>-table rtElem="table">
             <!-- min-width: max-content -->
-            <<префикс>-pagination>
+            <<prefix>-pagination>
         </div>
     </header>
 </ng-container>
 ```
 
-Оба правила прокрутки нужны вместе: с одним контейнером столбцы сжимаются вместо сдвига.
-Тулбар и пагинация своих классов не носят — промежуток задаёт сам `<префикс>-page`.
+Both scrolling rules are needed together: with the container alone the columns shrink instead of
+shifting. The toolbar and the pagination carry no classes of their own — the gap is set by
+`<prefix>-page` itself.
 
-## Таблица
+## The table
 
 ```html
-<<префикс>-table #rowsTable="<префикс>Table" rtElem="table" clickable [ariaLabel]="'recordsTableAria' | transloco"
+<<prefix>-table #rowsTable="<prefix>Table" rtElem="table" clickable [ariaLabel]="'recordsTableAria' | transloco"
 [emptyMessage]="'recordsEmpty' | transloco" [tableId]="tableId" [dataSource]="rows()" [columnsConfig]="columnsConfig()"
 [rowHasActions]="hasRowActions" [loading]="loading()">
 ```
 
-- `tableId` — ключ, под которым хранится выбор столбцов; он же уходит в асайд настроек.
-- `[columnsConfig]`, а не голый список ключей: из него берутся подписи и для панели настроек, и
-  для карточек на узком экране.
+- `tableId` — the key under which the column choice is stored; it also goes to the settings aside.
+- `[columnsConfig]`, not a bare list of keys: the captions for the settings panel and for the
+  cards on a narrow screen are taken from it.
 
-## Клик по строке
+## Row click
 
 ```html
 <tr
     *cdkRowDef="let row; columns: rowsTable.displayedColumns()"
     cdk-row
     qa-dataid="records-row"
-    <префикс>TableRow
+    <prefix>TableRow
     (activated)="openAside(row)"></tr>
 ```
 
-Строки объявляются на `rowsTable.displayedColumns()`: столбец с меню таблица добавляет сама.
+Rows are declared on `rowsTable.displayedColumns()`: the column with the menu the table adds
+itself.
 
-## Меню строки
+## Row menu
 
 ```html
-<<префикс>-table … [showRowActions]="true" [rowHasActions]="hasRowActions" [loading]="loading()">
-    <ng-template <префикс>TableRowActions let-row [<префикс>TableRowActionsRowType]="rows()"></ng-template>
+<<prefix>-table … [showRowActions]="true" [rowHasActions]="hasRowActions" [loading]="loading()">
+    <ng-template <prefix>TableRowActions let-row [<prefix>TableRowActionsRowType]="rows()"></ng-template>
 ```
 
 ```typescript
-protected readonly hasRowActions: I<Префикс>Table.RowActionsPredicate<IRecord.Row> = recordRowHasActions;
+protected readonly hasRowActions: I<Prefix>Table.RowActionsPredicate<IRecord.Row> = recordRowHasActions;
 ```
 
-Входа два, и они не заменяют друг друга. `showRowActions` заводит саму колонку действий — по
-умолчанию он опущен, и без него таблица рисует одни объявленные столбцы: ни шаблон действий, ни
-предикат колонки не добавляют. `rowHasActions` решает, показывать ли кнопку у конкретной
-строки, и колонки не заводит вовсе. Экран ролей так и вышел с четырьмя столбцами и
-недостижимыми действиями: сборка, линт и юниты на правилах строки при этом зелёные, а нашёл
-это прогон сквозной спеки.
+There are two inputs, and they do not replace each other. `showRowActions` creates the actions
+column itself — by default it is omitted, and without it the table draws only the declared
+columns: neither the actions template nor the predicate adds the column. `rowHasActions` decides
+whether to show the button on a particular row, and creates no column at all. That is how the
+roles screen came out with four columns and unreachable actions: the build, the lint and the
+units on the row rules were green, and it was found by the end-to-end run.
 
-Ячейка действий скрыта, пока указатель не на строке, — сквозная спека наводит на строку до
-нажатия.
+The actions cell is hidden until the pointer is on the row — the end-to-end test hovers the row
+before pressing.
 
-Доступность действия лежит полем строки (`canConfirm`, `canReject`), а не вызовом метода
-компонента. Действие, которого записи нельзя сделать, из меню убирается целиком. Необратимое
-несёт `danger`, `confirmTitle` и `confirmMessage` с последствием — не «Вы уверены?», а что
-именно произойдёт.
+Action availability lies in a row field (`canConfirm`, `canReject`), not in a call of a component
+method. An action the record cannot take is removed from the menu entirely. An irreversible one
+carries `danger`, `confirmTitle` and `confirmMessage` with the consequence — not "Are you sure?",
+but what exactly will happen.
 
-## Сортируемый заголовок
+## Sortable header
 
 ```html
-<th *cdkHeaderCellDef cdk-header-cell <префикс>SortHeader="createdAt">{{ 'recordsCreatedAt' | transloco }}</th>
+<th *cdkHeaderCellDef cdk-header-cell <prefix>SortHeader="createdAt">{{ 'recordsCreatedAt' | transloco }}</th>
 ```
 
-Колонка помечается `sortable: true` в `columnsConfig`. Заголовок переключает сортировку по
-кругу и отдаёт выбранное событием `(sortChange)`; саму выборку делает экран. Подпись остаётся
-внутри кнопки — из неё берётся доступное имя.
+The column is marked `sortable: true` in `columnsConfig`. The header cycles the sort and hands
+the chosen one out by the `(sortChange)` event; the query itself is done by the screen. The
+caption stays inside the button — the accessible name is taken from it.
 
-Список приходит уже отсортированным, поэтому экран передаёт таблице текущую сортировку —
-`[sort]="sortModel()"`, — и стрелка стоит на нужной колонке сразу, до первого нажатия. Без
-этого список выглядит неотсортированным, хотя он отсортирован.
+The list arrives already sorted, so the screen passes the table the current sort —
+`[sort]="sortModel()"` — and the arrow stands on the right column at once, before the first
+press. Without it the list looks unsorted while it is sorted.
 
-## Тулбар
+## Toolbar
 
-Тулбар поделён на две части слотами: `<префикс>ToolbarLeft` — то, что меняет выборку,
-`<префикс>ToolbarRight` — действия над списком. Своей раскладки внутри тулбара экран не заводит.
+The toolbar is split in two by slots: `<prefix>ToolbarLeft` — what changes the query,
+`<prefix>ToolbarRight` — actions on the list. The screen sets up no layout of its own inside the
+toolbar.
 
-Левый слот — фильтры и поиск. Правый — иконки `<префикс>-icon-button variant="primary"` с парой
-`tooltip` + `ariaLabel` одного текста: обновление (`sync`), настройки столбцов (`sliders-v`),
-создание (`plus`). Если список не прочитался, повторяют той же кнопкой обновления.
+The left slot — filters and search. The right — `<prefix>-icon-button variant="primary"` icons
+with a pair `tooltip` + `ariaLabel` of the same text: refresh (`sync`), column settings
+(`sliders-v`), create (`plus`). If the list failed to load, the retry is the same refresh button.
 
-## Отказ загрузки
+## Loading refusal
 
 ```typescript
 this.#notifications.error(this.#transloco.translate(this.#store.errorKey() ?? 'recordsLoadFailed'));
 ```
 
-Ключ читается сразу после запроса, а не подпиской на сигнал стора: стор делят список и панель
-правки, и подписка показала бы один отказ дважды. Строк `<p role="alert">` над таблицей не
-заводить.
+The key is read right after the request, not by subscribing to the store signal: the store is
+shared by the list and the edit panel, and a subscription would show one refusal twice. No
+`<p role="alert">` lines above the table.
 
-## Проверить
+## Check
 
 ```bash
 npx nx build admin
 ```
 
-Продовая сборка обязательна: без `[<префикс>TableRowActionsRowType]` тип `let-row` выводится как
-`unknown`, и падает только она — юниты и дев-сервер проходят.
+The production build is mandatory: without `[<prefix>TableRowActionsRowType]` the type of
+`let-row` is inferred as `unknown`, and only that build fails — units and the dev server pass.
 
-## Частые промахи
+## Common misses
 
-- Свой `@if (rows().length === 0)` — экран собран мимо таблицы.
-- Свой список столбцов вместо `displayedColumns()` — пропадает столбец с меню.
-- Доступность действия считается методом компонента — пересчёт на каждой проверке.
-- `[rowHasActions]` не задан — кнопка «…» висит у строки без действий.
-- Заголовок вложен в тулбар вместо своего `<header>`.
-- `qa-dataid` не проставлен на таблицу, строку, ячейки и элементы тулбара.
+- An own `@if (rows().length === 0)` — the screen was assembled bypassing the table.
+- An own column list instead of `displayedColumns()` — the column with the menu disappears.
+- Action availability computed by a component method — recomputed on every check.
+- `[rowHasActions]` not set — the "…" button hangs on a row without actions.
+- The title nested in the toolbar instead of its own `<header>`.
+- `qa-dataid` not set on the table, the row, the cells and the toolbar elements.
 
 ## Слоты общей страницы и токен хоста
 

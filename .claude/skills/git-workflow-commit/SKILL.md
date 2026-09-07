@@ -4,57 +4,58 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for creating a task and a branch, commit and push — the creation command with all four steps, moving the column, merging two tasks into one, working as the machine account, skipping the document requirement. Opening a PR — pattern git-workflow-pr.
 ---
-<!-- rt-kit v0.25.0 · patterns/git-workflow-commit.github.md · fb7b0957d30d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/git-workflow-commit.github.md · 9242f11a4370 · правится надстройкой, не здесь -->
 
-# Задача, ветка и коммит
+# Task, branch and commit
 
-Паттерн правила `git-workflow`. Что при этом должно быть верно — закон
+Pattern of the rule `git-workflow`. What must be true meanwhile — the law
 `docs/constitution/delivery.md`.
 
-## Когда брать
+## When to use
 
-- Заводится задача, с которой начинается правка.
-- Заводится ветка под задачу.
-- Готовится коммит или пуш.
-- Работа перешла на следующий шаг, и задача переставляется в другую колонку борды.
+- A task is being created, and the edit starts from it.
+- A branch is being created for a task.
+- A commit or a push is being prepared.
+- The work moved to the next step, and the task moves to another column of the board.
 
-## Сначала задача на борде, потом ветка
+## First the task on the board, then the branch
 
-Заведение состоит из четырёх шагов: issue, номер в его заголовке, добавление на борду,
-первая колонка. Борда к репозиторию не привязана — `projectsV2` у него пуст, — поэтому третий
-шаг сам не случается, и задача без него не видна ни в очереди работ, ни владельцу: так две
-задачи и простояли месяц.
+Creation is four steps: the issue, the number in its title, adding to the board, the first
+column. The board is not bound to the repository — its `projectsV2` is empty — so the third step
+does not happen by itself, and without it the task is visible neither in the work queue nor to
+the owner: two tasks stood that way for a month.
 
-Все четыре шага делает одна команда дерева, а не рука: делить их значит забывать третий.
+All four steps are done by one tree command, not by hand: splitting them means forgetting the
+third.
 
-**Команду, которой нет, паттерн не заменяет вызовами клиента.** Дерево, взявшее пакет впервые,
-получает файлы проверок, но не записи о них в своём манифесте: раскладка правит ресурсы, а
-манифест потребителя ей не принадлежит. Ходов отсюда два: завести команду тем же ходом либо
-повторить все её шаги поимённо по перечню выше. Обход вызовами клиента выглядит исполнением до
-последнего шага перечня: он забывается первым, потому что предыдущие уже дали видимый
-результат. Так карточка простояла вне
-колонок всю работу — два коммита и два закрытых этапа.
+**A command that does not exist is not replaced by client calls in the pattern.** A tree that
+takes the package for the first time gets the check files, but not the entries about them in its
+manifest: the layout edits resources, and the consumer's manifest does not belong to it. Two ways
+from here: create the command in the same turn, or repeat all its steps by name from the list
+above. A bypass by client calls looks like execution up to the last step of the list: it is
+forgotten first, because the previous ones have already given a visible result. So a card stood
+outside the columns for the whole work — two commits and two closed stages.
 
-**Локальные ветки этой задачи читаются до заведения новой.** Борда не видит ветки, и задача, по
-которой работа лежит доделанной в локальной ветке, выглядит открытой у всех: колонку двигают
-рукой, заявки нет, а ветка видна только на той машине, где её завели. Под один номер так
-завелась вторая ветка со своей папкой задачи и своим замыслом — то есть работа была спланирована
-второй раз, и выбирать из двух пришлось владельцу.
+**The local branches of this task are read before a new one is created.** The board does not see
+branches, and a task whose work lies finished in a local branch looks open to everyone: the column
+is moved by hand, there is no PR, and the branch is visible only on the machine where it was
+created. So a second branch was created under one number, with its own task folder and its own
+plan — that is, the work was planned a second time, and the owner had to choose between the two.
 
 ```bash
 git branch --list '<КЛЮЧ>-<номер>-*'
 ```
 
-Одна строка ответа означает, что работа уже начата: её состояние читается в ходе работы её
-папки, а не заводится заново. Пустой ответ говорит только про эту машину — ветка, заведённая на
-другой и не отданная хостингу, не видна и отсюда.
+One line of answer means the work is already started: its state is read in the progress of its
+folder, not created anew. An empty answer speaks only about this machine — a branch created on
+another and not handed to the host is invisible from here too.
 
-**Очередь работ спрашивается до заведения задачи, а не после.** Найденное собственной сверкой
-ощущается новым, и это ощущение — единственное, что стоит за решением завести задачу: команда
-заведения отвечает за свои вызовы и о содержании очереди не знает ничего. Спрашивается она
-поиском по словам темы, вместе с закрытым за последний месяц: дефект, закрытый и вернувшийся, —
-та же работа, а не новая. Дубль стоит дорого — по нему проходит вся работа целиком, а сводить
-две задачи в одну потом приходится руками.
+**The work queue is asked before the task is created, not after.** What one's own audit found
+feels new, and that feeling is the only thing behind the decision to create a task: the creation
+command answers for its calls and knows nothing about the queue's contents. It is asked by a search
+over the topic words, together with what was closed in the last month: a defect closed and back
+again is the same work, not a new one. A duplicate costs a lot — the whole work goes through it,
+and merging two tasks into one afterwards is done by hand.
 
 ```bash
 /opt/homebrew/bin/gh issue list --state all --limit 200 --search '<слова темы>' \
@@ -67,75 +68,79 @@ npm run task:new -- --title 'Письма владельцу не уходят �
     --label bug --label area:api --slug mail-owner-silence < описание.md
 ```
 
-Тело читается со стандартного ввода, `--slug` необязателен и идёт только в подсказку с именем
-ветки. Автор и исполнитель — учётная запись машинной работы; токен команда читает сама, из
-файла вне репозитория.
+The body is read from standard input, `--slug` is optional and goes only into the hint with the
+branch name. Author and assignee — the machine account; the command reads the token itself, from
+a file outside the repository.
 
-Скрипт под этой командой заводит проект — пакет её не везёт. Что он делает вызовами `gh`:
+The script under this command is created by the project — the package does not ship it. What it
+does by `gh` calls:
 
 ```bash
 gh issue create --title '[<КЛЮЧ>-<номер>] …' --label bug --assignee <бот> --body-file -
-gh issue edit <номер> --title '[<КЛЮЧ>-<номер>] …'   # номер известен только после создания
+gh issue edit <номер> --title '[<КЛЮЧ>-<номер>] …'   # the number is known only after creation
 gh project item-add <номер борды> --owner <владелец> --url <адрес issue>
 ```
 
-Последний шаг и есть тот, который забывается: без него задача заведена, но её нет в очереди.
+The last step is the one that gets forgotten: without it the task is created, but it is not in the
+queue.
 
-Заведение кончается не выводом команды, а ответом очереди работ. Команда спрашивает её сама и
-печатает прочитанное — присутствие на борде, колонку, исполнителя; отсутствие кончает её
-ненулевым кодом. В комментарий, в тело PR и в замысел идёт этот ответ, а не напечатанный
-номер: номер говорит «вызов прошёл», а не «задача видна тому, кто по ней работает».
+Creation ends not with the command's output but with the work queue's answer. The command asks
+it itself and prints what it read — presence on the board, the column, the assignee; absence ends
+it with a non-zero code. That answer goes into the comment, the PR body and the plan, not the
+printed number: the number says "the call went through", not "the task is visible to whoever
+works on it".
 
-Заведения, идущие подряд, проверяются не по последнему, а сверкой очереди целиком: промах у них
-общий, и по одной задаче он не виден. Шестнадцать задач подряд напечатали номер, и ни одна не
-попала в очередь так, чтобы её увидел владелец.
+Creations that go one after another are checked not by the last one but by an audit of the whole
+queue: their miss is shared, and by one task it is invisible. Sixteen tasks in a row printed a
+number, and not one reached the queue so that the owner saw it.
 
-Задача, заведённая по тексту документа, называет в теле проверку в дереве. Цитата основанием не
-бывает: документ говорит о замысле, стареет молча и остаётся верным на вид, а задача заводится
-под то, что в дереве сейчас. В теле стоит файл и символ, где промах виден, либо вывод команды,
-который его показывает. Не нашлось ни того ни другого — задача не заводится, а строка документа
-правится тем ходом, которым её прочитали.
+A task created from the text of a document names a check in the tree in its body. A quote is
+never the ground: a document speaks of intent, goes stale silently and stays true on the face of
+it, while a task is created for what is in the tree now. The body holds the file and the symbol
+where the miss is visible, or the command output that shows it. Neither found — the task is not
+created, and the document line is edited in the turn that read it.
 
-Название задачи говорит, что не так, а не что сделать: PR потом переводит его в сделанное.
-Номер в заголовок руками не пишется — он известен только после создания, и команда дописывает
-его сама.
+The task title says what is wrong, not what to do: the PR turns it into the done later. The number
+is not written into the title by hand — it is known only after creation, and the command appends
+it itself.
 
-Чем сверить, что очередь работ в порядке:
+What to check the work queue with:
 
 ```bash
 npm run check:board
 ```
 
-Она смотрит только открытое: задачи на борде, номер и исполнителя у каждой открытой задачи,
-а у каждого открытого PR — номер в заголовке, строку `Closes`, открытую задачу за ним и то,
-что второго PR с тем же номером нет. Имя ветки не судит: у открытого PR его не переименовать.
+It looks only at what is open: the tasks on the board, the number and the assignee of every open
+task, and for every open PR — the number in the title, the `Closes` line, the open task behind it
+and that there is no second PR with the same number. It does not judge the branch name: an open PR
+cannot have it renamed.
 
-Закрытые задачи сверка на борде не ищет, и добавлять их туда задним числом не надо: закрытая
-задача уходит из очереди мержем, а колонки под неё у борды нет. О закрытой задаче сверка
-помнит только одно — её папку в `docs/tasks/`.
+Closed tasks the audit does not look for on the board, and there is no need to add them there
+after the fact: a closed task leaves the queue by merge, and the board has no column for it. Of a
+closed task the audit remembers only one thing — its folder in `docs/tasks/`.
 
-## Две задачи, которые чинятся одной правкой
+## Two tasks fixed by one edit
 
-Если по ходу выяснилось, что правка закрывает и соседнюю задачу, — это одна задача, а не две.
-Слить их можно, пока правка не въехала в главную ветку:
+If it turned out along the way that the edit closes the neighbouring task too — that is one task,
+not two. They can be merged while the edit has not reached the main branch:
 
 ```bash
 GH=/opt/homebrew/bin/gh
-# то, чего в поглотившей задаче не было, дописывается в её тело
+# what the absorbing task lacked is appended to its body
 $GH api -X PATCH repos/<владелец>/<репозиторий>/issues/<поглотившая> -f body="$(cat тело.md)"
-# поглощённая стирается вместе с номером — две строки об одной работе хуже дыры в нумерации
+# the absorbed one is erased with its number — two lines about one work are worse than a numbering gap
 $GH api graphql -f query='mutation { deleteIssue(input: {issueId: "<node-id>"})
     { repository { name } } }'
 ```
 
-Удаление необратимо и уносит с собой ссылки вида `Closes #<номер>` из чужих тел — поэтому
-сначала правится поглотившая задача, и только потом стирается поглощённая. После мержа
-поглощения нет: ветка въехала, и откатывается она целиком.
+Deletion is irreversible and takes away the `Closes #<номер>` links from other bodies with it — so
+the absorbing task is edited first, and only then the absorbed one is erased. After the merge
+there is no absorbing: the branch went in, and it is reverted whole.
 
-## Ветка заводится отдельным вызовом
+## The branch is created by a separate call
 
-Гард главной ветки разбирает текст команды и смотрит ветку на момент запуска, поэтому
-составная команда отклоняется целиком — ветки в ней ещё нет:
+The main branch guard parses the command text and looks at the branch at launch, so a compound
+command is rejected whole — the branch does not exist in it yet:
 
 ```bash
 ✗ git checkout -b <КЛЮЧ>-85-guest-token && git commit -m 'feat(<область>): …'
@@ -143,38 +148,39 @@ $GH api graphql -f query='mutation { deleteIssue(input: {issueId: "<node-id>"})
 ✓ git commit -F -
 ```
 
-Имя — `<КЛЮЧ>-<номер задачи>-<короткий-slug>`, slug строчными латинскими через дефис. Гард
-поставки разбирает его на месте и отбивает промах в форме до первого коммита, а по номеру
-спрашивает борду: задача должна существовать, быть открытой, стоять в очереди и иметь
-исполнителя.
+The name — `<КЛЮЧ>-<номер задачи>-<короткий-slug>`, the slug in lowercase Latin letters joined by
+hyphens. The delivery guard parses it on the spot and refuses a miss in the form before the first
+commit, and by the number it asks the board: the task must exist, be open, stand in the queue and
+have an assignee.
 
-Имя без номера (`feat/…`, `fix/…`) законно, пока ветка живёт локально — под пробу и разбор.
-PR с неё не откроется: правка, доезжающая до главной ветки, начинается с задачи.
+A name without a number (`feat/…`, `fix/…`) is legitimate while the branch lives locally — for a
+trial and an analysis. No PR opens from it: an edit that reaches the main branch starts with a
+task.
 
-## Колонка задачи двигается вместе с работой
+## The task column moves together with the work
 
-Ветка заведена — задача уже не в `📋 Backlog`, а в работе. PR открыт — она ждёт разбора.
-Оба перевода делает одна команда, вторым вызовом сразу за тем, который его вызвал:
+Branch created — the task is no longer in `📋 Backlog` but in progress. PR opened — it awaits
+review. Both moves are done by one command, as a second call right after the one that caused it:
 
 ```bash
-npm run task:move -- 86 in-progress   # сразу после git checkout -b <КЛЮЧ>-86-…
-npm run task:move -- 86 in-review     # сразу после gh pr create
+npm run task:move -- 86 in-progress   # right after git checkout -b <КЛЮЧ>-86-…
+npm run task:move -- 86 in-review     # right after gh pr create
 ```
 
-Колонки под своими именами: `backlog`, `in-progress`, `in-review`, а ещё `new`, `ready`,
-`done` и `deployed`, через которые работа не проходит — закрытая задача уходит из очереди
-мержем. Команда правит борду под ботом, читает токен сама и печатает, откуда куда переставила;
-задачи не на борде и незнакомой колонки не принимает.
+The columns under their own names: `backlog`, `in-progress`, `in-review`, and also `new`,
+`ready`, `done` and `deployed`, which the work does not pass through — a closed task leaves the
+queue by merge. The command edits the board as the bot, reads the token itself and prints from
+where to where it moved; it accepts neither tasks off the board nor an unknown column.
 
-Перевод не откладывается на потом: очередь работ читают между шагами, а не после них. Задача
-с открытым PR простояла в `📋 Backlog` до самой сверки — всё это время она выглядела
-нетронутой, а разбора за неё никто не ждал.
+The move is not put off for later: the work queue is read between steps, not after them. A task
+with an open PR stood in `📋 Backlog` until the audit itself — all that time it looked untouched,
+and nobody was waiting to review it.
 
-## Коммит подписывается ботом
+## The commit is signed by the bot
 
-Токен читается в переменную и не печатается; автор и коммиттер задаются переменными той же
-команды. `git config` не годится — конфиг общий с основным деревом и переписал бы подпись
-владельцу:
+The token is read into a variable and not printed; author and committer are set by variables of
+the same command. `git config` will not do — the config is shared with the main tree and would
+rewrite the signature to the owner:
 
 ```bash
 TOKEN=$(tr -d '\n' < ~/.config/<дерево>-bot-token)
@@ -184,9 +190,9 @@ GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<номер>+<бот>@users.n
     git commit -F -
 ```
 
-Заголовок — `type(scope): description`. Типы: `feat`, `fix`, `refactor`, `docs`, `style`,
-`test`, `chore`, `perf`. Области: `site`, `admin`, `api`, `common`, `proto`, `deploy`. Точка в
-конце заголовка не принимается, длина — до 150 знаков.
+The subject — `type(scope): description`. Types: `feat`, `fix`, `refactor`, `docs`, `style`,
+`test`, `chore`, `perf`. Scopes: `site`, `admin`, `api`, `common`, `proto`, `deploy`. A full stop
+at the end of the subject is not accepted; the length — up to 150 characters.
 
 ```
 feat(<область>): availability calendar with season prices
@@ -194,58 +200,63 @@ fix(<область>): reject overlapping booking dates
 chore(deploy): docker-compose for vps
 ```
 
-## Файлы своей работы называются поимённо
+## The files of one's own work are named one by one
 
-Рабочее дерево одно, а работ в нём бывает несколько: чужая незакоммиченная папка, оставленный
-черновик, правка соседнего захода. Каталог, добавленный целиком, уносит их с собой, и в главную
-ветку уезжает то, о чём эта работа не просила.
+The working tree is one, and there can be several works in it: someone else's uncommitted folder,
+a draft left behind, an edit of a neighbouring session. A directory added whole takes them along,
+and what this work never asked for leaves for the main branch.
 
 ```bash
 git add docs/tasks/<КЛЮЧ>-<номер>-<slug>/plan.md docs/tasks/<КЛЮЧ>-<номер>-<slug>/progress.md
-git diff --cached --name-only     # что действительно встало в индекс
+git diff --cached --name-only     # what actually got into the index
 ```
 
-Проверки индекса после добавления мало: однажды добавленный чужой файл становится
-отслеживаемым и дальше едет молча — следующий `git add` его уже не спрашивает.
+Checking the index after adding is not enough: a foreign file added once becomes tracked and goes
+on silently — the next `git add` no longer asks about it.
 
-## Документ едет тем же коммитом
+## The document goes in the same commit
 
-`docs-guard` требует пару и называет её сам. Обход — строка в теле, причина обязательна:
+`docs-guard` demands the pair and names it itself. The bypass — a line in the body, the reason
+is mandatory:
 
 ```
 Docs-skip: правка только в тестах хука, зеркала у него нет
 ```
 
-## Частые промахи
+## Common misses
 
-- **Сверка сразу после добавления отвечает «нет», когда карточка уже стоит.** Очередь работ отдаёт
-  новый элемент не в ту же секунду, в какую его завели, а последний шаг читает её следующим
-  вызовом. Ответ на это — перечитать очередь целиком, а не завести карточку второй раз: две записи
-  об одной задаче снимает только администратор. Сама команда заведения при этом требует правки:
-  состояние читается сразу за мутацией, без повтора, и ложный отказ здесь дороже задержки.
-- `gh` в оболочке пользователя подменён — звать `/opt/homebrew/bin/gh` напрямую.
-- Каталог добавлен целиком при чужом незакоммиченном рядом: чужая папка задачи уехала в главную ветку и стала отслеживаемой.
-- `git add` с несколькими путями не добавляет ничего, если хоть один путь не существует:
-  команда обрывается на первом промахе целиком, а не пропускает его. Следующий
-  `git commit --amend` при этом уносит в коммит всё, что осталось в индексе, — так в коммит
-  уехало удаление файла, принадлежавшее соседней ветке. Состав коммита читается
-  `git show --stat` сразу после него, а не на разборе PR.
-- Состав индекса читается `git diff --cached --stat` **до** коммита, а не только `git show --stat`
-  после него. Команды дерева кладут файлы в индекс сами: `npm run task:new` добавляет папку
-  задачи, и вместе с ней уезжает всё, что лежало рядом, — так в индексе оказался временный
-  каталог диагностики.
-- `gh project` с `--owner` отвечает `unknown owner type`: владелец борды — другая учётная
-  запись, и правка идёт только через GraphQL.
-- Заведённую задачу на борду сама она не забирает: репозиторий с ней не связан, и добавление
-  идёт отдельным вызовом. Две задачи так и остались вне очереди работ — поэтому все четыре
-  шага и делает `npm run task:new`, а не рука.
-- Исполнитель у задачи не проставляется сам ни при заведении через веб, ни при добавлении на
-  борду: из девяноста девяти открытых задач он стоял у двух.
-- Задача, заведённая через веб, мимо команды, на борду не попадает и гардом не отбивается —
-  он смотрит команду, а не задачу. Ловится это только сверкой очереди.
-- Колонка задачи сама не двигается ни от заведения ветки, ни от открытия PR: борда ветки не
-  видит вовсе, а связь с PR заполняет только поле «Linked pull requests». Взятие в работу не
-  ловит и сверка — ей ветка тоже не видна.
-- `gh api graphql --paginate` на запросе элементов борды уходит в повтор первой страницы:
-  курсор берётся из ответа руками, а полнота сверяется с `items(first: 1) { totalCount }`.
-- Правка владельца ни токена, ни переменных не берёт — они только для машинной работы.
+- **An audit right after adding answers "no" when the card already stands.** The work queue gives
+  out a new item not in the same second it was created, and the last step reads it by the next
+  call. The answer to this is to reread the whole queue, not to create the card a second time: two
+  records about one task are removed only by an administrator. The creation command itself needs
+  an edit here: the state is read right after the mutation, without a retry, and a false refusal
+  here costs more than a delay.
+- `gh` in the user's shell is substituted — call `/opt/homebrew/bin/gh` directly.
+- A directory added whole with someone else's uncommitted work next to it: a foreign task folder
+  left for the main branch and became tracked.
+- `git add` with several paths adds nothing if even one path does not exist: the command breaks
+  off whole at the first miss instead of skipping it. The next `git commit --amend` then carries
+  into the commit everything left in the index — so a file deletion belonging to a neighbouring
+  branch went into the commit. The commit contents are read by `git show --stat` right after it,
+  not at PR review.
+- The index contents are read by `git diff --cached --stat` **before** the commit, not only by
+  `git show --stat` after it. Tree commands put files into the index themselves: `npm run
+  task:new` adds the task folder, and everything lying next to it goes along — so a temporary
+  diagnostics directory ended up in the index.
+- `gh project` with `--owner` answers `unknown owner type`: the board owner is another account,
+  and the edit goes only through GraphQL.
+- A created task is not taken onto the board by itself: the repository is not linked to it, and
+  adding goes by a separate call. Two tasks stayed outside the work queue that way — which is why
+  all four steps are done by `npm run task:new`, not by hand.
+- The assignee of a task is not set by itself either at creation through the web or at adding to
+  the board: of ninety-nine open tasks it stood on two.
+- A task created through the web, past the command, does not reach the board and is not refused
+  by the guard — it looks at the command, not at the task. Only the queue audit catches this.
+- The task column does not move by itself either from creating a branch or from opening a PR: the
+  board does not see the branch at all, and the link to the PR fills only the host's field of
+  linked PRs. The audit does not catch taking into work either — the branch is invisible to it
+  too.
+- `gh api graphql --paginate` on a query of board items goes into repeating the first page: the
+  cursor is taken from the answer by hand, and completeness is checked against
+  `items(first: 1) { totalCount }`.
+- The owner's edit takes neither the token nor the variables — they are only for machine work.
