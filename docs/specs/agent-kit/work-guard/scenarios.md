@@ -1,147 +1,154 @@
-# Сценарии — гарды хода работы
+# Scenarios — the guards of the progress of the work
 
-Идентификатор ставится в начало заголовка теста через тире. Префикс общий на домен, и номера при
-переезде в поддомен не пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier goes at the start of the test title, followed by a dash. The prefix is shared across
+the domain, and the numbers were not recounted at the move into the subdomain: the number ties the
+scenario to the test title.
 
-### SC-AK-288 — состояние не объявлено, и артефакт отказ не снимает
+### SC-AK-288 — the state is not declared, and an artefact lifts no refusal
 
-Дано папка задачи с замыслом, а строки состояния в ходе работы нет
-Когда правится код приложения
-Тогда гард отбивает правку: судится объявленный переход, а не наличие файлов
+Given a task folder with a plan, and there is no line of the state in the progress of the work
+When application code is edited
+Then the guard refuses the edit: what is judged is the declared transition, not the presence of files
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
 
-### SC-AK-289 — состояние до этапа отбивается с обязательным действием
+### SC-AK-289 — a state before a stage is refused with the mandatory action
 
-Дано в ходе работы объявлено состояние `замысел-записан`
-Когда правится код приложения
-Тогда гард отбивает правку и называет обязательное действие этого состояния
+Given the state `замысел-записан` is declared in the progress of the work
+When application code is edited
+Then the guard refuses the edit and names the mandatory action of this state
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
 
-### SC-AK-290 — в состоянии идущего этапа правка проходит
+### SC-AK-290 — in the state of a stage in progress the edit passes
 
-Дано в ходе работы объявлено состояние `этап-идёт`
-Когда правится код приложения
-Тогда гард пропускает
+Given the state `этап-идёт` is declared in the progress of the work
+When application code is edited
+Then the guard lets it through
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
 
-### SC-AK-291 — правка по замечаниям в отданной работе проходит
+### SC-AK-291 — an edit by the remarks in handed-in work passes
 
-Дано в ходе работы объявлено состояние `работа-отдана`
-Когда правится код приложения
-Тогда гард пропускает: прогон бывает красным, а разбор — с замечаниями, и починка идёт в ту же
-ветку
+Given the state `работа-отдана` is declared in the progress of the work
+When application code is edited
+Then the guard lets it through: a run is sometimes red and a review carries remarks, and the fix goes
+into the same branch
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
 
-### SC-AK-292 — состояние закрытой работы отбивается
+### SC-AK-292 — the state of closed work is refused
 
-Дано в ходе работы объявлено состояние `влито`
-Когда правится код приложения
-Тогда гард отбивает правку: работа кончилась, и правка кода начинается новой задачей
+Given the state `влито` is declared in the progress of the work
+When application code is edited
+Then the guard refuses the edit: the work has ended, and an edit of code begins with a new task
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
 
-### SC-AK-293 — имя вне перечня состоянием не считается
+### SC-AK-293 — a name outside the list does not count as a state
 
-Дано в ходе работы объявлено слово, которого в перечне состояний нет
-Когда правится код приложения
-Тогда гард отбивает правку: слово вне перечня не говорит ни о входе, ни о выходе, ни об
-обязательном действии
+Given a word that is not in the list of the states is declared in the progress of the work
+When application code is edited
+Then the guard refuses the edit: a word outside the list says nothing about the entry, the exit or
+the mandatory action
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
 
-### SC-AK-294 — обход договорённости требования о состоянии не снимает
+### SC-AK-294 — the bypass of the agreement lifts no requirement about the state
 
-Дано в замысле стоит строка о неизменном поведении, а состояние объявлено допереходным
-Когда правится код приложения
-Тогда гард отбивает правку: обход снимает требование договорённости, а не требование дойти до
-правки кода
+Given the line about unchanged behaviour stands in the plan, and the state declared is one before
+the transition
+When application code is edited
+Then the guard refuses the edit: the bypass lifts the requirement of the agreement, not the
+requirement to reach the editing of code
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
 
-### SC-AK-295 — папка без хода работы правку не пропускает
+### SC-AK-295 — a folder without a progress of the work lets no edit through
 
-Дано папка задачи с замыслом, а хода работы в ней нет вовсе
-Когда правится код приложения
-Тогда гард отбивает правку и называет файл, в котором объявляется состояние
+Given a task folder with a plan, and there is no progress of the work in it at all
+When application code is edited
+Then the guard refuses the edit and names the file the state is declared in
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
 
-### SC-AK-742 — замысел без договорённости гардом хода работы не судится
+### SC-AK-742 — a plan without an agreement is not judged by the guard of the progress of the work
 
-Дано замысел лежит и не называет договорённости о продукте
-Когда правится код приложения
-Тогда гард хода работы правку пропускает: договорённость — требование соседнего гарда, и снять
-одно из двух дерево вправе, не теряя второго
+Given the plan lies there and names no agreement about the product
+When application code is edited
+Then the guard of the progress of the work lets the edit through: the agreement is the requirement of
+a neighbouring guard, and the tree has the right to remove one of the two without losing the second
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
 
-### SC-AK-908 — ключи папки задачи читаются под английским именем наравне с русским
+### SC-AK-908 — the keys of the task folder are read under the English name on a par with the Russian
 
-Дано ход работы называет состояние строкой «- **State:** `этап-идёт`», а замысел — договорённость
-строкой «**Draft:**» либо неизменное поведение строкой «**Behaviour:** unchanged — причина» Когда
-правится код приложения Тогда оба гарда судят папку так же, как папку с русскими ключами:
-состояние вне правки кода отбивается, английская договорённость принимается
+Given the progress of the work names the state by the line "- **State:** `этап-идёт`", and the plan
+names the agreement by the line "**Draft:**" or the unchanged behaviour by the line "**Behaviour:**
+unchanged — the reason" When application code is edited Then both guards judge the folder the same as
+a folder with Russian keys: a state outside the editing of code is refused, an English agreement is
+accepted
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`,
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`,
 `projects/agent-kit/tests/task-flow-draft-guard.test.sh`.
 
-### SC-AK-743 — гард договорённости молчит там, где нет замысла
+### SC-AK-743 — the guard of the agreement stays silent where there is no plan
 
-Дано папки задачи с замыслом в ветке нет
-Когда правится код приложения
-Тогда гард договорённости правку пропускает: отказ о замысле печатает тот гард, чьё это
-требование, а второй отказ о том же звал бы чинить дважды одно
+Given there is no task folder with a plan in the branch
+When application code is edited
+Then the guard of the agreement lets the edit through: the refusal about the plan is printed by the
+guard whose requirement it is, and a second refusal about the same would call to fix one thing twice
 
-Покрыто: `projects/agent-kit/tests/task-flow-draft-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-draft-guard.test.sh`.
 
-### SC-AK-744 — договорённость спрашивается и у команды оболочки
+### SC-AK-744 — the agreement is asked of a shell command too
 
-Дано замысел не называет договорённости, а код пишется командой оболочки
-Когда гард договорённости разбирает вызов
-Тогда правка отбивается: обе двери закрыты одинаково, иначе требование снимается сменой способа
-записи
+Given the plan names no agreement, and the code is written by a shell command
+When the guard of the agreement takes the call apart
+Then the edit is refused: both doors are closed the same, otherwise the requirement is lifted by
+changing the way of writing
 
-Покрыто: `projects/agent-kit/tests/task-flow-draft-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-draft-guard.test.sh`.
 
-### SC-AK-529 — правка после разбора папки проходит
+### SC-AK-529 — an edit after the folder is taken apart passes
 
-Дано папка задачи снята коммитом этой ветки, а замысла на диске больше нет
-Когда правится код приложения
-Тогда гард пропускает: уборка стоит до открытия заявки, и правка после неё — правка по
-замечаниям разбора; требовать под неё замысел значило бы запирать ветку собственным порядком
+Given the task folder is removed by a commit of this branch, and there is no plan on the disk any
+more
+When application code is edited
+Then the guard lets it through: the tidying stands before the opening of the request, and an edit
+after it is an edit by the remarks of the review; demanding a plan for it would mean locking the
+branch by its own order
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
 
-### SC-AK-530 — снос папки без коммита отданной работы не означает
+### SC-AK-530 — removing the folder without a commit does not mean handed-in work
 
-Дано папка задачи снесена в рабочем дереве, но снос не закоммичен
-Когда правится код приложения
-Тогда гард отказывает: признак берётся из истории ветки, а не с диска
+Given the task folder is removed in the working tree, but the removal is not committed
+When application code is edited
+Then the guard refuses: the sign is taken from the history of the branch, not from the disk
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
 
-### SC-AK-665 — папка задачи только в рабочем дереве правку не пропускает
+### SC-AK-665 — a task folder only in the working tree lets no edit through
 
-Дано в ветке лежит полная папка задачи — замысел и объявленное состояние, — но в историю ветки
-она ни разу не заведена
-Когда правится код приложения
-Тогда гард отказывает: признак отданной работы берётся из истории, и с некоммиченной папкой
-отказ пришёл бы на открытии заявки, когда чинить уже нечего
+Given a full task folder lies in the branch — the plan and the declared state — but it was never put
+into the history of the branch
+When application code is edited
+Then the guard refuses: the sign of handed-in work is taken from the history, and with an
+uncommitted folder the refusal would come at the opening of the request, when there is nothing left
+to fix
 
-### SC-AK-666 — отказ называет команду, которой снимается
+### SC-AK-666 — the refusal names the command it is lifted by
 
-Дано та же ветка с некоммиченной папкой задачи
-Когда гард отказывает
-Тогда в отказе стоит команда заведения папки в историю, а не одно указание на промах
+Given the same branch with an uncommitted task folder
+When the guard refuses
+Then the command of putting the folder into the history stands in the refusal, not a mere pointing at
+the miss
 
-### SC-AK-667 — папка, заведённая в историю, правку пропускает
+### SC-AK-667 — a folder put into the history lets the edit through
 
-Дано та же папка задачи, закоммиченная в ветку
-Когда правится код приложения
-Тогда гард молчит: требование снято тем самым коммитом
+Given the same task folder, committed into the branch
+When application code is edited
+Then the guard stays silent: the requirement is lifted by that very commit
 
-Покрыто: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.

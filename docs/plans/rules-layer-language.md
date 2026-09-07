@@ -1,296 +1,364 @@
-# Слой правил на английском: заход читает те же тексты втрое дешевле
-
-Одной фразой: законы, правила, паттерны, скилы, отказы проверок и документы дерева написаны
-по-английски, заход тратит на них втрое меньше окна, а владелец читает задачи, заявки и ответы
-по-русски, как сейчас.
-
-Карточка эпика — задача RT-1846. Порядок задач держит эта запись.
-
-## Чем эпик обоснован
-
-Прошлый эпик о весе слоя, RT-1125, закрыт 26 августа 2026 года. Вопрос о языке он закрыл словами
-«доказать экономию нечем»: счёт токенов живёт у модели и стоит денег, а сторонний счётчик
-занижает число на кириллице. Через десять дней слой снова тяжелее, чем в день закрытия.
-
-| Что                                | 26 августа | 6 сентября |
-| ---------------------------------- | ---------: | ---------: |
-| Вход в работу, символов            |     38 431 |     41 052 |
-| Самое тяжёлое правило со спутником |     36 103 |     52 887 |
-| Весь слой, символов                |    927 115 |  1 156 277 |
-
-Числа сняты командой `npm run agent-kit:cost` на вершине главной ветки. Резать русский текст
-второй раз бесполезно: экономия не удержалась и в прошлый раз.
-
-Счёт токенов оказался бесплатным. Заход видит остаток своего окна после каждого вызова
-инструмента. Разница остатка до и после чтения файла и есть его цена в токенах для этой модели.
-Так 6 сентября 2026 года снято два числа на срезах по 12 000 знаков:
-
-| Срез                            | Токенов | Знаков на токен |
-| ------------------------------- | ------: | --------------: |
-| Русский текст правила поставки  | ≈ 7 400 |           ≈ 1,6 |
-| Английский текст той же природы | ≈ 4 000 |           ≈ 3,0 |
-
-Замер грубый: в разницу попадает и текст самого хода, поэтому у английского среза разброс от
-3 000 до 5 000. Тот же смысл по-английски короче ещё на треть: пробный абзац занял 941 знак
-против 1 449 по-русски. Вместе это даёт цену английского слоя примерно втрое ниже русского.
-Точное число снимает первая задача.
-
-Что перевод даёт процессу помимо окна, тоже проверяет первая задача. Модель пишет по-английски
-ровнее, и отказов проверки слога должно стать меньше. Цена в другом: владелец читает по-русски,
-и каждый текст ему заход переводит с языка слоя.
-
-## Порядок задач
-
-| №   | Задача                                                              | Почему здесь                                                                                     |
-| --- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| 1   | RT-1847 · Цена письменности снята на пробном переводе одной семьи   | одна семья текстов переведена, токены посчитаны, проверки прогнаны; по её числам владелец решает |
-| 2   | RT-1848 · Правило о двух языках записано                            | без него перевод расползётся на задачи и заявки, которые владелец читает по-русски               |
-| 3   | RT-1849 · Проверки слога, словаря и описаний судят английский текст | сегодня они считают кириллицу; на английском они либо молчат, либо отбивают всё                  |
-| 4   | RT-1850 · Словарь переведён, таблица терминов закреплена            | одно слово на понятие для всех следующих задач; словарь читается в каждом заходе                 |
-| 5   | RT-1851 · Вход в работу на английском                               | описания скилов и вывод хуков старта платятся в каждом заходе; самый большой выигрыш за задачу   |
-| 6   | RT-1852 · Законы на английском                                      | правила ссылаются на статьи законов; переведённый закон задаёт им слова                          |
-| 7   | RT-1853 · Правила и их холодные части на английском                 | основной груз при загрузке; берётся после законов, на которые правила ссылаются                  |
-| 8   | RT-1854 · Паттерны на английском                                    | грузятся по имени из правил; идут за правилами, чьи слова повторяют                              |
-| 9   | RT-1855 · Скилы, команды, роли и шаблоны на английском              | остаток пакетных текстов; шаблоны папки задачи читает каждая новая работа                        |
-| 10  | RT-1856 · Отказы хуков и проверок на английском                     | это правка кода, не текста; идёт после текстов, на которые отказы ссылаются цитатой              |
-| 11  | RT-1857 · Своё этого дерева на английском                           | надстройки, свои правила, свои хуки и проверки; после пакета, иначе слитый текст двуязычен       |
-| 12  | RT-1858 · Документы дерева на английском                            | спеки, замыслы, решения, разборы происшествий; самый большой объём и самый редкий в заходе       |
-
-Порядок назначен и держится до конца эпика. Пересмотр — решение владельца, и записывается он в
-ход работы той задачи, которая его вызвала.
-
-Ветки задач стоят каждая от главной, а не стопкой: задачи вливаются по одной, и следующая
-начинается с влитой предыдущей. Две задачи одновременно в работу не берутся: они правят одни и
-те же ресурсы пакета.
-
-**Задачи со второй по двенадцатую ждали слова владельца по числам первой.** Слово сказано
-6 сентября 2026 года: переводить всё, как задумано, — при выигрыше 20%, а не втрое. Числа лежат
-в разделе «Первый замер» ниже, решение записано в Q-1.
-
-## Что в эпик не входит
-
-- **Задачи, заявки, коммиты и ответы владельцу остаются русскими.** Так решил владелец
-  6 сентября 2026 года. Меняется язык того, что читает заход, а не того, что читает человек.
-- **Описание прошлого не переводится.** Записи каталога `docs/archive/` живут неделю и
-  снимаются проверкой; переводить снимаемое незачем.
-- **Ни одно требование не снимается и ни одна проверка не ослабевает.** Перевод — переписывание
-  смыслом, а не словом; пропавшая статья — промах. Что статья на месте, сверяется по числу
-  статей до и после в каждой задаче.
-- **Деревья-потребители переводятся не здесь.** Они получают английский слой раскладкой новой
-  редакции пакета обычным порядком; их надстройки — их работа.
-- **Код приложений и китов не трогается.** Комментарии в коде пакетов остаются как есть.
-
-## Чем виден конец
-
-Команда `npm run agent-kit:cost` на вершине главной ветки не находит в ресурсах пакета ни одной
-строки кириллицы, кроме перечисленных поимённо исключений. Тот же замер токенов, что в первой
-задаче, снятый на тех же файлах, даёт число ниже русского не меньше, чем вдвое. Все проверки
-дерева зелены, и в задаче, заведённой после эпика, тело написано по-русски.
-
-## Первый замер
-
-Снят 6 сентября 2026 года задачей RT-1847 на семье закона о документации проекта: закон,
-правило `doc-style`, его холодная часть и паттерн `doc-style-write`. Четыре файла переведены
-смыслом, а не словом; число статей совпало: 28, 23, 16.
-
-**Способ.** Файл читается командой `cat` отдельным вызовом; остаток окна под результатом
-показывает окно до этого результата, поэтому цена файла читается под следующим вызовом. Пустой
-вызов стоит 121 токен, и это число вычтено из каждой разницы. Замер повторяется той же парой
-вызовов на любом файле.
-
-| Файл                            | Знаков ru | Токенов ru | Знаков en | Токенов en | Разница |
-| ------------------------------- | --------: | ---------: | --------: | ---------: | ------: |
-| `laws/project-documentation.md` |     8 148 |      3 870 |     8 843 |      2 713 |    −30% |
-| `rules/doc-style.md`            |    14 801 |      6 113 |    15 902 |      5 078 |    −17% |
-| `pitfalls/doc-style.md`         |     7 496 |      3 174 |     7 904 |      2 595 |    −18% |
-| `patterns/doc-style-write.md`   |     9 362 |      3 917 |    10 302 |      3 260 |    −17% |
-| Итого                           |    39 807 |     17 074 |    42 951 |     13 646 |    −20% |
-
-**Английский слой дешевле на пятую часть, а не втрое.** Оценка «втрое» из обоснования выше
-ошиблась дважды. Русский текст слоя стоит 2,3 знака на токен, а не 1,6: первый замер нёс шум
-текста хода. Перевод, сохраняющий каждую статью, длиннее оригинала на 8%, а не короче на треть:
-короче был вольный пересказ пробного абзаца, и его выигрыш — сокращение, а не язык.
-
-Двадцать процентов от слоя в 1 156 277 знаков — это примерно 100 000 токенов, которые заход не
-платит. Владелец 6 сентября 2026 года решил эпик по этому числу довести целиком.
-
-**Проверки на английском тексте.** Предел в сорок слов на предложение работает: пробное
-предложение на 46 слов отбито. Список канцелярита русский, и английский канцелярский оборот
-проходит молча. Словарь держит двенадцать русских запретных слов и английский текст не судит. Проверка
-описаний и предел длины судят знаки и от языка не зависят. Гард слога на правке английского
-файла пропустил без единого отказа. Итог: две проверки из пяти на английском молчат, три
-работают.
-
-**Что перевод дал процессу.** Четыре файла на 43 000 знаков написаны одним ходом без отказа
-проверки слога. Цена на другой стороне: та же семья по-русски уже лежит, а перевод стоил ход и
-окно; каждый текст владельцу заход переводил бы обратно.
-
-## Второй замер: вход в работу
-
-Снят 6 сентября 2026 года задачей RT-1851 на склейке описаний 30 правил, 52 паттернов и 3
-скилов — тем же способом, что и первый замер. Русская склейка читалась двумя частями.
-
-| Склейка описаний | Знаков | Токенов | Знаков на токен |
-| ---------------- | -----: | ------: | --------------: |
-| Русская          | 22 341 |   9 195 |            2,43 |
-| Английская       | 23 393 |   7 875 |            2,97 |
-
-**Описания дешевле на 14%, а не на 20%.** Описание короче статьи закона, и доля имён файлов,
-паттернов и кода в нём выше: имена стоят одинаково на обоих языках, а перевод сохраняет каждое.
-Английская склейка длиннее русской на 5% в знаках.
-
-Вход в работу по команде цены слоя после задач 4 и 5: 49 358 знаков и 53 974 байта против
-41 052 знаков и 69 510 байт до них. Знаков стало больше — словарь получил таблицы имён, а
-английский текст длиннее в знаках; байт стало меньше на 22%. Число знаков этой команды с этого
-дня цену не измеряет: она сравнивает байты, а точное число даёт замер токенов.
-
-## Третий замер: законы
-
-Снят 6 сентября 2026 года задачей RT-1852 по пятнадцати файлам законов пакета, байтами файлов
-до и после перевода.
-
-| Законы     |    Байт |
-| ---------- | ------: |
-| Русские    | 134 287 |
-| Английские |  80 507 |
-
-**Законы легче на 40% в байтах.** Статья закона — проза без имён файлов и кода, и на ней
-перевод даёт больше, чем на описаниях. Число статей и вопросов в каждом законе равно прежнему:
-283 статьи и 4 открытых вопроса.
-
-Вход в работу после задачи 6: 49 336 знаков и 53 647 байт; закон в него не входит, и число
-почти не двинулось.
-
-## Четвёртый замер: правила и холодные части
-
-Снят 7 сентября 2026 года задачей RT-1853 по тридцати правилам и десяти холодным частям пакета,
-байтами файлов до и после перевода.
-
-| Правила и холодные части |    Байт |
-| ------------------------ | ------: |
-| Русские                  | 673 092 |
-| Английские               | 426 599 |
-
-**Правила легче на 36% в байтах.** Число статей раздела о применении закона равно прежнему в
-каждом правиле: 559 статей, 239 пунктов холодных частей, 53 строки `rt-when`. В строках и знаках
-английский текст длиннее русского, поэтому предел веса текста поднят до 330 строк и 24 000
-знаков: два правила и одна холодная часть вышли за 300 строк при том же числе статей.
-
-Вход в работу после задачи 7 не двинулся: правило грузится по требованию и во вход не входит.
-
-## Пятый замер: паттерны
-
-Снят 7 сентября 2026 года задачей RT-1854 по пятидесяти двум паттернам пакета, байтами файлов до
-и после перевода.
-
-| Паттерны   |    Байт |
-| ---------- | ------: |
-| Русские    | 587 107 |
-| Английские | 399 540 |
-
-**Паттерны легче на 32% в байтах.** Число заголовков вне оград и число оград в каждом паттерне
-равно прежнему; готовый код в примерах не тронут, переведены проза и комментарии. В знаках
-английский текст длиннее на 7%: самый тяжёлый паттерн — 17 877 знаков при пределе 24 000.
-
-Весь слой после задачи 8 — 1 468 014 байт против 1 628 176 после задачи 7. Вход в работу не
-двинулся: паттерн грузится по имени из правила и во вход не входит.
-
-## Шестой замер: скилы, команды, роли, шаблоны, образцы, процессы и умолчания
-
-Снят 7 сентября 2026 года задачей RT-1855 по тридцати пяти файлам семи каталогов пакета, байтами
-файлов до и после перевода.
-
-| Каталоги                         |    Байт |
-| -------------------------------- | ------: |
-| Русские                          | 259 400 |
-| Английские                       | 179 496 |
-| Из них тексты `.md` — русские    | 165 772 |
-| Из них тексты `.md` — английские | 109 784 |
-
-**Семь каталогов легче на 31% в байтах, тексты — на 34%.** В сценариях оболочки и рабочих
-процессах переведены комментарии, подсказки ролям и описания фаз; код не тронут. Кириллица
-осталась в ключах, которые читают хуки и отправка предложений, в именах состояний и в образцах
-русских текстов владельцу; они перечислены в записи архива задачи.
-
-## Седьмой замер: отказы хуков и проверок
-
-Снят 7 сентября 2026 года задачей RT-1856 по шестидесяти четырём хукам и сорока двум проверкам
-пакета, байтами файлов до и после перевода.
-
-| Хуки и проверки |    Байт | Строк с кириллицей |
-| --------------- | ------: | -----------------: |
-| Русские         | 654 666 |              3 038 |
-| Английские      | 502 936 |                 83 |
-
-| Проверки   |    Байт | Строк с кириллицей |
-| ---------- | ------: | -----------------: |
-| Русские    | 445 842 |              2 154 |
-| Английские | 354 605 |                123 |
-
-**Хуки легче на 23% в байтах, проверки на 20%.** Переведены комментарии, вводные, тексты отказов
-и сводок вместе с ожиданиями наборов; код не тронут. Число проб набора выросло с прежнего на
-четыре: SC-AK-908…911 о ключах папки задачи.
-
-Кириллица оставлена намеренно: имена состояний работы, русские имена ключей в альтернациях
-(ключи папки задачи, раздел передачи, ключи документов дерева), признаки русской речи владельца
-и исполнителя в регулярках, признаки русского слога в проверке текстов и образцы русских текстов
-владельцу. Все они перечислены в записи архива задачи.
-
-**Ключи папки задачи читаются под двумя именами.** Образцы папки задачи, паттерны, правило
-ведения работы и карта хода несут английские ключи — `## Where we stand`, `**State:**`,
-`**Stage:**`, `**Next step:**`, `**Draft:**`, `**Behaviour:** unchanged`, `**Task:**`,
-`**Branch:**`; шесть хуков и команда заведения задачи читают их наравне с русскими. Папки дерева,
-заведённые до перевода, работают без правки.
-
-Весь слой после задачи 10 — 1 450 197 байт против 1 468 014 после задачи 8. Вход в работу —
-57 987 байт: отказ хука во вход не входит и платится только в минуту отказа.
-
-## Восьмой замер: своё дерево
-
-Снят 7 сентября 2026 года задачей RT-1857 по своему слою этого дерева: надстройки, свои правила
-с компаньонами всех правил, свои хуки, свои проверки, карта гейта, профиль и памятка. Байты и
-строки с кириллицей — до и после перевода.
-
-| Свой слой  |      Байт | Строк с кириллицей |
-| ---------- | --------: | -----------------: |
-| Русские    | 1 512 943 |              6 350 |
-| Английские | 1 234 124 |                154 |
-
-| Часть слоя                    | Файлов | Байт до | Байт после |
-| ----------------------------- | -----: | ------: | ---------: |
-| Надстройки                    |     17 |  49 876 |     33 482 |
-| Свои правила и все компаньоны |     59 | 817 632 |    649 631 |
-| Свои хуки                     |      2 |  30 675 |     23 460 |
-| Свои проверки                 |     61 | 562 280 |    485 784 |
-| Карта, профиль, памятка       |      3 |  52 480 |     41 767 |
-
-**Своё дерево легче на 18% в байтах.** Переведены проза, комментарии, тексты отказов и сводок
-вместе с ожиданиями наборов; код не тронут. Все двенадцать правил линтера дерева и их пробы
-переведены тем же заходом — 142 пробы зелены. Гейт после перевода зовёт те же правила: сверено
-вызовом на тридцати четырёх путях, вывод совпал построчно.
-
-Кириллица оставлена намеренно, и вся она — цитата чужой строки, которую этой задачей править
-нечем: имена состояний работы, ключи разделов спеков (`## Правила`, `## Сценарии`, отметка
-`Не покрыто:`), заголовок раздела заявки «Оставшийся шаг», имена разделов админки приёма, имя
-шага конвейера «Убрать за прогоном», заголовки `CONTEXT.md`, раздел ручек потребителя в описании
-токенов, разделы витрины «Входы», русские образцы в альтернациях двух имён у гарда черновика,
-гарда отметки груза и проверки границы пакета. Правило одно: цитата правится той же правкой, что
-и источник, а источники лежат вне следа этой задачи.
-
-Весь слой после задачи 11 — 1 282 196 байт против 1 450 197 после задачи 10. Вход в работу —
-55 521 байт против 57 987: своё правило `ui-component-tests` грузится по требованию, а во вход
-входят описания правил, и они стали короче.
-
-## Открытые вопросы
-
-- **Q-1. Переводится ли слой целиком. Закрыт 6 сентября 2026 года: переводится, как задумано.**
-  Владелец решил это, увидев числа первой задачи: выигрыш 20%, а не втрое. Порядок задач и
-  границы эпика остаются прежними, все двенадцать задач в силе.
-- **Q-2. Чем заход переводит текст владельцу. Закрыт 6 сентября 2026 года задачей RT-1850:
-  таблицей имён в словаре.** Словарь пакета держит раздел «Russian names» — одно русское имя на
-  каждый английский термин; надстройка дерева держит такой же раздел под своим именем для своих
-  слов. Таблица одна, в одну сторону: заход читает английский термин и пишет владельцу русское имя
-  из таблицы. Обратная сторона не нужна: владелец по-английски не пишет.
-- **Q-3. Что делать с двуязычным слоем у потребителя.** Надстройка дерева-потребителя остаётся
-  русской, пока её не перевели; слитый текст правила выходит двуязычным. Терпимо ли это на время
-  перехода, решает владелец на задаче 11.
+# The rules layer in English: a session reads the same texts three times cheaper
+
+In one phrase: the laws, the rules, the patterns, the skills, the refusals of the checks and the
+documents of the tree are written in English, a session spends three times less of the window on them,
+and the owner reads the tasks, the requests and the replies in Russian, as now.
+
+The card of the epic is the task RT-1846. The order of the tasks is held by this record.
+
+## What the epic is grounded on
+
+The former epic about the weight of the layer, RT-1125, was closed on 26 August 2026. It closed the
+question about the language by the words "there is nothing to prove the saving by": the count of the
+tokens lives at the model and costs money, and a third-party counter undercounts the number on the
+Cyrillic. Ten days later the layer is heavier again than on the day of the closing.
+
+| What                                 | 26 August | 6 September |
+| ------------------------------------ | --------: | ----------: |
+| The entry into the work, characters  |    38 431 |      41 052 |
+| The heaviest rule with its companion |    36 103 |      52 887 |
+| The whole layer, characters          |   927 115 |   1 156 277 |
+
+The numbers were taken by the command `npm run agent-kit:cost` at the tip of the main branch. Cutting
+the Russian text a second time is useless: the saving did not hold the last time either.
+
+The count of the tokens turned out free. A session sees the remainder of its window after every call
+of an instrument. The difference of the remainder before and after a reading of a file is its price in
+the tokens for this model. So on 6 September 2026 two numbers were taken on slices of 12 000
+characters:
+
+| The slice                                    |  Tokens | Characters per token |
+| -------------------------------------------- | ------: | -------------------: |
+| The Russian text of the rule of the delivery | ≈ 7 400 |                ≈ 1.6 |
+| An English text of the same nature           | ≈ 4 000 |                ≈ 3.0 |
+
+The measurement is rough: the text of the turn itself falls into the difference too, so the English
+slice has a spread from 3 000 to 5 000. The same meaning in English is shorter by another third: a
+trial paragraph took 941 characters against 1 449 in Russian. Together this gives the price of an
+English layer about three times lower than the Russian one. The exact number is taken by the first
+task.
+
+What the translation gives the process apart from the window is also checked by the first task. The
+model writes in English more evenly, and the refusals of the check of the style should become fewer.
+The price is in another thing: the owner reads in Russian, and every text a session translates for
+them from the language of the layer.
+
+## The order of the tasks
+
+| №   | Task                                                                                             | Why here                                                                                                                     |
+| --- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| 1   | RT-1847 · The price of the writing is taken on a trial translation of one family                 | one family of the texts is translated, the tokens are counted, the checks are run; the owner decides by its numbers          |
+| 2   | RT-1848 · The rule about the two languages is written                                            | without it the translation will creep over the tasks and the requests the owner reads in Russian                             |
+| 3   | RT-1849 · The checks of the style, of the glossary and of the descriptions judge an English text | today they count the Cyrillic; on English they either are silent or refuse everything                                        |
+| 4   | RT-1850 · The glossary is translated, the table of the terms is nailed down                      | one word per notion for all the next tasks; the glossary is read in every session                                            |
+| 5   | RT-1851 · The entry into the work in English                                                     | the descriptions of the skills and the output of the hooks of the start are paid in every session; the largest gain per task |
+| 6   | RT-1852 · The laws in English                                                                    | the rules refer to the articles of the laws; a translated law sets the words for them                                        |
+| 7   | RT-1853 · The rules and their cold parts in English                                              | the main cargo at a loading; it is taken after the laws the rules refer to                                                   |
+| 8   | RT-1854 · The patterns in English                                                                | they are loaded by their name from the rules; they go after the rules whose words they repeat                                |
+| 9   | RT-1855 · The skills, the commands, the roles and the samples in English                         | the remainder of the package texts; the samples of the task folder are read by every new work                                |
+| 10  | RT-1856 · The refusals of the hooks and of the checks in English                                 | this is an edit of the code, not of a text; it goes after the texts the refusals refer to by a quotation                     |
+| 11  | RT-1857 · What is this tree's own in English                                                     | the overrides, its own rules, its own hooks and checks; after the package, otherwise the merged text is bilingual            |
+| 12  | RT-1858 · The documents of the tree in English                                                   | the specs, the plans, the decisions, the reviews of the incidents; the largest volume and the rarest in a session            |
+
+The order is assigned and holds to the end of the epic. A reconsideration is a decision of the owner,
+and it is written into the progress of the task that called it.
+
+The branches of the tasks stand each from the main one, not as a stack: the tasks are merged one at a
+time, and the next begins with the previous one merged. Two tasks are not taken into work at once:
+they edit the same resources of the package.
+
+**The tasks from the second to the twelfth waited for the word of the owner about the numbers of the
+first.** The word was said on 6 September 2026: to translate everything, as planned — at a gain of
+20%, not threefold. The numbers lie in the section "The first measurement" below, the decision is
+written down in Q-1.
+
+## What is not in the epic
+
+- **The tasks, the requests, the commits and the replies to the owner stay Russian.** So the owner
+  decided on 6 September 2026. What changes is the language of what a session reads, not of what a
+  person reads.
+- **The description of the past is not translated.** The records of the directory `docs/archive/` live
+  a week and are removed by a check; there is no point translating what is removed.
+- **Not a single requirement is lifted and not a single check weakens.** A translation is a rewriting
+  by the meaning, not by the word; a lost article is a miss. That an article is in place is reconciled
+  by the number of the articles before and after in every task.
+- **The consumer trees are not translated here.** They get the English layer by the layout of a new
+  edition of the package in the ordinary order; their overrides are their own work.
+- **The code of the applications and of the kits is not touched.** The comments in the code of the
+  packages stay as they are.
+
+## What the end is seen by
+
+The command `npm run agent-kit:cost` at the tip of the main branch finds in the resources of the
+package not a single line of the Cyrillic, apart from the exceptions listed by name. The same
+measurement of the tokens as in the first task, taken on the same files, gives a number lower than the
+Russian one by not less than twice. All the checks of the tree are green, and in a task created after
+the epic the body is written in Russian.
+
+## The first measurement
+
+Taken on 6 September 2026 by the task RT-1847 on the family of the law about the documentation of the
+project: the law, the rule `doc-style`, its cold part and the pattern `doc-style-write`. Four files
+were translated by the meaning, not by the word; the number of the articles coincided: 28, 23, 16.
+
+**The way.** A file is read by the command `cat` by a call of its own; the remainder of the window
+under a result shows the window before that result, so the price of a file is read under the next
+call. An empty call costs 121 tokens, and that number is subtracted from every difference. The
+measurement is repeated by the same pair of calls on any file.
+
+| File                            | Characters ru | Tokens ru | Characters en | Tokens en | The difference |
+| ------------------------------- | ------------: | --------: | ------------: | --------: | -------------: |
+| `laws/project-documentation.md` |         8 148 |     3 870 |         8 843 |     2 713 |           −30% |
+| `rules/doc-style.md`            |        14 801 |     6 113 |        15 902 |     5 078 |           −17% |
+| `pitfalls/doc-style.md`         |         7 496 |     3 174 |         7 904 |     2 595 |           −18% |
+| `patterns/doc-style-write.md`   |         9 362 |     3 917 |        10 302 |     3 260 |           −17% |
+| In all                          |        39 807 |    17 074 |        42 951 |    13 646 |           −20% |
+
+**The English layer is cheaper by a fifth part, not threefold.** The appraisal "threefold" from the
+grounds above was wrong twice. The Russian text of the layer costs 2.3 characters per token, not 1.6:
+the first measurement carried the noise of the text of the turn. A translation keeping every article
+is longer than the original by 8%, not shorter by a third: shorter was a free retelling of a trial
+paragraph, and its gain is a shortening, not the language.
+
+Twenty per cent of a layer of 1 156 277 characters is about 100 000 tokens a session does not pay. The
+owner on 6 September 2026 decided to bring the epic through whole by that number.
+
+**The checks on an English text.** The limit of forty words per sentence works: a trial sentence of 46
+words was refused. The list of the bureaucratese is Russian, and an English bureaucratic turn passes
+silently. The glossary holds twelve Russian forbidden words and does not judge an English text. The
+check of the descriptions and the length limit judge the characters and do not depend on the language.
+The guard of the style let an edit of an English file through without a single refusal. The outcome:
+two checks of five are silent on English, three work.
+
+**What the translation gave the process.** Four files of 43 000 characters were written in one turn
+without a refusal of the check of the style. The price is on the other side: the same family in
+Russian already lies, and the translation cost a turn and the window; every text a session would
+translate back for the owner.
+
+## The second measurement: the entry into the work
+
+Taken on 6 September 2026 by the task RT-1851 on the glue of the descriptions of 30 rules, 52 patterns
+and 3 skills — by the same way as the first measurement. The Russian glue was read in two parts.
+
+| The glue of the descriptions | Characters | Tokens | Characters per token |
+| ---------------------------- | ---------: | -----: | -------------------: |
+| Russian                      |     22 341 |  9 195 |                 2.43 |
+| English                      |     23 393 |  7 875 |                 2.97 |
+
+**The descriptions are cheaper by 14%, not by 20%.** A description is shorter than an article of a
+law, and the share of the names of the files, the patterns and the code in it is higher: the names cost
+the same in both languages, and the translation keeps every one. The English glue is longer than the
+Russian one by 5% in characters.
+
+The entry into the work by the command of the price of the layer after the tasks 4 and 5: 49 358
+characters and 53 974 bytes against 41 052 characters and 69 510 bytes before them. The characters
+became more — the glossary got the tables of the names, and an English text is longer in characters;
+the bytes became less by 22%. The number of the characters of this command from this day does not
+measure the price: it compares the bytes, and the exact number is given by the measurement of the
+tokens.
+
+## The third measurement: the laws
+
+Taken on 6 September 2026 by the task RT-1852 over the fifteen files of the laws of the package, by the
+bytes of the files before and after the translation.
+
+| The laws |   Bytes |
+| -------- | ------: |
+| Russian  | 134 287 |
+| English  |  80 507 |
+
+**The laws are lighter by 40% in bytes.** An article of a law is prose without the names of the files
+and the code, and on it the translation gives more than on the descriptions. The number of the
+articles and of the questions in every law is equal to the former one: 283 articles and 4 open
+questions.
+
+The entry into the work after the task 6: 49 336 characters and 53 647 bytes; a law does not enter it,
+and the number hardly moved.
+
+## The fourth measurement: the rules and the cold parts
+
+Taken on 7 September 2026 by the task RT-1853 over the thirty rules and the ten cold parts of the
+package, by the bytes of the files before and after the translation.
+
+| The rules and the cold parts |   Bytes |
+| ---------------------------- | ------: |
+| Russian                      | 673 092 |
+| English                      | 426 599 |
+
+**The rules are lighter by 36% in bytes.** The number of the articles of the section about the
+application of the law is equal to the former one in every rule: 559 articles, 239 items of the cold
+parts, 53 lines of `rt-when`. In the lines and the characters an English text is longer than a Russian
+one, so the limit of the weight of a text is lifted to 330 lines and 24 000 characters: two rules and
+one cold part went past 300 lines at the same number of the articles.
+
+The entry into the work after the task 7 did not move: a rule is loaded on demand and does not enter
+the entry.
+
+## The fifth measurement: the patterns
+
+Taken on 7 September 2026 by the task RT-1854 over the fifty-two patterns of the package, by the bytes
+of the files before and after the translation.
+
+| The patterns |   Bytes |
+| ------------ | ------: |
+| Russian      | 587 107 |
+| English      | 399 540 |
+
+**The patterns are lighter by 32% in bytes.** The number of the headings outside the fences and the
+number of the fences in every pattern is equal to the former one; the ready code in the examples is not
+touched, the prose and the comments are translated. In the characters an English text is longer by 7%:
+the heaviest pattern is 17 877 characters at a limit of 24 000.
+
+The whole layer after the task 8 is 1 468 014 bytes against 1 628 176 after the task 7. The entry into
+the work did not move: a pattern is loaded by its name from a rule and does not enter the entry.
+
+## The sixth measurement: the skills, the commands, the roles, the samples, the templates, the flows and the defaults
+
+Taken on 7 September 2026 by the task RT-1855 over the thirty-five files of the seven directories of
+the package, by the bytes of the files before and after the translation.
+
+| The directories                   |   Bytes |
+| --------------------------------- | ------: |
+| Russian                           | 259 400 |
+| English                           | 179 496 |
+| Of them the texts `.md` — Russian | 165 772 |
+| Of them the texts `.md` — English | 109 784 |
+
+**The seven directories are lighter by 31% in bytes, the texts by 34%.** In the scenarios of the shell
+and in the working flows the comments, the hints to the roles and the descriptions of the phases are
+translated; the code is not touched. The Cyrillic stayed in the keys the hooks and the sending of the
+proposals read, in the names of the states and in the samples of the Russian texts for the owner; they
+are listed in the archive record of the task.
+
+## The seventh measurement: the refusals of the hooks and of the checks
+
+Taken on 7 September 2026 by the task RT-1856 over the sixty-four hooks and the forty-two checks of the
+package, by the bytes of the files before and after the translation.
+
+| The hooks and the checks |   Bytes | Lines with the Cyrillic |
+| ------------------------ | ------: | ----------------------: |
+| Russian                  | 654 666 |                   3 038 |
+| English                  | 502 936 |                      83 |
+
+| The checks |   Bytes | Lines with the Cyrillic |
+| ---------- | ------: | ----------------------: |
+| Russian    | 445 842 |                   2 154 |
+| English    | 354 605 |                     123 |
+
+**The hooks are lighter by 23% in bytes, the checks by 20%.** The comments, the introductions, the
+texts of the refusals and of the digests together with the expectations of the sets are translated; the
+code is not touched. The number of the probes of the set grew from the former one by four:
+SC-AK-908…911 about the keys of the task folder.
+
+The Cyrillic is left deliberately: the names of the states of the work, the Russian names of the keys
+in the alternations (the keys of the task folder, the section of the handover, the keys of the
+documents of the tree), the signs of the Russian speech of the owner and of the executor in the regular
+expressions, the signs of the Russian style in the check of the texts and the samples of the Russian
+texts for the owner. All of them are listed in the archive record of the task.
+
+**The keys of the task folder are read under two names.** The samples of the task folder, the patterns,
+the rule of the conduct of the work and the map of the turn carry the English keys — `## Where we
+stand`, `**State:**`, `**Stage:**`, `**Next step:**`, `**Draft:**`, `**Behaviour:** unchanged`,
+`**Task:**`, `**Branch:**`; six hooks and the command of the creation of a task read them on a par with
+the Russian ones. The folders of the tree created before the translation work without an edit.
+
+The whole layer after the task 10 is 1 450 197 bytes against 1 468 014 after the task 8. The entry into
+the work is 57 987 bytes: a refusal of a hook does not enter the entry and is paid only in the minute
+of the refusal.
+
+## The eighth measurement: the tree's own
+
+Taken on 7 September 2026 by the task RT-1857 over the own layer of this tree: the overrides, its own
+rules with the companions of all the rules, its own hooks, its own checks, the gate map, the profile
+and the memo. The bytes and the lines with the Cyrillic — before and after the translation.
+
+| The own layer |     Bytes | Lines with the Cyrillic |
+| ------------- | --------: | ----------------------: |
+| Russian       | 1 512 943 |                   6 350 |
+| English       | 1 234 124 |                     154 |
+
+| The part of the layer                | Files | Bytes before | Bytes after |
+| ------------------------------------ | ----: | -----------: | ----------: |
+| The overrides                        |    17 |       49 876 |      33 482 |
+| Its own rules and all the companions |    59 |      817 632 |     649 631 |
+| Its own hooks                        |     2 |       30 675 |      23 460 |
+| Its own checks                       |    61 |      562 280 |     485 784 |
+| The map, the profile, the memo       |     3 |       52 480 |      41 767 |
+
+**The tree's own is lighter by 18% in bytes.** The prose, the comments, the texts of the refusals and
+of the digests together with the expectations of the sets are translated; the code is not touched. All
+twelve rules of the linter of the tree and their probes are translated by the same session — 142
+probes are green. The gate after the translation calls the same rules: reconciled by a call on
+thirty-four paths, the output coincided line by line.
+
+The Cyrillic is left deliberately, and all of it is a quotation of a foreign line this task has
+nothing to edit by: the names of the states of the work, the keys of the sections of the specs
+(`## Правила`, `## Сценарии`, the mark `Не покрыто:`), the heading of the section of the request
+«Оставшийся шаг», the names of the sections of the admin application of the intake, the name of the
+step of the pipeline «Убрать за прогоном», the headings of `CONTEXT.md`, the section of the handles of
+the consumer in the description of the tokens, the sections of the showcase «Входы», the Russian
+samples in the alternations of two names at the guard of a draft, at the guard of the mark of the
+cargo and at the check of the boundary of the package. The rule is one: a quotation is edited by the
+same edit as its source, and the sources lie outside the footprint of this task.
+
+The whole layer after the task 11 is 1 282 196 bytes against 1 450 197 after the task 10. The entry
+into the work is 55 521 bytes against 57 987: its own rule `ui-component-tests` is loaded on demand,
+and into the entry go the descriptions of the rules, and they became shorter.
+
+## The ninth measurement: the documents of the tree
+
+Taken on 7 September 2026 by the task RT-1858 over the two hundred and three specs of
+`docs/specs/`, the twenty-five plans of `docs/plans/` and the two decisions of `docs/adr/`, by the
+bytes of the files before and after the translation.
+
+| The documents of the tree | Files |  Bytes ru |  Bytes en | The difference |
+| ------------------------- | ----: | --------: | --------: | -------------: |
+| `docs/specs/`             |   203 | 2 248 047 | 1 599 300 |         −28.9% |
+| `docs/plans/`             |    25 |   316 822 |   239 196 |         −24.5% |
+| `docs/adr/`               |     2 |    21 781 |    19 919 |          −8.5% |
+| In all                    |   230 | 2 586 650 | 1 858 415 |         −28.2% |
+
+**The documents of the tree are lighter by 28% in bytes.** The decision about the primitives of the
+CDK was written in English from the very beginning, and its 11 000 bytes are counted in both columns
+— hence the small difference at `docs/adr/`. In the lines the English text is longer: the specs grew
+from 25 089 to 26 438, the plans from 2 918 to 3 108.
+
+The lines with the Cyrillic went from 20 392 to 62. What is left is listed by name:
+
+- **The Russian labels of the screens of the admin application** — the specs of the receiver: the
+  screen "Вход", the item "Выйти", the names of the sections, the names of the states of a record,
+  the labels of the rows of the panel "Чем исправлено" and "В какой версии", the items of the filter
+  "все версии" and "без версии", the labels of the section of the invitations.
+- **The data of the tests** — `Иван` next to `иван` in the scenario of the entry, the name "Дерево"
+  of an invitation, the label "Курсы валют" and the query "курс" in the scenario of the selection of a
+  submenu.
+- **The names of the states of the work** — `замысел-записан`, `этап-идёт`, `работа-отдана`,
+  `влито` in the scenarios of the guards: they are machine keys, and the guard reads them.
+- **The Russian names of the sections read under two names** — "Статьи", "Ловушки", "Когда брать",
+  "## Правила" in the specs of the checks of the texts, and the binding `путь/к/ресурсу.md:Семья` in
+  the scenario about a companion.
+- **The header of the layout in the sample of a domain** — `docs/specs/_template/spec.md` is laid out
+  by the package, and the line about the override is written by the layout itself.
+- **The Russian content of the showcase** — the quotations «Отклонить заявку» and «Отпустите, чтобы
+  приложить» in the plan about the moving of the labels of the second kit to the application.
+
+**What was found along the way.** `docs/specs/README.md` — the index of the domains, 83 lines — was
+not translated by the stages 2 to 4: they went by the directories of the domains, and the index lies
+above them. It is translated by the same task, and its 55 lines of the Cyrillic are counted in the
+numbers above.
+
+## Open questions
+
+- **Q-1. Whether the layer is translated whole. Closed on 6 September 2026: it is translated, as
+  planned.** The owner decided that having seen the numbers of the first task: the gain is 20%, not
+  threefold. The order of the tasks and the boundaries of the epic stay the former ones, all twelve
+  tasks are in force.
+- **Q-2. What a session translates a text for the owner by. Closed on 6 September 2026 by the task
+  RT-1850: by a table of the names in the glossary.** The glossary of the package holds the section
+  "Russian names" — one Russian name per English term; the override of the tree holds the same section
+  under a name of its own for its own words. The table is one, in one direction: a session reads an
+  English term and writes the owner the Russian name from the table. The reverse side is not needed: the
+  owner does not write in English.
+- **Q-3. What to do with a bilingual layer at a consumer.** The override of a consumer tree stays
+  Russian until it is translated; the merged text of a rule comes out bilingual. Whether that is
+  tolerable for the time of the transition is decided by the owner at the task 11.

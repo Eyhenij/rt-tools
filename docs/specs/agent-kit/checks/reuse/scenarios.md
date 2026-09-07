@@ -1,145 +1,148 @@
-# Сценарии — признаки единообразия
+# Scenarios — the uniformity signs
 
-Номера сквозные по домену: они связывают сценарий с заголовком теста и при переезде в поддомен
-не пересчитываются.
+The numbers run through the domain: they tie a scenario to a test title and are not recounted on the
+move into a subdomain.
 
-### SC-AK-142 — дерево получает признаки только объявленных наборов
+### SC-AK-142 — a tree gets the signs of the declared bundles only
 
-Дано дерево объявило один набор из нескольких, лежащих при пакете
-Когда идёт сплошная сверка единообразия
-Тогда признаки прочих наборов не применяются вовсе
+Given the tree declared one bundle out of several lying at the package
+When the sweeping uniformity audit runs
+Then the signs of the other bundles are not applied at all
 
-Покрыто: `projects/agent-kit/tests/reuse-guard.test.sh`.
+Covered: `projects/agent-kit/tests/reuse-guard.test.sh`.
 
-### SC-AK-143 — гард и сплошная сверка читают одни и те же признаки
+### SC-AK-143 — the guard and the sweeping audit read the same signs
 
-Дано дерево объявило набор, и в нём признак с образцом отмены
-Когда одна и та же строка попадает под гард на правке и под сплошную сверку
-Тогда обе называют один и тот же ключ признака и одно и то же готовое
+Given the tree declared a bundle, and it holds a sign with a cancelling sample
+When one and the same line falls under the guard on an edit and under the sweeping audit
+Then both name the same key of the sign and the same ready-made
 
-Покрыто: `projects/agent-kit/tests/reuse-guard.test.sh`.
+Covered: `projects/agent-kit/tests/reuse-guard.test.sh`.
 
-### SC-AK-144 — свой признак дерева приезжает поверх объявленных наборов
+### SC-AK-144 — an own sign of the tree arrives on top of the declared bundles
 
-Дано дерево объявило свой файл признаков, и в нём ключ, которого в наборах пакета нет
-Когда идёт проверка
-Тогда признак применяется наравне с пакетными
+Given the tree declared its own sign file, and it holds a key that is not in the package bundles
+When the check runs
+Then the sign is applied on a par with the package ones
 
-Покрыто: `projects/agent-kit/tests/reuse-guard.test.sh`.
+Covered: `projects/agent-kit/tests/reuse-guard.test.sh`.
 
-### SC-AK-145 — свой признак с занятым ключом замещает пакетный
+### SC-AK-145 — an own sign with a taken key replaces the package one
 
-Дано дерево объявило признак с ключом, который уже есть в объявленном наборе
-Когда идёт проверка
-Тогда применяется признак дерева, а пакетный не применяется
+Given the tree declared a sign with a key that already stands in a declared bundle
+When the check runs
+Then the sign of the tree is applied, and the package one is not
 
-Покрыто: `projects/agent-kit/tests/reuse-guard.test.sh`.
+Covered: `projects/agent-kit/tests/reuse-guard.test.sh`.
 
-### SC-AK-146 — имени дерева-потребителя в наборах пакета нет
+### SC-AK-146 — there is no name of a consumer tree in the bundles of the package
 
-Дано наборы признаков пакета прочитаны с диска
-Когда в них ищутся имена классов и компонентов, не принадлежащих пакетам rt-tools
-Тогда не находится ни одного
+Given the sign bundles of the package are read from the disk
+When names of classes and components not belonging to the rt-tools packages are looked for in them
+Then not one is found
 
-Не покрыто: признак «имя принадлежит пакету» машине не дан — его читает человек, как и
-признак приёма в законе. Это `Q-20`.
+Not covered: the sign "the name belongs to the package" is not given to a machine — it is read by a
+person, like the sign of the intake in the law. This is `Q-20`.
 
-### SC-AK-147 — признак области «файл целиком» судит итоговое содержимое
+### SC-AK-147 — a sign with the scope "the whole file" judges the resulting content
 
-Дано признак объявлен областью «файл целиком», а правка приносит строку без объявления класса
-Когда гард судит правку
-Тогда признак считается по файлу вместе с правкой, а не по одной правке
+Given a sign is declared with the scope "the whole file", and the edit brings a line without a class
+declaration
+When the guard judges the edit
+Then the sign is counted over the file together with the edit, not over the edit alone
 
-Покрыто: `projects/agent-kit/tests/reuse-guard.test.sh`.
+Covered: `projects/agent-kit/tests/reuse-guard.test.sh`.
 
-### SC-AK-148 — пустая отмена признака в соседнее поле не съезжает
+### SC-AK-148 — an empty cancelling of a sign does not slide into the neighbouring field
 
-Дано признак объявлен с пустой отменой и непустым советом
-Когда гард разбирает его
-Тогда советом остаётся совет, а образцом отмены — пустота
+Given a sign is declared with an empty cancelling and a non-empty advice
+When the guard takes it apart
+Then the advice stays the advice, and the cancelling sample stays empty
 
-Покрыто: `projects/agent-kit/tests/reuse-guard.test.sh`.
+Covered: `projects/agent-kit/tests/reuse-guard.test.sh`.
 
-### SC-AK-149 — дерево без объявленных наборов слышит об этом
+### SC-AK-149 — a tree without declared bundles hears about it
 
-Дано в настройке проверок дерева не объявлено ни одного набора и нет своих признаков
-Когда идёт правка файла под гардом
-Тогда гард говорит, что признаков нет и каким ключом они объявляются, и правку пропускает
+Given not a single bundle is declared in the check setting of the tree and there are no own signs
+When a file is edited under the guard
+Then the guard says that there are no signs and by which key they are declared, and lets the edit
+through
 
-Покрыто: `projects/agent-kit/tests/reuse-guard.test.sh`.
+Covered: `projects/agent-kit/tests/reuse-guard.test.sh`.
 
-### SC-AK-150 — названный набор, которого при пакете нет, отбивает сверку
+### SC-AK-150 — a named bundle that is not at the package refuses the audit
 
-Дано дерево объявило набор с именем, которому при пакете ничего не отвечает
-Когда идёт сплошная сверка
-Тогда она отдаёт ненулевой код, называет имя и перечисляет наборы, которые есть
+Given the tree declared a bundle with a name nothing at the package answers to
+When the sweeping audit runs
+Then it gives back a non-zero code, names the name and lists the bundles that are there
 
-Покрыто: `projects/agent-kit/tests/reuse-guard.test.sh`.
+Covered: `projects/agent-kit/tests/reuse-guard.test.sh`.
 
-### SC-AK-151 — маркер отступления снимает свою строку и следующую
+### SC-AK-151 — the deviation marker removes its own line and the next one
 
-Дано в файле стоит маркер отступления комментарием строкой выше нативного тега
-Когда идёт сплошная сверка единообразия
-Тогда признак в следующей за маркером строке не считается, а через строку — считается
+Given the file holds the deviation marker as a comment one line above a native tag
+When the sweeping uniformity audit runs
+Then the sign in the line following the marker is not counted, and the one a line further is
 
-Покрыто: `projects/agent-kit/tests/reuse-guard.test.sh`.
+Covered: `projects/agent-kit/tests/reuse-guard.test.sh`.
 
-### SC-AK-196 — пропуск корней бэкенда действует и у гарда
+### SC-AK-196 — the skip of the backend roots acts at the guard too
 
-Дано признак объявлен с пропуском корней бэкенда, а правка идёт под таким корнем
-Когда гард судит правку
-Тогда он пропускает — так же, как её пропускает сплошная проверка
+Given a sign is declared with the skip of the backend roots, and the edit goes under such a root
+When the guard judges the edit
+Then it lets it through — the same way the sweeping check lets it through
 
-Покрыто: `projects/agent-kit/tests/reuse-guard.test.sh`.
+Covered: `projects/agent-kit/tests/reuse-guard.test.sh`.
 
-### SC-AK-197 — образец имени сверяется с путём от корня дерева
+### SC-AK-197 — the name sample is checked against the path from the root of the tree
 
-Дано признак объявлен образцом имени, отделяющим один корень дерева от другого
-Когда гард судит два одноимённых файла из разных корней
-Тогда признак получает только тот, чей путь совпал с образцом
+Given a sign is declared by a name sample telling one root of the tree from another
+When the guard judges two files of the same name from different roots
+Then only the one whose path matched the sample gets the sign
 
-Покрыто: `projects/agent-kit/tests/reuse-guard.test.sh`.
+Covered: `projects/agent-kit/tests/reuse-guard.test.sh`.
 
-### SC-AK-813 — дерево без единого признака получает отказ, а не зелёный ноль
+### SC-AK-813 — a tree without a single sign gets a refusal, not a green zero
 
-Дано дерево не назвало ни одного набора признаков и своего файла признаков не завело
-Когда идёт сплошная проверка единообразия
-Тогда она отказывает ненулевым кодом и называет наборы, которые есть при пакете; с объявленным
-набором тот же прогон проходит
+Given the tree named not a single sign bundle and created no sign file of its own
+When the sweeping uniformity check runs
+Then it refuses with a non-zero code and names the bundles that are at the package; with a declared
+bundle the same run passes
 
-Покрыто: `projects/agent-kit/tests/checks-reuse.test.sh`.
+Covered: `projects/agent-kit/tests/checks-reuse.test.sh`.
 
-### SC-AK-814 — признак глобали судит положение имени
+### SC-AK-814 — the global sign judges the position of the name
 
-Дано в судимом файле имя глобали стоит внутри строки в кавычках, за знаком обращения к полю либо
-объявлено своей переменной
-Когда идёт сплошная проверка единообразия
-Тогда признак на них не срабатывает, а настоящее обращение к глобали он по-прежнему называет
+Given in the judged file the name of the global stands inside a quoted string, after a field access
+mark or is declared as a variable of its own
+When the sweeping uniformity check runs
+Then the sign does not fire on them, and it still names a real access to the global
 
-Покрыто: `projects/agent-kit/tests/checks-reuse.test.sh`.
+Covered: `projects/agent-kit/tests/checks-reuse.test.sh`.
 
-### SC-AK-815 — код без разметки признаком среды не судится
+### SC-AK-815 — code without markup is not judged by an environment sign
 
-Дано файл лежит под серверным корнем дерева
-Когда идёт сплошная проверка единообразия
-Тогда признаки окна браузера его не судят: окна там нет вовсе
+Given the file lies under a server root of the tree
+When the sweeping uniformity check runs
+Then the browser window signs do not judge it: there is no window there at all
 
-Покрыто: `projects/agent-kit/tests/checks-reuse.test.sh`.
+Covered: `projects/agent-kit/tests/checks-reuse.test.sh`.
 
-### SC-AK-817 — директивы своей дизайн-системы вырезаются из признаков нативных тегов
+### SC-AK-817 — the directives of the own design system are cut out of the signs of native tags
 
-Дано дерево объявило директивы своей дизайн-системы списком в настройке проверок
-Когда идёт сплошная проверка единообразия
-Тогда нативный тег, несущий такую директиву, расхождением не считается, а тег без неё — считается
+Given the tree declared the directives of its own design system as a list in the check setting
+When the sweeping uniformity check runs
+Then a native tag carrying such a directive does not count as a divergence, and a tag without one
+does
 
-Покрыто: `projects/agent-kit/tests/checks-reuse.test.sh`.
+Covered: `projects/agent-kit/tests/checks-reuse.test.sh`.
 
-### SC-AK-874 — папка источника готового выведена из-под признака
+### SC-AK-874 — the source folder of the ready-made is taken out from under a sign
 
-Дано признак несёт обратный образец пути, а дерево само пишет то готовое, о котором признак
-говорит
-Когда идёт сплошная проверка единообразия и правка того же файла проходит гард
-Тогда внутри набора признак судит по-прежнему, а папка источника готового расхождением не
-считается — оба читают образец одинаково
+Given a sign carries a reverse path sample, and the tree itself writes the ready-made the sign
+speaks of
+When the sweeping uniformity check runs and an edit of the same file passes the guard
+Then inside the bundle the sign judges as before, and the source folder of the ready-made does not
+count as a divergence — both read the sample the same way
 
-Покрыто: `projects/agent-kit/tests/checks-reuse.test.sh`, `projects/agent-kit/tests/reuse-guard.test.sh`.
+Covered: `projects/agent-kit/tests/checks-reuse.test.sh`, `projects/agent-kit/tests/reuse-guard.test.sh`.

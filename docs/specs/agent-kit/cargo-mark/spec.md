@@ -1,134 +1,144 @@
-# Отметка состояния груза
+# The state mark of a cargo record
 
-**Статус:** действует · **Ревизия:** 2026-08-24 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** `message-bus` (куда уходит отметка)
-**Законы:** `work-conduct`, `verifiability`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-24 · **Scenario prefix:** `SC-AK`
+**Depends on:** `message-bus` (where the mark goes)
+**Laws:** `work-conduct`, `verifiability`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Груз, приехавший в приём, разбирает тот, кто по нему работает, и состояние записи — единственное,
-что этот разбор переживает. Поддомен называет, чем состояние двигают, что команда отбивает до
-сети и как читается её ответ.
+The cargo that arrived in the intake is sorted out by whoever works on it, and the state of a record
+is the only thing that sorting out survives. The subdomain names what the state is moved by, what
+the command refuses before the network and how its answer is read.
 
-Отправка груза — соседний поддомен: там предмет другой, там груз уезжает, а здесь двигается
-состояние уже приехавшего.
+Sending the cargo is a neighbouring subdomain: the subject there is different — there the cargo
+leaves, here the state of what has already arrived is moved.
 
-## Терминология
+## Terminology
 
-- **Запись груза** — разбор происшествия или предложение, лежащее в приёме.
-- **Отметка** — вызов команды дерева, переводящий названные записи в одно состояние.
-- **Приём починки** — текст о том, чем промах исправлен; едет вместе с переходом в «готово».
-- **Версия выпуска** — строка, которой дерево назвало редакцию; едет с переходом в «выпущено».
+- **A cargo record** — an incident analysis or a proposal lying in the intake.
+- **A mark** — a call of the tree's command that moves the named records into one state.
+- **The fix acceptance** — the text about what the miss was fixed by; it travels together with the
+  move into "done".
+- **The release version** — the line the tree named the edition by; it travels with the move into
+  "released".
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Список записей и их состояния показывает админка приёма; отметка интерфейса не имеет — её видит
-исполнитель строками ответа.
+The list of records and their states is shown by the admin panel of the intake; the mark has no
+interface — the executor sees it as lines of the answer.
 
-## Правила
+## Rules
 
-- **Отметка ставится командой пакета, а не запросом руками.** Адрес приёма и токен дерева лежат
-  в настройке пакета, и второй их держатель развёл бы одно дерево по двум местам.
-- **Одна отметка несёт одно состояние и сколько угодно записей.** Разбор груза кончается тем, что
-  пачка записей уходит на один и тот же шаг; разные состояния — разные вызовы.
-- **Записи обоих родов уезжают одним запросом.** Команда собирает их в один пакет: приём правит
-  и разборы происшествий, и предложения.
-- **Команда строки запуска несёт текст починки доводом.** Дерево зовёт правку одной командой, и
-  приём починки не заставляет его собирать тело запроса руками.
-- **Команда строки запуска несёт версию выпуска доводом.** Дерево зовёт правку одной командой, и
-  отметка о выпуске не заставляет его собирать тело запроса руками. Довод назван по выпуску, а не
-  по версии: `--version` у команды строки запуска читается как «покажи свою версию».
-- **Записи называются теми же ключами, которыми приехали.** Разбор происшествия — именем своего
-  файла, предложение — признаком текста.
-- **Признак предложения считается тем же способом, что и у приёма.** Разойдясь, стороны не нашли
-  бы ни одной записи.
-- **Признак дерева считается одним приёмом на отправке и на отметке.** Две копии счёта расходятся
-  молча: своя копия брала последнее слово адреса, а отправка — адрес целиком и в нижнем регистре,
-  и дерево слало груз под одним признаком, а отмечало под другим. Приём отвечал на это отказом о
-  чужом дереве, и ни одна запись не отметилась ни разу — при том что обе стороны выглядели
-  работающими.
-- **Незнакомое состояние отбивается до сети.** Набор состояний закрыт, и опечатка стоит отказа
-  здесь, а не отказа приёма после запроса.
-- **Вызов без записей отбивается и называет, чего не хватает.** Отметка, которой нечего
-  отмечать, — промах вызывающего, а не пустая работа.
-- **Без токена дерева команда в сеть не идёт.** Она называет, чем дерево заводится: запрос без
-  токена всё равно кончился бы отказом приёма.
-- **Холостой ход печатает, что уехало бы, и в сеть не идёт.** Тем же приёмом, что и отправка
-  груза: перед первой отметкой видно, что именно уедет.
-- **Отбитые приёмом записи печатаются поимённо, с причиной.** Число само по себе не говорит,
-  какую запись исполнитель назвал не так.
-- **Отметка, которая ничего не перевела, кончается ненулевым кодом.** Ноль читается как
-  сделанная работа, и молчаливый ноль на отбитом пакете оставил бы разбор неотмеченным.
-- **Ни токен дерева, ни текст записи в вывод не попадают.** Печатается ключ записи, состояние и
-  причина отказа.
-- **Приём отвечает счётом, и команда пересказывает его человеку.** Сколько переведено, сколько
-  уже стояло в этом состоянии и что отбито.
+- **The mark is set by a command of the package, not by a request made by hand.** The address of the
+  intake and the token of the tree lie in the package setting, and a second holder of them would
+  split one tree between two places.
+- **One mark carries one state and any number of records.** Sorting out the cargo ends with a batch
+  of records going to one and the same step; different states are different calls.
+- **Records of both kinds leave by one request.** The command gathers them into one packet: the
+  intake edits both incident analyses and proposals.
+- **The launch-line command carries the fix text as an argument.** The tree calls the edit by one
+  command, and the fix acceptance does not force it to assemble the request body by hand.
+- **The launch-line command carries the release version as an argument.** The tree calls the edit by
+  one command, and the release mark does not force it to assemble the request body by hand. The
+  argument is named by the release, not by the version: `--version` on a launch-line command reads
+  as "show your version".
+- **The records are named by the same keys they arrived by.** An incident analysis by the name of
+  its file, a proposal by the sign of its text.
+- **The sign of a proposal is counted the same way as at the intake.** Having diverged, the sides
+  would find not a single record.
+- **The sign of the tree is counted by one technique on the send and on the mark.** Two copies of the
+  count diverge silently: the copy of one's own took the last word of the address, and the send took
+  the address whole and in lower case, and the tree sent the cargo under one sign and marked under
+  another. The intake answered that with a refusal about a foreign tree, and not one record was ever
+  marked — while both sides looked as if they were working.
+- **An unknown state is refused before the network.** The set of states is closed, and a typo costs a
+  refusal here, not a refusal of the intake after the request.
+- **A call without records is refused and names what is missing.** A mark with nothing to mark is a
+  miss of the caller, not empty work.
+- **Without the token of the tree the command goes to no network.** It names what the tree is created
+  by: a request without a token would end with a refusal of the intake anyway.
+- **A dry run prints what would leave and goes to no network.** By the same technique as sending the
+  cargo: before the first mark it is visible what exactly will leave.
+- **The records the intake refused are printed by name, with a reason.** A number by itself does not
+  say which record the executor named wrongly.
+- **A mark that moved nothing ends with a non-zero code.** Zero reads as work done, and a silent zero
+  on a refused packet would leave the sorting out unmarked.
+- **Neither the token of the tree nor the text of a record reaches the output.** What is printed is
+  the key of the record, the state and the reason for the refusal.
+- **The intake answers with a count, and the command retells it to the person.** How many were moved,
+  how many already stood in this state and what was refused.
 
-## Что не входит
+## What is out of scope
 
-- Разбор самого груза: что взять в работу, решает исполнитель, и машине этот признак недоступен.
-- Правка записей в приёме рукой человека: запись закрыта токеном дерева.
-- Отправка груза: она едет своим вызовом и состояния не двигает.
+- Sorting out the cargo itself: what to take into work the executor decides, and that sign is not
+  available to a machine.
+- Editing records in the intake by a person's hand: a record is closed by the token of the tree.
+- Sending the cargo: it travels by a call of its own and moves no states.
 
-## Контракт
+## Contract
 
-Поверхность — строка запуска команды дерева и один запрос к приёму на вызов.
+The surface is the launch line of the tree's command and one request to the intake per call.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: именованных кодов у команды нет — она отвечает кодом возврата процесса и строками, а таблица ниже говорит, что печатается в каждом случае.
+Not applicable: the command has no named codes — it answers with the exit code of the process and
+with lines, and the table below says what is printed in each case.
 
-| Что случилось                   | Чем кончается | Что говорит                               |
-| ------------------------------- | ------------- | ----------------------------------------- |
-| незнакомое состояние            | код 1         | какие состояния бывают; запроса не делает |
-| ни одной записи в доводах       | код 1         | чего не хватает и чем называется запись   |
-| нет токена дерева               | код 1         | чем дерево заводится                      |
-| приём отбил хотя бы одну запись | код 1         | ключ записи и причину отбоя построчно     |
-| всё переведено                  | код 0         | сколько переведено и сколько уже стояло   |
+| What happened                          | How it ends | What it says                                       |
+| -------------------------------------- | ----------- | -------------------------------------------------- |
+| an unknown state                       | code 1      | which states there are; makes no request           |
+| not a single record in the arguments   | code 1      | what is missing and what a record is named by      |
+| no token of the tree                   | code 1      | what the tree is created by                        |
+| the intake refused at least one record | code 1      | the key of the record and the reason, line by line |
+| everything was moved                   | code 0      | how many were moved and how many already stood     |
 
-## Данные
+## Data
 
-Своего хранилища нет: адрес приёма и токен дерева читаются из настройки, состояния записей живут
-в приёме.
+There is no storage of its own: the address of the intake and the token of the tree are read from
+the setting, the states of the records live in the intake.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: экранов у команды нет — список записей показывает админка приёма.
+Not applicable: the command has no screens — the list of records is shown by the admin panel of the
+intake.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: вывод команды одноязычен.
+Not applicable: the output of the command is single-language.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Команда живёт в дереве, где стоит приёмник: у дерева, которое пакет только ставит, ни приёма, ни
-его админки нет, и звать её там некому.
+The command lives in the tree where the receiver stands: a tree that only installs the package has
+neither the intake nor its admin panel, and there is nobody there to call it.
 
-## Решения
+## Decisions
 
-- **Команда живёт в дереве, а не в пакете.** Отмечает записи тот, кто груз разбирает, а
-  разбирает его дерево с приёмником. Отвергнуто: ресурс пакета — потребителю его нечем исполнить.
-- **Форма груза берётся у пакета, а не объявляется второй раз.** Обе стороны обязаны читать одно
-  объявление: из двух копий компилируется одна, а расходятся они молча.
-- **Всё, что можно отбить до сети, отбивается до сети.** Незнакомое состояние, вызов без записей
-  и отсутствующий токен видны на месте, и запрос ради отказа не делается.
+- **The command lives in the tree, not in the package.** The records are marked by whoever sorts the
+  cargo out, and it is the tree with the receiver that sorts it out. Rejected: a package resource —
+  a consumer has nothing to carry it out with.
+- **The shape of the cargo is taken from the package, not declared a second time.** Both sides are
+  bound to read one declaration: of two copies one is compiled, and they diverge silently.
+- **Everything that can be refused before the network is refused before the network.** An unknown
+  state, a call without records and a missing token are visible on the spot, and a request for the
+  sake of a refusal is not made.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом.
+The open questions of the domain are shared, and they live in the spec next to it.
 
-## История изменений
+## History of changes
 
-- 2026-08-24 — поддомен выделен из поддомена наблюдений, переросшего предел длины. Правила,
-  сценарии и привязки отметки переехали сюда прежними: номера сценариев не пересчитывались.
+- 2026-08-24 — the subdomain was split off from the observations subdomain, which had outgrown the
+  length limit. The rules, the scenarios and the bindings of the mark moved here unchanged: the
+  scenario numbers were not recounted.

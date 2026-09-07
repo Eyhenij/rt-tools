@@ -1,120 +1,133 @@
-# Значок по требованию
+# An icon on demand
 
-**Статус:** действует · **Ревизия:** 2026-08-26 · **Префикс сценариев:** `SC-UKV`
-**Зависимости:** снимки витрины (ожидание значков в кадре и проба разметок); набор значков
-пакета в `projects/ui-kit-v2/src/assets/icons`
-**Законы:** `verifiability`, `delivery`, `frontend-application`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-26 · **Scenario prefix:** `SC-UKV`
+**Depends on:** the snapshots of the showcase (the waiting for the icons in a frame and the probe of
+the markups); the set of the icons of the package in `projects/ui-kit-v2/src/assets/icons`
+**Laws:** `verifiability`, `delivery`, `frontend-application`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Кит отдаёт странице весь набор значков независимо от того, сколько она рисует. Реестр собирает
-спрайт одним пакетом запросов по всему перечню имён, и страница, показывающая единицы значков,
-платит за все: замер публичной страницы потребителя на мобильном профиле насчитал 335 запросов
-за файлами значков из 383 запросов страницы, общим весом 291 КБ, уходящих между 402 и 507 мс —
-то есть в одном канале с кодом приложения и картинками самой страницы.
+The kit gives the page the whole set of the icons regardless of how many it draws. The registry puts
+the sprite together by one bundle of requests over the whole list of the names, and a page showing
+single icons pays for all of them: a measurement of a public page of a consumer on the mobile profile
+counted 335 requests for the files of the icons out of the 383 requests of the page, of a total weight
+of 291 KB, going away between 402 and 507 ms — that is, in one channel with the code of the application
+and the pictures of the page itself.
 
-Обойти это со стороны приложения нечем: приём кита принимает адрес набора и ничего больше.
-Остаётся лазейка — положить свой спрайт в разметку до старта, — но тогда шаг сборки, имена
-символов и признак спрайта заводит у себя каждое приложение, хотя принадлежат они киту.
+There is nothing to go around this by from the side of the application: the intake of the kit accepts
+the address of the set and nothing more. What is left is a loophole — to put a sprite of one's own into
+the markup before the start — but then the step of the build, the names of the symbols and the sign of
+the sprite are created at home by every application, although they belong to the kit.
 
-Поддомен называет, что кит обещает вместо этого: значок едет тогда, когда его попросили, платит
-за него та страница, которая его нарисовала, и промах одного имени больше не гасит остальные.
+The subdomain names what the kit promises instead: an icon goes when it was asked for, the page that
+drew it pays for it, and a miss of one name no longer puts out the rest.
 
-## Терминология
+## Terminology
 
-- **Набор** — файлы значков, которые приложение публикует из каталога значков пакета.
-- **Перечень имён** — литеральный union имён значков, которым типизирован вход разметки.
-- **Спрайт** — узел в начале страницы, куда реестр складывает пришедшие символы.
-- **Символ** — один значок внутри спрайта, на который ссылается разметка.
-- **Запрос имени** — обращение разметки к реестру за символом: с него начинается загрузка.
-- **Разметка значка** — способ, которым кит рисует значок. Их две: свой компонент и кнопка,
-  рисующая значок сама.
+- **The set** — the files of the icons the application publishes from the catalogue of the icons of the
+  package.
+- **The list of the names** — the literal union of the names of the icons the input of the markup is
+  typed by.
+- **The sprite** — the node at the start of the page the registry puts the symbols that arrived into.
+- **A symbol** — one icon inside the sprite the markup refers to.
+- **A request of a name** — an address of the markup to the registry for a symbol: the loading starts
+  with it.
+- **A markup of an icon** — the way the kit draws an icon by. There are two: a component of its own and
+  a button drawing an icon itself.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Человеку за экраном ни один из этих терминов не показывается: значок либо нарисован, либо нет.
-Подпись контролу даёт сам контрол — значок для чтения с экрана спрятан.
+Not a single one of these terms is shown to the person behind the screen: an icon is either drawn or
+not. The label to a control is given by the control itself — an icon is hidden from the reading from
+the screen.
 
-## Правила
+## Rules
 
-- **Значок едет по запросу имени, а не вперёд.** Страница платит за то, что нарисовала.
-- **Повторный запрос того же имени сети не трогает.** Первый запрос заводит поток, остальные
-  ждут его; пришедший символ остаётся в спрайте до конца жизни страницы.
-- **Отказ одного имени гасит только его значок.** Остальные значки страницы рисуются.
-- **Обе разметки значка просят одинаково.** Компонент и кнопка ходят одним путём, и значок,
-  спрошенный обеими сразу, едет одним запросом.
-- **Символ, уже лежащий в спрайте страницы, запроса не даёт.** Так витрина не гоняет одно и то
-  же между историями, а приложение вправе положить свой спрайт заранее.
-- **Смена имени у нарисованного значка тянет новое имя.** Прежний символ остаётся в спрайте.
-- **На сервере набор не грузится.** Значки дорисовываются после гидрации.
-- **Предзагрузки всего набора у кита нет.** Ни умолчанием, ни признаком приёма: два пути
-  означали бы два исхода у ожидания снимков, и держать проверками пришлось бы оба.
+- **An icon goes by a request of a name, not in advance.** The page pays for what it drew.
+- **A repeated request of the same name does not touch the network.** The first request creates a
+  stream, the rest wait for it; the symbol that arrived stays in the sprite to the end of the life of
+  the page.
+- **A refusal of one name puts out only its icon.** The rest of the icons of the page are drawn.
+- **Both markups of an icon ask in the same way.** The component and the button go by one road, and an
+  icon asked by both at once goes by one request.
+- **A symbol already lying in the sprite of the page gives no request.** So the showcase does not chase
+  one and the same thing between the stories, and the application has the right to put a sprite of its
+  own in advance.
+- **A change of the name at a drawn icon pulls the new name.** The former symbol stays in the sprite.
+- **On the server the set is not loaded.** The icons are drawn after the hydration.
+- **The kit has no preloading of the whole set.** Neither by a default nor by a sign of the intake: two
+  roads would mean two outcomes at the waiting of the snapshots, and both would have to be held by
+  checks.
 
-## Что не входит
+## What is out of scope
 
-- Готовый спрайт в пакете и список имён параметром приёма — оба способа разобраны и отвергнуты.
-- Разбор самого набора на нужные значки и мёртвые: это работа про содержание набора.
-- Правка приложения-потребителя, на котором снят замер: оно получит правку версией пакета.
-- Публикация новой версии пакета в реестр.
+- A ready sprite in the package and a list of the names as a parameter of the intake — both ways were
+  taken apart and rejected.
+- The taking apart of the set itself into the needed icons and the dead ones: that is a work about the
+  content of the set.
+- An edit of the application-consumer the measurement was taken on: it will get the edit by a version of
+  the package.
+- The publication of a new version of the package into the registry.
 
-## Контракт
+## Contract
 
-Приём кита снаружи не меняется: он принимает адрес набора и ничего больше. Меняется то, что за
-ним стоит, — момент загрузки. Потребитель, ждавший весь спрайт к старту приложения, его больше
-не получает: это ломающая правка опубликованного пакета, и объявляется она поднятой версией и
-записью в разделе изменений.
+The intake of the kit does not change from outside: it accepts the address of the set and nothing more.
+What changes is what stands behind it — the minute of the loading. A consumer who waited for the whole
+sprite by the start of the application does not get it any more: this is a breaking edit of a published
+package, and it is declared by a raised version and a record in the section of the changes.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: отказов наружу поддомен не отдаёт. Отказ загрузки одного имени остаётся внутри
-реестра и виден как ненарисованный значок; строку о нём пишет приложение своими приёмами
-наблюдаемости, а не кит.
+Not applicable: the subdomain gives no refusals outward. A refusal of the loading of one name stays
+inside the registry and is visible as an icon that was not drawn; the row about it is written by the
+application by its own techniques of observability, not by the kit.
 
-## Данные
+## Data
 
-Своих данных поддомен не держит. Файлы набора публикует приложение, перечень имён живёт в коде
-кита.
+The subdomain keeps no data of its own. The files of the set are published by the application, the list
+of the names lives in the code of the kit.
 
-## Экраны и состояния
+## Screens and states
 
-Значок живёт в трёх состояниях: не спрошен, спрошен и ещё не приехал, нарисован. Второе видно
-пустым местом размера значка — место занято сразу, чтобы приход символа не двигал соседей.
-Четвёртого состояния на экране нет: отказавший значок остаётся тем же пустым местом, что и
-едущий.
+An icon lives in three states: not asked, asked and not arrived yet, drawn. The second is visible as an
+empty place of the size of the icon — the place is taken at once so that the arrival of the symbol does
+not move the neighbours. There is no fourth state on the screen: an icon that refused stays the same
+empty place as one that is on its way.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: значок текста не несёт.
+Not applicable: an icon carries no text.
 
 ### SEO
 
-Не применимо: значки спрятаны от чтения с экрана и в выдачу не попадают.
+Not applicable: the icons are hidden from the reading from the screen and do not get into the output.
 
-### Мобильная раскладка
+### Mobile layout
 
-Требование это и решает: мобильный профиль замера и был тем случаем, где сотни запросов делят
-канал с кодом страницы.
+This requirement is what it solves: the mobile profile of the measurement was the very case where
+hundreds of requests share the channel with the code of the page.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо: набор один на приложение.
+Not applicable: the set is one per application.
 
-## Решения
+## Decisions
 
-- **Загрузка по требованию, а не готовый спрайт в пакете.** Спрайт одним файлом убрал бы число
-  запросов, но оставил бы странице вес всего набора.
-- **Предзагрузка снимается целиком.** Оставленная необязательной, она дала бы ожиданию снимков
-  два разных исхода, и держать проверками пришлось бы оба.
+- **The loading on demand, not a ready sprite in the package.** A sprite as one file would have removed
+  the number of the requests but would have left the page the weight of the whole set.
+- **The preloading is lifted whole.** Left as not obligatory, it would have given the waiting of the
+  snapshots two different outcomes, and both would have had to be held by checks.
 
-## Открытые вопросы
+## Open questions
 
-Открытых вопросов нет. `Q-1` — каким местом реестра разметка просит имя — закрыт работой:
-запуск загрузки в вычислении адреса символа отвергнут, у реестра для этого свой вызов, ничего не
-возвращающий, и подписка живёт внутри него.
+There are no open questions. `Q-1` — by which place of the registry the markup asks for a name — was
+closed by the work: starting the loading in the computing of the address of a symbol was rejected, the
+registry has a call of its own for that which returns nothing, and the subscription lives inside it.
 
-## История изменений
+## History of changes
 
-- 2026-08-26 — заведено по заявке #1182 и влито в спек домена вместе с работой RT-1182.
+- 2026-08-26 — created by the request #1182 and merged into the spec of the domain together with the
+  work RT-1182.

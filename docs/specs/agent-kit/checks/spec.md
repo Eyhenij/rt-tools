@@ -1,301 +1,322 @@
-# Проверки дерева
+# The checks of the tree
 
-**Статус:** действует · **Ревизия:** 2026-08-20 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `verifiability`, `reuse-first`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-20 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `verifiability`, `reuse-first`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Проверка, которую надо помнить, до второго месяца не доживает. Поддомен называет, что пакет
-везёт проверками дерева — длину файлов, повторы, признаки единообразия, объявления классов
-вёрстки — и что каждая из них судит, а чего не судит вовсе. Чем стережётся дорога наружу,
-говорит поддомен гардов поставки.
+A check that has to be remembered does not live to its second month. The subdomain names what the
+package carries as the checks of the tree — file length, repeats, uniformity signs, declarations of
+markup classes — and what each of them judges and what it does not judge at all. What the road
+outward is watched by is said by the subdomain of the delivery guards.
 
-## Терминология
+## Terminology
 
-- **Предел длины** — число строк, за которым файл считается нечитаемым целиком. Одно на все
-  роды файлов.
-- **Накопленное** — файлы, перешагнувшие предел до того, как он объявлен. Перечислены поимённо.
-- **Долг** — накопленное, которое дерево намерено разобрать; от принятого отличается тем, что на
-  него заведена работа.
-- **Признак единообразия** — правило вида «в тексте есть такое-то, значит готовое обошли», вместе
-  с тем, чем его заменить.
-- **Набор признаков** — признаки одного пакета мастерской, объявленные одним файлом: что этот
-  пакет везёт и чем в нём пользуются вместо своего.
-- **Объявленный набор** — набор, который дерево назвало своим в настройке проверок.
-- **Свои признаки** — признаки самого дерева-потребителя, объявленные им у себя и приезжающие
-  поверх объявленных наборов.
-- **Область признака** — что признак читает: только новый текст правки или файл целиком.
-- **Отмена признака** — образец, при котором признак не срабатывает: основа уже унаследована,
-  готовое уже позвано.
+- **The length limit** — the number of lines past which a file counts as unreadable whole. One for
+  all kinds of files.
+- **The accumulated** — the files that stepped past the limit before it was declared. Listed by
+  name.
+- **Debt** — the accumulated that the tree intends to sort out; it differs from the accepted in that
+  work is opened for it.
+- **A uniformity sign** — a rule of the shape "the text holds such and such, so the ready-made was
+  bypassed", together with what to replace it by.
+- **A sign bundle** — the signs of one workshop package declared by one file: what this package
+  carries and what is used in it instead of one's own.
+- **A declared bundle** — a bundle the tree named as its own in the setting of the checks.
+- **Own signs** — the signs of the consumer tree itself, declared by it at home and arriving on top
+  of the declared bundles.
+- **The scope of a sign** — what the sign reads: only the new text of the edit or the whole file.
+- **The cancelling of a sign** — the sample at which the sign does not fire: the base is already
+  inherited, the ready-made is already called.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости           | В строке запуска                             |
-| -------------------------- | -------------------------------------------- |
-| проверка длины             | `node <корень проверок>/check-file-size.mjs` |
-| перечень принятого и долга | файл рядом с проверкой, назван её настройкой |
-| сплошная проверка          | команда сверки единообразия                  |
-| гард на правке             | гард единообразия, событие правки файла      |
+| In the agreement                      | In the launch line                                  |
+| ------------------------------------- | --------------------------------------------------- |
+| the length check                      | `node <the root of the checks>/check-file-size.mjs` |
+| the list of the accepted and the debt | a file next to the check, named by its setting      |
+| the sweeping check                    | the command of the uniformity audit                 |
+| the guard on an edit                  | the uniformity guard, the event of editing a file   |
 
-## Правила
+## Rules
 
-- **Каталог чужого пакета ищется разрешением модуля, а не путём в каталоге зависимостей.** Пакет,
-  объявленный зависимостью подпроекта, в корне дерева не лежит вовсе: менеджер держит его в своём
-  хранилище и вправе держать рядом несколько версий сразу. Зашитый путь на такой раскладке не
-  устаревает — он не бывает верным никогда, и проверка кончается отказом чтения каталога, не дойдя
-  до сверки. Обход хранилища по образцу пути тем же промахом выбирает версию, которую никто не
-  ставит.
-- **Таблица соответствий считается повтором по доле совпавших пар, а не по полному равенству.**
-  Полное равенство слепо ровно там, где копия разошлась с оригиналом на строку, — а это и есть
-  тот случай, ради которого копии сводят. Доля берётся от большей таблицы: от меньшей таблица из
-  двух пар, целиком лежащая внутри таблицы из двадцати, читалась бы полной копией. Строка находки
-  называет, на сколько пар из скольких таблицы разошлись, — без этого точная копия не отличается
-  от разошедшейся.
-- **Отсутствие чужого пакета проверку не роняет.** Его наборы — дополнение к сверке своих
-  повторов, а не её условие: дерево, где пакета нет, получает сверку своих, а не отказ.
-- **Предел длины объявлен одним числом на все роды файлов.** Своё число у каждого рода означает
-  спор о числе на каждой правке, а не о длине файла.
-- **Пределов длины два: код и текст слоя правил.** Тексту порог нужен раньше — у кода длину
-  стережёт ещё и линтер, а у прозы только это число. Файл судится по корню, под которым лежит,
-  а не по расширению: код лежит и в текстовых файлах. Каждая строка отказа называет тот предел,
-  которым судила, — иначе одно и то же число читается то строгостью, то послаблением. Дерево,
-  корней текста не назвавшее, судится одним пределом, как прежде.
-- **У текста слоя правил есть третий предел — вес в знаках.** Строки меряют, сколько текста
-  помещается на экран, а веса не меряют вовсе: правило о заявках занимает 282 строки при
-  13 595 знаках, правило поставки — 272 строки при 21 508. Сжатие срезает знаки и оставляет
-  число переносов прежним, поэтому без веса достигнутое не закрепляется и текст отрастает
-  обратно молча. Число назначается по сжатому слою: чуть выше самого тяжёлого текста — ниже
-  значило бы резать заново уже сжатое, выше не закрепляет ничего.
-- **Спутники из счёта веса выведены.** Компаньон правила и перечень сценариев — таблицы связи:
-  заголовок привязки дословно повторяет утверждение, потому что связь идёт по его тексту, и
-  резать там нечего, не порвав саму связь. Вес такого файла растёт с числом утверждений, а не с
-  многословием. Строковый предел на них остаётся: он ловит другое.
-- **Дерево, не назвавшее числа веса или корней текста, судится одними строками.** Вторая цифра в
-  сводке говорила бы о проверке, которая там не работает.
-- **Привязка записывается двумя формами, и читаются обе.** Таблица и строка списка
-  «- **утверждение** — `файл:символ`» равны: связь идёт по тексту утверждения, а не по форме
-  строки. Форма списка заведена потому, что треть веса спутника — пробелы, которыми форматтер
-  добивает столбцы таблицы до общей ширины: в спутниках дерева это 191 820 знаков. Смешанный
-  спутник читается целиком — перевод идёт файл за файлом, и половина дерева какое-то время стоит
-  в прежней форме.
-- **Накопленное до объявления предела перечислено поимённо.** Перечень отмечает долг, а не
-  выдаёт разрешение: файл, попавший в него, остаётся длинным и виден списком.
-- **Принятое и долг в перечне различаются.** Принятое — то, что дерево делить не собирается;
-  долг — то, на что работа заведена. Один список на оба означал бы, что разбирать нечего.
-- **Список принятого читает общий разбор, а не каждая проверка по-своему.** Форма записи одна на
-  все списки дерева: разойдясь, они начинают требовать разного, и запись, годная для одной
-  проверки, для соседней оказывается битой — а видно это только тому, кто её туда положил.
-- **У записи списка стоят своя причина и номер задачи, которой она внесена.** Причина прозой на
-  весь список объясняет любую строку и потому не объясняет ни одной; запись без номера не
-  спросишь ни у кого. Запись без причины или без номера кончает разбор отказом, называющим файл
-  и саму запись.
-- **Сторона списка, записанная перечнем строк, отбивает разбор, и отказ показывает форму
-  записи.** У строки нет места ни для причины, ни для номера задачи, и перечень читается как
-  список без объяснений. Отказ, называющий одну сторону, отправляет читать код разбора: рядом
-  стоит образец — ключ, а при нём причина и номер задачи.
-- **Сторона, которую проверка читает, названа разбору перечнем.** Прочитанная мимо разбора, она
-  теряет и требование причины, и требование номера, а отсутствие её в перечне отвечает пустотой
-  вместо отказа: проверка зеленеет тем громче, чем больше в стороне записей.
-- **Списка нет вовсе — разбор отдаёт пустое и работу не отбивает.** Проверка, встреченная
-  впервые, показывает всё найденное новым: это честнее, чем отказ из-за отсутствия файла.
-- **Данные из счёта длины выведены.** Словарь локали и настройка сборки читаются поиском, а не
-  подряд; делить их не на что.
-- **Описание прошлого и папка задачи из счёта выведены.** Архив по устройству перечисляет то,
-  чего в дереве уже нет, а папка задачи умирает со слиянием.
-- **Сгенерированное выведено каталогом, а не именами.** Его переписывает генератор целиком, и
-  спорить с ним о длине некому.
-- **Длина считается тем же способом, каким её считает линтер.** Число разрывов строк плюс один:
-  у двух проверок дерева одно понятие длины, иначе один и тот же файл длинен для одной и
-  короток для другой.
-- **Признак называет свою область.** Наследование основы и метка класса в точечную правку не
-  попадают, и признак, судящий их по добавленному тексту, молчит всегда.
-- **Пустое поле признака не съезжает в соседнее.** Признак с пустой отменой читается так же, как
-  признак без неё: разбор, теряющий пустое поле, превращает совет в образец и гасит гард целиком.
-- **Гард, не получивший ни одного признака, говорит об этом.** Молчаливый гард неотличим от
-  гарда, которому нечего отбивать; дерево без объявленных наборов узнаёт об этом при первой правке.
-- **Гард на правке и сплошная проверка читают у признака одни и те же поля.** Пропуск корней
-  бэкенда действует у обоих, а образец имени оба сверяют с путём от
-  корня дерева. Прочитанное по-разному расходится молча: гард отбивает правку, которую проверка
-  пропускает, увидеть это можно только на гейте, а провести правку больше нечем — маркер
-  отступления объявляет обход готового, а обхода здесь не было.
-- **Объявление, приехавшее подключённым пакетом, читается наравне со своим.** Экран, собранный
-  из готового, объявлений в дереве не держит: они лежат в пакете дизайн-системы, а приложение
-  подключает их одной строкой. Долг по такому классу вечен — написать правило рядом значит
-  продублировать пакетное и разойтись с ним молча, а снять класс значит переверстать экран,
-  собранный из готового.
-- **Читается то, что приложение подключило само, и не глубже.** Подключения внутри пакетного
-  файла не разбираются: обход односложный, иначе проверка идёт по чужому дереву подключений и
-  считает объявленным то, чего приложение не звало. Каталог зависимостей в корни исходников при
-  этом не попадает — их читают и другие проверки, а пакет под их сверку не годится.
-- **Расхождение опознаётся по имени класса, а не по перечню файлов при нём.** Перечень входит в
-  ключ списка известного и меняется от каждой правки разметки: сверенный целиком, он делает
-  прежнюю строку лишней, а тот же самый долг — новым расхождением.
-- **Изменившийся перечень файлов называется своим родом.** Долг разросся — перечисляются
-  добавившиеся файлы; сократился — то, что пора убрать из строки. Указания убрать строку
-  целиком при этом нет, и новая строка не предлагается: список набран к дню заведения проверки
-  и только сокращается, а пара «строку убрать» и «завелась новая» верного хода не даёт вовсе.
-- **Имя элемента собирается из вложенности, а не читается одной строкой.** Объявление
-  `&__<голова> { &-<хвост> }` даёт класс `<голова>-<хвост>`, и колен у него бывает сколько
-  угодно. Читая только то, что стоит после `__` целиком, проверка числит долгом исправную
-  вёрстку: половина накопленного в этом дереве оказалась именно такой — правило работает, класс
-  красит, а снять его значило бы сломать экран. Хвост без головы при этом объявлением не
-  становится: имя, собранное вне блока элемента, не принадлежит никому.
+- **The directory of a foreign package is found by module resolution, not by a path in the
+  dependency directory.** A package declared a dependency of a subproject does not lie in the root of
+  the tree at all: the manager keeps it in its own store and has the right to keep several versions
+  side by side. A hardwired path on such a layout does not go stale — it is never right at all, and
+  the check ends with a refusal to read the directory before reaching the audit. Walking the store by
+  a path sample picks, by the same miss, a version nobody installs.
+- **A table of correspondences counts as a repeat by the share of matching pairs, not by full
+  equality.** Full equality is blind exactly where a copy diverged from the original by one line —
+  and that is the very case copies are gathered for. The share is taken from the larger table: from
+  the smaller one, a table of two pairs lying whole inside a table of twenty would read as a full
+  copy. The line of a finding names on how many pairs out of how many the tables diverged — without
+  that an exact copy is indistinguishable from a diverged one.
+- **The absence of a foreign package does not take the check down.** Its bundles are an addition to
+  the audit of one's own repeats, not its condition: a tree where the package is absent gets the
+  audit of its own, not a refusal.
+- **The length limit is declared as one number for all kinds of files.** A number of its own for
+  every kind means an argument about the number on every edit, not about the length of the file.
+- **There are two length limits: code and the text of the rules layer.** A text needs the threshold
+  earlier — the length of code is watched by the linter as well, and prose has only this number. A
+  file is judged by the root it lies under, not by its extension: code lies in text files too. Every
+  refusal line names the limit it judged by — otherwise one and the same number reads now as
+  strictness, now as leniency. A tree that named no text roots is judged by one limit, as before.
+- **The text of the rules layer has a third limit — its weight in characters.** Lines measure how
+  much text fits on a screen, and they do not measure weight at all: the rule on requests takes 282
+  lines at 13 595 characters, the delivery rule 272 lines at 21 508. Compression cuts characters and
+  leaves the number of wraps the same, so without weight what was reached is not fixed and the text
+  grows back silently. The number is assigned by the compressed layer: a little above the heaviest
+  text — lower would mean cutting the already compressed anew, higher fixes nothing.
+- **The companions are taken out of the weight count.** A rule companion and a list of scenarios are
+  link tables: the heading of a binding repeats the statement verbatim, because the link goes by its
+  text, and there is nothing to cut there without breaking the link itself. The weight of such a file
+  grows with the number of statements, not with wordiness. The line limit stays on them: it catches
+  something else.
+- **A tree that named no weight number and no text roots is judged by lines alone.** A second figure
+  in the digest would speak of a check that does not work there.
+- **A binding is written in two shapes, and both are read.** A table and a list line
+  "- **statement** — `file:symbol`" are equal: the link goes by the text of the statement, not by the
+  shape of the line. The list shape was created because a third of the weight of a companion is the
+  spaces the formatter pads the table columns to a common width with: in the companions of the tree
+  that is 191 820 characters. A mixed companion is read whole — the translation goes file by file,
+  and half the tree stands in the former shape for a while.
+- **What accumulated before the limit was declared is listed by name.** The list marks debt, it does
+  not issue permission: a file that got into it stays long and is visible in the list.
+- **The accepted and the debt in the list are told apart.** The accepted is what the tree does not
+  intend to split; the debt is what work is opened for. One list for both would mean there is nothing
+  to sort out.
+- **The list of the accepted is read by a shared parser, not by every check in its own way.** The
+  shape of a record is one for all the lists of the tree: having diverged, they start demanding
+  different things, and a record fit for one check turns out broken for the neighbouring one — and
+  that is visible only to whoever put it there.
+- **A record of the list carries a reason of its own and the number of the task that added it.** A
+  prose reason for the whole list explains any line and therefore explains none; a record without a
+  number cannot be asked of anyone. A record without a reason or without a number ends the parse with
+  a refusal naming the file and the record itself.
+- **A side of the list written as a list of lines refuses the parse, and the refusal shows the shape
+  of a record.** A line has room for neither a reason nor a task number, and such a list reads as a
+  list without explanations. A refusal naming one side sends the reader to the code of the parser:
+  the sample stands next to it — a key, and at it a reason and a task number.
+- **The side the check reads is named to the parser by a list.** Read past the parser, it loses both
+  the demand for a reason and the demand for a number, and its absence from the list answers with
+  emptiness instead of a refusal: the check turns green all the louder the more records the side
+  holds.
+- **There is no list at all — the parser gives back an empty one and refuses no work.** A check met
+  for the first time shows everything found as new: that is more honest than a refusal over a missing
+  file.
+- **Data is taken out of the length count.** A locale dictionary and a build setting are read by
+  search, not in a row; there is nothing in them to split.
+- **The archive and the task folder are taken out of the count.** The archive by construction lists
+  what is no longer in the tree, and the task folder dies with the merge.
+- **What is generated is taken out by directory, not by names.** The generator rewrites it whole, and
+  there is nobody to argue with it about length.
+- **The length is counted the same way the linter counts it.** The number of line breaks plus one:
+  two checks of the tree have one notion of length, otherwise one and the same file is long for one
+  and short for the other.
+- **A sign names its own scope.** Inheriting a base and a class mark do not get into a pointed edit,
+  and a sign judging them by the added text stays silent always.
+- **An empty field of a sign does not slide into the neighbouring one.** A sign with an empty
+  cancelling reads the same as a sign without one: a parser that loses an empty field turns an advice
+  into a sample and puts the guard out whole.
+- **A guard that got not a single sign says so.** A silent guard is indistinguishable from a guard
+  with nothing to refuse; a tree without declared bundles learns of it on the first edit.
+- **The guard on an edit and the sweeping check read the same fields of a sign.** The skip of the
+  backend roots acts on both, and the name sample both check against the path from the root of the
+  tree. What is read differently diverges silently: the guard refuses an edit the check lets through,
+  this can be seen only at the gate, and there is nothing else to make the edit with — the deviation
+  marker declares a bypass of the ready-made, and there was no bypass here.
+- **A declaration that arrived by a connected package is read on a par with one's own.** A screen
+  assembled from the ready-made holds no declarations in the tree: they lie in the design-system
+  package, and the application connects them by one line. The debt on such a class is eternal —
+  writing a rule next to it means duplicating the package one and diverging from it silently, and
+  removing the class means re-laying out a screen assembled from the ready-made.
+- **What the application connected itself is read, and no deeper.** The connections inside a package
+  file are not taken apart: the walk is one link long, otherwise the check goes over a foreign tree of
+  connections and counts as declared what the application never called. The dependency directory does
+  not get into the source roots at that — other checks read those too, and the package is not fit for
+  their audit.
+- **A divergence is recognised by the name of the class, not by the list of files at it.** The list
+  is part of the key of the known list and changes with every markup edit: checked whole, it makes
+  the former line surplus, and that same debt a new divergence.
+- **A changed list of files is named by its own kind.** The debt grew — the added files are listed;
+  it shrank — what is time to take out of the line. There is no instruction to remove the line whole
+  at that, and no new line is offered: the list was gathered by the day the check was created and only
+  shrinks, and the pair "remove the line" and "a new one appeared" gives no right move at all.
+- **The name of an element is assembled from the nesting, not read as one line.** The declaration
+  `&__<head> { &-<tail> }` gives the class `<head>-<tail>`, and it has as many joints as needed.
+  Reading only what stands after `__` whole, the check counts sound markup as debt: half of what
+  accumulated in this tree turned out to be exactly that — the rule works, the class paints, and
+  removing it would mean breaking the screen. A tail without a head does not become a declaration at
+  that: a name assembled outside the element block belongs to nobody.
 
-- **Проверка объявляет пропуск кодом возврата, а не строкой вывода.** Строку читает человек, код
-  — зовущий: ноль на пропуске стоит в сводке набора рядом с пройденными проверками и ничем от них
-  не отличается, а набор при этом читается как проверенный целиком.
-- **Пропущенная проверка называется вслух, но пуш не отбивает.** Проверка, которой нечего
-  смотреть, это не поломка; молчание о ней и есть та неотличимость, ради которой код
-  заведён.
-- **Проверка, не сумевшая отработать, отказывает, а не пропускает.** «Проверять негде» и
-  «проверка сломана» — разные вещи, и ноль им обоим делает второе неотличимым от «сверено и
-  сошлось». Негде — это состояние дерева, названное самой проверкой: нет предмета, не задан
-  адрес, служба не отвечает; каждый такой выход объявлен поимённо и отдаёт ноль. Всё
-  остальное — недостающий пакет, пустое имя в настройке, неразобранный ответ службы,
-  непредвиденное исключение — отказ ненулевым кодом со строкой о том, что сломалась проверка, а
-  не предмет. Иначе она стоит в наборе гейта, годами возвращает ноль и ни разу ничего не сверяет.
-- **«Проверять негде» перестаёт быть пропуском, когда ветка тронула предмет проверки.** База на
-  машине бывает погашена буднично, и отбивать за это пуш документации не за что; но ветка,
-  правившая схему или миграции, без прогона цепочки уезжает в главную вслепую — и падает не она, а
-  выкатка. Так и упал прод: поля появились в схеме без миграций, часть страниц стала отвечать «не
-  найдено», полчаса недоступности, чинили откатом, а гейт был зелёным.
-- **Тронутость считается по обеим сторонам: незакоммиченному и вкладу ветки от главной.** Правка,
-  ещё не попавшая в коммит, уходит тем же пушем следом, а вклад ветки её не видит.
-- **Отказ по недоступной базе называет, чем её поднять.** Сказанное только «негде» читается как
-  разрешение: поднимать базу исполнитель не обязан, а гейт при этом зелёный.
+- **A check declares a skip by the exit code, not by a line of output.** The line is read by a
+  person, the code by the caller: zero on a skip stands in the digest of the set next to the checks
+  that passed and differs from them in nothing, while the set reads as checked whole.
+- **A skipped check is named aloud but refuses no push.** A check with nothing to look at is no
+  breakage; silence about it is the very indistinguishability the code was created for.
+- **A check that could not do its work refuses, it does not skip.** "There is nowhere to check" and
+  "the check is broken" are different things, and zero for both makes the second indistinguishable
+  from "checked and it came together". Nowhere is a state of the tree named by the check itself: there
+  is no subject, no address is set, the service does not answer; every such exit is declared by name
+  and gives back zero. Everything else — a missing package, an empty name in the setting, an
+  unparsed answer of the service, an unforeseen exception — is a refusal with a non-zero code and a
+  line saying that the check broke, not the subject. Otherwise it stands in the gate set, returns zero
+  for years and never checks a thing.
+- **"There is nowhere to check" stops being a skip when the branch touched the subject of the
+  check.** A database on the machine is shut down as a matter of course, and there is nothing to
+  refuse a documentation push for; but a branch that edited the schema or the migrations goes into the
+  main branch blind without a run of the chain — and it is not the branch that falls, it is the
+  rollout. That is how production fell: the fields appeared in the schema without migrations, part of
+  the pages started answering "not found", half an hour of unavailability, it was fixed by a rollback,
+  and the gate was green.
+- **Touchedness is counted on both sides: the uncommitted and the contribution of the branch from
+  main.** An edit that has not got into a commit yet leaves by the same push right after, and the
+  contribution of the branch does not see it.
+- **A refusal about an unavailable database names what to raise it with.** Said only as "nowhere", it
+  reads as permission: the executor is not obliged to raise the database, and the gate is green at
+  that.
 
-- **Пустое имя в настройке спрашивается отдельно от несуществующего файла.** Склеенное с корнем
-  дерева, пустое имя даёт сам корень, а он есть всегда: проверка читает это как «предмет на
-  месте» и идёт дальше с пустым доводом. Пустое имя — законный ответ дерева «предмета у меня
-  нет», и отвечать на него надо своей строкой и нулём, а не существованием корня.
+- **An empty name in the setting is asked about apart from a non-existent file.** Glued to the root
+  of the tree, an empty name gives the root itself, and it is always there: the check reads that as
+  "the subject is in place" and goes on with an empty argument. An empty name is a lawful answer of
+  the tree, "I have no such subject", and it must be answered by a line of its own and by zero, not by
+  the existence of the root.
 
-- **Тяжёлый шаг набора зовётся по своему предмету, а не по признаку «ветка тронула код».**
-  Предмет у каждого свой — витрина кита, приёмник, админка, — и объявлен он путями; ветка, не
-  задевшая путей предмета, за его шаг не платит. Признак «всё или ничего» ошибается в верную
-  сторону, но пропускает третье между «гнать всё» и «не гнать ничего»: гнать то, чего ветка
-  коснулась. Платят за это дважды — временем и ложным отказом: правка, не касавшаяся показа,
-  однажды встала на непостоянном снимке чужого компонента. Ошибаться признак обязан по-прежнему
-  в сторону лишнего прогона: путь, не попавший ни в один предмет, и общее основание дерева
-  поднимают весь набор — незнакомое читается как «могло задеть что угодно». Состав набора при
-  этом не меняется: полнота требуется отдельно, и меняется условие вызова, а не список.
-- **Дешёвая проверка предметом не делится и зовётся при любом составе правки.** Деление по
-  предмету заведено ради тяжёлых шагов: стенда, снимков, сборки образов. Проверка, идущая меньше
-  секунды, от такого деления ничего не выигрывает, а теряет то, ради чего стоит: правка соседнего
-  предмета проходит мимо неё, и красная проверка молчит днями. Пять проверок слоя оформления
-  второго кита так и не звал никто — ни гейт, ни конвейер, — и сверка графа токенов стояла
-  красной несколько дней подряд, ни разу не отбив пуша.
-- **Заявка, открытая не в главную ветку, называется своей строкой.** Прогона у неё не будет:
-  рабочий поток слушает заявки в главную и событий с другой базой не видит. Строка о потерянном
-  событии была бы неверна дважды: событие не терялось, и перезакрытие его не вернёт.
-  Исправляется это переносом базы после слияния нижней заявки.
-- **Проверка срока описания прошлого требует на сутки позже, чем чистка снимает.** Возраст
-  записи считается по минуте коммита. Чистка идёт в минуту пуша, проверка в конвейере — минутами
-  или часами позже, и без запаса очередная запись пересекала порог между ними: три прогона
-  одного захода покраснели так, ни один не по правке ветки. Отбор у обеих сторон один, разница в
-  запасе, и всё, что проверка называет, чистка снимает.
-- **Ответ помощника очереди работ говорит, чьими глазами снято состояние.** Задачу помощник
-  читает токеном машинной записи, заявку — без токена, от того, под кем залогинен клиент: полям
-  разбора нужны права на учётные записи организации, которых машинной записи не давали. По
-  одному выводу это неразличимо, и дерево, где машинная запись ограничена хостингом, принимало
-  картину человека за проверенную. Поле `viewer` в ответе — `machine` либо `client`; логин не
-  печатается, за ним пришлось бы ходить в сеть вторым запросом.
+- **A heavy step of the set is called by its own subject, not by the sign "the branch touched
+  code".** Each has a subject of its own — the showcase of a kit, the receiver, the admin panel — and
+  it is declared by paths; a branch that did not touch the paths of the subject does not pay for its
+  step. The sign "all or nothing" errs in the right direction, but it skips the third case between
+  "run everything" and "run nothing": running what the branch touched. It is paid for twice — by time
+  and by a false refusal: an edit that never touched the display once stood over an unstable snapshot
+  of a foreign component. The sign is still bound to err towards a surplus run: a path that fell into
+  no subject, and the common base of the tree, raise the whole set — the unfamiliar reads as "could
+  have touched anything". The composition of the set does not change at that: completeness is demanded
+  separately, and what changes is the condition of the call, not the list.
+- **A cheap check is not split by subject and is called at any composition of an edit.** The split by
+  subject was created for the heavy steps: the stand, the snapshots, the image builds. A check running
+  under a second wins nothing from such a split, and loses the very thing it stands for: an edit of a
+  neighbouring subject passes it by, and a red check stays silent for days. Five checks of the styling
+  layer of the second kit were called by nobody — neither the gate nor the pipeline — and the audit of
+  the token graph stood red for several days in a row without ever refusing a push.
+- **A request opened not into the main branch is named by a line of its own.** It will have no run:
+  the pipeline listens to requests into main and does not see events with another base. A line about a
+  lost event would be wrong twice over: the event was not lost, and reopening will not bring it back.
+  This is fixed by moving the base after the lower request is merged.
+- **The check of the archive keeping time demands a day later than the cleanup removes.** The age of a
+  record is counted by the minute of the commit. The cleanup goes at the minute of the push, the check
+  in the pipeline minutes or hours later, and without a margin the next record crossed the threshold
+  between them: three runs of one session turned red that way, not one of them over the edit of the
+  branch. The pick is the same on both sides, the difference is in the margin, and everything the check
+  names the cleanup removes.
+- **The answer of the work queue helper says whose eyes the state was taken by.** The helper reads a
+  task by the token of the machine record, and a request without a token, as whoever the client is
+  signed in under: the parse fields need rights over the accounts of the organisation, which the
+  machine record was not given. By the output alone this is indistinguishable, and a tree where the
+  machine record is limited by the hosting took a person's picture for a checked one. The field
+  `viewer` in the answer is `machine` or `client`; the login is not printed, fetching it would take a
+  second request to the network.
 
-## Что не входит
+## What is out of scope
 
-- Сценарии признаков единообразия — поддомен `reuse` рядом: их пятнадцать, и файл сценариев
-  домена перерос предел вместе с ними.
+- The scenarios of the uniformity signs — the subdomain `reuse` next to it: there are fifteen of
+  them, and the scenario file of the domain outgrew the limit along with them.
 
-- Деление длинных файлов: проверка называет их, а делит человек.
-- Счёт длины у кода на языке, где длину стережёт линтер: там она уже судится.
-- Отказ гарда единообразия за ненайденный файл своих признаков: пропуск дешевле остановки работы.
-- Перенос накопленного долга единообразия при смене наборов: снимок расхождений перечитывает та
-  работа, которая набор поменяла.
-- Машинная сверка того, что имя в наборе принадлежит пакету, а не дереву-потребителю: признак
-  читает человек — это `Q-20`.
-- **Разбор подключений глубже первого колена.** Читается файл, названный приложением; что
-  подключает он сам, проверке неизвестно. Иначе она идёт по чужому дереву подключений и считает
-  объявленным то, чего приложение не звало.
-- **Правка списка известного машиной.** Изменившийся перечень файлов проверка называет, а
-  строку правит человек: список сокращается решением, а не прогоном.
+- Splitting long files: the check names them, and a person splits them.
+- Counting the length of code in a language where the linter watches the length: there it is judged
+  already.
+- A refusal of the uniformity guard over a missing file of one's own signs: a skip is cheaper than
+  stopping the work.
+- Moving the accumulated uniformity debt when the bundles change: the snapshot of divergences is
+  re-read by the work that changed the bundles.
+- A machine check that a name in a bundle belongs to the package and not to the consumer tree: the
+  sign is read by a person — that is `Q-20`.
+- **Taking connections apart deeper than the first link.** The file named by the application is read;
+  what it connects itself is unknown to the check. Otherwise it goes over a foreign tree of
+  connections and counts as declared what the application never called.
+- **Editing the known list by a machine.** A changed list of files the check names, and a person edits
+  the line: the list shrinks by a decision, not by a run.
 
-## Контракт
+## Contract
 
-Поверхность — проверки, которые дерево зовёт строкой запуска. Каждая выходит нулём, когда
-расхождений нет, и единицей, когда они есть; накопленное до объявления перечислено поимённо и
-отказа не даёт.
+The surface is the checks the tree calls by the launch line. Each leaves with zero when there are no
+divergences and with one when there are; what accumulated before the declaration is listed by name
+and gives no refusal.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: проверки отвечают кодом возврата и текстом, а не именованными кодами.
+Not applicable: the checks answer with an exit code and a text, not with named codes.
 
-| Что случилось                                         | Код | Что говорит                                                                    |
-| ----------------------------------------------------- | --- | ------------------------------------------------------------------------------ |
-| файл длиннее предела и в перечне его нет              | `1` | путь, длину и предел                                                           |
-| строка перечня, у которой нет файла                   | `1` | строку и то, что файла по ней нет                                              |
-| признаков не осталось ни одного — ни набора, ни своих | `1` | что признаков нет, какие наборы есть при пакете и каким ключом они объявляются |
-| названный набор признаков при пакете не найден        | `1` | имя набора и то, какие наборы есть                                             |
-| файл своих признаков назван, но не найден             | `0` | что своих признаков нет, и работа идёт дальше                                  |
-| в тексте найден признак единообразия                  | `1` | ключ признака, файл и чем это заменить                                         |
+| What happened                                             | Code | What it says                                                                              |
+| --------------------------------------------------------- | ---- | ----------------------------------------------------------------------------------------- |
+| a file is longer than the limit and is not in the list    | `1`  | the path, the length and the limit                                                        |
+| a line of the list that has no file                       | `1`  | the line and that there is no file by it                                                  |
+| not a single sign is left — neither a bundle nor own ones | `1`  | that there are no signs, which bundles the package has and by which key they are declared |
+| the named sign bundle is not found at the package         | `1`  | the name of the bundle and which bundles there are                                        |
+| the file of one's own signs is named but not found        | `0`  | that there are no own signs, and the work goes on                                         |
+| a uniformity sign was found in the text                   | `1`  | the key of the sign, the file and what to replace it by                                   |
 
-## Данные
+## Data
 
-Своего хранилища нет. Перечень принятого и долга лежит файлом рядом с проверкой, а признаки
-единообразия — объявленными наборами при пакете и файлом своих признаков в дереве.
+There is no storage of its own. The list of the accepted and of the debt lies as a file next to the
+check, and the uniformity signs are in the declared bundles at the package and in the file of one's
+own signs in the tree.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: экранов нет.
+Not applicable: there are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: вывод проверок одноязычный.
+Not applicable: the output of the checks is single-language.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Проверки одни на все деревья, а корни, слова и объявленные наборы читаются из настройки дерева.
-Не названное деревом не судится вовсе: молчание означает «правила на это нет», а не «правило
-исполнено».
+The checks are one set for all trees, and the roots, the words and the declared bundles are read
+from the setting of the tree. What the tree did not name is not judged at all: silence means "there
+is no rule about this", not "the rule is kept".
 
-## Решения
+## Decisions
 
-- **Предел длины один на все роды.** Отвергнуто: своё число каждому роду — тогда каждая правка
-  начинается со спора о числе.
-- **Накопленное перечислено, а не прощено умолчанием.** Умолчание «старое не судим» не кончается
-  никогда: новый файл рядом со старым выглядит таким же законным.
-- **Данные из счёта выведены родом, а не перечнем.** Перечень словарей локалей пришлось бы
-  дописывать на каждую новую локаль.
-- **Признаки единообразия — данные, а не код.** Гард написан на оболочке, проверка — на JS; общего
-  кода между ними быть не может, а общие данные — могут. Отвергнуто: держать признаки в функции
-  профиля дерева — тогда сплошной проверке пришлось бы звать оболочку на каждый файл.
-- **Признаки режутся по пакетам мастерской, а не по родам файлов.** Дерево выбирает пакеты, а не
-  рода: оно знает, ставит ли кит, и не знает, какие рода файлов при этом задеты.
-- **Функция профиля остаётся у гарда единообразия.** Деревья её уже написали; она читается вместе
-  с объявленными наборами и ничего не отменяет.
+- **The length limit is one for all kinds.** Rejected: a number of its own for every kind — then
+  every edit starts with an argument about the number.
+- **What accumulated is listed, not forgiven by a default.** The default "we do not judge the old"
+  never ends: a new file next to an old one looks just as lawful.
+- **Data is taken out of the count by kind, not by a list.** A list of locale dictionaries would have
+  to be appended for every new locale.
+- **The uniformity signs are data, not code.** The guard is written in shell, the check in JS; there
+  can be no shared code between them, and shared data there can. Rejected: keeping the signs in a
+  profile function of the tree — then the sweeping check would have to call the shell on every file.
+- **The signs are cut by workshop packages, not by kinds of files.** The tree picks packages, not
+  kinds: it knows whether it installs a kit, and does not know which kinds of files are touched by it.
+- **The profile function stays at the uniformity guard.** The trees have already written it; it is
+  read together with the declared bundles and cancels nothing.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом.
+The open questions of the domain are shared, and they live in the spec next to it.
 
-## История изменений
+## History of changes
 
-- 2026-09-05 — поле `viewer` в ответах помощника очереди работ, задача RT-1800.
+- 2026-09-05 — the field `viewer` in the answers of the work queue helper, task RT-1800.
 
-- 2026-09-05 — запас в сутки у проверки срока описания прошлого, задача RT-1797.
+- 2026-09-05 — the day of margin at the check of the archive keeping time, task RT-1797.
 
-- 2026-08-17 — поддомен выделен из спека домена, переросшего предел длины. Правила, сценарии и
-  привязки проверок дерева и гейта пуша переехали сюда прежними: номера сценариев не
-  пересчитывались.
-- 2026-08-20 — гарды поставки и гейт пуша выделены отсюда в свой поддомен: спек перерос предел
-  длины, а два предмета в нём читались как один. Номера сценариев не пересчитывались.
+- 2026-08-17 — the subdomain was split off from the domain spec, which had outgrown the length limit.
+  The rules, the scenarios and the bindings of the tree checks and of the push gate moved here
+  unchanged: the scenario numbers were not recounted.
+- 2026-08-20 — the delivery guards and the push gate were split off from here into a subdomain of
+  their own: the spec had outgrown the length limit, and two subjects in it read as one. The scenario
+  numbers were not recounted.

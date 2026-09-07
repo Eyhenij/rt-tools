@@ -1,136 +1,139 @@
-# Сценарии — признак применимости у статьи правила
+# Scenarios — the applicability sign at an article of a rule
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной. Префикс общий на домен, и номера при переезде в поддомен не
-пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier goes at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason. The prefix is shared across the domain,
+and the numbers were not recounted at the move into the subdomain: the number ties the scenario to
+the test title.
 
-### SC-AK-656 — отказ называет статью заголовком
+### SC-AK-656 — the refusal names the article by a heading
 
-Дано под правку подпадают статьи размеченного правила
-Когда гейт правил собирает текст отказа
-Тогда в отказе стоят заголовки статей и причина: текст придёт вместе с правилом
+Given articles of a marked rule are covered by the edit
+When the rules gate assembles the text of the refusal
+Then the headings of the articles and the reason stand in the refusal: the text will arrive together
+with the rule
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-657 — тела статьи в отказе нет
+### SC-AK-657 — the body of the article is not in the refusal
 
-Дано под правку подпала статья, у которой за заголовком стоит текст
-Когда гейт правил собирает текст отказа
-Тогда тела статьи в отказе нет: пересказ здесь — плата за один текст дважды
+Given an article whose heading is followed by text is covered by the edit
+When the rules gate assembles the text of the refusal
+Then the body of the article is not in the refusal: a retelling here is paying for one text twice
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-488 — под правку стилей приходит своя статья
+### SC-AK-488 — at an edit of styles its own article arrives
 
-Дано у статьи правила стоит признак применимости с образцом файлов стилей
-Когда разбор зовут с путём правки файла стилей
-Тогда печатается текст этой статьи
+Given an article of a rule carries an applicability sign with a sample of style files
+When the parse is called with the path of an edit of a style file
+Then the text of this article is printed
 
-Покрыто: `projects/agent-kit/tests/rule-article.test.sh`.
+Covered: `projects/agent-kit/tests/rule-article.test.sh`.
 
-### SC-AK-489 — чужая статья в отказ не попадает
+### SC-AK-489 — a foreign article does not get into the refusal
 
-Дано у соседней статьи признак назван другим образцом
-Когда разбор зовут с путём правки файла стилей
-Тогда соседняя статья не печатается
+Given the sign of a neighbouring article is named by another sample
+When the parse is called with the path of an edit of a style file
+Then the neighbouring article is not printed
 
-Покрыто: `projects/agent-kit/tests/rule-article.test.sh`.
+Covered: `projects/agent-kit/tests/rule-article.test.sh`.
 
-### SC-AK-490 — сам признак в печатаемую статью не входит
+### SC-AK-490 — the sign itself does not go into the printed article
 
-Дано статья несёт строку признака
-Когда её текст печатается
-Тогда строки признака в нём нет: человеку она ничего не говорит
+Given the article carries the line of the sign
+When its text is printed
+Then the line of the sign is not in it: it says nothing to a person
 
-Покрыто: `projects/agent-kit/tests/rule-article.test.sh`.
+Covered: `projects/agent-kit/tests/rule-article.test.sh`.
 
-### SC-AK-491 — другой род правки берёт другую статью
+### SC-AK-491 — another kind of edit takes another article
 
-Дано у двух статей признаки названы разными образцами
-Когда разбор зовут с путём правки кода
-Тогда печатается статья про код
+Given the signs of two articles are named by different samples
+When the parse is called with the path of an edit of code
+Then the article about code is printed
 
-Покрыто: `projects/agent-kit/tests/rule-article.test.sh`.
+Covered: `projects/agent-kit/tests/rule-article.test.sh`.
 
-### SC-AK-492 — не подошло ничего: печатается пусто
+### SC-AK-492 — nothing matched: nothing is printed
 
-Дано ни один признак с путём правки не совпал
-Когда разбор кончается
-Тогда печатается пусто, и зовущий остаётся при прежнем отказе
+Given not a single sign matched the path of the edit
+When the parse ends
+Then nothing is printed, and whoever calls is left with the former refusal
 
-Покрыто: `projects/agent-kit/tests/rule-article.test.sh`.
+Covered: `projects/agent-kit/tests/rule-article.test.sh`.
 
-### SC-AK-493 — правило без единого признака отбивает прежним текстом
+### SC-AK-493 — a rule without a single sign refuses with the former text
 
-Дано у правила нет ни одной размеченной статьи
-Когда разбор зовут с любым путём правки
-Тогда печатается пусто: статья без признака законна
+Given the rule has not a single marked article
+When the parse is called with any path of an edit
+Then nothing is printed: an article without a sign is lawful
 
-Покрыто: `projects/agent-kit/tests/rule-article.test.sh`.
+Covered: `projects/agent-kit/tests/rule-article.test.sh`.
 
-### SC-AK-494 — образец без каталога сверяется с именем файла
+### SC-AK-494 — a sample without a directory is compared against the file name
 
-Дано признак назван именем файла без каталога
-Когда правка приходит полным путём
-Тогда статья выбирается: статья говорит «про такие файлы», а путь несёт каталоги
+Given the sign is named by a file name without a directory
+When the edit arrives as a full path
+Then the article is picked: the article says "about such files", and the path carries directories
 
-Покрыто: `projects/agent-kit/tests/rule-article.test.sh`.
+Covered: `projects/agent-kit/tests/rule-article.test.sh`.
 
-### SC-AK-495 — рабочий каталог на выбор статьи не влияет
+### SC-AK-495 — the working directory does not affect the choice of the article
 
-Дано в рабочем каталоге лежит файл, подходящий под образец признака
-Когда разбор зовут оттуда
-Тогда статья выбирается по пути правки: раскрытие имён при разборе образцов выключено
+Given a file matching the sample of the sign lies in the working directory
+When the parse is called from there
+Then the article is picked by the path of the edit: the expansion of names at the parse of the
+samples is switched off
 
-Покрыто: `projects/agent-kit/tests/rule-article.test.sh`.
+Covered: `projects/agent-kit/tests/rule-article.test.sh`.
 
-### SC-AK-496 — правила нет: молчание, а не отказ
+### SC-AK-496 — there is no rule: silence, not a refusal
 
-Дано файла правила по названному пути не существует
-Когда разбор зовут
-Тогда он молчит и возвращает ноль
+Given the file of the rule at the named path does not exist
+When the parse is called
+Then it stays silent and gives back zero
 
-Покрыто: `projects/agent-kit/tests/rule-article.test.sh`.
+Covered: `projects/agent-kit/tests/rule-article.test.sh`.
 
-### SC-AK-497 — пути правки нет: молчание, а не отказ
+### SC-AK-497 — there is no path of the edit: silence, not a refusal
 
-Дано путь правки пуст
-Когда разбор зовут
-Тогда он молчит и возвращает ноль
+Given the path of the edit is empty
+When the parse is called
+Then it stays silent and gives back zero
 
-Покрыто: `projects/agent-kit/tests/rule-article.test.sh`.
+Covered: `projects/agent-kit/tests/rule-article.test.sh`.
 
-### SC-AK-498 — отказ на правке стилей несёт текст статьи
+### SC-AK-498 — the refusal at an edit of styles carries the text of the article
 
-Дано у правила об оформлении размечена статья с образцом файлов стилей
-Когда гейт отбивает правку файла стилей
-Тогда в отказе стоит текст этой статьи, а не одно имя правила
+Given at the rule about styling an article with a sample of style files is marked
+When the gate refuses an edit of a style file
+Then the text of this article stands in the refusal, not the name of the rule alone
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-499 — правило целиком остаётся вторым ходом
+### SC-AK-499 — the whole rule stays the second move
 
-Дано отказ несёт текст подошедшей статьи
-Когда исполнитель читает его до конца
-Тогда там же названо, каким вызовом загрузить правило целиком: статья снимает чтение правила,
-а не сам отказ
+Given the refusal carries the text of the matching article
+When the executor reads it to the end
+Then it is named there by which call to load the whole rule: the article lifts the reading of the
+rule, not the refusal itself
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-500 — неразмеченное правило отбивает прежним текстом
+### SC-AK-500 — an unmarked rule refuses with the former text
 
-Дано ни у одной статьи требуемого правила нет признака под этот путь
-Когда гейт отбивает правку
-Тогда отказ остаётся прежним — с именем правила и запасным ходом
+Given not one article of the demanded rule has a sign under this path
+When the gate refuses the edit
+Then the refusal stays as it was — with the name of the rule and the fallback move
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-706 — спутник правила назван в отказе безусловно
+### SC-AK-706 — the companion of the rule is named in the refusal unconditionally
 
-Дано у требуемого правила рядом лежит спутник
-Когда гейт отбивает правку
-Тогда отказ называет путь спутника отдельным предложением, а не одним лишь запасным ходом:
-правило говорит, что должно быть верно, а спутник — чем это верно здесь и что здесь названо
-невозможным
+Given a companion lies next to the demanded rule
+When the gate refuses the edit
+Then the refusal names the path of the companion by a sentence of its own, not by the fallback move
+alone: the rule says what must be true, and the companion by what that is true here and what is
+named impossible here
 
-Покрыто: `projects/agent-kit/tests/skill-gate.test.sh`.
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.

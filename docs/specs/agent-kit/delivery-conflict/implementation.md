@@ -1,14 +1,14 @@
-# Привязка — конфликтующая своя заявка
+# Binding — a conflicting request of one's own
 
-Утверждение спека и место, где оно исполняется. Связь идёт по тексту утверждения: снятое
-утверждение снимается вместе со своей строкой.
+A statement of the spec and the place where it is carried out. The link goes by the text of the
+statement: a removed statement is removed together with its line.
 
-- **Взятие новой работы отбивается, пока хоть одна своя открытая заявка помечена конфликтующей.** — `projects/agent-kit/assets/hooks/git-guard-delivery-conflict.sh:rt_delivery_conflict`
-- **Работой считаются четыре команды: заведение задачи, заведение ветки под задачу, перевод колонки в работу и открытие заявки.** — `projects/agent-kit/assets/hooks/git-guard-delivery-conflict.sh:taking`
-- **Починка конфликта не отбивается ничем.** — **Не проверяется отдельным признаком.** Отбивается только названный список команд; всё прочее гард пропускает молча.
-- **Судится только прямое «конфликтует».** — `projects/agent-kit/assets/checks/board.github.mjs:conflictingPulls`
-- **Своими считаются заявки машинной записи дерева.** — `projects/agent-kit/assets/checks/board.github.mjs:conflictingPulls`
-- **Отказ называет номер и ветку каждой конфликтующей заявки.** — `projects/agent-kit/assets/hooks/git-guard-delivery-conflict.sh:listed`
-- **Ветка без номера задачи взятием работы не считается.** — `projects/agent-kit/assets/hooks/git-guard-delivery-conflict.sh:taking`
-- **Перевод колонки судится вместе с именем колонки.** — `projects/agent-kit/assets/hooks/git-guard-delivery-conflict.sh:taking`
-- **Молчание опроса работу не отбивает.** — `projects/agent-kit/assets/defaults/project.sh:rt_conflicting_pulls_default`
+- **Taking new work is refused while at least one open request of one's own is marked conflicting.** — `projects/agent-kit/assets/hooks/git-guard-delivery-conflict.sh:rt_delivery_conflict`
+- **Four commands count as work: creating a task, creating a branch for a task, moving the column into work and opening a request.** — `projects/agent-kit/assets/hooks/git-guard-delivery-conflict.sh:taking`
+- **Fixing a conflict is refused by nothing.** — **Not checked** by a sign of its own. Only the named list of commands is refused; everything else the guard lets through silently.
+- **Only a plain "conflicts" is judged.** — `projects/agent-kit/assets/checks/board.github.mjs:conflictingPulls`
+- **The requests of the machine record of the tree count as one's own.** — `projects/agent-kit/assets/checks/board.github.mjs:conflictingPulls`
+- **The refusal names the number and the branch of every conflicting request.** — `projects/agent-kit/assets/hooks/git-guard-delivery-conflict.sh:listed`
+- **A branch without a task number does not count as taking work.** — `projects/agent-kit/assets/hooks/git-guard-delivery-conflict.sh:taking`
+- **Moving a column is judged together with the name of the column.** — `projects/agent-kit/assets/hooks/git-guard-delivery-conflict.sh:taking`
+- **Silence of the poll refuses no work.** — `projects/agent-kit/assets/defaults/project.sh:rt_conflicting_pulls_default`

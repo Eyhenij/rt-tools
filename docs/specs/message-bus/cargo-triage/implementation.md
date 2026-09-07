@@ -1,33 +1,33 @@
-# Где это исполняется — рабочий порядок разбора груза
+# Where this is carried out — the working order of the sorting out of the cargo
 
-Ключ связи — сам текст правила. Правило, у которого места в коде нет, стоит здесь строкой о
-том, чем оно держится взамен: порядок исполняет агент, и половина требований этого поддомена
-держится текстом, а не машиной.
+The key of the link is the text of the rule itself. A rule that has no place in the code stands here as
+a line about what holds it instead: the order is carried out by an agent, and half the requirements of
+this subdomain are held by text, not by a machine.
 
-## Правила и их места
+## The rules and their places
 
-- **Груз читается админкой приёма, а не очередью работ.** — Не исполняется машиной: держится правилом разбора груза и командой сведения предложений
-- **Разбор начинается с неразобранного.** — `libs/message-bus-common/src/lib/cargo-page.ts:cargoPageAsked`
-- **Что уже разобрано, спрашивается у приёма, а не вспоминается.** — Не исполняется машиной: держится правилом разбора груза
-- **Взять отчёт в работу — значит завести по нему задачу.** — Не исполняется машиной: держится правилом разбора груза
-- **Задача и отметка идут одним ходом.** — Не исполняется машиной: держится правилом разбора груза
-- **Одна правка — одна задача, сколько бы записей груза её ни вызвало.** — Не исполняется машиной: то же требование стоит в правиле поставки
-- **Запись, по которой работы не будет, в «в работе» не переводится.** — Не исполняется машиной: состояния отказа нет — открытый вопрос `Q-CT-1`
-- **«Готово» ставится, когда правка влита в главную ветку.** — Не исполняется машиной: держится правилом разбора груза
-- **С переходом в «готово» едет приём починки.** — `tools/cargo-mark.mjs:itemsOf`
-- **Приём починки пишется словами правки, а не пересказом разбора.** — Не исполняется машиной: смысл текста не судит ничто
-- **«Выпущено» ставится тем, кто публикует редакцию, и тем же движением, что и публикация.** — Не исполняется машиной: выпуск идёт конвейером, а отметка — рукой публикующего
-- **Версия выпуска — та, которой назван выпуск, увёзший починку.** — `tools/cargo-mark.mjs:mark`
-- **Между «готово» и «выпущено» стоит редакция пакета.** — Набор состояний: `projects/agent-kit/src/lib/cargo.ts:CARGO_STATES`
-- **Отметка ставится командой пакета, а не рукой человека в админке.** — `tools/cargo-mark.mjs:main`
-- **Записи всего разбора едут одной пачкой.** — `tools/cargo-mark.mjs:itemsOf`
-- **Ответ команды читается, а не подразумевается.** — Не исполняется машиной: держится правилом разбора груза
-- **Отбитая строка разбирается, а не повторяется тем же вызовом.** — Не исполняется машиной: держится правилом разбора груза
+- **The cargo is read by the admin application of the intake, not by the work queue.** — **Not carried out by a machine:** it is held by the rule of the sorting out of the cargo and by the command of the digest of the proposals
+- **The sorting out starts with what is not sorted out.** — `libs/message-bus-common/src/lib/cargo-page.ts:cargoPageAsked`
+- **What is already sorted out is asked of the intake, it is not recalled.** — **Not carried out by a machine:** it is held by the rule of the sorting out of the cargo
+- **To take a report into work means to create a task by it.** — **Not carried out by a machine:** it is held by the rule of the sorting out of the cargo
+- **The task and the mark go by one turn.** — **Not carried out by a machine:** it is held by the rule of the sorting out of the cargo
+- **One edit — one task, however many records of the cargo called it up.** — **Not carried out by a machine:** the same requirement stands in the rule of the delivery
+- **A record no work will be done by is not moved into "in progress".** — **Not carried out by a machine:** there is no state of a refusal — the open question `Q-CT-1`
+- **"Ready" is put when the edit is merged into the main branch.** — **Not carried out by a machine:** it is held by the rule of the sorting out of the cargo
+- **With the transition into "ready" goes the way of the fix.** — `tools/cargo-mark.mjs:itemsOf`
+- **The way of the fix is written in the words of the edit, not as a retelling of the analysis.** — **Not carried out by a machine:** the meaning of a text is judged by nothing
+- **"Released" is put by whoever publishes the edition, and by the same movement as the publication.** — **Not carried out by a machine:** the release goes by the pipeline, and the mark by the hand of whoever publishes
+- **The version of the release is the one the release was named by that carried the fix.** — `tools/cargo-mark.mjs:mark`
+- **Between "ready" and "released" stands the edition of the package.** — The set of the states: `projects/agent-kit/src/lib/cargo.ts:CARGO_STATES`
+- **The mark is put by a command of the package, not by the hand of a person in the admin application.** — `tools/cargo-mark.mjs:main`
+- **The records of the whole sorting out go by one bundle.** — `tools/cargo-mark.mjs:itemsOf`
+- **The answer of the command is read, it is not implied.** — **Not carried out by a machine:** it is held by the rule of the sorting out of the cargo
+- **A refused row is taken apart, it is not repeated by the same call.** — **Not carried out by a machine:** it is held by the rule of the sorting out of the cargo
 
-## Чем закрывается непроверяемое
+## What the uncheckable is closed by
 
-Одиннадцать правил из семнадцати машиной не держатся, и это свойство предмета, а не недоделка:
-порядок исполняет агент, у которого между заходами не остаётся памяти. Держат их два текста —
-правило разбора груза в наборе ресурсов и паттерн при нём с готовыми вызовами, — и то, что
-сделанное видно в самом приёме: запись, у которой правка влита, а состояние прежнее, называет
-пропущенный шаг сама.
+Eleven rules out of seventeen are not held by a machine, and that is a trait of the subject, not an
+unfinished piece: the order is carried out by an agent who is left with no memory between sessions.
+They are held by two texts — the rule of the sorting out of the cargo in the set of the resources and
+the pattern at it with the ready calls — and by what is done being visible in the intake itself: a
+record whose edit is merged while the state is the former one names the missed step itself.

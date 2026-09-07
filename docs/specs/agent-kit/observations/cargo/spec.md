@@ -1,361 +1,393 @@
-# Груз наружу
+# Cargo outward
 
-**Статус:** действует · **Ревизия:** 2026-09-05 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** `message-bus` (куда уезжает груз и куда уходит отметка)
-**Законы:** `observability`, `work-conduct`, `delivery`, `frontend-application`, `verifiability`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-09-05 · **Scenario prefix:** `SC-AK`
+**Depends on:** `message-bus` (where the cargo goes and where the marking goes)
+**Laws:** `observability`, `work-conduct`, `delivery`, `frontend-application`, `verifiability`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Что дерево узнало о слое правил, полезно тому, кто слой правит, а видит он только приехавшее.
-Поддомен называет, что уезжает наружу и как: сводка со снимком надстроек, предложения с адресом
-«пакет» и разборы происшествий; чем предложение ложится на диск — разбором закрытой задачи либо
-словом посреди работы; как дерево заводится в приёме и чем метит свои записи после разбора.
+What a tree learned about the rules layer is useful to whoever edits the layer, and they see only
+what arrived. The subdomain names what goes outward and how: the digest with the snapshot of the
+overrides, the proposals addressed "package" and the incident analyses; what a proposal lands on
+disk by — the review of a closed task or a word mid-work; how a tree is created in the intake and
+what it marks its records with after the review.
 
-Наружу не уходит ничего, чего не отправил человек командой: ни один гард в сеть не ходит. Сами
-наблюдения, сводка и снимок надстроек — соседний поддомен «Наблюдения» рядом.
+Nothing goes outward that a person did not send by a command: not one guard goes into the network.
+The observations themselves, the digest and the snapshot of the overrides are the neighbouring
+subdomain "Observations" next to it.
 
-## Терминология
+## Terminology
 
-- **Предложение** — готовая формулировка правки с адресом. Приносит роль разбора закрытой
-  задачи, выгружает файлом главный агент, отправляет человек командой.
-- **Адрес предложения** — одно из трёх: «пакет» — правка ресурса, «компаньон» — имена этого
-  дерева при правиле, «дерево» — надстройка.
-- **Слово** — реплика человека посреди работы: что мешает, чего не хватило, что сработало не так.
-  Адреса у неё нет, пока её не разобрали.
-- **Блок** — предложение, записанное в файл: заголовок с адресом и ресурсом, место, повод, чем
-  закрывается и готовый текст.
-- **Файл дня** — файл предложений за один день работы, а не за одну реплику: блоки одного дня
-  ложатся в него рядом.
-- **Отправка** — увоз груза в приём: сводки наблюдений, предложений с адресом «пакет» и
-  разборов происшествий.
-- **Груз** — то, что уезжает прогоном отправки.
-- **Приём** — закрытая служба, принимающая груз запросом; своя, а не чужая очередь работ.
-- **Адрес приёма** — адрес службы приёма; объявлен настройкой дерева, а не зашит в код пакета.
-- **Токен дерева** — то, чем дерево представляется приёму; реестр держит только его хеш.
-- **Сведение** — разбор накопленных записей и наблюдений в список правок ресурсов.
-- **Выданный токен** — токен дерева, который человек получил в админке приёма и держит на руках.
-- **Обмен по коду** — прежний путь заведения: команда несёт одноразовый код и получает токен в
-  ответ.
-- **Отметка** — один вызов команды: состояние и записи груза, которые в него переводят.
-- **Ключ записи** — чем дерево называет свою запись: имя файла у разбора происшествия, признак у
-  предложения.
-- **Отбитая запись** — запись, которую приём не перевёл: у дерева её нет либо переход не разрешён.
-- **Холостой ход** — прогон, который печатает, что уехало бы, и в сеть не идёт.
+- **A proposal** — a ready wording of an edit with an address. It is brought by the role of the
+  closed-work review, unloaded as a file by the main agent, sent by a person with a command.
+- **The address of a proposal** — one of three: "package" — an edit of a resource, "companion" — the
+  names of this tree at the rule, "tree" — an override.
+- **A word** — a person's remark mid-work: what gets in the way, what was missing, what worked
+  wrongly. It has no address until it is taken apart.
+- **A block** — a proposal written into a file: a heading with the address and the resource, the
+  place, the occasion, what it is closed by and the ready text.
+- **The file of the day** — the file of proposals for one working day, not for one remark: the
+  blocks of one day lie in it side by side.
+- **A sending** — carrying the cargo away into the intake: the digests of the observations, the
+  proposals addressed "package" and the incident analyses.
+- **Cargo** — what goes away by a run of the sending.
+- **The intake** — a closed service accepting the cargo by a request; one's own, not someone else's
+  work queue.
+- **The intake address** — the address of the intake service; declared by a setting of the tree, not
+  nailed into the package code.
+- **The tree token** — what the tree presents itself to the intake by; the registry holds only its
+  hash.
+- **A summing-up** — taking apart the accumulated records and observations into a list of resource
+  edits.
+- **An issued token** — a tree token a person got in the intake admin panel and holds in hand.
+- **An exchange by code** — the former way of creating: the command carries a one-off code and gets
+  a token in answer.
+- **A marking** — one call of the command: the state and the cargo records it moves into it.
+- **The key of a record** — what the tree names its record by: the file name for an incident
+  analysis, the sign for a proposal.
+- **A refused record** — a record the intake did not move: the tree does not have it, or the
+  transition is not allowed.
+- **A dry run** — a run that prints what would go away and does not go into the network.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости           | В строке запуска                                                        |
-| -------------------------- | ----------------------------------------------------------------------- |
-| отправка груза             | `agent-kit propose [--dry-run]`                                         |
-| заведение обменом по коду  | `agent-kit enroll --code <код>`                                         |
-| заведение выданным токеном | `agent-kit enroll --token <токен>`                                      |
-| сведение                   | команда сведения за отрезок дней                                        |
-| выгрузка предложений       | шаг команды разбора закрытой задачи                                     |
-| слово посреди работы       | команда фидбэка, реплика прозой                                         |
-| отметка разбора            | `agent-kit mark --state <состояние> --postmortem <имя файла>`           |
-| отметка предложения        | `agent-kit mark --state <состояние> --proposal <признак>`               |
-| холостой ход отметки       | `agent-kit mark --state <состояние> --postmortem <имя файла> --dry-run` |
+| In the agreement                | In the launch line                                                  |
+| ------------------------------- | ------------------------------------------------------------------- |
+| the sending of the cargo        | `agent-kit propose [--dry-run]`                                     |
+| creating by an exchange by code | `agent-kit enroll --code <code>`                                    |
+| creating by an issued token     | `agent-kit enroll --token <token>`                                  |
+| the summing-up                  | the summing-up command over a stretch of days                       |
+| unloading the proposals         | a step of the closed-work review command                            |
+| a word mid-work                 | the feedback command, a remark in prose                             |
+| marking an analysis             | `agent-kit mark --state <state> --postmortem <file name>`           |
+| marking a proposal              | `agent-kit mark --state <state> --proposal <sign>`                  |
+| a dry run of the marking        | `agent-kit mark --state <state> --postmortem <file name> --dry-run` |
 
-## Правила
+## Rules
 
-- **Предложение выгружается файлом с адресом в заголовке.** Разбор закрытой задачи уже ставит
-  каждому предложению один из трёх адресов; файл сохраняет его заголовком, который читает
-  машина, а не пересказом.
-- **Роль разбора закрытой задачи файлов не пишет.** Выгрузку делает главный агент шагом команды.
-  Запрет роли править файлы держит то, ради чего он заведён: правила действуют на все будущие
-  сессии.
-- **Наружу уезжают только предложения с адресом «пакет».** «Компаньон» и «дерево» — про имена и
-  надстройки этого дерева, и в приёме им делать нечего.
-- **Отправка отказывает, если в тексте предложения найден адрес дерева.** Абсолютный путь,
-  корень дерева, чужая область имён пакета — отказ с номером строки вместо отправки. Запрет
-  называть чужое дерево держится проверкой, а не памятью того, кто пишет.
-- **Отправленное предложение помечается принявшим его месяцем и второй раз не уезжает.** Иначе
-  второй запуск команды кладёт в приём вторую запись об одной правке.
-- **Адрес приёма читается из настройки дерева.** Зашитый в код, он назвал бы чужое дерево в
-  текстах пакета, а дереву не оставил бы выбора, куда слать.
-- **Наружу не уходит ничего, чего не отправил человек командой.** Ни один гард в сеть не ходит,
-  фоновой отправки нет.
-- **Незнакомый довод отправку кончает, а не пропускается молча.** Единственное действие этой
-  команды необратимо и уходит наружу, и «довод лишний» здесь неотличимо от «команда ничего не
-  сделала»: вызов с доводом справки, сделанный ради списка режимов, отправил в приём всё
-  накопленное. Отказ приходит до первого сетевого вызова и называет доводы команды.
-- **Сведение отделяет пришедшее из нескольких деревьев от пришедшего из одного.** Повторившееся
-  у двоих — правка пакета; разовое — надстройка дерева, и сведение говорит это прямо.
-- **Выпуск версии остаётся отдельным решением владельца.** Сведение готовит правки и черновик
-  записи в журнал изменений и на этом кончается.
-- **Команда кладёт блок на диск и в сеть не ходит.** Фоновой отправки линия не заводит, а
-  реплика, уехавшая мгновенно, уезжает раньше, чем автор успел её перечитать. Отправка остаётся
-  отдельным шагом, и команда называет его вслух.
-- **Блок собирает агент, а не человек.** Человек говорит прозой; адрес, ресурс и готовый текст
-  правки знает тот, у кого в контексте лежит само правило. Спрашивать у человека идентификатор
-  ресурса — значит требовать помнить то, ради чего слой правил и заведён.
-- **Слово без ясного адреса не превращается в блок молча.** Адрес — это выбор между правкой
-  пакета, компаньона и надстройки дерева, и неверный уводит правку в чужой репозиторий.
-  Непонятный адрес спрашивается у человека одним вопросом, а не назначается по догадке.
-- **Блок ложится в файл сегодняшнего дня, а не в свой.** У разбора закрытой задачи и у реплики
-  посреди работы один адресат и один формат; второй файл рядом означал бы, что отправка читает
-  два места, а человек не помнит, в каком лежит его слово.
-- **Файл дня заводится с образца, если его ещё нет.** Форма заголовка — не украшение: по ней
-  отправка отбирает то, что уезжает наружу, и блок без адреса в заголовке не уедет никуда.
-- **Текст блока проверяется на адрес дерева тем же, чем проверяется всё остальное.** Реплика
-  посреди работы называет файлы, о которые человек споткнулся, чаще, чем разбор: она про
-  «вот это здесь», а не про правило вообще.
-- **Команда говорит, куда лёг блок и чем он уедет.** Иначе слово, легшее на диск, читается как
-  отправленное, и человек ждёт ответа, которого никто не посылал.
-- **Груз уезжает при каждом прогоне отправки, а предложения — когда они есть.** Прогон без
-  замечаний тоже говорит, чем пользовались, чем не пользовались ни разу и что дерево
-  переопределило; отправка, построенная вокруг предложения, эти данные теряла.
-- **Проверка на адрес дерева накрывает сводку и предложения, но не разбор происшествия.** Разбор
-  по устройству называет файлы дерева, где промах случился, и накрытая проверка отбивала бы
-  каждую его отправку. Остальной груз проверяется на выносящей стороне — там же, где и раньше.
-- **Блок предложения называет ближайшее утверждение ресурса, и цитата проверяется.** Разбор
-  происшествия кончается предложением дописать статью в тот же ресурс, который промах уже
-  описывал: статья стоит, а блок предлагает вторую о том же, и снаружи такой разбор неотличим от
-  разбора, кончившегося исправлением. Поле обязательно затем, чтобы ресурс был прочитан; цитата
-  ищется в нём и ненайденная отбивает блок. Ближайшего нет вовсе — так и говорится словом.
-- **Похожесть текстов повтора не отличает, и порогом она не судится.** Замер на живых блоках:
-  законное соседство двух статей одного правила даёт 0.345 общих значимых слов, законный перенос
-  удачной статьи на соседнее место — 0.355. Диапазоны перекрываются, и порог отбивал бы правки
-  вместо повторов. Названная цитата судится фактом: она в ресурсе либо есть, либо её там нет.
-- **Отбивается блок поимённо, а соседние едут.** Один непрочитанный ресурс не повод задержать
-  чужую работу: отказ называет файл, строку блока и причину.
-- **Отбитый блок остаётся на диске с отметкой и причиной.** Удалённый пишется следующим заходом
-  заново — следа разбора нет, и повтор возвращается. Отметка держит и то и другое: видно, что
-  разбор был, и видно, почему он не стал правкой.
-- **Проверка на адрес дерева судит все готовые блоки, а не одни уезжающие.** Отбитый по цитате
-  лежит на диске и уедет, как только его починят, — а найденная в нём утечка отбивает отправку
-  целиком и должна называться сразу, а не прятаться за отбоем.
-- **Найденный в грузе адрес дерева отбивает отправку целиком, а не свой блок.** Разбирает отказ
-  человек, и «уехало два из трёх» он прочтёт как «всё в порядке».
-- **Груз уезжает в закрытый приём, а не в открытую очередь работ.** Сводка говорит о рабочих
-  привычках команды: чем пользуются, обо что спотыкаются, сколько раз признавали промах. В
-  открытой очереди это выложено всему свету.
-- **Адрес приёма объявлен настройкой дерева, а не зашит в код пакета.** Зашитый, он назвал бы
-  чужое дерево в текстах пакета.
-- **Дерево представляется приёму токеном, а реестр держит только его хеш.** Ни в переменных
-  окружения приёма, ни в его выкатке самих токенов нет: утёкшая выкатка не даёт доступа.
-- **Токен выдаётся и отзывается командами приёмника.** Отозванный перестаёт приниматься сразу, и
-  дерево узнаёт об этом отказом отправки, а не молчанием. Админка их не заменяет: первую
-  учётную запись заводить всё равно нечем, кроме команды.
-- **Одна запись на пару «дерево — месяц»: нашлась — дописывается, не нашлась — заводится.**
-  Иначе месячная картина дерева рассыпается по прогонам, и собрать её можно только запросом.
-- **Груз каждого рода принимается своей операцией.** Сводка, предложение и разбор происшествия
-  устроены по-разному, и общая операция «принять что-нибудь» перекладывала бы разбор формы на
-  приёмник.
-- **Выключатель наблюдений гасит и отправку целиком, вместе со снимком надстроек.** Ключ настройки
-  дерева выключает запись целиком, а не частями, и снимок, уезжающий при выключенной записи,
-  обошёл бы выключатель ровно в том месте, ради которого он заведён.
-- **Дерево заводится двумя путями, и человек выбирает доводом.** Код приглашения обменивается на
-  токен, выданный токен кладётся как есть. Один путь на всех означал бы, что выданный в админке
-  токен применить нечем.
-- **Выданный токен в сеть не уходит.** Обменивать его не на что, и приём о нём не спрашивают: он
-  же его и выдал. Обращение ради подтверждения добавляло бы отказ там, где всё верно.
-- **Два довода вместе отбиваются.** Это два пути к одному и тому же, и молчаливый выбор одного
-  из них скрыл бы от человека, что второй он назвал зря.
-- **Ни одного довода — отказ называет оба пути.** Отказ, называющий только прежний путь, второй
-  для человека не существует.
-- **Токен ложится на диск одинаково, каким бы путём ни пришёл.** Тот же файл, те же права
-  «читает и пишет только владелец файла». Разные права у двух путей означали бы, что
-  безопасность зависит от того, как заводили дерево.
-- **Лежащий токен не перезаписывается молча ни у одного из путей.** Заведённое дерево потеряло бы
-  связь со своим прежним грузом; намеренная перезапись объявляется отдельным доводом.
-- **Проверки, общие обоим путям, стоят до развилки.** Лежащий токен и незаполненный ключ файла
-  судятся раньше, чем выбирается путь: поставленные после, они защищали бы только один из них.
-- **Адрес приёма и запрет открытого пути требуются только обмену по коду.** Токен, который никуда
-  не уходит, по открытому пути не читается, и требовать TLS у пути без сети — значит отбивать
-  заведение там, где угрозы нет.
-- **Отказ по ненайденному адресу приёма называет, у кого его спросить.** Ключ настройки отвечает
-  на «куда вписать» и не говорит, откуда взять: адреса пакет не знает — приём поднимает владелец,
-  и у каждой мастерской он свой. Исполнитель с готовым грузом и кодом приглашения получал этот
-  отказ и не знал, что спрашивать надо адрес и спрашивать у владельца.
-- **Настоящий прогон называет перечень груза до его результатов.** Что уедет и куда, читается
-  раньше, чем уехало: отказ на втором запросе иначе оставляет человека с одной строкой о нём и
-  без перечня, из которого видно, чего этот отказ стоил.
-- **Сухой прогон объявляется первой строкой, а не окончанием глагола.** «Уехало» и «уехало бы»
-  отличаются двумя буквами в хвосте, а строки под ними одинаковы до знака: вывод сухого прогона
-  читается сделанной работой, и следа наружу при этом нет. Первая строка говорит, что наружу не
-  ушло ничего, и называет вызов, которым это делается по-настоящему.
+- **A proposal is unloaded as a file with the address in the heading.** The closed-work review
+  already gives every proposal one of the three addresses; the file keeps it by a heading a machine
+  reads, not by a retelling.
+- **The role of the closed-work review writes no files.** The unloading is done by the main agent as
+  a step of the command. The ban on the role editing files holds the very thing it was created for:
+  the rules act on all future sessions.
+- **Only proposals addressed "package" go outward.** "Companion" and "tree" are about the names and
+  overrides of this tree, and they have nothing to do in the intake.
+- **The sending refuses if a tree address is found in the text of a proposal.** An absolute path, the
+  root of the tree, a foreign namespace of the package — a refusal with the line number instead of
+  the sending. The ban on naming a foreign tree is held by a check, not by the memory of whoever
+  writes.
+- **A sent proposal is marked by the month that accepted it and does not go a second time.**
+  Otherwise a second launch of the command puts a second record about one edit into the intake.
+- **The intake address is read from a setting of the tree.** Nailed into the code, it would name a
+  foreign tree in the package texts, and it would leave the tree no choice of where to send.
+- **Nothing goes outward that a person did not send by a command.** Not one guard goes into the
+  network, there is no background sending.
+- **An unfamiliar argument ends the sending, it is not skipped silently.** The only action of this
+  command is irreversible and goes outward, and "the argument is surplus" is here
+  indistinguishable from "the command did nothing": a call with the help argument, made for the sake
+  of the list of modes, sent everything accumulated into the intake. The refusal comes before the
+  first network call and names the arguments of the command.
+- **The summing-up tells what arrived from several trees from what arrived from one.** What repeated
+  at two is an edit of the package; a one-off is an override of the tree, and the summing-up says
+  this outright.
+- **Releasing a version stays a separate decision of the owner.** The summing-up prepares the edits
+  and a draft of the record in the changelog and ends at that.
+- **The command puts the block on disk and does not go into the network.** The line starts no
+  background sending, and a remark that went away instantly goes away before its author managed to
+  re-read it. The sending stays a separate step, and the command names it aloud.
+- **The block is assembled by the agent, not by the person.** The person speaks in prose; the
+  address, the resource and the ready text of the edit are known to whoever has the rule itself in
+  their context. Asking a person for the identifier of a resource means demanding they remember the
+  very thing the rules layer was created for.
+- **A word without a clear address does not turn into a block silently.** The address is a choice
+  between an edit of the package, of the companion and of the tree's override, and a wrong one takes
+  the edit into a foreign repository. An unclear address is asked of the person by one question, it
+  is not assigned by a guess.
+- **The block lands in the file of today, not in a file of its own.** The closed-work review and the
+  remark mid-work have one addressee and one format; a second file next to it would mean the sending
+  reads two places, and the person does not remember which their word lies in.
+- **The file of the day is created from a sample if it does not exist yet.** The shape of the heading
+  is no decoration: the sending picks by it what goes outward, and a block without an address in the
+  heading goes nowhere.
+- **The text of a block is checked for a tree address by the same thing everything else is checked
+  by.** A remark mid-work names the files a person stumbled over more often than an analysis does:
+  it is about "this thing here", not about the rule in general.
+- **The command says where the block landed and what it will go away by.** Otherwise a word that
+  landed on disk reads as sent, and the person waits for an answer nobody sent for.
+- **The cargo goes away at every run of the sending, and the proposals — when there are any.** A run
+  without remarks also says what was used, what was not used once and what the tree overrode; a
+  sending built around a proposal lost these data.
+- **The check for a tree address covers the digest and the proposals, but not an incident analysis.**
+  An analysis by its nature names the files of the tree where the miss happened, and a check covering
+  it would refuse every sending of it. The rest of the cargo is checked on the carrying-out side —
+  the same place as before.
+- **A proposal block names the nearest statement of the resource, and the quotation is checked.** An
+  incident analysis ends with a proposal to append an article to the very resource the miss already
+  described: the article stands, and the block proposes a second one about the same, and from outside
+  such an analysis is indistinguishable from one that ended in a fix. The field is mandatory so that
+  the resource is read; the quotation is looked for in it, and one not found refuses the block. There
+  is no nearest one at all — that is said as a word.
+- **Likeness of texts does not tell a repeat apart, and it is not judged by a threshold.** A
+  measurement on live blocks: a lawful neighbourhood of two articles of one rule gives 0.345 of
+  shared significant words, a lawful move of a good article to a neighbouring place gives 0.355. The
+  ranges overlap, and a threshold would refuse edits instead of repeats. The named quotation is
+  judged by fact: it is either in the resource or it is not.
+- **A block is refused by name, and the neighbouring ones go.** One unread resource is no reason to
+  hold up someone else's work: the refusal names the file, the line of the block and the reason.
+- **A refused block stays on disk with a mark and a reason.** A deleted one is written anew by the
+  next session — there is no trace of the analysis, and the repeat comes back. The mark holds both:
+  it is visible that there was an analysis, and visible why it did not become an edit.
+- **The check for a tree address judges all the ready blocks, not only the departing ones.** One
+  refused by the quotation lies on disk and will go as soon as it is fixed — and a leak found in it
+  refuses the whole sending and must be named at once, not hide behind the refusal.
+- **A tree address found in the cargo refuses the whole sending, not its own block.** The refusal is
+  taken apart by a person, and "two of three went" they will read as "everything is fine".
+- **The cargo goes into a closed intake, not into an open work queue.** The digest speaks of the
+  working habits of the team: what is used, what is stumbled over, how many times a miss was
+  admitted. In an open queue that is laid out for all the world.
+- **The intake address is declared by a setting of the tree, not nailed into the package code.**
+  Nailed in, it would name a foreign tree in the package texts.
+- **The tree presents itself to the intake by a token, and the registry holds only its hash.**
+  Neither in the environment variables of the intake nor in its rollout are the tokens themselves: a
+  leaked rollout gives no access.
+- **The token is issued and revoked by commands of the receiver.** A revoked one stops being accepted
+  at once, and the tree learns of this by a refusal of the sending, not by silence. The admin panel
+  does not replace them: there is nothing to create the first account with anyway except a command.
+- **One record per pair "tree — month": found — appended to, not found — created.** Otherwise the
+  monthly picture of the tree scatters across the runs, and it can be gathered only by a query.
+- **Cargo of each kind is accepted by an operation of its own.** The digest, a proposal and an
+  incident analysis are built differently, and a shared operation "accept something" would shift the
+  parse of the shape onto the receiver.
+- **The switch of the observations puts out the sending whole too, together with the snapshot of the
+  overrides.** The tree setting key switches the writing off whole, not in parts, and a snapshot
+  going away with the writing switched off would bypass the switch in exactly the place it was
+  created for.
+- **A tree is created by two ways, and the person chooses by an argument.** An invitation code is
+  exchanged for a token, an issued token is put as it is. One way for all would mean a token issued
+  in the admin panel could not be applied by anything.
+- **An issued token does not go into the network.** There is nothing to exchange it for, and the
+  intake is not asked about it: the intake issued it. A call for confirmation would add a refusal
+  where everything is right.
+- **Two arguments together are refused.** These are two ways to one and the same, and a silent choice
+  of one of them would hide from the person that they named the second in vain.
+- **Not a single argument — the refusal names both ways.** A refusal naming only the former way makes
+  the second one non-existent for the person.
+- **The token lands on disk the same way, by whichever way it came.** The same file, the same rights
+  "read and written by the file owner alone". Different rights at the two ways would mean security
+  depends on how the tree was created.
+- **A token that lies there is not overwritten silently by either of the ways.** A created tree would
+  lose the link with its former cargo; a deliberate overwrite is declared by an argument of its own.
+- **The checks shared by both ways stand before the fork.** A token that lies there and an unfilled
+  file key are judged before the way is chosen: put after it, they would defend only one of them.
+- **The intake address and the ban on the open way are demanded only by the exchange by code.** A
+  token that goes nowhere is not read over the open way, and demanding TLS of a way without a network
+  means refusing the creating where there is no threat.
+- **A refusal about a not-found intake address names whom to ask for it.** The setting key answers
+  "where to write it" and does not say where to take it from: the package does not know the address —
+  the intake is raised by the owner, and every workshop has its own. An executor with the cargo ready
+  and an invitation code got this refusal and did not know that the address had to be asked, and
+  asked of the owner.
+- **A real run names the list of the cargo before its results.** What will go and where is read
+  before it has gone: otherwise a refusal at the second request leaves the person with one line about
+  it and without the list showing what that refusal cost.
+- **A dry run is declared by the first line, not by the ending of a verb.** "Went" and "would have
+  gone" differ by two letters at the tail, and the lines under them are identical to the character:
+  the output of a dry run reads as work done, and there is no trace outward at that. The first line
+  says that nothing went outward, and names the call that really does it.
 
-## Что не входит
+## What is out of scope
 
-- Отправка и сведение под второй и третий хостинг: едут одним видом — тем же, что и нынешние
-  инструменты заведения задачи.
-- Отправка из самой команды фидбэка: наружу уходит только позванное отдельно.
-- Правка уже лежащих блоков: сказанное второй раз ложится вторым блоком, а сводит их тот, кто
-  отправляет.
-- Своя очередь и своё хранилище у команды фидбэка: файл предложений и есть очередь, и пустеет
-  она отправкой.
-- Разбор реплики без слова человека: команда зовётся руками и сама ничего не слушает.
-- **Правка груза из веба.** Приёмник принимает, админка читает; текст записи не правит ни та, ни
-  другая сторона, а состояние правит дерево отметкой.
-- **Инструмент агента для приёма.** Груз уезжает строкой запуска, и подключать приёмник к агенту
-  в каждом дереве не требуется.
-- **Отдельная периодическая команда отправки.** Её место занимает шаг разбора закрытой задачи:
-  команда у человека уже есть, а вторая, о которой надо помнить, до второго месяца не доживает.
-- **Прямая выдача токена в админке приёма.** Это сторона приёмника, своя работа.
-- **Снос признака дерева и его сверки с токеном.** Названо владельцем отдельной работой.
-- **Самостоятельная регистрация потребителя.** Отдельный эпик: дерево заводит человек, а не оно
-  само.
-- **Сведение снимков из нескольких деревьев в один свод.** Форма сведения проверяется на живых
-  данных, когда деревьев станет три; до тех пор груз лежит записями, а свод собирается разово.
-- **Выбор записей, которые надо отметить.** Чем исполнитель решает, что взять в работу и что
-  отмечать, — задача о рабочем порядке разбора груза.
-- **Чтение своего груза с приёма.** Отметка идёт по названным ключам и списков не читает.
-- **Приём починки и версия выпуска у записи.** Они ложатся тем же путём, но своими задачами.
-- **Груз в отметке.** Она едет своим вызовом: прогон отправки её не везёт, и груза она не несёт.
-- **Хранение отмеченного на дереве.** Что уже отмечено, помнит приём, а не файл в дереве.
-- **Сами наблюдения, сводка и снимок надстроек.** Что дерево пишет о себе и как считает —
-  поддомен «Наблюдения» рядом.
+- The sending and the summing-up under a second and a third hosting: they go in the same shape as the
+  present tools of creating a task.
+- Sending from the feedback command itself: only what was called separately goes outward.
+- Editing blocks already lying there: what is said a second time lands as a second block, and whoever
+  sends brings them together.
+- A queue and a storage of its own at the feedback command: the file of proposals is the queue, and
+  it empties by the sending.
+- Taking a remark apart without a person's word: the command is called by hand and listens to nothing
+  itself.
+- **Editing the cargo from the web.** The receiver accepts, the admin panel reads; the text of a
+  record is edited by neither side, and the state is edited by the tree with a marking.
+- **An agent tool for the intake.** The cargo goes away by a launch line, and connecting the receiver
+  to the agent in every tree is not required.
+- **A separate periodic sending command.** Its place is taken by the step of the closed-work review:
+  the person already has the command, and a second one they have to remember does not live to the
+  second month.
+- **Direct issuing of a token in the intake admin panel.** That is the receiver's side, its own work.
+- **Removing the tree sign and checking it against the token.** Named by the owner as separate work.
+- **Self-registration of a consumer.** A separate epic: a tree is created by a person, not by itself.
+- **Bringing snapshots from several trees into one summary.** The shape of the summing-up is checked
+  on live data when there are three trees; until then the cargo lies as records, and the summary is
+  gathered one-off.
+- **Choosing the records that have to be marked.** What the executor decides by what to take into
+  work and what to mark is the task about the working order of taking the cargo apart.
+- **Reading one's own cargo from the intake.** The marking goes by the named keys and reads no lists.
+- **Accepting a fix and the release version at a record.** They land by the same way, but by tasks of
+  their own.
+- **Cargo in the marking.** It goes by a call of its own: the run of the sending does not carry it,
+  and it carries no cargo.
+- **Keeping what is marked in the tree.** What is already marked is remembered by the intake, not by a
+  file in the tree.
+- **The observations themselves, the digest and the snapshot of the overrides.** What a tree writes
+  about itself and how it counts is the neighbouring subdomain "Observations".
 
-## Контракт
+## Contract
 
-Отправка увозит в приём сводку, предложения с адресом «пакет» и разборы происшествий, а на
-холостом ходу печатает, что уехало бы, и не отправляет ничего. Она выходит нулём, когда работа
-сделана или делать было нечего.
+The sending carries into the intake the digest, the proposals addressed "package" and the incident
+analyses, and on a dry run prints what would go away and sends nothing. It exits with zero when the
+work is done or there was nothing to do.
 
-Отметка берёт адрес приёма и токен дерева из той же настройки, что и отправка, и зовёт операцию
-правки состояния. Ответ приёма она пересказывает человеку: сколько записей переведено, сколько
-уже стояло в этом состоянии и какие отбиты.
+The marking takes the intake address and the tree token from the same setting as the sending, and
+calls the operation of editing the state. It retells the intake's answer to the person: how many
+records were moved, how many already stood in this state and which are refused.
 
-Доводы отметки:
+The arguments of the marking:
 
-- `--state <состояние>` — состояние, в которое переводятся записи; одно на вызов.
-- `--postmortem <имя>` — разбор происшествия по имени его файла; довод повторяется.
-- `--proposal <признак>` — предложение по признаку его текста; довод повторяется.
-- `--fix <чем исправлено>` — текст починки; ложится каждой записи вызова, а без довода строка
-  едет прежней.
-- `--release <метка выпуска>` — версия выпуска; обязательна при переходе в «выпущено» и при
-  остальных не берётся.
-- `--dry-run` — холостой ход: печатает, что уехало бы, и в сеть не идёт.
+- `--state <state>` — the state the records are moved into; one per call.
+- `--postmortem <name>` — an incident analysis by the name of its file; the argument repeats.
+- `--proposal <sign>` — a proposal by the sign of its text; the argument repeats.
+- `--fix <what it was fixed by>` — the text of the fix; it lands at every record of the call, and
+  without the argument the line goes as it was.
+- `--release <release label>` — the release version; mandatory at the transition to "released" and
+  not taken at the rest.
+- `--dry-run` — a dry run: prints what would go away and does not go into the network.
 
-Команда фидбэка стоит рядом со строкой запуска, а не в ней: её поверхность — реплика человека
-прозой на входе и строка ответа на выходе, где названы путь файла дня и то, чем блок уедет.
-Своего кода возврата у неё нет, а адреса по умолчанию нет намеренно — непонятный спрашивается
-вопросом. По сети она не ходит ни разу.
+The feedback command stands next to the launch line, not in it: its surface is a person's remark in
+prose at the input and a line of answer at the output, where the path of the file of the day and what
+the block will go away by are named. It has no exit code of its own, and it has no default address on
+purpose — an unclear one is asked by a question. It does not go over the network once.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: ответ — код возврата и текст, а не именованные коды.
+Not applicable: the answer is an exit code and text, not named codes.
 
-| Что случилось                                 | Код | Что говорит                                                    |
-| --------------------------------------------- | --- | -------------------------------------------------------------- |
-| нет настройки пакета в дереве                 | `1` | начать с заведения настройки                                   |
-| в тексте предложения найден адрес дерева      | `1` | файл, строка и что именно сочтено адресом                      |
-| предложений с адресом «пакет» нет             | `0` | сколько их с другими адресами и куда те идут                   |
-| приём не ответил или не принял груз           | `1` | что уехало до отказа, чем ответил приём и что делать с токеном |
-| оба довода заведения вместе или ни одного     | `1` | какие доводы названы и какой оставить, а без них — оба пути    |
-| файл токена уже лежит, перезапись не названа  | `1` | что дерево заведено, и каким доводом перезаписать намеренно    |
-| токена дерева в настройке нет, а идёт отметка | `1` | что дерево не заведено, и чем оно заводится                    |
-| состояние отметки не названо или незнакомо    | `1` | какие состояния бывают                                         |
-| ни одной записи в доводах отметки             | `1` | что отмечать нечего, и каким доводом называется запись         |
-| приём отбил хотя бы одну запись отметки       | `1` | какие записи отбиты и по какой причине                         |
-| все записи отметки переведены или так стояли  | `0` | сколько переведено и сколько уже стояло                        |
+| What happened                                             | Code | What it says                                                                         |
+| --------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------ |
+| there is no package setting in the tree                   | `1`  | to start with creating the setting                                                   |
+| a tree address is found in the text of a proposal         | `1`  | the file, the line and what exactly was counted as an address                        |
+| there are no proposals addressed "package"                | `0`  | how many there are with other addresses and where those go                           |
+| the intake did not answer or did not accept the cargo     | `1`  | what went before the refusal, what the intake answered and what to do with the token |
+| both arguments of creating together, or none              | `1`  | which arguments are named and which to keep, and without them — both ways            |
+| the token file already lies there, no overwrite named     | `1`  | that the tree is created, and by which argument to overwrite deliberately            |
+| there is no tree token in the setting, and a marking goes | `1`  | that the tree is not created, and what it is created by                              |
+| the state of the marking is not named or unfamiliar       | `1`  | which states there are                                                               |
+| not a single record in the arguments of the marking       | `1`  | that there is nothing to mark, and by which argument a record is named               |
+| the intake refused at least one record of the marking     | `1`  | which records are refused and for what reason                                        |
+| all the records of the marking are moved or stood so      | `0`  | how many were moved and how many already stood                                       |
 
-## Данные
+## Data
 
-**Предложение** — блок в файле по дню: адрес, ресурс пакета, место в нём, готовый текст, повод,
-чем закрывается — какие надстройки дерева снимет приехавшая правка — и после отправки ссылка на
-заведённую запись. Кладут его два движения — разбор закрытой задачи и команда фидбэка, — и файл у
-обоих один: тот, что за сегодняшний день.
+**A proposal** — a block in the file of the day: the address, the package resource, the place in it,
+the ready text, the occasion, what it is closed by — which overrides of the tree the arrived edit
+will remove — and, after the sending, a link to the created record. It is put by two movements — the
+closed-work review and the feedback command — and the file of both is one: the one for today.
 
-**Отметка** своих файлов в дереве не заводит и не правит: адрес приёма и токен дерева она читает
-из настройки пакета, а состояние записи живёт у приёма.
+**The marking** creates and edits no files of its own in the tree: it reads the intake address and
+the tree token from the package setting, and the state of a record lives at the intake.
 
-## Экраны и состояния
+## Screens and states
 
-Экранов у пакета нет. Нет своего экрана и у команды фидбэка: человек видит её ответ строкой.
+The package has no screens. The feedback command has no screen of its own either: the person sees its
+answer as a line.
 
-| Состояние         | Чем видно                                      |
-| ----------------- | ---------------------------------------------- |
-| блок лёг          | ответ называет путь файла и число блоков в нём |
-| адрес непонятен   | вопрос человеку до того, как что-либо записано |
-| файла дня не было | ответ говорит, что файл заведён с образца      |
+| State                        | What it is visible by                                         |
+| ---------------------------- | ------------------------------------------------------------- |
+| the block landed             | the answer names the file path and the number of blocks in it |
+| the address is unclear       | a question to the person before anything is written           |
+| there was no file of the day | the answer says the file was created from a sample            |
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: вывод строки запуска одноязычный.
+Not applicable: the output of the launch line is single-language.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Груз одного дерева в приёме лежит под его признаком и токеном: запись на пару «дерево — месяц»
-своя у каждого, и чужой груз дерево ни прочитать, ни отметить не может.
+The cargo of one tree lies in the intake under its sign and token: the record for the pair "tree —
+month" is its own for each, and a tree can neither read nor mark someone else's cargo.
 
-## Решения
+## Decisions
 
-- **Роль разбора закрытой задачи остаётся непишущей.** Отвергнуто: выдать ей инструмент записи —
-  это сняло бы запрет, ради которого роль заведена.
-- **Груз уезжает в закрытый приём, а не в очередь работ и не заявкой на слияние.** Сводка
-  говорит о рабочих привычках команды, и в открытой очереди это выложено всему свету; правку
-  же текста правила делает тот, кто видит остальных потребителей, — агент из чужого дерева
-  написал бы её вслепую. Отвергнуто: запись в очередь работ пакета; автоматическая заявка на
-  слияние в его репозиторий.
-- **Команда фидбэка везётся пакетом, а не заводится деревом.** Слой правил один на все деревья
-  мастерской, и обратная связь о нём нужна каждому.
-- **Форма фидбэка — команда для агента, а не подкоманда строки запуска.** Разбирать прозу в
-  адрес и ресурс умеет тот, у кого правило в контексте; программа этого не умеет вовсе.
-- **Приёмом работает своя закрытая служба, а не чужая очередь работ.** Решение владельца.
-  Очередь работ репозитория пакета открыта всему свету, и груз в ней выложил бы рабочие привычки
-  команды наружу. Закрытый приём заодно снимает вопрос доступа: дереву выдаётся токен, прав в
-  репозитории пакета не нужно никому. Роль, разбиравшая нужность, предлагала обратное — заменить
-  службу приватным репозиторием; владелец прочитал довод и решение подтвердил.
-- **Выданный токен приходит доводом, а не файлом или переменной окружения** — человек держит его
-  на руках сразу после выдачи, и лишний шаг «положи в файл» вернул бы ту же проблему.
-  Отвергнуто: чтение из переменной окружения — токен остаётся в истории оболочки у всех.
-- **Подтверждения выданного токена у приёма нет** — приём его и выдал. Отвергнуто: пробное
-  обращение — оно требует адреса приёма и сети там, где ни того ни другого не нужно.
-- **Приём и его админка живут своими приложениями этого монорепо.** Типы груза общие с пакетом,
-  поэтому формат не разъедется молча.
-- **Груз трёх родов: сводка, предложения, разборы происшествий.** Предложения пакет уже умеет
-  слать; разборы сейчас не уезжают никуда и лежат только в дереве, где случились.
-- **Груз — сводка, а предложение к ней прикладывается.** Прежний порядок строил отправку вокруг
-  предложения, и прогон без замечаний терял данные о том, какие правила грузились и что дерево
-  переопределило.
-- **Выключатель гасит и снимок надстроек — допущение исполнителя.** Довод взят из действующей
-  статьи спека: пакет стоит и у тех, о ком мы не знаем, и запись без ведома дерева недопустима.
-- **Обновляемая запись на пару «дерево — месяц».** Новая запись на каждый прогон рассыпала бы
-  месячную картину дерева по прогонам, и собрать её можно было бы только запросом.
-- **Отдельная периодическая команда не заводится.** Её место занимает шаг разбора закрытой
-  задачи. Отвергнуто: своя команда сбора в трекер.
-- **Отметка идёт своим вызовом, а не доводом отправки.** Довод: отправка везёт груз наружу по
-  расписанию прогона, а отметка ставится тогда, когда разобрали. Отвергнут довод у отправки.
-- **Одно состояние на вызов, записей сколько угодно.** Довод: разбор кончается пачкой записей на
-  одном шаге, и вызов читается целиком. Отвергнут список строк из файла или потока: его формат
-  понадобится рабочему порядку разбора груза, и придуманный раньше своего потребителя он
-  разошёлся бы с ним.
-- **Отбитая запись даёт ненулевой код возврата.** Довод: ноль читается как сделанная работа, и
-  отбитый разбор остался бы неотмеченным молча. Отвергнут ноль с печатью отбитых.
+- **The role of the closed-work review stays non-writing.** Rejected: giving it a writing tool — that
+  would lift the ban the role was created for.
+- **The cargo goes into a closed intake, not into a work queue and not by a PR.** The
+  digest speaks of the working habits of the team, and in an open queue that is laid out for all the
+  world; and the edit of a rule's text is made by whoever sees the other consumers — an agent from a
+  foreign tree would write it blind. Rejected: a record in the package work queue; an automatic merge
+  request into its repository.
+- **The feedback command is carried by the package, not created by the tree.** The rules layer is one
+  for all the trees of the workshop, and feedback about it is needed by every one.
+- **The shape of the feedback is a command for the agent, not a subcommand of the launch line.**
+  Parsing prose into an address and a resource is something whoever has the rule in their context can
+  do; a program cannot do it at all.
+- **The intake is worked by a closed service of its own, not by someone else's work queue.** The
+  owner's decision. The work queue of the package repository is open to all the world, and the cargo
+  in it would lay the team's working habits outward. A closed intake also removes the question of
+  access: a token is issued to the tree, and nobody needs rights in the package repository. The role
+  that took apart the need proposed the opposite — to replace the service with a private repository;
+  the owner read the argument and confirmed the decision.
+- **An issued token comes as an argument, not as a file or an environment variable** — the person
+  holds it in hand right after it is issued, and a surplus step "put it into a file" would bring back
+  the same problem. Rejected: reading from an environment variable — the token then stays in
+  everyone's shell history.
+- **There is no confirmation of an issued token at the intake** — the intake issued it. Rejected: a
+  probing call — it demands the intake address and a network where neither is needed.
+- **The intake and its admin panel live as applications of their own in this monorepo.** The cargo
+  types are shared with the package, so the format will not drift apart silently.
+- **The cargo is of three kinds: the digest, the proposals, the incident analyses.** The proposals the
+  package can already send; the analyses now go nowhere and lie only in the tree they happened in.
+- **The cargo is the digest, and a proposal is attached to it.** The former order built the sending
+  around a proposal, and a run without remarks lost the data about which rules were loaded and what
+  the tree overrode.
+- **The switch puts out the snapshot of the overrides too — an assumption of the executor.** The
+  argument is taken from an article of the spec in force: the package stands with those we know
+  nothing about too, and writing without the tree's knowledge is not allowed.
+- **An updatable record for the pair "tree — month".** A new record for every run would scatter the
+  monthly picture of the tree across the runs, and it could be gathered only by a query.
+- **A separate periodic command is not created.** Its place is taken by the step of the closed-work
+  review. Rejected: a gathering command of its own into the tracker.
+- **The marking goes by a call of its own, not by an argument of the sending.** The argument: the
+  sending carries the cargo outward by the schedule of the run, and the marking is put when the
+  review is done. An argument at the sending was rejected.
+- **One state per call, as many records as you like.** The argument: a review ends with a batch of
+  records at one step, and the call is read whole. A list of lines from a file or a stream was
+  rejected: its format will be needed by the working order of taking the cargo apart, and invented
+  before its consumer it would diverge from it.
+- **A refused record gives a non-zero exit code.** The argument: zero reads as work done, and a
+  refused analysis would stay unmarked silently. Zero with a printout of the refused was rejected.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом.
+The open questions of the domain are shared, and they live in the spec next to it.
 
-## История изменений
+## History of changes
 
-- 2026-09-05 — поддомен выделен из спека наблюдений, переросшего предел длины. Правила, сценарии
-  и привязки предложений, отправки, заведения дерева и отметки переехали сюда прежними: номера
-  сценариев не пересчитывались.
-- 2026-08-21 — влито одно правило договорённости задачи RT-911: команда отметки несёт версию
-  выпуска доводом `--release`. Своего сценария правило не завело: обещание проверяет `SC-MB-207`
-  домена приёмника — номер выдан там и связан с заголовком теста. Остальное той договорённости
-  легло в спеки приёмника.
-- 2026-08-21 — влито одно правило договорённости задачи RT-910: команда отметки несёт текст
-  починки доводом `--fix`. Своего сценария правило не завело: обещание проверяет `SC-MB-191`
-  домена приёмника — номер выдан там и связан с заголовком теста, а пересчитать его значило бы
-  порвать эту связь. Остальное той договорённости легло в спеки приёмника.
-- 2026-08-20 — влита договорённость задачи RT-909 о команде отметки состояния груза: тринадцать
-  правил, сценарии `SC-AK-427`…`SC-AK-432`, привязки на команду и её доводы. Состояние записи
-  правит дерево, а приёмник сторожит порядок переходов — поддомен правки состояния у домена
-  приёмника.
-- 2026-08-19 — влита договорённость о заведении дерева выданным токеном: восемь правил, сценарии
-  `SC-AK-283`…`SC-AK-287`, привязки на команду заведения.
+- 2026-09-05 — the subdomain was split out of the observations spec, which had outgrown the length
+  limit. The rules, scenarios and bindings of the proposals, the sending, the creating of a tree and
+  the marking moved here as they were: the scenario numbers were not recounted.
+- 2026-08-21 — one rule of the agreement of task RT-911 was merged in: the marking command carries the
+  release version by the argument `--release`. The rule created no scenario of its own: the promise is
+  checked by `SC-MB-207` of the receiver domain — the number was issued there and is tied to the test
+  title. The rest of that agreement landed in the receiver specs.
+- 2026-08-21 — one rule of the agreement of task RT-910 was merged in: the marking command carries the
+  text of the fix by the argument `--fix`. The rule created no scenario of its own: the promise is
+  checked by `SC-MB-191` of the receiver domain — the number was issued there and is tied to the test
+  title, and recounting it would mean tearing that link. The rest of that agreement landed in the
+  receiver specs.
+- 2026-08-20 — the agreement of task RT-909 about the command of marking the cargo state was merged
+  in: thirteen rules, scenarios `SC-AK-427`…`SC-AK-432`, bindings on the command and its arguments.
+  The state of a record is edited by the tree, and the receiver guards the order of the transitions —
+  the subdomain of editing the state at the receiver domain.
+- 2026-08-19 — the agreement about creating a tree by an issued token was merged in: eight rules,
+  scenarios `SC-AK-283`…`SC-AK-287`, bindings on the creating command.

@@ -1,61 +1,61 @@
-<!-- rt-kit v0.25.0 · samples/specs/_template/spec.md · d0422917132f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · samples/specs/_template/spec.md · d281e58fe4b7 · правится надстройкой, не здесь -->
 # <Domain>
 
-**Статус:** действует · **Ревизия:** <date> · **Префикс сценариев:** `SC-<PREFIX>`
-**Зависимости:** <domains without which this one does not work, or "none">
-**Законы:** `<law>`, `<law>`
-**Процедуры:** <libs whose procedures the domain serves, or "none">
+**Status:** in force · **Revision:** <date> · **Scenario prefix:** `SC-<PREFIX>`
+**Depends on:** <domains without which this one does not work, or "none">
+**Laws:** `<law>`, `<law>`
+**Procedures:** <libs whose procedures the domain serves, or "none">
 
 The sections below are all mandatory: a missing section is a refusal, and "not applicable" is a
 lawful answer. The product agreement written before the code lies in `proposed/<feature>/` of this
 same domain and merges here by the last commit of the PR — with the scenario numbers unchanged.
 
-## Зачем
+## Why
 
 <What the domain solves and what its absence costs. Not a retelling of the implementation.>
 
-## Терминология
+## Terminology
 
 | Term   | What it is |
 | ------ | ---------- |
 | <term> | <meaning>  |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
 | In the agreement | On the screen |
 | ---------------- | ------------- |
 | <term>           | <label>       |
 
-## Правила
+## Rules
 
 - **<a statement about the product>.** <Reason: what happens if this is not kept.> Every
   statement gets a `file:symbol` binding line in `implementation.md` next to it.
 
-## Что не входит
+## What is out of scope
 
 - <a neighbouring area and where to go for it>
 
-## Контракт
+## Contract
 
 <The domain's procedures as a table: name, what it takes, what it returns. No procedures — "not applicable".>
 
-### Коды отказов
+### Refusal codes
 
 | Code   | When                    |
 | ------ | ----------------------- |
 | <code> | <what it is thrown on>  |
 
-## Данные
+## Data
 
 <Storage records the domain owns. None of its own — "not applicable".>
 
-## Экраны и состояния
+## Screens and states
 
 <The domain's screens and the states of each: empty, loading, failure, ready. No screens — "not applicable".>
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
 <What is translated and where the keys live.>
 
@@ -63,22 +63,22 @@ same domain and merges here by the last commit of the PR — with the scenario n
 
 <Titles, addresses, markup. Not applicable — written just so.>
 
-### Мобильная раскладка
+### Mobile layout
 
 <What changes on a narrow screen.>
 
-### Мультиобъектность
+### Several objects
 
 <What the domain has of its own for each owned object.>
 
-## Решения
+## Decisions
 
 - **<decision>** — <reason>. Rejected: <alternative and why>.
 
-## Открытые вопросы
+## Open questions
 
 - `Q-<number>` — <the question and the assumption the work goes with>.
 
-## История изменений
+## History of changes
 
 - <date> — <what changed>.

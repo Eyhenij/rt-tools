@@ -1,20 +1,20 @@
-# Привязка — разбор состояния раскладки
+# Binding — taking the state of the layout apart
 
-Утверждение спека и место, где оно исполняется. Связь идёт по тексту утверждения: снятое
-утверждение снимается вместе со своей строкой.
+A statement of the spec and the place where it is carried out. The link goes by the text of the
+statement: a removed statement is removed together with its line.
 
-- **Разбор называет замещённые надстройками разделы поимённо — ресурс и заголовок.** — `projects/agent-kit/src/lib/commands.ts:replacedLines`
-- **Дерево без надстроек о замещённом молчит.** — `projects/agent-kit/src/lib/commands.ts:replacedLines`
-- **Сводка называет местные значения, которых ждут взятые хуки.** — `projects/agent-kit/src/lib/commands.ts:localValueLines`
-- **Ключ шапки местного значения читается на обоих языках.** — `projects/agent-kit/src/lib/commands.ts:LOCAL_VALUE`
-- **Надстройка, не подобранная ни к одному ресурсу, называется вместе с причиной.** — `projects/agent-kit/src/lib/snapshot.ts:overridesOf`
-- **Файл вне рода ресурсов надстройкой не считается.** — `projects/agent-kit/src/lib/snapshot.ts:treeSnapshot`
-- **Долг привязок считается по разложенному телу правила, а не по пакетной редакции.** — `projects/agent-kit/src/lib/sync.ts:mergedBody`
-- **Незаданный порог сжатия разбор называет вместе с готовыми числами.** — `projects/agent-kit/src/lib/thresholds.ts:thresholdLines`
-- **Надстройка, заведённая ради отправленного предложения, помечается в самой надстройке.** — `projects/agent-kit/src/lib/override-marks.ts:MARK` — форма пометки; сценарий `SC-AK-846`
-- **Раскладка перечисляет помеченные разделы, чья статья в новой редакции уже есть.** — `projects/agent-kit/src/lib/commands.ts:staleOverrideLines` — сценарий `SC-AK-847`
-- **Снимает раздел человек, а не команда.** — `projects/agent-kit/src/lib/override-marks.ts:staleOverrides` — функция только называет разделы и ничего не пишет; сценарий `SC-AK-847`
-- **Раздел без пометки считается постоянным.** — `projects/agent-kit/src/lib/override-marks.ts:marksOfOverride` — сценарий `SC-AK-846`
-- **Пометка на ресурс, которого в новой редакции нет, молчит.** — `projects/agent-kit/src/lib/override-marks.ts:staleOverrides` — сценарий `SC-AK-848`
-- **Незаполненная дырка расхождением не считается и называется отдельным состоянием.** — `projects/agent-kit/src/lib/commands.ts:syncCheck` — счёт расхождений её не включает; сценарий `SC-AK-854`
-- **Дырка называется на любом исходе сверки, вместе с ходом.** — `projects/agent-kit/src/lib/commands.ts:holeWarningLines` — блок стоит в предупреждениях, а они печатаются и на сошедшемся дереве; сценарий `SC-AK-854`
+- **The report names the sections replaced by overrides by name — the resource and the heading.** — `projects/agent-kit/src/lib/commands.ts:replacedLines`
+- **A tree without overrides stays silent about what is replaced.** — `projects/agent-kit/src/lib/commands.ts:replacedLines`
+- **The digest names the local values the taken hooks expect.** — `projects/agent-kit/src/lib/commands.ts:localValueLines`
+- **The key of the header of a local value is read in both languages.** — `projects/agent-kit/src/lib/commands.ts:LOCAL_VALUE`
+- **An override matched to no resource is named together with the reason.** — `projects/agent-kit/src/lib/snapshot.ts:overridesOf`
+- **A file outside the kinds of resources does not count as an override.** — `projects/agent-kit/src/lib/snapshot.ts:treeSnapshot`
+- **The debt of bindings is counted by the laid-out body of a rule, not by the package edition.** — `projects/agent-kit/src/lib/sync.ts:mergedBody`
+- **An unset compaction threshold the report names together with ready numbers.** — `projects/agent-kit/src/lib/thresholds.ts:thresholdLines`
+- **An override created for the sake of a sent proposal is marked in the override itself.** — `projects/agent-kit/src/lib/override-marks.ts:MARK` — the shape of the mark; scenario `SC-AK-846`
+- **The layout lists the marked sections whose article already stands in the new edition.** — `projects/agent-kit/src/lib/commands.ts:staleOverrideLines` — scenario `SC-AK-847`
+- **A section is removed by a person, not by a command.** — `projects/agent-kit/src/lib/override-marks.ts:staleOverrides` — the function only names the sections and writes nothing; scenario `SC-AK-847`
+- **A section without a mark counts as permanent.** — `projects/agent-kit/src/lib/override-marks.ts:marksOfOverride` — scenario `SC-AK-846`
+- **A mark on a resource that is not in the new edition stays silent.** — `projects/agent-kit/src/lib/override-marks.ts:staleOverrides` — scenario `SC-AK-848`
+- **An unfilled hole does not count as a divergence and is named as a state of its own.** — `projects/agent-kit/src/lib/commands.ts:syncCheck` — the count of divergences does not include it; scenario `SC-AK-854`
+- **A hole is named at any outcome of the audit, together with the move.** — `projects/agent-kit/src/lib/commands.ts:holeWarningLines` — the block stands among the warnings, and they are printed on a tree that came together too; scenario `SC-AK-854`

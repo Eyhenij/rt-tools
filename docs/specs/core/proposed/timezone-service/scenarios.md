@@ -1,27 +1,27 @@
-# Сценарии — часовой пояс читателя
+# Scenarios — the time zone of the reader
 
-Номера продолжают нумерацию домена ядра и после вливания не меняются.
+The numbers continue the numbering of the domain of the core and do not change after the merge.
 
-### SC-CR-05 — в браузере отдаётся пояс читателя
+### SC-CR-05 — in the browser the zone of the reader is given
 
-Дано приложение идёт в браузере, а в системе читателя стоит свой пояс
-Когда вызывающий спрашивает пояс
-Тогда служба отвечает поясом читателя
+Given the application goes in the browser, and a zone of their own is set in the system of the reader
+When the caller asks for the zone
+Then the service answers with the zone of the reader
 
-Покрыто: `projects/core/src/lib/services/timezone.service.spec.ts`.
+Covered: `projects/core/src/lib/services/timezone.service.spec.ts`.
 
-### SC-CR-06 — вне браузера отдаётся согласованный пояс
+### SC-CR-06 — outside the browser the agreed zone is given
 
-Дано страницу отдаёт сервер
-Когда вызывающий спрашивает пояс
-Тогда служба отвечает `UTC`, а окружение не спрашивает вовсе
+Given the page is given out by the server
+When the caller asks for the zone
+Then the service answers `UTC`, and does not ask the environment at all
 
-Покрыто: `projects/core/src/lib/services/timezone.service.spec.ts`.
+Covered: `projects/core/src/lib/services/timezone.service.spec.ts`.
 
-### SC-CR-07 — сменившийся пояс виден следующим обращением
+### SC-CR-07 — a zone that changed is visible at the next address
 
-Дано пояс читателя сменился после первого обращения
-Когда вызывающий спрашивает пояс снова
-Тогда служба отвечает новым поясом
+Given the zone of the reader changed after the first address
+When the caller asks for the zone again
+Then the service answers with the new zone
 
-Покрыто: `projects/core/src/lib/services/timezone.service.spec.ts`.
+Covered: `projects/core/src/lib/services/timezone.service.spec.ts`.

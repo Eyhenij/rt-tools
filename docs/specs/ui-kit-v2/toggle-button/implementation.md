@@ -1,14 +1,14 @@
-# Чем исполняется — кнопка с двумя положениями
+# What it is carried out by — a button with two positions
 
-Первая колонка — правило спека рядом дословно. Вторая — где оно исполняется в дереве; там же
-назван сценарий, которым это проверяется, а чем именно покрыт каждый сценарий, сказано в
-`scenarios.md`.
+The first column is the rule of the spec next to it verbatim. The second is where it is carried out
+in the tree; the scenario it is checked by is named there too, and what exactly every scenario is
+covered by is said in `scenarios.md`.
 
-Правило без строки и строка без правила — расхождение: спек обещает то, чего в дереве нет, либо
-в дереве стоит то, о чём спек молчит.
+A rule without a line and a line without a rule is a divergence: the spec promises what is not in the
+tree, or the tree holds what the spec is silent about.
 
-- **Признак положения трёхзначен: нажата, отжата, положения нет вовсе.** — `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.ts:pressed`; сценарий `SC-UKV-95`
-- **Отжатое положение объявляется наравне с нажатым.** — `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.ts:ariaPressed`; сценарий `SC-UKV-96`
-- **Вид нажатого положения берётся у удерживаемого нажатия самой кнопки.** — `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss:pressed`; сценарий `SC-UKV-97`
-- **Положение не меняется само по нажатию.** — `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.ts:pressed` — вход и только вход: своего состояния директива не держит; сценарий `SC-UKV-97`
-- **Отключённая кнопка сохраняет своё положение.** — `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss:pressed`; сценарий `SC-UKV-98`
+- **The sign of the position has three values: pressed, released, no position at all.** — `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.ts:pressed`; scenario `SC-UKV-95`
+- **The released position is declared on a par with the pressed one.** — `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.ts:ariaPressed`; scenario `SC-UKV-96`
+- **The look of the pressed position is taken from the held press of the button itself.** — `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss:pressed`; scenario `SC-UKV-97`
+- **The position does not change by itself at a press.** — `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.ts:pressed` — an input and only an input: the directive keeps no state of its own; scenario `SC-UKV-97`
+- **A switched-off button keeps its position.** — `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss:pressed`; scenario `SC-UKV-98`

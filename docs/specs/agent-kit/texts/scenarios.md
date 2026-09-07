@@ -1,293 +1,310 @@
-# Сценарии — тексты слоя правил
+# Scenarios — the texts of the rules layer
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной. Префикс общий на домен, и номера при переезде в поддомен не
-пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier goes at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason. The prefix is shared across the domain,
+and the numbers were not recounted at the move into the subdomain: the number ties the scenario to
+the test title.
 
-### SC-AK-04 — текст правила не называет чужого дерева
+### SC-AK-04 — the text of a rule names no foreign tree
 
-Дано разложенное правило и паттерн при нём
-Когда их тексты проверяются на адресность
-Тогда ни одного пути к домену, порта и селектора конкретного дерева в них нет
+Given a laid-out rule and the pattern at it
+When their texts are checked for addressness
+Then there is not a single path to a domain, port or selector of a specific tree in them
 
-### SC-AK-33 — словарь приезжает в дерево раскладкой
+### SC-AK-33 — the glossary arrives in the tree by the layout
 
-Дано дерево взяло всё, что везёт пакет
-Когда идёт `sync`
-Тогда в каталоге документов лежит словарь с шапкой пакета
+Given the tree took everything the package carries
+When `sync` goes
+Then a glossary with the header of the package lies in the documents directory
 
-### SC-AK-34 — предметные разделы словаря дописываются надстройкой
+### SC-AK-34 — the subject sections of the glossary are appended by an override
 
-Дано дерево положило надстройку словаря со своим разделом
-Когда идёт `sync`
-Тогда разложенный словарь несёт и общие разделы пакета, и раздел дерева
+Given the tree put an override of the glossary with a section of its own
+When `sync` goes
+Then the laid-out glossary carries both the shared sections of the package and the section of the
+tree
 
-### SC-AK-43 — правка правила требует правило об устройстве текстов
+### SC-AK-43 — an edit of a rule demands the rule about how the texts are built
 
-Дано правится файл правила или паттерна в каталоге правил
-Когда гейт судит правку
-Тогда он требует правило об устройстве текстов, а не о формулировках
+Given a file of a rule or a pattern in the rules directory is edited
+When the gate judges the edit
+Then it demands the rule about how the texts are built, not the one about wording
 
-### SC-AK-44 — прочие файлы агента правила по-прежнему не требуют
+### SC-AK-44 — the other files of the agent still demand no rule
 
-Дано правится роль, команда или конвейер агента
-Когда гейт судит правку
-Тогда он молчит
+Given a role, a command or a pipeline of the agent is edited
+When the gate judges the edit
+Then it stays silent
 
-### SC-AK-67 — счёт шагов работы сплошной через все паттерны
+### SC-AK-67 — the count of the steps of the work is through across all the patterns
 
-Дано шаги работы описаны паттернами начала, продолжения и закрытия работы
-Когда номера шагов читаются подряд по всем трём
-Тогда каждый номер встречается один раз, а полный их список стоит в правиле ведения работы
+Given the steps of the work are described by the patterns of the start, the continuation and the
+closing of the work
+When the numbers of the steps are read one after another across all three
+Then every number is met once, and the full list of them stands in the rule of the conduct of work
 
-### SC-AK-68 — правилу об оформлении документов есть куда вписать скил без закона
+### SC-AK-68 — the rule about the styling of documents has a place to write a skill without a law into
 
-Дано дерево ведёт свои скилы о документах
-Когда оно дописывает их надстройкой
-Тогда в правиле есть раздел «Скил без закона», и надстройка ложится в него, не замещая раздела ловушек
+Given the tree keeps its own skills about documents
+When it appends them by an override
+Then the rule has the section "A skill without a law", and the override lands in it without replacing
+the section of the pitfalls
 
-### SC-AK-94 — ресурс говорит о соседнем ресурсе условно и по имени
+### SC-AK-94 — a resource speaks of a neighbouring resource conditionally and by name
 
-Дано ресурс пакета упоминает соседний ресурс, которого в дереве может не быть
-Когда текст ресурса проверяется на утверждения о дереве
-Тогда упоминание условно и названо именем, а не подано как состоявшийся факт
+Given a package resource mentions a neighbouring resource that may not be in the tree
+When the text of the resource is checked for statements about the tree
+Then the mention is conditional and named by name, not given as an accomplished fact
 
-Покрыто: `projects/agent-kit/tests/texts.test.sh`.
+Covered: `projects/agent-kit/tests/texts.test.sh`.
 
-### SC-AK-906 — раздел статей закона принимается под любым из двух имён
+### SC-AK-906 — the section of the articles of a law is accepted under either of the two names
 
-Дано в дереве лежит закон с разделом «Articles» и закон с разделом «Статьи»
-Когда идёт проверка спеков
-Тогда ни один из них не назван законом без раздела статей, а закон без обоих имён назван с
-подсказкой обоих
+Given a law with the section "Articles" and a law with the section "Статьи" lie in the tree
+When the check of the specs goes
+Then neither of them is named a law without a section of articles, and a law without both names is
+named with a hint of both
 
-Покрыто: `projects/agent-kit/tests/checks-specs.test.sh`, `projects/agent-kit/tests/rules-review.test.sh`.
+Covered: `projects/agent-kit/tests/checks-specs.test.sh`, `projects/agent-kit/tests/rules-review.test.sh`.
 
-### SC-AK-211 — ресурс без обязательного раздела краснеет
+### SC-AK-211 — a resource without a mandatory section turns red
 
-Дано в наборе лежит закон без раздела статей
-Когда идёт проверка текстов пакета
-Тогда она называет ресурс, его род и недостающий заголовок и отдаёт ненулевой код
+Given a law without the section of articles lies in the suite
+When the check of the texts of the package goes
+Then it names the resource, its kind and the missing heading and gives back a non-zero code
 
-Покрыто: `projects/agent-kit/tests/rules-review.test.sh`.
+Covered: `projects/agent-kit/tests/rules-review.test.sh`.
 
-### SC-AK-212 — правило без паттерна краснеет в самом пакете
+### SC-AK-212 — a rule without a pattern turns red in the package itself
 
-Дано в наборе лежит правило, на которое не ссылается ни один паттерн
-Когда идёт проверка текстов пакета
-Тогда она называет это правило: связь сверху вниз сверяется так же, как снизу вверх
+Given a rule not a single pattern refers to lies in the suite
+When the check of the texts of the package goes
+Then it names this rule: the link from above downwards is checked the same as from below upwards
 
-Покрыто: `projects/agent-kit/tests/rules-review.test.sh`.
+Covered: `projects/agent-kit/tests/rules-review.test.sh`.
 
-### SC-AK-213 — невыбранный вид судится наравне с выбранным
+### SC-AK-213 — an unchosen edition is judged on a par with the chosen one
 
-Дано у ресурса несколько видов, и дерево разложило один из них
-Когда идёт проверка текстов пакета
-Тогда расхождение в неразложенном виде найдено так же, как в разложенном
+Given a resource has several editions, and the tree laid out one of them
+When the check of the texts of the package goes
+Then a divergence in the unlaid-out edition is found the same as in the laid-out one
 
-Покрыто: `projects/agent-kit/tests/rules-review.test.sh`.
+Covered: `projects/agent-kit/tests/rules-review.test.sh`.
 
-### SC-AK-214 — имя соседа, названное прозой, каталогу не отвечает
+### SC-AK-214 — the name of a neighbour named in prose answers to nothing in the catalogue
 
-Дано текст правила называет по имени ресурс, которого в наборе нет
-Когда идёт проверка текстов пакета
-Тогда она называет ресурс, названное имя и строку, где оно стоит
+Given the text of a rule names by name a resource that is not in the suite
+When the check of the texts of the package goes
+Then it names the resource, the named name and the line it stands in
 
-Покрыто: `projects/agent-kit/tests/rules-review.test.sh`.
+Covered: `projects/agent-kit/tests/rules-review.test.sh`.
 
-### SC-AK-215 — адрес дерева внутри блока кода краснеет
+### SC-AK-215 — a tree address inside a code block turns red
 
-Дано в блоке кода ресурса стоит путь конкретного дерева
-Когда идут проверки текстов пакета
-Тогда адрес найден: ограда блока кода запретов не снимает
+Given a path of a specific tree stands in a code block of a resource
+When the checks of the texts of the package go
+Then the address is found: the fence of a code block lifts no bans
 
-Покрыто: `projects/agent-kit/tests/texts.test.sh`.
+Covered: `projects/agent-kit/tests/texts.test.sh`.
 
-### SC-AK-216 — статья закона без правила машиной не считается
+### SC-AK-216 — an article of a law without a rule is not counted by a machine
 
-Дано у статьи закона нет ни одного правила, которое её исполняет
-Когда идёт проверка текстов пакета
-Тогда она об этом молчит: пробел такого рода ищется чтением, а не счётом привязок
+Given an article of a law has not a single rule that carries it out
+When the check of the texts of the package goes
+Then it stays silent about this: a gap of this kind is looked for by reading, not by counting the
+bindings
 
-Не покрыто: молчание проверки прогоном не отличить от того, что проверять было нечего, —
-подтверждается чтением её тела.
+Not covered: the silence of the check cannot be told by a run from there having been nothing to
+check — it is confirmed by reading its body.
 
-### SC-AK-217 — считаемое расхождение отдаёт ненулевой код
+### SC-AK-217 — a countable divergence gives back a non-zero code
 
-Дано в наборе есть хотя бы одно расхождение считаемого рода
-Когда идёт проверка текстов пакета
-Тогда она отдаёт ненулевой код, и гейт пуша отбивает правку
+Given there is at least one divergence of a countable kind in the suite
+When the check of the texts of the package goes
+Then it gives back a non-zero code, and the push gate refuses the edit
 
-Покрыто: `projects/agent-kit/tests/rules-review.test.sh`.
+Covered: `projects/agent-kit/tests/rules-review.test.sh`.
 
-### SC-AK-218 — набор без расхождений проходит молча
+### SC-AK-218 — a suite without divergences passes silently
 
-Дано ни одного расхождения считаемого рода в наборе нет
-Когда идёт проверка текстов пакета
-Тогда она отдаёт нулевой код и не называет ни одного ресурса — только счёт проверенного
+Given there is not a single divergence of a countable kind in the suite
+When the check of the texts of the package goes
+Then it gives back a zero code and names not a single resource — only the count of what was checked
 
-Покрыто: `projects/agent-kit/tests/rules-review.test.sh`.
+Covered: `projects/agent-kit/tests/rules-review.test.sh`.
 
-### SC-AK-219 — проверка текстов стоит в наборе, гоняемом перед пушем
+### SC-AK-219 — the check of the texts stands in the suite run before a push
 
-Дано правится любой ресурс пакета
-Когда исполнитель пушит ветку
-Тогда проверка текстов пакета идёт без отдельной команды: она названа в наборе гейта
+Given any resource of the package is edited
+When the executor pushes the branch
+Then the check of the texts of the package goes without a separate command: it is named in the suite
+of the gate
 
-Покрыто: `projects/agent-kit/src/lib/assets.spec.ts`.
+Covered: `projects/agent-kit/src/lib/assets.spec.ts`.
 
-### SC-AK-220 — ревью читает семью целиком
+### SC-AK-220 — the review reads the family whole
 
-Дано команде названо имя закона
-Когда идёт ревью
-Тогда роль читает этот закон, все правила под ним и все паттерны при этих правилах
+Given the name of a law is named to the command
+When the review goes
+Then the role reads this law, all the rules under it and all the patterns at those rules
 
-Не покрыто: команду исполняет агент, и прогоном она не проверяется — проверка идёт вызовом в
-живом дереве.
+Not covered: the command is carried out by an agent, and it is not checked by a run — the check goes
+by a call in a live tree.
 
-### SC-AK-221 — команда без имени семьи требует его
+### SC-AK-221 — a command without the name of a family demands it
 
-Дано команда позвана без довода
-Когда она начинает работу
-Тогда она требует назвать семью и печатает перечень имён законов, а ревью не идёт
+Given the command is called without an argument
+When it starts the work
+Then it demands to name the family and prints the list of the names of the laws, and the review does
+not go
 
-Не покрыто: команду исполняет агент, и прогоном она не проверяется — проверка идёт вызовом в
-живом дереве.
+Not covered: the command is carried out by an agent, and it is not checked by a run — the check goes
+by a call in a live tree.
 
-### SC-AK-222 — находка называет два места дословно
+### SC-AK-222 — a finding names two places verbatim
 
-Дано роль нашла, что два текста говорят об одном разное
-Когда она возвращает находку
-Тогда в ней стоят обе цитаты, имена обоих ресурсов и то, чем эти места расходятся
+Given the role found that two texts say different things about one matter
+When it gives back the finding
+Then both quotations, the names of both resources and what these places diverge by stand in it
 
-Не покрыто: судится чтением ответа роли — прогоном он не сверяется.
+Not covered: it is judged by reading the answer of the role — by a run it is not checked.
 
-### SC-AK-223 — смысловая находка ничего не отбивает
+### SC-AK-223 — a finding of meaning refuses nothing
 
-Дано ревью вернуло непустой список находок
-Когда работа продолжается
-Тогда ни сборка, ни гейт пуша от этого не краснеют: находка — довод для человека
+Given the review gave back a non-empty list of findings
+When the work goes on
+Then neither the build nor the push gate turns red from this: a finding is an argument for a person
 
-Не покрыто: судится чтением ответа роли — прогоном он не сверяется.
+Not covered: it is judged by reading the answer of the role — by a run it is not checked.
 
-### SC-AK-224 — роль ревью файлов не правит
+### SC-AK-224 — the role of the review edits no files
 
-Дано роль нашла расхождение в тексте правила
-Когда она заканчивает работу
-Тогда ни один файл не изменён: правку вносит человек
+Given the role found a divergence in the text of a rule
+When it finishes the work
+Then not a single file is changed: the edit is made by a person
 
-Не покрыто: роли объявлены одни читающие инструменты, но объявление это не судит ни один набор —
-род `agents` проверяется только на месте в раскладке. Подтверждается чтением шапки роли.
+Not covered: the roles are declared reading tools alone, but this declaration is judged by no suite —
+the kind `agents` is checked only for its place in the layout. It is confirmed by reading the header
+of the role.
 
-### SC-AK-225 — граф уезжает в дерево вместе с правилом
+### SC-AK-225 — the graph goes away into the tree together with the rule
 
-Дано правило с графом хода разложено в дерево
-Когда сверяется разложенная копия
-Тогда граф в ней стоит целиком: отдельным файлом рядом он не лежит
+Given a rule with a graph of the flow is laid out into the tree
+When the laid-out copy is checked
+Then the graph stands in it whole: it does not lie next to it as a separate file
 
-Покрыто: `projects/agent-kit/src/lib/plan.spec.ts` — раскладка сравнивает тело файла с телом
-ресурса и перекладывает при расхождении; отдельного файла рядом она не кладёт вовсе.
+Covered: `projects/agent-kit/src/lib/plan.spec.ts` — the layout compares the body of the file with
+the body of the resource and puts it anew at a divergence; a separate file next to it it does not put
+at all.
 
-### SC-AK-226 — набор разделов берётся из объявленного, а не из образца рода
+### SC-AK-226 — the set of sections is taken from the declared one, not from the sample of the kind
 
-Дано образец рода объявляет раздел, которого нет ни в одном ресурсе этого рода
-Когда идёт проверка текстов пакета
-Тогда она судит по объявленному набору и на этом разделе не краснеет ни разу, а сам образец
-называет расхождением: заводят по нему, и разошедшийся отдаёт новый ресурс сразу неполным
+Given the sample of a kind declares a section that is in not one resource of this kind
+When the check of the texts of the package goes
+Then it judges by the declared set and never turns red on this section, while it names the sample
+itself a divergence: resources are created by it, and a diverged one gives back a new resource
+incomplete at once
 
-Покрыто: `projects/agent-kit/tests/rules-review.test.sh`.
+Covered: `projects/agent-kit/tests/rules-review.test.sh`.
 
-### SC-AK-227 — род без объявленного набора разделов молчит
+### SC-AK-227 — a kind without a declared set of sections stays silent
 
-Дано правится гард, проверка или образец — род, набора разделов у которого нет
-Когда идёт проверка текстов пакета
-Тогда она об этом роде молчит и в список исключений его не заносит
+Given a guard, a check or a sample is edited — a kind that has no set of sections
+When the check of the texts of the package goes
+Then it stays silent about this kind and does not put it into the list of exceptions
 
-Покрыто: `projects/agent-kit/tests/rules-review.test.sh`.
+Covered: `projects/agent-kit/tests/rules-review.test.sh`.
 
-### SC-AK-228 — безымянный образец адресом дерева не считается
+### SC-AK-228 — a nameless sample does not count as a tree address
 
-Дано в блоке кода ресурса стоит `libs/<домен>` или `<Feature>Component`
-Когда идут проверки текстов пакета
-Тогда расхождения нет: перечень адресов закрытый, и безымянный образец в него не входит
+Given `libs/<domain>` or `<Feature>Component` stands in a code block of a resource
+When the checks of the texts of the package go
+Then there is no divergence: the list of the addresses is closed, and a nameless sample does not
+enter it
 
-Покрыто: `projects/agent-kit/tests/texts.test.sh`.
+Covered: `projects/agent-kit/tests/texts.test.sh`.
 
-### SC-AK-229 — нулевой долг назван числом, а не молчанием
+### SC-AK-229 — zero debt is named by a number, not by silence
 
-Дано ни одного правила без паттерна в наборе нет
-Когда идёт проверка текстов пакета
-Тогда она называет число проверенных правил, а не просто молчит
+Given there is not a single rule without a pattern in the suite
+When the check of the texts of the package goes
+Then it names the number of the rules checked instead of simply staying silent
 
-Покрыто: `projects/agent-kit/tests/rules-review.test.sh`.
+Covered: `projects/agent-kit/tests/rules-review.test.sh`.
 
-### SC-AK-230 — граф есть у каждого правила
+### SC-AK-230 — every rule has a graph
 
-Дано в наборе лежит правило без графа хода
-Когда идёт проверка текстов пакета
-Тогда она называет это правило: граф заводится всем правилам, а не ветвящимся
+Given a rule without a graph of the flow lies in the suite
+When the check of the texts of the package goes
+Then it names this rule: a graph is created for all the rules, not for the branching ones
 
-Покрыто: `projects/agent-kit/tests/rules-review.test.sh` — раздел графа стоит в наборе разделов
-рода «правило», и его отсутствие набор называет строкой на файл.
+Covered: `projects/agent-kit/tests/rules-review.test.sh` — the section of the graph stands in the set
+of sections of the kind "a rule", and its absence the suite names by a line per file.
 
-### SC-AK-690 — запретное слово, встреченное в дереве, краснеет
+### SC-AK-690 — a forbidden word met in the tree turns red
 
-Дано словарь объявил слово запретным, и это слово стоит в тексте дерева
-Когда идёт сверка словаря
-Тогда она называет место и слово и отвечает ненулевым кодом; принятое слово молчит
+Given the glossary declared a word forbidden, and this word stands in a text of the tree
+When the check of the glossary goes
+Then it names the place and the word and answers with a non-zero code; an accepted word stays silent
 
-Дано запретное слово раздела английское и стоит в английском тексте
-Когда идёт сверка словаря
-Тогда она находит его теми же границами: граница слова — любая буква, а слово внутри другого
-слова молчит
+Given the forbidden word of the section is English and stands in an English text
+When the check of the glossary goes
+Then it finds it by the same boundaries: the boundary of a word is any letter, and a word inside
+another word stays silent
 
-Покрыто: `projects/agent-kit/tests/checks-glossary.test.sh`.
+Covered: `projects/agent-kit/tests/checks-glossary.test.sh`.
 
-### SC-AK-691 — слово с уточнением поиском не судится и называется вслух
+### SC-AK-691 — a word with a refinement is not judged by a search and is named aloud
 
-Дано у запретного слова стоит скобочное уточнение: запрещено одно значение из двух
-Когда идёт сверка словаря
-Тогда расхождением оно не считается, а в выводе перечислено как оставшееся читателю
+Given a forbidden word carries a refinement in brackets: one meaning of two is forbidden
+When the check of the glossary goes
+Then it does not count as a divergence, and in the output it is listed as what is left to the reader
 
-Покрыто: `projects/agent-kit/tests/checks-glossary.test.sh`.
+Covered: `projects/agent-kit/tests/checks-glossary.test.sh`.
 
-### SC-AK-692 — словарь и описание прошлого из сверки выведены
+### SC-AK-692 — the glossary and an account of the past are taken out of the check
 
-Дано запретное слово стоит в самом словаре, в записи описания прошлого и в папке задачи
-Когда идёт сверка словаря
-Тогда расхождений нет: словарь называет слово по делу, остальные два по устройству перечисляют
-бывшее. Раздела запретных слов нет вовсе — сверка объявляет пропуск, а не сходство
+Given a forbidden word stands in the glossary itself, in a record of an account of the past and in
+the task folder
+When the check of the glossary goes
+Then there are no divergences: the glossary names the word for a reason, and the other two by their
+nature list what was. There is no section of forbidden words at all — the check declares a skip, not
+a match
 
-Покрыто: `projects/agent-kit/tests/checks-glossary.test.sh`.
+Covered: `projects/agent-kit/tests/checks-glossary.test.sh`.
 
-### SC-AK-904 — раздел запретных слов читается под обоими именами
+### SC-AK-904 — the section of the forbidden words is read under both names
 
-Дано словарь дерева держит раздел под русским именем, и запретное слово стоит в тексте дерева
-Когда идёт сверка словаря
-Тогда она находит раздел, называет место и слово и отвечает ненулевым кодом — так же, как при
-английском имени раздела
+Given the glossary of the tree holds the section under the Russian name, and a forbidden word stands
+in a text of the tree
+When the check of the glossary goes
+Then it finds the section, names the place and the word and answers with a non-zero code — the same
+as at the English name of the section
 
-Покрыто: `projects/agent-kit/tests/checks-glossary.test.sh`.
+Covered: `projects/agent-kit/tests/checks-glossary.test.sh`.
 
-### SC-AK-819 — вводная словаря ведёт в источник правки
+### SC-AK-819 — the preamble of the glossary leads into the source of the edit
 
-Дано словарь дерева несёт шапку раскладки
-Когда хук запуска кладёт его в контекст
-Тогда вводная называет надстройку и не зовёт править словарь на месте
+Given the glossary of the tree carries the layout header
+When the startup hook puts it into the context
+Then the preamble names the override and does not call to edit the glossary in place
 
-Дано шапки у словаря нет
-Когда хук запуска кладёт его в контекст
-Тогда вводная зовёт править словарь на месте и надстройки не называет
+Given the glossary has no header
+When the startup hook puts it into the context
+Then the preamble calls to edit the glossary in place and names no override
 
-Покрыто: `projects/agent-kit/tests/checks-glossary.test.sh`.
+Covered: `projects/agent-kit/tests/checks-glossary.test.sh`.
 
-### SC-AK-837 — язык текстов для человека назван правилом, а машиной не судится
+### SC-AK-837 — the language of the texts for a person is named by the rule and is not judged by a machine
 
-Дано пишутся задача в очереди, описание заявки и ответ владельцу в чате
-Когда исполнитель берёт правило слога
-Тогда раздел «Тексты для человека» называет язык всех трёх, паттерн `doc-style-human` даёт
-образцы «так» и «не так», а проверки на них нет: задача живёт на хостинге, ответ в чате в дерево
-не ложится, описание заявки читает человек
+Given a task in the queue, the description of a request and an answer to the owner in the chat are
+written
+When the executor takes the rule of the wording
+Then the section "Texts for a person" names the language of all three, the pattern `doc-style-human`
+gives the samples "like this" and "not like this", and there is no check for them: the task lives at
+the hosting, the answer in the chat does not land in the tree, the description of the request is read
+by a person
 
-Не покрыто: судить эти тексты нечем — ни один из них не файл дерева. Проверено на месте:
-раскладка положила правило и паттерн, сверка сошлась, проверка слога по обоим файлам чиста.
+Not covered: there is nothing to judge these texts by — not one of them is a file of the tree.
+Checked in place: the layout put the rule and the pattern, the check came out even, the check of the
+wording over both files is clean.

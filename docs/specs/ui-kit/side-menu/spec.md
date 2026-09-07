@@ -1,161 +1,164 @@
-# Второй уровень бокового меню
+# The second level of the side menu
 
-**Статус:** действует · **Ревизия:** 2026-09-06 · **Префикс сценариев:** `SC-UK`
-**Зависимости:** нет
-**Законы:** `frontend-application`, `reuse-first`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-09-06 · **Scenario prefix:** `SC-UK`
+**Depends on:** none
+**Laws:** `frontend-application`, `reuse-first`
+**Procedures:** none
 
-Поддомен первого кита о втором уровне бокового меню: чем подменю держится открытым, что в нём
-видно при закреплении и как в нём находят пункт.
+A subdomain of the first kit about the second level of the side menu: what a submenu is held open by, what
+is visible in it at a pinning and how an item is found in it.
 
-## Зачем
+## Why
 
-Подменю открывалось наведением и закрывалось уходом указателя. Человеку, который работает в
-одном разделе весь день, приходилось открывать его заново на каждое действие, а найти пункт в
-длинном списке можно было только взглядом. Поддомен называет, чем подменю держится открытым,
-что закреплённая панель показывает и когда она не занимает места, как поиск отбирает пункты и
-где кит останавливается: предпочтение хранит потребитель, адрес активного пункта кит не считает.
+The submenu opened at a hovering and closed at the leaving of the pointer. A person who works in one
+section the whole day had to open it anew at every action, and an item in a long list could be found only
+by the eye. The subdomain names what the submenu is held open by, what a pinned panel shows and when it
+takes no place, how the search filters the items and where the kit stops: the preference is kept by the
+consumer, the address of the active item the kit does not count.
 
-## Терминология
+## Terminology
 
-| Термин               | Что это                                                            |
-| -------------------- | ------------------------------------------------------------------ |
-| Полоса               | Первый уровень меню: узкая колонка с пунктами разделов             |
-| Подменю              | Второй уровень: панель с разделами пункта полосы                   |
-| Мода подменю         | Вход, которым потребитель называет, чем подменю держится открытым  |
-| Закреплённое подменю | Подменю, стоящее открытым постоянно, пока мода закреплённая        |
-| Активный пункт       | Пункт полосы, названный активным входом активности                 |
-| Запрос               | Текст в поле поиска подменю; живёт, пока подменю открыто           |
-| Ручка тяги           | Полоса на краю закреплённого подменю, за которую меняют его ширину |
+| Term                    | What it is                                                                             |
+| ----------------------- | -------------------------------------------------------------------------------------- |
+| The strip               | The first level of the menu: a narrow column with the items of the sections            |
+| A submenu               | The second level: a panel with the sections of an item of the strip                    |
+| The mode of the submenu | The input the consumer names what the submenu is held open by by                       |
+| A pinned submenu        | A submenu standing open permanently while the mode is the pinned one                   |
+| The active item         | The item of the strip named active by the input of the activity                        |
+| A query                 | The text in the field of the search of the submenu; it lives while the submenu is open |
+| The handle of the pull  | The strip at the edge of a pinned submenu its width is changed by                      |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В домене             | На экране                                                   |
-| -------------------- | ----------------------------------------------------------- |
-| Мода подменю         | переключатель закрепления у подвала полосы                  |
-| Закреплённое подменю | панель, стоящая слева от страницы постоянно, без подложки   |
-| Запрос               | поле поиска над списком подменю                             |
-| Пустой отбор         | строка о том, что совпадений нет, вместо списка             |
-| Ручка тяги           | тонкая полоса на правом краю панели, красится при наведении |
+| In the domain           | On the screen                                                           |
+| ----------------------- | ----------------------------------------------------------------------- |
+| The mode of the submenu | the switch of the pinning at the footer of the strip                    |
+| A pinned submenu        | a panel standing to the left of the page permanently, without a backing |
+| A query                 | the field of the search above the list of the submenu                   |
+| An empty filter         | a line saying that there are no coincidences, instead of the list       |
+| The handle of the pull  | a thin strip at the right edge of the panel, painted at a hovering      |
 
-## Правила
+## Rules
 
-- **Мода подменю приходит входом, и умолчание — сегодняшнее поведение.** Потребитель, не
-  назвавший моду, получает подменю, которое открывается наведением и закрывается уходом
-  указателя.
-- **Нажатие переключателя моду не меняет, а просит её.** Кит отдаёт наружу моду, которую человек
-  попросил, и ждёт её обратно входом: предпочтение хранит потребитель, своего состояния о нём
-  кит не заводит и в хранилище браузера не ходит.
-- **Закреплённое подменю показывает активный пункт.** Какой пункт активен, кит узнаёт входом
-  активности; своего вычисления по адресу у него нет.
-- **Закрепление не меняет того, что видно.** Активного пункта нет — закреплённым остаётся то
-  подменю, которое было открыто в минуту нажатия: человек закрепляет то, что перед ним, и
-  потерять его нажатием он не должен. Не открыто ничего и активного пункта нет — нет и подменю.
-- **Нажатие пункта полосы переставляет закреплённое подменю на его раздел.** Наведение при
-  закреплении по-прежнему не делает ничего — рука идёт вдоль полосы к подвалу и к самой панели,
-  и подменю мелькало бы разделами по дороге. Для раздела, у которого нет своего адреса, нажатие
-  остаётся единственным способом его открыть; без этого человек заперт в том разделе, с которого
-  начал. Выбранный раздел стоит впереди активного: иначе подменю активного адреса возвращается на
-  каждое нажатие.
-- **Пункт со своим адресом и без разделов закреплённое подменю снимает.** Человек ушёл на
-  страницу, разделов у которой нет, и панель от прежнего раздела врала бы о том, где он стоит.
-- **Закреплённой панели нечего показать — места она не занимает.** Ни ширины, ни ручки тяги:
-  ширина, поставленная одним лишь закреплением, оставляет пустую полосу слева от страницы на
-  каждом адресе без разделов, а тянуть за край невидимой панели не за что. Выбор моды при этом не
-  снимается: раздел, у которого подменю есть, показывает его закреплённым, как и прежде.
-- **Закреплённое подменю не закрывается ни уходом указателя, ни переходом по своему пункту.**
-  Иначе закрепление отменяется первым же действием человека.
-- **Под закреплённым подменю нет подложки.** Она гасит остальную страницу и ловит нажатия; у
-  панели, стоящей открытой постоянно, это делает страницу нерабочей.
-- **Поле ищет по открытому подменю, а не по всем разделам.** Результат остаётся принадлежащим
-  разделу: поиск по всему приложению — другой предмет.
-- **Отбор идёт по подстроке подписи без учёта регистра, а пустой запрос показывает всё.**
-  Совпадений нет — подменю говорит об этом строкой: пустая панель неотличима от поломки.
-- **Запрос живёт, пока подменю открыто.** Он не предпочтение: закрытое и открытое заново подменю
-  показывает список целиком.
-- **Подписи поля, переключателя и пустого отбора зашиты по-английски.** Словаря у кита нет, и
-  соседняя подпись — кнопка возврата к главному списку — зашита тем же способом.
-- **На узком экране закрепления нет, а поиск есть.** Подменю там занимает экран целиком, и
-  закреплять нечего; переключателя в узкой разметке нет вовсе.
-- **Ручка тяги захватывается шире, чем видна.** Зона захвата и видимая полоса — два разных
-  числа: в четыре пикселя курсор попадает не с первого раза, а промах мимо ручки попадает в
-  панель, то есть вместо тяги человек нажимает пункт. Зона шире втрое и стоит по центру прежнего
-  места, красится при наведении полоса внутри неё — закрашенная целиком зона читалась бы другим
-  оформлением.
+- **The mode of the submenu arrives by an input, and the default is today's behaviour.** A consumer who did
+  not name the mode gets a submenu that opens at a hovering and closes at the leaving of the pointer.
+- **A press of the switch does not change the mode but asks for it.** The kit gives outward the mode a
+  person asked for and waits for it back by an input: the preference is kept by the consumer, the kit
+  creates no state of its own about it and does not go into the storage of the browser.
+- **A pinned submenu shows the active item.** Which item is active the kit learns by the input of the
+  activity; it has no computing of its own by the address.
+- **The pinning does not change what is visible.** There is no active item — pinned stays the submenu that
+  was open at the minute of the press: a person pins what is in front of them, and they must not lose it by
+  a press. Nothing is open and there is no active item — there is no submenu either.
+- **A press of an item of the strip moves the pinned submenu onto its section.** A hovering at a pinning
+  still does nothing — the hand goes along the strip to the footer and to the panel itself, and the submenu
+  would flicker with the sections on the way. For a section that has no address of its own a press stays the
+  only way to open it; without that a person is locked in the section they began at. The chosen section
+  stands ahead of the active one: otherwise the submenu of the active address comes back at every press.
+- **An item with an address of its own and without sections lifts the pinned submenu.** The person left for
+  a page that has no sections, and a panel of the former section would lie about where they stand.
+- **A pinned panel that has nothing to show takes no place.** Neither a width nor a handle of the pull: a
+  width put by the pinning alone leaves an empty strip to the left of the page at every address without
+  sections, and there is nothing to pull the edge of an invisible panel by. The choice of the mode at that
+  is not lifted: a section that has a submenu shows it pinned, as before.
+- **A pinned submenu closes neither at the leaving of the pointer nor at a transition by its own item.**
+  Otherwise the pinning is cancelled by the very first action of the person.
+- **There is no backing under a pinned submenu.** It puts out the rest of the page and catches the presses;
+  at a panel standing open permanently that makes the page unworkable.
+- **The field searches over the open submenu, not over all the sections.** The result stays belonging to the
+  section: a search over the whole application is another subject.
+- **The filter goes by a substring of the label without a count of the case, and an empty query shows
+  everything.** There are no coincidences — the submenu says so by a line: an empty panel cannot be told
+  from a breakage.
+- **The query lives while the submenu is open.** It is not a preference: a submenu closed and opened anew
+  shows the list whole.
+- **The labels of the field, of the switch and of the empty filter are sewn in in English.** The kit has no
+  dictionary, and the neighbouring label — the button of the return to the main list — is sewn in the same
+  way.
+- **On a narrow screen there is no pinning, and there is a search.** The submenu there takes the screen
+  whole, and there is nothing to pin; there is no switch in the narrow layout at all.
+- **The handle of the pull is caught wider than it is visible.** The zone of the catching and the visible
+  strip are two different numbers: into four pixels the cursor does not land at the first try, and a miss
+  past the handle lands into the panel, that is, instead of a pull a person presses an item. The zone is
+  three times wider and stands at the centre of the former place, and the strip inside it is painted at a
+  hovering — a zone painted whole would read as another design.
 
-## Что не входит
+## What is out of scope
 
-- **Отдельный компонент подменю.** Второй уровень остаётся частью `rtui-side-menu`.
-- **Своё вычисление активного пункта по адресу.** Активность приходит киту входом.
-- **Поиск по всему приложению.** Его результат разделу не принадлежит, и это другой предмет.
-- **Остальные предметы первого кита.** Ячейка, спиннер, шторка и сортировка таблицы — спек
-  домена рядом.
+- **A separate component of the submenu.** The second level stays a part of `rtui-side-menu`.
+- **A computing of the active item by the address of its own.** The activity arrives to the kit by an input.
+- **A search over the whole application.** Its result does not belong to a section, and that is another
+  subject.
+- **The other subjects of the first kit.** The cell, the spinner, the curtain and the sorting of the table —
+  the spec of the domain next to it.
 
-## Контракт
+## Contract
 
-Не применимо: поверхность поддомена — входы и выходы `rtui-side-menu`, процедур он не
-обслуживает.
+Not applicable: the surface of the subdomain is the inputs and the outputs of `rtui-side-menu`, it serves
+no procedures.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: своих отказов у подменю нет.
+Not applicable: the submenu has no refusals of its own.
 
-## Данные
+## Data
 
-Своих записей хранилища у подменю нет: мода и активность приходят входами, а предпочтение
-хранит приложение, которое ставит кит.
+The submenu has no records of the storage of its own: the mode and the activity arrive by the inputs, and
+the preference is kept by the application that installs the kit.
 
-## Экраны и состояния
+## Screens and states
 
-| Состояние подменю                                   | Что видно                                               |
-| --------------------------------------------------- | ------------------------------------------------------- |
-| мода не названа, указатель на пункте полосы         | подменю раздела; уход указателя его закрывает           |
-| мода закреплённая, у активного адреса есть разделы  | панель открыта постоянно, подложки нет, ручка тяги есть |
-| мода закреплённая, разделов нет и не открыто ничего | панели нет, места она не занимает                       |
-| при закреплении нажат пункт полосы с разделами      | подменю его разделов с пустым запросом                  |
-| при закреплении нажат пункт с адресом без разделов  | подменю снято                                           |
-| запрос введён                                       | пункты с совпавшей подписью, совпадение отмечено        |
-| совпадений нет                                      | строка о пустом отборе                                  |
-| узкий экран                                         | подменю на весь экран, переключателя нет, поиск есть    |
+| The state of the submenu                                              | What is visible                                                                   |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| the mode is not named, the pointer is on an item of the strip         | the submenu of the section; the leaving of the pointer closes it                  |
+| the mode is the pinned one, the active address has sections           | the panel is open permanently, there is no backing, there is a handle of the pull |
+| the mode is the pinned one, there are no sections and nothing is open | there is no panel, it takes no place                                              |
+| at a pinning an item of the strip with sections is pressed            | the submenu of its sections with an empty query                                   |
+| at a pinning an item with an address and without sections is pressed  | the submenu is lifted                                                             |
+| a query is entered                                                    | the items with a coincided label, the coincidence is marked                       |
+| there are no coincidences                                             | a line about an empty filter                                                      |
+| a narrow screen                                                       | the submenu over the whole screen, there is no switch, there is a search          |
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Подписи поля, переключателя и пустого отбора зашиты по-английски: словаря у кита нет.
+The labels of the field, of the switch and of the empty filter are sewn in in English: the kit has no
+dictionary.
 
 ### SEO
 
-Не применимо: кит стоит в приложениях за входом, и его разметку не читает ни один сборщик
-поисковика.
+Not applicable: the kit stands in applications behind an entry, and its markup is read by not a single
+gatherer of a search engine.
 
-### Мобильная раскладка
+### Mobile layout
 
-На узком экране подменю занимает экран целиком: закрепления и ручки тяги нет, поиск есть.
+On a narrow screen the submenu takes the screen whole: there is no pinning and no handle of the pull, there
+is a search.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо: кит ничего не знает ни о владельце данных, ни о разделении по объектам.
+Not applicable: the kit knows nothing either about the owner of the data or about a division by objects.
 
-## Решения
+## Decisions
 
-- **Предпочтение моды хранит потребитель, а не кит.** Довод: кит отдаёт наружу моду, которую
-  попросил человек, и ждёт её обратно входом; своего состояния о ней у кита нет. Отвергнуто:
-  запись кита в хранилище браузера — второе место предпочтений рядом с потребительским.
-- **Пустая закреплённая панель убирается из разметки, а не рисуется пустой.** Довод: ширина,
-  поставленная одним закреплением, оставляла пустую полосу слева от страницы на каждом адресе
-  без разделов. Отвергнуто: панель с подписью о том, что разделов нет, — она занимает то же
-  место.
-- **Выбранный нажатием раздел стоит впереди активного.** Довод: иначе подменю активного адреса
-  возвращалось бы на каждое нажатие пункта полосы. Отвергнуто: наведение при закреплении — рука
-  идёт вдоль полосы, и подменю мелькало бы разделами по дороге.
+- **The preference of the mode is kept by the consumer, not by the kit.** The argument: the kit gives
+  outward the mode a person asked for and waits for it back by an input; the kit has no state of its own
+  about it. Rejected: a write of the kit into the storage of the browser — a second place of the preferences
+  next to the one of the consumer.
+- **An empty pinned panel is removed from the markup, it is not drawn empty.** The argument: a width put by
+  the pinning alone left an empty strip to the left of the page at every address without sections. Rejected:
+  a panel with a label saying that there are no sections — it takes the same place.
+- **A section chosen by a press stands ahead of the active one.** The argument: otherwise the submenu of the
+  active address would come back at every press of an item of the strip. Rejected: a hovering at a pinning —
+  the hand goes along the strip, and the submenu would flicker with the sections on the way.
 
-## Открытые вопросы
+## Open questions
 
-Открытых вопросов у поддомена нет.
+The subdomain has no open questions.
 
-## История изменений
+## History of changes
 
-- 2026-09-06 — поддомен выделен из спека первого кита, переросшего предел длины. Правила,
-  сценарии и привязки о втором уровне бокового меню переехали прежними: номера сценариев не
-  пересчитывались.
+- 2026-09-06 — the subdomain was split out of the spec of the first kit, which had outgrown the length
+  limit. The rules, the scenarios and the bindings about the second level of the side menu moved as they
+  were: the scenario numbers were not recounted.

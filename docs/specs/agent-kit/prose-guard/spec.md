@@ -1,99 +1,103 @@
-# Гард слога
+# The guard of the wording
 
-**Статус:** действует · **Ревизия:** 2026-08-20 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `project-documentation`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-20 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `project-documentation`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Формулировочные договорённости слоя правил не проверялись ничем: простые слова, отсутствие
-канцелярита, слова из левой колонки словаря — всё это держалось памятью того, кто пишет, и
-всплывало уже в правке владельца. Поддомен называет, что проверяет гард слога, чего он не
-судит и почему находка приходит вместе с заменой.
+The wording agreements of the rules layer were checked by nothing: plain words, the absence of
+officialese, the words from the left column of the glossary — all of it was held by the memory of
+whoever writes, and surfaced already in the owner's edit. The subdomain names what the guard of the
+wording checks, what it does not judge and why a finding comes together with a replacement.
 
-## Терминология
+## Terminology
 
-- **Находка** — слово или оборот, который в этом дереве не пишут, вместе с тем, чем его
-  заменить.
-- **Новый текст правки** — строки, которые правка добавляет; накопленное в файле гард не судит.
+- **A finding** — a word or a turn of phrase that is not written in this tree, together with what to
+  replace it with.
+- **The new text of an edit** — the lines the edit adds; what has accumulated in the file the guard
+  does not judge.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Интерфейса у гарда нет: его видит только исполнитель — текстом отказа в своём ходе.
+The guard has no interface: only the executor sees it — as the text of a refusal in their own turn.
 
-## Правила
+## Rules
 
-- **Канцелярит и слова, которых в дереве не пишут, не уезжают в документ.** Формулировочные
-  договорённости не проверялись ничем и держались памятью того, кто пишет.
-- **Каждая находка названа вместе с заменой.** Список запретов без замены читается как запрет
-  писать, и автор обходит его, а не правит текст.
-- **Судится только новый текст правки.** Накопленное чинится отдельной работой; отбивать за него
-  правку соседней строки — значит сделать гард обходимым по необходимости.
-- **Границы слова считаются по буквам, а не классом `\w`.** Он ASCII-only: образец с ним на
-  кириллице не срабатывает ни разу и молчит об этом.
-- **Признаки канцелярита есть на каждом языке слоя, и оба набора судят каждую строку.** Слой
-  правил пишется по-английски, а тексты владельцу — на его языке; набор одного языка на строке
-  другого не совпадает ни с чем, и определять язык файла незачем.
-- **Слово, которое бывает и существительным, проверяется по тому, что стоит следом.**
-  Множественная форма местоимения совпадает с существительным, которому замены нет: данные стенда
-  — это данные, и переписать строку нечем. Местоимением она читается перед словом, которое сама и
-  определяет, — по нему и распознаётся. Перечень таких слов короткий намеренно: распознаётся то,
-  что встречалось, а ложный отказ здесь дороже пропуска — проверка стоит в наборе гейта пуша, и
-  красное на слове без замены останавливает работу целиком.
+- **Officialese and words not written in the tree do not go away into a document.** The wording
+  agreements were checked by nothing and were held by the memory of whoever writes.
+- **Every finding is named together with a replacement.** A list of bans without a replacement reads
+  as a ban on writing, and the author goes around it instead of editing the text.
+- **Only the new text of the edit is judged.** What has accumulated is fixed by separate work;
+  refusing an edit of a neighbouring line for it would make the guard avoidable out of necessity.
+- **The boundaries of a word are counted by letters, not by the class `\w`.** It is ASCII-only: a
+  sample with it on Cyrillic never fires once and stays silent about that.
+- **The signs of officialese exist in each language of the layer, and both sets judge every line.**
+  The rules layer is written in English, and the texts for the owner in their language; the set of
+  one language on a line of the other matches nothing, and there is no need to work out the language
+  of the file.
+- **A word that is also a noun is checked by what stands after it.** The plural form of the pronoun
+  coincides with a noun that has no replacement: the data of the stand are data, and there is nothing
+  to rewrite the line with. It reads as a pronoun before the word it itself defines — that is what it
+  is recognised by. The list of such words is short on purpose: what is recognised is what has been
+  met, and a false refusal here costs more than a miss — the check stands in the suite of the push
+  gate, and red on a word without a replacement stops the work whole.
 
-## Что не входит
+## What is out of scope
 
-Слог ответа владельцу гардом не судится: правка файла ему видна, а реплика — нет.
+The wording of an answer to the owner is not judged by the guard: an edit of a file is visible to it,
+a remark is not.
 
-## Контракт
+## Contract
 
-Поверхность — файл хука, который дерево зовёт на правке файла. Отказ приходит решением `deny` с
-текстом причины, где каждая находка названа вместе с заменой; молчание означает, что правка
-разрешена.
+The surface is the file of the hook the tree calls at an edit of a file. The refusal comes as the
+decision `deny` with the text of the reason, where every finding is named together with a
+replacement; silence means the edit is allowed.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: гард отвечает решением и текстом причины, а не кодом.
+Not applicable: the guard answers with a decision and the text of a reason, not with a code.
 
-## Данные
+## Data
 
-Списки слов и замен живут в проверке слога, рядом с гардом.
+The lists of words and replacements live in the check of the wording, next to the guard.
 
-## Экраны и состояния
+## Screens and states
 
-Экранов у поддомена нет: он живёт гардом и проверкой.
+The subdomain has no screens: it lives as a guard and a check.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Слой правил и документы дерева пишутся по-английски, задача, заявка и ответ владельцу — на
-его языке; гард держит набор признаков на каждый из двух и судит ими каждую строку.
+The rules layer and the documents of the tree are written in English, the task, the request and the
+answer to the owner in their language; the guard holds a set of signs for each of the two and judges
+every line by both.
 
 ### SEO
 
-Не относится.
+Does not apply.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не относится.
+Does not apply.
 
-### Мультиобъектность
+### Several objects
 
-Не относится.
+Does not apply.
 
-## Решения
+## Decisions
 
-- **Находка приходит вместе с заменой.** Список запретов без замены читается как запрет писать,
-  и автор обходит его, а не правит текст.
-- **Судится только новый текст правки.** Накопленное чинится отдельной работой.
+- **A finding comes together with a replacement.** A list of bans without a replacement reads as a
+  ban on writing, and the author goes around it instead of editing the text.
+- **Only the new text of the edit is judged.** What has accumulated is fixed by separate work.
 
-## Открытые вопросы
+## Open questions
 
-Нет.
+None.
 
-## История изменений
+## History of changes
 
-- 2026-08-20 — поддомен выделен из спека гардов: файл сценариев перерос предел длины, а предмет
-  в нём был двойной.
+- 2026-08-20 — the subdomain was split out of the guards spec: the scenario file had outgrown the
+  length limit, and the subject in it was double.

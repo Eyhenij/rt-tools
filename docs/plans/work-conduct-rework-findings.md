@@ -1,42 +1,42 @@
-# Находки разбора закрытых работ эпика RT-896
+# The findings of the review of the closed works of the epic RT-896
 
-Находки лежат здесь, рядом с замыслом эпика «Переработка ведения работы» —
-`docs/plans/work-conduct-rework.md`. Эпик кончился, и владелец читает их разом: названное им
-оформляется предложением и уезжает в пакет, наружу без этого слова уходит только сводка
-наблюдений. Разобранное отсюда удаляется.
+The findings lie here, next to the plan of the epic "The rework of the conduct of the work" —
+`docs/plans/work-conduct-rework.md`. The epic is over, and the owner reads them at once: what they
+name is made into a proposal and leaves for the package, and outward without that word goes only
+the digest of the observations. What is taken apart is deleted from here.
 
-## Разобрано 29 августа 2026 года задачей RT-1553
+## Taken apart on 29 August 2026 by the task RT-1553
 
-Двенадцать пунктов разбора RT-955 сведены с нынешними ресурсами пакета. Закрытыми оказались
-шесть, и они сняты отсюда:
+Twelve items of the review RT-955 were reconciled with the present resources of the package. Six
+turned out closed, and they are removed from here:
 
-| Пункт                                        | Чем закрыт                                                                        |
-| -------------------------------------------- | --------------------------------------------------------------------------------- |
-| порядок подъёма редакции                     | раздел «Подъём версии» в правиле переносимого слоя — три шага и сверка по снимку  |
-| кэш сборки отдаёт выход с другой ветки       | команды раскладки зовут чистую сборку: снос каталога и сборка мимо кэша           |
-| перенаправление в пустоту как признак записи | признак записи вырезает `2>/dev/null` до проверки                                 |
-| паттерн закрытия перерос форму               | разбор папки уехал в свой паттерн; закрытие держится в пределе длины              |
-| сверка раскладки зовёт кэшируемую сборку     | обе команды дерева идут через чистую сборку                                       |
-| ряд отрицания в гарде утверждения            | гард судит отрицание своим рядом, и слово внутри него утвердительным не считается |
+| Item                                                             | What it is closed by                                                                                                         |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| the order of the lifting of the edition                          | the section "The lifting of the version" in the rule of the portable layer — three steps and a checking against the snapshot |
+| the cache of the build gives back the output from another branch | the commands of the layout call a clean build: the removal of the directory and a build past the cache                       |
+| a redirection into the emptiness as a sign of a write            | the sign of a write cuts out `2>/dev/null` before the check                                                                  |
+| the pattern of the closing outgrew the form                      | the taking apart of the folder left for a pattern of its own; the closing holds inside the length limit                      |
+| the checking of the layout calls a cacheable build               | both commands of the tree go through a clean build                                                                           |
+| a row of the negation in the guard of an affirmation             | the guard judges the negation by a row of its own, and a word inside it is not counted affirmative                           |
 
-Четыре внесены правкой ресурсов той же задачей:
+Four were brought in by an edit of the resources by the same task:
 
-| Пункт                                   | Куда легло                                                                        |
-| --------------------------------------- | --------------------------------------------------------------------------------- |
-| чужие папки задач приезжают мержем      | раздел в паттерне слияния: сверка очереди работ гоняется сразу после мержа        |
-| очередь конвейера снимает ждущего       | ловушка правила поставки: своя группа на ветку, общая — только у шагов со стендом |
-| вынос задачи в другой эпик              | ловушка правила ведения работы: состав и итог правятся тем же ходом               |
-| своя редакция зависимостью не считается | ветка манифеста в карте гейта не судит строку `"version"` этого же пакета         |
+| Item                                                | Where it landed                                                                                                   |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| foreign task folders arrive by a merge              | a section in the pattern of the merging: the audit of the work queue is run right after the merge                 |
+| the queue of the pipeline takes the waiting one off | a pitfall of the rule of the delivery: a group of its own per branch, a common one only at the steps with a stand |
+| the taking out of a task into another epic          | a pitfall of the rule of the conduct of the work: the composition and the outcome are edited by the same turn     |
+| an edition of one's own is not counted a dependency | the branch of the manifest in the gate map does not judge the line `"version"` of this same package               |
 
-## Разобрано 29 августа 2026 года задачей RT-1555
+## Taken apart on 29 August 2026 by the task RT-1555
 
-Три пункта, числившиеся нерешёнными, сверены с деревом. Два оказались закрытыми раньше — правка
-доехала, а находка осталась висеть живой; третий закрыт этой задачей.
+Three items listed as unsolved were reconciled with the tree. Two turned out closed earlier — the
+edit had arrived, and the finding stayed hanging alive; the third is closed by this task.
 
-| Пункт                                                    | Чем закрыт                                                                                                                  |
-| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| прогонщик сквозного набора переиспользует поднятый стенд | настройка прогонщика запрещает переиспользование явно, с доводом ровно об этой находке                                      |
-| ветка надстройки снимает правило со всего каталога       | каталог помощника разобран в надстройке ветками: правила помощника и его обвязка судятся порознь                            |
-| след разбора работы правилами                            | имя файла находок названо в паттерне разбора, образец лёг к образцам пакета, передача несёт строкой запущенный фоном разбор |
+| Item                                                            | What it is closed by                                                                                                                                                                                 |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| the runner of the end-to-end set reuses a raised stand          | the setting of the runner forbids the reuse openly, with an argument about exactly this finding                                                                                                      |
+| a branch of the override takes the rule off the whole directory | the directory of the helper is taken apart in the override by branches: the rules of the helper and its harness are judged apart                                                                     |
+| the trace of the review of the work by the rules                | the name of the file of the findings is named in the pattern of the taking apart, the sample went to the samples of the package, the handover carries by a line the review started in the background |
 
-Нерешённого по этому эпику не осталось.
+Nothing unsolved is left by this epic.

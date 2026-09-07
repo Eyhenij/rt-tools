@@ -1,74 +1,73 @@
-# Сценарии — конфликтующая своя заявка
+# Scenarios — a conflicting request of one's own
 
-Спек — `spec.md` рядом. Сценарии проверяют механику помощника гарда: что считается взятием
-работы, что считается конфликтом и когда ярус молчит.
+The spec is `spec.md` next to it. The scenarios check the mechanics of the guard helper: what counts
+as taking work, what counts as a conflict and when the tier stays silent.
 
-### SC-AK-786 — ветка под задачу не заводится, пока своя заявка конфликтует
+### SC-AK-786 — a branch for a task is not created while a request of one's own conflicts
 
-Дано хоть одна открытая заявка машинной записи помечена хостингом конфликтующей
-Когда исполнитель заводит ветку под задачу
-Тогда гард поставки отбивает вызов и называет и то, что берётся, и номер с веткой каждой
-конфликтующей заявки: отказ без имени заявки чинить нечем
+Given at least one open request of the machine record is marked conflicting by the hosting
+When the executor creates a branch for a task
+Then the delivery guard refuses the call and names both what is being taken and the number with the
+branch of every conflicting request: a refusal without the name of a request is unfixable
 
-Покрыто: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
 
-### SC-AK-787 — задача не заводится, пока своя заявка конфликтует
+### SC-AK-787 — a task is not created while a request of one's own conflicts
 
-Дано та же конфликтующая заявка
-Когда исполнитель зовёт команду заведения задачи
-Тогда гард отбивает вызов: заведённая задача прибавляет к очереди ещё одну ветку, которую
-придётся догонять той же главной
+Given the same conflicting request
+When the executor calls the task creation command
+Then the guard refuses the call: a created task adds to the queue one more branch that will have to
+be caught up by the same main
 
-Покрыто: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
 
-### SC-AK-788 — колонка в работу не переводится, а в разбор переводится
+### SC-AK-788 — the column is not moved into work, and into review it is
 
-Дано та же конфликтующая заявка
-Когда исполнитель переводит колонку задачи
-Тогда перевод в колонку работы отбит, а перевод в колонку разбора проходит: он конец работы, а
-не её начало
+Given the same conflicting request
+When the executor moves the column of a task
+Then the move into the work column is refused, and the move into the review column passes: it is the
+end of work, not its start
 
-Покрыто: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
 
-### SC-AK-789 — заявка не открывается, пока своя заявка конфликтует
+### SC-AK-789 — a request is not opened while a request of one's own conflicts
 
-Дано та же конфликтующая заявка
-Когда исполнитель открывает новую заявку
-Тогда гард отбивает вызов и называет открытие заявки взятием работы
+Given the same conflicting request
+When the executor opens a new request
+Then the guard refuses the call and names opening a request as taking work
 
-Покрыто: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
 
-### SC-AK-790 — починка конфликта идёт как прежде
+### SC-AK-790 — fixing a conflict goes as before
 
-Дано та же конфликтующая заявка
-Когда исполнитель подтягивает главную, вливает её, переходит на конфликтующую ветку или
-отправляет её
-Тогда гард молчит: гард, отбивающий починку, запирал бы дерево наглухо
+Given the same conflicting request
+When the executor pulls main, merges it, moves to the conflicting branch or sends it
+Then the guard stays silent: a guard refusing the fix would lock the tree tight
 
-Покрыто: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
 
-### SC-AK-791 — ветка без номера работой под задачу не считается
+### SC-AK-791 — a branch without a number does not count as work for a task
 
-Дано та же конфликтующая заявка
-Когда исполнитель заводит местную ветку под пробу, без номера задачи
-Тогда гард молчит: в главную она не поедет, потому что заявка с неё не откроется
+Given the same conflicting request
+When the executor creates a local branch for a trial, without a task number
+Then the guard stays silent: it will not go into main, because no request will be opened from it
 
-Покрыто: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
 
-### SC-AK-792 — без конфликтующих заявок работа берётся как прежде
+### SC-AK-792 — without conflicting requests work is taken as before
 
-Дано ни одна своя открытая заявка конфликтующей не помечена
-Когда исполнитель заводит задачу или переводит колонку в работу
-Тогда гард молчит
+Given not one open request of one's own is marked conflicting
+When the executor creates a task or moves the column into work
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
 
-### SC-AK-793 — молчание опроса работу не отбивает
+### SC-AK-793 — silence of the poll refuses no work
 
-Дано опрос своих заявок отказал — нет сети, нет машинной записи — либо дерево не объявило его
-вовсе
-Когда исполнитель берёт новую работу
-Тогда гард пропускает вызов: отбивать работу на молчании сети значило бы останавливать её
-всякий раз, когда её не с чем сверить
+Given the poll of one's own requests refused — no network, no machine record — or the tree did not
+declare it at all
+When the executor takes new work
+Then the guard lets the call through: refusing work on the silence of the network would mean
+stopping it every time there is nothing to check it against
 
-Покрыто: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-conflict.test.sh`.

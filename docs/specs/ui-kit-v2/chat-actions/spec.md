@@ -1,111 +1,116 @@
-# Действия у реплики переписки
+# The actions at a reply of a correspondence
 
-**Статус:** действует · **Ревизия:** 2026-08-30 · **Префикс сценариев:** `SC-UKV`
-**Зависимости:** нет
-**Законы:** `frontend-application`, `reuse-first`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-30 · **Scenario prefix:** `SC-UKV`
+**Depends on:** none
+**Laws:** `frontend-application`, `reuse-first`
+**Procedures:** none
 
-Поддомен называет, чем потребитель переписки объявляет своё действие у реплики и где проходит
-граница между этими действиями и теми, что переписка знает сама.
+The subdomain names what a consumer of the correspondence declares its own action at a reply by and
+where the boundary runs between those actions and the ones the correspondence knows itself.
 
-## Зачем
+## Why
 
-Переписка проецирует содержимое над диалогом и под ним, а у самой реплики точки проекции нет.
-Каждое действие у реплики кит объявляет поштучно — своим полем модели и своим выходом, — и
-потребителю, которому нужно своё, остаются два пути: ждать правки кита либо ставить кнопку над
-диалогом, то есть не там, где читают реплику.
+The correspondence projects content above the dialogue and under it, and at the reply itself there is
+no point of projection. Every action at a reply the kit declares one at a time — by a field of the
+model of its own and an output of its own — and a consumer who needs one of their own is left with two
+roads: to wait for an edit of the kit, or to put a button above the dialogue, that is, not where the
+reply is read.
 
-## Терминология
+## Terminology
 
-| Термин            | Что это                                                              |
-| ----------------- | -------------------------------------------------------------------- |
-| Реплика           | Одно сообщение треда                                                 |
-| Точка действий    | Меню у реплики, куда потребитель кладёт свои действия шаблоном       |
-| Признак действий  | Предикат потребителя: есть ли у этой реплики хоть одно его действие  |
-| Точечное действие | Действие, которое переписка знает сама: удаление, повтор, скачивание |
+| Term                     | What it is                                                                           |
+| ------------------------ | ------------------------------------------------------------------------------------ |
+| A reply                  | One message of a thread                                                              |
+| The point of the actions | The menu at a reply the consumer puts its own actions into by a template             |
+| The sign of the actions  | The predicate of the consumer: has this reply at least one action of theirs          |
+| A pinpoint action        | An action the correspondence knows itself: the deleting, the repeat, the downloading |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В спеке        | На экране                      |
-| -------------- | ------------------------------ |
-| Точка действий | кнопка «…» у реплики и её меню |
+| In the spec              | On the screen                          |
+| ------------------------ | -------------------------------------- |
+| The point of the actions | the button "…" at a reply and its menu |
 
-## Правила
+## Rules
 
-- **Своё действие у реплики потребитель объявляет шаблоном, а не правкой кита.** Шаблон
-  захватывается директивой и получает реплику контекстом; переписка рисует его в меню у реплики.
-- **Видимость точки действий держит предикат потребителя, а не подсчёт отрисованных пунктов.**
-  Содержимое спроецированного шаблона известно только после отрисовки, и кнопка успевала бы
-  мигнуть на первом кадре.
-- **Предикат не задан — точка действий показывается.** Так же это устроено у строки таблицы, и
-  расхождение между двумя точками проекции одного кита читалось бы дефектом.
-- **Шаблон не объявлен — разметка реплики прежняя.** Лишней кнопки у реплики не появляется, и
-  переписка, которой чужие действия не нужны, не меняется ни на пиксель.
-- **Точечные действия остаются на месте.** Удаление, повтор отправки и скачивание общи для любой
-  переписки, и в шаблон потребителя они не переезжают.
-- **Действие потребителя моделью реплики не описывается.** Поле модели описывало бы действие,
-  которого кит не знает; приходит оно разметкой.
+- **The consumer declares its own action at a reply by a template, not by an edit of the kit.** The
+  template is caught by a directive and gets the reply as the context; the correspondence draws it in
+  the menu at the reply.
+- **The visibility of the point of the actions is held by the predicate of the consumer, not by a
+  count of the drawn items.** The content of a projected template is known only after the drawing, and
+  the button would manage to blink on the first frame.
+- **The predicate is not set — the point of the actions is shown.** It is arranged the same way at a
+  row of the table, and a divergence between two points of projection of one kit would read as a
+  defect.
+- **The template is not declared — the markup of the reply is the former one.** No extra button appears
+  at the reply, and a correspondence that needs no foreign actions does not change by a single pixel.
+- **The pinpoint actions stay in place.** The deleting, the repeat of the sending and the downloading
+  are common to any correspondence, and they do not move into the template of the consumer.
+- **An action of the consumer is not described by the model of a reply.** A field of the model would
+  describe an action the kit does not know; it arrives as markup.
 
-## Что не входит
+## What is out of scope
 
-- **Слот у каждой части реплики.** Точка одна — меню у реплики; отдельные слоты у автора, текста
-  и вложения заводятся по надобности, а не пачкой наперёд.
-- **Свои действия у системной реплики и у удалённой.** Шаблон получает реплику целиком, и решает
-  предикат потребителя.
-- **Перенос точечных действий в шаблон.** Они общи для любой переписки, и потребитель, которому
-  нужно только удаление, не должен объявлять его сам.
+- **A slot at every part of a reply.** The point is one — the menu at a reply; separate slots at the
+  author, the text and an attachment are created as the need arises, not by a bundle in advance.
+- **Actions of one's own at a system reply and at a deleted one.** The template gets the reply whole,
+  and the predicate of the consumer decides.
+- **Moving the pinpoint actions into the template.** They are common to any correspondence, and a
+  consumer who needs only the deleting must not declare it themselves.
 
-## Контракт
+## Contract
 
-Не применимо: поддомен описывает поверхность компонента, а не обмен с сервером.
+Not applicable: the subdomain describes the surface of a component, not an exchange with the server.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо.
+Not applicable.
 
-## Данные
+## Data
 
-Не применимо: своё действие приходит разметкой, и в модели реплики его нет.
+Not applicable: an action of one's own arrives as markup, and it is not in the model of a reply.
 
-## Экраны и состояния
+## Screens and states
 
-| Состояние                     | Что видно                                         |
-| ----------------------------- | ------------------------------------------------- |
-| Шаблон не объявлен            | разметка реплики прежняя, кнопки «…» нет          |
-| Шаблон объявлен, предикат да  | кнопка «…» у реплики, в меню — пункты потребителя |
-| Шаблон объявлен, предикат нет | кнопки «…» у этой реплики нет вовсе               |
+| State                                            | What is visible                                                    |
+| ------------------------------------------------ | ------------------------------------------------------------------ |
+| The template is not declared                     | the markup of the reply is the former one, there is no button "…"  |
+| The template is declared, the predicate says yes | the button "…" at the reply, the items of the consumer in the menu |
+| The template is declared, the predicate says no  | there is no button "…" at this reply at all                        |
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Подписи пунктов приходят от потребителя вместе с шаблоном: кит их не знает.
+The labels of the items arrive from the consumer together with the template: the kit does not know them.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Точка действий живёт в потоке реплики и на узком экране ведёт себя как остальные её кнопки.
+The point of the actions lives in the flow of the reply and on a narrow screen behaves like the rest of
+its buttons.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо.
+Not applicable.
 
-## Решения
+## Decisions
 
-- **Приём взят у строки таблицы целиком.** Довод: та же задача у таблицы решена шаблоном,
-  предикатом и меню, и второй приём о том же породил бы два ответа на один вопрос. Отвергнуто:
-  поле действий в модели реплики и выход на каждое новое действие.
-- **Дженерика у контекста шаблона нет.** Довод: тип реплики у переписки один, и type-carrier,
-  который у строки таблицы несёт тип строки, здесь не нужен.
+- **The technique is taken from a row of the table whole.** The argument: the same task at the table is
+  solved by a template, a predicate and a menu, and a second technique about the same would give birth
+  to two answers to one question. Rejected: a field of the actions in the model of a reply and an output
+  at every new action.
+- **The context of the template has no generic.** The argument: the type of a reply at a correspondence
+  is one, and the type-carrier that at a row of the table carries the type of the row is not needed here.
 
-## Открытые вопросы
+## Open questions
 
-- **`Q-10` — нужна ли точка действий у части реплики, а не у неё целиком.** Принято допущение,
-  что одной точки хватает, пока не назван случай, которому мало.
+- **`Q-10` — whether a point of the actions is needed at a part of a reply, not at it whole.** The
+  assumption accepted is that one point is enough while no case has been named that it is too little for.
 
-## История изменений
+## History of changes
 
-- 2026-08-30 — заведён работой о действиях потребителя у реплики переписки.
+- 2026-08-30 — created by the work about the actions of a consumer at a reply of a correspondence.

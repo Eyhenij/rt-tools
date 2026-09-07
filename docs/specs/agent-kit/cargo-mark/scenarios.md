@@ -1,62 +1,64 @@
-# Сценарии — отметка состояния груза
+# Scenarios — the state mark of a cargo record
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной. Префикс общий на домен, и номера при переезде в поддомен не
-пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier stands at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason. The prefix is shared by the domain, and
+the numbers were not recounted on the move into the subdomain: the number ties a scenario to a test
+title.
 
-### SC-AK-427 — команда переводит названные записи в состояние
+### SC-AK-427 — the command moves the named records into a state
 
-Дано дерево заведено, и в доводах названы два разбора происшествий
-Когда исполнитель зовёт отметку с состоянием «в работе»
-Тогда приём получает один запрос с обеими записями, а вывод называет две переведённые
+Given the tree is created, and two incident analyses are named in the arguments
+When the executor calls the mark with the state "in work"
+Then the intake gets one request with both records, and the output names two that were moved
 
-Покрыто: `projects/agent-kit/tests/cargo-mark.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-mark.test.sh`.
 
-### SC-AK-428 — холостой ход в сеть не идёт
+### SC-AK-428 — a dry run goes to no network
 
-Дано в доводах названы записи и состояние
-Когда отметка зовётся холостым ходом
-Тогда печатается, что уехало бы, и ни одного запроса к приёму не уходит
+Given records and a state are named in the arguments
+When the mark is called as a dry run
+Then what would leave is printed, and not one request goes to the intake
 
-Покрыто: `projects/agent-kit/tests/cargo-mark.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-mark.test.sh`.
 
-### SC-AK-429 — без токена дерева отметка отказывает до сети
+### SC-AK-429 — without the token of the tree the mark refuses before the network
 
-Дано в настройке пакета токена дерева нет
-Когда исполнитель зовёт отметку
-Тогда команда кончается ненулевым кодом, называет заведение дерева и в сеть не идёт
+Given there is no token of the tree in the package setting
+When the executor calls the mark
+Then the command ends with a non-zero code, names the creation of the tree and goes to no network
 
-Покрыто: `projects/agent-kit/tests/cargo-mark.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-mark.test.sh`.
 
-### SC-AK-430 — незнакомое состояние отбивается до сети
+### SC-AK-430 — an unknown state is refused before the network
 
-Дано в доводе состояния стоит слово не из набора
-Когда исполнитель зовёт отметку
-Тогда команда называет, какие состояния бывают, и запроса не делает
+Given the state argument holds a word that is not in the set
+When the executor calls the mark
+Then the command names which states there are and makes no request
 
-Покрыто: `projects/agent-kit/tests/cargo-mark.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-mark.test.sh`.
 
-### SC-AK-431 — вызов без записей отбивается
+### SC-AK-431 — a call without records is refused
 
-Дано состояние названо, а ни одной записи в доводах нет
-Когда исполнитель зовёт отметку
-Тогда команда говорит, что отмечать нечего, и называет доводы, которыми называется запись
+Given the state is named, and there is not a single record in the arguments
+When the executor calls the mark
+Then the command says there is nothing to mark and names the arguments a record is named by
 
-Покрыто: `projects/agent-kit/tests/cargo-mark.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-mark.test.sh`.
 
-### SC-AK-432 — отбитая приёмом запись печатается и даёт ненулевой код
+### SC-AK-432 — a record refused by the intake is printed and gives a non-zero code
 
-Дано приём отбил одну из двух записей
-Когда отметка читает его ответ
-Тогда переведённая названа счётом, отбитая — ключом и причиной, а код возврата ненулевой
+Given the intake refused one of the two records
+When the mark reads its answer
+Then the moved one is named by the count, the refused one by its key and reason, and the exit code
+is non-zero
 
-Покрыто: `projects/agent-kit/tests/cargo-mark.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-mark.test.sh`.
 
-### SC-AK-558 — признак дерева считается одним приёмом на отправке и на отметке
+### SC-AK-558 — the sign of the tree is counted by one technique on the send and on the mark
 
-Дано у дерева есть удалённый репозиторий
-Когда отметка печатает, куда и от чьего имени уедет груз
-Тогда названный признак совпадает с тем, который считает отправка: две копии счёта расходятся
-молча, и приём отвечает на расхождение отказом о чужом дереве
+Given the tree has a remote repository
+When the mark prints where and on whose behalf the cargo will leave
+Then the named sign matches the one the send counts: two copies of the count diverge silently, and
+the intake answers a divergence with a refusal about a foreign tree
 
-Покрыто: `projects/agent-kit/tests/cargo-mark.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-mark.test.sh`.

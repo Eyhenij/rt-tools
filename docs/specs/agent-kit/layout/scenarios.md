@@ -1,464 +1,494 @@
-# Сценарии — раскладка ресурсов в дерево
+# Scenarios — laying resources out into the tree
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной. Префикс общий на домен, и номера при переезде в поддомен не
-пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier stands at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason. The prefix is shared by the domain, and the
+numbers were not recounted on the move into the subdomain: the number ties a scenario to a test title.
 
-### SC-AK-01 — вид оставил правило без инструмента, и раскладка отказала
+### SC-AK-01 — the kind left the rule without a tool, and the layout refused
 
-Дано дерево выбрало значение оси хостинга, под которое у проверок вида нет Когда идёт `sync` Тогда раскладка
-отказывает и называет правило и недостающий под ним инструмент поимённо
+Given the tree picked a value of the hosting axis for which the checks have no kind When `sync` runs
+Then the layout refuses and names the rule and the tool missing under it by name
 
-### SC-AK-02 — гард пакета проверяется своим набором сценариев
+### SC-AK-02 — a guard of the package is checked by its own scenario suite
 
-Дано в исполняемом ресурсе пакета сломана одна строка Когда гоняется прогон проверок пакета Тогда прогон падает
-и называет сломанный ресурс
+Given one line is broken in an executable resource of the package When the run of the package checks is
+run Then the run falls and names the broken resource
 
-### SC-AK-03 — раскладка из устаревшей сборки названа вслух
+### SC-AK-03 — a layout from a stale build is named aloud
 
-Дано ресурс в источнике правлен позже, чем собрана строка запуска Когда идёт `sync` Тогда пакет говорит, что
-читает не то, вместо «всё уже разложено»
+Given the resource in the source was edited later than the launch line was built When `sync` runs Then
+the package says it reads the wrong thing, instead of "everything is already laid out"
 
-### SC-AK-06 — чужой файл переходит в управление пакетом командой
+### SC-AK-06 — a foreign file moves under the package's management by a command
 
-Дано в дереве лежит файл под именем, под которое пакет кладёт свой ресурс, и шапки у него нет Когда владелец
-отдаёт файл пакету названным способом Тогда файл переходит в управление пакетом, а его прежнее содержимое не
-теряется молча
+Given the tree holds a file under a name the package puts its resource by, and it has no header When
+the owner hands the file to the package by the named way Then the file moves under the package's
+management, and its former content is not lost silently
 
-### SC-AK-07 — надстройка настроек проверок не сносит соседние ключи
+### SC-AK-07 — an override of the check settings does not carry away the neighbouring keys
 
-Дано дерево назвало в надстройке один ключ вложенного объекта настроек проверок Когда настройки собираются Тогда
-остальные ключи того же объекта сохраняют свои значения
+Given the tree named in an override one key of a nested object of the check settings When the settings
+are assembled Then the other keys of the same object keep their values
 
-### SC-AK-08 — расхождение тела при совпавшей шапке видно `doctor`
+### SC-AK-08 — a divergence of the body at a matching header is visible to `doctor`
 
-Дано у разложенного файла версия в шапке совпадает с пакетной, а тело разошлось Когда идёт `doctor` Тогда
-расхождение названо
+Given the version in the header of a laid-out file matches the package one, and the body diverged When
+`doctor` runs Then the divergence is named
 
-### SC-AK-09 — корень бэкенда читается из настройки, а не зашит
+### SC-AK-09 — the backend root is read from the setting, not hardwired
 
-Дано дерево держит бэкенд не по тому пути, который пакет считает умолчанием Когда гоняется проверка слоёв Тогда
-проверка ходит по пути из настройки дерева
+Given the tree keeps the backend not by the path the package counts as the default When the layers
+check is run Then the check walks by the path from the setting of the tree
 
-Покрытие: частичное — набор сценариев проверяет, что корни читаются из настройки, а не из кода; что проверка
-на дереве с иной раскладкой находит те же расхождения, не проверяет ничто.
+Coverage: partial — the scenario suite checks that the roots are read from the setting, not from the
+code; that the check on a tree with another layout finds the same divergences nothing checks.
 
-### SC-AK-10 — компаньоны заводятся черновиками, а не с чистого листа
+### SC-AK-10 — the companions are created as drafts, not from a blank page
 
-Дано чистое дерево после `sync` со всеми правилами Когда владелец берётся заполнять компаньоны Тогда каждый
-компаньон уже лежит скелетом с разделами, а не отсутствует
+Given a clean tree after `sync` with all the rules When the owner sets about filling the companions
+Then every companion already lies as a skeleton with sections instead of being absent
 
-### SC-AK-11 — чистая установка не требует ручной доводки
+### SC-AK-11 — a clean installation demands no finishing by hand
 
-Дано пустое дерево и вид хостинга, отличный от вида этого дерева Когда идут `init` и `sync` Тогда `doctor`
-проходит без отказов, и ни один шаг не сделан руками
+Given an empty tree and a hosting kind other than the kind of this tree When `init` and `sync` run Then
+`doctor` passes without refusals, and not one step is made by hand
 
-Не покрыто: сводный признак прогоняется рукой — установка с нуля в одноразовое дерево. Ни один прогон пакета
-не заводит чистого дерева целиком, и заводить его в спеке значило бы проверять собственную фикстуру.
+Not covered: the summary sign is run by hand — an installation from scratch into a one-off tree. Not
+one run of the package creates a clean tree whole, and creating it in the specs would mean checking
+one's own fixture.
 
-### SC-AK-85 — выбранный ресурс требует невыбранного, и сверка говорит об этом
+### SC-AK-85 — a picked resource demands an unpicked one, and the audit says so
 
-Дано дерево выбрало ресурс, чьё требование в его набор не входит Когда идёт сверка разложенного с пакетом Тогда
-она называет ресурс, его требование и то, что это предупреждение, а не отказ
+Given the tree picked a resource whose requirement is not in its set When the audit of the laid-out
+against the package runs Then it names the resource, its requirement and that this is a warning, not a
+refusal
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-86 — предупреждение о разорванной связи не меняет исхода сверки
+### SC-AK-86 — a warning about a broken link does not change the outcome of the audit
 
-Дано разложенное сходится с пакетом, но одно требование не выбрано Когда идёт сверка разложенного с пакетом
-Тогда она выходит с успехом: дерево вправе закрыть требование своим средством
+Given the laid-out comes together with the package, but one requirement is not picked When the audit of
+the laid-out against the package runs Then it leaves with success: the tree has the right to close the
+requirement by a means of its own
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-87 — разбор состояния называет невыбранное поимённо
+### SC-AK-87 — the state report names the unpicked by name
 
-Дано в дереве выбрана часть ресурсов пакета Когда идёт разбор состояния раскладки Тогда невыбранные названы
-именами, а не сведены в одно число
+Given part of the package resources is picked in the tree When the state of the layout is taken apart
+Then the unpicked are named by names, not folded into one number
 
-Не покрыто: вывод разбора состояния прогоном не сверяется — проверен запуском на этом дереве.
+Not covered: the output of the state report is not checked by a run — it was checked by running it on
+this tree.
 
-### SC-AK-119 — отказ от закона снимает правила и паттерны при нём
+### SC-AK-119 — refusing a law removes the rules and the patterns at it
 
-Дано дерево отвергло закон одной строкой отказа, а его правила и паттерны в отказе не названы Когда идёт
-раскладка Тогда ни правило с этим законом во вступлении, ни паттерн при таком правиле в дерево не ложатся
+Given the tree rejected a law by one refusal line, and its rules and patterns are not named in the
+refusal When the layout runs Then neither a rule with this law in its preamble nor a pattern at such a
+rule lands in the tree
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-120 — невыбранный закон потомков не раскладывает
+### SC-AK-120 — an unpicked law lays out no children
 
-Дано выбор законов назван поимённо, и одного из законов набора в нём нет Когда идёт раскладка Тогда правила и
-паттерны этого закона не ложатся так же, как если бы он стоял в отказе
+Given the pick of the laws is named by name, and one of the laws of the set is not in it When the
+layout runs Then the rules and the patterns of this law do not land, the same way as if it stood in the
+refusal
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-121 — отказ от паттерна ни правила, ни закона не трогает
+### SC-AK-121 — refusing a pattern touches neither the rule nor the law
 
-Дано дерево отвергло один паттерн при взятом правиле Когда идёт раскладка Тогда правило и его закон ложатся, а
-остальные паттерны при этом правиле остаются на месте
+Given the tree rejected one pattern at a taken rule When the layout runs Then the rule and its law land,
+and the other patterns at this rule stay in place
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-122 — строка отказа, снятая каскадом, объявляется предупреждением
+### SC-AK-122 — a refusal line removed by the cascade is declared a warning
 
-Дано в отказе стоят и закон, и правило при нём Когда идёт раскладка Тогда строка о правиле называется лишней
-вместе с законом, из-за которого она перестала снимать
+Given the refusal holds both a law and a rule at it When the layout runs Then the line about the rule is
+named surplus together with the law it stopped removing because of
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-123 — предупреждение о лишней строке раскладку не отбивает
+### SC-AK-123 — a warning about a surplus line does not refuse the layout
 
-Дано в отказе стоят и закон, и правило при нём Когда идёт раскладка Тогда она кладёт выбранное и выходит нулём:
-лишняя строка — предупреждение, а не отказ
+Given the refusal holds both a law and a rule at it When the layout runs Then it puts what is picked and
+leaves with zero: a surplus line is a warning, not a refusal
 
-Покрыто: `projects/agent-kit/src/lib/commands.spec.ts`.
+Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
 
-### SC-AK-124 — строка отказа без ресурса в каталоге называется тем же предупреждением
+### SC-AK-124 — a refusal line without a resource in the catalogue is named by the same warning
 
-Дано в отказе стоит ресурс, которого в наборе пакета нет вовсе Когда идёт раскладка Тогда строка называется
-вместе с тем, что отвечать ей в каталоге нечему, и раскладка идёт дальше
+Given the refusal holds a resource that is not in the set of the package at all When the layout runs
+Then the line is named together with the fact that nothing in the catalogue answers to it, and the
+layout goes on
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-125 — разбор состояния называет снятое вместе с родителем
+### SC-AK-125 — the state report names what is removed together with the parent
 
-Дано закон отвергнут, и его правила с паттернами сняты каскадом Когда идёт разбор состояния Тогда каждый снятый
-ресурс назван вместе с отвергнутым родителем, а не общим числом
+Given a law is rejected, and its rules with the patterns are removed by the cascade When the state
+report runs Then every removed resource is named together with the rejected parent, not by a common
+number
 
-Покрыто: `projects/agent-kit/src/lib/commands.spec.ts`.
+Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
 
-### SC-AK-126 — снятых законов в наборе пакета нет
+### SC-AK-126 — the removed laws are not in the set of the package
 
-Дано набор ресурсов пакета прочитан с диска Когда в нём ищутся закон о деньгах, закон о владеющей сущности и их
-правила с паттернами Тогда не находится ни один из них
+Given the set of the package resources is read from the disk When the law on money, the law on the
+owning entity and their rules with patterns are looked for in it Then not one of them is found
 
-Покрыто: `projects/agent-kit/src/lib/retired.spec.ts`.
+Covered: `projects/agent-kit/src/lib/retired.spec.ts`.
 
-### SC-AK-127 — правило без закона в самом пакете отбивается
+### SC-AK-127 — a rule without a law in the package itself is refused
 
-Дано в наборе оставлено правило, чей закон из пакета снят Когда идёт сверка связности ресурсов Тогда она
-называет правило и ссылку, которой нечего найти, и отдаёт ненулевой код
+Given a rule whose law is removed from the package is left in the set When the connectivity audit of
+the resources runs Then it names the rule and the reference that has nothing to find, and gives back a
+non-zero code
 
-Покрыто: `projects/agent-kit/src/lib/integrity.spec.ts`.
+Covered: `projects/agent-kit/src/lib/integrity.spec.ts`.
 
-### SC-AK-128 — отказ от предметного закона — одна строка
+### SC-AK-128 — refusing a subject law is one line
 
-Дано настройка дерева отвергает предметный закон одной строкой и ни одной строкой при его правилах и паттернах
-Когда идёт раскладка и её проверка Тогда проверка зелена, а правил и паттернов этого закона в дереве нет
+Given the setting of the tree rejects a subject law by one line and by not a single line at its rules
+and patterns When the layout and its check run Then the check is green, and the rules and the patterns
+of this law are not in the tree
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-129 — пустой выбор берёт весь набор
+### SC-AK-129 — an empty pick takes the whole set
 
-Дано настройка дерева заведена без ответа на вопрос о законах, и выбор пуст Когда идёт раскладка Тогда ложится
-весь набор: пустой выбор — случай по умолчанию, а не отказ от всех законов
+Given the setting of the tree is created without an answer to the question about the laws, and the pick
+is empty When the layout runs Then the whole set lands: an empty pick is the default case, not a
+refusal of all the laws
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-130 — родитель отвергнут, только когда не выбран ни один его вид
+### SC-AK-130 — a parent is rejected only when not one of its kinds is picked
 
-Дано правило лежит в наборе несколькими видами, и дерево выбрало один из них Когда идёт раскладка Тогда паттерны
-при этом правиле ложатся: невыбранные виды отвергнутостью родителя не считаются
+Given the rule lies in the set in several kinds, and the tree picked one of them When the layout runs
+Then the patterns at this rule land: the unpicked kinds do not count as the parent being rejected
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-131 — строка отказа на ресурс чужого вида лишней не считается
+### SC-AK-131 — a refusal line on a resource of a foreign kind does not count as surplus
 
-Дано в отказе стоит ресурс того вида, который дерево не выбирало Когда идёт раскладка Тогда строка не называется
-лишней: ею дерево гасит отказ о ресурсе без подходящего вида
+Given the refusal holds a resource of the kind the tree did not pick When the layout runs Then the line
+is not named surplus: by it the tree puts out the refusal about a resource without a fitting kind
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-132 — закон слоя приложения находится по короткому имени из шапки
+### SC-AK-132 — a law of the application layer is found by the short name from the header
 
-Дано правило объявляет закон коротким именем, а сам закон лежит в слое приложения Когда дерево отвергает этот
-закон строкой с каталогом слоя Тогда правило снимается каскадом: связь ищется по последнему звену имени внутри
-рода
+Given a rule declares its law by a short name, and the law itself lies in the application layer When
+the tree rejects this law by a line with the directory of the layer Then the rule is removed by the
+cascade: the link is looked for by the last link of the name inside the kind
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-133 — снятый внук назван обоими родителями
+### SC-AK-133 — a removed grandchild is named by both parents
 
-Дано закон отвергнут, вместе с ним снято правило, а вместе с правилом — паттерн при нём Когда идёт разбор
-состояния Тогда паттерн назван и правилом, из-за которого снят, и отвергнутым законом в основании цепочки
+Given a law is rejected, a rule is removed with it, and a pattern at that rule is removed with the rule
+When the state report runs Then the pattern is named both by the rule it was removed because of and by
+the rejected law at the base of the chain
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-134 — выбор, который после каскада ничего не берёт, называется вслух
+### SC-AK-134 — a pick that takes nothing after the cascade is named aloud
 
-Дано выбор называет правило поимённо, а закон при нём в выборе не стоит Когда идёт раскладка Тогда она говорит,
-что названное выбором не приедет, и по какому родителю
+Given the pick names a rule by name, and the law at it does not stand in the pick When the layout runs
+Then it says that what the pick named will not arrive, and by which parent
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`, `projects/agent-kit/src/lib/commands.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`, `projects/agent-kit/src/lib/commands.spec.ts`.
 
-### SC-AK-135 — родителя нет в каталоге — каскад молчит
+### SC-AK-135 — the parent is not in the catalogue — the cascade stays silent
 
-Дано у правила пустое поле закона или ссылка на закон, которого в наборе нет Когда идёт раскладка в дереве Тогда
-правило ложится: снимать не по чему, а промах судит сверка связности пакета
+Given the rule has an empty law field or a reference to a law that is not in the set When the layout
+runs in a tree Then the rule lands: there is nothing to remove by, and the miss is judged by the
+connectivity audit of the package
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-136 — связь, порванную каскадом, вторым предупреждением не называют
+### SC-AK-136 — a link broken by the cascade is not named by a second warning
 
-Дано закон отвергнут, снятое каскадом правило требуется другим взятым ресурсом Когда идёт раскладка Тогда ресурс
-назван один раз — каскадом, а не ещё и строкой о невыбранном требовании
+Given a law is rejected, and the rule removed by the cascade is required by another taken resource When
+the layout runs Then the resource is named once — by the cascade, not also by a line about an unpicked
+requirement
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-137 — ушедшее из набора называется по списку снятого
+### SC-AK-137 — what left the set is named by the list of the removed
 
-Дано в дереве лежит разложенный ресурс, которого в наборе пакета больше нет Когда идёт раскладка Тогда она
-называет его по списку снятых имён и говорит, что убирает его дерево само
+Given the tree holds a laid-out resource that is no longer in the set of the package When the layout
+runs Then it names it by the list of removed names and says that the tree removes it itself
 
-Покрыто: `projects/agent-kit/src/lib/commands.spec.ts`.
+Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
 
-### SC-AK-138 — снятое каскадом на диске называется отдельно от брошенного
+### SC-AK-138 — what the cascade removed on the disk is named apart from the abandoned
 
-Дано дерево стояло на прежней редакции, и в нём лежат правила отвергнутого теперь закона Когда идёт раскладка
-Тогда эти файлы названы снятыми каскадом, а не брошенными, и раскладка идёт дальше
+Given the tree stood on the former edition, and it holds the rules of a law now rejected When the
+layout runs Then these files are named as removed by the cascade, not as abandoned, and the layout goes
+on
 
-Покрыто: `projects/agent-kit/src/lib/commands.spec.ts`.
+Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
 
-### SC-AK-139 — поимённых ссылок на снятые законы в наборе не остаётся
+### SC-AK-139 — no references by name to the removed laws are left in the set
 
-Дано набор ресурсов пакета прочитан с диска Когда в паттернах, ролях и шаблонах ищутся имена снятых законов и их
-правил Тогда не находится ни одного вхождения
+Given the set of the package resources is read from the disk When the names of the removed laws and of
+their rules are looked for in the patterns, the roles and the templates Then not one occurrence is
+found
 
-Покрыто: `projects/agent-kit/src/lib/retired.spec.ts`.
+Covered: `projects/agent-kit/src/lib/retired.spec.ts`.
 
-### SC-AK-141 — одноимённые ресурсы одного рода отбиваются сверкой связности
+### SC-AK-141 — resources of one kind with the same name are refused by the connectivity audit
 
-Дано в наборе заведены два закона с одинаковым последним звеном имени в разных слоях Когда идёт сверка связности
-ресурсов Тогда она называет оба и отдаёт ненулевой код: связь при них двусмысленна
+Given two laws with the same last link of the name in different layers are created in the set When the
+connectivity audit of the resources runs Then it names both and gives back a non-zero code: the link at
+them is ambiguous
 
-Покрыто: `projects/agent-kit/src/lib/integrity.spec.ts`.
+Covered: `projects/agent-kit/src/lib/integrity.spec.ts`.
 
-### SC-AK-156 — статья без адреса попадает в счёт
+### SC-AK-156 — an article without an address gets into the count
 
-Дано у правила есть статья, которой в компаньоне дерева нет Когда считается добавленный долг Тогда статья
-названа, а число долга равно единице
+Given a rule has an article that is not in the companion of the tree When the added debt is counted
+Then the article is named, and the number of the debt equals one
 
-Покрыто: `projects/agent-kit/src/lib/companion.spec.ts`.
+Covered: `projects/agent-kit/src/lib/companion.spec.ts`.
 
-### SC-AK-157 — статья с адресом в счёт не идёт
+### SC-AK-157 — an article with an address does not go into the count
 
-Дано статья правила стоит строкой компаньона дерева Когда считается добавленный долг Тогда статья в счёт не
-попадает
+Given an article of the rule stands as a line of the companion of the tree When the added debt is
+counted Then the article does not get into the count
 
-Покрыто: `projects/agent-kit/src/lib/companion.spec.ts`.
+Covered: `projects/agent-kit/src/lib/companion.spec.ts`.
 
-### SC-AK-158 — отсутствующий компаньон называется отдельно
+### SC-AK-158 — a missing companion is named apart
 
-Дано компаньона рядом с правилом нет вовсе Когда считается добавленный долг Тогда все статьи правила названы
-долгом, а состояние — отсутствующий компаньон
+Given there is no companion next to the rule at all When the added debt is counted Then all the
+articles of the rule are named as debt, and the state is a missing companion
 
-Покрыто: `projects/agent-kit/src/lib/companion.spec.ts`.
+Covered: `projects/agent-kit/src/lib/companion.spec.ts`.
 
-### SC-AK-168 — ресурс с неотвеченным требованием не кладётся
+### SC-AK-168 — a resource with an unanswered requirement is not put
 
-Дано ресурс требует свойства `db`, а набор свойств дерева его не называет Когда идёт раскладка Тогда ни ресурс,
-ни черновик его компаньона в дерево не попадают
+Given a resource demands the property `db`, and the set of the tree's properties does not name it When
+the layout runs Then neither the resource nor the draft of its companion gets into the tree
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-169 — отвеченное требование ресурс не задерживает
+### SC-AK-169 — an answered requirement holds up no resource
 
-Дано ресурс требует свойства `db`, и дерево назвало `db` своим Когда идёт раскладка Тогда ресурс ложится под
-именем без требования в имени
+Given a resource demands the property `db`, and the tree named `db` as its own When the layout runs
+Then the resource lands under a name without the requirement in the name
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-170 — молчание дерева о себе требованию не отвечает
+### SC-AK-170 — the silence of the tree about itself answers no requirement
 
-Дано набор свойств дерева пуст Когда идёт раскладка Тогда ни один помеченный требованием ресурс не кладётся
+Given the set of the tree's properties is empty When the layout runs Then not one resource marked by a
+requirement is put
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-171 — ресурс без требования кладётся любому дереву
+### SC-AK-171 — a resource without a requirement is put into any tree
 
-Дано ресурс требования не несёт, а набор свойств дерева пуст Когда идёт раскладка Тогда ресурс ложится
+Given a resource carries no requirement, and the set of the tree's properties is empty When the layout
+runs Then the resource lands
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-172 — выбор поимённо сильнее неотвеченного требования
+### SC-AK-172 — a pick by name is stronger than an unanswered requirement
 
-Дано ресурс требует свойства, которого у дерева нет, и назван деревом поимённо Когда идёт раскладка Тогда ресурс
-ложится, а неотвеченное требование названо строкой перечня
+Given a resource demands a property the tree does not have and is named by the tree by name When the
+layout runs Then the resource lands, and the unanswered requirement is named by a line of the list
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-173 — требование неизвестного свойства — отказ раскладки
+### SC-AK-173 — a requirement of an unknown property is a refusal of the layout
 
-Дано ресурс требует свойства, которого пакет не объявлял Когда идёт раскладка Тогда она отказывает и называет и
-ресурс, и незнакомое свойство
+Given a resource demands a property the package did not declare When the layout runs Then it refuses
+and names both the resource and the unfamiliar property
 
-Не покрыто: отказ и перечень проверяются прогоном раскладки на живом дереве, спеки на них ещё нет.
+Not covered: the refusal and the list are checked by a run of the layout on a live tree, there is no
+spec for them yet.
 
-### SC-AK-174 — незнакомое свойство в настройке дерева — отказ раскладки
+### SC-AK-174 — an unfamiliar property in the setting of the tree is a refusal of the layout
 
-Дано набор свойств дерева называет свойство, которого пакет не объявлял Когда идёт раскладка Тогда она
-отказывает и называет это свойство
+Given the set of the tree's properties names a property the package did not declare When the layout
+runs Then it refuses and names that property
 
-Покрыто: `projects/agent-kit/src/lib/traits.spec.ts`.
+Covered: `projects/agent-kit/src/lib/traits.spec.ts`.
 
-### SC-AK-175 — вид и требование в одном имени читаются каждый своим перечнем
+### SC-AK-175 — a kind and a requirement in one name are read each by its own list
 
-Дано имя ресурса несёт и вид оси, и требуемое свойство Когда имя разбирается Тогда вид опознан по перечню осей,
-требование — по перечню свойств, и оба сняты с имени
+Given the name of a resource carries both a kind of an axis and a demanded property When the name is
+parsed Then the kind is recognised by the list of the axes, the requirement by the list of the
+properties, and both are taken off the name
 
-Покрыто: `projects/agent-kit/src/lib/traits.spec.ts`.
+Covered: `projects/agent-kit/src/lib/traits.spec.ts`.
 
-### SC-AK-176 — неположенное требованием отделено в перечне от снятого деревом
+### SC-AK-176 — what is not put by a requirement is separated in the list from what the tree removed
 
-Дано один ресурс снят строкой отказа, другой не положен неотвеченным требованием Когда печатается перечень
-ресурсов Тогда у первого стоит «пропущен», у второго — своё слово с названием требуемого свойства
+Given one resource is removed by a refusal line, the other is not put by an unanswered requirement When
+the list of the resources is printed Then the first carries "skipped", the second a word of its own with
+the name of the demanded property
 
-Не покрыто: отказ и перечень проверяются прогоном раскладки на живом дереве, спеки на них ещё нет.
+Not covered: the refusal and the list are checked by a run of the layout on a live tree, there is no
+spec for them yet.
 
-### SC-AK-177 — отказ по пустому компаньону называет требуемое свойство
+### SC-AK-177 — a refusal about an empty companion names the demanded property
 
-Дано компаньон ресурса пуст, а ресурс требует свойства, которого у дерева нет Когда идёт сверка разложенного
-Тогда отказ называет требуемое свойство и снятие ресурса строкой отказа, а не заполнение черновика
+Given the companion of a resource is empty, and the resource demands a property the tree does not have
+When the audit of the laid-out runs Then the refusal names the demanded property and the removal of the
+resource by a refusal line, not the filling of the draft
 
-Покрыто: `projects/agent-kit/src/lib/companion.spec.ts`.
+Covered: `projects/agent-kit/src/lib/companion.spec.ts`.
 
-### SC-AK-202 — образец ложится по своему пути внутри каталога документов
+### SC-AK-202 — a sample lands by its own path inside the documents directory
 
-Дано дерево не называло роду образцов своего каталога Когда считается, куда ложится образец папки задачи Тогда
-путь идёт от умолчания рода и повторяет раскладку внутри него
+Given the tree named no directory of its own for the kind of the samples When it is counted where the
+sample of the task folder lands Then the path goes from the default of the kind and repeats the layout
+inside it
 
-Покрыто: `projects/agent-kit/src/lib/assets.spec.ts`.
+Covered: `projects/agent-kit/src/lib/assets.spec.ts`.
 
-### SC-AK-203 — дерево называет образцам свой каталог
+### SC-AK-203 — the tree names a directory of its own for the samples
 
-Дано дерево назвало роду образцов свой каталог в раскладке Когда считается, куда ложится образец Тогда он
-ложится туда, а не в умолчание пакета
+Given the tree named a directory of its own for the kind of the samples in the layout When it is counted
+where the sample lands Then it lands there, not into the default of the package
 
-Покрыто: `projects/agent-kit/src/lib/assets.spec.ts`.
+Covered: `projects/agent-kit/src/lib/assets.spec.ts`.
 
-### SC-AK-264 — приставка селекторов судится только там, где дерево её назвало
+### SC-AK-264 — the prefix of the selectors is judged only where the tree named it
 
-Дано дерево приставки не назвало Когда гоняется сверка раскладки Тогда о приставке она молчит: слово принадлежит
-дереву, и зашитое в проверку краснело бы на каждой либе первого же дерева, у которого приставка своя
+Given the tree named no prefix When the layout audit is run Then it stays silent about the prefix: the
+word belongs to the tree, and hardwired into the check it would turn red on every lib of the very first
+tree whose prefix is its own
 
-Покрыто: `projects/agent-kit/tests/checks-lib-layers.test.sh`.
+Covered: `projects/agent-kit/tests/checks-lib-layers.test.sh`.
 
-### SC-AK-265 — названная приставка требуется у каждой либы фронта
+### SC-AK-265 — a named prefix is demanded of every frontend lib
 
-Дано дерево назвало приставку, а либа объявлена с другой Когда гоняется сверка раскладки Тогда она краснеет и
-называет обе стороны — что стоит у либы и что названо деревом
+Given the tree named a prefix, and a lib is declared with another When the layout audit is run Then it
+turns red and names both sides — what stands at the lib and what the tree named
 
-Покрыто: `projects/agent-kit/tests/checks-lib-layers.test.sh`.
+Covered: `projects/agent-kit/tests/checks-lib-layers.test.sh`.
 
-### SC-AK-266 — барель узнаётся по именам, названным деревом
+### SC-AK-266 — the barrel is recognised by the names the tree named
 
-Дано дерево назвало барелем и `index.ts`, и публичный вход публикуемого пакета Когда гоняется сверка раскладки
-Тогда собственный файл, собранный в этот вход, реэкспортом не считается: барель для того и заведён, а имя у него
-своё в каждом дереве
+Given the tree named as a barrel both `index.ts` and the public entry of a published package When the
+layout audit is run Then a file of its own assembled into that entry does not count as a re-export: the
+barrel is created for that, and its name is its own in every tree
 
-Покрыто: `projects/agent-kit/tests/checks-lib-layers.test.sh`.
+Covered: `projects/agent-kit/tests/checks-lib-layers.test.sh`.
 
-### SC-AK-267 — теги либ без зависимостей называет дерево, а не проверка
+### SC-AK-267 — the tags of the libs without dependencies are named by the tree, not by the check
 
-Дано дерево таких либ не держит и тегов не назвало Когда гоняется сверка раскладки Тогда она не требует описания
-границ под либу, которой в дереве нет
+Given the tree keeps no such libs and named no tags When the layout audit is run Then it demands no
+description of the boundaries for a lib that is not in the tree
 
-Покрыто: `projects/agent-kit/tests/checks-lib-layers.test.sh`.
+Covered: `projects/agent-kit/tests/checks-lib-layers.test.sh`.
 
-### SC-AK-409 — отказ любого гарда пакета зовёт общий хвост
+### SC-AK-409 — a refusal of any guard of the package calls the shared tail
 
-Дано в пакете лежит гард, отбивающий вызов или ход Когда ресурсы пакета проходят сплошной разбор Тогда у каждого
-такого гарда есть вызов общего хвоста: написанный по одному в каждом тексте, хвост пропускается там, где отказ
-заводили позже, а пропуск читается как «ходов отсюда нет»
+Given the package holds a guard refusing a call or a turn When the resources of the package go through
+a sweeping review Then every such guard has a call of the shared tail: written one at a time in every
+text, the tail is skipped where the refusal was created later, and the skip reads as "there are no moves
+from here"
 
-Покрыто: `projects/agent-kit/tests/syntax.test.sh`.
+Covered: `projects/agent-kit/tests/syntax.test.sh`.
 
-### SC-AK-515 — отказ от правила снимает его холодную часть
+### SC-AK-515 — refusing a rule removes its cold part
 
-Дано в наборе лежат правило и холодная часть при нём Когда дерево отказывается от правила Тогда каскад снимает и
-холодную часть: разложенная без своего правила, она читалась бы указанием к тому, чего в дереве нет
+Given the set holds a rule and a cold part at it When the tree refuses the rule Then the cascade removes
+the cold part too: laid out without its rule, it would read as an instruction to what is not in the tree
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-516 — холодная часть чужого правила при этом остаётся
+### SC-AK-516 — the cold part of a foreign rule stays at that
 
-Дано в наборе лежат холодные части двух правил Когда дерево отказывается от одного из правил Тогда снимается
-только его холодная часть
+Given the set holds the cold parts of two rules When the tree refuses one of the rules Then only its
+cold part is removed
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-517 — холодная часть ложится третьим файлом в каталог своего правила
+### SC-AK-517 — the cold part lands as a third file in the directory of its rule
 
-Дано пакет везёт холодную часть правила Когда идёт раскладка Тогда она ложится в каталог правила рядом с ним
-самим и с его компаньоном
+Given the package carries the cold part of a rule When the layout runs Then it lands in the directory of
+the rule next to the rule itself and to its companion
 
-Покрыто: `projects/agent-kit/src/lib/assets.spec.ts`.
+Covered: `projects/agent-kit/src/lib/assets.spec.ts`.
 
-### SC-AK-518 — холодная часть за имя файла с самим правилом не спорит
+### SC-AK-518 — the cold part does not argue with the rule itself over the file name
 
-Дано правило и его холодная часть носят одно имя ресурса Когда обоим считается целевой путь Тогда пути
-расходятся: одно имя каталога, разные имена файлов
+Given the rule and its cold part carry one resource name When the target path is counted for both Then
+the paths diverge: one directory name, different file names
 
-Покрыто: `projects/agent-kit/src/lib/assets.spec.ts`.
+Covered: `projects/agent-kit/src/lib/assets.spec.ts`.
 
-### SC-AK-519 — «Ловушки» спрашиваются у холодной части, а не у правила
+### SC-AK-519 — "Pitfalls" is asked of the cold part, not of the rule
 
-Дано правило отдало раздел «Ловушки» своей холодной части Когда набор считает полноту разделов Тогда правило без
-этого раздела проходит, а холодная часть без него краснеет
+Given the rule gave the section "Pitfalls" away to its cold part When the suite counts the completeness
+of the sections Then a rule without this section passes, and a cold part without it turns red
 
-Покрыто: `projects/agent-kit/tests/rules-review.test.sh`.
+Covered: `projects/agent-kit/tests/rules-review.test.sh`.
 
-### SC-AK-714 — строка требования внутри примера требованием не является
+### SC-AK-714 — a requirement line inside an example is no requirement
 
-Дано ресурс показывает образец строки требования в огороженном примере Когда раскладка читает, что он о себе
-объявил Тогда требований у него нет: иначе паттерн, показывающий образец, требовал бы ресурса с именем из
-угловых скобок. Настоящая строка, стоящая выше примера, читается по-прежнему
+Given a resource shows a sample of a requirement line inside a fenced example When the layout reads what
+it declared about itself Then it has no requirements: otherwise a pattern showing a sample would demand
+a resource with a name in angle brackets. A real line standing above the example is read as before
 
-Покрыто: `projects/agent-kit/src/lib/catalog.spec.ts`.
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 
-### SC-AK-798 — раскладка отказывает, когда установленная редакция не та, что объявило дерево
+### SC-AK-798 — the layout refuses when the installed edition is not the one the tree declared
 
-Дано дерево объявило редакцию пакета точным номером, а установлена другая Когда зовётся раскладка либо её
-сверка Тогда команда отказывает и называет обе редакции — объявленную деревом и установленную, — потому что
-легла бы она установленной, целиком и с тем же успешным выходом
+Given the tree declared the edition of the package by an exact number, and another one is installed When
+the layout or its audit is called Then the command refuses and names both editions — the one declared by
+the tree and the installed one — because it would be laid out by the installed one, whole and with the
+same successful exit
 
-Покрыто: `projects/agent-kit/src/lib/commands.spec.ts`.
+Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
 
-### SC-AK-799 — отказ не наступает там, где сравнивать нечего
+### SC-AK-799 — the refusal does not come where there is nothing to compare
 
-Дано дерево объявило редакцию диапазоном, не объявило пакет вовсе либо пакет не назвал своего имени Когда
-зовётся раскладка Тогда она идёт как прежде: диапазон покрывает несколько редакций и обе объявлены верно, а
-без имени пакет не нашёл бы себя в зависимостях дерева
+Given the tree declared the edition by a range, declared no package at all or the package named no name
+of its own When the layout is called Then it goes as before: a range covers several editions and both are
+declared rightly, and without a name the package would not find itself in the dependencies of the tree
 
-Покрыто: `projects/agent-kit/src/lib/commands.spec.ts`.
+Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
 
-### SC-AK-886 — хук ложится исполняемым и с потерянным битом источника
+### SC-AK-886 — a hook lands executable even with a lost bit at the source
 
-Дано файл каталога хуков в пакете лежит без права на исполнение
-Когда идёт раскладка
-Тогда разложенная копия получает право на исполнение: иначе гард не запускается вовсе, а
-выглядит установленным — файл на месте, раскладка отчиталась, и гарды по устройству молчат
+Given a file of the hooks directory in the package lies without the right to be executed
+When the layout runs
+Then the laid-out copy gets the right to be executed: otherwise the guard does not start at all and
+looks installed — the file is in place, the layout reported, and the guards by construction stay silent
 
-Дано проверка в пакете лежит без права на исполнение
-Когда идёт раскладка
-Тогда разложенная копия его не получает: часть проверок зовётся исполнителем, и бит им не нужен
+Given a check in the package lies without the right to be executed
+When the layout runs
+Then the laid-out copy does not get it: part of the checks are called by the executor, and they need no
+bit
 
-Дано проверка в пакете лежит с правом на исполнение
-Когда идёт раскладка
-Тогда разложенная копия его сохраняет
+Given a check in the package lies with the right to be executed
+When the layout runs
+Then the laid-out copy keeps it
 
-Покрыто: `projects/agent-kit/src/lib/sync.spec.ts`.
+Covered: `projects/agent-kit/src/lib/sync.spec.ts`.
 
-### SC-AK-887 — снятое право на запуск раскладка возвращает
+### SC-AK-887 — a removed right to run the layout brings back
 
-Дано разложенный хук цел телом, а бит исполнения с него снят Когда зовётся раскладка Тогда право возвращается, а
-тело не переписывается: чинить надо запуск, а не текст
+Given a laid-out hook is whole in body, and the execution bit is removed from it When the layout is
+called Then the right comes back, and the body is not rewritten: what has to be fixed is the run, not the
+text
 
-Покрыто: `projects/agent-kit/src/lib/plan.spec.ts`, `projects/agent-kit/src/lib/commands.spec.ts`.
+Covered: `projects/agent-kit/src/lib/plan.spec.ts`, `projects/agent-kit/src/lib/commands.spec.ts`.
 
-### SC-AK-888 — сверка о снятом праве не молчит
+### SC-AK-888 — the audit does not stay silent about a removed right
 
-Дано разложенный хук лежит без права на запуск Когда гоняется сверка раскладки Тогда она называет этот файл
-расхождением и отвечает ненулевым кодом: зарегистрированный командой хук без бита не запускается вовсе, а
-выглядит установленным
+Given a laid-out hook lies without the right to run When the layout audit is run Then it names this file
+as a divergence and answers with a non-zero code: a hook registered by a command without the bit does not
+start at all and looks installed
 
-Покрыто: `projects/agent-kit/src/lib/commands.spec.ts`.
+Covered: `projects/agent-kit/src/lib/commands.spec.ts`.

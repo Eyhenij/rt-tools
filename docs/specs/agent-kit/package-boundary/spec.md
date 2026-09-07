@@ -1,155 +1,171 @@
-# Граница пакета правил
+# The boundary of the rules package
 
-**Статус:** действует · **Ревизия:** 2026-08-22 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `work-conduct`, `project-documentation`, `delivery`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-22 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `work-conduct`, `project-documentation`, `delivery`
+**Procedures:** none
 
-Поддомен домена «пакет правил агента»: что пакет везёт потребителю, а что остаётся дереву,
-которое пакет пишет. Общее — терминология домена и сквозные требования — лежит в спеке домена
-рядом.
+A subdomain of the domain "the agent rules package": what the package carries to a consumer and what
+stays with the tree that writes the package. What is shared — the terminology of the domain and the
+cross-cutting requirements — lies in the domain spec next to it.
 
-## Зачем
+## Why
 
-Пакет ставят чужие деревья. Он везёт им законы, правила, паттерны, хуки и проверки — и вместе
-с ними то, чем у них воспользоваться нельзя.
+The package is installed by foreign trees. It carries them laws, rules, patterns, hooks and checks —
+and together with them what cannot be used at their place.
 
-Так уехал разбор приехавшего груза. Правило разбора и паттерн при нём описывают работу
-принимающей стороны: чем читается приём, когда запись переходит в работу, где смотрят её
-состояние. Приём — это приложение, и живёт оно в одном дереве мастерской. Компаньон правила у
-потребителя заполнить нечем: у него нет ни приёмника, ни админки приёма, ни команды отметки.
+That is how the review of the arrived cargo went away. The review rule and the pattern at it
+describe the work of the receiving side: what the intake is read by, when a record moves into work,
+where its state is looked at. The intake is an application, and it lives in one tree of the
+workshop. There is nothing to fill the rule's companion with at a consumer: it has neither a
+receiver, nor an intake admin panel, nor a marking command.
 
-Того же рода команда сведения предложений. Она говорит о себе прямо: зовётся в репозитории
-самого пакета, а в чужом дереве бессмысленна, потому что там лежит только своя половина
-картины. И всё равно едет туда вместе с остальными.
+Of the same kind is the command of summing up the proposals. It says of itself outright: it is
+called in the repository of the package itself, and in a foreign tree it is meaningless, because
+only one's own half of the picture lies there. And it goes there all the same together with the
+rest.
 
-Цена не в размере раскладки, а в том, что читатель не отличает одно от другого. Правило,
-пришедшее с пакетом, читается как верное для этого дерева: у него та же шапка, тот же закон
-сверху и то же место в перечне. Исполнитель чужого дерева берёт его в работу и упирается в
-пустой компаньон — и это лучший исход. Худший: он заполняет компаньон догадкой.
+The price is not in the size of the layout but in the reader not telling one from the other. A rule
+that arrived with the package reads as true for this tree: it has the same header, the same law
+above it and the same place in the list. The executor of a foreign tree takes it into work and runs
+into an empty companion — and that is the best outcome. The worst: they fill the companion by a
+guess.
 
-## Терминология
+## Terminology
 
-| Термин                | Что это                                                                          |
-| --------------------- | -------------------------------------------------------------------------------- |
-| потребитель пакета    | дерево, которое пакет ставит и не пишет: получает раскладку, шлёт груз           |
-| дерево пакета         | дерево, где пакет живёт исходниками: правит ресурсы, принимает груз, выпускает   |
-| отправляющая сторона  | то, чем дерево шлёт груз в приём: форма груза, отправка, команда предложения     |
-| принимающая сторона   | то, чем груз разбирают: приём, его админка, отметка состояний, сведение          |
-| ресурс не для везения | ресурс, который у потребителя не исполняется: некому позвать или нечем заполнить |
+| Term                        | What it is                                                                                                |
+| --------------------------- | --------------------------------------------------------------------------------------------------------- |
+| a consumer of the package   | a tree that installs the package and does not write it: it gets the layout, it sends the cargo            |
+| the package tree            | the tree where the package lives as sources: it edits the resources, accepts the cargo, releases          |
+| the sending side            | what a tree sends the cargo into the intake by: the shape of the cargo, the sending, the proposal command |
+| the receiving side          | what the cargo is taken apart by: the intake, its admin panel, the marking of states, the summing-up      |
+| a resource not for carrying | a resource not carried out at a consumer: there is nobody to call it or nothing to fill it with           |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Экранов у поддомена нет: предмет — раскладка текстов и строка запуска. Человек видит границу
-двумя способами — отказом проверки в гейте пуша и перечнем ресурсов в выводе раскладки.
+The subdomain has no screens: the subject is the layout of texts and the launch line. A person sees
+the boundary in two ways — by a refusal of the check in the push gate and by the list of resources
+in the output of the layout.
 
-## Правила
+## Rules
 
-- **Пакет везёт потребителю только то, что потребитель исполняет.** Ресурс, у которого в чужом
-  дереве нет ни исполнителя, ни предмета, ресурсом пакета не бывает.
-- **Признак «не для везения» — не оценка, а два вопроса к ресурсу.** Есть ли у потребителя то,
-  о чём ресурс говорит, и есть ли кому его позвать. Ответ «нет» хотя бы на один — ресурс
-  остаётся дереву пакета.
-- **Ресурс не для везения живёт своим ресурсом дерева, а не отменяется перечнем.** Перечень
-  отменяемого говорит «мне этого не надо» и оставляет ресурс в пакете: он продолжает ехать
-  всем остальным. Убирается он из самого пакета.
-- **Отправляющая сторона остаётся в пакете целиком.** Форма груза, отправка и команда, которой
-  дерево шлёт предложение, — ровно то, ради чего пакет ставят.
-- **Граница держится проверкой, а не чтением.** Проверка живёт в дереве пакета, входит в его
-  гейт пуша и краснеет на ресурсе, который заговорил о приёме или о дереве пакета.
-- **Ресурс, ещё не переехавший, стоит в перечне долга и назван адресом переезда.** Перечень
-  читает проверка: он держит известное молча и не мешает ей краснеть на новом.
-- **Закон, описывающий предмет приложения, а не класса приложений, ресурсом пакета не бывает.**
-  Доступ, локали и видимость в поиске у каждого приложения свои: у одного роли внутри стороны, у
-  другого приглашения по ссылке, — и общей остаётся не статья, а наблюдение, что предмет вообще
-  есть. Признак тот же, что у ресурса не для везения, только вопрос второй: не «есть ли кому
-  позвать», а «выводится ли статья из предмета дерева».
-- **Пакетная редакция, разложенная поверх богатой здешней, оказывается ни тем, ни другим.** У
-  дерева-потребителя редакция закона доступа была вдвое подробнее пакетной, и раскладка унесла
-  половину статей. Свести их в одну — потерять договорённость, держать рядом — иметь два закона,
-  которые говорят одно разными словами и расходятся молча.
-- **Правило снимается вместе с законом, под которым стоит.** Оставшееся без закона правило опору
-  теряет: оно называет приём, которым держат требование, а требования в пакете больше нет.
-- **Снятый ресурс, живой в дереве пакета, остаётся своим ресурсом дерева.** Файл остаётся на
-  месте без шапки раскладки, и гейт зовёт правило как прежде — читателю не видно, чем оно младше
-  пакетного.
-- **Своё правило дерева объявляется наравне с пакетным.** У него та же форма, тот же закон
-  сверху и своя ветка в карте гейта: читателю не должно быть видно, чем оно младше.
+- **The package carries to a consumer only what the consumer carries out.** A resource that in a
+  foreign tree has neither an executor nor a subject is never a package resource.
+- **The sign "not for carrying" is not an appraisal but two questions to the resource.** Does the
+  consumer have what the resource speaks of, and is there anybody to call it. An answer of "no" to at
+  least one — the resource stays with the package tree.
+- **A resource not for carrying lives as a resource of the tree's own, it is not cancelled by the
+  list.** The list of the cancelled says "I do not need this" and leaves the resource in the package:
+  it goes on travelling to everyone else. It is removed from the package itself.
+- **The sending side stays in the package whole.** The shape of the cargo, the sending and the
+  command a tree sends a proposal by are exactly what the package is installed for.
+- **The boundary is held by a check, not by reading.** The check lives in the package tree, enters
+  its push gate and turns red on a resource that started speaking of the intake or of the package
+  tree.
+- **A resource that has not moved yet stands in the list of the debt and is named with the address of
+  its move.** The list is read by the check: it holds the known silently and does not keep it from
+  turning red on something new.
+- **A law describing the subject of an application, not of a class of applications, is never a
+  package resource.** Access, locales and visibility in search are each application's own: one has
+  roles inside the side, another invitations by a link — and what stays shared is not the article but
+  the observation that the subject exists at all. The sign is the same as for a resource not for
+  carrying, only the second question differs: not "is there anybody to call it" but "is the article
+  derived from the subject of the tree".
+- **A package edition laid out over a rich local one turns out to be neither.** At a consumer tree
+  the edition of the access law was twice as detailed as the package one, and the layout carried away
+  half the articles. Merging them into one means losing the agreement, keeping them side by side
+  means having two laws that say one thing in different words and diverge silently.
+- **A rule is removed together with the law it stands under.** A rule left without a law loses its
+  support: it names the technique a requirement is held by, and the requirement is no longer in the
+  package.
+- **A removed resource, alive in the package tree, stays a resource of the tree's own.** The file
+  stays in place without the layout header, and the gate calls the rule as before — the reader cannot
+  see how it is younger than a package one.
+- **A rule of the tree's own is declared on a par with a package one.** It has the same shape, the
+  same law above it and its own branch in the gate map: the reader must not be able to see how it is
+  younger.
 
-## Что не входит
+## What is out of scope
 
-- Код приёмника и его админки: работа перекладывает слой правил и строку запуска, а не приём.
-- Отправляющая сторона: её ресурсы не двигаются и не переписываются.
-- Отметка записей груза, накопившихся в приёме: список закрыт входом человека.
-- Новый закон под локальное правило: правило встаёт под тот же закон о ведении работы.
+- The code of the receiver and of its admin panel: the work moves the rules layer and the launch
+  line, not the intake.
+- The sending side: its resources do not move and are not rewritten.
+- Marking the cargo records accumulated in the intake: the list is closed by a person's entry.
+- A new law under a local rule: the rule stands under the same law about the conduct of work.
 
-## Контракт
+## Contract
 
-Процедур поддомен не обслуживает. Договор здесь другого рода — между пакетом и деревом, которое
-его ставит: пакет обещает, что каждый разложенный ресурс у потребителя исполним.
+The subdomain serves no procedures. The contract here is of another kind — between the package and
+the tree that installs it: the package promises that every laid-out resource is executable at a
+consumer.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: предмет не ходит по сети и процедур не зовёт. Проверка границы отвечает кодом
-возврата и перечнем ресурсов, а не кодом отказа.
+Not applicable: the subject does not go over the network and calls no procedures. The boundary check
+answers with an exit code and a list of resources, not with a refusal code.
 
-## Данные
+## Data
 
-Своих данных поддомен не заводит. Читает он ресурсы пакета и перечень отменяемого в настройках
-дерева.
+The subdomain creates no data of its own. It reads the resources of the package and the list of the
+cancelled in the settings of the tree.
 
-## Экраны и состояния
+## Screens and states
 
-Экранов нет.
+There are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: предмет — тексты слоя правил и строка запуска, а они одноязычны.
+Not applicable: the subject is the texts of the rules layer and the launch line, and they are
+single-language.
 
 ### SEO
 
-Не применимо: наружу ничего не отдаётся.
+Not applicable: nothing is given outward.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо: экранов нет.
+Not applicable: there are no screens.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо: пакет в дереве один.
+Not applicable: the package in a tree is one.
 
-## Решения
+## Decisions
 
-- **Признак объявляется до переноса, а не выводится по ходу.** Иначе каждый следующий ресурс
-  судит тот, кому в эту минуту удобно, и граница расходится с самой собой. Отвергнут порядок
-  «перенести очевидное, признак записать потом»: очевидным выглядит ровно то, что уже назвали.
-- **Проверка живёт в дереве пакета, а не в самом пакете.** Она судит ресурсы пакета, и чужому
-  дереву судить нечего. Отвергнута правка сверки раскладки: та сверяет разложенное с пакетом, и
-  вторая тема в ней перестала бы читаться.
-- **Команда отметки уезжает вместе с правилом.** Она исполняется принимающей стороной, и в
-  чужом дереве звать её некому. Отвергнуто «оставить в строке запуска как исключение»: работа
-  затевалась ровно против таких исключений.
-- **Известный долг держится перечнем с адресом переезда.** Проверка, краснеющая до конца
-  переезда, отбивала бы пуш каждой ветки — включая те, которые переезд и делают. Перечень
-  называет по каждому ресурсу, куда он уедет, пустеет по мере эпика и уходит вместе с ним.
-  Отвергнуто молчание проверки до конца переезда: молчащая проверка не отличает долг от нового
-  промаха.
-- **Правило разбора груза переезжает целиком, вместе с паттерном и спеком.** Половина в пакете
-  и половина в дереве хуже обеих: читатель не знает, где искать статью.
+- **The sign is declared before the move, it is not derived along the way.** Otherwise every next
+  resource is judged by whoever finds it convenient at that minute, and the boundary diverges from
+  itself. The order "move the obvious, write the sign afterwards" was rejected: obvious looks exactly
+  what has already been named.
+- **The check lives in the package tree, not in the package itself.** It judges the resources of the
+  package, and a foreign tree has nothing to judge. An edit of the layout check was rejected: that
+  one checks the laid-out against the package, and a second subject in it would stop being read.
+- **The marking command goes away together with the rule.** It is carried out by the receiving side,
+  and in a foreign tree there is nobody to call it. "Leave it in the launch line as an exception" was
+  rejected: the work was started exactly against such exceptions.
+- **The known debt is held by a list with the address of the move.** A check turning red until the
+  end of the move would refuse the push of every branch — including those that do the move. The list
+  names for every resource where it will go, empties as the epic goes on and leaves together with it.
+  Silence of the check until the end of the move was rejected: a silent check does not tell debt from
+  a new miss.
+- **The rule of taking the cargo apart moves whole, together with the pattern and the spec.** Half in
+  the package and half in the tree is worse than either: the reader does not know where to look for
+  an article.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-PB-2` — становится ли признак статьёй закона о поставке. Правило его держит, закон о нём
-  молчит, а работа в ветке закон не правит.
+- `Q-PB-2` — does the sign become an article of the delivery law. The rule holds it, the law is
+  silent about it, and the work in the branch does not edit the law.
 
-## История изменений
+## History of changes
 
-- 2026-08-22 — заведён поддомен: признак границы, состав сторон, проверка в гейте.
-- 2026-08-22 — `Q-PB-1` закрыт владельцем: ресурс, нужный обеим сторонам, делится по сторонам
-  границы, а не везётся целиком с пометкой. Памятка о пакете разделена — потребителю осталась
-  раскладка, надстройки, свойства дерева и отправка груза, дереву пакета ушли правка ресурса,
-  сборка и разбор приехавших предложений.
-- 2026-08-22 — эпик кончился: разбор груза и обе команды дерева пакета уехали из него, перечень
-  известного долга опустел и снят с дерева.
+- 2026-08-22 — the subdomain was created: the sign of the boundary, the composition of the sides, the
+  check in the gate.
+- 2026-08-22 — `Q-PB-1` was closed by the owner: a resource needed by both sides is split by the
+  sides of the boundary, not carried whole with a mark. The memo about the package was split — the
+  consumer was left the layout, the overrides, the properties of the tree and the sending of the
+  cargo, and the package tree got the editing of a resource, the build and the review of the arrived
+  proposals.
+- 2026-08-22 — the epic ended: the review of the cargo and both commands of the package tree went out
+  of it, the list of the known debt emptied and was removed from the tree.

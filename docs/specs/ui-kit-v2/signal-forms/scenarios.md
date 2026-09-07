@@ -1,62 +1,62 @@
-# Сценарии — поле набора и сигнальная форма
+# Scenarios — a field of the set and a signal form
 
-Префикс `SC-UKV`, общий на домен вместе с поддоменами. Номера при вливании не меняются: на них
-ссылаются заголовки тестов.
+The prefix `SC-UKV` is shared across the domain together with the subdomains. The numbers do not change
+at the merge: the titles of the tests refer to them.
 
-Чем покрыт сценарий, сказано под ним.
+What a scenario is covered by is said under it.
 
-### SC-UKV-77 — поле на сигнальной привязке рисуется
+### SC-UKV-77 — a field on the signal binding is drawn
 
-Дано поле набора привязано сигнальной формой
-Когда поле поднято
-Тогда разметка поля нарисована и отказа в запуске нет
+Given a field of the set is bound by a signal form
+When the field is raised
+Then the markup of the field is drawn and there is no refusal in the start-up
 
-Покрыто: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
 
-### SC-UKV-78 — негодность сигнальной привязки доходит до поля
+### SC-UKV-78 — the unfitness of the signal binding reaches the field
 
-Дано поле на сигнальной привязке, и форма считает значение негодным
-Когда поле тронуто
-Тогда поле объявляет себя негодным
+Given a field on the signal binding, and the form counts the value unfit
+When the field is touched
+Then the field declares itself unfit
 
-Покрыто: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
 
-### SC-UKV-79 — до касания негодность не показывается
+### SC-UKV-79 — before a touch the unfitness is not shown
 
-Дано поле на сигнальной привязке, и форма считает значение негодным
-Когда поле ещё не тронуто и не правлено
-Тогда поле негодным себя не объявляет
+Given a field on the signal binding, and the form counts the value unfit
+When the field is not touched and not edited yet
+Then the field does not declare itself unfit
 
-Покрыто: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
 
-### SC-UKV-80 — ошибки сигнальной привязки видны обёртке
+### SC-UKV-80 — the errors of the signal binding are visible to the wrapper
 
-Дано поле на сигнальной привязке, и форма назвала ошибку
-Когда поле тронуто
-Тогда обёртка показывает текст этой ошибки
+Given a field on the signal binding, and the form named an error
+When the field is touched
+Then the wrapper shows the text of that error
 
-Покрыто: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
 
-### SC-UKV-81 — обязательность сигнальной привязки даёт звёздочку
+### SC-UKV-81 — the obligatoriness of the signal binding gives an asterisk
 
-Дано поле на сигнальной привязке, и форма объявила значение обязательным
-Когда поле нарисовано в обёртке
-Тогда у подписи стоит звёздочка
+Given a field on the signal binding, and the form declared the value obligatory
+When the field is drawn in the wrapper
+Then an asterisk stands at the label
 
-Покрыто: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
 
-### SC-UKV-82 — отключение сигнальной привязкой отключает поле
+### SC-UKV-82 — a switching off by the signal binding switches the field off
 
-Дано поле на сигнальной привязке, и форма отключила значение
-Когда поле нарисовано
-Тогда поле ввода не принимает ввод
+Given a field on the signal binding, and the form switched the value off
+When the field is drawn
+Then the field of input accepts no input
 
-Покрыто: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
 
-### SC-UKV-83 — прежняя привязка работает как раньше
+### SC-UKV-83 — the former binding works as before
 
-Дано поле на прежней привязке с обязательным контролом
-Когда контрол тронут и негоден
-Тогда поле объявляет себя негодным, а обёртка показывает ошибку и звёздочку
+Given a field on the former binding with an obligatory control
+When the control is touched and unfit
+Then the field declares itself unfit, and the wrapper shows the error and the asterisk
 
-Покрыто: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.

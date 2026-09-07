@@ -1,102 +1,108 @@
-# Ревью текстов слоя правил
+# The review of the texts of the rules layer
 
-Правка закона или правила, разошедшаяся с остальными текстами пакета, находится до выпуска
-версии, а не в чужом дереве через неделю.
+An edit of a law or a rule that diverged from the rest of the texts of the package is found before
+the release of a version, not in a foreign tree a week later.
 
-## Зачем
+## Why
 
-Пакет везёт семнадцать законов, двадцать шесть правил и сорок пять паттернов при них. Что они
-говорят по отдельности, читается; что они говорят вместе — не читается ничем. Сегодня тексты
-сверяет `integrity` — ссылки шапок, у правила есть закон, у паттерна правило, — и набор
-запретов на слова в `tests/texts.test.sh`. Ни то ни другое не судит ни полноты описания, ни
-согласия двух текстов между собой.
+The package carries seventeen laws, twenty-six rules and forty-five patterns at them. What they say
+apart is read; what they say together is read by nothing. Today the texts are reconciled by
+`integrity` — the links of the headers, a rule has a law, a pattern has a rule — and a set of bans on
+words in `tests/texts.test.sh`. Neither of them judges either the completeness of a description or
+the agreement of two texts with one another.
 
-Дефект такого рода уже лежит в пакете и найден замером до начала работы: образец правила
-`assets/templates/rule.md` объявляет раздел «Когда берётся», которого нет ни в одном из
-двадцати шести правил, а все двадцать шесть несут три раздела, о которых образец молчит. Форма,
-по которой заводят новое правило, разошлась со всем корпусом правил, и увидеть это было нечем:
-раскладка кладёт файлы, а не читает их.
+A defect of that kind already lies in the package and was found by a measurement before the work
+began: the sample of a rule `assets/templates/rule.md` declares the section "When it is taken", which
+is in not one of the twenty-six rules, and all twenty-six carry three sections the sample is silent
+about. The form by which a new rule is created diverged from the whole corpus of the rules, and there
+was nothing to see that by: the layout lays the files, it does not read them.
 
-## Решения
+## Decisions
 
-- **Слой двусоставный.** Машина считает то, что считается: ресурс без обязательного раздела
-  своего рода, правило без единого паттерна, имя соседа, которому в наборе ничего не отвечает,
-  адрес конкретного дерева внутри блока кода. Роль читает семью целиком и ищет то, что машине
-  не видно: два текста, говорящих об одном разное, и случай, которого не назвал ни один.
-- **Ревью зовётся двумя способами**: командой вручную и машинной частью в наборе, который
-  гоняется перед пушем. Хук на правке файла ресурса из работы выкинут — правка этих файлов и
-  есть работа в пакете, и хук срабатывал бы на каждом движении по прямому назначению.
-- **Единица работы роли — семья, а не файл и не пакет.** Семья это закон, правила под ним и
-  паттерны при них. Тексты ресурсов не помещаются в окно захода целиком, и роль, читающая всё
-  разом, возвращает крошку по каждому файлу вместо находок.
-- **Граф изображает ход правила и лежит в тексте самого правила.** Заводится всем правилам, а
-  не только тем, чей ход ветвится: правило без графа читается иначе, чем правило с ним.
-- **Пробел уровня «статья закона без правила» машине не отдаётся.** У каждого закона правило
-  есть, и на уровне закона такая проверка находит ноль; чтобы она стала мельче закона, каждой
-  статье нужен якорь руками — их больше двух сотен, и через полгода их перестанут ставить.
-  Пробелы ищет роль.
+- **The layer is of two parts.** The machine counts what is countable: a resource without a mandatory
+  section of its own kind, a rule without a single pattern, the name of a neighbour that nothing in
+  the set answers to, the address of a specific tree inside a block of code. The role reads a family
+  whole and looks for what the machine does not see: two texts saying different things about one
+  matter, and a case not one of them named.
+- **The review is called by two ways**: by a command by hand and by the machine part in the set that
+  is run before a push. A hook on an edit of a file of a resource is thrown out of the work — an edit
+  of these files is the work in the package itself, and the hook would go off at every movement by
+  the direct appointment.
+- **The unit of the work of the role is a family, not a file and not the package.** A family is a
+  law, the rules under it and the patterns at them. The texts of the resources do not fit into the
+  window of a session whole, and a role reading everything at once gives back a crumb per file
+  instead of findings.
+- **A graph depicts the course of a rule and lies in the text of the rule itself.** It is created for
+  all the rules, not only for those whose course branches: a rule without a graph is read differently
+  from a rule with one.
+- **A gap of the level "an article of a law without a rule" is not given to the machine.** Every law
+  has a rule, and at the level of a law such a check finds a zero; for it to become finer than a law,
+  every article needs an anchor by hand — there are more than two hundred of them, and in half a year
+  they will stop being put. The gaps are looked for by the role.
 
-## Порядок
+## The order
 
-| №   | Задача                                                            | Почему здесь                                                                                                            |
-| --- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| 1   | Машинная половина: статьи закона, проверка текстов, отказ в гейте | Ставит новый отказ в гейт и правит закон, который уезжает во все деревья. Ложное срабатывание откатывается одной веткой |
-| 2   | Роль-ревьюер и команда смыслового ревью                           | Кладёт в раскладку два новых ресурса. Половины зовутся порознь: машинная работает без роли, роль — без гейта            |
-| 3   | Графы хода в правилах и влитие договорённости                     | Правит тексты действующих правил, по которым работает агент в каждом дереве. Откатывается сам по себе                   |
+| №   | Task                                                                                     | Why here                                                                                                                                    |
+| --- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | The machine half: the articles of a law, the check of the texts, the refusal in the gate | It puts a new refusal into the gate and edits a law that leaves for all the trees. A false going-off is rolled back by one branch           |
+| 2   | The role of the reviewer and the command of the meaning review                           | It puts two new resources into the layout. The halves are called apart: the machine one works without the role, the role — without the gate |
+| 3   | The graphs of the course in the rules and the merging of the agreement                   | It edits the texts of the rules in force, by which the agent works in every tree. It is rolled back by itself                               |
 
-Порядок держится до конца эпика. Пересмотр — решение владельца, и записывается он в ход работы
-той задачи, которая его вызвала.
+The order holds to the end of the epic. A reconsideration is a decision of the owner, and it is
+written into the progress of the task that called it.
 
-**Чем кончилась первая.** Задача RT-703, PR #709. Шесть статей стоят в законе о документации
-проекта и разложены в конституцию. Проверка считает четыре рода расхождений и отбивает пуш —
-подтверждено снятием раздела у правила о списках: прогон краснеет, возврат раздела зеленит.
-Наборы разделов объявлены данными, а не выведены из образца рода; девять родов из тринадцати
-объявлены молчащими. Долг «правило без паттерна» измерен и оказался нулевым — проверка заведена
-на будущее. Дефект, ради которого заводился слой, починен той же веткой: образец правила
-приведён к объявленному набору и с этого дня судится наравне с корпусом — раздела, которого нет
-ни у кого, он больше не объявляет, а о трёх, которые несут все, больше не молчит.
+**What the first ended with.** The task RT-703, PR #709. Six articles stand in the law about the
+documentation of the project and are laid out into the constitution. The check counts four kinds of
+divergences and refuses a push — confirmed by the removal of a section at the rule about the lists:
+the run turns red, the return of the section turns it green. The sets of the sections are declared by
+data, not derived from the sample of a kind; nine kinds of thirteen are declared silent. The debt "a
+rule without a pattern" was measured and turned out zero — the check is created for the future. The
+defect the layer was created for is fixed by the same branch: the sample of a rule is brought to the
+declared set and from this day is judged on a par with the corpus — the section nobody has it no
+longer declares, and about the three that all carry it is no longer silent.
 
-## Что не входит
+## What is not included
 
-- **Автоправка найденного.** Ревью называет расхождение и пробел, правит человек.
-- **Ревью текстов самого дерева.** Спеки доменов, README и собственные скилы дерева остаются
-  снаружи: проверяется то, что везёт пакет.
-- **Хук на правке файла ресурса.** Выкинут решением владельца.
-- **Отказ сборки на смысловой находке.** В гейт и конвейер встаёт только машинная часть:
-  ответ роли не повторяется от запуска к запуску.
-- **Починка всего найденного.** Часть находок чинится тем же эпиком, остальное уходит задачами
-  в очередь работ.
+- **An automatic fixing of what is found.** The review names a divergence and a gap, a person edits.
+- **The review of the texts of the tree itself.** The specs of the domains, the READMEs and the tree's
+  own skills stay outside: what is checked is what the package carries.
+- **A hook on an edit of a file of a resource.** Thrown out by the decision of the owner.
+- **A refusal of the build on a meaning finding.** Only the machine part stands into the gate and the
+  pipeline: the answer of the role does not repeat from launch to launch.
+- **The fixing of everything found.** A part of the findings is fixed by the same epic, the rest goes
+  as tasks into the work queue.
 
-## Признак закрытия
+## The sign of the closing
 
-Ревью прогнано по двум-трём семьям, владелец прочитал список находок и подтвердил, что это
-дефекты, часть из них починена тем же эпиком. Проверка, не нашедшая ничего, неотличима от
-неработающей.
+The review is run over two or three families, the owner read the list of the findings and confirmed
+that these are defects, a part of them is fixed by the same epic. A check that found nothing is
+indistinguishable from one that does not work.
 
-## Рядом, но не в эпике
+## Next to it, but not in the epic
 
-Две договорённости о продукте лежали в каталоге предложенного невлитыми — они старше этой
-работы. На их вливание заводилась отдельная задача, и вливание состоялось ею же: каталога
-предложенного в дереве больше нет.
+Two product agreements lay in the directory of the proposed unmerged — they are older than this work.
+A task of its own was created for their merging, and the merging took place by it: there is no
+directory of the proposed in the tree any more.
 
-## Чем кончился
+## What it ended with
 
-16 августа 2026 года, четыре задачи вместо трёх.
+16 August 2026, four tasks instead of three.
 
-| Задача                     | Чем кончилась                                                                                                                                                                 |
-| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| RT-703 — машинная половина | Набор полноты текстов пакета: разделы по роду ресурса, правило без паттерна, имя соседа без ответа. Стоит в гейте пуша                                                        |
-| RT-704 — роль и команда    | Роль ревью и команда её вызова. Первый же прогон нашёл пять расхождений в семье, на которой набор полноты зелёный                                                             |
-| RT-705 — графы             | Граф хода у каждого из двадцати шести правил, проверка при нём, образец правила. Первый прогон роли нашёл в свежих графах пять расхождений с прозой — их починила та же ветка |
-| RT-706 — вливание          | Обе договорённости в спеке домена, каталог предложенного снят                                                                                                                 |
-| RT-735 — вне порядка       | Находки разбора PR задачи RT-704: команда зашивала раскладку репозитория пакета и собирала семью не целиком                                                                   |
+| Task                              | What it ended with                                                                                                                                                                                           |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| RT-703 — the machine half         | The set of the completeness of the texts of the package: the sections by the kind of a resource, a rule without a pattern, the name of a neighbour without an answer. It stands in the gate of the push      |
+| RT-704 — the role and the command | The role of the review and the command of its call. The very first run found five divergences in a family on which the set of the completeness is green                                                      |
+| RT-705 — the graphs               | A graph of the course at each of the twenty-six rules, a check at it, the sample of a rule. The first run of the role found in the fresh graphs five divergences with the prose — the same branch fixed them |
+| RT-706 — the merging              | Both agreements in the spec of the domain, the directory of the proposed is removed                                                                                                                          |
+| RT-735 — outside the order        | The findings of the review of the PR of the task RT-704: the command sewed in the layout of the repository of the package and gathered the family not whole                                                  |
 
-**Что эпик оставил и чем это кончилось.** Девятнадцать расхождений и пробелов по двум семьям он
-оставил лежать текстом — владелец их тогда не читал. Разобраны они позже, эпиком RT-1198: файл
-`docs/plans/agent-kit-rules-review-findings.md` называет по каждому пункту, чем тот кончился —
-задачами RT-1604, RT-1210, RT-1580, RT-1211, RT-1212 и RT-1213. Неразобранного в нём не осталось.
+**What the epic left and what that ended with.** Nineteen divergences and gaps over two families it
+left lying as a text — the owner did not read them then. They were taken apart later, by the epic
+RT-1198: the file `docs/plans/agent-kit-rules-review-findings.md` names by every item what it ended
+with — the tasks RT-1604, RT-1210, RT-1580, RT-1211, RT-1212 and RT-1213. Nothing unsorted is left in
+it.
 
-**Что оказалось дороже, чем в замысле.** Порядок задач держался, а вот их число — нет: разбор
-работы второй задачи вернул находки, на которые пришлось заводить пятую. Признак «два-три
-семейства» подтвердился с первого прогона: ревью нашло дефекты в текстах, которые машинная
-половина считает целыми.
+**What turned out costlier than in the plan.** The order of the tasks held, but their number did not:
+the review of the work of the second task gave back findings a fifth one had to be created for. The
+sign "two or three families" was confirmed from the first run: the review found defects in texts the
+machine half counts whole.

@@ -1,80 +1,81 @@
-# Сценарии — цена контекста считается командой
+# Scenarios — the cost of context is counted by a command
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной. Префикс общий на домен: номер связывает сценарий с заголовком
-теста и повторно не выдаётся.
+The identifier stands at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason. The prefix is shared by the domain: the
+number ties a scenario to a test title and is never issued twice.
 
-Номера `SC-AK-617`, `SC-AK-621` и `SC-AK-622` выданы редакции, где счёт шёл у модели, и после
-перехода на счёт символов освободились. Повторно они не выдаются: номер отдаётся один раз.
+The numbers `SC-AK-617`, `SC-AK-621` and `SC-AK-622` were issued to the edition where the count went
+at the model, and after the move to counting characters they were freed. They are not issued again: a
+number is given out once.
 
-### SC-AK-613 — команда печатает три веса
+### SC-AK-613 — the command prints three weights
 
-Дано дерево с разложенным слоем правил
-Когда команда счёта зовётся без доводов
-Тогда она печатает цену входа, вес правила и вес слоя
+Given a tree with the rules layer laid out
+When the counting command is called without arguments
+Then it prints the cost of the entry, the weight of a rule and the weight of the layer
 
-Покрыто: `projects/agent-kit/src/lib/cost.spec.ts`.
+Covered: `projects/agent-kit/src/lib/cost.spec.ts`.
 
-### SC-AK-614 — рядом с числами стоит, чем считано
+### SC-AK-614 — what it is counted by stands next to the numbers
 
-Дано дерево с разложенным слоем правил
-Когда команда счёта зовётся
-Тогда в выводе стоит, чем эти числа сняты
+Given a tree with the rules layer laid out
+When the counting command is called
+Then the output holds what these numbers are taken by
 
-Покрыто: `projects/agent-kit/src/lib/cost.spec.ts`.
+Covered: `projects/agent-kit/src/lib/cost.spec.ts`.
 
-### SC-AK-615 — описание правила считается полем, а не файлом
+### SC-AK-615 — a rule description is counted as a field, not as a file
 
-Дано правило, у которого описание много короче своего файла
-Когда команда счёта берёт цену входа
-Тогда в число входит вес поля описания, а не вес файла правила
+Given a rule whose description is far shorter than its file
+When the counting command takes the cost of the entry
+Then the number includes the weight of the description field, not the weight of the rule file
 
-Покрыто: `projects/agent-kit/src/lib/cost.spec.ts`.
+Covered: `projects/agent-kit/src/lib/cost.spec.ts`.
 
-### SC-AK-616 — словарь и карта хода считаются выводом хуков
+### SC-AK-616 — the glossary and the flow map are counted by the output of the hooks
 
-Дано хуки старта захода печатают словарь и карту хода
-Когда команда счёта берёт цену входа
-Тогда в число входит то, что хуки напечатали, а не то, что лежит в их файлах
+Given the session-start hooks print the glossary and the flow map
+When the counting command takes the cost of the entry
+Then the number includes what the hooks printed, not what lies in their files
 
-Покрыто: `projects/agent-kit/src/lib/cost.spec.ts`.
+Covered: `projects/agent-kit/src/lib/cost.spec.ts`.
 
-### SC-AK-618 — названного правила в дереве нет
+### SC-AK-618 — the named rule is not in the tree
 
-Дано доводом названо имя, которого в дереве нет
-Когда команда счёта зовётся
-Тогда она называет это имя, ничего не считает и даёт ненулевой код
+Given the argument names a name that is not in the tree
+When the counting command is called
+Then it names that name, counts nothing and gives a non-zero code
 
-Покрыто: `projects/agent-kit/src/lib/cost.spec.ts`.
+Covered: `projects/agent-kit/src/lib/cost.spec.ts`.
 
-### SC-AK-619 — машиночитаемый вывод даёт те же числа
+### SC-AK-619 — the machine-readable output gives the same numbers
 
-Дано дерево с разложенным слоем правил
-Когда команда счёта зовётся с требованием машиночитаемого вывода
-Тогда она печатает те же числа разбором, а не таблицей
+Given a tree with the rules layer laid out
+When the counting command is called with the demand for machine-readable output
+Then it prints the same numbers as a structure, not as a table
 
-Покрыто: `projects/agent-kit/src/lib/cost.spec.ts`.
+Covered: `projects/agent-kit/src/lib/cost.spec.ts`.
 
-### SC-AK-620 — команда ничего не пишет и в сеть не ходит
+### SC-AK-620 — the command writes nothing and goes to no network
 
-Дано дерево с разложенным слоем правил
-Когда команда счёта отработала
-Тогда ни один файл дерева не изменился и ни одного вызова наружу не сделано
+Given a tree with the rules layer laid out
+When the counting command has done its work
+Then not one file of the tree changed and not one call outward was made
 
-Покрыто: `projects/agent-kit/src/lib/cost.spec.ts`.
+Covered: `projects/agent-kit/src/lib/cost.spec.ts`.
 
-### SC-AK-623 — символы и байты печатаются оба
+### SC-AK-623 — characters and bytes are both printed
 
-Дано текст на кириллице, у которого байтов больше, чем символов
-Когда команда счёта его взвешивает
-Тогда она печатает оба числа, и они не равны
+Given a text outside Latin that has more bytes than characters
+When the counting command weighs it
+Then it prints both numbers, and they are not equal
 
-Покрыто: `projects/agent-kit/src/lib/cost.spec.ts`.
+Covered: `projects/agent-kit/src/lib/cost.spec.ts`.
 
-### SC-AK-624 — слой в дереве не разложен
+### SC-AK-624 — the layer is not laid out in the tree
 
-Дано каталога разложенных правил в дереве нет
-Когда команда счёта зовётся
-Тогда она говорит, что слой не разложен, и даёт ненулевой код
+Given there is no directory of laid-out rules in the tree
+When the counting command is called
+Then it says the layer is not laid out and gives a non-zero code
 
-Покрыто: `projects/agent-kit/src/lib/cost.spec.ts`.
+Covered: `projects/agent-kit/src/lib/cost.spec.ts`.

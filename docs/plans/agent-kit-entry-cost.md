@@ -1,168 +1,176 @@
-# Цена входа в работу: правило грузится под правку, а не под чтение
+# The price of the entry into the work: a rule is loaded under an edit, not under a reading
 
-Одной фразой: заход тратит на слой правил меньше, чем на саму работу, — правило не грузится
-под чтение, а загруженное несёт то, что нужно для решения, а не всё, что о нём известно.
+In one phrase: a session spends less on the rules layer than on the work itself — a rule is not
+loaded under a reading, and what is loaded carries what is needed for a decision, not everything that
+is known about it.
 
-Карточка эпика — задача RT-961. Порядок задач держит эта запись.
+The card of the epic is the task RT-961. The order of the tasks is held by this record.
 
-## Чем эпик обоснован
+## What the epic is grounded on
 
-Замеры сделаны 20 августа 2026 года на этом дереве. Числа верны на этот день и пересчитываются
-командой, названной рядом.
+The measurements were made on 20 August 2026 on this tree. The numbers are true for that day and are
+recounted by the command named next to them.
 
-Наблюдения слоя правил за два дня подряд — файлы дня в каталоге наблюдений дерева:
+The observations of the rules layer over two days in a row — the files of the day in the directory of
+the observations of the tree:
 
-| День       | Загрузок правил | Отбитий гейта | На команде оболочки | На правке файла |
-| ---------- | --------------- | ------------- | ------------------- | --------------- |
-| 2026-08-19 | 64              | 46            | 45                  | 1               |
-| 2026-08-20 | 46              | 30            | 27                  | 3               |
+| Day        | Loadings of the rules | Refusals of the gate | On a command of the shell | On an edit of a file |
+| ---------- | --------------------- | -------------------- | ------------------------- | -------------------- |
+| 2026-08-19 | 64                    | 46                   | 45                        | 1                    |
+| 2026-08-20 | 46                    | 30                   | 27                        | 3                    |
 
-Семьдесят два отбития из семидесяти шести пришлись не на правку файла. Отбитие кончает ход и
-стоит загрузки правила.
+Seventy-two refusals of seventy-six fell not on an edit of a file. A refusal ends a turn and costs a
+loading of a rule.
 
-Вес слоя правил — `find .claude/skills -type f -name '*.md' -exec cat {} + | wc -c`: 85 файлов,
-1 243 267 байт. Вход в работу одного захода — словарь на старте и четыре правила — 167 килобайт,
-порядка сорока пяти тысяч токенов, прежде чем был задан первый вопрос по работе, которая
-сводилась к снятию одного дубля в журнале изменений.
+The weight of the rules layer — `find .claude/skills -type f -name '*.md' -exec cat {} + | wc -c`: 85
+files, 1 243 267 bytes. The entry into the work of one session — the glossary at the start and four
+rules — is 167 kilobytes, of the order of forty-five thousand tokens, before the first question was
+asked about a work that came down to the removal of one duplicate in the journal of the changes.
 
-Время хуков — запуском самих хуков с готовым вводом: 11 хуков и 357 миллисекунд на вызов
-оболочки, 8 хуков и 185 миллисекунд на завершение хода.
+The time of the hooks — by a launch of the hooks themselves with a ready input: 11 hooks and 357
+milliseconds at a call of the shell, 8 hooks and 185 milliseconds at the ending of a turn.
 
-## Порядок задач
+## The order of the tasks
 
-| №   | Задача                                                     | Почему здесь                                                                                    |
-| --- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| 1   | RT-962 · цена входа считается командой                     | без числа ни одна следующая задача не докажет, что ускорила: «стало легче» признаком не бывает  |
-| 2   | RT-963 · читающая команда перестаёт считаться пишущей      | снимает большую часть отбитий; ни от чего не зависит и даёт больше всех                         |
-| 3   | RT-964 · отказ называет статью, а не файл правила целиком  | второй источник лишней загрузки; чинится после того, как гейт перестал срабатывать на чтении    |
-| 4   | RT-965 · у правила заводится холодная часть                | механизм, на котором стоит переезд хвостов                                                      |
-| 5   | RT-966 · хвосты крупных правил переезжают в холодную часть | нужен механизм из задачи 4                                                                      |
-| 6   | RT-967 · у правил свой предел длины                        | ставится после переезда: раньше он покраснеет на полутора десятках файлов, чинить которые нечем |
-| 7   | RT-968 · хуки события зовутся одним диспетчером            | независима от прочих, выгода меньше — она про секунды, а остальные про заполнение окна захода   |
+| №   | Task                                                                   | Why here                                                                                                                          |
+| --- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | RT-962 · the price of the entry is counted by a command                | without a number not a single next task will prove that it sped things up: "it got easier" is never a sign                        |
+| 2   | RT-963 · a reading command stops being counted a writing one           | it lifts the greater part of the refusals; it depends on nothing and gives the most                                               |
+| 3   | RT-964 · the refusal names the article, not the file of the rule whole | the second source of a surplus loading; it is fixed after the gate stopped going off on a reading                                 |
+| 4   | RT-965 · a rule gets a cold part                                       | the mechanism the moving of the tails stands on                                                                                   |
+| 5   | RT-966 · the tails of the large rules move into the cold part          | it needs the mechanism from the task 4                                                                                            |
+| 6   | RT-967 · the rules get a length limit of their own                     | it is put after the moving: earlier it will turn red on a dozen and a half files there is nothing to fix by                       |
+| 7   | RT-968 · the hooks of an event are called by one dispatcher            | independent of the rest, the gain is smaller — it is about seconds, and the rest are about the filling of the window of a session |
 
-Порядок назначен и держится до конца эпика. Пересмотр — решение владельца, и записывается он в
-ход работы той задачи, которая его вызвала.
+The order is assigned and holds to the end of the epic. A reconsideration is a decision of the owner,
+and it is written into the progress of the task that called it.
 
-## Что в эпик не входит
+## What is not in the epic
 
-- **Содержание правил не переписывается.** Задача о переезде хвостов переносит текст, не меняя
-  ни строки. Что в правилах сказано, эпик не судит.
-- **Ни один гард не ослабевает и ни один отказ не снимается.** Эпик убирает отказы, которые
-  выданы по ошибке, и не трогает те, что выданы по делу. Задача о диспетчере меняет точку
-  входа, а не то, что каждый гард судит.
-- **Однократность гейта и его карта остаются как есть.** Меняется признак записи перед картой и
-  текст отказа после неё.
-- **Предел длины кода и стилей не двигается.** Свой предел заводится правилам, а не всему
-  дереву.
+- **The content of the rules is not rewritten.** The task about the moving of the tails moves the
+  text without changing a line. What is said in the rules the epic does not judge.
+- **Not a single guard weakens and not a single refusal is lifted.** The epic removes the refusals
+  given out by a mistake and does not touch those given out for a reason. The task about the
+  dispatcher changes the point of the entry, not what every guard judges.
+- **The one-time-ness of the gate and its map stay as they are.** What changes is the sign of a write
+  before the map and the text of the refusal after it.
+- **The length limit of the code and of the styles does not move.** A limit of their own is created
+  for the rules, not for the whole tree.
 
-## Чем видно, что эпик кончился
+## What it is seen by that the epic is over
 
-Та же команда сводки, которую заводит первая задача, на неделе после последней задачи даёт:
-отбитий гейта на команде оболочки — заметно меньше, чем на правке файла; вес загруженного за
-заход — меньше, чем был на 20 августа 2026 года.
+The same command of the digest the first task creates gives, in the week after the last task:
+refusals of the gate on a command of the shell — noticeably fewer than on an edit of a file; the
+weight of what is loaded per session — less than it was on 20 August 2026.
 
-Число цели назначает владелец после того, как первая задача научилась считать: назначать его
-раньше значило бы придумать его.
+The number of the goal is assigned by the owner after the first task has learnt to count: to assign
+it earlier would mean to invent it.
 
-## Открытые вопросы
+## Open questions
 
-- **Q-1. Где живёт холодная часть правила.** Спутник с именами дерева уже лежит рядом с
-  правилом отдельным файлом; холодная часть встаёт третьим файлом или дописывается в спутник.
-  Решается в задаче RT-965 и записывается там же.
-- **Q-2. Каким числом задаётся новый предел длины правила.** Задача RT-967 предлагает его от
-  того, что останется после переезда хвостов, а не назначает заранее.
-- **Q-3. Чем в задаче RT-963 чинить ложные отбития, не вернув обход.** Широта признака записи —
-  не недосмотр: она объявлена в комментарии при нём и подкреплена разбором происшествия, где
-  отбитая правка дважды за заход легла командой оболочки. Цена широты там же и названа — команда
-  чтения с именем интерпретатора отбивается наравне с правкой. Правило говорит, что пришедшее из
-  разбора не снимается, пока разбор не признан неверным, поэтому сужать список имён нельзя.
+- **Q-1. Where the cold part of a rule lives.** The companion with the names of the tree already lies
+  next to the rule as a separate file; the cold part stands as a third file or is appended into the
+  companion. It is decided in the task RT-965 and written down there.
+- **Q-2. By which number the new length limit of a rule is set.** The task RT-967 proposes it from
+  what is left after the moving of the tails, instead of assigning it in advance.
+- **Q-3. What to fix the false refusals in the task RT-963 by without returning a bypass.** The
+  breadth of the sign of a write is no oversight: it is declared in the comment at it and backed by a
+  review of an incident where a refused edit landed twice in a session by a command of the shell. The
+  price of the breadth is named there too — a command of a reading with the name of an interpreter is
+  refused on a par with an edit. The rule says that what came from a review is not lifted until the
+  review is recognised wrong, so the list of the names must not be narrowed.
 
-    Разведка нашла две правки, которые с разбором не спорят. Первая: пустое устройство файлом не
-    бывает, и записи через него не выходит — обход отсюда не возвращается. Вторая, и она ценнее:
-    правкой считается не то, что команда упомянула, а то, что она пишет. Сегодня из строки
-    вынимается всё похожее на путь, включая пути из текста, который команда всего лишь печатает, —
-    и гейт требует правило под файл, которого никто не трогал. Разбор был о том, что правка легла
-    командой, а не о том, что названный в тексте путь считается правкой. Какой из двух приёмов
-    берётся и берутся ли оба — решается в RT-963.
+    The exploration found two edits that do not argue with the review. The first: an empty device is
+    never a file, and no write comes out through it — no bypass comes back from here. The second, and
+    it is worth more: what counts as an edit is not what a command mentioned but what it writes. Today
+    everything looking like a path is pulled out of the line, including the paths from a text the
+    command merely prints — and the gate demands a rule under a file nobody touched. The review was
+    about an edit landing by a command, not about a path named in a text being counted an edit. Which
+    of the two techniques is taken, and whether both are, is decided in RT-963.
 
-## Чем эпик кончился
+## What the epic ended with
 
-23 августа 2026 года. Все восемь работ влиты: семь из состава и деление текстов за пределом
-длины, выросшее из шестой. Числа ниже сняты в этот день теми же командами, что и в день
-заведения, на свободной машине.
+23 August 2026. All eight works are merged: seven of the composition and the division of the texts
+past the length limit, grown out of the sixth. The numbers below were taken on that day by the same
+commands as on the day of the creation, on a free machine.
 
-### Вход в работу
+### The entry into the work
 
-| Что                                        |    Было |   Стало |
-| ------------------------------------------ | ------: | ------: |
-| словарь и четыре правила, байт             | 167 000 | 148 262 |
-| правило ведения работы, строк              |     447 |     261 |
-| правило поставки, строк                    |     406 |     285 |
-| паттерн о коммите, строк                   |     445 |     190 |
-| паттерн закрытия работы, строк             |     377 |     208 |
-| текстов слоя правил длиннее своего предела |      11 |       0 |
+| What                                             |     Was |  Became |
+| ------------------------------------------------ | ------: | ------: |
+| the glossary and four rules, bytes               | 167 000 | 148 262 |
+| the rule of the conduct of the work, lines       |     447 |     261 |
+| the rule of the delivery, lines                  |     406 |     285 |
+| the pattern about a commit, lines                |     445 |     190 |
+| the pattern of the closing of a work, lines      |     377 |     208 |
+| texts of the rules layer longer than their limit |      11 |       0 |
 
-Вход считается тем же способом: словарь на старте плюс четыре правила, которые загружает
-работа по коду приложения. Выигрыш скромнее, чем выглядит по строкам: правило похудело вдвое,
-а вход — на девятую часть, потому что делённое правило приводит с собой второе, и оба
-загружаются там, где решение задевает обе половины.
+The entry is counted by the same way: the glossary at the start plus four rules that the work by the
+code of the application loads. The gain is more modest than it looks by the lines: the rule slimmed by
+half, and the entry by a ninth part, because a divided rule brings a second one with it, and both are
+loaded where the decision touches both halves.
 
-Всего слой правил стал тяжелее: 1 369 396 байт против 1 243 267 — сто семь файлов против
-восьмидесяти пяти. Это не промах и не отменяет выигрыша: эпик не убирал текст, он разносил его
-так, чтобы заход брал нужную часть, а не всё. Вес всего слоя никто и никогда не грузит.
+In all the rules layer became heavier: 1 369 396 bytes against 1 243 267 — a hundred and seven files
+against eighty-five. This is no miss and does not cancel the gain: the epic did not remove the text,
+it laid it out so that a session takes the part it needs, not everything. The weight of the whole
+layer is loaded by nobody ever.
 
-### Время хуков
+### The time of the hooks
 
-| Событие           | Гардов было | Гардов стало | Было, мс | Стало, мс |
-| ----------------- | ----------: | -----------: | -------: | --------: |
-| вызов инструмента |          11 |           18 |      357 |       387 |
-| завершение хода   |           8 |            8 |      185 |       285 |
+| Event                   | Guards were | Guards became | Was, ms | Became, ms |
+| ----------------------- | ----------: | ------------: | ------: | ---------: |
+| a call of an instrument |          11 |            18 |     357 |        387 |
+| the ending of a turn    |           8 |             8 |     185 |        285 |
 
-Медиана пятнадцати прогонов, запуском самих хуков с готовым вводом. Читается это так: за то же
-время событие вызова инструмента судят восемнадцать гардов вместо одиннадцати, а завершение
-хода подорожало на сто миллисекунд — там за эпик прибавились страж выходов хода, гард ожидания,
-гард разговора и гард происшествия, и каждый из них читает состояние работы. Диспетчер съел
-рост числа гардов, но не вернул времени: обещание задачи было про накладные расходы на процессы,
-и оно исполнено, а гарды с тех пор подорожали сами.
+The median of fifteen runs, by a launch of the hooks themselves with a ready input. It reads like
+this: in the same time the event of a call of an instrument is judged by eighteen guards instead of
+eleven, and the ending of a turn got dearer by a hundred milliseconds — over the epic the guard of the
+exits of a turn, the guard of the waiting, the guard of the conversation and the guard of an incident
+were added there, and each of them reads the state of the work. The dispatcher ate the growth of the
+number of the guards but did not give back the time: the promise of the task was about the overhead on
+the processes, and it is carried out, and the guards have got dearer by themselves since.
 
-### Отбития гейта
+### The refusals of the gate
 
-| День       | Сессий | Отбитий | Из них повторных | Загрузок правил |
-| ---------- | -----: | ------: | ---------------: | --------------: |
-| 2026-08-19 |      6 |      46 |                6 |              64 |
-| 2026-08-20 |      6 |      32 |                3 |              49 |
-| 2026-08-21 |      6 |      29 |                2 |              52 |
-| 2026-08-22 |      6 |      42 |               21 |              46 |
-| 2026-08-23 |      2 |       7 |                1 |               5 |
+| Day        | Sessions | Refusals | Of them repeat ones | Loadings of the rules |
+| ---------- | -------: | -------: | ------------------: | --------------------: |
+| 2026-08-19 |        6 |       46 |                   6 |                    64 |
+| 2026-08-20 |        6 |       32 |                   3 |                    49 |
+| 2026-08-21 |        6 |       29 |                   2 |                    52 |
+| 2026-08-22 |        6 |       42 |                  21 |                    46 |
+| 2026-08-23 |        2 |        7 |                   1 |                     5 |
 
-Повторное отбитие — второе и следующее по одному правилу в одной сессии; законным бывает
-только первое. Числа по дням шумят: они зависят от того, какие работы шли, а не от одного
-слоя правил, и день закрытия эпика прожит наполовину. Сказать по ним можно одно: доля
-повторных отбитий держится низкой, кроме 22 августа — там их двадцать одно из сорока двух, и
-это день, когда правила правились сами и гейт срабатывал на собственных ресурсах.
+A repeat refusal is the second and the next by one rule in one session; only the first is ever lawful.
+The numbers by the days are noisy: they depend on which works were going, not on the rules layer
+alone, and the day of the closing of the epic is lived half through. One thing can be said by them:
+the share of the repeat refusals holds low, apart from the 22nd of August — there they are twenty-one
+of forty-two, and that is the day when the rules were edited themselves and the gate went off on its
+own resources.
 
-### Ответы на открытые вопросы
+### The answers to the open questions
 
-- **Q-1. Где живёт холодная часть правила.** Третьим файлом рядом — `pitfalls.md`. Туда уехали
-  ловушки и поведение по разборам; отказ гейта о ней молчит, о ней говорит само правило строкой
-  в шапке.
-- **Q-2. Каким числом задаётся предел длины правила.** Триста строк — от того, что осталось
-  после переезда хвостов. Накопленное встало долгом с причиной у каждой записи и разобрано
-  делением: перечень долга пуст.
-- **Q-3. Чем чинить ложные отбития, не вернув обход.** Взяты оба приёма: пустое устройство
-  файлом не считается, и правкой считается не всё, что команда упомянула, а то, что стоит в
-  заголовке команды как цель записи. Список имён интерпретаторов не сужен — он пришёл из
-  разбора происшествия.
+- **Q-1. Where the cold part of a rule lives.** As a third file next to it — `pitfalls.md`. The
+  pitfalls and the behaviour from the reviews left for there; the refusal of the gate is silent about
+  it, and the rule itself speaks about it by a line in the header.
+- **Q-2. By which number the length limit of a rule is set.** Three hundred lines — from what was left
+  after the moving of the tails. What was accumulated stood as a debt with a reason at every record and
+  was taken apart by a division: the list of the debt is empty.
+- **Q-3. What to fix the false refusals by without returning a bypass.** Both techniques were taken: an
+  empty device is not counted a file, and what counts as an edit is not everything a command mentioned
+  but what stands in the head of the command as the goal of the write. The list of the names of the
+  interpreters is not narrowed — it came from a review of an incident.
 
-### Что вышло не так, как задумывалось
+### What came out other than intended
 
-- **Из шестой задачи выросла восьмая.** Предел, поставленный после переезда хвостов, всё равно
-  застал одиннадцать текстов за ним. Они встали долгом, и разбирала их отдельная работа —
-  делением пяти текстов по своим границам, а не переносом строк.
-- **Деление правила заводит второе правило, а не сокращает первое.** Правило поставки и правило
-  ведения работы дали `deploy-flow` и `turn-conduct`; правило оформления отдало надстройку
-  дерева в своё правило дерева с паттерном при нём. Там, где решение задевает обе половины,
-  заход грузит оба текста — и выигрывает только тот, чьё решение лежит в одной.
-- **Уборка трижды отстала от вливания.** Папка задачи разбирается последним коммитом, но
-  исполнитель снимал черновик раньше, и заявка вливалась готовой на вид. Разобрано записью о
-  происшествии; предложение — чтобы гард снятия черновика судил папку так же, как гард слияния.
+- **An eighth task grew out of the sixth.** The limit put after the moving of the tails still found
+  eleven texts beyond it. They stood as a debt, and a work of its own took them apart — by a division
+  of five texts by their own boundaries, not by a moving of the lines.
+- **The division of a rule creates a second rule, it does not shorten the first.** The rule of the
+  delivery and the rule of the conduct of the work gave `deploy-flow` and `turn-conduct`; the rule of
+  the design gave the override of the tree away into a rule of the tree of its own with a pattern at
+  it. Where a decision touches both halves, the session loads both texts — and only the one whose
+  decision lies in one of them gains.
+- **The tidying fell behind the merging three times.** The task folder is taken apart by the last
+  commit, but the executor lifted the draft earlier, and the request was merged looking ready. Taken
+  apart by a record about an incident; the proposal is that the guard of the lifting of a draft should
+  judge the folder the same as the guard of the merging.

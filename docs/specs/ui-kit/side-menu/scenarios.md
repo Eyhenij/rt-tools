@@ -1,382 +1,391 @@
-# Сценарии — второй уровень бокового меню
+# Scenarios — the second level of the side menu
 
-Идентификатор ставится в начало заголовка теста через тире. Префикс общий на домен, и номера при
-переезде в поддомен не пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier goes at the start of the test title, followed by a dash. The prefix is shared across the
+domain, and the numbers were not recounted at the move into the subdomain: the number ties a scenario to
+the title of its test.
 
-## Мода подменю
+## The mode of the submenu
 
-### SC-UK-17 — потребитель, не назвавший моду, получает подменю на наведении
+### SC-UK-17 — a consumer who did not name the mode gets a submenu at a hovering
 
-Дано боковое меню без входа моды
-Когда указатель уходит со шторки подменю
-Тогда подменю закрывается
+Given a side menu without an input of the mode
+When the pointer leaves the curtain of the submenu
+Then the submenu closes
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-18 — закреплённое подменю не закрывается уходом указателя
+### SC-UK-18 — a pinned submenu does not close at the leaving of the pointer
 
-Дано мода закреплённая и активный пункт с подменю
-Когда указатель уходит со шторки подменю
-Тогда подменю остаётся открытым
+Given the mode is the pinned one and an active item with a submenu
+When the pointer leaves the curtain of the submenu
+Then the submenu stays open
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-19 — закреплённое подменю не закрывается переходом по своему пункту
+### SC-UK-19 — a pinned submenu does not close at a transition by its own item
 
-Дано мода закреплённая и открытое подменю
-Когда нажат пункт подменю со ссылкой
-Тогда потребитель получает нажатие, а подменю остаётся открытым
+Given the mode is the pinned one and an open submenu
+When an item of the submenu with a link is pressed
+Then the consumer gets the press, and the submenu stays open
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-20 — нажатие переключателя моду не меняет, а просит её
+### SC-UK-20 — a press of the switch does not change the mode but asks for it
 
-Дано мода закреплённая
-Когда нажат переключатель
-Тогда наружу уходит просьба о моде наведения, а вход остаётся прежним
+Given the mode is the pinned one
+When the switch is pressed
+Then a request for the mode of the hovering goes away outward, and the input stays the former one
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-21 — закреплённое подменю показывает активный пункт
+### SC-UK-21 — a pinned submenu shows the active item
 
-Дано мода закреплённая, а вход активности называет пункт с подменю
-Когда меню нарисовано
-Тогда открыто подменю этого пункта
+Given the mode is the pinned one, and the input of the activity names an item with a submenu
+When the menu is drawn
+Then the submenu of that item is open
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-22 — активного пункта нет и не открыто ничего — закреплённого подменю нет
+### SC-UK-22 — there is no active item and nothing is open — there is no pinned submenu
 
-Дано мода закреплённая, вход активности пуст, и наведением ничего не открывали
-Когда меню нарисовано
-Тогда подменю не открыто
+Given the mode is the pinned one, the input of the activity is empty, and nothing was opened by a hovering
+When the menu is drawn
+Then no submenu is open
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-23 — под закреплённым подменю нет подложки
+### SC-UK-23 — there is no backing under a pinned submenu
 
-Дано мода закреплённая и открытое подменю
-Когда меню нарисовано
-Тогда подложки под шторкой нет
+Given the mode is the pinned one and an open submenu
+When the menu is drawn
+Then there is no backing under the curtain
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-24 — на узком экране переключателя нет
+### SC-UK-24 — on a narrow screen there is no switch
 
-Дано узкий экран и мода закреплённая
-Когда открыто подменю
-Тогда переключателя в разметке нет
+Given a narrow screen and the mode is the pinned one
+When the submenu is open
+Then there is no switch in the markup
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-## Поиск по подменю
+## The search over a submenu
 
-### SC-UK-25 — пустой запрос показывает подменю целиком
+### SC-UK-25 — an empty query shows the submenu whole
 
-Дано подменю из трёх пунктов и пустой запрос
-Когда идёт отбор
-Тогда возвращаются все три пункта
+Given a submenu of three items and an empty query
+When the filter goes
+Then all three items are given back
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
 
-### SC-UK-26 — отбор идёт по подстроке подписи без учёта регистра
+### SC-UK-26 — the filter goes by a substring of the label without a count of the case
 
-Дано подменю с пунктом «Курсы валют» и запрос «курс»
-Когда идёт отбор
-Тогда остаётся этот пункт
+Given a submenu with the item "Курсы валют" and the query "курс"
+When the filter goes
+Then that item stays
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
 
-### SC-UK-27 — пункт без подписи в отбор не попадает
+### SC-UK-27 — an item without a label does not get into the filter
 
-Дано подменю с пунктом без подписи и непустой запрос
-Когда идёт отбор
-Тогда этот пункт не возвращается
+Given a submenu with an item without a label and a non-empty query
+When the filter goes
+Then that item is not given back
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
 
-### SC-UK-28 — совпадений нет — подменю говорит об этом строкой
+### SC-UK-28 — there are no coincidences — the submenu says so by a line
 
-Дано открытое подменю и запрос, которому не отвечает ни один пункт
-Когда запрос набран
-Тогда вместо списка стоит строка сообщения
+Given an open submenu and a query no item answers to
+When the query is typed
+Then a line of a message stands instead of the list
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-29 — закрытое подменю открывается с пустым запросом
+### SC-UK-29 — a closed submenu opens with an empty query
 
-Дано подменю с набранным запросом
-Когда оно закрыто и открыто заново
-Тогда запрос пуст, а список показан целиком
+Given a submenu with a typed query
+When it is closed and opened anew
+Then the query is empty, and the list is shown whole
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-30 — закрепление не меняет того, что видно
+### SC-UK-30 — the pinning does not change what is visible
 
-Дано подменю, открытое наведением, а входа активности нет
-Когда нажат переключатель и потребитель вернул моду закреплённой
-Тогда в подменю те же пункты, что и до нажатия
+Given a submenu opened by a hovering, and there is no input of the activity
+When the switch is pressed and the consumer gave the mode back as the pinned one
+Then the submenu holds the same items as before the press
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-31 — закреплённое и незакреплённое подменю помечены разным видом кнопки
+### SC-UK-31 — a pinned and an unpinned submenu are marked by a different look of the button
 
-Дано подменю показано в обеих модах
-Когда человек смотрит на переключатель
-Тогда у закреплённого значок кнопки цветной, у незакреплённого спокойный, и разницу ведёт вид
-готовой кнопки кита, а не заливка глифа: заливку задаёт ось переменного шрифта, а её читает не
-всякий набор, зарегистрированный потребителем, — на статическом оба состояния рисуются одним
-глифом
+Given the submenu is shown in both modes
+When a person looks at the switch
+Then at the pinned one the icon of the button is coloured, at the unpinned one it is quiet, and the
+difference is led by the look of a ready button of the kit, not by the filling of the glyph: the filling is
+set by an axis of a variable font, and not every set registered by the consumer reads it — on a static one
+both states are drawn by one glyph
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-32 — выбор моды переживает перезагрузку
+### SC-UK-32 — the choice of the mode outlives a reload
 
-Дано человек закрепил подменю
-Когда страница перезагружена
-Тогда подменю по-прежнему закреплено: мода — настройка человека, а не состояние экрана, и хранит
-её потребитель ключом и разбором, которые даёт кит; закрытое настройками браузера хранилище
-работу не останавливает и оставляет прежнюю моду
+Given a person pinned the submenu
+When the page is reloaded
+Then the submenu is still pinned: the mode is a setting of a person, not a state of the screen, and it is
+kept by the consumer by the key and the taking apart the kit gives; a storage closed by the settings of the
+browser does not stop the work and leaves the former mode
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
 
-### SC-UK-33 — ширина подменю не выходит за пределы
+### SC-UK-33 — the width of the submenu does not go past the limits
 
-Дано человек тянет край закреплённого подменю
-Когда рука уводит край уже нижнего предела или шире верхнего
-Тогда ширина берётся предельной: уже нижнего не помещается ни одна подпись пункта, шире верхнего
-подменю закрывает содержимое страницы, ради которого меню и открывали
+Given a person pulls the edge of a pinned submenu
+When the hand leads the edge narrower than the lower limit or wider than the upper one
+Then the width is taken as the limit one: narrower than the lower one not a single label of an item fits,
+wider than the upper one the submenu covers the content of the page the menu was opened for
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
 
-### SC-UK-34 — выбранная ширина переживает перезагрузку
+### SC-UK-34 — the chosen width outlives a reload
 
-Дано человек растянул закреплённое подменю
-Когда страница перезагружена
-Тогда подменю той же ширины: ширина — настройка человека и хранится тем же приёмом, что и мода;
-сохранённого выбора нет, значение нечисловое или хранилище закрыто настройками браузера — ширину
-ставит оформление, и своё число вместо неё подменило бы значение из набора токенов
+Given a person stretched the pinned submenu
+When the page is reloaded
+Then the submenu is of the same width: the width is a setting of a person and is kept by the same technique
+as the mode; there is no saved choice, the value is not a number or the storage is closed by the settings of
+the browser — the width is put by the design, and a number of one's own instead of it would substitute the
+value from the set of the tokens
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
 
-### SC-UK-35 — край закреплённого подменю тянется указателем
+### SC-UK-35 — the edge of a pinned submenu is pulled by the pointer
 
-Дано закреплённое подменю
-Когда человек берёт его правый край и ведёт указателем
-Тогда панель идёт за рукой в пределах ширины, а на отпускании ширина уходит просьбой наружу —
-хранит её потребитель, как и моду; у незакреплённого подменю ручки нет вовсе: оно живёт
-наведением и уходит с экрана раньше, чем до края доедет рука
+Given a pinned submenu
+When a person takes its right edge and leads it by the pointer
+Then the panel goes after the hand within the limits of the width, and at the release the width goes away
+as a request outward — it is kept by the consumer, as the mode is; an unpinned submenu has no handle at all:
+it lives by the hovering and leaves the screen before the hand reaches the edge
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-36 — в отобранной подписи отмечено то, чем она совпала
+### SC-UK-36 — in a filtered label what it coincided by is marked
 
-Дано человек набрал запрос в поиске подменю
-Когда в списке остались совпавшие пункты
-Тогда в подписи каждого отмечено ровно набранное и все его вхождения, а не подпись целиком:
-подсвеченная целиком, она говорит то же, что и её присутствие в списке. Регистр подписи остаётся
-тем, каким его написал потребитель, а пустой запрос не отмечает ничего
+Given a person typed a query in the search of the submenu
+When the coincided items stayed in the list
+Then in the label of each exactly what was typed is marked and all its occurrences, not the label whole: a
+label highlighted whole says the same as its presence in the list. The case of the label stays as the
+consumer wrote it, and an empty query marks nothing
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`,
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`,
 `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-37 — поле поиска подменю рисуется готовым кита
+### SC-UK-37 — the field of the search of the submenu is drawn by a ready one of the kit
 
-Дано подменю с полем поиска
-Когда человек смотрит на поле и набирает запрос
-Тогда поле стоит в оболочке поля кита — той же, какой рисует поиск тулбар таблицы, — со значком
-поиска и кнопкой очистки: своя разметка расходится с готовым при первой же правке кита, и
-заметить это некому. Кнопка очистки не видна при пустом запросе и возвращает полный список
+Given a submenu with a field of the search
+When a person looks at the field and types a query
+Then the field stands in the shell of a field of the kit — the same one the search of the toolbar of the
+table is drawn by — with the icon of the search and the button of the clearing: a markup of one's own
+diverges from the ready one at the very first edit of the kit, and there is nobody to notice that. The
+button of the clearing is not visible at an empty query and brings the full list back
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-38 — подменю не бывает уже ширины, заданной оформлением
+### SC-UK-38 — the submenu is never narrower than the width set by the design
 
-Дано потребитель задал ширину подменю своим оформлением
-Когда человек тянет край панели влево дальше этой ширины
-Тогда панель останавливается на заданной ширине и уже неё не становится: нижний предел держит
-само оформление, а не число в ките — ширину знает потребитель, и своё число разошлось бы с ней у
-каждого второго. Тяга вправо расширяет панель, как прежде
+Given the consumer set the width of the submenu by their own design
+When a person pulls the edge of the panel to the left further than that width
+Then the panel stops at the set width and does not become narrower: the lower limit is held by the design
+itself, not by a number in the kit — the width is known by the consumer, and a number of one's own would
+diverge from it at every second one. The pull to the right widens the panel as before
 
-Не покрыто: предел держит правило `max(...)` в оформлении, а стили компонента в спеке не
-применяются — ширина панели там равна нулю. Снят замером в браузере: заданная оформлением ширина
-240 пикселей, тяга влево оставляет 240, тяга вправо даёт 358.
+Not covered: the limit is held by the rule `max(...)` in the design, and the styles of a component are not
+applied in a spec — the width of the panel there is zero. Taken by a measurement in the browser: the width
+set by the design is 240 pixels, the pull to the left leaves 240, the pull to the right gives 358.
 
-### SC-UK-39 — работа с полем держит незакреплённое подменю открытым
+### SC-UK-39 — the work with the field holds an unpinned submenu open
 
-Дано незакреплённое подменю, открытое наведением
-Когда человек нажимает в поле поиска или набирает в нём запрос
-Тогда подменю остаётся открытым и после ухода указателя, а раздвигается до полной ширины: узкая
-полоса годится, пока список разглядывают мимоходом, и не годится, когда в нём ищут. Закрывает
-подменю нажатие снаружи, и оно же снимает удержание; у закреплённого подменю удержания нет
-вовсе — оно и так открыто
+Given an unpinned submenu opened by a hovering
+When a person presses in the field of the search or types a query in it
+Then the submenu stays open after the leaving of the pointer too, and widens to the full width: a narrow
+strip is good while the list is looked over in passing and is not good when something is searched for in it.
+The submenu is closed by a press from outside, and the same press lifts the holding; a pinned submenu has no
+holding at all — it is open anyway
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
-Ширина растёт мгновенно: ширину шторки Material держит своим кодом, и переход по ширине, переход
-по нижней границе и кадры оставляют панель прежней — замерены все три.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+The width grows instantly: the width of the curtain Material holds by its own code, and a transition by the
+width, a transition by the lower boundary and the frames leave the panel the former one — all three are
+measured.
 
-### SC-UK-40 — пункт подменю занимает ширину панели и не выходит за неё
+### SC-UK-40 — an item of the submenu takes the width of the panel and does not go past it
 
-Дано подменю, ширина которого меняется — тягой за край и работой с полем поиска
-Когда панель становится шире или уже
-Тогда пункт идёт за ней и занимает её ширину, а за край панели не выходит ни одним своим видом:
-подпись, которая в отведённую ширину не влезла, уходит в многоточие. Вложенный пункт стоит с
-отступом своего уровня и считает предел от места, а не от числа: предел числом выносил бы его край
-за панель ровно на этот отступ
+Given a submenu whose width changes — by a pull of the edge and by the work with the field of the search
+When the panel becomes wider or narrower
+Then the item goes after it and takes its width, and does not go past the edge of the panel by any of its
+looks: a label that did not fit into the given width goes into an ellipsis. A nested item stands with the
+padding of its level and counts the limit from the place, not from a number: a limit by a number would carry
+its edge past the panel by exactly that padding
 
-Не покрыто: спекой ширину не снять — её держит оформление, а стили компонента в спеке не
-применяются, и ширина панели там равна нулю. Закрыт показом `SubMenuLongTitle`
-(`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): он идёт настоящим
-браузером, меряет правый край каждого пункта против края панели и требует обрезанной подписи —
-сверка покрытия читает только файлы спек и показ за тест не считает.
+Not covered: the width cannot be taken by a spec — it is held by the design, and the styles of a component
+are not applied in a spec, and the width of the panel there is zero. Closed by the show `SubMenuLongTitle`
+(`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): it goes by a real browser,
+measures the right edge of every item against the edge of the panel and demands a cut label — the checking of
+the coverage reads only the files of the specs and does not count a show as a test.
 
-### SC-UK-41 — подменю, удержанное полем поиска, тянет пункты за собой
+### SC-UK-41 — a submenu held by the field of the search pulls the items after it
 
-Дано незакреплённое подменю, которое человек удержал нажатием в поле поиска
-Когда панель встаёт во всю разрешённую ширину
-Тогда пункт идёт за ней и занимает эту ширину: предел, отсчитанный от прежней ширины панели,
-оставил бы справа пустую полосу в половину панели — ровно то, ради чего панель и раздвигали
+Given an unpinned submenu a person held by a press in the field of the search
+When the panel stands at the whole allowed width
+Then the item goes after it and takes that width: a limit counted from the former width of the panel would
+leave on the right an empty strip of half the panel — exactly what the panel was widened for
 
-Не покрыто: спекой ширину не снять — её держит оформление, а стили компонента в спеке не
-применяются. Закрыт показом `SubMenuHeldBySearch`
-(`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): он удерживает подменю
-полем, требует выросшей панели и меряет строку списка против её ширины. До проверки на прежнем
-пределе падал числами 240 против 480.
+Not covered: the width cannot be taken by a spec — it is held by the design, and the styles of a component
+are not applied in a spec. Closed by the show `SubMenuHeldBySearch`
+(`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): it holds the submenu by the field,
+demands a grown panel and measures a row of the list against its width. Before the fix it fell at the former
+limit with the numbers 240 against 480.
 
-### SC-UK-42 — список, который не влез по высоте, говорит об этом
+### SC-UK-42 — a list that did not fit by the height says so
 
-Дано список в прокручиваемой области с включённым признаком
-Когда снизу остаётся непоказанное
-Тогда у нижнего края стоит растушёвка и значок стрелки вниз с подсказкой: край, ровно обрезанный
-подвалом, читается как конец списка, и человек считает, что пункт пропал. Прокрутка до конца
-признак снимает, а область без включённого входа не показывает его никогда — вид её остальных
-потребителей не двигается
+Given a list in a scrollable area with the sign switched on
+When something not shown is left below
+Then a fading and the icon of an arrow down with a hint stand at the lower edge: an edge cut evenly by the
+footer reads as the end of the list, and a person counts an item as lost. A scroll to the end lifts the sign,
+and an area without the input switched on never shows it — the look of its other consumers does not move
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/scrollable/scrollable-container.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/scrollable/scrollable-container.component.spec.ts`.
 
-### SC-UK-43 — признак виден в самом меню
+### SC-UK-43 — the sign is visible in the menu itself
 
-Дано меню, пункты которого не влезли по высоте экрана
-Когда человек смотрит на полосу значков или на список подменю
-Тогда признак стоит у обоих: разное поведение двух списков одного меню читается дефектом
+Given a menu whose items did not fit by the height of the screen
+When a person looks at the strip of the icons or at the list of the submenu
+Then the sign stands at both: a different behaviour of two lists of one menu reads as a defect
 
-Не покрыто: спекой признак не снять — его показывает оформление, а стили компонента в спеке не
-применяются. Закрыт кадром `MenuScrollHint`
-(`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): кадр снят на низком
-окне, и на нём видно растушёвку и стрелку у нижнего края полосы значков.
+Not covered: the sign cannot be taken by a spec — it is shown by the design, and the styles of a component
+are not applied in a spec. Closed by the frame `MenuScrollHint`
+(`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): the frame is shot on a low window,
+and on it the fading and the arrow are visible at the lower edge of the strip of the icons.
 
-### SC-UK-44 — нажатие на значок уводит список к самому низу
+### SC-UK-44 — a press on the icon leads the list to the very bottom
 
-Дано список с признаком непоказанного снизу
-Когда человек нажимает на значок стрелки
-Тогда список уезжает к самому низу движением, а не рывком, и признак снимается сам. Нажатие
-останавливается на значке и в список под ним не уходит: под значком живой пункт, и человек,
-целившийся в подсказку, уехал бы на чужой экран
+Given a list with the sign of something not shown below
+When a person presses the icon of the arrow
+Then the list goes away to the very bottom by a movement, not by a jerk, and the sign is lifted by itself.
+The press stops at the icon and does not go into the list under it: under the icon there is a live item, and
+a person who aimed at the hint would go away to a foreign screen
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/scrollable/scrollable-container.component.spec.ts`.
-Растушёвка при этом красится цветом темы: начало берётся тем же цветом с нулевой прозрачностью, а
-не словом «прозрачный» — прозрачный это чёрный с нулевой прозрачностью, и на тёмной теме такой
-градиент идёт через грязь. Замер: светлая тема — от `srgb 1 1 1 / 0` к белому, тёмная — от
-`srgb 0.11 0.11 0.12 / 0` к `rgb(28, 27, 30)`.
+Covered: `projects/ui-kit/src/lib/ui-kit/scrollable/scrollable-container.component.spec.ts`.
+The fading at that is painted by the colour of the theme: the start is taken by the same colour with a zero
+transparency, not by the word "transparent" — transparent is black with a zero transparency, and on a dark
+theme such a gradient goes through dirt. The measurement: the light theme — from `srgb 1 1 1 / 0` to white,
+the dark one — from `srgb 0.11 0.11 0.12 / 0` to `rgb(28, 27, 30)`.
 
-### SC-UK-45 — растушёвка идёт за выбранной цветовой схемой
+### SC-UK-45 — the fading goes after the chosen colour scheme
 
-Дано приложение с выбранной цветовой схемой — своей палитрой бренда
-Когда список показывает признак непоказанного снизу
-Тогда растушёвка красится мягкой заливкой акцента этой схемы, а не нейтральным фоном: полоса,
-взявшая фон, стоит одного цвета во всех схемах и читается чужой в перекрашенном приложении.
-Светлую и тёмную темы разводит сам токен, и второго объявления под тему не заводится
+Given an application with a chosen colour scheme — a palette of a brand of its own
+When the list shows the sign of something not shown below
+Then the fading is painted by the soft filling of the accent of that scheme, not by a neutral ground: a strip
+that took the ground stands of one colour in all the schemes and reads as a foreign one in a repainted
+application. The light and the dark themes are set apart by the token itself, and no second declaration under
+a theme is created
 
-Не покрыто: спекой этого не снять — `var()` разрешает браузер, и там растушёвка совпадает сама с
-собой при любой схеме. Закрыт показом `MenuScrollHint`
-(`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): Показ
-ставит на корень страницы ряды роли — то же, что кладёт блок `[data-rt-scheme]`, — и спрашивает
-вычисленный цвет до и после. Замер четырёх сочетаний: светлая тема по умолчанию —
-`rgb(234, 237, 252)`, светлая на схеме бирюзы — `rgb(179, 227, 225)`, тёмная по умолчанию —
-`srgb 0.137 0.18 0.248`, тёмная на той же схеме — `srgb 0.09 0.181 0.188`.
+Not covered: this cannot be taken by a spec — `var()` is resolved by the browser, and there the fading
+coincides with itself at any scheme. Closed by the show `MenuScrollHint`
+(`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): the show puts the rows of the role
+at the root of the page — the same as what the block `[data-rt-scheme]` puts — and asks for the computed
+colour before and after. The measurement of four combinations: the light theme by default —
+`rgb(234, 237, 252)`, the light one on the scheme of the turquoise — `rgb(179, 227, 225)`, the dark one by
+default — `srgb 0.137 0.18 0.248`, the dark one on the same scheme — `srgb 0.09 0.181 0.188`.
 
-### SC-UK-46 — растушёвка доходит до содержимого подвала
+### SC-UK-46 — the fading reaches the content of the footer
 
-Дано список с признаком непоказанного снизу и подвал под ним
-Когда человек смотрит на стык списка и подвала
-Тогда растушёвка кончается там, где начинается содержимое подвала: разделитель потребитель
-рисует первой его строкой, и полоса, оборвавшаяся у края списка, оставляет до него полосу чистого
-фона — стык читается кривой вёрсткой. Верхний отступ подвала потребитель пишет как хочет — одним
-значением, двумя, четырьмя, — и в стилях его не вычесть, поэтому подъём полосы над низом области
-берётся замером
+Given a list with the sign of something not shown below and a footer under it
+When a person looks at the joint of the list and the footer
+Then the fading ends where the content of the footer begins: the divider is drawn by the consumer as its
+first row, and a strip that broke off at the edge of the list leaves a band of clean ground up to it — the
+joint reads as a crooked layout. The upper padding of the footer the consumer writes as they like — by one
+value, by two, by four — and it cannot be subtracted in the styles, so the rise of the strip over the bottom
+of the area is taken by a measurement
 
-Не покрыто: место полосы держит оформление, а стили компонента в спеке не применяются — там у
-области нулевая высота. Закрыт показом `MenuScrollHint`
-(`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): он меряет расстояние от
-низа полосы до первой строки подвала, и до правки она обрывалась на 16 пикселей выше.
+Not covered: the place of the strip is held by the design, and the styles of a component are not applied in a
+spec — the area there has a zero height. Closed by the show `MenuScrollHint`
+(`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): it measures the distance from the
+bottom of the strip to the first row of the footer, and before the fix it broke off 16 pixels higher.
 
-### SC-UK-47 — списки меню прокручиваются своей узкой полосой
+### SC-UK-47 — the lists of the menu are scrolled by a narrow bar of their own
 
-Дано меню, список которого не влез по высоте
-Когда человек смотрит на его правый край
-Тогда полоса прокрутки узкая, с плоской дорожкой и скруглённым ползунком, и такая же у обоих
-списков — полосы значков и подменю. Системная занимает у узкой панели заметную долю ширины и
-выглядит в каждой системе по-своему, а у таблицы и выпадающих списков кита полоса уже своя, и
-меню с системной читается недоделанным. Светлую и тёмную тему разводят токены ползунка и фона
+Given a menu whose list did not fit by the height
+When a person looks at its right edge
+Then the bar of the scroll is narrow, with a flat track and a rounded slider, and it is the same at both
+lists — of the strip of the icons and of the submenu. The one of the system takes a noticeable share of the
+width at a narrow panel and looks its own way in every system, while at the table and at the dropping lists
+of the kit the bar is already its own, and a menu with the one of the system reads as unfinished. The light
+and the dark theme are set apart by the tokens of the slider and of the ground
 
-Не покрыто: занятое полосой место спекой не снять, а браузер визуального прогона рисует полосы
-поверх содержимого — разность полной и внутренней ширины у него нулевая при любом оформлении.
-Закрыт показом `MenuScrollbar` (`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`):
-он спрашивает объявление — правило полосы в листах, ширину и цвет дорожки своими свойствами меню —
-и меряет ширину узлом, а не считает её сам. Замер в обычном браузере: полоса 2 пикселя у обоих
-списков, дорожка `light-dark(#e0e0e0, #3f3e43)`, ползунок `light-dark(#a3a3a3, #747474)`,
-скругление ползунка 4 пикселя. Значения взяты с образца, показанного владельцем.
+Not covered: the place taken by the bar cannot be taken by a spec, and the browser of the visual run draws
+the bars over the content — the difference of the full and the inner width at it is zero at any design.
+Closed by the show `MenuScrollbar` (`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`):
+it asks for the declaration — the rule of the bar in the sheets, the width and the colour of the track by the
+properties of the menu's own — and measures the width by a node, it does not count it itself. The measurement
+in an ordinary browser: the bar is 2 pixels at both lists, the track is `light-dark(#e0e0e0, #3f3e43)`, the
+slider is `light-dark(#a3a3a3, #747474)`, the rounding of the slider is 4 pixels. The values are taken from
+the sample shown by the owner.
 
-### SC-UK-48 — список подменю отступает от скруглённого угла панели
+### SC-UK-48 — the list of the submenu steps back from the rounded corner of the panel
 
-Дано панель подменю со скруглёнными правыми углами
-Когда её список прокручивается
-Тогда список кончается на радиус выше нижнего угла: панель обрезает всё, что в угол заходит, и
-полоса прокрутки, идущая по правому краю до самого низа, теряет в нём свой конец — читается это
-обрубленной полосой, а не скруглением панели. Радиус объявлен своим свойством меню и служит обоим
-числам сразу — скруглению панели и отступу списка, — иначе они разъезжаются
+Given a panel of a submenu with rounded right corners
+When its list is scrolled
+Then the list ends by the radius above the lower corner: the panel cuts everything that goes into the corner,
+and the bar of the scroll going by the right edge to the very bottom loses its end in it — that reads as a
+chopped-off bar, not as a rounding of the panel. The radius is declared by a property of the menu's own and
+serves both numbers at once — the rounding of the panel and the step back of the list — otherwise they go
+apart
 
-Не покрыто: обрезка углом видна только на отрисованной панели, а спека размеров панели не знает —
-там у неё нулевая высота. Замер в обычном браузере: низ списка 415 при нижнем крае панели 431,
-запас 16 пикселей — ровно радиус.
+Not covered: the cutting by the corner is visible only on a drawn panel, and a spec does not know the sizes
+of the panel — its height there is zero. The measurement in an ordinary browser: the bottom of the list is
+415 at the lower edge of the panel of 431, the reserve is 16 pixels — exactly the radius.
 
-### SC-UK-49 — ручка тяги захватывается курсором шире, чем видна
+### SC-UK-49 — the handle of the pull is caught by the cursor wider than it is visible
 
-Дано панель подменю, край которой тянут курсором
-Когда человек ведёт курсор к её краю
-Тогда ручка захватывается зоной втрое шире видимой полосы, а сама полоса стоит там же и той же
-ширины:
-попасть в четыре пикселя удаётся не с первого раза, а промах мимо ручки попадает в панель — то
-есть вместо тяги человек нажимает пункт. Красится при наведении полоса внутри зоны, а не вся
-зона: закрашенная целиком, она читалась бы другим оформлением, а не тем же с большей мишенью
+Given a panel of a submenu whose edge is pulled by the cursor
+When a person leads the cursor to its edge
+Then the handle is caught by a zone three times wider than the visible strip, and the strip itself stands in
+the same place and of the same width: landing into four pixels does not work at the first try, and a miss
+past the handle lands into the panel — that is, instead of a pull a person presses an item. The strip inside
+the zone is painted at a hovering, not the whole zone: painted whole, it would read as another design, not as
+the same one with a bigger target
 
-Не покрыто: ручка стоит по краю отрисованной панели, а стили компонента в спеке не применяются —
-там у панели нулевая ширина, и мерить нечего. Закрыт показом `MenuResizerGrab`
-(`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): он меряет ширину узла
-ручки, ширину видимой полосы и место её правого края. Замер в обычном браузере: зона захвата 12
-пикселей против прежних 4, полоса по-прежнему 4, её правый край 328 при правом крае панели 328.
+Not covered: the handle stands at the edge of a drawn panel, and the styles of a component are not applied in
+a spec — the panel there has a zero width, and there is nothing to measure. Closed by the show
+`MenuResizerGrab` (`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): it measures the
+width of the node of the handle, the width of the visible strip and the place of its right edge. The
+measurement in an ordinary browser: the zone of the catching is 12 pixels against the former 4, the strip is
+still 4, its right edge is 328 at the right edge of the panel of 328.
 
-### SC-UK-50 — закреплённой панели нечего показать: места она не занимает
+### SC-UK-50 — a pinned panel has nothing to show: it takes no place
 
-Дано мода закреплённая, а разделов у активного адреса нет
-Когда меню нарисовано
-Тогда панель не помечена открытой и ручки тяги в разметке нет
+Given the mode is the pinned one, and the active address has no sections
+When the menu is drawn
+Then the panel is not marked as open and there is no handle of the pull in the markup
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-51 — нажатие пункта полосы переставляет закреплённое подменю
+### SC-UK-51 — a press of an item of the strip moves the pinned submenu
 
-Дано мода закреплённая и пункт полосы со своими разделами
-Когда пункт нажат
-Тогда подменю показывает его разделы с пустым запросом, и это верно даже тогда, когда свои
-разделы несёт активный пункт
+Given the mode is the pinned one and an item of the strip with sections of its own
+When the item is pressed
+Then the submenu shows its sections with an empty query, and that is true even when the active item carries
+sections of its own
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-52 — переход на страницу без разделов снимает закреплённое подменю
+### SC-UK-52 — a transition to a page without sections lifts the pinned submenu
 
-Дано мода закреплённая и открытое подменю раздела
-Когда нажат пункт со своим адресом и без разделов, а вход активности назвал его активным
-Тогда подменю пусто и панель не помечена открытой
+Given the mode is the pinned one and an open submenu of a section
+When an item with an address of its own and without sections is pressed, and the input of the activity named
+it active
+Then the submenu is empty and the panel is not marked as open
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.

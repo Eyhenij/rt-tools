@@ -1,17 +1,17 @@
-# Привязка — сверка очереди работ
+# The binding — the check of the work queue
 
-Утверждение спека и место, где оно исполняется. Связь идёт по тексту утверждения: снятое
-утверждение снимается вместе со своей строкой.
+A statement of the spec and the place where it is carried out. The link goes by the text of the
+statement: a removed statement is removed together with its line.
 
-- **Сверка очереди работ видит папку задачи и во вложенном каталоге.** — `projects/agent-kit/assets/checks/board.github.mjs:taskDirs`
-- **Открытый PR, чья вершина не несёт прогона, — расхождение сверки.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkHeadRun`
-- **Прогон спрашивается на вершине PR, а не на его ветке.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:runsOnHead`
-- **Считается сам факт прогона, а не его цвет.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:total_count`
-- **Свежая вершина без прогона не судится.** — `projects/agent-kit/assets/checks/check-board.github.mjs:RUN_GRACE_MINUTES`
-- **Дерево без файла конвейера прогонов не спрашивает.** — `projects/agent-kit/assets/checks/check-board.github.mjs:HAS_PIPELINE`
-- **Дерево, у которого прогоны не спрашивались, слышит об этом отдельной строкой.** — `projects/agent-kit/assets/checks/check-board.github.mjs:HAS_PIPELINE`
-- **Черновик при зелёном прогоне на вершине — расхождение сверки.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkReadyDraft`
-- **Цвет прогона спрашивается отдельно от его наличия.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:verdictOnHead`
-- **Конфликтующий открытый PR — расхождение сверки.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkConflicting`
-- **Непосчитанная сливаемость конфликтом не считается.** — `projects/agent-kit/assets/checks/board.github.mjs:conflicting`
-- **У конфликтующей заявки причиной названа не потеря события, а конфликт.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkHeadRun` — строка о конфликте печатается вместо строки о событии; сценарии SC-AK-670…672
+- **The check of the work queue sees a task folder in a nested directory too.** — `projects/agent-kit/assets/checks/board.github.mjs:taskDirs`
+- **An open PR whose tip carries no run is a divergence of the check.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkHeadRun`
+- **The run is asked about at the tip of the PR, not at its branch.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:runsOnHead`
+- **What counts is the very fact of a run, not its colour.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:total_count`
+- **A fresh tip without a run is not judged.** — `projects/agent-kit/assets/checks/check-board.github.mjs:RUN_GRACE_MINUTES`
+- **A tree without a file of the pipeline is not asked about runs.** — `projects/agent-kit/assets/checks/check-board.github.mjs:HAS_PIPELINE`
+- **A tree whose runs were not asked about hears of it by a line of its own.** — `projects/agent-kit/assets/checks/check-board.github.mjs:HAS_PIPELINE`
+- **A draft at a green run at the tip is a divergence of the check.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkReadyDraft`
+- **The colour of the run is asked about apart from its presence.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:verdictOnHead`
+- **A conflicting open PR is a divergence of the check.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkConflicting`
+- **Mergeability that was not counted does not count as a conflict.** — `projects/agent-kit/assets/checks/board.github.mjs:conflicting`
+- **At a conflicting request the reason named is the conflict, not the loss of the event.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkHeadRun` — the line about the conflict is printed instead of the line about the event; scenarios SC-AK-670…672

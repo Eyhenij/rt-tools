@@ -1,206 +1,217 @@
-# Сценарии — передача захода и вход в новый заход
+# Scenarios — the handover of a session and the entry into a new one
 
-Идентификатор ставится в начало заголовка теста через тире. Префикс общий на домен, и номера при
-переезде в поддомен не пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier goes at the start of the test title, followed by a dash. The prefix is shared across
+the domain, and the numbers were not recounted at the move into the subdomain: the number ties the
+scenario to the test title.
 
-### SC-AK-643 — состояния, записанные списком, проверка читает
+### SC-AK-643 — the states written as a list the check reads
 
-Дано карта хода перечисляет состояния строками списка, а не строками таблицы
-Когда проверка карты сверяет её с правилом
-Тогда состояния читаются: список дешевле таблицы на треть, и он законная форма
+Given the map of the turn lists the states by rows of a list, not by rows of a table
+When the check of the map compares it with the rule
+Then the states are read: a list is a third cheaper than a table, and it is a lawful shape
 
-Покрыто: `projects/agent-kit/tests/checks-turn-map.test.sh`.
+Covered: `projects/agent-kit/tests/checks-turn-map.test.sh`.
 
-### SC-AK-644 — прежняя форма таблицей читается по-прежнему
+### SC-AK-644 — the former shape as a table is read as before
 
-Дано карта хода перечисляет состояния таблицей
-Когда проверка карты сверяет её с правилом
-Тогда состояния читаются: дерево, не переписывавшее карту, работает как прежде
+Given the map of the turn lists the states as a table
+When the check of the map compares it with the rule
+Then the states are read: a tree that did not rewrite its map works as before
 
-Покрыто: `projects/agent-kit/tests/checks-turn-map.test.sh`.
+Covered: `projects/agent-kit/tests/checks-turn-map.test.sh`.
 
-### SC-AK-645 — состояние, забытое в карте, названо поимённо
+### SC-AK-645 — a state forgotten in the map is named by name
 
-Дано правило объявляет состояние, которого в карте нет
-Когда проверка карты сверяет их в обе стороны
-Тогда расхождение называет это состояние по имени
+Given the rule declares a state that is not in the map
+When the check of the map compares them both ways
+Then the divergence names this state by name
 
-Покрыто: `projects/agent-kit/tests/checks-turn-map.test.sh`.
+Covered: `projects/agent-kit/tests/checks-turn-map.test.sh`.
 
-### SC-AK-646 — список паттернов правила состоянием не считается
+### SC-AK-646 — the list of the patterns of the rule does not count as a state
 
-Дано правило зовёт свои паттерны строками того же вида, что и состояния карты
-Когда проверка карты читает состояния правила
-Тогда паттерны в состояния не попадают: список разбирается только в карте
+Given the rule calls its patterns by rows of the same shape as the states of the map
+When the check of the map reads the states of the rule
+Then the patterns do not get into the states: a list is parsed only in the map
 
-Покрыто: `projects/agent-kit/tests/checks-turn-map.test.sh`.
+Covered: `projects/agent-kit/tests/checks-turn-map.test.sh`.
 
-### SC-AK-436 — передача прошлого захода приходит в контекст после сжатия
+### SC-AK-436 — the handover of the past session arrives in the context after a squeeze
 
-Дано по текущей ветке лежит передача, написанная хуком перед сжатием
-Когда сжатие кончилось и заход запускается заново
-Тогда текст передачи стоит в контексте захода целиком, и класть его рукой не приходится
+Given a handover written by the hook before the squeeze lies at the current branch
+When the squeeze has ended and the session is launched anew
+Then the text of the handover stands in the context of the session whole, and there is no need to
+put it by hand
 
-Покрыто: `projects/agent-kit/tests/turn-entry-load.test.sh`.
+Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
-### SC-AK-437 — передача берётся по имени текущей ветки
+### SC-AK-437 — the handover is taken by the name of the current branch
 
-Дано в каталоге передач лежат записи по трём веткам, и текущая ветка — одна из них
-Когда заход запускается
-Тогда в контекст приходит запись текущей ветки, а две чужие не приходят вовсе
+Given records at three branches lie in the directory of handovers, and the current branch is one of
+them
+When the session is launched
+Then the record of the current branch arrives in the context, and the two foreign ones do not arrive
+at all
 
-Покрыто: `projects/agent-kit/tests/turn-entry-load.test.sh`.
+Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
-### SC-AK-438 — передачи нет, и вход об этом молчит
+### SC-AK-438 — there is no handover, and the entry stays silent about it
 
-Дано по текущей ветке передачи не лежит
-Когда заход запускается
-Тогда о передаче в контексте нет ни строки, а запуск идёт как прежде
+Given no handover lies at the current branch
+When the session is launched
+Then there is not a line about the handover in the context, and the launch goes as before
 
-Покрыто: `projects/agent-kit/tests/turn-entry-load.test.sh`.
+Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
-### SC-AK-803 — передача берётся из хода работы, а файл вне дерева — запасным путём
+### SC-AK-803 — the handover is taken from the progress of the work, and a file outside the tree is the fallback way
 
-Дано у ветки есть папка задачи, и в её ходе работы стоит раздел «Передача захода»
-Когда заход запускается
-Тогда раздел приходит в контекст целиком, вход называет его место, а файл вне дерева не
-читается вовсе
+Given the branch has a task folder, and the section "The handover of the session" stands in its
+progress of the work
+When the session is launched
+Then the section arrives in the context whole, the entry names its place, and the file outside the
+tree is not read at all
 
-Покрыто: `projects/agent-kit/tests/turn-entry-load.test.sh`.
+Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
-### SC-AK-439 — карта хода приходит тем же запуском, что и передача
+### SC-AK-439 — the map of the turn arrives by the same launch as the handover
 
-Дано ресурс карты разложен в дереве
-Когда заход запускается после сжатия
-Тогда в контексте стоят обе части входа — передача и карта, — а не одна из них
+Given the resource of the map is laid out in the tree
+When the session is launched after a squeeze
+Then both parts of the entry stand in the context — the handover and the map — not one of them
 
-Покрыто: `projects/agent-kit/tests/turn-entry-load.test.sh`.
+Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
-### SC-AK-440 — карта называет обязательное действие каждого состояния
+### SC-AK-440 — the map names the mandatory action of every state
 
-Дано в правиле ведения работы объявлено одиннадцать состояний
-Когда карта пришла в контекст
-Тогда у каждого состояния названо его обязательное действие, и ни одна строка не пуста
+Given eleven states are declared in the rule of the conduct of work
+When the map has arrived in the context
+Then at every state its mandatory action is named, and not a single row is empty
 
-Покрыто: `projects/agent-kit/tests/turn-entry-load.test.sh`.
+Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
-### SC-AK-441 — карта называет четыре выхода хода
+### SC-AK-441 — the map names the four exits of a turn
 
-Дано карта пришла в контекст
-Когда заход ищет в ней, чем ход кончается
-Тогда он видит все четыре выхода и то, чем каждый подтверждается
+Given the map has arrived in the context
+When the session looks in it for what a turn ends with
+Then it sees all four exits and what each of them is confirmed by
 
-Покрыто: `projects/agent-kit/tests/turn-entry-load.test.sh`.
+Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
-### SC-AK-442 — карта берётся из ресурса, а не из разметки правила
+### SC-AK-442 — the map is taken from the resource, not from the markup of the rule
 
-Дано в разложенном правиле ведения работы переписана разметка таблицы состояний
-Когда заход запускается
-Тогда карта приходит прежней и полной: её текст берётся из своего ресурса
+Given the markup of the table of the states is rewritten in the laid-out rule of the conduct of work
+When the session is launched
+Then the map arrives as it was and whole: its text is taken from a resource of its own
 
-Покрыто: `projects/agent-kit/tests/turn-entry-load.test.sh`.
+Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
-### SC-AK-443 — карта короче объявленного предела
+### SC-AK-443 — the map is shorter than the declared limit
 
-Дано объявлен предел размера карты
-Когда карта пришла в контекст
-Тогда её размер меньше предела, и проверка дерева называет оба числа
+Given a limit of the size of the map is declared
+When the map has arrived in the context
+Then its size is less than the limit, and the check of the tree names both numbers
 
-Покрыто: `projects/agent-kit/tests/turn-entry-load.test.sh`.
+Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
-### SC-AK-444 — вход подаётся на всех четырёх запусках
+### SC-AK-444 — the entry is served at all four launches
 
-Дано ресурс карты разложен и передача по ветке лежит
-Когда заход запускается первым запуском, возобновлением, после сжатия и после очистки
-Тогда обе части входа приходят в контекст на каждом из четырёх, а не только после сжатия
+Given the resource of the map is laid out and the handover at the branch lies there
+When the session is launched by the first launch, by a resumption, after a squeeze and after a
+clearing
+Then both parts of the entry arrive in the context at each of the four, not only after a squeeze
 
-Покрыто: `projects/agent-kit/tests/turn-entry-load.test.sh`.
+Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
-### SC-AK-445 — нечитаемая передача запуска не отбивает
+### SC-AK-445 — an unreadable handover does not refuse the launch
 
-Дано файл передачи по текущей ветке не читается
-Когда заход запускается
-Тогда запуск проходит, карта в контексте есть, а о передаче нет ни строки
+Given the file of the handover at the current branch is not read
+When the session is launched
+Then the launch passes, the map is in the context, and there is not a line about the handover
 
-Покрыто: `projects/agent-kit/tests/turn-entry-load.test.sh`.
+Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
-### SC-AK-446 — отсутствующий ресурс карты запуска не отбивает
+### SC-AK-446 — a missing resource of the map does not refuse the launch
 
-Дано ресурс карты в дереве не разложен
-Когда заход запускается
-Тогда запуск проходит, передача в контексте есть, а о карте нет ни строки
+Given the resource of the map is not laid out in the tree
+When the session is launched
+Then the launch passes, the handover is in the context, and there is not a line about the map
 
-Покрыто: `projects/agent-kit/tests/turn-entry-load.test.sh`.
+Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
-### SC-AK-469 — порог сжатия ниже порога остановки на запас и более
+### SC-AK-469 — the threshold of the squeeze is lower than the threshold of the stop by the margin and more
 
-Дано дерево объявило оба порога, и между ними стоит объявленный запас
-Когда гоняется сверка порогов
-Тогда она проходит и печатает обе доли числами
+Given the tree declared both thresholds, and the declared margin stands between them
+When the check of the thresholds is run
+Then it passes and prints both shares as numbers
 
-Покрыто: `projects/agent-kit/src/lib/thresholds.spec.ts`.
+Covered: `projects/agent-kit/src/lib/thresholds.spec.ts`.
 
-### SC-AK-470 — совпавшие пороги отбиваются
+### SC-AK-470 — thresholds that coincided are refused
 
-Дано порог остановки и порог сжатия объявлены одним и тем же числом
-Когда гоняется сверка порогов
-Тогда она отказывает и называет обе стороны числами
+Given the threshold of the stop and the threshold of the squeeze are declared by one and the same
+number
+When the check of the thresholds is run
+Then it refuses and names both sides by numbers
 
-Покрыто: `projects/agent-kit/src/lib/thresholds.spec.ts`.
+Covered: `projects/agent-kit/src/lib/thresholds.spec.ts`.
 
-### SC-AK-471 — порог сжатия выше порога остановки отбивается
+### SC-AK-471 — a threshold of the squeeze above the threshold of the stop is refused
 
-Дано порог сжатия объявлен выше порога остановки
-Когда гоняется сверка порогов
-Тогда она отказывает и говорит, что страж сработает раньше сжатия
+Given the threshold of the squeeze is declared above the threshold of the stop
+When the check of the thresholds is run
+Then it refuses and says that the guard will fire before the squeeze
 
-Покрыто: `projects/agent-kit/src/lib/thresholds.spec.ts`.
+Covered: `projects/agent-kit/src/lib/thresholds.spec.ts`.
 
-### SC-AK-472 — запаса меньше объявленного не хватает
+### SC-AK-472 — a margin smaller than the declared one is not enough
 
-Дано пороги разведены, но расстояние между ними меньше объявленного запаса
-Когда гоняется сверка порогов
-Тогда она отказывает и называет и расстояние, и требуемый запас
+Given the thresholds are separated, but the distance between them is smaller than the declared margin
+When the check of the thresholds is run
+Then it refuses and names both the distance and the demanded margin
 
-Покрыто: `projects/agent-kit/src/lib/thresholds.spec.ts`.
+Covered: `projects/agent-kit/src/lib/thresholds.spec.ts`.
 
-### SC-AK-473 — дерево без объявленного сжатия отказа не получает
+### SC-AK-473 — a tree without a declared squeeze gets no refusal
 
-Дано порог сжатия деревом не объявлен
-Когда гоняется сверка порогов
-Тогда она проходит и о запасе молчит
+Given the threshold of the squeeze is not declared by the tree
+When the check of the thresholds is run
+Then it passes and stays silent about the margin
 
-Покрыто: `projects/agent-kit/src/lib/thresholds.spec.ts`.
+Covered: `projects/agent-kit/src/lib/thresholds.spec.ts`.
 
-### SC-AK-474 — дерево без объявленного окна не судится вовсе
+### SC-AK-474 — a tree without a declared window is not judged at all
 
-Дано размер окна захода деревом не объявлен
-Когда гоняется сверка порогов
-Тогда раздел молчит целиком, а не краснеет отсутствием
+Given the size of the window of the session is not declared by the tree
+When the check of the thresholds is run
+Then the section stays silent whole instead of turning red at the absence
 
-Покрыто: `projects/agent-kit/src/lib/thresholds.spec.ts`.
+Covered: `projects/agent-kit/src/lib/thresholds.spec.ts`.
 
-### SC-AK-478 — закон называет заполненное окно концом хода только без сжатия
+### SC-AK-478 — the law names a filled window the end of a turn only without a squeeze
 
-Дано в законе о ведении работы перечислены выходы хода
-Когда читается статья о заполненном окне
-Тогда она говорит, что окно кончает ход там, где сжатия нет, а где объявлено — ход идёт дальше
+Given the exits of a turn are listed in the law of the conduct of work
+When the article about a filled window is read
+Then it says that the window ends a turn where there is no squeeze, and where one is declared the
+turn goes on
 
-Не покрыто: статья закона проверяется чтением — машине отличить её от соседней нечем.
+Not covered: an article of a law is checked by reading — a machine has nothing to tell it from a
+neighbouring one by.
 
-### SC-AK-479 — заход проходит порог окна и работу не роняет
+### SC-AK-479 — the session passes the threshold of the window and does not drop the work
 
-Дано заход взял задачу и дошёл до порога сжатия
-Когда порог пройден
-Тогда контекст сжат, передача подана входом, и работа продолжена тем же заходом без реплики
-владельца
+Given the session took a task and reached the threshold of the squeeze
+When the threshold is passed
+Then the context is squeezed, the handover is served as the entry, and the work is continued by the
+same session without a remark of the owner
 
-Не покрыто: подтверждается живым замером захода, а не прогоном — прогнать заход прогоном нечем.
+Not covered: it is confirmed by a live measurement of a session, not by a run — there is nothing to
+run a session by.
 
-### SC-AK-905 — выходы хода читаются под обоими именами
+### SC-AK-905 — the exits of a turn are read under both names
 
-Дано карта хода называет четыре выхода английскими именами, а правило объявляет те же состояния
-Когда идёт проверка карты хода
-Тогда она сходится так же, как на карте с русскими именами выходов
+Given the map of the turn names the four exits by English names, and the rule declares the same
+states
+When the check of the map of the turn goes
+Then it comes out even the same as at a map with Russian names of the exits
 
-Покрыто: `projects/agent-kit/tests/checks-turn-map.test.sh`.
+Covered: `projects/agent-kit/tests/checks-turn-map.test.sh`.

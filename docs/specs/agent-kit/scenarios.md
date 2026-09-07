@@ -1,41 +1,42 @@
-# Сценарии — пакет правил агента
+# Scenarios — the agent rules package
 
-Сценарии живут в поддоменах, каждый при своих правилах. Префикс общий на домен, и номера при
-переезде между поддоменами не пересчитывались: номер связывает сценарий с заголовком теста, а
-какие номера где лежат, отвечает сверка спеков, а не эта таблица.
+The scenarios live in the subdomains, each next to its own rules. The prefix is shared by the
+domain, and the numbers were not recounted when they moved between subdomains: the number ties a
+scenario to a test title, and which numbers lie where is answered by the spec audit, not by this
+table.
 
-| Поддомен                                                               | Файл сценариев             |
-| ---------------------------------------------------------------------- | -------------------------- |
-| [Гарды браузера](browser-guards/scenarios.md)                          | `browser-guards/`          |
-| [Отметка состояния груза](cargo-mark/scenarios.md)                     | `cargo-mark/`              |
-| [Чтение груза из приёма](cargo-read/scenarios.md)                      | `cargo-read/`              |
-| [Проверки дерева](checks/scenarios.md)                                 | `checks/`                  |
-| [Признаки единообразия](checks/reuse/scenarios.md)                     | `checks/reuse/`            |
-| [Цена контекста считается командой](context-cost/scenarios.md)         | `context-cost/`            |
-| [Конфликтующая своя заявка](delivery-conflict/scenarios.md)            | `delivery-conflict/`       |
-| [Гарды поставки и гейт пуша](delivery-gate/scenarios.md)               | `delivery-gate/`           |
-| [Личность вызова, открывающего заявку](delivery-identity/scenarios.md) | `delivery-identity/`       |
-| [Диспетчер событий агента](dispatch/scenarios.md)                      | `dispatch/`                |
-| [Место правки](edit-place/scenarios.md)                                | `edit-place/`              |
-| [Экзамен по загруженным правилам](exam/scenarios.md)                   | `exam/`                    |
-| [Гарды правки](guards/scenarios.md)                                    | `guards/`                  |
-| [Расхождения внутри слоя правил](layer-drift/scenarios.md)             | `layer-drift/`             |
-| [Раскладка ресурсов в дерево](layout/scenarios.md)                     | `layout/`                  |
-| [Разбор состояния раскладки](layout-report/scenarios.md)               | `layout-report/`           |
-| [Наблюдения](observations/scenarios.md)                                | `observations/`            |
-| [Груз наружу](observations/cargo/scenarios.md)                         | `observations/cargo/`      |
-| [Граница пакета правил](package-boundary/scenarios.md)                 | `package-boundary/`        |
-| [Гард слога](prose-guard/scenarios.md)                                 | `prose-guard/`             |
-| [Признак применимости у статьи правила](rule-article/scenarios.md)     | `rule-article/`            |
-| [Гейт правил](rule-gate/scenarios.md)                                  | `rule-gate/`               |
-| [Предел длины описания правила](skill-description-limit/scenarios.md)  | `skill-description-limit/` |
-| [Граница состояния в текстах работы](state-boundary/scenarios.md)      | `state-boundary/`          |
-| [Тексты слоя правил](texts/scenarios.md)                               | `texts/`                   |
-| [Сверка спеков и адресов](texts/spec-checks/scenarios.md)              | `texts/spec-checks/`       |
-| [Утверждения владельцу](turn-claims/scenarios.md)                      | `turn-claims/`             |
-| [Передача захода и вход в новый заход](turn-entry/scenarios.md)        | `turn-entry/`              |
-| [Гарды завершения хода](turn-guards/scenarios.md)                      | `turn-guards/`             |
-| [Страж выходов хода](turn-guards/exit/scenarios.md)                    | `turn-guards/exit/`        |
-| [Ведение работы командами](work/scenarios.md)                          | `work/`                    |
-| [Гарды хода работы](work-guard/scenarios.md)                           | `work-guard/`              |
-| [Сверка очереди работ](work/queue-check/scenarios.md)                  | `work/queue-check/`        |
+| Subdomain                                                                       | Scenario file              |
+| ------------------------------------------------------------------------------- | -------------------------- |
+| [The browser guards](browser-guards/scenarios.md)                               | `browser-guards/`          |
+| [The state mark of a cargo record](cargo-mark/scenarios.md)                     | `cargo-mark/`              |
+| [Reading the cargo from the intake](cargo-read/scenarios.md)                    | `cargo-read/`              |
+| [The checks of the tree](checks/scenarios.md)                                   | `checks/`                  |
+| [The uniformity signs](checks/reuse/scenarios.md)                               | `checks/reuse/`            |
+| [The cost of context is counted by a command](context-cost/scenarios.md)        | `context-cost/`            |
+| [A conflicting request of one's own](delivery-conflict/scenarios.md)            | `delivery-conflict/`       |
+| [The delivery guards and the push gate](delivery-gate/scenarios.md)             | `delivery-gate/`           |
+| [The identity of the call that opens a request](delivery-identity/scenarios.md) | `delivery-identity/`       |
+| [The dispatcher of the agent's events](dispatch/scenarios.md)                   | `dispatch/`                |
+| [The place of an edit](edit-place/scenarios.md)                                 | `edit-place/`              |
+| [The exam on the loaded rules](exam/scenarios.md)                               | `exam/`                    |
+| [The edit guards](guards/scenarios.md)                                          | `guards/`                  |
+| [Divergences inside the rules layer](layer-drift/scenarios.md)                  | `layer-drift/`             |
+| [Laying resources out into the tree](layout/scenarios.md)                       | `layout/`                  |
+| [Taking the state of the layout apart](layout-report/scenarios.md)              | `layout-report/`           |
+| [Observations](observations/scenarios.md)                                       | `observations/`            |
+| [Cargo outward](observations/cargo/scenarios.md)                                | `observations/cargo/`      |
+| [The boundary of the rules package](package-boundary/scenarios.md)              | `package-boundary/`        |
+| [The prose guard](prose-guard/scenarios.md)                                     | `prose-guard/`             |
+| [The applicability sign at a rule article](rule-article/scenarios.md)           | `rule-article/`            |
+| [The rules gate](rule-gate/scenarios.md)                                        | `rule-gate/`               |
+| [The length limit of a rule description](skill-description-limit/scenarios.md)  | `skill-description-limit/` |
+| [The state boundary in the texts of work](state-boundary/scenarios.md)          | `state-boundary/`          |
+| [The texts of the rules layer](texts/scenarios.md)                              | `texts/`                   |
+| [The audit of specs and addresses](texts/spec-checks/scenarios.md)              | `texts/spec-checks/`       |
+| [Claims to the owner](turn-claims/scenarios.md)                                 | `turn-claims/`             |
+| [The handover and the entry into a new session](turn-entry/scenarios.md)        | `turn-entry/`              |
+| [The turn-closing guards](turn-guards/scenarios.md)                             | `turn-guards/`             |
+| [The watchman of the turn exits](turn-guards/exit/scenarios.md)                 | `turn-guards/exit/`        |
+| [Conducting work by commands](work/scenarios.md)                                | `work/`                    |
+| [The guards of the course of work](work-guard/scenarios.md)                     | `work-guard/`              |
+| [The audit of the work queue](work/queue-check/scenarios.md)                    | `work/queue-check/`        |

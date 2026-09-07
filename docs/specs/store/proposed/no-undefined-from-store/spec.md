@@ -1,108 +1,109 @@
-# Стор не отдаёт пустоту
+# The store gives no emptiness
 
-**Статус:** предложено · **Ревизия:** 20 августа 2026 · **Префикс сценариев:** `SC-ST`
-**Зависимости:** нет
-**Законы:** `frontend-application`, `code-structure`
-**Процедуры:** нет
+**Status:** proposed · **Revision:** 20 August 2026 · **Scenario prefix:** `SC-ST`
+**Depends on:** none
+**Laws:** `frontend-application`, `code-structure`
+**Procedures:** none
 
-Договорённость о продукте, написанная до кода. Вливается в спек домена последним коммитом PR — с
-прежними номерами сценариев. Домена стора в дереве ещё нет: договорённость станет его началом,
-когда владелец скажет заводить домен.
+An agreement about the product written before the code. It is merged into the spec of the domain by the
+last commit of the PR — with the former scenario numbers. There is no domain of the store in the tree yet:
+the agreement will become its beginning when the owner says to create the domain.
 
-## Зачем
+## Why
 
-Селектор объявляет непустой тип, а отдаёт пустоту: состояние наследника собрано своим объектом, и
-поля признаков ожидания в нём может не быть вовсе. Экран читает такой признак как «не ждём» и
-показывает пустой список вместо ожидания. Ни сборка, ни линтер этого не видят — тип обещает
-непустое значение.
+A selector declares a non-empty type and gives back an emptiness: the state of an heir is put together by
+an object of its own, and the field of a sign of the waiting may not be in it at all. A screen reads such a
+sign as "we are not waiting" and shows an empty list instead of a waiting. Neither the build nor the linter
+sees that — the type promises a non-empty value.
 
-Второе место — разбор отказа: он судит истинность, а не наличие. Отказ, равный нулю или пустой
-строке, отбрасывается вместе с действием, которое должно было за ним последовать.
+The second place is the taking apart of a refusal: it judges the truthfulness, not the presence. A refusal
+equal to zero or to an empty string is thrown away together with the action that was to follow it.
 
-## Терминология
+## Terminology
 
-| Термин         | Что это                                                            |
-| -------------- | ------------------------------------------------------------------ |
-| Селектор       | Производное значение стора: признак ожидания или состояние запроса |
-| Запасной ответ | Значение селектора, когда поля в состоянии нет                     |
-| Пустота        | `null` или `undefined` — отсутствие значения                       |
+| Term           | What it is                                                                    |
+| -------------- | ----------------------------------------------------------------------------- |
+| A selector     | A derived value of the store: a sign of the waiting or the state of a request |
+| A spare answer | The value of a selector when the field is not in the state                    |
+| An emptiness   | `null` or `undefined` — an absence of a value                                 |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Не применимо: у пакета нет экранов — его поверхность читают из кода приложения.
+Not applicable: the package has no screens — its surface is read from the code of an application.
 
-## Правила
+## Rules
 
-- **Селектор отдаёт объявленный тип, даже когда поля в состоянии нет.** Признаки ожидания
-  отвечают «не ждём», состояния запроса — начальным состоянием: экран, прочитавший пустоту как
-  «не ждём», показывает пустой список вместо ожидания.
-- **Запасной ответ выбирается по пустоте значения, а не по его истинности.** Начальное состояние
-  запроса — первый член перечня, и по истинности оно неотличимо от отсутствия поля.
-- **Разбор отказа судит пустоту, а не истинность.** Отказ, равный нулю или пустой строке, — такой
-  же отказ: отброшенный, он уносит с собой и действие, которое за ним стояло.
-- **Отсутствие значения в общем состоянии списка называется одним способом.** Сторы дерева
-  объявляют его пустой ссылкой; общий тип, допускающий и вторую пустоту, разводит два ответа на
-  один вопрос.
-- **Начальное состояние объявляет ровно те поля, что стоят в типе.** Поле, которого в типе нет,
-  наследник не увидит вовсе, а поле, которого нет в начальном состоянии, останется пустым после
-  сброса.
+- **A selector gives back the declared type even when the field is not in the state.** The signs of the
+  waiting answer "we are not waiting", the states of a request answer with the initial state: a screen that
+  read an emptiness as "we are not waiting" shows an empty list instead of a waiting.
+- **The spare answer is chosen by the emptiness of the value, not by its truthfulness.** The initial state of
+  a request is the first member of the enumeration, and by the truthfulness it cannot be told from an absence
+  of the field.
+- **The taking apart of a refusal judges the emptiness, not the truthfulness.** A refusal equal to zero or to
+  an empty string is a refusal all the same: thrown away, it carries with it the action that stood behind it.
+- **An absence of a value in the common state of a list is named by one way.** The stores of the tree declare
+  it by an empty reference; a common type allowing a second emptiness too sets apart two answers to one
+  question.
+- **The initial state declares exactly the fields that stand in the type.** A field that is not in the type
+  an heir will not see at all, and a field that is not in the initial state will stay empty after a reset.
 
-## Что не входит
+## What is out of scope
 
-- Проверка состояния, приходящего из инструментов разработчика: возврат к прежнему состоянию —
-  своя работа.
-- Тип полезной нагрузки сообщения: он требует связи сообщения с его нагрузкой.
-- Запрет пустоты в самих состояниях наследников: стор отвечает за то, что отдаёт, а не за то, что
-  ему положили.
+- A check of a state arriving from the tools of the developer: a return to the former state is a work of its
+  own.
+- The type of the payload of a message: it demands a bond of a message with its payload.
+- A ban of the emptiness in the states of the heirs themselves: the store answers for what it gives back, not
+  for what was put into it.
 
-## Контракт
+## Contract
 
-Не применимо: поверхность — классы пакета, процедур домен не обслуживает.
+Not applicable: the surface is the classes of the package, the domain serves no procedures.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо.
+Not applicable.
 
-## Данные
+## Data
 
-Своих записей хранилища у пакета нет: состояние живёт в памяти приложения.
+The package has no records of the storage of its own: the state lives in the memory of the application.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: экранов у пакета нет.
+Not applicable: the package has no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо.
+Not applicable.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо.
+Not applicable.
 
-## Решения
+## Decisions
 
-- **Запасной ответ ставится у селектора, а не проверкой начального состояния.** Довод: состояние
-  собирает наследник, и проверить его на входе значит требовать от него формы, которой он не
-  обещал. Отвергнуто: отказ на неполном начальном состоянии — он ломает работающие сторы.
-- **Пустота отличается от лжи явным разбором.** Довод: у признаков ожидания ложь законна, а
-  пустоты быть не должно, и по истинности их не различить. Отвергнуто: оставить прежнее
-  «или» — оно возвращает начальное состояние и на законном первом члене перечня.
+- **The spare answer is put at the selector, not by a check of the initial state.** The argument: the state
+  is put together by the heir, and to check it at the input means to demand of it a form it did not promise.
+  Rejected: a refusal at an incomplete initial state — it breaks the working stores.
+- **The emptiness differs from the falsehood by an open taking apart.** The argument: at the signs of the
+  waiting the falsehood is lawful, and there must be no emptiness, and by the truthfulness they cannot be
+  told apart. Rejected: to leave the former "or" — it brings back the initial state at a lawful first member
+  of the enumeration too.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-1` — стоит ли стору отбивать неполное начальное состояние. Работа идёт с допущением, что
-  нет: наследников много, и отказ на подъёме уронил бы работающие экраны.
+- `Q-1` — whether it is worth the store refusing an incomplete initial state. The work goes with the
+  assumption that no: the heirs are many, and a refusal at the raising would fell the working screens.
 
-## История изменений
+## History of changes
 
-- 20 августа 2026 — заведена.
+- 20 August 2026 — created.

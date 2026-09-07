@@ -1,32 +1,34 @@
-# Привязка — чтение груза из приёма
+# Binding — reading the cargo from the intake
 
-Утверждение спека и место, где оно исполняется. Связь идёт по тексту утверждения: снятое
-утверждение снимается вместе со своей строкой.
+A statement of the spec and the place where it is carried out. The link goes by the text of the
+statement: a removed statement is removed together with its line.
 
-- **Груз забирается командой дерева, а не входом человека в админку.** — `tools/cargo-pull.mjs:pull`
-- **Чтение закрыто входом учётной записи службы, а не токеном дерева.** — `tools/cargo-pull.mjs:login`
-- **Пара учётной записи лежит вне репозитория.** — `tools/cargo-pull.mjs:accountOf`
-- **Отсутствие пары отбивается до сети, и отказ называет, где она лежит и чем заводится.** — `tools/cargo-pull.mjs:pull`
-- **Незнакомый род груза отбивается до сети и перечисляет знакомые.** — `tools/cargo-pull.mjs:KINDS`
-- **Рядом с записью печатается тот ключ, которым её отмечают.** — `tools/cargo-pull.mjs:listLine`
-- **Ключ предложения считается из его текста тем же приёмом, что на приёме.** — `tools/cargo-pull.mjs:KINDS`
-- **Страница дочитывает тексты записей.** — `tools/cargo-pull.mjs:withTexts`
-- **Запись, текст которой не дочитался, из списка не выпадает.** — `tools/cargo-pull.mjs:withTexts`
-- **Отбор по состоянию и по дереву уезжает строкой запроса, а не отсеивается на своей стороне.** — `tools/cargo-pull.mjs:query`
-- **Ответ приёма, который не разобрался, отличается от отказа приёма.** — `tools/cargo-pull.mjs:read`
+- **The cargo is fetched by a command of the tree, not by a person's sign-in to the admin panel.** — `tools/cargo-pull.mjs:pull`
+- **The reading is closed by the sign-in of a service account, not by the token of the tree.** — `tools/cargo-pull.mjs:login`
+- **The pair of the account lies outside the repository.** — `tools/cargo-pull.mjs:accountOf`
+- **A missing pair is refused before the network, and the refusal names where it lies and what it is created by.** — `tools/cargo-pull.mjs:pull`
+- **An unknown kind of cargo is refused before the network and lists the known ones.** — `tools/cargo-pull.mjs:KINDS`
+- **Next to a record the key it is marked by is printed.** — `tools/cargo-pull.mjs:listLine`
+- **The key of a proposal is counted from its text by the same technique as at the intake.** — `tools/cargo-pull.mjs:KINDS`
+- **A page reads the texts of the records through.** — `tools/cargo-pull.mjs:withTexts`
+- **A record whose text was not read through does not drop out of the list.** — `tools/cargo-pull.mjs:withTexts`
+- **The filter by state and by tree leaves in the request line, it is not sifted on one's own side.** — `tools/cargo-pull.mjs:query`
+- **An answer of the intake that did not parse differs from a refusal of the intake.** — `tools/cargo-pull.mjs:read`
 
-Имена этого дерева: команда чтения — `npm run cargo:pull`, команда отметки — `npm run cargo:mark`,
-настройка дерева — `.claude/rt-kit.json` (ключи `intake` и `account`), сценарии —
-`projects/agent-kit/tests/cargo-pull.test.sh`, гоняет их `npm run agent-kit:hooks`.
+The names of this tree: the reading command is `npm run cargo:pull`, the mark command is
+`npm run cargo:mark`, the setting of the tree is `.claude/rt-kit.json` (the keys `intake` and
+`account`), the scenarios are `projects/agent-kit/tests/cargo-pull.test.sh`, and
+`npm run agent-kit:hooks` runs them.
 
-Сторона приёма, с которой команда говорит, лежит в этом же репозитории: вход —
-`libs/message-bus-api/accounts/feature/`, чтение списков — `libs/message-bus-api/proposals/feature/`
-и `libs/message-bus-api/postmortems/feature/`. Форма счёта признака предложения объявлена там же,
-в `libs/message-bus-api/proposals/util/`, и повторяется здесь дословно.
+The side of the intake the command speaks to lies in this same repository: the sign-in is
+`libs/message-bus-api/accounts/feature/`, the reading of the lists is
+`libs/message-bus-api/proposals/feature/` and `libs/message-bus-api/postmortems/feature/`. The shape
+of counting the sign of a proposal is declared there too, in `libs/message-bus-api/proposals/util/`,
+and is repeated here verbatim.
 
-- **Запись, чья статья уже стоит в источниках пакета, отбирается командой, а не глазами.** — `tools/cargo-fixed.mjs:fixed`
-- **Отбор идёт по заголовку предложенной статьи и ничему сверх него.** — `tools/cargo-fixed.mjs:titleOf` и `tools/cargo-fixed.mjs:standsIn`
-- **Отбор наружу не пишет ничего, а печатает вызовы отметки.** — `tools/cargo-fixed.mjs:fixed`
-- **Вызовов отметки печатается два: порядок состояний не перескакивается.** — `tools/cargo-fixed.mjs:keys`
-- **Запись, взятая в работу, у которой работа кончилась, отбирается тем же вызовом.** — `tools/cargo-fixed.mjs:stalled`
-- **Ключ из описания прошлого судится полным.** — `tools/cargo-fixed.mjs:archiveKeys` — образец ищет шестьдесят четыре знака
+- **A record whose article already stands in the sources of the package is picked by the command, not by eye.** — `tools/cargo-fixed.mjs:fixed`
+- **The pick goes by the title of the proposed article and by nothing beyond it.** — `tools/cargo-fixed.mjs:titleOf` and `tools/cargo-fixed.mjs:standsIn`
+- **The pick writes nothing outward and prints the mark calls.** — `tools/cargo-fixed.mjs:fixed`
+- **Two mark calls are printed: the order of the states is not skipped over.** — `tools/cargo-fixed.mjs:keys`
+- **A record taken into work whose work has ended is picked by the same call.** — `tools/cargo-fixed.mjs:stalled`
+- **A key from the archive is judged in full.** — `tools/cargo-fixed.mjs:archiveKeys` — the sample looks for sixty-four characters

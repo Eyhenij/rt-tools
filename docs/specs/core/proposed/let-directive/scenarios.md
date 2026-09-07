@@ -1,35 +1,35 @@
-# Сценарии — локальное значение шаблона
+# Scenarios — a local value of a template
 
-Номера начинают нумерацию домена ядра и после вливания не меняются.
+The numbers begin the numbering of the domain of the core and do not change after the merge.
 
-### SC-CR-01 — пустое значение содержимого не прячет
+### SC-CR-01 — an empty value does not hide the content
 
-Дано на вход директивы подана пустота
-Когда содержимое рисуется
-Тогда оно на месте, а имя равно пустоте
+Given emptiness is given to the input of the directive
+When the content is drawn
+Then it is in place, and the name is equal to the emptiness
 
-Покрыто: `projects/core/src/lib/directives/let.directive.spec.ts`.
+Covered: `projects/core/src/lib/directives/let.directive.spec.ts`.
 
-### SC-CR-02 — смена значения не пересоздаёт содержимое
+### SC-CR-02 — a change of the value does not recreate the content
 
-Дано содержимое нарисовано и внутри него набран текст
-Когда на вход подано другое значение
-Тогда набранный текст на месте, а имя равно новому значению
+Given the content is drawn and a text is typed inside it
+When another value is given to the input
+Then the typed text is in place, and the name is equal to the new value
 
-Покрыто: `projects/core/src/lib/directives/let.directive.spec.ts`.
+Covered: `projects/core/src/lib/directives/let.directive.spec.ts`.
 
-### SC-CR-03 — значение читается двумя именами
+### SC-CR-03 — the value is read by two names
 
-Дано содержимое объявляет имя умолчанием и имя директивы
-Когда значение приезжает на вход
-Тогда оба имени отвечают одним значением
+Given the content declares a name by the default and the name of the directive
+When the value arrives at the input
+Then both names answer with one value
 
-Покрыто: `projects/core/src/lib/directives/let.directive.spec.ts`.
+Covered: `projects/core/src/lib/directives/let.directive.spec.ts`.
 
-### SC-CR-04 — смена значения показывает новое значение в содержимом
+### SC-CR-04 — a change of the value shows the new value in the content
 
-Дано содержимое объявлено перерисовкой по требованию
-Когда значение сменилось
-Тогда разметка показывает новое значение обоими именами
+Given the content is declared with a redrawing on demand
+When the value changed
+Then the markup shows the new value by both names
 
-Покрыто: `projects/core/src/lib/directives/let.directive.spec.ts`.
+Covered: `projects/core/src/lib/directives/let.directive.spec.ts`.

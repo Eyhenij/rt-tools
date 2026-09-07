@@ -1,11 +1,11 @@
-# Привязка — гард слога
+# The binding — the guard of the wording
 
-Утверждение спека и место, где оно исполняется. Связь идёт по тексту утверждения: снятое
-утверждение снимается вместе со своей строкой.
+A statement of the spec and the place where it is carried out. The link goes by the text of the
+statement: a removed statement is removed together with its line.
 
-- **Канцелярит и слова, которых в дереве не пишут, не уезжают в документ.** — `projects/agent-kit/assets/hooks/prose-style-guard.sh:found`
-- **Каждая находка названа вместе с заменой.** — `projects/agent-kit/assets/checks/check-prose-style.mjs:MARKS`
-- **Судится только новый текст правки.** — `projects/agent-kit/assets/hooks/prose-style-guard.sh:added`
-- **Границы слова считаются по буквам, а не классом `\w`.** — `projects/agent-kit/assets/checks/check-prose-style.mjs:GLOSSARY_BANS`
-- **Признаки канцелярита есть на каждом языке слоя, и оба набора судят каждую строку.** — `projects/agent-kit/assets/checks/check-prose-style.mjs:MARKS_EN` — английский набор с латинской границей слова, применяется вместе с русским в `findingsIn`; сценарий `SC-AK-903`
-- **Слово, которое бывает и существительным, проверяется по тому, что стоит следом.** — `projects/agent-kit/assets/checks/check-prose-style.mjs:MARKS` — образец множественной формы требует за собой слово из перечня корней; сценарий `SC-AK-859`
+- **Officialese and words not written in the tree do not go away into a document.** — `projects/agent-kit/assets/hooks/prose-style-guard.sh:found`
+- **Every finding is named together with a replacement.** — `projects/agent-kit/assets/checks/check-prose-style.mjs:MARKS`
+- **Only the new text of the edit is judged.** — `projects/agent-kit/assets/hooks/prose-style-guard.sh:added`
+- **The boundaries of a word are counted by letters, not by the class `\w`.** — `projects/agent-kit/assets/checks/check-prose-style.mjs:GLOSSARY_BANS`
+- **The signs of officialese exist in each language of the layer, and both sets judge every line.** — `projects/agent-kit/assets/checks/check-prose-style.mjs:MARKS_EN` — the English set with the Latin word boundary, applied together with the Russian one in `findingsIn`; scenario `SC-AK-903`
+- **A word that is also a noun is checked by what stands after it.** — `projects/agent-kit/assets/checks/check-prose-style.mjs:MARKS` — the sample of the plural form demands a word from the list of roots after it; scenario `SC-AK-859`

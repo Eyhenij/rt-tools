@@ -1,229 +1,250 @@
-# Гарды завершения хода
+# The guards of the end of a turn
 
-**Статус:** действует · **Ревизия:** 2026-09-06 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `verifiability`, `work-conduct`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-09-06 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `verifiability`, `work-conduct`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Часть слоя правил стоит не на правке файла, а на завершении хода: там ловится то, чего в дереве
-не видно вовсе — ход, кончившийся отчётом, вопрос владельцу без прочитанных правил, признанный
-промах без записи о происшествии, заполненное окно захода. Поддомен называет, что при этом
-обязано быть верно и где кончается знание гарда о ходе.
+Part of the rules layer stands not at an edit of a file but at the end of a turn: there is caught
+what is not visible in the tree at all — a turn that ended with a report, a question to the owner
+without the rules read, an admitted miss without a record about an incident, a filled window of the
+session. The subdomain names what must be true at that and where the knowledge of a guard about a
+turn ends.
 
-Гарды, судящие правку файла, — соседний поддомен: там предмет другой, и растут они порознь.
+The guards judging an edit of a file are a neighbouring subdomain: the subject there is different,
+and they grow apart.
 
-## Терминология
+## Terminology
 
-- **Ход** — всё, что записано после последней настоящей реплики владельца. Ответ инструмента
-  приходит той же ролью и репликой не считается; сводка сжатия — тоже.
-- **Сводка сжатия** — пересказ прошлых ходов, который инструмент кладёт в запись перед тем, как
-  окно закрывается. Приходит она ролью владельца и ответом инструмента не является.
-- **Выход хода** — то, чем ход кончается законно: вопрос без ответа в правилах, отказ гарда,
-  заполненное окно, отданная работа с начатой следующей.
-- **Состояние работы** — единица, которой работа ведётся; объявлено строкой в ходе работы.
-- **Передача захода** — черновик, который пишет хук перед сжатием: рабочее дерево, ветка,
-  сделанное, следующий шаг и особенности захода. Сама она — соседний поддомен; здесь важно
-  только то, что написанная передача кончает ход.
+- **A turn** — everything written after the last real remark of the owner. The answer of a tool
+  arrives under the same role and does not count as a remark; a squeeze summary does not either.
+- **A squeeze summary** — a retelling of the past turns the tool puts into the record before the
+  window closes. It arrives under the role of the owner and is not the answer of a tool.
+- **An exit of a turn** — what a turn lawfully ends with: a question without an answer in the rules,
+  a refusal of a guard, a filled window, work handed in with the next one begun.
+- **A state of the work** — the unit the work is led by; it is declared by a line in the progress of
+  the work.
+- **The handover of a session** — a draft written by a hook before the squeeze: the working tree, the
+  branch, what was done, the next step and the traits of the session. It is a neighbouring subdomain
+  itself; here only one thing matters — a handover that is written ends a turn.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Интерфейса у гардов нет: их видит только исполнитель — текстом отказа в своём ходе.
+The guards have no interface: only the executor sees them — as the text of a refusal in their own
+turn.
 
-## Правила
+## Rules
 
-- **Ход, в котором владельцу задан вопрос, не заканчивается, пока за этот же ход не читались
-  законы и правила.** Требование стоит на завершении хода, а не на инструменте вопроса:
-  спрашивают чаще прозой, чем меню, и перехват меню дыру не закрывает.
-- **Сводка сжатия настоящей репликой владельца не бывает.** Она пересказывает ходы, которые уже
-  кончились: просьба, исполненная вчера, читается в ней как сказанная сейчас, и отбитый по ней ход
-  платит за работу, которой не просили. По словам она от речи владельца неотличима и богаче её —
-  пересказывает всю сессию разом, — поэтому узнаётся признаком записи, а не текстом.
-- **Повторный заход по тому же ходу не судится.** Гард говорит своё один раз и отпускает; иначе
-  ход не кончится никогда.
-- **Роль, выключенная деревом, гарда при ней не держит.** Дерево называет выключенные роли
-  списком в своей настройке, и гард при такой роли выходит молча. Выключается обязательность
-  вызова, а не сама роль: её файл остаётся разложенным, и позвать её можно в любую минуту.
-- **Настройка, которую не прочитать, роль не выключает.** Нет разборщика JSON, нет самой
-  настройки, настройка не разбирается — гард работает как прежде. Сломанное чтение гасило бы
-  слой правил молча, и заметить это было бы нечем.
-- **На вопрос, ответ на который уже дала реплика владельца, гард разговора отвечает отказом.**
-  Первый признак судит, читались ли правила, и на разрешённой работе молчит; промах бывает
-  другой — владелец дал указание прямой репликой, исполнитель нашёл факт против его цены и вместо
-  строки о цене задал меню, где два варианта из трёх отменяли решение владельца. Судится
-  пересечение значимых слов темы вопроса и последней реплики владельца — и только там, где вызов
-  меню в записи хода уже был: разбор просьбы идёт шестью вопросами по разным предметам, и порога
-  они не набирают.
-- **Отказ по второму признаку велит продолжать работу, а не переспрашивать иначе.** Промах здесь
-  не в форме вопроса, а в остановке работы, которая уже разрешена: отказ, названный формой,
-  чинится вторым вопросом той же остановки.
-- **Гард разговора пропускает работу при любой поломке.** Нет записи хода, нет разборщика
-  записи, сломалось чтение — ход разрешается. Сломанный гард не имеет права заклинить
-  разговор.
-- **Гард окна напоминает раньше, чем отбивает.** Между порогами и лежит то, на что заход
-  закрывается: дописать ход работы, написать передачу, закоммитить проверенное.
-- **Напоминание повторяется по ступеням, а не на каждом действии.** Иначе оно занимает то самое
-  место, которое бережёт.
-- **После порога остановки проходят запись хода работы, передача и команды поставки.** Отбить
-  их значило бы отобрать у захода единственный способ закрыться.
-- **Размер окна берётся из настройки дерева, а не из записи захода.** В записи модель названа
-  без пометки о расширенном окне: заход на широкое окно от захода на узкое неотличим.
-- **Порог сжатия задан деревом теми же числами, что и пороги стража.** Там, где передачу пишет
-  хук перед сжатием, порог сжатия — это порог закрытия захода. Оставленный инструменту, он
-  приходит почти у предела окна, и заход, остановленный стражем раньше, до передачи не доживает.
-- **Пара стража сверяется с парой сжатия, и разошедшееся называется числами обеих сторон.** По
-  отдельности обе выглядят настроенными, и расхождение видно только тому, кто положит их рядом.
-- **Дерево, не объявившее порога сжатия, отказа не получает.** Оставить порог инструменту —
-  законный выбор; тогда об этом говорится один раз, а не двумя строками о разнице.
-- **Страж после порога сжатия остаётся страховкой.** Там, где сжатие объявлено ниже порога
-  остановки, первый порог зовёт работать дальше, а не выбирать точку остановки: заход пройдёт
-  порог сам. Отбой при этом не снимается — клиент может не прийти вовсе, и заход без стража
-  доживёт до предела окна и уронит работу. Сработав, отбой называет несработавшее сжатие числом.
-- **Гард окна пропускает работу при любой поломке.** Нет размера окна, нет записи захода, нет
-  разборщика — работа идёт дальше.
-- **Один файл гарда вправе объявить несколько событий.** Напоминание и отказ — разные события
-  агента, а гард один: разводить их по двум файлам значило бы держать два разбора одной
-  записи.
-- **Снятая папка задачи снимает требование состояния, а ход не кончает.** Папка разбирается до
-  открытия заявки, и объявить состояние с этой минуты нечем. Отпускать ход по этому признаку
-  нельзя: снятая папка означает середину отдачи, а не её конец — между уборкой и заявкой работу
-  не видит никто. Дальше ход судится вторым признаком; ход, в котором заявку открыли или
-  прочитали, второй признак пропускает сам.
-- **Ход, объявивший записанный замысел, не кончается вовсе.** Обязательное действие этого
-  состояния — делать первый этап, а начавший его переводит состояние той же правкой: ход,
-  оставшийся в прежнем состоянии, первого этапа не начал по определению. Второй признак сюда не
-  годится — заведение задачи, ветки, колонки и папки он считает работой. Отказ называет
-  заголовок первого этапа замысла, а не общие слова о незаконченной работе.
-- **Ход, открывший заявку, не кончается, пока состояние отданной работы не спрошено командой.**
-  Черновик читается владельцем как «работа не кончена», а следующая задача, взятая вместо
-  доведения, оставляет готовое невидимым. Спрашивается это командой того же хода — снятием
-  черновика, чтением прогона либо сверкой очереди работ; сеть гард не трогает.
-- **Шаг закрытия работы взятием следующей задачи не считается.** Перевод закрываемой задачи в
-  колонку разбора и снятие её папки — обязательные шаги закрытия, и оба стоят в том же ходе,
-  которым открыта заявка. Признак взятия перечисляет то, чем взятие бывает, а не то, что
-  действием считается: список шагов закрытия открыт и растёт, а список действий по следующей
-  задаче закрыт.
-- **Этап, объявленный закрытым, подтверждается выводом команды.** Отметка «сделано» —
-  утверждение о дереве, и через заход отмеченное по памяти неотличимо от проверенного. Прежний
-  номер этапа страж читает из истории ветки, команду — из строки замысла «Чем проверяется».
-- **Приём, записанный прозой, страж не читает.** Подтвердить его выводом нечем — это его
-  известная граница, а не обещание.
-- **Ход, в котором по работе не сделано ничего, не заканчивается.** Отчёт о сделанном выходом
-  хода не является: он выглядит работой лучше всякой другой — полон, называет номера и
-  состояния, и пустоты за ним не видно ни владельцу, ни самому заходу.
-- **Работой считаются правка файла и команда, меняющая дерево.** Чтение, поиск и разговор ею не
-  считаются: ими и заполняется ход, который встал.
-- **Слово об остановке судится по реплике владельца, а не по словам исполнителя.** Иначе
-  остановку объявляет тот, кому она в эту минуту удобна.
-- **Ход, кончившийся словами об ожидании слова владельца, не отпускается без его слова или
-  вопроса ему инструментом.** Фраза «жду твоего слова» без них — остановка, объявленная
-  исполнителем; общие признаки отбивали её без имени, и после одного шага ход кончался той же
-  фразой снова. Отказ называет фразу по имени и велит продолжать: указание владельца действует
-  до его отмены. Набор образцов фразы назван и закрыт.
-- **Отданная и влитая работа стражем не судится.** Она уже дождалась чужого шага, и ход,
-  закрытый на ней, ничего не роняет.
-- **Ход, в котором исполнитель признал промах, не закрывается, пока записи о происшествии нет.**
-  Тем же приёмом, каким ход с вопросом требует чтения правил.
-- **Ход, в котором владелец сказал завести или отправить предложение, не закрывается, пока
-  отправки не было.** Написанное и не отправленное лежит в дереве неотличимо от отправленного, а
-  своей записи в слое правил у него нет. Показ того, что уехало бы, отправкой не считается.
-- **Чтением считается любой из трёх путей, а не только загрузка правила.** Требовать именно
-  загрузку значило бы гнать на неё там, где хватило поиска: гард мешал бы работе вместо того,
-  чтобы её выправлять.
-- **Просьба о предложении ловится глаголом рядом со словом о слое правил, а не словом самим по
-  себе.** Работа над уже приехавшими предложениями отправкой не кончается, и слово
-  «предложение» без соседа о слое правил ходит в каждом втором ходе о другом.
-- **Ход с вопросом владельцу проверяется на инструменте вопроса, а не на завершении хода.**
-  Требование «прочитай правила прежде, чем спрашивать» исполнимо только до отправки. Проверка на
-  завершении остаётся для вопроса, заданного прозой.
-- **Гард объявляет локаль исполнения, а не наследует её.** Образцы написаны словами дерева, и
-  складывание регистра у слова вне латиницы работает только под UTF-8: служба, запускающая ту же
-  работу, идёт с пустой локалью, и гард не находит своего слова — то есть пропускает ход, ничего
-  об этом не сказав. Заметить это на своей машине нечем: терминал разработчика идёт под UTF-8.
-- **Ход, в котором исполнитель просит владельца войти или ввести пароль, не заканчивается.**
-  Стенд, вход и учётные записи для проверки готовит агент. Препятствие перед просьбой — поле не
-  принимает ввод, чужое расширение в браузере, отключившийся профиль — снимает агент. Требование
-  держалось на памяти исполнителя и не сработало: за один заход просьба прозвучала четыре раза.
-- **Просьба переключить режим работы разрешена.** У владельца просят обычный режим вместо
-  автоматического; ввод в форму делает агент. Гард, не различающий эти две просьбы, запретил бы
-  единственный допустимый вариант.
-- **Граница набора образцов названа.** Просьбу другими словами или через меню вариантов гард не
-  распознаёт.
+- **A turn in which a question is asked of the owner does not end until the laws and the rules were
+  read during the same turn.** The requirement stands at the end of a turn, not at the tool of the
+  question: questions are asked in prose more often than by a menu, and intercepting the menu does
+  not close the hole.
+- **A squeeze summary is never a real remark of the owner.** It retells turns that have already
+  ended: a request carried out yesterday reads in it as said now, and a turn refused by it pays for
+  work nobody asked for. By its words it is indistinguishable from the speech of the owner and is
+  richer than it — it retells the whole session at once — so it is recognised by a sign of the record,
+  not by the text.
+- **A second pass over the same turn is not judged.** The guard says its word once and lets go;
+  otherwise the turn will never end.
+- **A role switched off by the tree does not hold the guard at it.** The tree names the switched-off
+  roles by a list in its setting, and the guard at such a role exits silently. What is switched off is
+  the mandatory call, not the role itself: its file stays laid out, and it can be called at any
+  minute.
+- **A setting that cannot be read does not switch a role off.** There is no JSON parser, there is no
+  setting itself, the setting is not parsed — the guard works as before. A broken reading would put
+  the rules layer out silently, and there would be nothing to notice it by.
+- **To a question whose answer a remark of the owner has already given, the guard of the conversation
+  answers with a refusal.** The first sign judges whether the rules were read, and at allowed work it
+  stays silent; the miss is of another kind — the owner gave an instruction by a direct remark, the
+  executor found a fact against its price and, instead of a line about the price, asked a menu where
+  two options of three cancelled the owner's decision. What is judged is the overlap of the
+  significant words of the topic of the question and of the last remark of the owner — and only where
+  a call of a menu was already in the record of the turn: the analysis of a request goes by six
+  questions about different subjects, and they do not reach the threshold.
+- **A refusal by the second sign orders to go on with the work, not to ask again differently.** The
+  miss here is not in the shape of the question but in the stopping of work that is already allowed: a
+  refusal named by the shape is fixed by a second question of the same stopping.
+- **The guard of the conversation lets the work through at any breakage.** There is no record of the
+  turn, there is no parser of the record, the reading broke — the turn is allowed. A broken guard has
+  no right to jam the conversation.
+- **The guard of the window reminds before it refuses.** Between the thresholds lies exactly what the
+  session is closed by: writing the progress of the work to the end, writing the handover, committing
+  what was checked.
+- **The reminder repeats by steps, not at every action.** Otherwise it takes the very place it saves.
+- **After the threshold of the stop the record of the progress of the work, the handover and the
+  commands of the delivery pass.** Refusing them would mean taking away from the session the only way
+  to close.
+- **The size of the window is taken from the setting of the tree, not from the record of the
+  session.** In the record the model is named without a mark about a widened window: a session on a
+  wide window is indistinguishable from a session on a narrow one.
+- **The threshold of the squeeze is set by the tree by the same numbers as the thresholds of the
+  guard.** Where the handover is written by a hook before the squeeze, the threshold of the squeeze is
+  the threshold of closing the session. Left to the tool, it comes almost at the limit of the window,
+  and a session stopped by the guard earlier does not live to the handover.
+- **The pair of the guard is checked against the pair of the squeeze, and what diverged is named by
+  the numbers of both sides.** Separately both look configured, and the divergence is visible only to
+  whoever puts them side by side.
+- **A tree that declared no threshold of the squeeze gets no refusal.** Leaving the threshold to the
+  tool is a lawful choice; then it is said once, not by two lines about the difference.
+- **After the threshold of the squeeze the guard stays an insurance.** Where the squeeze is declared
+  below the threshold of the stop, the first threshold calls to go on working, not to choose a point
+  of stopping: the session will pass the threshold itself. The refusal is not lifted at that — the
+  client may not come at all, and a session without the guard will live to the limit of the window and
+  drop the work. Having fired, the refusal names the squeeze that did not fire by a number.
+- **The guard of the window lets the work through at any breakage.** There is no size of the window,
+  there is no record of the session, there is no parser — the work goes on.
+- **One file of a guard has the right to declare several events.** The reminder and the refusal are
+  different events of the agent, and the guard is one: taking them apart into two files would mean
+  keeping two parses of one record.
+- **A removed task folder lifts the requirement of a state and does not end the turn.** The folder is
+  taken apart before the request is opened, and from that minute there is nothing to declare a state
+  by. Letting the turn go by this sign is not allowed: a removed folder means the middle of handing
+  in, not its end — between the tidying and the request the work is seen by nobody. Further the turn
+  is judged by the second sign; a turn in which the request was opened or read the second sign lets
+  through itself.
+- **A turn that declared a written plan does not end at all.** The mandatory action of this state is
+  to do the first stage, and whoever began it moves the state by the same edit: a turn that stayed in
+  the former state did not begin the first stage by definition. The second sign does not fit here — it
+  counts the creating of a task, a branch, a column and a folder as work. The refusal names the
+  heading of the first stage of the plan, not general words about unfinished work.
+- **A turn that opened a request does not end until the state of the handed-in work is asked by a
+  command.** A draft is read by the owner as "the work is not finished", and the next task taken
+  instead of finishing leaves what is ready invisible. This is asked by a command of the same turn —
+  by lifting the draft, by reading the run or by the check of the work queue; the guard does not touch
+  the network.
+- **A step of closing the work does not count as taking the next task.** Moving the task being closed
+  into the column of the review and removing its folder are mandatory steps of the closing, and both
+  stand in the same turn the request was opened by. The sign of taking lists what taking happens to
+  be, not what counts as an action: the list of the steps of closing is open and grows, and the list
+  of the actions on the next task is closed.
+- **A stage declared closed is confirmed by the output of a command.** The mark "done" is a statement
+  about the tree, and a session later what was marked from memory is indistinguishable from what was
+  checked. The former number of the stage the guard reads from the history of the branch, the command
+  from the line of the plan "What it is checked by".
+- **A technique written in prose the guard does not read.** There is nothing to confirm it by an
+  output with — that is its known boundary, not a promise.
+- **A turn in which nothing was done about the work does not end.** A report about what was done is
+  not an exit of a turn: it looks like work better than any other — it is full, it names numbers and
+  states, and the emptiness behind it is visible neither to the owner nor to the session itself.
+- **What counts as work is an edit of a file and a command that changes the tree.** Reading, searching
+  and conversation do not count as it: they are what fills a turn that has stalled.
+- **A word about a stop is judged by the remark of the owner, not by the words of the executor.**
+  Otherwise the stop is declared by whoever finds it convenient at that minute.
+- **A turn that ended with words about waiting for the word of the owner is not let go without their
+  word or a question to them by a tool.** The phrase "waiting for your word" without them is a stop
+  declared by the executor; the general signs refused it without a name, and after one step the turn
+  ended with the same phrase again. The refusal names the phrase by name and orders to go on: the
+  instruction of the owner holds until they cancel it. The set of the samples of the phrase is named
+  and closed.
+- **Work handed in and merged the guard does not judge.** It has already waited for someone else's
+  step, and a turn closed at it drops nothing.
+- **A turn in which the executor admitted a miss does not close until there is a record about the
+  incident.** By the same technique a turn with a question demands the reading of the rules.
+- **A turn in which the owner said to create or send a proposal does not close until there was a
+  sending.** What is written and not sent lies in the tree indistinguishably from what is sent, and it
+  has no record of its own in the rules layer. Showing what would go away does not count as a sending.
+- **What counts as reading is any of the three ways, not only the loading of a rule.** Demanding
+  exactly the loading would mean driving to it where a search was enough: the guard would get in the
+  way of the work instead of putting it right.
+- **A request for a proposal is caught by a verb next to a word about the rules layer, not by the word
+  itself.** Work on proposals that already arrived does not end with a sending, and the word
+  "proposal" without a neighbour about the layer walks in every second turn about something else.
+- **A turn with a question to the owner is checked at the tool of the question, not at the end of the
+  turn.** The requirement "read the rules before asking" is executable only before the sending. The
+  check at the end stays for a question asked in prose.
+- **The guard declares the locale of its run, it does not inherit it.** The samples are written in the
+  words of the tree, and the folding of the case at a word outside Latin works only under UTF-8: a
+  service launching the same work goes with an empty locale, and the guard does not find its word —
+  that is, it lets the turn through, saying nothing about it. There is nothing to notice this by on
+  one's own machine: the terminal of the developer goes under UTF-8.
+- **A turn in which the executor asks the owner to sign in or type a password does not end.** The
+  stand, the sign-in and the accounts for the check are prepared by the agent. An obstacle before the
+  request — a field that does not accept input, a foreign extension in the browser, a profile that
+  disconnected — is removed by the agent. The requirement was held by the memory of the executor and
+  did not fire: over one session the request sounded four times.
+- **A request to switch the mode of work is allowed.** The owner is asked for the ordinary mode
+  instead of the automatic one; the input into a form is done by the agent. A guard that does not tell
+  these two requests apart would forbid the only allowed one.
+- **The boundary of the set of samples is named.** A request in other words or through a menu of
+  options the guard does not recognise.
 
-- **Ключи хода работы и замысла читаются под двумя именами, английским и русским.** Образцы
-  папки задачи в пакете английские, папки дерева до перевода слоя — русские. Страж судит обе
-  одинаково: состояние, этап и следующий шаг он берёт по любому из двух имён.
+- **The keys of the progress of the work and of the plan are read under two names, English and
+  Russian.** The samples of a task folder in the package are English, those of a folder of the tree
+  before the translation of the layer are Russian. The guard judges both the same: the state, the
+  stage and the next step it takes by either of the two names.
 
-## Что не входит
+## What is out of scope
 
-- Гарды правки файла и гейт правил — соседний поддомен.
-- Передача захода и вход в новый заход — соседний поддомен: там ничего не отбивается, там
-  пишется файл и кладётся текст.
-- Проверки, которые гоняются командой, а не хуком: их предмет — дерево, а не ход.
-- Граница состояния в текстах работы — соседний поддомен: там судится проза правила и
-  паттернов, а не ход.
+- The guards of an edit of a file and the rules gate — a neighbouring subdomain.
+- The handover of a session and the entry into a new one — a neighbouring subdomain: nothing is
+  refused there, there a file is written and a text is put.
+- The checks run by a command, not by a hook: their subject is the tree, not a turn.
+- The boundary of a state in the texts of the work — a neighbouring subdomain: there the prose of the
+  rule and the patterns is judged, not a turn.
 
-## Контракт
+## Contract
 
-Поверхность — файлы хуков, которые дерево зовёт на событии завершения хода. Отказ приходит
-решением `block` с текстом причины; молчание означает, что ход разрешён.
+The surface is the files of the hooks the tree calls at the event of the end of a turn. The refusal
+comes as the decision `block` with the text of the reason; silence means the turn is allowed.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: гард отвечает решением и текстом причины, а не кодом.
+Not applicable: the guard answers with a decision and the text of a reason, not with a code.
 
-## Данные
+## Data
 
-Своих данных у гардов нет: они читают запись хода, ход работы и замысел в папке задачи.
+The guards have no data of their own: they read the record of the turn, the progress of the work and
+the plan in the task folder.
 
-## Экраны и состояния
+## Screens and states
 
-Экранов нет.
+There are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Тексты отказов — на языке дерева.
+The texts of the refusals are in the language of the tree.
 
 ### SEO
 
-Не применимо: наружу гарды ничего не отдают.
+Not applicable: the guards give nothing outward.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо: гард судит один ход одного захода.
+Not applicable: a guard judges one turn of one session.
 
-## Решения
+## Decisions
 
-- **Отказ в пользу работы.** При любой поломке гард пропускает ход: сломанный гард не имеет
-  права заклинить разговор.
-- **Признаки берутся из записи хода, а не из сети.** Сетевой вызов на завершении хода падает
-  вместе со связью и отбивал бы работу вместо промаха.
+- **Refusing in favour of the work.** At any breakage the guard lets the turn through: a broken guard
+  has no right to jam the conversation.
+- **The signs are taken from the record of the turn, not from the network.** A network call at the end
+  of a turn falls together with the connection and would refuse the work instead of a miss.
 
-## Открытые вопросы
+## Open questions
 
-Нет.
+None.
 
-## История изменений
+## History of changes
 
-- 2026-08-19 — поддомен выделен из спека гардов: файл сценариев перерос предел длины, а предмет
-  в нём был двойной.
-- 2026-08-20 — заведён гард утверждения: сказанное владельцу о состоянии дерева подтверждается
-  командой того же хода.
-- 2026-08-21 — передача захода и вход в новый заход выделены в свой поддомен: файл сценариев
-  снова упёрся в предел длины, а предмет в нём был двойной — то, что отбивает ход, и то, что
-  переносит работу между заходами.
-- 2026-08-22 — граница состояния уехала в свой поддомен: договорённость о ней влилась сюда и
-  тем же изменением перевела файл сценариев за предел длины, а предмет в нём был двойной —
-  гард, отбивающий ход, и проверка, читающая прозу.
-- 2026-08-22 — страж окна научился читать порог сжатия: там, где он объявлен, напоминание
-  зовёт работать дальше, а отбой стал страховкой.
-- 2026-09-06 — страж выходов отбивает по имени ход, кончившийся ожиданием слова владельца: у
-  дерева-потребителя три хода подряд кончались фразой «жду твоего слова» при неотменённом
-  указании работать без остановок.
+- 2026-08-19 — the subdomain was split out of the spec of the guards: the scenario file had outgrown
+  the length limit, and the subject in it was double.
+- 2026-08-20 — the guard of the statements was created: what is said to the owner about the state of
+  the tree is confirmed by a command of the same turn.
+- 2026-08-21 — the handover of a session and the entry into a new one were split into a subdomain of
+  their own: the scenario file ran into the length limit again, and the subject in it was double —
+  what refuses a turn and what carries the work between the sessions.
+- 2026-08-22 — the boundary of a state went into a subdomain of its own: the agreement about it was
+  merged in here and by the same change took the scenario file past the length limit, and the subject
+  in it was double — the guard refusing a turn and the check reading prose.
+- 2026-08-22 — the guard of the window learned to read the threshold of the squeeze: where it is
+  declared, the reminder calls to go on working, and the refusal became an insurance.
+- 2026-09-06 — the guard of the exits refuses by name a turn that ended with waiting for the word of
+  the owner: at a consumer tree three turns in a row ended with the phrase "waiting for your word"
+  with the instruction to work without stopping not cancelled.

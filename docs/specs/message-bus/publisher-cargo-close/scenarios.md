@@ -1,106 +1,110 @@
-# Сценарии — закрытие записи груза издателем редакции
+# Scenarios — the closing of a record of the cargo by the publisher of an edition
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной.
+The identifier goes at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason.
 
-### SC-MB-269 — издатель закрывает запись чужого дерева
+### SC-MB-269 — the publisher closes a record of a foreign tree
 
-Дано в приёме лежит запись предложения от дерева-соседа в состоянии «новое»
-Когда издатель, вошедший в приём, зовёт закрытие с переходом в «починено и не выпущено» и приёмом
-починки
-Тогда запись переходит, приём починки на ней сохраняется, а ответ называет её переведённой
+Given a record of a proposal from a neighbour tree lies in the intake in the state "new"
+When the publisher who entered the intake calls the closing with a transition into "fixed and not
+released" and with a way of the fix
+Then the record moves, the way of the fix is kept at it, and the answer names it as moved
 
-Покрыто: `libs/message-bus-api/cargo-state/feature/src/lib/cargo-close.controller.spec.ts`,
+Covered: `libs/message-bus-api/cargo-state/feature/src/lib/cargo-close.controller.spec.ts`,
 `libs/message-bus-common/src/lib/cargo-close-move.spec.ts`.
 
-### SC-MB-270 — токен дерева закрытие не открывает
+### SC-MB-270 — a token of a tree does not open the closing
 
-Дано вызов закрытия подписан токеном дерева, а не входом человека
-Когда он приходит в приём
-Тогда операция отказывает кодом «вход нужен»: способ представиться у закрытия один — вход
+Given the call of the closing is signed by a token of a tree, not by the entry of a person
+When it comes to the intake
+Then the operation refuses with the code "an entry is needed": the closing has one way of introducing
+oneself — the entry
 
-Покрыто: `libs/message-bus-api/cargo-state/feature/src/lib/cargo-close.controller.spec.ts`.
+Covered: `libs/message-bus-api/cargo-state/feature/src/lib/cargo-close.controller.spec.ts`.
 
-### SC-MB-271 — закрытие ходит только по двум последним шагам
+### SC-MB-271 — the closing goes only over the two last steps
 
-Дано запись соседа лежит в состоянии «новое»
-Когда издатель зовёт закрытие с переходом в «в работе»
-Тогда строка отбивается: «в работе» означает взятую дереву работу и ставится только им
+Given the record of the neighbour lies in the state "new"
+When the publisher calls the closing with a transition into "in progress"
+Then the row is refused: "in progress" means work taken by the tree and is put only by it
 
-Покрыто: `libs/message-bus-api/cargo-state/feature/src/lib/cargo-close.controller.spec.ts`,
+Covered: `libs/message-bus-api/cargo-state/feature/src/lib/cargo-close.controller.spec.ts`,
 `libs/message-bus-common/src/lib/cargo-close-move.spec.ts`.
 
-### SC-MB-272 — переход в выпуск без версии отбивается построчно
+### SC-MB-272 — a transition into the release without a version is refused row by row
 
-Дано издатель зовёт закрытие с переходом в «выпущено» и без версии редакции
-Когда пакет разбирается
-Тогда строка отбита с причиной «нет версии выпуска», а соседние строки пакета переводятся
+Given the publisher calls the closing with a transition into "released" and without a version of the
+edition
+When the bundle is taken apart
+Then the row is refused with the reason "there is no version of the release", and the neighbouring rows
+of the bundle are moved
 
-Покрыто: `libs/message-bus-api/cargo-state/feature/src/lib/cargo-close.controller.spec.ts`.
+Covered: `libs/message-bus-api/cargo-state/feature/src/lib/cargo-close.controller.spec.ts`.
 
-### SC-MB-273 — закрытая издателем запись видна закрытой издателем
+### SC-MB-273 — a record closed by the publisher is visible as closed by the publisher
 
-Дано издатель закрыл запись чужого дерева
-Когда список читают тем же чтением, каким дерево забирает свой груз
-Тогда у записи виден признак закрытия издателем: отправитель иначе читает состояние как свою
-отметку
+Given the publisher closed a record of a foreign tree
+When the list is read by the same reading the tree takes its cargo by
+Then the sign of the closing by a publisher is visible at the record: the sender otherwise reads the
+state as their own mark
 
-Покрыто: `libs/message-bus-api/proposals/data-access/src/lib/proposal.queries.spec.ts`,
+Covered: `libs/message-bus-api/proposals/data-access/src/lib/proposal.queries.spec.ts`,
 `libs/message-bus-api/cargo-state/feature/src/lib/cargo-close.controller.spec.ts`.
 
-### SC-MB-274 — право дерева на свою запись закрытие не отменяет
+### SC-MB-274 — the right of a tree to its own record is not cancelled by the closing
 
-Дано издатель закрыл запись дерева в «починено и не выпущено»
-Когда само дерево зовёт правку своей записи в «выпущено» своим токеном
-Тогда правка проходит: второй путь заведён рядом с первым, а не вместо него
+Given the publisher closed a record of the tree into "fixed and not released"
+When the tree itself calls the edit of its record into "released" by its token
+Then the edit passes: the second way is created next to the first, not instead of it
 
-Покрыто: `libs/message-bus-api/cargo-state/feature/src/lib/cargo-close.controller.spec.ts`.
+Covered: `libs/message-bus-api/cargo-state/feature/src/lib/cargo-close.controller.spec.ts`.
 
-### SC-MB-275 — закрытие называет в журнале, кто закрыл и чьи это деревья
+### SC-MB-275 — the closing names in the journal who closed and whose trees these are
 
-Дано издатель закрыл запись чужого дерева
-Когда читают журнал приёмника
-Тогда строка называет вошедшего, число переведённых и признаки деревьев — без ключей и текстов
-записей
+Given the publisher closed a record of a foreign tree
+When the journal of the intake is read
+Then the row names whoever entered, the number of the moved ones and the signs of the trees — without
+the keys and the texts of the records
 
-Покрыто: `libs/message-bus-api/cargo-state/feature/src/lib/cargo-close.controller.spec.ts`.
+Covered: `libs/message-bus-api/cargo-state/feature/src/lib/cargo-close.controller.spec.ts`.
 
-### SC-MB-276 — состояние вне двух последних шагов команда отбивает до сети
+### SC-MB-276 — a state outside the two last steps is refused by the command before the network
 
-Дано издатель зовёт команду закрытия с состоянием «в работе»
-Когда команда разбирает доводы
-Тогда она отказывает, называет, чем закрывают, и в приём не ходит вовсе
+Given the publisher calls the command of the closing with the state "in progress"
+When the command takes the arguments apart
+Then it refuses, names what the closing is done by, and does not go to the intake at all
 
-Покрыто: `projects/agent-kit/tests/cargo-close.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-close.test.sh`.
 
-### SC-MB-277 — вызов без записей команда отбивает до сети
+### SC-MB-277 — a call without records is refused by the command before the network
 
-Дано издатель зовёт команду закрытия, не назвав ни одной записи
-Когда команда разбирает доводы
-Тогда она отказывает и называет, каким доводом называется запись и откуда берётся её признак
+Given the publisher calls the command of the closing having named not a single record
+When the command takes the arguments apart
+Then it refuses and names by which argument a record is named and where its sign is taken from
 
-Покрыто: `projects/agent-kit/tests/cargo-close.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-close.test.sh`.
 
-### SC-MB-278 — сухой прогон показывает собранный пакет и никуда не стучится
+### SC-MB-278 — a dry run shows the gathered bundle and knocks nowhere
 
-Дано издатель зовёт закрытие с доводом сухого прогона
-Когда команда собирает пакет
-Тогда она печатает, что уехало бы, объявляет сухой прогон первой строкой и не входит в приём
+Given the publisher calls the closing with the argument of a dry run
+When the command gathers the bundle
+Then it prints what would have gone away, declares the dry run by the first line and does not enter the
+intake
 
-Покрыто: `projects/agent-kit/tests/cargo-close.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-close.test.sh`.
 
-### SC-MB-279 — без пары учётной записи службы команда отказывает до сети
+### SC-MB-279 — without a pair of an account of the service the command refuses before the network
 
-Дано пары учётной записи службы нет ни в файле, ни в окружении
-Когда издатель зовёт закрытие
-Тогда команда отказывает и говорит, что пара лежит вне дерева
+Given the pair of an account of the service is neither in a file nor in the environment
+When the publisher calls the closing
+Then the command refuses and says that the pair lies outside the tree
 
-Покрыто: `projects/agent-kit/tests/cargo-close.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-close.test.sh`.
 
-### SC-MB-280 — отбитая приёмом строка печатается и даёт ненулевой код
+### SC-MB-280 — a row refused by the intake is printed and gives a non-zero code
 
-Дано приём ответил счётом с одной отбитой строкой
-Когда команда разбирает ответ
-Тогда она печатает признак записи и причину словами, а код возврата ненулевой
+Given the intake answered with a count with one refused row
+When the command takes the answer apart
+Then it prints the sign of the record and the reason in words, and the exit code is non-zero
 
-Покрыто: `projects/agent-kit/tests/cargo-close.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-close.test.sh`.

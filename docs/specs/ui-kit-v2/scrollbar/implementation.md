@@ -1,19 +1,20 @@
-# Чем исполняется — полоса прокрутки
+# What it is carried out by — the bar of the scroll
 
-Первая колонка — правило спека рядом дословно. Вторая — где оно исполняется в дереве; там же
-назван сценарий, которым это проверяется, а чем именно покрыт каждый сценарий, сказано в
-`scenarios.md`.
+The first column is the rule of the spec next to it verbatim. The second is where it is carried out
+in the tree; the scenario it is checked by is named there too, and what exactly every scenario is
+covered by is said in `scenarios.md`.
 
-Правило без строки и строка без правила — расхождение: спек обещает то, чего в дереве нет, либо
-в дереве стоит то, о чём спек молчит.
+A rule without a line and a line without a rule is a divergence: the spec promises what is not in the
+tree, or the tree holds what the spec is silent about.
 
-- **Место под полосу занято всегда, видимым становится только ползунок.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:webkit-scrollbar`; сценарий `SC-UKV-91`
-- **Ползунок проявляется при наведении на зону, а не на сам ползунок.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:hover`; сценарий `SC-UKV-92`
-- **Фокус внутри зоны показывает полосу наравне с наведением.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:focus-within`; сценарий `SC-UKV-93`
-- **Там, где наведения не бывает, полоса видна всегда.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:hover-none`; сценарий `SC-UKV-94`
-- **Стандартные свойства полосы объявлены рядом с псевдоэлементами.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:scrollbar-color`; сценарий `SC-UKV-92`
-- **Цвет ползунка берётся токеном рамки, а не своим значением.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:rt-color-border-default`; сценарий `SC-UKV-92`
+- **The place under the bar is taken always, and only the slider becomes visible.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:webkit-scrollbar`; scenario `SC-UKV-91`
+- **The slider is shown at a hovering over the zone, not over the slider itself.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:hover`; scenario `SC-UKV-92`
+- **A focus inside the zone shows the bar on a par with a hovering.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:focus-within`; scenario `SC-UKV-93`
+- **Where there is no hovering, the bar is visible always.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:hover-none`; scenario `SC-UKV-94`
+- **The standard properties of the bar are declared next to the pseudo-elements.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:scrollbar-color`; scenario `SC-UKV-92`
+- **The colour of the slider is taken by the token of a border, not by a value of its own.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:rt-color-border-default`; scenario `SC-UKV-92`
 
-Сценарии этого поддомена снимаются замером на собранной витрине, а не спекой: полоса прокрутки —
-часть браузера, и в среде спек её не рисует ничто. История витрины — `Foundation/Design
-Tokens/Scrollbar`, обёртка — `projects/ui-kit-v2/src/showcase/stories/component/test-scrollbar.component.ts`.
+The scenarios of this subdomain are taken by a measurement on the assembled showcase, not by a spec:
+the bar of the scroll is a part of the browser, and in the environment of the specs nothing draws it.
+The story of the showcase is `Foundation/Design Tokens/Scrollbar`, the wrapper is
+`projects/ui-kit-v2/src/showcase/stories/component/test-scrollbar.component.ts`.

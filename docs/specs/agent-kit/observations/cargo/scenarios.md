@@ -1,367 +1,380 @@
-# Сценарии — груз наружу
+# Scenarios — cargo outward
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной. Префикс общий на домен, и номера при переезде в поддомен не
-пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier goes at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason. The prefix is shared across the domain,
+and the numbers were not recounted at the move into the subdomain: the number ties the scenario to
+the test title.
 
-### SC-AK-77 — предложение выгружается файлом с адресом
+### SC-AK-77 — a proposal is unloaded as a file with the address
 
-Дано разбор закрытой задачи принёс предложения с адресами
-Когда выгружается файл предложений
-Тогда у каждого блока в заголовке стоит его адрес и ресурс, к которому он относится
+Given the closed-work review brought proposals with addresses
+When the file of proposals is unloaded
+Then every block carries in its heading its address and the resource it belongs to
 
-Покрыто: `projects/agent-kit/src/lib/proposals.spec.ts`.
+Covered: `projects/agent-kit/src/lib/proposals.spec.ts`.
 
-### SC-AK-78 — наружу уезжает только адрес «пакет»
+### SC-AK-78 — only the address "package" goes outward
 
-Дано в файле предложений есть блоки всех трёх адресов
-Когда идёт отправка
-Тогда уезжают только блоки с адресом «пакет», а остальные остаются лежать в дереве
+Given the file of proposals holds blocks of all three addresses
+When the sending goes
+Then only the blocks addressed "package" go away, and the rest stay lying in the tree
 
-Покрыто: `projects/agent-kit/src/lib/shipment.spec.ts`.
+Covered: `projects/agent-kit/src/lib/shipment.spec.ts`.
 
-### SC-AK-79 — отправка отказывает на адрес дерева в тексте
+### SC-AK-79 — the sending refuses on a tree address in the text
 
-Дано в тексте предложения стоит путь дерева
-Когда идёт отправка
-Тогда она отказывает, называет файл и строку и не отправляет ничего
+Given a path of the tree stands in the text of a proposal
+When the sending goes
+Then it refuses, names the file and the line and sends nothing
 
-Покрыто: `projects/agent-kit/src/lib/shipment.spec.ts`.
+Covered: `projects/agent-kit/src/lib/shipment.spec.ts`.
 
-### SC-AK-80 — отправленное второй раз не уезжает
+### SC-AK-80 — what was sent does not go a second time
 
-Дано предложение уже отправлено и помечено
-Когда отправка запускается снова
-Тогда второй раз оно не уезжает, а прочий груз уезжает как обычно
+Given a proposal is already sent and marked
+When the sending is launched again
+Then it does not go a second time, and the rest of the cargo goes as usual
 
-Покрыто: `projects/agent-kit/src/lib/shipment.spec.ts`.
+Covered: `projects/agent-kit/src/lib/shipment.spec.ts`.
 
-### SC-AK-81 — адрес приёма берётся из настройки дерева
+### SC-AK-81 — the intake address is taken from the setting of the tree
 
-Дано пакет установлен в дерево
-Когда идёт отправка
-Тогда груз уезжает по адресу из настройки дерева, а в текстах пакета этого адреса нет
+Given the package is installed in a tree
+When the sending goes
+Then the cargo goes to the address from the setting of the tree, and that address is not in the
+package texts
 
-Покрыто: `projects/agent-kit/src/lib/shipment.spec.ts`.
+Covered: `projects/agent-kit/src/lib/shipment.spec.ts`.
 
-### SC-AK-82 — сведение отделяет повторившееся от разового
+### SC-AK-82 — the summing-up tells the repeated from the one-off
 
-Дано записи о правках пришли из двух деревьев, и часть из них об одном и том же ресурсе
-Когда идёт сведение
-Тогда повторившееся названо правкой пакета, а разовое — надстройкой дерева
+Given records about edits arrived from two trees, and some of them are about one and the same
+resource
+When the summing-up goes
+Then the repeated is named an edit of the package, and the one-off an override of the tree
 
-Не покрыто: сведение — работа человека по команде, а не прогон.
+Not covered: the summing-up is a person's work by a command, not a run.
 
-### SC-AK-140 — пометка об отправке встаёт в свой блок при любом их числе
+### SC-AK-140 — the mark about the sending stands in its own block at any number of them
 
-Дано файл предложений с пятью блоками, каждый адресован пакету
-Когда все пять отправлены и помечены
-Тогда каждая пометка стоит под своим заголовком, и ни одна не попадает в тело готового текста
+Given a file of proposals with five blocks, each addressed to the package
+When all five are sent and marked
+Then every mark stands under its own heading, and none gets into the body of the ready text
 
-Покрыто: `projects/agent-kit/src/lib/proposals.spec.ts`.
+Covered: `projects/agent-kit/src/lib/proposals.spec.ts`.
 
-### SC-AK-162 — прогон без предложений отправляет груз
+### SC-AK-162 — a run without proposals sends the cargo
 
-Дано предложений с адресом «пакет» нет ни одного
-Когда идёт отправка
-Тогда груз уезжает записью в приём, и отправка выходит нулём
+Given there is not a single proposal addressed "package"
+When the sending goes
+Then the cargo goes away as a record into the intake, and the sending exits with zero
 
-### SC-AK-163 — адрес дерева в сводке отбивает отправку целиком
+### SC-AK-163 — a tree address in the digest refuses the whole sending
 
-Дано адрес этого дерева найден в сводке, а тексты предложений чисты
-Когда идёт отправка
-Тогда не уезжает ничего, названо место в грузе и то, что сочтено адресом
+Given the address of this tree is found in the digest, and the texts of the proposals are clean
+When the sending goes
+Then nothing goes away, and the place in the cargo and what was counted as an address are named
 
-### SC-AK-164 — второй прогон месяца дописывает прежнюю запись приёмника
+### SC-AK-164 — a second run of the month appends to the former record of the receiver
 
-Дано у приёмника уже есть запись груза этого дерева за текущий месяц
-Когда идёт вторая отправка
-Тогда прежняя запись обновляется, второй не заводится, а отправка называет месяц и дерево
+Given the receiver already has a cargo record of this tree for the current month
+When a second sending goes
+Then the former record is updated, a second one is not created, and the sending names the month and
+the tree
 
-### SC-AK-165 — адреса приёма в манифесте нет: отправка отказывает
+### SC-AK-165 — there is no intake address in the manifest: the sending refuses
 
-Дано в настройке дерева адрес приёма не объявлен
-Когда идёт отправка
-Тогда она отказывает ненулевым кодом и называет, где адрес объявляется
+Given the intake address is not declared in the setting of the tree
+When the sending goes
+Then it refuses with a non-zero code and names where the address is declared
 
-### SC-AK-166 — отправка с отозванным токеном отбивается
+### SC-AK-166 — a sending with a revoked token is refused
 
-Дано токен дерева отозван у приёмника
-Когда идёт отправка
-Тогда приём отвечает отказом, а отправка называет адрес, род груза и то, что ничего не уехало
+Given the tree token is revoked at the receiver
+When the sending goes
+Then the intake answers with a refusal, and the sending names the address, the kind of the cargo and
+that nothing went away
 
-### SC-AK-167 — выключенная запись наблюдений отправку не начинает
+### SC-AK-167 — writing of observations switched off starts no sending
 
-Дано запись наблюдений выключена настройкой дерева
-Когда идёт отправка
-Тогда наружу не уезжает ничего, включая снимок надстроек, и названо, каким ключом выключено
+Given the writing of observations is switched off by a setting of the tree
+When the sending goes
+Then nothing goes outward, including the snapshot of the overrides, and it is named by which key it
+is switched off
 
-### SC-AK-185 — знакомый довод незнакомым не считается
+### SC-AK-185 — a familiar argument is not counted as unfamiliar
 
-Дано вызов несёт довод, объявленный командой
-Когда разбираются доводы вызова
-Тогда список незнакомых пуст
+Given the call carries an argument declared by the command
+When the arguments of the call are parsed
+Then the list of the unfamiliar is empty
 
-Покрыто: `projects/agent-kit/src/lib/argv.spec.ts`.
+Covered: `projects/agent-kit/src/lib/argv.spec.ts`.
 
-### SC-AK-186 — незнакомый довод назван
+### SC-AK-186 — an unfamiliar argument is named
 
-Дано вызов несёт довод, которого команда не объявляла
-Когда разбираются доводы вызова
-Тогда он стоит в списке незнакомых
+Given the call carries an argument the command did not declare
+When the arguments of the call are parsed
+Then it stands in the list of the unfamiliar
 
-Покрыто: `projects/agent-kit/src/lib/argv.spec.ts`.
+Covered: `projects/agent-kit/src/lib/argv.spec.ts`.
 
-### SC-AK-187 — значение при доводе доводом не считается
+### SC-AK-187 — a value at an argument is not counted as an argument
 
-Дано вызов несёт довод со значением, стоящим отдельным словом
-Когда разбираются доводы вызова
-Тогда список незнакомых пуст: значение прочитано вместе со своим доводом
+Given the call carries an argument with a value standing as a separate word
+When the arguments of the call are parsed
+Then the list of the unfamiliar is empty: the value was read together with its argument
 
-Покрыто: `projects/agent-kit/src/lib/argv.spec.ts`.
+Covered: `projects/agent-kit/src/lib/argv.spec.ts`.
 
-### SC-AK-188 — значение, начатое с дефиса, за довод не принимается
+### SC-AK-188 — a value begun with a hyphen is not taken for an argument
 
-Дано значение при доводе начинается с дефиса
-Когда разбираются доводы вызова
-Тогда список незнакомых пуст
+Given the value at an argument begins with a hyphen
+When the arguments of the call are parsed
+Then the list of the unfamiliar is empty
 
-Покрыто: `projects/agent-kit/src/lib/argv.spec.ts`.
+Covered: `projects/agent-kit/src/lib/argv.spec.ts`.
 
-### SC-AK-189 — значение через равенство читается тем же доводом
+### SC-AK-189 — a value through an equals sign is read by the same argument
 
-Дано значение приписано к доводу через знак равенства
-Когда разбираются доводы вызова
-Тогда список незнакомых пуст
+Given the value is attached to the argument through an equals sign
+When the arguments of the call are parsed
+Then the list of the unfamiliar is empty
 
-Покрыто: `projects/agent-kit/src/lib/argv.spec.ts`.
+Covered: `projects/agent-kit/src/lib/argv.spec.ts`.
 
-### SC-AK-190 — довод с параметром, стоящий последним, вызова не роняет
+### SC-AK-190 — an argument with a parameter standing last does not drop the call
 
-Дано довод со значением стоит последним, и значения за ним нет
-Когда разбираются доводы вызова
-Тогда список незнакомых пуст
+Given an argument with a value stands last, and there is no value after it
+When the arguments of the call are parsed
+Then the list of the unfamiliar is empty
 
-Покрыто: `projects/agent-kit/src/lib/argv.spec.ts`.
+Covered: `projects/agent-kit/src/lib/argv.spec.ts`.
 
-### SC-AK-191 — путь без дефиса доводом не считается
+### SC-AK-191 — a path without a hyphen is not counted as an argument
 
-Дано вызов несёт позиционное значение
-Когда разбираются доводы вызова
-Тогда список незнакомых пуст
+Given the call carries a positional value
+When the arguments of the call are parsed
+Then the list of the unfamiliar is empty
 
-Покрыто: `projects/agent-kit/src/lib/argv.spec.ts`.
+Covered: `projects/agent-kit/src/lib/argv.spec.ts`.
 
-### SC-AK-192 — незнакомое называется целиком, а не первым совпадением
+### SC-AK-192 — the unfamiliar is named whole, not by the first match
 
-Дано вызов несёт два незнакомых довода и один знакомый
-Когда разбираются доводы вызова
-Тогда в списке стоят оба незнакомых
+Given the call carries two unfamiliar arguments and one familiar
+When the arguments of the call are parsed
+Then both unfamiliar ones stand in the list
 
-Покрыто: `projects/agent-kit/src/lib/argv.spec.ts`.
+Covered: `projects/agent-kit/src/lib/argv.spec.ts`.
 
-### SC-AK-193 — у пустого набора незнакомо всё, начатое с дефиса
+### SC-AK-193 — with an empty set everything begun with a hyphen is unfamiliar
 
-Дано команда не объявила ни одного довода
-Когда разбираются доводы вызова
-Тогда всякий довод вызова стоит в списке незнакомых
+Given the command declared not a single argument
+When the arguments of the call are parsed
+Then every argument of the call stands in the list of the unfamiliar
 
-Покрыто: `projects/agent-kit/src/lib/argv.spec.ts`.
+Covered: `projects/agent-kit/src/lib/argv.spec.ts`.
 
-### SC-AK-204 — слово посреди работы ложится блоком в файл дня
+### SC-AK-204 — a word mid-work lands as a block in the file of the day
 
-Дано человек посреди работы сказал, что правило мешает
-Когда позвана команда фидбэка
-Тогда в файле предложений сегодняшнего дня появляется блок с адресом, ресурсом, поводом и
-готовым текстом правки
+Given a person said mid-work that a rule gets in the way
+When the feedback command is called
+Then a block with the address, the resource, the occasion and the ready text of the edit appears in
+the file of proposals of today
 
-Не покрыто: команда — текст для агента, и проверяется прогоном на живом дереве.
+Not covered: the command is a text for the agent, and it is checked by a run on a live tree.
 
-### SC-AK-205 — файл дня заводится с образца, когда его ещё нет
+### SC-AK-205 — the file of the day is created from a sample when there is none yet
 
-Дано в каталоге предложений нет файла за сегодня
-Когда позвана команда фидбэка
-Тогда файл заводится с образца, и ответ говорит об этом
+Given there is no file for today in the proposals directory
+When the feedback command is called
+Then the file is created from a sample, and the answer says so
 
-Не покрыто: проверяется прогоном команды в день, когда файла ещё нет.
+Not covered: it is checked by a run of the command on a day when there is no file yet.
 
-### SC-AK-206 — второе слово того же дня ложится вторым блоком
+### SC-AK-206 — a second word of the same day lands as a second block
 
-Дано в файле дня уже лежит блок
-Когда человек говорит ещё одно слово
-Тогда рядом ложится второй блок, а первый не переписан
+Given a block already lies in the file of the day
+When a person says one more word
+Then a second block lands next to it, and the first is not rewritten
 
-Не покрыто: склейку блоков в файле держит спека разбора, а сам прогон команды — руками.
+Not covered: the joining of blocks in the file is held by the spec of the parse, and the run of the
+command itself is by hand.
 
-### SC-AK-207 — непонятный адрес спрашивается, а не назначается
+### SC-AK-207 — an unclear address is asked, not assigned
 
-Дано из слова человека не видно, правится пакет, компаньон или надстройка дерева
-Когда позвана команда фидбэка
-Тогда адрес спрашивается одним вопросом, и до ответа в файл не записано ничего
+Given from the person's word it is not visible whether the package, the companion or an override of
+the tree is being edited
+When the feedback command is called
+Then the address is asked by one question, and until the answer nothing is written into the file
 
-Не покрыто: вопрос человеку прогоном не проверяется вовсе.
+Not covered: a question to a person is not checked by a run at all.
 
-### SC-AK-208 — команда в сеть не ходит
+### SC-AK-208 — the command does not go into the network
 
-Дано блок положен
-Когда команда закончила
-Тогда наружу не ушло ни одного запроса, а ответ называет, чем блок отправить
+Given the block is put
+When the command has finished
+Then not a single request went outward, and the answer names what the block is sent by
 
-Не покрыто: отсутствие запроса наружу видно только прогоном команды.
+Not covered: the absence of a request outward is visible only by a run of the command.
 
-### SC-AK-209 — положенный блок уезжает обычной отправкой
+### SC-AK-209 — a block that was put goes away by the ordinary sending
 
-Дано в файле дня лежит блок с адресом пакета
-Когда позвана отправка груза
-Тогда блок уезжает наравне с блоками разбора закрытой задачи и метится отправленным
+Given a block with the address of the package lies in the file of the day
+When the sending of the cargo is called
+Then the block goes away on a par with the blocks of the closed-work review and is marked as sent
 
-Не покрыто: проверяется прогоном отправки на живом дереве.
+Not covered: it is checked by a run of the sending on a live tree.
 
-### SC-AK-210 — адрес дерева в тексте блока отбивает отправку
+### SC-AK-210 — a tree address in the text of a block refuses the sending
 
-Дано в тексте блока назван путь этого дерева
-Когда позвана отправка груза
-Тогда она отказывает с номером строки, а не увозит текст наружу
+Given a path of this tree is named in the text of the block
+When the sending of the cargo is called
+Then it refuses with the line number instead of carrying the text outward
 
-Не покрыто: проверку на адрес дерева держит сценарий SC-AK-79 и его спека; своего теста этот сценарий не требует.
+Not covered: the check for a tree address is held by scenario SC-AK-79 and its spec; this scenario
+demands no test of its own.
 
-### SC-AK-283 — выданный токен ложится на диск, и в сеть команда не идёт
+### SC-AK-283 — an issued token lands on disk, and the command does not go into the network
 
-Дано у человека на руках токен, выданный в админке приёма, а файла токена у дерева нет
-Когда он зовёт заведение с доводом выданного токена
-Тогда токен лежит в файле, названном ключом настройки, правами «читает и пишет только владелец
-файла», а обращения в приём не было ни одного
+Given a person holds a token issued in the intake admin panel, and the tree has no token file
+When they call the creating with the argument of the issued token
+Then the token lies in the file named by the setting key, with the rights "read and written by the
+file owner alone", and there was not a single call to the intake
 
-Покрытие: частичное — юнит зовёт решение напрямую, а человек зовёт команду строкой запуска.
-Прогон собранной команды в этот набор не заведён.
+Coverage: partial — the unit calls the decision directly, while a person calls the command by the
+launch line. A run of the assembled command is not created in this suite.
 
-Покрыто: `projects/agent-kit/src/lib/enroll.spec.ts`.
+Covered: `projects/agent-kit/src/lib/enroll.spec.ts`.
 
-### SC-AK-284 — код приглашения и выданный токен вместе не идут
+### SC-AK-284 — an invitation code and an issued token do not go together
 
-Дано человек назвал оба довода сразу
-Когда зовётся заведение
-Тогда отказ ненулевым кодом называет оба довода и просит оставить один, а файла токена не
-появляется
+Given the person named both arguments at once
+When the creating is called
+Then a refusal with a non-zero code names both arguments and asks to keep one, and no token file
+appears
 
-Покрыто: `projects/agent-kit/src/lib/enroll.spec.ts`.
+Covered: `projects/agent-kit/src/lib/enroll.spec.ts`.
 
-### SC-AK-285 — заведение без единого довода называет оба пути
+### SC-AK-285 — creating without a single argument names both ways
 
-Дано доводов не названо
-Когда зовётся заведение
-Тогда отказ ненулевым кодом называет оба пути — код приглашения и выданный токен
+Given no arguments are named
+When the creating is called
+Then a refusal with a non-zero code names both ways — the invitation code and the issued token
 
-Покрыто: `projects/agent-kit/src/lib/enroll.spec.ts`.
+Covered: `projects/agent-kit/src/lib/enroll.spec.ts`.
 
-### SC-AK-286 — лежащий токен защищён у обоих путей одинаково
+### SC-AK-286 — a token that lies there is defended at both ways the same
 
-Дано файл токена уже лежит
-Когда зовётся заведение выданным токеном без довода намеренной перезаписи
-Тогда отказ ненулевым кодом, прежний токен в файле не тронут, а с доводом намеренной перезаписи
-тот же вызов кладёт новый
+Given the token file already lies there
+When the creating by an issued token is called without the argument of a deliberate overwrite
+Then a refusal with a non-zero code, the former token in the file untouched, and with the argument
+of a deliberate overwrite the same call puts a new one
 
-Покрыто: `projects/agent-kit/src/lib/enroll.spec.ts`.
+Covered: `projects/agent-kit/src/lib/enroll.spec.ts`.
 
-### SC-AK-287 — путь без сети не требует адреса приёма
+### SC-AK-287 — a way without a network demands no intake address
 
-Дано ключ адреса приёма в настройке пуст
-Когда зовётся заведение выданным токеном
-Тогда токен ложится на диск, и отказа об адресе приёма нет
+Given the key of the intake address in the setting is empty
+When the creating by an issued token is called
+Then the token lands on disk, and there is no refusal about the intake address
 
-Покрыто: `projects/agent-kit/src/lib/enroll.spec.ts`.
+Covered: `projects/agent-kit/src/lib/enroll.spec.ts`.
 
-### SC-AK-543 — отправка называет перечень груза до его результатов
+### SC-AK-543 — the sending names the list of the cargo before its results
 
-Дано груз собран и уезжает по-настоящему
-Когда команда отправляет его
-Тогда первой строкой названы адрес приёма и дерево, под ней — перечень того, что уедет, и только
-потом результаты; отказ приёма перечня не съедает
+Given the cargo is gathered and goes away for real
+When the command sends it
+Then the first line names the intake address and the tree, under it the list of what will go, and
+only then the results; a refusal of the intake does not eat the list
 
-Покрыто: `projects/agent-kit/src/lib/shipment.spec.ts`.
+Covered: `projects/agent-kit/src/lib/shipment.spec.ts`.
 
-### SC-AK-544 — сухой прогон объявляется первой строкой, а не окончанием глагола
+### SC-AK-544 — a dry run is declared by the first line, not by the ending of a verb
 
-Дано зовётся сухой прогон отправки или отметки
-Когда команда печатает вывод
-Тогда первая строка говорит, что наружу не ушло ничего, и называет вызов, которым это делается
-по-настоящему; с первой строкой настоящего прогона она не совпадает
+Given a dry run of the sending or the marking is called
+When the command prints the output
+Then the first line says that nothing went outward, and names the call that really does it; it does
+not coincide with the first line of a real run
 
-Покрыто: `projects/agent-kit/src/lib/shipment.spec.ts`,
+Covered: `projects/agent-kit/src/lib/shipment.spec.ts`,
 `projects/agent-kit/tests/cargo-mark.test.sh`.
 
-### SC-AK-545 — блок без названного ближайшего утверждения не уезжает
+### SC-AK-545 — a block without a named nearest statement does not go away
 
-Дано блок предложения не назвал ближайшего утверждения ресурса — поля нет вовсе либо цитата в
-ресурсе не находится
-Когда груз собирается к отправке
-Тогда блок наружу не едет, а отказ называет файл, строку блока и причину
+Given a proposal block named no nearest statement of the resource — there is no field at all, or the
+quotation is not found in the resource
+When the cargo is gathered for the sending
+Then the block does not go outward, and the refusal names the file, the line of the block and the
+reason
 
-Покрыто: `projects/agent-kit/src/lib/proposals-gate.spec.ts`.
+Covered: `projects/agent-kit/src/lib/proposals-gate.spec.ts`.
 
-### SC-AK-546 — блок с настоящей цитатой уезжает, а соседний отбоем не задерживается
+### SC-AK-546 — a block with a real quotation goes, and the neighbouring one is not held by the refusal
 
-Дано в файле лежат блок с найденной цитатой и блок без неё
-Когда груз собирается к отправке
-Тогда первый уезжает, второй нет: один непрочитанный ресурс чужую работу не задерживает
+Given a block with a found quotation and a block without one lie in the file
+When the cargo is gathered for the sending
+Then the first goes away, the second does not: one unread resource does not hold up someone else's
+work
 
-Покрыто: `projects/agent-kit/src/lib/proposals-gate.spec.ts`.
+Covered: `projects/agent-kit/src/lib/proposals-gate.spec.ts`.
 
-### SC-AK-547 — отбитый блок остаётся на диске с причиной
+### SC-AK-547 — a refused block stays on disk with the reason
 
-Дано блок отбит на отправке
-Когда отправка кончилась
-Тогда блок лежит на месте с отметкой «отбито» и причиной, а текст правки в нём не тронут
+Given a block is refused at the sending
+When the sending has ended
+Then the block lies in place with the mark "refused" and the reason, and the text of the edit in it
+is untouched
 
-Покрыто: `projects/agent-kit/src/lib/proposals-gate.spec.ts`.
+Covered: `projects/agent-kit/src/lib/proposals-gate.spec.ts`.
 
-### SC-AK-548 — сухой прогон называет отбитое и отметок не ставит
+### SC-AK-548 — a dry run names the refused and puts no marks
 
-Дано зовётся сухой прогон отправки
-Когда в файле лежит блок, который был бы отбит
-Тогда прогон называет его вместе с уезжающим и на диске ничего не метит
+Given a dry run of the sending is called
+When a block that would be refused lies in the file
+Then the run names it together with the departing one and marks nothing on disk
 
-Покрыто: `projects/agent-kit/src/lib/proposals-gate.spec.ts`.
+Covered: `projects/agent-kit/src/lib/proposals-gate.spec.ts`.
 
-### SC-AK-713 — нуль принятых отметку об отправке не отменяет
+### SC-AK-713 — zero accepted does not cancel the mark about the sending
 
-Дано приём ответил «принято 0, уже лежало 3» — весь груз доехал прежними отправками
-Когда отправитель разбирает ответ
-Тогда файлы предложений получают отметку об отправке наравне с принятым: отметка говорит, что
-запись в приёме есть, а не что её туда положил этот вызов
+Given the intake answered "accepted 0, already lay 3" — the whole cargo arrived by the former
+sendings
+When the sender takes the answer apart
+Then the files of proposals get the mark about the sending on a par with the accepted: the mark says
+that the record is in the intake, not that this call put it there
 
-### SC-AK-715 — несколько удалённых репозиториев без `origin` названы в отказе поимённо
+### SC-AK-715 — several remote repositories without `origin` are named in the refusal by name
 
-Дано у дерева несколько удалённых репозиториев, и `origin` среди них нет
-Когда идёт отправка груза
-Тогда она отказывает, называет их имена и зовёт выбрать: угаданное слило бы в сводке приёма два
-дерева в одно. Дерево без удалённого репозитория вовсе отказывает прежними словами
+Given the tree has several remote repositories, and `origin` is not among them
+When the sending of the cargo goes
+Then it refuses, names them and calls to choose: a guessed one would merge two trees into one in the
+digest of the intake. A tree without a remote repository at all refuses with the former words
 
-Покрыто: `projects/agent-kit/src/lib/shipment.spec.ts`.
+Covered: `projects/agent-kit/src/lib/shipment.spec.ts`.
 
-### SC-AK-855 — отказ по адресу приёма называет, у кого его спросить
+### SC-AK-855 — a refusal about the intake address names whom to ask for it
 
-Дано в настройке дерева ключ адреса приёма пуст
-Когда дерево заводится кодом приглашения либо отправляет груз
-Тогда отказ называет не только ключ настройки, но и того, у кого берётся значение: код приглашения
-и адрес идут парой и выдаются одним человеком
+Given the key of the intake address in the setting of the tree is empty
+When the tree is created by an invitation code or sends the cargo
+Then the refusal names not only the setting key but also whoever the value is taken from: the
+invitation code and the address go as a pair and are issued by one person
 
-Покрыто: `projects/agent-kit/src/lib/enroll.spec.ts`, `projects/agent-kit/src/lib/shipment.spec.ts`.
+Covered: `projects/agent-kit/src/lib/enroll.spec.ts`, `projects/agent-kit/src/lib/shipment.spec.ts`.
 
-### SC-AK-877 — сухой прогон отправки называет, чего он не проверял
+### SC-AK-877 — a dry run of the sending names what it did not check
 
-Дано груз собран, а годность токена приём ещё не отвечал
-Когда идёт прогон отправки вхолостую
-Тогда он говорит, что токен здесь не проверялся и отвечает о нём только настоящая отправка:
-молчание об этом читалось как обещание, что отправка пройдёт
+Given the cargo is gathered, and the intake has not yet answered about the fitness of the token
+When the run of the sending goes dry
+Then it says that the token was not checked here and that only a real sending answers about it:
+silence about this read as a promise that the sending would pass
 
-Покрыто: `projects/agent-kit/src/lib/shipment.spec.ts`.
+Covered: `projects/agent-kit/src/lib/shipment.spec.ts`.
 
-### SC-AK-878 — абсолютный путь к токену берётся как есть
+### SC-AK-878 — an absolute path to the token is taken as it is
 
-Дано ключ настройки называет файл токена целиком, от корня файловой системы
-Когда дерево заводится в приёме и когда отправка читает токен
-Тогда путь берётся как назван, а не клеится с корнем дерева: склеенный, он кладёт секрет внутрь
-репозитория, откуда тот уезжает в историю первой же командой добавления
+Given the setting key names the token file whole, from the root of the file system
+When the tree is created in the intake and when the sending reads the token
+Then the path is taken as named, not glued with the root of the tree: glued, it puts the secret
+inside the repository, from where it goes away into history by the very first adding command
 
-Покрыто: `projects/agent-kit/src/lib/enroll.spec.ts`.
+Covered: `projects/agent-kit/src/lib/enroll.spec.ts`.

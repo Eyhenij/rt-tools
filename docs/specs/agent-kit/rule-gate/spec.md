@@ -1,156 +1,167 @@
-# Гейт правил
+# The rules gate
 
-**Статус:** действует · **Ревизия:** 2026-08-23 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `verifiability`, `work-conduct`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-23 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `verifiability`, `work-conduct`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Правило, лежащее в дереве, читают тогда, когда о нём вспомнили. Гейт выбирает правило под
-правку сам: по пути файла — доменное, поверх него — слои по признакам, которых по пути не
-видно. Поддомен называет, чем правило выбирается, где кончается знание гейта о пути и что
-считается записью, а что — чтением.
+A rule lying in the tree is read when it is remembered. The gate picks the rule under an edit
+itself: by the path of the file — the domain one, and on top of it the layers by signs invisible in
+the path. The subdomain names what a rule is picked by, where the gate's knowledge of the path ends
+and what counts as a write and what as a read.
 
-Гарды, судящие ход работы и состояние, — соседние поддомены: там предмет другой.
+The guards judging the conduct of the work and the state are neighbouring subdomains: the subject
+there is different.
 
-## Терминология
+## Terminology
 
-- **Доменный слой гейта** — выбор одного правила по пути файла: у правки один предмет, и
-  правило у неё одно.
-- **Слой поверх** — правило, которое требуется дополнительно к доменному по признаку, видному
-  не по пути, а в тексте правки.
-- **Карта гейта** — файл дерева, который переводит путь и текст команды в имена правил.
-- **Запись** — то, что кладёт файл: правка инструментом, перенаправление, `tee`, `sed -i`,
-  интерпретатор с телом. Чтение и поиск записью не считаются.
+- **The domain layer of the gate** — the choice of one rule by the path of the file: an edit has one
+  subject, and one rule.
+- **A layer on top** — a rule demanded in addition to the domain one by a sign visible not in the
+  path but in the text of the edit.
+- **The gate map** — a file of the tree that translates the path and the text of the command into the
+  names of the rules.
+- **A write** — what puts a file: an edit by a tool, a redirection, `tee`, `sed -i`, an interpreter
+  with a body. Reading and searching do not count as a write.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Интерфейса у гейта нет: его видит только исполнитель — текстом отказа в своём ходе.
+The gate has no interface: only the executor sees it — as the text of a refusal in their own turn.
 
-## Правила
+## Rules
 
-- **Конфиг линтера требует правило под собой.** Запреты в нём — исполнение правил про типы и про
-  оформление, а комментарии пересказывают эти правила поимённо.
-- **Проверка повторов требует правило, чьи признаки исполняет, и только его.** Два отказа подряд
-  на правку двух строк комментария стоят захода, а второе прочитанное правило не пригождается.
-- **Заведение рабочего дерева грузит правило поставки.** Свежее дерево выглядит готовым и
-  упирается в нехватку не сразу, а на первом гарде, которому нужен ключ.
-- **Слои поверх доменного правила объявляются своим файлом, а не строками в гейте.** Доменное
-  правило выбирается один раз по пути, а слоёв поверх него полтора десятка: вместе они не
-  помещаются в файл, который читают целиком.
-- **Слой требует правило дополнительно, а не вместо доменного.** Правка, у которой предмет один,
-  а признаков несколько, иначе теряет доменное правило — то самое, которое знает, как этот файл
-  устроен.
-- **Признак, невидимый по пути, судится по тексту правки.** Доступ к среде исполнения виден
-  только в содержимом, и гейт, знающий один путь, пропускает его молча.
-- **Слой, которому нечем прочитать текст правки, отпускает действие.** Разбор входа — побочная
-  работа гейта, и её поломка не имеет права остановить правку.
-- **Файл слоёв гейт зовёт в своей оболочке, а не отдельным процессом.** Слой отвечает теми же
-  переменными, что и доменный выбор; отдельный процесс возвращал бы их через диск.
-- **Карта гейта считает командой вызов, а не упоминание.** Совпадение по подстроке ловит любое
-  упоминание: строка о коммите в теле самого коммита отбивалась как коммит, и обходили это
-  переписыванием текста, а не работой.
-- **Перенаправление в пустое устройство и в поток ошибок записью не считается.** Файла оно не
-  пишет, а выглядит как перенаправление в файл: так глушат вывод команды чтения, и поиск по
-  коду с заглушённым потоком требовал правила наравне с правкой. Запись рядом с заглушённым
-  потоком остаётся видной — снимается перенаправление, а не команда целиком.
-- **Интерпретатор проверяется по телу, а не по имени.** Он пишет тем, что ему подали, —
-  документом на входе или кодом доводом; путь, стоящий у него первым доводом, он читает.
-  Проверка по имени делала записью всякий запуск проверки дерева по пути её файла: заход,
-  запускавший проверку ради диагностики, получал требование правила общего кода, ничего в нём не
-  правя; за две задачи таких отказов набралось около пятнадцати. Цена сужения: скрипт, который
-  пишет файлы своим телом, гейт больше не проверяет — его проверяли при заведении, когда клали в
-  дерево.
-- **Стрелка в тексте команды перенаправлением не считается.** Знак в `->` и `=>` тот же, что у
-  записи в файл, а в оболочке они не значат ничего: команда, печатавшая таблицу со стрелкой,
-  объявлялась пишущей и отдавала под суд все свои пути. Туда же закрывающая скобка комментария
-  разметки.
-- **Цель перенаправления выглядит как путь, а не как слово словами.** Строка цитаты разметки от
-  записи в файл одним знаком неотличима, и различает их только цель. Цена сужения названа: путь,
-  набранный не латиницей, записью не считается.
-- **Пути берутся из заголовка команды, а не из тела документа на месте.** В теле лежит текст,
-  который команда кладёт в файл, и названный там словами чужой путь требовал правила под
-  запись, которой нет. Исключение — интерпретатор: ему код приходит телом, и путь записи стоит
-  именно там.
-- **Пути берутся у пишущего куска команды, а не у строки целиком.** Команда чтения, сцепленная
-  с записью, иначе отдаёт свои пути как цели записи: правило требуется за чтение соседнего
-  файла, и отбитий, пришедшихся не на правку, набирается большинство. Кусок — строка верхнего
-  уровня, а внутри неё `;`, `&&` и `||`; тело интерпретатора от своей команды не отрывается.
-- **Команда, публикующая тело задачи или заявки, требует правило слога.** Этот текст файлом
-  дерева не становится, а читает его человек — и чаще, чем любой файл: гейт проверял расширение
-  правимого файла и на такой команде молчал.
-- **Судятся два признака сразу: вызов клиента и тело в доводах.** Одного слова о заявке мало —
-  оно есть в строке любой команды, которая о ней пишет.
+- **The config of the linter demands a rule under it.** The bans in it are the carrying out of the
+  rules about types and about styling, and the comments retell those rules by name.
+- **The check of repeats demands the rule whose signs it carries out, and only it.** Two refusals in
+  a row at an edit of two lines of a comment cost a session, and the second rule read is of no use.
+- **Creating a working tree loads the rule of delivery.** A fresh tree looks ready and runs into the
+  shortage not at once but at the first guard that needs a key.
+- **The layers on top of the domain rule are declared by a file of their own, not by lines in the
+  gate.** The domain rule is picked once by the path, and there are a dozen and a half layers on top
+  of it: together they do not fit into a file that is read whole.
+- **A layer demands a rule in addition, not instead of the domain one.** An edit whose subject is one
+  and whose signs are several otherwise loses the domain rule — the very one that knows how this file
+  is built.
+- **A sign invisible in the path is judged by the text of the edit.** Access to the runtime
+  environment is visible only in the content, and a gate that knows one path skips it silently.
+- **A layer that has nothing to read the text of the edit with lets the action go.** The parse of the
+  input is a side duty of the gate, and its breakage has no right to stop an edit.
+- **The gate calls the file of the layers in its own shell, not as a separate process.** A layer
+  answers by the same variables as the domain choice; a separate process would give them back through
+  the disk.
+- **The gate map counts as a command a call, not a mention.** A match by substring catches any
+  mention: a line about a commit in the body of the commit itself was refused as a commit, and this
+  was gone around by rewriting the text, not by the work.
+- **A redirection into the empty device and into the error stream does not count as a write.** It
+  writes no file, and it looks like a redirection into a file: that is how the output of a reading
+  command is muted, and a search over the code with a muted stream demanded a rule on a par with an
+  edit. A write next to a muted stream stays visible — what is removed is the redirection, not the
+  whole command.
+- **An interpreter is checked by its body, not by its name.** It writes by what was handed to it — a
+  document at the input or code as an argument; the path standing as its first argument it reads. A
+  check by the name made a write of every launch of a check of the tree by the path of its file: a
+  session launching a check for the sake of diagnostics got a demand for the rule of common code
+  while editing nothing in it; over two tasks about fifteen such refusals accumulated. The price of
+  the narrowing: a script that writes files by its own body the gate no longer checks — it was
+  checked when it was created, when it was put into the tree.
+- **An arrow in the text of a command does not count as a redirection.** The sign in `->` and `=>` is
+  the same as at a write into a file, and in the shell they mean nothing: a command printing a table
+  with an arrow was declared writing and gave all its paths up to be judged. The closing bracket of a
+  markup comment goes there too.
+- **The target of a redirection looks like a path, not like a word in words.** A line of a markup
+  quotation is indistinguishable from a write into a file by one sign, and only the target tells them
+  apart. The price of the narrowing is named: a path typed not in Latin does not count as a write.
+- **The paths are taken from the heading of the command, not from the body of a document in place.**
+  The body holds the text the command puts into a file, and a foreign path named there in words
+  demanded a rule for a write that does not exist. The exception is the interpreter: the code arrives
+  to it as a body, and the path of the write stands exactly there.
+- **The paths are taken at the writing piece of the command, not at the whole line.** A reading
+  command chained with a write otherwise gives its paths up as targets of the write: a rule is
+  demanded for the reading of a neighbouring file, and the refusals that fell not on an edit make up
+  the majority. A piece is a top-level line, and inside it `;`, `&&` and `||`; the body of an
+  interpreter is not torn from its command.
+- **A command publishing the body of a task or a request demands the rule of the wording.** This text
+  does not become a file of the tree, and a person reads it — and more often than any file: the gate
+  checked the extension of the edited file and stayed silent at such a command.
+- **Two signs are judged at once: the call of the client and the body in the arguments.** One word
+  about a request is not enough — it is in the line of any command that writes about it.
 
-## Что не входит
+## What is out of scope
 
-- Выбор доменного правила деревом: карта гейта принадлежит дереву, и пакет её не пишет.
-- Правило под конфиг линтера, которого в дереве нет: гейт молчит о правиле, которого не
-  разложили.
-- Разбор оболочки по-настоящему: из текста вынимается то, что похоже на путь, и судит их
-  признак; лишнее он отсеивает сам.
+- The choice of the domain rule by the tree: the gate map belongs to the tree, and the package does
+  not write it.
+- A rule under a linter config that is not in the tree: the gate stays silent about a rule that was
+  not laid out.
+- Parsing the shell for real: what looks like a path is taken out of the text, and the sign judges
+  them; the surplus it sifts out itself.
 
-## Контракт
+## Contract
 
-Поверхность — события агента: правка файла и вызов оболочки. Ответ гейта — либо пропуск, либо
-отказ с именем правила, законом под ним и способом его загрузить.
+The surface is the events of the agent: editing a file and calling the shell. The answer of the gate
+is either a pass or a refusal with the name of the rule, the law under it and the way to load it.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: гейт отбивает вызов до его исполнения, и кода возврата команды у такого отказа нет.
+Not applicable: the gate refuses a call before it is carried out, and such a refusal has no command
+exit code.
 
-| Что случилось                     | Чем кончается | Что говорит                                   |
-| --------------------------------- | ------------- | --------------------------------------------- |
-| правка без загруженного правила   | отказ вызова  | имя правила, закон под ним и способ загрузить |
-| слою нечем прочитать текст правки | пропуск       | ничего: побочная работа гейта молчит          |
-| путь вне дерева                   | пропуск       | ничего: правила дерева судят файлы дерева     |
+| What happened                                    | How it ends      | What it says                                               |
+| ------------------------------------------------ | ---------------- | ---------------------------------------------------------- |
+| an edit without the rule loaded                  | the call refused | the name of the rule, the law under it and how to load it  |
+| a layer has nothing to read the text of the edit | a pass           | nothing: the side duty of the gate stays silent            |
+| a path outside the tree                          | a pass           | nothing: the rules of the tree judge the files of the tree |
 
-## Данные
+## Data
 
-Своего хранилища нет: загруженное за сессию читается из записи хода, карта — из файла дерева.
+There is no storage of its own: what was loaded during the session is read from the record of the
+turn, the map from a file of the tree.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: экранов нет.
+Not applicable: there are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: тексты отказов одноязычны.
+Not applicable: the refusal texts are single-language.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Гейт один на все деревья, а карта путей приходит от дерева. Дерево, не разложившее карты,
-гейта не получает: своих путей у пакета нет.
+The gate is one for all the trees, and the map of the paths comes from the tree. A tree that laid out
+no map gets no gate: the package has no paths of its own.
 
-## Решения
+## Decisions
 
-- **Ветка правила и паттерна в карте гейта стоит раньше ветки любого документа.** Иначе они
-  уходят под правило формулировок, а оно про слова, не про устройство.
-- **Слои вынесены в файл, который зовётся из гейта, а не в отдельный гард.** Отдельный гард
-  повторял бы разбор входа и расходился бы с гейтом молча.
-- **Признак вызова живёт в карте, а не в гейте.** Гейт отдаёт карте текст команды целиком, и
-  разбор границ вызова принадлежит тому, кто судит по этому тексту. Отвергнуто: отдельный
-  разбор команды в оболочке гейта — он расходился бы с картой дерева молча.
-- **Пишущий кусок команды отбирается тем же признаком, что и запись целиком.** Разойдясь, две
-  проверки начали бы считать записью разное, а заметить это нечем. Отвергнуто: свой признак для
-  куска.
+- **The branch of the rule and the pattern in the gate map stands before the branch of any
+  document.** Otherwise they go under the rule of the wording, and that one is about words, not about
+  how a thing is built.
+- **The layers are moved into a file called from the gate, not into a separate guard.** A separate
+  guard would repeat the parse of the input and would diverge from the gate silently.
+- **The sign of a call lives in the map, not in the gate.** The gate gives the map the text of the
+  command whole, and the parse of the boundaries of a call belongs to whoever judges by that text.
+  Rejected: a parse of the command of its own in the shell of the gate — it would diverge from the map
+  of the tree silently.
+- **The writing piece of the command is picked by the same sign as the whole write.** Having
+  diverged, the two checks would start counting different things as a write, and there is nothing to
+  notice this by. Rejected: a sign of its own for the piece.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом.
+The open questions of the domain are shared, and they live in the spec next to it.
 
-## История изменений
+## History of changes
 
-- 2026-08-23 — поддомен выделен из поддомена гардов правки, переросшего предел длины. Правила,
-  сценарии и привязки гейта переехали сюда прежними: номера сценариев не пересчитывались.
+- 2026-08-23 — the subdomain was split out of the subdomain of the edit guards, which had outgrown
+  the length limit. The rules, scenarios and bindings of the gate moved here as they were: the
+  scenario numbers were not recounted.

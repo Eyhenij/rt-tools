@@ -1,12 +1,12 @@
-# Чем исполняется — подложка панели и слои оформления
+# What it is carried out by — the backing of a panel and the layers of the design
 
-Первая колонка — правило спека рядом дословно. Вторая — где оно исполняется в дереве; там же
-назван сценарий, которым это проверяется, а чем именно покрыт каждый сценарий, сказано в
-`scenarios.md`.
+The first column is the rule of the spec next to it verbatim. The second is where it is carried out
+in the tree; the scenario it is checked by is named there too, and what exactly every scenario is
+covered by is said in `scenarios.md`.
 
-Правило без строки и строка без правила — расхождение: спек обещает то, чего в дереве нет, либо
-в дереве стоит то, о чём спек молчит.
+A rule without a line and a line without a rule is a divergence: the spec promises what is not in the
+tree, or the tree holds what the spec is silent about.
 
-- **Правило видимости подложки объявляется вне слоя.** — `projects/ui-kit-v2/src/lib/components/aside/_rt-aside-overlay.scss:rt-aside-backdrop--visible` — прозрачность и нажатия подложки стоят за закрывающей скобкой слоя; сценарий `SC-UKV-84`
-- **Правило видимости закрытой панели объявляется там же и по той же причине.** — `projects/ui-kit-v2/src/lib/components/aside/_rt-aside-overlay.scss:rt-aside-overlay--open` — правило нажатий закрытой панели стоит за той же скобкой; сценарий `SC-UKV-85`
-- **Правила оформления остаются в слое.** — `projects/ui-kit-v2/src/lib/components/aside/_rt-aside-overlay.scss:rt-aside-backdrop-bg` — цвет, размытие и переход объявлены внутри `@layer rt-kit.components`; сценарий `SC-UKV-86`
+- **The rule of the visibility of the backing is declared outside the layer.** — `projects/ui-kit-v2/src/lib/components/aside/_rt-aside-overlay.scss:rt-aside-backdrop--visible` — the transparency and the presses of the backing stand behind the closing bracket of the layer; scenario `SC-UKV-84`
+- **The rule of the visibility of a closed panel is declared there too and for the same reason.** — `projects/ui-kit-v2/src/lib/components/aside/_rt-aside-overlay.scss:rt-aside-overlay--open` — the rule of the presses of a closed panel stands behind the same bracket; scenario `SC-UKV-85`
+- **The rules of the design stay in the layer.** — `projects/ui-kit-v2/src/lib/components/aside/_rt-aside-overlay.scss:rt-aside-backdrop-bg` — the colour, the blur and the transition are declared inside `@layer rt-kit.components`; scenario `SC-UKV-86`

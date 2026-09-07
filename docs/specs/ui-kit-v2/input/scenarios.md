@@ -1,22 +1,23 @@
-# Сценарии — поле ввода
+# Scenarios — the field of input
 
-Префикс `SC-UKV`, общий на домен вместе с поддоменами. Номера при вливании не менялись: на них
-ссылаются заголовки тестов.
+The prefix `SC-UKV` is shared across the domain together with the subdomains. The numbers were not
+changed at the merge: the titles of the tests refer to them.
 
-Чем покрыт сценарий, сказано под ним. Где прогон сценарий не покрывает, это сказано прямо.
+What a scenario is covered by is said under it. Where the run does not cover a scenario, that is said
+openly.
 
-### SC-UKV-55 — тип адреса уезжает на нативное поле
+### SC-UKV-55 — the type of address goes away onto the native field
 
-Дано полю назван тип адреса
-Когда поле нарисовано
-Тогда нативное поле объявлено браузеру тем же типом
+Given the type of address is named to the field
+When the field is drawn
+Then the native field is declared to the browser by the same type
 
-Покрыто: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`.
 
-### SC-UKV-56 — прежние типы работают как раньше
+### SC-UKV-56 — the former types work as before
 
-Дано полю по очереди названы текст, пароль, почта и время
-Когда поле нарисовано
-Тогда нативное поле объявлено тем же типом, что назвали
+Given text, password, mail and time are named to the field in turn
+When the field is drawn
+Then the native field is declared by the same type that was named
 
-Покрыто: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`.
