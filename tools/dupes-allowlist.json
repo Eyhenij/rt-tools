@@ -1,67 +1,67 @@
 {
   "accepted": {
     "export Default @ projects/ui-kit, projects/ui-kit-v2": {
-      "reason": "заголовок истории витрины: витрины у китов свои, и имена историй совпадают по договорённости показа",
+      "reason": "a showcase story heading: the kits have showcases of their own, and the story names match by the agreement of showing",
       "task": "RT-764"
     },
     "export Header @ projects/ui-kit, projects/ui-kit-v2": {
-      "reason": "заголовок истории витрины: витрины у китов свои, и имена историй совпадают по договорённости показа",
+      "reason": "a showcase story heading: the kits have showcases of their own, and the story names match by the agreement of showing",
       "task": "RT-764"
     },
     "export IMessageBusEvent @ projects/core, projects/ui-kit-v2": {
-      "reason": "второй кит везёт свою шину событий, чтобы не зависеть от ядра",
+      "reason": "the second kit carries an event bus of its own so as not to depend on the core",
       "task": "RT-764"
     },
     "export MessageBus @ projects/core, projects/ui-kit-v2": {
-      "reason": "второй кит везёт свою шину событий, чтобы не зависеть от ядра",
+      "reason": "the second kit carries an event bus of its own so as not to depend on the core",
       "task": "RT-764"
     },
     "export Playground @ projects/ui-kit, projects/ui-kit-v2": {
-      "reason": "заголовок истории витрины: витрины у китов свои, и имена историй совпадают по договорённости показа",
+      "reason": "a showcase story heading: the kits have showcases of their own, and the story names match by the agreement of showing",
       "task": "RT-764"
     },
     "export RtAsideService @ projects/ui-kit, projects/ui-kit-v2": {
-      "reason": "два кита стоят в одном приложении рядом и кода не делят: свои селекторы, свой набор токенов оформления, свой список компонентов",
+      "reason": "two kits stand side by side in one application and share no code: their own selectors, their own styling token set, their own component list",
       "task": "RT-764"
     },
     "export RtPopoverDirective @ projects/ui-kit, projects/ui-kit-v2": {
-      "reason": "два кита стоят в одном приложении рядом и кода не делят: свои селекторы, свой набор токенов оформления, свой список компонентов",
+      "reason": "two kits stand side by side in one application and share no code: their own selectors, their own styling token set, their own component list",
       "task": "RT-764"
     },
     "export SIGN_IN_PATH @ apps/message-bus-admin-e2e, libs/message-bus-admin/auth/shell": {
-      "reason": "сквозной набор объявляет адрес входа и поиск узла своими значениями намеренно: вывезенные из проверяемой либы, они зеленели бы при любом значении",
+      "reason": "the end-to-end suite declares the entry address and the node search by values of its own deliberately: taken out of the lib under check, they would be green at any value",
       "task": "RT-764"
     },
     "export pathOf @ projects/agent-kit, projects/ui-kit-v2": {
-      "reason": "одно имя над разными понятиями: путь ресурса у пакета правил и путь адреса у кита",
+      "reason": "one name over different notions: a resource path at the rules package and an address path at the kit",
       "task": "RT-764"
     },
     "export qa @ apps/message-bus-admin-e2e, projects/ui-kit-v2": {
-      "reason": "сквозной набор объявляет адрес входа и поиск узла своими значениями намеренно: вывезенные из проверяемой либы, они зеленели бы при любом значении",
+      "reason": "the end-to-end suite declares the entry address and the node search by values of its own deliberately: taken out of the lib under check, they would be green at any value",
       "task": "RT-764"
     },
     "setting FAILURE_THRESHOLD @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts": {
-      "reason": "обвязки витрин у китов свои: правка ради одного кита сдвинула бы момент съёмки у другого и уронила его эталоны",
+      "reason": "the kits have showcase harnesses of their own: an edit for the sake of one kit would shift the moment of the shot at the other and drop its reference images",
       "task": "RT-764"
     },
     "setting LAYOUT_TIMEOUT_MS @ projects/ui-kit-v2/.storybook/snapshot-wait.ts, projects/ui-kit/.storybook/test-runner.ts": {
-      "reason": "обвязки витрин у китов свои: правка ради одного кита сдвинула бы момент съёмки у другого и уронила его эталоны",
+      "reason": "the kits have showcase harnesses of their own: an edit for the sake of one kit would shift the moment of the shot at the other and drop its reference images",
       "task": "RT-857"
     },
     "setting SETTLE_MS @ projects/ui-kit-v2/.storybook/snapshot-wait.ts, projects/ui-kit/.storybook/test-runner.ts": {
-      "reason": "обвязки витрин у китов свои: правка ради одного кита сдвинула бы момент съёмки у другого и уронила его эталоны",
+      "reason": "the kits have showcase harnesses of their own: an edit for the sake of one kit would shift the moment of the shot at the other and drop its reference images",
       "task": "RT-764"
     },
     "setting STILL_FRAMES @ projects/ui-kit-v2/.storybook/snapshot-wait.ts, projects/ui-kit/.storybook/test-runner.ts": {
-      "reason": "обвязки витрин у китов свои: правка ради одного кита сдвинула бы момент съёмки у другого и уронила его эталоны",
+      "reason": "the kits have showcase harnesses of their own: an edit for the sake of one kit would shift the moment of the shot at the other and drop its reference images",
       "task": "RT-857"
     },
     "table STORY_SNAPSHOT_VIEWPORT @ projects/ui-kit-v2 ~ VIEWPORT @ projects/ui-kit/.storybook/test-runner.ts": {
-      "reason": "обвязки витрин у китов свои: правка ради одного кита сдвинула бы момент съёмки у другого и уронила его эталоны",
+      "reason": "the kits have showcase harnesses of their own: an edit for the sake of one kit would shift the moment of the shot at the other and drop its reference images",
       "task": "RT-764"
     },
     "value admin-panel @ BEM_BLOCK @ libs/message-bus-admin/postmortems/ui ~ BEM_BLOCK @ libs/message-bus-admin/proposals/ui ~ BEM_BLOCK @ libs/message-bus-admin/summaries/ui": {
-      "reason": "линтер дерева требует локальную константу имени блока в каждом компоненте и общее объявление отбивает",
+      "reason": "the tree's linter demands a local constant of the block name in every component and refuses a shared declaration",
       "task": "RT-841"
     }
   },

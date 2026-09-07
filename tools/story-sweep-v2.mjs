@@ -1,51 +1,51 @@
 #!/usr/bin/env node
 /**
- * Обход всех историй витрины второго кита: есть ли в кадре хоть что-нибудь.
+ * A sweep over all the second kit's showcase stories: is there anything at all in the frame.
  *
- * Зелёные спеки, зелёная съёмка эталонов и зелёная сверка таблиц входов вместе на этот вопрос
- * не отвечают. Сравнение с эталоном не различает пустой показ вовсе: у новой истории эталона
- * ещё нет, а первым снятым эталоном закрепляется то, что нарисовалось, — в том числе ничего.
- * Поэтому обход идёт ДО съёмки эталонов, а не после.
+ * Green specs, a green taking of references and a green audit of the input tables together do not
+ * answer that question. A comparison with a reference does not tell an empty showing at all: a new
+ * story has no reference yet, and the first taken reference pins down what got drawn — emptiness
+ * included. So the sweep goes BEFORE the references are taken, not after.
  *
- * Пустым показ бывает по двум причинам, и снаружи они неотличимы:
+ * A showing is empty for two reasons, and from outside they are indistinguishable:
  *
- * 1. **Ошибка отрисовки.** `NG0201` — провайдера нет в инжекторе витрины, `NG0950` — хозяин
- *    компонента не задал обязательный вход. Разметка при этом либо пуста, либо оборвана.
- * 2. **Показывать нечего.** Матрица собрана, а данные ей не заведены: пустой список, пустой
- *    набор колонок, нулевой набор значений оси.
+ * 1. **A drawing error.** `NG0201` — a provider is not in the showcase's injector, `NG0950` — the
+ *    component's owner did not set a mandatory input. The markup is then either empty or cut off.
+ * 2. **There is nothing to show.** The matrix is assembled, and no data is put into it: an empty
+ *    list, an empty set of columns, a zero set of axis values.
  *
- * Ошибка в консоли важнее площади: площадь бывает ненулевой и у обломка.
+ * An error in the console matters more than the area: a wreck's area happens to be non-zero too.
  *
- * Обход не заменяет глаза. Он говорит, где смотреть нечего; что показанное показано верно,
- * отвечает только осмотр кадров.
+ * The sweep does not replace the eyes. It says where there is nothing to look at; that what is shown
+ * is shown rightly is answered only by looking at the frames.
  *
- *   pnpm run test:stories:v2                 # обход поднятой витрины
- *   STORYBOOK_URL=… pnpm run test:stories:v2 # витрина на другом адресе
+ *   pnpm run test:stories:v2                 # a sweep over the raised showcase
+ *   STORYBOOK_URL=… pnpm run test:stories:v2 # the showcase at another address
  */
 import { join } from 'node:path';
 
-/** Адрес уже поднятой витрины: обход свою не поднимает — как и прогон снимков рядом. */
+/** The address of an already raised showcase: the sweep raises none of its own — like the snapshot run next to it. */
 const URL = process.env.STORYBOOK_URL ?? 'http://localhost:6007';
 
-/** По этому пути в историях витрины опознаётся, что по адресу именно второй кит. */
+/** By this path in the showcase's stories it is recognised that the address holds the second kit. */
 const OWN_IMPORT_MARKER = 'projects/ui-kit-v2/';
 
 /**
- * Площадь корня показа, ниже которой кадр считается пустым.
+ * The showing root's area below which a frame counts as empty.
  *
- * Не ноль: обвязка показа рисует рамку и подпись ячейки даже там, где самой ячейке нечего
- * показать, и такой корень занимает десятки пикселей. Сотня квадратных пикселей — это полоска
- * 100×1, меньше которой не рисует ни один компонент кита.
+ * Not zero: the showing harness draws a frame and the cell's label even where the cell itself has
+ * nothing to show, and such a root takes dozens of pixels. A hundred square pixels is a strip of
+ * 100×1, below which not one kit component draws.
  */
 const MIN_AREA = 100;
 
 /**
- * Ошибки самой витрины, к показу отношения не имеющие.
+ * The showcase's own errors, having nothing to do with the showing.
  *
- * `NG04002` приходит в каждую историю без исключения: витрина отдаёт истории по адресу
- * `/iframe.html`, а маршрутизатор ей объявлен пустым набором маршрутов — сопоставлять этот
- * адрес не с чем. Маршрутизатор витрине нужен: без него не поднимается ни один компонент кита
- * со ссылкой. Не отсеяв это, обход отчитывается о всех историях разом и не говорит ничего.
+ * `NG04002` arrives in every story without exception: the showcase gives the stories at the address
+ * `/iframe.html`, and its router is declared with an empty set of routes — there is nothing to match
+ * that address against. The showcase needs the router: without it not one kit component with a link
+ * comes up. Without sifting this out, the sweep reports about all the stories at once and says nothing.
  */
 const KNOWN_SHOWCASE_NOISE = [/NG04002: Cannot match any routes\. URL Segment: 'iframe\.html'/];
 
@@ -55,10 +55,10 @@ function fail(message) {
 }
 
 /**
- * Драйвер браузера приезжает зависимостью прогонщика снимков, а не манифестом дерева.
+ * The browser driver arrives as a dependency of the snapshot runner rather than by the tree's manifest.
  *
- * Строгая раскладка pnpm не кладёт его в корневой `node_modules`, поэтому импорт по имени
- * здесь не находит ничего. Второй путь — общий каталог связей pnpm, куда сложено транзитивное.
+ * pnpm's strict layout does not put it into the root `node_modules`, so an import by name finds
+ * nothing here. The second road is pnpm's shared links directory, where the transitive is put.
  */
 async function loadChromium() {
     const candidates = ['playwright', join(process.cwd(), 'node_modules/.pnpm/node_modules/playwright/index.mjs')];
@@ -67,19 +67,19 @@ async function loadChromium() {
         try {
             return (await import(candidate)).chromium;
         } catch {
-            // Следующий путь.
+            // The next path.
         }
     }
 
-    return fail('Драйвер браузера не найден ни по имени, ни в каталоге связей pnpm. Поставь зависимости: pnpm install');
+    return fail('The browser driver is found neither by name nor in the pnpm links directory. Install the dependencies: pnpm install');
 }
 
 /**
- * Опознаёт витрину по её указателю историй.
+ * It recognises the showcase by its story index.
  *
- * Признак — путь исходника: у второго кита каждая история лежит под `projects/ui-kit-v2/`.
- * Заголовки для этого не годятся — `Components/Button` есть у обоих китов, и обход, наведённый
- * на чужую витрину, отчитался бы о чужих историях как о своих.
+ * The sign is the source path: at the second kit every story lies under `projects/ui-kit-v2/`.
+ * Titles are no good for this — `Components/Button` exists at both kits, and a sweep pointed at a
+ * foreign showcase would report about foreign stories as about its own.
  */
 async function ownStories() {
     let index;
@@ -87,38 +87,40 @@ async function ownStories() {
     try {
         const response = await fetch(`${URL}/index.json`);
         if (!response.ok) {
-            fail(`По адресу ${URL} витрина не отдала указатель историй (${response.status}). Подними её: pnpm run storybook:ui-kit-v2`);
+            fail(`At the address ${URL} the showcase gave no story index (${response.status}). Raise it: pnpm run storybook:ui-kit-v2`);
         }
         index = await response.json();
     } catch (error) {
-        fail(`По адресу ${URL} никто не отвечает (${error.message}). Подними витрину: pnpm run storybook:ui-kit-v2`);
+        fail(`At the address ${URL} nobody answers (${error.message}). Raise the showcase: pnpm run storybook:ui-kit-v2`);
     }
 
     const entries = Object.values(index.entries ?? {}).filter((entry) => entry.type === 'story');
     if (entries.length === 0) {
-        fail(`По адресу ${URL} витрина без единой истории — обходить нечего.`);
+        fail(`At the address ${URL} the showcase has not one story — there is nothing to sweep.`);
     }
 
     const own = entries.filter((entry) => (entry.importPath ?? '').includes(OWN_IMPORT_MARKER));
     if (own.length === 0) {
         const sample = entries[0]?.importPath ?? '—';
-        fail(`По адресу ${URL} отвечает не витрина второго кита: истории приходят из «${sample}», а ожидались из «${OWN_IMPORT_MARKER}».`);
+        fail(
+            `At the address ${URL} it is not the second kit's showcase that answers: the stories come from «${sample}», and were expected from «${OWN_IMPORT_MARKER}».`
+        );
     }
 
     return own;
 }
 
 /**
- * Площадь того, что история нарисовала.
+ * The area of what the story drew.
  *
- * Корень показа — хост обвязки, он же область кадра снимка. Истории, рисующей себя мимо
- * обвязки, замеряется корень самой витрины: такая история и кадром берётся целиком.
+ * The showing root is the harness's host, and it is also the snapshot's frame area. For a story
+ * drawing itself past the harness, the showcase's own root is measured: such a story is shot whole too.
  *
- * Нулевая высота корня ещё не значит пустого показа. Тост, нижний лист и всё, что компонент
- * прибивает к окну сам, стоят вне потока — корень над таким содержимым схлопывается в полоску
- * высотой ноль. Панель CDK Overlay и вовсе рисуется в контейнере на `body`. Поэтому при пустом
- * корне мерится самый крупный нарисованный узел внутри показа и внутри контейнера перекрытий:
- * пустому показу мерить нечего вовсе — там нет ни одного узла с площадью.
+ * A zero root height does not yet mean an empty showing. A toast, a bottom sheet and everything a
+ * component nails to the window itself stand outside the flow — the root above such content
+ * collapses into a strip of zero height. A CDK Overlay panel is drawn in a container on `body`
+ * altogether. So at an empty root the largest drawn node inside the showing and inside the overlay
+ * container is measured: an empty showing has nothing to measure at all — there is not one node with an area.
  */
 const measureShownArea = () => {
     const area = (node) => {
@@ -147,14 +149,14 @@ const measureShownArea = () => {
 const chromium = await loadChromium();
 const stories = await ownStories();
 
-console.log(`Витрина второго кита на ${URL}: историй ${stories.length}. Обход начат.`);
+console.log(`The second kit's showcase on ${URL}: stories ${stories.length}. The sweep is begun.`);
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 
 const errors = [];
-// Слушатели вешаются один раз на страницу, а коробка чистится перед каждой историей: подписка
-// на каждую историю копит слушателей, и к концу обхода одна ошибка приходит сотней строк.
+// The listeners are hung on the page once, and the box is cleared before every story: a subscription
+// per story piles up listeners, and by the end of the sweep one error arrives as a hundred lines.
 const remember = (text) => {
     if (!KNOWN_SHOWCASE_NOISE.some((pattern) => pattern.test(text))) {
         errors.push(text);
@@ -170,8 +172,8 @@ for (const story of stories) {
     errors.length = 0;
 
     await page.goto(`${URL}/iframe.html?id=${story.id}&viewMode=story`, { waitUntil: 'networkidle' });
-    // Ошибка приходит в консоль позже готовности страницы: без этой паузы `NG0950` достаётся
-    // не той истории, на которой случился, а следующей.
+    // The error arrives in the console later than the page's readiness: without this pause `NG0950`
+    // goes not to the story it happened on but to the next one.
     await page.waitForTimeout(150);
 
     const area = await page.evaluate(measureShownArea);
@@ -184,13 +186,13 @@ for (const story of stories) {
 await browser.close();
 
 if (broken.length === 0) {
-    console.log(`Пустых показов и ошибок отрисовки нет: ${stories.length} историй.`);
+    console.log(`There are no empty showings and no drawing errors: ${stories.length} stories.`);
     process.exit(0);
 }
 
-const lines = broken.map(({ id, area, error }) => `${id} — площадь ${area}${error === undefined ? '' : `, ${error.split('\n')[0]}`}`);
+const lines = broken.map(({ id, area, error }) => `${id} — area ${area}${error === undefined ? '' : `, ${error.split('\n')[0]}`}`);
 
 fail(
-    `Историй с пустым показом или ошибкой отрисовки: ${broken.length} из ${stories.length}.\n    ${lines.join('\n    ')}\n\n` +
-        `  Пока это не разобрано, эталоны снимать нельзя: съёмка закрепит пустоту, и прогон станет вечно зелёным.`
+    `Stories with an empty showing or a drawing error: ${broken.length} of ${stories.length}.\n    ${lines.join('\n    ')}\n\n` +
+        `  While this is not sorted out, the references must not be taken: the shot pins the emptiness down, and the run becomes eternally green.`
 );

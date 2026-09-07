@@ -2,115 +2,120 @@
 name: permissions
 kind: rule
 law: access
-description: Правило под «Закон о доступе». Брать при заведении или правке процедуры Connect, перехватчика входа, гварда маршрута админки и декларации меню. Называет четыре вида доступа, декораторы, сложение пресета с оверрайдами и гейтинг разделов админки. Готовый код — в паттерне permissions-procedure.
+description: A rule under the "Law on access". Take it when creating or editing a Connect procedure, a sign-in interceptor, an admin panel route guard and the menu declaration. It names the four kinds of access, the decorators and the gating of sections. Ready-made code — the pattern permissions-procedure.
 ---
 
-# Доступ — как это устроено здесь
+# Access — how it is arranged here
 
-Правило под закон `docs/constitution/application/access.md`. Закон говорит, что должно быть верно;
-здесь — чем это названо в этом дереве и где лежит. Устройство самих разделов админки —
-`navigation`.
+A rule under the law `docs/constitution/application/access.md`. The law says what must be true;
+here — what it is called in this tree and where it lies. How the admin panel sections themselves
+are arranged is `navigation`.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе           | Здесь                                                                                                                                                                   |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| право              | пара «ресурс и действие» строкой: `bookings:manage`, `chat:manage`                                                                                                      |
-| объявление доступа | декоратор на классе процедуры: `@RequiresPermission('bookings:manage')`, `@RequiresAuth('причина')`, `@PublicProcedure('причина')`, `@OptionalAuthProcedure('причина')` |
-| пресет             | именованный набор прав, выдаваемый пользователю целиком                                                                                                                 |
-| оверрайд           | точечная правка права поверх пресета для одного пользователя                                                                                                            |
-| отбивка без входа  | `Code.Unauthenticated`                                                                                                                                                  |
-| отбивка без права  | `Code.PermissionDenied`                                                                                                                                                 |
+| In the law            | Here                                                                                                                                                              |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| a right               | the pair "resource and action" as a string: `bookings:manage`, `chat:manage`                                                                                      |
+| an access declaration | a decorator on the procedure class: `@RequiresPermission('bookings:manage')`, `@RequiresAuth('reason')`, `@PublicProcedure('reason')`, `@OptionalAuthProcedure('reason')` |
+| a preset              | a named set of rights given to a user whole                                                                                                                       |
+| an override           | a pointed edit of one right over the preset for one user                                                                                                          |
+| the refusal without sign-in | `Code.Unauthenticated`                                                                                                                                      |
+| the refusal without a right  | `Code.PermissionDenied`                                                                                                                                    |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the first
+tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход проверки доступа: чем закрыта процедура, откуда берутся права вошедшего и чем отличается
-отсутствие входа от отсутствия права.
+The flow of an access check: what a procedure is closed by, where the signed-in person's rights
+come from and how the absence of a sign-in differs from the absence of a right.
 
 ```mermaid
 flowchart TD
-    A[Вызов процедуры] --> B{Каким видом доступа она объявлена}
-    B -->|Публично| C{Она заводит запись}
-    C -->|Да| D[Работает ещё и ограничитель частоты]
-    C -->|Нет| E[Работа идёт]
-    B -->|Любому вошедшему| F{Вход есть}
-    B -->|По праву| F
-    F -->|Нет| G[Отбивается как неаутентифицированный]
-    F -->|Да| H{Учётная запись ещё существует}
-    H -->|Нет| G
-    H -->|Да| I[Права читаются при каждом вызове: пресет плюс личные правки поверх]
-    I --> J{Право дано}
-    J -->|Да| E
-    J -->|Нет, либо роль о нём молчит| K[Отбивается как отказ в доступе: молчание — не разрешение]
+    A[A procedure is called] --> B{Which kind of access it declares}
+    B -->|Public| C{It creates a record}
+    C -->|Yes| D[A rate limiter works as well]
+    C -->|No| E[The work goes on]
+    B -->|Any signed-in person| F{There is a sign-in}
+    B -->|By a right| F
+    F -->|No| G[Refused as unauthenticated]
+    F -->|Yes| H{The account still exists}
+    H -->|No| G
+    H -->|Yes| I[The rights are read on every call: the preset plus the personal edits over it]
+    I --> J{The right is given}
+    J -->|Yes| E
+    J -->|No, or the role is silent about it| K[Refused as permission denied: silence is not permission]
     D --> E
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Каждая процедура объявляет свой доступ декоратором, и объявление ровно одно.**
-  Процедура без объявления или с двумя объявлениями не даёт приложению подняться.
-- **Видов доступа четыре: по праву, любому вошедшему, публично и публично с чтением входа.**
-  Последний отдаёт вошедшему больше, чем гостю, — так владелец видит скрытые объекты в общем
-  списке.
-- **Права пользователя — это права пресета, поверх которых применены его оверрайды.**
-- **У человека одна роль во владении, и держит это хранилище.** Две принадлежности в одном
-  владении пришлось бы складывать, а результат сложения запретов и разрешений по двум строкам
-  не прочитать. Права разных владений не складываются вовсе: они записаны у принадлежности, а
-  не у учётной записи.
-- **Право, о котором роль ничего не говорит, считается неданным.** Значение, которое не булево,
-  отбрасывается при сложении: отсутствующее право и прямо отобранное означают одно и то же, и
-  «непусто» правом не считается.
-- **Права вошедшего читаются при каждом вызове, а не берутся из выданного входа.** Выданный
-  вход говорит только о том, кто пришёл: подписанное однажды живёт часами и правку прав не
-  переживает, поэтому отобранное право открывало бы раздел до конца дня.
-- **Учётная запись, которой больше нет, вызовов, требующих входа, не открывает.** Тем же
-  чтением отбивается и человек, потерявший принадлежность в своём владении: работать ему не в
-  чем.
-- **Счётчик и рекламные сигналы включает ответ гостя, а не наличие ключа в настройках.**
-  Решений два, и хранятся они парой: «разрешил счёт посещений, но не рекламу» — законное
-  состояние, а третьим значением перечисления его пришлось бы заводить заново на каждое новое
-  разрешение. Всё, что не пара булевых значений, читается как неотвеченный вопрос, то есть как
-  отказ: хранилище принимает что угодно, а решать по испорченной записи нельзя. Своя
-  статистика к согласию не привязана — она не уходит наружу.
-- **Публичная процедура, заводящая запись, закрыта ещё и ограничителем частоты.** Право её не
-  сторожит, и без предела скорость роста таблицы задаёт отправитель, а не владелец. Считается
-  по ключу клиента, и ключ у всех таких процедур общий: второй ответ на вопрос «кто это»
-  разошёлся бы с первым. Публичная процедура, которая только читает, ограничителя не требует.
-- **Запрос без входа отбивается как неаутентифицированный, а вход без права — как отказ в
-  доступе.** Это разные ответы: первый лечится входом, второй — нет.
-- **Право проверяется перехватчиком до тела процедуры.** Обработчик не решает, пускать ли
-  вызывающего.
-- **Публичность объявляется с причиной.** Причина — аргумент декоратора, записанный для
-  читателя кода; ни в ответ, ни в лог она не уходит.
-- **Пункт меню и адрес раздела закрыты по одной декларации.** Иначе скрытый пункт закрывает
-  раздел лишь на вид: адрес открывается по прямой ссылке.
-- **Пока права не получены, админка ничего не прячет.** Пустая шапка после сетевого сбоя
-  выглядит как сломанная админка и не оставляет выхода.
+- **Every procedure declares its access by a decorator, and there is exactly one declaration.**
+  A procedure without a declaration or with two does not let the application come up.
+- **There are four kinds of access: by a right, to any signed-in person, public and public with a
+  read of the sign-in.** The last gives a signed-in person more than a guest — that is how an
+  owner sees hidden objects in a shared list.
+- **A user's rights are the preset's rights with their overrides applied over them.**
+- **A person has one role per ownership, and the storage holds that.** Two memberships in one
+  ownership would have to be added up, and the result of adding bans and permissions over two rows
+  cannot be read. The rights of different ownerships are not added at all: they are written down
+  on the membership, not on the account.
+- **A right the role says nothing about counts as not given.** A value that is not boolean is
+  discarded in the addition: an absent right and one outright taken away mean the same, and
+  "not empty" does not count as a right.
+- **A signed-in person's rights are read on every call rather than taken from the issued
+  sign-in.** An issued sign-in says only who came: once signed, it lives for hours and does not
+  survive an edit of the rights, so a right taken away would keep a section open until the end of
+  the day.
+- **An account that no longer exists opens no calls that require a sign-in.** By that same read a
+  person who lost their membership in their ownership is refused too: they have nothing to work
+  in.
+- **The counter and the advertising signals are switched on by the guest's answer, not by the
+  presence of a key in the settings.** There are two decisions, and they are stored as a pair:
+  "allowed the visit count but not the advertising" is a lawful state, and as a third value of an
+  enum it would have to be started anew for every new permission. Everything that is not a pair of
+  boolean values is read as an unanswered question, that is, as a refusal: the storage accepts
+  anything, and a decision may not be made on a corrupted record. One's own statistics is not tied
+  to consent — it goes nowhere outward.
+- **A public procedure that creates a record is closed by a rate limiter as well.** No right
+  watches it, and without a limit the growth rate of the table is set by the sender, not by the
+  owner. It is counted by the client key, and the key is shared by all such procedures: a second
+  answer to the question "who is this" would diverge from the first. A public procedure that only
+  reads requires no limiter.
+- **A request without a sign-in is refused as unauthenticated, and a sign-in without a right as
+  permission denied.** These are different answers: the first is cured by signing in, the second
+  is not.
+- **The right is checked by an interceptor before the procedure body.** The handler does not
+  decide whether to let the caller in.
+- **Being public is declared with a reason.** The reason is an argument of the decorator, written
+  for the reader of the code; it goes neither into the answer nor into the log.
+- **A menu item and a section address are closed by one declaration.** Otherwise a hidden item
+  closes the section only in appearance: the address opens by a direct link.
+- **Until the rights are received the admin panel hides nothing.** An empty header after a network
+  failure looks like a broken admin panel and leaves no way out.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Право, отобранное посреди сессии, до перевхода не действует: токен живёт со своими правами до
-истечения — это `Q-A-1` в законе. Смены пароля из интерфейса нет вовсе: ни экрана, ни
-процедуры, ни восстановления забытого — `Q-A-2`.
+A right taken away mid-session does not act until a re-sign-in: the token lives with its rights
+until it expires — that is `Q-A-1` in the law. There is no password change from the interface at
+all: no screen, no procedure, no recovery of a forgotten one — `Q-A-2`.
 
-## Паттерны
+## Patterns
 
-- `permissions-procedure` — объявление доступа у процедуры и гейтинг раздела админки.
+- `permissions-procedure` — declaring access on a procedure and gating an admin panel section.
 
-## Ловушки
+## Pitfalls
 
-- **Процедура, о которой перехватчик ничего не знает, отбивается как отказ в доступе, а не
-  пропускается.**
-- **Гвард стоит на дочерних маршрутах защищённой группы, а не на самой группе:** гвард группы
-  отрабатывает один раз за загрузку страницы и переходов между разделами не видит.
-- **Права приходят ответом профиля уже внутри защищённой группы**, поэтому гвард дожидается
-  запуска админки. Отказ запроса ожидание не роняет: с неизвестными правами не закрывается
-  ничего.
-- Декораторы живут в `util` домена аутентификации, а не рядом с перехватчиком: их ставит
-  каждый домен с процедурами, и ребро к объявлениям дешевле ребра к секрету и базе.
+- **A procedure the interceptor knows nothing about is refused as permission denied rather than
+  let through.**
+- **The guard stands on the child routes of the protected group, not on the group itself:** a
+  group's guard runs once per page load and does not see moves between sections.
+- **The rights arrive in the profile's answer already inside the protected group**, so the guard
+  waits for the admin panel to start. A refused request does not take the wait down: with unknown
+  rights nothing is closed.
+- The decorators live in the `util` of the authentication domain rather than next to the
+  interceptor: every domain with procedures sets them, and an edge to the declarations is cheaper
+  than an edge to the secret and the database.

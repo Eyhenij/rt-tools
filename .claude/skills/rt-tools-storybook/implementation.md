@@ -1,71 +1,72 @@
-# rt-tools-storybook — как это устроено здесь
+# rt-tools-storybook — how it is arranged here
 
-Имена этого дерева при правиле `SKILL.md` рядом. Правило своё, пакет такого не везёт: витрина —
-предмет этого репозитория, и другого дерева с двумя китами разом нет.
+The names of this tree, next to the rule `SKILL.md`. The rule is this tree's own, the package
+carries no such thing: the showcase is this repository's subject, and there is no other tree with
+two kits at once.
 
-Текст правила написан по-английски, потому что вырос из заметок по Storybook; разделы, дописанные
-позже, — по-русски. Привести его к одному языку стоит отдельным проходом, не правкой по ходу.
+## What it is called here
 
-## Как это называется здесь
+- **In the rule** — Here
+- **the showcase** — two independent ones: the first kit on `6006`, the second on `6007`
+- **a story wrapper** — `Test*Component` in the first kit, `TestRt*Component` in the second
+- **the showing harness** — `projects/ui-kit-v2/src/showcase/` — the grid, the row, the theme comparison, the states, the overlays
+- **the showing root** — the attribute `data-story-root` on the hosts of the grid, the row and the theme comparison
+- **a story's snapshot parameters** — the `snapshot` branch in `parameters`, declared in `src/showcase/story-snapshot.ts`
+- **the state-coverage contract** — the ADR `docs/adr/0002-ui-kit-v2-state-coverage.md`. The course of the six waves lies in the history as a record of the closed state-coverage line; the tree no longer holds it, and the line is closed
 
-- **В правиле** — Здесь
-- **витрина** — две независимые: первый кит на `6006`, второй на `6007`
-- **обёртка истории** — `Test*Component` у первого кита, `TestRt*Component` у второго
-- **обвязка показа** — `projects/ui-kit-v2/src/showcase/` — сетка, ряд, сравнение тем, состояния, перекрытия
-- **корень показа** — атрибут `data-story-root` на хостах сетки, ряда и сравнения тем
-- **параметры съёмки истории** — ветка `snapshot` в `parameters`, объявлена в `src/showcase/story-snapshot.ts`
-- **договор покрытия состояний** — ADR `docs/adr/0002-ui-kit-v2-state-coverage.md`; ход шести волн лежит в истории записью о закрытой линии покрытия состояний — из дерева она снята по сроку хранения, линия закрыта
+## Where it lives
 
-## Где это лежит
+- **The first showcase's config** — `projects/ui-kit/.storybook/`
+- **The second showcase's config** — `projects/ui-kit-v2/.storybook/`
+- **The stories** — `projects/<package>/src/**/stories/*.stories.ts`
+- **The component overview pages** — `projects/ui-kit-v2/src/**/Overview.mdx`
+- **The styling pages** — `projects/ui-kit-v2/docs/*.mdx`
+- **The showing harness** — `projects/ui-kit-v2/src/showcase/`
+- **Whole screens of the template level** — `projects/ui-kit-v2/src/showcase/templates/`
+- **The guard of the input tables** — `tools/verify-ui-kit-v2-docs.cjs`
 
-- **Настройка первой витрины** — `projects/ui-kit/.storybook/`
-- **Настройка второй витрины** — `projects/ui-kit-v2/.storybook/`
-- **Истории** — `projects/<пакет>/src/**/stories/*.stories.ts`
-- **Страницы-обзоры компонентов** — `projects/ui-kit-v2/src/**/Overview.mdx`
-- **Страницы оформления** — `projects/ui-kit-v2/docs/*.mdx`
-- **Обвязка показа** — `projects/ui-kit-v2/src/showcase/`
-- **Целые экраны уровня шаблонов** — `projects/ui-kit-v2/src/showcase/templates/`
-- **Страж таблиц входов** — `tools/verify-ui-kit-v2-docs.cjs`
+## Where the articles are carried out
 
-## Где исполняются статьи
+The first column is the article verbatim, as it is written in the rule's section "How the law
+applies here". An article without a line and a line without an article are a divergence.
 
-Первая колонка — статья дословно, как она написана в разделе «Как закон применяется здесь»
-правила. Статья без строки и строка без статьи — расхождение.
+- **Each kit has a showcase of its own, and they share nothing.** — `projects/ui-kit-v2/.storybook/main.ts:stories` — each showcase has its own set of paths. The second config lies with the first kit, and the ports and commands are kept apart in `package.json`.
+- **A story targets the wrapper, not the kit's component.** — **Not checked by anything.** A story targeting the kit's component directly builds and draws; it is caught by reading. The wrappers lie in `stories/component/` at every component.
+- **A component is covered when every input axis is shown at every value at once.** — `tools/verify-ui-kit-v2-docs.cjs:BASE_SECTION` — the overview page's input table is matched against the `input()` of that folder's components. The completeness of the axes is judged by reading.
+- **Axes are crossed only where they visibly affect one another.** — **Not checked by anything.** How axes affect one another is visible by eye, not to a machine. The decision and its price — `docs/adr/0002-ui-kit-v2-state-coverage.md`.
+- **An axis that cannot be shown is declared with a reason.** — **Not checked by anything.** A silent gap in an axis looks like coverage. It is declared by a section on the component's overview page.
+- **A story that draws an empty collection is not coverage.** — **Not checked by anything.** An empty frame is indistinguishable to a machine from a full one: a snapshot pins down what got drawn. Ten stories draw an empty collection today.
+- **The grid is drawn by the shared showing harness, not by the markup of every story.** — `projects/ui-kit-v2/src/showcase/story-snapshot.ts:STORY_SNAPSHOT_ROOT_ATTRIBUTE` — the frame is taken by the showing root. That root is drawn by the shared harness: the grid, the row and the theme comparison.
+- **A provider without which the component does not come up stands in `preview.ts`, not as one story's decorator.** — `projects/ui-kit-v2/.storybook/preview.ts:provideRtIDBStorage` — the only shared injector of the second showcase. Neither the linter nor the typecheck tells a story decorator with a provider apart.
+- **A template-level story shows a whole screen, and the coverage contract does not apply to it either.** — `projects/ui-kit-v2/src/showcase/templates/stories/component/test-bookings-template.component.ts:TestRtBookingsTemplateComponent` — the wrapper of a whole screen. Three stories of one file target it instead of `Playground`, `States` and `Themes`. The order of the showcase's sections is set by `projects/ui-kit-v2/.storybook/preview.ts`.
+- **The demonstration state one screen's stories differ by is declared by a story decorator, not in `preview.ts`.** — `projects/ui-kit-v2/src/showcase/templates/bookings/bookings.store.ts:BOOKINGS_FIXTURE` — the demonstration server's answer with a default. The stories `Empty` and `Failed` substitute their own by a decorator.
 
-- **Витрина у каждого кита своя, и общего между ними нет ничего.** — `projects/ui-kit-v2/.storybook/main.ts:stories` — свой набор путей у каждой витрины; вторая настройка лежит у первого кита, порты и команды разведены в `package.json`.
-- **История целит в обёртку, а не в компонент кита.** — **Не проверяется ничем.** История, целящая прямо в компонент кита, собирается и рисуется; ловится разбором. Обёртки лежат в `stories/component/` у каждого компонента.
-- **Компонент покрыт, когда каждая ось входов показана всеми значениями сразу.** — `tools/verify-ui-kit-v2-docs.cjs:BASE_SECTION` — таблица входов страницы-обзора сверяется с `input()` компонентов той же папки; полноту осей судит разбор.
-- **Оси перемножаются только там, где видно влияют друг на друга.** — **Не проверяется ничем.** Влияние осей друг на друга видно глазами, а не машине. Решение и его цена — `docs/adr/0002-ui-kit-v2-state-coverage.md`.
-- **Ось, которую показать нельзя, объявляется с причиной.** — **Не проверяется ничем.** Молчаливый пропуск оси выглядит как покрытие; объявляется он разделом на странице-обзоре компонента.
-- **История, рисующая пустой набор, покрытием не считается.** — **Не проверяется ничем.** Пустой кадр от полного машине не отличить: снимок закрепляет то, что нарисовалось. Десять историй сегодня рисуют пустой набор.
-- **Сетку рисует общая обвязка показа, а не разметка каждой истории.** — `projects/ui-kit-v2/src/showcase/story-snapshot.ts:STORY_SNAPSHOT_ROOT_ATTRIBUTE` — кадр берётся по корню показа, который рисует общая обвязка: сетка, ряд и сравнение тем.
-- **Провайдер, без которого компонент не поднимается, стоит в `preview.ts`, а не декоратором одной истории.** — `projects/ui-kit-v2/.storybook/preview.ts:provideRtIDBStorage` — единственный общий инжектор второй витрины; ни линтер, ни тайпчек декоратор истории с провайдером не отличают.
-- **История уровня шаблонов показывает целый экран, и договор о покрытии к ней не относится тоже.** — `projects/ui-kit-v2/src/showcase/templates/stories/component/test-bookings-template.component.ts:TestRtBookingsTemplateComponent` — обёртка целого экрана, в которую целят три истории одного файла вместо `Playground`, `States` и `Themes`; порядок разделов витрины задаёт `projects/ui-kit-v2/.storybook/preview.ts`.
-- **Демонстрационное состояние, которым истории одного экрана и различаются, объявляется декоратором истории, а не в `preview.ts`.** — `projects/ui-kit-v2/src/showcase/templates/bookings/bookings.store.ts:BOOKINGS_FIXTURE` — ответ демонстрационного сервера с умолчанием; истории `Empty` и `Failed` подставляют свой декоратором.
+## What of the law is not here
 
-## Чего из закона здесь нет
+The completeness of a matrix is checked by nothing: an axis forgotten in a matrix looks the same
+as an axis with one value. The guard matches the input table against the code, but not that every
+input is shown by a grid — that is written down as an open question in the coverage plan.
 
-Полноту матрицы не проверяет ничто: ось, забытая в матрице, выглядит так же, как ось с одним
-значением. Страж сверяет таблицу входов с кодом, но не то, что каждый вход показан сеткой — это
-записано открытым вопросом в плане покрытия.
+The language of the labels is not held by the rule: the kit's labels are given by a translator
+function, and the second showcase's Russian set lies in
+`projects/ui-kit-v2/.storybook/showcase-labels.ru.ts`. A key forgotten in the set draws an empty
+string and refuses by nothing.
 
-Язык подписей правилом не держится: подписи кита даёт функция-переводчик, и русский набор второй
-витрины лежит в `projects/ui-kit-v2/.storybook/showcase-labels.ru.ts`. Ключ, забытый в наборе,
-рисует пустую строку и не отказывает ничем.
+## What else is worth knowing when reading the code
 
-## Что ещё стоит знать при чтении кода
+- `.storybook` is excluded from ESLint whole, and `main.ts` carries `/* eslint-disable */`: an
+  error in the showcase config is caught only by its build.
+- `src/showcase/` is excluded from the library build next to `src/testing/`, but is linted as an
+  ordinary source.
+- The gate map leads `src/showcase/*` and the whole showcase config `.storybook/*.ts` to this
+  rule rather than to the application components rule: both the showing harness and the config are
+  the showcase's demonstration code. There is one exception — `test-runner.ts`: frame comparison is
+  led by `ui-component-tests`.
 
-- `.storybook` исключена из ESLint целиком, а `main.ts` несёт `/* eslint-disable */`: ошибку в
-  настройке витрины ловит только её сборка.
-- `src/showcase/` исключён из сборки библиотеки рядом с `src/testing/`, но линтуется как обычный
-  исходник.
-- Карта гейта ведёт на это правило `src/showcase/*` и всю настройку витрины `.storybook/*.ts`, а
-  не на правило компонентов приложения: и обвязка показа, и настройка — демонстрационный код
-  витрины. Исключение одно — `test-runner.ts`: сравнение кадров ведёт `ui-component-tests`.
+## What this is checked by
 
-## Чем это проверяется
-
-- `pnpm run build-storybook:ui-kit-v2` — витрина собирается, шаблоны историй проверены.
-- `pnpm exec nx verify @rt-tools/ui-kit-v2` — таблицы входов страниц-обзоров сходятся с кодом.
-- `pnpm exec nx run @rt-tools/ui-kit-v2:typecheck` — типы историй и обвязки показа.
-- Глазами по поднятой витрине: закон требует показа, а не только зелёной сборки.
+- `pnpm run build-storybook:ui-kit-v2` — the showcase builds, the story templates are checked.
+- `pnpm exec nx verify @rt-tools/ui-kit-v2` — the overview pages' input tables match the code.
+- `pnpm exec nx run @rt-tools/ui-kit-v2:typecheck` — the types of the stories and of the showing
+  harness.
+- By eye over the raised showcase: the law demands a showing, not only a green build.

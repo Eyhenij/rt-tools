@@ -3,7 +3,7 @@ import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 type TMessageIds = 'notAllowed';
 type TOptions = [];
 
-// Доступно в ESLint-конфигах как "@nx/workspace-no-subscribe-in-methods".
+// In the ESLint configs it is available as "@nx/workspace-no-subscribe-in-methods".
 export const RULE_NAME: string = 'no-subscribe-in-methods';
 
 const ALLOWED_METHOD_NAMES: ReadonlySet<string> = new Set(['ngOnInit']);

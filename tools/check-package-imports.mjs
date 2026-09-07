@@ -1,29 +1,31 @@
 #!/usr/bin/env node
 /**
- * Импортирует ли пакет из соседнего `@rt-tools/*` символы, которых в опубликованной версии
- * соседа нет.
+ * Does a package import from a neighbouring `@rt-tools/*` symbols the neighbour's published version
+ * does not hold.
  *
- * Зачем это есть. Сборка и типы в дереве читают исходники соседа, а потребитель ставит соседа
- * из реестра — той версии, которую разрешает манифест пакета. Символ, заведённый у соседа и не
- * опубликованный, в дереве зелёный, а у потребителя пакет не собирается. Так вышли два кита:
- * один с `EListSortOrder` из утилит, второй с `EPosition` из ядра — в реестре лежали версии
- * без них.
+ * Why this exists. The build and the types in the tree read the neighbour's sources, while a consumer
+ * installs the neighbour from the registry — of the version the package's manifest allows. A symbol
+ * created at the neighbour and not published is green in the tree, and at a consumer the package does
+ * not build. That is how two kits came out: one with `EListSortOrder` from the utils, the other with
+ * `EPosition` from the core — the registry held versions without them.
  *
- * Как судится. Импорты читаются из исходников пакета, а не из сборки: сборка пишет их в тот же
- * вид, а исходники читаются без неё. Экспорты соседа читаются из типов опубликованного пакета
- * той версии, которая наибольшая в реестре под диапазон манифеста. Пакет забирается командой
- * упаковки и кладётся в кэш под `node_modules/.cache/` — на одну версию сеть спрашивается раз.
+ * How it is judged. The imports are read from the package's sources rather than from the build: the
+ * build writes them in the same shape, and the sources are read without it. The neighbour's exports
+ * are read from the types of the published package of the version that is the largest in the registry
+ * under the manifest's range. The package is fetched by the packing command and put into a cache under
+ * `node_modules/.cache/` — the network is asked once per version.
  *
- * Реестр не ответил — проверка пропускается и говорит об этом: гейт пуша работает и без сети,
- * а молчаливый пропуск неотличим от сошедшейся сверки.
+ * The registry did not answer — the check is skipped and says so: the push gate works without the
+ * network too, and a silent skip is indistinguishable from a matching that came out right.
  *
- * Два режима. В гейте пуша и в конвейере символ, которого у опубликованного соседа нет, а в
- * исходниках соседа в дереве есть, называется ждущим публикации соседа и проверку не роняет:
- * между двумя выпусками такое состояние обычное, а чинится оно порядком публикации. Со флагом
- * `--strict` — в конвейере публикации — любой недостающий символ роняет проверку: выпуск с ним
- * не соберётся у потребителя. Флаг `--package <имя>` сужает суд до одного пакета.
+ * Two modes. In the push gate and in the pipeline, a symbol the published neighbour does not hold
+ * while the neighbour's sources in the tree do hold it is called waiting for the neighbour's
+ * publication and does not drop the check: between two releases such a state is ordinary, and it is
+ * fixed by the order of publication. With the flag `--strict` — in the publication pipeline — any
+ * missing symbol drops the check: a release with it will not build at a consumer. The flag
+ * `--package <name>` narrows the judging to one package.
  *
- * Ненулевой код возврата и строка на каждый символ: пакет, символ, сосед и его версия.
+ * A non-zero exit code and a line per symbol: the package, the symbol, the neighbour and its version.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync } from 'node:fs';
@@ -33,13 +35,13 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
-/** Каталог пакетов переопределяется переменной: набор проб судит дерево-фикстуру, а не своё. */
+/** The packages directory is overridden by a variable: the probe set judges a fixture tree, not its own. */
 const PROJECTS = process.env.RT_PROJECTS_DIR || join(ROOT, 'projects');
 
-/** Кэш распакованных версий: `<кэш>/<пакет>/<версия>/package/…`. Проба подставляет сюда фикстуру. */
+/** The cache of unpacked versions: `<cache>/<package>/<version>/package/…`. A probe puts a fixture here. */
 const CACHE = process.env.RT_PUBLISHED_DIR || join(ROOT, 'node_modules/.cache/rt-published');
 
-/** С фикстурой реестр не спрашивается: версии берутся из каталога. */
+/** With a fixture the registry is not asked: the versions are taken from the directory. */
 const OFFLINE = Boolean(process.env.RT_PUBLISHED_DIR);
 
 const ARGS = process.argv.slice(2);
@@ -48,23 +50,23 @@ const ONLY = ARGS.includes('--package') ? ARGS[ARGS.indexOf('--package') + 1] : 
 
 const SCOPE = '@rt-tools/';
 
-/** Файлы, которые в пакет не едут: пробы и истории витрины. */
+/** The files that do not travel into the package: the probes and the showcase's stories. */
 const NOT_SHIPPED = /\.(spec|stories|test)\.ts$/;
 
-/** Именованный импорт из соседа, в одну строку или в несколько. */
+/** A named import from a neighbour, on one line or on several. */
 const IMPORT = /import\s+(?:type\s+)?\{([^}]*)\}\s+from\s+'(@rt-tools\/[a-z0-9-]+)'/g;
 
-/** Комментарии снимаются до поиска импортов: пример в описании — не импорт. */
+/** The comments are removed before the import search: a sample in a description is not an import. */
 const COMMENTS = /\/\*[\s\S]*?\*\/|^\s*\/\/.*$/gm;
 
-/** Объявление с экспортом в типах: имя стоит после рода объявления. */
+/** A declaration with an export in the types: the name stands after the kind of the declaration. */
 const DECLARED =
     /^export\s+(?:declare\s+)?(?:abstract\s+)?(?:enum|const\s+enum|class|interface|type|const|function|let|var|namespace)\s+([A-Za-z_$][\w$]*)/gm;
 
-/** Список экспорта: `export { A, B as C }` и `export type { … }`; имя наружу — то, что после `as`. */
+/** An export list: `export { A, B as C }` and `export type { … }`; the name outward is what stands after `as`. */
 const LISTED = /^export\s+(?:type\s+)?\{([^}]*)\}\s*(?:from\s+'[^']+')?\s*;?/gm;
 
-/** Цепочка `export * from './…'`; `export * as ns from` сюда не входит — имён она не даёт. */
+/** The chain `export * from './…'`; `export * as ns from` does not go here — it gives no names. */
 const CHAINED = /^export\s+\*\s+from\s+'([^']+)'/gm;
 
 function readJson(path) {
@@ -83,7 +85,7 @@ function walk(dir, out = []) {
     return out;
 }
 
-/** Имена из списка `{ A, B as C, type D }`: при импорте нужно имя у соседа, то есть до `as`. */
+/** The names from the list `{ A, B as C, type D }`: an import needs the name at the neighbour, that is, before `as`. */
 function namesOf(list, { after = false } = {}) {
     return list
         .split(',')
@@ -96,7 +98,7 @@ function namesOf(list, { after = false } = {}) {
         .filter((name) => name && name !== 'default');
 }
 
-/** Импорты пакета из соседей: сосед → имя → первый файл, где имя встретилось. */
+/** The package's imports from its neighbours: neighbour → name → the first file the name was met in. */
 function importsOf(dir, own) {
     const imports = new Map();
     for (const file of walk(join(dir, 'src'))) {
@@ -127,9 +129,9 @@ function compare(a, b) {
 }
 
 /**
- * Разрешает ли диапазон манифеста версию. Формы — те, что пишут скрипты подъёма версии: `^`,
- * `~`, точная, `>=` и любая. Диапазон, которого разбор не знает, не разрешает ничего: это
- * лучше, чем принять наугад, и отказ называет диапазон.
+ * Does the manifest's range allow the version. The forms are those the version-raising scripts write:
+ * `^`, `~`, exact, `>=` and any. A range the reading does not know allows nothing: that is better than
+ * accepting at a guess, and the refusal names the range.
  */
 function satisfies(range, version) {
     const text = range.trim();
@@ -153,7 +155,7 @@ function maxSatisfying(versions, range) {
     return fit.length ? fit[fit.length - 1][0] : null;
 }
 
-/** Ответ реестра о версиях. `null` — реестр не ответил; пустой список — пакета в реестре нет. */
+/** The registry's answer about the versions. `null` — the registry did not answer; an empty list — the registry has no such package. */
 function publishedVersions(name) {
     if (OFFLINE) {
         const dir = join(CACHE, name);
@@ -173,7 +175,7 @@ function publishedVersions(name) {
     }
 }
 
-/** Каталог распакованной версии: из кэша либо забором из реестра. `null` — забрать не удалось. */
+/** The directory of an unpacked version: from the cache or by fetching from the registry. `null` — the fetch failed. */
 function unpacked(name, version) {
     const dir = join(CACHE, name, version);
     if (existsSync(join(dir, 'package', 'package.json'))) return dir;
@@ -195,7 +197,7 @@ function unpacked(name, version) {
     }
 }
 
-/** Файл типов опубликованного пакета: первое из полей манифеста, которое ведёт к файлу. */
+/** The types file of a published package: the first of the manifest's fields that leads to a file. */
 function typesEntry(packageDir) {
     const manifest = readJson(join(packageDir, 'package.json'));
     const candidates = [manifest.typings, manifest.types, manifest.exports?.['.']?.types, 'index.d.ts'].filter(
@@ -209,8 +211,8 @@ function typesEntry(packageDir) {
 }
 
 /**
- * Файл, на который ведёт `export * from`. Сначала типы, потом исходник: рядом с `.d.ts` лежит
- * одноимённый `.js`, и взятый первым он отдаёт пустой список имён.
+ * The file `export * from` leads to. The types first, the source after: next to a `.d.ts` lies a
+ * `.js` of the same name, and taken first it gives an empty list of names.
  */
 function resolveChained(from, target) {
     const base = join(dirname(from), target);
@@ -229,7 +231,7 @@ function resolveChained(from, target) {
     return null;
 }
 
-/** Все имена, которые пакет экспортирует: объявления, списки и цепочки `export *`. */
+/** All the names a package exports: the declarations, the lists and the `export *` chains. */
 function exportsOf(entry, seen = new Set(), out = new Set()) {
     if (!entry || seen.has(entry)) return out;
     seen.add(entry);
@@ -255,14 +257,14 @@ const allPackages = readdirSync(PROJECTS, { withFileTypes: true })
 const packages = ONLY ? allPackages.filter(({ manifest }) => manifest.name === ONLY) : allPackages;
 
 if (ONLY && packages.length === 0) {
-    console.error(`check-package-imports: пакета ${ONLY} в «${PROJECTS}» нет — судить нечего`);
+    console.error(`check-package-imports: there is no package ${ONLY} in «${PROJECTS}» — there is nothing to judge`);
     process.exit(1);
 }
 
 const exportsCache = new Map();
 const treeExports = new Map();
 
-/** Что сосед экспортирует в дереве — по его точке входа; символ отсюда ждёт публикации соседа. */
+/** What a neighbour exports in the tree — by its entry point; a symbol from here waits for the neighbour's publication. */
 function exportedInTree(neighbour) {
     if (!treeExports.has(neighbour)) {
         const found = allPackages.find(({ manifest }) => manifest.name === neighbour);
@@ -282,7 +284,7 @@ for (const { dir, manifest } of packages) {
         const range = ranges[neighbour];
         if (!range) {
             problems.push(
-                `${manifest.name}: импортирует из ${neighbour}, а в манифесте соседа не называет — потребитель его не получит`,
+                `${manifest.name}: it imports from ${neighbour} and does not name it in its manifest — a consumer will not get it`,
             );
             continue;
         }
@@ -292,25 +294,25 @@ for (const { dir, manifest } of packages) {
         if (!exportsCache.has(key)) {
             const versions = publishedVersions(neighbour);
             if (versions === null) {
-                notes.push(`${neighbour}: реестр не ответил — сверка с опубликованным соседом пропущена`);
+                notes.push(`${neighbour}: the registry did not answer — the matching against the published neighbour is skipped`);
                 skipped = true;
                 exportsCache.set(key, null);
             } else {
                 const version = maxSatisfying(versions, range);
                 if (!version) {
                     problems.push(
-                        `${manifest.name}: под диапазон ${neighbour}@${range} в реестре нет ни одной версии — потребителю ставить нечего`,
+                        `${manifest.name}: under the range ${neighbour}@${range} the registry holds not one version — a consumer has nothing to install`,
                     );
                     exportsCache.set(key, null);
                 } else {
                     const packed = unpacked(neighbour, version);
                     const entry = packed ? typesEntry(join(packed, 'package')) : null;
                     if (!packed) {
-                        notes.push(`${neighbour}@${version}: забрать из реестра не удалось — сверка пропущена`);
+                        notes.push(`${neighbour}@${version}: fetching from the registry failed — the matching is skipped`);
                         skipped = true;
                         exportsCache.set(key, null);
                     } else if (!entry) {
-                        problems.push(`${neighbour}@${version}: в опубликованном пакете нет файла типов — сверять не с чем`);
+                        problems.push(`${neighbour}@${version}: the published package has no types file — there is nothing to match against`);
                         exportsCache.set(key, null);
                     } else {
                         exportsCache.set(key, { version, names: exportsOf(entry) });
@@ -324,9 +326,9 @@ for (const { dir, manifest } of packages) {
 
         for (const [name, file] of names) {
             if (published.names.has(name)) continue;
-            const line = `${manifest.name}: импортирует ${name} из ${neighbour} (${file}), а в опубликованном ${neighbour}@${published.version} его нет`;
+            const line = `${manifest.name}: it imports ${name} from ${neighbour} (${file}), and the published ${neighbour}@${published.version} does not hold it`;
             if (!STRICT && exportedInTree(neighbour).has(name)) {
-                notes.push(`${line} — ждёт публикации соседа; до неё этот пакет не публикуется`);
+                notes.push(`${line} — waiting for the neighbour's publication; until then this package is not published`);
             } else {
                 problems.push(line);
             }
@@ -337,15 +339,15 @@ for (const { dir, manifest } of packages) {
 for (const note of notes) console.error(`check-package-imports: ${note}`);
 
 if (problems.length > 0) {
-    console.error(`check-package-imports: расхождений ${problems.length}\n`);
+    console.error(`check-package-imports: divergences ${problems.length}\n`);
     for (const problem of problems) console.error(`  ${problem}`);
     console.error(
-        '\nСимвол, которого нет у опубликованного соседа, ломает сборку у потребителя: сначала публикуется сосед, потом пакет, который его импортирует.',
+        '\nA symbol the published neighbour does not hold breaks the build at a consumer: first the neighbour is published, then the package importing it.',
     );
     process.exit(1);
 }
 
-const pending = notes.filter((note) => note.includes('ждёт публикации')).length;
+const pending = notes.filter((note) => note.includes("waiting for the neighbour's publication")).length;
 console.log(
-    `check-package-imports: пакетов ${packages.length}, пар с соседом ${judged}, расхождений нет${pending ? `, ждут публикации соседа ${pending}` : ''}${skipped ? ' — часть сверок пропущена, реестр не ответил' : ''}`,
+    `check-package-imports: packages ${packages.length}, pairs with a neighbour ${judged}, no divergences${pending ? `, waiting for the neighbour's publication ${pending}` : ''}${skipped ? ' — part of the matching is skipped, the registry did not answer' : ''}`,
 );

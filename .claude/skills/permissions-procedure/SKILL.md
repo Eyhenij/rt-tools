@@ -2,23 +2,23 @@
 name: permissions-procedure
 kind: pattern
 rule: permissions
-description: Паттерн правила permissions. Брать при заведении процедуры Connect и при закрытии раздела админки — готовые декораторы доступа, отбивка без входа и без права, декларация пункта меню с правом и флагом. Не брать для устройства самого меню — это правило navigation.
+description: A pattern of the rule permissions. Take it when creating a Connect procedure and when closing an admin panel section: ready-made access decorators, the refusal without a sign-in and without a right, a menu item with a right and a flag. Not for how the menu is arranged — that is navigation.
 ---
 
-# Объявление доступа
+# Declaring access
 
-Паттерн правила `permissions`. Что при этом должно быть верно — закон
+A pattern of the rule `permissions`. What must be true at that is the law
 `docs/constitution/application/access.md`.
 
-## Когда брать
+## When to use
 
-- Заводится процедура Connect.
-- Раздел админки закрывается правом.
-- Процедура должна отвечать гостю.
+- A Connect procedure is being created.
+- An admin panel section is closed by a right.
+- A procedure must answer a guest.
 
-## Декоратор на классе процедуры
+## The decorator on the procedure class
 
-Объявление ровно одно; без него приложение не поднимается:
+There is exactly one declaration; without it the application does not come up:
 
 ```typescript
 @Injectable()
@@ -29,44 +29,45 @@ export class LinkBookingProcedure implements IConnectProcedure<typeof ChatServic
 }
 ```
 
-| Декоратор                                    | Кому доступно                                     |
-| -------------------------------------------- | ------------------------------------------------- |
-| `@RequiresPermission('<ресурс>:<действие>')` | вошедшему с этим правом                           |
-| `@RequiresAuth('<причина>')`                 | любому вошедшему; так живут профиль и выбор языка |
-| `@PublicProcedure('<причина>')`              | гостю без входа                                   |
-| `@OptionalAuthProcedure('<причина>')`        | гостю, но токен читается, если он есть            |
+| Decorator                                     | Who it is open to                                            |
+| --------------------------------------------- | ------------------------------------------------------------ |
+| `@RequiresPermission('<resource>:<action>')`  | a signed-in person with that right                           |
+| `@RequiresAuth('<reason>')`                   | any signed-in person; that is how the profile and the language choice live |
+| `@PublicProcedure('<reason>')`                | a guest without a sign-in                                    |
+| `@OptionalAuthProcedure('<reason>')`          | a guest, but the token is read if there is one               |
 
-Аргумент — причина для читателя кода. Ни в ответ, ни в лог она не уходит.
+The argument is a reason for the reader of the code. It goes neither into the answer nor into the
+log.
 
-## Отбивка
+## The refusal
 
-Перехватчик отвечает до тела процедуры:
+The interceptor answers before the procedure body:
 
-- нет входа там, где вход нужен, — `Code.Unauthenticated`;
-- вход есть, права нет — `Code.PermissionDenied`;
-- процедура, о которой перехватчик ничего не знает, — тоже отказ в доступе, а не пропуск.
+- there is no sign-in where a sign-in is needed — `Code.Unauthenticated`;
+- there is a sign-in, there is no right — `Code.PermissionDenied`;
+- a procedure the interceptor knows nothing about — permission denied as well, not a pass.
 
-Обработчик решения о допуске не принимает.
+The handler makes no decision about admission.
 
-## Раздел админки
+## An admin panel section
 
-Пункт меню и адрес закрываются одной декларацией — той, из которой шапка берёт подписи и адреса,
-а гвард права. Где она лежит в этом дереве, называет `implementation.md` при правиле: путь,
-написанный здесь, врёт в первом же дереве, которое держит админку иначе. Второго объявления этой
-связи не заводится.
+The menu item and the address are closed by one declaration — the one the header takes the labels
+and the addresses from, and the guard the rights. Where it lies in this tree is named by
+`implementation.md` next to the rule: a path written here lies in the first tree that keeps its
+admin panel differently. No second declaration of this link is started.
 
-Гейтинг двухслойный: право пользователя и флаг раздела. Пункт с флагом объявляется без прав и
-без адреса — право открывает экран, а экрана нет. Появится экран — флаг снимается, права
-добавляются.
+The gating has two layers: the user's right and the section flag. An item with a flag is declared
+without rights and without an address — a right opens a screen, and there is no screen. Once a
+screen appears, the flag is removed and the rights are added.
 
-## Частые промахи
+## Frequent misses
 
-- Два объявления доступа на одной процедуре: приложение не поднимется, и увидено это будет
-  только при запуске.
-- Проверка права внутри `handle`: право проверяется до тела.
-- Своё объявление прав рядом с маршрутами: оно разойдётся с декларацией меню, и получится
-  «пункта не видно, а страница открывается».
-- Гвард, повешенный на защищённую группу целиком: он отрабатывает один раз за загрузку
-  страницы и переходов между разделами не видит.
-- Ожидание прав, которое роняется на отказе запроса: с неизвестными правами не закрывается
-  ничего, и пустая шапка выхода владельцу не оставляет.
+- Two access declarations on one procedure: the application will not come up, and this will be
+  seen only at startup.
+- A right check inside `handle`: the right is checked before the body.
+- One's own declaration of rights next to the routes: it will diverge from the menu declaration,
+  and the result is "the item is not visible, and the page opens".
+- A guard hung on the protected group whole: it runs once per page load and does not see moves
+  between sections.
+- A wait for the rights that falls on a refused request: with unknown rights nothing is closed,
+  and an empty header leaves the owner no way out.

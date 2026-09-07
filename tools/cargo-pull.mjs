@@ -1,20 +1,23 @@
 #!/usr/bin/env node
 /**
- * Чтение груза из приёма: команда, которой исполнитель забирает то, что ему прислали.
+ * Reading the cargo from the intake: the command by which the executor takes what was sent to them.
  *
- * Живёт в дереве, а не в пакете правил, по той же причине, что и команда отметки: читает груз
- * тот, кто его разбирает, а разбирает дерево, где стоит приёмник.
+ * It lives in the tree rather than in the rules package, for the same reason as the mark command:
+ * the cargo is read by whoever sorts it out, and that is the tree where the receiver stands.
  *
- * Закрыта не токеном дерева, а входом учётной записи службы. Токен открывает приём и только
- * своего дерева, а разбирать приходится весь груз о пакете — его шлют четыре дерева, а чинит
- * одно. Пара учётной записи лежит вне репозитория, как и токен: истории она не переживает.
+ * It is closed not by the tree's token but by a service account's sign-in. A token opens the intake
+ * and only its own tree's, while all the cargo about the package has to be sorted out — four trees
+ * send it and one fixes it. The account's pair lies outside the repository, like the token: it does
+ * not outlive the history.
  *
- * Ключ записи печатается рядом с ней, и он тот же, которым её отмечают: у разбора происшествия
- * это имя файла и приезжает оно строкой списка, у предложения — признак его текста, и он
- * считается здесь тем же приёмом, что на приёме. Поэтому страница дочитывает тексты: без них
- * предложение видно, но не отмечается, а разбор без текста разбирать нечем.
+ * A record's key is printed next to it, and it is the same one the record is marked by: for an
+ * incident analysis that is the file name and it arrives in the list row, for a proposal it is the
+ * sign of its text, and here it is counted by the same technique as at the intake. So the page
+ * reads on the texts: without them a proposal is visible but not markable, and an analysis without
+ * its text is nothing to sort out.
  *
- * Ненулевой код возврата у всего, что не легло: нет пары, не принят вход, не ответил приём.
+ * A non-zero exit code for everything that did not land: no pair, the sign-in not accepted, the
+ * intake silent.
  */
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
@@ -33,36 +36,36 @@ const SIZE_FLAG = '--size';
 const TEXT_FLAG = '--text';
 const BRIEF_FLAG = '--brief';
 
-/** Предел страницы у приёмника: больше он не отдаёт, и просить больше — молча получить столько же. */
+/** The receiver's page limit: it gives no more, and asking for more means silently getting the same. */
 const SIZE_MAX = 100;
 const SIZE_DEFAULT = 20;
 
-/** Сколько знаков текста показывать строкой списка: строка должна влезать в ширину терминала. */
+/** How many characters of the text to show in a list row: the row must fit the terminal's width. */
 const GLIMPSE = 70;
 
 const ROOT = resolve(process.cwd());
 const CONFIG = join(ROOT, '.claude/rt-kit.json');
 
-/** Два рода груза и то, чем они отличаются в чтении: путь, ключ отметки и как зовётся род. */
+/** The two kinds of cargo and what tells them apart in the reading: the path, the mark key and the kind's word. */
 const KINDS = {
     proposal: {
         path: 'proposals',
-        word: 'предложение',
-        /** Ключ отметки — признак текста: тем же приёмом его считает приём, когда запись кладёт. */
+        word: 'proposal',
+        /** The mark key is the text's sign: the intake counts it by the same technique when it puts the record. */
         keyOf: (row) => (typeof row.text === 'string' ? createHash('sha256').update(row.text, 'utf8').digest('hex') : ''),
-        /** Чем запись названа в списке: ресурс слоя правил, к которому предложение относится. */
+        /** What the record is named by in the list: the rules-layer resource the proposal is about. */
         titleOf: (row) => `${row.resource ?? '?'} · ${row.address ?? '?'}`,
     },
     postmortem: {
         path: 'postmortems',
-        word: 'разбор',
-        /** Ключ отметки — имя файла, и он приезжает строкой списка: дочитывать ради него нечего. */
+        word: 'analysis',
+        /** The mark key is the file name, and it arrives in the list row: there is nothing to read on for it. */
         keyOf: (row) => String(row.file ?? ''),
         titleOf: (row) => String(row.file ?? '?'),
     },
 };
 
-/** Значение довода: то, что стоит сразу за ним и само доводом не является. */
+/** An argument's value: what stands right after it and is not an argument itself. */
 function valueOf(argv, flag) {
     const at = argv.indexOf(flag);
     const next = at === -1 ? '' : (argv[at + 1] ?? '');
@@ -70,7 +73,7 @@ function valueOf(argv, flag) {
     return next.startsWith('--') ? '' : next;
 }
 
-/** Целое из довода, если оно там целое и положительное. */
+/** A whole number from an argument, if it is whole and positive there. */
 function wholeOf(argv, flag, fallback) {
     const said = Number(valueOf(argv, flag));
 
@@ -78,11 +81,11 @@ function wholeOf(argv, flag, fallback) {
 }
 
 /**
- * Пара учётной записи службы из файла, названного настройкой.
+ * The service account's pair from the file named by the settings.
  *
- * Файл лежит вне дерева и историю не переживает — тем же приёмом, что и токен. Две строки, а не
- * одна с разделителем: пароль вправе держать любой знак, и разделитель, встретившийся в нём,
- * резал бы пару молча.
+ * The file lies outside the tree and does not outlive the history — by the same technique as the
+ * token. Two lines rather than one with a separator: a password may hold any character, and a
+ * separator met inside it would cut the pair silently.
  */
 export function accountOf(where) {
     if (!where) {
@@ -100,7 +103,7 @@ export function accountOf(where) {
     return { name: (lines[0] ?? '').trim(), password: (lines[1] ?? '').trim() };
 }
 
-/** Что приём сказал словами: сообщение из ответа, а при неразборчивом — сам ответ. */
+/** What the intake said in words: the message from the answer, and for an unreadable one the answer itself. */
 function saidOf(text) {
     try {
         const said = JSON.parse(text);
@@ -111,7 +114,7 @@ function saidOf(text) {
     }
 }
 
-/** Значение куки входа из заголовков ответа: клиент их не хранит, и подставляется она руками. */
+/** The sign-in cookie's value from the answer's headers: the client does not keep them, and it is put in by hand. */
 function cookieOf(answer) {
     const set = answer.headers.getSetCookie ? answer.headers.getSetCookie() : [answer.headers.get('set-cookie') ?? ''];
 
@@ -126,7 +129,7 @@ function cookieOf(answer) {
     return '';
 }
 
-/** Вход учётной записью службы. Отказ — такой же ответ, как принятое. */
+/** A sign-in by the service account. A refusal is as much an answer as an accepted one. */
 export async function login(intake, account) {
     let answer;
 
@@ -146,7 +149,7 @@ export async function login(intake, account) {
     return { ok: answer.ok, status: answer.status, said: saidOf(text), cookie: answer.ok ? cookieOf(answer) : '' };
 }
 
-/** Запрос к приёму с кукой входа. Разбор ответа один на список и на одну запись. */
+/** A request to the intake with the sign-in cookie. The reading of the answer is one for a list and for one record. */
 export async function read(intake, cookie, path) {
     let answer;
 
@@ -168,11 +171,11 @@ export async function read(intake, cookie, path) {
     try {
         return { ok: true, status: answer.status, said: '', body: JSON.parse(text) };
     } catch {
-        return { ok: false, status: answer.status, said: 'ответ приёма не разобрался', body: null };
+        return { ok: false, status: answer.status, said: 'the intake answer did not parse', body: null };
     }
 }
 
-/** Выборка страницы строкой запроса: пустое не пишется, чтобы приёмник не разбирал пустоту. */
+/** The page selection as a query string: nothing empty is written, so the receiver parses no emptiness. */
 function query(asked) {
     const parts = [`page=${asked.page}`, `size=${asked.size}`, 'sort=arrivedAt', 'dir=asc'];
 
@@ -187,7 +190,7 @@ function query(asked) {
     return parts.join('&');
 }
 
-/** Первая значащая строка текста: по ней запись узнают, не открывая её целиком. */
+/** The first meaningful line of a text: a record is recognised by it without opening it whole. */
 function glimpseOf(text) {
     const first = String(text ?? '')
         .split('\n')
@@ -207,40 +210,40 @@ function glimpseOf(text) {
 }
 
 /**
- * Строка списка: ключ отметки, чем запись названа, чьё дерево, состояние и начало текста.
+ * A list row: the mark key, what the record is named by, whose tree it is, the state and the beginning of the text.
  *
- * У разбора происшествия ключ и есть его имя, и повторять его второй раз незачем: две
- * одинаковые строки подряд читаются как две записи.
+ * An incident analysis's key is its name, and there is no point repeating it a second time: two
+ * identical rows in a row read as two records.
  */
 function listLine(kind, row, key, glimpse) {
     const tail = glimpse ? ` — ${glimpse}` : '';
     const title = KINDS[kind].titleOf(row);
     const named = title === key ? '' : `${title} · `;
 
-    return `  ${key || '(ключа нет: текст не дочитан)'}\n    ${named}${row.tree?.slug ?? '?'} · ${row.state}${closedMark(row)} · в приёме ${row.id ?? '?'}${tail}`;
+    return `  ${key || '(there is no key: the text is not read on)'}\n    ${named}${row.tree?.slug ?? '?'} · ${row.state}${closedMark(row)} · in the intake ${row.id ?? '?'}${tail}`;
 }
 
 /**
- * Приписка о том, что запись закрыл издатель редакции, а не приславшее её дерево.
+ * A note that the record was closed by the edition's publisher rather than by the tree that sent it.
  *
- * Стоит рядом с состоянием, а своей строкой: выпущенную запись отправитель иначе читает как свою
- * отметку — и ищет у себя работу, которой не делал.
+ * It stands next to the state rather than on a line of its own: otherwise the sender reads a
+ * released record as their own mark — and looks at home for work they did not do.
  */
 function closedMark(row) {
-    return row.closedByPublisher ? ' (закрыто издателем)' : '';
+    return row.closedByPublisher ? ' (closed by the publisher)' : '';
 }
 
-/** Запись целиком: то, что читают перед решением. */
+/** The record whole: what is read before the decision. */
 function fullLines(kind, row, key) {
     return [
         `${KINDS[kind].word} ${KINDS[kind].titleOf(row)}`,
-        `  ключ отметки: ${key}`,
-        // Признак записи в приёме — не ключ отметки: тем ключом её двигает своё дерево, а этим
-        // закрывает издатель редакции, у которого чужого ключа нет и быть не может
-        `  признак в приёме: ${row.id ?? '?'}`,
-        `  дерево: ${row.tree?.slug ?? '?'} · состояние: ${row.state}${closedMark(row)} · приехало: ${row.arrivedAt ?? '?'}`,
-        ...(row.fixNote ? [`  чем починено: ${row.fixNote}`] : []),
-        ...(row.releaseVersion ? [`  выпущено в: ${row.releaseVersion}`] : []),
+        `  the mark key: ${key}`,
+        // The record's sign in the intake is not the mark key: by that key its own tree moves it, and
+        // by this one the edition's publisher closes it, having no foreign key and never able to have one
+        `  the sign in the intake: ${row.id ?? '?'}`,
+        `  tree: ${row.tree?.slug ?? '?'} · state: ${row.state}${closedMark(row)} · arrived: ${row.arrivedAt ?? '?'}`,
+        ...(row.fixNote ? [`  fixed by: ${row.fixNote}`] : []),
+        ...(row.releaseVersion ? [`  released in: ${row.releaseVersion}`] : []),
         '',
         String(row.text ?? '').trimEnd(),
         '',
@@ -248,14 +251,14 @@ function fullLines(kind, row, key) {
 }
 
 /**
- * Дочитать тексты записей страницы.
+ * Read on the texts of the page's records.
  *
- * Список текста не везёт, а без него предложение не отмечается — его ключ и есть признак текста.
- * Разбор происшествия отмечается именем файла, но читать его всё равно приходится: отметить, не
- * прочитав, значит сказать «разобрано» о том, чего не видели.
+ * The list carries no text, and without it a proposal is not marked — its key is the text's sign.
+ * An incident analysis is marked by the file name, but it still has to be read: to mark without
+ * reading means to say «sorted out» about what was not seen.
  *
- * Запись, которая не дочиталась, из списка не выпадает: она приезжает без текста и без ключа, и
- * строка о ней это говорит. Молча пропав, она читалась бы разобранной.
+ * A record that did not read on does not fall out of the list: it arrives without a text and
+ * without a key, and the row about it says so. Vanishing silently, it would read as sorted out.
  */
 export async function withTexts(intake, cookie, kind, rows) {
     const full = [];
@@ -269,18 +272,18 @@ export async function withTexts(intake, cookie, kind, rows) {
     return full;
 }
 
-/** Забрать груз из приёма и показать его пачкой. */
+/** Take the cargo from the intake and show it as a batch. */
 export async function pull(options) {
     if (!KINDS[options.kind]) {
-        return { code: REFUSED, lines: [`рода «${options.kind}» не бывает`, `бывают: ${Object.keys(KINDS).join(', ')}`] };
+        return { code: REFUSED, lines: [`there is no kind «${options.kind}»`, `there are: ${Object.keys(KINDS).join(', ')}`] };
     }
 
     if (!options.intake) {
         return {
             code: REFUSED,
             lines: [
-                'адреса приёма нет: читать неоткуда',
-                'он называется ключом `intake` в `.claude/rt-kit.json` либо переменной `RT_INTAKE`',
+                'there is no intake address: there is nowhere to read from',
+                'it is named by the key `intake` in `.claude/rt-kit.json` or by the variable `RT_INTAKE`',
             ],
         };
     }
@@ -289,9 +292,9 @@ export async function pull(options) {
         return {
             code: REFUSED,
             lines: [
-                'пары учётной записи службы нет: вход не состоялся',
-                'она лежит вне репозитория двумя строками — имя и пароль, — а путь к ней называется ключом `account` в `.claude/rt-kit.json`',
-                'сама запись заводится в приёмнике командой `account:add`',
+                'there is no service account pair: the sign-in did not happen',
+                'it lies outside the repository as two lines — the name and the password — and the path to it is named by the key `account` in `.claude/rt-kit.json`',
+                'the account itself is created in the receiver by the command `account:add`',
             ],
         };
     }
@@ -299,36 +302,38 @@ export async function pull(options) {
     const entered = await options.enter(options.intake, options.account);
 
     if (!entered.ok || !entered.cookie) {
-        return { code: REFUSED, lines: [`${options.intake} вход не принял: ${entered.status || 'молчание'} — ${entered.said}`] };
+        return { code: REFUSED, lines: [`${options.intake} did not accept the sign-in: ${entered.status || 'silence'} — ${entered.said}`] };
     }
 
     return page(options, entered.cookie);
 }
 
-/** Страница списка: сколько всего лежит, что на этой странице и чем каждую запись отмечать. */
+/** A page of the list: how much lies in all, what is on this page and what each record is marked by. */
 async function page(options, cookie) {
     const asked = { page: options.page, size: Math.min(options.size, SIZE_MAX), state: options.state, tree: options.tree };
     const got = await options.fetchOne(options.intake, cookie, `${KINDS[options.kind].path}?${query(asked)}`);
 
     if (!got.ok || !got.body) {
-        return { code: REFUSED, lines: [`${options.intake} ответил ${got.status || 'молчанием'} — ${got.said}`] };
+        return { code: REFUSED, lines: [`${options.intake} answered ${got.status || 'with silence'} — ${got.said}`] };
     }
 
     const rows = Array.isArray(got.body.rows) ? got.body.rows : [];
     const full = options.brief ? rows : await options.fetchTexts(options.intake, cookie, options.kind, rows);
-    const sifted = options.state ? '' : ' (отбора по состоянию нет: лежит всё)';
+    const sifted = options.state ? '' : ' (there is no filter by state: everything lies here)';
     const total = Number(got.body.total ?? rows.length);
 
     return {
         code: 0,
         lines: [
-            `ЧТЕНИЕ — ${options.intake}, род «${KINDS[options.kind].word}»${sifted}`,
-            `  всего ${total}, на странице ${asked.page} из ${Math.max(1, Math.ceil(total / asked.size))} — ${full.length}`,
+            `THE READING — ${options.intake}, kind «${KINDS[options.kind].word}»${sifted}`,
+            `  in all ${total}, on the page ${asked.page} of ${Math.max(1, Math.ceil(total / asked.size))} — ${full.length}`,
             ...(options.text
                 ? full.flatMap((row) => fullLines(options.kind, row, KINDS[options.kind].keyOf(row)))
                 : full.map((row) => listLine(options.kind, row, KINDS[options.kind].keyOf(row), glimpseOf(row.text)))),
-            ...(options.brief ? ['ключей у предложений нет: с `--brief` тексты не дочитываются, а ключ считается из текста'] : []),
-            ...(options.text ? [] : ['тексты целиком печатает `--text`; отмечает разобранное `cargo:mark`']),
+            ...(options.brief
+                ? ['the proposals have no keys: with `--brief` the texts are not read on, and the key is counted from the text']
+                : []),
+            ...(options.text ? [] : ['the texts whole are printed by `--text`; what is sorted out is marked by `cargo:mark`']),
         ],
     };
 }

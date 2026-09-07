@@ -1,18 +1,21 @@
 #!/usr/bin/env node
 /**
- * Отметка состояния груза: команда, которой исполнитель двигает свои записи в приёме.
+ * The cargo state mark: the command by which the executor moves its own records in the intake.
  *
- * Живёт в дереве, а не в пакете правил. Отмечает записи тот, кто груз разбирает, а разбирает
- * его дерево, где стоит приёмник; у дерева, которое пакет только ставит, ни приёма, ни его
- * админки нет — звать эту команду там некому. Признак и его два вопроса — правило `agent-kit`.
+ * It lives in the tree rather than in the rules package. The records are marked by whoever sorts
+ * out the cargo, and that is the tree where the receiver stands; a tree that only installs the
+ * package has no intake and no admin panel — there is nobody to call this command there. The sign
+ * and its two questions — the rule `agent-kit`.
  *
- * Форма груза берётся у пакета: её объявляет отправляющая сторона, и обе стороны обязаны читать
- * одно объявление. Из двух копий компилируется только одна, а расходятся они молча.
+ * The shape of the cargo is taken from the package: the sending side declares it, and both sides
+ * must read one declaration. Of two copies only one is compiled, and they diverge silently.
  *
- * Разбор доводов и сборка тела отделены от самого запроса нарочно: всё, что можно отбить до
- * сети, отбивается до сети — незнакомое состояние, вызов без записей и отсутствующий токен.
+ * Sorting out the arguments and assembling the body stand apart from the request on purpose:
+ * everything that can be refused before the network is refused before it — an unknown state, a
+ * call without records and a missing token.
  *
- * Ненулевой код возврата у всего, что не легло: отбитая строка кончает команду ненулевым кодом.
+ * A non-zero exit code for everything that did not land: a refused line ends the command with a
+ * non-zero code.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
@@ -33,17 +36,17 @@ const STATE_FLAG = '--state';
 const ROOT = resolve(process.cwd());
 const CONFIG = join(ROOT, '.claude/rt-kit.json');
 
-/** Причина отбоя словами человека: по каждой видно, что делать дальше. */
+/** The reason for a refusal in a person's words: by each it is visible what to do next. */
 const DENIAL_WORDS = {
-    missing: 'такой записи у дерева нет',
-    forbidden: 'переход не разрешён порядком',
-    'no-fix-note': 'переход в починку без довода `--fix`',
-    'extra-fix-note': 'довод `--fix` приехал не с переходом в починку',
-    'no-release-version': 'переход в выпуск без довода `--release`',
-    'extra-release-version': 'довод `--release` приехал не с переходом в выпуск',
+    missing: 'the tree has no such record',
+    forbidden: 'the move is not allowed by the order',
+    'no-fix-note': 'a move into the fix without the argument `--fix`',
+    'extra-fix-note': 'the argument `--fix` arrived not with a move into the fix',
+    'no-release-version': 'a move into the release without the argument `--release`',
+    'extra-release-version': 'the argument `--release` arrived not with a move into the release',
 };
 
-/** Форма груза у пакета: версия схемы и список состояний. Пакет не собран — команда об этом скажет. */
+/** The package's cargo shape: the schema version and the state list. Not built — the command says so. */
 function shapeOfCargo() {
     const built = join(ROOT, 'dist/agent-kit/lib/cargo.js');
 
@@ -54,7 +57,7 @@ function shapeOfCargo() {
     return built;
 }
 
-/** Значение довода: то, что стоит сразу за ним и само доводом не является. */
+/** An argument's value: what stands right after it and is not an argument itself. */
 function valueOf(argv, flag) {
     const at = argv.indexOf(flag);
     const next = at === -1 ? '' : (argv[at + 1] ?? '');
@@ -62,7 +65,7 @@ function valueOf(argv, flag) {
     return next.startsWith('--') ? '' : next;
 }
 
-/** Записи, названные доводами строки запуска: род у каждой свой, порядок — как их назвали. */
+/** The records named by the launch line's arguments: each has its kind, the order as named. */
 export function itemsOf(argv, state, attached = { fixNote: '', releaseVersion: '' }) {
     const items = [];
 
@@ -71,8 +74,8 @@ export function itemsOf(argv, state, attached = { fixNote: '', releaseVersion: '
         const key = argv[at + 1] ?? '';
 
         if (kind && key && !key.startsWith('--')) {
-            // Приложенное значение едет полем строки, а не своим вызовом: отметка одна, и все её
-            // записи чинились одним разбором либо уехали одним выпуском
+            // The attached value travels as a field of the line rather than by a call of its own:
+            // the mark is one, and all its records were fixed by one sorting out or left in one release
             items.push({
                 kind,
                 key,
@@ -87,13 +90,13 @@ export function itemsOf(argv, state, attached = { fixNote: '', releaseVersion: '
 }
 
 /**
- * Признак дерева: снимок его удалённой ссылки, а не название каталога на чьей-то машине.
+ * The tree's sign: a snapshot of its remote ref rather than a directory name on somebody's machine.
  *
- * Считается тем же приёмом, что и на отправке, и приём этот берётся у пакета, а не пишется
- * здесь заново. Своя копия счёта уже разошлась с пакетной молча: она брала одно последнее слово
- * адреса, а пакет — адрес целиком и в нижнем регистре, — и дерево слало груз под одним
- * признаком, а отмечало его под другим. Приём отвечал на это «признак дерева в грузе
- * принадлежит другому дереву», и ни одна запись не отметилась ни разу.
+ * It is counted by the same technique as on the send, and that technique is taken from the package
+ * rather than written here anew. A count of its own has already diverged from the package one
+ * silently: it took one last word of the address, and the package the whole address in lower case
+ * — and the tree sent the cargo under one sign and marked it under another. The intake answered
+ * that with «the tree sign in the cargo belongs to another tree», and not one record was marked.
  */
 async function treeSlug(shape) {
     try {
@@ -106,7 +109,7 @@ async function treeSlug(shape) {
     }
 }
 
-/** Токен дерева из файла, названного настройкой: он лежит вне дерева и историю не переживает. */
+/** The tree's token from the file named by the settings: it lies outside the tree and does not outlive the history. */
 function tokenOf(where) {
     if (!where) {
         return '';
@@ -117,12 +120,12 @@ function tokenOf(where) {
     return existsSync(path) ? readFileSync(path, 'utf8').trim() : '';
 }
 
-/** Адрес операции приёма. */
+/** The address of an intake operation. */
 function intakeUrl(intake, operation) {
     return `${intake.replace(/\/+$/, '')}/api/intake/${operation}`;
 }
 
-/** Что приём сказал словами: сообщение из ответа, а при неразборчивом — сам ответ. */
+/** What the intake said in words: the message from the answer, and for an unreadable one the answer itself. */
 function saidOf(text) {
     try {
         const said = JSON.parse(text);
@@ -133,7 +136,7 @@ function saidOf(text) {
     }
 }
 
-/** Запрос в приём. Отказ — такой же ответ, как принятое. */
+/** A request to the intake. A refusal is as much an answer as an accepted one. */
 async function callIntake(intake, token, body) {
     let answer;
 
@@ -168,30 +171,30 @@ async function callIntake(intake, token, body) {
     return { ok: answer.ok, status: answer.status, said: saidOf(text), accepted };
 }
 
-/** Пакет одной строкой: её читает человек перед тем, как отправить. */
+/** The batch in one line: a person reads it before sending. */
 function describe(items, state) {
     const postmortems = items.filter((one) => one.kind === 'postmortem').length;
 
-    return `в «${state}»: разборов ${postmortems}, предложений ${items.length - postmortems}`;
+    return `into «${state}»: analyses ${postmortems}, proposals ${items.length - postmortems}`;
 }
 
-/** Отбитая строка человеку: род, ключ и причина словами. */
+/** A refused line for a person: the kind, the key and the reason in words. */
 function deniedLine(kind, key, denial) {
-    return `  ${kind === 'postmortem' ? 'разбор' : 'предложение'} ${key} — ${DENIAL_WORDS[denial] ?? denial}`;
+    return `  ${kind === 'postmortem' ? 'analysis' : 'proposal'} ${key} — ${DENIAL_WORDS[denial] ?? denial}`;
 }
 
-/** Отметить записи дерева названным состоянием. */
+/** Mark the tree's records with the named state. */
 export async function mark(options) {
     if (!options.states.includes(options.state)) {
-        return { code: REFUSED, lines: [`состояния «${options.state}» не бывает`, `бывают: ${options.states.join(', ')}`] };
+        return { code: REFUSED, lines: [`there is no state «${options.state}»`, `there are: ${options.states.join(', ')}`] };
     }
 
     if (options.items.length === 0) {
         return {
             code: REFUSED,
             lines: [
-                'отмечать нечего: ни одной записи в доводах',
-                `разбор называется \`${POSTMORTEM_FLAG} <имя файла>\`, предложение — \`${PROPOSAL_FLAG} <признак текста>\``,
+                'there is nothing to mark: not one record in the arguments',
+                `an analysis is named \`${POSTMORTEM_FLAG} <file name>\`, a proposal — \`${PROPOSAL_FLAG} <text sign>\``,
             ],
         };
     }
@@ -200,27 +203,27 @@ export async function mark(options) {
         return {
             code: REFUSED,
             lines: [
-                'токена дерева нет: отметка осталась неотправленной',
-                'дерево заводится командой `enroll` пакета — по коду приглашения либо токеном из админки приёма',
+                'there is no tree token: the mark stayed unsent',
+                'a tree is enrolled by the package command `enroll` — by an invitation code or by a token from the intake admin panel',
             ],
         };
     }
 
     const body = { schema: options.schema, tree: options.tree, items: options.items };
 
-    // Перечень печатается обоими прогонами, и разделены они не окончанием глагола, а первой
-    // строкой: «уехало» и «уехало бы» отличаются двумя буквами в хвосте, а строки под ними
-    // одинаковы до знака, и вывод сухого прогона читается сделанной работой.
+    // The list is printed by both runs, and they are separated not by a verb ending but by the first
+    // line: a dry run and a real one differ by two letters at the tail, while the lines under them
+    // are the same to the character, and a dry run's output reads as done work.
     const listed = `  ${describe(options.items, options.state)}`;
 
     if (options.dryRun) {
         return {
             code: 0,
             lines: [
-                'СУХОЙ ПРОГОН — наружу не ушло ничего, в приёме не переведено ни одной записи',
-                `уехало бы в ${options.intake}, дерево ${options.tree}:`,
+                'A DRY RUN — nothing left outward, not one record is moved in the intake',
+                `it would have gone to ${options.intake}, tree ${options.tree}:`,
                 listed,
-                'отмечает это тот же вызов без `--dry-run`',
+                'this is marked by the same call without `--dry-run`',
             ],
         };
     }
@@ -228,7 +231,7 @@ export async function mark(options) {
     const marked = await options.call(options.intake, options.token, body);
 
     if (!marked.ok || !marked.accepted) {
-        return { code: REFUSED, lines: [`${options.intake} ответил ${marked.status || 'молчанием'} — ${marked.said}`] };
+        return { code: REFUSED, lines: [`${options.intake} answered ${marked.status || 'with silence'} — ${marked.said}`] };
     }
 
     const { changed, same, denied } = marked.accepted;
@@ -236,9 +239,9 @@ export async function mark(options) {
     return {
         code: denied.length ? REFUSED : 0,
         lines: [
-            `ОТМЕТКА — уходит в ${options.intake}, дерево ${options.tree}:`,
+            `THE MARK — going to ${options.intake}, tree ${options.tree}:`,
             listed,
-            `отмечено: переведено ${changed}, уже стояло ${same}, отбито ${denied.length}`,
+            `marked: moved ${changed}, already stood ${same}, refused ${denied.length}`,
             ...denied.map((one) => deniedLine(one.kind, one.key, one.denial)),
         ],
     };
@@ -249,7 +252,7 @@ async function main() {
     const shape = shapeOfCargo();
 
     if (!shape) {
-        console.log('пакет не собран: форма груза берётся у него — `pnpm exec nx build @rt-tools/agent-kit`');
+        console.log('the package is not built: the cargo shape is taken from it — `pnpm exec nx build @rt-tools/agent-kit`');
         return REFUSED;
     }
 
@@ -257,8 +260,8 @@ async function main() {
     const config = existsSync(CONFIG) ? JSON.parse(readFileSync(CONFIG, 'utf8')) : {};
     const state = valueOf(argv, STATE_FLAG);
 
-    // Адрес приёма и токен берутся из окружения, когда оно их называет: так спека ставит рядом
-    // свой приём и проверяет разбор ответа, не ходя в настоящий.
+    // The intake address and the token are taken from the environment when it names them: that is how
+    // a spec puts its own intake next to it and checks the reading of the answer without going to the real one.
     const outcome = await mark({
         intake: process.env.RT_INTAKE || (config.intake ?? ''),
         tree: await treeSlug(shape),

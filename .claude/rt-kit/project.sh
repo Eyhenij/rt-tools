@@ -1,143 +1,158 @@
 #!/usr/bin/env bash
-# Профиль этого дерева: что здесь чем зовётся и какими командами проверяется.
+# This tree's profile: what is called what here and which commands check it.
 #
-# Живёт в проекте, а не в пакете: механизм у сторожевых хуков общий, а команды, порты и пары
-# «правка — её документ» у каждого дерева свои. Пакет везёт хуки, проект — этот файл.
+# It lives in the project rather than in the package: the mechanism of the guard hooks is shared,
+# while the commands, the ports and the pairs "an edit — its document" are each tree's own. The
+# package brings the hooks, the project brings this file.
 #
-# Каждая функция вправе промолчать. Молчание значит «правила на это нет», и хук пропускает:
-# пустой профиль оставляет хуки безвредными, а не отбивающими наугад.
+# Every function may stay silent. Silence means "there is no rule for this", and the hook lets it
+# through: an empty profile leaves the hooks harmless rather than refusing at random.
 
-# Где поднимаются витрины. Приложения этот репозиторий не держит вовсе: он публикует пакеты,
-# а живьём смотрят на витрины.
-RT_STANDS='витрина ui-kit http://localhost:6006, витрина ui-kit-v2 http://localhost:6007'
+# Where the showcases come up. This repository holds no applications at all: it publishes packages,
+# and what is looked at live is the showcases.
+RT_STANDS='the ui-kit showcase http://localhost:6006, the ui-kit-v2 showcase http://localhost:6007'
 
-# Форма номера в заголовке PR и состояние задачи по номеру берутся у пакета как есть.
+# The shape of the number in a PR title and the task state by number are taken from the package as
+# they are.
 #
-# Оба здесь когда-то переопределялись: у задач не было ключа, номер стоял в хвосте заголовка
-# — «Что сделано (#312)», — и гард, читающий форму `[КЛЮЧ-123]`, не доставал номер ни из
-# заголовка, ни из ветки. Совпадение номеров при этом не сверялось ничем, а состояние задачи
-# приходилось собирать профилем. Ключ `RT` объявлен в `.claude/rt-kit/checks.json`, задача,
-# ветка и PR несут его одинаково, и обе надстройки стали ложью о дереве.
+# Both were once overridden here: the tasks had no key, the number stood at the tail of the title
+# — «Что сделано (#312)» — and the guard reading the form `[KEY-123]` got the number out of neither
+# the title nor the branch. The match of the numbers was checked by nothing at that, and the task
+# state had to be gathered by the profile. The key `RT` is declared in
+# `.claude/rt-kit/checks.json`, the task, the branch and the PR carry it the same way, and both
+# overrides became a lie about the tree.
 
-# Почта, которой подписан машинный коммит. Та же строка стоит в компаньоне правила поставки, и
-# берётся она оттуда — набранная по памяти, она уже стоила дереву переписанной истории: число в
-# служебном адресе принадлежало постороннему человеку, и хостинг одиннадцать коммитов приписал
-# ему. Логин машинной записи гард читает отсюда же, левой частью адреса.
+# The email a machine commit is signed by. The same string stands in the companion of the delivery
+# rule, and it is taken from there: typed from memory, it has already cost the tree a rewritten
+# history — the number in the service address belonged to an outside person, and the hosting
+# ascribed eleven commits to them. The guard reads the machine account's login from here too, by
+# the left part of the address.
 #
-# Исполнителем задач стоит эта же запись: заведённое ею видно и владельцу, и сверкам. Прежняя,
-# `rt-tools-agent`, была ограничена хостингом — при ней исполнителем приходилось ставить
-# владельца, — и с переходом на новую это отступление снято.
+# The same account stands as the assignee of the tasks: what it creates is visible both to the
+# owner and to the audits. The former one, `rt-tools-agent`, was limited by the hosting — under it
+# the owner had to be set as the assignee — and with the move to the new one that departure is
+# lifted.
 RT_COMMIT_EMAIL='317887029+rt-tools-dev@users.noreply.github.com'
 
-# Чем вызову подставляют токен машинной записи и как эта подстановка выглядит целиком. Клиент
-# хостинга залогинен владельцем, поэтому вызов без подстановки идёт от него: заявка выходит от
-# владельца, ревьювером его тогда не назначить — автор заявки её ревьювером не бывает, — и
-# чинится это только переоткрытием. Гард поставки читает обе строки: первой он ищет подстановку
-# в тексте команды, вторую печатает в отказе готовой.
-# Учётная запись машинной работы: исполнителем задач и автором заявок стоит она.
+# What the machine account's token is substituted into a call by, and how that substitution looks
+# whole. The hosting client is signed in as the owner, so a call without the substitution goes from
+# them: the request comes out from the owner, they cannot be assigned as its reviewer then — the
+# author of a request is never its reviewer — and that is cured only by reopening. The delivery
+# guard reads both strings: by the first it looks for the substitution in the text of the command,
+# the second it prints in the refusal ready to use.
+# The account of the machine work: it stands as the assignee of the tasks and the author of the
+# requests.
 RT_TASK_BOT='rt-tools-dev'
 
-# Почты людей, коммитящих в это дерево своими руками. Названные, они включают вторую половину
-# проверки подписи: известны машинная запись и эти люди, всё прочее отбивается — коммит под
-# записью, которой дерево не объявляло, прежде проходил молча.
+# The emails of the people who commit into this tree with their own hands. Named, they switch on
+# the second half of the signature check: the machine account and these people are known, and
+# everything else is refused — a commit under an account the tree never declared used to pass in
+# silence.
 RT_HUMAN_EMAILS='72300075+Eyhenij@users.noreply.github.com 41898282+github-actions[bot]@users.noreply.github.com'
 
 RT_PULL_TOKEN_VAR='GH_TOKEN'
 RT_PULL_TOKEN_HINT='GH_TOKEN=$(cat ~/.config/rt-tools-bot-token)'
 
-# Кто придёт к хостингу по этому токену. Читается тот же файл, что и в подстановке выше: файла
-# нет — значение пустое, клиент отвечает от залогиненной записи владельца, и гард поставки видит
-# это по логину, а не по тексту команды.
+# Who will come to the hosting by this token. The same file is read as in the substitution above:
+# there is no file — the value is empty, the client answers from the owner's signed-in account, and
+# the delivery guard sees that by the login rather than by the text of the command.
 #
-# Клиент вызывается полным путём: в оболочке владельца это имя занято псевдонимом менеджера
-# паролей, и вызов по имени ждал бы подтверждения, которого гарду никто не даст.
+# The client is called by its full path: in the owner's shell that name is taken by a password
+# manager's alias, and a call by the name would wait for a confirmation nobody will give the guard.
 rt_pull_token_login() {
     local token
     token="$(cat ~/.config/rt-tools-bot-token 2>/dev/null)"
     GH_TOKEN="$token" /opt/homebrew/bin/gh api user --jq .login 2>/dev/null
 }
 
-# Раздел, который тело заявки несёт с минуты открытия. Владелец вливает кнопкой хостинга, как
-# только видит зелёное, — и всё, чем требование разбора папки там держится, это раздел, который
-# он прочитал на странице. Однажды он влил заявку, пока шёл прогон, и папка задачи уехала в
-# главную ветку неразобранной.
+# The section the request body carries from the minute it is opened. The owner merges by the
+# hosting's button as soon as they see green — and all that the requirement to take the folder
+# apart is held by there is the section they read on the page. Once they merged a request while the
+# run was going, and the task folder travelled into the main branch untaken-apart.
 #
-# Заголовок пишется языком заявки, поэтому образец стоит здесь, а не в пакете. Судится заголовок
-# второго уровня, а не слово где угодно в теле: слова «оставшийся шаг» встречаются и в прозе.
+# The heading is written in the language of the request, so the sample stands here rather than in
+# the package. A second-level heading is judged, not a word anywhere in the body: the words
+# «оставшийся шаг» occur in prose too.
 RT_PULL_BODY_SECTION='^##[[:space:]]+Оставшийся шаг[[:space:]]*$'
 
-# Первая колонка борды — та, из которой задачу забирают в работу. Гард поставки сверяет её с
-# колонкой задачи и отбивает поставку, пока задача из неё не ушла: по очереди работ такая задача
-# читается как невзятая, хотя работа по ней уже выложена.
+# The board's first column — the one a task is taken into work from. The delivery guard matches it
+# against the task's column and refuses the delivery while the task has not left it: by the work
+# queue such a task reads as untaken, although the work on it is already laid out.
 #
-# Пишется полным именем колонки, вместе со значком: борда отвечает именем, а не коротким ключом,
-# — короткий `backlog` из `.claude/rt-kit/checks.json` не совпал бы ни с чем и молча выключил бы
-# проверку. Без объявления гард колонку не судит вовсе.
+# It is written by the column's full name, together with the sign: the board answers with the name
+# rather than with a short key — the short `backlog` from `.claude/rt-kit/checks.json` would match
+# nothing and silently switch the check off. Without the declaration the guard does not judge the
+# column at all.
 #
-# Судится одна колонка. «🆕 New», куда задачу кладёт правило борды, а не команда заведения, так
-# остаётся не покрытой ничем — гард сверяет имя целиком и второго не знает.
+# One column is judged. «🆕 New», where the board rule puts a task rather than the creating command,
+# stays covered by nothing: the guard matches the whole name and knows no second one.
 RT_BOARD_BACKLOG='📋 Backlog'
 
-# Чем снимаются перестоявшие срок записи о законченных работах. Гард хода работы эту команду не
-# судит: записи стареют по календарю, и шаг срока краснеет сам, без правки в ветке, — а в ветке
-# эпика, куда работу привозят слияниями, папки задачи нет, и без вывода заявка оставалась бы
-# красной без выхода. Сверяется вся команда, а не вхождение.
+# What the records about finished work that outstayed their retention are removed by. The work
+# guard does not judge this command: the records age by the calendar, and the retention step turns
+# red by itself, without an edit in the branch — while in an epic's branch, where work is brought
+# by merges, there is no task folder, and without the output the request would stay red with no way
+# out. The whole command is matched, not an occurrence.
 RT_ARCHIVE_PRUNE_CMD='node tools/archive-prune.mjs --apply'
 
-# Команды, которые обязаны пройти перед пушем. По одной на строку; первая упавшая отбивает пуш.
-# Линтер стилей отдельной строкой: линтер кода файлы стилей не читает вовсе.
+# The commands that must pass before a push. One per line; the first that falls refuses the push.
+# The style linter goes on a line of its own: the code linter does not read style files at all.
 #
-# Зовётся именованным скриптом, а не разложенной командой: порог замечаний объявлен при нём один
-# раз, и гард, сквозной прогон и ручной вызов не расходятся между собой.
+# It is called by a named script rather than by the command laid out: the warning threshold is
+# declared at it once, and the guard, the end-to-end run and a call by hand do not diverge.
 #
-# Чем каждый шаг конвейера здесь закрыт — в `pushGate.steps` файла `.claude/rt-kit/checks.json`,
-# и `check-push-gate` отбивает пуш, если шаг не закрыт ни строкой отсюда, ни исключением с
-# причиной. Сборка и сверка собранных пакетов стоят здесь именно поэтому: без них набор был уже
-# конвейерного, и дважды подряд PR уходил со словом «проверено» о том, чего не гоняли.
+# What every pipeline step here is closed by is in `pushGate.steps` of `.claude/rt-kit/checks.json`,
+# and `check-push-gate` refuses a push when a step is closed neither by a line from here nor by an
+# exception with a reason. The build and the matching of the built packages stand here for exactly
+# that reason: without them the set was narrower than the pipeline one, and twice in a row a PR left
+# with the word "checked" about what was never run.
 #
-# Сборка образа стоит здесь по той же причине, но говорит о другом: `nx build` собирает из дерева
-# целиком, а образ — из своего набора копируемых каталогов, и недостающий каталог виден только
-# сборкой самого образа. Шаг требует поднятого демона; не поднят — команда отказывает, и это
-# честнее, чем пуш со словом «проверено» о том, чего не собирали.
+# The image build stands here for the same reason but speaks of something else: `nx build` builds
+# from the tree whole, while an image is built from its own set of copied directories, and a missing
+# directory is visible only by building the image itself. The step needs a raised daemon; it is not
+# raised — the command refuses, and that is more honest than a push with the word "checked" about
+# what was never built.
 #
-# Сверка спеков идёт первой строкой: она стоит полсекунды на полном дереве и отбивает раньше, чем
-# начнётся десятиминутный прогон. Конвейер её не гоняет вовсе, и до этой строки красная сверка
-# ничего не отбивала: 208 расхождений копились в главной ветке молча, а вывод её читали руками
-# и не всегда. Известная её граница — гард стоит на командах агента, и пуш руками идёт мимо.
+# The spec matching goes on the first line: it costs half a second on the whole tree and refuses
+# before a ten-minute run begins. The pipeline does not run it at all, and until this line a red
+# matching refused nothing: 208 divergences piled up in the main branch silently, while its output
+# was read by hand and not always. Its known boundary is that the guard stands on the agent's
+# commands, and a push by hand goes past it.
 #
-# Проверка повторов стоит рядом с ней и по той же причине: конвейер её не гоняет, и до этой
-# строки её красное не отбивало ничего. Своё перечисление под уже объявленным набором ни линт,
-# ни сборка, ни тесты не видят — каждая копия сама по себе исправна.
+# The duplication check stands next to it and for the same reason: the pipeline does not run it, and
+# until this line its red refused nothing. One's own enumeration under an already declared set is
+# seen neither by the lint, nor by the build, nor by the tests — every copy is sound on its own.
 #
-# Сверка раскладки стоит там же и по тому же поводу: конвейер её не гоняет, и её красное до этой
-# строки не отбивало ничего — долг простоял с прошлой недели и дважды за заход встал поперёк
-# чужой работы. Здесь она зовётся именованным скриптом дерева, а не двоичным файлом зависимости:
-# пакет правил лежит в этом же дереве и собирается из исходников, поэтому сверка сперва
-# пересобирает его, а потом читает собранное. Стоит это около шести секунд вместе со сборкой.
+# The layout matching stands there too and on the same occasion: the pipeline does not run it, and
+# until this line its red refused nothing — a debt stood from the week before and twice in a session
+# got in the way of someone else's work. Here it is called by a named script of the tree rather than
+# by a dependency's binary: the rules package lies in this same tree and is built from the sources,
+# so the matching first rebuilds it and then reads what was built. That costs about six seconds
+# together with the build.
 #
-# Умолчание пакета зовётся, а не переписывается сюда строками. Своё перечисление называло восемь
-# проверок из четырнадцати, а шесть — `check-doc-paths`, `check-file-size`, `check-styles`,
-# `check-lib-layers`, `check-reuse`, `check-schema-drift` — лежали в `tools/` и не гонялись ничем:
-# ни этим набором, ни конвейером. Полноту набора судит `check-push-gate`, а судит он по именам
-# шагов конвейера — проверки, которой нет и в конвейере, он не хватится, и потеря молчалива с
-# обеих сторон. Перечисленные строками, шесть имён закрыли бы сегодняшнюю дыру и оставили
-# завтрашнюю: проверка, которую пакет заведёт следующей редакцией, до дерева снова не доедет, и
-# промах будет тот же самый.
+# The package default is called rather than rewritten here as lines. One's own enumeration named
+# eight checks out of fourteen, while six — `check-doc-paths`, `check-file-size`, `check-styles`,
+# `check-lib-layers`, `check-reuse`, `check-schema-drift` — lay in `tools/` and were run by nothing:
+# neither by this set nor by the pipeline. The completeness of the set is judged by
+# `check-push-gate`, and it judges by the names of the pipeline steps — it will not miss a check
+# that is not in the pipeline either, and the loss is silent on both sides. Enumerated as lines, the
+# six names would close today's hole and leave tomorrow's: a check the package creates in its next
+# edition would again not reach the tree, and the miss would be the very same.
 #
-# Отфильтровано то, что своя строка уже покрывает, и каждый род назван поимённо — иначе набор
-# гонял бы одно дважды:
+# What one's own line already covers is filtered out, and every kind is named by name — otherwise
+# the set would run one thing twice:
 #
-#   - `agent-kit sync --check` — здесь зовётся `pnpm run agent-kit:check`: пакет правил живёт в
-#     этом дереве, и сверять надо собранное из его исходников, а не двоичный файл зависимости,
-#     которого в `node_modules` нет вовсе;
-#   - `nx run-many -t lint test build` и `nx affected -t lint test build` — здешняя строка строже:
-#     в ней есть `typecheck`, которого у умолчания нет;
-#   - `stylelint "**/*.scss"` — здесь зовётся `pnpm run lint:styles`: порог замечаний объявлен при
-#     нём один раз, и гард, конвейер и ручной вызов не расходятся между собой;
-#   - `check-specs`, `check-dupes`, `check-push-gate` — те же самые строки, названные выше.
+#   - `agent-kit sync --check` — here it is called `pnpm run agent-kit:check`: the rules package
+#     lives in this tree, and what must be matched is what is built from its sources rather than a
+#     dependency's binary, which is not in `node_modules` at all;
+#   - `nx run-many -t lint test build` and `nx affected -t lint test build` — the line here is
+#     stricter: it holds `typecheck`, which the default does not have;
+#   - `stylelint "**/*.scss"` — here it is called `pnpm run lint:styles`: the warning threshold is
+#     declared at it once, and the guard, the pipeline and a call by hand do not diverge;
+#   - `check-specs`, `check-dupes`, `check-push-gate` — the very same lines named above.
 #
-# Образцы держатся узкими нарочно: под них не попадает ничего, кроме перечисленного, поэтому
-# проверка, заведённая пакетом завтра, доедет сюда сама.
+# The samples are kept narrow deliberately: nothing but what is enumerated falls under them, so a
+# check the package creates tomorrow reaches here by itself.
 rt_push_checks() {
     cat <<'EOF'
 pnpm run agent-kit:check
@@ -169,24 +184,25 @@ pnpm exec nx affected -t verify --parallel
 node tools/check-push-gate.mjs
 EOF
 
-    # Тяжёлые шаги идут по своему предмету, а не по признаку «ветка тронула код».
+    # The heavy steps go by their own subject rather than by the sign "the branch touched code".
     #
-    # Прежде признак был «всё или ничего»: текстовой считалась ветка, у которой каждый задетый
-    # файл — либо `.md`, либо под `docs/`, а всё прочее тянуло полный набор. Довод рядом стоял
-    # верный — ошибаться в сторону лишнего прогона, — но между «гнать всё» и «не гнать ничего»
-    # пропущено третье: гнать то, чего ветка коснулась.
+    # Before, the sign was all or nothing: a branch counted as textual when every touched file was
+    # either `.md` or under `docs/`, and everything else pulled the full set. The argument next to
+    # it was right — err towards a needless run — but between "run everything" and "run nothing" a
+    # third is missed: run what the branch touched.
     #
-    # Стоило это дважды. Пуш коммита с одной строкой в таблице markdown поднимал стенд, снимал
-    # две витрины и собирал два образа — владелец трижды за заход отбил такой пуш, приняв его за
-    # зависший. Позже ветка, поправившая один признак в хуках агента, заплатила тем же и была
-    # **отбита** непостоянным снимком чужой кнопки: правка гарда встала из-за кадра компонента,
-    # к которому не притрагивалась.
+    # That cost twice. Pushing a commit with one line in a markdown table raised the stand, took two
+    # showcases and built two images — the owner refused such a push three times in a session,
+    # taking it for a hung one. Later a branch that fixed one sign in the agent's hooks paid the
+    # same way and was **refused** by an unstable snapshot of somebody else's button: an edit of a
+    # guard stood because of a frame of a component it never touched.
     #
-    # Предмет у каждого шага свой, и объявлен он путями. Ветка, не задевшая путей предмета, за
-    # него не платит. Признак при этом ошибается в прежнюю сторону: путь, не попавший ни в один
-    # предмет, и общее основание дерева поднимают весь набор — незнакомое читается как «могло
-    # задеть что угодно». Пустая база означает, что сравнивать не с чем: гоняется всё, и той же
-    # пустой базой зовёт функцию сверка полноты набора — список она видит целиком.
+    # Every step has a subject of its own, and it is declared by paths. A branch that touched none
+    # of a subject's paths does not pay for it. The sign errs towards the former side at that: a
+    # path that fell into no subject, and the tree's shared base, raise the whole set — the unknown
+    # reads as "it could have touched anything". An empty base means there is nothing to compare
+    # against: everything is run, and the completeness matching calls the function with that same
+    # empty base — it sees the list whole.
     e2e='pnpm exec nx run message-bus-admin-e2e:e2e'
     shot_v1='node tools/visual-gate.mjs ui-kit'
     shot_v2='node tools/visual-gate.mjs ui-kit-v2'
@@ -202,23 +218,25 @@ EOF
     _touched="$(rt_push_touched "$1")"
 
     case " $_touched " in
-        *' всё '*)
+        *' everything '*)
             printf '%s\n%s\n%s\n%s\n%s\n' "$e2e" "$shot_v1" "$shot_v2" "$img_api" "$img_web"
 
             return 0
             ;;
     esac
 
-    case " $_touched " in *' приёмник '*) printf '%s\n%s\n%s\n' "$e2e" "$img_api" "$img_web" ;; esac
-    case " $_touched " in *' кит1 '*) printf '%s\n' "$shot_v1" ;; esac
-    case " $_touched " in *' кит2 '*) printf '%s\n' "$shot_v2" ;; esac
+    case " $_touched " in *' receiver '*) printf '%s\n%s\n%s\n' "$e2e" "$img_api" "$img_web" ;; esac
+    case " $_touched " in *' kit1 '*) printf '%s\n' "$shot_v1" ;; esac
+    case " $_touched " in *' kit2 '*) printf '%s\n' "$shot_v2" ;; esac
 }
 
-# Каких предметов коснулась ветка. Печатает слова предметов через пробел; `всё` означает, что
-# делить нечего — задето общее основание либо путь, которого признак не узнал.
+# Which subjects the branch touched. It prints the subject words separated by spaces; `everything`
+# means there is nothing to split — the shared base was touched, or a path the sign did not
+# recognise.
 #
-# Пустой список задетого предметом не считается: сравнивать не с чем, и молчание тут читалось бы
-# как «менять нечего». Такой вызов кончается ненулевым кодом, и зовущий гонит весь набор.
+# An empty list of what was touched does not count as a subject: there is nothing to compare
+# against, and silence here would read as "there is nothing to change". Such a call ends with a
+# non-zero code, and the caller runs the whole set.
 rt_push_touched() {
     _changed="$(git diff --name-only "$1"...HEAD 2>/dev/null)"
     [ -z "$_changed" ] && return 1
@@ -228,31 +246,33 @@ rt_push_touched() {
 
     for _f in $_changed; do
         case "$_f" in
-            # Тексты, обвязка агента и проверки дерева: своего тяжёлого шага у них нет.
+            # The texts, the agent's harness and the tree's checks: they have no heavy step of
+            # their own.
             #
-            # Проверки читают дерево и ничего в нём не собирают: ни витрина, ни приёмник от их
-            # правки не меняются. Пока они падали в общий случай, правка одной проверки поднимала
-            # сквозной набор, два набора снимков и две сборки образов — шесть минут за строку,
-            # которой ни один из этих предметов не касается.
+            # The checks read the tree and build nothing in it: neither the showcase nor the
+            # receiver changes from an edit of them. While they fell into the general case, an edit
+            # of one check raised the end-to-end suite, two snapshot sets and two image builds — six
+            # minutes for a line none of those subjects is touched by.
             docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*) ;;
-            # Киты — каждый со своей витриной.
-            projects/ui-kit/*) _add кит1 ;;
-            projects/ui-kit-v2/*) _add кит2 ;;
-            # Приёмник, админка, её сквозной набор, выкатка и схема базы.
-            apps/message-bus*|deploy/*|prisma/*) _add приёмник ;;
-            # Всё прочее — общие библиотеки, корневые настройки, обвязка сборки, конвейер.
-            # Делить их между предметами нельзя: они влияют на любой из них.
-            *) _add всё ;;
+            # The kits — each with a showcase of its own.
+            projects/ui-kit/*) _add kit1 ;;
+            projects/ui-kit-v2/*) _add kit2 ;;
+            # The receiver, the admin panel, its end-to-end suite, the rollout and the database
+            # schema.
+            apps/message-bus*|deploy/*|prisma/*) _add receiver ;;
+            # Everything else — the shared libraries, the root settings, the build harness, the
+            # pipeline. They cannot be split between the subjects: they act on any of them.
+            *) _add everything ;;
         esac
     done
 
     printf '%s' "$_subjects"
 }
 
-# Тронула ли ветка только тексты. Нулевой код — только тексты, иначе — код.
+# Whether the branch touched only texts. A zero code — only texts, otherwise — code.
 #
-# Пустой список задетого текстовой правкой не считается: сравнивать не с чем, и молчание тут
-# читалось бы как «менять нечего».
+# An empty list of what was touched does not count as a textual edit: there is nothing to compare
+# against, and silence here would read as "there is nothing to change".
 rt_push_docs_only() {
     changed="$(git diff --name-only "$1"...HEAD 2>/dev/null)"
     [ -z "$changed" ] && return 1
@@ -261,29 +281,33 @@ rt_push_docs_only() {
     return 0
 }
 
-# Какой документ обязан ехать тем же коммитом, что и этот файл. Печатает образец пути или молчит.
+# Which document must travel by the same commit as this file. It prints a path sample or stays
+# silent.
 rt_docs_pair_for() {
     case "$1" in
-        # Спека — не описание компонента: она его проверяет.
+        # A spec is not a description of a component: it checks it.
         *.spec.ts) return 0 ;;
-        # Описание компонента второго кита лежит рядом с ним и правится тем же движением.
+        # The description of a second-kit component lies next to it and is edited by the same
+        # motion.
         projects/ui-kit-v2/src/lib/*/*/*.component.ts)
             printf '%s' "${1%/*}/CONTEXT\.md" ;;
-        # Набор токенов оформления описан в одном документе, и новый токен без строки в нём
-        # найти нечем: имена токенов нигде больше не перечислены.
+        # The styling token set is described in one document, and a new token without a line in it
+        # cannot be found by anything: the token names are enumerated nowhere else.
         projects/ui-kit/src/styles/base/_tokens.scss | projects/ui-kit/src/styles/base/_color-scheme.scss)
             printf '%s' 'projects/ui-kit/src/styles/TOKENS\.md' ;;
-        # Устройство прода, путь запроса и разбор молчания описаны текстом, которого не читает
-        # ни линтер, ни сборка: расхождение состава с описанием копится молча.
+        # The structure of production, the path of a request and the sorting out of silence are
+        # described by a text neither the linter nor the build reads: a divergence of the make-up
+        # from the description piles up silently.
         docker-compose.prod.yml | deploy/Caddyfile | .github/workflows/deploy.yml)
             printf '%s' 'docs/PROD\.md' ;;
     esac
 }
 
-# Чем линтуется этот файл сразу после правки. Печатает команду или молчит.
+# What this file is linted by right after an edit. It prints a command or stays silent.
 #
-# Путь подставляется здесь, а не оставляется позиционным параметром: хук исполняет напечатанное
-# вычислением строки, и `$1` в нём разрешился бы в параметр самого хука, то есть в пустоту.
+# The path is substituted here rather than left as a positional parameter: the hook runs what is
+# printed by computing the string, and `$1` in it would resolve to the hook's own parameter, that
+# is, to nothing.
 rt_lint_for() {
     case "$1" in
         *.scss) printf 'pnpm exec stylelint --max-warnings 0 "%s"' "$1" ;;
@@ -291,34 +315,35 @@ rt_lint_for() {
     esac
 }
 
-# Имя ветки, с которой разрешено открывать PR: ключ задач, номер задачи, краткое имя.
+# The name of a branch a PR may be opened from: the task key, the task number, a short name.
 #
-# Форма та же, что строит команда заведения задачи, и та же, что читает `numberFromBranch` при
-# сверке очереди работ: три места расходились бы молча, и ветка, законная для гарда, оставалась
-# бы для сверки безымянной. Род правки сюда не идёт — он живёт в заголовке коммита, где его
-# сверяет commitlint, а в имени ветки только повторял бы то, что и так видно по её содержимому.
+# The shape is the same as the one the task-creating command builds, and the same as the one
+# `numberFromBranch` reads when matching the work queue: the three places would diverge silently,
+# and a branch lawful for the guard would stay nameless for the matching. The kind of the edit does
+# not go here — it lives in the commit subject, where commitlint matches it, and in the branch name
+# it would only repeat what its content already shows.
 rt_task_branch_ok() {
     printf '%s' "$1" | grep -qE '^RT-[0-9]+-[a-z0-9][a-z0-9-]*$'
 }
 
-# Что в этом дереве считается переизобретением. По строке «образец<таб>чем заменить».
-# Образцы узкие намеренно: гард сверяет только НОВЫЙ текст, и широкий образец отбивал бы
-# правку, которая ничего нового не заводит.
+# What counts as reinvention in this tree. One line per "sample<tab>what to replace it with".
+# The samples are narrow deliberately: the guard matches only the NEW text, and a wide sample would
+# refuse an edit that creates nothing new.
 rt_reinvented_in() {
-    # Признаки этого дерева объявлены данными — `.claude/rt-kit/signals.json`, и читают их и гард,
-    # и сплошная сверка. Здесь остаётся то, что данными не выразить: признак, зависящий от места
-    # файла в дереве.
+    # This tree's signs are declared as data — `.claude/rt-kit/signals.json` — and both the guard
+    # and the sweeping matching read them. What stays here is what cannot be put as data: a sign
+    # that depends on the file's place in the tree.
     case "$1" in
         */projects/ui-kit-v2/*.scss)
-            printf '%s\t%s\t%s\t%s\n' 'added' ':host' '' 'класс блока: .rt-<блок>, а под совпадением имён — селектор по имени элемента'
+            printf '%s\t%s\t%s\t%s\n' 'added' ':host' '' 'the block class: .rt-<block>, and under a clash of names a selector by the element name'
             ;;
     esac
 }
 
-# Каталог источников пакета правил. Это дерево пакет и разрабатывает: разложенная копия здесь
-# чинится не надстройкой, а источником, из которого её кладут. У дерева-потребителя источника
-# нет вовсе, и умолчание пакета молчит — гард места правки посылает такое дерево в надстройку.
+# The directory of the rules package sources. This tree develops the package too: a laid-out copy
+# here is mended not by an override but by the source it is laid from. A consumer tree has no source
+# at all, and the package default stays silent — the guard of the place of an edit sends such a tree
+# to the override.
 rt_kit_sources_dir() {
     printf 'projects/agent-kit/assets'
 }
-

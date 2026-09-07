@@ -1,4 +1,4 @@
-// rt-kit v0.25.0 · checks/spec-anchors.mjs · 854b33b42c7d · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/spec-anchors.mjs · 49e4b8a79200 · правится надстройкой, не здесь
 /**
  * The binding of a rule to code and the laws a spec applies.
  *
@@ -162,7 +162,7 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
             report(
                 mapFile,
                 `a statement without a binding: «${head.slice(0, 60)}…» — add a line with \`file:symbol\`, ` +
-                    'a verdict «Не исполняется» with a reason, or move the statement into «Открытые вопросы» of the law as Q-<letter>-<number>'
+                    'a verdict «Not carried out» with a reason, or move the statement into «Открытые вопросы» of the law as Q-<letter>-<number>'
             );
             continue;
         }
@@ -170,8 +170,8 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
         if (!row.anchors.length && !row.verdict) {
             report(
                 mapFile,
-                `the statement «${head.slice(0, 60)}…» has an empty binding — put \`файл:символ\` ` +
-                    'or the verdict «Не исполняется», «Не применимо», «Не проверяется» with a reason'
+                `the statement «${head.slice(0, 60)}…» has an empty binding — put \`file:symbol\` ` +
+                    'or the verdict «Not carried out», «Not applicable», «Not checked» with a reason'
             );
         }
         for (const [, path, symbol] of row.anchors) {

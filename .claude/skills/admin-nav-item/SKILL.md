@@ -4,7 +4,7 @@ kind: pattern
 rule: navigation
 description: Pattern of rule navigation. Load when creating an admin menu item, a section with a panel or a new section address — one declaration per item and route, the flag of a section without a screen, address nesting, a hint on an unavailable item. Not for the record edit panel — pattern entity-aside.
 ---
-<!-- rt-kit v0.25.0 · patterns/admin-nav-item.md · b6d676def926 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/admin-nav-item.md · 8c8d6157d340 · правится надстройкой, не здесь -->
 
 # A menu item and a section address
 
@@ -76,17 +76,20 @@ declaration: a domain section is named by the id of its item.
 - An icon picked as "similar": a missing one is added to the sprite and to
   `<prefix>-icon-names.ts`.
 
-## Подсветку даёт маршрутизатор, а не расчёт по адресу
+## The highlight is given by the router, not computed from the address
 
-Раздел этого дерева. Меню здесь рисует верхний ряд кита, и подсветку текущего пункта он
-отдаёт маршрутизатору: пункт несёт адрес раздела, а горит тот, чей адрес открыт. Считать её
-самому — производным по событиям роутера, как это делала оболочка до перевода меню в ряд, —
-значит отвечать на вопрос об адресе второй раз и расходиться с первым ответом на первом же
-адресе с параметром или открытой панелью.
+A section of this tree. The menu here is drawn by the kit top row, and it hands the highlight of
+the current item to the router: an item carries the section address, and the one lit is the one
+whose address is open. Computing it oneself — as a derivation over router events, the way the
+shell did before the menu moved into a row — means answering the question about the address a
+second time and diverging from the first answer on the very first address with a parameter or an
+open panel.
 
-- **Пункт объявляет адрес, а не признак «текущий».** Поля `active` в декларации нет вовсе:
-  положить его туда — значит завести второй источник правды об открытом разделе.
-- **Списка исключений для подсветки не заводится.** Адрес панели живёт в отдельном аутлете и
-  адреса раздела не меняет, поэтому открытая панель подсветку не сбивает.
-- **Узкую раскладку ряда заводит кит.** На узком экране инлайн-ряд прячется целиком, а те же
-  пункты открываются кнопкой — своей узкой раскладки шапка приложения не пишет.
+- **An item declares an address, not a «current» flag.** There is no `active` field in the
+  declaration at all: putting one there means starting a second source of truth about the open
+  section.
+- **No exception list for the highlight is started.** A panel address lives in a separate outlet
+  and does not change the section address, so an open panel does not knock the highlight off.
+- **The narrow layout of the row is started by the kit.** On a narrow screen the inline row hides
+  whole, and the same items open by a button — the application header writes no narrow layout of
+  its own.

@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 /**
- * Следующий свободный номер сценария — по всем веткам, а не по одной главной.
+ * The next free scenario number — over all the branches rather than over the main one alone.
  *
- * Номер связывает сценарий с тестом, и отданный второй раз он оставляет старую ссылку
- * правильной на вид и ведущей не туда. Свободный номер смотрели в главной ветке, а соседняя
- * работа держала свои шесть на диске и в главную ещё не въехала: `SC-AK-415` … `SC-AK-420`
- * раздали дважды, и двигаться пришлось той работе, чья договорённость не влита.
+ * A number ties a scenario to its test, and issued a second time it leaves the old reference looking
+ * right and leading elsewhere. The free number was looked up in the main branch while a neighbouring
+ * piece of work held its own six on the disk and had not arrived in the main one yet: `SC-AK-415` …
+ * `SC-AK-420` were handed out twice, and the work whose agreement was not merged had to move.
  *
- * Команда читает заголовки сценариев во всех ветках дерева — своих и удалённых, — и печатает
- * первый свободный номер за наибольшим занятым. Занятым считается номер, стоящий хоть где-то:
- * ветка, которая его держит, рано или поздно въедет.
+ * The command reads the scenario headings in all the tree's branches — its own and the remote ones —
+ * and prints the first free number past the largest taken. Taken means a number standing anywhere at
+ * all: the branch holding it will arrive sooner or later.
  *
- *   node tools/spec-next-id.mjs AK      # следующий свободный для префикса AK
- *   node tools/spec-next-id.mjs         # по префиксу на каждый, что встретился
+ *   node tools/spec-next-id.mjs AK      # the next free one for the prefix AK
+ *   node tools/spec-next-id.mjs         # by a prefix for each one met
  *
- * Ненулевой код — только отказ самой команды.
+ * A non-zero code is only a refusal of the command itself.
  */
 import { execFileSync } from 'node:child_process';
 
@@ -25,7 +25,7 @@ function git(args) {
     return execFileSync('git', args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
 }
 
-/** Ветки дерева: свои и удалённые. Ветка, держащая номер, рано или поздно въедет. */
+/** The tree's branches: its own and the remote ones. A branch holding a number will arrive sooner or later. */
 function branches() {
     const names = git(['for-each-ref', '--format=%(refname)', 'refs/heads', 'refs/remotes'])
         .split('\n')
@@ -43,7 +43,7 @@ function main() {
         try {
             text = git(['grep', '-h', '-oE', 'SC-[A-Z]{2,4}-[0-9]{1,3}', ref, '--', 'docs']);
         } catch {
-            // Ветка без единого сценария — законный случай: `git grep` отдаёт ненулевой код.
+            // A branch without a single scenario is a lawful case: `git grep` gives a non-zero code.
             continue;
         }
         for (const match of text.matchAll(HEADING)) {
@@ -54,7 +54,7 @@ function main() {
     }
 
     if (taken.size === 0) {
-        console.log('spec-next-id: сценариев не нашлось ни в одной ветке');
+        console.log('spec-next-id: not one scenario was found in any branch');
 
         return 0;
     }
@@ -64,11 +64,11 @@ function main() {
         if (WANT && prefix !== WANT) {
             continue;
         }
-        console.log(`SC-${prefix}: занято до ${max}, следующий свободный — SC-${prefix}-${max + 1}`);
+        console.log(`SC-${prefix}: taken up to ${max}, the next free is SC-${prefix}-${max + 1}`);
     }
 
     if (WANT && !taken.has(WANT)) {
-        console.log(`SC-${WANT}: ни одного номера не занято, следующий свободный — SC-${WANT}-1`);
+        console.log(`SC-${WANT}: not one number is taken, the next free is SC-${WANT}-1`);
     }
 
     return 0;

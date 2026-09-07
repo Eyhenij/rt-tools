@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-// Собирает слой оформления второго кита из источника: три файла стилей и типы имён.
+// It builds the second kit's styling layer from the source: three style files and the name types.
 //
-// Источник — projects/ui-kit-v2/src/styles/tokens.source.mjs. Собранное правится только здесь:
-// правка в собранном файле теряется на следующей сборке, и её ловит tools/check-tokens-build.mjs.
+// The source is projects/ui-kit-v2/src/styles/tokens.source.mjs. What is built is edited only there:
+// an edit in a built file is lost on the next build, and tools/check-tokens-build.mjs catches it.
 //
-// Ссылка на имя, которого источник не объявляет и которое не названо ручкой потребителя в
-// tools/tokens-handles.json, роняет сборку — ни один файл при этом не переписывается.
+// A reference to a name the source does not declare and which is not named a consumer's handle in
+// tools/tokens-handles.json drops the build — and not one file is rewritten at that.
 //
-// Вызов:
-//   node tools/build-tokens-v2.mjs            пишет собранное на диск
-//   node tools/build-tokens-v2.mjs --check    ничего не пишет, отвечает кодом возврата
+// The call:
+//   node tools/build-tokens-v2.mjs            writes what is built to the disk
+//   node tools/build-tokens-v2.mjs --check    writes nothing, answers with an exit code
 
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -22,53 +22,53 @@ const typesFile = resolve(root, 'projects/ui-kit-v2/src/lib/tokens/rt-design-tok
 const source = await import(`file://${stylesDir}/tokens.source.mjs`);
 const { scale, light, darkLayout, coarsePointer, material } = source;
 
-const BANNER = `/* Собрано генератором \`tools/build-tokens-v2.mjs\` из \`tokens.source.mjs\` — правится там, не здесь:
-   правка на месте теряется на следующей сборке, и её называет \`pnpm run check:tokens-build\`. */`;
+const BANNER = `/* Built by the generator \`tools/build-tokens-v2.mjs\` from \`tokens.source.mjs\` — edited there, not here:
+   an edit on the spot is lost on the next build, and \`pnpm run check:tokens-build\` names it. */`;
 
 const PREAMBLE = {
-    primitives: `/* Ступени шкал — значения, из которых слой назначений выбирает. Единственное место кита, где
-   код цвета и размер числом законны по определению. */`,
-    semantic: `/* Назначения светлой темы.
+    primitives: `/* The scale steps — the values the assignment layer chooses from. The only place in the kit where
+   a colour code and a size as a number are lawful by definition. */`,
+    semantic: `/* The light theme's assignments.
 
-   Тело вынесено в @mixin по той же причине, что и у тёмной темы: набор нужен не
-   только на \`:root\`, но и на отдельном контейнере. Без этого светлую половину
-   пары «светлая ↔ тёмная» нельзя показать, пока приложение стоит в тёмной теме, —
-   контейнер унаследует тёмные значения, и обе половины покажут одно и то же. */`,
-    dark: `/* Тёмная тема — переопределение назначений; ступени шкалы неизменны.
+   The body is carried into an @mixin for the same reason as the dark theme's: the set is needed not
+   only on \`:root\` but on a separate container too. Without that the light half of the
+   pair «light ↔ dark» cannot be shown while the application stands in the dark theme —
+   the container would inherit the dark values, and both halves would show the same. */`,
+    dark: `/* The dark theme — an override of the assignments; the scale steps are unchanging.
 
-   Тело вынесено в @mixin, чтобы тот же набор переопределений можно было
-   применить не только на html-уровне (тема приложения), но и к локальному
-   контейнеру (side-by-side light/dark в Storybook) — без дублирования значений.
+   The body is carried into an @mixin so that the same set of overrides could be
+   applied not only at the html level (the application's theme) but to a local
+   container too (side-by-side light/dark in Storybook) — without duplicating the values.
 
-   База (\`rt-theme-dark-tokens\`) — тёплый графит для приложений и всех
-   CDK-overlay'ев (асайды/диалоги/меню рендерятся на уровне body, вне
-   host-классов шеллов — поэтому графит держим на :root, иначе overlay'и
-   не наследовали бы палитру).
+   The base (\`rt-theme-dark-tokens\`) is warm graphite for the applications and all the
+   CDK overlays (asides/dialogs/menus are rendered at the body level, outside the
+   shells' host classes — so the graphite is held on :root, otherwise the overlays
+   would not inherit the palette).
 
-   Значения ответов живут в источнике рядом со своим светлым назначением: забытая половина
-   пары видна там же, а не вылавливается сверкой двух файлов. */`,
-    material: `/* Материальный набор — второй слой назначений: кит, нарисованный видом первого кита.
+   The values of the answers live in the source next to their light assignment: a forgotten half of
+   a pair is visible right there rather than caught by matching two files. */`,
+    material: `/* The material preset — a second layer of assignments: the kit drawn in the look of the first kit.
 
-   Ступени шкалы он не трогает: переписанная ступень перекрасила бы заодно и тёмную тему,
-   которая ссылается на те же ступени. Значения приходят из материальных ступеней шкалы.
+   It does not touch the scale steps: a rewritten step would repaint the dark theme as well,
+   and the dark theme refers to those same steps. The values come from the material steps of the scale.
 
-   Тело вынесено в @mixin по той же причине, что у тёмной темы: набор нужен не только на
-   \`:root\`, но и на отдельном контейнере — иначе два набора нельзя показать рядом.
+   The body is taken into a @mixin for the same reason as the dark theme's: the preset is needed not
+   only on \`:root\` but on a separate container too — otherwise two presets cannot be shown side by side.
 
-   Правило набора объявлено до тёмной темы нарочно: у корневых признаков одинаковая
-   специфичность, и порядок в файле — единственное, чем тёмная тема выигрывает у набора. */`,
+   The preset rule is declared before the dark theme on purpose: the root signs have equal
+   specificity, and the order in the file is the only thing by which the dark theme wins over the preset. */`,
 };
 
-const COARSE_NOTE = `/* На тач-устройствах инпут не меньше 16px: WebKit (весь iOS, включая Chrome)
-   зумит страницу при фокусе на поле с font-size < 16px — отсюда горизонтальный
-   сдвиг вёрстки. Десктоп сохраняет плотный 14px. */`;
+const COARSE_NOTE = `/* On touch devices an input is not smaller than 16px: WebKit (all of iOS, Chrome included)
+   zooms the page on focusing a field with font-size < 16px — hence the horizontal
+   shift of the layout. The desktop keeps the dense 14px. */`;
 
 const errors = [];
 function fail(message) {
     errors.push(message);
 }
 
-/** Объявление и его записки в том виде, в каком они уедут в собранный файл. */
+/** A declaration and its notes in the shape they will travel into the built file. */
 function renderNodes(nodes) {
     const out = [];
     for (const node of nodes) {
@@ -79,8 +79,8 @@ function renderNodes(nodes) {
             continue;
         }
         if (!node.name) continue;
-        // Длинное составное значение переносится под своё имя: так его ставит форматтер, и
-        // собранное совпадает с ним без второй правки.
+        // A long compound value is wrapped under its own name: that is how the formatter puts it, and
+        // what is built matches it without a second edit.
         const value = node.value.includes('\n') ? `\n        ${node.value}` : ` ${node.value}`;
         out.push(`    ${node.name}:${value};${node.note ? ` /* ${node.note} */` : ''}`);
     }
@@ -89,38 +89,38 @@ function renderNodes(nodes) {
 
 const lightByName = new Map(light.filter((n) => n.name).map((n) => [n.name, n]));
 
-// Тёмная раскладка называет имена; значения приходят из источника, от светлого назначения.
+// The dark layout names the names; the values come from the source, from the light assignment.
 const darkNodes = darkLayout.map((node) => {
     if (!node.name) return node;
     const owner = lightByName.get(node.name);
     if (owner) {
         if (owner.dark === undefined) {
-            fail(`тёмная раскладка называет '${node.name}', а ответа тёмной темы у него нет`);
+            fail(`the dark layout names '${node.name}', and it has no dark theme answer`);
         }
         return { ...node, value: owner.dark, note: node.note ?? owner.darkNote };
     }
     if (node.value === undefined) {
-        fail(`'${node.name}' стоит в тёмной раскладке, но значения нет ни там, ни в светлых назначениях`);
+        fail(`'${node.name}' stands in the dark layout, but there is no value either there or in the light assignments`);
     }
     return node;
 });
 
-// Материальный набор имён не заводит: он переопределяет назначения базового. Имя, которого в
-// базовом наборе нет, иначе объявилось бы только под признаком набора — страница без признака
-// получила бы мёртвую ссылку, и увидеть это можно было бы только на витрине.
+// The material preset declares no names of its own: it overrides the assignments of the base one. A name
+// absent from the base set would otherwise be declared only under the preset sign — a page without the
+// sign would get a dead reference, and that could be seen only on the showcase.
 for (const node of material) {
     if (!node.name) continue;
     if (!lightByName.has(node.name)) {
-        fail(`материальный набор объявляет '${node.name}', которого нет среди назначений базового`);
+        fail(`the material preset declares '${node.name}', which is absent from the base assignments`);
     }
 }
 
-// Каждое имя, объявленное источником, и каждая ручка потребителя.
+// Every name declared by the source and every consumer's handle.
 const declared = new Set([...scale, ...light, ...darkLayout].filter((n) => n.name).map((n) => n.name));
 const handles = new Set(Object.keys(JSON.parse(readFileSync(resolve(root, 'tools/tokens-handles.json'), 'utf8')).handles ?? {}));
 
-// Ссылка в никуда роняет сборку: имя, к которому обратились с опечаткой, иначе просто не
-// применяется, и увидеть это можно только на витрине и только если посмотреть.
+// A reference into nowhere drops the build: a name addressed with a typo simply does not
+// apply otherwise, and that can be seen only on the showcase and only if somebody looks.
 for (const node of [...scale, ...light, ...darkLayout, ...material]) {
     if (!node.name) continue;
     for (const value of [node.value, node.dark]) {
@@ -128,22 +128,22 @@ for (const node of [...scale, ...light, ...darkLayout, ...material]) {
         for (const match of value.matchAll(/var\(\s*(--rt-[a-z0-9-]+)/g)) {
             const ref = match[1];
             if (!declared.has(ref) && !handles.has(ref)) {
-                fail(`'${node.name}' ссылается на '${ref}', которого источник не объявляет и который не назван ручкой потребителя`);
+                fail(`'${node.name}' refers to '${ref}', which the source does not declare and which is not named a consumer's handle`);
             }
         }
     }
 }
 
-// Тёмный ответ без своего имени в раскладке в собранный файл не попадёт вовсе.
+// A dark answer without its own name in the layout will not get into the built file at all.
 const darkNames = new Set(darkLayout.filter((n) => n.name).map((n) => n.name));
 for (const node of light) {
     if (node.name && node.dark !== undefined && !darkNames.has(node.name)) {
-        fail(`у '${node.name}' есть ответ тёмной темы, но тёмная раскладка его не называет`);
+        fail(`'${node.name}' has a dark theme answer, but the dark layout does not name it`);
     }
 }
 
 if (errors.length > 0) {
-    console.error(`build-tokens-v2: отказов ${errors.length}, собранное не переписано\n`);
+    console.error(`build-tokens-v2: refusals ${errors.length}, what is built is not rewritten\n`);
     for (const message of errors) console.error(`  ${message}`);
     process.exit(1);
 }
@@ -174,20 +174,20 @@ function renderTypes() {
     const unique = [...new Set(names)].sort();
     const handleNames = [...handles].sort();
     return (
-        `/* Собрано генератором \`tools/build-tokens-v2.mjs\` из \`tokens.source.mjs\` — правится там, не здесь. */\n\n` +
-        `/** Имя свойства оформления, которое кит объявляет сам. */\n` +
+        `/* Built by the generator \`tools/build-tokens-v2.mjs\` from \`tokens.source.mjs\` — edited there, not here. */\n\n` +
+        `/** The name of a styling property the kit declares itself. */\n` +
         `export type TRtDesignTokenName =\n` +
         unique.map((name) => `    | '${name}'`).join('\n') +
         `;\n\n` +
-        `/** Имя ручки потребителя — свойства, которое кит намеренно не объявляет. */\n` +
+        `/** The name of a consumer's handle — a property the kit deliberately does not declare. */\n` +
         `export type TRtConsumerHandleName =\n` +
         handleNames.map((name) => `    | '${name}'`).join('\n') +
         `;\n\n` +
-        `/** Все свойства оформления, объявленные китом. */\n` +
+        `/** All the styling properties declared by the kit. */\n` +
         `export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [\n` +
         unique.map((name) => `    '${name}',`).join('\n') +
         `\n];\n\n` +
-        `/** Все ручки потребителя: значение приходит от приложения, до него работает запасное. */\n` +
+        `/** All the consumer's handles: the value comes from the application, until then the fallback works. */\n` +
         `export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [\n` +
         handleNames.map((name) => `    '${name}',`).join('\n') +
         `\n];\n`
@@ -213,13 +213,13 @@ for (const [path, content] of Object.entries(files)) {
 
 if (check) {
     if (stale.length > 0) {
-        console.error(`check:tokens-build: собранное разошлось с источником — файлов ${stale.length}\n`);
+        console.error(`check:tokens-build: what is built diverged from the source — files ${stale.length}\n`);
         for (const path of stale) console.error(`  ${path}`);
-        console.error(`\nСобранное правится не руками: правь projects/ui-kit-v2/src/styles/tokens.source.mjs`);
-        console.error(`и пересобирай командой \`pnpm run build:tokens-source\`.`);
+        console.error(`\nWhat is built is not edited by hand: edit projects/ui-kit-v2/src/styles/tokens.source.mjs`);
+        console.error(`and rebuild by the command \`pnpm run build:tokens-source\`.`);
         process.exit(1);
     }
-    console.log(`check:tokens-build: собранное совпадает с источником — файлов ${Object.keys(files).length}`);
+    console.log(`check:tokens-build: what is built matches the source — files ${Object.keys(files).length}`);
 } else {
-    console.log(`build-tokens-v2: собрано файлов ${Object.keys(files).length}`);
+    console.log(`build-tokens-v2: files built ${Object.keys(files).length}`);
 }

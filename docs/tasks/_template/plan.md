@@ -1,4 +1,4 @@
-<!-- rt-kit v0.25.0 · samples/tasks/_template/plan.md · 6e2a1f539db5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · samples/tasks/_template/plan.md · 4cc53751ebe2 · правится надстройкой, не здесь -->
 # Plan
 
 **Task:** <KEY>-<number> · **Branch:** <branch>
@@ -16,16 +16,16 @@ along the way.
 
 ## Task footprint
 
-<What the work touches. Filled in by the exploration before the grill and confirmed by the owner.
-By this same table, at closing, one looks at which of the specs, rules and patterns went stale:
-what is named here is read twice — before the work and after it.>
+<What the work touches. Filled in by exploration before the grill and confirmed by the owner. By
+this same table, at closing, one sees what of the specs, rules and patterns has gone stale: what
+is named here is read twice — before the work and after it.>
 
-| What  | Where                            |
-| ----- | -------------------------------- |
-| Specs | <domains the work touches>       |
-| Laws  | <laws along its footprint>       |
-| Rules | <rules and their companions>     |
-| Code  | <libs and applications>          |
+| What  | Where                         |
+| ----- | ----------------------------- |
+| Specs | `docs/specs/<domain>/`        |
+| Laws  | `docs/constitution/<name>.md` |
+| Rules | `.claude/skills/<name>/`      |
+| Code  | `projects/<package>/`         |
 
 ## What counts as done
 
@@ -46,16 +46,3 @@ cannot be confirmed by anything.
 ## What this work does not do
 
 - <neighbouring work that is not dragged in here, and where it is created>
-
-## След задачи
-
-<Что работа задевает. Заполняется разведкой до разбора и подтверждается владельцем. По этой же
-таблице на закрытии смотрят, что из спеков, правил и паттернов устарело: названное здесь
-читают дважды — до работы и после неё.>
-
-| Что     | Где                          |
-| ------- | ---------------------------- |
-| Спеки   | `docs/specs/<домен>/`        |
-| Законы  | `docs/constitution/<имя>.md` |
-| Правила | `.claude/skills/<имя>/`      |
-| Код     | `projects/<пакет>/`          |

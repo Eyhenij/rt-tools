@@ -1,7 +1,7 @@
 /**
- * Spec для `require-list-store-base`.
+ * The spec of `require-list-store-base`.
  *
- * Parser: `@typescript-eslint/parser`. Раннер: Vitest.
+ * Parser: `@typescript-eslint/parser`. The runner is Vitest.
  */
 import { RuleTester } from '@typescript-eslint/rule-tester';
 
@@ -17,7 +17,7 @@ const STORE_FILE: string = 'promo-codes.store.ts';
 
 ruleTester.run(RULE_NAME, rule, {
     valid: [
-        // список берётся у основы — разрешено
+        // the list is taken from the base — allowed
         {
             filename: STORE_FILE,
             code: `class PromoCodesStore extends AdminListStoreBase {
@@ -26,7 +26,7 @@ ruleTester.run(RULE_NAME, rule, {
                 }
             }`,
         },
-        // основа названа через неймспейс — разрешено
+        // the base is named through a namespace — allowed
         {
             filename: STORE_FILE,
             code: `class PromoCodesStore extends platform.AdminListStoreBase {
@@ -35,7 +35,7 @@ ruleTester.run(RULE_NAME, rule, {
                 }
             }`,
         },
-        // стор без выборки списка — правило его не касается
+        // a store without a list query — the rule does not touch it
         {
             filename: STORE_FILE,
             code: `class SessionStore {
@@ -44,7 +44,7 @@ ruleTester.run(RULE_NAME, rule, {
                 }
             }`,
         },
-        // тот же вызов вне стора — правило смотрит только на *.store.ts
+        // the same call outside a store — the rule looks only at *.store.ts
         {
             filename: 'promo-code-api.service.ts',
             code: `class PromoCodeApiService {
@@ -55,7 +55,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
     ],
     invalid: [
-        // свой список без основы — отказ
+        // a list of one's own without the base — refused
         {
             filename: STORE_FILE,
             code: `class PromoCodesStore {
@@ -65,7 +65,7 @@ ruleTester.run(RULE_NAME, rule, {
             }`,
             errors: [{ messageId: 'missingBase' }],
         },
-        // чужая основа основой списка не считается
+        // a foreign base does not count as the list base
         {
             filename: STORE_FILE,
             code: `class PromoCodesStore extends BaseAsyncStoreService {
@@ -75,7 +75,7 @@ ruleTester.run(RULE_NAME, rule, {
             }`,
             errors: [{ messageId: 'missingBase' }],
         },
-        // два вызова в одном сторе дают одно замечание, а не два
+        // two calls in one store give one finding, not two
         {
             filename: STORE_FILE,
             code: `class PromoCodesStore {

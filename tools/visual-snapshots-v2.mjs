@@ -1,41 +1,42 @@
 #!/usr/bin/env node
 /**
- * Прогон снимков витрины второго кита.
+ * The snapshot run of the second kit's showcase.
  *
- * Три вещи, которых сам `test-storybook` не делает и делать не умеет:
+ * Three things `test-storybook` itself does not do and cannot do:
  *
- * 1. **Опознаёт витрину по адресу.** Витрины двух китов — оба сторибука, отличимые только
- *    содержимым. Прогон, наведённый на чужую или на оставшуюся от прошлого раза, даёт либо гору
- *    ненайденных историй, либо, что хуже, сверку чужих кадров с эталонами второго кита — и
- *    причину ищут в обвязке, а она в порту.
- * 2. **Ловит осиротевшие эталоны.** История переименована, а её кадр остался: такой эталон вечно
- *    зелен, потому что прогон его не открывает. Через несколько волн каталог перестаёт отвечать
- *    на вопрос, что проверено, а вес растёт от файлов, которые не сверяет никто.
- * 3. **Разводит точечную пересъёмку и пересъёмку всего каталога.** Пересъёмка всего разом
- *    стирает и то расхождение, которого не ждали, поэтому она — отдельная команда с явным
- *    признаком, а не умолчание.
+ * 1. **It recognises the showcase by the address.** The showcases of the two kits are both
+ *    storybooks, told apart only by their content. A run pointed at a foreign one or at one left
+ *    from last time gives either a heap of stories not found or, worse, a matching of foreign frames
+ *    against the second kit's references — and the reason is looked for in the harness while it is
+ *    in the port.
+ * 2. **It catches orphaned references.** A story is renamed and its frame stays: such a reference is
+ *    eternally green, because the run does not open it. After several waves the directory stops
+ *    answering the question what is checked, while the weight grows from files nobody matches.
+ * 3. **It keeps a pointed re-take apart from a re-take of the whole directory.** A re-take of
+ *    everything at once erases the divergence that was not expected as well, so it is a separate
+ *    command with an explicit sign rather than the default.
  *
- * Договорённость — `docs/specs/ui-kit-v2/`.
+ * The agreement is `docs/specs/ui-kit-v2/`.
  *
- *   node tools/visual-snapshots-v2.mjs                      # сверка с эталонами
- *   node tools/visual-snapshots-v2.mjs --update '<файл>'    # пересъёмка названных файлов историй
- *   node tools/visual-snapshots-v2.mjs --update-all         # пересъёмка всего каталога
+ *   node tools/visual-snapshots-v2.mjs                      # matching against the references
+ *   node tools/visual-snapshots-v2.mjs --update '<file>'    # a re-take of the named story files
+ *   node tools/visual-snapshots-v2.mjs --update-all         # a re-take of the whole directory
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-/** Адрес уже поднятой витрины: прогон свою не поднимает. */
+/** The address of an already raised showcase: the run raises none of its own. */
 const URL = process.env.STORYBOOK_URL ?? 'http://localhost:6007';
 
-/** Настройка витрины второго кита — своя, общей с первым китом нет. */
+/** The second kit's showcase settings are its own, there are none shared with the first kit. */
 const CONFIG_DIR = 'projects/ui-kit-v2/.storybook';
 
-/** Каталог эталонов лежит при витрине: их читают вместе с историями. */
+/** The references directory lies next to the showcase: they are read together with the stories. */
 const SNAPSHOT_DIR = `${CONFIG_DIR}/__snapshots__`;
 
-/** По этому пути в историях витрины опознаётся, что по адресу именно второй кит. */
+/** By this path in the showcase's stories it is recognised that the address holds the second kit. */
 const OWN_IMPORT_MARKER = 'projects/ui-kit-v2/';
 
 function fail(message) {
@@ -44,10 +45,10 @@ function fail(message) {
 }
 
 /**
- * Опознаёт витрину по её указателю историй.
+ * It recognises the showcase by its story index.
  *
- * Признак — путь исходника: у второго кита каждая история лежит под `projects/ui-kit-v2/`.
- * Заголовки для этого не годятся — `Components/Button` есть у обоих китов.
+ * The sign is the source path: at the second kit every story lies under `projects/ui-kit-v2/`.
+ * Titles are no good for this — `Components/Button` exists at both kits.
  */
 async function requireOwnShowcase() {
     let index;
@@ -55,32 +56,34 @@ async function requireOwnShowcase() {
     try {
         const response = await fetch(`${URL}/index.json`);
         if (!response.ok) {
-            fail(`По адресу ${URL} витрина не отдала указатель историй (${response.status}). Подними её: pnpm run storybook:ui-kit-v2`);
+            fail(`At the address ${URL} the showcase gave no story index (${response.status}). Raise it: pnpm run storybook:ui-kit-v2`);
         }
         index = await response.json();
     } catch (error) {
-        fail(`По адресу ${URL} никто не отвечает (${error.message}). Подними витрину: pnpm run storybook:ui-kit-v2`);
+        fail(`At the address ${URL} nobody answers (${error.message}). Raise the showcase: pnpm run storybook:ui-kit-v2`);
     }
 
     const entries = Object.values(index.entries ?? {});
     if (entries.length === 0) {
-        fail(`По адресу ${URL} витрина без единой истории — сверять нечего.`);
+        fail(`At the address ${URL} the showcase has not one story — there is nothing to match.`);
     }
 
     const own = entries.filter((entry) => (entry.importPath ?? '').includes(OWN_IMPORT_MARKER));
     if (own.length === 0) {
         const sample = entries[0]?.importPath ?? '—';
-        fail(`По адресу ${URL} отвечает не витрина второго кита: истории приходят из «${sample}», а ожидались из «${OWN_IMPORT_MARKER}».`);
+        fail(
+            `At the address ${URL} it is not the second kit's showcase that answers: the stories come from «${sample}», and were expected from «${OWN_IMPORT_MARKER}».`
+        );
     }
 
     return own.length;
 }
 
 /**
- * Сверяет каталог эталонов с реестром снятого.
+ * It matches the references directory against the registry of what was taken.
  *
- * Реестр пишет обвязка на каждом снятом кадре; всё, что лежит в каталоге и в реестре не названо,
- * не сверялось ничем.
+ * The registry is written by the harness on every taken frame; everything lying in the directory and
+ * not named in the registry was matched by nothing.
  */
 function requireNoOrphans(registryPath) {
     if (!existsSync(SNAPSHOT_DIR)) {
@@ -101,8 +104,8 @@ function requireNoOrphans(registryPath) {
 
     if (orphans.length > 0) {
         fail(
-            `Эталоны, которым нет истории (${orphans.length}):\n    ${orphans.join('\n    ')}\n\n` +
-                `  Они вечно зелены — прогон их не открывает. Удали их или верни историю, которой они принадлежали.`
+            `References that have no story (${orphans.length}):\n    ${orphans.join('\n    ')}\n\n` +
+                `  They are eternally green — the run does not open them. Remove them or bring back the story they belonged to.`
         );
     }
 
@@ -116,28 +119,28 @@ const updateOne = updateIndex >= 0 ? args[updateIndex + 1] : undefined;
 
 if (updateIndex >= 0 && (updateOne === undefined || updateOne.startsWith('--'))) {
     fail(
-        `Пересъёмка идёт по названному файлу историй: --update '<образец пути>'. Пересъёмка всего каталога — отдельная команда --update-all.`
+        `The re-take goes by the named story file: --update '<path sample>'. A re-take of the whole directory is a separate command --update-all.`
     );
 }
 
 const own = await requireOwnShowcase();
-console.log(`Витрина второго кита на ${URL}: историй ${own}.`);
+console.log(`The second kit's showcase on ${URL}: stories ${own}.`);
 
 const registryDir = mkdtempSync(join(tmpdir(), 'rt-snapshots-'));
 const registryPath = join(registryDir, 'taken.txt');
 writeFileSync(registryPath, '');
 
 /**
- * Сколько историй открывается разом.
+ * How many stories are opened at once.
  *
- * Витрина по адресу одна, и умолчание Jest — по потоку на ядро — её обгоняет: приложение истории
- * не успевает встать, ожидание готовности внутри сборщика витрины завершается пустым, и история
- * падает с «no elements in sequence». На этой машине шесть потоков давали от двух до девяти таких
- * отказов за заход, четыре — один, два — ни одного за три захода подряд.
+ * There is one showcase at the address, and Jest's default — a thread per core — outruns it: the
+ * story's application does not manage to come up, the readiness wait inside the showcase builder
+ * ends empty, and the story falls with «no elements in sequence». On this machine six threads gave
+ * from two to nine such refusals per session, four gave one, two gave none over three sessions in a row.
  *
- * Повтором это не лечится намеренно: повтор превращает мигающую историю в зелёную со второго
- * раза, и правило про детерминированность кадра становится непроверяемым. Лечится это тем, что
- * витрину перестают перегружать.
+ * A retry does not cure this on purpose: a retry turns a flickering story green on the second
+ * attempt, and the rule about a frame's determinacy becomes uncheckable. It is cured by ceasing to
+ * overload the showcase.
  */
 const MAX_WORKERS = '2';
 
@@ -146,10 +149,10 @@ const runnerArgs = ['test-storybook', '--config-dir', CONFIG_DIR, '--url', URL, 
 if (updateAll) {
     runnerArgs.push('--', '-u');
 } else if (updateOne !== undefined) {
-    // Образец отбирает файлы историй по пути, а не по имени истории. Отбор по имени (`-t`)
-    // здесь не годится вовсе: с ним окружение прогона не создаёт страницы, и все файлы падают
-    // на `Cannot read properties of undefined (reading 'goto')` — то же самое и у первого кита.
-    // Проверено флаг за флагом: `-u` работает, `-t` ломает.
+    // The sample selects story files by path rather than by story name. A selection by name (`-t`)
+    // is no good here at all: with it the run's environment creates no page, and all the files fall
+    // with `Cannot read properties of undefined (reading 'goto')` — the same at the first kit.
+    // Checked flag by flag: `-u` works, `-t` breaks.
     runnerArgs.push('--', '-u', updateOne);
 }
 
@@ -158,23 +161,23 @@ const run = spawnSync('pnpm', ['exec', ...runnerArgs], {
     env: {
         ...process.env,
         RT_SNAPSHOT_REGISTRY: registryPath,
-        // Настройку витрины прогон читает в Node, а аддон состояний в Node не грузится: он
-        // трогает `Element` на верхнем уровне. Без этого признака импорт падает, окружение
-        // остаётся без страницы, и все истории валятся на `undefined (reading 'goto')`.
-        // На саму витрину это не влияет — она поднята отдельно и со всеми аддонами.
+        // The showcase settings the run reads in Node, and the states addon does not load in Node: it
+        // touches `Element` at the top level. Without this sign the import falls, the environment is
+        // left without a page, and all the stories fall with `undefined (reading 'goto')`.
+        // The showcase itself is not affected — it is raised apart and with all the addons.
         RT_SNAPSHOT_RUN: '1',
-        // Эталон появляется на диске только в заходе пересъёмки: в обычном прогоне отсутствие
-        // эталона — отказ, а не повод его дописать.
+        // A reference appears on the disk only in a re-take session: in an ordinary run a missing
+        // reference is a refusal, not a reason to append it.
         RT_SNAPSHOT_UPDATE: updateAll || updateOne !== undefined ? '1' : '0',
     },
 });
 
-// Осиротевшие ищутся и после красного прогона: иначе о них узнают только тогда, когда всё
-// остальное сойдётся, то есть в последнюю очередь.
+// The orphaned are looked for after a red run too: otherwise they are learned of only when
+// everything else matches, that is, last of all.
 let stored = 0;
 try {
-    // Точечная пересъёмка открывает не весь каталог, и всё, что она не тронула, выглядело бы
-    // осиротевшим. Сверка каталога идёт только на полном заходе.
+    // A pointed re-take opens not the whole directory, and everything it did not touch would look
+    // orphaned. The directory is matched only on a full session.
     if (updateOne === undefined) {
         stored = requireNoOrphans(registryPath);
     }
@@ -186,4 +189,4 @@ if (run.status !== 0) {
     process.exit(run.status ?? 1);
 }
 
-console.log(`Эталонов в каталоге: ${stored}. Осиротевших нет.`);
+console.log(`References in the directory: ${stored}. There are no orphaned ones.`);

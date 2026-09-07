@@ -3,30 +3,30 @@
 const stylelint = require('stylelint');
 
 /**
- * Запрещает `:host`, `:host()` и `:host-context()` в стилях кита, где у всех
- * компонентов `ViewEncapsulation.None`.
+ * It forbids `:host`, `:host()` and `:host-context()` in the kit's styles, where all
+ * the components have `ViewEncapsulation.None`.
  *
- * Под `None` Angular селектор не переписывает, а в обычном документе `:host`
- * не совпадает ни с чем: правило, написанное через него, просто не работает —
- * и молча, потому что синтаксически оно верно. Так уже случалось: под `None`
- * лежали мёртвыми и `display: contents` у панелей, и тёмная тема активной
- * плитки навигации.
+ * Under `None` Angular does not rewrite the selector, and in an ordinary document `:host`
+ * matches nothing: a rule written through it simply does not work —
+ * and silently, because syntactically it is right. That has happened already: under `None`
+ * both `display: contents` at the panels and the dark theme of the active
+ * navigation tile lay dead.
  *
- * Хост адресуется классом блока (`.rt-<блок>`), а если тот же класс висит ещё
- * и на корне шаблона — именем элемента (`rt-<блок>`). Предка, задающего тему,
- * вместо `:host-context()` адресуют напрямую: `[data-theme='dark'] …`.
+ * The host is addressed by the block's class (`.rt-<block>`), and if the same class hangs
+ * on the template root as well — by the element's name (`rt-<block>`). An ancestor setting the
+ * theme is addressed directly instead of `:host-context()`: `[data-theme='dark'] …`.
  */
 
 const RULE_NAME = 'rt-tools/no-host-selector';
 
 const messages = stylelint.utils.ruleMessages(RULE_NAME, {
     rejected: (selector, pseudo) =>
-        `"${selector}" — ${pseudo} под ViewEncapsulation.None не совпадает ни с чем, правило будет мёртвым. ` +
-        `Хост адресуется классом блока (.rt-<блок>) либо именем элемента (rt-<блок>), ` +
-        `предок с темой — напрямую ([data-theme='dark'] …).`,
+        `"${selector}" — ${pseudo} under ViewEncapsulation.None matches nothing, the rule will be dead. ` +
+        `The host is addressed by the block's class (.rt-<block>) or by the element's name (rt-<block>), ` +
+        `an ancestor with a theme — directly ([data-theme='dark'] …).`,
 });
 
-/** `:host`, `:host(...)`, `:host-context(...)` — но не `.rt-host` и не `--host`. */
+/** `:host`, `:host(...)`, `:host-context(...)` — but not `.rt-host` and not `--host`. */
 const HOST_PSEUDO = /(?<![\w-]):host(-context)?\b/g;
 
 const ruleFunction = (primary, _secondary, _context) => {
@@ -38,7 +38,7 @@ const ruleFunction = (primary, _secondary, _context) => {
         if (!validOptions || !primary) return;
 
         root.walkRules((rule) => {
-            // Селекторы внутри @keyframes — это ключевые кадры (from/to/50%), не селекторы.
+            // The selectors inside @keyframes are keyframes (from/to/50%), not selectors.
             if (rule.parent && rule.parent.type === 'atrule' && /keyframes$/i.test(rule.parent.name)) return;
 
             for (const selector of rule.selectors) {

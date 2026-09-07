@@ -1,7 +1,7 @@
 /**
- * Spec для `require-suffix-declaration`.
+ * The spec of `require-suffix-declaration`.
  *
- * Parser: `@typescript-eslint/parser`. Раннер: Vitest.
+ * Parser: `@typescript-eslint/parser`. The runner is Vitest.
  */
 import { RuleTester } from '@typescript-eslint/rule-tester';
 
@@ -15,7 +15,7 @@ const ruleTester: RuleTester = new RuleTester({
 
 ruleTester.run(RULE_NAME, rule, {
     valid: [
-        // метка на месте — разрешено
+        // the mark is in place — allowed
         {
             filename: 'promo-codes-list.component.ts',
             code: `@Component({ selector: 'vm-promo-codes-list' })
@@ -26,27 +26,27 @@ ruleTester.run(RULE_NAME, rule, {
             code: `@ConnectProcedure()
                 export class LinkBookingProcedure {}`,
         },
-        // основа, которую не внедряют, метки не несёт — имя класса обещание держит
+        // a base nobody injects carries no mark — the class name keeps the promise
         {
             filename: 'base-list-store.service.ts',
             code: 'export abstract class BaseListStoreService {}',
         },
-        // перевод сущности классом — как на фронте
+        // translating an entity by a class — as on the front end
         {
             filename: 'promo-code.mapper.ts',
             code: 'export class PromoCodeMapper extends BaseMapper {}',
         },
-        // перевод сущности функциями — как на бэкенде
+        // translating an entity by functions — as on the backend
         {
             filename: 'property.mapper.ts',
             code: 'export function propertyToProto(property: PropertyModel): unknown { return property; }',
         },
-        // таблица соответствий — тот же перевод, записанный постоянной
+        // a table of matches — the same translation, written as a constant
         {
             filename: 'analytics.mapper.ts',
             code: 'export const EVENT_TYPE_TO_DB: Record<string, string> = {};',
         },
-        // один маршрут вместо списка — тип тот же
+        // one route instead of a list — the type is the same
         {
             filename: 'promo-codes.routes.ts',
             code: "export const promoCodesRoute: Route = { path: 'promo-codes' };",
@@ -59,48 +59,48 @@ ruleTester.run(RULE_NAME, rule, {
             filename: 'booking.model.ts',
             code: 'export interface IBooking { id: string; }',
         },
-        // чистая функция стрелкой — такая же функция
+        // a pure function as an arrow — the same function
         {
             filename: 'availability-calendar.logic.ts',
             code: 'export const nightsOf = (from: string, to: string): number => 0;',
         },
-        // суффикса нет — правило файл не судит
+        // there is no suffix — the rule does not judge the file
         {
             filename: 'sign-in.ts',
             code: 'export const value: number = 1;',
         },
-        // слово в имени суффиксом не считается: `items` в таблице не объявлен
+        // a word in the name does not count as a suffix: `items` is not declared in the table
         {
             filename: 'menu.items.ts',
             code: 'export const value: number = 1;',
         },
     ],
     invalid: [
-        // ключ внедрения под именем модели
+        // an injection key under the name of a model
         {
             filename: 'google-maps.model.ts',
             code: "export const GOOGLE_MAPS_API_KEY: InjectionToken<string> = new InjectionToken<string>('GOOGLE_MAPS_API_KEY');",
             errors: [{ messageId: 'missingDeclaration' }],
         },
-        // компонент без метки
+        // a component without the mark
         {
             filename: 'promo-codes-list.component.ts',
             code: 'export class PromoCodesListComponent {}',
             errors: [{ messageId: 'missingDeclaration' }],
         },
-        // процедура без метки
+        // a procedure without the mark
         {
             filename: 'link-booking.procedure.ts',
             code: 'export class LinkBookingProcedure {}',
             errors: [{ messageId: 'missingDeclaration' }],
         },
-        // в файле логики одни постоянные
+        // a file of logic holds constants alone
         {
             filename: 'quote.logic.ts',
             code: 'export const LIMIT: number = 20;',
             errors: [{ messageId: 'missingDeclaration' }],
         },
-        // маппер, который ничего не переводит
+        // a mapper that translates nothing
         {
             filename: 'booking.mapper.ts',
             code: 'export const LIMIT: number = 20;',
