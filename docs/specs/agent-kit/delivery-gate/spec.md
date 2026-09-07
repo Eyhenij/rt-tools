@@ -1,309 +1,338 @@
-# Гарды поставки и гейт пуша
+# The delivery guards and the push gate
 
-**Статус:** действует · **Ревизия:** 2026-08-20 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `delivery`, `verifiability`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-20 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `delivery`, `verifiability`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Пуш — вход в конвейер: слияние в главную ветку запускает выкатку, и всё, что не проверено до
-пуша, проверяется уже на проде. Поддомен называет, что пакет стережёт по дороге наружу — свежесть
-основания ветки, подпись машинного коммита, готовность к открытию PR — и чем держится обещание,
-что запушенное не приедет красным: набор гейта пуша не бывает уже набора конвейера, и
-необъявленный шаг отбивает пуш.
+The push is the entry into the pipeline: a merge into the main branch starts the rollout, and
+everything not checked before the push is checked already on production. The subdomain names what
+the package watches on the road outward — the freshness of the branch base, the signature of a
+machine commit, the readiness to open a PR — and what holds the promise that what was pushed will
+not arrive red: the push gate set is never narrower than the pipeline set, and an undeclared step
+refuses the push.
 
-## Терминология
+## Terminology
 
-- **Машинная запись** — учётная запись, от имени которой исполнитель коммитит.
-- **Объявленная почта** — почта машинной записи целым значением; дерево называет её профилем.
-- **Логин записи** — левая часть объявленной почты: до собаки и после плюса, если он есть.
-- **Машинный коммит** — коммит, назвавшийся машинной записью: её логин стоит именем автора либо
-  левой частью его почты.
-- **Вклад ветки** — коммиты от вершины главной ветки у хостинга до вершины рабочей: то, что
-  уедет этим пушем.
-- **Готовность к поставке** — все условия, при которых работу отдают разом: свежее основание
-  ветки, подпись коммитов, состояние задачи вместе с её колонкой и разбор у PR. Про задачу и про
-  PR спрашивает поддомен ведения работы, здесь — то, что читается в самом дереве.
-- **Несошедшееся условие** — условие готовности, которое гард не подтвердил; в отказе оно стоит
-  вместе с тем, чем снимается.
-- **Набор гейта** — строки, которые печатает профиль дерева; гард гоняет их перед пушем.
-- **Файл конвейера** — описание прогона на стороне хостинга; у каждого вида хостинга своё имя, и
-  дерево называет его настройкой.
-- **Объявленный список** — соответствие «шаг конвейера → строка набора гейта», которое дерево
-  пишет в своей настройке.
-- **Исключение** — шаг конвейера, объявленный не входящим в гейт, вместе с причиной.
-- **Состав правки** — чем ветка отличается от главной по родам задетых файлов; по нему набор
-  гейта отбирает тяжёлые шаги.
+- **The machine record** — the account the executor commits on behalf of.
+- **The declared mail** — the mail of the machine record as a whole value; the tree names it in its
+  profile.
+- **The login of the record** — the left part of the declared mail: up to the at sign and after the
+  plus, if there is one.
+- **A machine commit** — a commit that named itself by the machine record: its login stands as the
+  author name or as the left part of its mail.
+- **The contribution of a branch** — the commits from the tip of the main branch at the hosting to
+  the tip of the working one: what will leave by this push.
+- **Readiness for delivery** — all the conditions under which the work is handed in at once: a fresh
+  branch base, the signature of the commits, the state of the task together with its column and the
+  review at the PR. About the task and about the PR the subdomain of conducting work asks; here it is
+  what is read in the tree itself.
+- **A condition that did not come together** — a readiness condition the guard did not confirm; in
+  the refusal it stands together with what it is lifted by.
+- **The gate set** — the lines the tree profile prints; the guard runs them before the push.
+- **The pipeline file** — the description of the run on the hosting side; every kind of hosting has
+  a name of its own, and the tree names it in the setting.
+- **The declared list** — the correspondence "a pipeline step → a line of the gate set" the tree
+  writes in its setting.
+- **An exception** — a pipeline step declared as not belonging to the gate, together with a reason.
+- **The composition of an edit** — how the branch differs from main by the kinds of files touched;
+  by it the gate set picks the heavy steps.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости     | В строке запуска                             |
-| -------------------- | -------------------------------------------- |
-| набор гейта          | функция профиля дерева, по команде на строку |
-| сверка полноты гейта | проверка гейта пуша против файла конвейера   |
-| гард поставки        | гард на вызове заведения ветки, пуша и PR    |
-| гард гейта пуша      | гард на вызове пуша, гоняющий набор          |
+| In the agreement            | In the launch line                                          |
+| --------------------------- | ----------------------------------------------------------- |
+| the gate set                | a function of the tree profile, one command per line        |
+| the gate completeness audit | the push gate check against the pipeline file               |
+| the delivery guard          | the guard on the call of creating a branch, of a push, a PR |
+| the push gate guard         | the guard on the call of a push, running the set            |
 
-## Правила
+## Rules
 
-- **Итоговый набор перед пушем печатает разбор состояния, а не только гард в минуту пуша.**
-  Набор собирается из двух файлов, и прочитать сборку было нечем: звать функцию профиля
-  приходилось руками из оболочки. Дерево, писавшее надстройку, умолчания не видело и дописывало
-  в него повтор — проверка, поднимающая теневое хранилище, гонялась дважды за пуш.
-- **Набор в разборе состояния зовётся, а не пересказывается чтением.** Он ветвится по содержимому
-  дерева — есть ли настройка раскладки, конфиг линтера стилей, какие проверки разложены, — и
-  разобранный по тексту функции разойдётся с настоящим молча.
-- **Что умолчание печатало, а в набор не попало, называется отдельной строкой.** Строка
-  `rt_push_checks_default "$@" | grep -v …` выглядит настройкой, а бывает снятием охраны, и
-  выкушенная проверка со стороны неотличима от той, которой в умолчании нет вовсе. Снятием охраны
-  разница НЕ называется: дерево могло заменить команду своим вариантом той же проверки, и отсюда
-  это выглядит так же — различает их надстройка, а читает её человек.
-- **Гард один раз за сессию называет, чем его набор уже конвейерного.** Правило требует, чтобы
-  гейт не был уже конвейера, а собрать это требование нечем: файл конвейера у каждого дерева свой.
-  Молчание при этом читается как «проверено всё», и расхождение узнаётся из красного конвейера
-  после заявки. На каждый пуш та же строка повторялась бы за заход десятки раз.
+- **The final set before the push is printed by the state report, not only by the guard at the
+  minute of the push.** The set is assembled from two files, and there was nothing to read the
+  assembly with: the profile function had to be called by hand from the shell. A tree writing an
+  override did not see the default and appended a repeat into it — a check raising a shadow storage
+  was run twice per push.
+- **The set in the state report is called, not retold by reading.** It branches by the content of the
+  tree — whether there is a layout setting, a style linter config, which checks are laid out — and
+  parsed by the text of the function it will diverge from the real one silently.
+- **What the default printed and what did not get into the set is named by a line of its own.** The
+  line `rt_push_checks_default "$@" | grep -v …` looks like a setting and is sometimes a lifting of
+  the watch, and a check cut out is indistinguishable from one the default does not have at all. The
+  difference is NOT called a lifting of the watch: the tree may have replaced the command by its own
+  variant of the same check, and from here that looks the same — they are told apart by the override,
+  and it is read by a person.
+- **The guard once per session names what its set is narrower than the pipeline by.** The rule
+  demands that the gate not be narrower than the pipeline, and there is nothing to assemble that
+  demand with: the pipeline file is different in every tree. Silence at that reads as "everything is
+  checked", and the divergence is learned from a red pipeline after the request. On every push the
+  same line would repeat dozens of times per session.
 
-- **Главная ветка влита в ветку задачи до открытия PR.** PR, открытый от разошедшейся
-  ветки, показывает ревьюверу правку вперемешку с чужой, а проверки на нём гоняются от
-  устаревшего основания.
-- **Открытие PR отбивается, пока главная ветка не влита.** Гард сверяет, что вершина главной
-  ветки — предок текущей, и называет, на сколько коммитов она ушла вперёд.
-- **Несошедшиеся условия поставки называются одним отказом.** Отказ по первому промаху заставляет
-  чинить их по одному: каждый круг стоит ещё одного вызова, хотя всё несошедшееся было известно
-  уже на первом.
-- **Каждое несошедшееся условие названо вместе с тем, чем оно снимается.** Отказ без действия
-  обходят, а не исполняют.
-- **Условие, известное в начале работы, спрашивается в начале.** Свежесть основания и почта,
-  которой рабочая копия подписывает коммиты, известны при заведении ветки; оставленные на пуш и
-  на открытие PR, они чинятся вливанием с разбором конфликта и переписыванием всей ветки.
-- **Судится то основание, которое названо командой, а не вершина рабочей копии.** Ветку заводят
-  и от вершины главной ветки прямо — этой командой основание как раз и берут свежим; основание,
-  о котором дерево ничего не знает, не судится вовсе.
-- **Свежесть локальной ссылки на главную ветку спрашивается и при заведении ветки.** Без второго
-  яруса молчание первого значит «основание не старше моей ссылки», а читается как «основание
-  свежее».
-- **Тело заявки несёт раздел об оставшемся шаге с минуты открытия.** Кнопку слияния нажимает
-  человек на хостинге, куда гард не достаёт, и вливает он, как только видит зелёное: всё, чем
-  условия поставки там держатся, — то, что владелец прочитал на странице заявки. Раздел,
-  дописанный перед просьбой влить, опаздывает на всю длину прогона.
-- **Образец обязательного раздела называет дерево, а не пакет.** Заголовок пишется языком заявки,
-  и выдуманное умолчание не совпало бы ни с чем; не названный деревом, раздел не судится вовсе.
-- **Тело, переданное файлом, судится наравне с телом в доводе команды.** Иначе обход появляется
-  сам собой, без единого решения: вызов с телом в файле проходит мимо признака молча.
-- **Флаг тела узнаётся только отдельным словом.** Хвост имени ветки `-b` в доводе основания
-  читался как флаг, и телом становилось следующее слово команды — `--head`, `2>&1`: гард отвечал,
-  что в теле нет раздела, хотя раздел в файле есть. Открыть заявку удавалось только именем
-  последним доводом и без хвоста команды.
-- **Номер задачи из имени ветки вынимает профиль, а не гард.** Форму имени гард у профиля уже
-  спрашивает, и приставкой в ней бывает не только ключ задач: `feat/88-slug` законна ровно
-  настолько же, насколько `RT-88-slug`. Разбор, зашитый в гард одной формой, оставлял такую
-  ветку без номера — и сверка номера ветки с номером заголовка заявки пропускалась молча, выглядя
-  сошедшейся, а проверка формы при заведении не срабатывала ни разу. Два вопроса к одному имени
-  разведены именами: форма отвечает «годится ли», разбор — «какой он».
-- **Ветка без номера задачи условий поставки не получает.** Локальная ветка под пробу законна, и
-  требовать от неё свежего основания значило бы отбивать работу, которая в главную не поедет.
-- **Гейт пуша зовёт то, что дерево разложило.** Заведённая проверка встаёт в него, а не только
-  в сводную цель, которую никто не запускает сам: новая строка в списке известного уезжает в
-  главную ветку молча, а список читается как действующая охрана.
-- **Отложенная правка пушем не считается.** Команда, кладущая правку в тайник рабочей копии,
-  наружу не отправляет ничего, а слово пуша стоит в ней отдельным словом — по одному этому
-  признаку гард гонял на ней весь набор и отбивал вызов первой же красной проверкой. Тайник
-  вырезается из строки, и признак считается по остатку: настоящий пуш, стоящий в той же команде
-  рядом, узнаётся по-прежнему.
-- **Переключение ветки в той же команде отбивает пуш целиком.** Гард разбирает команду до её
-  запуска, и набор он гоняет в том дереве, какое лежит сейчас: составная «переключиться и
-  запушить» проходит гейт по прежней ветке, молча проверяя не то. Заведение новой ветки под это
-  не подпадает — у свежей ветки дерево то же самое, что и было.
-- **Подпись машинного коммита судится до того, как коммит уедет.** Отказ стоит на пуше: до него
-  подпись переписывается на месте всей веткой сразу, после — силовой отправкой, и цена промаха
-  растёт скачком именно здесь.
-- **Машинный коммит опознаётся по заявке, а не по почте.** Судится коммит, назвавшийся машинной
-  записью; назвавшийся кем-то другим не судится вовсе — иначе гард отбивал бы работу, сделанную
-  человеком своими руками в том же дереве.
-- **Почта машинной записи сверяется целым значением.** Образец «число, плюс, логин, домен»
-  прошёл бы с чужим числом, то есть ровно с тем промахом, ради которого подпись и читается.
-- **Судится вклад ветки, а не вся история.** Коммиты, уже влитые в главную, этой веткой не
-  чинятся, и отказ за них отбивал бы работу вместо промаха.
-- **Подпись читается на машине, без сети.** Сетевой вызов падал бы вместе со связью и отбивал бы
-  работу там, где подпись верна.
-- **Отказ по подписи называет коммит поимённо и обе почты.** Промах в одном знаке глазами не
-  находится: без найденного и объявленного значения рядом отказ пришлось бы разбирать вручную.
-- **Дерево, не назвавшее почты машинной записи, требования не получает.** Своей машинной записи у
-  пакета нет, а выдуманная отбивала бы работу в чужом дереве.
-- **Личность машинной записи подтверждается ответом хостинга, а не узнаванием строки.** Знакомый
-  вид строки подтверждением не бывает: промах выглядел знакомо. Чем именно спросить, знает дерево
-  — у ограниченной записи поиск по числу отвечает «не найдено» даже её собственным токеном, и
-  остаётся ответ о себе самой, где логин и число приходят вместе.
-- **Токен машинной записи очередь работ не требует.** Дерево, его не назвавшее, читает очередь и
-  правит её учётной записью, под которой залогинен клиент хостинга. Требование токена держало бы
-  очередь у дерева, машинной записи не заводившего вовсе, и у дерева, чью запись хостинг
-  ограничил: квота на язык запросов борды у такой записи ноль, а отвечает хостинг текстом про
-  исчерпанный предел — он читается как временный, и работа встаёт с виду проходящей причиной.
-- **Подпись коммита и работа с очередью — разные свойства машинной записи.** Первая читается на
-  машине и без сети, вторая ходит к хостингу: ограничение, снявшее вторую, первой не касается, и
-  дерево, снявшее токен очереди, подпись машинного коммита не теряет.
-- **Набор гейта пуша не бывает уже набора конвейера.** Шаг конвейера, которому в наборе гейта
-  нет ни строки, ни объявленного исключения, отбивает пуш. Гейт, обещающий больше, чем
-  проверяет, хуже отсутствующего: отсутствующий не читается как подтверждение.
-- **Полнота держится объявленным списком, а не разбором файла конвейера.** Шаги там произвольны,
-  и часть их локально неисполнима — кэш, выгрузка следов, вход в реестр. Дерево объявляет, чем
-  каждый шаг закрывается в гейте, и необъявленный шаг краснеет: дыра видна на месте, а не
-  выводится сверкой двух списков глазами.
-- **Исключение объявляется с причиной и рядом с набором.** Причина — единственное, чем
-  постоянная дыра отличается от забытой строки; пустая причина исключением не считается.
-- **Дерево без файла конвейера сверку не получает.** Проверка, падающая там, где конвейера нет,
-  отбивала бы работу вместо промаха. Это тот же отказ в пользу работы, что у остальных гардов.
-- **Проверка полноты сама стоит в наборе гейта.** Проверка, которую надо помнить, до второго
-  месяца не доживает; заведённая проверка встаёт туда, где её зовут без человека.
-- **Тяжёлый шаг набора отбирается по составу правки.** Стенд, снимки витрин и сборка образов
-  идут только тогда, когда ветка тронула не только тексты: иначе пуш коммита с одной правленой
-  строкой занимает минуты, и владелец читает его как зависший. Признак ошибается в сторону
-  лишнего прогона, а не пропущенного, и при пустой базе молчит — тогда гоняется весь набор.
+- **The main branch is merged into the task branch before the PR is opened.** A PR opened from a
+  diverged branch shows the reviewer the edit mixed with someone else's, and the checks on it are run
+  from a stale base.
+- **Opening a PR is refused while the main branch is not merged.** The guard checks that the tip of
+  the main branch is an ancestor of the current one, and names how many commits it went ahead by.
+- **The delivery conditions that did not come together are named by one refusal.** A refusal at the
+  first miss makes them fixed one at a time: every round costs one more call, though everything that
+  did not come together was known already at the first one.
+- **Every condition that did not come together is named together with what it is lifted by.** A
+  refusal without an action is bypassed, not carried out.
+- **A condition known at the start of the work is asked at the start.** The freshness of the base and
+  the mail the working copy signs the commits with are known when the branch is created; left for the
+  push and for opening the PR, they are fixed by a merge with a conflict resolution and by rewriting
+  the whole branch.
+- **The base named by the command is judged, not the tip of the working copy.** A branch is created
+  from the tip of the main branch outright as well — by that very command the base is taken fresh; a
+  base the tree knows nothing of is not judged at all.
+- **The freshness of the local reference to the main branch is asked when the branch is created
+  too.** Without the second tier the silence of the first means "the base is no older than my
+  reference" and reads as "the base is fresh".
+- **The body of a request carries the section about the remaining step from the minute it is
+  opened.** The merge button is pressed by a person at the hosting, where the guard does not reach,
+  and they merge as soon as they see green: everything the delivery conditions are held by there is
+  what the owner read on the request page. A section appended before the ask to merge is late by the
+  whole length of the run.
+- **The sample of the mandatory section is named by the tree, not by the package.** The heading is
+  written in the language of the request, and an invented default would match nothing; not named by
+  the tree, the section is not judged at all.
+- **A body passed as a file is judged on a par with a body in the argument of the command.**
+  Otherwise a bypass appears by itself, without a single decision: a call with the body in a file
+  passes the sign silently.
+- **The body flag is recognised only as a separate word.** The tail of a branch name `-b` in the base
+  argument read as the flag, and the next word of the command became the body — `--head`, `2>&1`: the
+  guard answered that the body holds no section, though the section is in the file. The request could
+  be opened only with the name as the last argument and without the tail of the command.
+- **The task number is taken out of the branch name by the profile, not by the guard.** The guard
+  already asks the profile for the shape of the name, and the prefix in it is not always the task
+  key: `feat/88-slug` is exactly as lawful as `RT-88-slug`. A parse hardwired into the guard by one
+  shape left such a branch without a number — and the check of the branch number against the number
+  of the request title was skipped silently, looking as if it came together, while the shape check at
+  the creation never fired once. Two questions to one name are split by names: the shape answers "is
+  it fit", the parse answers "which one is it".
+- **A branch without a task number gets no delivery conditions.** A local branch for a trial is
+  lawful, and demanding a fresh base of it would mean refusing work that will not go into main.
+- **The push gate calls what the tree laid out.** A created check stands in it, not only in the
+  umbrella target nobody runs by themselves: a new line in the known list goes into the main branch
+  silently, while the list reads as an acting watch.
+- **A postponed edit does not count as a push.** A command putting an edit into the stash of the
+  working copy sends nothing outward, and the word of the push stands in it as a separate word — by
+  that sign alone the guard ran the whole set on it and refused the call at the first red check. The
+  stash is cut out of the line, and the sign is counted over the rest: a real push standing next to
+  it in the same command is recognised as before.
+- **Switching a branch in the same command refuses the push whole.** The guard takes the command
+  apart before it is run, and it runs the set in the tree that lies now: a compound "switch and push"
+  passes the gate by the former branch, checking the wrong thing silently. Creating a new branch does
+  not fall under this — for a fresh branch the tree is the same as it was.
+- **The signature of a machine commit is judged before the commit leaves.** The refusal stands at the
+  push: before it the signature is rewritten in place for the whole branch at once, after it by a
+  forced send, and the price of the miss jumps exactly here.
+- **A machine commit is recognised by its claim, not by its mail.** What is judged is a commit that
+  named itself by the machine record; one that named itself by somebody else is not judged at all —
+  otherwise the guard would refuse work a person did with their own hands in the same tree.
+- **The mail of the machine record is checked as a whole value.** A sample "number, plus, login,
+  domain" would pass with a foreign number, that is with exactly the miss the signature is read for.
+- **The contribution of the branch is judged, not the whole history.** Commits already merged into
+  main are not fixed by this branch, and a refusal over them would refuse the work instead of the
+  miss.
+- **The signature is read on the machine, without the network.** A network call would fall together
+  with the connection and would refuse work where the signature is right.
+- **A refusal about the signature names the commit by name and both mails.** A miss in one character
+  is not found by eye: without the found and the declared value side by side the refusal would have
+  to be taken apart by hand.
+- **A tree that named no mail of a machine record gets no demand.** The package has no machine record
+  of its own, and an invented one would refuse work in a foreign tree.
+- **The identity of the machine record is confirmed by the answer of the hosting, not by recognising
+  a string.** A familiar look of a string is never a confirmation: the miss looked familiar. What
+  exactly to ask with the tree knows — for a limited record a search by number answers "not found"
+  even by its own token, and what is left is the answer about itself, where the login and the number
+  arrive together.
+- **The work queue demands no token of the machine record.** A tree that did not name it reads the
+  queue and edits it by the account the hosting client is signed in under. Demanding a token would
+  hold the queue back from a tree that created no machine record at all, and from a tree whose record
+  the hosting limited: the quota for the board query language at such a record is zero, and the
+  hosting answers with a text about an exhausted limit — it reads as temporary, and the work stops
+  over a reason that looks passing.
+- **The commit signature and the work with the queue are different properties of the machine
+  record.** The first is read on the machine and without the network, the second goes to the hosting:
+  a limit that removed the second does not touch the first, and a tree that removed the queue token
+  does not lose the signature of a machine commit.
+- **The push gate set is never narrower than the pipeline set.** A pipeline step that has neither a
+  line nor a declared exception in the gate set refuses the push. A gate promising more than it checks
+  is worse than an absent one: an absent one does not read as a confirmation.
+- **The completeness is held by the declared list, not by parsing the pipeline file.** The steps
+  there are arbitrary, and part of them are locally unexecutable — a cache, an upload of traces, a
+  sign-in to a registry. The tree declares what each step is closed by in the gate, and an undeclared
+  step turns red: the hole is visible on the spot, not derived by comparing two lists by eye.
+- **An exception is declared with a reason and next to the set.** The reason is the only thing that
+  tells a permanent hole from a forgotten line; an empty reason does not count as an exception.
+- **A tree without a pipeline file gets no audit.** A check falling where there is no pipeline would
+  refuse work instead of a miss. This is the same refusal in favour of the work as at the other
+  guards.
+- **The completeness check itself stands in the gate set.** A check that has to be remembered does
+  not live to its second month; a created check stands where it is called without a person.
+- **A heavy step of the set is picked by the composition of the edit.** The stand, the showcase
+  snapshots and the image builds go only when the branch touched more than texts: otherwise a push of
+  a commit with one edited line takes minutes, and the owner reads it as hung. The sign errs towards a
+  surplus run, not towards a missed one, and at an empty base it stays silent — then the whole set is
+  run.
 
-- **Упавшее задание не перезапускается, пока его журнал не прочитан.** Красное бывает двух
-  родов, и в списке прогонов они выглядят одинаково: отказ хостинга на шаге подготовки лечится
-  перезапуском, дефект ветки — не лечится им вовсе, и круг повторяется, пока журнал не открыт.
-  Гард судит порядок — журнал раньше перезапуска, — а не причину падения: что в журнале
-  написано, судит человек.
-- **Прочитанным считается журнал того самого задания.** По списку прогонов задания стоят рядом,
-  и журнал соседнего о нашем не говорит ничего. Номер в чтении сверяется с номером в
-  перезапуске.
-- **Перезапуск без названного номера задания не судится.** Перезапуск последнего упавшего зовут
-  и без номера; угадывать, о каком задании речь, значит отбивать наугад.
-- **Глагол команды ищется в его позиции, а не подстрокой во всей строке.** Голый поиск «git
-  commit» промахивается в обе стороны: мимо уходит вызов с ключом между командой и глаголом —
-  `git -c user.name=… commit`, — а чтение истории со словом `commit` в доводе отбивается зря.
-  Отбой на чтении стоит дороже пропуска: гард, мешающий читать, выключают в первый же день.
-- **Заведение ветки узнаётся и с флагом между глаголом и `-b`.** Образец `checkout -b` видит
-  одну форму записи, а ветки заводят и как `checkout -q -b`: за один заход так завелись три
-  ветки, и ни одну гард не судил ни по основанию, ни по имени, а завершение хода не увидело
-  взятой работы. Образец у всех гардов один — иначе разойдутся молча.
-- **Гейт пуша пишет строку наблюдения на каждый свой исход.** Их три — набор прогнан и зелёный,
-  набор красный, набора не нашлось, — а записывались только отбои. Гейт, у которого проверок не
-  нашлось ни разу, в записи выглядит как гейт, у которого всё зелено: и тот и другой молчат.
-- **Отказ гейта пуша называет три хода, а не два.** Красное бывает двух родов, и по коду возврата
-  они неотличимы: когда ошибается сама проверка, «почини и пушь снова» велит чинить код, которого
-  никто не трогал. Третий вариант — разобрать отказы поимённо, показать разбор владельцу и
-  поправить проверку.
-- **Спорное в список известного не вносится.** Список хранит принятое, а не результаты сломанной
-  проверки.
+- **A fallen job is not restarted while its journal is not read.** Red comes in two kinds, and in the
+  list of runs they look the same: a refusal of the hosting on the preparation step is cured by a
+  restart, a defect of the branch is not cured by it at all, and the round repeats until the journal
+  is opened. The guard judges the order — the journal before the restart — not the cause of the fall:
+  what is written in the journal a person judges.
+- **The journal of that very job counts as read.** In the list of runs the jobs stand side by side,
+  and the journal of a neighbouring one says nothing about ours. The number in the reading is checked
+  against the number in the restart.
+- **A restart without a named job number is not judged.** A restart of the last fallen one is called
+  without a number too; guessing which job is meant means refusing at random.
+- **The verb of a command is looked for in its position, not as a substring across the whole line.**
+  A bare search for "git commit" misses in both directions: a call with a key between the command and
+  the verb goes past — `git -c user.name=… commit` — and reading the history with the word `commit`
+  in an argument is refused for nothing. A refusal on a read costs more than a miss: a guard that gets
+  in the way of reading is switched off on the very first day.
+- **Creating a branch is recognised with a flag between the verb and `-b` too.** The sample
+  `checkout -b` sees one shape of writing, while branches are created as `checkout -q -b` as well: in
+  one session three branches were created that way, and the guard judged not one of them by base or by
+  name, and the closing of the turn did not see the work taken. The sample is one for all the guards —
+  otherwise they diverge silently.
+- **The push gate writes an observation line for every outcome of its own.** There are three of them
+  — the set was run and is green, the set is red, no set was found — and only refusals were recorded.
+  A gate that never found a check looks in the record like a gate where everything is green: both stay
+  silent.
+- **A refusal of the push gate names three moves, not two.** Red comes in two kinds, and by the exit
+  code they are indistinguishable: when the check itself errs, "fix it and push again" orders fixing
+  code nobody touched. The third option is to take the refusals apart by name, show the analysis to
+  the owner and fix the check.
+- **What is disputed is not put into the known list.** The list keeps the accepted, not the results
+  of a broken check.
 
-## Что не входит
+## What is out of scope
 
-- Подпись коммита ключом: ключ лежит вне дерева, и машинной записи подписывать им нечем.
-- Точка коммита у проверки подписи: почта задаётся переменными самой команды, и разбор её из
-  текста ловил бы ту же строку, которая и так стоит перед глазами у набравшего её.
-- Коммиты, назвавшиеся человеком: кто из людей вправе коммитить в дереве — не предмет пакета.
-- Уже влитая история: она чинится переписыванием и силовой отправкой, а это решение владельца.
-- Состояние задачи и состояние PR: их читает поддомен ведения работы — там же, где очередь
-  работ спрашивается командами.
-- **Разбор файла конвейера машиной.** Отвергнуто решением владельца: три вида хостинга дали бы
-  три разбора чужого формата, а половина шагов локально не исполняется вовсе.
-- **Совпадение команд шаг в шаг.** Сверяется покрытие, а не текст: конвейер зовёт цель прогонщика
-  со своими ключами, гейт — свою.
-- **Свежесть самого файла конвейера.** Правка конвейера проверяется своим прогоном — это уже
-  сказано в правиле поставки.
-- **Чтение тела уже открытой заявки:** раздел там переписывается тем же вызовом, которым правится
-  тело, а промах дешевле — заявку владелец уже видел.
-- **Разбор составной команды глубже её формы.** Гард читает, что в команде стоит переключение
-  ветки, и не разбирает, на какую именно: чтобы узнать это наверняка, пришлось бы исполнить
-  половину команды до решения о ней.
+- Signing a commit by a key: the key lies outside the tree, and the machine record has nothing to
+  sign with it.
+- The point of the commit at the signature check: the mail is set by the variables of the command
+  itself, and parsing it from the text would catch the same line that already stands before the eyes
+  of whoever typed it.
+- Commits that named themselves by a person: which of the people has the right to commit in the tree
+  is not the subject of the package.
+- Already merged history: it is fixed by rewriting and a forced send, and that is the owner's
+  decision.
+- The state of a task and the state of a PR: they are read by the subdomain of conducting work — the
+  same place where the work queue is asked by commands.
+- **Parsing the pipeline file by a machine.** Rejected by the owner's decision: three kinds of hosting
+  would give three parsers of a foreign format, and half the steps are not executable locally at all.
+- **A step-by-step match of the commands.** The coverage is checked, not the text: the pipeline calls
+  the target of the runner with its own keys, the gate with its own.
+- **The freshness of the pipeline file itself.** An edit of the pipeline is checked by a run of its
+  own — that is already said in the delivery rule.
+- **Reading the body of an already open request:** the section there is rewritten by the same call the
+  body is edited by, and the miss is cheaper — the owner has already seen the request.
+- **Taking a compound command apart deeper than its shape.** The guard reads that the command holds a
+  branch switch and does not take apart which branch exactly: to learn that for sure it would have to
+  run half the command before deciding about it.
 
-## Контракт
+## Contract
 
-Поверхность — гарды на вызовах заведения ветки, пуша и открытия PR и проверка полноты набора
-гейта против файла конвейера. Гард отбивает вызов до его исполнения и называет способ снять
-отказ; проверка полноты выходит нулём, когда каждый шаг конвейера чем-то закрыт, и единицей,
-когда нет.
+The surface is the guards on the calls of creating a branch, of a push and of opening a PR, and the
+check of the completeness of the gate set against the pipeline file. The guard refuses a call before
+it is carried out and names the way to lift the refusal; the completeness check leaves with zero when
+every pipeline step is closed by something, and with one when it is not.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: проверка отвечает кодом возврата и текстом, а не именованными кодами.
+Not applicable: the check answers with an exit code and a text, not with named codes.
 
-| Что случилось                                        | Код | Что говорит                                            |
-| ---------------------------------------------------- | --- | ------------------------------------------------------ |
-| почта машинного коммита разошлась с объявленной      | `1` | коммит поимённо и обе почты                            |
-| шаг конвейера ничем не закрыт в наборе гейта         | `1` | имя шага и то, чем он объявляется                      |
-| главная ветка не влита, а открывается PR             | —   | на сколько коммитов ушла вперёд и чем это снимается    |
-| условий поставки не сошлось несколько                | —   | все несошедшиеся разом, каждое со своим действием      |
-| ветка заводится от основания без вершины главной     | —   | на сколько коммитов оно отстало и чем взять свежее     |
-| рабочая копия подписывает коммиты чужой почтой       | —   | обе почты и команду, которой подпись правится          |
-| строка набора гейта упала перед пушем                | —   | упавшую строку и хвост её вывода                       |
-| переключение ветки стоит в той же команде, что и пуш | —   | по какой ветке гонялся бы набор и чем разделить вызовы |
+| What happened                                               | Code | What it says                                                    |
+| ----------------------------------------------------------- | ---- | --------------------------------------------------------------- |
+| the mail of a machine commit diverged from the declared one | `1`  | the commit by name and both mails                               |
+| a pipeline step is closed by nothing in the gate set        | `1`  | the name of the step and what it is declared by                 |
+| the main branch is not merged, and a PR is being opened     | —    | how many commits it went ahead by and what lifts this           |
+| several delivery conditions did not come together           | —    | all that did not come together at once, each with its action    |
+| a branch is created from a base without the tip of main     | —    | how many commits it fell behind by and how to take a fresh one  |
+| the working copy signs commits with a foreign mail          | —    | both mails and the command the signature is fixed by            |
+| a line of the gate set fell before the push                 | —    | the fallen line and the tail of its output                      |
+| a branch switch stands in the same command as the push      | —    | which branch the set would be run by and how to split the calls |
 
-Отказ гарда кода возврата команды не имеет: он отбивает вызов до его исполнения и называет
-способ снять отказ.
+A refusal of a guard has no command exit code: it refuses the call before it is carried out and names
+the way to lift the refusal.
 
-## Данные
+## Data
 
-Своего хранилища нет. Набор гейта печатает функция профиля дерева, объявленный список шагов
-лежит ключом настройки проверок, а объявленная почта машинной записи — значением профиля.
+There is no storage of its own. The gate set is printed by a function of the tree profile, the
+declared list of steps lies as a key of the check setting, and the declared mail of the machine record
+as a value of the profile.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: экранов нет.
+Not applicable: there are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: вывод гардов и проверки одноязычный.
+Not applicable: the output of the guards and of the check is single-language.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Гарды одни на все деревья, а почта, имя главной ветки, набор гейта и объявленный список читаются
-из настройки дерева. Не названное деревом не судится вовсе: молчание означает «правила на это
-нет», а не «правило исполнено».
+The guards are one set for all trees, and the mail, the name of the main branch, the gate set and the
+declared list are read from the setting of the tree. What the tree did not name is not judged at all:
+silence means "there is no rule about this", not "the rule is kept".
 
-## Решения
+## Decisions
 
-- **Требование влить главную ветку держится словами и гардом.** Слова действуют до первой
-  спешки — ровно поэтому гейт правил в своё время стал гардом, а не строкой в подсказке.
-- **Подпись отбивается на пуше, а не печатается на коммите.** Напечатанное предупреждение
-  читается как разрешение — это проверено на этом дереве другой договорённостью. На коммите
-  промах ещё не уехал, и отказ там мешал бы чаще, чем помогал.
-- **Признак машинного коммита — логин, а не почта.** Почта в таком коммите как раз и неверна, и
-  опознавать по ней значило бы пропускать ровно тот случай, ради которого гард заведён.
-- **Логин читается из объявленной почты, а не объявляется вторым свойством.** Два объявления
-  одного имени разошлись бы молча. Отвергнут и уже объявленный исполнитель задачи: там, где
-  хостинг ограничил машинную запись, исполнителем ставят человека, а коммит остаётся машинным.
-- **Отбивать, а не печатать.** Первая запись предложений просила печатать расхождение вслух,
-  вторая — после второго красного конвейера — отбивать. Взята вторая: напечатанное
-  предупреждение читается как разрешение.
-- **Список объявляет дерево, а не пакет.** Пакет не знает ни имён шагов, ни того, чем они
-  закрываются: у каждого дерева свой конвейер и свои цели прогонщика.
-- **Проверка молчит там, где конвейера нет.** Иначе первое же дерево без него получает красную
-  проверку на пустом месте и снимает её из набора целиком.
-- **Объявленный список живёт в настройке проверок.** Проверка читает её напрямую, а набор гейта
-  спрашивает у профиля его же оболочкой: два места вместо одного, зато каждое отвечает за своё —
-  настройка за объявления, профиль за исполнение. Отвергнута отдельная функция профиля: она
-  вернула бы объявления той же оболочкой, что и набор, и расхождение между ними перестало бы быть
-  видимым.
-- **Имя шага достаётся образцом, который называет дерево.** У каждого хостинга своя форма
-  записи; умолчание записано под самый распространённый вид, остальные деревья называют свою.
-- **Составная команда отбивается целиком, а не разбирается на части.** Отвергнут разбор до
-  переключения с прогоном набора после него: гард стоит до исполнения команды, и «выполнить
-  половину, чтобы решить об остальном» превращает разбор в исполнение.
-- **Список проверок печатается по тому, что лежит на диске.** Проверки, которой в дереве нет,
-  гейт пуша не зовёт: отказ «нет такого файла» читается как поломка машины, а не как правило.
+- **The demand to merge the main branch is held by words and by a guard.** Words act until the first
+  rush — that is exactly why the rules gate became a guard in its time, not a line in a hint.
+- **The signature is refused at the push, not printed at the commit.** A printed warning reads as
+  permission — that was checked on this tree by another agreement. At the commit the miss has not left
+  yet, and a refusal there would get in the way more often than it would help.
+- **The sign of a machine commit is the login, not the mail.** In such a commit it is exactly the mail
+  that is wrong, and recognising by it would mean skipping exactly the case the guard was created for.
+- **The login is read from the declared mail, it is not declared as a second property.** Two
+  declarations of one name would diverge silently. The already declared assignee of the task was
+  rejected too: where the hosting limited the machine record, a person is set as the assignee, and the
+  commit stays a machine one.
+- **Refuse, do not print.** The first record of the proposals asked to print the divergence aloud, the
+  second — after the second red pipeline — to refuse. The second was taken: a printed warning reads as
+  permission.
+- **The list is declared by the tree, not by the package.** The package knows neither the names of the
+  steps nor what they are closed by: every tree has its own pipeline and its own runner targets.
+- **The check stays silent where there is no pipeline.** Otherwise the very first tree without one
+  gets a red check for nothing and takes it out of the set whole.
+- **The declared list lives in the check setting.** The check reads it directly, and the gate set is
+  asked of the profile by its own shell: two places instead of one, but each answers for its own — the
+  setting for the declarations, the profile for the execution. A separate profile function was
+  rejected: it would return the declarations by the same shell as the set, and the divergence between
+  them would stop being visible.
+- **The name of a step is taken by a sample the tree names.** Every hosting has its own shape of
+  writing; the default is written for the most widespread kind, the other trees name their own.
+- **A compound command is refused whole, it is not taken apart into pieces.** Parsing up to the switch
+  with the set run after it was rejected: the guard stands before the command is carried out, and
+  "carry out half to decide about the rest" turns the parse into an execution.
+- **The list of checks is printed by what lies on the disk.** The push gate does not call a check that
+  is not in the tree: a refusal "there is no such file" reads as a breakage of the machine, not as a
+  rule.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом.
+The open questions of the domain are shared, and they live in the spec next to it.
 
-## История изменений
+## History of changes
 
-- 2026-09-05 — заведение ветки узнаётся с флагом перед `-b`, задача RT-1799.
+- 2026-09-05 — creating a branch is recognised with a flag before `-b`, task RT-1799.
 
-- 2026-08-20 — поддомен выделен из спека проверок дерева, переросшего предел длины. Правила,
-  сценарии и привязки гардов поставки и гейта пуша переехали сюда прежними: номера сценариев не
-  пересчитывались.
+- 2026-08-20 — the subdomain was split off from the spec of the tree checks, which had outgrown the
+  length limit. The rules, the scenarios and the bindings of the delivery guards and of the push gate
+  moved here unchanged: the scenario numbers were not recounted.
