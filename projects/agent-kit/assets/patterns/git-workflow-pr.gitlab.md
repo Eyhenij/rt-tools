@@ -5,71 +5,72 @@ rule: git-workflow
 description: Pattern of rule git-workflow. Load for opening an MR and everything around it — title format, draft and leaving it, the link to the task, reviewer and labels, a description sample, reading the MR state, the checklist. Creating the task and committing — pattern git-workflow-commit.
 ---
 
-# Заявка на слияние
+# The MR
 
-Паттерн правила `git-workflow`. Что при этом должно быть верно — закон
-`docs/constitution/delivery.md`. Заведение задачи, ветки и коммит — паттерн
+Pattern of the rule `git-workflow`. What must be true — the law
+`docs/constitution/delivery.md`. Creating the task, the branch and the commit — pattern
 `git-workflow-commit`.
 
-## Когда брать
+## When to use
 
-- Открывается MR по готовой ветке.
-- Правится заголовок, тело или метки уже открытого MR.
-- Снимается черновик, и работа отдаётся на разбор.
-- Читается состояние MR перед тем, как что-либо о нём сказать владельцу.
+- An MR is opened from a finished branch.
+- The title, description or labels of an already open MR are edited.
+- The draft is lifted, and the work is handed over for review.
+- The MR state is read before anything is said about it to the owner.
 
-## Номер задачи стоит в её заголовке и в заголовке MR
+## The task number stands in its title and in the MR title
 
-Форма одна на оба — `[<КЛЮЧ>-<номер>] <текст>`. Номер стоит в самом заголовке, а не только в
-теле: в списке MR тела не видно, а в списке задач номер иначе приходится искать глазами. Тот же
-номер несёт и имя ветки, поэтому задача, ветка и MR читаются как одно.
+One form for both — `[<КЛЮЧ>-<номер>] <текст>`. The number stands in the title itself, not only
+in the description: the MR list shows no descriptions, and in the task list the number otherwise
+has to be found by eye. The branch name carries the same number, so task, branch and MR read as
+one.
 
-Задача говорит, что не так; MR тем же номером отчитывается, что сделано:
+The task says what is wrong; the MR, under the same number, says what was done:
 
 ```
 задача  [<КЛЮЧ>-86] Пустой адрес владельца — письма не уходят молча
 MR      [<КЛЮЧ>-86] Письмо владельцу с незаполненным адресом попадает в логи
 ```
 
-Инфинитив из задачи в заголовок MR не переносится: «исправить» становится «исправлено»,
-«вернуть» — «возвращено», «добавить» — «добавлено».
+The infinitive of the task does not carry into the MR title: "fix" becomes "fixed", "restore" —
+"restored", "add" — "added".
 
-Тип и область — `fix(site):`, `docs(common):` — в заголовок MR не идут: это формат заголовка
-коммита, и там его сверяет `commitlint`. В списке MR он занимает место, ничего не добавляя:
-род правки и область уже видны метками.
+Type and scope — `fix(site):`, `docs(common):` — do not go into the MR title: that is the commit
+subject format, and `commitlint` checks it there. In the MR list it takes room and adds nothing:
+the kind of edit and the area are already visible by the labels.
 
-## Не готовое к слиянию открывается черновиком
+## What is not ready to merge opens as a draft
 
-Правка кода отдаётся человеку открытым MR: запушенная ветка ему не показывается нигде. Открытый
-MR при этом читается как приглашение влить, поэтому у незаконченной работы он открывается
-черновиком — кнопку слияния у черновика хостинг блокирует сам:
+A code edit is handed to a person by an open MR: a pushed branch is shown to them nowhere. An
+open MR reads as an invitation to merge, so unfinished work opens it as a draft — the host locks
+a draft's merge button itself:
 
 ```bash
 GITLAB_TOKEN="$TOKEN" glab mr create --draft --title '[<КЛЮЧ>-86] …' --description "$(cat тело.md)"
 ```
 
-Признак черновика здесь — приставка `Draft:` в заголовке MR, и правится он вместе с ним:
-переписав заголовок вручную, черновик снимают, не заметив этого.
+The draft sign here is the `Draft:` prefix in the MR title, and it is edited together with it:
+rewriting the title by hand lifts the draft without anyone noticing.
 
-Черновиком идёт всё, что ждёт прогона конвейера, доработки или ответа на вопрос. Вопрос
-задаётся в самом MR, а не остаётся в голове исполнителя: человек читает MR, а не переписку
-захода.
+Everything waiting for a pipeline run, a rework or an answer to a question goes as a draft. The
+question is asked in the MR itself, not kept in the executor's head: a person reads the MR, not
+the session's conversation.
 
-Снимается черновик отдельным вызовом, и это тот самый ход, которым исполнитель говорит, что
-решение готово:
+The draft is lifted by a separate call, and that is the very turn in which the executor says the
+solution is ready:
 
 ```bash
 GITLAB_TOKEN="$TOKEN" glab mr update 86 --ready
 ```
 
-До снятия молчание исполнителя значит «ещё не готово», после — «можно вливать». Снятие
-черновика и просьба влить идут одним ходом: снятый черновик, о котором человеку не сказали,
-ждёт разбора ровно так же, как не снятый.
+Before the lifting the executor's silence means "not ready yet", after — "may be merged".
+Lifting the draft and asking to merge go in one turn: a lifted draft nobody told the person
+about waits for review just like one not lifted.
 
-## MR прикрепляется к задаче
+## The MR is attached to the task
 
-Описание начинается со строки связи. Ревьювер, исполнитель и метки задаются той же командой, и
-MR без них не открывается:
+The description starts with the link line. Reviewer, assignee and labels are set by the same
+command, and an MR does not open without them:
 
 ```bash
 GITLAB_TOKEN="$TOKEN" glab mr create \
@@ -81,35 +82,35 @@ GITLAB_TOKEN="$TOKEN" glab mr create \
 …'
 ```
 
-Ревьювер — всегда владелец: без запроса разбора MR не показывается ему в очереди. Исполнитель —
-та же учётная запись, от которой идёт машинная работа. Метки читаются у задачи, а не выбираются
-по памяти:
+The reviewer is always the owner: without a review request the MR does not show in their queue.
+The assignee is the same account the machine work goes from. Labels are read from the task, not
+picked from memory:
 
 ```bash
 glab issue view 86 --output json | jq -r '[.labels[]] | join(",")'
 ```
 
-Строка `Closes #<номер>` обязательна: без неё MR не прикрепляется к задаче, и сверка очереди
-это находит. Она же означает, что задача закрывается целиком — половину задачи одним MR не
-выкатывают: у задачи одна ветка, и работа, которая в неё не влезает, делится на задачи до того,
-как ветка заводится.
+The line `Closes #<номер>` is mandatory: without it the MR is not attached to the task, and the
+queue audit finds this. It also means the task closes whole — half a task is not rolled out by
+one MR: a task has one branch, and work that does not fit it is split into tasks before the
+branch is created.
 
-У уже открытого MR то же ставится правкой:
+On an already open MR the same is set by an edit:
 
 ```bash
 glab mr update 205 --label bug --label area:api --assignee <бот> --reviewer <владелец>
 glab mr update 205 --description "$(cat тело.md)"
 ```
 
-Правка описания переписывает его целиком, поэтому строка `Closes #<номер>` пишется заново
-вместе с остальным текстом. Описание перечитывается всякий раз, когда в ветку что-то влилось
-после публикации: MR утверждает про дерево, а дерево с тех пор изменилось.
+An edit of the description rewrites it whole, so the line `Closes #<номер>` is written anew
+together with the rest of the text. The description is reread whenever something merged into the
+branch after publishing: the MR states things about the tree, and the tree has changed since.
 
-## Образец описания MR
+## MR description sample
 
-Четыре раздела, и порядок между ними один: строка связи, что сделано, чем подтверждено,
-оставшийся шаг. Раздел, которому нечего сказать, пишется словами — пустой заголовок и снятый
-заголовок читаются одинаково, а значат разное.
+Four sections, and one order between them: the link line, what was done, what confirms it, the
+remaining step. A section with nothing to say says so in words — an empty heading and a removed
+heading read alike and mean different things.
 
 ```markdown
 Closes #86
@@ -129,8 +130,8 @@ Closes #86
 черновик; до этого кнопка слияния заблокирована хостингом.
 ```
 
-Раздел «Оставшийся шаг» стоит последним и переписывается тем же вызовом, что и остальное
-описание, — в тот ход, которым снимается черновик:
+The "Remaining step" section stands last and is rewritten by the same call as the rest of the
+description — in the turn that lifts the draft:
 
 ```markdown
 ## Оставшийся шаг
@@ -138,103 +139,109 @@ Closes #86
 Не осталось: прогон зелёный, черновик снят. Можно вливать.
 ```
 
-Стоит он там потому, что решение о слиянии принимается на этой странице, а не в переписке:
-сказанное владельцу вслух живёт до следующей реплики, а описание лежит у самой кнопки. Одно
-другого не отменяет — порядок обоих сообщений владельцу описывает паттерн закрытия работы.
+It stands there because the merge decision is made on that page, not in the conversation: what
+was said to the owner aloud lives until the next reply, and the description lies right by the
+button. One does not cancel the other — the order of both messages to the owner is described by
+the pattern for closing work.
 
-Проверить описание машиной нечем: ни одна сверка его не читает, а хостинг спрашивает только про
-заголовок. Держится образец тем, кто пишет описание, — как и слова вслух.
+There is nothing to check the description by machine: no audit reads it, and the host asks only
+about the title. The sample is held by whoever writes the description — like the words said
+aloud.
 
-## Состояние MR читается, а не додумывается
+## The MR state is read, not guessed
 
-Команды правки отвечают нулевым кодом и тогда, когда ничего не сделали: токен без права на
-проект молча не ставит ни метку, ни ревьювера. Поэтому после них MR перечитывают:
+The edit commands answer with a zero code even when they did nothing: a token without rights to
+the project silently sets neither a label nor a reviewer. So after them the MR is reread:
 
 ```bash
 glab mr view 205 --output json \
     | jq '{author: .author.username, reviewers: [.reviewers[].username], labels: .labels}'
 ```
 
-Владельцу называют то, что прочитали, а не то, что заказывали.
+The owner is told what was read, not what was ordered.
 
-Учётная запись, из-под которой пришлось пушить, в этот вызов не переносится: пуш и авторство
-MR выбираются отдельно, и токен для публикации — всегда токен машинной работы.
+The account one had to push from does not carry into this call: push and MR authorship are
+chosen separately, and the token for publishing is always the machine work's token.
 
-Перечитывают его и по времени, а не только после вызовов, которые молча ничего не сделали:
-состояние MR читается перед тем, как что-либо о нём сказать. Между «прогон зелёный» и следующей
-фразой владелец успевает влить MR, и всё сказанное о нём после этого — про вчерашний день. Так
-владельцу и было предложено влить то, что он влил часом раньше.
+It is reread by time too, not only after calls that silently did nothing: the MR state is read
+before anything is said about it. Between "the run is green" and the next phrase the owner has
+time to merge the MR, and everything said about it after that is about yesterday. That is how
+the owner was offered to merge what they had merged an hour earlier.
 
-Открытый MR означает, что задача ждёт разбора, — список переставляется тем же движением:
+An open MR means the task awaits review — the list is moved in the same motion:
 
 ```bash
 npm run task:move -- 86 in-review
 ```
 
-## Что проверяется до публикации MR
+## What is checked before the MR is published
 
-Проверок на самом MR нет ровно до тех пор, пока конвейер не запущен, а запускается он пушем.
-Линтеры, юниты и сценарии хуков снимает гейт пуша — ниже то, чего он не знает.
+There are no checks on the MR itself until the pipeline is started, and a push starts it.
+Linters, unit tests and hook scenarios are taken by the push gate — below is what it does not
+know.
 
-1. **Главная ветка влита в эту ветку** — `git fetch origin && git merge origin/main`.
-   Всё, что проверяется ниже, проверяется от этого основания: MR с разошедшейся ветки
-   показывает ревьюверу правку вперемешку с чужой. Порядок и разбор конфликта — паттерн
+1. **The main branch is merged into this branch** — `git fetch origin && git merge origin/main`.
+   Everything checked below is checked from this base: an MR from a diverged branch shows the
+   reviewer the edit mixed with someone else's. Order and conflict resolution — pattern
    `git-workflow-merge`.
-2. **В ветке только та правка, за которой её заводили** — `git diff main...HEAD --stat`. Чужой
-   домен в списке файлов означает, что правка расползлась, и её надо вернуть в свои границы.
-3. **Ни мока, ни подменённого ответа, ни отладочной строки** — `git diff main...HEAD` читается
-   целиком, а не по именам файлов. На прод они уезжают молча и портят настоящие данные.
-4. **Документ едет тем же коммитом.** Пару называет `docs-guard`, но спек домена и правку его
-   поведения он не знает — это остаётся за автором.
-5. **Проверки текстов и раскладки зелёные** — те, что дерево завело в `tools/`. Какие именно
-   есть здесь — `implementation.md` правила.
-6. **Все приложения дерева собираются** — `nx build` по каждому. Гейт пуша сборку не гоняет.
-7. **Видимый текст заведён во всех локалях перевода** — тестом полноты словарей, если дерево
-   переводится.
-8. **Правка вёрстки подтверждена замером**, а не взглядом, и снята при узком экране — паттерн
-   `browser-verification-measure`.
-9. **Правка разметки публичного сайта проверена на прод-сборке по всем локалям перевода** —
-   правило видимости в поиске того дерева, где оно есть.
-10. **Описание MR собрано по образцу** — начинается строкой `Closes #<номер>`, несёт разделы
-    «Что сделано», «Чем подтверждено» и «Оставшийся шаг», а метки, ревьювер и исполнитель
-    стоят. Раздел оставшегося шага к этому моменту говорит, что шагов не осталось: черновик
-    снимается после разбора папки, а не до него.
-11. **Заголовок MR несёт номер задачи и называет её сделанной:** `[<КЛЮЧ>-<номер>] <Что
-сделано>`, тем же номером, что стоит у задачи и в имени ветки.
-12. **Очередь работ сходится** — `npm run check:board`.
-13. **Состояние MR прочитано, а не выведено из кодов возврата.**
-14. **Набор взят из файла конвейера, а не собран по памяти.** Гейт пуша заведомо уже: он стоит
-    между командой и пушем, и всё, что дольше секунд, из него вынесено. Что гоняет конвейер,
-    написано в его файле — этот список и повторяется локально; зелёный гейт полнотой набора не
-    является.
-15. **Набор пересмотрен после вливания главной ветки.** Он выбирается по тому, что ветка везёт
-    теперь, а не по тому, что правил автор. Ветка, не тронувшая ни строки показа, прогоняет
-    снимки витрин: с момента вливания их гоняет конвейер на её коде, и красное придёт на её
-    PR.
+2. **The branch holds only the edit it was created for** — `git diff main...HEAD --stat`. A
+   foreign domain in the file list means the edit has spread, and it must be brought back within
+   its bounds.
+3. **No mock, no substituted response, no debug line** — `git diff main...HEAD` is read whole,
+   not by file names. They go to production silently and corrupt real data.
+4. **The document goes in the same commit.** `docs-guard` names the pair, but it does not know
+   the domain spec and an edit of its behaviour — that stays with the author.
+5. **Text and layout checks are green** — those the tree created in `tools/`. Which ones exist
+   here — the rule's `implementation.md`.
+6. **All applications of the tree build** — `nx build` for each. The push gate does not run the
+   build.
+7. **Visible text is entered in all translation locales** — by the dictionary completeness test,
+   if the tree is translated.
+8. **A layout edit is confirmed by a measurement**, not by a look, and captured on a narrow
+   screen — pattern `browser-verification-measure`.
+9. **A markup edit of the public site is checked on the production build in all translation
+   locales** — the search visibility rule of the tree that has one.
+10. **The MR description is assembled by the sample** — starts with the line `Closes #<номер>`,
+    carries the sections "What was done", "What confirms it" and "Remaining step", and labels,
+    reviewer and assignee are set. By this moment the remaining step section says no steps are
+    left: the draft is lifted after the folder is taken apart, not before.
+11. **The MR title carries the task number and names it done:** `[<КЛЮЧ>-<номер>] <Что
+сделано>`, with the same number as the task and the branch name.
+12. **The work queue matches** — `npm run check:board`.
+13. **The MR state is read, not derived from return codes.**
+14. **The set is taken from the pipeline file, not assembled from memory.** The push gate is
+    narrower by design: it stands between the command and the push, and everything longer than
+    seconds is taken out of it. What the pipeline runs is written in its file — that list is
+    repeated locally; a green gate is not completeness of the set.
+15. **The set is revised after merging the main branch in.** It is chosen by what the branch now
+    carries, not by what the author edited. A branch that touched no line of the showcase runs
+    the showcase snapshots: since the merge the pipeline runs them on its code, and the red
+    comes to its MR.
 
-Сразу после публикации задача переставляется в разбор, и сверка очереди прогоняется ещё раз: до
-открытия MR список она не судит, а после открытия расхождение видит.
+Right after publishing the task is moved to review, and the queue audit is run once more: before
+the MR opens it does not judge the list, after the opening it sees the discrepancy.
 
-Сделанное рассуждением и сделанное замером в теле MR разводятся прямо: непроверенное,
-названное проверенным, ревьювер принимает за проверенное.
+What was done by reasoning and what was done by measurement are told apart plainly in the MR
+description: the unchecked named as checked, the reviewer takes as checked.
 
-**Раздел «Чем подтверждено» называет и то, что не гонялось.** Список одного прогнанного
-неотличим от полного набора, и ревьювер по нему решает, что можно не перепроверять. Цена ошибки
-здесь не красный конвейер, а доверие к разделу: однажды прочитанный как полнота, дальше он
-перепроверяется весь.
+**The "What confirms it" section names what was not run too.** A list of one run cannot be told
+from the full set, and by it the reviewer decides what need not be rechecked. The price of a
+mistake here is not a red pipeline but trust in the section: once read as complete, from then on
+it is rechecked whole.
 
-## Частые промахи
+## Common misses
 
-Промахи про заведение задачи, ветку и коммит — паттерн
+Misses about creating the task, the branch and the commit — pattern
 `git-workflow-commit`.
 
-- MR открыт без ревьювера: он не попадает во входящие владельца, и очередь стоит, выглядя
-  работающей.
-- Метки поставлены по названию MR, а не прочитаны у задачи: область теряется, и по доске не
-  видно, что правка задела ещё и соседний домен.
-- Вторая строка `Closes` в одном MR: две задачи в одной ветке откатываются только вместе. Либо
-  это одна задача — и вторая поглощается, — либо две ветки.
-- Половина задачи, уехавшая своим MR: описание такого MR начинается со слов «Часть #<номер>»
-  вместо `Closes`, задача остаётся открытой, и после отката видно её целой.
-- `--remove-source-branch` забыт: ветки задач копятся в репозитории, и по списку веток больше
-  не видно, какая работа идёт сейчас.
+- An MR opened without a reviewer: it never reaches the owner's inbox, and the queue stands
+  while looking as if it works.
+- Labels set by the MR title, not read from the task: the area is lost, and the board does not
+  show that the edit touched a neighbouring domain too.
+- A second `Closes` line in one MR: two tasks in one branch roll back only together. Either it
+  is one task — and the second is absorbed — or two branches.
+- Half a task that left by its own MR: the description of such an MR starts with the words
+  `Часть #<номер>` instead of `Closes`, the task stays open, and after a rollback it shows as
+  whole.
+- `--remove-source-branch` forgotten: task branches pile up in the repository, and the branch
+  list no longer shows which work is going on now.

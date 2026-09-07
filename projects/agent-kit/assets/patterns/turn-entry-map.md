@@ -5,77 +5,79 @@ rule: turn-entry
 description: Pattern of rule turn-entry. Load when editing the turn map and the hook that serves it — what goes into the map, how it differs from a rule, how the hook stays silent about what is missing and how that is checked. Not for the shape of the handover itself — that is pattern task-flow-handoff.
 ---
 
-# Карта хода и её подача — готовый код
+# The turn map and its serving — ready-made code
 
-Паттерн правила `turn-entry`. Что при этом должно быть верно — закон
+Pattern of the rule `turn-entry`. What must be true — the law
 `docs/constitution/work-conduct.md`.
 
-## Когда брать
+## When to use
 
-- В правило ведения работы добавили состояние — карта отстала.
-- Правится хук входа или порядок, в котором части входа кладутся в контекст.
-- Проверка карты покраснела.
+- A state was added to the rule on the course of work — the map fell behind.
+- The entry hook is being edited, or the order in which the parts of the entry are put into the
+  context.
+- The map check turned red.
 
-## Что входит в карту, а что нет
+## What goes into the map and what does not
 
-Карта отвечает на вопрос «что делать», правило — на вопрос «почему». Признак отбора один: строка,
-которую заход прочитает и после которой сделает следующий шаг, — в карту; строка, которая
-объясняет, откуда требование взялось, — в правило.
+The map answers the question "what to do", the rule — the question "why". There is one selection
+sign: a line the session reads and then takes the next step — into the map; a line that explains
+where the requirement came from — into the rule.
 
-| В карту                                        | В правило                                          |
-| ---------------------------------------------- | -------------------------------------------------- |
-| имя состояния и его обязательное действие      | почему это действие обязательно                    |
-| паттерн, который состояние ведёт               | разбор происшествия, из которого оно выросло       |
-| четыре выхода хода и чем каждый подтверждается | что бывает, когда ход кончают иначе                |
-| строка о том, что остальное — продолжение хода | перечень того, чем ход кончать нельзя, с примерами |
+| Into the map                                        | Into the rule                                            |
+| --------------------------------------------------- | -------------------------------------------------------- |
+| the state name and its mandatory action             | why this action is mandatory                             |
+| the pattern the state leads to                      | the incident analysis it grew out of                     |
+| the four turn exits and what backs each of them     | what happens when a turn is ended otherwise              |
+| a line that the rest is a continuation of the turn  | the list of what a turn must not end with, with examples |
 
-Разбор происшествия в карту не переезжает никогда: он объясняет, а объяснение — это правило.
+An incident analysis never moves into the map: it explains, and an explanation is the rule.
 
-## Подача: сперва передача, потом карта
+## Serving: first the handover, then the map
 
-Порядок не безразличен. Передача говорит, где именно стоит эта работа, карта — что делают в
-таком месте вообще. Прочитанная первой, карта отвечает на вопрос, которого заход ещё не задал.
+The order is not indifferent. The handover says where exactly this work stands, the map — what is
+done in such a place in general. Read first, the map answers a question the session has not asked
+yet.
 
 ```bash
-# передача — по имени текущей ветки, не выбором из каталога
+# the handover — by the name of the current branch, not by picking from the directory
 handoff="$ROOT/${RT_HANDOFF_DIR:-.claude/handoff}/$(git branch --show-current).md"
-[ -r "$handoff" ] && { printf 'ПЕРЕДАЧА ПРОШЛОГО ЗАХОДА\n\n'; cat "$handoff"; }
+[ -r "$handoff" ] && { printf 'HANDOVER OF THE PAST SESSION\n\n'; cat "$handoff"; }
 
-# карта — своим файлом, а не разбором правила
-[ -r "$map" ] && { printf 'КАРТА ХОДА\n\n'; cat "$map"; }
+# the map — as its own file, not parsed out of the rule
+[ -r "$map" ] && { printf 'TURN MAP\n\n'; cat "$map"; }
 
 exit 0
 ```
 
-Три вещи в этом куске обязательны и легко теряются:
+Three things in this piece are mandatory and easily lost:
 
-- **`-r`, а не `-f`.** Файл может существовать и не читаться; `-f` тогда пропускает `cat`
-  дальше, и хук печатает заголовок над пустотой.
-- **`exit 0` в конце и никаких других выходов.** Хук входа ничего не отбивает: заход без части
-  контекста лучше, чем отбитый запуск.
-- **Имя файла собирается из ветки.** Выбор «первого попавшегося» в каталоге подаёт чужую
-  передачу, и выглядит она как своя.
+- **`-r`, not `-f`.** The file may exist and not be readable; `-f` then lets `cat` through, and
+  the hook prints a heading over emptiness.
+- **`exit 0` at the end and no other exits.** The entry hook refuses nothing: a session without
+  part of the context is better than a refused launch.
+- **The file name is built from the branch.** Picking "the first one found" in the directory
+  serves someone else's handover, and it looks like one's own.
 
-## Чем это проверяется
+## What it is checked with
 
 ```bash
-node tools/check-turn-map.mjs   # размер, полнота состояний в обе стороны, четыре выхода
+node tools/check-turn-map.mjs   # size, completeness of states both ways, four exits
 ```
 
-Проверка сверяет имена состояний карты с таблицей правила в обе стороны: состояние, заведённое
-правилом и забытое в карте, и состояние, оставшееся в карте после переименования, — оба
-расхождения.
+The check compares the state names of the map with the rule's table both ways: a state declared
+by the rule and forgotten in the map, and a state left in the map after a rename — both are
+divergences.
 
-Живая проба хука делается на дереве, где обе части лежат, и повторяется четырежды: обе части,
-без передачи, без карты, без обеих. Последний случай обязан дать пустой вывод и нулевой код —
-хук, промолчавший с ненулевым кодом, читается как отбитый запуск.
+A live trial of the hook is done on a tree where both parts lie, and is repeated four times: both
+parts, without the handover, without the map, without both. The last case must give empty output
+and a zero code — a hook that stayed silent with a non-zero code reads as a refused launch.
 
-## Частые промахи
+## Common misses
 
-- **Предел размера назначается замером, а не на глаз.** Первое число выбрали «вдвое больше
-  нынешней карты» — и проверка покраснела на собственном тексте в первом же прогоне: карта в
-  кириллице весит вдвое больше, чем кажется по числу строк.
-- **Выход за предел означает деление карты, а не подъём предела.** Поднятый однажды, он
-  поднимается и во второй раз, и карта тихо становится вторым экземпляром правила.
-- **Карта, разобранная из правила на месте, ломается молча.** Правку разметки таблицы не видит
-  ни одна проверка, а карта после неё приходит пустой — и заход об этом не узнает.
+- **The size limit is assigned by measurement, not by eye.** The first number was chosen as
+  "twice the current map" — and the check turned red on its own text in the very first run: a map
+  in Cyrillic weighs twice what the line count suggests.
+- **Going past the limit means splitting the map, not raising the limit.** Raised once, it is
+  raised a second time too, and the map quietly becomes a second copy of the rule.
+- **A map parsed out of the rule on the spot breaks silently.** No check sees an edit of the
+  table markup, and the map after it arrives empty — and the session never learns of it.

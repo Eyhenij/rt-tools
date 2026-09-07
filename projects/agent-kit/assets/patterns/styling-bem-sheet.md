@@ -5,28 +5,28 @@ rule: styling-bem
 description: Pattern of rule styling-bem. Load when creating or editing a sheet, a dialog or a full-screen view over the page — what opens it, what is passed inside, how it slides in from below, what checks it. Not for the record edit panel in the admin — that is pattern entity-aside.
 ---
 
-# Шторка и окно поверх страницы
+# The sheet and the window above the page
 
-Паттерн правила `styling-bem`. Что при этом должно быть верно — закон
+Pattern of the rule `styling-bem`. What must be true — the law
 `docs/constitution/frontend-application.md`.
 
-## Когда брать
+## When to use
 
-- На телефоне заводится шторка: выбор языка, валюты, дат.
-- Заводится окно или полноэкранный просмотр поверх страницы.
-- Шторку или окно что-то перекрывает, и хочется поднять им `z-index`.
+- A sheet is created for the phone: choosing a language, a currency, dates.
+- A window or a full-screen view above the page is created.
+- Something covers the sheet or the window, and raising their `z-index` looks tempting.
 
-Панель правки записи в админке — это другое: там маршрут в своём аутлете, паттерн
-`entity-aside`.
+The record edit panel in the admin is a different thing: there it is a route in its own outlet,
+pattern `entity-aside`.
 
-## Открывает служба, а не разметка рядом с кнопкой
+## A service opens it, not markup next to the button
 
-Компонент шторки — обычный элемент разметки. Он рисуется там, где написан, поэтому его
-`z-index` сравнивается только с соседями по этому месту. Липкая шапка размывает фон под собой —
-и всё, что написано внутри шапки, замкнуто в её слой.
+The sheet component is an ordinary markup element. It is drawn where it is written, so its
+`z-index` compares only with the neighbours of that place. A sticky header blurs the background
+under itself — and everything written inside the header is locked in its layer.
 
-Открывает шторку служба окон кита — тем же вызовом открывается полноэкранный просмотр.
-Разметка уезжает к `<body>`, и сравнивать её становится не с чем.
+The sheet is opened by the kit's window service — the same call opens a full-screen view. The
+markup moves to `<body>`, and there is nothing left to compare it with.
 
 ```typescript
 readonly #dialog: RtDialogService = inject(RtDialogService);
@@ -49,8 +49,8 @@ protected openLocalePicker(): void {
 }
 ```
 
-Ответ шторки ждут подпиской из конструктора — подписываться в методе запрещает
-`angular-patterns`:
+The sheet's answer is awaited by a subscription from the constructor — subscribing in a method
+is forbidden by `angular-patterns`:
 
 ```typescript
 this.#sheetOpenedSource
@@ -66,13 +66,13 @@ this.#sheetOpenedSource
     });
 ```
 
-Ссылку обнуляют здесь, а не в обработчике кнопки: шторку закрывают ещё жестом вниз и нажатием
-мимо, и оба пути идут мимо кнопки.
+The reference is cleared here, not in the button handler: the sheet is also closed by a swipe
+down and by a tap outside, and both paths bypass the button.
 
-## Внутри шторки — только она сама
+## Inside the sheet — only the sheet itself
 
-Что показать, приходит токеном. Что выбрали, уходит вместе с закрытием. Своей кнопки у шторки
-нет: кнопку держит тот, кто шторку открывает.
+What to show arrives by a token. What was chosen leaves together with the close. The sheet has
+no button of its own: the button is held by whoever opens the sheet.
 
 ```typescript
 export interface ILocalePickerData {
@@ -87,7 +87,7 @@ protected confirm(): void {
     this.#dialogRef.close(this.centeredLocale());
 }
 
-/** Закрыли, не подтвердив: значит, передумали — значение не меняем */
+/** Closed without confirming: they changed their mind — the value is left as is */
 protected onOpenChange(open: boolean): void {
     this.open.set(open);
     if (!open) {
@@ -96,10 +96,10 @@ protected onOpenChange(open: boolean): void {
 }
 ```
 
-## Шторка приезжает снизу
+## The sheet slides in from below
 
-Служба поднимает её сразу открытой, и анимировать киту нечего: вместо движения гость видит
-подмену экрана. Поэтому открывают её на кадр позже:
+The service raises it already open, and the kit has nothing to animate: instead of movement the
+guest sees the screen swapped. So it is opened one frame later:
 
 ```typescript
 protected readonly open: WritableSignal<boolean> = signal<boolean>(false);
@@ -111,39 +111,40 @@ constructor() {
 }
 ```
 
-`afterNextRender`, а не `ngAfterViewInit`: страницу отдаёт сервер, и разметка появляется позже.
+`afterNextRender`, not `ngAfterViewInit`: the page is served by the server, and the markup
+appears later.
 
-## Подложка
+## The backdrop
 
-Шторка сама затемняет фон и сама ловит нажатие мимо. Подложка окна поверх неё дала бы второе
-затемнение — фон стал бы вдвое темнее, чем у соседней шторки. Поэтому её делают прозрачной.
-Правило пишут в общий слой приложения: шторка уехала к `<body>`, и файл стилей компонента до
-неё не достаёт.
+The sheet dims the background itself and catches the tap outside itself. The window's backdrop
+above it would give a second dimming — the background would be twice as dark as next to a
+neighbouring sheet. So it is made transparent. The rule is written into the application's shared
+layer: the sheet has moved to `<body>`, and the component's styles file does not reach it.
 
 ```scss
-/* общий слой приложения; имя класса несёт приставку дерева */
+/* the application's shared layer; the class name carries the tree's prefix */
 .locale-picker-backdrop {
     background: transparent;
 }
 ```
 
-Нажатие она ловит по-прежнему — закрытие по ней делает само окно.
+It still catches the tap — closing on it is done by the window itself.
 
-## Чем проверяется
+## What checks it
 
-Скриншот тут не поможет: перекрытая шторка выглядит целой, а сборка и линт молчат. Спрашивают
-точку — кому достанется нажатие:
+A screenshot does not help here: a covered sheet looks whole, and the build and the lint are
+silent. The point is asked — who gets the tap:
 
 ```javascript
 const rect = button.getBoundingClientRect();
 document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
 ```
 
-Ответом должна быть сама кнопка. Мерить надо на стенде из прод-сборки и на узком экране —
-паттерн `browser-verification-measure`.
+The answer must be the button itself. Measure on the stand from the production build and on a
+narrow screen — pattern `browser-verification-measure`.
 
-В сквозном тесте перед замером дожидаются, пока шторка доедет: видимая кнопка ещё может
-двигаться, и координаты через кадр будут другими.
+In an end-to-end test, before the measurement, wait until the sheet has arrived: a visible button
+may still be moving, and a frame later the coordinates will differ.
 
 ```typescript
 await page.locator('[qa-dataid="locale-picker-sheet"] [qa-dataid="bottom-sheet-panel"]').evaluate(
@@ -159,20 +160,20 @@ await page.locator('[qa-dataid="locale-picker-sheet"] [qa-dataid="bottom-sheet-p
 );
 ```
 
-## Частые промахи
+## Common misses
 
-- **Шторка написана рядом со своей кнопкой в шапке.** Шапка размывает фон, и шторка замкнута в
-  её слой. Так нижняя панель накрыла шторку вместе с кнопкой подтверждения, и значение на
-  телефоне стало не сменить.
-- **Шапке подняли номер слоя.** Дефект уходит, шторка остаётся замкнутой в чужой слой:
-  следующий сосед с номером повыше накроет её снова.
-- **Шторку перенесли в другое место разметки.** То же самое: заработает, пока над новым местом
-  никто не поставит `transform`, `filter` или свой `z-index`.
-- **Правило подложки положили в стили компонента.** Подложка уехала к `<body>`, и правило до
-  неё не достаёт — писать надо в общий слой приложения.
-- **Ссылку на открытую шторку обнулили в обработчике кнопки.** Закрытие жестом и нажатием мимо
-  идёт мимо него, и второй раз шторка уже не откроется.
-- **Тест померил сразу после проверки видимости.** Шторка ещё едет, `elementFromPoint`
-  возвращает `null`, и тест краснеет на исправном коде.
-- **Образец искали по именам библиотеки, поверх которой собран кит.** Она лежит внутри кита, её
-  имён в дереве нет — искать надо по именам кита.
+- **The sheet is written next to its button in the header.** The header blurs the background,
+  and the sheet is locked in its layer. That is how the bottom bar covered the sheet together
+  with the confirm button, and the value could no longer be changed on the phone.
+- **The header got a higher layer number.** The defect goes away, the sheet stays locked in a
+  foreign layer: the next neighbour with a higher number covers it again.
+- **The sheet was moved to another place in the markup.** The same thing: it works until someone
+  puts a `transform`, a `filter` or a `z-index` of their own above the new place.
+- **The backdrop rule was put into the component's styles.** The backdrop has moved to `<body>`,
+  and the rule does not reach it — it has to be written into the application's shared layer.
+- **The reference to the open sheet was cleared in the button handler.** Closing by a swipe and
+  by a tap outside bypasses it, and the sheet does not open a second time.
+- **The test measured right after the visibility check.** The sheet is still moving,
+  `elementFromPoint` returns `null`, and the test goes red on working code.
+- **The sample was searched by the names of the library the kit is built on.** It lies inside
+  the kit, its names are not in the tree — search by the kit's names.

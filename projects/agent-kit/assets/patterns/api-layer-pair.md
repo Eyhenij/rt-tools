@@ -5,21 +5,21 @@ rule: api-layer
 description: Pattern of rule api-layer. Load when creating or editing the api layer of a frontend domain — ready-made facade and service, the query input, the page converter, order and filter types in the entity namespace. Not for the model and its mapper — that is pattern entity-models-new.
 ---
 
-# Фасад и сервис домена
+# The facade and the service of a domain
 
-Паттерн правила `api-layer`. Что при этом должно быть верно — закон
+Pattern of the rule `api-layer`. What must be true — the law
 `docs/constitution/frontend-application.md`.
 
-## Когда брать
+## When to use
 
-- Заводится слой `api` нового домена.
-- Список переводится на общую выборку.
-- Появляется новая процедура, за которой ходит экран.
+- The `api` layer of a new domain is created.
+- A list is moved onto the shared query.
+- A new procedure appears that a screen calls.
 
-## Фасад
+## The facade
 
-Принимает запрос контракта, отдаёт ответ контракта, ожидание заворачивает в поток. Ни выборки,
-ни перевода моделей в нём нет:
+Takes a contract request, returns a contract response, wraps the wait into a stream. Neither the
+query nor the model translation is in it:
 
 ```typescript
 @Injectable({ providedIn: 'root' })
@@ -36,11 +36,12 @@ export class PromoCodeApiFacade implements IListApiFacade<
 }
 ```
 
-Метод, которого у домена нет, не объявляется: список читают все, правят не все.
+A method the domain does not have is not declared: everyone reads the list, not everyone edits.
 
-## Сервис
+## The service
 
-Принимает доменные модели, отдаёт их же. Тип контракта до стора и шаблона не доходит:
+Takes domain models, returns the same. A type from the contract does not reach the store and
+the template:
 
 ```typescript
 export class PromoCodeApiService implements IListApiService<
@@ -61,28 +62,29 @@ export class PromoCodeApiService implements IListApiService<
 }
 ```
 
-`getList` принимает выборку и больше ничего: объект, к которому привязан список, тип фида,
-состояние подписки — это условия отбора, и лежат они в `filterModel`.
+`getList` takes the query and nothing else: the object the list is bound to, the feed type, the
+subscription state — those are filter conditions, and they lie in `filterModel`.
 
-## Типы выборки в неймспейсе сущности
+## Query types in the entity namespace
 
 ```typescript
 export type Query = IList.Query.State<EPromoCodeSortProperty, EPromoCodeFilterProperty>;
 export type ListResult = IList.Result.State<IPromoCode.State, EPromoCodeSortProperty, EPromoCodeFilterProperty>;
 ```
 
-Перечисления `EPromoCodeSortProperty` и `EPromoCodeFilterProperty` объявляются в модели рядом с
-сущностью и повторяют набор имён, по которым сортирует и отбирает сервер этого домена.
+The enums `EPromoCodeSortProperty` and `EPromoCodeFilterProperty` are declared in the model next
+to the entity and repeat the set of names by which the server of this domain sorts and filters.
 
-## Частые промахи
+## Common misses
 
-- Промежуточный объект между ответом и моделью: ответ ложится в конвертер целиком.
-- Выборка из своего запроса вместо применённой из ответа: умолчание сервера и отброшенное им
-  условие экран иначе не увидит.
-- Второй вход рядом с выборкой (`propertyId`, `feedType`): отбор, живущий отдельно, не виден ни
-  стору, ни адресу.
-- Голая `string` в поле порядка: имя, по которому сервер не сортирует, компилируется и падает
-  запросом.
-- Один класс на две сущности: подмена источника одной потянет за собой правку другой.
-- Промисный сервис в новом сторе: основа списочного стора работает потоками.
-- Своя копия общих мапперов страницы, порядка и отбора — её ловит `npm run check:dupes`.
+- An intermediate object between the response and the model: the response goes into the
+  converter whole.
+- The query from its own request instead of the applied one from the response: otherwise the
+  screen will not see the server default and a condition the server dropped.
+- A second input next to the query (`propertyId`, `feedType`): a filter living apart is seen by
+  neither the store nor the address.
+- A bare `string` in the order field: a name the server does not sort by compiles and fails as a
+  request.
+- One class for two entities: replacing the source of one drags an edit of the other along.
+- A promise service in a new store: the base of the list store works with streams.
+- An own copy of the shared page, order and filter mappers — caught by `npm run check:dupes`.

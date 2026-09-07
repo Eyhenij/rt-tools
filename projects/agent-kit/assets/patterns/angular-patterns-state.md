@@ -5,18 +5,18 @@ rule: angular-patterns
 description: Pattern of rule angular-patterns. Load when declaring state and streams in an Angular class — ready-made signals, derived values, service state, a long-lived subscription with an action source. Not for the layout of a component file — that is rule component-structure.
 ---
 
-# Состояние и потоки
+# State and streams
 
-Паттерн правила `angular-patterns`. Что при этом должно быть верно — закон
+Pattern of the rule `angular-patterns`. What must be true — the law
 `docs/constitution/frontend-application.md`.
 
-## Когда брать
+## When to use
 
-- Объявляется состояние компонента или сервиса.
-- Появляется поток, на который надо подписаться.
-- Значение считается из другого значения.
+- The state of a component or a service is declared.
+- A stream appears that has to be subscribed to.
+- A value is computed from another value.
 
-## Сигнальный API входов и выходов
+## The signal input and output API
 
 ```typescript
 public readonly data: InputSignal<Item[]> = input.required<Item[]>();
@@ -26,10 +26,10 @@ public readonly save: OutputEmitterRef<void> = output<void>();
 protected readonly myButton: Signal<ElementRef | undefined> = viewChild<ElementRef>('button');
 ```
 
-Декораторов `@Input()`, `@Output()`, `@ViewChild()`, `@ContentChild()` и их множественных пар
-в дереве нет.
+The decorators `@Input()`, `@Output()`, `@ViewChild()`, `@ContentChild()` and their plural pairs
+are not in the tree.
 
-## Производное значение — `computed`, а не эффект
+## A derived value — `computed`, not an effect
 
 ```typescript
 protected readonly items: WritableSignal<Item[]> = signal<Item[]>([]);
@@ -42,12 +42,12 @@ protected readonly hasItems: Signal<boolean> = computed((): boolean => this.item
 ✓ protected readonly count: Signal<number> = computed((): number => this.items().length);
 ```
 
-Геттера в компоненте не заводить: он пересчитывается на каждой перерисовке, и цена его не
-видна ни в одном месте кода.
+No getter in a component: it is recomputed on every redraw, and its cost is visible nowhere in
+the code.
 
-## Состояние сервиса
+## Service state
 
-Наружу — только чтение:
+Outward — reading only:
 
 ```typescript
 @Injectable({ providedIn: 'root' })
@@ -63,9 +63,9 @@ export class DomainStateService {
 }
 ```
 
-## Подписка объявляется один раз
+## A subscription is declared once
 
-Метод действия толкает значение в источник, подписка живёт в конструкторе:
+The action method pushes a value into the source, the subscription lives in the constructor:
 
 ```typescript
 readonly #loadSource: Subject<void> = new Subject<void>();
@@ -85,17 +85,18 @@ protected reload(): void {
 }
 ```
 
-Оператор выбирается по тому, что делать с предыдущим запросом: список берёт последний ответ
-(`switchMap`), кнопка не плодит дублей (`exhaustMap`), соседние строки идут независимо
-(`mergeMap`).
+The operator is chosen by what to do with the previous request: a list takes the last response
+(`switchMap`), a button does not spawn duplicates (`exhaustMap`), neighbouring rows go
+independently (`mergeMap`).
 
-## Частые промахи
+## Common misses
 
-- `.subscribe()` внутри метода: правило линтера отбивает, а вместе с ним отбивается и гонка
-  ответов на быстрых нажатиях.
-- Подписка без `takeUntilDestroyed`: она переживает владельца и держит уничтоженный экран в
-  памяти.
-- Поле-поток без суффикса `Source`: поток и значение в коде становятся неотличимы.
-- `inject()` вместо параметров конструктора — везде, включая базовые классы.
-- `untracked()` там, где эффекту не нужна зависимость от сигнала: без него эффект просыпается
-  на каждое чужое изменение.
+- `.subscribe()` inside a method: the linter rule refuses it, and with it the race of responses
+  on fast presses is refused too.
+- A subscription without `takeUntilDestroyed`: it outlives its owner and keeps the destroyed
+  screen in memory.
+- A stream field without the suffix `Source`: the stream and the value cannot be told apart in
+  code.
+- `inject()` instead of constructor parameters — everywhere, including base classes.
+- `untracked()` where the effect needs no dependency on a signal: without it the effect wakes on
+  every foreign change.

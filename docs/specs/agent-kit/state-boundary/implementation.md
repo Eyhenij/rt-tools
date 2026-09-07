@@ -15,3 +15,4 @@
 - **Карта хода говорит то же самое теми же словами по смыслу.** — `projects/agent-kit/assets/checks/check-state-next.mjs:MAP`
 - **Закон о ведении работы называет это статьёй.** — `projects/agent-kit/assets/checks/check-state-next.mjs:LAW`
 - **Раздел про состояние вне перечня эта проверка не судит.** — `projects/agent-kit/assets/checks/check-states.mjs:known`
+- **Заголовок раздела состояния и зачин строки читаются под двумя именами, английским и русским.** — `projects/agent-kit/assets/checks/check-state-next.mjs:MARKERS`

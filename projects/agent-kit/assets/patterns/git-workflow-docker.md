@@ -5,161 +5,169 @@ rule: deploy-flow
 description: Pattern of rule deploy-flow. Load when working with images on your own machine — starting and restarting the daemon, diagnosing a hanging command, building for the production server platform, registry login from a service. Production server commands — pattern git-workflow-restart.
 ---
 
-# Образы на своей машине
+# Images on one's own machine
 
-Паттерн правила `deploy-flow`. Что при этом должно быть верно — закон
+Pattern of the rule `deploy-flow`. What must be true meanwhile — the law
 `docs/constitution/delivery.md`.
 
-Демон здесь чужой: на машине владельца в нём живут его хранилище разработки, его стенд и
-контейнеры других его работ. Любая команда пишется так, чтобы её отменяли, не спрашивая
-владельца, и чтобы она не задела ничего, кроме заведённого ею самой.
+The daemon here is someone else's: on the owner's machine it holds their development storage,
+their stand and the containers of their other works. Every command is written so that it can be
+cancelled without asking the owner, and so that it touches nothing except what it created itself.
 
-## Когда брать
+## When to use
 
-- Команда демона не отвечает, и надо понять почему.
-- Нужен одноразовый контейнер рядом с уже работающими.
-- Собирается образ, который поедет на прод-сервер.
-- Раннер конвейера на этой машине не может войти в реестр.
+- A daemon command does not answer, and the reason must be found.
+- A one-off container is needed next to those already running.
+- An image is being built that will go to the production server.
+- The pipeline runner on this machine cannot log in to the registry.
 
-## Чужое не трогается
+## What is not yours is not touched
 
-Перед любым действием, которое задевает демон целиком, читается, что в нём живёт и переживёт
-ли оно перезапуск:
+Before any action that touches the daemon whole, read what lives in it and whether it survives a
+restart:
 
 ```bash
 docker ps --format '{{.Names}} | {{.Image}} | {{.Status}}'
 docker inspect <контейнер> --format '{{.Name}} restart={{.HostConfig.RestartPolicy.Name}}'
 ```
 
-`unless-stopped` поднимется сам, `no` — нет, и его возвращают руками сразу после подъёма
-демона. Стенд владельца обычно заведён с `no`: после перезапуска он остаётся лежать, а по его
-порту отвечает пустота — это выглядит поломкой стенда, а не следом перезапуска.
+`unless-stopped` comes up by itself, `no` does not, and it is brought back by hand right after the
+daemon comes up. The owner's stand is usually created with `no`: after a restart it stays down,
+and its port answers with nothing — this looks like a broken stand, not like the trace of a
+restart.
 
-Свои контейнеры именуются приставкой и снимаются по имени. `docker system prune`, `docker rm`
-по маске и `docker volume prune` не пишутся никогда: они уносят чужое молча.
+One's own containers are named with a prefix and removed by name. `docker system prune`,
+`docker rm` by a mask and `docker volume prune` are never written: they take away what is not
+yours silently.
 
 ```bash
-docker rm -f <приставка>-ci-db >/dev/null 2>&1 || true   # снять прошлый прогон
+docker rm -f <приставка>-ci-db >/dev/null 2>&1 || true   # remove the previous run
 ```
 
-Порт своего контейнера выбирается свободным: порт хранилища разработки занят, и попасть в него
-чужой миграцией нельзя.
+The port of one's own container is chosen free: the development storage port is taken, and a
+foreign migration must not land in it.
 
 ```bash
-lsof -nP -iTCP:<свободный порт> -sTCP:LISTEN     # пусто — порт свободен
+lsof -nP -iTCP:<свободный порт> -sTCP:LISTEN     # empty — the port is free
 ```
 
-## Место спрашивается до прогона
+## Space is asked before the run
 
-Диск виртуальной машины отдельный от диска хоста: на хосте свободно, внутри пусто, и видно это
-только изнутри.
+The virtual machine's disk is separate from the host's disk: the host has room, inside it is
+empty, and this is visible only from inside.
 
 ```bash
-docker system df                       # образы, тома и кэш сборки с долей многоразового
-docker run --rm alpine:3 df -h /       # сколько осталось у самой виртуальной машины
+docker system df                       # images, volumes and build cache with the reusable share
+docker run --rm alpine:3 df -h /       # how much the virtual machine itself has left
 ```
 
-Наружу нехватка выходит чужим лицом: контейнер поднимается и сразу гаснет, сверка схемы
-отвечает про ненакатываемую цепочку, гейт пуша краснеет целиком. По этим признакам чинят
-репозиторий, а причина в машине, — поэтому первое при любом из них `docker system df`.
+The shortage surfaces wearing someone else's face: a container comes up and goes out at once, the
+schema audit answers about a chain that does not apply, the push gate goes red whole. By these
+signs the repository gets fixed, while the cause is in the machine — so the first thing on any of
+them is `docker system df`.
 
-Диск хоста при этом остаётся свободным и говорит «места полно»: сквозной набор упал на
-`could not extend file … No space left on device`, когда на хосте было свободно 98 ГБ. Место
-меряется у докера, а не у машины.
+The host disk meanwhile stays free and says "plenty of room": the end-to-end suite fell on
+`could not extend file … No space left on device` with 98 GB free on the host. Space is measured
+at docker, not at the machine.
 
-## Мусор снимается отбором, и чужое из него исключается по метке
+## Garbage is removed by selection, and what is not yours is excluded by label
 
-Тома переживают свои контейнеры и накапливаются молча: `docker ps` их не показывает, а
-`docker system df` считает одной строкой. Копятся они по-разному — контейнер без `--rm`
-оставляет том всегда, а `docker run --rm` анонимный том снимает вместе с контейнером сам, и
-докручивать к нему `-v` не надо: у `docker run` этот флаг означает монтирование и без значения
-команду ломает. Снимает тома `-v` у `docker rm`, а не у `docker run`.
+Volumes outlive their containers and pile up silently: `docker ps` does not show them, and
+`docker system df` counts them as one line. They pile up differently — a container without `--rm`
+always leaves its volume, while `docker run --rm` removes an anonymous volume together with the
+container itself, and adding `-v` to it is not needed: for `docker run` that flag means a mount
+and without a value breaks the command. Volumes are removed by `-v` of `docker rm`, not of
+`docker run`.
 
-Признак своего — отсутствие метки состава: том, заведённый чьим-то `docker compose`, несёт
-`com.docker.compose.project` и принадлежит тому проекту, в том числе чужому.
+The sign of one's own is the absence of the compose label: a volume created by someone's
+`docker compose` carries `com.docker.compose.project` and belongs to that project, including
+someone else's.
 
 ```bash
-docker volume ls -q -f dangling=true | wc -l          # сколько накопилось неиспользуемых
+docker volume ls -q -f dangling=true | wc -l          # how many unused have piled up
 for v in $(docker volume ls -q -f dangling=true); do
     [ -z "$(docker volume inspect "$v" --format '{{index .Labels "com.docker.compose.project"}}')" ] \
         && docker volume rm "$v"
 done
-docker builder prune --force --filter until=24h       # вчерашний кэш ничей, свежий нужен сборке
+docker builder prune --force --filter until=24h       # yesterday's cache is nobody's, the fresh one the build needs
 ```
 
-Порог у кэша, а не полная чистка: снятый целиком, он заставляет следующую сборку идти с нуля.
+A threshold on the cache, not a full cleanup: removed whole, it makes the next build go from
+scratch.
 
-Прогон конвейера, живущий на машине владельца, убирает за собой сам и делает это шагом,
-который идёт и при падении: место кончается ровно тогда, когда прогон падает, и уборка,
-пропущенная на падении, не случается в тот единственный раз, когда она была нужна.
+A pipeline run living on the owner's machine cleans up after itself, and does it in a step that
+runs on failure too: space runs out exactly when the run fails, and a cleanup skipped on failure
+does not happen the one time it was needed.
 
-Освобождают отбором, а не общей чисткой: у сценария чистки образов сперва спрашивают, что он
-снял бы, и только потом дают снимать.
+Space is freed by selection, not by a general cleanup: the image cleanup script is first asked
+what it would remove, and only then allowed to remove.
 
-**Снятие образов отбивает не гейт, а режим захода.** В автоматическом режиме команда с
-необратимым удалением — снятие образа, чистка слоёв — отклоняется независимо от разрешений, и
-разрешающее правило на ту же команду отказа не снимает. Повторный вызов отбивается так же: отказ
-не зависит от того, как команда набрана, поэтому переформулировка тут не путь. Ходов отсюда два —
-освободить место тем, что удаления не требует, либо назвать это владельцу: режим переключает он,
-и снимает образы тоже он. Названное в конце захода стоит целого прогона: конвейер всё это время
-стоит красным по нехватке места.
+**Removing images is refused not by the gate but by the session mode.** In the automatic mode a
+command with an irreversible deletion — removing an image, cleaning layers — is rejected whatever
+the permissions, and an allow rule on the same command does not lift the refusal. A repeated
+call is refused the same way: the refusal does not depend on how the command is typed, so
+rewording is not the way here. Two ways from here — free space by what needs no deletion, or name
+it to the owner: they switch the mode, and they remove the images too. Named at the end of the
+session it costs a whole run: the pipeline stays red all that time for lack of space.
 
-## Демон поднимается своим CLI
+## The daemon is brought up by its own CLI
 
-Открытие приложения виртуальную машину не поднимает: приложение считается запущенным, а демон
-не отвечает часами. Поднимает только собственная команда клиента, а готовность проверяется
-самим демоном:
+Opening the application does not bring up the virtual machine: the application counts as
+running, and the daemon does not answer for hours. Only the client's own command brings it up,
+and readiness is checked by the daemon itself:
 
 ```bash
 docker desktop restart
 until docker info >/dev/null 2>&1; do sleep 5; done
-docker version --format 'демон: {{.Server.Version}}'
+docker version --format 'daemon: {{.Server.Version}}'
 ```
 
-Состояние, которое печатает приложение, говорит про приложение: оно отвечает «работает» и
-тогда, когда демон не принимает ни одной команды. Единственный признак живого демона — ответ
-`docker info`. Первые полминуты после подъёма он отвечает ошибкой и пишет в лог, что маршрута
-до виртуальной машины нет: это нормальный старт, а не поломка.
+The state the application prints speaks about the application: it answers "running" even when
+the daemon accepts not a single command. The only sign of a live daemon is the answer of
+`docker info`. For the first half a minute after coming up it answers with an error and writes to
+its log that there is no route to the virtual machine: that is a normal start, not a breakage.
 
-## «Команда висит» — сначала проверяется, вправду ли висит
+## "The command hangs" — first check whether it really hangs
 
-Вывод не заворачивается в `tail`, `head` и не глушится тихим режимом: они держат его в буфере
-до конца команды, и идущая работа выглядит зависшей. Читается прямой вывод:
+Output is not wrapped in `tail`, `head` and not muted by a quiet mode: they hold it in a buffer
+until the command ends, and work in progress looks hung. The direct output is read:
 
 ```bash
-docker pull alpine:3            # прогресс виден построчно
+docker pull alpine:3            # progress is visible line by line
 ```
 
-Скачивания не запускаются параллельно. Несколько одновременных забивают канал друг другу:
-образ, который тянется за три секунды, шёл полчаса — и это выглядело сломанным демоном, а было
-очередью, устроенной проверяющим.
+Downloads are not started in parallel. Several at once choke the channel for each other: an
+image that pulls in three seconds went for half an hour — and that looked like a broken daemon,
+while it was a queue arranged by the one checking.
 
-## Где рвётся: три яруса
+## Where it breaks: three tiers
 
-Ярусы проверяются по отдельности, иначе чинится не то. Каждый отвечает секундами:
+The tiers are checked separately, otherwise the wrong thing gets fixed. Each answers in seconds:
 
 ```bash
-# 1. Сеть машины: реестр отдаёт манифест
-curl -s -m 30 -w '%{http_code} за %{time_total}s\n' -o /dev/null '<адрес токена реестра>'
+# 1. The machine's network: the registry gives out the manifest
+curl -s -m 30 -w '%{http_code} in %{time_total}s\n' -o /dev/null '<адрес токена реестра>'
 
-# 2. Сеть контейнеров: объём проходит внутрь
+# 2. The containers' network: volume passes inside
 docker run --rm alpine:3 sh -c 'time wget -q -O /dev/null <адрес пробы канала>'
 
-# 3. Демон: тянет ли он сам
+# 3. The daemon: does it pull by itself
 docker pull busybox:latest
 ```
 
-Хост тянет быстро, контейнер тянет быстро, а скачивание стоит — дело в демоне, и его
-перезапускают. Стоят все три — дело в сети машины, и демон ни при чём. Что делал сам демон,
-отвечают его логи: ходы к реестру, подъём и состояние, консоль виртуальной машины — три разных
-файла в каталоге данных клиента.
+The host pulls fast, the container pulls fast, and the download stands — the daemon is the
+matter, and it is restarted. All three stand — the machine's network is the matter, and the
+daemon has nothing to do with it. What the daemon itself was doing, its logs answer: the calls to
+the registry, the startup and state, the virtual machine console — three different files in the
+client's data directory.
 
-## Команда из службы: свой каталог настроек и явный адрес демона
+## A command from a service: its own settings directory and an explicit daemon address
 
-Раннер конвейера запущен службой, и вход в реестр из неё отказывает: пароль сохраняет
-системный помощник хранения ключей, а сеанса пользователя у службы нет. Свой каталог настроек
-с пустым помощником от этого не спасает — клиент подставляет помощника сам и переписывает
-пустое значение молча. Поэтому вход не зовётся вовсе, а пароль пишется в файл настроек прямо:
+The pipeline runner is started as a service, and registry login from it refuses: the password is
+saved by the system keychain helper, and a service has no user session. A settings directory of
+its own with an empty helper does not save it — the client substitutes the helper itself and
+rewrites the empty value silently. So login is not called at all, and the password is written
+into the settings file directly:
 
 ```bash
 export DOCKER_CONFIG="$(mktemp -d)"
@@ -169,87 +177,97 @@ printf '{"auths":{"<реестр>":{"auth":"%s"}}}' "${auth}" > "${DOCKER_CONFIG
 chmod 600 "${DOCKER_CONFIG}/config.json"
 ```
 
-`DOCKER_HOST` здесь не для красоты: свой каталог уносит с собой и текущий контекст, а без него
-клиент идёт в общесистемный сокет, которого на машине с настольным клиентом нет вовсе, и
-отвечает «нет такого файла» на что угодно. Связь проверяется до сборки:
+`DOCKER_HOST` here is not for decoration: a directory of one's own takes the current context with
+it, and without it the client goes to the system-wide socket, which does not exist at all on a
+machine with a desktop client, and answers "no such file" to anything. The connection is checked
+before the build:
 
 ```bash
-docker info --format 'демон: {{.ServerVersion}}'
+docker info --format 'daemon: {{.ServerVersion}}'
 ```
 
-Поле у `docker info` называется иначе, чем у `docker version`: имя из второй команды первая не
-понимает, и связь выглядит непроверенной, хотя демон отвечает.
+The field in `docker info` is named differently from `docker version`: the first command does not
+understand the name from the second, and the connection looks unchecked though the daemon
+answers.
 
-Что пароль принят, видно по ответу реестра: анонимному он отвечает `401`, авторизованному —
-содержимым или `403`, но не `401`. Каталог снимается в конце — раннер живёт между прогонами, и
-пароль реестра остался бы лежать на диске владельца.
+That the password is accepted is seen by the registry's answer: to an anonymous one it answers
+`401`, to an authorised one — with content or `403`, but not `401`. The directory is removed at
+the end — the runner lives between runs, and the registry password would stay lying on the
+owner's disk.
 
-## Права токена спрашиваются до того, как конвейер на них обопрётся
+## Token rights are asked before the pipeline leans on them
 
-Токен, которым ходят руками, и токен, которым ходит выкатка, — один и тот же ровно до первой
-записи в реестр образов: области у него могут кончаться на чтении. Узнаётся это отказом, когда
-весь путь выкатки уже написан, поэтому спрашивается раньше — и не догадкой, а заголовком ответа
-хостинга:
+The token used by hand and the token the rollout uses are one and the same exactly until the
+first write to the image registry: its scopes may end at reading. This is learned by a refusal
+when the whole rollout path is already written, so it is asked earlier — and not by a guess but
+by the host's answer header:
 
 ```bash
 curl -sI -H "Authorization: Bearer <токен>" '<адрес хостинга>' | grep -i '^x-oauth-scopes:'
 ```
 
-Первая выкатка, сделанная руками из-за такого отказа, путь выкатки не проверяет — она проверяет
-образы. Об этом говорится владельцу прямо: иначе зелёный прод читается как пройденный конвейер.
+The first rollout done by hand because of such a refusal does not check the rollout path — it
+checks the images. This is said to the owner directly: otherwise a green production reads as a
+passed pipeline.
 
-## Образ собирается под платформу прод-сервера
+## The image is built for the production server platform
 
-Машина владельца и прод-сервер бывают разной архитектуры. Без явной платформы собирается образ
-под сборщика: он уходит в реестр, оттуда на сервер и не стартует там вовсе.
+The owner's machine and the production server can be of different architectures. Without an
+explicit platform the image is built for the builder: it goes to the registry, from there to the
+server and does not start there at all.
 
 ```bash
 docker buildx build --platform <платформа сервера> -f <файл сборки> --output type=cacheonly .
 ```
 
-`--output type=cacheonly` считает сборку, ничего не сохраняя, — этим замеряют время, не
-засоряя машину образом. Чужая платформа идёт эмуляцией, поэтому время сборки на машине и в
-облаке сравнивают числом, а не ожиданием.
+`--output type=cacheonly` runs the build without saving anything — that is how time is measured
+without littering the machine with an image. A foreign platform goes by emulation, so build time
+on the machine and in the cloud is compared by a number, not by expectation.
 
-Сборщик с драйвером `docker-container` нужен для чужой платформы и заводится отдельно; его
-первый подъём тянет свой образ из реестра:
+A builder with the `docker-container` driver is needed for a foreign platform and is created
+separately; its first startup pulls its own image from the registry:
 
 ```bash
 docker buildx create --name <приставка>-ci-builder --driver docker-container
-docker buildx inspect <приставка>-ci-builder --bootstrap    # покажет платформы и состояние
-docker buildx build --builder <приставка>-ci-builder …      # сборщик владельца не переключается
+docker buildx inspect <приставка>-ci-builder --bootstrap    # shows the platforms and the state
+docker buildx build --builder <приставка>-ci-builder …      # the owner's builder is not switched
 ```
 
-Сборщик не сносится после прогона: в его кэше живут слои и хранилище пакетов, а без них
-следующая сборка тянет все зависимости заново. Флаг `--use` тоже не пишется — он переключает
-сборщик владельца; вместо него `--builder` у самой сборки. Объявления сборщиков лежат в
-каталоге настроек, поэтому под своим каталогом их не видно вовсе — оставить их на месте
-помогает `BUILDX_CONFIG` с адресом каталога владельца.
+The builder is not torn down after the run: its cache holds the layers and the package store, and
+without them the next build pulls all dependencies anew. The `--use` flag is not written either —
+it switches the owner's builder; instead of it `--builder` on the build itself. Builder
+declarations lie in the settings directory, so under a directory of one's own they are not
+visible at all — `BUILDX_CONFIG` with the address of the owner's directory helps leave them in
+place.
 
-Установка зависимостей внутри сборки ограничивается по числу запросов, иначе она роняет сборку
-целиком — и не потому, что канал медленный, а потому, что сотни запросов забивают его сами
-себе.
+Dependency installation inside the build is limited by the number of requests, otherwise it
+brings the build down whole — and not because the channel is slow, but because hundreds of
+requests choke it for themselves.
 
-## Частые промахи
+## Common misses
 
-- **Перезапуск демона объявлен сделанным по состоянию приложения.** Приложение говорит
-  «работает», а `docker info` в это же время отвечает ошибкой.
-- **Стенд не возвращён после перезапуска.** У него политика `no`, и владелец находит мёртвый
-  порт вместо стенда.
-- **Вывод команды заведён в `tail`** — и работающая команда объявлена зависшей.
-- **Несколько скачиваний разом** — и медленной объявлена машина, а не собственная очередь.
-- **Образ собран без указания платформы** — прод получает образ чужой архитектуры, и видно это
-  только на перезапуске контейнеров.
-- **Свой контейнер занял порт хранилища разработки** — конвейер пишет в данные владельца.
-- **Вход в реестр из службы сделан командой входа** — пароль уходит в помощник хранения ключей
-  даже из своего каталога настроек, и задание падает до сборки.
-- **Каталог настроек подменён, а адрес демона не задан** — и починка входа в реестр выглядит
-  как упавший демон.
-- **Сборщик снесён после прогона** — вместе с кэшем, и следующая сборка идёт как первая.
-- **Общая чистка ради места** — уносит чужие образы и тома, и восстановить их нечем.
-- **Место освобождено сценарием выкатки целиком.** Сценарий писан для прод-сервера: там
-  собирает конвейер, а сервер только тянет готовое, поэтому последним шагом сценарий сносит
-  кэш сборщика. На машине владельца собирает раннер, и тот же шаг оставляет сборщика без кэша.
-  Отбор самих образов у сценария годится и здесь — он идёт по имени своего реестра, оставляет
-  три последних sha и обходит поднятые контейнеры, — а вот его хвост на этой машине запускают,
-  только когда согласились ждать полную сборку.
+- **The daemon restart is declared done by the application's state.** The application says
+  "running", and `docker info` at the same time answers with an error.
+- **The stand is not brought back after the restart.** Its policy is `no`, and the owner finds a
+  dead port instead of the stand.
+- **The command output is fed into `tail`** — and a working command is declared hung.
+- **Several downloads at once** — and the machine is declared slow, not one's own queue.
+- **The image is built without naming the platform** — production gets an image of a foreign
+  architecture, and this is visible only at the container restart.
+- **One's own container took the development storage port** — the pipeline writes into the
+  owner's data.
+- **Registry login from a service is done by the login command** — the password goes to the
+  keychain helper even from a settings directory of one's own, and the step fails before the
+  build.
+- **The settings directory is substituted, and the daemon address is not set** — and fixing the
+  registry login looks like a fallen daemon.
+- **The builder is torn down after the run** — together with the cache, and the next build goes as
+  the first.
+- **A general cleanup for the sake of space** — takes away someone else's images and volumes, and
+  there is nothing to restore them with.
+- **Space is freed by the rollout script whole.** The script is written for the production
+  server: there the pipeline builds, and the server only pulls the ready-made, so as the last step
+  the script tears down the builder cache. On the owner's machine the runner builds, and the same
+  step leaves the builder without a cache. The script's selection of the images themselves suits
+  here too — it goes by the name of its own registry, keeps the last three sha and skips running
+  containers — but its tail on this machine is run only when a full build wait was agreed to.

@@ -5,50 +5,51 @@ rule: deploy-flow
 description: Pattern of rule deploy-flow. Load when editing prisma/schema.prisma and prisma/migrations/** — ready-made commands for a one-off container, writing the migration file through migrate diff, applying to the local database. Not for the commit — pattern git-workflow-commit; for the PR — git-workflow-pr.
 ---
 
-# Миграция и прогон цепочки
+# A migration and the chain run
 
-Паттерн правила `deploy-flow`. Что при этом должно быть верно — закон
+Pattern of the rule `deploy-flow`. What must be true meanwhile — the law
 `docs/constitution/delivery.md`.
 
-## Когда брать
+## When to use
 
-- Правится `prisma/schema.prisma`.
-- Заводится или переименовывается каталог в `prisma/migrations/`.
-- Ветка с новой миграцией готовится к мержу.
+- `prisma/schema.prisma` is being edited.
+- A directory in `prisma/migrations/` is being created or renamed.
+- A branch with a new migration is being prepared for the merge.
 
-## Цепочка гоняется одной командой
+## The chain is run by one command
 
-Локальные `lint`, `test`, `check:all` и сборки порядок миграций не трогают вовсе, а шаг
-`Migrations match schema` в `.github/workflows/deploy.yml` идёт уже после мержа. Проверка
-стоит гейтом пуша и зовётся руками:
+Local `lint`, `test`, `check:all` and the builds do not touch the migration order at all, and the
+step `Migrations match schema` in `.github/workflows/deploy.yml` goes after the merge. The check
+stands as a push gate and is called by hand:
 
 ```bash
 npm run check:schema
 ```
 
-Она накатывает цепочку на теневую базу — ту же, что рабочая, с суффиксом `_gate_shadow`, —
-сравнивает её со схемой и сносит. Своя база при этом не трогается: сверка с ней судила бы о
-состоянии машины, а не репозитория. Погашенный докер и боевой адрес проверка пропускает
-молча.
+It applies the chain to a shadow database — the same as the working one, with the suffix
+`_gate_shadow` — compares it with the schema and tears it down. One's own database is not
+touched: an audit against it would judge the state of the machine, not of the repository. A
+stopped docker and a production address the check skips silently.
 
-Когда базы под рукой нет вовсе, та же цепочка гоняется на одноразовом контейнере:
+When there is no database at hand at all, the same chain is run on a one-off container:
 
 ```bash
 docker run -d --rm --name <префикс>-migcheck -e POSTGRES_PASSWORD=migcheck -p 55432:5432 postgres:16-alpine
-docker exec <префикс>-migcheck pg_isready -U postgres          # накат до готовности падает на соединении
+docker exec <префикс>-migcheck pg_isready -U postgres          # an apply before readiness fails on the connection
 DATABASE_URL=postgresql://postgres:migcheck@localhost:55432/postgres npx prisma migrate deploy
 DATABASE_URL=postgresql://postgres:migcheck@localhost:55432/postgres npx prisma migrate diff \
     --from-config-datasource --to-schema prisma/schema.prisma --exit-code
 docker stop <префикс>-migcheck
 ```
 
-Адрес ставится префиксом самой команды — `export` между вызовами не живёт.
+The address is set as a prefix of the command itself — `export` does not live between calls.
 
-## Файл миграции пишется тем же контейнером
+## The migration file is written by the same container
 
-`prisma migrate dev` не запускается ни командой, ни через `npm run prisma:migrate`: любое
-расхождение состояния он лечит предложением сбросить базу, а в локальной базе лежат объекты и
-брони владельца. Файл берётся разницей между накатанной цепочкой и схемой:
+`prisma migrate dev` is not run either as a command or through `npm run prisma:migrate`: any
+divergence of state it cures by offering to reset the database, and the local database holds the
+owner's properties and bookings. The file is taken as the difference between the applied chain
+and the schema:
 
 ```bash
 DATABASE_URL=postgresql://postgres:migcheck@localhost:55432/postgres npx prisma migrate diff \
@@ -56,44 +57,45 @@ DATABASE_URL=postgresql://postgres:migcheck@localhost:55432/postgres npx prisma 
     > prisma/migrations/<метка>_<имя>/migration.sql
 ```
 
-Каталог заводится **после** наката цепочки: пустой каталог, попавший в `migrate deploy`,
-помечается применённым, и его содержимое на этот контейнер уже не встанет.
+The directory is created **after** the chain is applied: an empty directory that got into
+`migrate deploy` is marked applied, and its contents will no longer land on this container.
 
-## Локальная база догоняет ветку
+## The local database catches up with the branch
 
 ```bash
 npx prisma migrate deploy
 ```
 
-Переименованная миграция остаётся в ней под прежним именем, и накат падает на
-`relation … already exists`. Состояние правится, повторный накат его не чинит:
+A renamed migration stays in it under the old name, and the apply fails on
+`relation … already exists`. The state is edited, a repeated apply does not fix it:
 
 ```bash
 npx prisma migrate resolve --applied <новое имя>
 ```
 
-## Частые промахи
+## Common misses
 
-- **Накат в образе настраивается файлом настройки, а не адресом в окружении.** Седьмая редакция
-  читает адрес хранилища только из своего файла настройки: ни объявление в схеме, ни переменная
-  окружения в составе прода его не заменяют. Этот файл кладётся в образ явно, рядом со схемой и
-  миграциями. Без него сборка зелёная целиком — генерация клиента на стадии сборки проходит, — а
-  отказывает первый же накат на узле.
-- Метку времени ставит момент создания, а порядок применения лексикографический: миграция из
-  ветки, начатой раньше, встаёт перед той, от которой зависит. На существующей базе это
-  незаметно — падает только накат с нуля.
-- Флаги `prisma migrate diff` не те, что в примерах из сети: `--from-url`, `--to-url`,
-  `--shadow-database-url` и `--to-schema-datamodel` сняты, а `prisma db execute` адреса
-  базы не принимает вовсе и берёт его из `prisma.config.ts`. На неизвестный флаг обе команды
-  печатают справку, и промах виден только в ней. Какие флаги есть сейчас, смотрят в
-  `prisma migrate diff --help`, а не в этом тексте.
-- Запись в боевую базу (порт 15432, прод-хост) запрещена совсем: схема меняется миграцией
-  через деплой, данные — через админку.
-- Строки адресуются по первичному ключу, а не по маске: удаление по маске почты однажды унесло
-  вместе с тестовыми записями демонстрационные брони владельца.
-- **Формой запроса вопрос гарда не снимается.** Условие по идентификатору он судит одинаково в
-  любой записи — что по одному, что по списку, — и на обе отвечает вопросом владельцу; отказ
-  приходит только на условие не по идентификатору. Там, где вопрос читается отказом, ход один:
-  назвать владельцу отбитую команду и попросить режим, в котором вопрос дойдёт, — а не
-  переписывать запрос, пока он не пройдёт. Иначе из захода уносят вывод о требованиях гарда,
-  которых у него нет.
+- **The apply in the image is set up by the settings file, not by an address in the
+  environment.** The seventh edition reads the storage address only from its own settings file:
+  neither the declaration in the schema nor an environment variable in the production stack
+  replaces it. That file is put into the image explicitly, next to the schema and the migrations.
+  Without it the build is green whole — client generation at the build stage passes — and the
+  first apply on the node refuses.
+- The timestamp is set by the moment of creation, and the apply order is lexicographic: a
+  migration from a branch started earlier lands before the one it depends on. On an existing
+  database this is invisible — only an apply from scratch fails.
+- The flags of `prisma migrate diff` are not those from the examples on the web: `--from-url`,
+  `--to-url`, `--shadow-database-url` and `--to-schema-datamodel` are removed, and
+  `prisma db execute` takes no database address at all and reads it from `prisma.config.ts`. On
+  an unknown flag both commands print the help, and the miss is visible only there. Which flags
+  exist now is looked up in `prisma migrate diff --help`, not in this text.
+- A write to the production database (port 15432, the production host) is forbidden altogether:
+  the schema changes by a migration through the rollout, the data — through the admin.
+- Rows are addressed by the primary key, not by a mask: a deletion by a mail mask once took the
+  owner's demonstration bookings away together with the test records.
+- **The guard's question is not lifted by the form of the query.** It judges a condition by
+  identifier the same way in any spelling — one at a time or as a list — and answers both with a
+  question to the owner; a refusal comes only on a condition not by identifier. Where the question
+  reads as a refusal, there is one way: name the refused command to the owner and ask for the mode
+  in which the question gets through — not rewrite the query until it passes. Otherwise the
+  session carries away a conclusion about guard requirements it does not have.

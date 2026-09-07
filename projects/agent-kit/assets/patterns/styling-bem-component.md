@@ -5,84 +5,84 @@ rule: styling-bem
 description: Pattern of rule styling-bem. Load when editing the styles of a kit component — the ready-made :host, modifiers, styling tokens, the styling language of the public site, overriding kit defaults. Not for screen layout — that is pattern styling-bem-layout.
 ---
 
-# Стили компонента
+# Component styles
 
-Паттерн правила `styling-bem`. Что при этом должно быть верно — закон
+Pattern of the rule `styling-bem`. What must be true — the law
 `docs/constitution/frontend-application.md`.
 
-## Когда брать
+## When to use
 
-- Правится компонент кита — он живёт в пакете `@rt-tools/ui-kit-v2`, а не в этом дереве.
-- Правится оформление публичного сайта.
-- Нужно перебить умолчание кита в своём компоненте.
+- A kit component is edited — it lives in the package `@rt-tools/ui-kit-v2`, not in this tree.
+- The styling of the public site is edited.
+- A kit default has to be overridden in a component of your own.
 
-## `:host` — сам блок
+## `:host` — the block itself
 
-Хост несёт класс блока, раскладка на `:host`, элементы вложены внутрь:
+The host carries the block class, the layout sits on `:host`, the elements are nested inside:
 
 ```scss
 :host {
     display: inline-flex;
 
-    .<префикс > -tag {
+    .<prefix > -tag {
         display: inline-flex;
-        gap: var(--<префикс>-space-1);
+        gap: var(--<prefix>-space-1);
         align-items: center;
 
         &--shape--pill {
-            border-radius: var(--<префикс>-radius-full);
+            border-radius: var(--<prefix>-radius-full);
         }
     }
 }
 ```
 
-Отступ — четыре пробела. Модификатор — `&--<имя>` или привязка класса на хосте
-(`[class.<префикс>-component-name--active]="isActive()"`).
+Indent — four spaces. A modifier — `&--<name>` or a class binding on the host
+(`[class.<prefix>-component-name--active]="isActive()"`).
 
-У экрана вне кита такого раздела нет: `display: flex` с `gap` и `padding` на `:host` — это
-раскладка, и она в общем слое приложения.
+A screen outside the kit has no such section: `display: flex` with `gap` and `padding` on
+`:host` is layout, and it lives in the application's shared layer.
 
-## Значения — только токенами
+## Values — only as tokens
 
 ```scss
 ✗ color: #fff;
 ✗ box-shadow: 0 1px 2px rgb(0 0 0 / 12%);
-✓ color: var(--<префикс>-color-surface);
-✓ box-shadow: var(--<префикс>-shadow-sm);
+✓ color: var(--<prefix>-color-surface);
+✓ box-shadow: var(--<prefix>-shadow-sm);
 ```
 
-Составное значение берётся готовым токеном целиком, а не собирается из частей. SCSS-переменные
-(`$primaryColor`) для значений оформления не используются вовсе.
+A composite value is taken as a ready-made token whole, not assembled from parts. SCSS variables
+(`$primaryColor`) are not used for styling values at all.
 
-## Язык оформления публичного сайта
+## The styling language of the public site
 
-Тропический премиум, фото-first:
+Tropical premium, photo first:
 
-- светлая тёплая палитра — песок, терракота, пальмовая зелень, только через `--<префикс>-color-*`;
-- акцентная антиква в заголовках (`--<префикс>-font-serif`), гуманистический гротеск в тексте
-  (`--<префикс>-font-sans`);
-- большие полноэкранные фото, щедрые отступы, сдержанные анимации;
-- тёмные оверлеи поверх фото — переменными с прозрачностью.
+- a light warm palette — sand, terracotta, palm green, only through `--<prefix>-color-*`;
+- an accent serif in headings (`--<prefix>-font-serif`), a humanist sans in the text
+  (`--<prefix>-font-sans`);
+- large full-screen photos, generous spacing, restrained animations;
+- dark overlays over photos — by variables with transparency.
 
-## Перебить умолчание кита
+## Overriding a kit default
 
-Стили компонента с `ViewEncapsulation.None` весят столько же, сколько умолчания кита: у
-`.<префикс>-block__item` и у `.<префикс>-kit-item` по одному классу, и исход решает порядок подключения.
-Переопределение пишется потомком блока:
+Styles of a component with `ViewEncapsulation.None` weigh the same as the kit defaults:
+`.<prefix>-block__item` and `.<prefix>-kit-item` have one class each, and the outcome is decided
+by the order of inclusion. The override is written as a descendant of the block:
 
 ```scss
 & &__item {
-    color: var(--<префикс>-color-text-muted);
+    color: var(--<prefix>-color-text-muted);
 }
 ```
 
-## Частые промахи
+## Common misses
 
-- Комментарий-выключатель stylelint: селекторы объединяются вложенностью, а не отключением
-  правила.
-- `!important`: запрещён, и инлайновый `width: 100%` на боксе панели перебить им нельзя.
-- Новые объявления при переносе стилей: переносится существующее, новое появляется только
-  тогда, когда задача — фича.
-- Замечание линтера, лежавшее в файле раньше, оставлено: правятся все, и новые, и старые.
-- Свой `font-family: inherit` в компоненте: наследование включено глобально в `styles.scss`
-  обоих приложений.
+- A stylelint switch-off comment: selectors are joined by nesting, not by disabling the rule.
+- `!important`: forbidden, and an inline `width: 100%` on the panel box cannot be overridden
+  with it.
+- New declarations while moving styles: what exists is moved, new appears only when the task is
+  a feature.
+- A linter remark that lay in the file before is left alone: all are fixed, new and old alike.
+- A `font-family: inherit` of your own in a component: inheritance is switched on globally in
+  the `styles.scss` of both applications.

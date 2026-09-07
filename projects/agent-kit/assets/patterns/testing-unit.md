@@ -5,29 +5,30 @@ rule: testing
 description: Pattern of rule testing. Load when creating or editing *.spec.ts under Vitest — the ready-made layout of describe and it, the fixture builder, the scenario id in the title, a Connect procedure test with a hand-written database double. Not for end-to-end tests — that is pattern testing-e2e.
 ---
 
-# Спека на чистую функцию и на процедуру
+# A test on a pure function and on a procedure
 
-Паттерн правила `testing`. Что при этом должно быть верно — закон
+Pattern of the rule `testing`. What must be true — the law
 `docs/constitution/verifiability.md`.
 
-## Когда брать
+## When to use
 
-- Заводится или правится `*.spec.ts` рядом с исходником.
-- Логику надо вынести из компонента или сервиса, чтобы её стало чем проверить.
-- Пишется спека на процедуру Connect.
+- A `*.spec.ts` next to the source is being created or edited.
+- Logic has to be moved out of a component or a service so that there is something to check it
+  with.
+- A test on a Connect procedure is being written.
 
-## Импорты явные
+## Imports are explicit
 
-`globals: true` в конфиге стоит, но список всё равно пишется:
+`globals: true` stands in the config, but the list is written anyway:
 
 ```typescript
 import { describe, expect, it } from 'vitest';
 ```
 
-## Один `describe` на функцию
+## One `describe` per function
 
-Имя блока совпадает с именем функции дословно; заголовки `it` — предложения по-русски,
-настоящим временем, о поведении, а не об устройстве:
+The block name matches the function name word for word; the `it` titles are sentences in Russian,
+present tense, about behaviour, not about the internals:
 
 ```typescript
 describe('applyDayClick', () => {
@@ -37,12 +38,13 @@ describe('applyDayClick', () => {
 });
 ```
 
-Идентификатор сценария из `docs/specs/<домен>/scenarios.md` стоит в начале заголовка, через
-тире. Краевые случаи — отдельные `it` в том же блоке, а не один тест с десятком проверок.
+The scenario id from `docs/specs/<domain>/scenarios.md` stands at the start of the title, followed
+by a dash. Edge cases are separate `it` blocks in the same `describe`, not one test with a dozen
+assertions.
 
-## Фикстура собирается функцией с `Partial<T>`
+## A fixture is built by a function with `Partial<T>`
 
-Не повторяющимся литералом:
+Not by a repeated literal:
 
 ```typescript
 function day(iso: string, overrides: Partial<ICalendarDay> = {}): ICalendarDay {
@@ -57,74 +59,79 @@ function day(iso: string, overrides: Partial<ICalendarDay> = {}): ICalendarDay {
 }
 ```
 
-Общие константы (`PRICING`, `BUSY`) лежат наверху файла, в области модуля.
+Shared constants (`PRICING`, `BUSY`) lie at the top of the file, at module scope.
 
-## Решение выносится в чистую функцию
+## A decision is moved into a pure function
 
-Господствующая форма в этом дереве: логика уезжает в `*.logic.ts`, `*.util.ts` или
-`*.calculator.ts`, и проверяется вызовом — без `TestBed`, без подмены зависимостей. Образцы —
-`libs/site/common/booking/util/src/lib/availability-calendar.logic.ts` и
-`libs/api/<домен расчёта>/util/src/lib/quote.calculator.ts`.
+The dominant form in this tree: the logic moves into `*.logic.ts`, `*.util.ts` or
+`*.calculator.ts` and is checked by a call — without `TestBed`, without substituting dependencies.
+Samples — `libs/site/common/booking/util/src/lib/availability-calendar.logic.ts` and
+`libs/api/<quote domain>/util/src/lib/quote.calculator.ts`.
 
-## Процедура зовётся напрямую
+## A procedure is called directly
 
-Обработчик — метод `handle` класса процедуры в слое `feature` своего домена. Двойник базы
-пишется руками; образец — `FakePrismaClient` в
-`libs/api/<домен заявок>/feature/src/lib/link-booking.procedure.spec.ts`:
+The handler is the `handle` method of the procedure class in the `feature` layer of its domain. The
+database double is written by hand; the sample is `FakePrismaClient` in
+`libs/api/<booking domain>/feature/src/lib/link-booking.procedure.spec.ts`:
 
 ```typescript
 const prisma: FakePrismaClient = new FakePrismaClient();
 await procedureWith(prisma, emitter).handle(request());
 ```
 
-Проверяются порядок действий, откат при отказе половины, идемпотентность повтора и то, что
-именно ушло в базу. Раскладку полей стерегут тесты слоя `api`, и здесь она не повторяется.
+What is checked is the order of actions, the rollback when half of it is refused, the idempotence
+of a repeat and what exactly went into the database. The layout of fields is guarded by the tests
+of the `api` layer and is not repeated here.
 
-## Разовый тест-доказательство
+## A one-off proof test
 
-Дефект, который иначе подтверждается только чтением кода, доказывается тестом, написанным на
-время разбора: он поднимает настоящую процедуру, подменяет её единственный выход наружу и
-считает походы.
+A defect that is otherwise confirmed only by reading the code is proved by a test written for the
+time of the investigation: it raises the real procedure, substitutes its only way out and counts
+the calls.
 
 ```typescript
 globalThis.fetch = (): Promise<Response> => Promise.resolve(Response.json({ success: false }));
 ```
 
-Число до правки и число после — единственная форма ответа, которую такая проверка даёт: «сто
-походов из ста» и «двадцать из ста» различимы, а «код выглядит правильным» — нет.
+The number before the edit and the number after are the only form of answer such a check gives. "A
+hundred calls out of a hundred" and "twenty out of a hundred" can be told apart, and "the code looks
+right" cannot.
 
-Второй способ снять «до» — вернуть на место версию файла из точки расхождения ветки и
-прогнать тест ветки: падение теста и есть воспроизведение дефекта. Файл после этого
-восстанавливается копией, и восстановление проверяется прогоном того же теста, а не памятью.
+The second way to take the "before" is to put back the version of the file from the point where
+the branch diverged and run the branch's test: the test failing is the reproduction of the defect.
+After that the file is restored from the copy, and the restoration is checked by running the same
+test, not by memory.
 
-Двойники соседей не выдумываются: рабочий набор берётся из теста соседней процедуры того же
-домена. Двойник, собранный по типу, падает не на утверждении, а на вызове метода, которого у
-него нет.
+Doubles of the neighbours are not invented: the working set is taken from the test of a
+neighbouring procedure of the same domain. A double assembled by type fails not on the assertion
+but on the call of a method it does not have.
 
-**Такой файл не коммитится.** Он живёт до конца разбора и удаляется вместе с ним; проверка,
-которую стоит оставить, переписывается в обычный `*.spec.ts` с идентификатором сценария в
-заголовке и едет в ветке. Признак временного файла — его заголовок не называет ни одного
-сценария.
+**Such a file is not committed.** It lives until the end of the investigation and is removed
+together with it; a check worth keeping is rewritten as an ordinary `*.spec.ts` with the scenario
+id in the title and goes in the branch. The sign of a temporary file is that its title names no
+scenario at all.
 
-## Зелёное, которое ничего не проверяет
+## Green that checks nothing
 
-**Проба, ждущая молчания, идёт в паре с пробой, ждущей отказа.** Молчание наступает и тогда,
-когда проверять было нечем: приставка перед командой в конвейере действует на одно звено, и
-хук, получивший пустое значение, молчит ровно так же, как хук, которому нечего отбивать. Две
-пробы из трёх при этом зелены — они и ждали молчания, — и промах виден только по третьей,
-которая ждёт отказа.
+**A probe that expects silence goes paired with a probe that expects a refusal.** Silence also comes
+when there was nothing to check with. A prefix before a command in the pipeline acts on one link,
+and a hook that got an empty value is silent exactly like a hook that has nothing to refuse. Two
+probes out of three are green then — they expected silence — and the miss is visible only by the
+third, which expects a refusal.
 
-**Проба на мину, которая не срабатывает, зелена и без починки.** Сценарий на таблицу кодов
-отказа у спека без процедур проходил бы и до правки: читать эту таблицу сверке не приходится
-вовсе. Проверяется такая проба обеими сторонами — прежнее состояние возвращается на минуту и
-прогоняется: не покраснело, значит проба ничего не сторожит.
+**A probe on a mine that does not go off is green without the fix.** A scenario on the table of
+refusal codes for a spec without procedures would have passed before the edit too: the audit
+never has to read that table at all. Such a probe is checked from both sides — the previous state
+is brought back for a minute and the probe is run: it did not turn red, so the probe guards
+nothing.
 
-## Частые промахи
+## Common misses
 
-- Либа без своего `vitest.config.mts`: `nx test <проект>` пройдёт зелёным, не запустив ни
-  одного файла. Прежде чем писать первый тест в либе, проверить, что конфиг рядом есть.
-- Подмена модуля (`vi.mock`) скрыла бы то, ради чего тест и заводится, — какой именно вызов
-  ушёл в базу и в каком порядке. Двойник пишется руками.
-- Своих помощников для проверок не заводить: `expect(...).toBe(...)` и `.toEqual(...)` прямо.
-- Заголовок с несуществующим идентификатором сценария роняет `npm run check:specs`, а сами
-  тесты при этом остаются зелёными.
+- A lib without its own `vitest.config.mts`: `nx test <project>` passes green without running a
+  single file. Before writing the first test in a lib, check that the config is next to it.
+- Substituting a module (`vi.mock`) would hide what the test is created for — which call went to
+  the database and in what order. The double is written by hand.
+- Do not create your own helpers for assertions: `expect(...).toBe(...)` and `.toEqual(...)`
+  directly.
+- A title with a scenario id that does not exist takes `npm run check:specs` down, while the tests
+  themselves stay green.

@@ -5,92 +5,94 @@ rule: git-workflow
 description: Pattern of rule git-workflow. Load for creating a work item and a branch, commit and push — an item with area and iteration, state transition, merging two tasks into one, working as the machine account, skipping the document requirement. Opening a PR — pattern git-workflow-pr.
 ---
 
-# Задача, ветка и коммит
+# Task, branch and commit
 
-Паттерн правила `git-workflow`. Что при этом должно быть верно — закон
+Pattern of the rule `git-workflow`. What must be true meanwhile — the law
 `docs/constitution/delivery.md`.
 
-## Когда брать
+## When to use
 
-- Заводится рабочий элемент, с которого начинается правка.
-- Заводится ветка под него.
-- Готовится коммит или пуш.
-- Работа перешла на следующий шаг, и элемент переводится в другое состояние.
+- A work item is being created, and the edit starts from it.
+- A branch is being created for it.
+- A commit or a push is being prepared.
+- The work moved to the next step, and the item moves to another state.
 
-## Сначала рабочий элемент, потом ветка
+## First the work item, then the branch
 
-Заведение состоит из четырёх шагов: элемент, номер в его заголовке, исполнитель, состояние
-`New`. Область и итерация ставятся тут же: элемент без них лежит в корне проекта и на доску
-команды не попадает — заведён, а в очереди работ его нет.
+Creation is four steps: the item, the number in its title, the assignee, the state `New`. Area and
+iteration are set right there: an item without them lies in the project root and does not reach
+the team board — created, but not in the work queue.
 
-Все четыре делает одна команда дерева, а не рука: делить их значит забывать последний.
+All four are done by one tree command, not by hand: splitting them means forgetting the last.
 
-**Команду, которой нет, паттерн не заменяет вызовами клиента.** Дерево, взявшее пакет впервые,
-получает файлы проверок, но не записи о них в своём манифесте: раскладка правит ресурсы, а
-манифест потребителя ей не принадлежит. Ходов отсюда два: завести команду тем же ходом либо
-повторить все её шаги поимённо по перечню выше. Обход вызовами клиента выглядит исполнением до
-последнего шага перечня: он забывается первым, потому что предыдущие уже дали видимый
-результат.
+**A command that does not exist is not replaced by client calls in the pattern.** A tree that
+takes the package for the first time gets the check files, but not the entries about them in its
+manifest: the layout edits resources, and the consumer's manifest does not belong to it. Two ways
+from here: create the command in the same turn, or repeat all its steps by name from the list
+above. A bypass by client calls looks like execution up to the last step of the list: it is
+forgotten first, because the previous ones have already given a visible result.
 
 ```bash
 npm run task:new -- --title 'Письма владельцу не уходят молча' \
     --type Bug --area '<проект>\<команда>' --slug mail-owner-silence < описание.md
 ```
 
-Скрипт под этой командой заводит проект — пакет её не везёт. Что он делает вызовами `az`:
+The script under this command is created by the project — the package does not ship it. What it
+does by `az` calls:
 
 ```bash
 az boards work-item create --type Bug --title '[<номер>] …' \
     --org https://dev.azure.com/<организация> --project <проект> \
     --assigned-to <бот> --area '<проект>\<команда>' --iteration '<проект>\<итерация>'
-az boards work-item update --id <номер> --title '[<номер>] …'   # номер известен после создания
+az boards work-item update --id <номер> --title '[<номер>] …'   # the number is known after creation
 ```
 
-Номер в заголовок руками не пишется — он известен только после создания, и команда дописывает
-его сама.
+The number is not written into the title by hand — it is known only after creation, and the
+command appends it itself.
 
-Заведение кончается не выводом команды, а ответом очереди работ. Команда спрашивает её сама и
-печатает прочитанное — присутствие на доске, состояние, исполнителя; отсутствие кончает её
-ненулевым кодом. В комментарий, в тело PR и в замысел идёт этот ответ, а не напечатанный
-номер: номер говорит «вызов прошёл», а не «работа видна тому, кто по ней придёт».
+Creation ends not with the command's output but with the work queue's answer. The command asks
+it itself and prints what it read — presence on the board, the state, the assignee; absence ends
+it with a non-zero code. That answer goes into the comment, the PR body and the plan, not the
+printed number: the number says "the call went through", not "the work is visible to whoever
+comes for it".
 
-Заведения, идущие подряд, проверяются не по последнему, а сверкой очереди целиком: промах у них
-общий, и по одному элементу он не виден.
+Creations that go one after another are checked not by the last one but by an audit of the whole
+queue: their miss is shared, and by one item it is invisible.
 
-Чем сверить, что очередь работ в порядке:
+What to check the work queue with:
 
 ```bash
 npm run check:board
 ```
 
-Она смотрит только открытое: состояние, область и исполнителя у каждого открытого элемента, а
-у каждого открытого PR — номер в заголовке, привязанный элемент и то, что второго PR с тем же
-номером нет. Имя ветки не судит: у открытого PR его не переименовать.
+It looks only at what is open: the state, the area and the assignee of every open item, and for
+every open PR — the number in the title, the attached item and that there is no second PR with
+the same number. It does not judge the branch name: an open PR cannot have it renamed.
 
-## Две задачи, которые чинятся одной правкой
+## Two tasks fixed by one edit
 
-Если по ходу выяснилось, что правка закрывает и соседний элемент, — это одна задача, а не две.
-Слить их можно, пока правка не въехала в главную ветку:
+If it turned out along the way that the edit closes the neighbouring item too — that is one task,
+not two. They can be merged while the edit has not reached the main branch:
 
 ```bash
-# то, чего в поглотившем элементе не было, дописывается в его описание
+# what the absorbing item lacked is appended to its description
 az boards work-item update --id <поглотивший> --description "$(cat тело.md)"
-# поглощённый связывается с ним как дубликат и закрывается
+# the absorbed one is linked to it as a duplicate and closed
 az boards work-item relation add --id <поглощённый> --relation-type duplicate-of \
     --target-id <поглотивший>
 az boards work-item update --id <поглощённый> --state 'Removed'
 ```
 
-Связь ставится до закрытия: закрытый без неё элемент читается как сделанный, а сделан он не
-был. Состояние снятого зависит от процесса проекта — `Removed` есть в Agile и Scrum, в Basic
-его нет; какое здесь, сказано в `implementation.md`.
+The link is set before closing: an item closed without it reads as done, and it was not done. The
+state of a removed item depends on the project process — `Removed` exists in Agile and Scrum, and
+Basic does not have it; which one is here, `implementation.md` says.
 
-После слияния ветки поглощения нет: она въехала, и откатывается целиком.
+After the branch is merged there is no absorbing: it went in, and it is reverted whole.
 
-## Ветка заводится отдельным вызовом
+## The branch is created by a separate call
 
-Гард главной ветки разбирает текст команды и смотрит ветку на момент запуска, поэтому
-составная команда отклоняется целиком — ветки в ней ещё нет:
+The main branch guard parses the command text and looks at the branch at launch, so a compound
+command is rejected whole — the branch does not exist in it yet:
 
 ```bash
 ✗ git checkout -b 85-guest-token && git commit -m 'feat(admin): …'
@@ -98,40 +100,42 @@ az boards work-item update --id <поглощённый> --state 'Removed'
 ✓ git commit -F -
 ```
 
-Имя несёт номер элемента, slug строчными латинскими через дефис; точная форма — в
-`implementation.md`. Гард поставки разбирает её на месте и отбивает промах до первого коммита,
-а по номеру спрашивает доску: элемент должен существовать, быть открытым и иметь исполнителя.
+The name carries the item number, the slug in lowercase Latin letters joined by hyphens; the exact
+form — in `implementation.md`. The delivery guard parses it on the spot and refuses a miss before
+the first commit, and by the number it asks the board: the item must exist, be open and have an
+assignee.
 
-Имя без номера (`feat/…`, `fix/…`) законно, пока ветка живёт локально — под пробу и разбор.
-PR с неё не откроется: правка, доезжающая до главной ветки, начинается с задачи.
+A name without a number (`feat/…`, `fix/…`) is legitimate while the branch lives locally — for a
+trial and an analysis. No PR opens from it: an edit that reaches the main branch starts with a
+task.
 
-## Состояние элемента двигается вместе с работой
+## The item state moves together with the work
 
-Ветка заведена — элемент уже не `New`, а `Active`. PR открыт — он ждёт разбора. Оба перевода
-делает одна команда, вторым вызовом сразу за тем, который его вызвал:
+Branch created — the item is no longer `New` but `Active`. PR opened — it awaits review. Both
+moves are done by one command, as a second call right after the one that caused it:
 
 ```bash
-npm run task:move -- 86 in-progress   # сразу после git checkout -b 86-…
-npm run task:move -- 86 in-review     # сразу после az repos pr create
+npm run task:move -- 86 in-progress   # right after git checkout -b 86-…
+npm run task:move -- 86 in-review     # right after az repos pr create
 ```
 
-Под ней — правка поля состояния:
+Under it — an edit of the state field:
 
 ```bash
 az boards work-item update --id 86 --state 'Active'
 ```
 
-Имена состояний берутся у процесса проекта, а не назначаются правилом: Agile, Scrum и Basic
-называют одни и те же три шага по-разному, и перевод в состояние, которого в процессе нет,
-отвечает отказом на каждой задаче подряд.
+State names are taken from the project process, not assigned by the rule: Agile, Scrum and Basic
+call the same three steps differently, and a move to a state the process does not have answers
+with a refusal on every task in a row.
 
-Перевод не откладывается на потом: очередь работ читают между шагами, а не после них.
+The move is not put off for later: the work queue is read between steps, not after them.
 
-## Коммит подписывается учётной записью машинной работы
+## The commit is signed by the machine account
 
-Токен читается в переменную и не печатается; автор и коммиттер задаются переменными той же
-команды. `git config` не годится — конфиг общий с основным деревом и переписал бы подпись
-владельцу:
+The token is read into a variable and not printed; author and committer are set by variables of
+the same command. `git config` will not do — the config is shared with the main tree and would
+rewrite the signature to the owner:
 
 ```bash
 TOKEN=$(tr -d '\n' < ~/.config/<дерево>-bot-token)
@@ -141,33 +145,36 @@ GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<почта бота>" \
     git commit -F -
 ```
 
-Заголовок — `type(scope): description`. Типы: `feat`, `fix`, `refactor`, `docs`, `style`,
-`test`, `chore`, `perf`. Области — свои у дерева, они перечислены в `implementation.md`. Точка
-в конце заголовка не принимается.
+The subject — `type(scope): description`. Types: `feat`, `fix`, `refactor`, `docs`, `style`,
+`test`, `chore`, `perf`. Scopes are the tree's own, listed in `implementation.md`. A full stop
+at the end of the subject is not accepted.
 
-Строка `AB#<номер>` в теле коммита привязывает его к рабочему элементу. Она не заменяет
-привязки самого PR: коммит связывается с элементом, а очередь работ читает связь PR.
+The line `AB#<номер>` in the commit body attaches it to the work item. It does not replace the
+attachment of the PR itself: the commit is linked to the item, and the work queue reads the PR's
+link.
 
-## Документ едет тем же коммитом
+## The document goes in the same commit
 
-`docs-guard` требует пару и называет её сам. Обход — строка в теле, причина обязательна:
+`docs-guard` demands the pair and names it itself. The bypass — a line in the body, the reason
+is mandatory:
 
 ```
 Docs-skip: правка только в тестах хука, зеркала у него нет
 ```
 
-## Частые промахи
+## Common misses
 
-- **Сверка сразу после добавления отвечает «нет», когда карточка уже стоит.** Очередь работ отдаёт
-  новый элемент не в ту же секунду, в какую его завели, а последний шаг читает её следующим
-  вызовом. Ответ на это — перечитать очередь целиком, а не завести карточку второй раз: две записи
-  об одной задаче снимает только администратор. Сама команда заведения при этом требует правки:
-  состояние читается сразу за мутацией, без повтора, и ложный отказ здесь дороже задержки.
-- Область и итерация не заданы: элемент заведён, но на доску команды не попал.
-- Состояние взято не из процесса проекта: перевод отвечает отказом на каждой задаче, и это
-  читается как сломанная команда, а не как неверное имя состояния.
-- `git add` с несколькими путями не добавляет ничего, если хоть один путь не существует:
-  команда обрывается на первом промахе целиком. Следующий `git commit --amend` при этом уносит
-  в коммит всё, что осталось в индексе. Состав коммита читается `git show --stat` сразу после
-  него, а не на разборе PR.
-- Правка владельца ни токена, ни переменных не берёт — они только для машинной работы.
+- **An audit right after adding answers "no" when the card already stands.** The work queue gives
+  out a new item not in the same second it was created, and the last step reads it by the next
+  call. The answer to this is to reread the whole queue, not to create the card a second time: two
+  records about one task are removed only by an administrator. The creation command itself needs
+  an edit here: the state is read right after the mutation, without a retry, and a false refusal
+  here costs more than a delay.
+- Area and iteration are not set: the item is created, but it did not reach the team board.
+- The state is not taken from the project process: the move answers with a refusal on every task,
+  and this reads as a broken command, not as a wrong state name.
+- `git add` with several paths adds nothing if even one path does not exist: the command breaks
+  off whole at the first miss. The next `git commit --amend` then carries into the commit
+  everything left in the index. The commit contents are read by `git show --stat` right after it,
+  not at PR review.
+- The owner's edit takes neither the token nor the variables — they are only for machine work.

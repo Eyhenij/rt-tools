@@ -149,6 +149,23 @@ report "следующее движение: неразложенный патт
 report "следующее движение: отказ про разделы, а не про паттерн" "$(next_says 'ни одного раздела состояния не нашлось')" 1
 write_pattern
 
+# SC-AK-907 — заголовок раздела и зачин строки читаются под английским именем: паттерн пакета
+# английский, паттерн дерева до перевода — русский, и проверка принимает оба.
+cat > "$NEXT_TREE/.claude/skills/сцена/SKILL.md" <<'EOF'
+# Scene
+
+## State `первое`: exploration goes before the first question
+
+**Next move:** the findings land in the grill, and the first question leaves in the same turn.
+
+## State `второе`: the plan is written in stages
+
+**Next move:** the plan is committed, and the first stage begins in the same turn.
+EOF
+report "SC-AK-907 — английские заголовок и зачин проходят" "$(next_code)" 0
+report "SC-AK-907 — вывод считает оба раздела" "$(next_says 'разделов состояния 2')" 1
+write_pattern
+
 # SC-AK-458 — проверка стоит своей строкой в наборе гейта пуша
 GATE_TREE="$(fixture_tree)"
 mkdir -p "$GATE_TREE/tools"

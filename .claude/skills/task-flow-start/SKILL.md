@@ -4,28 +4,28 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
-<!-- rt-kit v0.25.0 · patterns/task-flow-start.md · 395b4e69e777 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/task-flow-start.md · 84fc755d3b5f · правится надстройкой, не здесь -->
 
-# Начало работы
+# Starting the work
 
-Паттерн правила `task-flow`. Что при этом должно быть верно — закон
+Pattern of the rule `task-flow`. What must be true meanwhile — the law
 `docs/constitution/work-conduct.md`.
 
-## Когда брать
+## When to use
 
-- Владелец просит что-то сделать; размер просьбы значения не имеет — папка заводится под любую
-  работу.
-- Замеченный по ходу дефект становится задачей.
+- The owner asks for something to be done; the size of the request does not matter — a folder is
+  created for any work.
+- A defect noticed along the way becomes a task.
 
-## Порядок
+## Order
 
-Шаги ниже — начало сплошного счёта: номер шага один на весь путь работы и в следующем паттерне
-не начинается заново. Весь список — в правиле `task-flow`; он же показывается владельцу в начале
-работы, чтобы после шести вопросов было видно, что впереди.
+The steps below open one continuous count: a step number is one for the whole course of the work and
+does not start over in the next pattern. The whole list is in the rule `task-flow`; it is also shown
+to the owner at the start of work, so that after six questions what lies ahead is visible.
 
-### Состояние `просьба-не-разобрана`: разведка — до первого вопроса
+### State `просьба-не-разобрана`: exploration — before the first question
 
-Вопрос, ответ на который лежит в коде, владельцу не задаётся: он обесценивает и остальные.
+A question whose answer lies in the code is not put to the owner: it devalues the rest.
 
 ```
 Agent(subagent_type: "Explore", prompt: "<тема просьбы>: что по ней уже есть в дереве —
@@ -33,134 +33,142 @@ Agent(subagent_type: "Explore", prompt: "<тема просьбы>: что по 
   есть ли готовый образец рядом. Верни находки, а не пересказ файлов.")
 ```
 
-Находки складываются в раздел «Что уже есть в дереве» разбора.
+The findings go into the grill section "What is already in the tree".
 
-Дерево — не единственное место, где лежит ответ. Решение прошлого захода, никуда не записанное,
-живёт только в записи того захода: поиск по ним словом темы стоит одной команды. Найденное тем же
-ходом переписывается в дерево — в замысел эпика, если связывает задачи, и в ход работы, если
-касается одной.
+The tree is not the only place where the answer lies. A decision of a past session, written nowhere,
+lives only in that session's record: a search over them by the theme's word costs one command. What
+is found is written into the tree in the same turn — into the epic plan if it links tasks, into the
+progress if it concerns one.
 
-Разведка, не нашедшая ничего, разрешением спрашивать не становится: сначала называется, где
-искали, потом добираются места, которых в списке не было — замысел эпика, описание прошлого,
-записи прошлых заходов. «В таком-то месте не нашёл» говорит о месте, а не о дереве, и вопрос
-называет оба способа, которыми искали.
+Exploration that found nothing is no permission to ask. First, where the search went is named; then
+the places missing from the list are reached — the epic plan, the archive, the records of past
+sessions. "Not found in such a place" speaks of the place, not of the tree, and the question names
+both ways in which the search went.
 
-Разведка кончается не ощущением, а выводом команд. До первого вопроса владельцу исполнитель знает:
-как устроен репозиторий (корневая памятка), что лежит в каталоге, о котором пойдёт речь (`ls`), и
-есть ли уже написанное по теме (поиск по документации и правилам). Без списка того, что считается
-сделанным, разведка исполняется как настроение: прочитанный переданный текст сходит за неё, и по
-дереву не запускается ни одной команды.
+Exploration ends with command output, not with a feeling. Before the first question to the owner the
+executor knows three things. How the repository is arranged (the root memo), what lies in the
+directory at hand (`ls`), and whether something is already written on the theme (a search over the
+documentation and the rules). Without a list of what counts as done, exploration runs as a mood: a
+read handover passes for it, and not one command runs over the tree.
 
-Разведка по заведённой задаче кончается воспроизведённым симптомом, а не найденным файлом. Тело
-задачи описывает дерево на день заведения, и разведка по именам из тела подтверждает лишь то, что
-файлы на месте: отпавшая задача от живой этим не отличается. Прежде первой правки разведка
-повторяет то, на что задача жалуется, — зовёт процедуру, читает ответ, гоняет молчавшую
-проверку; симптом не воспроизвёлся — задача закрывается отпавшей, и это законный исход.
+Exploration over a created task ends with a reproduced symptom, not a found file. The task body
+describes the tree on the day of creation, and exploration by the names from the body confirms only
+that the files are in place: a task that has lapsed cannot be told from a live one. Before the first
+edit the exploration repeats what the task complains about — calls the procedure, reads the reply,
+runs the check that stayed silent. The symptom did not reproduce — the task is closed as lapsed, and
+that is a lawful outcome.
 
-Дерево, названное образцом, читается раскладкой целиком — обходом каталогов на два уровня, — и
-только потом идут вопросы о приёмах. Ответ на «как здесь делают вот это» даёт одну папку, а
-обобщённая до карты дерева она врёт: соседняя семья каталогов в неё не попадает, и пропажу
-находит владелец.
+A tree named as a sample is read as a layout whole — by walking the directories two levels deep —
+and only then come the questions about techniques. The answer to "how is this done here" gives one
+folder, and generalised into a map of the tree it lies: the neighbouring family of directories is
+left out, and the owner finds the loss.
 
-Выведенное помечается прямо в списке, вместе с тем, чем его подтвердить. Догадка по соседнему
-случаю стоит в одном списке с проверенным, и владелец читает список целиком как проверенный.
+What was inferred is marked right in the list, together with what confirms it. A guess by a
+neighbouring case stands in one list with what was checked, and the owner reads the whole list as
+checked.
 
-Шесть вопросов задаются за вычетом тех, на которые ответила разведка: вместо вопроса с готовым
-ответом в разбор идёт строка «беру такой-то ответ, вот откуда». Признак один — есть ли ответ в
-дереве; «задача кажется понятной» им не является ни в ту, ни в другую сторону.
+The six questions are asked minus those the exploration answered: instead of a question with a ready
+answer, the grill gets the line "taking such-and-such answer, here is where from". The sign is one —
+whether the answer is in the tree; "the task seems clear" is no sign in either direction.
 
-**Следующее движение:** находки ложатся в разбор, и тем же ходом владельцу уходит первый из
-шести вопросов. Разведка кончилась — состояние осталось прежним, ход тоже.
+**Next move:** the findings land in the grill, and in the same turn the first of the six questions
+goes to the owner. The exploration ended — the state stayed the same, so did the turn.
 
-### Состояние `просьба-не-разобрана`: разбор с владельцем
+### State `просьба-не-разобрана`: the grill with the owner
 
-Ведёт главный агент: субагент до владельца не достучится. Команда — `/grill-me`, один вопрос
-за раз, к каждому — свой рекомендуемый ответ с доводом.
+Led by the main agent: a subagent cannot reach the owner. The command is `/grill-me`, one question
+at a time, each with its recommended answer and the reason.
 
-Шесть вопросов закрываются все, а задаются те, на которые разведка не ответила:
+All six questions are closed, and those the exploration did not answer are asked:
 
-| Вопрос                                       | Зачем                                                    |
-| -------------------------------------------- | -------------------------------------------------------- |
-| Меняет ли задача поведение приложения        | от этого зависит договорённость о продукте               |
-| Требует ли правки закона или правила         | закон без ведома владельца не правится                   |
-| Одна задача или несколько                    | делится то, что откатывается порознь, и делится ДО ветки |
-| Что в задачу не входит                       | не названная вслух граница не существует                 |
-| Чем будет видно, что задача закрыта          | «работает» признаком не является                         |
-| Есть ли образец, с которого снимается подход | разведка найдёт похожее, а не то                         |
+| Question | Why |
+| --- | --- |
+| Does the task change the application's behaviour | the product agreement depends on it |
+| Does it need an edit of a law or a rule | a law is not edited without the owner's knowledge |
+| One task or several | what rolls back apart is split, and split BEFORE the branch |
+| What is not part of the task | a boundary not named aloud does not exist |
+| What will show that the task is closed | "it works" is no sign |
+| Is there a sample the approach is taken from | exploration finds something similar, not the thing itself |
 
-Список шести — набор того, что закрыто к началу работы, а не набор реплик, которые надо
-произнести. Вопрос, ответ на который владелец уже дал, отмечается закрытым вместе с тем, чем он
-закрыт: ответ ищется в документации и в сказанном этим же заходом, включая исходную просьбу.
-Закрыть его можно и допущением, когда ответ очевиден, — строкой «вопрос закрыт допущением:
-<что принято>»: неверное допущение стоит правки, вопрос ради очевидного — захода.
+The list of six is the set of what is closed by the start of work, not a set of lines to be said. A
+question the owner has already answered is marked closed together with what closed it: the answer is
+sought in the documentation and in what was said in this same session, the original request
+included. It can be closed by an assumption too, when the answer is obvious — by the line "question
+closed by assumption: <what is taken>": a wrong assumption costs an edit, a question about the
+obvious costs a session.
 
-Объём работы основанием для вопроса о границах не бывает: «это большая работа» решает
-исполнитель, «делать ли её целиком» — владелец, и решает раньше, чем работа началась.
+The size of the work is never a ground for a question about boundaries: "this is big work" is the
+executor's judgement, "whether to do it whole" is the owner's, and they decided before the work
+began.
 
-Форму вопроса задают настройки владельца: где требуют меню, спрашивается меню, и к каждому
-вопросу добавляется свободный вариант — у закрытого набора нет строки «вопрос не тот».
+The form of a question is set by the owner's settings: where a menu is required, a menu is asked,
+and a free option is added to every question — a closed set has no line "wrong question".
 
-**Рамка переданного текста на текущее дерево не переносится.** Передача захода, файл предложений
-и спек описывают то дерево, в котором писались; про текущее знает только текущее, и утверждение о
-раскладке проверяется командой здесь. Подтверждение находится само — признаки дерева, только
-ставящего пакет, стоят и у того, которое пакет пишет и ставит.
+**The framing of a handed-over text is not carried onto the current tree.** A session handover, a
+proposals file and a spec describe the tree they were written in. Only the current tree knows about
+the current one, and a statement about the layout is checked by a command here. Confirmation finds
+itself — the signs of a tree that only installs the package stand on the one that writes and
+installs it too.
 
-Сообщение, которым исполнитель останавливается, начинается с того, чего он ждёт:
+The message with which the executor stops begins with what they wait for:
 
 ```
 Стою на выборе <что решается>. Без ответа <что будет: пойду допущением таким-то / работа стоит>.
 <Вопрос>
 ```
 
-Под вопросом идёт таблица положения эпика — та же, что в передаче. Под, а не над: остановка
-называется первой строкой, а положение эпика — то, из чего владелец решает. Работа вне эпика
-таблицы не несёт.
+Under the question goes the table of the epic's position — the same as in the handover. Under, not
+above: the stop is named by the first line, and the epic's position is what the owner decides from.
+Work outside an epic carries no table.
 
-Замеры, находки ролей и список решений к этому моменту записаны в ход работы, и в сообщении
-владельцу они лишние: отчёт, в конце которого стоит вопрос, выглядит добросовестно ровно
-настолько, насколько надёжно вопрос в нём тонет.
+Measurements, role findings and the list of decisions are by then written in the progress, and in
+the message to the owner they are superfluous. A report with a question at its end looks diligent
+exactly as reliably as the question drowns in it.
 
-Ответы пишутся в `docs/tasks/_draft-<slug>/grill.md` — папка ещё черновик, номера нет.
+The answers are written into `docs/tasks/_draft-<slug>/grill.md` — the folder is still a draft,
+there is no number.
 
 ```bash
 mkdir -p docs/tasks/_draft-<slug>
 cp docs/tasks/_template/grill.md docs/tasks/_draft-<slug>/grill.md
 ```
 
-**Следующее движение:** ответ владельца дописывается в разбор, и следом уходит следующий
-вопрос. Ответы кончились — тем же ходом работа идёт в конвейер ролей.
+**Next move:** the owner's answer is appended to the grill, and the next question follows. The
+answers are over — in the same turn the work goes into the roles pipeline.
 
-### Состояние `разбор-закрыт`: конвейер после разбора
+### State `разбор-закрыт`: the pipeline after the grill
 
-Вопросов больше не будет — дальше роли:
+There will be no more questions — from here on, the roles:
 
 ```
 Workflow(name: "plan", args: "docs/tasks/_draft-<slug>")
 ```
 
-Нужность → договорённость о продукте (`spec-writer`) → её состязательный разбор
-(`spec-critic`) → замысел и разбивка (`project-manager`). Пробелы, которые роли не смогли
-закрыть, возвращаются владельцу — их относит главный агент.
+Need → the product agreement (`spec-writer`) → its adversarial review (`spec-critic`) → the plan and
+the breakdown (`project-manager`). Gaps the roles could not close return to the owner — the main
+agent carries them.
 
-Договорённость, вышедшая из конвейера, сверяется с `grill.md` построчно до работы по ней: роль
-пишет текст, не видя владельца, и способна развернуть его ответ в противоположный — очередь
-этапов оказывалась перевёрнутой, а входящие пункты переезжали в «не входит». Находка критика,
-расходящаяся с ответом владельца, относится владельцу, а не исполняется молча.
+The agreement that came out of the pipeline is checked against `grill.md` line by line before work
+by it. The role writes the text without seeing the owner and can turn their answer into its
+opposite: the order of stages came out reversed, and included items moved to "not included". A
+critic's finding that diverges from the owner's answer is carried to the owner, not carried out in
+silence.
 
-Ход на этой границе не кончается: закрытый разбор выглядит законченным куском — ответы на диске,
-файл закоммичен, отчитаться есть чем, — и отчёт встаёт на место договорённости. Пишется она тем
-же ходом, конвейером ролей или рукой исполнителя.
+The turn does not end on this boundary. A closed grill looks like a finished piece — the answers are
+on disk, the file is committed, there is something to report — and the report takes the place of the
+agreement. It is written in the same turn, by the roles pipeline or by the executor's hand.
 
-**Следующее движение:** сверенная с разбором договорённость коммитится, и тем же ходом
-заводятся задача, ветка и папка — а вышла из разбора серия, сперва объявляется эпик.
+**Next move:** the agreement checked against the grill is committed, and in the same turn the task,
+the branch and the folder are created — and if the grill produced a series, the epic is declared
+first.
 
-### Состояние `договорённость-записана`: серия задач объявляется эпиком
+### State `договорённость-записана`: a series of tasks is declared an epic
 
-Разбор кончился одной задачей — шаг пропускается. Вышло несколько, и порядок между ними значим —
-эпик объявляется здесь, до первой из них, и дважды: карточкой в очереди работ с меткой эпика и
-замыслом рядом с ней.
+The grill ended with one task — the step is skipped. Several came out, and the order between them
+matters — the epic is declared here, before the first of them, and twice. As a card in the work
+queue with the epic label, and as a plan next to it.
 
-Замысел эпика называет три вещи, и ни одна не выводится из остальных:
+The epic plan names three things, and none is derived from the others:
 
 ```markdown
 # <Возможность, которая разрабатывается>
@@ -173,26 +181,27 @@ Workflow(name: "plan", args: "docs/tasks/_draft-<slug>")
 | 2   | <что делает> | <что из первой ей нужно> |
 ```
 
-Состав без порядка порядком не является: две задачи, у которых он держался пониманием, ушли в
-работу наоборот, и вторая переделывалась под первую. Назначенный порядок держится до конца эпика;
-пересмотр — решение владельца, и пишется он в ход работы той задачи, которая его вызвала.
+A set without an order is no order: two tasks whose order rested on understanding went into work the
+other way round, and the second was redone under the first. The assigned order holds to the end of
+the epic; a revision is the owner's decision, and it is written into the progress of the task that
+caused it.
 
-Лежит замысел вне папки задачи: та умирает с мержем первой же. Каталог для него называет компаньон
-правила — у пакета своего пути нет.
+The plan lies outside the task folder: that one dies with the very first merge. The directory for it
+is named by the rule's companion — the package has no path of its own.
 
-Карточки заводятся на все задачи разом, здесь же: по вызову заведения задачи на каждую строку
-таблицы, с меткой эпика. Выданные номера возвращаются в ту же таблицу — колонкой или приставкой
-к названию, — и с этой минуты «взять следующую» отвечает номером, а не названием.
+The cards are created for all the tasks at once, right here: by the task creation call for every row
+of the table, with the epic label. The issued numbers return to the same table — as a column or a
+prefix to the name — and from this minute "take the next" answers with a number, not a name.
 
-Задача под эпиком называет его в своём теле — номер карточки и путь к замыслу одной строкой, — а
-замысел называет задачу со своей стороны. Односторонняя привязка выглядит целой так же, как
-двусторонняя: читатель приходит то от линии работ, то от карточки, и вторая сторона есть только
-для одного из них.
+A task under an epic names it in its body — the card number and the path to the plan in one line —
+and the plan names the task from its side. A one-sided binding looks as whole as a two-sided one:
+the reader comes now from the epic, now from the card, and the second side exists for only one of
+them.
 
-**Следующее движение:** объявленный эпик коммитится вместе с номерами задач, и тем же ходом
-берётся первая его задача — заведением ветки и папки.
+**Next move:** the declared epic is committed together with the task numbers, and in the same turn
+its first task is taken — by creating the branch and the folder.
 
-### Состояние `договорённость-записана`: задача, ветка, папка
+### State `договорённость-записана`: the task, the branch, the folder
 
 ```bash
 npm run task:new -- --title '<Что не так>' --slug <slug> --label documentation --label area:tooling < тело.md
@@ -200,43 +209,43 @@ git checkout -b <КЛЮЧ>-<номер>-<slug>
 npm run task:move -- <номер> in-progress
 ```
 
-Тело приходит файлом и пустым не бывает: пустая задача не говорит ничего ни исполнителю, ни
-владельцу, а дописать её потом можно только со слова владельца.
+The body comes as a file and is never empty: an empty task tells nothing to the executor or the
+owner, and it can be filled in later only on the owner's word.
 
-`task:new` переименовывает `_draft-<slug>` в `<КЛЮЧ>-<номер>-<slug>` и проставляет шапку замысла.
-Ветка заводится вторым вызовом: составную «завести и сразу коммитить» гард главной ветки
-отклоняет целиком.
+`task:new` renames `_draft-<slug>` to `<КЛЮЧ>-<номер>-<slug>` and fills in the plan header. The
+branch is created by a second call: a compound "create and commit at once" is refused by the
+main-branch guard whole.
 
-Номер уже выдан — черновика нет и не заводится: папка открывается сразу под именем ветки. Так
-начинается половина работ: номер приходит прошлым заходом, замеченным дефектом или соседней
-задачей, и переименовывать нечего. Ловушка «номер не бывает первым» сюда не относится — она про
-то, что задачу не заводят до разбора.
+The number is already issued — there is no draft and none is created: the folder opens straight
+under the branch name. Half of all work starts this way: the number comes from a past session, a
+noticed defect or a neighbouring task, and there is nothing to rename. The pitfall "the number never
+comes first" does not apply here — it is about not creating the task before the grill.
 
-Остальные два файла пишутся, а не кладутся образцом впрок: пустой `plan.md` неотличим от
-замысла без этапов, а следующий заход доверяет папке задачи. Образец открывается тем же
-движением, которым заполняется, и шапку раскладки с копии снимают тут же — иначе правку отобьёт
-гард, а ловушка при правиле объясняет почему:
+The other two files are written, not laid down as templates for later: an empty `plan.md` cannot be
+told from a plan without stages, and the next session trusts the task folder. The template is opened
+by the same move that fills it, and the layout header is stripped from the copy right there —
+otherwise the guard refuses the edit, and the pitfall next to the rule explains why:
 
 ```bash
-cp docs/tasks/_template/plan.md docs/tasks/<КЛЮЧ>-<номер>-<slug>/plan.md      # и сразу пишется
+cp docs/tasks/_template/plan.md docs/tasks/<КЛЮЧ>-<номер>-<slug>/plan.md      # and written at once
 cp docs/tasks/_template/progress.md docs/tasks/<КЛЮЧ>-<номер>-<slug>/progress.md
 ```
 
-В ходе работы первой строкой объявляется состояние — с этой минуты его читает гард:
+In the progress the first line declares the state — from this minute the guard reads it:
 
 ```markdown
 - **Состояние:** `задача-взята`
 ```
 
-Пока не объявлено состояние, в котором код правится, гард отбивает правку и называет
-обязательное действие того состояния, которое стоит в строке.
+Until a state in which code is edited is declared, the guard refuses the edit and names the
+mandatory action of the state that stands in the line.
 
-**Следующее движение:** объявив состояние, тот же ход берётся за замысел с его шапки. Заведённая
-папка ходом не кончается: написанного файла в ней ещё нет ни одного.
+**Next move:** having declared the state, the same turn takes up the plan starting with its header.
+A created folder does not end the turn: not one written file is in it yet.
 
-### Состояние `задача-взята`: шапка замысла
+### State `задача-взята`: the plan header
 
-Её читает гард:
+The guard reads it:
 
 ```markdown
 **Задача:** <КЛЮЧ>-282 · **Ветка:** <КЛЮЧ>-282-task-flow
@@ -244,56 +253,59 @@ cp docs/tasks/_template/progress.md docs/tasks/<КЛЮЧ>-<номер>-<slug>/pr
 **Поведение:** меняется
 ```
 
-Дерево, у которого каталога «предложено» нет, называет договорённость самим спеком домена — там
-она пишется прямо в него, и переезжать при закрытии работы нечему:
+A tree with no "proposed" directory names the agreement by the domain spec itself — there it is
+written straight into it, and nothing has to move at the closing of the work:
 
 ```markdown
 **Спек:** `docs/specs/bookings/spec.md`
 ```
 
-Работа, не задевающая `apps/**` и `libs/**`, договорённости не требует:
+Work that does not touch `apps/**` and `libs/**` needs no agreement:
 
 ```markdown
 **Поведение:** не меняется — переезд слоя, снаружи не видно. Подтверждено владельцем.
 ```
 
-Пустая причина не принимается.
+An empty reason is not accepted.
 
-**Следующее движение:** под шапкой пишутся след задачи и этапы, замысел коммитится, и тем же
-ходом начинается первый этап.
+**Next move:** under the header the task footprint and the stages are written, the plan is
+committed, and in the same turn the first stage begins.
 
-### Состояние `замысел-записан`: первый этап начинается тем же ходом
+### State `замысел-записан`: the first stage begins in the same turn
 
-Замысел закоммичен — работа переходит в первый этап сразу, не отдавая хода. Строка состояния
-перезаписывается на `этап-идёт`, и дальше работу ведёт паттерн возвращения.
+The plan is committed — the work moves into the first stage at once, without giving up the turn. The
+state line is rewritten to `этап-идёт`, and from there the work is led by the resume pattern.
 
 ```markdown
 - **Состояние:** `этап-идёт`
 - **Этап:** 1 из 3 — <название первого этапа из замысла>
 ```
 
-Ход на этой границе не кончается. Написанный замысел выглядит законченным куском: этапы разложены,
-файл закоммичен, отчитаться есть чем — и отчёт встаёт ровно на то место, которое должна была
-занять работа. Владелец читает его как сделанное, а сделано ничего: 21 августа заход кончился
-строкой «следующий шаг — такой-то» при заполнении окна около двух процентов.
+The turn does not end on this boundary. A written plan looks like a finished piece: the stages are
+laid out, the file is committed, there is something to report — and the report takes exactly the
+place the work should have taken. The owner reads it as done, and nothing is done: on 21 August a
+session ended with the line "next step — such-and-such" at a window fill of about two percent.
 
-Кончают ход четыре вещи, и они те же, что у остальных состояний: предел заполнения окна, отказ
-гарда, вопрос владельцу и отданная работа, по которой начата следующая. Дочитанный до конца
-паттерн к ним не относится — текст кончился, работа нет.
+Four things end a turn, and they are the same as for the other states: the window fill limit, a
+guard's refusal, a question to the owner and handed-in work with the next begun. A pattern read to
+the end is not among them — the text ended, the work did not.
 
-**Следующее движение:** первый этап делается тем же ходом, а закрытым он объявляется после
-того, как прошла его команда из строки «Чем проверяется».
+**Next move:** the first stage is done in the same turn, and it is declared closed after its command
+from the "Checked by" line has passed.
 
-## Частые промахи
+## Common misses
 
-- **Номер не бывает первым.** До конца разбора неизвестно даже, сколько задач из него выйдет:
-  заведённая заранее задача после разбивки закрывается и остаётся мусором в очереди работ.
-- **Разбор пишется на диск сразу, а не копится в переписке.** Сессия обрывается, и разбор,
-  прожитый в разговоре, восстанавливается только пересказом владельца.
-- **Из одного разбора вышло несколько задач — общее уезжает в замысел эпика.** Папка задачи
-  умирает с мержем, а порядок задач его переживает; каталог называет компаньон правила.
-- **Задача заводится командой, а не четырьмя вызовами подряд.** Борда к репозиторию не
-  привязана, и задача попадает на неё только явным добавлением.
-- **Slug ветки берётся из терминологии договорённости, а не из слов просьбы.** Договорённость
-  пишется раньше ветки и как раз там отказывается от слова владельца. Заголовок задачи и PR
-  поправить можно, имя ветки после открытия PR — уже нет.
+- **The number never comes first.** Until the grill ends it is not even known how many tasks come
+  out of it: a task created in advance is closed after the breakdown and stays as litter in the work
+  queue.
+- **The grill is written to disk at once, not stored up in the conversation.** The session breaks
+  off, and a grill lived through in conversation is recovered only by the owner's retelling.
+- **One grill produced several tasks — the common part leaves for the epic plan.** The task folder
+  dies with the merge, and the task order outlives it; the directory is named by the rule's
+  companion.
+- **The task is created by a command, not by four calls in a row.** The board is not bound to the
+  repository, and the task gets onto it only by an explicit addition.
+- **The branch slug is taken from the terminology of the agreement, not from the words of the
+  request.** The agreement is written before the branch, and that is exactly where it drops the
+  owner's word. The task title and the PR title can be fixed; the branch name after the PR opens —
+  no longer.

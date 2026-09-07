@@ -4,29 +4,29 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for opening a PR and everything around it — title format, draft and leaving it, the link to the task, reviewer and labels, a body sample, reading the PR state, the checklist. Creating the task and committing — pattern git-workflow-commit.
 ---
-<!-- rt-kit v0.25.0 · patterns/git-workflow-pr.github.md · 818b0881cd70 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/git-workflow-pr.github.md · c5943ab02a89 · правится надстройкой, не здесь -->
 
-# Заявка на слияние
+# The PR
 
-Паттерн правила `git-workflow`. Что при этом должно быть верно — закон
-`docs/constitution/delivery.md`. Заведение задачи, ветки и коммит — паттерн
+Pattern of the rule `git-workflow`. What must be true — the law
+`docs/constitution/delivery.md`. Creating the task, the branch and the commit — pattern
 `git-workflow-commit`.
 
-## Когда брать
+## When to use
 
-- Открывается PR по готовой ветке.
-- Правится заголовок, тело или метки уже открытого PR.
-- Снимается черновик, и работа отдаётся на разбор.
-- Читается состояние PR перед тем, как что-либо о нём сказать владельцу.
+- A PR is opened from a finished branch.
+- The title, body or labels of an already open PR are edited.
+- The draft is lifted, and the work is handed over for review.
+- The PR state is read before anything is said about it to the owner.
 
-## Номер задачи стоит в её заголовке и в заголовке PR
+## The task number stands in its title and in the PR title
 
-Форма одна на оба — `[<КЛЮЧ>-<номер>] <текст>`. Номер стоит в самом заголовке, а не только в
-теле: в списке PR тела не видно, а в списке задач номер иначе приходится искать глазами по
-колонке слева. Тот же номер несёт и имя ветки — `<КЛЮЧ>-<номер>-<короткий-slug>`, — поэтому
-задача, ветка и PR читаются как одно.
+One form for both — `[<КЛЮЧ>-<номер>] <текст>`. The number stands in the title itself, not only
+in the body: the PR list shows no bodies, and in the task list the number otherwise has to be
+found by eye in the left column. The branch name carries the same number —
+`<КЛЮЧ>-<номер>-<короткий-slug>` — so task, branch and PR read as one.
 
-Задача говорит, что не так; PR тем же номером отчитывается, что сделано:
+The task says what is wrong; the PR, under the same number, says what was done:
 
 ```
 задача  [<КЛЮЧ>-86] Пустой MAIL_OWNER — письма владельцу не уходят молча
@@ -39,45 +39,45 @@ PR      [<КЛЮЧ>-101] Stylelint включён гейтом
 PR      [<КЛЮЧ>-212] Виджет переписки зовёт кит его собственными именами
 ```
 
-Инфинитив из задачи в заголовок PR не переносится: «исправить» становится «исправлено»,
-«вернуть» — «возвращено», «добавить» — «добавлено».
+The infinitive of the task does not carry into the PR title: "fix" becomes "fixed", "restore" —
+"restored", "add" — "added".
 
-Номер в заголовке обязан совпасть с номером ветки: гард поставки сверяет их до отправки
-команды, а сверка очереди — у каждого открытого PR.
+The number in the title must match the branch number: the delivery guard checks them before the
+command is sent, and the queue audit — on every open PR.
 
-Тип и область — `fix(site):`, `docs(common):` — в заголовок PR не идут: это формат заголовка
-коммита, и там его сверяет `commitlint`. В списке PR он занимает место, ничего не добавляя:
-род правки и область уже видны метками.
+Type and scope — `fix(site):`, `docs(common):` — do not go into the PR title: that is the commit
+subject format, and `commitlint` checks it there. In the PR list it takes room and adds nothing:
+the kind of edit and the area are already visible by the labels.
 
-## Не готовое к слиянию открывается черновиком
+## What is not ready to merge opens as a draft
 
-Правка кода отдаётся человеку открытым PR: запушенная ветка ему не показывается нигде. Открытый
-PR при этом читается как приглашение влить, поэтому у незаконченной работы он открывается
-черновиком — кнопку слияния у черновика хостинг блокирует сам:
+A code edit is handed to a person by an open PR: a pushed branch is shown to them nowhere. An
+open PR reads as an invitation to merge, so unfinished work opens it as a draft — the host locks
+a draft's merge button itself:
 
 ```bash
 GH_TOKEN="$TOKEN" gh pr create --draft --title '[<КЛЮЧ>-86] …' --body-file тело.md
 ```
 
-Черновиком идёт всё, что ждёт прогона конвейера, доработки или ответа на вопрос. Вопрос
-задаётся в самом PR, а не остаётся в голове исполнителя: человек читает PR, а не переписку
-захода.
+Everything waiting for a pipeline run, a rework or an answer to a question goes as a draft. The
+question is asked in the PR itself, not kept in the executor's head: a person reads the PR, not
+the session's conversation.
 
-Снимается черновик отдельным вызовом, и это тот самый ход, которым исполнитель говорит, что
-решение готово:
+The draft is lifted by a separate call, and that is the very turn in which the executor says the
+solution is ready:
 
 ```bash
 GH_TOKEN="$TOKEN" gh pr ready 86
 ```
 
-До снятия молчание исполнителя значит «ещё не готово», после — «можно вливать». Снятие
-черновика и просьба влить идут одним ходом: снятый черновик, о котором человеку не сказали,
-ждёт разбора ровно так же, как не снятый.
+Before the lifting the executor's silence means "not ready yet", after — "may be merged".
+Lifting the draft and asking to merge go in one turn: a lifted draft nobody told the person
+about waits for review just like one not lifted.
 
-## PR прикрепляется к задаче
+## The PR is attached to the task
 
-Тело начинается со строки связи — по ней на борде заполняется поле «Linked pull requests».
-Ревьювер, исполнитель и метки задаются той же командой, и PR без них не открывается:
+The body starts with the link line — by it the board fills the linked PRs field. Reviewer,
+assignee and labels are set by the same command, and a PR does not open without them:
 
 ```bash
 GH_TOKEN="$TOKEN" gh pr create --title '[<КЛЮЧ>-86] Письмо владельцу с незаполненным адресом попадает в логи' \
@@ -87,25 +87,27 @@ GH_TOKEN="$TOKEN" gh pr create --title '[<КЛЮЧ>-86] Письмо владе�
 …'
 ```
 
-Ревьювер — всегда владелец: без запроса разбора PR не показывается ему в очереди. Исполнитель —
-та же учётная запись, от которой идёт машинная работа. Метки берутся у задачи целиком — и род
-правки, и все её области; читаются они у задачи, а не выбираются по памяти:
+The reviewer is always the owner: without a review request the PR does not show in their queue.
+The assignee is the same account the machine work goes from. Labels are taken from the task
+whole — both the kind of edit and all its areas; they are read from the task, not picked from
+memory:
 
 ```bash
 /opt/homebrew/bin/gh issue view 86 --json labels --jq '.labels | map(.name) | join(",")'
 ```
 
-Строка `Closes #<номер>` обязательна: без неё PR не прикрепляется к задаче, и сверка очереди это
-находит. Она же означает, что задача закрывается целиком — половину задачи одним PR не выкатывают:
-работа, которая в одну ветку не влезает, делится на задачи до того, как ветка заводится.
+The line `Closes #<номер>` is mandatory: without it the PR is not attached to the task, and the
+queue audit finds this. It also means the task closes whole — half a task is not rolled out by
+one PR: work that does not fit one branch is split into tasks before the branch is created.
 
-Отказ о превышенной квоте языка запросов (`API rate limit already exceeded`) заявки не заводит
-вовсе; открытие идёт тогда вызовом REST — `$GH api -X POST "repos/$REPO/pulls" -f head=… -f
-base=… -f title=… -F body=@<файл>`, — а метки и ревьювер ставятся следом. Текст такого отказа
-читается как временный, но квота у записи не исчерпана, а равна нулю: ждать нечего.
+A refusal about an exceeded query-language quota (`API rate limit already exceeded`) creates no
+PR at all; the opening then goes by a REST call — `$GH api -X POST "repos/$REPO/pulls" -f head=… -f
+base=… -f title=… -F body=@<файл>` — and labels and reviewer are set after it. The text of such
+a refusal reads as temporary, but the account's quota is not exhausted — it equals zero: there
+is nothing to wait for.
 
-У уже открытого PR то же ставится тремя вызовами REST. `gh pr edit` здесь не годится: он
-запрашивает карточки Projects (classic), получает отказ о снятом API и до правки не доходит.
+On an already open PR the same is set by three REST calls. `gh pr edit` will not do here: it
+queries Projects (classic) cards, gets a refusal about a removed API and never reaches the edit.
 
 ```bash
 GH=/opt/homebrew/bin/gh
@@ -116,21 +118,21 @@ $GH api -X POST "repos/$REPO/issues/205/assignees" -f 'assignees[]=<бот>'
 $GH api -X POST "repos/$REPO/pulls/205/requested_reviewers" -f 'reviewers[]=<владелец>'
 ```
 
-Тем же вызовом правится и само тело: `-f body=` переписывает его целиком, поэтому строка
-`Closes #<номер>` пишется заново вместе с остальным текстом.
+The same call edits the body itself: `-f body=` rewrites it whole, so the line
+`Closes #<номер>` is written anew together with the rest of the text.
 
 ```bash
 $GH api -X PATCH "repos/$REPO/pulls/205" -f body="$(cat тело.md)"
 ```
 
-Тело перечитывается всякий раз, когда в ветку что-то влилось после публикации: PR
-утверждает про дерево, а дерево с тех пор изменилось.
+The body is reread whenever something merged into the branch after publishing: the PR states
+things about the tree, and the tree has changed since.
 
-## Образец тела PR
+## PR body sample
 
-Четыре раздела, и порядок между ними один: строка связи, что сделано, чем подтверждено,
-оставшийся шаг. Раздел, которому нечего сказать, пишется словами — пустой заголовок и снятый
-заголовок читаются одинаково, а значат разное.
+Four sections, and one order between them: the link line, what was done, what confirms it, the
+remaining step. A section with nothing to say says so in words — an empty heading and a removed
+heading read alike and mean different things.
 
 ```markdown
 Closes #86
@@ -150,8 +152,8 @@ Closes #86
 черновик; до этого кнопка слияния заблокирована хостингом.
 ```
 
-Раздел «Оставшийся шаг» стоит последним и переписывается тем же вызовом, что и остальное тело,
-— в тот ход, которым снимается черновик:
+The "Remaining step" section stands last and is rewritten by the same call as the rest of the
+body — in the turn that lifts the draft:
 
 ```markdown
 ## Оставшийся шаг
@@ -159,141 +161,143 @@ Closes #86
 Не осталось: прогон зелёный, черновик снят. Можно вливать.
 ```
 
-Стоит он там потому, что решение о слиянии принимается на этой странице, а не в переписке:
-сказанное владельцу вслух живёт до следующей реплики, а тело лежит у самой кнопки. Одно другого
-не отменяет — порядок обоих сообщений владельцу описывает паттерн закрытия работы.
+It stands there because the merge decision is made on that page, not in the conversation: what
+was said to the owner aloud lives until the next reply, and the body lies right by the button.
+One does not cancel the other — the order of both messages to the owner is described by the
+pattern for closing work.
 
-Проверить тело машиной нечем: ни одна сверка его не читает, а хостинг спрашивает только про
-заголовок. Держится образец тем, кто пишет тело, — как и слова вслух.
+There is nothing to check the body by machine: no audit reads it, and the host asks only about
+the title. The sample is held by whoever writes the body — like the words said aloud.
 
-## Состояние PR читается, а не додумывается
+## The PR state is read, not guessed
 
-Вызовы, которыми ставятся ревьювер, метки и исполнитель, отвечают нулевым кодом и тогда, когда
-ничего не сделали: запрос разбора на автора PR GitHub молча выбрасывает. Поэтому после них PR
-перечитывают:
+The calls that set the reviewer, labels and assignee answer with a zero code even when they did
+nothing: GitHub silently drops a review request on the PR author. So after them the PR is reread:
 
 ```bash
-# Ключи латиницей: кириллический ключ без кавычек `jq` не разбирает и падает на нём
+# Keys in Latin letters: `jq` cannot parse an unquoted Cyrillic key and fails on it
 $GH api "repos/$REPO/pulls/321" \
     --jq '{author: .user.login, reviewers: [.requested_reviewers[].login], labels: [.labels[].name]}'
 ```
 
-Автор здесь — `<бот>`. Если им оказался владелец, ревьювера у PR не будет вовсе:
-назначить автора ревьювером нельзя, а отказа на такой запрос не приходит. Владельцу называют
-то, что прочитали, а не то, что заказывали.
+The author here is `<бот>`. If it turned out to be the owner, the PR will have no reviewer at
+all: the author cannot be made the reviewer, and no refusal comes for such a request. The owner
+is told what was read, not what was ordered.
 
-Прочитанное расхождение имеет назначенное действие: автора у заявки не сменить, и она
-закрывается и открывается заново токеном машинной записи — с переносом тела, меток, ревьювера и
-исполнителя. Номер сменится, и ссылки на прежний переписываются тем же ходом. Развилка, вынесенная
-тут владельцу, означает, что порядок поставки прочитан и не исполнен.
+A discrepancy read has an assigned action: a PR's author cannot be changed, so it is closed and
+opened anew with the machine account's token — carrying over the body, labels, reviewer and
+assignee. The number changes, and links to the old one are rewritten in the same turn. A fork
+brought to the owner here means the delivery order was read and not carried out.
 
-Учётная запись, из-под которой пришлось пушить, в этот вызов не переносится: пуш и авторство
-PR выбираются отдельно, и `GH_TOKEN` для публикации — всегда токен бота.
+The account one had to push from does not carry into this call: push and PR authorship are
+chosen separately, and `GH_TOKEN` for publishing is always the bot's token.
 
-Перечитывают его и по времени, а не только после вызовов, которые молча ничего не сделали:
-состояние PR читается перед тем, как что-либо о нём сказать. Между «прогон зелёный» и следующей
-фразой владелец успевает влить PR, и всё сказанное о нём после этого — про вчерашний день. Так
-владельцу и было предложено влить то, что он влил часом раньше.
+It is reread by time too, not only after calls that silently did nothing: the PR state is read
+before anything is said about it. Between "the run is green" and the next phrase the owner has
+time to merge the PR, and everything said about it after that is about yesterday. That is how
+the owner was offered to merge what they had merged an hour earlier.
 
-Читается состояние и перед пушем в ветку, у которой есть заявка. Влитая заявка означает, что
-ветки на сервере уже нет: пуш её не обновит, а заведёт заново, и вклад останется вне главной
-ветки. Ответ пуша говорит это отметкой о новой ветке вместо перечня коммитов — на удачную
-отправку он похож целиком.
+The state is read before a push into a branch that has a PR too. A merged PR means the branch is
+no longer on the server: the push will not update it but create it anew, and the contribution
+stays outside the main branch. The push answer says this with a new-branch mark instead of a list
+of commits — otherwise it looks exactly like a successful push.
 
-**Итог прогона читается отдельным вызовом, а не кодом возврата ожидания.** Команда клиента,
-которая ждёт конца прогона, возвращает ноль и на красном: дождалась она конца, а не успеха.
-Прочитанный как исход, этот ноль делает зелёным то, что упало, и сказанное владельцу о зелёном
-прогоне оказывается про красный. Состояние и заключение прогона спрашивают своим вызовом — тем
-же, каким читают состояние заявки.
+**The run's outcome is read by a separate call, not by the wait's return code.** The client
+command that waits for the run's end returns zero on red too: it waited for the end, not for
+success. Read as an outcome, this zero makes green what fell, and what was said to the owner
+about a green run turns out to be about a red one. The run's state and conclusion are asked by
+their own call — the same one that reads the PR state.
 
-Открытый PR означает, что задача ждёт разбора, — колонка переставляется тем же движением:
+An open PR means the task awaits review — the column is moved in the same motion:
 
 ```bash
 npm run task:move -- 86 in-review
 ```
 
-Голым GraphQL по идентификаторам проекта, элемента и варианта поля это не пишется: команда
-знает их сама, а собранный по памяти запрос молча ставит не ту колонку — отказа у борды на
-это нет.
+This is not written as bare GraphQL by project, item and field option ids: the command knows
+them itself, and a query assembled from memory silently sets the wrong column — the board has no
+refusal for that.
 
-## Что проверяется до публикации PR
+## What is checked before the PR is published
 
-Проверок на самом PR нет: выкатка запускается пушем в главную ветку, и до мержа никто не
-гоняет ничего. Линтеры, юниты и сценарии хуков снимает гейт пуша — ниже то, чего он не знает.
+There are no checks on the PR itself: the rollout starts with a push into the main branch, and
+before the merge nobody runs anything. Linters, unit tests and hook scenarios are taken by the
+push gate — below is what it does not know.
 
-1. **Главная ветка влита в эту ветку** — `git fetch origin && git merge origin/main`.
-   Свежесть основания между ветками одного захода не наследуется: вторая и третья отводятся
-   после своего `fetch`, а не от ссылки под первую. Пока идёт работа, главная уходит вперёд —
-   чаще всего собственным PR того же исполнителя. Всё, что проверяется ниже, проверяется от
-   этого основания: PR с разошедшейся ветки показывает ревьюверу правку вперемешку с чужой.
-   Порядок и разбор конфликта — паттерн `git-workflow-merge`.
-2. **В ветке только та правка, за которой её заводили** — `git diff main...HEAD --stat`. Чужой
-   домен в списке файлов означает, что правка расползлась, и её надо вернуть в свои границы.
-3. **Ни мока, ни подменённого ответа, ни отладочной строки** — `git diff main...HEAD` читается
-   целиком, а не по именам файлов. На прод они уезжают молча и портят настоящие данные.
-4. **Документ едет тем же коммитом.** Пару называет `docs-guard`, но спек домена и правку его
-   поведения он не знает — это остаётся за автором.
-5. **Проверки текстов и раскладки зелёные** — те, что дерево завело в `tools/`: сверка
-   сценариев с тестами, путей в документах, раскладки либ, повторов и классов без правила.
-   Какие именно есть здесь — `implementation.md` правила.
-6. **Все приложения дерева собираются** — `nx build` по каждому. Гейт пуша сборку не гоняет:
-   она длиннее всего, что он успевает сделать между командой и пушем.
-7. **Видимый текст заведён во всех локалях перевода** — тестом полноты словарей, если дерево
-   переводится.
-8. **Правка вёрстки подтверждена замером**, а не взглядом, и снята при узком экране — паттерн
-   `browser-verification-measure`.
-9. **Правка разметки публичного сайта проверена на прод-сборке по всем локалям перевода** — паттерн
-   правило видимости в поиске того дерева, где оно есть.
-10. **Тело PR собрано по образцу** — начинается строкой `Closes #<номер>`, несёт разделы «Что
-    сделано», «Чем подтверждено» и «Оставшийся шаг», а метки, ревьювер и исполнитель стоят.
-    Раздел оставшегося шага к этому моменту говорит, что шагов не осталось: черновик снимается
-    после разбора папки, а не до него.
-11. **Заголовок PR несёт номер задачи и называет её сделанной:** `[<КЛЮЧ>-<номер>] <Что сделано>`,
-    тем же номером, что стоит у задачи и в имени ветки. Инфинитив из задачи в него не
-    переносится, тип и область коммита — тоже.
-12. **Очередь работ сходится** — `npm run check:board`. Задача на борде, с исполнителем и
-    номером в заголовке; PR один на задачу, и закрывает он её целиком.
-13. **Состояние PR прочитано, а не выведено из кодов возврата** — автор `<бот>`,
-    ревьювер — владелец, метки те же, что у задачи. Владельцу называют прочитанное.
-14. **Набор взят из файла конвейера, а не собран по памяти.** Гейт пуша заведомо уже: он стоит
-    между командой и пушем, и всё, что дольше секунд, из него вынесено. Что гоняет конвейер,
-    написано в его файле — этот список и повторяется локально; зелёный гейт полнотой набора не
-    является.
-15. **Набор пересмотрен после вливания главной ветки.** Он выбирается по тому, что ветка везёт
-    теперь, а не по тому, что правил автор. Ветка, не тронувшая ни строки показа, прогоняет
-    снимки витрин: с момента вливания их гоняет конвейер на её коде, и красное придёт на её
-    PR.
+1. **The main branch is merged into this branch** — `git fetch origin && git merge origin/main`.
+   Base freshness is not inherited between branches of one session: the second and the third
+   are taken after their own `fetch`, not from the ref under the first. While work goes on, main
+   moves ahead — most often by the same executor's own PR. Everything checked below is checked
+   from this base: a PR from a diverged branch shows the reviewer the edit mixed with someone
+   else's. Order and conflict resolution — pattern `git-workflow-merge`.
+2. **The branch holds only the edit it was created for** — `git diff main...HEAD --stat`. A
+   foreign domain in the file list means the edit has spread, and it must be brought back within
+   its bounds.
+3. **No mock, no substituted response, no debug line** — `git diff main...HEAD` is read whole,
+   not by file names. They go to production silently and corrupt real data.
+4. **The document goes in the same commit.** `docs-guard` names the pair, but it does not know
+   the domain spec and an edit of its behaviour — that stays with the author.
+5. **Text and layout checks are green** — those the tree created in `tools/`: scenarios against
+   tests, paths in documents, lib layout, duplicates and classes without a rule. Which ones
+   exist here — the rule's `implementation.md`.
+6. **All applications of the tree build** — `nx build` for each. The push gate does not run the
+   build: it is longer than anything it can do between the command and the push.
+7. **Visible text is entered in all translation locales** — by the dictionary completeness test,
+   if the tree is translated.
+8. **A layout edit is confirmed by a measurement**, not by a look, and captured on a narrow
+   screen — pattern `browser-verification-measure`.
+9. **A markup edit of the public site is checked on the production build in all translation
+   locales** — the search visibility rule of the tree that has one.
+10. **The PR body is assembled by the sample** — starts with the line `Closes #<номер>`, carries
+    the sections "What was done", "What confirms it" and "Remaining step", and labels, reviewer
+    and assignee are set. By this moment the remaining step section says no steps are left: the
+    draft is lifted after the folder is taken apart, not before.
+11. **The PR title carries the task number and names it done:** `[<КЛЮЧ>-<номер>] <Что сделано>`,
+    with the same number as the task and the branch name. The infinitive of the task does not
+    carry into it, nor do the commit type and scope.
+12. **The work queue matches** — `npm run check:board`. The task is on the board, with an
+    assignee and the number in the title; one PR per task, and it closes the task whole.
+13. **The PR state is read, not derived from return codes** — author `<бот>`, reviewer — the
+    owner, labels the same as on the task. The owner is told what was read.
+14. **The set is taken from the pipeline file, not assembled from memory.** The push gate is
+    narrower by design: it stands between the command and the push, and everything longer than
+    seconds is taken out of it. What the pipeline runs is written in its file — that list is
+    repeated locally; a green gate is not completeness of the set.
+15. **The set is revised after merging the main branch in.** It is chosen by what the branch now
+    carries, not by what the author edited. A branch that touched no line of the showcase runs
+    the showcase snapshots: since the merge the pipeline runs them on its code, and the red
+    comes to its PR.
 
-Список этот — про снятие черновика, а не про его открытие. Черновиком PR открывается раньше:
-пока работа идёт, человеку показывают то, что уже есть, вместе с тем, чего ещё нет. Пункты 1–15
-проходятся перед `gh pr ready`, и невыполненный пункт означает, что черновик не снимается, — а
-не то, что PR не открывается.
+This list is about lifting the draft, not about opening it. The PR opens as a draft earlier:
+while work goes on, the person is shown what already exists together with what is still missing.
+Items 1–15 are passed before `gh pr ready`, and an unmet item means the draft is not lifted — not
+that the PR does not open.
 
-Сразу после публикации задача переставляется в разбор — `npm run task:move -- <номер>
-in-review`, — и `npm run check:board` прогоняется ещё раз: до открытия PR колонку он не судит,
-а после открытия расхождение видит.
+Right after publishing the task is moved to review — `npm run task:move -- <номер>
+in-review` — and `npm run check:board` is run once more: before the PR opens it does not judge
+the column, after the opening it sees the discrepancy.
 
-Сделанное рассуждением и сделанное замером в теле PR разводятся прямо: непроверенное,
-названное проверенным, ревьювер принимает за проверенное.
+What was done by reasoning and what was done by measurement are told apart plainly in the PR
+body: the unchecked named as checked, the reviewer takes as checked.
 
-**Раздел «Чем подтверждено» называет и то, что не гонялось.** Список одного прогнанного
-неотличим от полного набора, и ревьювер по нему решает, что можно не перепроверять. Цена ошибки
-здесь не красный конвейер, а доверие к разделу: однажды прочитанный как полнота, дальше он
-перепроверяется весь.
+**The "What confirms it" section names what was not run too.** A list of one run cannot be told
+from the full set, and by it the reviewer decides what need not be rechecked. The price of a
+mistake here is not a red pipeline but trust in the section: once read as complete, from then on
+it is rechecked whole.
 
-## Частые промахи
+## Common misses
 
-Промахи про заведение задачи, ветку и коммит — паттерн
+Misses about creating the task, the branch and the commit — pattern
 `git-workflow-commit`.
 
-- Второй строкой `Closes` в одном PR задача больше не закрывается: две задачи в одной ветке
-  откатываются только вместе. Либо это одна задача — и вторая поглощается, — либо две ветки.
-- Половина задачи, уехавшая своим PR, тоже промах: тело такого PR начинается со слов «Часть
-  #<номер>» вместо `Closes`, и задача остаётся открытой. Работа, которая в одну ветку не
-  влезает, делится на задачи до того, как ветка заводится.
-- PR открыт без ревьювера: он не попадает во входящие владельца вовсе, и очередь стоит,
-  выглядя работающей. Так шестнадцать PR ждали разбора, которого никто не запрашивал.
-- Метки поставлены по названию PR, а не прочитаны у задачи: область теряется, и по борде не
-  видно, что правка задела ещё и сайт.
-- Задача закрыта не полностью, а метки перенесены целиком: задача остаётся открытой, и это
-  говорится в теле PR, а не подразумевается строкой `Closes`.
+- A second `Closes` line in one PR no longer closes a task: two tasks in one branch roll back
+  only together. Either it is one task — and the second is absorbed — or two branches.
+- Half a task that left by its own PR is a miss too: the body of such a PR starts with the words
+  `Часть #<номер>` instead of `Closes`, and the task stays open. Work that does not fit one
+  branch is split into tasks before the branch is created.
+- A PR opened without a reviewer: it never reaches the owner's inbox at all, and the queue stands
+  while looking as if it works. That is how sixteen PRs waited for a review nobody had requested.
+- Labels set by the PR title, not read from the task: the area is lost, and the board does not
+  show that the edit touched the site too.
+- The task closed not in full, but the labels carried over whole: the task stays open, and the
+  PR body says so instead of implying it by a `Closes` line.

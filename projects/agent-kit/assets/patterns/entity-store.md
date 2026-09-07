@@ -5,17 +5,17 @@ rule: entity-conventions
 description: Pattern of rule entity-conventions. Load when creating or editing an admin store — the ready-made heir of the shared list store base, the mutate harness, method names from the action, an action with its own busy flag. Not for the panel — that is pattern entity-aside.
 ---
 
-# Стор сущности
+# The entity store
 
-Паттерн правила `entity-conventions`. Что при этом должно быть верно — закон
+Pattern of the rule `entity-conventions`. What must be true — the law
 `docs/constitution/entity-editing.md`.
 
-## Когда брать
+## When to use
 
-- Заводится `<сущность>.store.ts`.
-- Правится метод загрузки или записи существующего стора.
+- An `<entity>.store.ts` is created.
+- The load or save method of an existing store is edited.
 
-## Наследник объявляет своё в четырёх строках
+## The heir declares its own in four lines
 
 ```typescript
 @Injectable()
@@ -42,14 +42,15 @@ export class PromoCodesStore extends BaseListStoreService<
 }
 ```
 
-Конфиг решает, что уходит в выборку. Выключено всё — выборки нет вовсе, и сервер отдаёт список
-целиком. Из основы работают загрузка и перезапрос, смена страницы, порядка, условий отбора и
-строки поиска, догрузка следующей страницы, правка одной записи в списке и сброс выборки.
+The config decides what goes into the query. With everything off there is no query at all, and
+the server returns the whole list. From the base come loading and re-reading, changing the page,
+the order, the filter conditions and the search string, loading the next page, editing one record
+in the list and resetting the query.
 
-Файл называется `<сущность>.store.ts`: имя `<сущность>-store.service.ts` выводит его и из
-правила линтера, и из гейта скилов.
+The file is called `<entity>.store.ts`: the name `<entity>-store.service.ts` takes it out of both
+the linter rule and the rule gate.
 
-## Метод правки отдаёт поток
+## The save method returns a stream
 
 ```typescript
 public save(draft: IPromoCode.Draft): Observable<IPromoCode.State | null> {
@@ -57,12 +58,11 @@ public save(draft: IPromoCode.Draft): Observable<IPromoCode.State | null> {
 }
 ```
 
-`mutate` держит занятость, гашение прежней ошибки, перечитывание списка после успеха и ключ
-отказа. Мутация завершается **перечитанным списком**, а не отправленным запросом: панель
-закрывается по значению потока, и список, перечитанный после закрытия, показал бы прежнее
-значение.
+`mutate` holds the busy state, clearing the previous error, re-reading the list after success
+and the refusal key. A mutation ends with a **re-read list**, not with a sent request: the panel
+closes on the stream's value, and a list re-read after closing would show the previous value.
 
-## Имена — от действия, а не от домена
+## Names — from the action, not from the domain
 
 | ✗                                    | ✓          |
 | ------------------------------------ | ---------- |
@@ -70,22 +70,22 @@ public save(draft: IPromoCode.Draft): Observable<IPromoCode.State | null> {
 | `deleteBooking()`, `removeFeed()`    | `remove()` |
 | `loadBookings()`, `fetchFeeds()`     | `load()`   |
 
-Имя домена уже в имени стора и в его алиасе.
+The domain name is already in the store name and in its alias.
 
-## Действие со своей занятостью
+## An action with a busy state of its own
 
-Идёт мимо `mutate`: опрос подписки на календарь держит `pollingId`, потому что панель на минуту
-опроса не гасится, а ключ отказа кладёт `setErrorKey`.
+Goes past `mutate`: calendar subscription polling keeps `pollingId`, because the panel is not
+frozen for the minute of polling, and the refusal key is put by `setErrorKey`.
 
-## Частые промахи
+## Common misses
 
-- Булев ответ у метода правки: он теряет и записанную запись, и причину отказа — панель узнаёт
-  только «не вышло».
-- Своя обвязка занятости и ошибки вокруг вызова сервиса: всё это в `mutate`.
-- Свои сигналы записей, занятости и отказа: они в общей основе.
-- Подписка на сигнал отказа загрузки: сигнал делят список и панель, и один отказ показался бы
-  дважды. Отказ загрузки идёт отдельным потоком.
-- Второе поле сортировки: порядок в выборке один — его не принимают ни таблица, ни контракт,
-  ни разбор на сервере.
-- Хвост с `EMPTY`, приклеенный к мутации: он гасится `defaultIfEmpty`, иначе отказ приклеенного
-  потока превращает удачную запись в вечный спиннер.
+- A boolean answer from the save method: it loses both the saved record and the reason of the
+  refusal — the panel learns only "it did not work".
+- An own busy-and-error harness around the service call: all of that is in `mutate`.
+- Own signals of records, busy state and refusal: they are in the shared base.
+- A subscription to the load refusal signal: the signal is shared by the list and the panel, and
+  one refusal would show twice. The load refusal goes as a separate stream.
+- A second sort field: the query has one order — neither the table, nor the contract, nor the
+  parsing on the server accepts a second one.
+- A tail with `EMPTY` glued to a mutation: it is handled by `defaultIfEmpty`, otherwise a refusal
+  of the glued stream turns a successful save into an endless spinner.

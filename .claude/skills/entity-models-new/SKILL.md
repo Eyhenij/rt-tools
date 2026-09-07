@@ -4,22 +4,22 @@ kind: pattern
 rule: entity-models
 description: Pattern of rule entity-models. Load when declaring a new entity model and its mapper — the ready-made I<Entity> namespace with Api, State and Draft, short and full levels, a BaseMapper heir with typeCast, what to do after editing .proto.
 ---
-<!-- rt-kit v0.25.0 · patterns/entity-models-new.md · 076222009e4d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/entity-models-new.md · 0fa05e84bb7c · правится надстройкой, не здесь -->
 
-# Объявить модель сущности и её перевод
+# Declaring an entity model and its translation
 
-Паттерн правила `entity-models`. Что при этом должно быть верно — закон
+Pattern of the rule `entity-models`. What must be true — the law
 `docs/constitution/entity-models.md`.
 
-## Когда брать
+## When to use
 
-- Заводится новая сущность админки.
-- У существующей появляется короткий уровень.
-- Правится маппер или контракт этой сущности.
+- A new admin entity is created.
+- An existing one gets a short level.
+- The mapper or the contract of this entity is edited.
 
-## Модель — неймспейс в `util` домена
+## The model — a namespace in the domain's `util`
 
-Файл `libs/<семья>/<домен>/util/src/lib/models/<сущность>.model.ts`:
+The file `libs/<family>/<domain>/util/src/lib/models/<entity>.model.ts`:
 
 ```typescript
 export namespace IPromoCode {
@@ -36,13 +36,13 @@ export namespace IPromoCode {
 
     export interface State extends Short.State {
         readonly usageCount: number;
-        /** Пусто = код действует на любой объект владельца */
+        /** Empty = the code applies to any property of the owner */
         readonly propertyId: string;
-        /** 0 = без предела */
+        /** 0 = no limit */
         readonly usageLimit: number;
     }
 
-    /** Что уходит на сервер при сохранении: id пуст — код новый */
+    /** What goes to the server on save: an empty id — the code is new */
     export interface Draft {
         readonly id: string;
         readonly code: string;
@@ -55,19 +55,19 @@ export enum EPromoDiscountKind {
 }
 ```
 
-Перечисления домена лежат в том же файле, но **вне** неймспейса. Глубже двух уровней
-вложенности не заводить: `IPromoCode.Short.State` читается, третий уровень уже нет.
+The domain's enums lie in the same file, but **outside** the namespace. No deeper than two levels
+of nesting: `IPromoCode.Short.State` reads, a third level no longer does.
 
-Псевдонимы выборки объявляются там же:
+The query aliases are declared in the same place:
 
 ```typescript
 export type Query = IList.Query.State<EPromoCodeSortProperty, EPromoCodeFilterProperty>;
 export type ListResult = IList.Result.State<IPromoCode.State, EPromoCodeSortProperty, EPromoCodeFilterProperty>;
 ```
 
-## Маппер — в `api` домена, свой на каждый уровень
+## The mapper — in the domain's `api`, one per level
 
-Файл `libs/<семья>/<домен>/api/src/lib/mappers/<сущность>-model.mapper.ts`:
+The file `libs/<family>/<domain>/api/src/lib/mappers/<entity>-model.mapper.ts`:
 
 ```typescript
 export class PromoCodeModelMapper extends BaseMapper<IPromoCode.State> {
@@ -82,44 +82,44 @@ export class PromoCodeModelMapper extends BaseMapper<IPromoCode.State> {
 }
 ```
 
-Маппер без состояния и без DI:
+The mapper has no state and no DI:
 
 ```typescript
 readonly #mapper: PromoCodeModelMapper = new PromoCodeModelMapper();
 ```
 
-На каждый уровень — свой класс: `PromoCodeShortModelMapper` и `PromoCodeModelMapper`.
+One class per level: `PromoCodeShortModelMapper` and `PromoCodeModelMapper`.
 
-## Строковое поле с конечным набором сверяется явно
+## A string field with a finite set is checked explicitly
 
-`getAsType` умолчания не принимает: значение вне набора он пишет в консоль и возвращает
-строкой `'unknown'`.
+`getAsType` accepts no default: a value outside the set it writes to the console and returns as
+the string `'unknown'`.
 
 ```typescript
 kind: promoDiscountKindOf(raw?.kind) ?? EPromoDiscountKind.Percent,
 ```
 
-## После правки контракта
+## After editing the contract
 
 ```bash
 cd libs/common/proto && npx buf lint
 npm run proto:generate
 ```
 
-Ни `buf lint`, ни `buf breaking` не входят в `check:all` и в CI — гоняются руками.
-Сгенерированные типы лежат в репозитории, и без перегенерации расхождение вылезет сборкой
-чужого приложения.
+Neither `buf lint` nor `buf breaking` is part of `check:all` or CI — they are run by hand. The
+generated types lie in the repository, and without regeneration the divergence surfaces in the
+build of another application.
 
-Снятое поле помечается `reserved` с его номером и именем.
+A removed field is marked `reserved` with its number and name.
 
-## Частые промахи
+## Common misses
 
-- `Api` переписан руками вместо псевдонима — разойдётся с контрактом молча.
-- `??` вместо `typeCast` — контракт отдаёт значения по умолчанию, и проверка на `undefined`
-  не ловит ничего.
-- `as Type` в маппере — запрещено правилом `typescript-conventions`.
-- `null` или `undefined` в `State` — пустое выражается пустой строкой или нулём, а смысл нуля
-  объясняется комментарием рядом с полем.
-- `readonly`-массив отдан в запрос: init-тип сообщения требует изменяемый, модель отдаётся
-  копией.
-- Общий тип на админку и сайт — у гостя своя короткая форма записи.
+- `Api` rewritten by hand instead of an alias — diverges from the contract silently.
+- `??` instead of `typeCast` — the contract returns default values, and a check for `undefined`
+  catches nothing.
+- `as Type` in a mapper — forbidden by rule `typescript-conventions`.
+- `null` or `undefined` in `State` — empty is expressed by an empty string or zero, and the
+  meaning of zero is explained by a comment next to the field.
+- A `readonly` array handed to a request: the message's init type demands a mutable one, the
+  model hands out a copy.
+- A shared type for the admin and the site — the guest has its own short shape of the record.

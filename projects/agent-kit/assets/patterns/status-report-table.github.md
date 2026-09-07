@@ -5,76 +5,77 @@ rule: status-report
 description: Pattern of rule status-report. Load when answering the owner where the work stands. Ready-made calls for every cell: the branch and its commits, the PR state, the pipeline run checked against the head, the task on the board, the task order from the epic plan. A filled-in sample table is attached.
 ---
 
-# Чем спрашивается состояние и как оно ложится в таблицу
+# What the state is asked with and how it lands in the table
 
-Паттерн правила `status-report`. Что при этом должно быть верно — закон о ведении работы.
+Pattern of the rule `status-report`. What must be true — the work-conduct law.
 
-## Когда брать
+## When to use
 
-- Владелец спросил, где стоит работа: «какой статус», «что за эпик», «что сейчас делаешь».
-- Ход кончается отчётом о сделанном, и в нём называется состояние заявки или прогона.
-- Работа идёт под эпиком, и в ответе перечисляются все его задачи.
+- The owner asked where the work stands: "what is the status", "which epic", "what are you doing
+  now".
+- The turn ends with an account of what was done, and it names the state of a PR or a run.
+- The work runs under an epic, and the reply lists all its tasks.
 
-## Вызовы
+## Calls
 
-Ветка, её коммиты сверх главной, незакоммиченное и вершина:
+The branch, its commits beyond main, what is uncommitted and the tip:
 
 ```bash
 git branch --show-current
-git log --oneline <главная>..HEAD
+git log --oneline <main>..HEAD
 git status --short
 git rev-parse --short HEAD
 ```
 
-Порядок задач эпика берётся из его замысла, а не из борды: назначен он там, и номера задач на
-борде идут не подряд.
+The order of the epic's tasks is taken from its plan, not from the board: it is assigned there,
+and the task numbers on the board do not run in sequence.
 
 ```bash
-sed -n '/## Порядок задач/,/^## /p' <замысел эпика>
+sed -n '/## Порядок задач/,/^## /p' <epic plan>
 ```
 
-Состояние заявки — черновик ли она, сходится ли с главной, сколько файлов:
+The state of the PR — whether it is a draft, whether it merges with main, how many files:
 
 ```bash
-gh api repos/:owner/:repo/pulls/<номер> \
+gh api repos/:owner/:repo/pulls/<number> \
   --jq '{n:.number,draft:.draft,state:.state,mergeable:.mergeable,changed:.changed_files}'
 ```
 
-Прогон конвейера по ветке и разбор одного прогона:
+The pipeline run on the branch and the breakdown of one run:
 
 ```bash
-gh run list --branch <ветка> --limit 5
-gh run view <идентификатор>
+gh run list --branch <branch> --limit 5
+gh run view <id>
 ```
 
-Задача на борде — заголовок, состояние, метки:
+The task on the board — title, state, labels:
 
 ```bash
-gh api repos/:owner/:repo/issues/<номер> --jq '{t:.title,s:.state,labels:[.labels[].name]}'
+gh api repos/:owner/:repo/issues/<number> --jq '{t:.title,s:.state,labels:[.labels[].name]}'
 ```
 
-Чем зовётся исполняемый файл хостинга и где лежат замыслы эпиков, говорит компаньон правила:
-имя команды в оболочке бывает занято чужим псевдонимом, и тогда вызов уходит в интерактивный
-вход вместо ответа.
+What the host's executable is called and where the epic plans lie is said by the rule's companion.
+The command name in the shell is sometimes taken by someone else's alias, and then the call goes
+into an interactive sign-in instead of an answer.
 
-## Частые промахи
+## Common misses
 
-- **Задача на борде читается запросом, а не подкомандой просмотра.** Подкоманда тянет за собой
-  доски старого образца, хостинг отвечает отказом о них, и вызов краснеет целиком, ничего не
-  показав. Берётся прямой запрос.
+- **The task on the board is read by a request, not by the view subcommand.** The subcommand
+  drags in boards of the old kind, the host answers with a refusal about them, and the call turns
+  red whole, showing nothing. A direct request is taken.
 
-- **Прогон старше вершины.** Список прогонов показывает последний прогон ветки, а не прогон
-  нынешнего коммита. Сверяется с вершиной прежде, чем число встанет в ответ.
+- **The run is older than the tip.** The run list shows the last run of the branch, not the run of
+  the current commit. It is checked against the tip before the number goes into the reply.
 
-- **Папка задачи из шаблона.** Скопированные, но незаполненные разбор и замысел держат угловые
-  скобки шаблона. Это «заведена, не начата», и в клетке «Состояние» пишется так.
+- **The task folder is from the template.** A copied but unfilled grill and plan keep the
+  template's angle brackets. That is "created, not started", and the "State" cell says so.
 
-- **Заявка зелёная, но черновик.** Прогон успешен, а слияние заблокировано хостингом; в клетке
-  «Осталось» стоит снятие черновика либо названное вслух ожидание.
+- **The PR is green but a draft.** The run succeeded, while the merge is locked by the host; the
+  "Remaining" cell holds lifting the draft or a wait named aloud.
 
-## Образец
+## Sample
 
-Эпик над таблицей — абзацем, а не строкой:
+The epic above the table — as a paragraph, not as a row:
 
 > **Эпик «<название>» (<ключ>)** — <зачем он, одной фразой>. Задач <сколько>, идёт <номер по
 > порядку>.
@@ -85,4 +86,4 @@ gh api repos/:owner/:repo/issues/<номер> --jq '{t:.title,s:.state,labels:[.
 | 2   | <название задачи из замысла> | —       | <одной фразой>                 | не заведена                                |
 | —   | <заведённая вне эпика>       | <ключ>  | <одной фразой>                 | заведена, папка — пустой шаблон, ветки нет |
 
-Под таблицей — строка о том, чего ждём от владельца, и вызов, которым это снимается.
+Under the table — a line about what we wait for from the owner, and the call that lifts it.
