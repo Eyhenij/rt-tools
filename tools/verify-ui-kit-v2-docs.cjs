@@ -1,29 +1,30 @@
 /**
- * Сверяет таблицы входов на страницах-обзорах `@rt-tools/ui-kit-v2` с самими компонентами.
+ * It matches the input tables on the overview pages of `@rt-tools/ui-kit-v2` against the components
+ * themselves.
  *
- * Таблицы пишутся руками — `compodoc` отвергнут решением ADR 0002. Цена этого решения в том,
- * что рядом с кодом появляется вторая копия того же перечня, а расходятся копии молча: ни
- * сборка, ни линт таблицу не читают, и вход, переименованный в компоненте, продолжает
- * числиться в документе под старым именем.
+ * The tables are written by hand — `compodoc` was rejected by the decision ADR 0002. The price of that
+ * decision is that a second copy of the same list appears next to the code, and the copies diverge
+ * silently: neither the build nor the lint reads the table, and an input renamed in the component goes
+ * on standing in the document under its former name.
  *
- * Проверка работает по исходникам, а не по собранному пакету: страницы-обзоры в пакет не
- * уезжают, а расхождение должно ловиться там, где его чинят.
+ * The check works by the sources rather than by the built package: the overview pages do not travel
+ * into the package, and a divergence must be caught where it is fixed.
  */
 const fs = require('fs');
 const path = require('path');
 
 const componentsDir = path.resolve(__dirname, '../projects/ui-kit-v2/src/lib/components');
 const baseSource = path.join(componentsDir, 'form-control/rt-form-control.base.ts');
-/** Заголовок раздела, в котором описываются входы, доставшиеся полю от основы. */
+/** The heading of the section describing the inputs a field got from the base. */
 const BASE_SECTION = 'Входы от основы полей';
 const failures = [];
 
 /**
- * Имена входов, объявленных в компоненте: `input(...)` и `input.required(...)`.
+ * The names of the inputs declared in the component: `input(...)` and `input.required(...)`.
  *
- * Объявление ищется в пределах одной строки (`[^;\n]`): без этой границы поле без
- * присваивания — абстрактное или объявленное типом — склеивалось бы со следующим за ним
- * входом, забирало его `= input` себе, а сам вход оставался бы ненайденным.
+ * The declaration is looked for within one line (`[^;\n]`): without that boundary a field without
+ * an assignment — abstract or declared by a type — would stick to the input following it, take its
+ * `= input` for itself, and the input itself would stay unfound.
  */
 function declaredInputs(source) {
     const names = new Set();
@@ -38,13 +39,14 @@ function declaredInputs(source) {
 }
 
 /**
- * Имена входов, перечисленные на странице-обзоре в разделе с заданным заголовком:
- * первая колонка таблицы, в обратных кавычках.
+ * The names of the inputs listed on the overview page in the section with the given heading:
+ * the table's first column, in backticks.
  *
- * Разделом читаемое ограничено потому, что на той же странице стоят таблицы осей, состояний
- * и выходов, и в их первой колонке тоже бывает имя в кавычках. Без границы значение оси
- * `primary` числилось бы входом, которого в компоненте нет, и страж падал бы на исправном
- * документе. Раздела нет — читать нечего, и каждый вход отчитается неописанным.
+ * What is read is bounded by the section because on the same page stand the tables of the axes, the
+ * states and the outputs, and their first column also sometimes holds a name in backticks. Without
+ * the boundary the axis value `primary` would count as an input the component does not hold, and the
+ * guard would fall on a sound document. There is no section — there is nothing to read, and every
+ * input will be reported as undescribed.
  */
 function documentedInputs(source, heading) {
     const section = new RegExp(`^##\\s+${heading}\\s*$([\\s\\S]*?)(?=^##\\s|$(?![\\s\\S]))`, 'm').exec(source);
@@ -64,19 +66,19 @@ function documentedInputs(source, heading) {
     return names;
 }
 
-/** Сверяет один перечень имён с одной таблицей и копит расхождения обеих сторон. */
+/** It matches one list of names against one table and gathers the divergences of both sides. */
 function compare(declared, documented, { relative, section, subject }) {
-    // Задокументированного входа нет в коде — переименован или выкинут, а документ этого не знает.
+    // A documented input is not in the code — renamed or thrown out, and the document does not know it.
     for (const name of documented) {
         if (!declared.has(name)) {
-            failures.push(`${relative}: в разделе «${section}» есть \`${name}\`, а ${subject} его нет`);
+            failures.push(`${relative}: the section «${section}» holds \`${name}\`, and ${subject} does not hold it`);
         }
     }
 
-    // Вход есть, а строки нет — «все входы описаны» держится на памяти автора.
+    // The input is there and the row is not — «all the inputs are described» holds by the author's memory.
     for (const name of declared) {
         if (!documented.has(name)) {
-            failures.push(`${relative}: вход \`${name}\` не описан в разделе «${section}»`);
+            failures.push(`${relative}: the input \`${name}\` is not described in the section «${section}»`);
         }
     }
 }
@@ -102,7 +104,9 @@ for (const overview of overviews) {
     );
 
     if (sources.length === 0) {
-        failures.push(`${path.relative(componentsDir, overview)}: рядом нет компонента — таблицу не с чем сверить`);
+        failures.push(
+            `${path.relative(componentsDir, overview)}: there is no component next to it — there is nothing to match the table against`
+        );
         continue;
     }
 
@@ -122,31 +126,31 @@ for (const overview of overviews) {
     compare(declared, documentedInputs(page, 'Входы'), {
         relative,
         section: 'Входы',
-        subject: 'среди входов компонента',
+        subject: "the component's inputs",
     });
 
-    // Половина входов поля объявлена не в его файле, а в основе, от которой оно наследуется.
-    // Перечень оттуда описывается отдельной таблицей: слитый с собственными входами, он
-    // выглядел бы как объявленный здесь, а разошёлся бы молча — правка в основе меняет разом
-    // все страницы наследников, и ни одна из них об этом не узнает.
+    // Half a field's inputs are declared not in its file but in the base it inherits from. The list
+    // from there is described by a separate table: merged with its own inputs it would look declared
+    // here, and would diverge silently — an edit in the base changes all the heirs' pages at once,
+    // and not one of them learns about it.
     if (extendsBase) {
         compare(declaredInputs(fs.readFileSync(baseSource, 'utf8')), documentedInputs(page, BASE_SECTION), {
             relative,
             section: BASE_SECTION,
-            subject: 'среди входов основы полей',
+            subject: "the fields base's inputs",
         });
     }
 }
 
 if (failures.length > 0) {
     // eslint-disable-next-line no-console
-    console.error(`Таблицы входов разошлись с компонентами:\n${failures.map((line) => `  - ${line}`).join('\n')}`);
+    console.error(`The input tables diverged from the components:\n${failures.map((line) => `  - ${line}`).join('\n')}`);
     process.exit(1);
 }
 
 // eslint-disable-next-line no-console
 console.log(
     overviews.length === 0
-        ? 'Страниц-обзоров пока нет — сверять нечего.'
-        : `Сверено страниц-обзоров: ${overviews.length}, расхождений с входами компонентов нет.`
+        ? 'There are no overview pages yet — there is nothing to match.'
+        : `Overview pages matched: ${overviews.length}, no divergences with the components' inputs.`
 );
