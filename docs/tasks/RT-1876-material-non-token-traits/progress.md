@@ -140,9 +140,9 @@ Put together by a hook before the compaction of the context (manual).
 
 ### Where we stand at the minute of the compaction
 
-- **State:** `этап-идёт`
-- **Stage:** 4 из 4 — матрица состояний в витрине в обоих наборах
-- **Next step:** этап 4 — истории обеих кнопок показывают матрицу состояний в обоих наборах
+- **State:** `этапы-кончились`
+- **Stage:** все четыре закрыты
+- **Next step:** сделать RT-1891 — без неё пуш отбит гардом снимков у любой ветки дерева, и
 - **PR:** ещё не открыт
 
 The progress in full — `docs/tasks/RT-1876-material-non-token-traits/progress.md`; the plan lies next to it.
@@ -156,6 +156,19 @@ none
 ### Commits over the main branch
 
 ```
+2abe0ab50 docs(rt:ui-kit-v2): ход RT-1876 — нижняя работа влита, дальше RT-1891
+62315d6b3 Merge branch 'RT-1871-material-preset-tokens' into RT-1876-material-non-token-traits
+530a2dc9f fix(rt:agent-kit): сверка адресов зелёная — три машинных файла названы принятыми
+63f5d5070 docs(rt:ui-kit-v2): правило оформления знает про второй слой назначений
+cba2806fe docs(rt:ui-kit-v2): ход RT-1871 — цена этапа 4 замерена по каждому пункту договорённости
+49ea7339b docs(rt:ui-kit-v2): ход RT-1876 — набор проверок зелёный, заявка ждёт нижней ветки
+912eaa4f2 docs(rt:ui-kit-v2): ход RT-1876 — все четыре этапа закрыты
+8948bed26 fix(rt:ui-kit-v2): матрица наборов не режется краем половины, оба эталона сняты
+cf51af73e docs(rt:ui-kit-v2): обзоры обеих кнопок называют материальный набор и его историю
+7950d2a66 Merge branch 'RT-1871-material-preset-tokens' into RT-1876-material-non-token-traits
+656328846 Merge branch 'main' into RT-1871-material-preset-tokens
+d257a93ae docs(rt:ui-kit-v2): ход RT-1876 — пара наборов заведена, впереди осмотр и эталоны
+1763a8033 feat(rt:ui-kit-v2): свой набор оформления и материальный стоят рядом в витрине
 e309413c3 docs(rt:ui-kit-v2): таблица осей кнопки-значка сходится с компонентом
 916d2866d docs(rt:ui-kit-v2): ход RT-1876 — краснота снимков заведена карточкой RT-1891
 e0b2090f2 Merge branch 'RT-1871-material-preset-tokens' into RT-1876-material-non-token-traits
@@ -163,19 +176,6 @@ e25ed0b22 style(rt:ui-kit-v2): линтер стилей на собранном
 9dc1863e1 feat(rt:ui-kit-v2): у кнопки-значка ровный ряд форм и своё свойство тени
 fff16d994 fix(rt:ui-kit-v2): признак уровня записан в правило, обе разъехавшиеся пары выправлены
 83e7bef15 docs(rt:ui-kit-v2): ход RT-1876 — признак уровня атомарного дизайна нигде не записан
-abc24968e feat(rt:ui-kit-v2): у кнопки-значка четыре формы вместо двух
-4d2d2fc0e fix(rt:ui-kit-v2): стили волны подключены к слою оформления кита
-3940dd98c feat(rt:ui-kit-v2): кнопка и кнопка-значок отвечают на нажатие волной
-36f444cff docs(rt:ui-kit-v2): папка задачи RT-1876 заведена, замысел записан
-e3ae5b076 feat(rt:ui-kit-v2): скругление контрола стало назначением, набор ставит ему 1.5rem
-d8b7e8278 docs(rt:ui-kit-v2): первый кит снимается только по разрешению владельца
-02a2a89b7 docs(rt:ui-kit-v2): ход RT-1871 — карточки эпика заведены, следующий шаг этап 3
-b3f9180c3 docs(rt:ui-kit-v2): двенадцать недостающих задач эпика заведены, номера в плане
-a0c9b91e5 docs(rt:ui-kit-v2): перенос идёт по каталогам, с покрытием и сличением снимков
-d5748c0f7 Merge remote-tracking branch 'origin/main' into RT-1871-material-preset-tokens
-bf3d0b137 docs(rt:ui-kit-v2): перенос семейства и есть вычистка Material
-308bc7343 feat(rt:ui-kit-v2): материальный набор оформления и признак набора на странице
-fad0d6786 docs(rt:ui-kit-v2): кит остаётся один — второй дополняется, первый закрывается
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
