@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-specs.mjs · c09999047047 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-specs.mjs · a9fceaa21ff3 · правится надстройкой, не здесь
 /**
  * The check that a domain spec has not diverged from the code.
  *
@@ -224,8 +224,13 @@ for (const file of walk(CONSTITUTION_DIR, (name) => name.endsWith('.md'))) {
 // wrote before the layer was translated. The one that stands in the file is taken.
 const RULE_HEADINGS = ['## How the law applies here', '## Как закон применяется здесь'];
 const ruleHeadingOf = (text) => RULE_HEADINGS.find((heading) => text.split('\n').some((line) => line.trimEnd() === heading)) ?? RULE_HEADINGS[0];
-/** The companion section of a rule where the bindings lie; its other tables name the tree's names. */
-const MAP_HEADING = '## Где исполняются статьи';
+/**
+ * The companion section of a rule where the bindings lie; its other tables name the tree's names.
+ * It has two names, like the rule heading above: the one that stands in the file is taken.
+ */
+const MAP_HEADINGS = ['## Where the articles are carried out', '## Где исполняются статьи'];
+const mapHeadingOf = (text) =>
+    MAP_HEADINGS.find((heading) => text.split('\n').some((line) => line.trimEnd() === heading)) ?? MAP_HEADINGS[0];
 
 /**
  * The front matter of a skill — the first block between `---`. Only it is read: the pattern that
@@ -272,7 +277,9 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
     } else {
         ruled.add(law);
     }
-    checkRuleImplementation(file, text, `${dirname(file)}/implementation.md`, ruleHeadingOf(text), MAP_HEADING);
+    const mapFile = `${dirname(file)}/implementation.md`;
+
+    checkRuleImplementation(file, text, mapFile, ruleHeadingOf(text), mapHeadingOf(read(mapFile)));
 
     const name = nameOf(head);
     if (name && name !== file.slice('.claude/skills/'.length, -'/SKILL.md'.length)) {

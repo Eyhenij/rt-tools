@@ -28,14 +28,14 @@ The first column is the article verbatim. An autonomous session is held by techn
 a single guard in the tree that would tell night from day, and this is said outright at every
 article.
 
-- **The branch of the next work is created from the previous one, not from main.** — **Checked by nothing.** Not a single guard judges the base of a branch; it is held by the technique `git checkout -b RT-<number>-<slug> <the previous branch>` and by the order in the morning list
-- **Nothing goes outside during the night.** — **Checked by nothing.** A push command at night differs in nothing from a daytime one, and the push gate lets it through; it is held by the owner word about the session
-- **A task that needs the owner's word is not taken at all.** — **Checked by nothing.** The board does not know what a task is waiting for; it is held by the line of a postponed task in the morning list
-- **A default is written where the owner's answer would have been written.** — **Checked by nothing.** It is written into the section «Decisions» of the grill — `docs/tasks/RT-<number>-<slug>/grill.md`; the completeness of the section is not judged by a machine
+- **The branch of the next work is created from the previous one, not from main.** — **Not checked.** Not a single guard judges the base of a branch; it is held by the technique `git checkout -b RT-<number>-<slug> <the previous branch>` and by the order in the morning list
+- **Nothing goes outside during the night.** — **Not checked.** A push command at night differs in nothing from a daytime one, and the push gate lets it through; it is held by the owner word about the session
+- **A task that needs the owner's word is not taken at all.** — **Not checked.** The board does not know what a task is waiting for; it is held by the line of a postponed task in the morning list
+- **A default is written where the owner's answer would have been written.** — **Not checked.** It is written into the section «Decisions» of the grill — `docs/tasks/RT-<number>-<slug>/grill.md`; the completeness of the section is not judged by a machine
 - **The readiness sign is named as a command before the stage begins.** — `.claude/hooks/turn-exit-guard.sh:rt_te_deny` — the turn-exit guard reads the command from the line «Verified by» of the plan and does not release a turn where a stage is declared closed and the command was never run
 - **A red run is fixed in the same branch, not postponed.** — `.claude/rt-kit/project.sh:rt_push_checks` — the push gate set; at night it runs by the same call as in the daytime
-- **A guard's refusal is a work step, not the end of the session.** — **Checked by nothing.** The guard does not know what happened after its refusal; it is held by technique
-- **The morning list is written along the way, not recalled at the end.** — **Checked by nothing.** It is assembled from the section «Sessions» of the progress — `docs/tasks/RT-<number>-<slug>/progress.md`; that it was written in time is invisible to a machine
+- **A guard's refusal is a work step, not the end of the session.** — **Not checked.** The guard does not know what happened after its refusal; it is held by technique
+- **The morning list is written along the way, not recalled at the end.** — **Not checked.** It is assembled from the section «Sessions» of the progress — `docs/tasks/RT-<number>-<slug>/progress.md`; that it was written in time is invisible to a machine
 
 ## What else is worth knowing when reading the code
 
