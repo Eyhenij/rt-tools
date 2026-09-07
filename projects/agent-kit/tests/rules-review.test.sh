@@ -28,7 +28,7 @@ sections_for() {
             ;;
         pitfalls) printf '## (Pitfalls|Ловушки)\n' ;;
         patterns) printf '## Когда брать\n' ;;
-        skills) printf '## Когда брать\n' ;;
+        skills) printf '## (When to use|Когда брать)\n' ;;
     esac
 }
 
@@ -100,7 +100,7 @@ fi
 
 # Образец паттерна судится тем же: у него свой набор.
 report "SC-AK-226 — образец паттерна несёт «Когда брать»" \
-    "$(grep -cxF '## Когда брать' "$ASSETS/templates/pattern.md")" 1
+    "$(grep -cxE '## (When to use|Когда брать)' "$ASSETS/templates/pattern.md")" 1
 
 # --- SC-AK-227 — род без объявленного набора молчит ---------------------------------------------
 noisy=0
