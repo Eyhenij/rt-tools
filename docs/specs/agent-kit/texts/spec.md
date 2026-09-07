@@ -1,293 +1,320 @@
-# Тексты слоя правил
+# The texts of the rules layer
 
-**Статус:** действует · **Ревизия:** 2026-09-06 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `project-documentation`, `verifiability`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-09-06 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `project-documentation`, `verifiability`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Слой правил — это тексты, и судится он как тексты: набор разделов, переносимость, словарь и
-граф, изображающий ход правила. Поддомен называет, что при этом обязано быть верно у самого
-пакета и у разложенной копии, и как об этом говорят тексты для человека.
+The rules layer is texts, and it is judged as texts: the set of sections, portability, the glossary
+and the graph drawing the flow of a rule. The subdomain names what must be true at that of the
+package itself and of a laid-out copy, and how the texts for a person speak of this.
 
-Сюда же входит вторая, несчитаемая половина: ревью читает семью ресурсов целиком и ищет то, чего
-машина не считает, — два текста, говорящих об одном разное, и случай, которого не назвал ни один.
+The second, uncountable half belongs here too: the review reads the family of resources whole and
+looks for what a machine does not count — two texts saying different things about one matter, and a
+case named by neither.
 
-Чем сверяются спеки, адреса, указатели, привязки и номера сценариев — соседний поддомен «Сверка
-спеков и адресов» рядом.
+What the specs, the addresses, the pointers, the bindings and the scenario numbers are checked by is
+the neighbouring subdomain "The check of the specs and the addresses" next to it.
 
-## Терминология
+## Terminology
 
-- **Переносимый текст** — закон, правило или паттерн, написанный для любого дерева этого класса:
-  его адреса принадлежат тому дереву, куда он ложится. Разложенная копия несёт шапку раскладки,
-  исходник — нет.
-- **Обязательный раздел** — заголовок, без которого ресурс этого рода считается описанным
-  наполовину.
-- **Невыбранный вид** — редакция ресурса под значение оси, которого это дерево не выбрало.
-- **Словарь** — документ дерева, который уезжает в контекст целиком на каждом запуске сессии.
-  Общую часть везёт пакет, предметные разделы дописывает дерево надстройкой.
-- **Семья ресурсов** — закон, все правила под ним и все паттерны при этих правилах.
-- **Расхождение** — находка машинной половины: то, что считается и повторяется от запуска к
-  запуску.
-- **Находка** — находка роли: два текста, говорящих об одном разное, либо случай, которого не
-  назвал ни один.
-- **Ход правила** — порядок шагов, который правило предписывает, вместе с развилками между ними.
-- **Граф хода** — изображение хода правила в тексте самого правила.
-- **Ветвление хода** — развилка, после которой шаги идут по-разному в зависимости от условия.
+- **A portable text** — a law, a rule or a pattern written for any tree of this class: its addresses
+  belong to the tree it lands in. A laid-out copy carries the layout header, a source does not.
+- **A mandatory section** — a heading without which a resource of this kind counts as half
+  described.
+- **An unchosen edition** — the edition of a resource under a value of an axis this tree did not
+  choose.
+- **The glossary** — a document of the tree that goes into the context whole at every launch of a
+  session. The shared part is carried by the package, the subject sections are appended by the tree
+  with an override.
+- **A family of resources** — a law, all the rules under it and all the patterns at those rules.
+- **A divergence** — a finding of the machine half: what is counted and repeats from run to run.
+- **A finding** — a finding of the role: two texts saying different things about one matter, or a
+  case named by neither.
+- **The flow of a rule** — the order of steps the rule prescribes, together with the forks between
+  them.
+- **The graph of the flow** — the drawing of the flow of a rule in the text of the rule itself.
+- **A branching of the flow** — a fork after which the steps go differently depending on a condition.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости      | В строке запуска                          |
-| --------------------- | ----------------------------------------- |
-| сверка текстов пакета | машинная половина ревью, шаг набора гейта |
-| ревью семьи ресурсов  | команда ревью с именем закона доводом     |
+| In the agreement                    | In the launch line                                         |
+| ----------------------------------- | ---------------------------------------------------------- |
+| the check of the package texts      | the machine half of the review, a step of the gate suite   |
+| the review of a family of resources | the review command with the name of the law as an argument |
 
-## Правила
+## Rules
 
-- **Текст правила не называет путей, доменов и портов дерева, которому он не принадлежит.**
-  Адресность живёт в компаньоне рядом; в тексте пакета стоит безымянный образец.
-- **Слово, объявленное словарём запретным, краснеет проверкой, а не вычиткой.** Раздел запретных
-  слов лежал без единой сверки, и расхождение росло годами: словарь звал службу одним словом,
-  дерево — другим, и обе стороны выглядели действующими. Едет проверка пакетом, потому что и
-  раздел везёт он: дерево, получившее словарь без проверки, живёт ровно с той дырой, ради
-  которой она заведена.
-- **Слово, у которого запрещено одно значение из двух, поиском не судится и называется вслух.**
-  Уточнение при слове — «приём (о службе)» — и означает, что различить значения в строке машине
-  нечем: «операция приёма» законна, а «приём принимает груз» — нет, и для поиска обе строки
-  одинаковы. Такое слово остаётся требованием к читателю, и молчание о нём читалось бы как охват.
-- **Раздел запретных слов находится по двум именам: английскому и русскому.** Словарь пакета
-  написан по-английски, а дерево со своим словарём ещё держит русское имя раздела. Новая редакция
-  проверки не вправе оставить такое дерево без сверки: не найденный раздел читается как «сверять
-  нечем», и дыра открывается молча.
-- **Словарь держит таблицу русских имён при английских терминах.** Заход думает словами слоя, а
-  задачу, описание заявки и ответ владельцу пишет по-русски. Одно понятие под тремя русскими
-  именами — три понятия для читателя; таблица закрепляет одно имя на каждое. Свои термины дерево
-  кладёт в такую же таблицу надстройки под своим именем раздела: одноимённый раздел заместил бы
-  пакетный.
-- **Пакет везёт словарь как ресурс, а не только хук, который его читает.** Хук, которому нечего
-  читать, молчит, и дерево не узнаёт об этом ничем: слова расходятся, а отказ от слова
-  предъявить негде.
-- **Вводная перед словарём называет место, где слово заводят, а не файл, который она печатает.**
-  Словарь уезжает в контекст каждой сессии целиком и оттого читается обычным документом дерева;
-  вводная — единственный текст о нём, доезжающий до читателя гарантированно, и, ведя в собранный
-  файл, она отменяет собой всё, что о словаре сказано на других слоях. Опровержение стоит строкой
-  ниже, в шапке раскладки, и читается служебной строкой сборки.
-- **Адрес надстройки вводная выводит из шапки словаря, а не зашивает.** Каталог надстроек у
-  каждого дерева свой. Шапки нет — словарь принадлежит дереву целиком, и адрес надстройки был бы
-  там ложью.
-- **Пакет везёт общую часть словаря, дерево дописывает предметную.** Термины слоя правил
-  одинаковы везде, где пакет стоит; переписывать их заново в каждом дереве значило бы заводить
-  столько редакций, сколько репозиториев.
-- **Правило и паттерн судятся как спек, а не как файл агента.** Утверждение в них ключуется своим
-  текстом, и переформулировка тянет за собой строку привязки; общее исключение каталога агента
-  снимало требование и с них.
-- **Шаги работы пронумерованы сплошь, и весь их список лежит в правиле ведения работы.** Шаг
-  называют номером вслух, и два разных первых шага мешают разговору; список нужен целиком, потому
-  что пропущенный шаг виден только по списку, из которого он выпал.
-- **Правило об оформлении документов держит раздел «Скил без закона».** Без своего места дерево
-  дописывает свои скилы о документах в чужой раздел, а одноимённый раздел надстройки замещает пакетный целиком.
-- **Ресурс пакета не описывает состояние дерева как факт.** О соседнем ресурсе он говорит
-  условно и называет его по имени. Что разложено, знает список раскладки, а не текст ресурса.
-- **Тексты пакета судятся тем же набором требований, что и копии, разложенные в дерево.** Сейчас
-  обязательные разделы, привязка утверждений и наличие паттерна проверяются только у разложенного:
-  промах в источнике доезжает до потребителя и краснеет у него, а не там, где его правят.
-- **Невыбранный вид судится наравне с выбранным.** Дерево раскладывает одну редакцию правила, и
-  остальные не читает никто — ни раскладка, ни проверки дерева. Три редакции правила о поставке
-  расходятся между собой молча, и узнаёт об этом первое дерево, выбравшее другой хостинг.
-- **Ресурс без обязательного раздела своего рода — расхождение.** Отсутствие раздела значит, что
-  ресурс описан наполовину, а не что в нём нечего сказать.
-- **Набор разделов объявлен на род и назван поимённо, а не выведен из образца.** Образец рода —
-  черновик для того, кто заводит ресурс, и корпусу он не хозяин: до этой работы образец правила
-  объявлял раздел «Когда берётся», которого не было ни в одном из двадцати шести файлов правил, а
-  все двадцать шесть несли три раздела, о которых образец молчал. Наборы такие:
+- **The text of a rule names no paths, domains or ports of a tree it does not belong to.**
+  Addressness lives in the companion next to it; a nameless sample stands in the text of the package.
+- **A word declared forbidden by the glossary turns red by a check, not by proofreading.** The
+  section of the forbidden words lay without a single check, and the divergence grew for years: the
+  glossary called the service by one word, the tree by another, and both sides looked in force. The
+  check is carried by the package, because the package carries the section too: a tree that got the
+  glossary without the check lives with exactly the hole the check was created for.
+- **A word of which one meaning of two is forbidden is not judged by a search and is named aloud.**
+  The refinement at the word — "the intake (of the service)" — means that a machine has nothing to
+  tell the meanings apart in a line by: "the operation of the intake" is lawful, and "the intake
+  accepts the cargo" is not, and to a search both lines are the same. Such a word stays a requirement
+  to the reader, and silence about it would read as coverage.
+- **The section of the forbidden words is found by two names: the English one and the Russian one.**
+  The glossary of the package is written in English, while a tree with a glossary of its own still
+  holds the Russian name of the section. A new edition of the check has no right to leave such a tree
+  without the comparison: a section not found reads as "there is nothing to compare", and the hole
+  opens silently.
+- **The glossary holds a table of Russian names at the English terms.** The session thinks in the
+  words of the layer, and writes the task, the description of the request and the answer to the owner
+  in Russian. One notion under three Russian names is three notions for the reader; the table fixes
+  one name for each. The tree puts its own terms into the same kind of table in the override under a
+  section name of its own: a section of the same name would replace the package one.
+- **The package carries the glossary as a resource, not only the hook that reads it.** A hook with
+  nothing to read stays silent, and the tree learns of this by nothing: the words diverge, and there
+  is nowhere to point to a refusal of a word.
+- **The preamble before the glossary names the place where a word is created, not the file it
+  prints.** The glossary goes into the context of every session whole and is therefore read as an
+  ordinary document of the tree; the preamble is the only text about it that reaches the reader for
+  certain, and, leading into the assembled file, it cancels by itself everything said about the
+  glossary at the other layers. The refutation stands one line below, in the layout header, and reads
+  as a service line of the build.
+- **The preamble derives the address of the override from the header of the glossary, it does not
+  nail it in.** The overrides directory is its own at every tree. There is no header — the glossary
+  belongs to the tree whole, and the address of an override would be a lie there.
+- **The package carries the shared part of the glossary, the tree appends the subject part.** The
+  terms of the rules layer are the same everywhere the package stands; rewriting them anew in every
+  tree would mean creating as many editions as there are repositories.
+- **A rule and a pattern are judged as a spec, not as a file of the agent.** A statement in them is
+  keyed by its own text, and a rewording drags the binding line with it; a general exception of the
+  agent directory lifted the requirement from them too.
+- **The steps of the work are numbered through, and the whole list of them lies in the rule of the
+  conduct of work.** A step is named by its number aloud, and two different first steps get in the
+  way of the conversation; the list is needed whole, because a missed step is visible only by the
+  list it fell out of.
+- **The rule about the styling of documents holds the section "A skill without a law".** Without a
+  place of its own the tree appends its own skills about documents into a foreign section, and a
+  section of the same name in an override replaces the package one whole.
+- **A package resource does not describe the state of a tree as a fact.** Of a neighbouring resource
+  it speaks conditionally and names it by name. What is laid out is known to the layout list, not to
+  the text of the resource.
+- **The texts of the package are judged by the same set of requirements as the copies laid out into a
+  tree.** Now the mandatory sections, the binding of the statements and the presence of a pattern are
+  checked only at the laid-out: a miss in the source reaches the consumer and turns red at their
+  place, not where it is edited.
+- **An unchosen edition is judged on a par with the chosen one.** A tree lays out one edition of a
+  rule, and the rest are read by nobody — neither by the layout nor by the checks of the tree. Three
+  editions of the rule about delivery diverge from each other silently, and the first tree that chose
+  another hosting learns of it.
+- **A resource without a mandatory section of its kind is a divergence.** The absence of a section
+  means that the resource is described by half, not that there is nothing to say in it.
+- **The set of sections is declared per kind and named by name, it is not derived from a sample.** A
+  sample of a kind is a draft for whoever creates a resource, and it is no master of the corpus:
+  before this work the sample of a rule declared the section "When it is taken", which was in not one
+  of the twenty-six files of rules, while all twenty-six carried three sections the sample was silent
+  about. The sets are these:
 
-    | Род             | Обязательные разделы                                                                                                                                                     |
-    | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-    | закон           | «Articles» либо «Статьи»                                                                                                                                                 |
-    | правило         | «What it is called here», «Where it lives», «Flow», «How the law applies here», «What of the law is not here», «Patterns»; русские имена тех же разделов законны наравне |
-    | холодная часть  | «Pitfalls» либо «Ловушки»                                                                                                                                                |
-    | паттерн         | «When to use» и завершающий раздел о промахах — «Common misses» либо «Pitfalls»; русские имена тех же разделов законны наравне                                           |
-    | скил без закона | «When to use» либо «Когда брать»                                                                                                                                         |
+    | Kind                  | Mandatory sections                                                                                                                                                                    |
+    | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | a law                 | "Articles" or "Статьи"                                                                                                                                                                |
+    | a rule                | "What it is called here", "Where it lives", "Flow", "How the law applies here", "What of the law is not here", "Patterns"; the Russian names of the same sections are lawful on a par |
+    | a cold part           | "Pitfalls" or "Ловушки"                                                                                                                                                               |
+    | a pattern             | "When to use" and a closing section about misses — "Common misses" or "Pitfalls"; the Russian names of the same sections are lawful on a par                                          |
+    | a skill without a law | "When to use" or "Когда брать"                                                                                                                                                        |
 
-- **Раздел статей закона читается под двумя именами, английским и русским.** Закон пакета несёт
-  английское имя, а закон, который дерево написало до перевода слоя, — русское. Оба означают одно,
-  и ни проверка спеков, ни набор пакета не заставляют дерево переписывать свой закон ради
-  заголовка.
-- **Образец рода судится объявленным набором наравне с корпусом.** По образцу заводят новый
-  ресурс: разошедшийся с набором, он отдаёт новое правило сразу неполным, и промах приезжает не
-  туда, где его сделали. Набору образец при этом не хозяин — судят его, а не по нему.
-- **Род, которому набор не объявлен, молчит, а не краснеет.** Наборы есть у четырёх родов из
-  тринадцати; у девяти остальных — гарды, умолчания, проверки, роли, команды, конвейеры, образцы,
-  шаблоны и документы — обязательных разделов нет вовсе, и придумывать их проверке не поручается.
-  Красная проверка на роде, требований к которому никто не формулировал, гасится списком
-  исключений, а список исключений через месяц становится рабочим путём.
-- **Пустой список долга называется вслух и с числом.** Проверка, у которой нечего сказать,
-  неотличима от проверки, которая ничего не искала. Замер до начала работы: у всех двадцати
-  четырёх правил пакета есть хотя бы один паттерн — долг «правило без паттерна» здесь нулевой, и
-  проверка заводится на будущее, а не на разбор накопленного.
-- **Правило без паттерна — расхождение.** Связь снизу вверх пакет уже сверяет: у паттерна есть
-  правило, у правила — закон. Обратная сторона не сверялась ни разу, и правило без готового кода
-  исполняется пересказом.
-- **Имя соседнего ресурса, названное прозой, проверяется наравне со ссылкой шапки.** Правила
-  ссылаются друг на друга именами в тексте — «как заводится сам скил», «устройство слоёв». Снятый
-  или переименованный ресурс оставляет такую фразу верной на вид и ведущей в пустоту, а шапки при
-  этом целы.
-- **Запреты текстов действуют и внутри блока кода.** Узлы графа — тот же текст ресурса, и путь
-  чужого дерева в узле остаётся путём чужого дерева. Проверка, читающая только прозу, пропустит
-  его целиком.
-- **Адресом конкретного дерева считается перечисленное, а не всё, что похоже на путь.** Перечень
-  закрытый и тот же, что у действующего набора текстов: доменное имя дерева — всё, что глубже
-  семей и общих доменов, объявленных законом об импортах; порт, записанный числом, кроме
-  поднятого той же командой и объявленного публикацией рядом; путь от корня дерева в разделе «Где
-  это лежит»; имя репозитория. Безымянный образец — `libs/<домен>`, `<Feature>Component` — под
-  перечень не подпадает ни в прозе, ни в блоке кода.
-- **Машинная половина краснеет только на считаемом.** Ответ роли не повторяется от запуска к
-  запуску, и поставленный в гейт он отбивал бы работу по-разному на одном и том же дереве.
-- **Проверка текстов пакета стоит в наборе, который гоняется перед пушем.** Проверку, которую
-  надо помнить, до второго месяца не доводят.
-- **Ревью читает семью целиком, а не файл по одному.** Противоречие живёт между двумя текстами:
-  правило требует то, что паттерн при соседнем правиле запрещает. Файл, прочитанный в одиночку,
-  выглядит непротиворечивым всегда.
-- **Роль возвращает находки и ничего не правит.** Правка текста правила действует на все будущие
-  сессии всех деревьев, и вносит её человек, а не тот, кто её предложил.
-- **Находка называет два места дословно и то, чем они расходятся.** Пересказ своими словами
-  проверить нечем: владелец не отличит настоящий дефект от прочтения роли.
-- **Пробел ищется чтением, а не счётом привязок.** Статья закона, под которой нет ни одного
-  правила, считается машиной только по проставленному руками якорю: их пришлось бы завести на
-  каждую из 248 статей, и через полгода их перестанут проставлять — проверка останется зелёной
-  при пустой полке. На уровне целого закона она уже сегодня находит ноль: правило есть у каждого
-  из семнадцати.
-- **Ревью зовётся двумя способами: командой вручную и машинной половиной в гейте.** Обе половины
-  зовутся без сговора: команда не ждёт гейта, гейт не ждёт команды.
-- **Граф изображает ход правила и лежит в тексте самого правила.** Карта связей между ресурсами
-  уже считается по шапкам и читателю ничего нового не говорит. Граф, живущий отдельным файлом или
-  внутри отчёта ревью, расходится с прозой так же, но виден он при этом одному исполнителю и один раз.
-- **Граф заводится каждому правилу, а не только ветвящемуся.** Правило с графом читается иначе,
-  чем правило без него, и выборочность здесь означала бы два разных вида одного ресурса: читатель
-  не знает заранее, есть ли граф, и потому ищет ход в прозе всё равно. Цена названа и принята —
-  двадцать шесть файлов правил при медиане в 93 строки.
-- **Граф правится тем же изменением, что и проза, которую он изображает.** Разойдясь, они
-  оставляют обе стороны читаемыми как действующие, и первым это замечает тот, кто пошёл по графу.
-- **Текст для владельца пишется словами продукта, а не словами слоя правил.** Задачу, описание
-  заявки и ответ в чате читает человек, не читавший ни одного правила: слова слоя для него
-  пустые, и он не узнаёт в тексте ни одного своего экрана.
-- **Из задачи видно, что сломалось у человека, а не только где красная проверка.** По именам
-  файлов и номерам проверок не решить, срочная работа или нет.
-- **Страдательный залог и метафоры в этих текстах не пишутся.** Они звучат весомо и не называют
-  ни действия, ни того, кто его сделал.
-- **У текста есть адресат, и слог выбирается по нему, а не по тому, что писалось до него.** Текст,
-  написанный сразу после правки спеки, наследует её слог: изнутри он выглядит точным, а для
-  читателя снаружи пуст.
-- **Команда, публикующая тело задачи или заявки, требует правило слога.** Этот текст файлом дерева
-  не становится, и гейт, проверявший расширение правимого файла, на нём молчал.
-- **Язык этих трёх текстов не проверяет ничто.** Задача живёт на хостинге, ответ в чате не
-  ложится в дерево вовсе, а описание заявки читается только человеком: проверке слога нечего
-  открыть.
+- **The section of the articles of a law is read under two names, English and Russian.** The law of
+  the package carries the English name, and a law the tree wrote before the translation of the layer
+  the Russian one. Both mean one thing, and neither the check of the specs nor the suite of the
+  package makes the tree rewrite its law for the sake of a heading.
+- **The sample of a kind is judged by the declared set on a par with the corpus.** A new resource is
+  created by the sample: diverged from the set, it gives back a new rule incomplete at once, and the
+  miss arrives not where it was made. The sample is no master of the set at that — it is judged, not
+  judged by.
+- **A kind that has no set declared stays silent, it does not turn red.** Four kinds of thirteen have
+  sets; the other nine — the guards, the defaults, the checks, the roles, the commands, the
+  pipelines, the samples, the templates and the documents — have no mandatory sections at all, and
+  the check is not charged with inventing them. A red check at a kind nobody worded requirements for
+  is put out by a list of exceptions, and a list of exceptions in a month becomes a working way.
+- **An empty list of the debt is named aloud and with a number.** A check that has nothing to say is
+  indistinguishable from a check that looked for nothing. The measurement before the start of the
+  work: all twenty-four rules of the package have at least one pattern — the debt "a rule without a
+  pattern" here is zero, and the check is created for the future, not for taking apart what has
+  accumulated.
+- **A rule without a pattern is a divergence.** The link from below upwards the package already
+  checks: a pattern has a rule, a rule has a law. The reverse side was never checked, and a rule
+  without ready code is carried out by a retelling.
+- **The name of a neighbouring resource named in prose is checked on a par with a link of the
+  header.** The rules refer to each other by names in the text — "how a skill itself is created",
+  "how the layers are built". A removed or renamed resource leaves such a phrase looking true and
+  leading into emptiness, and the headers are whole at that.
+- **The bans of the texts act inside a code block too.** The nodes of a graph are the same text of
+  the resource, and the path of a foreign tree in a node stays the path of a foreign tree. A check
+  reading only prose will skip it whole.
+- **What counts as the address of a specific tree is what is listed, not everything that looks like a
+  path.** The list is closed and the same as at the set of texts in force: the domain name of the
+  tree — everything deeper than the families and the shared domains declared by the law of the
+  imports; a port written as a number, except one raised by the same command and declared by a
+  publication next to it; a path from the root of the tree in the section "Where it lives"; the name
+  of the repository. A nameless sample — `libs/<domain>`, `<Feature>Component` — falls under the list
+  neither in prose nor in a code block.
+- **The machine half turns red only on the countable.** The answer of the role does not repeat from
+  run to run, and put into the gate it would refuse the work differently on one and the same tree.
+- **The check of the package texts stands in the suite run before a push.** A check one has to
+  remember is not brought to the second month.
+- **The review reads the family whole, not a file at a time.** A contradiction lives between two
+  texts: a rule demands what a pattern at a neighbouring rule forbids. A file read alone always looks
+  free of contradictions.
+- **The role gives back findings and edits nothing.** An edit of the text of a rule acts on all
+  future sessions of all trees, and it is made by a person, not by whoever proposed it.
+- **A finding names two places verbatim and what they diverge by.** A retelling in one's own words
+  can be checked by nothing: the owner will not tell a real defect from the reading of the role.
+- **A gap is looked for by reading, not by counting the bindings.** An article of a law under which
+  there is not a single rule is counted by a machine only by an anchor put by hand: they would have
+  to be created at each of the 248 articles, and in half a year they will stop being put — the check
+  will stay green at an empty shelf. At the level of a whole law it already finds zero today: each of
+  the seventeen has a rule.
+- **The review is called in two ways: by a command by hand and by the machine half in the gate.**
+  Both halves are called without an agreement: the command does not wait for the gate, the gate does
+  not wait for the command.
+- **The graph draws the flow of a rule and lies in the text of the rule itself.** The map of the
+  links between the resources is already counted by the headers and says nothing new to the reader. A
+  graph living as a separate file or inside the report of the review diverges from the prose the same
+  way, and it is visible at that to one executor and once.
+- **A graph is created for every rule, not only for a branching one.** A rule with a graph is read
+  differently from a rule without one, and selectiveness here would mean two different kinds of one
+  resource: the reader does not know in advance whether there is a graph, and therefore looks for the
+  flow in the prose anyway. The price is named and accepted — twenty-six files of rules at a median
+  of 93 lines.
+- **The graph is edited by the same change as the prose it draws.** Having diverged, they leave both
+  sides readable as in force, and the first to notice this is whoever went by the graph.
+- **A text for the owner is written in the words of the product, not in the words of the rules
+  layer.** The task, the description of the request and the answer in the chat are read by a person
+  who has read no rule: the words of the layer are empty for them, and they do not recognise a single
+  screen of theirs in the text.
+- **From the task it is visible what broke at a person, not only where a check is red.** By the names
+  of the files and the numbers of the checks it cannot be decided whether the work is urgent.
+- **The passive voice and metaphors are not written in these texts.** They sound weighty and name
+  neither the action nor whoever did it.
+- **A text has an addressee, and the wording is picked by them, not by what was written before it.** A
+  text written right after an edit of a spec inherits its wording: from inside it looks exact, and for
+  the reader outside it is empty.
+- **A command publishing the body of a task or a request demands the rule of the wording.** This text
+  does not become a file of the tree, and the gate, which checked the extension of the edited file,
+  stayed silent at it.
+- **The language of these three texts is checked by nothing.** The task lives at the hosting, the
+  answer in the chat does not land in the tree at all, and the description of the request is read only
+  by a person: the check of the wording has nothing to open.
 
-## Что не входит
+## What is out of scope
 
-- Предметные разделы словаря: их слова принадлежат дереву, а не пакету.
-- **Правка найденного машиной.** Ревью называет расхождение и место; текст правит человек. Слой,
-  который сам переписывает правила, меняет их во всех будущих сессиях без чьего-либо ведома.
-- **Ревью текстов дерева.** Судятся тексты пакета. Надстройки, компаньоны и скилы дерева
-  проверяются тем, что пакет в дерево раскладывает.
-- **Графы у паттернов, скилов без закона и законов.** Граф изображает ход правила; у закона хода
-  нет вовсе, а паттерн ход уже несёт готовым кодом.
-- **Отказ сборки на смысловой находке.** Находка роли — довод для человека, а не приговор ветке.
-- **Хук на правке файла ресурса.** Работа в пакете — это и есть правка текстов ресурсов, и хук
-  сработал бы на каждом движении по прямому назначению. Теряется немедленность напоминания:
-  считаемое ловит гейт, смысловое — команда.
-- **Сплошной прогон по всему пакету как признак закрытия.** В законах, правилах, паттернах и
-  скилах десять с четвертью тысяч строк: в окно они не помещаются, и сплошной проход вернёт
-  крошку вместо дорогих находок.
-- **Сведение находок с записями предложений.** Находка ревью — не предложение правки с адресом:
-  адрес у неё один, и это пакет.
-- **Сверка спеков, адресов, указателей и привязок.** Поддомен «Сверка спеков и адресов» рядом.
+- The subject sections of the glossary: their words belong to the tree, not to the package.
+- **Editing what the machine found.** The review names the divergence and the place; the text is
+  edited by a person. A layer that rewrites the rules itself changes them in all future sessions
+  without anybody's knowledge.
+- **A review of the texts of the tree.** What is judged is the texts of the package. The overrides,
+  the companions and the skills of the tree are checked by what the package lays out into the tree.
+- **Graphs at the patterns, at the skills without a law and at the laws.** A graph draws the flow of a
+  rule; a law has no flow at all, and a pattern already carries the flow as ready code.
+- **A refusal of the build on a finding of meaning.** A finding of the role is an argument for a
+  person, not a verdict on the branch.
+- **A hook at an edit of a resource file.** Work in the package is exactly the editing of the texts of
+  the resources, and the hook would fire at every movement done for its direct purpose. The
+  immediateness of the reminder is lost: the countable is caught by the gate, the meaningful by the
+  command.
+- **A run through the whole package as a sign of closing.** There are ten and a quarter thousand lines
+  in the laws, the rules, the patterns and the skills: they do not fit into the window, and a
+  through pass will give back crumbs instead of costly findings.
+- **Bringing the findings together with the records of the proposals.** A finding of the review is not
+  a proposal of an edit with an address: it has one address, and it is the package.
+- **The check of the specs, the addresses, the pointers and the bindings.** The subdomain "The check
+  of the specs and the addresses" is next to it.
 
-## Контракт
+## Contract
 
-Поверхность — команда ревью и сверка текстов, стоящая шагом набора гейта. Машинная половина
-кончается ненулевым кодом на считаемом расхождении и молчит, когда расхождений нет. Смысловая
-половина возвращает находки текстом и ничего не отбивает.
+The surface is the review command and the check of the texts, standing as a step of the gate suite.
+The machine half ends with a non-zero code on a countable divergence and stays silent when there are
+no divergences. The half of meaning gives back the findings as text and refuses nothing.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: ответ — код возврата и текст, а не именованные коды.
+Not applicable: the answer is an exit code and text, not named codes.
 
-| Что случилось                          | Код | Что говорит                                 |
-| -------------------------------------- | --- | ------------------------------------------- |
-| считаемое расхождение в текстах пакета | `1` | ресурс, раздел и чего в нём не хватает      |
-| расхождений нет                        | `0` | что набор пройден, и число прочитанного     |
-| команда ревью позвана без имени семьи  | `1` | что имя обязательно, и как его назвать      |
-| смысловая находка                      | `0` | два места дословно и то, чем они расходятся |
+| What happened                                              | Code | What it says                                           |
+| ---------------------------------------------------------- | ---- | ------------------------------------------------------ |
+| a countable divergence in the texts of the package         | `1`  | the resource, the section and what is missing in it    |
+| there are no divergences                                   | `0`  | that the suite passed, and the number of what was read |
+| the review command was called without the name of a family | `1`  | that the name is mandatory, and how to name it         |
+| a finding of meaning                                       | `0`  | two places verbatim and what they diverge by           |
 
-## Данные
+## Data
 
-Своего хранилища нет. Предмет сверки — файлы ресурсов пакета и разложенные копии в дереве, их
-шапки и разделы.
+There is no storage of its own. The subject of the check is the files of the package resources and
+the laid-out copies in the tree, their headers and sections.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: экранов нет.
+Not applicable: there are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: тексты ресурсов одноязычны.
+Not applicable: the texts of the resources are single-language.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Тексты пакета одни на все деревья, и адреса конкретного дерева в них не стоят. Разложенная копия
-адресуется тем деревом, куда легла, и сверяется по своей шапке отдельно от исходника.
+The texts of the package are one for all the trees, and the addresses of a specific tree do not stand
+in them. A laid-out copy is addressed by the tree it landed in and is checked by its own header apart
+from the source.
 
-## Решения
+## Decisions
 
-- **Словарь ложится родом ресурса под документы дерева.** Его место — не каталог правил и не
-  каталог законов: словарь читает и человек, и агент, и живёт он там же, где остальные
-  документы.
-- **Слой двусоставный.** Противоречие «правило A требует того, что правило B запрещает» не
-  ловится ни поиском по словам, ни разбором шапок; пробел «у правила нет паттерна» считается
-  точно и дёшево. Отвергнуто: только машина — смысловые расхождения остались бы ненайденными;
-  только роль — результат не повторяется от запуска к запуску, и в гейт его не поставишь.
-- **Способов запуска два, а не три.** Третьим был хук на правке файла ресурса; в пакете правка
-  текстов ресурсов и есть работа, и хук шумел бы на каждой. Отвергнут в пользу строки в правиле о
-  заведении скила.
-- **Пробел на уровне статьи отдан роли.** Машине для него нужен якорь на каждую статью, и
-  проставляются они руками; проверка, чья зелень держится ручной разметкой, зеленеет и на пустой
-  полке.
-- **Граф ложится в текст правила.** Отвергнуто: граф только в отчёте ревью — его видит один
-  исполнитель и один раз; отдельный файл рядом с правилом — тот же риск расхождения с прозой плюс
-  лишний файл в раскладке.
-- **Граф заводится всем правилам, а не двум ветвящимся.** Решение владельца против довода
-  аналитика о налоге на корпус: медиана длины правила — 93 строки, ветвления в большинстве нет, и
-  налог платится местом в окне каждой сессии каждого дерева. Отвергнуто потому, что правило с
-  графом и правило без графа становятся двумя разными видами одного ресурса, а читатель узнаёт,
-  какой перед ним, только открыв файл.
-- **Признак закрытия — два-три семейства, а не весь пакет.** Полнота здесь не цель, а её
-  видимость: ревью считается состоявшимся, когда владелец подтвердил найденное дефектами и часть
-  из них починена.
+- **The glossary lands as a kind of resource under the documents of the tree.** Its place is neither
+  the directory of the rules nor the directory of the laws: the glossary is read both by a person and
+  by an agent, and it lives where the rest of the documents live.
+- **The layer is of two parts.** The contradiction "rule A demands what rule B forbids" is caught
+  neither by a search over words nor by a parse of the headers; the gap "a rule has no pattern" is
+  counted exactly and cheaply. Rejected: the machine alone — the divergences of meaning would stay
+  unfound; the role alone — the result does not repeat from run to run, and it cannot be put into the
+  gate.
+- **There are two ways of launching, not three.** The third was a hook at an edit of a resource file;
+  in the package the editing of the texts of the resources is the work itself, and the hook would make
+  noise at every one. Rejected in favour of a line in the rule about creating a skill.
+- **The gap at the level of an article is given to the role.** A machine needs an anchor at every
+  article for it, and they are put by hand; a check whose green is held by marking by hand goes green
+  at an empty shelf too.
+- **The graph lands in the text of the rule.** Rejected: the graph only in the report of the review —
+  it is seen by one executor and once; a separate file next to the rule — the same risk of a
+  divergence with the prose plus a surplus file in the layout.
+- **A graph is created for all the rules, not for the two branching ones.** The owner's decision
+  against the analyst's argument about a tax on the corpus: the median length of a rule is 93 lines,
+  in most there is no branching, and the tax is paid by the place in the window of every session of
+  every tree. Rejected because a rule with a graph and a rule without a graph become two different
+  kinds of one resource, and the reader learns which one is before them only by opening the file.
+- **The sign of closing is two or three families, not the whole package.** Completeness is not the
+  goal here, its visibility is: the review counts as having taken place when the owner confirmed what
+  was found as defects and some of them are fixed.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом.
+The open questions of the domain are shared, and they live in the spec next to it.
 
-## История изменений
+## History of changes
 
-- 2026-09-06 — раздел правила об оформлении документов под скилы дерева назван «Скил без
-  закона»: словарь снимает слово только в единственном числе, и раздел во множественном
-  читался долгом у дерева-потребителя.
-- 2026-09-05 — поддомен сверки спеков и адресов выделен из этого спека, переросшего предел
-  длины. Правила, сценарии и привязки о путях, указателях, привязках, номерах сценариев и
-  договорённостях переехали в него прежними: номера сценариев не пересчитывались.
-- 2026-08-17 — поддомен выделен из спека домена, переросшего предел длины. Правила, сценарии и
-  привязки о текстах слоя правил переехали сюда прежними: номера сценариев не пересчитывались.
+- 2026-09-06 — the section of the rule about the styling of documents for the skills of the tree was
+  named "A skill without a law": the glossary removes the word only in the singular, and the section
+  in the plural read as debt at a consumer tree.
+- 2026-09-05 — the subdomain of the check of the specs and the addresses was split out of this spec,
+  which had outgrown the length limit. The rules, scenarios and bindings about the paths, the
+  pointers, the bindings, the scenario numbers and the agreements moved into it as they were: the
+  scenario numbers were not recounted.
+- 2026-08-17 — the subdomain was split out of the domain spec, which had outgrown the length limit.
+  The rules, scenarios and bindings about the texts of the rules layer moved here as they were: the
+  scenario numbers were not recounted.
