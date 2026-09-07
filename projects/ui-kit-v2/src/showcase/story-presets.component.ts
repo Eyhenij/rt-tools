@@ -39,25 +39,7 @@ import {
  */
 @Component({
     selector: 'app-story-presets',
-    template: `
-        @if (caption()) {
-            <h3 class="app-story-presets__caption">{{ caption() }}</h3>
-        }
-        <div class="app-story-presets__panes">
-            <div class="app-story-presets__pane">
-                <span class="app-story-presets__label">Свой набор</span>
-                @if (pane(); as template) {
-                    <ng-container [ngTemplateOutlet]="template" />
-                }
-            </div>
-            <div class="app-story-presets__pane app-story-presets__pane--material" data-preset="material">
-                <span class="app-story-presets__label">Материальный набор</span>
-                @if (pane(); as template) {
-                    <ng-container [ngTemplateOutlet]="template" />
-                }
-            </div>
-        </div>
-    `,
+    templateUrl: './story-presets.component.html',
     styleUrl: './story-presets.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
