@@ -1,20 +1,17 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/board.github.mjs · fe374e698c32 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/board.github.mjs · ddbde6f3fd6d · правится надстройкой, не здесь
 /**
  * Shared work with the work queue: the project board, the tasks and their state.
  *
- * One and the same question — "is task N in order?" — is asked by three callers: the task
- * creation command (tools/task-new.mjs), the queue audit (tools/check-board.mjs) and the delivery
- * guard (.claude/hooks/git-guard-delivery.sh). While the answer to it was written as ready-made
- * lines in a pattern, each of them answered in its own way: a task was created without being
- * added to the board, and two tasks stood outside the queue that way.
+ * One question — "is task N in order?" — is asked by three callers: the task creation command
+ * (tools/task-new.mjs), the queue audit (tools/check-board.mjs) and the delivery guard
+ * (.claude/hooks/git-guard-delivery.sh). While the answer stood as ready-made lines in a pattern,
+ * each answered its own way: two tasks were created outside the board that way.
  *
  * The board is not bound to the repository — its `projectsV2` is empty — so a task lands on it
- * only by an explicit call, not by itself.
- *
- * The guard calls this file as a command: `node tools/board.mjs task <number>` prints the state
- * of the task as one line of JSON. The task's column is moved by the second mode —
- * `node tools/board.mjs move <number> <column>`, also `npm run task:move`.
+ * only by an explicit call. The guard calls this file as a command: `node tools/board.mjs task
+ * <number>` prints the task state as one line of JSON; `move <number> <column>` moves its column,
+ * also `npm run task:move`.
  *
  * No network or no token is not a discrepancy but an inability to check: the functions return
  * `null`, the command mode prints `{"offline":true}`.
@@ -237,17 +234,16 @@ export function fetchOpenPulls(options) {
 }
 
 /**
- * Own open PRs marked as conflicting. This is asked at the minute new work is taken: while what
- * was handed over conflicts, a person cannot merge it, and every next PR adds one more to the
- * queue that will have to catch up.
+ * Own open PRs marked as conflicting. Asked at the minute new work is taken: while what was
+ * handed over conflicts, a person cannot merge it, and every next PR adds one more to the queue.
  *
  * Own means opened by the tree's machine account. A tree that has not named it is not asked at
- * all: `@me` would answer with the account the hosting client is logged in as, and that is most
- * often the owner, whose PRs are not the executor's to fix.
+ * all: `@me` would answer with the account the hosting client is logged in as — most often the
+ * owner, whose PRs are not the executor's to fix.
  *
  * Only a direct `CONFLICTING` is judged. `UNKNOWN` means the hosting is still computing
  * mergeability — it recomputes it after every edit of the main branch — and reading it as a
- * conflict would mean refusing work on every fresh head.
+ * conflict would refuse work on every fresh head.
  */
 export function conflictingPulls(options) {
     if (!BOT) {
@@ -300,14 +296,11 @@ const STAMP = /^<!-- rt-kit v[^\n]*-->\n/m;
 /**
  * Remove the layout header from copies of the template.
  *
- * The template is laid out by the package and carries the header by right: the layout puts it
- * there and updates it. A copy under a task is already the project's text, by the same argument
- * by which the package lays out the companion draft without a header: from the first edit there
- * is nothing to audit in it.
- *
- * Left in the copy, the header refuses the very first edit of the grill — that is, the first
- * move of any work — and the refusal sends one to edit the package template instead of the copy
- * under the task. It was removed by three lines by hand, anew with every piece of work.
+ * The template carries the header by right: the layout puts it there and updates it. A copy under
+ * a task is already the project's text, by the same argument by which the companion draft is laid
+ * out without a header: from the first edit there is nothing to audit in it. Left in the copy, the
+ * header refuses the very first edit of the grill and sends one to edit the package template
+ * instead. It was removed by three lines by hand, anew with every piece of work.
  *
  * Returns the names of the files the header was removed from: by them the scenario judges that
  * the removal works, and the caller that the folder is assembled.
@@ -389,13 +382,12 @@ export function taskState(number, options) {
 }
 
 /**
- * The work queue's answer about a created task, folded into lines, and the verdict: the work is
- * secured or not.
+ * The work queue's answer about a created task, folded into lines, and the verdict: secured or not.
  *
- * Separated from the network calls on purpose. Creation ends not with the command output but
- * with the queue's answer, and the decision of what to print and how to end is exactly the place
- * where sixteen tasks in a row passed as successful without one of them reaching the queue.
- * Inside the network calls it is checked only by a live board, that is, never.
+ * Separated from the network calls on purpose. Creation ends not with the command output but with
+ * the queue's answer, and the decision of what to print and how to end is exactly where sixteen
+ * tasks in a row passed as successful without one reaching the queue. Inside the network calls it
+ * is checked only by a live board, that is, never.
  *
  * `state` — what `taskState` returned, or `{ offline: <reason> }` if asking failed.
  */
