@@ -248,7 +248,7 @@ flowchart TD
   invitation. The branch content is judged, not the working tree.
 - **A branch that removed the folder must add a record to the archive.** Removing is cheaper than
   taking apart, and the grill leaves first — the only record of the owner's words.
-- **The bypass is the line `Task-folder-skip: <причина>` in the PR or in the command itself.** An
+- **The bypass is the line `Task-folder-skip: <reason>` in the PR or in the command itself.** An
   empty reason is no bypass, and the bypass lifts the refusal but does not silence the work queue
   audit line.
 

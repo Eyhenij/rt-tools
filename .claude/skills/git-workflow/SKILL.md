@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for creating a task and a branch, commit, push, opening a PR and merging. Names the one-to-one pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — rule deploy-flow.
 ---
-<!-- rt-kit v0.25.0 · rules/git-workflow.github.md · 6fd4d7f25872 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/git-workflow.github.md · a4ad1f58cda3 · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -158,7 +158,7 @@ flowchart TD
   before.
 - **A conflicting open PR is a work queue audit discrepancy.** The conflict arrives with someone
   else's merge and is invisible in the list: the host shows the mark only inside the PR.
-- **A document goes in the same commit as the edit.** The bypass is the line `Docs-skip: <причина>`
+- **A document goes in the same commit as the edit.** The bypass is the line `Docs-skip: <reason>`
   in the commit body; an empty reason is not accepted.
 - **The commit subject is checked against the format on the spot.** A subject parsed by type and
   scope is read as a list, free text — only whole.
