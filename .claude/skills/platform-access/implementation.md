@@ -1,54 +1,58 @@
-# platform-access — как это устроено здесь
+# platform-access — how it is arranged here
 
-Имена этого дерева при правиле `SKILL.md` рядом. Отдельный файл потому, что правило говорит
-приёмом и переносится между репозиториями целиком, а всё, что ниже, верно только здесь и
-устаревает при каждом переименовании.
+The names of this tree, next to the rule `SKILL.md` beside it. A file of its own because the rule
+speaks by technique and travels between repositories whole, while everything below is true only
+here and goes stale at every rename.
 
-Для библиотеки это правило строже, чем для приложения: код кита исполняется и там, где страницу
-отдаёт сервер, и в среде спек без браузера, — причём в чужих деревьях, где сломанное чинить
-некому.
+For a library this rule is stricter than for an application: the kit code runs both where the page
+is served by a server and in the spec environment without a browser — and in foreign trees, where
+there is nobody to fix what broke.
 
-## Как это называется здесь
+## What it is called here
 
-- **В правиле** — Здесь
-- **окно** — токен внедрения `WINDOW` из `@rt-tools/core`
-- **сведения о браузере** — токен `NAVIGATOR` оттуда же
-- **документ** — `DOCUMENT` каркаса
-- **признак среды** — `PlatformService.isPlatformBrowser`
-- **хранилище браузера** — службы хранилищ основания: местное, сеансовое, в памяти, в базе браузера
-- **наблюдатель за разметкой** — `ResizeObserver` и подобное — берётся с глобальной области, а не с интерфейса окна
+- **In the rule** — Here
+- **the window** — the injection token `WINDOW` from `@rt-tools/core`
+- **the browser information** — the token `NAVIGATOR` from the same place
+- **the document** — `DOCUMENT` of the framework
+- **the environment sign** — `PlatformService.isPlatformBrowser`
+- **browser storage** — the storage services of the base: local, session, in memory, in the browser database
+- **a layout observer** — `ResizeObserver` and the like — taken from the global scope, not from the window interface
 
-## Где это лежит
+## Where it lives
 
-- **токен окна** — `projects/core/src/lib/tokens/window.token.ts`
-- **токен сведений о браузере** — `projects/core/src/lib/tokens/navigator.token.ts`
-- **признак среды** — `projects/core/src/lib/services/platform.service.ts`
-- **разбор устройства** — `projects/core/src/lib/services/device-detector.service.ts`
-- **службы хранилищ** — `projects/core/src/lib/storage/`, `projects/core/src/lib/idb-storage/`
-- **образец работы под проверкой среды** — `projects/ui-kit/src/lib/ui-kit/theme/rtui-theme.service.ts`
+- **the window token** — `projects/core/src/lib/tokens/window.token.ts`
+- **the browser information token** — `projects/core/src/lib/tokens/navigator.token.ts`
+- **the environment sign** — `projects/core/src/lib/services/platform.service.ts`
+- **the device parsing** — `projects/core/src/lib/services/device-detector.service.ts`
+- **the storage services** — `projects/core/src/lib/storage/`, `projects/core/src/lib/idb-storage/`
+- **a sample of work under the environment check** — `projects/ui-kit/src/lib/ui-kit/theme/rtui-theme.service.ts`
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-Первая колонка — статья дословно, как она написана в разделе «Как закон применяется здесь»
-(жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает
-то, чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
+The first column is the article verbatim, as it is written in the section «How the law applies
+here» (the bold part of the item). An article without a line and a line without an article are a
+divergence: the rule promises what the tree does not have, or the tree holds what the rule is
+silent about.
 
-- **The global object comes by the `WINDOW` token, not taken directly.** — `projects/core/src/lib/tokens/window.token.ts:WINDOW` — фабрика поднимает представление документа и бросает отказ, если его нет; сведения о браузере приходят тем же путём.
-- **The environment is checked through `PlatformService`, not through `typeof window`.** — `projects/core/src/lib/services/platform.service.ts:PlatformService` — восемь мест дерева идут через него; проверок «есть ли window» в дереве нет.
-- **A direct call to the global object is refused by the linter.** — **Не исполняется.** Правила линтера на прямое обращение в конфиге нет: роль перечня играют сами токены и служба среды, а новое обращение ловится разбором.
+- **The global object comes by the `WINDOW` token, not taken directly.** — `projects/core/src/lib/tokens/window.token.ts:WINDOW` — the factory raises the document view and throws a refusal if there is none; the browser information comes the same way.
+- **The environment is checked through `PlatformService`, not through `typeof window`.** — `projects/core/src/lib/services/platform.service.ts:PlatformService` — eight places of the tree go through it; there are no «is there a window» checks in the tree.
+- **A direct call to the global object is refused by the linter.** — **Not carried out.** There is no linter rule against a direct call in the config: the role of the list is played by the tokens themselves and the environment service, and a new call is caught by review.
 
-## Что ещё стоит знать при чтении кода
+## What else is worth knowing when reading the code
 
-- Фабрика токена окна отказывает, когда у документа нет представления. Поэтому служба, обязанная
-  работать и без разметки, берёт окно внутри метода под проверкой среды, а не полем класса.
-- Вокруг служб хранилища проверка среды не нужна: они и так уходят в память вне браузера.
-- В чистых функциях внедрения нет — окно принимается параметром, а внедряет его вызывающий.
-- Среда спек — не браузер: ширину окна там мерить нечем, и компоненты, которые по ней
-  перестраиваются, берут подменённую службу точек перелома (правило `testing`).
+- The window token factory refuses when the document has no view. So a service obliged to work
+  without markup too takes the window inside a method under the environment check, not as a class
+  field.
+- Around the storage services no environment check is needed: outside the browser they fall back
+  to memory by themselves.
+- Pure functions have no injection — the window is accepted as a parameter, and the caller injects
+  it.
+- The spec environment is not a browser: there is nothing to measure the window width with, and
+  components that rebuild by it take a substituted breakpoints service (the rule `testing`).
 
-## Чем это проверяется
+## What this is checked by
 
-- `pnpm exec nx lint @rt-tools/<пакет>` — общий набор; отдельного правила на прямое обращение к
-  глобальному объекту здесь нет.
-- `pnpm exec nx test @rt-tools/core` — спеки хранилищ и разбора устройства идут в среде без
-  браузера: прямое обращение падает именно там.
+- `pnpm exec nx lint @rt-tools/<package>` — the common set; there is no separate rule against a
+  direct call to the global object here.
+- `pnpm exec nx test @rt-tools/core` — the storage and device-parsing specs run in an environment
+  without a browser: a direct call falls exactly there.

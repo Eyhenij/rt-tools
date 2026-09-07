@@ -1,52 +1,52 @@
-# dependencies — что здесь своё
+# dependencies — what is its own here
 
-Имена и привязки этого дерева при правиле `SKILL.md` рядом.
+The names and bindings of this tree, next to the rule `SKILL.md` beside it.
 
-Дерево публикует библиотеки и держит одно приложение — приёмник груза. Зависимость здесь либо
-инструмент сборки и проверки, либо соседний пакет этого же репозитория, либо peer-зависимость
-публикуемого пакета, либо то, на чём стоит приёмник: каркас отдачи, клиент хранилища и его
-адаптер. Из этого и растут отличия от правила.
+The tree publishes libraries and holds one application — the cargo intake. A dependency here is
+either a build or check tool, or a neighbouring package of this same repository, or a peer
+dependency of a published package, or what the intake stands on: the serving framework, the
+storage client and its adapter. The differences from the rule grow out of that.
 
-## Как это называется здесь
+## What it is called here
 
-- **В правиле** — Здесь
-- **объявление зависимости** — `package.json` в корне — один манифест на весь монорепозиторий; у пакетов свои `package.json`
-- **снимок установленного дерева** — `pnpm-lock.yaml` в корне
-- **подмена чужой версии** — `overrides` в `pnpm-workspace.yaml` — 18 записей, все под уязвимости сборочного графа
-- **выдержка новой версии** — `minimumReleaseAgeExclude` в `pnpm-workspace.yaml`; самой выдержки в дереве не задано
-- **публикация своего пакета** — ручной запуск конвейера на GitHub, не `pnpm publish` с машины
+- **In the rule** — Here
+- **a dependency declaration** — `package.json` at the root — one manifest for the whole monorepo; the packages have their own `package.json`
+- **the snapshot of the installed tree** — `pnpm-lock.yaml` at the root
+- **a substitution of a foreign version** — `overrides` in `pnpm-workspace.yaml` — 18 entries, all against vulnerabilities of the build graph
+- **the waiting term for a fresh version** — `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`; the term itself is not set in the tree
+- **publishing one of our packages** — a manual start of the pipeline on GitHub, not `pnpm publish` from a machine
 
-## Где это лежит
+## Where it lives
 
-- **зависимости инструментов** — `package.json`, `devDependencies`
-- **peer-зависимости публикуемого** — `projects/<пакет>/package.json`
-- **подмены и выдержка** — `pnpm-workspace.yaml`
-- **состав рабочих областей** — `pnpm-workspace.yaml`, `packages`
-- **проверка, что лок сходится** — `.github/workflows/ci.yml` — установка с замороженным локом
+- **the tool dependencies** — `package.json`, `devDependencies`
+- **the peer dependencies of a published package** — `projects/<package>/package.json`
+- **the substitutions and the waiting term** — `pnpm-workspace.yaml`
+- **the makeup of the workspaces** — `pnpm-workspace.yaml`, `packages`
+- **the check that the lock matches** — `.github/workflows/ci.yml` — installation with a frozen lock
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-- **A package version is written as an exact number.** — `package.json:dependencies` — ни одной записи с `^` или `~`; строка запроса в `pnpm-lock.yaml` совпадает с манифестом, и `pnpm install --frozen-lockfile` принимает лок без правки. Подмены чужих версий в `pnpm-workspace.yaml` остаются диапазонами намеренно: их смысл — «не ниже этой версии» для транзитивных зависимостей, которых в манифесте нет вовсе, и точный номер там закрепил бы уязвимую ветку.
-- **Substituted versions of foreign dependencies are gathered in one list, and it is revisited at every update.** — `pnpm-workspace.yaml:overrides` — восемнадцать записей, все под уязвимости сборочного графа; список пересматривается при каждом подъёме версий.
-- **A fresh version waits first, and one needed before the term is written out separately.** — **Не исполняется** до конца: выдержка задана `minimumReleaseAge`, а отдельного списка «нужно раньше срока» в дереве нет — исключение пишется строкой в том же файле.
-- **Only what the linter checks the formatting of gets reformatted.** — `.claude/rt-kit/project.sh:rt_lint_for` — набор линтеров дерева; переформатируется то, что они читают, и ничего сверх того.
-- **A package that carries styling is raised by a task of its own.** — **Не исполняется** здесь: дерево пакетов оформления не читает, оно их публикует. Отдельная задача заводится командой заведения задачи; проверки на снятые свойства у дерева нет намеренно — свои свойства оно объявляет само.
+- **A package version is written as an exact number.** — `package.json:dependencies` — not a single entry with `^` or `~`; the request line in `pnpm-lock.yaml` matches the manifest, and `pnpm install --frozen-lockfile` accepts the lock without an edit. The substitutions of foreign versions in `pnpm-workspace.yaml` stay ranges on purpose: their meaning is «not below this version» for transitive dependencies that are not in the manifest at all, and an exact number there would pin a vulnerable branch.
+- **Substituted versions of foreign dependencies are gathered in one list, and it is revisited at every update.** — `pnpm-workspace.yaml:overrides` — eighteen entries, all against vulnerabilities of the build graph; the list is revisited at every version bump.
+- **A fresh version waits first, and one needed before the term is written out separately.** — **Not carried out** in full: the waiting term is set by `minimumReleaseAge`, and there is no separate list «needed before the term» in the tree — an exception is written as a line in the same file.
+- **Only what the linter checks the formatting of gets reformatted.** — `.claude/rt-kit/project.sh:rt_lint_for` — the linter set of the tree; what they read gets reformatted, and nothing beyond that.
+- **A package that carries styling is raised by a task of its own.** — **Not carried out** here: the tree does not read styling packages, it publishes them. A task of its own is created by the task creation command; the tree deliberately has no check for removed properties — it declares its own properties itself.
 
-## Что ещё стоит знать при чтении кода
+## What else is worth knowing when reading the code
 
-- **Свой пакет объявляется точным номером даже там, где чужой стоит диапазоном.** Диапазон на
-  соседний пакет монорепозитория даёт разное дерево на машине и в конвейере: локально стоит
-  собранный `dist`, в конвейере — то, что уже в реестре.
-- **Лок-файл расходится с манифестами после каждой публикации.** Версии пакетов поднимает
-  конвейер, а лок остаётся с прежними — правится отдельным коммитом, иначе следующая установка
-  с замороженным локом падает.
-- **`npm run` здесь зовёт скрипты, а установку делает `pnpm install`.** Смешивать нельзя:
-  `npm install` заведёт второй лок-файл и другое дерево.
+- **Our own package is declared by an exact number even where a foreign one stands as a range.** A
+  range on a neighbouring package of the monorepo gives a different tree on the machine and in the
+  pipeline: locally the built `dist` stands there, in the pipeline what is already in the registry.
+- **The lock file diverges from the manifests after every publication.** The package versions are
+  bumped by the pipeline, and the lock stays with the former ones — it is fixed by a separate
+  commit, otherwise the next installation with a frozen lock falls.
+- **`npm run` here calls the scripts, and the installation is done by `pnpm install`.** They are
+  not mixed: `npm install` would start a second lock file and a different tree.
 
-## Чем это проверяется
+## What this is checked by
 
-- `pnpm install --frozen-lockfile` — ловит манифест, разошедшийся с локом; так же ставит
-  конвейер.
-- `pnpm run check:all` — после подъёма версий: линтеры, спеки, сборка всех пакетов.
-- `pnpm run test:visual` — после подъёма версии пакета, который рисует вёрстку: спеки останутся
-  зелёными и на съехавшем отступе.
+- `pnpm install --frozen-lockfile` — catches a manifest that diverged from the lock; the pipeline
+  installs the same way.
+- `pnpm run check:all` — after a version bump: the linters, the specs, the build of every package.
+- `pnpm run test:visual` — after bumping the version of a package that draws the layout: the specs
+  stay green even on a shifted padding.
