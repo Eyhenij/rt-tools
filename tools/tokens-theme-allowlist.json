@@ -1,163 +1,163 @@
 {
   "accepted": {
-    "контраст --rt-chat-bubble-date на --rt-chat-bubble-own-bg в светлой": {
-      "reason": "4.29:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-chat-bubble-date on --rt-chat-bubble-own-bg in the light": {
+      "reason": "4.29:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-386"
     },
-    "контраст --rt-chat-bubble-date на --rt-chat-bubble-own-bg в тёмной": {
-      "reason": "3.71:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-chat-bubble-date on --rt-chat-bubble-own-bg in the dark": {
+      "reason": "3.71:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-272"
     },
-    "контраст --rt-chat-bubble-own-author на --rt-chat-bubble-own-bg в светлой": {
-      "reason": "3.08:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-chat-bubble-own-author on --rt-chat-bubble-own-bg in the light": {
+      "reason": "3.08:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-386"
     },
-    "контраст --rt-chat-bubble-own-author на --rt-chat-bubble-own-bg в тёмной": {
-      "reason": "3.71:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-chat-bubble-own-author on --rt-chat-bubble-own-bg in the dark": {
+      "reason": "3.71:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-272"
     },
-    "контраст --rt-color-action-danger-on-surface на --rt-color-bg-surface в тёмной": {
-      "reason": "3.16:1 при пороге 4.5:1 — RT-394: цвет роли общий для обеих тем, на графите отношение падает",
+    "contrast --rt-color-action-danger-on-surface on --rt-color-bg-surface in the dark": {
+      "reason": "3.16:1 at the threshold 4.5:1 — RT-394: the role colour is shared by both themes, on graphite the ratio falls",
       "task": "RT-272"
     },
-    "контраст --rt-color-action-info-on-surface на --rt-color-bg-surface в тёмной": {
-      "reason": "3.10:1 при пороге 4.5:1 — RT-394: цвет роли общий для обеих тем, на графите отношение падает",
+    "contrast --rt-color-action-info-on-surface on --rt-color-bg-surface in the dark": {
+      "reason": "3.10:1 at the threshold 4.5:1 — RT-394: the role colour is shared by both themes, on graphite the ratio falls",
       "task": "RT-386"
     },
-    "контраст --rt-color-action-on-disabled на --rt-color-action-disabled в светлой": {
-      "reason": "Отключённый контрол порогом не судится: приглушённость и есть признак недоступности, а поднятая до 4.5:1 подпись перестаёт читаться отключённой",
+    "contrast --rt-color-action-on-disabled on --rt-color-action-disabled in the light": {
+      "reason": "A disabled control is not judged by the threshold: the muting is the very sign of unavailability, and a label raised to 4.5:1 stops reading as disabled",
       "task": "RT-272"
     },
-    "контраст --rt-color-action-on-disabled на --rt-color-action-disabled в тёмной": {
-      "reason": "Отключённый контрол порогом не судится — та же причина, что и в светлой теме",
+    "contrast --rt-color-action-on-disabled on --rt-color-action-disabled in the dark": {
+      "reason": "A disabled control is not judged by the threshold — the same reason as in the light theme",
       "task": "RT-272"
     },
-    "контраст --rt-color-action-on-success на --rt-color-action-success в светлой": {
-      "reason": "RT-394: подпись на подложке успеха берёт 3.77:1; чинится вместе с остальными парами ниже порога",
+    "contrast --rt-color-action-on-success on --rt-color-action-success in the light": {
+      "reason": "RT-394: the label on the success backdrop takes 3.77:1; fixed together with the rest of the pairs below the threshold",
       "task": "RT-272"
     },
-    "контраст --rt-color-action-on-success на --rt-color-action-success в тёмной": {
-      "reason": "RT-394: цвет роли общий для обеих тем, отношение то же 3.77:1",
+    "contrast --rt-color-action-on-success on --rt-color-action-success in the dark": {
+      "reason": "RT-394: the role colour is shared by both themes, the ratio is the same 3.77:1",
       "task": "RT-272"
     },
-    "контраст --rt-color-action-on-warning на --rt-color-action-warning в светлой": {
-      "reason": "RT-394: подпись на подложке предупреждения берёт 3.19:1 — самая слабая пара среди ролей действия",
+    "contrast --rt-color-action-on-warning on --rt-color-action-warning in the light": {
+      "reason": "RT-394: the label on the warning backdrop takes 3.19:1 — the weakest pair among the action roles",
       "task": "RT-272"
     },
-    "контраст --rt-color-action-on-warning на --rt-color-action-warning в тёмной": {
-      "reason": "RT-394: цвет роли общий для обеих тем, отношение то же 3.19:1",
+    "contrast --rt-color-action-on-warning on --rt-color-action-warning in the dark": {
+      "reason": "RT-394: the role colour is shared by both themes, the ratio is the same 3.19:1",
       "task": "RT-272"
     },
-    "контраст --rt-color-action-primary на --rt-color-action-primary-soft в светлой": {
-      "reason": "3.54:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-color-action-primary on --rt-color-action-primary-soft in the light": {
+      "reason": "3.54:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-384"
     },
-    "контраст --rt-color-action-primary на --rt-color-action-primary-soft в тёмной": {
-      "reason": "2.34:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-color-action-primary on --rt-color-action-primary-soft in the dark": {
+      "reason": "2.34:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-384"
     },
-    "контраст --rt-color-action-primary-on-surface на --rt-color-bg-surface в тёмной": {
-      "reason": "2.91:1 при пороге 4.5:1 — RT-394: марка на графите тускла, и подъём ступени бренда двигает всё, что ею красится",
+    "contrast --rt-color-action-primary-on-surface on --rt-color-bg-surface in the dark": {
+      "reason": "2.91:1 at the threshold 4.5:1 — RT-394: the brand mark on graphite is dim, and raising the brand step moves everything painted by it",
       "task": "RT-272"
     },
-    "контраст --rt-color-action-success-on-surface на --rt-color-bg-surface в светлой": {
-      "reason": "3.77:1 при пороге 4.5:1 — RT-394: та же ступень роли, что и у подписи на подложке успеха, чинится вместе с ней",
+    "contrast --rt-color-action-success-on-surface on --rt-color-bg-surface in the light": {
+      "reason": "3.77:1 at the threshold 4.5:1 — RT-394: the same role step as the label on the success backdrop, fixed together with it",
       "task": "RT-272"
     },
-    "контраст --rt-color-action-success-on-surface на --rt-color-bg-surface в тёмной": {
-      "reason": "4.05:1 при пороге 4.5:1 — RT-394: цвет роли общий для обеих тем, чинится подъёмом ступени",
+    "contrast --rt-color-action-success-on-surface on --rt-color-bg-surface in the dark": {
+      "reason": "4.05:1 at the threshold 4.5:1 — RT-394: the role colour is shared by both themes, fixed by raising the step",
       "task": "RT-272"
     },
-    "контраст --rt-color-action-warning-on-surface на --rt-color-bg-surface в светлой": {
-      "reason": "3.19:1 при пороге 4.5:1 — RT-394: янтарь на белом — самая слабая пара среди ролей действия",
+    "contrast --rt-color-action-warning-on-surface on --rt-color-bg-surface in the light": {
+      "reason": "3.19:1 at the threshold 4.5:1 — RT-394: amber on white — the weakest pair among the action roles",
       "task": "RT-272"
     },
-    "контраст --rt-color-state-danger на --rt-color-state-danger-bg в светлой": {
-      "reason": "4.41:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-color-state-danger on --rt-color-state-danger-bg in the light": {
+      "reason": "4.41:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-272"
     },
-    "контраст --rt-color-state-danger на --rt-color-state-danger-bg в тёмной": {
-      "reason": "3.19:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-color-state-danger on --rt-color-state-danger-bg in the dark": {
+      "reason": "3.19:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-272"
     },
-    "контраст --rt-color-state-error-text на --rt-color-state-danger-bg в тёмной": {
-      "reason": "3.19:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-color-state-error-text on --rt-color-state-danger-bg in the dark": {
+      "reason": "3.19:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-272"
     },
-    "контраст --rt-color-state-info на --rt-color-state-info-bg в тёмной": {
-      "reason": "3.03:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-color-state-info on --rt-color-state-info-bg in the dark": {
+      "reason": "3.03:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-386"
     },
-    "контраст --rt-color-state-success на --rt-color-state-success-bg в светлой": {
-      "reason": "3.58:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-color-state-success on --rt-color-state-success-bg in the light": {
+      "reason": "3.58:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-384"
     },
-    "контраст --rt-color-state-success на --rt-color-state-success-bg в тёмной": {
-      "reason": "3.83:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-color-state-success on --rt-color-state-success-bg in the dark": {
+      "reason": "3.83:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-384"
     },
-    "контраст --rt-color-state-warning на --rt-color-state-warning-bg в светлой": {
-      "reason": "3.07:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-color-state-warning on --rt-color-state-warning-bg in the light": {
+      "reason": "3.07:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-384"
     },
-    "контраст --rt-color-state-warning на --rt-color-state-warning-bg в тёмной": {
-      "reason": "4.46:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-color-state-warning on --rt-color-state-warning-bg in the dark": {
+      "reason": "4.46:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-384"
     },
-    "контраст --rt-color-state-warning-text на --rt-color-state-warning-bg в светлой": {
-      "reason": "RT-394: подпись на подложке предупреждения берёт 4.02:1; следующая ступень шкалы уводит её в коричневый",
+    "contrast --rt-color-state-warning-text on --rt-color-state-warning-bg in the light": {
+      "reason": "RT-394: the label on the warning backdrop takes 4.02:1; the next scale step leads it into brown",
       "task": "RT-272"
     },
-    "контраст --rt-color-state-warning-text на --rt-color-state-warning-bg в тёмной": {
-      "reason": "RT-394: на тёмной подложке 4.46:1 — не хватает сотых, чинится вместе со шкалой предупреждения",
+    "contrast --rt-color-state-warning-text on --rt-color-state-warning-bg in the dark": {
+      "reason": "RT-394: on the dark backdrop 4.46:1 — hundredths are missing, fixed together with the warning scale",
       "task": "RT-272"
     },
-    "контраст --rt-color-text-link на --rt-color-action-primary-soft в светлой": {
-      "reason": "3.54:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-color-text-link on --rt-color-action-primary-soft in the light": {
+      "reason": "3.54:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-272"
     },
-    "контраст --rt-color-text-muted на --rt-color-bg-subtle в светлой": {
-      "reason": "4.29:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-color-text-muted on --rt-color-bg-subtle in the light": {
+      "reason": "4.29:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-386"
     },
-    "контраст --rt-field-error-color на --rt-color-bg-surface в тёмной": {
-      "reason": "3.16:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-field-error-color on --rt-color-bg-surface in the dark": {
+      "reason": "3.16:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-272"
     },
-    "контраст --rt-nav-color-disabled на --rt-nav-item-color-bg в светлой": {
-      "reason": "2.14:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-nav-color-disabled on --rt-nav-item-color-bg in the light": {
+      "reason": "2.14:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-386"
     },
-    "контраст --rt-nav-color-disabled на --rt-nav-item-color-bg в тёмной": {
-      "reason": "3.12:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-nav-color-disabled on --rt-nav-item-color-bg in the dark": {
+      "reason": "3.12:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-386"
     },
-    "контраст --rt-nav-panel-item-color-active на --rt-nav-panel-item-color-bg-active в тёмной": {
-      "reason": "2.78:1 при пороге 4.5:1 — RT-394: подъём ступеней до порога двигает кадры витрины",
+    "contrast --rt-nav-panel-item-color-active on --rt-nav-panel-item-color-bg-active in the dark": {
+      "reason": "2.78:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-386"
     },
-    "ступень шкалы в тёмной --rt-shadow-card-soft": {
-      "reason": "RT-386: тень объявлена шкалой и переписана тёмной темой; свод шкал и назначений к канону — предмет седьмой позиции линии",
+    "a scale step in the dark --rt-shadow-card-soft": {
+      "reason": "RT-386: the shadow is declared by the scale and rewritten by the dark theme; bringing the scales and assignments to the canon is the subject of the line's seventh position",
       "task": "RT-272"
     },
-    "тёмный блок projects/ui-kit-v2/src/lib/components/header/rt-header.component.scss": {
-      "reason": "RT-274: фон шапки красится ступенью шкалы прямо в правиле; своё свойство компонента, которое можно переопределить в слое оформления, заводится восьмой позицией линии",
+    "a dark block projects/ui-kit-v2/src/lib/components/header/rt-header.component.scss": {
+      "reason": "RT-274: the header's background is painted by a scale step right in the rule; a component's own property, overridable in the styling layer, is created by the line's eighth position",
       "task": "RT-272"
     },
-    "тёмный блок projects/ui-kit-v2/src/lib/components/info-item/rt-info-item.component.scss": {
-      "reason": "RT-274: тёмный вид карточки приходит миксином вёрстки, а не свойством компонента",
+    "a dark block projects/ui-kit-v2/src/lib/components/info-item/rt-info-item.component.scss": {
+      "reason": "RT-274: the card's dark look comes by a layout mixin rather than by a component's property",
       "task": "RT-272"
     },
-    "тёмный блок projects/ui-kit-v2/src/lib/components/logo/rt-logo.component.scss": {
-      "reason": "RT-274: тёмный логотип получается инверсией рисунка, а не цветом из слоя оформления; своего свойства у неё нет",
+    "a dark block projects/ui-kit-v2/src/lib/components/logo/rt-logo.component.scss": {
+      "reason": "RT-274: the dark logo comes out by inverting the picture rather than by a colour from the styling layer; it has no property of its own",
       "task": "RT-272"
     },
-    "тёмный блок projects/ui-kit-v2/src/lib/components/section-nav/rt-section-nav.component.scss": {
-      "reason": "RT-274: подложка активной плитки красится ступенью шкалы прямо в правиле",
+    "a dark block projects/ui-kit-v2/src/lib/components/section-nav/rt-section-nav.component.scss": {
+      "reason": "RT-274: the active tile's backdrop is painted by a scale step right in the rule",
       "task": "RT-272"
     },
-    "тёмный блок projects/ui-kit-v2/src/lib/components/table/rt-table.component.scss": {
-      "reason": "RT-274: таблица подменяет фон назначением в правиле темы вместо своего свойства компонента",
+    "a dark block projects/ui-kit-v2/src/lib/components/table/rt-table.component.scss": {
+      "reason": "RT-274: the table substitutes the background by an assignment in the theme rule instead of the component's own property",
       "task": "RT-272"
     }
   }

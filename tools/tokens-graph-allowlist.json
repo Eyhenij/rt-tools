@@ -1,39 +1,39 @@
 {
   "accepted": {
-    "общее имя с первым китом --rt-font-weight-bold": {
-      "reason": "имя объявлено обоими китами: принято при заведении проверки, разведение имён — отдельная работа",
+    "a shared name with the first kit --rt-font-weight-bold": {
+      "reason": "the name is declared by both kits: accepted when the check was created, keeping the names apart is a separate piece of work",
       "task": "RT-383"
     },
-    "общее имя с первым китом --rt-font-weight-medium": {
-      "reason": "имя объявлено обоими китами: принято при заведении проверки, разведение имён — отдельная работа",
+    "a shared name with the first kit --rt-font-weight-medium": {
+      "reason": "the name is declared by both kits: accepted when the check was created, keeping the names apart is a separate piece of work",
       "task": "RT-383"
     },
-    "общее имя с первым китом --rt-font-weight-regular": {
-      "reason": "имя объявлено обоими китами: принято при заведении проверки, разведение имён — отдельная работа",
+    "a shared name with the first kit --rt-font-weight-regular": {
+      "reason": "the name is declared by both kits: accepted when the check was created, keeping the names apart is a separate piece of work",
       "task": "RT-383"
     },
-    "общее имя с первым китом --rt-font-weight-semibold": {
-      "reason": "имя объявлено обоими китами: принято при заведении проверки, разведение имён — отдельная работа",
+    "a shared name with the first kit --rt-font-weight-semibold": {
+      "reason": "the name is declared by both kits: accepted when the check was created, keeping the names apart is a separate piece of work",
       "task": "RT-383"
     },
-    "общее имя с первым китом --rt-radius-full": {
-      "reason": "имя объявлено обоими китами: принято при заведении проверки, разведение имён — отдельная работа",
+    "a shared name with the first kit --rt-radius-full": {
+      "reason": "the name is declared by both kits: accepted when the check was created, keeping the names apart is a separate piece of work",
       "task": "RT-383"
     },
-    "общее имя с первым китом --rt-radius-md": {
-      "reason": "имя объявлено обоими китами: принято при заведении проверки, разведение имён — отдельная работа",
+    "a shared name with the first kit --rt-radius-md": {
+      "reason": "the name is declared by both kits: accepted when the check was created, keeping the names apart is a separate piece of work",
       "task": "RT-383"
     },
-    "общее имя с первым китом --rt-radius-sm": {
-      "reason": "имя объявлено обоими китами: принято при заведении проверки, разведение имён — отдельная работа",
+    "a shared name with the first kit --rt-radius-sm": {
+      "reason": "the name is declared by both kits: accepted when the check was created, keeping the names apart is a separate piece of work",
       "task": "RT-383"
     },
-    "общее имя с первым китом --rt-radius-xl": {
-      "reason": "имя объявлено обоими китами: принято при заведении проверки, разведение имён — отдельная работа",
+    "a shared name with the first kit --rt-radius-xl": {
+      "reason": "the name is declared by both kits: accepted when the check was created, keeping the names apart is a separate piece of work",
       "task": "RT-383"
     },
-    "общее имя с первым китом --rt-radius-xs": {
-      "reason": "имя объявлено обоими китами: принято при заведении проверки, разведение имён — отдельная работа",
+    "a shared name with the first kit --rt-radius-xs": {
+      "reason": "the name is declared by both kits: accepted when the check was created, keeping the names apart is a separate piece of work",
       "task": "RT-272"
     }
   }
