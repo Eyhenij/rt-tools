@@ -193,6 +193,58 @@ export type TRtDesignTokenName =
     | '--rt-leading-snug'
     | '--rt-leading-tight'
     | '--rt-letter-spacing-wide'
+    | '--rt-mat-blue-100'
+    | '--rt-mat-blue-20'
+    | '--rt-mat-blue-40'
+    | '--rt-mat-blue-60'
+    | '--rt-mat-blue-80'
+    | '--rt-mat-blue-active'
+    | '--rt-mat-blue-hover'
+    | '--rt-mat-green-10'
+    | '--rt-mat-green-100'
+    | '--rt-mat-green-20'
+    | '--rt-mat-green-40'
+    | '--rt-mat-green-60'
+    | '--rt-mat-green-80'
+    | '--rt-mat-green-active'
+    | '--rt-mat-green-hover'
+    | '--rt-mat-navy-100'
+    | '--rt-mat-neutral-0'
+    | '--rt-mat-neutral-10'
+    | '--rt-mat-neutral-100'
+    | '--rt-mat-neutral-15'
+    | '--rt-mat-neutral-20'
+    | '--rt-mat-neutral-25'
+    | '--rt-mat-neutral-30'
+    | '--rt-mat-neutral-35'
+    | '--rt-mat-neutral-40'
+    | '--rt-mat-neutral-5'
+    | '--rt-mat-neutral-60'
+    | '--rt-mat-neutral-80'
+    | '--rt-mat-neutral-active'
+    | '--rt-mat-neutral-hover'
+    | '--rt-mat-orange-10'
+    | '--rt-mat-orange-100'
+    | '--rt-mat-orange-20'
+    | '--rt-mat-orange-40'
+    | '--rt-mat-orange-5'
+    | '--rt-mat-orange-60'
+    | '--rt-mat-orange-70'
+    | '--rt-mat-orange-80'
+    | '--rt-mat-orange-active'
+    | '--rt-mat-orange-hover'
+    | '--rt-mat-overlay-black-32'
+    | '--rt-mat-overlay-black-4'
+    | '--rt-mat-overlay-blue-24'
+    | '--rt-mat-overlay-blue-8'
+    | '--rt-mat-red-10'
+    | '--rt-mat-red-100'
+    | '--rt-mat-red-20'
+    | '--rt-mat-red-40'
+    | '--rt-mat-red-60'
+    | '--rt-mat-red-80'
+    | '--rt-mat-red-active'
+    | '--rt-mat-red-hover'
     | '--rt-nav-caret-size'
     | '--rt-nav-color-disabled'
     | '--rt-nav-color-focus'
@@ -589,6 +641,58 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-leading-snug',
     '--rt-leading-tight',
     '--rt-letter-spacing-wide',
+    '--rt-mat-blue-100',
+    '--rt-mat-blue-20',
+    '--rt-mat-blue-40',
+    '--rt-mat-blue-60',
+    '--rt-mat-blue-80',
+    '--rt-mat-blue-active',
+    '--rt-mat-blue-hover',
+    '--rt-mat-green-10',
+    '--rt-mat-green-100',
+    '--rt-mat-green-20',
+    '--rt-mat-green-40',
+    '--rt-mat-green-60',
+    '--rt-mat-green-80',
+    '--rt-mat-green-active',
+    '--rt-mat-green-hover',
+    '--rt-mat-navy-100',
+    '--rt-mat-neutral-0',
+    '--rt-mat-neutral-10',
+    '--rt-mat-neutral-100',
+    '--rt-mat-neutral-15',
+    '--rt-mat-neutral-20',
+    '--rt-mat-neutral-25',
+    '--rt-mat-neutral-30',
+    '--rt-mat-neutral-35',
+    '--rt-mat-neutral-40',
+    '--rt-mat-neutral-5',
+    '--rt-mat-neutral-60',
+    '--rt-mat-neutral-80',
+    '--rt-mat-neutral-active',
+    '--rt-mat-neutral-hover',
+    '--rt-mat-orange-10',
+    '--rt-mat-orange-100',
+    '--rt-mat-orange-20',
+    '--rt-mat-orange-40',
+    '--rt-mat-orange-5',
+    '--rt-mat-orange-60',
+    '--rt-mat-orange-70',
+    '--rt-mat-orange-80',
+    '--rt-mat-orange-active',
+    '--rt-mat-orange-hover',
+    '--rt-mat-overlay-black-32',
+    '--rt-mat-overlay-black-4',
+    '--rt-mat-overlay-blue-24',
+    '--rt-mat-overlay-blue-8',
+    '--rt-mat-red-10',
+    '--rt-mat-red-100',
+    '--rt-mat-red-20',
+    '--rt-mat-red-40',
+    '--rt-mat-red-60',
+    '--rt-mat-red-80',
+    '--rt-mat-red-active',
+    '--rt-mat-red-hover',
     '--rt-nav-caret-size',
     '--rt-nav-color-disabled',
     '--rt-nav-color-focus',

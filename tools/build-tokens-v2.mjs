@@ -20,7 +20,7 @@ const stylesDir = resolve(root, 'projects/ui-kit-v2/src/styles');
 const typesFile = resolve(root, 'projects/ui-kit-v2/src/lib/tokens/rt-design-tokens.ts');
 
 const source = await import(`file://${stylesDir}/tokens.source.mjs`);
-const { scale, light, darkLayout, coarsePointer } = source;
+const { scale, light, darkLayout, coarsePointer, material } = source;
 
 const BANNER = `/* Собрано генератором \`tools/build-tokens-v2.mjs\` из \`tokens.source.mjs\` — правится там, не здесь:
    правка на месте теряется на следующей сборке, и её называет \`pnpm run check:tokens-build\`. */`;
@@ -47,6 +47,16 @@ const PREAMBLE = {
 
    Значения ответов живут в источнике рядом со своим светлым назначением: забытая половина
    пары видна там же, а не вылавливается сверкой двух файлов. */`,
+    material: `/* Материальный набор — второй слой назначений: кит, нарисованный видом первого кита.
+
+   Ступени шкалы он не трогает: переписанная ступень перекрасила бы заодно и тёмную тему,
+   которая ссылается на те же ступени. Значения приходят из материальных ступеней шкалы.
+
+   Тело вынесено в @mixin по той же причине, что у тёмной темы: набор нужен не только на
+   \`:root\`, но и на отдельном контейнере — иначе два набора нельзя показать рядом.
+
+   Правило набора объявлено до тёмной темы нарочно: у корневых признаков одинаковая
+   специфичность, и порядок в файле — единственное, чем тёмная тема выигрывает у набора. */`,
 };
 
 const COARSE_NOTE = `/* На тач-устройствах инпут не меньше 16px: WebKit (весь iOS, включая Chrome)
@@ -95,13 +105,23 @@ const darkNodes = darkLayout.map((node) => {
     return node;
 });
 
+// Материальный набор имён не заводит: он переопределяет назначения базового. Имя, которого в
+// базовом наборе нет, иначе объявилось бы только под признаком набора — страница без признака
+// получила бы мёртвую ссылку, и увидеть это можно было бы только на витрине.
+for (const node of material) {
+    if (!node.name) continue;
+    if (!lightByName.has(node.name)) {
+        fail(`материальный набор объявляет '${node.name}', которого нет среди назначений базового`);
+    }
+}
+
 // Каждое имя, объявленное источником, и каждая ручка потребителя.
 const declared = new Set([...scale, ...light, ...darkLayout].filter((n) => n.name).map((n) => n.name));
 const handles = new Set(Object.keys(JSON.parse(readFileSync(resolve(root, 'tools/tokens-handles.json'), 'utf8')).handles ?? {}));
 
 // Ссылка в никуда роняет сборку: имя, к которому обратились с опечаткой, иначе просто не
 // применяется, и увидеть это можно только на витрине и только если посмотреть.
-for (const node of [...scale, ...light, ...darkLayout]) {
+for (const node of [...scale, ...light, ...darkLayout, ...material]) {
     if (!node.name) continue;
     for (const value of [node.value, node.dark]) {
         if (typeof value !== 'string') continue;
@@ -140,6 +160,11 @@ const files = {
     [`${stylesDir}/_theme-dark.scss`]:
         `${BANNER}\n\n${PREAMBLE.dark}\n\n@mixin rt-theme-dark-tokens {\n${renderNodes(darkNodes)}\n}\n\n` +
         `:root[data-theme='dark'],\nhtml.rt-theme-dark {\n    @include rt-theme-dark-tokens;\n}\n`,
+
+    [`${stylesDir}/_preset-material.scss`]:
+        `${BANNER}\n\n${PREAMBLE.material}\n\n@mixin rt-preset-material-tokens {\n${renderNodes(material)}\n}\n\n` +
+        `:root[data-preset='material'],\n[data-preset='material'],\n.rt-preset-material {\n` +
+        `    @include rt-preset-material-tokens;\n}\n`,
 
     [typesFile]: renderTypes(),
 };

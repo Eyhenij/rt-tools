@@ -291,4 +291,74 @@
     --rt-bp-md: 768px;
     --rt-bp-lg: 1080px;
     --rt-bp-xl: 1380px;
+
+    /* Материальный набор: нейтральный ряд первого кита */
+    --rt-mat-neutral-0: #fff;
+    --rt-mat-neutral-5: #f5f6f8;
+    --rt-mat-neutral-10: #f3f3f3;
+    --rt-mat-neutral-15: #eee;
+    --rt-mat-neutral-20: #e8e8e8;
+    --rt-mat-neutral-25: #e0e0e0;
+    --rt-mat-neutral-30: #d1d1d1;
+    --rt-mat-neutral-35: #ccc;
+    --rt-mat-neutral-40: #a3a3a3;
+    --rt-mat-neutral-60: #747474;
+    --rt-mat-neutral-80: #323033;
+    --rt-mat-neutral-100: #181818;
+
+    /* Материальный набор: синий — действие, ссылка, кольцо фокуса */
+    --rt-mat-blue-20: #eaedfc;
+    --rt-mat-blue-40: #b3ceef;
+    --rt-mat-blue-60: #6d96e8;
+    --rt-mat-blue-80: #4285f4;
+    --rt-mat-blue-100: #4284d7;
+
+    /* Материальный набор: красный — опасное действие и ошибка */
+    --rt-mat-red-10: #fdedee;
+    --rt-mat-red-20: #efc0c1;
+    --rt-mat-red-40: #f7b9bb;
+    --rt-mat-red-60: #e88487;
+    --rt-mat-red-80: #df6064;
+    --rt-mat-red-100: #eb5055;
+
+    /* Материальный набор: оранжевый — предупреждение */
+    --rt-mat-orange-5: #f6e4d9;
+    --rt-mat-orange-10: #e8cbbf;
+    --rt-mat-orange-20: #e1ba9e;
+    --rt-mat-orange-40: #e4a985;
+    --rt-mat-orange-60: #f1a05d;
+    --rt-mat-orange-70: #f2994a;
+    --rt-mat-orange-80: #ee7a34;
+    --rt-mat-orange-100: #ef7128;
+
+    /* Материальный набор: зелёный — успех */
+    --rt-mat-green-10: #e5f8f4;
+    --rt-mat-green-20: #baf4e0;
+    --rt-mat-green-40: #5dbfbc;
+    --rt-mat-green-60: #46c4c0;
+    --rt-mat-green-80: #21b18e;
+    --rt-mat-green-100: #01af8d;
+
+    /* Материальный набор: марка первого кита и подложка его обвязки */
+    --rt-mat-navy-100: #0d1c2b;
+
+    /* Прозрачные оттенки считаются от своих ступеней, а не повторяют их коды цвета. */
+    --rt-mat-overlay-black-4: color-mix(in srgb, var(--rt-mat-neutral-100) 4%, transparent);
+    --rt-mat-overlay-black-32: color-mix(in srgb, var(--rt-mat-neutral-100) 32%, transparent);
+    --rt-mat-overlay-blue-8: color-mix(in srgb, var(--rt-mat-blue-100) 8%, transparent);
+    --rt-mat-overlay-blue-24: color-mix(in srgb, var(--rt-mat-blue-100) 24%, transparent);
+
+    /* Наведение и нажатие первый кит считает от своей ступени тем же приёмом — подмешивая
+       чёрное. Ступени здесь считаются так же, а не подбираются на глаз: иначе перекрашенная
+       марка перестанет темнеть под курсором вместе с остальным. */
+    --rt-mat-blue-hover: color-mix(in srgb, var(--rt-mat-blue-100) 90%, #000);
+    --rt-mat-blue-active: color-mix(in srgb, var(--rt-mat-blue-100) 80%, #000);
+    --rt-mat-green-hover: color-mix(in srgb, var(--rt-mat-green-80) 90%, #000);
+    --rt-mat-green-active: color-mix(in srgb, var(--rt-mat-green-80) 80%, #000);
+    --rt-mat-orange-hover: color-mix(in srgb, var(--rt-mat-orange-80) 90%, #000);
+    --rt-mat-orange-active: color-mix(in srgb, var(--rt-mat-orange-80) 80%, #000);
+    --rt-mat-red-hover: color-mix(in srgb, var(--rt-mat-red-100) 90%, #000);
+    --rt-mat-red-active: color-mix(in srgb, var(--rt-mat-red-100) 80%, #000);
+    --rt-mat-neutral-hover: color-mix(in srgb, var(--rt-mat-neutral-60) 90%, #000);
+    --rt-mat-neutral-active: color-mix(in srgb, var(--rt-mat-neutral-60) 80%, #000);
 }

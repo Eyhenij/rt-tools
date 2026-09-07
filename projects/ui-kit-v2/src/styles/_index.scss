@@ -8,6 +8,12 @@
 
 @forward './primitives';
 @forward './semantic';
+
+// Материальный набор стоит между назначениями и тёмной темой: у признака набора и признака
+// тёмной темы на корне одинаковая специфичность, и порядок здесь — единственное, чем тёмная
+// тема выигрывает у набора.
+@forward './preset-material';
+
 @forward './theme-dark';
 @forward './theme-dark-rules';
 @forward './scrollbar';
