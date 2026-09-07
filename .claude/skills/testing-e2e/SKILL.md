@@ -4,7 +4,7 @@ kind: pattern
 rule: testing
 description: Pattern of rule testing. Load when editing and running end-to-end tests in apps/site-e2e and apps/admin-e2e — what an end-to-end test closes, ready-made run commands, a stand from the production build behind real nginx, test switches. Not for unit tests — that is pattern testing-unit.
 ---
-<!-- rt-kit v0.25.0 · patterns/testing-e2e.md · ecbc399dcbd5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/testing-e2e.md · 024fd52243a1 · правится надстройкой, не здесь -->
 
 # End-to-end tests
 
@@ -141,7 +141,7 @@ code.
   stand answers 403 to everything, and all tests fail at once. After
   `rm -rf dist/apps/<application>` the container is recreated.
 
-## The run
+## The run in this tree
 
 A section of this tree: there is one end-to-end suite — the intake admin panel, the runner target
 `message-bus-admin-e2e`.

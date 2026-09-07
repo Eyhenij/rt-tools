@@ -1,4 +1,4 @@
-## The port numbers are declared by the tree, not by the pattern
+## The ports and stands of this tree
 
 A section of this tree: there is no site and no rendering server here, and there are two stands —
 the showcase of the component set and the stand of the end-to-end suite with its own seeded
@@ -22,7 +22,7 @@ Sorting out an occupied port, telling a built artefact from a dev server and the
 second instance is not raised hold here in full — and they are what one uses when the showcase
 answers with the wrong thing.
 
-## A stand under a real nginx
+## Why there is no nginx stand here
 
 A section of this tree: none of the applications here has a proxy. The admin panel goes to the
 receiver directly, proxying `/api` to its port by its own dev config, and the showcase is static

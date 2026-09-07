@@ -1,4 +1,4 @@
-## The task footprint
+## Task footprint
 
 <What the work touches. Filled in by exploration before the grill and confirmed by the owner. By
 this same table, at closing, one sees what of the specs, rules and patterns has gone stale: what

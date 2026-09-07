@@ -1,50 +1,52 @@
-# autonomous-work — что здесь своё
+# autonomous-work — what is its own here
 
-Имена и привязки этого дерева при правиле `SKILL.md` рядом.
+The names and bindings of this tree, next to the rule `SKILL.md` beside it.
 
-## Как это называется здесь
+## What it is called here
 
-| В правиле         | Здесь                                                                 |
-| ----------------- | --------------------------------------------------------------------- |
-| ключ задач череды | `RT-<номер>`; ветка — `RT-<номер>-<slug>`                             |
-| очередь работ     | доска проекта на GitHub; колонки двигает `npm run task:move`          |
-| список к утру     | последняя реплика захода владельцу; строка на каждую закрытую работу  |
-| описание прошлого | `docs/archive/RT-<номер>-<slug>.md`                                   |
-| папка задачи      | `docs/tasks/RT-<номер>-<slug>/` — разбор просьбы, замысел, ход работы |
+| In the rule             | Here                                                                        |
+| ----------------------- | --------------------------------------------------------------------------- |
+| the run task key        | `RT-<number>`; the branch is `RT-<number>-<slug>`                           |
+| the work queue          | the project board on GitHub; the columns are moved by `npm run task:move`   |
+| the morning list        | the last reply of the session to the owner; a line per closed piece of work |
+| description of the past | `docs/archive/RT-<number>-<slug>.md`                                        |
+| the task folder         | `docs/tasks/RT-<number>-<slug>/` — the grill, the plan, the progress        |
 
-## Где это лежит
+## Where it lives
 
-| Что                         | Где                                      |
-| --------------------------- | ---------------------------------------- |
-| образец папки задачи        | `docs/tasks/_template/`                  |
-| заведение задачи            | `npm run task:new`                       |
-| перевод колонки             | `npm run task:move -- <номер> <колонка>` |
-| прогон набора пакета правил | `bash projects/agent-kit/tests/run.sh`   |
-| сверка раскладки            | `pnpm run agent-kit:check`               |
+| What                            | Where                                    |
+| ------------------------------- | ---------------------------------------- |
+| the task folder sample          | `docs/tasks/_template/`                  |
+| creating a task                 | `npm run task:new`                       |
+| moving the column               | `npm run task:move -- <number> <column>` |
+| running the rules package suite | `bash projects/agent-kit/tests/run.sh`   |
+| the layout audit                | `pnpm run agent-kit:check`               |
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-Первая колонка — статья дословно. Автономный заход держится приёмом: стража, который отличал бы
-ночь от дня, в дереве нет ни одного, и это сказано по каждой статье прямо.
+The first column is the article verbatim. An autonomous session is held by technique: there is not
+a single guard in the tree that would tell night from day, and this is said outright at every
+article.
 
-- **The branch of the next work is created from the previous one, not from main.** — **Не проверяется ничем.** Ни один гард основания ветки не судит; держится приёмом `git checkout -b RT-<номер>-<slug> <прошлая ветка>` и порядком в списке к утру
-- **Nothing goes outside during the night.** — **Не проверяется ничем.** Команда пуша ночью ничем не отличается от дневной, и гейт пуша её пропускает; держится словом владельца о заходе
-- **A task that needs the owner's word is not taken at all.** — **Не проверяется ничем.** Борда не знает, чего задача ждёт; держится строкой отложенной задачи в списке к утру
-- **A default is written where the owner's answer would have been written.** — **Не проверяется ничем.** Пишется в раздел «Решения» разбора просьбы — `docs/tasks/RT-<номер>-<slug>/grill.md`; полноту раздела машина не судит
-- **The readiness sign is named as a command before the stage begins.** — `.claude/hooks/turn-exit-guard.sh:rt_te_deny` — страж выходов хода читает команду из строки «Чем проверяется» замысла и не выпускает ход, где этап объявлен закрытым, а команда не запускалась
-- **A red run is fixed in the same branch, not postponed.** — `.claude/rt-kit/project.sh:rt_push_checks` — набор гейта пуша; ночью он гоняется тем же вызовом, что и днём
-- **A guard's refusal is a work step, not the end of the session.** — **Не проверяется ничем.** Страж не знает, что было после его отказа; держится приёмом
-- **The morning list is written along the way, not recalled at the end.** — **Не проверяется ничем.** Собирается из раздела «Заходы» хода работы — `docs/tasks/RT-<номер>-<slug>/progress.md`; что он дописан вовремя, машине не видно
+- **The branch of the next work is created from the previous one, not from main.** — **Checked by nothing.** Not a single guard judges the base of a branch; it is held by the technique `git checkout -b RT-<number>-<slug> <the previous branch>` and by the order in the morning list
+- **Nothing goes outside during the night.** — **Checked by nothing.** A push command at night differs in nothing from a daytime one, and the push gate lets it through; it is held by the owner word about the session
+- **A task that needs the owner's word is not taken at all.** — **Checked by nothing.** The board does not know what a task is waiting for; it is held by the line of a postponed task in the morning list
+- **A default is written where the owner's answer would have been written.** — **Checked by nothing.** It is written into the section «Decisions» of the grill — `docs/tasks/RT-<number>-<slug>/grill.md`; the completeness of the section is not judged by a machine
+- **The readiness sign is named as a command before the stage begins.** — `.claude/hooks/turn-exit-guard.sh:rt_te_deny` — the turn-exit guard reads the command from the line «Verified by» of the plan and does not release a turn where a stage is declared closed and the command was never run
+- **A red run is fixed in the same branch, not postponed.** — `.claude/rt-kit/project.sh:rt_push_checks` — the push gate set; at night it runs by the same call as in the daytime
+- **A guard's refusal is a work step, not the end of the session.** — **Checked by nothing.** The guard does not know what happened after its refusal; it is held by technique
+- **The morning list is written along the way, not recalled at the end.** — **Checked by nothing.** It is assembled from the section «Sessions» of the progress — `docs/tasks/RT-<number>-<slug>/progress.md`; that it was written in time is invisible to a machine
 
-## Что ещё стоит знать при чтении кода
+## What else is worth knowing when reading the code
 
-- Заявка за ночь не открывается, поэтому папка задачи разбирается в описание прошлого последним
-  коммитом ветки: ветка остаётся готовой к заявке, которую утром откроет владелец.
-- Отметка груза в приёме ночью не ставится: она утверждает, что правка в главной ветке, а ветки
-  за ночь не уходят даже на хостинг.
+- A request does not open overnight, so the task folder is taken apart into the description of the
+  past by the last commit of the branch: the branch stays ready for the request the owner will open
+  in the morning.
+- A cargo mark in the intake is not set at night: it states that the edit is in the main branch,
+  while overnight the branches do not even leave for the hosting.
 
-## Чем это проверяется
+## What this is checked by
 
-- `bash projects/agent-kit/tests/run.sh` — наборы пакета правил зелёные после правки ресурсов.
-- `pnpm run agent-kit:check` — разложенное сходится с пакетом.
-- `npm run check:docs`, `npm run check:specs` — пути документов и спеки без расхождений.
+- `bash projects/agent-kit/tests/run.sh` — the rules package suites are green after a resource edit.
+- `pnpm run agent-kit:check` — the laid-out matches the package.
+- `npm run check:docs`, `npm run check:specs` — the document paths and the specs without divergences.

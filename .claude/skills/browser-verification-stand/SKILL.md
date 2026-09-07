@@ -4,7 +4,7 @@ kind: pattern
 rule: browser-verification
 description: Pattern of rule browser-verification. Load when an honest stand is needed — the production build of the site, the admin stand, a stand behind real nginx, signing in to the admin, finding out what sits on a port. Not for layout measurements — that is pattern browser-verification-measure.
 ---
-<!-- rt-kit v0.25.0 · patterns/browser-verification-stand.md · ce1d3ce971ef · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/browser-verification-stand.md · bff488797902 · правится надстройкой, не здесь -->
 
 # An honest stand
 
@@ -244,7 +244,7 @@ past session, and it answers 200 with old code.
   `ssr:<rendering port>` through `host-gateway`, and while a foreign process hangs on it, the
   stand serves a foreign build.
 
-## The port numbers are declared by the tree, not by the pattern
+## The ports and stands of this tree
 
 A section of this tree: there is no site and no rendering server here, and there are two stands —
 the showcase of the component set and the stand of the end-to-end suite with its own seeded
@@ -268,7 +268,7 @@ Sorting out an occupied port, telling a built artefact from a dev server and the
 second instance is not raised hold here in full — and they are what one uses when the showcase
 answers with the wrong thing.
 
-## A stand under a real nginx
+## Why there is no nginx stand here
 
 A section of this tree: none of the applications here has a proxy. The admin panel goes to the
 receiver directly, proxying `/api` to its port by its own dev config, and the showcase is static
