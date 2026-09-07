@@ -1,58 +1,61 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
-# Гард снятия черновика: ход не заканчивается, пока готовая работа стоит черновиком. Stop.
+# The draft-lifting guard: a turn does not end while ready work stands as a draft. Stop.
 #
-# Зачем именно так. Работа кончается не последним коммитом, а снятым черновиком: до него кнопка
-# слияния у владельца заблокирована самим хостингом, и зелёная страница PR ему ничего не
-# разрешает. Между «всё сделано» и «можно вливать» остаётся ровно один вызов, и держался он
-# памятью исполнителя — до тех пор, пока память не проиграла: прогон стал зелёным, исполнитель
-# это прочитал, ответил одним словом и остановился. Разбор — `docs/postmortems/handled/`,
-# запись `2026-08-16-green-run-draft-left.md`.
+# Why exactly so. Work ends not with the last commit but with the lifted draft: before that the
+# merge button is locked for the owner by the host itself, and a green PR page allows them nothing.
+# Between "everything is done" and "it can be merged" there is exactly one call, and it was held by
+# the executor's memory — until the memory lost: the run went green, the executor read that,
+# answered in one word and stopped. The analysis is `docs/postmortems/handled/`, the record
+# `2026-08-16-green-run-draft-left.md`.
 #
-# Ловится на завершении хода, а не на чтении прогона. Состояние прогона спрашивают десятком
-# способов, и опознать этот вопрос среди прочих команд нечем; завершение хода — единственная
-# точка, где видно, что исполнитель собрался остановиться.
+# It is caught at the end of a turn rather than at the reading of the run. The state of a run is
+# asked in a dozen ways, and there is nothing to recognise that question by among the other
+# commands; the end of a turn is the only point where it is visible that the executor is about to
+# stop.
 #
-# ТРИ УСЛОВИЯ, И ВСЕ ТРИ ОБЯЗАТЕЛЬНЫ:
+# THREE CONDITIONS, AND ALL THREE ARE MANDATORY:
 #
-#   PR текущей ветки открыт и он черновик   — иначе отбивать нечего;
-#   прогон НА ВЕРШИНЕ PR завершён успехом   — не последний прогон ветки: прогон промежуточного
-#                                             коммита к готовности отношения не имеет;
-#   ветка НЕ везёт папку своей задачи       — папка на месте означает, что работа ещё идёт, и
-#                                             черновик при ней законен. Разобранная папка —
-#                                             признак того, что остался один вызов.
+#   the current branch's PR is open and a draft — otherwise there is nothing to refuse;
+#   the run AT THE PR's HEAD ended in success  — not the branch's last run: the run of an
+#                                                intermediate commit says nothing about readiness;
+#   the branch does NOT carry its task folder  — a folder in place means the work is still going,
+#                                                and a draft with it is lawful. A folder taken
+#                                                apart is the sign that one call is left.
 #
-# Третье условие и есть то, что отделяет готовую работу от идущей. Без него гард пинал бы
-# посреди работы на каждом зелёном прогоне, и его выключили бы в первый же день.
+# The third condition is what separates ready work from work in progress. Without it the guard
+# would kick in the middle of the work on every green run, and it would be switched off on the
+# first day.
 #
-# ЯРУСОВ ДВА, И ВТОРОЙ — ПРО ЧУЖИЕ ВЕТКИ.
+# THERE ARE TWO TIERS, AND THE SECOND IS ABOUT FOREIGN BRANCHES.
 #
-# Первый ярус судит заявку текущей ветки и знает про неё всё: ход работы, папку, закрытость
-# этапов. Он же и был всем гардом целиком — и ровно поэтому не ловил самого дешёвого способа
-# бросить работу: перейти в соседнюю ветку. Заявка никуда не делась, прогон по ней дошёл,
-# черновик остался, а гард с этой минуты судил уже другую ветку и молчал. За один заход так
-# разошлись с главной четыре заявки подряд, и заметил это владелец, а не гард. Разбор —
-# запись «2026-08-25-run-left-unwatched» в приёме.
+# The first tier judges the current branch's request and knows everything about it: the progress,
+# the folder, whether the stages are closed. It was the whole guard — and for exactly that reason
+# it did not catch the cheapest way to abandon the work: to move into a neighbouring branch. The
+# request did not go anywhere, the run on it arrived, the draft stayed, and from that minute the
+# guard was judging another branch and stayed silent. In one session four requests in a row drifted
+# from the main branch that way, and the owner noticed it rather than the guard. The analysis is
+# the record «2026-08-25-run-left-unwatched» in the intake.
 #
-# Второй ярус спрашивает у хостинга все открытые черновики машинной записи и судит каждый по
-# двум признакам: прогон на вершине завершён успехом и ветка не везёт папки своей задачи. Хода
-# работы у чужой ветки он не читает — папка на месте означает, что работа там ещё идёт, и такой
-# черновик законен. Имя машинной записи берётся из профиля дерева; дерево, его не назвавшее,
-# второго яруса не получает вовсе.
+# The second tier asks the host for all the open drafts of the machine account and judges each by
+# two signs: the run at the head ended in success and the branch does not carry its task folder. It
+# does not read a foreign branch's progress — a folder in place means the work there is still
+# going, and such a draft is lawful. The machine account's name is taken from the tree's profile; a
+# tree that did not name it gets no second tier at all.
 #
-# Ответ хостинга кладётся в кэш на минуту: гард срабатывает на каждом завершении хода, и вызов
-# сети на каждом из них платится временем владельца.
+# The host's answer is put into a cache for a minute: the guard fires at every end of a turn, and a
+# network call on each of them is paid for with the owner's time.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, главная ветка, нет `jq`, нет помощника хостинга, нет
-# сети, нет PR, повторный заход — ход РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права
-# заклинить разговор.
+# A REFUSAL IN FAVOUR OF THE WORK: not a repository, the main branch, no `jq`, no host helper, no
+# network, no PR, a repeated approach — the turn is ALLOWED (exit 0). A broken guard has no right
+# to jam the conversation.
 
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0
 
 command -v jq >/dev/null 2>&1 || exit 0
 
-# Повторный заход по тому же ходу не судится: гард сказал своё один раз и отпускает.
+# A repeated approach on the same turn is not judged: the guard said its word once and lets go.
 active="$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/null)"
 [ "$active" = "true" ] && exit 0
 
@@ -63,8 +66,8 @@ git rev-parse --git-dir >/dev/null 2>&1 || exit 0
 branch="$(git branch --show-current 2>/dev/null)"
 [ -z "$branch" ] && exit 0
 
-# Помощник хостинга. Имя `gh` на машине владельца перехвачено чужим псевдонимом, поэтому сперва
-# ищется настоящий бинарь и только потом — то, что попалось в пути.
+# The host helper. The name `gh` on the owner's machine is intercepted by a foreign alias, so first
+# the real binary is looked for and only then what turned up in the path.
 gh_bin="${RT_GH_BIN:-}"
 if [ -z "$gh_bin" ]; then
     for candidate in /opt/homebrew/bin/gh /usr/local/bin/gh; do
@@ -74,7 +77,7 @@ fi
 [ -z "$gh_bin" ] && gh_bin="$(command -v gh 2>/dev/null)"
 [ -z "$gh_bin" ] && exit 0
 
-# Предел ожидания: висящий сетевой вызов на завершении хода читается как зависший агент.
+# The waiting limit: a hanging network call at the end of a turn reads as a stuck agent.
 run_gh() {
     if command -v timeout >/dev/null 2>&1; then
         timeout 12 "$gh_bin" "$@" 2>/dev/null
@@ -84,12 +87,12 @@ run_gh() {
         "$gh_bin" "$@" 2>/dev/null
     fi
 }
-# Кэш ответов хостинга. Ключ — ветка: вершина её меняется вместе с ответом, и держать её в ключе
-# значило бы спрашивать хостинг на каждом коммите заново.
+# The cache of the host's answers. The key is the branch: its head changes together with the
+# answer, and holding the head in the key would mean asking the host anew on every commit.
 cache_dir="${TMPDIR:-/tmp}"
 cache_ttl=60
 
-# Свежесть кэша по имени файла: ярусов два, и у каждого свой ответ хостинга.
+# The freshness of the cache by file name: there are two tiers, and each has its own host answer.
 cache_fresh() {
     [ -f "$1" ] || return 1
     now="$(date +%s 2>/dev/null)" || return 1
@@ -107,8 +110,8 @@ safe_name() { printf '%s' "$1" | tr -c 'A-Za-z0-9_.-' '_'; }
 
 tasks_dir="${RT_TASKS_DIR-docs/tasks}"
 
-# Прогон именно на вершине заявки. Последний прогон ветки может принадлежать промежуточному
-# коммиту, и его зелёный цвет о готовности не говорит ничего.
+# The run exactly at the request's head. The branch's last run may belong to an intermediate
+# commit, and its green colour says nothing about readiness.
 run_verdict() {
     run_gh run list --branch "$1" --limit 20 \
         --json headSha,status,conclusion 2>/dev/null \
@@ -121,9 +124,9 @@ run_verdict() {
         ' 2>/dev/null
 }
 
-# Везёт ли ветка папку своей задачи. Читается ветка, а не рабочее дерево: судим то, что въедет.
-# Чужая ветка спрашивается сперва по удалённой ссылке — она и есть то, что видит владелец, — и
-# только потом по локальной копии. Ни одной ссылки нет — ветка не судится вовсе.
+# Does the branch carry its task folder. The branch is read rather than the working tree: what is
+# judged is what will arrive. A foreign branch is asked first by the remote ref — that is what the
+# owner sees — and only then by the local copy. There is no ref at all — the branch is not judged.
 carries_folder() {
     for ref in "origin/$1" "$1"; do
         git rev-parse --verify --quiet "$ref" >/dev/null 2>&1 || continue
@@ -137,7 +140,7 @@ carries_folder() {
     printf 'unknown'
 }
 
-# ── Ярус первый: заявка текущей ветки ────────────────────────────────────────────────────────
+# ── Tier one: the current branch's request ───────────────────────────────────────────────────
 
 reason=''
 
@@ -167,84 +170,90 @@ judge_current() {
 
     [ "$(run_verdict "$branch" "$head_sha")" = "green" ] || return 0
 
-    # Дальше решается, на каком именно шаге стоит работа, и оснований для отказа два.
+    # Next it is decided at which step exactly the work stands, and there are two grounds for a
+    # refusal.
     #
-    # Прежняя редакция гарда знала одно: папки в ветке нет — значит остался один вызов. Молчание
-    # при лежащей папке она считала законным всегда, и остановка просто переехала на шаг назад:
-    # работа была готова, прогон зелёный, папка не разобрана — и гард молчал ровно так же, как
-    # раньше молчал слой правил. Гард, закрывающий последний шаг, переносит остановку на
-    # предыдущий; закрывать надо переход, а не точку. Разбор —
-    # запись «2026-08-16-draft-guard-half-closed» в приёме.
+    # The former edition of the guard knew one: there is no folder in the branch, so one call is
+    # left. Silence with the folder lying it counted lawful always, and the stop simply moved one
+    # step back: the work was ready, the run green, the folder not taken apart — and the guard
+    # stayed silent exactly as the rules layer used to. A guard closing the last step moves the
+    # stop to the previous one; what has to be closed is the transition, not the point. The
+    # analysis is the record «2026-08-16-draft-guard-half-closed» in the intake.
     folder="$(git ls-tree -d --name-only HEAD "$tasks_dir/$branch" 2>/dev/null)"
 
     if [ -z "$folder" ]; then
         step="ready"
     else
-        # Папка на месте. Готова работа или ещё идёт, машине видно только из хода работы: раздел
-        # «Где стоим» — единственное место, где отмечается сделанное. Читается он из ветки, а не
-        # из рабочего дерева: незакоммиченная правка въедет вместе с веткой, а судим мы то, что
-        # въедет.
+        # The folder is in place. Whether the work is ready or still going is visible to a machine
+        # only from the progress: the section "Where we stand" is the only place where done work is
+        # marked. It is read from the branch rather than from the working tree: an uncommitted edit
+        # will arrive together with the branch, and what is judged is what will arrive.
         #
-        # Ловится закрытость этапов образцами, а не пониманием смысла: оценку «работа готова»
-        # назначал бы тот, кому она мешает. Набор открыт, пополняется правкой и промахивается
-        # заметно — ход работы, написанный словами вне набора, гард пропускает, и это его
-        # граница, а не обещание.
-        stage_re='закрыт|кончил|сделаны все|этапов не осталось|последний этап'
+        # The closing of the stages is caught by samples rather than by understanding the meaning:
+        # the appraisal "the work is ready" would be assigned by whoever it hinders. The set is
+        # open, is added to by an edit and misses noticeably — a progress written in words outside
+        # the set the guard lets through, and that is its boundary rather than a promise.
+        #
+        # The line key is read under two names, English and Russian: the progress of this tree
+        # writes the keys in English, and the former sample knew only the Russian one.
+        stage_re='закрыт|кончил|сделаны все|этапов не осталось|последний этап|closed|are over|no stages left|last stage'
         stage_line="$(git show "HEAD:$tasks_dir/$branch/progress.md" 2>/dev/null \
-            | grep -m1 -i '^[[:space:]]*[-*][[:space:]]*\*\*Этап' 2>/dev/null)"
+            | grep -m1 -iE '^[[:space:]]*[-*][[:space:]]*\*\*(Этап|Stage)' 2>/dev/null)"
         if printf '%s' "$stage_line" | grep -qiE "$stage_re" 2>/dev/null; then
             step="teardown"
         else
-            # Этапы ещё открыты — черновик при них законен, и гард молчит.
+            # The stages are still open — a draft with them is lawful, and the guard stays silent.
             return 0
         fi
     fi
 
     if [ "$step" = "ready" ]; then
-        reason="BLOCKED by git-guard-draft-ready: работа готова, а PR #$number всё ещё черновик.
+        reason="BLOCKED by git-guard-draft-ready: the work is ready, and PR #$number is still a draft.
 
-Прогон на вершине \`${head_sha:0:8}\` завершён успехом, папку задачи ветка больше не везёт — значит
-сделано всё, кроме одного вызова. У черновика кнопка слияния заблокирована хостингом: пока он
-стоит, зелёная страница PR владельцу ничего не разрешает, а молчание он читает как поломку.
+The run at the head \`${head_sha:0:8}\` ended in success, and the branch no longer carries the task
+folder — so everything is done but one call. A draft's merge button is locked by the host: while it
+stands, a green PR page allows the owner nothing, and they read the silence as a breakage.
 
     $gh_bin pr ready $number
 
-После этого владельцу говорится одной репликой, что работа готова к слиянию, и называется номер.
-Снятие черновика и просьба влить — один ход, а не два разных дня.
+After that the owner is told in one reply that the work is ready to merge, and the number is named.
+Lifting the draft and the request to merge are one turn, not two different days.
 
-Черновик стоит намеренно — скажи владельцу, чего именно ждёшь, вслух: гард судит один ход и
-следующий заход не отбивает."
+The draft stands on purpose — tell the owner aloud what exactly you are waiting for: the guard
+judges one turn and does not refuse the next approach."
     else
-        reason="BLOCKED by git-guard-draft-ready: этапы закрыты, прогон зелёный, а работа не убрана.
+        reason="BLOCKED by git-guard-draft-ready: the stages are closed, the run is green, and the work is not cleaned up after.
 
-PR #$number черновик, прогон на вершине \`${head_sha:0:8}\` завершён успехом, а ход работы говорит,
-что этапов не осталось. Ветка при этом всё ещё везёт \`$tasks_dir/$branch/\` — значит стоит она
-не на работе, а на уборке за ней.
+PR #$number is a draft, the run at the head \`${head_sha:0:8}\` ended in success, and the progress says
+no stages are left. The branch at that still carries \`$tasks_dir/$branch/\` — so it stands not at the
+work but at the clean-up after it.
 
-Обычно сюда не приходят: уборка стоит до открытия заявки, и открытие с лежащей папкой отбивает
-гард поставки. Папка здесь означает, что заявку открыли обходом — строкой \`Task-folder-skip:\`.
+Usually nobody comes here: the clean-up stands before the request is opened, and opening one with
+the folder lying is refused by the delivery guard. A folder here means the request was opened by a
+bypass — the line \`Task-folder-skip:\`.
 
-Порядок один и он не делится между заходами:
+The order is one and it is not split between sessions:
 
-    1. договорённость вливается в спек домена, тексты приводятся к сделанному;
-    2. папка задачи разбирается последним коммитом — разбор просьбы и решения по ходу в архив,
-       замысел прочь;
+    1. the agreement merges into the domain spec, the texts are brought up to what was done;
+    2. the task folder is taken apart by the last commit — the grill and the decisions along the
+       way to the archive, the plan away;
     3. $gh_bin pr ready $number
-    4. владельцу говорится одной репликой, что работа готова к слиянию, и называется номер.
+    4. the owner is told in one reply that the work is ready to merge, and the number is named.
 
-Папка, оставленная до слияния, въезжает в главную ветку и читается там как текущая. Порядок —
-паттерн \`task-flow-close\`.
+A folder left until the merge arrives in the main branch and reads there as current. The order is
+the pattern \`task-flow-close\`.
 
-Этапы на самом деле не закрыты — поправь «Где стоим» в ходе работы: гард читает именно эту
-строку, и судит он один ход."
+The stages are in fact not closed — fix \"Where we stand\" in the progress: the guard reads exactly
+that line, and it judges one turn."
     fi
 }
 
-# ── Ярус второй: черновики, брошенные в соседних ветках ──────────────────────────────────────
+# ── Tier two: drafts abandoned in neighbouring branches ──────────────────────────────────────
 
 judge_abandoned() {
-    # Имя машинной записи — из профиля дерева. Спрашивать `@me` нельзя: помощник хостинга на
-    # машине владельца залогинен им самим, и список вернулся бы чужим.
+    # The machine account's name comes from the tree's profile. Asking `@me` is not allowed: the
+    # host helper on the owner's machine is signed in as the owner, and the list would come back a
+    # foreign one.
     bot=''
     if [ -n "${RT_BOT:-}" ]; then
         bot="$RT_BOT"
@@ -277,7 +286,7 @@ judge_abandoned() {
         [ "$(run_verdict "$ref" "$sha")" = "green" ] || continue
 
         left="$left
-    #$number  $ref  вершина ${sha:0:8}    $gh_bin pr ready $number"
+    #$number  $ref  head ${sha:0:8}    $gh_bin pr ready $number"
         count=$((count + 1))
     done <<EOF
 $(printf '%s' "$list_json" | jq -r '.[] | [.number, .headRefName, .headRefOid] | @tsv' 2>/dev/null)
@@ -285,21 +294,21 @@ EOF
 
     [ "$count" -eq 0 ] && return 0
 
-    plural='заявка брошена черновиком'
-    [ "$count" -gt 1 ] && plural="заявок брошено черновиками"
+    plural='request is abandoned as a draft'
+    [ "$count" -gt 1 ] && plural="requests are abandoned as drafts"
 
-    reason="BLOCKED by git-guard-draft-ready: $count $plural — прогон по ним дошёл, а черновик не снят.
+    reason="BLOCKED by git-guard-draft-ready: $count $plural — the run on them arrived, and the draft is not lifted.
 $left
 
-Уход в соседнюю ветку заявку не закрывает: прогон по ней кончился успехом, папку задачи она
-больше не везёт, и остался один вызов. Пока черновик стоит, кнопка слияния у владельца
-заблокирована хостингом, а главная ветка уходит вперёд — чем дольше заявка ждёт, тем вероятнее
-конфликт, который придётся разбирать вторым мержем.
+Leaving for a neighbouring branch does not close a request: the run on it ended in success, it no
+longer carries the task folder, and one call is left. While the draft stands, the merge button is
+locked for the owner by the host, and the main branch goes ahead — the longer the request waits,
+the more likely a conflict that will have to be sorted out by a second merge.
 
-Снятие черновика и просьба влить — один ход: сними и назови владельцу номер.
+Lifting the draft and the request to merge are one turn: lift it and name the number to the owner.
 
-Черновик стоит намеренно — скажи владельцу, по какой заявке и чего именно ждёшь, вслух: гард
-судит один ход и следующий заход не отбивает."
+The draft stands on purpose — tell the owner aloud which request it is and what exactly you are
+waiting for: the guard judges one turn and does not refuse the next approach."
 }
 
 judge_current
@@ -307,6 +316,6 @@ judge_current
 [ -z "$reason" ] && exit 0
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-    || printf '{"decision":"block","reason":"git-guard-draft-ready: прогон зелёный, а PR всё ещё черновик — сними его."}\n'
+    || printf '{"decision":"block","reason":"git-guard-draft-ready: the run is green, and the PR is still a draft — lift it."}\n'
 
 exit 0
