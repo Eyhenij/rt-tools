@@ -1,6 +1,8 @@
 <button
     rtBlock="rt-icon-button"
     qa-dataid="icon-button-control"
+    rtRipple
+    [rippleDisabled]="isDisabled() || loading()"
     [rtTooltip]="tooltip()"
     [rtMod]="bemMods()"
     [type]="type()"

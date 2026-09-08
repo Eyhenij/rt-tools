@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, LOCALE_ID, Provider } from '@angular/core';
+import { ChangeDetectionStrategy, Component, LOCALE_ID, Provider, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
@@ -14,20 +14,35 @@ const RU_LOCALE: Provider = { provide: LOCALE_ID, useValue: 'ru' };
 
 @Component({
     selector: 'rt-input-number-host',
-    template: '<rt-input-number [formControl]="control" />',
+    template: '<rt-input-number [formControl]="control" [grouped]="grouped()" [maxFractionDigits]="maxFractionDigits()" />',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtInputNumberComponent, ReactiveFormsModule],
 })
 class InputNumberHostComponent {
     public readonly control: FormControl<number | null> = new FormControl<number | null>(null);
+    /** Умолчания те же, что у самого поля: спека меняет их там, где число сплошное. */
+    public readonly grouped: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly maxFractionDigits: WritableSignal<number> = signal<number>(2);
 }
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtInputNumberComponent> {
     return createRtFixture(RtInputNumberComponent, inputs, { providers: [RU_LOCALE] });
 }
 
-function setupHost(): ComponentFixture<InputNumberHostComponent> {
-    return createRtFixture(InputNumberHostComponent, {}, { providers: [RU_LOCALE] });
+function setupHost(view: { grouped?: boolean; maxFractionDigits?: number } = {}): ComponentFixture<InputNumberHostComponent> {
+    const fixture: ComponentFixture<InputNumberHostComponent> = createRtFixture(InputNumberHostComponent, {}, { providers: [RU_LOCALE] });
+
+    if (view.grouped !== undefined) {
+        fixture.componentInstance.grouped.set(view.grouped);
+    }
+
+    if (view.maxFractionDigits !== undefined) {
+        fixture.componentInstance.maxFractionDigits.set(view.maxFractionDigits);
+    }
+
+    fixture.detectChanges();
+
+    return fixture;
 }
 
 function field<T>(fixture: ComponentFixture<T>): HTMLInputElement {
@@ -65,12 +80,26 @@ describe('RtInputNumberComponent', (): void => {
     });
 
     describe('набор', (): void => {
-        it('разряды группируются прямо во время набора', (): void => {
+        it('SC-UKV-113 — разряды группируются прямо во время набора', (): void => {
             const fixture: ComponentFixture<RtInputNumberComponent> = setup();
 
             type(fixture, '1000000');
 
             expect(field(fixture).value).toBe(`1${NBSP}000${NBSP}000`);
+        });
+
+        it('SC-UKV-114 — полю сплошного числа разделители не ставятся ни при наборе, ни после ухода фокуса', (): void => {
+            // Год разрядами не читается: владелец отзыва видел в поле «2 026».
+            const fixture: ComponentFixture<InputNumberHostComponent> = setupHost({ grouped: false, maxFractionDigits: 0 });
+
+            type(fixture, '2026');
+
+            expect(field(fixture).value).toBe('2026');
+
+            blur(fixture);
+
+            expect(field(fixture).value).toBe('2026');
+            expect(fixture.componentInstance.control.value).toBe(2026);
         });
 
         it('ведущие нули убираются', (): void => {

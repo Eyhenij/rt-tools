@@ -20,7 +20,7 @@ const stylesDir = resolve(root, 'projects/ui-kit-v2/src/styles');
 const typesFile = resolve(root, 'projects/ui-kit-v2/src/lib/tokens/rt-design-tokens.ts');
 
 const source = await import(`file://${stylesDir}/tokens.source.mjs`);
-const { scale, light, darkLayout, coarsePointer } = source;
+const { scale, light, darkLayout, coarsePointer, material } = source;
 
 const BANNER = `/* Built by the generator \`tools/build-tokens-v2.mjs\` from \`tokens.source.mjs\` — edited there, not here:
    an edit on the spot is lost on the next build, and \`pnpm run check:tokens-build\` names it. */`;
@@ -47,6 +47,16 @@ const PREAMBLE = {
 
    The values of the answers live in the source next to their light assignment: a forgotten half of
    a pair is visible right there rather than caught by matching two files. */`,
+    material: `/* The material preset — a second layer of assignments: the kit drawn in the look of the first kit.
+
+   It does not touch the scale steps: a rewritten step would repaint the dark theme as well,
+   and the dark theme refers to those same steps. The values come from the material steps of the scale.
+
+   The body is taken into a @mixin for the same reason as the dark theme's: the preset is needed not
+   only on \`:root\` but on a separate container too — otherwise two presets cannot be shown side by side.
+
+   The preset rule is declared before the dark theme on purpose: the root signs have equal
+   specificity, and the order in the file is the only thing by which the dark theme wins over the preset. */`,
 };
 
 const COARSE_NOTE = `/* On touch devices an input is not smaller than 16px: WebKit (all of iOS, Chrome included)
@@ -95,13 +105,23 @@ const darkNodes = darkLayout.map((node) => {
     return node;
 });
 
+// The material preset declares no names of its own: it overrides the assignments of the base one. A name
+// absent from the base set would otherwise be declared only under the preset sign — a page without the
+// sign would get a dead reference, and that could be seen only on the showcase.
+for (const node of material) {
+    if (!node.name) continue;
+    if (!lightByName.has(node.name)) {
+        fail(`the material preset declares '${node.name}', which is absent from the base assignments`);
+    }
+}
+
 // Every name declared by the source and every consumer's handle.
 const declared = new Set([...scale, ...light, ...darkLayout].filter((n) => n.name).map((n) => n.name));
 const handles = new Set(Object.keys(JSON.parse(readFileSync(resolve(root, 'tools/tokens-handles.json'), 'utf8')).handles ?? {}));
 
 // A reference into nowhere drops the build: a name addressed with a typo simply does not
 // apply otherwise, and that can be seen only on the showcase and only if somebody looks.
-for (const node of [...scale, ...light, ...darkLayout]) {
+for (const node of [...scale, ...light, ...darkLayout, ...material]) {
     if (!node.name) continue;
     for (const value of [node.value, node.dark]) {
         if (typeof value !== 'string') continue;
@@ -140,6 +160,11 @@ const files = {
     [`${stylesDir}/_theme-dark.scss`]:
         `${BANNER}\n\n${PREAMBLE.dark}\n\n@mixin rt-theme-dark-tokens {\n${renderNodes(darkNodes)}\n}\n\n` +
         `:root[data-theme='dark'],\nhtml.rt-theme-dark {\n    @include rt-theme-dark-tokens;\n}\n`,
+
+    [`${stylesDir}/_preset-material.scss`]:
+        `${BANNER}\n\n${PREAMBLE.material}\n\n@mixin rt-preset-material-tokens {\n${renderNodes(material)}\n}\n\n` +
+        `:root[data-preset='material'],\n[data-preset='material'],\n.rt-preset-material {\n` +
+        `    @include rt-preset-material-tokens;\n}\n`,
 
     [typesFile]: renderTypes(),
 };

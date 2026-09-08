@@ -82,6 +82,18 @@ they do not speak at all.
 - **The rightness of a finding the guard does not judge.** That is decided by the executor, and their
   decision is the work of the next turn: a false finding is named to the owner the same way as a true
   one.
+- **A finding is the answer of the role, not the mark met in the turn.** The mark printed in the
+  answer of a tool that reads or writes files, and the mark quoted in the executor's own text, are
+  not a finding: a record of the past naming that mark in its list of what is deliberately kept
+  turned every reading of it into a refusal by a finding that never was. The call whose answer is
+  discarded is recognised by its identifier, so one such call does not mute the answers of all the
+  rest.
+- **The deed by a finding is looked for over the whole record of the turn.** The analysis is created
+  by a command, the work is put right by an edit, and the word to the owner lies in the reply text:
+  narrowed to where the role answers, the search would lock the turn for good.
+- **The refusal quotes the answer it judged.** Taken by a search over the raw record, the quotation
+  names the first mark met — that is, the read file — and sends the executor to look for a finding
+  where there is none.
 
 ## What is out of scope
 

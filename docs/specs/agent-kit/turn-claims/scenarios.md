@@ -234,3 +234,27 @@ the first exit the removal of the statement — a launch of a command for the sa
 refusal is sometimes more dangerous than what the guard watches
 
 Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
+
+### SC-AK-915 — a file read with the mark in it does not hold the turn
+
+Given a record of the past naming the mark of the role was read during the turn
+When the turn ends
+Then the guard stays silent: a mark printed in the answer of a reading tool is not a finding
+
+Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.
+
+### SC-AK-916 — the mark in one's own text is not read as a finding
+
+Given the executor quoted the mark of the role in their own reply
+When the turn ends
+Then the guard stays silent: writing the needed line in a reply costs one move
+
+Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.
+
+### SC-AK-917 — the answer of the role holds the turn after a file with the mark was read
+
+Given a file with the mark was read during the turn, and then the role answered with a repeat
+When the turn ends, and nothing is done about the finding
+Then the guard gives the turn back: one muted call does not mute the answer of the role
+
+Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.

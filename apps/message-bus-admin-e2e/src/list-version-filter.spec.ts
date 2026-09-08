@@ -1,4 +1,4 @@
-import { expect, Page, test } from '@playwright/test';
+import { expect, Locator, Page, test } from '@playwright/test';
 
 import { TREES } from '../stand/stand.mjs';
 import { columnTexts, openSection, pickTree, pickVersion, qa, queryOf, rowsOf, SECTION, sortBy } from './support/admin';
@@ -45,13 +45,24 @@ test.describe('отбор по версии выпуска', () => {
 
         await qa(page, 'list-version-filter').click();
 
-        const offered: string[] = await page.getByRole('option').allTextContents();
+        const expected: readonly string[] = [VERSION.all, VERSION.none, ...POSTMORTEM_VERSIONS];
+        const offered: Locator = page.getByRole('option');
 
-        expect(offered.map((text: string): string => text.trim())).toEqual([VERSION.all, VERSION.none, ...POSTMORTEM_VERSIONS]);
+        // Набор версий приезжает ответом приёмника, а разметкой стоят только два постоянных
+        // пункта. Прочитанный сразу после нажатия, он судил бы загрузку машины: на свободной
+        // проверка зелена, на занятой красна. Ждётся сам набор пунктов, а не его след.
+        await expect(offered).toHaveCount(expected.length);
+
+        expect((await offered.allTextContents()).map((text: string): string => text.trim())).toEqual([...expected]);
     });
 
     test('SC-MB-237, SC-MB-238 — столбец версии стоит за состоянием и пуст у невыпущенной записи', async ({ page }: { page: Page }) => {
         await openSection(page, 'postmortems', '?size=50');
+
+        // Строки приезжают ответом приёмника позже видимой таблицы, а замер без них берёт ноль
+        // с обеих сторон и сравнивает ноль с нулём.
+        await expect(qa(page, 'postmortems-cell-state').first()).toBeVisible();
+        await expect(qa(page, VERSION_CELL).first()).toBeVisible();
 
         const state: { x: number } = (await qa(page, 'postmortems-cell-state').first().boundingBox()) ?? { x: 0 };
         const version: { x: number } = (await qa(page, VERSION_CELL).first().boundingBox()) ?? { x: 0 };
@@ -172,8 +183,11 @@ test.describe('отбор по версии выпуска', () => {
 
         await qa(page, 'list-version-filter').click();
 
-        const offered: string[] = (await page.getByRole('option').allTextContents()).map((text: string): string => text.trim());
+        const expected: readonly string[] = [VERSION.all, VERSION.none, PROPOSAL_VERSION];
+        const offered: Locator = page.getByRole('option');
 
-        expect(offered).toEqual([VERSION.all, VERSION.none, PROPOSAL_VERSION]);
+        await expect(offered).toHaveCount(expected.length);
+
+        expect((await offered.allTextContents()).map((text: string): string => text.trim())).toEqual([...expected]);
     });
 });

@@ -151,3 +151,12 @@ When the guard checks the command
 Then it lets it through: before, the refusal arrived at an attempt to describe this defect too
 
 Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
+
+### SC-AK-918 — a muted call is the named one, not all the answers at once
+
+Given a shell call went during the session, and after it the role answered with a full score
+When a file is edited
+Then the guard stays silent: one muted call does not carry away the answer of the role. A score
+printed by the shell after the answer of the role is not counted as before
+
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.

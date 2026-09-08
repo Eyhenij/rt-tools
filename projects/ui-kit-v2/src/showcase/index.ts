@@ -8,6 +8,7 @@ export * from './story-drag';
 export * from './story-grid.component';
 export * from './story-metrics';
 export * from './story-overlay';
+export * from './story-presets.component';
 export * from './story-row.component';
 export * from './story-snapshot';
 export * from './story-states';

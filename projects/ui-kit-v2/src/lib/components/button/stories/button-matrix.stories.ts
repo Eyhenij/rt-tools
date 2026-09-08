@@ -43,4 +43,14 @@ export const States: TStory = {
     parameters: { pseudo: STORY_PSEUDO_PARAMETERS },
 };
 
+/**
+ * Свой набор оформления и материальный рядом. Показывает то, чего не показывает ни одна
+ * матрица по отдельности: набор переписывает цвет, скругление и тень, оставляя разметку той
+ * же, — и в одиночной матрице половина отличий читается как «так и было».
+ */
+export const Presets: TStory = {
+    args: { part: 'presets' },
+    parameters: { pseudo: STORY_PSEUDO_PARAMETERS },
+};
+
 export const Themes: TStory = { args: { part: 'themes' } };

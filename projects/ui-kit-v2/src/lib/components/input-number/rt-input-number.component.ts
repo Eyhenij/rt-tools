@@ -69,8 +69,17 @@ function clamp(value: number, min: number | null, max: number | null): number {
  * precision = `max(min, min(max, 20))` и фиксирует одинаковую нижнюю/верхнюю
  * границу дробной части (как прежний `toFixed`), меняется только группировка
  * и десятичный разделитель — их даёт `locale`.
+ *
+ * `grouped === false` снимает разделители разрядов: у года, номера дома и кода
+ * разряды значения не несут, и `2026` показывалось как `2 026`.
  */
-function formatNumber(value: number | null, minFractionDigits: number, maxFractionDigits: number, locale: string): string {
+function formatNumber(
+    value: number | null,
+    minFractionDigits: number,
+    maxFractionDigits: number,
+    locale: string,
+    grouped: boolean
+): string {
     if (value === null) {
         return '';
     }
@@ -79,7 +88,7 @@ function formatNumber(value: number | null, minFractionDigits: number, maxFracti
     return value.toLocaleString(locale, {
         minimumFractionDigits: precision,
         maximumFractionDigits: precision,
-        useGrouping: true,
+        useGrouping: grouped,
     });
 }
 
@@ -165,10 +174,15 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
     public readonly max: InputSignal<number | null> = input<number | null>(null);
     public readonly minFractionDigits: InputSignal<number> = input<number>(0);
     public readonly maxFractionDigits: InputSignal<number> = input<number>(2);
+    /**
+     * Группировать ли разряды. Снимается у чисел, которые разрядами не читаются:
+     * год, номер дома, код. У года разделитель превращает `2026` в `2 026`.
+     */
+    public readonly grouped: InputSignal<boolean> = input<boolean>(true);
 
     public override writeValue(value: number | null): void {
         super.writeValue(value);
-        this.displayValue.set(formatNumber(this.value(), this.minFractionDigits(), this.maxFractionDigits(), this.#locale));
+        this.displayValue.set(formatNumber(this.value(), this.minFractionDigits(), this.maxFractionDigits(), this.#locale, this.grouped()));
     }
 
     protected getEmptyValue(): number | null {
@@ -206,7 +220,7 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
      */
     protected override clearValue(): void {
         this.value.set(0);
-        this.displayValue.set(formatNumber(0, this.minFractionDigits(), this.maxFractionDigits(), this.#locale));
+        this.displayValue.set(formatNumber(0, this.minFractionDigits(), this.maxFractionDigits(), this.#locale, this.grouped()));
     }
 
     protected onInput(event: Event): void {
@@ -250,7 +264,7 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
             return;
         }
         const clamped: number = clamp(parsed, this.min(), this.max());
-        const formatted: string = formatNumber(clamped, this.minFractionDigits(), this.maxFractionDigits(), this.#locale);
+        const formatted: string = formatNumber(clamped, this.minFractionDigits(), this.maxFractionDigits(), this.#locale, this.grouped());
         // `formatted` содержит разделители локали — обратный парс через
         // parseNumber (а не parseFloat) даёт округлённое числовое значение.
         const rounded: number = parseNumber(formatted, this.#groupSep) ?? clamped;
@@ -295,7 +309,9 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
         if (intDigits === '') {
             intPart = sep === '' ? '' : '0';
         } else {
-            intPart = this.#groupInteger(intDigits);
+            // Набор идёт тем же видом, что и показ на blur: иначе разделители
+            // появлялись бы при наборе и пропадали после ухода из поля.
+            intPart = this.grouped() ? this.#groupInteger(intDigits) : intDigits;
         }
 
         let out: string = negative ? `-${intPart}` : intPart;

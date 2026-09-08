@@ -22,6 +22,10 @@ The references were taken on the same machine the pipeline runs on, so the compa
 held at zero and a small edit does not pass silently. A change of machine or of browser version
 means re-taking all the references rather than sorting out divergences.
 
+Two traits of the machine are taken out of that dependence at the second kit — the timezone and the
+browser's language: they change by themselves, without a change of machine at all. They are set by
+the run's settings file; the list of what is undetermined says how.
+
 ## A state that is not in the frame
 
 A story of its own is created for a state the snapshot does not reach by itself: a tooltip, a button
@@ -77,7 +81,19 @@ chosen file, an opened panel are reached by a press in `play`.
   harness drives them to the end before the shot;
 - the icon font lies next to the showcase and is served by it rather than travelling from a foreign
   network; an icon keeps itself invisible until it is loaded, so the harness itself calls the
-  loading of the families and refuses if they did not come up.
+  loading of the families and refuses if they did not come up;
+- the timezone and the browser's language — by the run's own settings file at the second kit's
+  showcase, `projects/ui-kit-v2/.storybook/test-runner-jest.config.js`. The run picks a file of
+  that name up from the showcase config directory and hands it to the test builder instead of its
+  own default; a file in the tree root would be read by the first kit's run as well.
+
+**Two settings are needed there, not one, and this is measured rather than reasoned.** The
+context's `locale` moves `navigator.language` and the request header but does not touch the format
+of a native date field: that one the browser draws in the language of its own launch. On one
+date-picker story: without settings the month came first and the clock was twelve-hour, with
+`locale` alone the same, with the launch language `15.03.2026` and `09:30`. The timezone is the
+other way round — it obeys
+the context, and a debug-protocol session sets it too, while the language it does not.
 
 ## The sweep over all the stories — before the references are taken
 
@@ -154,3 +170,8 @@ something else.
   registry of what was taken, not by `test-storybook` itself.
 - **The pointer outlives the move between stories.** Hover from one arrives in the snapshot of the
   next: a story without hover carries the pointer away into a corner.
+- **An orphaned reference can be a consequence rather than a rename.** A story that takes a second
+  frame at a threshold width does not reach it once the first frame has fallen: the second is never
+  taken, and its reference reads as orphaned. Eight such stood next to fifteen divergences and went
+  away together with them, without a single file deleted. So the orphan list is read after the
+  divergences are cured, not before: deleted on sight, those references would have to be taken anew.

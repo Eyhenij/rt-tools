@@ -120,10 +120,18 @@ export const lightForms = [
         value: `var(--rt-control-max-width)`,
     },
     {
+        lead: `    /* Скругление контрола — назначение, а не ступень на месте. Кнопка, поле ввода и
+       всё, что стоит с ними в строке, берут его отсюда: набор оформления живёт слоем
+       назначений и до ступени, взятой компонентом напрямую, не достаёт. */`,
+        space: true,
+        name: `--rt-radius-control`,
+        value: `var(--rt-radius-lg)`,
+    },
+    {
         lead: `    /* Radius / spacing / border */`,
         space: true,
         name: `--rt-input-radius`,
-        value: `var(--rt-radius-lg)`,
+        value: `var(--rt-radius-control)`,
     },
     {
         name: `--rt-input-padding-x`,

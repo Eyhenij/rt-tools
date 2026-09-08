@@ -29,9 +29,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | ось           | значения                                                        | умолчание |
 | ------------- | --------------------------------------------------------------- | --------- |
 | палитра       | `ghost`, `primary`, `secondary`, `danger`, `success`, `warning` | `ghost`   |
-| размер        | `sm` 28, `md` 36, `lg` 44, `xl` 52, `2xl` 60 px                 | `md`      |
+| размер        | `sm` 32, `md` 40, `lg` 48, `xl` 56, `2xl` 64 px                 | `md`      |
 | размер иконки | от кнопки (`null`), `xs`…`2xl`                                  | от кнопки |
-| форма         | `square`, `circle`                                              | `square`  |
+| форма         | `square`, `rounded-sm`, `rounded-lg`, `circle`                  | `square`  |
 | признаки      | обычная, нажата, с точкой, загрузка, отключена                  | обычная   |
 
 Перемножены палитра с формой (у круглой кнопки заливка читается иначе) и признак с палитрой.
@@ -74,6 +74,12 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Диаметр — `--rt-icon-button-size`, заливка наведения — `--rt-icon-button-color-bg-hover`.
 Модификаторы в камелкейсе конвертируются в дефис: `indicator` → `rt-icon-button--has-indicator`.
 
+Тень покоя — `--rt-icon-button-shadow`; по умолчанию тени нет, и потребитель поднимает кнопку сам.
+
+Материальный набор — второй слой назначений поверх светлой темы: он переписывает цвет, скругление
+и тень, не трогая ни разметку, ни размеры, и включается признаком `data-preset='material'` на
+корне страницы или на любом контейнере. Пара наборов рядом показана историей **Presets**.
+
 ## Входы
 
 | вход        | тип                                                                         | умолчание                   |
@@ -84,7 +90,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `size`      | `'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                                     | `'md'`                      |
 | `iconSize`  | `IRtIcon.Size \| null`                                                      | `null` → от размера кнопки  |
 | `iconColor` | `IRtIcon.Color`                                                             | `'current'`                 |
-| `shape`     | `'circle' \| 'square'`                                                      | `'square'`                  |
+| `shape`     | `'square' \| 'rounded-sm' \| 'rounded-lg' \| 'circle'`                      | `'square'`                  |
 | `type`      | `'button' \| 'submit'`                                                      | `'button'`                  |
 | `tooltip`   | `string`                                                                    | `''` — пусто, подсказки нет |
 | `tabIndex`  | `number`                                                                    | `0`                         |

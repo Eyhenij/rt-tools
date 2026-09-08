@@ -1,0 +1,240 @@
+@use './breakpoints' as bp;
+
+/* Словарь формы панели: раздел, колонка контролов, строка контрола, элемент в ряду. Объявлен
+   классами, а не компонентом, поэтому доехать до потребителя может только через агрегатор
+   стилей. Иерархия одна на кит: до неё каждое приложение заводило свою, и одно имя значило в
+   двух деревьях разное — `controls` было и колонкой контролов раздела, и полосой кнопок внизу
+   панели.
+
+   Блок формы объявляется ровно один раз на панель и стоит НАД полосой вкладок: вкладки лежат
+   внутри формы, а не наоборот. Носителем бывает и `<form>`, и `<div>` — форма Angular и блок
+   формы разные вещи, и `[formGroup]` законно живёт ниже, обёрткой над одной строкой контрола.
+
+   Промежуток задаёт контейнер своим зазором, а своего отступа нет ни у одного элемента. Так у
+   каждого промежутка один источник: зазор не достаётся первому ребёнку, не складывается с
+   зазором зоны содержимого панели и действует на проецируемое содержимое наравне со своей
+   разметкой — а правило соседства знает только те имена, которые перечислены в нём самом. */
+
+@layer rt-kit.components {
+    .rt-form {
+        display: flex;
+        width: 100%;
+        flex: 1 1 100%;
+        flex-direction: column;
+        gap: var(--rt-space-xl);
+
+        /* Раздел: смысловая группа полей. Вкладывается в себя — цвет внутри сезона остаётся
+           разделом, а не заводит третье имя. */
+        &__item {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            gap: var(--rt-space-xl);
+        }
+
+        /* Колонка контролов раздела: всё, что в разделе выстроено сверху вниз. Её зазор — ритм
+           строк, и он же отбивает заголовок раздела от первой строки. */
+        &__controls {
+            position: relative;
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            gap: var(--rt-space-md);
+        }
+
+        /* Заголовок раздела и описание под ним. Оба живут внутри колонки контролов: подпись
+           принадлежит столбцу, а не разделу целиком. */
+        &__title {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-md);
+            font-weight: var(--rt-font-weight-semibold);
+            line-height: var(--rt-leading-snug);
+        }
+
+        &__title-descr {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            line-height: var(--rt-leading-normal);
+        }
+
+        /* Строка контрола: один ряд колонки. Поле занимает строку целиком — иначе каждый
+           потребитель дописывает ширину сам. Зазор строки разводит элементы в ряду. */
+        &__control-item {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: flex-start;
+            gap: var(--rt-space-xl);
+
+            /* Поле, стоящее в строке одно, занимает её целиком. Без этого оно получает ширину
+               по содержимому и обрывается посреди строки, оставляя справа пустое место. */
+            > rt-field {
+                min-width: 0;
+                flex: 1 1 auto;
+            }
+        }
+
+        /* Строка, разведённая по краям: подпись у начала, значение у конца. Так стоит
+           карточка просмотра — записи в ней показывают, а не правят. */
+        &__control-item--split {
+            justify-content: space-between;
+        }
+
+        /* Строка колонкой: подпись сверху, контрол под ней. Берётся там, где подпись рядом с
+           контролом не встаёт — в узкой панели три состояния права рядом с его именем
+           переносились бы по слогам. */
+        &__control-item--stack {
+            flex-direction: column;
+            align-items: stretch;
+            gap: var(--rt-space-xs);
+        }
+
+        /* Элемент в ряду: два и больше контролов, стоящих рядом в одной строке. Нулевая нижняя
+           граница ширины обязательна: без неё длинное значение не даёт строке перенестись, и
+           соседи сжимаются до столбика по одной букве. */
+        &__control-sub-item {
+            display: flex;
+            min-width: 0;
+            align-items: center;
+            justify-content: flex-start;
+
+            /* Поле внутри элемента ряда занимает его целиком. Без этого элемент растянут своим
+               видом, а поле в нём стоит по ширине содержимого: в панели внешней брони шесть
+               полей занимали меньше половины своей колонки. */
+            > rt-field {
+                min-width: 0;
+                flex: 1 1 auto;
+            }
+        }
+
+        /* Подпись в паре «подпись — значение»: приглушённый цвет отличает её от значения. */
+        &__control-sub-item--label {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+
+        /* Значение рядом с подписью: длинное переносится в любом месте — адрес почты и имя
+           процедуры по словам не переносятся. */
+        &__control-sub-item--value {
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+            overflow-wrap: anywhere;
+        }
+
+        /* Элемент, делящий ширину строки поровну с соседями: пара дат встаёт одной ширины, а не
+           по ширине своего содержимого. */
+        &__control-sub-item--grow {
+            flex: 1;
+        }
+
+        /* Значение снятой записи: адреса, которого больше нет. */
+        &__control-sub-item--gone {
+            color: var(--rt-color-text-muted);
+        }
+
+        /* Приписка о неудаче: приёмник запрос не принял. */
+        &__control-sub-item--warning {
+            color: var(--rt-color-state-warning);
+        }
+
+        /* Подпись над контролом — там, где своей подписи у контрола нет. */
+        &__label {
+            display: block;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-medium);
+        }
+
+        /* Ссылка на связанную запись: обычная ссылка с иконкой перехода. */
+        &__related {
+            display: inline-flex;
+            align-items: center;
+            align-self: flex-start;
+            color: var(--rt-color-text-link);
+            font-size: var(--rt-text-sm);
+            gap: var(--rt-space-xs);
+        }
+
+        /* Полоса меток записи: их бывает много, и в одну строку они не влезают. */
+        &__tags {
+            display: flex;
+            flex-flow: row wrap;
+            align-items: center;
+            gap: var(--rt-space-xs);
+        }
+
+        /* Строки одной службы в общей рамке: ключей у службы бывает два, и рамка на каждом
+           читалась бы как две разные карточки. */
+        &__framed-list {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-radius-md);
+
+            > * + * {
+                border-top: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+            }
+        }
+
+        /* Длинное тело запроса или ответа: по словам оно не переносится и прокручивается внутри
+           своего блока, чтобы не растягивать панель. */
+        &__code {
+            overflow: auto;
+            padding: var(--rt-space-xs);
+            border-radius: var(--rt-radius-sm);
+            margin: 0;
+            background: var(--rt-color-bg-surface-subtle);
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-xs);
+            max-block-size: 12rem;
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+        }
+
+        /* Просмотр готового документа: лист виден целиком, рамка отделяет его от полей. */
+        &__preview {
+            width: 100%;
+            height: 460px;
+            flex-shrink: 0;
+            border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-radius-sm);
+        }
+
+        /* Запись внутри общей рамки: свой внутренний отступ и ритм строк. Без него строки
+           записей лежат вплотную к рамке и к соседней записи, и перечень читается сплошной
+           лентой слов. */
+        &__framed-item {
+            display: flex;
+            flex-direction: column;
+            padding: var(--rt-space-sm) var(--rt-space-md);
+            gap: var(--rt-space-xs);
+        }
+
+        /* Маячок догрузки в конце списка: он невидим и только отмечает низ, до которого
+           дочитали. */
+        &__sentinel {
+            block-size: 1px;
+        }
+
+        /* Зона содержимого вкладки внутри формы: разделы лежат в ней, и ритм у них тот же, что
+           у разделов вне вкладок. Своим зазором зона вкладок отбивает произвольное содержимое,
+           и разделы формы получали от неё чужой шаг — панель с вкладками и панель без них
+           показывали одни и те же разделы по-разному. */
+        .rt-tabs__content {
+            gap: var(--rt-space-xl);
+        }
+    }
+
+    /* На узком экране панель занимает весь экран, и ритм разделов сжимается вдвое. Порог тот же,
+       что у самой панели. Ритм строк не трогается: строки и на узком идут тем же шагом. */
+    @media (width <= #{bp.$rt-bp-md}) {
+        .rt-form,
+        .rt-form__item,
+        .rt-form .rt-tabs__content {
+            gap: var(--rt-space-md);
+        }
+    }
+}

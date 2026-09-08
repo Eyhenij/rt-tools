@@ -180,6 +180,24 @@ The sections below are this tree's articles: the law's technique is named by the
       such a case is re-taken, and the conclusion "the layout moved" is made by a measurement, not
       by the share of the divergence.
 
+- **A styling preset is a second layer of assignments, not a second scale and not a theme.** The kit
+  has one scale of steps and one set of assignment names; a preset rewrites the values of the
+  assignments and touches neither. Rewriting a step repaints the dark theme too — it refers to those
+  same steps — and a name absent from the base set would live under the preset flag alone, leaving a
+  dead reference on a page without the flag. The build refuses both.
+  <!-- rt-when: *.scss *.css *.mjs -->
+
+- **The preset flag is an attribute or a class on the page root or on a container, and the kit does
+  not switch it in code.** That is what tells a preset from a theme: the theme has a kit service
+  that remembers the choice, the preset has none — the application sets the flag. A preset scoped to
+  a container is what lets two presets stand side by side on one page.
+  <!-- rt-when: *.scss *.css *.html -->
+
+- **The dark theme wins over a preset, and it wins by the order in the file, not by specificity.**
+  Both flags sit on the same root with equal specificity, so the preset rule is emitted before the
+  dark theme's. A preset declared after it would silently repaint the dark theme with light values.
+  <!-- rt-when: *.scss *.css *.mjs -->
+
 ## What of the law is not here
 
 The agreement of the media query with the breakpoints service is counted by nothing: the threshold
