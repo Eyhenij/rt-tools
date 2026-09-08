@@ -2,7 +2,7 @@
 name: agent-kit-extend
 description: Ready-made examples of how a tree adds its own on top of the rules package. Load when the package text says something that is not true here, the gate demands the wrong rule or a guard judges by the wrong paths. Layout and settings — skill agent-kit; the shape of a new skill — write-a-skill.
 ---
-<!-- rt-kit v0.25.0 · skills/agent-kit-extend.md · 9a289cb25603 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · skills/agent-kit-extend.md · 9a289cb25603 · правится надстройкой, не здесь -->
 
 # How to add your own on top of the package
 

@@ -1,4 +1,4 @@
-// rt-kit v0.25.0 · checks/lib-manifests.mjs · 75d83514d0f9 · правится надстройкой, не здесь
+// rt-kit v0.26.0 · checks/lib-manifests.mjs · 75d83514d0f9 · правится надстройкой, не здесь
 /**
  * The lib itself: the mandatory files, the project name, the selector prefix, the tag and the
  * import alias — everything `project.json` and `tsconfig.base.json` must match the lib path on

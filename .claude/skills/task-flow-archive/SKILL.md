@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when the texts are up to date and the task folder is taken apart by the last commit before the PR opens. The move to the archive, the work queue audit, the rules review of the closed work and what to do with the findings.
 ---
-<!-- rt-kit v0.25.0 · patterns/task-flow-archive.md · 0650841b4aa9 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · patterns/task-flow-archive.md · 0650841b4aa9 · правится надстройкой, не здесь -->
 
 # Taking the task folder apart and the rules review of the work
 

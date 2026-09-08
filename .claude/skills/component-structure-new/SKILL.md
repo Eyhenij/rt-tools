@@ -4,7 +4,7 @@ kind: pattern
 rule: component-structure
 description: Pattern of rule component-structure. Load when creating or editing *.component.ts — the ready-made decorator with property order, import grouping, class field layout, template conventions and qa-dataid. Not for state and streams — that is pattern angular-patterns-state.
 ---
-<!-- rt-kit v0.25.0 · patterns/component-structure-new.md · a1cf27649e96 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · patterns/component-structure-new.md · a1cf27649e96 · правится надстройкой, не здесь -->
 
 # The component file
 

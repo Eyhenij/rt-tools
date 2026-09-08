@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/guard-note.sh · d95e4eedd989 · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/guard-note.sh · d95e4eedd989 · правится надстройкой, не здесь
 # The record of a guard refusal. NOT a guard: it has no `rt-hook:` declaration and hooks into no
 # agent event. The shared deny tail sources it — the one place every refusal passes through.
 #

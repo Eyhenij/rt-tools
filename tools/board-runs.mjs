@@ -1,4 +1,4 @@
-// rt-kit v0.25.0 · checks/board-runs.github.mjs · 7a1873d9ab83 · правится надстройкой, не здесь
+// rt-kit v0.26.0 · checks/board-runs.github.mjs · 7a1873d9ab83 · правится надстройкой, не здесь
 /**
  * The state of the runs and of the rollout at the hosting: what stands on the head, how it ended
  * and by how much production has fallen behind the main branch.

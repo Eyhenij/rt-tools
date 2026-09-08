@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of work from the owner's request to the merge. Load at the start of any work, when editing task folders and product agreements, and when returning to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. End of a turn — turn-conduct.
 ---
-<!-- rt-kit v0.25.0 · rules/task-flow.md · c30d521918d7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · rules/task-flow.md · c30d521918d7 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 

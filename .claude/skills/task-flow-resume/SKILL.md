@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when returning to unfinished work in a new session. What is already in the context, what not to ask the owner, how to edit "Where we stand", how to record a decision along the way and a stage revision. Not for starting work — that is pattern task-flow-start.
 ---
-<!-- rt-kit v0.25.0 · patterns/task-flow-resume.md · aa0bfcb122bf · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · patterns/task-flow-resume.md · aa0bfcb122bf · правится надстройкой, не здесь -->
 
 # Returning to unfinished work
 

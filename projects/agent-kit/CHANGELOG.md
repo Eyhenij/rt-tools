@@ -1,3 +1,40 @@
+# [0.26.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.25.0...rt-agent-kit@0.26.0) (2026-09-08)
+
+### Bug Fixes
+
+- **rt:agent-kit:** гард совести берёт вердикт роли только из её ответа ([d96c994](https://github.com/Eyhenij/rt-tools/commit/d96c9947e210749e14db467b32f2496cd887cff8))
+- **rt:agent-kit:** замыслом эпика считается документ с таблицей состава ([154068d](https://github.com/Eyhenij/rt-tools/commit/154068d1f2251dff11121f590350c8651534b909))
+- **rt:agent-kit:** конвейеры публикации пересобирают замок после публикации ([cb21c1c](https://github.com/Eyhenij/rt-tools/commit/cb21c1c89009defdb84c2914a34b6f4623b942be))
+- **rt:agent-kit:** корни наборов объявляются своим ключом ([8731494](https://github.com/Eyhenij/rt-tools/commit/8731494c489968e26a76c5ce1fc9554330e94123))
+- **rt:agent-kit:** отбор у гарда экзамена узнаёт вызов по опознавателю ([0db125e](https://github.com/Eyhenij/rt-tools/commit/0db125e951d12c8e3e39639714c19628c15e65fc))
+- **rt:agent-kit:** правило поставки говорит, что активная запись клиента выбирается на машину ([37eae3d](https://github.com/Eyhenij/rt-tools/commit/37eae3d4fd97316fc9062b08f9bcc774aaf0dffb))
+- **rt:agent-kit:** принадлежность эпику объявляется словом о задаче ([eafba56](https://github.com/Eyhenij/rt-tools/commit/eafba560c2a91b578684a39b46dab09c6ca1ff65))
+- **rt:agent-kit:** раздел правила о текстах назван «Скил без закона» ([f479e9a](https://github.com/Eyhenij/rt-tools/commit/f479e9ae45340e7efa8ef81a0ad79daa33eda1f0))
+- **rt:agent-kit:** сверка спеков читает пункты за подзаголовком и называет, что нашла вместо них ([2a5ace3](https://github.com/Eyhenij/rt-tools/commit/2a5ace3aadaae352c1f4858df35f0a3a7432a6b1))
+- **rt:agent-kit:** столбец задачи в замысле эпика читается под двумя именами ([247b46f](https://github.com/Eyhenij/rt-tools/commit/247b46f4f5c890275206be517b81e5f9a21dcf4e))
+- **rt:agent-kit:** страж выходов отбивает по имени ход, кончившийся ожиданием слова владельца ([133ed76](https://github.com/Eyhenij/rt-tools/commit/133ed76f27aa93a9fe04d36b3b247ca9561675ed))
+
+### Features
+
+- **rt:agent-kit:** импорты из соседних пакетов сверяются с опубликованной версией соседа ([98976f4](https://github.com/Eyhenij/rt-tools/commit/98976f40d48203cb594da2a76d232d03ede9d32c))
+- **rt:agent-kit:** ключи папки задачи читаются под двумя именами ([36c406f](https://github.com/Eyhenij/rt-tools/commit/36c406fc95cc67679be1015d887d5189d7c460a7))
+- **rt:agent-kit:** ключи разделов спека читаются под двумя именами ([e30c97c](https://github.com/Eyhenij/rt-tools/commit/e30c97cb2d7b7e3c5f265b72f0029ef35d56e32f))
+- **rt:agent-kit:** команды груза печатают вывод по-английски ([a4d0a75](https://github.com/Eyhenij/rt-tools/commit/a4d0a7590d3c5a150a46781c492cf94f51f05615))
+- **rt:agent-kit:** образец домена написан по-английски ([ca695c5](https://github.com/Eyhenij/rt-tools/commit/ca695c5017e498d79d5d7508d5d8e6277f1aa37c))
+- **rt:agent-kit:** остаток кириллицы в хуках и проверках дожат, замер записан ([cc20da8](https://github.com/Eyhenij/rt-tools/commit/cc20da8d2f5e2fa1971a6f0871ae313b80b15b2f))
+- **rt:agent-kit:** отказы двадцати хуков написаны по-английски ([3ca09e9](https://github.com/Eyhenij/rt-tools/commit/3ca09e9eb3483ab4375e9cc70df8ec2afb412bd7))
+- **rt:agent-kit:** отказы ещё одиннадцати проверок написаны по-английски ([25f9597](https://github.com/Eyhenij/rt-tools/commit/25f9597a4427a38f7247fbe65fa7553aed73660a))
+- **rt:agent-kit:** отказы ещё шестнадцати хуков написаны по-английски ([0e503c1](https://github.com/Eyhenij/rt-tools/commit/0e503c125f04fd97abffa4aff6eae307cf2078fc))
+- **rt:agent-kit:** отказы проверок пакета написаны по-английски ([a5533c2](https://github.com/Eyhenij/rt-tools/commit/a5533c2f26ee56f311833e3ee9c0890d57ca75fa))
+- **rt:agent-kit:** отказы пятнадцати проверок написаны по-английски ([358c902](https://github.com/Eyhenij/rt-tools/commit/358c902a207077e4dcbf4d57bd851a75b81cddb4))
+- **rt:agent-kit:** отказы сверки очереди, схемы и спек написаны по-английски ([6b8e3cd](https://github.com/Eyhenij/rt-tools/commit/6b8e3cd769274dc77ed7596edbae70316d74ab2a))
+- **rt:agent-kit:** отказы хуков пакета написаны по-английски ([8168f98](https://github.com/Eyhenij/rt-tools/commit/8168f982371eb04b6cdf47dfeca830b10cac5010))
+- **rt:agent-kit:** проверка импортов из соседей печатает отказы по-английски ([0f3b539](https://github.com/Eyhenij/rt-tools/commit/0f3b539a5f2212b552413b6c499a4485ea79b4f9))
+- **rt:agent-kit:** проверка слога ловит английский канцелярит наравне с русским ([4bcac43](https://github.com/Eyhenij/rt-tools/commit/4bcac43a68ec7e9a5413a4fdc75869ead316042c))
+- **rt:agent-kit:** раздел привязок и вердикт компаньона читаются под двумя именами ([ce490f0](https://github.com/Eyhenij/rt-tools/commit/ce490f0c84de272357b26bd4ee4c3cbead261af7))
+- **rt:agent-kit:** раздел состояния и строка движения читаются под двумя именами, английским и русским ([b109c06](https://github.com/Eyhenij/rt-tools/commit/b109c063318d1e74d50ecb8b08ba2b5d8e19e8be))
+- **rt:agent-kit:** свои хуки печатают отказы по-английски ([6bf78d0](https://github.com/Eyhenij/rt-tools/commit/6bf78d0526a53695dd8d2eef5587f7b53fdb4138))
+
 # [0.25.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.24.0...rt-agent-kit@0.25.0) (2026-09-06)
 
 ### Bug Fixes

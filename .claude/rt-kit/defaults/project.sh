@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · defaults/project.sh · c444dfed641c · правится надстройкой, не здесь
+# rt-kit v0.26.0 · defaults/project.sh · c444dfed641c · правится надстройкой, не здесь
 # Tree profile: what checks an edit here and what counts as reinvention.
 #
 # The package default. Everything the trees of this workshop have in common lives here: the Nx
