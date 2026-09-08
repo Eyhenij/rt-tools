@@ -4,9 +4,8 @@ The first column is the rule verbatim, as it is written in the "Rules" section o
 without a line and a line without a rule is a divergence: the spec promises what is not in the
 code, or the code holds what the spec is silent about.
 
-The agreement is proposed. All twelve rules of it are carried out by the task RT-1897 and carry a
-symbol: the storage and the addition of rights by stage two, the check of access by stage three,
-what the admin panel is given by stage four.
+All twelve rules are carried out by the task RT-1897 and carry a symbol: the storage and the
+addition of rights, the check of access by a right, and what the admin panel is given.
 
 - **A right is the pair "resource and action", and the set of rights is closed.** — `libs/message-bus-api/access/util/src/lib/rights.ts:RIGHTS`
 - **A role is a named set of rights, and a person has one role.** — `prisma/schema.prisma:Role`
@@ -19,4 +18,4 @@ what the admin panel is given by stage four.
 - **A refusal by a right does not name which right was missing.** — `libs/message-bus-api/access/feature/src/lib/access.guard.ts:AccessGuard`
 - **A token of a tree carries no rights and opens no operation declared by a right.** — `libs/message-bus-api/access/feature/src/lib/access.guard.ts:AccessGuard`
 - **The answer about the signed-in person carries their rights whole.** — `libs/message-bus-api/accounts/feature/src/lib/auth.controller.ts:ISessionAnswer`
-- **Until the rights are received the admin panel hides nothing.** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:AuthStore.allows`
+- **Until the rights are received the admin panel hides nothing.** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:allows`

@@ -1,12 +1,14 @@
 # A right, a role and the check that reads them
 
-**Status:** proposed · **Revision:** 8 September 2026 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 8 September 2026 · **Scenario prefix:** `SC-MB`
 **Depends on:** `docs/specs/message-bus/admin-auth/spec.md`
 **Laws:** `access`
 **Procedures:** none — the operations are declared by the controllers of the receiver
 
-An agreement about the product written before the code. It is merged into the spec of the domain by
-the last commits of the task branch and does not reach the main branch as a separate document.
+A subdomain of the domain "the intake of the cargo": what a person may do after the entry. The
+entry itself — who came and how long that lasts — is described by the subdomain of the entry of a
+person next to it; who the sections and the menu items are shown to — by the subdomain of the shell
+of the admin application.
 
 ## Why
 
@@ -93,10 +95,14 @@ list of the rights of that person, computed at the minute of the request.
 
 ### Refusal codes
 
-| Code | When                                                                                      |
-| ---- | ----------------------------------------------------------------------------------------- |
-| 401  | there is no sign-in, it expired, it was revoked, or the account is disabled               |
-| 403  | there is a sign-in, and the right the operation declared is not among the person's rights |
+Not applicable: the receiver answers with a code of the answer of HTTP, not with named codes of the
+domain. Where an operation closed by a right is obliged to refuse instead of staying silent:
+
+| What happened                                                         | Code  | What it says                                                  |
+| --------------------------------------------------------------------- | ----- | ------------------------------------------------------------- |
+| there is no sign-in, it expired, it was revoked or the account is off | `401` | that the operation demands a sign-in                          |
+| there is a sign-in, and the declared right is not among the rights    | `403` | that the operation demands a right; which one it does not say |
+| a token of a tree was presented to an operation closed by a right     | `401` | the same as without a sign-in                                 |
 
 ## Data
 
