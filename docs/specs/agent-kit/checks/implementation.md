@@ -50,3 +50,4 @@ whole.
 - **A request opened not into the main branch is named by a line of its own.** — `projects/agent-kit/assets/checks/check-board.github.mjs:baseRefName` — the base arrives by the same request as the other fields of the request; scenario SC-AK-845
 - **The check of the archive keeping time demands a day later than the cleanup removes.** — `projects/agent-kit/assets/checks/archive-age.mjs:CHECK_GRACE_DAYS` — the check calls the shared pick with a margin, the cleanup without one; scenarios SC-AK-869, SC-AK-870, SC-AK-871
 - **The answer of the work queue helper says whose eyes the state was taken by.** — `projects/agent-kit/assets/checks/board.github.mjs:viewerOf` — the field is set by `taskState` and `pullState`; scenario SC-AK-873
+- **The plan of an epic is the document that carries the makeup, not the first path in the card.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkEpicLinks` — the table is read by `planRows`; scenario SC-AK-919

@@ -218,6 +218,13 @@ outward is watched by is said by the subdomain of the delivery guards.
   machine record is limited by the hosting took a person's picture for a checked one. The field
   `viewer` in the answer is `machine` or `client`; the login is not printed, fetching it would take a
   second request to the network.
+- **The plan of an epic is the document that carries the makeup, not the first path in the card.** A
+  card names its decision next to its plan, and the decision has no table of tasks: read as the
+  plan, it makes the makeup empty and every open task of the epic reads as not belonging to it —
+  fourteen false lines at once, and the true ones drowned among them. Every path the body names is
+  read, and the plan is the first of them that carries a table with a task column. None of the named
+  documents on disk, and none of those on disk carrying the makeup, are two divergences of their
+  own: one sends the reader to write the plan, the other to write the table.
 
 ## What is out of scope
 

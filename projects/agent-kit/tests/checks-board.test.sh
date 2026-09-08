@@ -178,6 +178,33 @@ export STUB_ISSUES="$(epic_issues 'Повод')"
 rm -f "$BOARD_TREE/docs/plans/epic.md"
 report "SC-AK-751 — замысла нет на диске" "$(board_says 'is not on disk — the card points into emptiness')" 1
 
+# --- SC-AK-919 — замыслом считается документ с таблицей состава --------------------------------
+# Карточка называет своё решение рядом с замыслом, и решение стоит первым. Пока замыслом считался
+# первый путь в теле, состав выходил пустым, и все открытые задачи эпика читались как не входящие
+# в него: четырнадцать ложных строк разом.
+mkdir -p "$BOARD_TREE/docs/adr"
+printf '%s\n' '# Решение' '' 'Решение о том, что киту быть одному.' > "$BOARD_TREE/docs/adr/decision.md"
+printf '%s\n' '# Замысел эпика' '' '| № | Задача |' '| - | ------ |' '| 1 | RT-702 |' \
+    > "$BOARD_TREE/docs/plans/epic.md"
+
+epic_two_docs() {
+    printf '[{"number":700,"title":"[RT-700] Эпик","state":"OPEN","assignees":[{"login":"probe"}],"labels":[{"name":"epic"}],"body":"Решение — docs/adr/decision.md; порядок задач — docs/plans/epic.md"},{"number":702,"title":"[RT-702] Задача","state":"OPEN","assignees":[{"login":"probe"}],"labels":[],"body":"%s"}]' "$1"
+}
+
+export STUB_ISSUES="$(epic_two_docs 'Повод')"
+report "SC-AK-919 — решение перед замыслом состав не прячет" \
+    "$(board_says '#702: the plan of the epic #700 names the task')" 1
+export STUB_ISSUES="$(epic_two_docs 'Задача эпика #700, замысел — docs/plans/epic.md')"
+report "SC-AK-919 — с решением перед замыслом двусторонняя привязка молчит" "$(board_says 'эпик')" 0
+
+# Ни один названный документ состава не несёт — это своя строка, а не молчание и не «нет на диске».
+printf '%s\n' '# Замысел эпика' '' 'Порядок задач ещё не записан.' > "$BOARD_TREE/docs/plans/epic.md"
+export STUB_ISSUES="$(epic_two_docs 'Повод')"
+report "SC-AK-919 — ни один названный документ состава не несёт" \
+    "$(board_says 'none of the documents the card names carries the makeup')" 1
+
+rm -f "$BOARD_TREE/docs/adr/decision.md" "$BOARD_TREE/docs/plans/epic.md"
+
 board_config "$BOARD_CONFIG"
 export STUB_ISSUES="$saved_issues"
 export STUB_BOARD="$saved_board"
