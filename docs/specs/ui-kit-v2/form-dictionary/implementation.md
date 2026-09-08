@@ -18,3 +18,9 @@
 - **На узком экране ритм разделов сжимается, и порог тот же, что у самой панели.** — `projects/ui-kit-v2/src/styles/_form.scss:rt-bp-md`, порог панели — `projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.scss:media`; сценарий `SC-UKV-104`
 - **Раздел вкладывается в себя, и третьего имени под вложенный раздел нет.** — `projects/ui-kit-v2/src/styles/_form.scss:__item`, вложенный раздел в показе — `projects/ui-kit-v2/src/showcase/stories/component/test-form-dictionary.component.html:form-item-meals`; сценарий `SC-UKV-100`
 - **Раздел панели берёт словарь сам.** — `projects/ui-kit-v2/src/lib/components/aside-section/rt-aside-section.component.html:rt-form`, своих правил раскладки у раздела не осталось — `projects/ui-kit-v2/src/lib/components/aside-section/rt-aside-section.component.scss:rt-aside-section`; сценарий `SC-UKV-105`
+- **Виды строки и элемента объявлены словарём, а не потребителем.** — `projects/ui-kit-v2/src/styles/_form.scss:__control-item--split`; сценарии `SC-UKV-106`, `SC-UKV-107`
+- **Элемент в ряду умеет сжиматься.** — `projects/ui-kit-v2/src/styles/_form.scss:min-width`; сценарий `SC-UKV-108`
+- **Зона содержимого вкладки внутри формы отбивает разделы ритмом формы.** — `projects/ui-kit-v2/src/styles/_form.scss:rt-tabs__content`; сценарий `SC-UKV-109`
+- **Поле, стоящее в строке контрола одно, занимает её целиком.** — `projects/ui-kit-v2/src/styles/_form.scss:rt-field`; сценарий `SC-UKV-110`
+- **Поле внутри элемента ряда занимает элемент целиком.** — `projects/ui-kit-v2/src/styles/_form.scss:__control-sub-item`; сценарий `SC-UKV-112`
+- **Запись внутри общей рамки несёт свой внутренний отступ.** — `projects/ui-kit-v2/src/styles/_form.scss:__framed-item`; сценарий `SC-UKV-111`

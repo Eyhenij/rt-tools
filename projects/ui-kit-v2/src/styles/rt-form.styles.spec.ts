@@ -87,6 +87,29 @@ describe('стили словаря формы панели', (): void => {
         });
     });
 
+    it('SC-UKV-106 — виды строки и элемента объявлены все, и карточка просмотра размечается', (): void => {
+        // Пары «подпись — значение» держатся на этих видах: без них половина панелей
+        // потребителя объявит раскладку у себя, ради снятия которой словарь и переехал.
+        ['--split', '--stack'].forEach((view: string): void => {
+            expect(css).toContain(`.rt-form__control-item${view}`);
+        });
+        ['--label', '--value', '--grow', '--gone', '--warning'].forEach((view: string): void => {
+            expect(css).toContain(`.rt-form__control-sub-item${view}`);
+        });
+    });
+
+    it('SC-UKV-107 — имена, стоящие в панели рядом с полями, объявлены словарём', (): void => {
+        ['__label', '__related', '__tags', '__framed-list', '__code', '__preview', '__sentinel'].forEach((name: string): void => {
+            expect(css).toContain(`.rt-form${name}`);
+        });
+    });
+
+    it('SC-UKV-108 — элемент в ряду умеет сжиматься, иначе длинное значение ломает строку', (): void => {
+        // Без нулевой нижней границы ширины соседи сжимаются до столбика по одной букве:
+        // так разъехалась вкладка документа в рабочем приложении.
+        expect(ruleBody(css, '.rt-form__control-sub-item')).toContain('min-width: 0');
+    });
+
     it('SC-UKV-102 — все правила словаря стоят внутри подслоя оформления', (): void => {
         expect(parts.inLayer).toContain('.rt-form');
         expect(parts.outsideLayer).not.toContain('.rt-form');
@@ -104,5 +127,27 @@ describe('стили словаря формы панели', (): void => {
 
     it('SC-UKV-104 — порог узкого экрана в словаре один с порогом самой панели', (): void => {
         expect(threshold(css)).toBe(threshold(sass.compile(PANEL).css));
+    });
+
+    it('SC-UKV-109 — разделы внутри вкладки отбиты ритмом формы, а не ритмом вкладок', (): void => {
+        expect(ruleBody(css, '.rt-form .rt-tabs__content')).toContain('gap: var(--rt-space-xl)');
+    });
+
+    it('SC-UKV-111 — запись в общей рамке несёт свой внутренний отступ', (): void => {
+        expect(ruleBody(css, '.rt-form__framed-item')).toContain('padding');
+    });
+
+    it('SC-UKV-110 — поле, стоящее в строке одно, занимает её целиком', (): void => {
+        expect(ruleBody(css, '.rt-form__control-item > rt-field')).toContain('flex: 1 1 auto');
+    });
+
+    it('SC-UKV-112 — поле внутри элемента ряда занимает элемент целиком', (): void => {
+        expect(ruleBody(css, '.rt-form__control-sub-item > rt-field')).toContain('flex: 1 1 auto');
+    });
+
+    it('SC-UKV-109 — на узком экране зона вкладок сжимается вместе с формой', (): void => {
+        const at: number = css.indexOf('@media');
+
+        expect(css.slice(at)).toContain('.rt-form .rt-tabs__content');
     });
 });

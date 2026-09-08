@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtInputComponent } from '../../../lib/components/input/rt-input.component';
+import { RtTagComponent } from '../../../lib/components/tag/rt-tag.component';
 
 /**
  * Демонстрационная обёртка для витрины: словарь формы панели целиком. Показывает все семь имён
@@ -32,7 +33,9 @@ import { RtInputComponent } from '../../../lib/components/input/rt-input.compone
         // standalone components / directives
         BlockDirective,
         ElemDirective,
+        ModDirective,
         RtInputComponent,
+        RtTagComponent,
     ],
 })
 export class TestRtFormDictionaryComponent {}

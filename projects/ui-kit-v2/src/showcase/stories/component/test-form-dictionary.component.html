@@ -39,4 +39,67 @@
             </div>
         </div>
     </div>
+
+    <div rtElem="item" qa-dataid="form-item-card">
+        <div rtElem="controls">
+            <h3 rtElem="title">Карточка просмотра</h3>
+            <p rtElem="title-descr">Записи здесь показывают, а не правят: строка разведена по краям.</p>
+
+            <div rtElem="control-item" [rtMod]="{ split: true }">
+                <span rtElem="control-sub-item" [rtMod]="{ label: true }">Номер брони</span>
+                <span rtElem="control-sub-item" [rtMod]="{ value: true }">31</span>
+            </div>
+
+            <div rtElem="control-item" [rtMod]="{ split: true }">
+                <span rtElem="control-sub-item" [rtMod]="{ label: true }">Почта</span>
+                <span rtElem="control-sub-item" [rtMod]="{ value: true }">very-long-guest-address@example.test</span>
+            </div>
+
+            <div rtElem="control-item" [rtMod]="{ split: true }">
+                <span rtElem="control-sub-item" [rtMod]="{ label: true }">Прежний адрес</span>
+                <span rtElem="control-sub-item" [rtMod]="{ gone: true }">снят с публикации</span>
+            </div>
+
+            <div rtElem="control-item" [rtMod]="{ split: true }">
+                <span rtElem="control-sub-item" [rtMod]="{ label: true }">Отправка</span>
+                <span rtElem="control-sub-item" [rtMod]="{ warning: true }">приёмник запрос не принял</span>
+            </div>
+
+            <div rtElem="control-item">
+                <span rtElem="control-sub-item" [rtMod]="{ grow: true }">
+                    <rt-input placeholder="Начало" />
+                </span>
+                <span rtElem="control-sub-item" [rtMod]="{ grow: true }">
+                    <rt-input placeholder="Конец" />
+                </span>
+            </div>
+
+            <div rtElem="control-item" [rtMod]="{ stack: true }">
+                <span rtElem="label">Право на правку</span>
+                <rt-input placeholder="Кому выдано" />
+            </div>
+
+            <a rtElem="related" href="#">Связанная запись</a>
+
+            <div rtElem="tags">
+                <rt-tag value="сайт" />
+                <rt-tag value="оплачено" severity="success" />
+            </div>
+
+            <div rtElem="framed-list">
+                <div rtElem="control-item" [rtMod]="{ split: true }">
+                    <span rtElem="control-sub-item" [rtMod]="{ label: true }">Ключ</span>
+                    <span rtElem="control-sub-item" [rtMod]="{ value: true }">публичный</span>
+                </div>
+                <div rtElem="control-item" [rtMod]="{ split: true }">
+                    <span rtElem="control-sub-item" [rtMod]="{ label: true }">Ключ</span>
+                    <span rtElem="control-sub-item" [rtMod]="{ value: true }">тайный</span>
+                </div>
+            </div>
+
+            <pre rtElem="code">{{ '{ "status": "ok" }' }}</pre>
+
+            <div rtElem="sentinel"></div>
+        </div>
+    </div>
 </div>
