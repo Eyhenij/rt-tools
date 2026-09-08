@@ -133,19 +133,6 @@
         0 0 0 var(--rt-focus-ring-offset) var(--rt-color-bg-surface),
         0 0 0 calc(var(--rt-focus-ring-offset) + var(--rt-focus-ring-width)) var(--rt-focus-ring-color-danger);
 
-    /* Stepper (rt-stepper) — рельса прогресса. Текущий шаг — янтарный (одинаков
-       в обеих темах); трек/прогресс переопределяются в dark на приглушённые. */
-    --rt-color-stepper-current: var(--rt-amber-400); /* rt-theme-shared: янтарь текущего шага один в обеих темах */
-    --rt-color-stepper-current-subtle: var(--rt-overlay-amber-16); /* rt-theme-shared: янтарь текущего шага один в обеих темах */
-    --rt-color-stepper-track: var(--rt-gray-350);
-    --rt-color-stepper-progress: var(--rt-color-action-primary);
-
-    /* Step-indicator ring — halo вокруг активного пункта rt-stepper. */
-    --rt-shadow-step-indicator: 0 0 0 4px var(--rt-color-stepper-current-subtle);
-
-    /* Status-dot ring — halo вокруг точки «объект занят сейчас». */
-    --rt-shadow-status-dot: 0 0 0 3px var(--rt-color-state-success-bg);
-
     /* State */
     --rt-color-state-success: var(--rt-success-500); /* rt-theme-shared: цвет статуса один в обеих темах */
     --rt-color-state-success-bg: var(--rt-success-50);
@@ -160,6 +147,19 @@
     --rt-color-state-error-text: var(--rt-danger-600);
     --rt-color-state-info: var(--rt-info-500); /* rt-theme-shared: цвет статуса один в обеих темах */
     --rt-color-state-info-bg: var(--rt-info-50);
+
+    /* Stepper (rt-stepper) — рельса прогресса. Текущий шаг — янтарный (одинаков
+       в обеих темах); трек/прогресс переопределяются в dark на приглушённые. */
+    --rt-color-stepper-current: var(--rt-amber-400); /* rt-theme-shared: янтарь текущего шага один в обеих темах */
+    --rt-color-stepper-current-subtle: var(--rt-overlay-amber-16); /* rt-theme-shared: янтарь текущего шага один в обеих темах */
+    --rt-color-stepper-track: var(--rt-gray-350);
+    --rt-color-stepper-progress: var(--rt-color-action-primary);
+
+    /* Step-indicator ring — halo вокруг активного пункта rt-stepper. */
+    --rt-shadow-step-indicator: 0 0 0 4px var(--rt-color-stepper-current-subtle);
+
+    /* Status-dot ring — halo вокруг точки «объект занят сейчас». */
+    --rt-shadow-status-dot: 0 0 0 3px var(--rt-color-state-success-bg);
 
     /* Chat — пузыри переписки. Входящее и своё различаются фоном, а не рамкой:
        рамка на каждом пузыре дробит ленту. Отметка прочтения синяя — единственный

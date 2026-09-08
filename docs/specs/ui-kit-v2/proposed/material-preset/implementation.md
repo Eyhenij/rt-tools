@@ -32,10 +32,10 @@
 - **`SC-UKV-117`** — теста нет
 - **`SC-UKV-118`** — теста нет
 - **`SC-UKV-119`** — теста нет
-- **`SC-UKV-120`** — теста нет
-- **`SC-UKV-121`** — теста нет
+- **`SC-UKV-120`** — `tools/tests/check-preset-complete.test.sh`, сборщику покрытия не виден
+- **`SC-UKV-121`** — `tools/tests/check-preset-complete.test.sh`, сборщику покрытия не виден
 - **`SC-UKV-122`** — теста нет
-- **`SC-UKV-123`** — теста нет
+- **`SC-UKV-123`** — `tools/tests/check-tokens-theme.test.sh`, сборщику покрытия не виден
 - **`SC-UKV-124`** — теста нет
 - **`SC-UKV-125`** — теста нет
 - **`SC-UKV-126`** — теста нет
