@@ -10,7 +10,18 @@ import { RtIconComponent } from '../../rt-icon.component';
 import { IRtIcon } from '../../rt-icon.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TIconMatrixPart = 'catalog' | 'size' | 'color' | 'rotate' | 'themes' | 'social' | 'material' | 'presets' | 'preset-axes';
+export type TIconMatrixPart =
+    | 'catalog'
+    | 'size'
+    | 'color'
+    | 'rotate'
+    | 'themes'
+    | 'social'
+    | 'material'
+    | 'material-catalog'
+    | 'material-themes'
+    | 'presets'
+    | 'preset-axes';
 
 /** Категория набора со своими именами — строка каталога. */
 interface IIconCategoryGroup {
@@ -101,6 +112,40 @@ interface IIconCategoryGroup {
                 <p class="app-icon-matrix__note">
                     Прочерк — имя, которому рисунка в наборе нет вовсе: его дорисовывают. Пара выбрана по смыслу, и смотреть её надо
                     глазами: проверка держит только то, что имя существует и файл на месте.
+                </p>
+            }
+
+            @case ('material-catalog') {
+                <div data-preset="material">
+                    <app-story-row caption="Материальный набор целиком" [items]="materialDrawn">
+                        <ng-template let-name>
+                            <rt-icon size="lg" [name]="name" />
+                        </ng-template>
+                    </app-story-row>
+                </div>
+
+                <p class="app-icon-matrix__note">
+                    Двадцать восемь имён — всё, что закрыто рисунком Material. Остальные три с лишним сотни имён кита набор не трогает: он
+                    слой переопределений, и они рисуются своим рисунком под тем же признаком набора.
+                </p>
+            }
+
+            @case ('material-themes') {
+                <app-story-themes caption="Материальный набор в обеих темах">
+                    <ng-template>
+                        <div data-preset="material">
+                            @for (name of materialDrawn; track name) {
+                                <rt-icon size="lg" [name]="name" />
+                            }
+                        </div>
+                    </ng-template>
+                </app-story-themes>
+
+                <p class="app-icon-matrix__note">
+                    Рисунок красится
+                    <code>currentColor</code>
+                    и в тёмной теме берёт её цвет текста — своего цвета у него нет. Тёмная тема выигрывает у набора: это её правило, а не
+                    пропуск материального набора.
                 </p>
             }
 
