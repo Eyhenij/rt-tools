@@ -35,5 +35,12 @@ export const Themes: TStory = { args: { part: 'themes' } };
  */
 export const MaterialMap: TStory = { args: { part: 'material' } };
 
+/**
+ * Один и тот же значок в двух наборах рядом. Набор рисунков выбирается вместе с набором
+ * оформления: признак стоит на половине, и кит меняет рисунок сам — кодом его никто не
+ * переключает.
+ */
+export const MaterialGlyphs: TStory = { args: { part: 'presets' } };
+
 /** Знаки соцсетей: заливка в файле, ось цвета не действует — показываются парой тем. */
 export const Social: TStory = { args: { part: 'social' } };

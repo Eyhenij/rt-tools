@@ -1,15 +1,16 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { CATEGORY_ORDER, categoryOf, TIconCategory } from '../../icon-categories';
-import { iconMaterialMap, IRtIconMaterialEntry } from '../../rt-icon-material-map';
+import { iconMaterialDrawn, iconMaterialMap, IRtIconMaterialEntry } from '../../rt-icon-material-map';
 import { iconsName } from '../../rt-icon-names';
 import { RtIconComponent } from '../../rt-icon.component';
 import { IRtIcon } from '../../rt-icon.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TIconMatrixPart = 'catalog' | 'size' | 'color' | 'rotate' | 'themes' | 'social' | 'material';
+export type TIconMatrixPart = 'catalog' | 'size' | 'color' | 'rotate' | 'themes' | 'social' | 'material' | 'presets';
 
 /** Категория набора со своими именами — строка каталога. */
 interface IIconCategoryGroup {
@@ -103,6 +104,26 @@ interface IIconCategoryGroup {
                 </p>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Один и тот же значок в двух наборах: свой рисунок и материальный">
+                    <ng-template>
+                        <div class="app-icon-matrix__map">
+                            @for (entry of materialDrawn; track entry) {
+                                <div class="app-icon-matrix__pair">
+                                    <rt-icon size="lg" [name]="entry" />
+                                    <code>{{ entry }}</code>
+                                </div>
+                            }
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+
+                <p class="app-icon-matrix__note">
+                    Набор рисунков выбирается вместе с набором оформления: признак стоит на половине, и кит меняет рисунок сам. Имена,
+                    которых в материальном наборе нет, рисуются своим — набор слой переопределений, а не второй полный каталог.
+                </p>
+            }
+
             @case ('social') {
                 <app-story-themes caption="Знаки соцсетей в обеих темах: цвет задан в файле, тема его не трогает">
                     <ng-template>
@@ -148,6 +169,7 @@ interface IIconCategoryGroup {
         RtIconComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],
@@ -164,6 +186,11 @@ export class TestRtIconMatrixComponent {
 
     /** Перечень соответствия значков первого кита: пару выбирают по смыслу, и смотрят её глазами. */
     public readonly materialMap: readonly IRtIconMaterialEntry[] = iconMaterialMap;
+
+    /** Имена, у которых материальный рисунок есть: только их и показывает пара наборов. */
+    public readonly materialDrawn: readonly IRtIcon.Name[] = [...iconMaterialDrawn].sort(
+        (left: IRtIcon.Name, right: IRtIcon.Name): number => left.localeCompare(right)
+    );
 
     /** Весь набор, разложенный по категориям в порядке `CATEGORY_ORDER`. */
     public readonly catalog: readonly IIconCategoryGroup[] = CATEGORY_ORDER.map((category: TIconCategory): IIconCategoryGroup => ({
