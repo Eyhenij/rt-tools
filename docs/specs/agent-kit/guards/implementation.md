@@ -21,6 +21,7 @@ whole.
 - **The state is judged before the agreement and its bypass.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:progress`
 - **A session begun from a handover edits no files while the rule of conducting work is not loaded.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:verdict`
 - **The handover is recognised both by the path to it and by a word about it.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:from_handoff`
+- **A guard of an edit judges a write by a shell command on a par with one by the edit tool.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:rt_write_targets` — the shared parse; scenarios `SC-AK-928`–`SC-AK-930`
 - **A refusal of a guard names two lawful moves.** — `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`
 - **The lawful shape of a bypass is named by the same tail, and its absence too.** — `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`
 - **The tail of a refusal is assembled by a shared function, not by every text on its own.** — `projects/agent-kit/assets/hooks/git-guard-main.sh:deny_tail_text`
