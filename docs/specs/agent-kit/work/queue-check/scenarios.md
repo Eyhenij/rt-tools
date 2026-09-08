@@ -229,3 +229,13 @@ Then the number of what was sifted out is named, and without cargo there is no l
 all: a silent sifting is indistinguishable from a check whose mark is named with a typo
 
 Covered: `projects/agent-kit/tests/checks-board-cargo.test.sh`.
+
+### SC-AK-923 — a task with the mark of the cargo is judged as a task
+
+Given the tree named the mark of the cargo, and a card carries it together with a title with a
+number
+When the check of the work queue goes
+Then the card is asked about the executor and the board like any task, and it does not enter the
+count of the cargo; a record of the cargo next to it is sifted out as before
+
+Covered: `projects/agent-kit/tests/checks-board-cargo.test.sh`.

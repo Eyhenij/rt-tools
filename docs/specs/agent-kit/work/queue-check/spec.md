@@ -75,6 +75,13 @@ the total.
   carried out literally: over one session the request was reclosed twice in a row, and the run stood
   only after the main branch was merged in. The line names the reason that gets fixed, and there are
   no commands of reclosing in it.
+- **A card carrying a title with a number is a task, whatever marks it wears.** The mark of the
+  cargo takes a record out of the task half whole, and a tree puts that same mark on the tasks
+  that grew out of cargo: that is how the reader sees where the work came from. Read by the mark
+  alone, such a task was asked about neither by executor, nor by the board, nor by the link with
+  an epic, nor by a matching title, and a request about it got the line "the task is not among the
+  open ones". A record of the cargo has no title with a number at all, so the two signs never
+  argue: the title decides, the mark sifts out what is left.
 
 ## What is out of scope
 

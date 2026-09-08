@@ -112,9 +112,12 @@ export const messageBusAdminBoundaries = [
         sourceTag: 'scope:message-bus-admin-auth-feature-sign-in',
         onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-ui', AUTH_DATA_ACCESS, AUTH_UTIL, CORE_UI, CORE_UTIL, PACKAGE],
     },
+    // Стражи закрытой ветки стоят здесь оба, и второй читает право раздела из объявления пункта
+    // меню: свой список прав рядом с маршрутами разошёлся бы с меню молча. Оболочку он при этом
+    // не видит — она грузится по требованию, и статическая ссылка на неё это потеряла бы
     {
         sourceTag: 'scope:message-bus-admin-auth-shell',
-        onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-feature-sign-in', AUTH_DATA_ACCESS, AUTH_UTIL, PACKAGE],
+        onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-feature-sign-in', AUTH_DATA_ACCESS, AUTH_UTIL, CONTAINER_UTIL, PACKAGE],
     },
     {
         sourceTag: 'scope:message-bus-admin-auth-ui',
@@ -131,6 +134,9 @@ export const messageBusAdminBoundaries = [
 
     // Оболочка: она знает, кто вошёл, куда его вывести при выходе, из чего собрано меню и чем
     // рисуется шапка. Сама шапка предмета не знает — разделы и вошедший приходят к ней входами
+    // Оболочка видит словарь по той же причине, что шапка и меню: свою подпись она показывает
+    // одну — экран для того, кому не открыт ни один раздел, — и написанная разметкой она
+    // разошлась бы с остальными подписями админки молча
     {
         sourceTag: 'scope:message-bus-admin-common-container-feature',
         onlyDependOnLibsWithTags: [
@@ -139,6 +145,7 @@ export const messageBusAdminBoundaries = [
             AUTH_DATA_ACCESS,
             AUTH_UTIL,
             CONTAINER_UTIL,
+            CORE_UTIL,
             PACKAGE,
         ],
     },
@@ -151,10 +158,12 @@ export const messageBusAdminBoundaries = [
         onlyDependOnLibsWithTags: [PACKAGE],
     },
     // Меню видит словарь: подписи разделов оно берёт оттуда же, откуда их берут сами разделы, —
-    // переписанные в декларации литералом, они расходятся с заголовком экрана молча
+    // переписанные в декларации литералом, они расходятся с заголовком экрана молча. Общую либу
+    // оно видит ради имени права: тем же именем приёмник закрывает свою операцию, и свой список
+    // имён в админке разошёлся бы с ним молча
     {
         sourceTag: 'scope:message-bus-admin-common-container-util',
-        onlyDependOnLibsWithTags: [CORE_UTIL, PACKAGE],
+        onlyDependOnLibsWithTags: [CONTRACT, CORE_UTIL, PACKAGE],
     },
     {
         sourceTag: 'scope:message-bus-admin-common-container-api',

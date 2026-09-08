@@ -25,7 +25,7 @@ import {
     Query,
 } from '@nestjs/common';
 
-import { SessionOperation } from '@rt/message-bus-api/access/util';
+import { RequiresRight } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { findLiveInviteByName, IStoredInvite, readInvites, revokeInvite } from '@rt/message-bus-api/trees/data-access';
 import { EInviteRefusal, inviteState } from '@rt/message-bus-api/trees/util';
@@ -64,7 +64,7 @@ export class InvitesReadController {
      * заполняет — у него нет метки, — и в бою работает умолчание.
      */
     @Get()
-    @SessionOperation()
+    @RequiresRight('invites:read')
     public async page(@Query() query: Record<string, unknown>, at: Date = new Date()): Promise<IPage<ITreeInviteView>> {
         const fault: string | null = pageFault(query, TREE_INVITE_SORTABLE);
 
@@ -89,7 +89,7 @@ export class InvitesReadController {
      * этот довод не заполняет — у него нет метки, — и в бою работает умолчание.
      */
     @Post()
-    @SessionOperation()
+    @RequiresRight('invites:manage')
     public async issue(@Body() body: unknown, at: Date = new Date()): Promise<ITreeInviteIssued> {
         const fields: Record<string, unknown> = (body ?? {}) as Record<string, unknown>;
         const raw: unknown = fields['name'];
@@ -132,7 +132,7 @@ export class InvitesReadController {
      * отзываемого, и он же становится временем отзыва.
      */
     @Delete(':name')
-    @SessionOperation()
+    @RequiresRight('invites:manage')
     public async revoke(@Param('name') name: string, at: Date = new Date()): Promise<ITreeInviteView> {
         const live: IStoredInvite | null = await findLiveInviteByName(this.#prisma, name);
 

@@ -248,4 +248,12 @@ export const darkLayout = [
     {
         name: `--rt-color-bg-surface-auth-card`,
     },
+    {
+        lead: `    /* Skeleton — заглушка загрузки: покой и гребень волны. */`,
+        space: true,
+        name: `--rt-color-skeleton-base`,
+    },
+    {
+        name: `--rt-color-skeleton-wave`,
+    },
 ];
