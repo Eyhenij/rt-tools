@@ -75,6 +75,10 @@ the work.
   is taken up past the rule.
 - **The handover is recognised both by the path to it and by a word about it.** It is given as text no
   less often than as a path.
+- **A guard of an edit judges a write by a shell command on a par with one by the edit tool.** The
+  same text with the name of the shell instead of the name of the edit gave silence, and a whole
+  session worked past the rule that way. The target is taken by the shared parse of write targets: a
+  command that writes nothing wakes no guard, otherwise reading the tree would be refused.
 - **The plan guard judges the declared transition, not the presence of files.** An artefact on the disk
   does not say whether the work has reached the editing of code: an empty plan put there to lift the
   refusal lies the same way a written one does. The state of the work is declared by a line in the
