@@ -140,6 +140,13 @@ refuses the push.
   miss.
 - **The signature is read on the machine, without the network.** A network call would fall together
   with the connection and would refuse work where the signature is right.
+- **The repair named in the refusal is let through by the refusal itself.** It is a commit too, and
+  without the exception the guard refused it together with the miss: the divergence is removed only
+  by a commit, and a commit is refused while the divergence is there. What is recognised is not
+  trust in the line but the declared mail — the same address the guard named itself, in both
+  signature variables at once, next to a rewrite of the last commit; faking that means putting the
+  right signature. A send is never a repair, whatever stands in its variables: after it only a
+  forced one helps.
 - **A refusal about the signature names the commit by name and both mails.** A miss in one character
   is not found by eye: without the found and the declared value side by side the refusal would have
   to be taken apart by hand.

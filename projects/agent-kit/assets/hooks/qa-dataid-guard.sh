@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file
-# Requires: hooks/profile-check.sh, hooks/deny-tail.sh
+# rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # Anchor guard for end-to-end tests. PreToolUse on a markup edit.
 #
 # Specs address elements only through this attribute. Styling classes change together with the
@@ -38,15 +38,33 @@ input="$RT_HOOK_INPUT"
 command -v jq >/dev/null 2>&1 || exit 0
 command -v perl >/dev/null 2>&1 || exit 0
 
+rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# The write targets are taken by the shared parse: the same sign serves the guard of the place of an
+# edit, and two copies of it would let through different shapes of a write. No file — a silent
+# default remains, so that the guard does not break on an incomplete layout.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/write-targets.sh" ] && . "$rt_hooks_dir/write-targets.sh" 2>/dev/null
+command -v rt_write_targets >/dev/null 2>&1 || rt_write_targets() { cat >/dev/null; }
+
 tool="$(rt_hook_tool)"
+cmd=""
 case "$tool" in
     # The IDE tool creates a file from the same two pieces of data, only names them differently —
     # without this branch markup was created past all the checks.
-    Edit | Write | MultiEdit | mcp__webstorm__create_new_file) ;;
+    Edit | Write | MultiEdit | mcp__webstorm__create_new_file)
+        path="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
+        ;;
+    # Markup written by a shell command is judged the same: the same text with the name of the shell
+    # instead of the name of the edit gave silence, and a screen written by a heredoc got into the
+    # tree without a single anchor.
+    Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool)
+        cmd="$(rt_hook_cmd)"
+        [ -z "$cmd" ] && exit 0
+        path="$(printf '%s' "$cmd" | rt_write_targets | grep -m1 '\.html$')"
+        ;;
     *) exit 0 ;;
 esac
-
-path="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
 # The path from the IDE arrives relative to the tree root, while all the samples below are
 # written from the application directory. Bring it to one form once, so the rules do not double.
 case "$path" in
@@ -59,7 +77,6 @@ case "$path" in
 esac
 
 # The tree profile: first the package default, over it the project override, if there is one.
-rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
@@ -83,11 +100,16 @@ if [ -n "${RT_QA_SKIP_RE:-}" ] && printf '%s' "$path" | grep -qE "$RT_QA_SKIP_RE
 fi
 
 # Only the NEW text is checked: what already lay in the file was not created by this edit, and
-# demanding an anchor from someone else's line means refusing the edit of a neighbouring one.
-added="$(printf '%s' "$input" | jq -r '
-    [ .tool_input.content?, .tool_input.text?, .tool_input.new_string?, (.tool_input.edits[]?.new_string) ]
-    | map(select(. != null)) | join("\n")
-' 2>/dev/null)"
+# demanding an anchor from someone else's line means refusing the edit of a neighbouring one. For a
+# shell command the new text is the body of the command: the written markup stands inside it.
+if [ -n "$cmd" ]; then
+    added="$cmd"
+else
+    added="$(printf '%s' "$input" | jq -r '
+        [ .tool_input.content?, .tool_input.text?, .tool_input.new_string?, (.tool_input.edits[]?.new_string) ]
+        | map(select(. != null)) | join("\n")
+    ' 2>/dev/null)"
+fi
 [ -z "$added" ] && exit 0
 
 decorative="$(rt_needs rt_qa_decorative qa-dataid-guard && rt_qa_decorative 2>/dev/null)"

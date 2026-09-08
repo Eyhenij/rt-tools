@@ -401,6 +401,28 @@ Then it refuses the same way: the uncommitted leaves by the same push right afte
 
 Covered: `projects/agent-kit/tests/checks-schema-drift.test.sh`.
 
+### SC-AK-932 — the shadow database is created by a command of its own
+
+Given the server answers and the shadow database is torn down before the run
+When the schema-against-migrations audit is run
+Then it creates the shadow database itself and does not leave that to the deploy command
+
+Covered: `projects/agent-kit/tests/checks-schema-drift.test.sh`.
+
+### SC-AK-933 — a defect of the check is told apart from a divergence of the migrations
+
+Given the deploy command answered `P1001` — the same code it says about a missing database as about
+an unreachable server
+When the audit reads that answer
+Then it names the refusal a defect of the check itself, not a divergence of the migrations: the
+shadow database was created a line above
+
+Given the deploy command refused with anything else
+When the audit reads that answer
+Then it names the refusal a divergence: the migrations do not apply to a clean database
+
+Covered: `projects/agent-kit/tests/checks-schema-drift.test.sh`.
+
 ### SC-AK-869 — a record of seven days and an hour the cleanup removes, and the check stays silent
 
 Given the keeping time is seven days, the record was committed seven days and an hour ago
