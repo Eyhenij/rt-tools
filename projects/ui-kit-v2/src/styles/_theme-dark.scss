@@ -134,6 +134,10 @@
     /* Special — Auth surface (градиентный фон логина + прозрачная карточка). */
     --rt-color-bg-page-auth: linear-gradient(156deg, var(--rt-neutral-950) 12.68%, var(--rt-navy-900) 99.28%);
     --rt-color-bg-surface-auth-card: transparent;
+
+    /* Skeleton — заглушка загрузки: покой и гребень волны. */
+    --rt-color-skeleton-base: var(--rt-charcoal-950);
+    --rt-color-skeleton-wave: var(--rt-charcoal-border);
 }
 
 :root[data-theme='dark'],

@@ -1,145 +1,5 @@
 {
   "accepted": {
-    "contrast --rt-chat-bubble-date on --rt-chat-bubble-own-bg in the light": {
-      "reason": "4.29:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-386"
-    },
-    "contrast --rt-chat-bubble-date on --rt-chat-bubble-own-bg in the dark": {
-      "reason": "3.71:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-272"
-    },
-    "contrast --rt-chat-bubble-own-author on --rt-chat-bubble-own-bg in the light": {
-      "reason": "3.08:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-386"
-    },
-    "contrast --rt-chat-bubble-own-author on --rt-chat-bubble-own-bg in the dark": {
-      "reason": "3.71:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-action-danger-on-surface on --rt-color-bg-surface in the dark": {
-      "reason": "3.16:1 at the threshold 4.5:1 — RT-394: the role colour is shared by both themes, on graphite the ratio falls",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-action-info-on-surface on --rt-color-bg-surface in the dark": {
-      "reason": "3.10:1 at the threshold 4.5:1 — RT-394: the role colour is shared by both themes, on graphite the ratio falls",
-      "task": "RT-386"
-    },
-    "contrast --rt-color-action-on-disabled on --rt-color-action-disabled in the light": {
-      "reason": "A disabled control is not judged by the threshold: the muting is the very sign of unavailability, and a label raised to 4.5:1 stops reading as disabled",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-action-on-disabled on --rt-color-action-disabled in the dark": {
-      "reason": "A disabled control is not judged by the threshold — the same reason as in the light theme",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-action-on-success on --rt-color-action-success in the light": {
-      "reason": "RT-394: the label on the success backdrop takes 3.77:1; fixed together with the rest of the pairs below the threshold",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-action-on-success on --rt-color-action-success in the dark": {
-      "reason": "RT-394: the role colour is shared by both themes, the ratio is the same 3.77:1",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-action-on-warning on --rt-color-action-warning in the light": {
-      "reason": "RT-394: the label on the warning backdrop takes 3.19:1 — the weakest pair among the action roles",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-action-on-warning on --rt-color-action-warning in the dark": {
-      "reason": "RT-394: the role colour is shared by both themes, the ratio is the same 3.19:1",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-action-primary on --rt-color-action-primary-soft in the light": {
-      "reason": "3.54:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-384"
-    },
-    "contrast --rt-color-action-primary on --rt-color-action-primary-soft in the dark": {
-      "reason": "2.34:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-384"
-    },
-    "contrast --rt-color-action-primary-on-surface on --rt-color-bg-surface in the dark": {
-      "reason": "2.91:1 at the threshold 4.5:1 — RT-394: the brand mark on graphite is dim, and raising the brand step moves everything painted by it",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-action-success-on-surface on --rt-color-bg-surface in the light": {
-      "reason": "3.77:1 at the threshold 4.5:1 — RT-394: the same role step as the label on the success backdrop, fixed together with it",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-action-success-on-surface on --rt-color-bg-surface in the dark": {
-      "reason": "4.05:1 at the threshold 4.5:1 — RT-394: the role colour is shared by both themes, fixed by raising the step",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-action-warning-on-surface on --rt-color-bg-surface in the light": {
-      "reason": "3.19:1 at the threshold 4.5:1 — RT-394: amber on white — the weakest pair among the action roles",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-state-danger on --rt-color-state-danger-bg in the light": {
-      "reason": "4.41:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-state-danger on --rt-color-state-danger-bg in the dark": {
-      "reason": "3.19:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-state-error-text on --rt-color-state-danger-bg in the dark": {
-      "reason": "3.19:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-state-info on --rt-color-state-info-bg in the dark": {
-      "reason": "3.03:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-386"
-    },
-    "contrast --rt-color-state-success on --rt-color-state-success-bg in the light": {
-      "reason": "3.58:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-384"
-    },
-    "contrast --rt-color-state-success on --rt-color-state-success-bg in the dark": {
-      "reason": "3.83:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-384"
-    },
-    "contrast --rt-color-state-warning on --rt-color-state-warning-bg in the light": {
-      "reason": "3.07:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-384"
-    },
-    "contrast --rt-color-state-warning on --rt-color-state-warning-bg in the dark": {
-      "reason": "4.46:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-384"
-    },
-    "contrast --rt-color-state-warning-text on --rt-color-state-warning-bg in the light": {
-      "reason": "RT-394: the label on the warning backdrop takes 4.02:1; the next scale step leads it into brown",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-state-warning-text on --rt-color-state-warning-bg in the dark": {
-      "reason": "RT-394: on the dark backdrop 4.46:1 — hundredths are missing, fixed together with the warning scale",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-text-link on --rt-color-action-primary-soft in the light": {
-      "reason": "3.54:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-272"
-    },
-    "contrast --rt-color-text-muted on --rt-color-bg-subtle in the light": {
-      "reason": "4.29:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-386"
-    },
-    "contrast --rt-field-error-color on --rt-color-bg-surface in the dark": {
-      "reason": "3.16:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-272"
-    },
-    "contrast --rt-nav-color-disabled on --rt-nav-item-color-bg in the light": {
-      "reason": "2.14:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-386"
-    },
-    "contrast --rt-nav-color-disabled on --rt-nav-item-color-bg in the dark": {
-      "reason": "3.12:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-386"
-    },
-    "contrast --rt-nav-panel-item-color-active on --rt-nav-panel-item-color-bg-active in the dark": {
-      "reason": "2.78:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
-      "task": "RT-386"
-    },
-    "a scale step in the dark --rt-shadow-card-soft": {
-      "reason": "RT-386: the shadow is declared by the scale and rewritten by the dark theme; bringing the scales and assignments to the canon is the subject of the line's seventh position",
-      "task": "RT-272"
-    },
     "a dark block projects/ui-kit-v2/src/lib/components/header/rt-header.component.scss": {
       "reason": "RT-274: the header's background is painted by a scale step right in the rule; a component's own property, overridable in the styling layer, is created by the line's eighth position",
       "task": "RT-272"
@@ -159,6 +19,338 @@
     "a dark block projects/ui-kit-v2/src/lib/components/table/rt-table.component.scss": {
       "reason": "RT-274: the table substitutes the background by an assignment in the theme rule instead of the component's own property",
       "task": "RT-272"
+    },
+    "a scale step in the dark --rt-shadow-card-soft": {
+      "reason": "RT-386: the shadow is declared by the scale and rewritten by the dark theme; bringing the scales and assignments to the canon is the subject of the line's seventh position",
+      "task": "RT-272"
+    },
+    "contrast --rt-chat-bubble-date on --rt-chat-bubble-own-bg in the dark": {
+      "reason": "3.71:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-272"
+    },
+    "contrast --rt-chat-bubble-date on --rt-chat-bubble-own-bg in the light": {
+      "reason": "4.29:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-386"
+    },
+    "contrast --rt-chat-bubble-date on --rt-chat-bubble-own-bg in the material": {
+      "reason": "3.54:1 at the threshold 4.5:1 — RT-1872: the correspondence bubble: the same pair stands accepted in the base set — the material step did not move it up",
+      "task": "RT-1872"
+    },
+    "contrast --rt-chat-bubble-date on --rt-chat-bubble-own-bg in the material dark": {
+      "reason": "3.71:1 at the threshold 4.5:1 — RT-1872: the correspondence bubble: the same pair stands accepted in the base set — the material step did not move it up",
+      "task": "RT-1872"
+    },
+    "contrast --rt-chat-bubble-own-author on --rt-chat-bubble-own-bg in the dark": {
+      "reason": "3.71:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-272"
+    },
+    "contrast --rt-chat-bubble-own-author on --rt-chat-bubble-own-bg in the light": {
+      "reason": "3.08:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-386"
+    },
+    "contrast --rt-chat-bubble-own-author on --rt-chat-bubble-own-bg in the material": {
+      "reason": "3.08:1 at the threshold 4.5:1 — RT-1872: the correspondence bubble: the same pair stands accepted in the base set — the material step did not move it up",
+      "task": "RT-1872"
+    },
+    "contrast --rt-chat-bubble-own-author on --rt-chat-bubble-own-bg in the material dark": {
+      "reason": "3.71:1 at the threshold 4.5:1 — RT-1872: the correspondence bubble: the same pair stands accepted in the base set — the material step did not move it up",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-danger-on-surface on --rt-color-bg-surface in the dark": {
+      "reason": "3.16:1 at the threshold 4.5:1 — RT-394: the role colour is shared by both themes, on graphite the ratio falls",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-action-danger-on-surface on --rt-color-bg-surface in the material": {
+      "reason": "3.61:1 at the threshold 4.5:1 — RT-1872: the role colour as text on a surface: the material accent is picked for a filled backdrop, not for a letter on white",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-danger-on-surface on --rt-color-bg-surface in the material dark": {
+      "reason": "4.22:1 at the threshold 4.5:1 — RT-1872: the role colour as text on a surface: the material accent is picked for a filled backdrop, not for a letter on white",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-info-on-surface on --rt-color-bg-surface in the dark": {
+      "reason": "3.10:1 at the threshold 4.5:1 — RT-394: the role colour is shared by both themes, on graphite the ratio falls",
+      "task": "RT-386"
+    },
+    "contrast --rt-color-action-info-on-surface on --rt-color-bg-surface in the material": {
+      "reason": "3.81:1 at the threshold 4.5:1 — RT-1872: the role colour as text on a surface: the material accent is picked for a filled backdrop, not for a letter on white",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-info-on-surface on --rt-color-bg-surface in the material dark": {
+      "reason": "4.00:1 at the threshold 4.5:1 — RT-1872: the role colour as text on a surface: the material accent is picked for a filled backdrop, not for a letter on white",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-on-danger on --rt-color-action-danger in the material": {
+      "reason": "3.61:1 at the threshold 4.5:1 — RT-1872: the label on a filled action: the material step is chosen to be the accent of the first kit, and its own label sits below the threshold there too — raising the step changes the look the set exists for",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-on-danger on --rt-color-action-danger in the material dark": {
+      "reason": "3.61:1 at the threshold 4.5:1 — RT-1872: the label on a filled action: the material step is chosen to be the accent of the first kit, and its own label sits below the threshold there too — raising the step changes the look the set exists for",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-on-disabled on --rt-color-action-disabled in the dark": {
+      "reason": "A disabled control is not judged by the threshold — the same reason as in the light theme",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-action-on-disabled on --rt-color-action-disabled in the light": {
+      "reason": "A disabled control is not judged by the threshold: the muting is the very sign of unavailability, and a label raised to 4.5:1 stops reading as disabled",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-action-on-disabled on --rt-color-action-disabled in the material": {
+      "reason": "1.91:1 at the threshold 4.5:1 — RT-1872: the label on a filled action: the material step is chosen to be the accent of the first kit, and its own label sits below the threshold there too — raising the step changes the look the set exists for",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-on-disabled on --rt-color-action-disabled in the material dark": {
+      "reason": "2.19:1 at the threshold 4.5:1 — RT-1872: the label on a filled action: the material step is chosen to be the accent of the first kit, and its own label sits below the threshold there too — raising the step changes the look the set exists for",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-on-info on --rt-color-action-info in the material": {
+      "reason": "3.81:1 at the threshold 4.5:1 — RT-1872: the label on a filled action: the material step is chosen to be the accent of the first kit, and its own label sits below the threshold there too — raising the step changes the look the set exists for",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-on-info on --rt-color-action-info in the material dark": {
+      "reason": "3.81:1 at the threshold 4.5:1 — RT-1872: the label on a filled action: the material step is chosen to be the accent of the first kit, and its own label sits below the threshold there too — raising the step changes the look the set exists for",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-on-primary on --rt-color-action-primary in the material": {
+      "reason": "3.81:1 at the threshold 4.5:1 — RT-1872: the label on a filled action: the material step is chosen to be the accent of the first kit, and its own label sits below the threshold there too — raising the step changes the look the set exists for",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-on-primary on --rt-color-action-primary in the material dark": {
+      "reason": "3.81:1 at the threshold 4.5:1 — RT-1872: the label on a filled action: the material step is chosen to be the accent of the first kit, and its own label sits below the threshold there too — raising the step changes the look the set exists for",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-on-success on --rt-color-action-success in the dark": {
+      "reason": "RT-394: the role colour is shared by both themes, the ratio is the same 3.77:1",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-action-on-success on --rt-color-action-success in the light": {
+      "reason": "RT-394: the label on the success backdrop takes 3.77:1; fixed together with the rest of the pairs below the threshold",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-action-on-success on --rt-color-action-success in the material": {
+      "reason": "2.71:1 at the threshold 4.5:1 — RT-1872: the label on a filled action: the material step is chosen to be the accent of the first kit, and its own label sits below the threshold there too — raising the step changes the look the set exists for",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-on-success on --rt-color-action-success in the material dark": {
+      "reason": "2.71:1 at the threshold 4.5:1 — RT-1872: the label on a filled action: the material step is chosen to be the accent of the first kit, and its own label sits below the threshold there too — raising the step changes the look the set exists for",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-on-warning on --rt-color-action-warning in the dark": {
+      "reason": "RT-394: the role colour is shared by both themes, the ratio is the same 3.19:1",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-action-on-warning on --rt-color-action-warning in the light": {
+      "reason": "RT-394: the label on the warning backdrop takes 3.19:1 — the weakest pair among the action roles",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-action-on-warning on --rt-color-action-warning in the material": {
+      "reason": "2.81:1 at the threshold 4.5:1 — RT-1872: the label on a filled action: the material step is chosen to be the accent of the first kit, and its own label sits below the threshold there too — raising the step changes the look the set exists for",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-on-warning on --rt-color-action-warning in the material dark": {
+      "reason": "2.81:1 at the threshold 4.5:1 — RT-1872: the label on a filled action: the material step is chosen to be the accent of the first kit, and its own label sits below the threshold there too — raising the step changes the look the set exists for",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-primary on --rt-color-action-primary-soft in the dark": {
+      "reason": "2.34:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-384"
+    },
+    "contrast --rt-color-action-primary on --rt-color-action-primary-soft in the light": {
+      "reason": "3.54:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-384"
+    },
+    "contrast --rt-color-action-primary on --rt-color-action-primary-soft in the material": {
+      "reason": "2.70:1 at the threshold 4.5:1 — RT-1872: the accent on its own faded backdrop: both come from one material step, and the distance between them is set by the step, not by the assignment",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-primary on --rt-color-action-primary-soft in the material dark": {
+      "reason": "3.22:1 at the threshold 4.5:1 — RT-1872: the accent on its own faded backdrop: both come from one material step, and the distance between them is set by the step, not by the assignment",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-primary-on-surface on --rt-color-bg-surface in the dark": {
+      "reason": "2.91:1 at the threshold 4.5:1 — RT-394: the brand mark on graphite is dim, and raising the brand step moves everything painted by it",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-action-primary-on-surface on --rt-color-bg-surface in the material": {
+      "reason": "3.81:1 at the threshold 4.5:1 — RT-1872: the role colour as text on a surface: the material accent is picked for a filled backdrop, not for a letter on white",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-primary-on-surface on --rt-color-bg-surface in the material dark": {
+      "reason": "4.00:1 at the threshold 4.5:1 — RT-1872: the role colour as text on a surface: the material accent is picked for a filled backdrop, not for a letter on white",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-success-on-surface on --rt-color-bg-surface in the dark": {
+      "reason": "4.05:1 at the threshold 4.5:1 — RT-394: the role colour is shared by both themes, fixed by raising the step",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-action-success-on-surface on --rt-color-bg-surface in the light": {
+      "reason": "3.77:1 at the threshold 4.5:1 — RT-394: the same role step as the label on the success backdrop, fixed together with it",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-action-success-on-surface on --rt-color-bg-surface in the material": {
+      "reason": "2.71:1 at the threshold 4.5:1 — RT-1872: the role colour as text on a surface: the material accent is picked for a filled backdrop, not for a letter on white",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-action-warning-on-surface on --rt-color-bg-surface in the light": {
+      "reason": "3.19:1 at the threshold 4.5:1 — RT-394: amber on white — the weakest pair among the action roles",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-action-warning-on-surface on --rt-color-bg-surface in the material": {
+      "reason": "2.81:1 at the threshold 4.5:1 — RT-1872: the role colour as text on a surface: the material accent is picked for a filled backdrop, not for a letter on white",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-state-danger on --rt-color-state-danger-bg in the dark": {
+      "reason": "3.19:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-state-danger on --rt-color-state-danger-bg in the light": {
+      "reason": "4.41:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-state-danger on --rt-color-state-danger-bg in the material": {
+      "reason": "3.19:1 at the threshold 4.5:1 — RT-1872: the message plate: the tinted backdrop and the role colour on it are both counted from one material step",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-state-danger on --rt-color-state-danger-bg in the material dark": {
+      "reason": "4.26:1 at the threshold 4.5:1 — RT-1872: the message plate: the tinted backdrop and the role colour on it are both counted from one material step",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-state-error-text on --rt-color-state-danger-bg in the dark": {
+      "reason": "3.19:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-state-error-text on --rt-color-state-danger-bg in the material": {
+      "reason": "3.19:1 at the threshold 4.5:1 — RT-1872: the message plate: the tinted backdrop and the role colour on it are both counted from one material step",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-state-error-text on --rt-color-state-danger-bg in the material dark": {
+      "reason": "3.19:1 at the threshold 4.5:1 — RT-1872: the message plate: the tinted backdrop and the role colour on it are both counted from one material step",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-state-info on --rt-color-state-info-bg in the dark": {
+      "reason": "3.03:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-386"
+    },
+    "contrast --rt-color-state-info on --rt-color-state-info-bg in the material": {
+      "reason": "3.27:1 at the threshold 4.5:1 — RT-1872: the message plate: the tinted backdrop and the role colour on it are both counted from one material step",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-state-info on --rt-color-state-info-bg in the material dark": {
+      "reason": "3.91:1 at the threshold 4.5:1 — RT-1872: the message plate: the tinted backdrop and the role colour on it are both counted from one material step",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-state-success on --rt-color-state-success-bg in the dark": {
+      "reason": "3.83:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-384"
+    },
+    "contrast --rt-color-state-success on --rt-color-state-success-bg in the light": {
+      "reason": "3.58:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-384"
+    },
+    "contrast --rt-color-state-success on --rt-color-state-success-bg in the material": {
+      "reason": "2.54:1 at the threshold 4.5:1 — RT-1872: the message plate: the tinted backdrop and the role colour on it are both counted from one material step",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-state-warning on --rt-color-state-warning-bg in the dark": {
+      "reason": "4.46:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-384"
+    },
+    "contrast --rt-color-state-warning on --rt-color-state-warning-bg in the light": {
+      "reason": "3.07:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-384"
+    },
+    "contrast --rt-color-state-warning on --rt-color-state-warning-bg in the material": {
+      "reason": "2.41:1 at the threshold 4.5:1 — RT-1872: the message plate: the tinted backdrop and the role colour on it are both counted from one material step",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-state-warning-text on --rt-color-state-warning-bg in the dark": {
+      "reason": "RT-394: on the dark backdrop 4.46:1 — hundredths are missing, fixed together with the warning scale",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-state-warning-text on --rt-color-state-warning-bg in the light": {
+      "reason": "RT-394: the label on the warning backdrop takes 4.02:1; the next scale step leads it into brown",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-state-warning-text on --rt-color-state-warning-bg in the material": {
+      "reason": "2.41:1 at the threshold 4.5:1 — RT-1872: the message plate: the tinted backdrop and the role colour on it are both counted from one material step",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-state-warning-text on --rt-color-state-warning-bg in the material dark": {
+      "reason": "4.46:1 at the threshold 4.5:1 — RT-1872: the message plate: the tinted backdrop and the role colour on it are both counted from one material step",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-text-link on --rt-color-action-primary-soft in the light": {
+      "reason": "3.54:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-272"
+    },
+    "contrast --rt-color-text-link on --rt-color-action-primary-soft in the material": {
+      "reason": "2.70:1 at the threshold 4.5:1 — RT-1872: the accent on its own faded backdrop: both come from one material step, and the distance between them is set by the step, not by the assignment",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-text-link on --rt-color-bg-surface in the material": {
+      "reason": "3.81:1 at the threshold 4.5:1 — RT-1872: the link colour: the material blue is the first kit's link colour one to one",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-text-muted on --rt-color-bg-page in the material": {
+      "reason": "4.32:1 at the threshold 4.5:1 — RT-1872: the muted text: the material grey of a secondary label, the first kit's look",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-text-muted on --rt-color-bg-subtle in the light": {
+      "reason": "4.29:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-386"
+    },
+    "contrast --rt-color-text-muted on --rt-color-bg-subtle in the material": {
+      "reason": "4.21:1 at the threshold 4.5:1 — RT-1872: the muted text: the material grey of a secondary label, the first kit's look",
+      "task": "RT-1872"
+    },
+    "contrast --rt-color-text-muted on --rt-color-bg-surface-subtle in the material": {
+      "reason": "3.99:1 at the threshold 4.5:1 — RT-1872: the muted text: the material grey of a secondary label, the first kit's look",
+      "task": "RT-1872"
+    },
+    "contrast --rt-field-error-color on --rt-color-bg-surface in the dark": {
+      "reason": "3.16:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-272"
+    },
+    "contrast --rt-field-error-color on --rt-color-bg-surface in the material": {
+      "reason": "3.61:1 at the threshold 4.5:1 — RT-1872: the field error: the material red is the first kit's error colour",
+      "task": "RT-1872"
+    },
+    "contrast --rt-field-error-color on --rt-color-bg-surface in the material dark": {
+      "reason": "4.22:1 at the threshold 4.5:1 — RT-1872: the field error: the material red is the first kit's error colour",
+      "task": "RT-1872"
+    },
+    "contrast --rt-input-color-text-placeholder on --rt-input-color-bg in the material": {
+      "reason": "3.99:1 at the threshold 4.5:1 — RT-1872: the field prompt: it is faded on purpose, and the material grey of it is the first kit's",
+      "task": "RT-1872"
+    },
+    "contrast --rt-nav-color-disabled on --rt-nav-item-color-bg in the dark": {
+      "reason": "3.12:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-386"
+    },
+    "contrast --rt-nav-color-disabled on --rt-nav-item-color-bg in the light": {
+      "reason": "2.14:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-386"
+    },
+    "contrast --rt-nav-color-disabled on --rt-nav-item-color-bg in the material": {
+      "reason": "2.13:1 at the threshold 4.5:1 — RT-1872: a switched-off navigation item: a faded label is the sign of being switched off",
+      "task": "RT-1872"
+    },
+    "contrast --rt-nav-color-disabled on --rt-nav-item-color-bg in the material dark": {
+      "reason": "3.14:1 at the threshold 4.5:1 — RT-1872: a switched-off navigation item: a faded label is the sign of being switched off",
+      "task": "RT-1872"
+    },
+    "contrast --rt-nav-panel-item-color-active on --rt-nav-panel-item-color-bg-active in the dark": {
+      "reason": "2.78:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
+      "task": "RT-386"
+    },
+    "contrast --rt-nav-panel-item-color-active on --rt-nav-panel-item-color-bg-active in the material": {
+      "reason": "3.81:1 at the threshold 4.5:1 — RT-1872: the active item of the panel: the accent on its own faded backdrop, both from one material step",
+      "task": "RT-1872"
+    },
+    "contrast --rt-nav-panel-item-color-active on --rt-nav-panel-item-color-bg-active in the material dark": {
+      "reason": "3.87:1 at the threshold 4.5:1 — RT-1872: the active item of the panel: the accent on its own faded backdrop, both from one material step",
+      "task": "RT-1872"
     }
   }
 }

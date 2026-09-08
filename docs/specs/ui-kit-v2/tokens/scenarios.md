@@ -188,3 +188,12 @@ violation laid under them. Confirmed twice. The name `--rt-neutral-50` in the so
 `--rt-neutrl-50`: `node tools/build-tokens-v2.mjs` gave back one, named the referring appointment and did not
 touch the put-together file. A value edited by hand in the put-together file `pnpm run check:tokens-build`
 named by the file and gave back one; after the rolling back both commands are green.
+
+### SC-UKV-129 — a transition whose ends come out one paint fells the check
+
+Given the styles of the kit hold a gradient written with two or more different ends
+When the ends are resolved in each of the four looks
+Then a look in which they all come out one paint fells the run, and the refusal names the file, the line, the
+look and the paint
+
+Covered: `tools/tests/check-gradient-stops.test.sh` — twenty-two cases, called by `pnpm run test:checks`.

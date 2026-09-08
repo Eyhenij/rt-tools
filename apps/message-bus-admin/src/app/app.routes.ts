@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { authRoutes, sessionGuard } from '@rt/message-bus-admin/auth/shell';
+import { authRoutes, firstOpenSectionPath, sectionRightGuard, sessionGuard } from '@rt/message-bus-admin/auth/shell';
 import { COLUMNS_ROUTE } from '@rt/message-bus-admin/common/core/util';
 import { INVITES_ROUTE, invitesRoutes } from '@rt/message-bus-admin/invites/shell';
 import { POSTMORTEMS_ROUTE, postmortemsRoutes } from '@rt/message-bus-admin/postmortems/shell';
@@ -38,13 +38,20 @@ function columnsRoute(section: string): Route {
  * оставался бы принятым, и человек ходил бы по разделам, которым приёмник уже отвечает отказом.
  * На детях он проверяет каждый переход, но саму оболочку не закрывает — её держит первое
  * объявление.
+ *
+ * Рядом с ним на детях стоит проверка по праву: раздел закрыт правом своего пункта меню, и
+ * читает она его оттуда же, откуда шапка берёт подпись и адрес. На самой ветке ей места нет по
+ * той же причине — снятое посреди работы право держало бы раздел открытым до перезагрузки.
+ *
+ * Корень ведёт не в первый раздел списка, а в первый открытый: у того, кто первого раздела не
+ * видит, переадресация на него кончалась бы отказом сразу после входа.
  */
 export const appRoutes: Route[] = [
     ...authRoutes,
     {
         path: '',
         canActivate: [sessionGuard],
-        canActivateChild: [sessionGuard],
+        canActivateChild: [sessionGuard, sectionRightGuard],
         loadComponent: async () => (await import('@rt/message-bus-admin/common/container/feature')).AdminContainerComponent,
         children: [
             // Впереди маршрутов разделов: у панели подробностей путь `<раздел>/:id`, и
@@ -58,7 +65,7 @@ export const appRoutes: Route[] = [
             ...proposalsRoutes,
             ...summariesRoutes,
             ...invitesRoutes,
-            { path: '', pathMatch: 'full', redirectTo: POSTMORTEMS_ROUTE },
+            { path: '', pathMatch: 'full', redirectTo: (): string => firstOpenSectionPath() },
         ],
     },
 ];

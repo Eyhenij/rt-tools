@@ -29,7 +29,7 @@
 ## Чем подтверждается
 
 - `pnpm exec nx test message-bus-api-access-util` — 14 прошли.
-- `pnpm exec nx test message-bus-api-access-feature` — 36 прошли, из них 8 о праве.
+- `pnpm exec nx test message-bus-api-access-feature` — 22 прошли, из них 8 о праве.
 - `pnpm exec nx test message-bus-api-accounts-feature` — 37 прошли.
 - `pnpm exec nx test message-bus-admin-auth-data-access` — 10 прошли.
 - `npm run check:specs`, `npm run check:docs` — без расхождений; десять сценариев из одиннадцати
