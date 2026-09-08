@@ -2,11 +2,11 @@
 
 The names and bindings of this tree, next to the rule `SKILL.md`.
 
-There are no rights here. No roles, no presets, no overrides, no ownerships: the owner's word —
-they are not to be taken into this work. So only half the rule acts — the half about declaring
-access on an operation and about refusing whoever did not introduce themselves. The other half,
-about adding up rights, has nothing to be bound to, and that is written down as a line rather than
-as emptiness: an empty line a month later is indistinguishable from a forgotten one.
+There are rights here: a closed set of them, a role that holds a set whole, and pointed edits over
+the role. What the tree has not got is ownerships — there is one intake and one set of sections, so
+a person has one role, not one per ownership. Where the rule speaks of an ownership, the line says
+so and names what is here instead: an empty line a month later is indistinguishable from a
+forgotten one.
 
 The receiver's operations are Nest controllers over HTTP, not Connect procedures. The access
 declaration at that is arranged exactly as the rule demands: a mark on the class or on the
@@ -16,15 +16,15 @@ operation, one check for the whole application, closed by default.
 
 - **In the rule** — Here
 - **a Connect procedure** — an operation of a Nest controller; the shared check stands as `APP_GUARD`
-- **a right ("resource and action")** — there is no such thing here: no rights are started in the tree
-- **`@RequiresPermission('…')`** — there is no such thing here
+- **a right ("resource and action")** — the pair as a string: `postmortems:manage`, `roles:manage`; the set is closed by the code
+- **`@RequiresPermission('…')`** — `@RequiresRight('…')` — the right is taken from the closed set, not written as a string
 - **`@RequiresAuth('reason')`** — `@SessionOperation()` — closed by a person's sign-in
 - **`@PublicProcedure('reason')`** — `@PublicOperation()` — the reason is not passed as an argument, it stands as a comment
 - **`@OptionalAuthProcedure('reason')`** — there is no such thing here: an operation gives a guest and a signed-in person nothing different
 - **— (the rule has no fourth kind)** — `@TreeOperation()` — closed by a tree token: taking in cargo and editing its state
-- **a preset, an override** — there is no such thing here
+- **a preset, an override** — a role and a pointed edit over it: a role is a named set, an edit is one right given or taken away from one person
 - **`Code.Unauthenticated`** — the framework's `UnauthorizedException` — the answer 401
-- **`Code.PermissionDenied`** — there is no such thing here: there is nothing to divide the signed-in by
+- **`Code.PermissionDenied`** — the framework's `ForbiddenException` — the answer 403
 - **the sign-in interceptor** — `AccessGuard` — one check for both ways of introducing oneself
 - **the admin panel route guard** — `sessionGuard`
 
@@ -37,7 +37,9 @@ operation, one check for the whole application, closed by default.
 - **the count of failed attempts** — `libs/message-bus-api/accounts/feature/src/lib/login-attempts.service.ts`
 - **the cookie and the sign-in value** — `libs/message-bus-api/accounts/util/src/lib/session-cookie.util.ts`, `session-token.util.ts`
 - **the admin panel route guard** — `libs/message-bus-admin/auth/shell/src/lib/session.guard.ts`
-- **the sign-in state in the admin panel** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts`
+- **the sign-in state in the admin panel and the rights of the signed-in person** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts`
+- **the closed set of rights and the addition of a role with the edits over it** — `libs/message-bus-api/access/util/src/lib/rights.ts`
+- **the role and the pointed edits in the storage** — `prisma/schema.prisma` — the models `Role` and `AccountPermission`
 
 ## Where the articles are carried out
 
@@ -47,19 +49,19 @@ divergence: the rule promises what the tree does not have, or the tree holds wha
 silent about.
 
 - **Every procedure declares its access by a decorator, and there is exactly one declaration.** — `libs/message-bus-api/access/feature/src/lib/access.guard.ts:AccessGuard` — the mark is read from the operation and from the class at once, `getAllAndOverride`. An undeclared operation answers nobody. A second declaration cannot come about: the mark is one, and a second one replaces the first rather than adding to it.
-- **There are four kinds of access: by a right, to any signed-in person, public and public with a read of the sign-in.** — Here there are three, and they are different: `libs/message-bus-api/access/util/src/lib/operation-access.ts:TOperationAccess` — `public`, `tree`, `session`. "By a right" is absent for want of rights. "Public with a read of the sign-in" is absent for want of anything to show a signed-in person beyond a guest. Third here comes the tree token, which the rule does not know at all.
-- **A user's rights are the preset's rights with their overrides applied over them.** — Not applicable: there are no rights in the tree. Everything an operation is closed by is listed in `libs/message-bus-api/access/util/src/lib/operation-access.ts:OPERATION_ACCESS` — the set is closed, and there is no place for a right in it.
-- **A person has one role per ownership, and the storage holds that.** — Not applicable: there are neither roles nor ownerships in the schema. Everything the storage knows about a signed-in person is read by `libs/message-bus-api/accounts/data-access/src/lib/account.queries.ts:findSessionByHash` — the account, the sign-in expiry and the disabled sign.
-- **A right the role says nothing about counts as not given.** — Not applicable: there is nothing to add up. The default is the same here and stands a tier higher — `libs/message-bus-api/access/feature/src/lib/access.guard.ts:AccessGuard`, the `default` branch. An operation that declared no access is refused rather than let through.
-- **A signed-in person's rights are read on every call rather than taken from the issued sign-in.** — `libs/message-bus-api/accounts/util/src/lib/session-token.util.ts:sessionTokenHash` — the cookie holds a random value. The decision is made by the record from the storage, found by its hash on every request.
+- **There are four kinds of access: by a right, to any signed-in person, public and public with a read of the sign-in.** — There are four here too, and one of them is another: `libs/message-bus-api/access/util/src/lib/operation-access.ts:TOperationAccess` — `public`, `tree`, `session`, `permission`. "Public with a read of the sign-in" is absent for want of anything to show a signed-in person beyond a guest; in its place stands the tree token, which the rule does not know at all.
+- **A user's rights are the preset's rights with their overrides applied over them.** — `libs/message-bus-api/access/util/src/lib/rights.ts:rightsOf` — a pure addition: the set of the role, then the pointed edits over it. A name outside the closed set is discarded on both sides — `isRight` next to it.
+- **A person has one role per ownership, and the storage holds that.** — `prisma/schema.prisma:Role` — one role on the account, and there are no ownerships here to divide it by: the intake is one. There is nothing to add up either, and that is what the article is about.
+- **A right the role says nothing about counts as not given.** — `libs/message-bus-api/access/util/src/lib/rights.ts:hasRight` — the set holds what is given, and silence about a right is an answer, not a gap. The same default stands a tier higher, in the `default` branch of `access.guard.ts`: an operation that declared no access is refused rather than let through.
+- **A signed-in person's rights are read on every call rather than taken from the issued sign-in.** — `libs/message-bus-api/accounts/data-access/src/lib/account.queries.ts:findAccountRights` — the check asks the storage for the role and the edits at every call. The cookie holds a random value and says only who came — `libs/message-bus-api/accounts/util/src/lib/session-token.util.ts:sessionTokenHash`.
 - **An account that no longer exists opens no calls that require a sign-in.** — `libs/message-bus-api/accounts/util/src/lib/session-token.util.ts:sessionAlive` — by that same read an expired and a revoked sign-in are refused. A disabled account is refused by `access.guard.ts` on the `disabledAt` sign.
 - **The counter and the advertising signals are switched on by the guest's answer, not by the presence of a key in the settings.** — Not applicable: neither the receiver nor the admin panel has a visit counter or advertising. One operation is open to a guest here — the liveness probe, `apps/message-bus/src/app/health/health.controller.ts:HealthController`.
 - **A public procedure that creates a record is closed by a rate limiter as well.** — `libs/message-bus-api/accounts/feature/src/lib/login-attempts.service.ts:LoginAttemptsService` — the count of failures in a row; the answer's delay is computed by `libs/message-bus-api/accounts/util/src/lib/login-delay.util.ts:loginDelayMs`. The key here is the account name rather than the client: of the two public operations the one worth watching is the sign-in, and the liveness probe creates nothing.
-- **A request without a sign-in is refused as unauthenticated, and a sign-in without a right as permission denied.** — Here there is one answer out of the two: `libs/message-bus-api/access/feature/src/lib/access.guard.ts:AccessGuard` answers `UnauthorizedException` in every branch. Nor can there be a second — the signed-in are not divided. The refusal deliberately does not name what did not match: by the difference of answers one could check what exists.
+- **A request without a sign-in is refused as unauthenticated, and a sign-in without a right as permission denied.** — `libs/message-bus-api/access/feature/src/lib/access.guard.ts:AccessGuard` — the first refusal is `UnauthorizedException`, the second `ForbiddenException`: one is cured by signing in, the other is not. Neither names what did not match, the right included: by the difference of answers one could read what exists and what rights a foreign account holds.
 - **The right is checked by an interceptor before the procedure body.** — `libs/message-bus-api/access/feature/src/lib/access.module.ts:AccessModule` — the check is put as `APP_GUARD`, that is, before any handler and over the whole application at once.
 - **Being public is declared with a reason.** — Here it is otherwise: `libs/message-bus-api/access/util/src/lib/operation-access.ts:PublicOperation` accepts no arguments, and the reason stands as a comment on the operation. There are two public operations — the liveness probe and the sign-in itself — and both have their argument in a comment rather than in the signature.
 - **A menu item and a section address are closed by one declaration.** — Not applicable in the shape it is written in: everything is closed at once rather than per item. `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:ADMIN_MENU` names no rights, and the guard stands on the closed branch whole.
-- **Until the rights are received the admin panel hides nothing.** — There is nothing to hide: the menu is the same for every signed-in person. The closest in meaning is `libs/message-bus-admin/auth/shell/src/lib/session.guard.ts:sessionGuard`: it waits for the receiver's answer rather than deciding by the tab's memory. Checked by a click: `apps/message-bus-admin-e2e/src/sign-in.spec.ts` — someone not signed in sees the sign-in screen instead of an empty section, and a dropped sign-in leads to the sign-in rather than showing a refusal.
+- **Until the rights are received the admin panel hides nothing.** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:allows` — until the answer about the signed-in person arrives, the rights are unknown rather than empty, and nothing is hidden by them. The route guard next to it waits for that same answer rather than deciding by the tab's memory — `libs/message-bus-admin/auth/shell/src/lib/session.guard.ts:sessionGuard`; checked by a click in `apps/message-bus-admin-e2e/src/sign-in.spec.ts`.
 
 ## What else is worth knowing when reading the code
 
@@ -78,7 +80,10 @@ silent about.
 ## What this is checked by
 
 - `pnpm exec nx test message-bus-api-access-feature` — the specs of the access check: an
-  undeclared operation, a foreign token, an expired sign-in, a disabled account.
+  undeclared operation, a foreign token, an expired sign-in, a disabled account, and an operation
+  closed by a right — a sign-in with it, without it and with no role at all.
+- `pnpm exec nx test message-bus-api-access-util` — the addition of a role with the pointed edits
+  and the marks the declaration by a right sets.
 - `pnpm exec nx test message-bus-api-accounts-feature` — the sign-in specs: a valid and an invalid
   pair, signing out, the count of attempts.
 - `pnpm exec nx run message-bus-admin-e2e:e2e` — the end-to-end suite: signing in by the screen,

@@ -35,6 +35,12 @@ export class AuthStore extends BaseAsyncStoreService<IAuthState, TAuthMessage> {
     public readonly fault: Signal<ESignInFault | null> = computed(() => this.store().fault);
     public readonly signedIn: Signal<boolean> = computed(() => this.store().session !== null);
 
+    /** Права вошедшего, как их прислал приёмник. У невошедшего их нет ни одного. */
+    public readonly rights: Signal<readonly string[]> = computed(() => this.store().session?.rights ?? []);
+
+    /** Приехал ли ответ о вошедшем. Пока не приехал, права неизвестны, а не пусты. */
+    public readonly rightsKnown: Signal<boolean> = computed(() => this.store().session !== null);
+
     readonly #api: AuthApiService = inject(AuthApiService);
     readonly #signInSource: Subject<ISignInPair> = new Subject<ISignInPair>();
 
@@ -64,6 +70,17 @@ export class AuthStore extends BaseAsyncStoreService<IAuthState, TAuthMessage> {
                 takeUntilDestroyed()
             )
             .subscribe();
+    }
+
+    /**
+     * Показывать ли то, что закрыто правом.
+     *
+     * Пока ответ о вошедшем не приехал, не скрывается ничего: пустой набор прав до ответа прятал
+     * бы разделы у того, у кого они есть, и человек видел бы пустую админку без выхода из неё.
+     * Закрывает раздел приёмник, а этот ответ решает только, показывать ли пункт.
+     */
+    public allows(right: string): boolean {
+        return !this.rightsKnown() || this.rights().includes(right);
     }
 
     /** Отправить пару. Что делать с предыдущей попыткой, решает подписка, а не вызывающий. */

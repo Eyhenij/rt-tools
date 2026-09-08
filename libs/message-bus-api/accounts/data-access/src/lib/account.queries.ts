@@ -133,6 +133,37 @@ export async function revokeSession(prisma: PrismaService, id: string, at: Date)
     await prisma.session.updateMany({ where: { id, revokedAt: null }, data: { revokedAt: at } });
 }
 
+/** Роль и точечные правки одной записи: то, из чего складываются права человека. */
+export interface IAccountRights {
+    readonly roleRights: readonly string[] | null;
+    readonly edits: readonly { readonly right: string; readonly granted: boolean }[];
+}
+
+/** Строка, какой её отдаёт хранилище: роль отдельно, правки отдельно. */
+interface IAccountRightsRow {
+    readonly role: { readonly rights: string[] } | null;
+    readonly permissions: readonly { readonly right: string; readonly granted: boolean }[];
+}
+
+/**
+ * Права записи: набор её роли и точечные правки поверх него.
+ *
+ * Читается на каждом вызове операции, закрытой правом, а не берётся из выданного входа: вход
+ * живёт часами и говорит только, кто пришёл. Снятое право иначе держало бы раздел открытым до
+ * конца дня.
+ *
+ * Записи нет — пусто вместо отказа: решение принимает проверка доступа, и второй код отказа в
+ * этом месте разошёлся бы с её собственным.
+ */
+export async function findAccountRights(prisma: PrismaService, accountId: string): Promise<IAccountRights | null> {
+    const found: IAccountRightsRow | null = await prisma.account.findUnique({
+        where: { id: accountId },
+        select: { role: { select: { rights: true } }, permissions: { select: { right: true, granted: true } } },
+    });
+
+    return found ? { roleRights: found.role?.rights ?? null, edits: found.permissions } : null;
+}
+
 /** Вошедший для запроса: то, что кладётся в него проверкой входа. */
 export function requestAccountOf(session: ISessionForRequest): IRequestAccount {
     return { id: session.account.id, name: session.account.name, sessionId: session.id };

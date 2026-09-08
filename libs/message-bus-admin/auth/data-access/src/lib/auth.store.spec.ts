@@ -9,7 +9,7 @@ const LOGIN_PATH: string = '/api/auth/login';
 const LOGOUT_PATH: string = '/api/auth/logout';
 const SESSION_PATH: string = '/api/auth/session';
 
-const SESSION: IAdminSession = { name: 'owner' };
+const SESSION: IAdminSession = { name: 'owner', rights: ['postmortems:read'] };
 
 describe('AuthStore', () => {
     let store: AuthStore;
@@ -40,6 +40,21 @@ describe('AuthStore', () => {
         expect(store.signedIn()).toBe(true);
         expect(store.session()).toEqual(SESSION);
         expect(store.fault()).toBeNull();
+    });
+
+    it('SC-MB-296 — права вошедшего приезжают тем же ответом и лежат в хранилище входа', () => {
+        signIn().flush(SESSION);
+
+        expect(store.rights()).toEqual(['postmortems:read']);
+        expect(store.allows('postmortems:read')).toBe(true);
+        expect(store.allows('roles:manage')).toBe(false);
+    });
+
+    it('пока ответ о вошедшем не приехал, не скрывается ничего', () => {
+        // Права неизвестны, а не пусты: скрыв по пустому набору, админка спрятала бы разделы у
+        // того, у кого они есть, и человек остался бы на пустом экране без выхода с него.
+        expect(store.rightsKnown()).toBe(false);
+        expect(store.allows('roles:manage')).toBe(true);
     });
 
     it('вход идёт с кукой: без неё приёмник не узнаёт вошедшего', () => {
