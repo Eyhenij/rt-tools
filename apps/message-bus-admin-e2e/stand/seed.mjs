@@ -15,8 +15,9 @@
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
+import { seedAccount } from './seed-account.mjs';
 import { checkNothingDrifts } from './seed-self-check.mjs';
-import { ACCOUNT, API_ORIGIN, ENROLLED_SLUG, INVITES, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
+import { API_ORIGIN, ENROLLED_SLUG, INVITES, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
 
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 
@@ -150,48 +151,6 @@ async function wipe() {
     await sql(
         'TRUNCATE TABLE "session", "account_permission", "role", "account", "postmortem", "proposal", "month_record", "tree_invite", "tree_token", "tree" CASCADE;'
     );
-}
-
-/**
- * Учётная запись стенда.
- *
- * Пароль уходит команде через стандартный ввод — тем же путём, каким его вводит владелец: доводом
- * он остался бы и в истории оболочки, и в списке процессов машины.
- */
-async function account() {
-    await command(['account:add', ACCOUNT.name], `${ACCOUNT.password}\n`);
-    await role();
-}
-
-/**
- * Роль записи стенда: все права разом.
- *
- * Права здесь у всех, потому что набор проверяет разделы, а не права: само сложение прав и два
- * отказа проверяются вызовом, спеками приёмника. Без роли запись прав не имеет ни одного, и весь
- * набор покраснел бы на пустой админке — ни один сценарий при этом не был бы о правах.
- *
- * Имена перечислены здесь, а не собраны из кода приёмника: набор, взятый из того же кода, что
- * проверяется, подтвердил бы сам себя. Разойдётся перечень с набором — стенд скажет об этом
- * сразу: раздел, права на который не нашлось, исчезнет с экрана.
- */
-async function role() {
-    const rights = [
-        'postmortems:read',
-        'postmortems:manage',
-        'proposals:read',
-        'proposals:manage',
-        'summaries:read',
-        'invites:read',
-        'invites:manage',
-        'accounts:read',
-        'accounts:manage',
-        'roles:manage',
-    ]
-        .map((right) => `'${right}'`)
-        .join(', ');
-
-    await sql(`INSERT INTO "role" ("id", "key", "name", "rights") VALUES (gen_random_uuid(), 'owner', 'Владелец', ARRAY[${rights}]);`);
-    await sql('UPDATE "account" SET "roleId" = (SELECT "id" FROM "role" WHERE "key" = \'owner\');');
 }
 
 /**
@@ -504,7 +463,7 @@ async function states() {
 /** Засев целиком. Зовётся подъёмом стенда после того, как приёмник поднят. */
 export async function seed() {
     await wipe();
-    await account();
+    await seedAccount(command, sql);
     const tokens = await trees();
     await postmortems(tokens);
     await proposals(tokens);
