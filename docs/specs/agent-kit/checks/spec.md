@@ -201,30 +201,13 @@ outward is watched by is said by the subdomain of the delivery guards.
   neighbouring subject passes it by, and a red check stays silent for days. Five checks of the styling
   layer of the second kit were called by nobody — neither the gate nor the pipeline — and the audit of
   the token graph stood red for several days in a row without ever refusing a push.
-- **A request opened not into the main branch is named by a line of its own.** It will have no run:
-  the pipeline listens to requests into main and does not see events with another base. A line about a
-  lost event would be wrong twice over: the event was not lost, and reopening will not bring it back.
-  This is fixed by moving the base after the lower request is merged.
+
 - **The check of the archive keeping time demands a day later than the cleanup removes.** The age of a
   record is counted by the minute of the commit. The cleanup goes at the minute of the push, the check
   in the pipeline minutes or hours later, and without a margin the next record crossed the threshold
   between them: three runs of one session turned red that way, not one of them over the edit of the
   branch. The pick is the same on both sides, the difference is in the margin, and everything the check
   names the cleanup removes.
-- **The answer of the work queue helper says whose eyes the state was taken by.** The helper reads a
-  task by the token of the machine record, and a request without a token, as whoever the client is
-  signed in under: the parse fields need rights over the accounts of the organisation, which the
-  machine record was not given. By the output alone this is indistinguishable, and a tree where the
-  machine record is limited by the hosting took a person's picture for a checked one. The field
-  `viewer` in the answer is `machine` or `client`; the login is not printed, fetching it would take a
-  second request to the network.
-- **The plan of an epic is the document that carries the makeup, not the first path in the card.** A
-  card names its decision next to its plan, and the decision has no table of tasks: read as the
-  plan, it makes the makeup empty and every open task of the epic reads as not belonging to it —
-  fourteen false lines at once, and the true ones drowned among them. Every path the body names is
-  read, and the plan is the first of them that carries a table with a task column. None of the named
-  documents on disk, and none of those on disk carrying the makeup, are two divergences of their
-  own: one sends the reader to write the plan, the other to write the table.
 
 ## What is out of scope
 
