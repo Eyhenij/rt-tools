@@ -56,27 +56,28 @@ subdomains are the ones the rule groups had already drawn.
   scenario to a test title, and numbering of its own in every subdomain would mean recounting every
   number at once.
 
-| Subdomain                                                        | About                                                                                          |
-| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| [Laying resources out into the tree](layout/spec.md)             | what is laid out and what is not, the requirements of a resource, the refusal cascade, samples |
-| [The texts of the rules layer](texts/spec.md)                    | mandatory sections, bindings and anchors, addresses, the flow graph, the review of a family    |
-| [The edit guards](guards/spec.md)                                | the plan behind an edit, missing profile functions, the refusal tail                           |
-| [The rules gate](rule-gate/spec.md)                              | picking a rule by path and by layers, what counts as a write, taking a shell command apart     |
-| [The exam on the rules](exam/spec.md)                            | when it is asked, what counts as passing, what switches the role off                           |
-| [The place of an edit](edit-place/spec.md)                       | where a rules-layer text is fixed, what is refused on a laid-out copy and on an override       |
-| [The state mark of a cargo record](cargo-mark/spec.md)           | what moves the state of a record, what is refused before the network, how the intake answers   |
-| [The applicability sign of a rule article](rule-article/spec.md) | the shape of the sign at an article, picking the article that fits, its text in the refusal    |
-| [The turn-closing guards](turn-guards/spec.md)                   | the exits of a turn, the work watchman, the conversation guard, windows, incidents, proposals  |
-| [The handover and the entry](turn-entry/spec.md)                 | the handover written before the compaction, the flow map and what a session gets at the start  |
-| [The state boundary in texts](state-boundary/spec.md)            | the next-move line in the section, the law article, the flow map and the check over them       |
-| [The prose guard](prose-guard/spec.md)                           | officialese and words from the left column of the glossary, a finding with its replacement     |
-| [The checks of the tree](checks/spec.md)                         | file length, uniformity, declarations of markup classes, repeats                               |
-| [The delivery guards and the push gate](delivery-gate/spec.md)   | the base of a branch, the signature of a machine commit, the completeness of the gate set      |
-| [Conducting work by commands](work/spec.md)                      | creating a task, closing a session, the task folder on the merge                               |
-| [Observations and cargo outward](observations/spec.md)           | an observation and a digest, proposals and blocks, the send, the snapshot of overrides         |
-| [The boundary of the package](package-boundary/spec.md)          | what is carried to a consumer and what stays with the package's own tree, the sign and check   |
-| [The cost of context](context-cost/spec.md)                      | what the weight of the input, of a rule and of the layer is counted by; why on the spot        |
-| [The publish checks](publish-checks/spec.md)                     | imports from neighbours against the published version of the neighbour, the lock after publish |
+| Subdomain                                                        | About                                                                                            |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| [Laying resources out into the tree](layout/spec.md)             | what is laid out and what is not, the requirements of a resource, the refusal cascade, samples   |
+| [The texts of the rules layer](texts/spec.md)                    | mandatory sections, bindings and anchors, addresses, the flow graph, the review of a family      |
+| [The edit guards](guards/spec.md)                                | the plan behind an edit, missing profile functions, the refusal tail                             |
+| [The rules gate](rule-gate/spec.md)                              | picking a rule by path and by layers, what counts as a write, taking a shell command apart       |
+| [The exam on the rules](exam/spec.md)                            | when it is asked, what counts as passing, what switches the role off                             |
+| [The place of an edit](edit-place/spec.md)                       | where a rules-layer text is fixed, what is refused on a laid-out copy and on an override         |
+| [The state mark of a cargo record](cargo-mark/spec.md)           | what moves the state of a record, what is refused before the network, how the intake answers     |
+| [The applicability sign of a rule article](rule-article/spec.md) | the shape of the sign at an article, picking the article that fits, its text in the refusal      |
+| [The turn-closing guards](turn-guards/spec.md)                   | the exits of a turn, the work watchman, the conversation guard, windows, incidents, proposals    |
+| [The handover and the entry](turn-entry/spec.md)                 | the handover written before the compaction, the flow map and what a session gets at the start    |
+| [The state boundary in texts](state-boundary/spec.md)            | the next-move line in the section, the law article, the flow map and the check over them         |
+| [The prose guard](prose-guard/spec.md)                           | officialese and words from the left column of the glossary, a finding with its replacement       |
+| [The checks of the tree](checks/spec.md)                         | file length, uniformity, declarations of markup classes, repeats                                 |
+| [The audit of the work queue](board/spec.md)                     | the run on the tip, the link with an epic, the lag of a branch, whose eyes the state was read by |
+| [The delivery guards and the push gate](delivery-gate/spec.md)   | the base of a branch, the signature of a machine commit, the completeness of the gate set        |
+| [Conducting work by commands](work/spec.md)                      | creating a task, closing a session, the task folder on the merge                                 |
+| [Observations and cargo outward](observations/spec.md)           | an observation and a digest, proposals and blocks, the send, the snapshot of overrides           |
+| [The boundary of the package](package-boundary/spec.md)          | what is carried to a consumer and what stays with the package's own tree, the sign and check     |
+| [The cost of context](context-cost/spec.md)                      | what the weight of the input, of a rule and of the layer is counted by; why on the spot          |
+| [The publish checks](publish-checks/spec.md)                     | imports from neighbours against the published version of the neighbour, the lock after publish   |
 
 ## What is out of scope
 
