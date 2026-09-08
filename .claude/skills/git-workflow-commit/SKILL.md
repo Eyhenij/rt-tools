@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for creating a task and a branch, commit and push — the creation command with all four steps, moving the column, merging two tasks into one, working as the machine account, skipping the document requirement. Opening a PR — pattern git-workflow-pr.
 ---
-<!-- rt-kit v0.26.0 · patterns/git-workflow-commit.github.md · 9242f11a4370 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · patterns/git-workflow-commit.github.md · 6f31f416e270 · правится надстройкой, не здесь -->
 
 # Task, branch and commit
 
@@ -147,6 +147,10 @@ command is rejected whole — the branch does not exist in it yet:
 ✓ git checkout -b <КЛЮЧ>-85-guest-token
 ✓ git commit -F -
 ```
+
+The base is the epic branch, not the main branch — `git checkout -b <КЛЮЧ>-85-guest-token
+<ветка эпика>`. From the main branch only the epic branch itself is taken: a task branched from it
+carries into it what the epic has not finished.
 
 The name — `<КЛЮЧ>-<номер задачи>-<короткий-slug>`, the slug in lowercase Latin letters joined by
 hyphens. The delivery guard parses it on the spot and refuses a miss in the form before the first

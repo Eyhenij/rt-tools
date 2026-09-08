@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for creating a task and a branch, commit, push, opening a PR and merging. Names the one-to-one pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — rule deploy-flow.
 ---
-<!-- rt-kit v0.26.0 · rules/git-workflow.github.md · a4ad1f58cda3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · rules/git-workflow.github.md · 6b8098186feb · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -22,7 +22,10 @@ with the rule.
 | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | main branch                  | `main`                                                                                                                                 |
 | task key                     | the tree's word for its tasks: `board.taskKey` in `.claude/rt-kit/checks.json`, named in `implementation.md` for the reader            |
-| separate branch              | `<КЛЮЧ>-<номер задачи>-<короткий-slug>`. A name without a number (`feat/…`, `fix/…`) is legitimate locally: no PR opens from it        |
+| epic                         | a repository issue with the epic label, `[<КЛЮЧ>-<номер>] <Возможность>`, and a plan next to it: the order of tasks and how the branches stand |
+| epic branch                  | `<КЛЮЧ>-<номер эпика>-<короткий-slug>`, taken from `main`. Task branches are taken from it, and their PRs go into it                   |
+| PR of an epic                | PR into `main` from the epic branch; opens after all its tasks are merged and their folders taken apart                                |
+| separate branch              | `<КЛЮЧ>-<номер задачи>-<короткий-slug>`, taken from the epic branch. A name without a number (`feat/…`, `fix/…`) is legitimate locally: no PR opens from it |
 | task                         | a repository issue `[<КЛЮЧ>-<номер>] <Что не так>`, assignee the machine account; attached PR: `Closes #<номер>` in its body           |
 | work queue                   | a GitHub Projects board, not bound to the repository: its `projectsV2` is empty, and a task lands on it only when added                |
 | task state in the work queue | a board column ("Status"): created, in progress, in review; names in `implementation.md`. A closed task leaves by merge, not by column |
@@ -44,8 +47,11 @@ work ends.
 
 ```mermaid
 flowchart TD
-    A[Work begins] --> B[A command creates the task and it enters the work queue]
-    B --> C[The branch is named by the task number; the column moves in the same motion]
+    A[Work begins] --> Z{The epic of this work is named}
+    Z -->|No| Y[The epic is created together with its tasks, and its branch is taken from main]
+    Z -->|Yes| B[A command creates the task and it enters the work queue]
+    Y --> B
+    B --> C[The branch is named by the task number and taken from the epic branch; the column moves in the same motion]
     C --> D{The edit is ready}
     D -->|No| C
     D -->|Yes| E[Main is merged in, the gate set is run whole]
@@ -57,7 +63,10 @@ flowchart TD
     J -->|Run red| K[Fixed in the same branch]
     K --> J
     J -->|Green| L[The last commit takes the task folder apart, the draft is lifted]
-    L --> M[A person presses the merge: the executor asks and names the number]
+    L --> M[A person presses the merge into the epic branch: the executor asks and names the number]
+    M --> N{Tasks of the epic are left}
+    N -->|Yes| B
+    N -->|No| O[The PR of the epic into main opens: all the folders are taken apart, and the main branch takes the epic whole]
     G --> B
 ```
 
@@ -69,14 +78,27 @@ flowchart TD
 - **A branch without a task number opens no PR.** Locally it is legitimate, but an edit from it is a
   rollout with nothing behind it in the queue. A task is created, and the work moves to a branch
   with its number.
-- **The main branch is merged into the task branch before the PR opens.** The guard refuses the
-  opening until main's tip is an ancestor of the current branch: otherwise the reviewer sees the
-  edit mixed with someone else's, and everything was checked from a base that is gone.
-- **A wave of branches off one main is checked by a trial merge, not one by one:** each is green on
-  its own, and they collide on what one branch cannot show.
+- **Work begins with the epic, and the branch of a task is taken from the epic branch.** `git
+  checkout -b <КЛЮЧ>-<номер задачи>-<slug> <ветка эпика>`; from `main` only the epic branch itself
+  is taken — a task branched from `main` carries into it what the epic has not finished.
+- **The PR of a task has the epic branch as its base — `gh pr create --base <ветка эпика>`.**
+  Opened into `main`, it leaves the epic branch a copy nobody merges: half the epic is rolled out
+  while the rest is being written.
+- **The PR of an epic into the main branch opens after all its tasks are merged and their folders
+  are taken apart.** The merge button on the epic branch means the whole epic, and there is nothing
+  to press it for while a task of it is still being written.
+- **The epic branch carries the plan of the epic and the merges of its tasks, and no edits of its
+  own.** An edit made in it directly goes into `main` unreviewed: nobody opens a PR about the epic
+  branch to the epic branch.
+- **The main branch is merged into the epic branch, and the epic branch into the branches of its
+  tasks — while the work runs, not before the hand-over.** Otherwise the reviewer sees the edit
+  mixed with someone else's, and everything was checked from a base that is gone.
+- **A wave of branches off one epic branch is checked by a trial merge, not one by one:** each is
+  green on its own, and they collide on what one branch cannot show.
 - **The next work's branch is taken from the previous one while the chain is unbroken.** `git
-  checkout -b <КЛЮЧ>-<номер>-<slug> <предыдущая ветка>` instead of `origin/main`; from main — only
-  the chain's first work. Otherwise the first merge diverges the rest at once.
+  checkout -b <КЛЮЧ>-<номер>-<slug> <предыдущая ветка>`; from the epic branch — only the chain's
+  first work, otherwise the first merge diverges the rest at once. A chain is set up inside one
+  epic and only where the next task edits what the previous one wrote.
 - **A PR in a chain has the previous branch as its base, not main.** `gh pr create --base
   <предыдущая ветка>` — otherwise the review shows the edit mixed with all under it. The host
   retargets the base of a merged lower one itself.
@@ -124,7 +146,7 @@ flowchart TD
   The queue audit finds such cards, a line each.
 - **A lagging column is found by the queue audit, not by eye.** It judges the column by the PR both
   ways: an open PR with the task not in review, and review with no open PR.
-- **A branch with an open PR lags behind main silently.** The guard judges the base once, at
+- **A branch with an open PR lags behind its base silently.** The guard judges the base once, at
   opening, and the run does not see what merged after either. The work queue audit counts the lag.
 - **The link between a task and an epic is read by the audit both ways.** A one-sided binding looks
   as whole as a two-sided one: the reader comes now from the epic plan, now from the card.
@@ -137,9 +159,8 @@ flowchart TD
   looks the same as with a green one: no colour in either. The audit asks the tip, counts the fact
   of a run, not the colour, and gives a fresh tip time.
 - **A PR whose base is not the main branch is checked by the same set as a PR into main.** The
-  pipeline trigger reads the base, and a PR into a neighbouring branch does not raise it: an empty
-  checks field reads as waiting in the queue. Asked before the first PR of the stack opens; a PR
-  without a run on its tip is not merged — pattern `git-workflow-stack`.
+  pipeline trigger reads the base, and an empty checks field reads as waiting in the queue. Asked
+  before the first PR of an epic opens — pattern `git-workflow-stack`.
 - **A run pushed out of the pipeline queue gets a separate audit line.** It looks failed though it
   never checked the branch; the step count tells them apart — it has zero.
 - **A draft with a green run on its tip is an audit discrepancy.** A green page permits nothing: the
@@ -184,11 +205,10 @@ flowchart TD
   silently makes the exclusion perpetual. Asked by the same tier as the task state at the guard.
 - **The layout audit stands in the push gate set on a par with lint and the build.** An edit past
   the source piles up silently, and the audit is not in the pipeline.
-- **After merging main in, the check set is revised by what the branch now carries.** Checking by
+- **After merging the base in, the check set is revised by what the branch now carries.** Checking by
   what the author edited means checking half: the branch answers whole.
 - **The main branch is taken by the remote ref — in words and in actions.** The local one is
-  yesterday's snapshot and silent about it. From `origin/main` go the comparison, a new branch's
-  base and the count of the merged: by the local one a merged branch counts as unmerged, and cleanup
+  yesterday's snapshot and silent about it: by it a merged branch counts as unmerged, and cleanup
   ends with a list of unmerged that does not exist.
 - **A code edit is handed to a person by an open PR, not by a pushed branch.** A branch reaches no
   inbox and has no discussion: before the PR opens there is no edit for a person. It opens in the
@@ -222,10 +242,8 @@ flowchart TD
   substitution. The guard asks the host about the author at draft lifting: a merged PR cannot be
   reopened.
 - **The host client's active account is chosen per machine, not per tree; the machine account is
-  substituted per call, never made active.** A client login as the machine account hijacks every
-  neighbouring session on the machine: a neighbour with rights to one repository reads its task as
-  nonexistent, and from inside the tree the miss is invisible. Substitution is mandatory even with
-  an active account.
+  substituted per call, never made active.** A login as the machine account hijacks every
+  neighbouring session on the machine. Substitution is mandatory even with an active account.
 
 - **The PR author cannot be its reviewer.** GitHub accepts a self review request and silently does
   not create it. Only a request and a review not from the author count.
@@ -274,7 +292,7 @@ tree, the remote one — whether the ref itself went stale.
 
 - `git-workflow-commit` — task, branch, commit and push as the machine account.
 - `git-workflow-pr` — opening a PR, the draft and lifting it, the body, reviewer, labels, state.
-- `git-workflow-merge` — main merged into the task branch, the conflict resolved.
+- `git-workflow-merge` — the base merged into the branch standing on it, the conflict resolved.
 - `git-workflow-stack` — a chain of branches: branching from the previous, the PR base, the handover
   order.
 - `git-workflow-freshness` — one's own open PRs: reading all at once, lag against a dispute.

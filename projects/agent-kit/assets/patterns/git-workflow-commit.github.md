@@ -147,6 +147,10 @@ command is rejected whole — the branch does not exist in it yet:
 ✓ git commit -F -
 ```
 
+The base is the epic branch, not the main branch — `git checkout -b <КЛЮЧ>-85-guest-token
+<ветка эпика>`. From the main branch only the epic branch itself is taken: a task branched from it
+carries into it what the epic has not finished.
+
 The name — `<КЛЮЧ>-<номер задачи>-<короткий-slug>`, the slug in lowercase Latin letters joined by
 hyphens. The delivery guard parses it on the spot and refuses a miss in the form before the first
 commit, and by the number it asks the board: the task must exist, be open, stand in the queue and

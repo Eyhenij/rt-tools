@@ -74,7 +74,7 @@ else's work item, and the second command goes by silently, leaving the PR bound 
 ```bash
 AZURE_DEVOPS_EXT_PAT="$TOKEN" az repos pr create \
     --title '[86] Письмо владельцу с незаполненным адресом попадает в логи' \
-    --source-branch 86-mail-owner-silence --target-branch main \
+    --source-branch 86-mail-owner-silence --target-branch <ветка эпика> \
     --work-items 86 --reviewers <владелец> --delete-source-branch true \
     --description 'Закрывает рабочий элемент 86.'
 ```
