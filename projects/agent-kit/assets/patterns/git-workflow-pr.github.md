@@ -55,8 +55,13 @@ open PR reads as an invitation to merge, so unfinished work opens it as a draft 
 a draft's merge button itself:
 
 ```bash
-GH_TOKEN="$TOKEN" gh pr create --draft --title '[<КЛЮЧ>-86] …' --body-file тело.md
+GH_TOKEN="$TOKEN" gh pr create --draft --base <ветка эпика> --title '[<КЛЮЧ>-86] …' --body-file тело.md
 ```
+
+**The base is the epic branch, and it is named by the command.** Without `--base` the host takes
+the default branch of the repository, that is the main branch: the request then carries the task
+past the epic, and the epic branch stays a copy nobody merges. The epic's own request is the only
+one whose base is the main branch, and it opens when the last folder of its tasks is taken apart.
 
 Everything waiting for a pipeline run, a rework or an answer to a question goes as a draft. The
 question is asked in the PR itself, not kept in the executor's head: a person reads the PR, not
@@ -79,7 +84,7 @@ The body starts with the link line — by it the board fills the linked PRs fiel
 assignee and labels are set by the same command, and a PR does not open without them:
 
 ```bash
-GH_TOKEN="$TOKEN" gh pr create --title '[<КЛЮЧ>-86] Письмо владельцу с незаполненным адресом попадает в логи' \
+GH_TOKEN="$TOKEN" gh pr create --base <ветка эпика> --title '[<КЛЮЧ>-86] Письмо владельцу с незаполненным адресом попадает в логи' \
     --reviewer <владелец> --assignee <бот> --label bug --label area:api \
     --body 'Closes #86
 
@@ -223,7 +228,7 @@ There are no checks on the PR itself: the rollout starts with a push into the ma
 before the merge nobody runs anything. Linters, unit tests and hook scenarios are taken by the
 push gate — below is what it does not know.
 
-1. **The main branch is merged into this branch** — `git fetch origin && git merge origin/main`.
+1. **The base is merged into this branch** — for a task branch that is the epic branch, for an epic branch the main one: `git fetch origin && git merge origin/<база>`.
    Base freshness is not inherited between branches of one session: the second and the third
    are taken after their own `fetch`, not from the ref under the first. While work goes on, main
    moves ahead — most often by the same executor's own PR. Everything checked below is checked
