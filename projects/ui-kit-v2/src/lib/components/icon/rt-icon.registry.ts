@@ -93,7 +93,22 @@ export class RtIconRegistry {
 
     #load(asked: IRtIconRequest): Observable<void> {
         const base: string = asked.preset === 'material' ? this.#materialBaseUrl : this.#baseUrl;
+
         return this.#http.get(`${base}/${asked.name}.svg`, { responseType: 'text' }).pipe(
+            tap((raw: string): void => this.#mountSymbol(asked, raw)),
+            map((): void => undefined),
+            // Материальный рисунок, который не приехал, закрывается своим. Материальный набор —
+            // слой переопределений: имени, которого в нём нет, кит и так рисует свой рисунок, и
+            // не приехавший файл обязан вести себя так же. Иначе страница, объявившая набор, но
+            // не опубликовавшая его папку, показывает пустое место там, где обещан значок, —
+            // разметка при этом верна, и промах виден только глазами.
+            catchError((): Observable<void> => (asked.preset === 'material' ? this.#loadOwnInto(asked) : EMPTY))
+        );
+    }
+
+    /** Свой рисунок под именем символа материального набора: подмена ссылки разметке не нужна. */
+    #loadOwnInto(asked: IRtIconRequest): Observable<void> {
+        return this.#http.get(`${this.#baseUrl}/${asked.name}.svg`, { responseType: 'text' }).pipe(
             tap((raw: string): void => this.#mountSymbol(asked, raw)),
             map((): void => undefined),
             // Отказ одного имени гасит только его значок: иначе один промах в наборе ронял бы
