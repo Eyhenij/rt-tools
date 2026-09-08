@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-lib-layers.mjs · 9273af17fd49 · правится надстройкой, не здесь
+// rt-kit v0.26.0 · checks/check-lib-layers.mjs · 9273af17fd49 · правится надстройкой, не здесь
 /**
  * The check of the domain grid invariant: every domain has exactly the layers due to
  * its form, and every lib has a name, tag, alias and configs matching its path.

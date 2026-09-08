@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/board-folders.mjs · ff43d352c59d · правится надстройкой, не здесь
+// rt-kit v0.26.0 · checks/board-folders.mjs · ff43d352c59d · правится надстройкой, не здесь
 /**
  * Task branches that have not carried their folder in by a single commit — a part of the work queue
  * audit.

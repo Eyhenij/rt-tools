@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/utf8.sh · b038f9712c13 · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/utf8.sh · b038f9712c13 · правится надстройкой, не здесь
 # The locale a guard runs in. Sourced as the first line of the body: `. "<guards directory>/utf8.sh"`.
 #
 # Guard patterns are written in the words of the language the tree speaks, and matching against

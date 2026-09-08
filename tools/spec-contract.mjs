@@ -1,4 +1,4 @@
-// rt-kit v0.25.0 · checks/spec-contract.mjs · 0d42e77f0101 · правится надстройкой, не здесь
+// rt-kit v0.26.0 · checks/spec-contract.mjs · 0d42e77f0101 · правится надстройкой, не здесь
 /**
  * The spec contract against what the code declares: the procedure table against the decorators,
  * the refusal codes against the throw points.

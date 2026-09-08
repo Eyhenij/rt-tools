@@ -1,4 +1,4 @@
-// rt-kit v0.25.0 · checks/spec-proposed.mjs · 51b46032f1fe · правится надстройкой, не здесь
+// rt-kit v0.26.0 · checks/spec-proposed.mjs · 51b46032f1fe · правится надстройкой, не здесь
 /**
  * Product agreements waiting to move into the domain spec.
  *

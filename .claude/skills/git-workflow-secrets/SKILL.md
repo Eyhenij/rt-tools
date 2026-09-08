@@ -4,7 +4,7 @@ kind: pattern
 rule: deploy-flow
 description: Pattern of rule deploy-flow. Load when working with keys of external services — where they live, how the owner's key differs from the environment key, what each state of an integration row means and why a green probe does not promise a working feature.
 ---
-<!-- rt-kit v0.25.0 · patterns/git-workflow-secrets.md · 6c412d3da7e7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · patterns/git-workflow-secrets.md · 6c412d3da7e7 · правится надстройкой, не здесь -->
 
 # Keys of external services
 

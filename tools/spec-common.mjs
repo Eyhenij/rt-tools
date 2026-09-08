@@ -1,4 +1,4 @@
-// rt-kit v0.25.0 · checks/spec-common.mjs · 02488db9f2ec · правится надстройкой, не здесь
+// rt-kit v0.26.0 · checks/spec-common.mjs · 02488db9f2ec · правится надстройкой, не здесь
 /**
  * What is shared by every subject of the spec audit: what counts as a domain, how the tree is
  * read and how a document is cut into sections and bullets.

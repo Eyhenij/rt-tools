@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/lint-after-edit.sh · 470b9558ee09 · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/lint-after-edit.sh · 470b9558ee09 · правится надстройкой, не здесь
 # rt-hook: PostToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file
 # Requires: hooks/profile-check.sh
 # The linter in the footsteps of an edit. PostToolUse.

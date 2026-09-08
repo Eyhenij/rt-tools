@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/skill-gate-layers.sh · 15690dc11cb4 · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/skill-gate-layers.sh · 15690dc11cb4 · правится надстройкой, не здесь
 # Layers of the rules gate: requirements that come ON TOP of the domain one.
 #
 # The domain rule is chosen once by the file path — an edit has one subject, and there is one
