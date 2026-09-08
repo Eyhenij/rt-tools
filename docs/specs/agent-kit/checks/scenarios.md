@@ -415,6 +415,15 @@ of those on disk carrying the makeup, are named by lines of their own
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
+### SC-AK-920 — belonging to an epic is declared by a word about the task
+
+Given the body of a task names the number of an epic in its reasoning, not as a declaration
+When the work queue audit reads the link of the task with the epic
+Then it counts the task as belonging to no epic, and a body that declares belonging is judged from
+both sides as before
+
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+
 ### SC-AK-752 — a branch of an open request lagging behind main is named by the audit
 
 Given the branch of an open request has fallen several commits behind the main branch

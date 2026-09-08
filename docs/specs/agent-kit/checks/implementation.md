@@ -51,3 +51,4 @@ whole.
 - **The check of the archive keeping time demands a day later than the cleanup removes.** — `projects/agent-kit/assets/checks/archive-age.mjs:CHECK_GRACE_DAYS` — the check calls the shared pick with a margin, the cleanup without one; scenarios SC-AK-869, SC-AK-870, SC-AK-871
 - **The answer of the work queue helper says whose eyes the state was taken by.** — `projects/agent-kit/assets/checks/board.github.mjs:viewerOf` — the field is set by `taskState` and `pullState`; scenario SC-AK-873
 - **The plan of an epic is the document that carries the makeup, not the first path in the card.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkEpicLinks` — the table is read by `planRows`; scenario SC-AK-919
+- **Belonging to an epic is declared by a word about the task, not by a mention of the number.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:declaredEpicOf` — both sides call it; scenario SC-AK-920

@@ -226,6 +226,13 @@ outward is watched by is said by the subdomain of the delivery guards.
   documents on disk, and none of those on disk carrying the makeup, are two divergences of their
   own: one sends the reader to write the plan, the other to write the table.
 
+- **Belonging to an epic is declared by a word about the task, not by a mention of the number.** The
+  number of an epic stands in a task body in the reasoning, in a quoted refusal, in the list of what
+  the work does not do — read as a declaration, each of those gave a false line, and a task that
+  merely explained something about an epic was counted into it. The declaration is the shape the
+  refusal itself dictates, and both sides of the link read that one shape: read differently, one
+  side would demand what the other does not see.
+
 ## What is out of scope
 
 - The scenarios of the uniformity signs — the subdomain `reuse` next to it: there are fifteen of
