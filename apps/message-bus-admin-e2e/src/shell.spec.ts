@@ -12,6 +12,15 @@ import { expectScreen } from './support/shot';
  * решением и увиденным лежит вся отрисовка — она и проверяется тут.
  */
 test.describe('оболочка админки', () => {
+    test('SC-MB-307 — вошедшему на стенде открыты все разделы: роль засева даёт все права', async ({ page }: { page: Page }) => {
+        // Разделы приходят по праву, и запись без роли не увидела бы ни одного. Набор проверяет
+        // разделы, а не права: само сложение прав проверяется вызовом, спеками приёмника.
+        await openSection(page, 'postmortems');
+
+        await expect(qa(page, 'header-nav-item')).toHaveCount(Object.keys(SECTIONS).length);
+        await expect(qa(page, 'container-no-sections')).toHaveCount(0);
+    });
+
     test('SC-MB-142 — разделы стоят верхним рядом, а колонки с ними слева нет', async ({ page }: { page: Page }) => {
         await openSection(page, 'postmortems');
 

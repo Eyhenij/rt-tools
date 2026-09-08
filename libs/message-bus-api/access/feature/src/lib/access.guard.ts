@@ -34,7 +34,8 @@ import {
     sessionCookieOf,
     sessionTokenHash,
 } from '@rt/message-bus-api/accounts/util';
-import { hasRight, OPERATION_ACCESS, OPERATION_RIGHT, rightsOf, TOperationAccess, TRight } from '@rt/message-bus-api/access/util';
+import { OPERATION_ACCESS, OPERATION_RIGHT, TOperationAccess } from '@rt/message-bus-api/access/util';
+import { hasRight, rightsOf, TRight } from '@rt/message-bus-common';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { findTreeByTokenHash } from '@rt/message-bus-api/trees/data-access';
 import { IRequestTree, ITreeBearingRequest, rememberTree, treeTokenHash } from '@rt/message-bus-api/trees/util';

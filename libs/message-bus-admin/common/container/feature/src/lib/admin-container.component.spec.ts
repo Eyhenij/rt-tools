@@ -1,15 +1,34 @@
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpRequest, provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
+import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { provideRtStorage, provideRtUtils } from '@rt-tools/core';
 
 import { AdminContainerComponent } from './admin-container.component';
 
 describe('AdminContainerComponent', () => {
     let fixture: ComponentFixture<AdminContainerComponent>;
+    let http: HttpTestingController;
+
+    /**
+     * Ответ приёмника о том, кто вошёл. Права приезжают им, а не подставляются в состояние:
+     * подставленные, они проверяли бы то, чего в дереве нет, — путь ответа тот же, что у экрана.
+     */
+    function signedInWith(rights: readonly string[]): void {
+        TestBed.inject(AuthStore).restore().subscribe();
+        http.expectOne('/api/auth/session').flush({ name: 'Владелец', rights });
+        fixture.detectChanges();
+    }
+
+    /** Подписи разделов в шапке: по ним видно, какие пункты нарисованы. */
+    function shownSections(): readonly string[] {
+        return fixture.debugElement
+            .queryAll(By.css('[qa-dataid="header-nav-item"]'))
+            .map((item): string => (item.nativeElement as HTMLElement).textContent?.trim() ?? '');
+    }
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -24,11 +43,16 @@ describe('AdminContainerComponent', () => {
             ],
         });
 
+        http = TestBed.inject(HttpTestingController);
         fixture = TestBed.createComponent(AdminContainerComponent);
         fixture.detectChanges();
     });
 
     afterEach(() => {
+        // Значки кит просит тем же клиентом: без слива они читаются проверкой как неотвеченные
+        // запросы экрана, и падает на них любая спека, что бы она ни проверяла.
+        http.match((request: HttpRequest<unknown>): boolean => request.url.startsWith('/icons/'));
+        http.verify();
         TestBed.resetTestingModule();
         localStorage.clear();
     });
@@ -46,9 +70,36 @@ describe('AdminContainerComponent', () => {
     });
 
     it('SC-MB-142 — разделы приходят в шапку декларацией меню, а колонки с ними нет', () => {
-        const items: ReadonlyArray<unknown> = fixture.debugElement.queryAll(By.css('[qa-dataid="header-nav-item"]'));
+        signedInWith(['postmortems:read', 'proposals:read', 'summaries:read', 'invites:read']);
 
-        expect(items.length).toBeGreaterThan(0);
+        expect(shownSections().length).toBe(4);
         expect(fixture.debugElement.query(By.css('rt-section-nav'))).toBeNull();
+    });
+
+    it('SC-MB-298 — раздел, право на который есть, в шапке стоит', () => {
+        signedInWith(['postmortems:read']);
+
+        expect(shownSections()).toEqual(['Разборы происшествий']);
+    });
+
+    it('SC-MB-299 — раздела, права на который нет, в шапке нет вовсе', () => {
+        signedInWith(['postmortems:read']);
+
+        expect(shownSections()).not.toContain('Приглашения');
+        expect(fixture.debugElement.query(By.css('[qa-dataid="container-no-sections"]'))).toBeNull();
+    });
+
+    it('SC-MB-301 — пока ответ о вошедшем не приехал, не скрывается ничего', () => {
+        // Права неизвестны, а не пусты: скрыв по пустому набору, админка спрятала бы разделы у
+        // того, у кого они есть, — и человек остался бы на пустом экране без выхода с него.
+        expect(shownSections().length).toBe(4);
+    });
+
+    it('SC-MB-302 — вошедшему без единого права разделов не показывают, а говорят, что доступа нет', () => {
+        signedInWith([]);
+
+        expect(shownSections()).toEqual([]);
+        expect(fixture.debugElement.query(By.css('[qa-dataid="container-no-sections"]'))).not.toBeNull();
+        expect(fixture.debugElement.query(By.css('[qa-dataid="container-content"] router-outlet'))).toBeNull();
     });
 });

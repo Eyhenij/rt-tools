@@ -10,7 +10,8 @@
  */
 import { Body, Controller, Get, HttpCode, HttpStatus, Logger, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
 
-import { PublicOperation, rightsOf, SessionOperation } from '@rt/message-bus-api/access/util';
+import { PublicOperation, SessionOperation } from '@rt/message-bus-api/access/util';
+import { rightsOf } from '@rt/message-bus-common';
 import {
     createSession,
     findAccountByNameKey,

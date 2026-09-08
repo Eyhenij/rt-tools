@@ -27,6 +27,8 @@ export const ADMIN_LABELS = {
     language: 'Язык',
     languageSwitch: 'Язык подписей',
     signInTitle: 'Вход в админку',
+    noSectionsTitle: 'Доступа ни к одному разделу нет',
+    noSectionsFrom: 'Права выдаёт владелец приёмника — попросите его открыть нужные разделы',
 
     sectionPostmortems: 'Разборы происшествий',
     sectionProposals: 'Предложения',
