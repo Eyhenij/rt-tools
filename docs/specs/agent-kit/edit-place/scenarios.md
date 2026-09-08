@@ -192,3 +192,38 @@ Then the guard refuses: the assignment and the call are taken apart as a pair, o
 through a variable is lost
 
 Covered: `projects/agent-kit/tests/rule-source-guard.test.sh`.
+
+### SC-AK-924 — the parse names the write target in each of its shapes
+
+Given a shell command writes a file by a redirection, by an append, through `tee`, by an in-place edit
+or by a copy over the top
+When the shared parse takes the write targets out of the command text
+Then it names that file, and the source of the copy is not named: only what the command writes counts
+as a target
+
+Covered: `projects/agent-kit/tests/shell-write-paths.test.sh`.
+
+### SC-AK-925 — the write path inside the body of an interpreter is named too
+
+Given the code goes as an argument of an interpreter or as the body of a heredoc, and the write path
+stands inside it
+When the shared parse takes the write targets out of the command text
+Then it names that path; a body that only reads gives out no paths at all
+
+Covered: `projects/agent-kit/tests/shell-write-paths.test.sh`.
+
+### SC-AK-926 — reading is not a write
+
+Given the command reads a file, searches over the tree or prints a piece of a file
+When the shared parse takes the write targets out of the command text
+Then it names nothing: a guard that gets in the way of reading is switched off on the very first day
+
+Covered: `projects/agent-kit/tests/shell-write-paths.test.sh`.
+
+### SC-AK-927 — muted output is not a sign of a write
+
+Given the command mutes its output into the empty device and into the error stream
+When the shared parse takes the write targets out of the command text
+Then the muted stream names nothing, while a real write standing next to it is still named
+
+Covered: `projects/agent-kit/tests/shell-write-paths.test.sh`.
