@@ -127,31 +127,6 @@ refuses the push.
   apart before it is run, and it runs the set in the tree that lies now: a compound "switch and push"
   passes the gate by the former branch, checking the wrong thing silently. Creating a new branch does
   not fall under this — for a fresh branch the tree is the same as it was.
-- **The signature of a machine commit is judged before the commit leaves.** The refusal stands at the
-  push: before it the signature is rewritten in place for the whole branch at once, after it by a
-  forced send, and the price of the miss jumps exactly here.
-- **A machine commit is recognised by its claim, not by its mail.** What is judged is a commit that
-  named itself by the machine record; one that named itself by somebody else is not judged at all —
-  otherwise the guard would refuse work a person did with their own hands in the same tree.
-- **The mail of the machine record is checked as a whole value.** A sample "number, plus, login,
-  domain" would pass with a foreign number, that is with exactly the miss the signature is read for.
-- **The contribution of the branch is judged, not the whole history.** Commits already merged into
-  main are not fixed by this branch, and a refusal over them would refuse the work instead of the
-  miss.
-- **The signature is read on the machine, without the network.** A network call would fall together
-  with the connection and would refuse work where the signature is right.
-- **The repair named in the refusal is let through by the refusal itself.** It is a commit too, and
-  without the exception the guard refused it together with the miss: the divergence is removed only
-  by a commit, and a commit is refused while the divergence is there. What is recognised is not
-  trust in the line but the declared mail — the same address the guard named itself, in both
-  signature variables at once, next to a rewrite of the last commit; faking that means putting the
-  right signature. A send is never a repair, whatever stands in its variables: after it only a
-  forced one helps.
-- **A refusal about the signature names the commit by name and both mails.** A miss in one character
-  is not found by eye: without the found and the declared value side by side the refusal would have
-  to be taken apart by hand.
-- **A tree that named no mail of a machine record gets no demand.** The package has no machine record
-  of its own, and an invented one would refuse work in a foreign tree.
 - **The identity of the machine record is confirmed by the answer of the hosting, not by recognising
   a string.** A familiar look of a string is never a confirmation: the miss looked familiar. What
   exactly to ask with the tree knows — for a limited record a search by number answers "not found"
