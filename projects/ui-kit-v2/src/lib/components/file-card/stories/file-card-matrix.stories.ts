@@ -34,4 +34,6 @@ export const States: TStory = {
 
 export const Disabled: TStory = { args: { part: 'disabled' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

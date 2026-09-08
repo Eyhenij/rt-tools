@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtThreadListComponent } from '../../rt-thread-list.component';
 import { RtThreadListRowDirective } from '../../rt-thread-list.directives';
 import { IRtThreadList } from '../../rt-thread-list.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TThreadListMatrixPart = 'rowState' | 'loading' | 'more' | 'empty' | 'themes';
+export type TThreadListMatrixPart = 'rowState' | 'loading' | 'more' | 'empty' | 'presets' | 'themes';
 
 /** Строка списка витрины: к обязательным полям добавлены подпись и приписка. */
 interface IThreadRow extends IRtThreadList.Row {
@@ -103,6 +104,25 @@ const ROWS: readonly IThreadRow[] = [
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Список в обоих наборах">
+                    <ng-template>
+                        <div style="width: 20rem; height: 20rem">
+                            <rt-thread-list searchPlaceholder="Поиск" [rows]="rows" [activeId]="2">
+                                <ng-template rtThreadListRow let-row>
+                                    <div style="display: grid; gap: 0.125rem">
+                                        <strong>{{ row.title }}</strong>
+                                        <span style="color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)">
+                                            {{ row.meta }}
+                                        </span>
+                                    </div>
+                                </ng-template>
+                            </rt-thread-list>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Список в обеих темах">
                     <ng-template>
@@ -132,6 +152,7 @@ const ROWS: readonly IThreadRow[] = [
         RtThreadListRowDirective,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

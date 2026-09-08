@@ -32,4 +32,6 @@ export const States: TStory = {
     parameters: { pseudo: STORY_PSEUDO_PARAMETERS },
 };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

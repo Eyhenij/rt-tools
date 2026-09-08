@@ -25,4 +25,6 @@ export const LastPhoto: TStory = { args: { part: 'start' } };
 /** Один кадр: стрелок нет вовсе — рядом с историей выше видно, что их убирает сам просмотрщик. */
 export const SinglePhoto: TStory = { args: { part: 'single' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

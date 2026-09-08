@@ -25,4 +25,6 @@ export const Formatting: TStory = { args: { part: 'formatting' } };
 
 export const Rows: TStory = { args: { part: 'rows' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

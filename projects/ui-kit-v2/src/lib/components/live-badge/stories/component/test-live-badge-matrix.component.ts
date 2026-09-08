@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryGridComponent } from '../../../../../showcase/story-grid.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtLiveBadgeComponent } from '../../rt-live-badge.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TLiveBadgeMatrixPart = 'active' | 'label' | 'themes';
+export type TLiveBadgeMatrixPart = 'active' | 'label' | 'presets' | 'themes';
 
 /** Случай подписи — не значение оси, а различимая пара «что передали → что нарисовано». */
 interface ILiveBadgeLabelCase {
@@ -48,6 +49,16 @@ interface ILiveBadgeLabelCase {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Живость в обоих наборах">
+                    <ng-template>
+                        @for (active of activeStates; track active) {
+                            <rt-live-badge label="Смотрят сейчас" [count]="128" [active]="active" />
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Живость в обеих темах">
                     <ng-template>
@@ -66,6 +77,7 @@ interface ILiveBadgeLabelCase {
 
         // showcase
         StoryGridComponent,
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

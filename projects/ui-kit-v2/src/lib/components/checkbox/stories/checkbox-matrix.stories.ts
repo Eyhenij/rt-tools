@@ -31,4 +31,6 @@ export const States: TStory = {
     parameters: { pseudo: storyPseudoParameters('.rt-checkbox') },
 };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

@@ -23,4 +23,6 @@ export const Blocks: TStory = { args: { part: 'blocks' } };
 
 export const Empty: TStory = { args: { part: 'empty' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtNoteComponent } from '../../rt-note.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TNoteMatrixPart = 'content' | 'width' | 'edges' | 'themes';
+export type TNoteMatrixPart = 'content' | 'width' | 'edges' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-note` для витрины.
@@ -82,6 +83,20 @@ export type TNoteMatrixPart = 'content' | 'width' | 'edges' | 'themes';
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Заметка в обоих наборах">
+                    <ng-template>
+                        <div style="width: 20rem">
+                            <rt-note>
+                                Договор действует до
+                                <strong>14 марта 2027</strong>
+                                года.
+                            </rt-note>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Заметка в обеих темах">
                     <ng-template>
@@ -103,6 +118,7 @@ export type TNoteMatrixPart = 'content' | 'width' | 'edges' | 'themes';
         RtNoteComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

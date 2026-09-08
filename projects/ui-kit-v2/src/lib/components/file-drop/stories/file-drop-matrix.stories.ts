@@ -44,6 +44,8 @@ export const Zones: TStory = {
     },
 };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = {
     args: { part: 'themes' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {

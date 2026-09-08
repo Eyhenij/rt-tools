@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtStatTileComponent } from '../../rt-stat-tile.component';
 import { IRtStatTile } from '../../rt-stat-tile.model';
@@ -9,7 +10,7 @@ import { IRtStatTile } from '../../rt-stat-tile.model';
 const DELTA_LABEL: string = 'к прошлой неделе';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TStatTileMatrixPart = 'delta' | 'baseline' | 'parts' | 'themes';
+export type TStatTileMatrixPart = 'delta' | 'baseline' | 'parts' | 'presets' | 'themes';
 
 /** Случай изменения — подпись для ряда и само значение входа. */
 interface IStatTileDeltaCase {
@@ -68,6 +69,16 @@ interface IStatTilePartsCase {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Знак изменения в обоих наборах">
+                    <ng-template>
+                        @for (deltaCase of deltaCases; track deltaCase.name) {
+                            <rt-stat-tile label="Визиты" value="1 240" [deltaPrimary]="deltaCase.delta" />
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Знак изменения в обеих темах">
                     <ng-template>
@@ -85,6 +96,7 @@ interface IStatTilePartsCase {
         RtStatTileComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],
