@@ -9,9 +9,9 @@
         overflow: hidden;
         background: linear-gradient(
             90deg,
-            var(--rt-color-bg-subtle) 0%,
-            var(--rt-color-border-default) 50%,
-            var(--rt-color-bg-subtle) 100%
+            var(--rt-color-skeleton-base) 0%,
+            var(--rt-color-skeleton-wave) 50%,
+            var(--rt-color-skeleton-base) 100%
         );
         background-size: 200% 100%;
 

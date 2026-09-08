@@ -95,4 +95,18 @@ export const lightParts = [
         value: `var(--rt-neutral-0)`,
         dark: `transparent`,
     },
+    {
+        lead: `    /* Skeleton (rt-skeleton) — заглушка загрузки. Два конца перелива: покой и гребень
+       волны. Имена свои, а не роли подложки и рамки: в светлом наборе те ведут на одну краску,
+       и перелив между ними стоял ровной заливкой. */`,
+        space: true,
+        name: `--rt-color-skeleton-base`,
+        value: `var(--rt-neutral-100)`,
+        dark: `var(--rt-charcoal-950)`,
+    },
+    {
+        name: `--rt-color-skeleton-wave`,
+        value: `var(--rt-neutral-50)`,
+        dark: `var(--rt-charcoal-border)`,
+    },
 ];
