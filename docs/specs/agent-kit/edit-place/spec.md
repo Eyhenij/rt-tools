@@ -52,6 +52,10 @@ turn.
   The general sign is wide on purpose — it holds the name of the interpreter too — and running a
   laid-out check would read as an edit of the check itself. A refusal on a read costs more than a
   miss: a guard that gets in the way of reading is switched off on the very first day.
+- **The parse of write targets is declared once, and every guard that judges an edit calls it.** Two
+  copies of one sign diverge silently: each is fixed on its own, and neither says the rest stayed
+  blind. The parse has a suite of its own, so that a failure names the parse and not the guard that
+  called it.
 - **The body of an interpreter without a write gives out none of its paths.** Inside the body there is
   nothing to parse a foreign language with, and everything looking like a path is taken from there; a
   body holding not a single write call gave out its paths on a par with one that writes. A command

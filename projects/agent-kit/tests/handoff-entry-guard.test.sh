@@ -41,6 +41,24 @@ h "SC-AK-345 — передача, вставленная текстом, лов
 h "SC-AK-346 — чтение правила файлом засчитывается" \
     "$(transcript "$(say 'handoff — работай')" "$(ran 'cat .claude/skills/task-flow/SKILL.md')")" PASS
 
+# Та же правка командой оболочки: гард судит запись файла, а не имя инструмента. Команда, которая
+# ничего не пишет, гарда не будит — вход из передачи начинается с чтения дерева.
+cmd_in() {
+    jq -n --arg p "$1" --arg c "$2" \
+        '{session_id:"tests",tool_name:"Bash",tool_input:{command:$c},transcript_path:$p}'
+}
+hc() { expect_decision "$1" handoff-entry-guard.sh "$(cmd_in "$2" "$3")" "$4"; }
+
+hc "SC-AK-929 — запись командой без правила отбивается" \
+    "$(transcript "$(say '.claude/handoff/2026-08-19-x.md — работай по нему')")" \
+    'printf x > docs/a.md' deny
+hc "SC-AK-929 — чтение командой проходит" \
+    "$(transcript "$(say '.claude/handoff/2026-08-19-x.md — работай по нему')")" \
+    'cat docs/a.md' PASS
+hc "SC-AK-929 — с загруженным правилом запись командой проходит" \
+    "$(transcript "$(say '.claude/handoff/2026-08-19-x.md')" "$(skill 'task-flow')")" \
+    'printf x > docs/a.md' PASS
+
 exit_code_of() {
     printf '%s' "$2" | "$HOOKS/handoff-entry-guard.sh" >/dev/null 2>&1
     report "$1" "код:$?" "код:0"

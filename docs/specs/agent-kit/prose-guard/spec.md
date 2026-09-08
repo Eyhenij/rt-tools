@@ -29,6 +29,10 @@ The guard has no interface: only the executor sees it — as the text of a refus
   agreements were checked by nothing and were held by the memory of whoever writes.
 - **Every finding is named together with a replacement.** A list of bans without a replacement reads
   as a ban on writing, and the author goes around it instead of editing the text.
+- **A write by a shell command is judged the same as one by the edit tool.** The same text with the
+  name of the shell instead of the name of the edit gave silence, and a document written by a heredoc
+  went past the wording convention whole. The target is taken by the shared parse of write targets,
+  and the new text is the body of the command: the written text stands inside it.
 - **Only the new text of the edit is judged.** What has accumulated is fixed by separate work;
   refusing an edit of a neighbouring line for it would make the guard avoidable out of necessity.
 - **The boundaries of a word are counted by letters, not by the class `\w`.** It is ASCII-only: a
