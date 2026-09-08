@@ -82,6 +82,7 @@
             "Archive retention": "node tools/check-archive-age.mjs",
             "Style layer": "node tools/check-cascade-layer.mjs",
             "Icon map": "node tools/check-icon-map.mjs",
+            "Preset stories": "node tools/check-preset-stories.mjs",
             "Test, Lint, Typecheck, Build": "pnpm exec nx affected -t lint typecheck test build --parallel",
             "Hook suites": "pnpm exec nx affected -t test-hooks",
             "Stylelint": "pnpm run lint:styles",
