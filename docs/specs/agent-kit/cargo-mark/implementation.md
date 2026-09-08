@@ -1,21 +1,21 @@
-# Привязка — отметка состояния груза
+# Binding — the state mark of a cargo record
 
-Утверждение спека и место, где оно исполняется. Связь идёт по тексту утверждения: снятое
-утверждение снимается вместе со своей строкой.
+A statement of the spec and the place where it is carried out. The link goes by the text of the
+statement: a removed statement is removed together with its line.
 
-- **Отметка ставится командой пакета, а не запросом руками.** — `tools/cargo-mark.mjs:main`
-- **Одна отметка несёт одно состояние и сколько угодно записей.** — `tools/cargo-mark.mjs:itemsOf`
-- **Записи обоих родов уезжают одним запросом.** — `tools/cargo-mark.mjs:mark`
-- **Записи называются теми же ключами, которыми приехали.** — `tools/cargo-mark.mjs:itemsOf`
-- **Признак предложения считается тем же способом, что и у приёма.** — `tools/cargo-mark.mjs:itemsOf`
-- **Признак дерева считается одним приёмом на отправке и на отметке.** — `tools/cargo-mark.mjs:treeSlug`
-- **Незнакомое состояние отбивается до сети.** — `tools/cargo-mark.mjs:mark`
-- **Вызов без записей отбивается и называет, чего не хватает.** — `tools/cargo-mark.mjs:mark`
-- **Без токена дерева команда в сеть не идёт.** — `tools/cargo-mark.mjs:mark`
-- **Холостой ход печатает, что уехало бы, и в сеть не идёт.** — `tools/cargo-mark.mjs:mark`
-- **Отбитые приёмом записи печатаются поимённо, с причиной.** — `tools/cargo-mark.mjs:mark`
-- **Отметка, которая ничего не перевела, кончается ненулевым кодом.** — `tools/cargo-mark.mjs:mark`
-- **Ни токен дерева, ни текст записи в вывод не попадают.** — `tools/cargo-mark.mjs:callIntake`
-- **Приём отвечает счётом, и команда пересказывает его человеку.** — `tools/cargo-mark.mjs:mark`
-- **Команда строки запуска несёт текст починки доводом.** — `tools/cargo-mark.mjs:FIX_FLAG` — довод читается строкой запуска и ложится каждой записи вызова
-- **Команда строки запуска несёт версию выпуска доводом.** — `tools/cargo-mark.mjs:RELEASE_FLAG` — довод читается строкой запуска и ложится каждой записи вызова
+- **The mark is set by a command of the package, not by a request made by hand.** — `tools/cargo-mark.mjs:main`
+- **One mark carries one state and any number of records.** — `tools/cargo-mark.mjs:itemsOf`
+- **Records of both kinds leave by one request.** — `tools/cargo-mark.mjs:mark`
+- **The records are named by the same keys they arrived by.** — `tools/cargo-mark.mjs:itemsOf`
+- **The sign of a proposal is counted the same way as at the intake.** — `tools/cargo-mark.mjs:itemsOf`
+- **The sign of the tree is counted by one technique on the send and on the mark.** — `tools/cargo-mark.mjs:treeSlug`
+- **An unknown state is refused before the network.** — `tools/cargo-mark.mjs:mark`
+- **A call without records is refused and names what is missing.** — `tools/cargo-mark.mjs:mark`
+- **Without the token of the tree the command goes to no network.** — `tools/cargo-mark.mjs:mark`
+- **A dry run prints what would leave and goes to no network.** — `tools/cargo-mark.mjs:mark`
+- **The records the intake refused are printed by name, with a reason.** — `tools/cargo-mark.mjs:mark`
+- **A mark that moved nothing ends with a non-zero code.** — `tools/cargo-mark.mjs:mark`
+- **Neither the token of the tree nor the text of a record reaches the output.** — `tools/cargo-mark.mjs:callIntake`
+- **The intake answers with a count, and the command retells it to the person.** — `tools/cargo-mark.mjs:mark`
+- **The launch-line command carries the fix text as an argument.** — `tools/cargo-mark.mjs:FIX_FLAG` — the argument is read by the launch line and lands on every record of the call
+- **The launch-line command carries the release version as an argument.** — `tools/cargo-mark.mjs:RELEASE_FLAG` — the argument is read by the launch line and lands on every record of the call

@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — the part about the rollout. Load when an edit goes to production — merge into the main branch, the pipeline, images and tags, storage migrations. Patterns git-workflow-migration, -restart, -docker, -secrets. Task and branch — rule git-workflow.
 ---
-<!-- rt-kit v0.25.0 · rules/deploy-flow.github.md · fd627500e51a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/deploy-flow.github.md · cd1c4a75e71f · правится надстройкой, не здесь -->
 
 # Rollout — how it works here
 
@@ -150,33 +150,33 @@ flowchart TD
 
 ## What of the law is not here
 
-**Слияние в главную ветку прода не выкатывает.** У `.github/workflows/deploy.yml` один
-триггер — `workflow_dispatch`, — и выкатку запускают рукой. Всё, что правило говорит про мерж
-как про начало выкатки, к этому дереву не приложено: влитая правка доезжает до прода тогда,
-когда кто-то нажмёт запуск, и ни минутой раньше.
+**A merge into the main branch rolls nothing out to production.** `.github/workflows/deploy.yml`
+has one trigger — `workflow_dispatch` — and the rollout is started by hand. Everything the rule
+says about a merge as the start of a rollout does not apply to this tree: a merged edit reaches
+production when someone presses the start, and not a minute earlier.
 
-Цена этому уже заплачена. Прод отставал от главной ветки на 476 коммитов, четыре миграции
-эпика о разборе груза на нём не накатывались, и колонок, которых ждал приёмник, в таблицах
-физически не было. Читалось это как поломка приёмника — потому что правило обещало прод,
-который едет сам.
+The price for this has already been paid. Production lagged the main branch by 476 commits, four
+migrations of the cargo-analysis epic were never applied to it, and the columns the receiver
+expected were physically absent from the tables. This read as a broken receiver — because the
+rule promised production that travels by itself.
 
 ```bash
-# что выкачено на самом деле: последняя успешная выкатка и её коммит
+# what is actually rolled out: the last successful rollout and its commit
 GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh run list \
     --workflow=deploy.yml --status=success --limit 1 --json headSha,createdAt
-# на сколько прод отстал от главной ветки
-git rev-list --count <sha выкатки>..origin/main
+# by how much production lags the main branch
+git rev-list --count <sha of the rollout>..origin/main
 ```
 
-Отсюда же — граница сверки очереди работ. Она спрашивает последний прогон главной ветки, а
-прогон главной ветки о проде не говорит ничего: слияние его не двигает. Расхождение в
-476 коммитов сверка молчала ровно поэтому.
+From here comes the boundary of the work queue audit too. It asks the last run of the main
+branch, and a run of the main branch says nothing about production: a merge does not move it. The
+divergence of 476 commits was exactly what the audit stayed silent about.
 
-Состояние прода машине не видно и в остальном: отвечает ли прод той сборкой, которую он
-выкатил, не спрашивает никто. Держится это тем, кто выкатывал.
+The state of production is invisible to a machine in the rest as well: whether production answers
+with the build it rolled out nobody asks. This is held by whoever rolled it out.
 
-Полноту чистки реестра не считает ничто: сценарий оставляет три последних sha, и промах в
-его отборе виден только тогда, когда диск сервера кончился.
+The completeness of the registry cleanup is counted by nothing: the script keeps the last three
+shas, and a miss in its selection shows only when the server's disk has run out.
 
 ## Patterns
 

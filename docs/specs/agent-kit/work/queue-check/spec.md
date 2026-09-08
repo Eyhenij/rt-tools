@@ -1,130 +1,140 @@
-# Сверка очереди работ
+# The check of the work queue
 
-**Статус:** действует · **Ревизия:** 2026-08-26 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `delivery`, `work-conduct`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-26 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `delivery`, `work-conduct`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Очередь работ и репозиторий расходятся молча: колонка отстаёт от ветки, прогон не встаёт на
-вершине, черновик стоит при зелёном прогоне, конфликт приезжает чужим слиянием. Ни одно из
-этого не отбивает гард — он судит один ход, а заявка стоит в очереди днями. Поддомен называет,
-что обязана видеть сверка и какими словами она об этом говорит.
+The work queue and the repository diverge silently: the column falls behind the branch, a run does
+not stand at the tip, a draft stands at a green run, a conflict arrives by someone else's merge. Not
+one of these is refused by a guard — it judges one turn, while a request stands in the queue for
+days. The subdomain names what the check is obliged to see and by which words it says it.
 
-Остальное ведение работы командами — домен рядом: там заведение задачи, папка, разбор и обходы.
+The rest of leading the work by commands is the domain next to it: there stand the creating of a
+task, the folder, the taking apart and the bypasses.
 
-## Терминология
+## Terminology
 
-- **Расхождение** — строка сверки: очередь работ и репозиторий говорят о работе разное.
-- **Вершина заявки** — последний коммит её ветки; прогон спрашивается на нём.
-- **Вытесненный прогон** — ждавший в группе очереди и отменённый следующим встающим; заданий у
-  него ноль.
-- **Первая колонка** — та, из которой задачу забирают в работу.
+- **A divergence** — a line of the check: the work queue and the repository say different things
+  about the work.
+- **The tip of a request** — the last commit of its branch; the run is asked about at it.
+- **A pushed-out run** — one that waited in the group of the queue and was cancelled by the next one
+  standing up; it has zero jobs.
+- **The first column** — the one a task is taken into work from.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Своей строки запуска у поддомена нет: сверка говорит строками расхождений и итогом.
+The subdomain has no launch line of its own: the check speaks by the lines of the divergences and by
+the total.
 
-| В договорённости     | Что видит исполнитель                               |
-| -------------------- | --------------------------------------------------- |
-| расхождение          | строка с номером заявки, причиной и командой чинить |
-| пропущенная проверка | строка о том, почему прогоны не спрашивались        |
+| In the agreement | What the executor gets                                                      |
+| ---------------- | --------------------------------------------------------------------------- |
+| a divergence     | a line with the number of the request, the reason and the command to fix it |
+| a skipped check  | a line about why the runs were not asked                                    |
 
-## Правила
+## Rules
 
-- **Открытый PR, чья вершина не несёт прогона, — расхождение сверки.** Страница PR без прогона
-  выглядит так же, как страница с зелёным: цвета у неё нет ни там, ни там. Событие до хостинга
-  доходит не всегда, и вершина, за которой прогон не встал, узнаётся только тем, что кто-то
-  открыл список прогонов руками.
-- **Прогон спрашивается на вершине PR, а не на его ветке.** Прогон промежуточного коммита о
-  состоянии вершины не говорит ничего, а список прогонов ветки отдаёт их вперемешку.
-- **Считается сам факт прогона, а не его цвет.** Идущий и упавший прогон видны на странице PR
-  оба; невидимо только отсутствие, и сверка говорит ровно о нём.
-- **Свежая вершина без прогона не судится.** Между пушем и прогоном проходит время, и строка на
-  этом промежутке значила бы «подожди», а не «чини».
-- **Дерево без файла конвейера прогонов не спрашивает.** Заводиться прогону там неоткуда, и
-  строка встала бы на каждый открытый PR ни о чём.
-- **Дерево, у которого прогоны не спрашивались, слышит об этом отдельной строкой.** Молчание о
-  непроверенном читается как «прогоны на месте».
-- **Черновик при зелёном прогоне на вершине — расхождение сверки.** У черновика кнопка слияния
-  заблокирована самим хостингом: зелёная страница PR владельцу ничего не разрешает, а список, в
-  котором всё серое, читается как «работа не сделана». Гард снятия черновика сюда не достаёт —
-  он судит один ход и молчит, пока ветка везёт папку своей задачи.
-- **Цвет прогона спрашивается отдельно от его наличия.** Наличие отвечает на вопрос «событие
-  дошло», цвет — на вопрос «работу можно отдавать»; идущий и упавший прогон черновика не
-  осуждают.
-- **Конфликтующий открытый PR — расхождение сверки.** Конфликт приезжает в отданный PR чужим
-  слиянием, и своего хода у него нет: гард судит один ход, а PR стоит в очереди днями. Строка
-  называет, с чем конфликт, и встаёт третьей рядом с вершиной без прогона и черновиком при
-  зелёном прогоне.
-- **Непосчитанная сливаемость конфликтом не считается.** Хостинг считает её заново после каждой
-  правки главной ветки, и строка на непосчитанное краснела бы на каждой свежей вершине.
-- **Сверка очереди работ видит папку задачи и во вложенном каталоге.** Номером считается и
-  голое число в имени — такую же форму принимает проверка имени ветки. Папку, которую сверка
-  не видит, никто не найдёт: одну такую нашли грепом, а не проверкой.
-- **У конфликтующей заявки причиной названа не потеря события, а конфликт.** Конвейер проверяет
-  слияние ветки с базой, и при конфликте слияния нет — прогон не встанет, сколько бы событий ни
-  вернули. Совет вернуть событие выполняется буквально: за один заход заявка перезакрывалась
-  дважды подряд, и прогон встал только после вливания главной ветки. Строка называет ту причину,
-  которая чинится, и команды перезакрытия в ней нет.
+- **An open PR whose tip carries no run is a divergence of the check.** A page of a PR without a run
+  looks the same as a page with a green one: it has no colour in either case. The event does not
+  always reach the hosting, and a tip behind which a run did not stand is recognised only by
+  somebody opening the list of the runs by hand.
+- **The run is asked about at the tip of the PR, not at its branch.** A run of an intermediate
+  commit says nothing about the state of the tip, and the list of the runs of the branch gives them
+  back mixed together.
+- **What counts is the very fact of a run, not its colour.** A run in progress and a fallen one are
+  both visible on the page of the PR; only the absence is invisible, and the check speaks exactly
+  about it.
+- **A fresh tip without a run is not judged.** Between the push and the run some time passes, and a
+  line over that interval would mean "wait", not "fix".
+- **A tree without a file of the pipeline is not asked about runs.** There is nowhere for a run to
+  come from there, and the line would stand at every open PR about nothing.
+- **A tree whose runs were not asked about hears of it by a line of its own.** Silence about the
+  unchecked reads as "the runs are in place".
+- **A draft at a green run at the tip is a divergence of the check.** At a draft the merge button is
+  locked by the hosting itself: a green page of a PR allows the owner nothing, and a list where
+  everything is grey reads as "the work is not done". The guard of the lifting of the draft does not
+  reach here — it judges one turn and stays silent while the branch carries the folder of its task.
+- **The colour of the run is asked about apart from its presence.** The presence answers the
+  question "the event arrived", the colour the question "the work can be handed in"; a run in
+  progress and a fallen one do not condemn a draft.
+- **A conflicting open PR is a divergence of the check.** A conflict arrives into a handed-in PR by
+  someone else's merge, and it has no turn of its own: the guard judges one turn, while the PR
+  stands in the queue for days. The line names what the conflict is with and stands third next to a
+  tip without a run and a draft at a green run.
+- **Mergeability that was not counted does not count as a conflict.** The hosting counts it anew
+  after every edit of the main branch, and a line about the uncounted would turn red at every fresh
+  tip.
+- **The check of the work queue sees a task folder in a nested directory too.** A bare number in the
+  name also counts as a number — the check of the name of the branch accepts the same form. A folder
+  the check does not see nobody will find: one such was found by a grep, not by a check.
+- **At a conflicting request the reason named is the conflict, not the loss of the event.** The
+  pipeline checks the merge of the branch with the base, and at a conflict there is no merge — the
+  run will not stand, however many events are brought back. Advice to bring the event back is
+  carried out literally: over one session the request was reclosed twice in a row, and the run stood
+  only after the main branch was merged in. The line names the reason that gets fixed, and there are
+  no commands of reclosing in it.
 
-## Что не входит
+## What is out of scope
 
-- Гарды поставки: они судят один ход, а сверка — состояние очереди целиком.
-- Цвет прогона как признак готовности работы: сверка считает наличие, а готовность судит гард
-  снятия черновика.
-- Заведение задачи, ветки и папки — домен рядом.
+- The guards of the delivery: they judge one turn, while the check judges the state of the queue
+  whole.
+- The colour of the run as a sign of the readiness of the work: the check counts the presence, and
+  the readiness is judged by the guard of the lifting of the draft.
+- The creating of a task, a branch and a folder — the domain next to it.
 
-## Контракт
+## Contract
 
-Поверхность — команда сверки. Ответ: строки расхождений и код возврата, ненулевой при хотя бы
-одном.
+The surface is the command of the check. The answer: the lines of the divergences and an exit code,
+non-zero at even one of them.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: сверка отвечает кодом возврата команды, а не кодом отказа домена — `1` при
-найденных расхождениях, `0` при их отсутствии.
+Not applicable: the check answers with the exit code of the command, not with a code of the domain —
+`1` at found divergences, `0` in their absence.
 
-## Данные
+## Data
 
-Своих данных сверка не держит. Читает очередь работ, заявки, прогоны и дерево задач на диске.
+The check holds no data of its own. It reads the work queue, the requests, the runs and the tree of
+the tasks on the disk.
 
-## Экраны и состояния
+## Screens and states
 
-Экранов нет.
+There are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Строки пишутся на языке дерева.
+The lines are written in the language of the tree.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо: сверка судит одну очередь работ.
+Not applicable: the check judges one work queue.
 
-## Решения
+## Decisions
 
-- **Строка называет команду, которой чинится.** Расхождение без команды читается как жалоба:
-  исполнитель ищет способ сам и находит не тот.
-- **Причина называется та, которая чинится.** Следствие, названное причиной, уводит починку в
-  сторону — и уводило дважды подряд за один заход.
+- **The line names the command it is fixed by.** A divergence without a command reads as a
+  complaint: the executor looks for a way themselves and finds the wrong one.
+- **The reason named is the one that gets fixed.** A consequence named as the reason leads the fix
+  aside — and led it aside twice in a row over one session.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-QC-1` — момент, когда задачу берут в работу, сверке не виден: ветки на борде нет. Колонка,
-  двинутая пачкой при заведении задач, читается как взятая в работу, и сверка молчит.
+- `Q-QC-1` — the moment a task is taken into work is invisible to the check: the branch is not on
+  the queue. A column moved in a batch at the creating of the tasks reads as taken into work, and
+  the check stays silent.
 
-## История изменений
+## History of changes
 
-- 2026-08-26 — поддомен отделён от домена «Ведение работы командами»: два десятка сценариев из
-  шести были об одной проверке, и перечень перевалил предел длины.
+- 2026-08-26 — the subdomain was split off from the domain "Leading the work by commands": two dozen
+  scenarios out of six dozen were about one check, and the list went past the length limit.

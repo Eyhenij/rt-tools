@@ -1,71 +1,74 @@
 #!/usr/bin/env node
 /**
- * Проверка слоя каскада второго кита: правило кита объявлено в слое, а не в общем каскаде.
+ * The check of the second kit's cascade layer: a kit rule is declared inside the layer rather than in
+ * the common cascade.
  *
- * Слой заводится ради одного обещания — правило приложения выигрывает у правила кита без счёта
- * специфичности. Держится оно ровно до первого файла стилей, который приехал мимо слоя: такой
- * файл продолжает работать, ничего не роняет и виден только глазами у потребителя, которому
- * перебить его снова нечем, кроме обхода чужой вёрстки. Восемьдесят семь файлов обёрнуты разом,
- * и без проверки восемьдесят восьмой приедет так же молча.
+ * The layer is created for one promise — an application's rule beats a kit's rule without a count of
+ * specificity. It holds exactly until the first style file that arrived past the layer: such a file
+ * goes on working, drops nothing and is visible only by eye at a consumer, who has nothing to
+ * override it with again except going around somebody else's layout. Eighty-seven files were wrapped
+ * at once, and without the check the eighty-eighth would arrive just as silently.
  *
- * Что проверка судит:
+ * What the check judges:
  *
- * 1. Файл стилей компонента без объявления подслоя `rt-kit.components`.
- * 2. Второе объявление слоя в том же файле — обёртка одна на файл, иначе часть правил остаётся
- *    снаружи, а выглядит файл обёрнутым.
- * 3. Правило, стоящее в файле до обёртки. Снаружи законны только объявления `@use`, `@forward` и
- *    `@import`: sass требует их в начале файла и роняет сборку на обёрнутом.
- * 4. Порядок подслоёв, объявленный слоем оформления. Подслой, не названный заранее, встаёт в
- *    каскад по первому появлению, а появляются они в порядке загрузки — стили компонента Angular
- *    инжектит отдельным блоком, и он способен опередить основу.
- * 5. Объявление свойств на корне страницы, уехавшее в слой оформления внутрь блока `@layer`:
- *     перекраска бренда потребителем держится порядком, а не слоем.
- * 6. Правило, стоящее ПОСЛЕ закрывающей скобки обёртки. Такой файл выглядит обёрнутым и до
- *    этой статьи проходил молча: проверка судила число обёрток и правила до первой. Вынос
- *    бывает нужен по делу — правило кита, спорящее с неслоевым правилом чужой библиотеки, в
- *    слое проигрывает независимо от специфичности, — поэтому нарочный вынос отличается от
- *    промаха отметкой `rt-layer-outside` в пояснении рядом с вынесенными правилами.
+ * 1. A component's style file without a declaration of the sublayer `rt-kit.components`.
+ * 2. A second layer declaration in the same file — the wrapper is one per file, otherwise part of the
+ *    rules stays outside while the file looks wrapped.
+ * 3. A rule standing in the file before the wrapper. Outside only the declarations `@use`, `@forward`
+ *    and `@import` are lawful: sass demands them at the file's beginning and drops the build on a
+ *    wrapped one.
+ * 4. The order of the sublayers declared by the styling layer. A sublayer not named in advance takes
+ *    its place in the cascade by its first appearance, and they appear in the order of loading —
+ *    Angular injects a component's styles as a separate block, and it is able to outrun the base.
+ * 5. A declaration of properties on the page root that drifted into the styling layer inside a
+ *    `@layer` block: a consumer's repainting of the brand holds by order rather than by the layer.
+ * 6. A rule standing AFTER the wrapper's closing brace. Such a file looks wrapped and until this
+ *    article passed silently: the check judged the number of wrappers and the rules before the first
+ *    one. A move out is sometimes needed on the merits — a kit rule arguing with a non-layered rule
+ *    of a foreign library loses inside the layer whatever the specificity — so a deliberate move out
+ *    is told from a miss by the mark `rt-layer-outside` in the explanation next to the moved rules.
  *
- * Накопленное лежит в списке принятого, отказом не считается и видно числом; падает проверка на
- * НОВОМ месте. Список только убывает: запись, которой больше ничего не отвечает, роняет прогон.
+ * What has piled up lies in the accepted list, does not count as a refusal and is visible as a
+ * number; the check falls on a NEW place. The list only shrinks: a record nothing answers to any more
+ * drops the run.
  *
- * Ненулевой код возврата и перечень расхождений.
+ * A non-zero exit code and a list of the divergences.
  */
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 
 import { ROOT, allowlistOf, baselineOf, parseAllowlist } from './rt-kit-checks.config.mjs';
 
-/** Набор стилей компонентов и слой оформления, объявляющий порядок подслоёв. */
+/** The set of component styles and the styling layer declaring the order of the sublayers. */
 const COMPONENTS = 'projects/ui-kit-v2/src/lib';
 const STYLES = 'projects/ui-kit-v2/src/styles';
 const LAYERS_FILE = join(STYLES, '_layers.scss');
 const ALLOWLIST = allowlistOf('cascade-layer');
 
-/** Обёртка стилей компонента и объявление порядка подслоёв. */
+/** The wrapper of a component's styles and the declaration of the sublayer order. */
 const COMPONENT_LAYER = '@layer rt-kit.components {';
 const LAYER_ORDER = /@layer\s+rt-kit\.vendor\s*,\s*rt-kit\.base\s*,\s*rt-kit\.components\s*;/;
 
-/** Снаружи обёртки законны только объявления sass: он требует их в начале файла. */
+/** Outside the wrapper only sass declarations are lawful: it demands them at the file's beginning. */
 const OUTSIDE_OK = /^@(use|forward|import)\b/;
 
 /**
- * Отметка нарочного выноса из слоя. Стоит в пояснении рядом с вынесенными правилами и читается
- * тем, кто правит файл, — список принятого прочитал бы только тот, кто его открыл.
+ * The mark of a deliberate move out of the layer. It stands in the explanation next to the moved
+ * rules and is read by whoever edits the file — the accepted list would be read only by whoever opened it.
  */
 const OUTSIDE_MARK = 'rt-layer-outside';
 
 const findings = [];
 const add = (key, text) => findings.push({ key, text });
 
-/** Сколько файлов вынесли часть правил из слоя нарочно, с отметкой. */
+/** How many files moved part of their rules out of the layer on purpose, with the mark. */
 let marked = 0;
 
 /**
- * Строки кода из набора строк: пустые и пояснения снимаются.
+ * The code lines out of the set of lines: the empty ones and the explanations are removed.
  *
- * Комментарий судится состоянием, а не началом строки: у блочного продолжение бывает и без
- * ведущей звёздочки, и такая строка читалась бы как правило.
+ * A comment is judged by state rather than by the line's beginning: a block one is sometimes
+ * continued without a leading star, and such a line would read as a rule.
  */
 function codeLines(lines) {
     const code = [];
@@ -88,7 +91,7 @@ function codeLines(lines) {
     return code;
 }
 
-/** Позиция за закрывающей скобкой блока, открытого от места `at`. */
+/** The position past the closing brace of the block opened at the place `at`. */
 function closingBrace(text, at) {
     let depth = 0;
     let index = text.indexOf('{', at);
@@ -120,32 +123,32 @@ for (const file of files) {
     const count = text.split(COMPONENT_LAYER).length - 1;
 
     if (count === 0) {
-        add(`${file}: без слоя`, `${file}: правила стоят вне слоя — обернуть в «${COMPONENT_LAYER} … }»`);
+        add(`${file}: without a layer`, `${file}: the rules stand outside the layer — wrap them in «${COMPONENT_LAYER} … }»`);
         continue;
     }
 
     if (count > 1) {
         add(
-            `${file}: обёрток ${count}`,
-            `${file}: обёрток слоя ${count}, а нужна одна: часть правил остаётся снаружи, а файл выглядит обёрнутым`
+            `${file}: wrappers ${count}`,
+            `${file}: layer wrappers ${count}, and one is needed: part of the rules stays outside while the file looks wrapped`
         );
     }
 
-    // Комментарий судится состоянием, а не началом строки: у блочного продолжение бывает и без
-    // ведущей звёздочки, и такая строка читалась бы как правило вне слоя.
+    // A comment is judged by state rather than by the line's beginning: a block one is sometimes
+    // continued without a leading star, and such a line would read as a rule outside the layer.
     const before = text.slice(0, text.indexOf(COMPONENT_LAYER)).split('\n');
     const stray = codeLines(before).filter((line) => !OUTSIDE_OK.test(line));
 
     if (stray.length > 0) {
         add(
-            `${file}: правило до обёртки`,
-            `${file}: до обёртки стоит «${stray[0].slice(0, 60)}» — снаружи законны только @use, @forward и @import`
+            `${file}: a rule before the wrapper`,
+            `${file}: before the wrapper stands «${stray[0].slice(0, 60)}» — outside only @use, @forward and @import are lawful`
         );
     }
 
-    // Хвост за закрывающей скобкой обёртки. Пустой он у восьмидесяти семи файлов из восьмидесяти
-    // восьми; непустой означает либо нарочный вынос, либо уехавшую за скобку часть файла, и
-    // отличает их отметка.
+    // The tail past the wrapper's closing brace. It is empty at eighty-seven files out of
+    // eighty-eight; a non-empty one means either a deliberate move out or a part of the file that
+    // drifted past the brace, and the mark tells them apart.
     const tail = text.slice(closingBrace(text, text.indexOf(COMPONENT_LAYER)));
     const outside = codeLines(tail.split('\n'));
 
@@ -153,8 +156,8 @@ for (const file of files) {
 
     if (!tail.includes(OUTSIDE_MARK)) {
         add(
-            `${file}: правило после обёртки`,
-            `${file}: после обёртки стоит «${outside[0].slice(0, 60)}» — часть файла осталась вне слоя, а файл выглядит обёрнутым. Нарочный вынос помечается «${OUTSIDE_MARK}» в пояснении рядом с вынесенными правилами`
+            `${file}: a rule after the wrapper`,
+            `${file}: after the wrapper stands «${outside[0].slice(0, 60)}» — part of the file is left outside the layer while the file looks wrapped. A deliberate move out is marked «${OUTSIDE_MARK}» in the explanation next to the moved rules`
         );
         continue;
     }
@@ -166,8 +169,8 @@ const layers = readFileSync(resolve(ROOT, LAYERS_FILE), 'utf8');
 
 if (!LAYER_ORDER.test(layers)) {
     add(
-        `${LAYERS_FILE}: порядок подслоёв`,
-        `${LAYERS_FILE}: порядок подслоёв не объявлен строкой «@layer rt-kit.vendor, rt-kit.base, rt-kit.components;» — не названный заранее подслой встаёт в каскад по первому появлению`
+        `${LAYERS_FILE}: the sublayer order`,
+        `${LAYERS_FILE}: the sublayer order is not declared by the line «@layer rt-kit.vendor, rt-kit.base, rt-kit.components;» — a sublayer not named in advance takes its place in the cascade by its first appearance`
     );
 }
 
@@ -185,8 +188,8 @@ for (const file of scssIn(STYLES).sort()) {
         if (depth > 0) {
             if (/^\s*:root[\s,{]/.test(line)) {
                 add(
-                    `${file}: :root в слое`,
-                    `${file}: объявление на корне страницы уехало внутрь слоя — потребитель перебивает его порядком, и слой отнимает у него эту возможность`
+                    `${file}: :root inside the layer`,
+                    `${file}: a declaration on the page root drifted inside the layer — a consumer overrides it by order, and the layer takes that possibility away`
                 );
                 break;
             }
@@ -208,15 +211,15 @@ const problems = [
     ...findings.filter((finding) => !known.has(finding.key)).map((finding) => finding.text),
     ...[...known]
         .filter((key) => !seen.has(key))
-        .map((key) => `${key}: значится в ${ALLOWLIST}, но в стилях этого больше нет — строку убрать`),
+        .map((key) => `${key}: it stands in ${ALLOWLIST}, but the styles no longer hold it — remove the line`),
 ];
 
 if (problems.length > 0) {
-    console.error(`check-cascade-layer: расхождений ${problems.length}\n`);
+    console.error(`check-cascade-layer: divergences ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
     process.exit(1);
 }
 
 console.log(
-    `check-cascade-layer: файлов стилей ${files.length}, все в подслое rt-kit.components; вынесено из слоя с отметкой ${marked}; порядок подслоёв объявлен, принято списком ${seen.size}`
+    `check-cascade-layer: style files ${files.length}, all in the sublayer rt-kit.components; moved out of the layer with the mark ${marked}; the sublayer order is declared, accepted by the list ${seen.size}`
 );

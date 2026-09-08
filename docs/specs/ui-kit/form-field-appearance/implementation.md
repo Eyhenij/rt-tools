@@ -1,13 +1,13 @@
-# Чем исполняется — вид поля ввода в настройке кита
+# What it is carried out by — the look of a field of input in the setting of the kit
 
-Первая колонка — правило спека рядом дословно. Вторая — где оно исполняется в дереве; там же
-назван сценарий, которым это проверяется, а чем именно покрыт каждый сценарий, сказано в
-`scenarios.md`.
+The first column is the rule of the spec next to it verbatim. The second is where it is carried out
+in the tree; the scenario it is checked by is named there too, and what exactly every scenario is
+covered by is said in `scenarios.md`.
 
-Правило без строки и строка без правила — расхождение: спек обещает то, чего в дереве нет, либо
-в дереве стоит то, о чём спек молчит.
+A rule without a line and a line without a rule is a divergence: the spec promises what is not in the
+tree, or the tree holds what the spec is silent about.
 
-- **Вид поля разрешается тем же порядком, что и остальные умолчания кита.** — `projects/ui-kit/src/lib/ui-kit/config/rt-ui-config.ts:DynamicSelectors`; сценарий `SC-UK-54`
-- **Умолчание входа — пустота, а прежнее значение стоит в конце цепочки.** — `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/components/dynamic-selectors-directive.ts:DEFAULT_APPEARANCE`; сценарий `SC-UK-53`
-- **Разрешённое значение считается один раз, а шаблоны читают его.** — `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/components/dynamic-selectors-directive.ts:resolvedAppearance`; сценарий `SC-UK-55`
-- **Вложенный компонент получает уже разрешённое значение, а не разрешает заново.** — `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/components/dynamic-selector/rtui-dynamic-selector.component.html:resolvedAppearance`; сценарий `SC-UK-54`
+- **The look of a field is resolved by the same order as the rest of the defaults of the kit.** — `projects/ui-kit/src/lib/ui-kit/config/rt-ui-config.ts:DynamicSelectors`; scenario `SC-UK-54`
+- **The default of the input is emptiness, and the former value stands at the end of the chain.** — `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/components/dynamic-selectors-directive.ts:DEFAULT_APPEARANCE`; scenario `SC-UK-53`
+- **The resolved value is counted once, and the templates read it.** — `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/components/dynamic-selectors-directive.ts:resolvedAppearance`; scenario `SC-UK-55`
+- **A nested component gets an already resolved value, it does not resolve it anew.** — `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/components/dynamic-selector/rtui-dynamic-selector.component.html:resolvedAppearance`; scenario `SC-UK-54`

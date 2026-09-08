@@ -4,7 +4,7 @@ kind: pattern
 rule: browser-verification
 description: Pattern of rule browser-verification. Load when an honest stand is needed — the production build of the site, the admin stand, a stand behind real nginx, signing in to the admin, finding out what sits on a port. Not for layout measurements — that is pattern browser-verification-measure.
 ---
-<!-- rt-kit v0.25.0 · patterns/browser-verification-stand.md · caa36877dd25 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/browser-verification-stand.md · bff488797902 · правится надстройкой, не здесь -->
 
 # An honest stand
 
@@ -244,30 +244,33 @@ past session, and it answers 200 with old code.
   `ssr:<rendering port>` through `host-gateway`, and while a foreign process hangs on it, the
   stand serves a foreign build.
 
-## Номера портов объявляет дерево, а не паттерн
+## The ports and stands of this tree
 
-Раздел этого дерева: сайта и сервера отрисовки здесь нет, а стендов два — витрина набора
-компонентов и стенд сквозного набора со своей засеянной базой.
+A section of this tree: there is no site and no rendering server here, and there are two stands —
+the showcase of the component set and the stand of the end-to-end suite with its own seeded
+database.
 
-| Роль                | Порт  | Чем поднимается                    |
-| ------------------- | ----- | ---------------------------------- |
-| витрина             | 6006  | `pnpm run storybook`               |
-| собранная витрина   | 6007  | `pnpm run build-storybook` и отдача |
-| приёмник стенда     | 3310  | `pnpm run serve:stand`             |
-| админка стенда      | 4310  | тем же вызовом                     |
-| приёмник разработки | 3000  | `pnpm run serve:api`               |
-| админка разработки  | 4200  | `pnpm run serve:admin`             |
-| база разработки     | 55432 | `pnpm run serve:db`                |
+| Role                  | Port  | Raised by                              |
+| --------------------- | ----- | -------------------------------------- |
+| the showcase          | 6006  | `pnpm run storybook`                   |
+| the built showcase    | 6007  | `pnpm run build-storybook` and serving  |
+| the stand receiver    | 3310  | `pnpm run serve:stand`                 |
+| the stand admin panel | 4310  | by the same call                       |
+| the dev receiver      | 3000  | `pnpm run serve:api`                   |
+| the dev admin panel   | 4200  | `pnpm run serve:admin`                 |
+| the dev database      | 55432 | `pnpm run serve:db`                    |
 
-Порты стенда сквозного набора переопределяются переменными `E2E_API_PORT` и `E2E_ADMIN_PORT` —
-объявлены они в `apps/message-bus-admin-e2e/stand/stand.mjs`. Рабочих портов стенд не занимает:
-на нём смотрят то, чего в рабочей базе нет.
+The ports of the end-to-end stand are overridden by the variables `E2E_API_PORT` and
+`E2E_ADMIN_PORT` — they are declared in `apps/message-bus-admin-e2e/stand/stand.mjs`. The stand
+takes no working ports: on it one looks at what the working database does not have.
 
-Разбор занятого порта, отличение собранного артефакта от дев-сервера и правило «второй экземпляр
-не поднимается» верны здесь целиком — ими и пользуются, когда витрина отвечает не тем.
+Sorting out an occupied port, telling a built artefact from a dev server and the rule that a
+second instance is not raised hold here in full — and they are what one uses when the showcase
+answers with the wrong thing.
 
-## Стенд под настоящим nginx
+## Why there is no nginx stand here
 
-Раздел этого дерева: прокси здесь нет ни у одного приложения. Админка ходит на приёмник напрямую,
-проксируя `/api` на его порт своей настройкой разработки, а витрина — статика без сервера.
-Выводов про кэш, перенаправления и заголовки на этих стендах не делают: не на чем.
+A section of this tree: none of the applications here has a proxy. The admin panel goes to the
+receiver directly, proxying `/api` to its port by its own dev config, and the showcase is static
+without a server. No conclusions about caching, redirects and headers are drawn on these stands:
+there is nothing to draw them from.

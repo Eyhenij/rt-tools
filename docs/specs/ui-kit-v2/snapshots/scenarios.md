@@ -1,200 +1,208 @@
-# Сценарии — снимки витрины
+# Scenarios — the snapshots of the showcase
 
-Префикс `SC-UKV`, общий на домен вместе с поддоменами. Номера при переезде в поддомен не
-менялись: на них ссылаются заголовки тестов.
+The prefix `SC-UKV` is shared across the domain together with the subdomains. The numbers were not
+changed at the move into the subdomain: the titles of the tests refer to them.
 
-Чем покрыт сценарий, сказано под ним. Где прогон сценарий не покрывает, это сказано прямо.
+What a scenario is covered by is said under it. Where the run does not cover a scenario, that is said
+openly.
 
-### SC-UKV-01 — правка оформления, изменившая матрицу, роняет прогон
+### SC-UKV-01 — an edit of the design that changed a matrix fells the run
 
-Дано у матрицы состояний компонента снят эталон
-Когда общий токен оформления меняет вид хотя бы одной ячейки этой матрицы
-Тогда прогон снимков называет эту историю разошедшейся и отдаёт долю расхождения
+Given a reference is shot at a matrix of the states of a component
+When a common token of the design changes the look of at least one cell of that matrix
+Then the run of the snapshots names that story as diverged and gives out the share of the divergence
 
-Не покрыто: тестом с идентификатором это не закрыть — проверяет прогон снимков, а его тесты заводятся по историям витрины и идентификатора не несут. Проверено на месте: отступ метки увеличен на пиксель — прогон назвал 14 разошедшихся историй в четырёх компонентах и отдал долю расхождения по каждой.
+Not covered: it cannot be closed by a test with an identifier — it is checked by the run of the snapshots, and its tests are created by the stories of the showcase and carry no identifier. Checked on the spot: the padding of a label was increased by a pixel — the run named 14 diverged stories in four components and gave out the share of the divergence at each.
 
-### SC-UKV-02 — история, помеченная исключением, кадра не даёт, а непомеченная даёт
+### SC-UKV-02 — a story marked by an exception gives no frame, and an unmarked one gives it
 
-Дано витрина держит матрицу компонента и историю со значениями по умолчанию, помеченную
-исключением с причиной
-Когда идёт прогон снимков
-Тогда снимается матрица, а помеченная история кадра не получает и в каталоге эталонов не
-заводится; матрица, при которой признака нет вовсе, снимается наравне с остальными
+Given the showcase holds a matrix of a component and a story with the values by default marked by an
+exception with a reason
+When the run of the snapshots goes
+Then the matrix is shot, and the marked story gets no frame and is not created in the catalogue of the
+references; a matrix at which there is no sign at all is shot on a par with the rest
 
-Покрытие: частичное — спека проверяет форму пометки, а не то, что помеченная история кадра не даёт. Второе проверяет прогон снимков: 62 истории из 288 сняты со съёмки причиной, остальные дали 255 кадров вместе с кадрами порогов.
+Coverage: partial — the spec checks the form of the mark, not that a marked story gives no frame. The second is checked by the run of the snapshots: 62 stories out of 288 are lifted from the shooting by a reason, the rest gave 255 frames together with the frames of the thresholds.
 
-### SC-UKV-03 — кадр порога берётся на каждом пороге, который называет компонент
+### SC-UKV-03 — a frame of a threshold is taken at every threshold the component names
 
-Дано у одного компонента в стилях объявлено три порога ширины, у другого — ни одного
-Когда идёт прогон снимков
-Тогда у первого сверяются четыре кадра — базовый и по одному на каждый порог, — а у второго один
+Given three thresholds of the width are declared in the styles of one component, and none at another
+When the run of the snapshots goes
+Then four frames are checked at the first — the base one and one at every threshold — and one at the
+second
 
-Покрытие: частичное — спека проверяет сторону порога и перечень, а не съёмку кадра в окне этой ширины. Второе проверяет прогон снимков: 29 кадров порогов у пяти папок.
+Coverage: partial — the spec checks the side of a threshold and the list, not the shooting of a frame in a window of that width. The second is checked by the run of the snapshots: 29 frames of the thresholds at five folders.
 
-### SC-UKV-04 — перекрытие, не открывшееся к моменту съёмки, роняет прогон
+### SC-UKV-04 — an overlay that did not open by the minute of the shooting fells the run
 
-Дано история открывает перекрытие сама, а к моменту съёмки оно не открылось
-Когда история снимается
-Тогда прогон отказывает и называет причину, а кадр с закрытым перекрытием эталоном не становится
+Given a story opens an overlay itself, and by the minute of the shooting it did not open
+When the story is shot
+Then the run refuses and names the reason, and a frame with a closed overlay does not become a reference
 
-Не покрыто: тестом с идентификатором это не закрыть — проверяет прогон снимков. Проверено на месте — история подсказок `Hosts` отказала ровно этим, пока обвязка переводила фокус и гасила соседние панели.
+Not covered: it cannot be closed by a test with an identifier — it is checked by the run of the snapshots. Checked on the spot — the story of the hints `Hosts` refused by exactly this while the harness was moving the focus and putting out the neighbouring panels.
 
-### SC-UKV-05 — эталона нет, и прогон отказывает вместо досъёмки
+### SC-UKV-05 — there is no reference, and the run refuses instead of shooting after the fact
 
-Дано у истории эталона в каталоге нет
-Когда идёт обычный прогон снимков
-Тогда прогон называет историю без эталона и отказывает, а файл эталона молча не появляется
+Given a story has no reference in the catalogue
+When an ordinary run of the snapshots goes
+Then the run names the story without a reference and refuses, and the file of the reference does not
+appear silently
 
-Не покрыто: тестом с идентификатором это не закрыть — проверяет прогон снимков. Проверено на месте — первый заход по размеченной витрине дал 230 таких отказов, и ни один файл эталона при этом не появился.
+Not covered: it cannot be closed by a test with an identifier — it is checked by the run of the snapshots. Checked on the spot — the first pass over the marked-up showcase gave 230 such refusals, and not a single file of a reference appeared at that.
 
-### SC-UKV-06 — две съёмки подряд без правок сходятся
+### SC-UKV-06 — two shootings in a row without edits agree
 
-Дано кит и витрина между съёмками не менялись
-Когда прогон снимков идёт дважды подряд
-Тогда оба прогона зелёные, и ни одна история не названа разошедшейся
+Given the kit and the showcase did not change between the shootings
+When the run of the snapshots goes twice in a row
+Then both runs are green, and not a single story is named as diverged
 
-Не покрыто: тестом с идентификатором это не закрыть — детерминированность проверяется двумя заходами прогона подряд — 86.1 с и 91.0 с, оба зелёные, 255 кадров сошлись.
+Not covered: it cannot be closed by a test with an identifier — the determinacy is checked by two passes of the run in a row — 86.1 s and 91.0 s, both green, 255 frames agreed.
 
-### SC-UKV-07 — прогон второй витрины не трогает эталоны первой
+### SC-UKV-07 — the run of the second showcase does not touch the references of the first
 
-Дано в дереве лежат эталоны обеих витрин
-Когда идёт прогон снимков второй витрины
-Тогда сверяются и пересъёмываются только эталоны второй, а каталог первой остаётся нетронутым
+Given the references of both showcases lie in the tree
+When the run of the snapshots of the second showcase goes
+Then only the references of the second are checked and reshot, and the catalogue of the first stays
+untouched
 
-Не покрыто: тестом с идентификатором это не закрыть — держится раскладкой — у второй витрины свои настройка прогона, каталог эталонов, порт и команды. Проверено на месте: каталог первой витрины не изменён ни одним файлом за всю работу.
+Not covered: it cannot be closed by a test with an identifier — it is held by the layout: the second showcase has a setting of the run, a catalogue of the references, a port and commands of its own. Checked on the spot: the catalogue of the first showcase was not changed by a single file over the whole work.
 
-### SC-UKV-08 — разошедшийся кадр отдаёт картинку различий и не оставляет файлов на коммит
+### SC-UKV-08 — a frame that diverged gives out a picture of the differences and leaves no files for a commit
 
-Дано хотя бы один кадр разошёлся
-Когда прогон закончился отказом
-Тогда картинки различий выложены вложением прогона, по ним видно, что именно поехало, и в дереве
-не остаётся ни одного неотслеживаемого файла
+Given at least one frame diverged
+When the run ended with a refusal
+Then the pictures of the differences are laid out as an attachment of the run, by them it is visible what
+exactly went wrong, and not a single untracked file is left in the tree
 
-Не покрыто: тестом с идентификатором это не закрыть — проверяет прогон снимков вместе с маской каталога различий. Проверено на месте — намеренное расхождение выложило 14 картинок различий, и `git status` после него не показал ни одного файла на коммит.
+Not covered: it cannot be closed by a test with an identifier — it is checked by the run of the snapshots together with the mask of the catalogue of the differences. Checked on the spot — a divergence made on purpose laid out 14 pictures of the differences, and `git status` after it showed not a single file for a commit.
 
-### SC-UKV-09 — тема кадра назначена обвязкой, а вторая тема сверяется своим кадром
+### SC-UKV-09 — the theme of a frame is appointed by the harness, and the second theme is checked by a frame of its own
 
-Дано у компонента заведена история сравнения тем, а в настройках машины выбрана тёмная тема
-Когда прогон снимков идёт
-Тогда матрицы сняты в теме, которую назначила обвязка, и сходятся с эталоном, а светлая и тёмная
-половины сверяются кадром истории сравнения тем
+Given a story of the comparison of the themes is created at a component, and the dark theme is chosen in
+the settings of the machine
+When the run of the snapshots goes
+Then the matrices are shot in the theme the harness appointed and agree with the reference, and the light
+and the dark halves are checked by the frame of the story of the comparison of the themes
 
-Не покрыто: тестом с идентификатором это не закрыть — тему назначает настройка витрины, вторая тема сверяется кадрами историй сравнения тем — их в каталоге 34.
+Not covered: it cannot be closed by a test with an identifier — the theme is appointed by the setting of the showcase, the second theme is checked by the frames of the stories of the comparison of the themes — there are 34 of them in the catalogue.
 
-### SC-UKV-10 — новый компонент привозит эталон собой, и красный кадр не вливается
+### SC-UKV-10 — a new component brings the reference itself, and a red frame is not merged
 
-Дано в витрину добавляется новая матрица состояний
-Когда изменение с ней приходит на сверку
-Тогда прогон снимков зелёный только при том, что эталон этой матрицы пришёл тем же изменением, а
-красный прогон держит вливание, а не остаётся записью в выводе
+Given a new matrix of the states is added into the showcase
+When the change with it comes for the checking
+Then the run of the snapshots is green only provided that the reference of that matrix came by the same
+change, while a red run holds the merge instead of staying a record in the output
 
-Не покрыто: тестом с идентификатором это не закрыть — держится шагом прогона в CI — он блокирующий с первого дня, и отсутствующий эталон новой матрицы роняет его отказом.
+Not covered: it cannot be closed by a test with an identifier — it is held by the step of the run in CI: it is blocking from the first day, and a missing reference of a new matrix fells it by a refusal.
 
-### SC-UKV-11 — исключение без причины роняет прогон
+### SC-UKV-11 — an exception without a reason fells the run
 
-Дано история помечена исключением, но причина при пометке не названа
-Когда идёт прогон снимков
-Тогда прогон отказывает и называет эту историю, а кадр с неё не снимается и не пропускается молча
+Given a story is marked by an exception, but the reason is not named at the mark
+When the run of the snapshots goes
+Then the run refuses and names that story, and a frame is not shot from it and it is not skipped silently
 
-Покрытие: частичное — спека проверяет, что пустая причина доезжает до обвязки пустой, а не то, что прогон на ней отказывает. Второе проверяет сам прогон.
+Coverage: partial — the spec checks that an empty reason reaches the harness empty, not that the run refuses at it. The second is checked by the run itself.
 
-### SC-UKV-12 — эталон, которому нет истории, роняет прогон
+### SC-UKV-12 — a reference that has no story fells the run
 
-Дано история переименована, а её прежний эталон остался в каталоге
-Когда идёт прогон снимков
-Тогда прогон отказывает и называет осиротевший эталон, а не проходит зелёным мимо него
+Given a story is renamed, and its former reference stayed in the catalogue
+When the run of the snapshots goes
+Then the run refuses and names the orphaned reference, it does not pass it green
 
-Не покрыто: тестом с идентификатором это не закрыть — проверяет сверка каталога с реестром снятого. Проверено на месте — четыре кадра порогов осиротели, когда их истории упали до съёмки, и прогон назвал каждый.
+Not covered: it cannot be closed by a test with an identifier — it is checked by the checking of the catalogue against the registry of what was shot. Checked on the spot — four frames of the thresholds were orphaned when their stories fell before the shooting, and the run named each.
 
-### SC-UKV-13 — кадр берётся по корню показа, а не всей страницей
+### SC-UKV-13 — the frame is taken by the root of the show, not by the whole page
 
-Дано история рисует сетку помощниками витрины, а страница вокруг сетки заметно выше её
-Когда история снимается
-Тогда кадр содержит сетку и не содержит пустого поля страницы вокруг неё
+Given a story draws a grid by the helpers of the showcase, and the page around the grid is noticeably
+higher than it
+When the story is shot
+Then the frame holds the grid and does not hold the empty field of the page around it
 
-Покрытие: частичное — спека проверяет только то, что признак корня у помощников и у обвязки один и тот же. Область кадра проверяет прогон: история без корня отказывает с требованием объявить кадр целой страницей, и так нашлись три таких показа.
+Coverage: partial — the spec checks only that the sign of the root at the helpers and at the harness is one and the same. The area of the frame is checked by the run: a story without a root refuses with the demand to declare the frame a whole page, and three such shows were found that way.
 
-### SC-UKV-14 — эталон снимается с починенного
+### SC-UKV-14 — a reference is shot from what is fixed
 
-Дано съёмка вскрыла расхождение, показывающее дефект кита
-Когда эталон этой истории кладётся в каталог
-Тогда он снят после починки дефекта, а не поверх него
+Given a shooting opened up a divergence showing a defect of the kit
+When the reference of that story is put into the catalogue
+Then it is shot after the fixing of the defect, not over it
 
-Не покрыто: прогоном это не покрывается вовсе — кадр дефекта неотличим от кадра нормы, в этом и состоит опасность правила. Проверяется разбором изменения. В этой работе исполнено: 22 кадра, снятых поверх пустого показа и страницы отказа, удалены, и эталон снимался только после починки либо не снимался вовсе.
+Not covered: it is not covered by the run at all — a frame of a defect cannot be told from a frame of the norm, and in that the danger of the rule consists. It is checked by the taking apart of the change. In this work it is carried out: 22 frames shot over an empty show and a page of a refusal were deleted, and a reference was shot only after a fixing or was not shot at all.
 
-### SC-UKV-15 — порог расхождения ловит правку в один токен
+### SC-UKV-15 — the threshold of the divergence catches an edit of one token
 
-Дано порог назначен замером на матрице
-Когда меняется один токен оформления, задевающий одну ячейку сетки
-Тогда прогон называет эту историю разошедшейся, а не проходит зелёным
+Given the threshold is appointed by a measurement on a matrix
+When one token of the design changes, touching one cell of the grid
+Then the run names that story as diverged, it does not pass green
 
-Не покрыто: тестом с идентификатором это не закрыть — проверяется замером — правка одного значения отступа уронила 14 кадров при пороге 0.0002 от площади кадра.
+Not covered: it cannot be closed by a test with an identifier — it is checked by a measurement: an edit of one value of a padding felled 14 frames at the threshold 0.0002 of the area of the frame.
 
-### SC-UKV-16 — пересъёмка и сверка идут одной обвязкой в одной среде
+### SC-UKV-16 — the reshooting and the checking go by one harness in one environment
 
-Дано эталоны пересняты командой пересъёмки
-Когда сразу за этим идёт обычный прогон сверки
-Тогда он зелёный без единой правки кита
+Given the references are reshot by the command of the reshooting
+When an ordinary run of the checking goes right after that
+Then it is green without a single edit of the kit
 
-Не покрыто: тестом с идентификатором это не закрыть — пересъёмка и сверка идут одной обвязкой, и заход сверки сразу за пересъёмкой зелёный.
+Not covered: it cannot be closed by a test with an identifier — the reshooting and the checking go by one harness, and the pass of the checking right after the reshooting is green.
 
-### SC-UKV-17 — язык кадра назначен обвязкой, а не настройками машины
+### SC-UKV-17 — the language of a frame is appointed by the harness, not by the settings of the machine
 
-Дано в среде прогона выбран язык, отличный от языка кадра
-Когда идёт прогон снимков
-Тогда подписи в кадрах те же, что в эталонах, и ни одна история не названа разошедшейся
+Given a language different from the language of the frame is chosen in the environment of the run
+When the run of the snapshots goes
+Then the labels in the frames are the same as in the references, and not a single story is named as
+diverged
 
-Не покрыто: тестом с идентификатором это не закрыть — язык подписей прибит в настройке витрины и из среды не берётся.
+Not covered: it cannot be closed by a test with an identifier — the language of the labels is nailed in the setting of the showcase and is not taken from the environment.
 
-### SC-UKV-18 — прогон отказывает, когда по адресу не та витрина
+### SC-UKV-18 — the run refuses when the wrong showcase is at the address
 
-Дано по названному адресу отвечает витрина первого кита
-Когда идёт прогон снимков второго
-Тогда прогон отказывает и называет адрес и признак, по которому витрина опознана чужой, а кадры
-не сверяются ни с одним эталоном
+Given the showcase of the first kit answers at the named address
+When the run of the snapshots of the second goes
+Then the run refuses and names the address and the sign the showcase was recognised as a foreign one by,
+and the frames are not checked against a single reference
 
-Не покрыто: тестом с идентификатором это не закрыть — проверяет опознание витрины по указателю историй — прогон отказывает до первой съёмки, называя адрес и путь, из которого пришли истории.
+Not covered: it cannot be closed by a test with an identifier — it is checked by the recognising of the showcase by the index of the stories: the run refuses before the first shooting, naming the address and the path the stories came from.
 
-### SC-UKV-19 — упавшая история названа один раз и заново не снимается
+### SC-UKV-19 — a story that fell is named once and is not shot anew
 
-Дано история не дошла до нужного состояния
-Когда прогон дошёл до неё
-Тогда она названа упавшей и повторно не снимается, а прогон остаётся красным
+Given a story did not reach the needed state
+When the run reached it
+Then it is named as fallen and is not shot a second time, and the run stays red
 
-Не покрыто: тестом с идентификатором это не закрыть — повторов у прогона не задано вовсе. Мигающая история видна мигающей — так и нашёлся необработанный отказ загрузки значков, ронявший по одной-две истории за заход.
+Not covered: it cannot be closed by a test with an identifier — no repeats are set at the run at all. A blinking story is visible as blinking — that is how an unhandled refusal of the loading of the icons was found that felled one or two stories per pass.
 
-### SC-UKV-20 — точечная пересъёмка не трогает соседние эталоны
+### SC-UKV-20 — a pinpoint reshooting does not touch the neighbouring references
 
-Дано в каталоге лежат эталоны многих историй
-Когда идёт пересъёмка одной названной истории
-Тогда переписан только её эталон, а остальные файлы каталога не изменены
+Given the references of many stories lie in the catalogue
+When the reshooting of one named story goes
+Then only its reference is rewritten, and the rest of the files of the catalogue are not changed
 
-Не покрыто: тестом с идентификатором это не закрыть — проверено на месте — пересъёмка одной таблицы переписала два её кадра и не тронула остальные 253.
+Not covered: it cannot be closed by a test with an identifier — checked on the spot: the reshooting of one table rewrote its two frames and did not touch the other 253.
 
-### SC-UKV-53 — недостроенный компонент в кадр не попадает
+### SC-UKV-53 — an unfinished component does not get into a frame
 
-Дано история показывает компонент, начинка которого приезжает динамическим импортом
-Когда прогон снимков доходит до этой истории
-Тогда кадр снимается после того, как компонент снял с себя признак недостроенности, а не по
-отсчёту времени
+Given a story shows a component whose filling arrives by a dynamic import
+When the run of the snapshots reaches that story
+Then the frame is shot after the component took the sign of the unfinishedness off itself, not by a
+counting of the time
 
-Покрыто: `projects/ui-kit-v2/src/lib/components/rich-editor/rt-rich-editor.component.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/rich-editor/rt-rich-editor.component.spec.ts`.
 
-### SC-UKV-54 — раскрытая панель доживает до кадра
+### SC-UKV-54 — an opened panel lives until the frame
 
-Дано история сама открывает панель кита и называет её узел параметром съёмки
-Когда прогон снимков доходит до этой истории
-Тогда панель в кадре открыта, а история, у которой к моменту съёмки названного узла нет, роняет
-прогон
+Given a story opens a panel of the kit itself and names its node by a parameter of the shooting
+When the run of the snapshots reaches that story
+Then the panel in the frame is open, and a story that has no named node by the minute of the shooting
+fells the run
 
-Не покрыто: тестом с идентификатором это не закрыть — проверено на месте: два кадра целого экрана
-выходили с закрытой панелью и зелёным прогоном, пока отказ не был заведён.
+Not covered: it cannot be closed by a test with an identifier — checked on the spot: two frames of a whole
+screen came out with a closed panel and a green run until the refusal was created.
 
-### SC-UKV-57 — кадр целой страницы снимается раздвинутым окном, а не съёмкой за его пределы
+### SC-UKV-57 — a frame of a whole page is shot by a widened window, not by a shooting past its bounds
 
-Дано история объявила кадр целой страницы, и страница в базовое окно не влезает
-Когда прогон снимков доходит до этой истории
-Тогда окно раздвигается до размеров страницы, показ ждут вставшим, и только после этого
-снимается обычный кадр; прокрутка внутренних лент и высота страницы при этом не меняются
+Given a story declared a frame of a whole page, and the page does not fit into the base window
+When the run of the snapshots reaches that story
+Then the window is widened to the sizes of the page, the show is waited for as having stood, and only
+after that an ordinary frame is shot; the scroll of the inner ribbons and the height of the page do not
+change at that
 
-Не покрыто: тестом с идентификатором это не закрыть — проверяет прогон снимков. Проверено замером: при съёмке за пределы окна лента просмотрщика фото теряла прокрутку — 2624 на 2, — и в кадр попадал первый снимок набора вместо последнего, а высота страницы уезжала на два пикселя; после раздвинутого окна три кадра подряд совпали пиксель в пиксель, и лента осталась на последнем снимке.
+Not covered: it cannot be closed by a test with an identifier — it is checked by the run of the snapshots. Checked by a measurement: at a shooting past the bounds of the window the ribbon of the viewer of the photos lost its scroll — 2624 to 2 — and the first snapshot of the set instead of the last got into the frame, while the height of the page went away by two pixels; after the widened window three frames in a row coincided pixel for pixel, and the ribbon stayed at the last snapshot.

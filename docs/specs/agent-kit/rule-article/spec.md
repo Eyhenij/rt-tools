@@ -1,121 +1,128 @@
-# Признак применимости у статьи правила
+# The applicability sign at an article of a rule
 
-**Статус:** действует · **Ревизия:** 2026-08-22 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `project-documentation`, `verifiability`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-22 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `project-documentation`, `verifiability`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Отказ гейта правил звал правило целиком, а под конкретную правку подпадает одна его статья.
-Правило весит от двадцати до шестидесяти килобайт: исполнитель платит за решение полной ценой
-правила и учится не тому — дешевле не читать лишнего, то есть работать хуже разведанным.
+The refusal of the rules gate called the whole rule, while one of its articles covers the specific
+edit. A rule weighs from twenty to sixty kilobytes: the executor pays the full price of the rule for
+a decision and learns the wrong thing — it is cheaper not to read what is surplus, that is, to work
+worse than what was explored.
 
-Поддомен называет, чем статья говорит о своей применимости и как эта статья попадает в отказ
-вместо файла правила целиком.
+The subdomain names what an article speaks of its own applicability by, and how that article gets
+into the refusal instead of the whole file of the rule.
 
-## Терминология
+## Terminology
 
-- **Статья правила** — пункт списка верхнего уровня в разделе применения закона: жирный
-  заголовок и текст под ним.
-- **Признак применимости** — строка `<!-- rt-when: <образцы> -->` внутри статьи; образцы
-  разделены пробелом.
-- **Подошедшая статья** — та, чей образец совпал с путём правки.
-- **Неразмеченное правило** — правило, у которого признака нет ни у одной статьи.
+- **An article of a rule** — an item of the top-level list in the section of the application of the
+  law: a bold heading and the text under it.
+- **The applicability sign** — the line `<!-- rt-when: <samples> -->` inside an article; the samples
+  are separated by a space.
+- **A matching article** — the one whose sample matched the path of the edit.
+- **An unmarked rule** — a rule that has the sign at not one of its articles.
 
-## Правила
+## Rules
 
-- **Статья правила говорит о своей применимости сама, строкой признака при себе.** Карта гейта
-  знает путь и правило, но не знает, какая из двух десятков статей про этот путь.
-- **Отказ называет подошедшие статьи заголовками, а не пересказывает их телом.** Правило заход
-  грузит следом, и текст статей приходит в контекст вместе с ним: пересказ в отказе — плата за
-  один текст дважды. У правила текстов отказ печатал 4 134 знака одиннадцатью статьями, их
-  заголовки весят 718. Заголовок при этом не украшение: по нему идёт привязка утверждения к коду,
-  и он же находит статью в правиле глазами.
-- **Образец сверяется с путём правки как образец оболочки, а не поиском по словам.** Поиск
-  называет не ту статью и молчит об этом.
-- **Образец без каталога сверяется и с именем файла.** Статья говорит «про такие файлы», а
-  правка приходит полным путём.
-- **Раскрытие имён при разборе образцов выключено.** Иначе `*.scss` разворачивается в имена
-  файлов рабочего каталога, и статья выбирается по тому, откуда позвали.
-- **Сам признак в печатаемую статью не входит.** Человеку он не говорит ничего.
-- **Статья без признака законна, и правило без единого признака — тоже.** Не подошло ничего —
-  зовущий остаётся при прежнем отказе.
-- **Статья снимает чтение правила целиком, а не сам отказ.** Правило целиком остаётся вторым
-  ходом — для того, кому статьи мало.
+- **An article of a rule speaks of its own applicability itself, by a sign line at its side.** The
+  gate map knows the path and the rule, but does not know which of two dozen articles is about that
+  path.
+- **The refusal names the matching articles by headings, it does not retell them by their body.** The
+  session loads the rule after that, and the text of the articles arrives in the context together
+  with it: a retelling in the refusal is paying for one text twice. At the rule of the texts the
+  refusal printed 4 134 characters in eleven articles, and their headings weigh 718. The heading at
+  that is no decoration: the binding of a statement to code goes by it, and it is also what finds the
+  article in the rule by eye.
+- **The sample is compared against the path of the edit as a shell sample, not by a word search.** A
+  search names the wrong article and stays silent about it.
+- **A sample without a directory is compared against the file name too.** The article says "about
+  such files", and the edit arrives as a full path.
+- **The expansion of names at the parse of the samples is switched off.** Otherwise `*.scss` unfolds
+  into the file names of the working directory, and the article is picked by where it was called
+  from.
+- **The sign itself does not go into the printed article.** It says nothing to a person.
+- **An article without a sign is lawful, and a rule without a single sign is too.** Nothing matched —
+  whoever calls is left with the former refusal.
+- **The article lifts the reading of the whole rule, not the refusal itself.** The whole rule stays
+  the second move — for whoever finds the article too little.
 
-## Что не входит
+## What is out of scope
 
-- **Выбор статьи по совпадению слов.** Отвергнуто решением владельца: такой поиск называет не
-  ту статью и молчит об этом.
-- **Признак в карте гейта, а не при статье.** Отвергнуто решением владельца: карта дешевле в
-  правке, но раскладывает знание о правиле по двум файлам, и разойдутся они молча.
-- **Снятие отказа статьёй.** Статья снимет его только у правила с холодной частью; механизм
-  холодной части заводится отдельно.
-- **Разметка статей всех правил разом.** Размечаются те правила, что отбивают на правке файла;
-  остальные — по мере того, как их отбития попадут в сводку.
-- **Признак у паттерна и у закона.** Гейт требует правило, а не паттерн; закон путей не знает
-  вовсе.
+- **Picking an article by a match of words.** Rejected by the owner's decision: such a search names
+  the wrong article and stays silent about it.
+- **The sign in the gate map instead of at the article.** Rejected by the owner's decision: the map
+  is cheaper to edit, but it spreads the knowledge about the rule over two files, and they will
+  diverge silently.
+- **The lifting of the refusal by an article.** An article will lift it only at a rule with a cold
+  part; the mechanism of the cold part is created separately.
+- **Marking the articles of all the rules at once.** What is marked is the rules that refuse at an
+  edit of a file; the rest as their refusals reach the digest.
+- **The sign at a pattern and at a law.** The gate demands a rule, not a pattern; a law knows no
+  paths at all.
 
-## Контракт
+## Contract
 
-Поверхность — помощник разбора рядом с гейтом: две функции, признаки правила и текст
-подошедшей статьи. Печатается текст статей целиком; не подошло ничего — печатается пусто, и
-код возврата ноль.
+The surface is a parse helper next to the gate: two functions, the signs of the rule and the text of
+the matching article. The text of the articles is printed whole; nothing matched — nothing is
+printed, and the exit code is zero.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: помощник отвечает текстом и нулевым кодом. Отказа у него нет вовсе — он молчит
-там, где судить нечем.
+Not applicable: the helper answers with text and a zero code. It has no refusal at all — it stays
+silent where there is nothing to judge.
 
-## Данные
+## Data
 
-Не применимо: помощник читает файл правила и путь правки, своего хранилища у него нет.
+Not applicable: the helper reads the file of the rule and the path of the edit, it has no storage of
+its own.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: поддомен о тексте отказа, а не об экране.
+Not applicable: the subdomain is about the text of a refusal, not about a screen.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-- **Отказ в пользу работы.** Нет файла правила, пуст путь правки, нет ни одного признака —
-  помощник молчит и возвращает ноль.
-- **Переносимость.** Ни одного имени дерева: образцы задаёт то правило, которое размечают.
+- **Refusing in favour of the work.** There is no file of the rule, the path of the edit is empty,
+  there is not a single sign — the helper stays silent and gives back zero.
+- **Portability.** Not a single name of a tree: the samples are set by the rule that is being marked.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Не применимо: у поддомена нет экрана, его поверхность — текст отказа гейта.
+Not applicable: the subdomain has no screen, its surface is the text of the gate refusal.
 
-### Локали
+### Locales
 
-Не применимо: вывод гейта одноязычный.
+Not applicable: the output of the gate is single-language.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Разбор один на все деревья: он читает то правило, которое ему назвали, и путь правки. Образцы
-принадлежат правилу, а не дереву, и переезжают вместе с ним.
+The parse is one for all the trees: it reads the rule it was named and the path of the edit. The
+samples belong to the rule, not to the tree, and they move together with it.
 
-## Решения
+## Decisions
 
-- **Форма признака — комментарий разметки.** Он не виден в собранной разметке, поэтому статья
-  читается человеком как прежде, а машине строка видна целиком.
-- **Разбор живёт помощником, а не внутри гейта.** Гейт стоит на каждом вызове, и разбор правила
-  в его теле платился бы на каждом.
+- **The shape of the sign is a markup comment.** It is invisible in the assembled markup, so the
+  article is read by a person as before, while the machine sees the line whole.
+- **The parse lives as a helper, not inside the gate.** The gate stands at every call, and the parse
+  of a rule inside its body would be paid for at every one.
 
-## Открытые вопросы
+## Open questions
 
-- **Q-1. Размечать ли статьи разделов сверх раздела применения закона.** Ловушки и разборы
-  происшествий тоже привязаны к роду файла, но в отказ они не идут: решается вместе с холодной
-  частью правила.
+- **Q-1. Whether to mark the articles of sections beyond the section of the application of the law.**
+  The pitfalls and the incident analyses are also tied to the kind of a file, but they do not go into
+  the refusal: it is decided together with the cold part of the rule.
 
-## История изменений
+## History of changes
 
-- 2026-08-22 — поддомен заведён: признак применимости у статьи и печать статьи в отказе.
+- 2026-08-22 — the subdomain was created: the applicability sign at an article and the printing of
+  the article in the refusal.

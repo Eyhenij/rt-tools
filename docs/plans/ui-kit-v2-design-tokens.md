@@ -1,119 +1,126 @@
-# Оформление второго кита: слои, гейты и бренд
+# The design of the second kit: the layers, the gates and the brand
 
-## Контекст
+## The context
 
-У второго кита есть трёхслойная раскладка оформления — шкалы, назначения, свойства компонента, —
-и она описана на страницах витрины. Держится она при этом только памятью: правила `color-no-hex`
-и `rt-tools/no-hardcoded-design-tokens` навешаны в `stylelint.config.js` на первый кит, а на
-второй — нет. За этим ничего не стоит, кроме порядка, в котором писались киты, и накопилось
-ровно то, что накапливается без проверки.
+The second kit has a three-layer layout of the design — the scales, the appointments, the properties
+of a component — and it is described on the pages of the showcase. It is held at that only by memory:
+the rules `color-no-hex` and `rt-tools/no-hardcoded-design-tokens` are hung in `stylelint.config.js`
+on the first kit, and on the second — not. Nothing stands behind that apart from the order in which
+the kits were written, and exactly what accumulates without a check has accumulated.
 
-Замеры на 2026-08-12 по `projects/ui-kit-v2/src/lib/**/*.scss`:
+The measurements as of 2026-08-12 over `projects/ui-kit-v2/src/lib/**/*.scss`:
 
-| Что                                                    | Сколько |
-| ------------------------------------------------------ | ------- |
-| Файлов стилей в наборе                                 | 87      |
-| Пиксельных литералов, вне медиазапросов                | 208     |
-| Кодов цвета там же                                     | 44      |
-| Употребляемых и нигде не объявленных `--rt-*`          | 33      |
-| Обращений к ним, из них без запасного значения         | 55 / 5  |
-| Файлов, объявляющих свои свойства                      | 13      |
-| Ступеней в шкале нейтрального                          | 21      |
-| Цветовых переопределений тёмной темы против назначений | 30 / 40 |
+| What                                                            | How many |
+| --------------------------------------------------------------- | -------- |
+| Files of styles in the set                                      | 87       |
+| Pixel literals, outside media queries                           | 208      |
+| Codes of a colour there too                                     | 44       |
+| `--rt-*` used and declared nowhere                              | 33       |
+| Addresses to them, of them without a spare value                | 55 / 5   |
+| Files declaring properties of their own                         | 13       |
+| Steps in the scale of the neutral                               | 21       |
+| The colour overrides of the dark theme against the appointments | 30 / 40  |
 
-Кроме количества, есть три места, где сломано устройство. `--rt-color-disabled` и
-`--rt-color-on-disabled` не объявлены нигде, а отключённая кнопка ссылается на них с запасным
-значением `#d1d5db` — то есть красится кодом цвета мимо тёмной темы. Цвет марки подставлен прямо
-в назначения (`_semantic.scss`, строки 24, 31, 34) и повторён четырьмя тройками каналов в
-прозрачных оттенках, поэтому сменить синий нельзя, не сломав его декоративные употребления.
-Стили кита глобальны — у этого кита `ViewEncapsulation.None`, — и каскад ничем не огорожен.
+Apart from the number, there are three places where the device is broken. `--rt-color-disabled` and
+`--rt-color-on-disabled` are declared nowhere, and a switched-off button refers to them with the spare
+value `#d1d5db` — that is, it is painted by a code of a colour past the dark theme. The colour of the
+mark is substituted straight into the appointments (`_semantic.scss`, the lines 24, 31, 34) and
+repeated by four triples of channels in the transparent shades, so the blue cannot be changed without
+breaking its decorative uses. The styles of the kit are global — this kit has
+`ViewEncapsulation.None` — and the cascade is fenced by nothing.
 
-Образец устройства — PrimeNG: три уровня токенов, пара «светлая и тёмная» в одном узле, точечное
-переопределение свойств вместо `::ng-deep`. Зависимостью он не становится: ни библиотека тем, ни
-её формат пресетов в кит не едут.
+The sample of the device is PrimeNG: three levels of the tokens, a pair "the light one and the dark
+one" in one node, a pinpoint override of the properties instead of `::ng-deep`. It does not become a
+dependency: neither the library of the themes nor its format of the presets travels into the kit.
 
-Разбор просьбы лежал записью RT-381-tokens-spec-scope.md — срок её вышел, и найти её можно
-по имени файла в истории. Договорённость о продукте влита в
-спек домена `docs/specs/ui-kit-v2/` последней работой линии: каталога «предложено» больше нет,
-номера сценариев не менялись.
+The grill of the request lay as the record RT-381-tokens-spec-scope.md — its term ran out, and it can
+be found by the name of the file in the history. The product agreement is merged into the spec of the
+domain `docs/specs/ui-kit-v2/` by the last work of the line: there is no directory "proposed" any
+more, the numbers of the scenarios were not changed.
 
-**Линия закрыта 2026-08-13.** Все десять позиций пройдены; открытым остался `Q-7` спека — девять
-имён, общих у двух китов, — и он заведён своей задачей RT-391.
+**The line is closed on 2026-08-13.** All ten positions are passed; open stayed the `Q-7` of the spec
+— nine names common to the two kits — and it is created as a task of its own RT-391.
 
-## Принятые решения
+## The accepted decisions
 
-1. **Течь закрывается раньше уборки.** Проверки включаются на весь набор сразу, а накопленное
-   уезжает в список принятого — так же, как уже сделано для классов BEM. Иначе `--max-warnings 0`
-   краснеет на двух сотнях мест в первый же день, и проверку снимают вместо того, чтобы чинить.
-2. **Имена токенов снимаются и переименовываются свободно.** Потребительский код пока один и
-   правится вместе с китом. Как только придёт второй потребитель, тот же перенос станет ломающим
-   изменением с запиской о переходе — до этого момента слой алиасов не заводится.
-3. **Бренд объявляется линейкой 50…900.** Потребитель владеет оттенками полностью; кит выводит
-   из линейки назначения, а прозрачные оттенки считает от неё, а не повторяет код цвета.
-4. **Контраст считает машина, порог 4.5:1.** Комментарии в шкалах, посчитанные руками, становятся
-   проверяемыми. Пары ниже порога либо чинятся, либо стоят исключением с причиной.
-5. **Компонент после правки выглядит так же.** Снимки витрины остаются зелёными; разошедшийся
-   кадр значит либо дефект, либо названную вслух правку вида. Названа одна такая — отключённая
-   кнопка.
-6. **Правило `styling-bem` дописывается надстройкой**, а не правкой файла в `.claude/skills/`:
-   разложенное пакетом на месте не правится. Формулировка — «компонент объявляет свои свойства,
-   когда его настраивают снаружи», а не «всегда»: правило, которое в день выхода нарушают 65
-   файлов из 78, перестают соблюдать за месяц.
-7. **Источник токенов в объекте — последняя задача, а не первая.** Генерировать 21-ступенчатую
-   шкалу с дырками значит закрепить кодом тот беспорядок, ради которого линия и заводится.
+1. **The leak is closed before the tidying.** The checks are switched on over the whole set at once,
+   and what is accumulated leaves for the list of what is accepted — the same as is already done for
+   the BEM classes. Otherwise `--max-warnings 0` turns red on two hundred places on the very first day,
+   and the check is removed instead of the fixing.
+2. **The names of the tokens are removed and renamed freely.** The consumer code is still one and is
+   edited together with the kit. As soon as a second consumer comes, the same moving will become a
+   breaking change with a note about the transition — until that moment no layer of aliases is created.
+3. **The brand is declared by a line 50…900.** The consumer owns the shades wholly; the kit derives the
+   appointments from the line and counts the transparent shades from it instead of repeating a code of
+   a colour.
+4. **The contrast is counted by a machine, the threshold 4.5:1.** The comments in the scales, counted
+   by hand, become checkable. The pairs below the threshold are either fixed or stand as an exception
+   with a reason.
+5. **A component after an edit looks the same.** The snapshots of the showcase stay green; a diverged
+   frame means either a defect or an edit of the look named aloud. One such is named — the switched-off
+   button.
+6. **The rule `styling-bem` is appended by an override**, not by an edit of the file in
+   `.claude/skills/`: what is laid out by the package is not edited in place. The wording is "a
+   component declares properties of its own when it is set from outside", not "always": a rule broken
+   on the day of its release by 65 files of 78 stops being kept within a month.
+7. **The source of the tokens in an object is the last task, not the first.** To generate a
+   twenty-one-step scale with holes means to nail down by code the very disorder the line is created for.
 
-## Что считается сделанным
+## What counts as done
 
-- Линтер отбивает код цвета и размер числом в стилях компонента второго кита; накопленное стоит
-  поимённо в списке принятого, и список только убывает.
-- Токен, на который кит ссылается, либо объявлен слоем оформления, либо назван ручкой
-  потребителя; ссылка на токен кита идёт без запасного значения.
-- Тёмная тема отвечает на каждое цветовое назначение светлой — переопределением или названной
-  причиной, почему цвет общий.
-- Пара «цвет текста и его фон» держит контраст не ниже 4.5:1, и это подтверждено прогоном.
-- Потребитель перекрашивает кит объявлением линейки бренда поверх `tokens.css` и кит не форкает —
-  подтверждено замером в браузере на странице витрины.
-- 493 эталонных снимка зелёные, кроме поимённо названных пересъёмок.
+- The linter refuses a code of a colour and a size as a number in the styles of a component of the
+  second kit; what is accumulated stands by name in the list of what is accepted, and the list only
+  shrinks.
+- A token the kit refers to is either declared by the layer of the design or named a handle of the
+  consumer; a reference to a token of the kit goes without a spare value.
+- The dark theme answers every colour appointment of the light one — by an override or by a named
+  reason why the colour is common.
+- A pair "the colour of a text and its ground" holds a contrast not below 4.5:1, and this is confirmed
+  by a run.
+- The consumer repaints the kit by a declaration of the line of the brand over `tokens.css` and does
+  not fork the kit — confirmed by a measurement in the browser on a page of the showcase.
+- 493 reference snapshots are green, apart from the reshoots named by name.
 
-## Порядок задач
+## The order of the tasks
 
-Позиции идут последовательно: каждая опирается на предыдущую, и параллелить их нельзя — пятая,
-шестая и седьмая правят одни и те же три файла оформления.
+The positions go one after another: each rests on the previous one, and they cannot be parallelised —
+the fifth, the sixth and the seventh edit the same three files of the design.
 
-| №   | Задача | О чём                                                                                                                                       | Зависит от |
-| --- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| 1   | RT-381 | Спек оформления дорешён: развилки закрыты, границы набора названы, замеры пересняты по названному набору                                    | —          |
-| 2   | RT-382 | Гейт литералов на стилях второго кита и список принятого                                                                                    | 1          |
-| 3   | RT-383 | Гейт графа токенов: объявлено, ручка потребителя или мёртвая ссылка                                                                         | 1          |
-| 4   | RT-384 | Гейт полноты тёмной темы и считалка контраста                                                                                               | 1, 3       |
-| 5   | RT-385 | Бренд линейкой 50…900; назначения и кольцо фокуса берут его                                                                                 | 3, 4       |
-| 6   | RT-272 | Мёртвые ссылки убраны, `--rt-color-disabled` заведён, объявления с корня переехали; отключённость кнопки перестаёт проигрывать оформлению   | 3, 5       |
-| 7   | RT-386 | Шкалы и назначения приведены к канону: литералы из назначений, свод шкалы нейтрального, off-grid отступы сняты, общая шкала высот контролов | 2, 6       |
-| 8   | RT-274 | Свои свойства компонента как настроечный API — там, где его настраивают снаружи                                                             | 7          |
-| 9   | RT-387 | `@layer rt-kit`: правило приложения выигрывает у правила кита без счёта специфичности                                                       | 8          |
-| 10  | RT-388 | Источник токенов в объекте: генерация SCSS, CSS и типов из одного места                                                                     | 7, 9       |
+| №   | Task   | About what                                                                                                                                                                                                            | Depends on |
+| --- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| 1   | RT-381 | The spec of the design is decided through: the forks are closed, the boundaries of the set are named, the measurements are retaken by the named set                                                                   | —          |
+| 2   | RT-382 | The gate of the literals on the styles of the second kit and the list of what is accepted                                                                                                                             | 1          |
+| 3   | RT-383 | The gate of the graph of the tokens: declared, a handle of the consumer or a dead reference                                                                                                                           | 1          |
+| 4   | RT-384 | The gate of the completeness of the dark theme and the counter of the contrast                                                                                                                                        | 1, 3       |
+| 5   | RT-385 | The brand by a line 50…900; the appointments and the ring of the focus take it                                                                                                                                        | 3, 4       |
+| 6   | RT-272 | The dead references are removed, `--rt-color-disabled` is created, the declarations moved from the root; the switched-off state of the button stops losing to the design                                              | 3, 5       |
+| 7   | RT-386 | The scales and the appointments are brought to the canon: the literals out of the appointments, the summary of the scale of the neutral, the off-grid paddings removed, a common scale of the heights of the controls | 2, 6       |
+| 8   | RT-274 | The properties of a component of its own as a setting API — where it is set from outside                                                                                                                              | 7          |
+| 9   | RT-387 | `@layer rt-kit`: a rule of the application wins over a rule of the kit without a count of the specificity                                                                                                             | 8          |
+| 10  | RT-388 | The source of the tokens in an object: the generation of SCSS, CSS and the types from one place                                                                                                                       | 7, 9       |
 
-**Почему такой порядок.** Первые четыре позиции не двигают ни одного пикселя — они правят спек,
-конфиг линтера и проверки, и откатываются снятием проверок. Пятая и шестая меняют видимое и
-требуют пересъёмки эталонов, поэтому идут после того, как гейты уже стерегут дерево. Седьмая
-опирается на гейт литералов: без него свод шкалы разъедется обратно. Девятая ставится после
-восьмой, потому что слой каскада имеет смысл там, где у потребителя уже есть чем настраивать
-компонент вместо перебивания специфичностью.
+**Why such an order.** The first four positions move not a single pixel — they edit the spec, the
+config of the linter and the checks, and they roll back by the removal of the checks. The fifth and the
+sixth change what is visible and demand a reshoot of the references, so they go after the gates already
+guard the tree. The seventh rests on the gate of the literals: without it the summary of the scale
+would drift back. The ninth is put after the eighth, because a layer of the cascade makes sense where
+the consumer already has something to set the component by instead of beating it by the specificity.
 
-## Ловушки
+## Pitfalls
 
-- **`tools/styles-allowlist.json` и команду `check:styles` занимать нельзя.** Их держит
-  разложенная пакетом проверка классов BEM (`tools/check-styles.mjs`, шапка «правится
-  надстройкой, не здесь»), и её записи — голые имена классов. Гейт литералов заводит свой файл и
-  своё имя команды.
-- **Порог ширины числом в `@media` литералом не считается.** Пользовательские свойства CSS в
-  медиазапросах не работают, порог берётся переменной препроцессора из `_breakpoints.scss` —
-  иначе два десятка мест обязаны нарушить правило в день его включения.
-- **Тёмные ответы живут не только в миксине.** Шесть компонентных файлов объявляют их сами, с
-  голым `[data-theme='dark']`; проверка полноты, читающая только `:root`, их не увидит.
-- **Девять имён объявляют оба кита с разными значениями на корне страницы.** Побеждает
-  подключённый позже. Починка задевает выпущенный первый кит и в границы линии не входит —
-  сегодняшние совпадения уезжают в список принятого, новое роняет прогон.
-- **`@layer` меняет вид у потребителя молча.** Единственная позиция линии, о которой узнают не
-  ошибкой сборки, а глазами после обновления. Эталонные снимки этого не поймают: в витрине нет
-  чужих переопределений.
+- **`tools/styles-allowlist.json` and the command `check:styles` must not be taken.** They are held by
+  the check of the BEM classes laid out by the package (`tools/check-styles.mjs`, the header "it is
+  edited by an override, not here"), and its records are bare names of the classes. The gate of the
+  literals creates a file of its own and a name of its own for the command.
+- **A threshold of the width as a number in `@media` is not counted a literal.** The custom properties
+  of CSS do not work in media queries, the threshold is taken by a variable of the preprocessor from
+  `_breakpoints.scss` — otherwise two dozen places are obliged to break the rule on the day it is
+  switched on.
+- **The dark answers live not only in the mixin.** Six files of components declare them themselves,
+  with a bare `[data-theme='dark']`; a check of the completeness reading only `:root` will not see them.
+- **Nine names are declared by both kits with different values at the root of the page.** The one
+  plugged in later wins. The fixing touches the released first kit and does not enter the boundaries of
+  the line — today's coincidences leave for the list of what is accepted, a new one fells the run.
+- **`@layer` changes the look at the consumer silently.** The only position of the line that is learned
+  of not by an error of the build but by the eyes after an update. The reference snapshots will not
+  catch this: the showcase has no foreign overrides.

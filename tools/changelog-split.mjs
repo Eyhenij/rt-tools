@@ -1,19 +1,22 @@
 #!/usr/bin/env node
 /**
- * Деление журнала выпусков, когда он перерос предел длины.
+ * The splitting of the release journal when it has outgrown the length limit.
  *
- * Журнал растёт известным движением — выпуском, — а длину его меряли на пуше: журнал приехал
- * вливанием главной ветки с 530 строками при пределе 500, и из дерева перестала пушиться любая
- * ветка. Причина лежала в чужой работе, а чинил тот, кто подвернулся.
+ * The journal grows by a known motion — a release — while its length was measured at the push: the
+ * journal arrived by a merge of the main branch with 530 lines at a limit of 500, and no branch could
+ * be pushed from the tree any more. The cause lay in somebody else's work, and whoever turned up
+ * fixed it.
  *
- * Команда зовётся выпуском сразу после дописи журнала и до коммита редакции: делит тем же
- * движением, которое растит. Прогоняется и на месте — на любом журнале, без выпуска.
+ * The command is called by the release right after the journal is appended to and before the
+ * edition's commit: it splits by the same motion that grows it. It is run on the spot too — on any
+ * journal, without a release.
  *
- * Старые выпуски уезжают в отдельный файл, названный диапазоном версий. Свежие остаются: их
- * читают, а генератор дописывает новый выпуск в начало и до старых строк не доходит.
+ * The old releases leave for a separate file named by the range of versions. The fresh ones stay:
+ * they are read, and the generator appends a new release at the beginning and does not reach the old
+ * lines.
  *
- * Без правки выходит нулём и говорит, что делить нечего. Ненулевой код — только отказ самой
- * команды.
+ * Without an edit it exits with zero and says there is nothing to split. A non-zero code is only a
+ * refusal of the command itself.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
@@ -23,14 +26,14 @@ import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 const FILE = process.argv[2] ?? 'projects/agent-kit/CHANGELOG.md';
 const LIMIT = CONFIG.fileSizeLimit;
 /**
- * Сколько строк оставить в свежей части. Половина предела, а не «предел минус чуть-чуть»:
- * делённый впритык, журнал упирается в предел через два выпуска, и делить приходится снова.
+ * How many lines to leave in the fresh part. Half the limit rather than «the limit minus a little»:
+ * split right up to the edge, the journal runs into the limit in two releases, and has to be split again.
  */
 const KEEP = Math.floor(LIMIT / 2);
-/** Заголовок выпуска: генератор пишет крупный для минорных и мелкий для патчей. */
+/** A release's heading: the generator writes a large one for minors and a small one for patches. */
 const RELEASE = /^#{1,2} \[([0-9]+\.[0-9]+\.[0-9]+)\]/;
 
-/** Разделы журнала: шапка до первого выпуска и по разделу на выпуск, свежие сверху. */
+/** The journal's sections: the header before the first release and a section per release, the fresh on top. */
 function split(lines) {
     const head = [];
     const sections = [];
@@ -54,20 +57,22 @@ function main() {
     const path = join(ROOT, FILE);
     const lines = readFileSync(path, 'utf8').split('\n');
     if (lines.length <= LIMIT) {
-        console.log(`changelog-split: ${FILE} — ${lines.length} строк при пределе ${LIMIT}, делить нечего`);
+        console.log(`changelog-split: ${FILE} — ${lines.length} lines at the limit ${LIMIT}, there is nothing to split`);
 
         return 0;
     }
 
     const { head, sections } = split(lines);
     if (sections.length < 2) {
-        console.error(`changelog-split: в ${FILE} меньше двух выпусков — делить нечего, а длина взялась не отсюда`);
+        console.error(
+            `changelog-split: ${FILE} has fewer than two releases — there is nothing to split, and the length came from elsewhere`
+        );
 
         return 1;
     }
 
-    // Свежие набираются сверху, пока влезают в половину предела; первый выпуск остаётся всегда,
-    // даже если он один длиннее её: журнал без последнего выпуска бессмыслен.
+    // The fresh are gathered from the top while they fit into half the limit; the first release stays
+    // always, even if it alone is longer than that: a journal without the last release is meaningless.
     const keep = [];
     let count = head.length;
     for (const section of sections) {
@@ -80,7 +85,9 @@ function main() {
 
     const moved = sections.slice(keep.length);
     if (moved.length === 0) {
-        console.error(`changelog-split: ${FILE} длиннее предела, но весь его объём в свежих выпусках — делить нечего`);
+        console.error(
+            `changelog-split: ${FILE} is longer than the limit, but its whole volume is in the fresh releases — there is nothing to split`
+        );
 
         return 1;
     }
@@ -89,18 +96,18 @@ function main() {
     const newest = moved[0].version;
     const name = `${basename(FILE, '.md')}-${oldest}-${newest}.md`;
     const target = join(dirname(path), name);
-    const title = `# Журнал изменений — выпуски ${oldest} … ${newest}\n
-Старая часть журнала, вынесенная из \`${FILE}\`: тот перерос предел длины документа, а генератор
-дописывает новый выпуск только в начало и до этих строк не доходит. Свежие выпуски — там, здесь
-только описание прошлого; оно не правится.\n`;
+    const title = `# The changelog — releases ${oldest} … ${newest}\n
+The old part of the journal, carried out of \`${FILE}\`: that one outgrew the document length limit,
+while the generator appends a new release only at the beginning and does not reach these lines. The
+fresh releases are there, here only a description of the past; it is not edited.\n`;
 
     writeFileSync(target, `${title}\n${moved.flatMap((section) => section.lines).join('\n')}`.replace(/\n+$/, '\n'));
     writeFileSync(path, `${[...head, ...keep.flatMap((section) => section.lines)].join('\n')}`.replace(/\n+$/, '\n'));
 
     console.log(
-        `changelog-split: ${FILE} был ${lines.length} строк при пределе ${LIMIT}\n` +
-            `  осталось выпусков: ${keep.length} (${keep[0].version} … ${keep.at(-1).version})\n` +
-            `  вынесено выпусков: ${moved.length} → ${join(dirname(FILE), name)}`
+        `changelog-split: ${FILE} was ${lines.length} lines at the limit ${LIMIT}\n` +
+            `  releases left: ${keep.length} (${keep[0].version} … ${keep.at(-1).version})\n` +
+            `  releases carried out: ${moved.length} → ${join(dirname(FILE), name)}`
     );
 
     return 0;

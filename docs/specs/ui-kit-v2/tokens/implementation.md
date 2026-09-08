@@ -1,35 +1,35 @@
-# Чем исполняется — оформление кита
+# What it is carried out by — the design of the kit
 
-Первая колонка — правило спека рядом дословно. Вторая — где оно исполняется в дереве; там же
-назван сценарий, которым это проверяется, а чем именно покрыт каждый сценарий, сказано в
-`scenarios.md`.
+The first column is the rule of the spec next to it verbatim. The second is where it is carried out
+in the tree; the scenario it is checked by is named there too, and what exactly every scenario is
+covered by is said in `scenarios.md`.
 
-Правило без строки и строка без правила — расхождение: спек обещает то, чего в дереве нет, либо
-в дереве стоит то, о чём спек молчит.
+A rule without a line and a line without a rule is a divergence: the spec promises what is not in the
+tree, or the tree holds what the spec is silent about.
 
-- **Потребитель перекрашивает кит объявлениями поверх него и кит не форкает.** — ступени бренда в `projects/ui-kit-v2/src/styles/tokens.scale-color.mjs:rt-brand-500`; страница витрины показывает кит на чужой марке — `projects/ui-kit-v2/docs/Theming.mdx:rt-brand-500`; сценарий `SC-UKV-35`
-- **Бренд объявляется линейкой ступеней 50…950.** — та же линейка в источнике оформления — `projects/ui-kit-v2/src/styles/tokens.scale-color.mjs:rt-brand-950`; сценарий `SC-UKV-35`
-- **Палитра держит одну роль, а ряд у палитр общий.** — подложка обвязки уехала своей палитрой — `projects/ui-kit-v2/src/styles/tokens.scale-color.mjs:rt-navy-900`; сценарий `SC-UKV-35`
-- **Ступени палитры идут ровным рядом, а не подбираются по месту.** — ряды нейтрального и бренда в источнике оформления — `projects/ui-kit-v2/src/styles/tokens.scale-color.mjs:rt-neutral-500`; сценарий `SC-UKV-35`
-- **Прозрачный оттенок считается от своей ступени, а не повторяет её код цвета.** — оттенки бренда и статусов считаются смешением — `projects/ui-kit-v2/src/styles/tokens.scale-effects.mjs:color-mix`; сценарий `SC-UKV-36`
-- **Кольцо фокуса красится брендом.** — цвет, толщина и смещение кольца — `projects/ui-kit-v2/src/styles/tokens.light-color.mjs:rt-focus-ring-color`; сценарий `SC-UKV-36`
-- **Токен, на который кит ссылается, либо объявлен слоем оформления, либо назван ручкой потребителя.** — `tools/check-tokens-graph.mjs:HANDLES_FILE`, перечень ручек — `tools/tokens-handles.json:handles`; сценарии `SC-UKV-38`, `SC-UKV-39`
-- **Ссылка на токен кита идёт без запасного значения.** — та же проверка разбирает обращения — `tools/check-tokens-graph.mjs:REFERENCE_RE`; сценарии `SC-UKV-37`, `SC-UKV-39`
-- **Запасное значение стоит только у ручки потребителя, и каждая ручка перечислена в контракте.** — сверка перечня с человеческой половиной — `tools/check-tokens-graph.mjs:THEMING_DOC`, раздел «Ручки потребителя» в `projects/ui-kit-v2/docs/Theming.mdx:handles`; сценарий `SC-UKV-39`
-- **Токен объявляется слоем оформления, а не стилями компонента.** — та же проверка судит объявления на корне страницы — `tools/check-tokens-graph.mjs:BLOCK_RE`; сценарий `SC-UKV-40`
-- **Значение живёт в шкале; назначение и переопределение темы ссылаются на ступень.** — шкалы и назначения в источнике оформления — `projects/ui-kit-v2/src/styles/tokens.source.mjs:scale`; сценарий `SC-UKV-41`
-- **Шкала остаётся шкалой: ступень выбирается из ряда, а не дописывается под случай.** — ряды нейтрального, бренда и отступов — `projects/ui-kit-v2/src/styles/tokens.source.mjs:light`; сценарий `SC-UKV-41`
-- **Интерактивные контролы одного размера совпадают по высоте.** — общая шкала высот — `projects/ui-kit-v2/src/styles/tokens.scale-effects.mjs:rt-control-height-md`; сценарий `SC-UKV-48`
-- **Тёмная тема отвечает на каждое цветовое назначение светлой.** — `tools/check-tokens-theme.mjs:DARK_MIXIN`, принятое — `tools/tokens-theme-allowlist.json:accepted`; сценарий `SC-UKV-42`
-- **Пара «цвет текста и его фон» держит контраст не ниже 4.5:1.** — та же проверка, второй раздел вывода — `tools/check-tokens-theme.mjs:THRESHOLD`, перечень пар — `tools/tokens-contrast-pairs.json:pairs`; сценарий `SC-UKV-47`
-- **Литерал цвета и значение в свойстве оформления в стилях компонента отбиваются проверкой.** — `tools/check-tokens-styles.mjs:CONFIG_FILE` и её конфиг `tools/stylelint-tokens.config.mjs:rules`; сценарий `SC-UKV-43`
-- **Накопленное до включения проверки стоит поимённо в списке принятого.** — `tools/check-tokens-styles.mjs:parseAllowlist`, сам список — `tools/tokens-styles-allowlist.json:accepted`; сценарий `SC-UKV-44`
-- **Запись из списка принятого снимается вместе с починкой и обратно не заводится.** — та же проверка отказывает на записи, которой больше ничего не отвечает — `tools/check-tokens-styles.mjs:stale`; сценарий `SC-UKV-45`
-- **Свойства компонента заводятся там, где компонент настраивают снаружи.** — обход отбивает `tools/stylelint-tokens.config.mjs:declaration-property-value-disallowed-list`; показ — страница витрины «Foundation / Design Tokens / Component Props»; сценарий `SC-UKV-49`
-- **Правило приложения выигрывает у правила кита без счёта специфичности.** — порядок подслоёв — `projects/ui-kit-v2/src/styles/_layers.scss:rt-kit`, обёртку судит `tools/check-cascade-layer.mjs:ALLOWLIST`; сценарий `SC-UKV-50`
-- **Всё, что кит объявляет классами, доезжает до потребителя одной точкой входа.** — `projects/ui-kit-v2/src/styles/_index.scss:login` — агрегатор форвардит порядок подслоёв, шкалы, назначения, тёмную тему, полосу прокрутки, стили директивы кнопки и раскладку экрана входа `projects/ui-kit-v2/src/styles/_login.scss`
-- **Слой оформления собирается из источника, а не правится в собранном виде.** — источник — `projects/ui-kit-v2/src/styles/tokens.source.mjs:scale`, генератор — `tools/build-tokens-v2.mjs:renderNodes`, сверка — `tools/build-tokens-v2.mjs:stale`; собранное — три файла `projects/ui-kit-v2/src/styles/` и имена в `projects/ui-kit-v2/src/lib/tokens/rt-design-tokens.ts:TRtDesignTokenName`; сценарий `SC-UKV-51`
-- **Состояние выигрывает у оформления, а не стоит с ним наравне.** — порядок блоков в стилях компонента — `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss:disabled`; прогоном не проверяется, судит разбор изменения и кадр витрины; сценарий `SC-UKV-46`
-- **Роль действия — пятёрка, а не один цвет.** — пятёрки ролей в назначениях — `projects/ui-kit-v2/src/styles/tokens.light-color.mjs:rt-color-action-primary-active`; сценарий `SC-UKV-46`
-- **Цвет роли на поверхности объявлен отдельно от её подложки.** — `projects/ui-kit-v2/src/styles/tokens.light-color.mjs:rt-color-action-primary-on-surface`; сценарий `SC-UKV-47`
-- **Вид компонента меняется только там, где это названо вслух.** — эталоны при витрине и прогон `tools/visual-snapshots-v2.mjs:requireNoOrphans`; сценарий `SC-UKV-46`
+- **The consumer repaints the kit by declarations over it and does not fork the kit.** — the steps of the brand in `projects/ui-kit-v2/src/styles/tokens.scale-color.mjs:rt-brand-500`; a page of the showcase shows the kit on a foreign mark — `projects/ui-kit-v2/docs/Theming.mdx:rt-brand-500`; scenario `SC-UKV-35`
+- **The brand is declared by a line of the steps 50…950.** — the same line in the source of the design — `projects/ui-kit-v2/src/styles/tokens.scale-color.mjs:rt-brand-950`; scenario `SC-UKV-35`
+- **A palette holds one role, and the row at the palettes is common.** — the backing of the harness went away by a palette of its own — `projects/ui-kit-v2/src/styles/tokens.scale-color.mjs:rt-navy-900`; scenario `SC-UKV-35`
+- **The steps of a palette go by an even row, they are not picked by the place.** — the rows of the neutral and of the brand in the source of the design — `projects/ui-kit-v2/src/styles/tokens.scale-color.mjs:rt-neutral-500`; scenario `SC-UKV-35`
+- **A transparent shade is counted from its own step, it does not repeat its code of the colour.** — the shades of the brand and of the statuses are counted by a mixing — `projects/ui-kit-v2/src/styles/tokens.scale-effects.mjs:color-mix`; scenario `SC-UKV-36`
+- **The ring of the focus is painted by the brand.** — the colour, the thickness and the offset of the ring — `projects/ui-kit-v2/src/styles/tokens.light-color.mjs:rt-focus-ring-color`; scenario `SC-UKV-36`
+- **A token the kit refers to is either declared by the layer of the design or named a handle of the consumer.** — `tools/check-tokens-graph.mjs:HANDLES_FILE`, the list of the handles — `tools/tokens-handles.json:handles`; scenarios `SC-UKV-38`, `SC-UKV-39`
+- **A reference to a token of the kit goes without a spare value.** — the same check takes the addresses apart — `tools/check-tokens-graph.mjs:REFERENCE_RE`; scenarios `SC-UKV-37`, `SC-UKV-39`
+- **A spare value stands only at a handle of the consumer, and every handle is listed in the contract.** — the checking of the list against the human half — `tools/check-tokens-graph.mjs:THEMING_DOC`, the section "The handles of the consumer" in `projects/ui-kit-v2/docs/Theming.mdx:handles`; scenario `SC-UKV-39`
+- **A token is declared by the layer of the design, not by the styles of a component.** — the same check judges the declarations at the root of the page — `tools/check-tokens-graph.mjs:BLOCK_RE`; scenario `SC-UKV-40`
+- **The value lives in the scale; an appointment and an override of a theme refer to a step.** — the scales and the appointments in the source of the design — `projects/ui-kit-v2/src/styles/tokens.source.mjs:scale`; scenario `SC-UKV-41`
+- **A scale stays a scale: a step is chosen from the row, it is not written in for the case.** — the rows of the neutral, of the brand and of the paddings — `projects/ui-kit-v2/src/styles/tokens.source.mjs:light`; scenario `SC-UKV-41`
+- **The interactive controls of one size coincide in height.** — the common scale of the heights — `projects/ui-kit-v2/src/styles/tokens.scale-effects.mjs:rt-control-height-md`; scenario `SC-UKV-48`
+- **The dark theme answers every colour appointment of the light one.** — `tools/check-tokens-theme.mjs:DARK_MIXIN`, what is accepted — `tools/tokens-theme-allowlist.json:accepted`; scenario `SC-UKV-42`
+- **A pair "the colour of a text and its ground" holds a contrast not below 4.5:1.** — the same check, the second section of the output — `tools/check-tokens-theme.mjs:THRESHOLD`, the list of the pairs — `tools/tokens-contrast-pairs.json:pairs`; scenario `SC-UKV-47`
+- **A literal of a colour and a value in a property of the design in the styles of a component are refused by a check.** — `tools/check-tokens-styles.mjs:CONFIG_FILE` and its config `tools/stylelint-tokens.config.mjs:rules`; scenario `SC-UKV-43`
+- **What was accumulated before the switching on of a check stands by name in the list of what is accepted.** — `tools/check-tokens-styles.mjs:parseAllowlist`, the list itself — `tools/tokens-styles-allowlist.json:accepted`; scenario `SC-UKV-44`
+- **A record leaves the list of what is accepted together with the fixing and is not created back.** — the same check refuses at a record that nothing answers to any more — `tools/check-tokens-styles.mjs:stale`; scenario `SC-UKV-45`
+- **The properties of a component are created where the component is set from outside.** — a walk is refused by `tools/stylelint-tokens.config.mjs:declaration-property-value-disallowed-list`; the show is the page of the showcase "Foundation / Design Tokens / Component Props"; scenario `SC-UKV-49`
+- **A rule of the application wins over a rule of the kit without a count of the specificity.** — the order of the sublayers — `projects/ui-kit-v2/src/styles/_layers.scss:rt-kit`, the wrapper is judged by `tools/check-cascade-layer.mjs:ALLOWLIST`; scenario `SC-UKV-50`
+- **Everything the kit declares by classes reaches the consumer by one point of entry.** — `projects/ui-kit-v2/src/styles/_index.scss:login` — the aggregator forwards the order of the sublayers, the scales, the appointments, the dark theme, the bar of the scroll, the styles of the directive of the button and the layout of the screen of the entry `projects/ui-kit-v2/src/styles/_login.scss`
+- **The layer of the design is put together from the source, it is not edited in the put-together look.** — the source is `projects/ui-kit-v2/src/styles/tokens.source.mjs:scale`, the generator is `tools/build-tokens-v2.mjs:renderNodes`, the checking is `tools/build-tokens-v2.mjs:stale`; what is put together is three files of `projects/ui-kit-v2/src/styles/` and the names in `projects/ui-kit-v2/src/lib/tokens/rt-design-tokens.ts:TRtDesignTokenName`; scenario `SC-UKV-51`
+- **The state wins over the design, it does not stand with it on a par.** — the order of the blocks in the styles of a component — `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss:disabled`; it is not checked by the run, it is judged by the taking apart of the change and by a frame of the showcase; scenario `SC-UKV-46`
+- **The role of an action is a five, not one colour.** — the fives of the roles in the appointments — `projects/ui-kit-v2/src/styles/tokens.light-color.mjs:rt-color-action-primary-active`; scenario `SC-UKV-46`
+- **The colour of a role on a surface is declared apart from its backing.** — `projects/ui-kit-v2/src/styles/tokens.light-color.mjs:rt-color-action-primary-on-surface`; scenario `SC-UKV-47`
+- **The look of a component changes only where that is named aloud.** — the references at the showcase and the run `tools/visual-snapshots-v2.mjs:requireNoOrphans`; scenario `SC-UKV-46`

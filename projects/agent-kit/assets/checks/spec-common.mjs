@@ -36,20 +36,26 @@ const SKIPPED_DIRS = CONFIG.skippedDirs;
  * first nine of them silently — neither in coverage nor in debts, with a green audit.
  */
 const SCENARIO_HEADING = /^###\s+(SC-([A-Z]{2,4})-(\d{1,3}))\s+—\s+(.+?)\s*$/;
+/**
+ * The keys of a spec are read under two names, English and the owner's. A tree translates its
+ * specs one domain at a time, and a key that moved instead of learning the second name takes the
+ * untranslated domains out of the audit silently: the heading is not found, the statements and the
+ * scenarios are not read, and the audit stays green about a domain it no longer sees.
+ */
 /** The mark of a knowingly uncovered scenario; the reason is mandatory */
-const UNCOVERED = /^Не покрыто:\s*\S/;
+const UNCOVERED = /^(?:Not covered|Не покрыто):\s*\S/;
 /** The test exists, but checks not everything promised or goes another way */
-const PARTIAL = /^Покрытие:\s*частичное\s*—\s*\S/;
+const PARTIAL = /^(?:Coverage:\s*partial|Покрытие:\s*частичное)\s*—\s*\S/;
 /** A mention of the scenario in the title of a test; the number is as long as in the heading */
 const SCENARIO_REFERENCE = /\bSC-[A-Z]{2,4}-\d{1,3}\b/g;
 /** The promise line of a scenario; its continuations go with an indent */
-const PROMISE = /^Тогда\s+\S/;
+const PROMISE = /^(?:Then|Тогда)\s+\S/;
 /**
  * A person in front of the screen and their perception. Word boundaries are not set: `\b` in
  * JavaScript counts only Latin letters as letters, and `\bгость\b` would not match once.
  */
-const ACTOR = /(гост[ьяию]|владел(?:ец|ьца|ьцу|ьцем)|сотрудник\w*|оператор\w*|пользовател\w+)/i;
-const PERCEIVES = /(вид(?:ит|ят|но)|чита(?:ет|ют)|смотр(?:ит|ят))/i;
+const ACTOR = /(гост[ьяию]|владел(?:ец|ьца|ьцу|ьцем)|сотрудник\w*|оператор\w*|пользовател\w+|\bguests?\b|\bowner\b|\bemployees?\b|\boperators?\b|\busers?\b)/i;
+const PERCEIVES = /(вид(?:ит|ят|но)|чита(?:ет|ют)|смотр(?:ит|ят)|\bsees?\b|\breads?\b|\bis shown\b|\bare shown\b)/i;
 /** End-to-end tests: only they go the same way the user does */
 const E2E_ROOTS = CONFIG.e2eRoots;
 
@@ -93,31 +99,41 @@ const ANCHOR = /`([\w./-]+\.[A-Za-z]{2,10}):(#?\p{L}[\p{L}\p{N}_-]*|#?_[\w-]*|\d
  * The end of the word is found by a negative lookahead, not by `\b`: JavaScript knows only Latin
  * as a word boundary, and after a Cyrillic letter there is none at all — the verdict was not
  * recognised once.
+ *
+ * The verdict has two names: an English one in a companion written after the layer was translated,
+ * a Russian one in a companion written before it. Either is enough.
  */
-const VERDICT = /^\s*(?:\*\*)?Не (?:исполняется|применимо|проверяется)(?![\p{L}\p{N}_])/u;
+const VERDICT =
+    /^\s*(?:\*\*)?(?:Not (?:carried out|applicable|checked)|Не (?:исполняется|применимо|проверяется))(?![\p{L}\p{N}_])/u;
 const VERDICT_MIN = 40;
 /** The header line declaring the libs whose procedures the domain serves */
-const PROCEDURE_ROOTS = /^\*\*Процедуры:\*\*\s*(.+)$/;
+const PROCEDURE_ROOTS = /^\*\*(?:Procedures|Процедуры):\*\*\s*(.+)$/;
 const BACKTICKED = /`([^`]+)`/g;
 
+/**
+ * The mandatory sections of a spec, each under two names: the English one first, the owner's
+ * second. A spec carries one of the two, and a tree translating its specs domain by domain keeps a
+ * green audit all the while. The refusal names the first of the pair — the one a new spec is
+ * written by.
+ */
 const REQUIRED_HEADINGS = [
-    '## Зачем',
-    '## Терминология',
-    '### Как это называется в интерфейсе',
-    '## Правила',
-    '## Что не входит',
-    '## Контракт',
-    '### Коды отказов',
-    '## Данные',
-    '## Экраны и состояния',
-    '## Сквозные требования',
-    '### Локали',
-    '### SEO',
-    '### Мобильная раскладка',
-    '### Мультиобъектность',
-    '## Решения',
-    '## Открытые вопросы',
-    '## История изменений',
+    ['## Why', '## Зачем'],
+    ['## Terminology', '## Терминология'],
+    ['### What it is called in the interface', '### Как это называется в интерфейсе'],
+    ['## Rules', '## Правила'],
+    ['## What is out of scope', '## Что не входит'],
+    ['## Contract', '## Контракт'],
+    ['### Refusal codes', '### Коды отказов'],
+    ['## Data', '## Данные'],
+    ['## Screens and states', '## Экраны и состояния'],
+    ['## Cross-cutting requirements', '## Сквозные требования'],
+    ['### Locales', '### Локали'],
+    ['### SEO'],
+    ['### Mobile layout', '### Мобильная раскладка'],
+    ['### Several objects', '### Мультиобъектность'],
+    ['## Decisions', '## Решения'],
+    ['## Open questions', '## Открытые вопросы'],
+    ['## History of changes', '## История изменений'],
 ];
 
 const problems = [];
@@ -166,9 +182,12 @@ function collectDomains() {
  * of the contract.
  */
 function sectionOf(text, heading) {
-    const level = heading.match(/^#+/)[0].length;
+    // The heading arrives as one name or as a list of names: a spec carries the English heading or
+    // the owner's one, and the section is the same section under either.
+    const names = Array.isArray(heading) ? heading : [heading];
+    const level = names[0].match(/^#+/)[0].length;
     const lines = text.split('\n');
-    const start = lines.findIndex((line) => line.trimEnd() === heading);
+    const start = lines.findIndex((line) => names.includes(line.trimEnd()));
     if (start < 0) {
         return [];
     }

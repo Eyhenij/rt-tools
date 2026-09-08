@@ -1,104 +1,106 @@
-# Входы компонента, созданного в коде
+# The inputs of a component created in code
 
-**Статус:** предложено · **Ревизия:** 31 августа 2026 · **Префикс сценариев:** `SC-CR`
-**Зависимости:** нет
-**Законы:** `frontend-application`
-**Процедуры:** нет
+**Status:** proposed · **Revision:** 31 August 2026 · **Scenario prefix:** `SC-CR`
+**Depends on:** none
+**Laws:** `frontend-application`
+**Procedures:** none
 
-Договорённость о продукте, написанная до кода. Вливается в спек домена последним коммитом PR — с
-прежними номерами сценариев. Домена ядра в дереве ещё нет: договорённость станет его началом
-вместе с соседними предложениями, когда владелец скажет заводить домен.
+An agreement about the product written before the code. It is merged into the spec of the domain by the
+last commit of the PR — with the former scenario numbers. There is no domain of the core in the tree yet:
+the agreement will become its beginning together with the neighbouring proposals, when the owner says to
+create the domain.
 
-## Зачем
+## Why
 
-Компонент, созданный в коде, получает входы по имени строкой. Имя не проверяет ничто: опечатка
-компилируется и падает уже на подъёме — сообщением о входе, которого у компонента нет. Значение не
-сверяется с типом входа вовсе: строка уезжает туда, где ждали число, и обнаруживается это на
-экране.
+A component created in code gets its inputs by a name as a string. The name is checked by nothing: a typo
+compiles and falls already at the raising — by a message about an input the component does not have. The
+value is not checked against the type of the input at all: a string goes away where a number was expected,
+and that is discovered on the screen.
 
-Компонент, поднятый разметкой, обе ошибки ловит проверкой шаблона. Созданный в коде — не ловит ни
-одной, хотя те же имена и типы объявлены рядом, в самом классе.
+A component raised by markup catches both mistakes by the check of the template. One created in code
+catches neither, although the same names and types are declared next to it, in the class itself.
 
-## Терминология
+## Terminology
 
-| Термин       | Что это                                                          |
-| ------------ | ---------------------------------------------------------------- |
-| вход         | поле класса, объявленное сигнальным входом                       |
-| принимаемое  | значение, которое вход принимает снаружи                         |
-| набор входов | объект «имя входа — значение», раздаваемый созданному компоненту |
+| Term                | What it is                                                                  |
+| ------------------- | --------------------------------------------------------------------------- |
+| an input            | a field of a class declared a signal input                                  |
+| what is accepted    | the value the input accepts from outside                                    |
+| a set of the inputs | the object "the name of an input — the value" handed to a created component |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Не применимо: тип на экране не виден.
+Not applicable: a type is not visible on the screen.
 
-## Правила
+## Rules
 
-- **Именами набора могут быть только входы компонента.** Обычное поле класса входом не является, и
-  попытка положить в него значение падает на подъёме, а не при сборке.
-- **Имена отбираются по типу поля, а не по имени.** Поле, названное как вход, входом не
-  становится; пометки, по которой их можно отличить, у класса нет.
-- **Значением каждого имени служит то, что вход принимает снаружи.** У входа с преобразованием
-  типов два — принимаемый и получаемый, — и вызывающий передаёт первый.
-- **Набор неполон по устройству: входы, которых в нём нет, остаются со своими умолчаниями.**
-  Обязательный вход при этом остаётся обязательным — это забота того, кто компонент поднимает.
-- **Входы ставятся своей функцией, а не строкой на месте.** Тип, объявленный и никем не
-  применённый, не проверяет ничего.
+- **The names of the set can be only the inputs of the component.** An ordinary field of a class is not an
+  input, and an attempt to put a value into it falls at the raising, not at the build.
+- **The names are picked by the type of the field, not by the name.** A field named like an input does not
+  become an input; the class has no mark they can be told apart by.
+- **As the value of every name serves what the input accepts from outside.** An input with a transformation
+  has two of them — what is accepted and what is got — and the caller passes the first.
+- **The set is incomplete by its arrangement: the inputs that are not in it stay with their defaults.** An
+  obligatory input at that stays obligatory — that is the care of whoever raises the component.
+- **The inputs are put by a function of their own, not by a string at the place.** A type declared and
+  applied by nobody checks nothing.
 
-## Что не входит
+## What is out of scope
 
-- Выходы компонента: подписка на них живёт своей жизнью и типизируется отдельно.
-- Создание самого компонента: где его создавать и куда класть — решает вызывающий.
+- The outputs of a component: the subscription to them lives a life of its own and is typed apart.
+- The creating of the component itself: where to create it and where to put it is decided by the caller.
 
-## Контракт
+## Contract
 
-| Имя                    | Что принимает или отдаёт                                 |
-| ---------------------- | -------------------------------------------------------- |
-| `TRtComponentInputs`   | тип: набор «имя входа — принимаемое значение» для класса |
-| `setRtComponentInputs` | ставит набор входов созданному компоненту                |
+| Name                   | What it accepts or gives back                                             |
+| ---------------------- | ------------------------------------------------------------------------- |
+| `TRtComponentInputs`   | the type: the set "the name of an input — the accepted value" for a class |
+| `setRtComponentInputs` | puts the set of the inputs to a created component                         |
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: отказов нет — неверное имя и неверное значение отбиваются сборкой.
+Not applicable: there are no refusals — a wrong name and a wrong value are refused by the build.
 
-## Данные
+## Data
 
-Не применимо.
+Not applicable.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо.
+Not applicable.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо.
+Not applicable.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо.
+Not applicable.
 
-## Решения
+## Decisions
 
-- **Имена отбираются по типу поля** — иного признака входа у класса нет. Отвергнуто: перечислять
-  имена руками у каждого места — тот же список, только вручную и устаревающий молча.
-- **Тип живёт в пакете ядра** — он выводится из типов сигнальных входов, а те приходят из
-  фреймворка, которого в утилитах нет. Отвергнуто: положить в утилиты, оставшиеся без фреймворка.
+- **The names are picked by the type of the field** — the class has no other sign of an input. Rejected: to
+  list the names by hand at every place — the same list, only by hand and growing stale silently.
+- **The type lives in the package of the core** — it is derived from the types of the signal inputs, and
+  those arrive from the framework the utilities do not have. Rejected: to put it into the utilities, which
+  were left without the framework.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-3` — переводить ли на этот тип обвязку спек второго кита: она принимает набор «имя — что
-  угодно» и этим удобна. Работа идёт с допущением, что тип применяется там, где входы ставит
-  рабочий код.
+- `Q-3` — whether to move the harness of the specs of the second kit onto this type: it accepts the set
+  "a name — anything" and is convenient by that. The work goes with the assumption that the type is applied
+  where the inputs are put by working code.
 
-## История изменений
+## History of changes
 
-- 31 августа 2026 — договорённость написана.
+- 31 August 2026 — the agreement was written.

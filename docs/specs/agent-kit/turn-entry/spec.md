@@ -1,183 +1,201 @@
-# Передача захода и вход в новый заход
+# The handover of a session and the entry into a new one
 
-**Статус:** действует · **Ревизия:** 2026-08-21 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Процедуры:** нет
-**Законы:** `work-conduct`, `verifiability`
+**Status:** in force · **Revision:** 2026-08-21 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Procedures:** none
+**Laws:** `work-conduct`, `verifiability`
 
-## Зачем
+## Why
 
-Заход кончается заполненным окном, и работа переходит в следующий заход через два файла:
-передачу, которую пишет хук перед сжатием, и карту хода, которую хук старта кладёт в контекст.
-Поддомен называет, что при этом обязано быть верно с обеих сторон перехода.
+A session ends with a filled window, and the work moves into the next session through two files: the
+handover written by a hook before the squeeze, and the map of the turn the startup hook puts into the
+context. The subdomain names what must be true at that on both sides of the transition.
 
-Ни один из этих хуков ничего не отбивает: они пишут файл и кладут текст. Гарды, судящие
-завершение хода, — соседний поддомен: там предмет другой, и растут они порознь.
+Neither of these hooks refuses anything: they write a file and put a text. The guards judging the end
+of a turn are a neighbouring subdomain: the subject there is different, and they grow apart.
 
-Цена молчания на входе видна в разборах происшествий этого дерева: заход после сжатия знал, что
-за задача, и не знал, что с ней делать, — перечень состояний с обязательными действиями лежит в
-правиле, а правило после сжатия не загружено. Первым движением заход шёл читать его целиком, то
-есть тратил на восстановление порядка ту часть окна, ради которой сжатие и случилось.
+The price of silence at the entry is visible in the incident analyses of this tree: a session after a
+squeeze knew what the task was and did not know what to do with it — the list of the states with
+their mandatory actions lies in the rule, and after a squeeze the rule is not loaded. As the first
+movement the session went to read it whole, that is, spent on restoring the order the very part of
+the window the squeeze happened for.
 
-## Терминология
+## Terminology
 
-- **Передача захода** — черновик, который пишет хук перед сжатием: рабочее дерево, ветка,
-  сделанное, следующий шаг и особенности захода. Лежит вне истории, по имени ветки.
-- **Вход в заход** — то, что хук старта кладёт в контекст до первой реплики. Отличается от
-  того, что заход прочитает сам: прочитанное стоит хода, положенное — нет.
-- **Карта хода** — короткий перечень состояний работы с обязательным действием каждого и
-  четыре выхода хода. Не пересказ правила: правило объясняет, карта называет.
-- **Запуск** — событие, на котором хук старта срабатывает: первый запуск, возобновление,
-  сжатие контекста, очистка.
+- **The handover of a session** — a draft written by a hook before the squeeze: the working tree, the
+  branch, what was done, the next step and the traits of the session. It lies outside history, under
+  the name of the branch.
+- **The entry into a session** — what the startup hook puts into the context before the first remark.
+  It differs from what the session will read itself: what is read costs a turn, what is put does not.
+- **The map of the turn** — a short list of the states of the work with the mandatory action of each,
+  and the four exits of a turn. Not a retelling of the rule: the rule explains, the map names.
+- **A launch** — the event the startup hook fires at: the first launch, a resumption, a squeeze of
+  the context, a clearing.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Интерфейса у поддомена нет: и передача, и карта приходят текстом в контекст захода. Владелец
-видит их так же, как остальной вход, — блоком в начале захода.
+The subdomain has no interface: both the handover and the map arrive as text in the context of the
+session. The owner sees them the same as the rest of the entry — as a block at the start of the
+session.
 
-## Правила
+## Rules
 
-- **Передача захода пишется перед сжатием контекста, а не рукой исполнителя.** Сжатие приходит
-  и тогда, когда напомнить некому: ночью или посреди длинного хода. Без записи в эту минуту
-  заход теряет передачу целиком — писать её уже некому, а после сжатия пересказывать нечего.
-- **Хук передачи ничего от себя не добавляет.** Состояние и следующий шаг он берёт из хода
-  работы, ветку и незакоммиченное — из дерева. Работа вне папки задачи получает передачу без
-  состояния: выдуманное состояние хуже отсутствующего.
-- **Написанное хуком — нижняя граница передачи.** Исполнитель пишет поверх, когда закрывает
-  заход: он знает то, чего на диске нет. Файл один, последняя запись побеждает.
-- **Хук передачи сжатие не отбивает.** Остановленное сжатие оставило бы заход без места, а хук
-  здесь пишет файл, а не судит действие.
-- **Ключи хода работы читаются под двумя именами, английским и русским.** Раздел «где стоим»,
-  состояние, этап и следующий шаг стоят в образцах пакета по-английски, а в папках дерева до
-  перевода — по-русски. Передача собирается с обеих одинаково, и переросший порог ход работы
-  режется по разделу под любым из двух имён.
-- **Передача прошлого захода приходит в контекст на запуске, а не кладётся в чат рукой.**
-  Написанная хуком и не прочитанная никем, она равна ненаписанной: следующий заход о ней не
-  знает и начинает с пустого места.
-- **Передача берётся по имени текущей ветки.** Передач в каталоге лежит столько, сколько было
-  веток; чужая, поданная как своя, описывает работу, которой в этом дереве нет.
-- **Передачи нет — вход об этом молчит.** Ветка, по которой заход ещё не закрывался, — обычное
-  начало работы, а не поломка; отказ на ней превращал бы каждый первый заход в разбор хука.
-- **Карта хода приходит в контекст на том же запуске, что и передача.** Заход, знающий задачу
-  и не знающий порядка, идёт читать правило целиком — то есть платит окном за то, что уже
-  записано.
-- **Выходы хода и строка о границе состояния читаются под двумя именами: английским и
-  русским.** Карта пакета написана по-английски, а правило и закон переводятся своими задачами;
-  дерево со своей русской картой не остаётся без сверки на новой редакции пакета. Хватает любого
-  из двух имён.
-- **Карта называет обязательное действие каждого состояния и четыре выхода хода.** Перечень
-  состояний без обязательных действий отвечает на вопрос «где мы», а нужен ответ на вопрос
-  «что делать»; выходы хода без него читаются как разрешение остановиться где угодно.
-- **Карта живёт своим файлом ресурса пакета.** Разобранная на месте из таблицы правила, она
-  ломается молча при первой правке разметки; зашитая в хук — расходится с правилом без единой
-  правки.
-- **Карта короче правила и этим отличается от него.** Вход, в который положили правило
-  целиком, заход дочитывает до конца и тратит на это то же окно; предел объявляется числом и
-  проверяется.
-- **Вход подаётся на всех четырёх запусках, а не только после сжатия.** Заход после обрыва и
-  заход после очистки начинают с того же пустого места, что и заход после сжатия, и разница
-  между ними исполнителю не видна вовсе.
-- **Порог сжатия стоит ниже порога остановки.** Первым обязано срабатывать то, что заход
-  продолжает, а не то, что его останавливает: страж стоит на вызове инструмента, а сжатие
-  приходит между ходами, и на общем числе страж успевает раньше.
-- **Совпадение порогов — расхождение, а не согласие.** Сверка, принимающая общее число, зелена
-  ровно там, где переход сломан: одно число означает гонку, а кто её выиграет, не назначено
-  ничем.
-- **Расстояние между порогами объявлено, а не выведено.** Сжатие приходит не мгновенно, и заход,
-  у которого между порогами один процент, упирается в стража прежде, чем клиент успевает начать.
-- **Дерево, не объявившее сжатия, работает как прежде.** Ни отказа, ни требования запаса: судить
-  у него нечего, а прежний порядок — заход кончается передачей — остаётся верным.
-- **Отказ называет обе стороны числами.** «Пороги разошлись» без чисел чинится подбором: у
-  расхождения две стороны, и правится обычно та, о которой читатель не думал.
-- **Заполненное окно кончает ход только там, где сжатия нет.** Где сжатие объявлено, порог окна
-  — продолжение хода: контекст сжимается, передача приходит входом, и работа идёт дальше тем же
-  заходом. Карта хода называет выход именно так.
-- **Хук входа запуск не отбивает.** Отказ любой его части — нечитаемый файл, отсутствующий
-  ресурс, чужие права — оставляет заход без части входа, но не без захода.
+- **The handover of a session is written before the squeeze of the context, not by the hand of the
+  executor.** The squeeze comes at times when there is nobody to remind: at night or in the middle of
+  a long turn. Without the record at that minute the session loses the handover whole — there is
+  nobody left to write it, and after the squeeze there is nothing to retell.
+- **The hook of the handover adds nothing of its own.** The state and the next step it takes from the
+  progress of the work, the branch and the uncommitted from the tree. Work outside a task folder gets
+  a handover without a state: an invented state is worse than a missing one.
+- **What the hook wrote is the lower bound of the handover.** The executor writes on top of it when
+  they close the session: they know what is not on the disk. The file is one, the last record wins.
+- **The hook of the handover does not refuse the squeeze.** A stopped squeeze would leave the session
+  without room, and the hook here writes a file, it does not judge an action.
+- **The keys of the progress of the work are read under two names, English and Russian.** The section
+  "where we stand", the state, the stage and the next step stand in the samples of the package in
+  English, and in the folders of the tree before the translation in Russian. The handover is gathered
+  from both the same, and a progress of the work that outgrew the threshold is cut by the section
+  under either of the two names.
+- **The handover of the past session arrives in the context at the launch, it is not put into the
+  chat by hand.** Written by the hook and read by nobody, it equals one not written: the next session
+  knows nothing of it and starts from an empty place.
+- **The handover is taken by the name of the current branch.** There are as many handovers in the
+  directory as there were branches; a foreign one served as one's own describes work that is not in
+  this tree.
+- **There is no handover — the entry stays silent about it.** A branch at which the session has not
+  yet closed is an ordinary start of work, not a breakage; a refusal at it would turn every first
+  session into a review of the hook.
+- **The map of the turn arrives in the context at the same launch as the handover.** A session that
+  knows the task and does not know the order goes to read the rule whole — that is, pays with the
+  window for what is already written down.
+- **The exits of a turn and the line about the boundary of a state are read under two names: English
+  and Russian.** The map of the package is written in English, and the rule and the law are
+  translated by tasks of their own; a tree with a Russian map of its own is not left without the
+  check at a new edition of the package. Either of the two names is enough.
+- **The map names the mandatory action of every state and the four exits of a turn.** A list of the
+  states without the mandatory actions answers the question "where are we", while the answer needed is
+  to the question "what to do"; the exits of a turn without it read as permission to stop anywhere.
+- **The map lives as a file of a package resource of its own.** Parsed in place out of the table of
+  the rule, it breaks silently at the first edit of the markup; nailed into the hook, it diverges
+  from the rule without a single edit.
+- **The map is shorter than the rule and differs from it by this.** An entry a whole rule was put into
+  the session reads to the end and spends the same window on it; the limit is declared by a number and
+  is checked.
+- **The entry is served at all four launches, not only after a squeeze.** A session after a break and
+  a session after a clearing start from the same empty place as a session after a squeeze, and the
+  difference between them is invisible to the executor at all.
+- **The threshold of the squeeze stands lower than the threshold of the stop.** What must fire first
+  is what continues the session, not what stops it: the guard stands at a call of a tool, and the
+  squeeze comes between the turns, and at a shared number the guard manages to be first.
+- **A coincidence of the thresholds is a divergence, not an agreement.** A check accepting a shared
+  number is green exactly where the transition is broken: one number means a race, and who wins it is
+  assigned by nothing.
+- **The distance between the thresholds is declared, not derived.** The squeeze does not come
+  instantly, and a session that has one per cent between the thresholds runs into the guard before the
+  client manages to start.
+- **A tree that declared no squeeze works as before.** Neither a refusal nor a requirement of a
+  margin: it has nothing to judge, and the former order — a session ends with a handover — stays true.
+- **The refusal names both sides by numbers.** "The thresholds diverged" without the numbers is fixed
+  by trying: a divergence has two sides, and the one usually edited is the one the reader was not
+  thinking about.
+- **A filled window ends a turn only where there is no squeeze.** Where the squeeze is declared, the
+  threshold of the window is a continuation of the turn: the context is squeezed, the handover arrives
+  as the entry, and the work goes on in the same session. The map of the turn names the exit exactly
+  like this.
+- **The hook of the entry does not refuse the launch.** A refusal of any of its parts — an unreadable
+  file, a missing resource, foreign rights — leaves the session without a part of the entry, but not
+  without the session.
 
-## Что не входит
+## What is out of scope
 
-- Поведение самого стража окна — соседний поддомен: он отбивает действие, а здесь названы
-  только числа, по которым он и клиент решают, когда сработать.
-- Содержание самой передачи сверх названных разделов: их назначает хук записи, а вход подаёт
-  то, что лежит.
+- The behaviour of the guard of the window itself — a neighbouring subdomain: it refuses an action,
+  and here only the numbers are named by which it and the client decide when to fire.
+- The content of the handover itself beyond the named sections: they are assigned by the hook of the
+  record, and the entry serves what lies there.
 
-## Контракт
+## Contract
 
-Внешних вызовов у поддомена нет. Контракт входа — то, что хук получает от инструмента и что
-кладёт в контекст.
+The subdomain has no external calls. The contract of the entry is what the hook gets from the tool
+and what it puts into the context.
 
-| Что              | Откуда                                                                   |
-| ---------------- | ------------------------------------------------------------------------ |
-| род запуска      | поле события хука старта: первый запуск, возобновление, сжатие, очистка  |
-| имя ветки        | система контроля версий текущего дерева                                  |
-| каталог передач  | переменная окружения; не задана — умолчание профиля дерева               |
-| текст карты хода | файл ресурса пакета, разложенный в дерево наравне с остальными ресурсами |
+| What                            | From where                                                                                       |
+| ------------------------------- | ------------------------------------------------------------------------------------------------ |
+| the kind of launch              | the event field of the startup hook: the first launch, a resumption, a squeeze, a clearing       |
+| the name of the branch          | the version control system of the current tree                                                   |
+| the directory of handovers      | an environment variable; not set — the default of the profile of the tree                        |
+| the text of the map of the turn | the file of the package resource, laid out into the tree on a par with the rest of the resources |
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: ни один из двух хуков ничего не отбивает — кода отказа здесь нет и не заводится.
-Каждая часть входа либо подаётся, либо молча пропускается: перечень причин пропуска стоит
-правилами выше.
+Not applicable: neither of the two hooks refuses anything — there is no refusal code here and none is
+created. Every part of the entry is either served or skipped silently: the list of the reasons of a
+skip stands as the rules above.
 
-## Данные
+## Data
 
-Своих данных поддомен не держит. Хук записи кладёт один файл — передачу по имени ветки в
-каталоге передач; хук входа читает его и текст карты хода среди разложенных ресурсов, а сам не
-пишет ничего.
+The subdomain holds no data of its own. The hook of the record puts one file — the handover under the
+name of the branch in the directory of handovers; the hook of the entry reads it and the text of the
+map of the turn among the laid-out resources, and writes nothing itself.
 
-## Экраны и состояния
+## Screens and states
 
-Экранов нет. Состояния входа — то, что заход получает на старте:
+There are no screens. The states of the entry are what the session gets at the start:
 
-| Состояние                 | Что в контексте                                        |
-| ------------------------- | ------------------------------------------------------ |
-| передача есть, карта есть | обе части входа, и заход начинает со следующего шага   |
-| передачи нет, карта есть  | карта; работа начинается заново, и это её обычный вход |
-| ресурса карты нет         | передача; о карте вход молчит                          |
-| ни того ни другого        | вход не добавляет ничего, запуск идёт как прежде       |
+| State                                | What is in the context                                             |
+| ------------------------------------ | ------------------------------------------------------------------ |
+| there is a handover, there is a map  | both parts of the entry, and the session starts with the next step |
+| there is no handover, there is a map | the map; the work starts anew, and this is its ordinary entry      |
+| there is no resource of the map      | the handover; about the map the entry stays silent                 |
+| neither of the two                   | the entry adds nothing, the launch goes as before                  |
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Язык входа один — язык дерева, как у остального слоя правил. Переводу текст карты не подлежит:
-его читает исполнитель, а не пользователь приложения.
+The language of the entry is one — the language of the tree, as for the rest of the rules layer. The
+text of the map is not subject to translation: it is read by the executor, not by a user of an
+application.
 
 ### SEO
 
-Не применимо: наружу ничего не отдаётся.
+Not applicable: nothing is given outward.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо: разметки у входа нет.
+Not applicable: the entry has no markup.
 
-### Мультиобъектность
+### Several objects
 
-Каждое рабочее дерево держит свой каталог передач, а имя файла в нём — имя ветки. Два дерева на
-одной машине входы друг другу не подменяют: каталог берётся от корня текущего дерева.
+Every working tree holds its own directory of handovers, and the name of a file in it is the name of
+a branch. Two trees on one machine do not substitute entries for each other: the directory is taken
+from the root of the current tree.
 
-## Решения
+## Decisions
 
-- **Карта хода живёт своим файлом ресурса, а не разбором таблицы правила.** Так решил владелец.
-  Отвергнуто: разбор разложенного правила на месте — правка разметки ломает его молча; строки,
-  зашитые в хук, — карта тогда живёт в двух местах и расходится без единой правки.
-- **Вход подаётся на всех четырёх запусках.** Так решил владелец. Отвергнуто: только на
-  сжатии — заход после очистки начинает с того же пустого места.
-- **Отказ в пользу захода.** При любой поломке обе стороны перехода молчат и пропускают:
-  сессия важнее контекста, а остановленное сжатие оставило бы заход без места.
+- **The map of the turn lives as a file of a resource of its own, not as a parse of the table of the
+  rule.** So the owner decided. Rejected: a parse of the laid-out rule in place — an edit of the
+  markup breaks it silently; lines nailed into the hook — the map then lives in two places and
+  diverges without a single edit.
+- **The entry is served at all four launches.** So the owner decided. Rejected: only at a squeeze — a
+  session after a clearing starts from the same empty place.
+- **Refusing in favour of the session.** At any breakage both sides of the transition stay silent and
+  let it through: the session is more important than the context, and a stopped squeeze would leave
+  the session without room.
 
-## Открытые вопросы
+## Open questions
 
-- **Q-1. Предел размера подаваемой передачи.** Передача бывает длинной, а окно после сжатия
-  узкое. Число назначается замыслом и проверяется сценарием; разойдясь с ожиданием владельца,
-  правится в одном месте.
-- **Q-2. Срок жизни файла передачи.** Передача переживает ветку, а каталог никто не чистит.
+- **Q-1. The limit of the size of the handover served.** A handover is sometimes long, and the window
+  after a squeeze is narrow. The number is assigned by the plan and checked by a scenario; diverged
+  from the expectation of the owner, it is edited in one place.
+- **Q-2. The lifetime of the file of the handover.** A handover outlives the branch, and nobody
+  cleans the directory.
 
-## История изменений
+## History of changes
 
-- 2026-08-22 — договорённость о переходе через порог окна влита сюда: пороги разведены, их
-  расстояние объявлено числом, и совпадение стало расхождением.
-- 2026-08-21 — поддомен выделен из спека гардов завершения хода: файл сценариев перерос предел
-  длины, а предмет в нём был двойной — то, что отбивает ход, и то, что переносит работу между
-  заходами. Тем же изменением влита договорённость о входе в заход.
+- 2026-08-22 — the agreement about the transition through the threshold of the window was merged in
+  here: the thresholds were separated, the distance between them was declared by a number, and a
+  coincidence became a divergence.
+- 2026-08-21 — the subdomain was split out of the spec of the guards of the end of a turn: the
+  scenario file had outgrown the length limit, and the subject in it was double — what refuses a turn
+  and what carries the work between the sessions. By the same change the agreement about the entry
+  into a session was merged in.

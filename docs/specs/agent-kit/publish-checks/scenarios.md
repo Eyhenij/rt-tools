@@ -1,97 +1,102 @@
-# Сценарии — проверки публикации
+# Scenarios — the checks of publishing
 
-Префикс `SC-AK`. Поддомен `publish-checks` домена `agent-kit`.
+The prefix `SC-AK`. The subdomain `publish-checks` of the domain `agent-kit`.
 
-### SC-AK-893 — символ есть у опубликованного соседа
+### SC-AK-893 — the published neighbour has the symbol
 
-Дано пакет импортирует из соседа символы, которые есть в типах опубликованной версии
-Когда идёт сверка импортов
-Тогда проверка зелёная и называет число пар «пакет — сосед»
+Given the package imports from a neighbour symbols that are in the types of the published version
+When the comparison of the imports goes
+Then the check is green and names the number of pairs "package — neighbour"
 
-Покрыто: `projects/agent-kit/tests/checks-package-imports.test.sh`.
+Covered: `projects/agent-kit/tests/checks-package-imports.test.sh`.
 
-### SC-AK-894 — символа у опубликованного соседа нет
+### SC-AK-894 — the published neighbour does not have the symbol
 
-Дано пакет импортирует символ, которого нет в наибольшей версии соседа под диапазон манифеста
-Когда идёт сверка импортов
-Тогда проверка красная и называет пакет, символ, соседа и его версию; имеющиеся символы не
-называет
+Given the package imports a symbol that is not in the greatest version of the neighbour under the
+range of the manifest
+When the comparison of the imports goes
+Then the check is red and names the package, the symbol, the neighbour and its version; it does not
+name the symbols that are there
 
-Покрыто: `projects/agent-kit/tests/checks-package-imports.test.sh`.
+Covered: `projects/agent-kit/tests/checks-package-imports.test.sh`.
 
-### SC-AK-895 — многострочный импорт с `type` и `as`
+### SC-AK-895 — a multi-line import with `type` and `as`
 
-Дано импорт записан в несколько строк, с `import type` и с переименованием через `as`
-Когда идёт сверка импортов
-Тогда сверяется имя у соседа, а не псевдоним, и проверка зелёная
+Given the import is written in several lines, with `import type` and with a rename through `as`
+When the comparison of the imports goes
+Then what is compared is the name at the neighbour, not the alias, and the check is green
 
-Покрыто: `projects/agent-kit/tests/checks-package-imports.test.sh`.
+Covered: `projects/agent-kit/tests/checks-package-imports.test.sh`.
 
-### SC-AK-896 — цепочка `export *` читается до конца
+### SC-AK-896 — the chain of `export *` is read to the end
 
-Дано типы соседа собраны цепочкой `export * from`, а рядом с каждым `.d.ts` лежит `.js`
-Когда идёт сверка импортов
-Тогда символ из глубины цепочки найден, и проверка зелёная
+Given the types of the neighbour are assembled by a chain of `export * from`, and a `.js` lies next
+to every `.d.ts`
+When the comparison of the imports goes
+Then the symbol from the depth of the chain is found, and the check is green
 
-Покрыто: `projects/agent-kit/tests/checks-package-imports.test.sh`.
+Covered: `projects/agent-kit/tests/checks-package-imports.test.sh`.
 
-### SC-AK-897 — пробы и истории витрины не судятся
+### SC-AK-897 — probes and showcase stories are not judged
 
-Дано недостающий символ импортирован только в пробе и в истории витрины
-Когда идёт сверка импортов
-Тогда проверка зелёная
+Given the missing symbol is imported only in a probe and in a showcase story
+When the comparison of the imports goes
+Then the check is green
 
-Покрыто: `projects/agent-kit/tests/checks-package-imports.test.sh`.
+Covered: `projects/agent-kit/tests/checks-package-imports.test.sh`.
 
-### SC-AK-898 — сосед без версии под диапазон либо не назван в манифесте
+### SC-AK-898 — a neighbour without a version under the range, or not named in the manifest
 
-Дано под диапазон манифеста в реестре нет ни одной версии соседа
-Когда идёт сверка импортов
-Тогда проверка красная и называет диапазон
+Given there is not a single version of the neighbour in the registry under the range of the manifest
+When the comparison of the imports goes
+Then the check is red and names the range
 
-Дано пакет импортирует из соседа, которого в манифесте нет
-Когда идёт сверка импортов
-Тогда проверка красная и называет пропажу в манифесте
+Given the package imports from a neighbour that is not in the manifest
+When the comparison of the imports goes
+Then the check is red and names the absence in the manifest
 
-Покрыто: `projects/agent-kit/tests/checks-package-imports.test.sh`.
+Covered: `projects/agent-kit/tests/checks-package-imports.test.sh`.
 
-### SC-AK-899 — реестр не ответил
+### SC-AK-899 — the registry did not answer
 
-Дано реестр не отвечает
-Когда идёт сверка импортов
-Тогда проверка проходит и говорит, что сверка пропущена
+Given the registry does not answer
+When the comparison of the imports goes
+Then the check passes and says that the comparison was skipped
 
-Покрыто: `projects/agent-kit/tests/checks-package-imports.test.sh`.
+Covered: `projects/agent-kit/tests/checks-package-imports.test.sh`.
 
-### SC-AK-900 — символ ждёт публикации соседа
+### SC-AK-900 — the symbol waits for the publishing of the neighbour
 
-Дано символа нет у опубликованного соседа, а в исходниках соседа в дереве он экспортирован
-Когда идёт сверка импортов без строгого режима
-Тогда проверка проходит, называет символ ждущим публикации и считает ждущих
+Given the published neighbour does not have the symbol, while in the sources of the neighbour in the
+tree it is exported
+When the comparison of the imports goes without the strict mode
+Then the check passes, names the symbol as waiting for publishing and counts those waiting
 
-Дано то же
-Когда идёт сверка импортов в строгом режиме
-Тогда проверка красная и называет символ
+Given the same
+When the comparison of the imports goes in the strict mode
+Then the check is red and names the symbol
 
-Покрыто: `projects/agent-kit/tests/checks-package-imports.test.sh`.
+Covered: `projects/agent-kit/tests/checks-package-imports.test.sh`.
 
-### SC-AK-901 — суд одного пакета и импорт в комментарии
+### SC-AK-901 — judging one package and an import inside a comment
 
-Дано названный пакет чист, а у соседнего пакета недостающий символ
-Когда сверка сужена до названного пакета
-Тогда проверка зелёная и соседнего не видит; импорт внутри комментария не судится
+Given the named package is clean, while a neighbouring package has a missing symbol
+When the comparison is narrowed down to the named package
+Then the check is green and does not see the neighbouring one; an import inside a comment is not
+judged
 
-Дано названного пакета в каталоге нет
-Когда сверка сужена до него
-Тогда проверка красная: судить нечего
+Given the named package is not in the directory
+When the comparison is narrowed down to it
+Then the check is red: there is nothing to judge
 
-Покрыто: `projects/agent-kit/tests/checks-package-imports.test.sh`.
+Covered: `projects/agent-kit/tests/checks-package-imports.test.sh`.
 
-### SC-AK-902 — конвейер публикации пересобирает замок после публикации и кладёт его заявкой
+### SC-AK-902 — the publishing pipeline rebuilds the lock after the publishing and puts it by a request
 
-Дано конвейер поднимает версию пакета
-Когда читаются его шаги
-Тогда пересборка замка стоит после шага публикации, а за ней — шаг, кладущий заявку; конвейер
-без пересборки, с пересборкой до публикации или без заявки называется по имени файла с причиной
+Given the pipeline raises the version of the package
+When its steps are read
+Then the rebuild of the lock stands after the publishing step, and after it a step that puts the
+request; a pipeline without a rebuild, with a rebuild before the publishing or without a request is
+named by the name of its file with the reason
 
-Покрыто: `projects/agent-kit/tests/checks-publish-lockfile.test.sh`.
+Covered: `projects/agent-kit/tests/checks-publish-lockfile.test.sh`.

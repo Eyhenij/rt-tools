@@ -1,224 +1,231 @@
-# Сценарии: сверка очереди работ
+# Scenarios: the check of the work queue
 
-Поддомен домена «Ведение работы командами». Здесь сценарии одной проверки — той, что сверяет
-очередь работ с репозиторием: колонки, прогоны на вершинах заявок, черновики, конфликты и папки
-задач. Остальное ведение работы — в перечне сценариев домена рядом.
+A subdomain of the domain "Leading the work by commands". Here are the scenarios of one check — the
+one that checks the work queue against the repository: the columns, the runs at the tips of the
+requests, the drafts, the conflicts and the task folders. The rest of the leading of the work is in
+the list of the scenarios of the domain next to it.
 
-Идентификатор ставится в начало заголовка теста через тире. Префикс общий на домен, и номера при
-переезде в поддомен не пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier goes at the start of the test title, followed by a dash. The prefix is shared across
+the domain, and the numbers were not recounted at the move into the subdomain: the number ties the
+scenario to the test title.
 
-### SC-AK-277 — вершина открытого PR без прогона названа расхождением
+### SC-AK-277 — the tip of an open PR without a run is named a divergence
 
-Дано открытый PR, на вершине которого не завёлся ни один прогон, а лежит она дольше отпущенного
-Когда идёт сверка очереди работ
-Тогда она называет вершину, её возраст и то, чем событие возвращается, и кончается ненулевым
-кодом
+Given an open PR at whose tip not a single run started, and the tip has lain longer than allowed
+When the check of the work queue goes
+Then it names the tip, its age and what the event is brought back with, and ends with a non-zero
+code
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-278 — свежая вершина без прогона не судится
+### SC-AK-278 — a fresh tip without a run is not judged
 
-Дано открытый PR, вершина которого запушена минуту назад, и прогона за ней ещё нет
-Когда идёт сверка очереди работ
-Тогда она молчит: между пушем и прогоном проходит время
+Given an open PR whose tip was pushed a minute ago, and there is no run behind it yet
+When the check of the work queue goes
+Then it stays silent: between the push and the run some time passes
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-279 — прогон на вершине снимает вопрос
+### SC-AK-279 — a run at the tip lifts the question
 
-Дано открытый PR, на вершине которого прогон есть
-Когда идёт сверка очереди работ
-Тогда она молчит о нём, каким бы ни был его цвет
+Given an open PR at whose tip there is a run
+When the check of the work queue goes
+Then it stays silent about it, whatever its colour
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-280 — дерево без файла конвейера прогонов не спрашивает
+### SC-AK-280 — a tree without a file of the pipeline is not asked about runs
 
-Дано дерево, у которого названного файла конвейера нет, и открытый PR без прогона на вершине
-Когда идёт сверка очереди работ
-Тогда она говорит, что прогоны не спрашивались, и расхождением это не считает
+Given a tree that has no named file of the pipeline, and an open PR without a run at the tip
+When the check of the work queue goes
+Then it says that the runs were not asked about, and does not count that as a divergence
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-281 — готовое, оставленное черновиком, названо расхождением
+### SC-AK-281 — ready work left as a draft is named a divergence
 
-Дано открытый PR-черновик, прогон на вершине которого завершён успехом
-Когда идёт сверка очереди работ
-Тогда она называет вершину и то, чем черновик снимается, и кончается ненулевым кодом
+Given an open draft PR whose run at the tip ended in success
+When the check of the work queue goes
+Then it names the tip and what the draft is lifted by, and ends with a non-zero code
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-282 — черновик при незелёном прогоне не судится
+### SC-AK-282 — a draft at a run that is not green is not judged
 
-Дано открытый PR-черновик, прогон на вершине которого идёт или упал
-Когда идёт сверка очереди работ
-Тогда она о черновике молчит: работа ещё не готова
+Given an open draft PR whose run at the tip is in progress or fell
+When the check of the work queue goes
+Then it stays silent about the draft: the work is not ready yet
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-377 — состояние PR называет его разбор
+### SC-AK-377 — the state of a PR names its review
 
-Дано у PR запрошен ревьювер и оставлен отзыв
-Когда спрашивается состояние PR
-Тогда PR найден, разбор у него есть, и в списке стоят оба — и запрошенный, и оставивший отзыв
+Given a reviewer is requested at the PR and an opinion is left
+When the state of the PR is asked about
+Then the PR is found, it has a review, and both stand in the list — the requested one and the one
+who left the opinion
 
-Покрыто: `projects/agent-kit/tests/checks-board-pull.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board-pull.test.sh`.
 
-### SC-AK-378 — разбор автора разбором не считается
+### SC-AK-378 — a review by the author does not count as a review
 
-Дано единственный, кто назван при PR, — его же автор
-Когда спрашивается состояние PR
-Тогда разбора у PR нет, хотя из списка названных автор не пропадает; неизвестный номер
-отвечает отсутствием
+Given the only one named at the PR is its own author
+When the state of the PR is asked about
+Then the PR has no review, although the author does not disappear from the list of the named ones;
+an unknown number answers with an absence
 
-Покрыто: `projects/agent-kit/tests/checks-board-pull.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board-pull.test.sh`.
 
-### SC-AK-379 — молчание хостинга состоянием PR не считается
+### SC-AK-379 — silence of the hosting does not count as a state of a PR
 
-Дано хостинг не ответил либо отказал во входе
-Когда спрашивается состояние PR
-Тогда ответ назван молчанием сети, и приговора о разборе в нём нет
+Given the hosting did not answer or refused the entry
+When the state of the PR is asked about
+Then the answer is named a silence of the network, and there is no verdict about a review in it
 
-Покрыто: `projects/agent-kit/tests/checks-board-pull.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board-pull.test.sh`.
 
-### SC-AK-391 — номер PR берётся из ответа хостинга
+### SC-AK-391 — the number of the PR is taken from the answer of the hosting
 
-Дано PR назван адресом
-Когда спрашивается состояние PR
-Тогда PR найден, и номер его приходит из ответа хостинга; вызов без ссылки идёт к клиенту
-вовсе без довода
+Given the PR is named by an address
+When the state of the PR is asked about
+Then the PR is found, and its number comes from the answer of the hosting; a call without a
+reference goes to the client with no argument at all
 
-Покрыто: `projects/agent-kit/tests/checks-board-pull.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board-pull.test.sh`.
 
-### SC-AK-392 — PR находится и по имени ветки
+### SC-AK-392 — a PR is found by the name of a branch too
 
-Дано PR назван именем ветки либо адресом
-Когда спрашивается состояние PR
-Тогда названное уходит клиенту хостинга доводом, и PR по нему находится
+Given the PR is named by the name of a branch or by an address
+When the state of the PR is asked about
+Then what was named goes to the client of the hosting as an argument, and the PR is found by it
 
-Покрыто: `projects/agent-kit/tests/checks-board-pull.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board-pull.test.sh`.
 
-### SC-AK-425 — конфликтующий открытый PR назван расхождением
+### SC-AK-425 — a conflicting open PR is named a divergence
 
-Дано открытый PR конфликтует с главной веткой
-Когда идёт сверка очереди работ
-Тогда сверка называет его расхождением и говорит, с чем конфликт: гард судит один ход, а
-конфликт приезжает в отданный PR чужим слиянием, без действия автора
+Given an open PR conflicts with the main branch
+When the check of the work queue goes
+Then the check names it a divergence and says what the conflict is with: the guard judges one turn,
+while a conflict arrives into a handed-in PR by someone else's merge, without an action of the
+author
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-426 — непосчитанная и сливаемая заявки молчат
+### SC-AK-426 — an uncounted request and a mergeable one stay silent
 
-Дано у PR сливаемость ещё не посчитана либо посчитана и конфликта нет
-Когда идёт сверка очереди работ
-Тогда строки о нём нет: хостинг считает сливаемость заново после каждой правки главной ветки, и
-строка на непосчитанное краснела бы на каждой свежей вершине
+Given the mergeability of the PR is not counted yet, or it is counted and there is no conflict
+When the check of the work queue goes
+Then there is no line about it: the hosting counts the mergeability anew after every edit of the
+main branch, and a line about the uncounted would turn red at every fresh tip
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-531 — отставший прод назван расхождением
+### SC-AK-531 — a production that lags is named a divergence
 
-Дано последняя успешная выкатка сделана не с вершины главной ветки
-Когда идёт сверка очереди работ
-Тогда сверка называет отставание числом коммитов и коммит последней выкатки: слияние прод не
-двигает, и прогон главной ветки о нём не говорит ничего
+Given the last successful rollout was made not from the tip of the main branch
+When the check of the work queue goes
+Then the check names the lag by the number of commits and the commit of the last rollout: a merge
+does not move production, and a run of the main branch says nothing about it
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-532 — дерево без названного потока выкатки сверки прода не получает
+### SC-AK-532 — a tree without a named flow of the rollout gets no check of production
 
-Дано в настройке дерева рабочий поток выкатки не назван
-Когда идёт сверка очереди работ
-Тогда прод не сверяется, и сверка говорит об этом вслух: молчание читалось бы как сошедшийся прод
+Given the working flow of the rollout is not named in the settings of the tree
+When the check of the work queue goes
+Then production is not checked, and the check says so aloud: silence would read as production being
+in step
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-584 — вытесненный прогон на вершине заявки назван строкой сверки
+### SC-AK-584 — a pushed-out run at the tip of a request is named by a line of the check
 
-Дано открытая заявка, у вершины которой один прогон: отменённый и с нулём заданий
-Когда идёт сверка очереди работ
-Тогда она называет заявку, номер прогона и то, что ветка не проверялась
+Given an open request at whose tip there is one run: cancelled and with zero jobs
+When the check of the work queue goes
+Then it names the request, the number of the run and that the branch was not checked
 
-### SC-AK-585 — строка называет чтение прогона раньше его перезапуска
+### SC-AK-585 — the line names the reading of the run before its restart
 
-Дано вытесненный прогон на вершине открытой заявки
-Когда идёт сверка очереди работ
-Тогда в её строке команда чтения прогона стоит раньше команды перезапуска
+Given a pushed-out run at the tip of an open request
+When the check of the work queue goes
+Then in its line the command of reading the run stands before the command of the restart
 
-### SC-AK-586 — отменённый на ходу прогон строки не даёт
+### SC-AK-586 — a run cancelled mid-way gives no line
 
-Дано открытая заявка, у вершины которой отменённый прогон с заданиями
-Когда идёт сверка очереди работ
-Тогда о вытеснении она не говорит: журнал у прогона есть, и решает по нему человек
+Given an open request at whose tip there is a cancelled run with jobs
+When the check of the work queue goes
+Then it says nothing about a pushing out: the run has a journal, and a person decides by it
 
-### SC-AK-587 — число заданий спрашивается только у отменённых прогонов
+### SC-AK-587 — the number of the jobs is asked only of the cancelled runs
 
-Дано открытая заявка, у вершины которой прогон завершился успехом
-Когда идёт сверка очереди работ
-Тогда вызова о числе заданий этого прогона не было
+Given an open request at whose tip a run ended in success
+When the check of the work queue goes
+Then there was no call about the number of the jobs of that run
 
-### SC-AK-588 — зелёный прогон на той же вершине снимает строку
+### SC-AK-588 — a green run at the same tip removes the line
 
-Дано вершина, у которой есть и вытесненный прогон, и другой, завершившийся успехом
-Когда идёт сверка очереди работ
-Тогда о вытеснении она не говорит: прогон уже перезапущен
+Given a tip that has both a pushed-out run and another one that ended in success
+When the check of the work queue goes
+Then it says nothing about a pushing out: the run is already restarted
 
-### SC-AK-589 — вытеснение судится раньше отсутствия прогона
+### SC-AK-589 — the pushing out is judged before the absence of a run
 
-Дано вершина, у которой единственный прогон вытеснен, и лежит она дольше отпущенного времени
-Когда идёт сверка очереди работ
-Тогда строка одна — о вытеснении, а не о том, что прогона нет
+Given a tip whose only run is pushed out, and the tip has lain longer than the allowed time
+When the check of the work queue goes
+Then there is one line — about the pushing out, not about there being no run
 
-### SC-AK-590 — дерево без файла конвейера о вытеснении не судит
+### SC-AK-590 — a tree without a file of the pipeline does not judge the pushing out
 
-Дано дерево, не назвавшее файла конвейера, и открытая заявка при нём
-Когда идёт сверка очереди работ
-Тогда прогоны не спрашиваются вовсе, и строки о вытеснении нет
+Given a tree that named no file of the pipeline, and an open request at it
+When the check of the work queue goes
+Then the runs are not asked about at all, and there is no line about a pushing out
 
-### SC-AK-670 — у конфликтующей заявки причиной назван конфликт, а не потеря события
+### SC-AK-670 — at a conflicting request the reason named is the conflict, not the loss of the event
 
-Дано открытый PR конфликтует с главной веткой, и прогона на его вершине нет
-Когда идёт сверка очереди работ
-Тогда строка называет причиной конфликт: конвейер проверяет слияние ветки с базой, а слияния
-при конфликте нет
+Given an open PR conflicts with the main branch, and there is no run at its tip
+When the check of the work queue goes
+Then the line names the conflict as the reason: the pipeline checks the merge of the branch with the
+base, and at a conflict there is no merge
 
-### SC-AK-671 — совета перезакрыть заявку при конфликте нет
+### SC-AK-671 — there is no advice to reclose the request at a conflict
 
-Дано тот же конфликтующий PR без прогона
-Когда идёт сверка очереди работ
-Тогда команды перезакрытия в строке нет: она выполняется буквально и прогона не возвращает
+Given the same conflicting PR without a run
+When the check of the work queue goes
+Then there is no command of reclosing in the line: it is carried out literally and brings no run
+back
 
-### SC-AK-672 — у сливаемой заявки строка о событии прежняя
+### SC-AK-672 — at a mergeable request the line about the event is the former one
 
-Дано открытый PR без конфликта, и прогона на его вершине нет
-Когда идёт сверка очереди работ
-Тогда строка говорит о потерянном событии и зовёт вернуть его — там причина и вправду в нём
+Given an open PR without a conflict, and there is no run at its tip
+When the check of the work queue goes
+Then the line speaks of a lost event and calls to bring it back — there the reason really is in it
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-794 — дерево, не назвавшее метки груза, судится как прежде
+### SC-AK-794 — a tree that named no mark of the cargo is judged as before
 
-Дано в очереди работ стоит запись груза, а метку груза дерево не назвало
-Когда идёт сверка очереди работ
-Тогда запись судится задачей: заголовок без номера, нет исполнителя, нет на борде — выдуманное
-умолчание метки не совпало бы ни с чем и молча выключило бы отсев у всякого дерева
+Given a record of the cargo stands in the work queue, and the tree named no mark of the cargo
+When the check of the work queue goes
+Then the record is judged as a task: a title without a number, no executor, not on the queue — an
+invented default of the mark would coincide with nothing and would silently switch the sifting off
+at every tree
 
-Покрыто: `projects/agent-kit/tests/checks-board-cargo.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board-cargo.test.sh`.
 
-### SC-AK-795 — помеченная запись не судится задачей вовсе
+### SC-AK-795 — a marked record is not judged as a task at all
 
-Дано дерево назвало метку груза, и запись её несёт
-Когда идёт сверка очереди работ
-Тогда о записи не печатается ни одной строки, а соседняя задача без метки судится как прежде:
-помеченная запись не задача целиком, а не наполовину
+Given the tree named the mark of the cargo, and the record carries it
+When the check of the work queue goes
+Then not a single line is printed about the record, while the task next to it without the mark is
+judged as before: a marked record is not a task whole, not by half
 
-Покрыто: `projects/agent-kit/tests/checks-board-cargo.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board-cargo.test.sh`.
 
-### SC-AK-796 — отсеянное названо числом
+### SC-AK-796 — what was sifted out is named by a number
 
-Дано сверка отсеяла записи груза
-Когда она печатает сводку
-Тогда число отсеянного названо, а без груза строки о нём нет вовсе: молчаливый отсев неотличим
-от сверки, у которой метка названа с опечаткой
+Given the check sifted out records of the cargo
+When it prints the total
+Then the number of what was sifted out is named, and without cargo there is no line about it at
+all: a silent sifting is indistinguishable from a check whose mark is named with a typo
 
-Покрыто: `projects/agent-kit/tests/checks-board-cargo.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board-cargo.test.sh`.

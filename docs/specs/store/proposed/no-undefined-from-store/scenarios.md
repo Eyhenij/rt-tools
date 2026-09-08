@@ -1,43 +1,43 @@
-# Сценарии — стор не отдаёт пустоту
+# Scenarios — the store gives no emptiness
 
-Номера начинают нумерацию домена стора и после вливания не меняются.
+The numbers begin the numbering of the domain of the store and do not change after the merge.
 
-### SC-ST-01 — признак ожидания без поля в состоянии отвечает «не ждём»
+### SC-ST-01 — a sign of the waiting without a field in the state answers "we are not waiting"
 
-Дано состояние собрано без полей признаков ожидания
-Когда экран читает признак загрузки и признак дозагрузки
-Тогда оба отвечают ложью, а не пустотой
+Given the state is put together without the fields of the signs of the waiting
+When the screen reads the sign of the loading and the sign of the further loading
+Then both answer with a falsehood, not with an emptiness
 
-Покрыто: `projects/store/src/lib/base-async-store.service.spec.ts`.
+Covered: `projects/store/src/lib/base-async-store.service.spec.ts`.
 
-### SC-ST-02 — состояние запроса без поля отвечает начальным
+### SC-ST-02 — a state of a request without a field answers with the initial one
 
-Дано состояние собрано без полей состояний запроса
-Когда экран читает состояние запроса
-Тогда оно отвечает начальным состоянием
+Given the state is put together without the fields of the states of a request
+When the screen reads the state of the request
+Then it answers with the initial state
 
-Покрыто: `projects/store/src/lib/base-async-store.service.spec.ts`.
+Covered: `projects/store/src/lib/base-async-store.service.spec.ts`.
 
-### SC-ST-03 — законное начальное состояние запасным ответом не подменяется
+### SC-ST-03 — a lawful initial state is not substituted by the spare answer
 
-Дано состояние держит начальное состояние запроса
-Когда экран читает его
-Тогда приходит то же начальное состояние, а не запасной ответ
+Given the state holds the initial state of a request
+When the screen reads it
+Then the same initial state arrives, not the spare answer
 
-Покрыто: `projects/store/src/lib/base-async-store.service.spec.ts`.
+Covered: `projects/store/src/lib/base-async-store.service.spec.ts`.
 
-### SC-ST-04 — отказ, равный нулю, доходит до разбора
+### SC-ST-04 — a refusal equal to zero reaches the taking apart
 
-Дано отказ равен нулю
-Когда стор разбирает его
-Тогда разбор случается и названное действие исполняется
+Given the refusal is equal to zero
+When the store takes it apart
+Then the taking apart happens and the named action is carried out
 
-Покрыто: `projects/store/src/lib/base-async-store.service.spec.ts`.
+Covered: `projects/store/src/lib/base-async-store.service.spec.ts`.
 
-### SC-ST-05 — пустой отказ разбора не вызывает
+### SC-ST-05 — an empty refusal calls no taking apart
 
-Дано отказа нет вовсе
-Когда стор разбирает его
-Тогда ни записи, ни названного действия не случается
+Given there is no refusal at all
+When the store takes it apart
+Then neither a write nor the named action happens
 
-Покрыто: `projects/store/src/lib/base-async-store.service.spec.ts`.
+Covered: `projects/store/src/lib/base-async-store.service.spec.ts`.

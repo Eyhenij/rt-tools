@@ -4,15 +4,15 @@ const stylelint = require('stylelint');
 const valueParser = require('module').createRequire(require.resolve('stylelint'))('postcss-value-parser');
 
 /**
- * Запрещает хардкод дизайн-значений в component-SCSS rt-tools.
+ * It forbids hardcoded design values in the component SCSS of rt-tools.
  *
- * Разрешённые var-префиксы: `--rt-*` (проектные токены), `--mat-*` / `--mdc-*`
- * (Angular Material bridge). Любой другой `var(--x)` — нарушение.
+ * The allowed var prefixes: `--rt-*` (the project's tokens), `--mat-*` / `--mdc-*`
+ * (the Angular Material bridge). Any other `var(--x)` is a violation.
  *
- * По группам свойства запрещает: хардкод цветов (hex/named/rgb/hsl), magic numbers
- * в padding/margin/gap/radius/font-size/border-width/..., SCSS-функции цвета и
- * `$vars`/`#{}`-интерполяцию. Разрешает calc/min/max/clamp, color-mix/color и
- * modern-color-функции `from var()`, `0`, universal-ключевые слова.
+ * By property group it forbids: hardcoded colours (hex/named/rgb/hsl), magic numbers
+ * in padding/margin/gap/radius/font-size/border-width/..., the SCSS colour functions and
+ * `$vars`/`#{}` interpolation. It allows calc/min/max/clamp, color-mix/color and
+ * the modern colour functions `from var()`, `0`, the universal keywords.
  *
  */
 
@@ -27,7 +27,7 @@ const messages = stylelint.utils.ruleMessages(RULE_NAME, {
     compositeRequired: (prop) => `${prop} must use a single var(--rt-*) composite token (or "none").`,
 });
 
-/** Префиксы CSS-переменных, признаваемые дизайн-токенами. */
+/** The prefixes of CSS variables recognised as design tokens. */
 const ALLOWED_VAR_PREFIX = /^--(rt|mat|mdc)-/;
 
 const UNIVERSAL_KEYWORDS = new Set([
@@ -633,12 +633,12 @@ function checkTransitionOrAnimationList(parsed, propName, report) {
     }
 }
 
-/* Объявление своего свойства блока судится отдельным обходом и только на цвет.
+/* A declaration of a block's own property is judged by a separate walk and only for colour.
 
-   Общий обход сюда не годится: он же судит размеры числом и приставку имени, а
-   своё свойство блока законно держит и `40px`, и локальное `var(--lift)` внутри
-   кадров анимации. Цвет — другое дело: код цвета в своём свойстве красит экран
-   ровно так же, как в обычном объявлении, и до сих пор не судился вовсе. */
+   The common walk is no good here: it also judges sizes by number and the name's prefix, while
+   a block's own property lawfully holds both `40px` and a local `var(--lift)` inside animation
+   frames. Colour is another matter: a colour code in one's own property paints the screen
+   exactly as it does in an ordinary declaration, and until now it was not judged at all. */
 function checkCustomPropertyColor(nodes, report) {
     for (const node of nodes) {
         if (node.type === 'function') {
@@ -676,9 +676,9 @@ const ruleFunction = (primary, secondary, _context) => {
         );
         if (!validOptions || !primary) return;
 
-        /* Суд над объявлением своего свойства включается набором, а не идёт всегда:
-           первый кит выпущен, его токены и его проверки эта работа не трогает, а
-           накопленное у него покраснело бы в тот же день. Второй кит включает. */
+        /* Judging a declaration of one's own property is switched on by the set rather than going
+           always: the first kit is published, this work does not touch its tokens and its checks,
+           and what piled up there would turn red the same day. The second kit switches it on. */
         const inspectCustomProperties = secondary?.customProperties === true;
 
         root.walkDecls((decl) => {

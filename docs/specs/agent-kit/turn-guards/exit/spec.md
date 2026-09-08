@@ -1,111 +1,120 @@
-# Страж выходов хода
+# The guard of the exits of a turn
 
-**Статус:** действует · **Ревизия:** 2026-08-25 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `work-conduct`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-25 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `work-conduct`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Один гард из домена «Гарды завершения хода» вырос настолько, что его сценарии перестали
-помещаться рядом с чужими: сорок два из шестидесяти трёх были о нём. Поддомен отделён затем,
-чтобы перечень сценариев домена читался, а этот рос своим порядком.
+One guard of the domain "The guards of the end of a turn" grew so much that its scenarios stopped
+fitting next to the foreign ones: forty-two of sixty-three were about it. The subdomain is split off
+so that the list of the scenarios of the domain can be read, and this one grows by an order of its
+own.
 
-Предмет поддомена — завершение хода. Ход, в котором работа стоит там же, где стояла, не
-кончается: правило перечисляет четыре законных выхода, и ни один из них не звучит как «сказать о
-сделанном».
+The subject of the subdomain is the end of a turn. A turn in which the work stands where it stood
+does not end: the rule lists four lawful exits, and not one of them sounds like "to tell what was
+done".
 
-## Терминология
+## Terminology
 
-- **Ход** — всё, что записано после последней настоящей реплики владельца. Ответ инструмента
-  приходит той же ролью и репликой не считается.
-- **Последнее действие хода** — вызов инструмента, стоящий в ходе последним. Текст ответа
-  действием не считается вовсе.
-- **Работа** — правка файла либо команда, меняющая дерево или его состояние. Чтение, поиск и
-  переключение ветки работой не считаются.
-- **Разведка** — читающая подкоманда системы контроля версий и читающий вызов клиента хостинга:
-  просмотр истории, состояние дерева, перечень заявок и прогонов.
-- **Ярус** — отдельная проверка стража, называющая вид остановки по имени. Ярусы выводятся из
-  общего признака и нужны затем, чтобы отказ был понятен.
+- **A turn** — everything written after the last real remark of the owner. The answer of a tool
+  arrives under the same role and does not count as a remark.
+- **The last action of a turn** — the call of a tool standing last in the turn. The text of the
+  answer does not count as an action at all.
+- **Work** — an edit of a file or a command that changes the tree or its state. Reading, searching
+  and switching a branch do not count as work.
+- **Exploration** — a reading subcommand of the version control system and a reading call of the
+  hosting client: a look at the history, the state of the tree, the list of the requests and the
+  runs.
+- **A tier** — a separate check of the guard naming the kind of the stop by name. The tiers are
+  derived from the general sign and are needed so that the refusal is understandable.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Наружу поддомен не выходит: у гарда нет экранов. Его отказ читает исполнитель, а не человек.
+The subdomain does not come outward: the guard has no screens. Its refusal is read by the executor,
+not by a person.
 
-## Правила
+## Rules
 
-- **Последним действием хода бывает только работа.** Признак один на все виды остановки; частные
-  ярусы из него выводят понятный отказ.
-- **Ответ владельцу действием не работает.** Порядок внутри хода: работа, первый шаг следующей,
-  потом текст.
-- **Разведка работой не считается.** Читающая подкоманда системы контроля версий и читающий
-  вызов клиента хостинга подготовкой к работе остаются.
-- **Перенаправление вывода работой не считается.** Работой ход делает то, куда стрелка ведёт, а
-  не она сама: запись во временный каталог захода и отвод потока ошибок дерева не меняют.
-- **Ожидание чужого шага концом хода не бывает.** Сколько бы работы ни было раньше — прогон,
-  разбор владельцем и слияние идут без исполнителя.
-- **Отданная работа кончает ход только вместе с начатой следующей.** По следующей должно быть
-  сделано действие, а не сказано.
-- **Взятая задача без папки задачи ход не кончает.** Заведение ветки и перевод колонки началом
-  работы не считаются.
-- **Закрытый этап подтверждается командой проверки того же хода.**
-- **Законные выходы судятся раньше всех ярусов.** Их четыре: вопрос владельцу, отказ гарда,
-  написанная передача и слово владельца об остановке.
-- **Части составной команды судятся по одной.** Чтение, соединённое с правкой, работой
-  остаётся.
+- **The last action of a turn is only ever work.** The sign is one for all the kinds of stopping;
+  the particular tiers derive an understandable refusal from it.
+- **An answer to the owner does not work as an action.** The order inside a turn: the work, the
+  first step of the next one, then the text.
+- **Exploration does not count as work.** A reading subcommand of the version control system and a
+  reading call of the hosting client stay a preparation for work.
+- **A redirection of the output does not count as work.** What makes a turn work is where the arrow
+  leads, not the arrow itself: a write into the temporary directory of the session and a diversion of
+  the error stream do not change the tree.
+- **Waiting for someone else's step is never the end of a turn.** However much work there was before
+  — the run, the review by the owner and the merge go without the executor.
+- **Handed-in work ends a turn only together with the next one begun.** On the next one an action
+  must be done, not said.
+- **A task taken without a task folder does not end the turn.** Creating a branch and moving the
+  column do not count as the start of the work.
+- **A closed stage is confirmed by the command of the check of the same turn.**
+- **The lawful exits are judged before all the tiers.** There are four of them: a question to the
+  owner, a refusal of a guard, a written handover and a word of the owner about a stop.
+- **The parts of a compound command are judged one by one.** A reading joined with an edit stays
+  work.
 
-## Что не входит
+## What is out of scope
 
-Гард разговора, гард происшествия, гард окна захода и гард ожидания — они в домене рядом.
-Утверждения о состоянии дерева судит гард утверждений: этот страж читает действия, а не текст.
+The guard of the conversation, the guard of the incident, the guard of the window of the session and
+the guard of waiting — they are in the domain next to it. The statements about the state of the tree
+are judged by the guard of the statements: this guard reads actions, not text.
 
-## Контракт
+## Contract
 
-Гард вызывается событием остановки и отвечает решением: пропустить или вернуть ход с причиной.
+The guard is called by the event of a stop and answers with a decision: let it through or give the
+turn back with a reason.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: отказ приходит текстом, который называет вид остановки и следующий шаг.
+Not applicable: the refusal comes as text naming the kind of the stop and the next step.
 
-## Данные
+## Data
 
-Своих данных гард не держит. Читает запись хода, ход работы задачи и историю ветки.
+The guard holds no data of its own. It reads the record of the turn, the progress of the work of the
+task and the history of the branch.
 
-## Экраны и состояния
+## Screens and states
 
-Экранов нет.
+There are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Отказ пишется на языке дерева.
+The refusal is written in the language of the tree.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо: гард судит один ход одного захода.
+Not applicable: the guard judges one turn of one session.
 
-## Решения
+## Decisions
 
-- **Отказ в пользу работы.** При любой ошибке, нехватке разбора JSON, отсутствии записи хода или
-  строки состояния ход разрешается: сломанный страж не имеет права заклинить разговор.
-- **Общий признак вместо ряда ярусов.** Девять разборов происшествий за сутки описывали девять
-  видов остановки; ярус на каждый вид — гонка без конца.
+- **Refusing in favour of the work.** At any error, at a missing JSON parse, at a missing record of
+  the turn or line of the state the turn is allowed: a broken guard has no right to jam the
+  conversation.
+- **A general sign instead of a row of tiers.** Nine incident analyses over a day described nine
+  kinds of stopping; a tier for every kind is a race without end.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-TE-1` — текст ответа страж не читает вовсе. Ход, где работа стоит последней, но сказано о
-  ней неверно, ловит гард утверждений; нужен ли здесь свой признак — решает владелец.
+- `Q-TE-1` — the text of the answer the guard does not read at all. A turn where the work stands last
+  but is told about wrongly is caught by the guard of the statements; whether a sign of its own is
+  needed here is decided by the owner.
 
-## История изменений
+## History of changes
 
-- 2026-08-25 — поддомен отделён от домена «Гарды завершения хода»: сорок два сценария из
-  шестидесяти трёх были об одном гарде.
+- 2026-08-25 — the subdomain was split off from the domain "The guards of the end of a turn":
+  forty-two scenarios of sixty-three were about one guard.

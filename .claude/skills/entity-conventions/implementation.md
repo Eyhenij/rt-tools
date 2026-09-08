@@ -1,72 +1,78 @@
-# entity-conventions — что здесь своё
+# entity-conventions — what is this tree's own
 
-Имена и привязки этого дерева при правиле `SKILL.md` рядом.
+The names and bindings of this tree, next to the rule `SKILL.md`.
 
-Панелей правки записи здесь нет ни одной, и не будет: груз читается, а не правится — приёмник
-принимает его от деревьев. Записывающая панель одна, и она заводит запись, а не правит:
-панель выдачи приглашения в разделе приглашений. Панелей подробностей три, по одной на раздел
-груза, и все они стоят на той же основе кита, что и панель правки: маршрут в аутлете `ro`,
-чтение записи по идентификатору из адреса, закрытие навигацией. Поэтому статьи про запись
-держит одна панель выдачи, а остальные панели верны буквой основы.
+There is not one record-editing panel here, and there will be none: cargo is read, not edited —
+the receiver takes it from trees. There is one writing panel, and it creates a record rather
+than editing one: the invitation-issuing panel in the invitations section. There are three
+detail panels, one per cargo section, and all of them stand on the same kit base as an editing
+panel: a route in the `ro` outlet, reading the record by the identifier from the address,
+closing by navigation. So the articles about writing are held by the issuing panel alone, while
+the other panels are true by the letter of the base.
 
-## Как это называется здесь
+## What it is called here
 
-- **В правиле** — Здесь
-- **асайд с `outlet: 'ro'`** — он же; сам компонент боковой панели — `rt-aside` из `@rt-tools/ui-kit-v2`
-- **`RtRouteAsideComponent<T>`** — он же: директива без селектора в ките, `rt-route-aside.base.ts`
-- **`BaseListStoreService`** — здесь такого нет; ближайшее — `BaseAsyncStoreService` из `@rt-tools/store`
-- **`runMutation`** — он же — метод основы
-- **`pristineSignal(control)`** — он же — из той же основы
-- **`openRelated`** — он же — метод основы
-- **стор сущности** — `<сущность>.store.ts` в `<домен>/data-access` — по два на раздел груза
+- **In the rule** — Here
+- **an aside with `outlet: 'ro'`** — the same; the side panel component itself is `rt-aside` from `@rt-tools/ui-kit-v2`
+- **`RtRouteAsideComponent<T>`** — the same: a directive without a selector in the kit, `rt-route-aside.base.ts`
+- **`BaseListStoreService`** — there is no such thing here; the closest is `BaseAsyncStoreService` from `@rt-tools/store`
+- **`runMutation`** — the same — a method of the base
+- **`pristineSignal(control)`** — the same — from that same base
+- **`openRelated`** — the same — a method of the base
+- **an entity store** — `<entity>.store.ts` in `<domain>/data-access` — two per cargo section
 
-## Где это лежит
+## Where it lives
 
-- **общая основа панели маршрута** — `projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts`
-- **боковая панель** — `projects/ui-kit-v2/src/lib/components/aside/`
-- **основы сторов** — `projects/store/src/lib/` — `BaseStoreService`, `BaseAsyncStoreService`
-- **шина оповещений** — `projects/ui-kit-v2/src/lib/platform/notification-bus.service.ts`
-- **стор входа** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts` — вход, не сущность
-- **общая основа списочного стора** — `libs/message-bus-admin/common/core/data-access/src/lib/admin-list-store.base.ts`
-- **сторы разделов** — `libs/message-bus-admin/postmortems/data-access/`, `.../proposals/data-access/`, `.../summaries/data-access/` — список и запись порознь
-- **панели подробностей** — `libs/message-bus-admin/postmortems/feature/details-aside/`, `.../proposals/feature/details-aside/`, `.../summaries/feature/details-aside/`
-- **панель, заводящая запись** — `libs/message-bus-admin/invites/feature/create-aside/` — выдача приглашения: поле имени, `runMutation`, показ кода
-- **сквозные спеки панели** — `apps/message-bus-admin-e2e/src/postmortems-list.spec.ts`, `apps/message-bus-admin-e2e/src/sections.spec.ts`, `apps/message-bus-admin-e2e/src/invites-list.spec.ts`
+- **the shared route panel base** — `projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts`
+- **the side panel** — `projects/ui-kit-v2/src/lib/components/aside/`
+- **the store bases** — `projects/store/src/lib/` — `BaseStoreService`, `BaseAsyncStoreService`
+- **the notification bus** — `projects/ui-kit-v2/src/lib/platform/notification-bus.service.ts`
+- **the sign-in store** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts` — sign-in, not an entity
+- **the shared list-store base** — `libs/message-bus-admin/common/core/data-access/src/lib/admin-list-store.base.ts`
+- **the section stores** — `libs/message-bus-admin/postmortems/data-access/`, `.../proposals/data-access/`, `.../summaries/data-access/` — the list and the record apart
+- **the detail panels** — `libs/message-bus-admin/postmortems/feature/details-aside/`, `.../proposals/feature/details-aside/`, `.../summaries/feature/details-aside/`
+- **the panel that creates a record** — `libs/message-bus-admin/invites/feature/create-aside/` — issuing an invitation: the name field, `runMutation`, showing the code
+- **the end-to-end panel specs** — `apps/message-bus-admin-e2e/src/postmortems-list.spec.ts`, `apps/message-bus-admin-e2e/src/sections.spec.ts`, `apps/message-bus-admin-e2e/src/invites-list.spec.ts`
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-Первая колонка — статья дословно, как она написана в разделе «Как закон применяется здесь»
-(жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает то,
-чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
+The first column is the article verbatim, as it is written in the section "How the law applies
+here" (the bold part of the item). An article without a line and a line without an article are a
+divergence: the rule promises what the tree does not have, or the tree holds what the rule is
+silent about.
 
-- **The aside opens by a route in the `ro` outlet, not by a service call.** — `projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts:RtRouteAsideComponent` — основа кита читает запись по идентификатору из адреса и закрывается навигацией. Все три панели админки открываются маршрутом — `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts:postmortemsRoutes`, и уход в панель идёт из общей механики экрана: `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:openDetails`.
-- **Saving goes through `runMutation`, and the panel hands the base the mutation stream and the keys.** — `projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts:runMutation` — занятость, гашение прежней ошибки, тост об успехе и закрытие держит основа. Зовёт её одна панель дерева — `libs/message-bus-admin/invites/feature/create-aside/src/lib/admin-invite-create-aside.component.ts:submit`, и закрытия она у основы не просит: код виден только в открытой панели.
-- **The mutation stream must give a value or an error.** — `projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts:submitting` — признак записи снимается ответом потока; пустой поток оставил бы его поднятым навсегда, и закрыть панель стало бы нечем.
-- **A mutation ends with a re-read list, not with a sent request.** — Груз админка не правит вовсе; мутации у неё две, и обе над приглашением — выдача и отзыв. Обе кончаются перечитанным списком: `libs/message-bus-admin/invites/data-access/src/lib/invites.store.ts:issue` и `:revoke` зовут `libs/message-bus-admin/common/core/data-access/src/lib/admin-list-store.base.ts:retry` ответом, а не отправленным запросом.
-- **The store answers with a stream: success is a value, refusal is a stream error.** — Сторы разделов отвечают сигналами, а не потоком, и законно: читающий стор ничего не возвращает вызывающему — экран смотрит на `rows`, `pending` и `fault` (`libs/message-bus-admin/common/core/data-access/src/lib/admin-list-store.base.ts:AdminListStoreBase`). Стор входа — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:AuthStore` — отвечает наполовину иначе, и законно: вход ничего не возвращает, потому что у него источник действия и `exhaustMap`, и второе нажатие кнопки не заводит второго запроса; результат читается сигналами `session` и `fault`. Потоком отвечают `restore` и `signOut` — их зовут гвард и оболочка, а не форма. Потоком со значением отвечает и выдача приглашения — `libs/message-bus-admin/invites/data-access/src/lib/invites.store.ts:issue`: код приезжает ответом, и панели взять его больше неоткуда. Булева ответа в дереве нет нигде.
-- **Names come from the entity, not from the domain.** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:signIn` — рядом `signOut` и `restore`: имя домена стоит в имени стора, и повторять его в методах нечем.
-- **The unsaved-edits guard is set by the panel itself, on all four closing paths.** — `projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts:guardUnsavedChanges` — четыре пути закрытия держит основа кита; своей проверки панель не заводит. Ни одна панель админки его не ставит. У панелей подробностей правок нет вовсе; у панели выдачи приглашения поле одно, и несохранённым в ней бывает только набранное и не выданное имя.
-- **Leaving the panel goes through `openRelated`, not through an own `router.navigate`.** — `projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts:openRelated` — абсолютные команды оставляют аутлет `ro` в адресе, и роутер отклоняет навигацию молча.
-- **The record is read by the identifier from the address as the full model, not taken from the list.** — `libs/message-bus-admin/postmortems/data-access/src/lib/postmortem.store.ts:PostmortemStore` — панель читает запись своей операцией по идентификатору из адреса, а не берёт строку из списка: текста разбора в строке нет вовсе. Уровни модели — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.model.ts:IPostmortem`.
+- **The aside opens by a route in the `ro` outlet, not by a service call.** — `projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts:RtRouteAsideComponent` — the kit base reads the record by the identifier from the address and closes by navigation. All three admin panels open by a route — `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts:postmortemsRoutes`, and the move into the panel comes from the shared screen mechanics: `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:openDetails`.
+- **Saving goes through `runMutation`, and the panel hands the base the mutation stream and the keys.** — `projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts:runMutation` — busyness, clearing the former error, the success toast and the closing are held by the base. One panel of the tree calls it — `libs/message-bus-admin/invites/feature/create-aside/src/lib/admin-invite-create-aside.component.ts:submit`, and it does not ask the base to close: the code is visible only in an open panel.
+- **The mutation stream must give a value or an error.** — `projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts:submitting` — the writing sign is taken down by the stream's answer; an empty stream would leave it raised forever, and there would be nothing left to close the panel with.
+- **A mutation ends with a re-read list, not with a sent request.** — The admin panel does not edit cargo at all; it has two mutations, and both are over an invitation — issuing and revoking. Both end with a re-read list: `libs/message-bus-admin/invites/data-access/src/lib/invites.store.ts:issue` and `:revoke` call `libs/message-bus-admin/common/core/data-access/src/lib/admin-list-store.base.ts:retry` on the answer, not on the sent request.
+- **The store answers with a stream: success is a value, refusal is a stream error.** — The section stores answer with signals rather than a stream, and lawfully: a reading store returns nothing to its caller — the screen looks at `rows`, `pending` and `fault` (`libs/message-bus-admin/common/core/data-access/src/lib/admin-list-store.base.ts:AdminListStoreBase`). The sign-in store — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:AuthStore` — answers half otherwise, and lawfully: sign-in returns nothing because it has an action source and `exhaustMap`, and a second press of the button starts no second request; the result is read by the signals `session` and `fault`. A stream is the answer of `restore` and `signOut` — they are called by the guard and the shell, not by a form. A stream with a value is also the answer of issuing an invitation — `libs/message-bus-admin/invites/data-access/src/lib/invites.store.ts:issue`: the code arrives in the answer, and the panel has nowhere else to take it from. There is no boolean answer anywhere in the tree.
+- **Names come from the entity, not from the domain.** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:signIn` — next to it `signOut` and `restore`: the domain name stands in the store name, and there is nothing to repeat it with in the methods.
+- **The unsaved-edits guard is set by the panel itself, on all four closing paths.** — `projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts:guardUnsavedChanges` — the four closing paths are held by the kit base; the panel starts no check of its own. Not one admin panel sets it. The detail panels have no edits at all; the invitation-issuing panel has one field, and the only thing unsaved in it is a name typed and not issued.
+- **Leaving the panel goes through `openRelated`, not through an own `router.navigate`.** — `projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts:openRelated` — absolute commands leave the `ro` outlet in the address, and the router rejects the navigation silently.
+- **The record is read by the identifier from the address as the full model, not taken from the list.** — `libs/message-bus-admin/postmortems/data-access/src/lib/postmortem.store.ts:PostmortemStore` — the panel reads the record by its own operation with the identifier from the address instead of taking the row from the list: the review text is not in the row at all. The model levels — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.model.ts:IPostmortem`.
 
-## Что ещё стоит знать при чтении кода
+## What else is worth knowing when reading the code
 
-- Общая основа списочного стора здесь своя — `AdminListStoreBase` в `common/core/data-access`, а
-  не `BaseListStoreService` из правила: она стоит на `BaseAsyncStoreService` кита и знает ровно
-  то, что нужно читающему списку — страницу, занятость и род отказа.
-- Стор входа сущностью не заведует, и правило на нём не действует: гейт уводит всё поддерево
-  `libs/message-bus-admin/auth/` в общие правила — ветка в `.claude/rt-kit/gate-map.sh`.
-- Основа панели живёт в ките, который пишет это же дерево. Правка, которой панели не хватает,
-  идёт в основу, а не в панель: вторая панель со своей механикой разойдётся с первой молча.
-- Действие со своей занятостью через основу не идёт — у него свой признак; в дереве такого
-  действия пока нет.
-
-## Чем это проверяется
-
-- `pnpm exec nx test @rt-tools/ui-kit-v2` — спеки основы панели маршрута: `runMutation`,
-  `openRelated`, нетронутость формы, четыре пути закрытия.
-- `pnpm exec nx test message-bus-admin-auth-util` — спеки разбора отказа входа.
-- `pnpm exec nx run message-bus-admin-e2e:e2e` — сквозной набор: панель открывается нажатием на
-  строку, закрытая возвращает список тем же, а записи, которой нет, панель говорит об этом.
-- Гейт правил требует это правило на сторах админки и на панелях правки — ветка в
+- The shared list-store base is this tree's own here — `AdminListStoreBase` in
+  `common/core/data-access`, not `BaseListStoreService` from the rule: it stands on the kit's
+  `BaseAsyncStoreService` and knows exactly what a reading list needs — the page, the busyness
+  and the kind of refusal.
+- The sign-in store keeps no entity, and the rule does not act on it: the gate takes the whole
+  subtree `libs/message-bus-admin/auth/` into the shared rules — a branch in
   `.claude/rt-kit/gate-map.sh`.
+- The panel base lives in the kit written by this same tree. An edit a panel lacks goes into the
+  base, not into the panel: a second panel with mechanics of its own diverges from the first
+  silently.
+- An action with a busyness of its own does not go through the base — it has its own sign; there
+  is no such action in the tree yet.
+
+## What this is checked by
+
+- `pnpm exec nx test @rt-tools/ui-kit-v2` — the specs of the route panel base: `runMutation`,
+  `openRelated`, the pristine form, the four closing paths.
+- `pnpm exec nx test message-bus-admin-auth-util` — the specs of parsing a sign-in refusal.
+- `pnpm exec nx run message-bus-admin-e2e:e2e` — the end-to-end suite: the panel opens on a click
+  on a row, a closed one gives the list back as it was, and about a record that does not exist
+  the panel says so.
+- The rule gate demands this rule on the admin panel stores and on the editing panels — a branch
+  in `.claude/rt-kit/gate-map.sh`.

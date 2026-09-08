@@ -1,14 +1,14 @@
 /**
- * Spec для `require-interface-prefix`.
+ * The spec of `require-interface-prefix`.
  *
- * Parser: `@typescript-eslint/parser`. Раннер: Vitest.
+ * Parser: `@typescript-eslint/parser`. The runner is Vitest.
  *
  * Coverage:
- *  - valid: канонические `I`+PascalCase имена, skip-inside-namespace, skip-inside-declare-global,
- *           skip-inside-declare-module, многословные имена с цифрами
- *  - invalid `missingPrefix`: нет `I`, T-префикс
- *  - invalid `invalidFormat`: lowercase после `I`, single-letter, цифра после `I`, underscore,
- *           аббревиатуры капсом
+ *  - valid: the canonical `I` plus PascalCase names, the skip inside a namespace, inside
+ *           declare global and inside declare module, many-word names with digits
+ *  - invalid `missingPrefix`: no `I`, the T prefix
+ *  - invalid `invalidFormat`: lowercase after `I`, a single letter, a digit after `I`, an
+ *           underscore, an all-caps abbreviation
  */
 import { RuleTester } from '@typescript-eslint/rule-tester';
 

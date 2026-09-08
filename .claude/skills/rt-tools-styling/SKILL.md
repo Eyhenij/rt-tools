@@ -2,178 +2,194 @@
 name: rt-tools-styling
 kind: rule
 law: frontend-application
-description: Правило этого дерева про оформление китов: порог узкого экрана, токены и ручки тем, тёмная тема, слой каскада, сборка слоя оформления. Брать при правке любого *.scss китов и их шаблонов вместе с правилом styling-bem: то говорит приёмом закона, это — именами и числами дерева.
+description: This tree's rule about kit styling: the narrow-screen threshold, tokens and theme handles, the dark theme, the cascade layer, building the styling layer. Take it on any edit of a kit's *.scss together with styling-bem: that one speaks by the law's technique, this one by the tree's names.
 ---
 
-# Оформление китов — что здесь своё
+# Kit styling — what is this tree's own
 
-Правило этого дерева под закон `docs/constitution/frontend-application.md`. Приём, каким
-закон держится вообще, — правило `styling-bem`; здесь то, чего пакет знать не может:
-токены и ручки тем этого дерева, порог узкого экрана, слои каскада и порядок сборки
-слоя оформления. Оба правила читаются вместе — гейт требует их парой.
+This tree's rule under the law `docs/constitution/frontend-application.md`. The technique the law
+is held by in general is the rule `styling-bem`; here is what the package cannot know: this
+tree's tokens and theme handles, the narrow-screen threshold, the cascade layers and the order of
+building the styling layer. Both rules are read together — the gate demands them as a pair.
 
-## Когда брать
+## When to use
 
-- Правится `*.scss` кита или шаблон его компонента.
-- Заводится или переименовывается токен, ручка темы, слой каскада.
-- Разбирается расхождение тёмной темы, контраста или порога узкого экрана.
+- A kit's `*.scss` or a template of its component is edited.
+- A token, a theme handle or a cascade layer is started or renamed.
+- A divergence of the dark theme, of the contrast or of the narrow-screen threshold is being
+  sorted out.
 
-## Как закон применяется здесь
+## How the law applies here
 
-Разделы ниже — статьи этого дерева: приём закона называет правило `styling-bem`, здесь
-имена, числа и слои, которых пакет знать не может.
+The sections below are this tree's articles: the law's technique is named by the rule
+`styling-bem`, here are the names, numbers and layers the package cannot know.
 
-- **Узкий экран.** Порог один на весь кит, и он записан дважды: медиа-запросом в стилях и запросом
-  службы точек перелома в коде. Разойдясь, они дают полосу ширин, где разметка уже мобильная, а
-  оформление ещё нет.
-    - **Признак узкого экрана даёт служба кита, и второго источника у него нет.** Вход, которым
-      его передавало приложение, снят: два источника одного признака расходились молча — переданное
-      однажды значение оставалось главнее замера и держало вид кита, сколько бы окно ни меняли.
-      Узкую панель на широком экране кит поэтому не различает, и приёма под неё, кроме
-      контейнерных запросов, у него пока нет.
-    - **Размер и раскладка узкого экрана объявлены медиа-запросом, а не условием в шаблоне.**
-      Условие в шаблоне, ставящее модификатор ради других отступов, — это оформление, уехавшее в
-      код.
-    - **За условием в шаблоне остаётся то, чего CSS не делает:** другая ветка дерева, отключённая
-      подсказка, другой обработчик.
-    - **Правило, которое действует только на широком экране, объявляется медиа-запросом вверх, а не
-      отменяется вторым правилом вниз.** Отмена оставляет в файле два места, где решается один
-      вопрос.
-    - **Вывод про узкий вид подкрепляется замером по обе стороны порога.** Условие в шаблоне и
-      медиа-запрос разъезжаются молча: модификатор продолжает ставиться, а правила под ним уже
-      переехали.
-    - **Порог бывает трёх родов, и рамка кадра ловит только один.** Медиа-запрос по ширине окна
-      переключается рамкой снимка; запрос по ширине контейнера и порог из службы точек перелома от
-      рамки не зависят вовсе. До съёмки называется, какого рода порог у компонента: кадр на оконной
-      ширине для контейнерного порога не сработает ни разу, и это выглядит как отсутствие правила, а
-      не как промах проверки.
+- **The narrow screen.** The threshold is one for the whole kit, and it is written down twice: by a
+  media query in the styles and by a query to the breakpoints service in the code. Diverging, they
+  give a band of widths where the markup is already mobile and the styling is not yet.
+    - **The narrow-screen sign is given by the kit's service, and it has no second source.** The
+      input the application passed it by is gone: two sources of one sign diverged silently — a
+      value passed once stayed stronger than the measurement and held the kit's look however much
+      the window changed. So the kit does not tell a narrow panel on a wide screen apart, and it
+      has no technique for that yet other than container queries.
+    - **The size and layout of the narrow screen are declared by a media query, not by a condition
+      in the template.** A condition in the template that sets a modifier for the sake of different
+      paddings is styling that rode into the code.
+    - **What stays behind a condition in the template is what CSS does not do:** a different branch
+      of the tree, a switched-off hint, a different handler.
+    - **A rule that acts only on a wide screen is declared by a media query upwards rather than
+      cancelled by a second rule downwards.** A cancellation leaves two places in the file where
+      one question is decided.
+    - **A conclusion about the narrow view is backed by a measurement on both sides of the
+      threshold.** A condition in the template and a media query drift apart silently: the modifier
+      keeps being set while the rules under it have already moved.
+    - **The threshold comes in three kinds, and the frame catches only one.** A media query by the
+      window width is switched by the snapshot's frame; a query by the container width and the
+      threshold from the breakpoints service do not depend on the frame at all. Before a snapshot
+      it is named which kind of threshold the component has: a frame at a window width will never
+      fire for a container threshold, and that looks like the absence of a rule rather than like a
+      miss of the check.
 
-- **Оформление берётся токеном.** Проверка второго кита — `pnpm run check:tokens-styles`. Она зовёт
-  stylelint своим конфигом (`tools/stylelint-tokens.config.mjs`) по набору
-  `projects/ui-kit-v2/src/lib/**/*.scss` и сверяет находки со списком принятого
+- **Styling is taken as a token.** The second kit's check is `pnpm run check:tokens-styles`. It
+  calls stylelint with its own config (`tools/stylelint-tokens.config.mjs`) over the set
+  `projects/ui-kit-v2/src/lib/**/*.scss` and matches the findings against the accepted list
   `tools/tokens-styles-allowlist.json`.
-    - **Правила навешены своим конфигом, а не общим.** `lint:styles` идёт по всем `projects/**` с
-      `--max-warnings 0`, а списка принятого у stylelint нет: включи их там — и накопленное
-      покраснеет в тот же день, после чего правило снимут вместо того, чтобы чинить.
-    - **Список принятого — свой файл.** `tools/styles-allowlist.json` и `tools/check-styles.mjs`
-      заняты проверкой классов вёрстки, разложены пакетом и на месте не правятся.
-    - **Запись списка — файл и значение, без номера строки.** Строка едет от любого
-      переформатирования, и список краснел бы на правках, которых не было.
-    - **Список только убывает.** Запись, которой в стилях больше ничего не отвечает, роняет прогон:
-      починка снимает и место, и строку списка.
-    - **Правило судит цвет и свойства отступа, скругления, кегля и толщины рамки; размеры числом —
-      `width`, `height`, `inline-size`, `outline` — оно не судит вовсе.** Это не пропуск проверки, а
-      её граница. Шкалы под размеры у кита уже есть — габариты `--rt-size-*` и высоты контролов
-      `--rt-control-height-*`, — но суд над ними проверка пока не берёт: включённый в тот же день,
-      он покраснел бы на сотне мест, где размер числом задают не контролы, а полоски, значки и
-      ячейки таблицы. Расширение набора — своя работа.
+    - **The rules are hung by their own config, not by the shared one.** `lint:styles` goes over
+      all of `projects/**` with `--max-warnings 0`, and stylelint has no accepted list: switch them
+      on there and what has accumulated turns red the same day, after which the rule is removed
+      instead of being fixed.
+    - **The accepted list is a file of its own.** `tools/styles-allowlist.json` and
+      `tools/check-styles.mjs` are busy with the check of layout classes, are laid out by the
+      package and are not edited in place.
+    - **A list entry is a file and a value, without a line number.** A line moves with any
+      reformatting, and the list would turn red on edits that never happened.
+    - **The list only shrinks.** An entry nothing in the styles answers to any more fails the run:
+      the fix removes both the place and the list line.
+    - **The rule judges colour and the properties of padding, rounding, font size and border width;
+      sizes as numbers — `width`, `height`, `inline-size`, `outline` — it does not judge at all.**
+      That is not a gap in the check but its boundary. The kit already has scales for sizes — the
+      dimensions `--rt-size-*` and the control heights `--rt-control-height-*` — but the check does
+      not yet take judging them on: switched on the same day, it would turn red in a hundred places
+      where a size as a number is set not by controls but by strips, icons and table cells.
+      Widening the set is work of its own.
 
-    - **Набор проверки — стили компонентов, и слой оформления в него не входит.** Литерал в шкале
-      или в назначении она не видит вовсе: шесть прозрачных оттенков, повторявших коды цвета своих
-      ступеней тройками каналов, нашлись чтением, а не прогоном. Зелёный прогон означает «в стилях
-      компонентов чисто», а не «литералов не осталось».
+    - **The check's set is the components' styles, and the styling layer is not in it.** It does not
+      see a literal in a scale or in an assignment at all: six transparent shades repeating the
+      colour codes of their steps as channel triples were found by reading, not by a run. A green
+      run means "the components' styles are clean", not "no literals are left".
 
-- **Между ступенью и местом стоит своё свойство компонента.** Судит та же проверка — `pnpm run
-  check:tokens-styles`: правило `declaration-property-value-disallowed-list` стоит в том же конфиге,
-  и находки ложатся в тот же список принятого. Второго перечня накопленного не заводится.
-    - **Свойство объявляется в корне блока, значением по умолчанию — та ступень, что стояла на
-      месте.** Вид от перевода не двигается ни на пиксель, и разошедшийся кадр читается дефектом
-      правки, а не поводом переснять.
-    - **Имя выводится из имени блока — `--rt-<блок>-<что>`.** Там, где блок уже носит имя семейства
-      назначений (`--rt-nav-panel-*` у подменю шапки), берётся оно, а не имя файла. Имя под место
-      употребления не заводится.
-    - **Модификатор переназначает свойство, а не повторяет объявление свойства CSS.** У плашки семь
-      видов скругления стали семью строками вместо семи правил `border-radius`.
-    - **Судятся четыре семейства: скругление, тень, толщина рамки и длительность.** Отступ, кегль и
-      габариты остаются на ступенях, и это граница правила, а не пропуск: роль отступа одним словом
-      не называется, и свойство под неё вышло бы именем места, а не именем роли.
-    - **Объявление своего свойства правило не судит — и это единственный законный вид ступени в
-      стилях компонента.** Имя цели отбирается выражением `^(?!--)`; запрет на само объявление
-      отменял бы весь приём.
-    - **Правую часть объявления своего свойства не судит ничто.** `--rt-btn-radius: 10px` проходило
-      и гейт литералов, и это правило, хотя это ступень `lg`: гейт судит `border-radius`, а не
-      объявление своего свойства. Ловится чтением.
-    - **Часть, которую браузер уносит из поддерева блока, объявляет свойство на себе.** Панель в
-      перекрытии, меню и перетаскиваемая строка живут вне блока, и объявление с его корня до них не
-      докатывается. Девять кадров разошлись молча и показали панель без тени, пока причину не нашли.
-    - **Линтер стилей требует пустую строку после блока объявлений и запрещает внутри него.**
-      `declaration-empty-line-before` и `custom-property-empty-line-before` вместе означают: блок
-      своих свойств идёт сплошным, дальше ровно одна пустая строка.
-    - **Потребитель переопределяет свойство правилом той же цели и большей силы.** Объявление живёт
-      на самом блоке и перебивает всё, что пришло по наследству сверху.
+- **Between a step and a place stands the component's own property.** It is judged by that same
+  check — `pnpm run check:tokens-styles`: the rule `declaration-property-value-disallowed-list`
+  stands in the same config, and the findings go into the same accepted list. No second list of
+  what has accumulated is started.
+    - **The property is declared in the block's root, and its default value is the step that stood
+      in that place.** The look does not move by a pixel from the move, and a diverged frame reads
+      as a defect of the edit rather than a reason to re-take it.
+    - **The name is derived from the block name — `--rt-<block>-<what>`.** Where the block already
+      carries the name of a family of assignments (`--rt-nav-panel-*` on the header's submenu), it
+      is taken rather than the file name. A name is not started after the place of use.
+    - **A modifier reassigns the property instead of repeating the declaration of a CSS property.**
+      The plate's seven kinds of rounding became seven lines instead of seven `border-radius` rules.
+    - **Four families are judged: rounding, shadow, border width and duration.** Padding, font size
+      and dimensions stay on the steps, and that is the rule's boundary rather than a gap: the role
+      of a padding is not named in one word, and a property for it would come out named after the
+      place rather than after the role.
+    - **The rule does not judge the declaration of one's own property — and that is the only lawful
+      kind of step in a component's styles.** The target name is selected by the expression
+      `^(?!--)`; a ban on the declaration itself would cancel the whole technique.
+    - **The right-hand side of one's own property declaration is judged by nothing.**
+      `--rt-btn-radius: 10px` passed both the literal gate and this rule, though it is the step
+      `lg`: the gate judges `border-radius`, not the declaration of one's own property. It is
+      caught by reading.
+    - **A part the browser takes out of the block's subtree declares the property on itself.** A
+      panel in an overlay, a menu and a dragged row live outside the block, and a declaration from
+      its root does not reach them. Nine frames diverged silently and showed a panel without a
+      shadow until the cause was found.
+    - **The styles linter demands an empty line after the block of declarations and forbids one
+      inside it.** `declaration-empty-line-before` and `custom-property-empty-line-before` together
+      mean: the block of one's own properties goes solid, then exactly one empty line.
+    - **A consumer overrides the property by a rule of the same target and greater force.** The
+      declaration lives on the block itself and beats everything that came by inheritance from
+      above.
 
-- **Состояние сильнее оформления.**
-    - **Блок состояния стоит ниже всех вариантов оформления и палитры того же блока.**
-      Отключённость, загрузка и только-чтение отменяют заливку, обводку и цвет подписи; обратного не
-      бывает. Специфичность у модификаторов одного блока равная, и правила равной силы разбираются
-      порядком в файле — состояние, записанное выше варианта оформления, проигрывает ему молча.
-    - **Специфичность вместо переноса не поднимается.** Поднятая, она перебивает и то, чего
-      перебивать не собирались: размер, скругление и свойства, которые потребитель задаёт снаружи.
-    - **Проигравшее состояние не ловит ничто.** Ни сборка, ни линтер стилей, ни кадр витрины не
-      отличают его от задуманного: отключённая текстовая кнопка получала серую заливку, которой у
-      неё нет ни в одном другом состоянии, и это простояло во всех восемнадцати ячейках её матрицы,
-      пока не пришли глазами.
-    - **Безфоновому оформлению отключённость фона не даёт.** Заливка, появляющаяся только в
-      отключённом виде, читается подсветкой, а не недоступностью: остаются приглушённая подпись и
-      спокойная рамка.
+- **State outweighs styling.**
+    - **The state block stands below every styling variant and palette of the same block.** Being
+      disabled, loading and read-only cancel the fill, the outline and the label colour; the
+      reverse never happens. The specificity of one block's modifiers is equal, and rules of equal
+      force are sorted out by the order in the file — a state written above a styling variant loses
+      to it silently.
+    - **Specificity is not raised instead of moving.** Raised, it beats what was not meant to be
+      beaten too: the size, the rounding and the properties a consumer sets from outside.
+    - **A losing state is caught by nothing.** Neither the build, nor the styles linter, nor a
+      showcase frame tells it from what was intended: a disabled text button got a grey fill it has
+      in no other state, and that stood in all eighteen cells of its matrix until people came with
+      their eyes.
+    - **Styling without a background gets no background from being disabled.** A fill that appears
+      only in the disabled look reads as a highlight rather than as unavailability: what stays is a
+      muted label and a calm border.
 
-- **Класс блока и директива блока.**
-    - **`rtElem` в шаблоне требует `BlockDirective` в инжекторе, а класса блока на хосте ему мало.**
-      `host: { class: BEM_BLOCK }` рисует класс и никакой директивы не заводит: компонент
-      собирается, тайпчек и линтер молчат, а первый же потребитель получает `NG0201` при подъёме
-      шаблона. Класс остаётся на хосте — директиву даёт `<ng-container rtBlock="…">`, обнимающий
-      разметку: он ничего не рисует и хозяина для `rtElem` предоставляет.
-    - **Компонент, который не поднят ни одной спекой и ни одной историей, этой ошибки не
-      показывает.** Она видна только там, где его рисуют, — поэтому набор показов и есть проверка.
+- **The block class and the block directive.**
+    - **`rtElem` in a template demands a `BlockDirective` in the injector, and the block class on
+      the host is not enough for it.** `host: { class: BEM_BLOCK }` draws the class and starts no
+      directive: the component builds, the typecheck and the linter stay silent, and the very first
+      consumer gets `NG0201` when the template comes up. The class stays on the host — the
+      directive is given by `<ng-container rtBlock="…">` embracing the markup: it draws nothing and
+      provides an owner for `rtElem`.
+    - **A component raised by no spec and by no story does not show this error.** It is visible only
+      where the component is drawn — so the set of showings is the check.
 
-- **Правило кита живёт в слое каскада.** Проверка — `pnpm run check:cascade-layer`. Она читает стили
-  компонентов второго кита и слой оформления, судит обёртку и порядок подслоёв; список принятого —
-  `tools/cascade-layer-allowlist.json`.
-    - **Файл стилей компонента объявлен в подслое `rt-kit.components` целиком.** Обёртка одна на
-      файл: вторая оставляет часть правил снаружи, а файл выглядит обёрнутым. Новый файл заводится
-      сразу обёрнутым — приехавший мимо слоя работает, ничего не роняет и виден только глазами у
-      потребителя, которому перебить его снова нечем.
-    - **Правило, спорящее с неслоевым правилом чужой библиотеки, объявляется вне слоя и говорит
-      об этом при себе.** Неслоевое правило сильнее любого слоевого независимо от специфичности, и
-      порядок слоёв этого не меняет: в слое такое правило проигрывает молча — вид у потребителя со
-      слоями расходится с видом у того, кто берёт готовый CSS. Вне слоя выносится ровно спорная
-      пара свойств, оформление остаётся в слое, а рядом стоит пояснение с именем чужого правила:
-      без него следующий читатель вернёт вынесенное обратно. Пояснение при этом машиночитаемое:
-      слово `rt-layer-outside` в нём отличает нарочный вынос от промаха «часть файла уехала за
-      скобку», и правило после обёртки без этого слова роняет проверку слоя каскада. Что вынесено
-      именно спорное, а не полфайла, проверка не судит — это держит своя проба над собранным CSS.
-    - **Снаружи обёртки законны только `@use`, `@forward` и `@import`.** Sass требует их в начале
-      файла и роняет сборку на объявлении, загнанном внутрь блока.
-    - **Порядок подслоёв объявлен заранее — `@layer rt-kit.vendor, rt-kit.base,
-      rt-kit.components;`.** Подслой, не названный заранее, встаёт в каскад по первому появлению, а
-      появляются они в порядке загрузки: стили компонента Angular инжектит отдельным блоком, и он
-      способен опередить основу.
-    - **Объявления на корне страницы в слой не уходят.** Перекраска бренда держится порядком:
-      потребитель объявляет свою линейку после `tokens.css` и выигрывает. Уехав в слой, объявление
-      отнимает у него эту возможность.
-    - **Чужой CSS, который чинит кит, подключается в нижний подслой `vendor`.** Слой опускает
-      правила кита ниже всего, что объявлено вне слоя, — не только ниже приложения, но и ниже такой
-      библиотеки. Тема редактора текста, подключённая мимо подслоя, стала выигрывать у кита, и
-      панель редактора перестроилась молча; поймали это пять кадров витрины, а у потребителя не
-      поймал бы никто. Приём — импорт с именем подслоя: `@import 'quill/dist/quill.snow.css'
-      layer(rt-kit.vendor);`
-    - **Кит не настаивает на своём восклицательным знаком.** Последнее слово за приложением, и
-      правило кита, спорящее с ним важностью, отменяет то, ради чего слой заведён. Два таких правила
-      в таблице сняты вместе с заведением слоя.
-    - **Обёртка слоя меняет растеризацию текста в композитном слое перекрытия.** Раскладка при этом
-      не двигается: сорок узлов шапки по двадцати двум свойствам совпали до тысячных, а кадр
-      разошёлся на 0,11% сдвигом текста в пиксель. Кадр в таком случае пересъёмывается, а вывод
-      «поехала вёрстка» делается замером, а не долей расхождения.
+- **A kit rule lives in a cascade layer.** The check is `pnpm run check:cascade-layer`. It reads the
+  second kit's component styles and the styling layer, judges the wrapper and the order of the
+  sublayers; the accepted list is `tools/cascade-layer-allowlist.json`.
+    - **A component's styles file is declared in the sublayer `rt-kit.components` whole.** There is
+      one wrapper per file: a second one leaves part of the rules outside while the file looks
+      wrapped. A new file is started wrapped at once — one that arrived past the layer works, fails
+      nothing and is visible only by eye at a consumer who has nothing left to override it with.
+    - **A rule arguing with a layerless rule of a foreign library is declared outside the layer and
+      says so next to itself.** A layerless rule is stronger than any layered one regardless of
+      specificity, and the order of layers does not change that: inside a layer such a rule loses
+      silently — the look at a consumer with layers diverges from the look at one who takes the
+      ready-made CSS. Outside the layer goes exactly the disputed pair of properties, the styling
+      stays in the layer, and next to it stands an explanation naming the foreign rule: without it
+      the next reader puts what was taken out back. The explanation at that is machine-readable:
+      the word `rt-layer-outside` in it tells a deliberate move out from the miss "part of the file
+      rode past the brace", and a rule after the wrapper without that word fails the cascade layer
+      check. That exactly the disputed part was taken out, and not half the file, the check does not
+      judge — that is held by a probe of its own over the built CSS.
+    - **Outside the wrapper only `@use`, `@forward` and `@import` are lawful.** Sass demands them at
+      the start of the file and fails the build on a declaration driven inside the block.
+    - **The order of the sublayers is declared in advance — `@layer rt-kit.vendor, rt-kit.base,
+      rt-kit.components;`.** A sublayer not named in advance takes its place in the cascade by its
+      first appearance, and they appear in the order of loading: Angular injects a component's
+      styles as a separate block, and it can outrun the base.
+    - **Declarations on the page root do not go into the layer.** Repainting the brand is held by
+      the order: the consumer declares their own scale after `tokens.css` and wins. Having ridden
+      into the layer, the declaration takes that possibility away from them.
+    - **Foreign CSS that the kit fixes is included in the bottom sublayer `vendor`.** A layer puts
+      the kit's rules below everything declared outside a layer — not only below the application
+      but below such a library too. The text editor's theme, included past the sublayer, began
+      winning over the kit, and the editor's panel rebuilt itself silently; five showcase frames
+      caught it, and at a consumer nobody would have. The technique is an import with the sublayer
+      name: `@import 'quill/dist/quill.snow.css' layer(rt-kit.vendor);`
+    - **The kit does not insist on its own with an exclamation mark.** The last word belongs to the
+      application, and a kit rule arguing with it by importance cancels the very thing the layer was
+      started for. Two such rules in the table were removed together with the creation of the layer.
+    - **The layer wrapper changes the rasterisation of text in the overlay's composite layer.** The
+      layout does not move at that: forty header nodes over twenty-two properties matched to the
+      thousandth, while the frame diverged by 0.11% on a one-pixel shift of the text. A frame in
+      such a case is re-taken, and the conclusion "the layout moved" is made by a measurement, not
+      by the share of the divergence.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Согласия медиа-запроса со службой точек перелома не считает ничто: порог записан дважды,
-и разъезжаются они молча — держит это замер по обе стороны порога.
+The agreement of the media query with the breakpoints service is counted by nothing: the threshold
+is written down twice, and they drift apart silently — that is held by a measurement on both sides
+of the threshold.
 
-Живость токена проверяется поиском по дереву, а не сборкой: мёртвый токен собирается
-наравне с живым и виден только тому, кто спросит.
+The liveness of a token is checked by a search over the tree rather than by the build: a dead
+token builds on a par with a live one and is visible only to whoever asks.
 
-## Паттерны
+## Patterns
 
-- `rt-tools-styling-tokens` — токены и ручки тем, контраст тёмной темы, сборка слоя
-  оформления.
+- `rt-tools-styling-tokens` — tokens and theme handles, the dark theme's contrast, building the
+  styling layer.

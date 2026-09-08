@@ -1,55 +1,57 @@
-# status-report — что здесь своё
+# status-report — what is its own here
 
-Имена и привязки этого дерева при правиле `SKILL.md` рядом.
+The names and bindings of this tree, next to the rule `SKILL.md` beside it.
 
-Правило говорит приёмом и называет пути, общие для деревьев мастерской, — их переписывать
-здесь не надо. Сюда идёт только то, чего пакет знать не может: как названы вещи именно в этом
-репозитории, и в каком его файле каждая статья правила исполняется.
+The rule speaks by technique and names the paths common to the workshop trees — they need no
+rewriting here. Only what the package cannot know goes here: how things are named in this very
+repository, and in which of its files each article of the rule is carried out.
 
-## Как это называется здесь
+## What it is called here
 
-Только то, что расходится с правилом: ключ задач, адрес борды, префикс компонентов, имя
-владеющей сущности, валюта хранения, набор областей коммита. Строку, которая просто повторяет
-правило, сюда не переносят — она устареет отдельно от него.
+Only what diverges from the rule: the task key, the board address, the component prefix, the name
+of the owning entity, the storage currency, the set of commit scopes. A line that merely repeats
+the rule is not carried here — it would go stale apart from it.
 
-- **В правиле** — Здесь
-- **ключ задачи** — `RT-<номер>`; борда — задачи репозитория на хостинге
-- **главная ветка** — `main`
-- **замысел эпика** — файл в `docs/plans/`; порядок задач — его раздел «Порядок задач»
-- **запись хода в папке задачи** — `docs/tasks/<ветка>/progress.md`, раздел «Где стоим»
-- **исполняемый файл хостинга** — `/opt/homebrew/bin/gh` — имя `gh` в оболочке занято чужим псевдонимом
+- **In the rule** — Here
+- **the task key** — `RT-<number>`; the board is the repository issues on the hosting
+- **the main branch** — `main`
+- **the epic plan** — a file in `docs/plans/`; the task order is its section «Порядок задач»
+- **the progress record in the task folder** — `docs/tasks/<branch>/progress.md`, the section «Where we stand»
+- **the hosting executable** — `/opt/homebrew/bin/gh` — the name `gh` in the shell is taken by a foreign alias
 
-## Где это лежит
+## Where it lives
 
-- **замыслы эпиков** — `docs/plans/`
-- **папки задач** — `docs/tasks/`
-- **страж утверждений о дереве** — `.claude/hooks/claim-guard.sh`
-- **страж заявки, стоящей черновиком** — `.claude/hooks/git-guard-draft-ready.sh`
+- **the epic plans** — `docs/plans/`
+- **the task folders** — `docs/tasks/`
+- **the guard of statements about the tree** — `.claude/hooks/claim-guard.sh`
+- **the guard of a request left as a draft** — `.claude/hooks/git-guard-draft-ready.sh`
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-Первая колонка — статья дословно, как она написана в разделе «Как закон применяется здесь»
-(жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает то,
-чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
+The first column is the article verbatim, as it is written in the section «How the law applies
+here» (the bold part of the item). An article without a line and a line without an article are a
+divergence: the rule promises what the tree does not have, or the tree holds what the rule is
+silent about.
 
-- **The work state is shown as a table, not as prose.** — **Не проверяется ничем.** Ответ владельцу в дерево не ложится, и читать его нечему; держится памятью отвечающего.
-- **The epic itself is described by text above the table, not by a row in it.** — **Не проверяется ничем.** Форму ответа владельцу не читает ни одна сверка; держится памятью отвечающего.
-- **The epic's tasks are listed all, and in the order the plan assigned them.** — **Не проверяется ничем.** Порядок стоит в замысле эпика — `docs/plans/`, — но сверить с ним текст ответа некому.
-- **Every cell about the tree's state is backed by a command run by the same turn.** — `.claude/hooks/claim-guard.sh:claims` — перечень утверждений о дереве; ход, сказавший такое без команды, отбивается.
-- **A run confirms the commit it ran on.** — **Не проверяется ничем.** Страж утверждений видит, что команда была, но её вывод с вершиной ветки не сверяет.
-- **A draft PR is called a draft aloud, together with what we wait for.** — `.claude/hooks/git-guard-draft-ready.sh:run_gh` — спрашивает состояние заявки и требует снять черновик либо назвать ожидание вслух.
-- **A task folder left as an empty template is "created, not started".** — **Не проверяется ничем.** Образец лежит в `docs/tasks/_template/`, и отличить незаполненную копию от заполненной нечем.
-- **Under the table — no more than two lines.** — **Не проверяется ничем.** Длину ответа владельцу не считает никто.
+- **The work state is shown as a table, not as prose.** — **Not checked.** The reply to the owner does not land in the tree, and there is nothing to read it with; it is held by the memory of whoever answers.
+- **The epic itself is described by text above the table, not by a row in it.** — **Not checked.** The form of the reply to the owner is read by no audit; it is held by the memory of whoever answers.
+- **The epic's tasks are listed all, and in the order the plan assigned them.** — **Not checked.** The order stands in the epic plan — `docs/plans/` — but there is nobody to reconcile the reply text with it.
+- **Every cell about the tree's state is backed by a command run by the same turn.** — `.claude/hooks/claim-guard.sh:claims` — the list of statements about the tree; a turn that said such a thing without a command is refused.
+- **A run confirms the commit it ran on.** — **Not checked.** The statement guard sees that the command was there, but it does not reconcile its output with the branch tip.
+- **A draft PR is called a draft aloud, together with what we wait for.** — `.claude/hooks/git-guard-draft-ready.sh:run_gh` — it asks the state of the request and demands either lifting the draft or naming aloud what is awaited.
+- **A task folder left as an empty template is "created, not started".** — **Not checked.** The sample lies in `docs/tasks/_template/`, and there is nothing to tell an unfilled copy from a filled one.
+- **Under the table — no more than two lines.** — **Not checked.** The length of the reply to the owner is counted by nobody.
 
-## Что ещё стоит знать при чтении кода
+## What else is worth knowing when reading the code
 
-- Задача на борде читается запросом к хостингу, а не подкомандой просмотра: та тянет доски
-  старого образца, и хостинг отвечает отказом о них, ничего не показав.
-- Прогоны здесь гоняет свой раннер, и последний прогон ветки бывает старше её вершины.
+- A task on the board is read by a request to the hosting, not by the view subcommand: that one
+  pulls boards of the old kind, and the hosting answers with a refusal about them, showing nothing.
+- The runs here are driven by its own runner, and the last run of a branch is sometimes older than
+  its tip.
 
-## Чем это проверяется
+## What this is checked by
 
-- `.claude/hooks/claim-guard.sh` — отбивает завершение хода, в котором утверждение о дереве
-  сказано без команды, показавшей его.
-- `.claude/hooks/git-guard-draft-ready.sh` — отбивает завершение хода, в котором работа готова,
-  а заявка стоит черновиком и ожидание вслух не названо.
+- `.claude/hooks/claim-guard.sh` — refuses the end of a turn in which a statement about the tree
+  was made without a command that showed it.
+- `.claude/hooks/git-guard-draft-ready.sh` — refuses the end of a turn in which the work is ready
+  while the request stands as a draft and what is awaited is not named aloud.

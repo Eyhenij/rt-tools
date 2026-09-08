@@ -1,459 +1,487 @@
-# Сценарии — проверки дерева
+# Scenarios — the checks of the tree
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной. Префикс общий на домен, и номера при переезде в поддомен не
-пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier stands at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason. The prefix is shared by the domain, and
+the numbers were not recounted on the move into the subdomain: the number ties a scenario to a test
+title.
 
-### SC-AK-103 — файл длиннее предела отбивается
+### SC-AK-103 — a file longer than the limit is refused
 
-Дано в дереве есть файл судимого рода длиннее предела, и в перечне его нет
-Когда идёт проверка длины
-Тогда она отказывает и называет путь, длину и предел
+Given the tree holds a file of a judged kind longer than the limit, and it is not in the list
+When the length check runs
+Then it refuses and names the path, the length and the limit
 
-Покрыто: `projects/agent-kit/tests/checks-file-size.test.sh`.
+Covered: `projects/agent-kit/tests/checks-file-size.test.sh`.
 
-### SC-AK-104 — накопленное названо и не отбивает
+### SC-AK-104 — what accumulated is named and refuses nothing
 
-Дано файл длиннее предела стоит в перечне принятого
-Когда идёт проверка длины
-Тогда она выходит с успехом и называет, сколько файлов принято
+Given a file longer than the limit stands in the list of the accepted
+When the length check runs
+Then it leaves with success and names how many files are accepted
 
-Покрыто: `projects/agent-kit/tests/checks-file-size.test.sh`.
+Covered: `projects/agent-kit/tests/checks-file-size.test.sh`.
 
-### SC-AK-105 — долг отличается от принятого
+### SC-AK-105 — debt differs from the accepted
 
-Дано в перечне есть и принятое, и долг
-Когда идёт проверка длины
-Тогда долг назван отдельно от принятого, а не общим числом
+Given the list holds both the accepted and debt
+When the length check runs
+Then the debt is named apart from the accepted, not by a common number
 
-Покрыто: `projects/agent-kit/tests/checks-file-size.test.sh`.
+Covered: `projects/agent-kit/tests/checks-file-size.test.sh`.
 
-### SC-AK-106 — строка перечня, у которой нет файла, отбивает
+### SC-AK-106 — a line of the list that has no file refuses
 
-Дано в перечне стоит путь, которого в дереве нет
-Когда идёт проверка длины
-Тогда она отказывает и называет устаревшую строку
+Given the list holds a path that is not in the tree
+When the length check runs
+Then it refuses and names the stale line
 
-Покрыто: `projects/agent-kit/tests/checks-file-size.test.sh`.
+Covered: `projects/agent-kit/tests/checks-file-size.test.sh`.
 
-### SC-AK-107 — данные и описание прошлого не судятся
+### SC-AK-107 — data and the archive are not judged
 
-Дано в дереве лежат словарь локали, настройка сборки и запись архива длиннее предела
-Когда идёт проверка длины
-Тогда ни один из них не отбит: их читают поиском, а не подряд
+Given the tree holds a locale dictionary, a build setting and an archive record longer than the limit
+When the length check runs
+Then not one of them is refused: they are read by search, not in a row
 
-Покрыто: `projects/agent-kit/tests/checks-file-size.test.sh`.
+Covered: `projects/agent-kit/tests/checks-file-size.test.sh`.
 
-### SC-AK-108 — длина считается как у линтера
+### SC-AK-108 — the length is counted as by the linter
 
-Дано файл кончается переводом строки
-Когда считается его длина
-Тогда она равна числу разрывов плюс один — тому же числу, что видит линтер
+Given a file ends with a line break
+When its length is counted
+Then it equals the number of breaks plus one — the same number the linter sees
 
-Покрыто: `projects/agent-kit/tests/checks-file-size.test.sh`.
+Covered: `projects/agent-kit/tests/checks-file-size.test.sh`.
 
-### SC-AK-244 — набор из пакета подпроекта считается наравне с либами
+### SC-AK-244 — a bundle from a subproject package counts on a par with the libs
 
-Дано пакет объявлен зависимостью подпроекта и в корне дерева не лежит
-Когда идёт проверка повторов
-Тогда его перечисления читаются, и своё перечисление под тем же набором названо повтором
+Given the package is declared a dependency of a subproject and does not lie in the root of the tree
+When the repeats check runs
+Then its listings are read, and one's own listing under the same bundle is named a repeat
 
-Покрыто: `projects/agent-kit/tests/checks-push-gate.test.sh`.
+Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
-### SC-AK-245 — дерево без внешнего пакета получает сверку своих повторов
+### SC-AK-245 — a tree without the external package gets the audit of its own repeats
 
-Дано пакета, названного в настройке, в дереве нет вовсе
-Когда идёт проверка повторов
-Тогда она доходит до сверки своих и отдаёт нулевой код, а не отказ чтения каталога
+Given the package named in the setting is not in the tree at all
+When the repeats check runs
+Then it reaches the audit of its own and gives back a zero code, not a refusal to read the directory
 
-Покрыто: `projects/agent-kit/tests/checks-push-gate.test.sh`.
+Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
-### SC-AK-268 — правило, приехавшее подключённым пакетом, расхождением не считается
+### SC-AK-268 — a rule that arrived by a connected package does not count as a divergence
 
-Дано класс элемента стоит в шаблоне дерева, а его правило объявлено в файле стилей пакета,
-который приложение подключило у себя строкой `@use`
-Когда идёт проверка классов вёрстки
-Тогда класс объявленным считается, и в расхождения он не попадает: правило работает, лежит в
-зависимости и починке в дереве не поддаётся
+Given the class of an element stands in a template of the tree, while its rule is declared in a
+style file of a package the application connected at home by an `@use` line
+When the markup classes check runs
+Then the class counts as declared and does not fall into the divergences: the rule works, lies in a
+dependency and yields to no fix in the tree
 
-Покрыто: `projects/agent-kit/tests/checks-styles.test.sh`.
+Covered: `projects/agent-kit/tests/checks-styles.test.sh`.
 
-### SC-AK-269 — подключение внутри пакетного файла не разбирается
+### SC-AK-269 — a connection inside a package file is not taken apart
 
-Дано подключённый пакетный файл сам подключает второй файл того же пакета, и объявление лежит
-во втором
-Когда идёт проверка классов вёрстки
-Тогда объявление не читается: объявленным считается то, что приложение назвало само, и обход
-остаётся односложным
+Given a connected package file itself connects a second file of the same package, and the
+declaration lies in the second
+When the markup classes check runs
+Then the declaration is not read: what counts as declared is what the application named itself, and
+the walk stays one link long
 
-Покрыто: `projects/agent-kit/tests/checks-styles.test.sh`.
+Covered: `projects/agent-kit/tests/checks-styles.test.sh`.
 
-### SC-AK-270 — ненайденный пакет проверку не роняет
+### SC-AK-270 — a package that is not found does not take the check down
 
-Дано в файле стилей стоит подключение пакета, которого в дереве нет
-Когда идёт проверка классов вёрстки
-Тогда она идёт дальше по своим исходникам и отказом чтения не кончается
+Given a style file holds a connection of a package that is not in the tree
+When the markup classes check runs
+Then it goes on over its own sources and does not end with a refusal to read
 
-Покрыто: `projects/agent-kit/tests/checks-styles.test.sh`.
+Covered: `projects/agent-kit/tests/checks-styles.test.sh`.
 
-### SC-AK-271 — разросшийся долг называется разросшимся
+### SC-AK-271 — debt that grew is named as grown
 
-Дано класс без правила стоит в списке известного, а в дереве он появился ещё в одном шаблоне
-Когда идёт проверка классов вёрстки
-Тогда она называет долг разросшимся и перечисляет добавившиеся файлы, а указания убрать прежнюю
-строку и завести новую не выдаёт ни одного
+Given a class without a rule stands in the known list, and in the tree it appeared in one more
+template
+When the markup classes check runs
+Then it names the debt as grown and lists the files added, and gives not a single instruction to
+remove the former line and create a new one
 
-Покрыто: `projects/agent-kit/tests/checks-styles.test.sh`.
+Covered: `projects/agent-kit/tests/checks-styles.test.sh`.
 
-### SC-AK-272 — сократившийся перечень называется сократившимся
+### SC-AK-272 — a list that shrank is named as shrunk
 
-Дано класс без правила стоит в списке известного с двумя файлами, а в дереве остался в одном
-Когда идёт проверка классов вёрстки
-Тогда она называет долг сократившимся и говорит, что из строки пора убрать: список сокращается,
-и это починка, а не новое расхождение
+Given a class without a rule stands in the known list with two files, and in the tree it is left in
+one
+When the markup classes check runs
+Then it names the debt as shrunk and says what is time to take out of the line: the list shrinks,
+and this is a fix, not a new divergence
 
-Покрыто: `projects/agent-kit/tests/checks-styles.test.sh`.
+Covered: `projects/agent-kit/tests/checks-styles.test.sh`.
 
-### SC-AK-273 — строка о подкреплённом классе по-прежнему убирается
+### SC-AK-273 — a line about a backed class is still removed
 
-Дано класс из списка известного подкреплён правилом в стилях дерева
-Когда идёт проверка классов вёрстки
-Тогда она отказывает и говорит убрать строку: долг починен, и место ему в истории, а не в списке
+Given a class from the known list is backed by a rule in the styles of the tree
+When the markup classes check runs
+Then it refuses and says to remove the line: the debt is fixed, and its place is in the history, not
+in the list
 
-Покрыто: `projects/agent-kit/tests/checks-styles.test.sh`.
+Covered: `projects/agent-kit/tests/checks-styles.test.sh`.
 
-### SC-AK-274 — правило, собранное вложенностью, читается объявлением
+### SC-AK-274 — a rule assembled by nesting is read as a declaration
 
-Дано класс элемента объявлен конкатенацией — вложенным `&-<хвост>` внутри `&__<голова>`
-Когда идёт проверка классов вёрстки
-Тогда полное имя собирается из вложенности и класс считается объявленным: правило работает, и
-расхождением оно не бывает
+Given the class of an element is declared by concatenation — a nested `&-<tail>` inside `&__<head>`
+When the markup classes check runs
+Then the full name is assembled from the nesting and the class counts as declared: the rule works,
+and it is never a divergence
 
-Покрыто: `projects/agent-kit/tests/checks-styles.test.sh`.
+Covered: `projects/agent-kit/tests/checks-styles.test.sh`.
 
-### SC-AK-275 — вложенность собирается на любую глубину
+### SC-AK-275 — the nesting is assembled to any depth
 
-Дано класс объявлен третьим коленом — `&__<голова> { &-<середина> { &-<хвост> } }`
-Когда идёт проверка классов вёрстки
-Тогда собранным считается полное имя со всеми коленами, а не только первые два
+Given a class is declared by a third joint — `&__<head> { &-<middle> { &-<tail> } }`
+When the markup classes check runs
+Then the assembled name counts as the full one with all the joints, not only the first two
 
-Покрыто: `projects/agent-kit/tests/checks-styles.test.sh`.
+Covered: `projects/agent-kit/tests/checks-styles.test.sh`.
 
-### SC-AK-276 — конкатенация не выдумывает имён за пределами своего блока
+### SC-AK-276 — concatenation invents no names outside its own block
 
-Дано `&-<хвост>` стоит в файле стилей вне какого-либо объявления элемента
-Когда идёт проверка классов вёрстки
-Тогда объявленным ничего не становится: имя без головы не собирается, и класс без правила
-по-прежнему называется расхождением
+Given `&-<tail>` stands in a style file outside any declaration of an element
+When the markup classes check runs
+Then nothing becomes declared: a name without a head is not assembled, and a class without a rule is
+still named a divergence
 
-Покрыто: `projects/agent-kit/tests/checks-styles.test.sh`.
+Covered: `projects/agent-kit/tests/checks-styles.test.sh`.
 
-### SC-AK-400 — годная запись списка принятого разобрана
+### SC-AK-400 — a sound record of the accepted list is parsed
 
-Дано запись несёт причину и номер задачи, которой она внесена
-Когда список читается общим разбором
-Тогда запись разобрана, а принятое и долг считаются вместе одним перечнем ключей
+Given the record carries a reason and the number of the task that added it
+When the list is read by the shared parser
+Then the record is parsed, and the accepted and the debt are counted together as one list of keys
 
-Покрыто: `projects/agent-kit/tests/checks-config.test.sh`.
+Covered: `projects/agent-kit/tests/checks-config.test.sh`.
 
-### SC-AK-401 — запись без причины отбивает разбор
+### SC-AK-401 — a record without a reason refuses the parse
 
-Дано у записи пустая причина
-Когда список читается общим разбором
-Тогда разбор отбит и назвал саму запись
+Given the record has an empty reason
+When the list is read by the shared parser
+Then the parse is refused and named the record itself
 
-Покрыто: `projects/agent-kit/tests/checks-config.test.sh`.
+Covered: `projects/agent-kit/tests/checks-config.test.sh`.
 
-### SC-AK-402 — запись без номера задачи отбивает разбор
+### SC-AK-402 — a record without a task number refuses the parse
 
-Дано у записи нет номера задачи либо он не той формы, что у задач дерева
-Когда список читается общим разбором
-Тогда разбор отбит: спросить о записи было бы некого
+Given the record has no task number, or it is not of the shape the tasks of the tree have
+When the list is read by the shared parser
+Then the parse is refused: there would be nobody to ask about the record
 
-Покрыто: `projects/agent-kit/tests/checks-config.test.sh`.
+Covered: `projects/agent-kit/tests/checks-config.test.sh`.
 
-### SC-AK-403 — сторона, записанная перечнем, отбивает разбор
+### SC-AK-403 — a side written as a list of lines refuses the parse
 
-Дано сторона списка записана перечнем строк, а не объектом с причинами
-Когда список читается общим разбором
-Тогда разбор отбит и назвал файл: у записи нет места ни для причины, ни для номера задачи
+Given a side of the list is written as a list of lines, not as an object with reasons
+When the list is read by the shared parser
+Then the parse is refused and named the file: a record has room for neither a reason nor a task
+number
 
-Покрыто: `projects/agent-kit/tests/checks-config.test.sh`.
+Covered: `projects/agent-kit/tests/checks-config.test.sh`.
 
-### SC-AK-404 — списка нет вовсе, и разбор работу не отбивает
+### SC-AK-404 — there is no list at all, and the parse refuses no work
 
-Дано файла списка в дереве нет
-Когда список читается общим разбором
-Тогда разбор отдаёт пустое: проверка, встреченная впервые, показывает найденное новым
+Given there is no list file in the tree
+When the list is read by the shared parser
+Then the parse gives back an empty one: a check met for the first time shows what it found as new
 
-Покрыто: `projects/agent-kit/tests/checks-config.test.sh`.
+Covered: `projects/agent-kit/tests/checks-config.test.sh`.
 
-### SC-AK-658 — тяжёлый текст назван по весу
+### SC-AK-658 — a heavy text is named by weight
 
-Дано файл слоя правил короче строкового предела, но тяжелее предела веса
-Когда идёт проверка длины
-Тогда файл назван по весу: строки веса не меряют
+Given a file of the rules layer is shorter than the line limit but heavier than the weight limit
+When the length check runs
+Then the file is named by weight: lines do not measure weight
 
-Покрыто: `projects/agent-kit/tests/checks-file-size.test.sh`.
+Covered: `projects/agent-kit/tests/checks-file-size.test.sh`.
 
-### SC-AK-659 — лёгкий текст той же длины молчит
+### SC-AK-659 — a light text of the same length stays silent
 
-Дано два файла одной длины в строках, один вдвое тяжелее другого
-Когда идёт проверка длины
-Тогда назван только тяжёлый
+Given two files of one length in lines, one twice as heavy as the other
+When the length check runs
+Then only the heavy one is named
 
-Покрыто: `projects/agent-kit/tests/checks-file-size.test.sh`.
+Covered: `projects/agent-kit/tests/checks-file-size.test.sh`.
 
-### SC-AK-660 — спутник из счёта веса выведен
+### SC-AK-660 — a companion is taken out of the weight count
 
-Дано компаньон правила тяжелее предела веса
-Когда идёт проверка длины
-Тогда он не назван: таблица связи растёт с числом утверждений, а не с многословием
+Given a rule companion is heavier than the weight limit
+When the length check runs
+Then it is not named: a link table grows with the number of statements, not with wordiness
 
-Покрыто: `projects/agent-kit/tests/checks-file-size.test.sh`.
+Covered: `projects/agent-kit/tests/checks-file-size.test.sh`.
 
-### SC-AK-661 — без числа веса проверка молчит
+### SC-AK-661 — without a weight number the check stays silent
 
-Дано дерево не назвало предела веса
-Когда идёт проверка длины
-Тогда судятся одни строки, и вторая цифра в сводке не печатается
+Given the tree named no weight limit
+When the length check runs
+Then lines alone are judged, and the second figure is not printed in the digest
 
-Покрыто: `projects/agent-kit/tests/checks-file-size.test.sh`.
+Covered: `projects/agent-kit/tests/checks-file-size.test.sh`.
 
-### SC-AK-861 — долг тяжёлого по знакам файла не отбивает
+### SC-AK-861 — the debt of a file heavy in characters refuses nothing
 
-Дано текст тяжелее предела веса, но короче предела строк, записан в списке известного долгом
-Когда идёт проверка длины
-Тогда она проходит и не называет запись устаревшей
+Given a text heavier than the weight limit but shorter than the line limit is written in the known
+list as debt
+When the length check runs
+Then it passes and does not name the record as stale
 
-Покрыто: `projects/agent-kit/tests/checks-file-size.test.sh`.
+Covered: `projects/agent-kit/tests/checks-file-size.test.sh`.
 
-### SC-AK-520 — текст слоя правил судится своим пределом
+### SC-AK-520 — a text of the rules layer is judged by its own limit
 
-Дано текст лежит под корнем слоя правил и длиннее предела текста, но короче предела кода
-Когда гоняется проверка длины
-Тогда она называет файл и говорит, что судила его пределом текста
+Given a text lies under the root of the rules layer and is longer than the text limit but shorter
+than the code limit
+When the length check is run
+Then it names the file and says it judged it by the text limit
 
-Покрыто: `projects/agent-kit/tests/checks-file-size.test.sh`.
+Covered: `projects/agent-kit/tests/checks-file-size.test.sh`.
 
-### SC-AK-521 — дерево без названных корней текста судится одним пределом
+### SC-AK-521 — a tree without named text roots is judged by one limit
 
-Дано корни текста в настройке не названы
-Когда гоняется проверка длины
-Тогда все файлы судятся пределом кода, а сводка называет одно число
+Given the text roots are not named in the setting
+When the length check is run
+Then all the files are judged by the code limit, and the digest names one number
 
-Покрыто: `projects/agent-kit/tests/checks-file-size.test.sh`.
+Covered: `projects/agent-kit/tests/checks-file-size.test.sh`.
 
-### SC-AK-549 — проверка, не сумевшая отработать, отказывает вместо пропуска
+### SC-AK-549 — a check that could not do its work refuses instead of skipping
 
-Дано проверка входит в набор гейта, а обвязка её сломана — нет нужного пакета либо в настройке
-дерева пустое имя предмета
-Когда гейт её зовёт
-Тогда она отказывает ненулевым кодом и говорит, что сломалась сама проверка, а не предмет; а
-случаи «предмета нет», «адрес не задан» и «служба не отвечает» отдают код пропуска — не ноль и
-не отказ
+Given the check is part of the gate set, and its harness is broken — a needed package is missing or
+the setting of the tree holds an empty name of the subject
+When the gate calls it
+Then it refuses with a non-zero code and says that the check itself broke, not the subject; while
+the cases "there is no subject", "the address is not set" and "the service does not answer" give
+back the skip code — neither zero nor a refusal
 
-Не покрыто: тестом с идентификатором это не закрыть — проверяется прогоном самой проверки. Проверено на месте на сверке схемы с миграциями: шесть исходов — сошедшиеся миграции, три пропуска нулём и два сломанных случая отказом кодом один, каждый со своей строкой. До правки все шесть возвращали ноль, и проверка простояла в наборе гейта, ни разу ничего не сверив.
+Not covered: a test with an identifier cannot close this — it is checked by a run of the check
+itself. Checked on the spot on the schema-against-migrations audit: six outcomes — the migrations
+came together, three skips by the skip code and two broken cases refusing with code one, each with a
+line of its own. Before the edit all six returned zero, and the check stood in the gate set without
+ever checking a thing.
 
-### SC-AK-680 — журнал выпусков делится тем движением, которое его растит
+### SC-AK-680 — the release journal is split by the move that grows it
 
-Дано журнал выпусков перерос предел длины документа
-Когда идёт выпуск новой редакции
-Тогда старые выпуски уезжают в отдельный файл тем же коммитом, которым поднята редакция:
-меренный на пуше, журнал останавливал пуш всему дереву — и не тому, кто его растил
+Given the release journal outgrew the length limit of a document
+When a new edition is released
+Then the old releases leave into a separate file by the same commit that raised the edition:
+measured at the push, the journal stopped the push of the whole tree — and not for whoever grew it
 
-Не покрыто: тестом с идентификатором это не закрыть — предметом команды служит сам файл журнала, а двойника у него нет. Проверено прогоном на месте: журнал в 655 строк поделён на 224 свежих и 435 вынесенных, десять свежих выпусков остались, тринадцать старых уехали в файл, названный диапазоном версий; на журнале в 220 строк команда не тронула ничего и сказала об этом.
+Not covered: a test with an identifier cannot close this — the subject of the command is the journal
+file itself, and it has no double. Checked by a run on the spot: a journal of 655 lines was split
+into 224 fresh and 435 taken out, ten fresh releases stayed, thirteen old ones left into a file
+named by a version range; on a journal of 220 lines the command touched nothing and said so.
 
-### SC-AK-678 — проверка объявляет пропуск кодом возврата, а не строкой вывода
+### SC-AK-678 — a check declares a skip by the exit code, not by a line of output
 
-Дано проверке нечего смотреть: предмета нет, адрес не задан, адрес боевой или служба не
-отвечает
-Когда гейт её зовёт
-Тогда она выходит кодом пропуска, а не нулём: строку вывода читает человек, код — зовущий, и
-ноль на пропуске в сводке набора неотличим от пройденной проверки
+Given the check has nothing to look at: there is no subject, the address is not set, the address is
+the production one or the service does not answer
+When the gate calls it
+Then it leaves with the skip code, not with zero: the line of output is read by a person, the code
+by the caller, and zero on a skip is indistinguishable in the digest of the set from a check that
+passed
 
-### SC-AK-679 — пропуск называется вслух, но пуш не отбивает
+### SC-AK-679 — a skip is named aloud but refuses no push
 
-Дано набор гейта пуша прошёл, и одна из проверок вышла кодом пропуска
-Когда гард решает судьбу пуша
-Тогда пуш идёт — проверка, которой нечего смотреть, это не поломка, — а имя пропущенной
-проверки печатается: молчание о ней и есть та неотличимость, ради которой код заведён
+Given the push gate set passed, and one of the checks left with the skip code
+When the guard decides the fate of the push
+Then the push goes — a check with nothing to look at is no breakage — and the name of the skipped
+check is printed: silence about it is the very indistinguishability the code was created for
 
-Покрыто: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
-### SC-AK-569 — тяжёлый шаг набора зовётся по своему предмету
+### SC-AK-569 — a heavy step of the set is called by its own subject
 
-Дано ветка задела пути одного предмета — витрины кита, приёмника или ни одного из них
-Когда собирается набор гейта пуша
-Тогда зовутся тяжёлые шаги только задетых предметов; путь, не попавший ни в один предмет, и
-общее основание дерева поднимают весь набор, а пустая база сравнения — тоже весь
+Given the branch touched the paths of one subject — the showcase of a kit, the receiver or none of
+them
+When the push gate set is assembled
+Then only the heavy steps of the touched subjects are called; a path that fell into no subject, and
+the common base of the tree, raise the whole set, and an empty comparison base raises the whole set
+too
 
-Покрыто: `projects/agent-kit/tests/tree-push-checks.test.sh`.
+Covered: `projects/agent-kit/tests/tree-push-checks.test.sh`.
 
-### SC-AK-673 — дешёвая проверка дерева зовётся при любом составе правки
+### SC-AK-673 — a cheap check of the tree is called at any composition of an edit
 
-Дано ветка задела только тексты либо только снимок зависимостей
-Когда собирается набор гейта пуша
-Тогда проверки слоя оформления зовутся в обоих случаях: предметом они не делятся, потому что
-вместе стоят три секунды
+Given the branch touched only the texts or only the dependency snapshot
+When the push gate set is assembled
+Then the checks of the styling layer are called in both cases: they are not split by subject,
+because together they take three seconds
 
-Покрыто: `projects/agent-kit/tests/tree-push-checks.test.sh`.
+Covered: `projects/agent-kit/tests/tree-push-checks.test.sh`.
 
-### SC-AK-594 — названная сторона списка известного разобрана
+### SC-AK-594 — a named side of the known list is parsed
 
-Дано список известного со стороной, которую разбору назвали перечнем
-Когда разбор читает список
-Тогда записи этой стороны приходят разобранными, с причиной и номером задачи у каждой
+Given a known list with a side that was named to the parser by a list
+When the parser reads the list
+Then the records of this side arrive parsed, with a reason and a task number at each
 
-### SC-AK-595 — отказ о стороне не объектом показывает форму записи
+### SC-AK-595 — the refusal about a side that is not an object shows the shape of a record
 
-Дано сторона списка известного, записанная перечнем вместо объекта
-Когда разбор читает список
-Тогда отказ называет не только сторону, но и форму записи: ключ, причину и номер задачи
+Given a side of the known list written as a list instead of an object
+When the parser reads the list
+Then the refusal names not only the side but the shape of a record: the key, the reason and the task
+number
 
-Покрыто: `projects/agent-kit/tests/checks-config.test.sh`.
+Covered: `projects/agent-kit/tests/checks-config.test.sh`.
 
-### SC-AK-596 — точная копия таблицы соответствий названа
+### SC-AK-596 — an exact copy of a correspondence table is named
 
-Дано две либы, в каждой таблица соответствий с одними и теми же парами
-Когда идёт проверка повторов
-Тогда пара таблиц называется одной таблицей соответствий
+Given two libs, each with a correspondence table holding the same pairs
+When the repeats check runs
+Then the pair of tables is named as one correspondence table
 
-### SC-AK-597 — копия, разошедшаяся на пару, названа тоже
+### SC-AK-597 — a copy that diverged by one pair is named too
 
-Дано те же две таблицы, но одна пара из шести в них разная
-Когда идёт проверка повторов
-Тогда пара таблиц называется, и строка говорит, на сколько пар из скольких они разошлись
+Given the same two tables, but one pair out of six differs in them
+When the repeats check runs
+Then the pair of tables is named, and the line says on how many pairs out of how many they diverged
 
-### SC-AK-598 — две разные таблицы повтором не считаются
+### SC-AK-598 — two different tables do not count as a repeat
 
-Дано две таблицы, у которых не совпадает ни одна пара
-Когда идёт проверка повторов
-Тогда строки о таблице соответствий нет
+Given two tables in which not one pair matches
+When the repeats check runs
+Then there is no line about a correspondence table
 
-Покрыто: `projects/agent-kit/tests/checks-dupes.test.sh`.
+Covered: `projects/agent-kit/tests/checks-dupes.test.sh`.
 
-### SC-AK-681 — свободный номер сценария ищется во всех ветках
+### SC-AK-681 — a free scenario number is looked for across all branches
 
-Дано соседняя работа держит свои номера сценариев в невлитой ветке
-Когда исполнитель берёт номер новому сценарию
-Тогда занятым считается номер, стоящий хоть в какой ветке — своей или удалённой: смотревший
-только главную раздал шесть номеров дважды, и двигаться пришлось той работе, чья договорённость
-не влита
+Given neighbouring work keeps its scenario numbers in an unmerged branch
+When the executor takes a number for a new scenario
+Then a number standing in any branch — one's own or a remote one — counts as taken: whoever looked
+at main alone handed out six numbers twice, and it was the work whose agreement is not merged that
+had to move
 
-Не покрыто: тестом с идентификатором это не закрыть — предмет команды сами ветки дерева, и двойника у них нет. Проверено прогоном на месте: по префиксу `AK` команда видит номер, занятый только невлитой веткой, и предлагает следующий за ним; из главной ветки виден был бы номер на единицу меньше.
+Not covered: a test with an identifier cannot close this — the subject of the command is the
+branches of the tree themselves, and they have no double. Checked by a run on the spot: by the
+prefix `AK` the command sees a number taken only by an unmerged branch and offers the next one after
+it; from the main branch a number one lower would be visible.
 
-### SC-AK-702 — снятый из рабочего дерева файл прогона не роняет
+### SC-AK-702 — a file removed from the working tree does not take the run down
 
-Дано файл судимого рода снят из рабочего дерева, а снос ещё не заведён в историю
-Когда идёт проверка длины
-Тогда она выходит с успехом и трассировки чтения не печатает: система контроля версий помнит
-такой файл, а прочитать его нечем
+Given a file of a judged kind is removed from the working tree, and the removal is not in the
+history yet
+When the length check runs
+Then it leaves with success and prints no read trace: the version control system remembers such a
+file, and there is nothing to read it with
 
-Покрыто: `projects/agent-kit/tests/checks-file-size.test.sh`.
+Covered: `projects/agent-kit/tests/checks-file-size.test.sh`.
 
-### SC-AK-732 — прогон не требуется у ветки, которой конвейер не слушает
+### SC-AK-732 — no run is demanded of a branch the pipeline does not listen to
 
-Дано конвейер называет пути, которых не слушает, и весь вклад открытой заявки лежит под ними
-Когда сверка очереди работ спрашивает прогон на вершине
-Тогда она молчит: события у такой ветки не бывает, и совет вернуть его не исполним. Файл вне
-списка возвращает требование, а состав, которого не прочитать, судится как прежде
+Given the pipeline names the paths it does not listen to, and the whole contribution of an open
+request lies under them
+When the work queue audit asks about the run at the tip
+Then it stays silent: such a branch never has an event, and the advice to bring it back is not
+executable. A file outside the list brings the demand back, and a composition that cannot be read is
+judged as before
 
-### SC-AK-733 — открытые задачи с совпадающими заголовками перечисляются сводкой
+### SC-AK-733 — open tasks with matching titles are listed by a digest
 
-Дано в очереди работ стоят две открытые задачи об одном и том же, названные разными словами
-Когда сверка очереди работ читает её
-Тогда она называет их одной строкой сводки и расхождением не считает: совпадение слов — повод
-посмотреть, а не признак дубля, и отказ отбивал бы работу на каждой серии однотипных задач
+Given the work queue holds two open tasks about one and the same thing, named by different words
+When the work queue audit reads it
+Then it names them by one digest line and counts it as no divergence: matching words are a reason to
+look, not a sign of a duplicate, and a refusal would refuse the work at every series of similar
+tasks
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-751 — связь задачи с эпиком читается в обе стороны
+### SC-AK-751 — the link of a task with an epic is read both ways
 
-Дано метка карточки эпика названа настройкой дерева, а карточка эпика называет путь к своему
-замыслу
-Когда сверка очереди работ читает открытые задачи
-Тогда она называет расхождением обе односторонние привязки — задачу, которую замысел эпика
-называет, а её тело эпика не называет, и задачу, чьё тело эпик назвало, а замысел эпика её не
-знает; карточка без пути к замыслу и путь без файла на диске названы каждый своей строкой. Метка
-не названа — связь не судится вовсе: отличить карточку эпика от обычной задачи нечем
+Given the label of an epic card is named by the setting of the tree, and the epic card names the
+path to its plan
+When the work queue audit reads the open tasks
+Then it names as a divergence both one-sided links — a task the epic plan names while the body of
+the epic does not, and a task the epic named in its body while the epic plan does not know it; a card
+without a path to a plan and a path without a file on the disk are each named by a line of their own.
+The label is not named — the link is not judged at all: there is nothing to tell an epic card from an
+ordinary task by
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-752 — отставание ветки открытой заявки от главной называется сверкой
+### SC-AK-752 — a branch of an open request lagging behind main is named by the audit
 
-Дано у открытой заявки ветка отстала от главной ветки на несколько коммитов
-Когда сверка очереди работ читает открытые заявки
-Тогда она называет число отставания и говорит, что прогон шёл от основания, которого в главной
-ветке уже нет; на ветке без отставания и там, где сравнить нечем, она молчит
+Given the branch of an open request has fallen several commits behind the main branch
+When the work queue audit reads the open requests
+Then it names the number of the lag and says the run went from a base that is no longer in the main
+branch; on a branch without a lag and where there is nothing to compare with, it stays silent
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-774 — вызов, отбитый недоступностью хостинга, повторяется
+### SC-AK-774 — a call refused by the unavailability of the hosting is repeated
 
-Дано хостинг отвечает кодом недоступности — пятисотым, шлюзом или его таймаутом Когда вызов идёт
-из модуля очереди работ Тогда он повторяется до трёх раз с растущей паузой и проходит, как только
-хостинг ответил; отказ по праву и по несуществующей записи не повторяется вовсе, а недоступность
-дольше трёх попыток отказывает — но именно после трёх
+Given the hosting answers with an unavailability code — a five hundredth, a gateway one or its
+timeout When the call goes from the work queue module Then it is repeated up to three times with a
+growing pause and passes as soon as the hosting answered; a refusal by right and by a non-existent
+record is not repeated at all, and unavailability longer than three attempts refuses — but exactly
+after three
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-822 — пропуск сверки схемы, ставший отказом
+### SC-AK-822 — a skip of the schema audit that became a refusal
 
-Дано база недоступна, а ветка хранилища не трогала
-Когда гоняется сверка схемы с миграциями
-Тогда она пропускает: погашенная база — состояние машины, а не повод отбить пуш документации
+Given the database is unavailable, and the branch did not touch the storage
+When the schema-against-migrations audit is run
+Then it skips: a shut-down database is a state of the machine, not a reason to refuse a documentation
+push
 
-Дано база недоступна, а ветка правила схему или каталог миграций
-Когда гоняется та же сверка
-Тогда она отказывает и называет, чем поднять базу и почему порядок миграций виден только на
-пустом хранилище
+Given the database is unavailable, and the branch edited the schema or the migrations directory
+When the same audit is run
+Then it refuses and names what to raise the database with and why the order of the migrations is
+visible only on an empty storage
 
-Дано правка миграций лежит в рабочем дереве, а не в коммите
-Когда гоняется та же сверка
-Тогда она отказывает так же: незакоммиченное уходит тем же пушем следом
+Given the edit of the migrations lies in the working tree, not in a commit
+When the same audit is run
+Then it refuses the same way: the uncommitted leaves by the same push right after
 
-Покрыто: `projects/agent-kit/tests/checks-schema-drift.test.sh`.
+Covered: `projects/agent-kit/tests/checks-schema-drift.test.sh`.
 
-### SC-AK-845 — заявка поверх соседней прогона не получает, и сверка называет причину
+### SC-AK-845 — a request on top of a neighbouring one gets no run, and the audit names the reason
 
-Дано заявка открыта в ветку соседней заявки, а не в главную
-Когда сверка очереди работ проверяет её вершину
-Тогда она называет базу, сообщает, что прогона не будет, и что исправляется это переносом базы
-после слияния нижней заявки; совета перезакрыть заявку нет. Заявка в главную ветку проверяется
-прежней строкой о потерянном событии
+Given a request is opened into the branch of a neighbouring request, not into main
+When the work queue audit checks its tip
+Then it names the base, reports that there will be no run and that this is fixed by moving the base
+after the lower request is merged; there is no advice to reopen the request. A request into the main
+branch is checked by the former line about a lost event
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-869 — запись в семь суток и час чистка снимает, а проверка молчит
+### SC-AK-869 — a record of seven days and an hour the cleanup removes, and the check stays silent
 
-Дано срок хранения — семь суток, запись закоммичена семь суток и час назад
-Когда идут чистка и проверка срока
-Тогда чистка называет запись к снятию, а проверка о ней молчит и отвечает зелёным
+Given the keeping time is seven days, the record was committed seven days and an hour ago
+When the cleanup and the time check run
+Then the cleanup names the record for removal, and the check stays silent about it and answers green
 
-Покрыто: `projects/agent-kit/tests/archive-age.test.sh`.
+Covered: `projects/agent-kit/tests/archive-age.test.sh`.
 
-### SC-AK-870 — запись в восемь суток и час проверка называет
+### SC-AK-870 — a record of eight days and an hour the check names
 
-Дано срок хранения — семь суток, запись закоммичена восемь суток и час назад
-Когда идёт проверка срока
-Тогда она называет запись, срок и запас, а семисуточную по-прежнему не называет
+Given the keeping time is seven days, the record was committed eight days and an hour ago
+When the time check runs
+Then it names the record, the time and the margin, and still does not name the seven-day one
 
-Покрыто: `projects/agent-kit/tests/archive-age.test.sh`.
+Covered: `projects/agent-kit/tests/archive-age.test.sh`.
 
-### SC-AK-871 — свежую запись не трогает ни одна сторона
+### SC-AK-871 — a fresh record is touched by neither side
 
-Дано запись закоммичена час назад
-Когда идут чистка и проверка срока
-Тогда ни одна её не называет
+Given the record was committed an hour ago
+When the cleanup and the time check run
+Then neither of them names it
 
-Покрыто: `projects/agent-kit/tests/archive-age.test.sh`.
+Covered: `projects/agent-kit/tests/archive-age.test.sh`.
 
-### SC-AK-873 — ответ помощника очереди работ называет, чьими глазами снято состояние
+### SC-AK-873 — the answer of the work queue helper says whose eyes the state was taken by
 
-Дано дерево с токеном машинной записи и дерево без него
-Когда помощник читает задачу и заявку
-Тогда задача с токеном приходит с `viewer: machine`, без токена — `client`; заявка в обоих
-деревьях — `client`, потому что читается без токена
+Given a tree with the token of the machine record and a tree without it
+When the helper reads a task and a request
+Then a task with the token arrives with `viewer: machine`, without the token with `client`; a request
+in both trees is `client`, because it is read without the token
 
-Покрыто: `projects/agent-kit/tests/checks-board-pull.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board-pull.test.sh`.

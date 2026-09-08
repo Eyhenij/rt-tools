@@ -1,100 +1,102 @@
-# Часовой пояс читателя
+# The time zone of the reader
 
-**Статус:** предложено · **Ревизия:** 31 августа 2026 · **Префикс сценариев:** `SC-CR`
-**Зависимости:** нет
-**Законы:** `frontend-application`
-**Процедуры:** нет
+**Status:** proposed · **Revision:** 31 August 2026 · **Scenario prefix:** `SC-CR`
+**Depends on:** none
+**Laws:** `frontend-application`
+**Procedures:** none
 
-Договорённость о продукте, написанная до кода. Вливается в спек домена последним коммитом PR — с
-прежними номерами сценариев. Домена ядра в дереве ещё нет: договорённость станет его началом
-вместе с соседним предложением, когда владелец скажет заводить домен.
+An agreement about the product written before the code. It is merged into the spec of the domain by the
+last commit of the PR — with the former scenario numbers. There is no domain of the core in the tree yet:
+the agreement will become its beginning together with the neighbouring proposal, when the owner says to
+create the domain.
 
-## Зачем
+## Why
 
-Дата, показанная без пояса читателя, называет другой день у половины тех, кто на неё смотрит.
-Спросить пояс умеет только браузер, и вызов, которым его спрашивают, при отдаче страницы сервером
-отвечает поясом машины сервера — ответом, который выглядит настоящим и врёт молча.
+A date shown without the zone of the reader names another day at half of those who look at it. Only the
+browser knows how to be asked for the zone, and the call it is asked by, at the giving out of a page by the
+server, answers with the zone of the machine of the server — an answer that looks real and lies silently.
 
-Отсюда служба: обращение к окружению стоит в одном месте, среда спрашивается явно, а вызывающий
-получает либо пояс читателя, либо согласованный ответ, о котором знает.
+Hence the service: the address to the environment stands in one place, the environment is asked openly, and
+the caller gets either the zone of the reader or an agreed answer they know about.
 
-## Терминология
+## Terminology
 
-| Термин             | Что это                                                           |
-| ------------------ | ----------------------------------------------------------------- |
-| пояс читателя      | часовой пояс, настроенный в системе того, кто смотрит на страницу |
-| согласованный пояс | `UTC` — ответ там, где пояса читателя знать неоткуда              |
+| Term                   | What it is                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------ |
+| the zone of the reader | the time zone set in the system of whoever looks at the page                   |
+| the agreed zone        | `UTC` — the answer where there is nowhere to learn the zone of the reader from |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Не применимо: службы на экране не видно, её ответ показывает тот, кто рисует дату.
+Not applicable: the service is not visible on the screen, its answer is shown by whoever draws the date.
 
-## Правила
+## Rules
 
-- **Пояс спрашивается у окружения только в браузере.** При отдаче страницы сервером тот же вызов
-  отвечает поясом машины сервера: он выглядит настоящим, и разницу в несколько часов замечает
-  только читатель, у которого дата съехала на день.
-- **Там, где пояса читателя знать неоткуда, отдаётся согласованный пояс.** Пустая строка и пустота
-  заставляют каждого вызывающего писать свою запасную ветку, и ветки эти расходятся.
-- **Пояс читается при каждом обращении.** Запомненный однажды, он остаётся прежним у читателя,
-  который переехал или поправил настройку системы, не перезагрузив вкладку.
-- **Обращение к окружению стоит в службе, а не в вызывающем.** Прямое обращение собирается и
-  падает только при отдаче страницы сервером, и этого не проверяет ничто.
+- **The zone is asked of the environment only in the browser.** At the giving out of a page by the server
+  the same call answers with the zone of the machine of the server: it looks real, and the difference of
+  several hours is noticed only by the reader whose date slid away by a day.
+- **Where there is nowhere to learn the zone of the reader from, the agreed zone is given.** An empty string
+  and an emptiness make every caller write a spare branch of their own, and those branches diverge.
+- **The zone is read at every address.** Remembered once, it stays the former one at a reader who moved or
+  fixed the setting of the system without reloading the tab.
+- **The address to the environment stands in the service, not in the caller.** A direct address builds and
+  falls only at the giving out of a page by the server, and nothing checks that.
 
-## Что не входит
+## What is out of scope
 
-- Перевод даты в пояс и её показ: это работа того, кто дату рисует.
-- Список поясов и их выбор человеком: своей настройки у службы нет.
+- The bringing of a date into a zone and its showing: that is the work of whoever draws the date.
+- The list of the zones and their choice by a person: the service has no setting of its own.
 
-## Контракт
+## Contract
 
-| Процедура            | Принимает | Отдаёт                                                   |
-| -------------------- | --------- | -------------------------------------------------------- |
-| `getCurrentTimezone` | ничего    | имя пояса читателя, а вне браузера — согласованный `UTC` |
+| Procedure            | What it accepts | What it gives back                                                           |
+| -------------------- | --------------- | ---------------------------------------------------------------------------- |
+| `getCurrentTimezone` | nothing         | the name of the zone of the reader, and outside the browser the agreed `UTC` |
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: отказов у службы нет — вне браузера она отвечает согласованным поясом.
+Not applicable: the service has no refusals — outside the browser it answers with the agreed zone.
 
-## Данные
+## Data
 
-Не применимо: своих записей хранилища у службы нет.
+Not applicable: the service has no records of the storage of its own.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: служба ничего не рисует.
+Not applicable: the service draws nothing.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: подписей у службы нет.
+Not applicable: the service has no labels.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо.
+Not applicable.
 
-## Решения
+## Decisions
 
-- **Вне браузера отдаётся `UTC`, а не пояс машины** — пояс машины сервера выглядит настоящим и
-  врёт про читателя. Отвергнуто: отдавать пустоту — тогда запасную ветку пишет каждый вызывающий,
-  и ветки расходятся.
-- **Служба внедряется, а не зовётся функцией** — среду она спрашивает у соседней службы, и подмена
-  среды в спеке идёт тем же приёмом, что у остальных служб пакета.
+- **Outside the browser `UTC` is given, not the zone of the machine** — the zone of the machine of the
+  server looks real and lies about the reader. Rejected: to give an emptiness — then the spare branch is
+  written by every caller, and the branches diverge.
+- **The service is injected, it is not called as a function** — it asks the environment of the neighbouring
+  service, and the substitution of the environment in a spec goes by the same technique as at the rest of
+  the services of the package.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-2` — нужен ли поверх этого перевод даты в пояс. Работа идёт с допущением, что перевод
-  остаётся у того, кто дату показывает.
+- `Q-2` — whether the bringing of a date into a zone is needed over this. The work goes with the assumption
+  that the bringing stays with whoever shows the date.
 
-## История изменений
+## History of changes
 
-- 31 августа 2026 — договорённость написана.
+- 31 August 2026 — the agreement was written.

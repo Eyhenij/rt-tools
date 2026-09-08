@@ -2,270 +2,290 @@
 name: ui-component-tests
 kind: rule
 law: verifiability
-description: Готовый код и порядок проверки компонента кита и экрана приложения. Брать при заведении или правке *.spec.ts рядом с компонентом, при кадре в сквозном наборе, при разборе упавшего снимка витрины и когда решается, чем подтверждается правка вёрстки. Зачем — правила testing и browser-verification.
+description: Ready-made code and the order of checking a kit component and an application screen. Take it on a *.spec.ts next to a component, a frame in the end-to-end suite, a failed showcase snapshot and when deciding what confirms a layout edit. The "why" — testing and browser-verification.
 ---
 
-# Проверка компонента кита и экрана приложения — готовый код
+# Checking a kit component and an application screen — the ready-made code
 
-Правило этого дерева, не из пакета. Оно не повторяет `testing` и `browser-verification` — там
-сказано, что считается подтверждением, и где в дереве что лежит. Здесь — что писать руками и в
-каком порядке гонять.
+This tree's rule, not from the package. It does not repeat `testing` and `browser-verification` —
+there it is said what counts as confirmation and where in the tree what lies. Here is what to write
+by hand and in what order to run it.
 
-**Холодная часть:** `pitfalls.md` рядом — замеры, числа и случаи по разобранным снимкам.
-Грузится по требованию, а не вместе с правилом.
+**Cold part:** `pitfalls.md` next to it — measurements, numbers and cases from sorted-out
+snapshots. Loaded on demand, not together with the rule.
 
-## Когда берётся
+## When it is taken
 
-Заведение или правка спеки компонента, заведение истории ради проверки состояния, заведение
-кадра экрана в сквозном наборе, разбор упавшего снимка, правка обвязки снимков, вывод о вёрстке.
+Creating or editing a component's spec, creating a story for the sake of checking a state, creating
+a screen frame in the end-to-end suite, sorting out a failed snapshot, editing the snapshot harness,
+a conclusion about layout.
 
-## Чем отвечают на какой вопрос
+## What answers which question
 
-Четыре проверки не заменяют друг друга, и выбор между ними — не вкус.
+Four checks do not replace one another, and the choice between them is not a matter of taste.
 
-| Вопрос                                            | Чем отвечать                                                |
-| ------------------------------------------------- | ------------------------------------------------------------ |
-| Состояние наступило? Вход дошёл? Выход выстрелил?  | спека — паттерн `ui-component-tests-spec`                    |
-| Выглядит ли компонент так же, как раньше?          | снимок истории — паттерн `ui-component-tests-visual`         |
-| Выглядит ли так же экран целиком?                 | кадр экрана в сквозном наборе — паттерн `testing-e2e`        |
-| Сходится ли отступ, кегль, цвет с образцом?       | замер вычисленных значений — `browser-verification-measure` |
+| Question                                              | What to answer with                                       |
+| ----------------------------------------------------- | ---------------------------------------------------------- |
+| Did the state come about? Did the input arrive? Did the output fire? | a spec — the pattern `ui-component-tests-spec`   |
+| Does the component look the same as before?           | a story snapshot — the pattern `ui-component-tests-visual` |
+| Does the whole screen look the same?                  | a screen frame in the end-to-end suite — the pattern `testing-e2e` |
+| Do the padding, the font size and the colour match the reference? | a measurement of computed values — `browser-verification-measure` |
 
-- **Спека молчит о том, как это выглядит.** Класс в разметке сходится, а отступ съеден и подпись
-  обрезана — прогон зелёный. Правка оформления подтверждается снимком, а не спекой.
-- **Снимок молчит о том, почему разошлось.** Он ловит всё видимое разом и говорит «стало другим»;
-  что именно поехало, отвечает замер.
-- **Замер отвечает только на заданный вопрос.** Числа сходятся, пока никто не спросил про фон на
-  наведении.
+- **A spec is silent about how it looks.** The class in the markup matches, while the padding is
+  eaten and the label clipped — the run is green. A styling edit is confirmed by a snapshot, not by
+  a spec.
+- **A snapshot is silent about why it diverged.** It catches everything visible at once and says
+  "it became different"; what exactly moved is answered by a measurement.
+- **A measurement answers only the question asked.** The numbers match until somebody asks about
+  the background on hover.
 
-## Как закон применяется здесь
-- **Волна показов закрывается обходом всех историй, а не цветом прогона.** Зелёные спеки, зелёная
-  съёмка эталонов и зелёная сверка таблиц входов вместе не отвечают на вопрос, есть ли в кадре
-  хоть что-нибудь. Между «прогон прошёл» и «показанное показано» в этом дереве нет ничего, кроме
-  обхода — `pnpm run test:stories:v2`, разобран в паттерне `ui-component-tests-visual`.
-- **Состояние, которого не видно в кадре, снимком не проверено.** Кнопка под наведением, панель в
-  перекрытии, ветка после выбора файла — в разметке они есть, в снимке их нет. Такому состоянию
-  заводится своя история, а не приписывается покрытие соседней.
-- **Признак состояния проверяется тем же, чем его видит человек: кадром или замером растра, а не
-  значением записанного стиля.** Стиль, выставленный узлу, доказывает только то, что его
-  выставили: подействовал ли он, зависит от того, что зарегистрировал показ. Пара значков
-  различалась осью заливки переменного шрифта, а витрина держит статический набор — значение в
-  разметке разное, глиф один, и в отладчике всё выглядит верным.
-- **Если состояний пара, в кадре обязаны быть оба.** Эталон, показывающий одну сторону пары, о
-  самой паре не говорит ничего и остаётся зелёным при любой её поломке: три снятых кадра
-  показывали закреплённую моду, и контурный значок не попадал в кадр ни разу — ни в верном виде,
-  ни в неверном.
-- **Правка оформления, прошедшая снимки без расхождений, проверена наполовину.** Мелкий элемент
-  занимает сотые доли кадра; порог сравнения способен его пропустить. Признак — доля расхождения,
-  а не цвет прогона.
-- **Вставший кадр ждётся событием, а не отсчётом времени, и приём повторяется в каждой обвязке.**
-  Отсчёт проверяет машину, а не вёрстку: на свободной он всегда достаточен, на занятой — нет, и
-  какой именно кадр не успел, оказывается делом случая. Ждутся признаки, от загрузки машины не
-  зависящие: шрифты подняты, движение остановлено, сеть замолчала, размер снимаемого узла не
-  менялся два кадра подряд. Пока ожидание идёт по времени, зелёный прогон означает «момент
-  промахивается одинаково», а не «кадр верен».
-- **Ожидание, гасящее свой отказ, снимает кадр раньше срока.** Не дождавшись, оно молча отпускает
-  съёмку дальше, и кадр уходит в сравнение без того, чего ждали. Отказ ожидания стоит строки
-  разбора, разошедшийся снимок — целого захода.
-- **Ожидание ждёт того, чего ждут, а не следствия.** Признак, наступающий и без ожидаемого, молчит
-  вместо отказа: класс ожидания у иконки снимает готовность шрифтов страницы, а она наступает и с
-  пустым набором — не приехали сами объявления шрифта, ждать нечего, и ожидание проходит на
-  странице, где значков нет вовсе. Такое ожидание не гасит отказа — ему просто неоткуда взяться.
-  Ждётся тот же предмет, о котором отказ: сами семейства, сам узел, само состояние; косвенный
-  признак берётся, только когда прямого нет, и тогда он назван вместе с тем, чего не покрывает.
-- **Пришедший ресурс и заметивший его компонент — не одно и то же, и ждут обоих.** Шрифт поднялся,
-  а компонент значка узнаёт об этом своим сигналом и до перерисовки держит себя невидимым: между
-  тем и другим целая гонка, и кадр в неё попадает. Ожидание, знающее только причину, отпускает
-  съёмку в этот промежуток; ожидание, знающее только следствие, молчит там, где причины не было
-  вовсе. Ждутся оба, и каждый со своим отказом — по нему сразу видно, где поломка: в подаче
-  ресурса или в компоненте, который его не заметил.
-- **Вставшая раскладка — ещё не дорисованная страница, и кадр снимается до совпадения двух
-  подряд.** Обвязка умеет ждать размеры, шрифты, молчание сети и завершённые анимации, а кадр
-  всё равно расходится подпиксельными ореолами по подписям при той же геометрии до сотых:
-  отличается там растеризация, а события «страница дорисована» браузер не даёт вовсе. Два
-  одинаковых кадра подряд говорят то же самое и проверяются прямо.
-- **Вставшая страница и нарисованная страница — разное, и кадр ждёт второго.** Обработчик кадра
-  анимации выполняется **до** отрисовки, поэтому ожидание, крутящее такой цикл, отпускает съёмку в
-  промежуток между «раскладка сошлась» и «кадр нарисован». Кадр, снятый в этот промежуток,
-  расходится с эталоном устойчиво — надписи растеризованы иначе при той же геометрии до сотых, — и
-  цикл двух совпавших кадров тут не помогает: два ранних кадра совпадают между собой ничуть не
-  хуже двух поздних. Ждётся поэтому именно отрисовка — вложенная пара вызовов кадра анимации,
-  второй из которых стоит уже за нарисованным кадром. Стережёт откат отдельная проба, а не снимки.
-- **Расхождение, выпадающее редко, оставляет улику, иначе разбирать нечего.** Обвязка складывает
-  кадр различий и условия прогона — сошлись ли кадры и с какой попытки, размеры окна и страницы,
-  плотность точек, номер рабочего потока — в каталог вне репозитория, который следующий прогон не
-  трогает.
-- **Съёмка за пределы окна трогает страницу под затвором, и лечится это не циклом, а окном.** Кадр
-  целой страницы шире или выше окна браузер снимает, подменив окно на время кадра: страница
-  получает `resize`, и всё, что от размеров окна считается, съезжает прямо в кадре. Цикл до
-  совпадения двух кадров подряд тут не лекарство, а закрепление поломки: сдвиг устойчив, второй и
-  третий кадры сходятся между собой, и цикл вернул бы именно сдвинутый. Лечится обратным порядком
-  — окно раздвигается до страницы **до** кадра, показ ждут вставшим, и снимается обычный кадр: то
-  же движение, сделанное заранее, прокрутки не теряет. Следствие видно в эталоне: `100vh` и
-  `100vw` такой истории считаются от раздвинутого окна.
-- **Кадр складывается из того, что лежит в дереве, и обвязка отсекает съёмку от чужой сети.** Всё,
-  что едет снаружи, привносит в кадр чужую доступность: не приехав, оно оставляет пустое место, и
-  снимок расходится там, где вёрстку никто не трогал. Одной статьи о том, что недетерминированное
-  берётся байтами рядом, для этого мало — она держится памятью того, кто правит шапку показа, и
-  снимается одной строкой. Отсекается это обвязкой: запрос за пределы местной машины прогон
-  роняет, и вернувшийся внешний адрес виден сразу, а не гадает от прогона к прогону.
-- **Вставший показ и наступившее состояние — не одно и то же, и историю ждут по второму.** Обвязка
-  судит о кадре по молчанию сети и неподвижному размеру снимаемого узла, а у экрана со скелетонами
-  размер такой же неподвижный, как у экрана со списком: три эталона подряд закрепили скелетоны и
-  вышли неотличимыми друг от друга. Признак наступившего состояния знает только сама история —
-  узел, который в этом состоянии есть, и узел, которого в нём уже нет, — поэтому она и ждёт его
-  шагом `play`, до съёмки. Общей обвязке этот признак взять неоткуда: он у каждой истории свой.
-- **Перекрытие, открытое историей, доживает до кадра только там, где это объявлено.** Отличить
-  такой кадр от истории, у которой панели и не должно быть, нечем — он зелёный и выглядит целым.
-  Поэтому история называет узел перекрытия параметром съёмки: обвязка глушит на её странице уход
-  указателя и отказывает, не найдя обещанного узла к моменту кадра.
-- **Ожидание, снятое из обвязки, стережёт проба, а не прогон снимков.** Прогон сверяет кадр с
-  эталоном, а эталон снят той же обвязкой: сними из неё ожидание — и кадр, и эталон уедут в одну
-  сторону, после чего прогон вечно зелен на промахе. Такое ожидание поэтому стережётся прямо:
-  проба читает, стоит ли вызов в обвязке и не после ли съёмки он стоит, а потом придерживает
-  ожидаемое на подходе и сверяет кадр до ожидания с кадром после. Первая половина ловит откат
-  правкой, вторая — откат по существу: вызов на месте, а ждёт он не того.
-- **Проба судит ту разметку, ради которой заведена.** Промах бывает у одного вида разметки и не
-  бывает у соседнего: значок, нарисованный директивой без своего хоста, ожидание пропускало, а
-  тот же значок в компоненте с хостом — нет. Проба, взявшая историю с хостом, зелена и на
-  непочиненной обвязке. Историю она поэтому не только открывает, но и спрашивает: та ли это
-  разметка — и отказывает, когда история сменила её на соседнюю.
-- **Проба, судящая по одному замеру, наследует ту же редкость, от которой стережёт.** Она
-  требует, чтобы кадр без ожидания разошёлся с кадром после него, — а тот иногда успевает
-  отрисоваться сам, тем же случаем раз на полсотни. Одиночное совпадение при этом отбивает пуш на
-  дереве, которому нечего предъявить, и повторный вызов той же команды проходит зелёным: читается
-  это как сломанная проверка, а не как её условие. Замеры берутся подряд, пока не разойдутся, и
-  отказ приходит, только когда совпали все; отказ называет, сколько замеров снято.
-- **Проба, читающая обвязку текстом, отделяет код от пояснений.** Поиск слов по всему файлу
-  находит их и в закомментированной строке: вызов, снятый одной косой чертой, читается как
-  живой, и проба остаётся зелёной ровно на том откате, ради которого стоит. Поймано это не
-  чтением кода, а проверкой обратной стороны — снятием стерегомого вызова из обвязки.
-- **Эталон снимается после того, как на кадр посмотрели, а не до.** Съёмка закрепляет то, что
-  нарисовалось: пустой кадр становится образцом, и дальше прогон вечно зелен на пустоте. Порядок
-  один — поднятая витрина, глаза, потом эталон. Пачкой эталоны снимаются только у историй, которые
-  уже осмотрены.
-- **Эталон пересъёмывается намеренно и по одному.** Пересъёмка всего разом стирает и то
-  расхождение, которого не ждали.
-- **Разовый сценарий проверки в репозиторий не едет.** Он живёт во временном каталоге: это
-  доказательство одной правки, а не проверка дерева. Проверка, которую позовут и на следующей
-  волне, — не разовый сценарий: ей место рядом с прогонщиком снимков, отдельной командой.
-- **Ветка, до которой спека не доходит, называется в PR.** Молчаливый пропуск выглядит так же, как
-  покрытие.
-- **Экран приложения закрывается кадром сквозного набора, а не историей витрины.** История
-  показывает компонент в отрыве от приложения: своими входами, на своём фоне, без словаря, стора и
-  маршрута. Экран собран из компонентов, и то, что видит человек, чаще расходится между ними — в
-  раскладке, в отступах контейнера, в порядке блоков, — чем внутри одного. Поэтому экран снимается
-  там, где его открывает пользователь: на прод-сборке за стендом, целой страницей, тем же путём
-  нажатий, что и остальные сквозные спеки, и рядом с ними — в спеке того экрана, а не отдельным
-  файлом «про снимки». Оконный кадр вместо целой страницы обрезает панель, вылезшую за нижний
-  край, и пропажа её половины читается как «ничего не изменилось».
-- **Своего ожидания вставшего кадра сквозной набор не пишет.** Прогонщик сквозных спек глушит
-  движение, прячет каретку, ждёт шрифты и снимает кадр за кадром, пока два подряд не совпадут
-  пиксель в пиксель, — то самое, что обвязки витрин делают руками. Витрины пишут это руками
-  потому, что их прогонщик такого цикла не делает вовсе: там кадр снимается один раз и сразу
-  сверяется. Разница в прогонщике, а не в устойчивости экрана, и свой такой же цикл рядом был бы
-  вторым ответом на один вопрос — разошлись бы они молча.
-- **У кадров экрана нет своего шага ни в гейте, ни в конвейере.** Они снимаются внутри шага
-  сквозного набора, который в обоих уже стоит. Отдельный шаг поднимал бы стенд второй раз, а
-  соседний стенд на той же машине делает исход съёмки делом случая. У кадров витрин шаг свой ровно
-  потому, что стенда им не нужно вовсе.
-- **Плывущее в кадре экрана убирается поимённо, а не покрывается порогом.** Порог пропускает
-  съеденный отступ вместе с плывущим значением, поэтому он держится у нуля, а причина ищется до
-  конца — Порядок разбора один — сравнить кадры попиксельно и посмотреть, где именно они разошлись
-  и на сколько. Единица-другая по каналу на сглаженных уголках — это цвет, а не вёрстка: браузер
-  берёт профиль у дисплея машины, и профиль называется явно. Сдвиг всего кадра на пиксель — это
-  ширина: столбцы таблица раскладывает по содержимому, и значение, посчитанное от нынешнего
-  момента, двигает кадр целиком. Порядок строк — это засев: ключ записи заводится заново каждым
-  прогоном, и раздача по нему случайна.
-- **Маска закрывает содержимое, но не ширину.** Столбец под маской занимает своё место
-  по-прежнему, и плывущее значение внутри него двигает соседей мимо маски. Плывущее лечится в
-  засеве — постоянным значением, — и тогда маска не нужна вовсе.
-- **Постоянным делается не только время, но и всё, что приложение из него вывело.** Приложение
-  считает от своих часов и производное — ключ месяца, срок, признак свежести, — и считает его в
-  минуту записи. Засев, правящий времена уже после записи, производного не двигает: оно посчитано
-  раньше и лежит в соседней колонке. Расхождения при этом не наступает месяцами, а потом кадр
-  краснеет в день, когда в дерево не внесли ни строки: на экране сменился месяц, а эталон остался
-  прежним. Признак у этого промаха свой и сравнением двух колонок виден сразу — производное
-  перестало сходиться с тем, из чего его обязаны были вывести.
-- **Засев проверяет себя сам, а не полагается на кадр.** Кадр говорит «стало другим» и молчит о
-  том, почему; отказ засева называет причину словами и приходит на подъёме стенда, до того как
-  снят хоть один кадр. Признак берётся верный в любой день прогона: данные стенда — прошлое,
-  поэтому значение времени, попавшее на день прогона или позже, посчитано часами машины, а
-  засевом не закреплено. Нарочно будущее — далёкий срок годности — отделяется границей и
-  называется отдельно.
-- **Самопроверка судит временные колонки всех таблиц, которые читают экраны, а не только
-  показанные сегодня.** Столбец выводят на экран одной строкой разметки, и вспомнить при этом про
-  засев некому: проверка, набранная по показанному, отстаёт ровно на эту строку.
+## How the law applies here
 
-## Порядок
+- **A wave of showings is closed by a sweep over all the stories, not by the colour of a run.**
+  Green specs, a green taking of references and a green audit of the input tables together do not
+  answer whether there is anything in the frame at all. Between "the run passed" and "what was shown
+  is shown" there is nothing in this tree but the sweep — `pnpm run test:stories:v2`, sorted out in
+  the pattern `ui-component-tests-visual`.
+- **A state invisible in the frame is not checked by a snapshot.** A button under hover, a panel in
+  an overlay, the branch after a file is chosen — they exist in the markup and not in the snapshot.
+  Such a state gets a story of its own rather than being credited with a neighbour's coverage.
+- **A state's sign is checked by the same thing a person sees it by: a frame or a measurement of
+  the raster, not by the value of a written style.** A style set on a node proves only that it was
+  set: whether it applied depends on what the showing registered. A pair of icons differed by the
+  fill axis of a variable font, while the showcase holds a static set — the value in the markup is
+  different, the glyph is one, and in the debugger everything looks right.
+- **If there is a pair of states, both must be in the frame.** A reference showing one side of a
+  pair says nothing about the pair itself and stays green under any breakage of it: three taken
+  frames showed the pinned mode, and the outline icon never got into a frame — neither in the right
+  look nor in the wrong one.
+- **A styling edit that passed the snapshots without divergences is half checked.** A small element
+  takes hundredths of a frame; the comparison threshold can let it through. The sign is the share of
+  the divergence, not the colour of the run.
+- **A settled frame is waited for by an event, not by a countdown, and the technique is repeated in
+  every harness.** A countdown checks the machine rather than the layout: on a free one it is always
+  enough, on a busy one it is not, and which frame did not make it turns out to be a matter of
+  chance. What are waited for are signs independent of the machine's load: the fonts are up, the
+  motion is stopped, the network went quiet, the size of the node being shot did not change over two
+  frames in a row. While the wait goes by time, a green run means "the moment is missed alike", not
+  "the frame is right".
+- **A wait that swallows its own refusal takes the frame too early.** Not having waited, it silently
+  lets the shot go on, and the frame goes into the comparison without what was awaited. A wait's
+  refusal costs a line of sorting out, a diverged snapshot a whole session.
+- **A wait waits for what is awaited, not for its consequence.** A sign that comes about without the
+  awaited thing stays silent instead of refusing: an icon's wait class takes the page's font
+  readiness, and that comes about with an empty set too — the font declarations themselves never
+  arrived, there is nothing to wait for, and the wait passes on a page with no icons at all. Such a
+  wait does not swallow a refusal — there is simply nowhere for one to come from. What is waited for
+  is the same subject the refusal is about: the families themselves, the node itself, the state
+  itself; an indirect sign is taken only when there is no direct one, and then it is named together
+  with what it does not cover.
+- **An arrived resource and the component that noticed it are not the same, and both are waited
+  for.** The font came up, while the icon component learns of it by its own signal and keeps itself
+  invisible until the redraw: between the two lies a whole race, and the frame lands in it. A wait
+  that knows only the cause lets the shot go into that gap; a wait that knows only the consequence
+  stays silent where there was no cause at all. Both are waited for, and each with its own refusal —
+  by it one sees at once where the breakage is: in the serving of the resource or in the component
+  that did not notice it.
+- **A settled layout is not yet a drawn page, and the frame is taken after two in a row match.** The
+  harness can wait for the sizes, the fonts, the network's silence and finished animations, and the
+  frame still diverges by sub-pixel halos on the labels at the same geometry to the hundredth: the
+  rasterisation differs there, and the browser gives no "the page is drawn" event at all. Two
+  identical frames in a row say the same thing and are checked directly.
+- **A settled page and a drawn page are different, and the frame waits for the second.** An
+  animation frame's handler runs **before** the drawing, so a wait spinning such a cycle lets the
+  shot go into the gap between "the layout settled" and "the frame was drawn". A frame taken in that
+  gap diverges from the reference steadily — the labels are rasterised differently at the same
+  geometry to the hundredth — and the cycle of two matching frames does not help here: two early
+  frames match each other no worse than two late ones. So what is waited for is the drawing itself —
+  a nested pair of animation-frame calls, the second of which stands already past the drawn frame. A
+  probe of its own guards the rollback, not the snapshots.
+- **A divergence that falls out rarely leaves evidence, otherwise there is nothing to sort out.**
+  The harness puts the difference frame and the run's conditions — whether the frames matched and on
+  which attempt, the window and page sizes, the point density, the worker's number — into a
+  directory outside the repository, which the next run does not touch.
+- **A shot beyond the window touches the page under the shutter, and that is cured not by a cycle
+  but by the window.** A frame of a whole page wider or taller than the window the browser takes by
+  substituting the window for the duration of the frame: the page gets a `resize`, and everything
+  computed from the window sizes moves right inside the frame. A cycle until two frames in a row
+  match is no cure here but a pinning of the breakage: the shift is steady, the second and third
+  frames match each other, and the cycle would return exactly the shifted one. It is cured by the
+  reverse order — the window is widened to the page **before** the frame, the showing is waited for
+  settled, and an ordinary frame is taken: the same motion, made in advance, loses no scrolling. The
+  consequence is visible in the reference: `100vh` and `100vw` of such a story are computed from the
+  widened window.
+- **A frame is assembled from what lies in the tree, and the harness cuts the shot off from a
+  foreign network.** Everything that travels from outside brings a foreign availability into the
+  frame: not having arrived, it leaves an empty place, and the snapshot diverges where nobody
+  touched the layout. One article saying that what is not deterministic is taken as bytes next to it
+  is too little for this — it is held by the memory of whoever edits the showing's header, and it is
+  removed by one line. This is cut off by the harness: a request beyond the local machine fails the
+  run, and a returned external address is visible at once rather than guessed from run to run.
+- **A settled showing and a state that came about are not the same, and a story is waited for by the
+  second.** The harness judges the frame by the network's silence and the motionless size of the
+  node being shot, while a screen with skeletons has a size just as motionless as a screen with a
+  list: three references in a row pinned the skeletons and came out indistinguishable from one
+  another. The sign of a state that came about is known only to the story itself — the node that
+  exists in that state and the node that no longer does — so it is the story that waits for it by a
+  `play` step, before the shot. The shared harness has nowhere to take that sign from: every story
+  has its own.
+- **An overlay opened by a story lives to the frame only where that is declared.** There is nothing
+  to tell such a frame from a story that should have no panel at all — it is green and looks whole.
+  So a story names the overlay's node as a shot parameter: the harness mutes the pointer leaving on
+  its page and refuses when it does not find the promised node by the moment of the frame.
+- **A wait removed from the harness is guarded by a probe, not by the snapshot run.** The run
+  matches a frame against a reference, and the reference was taken by that same harness: remove the
+  wait from it and both the frame and the reference move the same way, after which the run is
+  eternally green on the miss. So such a wait is guarded directly: the probe reads whether the call
+  stands in the harness and whether it stands after the shot, then holds back what is awaited on its
+  approach and matches the frame before the wait against the frame after it. The first half catches
+  a rollback by an edit, the second a rollback in substance: the call is in place, and it waits for
+  the wrong thing.
+- **A probe judges the markup it was created for.** A miss happens with one kind of markup and not
+  with a neighbouring one: an icon drawn by a directive without a host of its own the wait let
+  through, while the same icon in a component with a host it did not. A probe that took a story with
+  a host is green on an unfixed harness too. So it not only opens the story but asks it: is this the
+  markup — and refuses when the story changed it for a neighbouring one.
+- **A probe judging by one measurement inherits the very rarity it guards against.** It demands that
+  the frame without the wait diverge from the frame after it — and that one sometimes manages to
+  draw itself, by that same chance once in fifty. A single match then refuses a push on a tree with
+  nothing to answer for, and a repeated call of the same command passes green: that reads as a
+  broken check rather than as its condition. The measurements are taken one after another until they
+  diverge, and the refusal comes only when they all matched; the refusal names how many
+  measurements were taken.
+- **A probe reading the harness as text separates the code from the explanations.** A word search
+  over the whole file finds them in a commented-out line too: a call taken out by one slash reads as
+  live, and the probe stays green on exactly the rollback it stands for. This was caught not by
+  reading the code but by checking the reverse side — by removing the guarded call from the harness.
+- **A reference is taken after the frame has been looked at, not before.** A shot pins down what got
+  drawn: an empty frame becomes the sample, and afterwards the run is eternally green on emptiness.
+  The order is one — a raised showcase, the eyes, then the reference. References are taken in a
+  batch only for stories that have already been looked over.
+- **A reference is re-taken deliberately and one at a time.** Re-taking everything at once erases
+  the divergence that was not expected too.
+- **A one-off check script does not travel into the repository.** It lives in a temporary directory:
+  it is the proof of one edit, not a check of the tree. A check that will be called on the next wave
+  too is no one-off script: its place is next to the snapshot runner, as a separate command.
+- **A branch the spec does not reach is named in the PR.** A silent gap looks the same as coverage.
+- **An application screen is closed by an end-to-end suite frame, not by a showcase story.** A story
+  shows a component apart from the application: with its own inputs, on its own background, without
+  the dictionary, the store and the route. A screen is assembled from components, and what a person
+  sees more often diverges between them — in the layout, in the container's paddings, in the order
+  of the blocks — than inside one. So a screen is shot where a user opens it: on a production build
+  behind a stand, as a whole page, by the same path of clicks as the other end-to-end specs, and
+  next to them — in that screen's spec rather than in a separate file "about snapshots". A window
+  frame instead of a whole page clips a panel that went past the bottom edge, and the loss of half
+  of it reads as "nothing has changed".
+- **The end-to-end suite writes no settled-frame wait of its own.** The end-to-end spec runner mutes
+  the motion, hides the caret, waits for the fonts and takes frame after frame until two in a row
+  match pixel for pixel — the very thing the showcase harnesses do by hand. The showcases write it
+  by hand because their runner does no such cycle at all: there a frame is taken once and matched at
+  once. The difference is in the runner, not in the screen's steadiness, and a cycle of one's own
+  next to it would be a second answer to one question — they would diverge silently.
+- **Screen frames have no step of their own in the gate or in the pipeline.** They are taken inside
+  the end-to-end suite's step, which stands in both already. A separate step would raise the stand a
+  second time, and a neighbouring stand on the same machine makes the outcome of the shot a matter
+  of chance. The showcases' frames have a step of their own precisely because they need no stand at
+  all.
+- **What drifts in a screen frame is removed by name, not covered by a threshold.** A threshold lets
+  an eaten padding through together with the drifting value, so it is held at zero and the cause is
+  looked for to the end. The order of sorting out is one — compare the frames pixel by pixel and see
+  where exactly they diverged and by how much. A unit or two per channel on the anti-aliased corners
+  is colour, not layout: the browser takes the profile from the machine's display, and the profile
+  is named explicitly. A shift of the whole frame by a pixel is width: the table lays the columns
+  out by content, and a value computed from the current moment moves the frame whole. The order of
+  the rows is the seeding: the record key is created anew by every run, and the handing out by it is
+  random.
+- **A mask covers the content but not the width.** A column under a mask takes its place as before,
+  and a drifting value inside it moves its neighbours past the mask. What drifts is cured in the
+  seeding — by a constant value — and then no mask is needed at all.
+- **Not only time is made constant but everything the application derived from it.** The application
+  counts from its clock and computes the derivative — the month key, the deadline, the freshness
+  sign — at the minute of writing. A seeding that edits the times after the write does not move the
+  derivative: it was computed earlier and lies in the next column. The divergence does not arrive
+  for months, and then the frame turns red on a day when not a line was added to the tree: the month
+  changed on the screen while the reference stayed as it was. The miss has its own sign, visible at
+  once by comparing two columns — the derivative stopped matching what it had to be derived from.
+- **The seeding checks itself instead of relying on the frame.** The frame says "it became
+  different" and is silent about why; a seeding refusal names the reason in words and arrives at the
+  stand's startup, before a single frame is taken. The sign is taken so that it holds on any run
+  day: the stand's data is the past, so a time value that landed on the run day or later was
+  computed by the machine clock and not pinned by the seeding. A deliberate future — a far expiry
+  date — is separated by a boundary and named apart.
+- **The self-check judges the time columns of every table the screens read, not only those shown
+  today.** A column is put on screen by one line of markup, and there is nobody to remember the
+  seeding then: a check assembled by what is shown lags behind by exactly that line.
 
-1. Спека на поведение — вход, выход, состояние. Готовый скелет — паттерн
-   `ui-component-tests-spec`.
-2. История на каждое видимое состояние, которого ещё нет в кадре — паттерн
-   `ui-component-tests-visual`.
-3. Обход историй и осмотр кадров глазами — до первой съёмки эталонов, иначе съёмка закрепит
-   пустоту.
-4. Прогон спек, потом снимки, потом замер — если правка про вёрстку.
-5. Число в PR: сколько тестов исполнилось, сколько снимков сошлось, что показал замер.
+## The order
 
-## Команды
+1. A spec on the behaviour — the input, the output, the state. The ready-made skeleton is the
+   pattern `ui-component-tests-spec`.
+2. A story for every visible state not yet in a frame — the pattern `ui-component-tests-visual`.
+3. A sweep over the stories and a look at the frames by eye — before the first taking of references,
+   otherwise the shot pins down emptiness.
+4. A run of the specs, then the snapshots, then the measurement — if the edit is about layout.
+5. A number in the PR: how many tests ran, how many snapshots matched, what the measurement showed.
+
+## Commands
 
 ```bash
-pnpm exec nx test @rt-tools/ui-kit --testFile=<путь>   # один файл спеки
-pnpm test                                              # спеки всех пакетов
-pnpm exec nx run @rt-tools/ui-kit-v2:typecheck         # типы спек: Jest их не смотрит
-pnpm run check:affected                                # то же, что спросит гард перед пушем
+pnpm exec nx test @rt-tools/ui-kit --testFile=<path>   # one spec file
+pnpm test                                              # the specs of all packages
+pnpm exec nx run @rt-tools/ui-kit-v2:typecheck         # the types of the specs: Jest does not look at them
+pnpm run check:affected                                # the same as the guard asks before a push
 ```
 
-Снимки идут против **уже поднятой** витрины: своя не поднимается, адрес перебивается
-`STORYBOOK_URL`.
+The snapshots go against an **already raised** showcase: their own is not raised, and the address is
+overridden by `STORYBOOK_URL`.
 
-## Две витрины — две обвязки снимков
+## Two showcases — two snapshot harnesses
 
-Общего файла между китами нет ни одного: киты разведены намеренно, и правка ради второго роняла
-бы эталоны первого.
+There is not one shared file between the kits: they are kept apart deliberately, and an edit for the
+second one's sake would fail the first one's references.
 
-|                    | `@rt-tools/ui-kit`                             | `@rt-tools/ui-kit-v2`                            |
-| ------------------ | ---------------------------------------------- | ------------------------------------------------ |
-| Витрина            | `pnpm run storybook` — порт 6006               | `pnpm run storybook:ui-kit-v2` — порт 6007       |
-| Обвязка снимков    | `projects/ui-kit/.storybook/test-runner.ts`    | `projects/ui-kit-v2/.storybook/test-runner.ts`   |
-| Эталоны            | `projects/ui-kit/.storybook/__snapshots__`     | `projects/ui-kit-v2/.storybook/__snapshots__`    |
-| Сверка             | `pnpm run test:visual`                         | `pnpm run test:visual:v2`                        |
-| Пересъёмка точечно | `pnpm run test:visual:update <образец пути>`   | `pnpm run test:visual:v2:update '<образец пути>'` |
-| Пересъёмка всего   | `pnpm run test:visual:update`                  | `pnpm run test:visual:v2:update-all`             |
-| Что снимается      | каждая история                                 | всё, кроме помеченного `storySnapshotSkip`       |
-| Область кадра      | вся страница                                   | корень показа `[data-story-root]`                |
-| Обход историй      | —                                              | `pnpm run test:stories:v2`                       |
+|                     | `@rt-tools/ui-kit`                             | `@rt-tools/ui-kit-v2`                            |
+| ------------------- | ---------------------------------------------- | ------------------------------------------------ |
+| Showcase            | `pnpm run storybook` — port 6006               | `pnpm run storybook:ui-kit-v2` — port 6007       |
+| Snapshot harness    | `projects/ui-kit/.storybook/test-runner.ts`    | `projects/ui-kit-v2/.storybook/test-runner.ts`   |
+| References          | `projects/ui-kit/.storybook/__snapshots__`     | `projects/ui-kit-v2/.storybook/__snapshots__`    |
+| The audit           | `pnpm run test:visual`                         | `pnpm run test:visual:v2`                        |
+| Pointed re-take     | `pnpm run test:visual:update <path sample>`    | `pnpm run test:visual:v2:update '<path sample>'` |
+| Re-take of all      | `pnpm run test:visual:update`                  | `pnpm run test:visual:v2:update-all`             |
+| What gets shot      | every story                                    | everything but what is marked `storySnapshotSkip` |
+| The frame's area    | the whole page                                 | the showing root `[data-story-root]`             |
+| Sweep over stories  | —                                              | `pnpm run test:stories:v2`                       |
 
-Договорённость второй витрины — `docs/specs/ui-kit-v2/`; параметры
-историй — `src/showcase/story-snapshot.ts`, и как их ставить, сказано в правиле
-`rt-tools-storybook`.
+The second showcase's agreement is `docs/specs/ui-kit-v2/`; the story parameters are
+`src/showcase/story-snapshot.ts`, and how to set them is said in the rule `rt-tools-storybook`.
 
-## Ловушки
+## Pitfalls
 
-- **Зелёная цель не значит, что спека исполнялась.** `passWithNoTests` включён: пакет без файлов
-  спек проходит успешно. Читается число тестов в отчёте.
-- **«Couldn't find story … after HMR» — след горячей перезагрузки, а не дефект.** Витрина
-  перезапускается, код не правится.
-- **Указатель переживает переход между историями.** Наведение из одной приходит в снимок
-  следующей: история без наведения увозит указатель в угол.
-- **Значения истории приходят обёртке позже её `ngOnInit`.** Начальное состояние, посчитанное в
-  крючке по значению истории, считается по умолчанию поля. Нужное состояние достигается
-  нажатием в `play`, а не входом.
-- **Серия прогонов не терпит правок дерева под собой.** Витрина держится горячей
-  перезагрузкой: файл, правленный посреди серии, меняет то, что снимают, — и снимают уже не то,
-  что мерили. Признак — одиночное расхождение в середине серии, которое при перезапуске начисто
-  не повторяется; вливание главной ветки, коммит и откат из отложенного считаются правкой
-  наравне с редактированием. Стоит это целой серии: пойманное так расхождение читается как
-  дефект, и следующий заход чинит то, что не ломалось. Серия гоняется на неподвижном дереве, а
-  задетая правкой — перезапускается начисто, и прежний её счёт не годится.
-- **База стенда переживает прогон, и её состояние после набора — не то, что оставил засев.**
-  Спеки заводят свои записи — выданное приглашение, вход человека, — и времена у них законно
-  приходятся на день прогона. Самопроверка засева поэтому стоит внутри самого засева, а не после
-  набора: прогнанная снаружи, она краснеет на том, что сделали сами спеки.
-- **Разбор упавшего снимка начинается с доли расхождения и области.** Красный прогон бывает и
-  от сдвига в пиксель, и от пропавшего блока — на глаз по картинке это неотличимо.
+- **A green target does not mean the spec ran.** `passWithNoTests` is on: a package without spec
+  files passes successfully. The number of tests is read from the report.
+- **"Couldn't find story … after HMR" is a trace of hot reloading, not a defect.** The showcase is
+  restarted, the code is not edited.
+- **The pointer outlives the move between stories.** A hover from one arrives in the next one's
+  snapshot: a story without a hover takes the pointer away into a corner.
+- **A story's values arrive at the wrapper later than its `ngOnInit`.** An initial state computed in
+  the hook by the story's value is computed by the field's default. The needed state is reached by a
+  click in `play`, not by an input.
+- **A series of runs does not tolerate edits of the tree under it.** The showcase is held by hot
+  reloading: a file edited in the middle of a series changes what is being shot — and what gets shot
+  is no longer what was measured. The sign is a single divergence in the middle of a series that
+  does not repeat on a clean restart; merging the main branch, a commit and a restore from the stash
+  count as an edit on a par with editing. It costs a whole series: a divergence caught that way
+  reads as a defect, and the next session fixes what was not broken. A series is run on a motionless
+  tree, and one touched by an edit is restarted clean, its former count being no good.
+- **The stand's database outlives a run, and its state after the suite is not what the seeding
+  left.** The specs create their own records — an issued invitation, a person's sign-in — and their
+  times lawfully land on the run day. So the seeding's self-check stands inside the seeding itself
+  rather than after the suite: run from outside, it turns red on what the specs did themselves.
+- **Sorting out a failed snapshot starts with the share of the divergence and the area.** A red run
+  comes both from a shift of one pixel and from a lost block — by eye on the picture that is
+  indistinguishable.
 
-## Паттерны
+## Patterns
 
-- `ui-component-tests-spec` — готовая спека компонента: фикстура, обвязка второго кита, двойники.
-- `ui-component-tests-visual` — история ради снимка, обход историй, разбор упавшего прогона.
+- `ui-component-tests-spec` — a ready-made component spec: the fixture, the second kit's harness,
+  the doubles.
+- `ui-component-tests-visual` — a story for the sake of a snapshot, a sweep over the stories,
+  sorting out a failed run.

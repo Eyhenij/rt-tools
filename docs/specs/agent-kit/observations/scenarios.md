@@ -1,170 +1,177 @@
-# Сценарии — наблюдения
+# Scenarios — observations
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной. Префикс общий на домен, и номера при переезде в поддомен не
-пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier goes at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason. The prefix is shared across the domain,
+and the numbers were not recounted at the move into the subdomain: the number ties the scenario to
+the test title.
 
-### SC-AK-70 — наблюдение переживает заход
+### SC-AK-70 — an observation outlives the session
 
-Дано за сессию загружено правило, а контекст после этого сжат
-Когда наблюдения читаются следующим заходом
-Тогда загрузка в них есть, потому что запись легла в дерево, а не во временный каталог
+Given a rule was loaded during the session, and the context was squeezed after that
+When the observations are read by the next session
+Then the loading is in them, because the record landed in the tree, not in a temporary directory
 
-Покрыто: `projects/agent-kit/tests/observe.test.sh`.
+Covered: `projects/agent-kit/tests/observe.test.sh`.
 
-### SC-AK-71 — наблюдение не называет дерева
+### SC-AK-71 — an observation names no tree
 
-Дано гейт отбил правку файла в домене дерева
-Когда записанное наблюдение читается целиком
-Тогда в нём стоят имя правила, род файла и версия — и ни пути, ни имени домена, ни имени дерева
+Given the gate refused an edit of a file in a domain of the tree
+When the written observation is read whole
+Then it holds the name of the rule, the kind of the file and the version — and neither the path,
+nor the domain name, nor the name of the tree
 
-Покрыто: `projects/agent-kit/tests/observe.test.sh`.
+Covered: `projects/agent-kit/tests/observe.test.sh`.
 
-### SC-AK-72 — запись выключается настройкой дерева
+### SC-AK-72 — the writing is switched off by a setting of the tree
 
-Дано настройка дерева выключила запись наблюдений
-Когда гард отрабатывает событие, о котором обычно пишет
-Тогда наблюдение не пишется вовсе, а само действие проходит как прежде
+Given the setting of the tree switched the writing of observations off
+When a guard handles an event it usually writes about
+Then no observation is written at all, and the action itself passes as before
 
-Покрыто: `projects/agent-kit/tests/observe.test.sh`.
+Covered: `projects/agent-kit/tests/observe.test.sh`.
 
-### SC-AK-73 — непишущееся наблюдение не останавливает работу
+### SC-AK-73 — an observation that cannot be written does not stop the work
 
-Дано каталог наблюдений недоступен на запись
-Когда гард отрабатывает событие
-Тогда действие пропускается, а гард завершается нулевым кодом
+Given the observations directory is not available for writing
+When a guard handles an event
+Then the action is let through, and the guard ends with a zero code
 
-Покрыто: `projects/agent-kit/tests/observe.test.sh`.
+Covered: `projects/agent-kit/tests/observe.test.sh`.
 
-### SC-AK-74 — сводка называет правило, которым не пользовались
+### SC-AK-74 — the digest names a rule that was not used
 
-Дано в дереве разложено правило, ни разу не загруженное за отрезок
-Когда собирается сводка
-Тогда правило стоит в ней отдельной строкой как неиспользованное
+Given a rule is laid out in the tree and was not loaded once over the stretch
+When the digest is gathered
+Then the rule stands in it as a line of its own, as unused
 
-Покрыто: `projects/agent-kit/src/lib/observations.spec.ts`.
+Covered: `projects/agent-kit/src/lib/observations.spec.ts`.
 
-### SC-AK-75 — сводка без наблюдений говорит о причине
+### SC-AK-75 — a digest without observations says the reason
 
-Дано наблюдений за отрезок нет ни одного
-Когда собирается сводка
-Тогда она говорит, что записи не велось, и чем она включается, а не печатает нули
+Given there is not a single observation over the stretch
+When the digest is gathered
+Then it says that no record was kept, and what it is switched on by, instead of printing zeroes
 
-Покрыто: `projects/agent-kit/src/lib/commands.spec.ts`.
+Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
 
-### SC-AK-76 — наблюдения старше срока снимаются
+### SC-AK-76 — observations older than the keeping time are removed
 
-Дано в каталоге лежат наблюдения старше срока хранения
-Когда собирается сводка
-Тогда устаревшие файлы сняты, а сводка считает только те, что в отрезке
+Given observations older than the keeping time lie in the directory
+When the digest is gathered
+Then the stale files are removed, and the digest counts only those inside the stretch
 
-Покрыто: `projects/agent-kit/src/lib/observations.spec.ts`.
+Covered: `projects/agent-kit/src/lib/observations.spec.ts`.
 
-### SC-AK-159 — строка наблюдения несёт версию схемы записи
+### SC-AK-159 — an observation line carries the version of the record schema
 
-Дано гард записывает наблюдение
-Когда строка попадает в файл дня
-Тогда в ней стоит версия схемы записи отдельно от версии пакета
+Given a guard writes an observation
+When the line gets into the file of the day
+Then the version of the record schema stands in it apart from the version of the package
 
-Не покрыто: версии схемы в строке ещё нет.
+Not covered: the schema version is not in the line yet.
 
-### SC-AK-160 — строки неизвестной версии схемы считаются отдельно
+### SC-AK-160 — lines of an unknown schema version are counted apart
 
-Дано среди наблюдений за отрезок есть строки версии схемы, которой сводка не знает
-Когда собирается сводка
-Тогда она называет их число и встреченные версии, а остальные строки разбирает как обычно
+Given among the observations over the stretch there are lines of a schema version the digest does
+not know
+When the digest is gathered
+Then it names their number and the versions met, and parses the rest of the lines as usual
 
-Не покрыто: версии схемы в строке ещё нет.
+Not covered: the schema version is not in the line yet.
 
-### SC-AK-161 — признание промаха попадает в сводку числом происшествий
+### SC-AK-161 — an admission of a miss gets into the digest as a number of incidents
 
-Дано за отрезок гард происшествия поймал признание промаха
-Когда собирается сводка
-Тогда происшествие в ней посчитано, а не видно только по записи в каталоге записей
+Given over the stretch the incident guard caught an admission of a miss
+When the digest is gathered
+Then the incident is counted in it, and is not visible only by the record in the records directory
 
-Не покрыто: гард происшествия наблюдения не источает.
+Not covered: the incident guard gives off no observations.
 
-### SC-AK-231 — замещённый раздел пакета назван в снимке по имени
+### SC-AK-231 — a replaced package section is named in the snapshot by name
 
-Дано дерево замещает надстройкой раздел разложенного правила
-Когда берётся снимок надстроек
-Тогда в нём стоят имя ресурса, заголовок этого раздела и род правки «замещение»
+Given the tree replaces by an override a section of a laid-out rule
+When the snapshot of the overrides is taken
+Then it holds the name of the resource, the heading of that section and the edit kind "replacement"
 
-### SC-AK-232 — свой раздел уезжает числом, а не именем
+### SC-AK-232 — a section of one's own goes as a number, not as a name
 
-Дано надстройка дописывает раздел, которого в ресурсе пакета нет
-Когда берётся снимок надстроек
-Тогда род правки — «дописывание», а заголовок раздела в снимок не попадает: его придумало дерево
+Given the override appends a section the package resource does not have
+When the snapshot of the overrides is taken
+Then the edit kind is "appending", and the heading of the section does not get into the snapshot:
+it was invented by the tree
 
-### SC-AK-233 — невыбранный ресурс виден в снимке отдельно от надстроенного
+### SC-AK-233 — an unchosen resource is visible in the snapshot apart from the overridden
 
-Дано дерево сняло ресурс списком отказов
-Когда берётся снимок надстроек
-Тогда ресурс назван невыбранным, а не отсутствует в снимке молча
+Given the tree removed a resource by the refusal list
+When the snapshot of the overrides is taken
+Then the resource is named unchosen, and is not absent from the snapshot silently
 
-### SC-AK-234 — содержимое надстройки в снимок не попадает
+### SC-AK-234 — the content of an override does not get into the snapshot
 
-Дано дописанный деревом раздел называет пути и домены этого дерева
-Когда берётся снимок надстроек
-Тогда в снимке нет ни одной строки текста надстройки — только ресурс, раздел и род правки
+Given the section appended by the tree names the paths and domains of this tree
+When the snapshot of the overrides is taken
+Then there is not a single line of the override text in the snapshot — only the resource, the
+section and the kind of the edit
 
-### SC-AK-235 — наблюдение несёт признак дерева, по которому адрес не восстановить
+### SC-AK-235 — an observation carries a tree sign the address is not recovered from
 
-Дано у дерева есть адрес удалённого репозитория
-Когда гард записывает наблюдение
-Тогда в строке стоит признак дерева, и адреса в ней нет ни целиком, ни частями
+Given the tree has an address of a remote repository
+When a guard writes an observation
+Then the tree sign stands in the line, and the address is not in it, whole or in parts
 
-Не покрыто: признака дерева в строке ещё нет.
+Not covered: the tree sign is not in the line yet.
 
-### SC-AK-236 — две рабочие копии одного репозитория дают один признак
+### SC-AK-236 — two working copies of one repository give one sign
 
-Дано два дерева заведены с одного удалённого репозитория
-Когда каждое записывает наблюдение
-Тогда признак дерева в обеих строках один: считаются деревья, а не машины
+Given two trees were created from one remote repository
+When each of them writes an observation
+Then the tree sign in both lines is one: trees are counted, not machines
 
-Не покрыто: признака дерева в строке ещё нет.
+Not covered: the tree sign is not in the line yet.
 
-### SC-AK-237 — дерево без удалённого репозитория берёт признак из настройки
+### SC-AK-237 — a tree without a remote repository takes its sign from the setting
 
-Дано у дерева нет адреса удалённого репозитория, а в настройке назван его признак
-Когда гард записывает наблюдение
-Тогда в строке стоит признак из настройки, а не общее значение на все такие деревья
+Given the tree has no address of a remote repository, and its sign is named in the setting
+When a guard writes an observation
+Then the sign from the setting stands in the line, not a shared value for all such trees
 
-Не покрыто: признака дерева в строке ещё нет.
+Not covered: the tree sign is not in the line yet.
 
-### SC-AK-809 — гард, не отбивший за отрезок ни разу, назван отдельной строкой
+### SC-AK-809 — a guard that did not refuse once over the stretch is named by a line of its own
 
-Дано за отрезок отбивал один гард дерева, а остальные молчали
-Когда собирается сводка наблюдений
-Тогда молчавшие названы своим разделом, отбивавший в него не попадает, а счётчик его отказов
-остаётся на месте
+Given over the stretch one guard of the tree refused, and the rest stayed silent
+When the digest of the observations is gathered
+Then the silent ones are named by a section of their own, the one that refused does not get into
+it, and the counter of its refusals stays in place
 
-Покрыто: `projects/agent-kit/src/lib/observations.spec.ts`,
+Covered: `projects/agent-kit/src/lib/observations.spec.ts`,
 `projects/agent-kit/src/lib/commands.spec.ts`.
 
-### SC-AK-810 — перечня гардов не назвали: сводка молчит о них, а не зовёт молчащими всех
+### SC-AK-810 — the list of guards was not named: the digest stays silent about them instead of calling them all silent
 
-Дано сводка собирается без перечня гардов дерева — так её зовёт отправка груза
-Когда в наблюдениях лежат отказы гардов
-Тогда раздел молчащих пуст, а счётчики отказов считаются прежним порядком: пустой перечень
-означает «спросить не у кого», а не «не отбивал никто»
+Given the digest is gathered without the list of the tree's guards — that is how the cargo sending
+calls it
+When refusals of guards lie in the observations
+Then the section of the silent is empty, and the counters of refusals are counted the former way:
+an empty list means "there is nobody to ask", not "nobody refused"
 
-Покрыто: `projects/agent-kit/src/lib/observations.spec.ts`.
+Covered: `projects/agent-kit/src/lib/observations.spec.ts`.
 
-### SC-AK-811 — отбой пишет общий хвост отказа, а не сам гард
+### SC-AK-811 — a refusal is written by the shared refusal tail, not by the guard itself
 
-Дано гард заявил своё имя для наблюдений и отказывает
-Когда собирается хвост отказа
-Тогда отбой записан под этим именем и с признаком сессии, а текст двух законных ходов напечатан
-наравне с записью. Гард без заявки имени не пишет ничего
+Given a guard declared its name for the observations and refuses
+When the refusal tail is assembled
+Then the refusal is recorded under that name and with the session sign, and the text of the two
+lawful moves is printed on a par with the record. A guard without a declaration writes nothing
 
-Покрыто: `projects/agent-kit/tests/observe.test.sh`.
+Covered: `projects/agent-kit/tests/observe.test.sh`.
 
-### SC-AK-836 — исходы гейта пуша считаются отдельно от отбоев гардов
+### SC-AK-836 — the outcomes of the push gate are counted apart from the refusals of the guards
 
-Дано в наблюдениях лежат исходы гейта пуша и отбои гардов
-Когда собирается сводка
-Тогда исходы посчитаны своим разделом по именам `green`, `red` и `no-checks`, отбои гардов
-остались на прежнем счету, а гейт, не отработавший ни разу, счёта не заводит вовсе
+Given the outcomes of the push gate and the refusals of the guards lie in the observations
+When the digest is gathered
+Then the outcomes are counted by a section of their own under the names `green`, `red` and
+`no-checks`, the refusals of the guards stay on the former count, and a gate that did not work once
+starts no count at all
 
-Покрыто: `projects/agent-kit/src/lib/observations.spec.ts`.
+Covered: `projects/agent-kit/src/lib/observations.spec.ts`.

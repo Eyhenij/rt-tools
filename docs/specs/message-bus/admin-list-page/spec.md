@@ -1,180 +1,189 @@
-# Общая страница списка
+# The common page of a list
 
-**Статус:** действует · **Ревизия:** 20 августа 2026 · **Префикс сценариев:** `SC-MB`
-**Зависимости:** нет
-**Законы:** `frontend-application`, `reuse-first`, `lists`, `navigation`
-**Процедуры:** нет — своих операций у страницы нет
+**Status:** in force · **Revision:** 20 August 2026 · **Scenario prefix:** `SC-MB`
+**Depends on:** none
+**Laws:** `frontend-application`, `reuse-first`, `lists`, `navigation`
+**Procedures:** none — the page has no operations of its own
 
-Поддомен домена «приёмник груза»: на чём собраны все списочные экраны админки — вид страницы,
-её слоты, разговор раздела с ней и якоря её элементов. Что показывает каждый раздел и чем
-человек к этому допущен — поддомен чтения принятого рядом. Общее — терминология домена,
-сквозные требования и решения — лежит в спеке домена.
+A subdomain of the domain "the intake of the cargo": what all the list screens of the admin
+application are put together on — the look of the page, its slots, the conversation of a section with
+it and the anchors of its elements. What every section shows and what a person is allowed to it by is
+the subdomain of the reading of what was taken in next to it. What is shared — the terminology of the
+domain, the cross-cutting requirements and the decisions — lies in the spec of the domain.
 
-## Зачем
+## Why
 
-Разделов груза четыре, и собраны они одним экраном: таблица, тулбар, переключатель страниц,
-панель настройки столбцов. Написанная в каждом разделе своя раскладка расходится молча —
-экраны начинают отличаться кеглем названия, отступом над таблицей и местом кнопок, и первым это
-видит человек, а не прогон.
+There are four sections of the cargo, and they are put together by one screen: a table, a toolbar, a
+switch of the pages, a panel of the setting of the columns. A layout of its own written in every
+section diverges silently — the screens start to differ in the size of the name, in the padding above
+the table and in the place of the buttons, and the first to get that is a person, not a run.
 
-Здесь: каким страница обязана быть, что кладёт в неё раздел, чем они говорят друг с другом и по
-каким якорям её находит проверка.
+Here: what the page is obliged to be, what a section puts into it, what they speak to each other by
+and by which anchors a check finds it.
 
-## Терминология
+## Terminology
 
-Словарь домена целиком — в спеке домена. Здесь только то, что живёт на странице списка:
+The vocabulary of the domain whole is in the spec of the domain. Here only what lives on the page of a
+list:
 
-| Термин   | Что это                                                                                  |
-| -------- | ---------------------------------------------------------------------------------------- |
-| Страница | Общий списочный экран: шапка раздела, тулбар, таблица и переключатель страниц            |
-| Слот     | Место страницы, в которое раздел кладёт своё: отбор, действия, строку над таблицей       |
-| Хост     | То, у чего страница спрашивает чтение, страницу, её размер, порядок и настройку столбцов |
-| Префикс  | Слово, которым раздел называет себя: из него собираются якоря страницы и её таблицы      |
+| Term       | What it is                                                                                            |
+| ---------- | ----------------------------------------------------------------------------------------------------- |
+| The page   | The common list screen: the header of the section, the toolbar, the table and the switch of the pages |
+| A slot     | A place of the page a section puts its own into: the filter, the actions, the row above the table     |
+| The host   | What the page asks for the reading, the page, its size, the order and the setting of the columns      |
+| The prefix | The word a section names itself by: the anchors of the page and of its table are put together from it |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости      | На экране                                                     |
-| --------------------- | ------------------------------------------------------------- |
-| шапка раздела         | название с подсказкой слева, место действий справа            |
-| тулбар                | полоса над таблицей: отбор слева, действия над списком справа |
-| переключатель страниц | строка под таблицей: номера страниц и число строк на странице |
-| настройка столбцов    | панель, открытая своим адресом у каждого раздела              |
+| In the agreement           | On the screen                                                                             |
+| -------------------------- | ----------------------------------------------------------------------------------------- |
+| the header of the section  | the name with a hint on the left, the place of the actions on the right                   |
+| the toolbar                | the strip above the table: the filter on the left, the actions over the list on the right |
+| the switch of the pages    | the line under the table: the numbers of the pages and the number of the rows on a page   |
+| the setting of the columns | a panel opened by an address of its own at every section                                  |
 
-## Правила
+## Rules
 
-**Вид страницы.**
+**The look of the page.**
 
-- **Страница растёт под содержимое, и прокручивается она целиком.** Каркас, прибитый к высоте
-  окна, обрезает всё, что за нижним краем, — и строки, и переключатель страниц. Зонами по
-  отдельности страница не прокручивается: переключатель уезжает под нижний край, и достать его
-  нечем.
-- **Все записи страницы достижимы прокруткой.** Число строк выбирает человек переключателем
-  размера, и любой из размеров обязан быть достижим до последней строки.
-- **Переключатель страниц достижим при любом числе строк.** Он стоит под таблицей и уезжает
-  вместе с ней, а не остаётся за обрезанным краем.
-- **Название раздела набрано кеглем и начертанием образца.** Одинаковые с виду экраны
-  расходятся кеглем названия первым делом, и расходятся молча.
-- **Шапка раздела — строка с переносом: название с подсказкой слева, место действий справа.**
-  Колонка вместо строки отнимает у раздела место под действия, и разделу, которому они
-  понадобятся, ставить их некуда.
-- **Подсказка стоит под названием, а не рядом с ним.** Рядом она удлиняет строку шапки и на
-  узком окне переносится посередине названия.
-- **Поля страницы и промежутки между её блоками — те же, что у образца.** Промежуток задаёт
-  колонка страницы, а не отступы у тулбара и переключателя страниц: второе объявление отступа
-  спорит с первым.
-- **Вид страницы объявлен один раз на все разделы.** Своей раскладки разделы не держат вовсе:
-  объявленная у каждого, она расходится молча — экраны начинают отличаться кеглем названия и
-  отступом над таблицей.
+- **The page grows under the content, and it scrolls whole.** A harness nailed to the height of the
+  window cuts off everything past the lower edge — both the rows and the switch of the pages. The page
+  does not scroll by zones apart: the switch goes away under the lower edge, and there is nothing to
+  reach it by.
+- **All the records of the page are reachable by scrolling.** The number of the rows is chosen by the
+  person by the switch of the size, and any of the sizes is obliged to be reachable down to the last
+  row.
+- **The switch of the pages is reachable at any number of rows.** It stands under the table and goes
+  away together with it, it does not stay beyond a cut edge.
+- **The name of the section is set in the size and the drawing of the sample.** Screens alike in look
+  diverge in the size of the name first of all, and they diverge silently.
+- **The header of the section is a row with a wrap: the name with a hint on the left, the place of the
+  actions on the right.** A column instead of a row takes from the section the place under the actions,
+  and a section that needs them has nowhere to put them.
+- **The hint stands under the name, not next to it.** Next to it, it lengthens the row of the header and
+  at a narrow window wraps in the middle of the name.
+- **The margins of the page and the gaps between its blocks are the same as at the sample.** The gap is
+  set by the column of the page, not by paddings at the toolbar and at the switch of the pages: a
+  second declaration of a padding argues with the first.
+- **The look of the page is declared once for all the sections.** The sections hold no layout of their
+  own at all: declared at every one of them, it diverges silently — the screens start to differ in the
+  size of the name and in the padding above the table.
 
-**Чем раздел говорит со страницей.**
+**What a section speaks to the page by.**
 
-- **Отбор кладёт в страницу раздел, а не страница знает его сама.** Зашитый внутрь, отбор
-  одинаков у всех разделов по принуждению: разделу, которому нужен другой, положить его некуда,
-  и страница обрастает входом на каждый новый вид отбора, который когда-нибудь понадобится.
-- **Незанятый слот места на экране не занимает.** Пустая полоса над таблицей и пустая половина
-  тулбара читаются поломкой разметки, а не свободным местом.
-- **Отбор стоит слева, а действия над списком целиком — справа.** Вперемешку они читаются одним
-  набором кнопок, и непонятно, что меняет показанное, а что делает что-то со списком.
-- **Обновление списка и настройку столбцов рисует страница, а не приносит раздел.** Они есть у
-  всех разделов и одинаковы; розданные разделам, они разойдутся подписью, значком и
-  местом, и первым это увидит человек, а не прогон.
-- **Кнопки раздела стоят левее тех, что рисует страница.** Обновление и настройка столбцов есть
-  на каждом разделе, и человек ищет их на одном и том же месте у края тулбара; вставленные
-  между кнопками раздела, они переезжают с каждым разделом.
-- **Над таблицей есть место для того, что относится ко всему списку сразу.** Сказанное о всём
-  списке, поставленное строкой в сам список, читается как одна из записей.
-- **Действий над одной записью в тулбаре нет.** Тулбар говорит о списке целиком; действие над
-  записью, стоящее над списком, отвечает на вопрос «над какой именно» только выделением, а
-  выделения в списке нет вовсе.
-- **Страница спрашивает чтение, страницу, её размер, порядок и настройку столбцов у хоста, а не
-  отдаёт их наружу событиями.** Событие на каждое действие растёт числом с каждым новым
-  действием, а хост объявляет их один раз; подключение при этом перестаёт быть делом того, кто
-  ставит страницу в разметку, — забытое подключение видно только на собранном экране.
-- **Отвечает хостом общая основа механики, а раздел только указывает на себя одной строкой.**
-  Механика одна на все разделы и уже там; написанная в каждом экране, она повторяет одно и то
-  же столько раз, сколько разделов, и столько же раз расходится.
-- **Панель настройки столбцов открывается своим адресом у каждого раздела.** Адрес — это ещё и
-  ссылка, и место в истории браузера: с одним адресом на все разделы не сказать, чьи столбцы
-  настраивают, а вернувшийся по ссылке человек попадает в настройки того раздела, который
-  открылся первым.
-- **Страница показывает то состояние чтения, которое назвал хост.** Занятость, отказ, номер
-  страницы и общее число записей приходят от него, а не собираются страницей заново: две
-  стороны, считающие одно и то же порознь, расходятся на первом же отказе.
-- **Заголовок принимает подсказку, а раздел без подсказки показывает одно название.** Пустое
-  место, оставленное под подсказку, сдвигает заголовок на разделах, где её нет.
-- **Якоря элементов общей страницы собираются из префикса, который называет раздел.**
-  Одинаковые якоря на разных разделах не отвечают на вопрос, чей элемент нашла проверка: спека,
-  открывшая не тот раздел, находит тот же якорь и проходит зелёной.
-- **Префикс называет раздел тем же словом, что и его таблица.** Второе имя того же раздела
-  означает, что по якорю не найти ни таблицу от страницы, ни страницу от таблицы.
-- **Якоря таблицы и её строк собираются из того же префикса, что и якоря страницы.** Записанные
-  строкой у каждого элемента, они расходятся с префиксом молча, и спека, открывшая не тот
-  раздел, находит тот же якорь и проходит зелёной.
+- **The filter is put into the page by the section, the page does not know it itself.** Sewn inside, the
+  filter is one and the same at all the sections by force: a section that needs another one has nowhere
+  to put it, and the page grows an entry for every new kind of filter that will ever be needed.
+- **An unoccupied slot takes no place on the screen.** An empty strip above the table and an empty half
+  of the toolbar read as a breakage of the markup, not as free space.
+- **The filter stands on the left, and the actions over the list whole on the right.** Mixed together
+  they read as one set of buttons, and it is unclear what changes what is shown and what does something
+  to the list.
+- **The refreshing of the list and the setting of the columns are drawn by the page, they are not
+  brought by the section.** They belong to all the sections and are one and the same; handed out to the
+  sections, they will diverge in the label, in the sign and in the place, and the first to get that is a
+  person, not a run.
+- **The buttons of the section stand to the left of those the page draws.** The refreshing and the
+  setting of the columns are at every section, and a person looks for them at one and the same place at
+  the edge of the toolbar; inserted between the buttons of the section, they move with every section.
+- **Above the table there is a place for what concerns the whole list at once.** What is said about the
+  whole list, put as a row into the list itself, reads as one of the records.
+- **There are no actions over one record in the toolbar.** The toolbar speaks about the list whole; an
+  action over a record standing above the list answers the question "over which one exactly" only by a
+  selection, and there is no selection in the list at all.
+- **The page asks the host for the reading, the page, its size, the order and the setting of the
+  columns, it does not give them outward by events.** An event per action grows in number with every new
+  action, while the host declares them once; the connecting at that stops being the business of whoever
+  puts the page into the markup — a forgotten connecting is visible only on the assembled screen.
+- **The host is answered by the common base of the mechanics, and a section only points at itself by one
+  line.** The mechanics are one for all the sections and are already there; written in every screen, they
+  repeat one and the same thing as many times as there are sections, and diverge as many times.
+- **The panel of the setting of the columns opens by an address of its own at every section.** An
+  address is also a link and a place in the history of the browser: with one address for all the
+  sections there is no saying whose columns are being set, and a person who came back by the link lands
+  in the settings of the section that opened first.
+- **The page shows the state of the reading that the host named.** The busyness, the refusal, the number
+  of the page and the total number of the records come from it, they are not put together by the page
+  anew: two sides counting one and the same thing apart diverge at the very first refusal.
+- **The heading accepts a hint, and a section without a hint shows the name alone.** An empty place left
+  under the hint shifts the heading at the sections that have none.
+- **The anchors of the elements of the common page are put together from the prefix the section names.**
+  Equal anchors at different sections do not answer the question of whose element a check found: a spec
+  that opened the wrong section finds the same anchor and passes green.
+- **The prefix names the section by the same word as its table.** A second name of the same section means
+  that by an anchor neither the table can be found from the page nor the page from the table.
+- **The anchors of the table and of its rows are put together from the same prefix as the anchors of the
+  page.** Written as a string at every element, they diverge from the prefix silently, and a spec that
+  opened the wrong section finds the same anchor and passes green.
 
-## Что не входит
+## What is out of scope
 
-- **Что показывает каждый раздел.** Столбцы, отбор и панель подробностей — поддомен чтения
-  принятого рядом.
-- **Оболочка приложения.** Верхний ряд разделов, попап профиля, тема и язык — поддомен оболочки.
-- **Вход человека.** Чем он допущен к разделам — поддомен чтения принятого.
-- **Правка записи со страницы.** Списки груза только читают: правит присланное дерево.
+- **What every section shows.** The columns, the filter and the panel of details — the subdomain of the
+  reading of what was taken in next to it.
+- **The shell of the application.** The top row of the sections, the popup of the profile, the theme and
+  the language — the subdomain of the shell.
+- **The entry of a person.** What they are allowed to the sections by — the subdomain of the reading of
+  what was taken in.
+- **The edit of a record from the page.** The lists of the cargo only read: the tree that sent it edits.
 
-## Контракт
+## Contract
 
-Не применимо: своих операций у страницы нет. Что показать, страница спрашивает у хоста, а
-хостом отвечает общая основа механики раздела.
+Not applicable: the page has no operations of its own. What to show the page asks of the host, and the
+host is answered by the common base of the mechanics of a section.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: своих отказов страница не заводит. Состояние чтения — занятость, отказ, номер
-страницы и общее число записей — приходит от хоста; отказ, видимый человеку, описан поддоменом
-чтения принятого.
+Not applicable: the page creates no refusals of its own. The state of the reading — the busyness, the
+refusal, the number of the page and the total number of the records — comes from the host; a refusal
+visible to a person is described by the subdomain of the reading of what was taken in.
 
-## Данные
+## Data
 
-Не применимо: своих сущностей у страницы нет. Настройку столбцов и размер страницы выбирает
-человек, а хранит их та же основа, что отвечает хостом.
+Not applicable: the page has no entities of its own. The setting of the columns and the size of the page
+are chosen by the person, and they are kept by the same base that answers as the host.
 
-## Экраны и состояния
+## Screens and states
 
-| Состояние            | Что видно                                                                  |
-| -------------------- | -------------------------------------------------------------------------- |
-| чтение идёт          | на месте строк видно чтение, а пустое состояние не показывается            |
-| строки прочитаны     | таблица, тулбар и переключатель страниц; страница прокручивается целиком   |
-| строк нет            | пустое состояние раздела вместо таблицы без строк                          |
-| чтение не удалось    | отказ с повтором одним действием                                           |
-| раздел без подсказки | заголовок показывает одно название, и места под подсказку не остаётся      |
-| настройка столбцов   | панель, открытая своим адресом раздела; вернувшийся по ссылке видит его же |
+| State                       | What is there                                                                                         |
+| --------------------------- | ----------------------------------------------------------------------------------------------------- |
+| the reading goes            | in the place of the rows the reading is there, and the empty state is not shown                       |
+| the rows are read           | the table, the toolbar and the switch of the pages; the page scrolls whole                            |
+| there are no rows           | the empty state of the section instead of a table without rows                                        |
+| the reading did not succeed | a refusal with a repeat by one action                                                                 |
+| a section without a hint    | the heading shows the name alone, and no place under the hint is left                                 |
+| the setting of the columns  | a panel opened by the address of its own section; whoever came back by the link lands at the same one |
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Подписи страницы идут из словаря приложения — теми же, что у остальных экранов админки.
+The labels of the page come from the dictionary of the application — the same ones as at the rest of the
+screens of the admin application.
 
 ### SEO
 
-Не применимо: админка закрыта входом.
+Not applicable: the admin application is closed by the entry.
 
-### Мобильная раскладка
+### Mobile layout
 
-На узком экране строка списка показана карточкой кита; шапка, тулбар и переключатель страниц
-остаются достижимы прокруткой страницы целиком.
+On a narrow screen a row of the list is shown as a card of the kit; the header, the toolbar and the
+switch of the pages stay reachable by scrolling the page whole.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо: страница показывает то, что дал ей раздел, и о деревьях не знает ничего.
+Not applicable: the page shows what the section gave it and knows nothing about the trees.
 
-## Решения
+## Decisions
 
-Решения домена — общие, и живут они в спеке домена рядом.
+The decisions of the domain are shared, and they live in the spec of the domain next to it.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке домена рядом.
+The open questions of the domain are shared, and they live in the spec of the domain next to it.
 
-## История изменений
+## History of changes
 
-- 20 августа 2026 — поддомен выделен из спека чтения принятого, переросшего предел длины.
-  Правила вида страницы и разговора раздела с ней, их сценарии и привязки переехали сюда
-  прежними: номера сценариев не пересчитывались.
+- 20 August 2026 — the subdomain was split out of the spec of the reading of what was taken in, which
+  had outgrown the length limit. The rules of the look of the page and of the conversation of a section
+  with it, their scenarios and the bindings moved here as they were: the scenario numbers were not
+  recounted.

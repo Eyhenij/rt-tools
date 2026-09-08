@@ -1,156 +1,167 @@
-# Граница состояния в текстах работы
+# The boundary of a state in the texts of the work
 
-**Статус:** действует · **Ревизия:** 2026-08-22 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `work-conduct`, `project-documentation`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-22 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `work-conduct`, `project-documentation`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Работа идёт по состояниям, и у каждого состояния есть обязательное действие. Сделав его,
-исполнитель стоит на границе: сделанное названо, отчитаться есть чем — и ход просится наружу,
-хотя законных выходов у него четыре и границы состояния среди них нет.
+The work goes by states, and every state has a mandatory action. Having done it, the executor stands
+at a boundary: what is done is named, there is something to report — and the turn asks to go
+outward, although it has four lawful exits and the boundary of a state is not among them.
 
-Поддомен называет, чем эта граница закрыта в текстах: строкой следующего движения в каждом
-разделе состояния, статьёй закона, утверждением правила, строкой карты хода — и проверкой,
-которая читает всё это и отбивает расхождение.
+The subdomain names what this boundary is closed by in the texts: by the line of the next move in
+every section of a state, by an article of the law, by a statement of the rule, by a line of the map
+of the turn — and by a check that reads all of this and refuses a divergence.
 
-Предмет здесь — проза, а не действие. Гарды, судящие завершение хода, — соседний поддомен:
-они смотрят на то, что за ход сделано, и ничего не знают о том, что написано в разделе.
+The subject here is prose, not an action. The guards judging the end of a turn are a neighbouring
+subdomain: they look at what was done during the turn and know nothing of what is written in a
+section.
 
-## Терминология
+## Terminology
 
-- **Раздел состояния** — кусок паттерна, который ведёт исполнителя внутри одного состояния.
-  Состояний одиннадцать, а разделов больше: у трёх состояний их по два и по три.
-- **Строка следующего движения** — последняя строка раздела: она называет, что делается сразу
-  за обязательным действием этого раздела.
-- **Зачин** — общее начало всех таких строк, по которому их находит проверка.
-- **Хвост** — остаток строки после зачина: он свой у каждого раздела.
-- **Ведущий паттерн** — тот паттерн, в котором лежит раздел состояния.
+- **A section of a state** — a piece of a pattern that leads the executor inside one state. There
+  are eleven states, and more sections: three states have two and three of them.
+- **The line of the next move** — the last line of a section: it names what is done right after the
+  mandatory action of this section.
+- **The opening** — the shared start of all such lines, the check finds them by it.
+- **The tail** — the rest of the line after the opening: it is its own at every section.
+- **The leading pattern** — the pattern the section of the state lies in.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Не применимо: интерфейса у поддомена нет — его читатель исполнитель, а не пользователь.
+Not applicable: the subdomain has no interface — its reader is the executor, not a user.
 
-## Правила
+## Rules
 
-- **Раздел состояния называет следующее движение.** Раздел, обрывающийся на последнем приёме,
-  читается как конец работы: за ним не написано ничего, и ход кончается отчётом.
-- **Строка стоит в каждом разделе состояния, а не по одной на состояние.** Состояние, у которого
-  разделов несколько, ведёт исполнителя по ним порознь, и дочитывает он тот раздел, в котором
-  стоит: следующее движение у разведки и у разбора с владельцем разное, хотя состояние одно.
-- **Формулировка у каждого раздела своя.** Дословно одинаковая строка читается как шаблон и
-  перестаёт замечаться на третьем разделе — а замечать её нужно ровно в ту минуту, когда
-  обязательное действие сделано и ход просится наружу.
-- **Строку находит зачин, общий для всех разделов.** Отличить рассказ о следующем движении от
-  рассказа о чём угодно машине нечем, и без общего признака проверка читала бы прозу.
-- **Хвост у каждой строки свой, и две дословно совпавшие строки — расхождение.** Общий зачин
-  приглашает списать соседнюю строку целиком; названное движение — то единственное, ради чего
-  строка стоит в разделе.
-- **Заголовок раздела состояния и зачин строки читаются под двумя именами, английским и
-  русским.** Паттерн пакета несёт «State `имя`» и «Next move:», паттерн дерева, написанный до
-  перевода слоя, — «Состояние `имя`» и «Следующее движение:». Оба означают одно, и ни одна из
-  двух проверок не заставляет дерево переписывать свой паттерн ради заголовка.
-- **Правило ведения работы называет переход между состояниями среди того, чем ход не
-  кончается.** Разделы говорят о своём движении поштучно, и общего утверждения из них не
-  собрать: исполнитель, стоящий в одном состоянии, читает один раздел.
-- **Карта хода говорит то же самое теми же словами по смыслу.** Она приходит в контекст на
-  каждом запуске и перечисляет выходы наравне с правилом; промолчав о переходе, она расходится с
-  правилом там, где её читают чаще всего.
-- **Закон о ведении работы называет это статьёй.** Что должно быть верно, говорит закон; какими
-  словами и в каком разделе это стоит — правило и паттерны при нём.
-- **Проверка заводится своя, со своей командой и своей строкой в наборе гейта пуша.** Сверка
-  состояний сравнивает два множества имён; чтение текста внутри раздела — другой предмет, и
-  сложенные в одну команду они краснеют одной строкой на две разные поломки.
-- **Отказ называет состояние, ведущий паттерн и заголовок раздела.** Расхождение, названное
-  числом разделов без имён, чинится перечитыванием всех разделов подряд.
-- **Проверка пропускает дерево, где правила ведения работы нет.** Сверять нечего — нулевой код.
-  Пустой перечень состояний при этом отказом считается: он означает не «нечего сверять», а
-  «перечень сломан».
-- **Раздел про состояние вне перечня эта проверка не судит.** Его ловит сверка состояний, и
-  вторая проверка о том же дала бы две красные строки об одном промахе.
+- **A section of a state names the next move.** A section breaking off at the last technique reads as
+  the end of the work: nothing is written after it, and the turn ends with a report.
+- **The line stands in every section of a state, not one per state.** A state that has several
+  sections leads the executor through them separately, and they read to the end the section they
+  stand in: the next move at the exploration and at the review with the owner are different, although
+  the state is one.
+- **The wording is its own at every section.** A line identical word for word reads as a template and
+  stops being noticed at the third section — and it has to be noticed exactly at the minute when the
+  mandatory action is done and the turn asks to go outward.
+- **The line is found by the opening, shared by all the sections.** A machine has nothing to tell an
+  account of the next move from an account of anything else, and without a shared sign the check
+  would be reading prose.
+- **The tail is its own at every line, and two lines coinciding word for word are a divergence.** The
+  shared opening invites copying the neighbouring line whole; the named move is the only thing the
+  line stands in the section for.
+- **The heading of a section of a state and the opening of the line are read under two names, English
+  and Russian.** The package pattern carries "State `name`" and "Next move:", the pattern of the
+  tree, written before the translation of the layer, "Состояние `имя`" and "Следующее движение:".
+  Both mean one thing, and neither of the two checks makes the tree rewrite its pattern for the sake
+  of a heading.
+- **The rule of the conduct of work names the transition between states among what a turn does not
+  end with.** The sections speak of their move one by one, and a shared statement cannot be assembled
+  from them: an executor standing in one state reads one section.
+- **The map of the turn says the same thing in the same words by meaning.** It arrives in the context
+  at every launch and lists the exits on a par with the rule; staying silent about the transition, it
+  diverges from the rule exactly where it is read most often.
+- **The law of the conduct of work names this by an article.** What must be true is said by the law;
+  in which words and in which section it stands is said by the rule and the patterns at it.
+- **A check of its own is created, with a command of its own and a line of its own in the suite of
+  the push gate.** The check of the states compares two sets of names; reading the text inside a
+  section is another subject, and put into one command they turn red by one line on two different
+  breakages.
+- **The refusal names the state, the leading pattern and the heading of the section.** A divergence
+  named by the number of sections without names is fixed by re-reading all the sections one after
+  another.
+- **The check lets through a tree where there is no rule of the conduct of work.** There is nothing
+  to compare — a zero code. An empty list of states at that counts as a refusal: it means not "there
+  is nothing to compare" but "the list is broken".
+- **A section about a state outside the list this check does not judge.** It is caught by the check of
+  the states, and a second check about the same would give two red lines about one miss.
 
-## Что не входит
+## What is out of scope
 
-- Гарды завершения хода — соседний поддомен: они судят сделанное за ход, а не написанное в
-  разделе.
-- Сверка состояний с разделами: она сравнивает два множества имён, и её предмет — полнота
-  перечня, а не текст внутри раздела.
-- Правка самих паттернов: что в каком разделе написано, решает тот, кто пишет правило.
+- The guards of the end of a turn — a neighbouring subdomain: they judge what was done during the
+  turn, not what is written in a section.
+- The check of the states against the sections: it compares two sets of names, and its subject is the
+  completeness of the list, not the text inside a section.
+- Editing the patterns themselves: what is written in which section is decided by whoever writes the
+  rule.
 
-## Контракт
+## Contract
 
-Внешних вызовов у поддомена нет. Контракт проверки — то, что она читает.
+The subdomain has no external calls. The contract of the check is what it reads.
 
-| Что                   | Откуда                                           |
-| --------------------- | ------------------------------------------------ |
-| перечень состояний    | таблица состояний в правиле ведения работы       |
-| разделы состояния     | паттерны, названные в той же таблице ведущими    |
-| утверждение о границе | текст правила ведения работы                     |
-| строка карты хода     | файл ресурса карты, разложенный в дерево         |
-| статья закона         | закон о ведении работы среди разложенных законов |
-
-### Коды отказов
-
-Не применимо: кода отказа у проверки нет — она отвечает кодом возврата и перечнем расхождений. Каждое
-расхождение названо состоянием, ведущим паттерном и заголовком раздела.
-
-## Данные
-
-Своих данных поддомен не держит: проверка читает разложенные тексты и не пишет ничего.
-
-## Экраны и состояния
-
-Экранов нет. Состояния проверки — то, чем она кончается:
-
-| Состояние                       | Чем кончается                                          |
+| What                            | From where                                             |
 | ------------------------------- | ------------------------------------------------------ |
-| правила ведения работы нет      | нулевой код, дерево не судится                         |
-| перечень состояний пуст         | отказ: перечень сломан, а не «нечего сверять»          |
-| все разделы со своей строкой    | нулевой код и число прочитанных разделов               |
-| раздел без строки или с чужой   | отказ с именем состояния, паттерна и заголовка раздела |
-| правило, карта или закон молчат | отказ с именем того текста, в котором утверждения нет  |
+| the list of the states          | the table of states in the rule of the conduct of work |
+| the sections of a state         | the patterns named as leading in the same table        |
+| the statement of the boundary   | the text of the rule of the conduct of work            |
+| the line of the map of the turn | the file of the map resource laid out into the tree    |
+| the article of the law          | the law of the conduct of work among the laid-out laws |
 
-## Сквозные требования
+### Refusal codes
 
-### Локали
+Not applicable: the check has no refusal code — it answers with an exit code and a list of
+divergences. Every divergence is named by the state, the leading pattern and the heading of the
+section.
 
-Язык один — язык дерева, как у остального слоя правил. Зачин строки задан на нём же, и
-проверка объявляет локаль исполнения сама, а не наследует её.
+## Data
+
+The subdomain holds no data of its own: the check reads the laid-out texts and writes nothing.
+
+## Screens and states
+
+There are no screens. The states of the check are what it ends with:
+
+| State                                          | What it ends with                                                                |
+| ---------------------------------------------- | -------------------------------------------------------------------------------- |
+| there is no rule of the conduct of work        | a zero code, the tree is not judged                                              |
+| the list of the states is empty                | a refusal: the list is broken, not "there is nothing to compare"                 |
+| all the sections have their own line           | a zero code and the number of sections read                                      |
+| a section without a line or with a foreign one | a refusal with the name of the state, the pattern and the heading of the section |
+| the rule, the map or the law stay silent       | a refusal with the name of the text the statement is missing from                |
+
+## Cross-cutting requirements
+
+### Locales
+
+The language is one — the language of the tree, as for the rest of the rules layer. The opening of
+the line is set in it too, and the check declares the locale of its run itself, it does not inherit
+it.
 
 ### SEO
 
-Не применимо: наружу ничего не отдаётся.
+Not applicable: nothing is given outward.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо: разметки у поддомена нет.
+Not applicable: the subdomain has no markup.
 
-### Мультиобъектность
+### Several objects
 
-Каждое дерево судится своими текстами: проверка идёт от корня текущего дерева и о соседних
-ничего не знает.
+Every tree is judged by its own texts: the check goes from the root of the current tree and knows
+nothing of the neighbouring ones.
 
-## Решения
+## Decisions
 
-- **Строка стоит в каждом разделе состояния, а не по одной на состояние.** Так решил владелец.
-  Отвергнуто: одна статья в правиле и строка в карте — исполнитель дочитывает тот раздел, в
-  котором стоит, и общего утверждения из соседних разделов не собирает.
-- **Формулировка своя у каждого раздела, а признак общий.** Так решил владелец: дословно
-  одинаковая строка читается как шаблон. Общий зачин при этом остался — без него проверке
-  пришлось бы читать прозу, а отличить рассказ о следующем движении от любого другого машине
-  нечем.
-- **Проверка заводится своя, а не дописывается в сверку состояний.** Так решил владелец.
-  Отвергнуто: расширение сверки состояний — две разные поломки краснели бы одной строкой.
-- **Проверка молчит там, где правила ведения работы нет.** Дерево без этого правила сверять
-  нечем, и отказ у него означал бы промах, который правится не у него.
+- **The line stands in every section of a state, not one per state.** So the owner decided. Rejected:
+  one article in the rule and a line in the map — the executor reads to the end the section they
+  stand in, and does not assemble a shared statement from the neighbouring sections.
+- **The wording is its own at every section, and the sign is shared.** So the owner decided: a line
+  identical word for word reads as a template. The shared opening stayed at that — without it the
+  check would have to read prose, and a machine has nothing to tell an account of the next move from
+  any other.
+- **A check of its own is created, it is not appended to the check of the states.** So the owner
+  decided. Rejected: an extension of the check of the states — two different breakages would turn red
+  by one line.
+- **The check stays silent where there is no rule of the conduct of work.** A tree without this rule
+  has nothing to compare, and a refusal at it would mean a miss that is fixed elsewhere.
 
-## Открытые вопросы
+## Open questions
 
-Нет.
+None.
 
-## История изменений
+## History of changes
 
-- 2026-08-22 — поддомен выделен из спека гардов завершения хода: договорённость о границе
-  состояния влилась туда и тем же изменением перевела файл сценариев за предел длины. Предмет
-  в нём был двойной — гард, отбивающий ход, и проверка, читающая прозу.
+- 2026-08-22 — the subdomain was split out of the spec of the guards of the end of a turn: the
+  agreement about the boundary of a state was merged there and by the same change took the scenario
+  file past the length limit. The subject in it was double — the guard refusing a turn and the check
+  reading prose.

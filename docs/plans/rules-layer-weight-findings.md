@@ -1,20 +1,20 @@
-# Находки эпика о весе слоя правил
+# The findings of the epic about the weight of the rules layer
 
-## Разобрано 29 августа 2026 года задачей RT-1567
+## Taken apart on 29 August 2026 by the task RT-1567
 
-Пять пунктов задачи RT-1126 сведены с нынешними ресурсами. Закрытыми оказались четыре:
+The five items of the task RT-1126 were reconciled with the present resources. Four turned out closed:
 
-| Пункт                                                 | Чем закрыт                                                                                   |
-| ----------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| одна задача загрузила одиннадцать правил              | предмет самого эпика, названный числом: эпик кончился, вес разобран его задачами             |
-| спека кода без показа тянет правило о витринах        | карта гейта этого дерева разобрана ветками: спека кода без показа стоит до общей `*.spec.ts` |
-| отказ гейта вклеивает перечень статей правила         | отказ называет правило и говорит прямо, что пересказ статей — плата за один текст дважды     |
-| правило о единообразии грузится на файл пакета правил | каталог правил и обвязка разведены в надстройке карты гейта                                  |
+| Item                                                                          | What it is closed by                                                                                                     |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| one task loaded eleven rules                                                  | the subject of the epic itself, named by a number: the epic is over, the weight was taken apart by its tasks             |
+| a spec of code without a show pulls the rule about showcases                  | the gate map of this tree is taken apart by branches: a spec of code without a show stands before the common `*.spec.ts` |
+| the refusal of the gate glues in the list of the articles of the rule         | the refusal names the rule and says openly that a retelling of the articles is a payment for one text twice              |
+| the rule about the uniformity is loaded on a file of the package of the rules | the directory of the rules and the harness are set apart in the override of the gate map                                 |
 
-Один внесён правкой ресурсов той же задачей:
+One was brought in by an edit of the resources by the same task:
 
-| Пункт                                  | Куда легло                                                                           |
-| -------------------------------------- | ------------------------------------------------------------------------------------ |
-| копия образца папки задачи несёт шапку | ловушка правила ведения работы плюс строка при команде копирования в паттерне начала |
+| Item                                                   | Where it landed                                                                                                        |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| a copy of the sample of a task folder carries a header | a pitfall of the rule of the conduct of the work plus a line at the command of the copying in the pattern of the start |
 
-Неразобранного по этому эпику не осталось.
+Nothing unsorted is left by this epic.

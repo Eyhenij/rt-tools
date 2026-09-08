@@ -1,13 +1,13 @@
-# Привязка — часовой пояс читателя
+# The binding — the time zone of the reader
 
-- **Пояс спрашивается у окружения только в браузере** — `timezone.service.ts:getCurrentTimezone`
-- **Там, где пояса читателя знать неоткуда, отдаётся согласованный пояс** — `timezone.service.ts:FALLBACK_TIMEZONE`
-- **Пояс читается при каждом обращении** — `timezone.service.ts:getCurrentTimezone`
-- **Обращение к окружению стоит в службе, а не в вызывающем** — `timezone.service.ts:RtTimezoneService`
+- **The zone is asked of the environment only in the browser** — `timezone.service.ts:getCurrentTimezone`
+- **Where there is nowhere to learn the zone of the reader from, the agreed zone is given** — `timezone.service.ts:FALLBACK_TIMEZONE`
+- **The zone is read at every address** — `timezone.service.ts:getCurrentTimezone`
+- **The address to the environment stands in the service, not in the caller** — `timezone.service.ts:RtTimezoneService`
 
-Пути от корня пакета: `projects/core/src/lib/services/`.
+The paths are from the root of the package: `projects/core/src/lib/services/`.
 
-- **Сценарий** — Тест
+- **Scenario** — Test
 - **`SC-CR-05`** — `timezone.service.spec.ts`
 - **`SC-CR-06`** — `timezone.service.spec.ts`
 - **`SC-CR-07`** — `timezone.service.spec.ts`

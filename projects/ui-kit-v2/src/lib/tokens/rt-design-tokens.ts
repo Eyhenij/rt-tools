@@ -1,6 +1,6 @@
-/* Собрано генератором `tools/build-tokens-v2.mjs` из `tokens.source.mjs` — правится там, не здесь. */
+/* Built by the generator `tools/build-tokens-v2.mjs` from `tokens.source.mjs` — edited there, not here. */
 
-/** Имя свойства оформления, которое кит объявляет сам. */
+/** The name of a styling property the kit declares itself. */
 export type TRtDesignTokenName =
     | '--rt-amber-400'
     | '--rt-border-width-medium'
@@ -382,7 +382,7 @@ export type TRtDesignTokenName =
     | '--rt-z-sticky'
     | '--rt-z-tooltip';
 
-/** Имя ручки потребителя — свойства, которое кит намеренно не объявляет. */
+/** The name of a consumer's handle — a property the kit deliberately does not declare. */
 export type TRtConsumerHandleName =
     | '--rt-aside-width'
     | '--rt-dialog-width'
@@ -396,7 +396,7 @@ export type TRtConsumerHandleName =
     | '--rt-workspace-aside-size'
     | '--rt-workspace-list-size';
 
-/** Все свойства оформления, объявленные китом. */
+/** All the styling properties declared by the kit. */
 export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-amber-400',
     '--rt-border-width-medium',
@@ -779,7 +779,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-z-tooltip',
 ];
 
-/** Все ручки потребителя: значение приходит от приложения, до него работает запасное. */
+/** All the consumer's handles: the value comes from the application, until then the fallback works. */
 export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-aside-width',
     '--rt-dialog-width',

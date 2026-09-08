@@ -1,103 +1,106 @@
-# Вид поля ввода в настройке кита
+# The look of a field of input in the setting of the kit
 
-**Статус:** действует · **Ревизия:** 31 августа 2026 · **Префикс сценариев:** `SC-UK`
-**Зависимости:** нет
-**Законы:** `frontend-application`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 31 August 2026 · **Scenario prefix:** `SC-UK`
+**Depends on:** none
+**Laws:** `frontend-application`
+**Procedures:** none
 
-Поддомен называет, откуда компоненты кита берут вид поля ввода и в каком порядке значения
-перебиваются.
+The subdomain names where the components of the kit take the look of a field of input from and in which
+order the values are overridden.
 
-## Зачем
+## Why
 
-Вид поля ввода был зашит умолчанием входа в двух местах. Приложение, которому нужен другой вид,
-передавало его входом на каждом употреблении — а употреблений у селекторов пять, считая вложенные.
-Пропущенное отличается от остальных видом поля, и заметно это только глазами на собранном экране.
+The look of a field of input was sewn in as the default of an input in two places. An application needing
+another look passed it by an input at every use — and the selectors have five uses, counting the nested
+ones. A missed one differs from the rest by the look of the field, and that is noticeable only by the eyes
+on the assembled screen.
 
-Настройка кита при этом уже есть, и порядок разрешения в ней объявлен. Вид поля в этот порядок не
-входил вовсе.
+The setting of the kit at that already exists, and the order of the resolving is declared in it. The look
+of a field was not in that order at all.
 
-## Терминология
+## Terminology
 
-| Термин             | Что это                                                                     |
-| ------------------ | --------------------------------------------------------------------------- |
-| вид поля           | оформление поля ввода: с заливкой или обводкой                              |
-| порядок разрешения | чем перебивается что: вход, раздел компонента, общий раздел, умолчание кита |
+| Term                       | What it is                                                                                               |
+| -------------------------- | -------------------------------------------------------------------------------------------------------- |
+| the look of a field        | the design of a field of input: with a filling or with an outline                                        |
+| the order of the resolving | what overrides what: the input, the section of the component, the common section, the default of the kit |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Не применимо: настройка на экране не видна, видно её действие на полях.
+Not applicable: the setting is not visible on the screen, what is visible is its work on the fields.
 
-## Правила
+## Rules
 
-- **Вид поля разрешается тем же порядком, что и остальные умолчания кита.** Второй порядок для
-  одного и того же вопроса разошёлся бы с первым при первой правке.
-- **Умолчание входа — пустота, а прежнее значение стоит в конце цепочки.** Значение, оставленное
-  умолчанием входа, побеждает настройку всегда: вход задан, и цепочка на нём кончается — настройка
-  не срабатывает ни разу и выглядит сломанной.
-- **Разрешённое значение считается один раз, а шаблоны читают его.** Повторённая в каждом шаблоне
-  цепочка разъедется с настройкой в первом же месте, куда забыли заглянуть.
-- **Вложенный компонент получает уже разрешённое значение, а не разрешает заново.** Иначе у него
-  выходит своя цепочка, и вид поля внутри всплывающего окна отличается от вида поля под ним.
+- **The look of a field is resolved by the same order as the rest of the defaults of the kit.** A second
+  order for one and the same question would diverge from the first at the first edit.
+- **The default of the input is emptiness, and the former value stands at the end of the chain.** A value
+  left as the default of the input wins over the setting always: the input is set, and the chain ends at it
+  — the setting does not work once and looks broken.
+- **The resolved value is counted once, and the templates read it.** A chain repeated in every template
+  diverges from the setting at the very first place they forgot to look into.
+- **A nested component gets an already resolved value, it does not resolve it anew.** Otherwise it comes out
+  with a chain of its own, and the look of a field inside a popup window differs from the look of a field
+  under it.
 
-## Что не входит
+## What is out of scope
 
-- Вид полей второго кита: у него своя настройка и свои поля.
-- Прочие свойства поля — плотность, размер подписи: они в настройку не заводятся, пока о них не
-  попросят.
+- The look of the fields of the second kit: it has a setting of its own and fields of its own.
+- The other properties of a field — the density, the size of the label: they are not created in the setting
+  until they are asked for.
 
-## Контракт
+## Contract
 
-Не применимо: поверхность — раздел настройки и входы компонентов, процедур поддомен не
-обслуживает.
+Not applicable: the surface is the section of the setting and the inputs of the components, the subdomain
+serves no procedures.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо.
+Not applicable.
 
-## Данные
+## Data
 
-Не применимо.
+Not applicable.
 
-## Экраны и состояния
+## Screens and states
 
-| Состояние               | Что видно                                |
-| ----------------------- | ---------------------------------------- |
-| настройки нет           | поля с заливкой — прежнее умолчание кита |
-| раздел компонента задан | поля того вида, что назван в разделе     |
-| вход задан на месте     | поле того вида, что назван входом        |
+| State                               | What is visible                                           |
+| ----------------------------------- | --------------------------------------------------------- |
+| there is no setting                 | the fields with a filling — the former default of the kit |
+| the section of the component is set | the fields of the look named in the section               |
+| the input is set at the place       | the field of the look named by the input                  |
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо.
+Not applicable.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Ничего своего.
+Nothing of its own.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо.
+Not applicable.
 
-## Решения
+## Decisions
 
-- **Вид поля вошёл в существующий порядок разрешения** — он уже написан у кнопки и повторяется
-  здесь один в один. Отвергнуто: свой признак внедрения под вид поля.
-- **Умолчание входа стало пустотой** — иначе настройка не срабатывает ни разу. Отвергнуто:
-  оставить `'fill'` умолчанием входа и читать настройку только при пустом значении, переданном
-  снаружи, — это то же самое, но выражено неявно.
+- **The look of a field entered the existing order of the resolving** — it is already written at the button
+  and is repeated here one to one. Rejected: a sign of the injection of its own under the look of a field.
+- **The default of the input became emptiness** — otherwise the setting does not work once. Rejected: to
+  leave `'fill'` as the default of the input and to read the setting only at an empty value passed from
+  outside — that is the same thing but expressed unopenly.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-6` — нужен ли такой же раздел остальным полям кита. Работа идёт с допущением, что раздел
-  заводится по имени компонента и следующий добавит своё имя, не трогая этого.
+- `Q-6` — whether the rest of the fields of the kit need the same section. The work goes with the assumption
+  that the section is created by the name of the component and the next one will add its own name without
+  touching this one.
 
-## История изменений
+## History of changes
 
-- 31 августа 2026 — заведён поддомен: вид поля в настройке кита.
+- 31 August 2026 — the subdomain was created: the look of a field in the setting of the kit.

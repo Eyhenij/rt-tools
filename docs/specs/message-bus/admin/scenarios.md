@@ -1,459 +1,468 @@
-# Сценарии — чтение принятого
+# Scenarios — the reading of what was taken in
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной, а закрытый со стороны приёмника, но не со стороны экрана —
-пометку «Покрытие: частичное».
+The identifier goes at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason; one closed on the side of the intake but
+not on the side of the screen carries the mark "Coverage: partial".
 
-Сценарии, чьё «Тогда» называет человека и то, что он видит, закрываются сквозной спекой. Рядом с
-ними идут замеры в браузере и живой проход на узле; заменой сквозной спеки они не считаются.
+The scenarios whose "Then" names a person and what they see are closed by an end-to-end spec. Next
+to them go measurements in the browser and a live pass on the node; a replacement of an end-to-end
+spec they are not.
 
-### SC-MB-46 — адрес раздела переживает перезагрузку
+### SC-MB-46 — the address of a section outlives a reload
 
-Дано владелец вошёл и стоит в разделе разборов
-Когда он перезагружает страницу
-Тогда он видит тот же раздел, а не начальный экран админки
+Given the owner entered and stands in the section of the analyses
+When they reload the page
+Then they see the same section, not the starting screen of the admin application
 
-## Список разборов происшествий
+## The list of the incident analyses
 
-### SC-MB-47 — список показывает разборы страницами, свежие сверху
+### SC-MB-47 — the list shows the analyses by pages, the fresh ones on top
 
-Дано разборов больше, чем помещается на страницу
-Когда владелец открывает раздел
-Тогда он видит первую страницу, свежие разборы сверху, и число страниц под списком
+Given there are more analyses than fit onto a page
+When the owner opens the section
+Then they see the first page, the fresh analyses on top, and the number of the pages under the list
 
-### SC-MB-48 — пока список читается, на месте строк видно чтение
+### SC-MB-48 — while the list is being read, the reading is visible in the place of the rows
 
-Дано чтение страницы ещё не ответило
-Когда владелец смотрит на раздел
-Тогда он видит на месте строк признак чтения, а не пустую область
+Given the reading of the page has not answered yet
+When the owner looks at the section
+Then they see the sign of the reading in the place of the rows, not an empty area
 
-### SC-MB-49 — пустой список объясняет, почему он пуст
+### SC-MB-49 — an empty list explains why it is empty
 
-Дано ни одно дерево не прислало разборов
-Когда владелец открывает раздел
-Тогда он читает, что разборов нет вовсе, а не видит пустую таблицу
+Given not a single tree sent an analysis
+When the owner opens the section
+Then they read that there are no analyses at all, not see an empty table
 
-### SC-MB-50 — отбор, не давший строк, отличается от пустого списка
+### SC-MB-50 — a filter that gave no rows differs from an empty list
 
-Дано разборы есть, но ни одного у выбранного дерева
-Когда владелец ставит отбор по этому дереву
-Тогда он читает, что записей нет по отбору, а не что их нет вовсе
+Given there are analyses, but not one at the chosen tree
+When the owner sets the filter by that tree
+Then they read that there are no records by the filter, not that there are none at all
 
-### SC-MB-51 — не прочитавшийся список говорит почему и повторяется одним действием
+### SC-MB-51 — a list that was not read says why and is repeated by one action
 
-Дано хранилище не ответило
-Когда владелец открывает раздел
-Тогда он читает причину и повторяет чтение одним действием, не перезагружая страницу
+Given the storage did not answer
+When the owner opens the section
+Then they read the reason and repeat the reading by one action, without reloading the page
 
-### SC-MB-52 — нажатие на строку открывает панель с текстом разбора целиком
+### SC-MB-52 — a press on a row opens the panel with the text of the analysis whole
 
-Дано список прочитан
-Когда владелец нажимает на строку
-Тогда он видит панель подробностей с текстом того разбора целиком
+Given the list is read
+When the owner presses a row
+Then they see the panel of details with the text of that analysis whole
 
-### SC-MB-53 — строка списка текста разбора целиком не несёт
+### SC-MB-53 — a row of the list does not carry the text of the analysis whole
 
-Дано у дерева есть разбор длиной в несколько экранов
-Когда приезжает страница списка
-Тогда в ответе стоят свойства строки без текста разбора
+Given a tree has an analysis several screens long
+When a page of the list arrives
+Then the answer holds the properties of the row without the text of the analysis
 
-### SC-MB-54 — отбор переживает переход на другую страницу
+### SC-MB-54 — the filter outlives a transition to another page
 
-Дано владелец поставил отбор по дереву
-Когда он переходит на вторую страницу списка
-Тогда он видит вторую страницу того же отбора, а отбор на экране остаётся названным
+Given the owner set the filter by tree
+When they go to the second page of the list
+Then they see the second page of the same filter, and the filter stays named on the screen
 
-### SC-MB-55 — закрытая панель возвращает список в том же состоянии
+### SC-MB-55 — a closed panel brings the list back in the same state
 
-Дано владелец открыл панель со второй страницы отобранного списка
-Когда он закрывает панель
-Тогда он видит ту же вторую страницу с тем же отбором и той же сортировкой
+Given the owner opened the panel from the second page of a filtered list
+When they close the panel
+Then they see the same second page with the same filter and the same sorting
 
-### SC-MB-62 — размер страницы имеет умолчание и предел
+### SC-MB-62 — the size of a page has a default and a limit
 
-Дано в списке больше записей, чем помещается на страницу
-Когда страница запрошена без размера, а затем с размером выше предела
-Тогда первый ответ несёт умолчание, второй — предел, и оба называют общее число
+Given there are more records in the list than fit onto a page
+When the page is requested without a size, and then with a size above the limit
+Then the first answer carries the default, the second the limit, and both name the total number
 
-### SC-MB-63 — страница за пределом списка отвечает пустой страницей
+### SC-MB-63 — a page past the end of the list answers with an empty page
 
-Дано в списке три страницы
-Когда запрошена пятидесятая
-Тогда ответ пуст, несёт общее число и отказом не является
+Given there are three pages in the list
+When the fiftieth is requested
+Then the answer is empty, carries the total number and is not a refusal
 
-### SC-MB-64 — неразобранный номер страницы отбивается с границами
+### SC-MB-64 — a number of a page that was not taken apart is refused with the boundaries
 
-Дано номер страницы в запросе — не число
-Когда запрос приходит на список
-Тогда он отбивается, а отказ называет параметр и его границы
+Given the number of the page in the request is not a number
+When the request arrives at the list
+Then it is refused, and the refusal names the parameter and its boundaries
 
-### SC-MB-65 — записи с равным временем не перескакивают между страницами
+### SC-MB-65 — records with equal time do not jump between the pages
 
-Дано у двух записей одно и то же время приезда
-Когда владелец переходит с первой страницы на вторую
-Тогда каждая из них видна ровно на одной странице
+Given two records have one and the same time of arrival
+When the owner goes from the first page to the second
+Then each of them is visible on exactly one page
 
-### SC-MB-66 — порядок меняется заголовком столбца и назван на экране
+### SC-MB-66 — the order is changed by the heading of a column and is named on the screen
 
-Дано список показан порядком по умолчанию
-Когда владелец нажимает заголовок сортируемого столбца
-Тогда порядок меняется, и экран называет применённый
+Given the list is shown by the order by default
+When the owner presses the heading of a sortable column
+Then the order changes, and the screen names the applied one
 
-### SC-MB-67 — выбор столбцов переживает возвращение в раздел
+### SC-MB-67 — the choice of the columns outlives a return into the section
 
-Дано владелец убрал столбец в разделе разборов
-Когда он уходит в другой раздел и возвращается
-Тогда столбец остаётся убранным, а в другом разделе состав столбцов свой
+Given the owner removed a column in the section of the analyses
+When they leave for another section and come back
+Then the column stays removed, and in the other section the composition of the columns is its own
 
-### SC-MB-68 — отбор называет деревья именами, а отбирает признаком
+### SC-MB-68 — the filter names the trees by names and filters by a sign
 
-Дано груз приехал с двух деревьев
-Когда владелец открывает отбор по дереву
-Тогда он видит имена деревьев, а выбранное сужает список по признаку
+Given the cargo arrived from two trees
+When the owner opens the filter by tree
+Then they see the names of the trees, and the chosen one narrows the list by the sign
 
-### SC-MB-69 — ответ, догнавший свой список позже, не показывается
+### SC-MB-69 — an answer that caught up with its list later is not shown
 
-Дано владелец сменил отбор, не дождавшись первого ответа
-Когда первый ответ приходит после второго
-Тогда список показывает строки второго отбора
+Given the owner changed the filter without waiting for the first answer
+When the first answer comes after the second
+Then the list shows the rows of the second filter
 
-### SC-MB-71 — панель записи, которой нет, говорит об этом
+### SC-MB-71 — the panel of a record that does not exist says so
 
-Дано ссылка ведёт на запись, которой в хранилище нет
-Когда владелец открывает её
-Тогда панель говорит, что записи нет, а не показывает пустые поля
+Given a link leads to a record that is not in the storage
+When the owner opens it
+Then the panel says there is no record, it does not show empty fields
 
-### SC-MB-72 — отказ службы называет номер обращения
+### SC-MB-72 — a refusal of the service names the number of the request
 
-Дано хранилище недоступно
-Когда владелец открывает раздел
-Тогда он видит отказ с номером обращения, и тот же номер стоит в журнале
+Given the storage is unavailable
+When the owner opens the section
+Then they see a refusal with the number of the request, and the same number stands in the journal
 
-### SC-MB-73 — ожидание ответа ограничено сроком
+### SC-MB-73 — the waiting for an answer is limited by a term
 
-Дано служба не отвечает
-Когда срок ожидания вышел
-Тогда экран говорит об отказе и предлагает повторить, а не ждёт без предела
+Given the service does not answer
+When the term of the waiting is over
+Then the screen says about the refusal and offers to repeat, it does not wait without a limit
 
-### SC-MB-74 — раздел предложений собран тем же списочным экраном
+### SC-MB-74 — the section of the proposals is put together by the same list screen
 
-Дано предложения приехали с двух деревьев
-Когда владелец открывает раздел предложений
-Тогда он видит таблицу с тулбаром и пагинацией, а нажатие на строку открывает панель
+Given the proposals arrived from two trees
+When the owner opens the section of the proposals
+Then they see a table with a toolbar and a pagination, and a press on a row opens the panel
 
-### SC-MB-75 — раздел сводок собран тем же списочным экраном
+### SC-MB-75 — the section of the digests is put together by the same list screen
 
-Дано записи месяца приехали с двух деревьев
-Когда владелец открывает раздел сводок
-Тогда он видит таблицу с тулбаром и пагинацией, а нажатие на строку открывает панель
+Given the records of the months arrived from two trees
+When the owner opens the section of the digests
+Then they see a table with a toolbar and a pagination, and a press on a row opens the panel
 
-### SC-MB-76 — время показано в поясе того, кто смотрит
+### SC-MB-76 — the time is shown in the zone of whoever is looking
 
-Дано запись приехала в конце суток по всемирному времени
-Когда владелец смотрит список из своего пояса
-Тогда время показано местным, а порядок «свежие сверху» ему не противоречит
+Given a record arrived at the end of a day by universal time
+When the owner looks at the list from their own zone
+Then the time is shown as local, and the order "the fresh ones on top" does not contradict it
 
-### SC-MB-77 — строка списка на узком экране показана карточкой
+### SC-MB-77 — a row of the list on a narrow screen is shown as a card
 
-Дано раздел открыт на узком экране
-Когда список прочитан
-Тогда каждая запись показана карточкой таблицы кита, а не обрезанной строкой
+Given the section is open on a narrow screen
+When the list is read
+Then every record is shown as a card of the table of the kit, not as a cut row
 
-### SC-MB-78 — подписи кита идут из словаря приложения
+### SC-MB-78 — the labels of the kit come from the dictionary of the application
 
-Дано на экране есть пагинация и пустое состояние
-Когда владелец смотрит их подписи
-Тогда они на языке админки, а не английским умолчанием кита
+Given there is a pagination and an empty state on the screen
+When the owner looks at their labels
+Then they are in the language of the admin application, not in the English default of the kit
 
-### SC-MB-96 — раздел админки открывается прямой ссылкой
+### SC-MB-96 — a section of the admin application opens by a direct link
 
-Дано админка отдана проксировщиком по имени
-Когда человек заходит прямой ссылкой на адрес раздела
-Тогда открывается приложение, а не отказ проксировщика
+Given the admin application is given out by the proxy by name
+When a person comes by a direct link to the address of a section
+Then the application opens, not a refusal of the proxy
 
-Не покрыто: проверяется запросом к живому узлу.
+Not covered: it is checked by a request to the live node.
 
-### SC-MB-167 — приехавший разбор встаёт в «новое»
+### SC-MB-167 — an analysis that arrived stands in "new"
 
-Дано дерево прислало разбор происшествия, которого у приёмника не было
-Когда чтение отдаёт его строкой списка
-Тогда состояние разбора — новое
+Given a tree sent an incident analysis the intake did not have
+When the reading gives it back as a row of the list
+Then the state of the analysis is new
 
-### SC-MB-168 — записи, приехавшие до заведения поля, читаются как новые
+### SC-MB-168 — the records that arrived before the creating of the field are read as new
 
-Дано записи груза лежат в хранилище с прежней поры, и состояния у них не было
-Когда миграция накатана и чтение отдаёт их страницей
-Тогда у каждой стоит новое, и пустого состояния нет ни у одной
+Given records of the cargo lie in the storage from the former time, and they had no state
+When the migration is rolled on and the reading gives them back by a page
+Then each of them carries new, and not one has an empty state
 
-### SC-MB-171 — состояние видно столбцом в списке раздела
+### SC-MB-171 — the state is visible as a column in the list of the section
 
-Дано в разделе разборов лежат записи в разных состояниях
-Когда человек открыл раздел
-Тогда у каждой строки виден столбец состояния со словом человека, а не с именем значения
+Given records in different states lie in the section of the analyses
+When a person opened the section
+Then at every row the column of the state is visible with the word of a person, not with the name of the value
 
-## Единый язык списков
+## The single language of the lists
 
-### SC-MB-129 — пустой раздел показывает пустое состояние, а не таблицу без строк
+### SC-MB-129 — an empty section shows an empty state, not a table without rows
 
-Дано записей у раздела нет ни одной
-Когда владелец открывает его
-Тогда он видит пустое состояние со значком и словом о том, откуда записи приходят, а строк
-таблицы не видит вовсе
+Given the section has not a single record
+When the owner opens it
+Then they see an empty state with a sign and a word about where the records come from, and see no
+rows of the table at all
 
-### SC-MB-130 — идущее чтение пустого состояния не показывает
+### SC-MB-130 — a reading that goes does not show an empty state
 
-Дано чтение списка ещё идёт
-Когда владелец смотрит на раздел
-Тогда он видит скелетоны таблицы, а пустого состояния не видит: пустота ещё не установлена
+Given the reading of the list still goes
+When the owner looks at the section
+Then they see the skeletons of the table and see no empty state: the emptiness is not established yet
 
-### SC-MB-131 — отказ чтения от пустого раздела отличим
+### SC-MB-131 — a refusal of the reading is told from an empty section
 
-Дано чтение списка отказало
-Когда владелец смотрит на раздел
-Тогда он видит тост отказа, а не пустое состояние: пустота и поломка выглядят по-разному
+Given the reading of the list refused
+When the owner looks at the section
+Then they see the toast of the refusal, not an empty state: the emptiness and a breakage look different
 
-### SC-MB-135 — четыре раздела объявляют таблицу одним языком
+### SC-MB-135 — four sections declare the table by one language
 
-Дано разделов со списком четыре
-Когда их разметку читают подряд
-Тогда каждый объявляет таблицу элементом кита, и ни один не объявляет её атрибутом на своей
-разметке
+Given there are four sections with a list
+When their markup is read one after another
+Then each declares the table by an element of the kit, and not one declares it by an attribute on
+its own markup
 
-### SC-MB-136 — готовый код паттерна списка сходится с разметкой разделов
+### SC-MB-136 — the ready code of the pattern of a list agrees with the markup of the sections
 
-Дано паттерн дерева о списочном экране несёт готовый код таблицы
-Когда его читают рядом с разметкой любого раздела
-Тогда язык совпадает: паттерн пишет таблицу тем же элементом, что и разделы
+Given the pattern of the tree about the list screen carries the ready code of a table
+When it is read next to the markup of any section
+Then the language coincides: the pattern writes the table by the same element as the sections
 
-Не покрыто: готовый код паттерна не сверяет ничто — сверка спеков читает утверждения правила, а
-пример под ними не читает вовсе. Расхождение ищется чтением паттерна рядом с разметкой раздела.
+Not covered: the ready code of a pattern is checked by nothing — the check of the specs reads the
+statements of a rule and does not read the sample under them at all. A divergence is looked for by
+reading the pattern next to the markup of a section.
 
-### SC-MB-137 — свойства записи показаны готовым списком кита, а не своей разметкой
+### SC-MB-137 — the properties of a record are shown by a ready list of the kit, not by markup of one's own
 
-Дано владелец открыл панель подробностей любой из трёх записей
-Когда её разметку читают
-Тогда свойства стоят в готовом списке кита, а рукописного списка определений в панели нет
+Given the owner opened the panel of details of any of the three records
+When its markup is read
+Then the properties stand in a ready list of the kit, and there is no handwritten list of definitions
+in the panel
 
-### SC-MB-138 — заголовок раздела панели рисует кит
+### SC-MB-138 — the heading of a section of the panel is drawn by the kit
 
-Дано у панели есть раздел свойств и раздел текста
-Когда владелец смотрит на панель
-Тогда заголовок каждого раздела нарисован готовым разделом кита, а своего заголовка в панели нет
+Given the panel has a section of the properties and a section of the text
+When the owner looks at the panel
+Then the heading of every section is drawn by a ready section of the kit, and there is no heading of
+one's own in the panel
 
-### SC-MB-139 — пока запись читается, на месте значений видны скелетоны
+### SC-MB-139 — while the record is being read, skeletons are visible in the place of the values
 
-Дано чтение записи ещё идёт
-Когда владелец смотрит на открытую панель
-Тогда названия свойств уже на месте, а на месте значений — скелетоны, а не пустота
+Given the reading of the record still goes
+When the owner looks at the open panel
+Then the names of the properties are already in place, and in the place of the values there are
+skeletons, not emptiness
 
-### SC-MB-140 — признак стоит на панели, её шапке и каждой строке свойства
+### SC-MB-140 — the sign stands at the panel, at its header and at every row of a property
 
-Дано панель открыта
-Когда сквозная спека ищет саму панель, её шапку и строку свойства
-Тогда она находит каждое из трёх по своему признаку, а не только значение внутри строки
+Given the panel is open
+When an end-to-end spec looks for the panel itself, its header and a row of a property
+Then it finds each of the three by a sign of its own, not only the value inside the row
 
-### SC-MB-141 — три панели собраны одним языком
+### SC-MB-141 — three panels are put together by one language
 
-Дано панелей подробностей три
-Когда их разметку читают подряд
-Тогда каждая собрана разделом, списком и строками кита, и ни одна не пишет их своей разметкой
+Given there are three panels of details
+When their markup is read one after another
+Then each is put together by a section, a list and rows of the kit, and not one writes them by markup
+of its own
 
-### SC-MB-208 — заголовок разметки виден заголовком, а не палкой
+### SC-MB-208 — a heading of the markup is visible as a heading, not as a stick
 
-Дано разбор происшествия приехал с заголовком первого уровня
-Когда владелец открывает панель подробностей
-Тогда он видит заголовок отдельным узлом, а знака решётки в показанном тексте нет
+Given an incident analysis arrived with a heading of the first level
+When the owner opens the panel of details
+Then they see the heading as a node of its own, and there is no hash sign in the shown text
 
-### SC-MB-209 — строка скрипта остаётся видимым текстом и не исполняется
+### SC-MB-209 — a line of a script stays visible text and is not executed
 
-Дано разбор происшествия приехал со строкой скрипта внутри
-Когда владелец открывает панель подробностей
-Тогда строка видна текстом как есть, а ничего из неё не исполнилось
+Given an incident analysis arrived with a line of a script inside
+When the owner opens the panel of details
+Then the line is visible as text as it is, and nothing out of it was executed
 
-### SC-MB-210 — парный тег остаётся видимым текстом
+### SC-MB-210 — a paired tag stays visible text
 
-Дано разбор происшествия приехал с парным тегом жирного начертания
-Когда владелец открывает панель подробностей
-Тогда угловые скобки видны в тексте, а начертание слова не изменилось
+Given an incident analysis arrived with a paired tag of the bold face
+When the owner opens the panel of details
+Then the angle brackets are visible in the text, and the face of the word did not change
 
-### SC-MB-211 — таблица разметки показана таблицей
+### SC-MB-211 — a table of the markup is shown as a table
 
-Дано разбор происшествия приехал с таблицей из двух столбцов
-Когда владелец открывает панель подробностей
-Тогда он видит таблицу со строкой заголовка, а не строки с палками
+Given an incident analysis arrived with a table of two columns
+When the owner opens the panel of details
+Then they see a table with a row of the heading, not rows with sticks
 
-### SC-MB-212 — список показан списком
+### SC-MB-212 — a list is shown as a list
 
-Дано предложение приехало со списком из трёх пунктов
-Когда владелец открывает панель подробностей
-Тогда он видит три пункта списка, а знаков дефиса в начале строк нет
+Given a proposal arrived with a list of three items
+When the owner opens the panel of details
+Then they see three items of a list, and there are no hyphens at the start of the lines
 
-### SC-MB-213 — блок кода показан моноширинным и без раскраски
+### SC-MB-213 — a block of code is shown monospaced and without colouring
 
-Дано разбор происшествия приехал с блоком кода, у ограды которого назван язык
-Когда владелец открывает панель подробностей
-Тогда содержимое блока показано моноширинным шрифтом одним цветом, а слово языка в тексте не
-показано
+Given an incident analysis arrived with a block of code whose fence names the language
+When the owner opens the panel of details
+Then the content of the block is shown in a monospaced font of one colour, and the word of the
+language is not shown in the text
 
-### SC-MB-214 — сводка месяца показывается тем же компонентом, блоком кода
+### SC-MB-214 — the digest of a month is shown by the same component, as a block of code
 
-Дано сводка месяца приехала телом прогона, а не разметкой
-Когда владелец открывает панель подробностей сводки
-Тогда он видит тело моноширинным блоком с отступами, нарисованное тем же компонентом, каким
-показан текст разбора происшествия
+Given the digest of a month arrived as the body of a run, not as markup
+When the owner opens the panel of details of the digest
+Then they see the body as a monospaced block with the indents, drawn by the same component the text
+of an incident analysis is shown by
 
-### SC-MB-215 — одиночный перенос строки остаётся переносом
+### SC-MB-215 — a single line break stays a break
 
-Дано разбор происшествия приехал с тремя строками подряд без пустой строки между ними
-Когда владелец открывает панель подробностей
-Тогда три строки показаны тремя строками, а не склеены в одну
+Given an incident analysis arrived with three lines in a row without an empty line between them
+When the owner opens the panel of details
+Then the three lines are shown as three lines, they are not glued into one
 
-### SC-MB-216 — картинка в вывод не попадает
+### SC-MB-216 — a picture does not get into the output
 
-Дано предложение приехало со ссылкой на внешнюю картинку
-Когда владелец открывает панель подробностей
-Тогда узла картинки в показанном нет, а запроса в чужую сеть страница не делала
+Given a proposal arrived with a link to an external picture
+When the owner opens the panel of details
+Then there is no node of a picture in what is shown, and the page made no request into a foreign network
 
-### SC-MB-217 — внешняя ссылка ведёт наружу, а ссылка чужой схемы остаётся текстом
+### SC-MB-217 — an external link leads outward, and a link of a foreign scheme stays text
 
-Дано разбор происшествия приехал с двумя ссылками: на внешний адрес и на адрес схемы сценариев
-Когда владелец открывает панель подробностей
-Тогда первая показана ссылкой на тот же адрес, а вторая — видимым текстом без ссылки
+Given an incident analysis arrived with two links: to an external address and to an address of the
+scheme of scripts
+When the owner opens the panel of details
+Then the first is shown as a link to the same address, and the second as visible text without a link
 
-### SC-MB-218 — текст без разметки показывается как есть
+### SC-MB-218 — a text without markup is shown as it is
 
-Дано предложение приехало одной строкой без единого знака разметки
-Когда владелец открывает панель подробностей
-Тогда он видит ту же строку целиком и без добавленных узлов
+Given a proposal arrived as one line without a single sign of markup
+When the owner opens the panel of details
+Then they see the same line whole and without added nodes
 
-### SC-MB-219 — текста нет — нет и раздела панели
+### SC-MB-219 — there is no text — there is no section of the panel
 
-Дано разбор происшествия приехал с текстом из одних пробелов
-Когда владелец открывает панель подробностей
-Тогда раздела панели про текст на экране нет вовсе
+Given an incident analysis arrived with a text of spaces alone
+When the owner opens the panel of details
+Then there is no section of the panel about the text on the screen at all
 
-### SC-MB-220 — строка списка текста по-прежнему не несёт
+### SC-MB-220 — a row of the list still carries no text
 
-Дано список разборов происшествий показывает страницу записей
-Когда владелец смотрит на строку списка
-Тогда текста записи в строке нет — ни сырого, ни размеченного
+Given the list of the incident analyses shows a page of records
+When the owner looks at a row of the list
+Then there is no text of the record in the row — neither raw nor marked up
 
-### SC-MB-221 — длинная строка кода не растягивает панель
+### SC-MB-221 — a long line of code does not stretch the panel
 
-Дано разбор происшествия приехал с блоком кода, строка которого длиннее панели
-Когда владелец открывает панель подробностей
-Тогда блок кода прокручивается вбок сам, а ширина панели осталась прежней
+Given an incident analysis arrived with a block of code whose line is longer than the panel
+When the owner opens the panel of details
+Then the block of code scrolls sideways itself, and the width of the panel stayed the former one
 
-### SC-MB-189 — панель подробностей показывает текст, список — нет
+### SC-MB-189 — the panel of details shows the text, the list does not
 
-Дано запись груза несёт текст починки
-Когда владелец открыл её панель подробностей
-Тогда в панели стоит строка «Чем исправлено» с этим текстом, а столбца с ним в списке раздела нет
+Given a record of the cargo carries a text of the fix
+When the owner opened its panel of details
+Then the row «Чем исправлено» with that text stands in the panel, and there is no column with it in
+the list of the section
 
-### SC-MB-190 — у записи без текста строки в панели нет вовсе
+### SC-MB-190 — at a record without a text there is no row in the panel at all
 
-Дано запись груза текста починки не несёт
-Когда владелец открыл её панель подробностей
-Тогда строки «Чем исправлено» в панели нет — ни подписи, ни пустого значения
+Given a record of the cargo carries no text of the fix
+When the owner opened its panel of details
+Then there is no row «Чем исправлено» in the panel — neither a label nor an empty value
 
-### SC-MB-205 — панель подробностей показывает версию выпуска
+### SC-MB-205 — the panel of details shows the version of the release
 
-Дано запись груза несёт версию выпуска
-Когда открыта панель подробностей этой записи
-Тогда в ней стоит строка «В какой версии» с этой версией
+Given a record of the cargo carries a version of the release
+When the panel of details of that record is open
+Then the row «В какой версии» with that version stands in it
 
-### SC-MB-206 — у записи без версии строки в панели нет
+### SC-MB-206 — at a record without a version there is no row in the panel
 
-Дано запись груза стоит в «новом» и версии выпуска не несёт
-Когда открыта панель подробностей этой записи
-Тогда строки «В какой версии» в ней нет вовсе
+Given a record of the cargo stands in "new" and carries no version of the release
+When the panel of details of that record is open
+Then there is no row «В какой версии» in it at all
 
-### SC-MB-222 — отбор по состоянию стоит в тулбаре правее отбора по дереву
+### SC-MB-222 — the filter by state stands in the toolbar to the right of the filter by tree
 
-Дано раздел разборов происшествий открыт
-Когда владелец смотрит на полосу над списком
-Тогда слева стоят два отбора подряд: по дереву, а правее него — по состоянию
+Given the section of the incident analyses is open
+When the owner looks at the strip above the list
+Then on the left two filters stand in a row: by tree, and to the right of it by state
 
-### SC-MB-223 — выбранное состояние сужает список и встаёт в адрес
+### SC-MB-223 — a chosen state narrows the list and stands in the address
 
-Дано список раздела показан целиком
-Когда владелец выбирает состояние «взято в разбор»
-Тогда в списке остаются только записи этого состояния, а выбор стоит в адресе раздела
+Given the list of the section is shown whole
+When the owner chooses the state "in progress"
+Then only the records of that state stay in the list, and the choice stands in the address of the section
 
-### SC-MB-224 — «все состояния» снимают отбор и убирают параметр из адреса
+### SC-MB-224 — "all the states" lifts the filter and removes the parameter from the address
 
-Дано список сужен состоянием
-Когда владелец выбирает «все состояния»
-Тогда список показывает записи всех состояний, а параметра отбора в адресе нет вовсе
+Given the list is narrowed by a state
+When the owner chooses "all the states"
+Then the list shows the records of all the states, and there is no parameter of the filter in the
+address at all
 
-### SC-MB-225 — отбор по состоянию складывается с отбором по дереву
+### SC-MB-225 — the filter by state adds up with the filter by tree
 
-Дано список сужен деревом
-Когда владелец выбирает состояние
-Тогда в списке остаются записи этого дерева и этого состояния, а оба отбора стоят в адресе
+Given the list is narrowed by a tree
+When the owner chooses a state
+Then the records of that tree and that state stay in the list, and both filters stand in the address
 
-### SC-MB-226 — выбор состояния возвращает список на первую страницу
+### SC-MB-226 — the choice of a state brings the list back to the first page
 
-Дано владелец стоит на третьей странице списка
-Когда он выбирает состояние
-Тогда список показывает первую страницу суженного списка, а не третью
+Given the owner stands on the third page of the list
+When they choose a state
+Then the list shows the first page of the narrowed list, not the third
 
-### SC-MB-227 — отбор по состоянию переживает переход на другую страницу
+### SC-MB-227 — the filter by state outlives a transition to another page
 
-Дано список сужен состоянием и не помещается на одну страницу
-Когда владелец переходит на вторую страницу
-Тогда список остаётся суженным тем же состоянием
+Given the list is narrowed by a state and does not fit onto one page
+When the owner goes to the second page
+Then the list stays narrowed by the same state
 
-### SC-MB-228 — закрытая панель записи возвращает список с тем же отбором
+### SC-MB-228 — a closed panel of a record brings the list back with the same filter
 
-Дано список сужен состоянием, и владелец открыл запись панелью
-Когда он закрывает панель
-Тогда список стоит на той же странице с тем же отбором и тем же порядком
+Given the list is narrowed by a state, and the owner opened a record by the panel
+When they close the panel
+Then the list stands on the same page with the same filter and the same order
 
-### SC-MB-229 — список, пустой по отбору состояния, объясняет это отбором
+### SC-MB-229 — a list that is empty by the filter of the state explains that by the filter
 
-Дано в разделе нет ни одной записи выбранного состояния
-Когда владелец выбирает это состояние
-Тогда на месте строк стоит пустое состояние про отбор, а не про дерево, ничего не приславшее
+Given there is not a single record of the chosen state in the section
+When the owner chooses that state
+Then in the place of the rows stands an empty state about the filter, not about a tree that sent nothing
 
-### SC-MB-230 — заголовок столбца состояния меняет порядок списка
+### SC-MB-230 — the heading of the column of the state changes the order of the list
 
-Дано раздел разборов происшествий открыт
-Когда владелец нажимает заголовок столбца состояния
-Тогда список упорядочен по состоянию, и применённый порядок виден на самом заголовке
+Given the section of the incident analyses is open
+When the owner presses the heading of the column of the state
+Then the list is ordered by the state, and the applied order is visible on the heading itself
 
-### SC-MB-231 — порядок по состоянию идёт шагами разбора
+### SC-MB-231 — the order by state goes by the steps of the sorting out
 
-Дано в списке есть записи всех четырёх состояний
-Когда владелец упорядочивает список по состоянию по возрастанию
-Тогда записи идут новыми, затем взятыми в разбор, затем починенными, затем выпущенными
+Given there are records of all four states in the list
+When the owner orders the list by the state ascending
+Then the records go new, then taken into the sorting out, then fixed, then released
 
-### SC-MB-232 — приёмник отбивает слово вне набора состояний
+### SC-MB-232 — the intake refuses a word outside the set of the states
 
-Дано вошедший человек запрашивает страницу разборов
-Когда в параметре состояния приходит слово, которого в наборе нет
-Тогда приёмник отвечает отказом с именем параметра, а не страницей записей
+Given a person who entered requests a page of the analyses
+When a word that is not in the set comes in the parameter of the state
+Then the intake answers with a refusal with the name of the parameter, not with a page of records
 
-### SC-MB-233 — нечитаемое состояние в адресе читается экраном как снятый отбор
+### SC-MB-233 — an unreadable state in the address is read by the screen as a lifted filter
 
-Дано владелец открыл раздел ссылкой, в которой состояние написано с опечаткой
-Когда экран разбирает выборку из адреса
-Тогда список показан несуженным, а отбор стоит на «всех состояниях»
+Given the owner opened the section by a link in which the state is written with a typo
+When the screen takes the selection apart from the address
+Then the list is shown not narrowed, and the filter stands at "all the states"
 
-### SC-MB-234 — раздел сводок отбора по состоянию не показывает
+### SC-MB-234 — the section of the digests does not show the filter by state
 
-Дано раздел сводок открыт
-Когда владелец смотрит на полосу над списком
-Тогда слева стоит один отбор по дереву, и второго рядом с ним нет
+Given the section of the digests is open
+When the owner looks at the strip above the list
+Then one filter by tree stands on the left, and there is no second one next to it
 
-### SC-MB-235 — два отбора на узком экране переносятся, а не режутся
+### SC-MB-235 — two filters on a narrow screen wrap, they are not cut
 
-Дано раздел разборов происшествий открыт на узком экране
-Когда владелец смотрит на полосу над списком
-Тогда оба отбора видны целиком, перенесённые на строки, и ни один не обрезан
+Given the section of the incident analyses is open on a narrow screen
+When the owner looks at the strip above the list
+Then both filters are visible whole, wrapped onto lines, and not one is cut
 
-### SC-MB-236 — состояние названо в отборе теми же словами, что в столбце
+### SC-MB-236 — the state is named in the filter by the same words as in the column
 
-Дано в списке есть запись в состоянии «починено»
-Когда владелец открывает список выбора состояния
-Тогда пункт назван тем же словом, каким состояние подписано в столбце этой записи
+Given there is a record in the state "ready" in the list
+When the owner opens the list of the choice of the state
+Then the item is named by the same word the state is labelled by in the column of that record

@@ -1,16 +1,16 @@
 {
-  "note": "Ручки потребителя второго кита: токены, которые кит намеренно не объявляет — значение приходит от приложения, а до него работает запасное значение. Перечень читает tools/check-tokens-graph.mjs и сверяет с человеческой половиной в projects/ui-kit-v2/docs/Theming.mdx. Всё, чего здесь нет, кит объявляет сам; имя, не объявленное и не названное здесь, проверка считает мёртвой ссылкой.",
+  "note": "The second kit's consumer handles: the tokens the kit deliberately does not declare — the value comes from the application, and until it does the fallback value works. The list is read by tools/check-tokens-graph.mjs and matched against its human half in projects/ui-kit-v2/docs/Theming.mdx. Everything that is not here the kit declares itself; a name neither declared nor named here the check counts as a dead reference.",
   "handles": {
-    "--rt-aside-width": "ширина боковой панели; умолчание — ступень --rt-aside-width-md",
-    "--rt-dialog-width": "ширина диалога; умолчание — ступень --rt-dialog-width-md",
-    "--rt-header-height": "высота шапки приложения; кит её не рисует и не знает",
-    "--rt-header-content-max-width": "кап ширины содержимого шапки",
-    "--rt-logo-wordmark": "начертание логотипа приложения, светлая тема",
-    "--rt-logo-wordmark-dark": "то же для тёмной темы",
-    "--rt-logo-tagline": "подпись под логотипом, светлая тема",
-    "--rt-logo-tagline-dark": "то же для тёмной темы",
-    "--rt-workspace-aside-size": "ширина боковой колонки рабочей области",
-    "--rt-workspace-list-size": "ширина списка рабочей области",
-    "--rt-page-header-bg": "подложка шапки страницы; умолчание — подложка панели навигации кита"
+    "--rt-aside-width": "the side panel's width; the default is the step --rt-aside-width-md",
+    "--rt-dialog-width": "the dialog's width; the default is the step --rt-dialog-width-md",
+    "--rt-header-height": "the height of the application's header; the kit neither draws nor knows it",
+    "--rt-header-content-max-width": "the cap on the width of the header's content",
+    "--rt-logo-wordmark": "the application logo's wordmark, the light theme",
+    "--rt-logo-wordmark-dark": "the same for the dark theme",
+    "--rt-logo-tagline": "the tagline under the logo, the light theme",
+    "--rt-logo-tagline-dark": "the same for the dark theme",
+    "--rt-workspace-aside-size": "the width of the workspace's side column",
+    "--rt-workspace-list-size": "the width of the workspace's list",
+    "--rt-page-header-bg": "the backdrop of the page header; the default is the kit's navigation panel backdrop"
   }
 }

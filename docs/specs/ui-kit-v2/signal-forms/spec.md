@@ -1,116 +1,125 @@
-# Поле набора и сигнальная форма
+# A field of the set and a signal form
 
-**Статус:** действует · **Ревизия:** 2026-08-30 · **Префикс сценариев:** `SC-UKV`
-**Зависимости:** нет
-**Законы:** `frontend-application`, `verifiability`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-30 · **Scenario prefix:** `SC-UKV`
+**Depends on:** none
+**Laws:** `frontend-application`, `verifiability`
+**Procedures:** none
 
-Договорённость называет, откуда поле набора берёт состояние формы и что происходит с полем,
-привязанным сигнальной формой Angular 22.
+The agreement names where a field of the set takes the state of the form from and what happens to a
+field bound by a signal form of Angular 22.
 
-## Зачем
+## Why
 
-Поле набора берёт состояние у прежней формы Angular: подписывается на события контрола в своём
-запуске. Сигнальная форма отдаёт по тому же имени свой переходник, у которого событий нет
-вовсе, — поле падает из запуска, и обёртка вместе с ним не рисует ничего. На экране остаются
-заголовки секций, а полей ввода ноль.
+A field of the set takes the state from the former form of Angular: it subscribes to the events of the
+control in its own start-up. A signal form gives back by the same name a bridge of its own that has no
+events at all — the field falls out of the start-up, and the wrapper together with it draws nothing. On
+the screen the headings of the sections stay, and there are zero fields of input.
 
-Одиночное поле промах прячет: рядом стоят поля на прежней привязке, и падение обёртки
-незаметно. Рассыпается всё при переводе группы полей — то есть ровно там, где сигнальная форма
-и нужна: длинную форму, разложенную по дочерним компонентам, прежняя привязка не собирает,
-потому что директива значения за границу дочернего компонента не выходит.
+A single field hides the miss: next to it stand fields on the former binding, and the fall of the
+wrapper is not noticeable. Everything falls apart at the translation of a group of fields — that is,
+exactly where a signal form is needed: a long form laid out over child components is not gathered by
+the former binding, because the directive of the value does not go past the boundary of a child
+component.
 
-## Терминология
+## Terminology
 
-| Термин              | Что это                                                                    |
-| ------------------- | -------------------------------------------------------------------------- |
-| Поле набора         | компонент набора, наследующий основу поля формы                            |
-| Прежняя привязка    | форма Angular на контролах: поле получает контрол, рассылающий события     |
-| Сигнальная привязка | форма Angular 22 на сигналах: поле получает переходник, читаемый сигналами |
-| Состояние формы     | негодность, ошибки, обязательность и отключённость поля                    |
+| Term                | What it is                                                                          |
+| ------------------- | ----------------------------------------------------------------------------------- |
+| A field of the set  | a component of the set inheriting the base of a field of a form                     |
+| The former binding  | a form of Angular on controls: the field gets a control sending out events          |
+| The signal binding  | a form of Angular 22 on signals: the field gets a bridge read by signals            |
+| The state of a form | the unfitness, the errors, the obligatoriness and the switched-off state of a field |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости | На экране                                 |
-| ---------------- | ----------------------------------------- |
-| Негодность       | красная рамка поля и текст ошибки под ним |
-| Обязательность   | звёздочка у подписи поля                  |
+| In the agreement   | On the screen                                                  |
+| ------------------ | -------------------------------------------------------------- |
+| The unfitness      | the red border of the field and the text of the error under it |
+| The obligatoriness | an asterisk at the label of the field                          |
 
-## Правила
+## Rules
 
-- **Поле работает с обеими привязками.** Прежняя остаётся рабочей слово в слово: поле выбирает
-  источник состояния по тому, что ему досталось, а не по настройке снаружи. Настройка означала
-  бы, что потребитель обязан назвать род формы, — а он его уже назвал самой привязкой.
-- **Отсутствие событий у контрола падением не бывает.** Контрол, который состояния не рассылает,
-  — это законный случай, а не поломка: поле читает у него то же состояние вычислением. Пока
-  падение шло из запуска, вместе с полем не рисовалось всё поддерево разметки.
-- **Состояние сигнальной привязки доходит до поля целиком.** Негодность, ошибки, обязательность
-  и отключённость — то же, что поле берёт у прежней привязки. Половина состояния хуже его
-  отсутствия: поле выглядит рабочим и молчит о том, что форма его отвергла.
-- **Негодность показывается после касания или правки, а не сразу.** Это верно при обеих
-  привязках: поле, покрасневшее до первого ввода, обвиняет человека в том, чего он ещё не делал.
-- **Обёртка поля берёт состояние у поля, а не у формы.** Она не знает, какой привязкой поле
-  связано, и знать не должна: иначе род формы придётся называть ей вторым входом.
+- **The field works with both bindings.** The former one stays working word for word: the field chooses
+  the source of the state by what it got, not by a setting from outside. A setting would mean that the
+  consumer is obliged to name the kind of the form — and they have already named it by the binding
+  itself.
+- **An absence of events at a control is never a fall.** A control that sends no state out is a lawful
+  case, not a breakage: the field reads the same state from it by a computing. While the fall came out of
+  the start-up, the whole subtree of the markup was not drawn together with the field.
+- **The state of the signal binding reaches the field whole.** The unfitness, the errors, the
+  obligatoriness and the switched-off state — the same as the field takes from the former binding. Half
+  of the state is worse than an absence of it: the field looks working and stays silent about the form
+  having rejected it.
+- **The unfitness is shown after a touch or an edit, not at once.** This is true at both bindings: a
+  field that went red before the first input accuses a person of what they have not done yet.
+- **The wrapper of a field takes the state from the field, not from the form.** It does not know which
+  binding the field is bound by, and must not know: otherwise the kind of the form would have to be
+  named to it by a second input.
 
-## Что не входит
+## What is out of scope
 
-- Договор поля сигнальной формы (`FormValueControl`) с моделью значения наружу: пока поле
-  отдаёт доступ к значению, директива выбирает его и до договора не доходит. Отдельная работа,
-  и она снимает прежний путь — то есть ломает обратную совместимость.
-- Проверка значения: форма её объявляет, а поле показывает результат.
-- Первый кит: у него своя основа поля.
+- The agreement of a field of a signal form (`FormValueControl`) with the model of the value outward:
+  while the field gives access to the value, the directive chooses it and does not reach the agreement.
+  A work of its own, and it lifts the former road — that is, it breaks the backward compatibility.
+- The check of the value: the form declares it, and the field shows the outcome.
+- The first kit: it has a base of a field of its own.
 
-## Контракт
+## Contract
 
-Не применимо: поверхность — входы и состояние компонента набора, процедур домен не обслуживает.
+Not applicable: the surface is the inputs and the state of a component of the set, the domain serves no
+procedures.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: поле отказов не бросает — отсутствие состояния для него законный случай.
+Not applicable: the field throws no refusals — an absence of the state is a lawful case for it.
 
-## Данные
+## Data
 
-Не применимо: своих записей хранилища у полей нет.
+Not applicable: the fields have no records of the storage of their own.
 
-## Экраны и состояния
+## Screens and states
 
-| Состояние поля         | Что видно                                              |
-| ---------------------- | ------------------------------------------------------ |
-| Нетронутое             | обычная рамка, ошибки нет                              |
-| Обязательное           | звёздочка у подписи                                    |
-| Негодное после касания | красная рамка и текст ошибки под полем                 |
-| Отключённое формой     | поле не принимает ввод, кнопка очистки не показывается |
+| The state of a field     | What is visible                                                     |
+| ------------------------ | ------------------------------------------------------------------- |
+| Untouched                | the ordinary border, there is no error                              |
+| Obligatory               | an asterisk at the label                                            |
+| Unfit after a touch      | the red border and the text of the error under the field            |
+| Switched off by the form | the field accepts no input, the button of the clearing is not shown |
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Своих подписей работа не заводит: текст ошибки приходит от формы, подписи набора уже переведены.
+The work creates no labels of its own: the text of an error arrives from the form, the labels of the set
+are already translated.
 
 ### SEO
 
-Не применимо: набор компонентов страниц не отдаёт.
+Not applicable: the set of components gives out no pages.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не меняется: работа о состоянии, а не о виде.
+It does not change: the work is about the state, not about the look.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо: состояние формы принадлежит экрану, а не объекту владения.
+Not applicable: the state of a form belongs to the screen, not to an object of the ownership.
 
-## Решения
+## Decisions
 
-- **Источник состояния выбирает поле, а не потребитель** — привязка уже названа разметкой,
-  и второй вход о том же расходился бы с ней молча. Отвергнуто: вход «род формы».
-- **Состояние сигнальной привязки читается вычислением** — переходник событий не рассылает, а
-  его чтения реактивны. Отвергнуто: опрос по таймеру и подписка на разосланное вручную.
+- **The source of the state is chosen by the field, not by the consumer** — the binding is already named
+  by the markup, and a second input about the same would diverge from it silently. Rejected: an input
+  "the kind of the form".
+- **The state of the signal binding is read by a computing** — the bridge sends no events out, and its
+  readings are reactive. Rejected: a poll by a timer and a subscription to what is sent out by hand.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-SF-1` — нужен ли полям вход значения моделью наружу. Работа идёт с допущением, что не
-  нужен: значение живёт внутри поля, а формы обеих родов достают его доступом.
+- `Q-SF-1` — whether the fields need an input of the value by a model outward. The work goes with the
+  assumption that they do not: the value lives inside the field, and forms of both kinds get it by
+  access.
 
-## История изменений
+## History of changes
 
-- 2026-08-30 — договорённость написана по предложению приёма о полях набора и сигнальной форме.
+- 2026-08-30 — the agreement was written by a proposal of the intake about the fields of the set and a
+  signal form.

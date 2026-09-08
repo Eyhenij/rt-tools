@@ -1,180 +1,183 @@
-# Сценарии — гард слога
+# Scenarios — the guard of the wording
 
-Идентификатор ставится в начало заголовка теста через тире. Префикс общий на домен, и номера
-при переезде в поддомен не пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier goes at the start of the test title, followed by a dash. The prefix is shared across
+the domain, and the numbers were not recounted at the move into the subdomain: the number ties the
+scenario to the test title.
 
-### SC-AK-327 — канцелярское слово ловится вместе с заменой
+### SC-AK-327 — an officialese word is caught together with a replacement
 
-Дано в тексте стоит слово из перечня признаков
-Когда идёт проверка слога
-Тогда она называет слово и то, чем его заменить
+Given a word from the list of signs stands in the text
+When the check of the wording goes
+Then it names the word and what to replace it with
 
-Покрыто: `projects/agent-kit/tests/check-prose-style.test.sh`.
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
 
-### SC-AK-330 — слово из левой колонки словаря ловится
+### SC-AK-330 — a word from the left column of the glossary is caught
 
-Дано в тексте стоит слово, которого в этом дереве не пишут
-Когда идёт проверка слога
-Тогда она называет его и слово из правой колонки
+Given a word not written in this tree stands in the text
+When the check of the wording goes
+Then it names it and the word from the right column
 
-Покрыто: `projects/agent-kit/tests/check-prose-style.test.sh`.
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
 
-### SC-AK-332 — слишком длинное предложение ловится
+### SC-AK-332 — a sentence that is too long is caught
 
-Дано в предложении больше слов, чем держит предел
-Когда идёт проверка слога
-Тогда она называет длину и предел
+Given there are more words in the sentence than the limit holds
+When the check of the wording goes
+Then it names the length and the limit
 
-Покрыто: `projects/agent-kit/tests/check-prose-style.test.sh`.
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
 
-### SC-AK-334 — блок кода не судится
+### SC-AK-334 — a code block is not judged
 
-Дано канцелярское слово стоит внутри блока кода
-Когда идёт проверка слога
-Тогда она молчит: в блоках лежат команды и вывод
+Given an officialese word stands inside a code block
+When the check of the wording goes
+Then it stays silent: commands and output lie in the blocks
 
-Покрыто: `projects/agent-kit/tests/check-prose-style.test.sh`.
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
 
-### SC-AK-336 — канцелярит в новом тексте отбивается
+### SC-AK-336 — officialese in the new text is refused
 
-Дано правка кладёт в документ канцелярское слово
-Когда гард судит правку
-Тогда он отбивает её и называет замену
+Given the edit puts an officialese word into a document
+When the guard judges the edit
+Then it refuses it and names the replacement
 
-Покрыто: `projects/agent-kit/tests/prose-style-guard.test.sh`.
+Covered: `projects/agent-kit/tests/prose-style-guard.test.sh`.
 
-### SC-AK-339 — файл кода гардом слога не судится
+### SC-AK-339 — a code file is not judged by the guard of the wording
 
-Дано правится файл кода
-Когда гард судит правку
-Тогда он молчит: его предмет — проза
+Given a code file is edited
+When the guard judges the edit
+Then it stays silent: its subject is prose
 
-Покрыто: `projects/agent-kit/tests/prose-style-guard.test.sh`.
+Covered: `projects/agent-kit/tests/prose-style-guard.test.sh`.
 
-### SC-AK-340 — описание прошлого и папка задачи не судятся
+### SC-AK-340 — an account of the past and the task folder are not judged
 
-Дано правится запись архива или ход работы
-Когда гард судит правку
-Тогда он молчит: архив не правится вовсе, а папка задачи живёт до слияния
+Given a record of the archive or the progress of the work is edited
+When the guard judges the edit
+Then it stays silent: the archive is not edited at all, and the task folder lives until the merge
 
-Покрыто: `projects/agent-kit/tests/prose-style-guard.test.sh`.
+Covered: `projects/agent-kit/tests/prose-style-guard.test.sh`.
 
-### SC-AK-328 — «в целях» ловится
+### SC-AK-328 — an officialese preposition is caught
 
-Дано в тексте стоит канцелярский предлог
-Когда идёт проверка слога
-Тогда она называет его и простой предлог вместо него
+Given an officialese preposition stands in the text
+When the check of the wording goes
+Then it names it and the plain preposition instead of it
 
-Покрыто: `projects/agent-kit/tests/check-prose-style.test.sh`.
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
 
-### SC-AK-329 — «данный» ловится
+### SC-AK-329 — an officialese pronoun is caught
 
-Дано в тексте стоит канцелярское местоимение
-Когда идёт проверка слога
-Тогда она называет его и то, чем его заменить
+Given an officialese pronoun stands in the text
+When the check of the wording goes
+Then it names it and what to replace it with
 
-Покрыто: `projects/agent-kit/tests/check-prose-style.test.sh`.
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
 
-### SC-AK-331 — словоформа запрещённого слова ловится тоже
+### SC-AK-331 — a word form of a forbidden word is caught too
 
-Дано слово из левой колонки словаря стоит в косвенном падеже
-Когда идёт проверка слога
-Тогда она находит его: границы слова считаются по буквам, а не классом `\w`
+Given a word from the left column of the glossary stands in an oblique case
+When the check of the wording goes
+Then it finds it: the boundaries of a word are counted by letters, not by the class `\w`
 
-Покрыто: `projects/agent-kit/tests/check-prose-style.test.sh`.
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
 
-### SC-AK-333 — чистый текст проходит
+### SC-AK-333 — a clean text passes
 
-Дано в тексте нет ни одного признака из перечня
-Когда идёт проверка слога
-Тогда она молчит
+Given there is not a single sign from the list in the text
+When the check of the wording goes
+Then it stays silent
 
-Покрыто: `projects/agent-kit/tests/check-prose-style.test.sh`.
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
 
-### SC-AK-335 — слово внутри другого слова не ловится
+### SC-AK-335 — a word inside another word is not caught
 
-Дано запрещённое слово стоит частью другого слова
-Когда идёт проверка слога
-Тогда она молчит: иначе она ловила бы половину дерева
+Given a forbidden word stands as a part of another word
+When the check of the wording goes
+Then it stays silent: otherwise it would catch half the tree
 
-Покрыто: `projects/agent-kit/tests/check-prose-style.test.sh`.
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
 
-### SC-AK-393 — заголовок обязательного раздела спека не судится
+### SC-AK-393 — the heading of a mandatory spec section is not judged
 
-Дано строка — заголовок, чьё имя названо исключением поимённо
-Когда идёт проверка слога
-Тогда она молчит: это имя раздела, которого набор разделов требует дословно
+Given the line is a heading whose name is named as an exception by name
+When the check of the wording goes
+Then it stays silent: this is the name of a section the set of sections demands verbatim
 
-Покрыто: `projects/agent-kit/tests/check-prose-style.test.sh`.
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
 
-### SC-AK-394 — то же слово в предложении ловится по-прежнему
+### SC-AK-394 — the same word inside a sentence is caught as before
 
-Дано слово из исключения стоит не заголовком, а внутри фразы
-Когда идёт проверка слога
-Тогда она отбивает: исключение снято с имени раздела, а не со слова
+Given a word from the exception stands not as a heading but inside a phrase
+When the check of the wording goes
+Then it refuses: the exception is lifted from the name of the section, not from the word
 
-Покрыто: `projects/agent-kit/tests/check-prose-style.test.sh`.
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
 
-### SC-AK-337 — слово из левой колонки словаря в правке отбивается
+### SC-AK-337 — a word from the left column of the glossary in an edit is refused
 
-Дано правка кладёт в документ слово, которого в дереве не пишут
-Когда гард судит правку
-Тогда он отбивает её
+Given the edit puts into a document a word not written in the tree
+When the guard judges the edit
+Then it refuses it
 
-Покрыто: `projects/agent-kit/tests/prose-style-guard.test.sh`.
+Covered: `projects/agent-kit/tests/prose-style-guard.test.sh`.
 
-### SC-AK-338 — чистая правка проходит
+### SC-AK-338 — a clean edit passes
 
-Дано в новом тексте признаков нет
-Когда гард судит правку
-Тогда он молчит
+Given there are no signs in the new text
+When the guard judges the edit
+Then it stays silent
 
-Покрыто: `projects/agent-kit/tests/prose-style-guard.test.sh`.
+Covered: `projects/agent-kit/tests/prose-style-guard.test.sh`.
 
-### SC-AK-341 — ход работы гардом слога не судится
+### SC-AK-341 — the progress of the work is not judged by the guard of the wording
 
-Дано правится ход работы в папке задачи
-Когда гард судит правку
-Тогда он молчит
+Given the progress of the work in the task folder is edited
+When the guard judges the edit
+Then it stays silent
 
-Покрыто: `projects/agent-kit/tests/prose-style-guard.test.sh`.
+Covered: `projects/agent-kit/tests/prose-style-guard.test.sh`.
 
-### SC-AK-859 — слово, которое бывает и существительным
+### SC-AK-859 — a word that is also a noun
 
-Дано в тексте стоит множественная форма — то существительным, то местоимением перед своим словом
-Когда проверка читает текст
-Тогда существительное проходит, а местоимение перед своим словом называется вместе с заменой
+Given a plural form stands in the text — now as a noun, now as a pronoun before its own word
+When the check reads the text
+Then the noun passes, and the pronoun before its own word is named together with a replacement
 
-Покрыто: `projects/agent-kit/tests/check-prose-style.test.sh`.
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
 
-### SC-AK-865 — цитата закона проверкой слога не судится
+### SC-AK-865 — a quotation of a law is not judged by the check of the wording
 
-Дано в тексте стоит блок цитаты, введённый строкой с адресом закона
-Когда проверка слога читает файл
-Тогда строки цитаты она пропускает: слова, которые она отбивает, стоят в самих законах
-десятками, и правка цитаты меняет чужой текст — правь её, и соврёшь, не правь, и не запушишь
+Given a quotation block introduced by a line with the address of a law stands in the text
+When the check of the wording reads the file
+Then it skips the lines of the quotation: the words it refuses stand in the laws themselves by the
+dozen, and editing a quotation changes someone else's text — edit it and you lie, do not edit it and
+you do not push
 
-Дано блок цитаты стоит без адреса закона перед ним
-Когда проверка слога читает файл
-Тогда она судит его наравне с прочим текстом: иначе цитата стала бы местом, куда прячут своё
-письмо от проверки
+Given a quotation block stands without the address of a law before it
+When the check of the wording reads the file
+Then it judges it on a par with the rest of the text: otherwise a quotation would become the place
+where one's own writing is hidden from the check
 
-Покрыто: `projects/agent-kit/tests/check-prose-style.test.sh`.
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
 
-### SC-AK-903 — английский канцелярит ловится наравне с русским
+### SC-AK-903 — English officialese is caught on a par with Russian
 
-Дано в тексте стоит английский оборот из перечня признаков
-Когда идёт проверка слога
-Тогда она называет его и то, чем его заменить; русский набор при этом остаётся, чистый
-английский текст проходит, а латинское слово внутри другого слова находкой не считается
+Given an English turn of phrase from the list of signs stands in the text
+When the check of the wording goes
+Then it names it and what to replace it with; the Russian set stays at that, a clean English text
+passes, and a Latin word inside another word is not counted as a finding
 
-Покрыто: `projects/agent-kit/tests/check-prose-style.test.sh`.
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
 
-### SC-AK-868 — слова дерева сверх пакетных
+### SC-AK-868 — the words of the tree on top of the package ones
 
-Дано дерево завело свои слова левой колонки словаря настройкой проверок
-Когда проверка слога читает текст
-Тогда она ловит их наравне с пакетными, а пакетные при этом остаются; негодный образец
-проверку не роняет и остальные слова судятся по-прежнему
+Given the tree created words of its own for the left column of the glossary by the setting of the
+checks
+When the check of the wording reads the text
+Then it catches them on a par with the package ones, and the package ones stay at that; an unfit
+sample does not drop the check, and the rest of the words are judged as before
 
-Покрыто: `projects/agent-kit/tests/check-prose-style.test.sh`.
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.

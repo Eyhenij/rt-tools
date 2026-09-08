@@ -1,130 +1,138 @@
-# browser-verification — как это устроено здесь
+# browser-verification — how it is arranged here
 
-Имена этого дерева при правиле `SKILL.md` рядом. Отдельный файл потому, что правило говорит
-приёмом и переносится между репозиториями целиком, а всё, что ниже, верно только здесь и
-устаревает при каждом переименовании.
+The names of this tree, next to the rule `SKILL.md`. A separate file because the rule speaks by
+technique and travels between repositories whole, while everything below is true only here and
+goes stale at every renaming.
 
-Стендов здесь три рода, и они отвечают на разные вопросы. Витрина показывает компонент кита во
-всех объявленных состояниях — по ней делается вывод о вёрстке компонента. Приложения дерева —
-приёмник и админка — поднимаются на своей машине командами `serve:*` и показывают то, что видит
-человек. Стенд сквозного набора поднимает прод-сборки обоих на своих портах со своей засеянной
-базой: на нём смотрят состояния, которых в рабочей базе не бывает.
+There are three kinds of stand here, and they answer different questions. The showcase shows a kit
+component in all its declared states — the layout of a component is judged by it. The tree's
+applications — the receiver and the admin panel — come up on one's own machine by the `serve:*`
+commands and show what a person sees. The end-to-end suite's stand raises the production builds of
+both on ports of its own with its own seeded database: on it one looks at the states that never
+happen in the working database.
 
-## Как это называется здесь
+## What it is called here
 
-- **В правиле** — Здесь
-- **стенд** — витрина: первый кит на `http://localhost:6006`, второй на `:6007`; приложения: приёмник на `:3000`, админка на `:4200`; сквозной набор — свои `:3310` и `:4310`
-- **драйвер браузера** — расширение claude-in-chrome; других дверей нет
-- **закреплённый профиль** — идентификатор из `.claude/rt-kit/browser-device-id` — файл машины, в репозиторий не едет
-- **замер** — вычисленные значения узла, снятые из страницы, а не глазами по снимку
+- **In the rule** — Here
+- **a stand** — the showcase: the first kit at `http://localhost:6006`, the second at `:6007`; the applications: the receiver at `:3000`, the admin panel at `:4200`; the end-to-end suite — its own `:3310` and `:4310`
+- **the browser driver** — the claude-in-chrome extension; there are no other doors
+- **the pinned profile** — the identifier from `.claude/rt-kit/browser-device-id` — a file of the machine, it does not travel into the repository
+- **a measurement** — the computed values of a node, taken from the page rather than by eye from a screenshot
 
-## Где это лежит
+## Where it lives
 
-- **помощник, печатающий профиль** — `.claude/hooks/browser-device-id.sh`
-- **гард выбора профиля** — `.claude/hooks/browser-guard-device-id.sh`
-- **гард свежести выбора** — `.claude/hooks/browser-guard-require-select.sh`
-- **гард обходных путей** — `.claude/hooks/browser-guard-no-other-drivers.sh`
-- **гард перечисления и переключения** — `.claude/hooks/browser-guard-no-listing.sh`
-- **гард лишнего вопроса о профиле** — `.claude/hooks/browser-guard-no-asking.sh` — файл этого дерева, пакет его не везёт
-- **истории и страницы-обзоры** — `projects/<кит>/src/**/stories/`, `projects/ui-kit/docs/*.mdx`
+- **the helper that prints the profile** — `.claude/hooks/browser-device-id.sh`
+- **the profile choice guard** — `.claude/hooks/browser-guard-device-id.sh`
+- **the choice freshness guard** — `.claude/hooks/browser-guard-require-select.sh`
+- **the workaround guard** — `.claude/hooks/browser-guard-no-other-drivers.sh`
+- **the listing and switching guard** — `.claude/hooks/browser-guard-no-listing.sh`
+- **the guard against asking about the profile** — `.claude/hooks/browser-guard-no-asking.sh` — a file of this tree, the package does not carry it
+- **the stories and the overview pages** — `projects/<kit>/src/**/stories/`, `projects/ui-kit/docs/*.mdx`
 
-## Стенды этого дерева
+## The stands of this tree
 
-Перечень, который хуки печатают в отказе, объявлен надстройкой профиля —
-`.claude/rt-kit/project.sh:RT_STANDS`: витрина `ui-kit` на 6006, витрина `ui-kit-v2` на 6007.
-Приложений это дерево не держит вовсе.
+The list the hooks print in a refusal is declared by the profile override —
+`.claude/rt-kit/project.sh:RT_STANDS`: the `ui-kit` showcase on 6006, the `ui-kit-v2` showcase on 6007. This tree holds no applications at all.
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-Первая колонка — статья дословно, как она написана в разделе «Как закон применяется здесь»
-(жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает
-то, чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
+The first column is the article verbatim, as it is written in the section "How the law applies
+here" (the bold part of the item). An article without a line and a line without an article are a
+divergence: the rule promises what the tree does not have, or the tree holds what the rule is
+silent about.
 
-- **A second instance of an application that is already up is not raised.** — **Не исполняется.** Гарда второго экземпляра не разложено; держится порядком: `lsof -nP -iTCP:<порт> -sTCP:LISTEN` до подъёма — `6006` и `6007` у витрин, `3000` и `4200` у приложений, `3310` и `4310` у стенда сквозного набора. Занятый порт означает уже поднятое, а не повод взять соседний; отдельный экземпляр витрины под прогон снимков поднимается своим портом и передаётся через `STORYBOOK_URL`. Поднимает всё агент сам: `pnpm run storybook`, `storybook:ui-kit-v2`, `serve:db`, `serve:api`, `serve:admin`, `serve:stand`.
-- **The browser is driven by one driver on the pinned profile.** — `.claude/hooks/browser-guard-no-other-drivers.sh:deny` — отбивает второй и третий драйверы, открытие ссылки средствами системы, запуск бинарника и управление сценарием автоматизации.
-- **A browser raised by a library from inside a script is the same door as launching the binary.** — `.claude/hooks/browser-guard-no-other-drivers.sh:launch` — судит содержимое запускаемого файла и код, переданный доводом вместо файла, на точки входа браузерных библиотек; файла, которого нет, не судит вовсе.
-- **The browser choice goes stale and needs a repeated call.** — `.claude/hooks/browser-guard-require-select.sh:ttl` — метка выбора живёт пять минут и обновляется каждым прошедшим вызовом.
-- **A refused profile choice ends the work with the browser; it does not start a search for a workaround.** — **Не проверяется ничем.** Гард свежести выбора судит вызовы после состоявшегося выбора, а сам отказ выбора видит только исполнитель: снаружи «профиля нет» и «выбор ещё не звали» неотличимы. Держится статьёй; в дереве промах уже случался — отказ прочитали как препятствие и пошли вызовами без выбора.
-- **The profile is not picked from the list and not asked from the owner.** — `.claude/hooks/browser-guard-no-listing.sh:device_id` отбивает перечисление и переключение, `browser-guard-no-asking.sh` — сам вопрос о профиле.
-- **An unconfigured guard is a reason to stop, not a permission to go on.** — **Не проверяется ничем.** Гарды браузера отпускают вызов, когда сами не сумели отработать, — это их объявленный `FAIL-OPEN`; остановился исполнитель после пустого вывода помощника или поехал дальше, не видно ни одному из них.
-- **A screen behind sign-in is checked on a stand with a substituted sign-in answer, not with a live account.** — `apps/message-bus-admin-e2e/src/support/admin.ts:signIn` — вход идёт формой, как у человека, а пара берётся у стенда: `apps/message-bus-admin-e2e/stand/stand.mjs:ACCOUNT`.
-- **A screen whose data never exists in the development database is measured with the component's real styles.** — **Не проверяется ничем.** Машине вставленная разметка неотличима от пришедшей с сервера — тем приём и работает; честность замера держится тем, что стили берутся у открытого экрана, а не выдумываются вместе со строкой
-- **Changing the number of elements in a container is a layout edit.** — **Не проверяется ничем.** Ширина документа в тексте правки не видна, и гарду судить нечем; ловится замером на узком вьюпорте — паттерн `browser-verification-measure` либо сквозная спека с заданным вьюпортом
-- **A measurement is taken on the longest value, not on the sample one.** — **Не проверяется ничем.** Обрезка текста браузером в разметке не видна: спеки читают целый текст и зелены по обе стороны промаха. Держится замером — паттерн `browser-verification-measure`
-- **A ready-made kit piece taken for values of another size is measured, not looked at.** — **Не проверяется ничем.** Ни линтер, ни сборка, ни снимок витрины не знают, каким значением компонент наполнят у потребителя; снимок ловит это только там, где для нового места заведён свой кадр
-- **The stand proxy supplies what the application recognises the request's tenant by.** — **Не применимо.** Арендаторов у библиотеки нет: единственный стенд — витрина, и запрос в ней ничей.
-- **The production configuration is checked only behind the real proxy.** — Не применимо: прода и прокси у библиотеки нет. Ближайшее — собранная витрина (`pnpm run build-storybook`) против витрины в режиме разработки.
-- **What is shown to a person is built from the work under discussion.** — **Не проверяется ничем:** сборка стенда — обычная команда сборки, и по ней не видно, что собранное пойдёт владельцу. Держится тем, что сказанное о показанном называет ветку.
-- **The work branch keeps the tip of main merged in the whole time, not only before delivery.** — `.claude/hooks/git-guard-delivery.sh:behind` — гард судит отставание при открытии заявки; между отдачами отставание не судит ничто.
-- **A measurement that will have to be repeated is taken by an end-to-end test, not by the driver.** — `apps/message-bus-admin-e2e/src/list-state-filter.narrow.spec.ts:viewport` — ширина окна берётся у страницы, положение и ширина узла — у его прямоугольника; так же меряют список и фильтр версии остальные спеки с суффиксом `.narrow`. Вьюпорт задан на весь набор в `apps/message-bus-admin-e2e/playwright.config.ts`.
-- **A measurement is taken before the work is shown to the owner, not after their remark.** — **Не проверяется ничем:** минуты показа у хода нет вовсе, и отличить замер до неё от замера после нечем. Держится порядком: числа образца лежат в разборе просьбы, и сверка с ними идёт тем же ходом, что и показ.
-- **The first visit to a public screen is marked with the service-visit sign.** — **Не применимо.** Публичного экрана у библиотеки нет: единственный стенд — витрина, и метить в ней нечего.
+- **A second instance of an application that is already up is not raised.** — **Not carried out.** No second-instance guard is laid out; it is held by the order: `lsof -nP -iTCP:<port> -sTCP:LISTEN` before the startup — `6006` and `6007` on the showcases, `3000` and `4200` on the applications, `3310` and `4310` on the end-to-end suite's stand. A taken port means something already up rather than a reason to take the next one; a separate showcase instance for the snapshot run comes up on its own port and is passed through `STORYBOOK_URL`. Everything is raised by the agent itself: `pnpm run storybook`, `storybook:ui-kit-v2`, `serve:db`, `serve:api`, `serve:admin`, `serve:stand`.
+- **The browser is driven by one driver on the pinned profile.** — `.claude/hooks/browser-guard-no-other-drivers.sh:deny` — it refuses the second and third drivers, opening a link by system means, launching the binary and driving by an automation script.
+- **A browser raised by a library from inside a script is the same door as launching the binary.** — `.claude/hooks/browser-guard-no-other-drivers.sh:launch` — it judges the content of the file being run and the code passed as an argument instead of a file, against the entry points of browser libraries; a file that does not exist it does not judge at all.
+- **The browser choice goes stale and needs a repeated call.** — `.claude/hooks/browser-guard-require-select.sh:ttl` — the choice mark lives five minutes and is refreshed by every call that passes.
+- **A refused profile choice ends the work with the browser; it does not start a search for a workaround.** — **Not checked by anything.** The choice freshness guard judges calls after a choice has taken place, while the refusal of the choice itself is seen only by the executor: from outside "there is no profile" and "the choice has not been called yet" are indistinguishable. Held by the article; the miss has already happened in the tree — the refusal was read as an obstacle and the calls went on without a choice.
+- **The profile is not picked from the list and not asked from the owner.** — `.claude/hooks/browser-guard-no-listing.sh:device_id` refuses the listing and the switching, `browser-guard-no-asking.sh` — the question about the profile itself.
+- **An unconfigured guard is a reason to stop, not a permission to go on.** — **Not checked by anything.** The browser guards let a call through when they themselves failed to work — that is their declared `FAIL-OPEN`; whether the executor stopped after the helper's empty output or went on is visible to none of them.
+- **A screen behind sign-in is checked on a stand with a substituted sign-in answer, not with a live account.** — `apps/message-bus-admin-e2e/src/support/admin.ts:signIn` — the sign-in goes through the form, as a person's does, and the pair is taken from the stand: `apps/message-bus-admin-e2e/stand/stand.mjs:ACCOUNT`.
+- **A screen whose data never exists in the development database is measured with the component's real styles.** — **Not checked by anything.** To a machine inserted markup is indistinguishable from markup that came from the server — that is exactly how the technique works; the honesty of the measurement is held by the styles being taken from the open screen rather than invented together with the row
+- **Changing the number of elements in a container is a layout edit.** — **Not checked by anything.** The document width is invisible in the text of the edit, and a guard has nothing to judge by; it is caught by a measurement on a narrow viewport — the pattern `browser-verification-measure` or an end-to-end spec with a set viewport
+- **A measurement is taken on the longest value, not on the sample one.** — **Not checked by anything.** Text clipping by the browser is invisible in the markup: the specs read the whole text and are green on both sides of the miss. Held by a measurement — the pattern `browser-verification-measure`
+- **A ready-made kit piece taken for values of another size is measured, not looked at.** — **Not checked by anything.** Neither the linter, nor the build, nor a showcase snapshot knows what value the component will be filled with at a consumer; a snapshot catches this only where a frame of its own is started for the new place
+- **The stand proxy supplies what the application recognises the request's tenant by.** — **Not applicable.** The library has no tenants: the only stand is the showcase, and a request in it belongs to nobody.
+- **The production configuration is checked only behind the real proxy.** — Not applicable: the library has neither production nor a proxy. The closest is the built showcase (`pnpm run build-storybook`) against the showcase in development mode.
+- **What is shown to a person is built from the work under discussion.** — **Not checked by anything:** building the stand is an ordinary build command, and it is invisible from it that what was built will go to the owner. Held by what is said about the shown naming the branch.
+- **The work branch keeps the tip of main merged in the whole time, not only before delivery.** — `.claude/hooks/git-guard-delivery.sh:behind` — the guard judges how far behind the branch is when a request is opened; between deliveries nothing judges it.
+- **A measurement that will have to be repeated is taken by an end-to-end test, not by the driver.** — `apps/message-bus-admin-e2e/src/list-state-filter.narrow.spec.ts:viewport` — the window width is taken from the page, the position and width of a node from its rectangle; the rest of the specs with the `.narrow` suffix measure the list and the filter the same way. The viewport is set for the whole suite in `apps/message-bus-admin-e2e/playwright.config.ts`.
+- **A measurement is taken before the work is shown to the owner, not after their remark.** — **Not checked by anything:** the turn has no minute of showing at all, and there is nothing to tell a measurement before it from one after. Held by the order: the reference numbers lie in the grill of the request, and the audit against them goes in the same turn as the showing.
+- **The first visit to a public screen is marked with the service-visit sign.** — **Not applicable.** The library has no public screen: the only stand is the showcase, and there is nothing to mark in it.
 
-## Что ещё стоит знать при чтении кода
+## What else is worth knowing when reading the code
 
-- **Дверей в браузер здесь две, и вторая не обход.** Расширение водит живую вкладку на
-  закреплённом профиле и требует владельца у машины. Драйвер, стоящий в дереве под прогонщик
-  снимков, водится сценарием без него — им берутся замеры, узкий экран и обход всех историй
-  (`tools/story-sweep-v2.mjs`). Гард обходных путей стережёт открытие адреса средствами
-  системы, вождение из командной строки драйвера и второй драйвер живой вкладки, а не запуск
-  сценария. Замер, снятый вторым путём, — такой же замер.
-- Профиль закреплён на машине и в репозиторий не едет: файл `.claude/rt-kit/browser-device-id`
-  исключён из индекса. Нет файла — все гарды браузера пропускают, и это сделано намеренно:
-  гард, который не может назвать нужный профиль, ничего не предлагает взамен.
-- Спека и показ на витрине не заменяют друг друга: спека доказывает, что состояние наступило,
-  а витрина — что оно выглядит как обещано. Это записано законом проверяемости и надстройкой к
-  нему в `.claude/rt-kit/overrides/laws/verifiability.md`.
-- Витрина второго кита обязана показывать все объявленные состояния компонента; непоказуемое
-  помечается с причиной — правило `rt-tools-storybook`.
-- Витрину для глаз нельзя поднимать с `RT_SNAPSHOT_RUN=1`: переменная снимает аддон
-  псевдосостояний, и hover, focus и active пропадают из показа. Её ставит только команда
-  прогона снимков.
+- **There are two doors into the browser here, and the second is not a workaround.** The
+  extension drives a live tab on the pinned profile and demands the owner at the machine. The
+  driver standing in the tree for the snapshot runner is driven by a script without it — it is
+  what takes the measurements, the narrow screen and the sweep over all the stories
+  (`tools/story-sweep-v2.mjs`). The workaround guard watches opening an address by system means,
+  driving the driver from the command line and a second driver of a live tab, not the running of
+  a script. A measurement taken by the second path is just as much a measurement.
+- The profile is pinned on the machine and does not travel into the repository: the file
+  `.claude/rt-kit/browser-device-id` is excluded from the index. With no file all the browser
+  guards let through, and that is done deliberately: a guard that cannot name the right profile
+  offers nothing in its stead.
+- A spec and a showing in the showcase do not replace one another: a spec proves that a state
+  came about, and the showcase that it looks as promised. That is written down by the law of
+  verifiability and by the override to it in `.claude/rt-kit/overrides/laws/verifiability.md`.
+- The second kit's showcase must show every declared state of a component; what cannot be shown
+  is marked with a reason — the rule `rt-tools-storybook`.
+- The showcase for the eyes may not be raised with `RT_SNAPSHOT_RUN=1`: the variable removes the
+  pseudo-state addon, and hover, focus and active disappear from the showing. It is set only by
+  the snapshot run command.
 
-## Чем это проверяется
+## What this is checked by
 
-- `pnpm run storybook` и `pnpm run storybook:ui-kit-v2` — витрины первого и второго кита.
-- `pnpm run build-storybook` — собранная витрина, если расхождение похоже на след режима
-  разработки.
-- `pnpm run test:visual` — снимок каждой истории первого кита против эталона; сами эталоны
-  лежат в `projects/ui-kit/.storybook/__snapshots__/`, расхождения — в `__diff_output__`
-  рядом, и в репозиторий не едут. Обновляются намеренно: `pnpm run test:visual:update`.
-  Прогон идёт против уже поднятой витрины; адрес перебивается `STORYBOOK_URL`.
+- `pnpm run storybook` and `pnpm run storybook:ui-kit-v2` — the showcases of the first and the
+  second kit.
+- `pnpm run build-storybook` — the built showcase, if a divergence looks like a trace of
+  development mode.
+- `pnpm run test:visual` — a snapshot of every story of the first kit against a reference; the
+  references themselves lie in `projects/ui-kit/.storybook/__snapshots__/`, the divergences in
+  `__diff_output__` next to them, and they do not travel into the repository. They are updated
+  deliberately: `pnpm run test:visual:update`. The run goes against an already raised showcase;
+  the address is overridden by `STORYBOOK_URL`.
 
-## Про снимки витрины
+## About the showcase snapshots
 
-- **Эталон привязан к машине.** Здесь это ничего не стоит: раннер CI — та же машина, что у
-  разработчика, поэтому снятый локально эталон совпадает с прогоном в CI. Смена машины или
-  версии браузера означает пересъёмку всех эталонов, а не разбор расхождений.
-- **Снимок и замер отвечают на разные вопросы.** Замер вычисленных значений говорит только о
-  том, о чём его спросили; снимок ловит всё видимое, но срабатывает и на сдвиг в пиксель.
-  Одно другого не заменяет.
-- **Недетерминированное в историю не попадает.** Случайные данные фиксируются зерном
-  генератора (`faker.seed` в `preview.ts`), картинки встраиваются в адрес вместо загрузки из
-  сети, шрифт значков дожидается готовности — до неё `rtui-icon` держит себя невидимой.
-- **Анимации каркаса идут не через CSS.** Объявление нулевой длительности их не
-  останавливает: перед снимком они доводятся до конца через программный интерфейс анимаций,
-  иначе панель действий попадает в кадр на середине пути.
+- **A reference is pinned to the machine.** Here that costs nothing: the CI runner is the same
+  machine as the developer's, so a reference taken locally matches the run in CI. A change of
+  machine or of browser version means re-taking all the references, not sorting out divergences.
+- **A snapshot and a measurement answer different questions.** A measurement of computed values
+  says only what it was asked about; a snapshot catches everything visible, but fires on a shift
+  of one pixel too. One does not replace the other.
+- **What is not deterministic does not get into a story.** Random data is pinned by the
+  generator's seed (`faker.seed` in `preview.ts`), pictures are embedded into the address instead
+  of being loaded from the network, the icon font waits for readiness — until then `rtui-icon`
+  keeps itself invisible.
+- **The framework's animations do not go through CSS.** Declaring a zero duration does not stop
+  them: before a snapshot they are driven to the end through the animations interface, otherwise
+  the action bar gets into the frame halfway along.
 
-## Про узкий экран
+## About the narrow screen
 
-Порог узкого экрана здесь `599px` — им меряет и медиа-запрос `media-breakpoint-down($device-xs)`,
-и `BreakpointService`. Окно браузера на macOS уже примерно `606px` не сужается, поэтому ни
-драйвером, ни руками до порога не добраться: узкий вид проверяется драйвером витрины, который
-ставит размер рамки сам.
+The narrow-screen threshold here is `599px` — both the media query
+`media-breakpoint-down($device-xs)` and `BreakpointService` measure by it. A browser window on
+macOS does not narrow below about `606px`, so neither by the driver nor by hand can the threshold
+be reached: the narrow view is checked by the showcase driver, which sets the frame size itself.
 
-Драйвер стоит в дереве под прогонщик снимков; вызывается разовым сценарием из временного
-каталога, в репозиторий такой сценарий не едет:
+The driver stands in the tree for the snapshot runner; it is called by a one-off script from a
+temporary directory, and such a script does not travel into the repository:
 
 ```javascript
 const page = await browser.newPage({ viewport: { width: 599, height: 900 } });
-await page.goto('http://localhost:6006/iframe.html?id=<история>&viewMode=story', { waitUntil: 'networkidle' });
-await page.evaluate(() => getComputedStyle(document.querySelector('<селектор>')).visibility);
+await page.goto('http://localhost:6006/iframe.html?id=<story>&viewMode=story', { waitUntil: 'networkidle' });
+await page.evaluate(() => getComputedStyle(document.querySelector('<selector>')).visibility);
 ```
 
-- **Меряется по обе стороны порога, а не с одной.** Значение на узком экране без значения на
-  широком не отличает переехавшее правило от правила, которое действовало всегда.
-- **Витрина передаёт `isMobile` намеренно**, и на узкой рамке ветка разметки останется
-  широкой. Ветку переключает не размер рамки, а аргумент истории: `&args=isMobile:!true`.
-- **Правило, которое не на что навесить, проверяется навешенным классом.** Модификатор,
-  который ставится замером содержимого, на витрине может не сработать ни на одной ширине;
-  тогда класс добавляется из страницы, и меряется вычисленное значение под ним.
+- **The measurement is taken on both sides of the threshold, not on one.** A value on a narrow
+  screen without the value on a wide one does not tell a rule that moved from a rule that always
+  applied.
+- **The showcase passes `isMobile` deliberately**, and on a narrow frame the markup branch stays
+  the wide one. The branch is switched not by the frame size but by the story argument:
+  `&args=isMobile:!true`.
+- **A rule with nothing to hang it on is checked by hanging the class.** A modifier that is set by
+  measuring the content may fire at no width at all in the showcase; then the class is added from
+  the page, and the computed value under it is measured.

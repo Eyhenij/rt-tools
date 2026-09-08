@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load when editing any test file and anything in the tree's end-to-end suites. Names the scenario id in the title, moving a decision into a pure function and what an end-to-end test closes. Patterns testing-unit, testing-e2e.
 ---
-<!-- rt-kit v0.25.0 · rules/testing.md · 8aeaf3df24bb · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/testing.md · 40e57d6b8ed2 · правится надстройкой, не здесь -->
 
 # Verifiability — how it works here
 
@@ -227,27 +227,30 @@ flowchart TD
 
 ## What of the law is not here
 
-Дерево держит и библиотеки, и приложения, и правило прикладывается к ним по-разному. У
-библиотек сквозных прогонов нет вовсе: видимое состояние показывает витрина, и подтверждается
-оно кадром истории. Сквозной набор в дереве один — набор админки приёмника, — и всё, что закон
-говорит про стенд, данные и путь запроса, приложено к нему одному.
+The tree holds both libraries and applications, and the rule applies to them differently. The
+libraries have no end-to-end runs at all: the visible state is shown by the showcase, and it is
+confirmed by a story frame. There is one end-to-end suite in the tree — the suite of the
+receiver's admin panel — and everything the law says about a stand, data and the request path
+applies to it alone.
 
-- **Прогонщик спек пакетов — Jest с `jest-preset-angular`, а не Vitest.** Один проект на пакет;
-  всё, что правило говорит про настройку Vitest, здесь не к чему приложить. Сквозной набор
-  гоняет Playwright.
-- **Нумерованные сценарии есть у приёмника и нет у китов.** Заголовки сквозных спек админки
-  несут номер сценария, и сами сценарии живут в `docs/specs/message-bus/`. У китов их нет:
-  связь поведения с тестом держится словом — поведение названо в `CONTEXT.md` компонента и
-  названо ещё раз в заголовке теста.
-- **Стенд сквозной набор поднимает себе сам, и увести его переменной окружения нельзя.**
-  Прод-сборки обоих приложений, своя база, схема и засев встают одной командой и гаснут вместе
-  с прогоном; выключателей по состоянию стенда у спек поэтому нет.
-- **Готовый код спеки компонента кита и кадра экрана приложения лежит в правиле
-  `ui-component-tests`.** Там же — подмены, до которых не додуматься, и выбор между спекой,
-  снимком истории, кадром экрана и замером.
+- **The runner of the package specs is Jest with `jest-preset-angular`, not Vitest.** One project
+  per package; everything the rule says about the Vitest config has nothing to apply to here. The
+  end-to-end suite runs Playwright.
+- **Numbered scenarios exist for the receiver and do not for the kits.** The titles of the admin
+  panel's end-to-end specs carry a scenario number, and the scenarios themselves live in
+  `docs/specs/message-bus/`. The kits have none: the link between behaviour and test is held by a
+  word — the behaviour is named in the component's `CONTEXT.md` and named once more in the test
+  title.
+- **The end-to-end suite raises the stand itself, and it cannot be pointed elsewhere by an
+  environment variable.** Production builds of both applications, their own database, schema and
+  seeding come up by one command and go down with the run; the specs therefore have no switches
+  by the state of the stand.
+- **The ready-made code of a kit component's spec and of an application screen frame lies in the
+  rule `ui-component-tests`.** There too are the substitutions nobody would think of, and the
+  choice between a spec, a story snapshot, a screen frame and a measurement.
 
-Полноту теста не проверяет ничто, и подмену модулей дерево не договаривалось делать никак:
-двойник пишется руками.
+The completeness of a test is checked by nothing, and the tree agreed on no way of substituting
+modules: a double is written by hand.
 
 ## Patterns
 

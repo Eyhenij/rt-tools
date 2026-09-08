@@ -1,205 +1,233 @@
-# Сверка спеков и адресов
+# The check of the specs and the addresses
 
-**Статус:** действует · **Ревизия:** 2026-09-06 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `project-documentation`, `verifiability`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-09-06 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `project-documentation`, `verifiability`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Утверждение спека и правила привязано к месту в коде, адрес в тексте обязан существовать, номер
-сценария связывает обещание с пробой, а договорённость о продукте живёт до вливания в спек
-домена. Поддомен называет, что из этого считает машина и как: сверка спеков, сверка адресов
-документов и указателей каталогов, разбор якорей привязки и возраст договорённостей.
+A statement of a spec and of a rule is bound to a place in code, an address in a text must exist, the
+number of a scenario ties a promise to a probe, and an agreement about the product lives until it is
+merged into the domain spec. The subdomain names what of this a machine counts and how: the check of
+the specs, the check of the addresses of the documents and of the pointers of the directories, the
+parse of the anchors of the bindings and the age of the agreements.
 
-Что обязано быть верно у самих текстов пакета — разделы, переносимость, словарь, граф, ревью
-семьи — соседний поддомен «Тексты слоя правил» рядом.
+What must be true of the texts of the package themselves — the sections, the portability, the
+glossary, the graph, the review of a family — is the neighbouring subdomain "The texts of the rules
+layer" next to it.
 
-## Терминология
+## Terminology
 
-- **Адрес** — путь, голое имя или каталог, названные в тексте в обратных кавычках.
-- **Голое имя** — имя файла без каталога перед ним.
-- **Указатель каталога** — таблица в обзорном документе каталога, перечисляющая его записи.
-  Читателю она заменяет обход.
-- **Таблица привязок** — таблица раздела «Где исполняются статьи» в компаньоне правила; только
-  её строки — привязки. Описательные таблицы компаньона называют имена дерева и ни одного
-  утверждения не исполняют.
-- **Переносимый текст** — закон, правило или паттерн, написанный для любого дерева этого класса:
-  его адреса принадлежат тому дереву, куда он ложится. Разложенная копия несёт шапку раскладки,
-  исходник — нет.
-- **Якорь** — имя файла и символ в строке привязки; сверка ищет символ по тексту файла.
-- **Договорённость** — спек фичи, записанный до кода в каталоге «предложено» домена; вливается в
-  спек домена одним из последних коммитов ветки.
+- **An address** — a path, a bare name or a directory named in a text in backticks.
+- **A bare name** — the name of a file without a directory before it.
+- **A pointer of a directory** — a table in the overview document of the directory listing its
+  records. For a reader it replaces a walk.
+- **The table of the bindings** — the table of the section "Where the articles are carried out" in
+  the companion of a rule; only its rows are bindings. The descriptive tables of the companion name
+  the names of the tree and carry out not a single statement.
+- **A portable text** — a law, a rule or a pattern written for any tree of this class: its addresses
+  belong to the tree it lands in. A laid-out copy carries the layout header, a source does not.
+- **An anchor** — the name of a file and a symbol in a binding line; the check looks for the symbol
+  over the text of the file.
+- **An agreement** — a feature spec written before the code in the "proposed" directory of a domain;
+  it is merged into the domain spec by one of the last commits of the branch.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости          | В строке запуска                        |
-| ------------------------- | --------------------------------------- |
-| сверка спеков дерева      | команда сверки спеков, шаг набора гейта |
-| сверка адресов документов | проверка адресов, шаг набора гейта      |
+| In the agreement                            | In the launch line                                              |
+| ------------------------------------------- | --------------------------------------------------------------- |
+| the check of the specs of the tree          | the command of the check of the specs, a step of the gate suite |
+| the check of the addresses of the documents | the check of the addresses, a step of the gate suite            |
 
-## Правила
+## Rules
 
-- **Таблица кодов отказа процедурой не считается.** Раздел «Контракта» держит две разные
-  таблицы — процедуры с правами и коды отказа с поводами, — и по форме строки они неотличимы:
-  обе несут значение в кавычках первой ячейкой. Спек, объявивший процедуры, получал из-за этого
-  свою таблицу кодов прочитанной как список процедур, и каждая её строка становилась процедурой,
-  которой в домене нет. Различает их вторая ячейка: код отказа — число.
-- **Поддомен сверяется наравне с доменом.** Те же обязательные разделы, тот же компаньон рядом,
-  та же связь сценариев с тестами. Домен, у которого половина поддоменов описана, а половина
-  заведена пустыми каталогами, зелёным не бывает.
-- **Предложенный закон правила не требует.** Признак стоит строкой статуса в самом законе, а не
-  списком исключений рядом с проверкой: договорённость, записанную раньше кода, привязывать не
-  к чему.
-- **Влитая договорённость ветку не запирает.** После вливания директории «предложено» на диске
-  нет, а замысел ссылается на неё до конца работы. Гард замысла отличает влитое от
-  незаведённого по истории ветки: путь, которого в ней никогда не было, договорённостью не был.
-- **Префикс сценариев занят одним спеком по всему дереву.** Второй префикс внутри спека значит,
-  что предмет описан дважды; занятый чужим — что по номеру не видно, чей это сценарий.
-  Договорённость о продукте — исключение: она нумеруется вместе со спеком, в который вольётся.
-- **Голое имя и каталог судятся наравне с полным путём.** Половина таблиц «Где это лежит» названа
-  каталогами, и проверка, знающая только строку с расширением, их не видит вовсе.
-- **Дерево для сверки путей берётся у системы контроля версий, а не обходом каталогов.** Обход не
-  видит каталогов, начинающихся с точки, и всё, что в них лежит, читается как несуществующее.
-- **Папки задач выведены из сверки путей, как архив.** Ход работы перечисляет находки — то есть
-  ровно то, чего в дереве нет.
-- **Переносимый текст из сверки адресов выведен.** Правило, которое ложится в другое дерево,
-  называет адреса того дерева: разложенную копию проверка узнаёт по шапке раскладки, исходник —
-  по каталогу, названному в настройке. Судить их значит краснеть на полтораста строк, ни одна из
-  которых не чинится правкой этого дерева.
-- **Полнота указателя каталога сверяется обеими сторонами.** Запись каталога без строки в таблице
-  и строка таблицы без записи — оба расхождения, и оба называются.
-- **Расхождение указателя печатается своим списком со своим доводом.** Совет внести путь в список
-  исключений здесь не подходит: чинится это строкой в таблице, а не молчанием проверки.
-- **Привязками считаются строки одной таблицы компаньона, а не всякая строка, похожая на строку
-  таблицы.** Раздел, из которого они берутся, называет тот, кто зовёт сверку: у правила это «Где
-  исполняются статьи», у спека домена раздела нет — там компаньон держит одну таблицу.
-- **Компаньон правила без раздела привязок — отказ, а не молчание.** Раздел стоит в образце
-  компаньона, и его отсутствие означает переписанный руками файл, у которого привязки не
-  проверяет ничто; молчаливо прочесть вместо него весь файл значит вернуть исходный дефект.
-- **Подзаголовок внутри раздела список пунктов не кончает, таблица кончает, и отказ о пустом
-  разделе называет, что стоит вместо пунктов.** Раздел отрезан по уровню заголовка, и строка
-  `#` в нём всегда глубже — ею спек большого домена группирует правила. Отказ без причины
-  заставлял переставлять разметку наугад: подзаголовки и таблица перед списком давали один и
-  тот же отказ.
-- **Имя в якоре записывается так, как объявлено в коде, решётку включая.** Приватное поле класса
-  объявлено с решёткой, и прежде такой якорь читался пустой привязкой: образец решётки не
-  разбирал вовсе, а счёт вхождений искал имя границей слова, которой перед решёткой нет. Имя без
-  решётки остаётся законным — привязки прежней формы зелёные, — но называет метод не тем именем,
-  каким он объявлен.
-- **Символом якоря считается любая буква, а не только латинская.** Текст, исполняемый моделью,
-  держится своими словами; разбор, знающий один алфавит, оставляет автору выбор между привязкой
-  к ничего не держащему имени и красной сверкой.
-- **Алфавит не перечисляется списком.** Свойство «буква» не знает языков, и текст на следующем
-  языке правки разбора не потребует. Перечисленные диапазоны молча не покрывают соседнего
-  алфавита: промах при этом выглядит как отсутствие привязки, а не как узкий разбор.
-- **Путь пары разбирается по-прежнему.** Имя файла и расширение остаются латинскими: они —
-  адрес в дереве, а не слово текста.
-- **Номер сценария из одной цифры сверка видит наравне с двумя и тремя.** Заголовок, не
-  подошедший под шаблон, сценария не заводит и отказа не даёт: такой сценарий не виден ни в
-  покрытии, ни в долгах, а сверка остаётся зелёной.
-- **Номер сценария выдаётся один раз и повторно не используется.** Номер — единственная связь
-  сценария с тестом: отданный новому сценарию, он оставляет старую ссылку правильной на вид и
-  ведущей не туда.
-- **Сценарий и заголовок его теста правятся одним изменением.** Разъехавшись, они оставляют
-  прогон зелёным, хотя проверяет он уже не то.
-- **Правило, чьи паттерны дерево пропустило при раскладке, паттерна не требует.** Пропуск —
-  выбор дерева, а не забытая работа: правило о процедурах бэкенда ложится и туда, где бэкенда
-  нет вовсе. Требовать там паттерн значит требовать файл, которому нечего сказать, и
-  единственным способом позеленеть становится снятие пропуска. Пропущенный файл в дереве
-  спросить не у кого, поэтому имена паттернов читаются в разделе «Паттерны» самого правила.
-- **Вывод переносимого текста из сверки адресов старше нового требования.** Действующее правило
-  выводит закон, правило и паттерн из проверки путей целиком: адреса в них принадлежат тому
-  дереву, куда текст ложится, и сверять их не с чем. Новое требование его не отменяет и спорить с
-  ним не может — оно судит не существование пути, а принадлежность имени конкретному дереву. Там,
-  где обе стороны смотрят на одну строку, первая решает раньше.
-- **Договорённость, ждущая своего домена дольше месяца, называется отдельным разделом вывода.**
-  Привязка в ней стареет молча: объявление, на которое она показывает, переезжает вместе с
-  соседней работой, а сверять договорённость с кодом никто не станет, пока она не вольётся. Три
-  такие пролежали месяц, и промах нашёлся ровно при вливании — то есть в тот час, когда чинить
-  его дороже всего.
-- **Возраст договорённости берётся из истории, а не со времени файла на диске.** Свежий чекаут
-  делает все каталоги одновременными, а дня в тексте договорённости нет вовсе. Тот же довод
-  стоит у возраста записей описания прошлого, и приём взят оттуда.
-- **Отказом это не делается.** Работа над договорённостью законно идёт неделями, и красная сверка
-  отбивала бы пуш каждой ветки — включая ту, которая договорённость и дописывает.
+- **A table of refusal codes does not count as a procedure.** The section "Contract" holds two
+  different tables — the procedures with their permissions and the refusal codes with their occasions
+  — and by the shape of a row they are indistinguishable: both carry a value in quotes as the first
+  cell. A spec that declared procedures got, because of this, its table of codes read as a list of
+  procedures, and every row of it became a procedure the domain does not have. They are told apart by
+  the second cell: a refusal code is a number.
+- **A subdomain is checked on a par with a domain.** The same mandatory sections, the same companion
+  next to it, the same link between the scenarios and the tests. A domain with half of its subdomains
+  described and half created as empty directories is never green.
+- **A proposed law demands no rule.** The sign stands as a status line in the law itself, not as a
+  list of exceptions next to the check: an agreement written before the code has nothing to be bound
+  to.
+- **A merged agreement does not lock the branch.** After the merge the "proposed" directory is not on
+  disk, while the plan refers to it to the end of the work. The guard of the plan tells the merged
+  from the never-created by the history of the branch: a path that was never in it was no agreement.
+- **A scenario prefix is taken by one spec across the whole tree.** A second prefix inside a spec
+  means the subject is described twice; one taken by another means the number does not show whose
+  scenario it is. An agreement about the product is the exception: it is numbered together with the
+  spec it will merge into.
+- **A bare name and a directory are judged on a par with a full path.** Half of the tables "Where it
+  lives" are named by directories, and a check that knows only a line with an extension does not see
+  them at all.
+- **The tree for the check of the paths is taken from the version control system, not by a walk of
+  the directories.** A walk does not see the directories that begin with a dot, and everything lying
+  in them reads as non-existent.
+- **The task folders are taken out of the check of the paths, like the archive.** The progress of the
+  work lists findings — that is, exactly what is not in the tree.
+- **A portable text is taken out of the check of the addresses.** A rule that lands in another tree
+  names the addresses of that tree: a laid-out copy the check recognises by the layout header, a
+  source by the directory named in the setting. Judging them means turning red on a hundred and fifty
+  lines, not one of which is fixed by an edit of this tree.
+- **The completeness of the pointer of a directory is checked from both sides.** A record of the
+  directory without a row in the table and a row of the table without a record are both divergences,
+  and both are named.
+- **A divergence of the pointer is printed as a list of its own with an argument of its own.** The
+  advice to put the path into the list of exceptions does not fit here: it is fixed by a row in the
+  table, not by the silence of the check.
+- **What count as bindings are the rows of one table of the companion, not every row that looks like
+  a row of a table.** The section they are taken from is named by whoever calls the check: at a rule
+  it is "Where the articles are carried out", at a domain spec there is no section — there the
+  companion holds one table.
+- **The companion of a rule without the section of the bindings is a refusal, not silence.** The
+  section stands in the sample of the companion, and its absence means a file rewritten by hand,
+  whose bindings are checked by nothing; to read the whole file instead of it silently means bringing
+  the original defect back.
+- **The heading of the section of the bindings and the verdict «not carried out» are read under two names, English and Russian.** The companions of the tree are translated by a task of
+  their own and one at a time, and the check is run over them all at once: one name would mean it
+  is red at half the rules until the translation is over. Either of the two names is enough; the
+  refusal about a missing section names the English one.
+- **A subheading inside the section does not end the list of items, a table does, and the refusal
+  about an empty section names what stands instead of the items.** The section is cut off by the
+  level of the heading, and a `#` line in it is always deeper — a spec of a big domain groups the
+  rules by it. A refusal without a reason made one rearrange the markup at random: the subheadings
+  and a table before the list gave one and the same refusal.
+- **A name in an anchor is written as it is declared in code, the hash included.** A private field of
+  a class is declared with a hash, and before this such an anchor read as an empty binding: the
+  sample did not parse the hash at all, and the count of occurrences looked for the name by a word
+  boundary, which is not there before a hash. A name without the hash stays lawful — the bindings of
+  the former shape are green — but it names the method not by the name it is declared with.
+- **What counts as a symbol of an anchor is any letter, not only a Latin one.** A text carried out by
+  a model holds by its own words; a parse that knows one alphabet leaves the author the choice
+  between a binding to a name that holds nothing and a red check.
+- **The alphabet is not listed as a list.** The property "a letter" knows no languages, and a text in
+  the next language will demand no edit of the parse. Listed ranges silently do not cover a
+  neighbouring alphabet: the miss at that looks like the absence of a binding, not like a narrow
+  parse.
+- **The path of the pair is parsed as before.** The name of the file and the extension stay Latin:
+  they are an address in the tree, not a word of the text.
+- **A scenario number of one digit the check sees on a par with two and three.** A heading that did
+  not match the template creates no scenario and gives no refusal: such a scenario is visible neither
+  in the coverage nor in the debts, and the check stays green.
+- **A scenario number is issued once and is not used a second time.** The number is the only link of a
+  scenario with a test: given to a new scenario, it leaves the old reference looking right and
+  leading elsewhere.
+- **A scenario and the title of its test are edited by one change.** Having drifted apart, they leave
+  the run green while it checks something else.
+- **A rule whose patterns the tree skipped at the layout demands no pattern.** A skip is a choice of
+  the tree, not forgotten work: the rule about the procedures of the backend lands where there is no
+  backend at all. Demanding a pattern there means demanding a file that has nothing to say, and the
+  only way to go green becomes lifting the skip. There is nobody to ask about a skipped file in the
+  tree, so the names of the patterns are read in the section "Patterns" of the rule itself.
+- **The taking of a portable text out of the check of the addresses is older than the new
+  requirement.** The rule in force takes a law, a rule and a pattern out of the check of the paths
+  whole: the addresses in them belong to the tree the text lands in, and there is nothing to check
+  them against. The new requirement does not cancel it and cannot argue with it — it judges not the
+  existence of a path but the belonging of a name to a specific tree. Where both sides look at one
+  line, the first decides earlier.
+- **An agreement waiting for its domain longer than a month is named by a section of its own in the
+  output.** A binding in it grows old silently: the declaration it points at moves together with
+  neighbouring work, and nobody will check the agreement against the code until it is merged. Three
+  such lay for a month, and the miss was found exactly at the merge — that is, at the hour when it is
+  most costly to fix.
+- **The age of an agreement is taken from the history, not from the time of the file on disk.** A
+  fresh checkout makes all the directories simultaneous, and there is no day in the text of the
+  agreement at all. The same argument stands at the age of the records of an account of the past, and
+  the technique is taken from there.
+- **This is not made a refusal.** Work on an agreement lawfully goes on for weeks, and a red check
+  would refuse the push of every branch — including the one that is writing the agreement.
+- **The key of a spec section is read under two names — the English one and the language of the
+  owner.** The tree translates the specs one domain at a time, and a key that moved instead of the
+  second name takes the untranslated domains out of the check silently: the heading is not found, the
+  articles and the scenarios are not read, and the check stays green about a domain it no longer sees.
+  The refusal names the first name of the pair — the one a new spec is written by.
 
-## Что не входит
+## What is out of scope
 
-- Содержимое строки указателя: машина видит наличие строки, а не то, верно ли она описывает
-  запись.
-- Требование указателя у каждого каталога дерева: сверяются те, что названы в настройке проверок.
-- Порядок таблиц в компаньоне: сверка судит раздел по имени, а не по месту.
-- **Разделы, переносимость и словарь текстов пакета.** Поддомен «Тексты слоя правил» рядом.
+- The content of a row of the pointer: the machine sees the presence of a row, not whether it
+  describes the record rightly.
+- Demanding a pointer of every directory of the tree: what is checked is those named in the setting of
+  the checks.
+- The order of the tables in the companion: the check judges the section by its name, not by its
+  place.
+- **The sections, the portability and the glossary of the texts of the package.** The subdomain "The
+  texts of the rules layer" is next to it.
 
-## Контракт
+## Contract
 
-Поверхность — сверка спеков и сверка адресов документов; обе стоят шагами набора гейта. Каждая
-кончается ненулевым кодом на расхождении и молчит, когда расхождений нет. Раздел о
-договорённостях, ждущих дольше месяца, печатается после перечня и кода возврата не меняет.
+The surface is the check of the specs and the check of the addresses of the documents; both stand as
+steps of the gate suite. Each ends with a non-zero code on a divergence and stays silent when there
+are no divergences. The section about the agreements waiting longer than a month is printed after the
+list and does not change the exit code.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: ответ — код возврата и текст, а не именованные коды.
+Not applicable: the answer is an exit code and text, not named codes.
 
-| Что случилось                            | Код | Что говорит                                     |
-| ---------------------------------------- | --- | ----------------------------------------------- |
-| расхождение спека, привязки или сценария | `1` | файл, строку и чего не хватает                  |
-| мёртвый адрес или расхождение указателя  | `1` | файл, строку и адрес; указатель — своим списком |
-| расхождений нет                          | `0` | молчит либо называет число прочитанного         |
-| договорённость ждёт дольше месяца        | `0` | каталог договорённости и её возраст в сутках    |
+| What happened                                   | Code | What it says                                                         |
+| ----------------------------------------------- | ---- | -------------------------------------------------------------------- |
+| a divergence of a spec, a binding or a scenario | `1`  | the file, the line and what is missing                               |
+| a dead address or a divergence of the pointer   | `1`  | the file, the line and the address; the pointer by a list of its own |
+| there are no divergences                        | `0`  | it stays silent or names the number of what was read                 |
+| an agreement waits longer than a month          | `0`  | the directory of the agreement and its age in days                   |
 
-## Данные
+## Data
 
-Своего хранилища нет. Предмет сверки — спеки доменов и их компаньоны, правила и их компаньоны,
-документы с адресами, указатели каталогов, названных настройкой проверок, и история каталога
-спеков.
+There is no storage of its own. The subject of the check is the domain specs and their companions,
+the rules and their companions, the documents with addresses, the pointers of the directories named
+by the setting of the checks, and the history of the specs directory.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: экранов нет.
+Not applicable: there are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: тексты ресурсов одноязычны. Якорь привязки при этом судится любым алфавитом — это
-правило поддомена, а не свойство локали.
+Not applicable: the texts of the resources are single-language. The anchor of a binding at that is
+judged by any alphabet — that is a rule of the subdomain, not a property of the locale.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Сверка идёт по одному дереву: разложенная копия судится по своей шапке отдельно от исходника, а
-переносимый текст из сверки адресов выведен.
+The check goes over one tree: a laid-out copy is judged by its own header apart from the source, and
+a portable text is taken out of the check of the addresses.
 
-## Решения
+## Decisions
 
-- **Папки задач выведены из сверки адресов целиком, а не поимённо.** Разбор просьбы называет то,
-  чего в дереве нет, по устройству — это его предмет.
-- **Каталоги, чей указатель сверяется, называет дерево, а не пакет.** Зашитый каталог архива
-  отбирал бы у чужого дерева его собственные указатели, а у дерева без архива заводил бы сверку
-  ни над чем. Умолчание — каталог архива.
-- **Выборка привязок сужается разделом, а не расширенным отсевом шапок.** Отсев по именам шапок —
-  список из двух слов, который придётся дописывать на каждую новую таблицу компаньона, и он
-  снимает 32 строки из 261.
-- **У компаньона спека домена раздела привязок нет, и это не отказ.** Там таблица одна, и сужать
-  нечего; имя раздела приходит доводом от того, кто зовёт сверку.
+- **The task folders are taken out of the check of the addresses whole, not by name.** The analysis of
+  a request names what is not in the tree by its nature — that is its subject.
+- **The directories whose pointer is checked are named by the tree, not by the package.** A nailed-in
+  archive directory would take away from a foreign tree its own pointers, and at a tree without an
+  archive would create a check over nothing. The default is the archive directory.
+- **The selection of the bindings is narrowed by the section, not by a widened sifting of the
+  headers.** The sifting by the names of the headers is a list of two words that will have to be
+  appended at every new table of the companion, and it removes 32 rows out of 261.
+- **The companion of a domain spec has no section of the bindings, and this is not a refusal.** There
+  the table is one, and there is nothing to narrow; the name of the section arrives as an argument
+  from whoever calls the check.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом.
+The open questions of the domain are shared, and they live in the spec next to it.
 
-## История изменений
+## History of changes
 
-- 2026-09-06 — подзаголовок внутри раздела список пунктов не кончает, а отказ о пустом разделе
-  называет, что стоит вместо пунктов. Пришло предложением из приёма.
-- 2026-09-05 — поддомен выделен из спека текстов слоя правил, переросшего предел длины. Правила,
-  сценарии и привязки о путях, указателях, привязках, номерах сценариев и договорённостях
-  переехали сюда прежними: номера сценариев не пересчитывались.
+- 2026-09-06 — a subheading inside a section does not end the list of items, and the refusal about an
+  empty section names what stands instead of the items. It arrived as a proposal from the intake.
+- 2026-09-05 — the subdomain was split out of the spec of the texts of the rules layer, which had
+  outgrown the length limit. The rules, scenarios and bindings about the paths, the pointers, the
+  bindings, the scenario numbers and the agreements moved here as they were: the scenario numbers were
+  not recounted.

@@ -3,7 +3,7 @@ import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 type TMessageIds = 'missing';
 type TOptions = [];
 
-// NOTE: The rule будет доступен в ESLint-конфигах как "@nx/workspace-require-take-until-destroyed"
+// NOTE: the rule will be available in the ESLint configs as "@nx/workspace-require-take-until-destroyed"
 export const RULE_NAME: string = 'require-take-until-destroyed';
 
 const TERMINATING_OPERATORS: ReadonlySet<string> = new Set([

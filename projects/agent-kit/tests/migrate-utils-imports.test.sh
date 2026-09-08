@@ -87,15 +87,15 @@ probe 'импорт пакета целиком не тронут' 'да' \
     "$(has src/whole.ts "import * as utils from '@rt-tools/utils';")"
 
 probe 'и назван отдельно' 'да' \
-    "$(seed; node "$tool" "$tree" | grep -qF 'делится только руками' && printf 'да' || printf 'нет')"
+    "$(seed; node "$tool" "$tree" | grep -qF 'split only by hand' && printf 'да' || printf 'нет')"
 
-probe 'повторный прогон не меняет ничего' 'файлов 0, объявлений переставлено 0, поделено 0' \
+probe 'повторный прогон не меняет ничего' 'files 0, declarations moved 0, split 0' \
     "$(node "$tool" "$tree" | tail -1)"
 
 seed
 dry="$(node "$tool" "$tree" --dry | tail -1)"
 
-probe 'сухой прогон называет то же, что сделал бы' 'сухой прогон: файлов 4, объявлений переставлено 2, поделено 2' "$dry"
+probe 'сухой прогон называет то же, что сделал бы' 'a dry run: files 4, declarations moved 2, split 2' "$dry"
 
 probe 'и ничего не записывает' 'да' \
     "$(has src/moved.ts "from '@rt-tools/utils';")"

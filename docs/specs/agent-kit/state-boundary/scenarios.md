@@ -1,108 +1,111 @@
-# Сценарии — граница состояния в текстах работы
+# Scenarios — the boundary of a state in the texts of the work
 
-Идентификатор ставится в начало заголовка теста через тире. Префикс общий на домен, и номера при
-переезде в поддомен не пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier goes at the start of the test title, followed by a dash. The prefix is shared across
+the domain, and the numbers were not recounted at the move into the subdomain: the number ties the
+scenario to the test title.
 
-### SC-AK-447 — у каждого раздела состояния есть строка следующего движения
+### SC-AK-447 — every section of a state has a line of the next move
 
-Дано в дереве разложены правило ведения работы и все паттерны, которые ведут состояния
-Когда гоняется проверка строк следующего движения
-Тогда она проходит и называет, сколько разделов состояния прочитано
+Given the rule of the conduct of work and all the patterns that lead the states are laid out in the
+tree
+When the check of the lines of the next move is run
+Then it passes and names how many sections of a state were read
 
-Покрыто: `projects/agent-kit/tests/checks-state-next.test.sh`.
+Covered: `projects/agent-kit/tests/checks-state-next.test.sh`.
 
-### SC-AK-448 — раздел без строки отбивается с именем состояния и паттерна
+### SC-AK-448 — a section without a line is refused with the name of the state and the pattern
 
-Дано в одном разделе состояния строки следующего движения нет
-Когда гоняется проверка
-Тогда она отказывает и называет состояние, ведущий паттерн и заголовок этого раздела
+Given there is no line of the next move in one section of a state
+When the check is run
+Then it refuses and names the state, the leading pattern and the heading of this section
 
-Покрыто: `projects/agent-kit/tests/checks-state-next.test.sh`.
+Covered: `projects/agent-kit/tests/checks-state-next.test.sh`.
 
-### SC-AK-449 — строка находится по зачину, а не по дословному совпадению
+### SC-AK-449 — the line is found by the opening, not by a word-for-word match
 
-Дано два раздела называют своё движение разными словами после общего зачина
-Когда гоняется проверка
-Тогда оба раздела считаются описанными, и расхождений нет
+Given two sections name their move in different words after a shared opening
+When the check is run
+Then both sections count as described, and there are no divergences
 
-Покрыто: `projects/agent-kit/tests/checks-state-next.test.sh`.
+Covered: `projects/agent-kit/tests/checks-state-next.test.sh`.
 
-### SC-AK-450 — списанная у соседа строка отбивается
+### SC-AK-450 — a line copied from a neighbour is refused
 
-Дано в двух разделах состояния строки следующего движения совпадают дословно
-Когда гоняется проверка
-Тогда она отказывает и называет оба раздела
+Given the lines of the next move in two sections of a state coincide word for word
+When the check is run
+Then it refuses and names both sections
 
-Покрыто: `projects/agent-kit/tests/checks-state-next.test.sh`.
+Covered: `projects/agent-kit/tests/checks-state-next.test.sh`.
 
-### SC-AK-451 — зачин без движения за ним отбивается
+### SC-AK-451 — an opening without a move after it is refused
 
-Дано в разделе стоит зачин строки, а после него не названо ничего
-Когда гоняется проверка
-Тогда она отказывает: строка есть, а движения в ней нет
+Given the opening of the line stands in the section, and after it nothing is named
+When the check is run
+Then it refuses: the line is there, and there is no move in it
 
-Покрыто: `projects/agent-kit/tests/checks-state-next.test.sh`.
+Covered: `projects/agent-kit/tests/checks-state-next.test.sh`.
 
-### SC-AK-452 — правило ведения работы называет переход между состояниями
+### SC-AK-452 — the rule of the conduct of work names the transition between states
 
-Дано правило перечисляет то, чем ход не кончается
-Когда исполнитель ищет в нём границу состояния
-Тогда переход между состояниями стоит в перечне наравне с коммитом и зелёной проверкой
+Given the rule lists what a turn does not end with
+When the executor looks in it for the boundary of a state
+Then the transition between states stands in the list on a par with a commit and a green check
 
-Покрыто: `projects/agent-kit/tests/checks-state-next.test.sh`.
+Covered: `projects/agent-kit/tests/checks-state-next.test.sh`.
 
-### SC-AK-453 — правило без этой статьи отбивается той же проверкой
+### SC-AK-453 — a rule without this article is refused by the same check
 
-Дано в правиле ведения работы статьи о переходе между состояниями нет
-Когда гоняется проверка
-Тогда она отказывает и называет правило, а не разделы паттернов
+Given there is no article about the transition between states in the rule of the conduct of work
+When the check is run
+Then it refuses and names the rule, not the sections of the patterns
 
-Покрыто: `projects/agent-kit/tests/checks-state-next.test.sh`.
+Covered: `projects/agent-kit/tests/checks-state-next.test.sh`.
 
-### SC-AK-454 — карта хода говорит о переходе то же, что и правило
+### SC-AK-454 — the map of the turn says about the transition the same as the rule
 
-Дано карта хода пришла в контекст на запуске захода
-Когда заход ищет в ней, чем ход кончается
-Тогда среди того, чем ход не кончается, назван переход между состояниями
+Given the map of the turn arrived in the context at the launch of the session
+When the session looks in it for what a turn ends with
+Then among what a turn does not end with the transition between states is named
 
-Покрыто: `projects/agent-kit/tests/checks-state-next.test.sh`.
+Covered: `projects/agent-kit/tests/checks-state-next.test.sh`.
 
-### SC-AK-455 — закон о ведении работы называет границу состояния статьёй
+### SC-AK-455 — the law of the conduct of work names the boundary of a state by an article
 
-Дано закон о ведении работы прочитан целиком
-Когда в нём ищется статья о границе между состояниями
-Тогда она стоит там и не называет ни путей, ни имён файлов
+Given the law of the conduct of work is read whole
+When an article about the boundary between states is looked for in it
+Then it stands there and names neither paths nor file names
 
-Покрыто: `projects/agent-kit/tests/checks-state-next.test.sh`.
+Covered: `projects/agent-kit/tests/checks-state-next.test.sh`.
 
-### SC-AK-456 — дерево без правила ведения работы проверку проходит
+### SC-AK-456 — a tree without the rule of the conduct of work passes the check
 
-Дано правила ведения работы в дереве нет
-Когда гоняется проверка
-Тогда она молча проходит: сверять нечего
+Given there is no rule of the conduct of work in the tree
+When the check is run
+Then it passes silently: there is nothing to compare
 
-Покрыто: `projects/agent-kit/tests/checks-state-next.test.sh`.
+Covered: `projects/agent-kit/tests/checks-state-next.test.sh`.
 
-### SC-AK-457 — сломанный перечень состояний отказом считается
+### SC-AK-457 — a broken list of states counts as a refusal
 
-Дано правило ведения работы лежит, а таблицы состояний в нём нет
-Когда гоняется проверка
-Тогда она отказывает: перечень сломан, а не пуст
+Given the rule of the conduct of work lies there, and there is no table of states in it
+When the check is run
+Then it refuses: the list is broken, not empty
 
-Покрыто: `projects/agent-kit/tests/checks-state-next.test.sh`.
+Covered: `projects/agent-kit/tests/checks-state-next.test.sh`.
 
-### SC-AK-458 — проверка стоит своей строкой в наборе гейта пуша
+### SC-AK-458 — the check stands as a line of its own in the suite of the push gate
 
-Дано набор гейта пуша гоняется целиком
-Когда одна из строк набора — проверка строк следующего движения
-Тогда её отказ роняет гейт, а не теряется в выводе соседней сверки
+Given the suite of the push gate is run whole
+When one of the lines of the suite is the check of the lines of the next move
+Then its refusal drops the gate instead of being lost in the output of a neighbouring check
 
-Покрыто: `projects/agent-kit/tests/checks-state-next.test.sh`.
+Covered: `projects/agent-kit/tests/checks-state-next.test.sh`.
 
-### SC-AK-907 — раздел состояния принимается под любым из двух имён
+### SC-AK-907 — a section of a state is accepted under either of the two names
 
-Дано паттерн, где разделы озаглавлены «State `имя`», а строка движения начинается с «Next move:»
-Когда гоняется проверка
-Тогда оба раздела найдены, и у каждого названо следующее движение
+Given a pattern where the sections are headed "State `name`", and the line of the move begins with
+"Next move:"
+When the check is run
+Then both sections are found, and at each of them the next move is named
 
-Покрыто: `projects/agent-kit/tests/checks-state-next.test.sh`.
+Covered: `projects/agent-kit/tests/checks-state-next.test.sh`.

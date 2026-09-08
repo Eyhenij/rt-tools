@@ -1,7 +1,7 @@
 /**
- * Spec для `no-subscribe-in-methods`.
+ * The spec of `no-subscribe-in-methods`.
  *
- * Parser: `@typescript-eslint/parser`. Раннер: Vitest.
+ * Parser: `@typescript-eslint/parser`. The runner is Vitest.
  */
 import { RuleTester } from '@typescript-eslint/rule-tester';
 
@@ -15,35 +15,35 @@ const ruleTester: RuleTester = new RuleTester({
 
 ruleTester.run(RULE_NAME, rule, {
     valid: [
-        // subscribe в конструкторе — разрешено
+        // subscribe in the constructor — allowed
         `class A {
             constructor() {
                 this.#source.pipe(switchMap(() => req())).subscribe();
             }
         }`,
-        // subscribe в ngOnInit — разрешено
+        // subscribe in ngOnInit — allowed
         `class A {
             public ngOnInit(): void {
                 this.#source.pipe(switchMap(() => req())).subscribe();
             }
         }`,
-        // subscribe в field initializer — разрешено
+        // subscribe in a field initializer — allowed
         `class A {
             readonly #sub = this.#stream$.subscribe();
         }`,
-        // subscribe на module level — разрешено (не внутри класса)
+        // subscribe at module level — allowed, it is outside a class
         'stream$.subscribe();',
-        // subscribe внутри стрелки в field initializer — разрешено (всё ещё PropertyDefinition)
+        // subscribe inside an arrow in a field initializer — allowed, it is still a PropertyDefinition
         `class A {
             readonly #handler = () => this.#stream$.subscribe();
         }`,
-        // subscribe внутри callback'а из ngOnInit — разрешено (ближайший метод — ngOnInit)
+        // subscribe inside a callback from ngOnInit — allowed, the nearest method is ngOnInit
         `class A {
             public ngOnInit(): void {
                 this.#stream$.pipe(tap(() => this.#other$.subscribe())).subscribe();
             }
         }`,
-        // .subscribe как property access без вызова — не subscribe-вызов
+        // .subscribe as a property access without a call — not a subscribe call
         `class A {
             public foo(): void {
                 const fn = this.#stream$.subscribe;
@@ -75,7 +75,7 @@ ruleTester.run(RULE_NAME, rule, {
             }`,
             errors: [{ messageId: 'notAllowed', data: { name: '#delete' } }],
         },
-        // ngAfterViewInit НЕ в allow-list (strict mode)
+        // ngAfterViewInit is NOT in the allow list (strict mode)
         {
             code: `class A {
                 public ngAfterViewInit(): void {
@@ -84,7 +84,7 @@ ruleTester.run(RULE_NAME, rule, {
             }`,
             errors: [{ messageId: 'notAllowed', data: { name: 'ngAfterViewInit' } }],
         },
-        // subscribe внутри стрелки внутри не-разрешённого метода
+        // subscribe inside an arrow inside a method that is not allowed
         {
             code: `class A {
                 public save(): void {
@@ -93,7 +93,7 @@ ruleTester.run(RULE_NAME, rule, {
             }`,
             errors: [{ messageId: 'notAllowed', data: { name: 'save' } }],
         },
-        // getter / setter — тоже репортится
+        // a getter and a setter are reported too
         {
             code: `class A {
                 get foo(): unknown {

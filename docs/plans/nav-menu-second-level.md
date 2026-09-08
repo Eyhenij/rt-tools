@@ -1,74 +1,79 @@
-# Меню навигации: второй уровень стоит по настройке человека и ищется
+# The menu of the navigation: the second level stands by the setting of a person and is searched
 
-Карточка эпика — задача RT-1657.
+The card of the epic is the task RT-1657.
 
-Второй уровень бокового меню человек держит открытым сам, а нужный пункт находит подстрокой
-подписи, а не глазами по списку.
+The second level of the side menu is held open by the person themselves, and the needed item is
+found by a substring of the label, not by the eyes over the list.
 
-## Зачем
+## Why
 
-Второй уровень открывался только наведением и закрывался уходом указателя. Из этого выходили две
-вещи, и обе стоят человеку времени.
+The second level opened only at a hovering and closed at the leaving of the pointer. Two things
+came out of that, and both cost a person time.
 
-- **Список второго уровня проходится глазами.** В разделах, где пунктов десятки, нужный ищут
-  чтением сверху вниз, а списка длиннее экрана не видно целиком.
-- **Подменю нельзя оставить открытым.** Оно живёт ровно столько, сколько указатель лежит на
-  пункте: увести его — значит потерять подменю, а работать с открытым вторым уровнем нельзя.
+- **The list of the second level is walked by the eyes.** In the sections where the items are
+  dozens, the needed one is looked for by reading from the top down, and a list longer than the
+  screen is not visible whole.
+- **The submenu cannot be left open.** It lives exactly as long as the pointer lies on the item: to
+  take it away means to lose the submenu, and one cannot work with the second level open.
 
-Просьба владельца называла второй уровень статичным **по настройке пользователя** — то есть
-решение принимает человек, и оно принадлежит ему, а не экрану.
+The request of the owner named the second level static **by the setting of the user** — that is, the
+decision is taken by the person, and it belongs to them, not to the screen.
 
-## Решения
+## Decisions
 
-- **Мода подменю — вход компонента, а не его состояние.** Компонент только просит смену выходом;
-  что моду хранит потребитель, следует прямо из слов «по настройке пользователя»: настройка
-  принадлежит человеку, и кит не знает, где потребитель держит настройки человека.
-- **Закрепление не меняет того, что видно.** Нажатие переключателя переставляет только способ
-  держать подменю открытым; пункты в нём остаются те же. Иначе человек, закрепивший подменю,
-  теряет из виду то, ради чего его закреплял.
-- **Поиск идёт по открытому подменю, а не по всему дереву меню.** Слово владельца: человек ищет
-  там, куда уже пришёл.
-- **На узком экране переключателя нет, поиск есть.** Слово владельца: закреплять там нечего —
-  подменю занимает экран целиком.
-- **Подписи зашиты по-английски.** Слово владельца: словаря у первого кита нет вовсе, и заводить
-  его ради трёх подписей эпик не берётся.
-- **Ширина панели — настройка человека, наравне с модой.** Она хранится тем же способом и тем же
-  соседним ключом: одно решение человека о том, как выглядит его меню, не должно жить в двух
-  разных местах.
-- **Выделяется найденная подстрока, а не вся подпись.** Выделенная целиком подпись говорит только
-  «этот пункт подошёл» — то же, что и сам факт его присутствия в отобранном списке.
-- **Признак закрепления берётся цветом значка, а не начертанием глифа.** Заливкой глифа
-  состояние показать нечем: ось переменного шрифта читает не всякий набор, зарегистрированный
-  потребителем, и на статическом оба состояния рисуются одним рисунком. Цвет значка кнопка кита
-  даёт своим входом оформления, и он виден на любом наборе.
-- **Найденная подстрока отмечена жёлтым фоном.** Слово владельца: так её показывает браузер в
-  своём поиске по странице. Приглушённый фон бренда не читался — от белого его отделяли три
-  единицы канала.
-- **Поле поиска и переключатель нарисованы готовым кита.** Своя разметка поля и своя кнопка
-  разошлись с видом кита на первом же показе; кит везёт и поле, и кнопку значком, и обе несут
-  вид, состояния и доступность.
+- **The mode of the submenu is an input of the component, not its state.** The component only asks
+  for a change by an output; that the mode is kept by the consumer follows straight from the words
+  "by the setting of the user": the setting belongs to the person, and the kit does not know where
+  the consumer keeps the settings of the person.
+- **The pinning does not change what is visible.** A press of the switch moves only the way the
+  submenu is held open; the items in it stay the same. Otherwise the person who pinned the submenu
+  loses from sight the very thing they pinned it for.
+- **The search goes over the open submenu, not over the whole tree of the menu.** The word of the
+  owner: a person searches where they have already come.
+- **On a narrow screen there is no switch, there is a search.** The word of the owner: there is
+  nothing to pin there — the submenu takes the screen whole.
+- **The labels are sewn in in English.** The word of the owner: the first kit has no vocabulary at
+  all, and the epic does not undertake to create one for the sake of three labels.
+- **The width of the panel is a setting of the person, on a par with the mode.** It is kept by the
+  same way and by the same neighbouring key: one decision of the person about how their menu looks
+  must not live in two different places.
+- **The found substring is highlighted, not the whole label.** A label highlighted whole says only
+  "this item matched" — the same as the fact of its presence in the selected list itself.
+- **The sign of the pinning is taken by the colour of the icon, not by the drawing of the glyph.**
+  There is nothing to show the state by with a filling of the glyph: the axis of a variable font is
+  read by not every set registered by the consumer, and on a static one both states are drawn by one
+  picture. The colour of the icon is given by the button of the kit by its input of the look, and it
+  is visible on any set.
+- **The found substring is marked by a yellow ground.** The word of the owner: that is how the
+  browser shows it in its own search over the page. A muted ground of the brand did not read — three
+  units of a channel set it apart from the white.
+- **The field of the search and the switch are drawn by the ready-made of the kit.** A field of one's
+  own markup and a button of one's own diverged from the look of the kit at the very first show; the
+  kit carries both the field and the button with an icon, and both carry the look, the states and
+  the accessibility.
 
-## Порядок
+## The order
 
-Каждая строка заведена своей задачей.
+Every line is created by a task of its own.
 
-| №           | Задача                                       | Почему здесь                                                                              |
-| ----------- | -------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| 1 · RT-1648 | Подменю закрепляется и ищет по своим пунктам | Основание: пока моды нет, хранить нечего, а поиск живёт внутри открытого подменю          |
-| 2 · RT-1658 | Выбор моды переживает перезагрузку           | Настройка принадлежит человеку; стоит на первой — до неё выбирать нечего                  |
-| 3 · RT-1661 | Ширина второго уровня тянется                | Та же настройка человека, что и мода, и хранится тем же способом: стоит на второй         |
-| 4 · RT-1662 | Совпавшая подстрока выделена в подписи       | Отбор без выделения оставляет тот же проход глазами, ради снятия которого поле заводилось |
-| 5 · RT-1665 | Поле поиска и переключатель — готовые кита   | Своё поле и своя кнопка выбиваются из вида кита; правится там, где обе уже стоят на месте |
+| №           | Task                                                                 | Why here                                                                                                                         |
+| ----------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| 1 · RT-1648 | The submenu is pinned and searches over its own items                | The foundation: while there is no mode, there is nothing to keep, and the search lives inside the open submenu                   |
+| 2 · RT-1658 | The choice of the mode outlives a reload                             | The setting belongs to the person; it stands on the first — before it there is nothing to choose                                 |
+| 3 · RT-1661 | The width of the second level is pulled                              | The same setting of the person as the mode, and it is kept by the same way: it stands on the second                              |
+| 4 · RT-1662 | The matched substring is highlighted in the label                    | A selection without a highlight leaves the same walk by the eyes the field was created to lift                                   |
+| 5 · RT-1665 | The field of the search and the switch are the ready-made of the kit | A field of one's own and a button of one's own stand out from the look of the kit; it is fixed where both already stand in place |
 
-## Чего этот эпик не делает
+## What this epic does not do
 
-- Поиск по всему дереву меню, а не по открытому подменю: отвергнуто словом владельца.
-- Словарь подписей первого кита: подписи зашиты по-английски, тем же словом.
-- Второй кит: `rt-page-header` этой работой не тронут — она вся в `rtui-side-menu`.
+- A search over the whole tree of the menu instead of over the open submenu: rejected by the word of
+  the owner.
+- A vocabulary of the labels of the first kit: the labels are sewn in in English, by the same word.
+- The second kit: `rt-page-header` is not touched by this work — it is all in `rtui-side-menu`.
 
-## Когда эпик кончится
+## When the epic will be over
 
-Когда закрыты все пять задач и человек, закрепивший подменю, растянувший его и перезагрузивший
-страницу, видит его по-прежнему закреплённым и той же ширины, а в отобранном списке — отмеченным
-жёлтым то, чем пункт совпал. Поле и переключатель при этом выглядят так же, как остальной кит.
-Признак снимается в браузере, а не чтением кода.
+When all five tasks are closed and a person who pinned the submenu, pulled it out and reloaded the
+page sees it still pinned and of the same width, and in the selected list — marked by yellow, what
+the item matched by. The field and the switch look at that the same as the rest of the kit. The sign
+is taken in the browser, not by a reading of the code.

@@ -97,8 +97,13 @@ printf -- '---\nname: acting-rule\nkind: rule\nlaw: acting\n---\n\n# Прави�
 companion() {
     {
         printf '# Компаньон\n\n## Где это лежит\n\n| Что | Где |\n| --- | --- |\n| механизм | `tools/check-specs.mjs` |\n\n'
-        [ "$1" = 'без раздела' ] ||
-            printf '## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `tools/check-specs.mjs:checkSpecHeadings` |\n'
+        case "$1" in
+            'без раздела') ;;
+            'английский раздел')
+                printf '## Where the articles are carried out\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `tools/check-specs.mjs:checkSpecHeadings` |\n' ;;
+            *)
+                printf '## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `tools/check-specs.mjs:checkSpecHeadings` |\n' ;;
+        esac
     } > "$SPEC_TREE/.claude/skills/acting-rule/implementation.md"
 }
 
@@ -106,16 +111,22 @@ companion 'с разделом'
 report "SC-AK-56 — строка описательной таблицы привязкой не считается" "$(specs_says 'a binding without an item: «механизм')" 0
 report "SC-AK-56 — привязка из таблицы привязок читается" "$(specs_says 'a statement without a binding: «Раз')" 0
 
+# SC-AK-912 — раздел привязок читается под английским именем наравне с русским: компаньоны дерева
+# переводятся задачей о своём, а написанные до перевода остаются русскими.
+companion 'английский раздел'
+report "SC-AK-912 — английский раздел привязок читается" "$(specs_says 'a statement without a binding: «Раз')" 0
+report "SC-AK-912 — и отсутствия раздела при нём не объявляется" "$(specs_says 'there is no section')" 0
+
 # SC-AK-57 — компаньон правила без раздела привязок отбивается
 companion 'без раздела'
-report "SC-AK-57 — отсутствие раздела названо" "$(specs_says 'there is no section .*Где исполняются статьи')" 1
+report "SC-AK-57 — отсутствие раздела названо" "$(specs_says 'there is no section .*Where the articles are carried out')" 1
 report "SC-AK-57 — строка описательной таблицы привязкой всё равно не стала" "$(specs_says 'a binding without an item: «механизм')" 0
 
 # SC-AK-58 — у компаньона спека домена раздел не требуется: там таблица одна
 rm -rf "$SPEC_TREE/.claude/skills/acting-rule"
 printf '# Привязка\n\n| Правило | Где исполняется |\n| --- | --- |\n| Не применимо. | `tools/check-specs.mjs:checkSpecHeadings` |\n' \
     > "$SPEC_TREE/docs/specs/alpha/implementation.md"
-report "SC-AK-58 — компаньон спека без раздела читается" "$(specs_says 'there is no section .*Где исполняются статьи')" 0
+report "SC-AK-58 — компаньон спека без раздела читается" "$(specs_says 'there is no section .*Where the articles are carried out')" 0
 report "SC-AK-58 — его привязка нашлась" "$(specs_says 'a statement without a binding')" 0
 
 # --- SC-AK-662…664 — привязка списком ---------------------------------------------------------
@@ -422,13 +433,42 @@ rules_of() {
 
 # SC-AK-889 — подзаголовок внутри раздела список правил не кончает
 rules_of gamma 'Гамма' GA '### Первая группа\n\n- **Раз.** Два.\n\n### Вторая группа\n\n- **Три.** Четыре.\n'
-report "SC-AK-889 — раздел с подзаголовками не назван пустым" "$(specs_says 'gamma/spec.md: the section .*Правила.* carries no item at all')" 0
+report "SC-AK-889 — раздел с подзаголовками не назван пустым" "$(specs_says 'gamma/spec.md: the section .*Rules.* carries no item at all')" 0
 report "SC-AK-889 — пункт после подзаголовка прочитан" "$(specs_says 'gamma/implementation.md: a statement without a binding: «Три')" 1
 
 # SC-AK-890 — таблица кончает список, и отказ называет, что стоит вместо пунктов
 rules_of delta 'Дельта' DE '| Поддомен | О чём |\n| --- | --- |\n| [Раз](raz/spec.md) | два |\n\n- **Раз.** Два.\n'
-report "SC-AK-890 — таблица перед списком названа в отказе" "$(specs_says 'delta/spec.md: the section .*Правила.* carries no item at all, the list ended at the line .\| Поддомен')" 1
-report "SC-AK-890 — раздел без пунктов называет первую строку" "$(specs_says 'alpha/spec.md: the section .*Правила.* carries no item at all, the first one is .Не применимо')" 1
+report "SC-AK-890 — таблица перед списком названа в отказе" "$(specs_says 'delta/spec.md: the section .*Rules.* carries no item at all, the list ended at the line .\| Поддомен')" 1
+report "SC-AK-890 — раздел без пунктов называет первую строку" "$(specs_says 'alpha/spec.md: the section .*Rules.* carries no item at all, the first one is .Не применимо')" 1
+
+# --- SC-AK-913…914 — ключи разделов читаются под двумя именами ------------------------------
+#
+# Дерево переводит спеки по одному домену, и ключ, переехавший вместо второго имени, вынес бы
+# непереведённые домены из проверки молча. Фикстура кладёт спек с английскими заголовками рядом
+# с русскими и смотрит, что сверка читает оба.
+
+en_spec_body() {
+    printf '# %s\n\n**Статус:** действует · **Префикс сценариев:** `SC-%s`\n**Laws:** нет\n**Procedures:** нет\n\n' "$1" "$2"
+    for heading in '## Why' '## Terminology' '### What it is called in the interface' '## Rules' \
+        '## What is out of scope' '## Contract' '### Refusal codes' '## Data' '## Screens and states' \
+        '## Cross-cutting requirements' '### Locales' '### SEO' '### Mobile layout' '### Several objects' \
+        '## Decisions' '## Open questions' '## History of changes'; do
+        printf '%s\n\nNot applicable.\n\n' "$heading"
+    done
+}
+
+mkdir -p "$SPEC_TREE/docs/specs/epsilon"
+en_spec_body 'Эпсилон' EP > "$SPEC_TREE/docs/specs/epsilon/spec.md"
+RULES='- **One.** Two.' perl -0pi -e 's/## Rules\n\nNot applicable\.\n/## Rules\n\n$ENV{RULES}\n/' "$SPEC_TREE/docs/specs/epsilon/spec.md"
+printf '# Привязка\n\n- **One.** — `tools/check-specs.mjs:checkSpecHeadings`\n' > "$SPEC_TREE/docs/specs/epsilon/implementation.md"
+printf '# Сценарии\n\n### SC-%s-01 — первый\n\nДано раз\nКогда два\nТогда три\n\nNot covered: тест ещё не написан.\n' EP \
+    > "$SPEC_TREE/docs/specs/epsilon/scenarios.md"
+
+report "SC-AK-913 — английские разделы спека считаются на месте" "$(specs_says 'epsilon/spec.md: no mandatory section')" 0
+report "SC-AK-913 — пункт английского раздела прочитан" "$(specs_says 'epsilon/implementation.md: a statement without a binding')" 0
+# Идентификатор собирается из частей: написанный литералом, он читался бы сверкой этого дерева
+# как ссылка на сценарий, которого здесь нет.
+report "SC-AK-914 — английская отметка непокрытого прочитана" "$(specs_says "$(printf 'SC-%s-01 is mentioned in no test' EP)")" 0
 
 rm -rf "$SPEC_TREE"
 

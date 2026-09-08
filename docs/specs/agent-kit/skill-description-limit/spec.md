@@ -1,121 +1,126 @@
-# Предел длины описания правила
+# The length limit of a rule description
 
-**Статус:** действует · **Ревизия:** 2026-08-25 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `project-documentation`, `work-conduct`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-25 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `project-documentation`, `work-conduct`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Описание правила едет в системный промпт каждого захода — все семьдесят четыре, и платит их
-заход, чем бы ни занимался. Замер 25 августа 2026 года: 23 830 знаков описаний при входе в
-работу в 55 142 знака, то есть больше двух пятых всего, что заход получает до первой строки
-работы.
+The description of a rule goes into the system prompt of every session — all seventy-four of them,
+and the session pays for them whatever it works on. The measurement of 25 August 2026: 23 830
+characters of descriptions at an entry into work of 55 142 characters, that is, more than two fifths
+of everything the session gets before the first line of work.
 
-Растёт это само: описание пишут вслед за правилом и пересказывают в нём содержимое — что
-правило называет, какие разделы держит, чем кончается. Ни одна проверка длины описания не
-считает, и сорок описаний из семидесяти четырёх переросли триста знаков.
+It grows on its own: the description is written after the rule and retells its content in it — what
+the rule names, which sections it holds, what it ends with. No check counts the length of a
+description, and forty descriptions out of seventy-four have outgrown three hundred characters.
 
-Цена не в килобайтах, а в том, чему это учит: по описанию правило выбирают, а выбор — решение
-на один вопрос. Описание, пересказывающее правило, отвечает на вопрос, который задан ниже, и
-второй раз тот же текст приходит вместе с самим правилом.
+The price is not in the kilobytes but in what this teaches: a rule is picked by the description, and
+a pick is a decision on one question. A description retelling the rule answers a question asked
+below, and the same text arrives a second time together with the rule itself.
 
-## Терминология
+## Terminology
 
-| Термин           | Что это                                                                  |
-| ---------------- | ------------------------------------------------------------------------ |
-| описание правила | поле `description` в шапке скила; едет в системный промпт каждого захода |
-| предел описания  | наибольшее число знаков, которое описание занимает                       |
-| принятый долг    | описание длиннее предела, оставленное намеренно и названное поимённо     |
+| Term                       | What it is                                                                                          |
+| -------------------------- | --------------------------------------------------------------------------------------------------- |
+| the description of a rule  | the field `description` in the header of the skill; it goes into the system prompt of every session |
+| the limit of a description | the greatest number of characters a description takes                                               |
+| accepted debt              | a description longer than the limit, left deliberately and named by name                            |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Не применимо: у слоя правил экрана нет.
+Not applicable: the rules layer has no screen.
 
-## Правила
+## Rules
 
-- **Описание правила не длиннее трёхсот знаков.** Число назначено владельцем от первого замера:
-  сорок описаний из семидесяти четырёх сегодня длиннее, и режется в них пересказ содержимого, а
-  не то, по чему правило выбирают.
-- **Описание отвечает на один вопрос — брать это правило или нет.** Оно называет, когда правило
-  берут, и — у паттерна — когда его не берут, отсылая к соседнему. Перечисление разделов,
-  пересказ статей и довод, зачем правило заведено, в описание не идут: их читают в самом
-  правиле, и приходят они вместе с ним.
-- **Длина описания считается командой, а не глазом.** Проверка читает шапку каждого скила и
-  называет превысившие поимённо, с числом знаков; без неё описание отрастает обратно за
-  несколько правок, и увидеть это нечем.
-- **Описание, оставленное длиннее предела, стоит в перечне принятого долга поимённо.** Правило,
-  которое иначе перестанут находить по своей теме, важнее трёхсот знаков; но молчаливое
-  превышение и осознанное выглядят одинаково, поэтому второе называется списком.
-- **Правило по-прежнему находится по своей теме.** Обрезка судится не длиной, а тем, что правило
-  выбирают там же, где выбирали: слова, по которым его звали, из описания не уходят.
+- **The description of a rule is no longer than three hundred characters.** The number was assigned
+  by the owner from the first measurement: forty descriptions out of seventy-four are longer today,
+  and what is cut in them is the retelling of the content, not what the rule is picked by.
+- **The description answers one question — take this rule or not.** It names when the rule is taken
+  and — at a pattern — when it is not taken, sending to a neighbouring one. A list of sections, a
+  retelling of the articles and the argument why the rule was created do not go into the description:
+  they are read in the rule itself, and they arrive together with it.
+- **The length of a description is counted by a command, not by eye.** The check reads the header of
+  every skill and names those that exceeded by name, with the number of characters; without it a
+  description grows back over a few edits, and there is nothing to see it by.
+- **A description left longer than the limit stands in the list of the accepted debt by name.** A
+  rule that would otherwise stop being found by its subject is more important than three hundred
+  characters; but a silent excess and a deliberate one look the same, so the second is named by a
+  list.
+- **The rule is still found by its subject.** The trim is judged not by the length but by the rule
+  being picked where it was picked before: the words it was called by do not leave the description.
 
-## Что не входит
+## What is out of scope
 
-- Сжатие самих правил и паттернов — задачи RT-1132…RT-1135 того же эпика.
-- Словарь и карта хода, которые едут хуками старта, — задача RT-1137.
-- Предел длины самого правила — задача RT-1139: он про тело, а не про шапку.
+- The compression of the rules and the patterns themselves — the tasks RT-1132…RT-1135 of the same
+  epic.
+- The glossary and the map of the turn, which go by the startup hooks — the task RT-1137.
+- The length limit of the rule itself — the task RT-1139: it is about the body, not about the header.
 
-## Контракт
+## Contract
 
-Не применимо: процедур домен не обслуживает.
+Not applicable: the domain serves no procedures.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо.
+Not applicable.
 
-## Данные
+## Data
 
-Не применимо: своих записей хранилища у домена нет.
+Not applicable: the domain has no storage records of its own.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо.
+Not applicable.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: слой правил не переводится.
+Not applicable: the rules layer is not translated.
 
-### Доступ
+### Access
 
-Не применимо.
+Not applicable.
 
-### Наблюдаемость
+### Observability
 
-Проверка длины печатает превысившие описания списком: имя скила, число знаков, предел. Молчание
-означает, что все описания в пределе.
+The check of the length prints the descriptions that exceeded as a list: the name of the skill, the
+number of characters, the limit. Silence means all the descriptions are within the limit.
 
 ### SEO
 
-Не применимо: слой правил наружу не показывается.
+Not applicable: the rules layer is not shown outward.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо: экрана у слоя правил нет.
+Not applicable: the rules layer has no screen.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо: владения у слоя правил нет — он один на дерево.
+Not applicable: the rules layer has no ownership — it is one per tree.
 
-## Решения
+## Decisions
 
-- **Предел — триста знаков** — число владельца, назначенное от первого замера. Отвергнуто: сто
-  пятьдесят, дающие половину объёма описаний, — при них описание перестаёт разводить соседние
-  паттерны одного правила друг от друга.
-- **Считаются знаки, а не байты** — байт о цене окна не говорит, а кириллица делает его в
-  полтора раза больше знака. Отвергнуто: байты, которыми меряет команда счёта цены слоя.
-- **Превышение снимается перечнем принятого долга, а не поднятием предела** — правило, которое
-  иначе перестанут находить по своей теме, важнее трёхсот знаков, но названо оно должно быть
-  поимённо. Отвергнуто: порог, у которого исключение молчит.
+- **The limit is three hundred characters** — the owner's number, assigned from the first
+  measurement. Rejected: a hundred and fifty, giving half the volume of the descriptions — at them a
+  description stops telling the neighbouring patterns of one rule apart from each other.
+- **Characters are counted, not bytes** — a byte says nothing about the price of the window, and
+  Cyrillic makes it one and a half times bigger than a character. Rejected: bytes, which the command
+  of counting the price of the layer measures by.
+- **An excess is lifted by the list of the accepted debt, not by raising the limit** — a rule that
+  would otherwise stop being found by its subject is more important than three hundred characters,
+  but it must be named by name. Rejected: a threshold at which the exception stays silent.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-1` — считать ли описания скилов, которых дерево не раскладывает. Работа идёт с допущением,
-  что проверка судит разложенное: неразложенного в дереве нет вовсе, а в пакете описание правится
-  в источнике и попадает под ту же проверку у потребителя.
+- `Q-1` — whether to count the descriptions of skills the tree does not lay out. The work goes with
+  the assumption that the check judges the laid-out: there is nothing unlaid-out in the tree at all,
+  and in the package the description is edited in the source and falls under the same check at a
+  consumer.
 
-## История изменений
+## History of changes
 
-- 2026-08-25 — договорённость записана до кода: предел, форма описания, перечень принятого долга.
+- 2026-08-25 — the agreement was written before the code: the limit, the shape of the description,
+  the list of the accepted debt.

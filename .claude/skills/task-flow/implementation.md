@@ -1,174 +1,177 @@
-# task-flow — что здесь своё
+# task-flow — what is its own here
 
-Имена и привязки этого дерева при правиле `SKILL.md` рядом.
+The names and bindings of this tree, next to the rule `SKILL.md` beside it.
 
-Дерево публикует библиотеки и держит одно приложение — приёмник груза. **Домен здесь — пакет в
-`projects/` или приложение**: `ui-kit`, `ui-kit-v2`, `core`, `store`, `utils`, `agent-kit`,
-`message-bus`. Спек пакета описывает публичную поверхность — что он обещает потребителю; спек
-приложения описывает предметную область: что оно принимает, что хранит и чем отказывает.
+The tree publishes libraries and holds one application — the cargo intake. **A domain here is a
+package under `projects/` or an application**: `ui-kit`, `ui-kit-v2`, `core`, `store`, `utils`,
+`agent-kit`, `message-bus`. A package spec describes the public surface — what it promises the
+consumer; an application spec describes the subject area: what it accepts, what it stores and what
+it refuses with.
 
-## Как это называется здесь
+## What it is called here
 
-- **В правиле** — Здесь
-- **домен** — пакет в `projects/` или приложение в `apps/` — каталог спека на каждый
-- **очередь работ** — задачи GitHub и доска `Rt-tools`; номер задачи стоит в имени ветки
-- **папка задачи** — `docs/tasks/<ветка>/` — путь повторяет имя ветки буквально, вместе с косой
-- **замысел эпика** — `docs/plans/<тема>.md` — каталог заведён раньше правила и используется
-- **разбор просьбы** — вопросы владельцу инструментом опроса, ответы дословно в `grill.md`
-- **разбор замысла ролями** — `.claude/workflows/plan.js`
-- **переименование папки под номер** — делает `npm run task:new`: черновик по слагу становится папкой по имени ветки
-- **сборка папки задачи** — делает он же: копирует `docs/tasks/_template` и снимает с копий шапку раскладки
+- **In the rule** — Here
+- **a domain** — a package under `projects/` or an application under `apps/` — a spec directory for each
+- **the work queue** — the GitHub issues and the board `Rt-tools`; the task number stands in the branch name
+- **the task folder** — `docs/tasks/<branch>/` — the path repeats the branch name literally, the slash included
+- **the epic plan** — `docs/plans/<subject>.md` — the directory was started before the rule and is in use
+- **the grill** — questions to the owner by the asking tool, the answers verbatim in `grill.md`
+- **the plan review by roles** — `.claude/workflows/plan.js`
+- **renaming the folder to the number** — done by `npm run task:new`: the draft by slug becomes the folder by branch name
+- **assembling the task folder** — done by the same command: it copies `docs/tasks/_template` and strips the layout header from the copies
 
-## Где это лежит
+## Where it lives
 
-- **Папки задач** — `docs/tasks/`, образец — `docs/tasks/_template/`
-- **Договорённость о продукте до кода** — `docs/specs/<пакет>/proposed/<фича>/`
-- **Спек пакета** — `docs/specs/<пакет>/`
-- **Замысел эпика** — `docs/plans/`
-- **Роли разбора** — `.claude/agents/spec-writer.md`, `.claude/agents/spec-critic.md`
-- **Конвейер после разбора** — `.claude/workflows/plan.js`
+- **The task folders** — `docs/tasks/`, the sample is `docs/tasks/_template/`
+- **The product agreement before the code** — `docs/specs/<package>/proposed/<feature>/`
+- **The package spec** — `docs/specs/<package>/`
+- **The epic plan** — `docs/plans/`
+- **The review roles** — `.claude/agents/spec-writer.md`, `.claude/agents/spec-critic.md`
+- **The pipeline after the grill** — `.claude/workflows/plan.js`
 
-## Что не делается без слова владельца
+## What is not done without the owner word
 
-Слово даётся на действие, а не на работу целиком: «делай, что нужно по плану» разрешает то,
-что в плане названо, и ничего сверх того.
+The word is given for an action, not for the work as a whole: «do what the plan needs» permits
+what the plan names, and nothing beyond that.
 
-- **Действие** — Почему оно здесь
-- **слияние PR в главную ветку** — назад одним движением не откатывается
-- **публикация пакета в реестр** — опубликованную версию не снять
-- **правка тела уже заведённой задачи или PR** — это текст владельца, а не рабочая запись
-- **снятие ветки, рабочего дерева или папки задачи** — снесённое восстанавливается только из истории, а незакоммиченное — ничем
-- **правка рабочего дерева не своей правкой** — выкладка чужой версии поверх дерева и сброс к чужой вершине стирают то же
-- **правка файлов вне корня рабочего дерева** — замысел этой ветки ими не распоряжается
+- **The action** — Why it is here
+- **merging a PR into the main branch** — it is not rolled back by one motion
+- **publishing a package to the registry** — a published version cannot be taken back
+- **editing the body of an already created task or PR** — that is the owner text, not a working record
+- **removing a branch, a working tree or a task folder** — what is removed is restored only from history, and what is uncommitted by nothing
+- **changing the working tree by an edit that is not one own** — checking out a foreign version over the tree and resetting to a foreign tip erase the same
+- **editing files outside the root of the working tree** — the plan of this branch does not dispose of them
 
-Коммит в свою ветку сюда не входит: он не уходит наружу и откатывается.
+A commit into one own branch is not in this list: it does not leave outward and it rolls back.
 
-**Пуш ветки задачи и открытие PR черновиком отсюда сняты.** Стояли они здесь оба, и вместе с
-ними стоял запрет на то, чего правило требует прямо: PR открывается черновиком тем ходом,
-которым правка отдаётся, — а без пуша его не открыть. Работа от этого простаивала готовой и
-невидимой, дожидаясь слова, которого владелец не ждал: страж выхода требовал открыть заявку,
-этот список — не открывать, и разрешить противоречие исполнителю было нечем.
+**Pushing the task branch and opening a PR as a draft are removed from here.** Both stood here,
+and together with them stood a ban on what the rule demands outright: a PR opens as a draft by the
+turn in which the edit is handed over — and without a push it cannot be opened. Work stood idle
+because of that, ready and invisible, waiting for a word the owner was not expecting: the exit
+guard demanded opening the request, this list demanded not opening it, and the executor had nothing
+to resolve the contradiction with.
 
-Оба шага обратимы, а необратимо только слияние, и оно в списке осталось. Ветка снимается, заявка
-закрывается, а кнопка слияния у черновика заблокирована самим хостингом: пока черновик не снят,
-открытая заявка приглашением влить не читается. Снятие черновика тоже остаётся за исполнителем —
-им он и говорит, что решение готово, — и стережёт его свой гард: он смотрит разбор, сливаемость
-и прогон на вершине заявки.
+Both steps are reversible, and only the merge is not, and it stayed in the list. A branch is
+removed, a request is closed, and the merge button of a draft is locked by the hosting itself:
+while the draft is not lifted, an open request does not read as an invitation to merge. Lifting the
+draft also stays with the executor — by it they say the solution is ready — and it is guarded by a
+guard of its own: it looks at the review, the mergeability and the run on the tip of the request.
 
-Строка о правке рабочего дерева не своей правкой заведена разбором
-запись «2026-08-20-diagnostic-command-overwrote-the-tree» в приёме: список называл снос —
-ветки, рабочего дерева, папки задачи, — и выкладка чужой версии поверх дерева в него не
-попадала, хотя стирает ровно то же и тем же способом.
+The line about changing the working tree by an edit that is not one own was started by an analysis,
+the record «2026-08-20-diagnostic-command-overwrote-the-tree» in the intake: the list named removal
+— of a branch, of a working tree, of a task folder — and checking out a foreign version over the
+tree did not get into it, although it erases exactly the same in exactly the same way.
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Папка задачи заводится вместе с веткой, а не после первой правки.** Путь повторяет имя
-  ветки буквально: `RT-334-archive-closed-task-folders` →
-  `docs/tasks/RT-334-archive-closed-task-folders/`. Ветку старой формы, с косой, косая на дефис
-  не заменяется — так папку ищут `task-context-load.sh` и `task-flow-guard.sh`, и папка,
-  названная иначе, не находится ничем.
-- **Просьба владельца ложится в `grill.md` дословно.** Пересказ подгоняется под уже сделанное;
-  дословная запись — единственное, с чем можно сверить результат при приёмке.
-- **`plan.md` после написания не правится.** Пересмотр этапа пишется в `progress.md` как
-  решение по ходу, с доводом.
-- **Сделанное отмечается только в `progress.md`.** Вторая запись об этом же — в теле коммита,
-  в описании PR, в плане — разъезжается с первой молча.
-- **Договорённость о поведении компонента пишется до кода** и живёт в
-  `docs/specs/<пакет>/proposed/<фича>/`, пока ветка не влита.
+- **The task folder is created together with the branch, not after the first edit.** The path
+  repeats the branch name literally: `RT-334-archive-closed-task-folders` →
+  `docs/tasks/RT-334-archive-closed-task-folders/`. For a branch of the old form, with a slash, the
+  slash is not replaced by a dash — that is how `task-context-load.sh` and `task-flow-guard.sh`
+  look for the folder, and a folder named otherwise is found by nothing.
+- **The owner request goes into `grill.md` verbatim.** A retelling is fitted to what has already
+  been done; the verbatim record is the only thing the result can be reconciled with at acceptance.
+- **`plan.md` is not edited after it is written.** A revision of a stage is written into
+  `progress.md` as a decision along the way, with an argument.
+- **What is done is marked only in `progress.md`.** A second record of the same — in the commit
+  body, in the PR description, in the plan — diverges from the first silently.
+- **The agreement about the behaviour of a component is written before the code** and lives in
+  `docs/specs/<package>/proposed/<feature>/` until the branch is merged.
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-Первая колонка — статья дословно, как она написана в разделе «Как закон применяется здесь».
-Пока в таблице только то, что стережёт разбор папки задачи: остальные статьи правила привязок
-не имеют — это долг, лежавший здесь до этой таблицы.
+The first column is the article verbatim, as it is written in the section «How the law applies
+here». For now the table holds only what guards the taking apart of the task folder: the other
+articles of the rule have no bindings — that is the debt that lay here before this table.
 
-- **Editing application code is refused until the work has reached a state in which code is edited.** — `.claude/hooks/task-flow-guard.sh:plan` — папка по имени текущей ветки, замысел в ней и объявленное состояние; без любого из них правка кода отбивается
-- **The guard judges the declared transition, not the presence of files.** — `.claude/hooks/task-flow-guard.sh:state` — строка состояния читается из хода работы, и отказ снимает она, а не лежащий на диске файл
-- **A refusal by state names the mandatory action of the declared state.** — `.claude/hooks/task-flow-guard.sh:state_action` — обязательное действие каждого допереходного состояния
-- **Only a word from the list counts as a state name.** — `.claude/hooks/task-flow-guard.sh:state_action` — слово вне перечня отбивается отдельной причиной
-- **After opening the PR, the executor tells the owner the number, what it waits for and what comes next.** — **Не проверяется ничем.** Гарды судят файлы и команды, а не текст ответа владельцу; сказанное в переписке следа в дереве не оставляет
-- **Editing application code is refused until the work has reached a state in which code is edited.** — `.claude/rt-kit/project.sh:RT_ARCHIVE_PRUNE_CMD` — `node tools/archive-prune.mjs --apply`. Эту команду гард не судит: записи стареют по календарю, и шаг срока краснеет без правки в ветке. Сверяется вся команда, а не вхождение
-- **A refusal by an external limiter removes the way, not the task.** — **Не исполняется.** Отказ приходит от среды исполнения, а не от гарда дерева: его текста не видит ни одна проверка, и способ, названный соседним гардом, машине с ним не связать. Держит это статья и слово владельцу о том, что осталось.
-- **The plan guard is the lower bound of the requirement, not its limit.** — `.claude/hooks/task-flow-guard.sh:plan` — гард судит пути кода приложения; требование шире его и держится памятью исполнителя
-- **A request to merge is a turn of its own, and it never comes before a green run.** — `.claude/hooks/git-guard-draft-ready.sh:run_verdict` — ход не заканчивается, пока разобранная ветка стоит черновиком при зелёном прогоне на вершине PR
-- **The task folder goes into the branch by a commit, not lives in one working tree.** — `.claude/hooks/task-flow-guard.sh:in_tree` — правка кода отбивается, пока папки задачи нет в `HEAD` ветки
-- **The task folder is taken apart by the last commit before the PR opens, not after approval.** — `.claude/hooks/git-guard-delivery-folder.sh:rt_delivery_open_folder` — открытие заявки отбивается, пока ветка везёт `docs/tasks/<ветка>`; замысел после уборки гард хода работы берёт из истории ветки — `.claude/hooks/task-flow-guard.sh:folder_archived`
-- **A state line moved forward is the same declaration of intent, only machine-readable.** — Не проверяется: другого источника состояния, кроме этой строки, нет вовсе, и страж `.claude/hooks/turn-exit-guard.sh` обязан ей верить. Держит это сама статья.
-- **Waiting for one part of a stage is never a stop of the stage.** — Не проверяется машиной: какая часть работы от чего зависит, машине не видно. Держат это статья правила и слово владельцу о том, что уже сделано.
-- **An instruction to work by a rule is an instruction to do its steps, including those that change history.** — Не проверяется ничем: слово владельца лежит вне дерева, и связать его с тем, что исполнитель сделал дальше, нечем. Держится этой статьёй и ловушкой о строке ожидания в холодной части правила.
-- **A taken task does not end a turn.** — `.claude/hooks/turn-exit-guard.sh:first_stage` — ход, объявивший записанный замысел, отбивается до второго признака; сценарии — `projects/agent-kit/tests/turn-exit-guard.test.sh`
-- **A finding made mid-stage is checked against the plan's exit conditions before the first edit.** — **Не проверяется ничем.** До первой правки находки в дереве нет вовсе, а после неё гард видит правку и не знает, названа она замыслом или нет. Файлы соседней работы от файлов своей ничем не отличаются. Держится сверкой с перечнем этапов, а не признаком.
-- **Done work is marked only in the progress.** — **Не проверяется ничем.** Вторую запись о сделанном — в теле коммита, в описании PR — машине не с чем сверить
-- **The next task is taken from the epic plan, and the work queue list is asked only where there is no epic.** — **Не проверяется ничем.** Замысел эпика лежит в `docs/plans/`, а вызов очереди работ машине неотличим от вызова с открытым замыслом рядом. Держится порядком паттерна возвращения к работе
-- **An epic is not closed by a sign confirmed by reading alone.** — **Не проверяется ничем.** Признак конца эпика — проза в его замысле; отличить прочитанное от проверенного машине нечем. Держится тем, что при закрытии эпика каждый его признак называется вслух вместе с командой либо замером
-- **The tasks of an epic are created all at once, by the same turn as the epic itself.** — **Не проверяется ничем.** Сверка очереди работ судит метку эпика против замысла только по паре «карточка и замысел», а состав задач с таблицей порядка не сводит. Заведена одна из десяти или все десять, ей не видно
-- **The epic plan names how the branches of its tasks stand, on a par with their order.** — **Не проверяется ничем.** Замыслы эпиков лежат в `docs/plans/`, и строки о расстановке веток у них нет. Сверка очереди работ читает состав задач, а не базу их веток. Держится статьёй; цена расстановки видна только после открытия заявок — по тому, у скольких из них встал прогон.
-- **The epic plan lies where it is found without the network and after the merge.** — **Не проверяется ничем.** Каталог замыслов здесь `docs/plans/`, но что в нём лежит замысел именно этого эпика, проверить нечем
-- **Closed work is reviewed by the rules, and this is a closing step, not a separate request.** — **Не проверяется ничем.** Запуск роли разбора — ход исполнителя, и следа в дереве он не оставляет; приём — команда `/skill-curator`
-- **Two requirements — two guards, and one can be lifted without losing the other.** — `.claude/hooks/task-flow-draft-guard.sh:draft` — договорённость судит свой гард, папку задачи и состояние — `.claude/hooks/task-flow-guard.sh:folder_archived`; разбор вызова у них общий — `.claude/hooks/task-flow-context.sh:rt_task_flow_context`
-- **The agreement is required by the edit paths, not by an appraisal of the task.** — `.claude/hooks/task-flow-context.sh:rt_tf_candidates` — судятся пути правки; обход — строка о поведении в шапке замысла
-- **What needs the owner's word is taken from a list, not appraised on the spot.** — **Не проверяется.** Список стоит в настройке агента, `.claude/settings.json`, ключом решений о доступе. Исполнимого признака «оценил на месте» у машины нет: она видит вызов, а не то, чем он был решён
-- **A reply to the owner's order begins with the result, not with intent or its justification.** — **Не проверяется ничем.** Ответ владельцу не читает ни один гейт: правило текстов зовётся только на `.md`, а форму реплики не судит ничто. Держится автором
-- **A session does not start work by itself.** — `.claude/hooks/work-start-guard.sh:kind` — ход, правивший код приложения после реплики, просьбой не бывающей, не заканчивается. Судится форма реплики, а не смысл: пустая, одно слово, один путь; всё остальное считается просьбой
-- **An instruction to work by the progress covers all its steps, including those that change history.** — **Не проверяется.** Ни один гард не спрашивает, чем именно разрешён шаг
-- **A question written by a past session does not become a question to the owner.** — **Не проверяется.** Гард разговора судит завершение хода, а не происхождение вопроса
-- **The owner's instruction holds until they cancel it, and a new fact against it is a line in the reply about the cost, not a new question.** — `.claude/hooks/grill-gate.sh:seen` — второй признак гарда. Судится пересечение значимых слов темы вопроса и последней реплики владельца, и только при уже бывшем вызове меню
-- **An answer in the owner's message counts the same as an answer in a document.** — `.claude/hooks/grill-gate.sh:seen` — реплика владельца берётся из записи хода тем же разбором, что и первый признак
-- **The owner's word about the design is a task setting, not a decision.** — **Не проверяется ничем:** прочтение слова машине не видно. Держится разбором просьбы — шесть обязательных вопросов паттерна `task-flow-start` спрашивают как раз о том, что названо словом владельца, а сверка слова с деревом стоит одного поиска по спекам и моделям.
-- **A task folder is created for any work, no exceptions.** — `.claude/hooks/task-flow-guard.sh:tasks_dir` — каталог задач здесь `docs/tasks`, папка ищется по имени ветки один в один
-- **The task folder is created as a draft and gets its number by a command.** — `tools/task-new.mjs:adoptDraft` — черновик по слагу переименовывается в папку по имени ветки и получает шапку замысла
-- **An abandoned grill is visible.** — `tools/check-board.mjs:checkDrafts` — черновик старше недели перечисляется сверкой очереди работ
-- **Work ordered in words becomes a task in the queue in the same turn.** — **Не проверяется ничем:** просьба владельца звучит репликой, а не вызовом, и признака у неё нет. Сверка очереди видит черновик папки только через неделю — это порог брошенного разбора, а работа теряется в тот же час
-- **The cheap closing step goes before the costly one, and the run — after the merge.** — **Не проверяется.** Порядок шагов внутри ветки машине не виден: она читает коммиты, а не то, в каком порядке их делали. Держится порядком паттерна закрытия работы
-- **The agreement merges into the domain spec by one of the last commits of the branch, before the PR opens.** — `tools/check-specs.mjs:ripe` — готовые к вливанию перечисляет `npm run check:specs`
-- **The folder of a closed task is taken apart, not moved whole.** — `tools/check-board.mjs:numberFromTaskDir` — папка при закрытой задаче находится сверкой очереди работ
-- **Opening the PR and lifting the draft are refused while the branch carries its task folder.** — `.claude/hooks/git-guard-delivery-folder.sh:rt_delivery_open_folder` — ярус на `gh pr create`, второй рубеж на `gh pr merge`; каталог задач `docs/tasks`, главная `main`
-- **A branch that removed the folder must add a record to the archive.** — `.claude/hooks/git-guard-delivery-folder.sh:rt_folder_was_in_branch` — каталог архива здесь `docs/archive/`
-- **The bypass is the line `Task-folder-skip: <причина>` in the PR or in the command itself.** — `.claude/hooks/git-guard-delivery.sh:folder_skip_re`, тело PR — `.claude/rt-kit/defaults/project.sh:rt_report_body_default`
-- **A merged agreement does not lock the branch.** — `.claude/hooks/task-flow-draft-guard.sh:draft_path` — история ветки отличает влитое от незаведённого
-- **The PR opens as a draft, not at the end of the work.** — Не проверяется ничем: гарды видят вызов открытия PR, но не знают, закрыты ли этапы замысла. Приём — паттерн `git-workflow-commit`
-- **A word for a new notion is looked up in the tree's glossary.** — `.claude/hooks/glossary-load.sh:GLOSSARY` — словарь `docs/GLOSSARY.md`, свои разделы в `.claude/rt-kit/overrides/docs/GLOSSARY.md`
-- **The review of closed work goes to the background, and the executor takes the next task.** — Не проверяется ничем: запуск роли — ход исполнителя, и машине не видно, ждал он её или работал. Приём — команда `/skill-curator`
-- **The review's findings wait for the owner, and only the digest of observations leaves for the package.** — `projects/agent-kit/src/lib/proposals.ts:readProposals` — уезжает то, что лежит в `.claude/rt-kit/proposals/`, и только по вызову `agent-kit propose`
-- **Building by a sample begins with reading the sample itself, not a retelling of it.** — **Не проверяется ничем.** Что заход открывал, следа в дереве не оставляет: гарды судят правку, а не чтение. Держится этой статьёй и разбором запись «2026-08-16-sample-judged-by-one-file» в приёме
-- **What acts on the tree, not on the edit, lies outside the index.** — **Не проверяется ничем.** Запись лежит в `.claude/handoff/` рядом с передачей захода — каталог в `.gitignore`, и сверки его не читают. Печатает её хук `SessionStart` в `.claude/settings.local.json`, который тоже вне истории. Разрешения работать вне эпика у этого дерева нет вовсе: гарда эпика оно не завело
+- **Editing application code is refused until the work has reached a state in which code is edited.** — `.claude/hooks/task-flow-guard.sh:plan` — the folder by the name of the current branch, the plan in it and a declared state; without any of them a code edit is refused
+- **The guard judges the declared transition, not the presence of files.** — `.claude/hooks/task-flow-guard.sh:state` — the state line is read from the progress, and it lifts the refusal, not a file lying on disk
+- **A refusal by state names the mandatory action of the declared state.** — `.claude/hooks/task-flow-guard.sh:state_action` — the mandatory action of every pre-transition state
+- **Only a word from the list counts as a state name.** — `.claude/hooks/task-flow-guard.sh:state_action` — a word outside the list is refused with a reason of its own
+- **After opening the PR, the executor tells the owner the number, what it waits for and what comes next.** — **Not checked.** The guards judge files and commands, not the text of the reply to the owner; what is said in the correspondence leaves no trace in the tree
+- **Editing application code is refused until the work has reached a state in which code is edited.** — `.claude/rt-kit/project.sh:RT_ARCHIVE_PRUNE_CMD` — `node tools/archive-prune.mjs --apply`. This command the guard does not judge: the records age by the calendar, and the retention step turns red without an edit in the branch. The whole command is matched, not an occurrence
+- **A refusal by an external limiter removes the way, not the task.** — **Not carried out.** The refusal comes from the runtime environment, not from a guard of the tree: no check sees its text, and the way named by a neighbouring guard cannot be tied to it by a machine. This is held by the article and by the word to the owner about what is left.
+- **The plan guard is the lower bound of the requirement, not its limit.** — `.claude/hooks/task-flow-guard.sh:plan` — the guard judges the paths of the application code; the requirement is wider than it and is held by the memory of the executor
+- **A request to merge is a turn of its own, and it never comes before a green run.** — `.claude/hooks/git-guard-draft-ready.sh:run_verdict` — the turn does not end while a branch with its folder taken apart stands as a draft with a green run on the PR tip
+- **The task folder goes into the branch by a commit, not lives in one working tree.** — `.claude/hooks/task-flow-guard.sh:in_tree` — a code edit is refused while the task folder is not in the `HEAD` of the branch
+- **The task folder is taken apart by the last commit before the PR opens, not after approval.** — `.claude/hooks/git-guard-delivery-folder.sh:rt_delivery_open_folder` — opening a request is refused while the branch carries `docs/tasks/<branch>`; after the tidying the work conduct guard takes the plan from the branch history — `.claude/hooks/task-flow-guard.sh:folder_archived`
+- **A state line moved forward is the same declaration of intent, only machine-readable.** — Not checked: there is no source of the state other than this line at all, and the guard `.claude/hooks/turn-exit-guard.sh` is obliged to believe it. This is held by the article itself.
+- **Waiting for one part of a stage is never a stop of the stage.** — Not checked: which part of the work depends on what is invisible to a machine. This is held by the article of the rule and by the word to the owner about what is already done.
+- **An instruction to work by a rule is an instruction to do its steps, including those that change history.** — Not checked: the owner word lies outside the tree, and there is nothing to tie it to what the executor did next. It is held by this article and by the trap about the waiting line in the cold part of the rule.
+- **A taken task does not end a turn.** — `.claude/hooks/turn-exit-guard.sh:first_stage` — a turn that declared the written plan is refused before the second sign; the scenarios are `projects/agent-kit/tests/turn-exit-guard.test.sh`
+- **A finding made mid-stage is checked against the plan's exit conditions before the first edit.** — **Not checked.** Before the first edit the finding is not in the tree at all, and after it the guard sees the edit and does not know whether the plan named it. The files of a neighbouring piece of work differ in nothing from one own. It is held by reconciling with the list of stages, not by a sign.
+- **Done work is marked only in the progress.** — **Not checked.** A second record of what is done — in the commit body, in the PR description — has nothing for a machine to reconcile it with
+- **The next task is taken from the epic plan, and the work queue list is asked only where there is no epic.** — **Not checked.** The epic plan lies in `docs/plans/`, and a call to the work queue is indistinguishable to a machine from a call with the plan open next to it. It is held by the order of the returning-to-work pattern
+- **An epic is not closed by a sign confirmed by reading alone.** — **Not checked.** The sign of the end of an epic is prose in its plan; a machine has nothing to tell what was read from what was checked. It is held by naming every sign aloud, together with a command or a measurement, when the epic is closed
+- **The tasks of an epic are created all at once, by the same turn as the epic itself.** — **Not checked.** The work queue audit judges the epic label against the plan only by the pair «card and plan», and it does not reconcile the makeup of tasks with the order table. Whether one of ten was created or all ten is invisible to it
+- **The epic plan names how the branches of its tasks stand, on a par with their order.** — **Not checked.** The epic plans lie in `docs/plans/`, and they have no line about the arrangement of branches. The work queue audit reads the makeup of tasks, not the base of their branches. It is held by the article; the price of the arrangement shows only after the requests are opened — by how many of them the run stalled on.
+- **The epic plan lies where it is found without the network and after the merge.** — **Not checked.** The plans directory here is `docs/plans/`, but there is nothing to check that the plan of this very epic lies in it
+- **Closed work is reviewed by the rules, and this is a closing step, not a separate request.** — **Not checked.** Starting the review role is a move of the executor, and it leaves no trace in the tree; the technique is the command `/skill-curator`
+- **Two requirements — two guards, and one can be lifted without losing the other.** — `.claude/hooks/task-flow-draft-guard.sh:draft` — the agreement is judged by its own guard, and the task folder and the state by `.claude/hooks/task-flow-guard.sh:folder_archived`; the parsing of the call is shared — `.claude/hooks/task-flow-context.sh:rt_task_flow_context`
+- **The agreement is required by the edit paths, not by an appraisal of the task.** — `.claude/hooks/task-flow-context.sh:rt_tf_candidates` — the edit paths are judged; the bypass is the line about behaviour in the plan header
+- **What needs the owner's word is taken from a list, not appraised on the spot.** — **Not checked.** The list stands in the agent config, `.claude/settings.json`, under the access decisions key. A machine has no executable sign for «appraised on the spot»: it sees the call, not what decided it
+- **A reply to the owner's order begins with the result, not with intent or its justification.** — **Not checked.** No gate reads the reply to the owner: the texts rule is called only on `.md`, and the form of a remark is judged by nothing. It is held by the author
+- **A session does not start work by itself.** — `.claude/hooks/work-start-guard.sh:kind` — a turn that edited application code after a remark that cannot be a request does not end. The form of the remark is judged, not the meaning: empty, one word, one path; everything else counts as a request
+- **An instruction to work by the progress covers all its steps, including those that change history.** — **Not checked.** No guard asks by what exactly a step is permitted
+- **A question written by a past session does not become a question to the owner.** — **Not checked.** The conversation guard judges the end of a turn, not the origin of a question
+- **The owner's instruction holds until they cancel it, and a new fact against it is a line in the reply about the cost, not a new question.** — `.claude/hooks/grill-gate.sh:seen` — the second sign of the guard. What is judged is the overlap of the meaningful words of the question subject and of the last owner remark, and only when a menu call has already happened
+- **An answer in the owner's message counts the same as an answer in a document.** — `.claude/hooks/grill-gate.sh:seen` — the owner remark is taken from the turn record by the same parsing as the first sign
+- **The owner's word about the design is a task setting, not a decision.** — **Not checked:** the reading of the word is invisible to a machine. It is held by the grill — the six mandatory questions of the pattern `task-flow-start` ask exactly about what the owner word named, and reconciling the word with the tree costs one search over the specs and the models.
+- **A task folder is created for any work, no exceptions.** — `.claude/hooks/task-flow-guard.sh:tasks_dir` — the task directory here is `docs/tasks`, and the folder is looked for by the branch name one to one
+- **The task folder is created as a draft and gets its number by a command.** — `tools/task-new.mjs:adoptDraft` — the draft by slug is renamed into the folder by branch name and gets the plan header
+- **An abandoned grill is visible.** — `tools/check-board.mjs:checkDrafts` — a draft older than a week is listed by the work queue audit
+- **Work ordered in words becomes a task in the queue in the same turn.** — **Not checked:** the owner request sounds as a remark, not as a call, and it has no sign. The queue audit sees a draft folder only after a week — that is the threshold of an abandoned grill, while the work is lost within the same hour
+- **The cheap closing step goes before the costly one, and the run — after the merge.** — **Not checked.** The order of steps inside a branch is invisible to a machine: it reads the commits, not the order in which they were made. It is held by the order of the work closing pattern
+- **The agreement merges into the domain spec by one of the last commits of the branch, before the PR opens.** — `tools/check-specs.mjs:ripe` — what is ready to merge is listed by `npm run check:specs`
+- **The folder of a closed task is taken apart, not moved whole.** — `tools/check-board.mjs:numberFromTaskDir` — a folder left with a closed task is found by the work queue audit
+- **Opening the PR and lifting the draft are refused while the branch carries its task folder.** — `.claude/hooks/git-guard-delivery-folder.sh:rt_delivery_open_folder` — the tier on `gh pr create`, the second line on `gh pr merge`; the task directory is `docs/tasks`, the main branch `main`
+- **A branch that removed the folder must add a record to the archive.** — `.claude/hooks/git-guard-delivery-folder.sh:rt_folder_was_in_branch` — the archive directory here is `docs/archive/`
+- **The bypass is the line `Task-folder-skip: <reason>` in the PR or in the command itself.** — `.claude/hooks/git-guard-delivery.sh:folder_skip_re`, the PR body — `.claude/rt-kit/defaults/project.sh:rt_report_body_default`
+- **A merged agreement does not lock the branch.** — `.claude/hooks/task-flow-draft-guard.sh:draft_path` — the branch history tells the merged from the never-created
+- **The PR opens as a draft, not at the end of the work.** — Not checked: the guards see the call that opens a PR but do not know whether the stages of the plan are closed. The technique is the pattern `git-workflow-commit`
+- **A word for a new notion is looked up in the tree's glossary.** — `.claude/hooks/glossary-load.sh:GLOSSARY` — the glossary `docs/GLOSSARY.md`, its own sections in `.claude/rt-kit/overrides/docs/GLOSSARY.md`
+- **The review of closed work goes to the background, and the executor takes the next task.** — Not checked: starting the role is a move of the executor, and it is invisible to a machine whether they waited for it or worked. The technique is the command `/skill-curator`
+- **The review's findings wait for the owner, and only the digest of observations leaves for the package.** — `projects/agent-kit/src/lib/proposals.ts:readProposals` — what lies in `.claude/rt-kit/proposals/` leaves, and only by the call `agent-kit propose`
+- **Building by a sample begins with reading the sample itself, not a retelling of it.** — **Not checked.** What the session opened leaves no trace in the tree: the guards judge an edit, not a read. It is held by this article and by the analysis, the record «2026-08-16-sample-judged-by-one-file» in the intake
+- **What acts on the tree, not on the edit, lies outside the index.** — **Not checked.** The record lies in `.claude/handoff/` next to the session handover — the directory is in `.gitignore`, and the audits do not read it. It is printed by the `SessionStart` hook in `.claude/settings.local.json`, which is also outside history. This tree has no permission to work outside an epic at all: it started no epic guard
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-- **Брошенные черновики и папки закрытых задач находятся проверкой.** — **Исполняется наполовину.** `npm run check:board` в дереве есть, но машинная учётная запись доску владельца не видит и проверка отказывает вслух. Папки пока разбираются глазами при закрытии.
-- **Готовность договорённости к вливанию проверяется командой.** — **Проверять нечего.** `npm run check:specs` работает, но спеков пакетов пока ни одного.
+- **Abandoned drafts and folders of closed tasks are found by a check.** — **Carried out by half.** `npm run check:board` is in the tree, but the machine account does not see the owner board and the check refuses aloud. The folders are for now taken apart by eye at closing.
+- **The readiness of an agreement to merge is checked by a command.** — **There is nothing to check.** `npm run check:specs` works, but there is not a single package spec yet.
 
-Две другие статьи закона — состояние незаконченной работы в контексте и запрет писать код
-раньше замысла — исполняются с редакции 0.4.0 пакета: он везёт `task-context-load.sh` и
-`task-flow-guard.sh` сам.
+Two other articles of the law — the state of unfinished work in the context and the ban on writing
+code before the plan — have been carried out since edition 0.4.0 of the package: it ships
+`task-context-load.sh` and `task-flow-guard.sh` itself.
 
-## Что ещё стоит знать при чтении кода
+## What else is worth knowing when reading the code
 
-- **`docs/plans/` старше этого правила.** Там лежат замыслы эпиков — работ, каждая из которых
-  шире одной ветки; папка задачи их не отменяет и не дублирует — она про одну ветку. Туда же
-  ложится замысел нового эпика: карточка с меткой `epic` в очереди работ говорит, что он есть, а
-  порядок задач держит эта запись.
-- **Номер задачи приходит из GitHub, а не из имени папки.** Пока задача не заведена, папка
-  зовётся `docs/tasks/_draft-<slug>/` и в историю не едет.
+- **`docs/plans/` is older than this rule.** There lie the epic plans — works each of which is
+  wider than one branch; the task folder neither cancels nor duplicates them — it is about one
+  branch. The plan of a new epic goes there too: a card with the `epic` label in the work queue says
+  it exists, and the task order is held by that record.
+- **The task number comes from GitHub, not from the folder name.** Until the task is created, the
+  folder is called `docs/tasks/_draft-<slug>/` and does not travel into history.
 
-## Чем это проверяется
+## What this is checked by
 
-- `.claude/hooks/task-flow-guard.sh` — правку кода без `plan.md` отбивает, один раз на ветку за
-  сессию.
-- `.claude/hooks/task-context-load.sh` — состояние незаконченной работы уезжает в контекст на
-  запуске сессии.
-- `.claude/hooks/git-guard-draft-ready.sh` — ход не заканчивается, пока готовая работа стоит
-  черновиком. Гард этого дерева, не пакетный. Общие условия: PR текущей ветки открыт черновиком
-  и прогон **на вершине PR** завершён успехом. Дальше оснований для отказа два — папки задачи в
-  ветке нет, значит остался один вызов `gh pr ready`; папка лежит, но ход работы говорит, что
-  этапы закрыты, значит работа стоит на уборке, и отбивка называет её порядок. Этапы открыты —
-  гард молчит: черновик при идущей работе законен. Ответ хостинга кэшируется на минуту.
-- `npm run check:hooks` — сценарии гарда, десять исходов, без сети: помощник хостинга подставлен,
-  каждый сценарий поднимает свой временный репозиторий. Стоит в наборе гейта пуша и шагом
-  конвейера. Натравливается на нарочно сломанную копию гарда через `RT_GUARD_PATH`: набор,
-  который не краснеет на поломке, не проверяет ничего.
-- `npm run check:board` — брошенные черновики и папки закрытых задач; сейчас отказывает вслух,
-  потому что доска машинной учётной записи не видна.
-- Глазами при закрытии работы: папка задачи разобрана, `progress.md` дописан, договорённость
-  влита в спек пакета.
-- `pnpm run agent-kit:check` — правило разложено и его компаньон заполнен.
+- `.claude/hooks/task-flow-guard.sh` — refuses a code edit without `plan.md`, once per branch per
+  session.
+- `.claude/hooks/task-context-load.sh` — the state of unfinished work travels into the context at
+  session start.
+- `.claude/hooks/git-guard-draft-ready.sh` — the turn does not end while ready work stands as a
+  draft. A guard of this tree, not a package one. The shared conditions: the PR of the current
+  branch is open as a draft and the run **on the PR tip** finished with success. Beyond that there
+  are two grounds for a refusal — the task folder is not in the branch, so one call `gh pr ready` is
+  left; the folder lies there, but the progress says the stages are closed, so the work stands at
+  the tidying, and the refusal names its order. The stages are open — the guard is silent: a draft
+  during ongoing work is lawful. The hosting answer is cached for a minute.
+- `npm run check:hooks` — the guard scenarios, ten outcomes, without the network: the hosting
+  helper is substituted, and each scenario raises a temporary repository of its own. It stands in
+  the push gate set and as a pipeline step. It is set upon a deliberately broken copy of the guard
+  through `RT_GUARD_PATH`: a suite that does not turn red on a breakage checks nothing.
+- `npm run check:board` — abandoned drafts and folders of closed tasks; right now it refuses aloud,
+  because the board is not visible to the machine account.
+- By eye at the closing of the work: the task folder is taken apart, `progress.md` is written up,
+  the agreement is merged into the package spec.
+- `pnpm run agent-kit:check` — the rule is laid out and its companion is filled in.

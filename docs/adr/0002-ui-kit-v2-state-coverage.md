@@ -1,86 +1,90 @@
-# ADR 0002 — Покрытие состояний `@rt-tools/ui-kit-v2`: витрина и проверки
+# ADR 0002 — The coverage of the states of `@rt-tools/ui-kit-v2`: the showcase and the checks
 
-- **Статус:** Принято (план)
-- **Дата:** 2026-08-06
-- **Область:** `@rt-tools/ui-kit-v2`
+- **Status:** Accepted (a plan)
+- **Date:** 2026-08-06
+- **Area:** `@rt-tools/ui-kit-v2`
 
-## Контекст
+## The context
 
-Витрина второго кита показывает 80 файлов историй, и в 79 из них — единственный экспорт
-`Default`. Исключение одно: `Autocomplete`, у него два. Docs-страниц у компонентов нет вовсе —
-`autodocs` не включён, `compodoc` выключен в `project.json` обеими целями витрины.
+The showcase of the second kit shows 80 files of stories, and in 79 of them there is a single export
+`Default`. The exception is one: `Autocomplete`, it has two. The components have no Docs pages at
+all — `autodocs` is not switched on, `compodoc` is switched off in `project.json` by both goals of
+the showcase.
 
-Что это значит на практике: чтобы увидеть `outlined` + `warning` + `disabled`, надо открыть
-`Button`, найти три контрола и выставить их руками. Расхождение, которое видно только при таком
-сочетании, не видит никто — ни автор правки, ни ревьюер.
+What that means in practice: to see `outlined` + `warning` + `disabled` one has to open `Button`,
+find three controls and set them by hand. A divergence visible only at such a combination is seen by
+nobody — neither by the author of the edit nor by the reviewer.
 
-Замеры на 2026-08-06:
+The measurements as of 2026-08-06:
 
-|                                         |                                          |
-| --------------------------------------- | ---------------------------------------- |
-| Компонентов и директив                  | 94 в 71 папке                            |
-| Файлов историй                          | 80, из них с единственным экспортом — 79 |
-| Компонентов без историй                 | 14 (`UI-KIT-V2-ISSUES.md` §2.1)          |
-| Историй, рисующих пустой массив         | 10 (`UI-KIT-V2-ISSUES.md` §2.3)          |
-| Папок, где спек меньше, чем компонентов | 11                                       |
-| Спек всего                              | 81                                       |
-| Покомпонентных `CONTEXT.md`             | 72 + индекс                              |
+|                                                       |                                       |
+| ----------------------------------------------------- | ------------------------------------- |
+| Components and directives                             | 94 in 71 folders                      |
+| Files of stories                                      | 80, of them with a single export — 79 |
+| Components without stories                            | 14 (`UI-KIT-V2-ISSUES.md` §2.1)       |
+| Stories drawing an empty array                        | 10 (`UI-KIT-V2-ISSUES.md` §2.3)       |
+| Folders where the specs are fewer than the components | 11                                    |
+| Specs in all                                          | 81                                    |
+| Per-component `CONTEXT.md`                            | 72 + an index                         |
 
-Отдельно: `CONTEXT.md` держит поведенческий контракт («крестик не закрывает тег», «содержимое
-директива рисует сама»), но в опубликованный пакет не уезжает — `ng-package.json` копирует
-только `src/styles`, `src/assets` и `*.scss`. Потребитель пакета этот контракт прочитать не
-может нигде.
+Apart from that: `CONTEXT.md` holds the contract of the behaviour ("the cross does not close the
+tag", "the content is drawn by the directive itself"), but does not leave for the published package
+— `ng-package.json` copies only `src/styles`, `src/assets` and `*.scss`. The consumer of the package
+can read this contract nowhere.
 
-За образец взята внешняя витрина: страница-обзор на компонент плюс набор историй по осям
-состояний. Перенос её формы упирается в четыре вещи, которых у нас нет: RTL не поддержан ни
-одним селектором (только логические свойства), из аддонов подключён лишь `addon-docs`,
-интерактивные состояния стилизованы в 27 SCSS-файлах из 86, а 13 компонентов открываются через
-CDK Overlay и в статическую сетку не ложатся.
+A foreign showcase was taken as the sample: a page of an overview per component plus a set of
+stories by the axes of the states. The moving of its form runs into four things we do not have: RTL
+is supported by not a single selector (only logical properties), of the add-ons only `addon-docs` is
+plugged in, the interactive states are styled in 27 SCSS files of 86, and 13 components open through
+CDK Overlay and do not lie down into a static grid.
 
-## Решения
+## The decisions
 
-| #   | Решение                                                                                                                                                                                                                                                                                                                                          |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | **Два слоя, а не один.** Страница-обзор в MDX (назначение, когда применять, таблицы осей, доступность, оформление) плюс отдельные истории-матрицы по осям состояний.                                                                                                                                                                             |
-| 2   | **Таблица API пишется руками в MDX.** `compodoc` отвергнут: он замедляет старт витрины генерацией `documentation.json` и рисует таблицу своим видом, а не нужным. Цена решения — 72 копии того, что уже записано в коде; от расхождения держит проверка `tools/verify-ui-kit-v2-docs.cjs`, сверяющая имена входов в MDX с `input()` в исходнике. |
-| 3   | **«Все состояния» = каждая ось целиком плюс значимые пересечения.** Перемножаются только оси, которые видно влияют друг на друга. Полный декартов продукт отвергнут: у `Button` это 1296 ячеек, у `Table` с 15 входами — десятки тысяч.                                                                                                          |
-| 4   | **Интерактивные состояния показываются, а не описываются.** Ставится `storybook-addon-pseudo-states` (требует патч-бампа `storybook` до `^10.5.6`). Без него `hover`, `focus-visible` и `active` не увидеть глазами никогда.                                                                                                                     |
-| 5   | **Сетку рисует общая обвязка, а не 72 копии разметки.** Заводится `projects/ui-kit-v2/src/showcase/`, добавляется в `exclude` сборки библиотеки рядом с `src/testing/**`.                                                                                                                                                                        |
-| 6   | **Оверлеи раскладываются надвое.** Презентационная начинка (шапка диалога, пункт меню, тост, панель) матрицируется как обычный компонент; сам оверлей открывает история с `play`-функцией, жмущей триггер при монтировании. Нативный `click` — новых зависимостей не нужно.                                                                      |
-| 7   | **Тёмная тема не удваивает объём.** Матрицы рисуются в текущей теме тумблера; у каждого компонента заводится одна история `Themes`, где светлая и тёмная стоят рядом. Возможно потому, что тёмная объявлена миксином и накладывается на любой селектор, не только на `:root`.                                                                    |
-| 8   | **`CONTEXT.md` уезжает в пакет.** Поведенческий контракт обязан доехать до потребителя: в витрине его нет, а из пакета он сейчас вырезан. Вместе с этим снимается ссылка на спеку в конце каждого файла — в пакете спек нет, и ссылка там висячая.                                                                                               |
-| 9   | **Работа идёт волнами по типам компонентов**, а не по алфавиту и не одним заходом: атомы → форменные → оверлеи → составные → остаток.                                                                                                                                                                                                            |
-| 10  | **Требования записываются в трёх слоях.** Закон — надстройкой над `verifiability.md`; правила — в `rt-tools-storybook` и `testing`, которые выдаёт `skill-gate.sh`; решение и его цена — здесь.                                                                                                                                                  |
+| #   | The decision                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **Two layers, not one.** A page of an overview in MDX (the appointment, when to apply, the tables of the axes, the accessibility, the look) plus separate stories-matrices by the axes of the states.                                                                                                                                                                                                                                                               |
+| 2   | **The table of the API is written by hand in MDX.** `compodoc` is rejected: it slows down the start of the showcase by the generation of `documentation.json` and draws the table by its own look, not by the needed one. The price of the decision is 72 copies of what is already written in the code; from a divergence it is held by the check `tools/verify-ui-kit-v2-docs.cjs`, which reconciles the names of the inputs in MDX with `input()` in the source. |
+| 3   | **"All the states" = every axis whole plus the meaningful crossings.** Only the axes that visibly act on one another are multiplied. The full Cartesian product is rejected: at `Button` that is 1296 cells, at `Table` with 15 inputs — tens of thousands.                                                                                                                                                                                                         |
+| 4   | **The interactive states are shown, not described.** `storybook-addon-pseudo-states` is put in (it demands a patch lifting of `storybook` to `^10.5.6`). Without it `hover`, `focus-visible` and `active` are never to be seen by the eyes.                                                                                                                                                                                                                         |
+| 5   | **The grid is drawn by a common harness, not by 72 copies of the markup.** `projects/ui-kit-v2/src/showcase/` is created, added to the `exclude` of the build of the library next to `src/testing/**`.                                                                                                                                                                                                                                                              |
+| 6   | **The overlays are laid out in two.** The presentational filling (the header of a dialog, an item of a menu, a toast, a panel) is put into a matrix as an ordinary component; the overlay itself is opened by a story with a `play` function pressing the trigger at the mounting. A native `click` — no new dependencies are needed.                                                                                                                               |
+| 7   | **The dark theme does not double the volume.** The matrices are drawn in the current theme of the toggle; every component gets one story `Themes`, where the light one and the dark one stand side by side. It is possible because the dark one is declared by a mixin and is laid over any selector, not only over `:root`.                                                                                                                                        |
+| 8   | **`CONTEXT.md` leaves for the package.** The contract of the behaviour is obliged to reach the consumer: the showcase has it not, and it is now cut out of the package. Together with that the link to the spec at the end of every file is removed — the package has no specs, and the link there hangs.                                                                                                                                                           |
+| 9   | **The work goes by waves over the kinds of the components**, not by the alphabet and not in one go: atoms → form ones → overlays → composite → the remainder.                                                                                                                                                                                                                                                                                                       |
+| 10  | **The requirements are written in three layers.** The law — by an override over `verifiability.md`; the rules — in `rt-tools-storybook` and `testing`, which `skill-gate.sh` gives out; the decision and its price — here.                                                                                                                                                                                                                                          |
 
-## Что это меняет
+## What this changes
 
-**Объём.** Около 430 экспортов историй и 72 страницы MDX сверх нынешних 80 файлов.
+**The volume.** About 430 exports of stories and 72 pages of MDX over the present 80 files.
 
-**Что придётся починить попутно** — иначе объём умножит существующие дефекты:
+**What will have to be fixed along the way** — otherwise the volume will multiply the existing
+defects:
 
-- `tsconfig.lib.json` не исключает `**/stories/**`, а только `*.stories.ts`. Обёртки не уезжают
-  в пакет лишь потому, что до них не дотягивается граф от `public-api.ts`
-  (`UI-KIT-V2-ISSUES.md` §2.7). С ростом числа обёрток случайный экспорт станет вопросом времени.
-- `nx lint @rt-tools/ui-kit-v2` даёт 80 предупреждений `rt/require-host-bem-block`, все на
-  демонстрационных обёртках (§2.6). Каждая новая обёртка добавляет ещё одно; настоящее
-  восемьдесят первое утонет.
-- `skill-gate.sh` не знает маски `*.mdx`. Семьдесят две новые страницы правились бы без выдачи
-  правила витрины.
-- 10 историй рисуют пустой массив (§2.3). Компоненту, которому нужен набор данных, матрица без
-  данных не поможет — наборы придётся завести до матриц.
-- `agent-kit:check` падает: все шесть законов отстали от пакета. Надстройка пишется после
-  `agent-kit:sync`, иначе сливается с устаревшей основой.
+- `tsconfig.lib.json` excludes not `**/stories/**` but only `*.stories.ts`. The wrappers do not leave
+  for the package only because the graph from `public-api.ts` does not reach them
+  (`UI-KIT-V2-ISSUES.md` §2.7). With the growth of the number of the wrappers an accidental export
+  becomes a matter of time.
+- `nx lint @rt-tools/ui-kit-v2` gives 80 warnings `rt/require-host-bem-block`, all on the
+  demonstration wrappers (§2.6). Every new wrapper adds one more; a real eighty-first one will drown.
+- `skill-gate.sh` does not know the mask `*.mdx`. Seventy-two new pages would be edited without the
+  giving out of the rule of the showcase.
+- 10 stories draw an empty array (§2.3). A matrix without data will not help a component that needs a
+  set of data — the sets will have to be created before the matrices.
+- `agent-kit:check` falls: all six laws fell behind the package. The override is written after
+  `agent-kit:sync`, otherwise it merges with an outdated base.
 
-**Чего это не даёт.** Матрица показывает, что состояние отрисовалось, но не то, что оно
-отрисовалось верно: закон `verifiability.md` требует замера, а не взгляда. Сравнение снимков
-здесь не заводится — вопрос вынесен ниже.
+**What this does not give.** A matrix shows that a state was drawn, but not that it was drawn right:
+the law `verifiability.md` demands a measurement, not a look. A comparison of the snapshots is not
+created here — the question is taken out below.
 
-## Открытые вопросы
+## Open questions
 
-- **Q-1 — чем проверяется, что матрица полна.** Сегодня «все значения оси показаны» держится
-  на внимательности автора: ось, забытая в матрице, выглядит так же, как ось, у которой одно
-  значение. Решение изменит, появится ли на это проверка, читающая тип входа.
-- **Q-2 — нужно ли сравнение снимков.** Матрица ловит расхождение только когда на неё смотрят.
-  Решение изменит, появится ли автоматическое сравнение и что считать его эталоном.
-- **Q-3 — что делать с RTL.** Кит написан на логических свойствах, но ни одного `[dir=]` в нём
-  нет, и что произойдёт в правостороннем письме, не проверено ничем.
+- **Q-1 — by what it is checked that a matrix is complete.** Today "all the values of the axis are
+  shown" stands on the attentiveness of the author: an axis forgotten in a matrix looks the same as
+  an axis that has one value. The decision will change whether a check reading the type of the input
+  appears for this.
+- **Q-2 — whether a comparison of the snapshots is needed.** A matrix catches a divergence only when
+  it is looked at. The decision will change whether an automatic comparison appears and what to count
+  as its reference.
+- **Q-3 — what to do with RTL.** The kit is written on logical properties, but there is not a single
+  `[dir=]` in it, and what will happen in a right-side writing is checked by nothing.

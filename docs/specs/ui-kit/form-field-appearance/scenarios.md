@@ -1,25 +1,25 @@
-# Сценарии — вид поля ввода в настройке кита
+# Scenarios — the look of a field of input in the setting of the kit
 
-### SC-UK-53 — без настройки поле остаётся прежним
+### SC-UK-53 — without a setting the field stays the former one
 
-Дано настройка кита не объявлена
-Когда селектор рисуют
-Тогда поле показывается с заливкой — прежним умолчанием кита
+Given the setting of the kit is not declared
+When the selector is drawn
+Then the field is shown with a filling — the former default of the kit
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/components/dynamic-selector/rtui-dynamic-selector.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/components/dynamic-selector/rtui-dynamic-selector.component.spec.ts`.
 
-### SC-UK-54 — раздел компонента задаёт вид поля
+### SC-UK-54 — the section of the component sets the look of the field
 
-Дано в настройке кита объявлен вид поля для селекторов
-Когда селектор рисуют без входа вида
-Тогда поле показывается видом из настройки
+Given the look of a field for the selectors is declared in the setting of the kit
+When the selector is drawn without an input of the look
+Then the field is shown by the look from the setting
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/components/dynamic-selector/rtui-dynamic-selector.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/components/dynamic-selector/rtui-dynamic-selector.component.spec.ts`.
 
-### SC-UK-55 — вход на месте перебивает настройку
+### SC-UK-55 — an input at the place overrides the setting
 
-Дано в настройке кита объявлен один вид, а входом передан другой
-Когда селектор рисуют
-Тогда поле показывается видом из входа
+Given one look is declared in the setting of the kit, and another is passed by an input
+When the selector is drawn
+Then the field is shown by the look from the input
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/components/dynamic-selector/rtui-dynamic-selector.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/components/dynamic-selector/rtui-dynamic-selector.component.spec.ts`.

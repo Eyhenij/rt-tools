@@ -1,83 +1,87 @@
-# Сценарии — раздел приглашений
+# Scenarios — the section of the invitations
 
-Идентификатор ставится в начало заголовка теста через тире. Номера продолжают общую нумерацию
-домена: префикс принадлежит домену вместе с поддоменами, и при выделении поддомена они не
-пересчитываются.
+The identifier goes at the start of the test title, followed by a dash. The numbers continue the
+shared numbering of the domain: the prefix belongs to the domain together with its subdomains, and at
+the splitting off of a subdomain they are not recounted.
 
-Пока сценарий не покрыт, он несёт пометку «Не покрыто» с причиной, а закрытый со стороны
-приёмника, но не со стороны экрана — пометку «Покрытие: частичное». Сценарии, чьё «Тогда»
-называет человека и то, что он видит, закрываются сквозной спекой; замер в браузере идёт рядом
-с ней и заменой ей не считается.
+While a scenario is not covered, it carries the mark "Not covered" with a reason, and one closed from
+the side of the intake but not from the side of the screen carries the mark "Coverage: partial".
+Scenarios whose "Then" names a person and what they get on the screen are closed by an end-to-end
+spec; a measurement in the browser goes next to it and does not count as a replacement of it.
 
-### SC-MB-128 — выданный код печатается один раз
+### SC-MB-128 — an issued code is printed once
 
-Дано владелец выдал приглашение
-Когда он зовёт список приглашений
-Тогда видно имя, состояние и сроки, а самого кода нет ни в списке, ни в хранилище
+Given the owner issued an invitation
+When they call the list of the invitations
+Then the name, the state and the terms are there, and the code itself is neither in the list nor in
+the storage
 
-### SC-MB-154 — вход создания стоит в тулбаре раздела приглашений
+### SC-MB-154 — the entry of creating stands in the toolbar of the section of the invitations
 
-Дано раздел приглашений открыт
-Когда владелец смотрит на полосу над списком
-Тогда там стоит кнопка «Пригласить проект», а у остальных разделов входа создания нет
+Given the section of the invitations is open
+When the owner looks at the strip above the list
+Then the button "Пригласить проект" stands there, and the rest of the sections have no entry of
+creating
 
-### SC-MB-155 — панель создания открывается своим адресом
+### SC-MB-155 — the panel of creating opens by an address of its own
 
-Дано раздел приглашений открыт
-Когда владелец нажимает «Пригласить проект»
-Тогда справа выезжает панель, её адрес стоит в строке браузера, и перезагрузка страницы
-оставляет панель открытой
+Given the section of the invitations is open
+When the owner presses "Пригласить проект"
+Then a panel slides out on the right, its address stands in the line of the browser, and a reload of
+the page leaves the panel open
 
-### SC-MB-156 — выдача отдаёт код один раз и показывает его в панели
+### SC-MB-156 — the issuing gives the code back once and shows it in the panel
 
-Дано в панели введено свободное имя будущего дерева
-Когда владелец нажимает выдать
-Тогда в панели появляется код, кнопка «Скопировать» и срок годности, а сама панель остаётся
-открытой
+Given a free name of a future tree is entered in the panel
+When the owner presses to issue
+Then the code, the button "Скопировать" and the term of validity appear in the panel, and the panel
+itself stays open
 
-### SC-MB-157 — выданное приглашение сразу видно в списке ждущим
+### SC-MB-157 — an issued invitation is at once in the list as a waiting one
 
-Дано приглашение только что выдано панелью
-Когда владелец смотрит на список за панелью
-Тогда в нём стоит новая строка с тем же именем, состоянием «ждёт» и тем же сроком
+Given an invitation was just issued by the panel
+When the owner looks at the list behind the panel
+Then a new row with the same name, the state "ждёт" and the same term stands in it
 
-### SC-MB-158 — закрытая панель кода больше не показывает
+### SC-MB-158 — a closed panel shows the code no more
 
-Дано приглашение выдано и панель закрыта
-Когда владелец открывает панель создания снова
-Тогда она пуста, а прежнего кода нет ни в ней, ни в строке списка
+Given the invitation is issued and the panel is closed
+When the owner opens the panel of creating again
+Then it is empty, and the former code is neither in it nor in the row of the list
 
-### SC-MB-159 — занятое имя отбивается с названной причиной
+### SC-MB-159 — a taken name is refused with a named reason
 
-Дано на это имя уже есть годное приглашение
-Когда владелец пробует выдать ещё одно
-Тогда панель говорит, что годное приглашение на это имя уже есть, и введённое имя остаётся в
-поле
+Given a valid invitation on this name already exists
+When the owner tries to issue one more
+Then the panel says that a valid invitation on this name already exists, and the entered name stays
+in the field
 
-### SC-MB-160 — имя заведённого дерева отбивается отдельной причиной
+### SC-MB-160 — the name of a created tree is refused by a reason of its own
 
-Дано дерево с этим именем уже заведено
-Когда владелец пробует выдать приглашение на него
-Тогда панель говорит, что проект с таким именем уже заведён
+Given a tree with this name is already created
+When the owner tries to issue an invitation on it
+Then the panel says that a project with such a name is already created
 
-Покрытие: частичное — вызовом проверен отказ приёмника, а показ его слова человеком закрыт
-сквозной спекой только для занятого приглашения: заведённого дерева с именем, свободным от
-приглашения, на стенде нет.
+Coverage: partial — the refusal of the intake was checked by a call, and the showing of its word to a
+person is closed by the end-to-end spec only for a taken invitation: there is no created tree with a
+name free of an invitation on the stand.
 
-### SC-MB-161 — выдача не открывается ни без входа, ни токеном дерева
+### SC-MB-161 — the issuing opens neither without an entry nor by a token of a tree
 
-Дано запрос выдачи пришёл без входа либо с токеном дерева
-Когда приёмник его разбирает
-Тогда он отвечает тем же отказом, что и остальным операциям админки, и приглашения не заводит
+Given the request of the issuing came without an entry or with a token of a tree
+When the intake takes it apart
+Then it answers with the same refusal as to the rest of the operations of the admin application, and
+creates no invitations
 
-Покрытие: частичное — вызовом проверено объявление доступа у самой операции; что отбивает её
-проверка приёмника, закрыто спеками проверки доступа.
+Coverage: partial — the declaration of the access at the operation itself was checked by a call; that
+it is refused by the check of the intake is closed by the specs of the check of the access.
 
-### SC-MB-162 — пустой раздел называет кнопку, а не команду узла
+### SC-MB-162 — an empty section names the button, not the command of the node
 
-Дано ни одного приглашения ещё не выдавали
-Когда владелец открывает раздел
-Тогда пустое состояние называет кнопку «Пригласить проект», а не команду строки запуска
+Given not a single invitation was issued yet
+When the owner opens the section
+Then the empty state names the button "Пригласить проект", not a command of the launch line
 
-Покрытие: частичное — проверено вызовом на поднятом экране раздела; сквозной спекой не закрыто,
-потому что стенд засевает по приглашению на каждое состояние и пустого раздела на нём не бывает.
+Coverage: partial — checked by a call on a raised screen of the section; it is not closed by the
+end-to-end spec, because the stand seeds an invitation per state and an empty section never happens
+on it.

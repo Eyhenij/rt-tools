@@ -1,40 +1,42 @@
-# Сценарии — действия у реплики переписки
+# Scenarios — the actions at a reply of a correspondence
 
-Префикс `SC-UKV`, общий на домен вместе с поддоменами. Номера сквозные: на них ссылаются
-заголовки тестов.
+The prefix `SC-UKV` is shared across the domain together with the subdomains. The numbers go through:
+the titles of the tests refer to them.
 
-Чем покрыт сценарий, сказано под ним. Где прогон сценарий не покрывает, это сказано прямо.
+What a scenario is covered by is said under it. Where the run does not cover a scenario, that is said
+openly.
 
-### SC-UKV-73 — своё действие у реплики объявляется шаблоном
+### SC-UKV-73 — an action of one's own at a reply is declared by a template
 
-Дано потребитель объявил шаблон действий у реплики
-Когда тред нарисован
-Тогда у реплики есть точка действий, а в её меню — пункты потребителя с самой репликой контекстом
+Given the consumer declared a template of the actions at a reply
+When the thread is drawn
+Then the reply has a point of the actions, and its menu holds the items of the consumer with the reply
+itself as the context
 
-Покрыто: `projects/ui-kit-v2/src/lib/components/chat/rt-chat-message-actions.directive.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/chat/rt-chat-message-actions.directive.spec.ts`.
 
-### SC-UKV-74 — шаблон не объявлен: разметка реплики прежняя
+### SC-UKV-74 — the template is not declared: the markup of the reply is the former one
 
-Дано шаблона действий у реплики нет
-Когда тред нарисован
-Тогда точки действий у реплики нет вовсе, а точечные действия остались на месте
+Given there is no template of the actions at a reply
+When the thread is drawn
+Then there is no point of the actions at the reply at all, and the pinpoint actions stayed in place
 
-Покрыто: `projects/ui-kit-v2/src/lib/components/chat/rt-chat-message-actions.directive.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/chat/rt-chat-message-actions.directive.spec.ts`.
 
-### SC-UKV-75 — предикат отдал ложь: точки действий у реплики нет
+### SC-UKV-75 — the predicate gave falsehood: there is no point of the actions at the reply
 
-Дано шаблон объявлен, а признак действий отдаёт ложь на этой реплике
-Когда тред нарисован
-Тогда точки действий у неё нет, а у реплики, на которой признак отдал истину, — есть
+Given the template is declared, and the sign of the actions gives falsehood at this reply
+When the thread is drawn
+Then it has no point of the actions, and the reply at which the sign gave truth has one
 
-Покрыто: `projects/ui-kit-v2/src/lib/components/chat/rt-chat-message-actions.logic.spec.ts`,
+Covered: `projects/ui-kit-v2/src/lib/components/chat/rt-chat-message-actions.logic.spec.ts`,
 `projects/ui-kit-v2/src/lib/components/chat/rt-chat.component.spec.ts`.
 
-### SC-UKV-76 — признак не задан: точка действий показывается
+### SC-UKV-76 — the sign is not set: the point of the actions is shown
 
-Дано шаблон объявлен, а признака действий потребитель не назвал
-Когда тред нарисован
-Тогда точка действий есть у каждой реплики: экран, который ничего не гейтит, показывает её так
-же, как это делает строка таблицы
+Given the template is declared, and the consumer named no sign of the actions
+When the thread is drawn
+Then every reply has a point of the actions: a screen that gates nothing shows it the same way a row
+of the table does
 
-Покрыто: `projects/ui-kit-v2/src/lib/components/chat/rt-chat-message-actions.logic.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/chat/rt-chat-message-actions.logic.spec.ts`.

@@ -1,8 +1,8 @@
-# Чем исполняется — второй кит
+# What it is carried out by — the second kit
 
-Предметных правил у домена больше нет: они живут в поддоменах, и привязки лежат рядом с ними —
-`snapshots/implementation.md`, `aside/implementation.md`, `tokens/implementation.md`.
+The domain has no rules of the subjects any more: they live in the subdomains, and the bindings lie
+next to them — `snapshots/implementation.md`, `aside/implementation.md`, `tokens/implementation.md`.
 
-Своё у домена одно — то, чем держится само деление.
+The domain has one of its own — what the splitting itself is held by.
 
-- **Префикс сценариев принадлежит домену вместе с поддоменами.** — `tools/check-specs.mjs:prefixOwners`
+- **The scenario prefix belongs to the domain together with the subdomains.** — `tools/check-specs.mjs:prefixOwners`

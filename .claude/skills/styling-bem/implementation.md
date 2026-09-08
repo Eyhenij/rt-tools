@@ -1,82 +1,83 @@
-# styling-bem — как это устроено здесь
+# styling-bem — how it is arranged here
 
-Имена этого дерева при правиле `SKILL.md` рядом. Отдельный файл потому, что правило говорит
-приёмом и переносится между репозиториями целиком, а всё, что ниже, верно только здесь и
-устаревает при каждом переименовании.
+The names of this tree, next to the rule `SKILL.md`. A separate file because the rule speaks by
+technique and travels between repositories whole, while everything below is true only here and
+goes stale at every renaming.
 
-Здесь оформление и есть предмет поставки: дерево публикует наборы токенов вместе с
-компонентами, и «сырое значение на месте» уезжает к потребителю навсегда.
+Here the styling is itself the subject of delivery: the tree publishes token sets together with
+the components, and "a raw value in place" leaves for the consumer forever.
 
-## Как это называется здесь
+## What it is called here
 
-- **В правиле** — Здесь
-- **токен оформления** — пользовательское свойство `--rt-*` в трёх ярусах: первичный, смысловой, компонентный
-- **директива класса блока** — `rtBlock` из `@rt-tools/core`
-- **директива класса элемента** — `rtElem`
-- **директива модификатора** — `[rtMod]` — принимает запись «имя модификатора → признак»
-- **общий слой раскладки** — `projects/<кит>/src/styles/` — там же смена темы и точки перелома
-- **компонентный ярус токенов** — карта `элемент → (свойство: значение)` в файле стилей компонента, разворачивается `generateCssVar`
+- **In the rule** — Here
+- **a styling token** — the custom property `--rt-*` in three tiers: primitive, semantic, component
+- **the block class directive** — `rtBlock` from `@rt-tools/core`
+- **the element class directive** — `rtElem`
+- **the modifier directive** — `[rtMod]` — accepts a record "modifier name → sign"
+- **the shared layout layer** — `projects/<kit>/src/styles/` — the theme switch and the breakpoints are there too
+- **the component tier of tokens** — a map `element → (property: value)` in the component's styles file, unfolded by `generateCssVar`
 
-## Где это лежит
+## Where it lives
 
-- **первичный и смысловой ярусы первого кита** — `projects/ui-kit/src/styles/base/_tokens.scss`
-- **описание набора токенов** — `projects/ui-kit/src/styles/TOKENS.md`
-- **набор токенов второго кита** — `projects/ui-kit-v2/src/styles/`
-- **правило про сырые значения** — `tools/stylelint-rules/no-hardcoded-design-tokens.cjs`
-- **правило про хост во втором ките** — `tools/stylelint-rules/no-host-selector.cjs`
-- **слой каскада второго кита** — `projects/ui-kit-v2/src/styles/_layers.scss`
-- **проверка слоя каскада** — `tools/check-cascade-layer.mjs`
-- **образец стилей компонента** — `projects/ui-kit/src/lib/ui-kit/toggle/rtui-toggle.component.scss`
-- **мост к Material** — `projects/ui-kit/src/styles/components/_material-bridge.scss`
-- **агрегатор слоя оформления второго кита** — `projects/ui-kit-v2/src/styles/_index.scss`
-- **общий слой раскладки админки** — `apps/message-bus-admin/src/styles/`
+- **the primitive and semantic tiers of the first kit** — `projects/ui-kit/src/styles/base/_tokens.scss`
+- **the description of the token set** — `projects/ui-kit/src/styles/TOKENS.md`
+- **the token set of the second kit** — `projects/ui-kit-v2/src/styles/`
+- **the rule about raw values** — `tools/stylelint-rules/no-hardcoded-design-tokens.cjs`
+- **the rule about the host in the second kit** — `tools/stylelint-rules/no-host-selector.cjs`
+- **the cascade layer of the second kit** — `projects/ui-kit-v2/src/styles/_layers.scss`
+- **the cascade layer check** — `tools/check-cascade-layer.mjs`
+- **a sample of component styles** — `projects/ui-kit/src/lib/ui-kit/toggle/rtui-toggle.component.scss`
+- **the bridge to Material** — `projects/ui-kit/src/styles/components/_material-bridge.scss`
+- **the aggregator of the second kit's styling layer** — `projects/ui-kit-v2/src/styles/_index.scss`
+- **the admin panel's shared layout layer** — `apps/message-bus-admin/src/styles/`
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-Первая колонка — статья дословно, как она написана в разделе «Как закон применяется здесь»
-(жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает
-то, чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
+The first column is the article verbatim, as it is written in the section "How the law applies
+here" (the bold part of the item). An article without a line and a line without an article are a
+divergence: the rule promises what the tree does not have, or the tree holds what the rule is
+silent about.
 
-- **Styling is taken as a `--rt-*` token, not written as a value in place.** — `tools/stylelint-rules/no-hardcoded-design-tokens.cjs:RULE_NAME` — отбивает цвет, число в отступе, скруглении, кегле и толщине рамки, функции цвета и подстановку переменных сборщика; принимаются только `var(--rt-*)`, `var(--mat-*)`, `var(--mdc-*)`, вычисления и ноль. Плюс `color-no-hex` из набора. Демонстрационные стили витрины из-под правила выведены.
-- **Every element class has its own style rule.** — `tools/check-styles.mjs:ELEM_RE` — читает `rtElem="…"` по всем корням дерева (`projects`, `apps`, `libs`) и ищет объявление `__<элемент>` в любом файле стилей. Совпадение считается по имени элемента, а не по паре «блок — элемент», поэтому класс с правилом у чужого блока проходит. Накопленное лежит в `tools/styles-allowlist.json`; отказ даёт только новый класс без правила.
-- **A class is set by a directive, not by a string in an attribute.** — `tools/eslint-rules/rules/require-bem-directives.ts:BINDING_TYPE_CLASS` — отбивает `class="…"`, `[class.x]`, `[ngClass]`. Объявлено замечанием, но роняет прогон наравне с отказом: у цели `lint` стоит `maxWarnings: 0`. В демонстрационной разметке витрины правило выключено.
-- **One thing is called by one name in every place it occurs.** — **Не проверяется ничем.** Три блока с общими именами в разных значениях лежат в одном слое и линтеру неотличимы от словаря одного: он судит форму имени, а не то, что имя значит. Ловится чтением всех мест, где вещь встречается, — здесь это форма страницей, панелью правки и окном.
-- **The layout is declared in the application's shared layer, not in the screen's styles.** — `apps/message-bus-admin/src/styles/_page.scss:admin-page` — общий слой админки: основа страницы, страница, панель; подключается из `apps/message-bus-admin/src/styles.scss` после кита, где приложению оставлено последнее слово. Раскладку, объявленную классами, кит отдаёт наружу только агрегатором `projects/ui-kit-v2/src/styles/_index.scss`; файл стилей компонента держит только его собственные отличия.
-- **The sheet and the window are opened by the kit service, not by a layer number.** — `projects/ui-kit-v2/src/lib/components/dialog/rt-dialog.service.ts:RtDialogService` — служба выносит разметку к `<body>`, и сравнивать номера слоёв становится не с чем.
-- **The layer number is taken from the scale, not written as a number in the component file.** — **Не исполняется.** Шкалы слоёв у кита пока нет: единственное число стоит в `projects/ui-kit-v2/src/styles/_login.scss`, и завести шкалу — своя работа.
-- **A width limit is declared together with the fate of what did not fit.** — `projects/ui-kit-v2/src/lib/components/table/copy-cell/rt-copy-cell.component.scss:text-overflow` — у содержимого ячейки стоят обрезка, многоточие и запрет переноса; `min-width: 0` рядом только разрешает сжатие. Правилом линтера не судится: предел ширины ставят и там, где содержимое заведомо короче
-- **Truncation goes in a pair with a tooltip.** — `projects/ui-kit-v2/src/lib/components/table/copy-cell/rt-copy-cell.component.ts:measureTruncation` — ячейка показывает подсказку со значением целиком, и только у обрезанного: обрезка меряется в момент наведения
-- **The size of a control is chosen by the pointer sign, not by the screen width.** — `projects/ui-kit-v2/src/styles/_semantic.scss:coarse` — ступени контролов переключает медиа-запрос по признаку указателя, а не по ширине окна.
-- **A styles file is no longer than 500 lines.** — `tools/check-file-size.mjs:LIMIT` — предел общий с кодом и текстами; stylelint длину не судит вовсе.
-- **A stylelint warning fails the run the same as an error.** — `.claude/rt-kit/project.sh:rt_lint_for` — линтер стилей с порогом `--max-warnings 0`. Зовётся из гарда пуша, из сквозных прогонов `check:all` и `check:affected` и отдельным шагом CI; хук правки файла стилей гоняет с тем же порогом.
+- **Styling is taken as a `--rt-*` token, not written as a value in place.** — `tools/stylelint-rules/no-hardcoded-design-tokens.cjs:RULE_NAME` — it refuses a colour, a number in a padding, a rounding, a font size and a border width, colour functions and the substitution of build variables; accepted are only `var(--rt-*)`, `var(--mat-*)`, `var(--mdc-*)`, computations and zero. Plus `color-no-hex` from the bundle. The showcase's demonstration styles are taken out from under the rule.
+- **Every element class has its own style rule.** — `tools/check-styles.mjs:ELEM_RE` — it reads `rtElem="…"` over all roots of the tree (`projects`, `apps`, `libs`) and looks for a declaration `__<element>` in any styles file. A match is counted by the element name rather than by the pair "block — element", so a class with a rule on a foreign block passes. What accumulated lies in `tools/styles-allowlist.json`; only a new class without a rule gives a refusal.
+- **A class is set by a directive, not by a string in an attribute.** — `tools/eslint-rules/rules/require-bem-directives.ts:BINDING_TYPE_CLASS` — it refuses `class="…"`, `[class.x]`, `[ngClass]`. Declared as a warning, but it fails the run on a par with an error: the `lint` target has `maxWarnings: 0`. In the showcase's demonstration markup the rule is switched off.
+- **One thing is called by one name in every place it occurs.** — **Not checked by anything.** Three blocks with shared names in different meanings lie in one layer and are indistinguishable to the linter from the vocabulary of one: it judges the shape of the name, not what the name means. It is caught by reading all the places where the thing occurs — here that is the form as a page, as an editing panel and as a dialog.
+- **The layout is declared in the application's shared layer, not in the screen's styles.** — `apps/message-bus-admin/src/styles/_page.scss:admin-page` — the admin panel's shared layer: the page base, the page, the panel; it is included from `apps/message-bus-admin/src/styles.scss` after the kit, where the last word is left to the application. Layout declared by classes the kit gives outward only through the aggregator `projects/ui-kit-v2/src/styles/_index.scss`; a component's styles file holds only its own differences.
+- **The sheet and the window are opened by the kit service, not by a layer number.** — `projects/ui-kit-v2/src/lib/components/dialog/rt-dialog.service.ts:RtDialogService` — the service takes the markup out to `<body>`, and there is nothing left to compare layer numbers with.
+- **The layer number is taken from the scale, not written as a number in the component file.** — **Not carried out.** The kit has no layer scale yet: the only number stands in `projects/ui-kit-v2/src/styles/_login.scss`, and starting a scale is work of its own.
+- **A width limit is declared together with the fate of what did not fit.** — `projects/ui-kit-v2/src/lib/components/table/copy-cell/rt-copy-cell.component.scss:text-overflow` — the cell content has clipping, an ellipsis and a ban on wrapping; `min-width: 0` next to it only allows shrinking. It is not judged by a linter rule: a width limit is also set where the content is knowingly shorter
+- **Truncation goes in a pair with a tooltip.** — `projects/ui-kit-v2/src/lib/components/table/copy-cell/rt-copy-cell.component.ts:measureTruncation` — the cell shows a tooltip with the whole value, and only on a truncated one: the truncation is measured at the moment of hovering
+- **The size of a control is chosen by the pointer sign, not by the screen width.** — `projects/ui-kit-v2/src/styles/_semantic.scss:coarse` — the control steps are switched by a media query on the pointer sign, not by the window width.
+- **A styles file is no longer than 500 lines.** — `tools/check-file-size.mjs:LIMIT` — the limit is shared with code and texts; stylelint does not judge length at all.
+- **A stylelint warning fails the run the same as an error.** — `.claude/rt-kit/project.sh:rt_lint_for` — the styles linter with the threshold `--max-warnings 0`. It is called from the push guard, from the sweeping runs `check:all` and `check:affected` and as a separate CI step; the styles-file edit hook runs it with the same threshold.
 
-## Что ещё стоит знать при чтении кода
+## What else is worth knowing when reading the code
 
-- Значения компонентов пишутся в `rem`; `mixins.rem(16)` переводит из пикселей. Исключение —
-  переменные точек перелома `$device-*`, они в пикселях.
-- Ярус компонента объявляется картой и разворачивается `generateCssVar('toggle', 'label',
-'color')` → `--rt-toggle-label-color`. Место объявления решает, кто сможет перебить: на
-  `:root` перебивается любым предком, на хосте — только адресно по элементу.
-- Второй кит целиком на `ViewEncapsulation.None`, и `:host` там не совпадает ни с чем — правило
-  через него написанное молча не применяется. Отсюда `rt/no-host-selector`: вместо хоста
-  пишется класс блока `.rt-<блок>`, а там, где класс висит и на хосте, и на корне шаблона, —
-  селектор по имени элемента.
-- Порядок свойств держит `stylelint-config-idiomatic-order`, форматирование —
-  `stylelint-prettier`. Комментарии-выключатели линтера стилей здесь не ставятся.
-- Набор `.c-button` снят с употребления вместе со своим файлом; действующий —
-  `.rtui-btn`, и его правила лежат частями в `projects/ui-kit/src/styles/components/button/`, а
-  `projects/ui-kit/src/styles/components/_rtui_button.scss` остался входом и задаёт им порядок
-  каскада. Карта перехода — в `projects/ui-kit/src/styles/TOKENS.md`.
+- Component values are written in `rem`; `mixins.rem(16)` converts from pixels. The exception is
+  the breakpoint variables `$device-*`, they are in pixels.
+- The component tier is declared as a map and unfolded by `generateCssVar('toggle', 'label',
+'color')` → `--rt-toggle-label-color`. The place of declaration decides who can override it: on
+  `:root` it is overridden by any ancestor, on the host — only pointedly by the element.
+- The second kit is entirely on `ViewEncapsulation.None`, and `:host` there matches nothing — a
+  rule written through it silently does not apply. Hence `rt/no-host-selector`: instead of the
+  host the block class `.rt-<block>` is written, and where the class hangs both on the host and
+  on the template root — a selector by the element name.
+- The property order is held by `stylelint-config-idiomatic-order`, the formatting by
+  `stylelint-prettier`. Comments switching off the styles linter are not set here.
+- The `.c-button` bundle is out of use together with its file; the live one is `.rtui-btn`, and
+  its rules lie in parts in `projects/ui-kit/src/styles/components/button/`, while
+  `projects/ui-kit/src/styles/components/_rtui_button.scss` stayed as the entry and sets their
+  cascade order. The transition map is in `projects/ui-kit/src/styles/TOKENS.md`.
 
-## Чем это проверяется
+## What this is checked by
 
-- `pnpm run lint:styles` — оба собственных правила и набор целиком, с порогом замечаний. Судит
-  `projects/**/*.scss`: стили приложений линтер не читает вовсе, и правило, написанное в общем
-  слое админки, ни одной проверкой не судится.
-- `pnpm run check:styles` — класс элемента без правила, по всем корням дерева.
-- `pnpm run check:cascade-layer` — файл стилей второго кита без слоя, правило до обёртки,
-  порядок подслоёв и объявление корня, уехавшее в слой.
-- `pnpm run build:tokens` и `pnpm run build:tokens-v2` — пересборка готового набора токенов для
-  потребителей, которые не собирают SCSS.
-- Правка `_tokens.scss` или `_color-scheme.scss` — `pnpm exec nx test @rt-tools/ui-kit`, спека
-  `projects/ui-kit/src/styles/color-scheme.spec.ts`.
+- `pnpm run lint:styles` — both own rules and the whole bundle, with the warning threshold. It
+  judges `projects/**/*.scss`: the linter does not read the applications' styles at all, and a
+  rule written in the admin panel's shared layer is judged by no check.
+- `pnpm run check:styles` — an element class without a rule, over all roots of the tree.
+- `pnpm run check:cascade-layer` — a second-kit styles file without a layer, a rule before the
+  wrapper, the order of the sublayers and a root declaration that rode into the layer.
+- `pnpm run build:tokens` and `pnpm run build:tokens-v2` — rebuilding the ready-made token set
+  for consumers that do not build SCSS.
+- An edit of `_tokens.scss` or `_color-scheme.scss` — `pnpm exec nx test @rt-tools/ui-kit`, the
+  spec `projects/ui-kit/src/styles/color-scheme.spec.ts`.

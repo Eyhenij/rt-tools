@@ -1,215 +1,232 @@
-# Сценарии — правка состояния деревом
+# Scenarios — the edit of a state by a tree
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной, а закрытый со стороны решения, но не со стороны запроса —
-пометку «Покрытие: частичное».
+The identifier goes at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason, and one closed from the side of the decision
+but not from the side of the request carries the mark "Coverage: partial".
 
-Нумерация общая на домен, и при переезде в поддомен номера не пересчитывались: номер связывает
-сценарий с заголовком теста.
+The numbering is shared across the domain, and at the move into the subdomain the numbers were not
+recounted: the number ties the scenario to the test title.
 
-### SC-MB-172 — дерево переводит свою запись в следующее состояние
+### SC-MB-172 — a tree moves its record into the next state
 
-Дано у дерева лежит разбор происшествия в состоянии «новое»
-Когда дерево прислало правку своим токеном и назвало состояние «в работе»
-Тогда состояние разбора — в работе, а ответ говорит об одной переведённой записи
+Given an incident analysis in the state "new" lies at the tree
+When the tree sent an edit by its token and named the state "in progress"
+Then the state of the analysis is in progress, and the answer speaks of one moved record
 
-### SC-MB-173 — пакет правит записи обоих родов за один запрос
+### SC-MB-173 — a bundle edits records of both kinds by one request
 
-Дано у дерева лежат разбор происшествия и предложение, оба в состоянии «новое»
-Когда дерево прислало пакет из двух строк — по строке на род записи
-Тогда обе записи стоят в работе, и ответ говорит о двух переведённых
+Given an incident analysis and a proposal lie at the tree, both in the state "new"
+When the tree sent a bundle of two rows — a row per kind of record
+Then both records stand in progress, and the answer speaks of two moved ones
 
-### SC-MB-174 — возврат из «в работе» в «новое» проходит
+### SC-MB-174 — the return from "in progress" into "new" passes
 
-Дано разбор происшествия стоит в работе
-Когда дерево прислало правку с состоянием «новое»
-Тогда состояние разбора — новое
+Given the incident analysis stands in progress
+When the tree sent an edit with the state "new"
+Then the state of the analysis is new
 
-Покрытие: частичное — решение о переходе проверено вызовом в спеке общей либы; путь запроса
-сам возврат не проходит.
+Coverage: partial — the decision about the transition is checked by a call in the spec of the common
+lib; by the way of a request the return itself does not pass.
 
-### SC-MB-175 — прыжок через шаг отбивает строку, а не пакет
+### SC-MB-175 — a jump over a step refuses the row, not the bundle
 
-Дано в пакете две строки: годная и переводящая запись из «новое» сразу в «выпущено»
-Когда дерево прислало этот пакет
-Тогда годная запись переведена, а вторая строка стоит в ответе отбитой с причиной о переходе
+Given there are two rows in the bundle: a fit one and one moving a record from "new" straight into
+"released"
+When the tree sent that bundle
+Then the fit record is moved, and the second row stands in the answer as refused with the reason about
+the transition
 
-### SC-MB-176 — правка в то же состояние переходом не считается
+### SC-MB-176 — an edit into the same state does not count as a transition
 
-Дано разбор происшествия стоит в работе
-Когда дерево прислало правку с состоянием «в работе»
-Тогда ответ говорит об одной записи, которая уже стояла в этом состоянии, и ни одной отбитой
+Given the incident analysis stands in progress
+When the tree sent an edit with the state "in progress"
+Then the answer speaks of one record that already stood in this state, and of not a single refused one
 
-### SC-MB-177 — запись другого дерева отвечает так же, как ненайденная
+### SC-MB-177 — a record of another tree answers the same way as one that was not found
 
-Дано разбор происшествия принадлежит соседнему дереву
-Когда дерево прислало правку с ключом этого разбора
-Тогда строка отбита с причиной о ненайденной записи, и состояние соседа не изменилось
+Given the incident analysis belongs to the neighbouring tree
+When the tree sent an edit with the key of that analysis
+Then the row is refused with the reason about a record that was not found, and the state of the
+neighbour did not change
 
-### SC-MB-178 — правка без токена дерева отказывает
+### SC-MB-178 — an edit without a token of a tree refuses
 
-Дано запрос правки пришёл без заголовка с токеном дерева
-Когда приёмник его разбирает
-Тогда операция отказывает как неаутентифицированная, и хранилища запрос не касается
+Given the request of the edit came without the header with the token of a tree
+When the intake takes it apart
+Then the operation refuses as unauthenticated, and the request does not touch the storage
 
-Покрытие: частичное — проверено объявление операции: она закрыта токеном дерева. Саму отбивку
-без токена проходит спека стража входа.
+Coverage: partial — the declaration of the operation is checked: it is closed by a token of a tree. The
+refusal itself without a token is passed by the spec of the guard of the entry.
 
-### SC-MB-179 — незнакомое состояние отбивает запрос по форме
+### SC-MB-179 — an unknown state refuses the request by the form
 
-Дано в строке пакета стоит состояние, которого в наборе нет
-Когда дерево прислало этот пакет
-Тогда запрос отбит целиком отказом по форме, и он называет строку, в которой значение не из
-набора
+Given a state that is not in the set stands in a row of the bundle
+When the tree sent that bundle
+Then the request is refused whole by a refusal by the form, and it names the row in which the value is
+not from the set
 
-### SC-MB-180 — отбитая строка попадает в журнал приёмника
+### SC-MB-180 — a refused row gets into the journal of the intake
 
-Дано в пакете есть строка, которую приёмник не исполнил
-Когда правка отвечает дереву
-Тогда в журнале лежит строка с родом записи, признаком дерева и причиной, без токена и текста
-записи
+Given there is a row in the bundle the intake did not carry out
+When the edit answers the tree
+Then a row with the kind of the record, the sign of the tree and the reason lies in the journal,
+without the token and the text of the record
 
-### SC-MB-181 — текст починки едет полем той же строки правки
+### SC-MB-181 — the text of the fix goes as a field of the same row of the edit
 
-Дано у дерева лежит разбор происшествия в состоянии «в работе»
-Когда дерево прислало одну строку правки с состоянием «починено и не выпущено» и текстом починки
-Тогда запись стоит в «починено и не выпущено» и несёт этот текст, а ответ говорит об одной переведённой записи
+Given an incident analysis in the state "in progress" lies at the tree
+When the tree sent one row of the edit with the state "fixed and not released" and with a text of the
+fix
+Then the record stands in "fixed and not released" and carries that text, and the answer speaks of one
+moved record
 
-### SC-MB-182 — переход в «починено» без текста отбивает строку
+### SC-MB-182 — a transition into "fixed" without a text refuses the row
 
-Дано у дерева лежит разбор происшествия в состоянии «в работе»
-Когда дерево прислало строку с состоянием «починено и не выпущено» и без текста починки
-Тогда строка стоит в ответе отбитой с причиной о недостающем тексте
+Given an incident analysis in the state "in progress" lies at the tree
+When the tree sent a row with the state "fixed and not released" and without a text of the fix
+Then the row stands in the answer as refused with the reason about the missing text
 
-### SC-MB-183 — текст не с тем переходом отбивает строку целиком
+### SC-MB-183 — a text not with its own transition refuses the row whole
 
-Дано у дерева лежит разбор происшествия в состоянии «новое»
-Когда дерево прислало строку с состоянием «в работе» и текстом починки
-Тогда строка стоит в ответе отбитой, а запись осталась в «новом»
+Given an incident analysis in the state "new" lies at the tree
+When the tree sent a row with the state "in progress" and with a text of the fix
+Then the row stands in the answer as refused, and the record stayed in "new"
 
-### SC-MB-184 — текст из одних пробелов текстом не считается
+### SC-MB-184 — a text of spaces alone does not count as a text
 
-Дано у дерева лежит предложение в состоянии «в работе»
-Когда дерево прислало строку с состоянием «починено и не выпущено» и текстом из одних пробелов
-Тогда строка отбита той же причиной, что и строка без текста вовсе
+Given a proposal in the state "in progress" lies at the tree
+When the tree sent a row with the state "fixed and not released" and with a text of spaces alone
+Then the row is refused by the same reason as a row without a text at all
 
-### SC-MB-185 — текст ложится обоим родам записей за один пакет
+### SC-MB-185 — the text lands at both kinds of records by one bundle
 
-Дано у дерева лежат разбор происшествия и предложение, оба в состоянии «в работе»
-Когда дерево прислало пакет из двух строк — по строке на род, обе с текстом починки
-Тогда обе записи стоят в «починено и не выпущено» и несут свои тексты
+Given an incident analysis and a proposal lie at the tree, both in the state "in progress"
+When the tree sent a bundle of two rows — a row per kind, both with a text of the fix
+Then both records stand in "fixed and not released" and carry their texts
 
-### SC-MB-186 — отбитая строка не пишет ни состояния, ни текста
+### SC-MB-186 — a refused row writes neither the state nor the text
 
-Дано у дерева лежит разбор происшествия в состоянии «новое»
-Когда дерево прислало строку с текстом починки и переходом через шаг — сразу в «выпущено»
-Тогда запись осталась в «новом» и текста починки не несёт
+Given an incident analysis in the state "new" lies at the tree
+When the tree sent a row with a text of the fix and with a transition over a step — straight into
+"released"
+Then the record stayed in "new" and carries no text of the fix
 
-### SC-MB-187 — второй приезд текста затирает прежний
+### SC-MB-187 — a second arrival of the text overwrites the former one
 
-Дано у дерева лежит разбор происшествия в «починено и не выпущено» с текстом починки
-Когда дерево прислало ту же запись с тем же состоянием и другим текстом
-Тогда запись несёт новый текст, а прежнего в ней не осталось
+Given an incident analysis in "fixed and not released" with a text of the fix lies at the tree
+When the tree sent the same record with the same state and with another text
+Then the record carries the new text, and none of the former one is left in it
 
-### SC-MB-188 — своего предела длины у текста нет
+### SC-MB-188 — the text has no length limit of its own
 
-Дано у дерева лежит разбор происшествия в состоянии «в работе»
-Когда дерево прислало строку с текстом починки длиннее любого свойства записи, а запрос влезает в предел веса
-Тогда текст лёг целиком и ничем не обрезан
+Given an incident analysis in the state "in progress" lies at the tree
+When the tree sent a row with a text of the fix longer than any property of a record, and the request
+fits into the limit of the weight
+Then the text landed whole and is cut by nothing
 
-### SC-MB-192 — отбой по недостающему тексту попадает в журнал приёмника
+### SC-MB-192 — a refusal by a missing text gets into the journal of the intake
 
-Дано дерево прислало строку с переходом в «починено и не выпущено» и без текста починки
-Когда приёмник отбил эту строку
-Тогда в журнале стоит строка отбоя с родом записи, признаком дерева и причиной о недостающем тексте
+Given the tree sent a row with a transition into "fixed and not released" and without a text of the fix
+When the intake refused that row
+Then a row of the refusal with the kind of the record, the sign of the tree and the reason about the
+missing text stands in the journal
 
-### SC-MB-191 — команда строки запуска несёт текст доводом
+### SC-MB-191 — the command of the launch line carries the text as an argument
 
-Дано дерево зовёт отметку о починке командой строки запуска
-Когда к вызову добавлен довод текста починки
-Тогда в теле запроса стоит строка правки с этим текстом, а без довода тело прежнее
+Given the tree calls the mark about the fix by the command of the launch line
+When the argument of the text of the fix is added to the call
+Then a row of the edit with that text stands in the body of the request, and without the argument the
+body is the former one
 
-Живёт обещание в пакете правил: команду ведёт спек `docs/specs/agent-kit/observations/`, а номер
-стоит здесь — тело запроса собирает эта операция.
+The promise lives in the package of the rules: the command is led by the spec
+`docs/specs/agent-kit/observations/`, and the number stands here — the body of the request is put
+together by this operation.
 
-### SC-MB-193 — версия выпуска едет полем той же строки правки
+### SC-MB-193 — the version of the release goes as a field of the same row of the edit
 
-Дано у дерева лежит разбор происшествия в состоянии «починено и не выпущено»
-Когда дерево прислало одну строку правки с состоянием «выпущено» и версией выпуска
-Тогда запись стоит в «выпущено» и несёт эту версию, а ответ говорит об одной переведённой записи
+Given an incident analysis in the state "fixed and not released" lies at the tree
+When the tree sent one row of the edit with the state "released" and with a version of the release
+Then the record stands in "released" and carries that version, and the answer speaks of one moved
+record
 
-### SC-MB-194 — переход в выпуск без версии отбивает строку
+### SC-MB-194 — a transition into the release without a version refuses the row
 
-Дано у дерева лежит разбор происшествия в состоянии «починено и не выпущено»
-Когда дерево прислало строку с состоянием «выпущено» и без версии выпуска
-Тогда строка стоит в ответе отбитой с причиной о недостающей версии
+Given an incident analysis in the state "fixed and not released" lies at the tree
+When the tree sent a row with the state "released" and without a version of the release
+Then the row stands in the answer as refused with the reason about the missing version
 
-### SC-MB-195 — версия не с тем переходом отбивает строку целиком
+### SC-MB-195 — a version not with its own transition refuses the row whole
 
-Дано у дерева лежит разбор происшествия в состоянии «в работе»
-Когда дерево прислало строку с состоянием «починено и не выпущено» и версией выпуска
-Тогда строка стоит в ответе отбитой, а запись осталась в «в работе»
+Given an incident analysis in the state "in progress" lies at the tree
+When the tree sent a row with the state "fixed and not released" and with a version of the release
+Then the row stands in the answer as refused, and the record stayed in "in progress"
 
-### SC-MB-196 — версия из одних пробелов версией не считается
+### SC-MB-196 — a version of spaces alone does not count as a version
 
-Дано у дерева лежит предложение в состоянии «починено и не выпущено»
-Когда дерево прислало строку с состоянием «выпущено» и версией из одних пробелов
-Тогда строка отбита той же причиной, что и строка без версии вовсе
+Given a proposal in the state "fixed and not released" lies at the tree
+When the tree sent a row with the state "released" and with a version of spaces alone
+Then the row is refused by the same reason as a row without a version at all
 
-### SC-MB-197 — версия ложится обоим родам записей за один пакет
+### SC-MB-197 — the version lands at both kinds of records by one bundle
 
-Дано у дерева лежат разбор происшествия и предложение, оба в состоянии «починено и не выпущено»
-Когда дерево прислало пакет из двух строк — по строке на род, обе с версией выпуска
-Тогда обе записи стоят в «выпущено» и несут эту версию
+Given an incident analysis and a proposal lie at the tree, both in the state "fixed and not released"
+When the tree sent a bundle of two rows — a row per kind, both with a version of the release
+Then both records stand in "released" and carry that version
 
-### SC-MB-198 — отбитая строка не пишет ни состояния, ни версии
+### SC-MB-198 — a refused row writes neither the state nor the version
 
-Дано у дерева лежит разбор происшествия в состоянии «новое»
-Когда дерево прислало строку с состоянием «выпущено» и версией выпуска
-Тогда строка отбита порядком переходов, а запись стоит в «новом» и версии не несёт
+Given an incident analysis in the state "new" lies at the tree
+When the tree sent a row with the state "released" and with a version of the release
+Then the row is refused by the order of the transitions, and the record stands in "new" and carries no
+version
 
-### SC-MB-199 — второй приезд версии затирает прежнюю
+### SC-MB-199 — a second arrival of the version overwrites the former one
 
-Дано у дерева лежит разбор происшествия в состоянии «выпущено» с версией прошлого выпуска
-Когда дерево прислало строку с тем же состоянием и другой версией
-Тогда запись несёт новую версию, а прежней у неё не осталось
+Given an incident analysis in the state "released" with the version of the past release lies at the
+tree
+When the tree sent a row with the same state and with another version
+Then the record carries the new version, and none of the former one is left at it
 
-### SC-MB-200 — строка с версией при том же состоянии переведённой не считается
+### SC-MB-200 — a row with a version at the same state does not count as moved
 
-Дано у дерева лежит предложение в состоянии «выпущено» с версией
-Когда дерево прислало строку с тем же состоянием и другой версией
-Тогда ответ считает её среди уже стоявших в этом состоянии, а не среди переведённых
+Given a proposal in the state "released" with a version lies at the tree
+When the tree sent a row with the same state and with another version
+Then the answer counts it among the ones that already stood in this state, not among the moved ones
 
-### SC-MB-201 — версия длиннее предела отбивает запрос целиком
+### SC-MB-201 — a version longer than the limit refuses the request whole
 
-Дано у дерева лежит разбор происшествия в состоянии «починено и не выпущено»
-Когда дерево прислало строку с состоянием «выпущено» и версией длиннее предела
-Тогда приёмник ответил отказом о форме запроса и не тронул ни одной записи пакета
+Given an incident analysis in the state "fixed and not released" lies at the tree
+When the tree sent a row with the state "released" and with a version longer than the limit
+Then the intake answered with a refusal about the form of the request and touched not a single record
+of the bundle
 
-### SC-MB-202 — формы версии приёмник не судит
+### SC-MB-202 — the intake does not judge the form of the version
 
-Дано у дерева лежит разбор происшествия в состоянии «починено и не выпущено»
-Когда дерево прислало версию выпуска, не похожую на номер, — словом без цифр
-Тогда запись стоит в «выпущено» и несёт эту строку как есть
+Given an incident analysis in the state "fixed and not released" lies at the tree
+When the tree sent a version of the release that does not look like a number — a word without figures
+Then the record stands in "released" and carries that string as it is
 
-### SC-MB-203 — строка с текстом починки и версией разом отбивается
+### SC-MB-203 — a row with a text of the fix and a version at once is refused
 
-Дано у дерева лежит разбор происшествия в состоянии «починено и не выпущено»
-Когда дерево прислало строку с состоянием «выпущено», версией выпуска и текстом починки
-Тогда строка стоит в ответе отбитой, а запись осталась в «починено и не выпущено»
+Given an incident analysis in the state "fixed and not released" lies at the tree
+When the tree sent a row with the state "released", with a version of the release and with a text of
+the fix
+Then the row stands in the answer as refused, and the record stayed in "fixed and not released"
 
-### SC-MB-204 — отбой по недостающей версии виден строкой журнала
+### SC-MB-204 — a refusal by a missing version is visible as a row of the journal
 
-Дано приёмник отбил строку правки по недостающей версии выпуска
-Когда читается журнал приёмника
-Тогда в нём стоит строка об отбое с признаком дерева, родом записи и причиной, а версии и токена в ней нет
+Given the intake refused a row of the edit by a missing version of the release
+When the journal of the intake is read
+Then a row about the refusal with the sign of the tree, the kind of the record and the reason stands in
+it, and there is neither the version nor the token in it
 
-### SC-MB-207 — команда строки запуска несёт версию доводом
+### SC-MB-207 — the command of the launch line carries the version as an argument
 
-Дано исполнитель зовёт отметку с состоянием «выпущено» и доводом версии выпуска
-Когда команда собирает пакет правки
-Тогда версия стоит полем той же строки, что род записи, ключ и состояние
+Given the executor calls the mark with the state "released" and with the argument of the version of the
+release
+When the command gathers the bundle of the edit
+Then the version stands as a field of the same row as the kind of the record, the key and the state
 
-Сценарий команды строки запуска стоит здесь, а не в спеке пакета: префикс у того спека другой, а
-пересчёт номера порвал бы связь с заголовком теста. Само обещание команды ведёт спек
-`docs/specs/agent-kit/observations/`.
+The scenario of the command of the launch line stands here, not in the spec of the package: that spec
+has another prefix, and a recounting of the number would tear the link with the test title. The
+promise of the command itself is led by the spec `docs/specs/agent-kit/observations/`.

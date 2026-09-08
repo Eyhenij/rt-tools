@@ -1,73 +1,73 @@
-# Чтение принятого — где исполняются правила
+# The reading of what was taken in — where the rules are carried out
 
-Первая колонка — правило дословно, как оно написано в разделе «Правила» спека. Правило без
-строки и строка без правила — расхождение: спек обещает то, чего в коде нет, либо в коде стоит
-то, о чём спек молчит.
+The first column is the rule verbatim, as it is written in the "Rules" section of the spec. A rule
+without a line and a line without a rule is a divergence: the spec promises what is not in the code,
+or the code holds what the spec is silent about.
 
-- **Админка читает груз и не правит его.** — `libs/message-bus-admin/common/core/api/src/lib/admin-read.api.ts:readPage`
-- **Пункт меню заводится вместе со своим экраном.** — `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:ADMIN_MENU`
-- **Раздел открывается своим адресом — прямой ссылкой и после перезагрузки.** — `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts:POSTMORTEMS_ROUTE`
-- **Выборка живёт в адресе раздела.** — `libs/message-bus-admin/common/core/util/src/lib/list-query.ts:listQueryParams`
-- **Подписи экранов берутся из словаря приложения, а не пишутся в разметке.** — `libs/message-bus-admin/common/core/util/src/lib/admin-labels.ts:adminLabel`
-- **Каждый раздел собран одним и тем же списочным экраном.** — `libs/message-bus-admin/common/core/ui/src/lib/list-page/admin-list-page.component.ts:AdminListPageComponent`
-- **Таблицу раздел объявляет элементом кита, а не атрибутом на своей разметке.** — `projects/ui-kit-v2/src/lib/components/table/rt-table.component.ts:hostRole` — своему тегу роль таблицы даёт кит: у элемента её нет, а роли строк и ячеек ставит CDK
-- **Каждая запись показана отдельной строкой, а каждое её свойство — своим столбцом.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.columns.ts:POSTMORTEMS_COLUMNS`
-- **Нажатие на строку открывает панель подробностей.** — `libs/message-bus-admin/postmortems/feature/list/src/lib/admin-postmortems-list.component.ts:AdminPostmortemsListComponent`
-- **Панель показывает запись целиком, а строка списка — нет.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:readPostmortem`
-- **Текст груза показывается разметкой, а не сырым текстом.** — `projects/ui-kit-v2/src/lib/util/markdown-parse.ts:parseMarkdown`
-- **Список приезжает страницами, а не целиком.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:readPostmortems`
-- **Размер страницы назван умолчанием и ограничен сверху.** — `libs/message-bus-common/src/lib/page.ts:pageAsked`
-- **Страница за пределом списка отвечает пустой страницей и общим числом, а не отказом.** — `libs/message-bus-common/src/lib/page.ts:pageFault`
-- **Порядок по умолчанию — свежие сверху, и он назван на экране.** — `libs/message-bus-admin/common/core/util/src/lib/list-view.ts:sortModelOf`
-- **Человек меняет порядок заголовком столбца и видит, какой порядок применён.** — `libs/message-bus-admin/common/core/util/src/lib/list-view.ts:sortAskedOf`
-- **Состав и порядок столбцов выбирает человек, и выбор сохраняется.** — `libs/message-bus-admin/common/container/feature/src/lib/admin-columns-aside.ts:adminColumnsAside`
-- **Отбор по дереву называет деревья именами, а не признаками.** — `libs/message-bus-api/trees/data-access/src/lib/tree.queries.ts:listTreeChoices`
-- **Отбор переживает переход на другую страницу списка.** — `libs/message-bus-admin/common/core/util/src/lib/list-query.ts:listQueryOf`
-- **Ответ, догнавший свой список после следующего запроса, не показывается.** — `libs/message-bus-admin/common/core/data-access/src/lib/admin-list-store.base.ts:AdminListStoreBase`
-- **Пока список читается, на месте строк видно, что идёт чтение.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:AdminListScreenBase`
-- **Пустой список объясняет, почему он пуст.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:emptyMessage`
-- **Пустой список показывает пустое состояние, а не фразу внутри таблицы.** — `projects/ui-kit-v2/src/lib/components/table/rt-table.component.ts:isEmpty` — вид пустоты кит рисует сам и только когда чтение кончилось: идущее показывает скелетоны
-- **Пустое состояние называет, откуда записи приходят.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:emptyDescription` — вторая строка вида; у приглашений её перебивает свой раздел
-- **Не прочитавшийся список говорит почему, и попытка повторяется одним действием.** — `libs/message-bus-admin/common/core/data-access/src/lib/admin-list-store.base.ts:retry`
-- **Закрытая панель возвращает список в том же состоянии.** — `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts:postmortemsRoutes`
-- **Записи, которой нет, панель не рисует пустой.** — `libs/message-bus-admin/postmortems/data-access/src/lib/postmortem.store.ts:PostmortemStore`
-- **Вошедший видит груз всех деревьев.** — `libs/message-bus-api/postmortems/feature/src/lib/postmortems-read.controller.ts:page`
-- **Время показывается в поясе того, кто смотрит, а хранится во всемирном.** — `libs/message-bus-admin/common/core/ui/src/lib/moment/admin-moment.pipe.ts:AdminMomentPipe`
-- **Отказ службы называет человеку номер обращения, и тот же номер стоит в журнале.** — `apps/message-bus/src/app/failure.filter.ts:catch`
-- **Ожидание ответа ограничено сроком.** — `libs/message-bus-admin/common/core/api/src/lib/admin-read.api.ts:READ_TIMEOUT_MS`
-- **Админка читает те же записи, что кладёт приём.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:readPostmortems`
-- **Разделы панели рисует готовый компонент кита, а не свой заголовок.** — `projects/ui-kit-v2/src/lib/components/aside-section/rt-aside-section.component.ts:RtAsideSectionComponent`
-- **Свойства записи показаны готовым списком кита, а не своей разметкой списка определений.** — `projects/ui-kit-v2/src/lib/components/detail-list/rt-detail-list.component.ts:RtDetailListComponent`
-- **Пока запись читается, на месте значения виден скелетон.** — `projects/ui-kit-v2/src/lib/components/detail-list/rt-detail-row.component.ts:loading` — признак чтения панель получает от асайда входом `reading`
-- **Признак проверки стоит на панели, её шапке и каждой строке свойства.** — `libs/message-bus-admin/postmortems/feature/details-aside/src/lib/admin-postmortem-details-aside.component.ts:AdminPostmortemDetailsAsideComponent` — метки панели и её шапки стоят в его шаблоне, метка строки свойства — в шаблоне вида рядом
-- **Состояние записи приезжает чтением — и списком, и одной записью.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:listRowOf`
-- **Состояние видно столбцом в разделах разборов и предложений.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.columns.ts:POSTMORTEMS_COLUMNS`
-- **Слова состояний берутся из словаря приложения.** — `libs/message-bus-admin/common/core/util/src/lib/cargo-state.logic.ts:cargoStateLabel`
-- **Модель записи груза несёт состояние значением набора, а не строкой.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts:PostmortemShortMapper`
-- **Перечень разметки закрыт и зашит в компоненте.** — `projects/ui-kit-v2/src/lib/util/markdown-parse.ts:BLOCK_READERS` — перечень читателей блоков закрыт, вход у компонента один: сам текст
-- **Размеченное содержимое строится узлами, а не вклеивается строкой.** — `projects/ui-kit-v2/src/lib/components/markdown-text/rt-markdown-text.component.html:blockTpl` — шаблон рисует дерево узлов, строка разметки в страницу не отдаётся
-- **Картинки и вставки в вывод не попадают, а ссылка ведёт наружу тремя схемами.** — `projects/ui-kit-v2/src/lib/util/markdown-inline.ts:ALLOWED_SCHEMES` — разметка картинки узлом не становится, адрес чужой схемы остаётся текстом
-- **Блок кода моноширинный, одноцветный и прокручивается вбок сам.** — `projects/ui-kit-v2/src/lib/components/markdown-text/rt-markdown-text.component.scss:__code` — моноширинное начертание и прокрутка блока вбок
-- **Одиночный перенос строки остаётся переносом.** — `projects/ui-kit-v2/src/lib/util/markdown-parse.ts:joinLines`
-- **Компонент показа один на все три раздела груза.** — `projects/ui-kit-v2/src/lib/components/markdown-text/rt-markdown-text.component.ts:RtMarkdownTextComponent` — его зовут виды разбора, предложения и сводки месяца
-- **Сводка месяца приезжает телом прогона и объявляется блоком кода при переводе в текст.** — `libs/message-bus-admin/summaries/util/src/lib/month-record.mapper.ts:SUMMARY_FENCE_OPEN`
-- **Текста нет — нет и раздела панели.** — `libs/message-bus-admin/postmortems/ui/src/lib/postmortem-view/admin-postmortem-view.component.html:rt-markdown-text` — условие раздела стоит на самом тексте, а не на записи
+- **The admin application reads the cargo and does not edit it.** — `libs/message-bus-admin/common/core/api/src/lib/admin-read.api.ts:readPage`
+- **An item of the menu is created together with its screen.** — `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:ADMIN_MENU`
+- **A section opens by an address of its own — by a direct link and after a reload.** — `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts:POSTMORTEMS_ROUTE`
+- **The selection lives in the address of the section.** — `libs/message-bus-admin/common/core/util/src/lib/list-query.ts:listQueryParams`
+- **The labels of the screens are taken from the dictionary of the application, they are not written in the markup.** — `libs/message-bus-admin/common/core/util/src/lib/admin-labels.ts:adminLabel`
+- **Every section is put together by one and the same list screen.** — `libs/message-bus-admin/common/core/ui/src/lib/list-page/admin-list-page.component.ts:AdminListPageComponent`
+- **A section declares the table by an element of the kit, not by an attribute on its own markup.** — `projects/ui-kit-v2/src/lib/components/table/rt-table.component.ts:hostRole` — the role of a table is given to its own tag by the kit: the element does not carry it, and the roles of the rows and the cells are put by the CDK
+- **Every record is shown by a row of its own, and every property of it by a column of its own.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.columns.ts:POSTMORTEMS_COLUMNS`
+- **A press on a row opens the panel of details.** — `libs/message-bus-admin/postmortems/feature/list/src/lib/admin-postmortems-list.component.ts:AdminPostmortemsListComponent`
+- **The panel shows the record whole, and a row of the list does not.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:readPostmortem`
+- **The text of the cargo is shown as markup, not as raw text.** — `projects/ui-kit-v2/src/lib/util/markdown-parse.ts:parseMarkdown`
+- **The list arrives by pages, not whole.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:readPostmortems`
+- **The size of a page is named by a default and is limited from above.** — `libs/message-bus-common/src/lib/page.ts:pageAsked`
+- **A page past the end of the list answers with an empty page and the total number, not with a refusal.** — `libs/message-bus-common/src/lib/page.ts:pageFault`
+- **The order by default is the fresh ones on top, and it is named on the screen.** — `libs/message-bus-admin/common/core/util/src/lib/list-view.ts:sortModelOf`
+- **A person changes the order by the heading of a column and gets which order is applied.** — `libs/message-bus-admin/common/core/util/src/lib/list-view.ts:sortAskedOf`
+- **The composition and the order of the columns are chosen by the person, and the choice is kept.** — `libs/message-bus-admin/common/container/feature/src/lib/admin-columns-aside.ts:adminColumnsAside`
+- **The filter by tree names the trees by names, not by signs.** — `libs/message-bus-api/trees/data-access/src/lib/tree.queries.ts:listTreeChoices`
+- **The filter outlives a transition to another page of the list.** — `libs/message-bus-admin/common/core/util/src/lib/list-query.ts:listQueryOf`
+- **An answer that caught up with its list after the next request is not shown.** — `libs/message-bus-admin/common/core/data-access/src/lib/admin-list-store.base.ts:AdminListStoreBase`
+- **While the list is being read, in the place of the rows it is visible that the reading goes.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:AdminListScreenBase`
+- **An empty list explains why it is empty.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:emptyMessage`
+- **An empty list shows an empty state, not a phrase inside the table.** — `projects/ui-kit-v2/src/lib/components/table/rt-table.component.ts:isEmpty` — the look of the emptiness is drawn by the kit itself and only when the reading is over: a reading that goes it shows by skeletons
+- **An empty state names where the records come from.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:emptyDescription` — the second line of the look; at the invitations it is overridden by their own section
+- **A list that was not read says why, and the attempt is repeated by one action.** — `libs/message-bus-admin/common/core/data-access/src/lib/admin-list-store.base.ts:retry`
+- **A closed panel brings the list back in the same state.** — `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts:postmortemsRoutes`
+- **A record that does not exist the panel does not draw as empty.** — `libs/message-bus-admin/postmortems/data-access/src/lib/postmortem.store.ts:PostmortemStore`
+- **Whoever entered gets the cargo of all the trees.** — `libs/message-bus-api/postmortems/feature/src/lib/postmortems-read.controller.ts:page`
+- **The time is shown in the zone of whoever is looking, and is kept in the universal one.** — `libs/message-bus-admin/common/core/ui/src/lib/moment/admin-moment.pipe.ts:AdminMomentPipe`
+- **A refusal of the service names the number of the request to a person, and the same number stands in the journal.** — `apps/message-bus/src/app/failure.filter.ts:catch`
+- **The waiting for an answer is limited by a term.** — `libs/message-bus-admin/common/core/api/src/lib/admin-read.api.ts:READ_TIMEOUT_MS`
+- **The admin application reads the same records the intake puts.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:readPostmortems`
+- **The sections of the panel are drawn by a ready component of the kit, not by a heading of one's own.** — `projects/ui-kit-v2/src/lib/components/aside-section/rt-aside-section.component.ts:RtAsideSectionComponent`
+- **The properties of a record are shown by a ready list of the kit, not by markup of a list of definitions of one's own.** — `projects/ui-kit-v2/src/lib/components/detail-list/rt-detail-list.component.ts:RtDetailListComponent`
+- **While the record is being read, a skeleton is in the place of the value.** — `projects/ui-kit-v2/src/lib/components/detail-list/rt-detail-row.component.ts:loading` — the sign that the reading goes the panel gets from the aside by the input `reading`
+- **The sign of a check stands at the panel, at its header and at every row of a property.** — `libs/message-bus-admin/postmortems/feature/details-aside/src/lib/admin-postmortem-details-aside.component.ts:AdminPostmortemDetailsAsideComponent` — the anchors of the panel and of its header stand in its template, the anchor of a row of a property in the template of the view next to it
+- **The state of a record arrives by the reading — both by the list and by one record.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:listRowOf`
+- **The state is visible as a column at the sections of the analyses and of the proposals.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.columns.ts:POSTMORTEMS_COLUMNS`
+- **The words of the states are taken from the dictionary of the application.** — `libs/message-bus-admin/common/core/util/src/lib/cargo-state.logic.ts:cargoStateLabel`
+- **The model of a record of the cargo carries the state as a value of a set, not as a string.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts:PostmortemShortMapper`
+- **The list of the markup is closed and sewn into the component.** — `projects/ui-kit-v2/src/lib/util/markdown-parse.ts:BLOCK_READERS` — the list of the readers of the blocks is closed, and the component has one input: the text itself
+- **The marked-up content is built by nodes, it is not glued in as a string.** — `projects/ui-kit-v2/src/lib/components/markdown-text/rt-markdown-text.component.html:blockTpl` — the template draws a tree of nodes, a string of markup is not given to the page
+- **The pictures and the embeds do not get into the output, and a link leads outward by three schemes.** — `projects/ui-kit-v2/src/lib/util/markdown-inline.ts:ALLOWED_SCHEMES` — the markup of a picture does not become a node, the address of a foreign scheme stays text
+- **A block of code is monospaced, of one colour and scrolls sideways itself.** — `projects/ui-kit-v2/src/lib/components/markdown-text/rt-markdown-text.component.scss:__code` — the monospaced face and the sideways scroll of the block
+- **A single line break stays a break.** — `projects/ui-kit-v2/src/lib/util/markdown-parse.ts:joinLines`
+- **The component of the showing is one for all three sections of the cargo.** — `projects/ui-kit-v2/src/lib/components/markdown-text/rt-markdown-text.component.ts:RtMarkdownTextComponent` — it is called by the views of an analysis, of a proposal and of a digest of a month
+- **The digest of a month arrives as the body of a run and is declared a block of code at the turning into text.** — `libs/message-bus-admin/summaries/util/src/lib/month-record.mapper.ts:SUMMARY_FENCE_OPEN`
+- **There is no text — there is no section of the panel.** — `libs/message-bus-admin/postmortems/ui/src/lib/postmortem-view/admin-postmortem-view.component.html:rt-markdown-text` — the condition of the section stands on the text itself, not on the record
 
-- **Текст починки виден в панели подробностей и не виден в списке.** — `libs/message-bus-admin/postmortems/ui/src/lib/postmortem-view/admin-postmortem-view.component.ts:fixNoteLabel` — та же строка стоит у панели предложения; столбцов списка работа не трогала
-- **У записи без текста починки строки в панели нет вовсе.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts:PostmortemMapper` — маппер приводит пустоту контракта к пустой строке, и раздел панели рисуется только при непустой
-- **Версия выпуска видна в панели подробностей и не видна в списке.** — `libs/message-bus-admin/postmortems/ui/src/lib/postmortem-view/admin-postmortem-view.component.ts:releaseVersionLabel` — та же строка стоит у панели предложения; столбцов списка работа не трогала
-- **У записи без версии выпуска строки в панели нет вовсе.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts:PostmortemMapper` — маппер приводит пустоту контракта к пустой строке, и строка свойства рисуется только при непустой
-- **Отбор по состоянию кладёт в страницу раздел, а не страница знает его сама.** — `libs/message-bus-admin/postmortems/feature/list/src/lib/admin-postmortems-list.component.ts:AdminStateFilterComponent` — раздел объявляет отбор своим импортом и кладёт его в слот; общая страница о видах отбора не знает
-- **Отбор по состоянию стоит правее отбора по дереву, в том же слоте тулбара.** — `libs/message-bus-admin/postmortems/feature/list/src/lib/admin-postmortems-list.component.html:admin-state-filter` — порядок задаёт разметка слота: отбор по дереву первым, отбор по состоянию за ним
-- **Отбор по состоянию есть у разделов разборов и предложений и только у них.** — `libs/message-bus-admin/proposals/feature/list/src/lib/admin-proposals-list.component.html:admin-state-filter` — второй из двух разделов груза; у сводок в слоте стоит один отбор: `libs/message-bus-admin/summaries/feature/list/src/lib/admin-summaries-list.component.html:admin-tree-filter`
-- **Первым пунктом отбора стоят «все состояния».** — `libs/message-bus-admin/common/core/ui/src/lib/state-filter/admin-state-filter.component.ts:ALL_STATES` — пустое значение стоит первым пунктом и означает несуженный список
-- **Слова состояний в отборе — те же, что в столбце, и берутся из словаря приложения.** — `libs/message-bus-admin/common/core/ui/src/lib/state-filter/admin-state-filter.component.ts:cargoStateLabel` — та же функция семейства, которую зовут мапперы обоих разделов для столбца
-- **Отбор по состоянию живёт в адресе раздела наравне со страницей, размером и порядком.** — `libs/message-bus-admin/common/core/util/src/lib/list-query.ts:LIST_QUERY_PARAMS` — имя параметра стоит рядом с остальными и разбирается тем же ходом
-- **Снятый отбор в адресе не стоит.** — `libs/message-bus-admin/common/core/util/src/lib/list-query.ts:listQueryParams` — пустое значение уходит в адрес пустотой, и роутер убирает параметр
-- **Отбор по состоянию складывается с отбором по дереву, а не заменяет его.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:whereOf` — оба условия собираются в одно `where`, а не выбирают друг друга
-- **Выбранное состояние сбрасывает список на первую страницу.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:changeState` — вместе с состоянием в выборку уходит первая страница
-- **Слово, которого нет в наборе состояний, приёмник отбивает отказом с именем параметра.** — `libs/message-bus-common/src/lib/cargo-page.ts:cargoStateFault` — отказ называет параметр и перечисляет набор
-- **Экран чужого слова в адресе приёмнику не посылает.** — `libs/message-bus-admin/common/core/util/src/lib/list-query.ts:listQueryOf` — разбор чистый: слово вне набора читается как несказанное
-- **Список, не давший ни строки при любом отборе, объясняет это отбором, а не пустотой службы.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:narrowed` — признак «сужен ли» считает оба отбора, и от него зависят обе подписи пустоты
-- **Состояние — сортируемое поле у разборов и у предложений.** — `libs/message-bus-common/src/lib/sortable.ts:POSTMORTEM_SORTABLE` — набор один на обе стороны: по нему экран рисует заголовок, приёмник принимает запрос
-- **Порядок по состоянию идёт шагами разбора, а не по алфавиту.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:orderOf` — порядок идёт колонкой набора, а хранилище упорядочивает её по объявлению
+- **The text of the fix is visible in the panel of details and is not visible in the list.** — `libs/message-bus-admin/postmortems/ui/src/lib/postmortem-view/admin-postmortem-view.component.ts:fixNoteLabel` — the same line stands at the panel of a proposal; the columns of the list were not touched by the work
+- **At a record without a text of the fix there is no row in the panel at all.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts:PostmortemMapper` — the mapper brings the emptiness of the contract to an empty string, and the section of the panel is drawn only at a non-empty one
+- **The version of the release is visible in the panel of details and is not visible in the list.** — `libs/message-bus-admin/postmortems/ui/src/lib/postmortem-view/admin-postmortem-view.component.ts:releaseVersionLabel` — the same line stands at the panel of a proposal; the columns of the list were not touched by the work
+- **At a record without a version of the release there is no row in the panel at all.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts:PostmortemMapper` — the mapper brings the emptiness of the contract to an empty string, and the row of the property is drawn only at a non-empty one
+- **The filter by state is put into the page by the section, the page does not know it itself.** — `libs/message-bus-admin/postmortems/feature/list/src/lib/admin-postmortems-list.component.ts:AdminStateFilterComponent` — the section declares the filter by its own import and puts it into the slot; the common page knows nothing about the kinds of the filter
+- **The filter by state stands to the right of the filter by tree, in the same slot of the toolbar.** — `libs/message-bus-admin/postmortems/feature/list/src/lib/admin-postmortems-list.component.html:admin-state-filter` — the order is set by the markup of the slot: the filter by tree first, the filter by state after it
+- **The filter by state is at the sections of the analyses and of the proposals and only at them.** — `libs/message-bus-admin/proposals/feature/list/src/lib/admin-proposals-list.component.html:admin-state-filter` — the second of the two sections of the cargo; at the digests one filter stands in the slot: `libs/message-bus-admin/summaries/feature/list/src/lib/admin-summaries-list.component.html:admin-tree-filter`
+- **The first item of the filter is "all the states".** — `libs/message-bus-admin/common/core/ui/src/lib/state-filter/admin-state-filter.component.ts:ALL_STATES` — the empty value stands as the first item and means a list that is not narrowed
+- **The words of the states in the filter are the same as in the column and are taken from the dictionary of the application.** — `libs/message-bus-admin/common/core/ui/src/lib/state-filter/admin-state-filter.component.ts:cargoStateLabel` — the same function of the family the mappers of both sections call for the column
+- **The filter by state lives in the address of the section on a par with the page, the size and the order.** — `libs/message-bus-admin/common/core/util/src/lib/list-query.ts:LIST_QUERY_PARAMS` — the name of the parameter stands next to the rest and is taken apart by the same move
+- **A lifted filter does not stand in the address.** — `libs/message-bus-admin/common/core/util/src/lib/list-query.ts:listQueryParams` — the empty value goes into the address as emptiness, and the router removes the parameter
+- **The filter by state adds up with the filter by tree, it does not replace it.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:whereOf` — both conditions are gathered into one `where`, they do not choose one another
+- **A chosen state resets the list to the first page.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:changeState` — together with the state the first page goes into the selection
+- **A word that is not in the set of the states the intake refuses with a refusal with the name of the parameter.** — `libs/message-bus-common/src/lib/cargo-page.ts:cargoStateFault` — the refusal names the parameter and lists the set
+- **The screen does not send a foreign word from the address to the intake.** — `libs/message-bus-admin/common/core/util/src/lib/list-query.ts:listQueryOf` — the taking apart is pure: a word outside the set is read as unsaid
+- **A list that gave not a row at any filter explains that by the filter, not by an emptiness of the service.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:narrowed` — the sign "is it narrowed" counts both filters, and both labels of the emptiness depend on it
+- **The state is a sortable field at the analyses and at the proposals.** — `libs/message-bus-common/src/lib/sortable.ts:POSTMORTEM_SORTABLE` — the set is one for both sides: by it the screen draws the heading, by it the intake accepts the request
+- **The order by state goes by the steps of the sorting out, not by the alphabet.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:orderOf` — the order goes by the column of the set, and the storage orders it by the declaration

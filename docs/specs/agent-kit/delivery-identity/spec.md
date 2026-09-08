@@ -1,133 +1,144 @@
-# Личность вызова, открывающего заявку
+# The identity of the call that opens a request
 
-**Статус:** действует · **Ревизия:** 2026-09-06 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `delivery`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-09-06 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `delivery`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Клиент хостинга держит две учётные записи сразу — залогиненную и ту, чей токен стоит в окружении
-вызова, — и какая из них откроет заявку, из текста команды видно только по явной подстановке.
-Читающие вызовы идут от залогиненной и работают, поэтому пишущий выглядит таким же обычным.
+The hosting client holds two accounts at once — the signed-in one and the one whose token stands in
+the environment of the call — and which of them will open a request is visible from the text of the
+command only by an explicit substitution. The reading calls go from the signed-in one and work, so
+the writing one looks just as ordinary.
 
-Промах всплывает шагом позже, на назначении ревьювера: автор заявки её ревьювером не бывает.
-Чинится он только переоткрытием — автора у заявки не сменить, — поэтому судить личность надо до
-вызова, а не после.
+The miss surfaces one step later, at assigning a reviewer: the author of a request is never its
+reviewer. It is fixed only by reopening — the author of a request cannot be changed — so the identity
+has to be judged before the call, not after.
 
-Поддомен называет, чем личность вызова судится, по какому признаку гард вообще узнаёт в команде
-своё дело и где стоит последний рубеж, на котором промах ещё исправим.
+The subdomain names what the identity of a call is judged by, by which sign the guard recognises its
+own business in a command at all, and where the last line stands at which the miss is still fixable.
 
-## Терминология
+## Terminology
 
-| Слово             | Значение                                                                                       |
-| ----------------- | ---------------------------------------------------------------------------------------------- |
-| машинная запись   | учётная запись, которой дерево ведёт свою работу: ею открываются заявки и ставится исполнитель |
-| переменная токена | имя переменной окружения, которой вызову подставляют токен машинной записи                     |
-| граница команды   | признак, по которому гард узнаёт в тексте вызов, а не упоминание его имени                     |
+| Word                 | Meaning                                                                                   |
+| -------------------- | ----------------------------------------------------------------------------------------- |
+| the machine record   | the account the tree conducts its work by: requests are opened and the assignee set by it |
+| the token variable   | the name of the environment variable the token of the machine record is substituted by    |
+| the command boundary | the sign by which the guard recognises a call in the text, not a mention of its name      |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Интерфейса нет: гард виден только исполнителю — текстом отказа в своём ходе.
+There is no interface: the guard is visible only to the executor — as the text of a refusal in their
+own turn.
 
-## Правила
+## Rules
 
-- **Заявка, открываемая без подстановки токена машинной записи, отбивается.** Судится текст
-  команды, а не ответ хостинга: спросить, чьим токеном пойдёт вызов, до его исполнения нельзя.
-- **Отказ называет переменную токена и печатает готовую строку подстановки.** Требование, не
-  назвавшее способа его выполнить, исполняется по памяти, а память здесь и подвела.
-- **Дерево, не назвавшее переменной токена, требования не получает.** У такого дерева личность
-  вызова не значит ничего, и отбивать было бы нечего.
-- **Команда, названная путём, узнаётся наравне с голым именем.** Клиент, у которого своё имя
-  занято псевдонимом оболочки, зовут полным путём; признак, знавший только голое имя, такой вызов
-  не узнавал вовсе и выходил нулём. Молчание гарда неотличимо от разрешения, поэтому признак
-  обязан ошибаться в сторону лишнего срабатывания, а не пропуска.
-- **Упоминание имени команды внутри строки командой не считается.** Признак допускает каталог
-  перед именем и не допускает перехода через пробел: часть пути остаётся внутри одного слова.
-- **Черновик не снимается с заявки, открытой не машинной записью.** Это последний рубеж, на
-  котором промах ещё исправим переоткрытием: после снятия черновика заявку вливают, а влитую не
-  переоткрыть.
-- **Отказ на снятии черновика называет обе записи и переоткрытие.** Исполнитель, услышавший
-  только «не та запись», ищет способ поменять автора — способа нет.
-- **Кто придёт по токену, спрашивается у хостинга, а не выводится из текста команды.** Подстановка
-  говорит о намерении: она читает файл, а файла на машине может не быть — тогда значение пустое,
-  клиент отвечает от залогиненной записи, и заявка выходит от владельца при верной с виду команде.
-  У такой заявки нет ревьювера, автора ей не сменить, чинится только переоткрытием.
-- **Спрашивает дерево, а не пакет.** Хостинг, клиент и путь к токену у каждого свои; пакет держит
-  сверку ответа с машинной записью и не знает, как его получить.
-- **Пустой ответ работу не останавливает, и о нём сообщается.** «Спросить не удалось» и «сверка
-  сошлась» молчат одинаково, поэтому пропуск сообщает о себе строкой.
-- **Правило поставки говорит, что активная запись клиента хостинга выбирается на машину, а не
-  на дерево.** Машинная запись подставляется на вызов и активной не делается: вход клиентом под
-  неё уводит все соседние сессии на машине, а изнутри дерева промах не виден ничем. Статья о
-  подстановке одна разрешала прочитать себя как «запись уже активная, подставлять нечего».
+- **A request opened without the substitution of the machine record token is refused.** The text of
+  the command is judged, not the answer of the hosting: there is no asking whose token the call will
+  go by before it is carried out.
+- **The refusal names the token variable and prints a ready substitution line.** A demand that names
+  no way to fulfil it is carried out by memory, and memory is exactly what failed here.
+- **A tree that named no token variable gets no demand.** For such a tree the identity of a call
+  means nothing, and there would be nothing to refuse.
+- **A command named by a path is recognised on a par with a bare name.** A client whose own name is
+  taken by a shell alias is called by the full path; a sign that knew only the bare name did not
+  recognise such a call at all and left with zero. The silence of a guard is indistinguishable from
+  permission, so the sign is bound to err towards a surplus firing, not towards a miss.
+- **A mention of the command name inside a string does not count as a command.** The sign allows a
+  directory before the name and allows no crossing over a space: a part of a path stays inside one
+  word.
+- **The draft is not lifted from a request opened by other than the machine record.** This is the
+  last line at which the miss is still fixable by reopening: after the draft is lifted the request is
+  merged, and a merged one cannot be reopened.
+- **The refusal at lifting the draft names both records and the reopening.** An executor who heard
+  only "the wrong record" looks for a way to change the author — there is no way.
+- **Who will come by the token is asked of the hosting, it is not derived from the text of the
+  command.** The substitution speaks of an intent: it reads a file, and the file may not be on the
+  machine — then the value is empty, the client answers from the signed-in record, and the request
+  comes out from the owner at a command that looks right. Such a request has no reviewer, its author
+  cannot be changed, and it is fixed only by reopening.
+- **The tree asks, not the package.** The hosting, the client and the path to the token are each
+  their own; the package holds the check of the answer against the machine record and does not know
+  how to get it.
+- **An empty answer stops no work, and it is reported.** "Asking did not work" and "the check came
+  together" stay silent alike, so the skip reports itself by a line.
+- **The delivery rule says that the active record of the hosting client is picked per machine, not
+  per tree.** The machine record is substituted onto a call and is not made active: signing the
+  client in under it takes every neighbouring session on the machine away, and from inside the tree
+  the miss is visible by nothing. The article about the substitution alone allowed itself to be read
+  as "the record is already active, there is nothing to substitute".
 
-## Что не входит
+## What is out of scope
 
-- Форма имени ветки, номер задачи и её состояние — поддомен гардов поставки: там судится
-  готовность той работы, которая идёт сейчас.
-- Конфликтующие свои заявки — свой поддомен: предмет там соседний, а признак другой.
-- Кто нажимает слияние: личность вызова говорит о том, чьей записью заявка открыта, и молчит о
-  том, кому её вливать.
+- The shape of a branch name, the task number and its state — the subdomain of the delivery guards:
+  there the readiness of the work going on now is judged.
+- Conflicting requests of one's own — a subdomain of its own: the subject there is neighbouring, and
+  the sign is different.
+- Who presses the merge: the identity of a call speaks of whose record the request is opened by and
+  is silent about who is to merge it.
 
-## Контракт
+## Contract
 
-Поверхность — гард поставки на событии команды и общий помощник разбора ввода, который отдаёт
-границу команды всем гардам сразу. Отказ приходит решением `deny` с текстом причины; молчание
-означает, что команда разрешена.
+The surface is the delivery guard on the event of a command and the shared input parsing helper that
+gives the command boundary to all the guards at once. The refusal arrives as the decision `deny`
+with the text of the reason; silence means the command is allowed.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: гард отвечает решением и текстом причины, а не кодом.
+Not applicable: the guard answers with a decision and the text of a reason, not with a code.
 
-## Данные
+## Data
 
-Своих данных нет: имя машинной записи и имя переменной токена дерево объявляет профилем, автор
-заявки спрашивается у хостинга помощником очереди работ.
+There is no data of its own: the name of the machine record and the name of the token variable are
+declared by the tree in its profile, the author of a request is asked of the hosting by the work
+queue helper.
 
-## Экраны и состояния
+## Screens and states
 
-Экранов нет.
+There are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Текст отказа — на языке дерева.
+The text of the refusal is in the language of the tree.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо: гард судит одну команду одного хода.
+Not applicable: the guard judges one command of one turn.
 
-## Решения
+## Decisions
 
-- **Личность судится текстом команды, а не ответом хостинга.** Спросить, чьим токеном пойдёт
-  вызов, до его исполнения нельзя, а после исполнения заявка уже открыта.
-- **Граница команды объявлена одним местом на все гарды.** Разойдясь, копии чинятся по одной и
-  молчат о том, что остальные остались слепыми.
-- **Признак ошибается в сторону лишнего срабатывания.** Гард, не узнавший вызов, молчит и
-  выглядит исправным; сработавший на лишнем виден сразу и правится.
+- **The identity is judged by the text of the command, not by the answer of the hosting.** There is
+  no asking whose token the call will go by before it is carried out, and after it is carried out the
+  request is already open.
+- **The command boundary is declared in one place for all the guards.** Having diverged, the copies
+  are fixed one at a time and stay silent about the rest being left blind.
+- **The sign errs towards a surplus firing.** A guard that did not recognise a call stays silent and
+  looks sound; one that fired on a surplus is seen at once and is fixed.
 
-## Открытые вопросы
+## Open questions
 
-Нет.
+None.
 
-## История изменений
+## History of changes
 
-- 2026-09-01 — поддомен заведён: две заявки уехали открытыми от учётной записи владельца, потому
-  что признак не узнавал команду, названную путём; файл сценариев соседнего поддомена при этом
-  перерос предел длины.
-- 2026-09-06 — правило поставки говорит, что активная запись клиента выбирается на машину:
-  у дерева-потребителя вход клиентом под машинную запись увёл личность у соседних сессий.
+- 2026-09-01 — the subdomain was created: two requests went out opened from the account of the
+  owner, because the sign did not recognise a command named by a path; the scenario file of the
+  neighbouring subdomain outgrew the length limit at that.
+- 2026-09-06 — the delivery rule says that the active record of the client is picked per machine: in
+  a consumer tree, signing the client in under the machine record took the identity away from the
+  neighbouring sessions.
 
-## Сценарии
+## Scenarios
 
-`scenarios.md` рядом.
+`scenarios.md` next to it.

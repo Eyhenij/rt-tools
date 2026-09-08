@@ -84,7 +84,8 @@ function parseScenarios(file) {
  * the verb of perception itself: a free link catches «он» about a request, a session and a counter
  * as well, where the verb of perception stands in the other half of the line.
  */
-const PRONOUN_PERCEIVES = /(^|[^а-яё])(он|она|они)\s+(?:не\s+)?(?:вид(?:ит|ят)|чита(?:ет|ют)|смотр(?:ит|ят))/i;
+const PRONOUN_PERCEIVES =
+    /(^|[^а-яё])(он|она|они)\s+(?:не\s+)?(?:вид(?:ит|ят)|чита(?:ет|ют)|смотр(?:ит|ят))|\b(?:he|she|they)\s+(?:does not |do not |never )?(?:sees?|reads?)\b/i;
 
 /**
  * Whether a screen is promised by the scenario. The sign is read only from «Тогда»: «Дано»
