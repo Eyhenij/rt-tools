@@ -135,6 +135,14 @@ silent: the path to the rule is the same
 
 Covered: `projects/agent-kit/tests/handoff-entry-guard.test.sh`.
 
+### SC-AK-929 — a write by a shell command is judged on a par with an edit
+
+Given a session begun from a handover writes a file by a shell command without a loaded rule When the
+guard checks the call Then it refuses it; a command that writes nothing passes — the order of entry
+begins with reading the tree
+
+Covered: `projects/agent-kit/tests/handoff-entry-guard.test.sh`.
+
 ### SC-AK-410 — the refusal names two lawful moves and the shape of a bypass
 
 Given the guard refuses a call, and the refusal has a lawful shape of a bypass When the refusal reaches

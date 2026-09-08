@@ -195,3 +195,5 @@ Given the styles of the kit hold a gradient written with two or more different e
 When the ends are resolved in each of the four looks
 Then a look in which they all come out one paint fells the run, and the refusal names the file, the line, the
 look and the paint
+
+Covered: `tools/tests/check-gradient-stops.test.sh`.
