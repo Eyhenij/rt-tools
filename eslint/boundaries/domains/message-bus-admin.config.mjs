@@ -112,9 +112,12 @@ export const messageBusAdminBoundaries = [
         sourceTag: 'scope:message-bus-admin-auth-feature-sign-in',
         onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-ui', AUTH_DATA_ACCESS, AUTH_UTIL, CORE_UI, CORE_UTIL, PACKAGE],
     },
+    // Стражи закрытой ветки стоят здесь оба, и второй читает право раздела из объявления пункта
+    // меню: свой список прав рядом с маршрутами разошёлся бы с меню молча. Оболочку он при этом
+    // не видит — она грузится по требованию, и статическая ссылка на неё это потеряла бы
     {
         sourceTag: 'scope:message-bus-admin-auth-shell',
-        onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-feature-sign-in', AUTH_DATA_ACCESS, AUTH_UTIL, PACKAGE],
+        onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-feature-sign-in', AUTH_DATA_ACCESS, AUTH_UTIL, CONTAINER_UTIL, PACKAGE],
     },
     {
         sourceTag: 'scope:message-bus-admin-auth-ui',

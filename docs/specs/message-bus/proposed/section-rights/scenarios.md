@@ -24,8 +24,6 @@ Given a signed-in person without the read right of a section
 When they open the address of that section directly
 Then the screen of the section does not open, and the person lands in a section open to them
 
-Not covered: the check is written by the task RT-1898.
-
 ### SC-MB-301 — until the rights arrive nothing is hidden
 
 Given the answer about the signed-in person has not arrived yet
@@ -45,8 +43,6 @@ Given a signed-in person without the right of the first section of the list
 When they open the root address of the admin panel
 Then the first section open to them opens, not the first of the list
 
-Not covered: the check is written by the task RT-1898.
-
 ### SC-MB-304 — an operation of a section refuses a sign-in without the right of that section
 
 Given a signed-in person without the read right of a section
@@ -60,8 +56,6 @@ Not covered: the check is written by the task RT-1898.
 Given a person who has the section open and their right taken away meanwhile
 When they move to that section anew
 Then the section does not open, and its item is gone from the row
-
-Not covered: the check is written by the task RT-1898.
 
 ### SC-MB-306 — the right of an item is a name from the closed set
 
