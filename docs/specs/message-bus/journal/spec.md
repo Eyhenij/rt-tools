@@ -1,149 +1,166 @@
-# Что приёмник пишет о себе
+# What the intake writes about itself
 
-**Статус:** действует · **Ревизия:** 2026-08-16 · **Префикс сценариев:** `SC-MB`
-**Зависимости:** нет
-**Законы:** `observability`
-**Процедуры:** нет — разбор отказов стоит перед всеми операциями сразу
+**Status:** in force · **Revision:** 2026-08-16 · **Scenario prefix:** `SC-MB`
+**Depends on:** none
+**Laws:** `observability`
+**Procedures:** none — the taking apart of the refusals stands before all the operations at once
 
-Поддомен домена «приёмник груза»: что приёмник пишет об отказе и в каком виде. Общее —
-терминология домена, сквозные требования и решения — лежит в спеке домена рядом.
+A subdomain of the domain "the intake of the cargo": what the intake writes about a refusal and in
+which shape. What is shared — the terminology of the domain, the cross-cutting requirements and the
+decisions — lies in the spec of the domain next to it.
 
-## Зачем
+## Why
 
-Приёмник отвечает отказом и записывает о нём строку. Пока в этой строке стояли только род
-груза, признак дерева, код и номер обращения, разбирать по ней было нечего: пятисотый на приёме
-предложений пришлось разбирать тремя разовыми доказательствами подряд.
+The intake answers with a refusal and writes a row about it. While only the kind of the cargo, the
+sign of the tree, the code and the number of the request stood in that row, there was nothing to take
+apart by it: a five-hundredth at the intake of the proposals had to be taken apart by three one-off
+proofs in a row.
 
-Здесь: что приёмник пишет об отказе, в каком виде и что из написанного наружу не уходит.
+Here: what the intake writes about a refusal, in which shape and what of the written does not go
+outward.
 
-## Терминология
+## Terminology
 
-Словарь домена целиком — в спеке рядом. Здесь только то, что живёт в журнале:
+The vocabulary of the domain whole is in the spec next to it. Here only what lives in the journal:
 
-| Термин              | Что это                                                                                     |
-| ------------------- | ------------------------------------------------------------------------------------------- |
-| Строка журнала      | Одна запись вывода приёмника: имя, уровень и поля                                           |
-| Имя строки          | Постоянная часть записи, по которой строки одного рода собираются вместе                    |
-| Поля строки         | Всё переменное, что приёмник знает о случившемся, объектом рядом с именем                   |
-| Разобранная причина | Ошибка полями: класс, текст, код хранилища, его подробности, ответ драйвера, срезанный стек |
-| Вычистка            | Замена значения поля по имени ключа до того, как строка ушла в вывод                        |
-| Срезанный стек      | Первые строки стека — дальше идёт обвязка каркаса, одинаковая у всех отказов                |
+| Term                 | What it is                                                                                                           |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| A row of the journal | One record of the output of the intake: the name, the level and the fields                                           |
+| The name of a row    | The constant part of the record, by which rows of one kind are gathered together                                     |
+| The fields of a row  | Everything variable the intake knows about what happened, as an object next to the name                              |
+| A taken-apart reason | An error by fields: the class, the text, the code of the storage, its details, the answer of the driver, a cut stack |
+| A cleaning           | The replacement of the value of a field by the name of the key before the row went into the output                   |
+| A cut stack          | The first lines of the stack — further on goes the harness of the framework, one and the same at every refusal       |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Своего интерфейса нет: строки журнала читает тот, у кого есть доступ к узлу, командой вывода
-контейнера.
+There is no interface of its own: the rows of the journal are read by whoever has access to the node,
+by the command of the output of the container.
 
-## Правила
+## Rules
 
-**Что приёмник пишет об отказе.**
+**What the intake writes about a refusal.**
 
-- **Отказ пишется разобранной причиной, а не одним текстом.** Класс, текст, код хранилища, его
-  подробности, ответ драйвера и срезанный стек — каждое своим полем. Строка, собранная
-  подстановкой, разбирается глазами и отбирается только поиском по подстроке.
-- **Причина разворачивается по цепочке до предела глубины.** Клиент хранилища прячет настоящий
-  ответ базы вложенной причиной, и первый уровень называет обёртку, а не то, что случилось.
-- **Ошибка хранилища узнаётся формой кода, а не классом.** Код вида `P2022` устойчив, а
-  проверка классом тянула бы клиент хранилища в слой журнала.
-- **Стек пишется срезанным.** Дальше первых строк идёт обвязка каркаса, одинаковая у всех
-  отказов; полный стек делает строку нечитаемой, не прибавляя к ней ничего.
-- **Отказ по вводу и правам пишется без стека.** Это сработавшая проверка: со стеком она
-  выглядит поломкой и забивает собой настоящие.
+- **A refusal is written as a taken-apart reason, not as one text.** The class, the text, the code of
+  the storage, its details, the answer of the driver and the cut stack — each by a field of its own.
+  A row put together by substitution is taken apart by the eyes and is picked out only by a search
+  over a substring.
+- **The reason is unfolded along the chain up to the limit of the depth.** The client of the storage
+  hides the real answer of the database as a nested reason, and the first level names the wrapper, not
+  what happened.
+- **An error of the storage is recognised by the shape of the code, not by the class.** A code of the
+  form `P2022` is stable, while a check by the class would pull the client of the storage into the
+  layer of the journal.
+- **The stack is written cut.** Past the first lines goes the harness of the framework, one and the
+  same at every refusal; the whole stack makes the row unreadable and adds nothing to it.
+- **A refusal by the input and by the rights is written without a stack.** This is a check that
+  worked: with a stack it looks like a breakage and drowns the real ones.
 
-**В каком виде приёмник пишет.**
+**In which shape the intake writes.**
 
-- **Строка журнала машинная: имя и поля объектом.** Поля отбираются и вычищаются по именам; у
-  текста, собранного подстановкой, ни того ни другого сделать нельзя.
-- **Имя строки постоянно, а всё переменное лежит полями.** Иначе строки одного рода не
-  собираются вместе: номер обращения в имени делает каждую запись единственной в своём роде.
-- **Вне прода строка печатается читаемой.** Разбор своего прогона иначе превращается в чтение
-  машинного вида глазами.
-- **Уже написанные вызовы журнала пишут так же, ничего в них не правя.** Журнал ставится на всё
-  приложение, и строки каркаса идут тем же путём, что и свои.
-- **Поля вычищаются по имени ключа, а не по виду значения.** Угадывать секрет по форме строки —
-  значит однажды не угадать; имя ключа известно заранее и стоит рядом со значением.
-- **Пароль, токен и хеш вырезаются целиком.** Они попадают в поля вместе с телом запроса и
-  подробностями хранилища, а вычищать записанное дороже, чем не записать.
-- **Текст ошибки внутри разобранной причины вычисткой не съедается.** Поле с именем текста
-  внутри причины — это текст ошибки, а не текст человека, и общее правило про свободный текст
-  съедало бы ровно то, ради чего всё заведено.
-- **Обход в глубину и в длину ограничен.** Журнал — не выгрузка: объект глубже нескольких
-  уровней стоит столько же, сколько сам запрос, а читается хуже. Этим же пределом обрывается
-  циклическая ссылка в полях — иначе запись уронила бы запрос, ради журнала которого её
-  и складывали.
+- **The row of the journal is machine-readable: the name and the fields as an object.** The fields are
+  picked out and cleaned by their names; at a text put together by substitution neither of the two can
+  be done.
+- **The name of the row is constant, and everything variable lies as fields.** Otherwise rows of one
+  kind are not gathered together: the number of the request in the name makes every record the only
+  one of its kind.
+- **Outside production the row is printed readable.** Taking apart one's own run otherwise turns into
+  reading the machine shape by the eyes.
+- **The already written calls of the journal write the same way, with nothing edited in them.** The
+  journal is put on the whole application, and the rows of the framework go by the same way as one's
+  own.
+- **The fields are cleaned by the name of the key, not by the look of the value.** Guessing a secret by
+  the shape of a string means failing to guess one day; the name of the key is known in advance and
+  stands next to the value.
+- **A password, a token and a hash are cut out whole.** They get into the fields together with the body
+  of the request and the details of the storage, and cleaning what was written is dearer than not
+  writing it.
+- **The text of the error inside a taken-apart reason is not eaten by the cleaning.** A field with the
+  name of a text inside a reason is the text of the error, not the text of a person, and the general
+  rule about free text would eat exactly what all of this is created for.
+- **The walk in depth and in length is limited.** The journal is not an unloading: an object deeper
+  than a few levels costs as much as the request itself and reads worse. The same limit breaks off a
+  cyclic reference in the fields — otherwise the record would fell the very request it was put
+  together for the journal of.
 
-## Что не входит
+## What is out of scope
 
-- **Хранилище отказов.** Группы отказов, их вхождения, чистка по сроку и предел роста —
-  отдельная работа с миграцией. Написанное живёт выводом контейнера.
-- **Экран отказов для владельца и право на него.** Смотреть отказы без доступа к узлу пока
-  нечем.
-- **Номер обращения на каждый запрос.** Он заводится на отказ: строк об одном обращении у
-  приёмника ровно одна, и связывать нечего.
-- **Тела запроса и ответа в полях строки журнала.** Груз приезжает мегабайтами, и запись его в
-  журнал переполнила бы вывод узла быстрее, чем пригодилась бы.
-- **Адрес отправителя в логах.** Приёмник его не пишет: за проксировщиком это требует и доверия
-  к заголовку, и правки самого приёмника.
+- **A storage of the refusals.** The groups of the refusals, their occurrences, the cleaning by a term
+  and the limit of the growth — separate work with a migration. What is written lives by the output of
+  the container.
+- **A screen of the refusals for the owner and the right to it.** There is nothing yet to look at the
+  refusals with, without access to the node.
+- **A number of the request at every request.** It is created per refusal: the intake has exactly one
+  row about one request, and there is nothing to link.
+- **The bodies of the request and of the answer in the fields of a row of the journal.** The cargo
+  arrives by megabytes, and writing it into the journal would overflow the output of the node faster
+  than it would come in useful.
+- **The address of the sender in the logs.** The intake does not write it: behind the proxy that
+  demands both trust in the header and an edit of the intake itself.
 
-## Контракт
+## Contract
 
-Поверхность приёмника не меняется ни одной операцией: те же операции, те же коды ответа, тот же
-текст отказа тому, кто спрашивал. Меняется то, что приёмник пишет о себе.
+The surface of the intake does not change by a single operation: the same operations, the same codes
+of the answer, the same text of the refusal to whoever asked. What changes is what the intake writes
+about itself.
 
-| Что                          | Было                                          | Стало                                            |
-| ---------------------------- | --------------------------------------------- | ------------------------------------------------ |
-| строка отказа                | текст с родом груза, деревом, кодом и номером | имя и поля, среди них — разобранная причина      |
-| подробности ошибки хранилища | нет нигде                                     | поля с кодом, подробностями и ответом драйвера   |
-| стек                         | нет нигде                                     | срезанный, у поломок; у отказов по вводу его нет |
-| вычистка секретов            | нечем: полей нет                              | по имени ключа, до вывода                        |
-| вид строки вне прода         | текст                                         | читаемый вид с теми же полями                    |
+| What                                    | It was                                                               | It became                                                      |
+| --------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------- |
+| the row of a refusal                    | a text with the kind of the cargo, the tree, the code and the number | the name and the fields, among them the taken-apart reason     |
+| the details of an error of the storage  | nowhere                                                              | fields with the code, the details and the answer of the driver |
+| the stack                               | nowhere                                                              | cut, at the breakages; at refusals by the input there is none  |
+| the cleaning of the secrets             | nothing to do it with: there are no fields                           | by the name of the key, before the output                      |
+| the shape of the row outside production | a text                                                               | a readable shape with the same fields                          |
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: поддомен не добавляет ни одной операции и ни одного отказа — приёмник
-отвечает теми же кодами, что и раньше.
+Not applicable: the subdomain adds not a single operation and not a single refusal — the intake
+answers with the same codes as before.
 
-## Данные
+## Data
 
-Своих таблиц поддомен не заводит: написанное живёт выводом контейнера — тремя файлами по десять
-мегабайт, с затиранием.
+The subdomain creates no tables of its own: what is written lives by the output of the container —
+three files of ten megabytes each, with overwriting.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: своих экранов нет. Журнал читают командой с узла.
+Not applicable: there are no screens of its own. The journal is read by a command from the node.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: строки журнала не переводятся — их читает тот, кто чинит службу.
+Not applicable: the rows of the journal are not translated — they are read by whoever fixes the
+service.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо: своих экранов нет.
+Not applicable: there are no screens of its own.
 
-### Мультиобъектность
+### Several objects
 
-Служба одна, и журнал у неё один.
+The service is one, and its journal is one.
 
-## Решения
+## Decisions
 
-- **Ошибка хранилища узнаётся формой кода, а не именем класса.** Код вида `P2022` устойчив, а
-  проверка классом тянула бы клиент хранилища в слой журнала.
-- **Строка машинная на проде и читаемая вне его.** Иначе работа над приёмником превращается в
-  чтение полей глазами.
-- **Циклическую ссылку в полях обрывает вычистка, а не сериализатор.** Обход кончается пределом
-  глубины раньше, чем строка уходит в вывод.
+- **An error of the storage is recognised by the shape of the code, not by the name of the class.** A
+  code of the form `P2022` is stable, while a check by the class would pull the client of the storage
+  into the layer of the journal.
+- **The row is machine-readable on production and readable outside it.** Otherwise the work on the
+  intake turns into reading the fields by the eyes.
+- **A cyclic reference in the fields is broken off by the cleaning, not by the serialiser.** The walk
+  ends by the limit of the depth before the row goes into the output.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом.
+The open questions of the domain are shared, and they live in the spec next to it.
 
-## История изменений
+## History of changes
 
-- 2026-08-16 — поддомен выделен из спека домена, переросшего предел длины. Правила, сценарии и
-  привязки журнала переехали сюда прежними: номера сценариев не пересчитывались.
+- 2026-08-16 — the subdomain was split out of the spec of the domain, which had outgrown the length
+  limit. The rules, the scenarios and the bindings of the journal moved here as they were: the
+  scenario numbers were not recounted.

@@ -1,8 +1,8 @@
-<ng-container rtBlock="rt-aside-section">
-    @if (heading()) {
-        <h3 rtElem="heading" qa-dataid="aside-section-heading">{{ heading() }}</h3>
-    }
-    <div rtElem="body" qa-dataid="aside-section-body">
+<ng-container rtBlock="rt-form">
+    <div rtElem="controls" qa-dataid="aside-section-body">
+        @if (heading()) {
+            <h3 rtElem="title" qa-dataid="aside-section-heading">{{ heading() }}</h3>
+        }
         <ng-content />
     </div>
 </ng-container>

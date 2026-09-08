@@ -1,96 +1,98 @@
-# Сценарии — расхождения внутри слоя правил
+# Scenarios — divergences inside the rules layer
 
-Номера при переезде из поддомена «Проверки» не менялись: идентификатор — единственное, чем
-сценарий связан с заголовком теста.
+The numbers did not change on the move from the subdomain "The checks": the identifier is the only
+thing a scenario is tied to a test title by.
 
-### SC-AK-765 — замещённое, о котором молчит компаньон, называется сверкой
+### SC-AK-765 — what is replaced and the companion is silent about is named by the audit
 
-Дано переменная профиля замещена, и её имени нет ни в одном компаньоне правила Когда идёт сверка
-надстроек профиля Тогда она отказывает и называет переменную по имени: читатель компаньона иначе
-получает пакетное умолчание вместо действующего порядка
+Given a profile variable is replaced, and its name is in not a single rule companion When the audit of
+the profile overrides runs Then it refuses and names the variable by name: the reader of the companion
+otherwise gets the package default instead of the acting order
 
-Покрыто: `projects/agent-kit/tests/checks-profile-drift.test.sh`.
+Covered: `projects/agent-kit/tests/checks-profile-drift.test.sh`.
 
-### SC-AK-766 — названное компаньоном замещение расхождением не считается
+### SC-AK-766 — a replacement named by a companion does not count as a divergence
 
-Дано имя замещённой переменной стоит в компаньоне правила Когда идёт сверка надстроек профиля
-Тогда она проходит; имя ищется по всем компаньонам дерева — правило у надстройки бывает своё
+Given the name of the replaced variable stands in a rule companion When the audit of the profile
+overrides runs Then it passes; the name is looked for across all the companions of the tree — an
+override has a rule of its own
 
-Покрыто: `projects/agent-kit/tests/checks-profile-drift.test.sh`.
+Covered: `projects/agent-kit/tests/checks-profile-drift.test.sh`.
 
-### SC-AK-767 — строка профиля, повторяющая умолчание пакета, замещением не бывает
+### SC-AK-767 — a profile line repeating the package default is never a replacement
 
-Дано переменная профиля задана значением умолчания пакета Когда идёт сверка надстроек профиля
-Тогда она проходит и в замещённые эту переменную не считает; та же переменная с другим значением
-замещает
+Given a profile variable is set to the value of the package default When the audit of the profile
+overrides runs Then it passes and does not count that variable among the replaced ones; the same
+variable with another value replaces
 
-Покрыто: `projects/agent-kit/tests/checks-profile-drift.test.sh`.
+Covered: `projects/agent-kit/tests/checks-profile-drift.test.sh`.
 
-### SC-AK-768 — сверять нечем — проверка молчит
+### SC-AK-768 — there is nothing to check with — the check stays silent
 
-Дано у дерева нет профиля, либо нет умолчаний пакета, либо нет компаньонов правил Когда идёт
-сверка надстроек профиля Тогда она говорит, чего не хватает, и уходит нулём
+Given the tree has no profile, or no package defaults, or no rule companions When the audit of the
+profile overrides runs Then it says what is missing and leaves with zero
 
-Покрыто: `projects/agent-kit/tests/checks-profile-drift.test.sh`.
+Covered: `projects/agent-kit/tests/checks-profile-drift.test.sh`.
 
-### SC-AK-769 — ветка тела, которой нет в объявлении, называется расхождением
+### SC-AK-769 — a branch of the body that is not in the declaration is named a divergence
 
-Дано тело гарда ветвится на имя инструмента, которого образец его объявления не покрывает Когда
-идёт сверка области гардов Тогда она отказывает и называет гард с этим именем: под ним гард не
-зовут, и ветка не исполняется ни разу. Объявление, дополненное до тела, проходит
+Given the body of a guard branches on a tool name the sample of its declaration does not cover When the
+guard scope audit runs Then it refuses and names the guard with that name: under it the guard is not
+called, and the branch is never carried out. A declaration completed to the body passes
 
-Покрыто: `projects/agent-kit/tests/checks-hook-scope.test.sh`.
+Covered: `projects/agent-kit/tests/checks-hook-scope.test.sh`.
 
-### SC-AK-770 — образец объявления читается выражением, а не списком имён
+### SC-AK-770 — the sample of a declaration is read as an expression, not as a list of names
 
-Дано объявление названо образцом со звёздочкой, а тело ветвится на имя, которое он покрывает
-Когда идёт сверка области гардов Тогда она проходит; образец, который не разобрать, покрытием не
-считается — под ним не совпадёт ни одно имя, а выглядит объявление написанным
+Given the declaration is named by a sample with an asterisk, and the body branches on a name it covers
+When the guard scope audit runs Then it passes; a sample that cannot be parsed does not count as
+coverage — not one name will match under it, while the declaration looks written
 
-Покрыто: `projects/agent-kit/tests/checks-hook-scope.test.sh`.
+Covered: `projects/agent-kit/tests/checks-hook-scope.test.sh`.
 
-### SC-AK-771 — судится ветвление, а не упоминание
+### SC-AK-771 — a branching is judged, not a mention
 
-Дано имя инструмента стоит в тексте отказа, в комментарии или веткой `case` по другому предмету
-Когда идёт сверка области гардов Тогда она молчит: ветка «всё остальное» именем инструмента тоже
-не бывает
+Given the tool name stands in the text of a refusal, in a comment or as a `case` branch over another
+subject When the guard scope audit runs Then it stays silent: the branch "everything else" is never a
+tool name either
 
-Покрыто: `projects/agent-kit/tests/checks-hook-scope.test.sh`.
+Covered: `projects/agent-kit/tests/checks-hook-scope.test.sh`.
 
-### SC-AK-772 — файл без объявления гардом не считается
+### SC-AK-772 — a file without a declaration does not count as a guard
 
-Дано в каталоге хуков лежит помощник без строки объявления либо каталога хуков нет вовсе Когда
-идёт сверка области гардов Тогда она молчит: помощники объявления не несут намеренно
+Given the hooks directory holds a helper without a declaration line, or there is no hooks directory at
+all When the guard scope audit runs Then it stays silent: the helpers carry no declaration on purpose
 
-Покрыто: `projects/agent-kit/tests/checks-hook-scope.test.sh`.
+Covered: `projects/agent-kit/tests/checks-hook-scope.test.sh`.
 
-### SC-AK-782 — проверка, выкушенная надстройкой из набора гейта, называется по имени
+### SC-AK-782 — a check cut out of the gate set by an override is named by name
 
-Дано умолчание пакета зовёт набором гейта пуша три проверки, а надстройка дерева объявила набор
-заново и одну из них отсеяла Когда идёт сверка расхождения профиля Тогда она отказывает и называет
-пропавшую по имени файла: выкушенная проверка ничем не отличима от той, которой в дереве нет
+Given the package default calls three checks as the push gate set, and the override of the tree
+declared the set anew and sifted one of them out When the audit of the profile divergence runs Then it
+refuses and names the one that vanished by the name of the file: a check cut out is indistinguishable
+from one that is not in the tree
 
-Покрыто: `projects/agent-kit/tests/checks-profile-drift.test.sh`.
+Covered: `projects/agent-kit/tests/checks-profile-drift.test.sh`.
 
-### SC-AK-783 — набор, который дерево не трогало, расхождением не бывает
+### SC-AK-783 — a set the tree did not touch is never a divergence
 
-Дано надстройка дерева набора гейта не объявляет Когда идёт сверка расхождения профиля Тогда о
-наборе она молчит и судит остальное своим порядком
+Given the override of the tree declares no gate set When the audit of the profile divergence runs Then
+it stays silent about the set and judges the rest in its own order
 
-Покрыто: `projects/agent-kit/tests/checks-profile-drift.test.sh`.
+Covered: `projects/agent-kit/tests/checks-profile-drift.test.sh`.
 
-### SC-AK-784 — та же проверка, позванная иначе, пропажей не считается
+### SC-AK-784 — the same check called differently does not count as vanished
 
-Дано надстройка зовёт ту же проверку другим запускателем и с другим доводом Когда идёт сверка
-расхождения профиля Тогда она проходит: сверяется имя файла, а не строка команды целиком — право
-дерева звать проверку по-своему расхождением не является
+Given the override calls the same check by another runner and with another argument When the audit of
+the profile divergence runs Then it passes: the name of the file is checked, not the line of the
+command whole — the right of the tree to call a check in its own way is no divergence
 
-Покрыто: `projects/agent-kit/tests/checks-profile-drift.test.sh`.
+Covered: `projects/agent-kit/tests/checks-profile-drift.test.sh`.
 
-### SC-AK-785 — умолчание без функции набора сверку не держит
+### SC-AK-785 — a default without a set function holds no audit
 
-Дано умолчание пакета функции набора гейта не объявляет вовсе Когда идёт сверка расхождения
-профиля Тогда о наборе она молчит и остальное судит по-прежнему: собрать набор нечем, и отказ
-идёт в пользу работы
+Given the package default declares no function of the gate set at all When the audit of the profile
+divergence runs Then it stays silent about the set and judges the rest as before: there is nothing to
+assemble the set with, and the refusal goes in favour of the work
 
-Покрыто: `projects/agent-kit/tests/checks-profile-drift.test.sh`.
+Covered: `projects/agent-kit/tests/checks-profile-drift.test.sh`.

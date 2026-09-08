@@ -1,491 +1,499 @@
-# Сценарии — гарды поставки и гейт пуша
+# Scenarios — the delivery guards and the push gate
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной. Префикс общий на домен, и номера при переезде в поддомен не
-пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier stands at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason. The prefix is shared by the domain, and
+the numbers were not recounted on the move into the subdomain: the number ties a scenario to a test
+title.
 
-### SC-AK-83 — PR от разошедшейся ветки отбивается
+### SC-AK-83 — a PR from a diverged branch is refused
 
-Дано главная ветка ушла вперёд, и в ветке задачи её нет
-Когда открывается PR
-Тогда открытие отбито, названо число коммитов расхождения и способ его снять
+Given the main branch went ahead, and it is not in the task branch
+When a PR is opened
+Then the opening is refused, the number of commits of the divergence is named and the way to lift it
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-84 — влитая главная ветка PR пропускает
+### SC-AK-84 — a merged main branch lets a PR through
 
-Дано главная ветка влита в ветку задачи
-Когда открывается PR
-Тогда гард пропускает вызов молча
+Given the main branch is merged into the task branch
+When a PR is opened
+Then the guard lets the call through silently
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-112 — заведённая проверка встаёт в гейт пуша
+### SC-AK-112 — a created check stands in the push gate
 
-Дано в дереве разложены проверка пакета и набор сценариев гардов
-Когда собирается список того, что гоняется перед пушем
-Тогда обе стоят в нём наравне со сборкой, линтом и спеками
+Given a package check and a set of guard scenarios are laid out in the tree
+When the list of what is run before the push is assembled
+Then both stand in it on a par with the build, the lint and the specs
 
-Покрыто: `projects/agent-kit/tests/defaults.test.sh`.
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
-### SC-AK-113 — проверки, которой в дереве нет, гейт не зовёт
+### SC-AK-113 — the gate does not call a check that is not in the tree
 
-Дано проверка пакета в это дерево не разложена
-Когда собирается список того, что гоняется перед пушем
-Тогда её в списке нет: отказ «нет такого файла» читался бы как поломка машины
+Given a package check is not laid out into this tree
+When the list of what is run before the push is assembled
+Then it is not in the list: a refusal "there is no such file" would read as a breakage of the machine
 
-Покрыто: `projects/agent-kit/tests/defaults.test.sh`.
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
-### SC-AK-114 — необъявленный шаг конвейера отбивает пуш
+### SC-AK-114 — an undeclared pipeline step refuses the push
 
-Дано в файле конвейера есть шаг, которому в настройке дерева нет ни строки набора, ни исключения
-Когда идёт проверка полноты набора гейта
-Тогда она называет этот шаг и отдаёт ненулевой код, а гард отбивает пуш
+Given the pipeline file holds a step that has neither a set line nor an exception in the setting of
+the tree
+When the check of the completeness of the gate set runs
+Then it names that step and gives back a non-zero code, and the guard refuses the push
 
-Покрыто: `projects/agent-kit/tests/checks-push-gate.test.sh`.
+Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
-### SC-AK-115 — объявленное исключение пуш не отбивает
+### SC-AK-115 — a declared exception refuses no push
 
-Дано шаг конвейера объявлен в настройке дерева исключением с причиной
-Когда идёт проверка полноты набора гейта
-Тогда шаг расхождением не считается, и проверка молчит о нём
+Given a pipeline step is declared in the setting of the tree as an exception with a reason
+When the check of the completeness of the gate set runs
+Then the step does not count as a divergence, and the check stays silent about it
 
-Покрыто: `projects/agent-kit/tests/checks-push-gate.test.sh`.
+Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
-### SC-AK-116 — исключение без причины расхождением остаётся
+### SC-AK-116 — an exception without a reason stays a divergence
 
-Дано шаг конвейера объявлен исключением, а причина при нём пуста
-Когда идёт проверка полноты набора гейта
-Тогда она требует причину и отдаёт ненулевой код: пустая причина исключением не считается
+Given a pipeline step is declared an exception, and the reason at it is empty
+When the check of the completeness of the gate set runs
+Then it demands a reason and gives back a non-zero code: an empty reason is no exception
 
-Покрыто: `projects/agent-kit/tests/checks-push-gate.test.sh`.
+Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
-### SC-AK-117 — объявленная строка, которой нет в наборе, краснеет
+### SC-AK-117 — a declared line that is not in the set turns red
 
-Дано шаг конвейера объявлен закрытым строкой, а `rt_push_checks` этой строки не печатает
-Когда идёт проверка полноты набора гейта
-Тогда она называет шаг и недостающую строку: объявление без исполнения — та же дыра
+Given a pipeline step is declared closed by a line, and `rt_push_checks` does not print that line
+When the check of the completeness of the gate set runs
+Then it names the step and the missing line: a declaration without execution is the same hole
 
-Покрыто: `projects/agent-kit/tests/checks-push-gate.test.sh`.
+Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
-### SC-AK-118 — дерево без файла конвейера сверку не получает
+### SC-AK-118 — a tree without a pipeline file gets no audit
 
-Дано файла конвейера в дереве нет
-Когда идёт проверка полноты набора гейта
-Тогда она молчит и отдаёт нулевой код: падать там, где конвейера нет, значит отбивать работу
+Given there is no pipeline file in the tree
+When the check of the completeness of the gate set runs
+Then it stays silent and gives back a zero code: falling where there is no pipeline refuses work
 
-Покрыто: `projects/agent-kit/tests/checks-push-gate.test.sh`.
+Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
-### SC-AK-178 — чужая почта у машинного имени отбивает пуш
+### SC-AK-178 — a foreign mail at a machine name refuses the push
 
-Дано во вкладе ветки есть коммит, назвавшийся машинной записью, а почта в нём не та, что
-объявлена профилем
-Когда идёт вызов пуша
-Тогда гард отказывает
+Given the contribution of the branch holds a commit that named itself by the machine record, and the
+mail in it is not the one the profile declares
+When a push call goes
+Then the guard refuses
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-179 — отказ называет коммит и обе почты
+### SC-AK-179 — the refusal names the commit and both mails
 
-Дано тот же коммит с расхождением в почте
-Когда идёт вызов пуша
-Тогда в тексте отказа стоят короткий хеш коммита, найденная почта и объявленная
+Given the same commit with the divergence in the mail
+When a push call goes
+Then the text of the refusal holds the short hash of the commit, the found mail and the declared one
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-180 — верная подпись пуш не задерживает
+### SC-AK-180 — a right signature holds up no push
 
-Дано весь вклад ветки подписан объявленной почтой
-Когда идёт вызов пуша
-Тогда гард пропускает
+Given the whole contribution of the branch is signed by the declared mail
+When a push call goes
+Then the guard lets it through
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-181 — коммит, назвавшийся человеком, не судится
+### SC-AK-181 — a commit that named itself by a person is not judged
 
-Дано во вкладе ветки есть коммит с чужими именем и почтой, и логина машинной записи в них нет
-Когда идёт вызов пуша
-Тогда гард пропускает: машинным этот коммит не назвался
+Given the contribution of the branch holds a commit with a foreign name and mail, and the login of
+the machine record is not in them
+When a push call goes
+Then the guard lets it through: this commit did not name itself a machine one
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-182 — судится вклад ветки, а не вся история
+### SC-AK-182 — the contribution of the branch is judged, not the whole history
 
-Дано коммит с чужой почтой от машинного имени лежит в главной ветке, а вклад ветки чист
-Когда идёт вызов пуша
-Тогда гард пропускает: влитое этой веткой не чинится
+Given a commit with a foreign mail under a machine name lies in the main branch, and the
+contribution of the branch is clean
+When a push call goes
+Then the guard lets it through: what is merged is not fixed by this branch
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-183 — дерево, не назвавшее почты, требования не получает
+### SC-AK-183 — a tree that named no mail gets no demand
 
-Дано профиль дерева почты машинной записи не называет
-Когда идёт вызов пуша с тем же расхождением
-Тогда гард пропускает молча
+Given the profile of the tree names no mail of a machine record
+When a push call goes with the same divergence
+Then the guard lets it through silently
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-184 — пробный пуш подписи не судит
+### SC-AK-184 — a dry push judges no signature
 
-Дано вклад ветки несёт расхождение в почте, а пуш вызван пробным
-Когда идёт вызов пуша
-Тогда гард пропускает: пробный пуш не отправляет ничего
+Given the contribution of the branch carries a divergence in the mail, and the push is called as a
+dry one
+When a push call goes
+Then the guard lets it through: a dry push sends nothing
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-753 — подпись судится и на коммите, а не только на отправке
+### SC-AK-753 — the signature is judged at the commit too, not only at the send
 
-Дано вклад ветки несёт коммит машинной записи с чужой почтой
-Когда идёт вызов коммита — обычного или переписывающего последний
-Тогда гард отбивает его тем же отказом, что и на отправке: промах делается на коммите и до
-отправки успевает лечь в несколько коммитов подряд. Верная подпись коммита не задерживает, а
-упоминание команды внутри строки вызовом не считается
+Given the contribution of the branch carries a commit of the machine record with a foreign mail
+When a commit call goes — an ordinary one or one rewriting the last
+Then the guard refuses it by the same refusal as at the send: the miss is made at the commit and
+lands in several commits in a row before the send. A right signature holds up no commit, and a
+mention of the command inside a string is no call
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-198 — очередь работ обходится без токена машинной записи
+### SC-AK-198 — the work queue does without the token of the machine record
 
-Дано дерево токена машинной записи не назвало
-Когда идёт перевод колонки задачи
-Тогда борда правится учётной записью, под которой залогинен клиент хостинга
+Given the tree named no token of a machine record
+When the column of a task is moved
+Then the board is edited by the account the hosting client is signed in under
 
-Покрыто: `projects/agent-kit/tests/checks-push-gate.test.sh`.
+Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
-### SC-AK-256 — сверка раскладки стоит в наборе гейта пуша
+### SC-AK-256 — the layout audit stands in the push gate set
 
-Дано в дереве лежит настройка раскладки
-Когда умолчание печатает набор гейта пуша
-Тогда сверка раскладки стоит в нём первой строкой: она отбивает за секунды, а расхождение
-разложенного с пакетом до неё не отбивало ничего
+Given the layout setting lies in the tree
+When the default prints the push gate set
+Then the layout audit stands first in it: it refuses within seconds, and before a divergence passed
 
-Покрыто: `projects/agent-kit/tests/defaults.test.sh`.
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
-### SC-AK-257 — дерево без настройки раскладки сверки не получает
+### SC-AK-257 — a tree without a layout setting gets no audit
 
-Дано настройки раскладки в дереве нет
-Когда умолчание печатает набор гейта пуша
-Тогда сверки в нём нет: дерево без настройки пакета не ставит, и звать в нём нечего
+Given there is no layout setting in the tree
+When the default prints the push gate set
+Then there is no audit in it: without the setting no package is installed and nobody to call
 
-Покрыто: `projects/agent-kit/tests/defaults.test.sh`.
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
-### SC-AK-258 — красная проверка набора отбивает пуш
+### SC-AK-258 — a red check of the set refuses the push
 
-Дано в наборе гейта стоит проверка, которая падает
-Когда идёт вызов пуша
-Тогда гард отбивает его и называет упавшую строку: красное отсюда проверяется уже на проде
+Given the gate set holds a check that falls
+When a push call goes
+Then the guard refuses it and names the fallen line: red from here is checked already on production
 
-Покрыто: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
-### SC-AK-259 — пуш с ключами между командой и подкомандой узнаётся гардом проверок
+### SC-AK-259 — a push with keys between the command and the subcommand is recognised by the checks guard
 
-Дано пуш идёт с ключами `-c` между `git` и `push` — помощник учётных данных и заголовок запроса
-Когда команда приходит гарду проверок
-Тогда он узнаёт её двумя признаками сразу и гоняет набор: подстрокой «git push» такую команду не
-поймать, а не пойманная она уходит в удалённое дерево, не задев ни одной проверки
+Given the push goes with the keys `-c` between `git` and `push` — a credentials helper and a request
+header
+When the command comes to the checks guard
+Then it recognises it by two signs at once and runs the set: such a command is not caught by the
+substring "git push", and uncaught it goes into the remote tree without touching a single check
 
-Покрыто: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
-### SC-AK-366 — несошедшиеся условия поставки называются одним отказом
+### SC-AK-366 — the delivery conditions that did not come together are named by one refusal
 
-Дано у ветки не сходятся сразу два условия — заголовок PR без номера и невлитая главная ветка
-Когда открывается PR
-Тогда открытие отбито одним отказом, и в нём стоят оба условия, каждое со своим действием
+Given the branch has two conditions failing at once — a PR title without a number and an unmerged
+main branch
+When a PR is opened
+Then the opening is refused by one refusal, and both conditions stand in it, each with its own action
 
-Покрыто: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
-### SC-AK-370 — заведение ветки отбивает основание без вершины главной
+### SC-AK-370 — creating a branch refuses a base without the tip of main
 
-Дано главная ветка ушла вперёд, а рабочая копия стоит на прежнем основании
-Когда заводится ветка с номером задачи
-Тогда заведение отбито, названо отставание числом коммитов и чем взять свежее основание;
-ветка без номера задачи так не судится
+Given the main branch went ahead, and the working copy stands on the former base
+When a branch with a task number is created
+Then the creation is refused, the lag is named as a number of commits and what to take a fresh base
+with; a branch without a task number is not judged this way
 
-Покрыто: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
-### SC-AK-371 — ветка от свежего основания заводится
+### SC-AK-371 — a branch from a fresh base is created
 
-Дано вершина главной ветки лежит в основании новой ветки
-Когда заводится ветка с номером задачи
-Тогда гард пропускает вызов молча
+Given the tip of the main branch lies in the base of the new branch
+When a branch with a task number is created
+Then the guard lets the call through silently
 
-Покрыто: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
-### SC-AK-372 — заведение ветки отбивает чужую почту коммитов
+### SC-AK-372 — creating a branch refuses a foreign mail of the commits
 
-Дано дерево объявило почту машинной записи, а рабочая копия подписывает коммиты другой
-Когда заводится ветка с номером задачи
-Тогда заведение отбито, и в отказе стоят обе почты — найденная и объявленная
+Given the tree declared the mail of a machine record, and the working copy signs commits with
+another
+When a branch with a task number is created
+Then the creation is refused, and the refusal holds both mails — the found one and the declared one
 
-Покрыто: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
-### SC-AK-373 — совпавшая и необъявленная почта заведение ветки не задерживают
+### SC-AK-373 — a matching and an undeclared mail hold up no branch creation
 
-Дано почта рабочей копии совпала с объявленной либо дерево почты не объявляло вовсе
-Когда заводится ветка с номером задачи
-Тогда гард пропускает вызов молча
+Given the mail of the working copy matched the declared one, or the tree declared no mail at all
+When a branch with a task number is created
+Then the guard lets the call through silently
 
-Покрыто: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
-### SC-AK-386 — ветка от названного свежего основания заводится
+### SC-AK-386 — a branch from a named fresh base is created
 
-Дано вершина главной ветки лежит в том основании, которое названо командой
-Когда заводится ветка с номером задачи — хоть через checkout, хоть через switch
-Тогда гард пропускает вызов молча
+Given the tip of the main branch lies in the base named by the command
+When a branch with a task number is created — by checkout or by switch
+Then the guard lets the call through silently
 
-Покрыто: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
-### SC-AK-387 — ветка от отставшего основания отбита
+### SC-AK-387 — a branch from a lagging base is refused
 
-Дано названное командой основание — вчерашнее, а рабочая копия стоит на отставшей вершине
-Когда заводится ветка с номером задачи
-Тогда заведение отбито и названо, чем взять основание от главной ветки; основание, которого
-дерево не знает, не судится вовсе
+Given the base named by the command is yesterday's, and the working copy stands on a lagging tip
+When a branch with a task number is created
+Then the creation is refused and how to take a fresh base is named; an unknown base is not judged
 
-Покрыто: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
-### SC-AK-388 — отставшая локальная ссылка отбивает заведение ветки
+### SC-AK-388 — a lagging local reference refuses the branch creation
 
-Дано удалённая вершина главной ветки ушла вперёд локальной ссылки на неё
-Когда заводится ветка с номером задачи
-Тогда заведение отбито, названы обе стороны расхождения и чем ссылка подтягивается
+Given the remote tip of the main branch went ahead of the local reference to it
+When a branch with a task number is created
+Then the creation is refused: both sides of the divergence and how to pull the reference are named
 
-Покрыто: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
-### SC-AK-389 — молчание опроса заведение ветки не задерживает
+### SC-AK-389 — silence of the poll holds up no branch creation
 
-Дано удалённую вершину главной ветки спросить не удалось
-Когда заводится ветка с номером задачи
-Тогда гард пропускает вызов молча
+Given the remote tip of the main branch could not be asked
+When a branch with a task number is created
+Then the guard lets the call through silently
 
-Покрыто: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
-### SC-AK-405 — переключение ветки и пуш одной командой отбиваются
+### SC-AK-405 — a branch switch and a push in one command are refused
 
-Дано в одной команде стоят переход на существующую ветку и пуш
-Когда команда приходит гарду гейта пуша
-Тогда она отбита целиком, и отказ называет законный ход: сперва переключиться, затем пушить
-отдельной командой — набор гейта гоняется по прежней ветке, а не по той, что уходит на хостинг
+Given one command holds a move to an existing branch and a push
+When the command comes to the push gate guard
+Then it is refused whole, and the refusal names the lawful move: first switch, then push by a
+separate command — the gate set is run by the former branch, not by the one going to the hosting
 
-Покрыто: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
-### SC-AK-406 — заведение новой ветки в той же команде пуш не отбивает
+### SC-AK-406 — creating a new branch in the same command refuses no push
 
-Дано в одной команде стоят заведение новой ветки и пуш на неё
-Когда команда приходит гарду гейта пуша
-Тогда она проходит: у свежей ветки дерево то же самое, что и было, и набор гоняется по нему
+Given one command holds the creation of a new branch and a push to it
+When the command comes to the push gate guard
+Then it passes: for a fresh branch the tree is the same as it was, and the set is run by it
 
-Покрыто: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
-### SC-AK-407 — пробный пуш формы команды не судит
+### SC-AK-407 — a dry push judges no shape of the command
 
-Дано в одной команде стоят переход на существующую ветку и пробный пуш
-Когда команда приходит гарду гейта пуша
-Тогда она проходит: пробный пуш ничего не отправляет, и судить по какому дереву он прошёл, нечего
+Given one command holds a move to an existing branch and a dry push
+When the command comes to the push gate guard
+Then it passes: a dry push sends nothing, and there is nothing to judge about which tree it passed by
 
-Покрыто: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
-### SC-AK-408 — отложенная правка пушем не считается
+### SC-AK-408 — a postponed edit does not count as a push
 
-Дано команда кладёт правку в тайник рабочей копии, и слово пуша стоит в ней отдельным
-Когда команда приходит гардам поставки
-Тогда набор гейта не гоняется и подпись не спрашивается: наружу такая команда не отправляет
-ничего. Настоящий пуш, стоящий в той же команде рядом с тайником, узнаётся по-прежнему
+Given the command puts the edit into the stash of the working copy, and the word of the push stands
+in it as a separate one
+When the command comes to the delivery guards
+Then the gate set is not run and the signature is not asked: such a command sends nothing outward. A
+real push standing in the same command next to the stash is recognised as before
 
-Покрыто: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
-### SC-AK-411 — перезапуск задания без прочитанного журнала отбит
+### SC-AK-411 — a restart of a step without a read journal is refused
 
-Дано за ход журнал упавшего задания не читался
-Когда идёт вызов перезапуска этого задания
-Тогда вызов отбит, и отказ называет задание вместе с командой, которой журнал читается
+Given the journal of the fallen step was not read during the turn
+When a call to restart that step goes
+Then the call is refused, and the refusal names the step and the command the journal is read by
 
-Покрыто: `projects/agent-kit/tests/rerun-guard.test.sh`.
+Covered: `projects/agent-kit/tests/rerun-guard.test.sh`.
 
-### SC-AK-412 — перезапуск после прочитанного журнала проходит
+### SC-AK-412 — a restart after a read journal passes
 
-Дано за тот же ход журнал этого задания прочитан
-Когда идёт вызов перезапуска
-Тогда он проходит: гард судит порядок, а не причину падения
+Given during the same turn the journal of this step was read
+When a restart call goes
+Then it passes: the guard judges the order, not the cause of the fall
 
-Покрыто: `projects/agent-kit/tests/rerun-guard.test.sh`.
+Covered: `projects/agent-kit/tests/rerun-guard.test.sh`.
 
-### SC-AK-413 — журнал соседнего задания перезапуск не открывает
+### SC-AK-413 — the journal of a neighbouring step opens no restart
 
-Дано за ход прочитан журнал другого задания
-Когда идёт вызов перезапуска нашего
-Тогда он отбит: по списку прогонов задания стоят рядом, а о нашем чужой журнал не говорит ничего
+Given during the turn the journal of another step was read
+When a call to restart ours goes
+Then it is refused: the jobs stand side by side in the run list, and a foreign journal says nothing
 
-Покрыто: `projects/agent-kit/tests/rerun-guard.test.sh`.
+Covered: `projects/agent-kit/tests/rerun-guard.test.sh`.
 
-### SC-AK-414 — перезапуск без номера задания не судится
+### SC-AK-414 — a restart without a number of a step is not judged
 
-Дано в команде перезапуска номера задания нет
-Когда команда приходит гарду
-Тогда она проходит: перезапуск последнего упавшего зовут и без номера, а угадывать задание
-значит отбивать наугад
+Given there is no number of a step in the restart command
+When the command comes to the guard
+Then it passes: a restart of the last fallen one is called without a number too, and a guessed step
+refuses at random
 
-Покрыто: `projects/agent-kit/tests/rerun-guard.test.sh`.
+Covered: `projects/agent-kit/tests/rerun-guard.test.sh`.
 
-### SC-AK-685 — тело без раздела об оставшемся шаге отбивает открытие заявки
+### SC-AK-685 — a body without the section about the remaining step refuses opening a request
 
-Дано дерево назвало образец обязательного раздела, а тело заявки его не несёт
-Когда идёт вызов открытия заявки
-Тогда гард отбивает его и называет, чего в теле не хватает и зачем этот раздел там стоит
+Given the tree named the sample of the mandatory section, and the body of the request does not carry
+it
+When a call to open a request goes
+Then the guard refuses it and names what the body is missing and what that section stands there for
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-686 — тело с разделом про него молчит
+### SC-AK-686 — about a body with the section it stays silent
 
-Дано дерево назвало образец, и заголовок раздела стоит в теле
-Когда идёт тот же вызов
-Тогда про раздел гард не говорит ничего; не назвавшее образца дерево не судится вовсе
+Given the tree named the sample, and the heading of the section stands in the body
+When the same call goes
+Then the guard says nothing about the section; a tree that named no sample is not judged at all
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-687 — тело, переданное файлом, судится наравне с доводом команды
+### SC-AK-687 — a body passed as a file is judged on a par with an argument of the command
 
-Дано тело заявки лежит в файле, названном доводом вызова
-Когда гард судит открытие заявки
-Тогда он читает файл с диска и требует раздел так же, как в теле, переданном строкой
+Given the body of the request lies in a file named by an argument of the call
+When the guard judges the opening of the request
+Then it reads the file from the disk and demands the section as in a body passed as a string
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-707 — живая задача в причине исключения проходит
+### SC-AK-707 — a live task in the reason of an exception passes
 
-Дано шаг конвейера объявлен исключением, причина которого называет заведённую задачу
-Когда идёт проверка полноты набора гейта пуша
-Тогда она выходит с успехом
+Given a pipeline step is declared an exception whose reason names a created task
+When the check of the completeness of the push gate set runs
+Then it leaves with success
 
-Покрыто: `projects/agent-kit/tests/checks-push-gate.test.sh`.
+Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
-### SC-AK-708 — мёртвый номер в причине делает отсрочку бессрочной
+### SC-AK-708 — a dead number in the reason makes the deferral endless
 
-Дано причина исключения называет задачу, которой в очереди работ нет
-Когда идёт проверка полноты набора гейта пуша
-Тогда она отказывает и называет номер: отсрочка со сроком и отсрочка без срока выглядят
-одинаково, пока номер никто не спросил
+Given the reason of the exception names a task that is not in the work queue
+When the check of the completeness of the push gate set runs
+Then it refuses and names the number: a deferral with a term and one without look the same
 
-Покрыто: `projects/agent-kit/tests/checks-push-gate.test.sh`.
+Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
-### SC-AK-709 — молчащая очередь работ проверку не роняет
+### SC-AK-709 — a silent work queue does not take the check down
 
-Дано очереди работ у дерева нет либо она отказала — нет сети, нет доступа
-Когда идёт проверка полноты набора гейта пуша
-Тогда она судит как прежде и о живости задач молчит
+Given the tree has no work queue or it refused — no network, no access
+When the check of the completeness of the push gate set runs
+Then it judges as before and stays silent about the liveness of the tasks
 
-Покрыто: `projects/agent-kit/tests/checks-push-gate.test.sh`.
+Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
-### SC-AK-763 — номер заголовка вынимается той же формой, что его задаёт
+### SC-AK-763 — the number of the title is taken out by the same shape that sets it
 
-Дано дерево замостило форму заголовка заявки своей
-Когда гард поставки сверяет номер заголовка с номером ветки
-Тогда он вынимает номер из той части заголовка, которую признала сама форма: своя вторая
-регулярка знала только пакетную форму, при замещённой отдавала пустой номер, и сверка молча не
-выполнялась вовсе, выглядя при этом сошедшейся
+Given the tree overrode the shape of the request title with its own
+When the delivery guard checks the number of the title against the number of the branch
+Then it takes the number out of the part of the title the shape itself recognised: a second
+expression of its own knew only the package shape, gave back an empty number at an overridden one,
+and the check was silently not performed at all, looking as if it came together
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-820 — чем набор гейта уже набора конвейера
+### SC-AK-820 — what the gate set is narrower than the pipeline set by
 
-Дано в дереве зелёный набор перед пушем и первый пуш за сессию
-Когда гард гоняет набор
-Тогда он говорит, что набор гейта — не набор конвейера, и называет, где посмотреть его целиком
+Given the tree has a green set before the push and this is the first push of the session
+When the guard runs the set
+Then it says that the gate set is not the pipeline set, and names where to see it whole
 
-Дано в той же сессии идёт второй пуш
-Когда гард гоняет набор
-Тогда о разнице он молчит: на каждый пуш строка повторялась бы за заход десятки раз
+Given a second push goes in the same session
+When the guard runs the set
+Then it stays silent about the difference: on every push the line would repeat dozens of times
 
-Покрыто: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
-### SC-AK-821 — итоговый набор перед пушем виден в разборе состояния
+### SC-AK-821 — the final set before the push is visible in the state report
 
-Дано дерево объявило набор умолчанием профиля
-Когда зовётся разбор состояния
-Тогда он печатает набор целиком, по команде на строку
+Given the tree declared the set by the default of the profile
+When the state report is called
+Then it prints the set whole, one command per line
 
-Дано надстройка дерева выкусила проверку из умолчания
-Когда зовётся разбор состояния
-Тогда выкушенная строка названа отдельно — как то, что умолчание печатало, а в набор не попало
+Given an override of the tree cut a check out of the default
+When the state report is called
+Then the cut-out line is named apart — as what the default printed and what did not get into the set
 
-Дано профиля дерева нет вовсе
-Когда зовётся разбор состояния
-Тогда раздел называет причину, а не молчит
+Given there is no profile of the tree at all
+When the state report is called
+Then the section names the reason instead of staying silent
 
-Покрыто: `projects/agent-kit/src/lib/commands.spec.ts`.
+Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
 
-### SC-AK-830 — номер ветки вынимает профиль, а не гард
+### SC-AK-830 — the number of the branch is taken out by the profile, not by the guard
 
-Дано ветка названа `feat/88-add-select-button` — форма, законная по профилю дерева
-Когда гард поставки разбирает заведение этой ветки
-Тогда номер задачи он получает от профиля и судит ветку наравне с `RT-88-slug`: своя регулярка
-знала одну приставку, оставляла номер пустым, и проверка формы при заведении не срабатывала на
-такой ветке ни разу
+Given the branch is named `feat/88-add-select-button` — a shape lawful by the profile of the tree
+When the delivery guard takes apart the creation of this branch
+Then it gets the task number from the profile and judges the branch on a par with `RT-88-slug`: an
+expression of its own knew one prefix and never fired on such a branch
 
-Дано заявка открывается с ветки `feat/88-add-select-button`, а в заголовке стоит номер 89
-Когда гард сверяет номер заголовка с номером ветки
-Тогда он отбивает расхождение: прежде этот блок пропускался молча, выглядя сошедшимся
+Given a request is opened from the branch `feat/88-add-select-button`, the title holding 89
+When the guard checks the number of the title against the number of the branch
+Then it refuses the divergence: before, the block was skipped silently and looked agreed
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-832 — глагол команды ищется в его позиции, а не подстрокой
+### SC-AK-832 — the verb of a command is looked for in its position, not as a substring
 
-Дано коммит зовётся с ключами между командой и глаголом, а рядом идёт чтение истории со словом
-`commit` в доводе
-Когда гард главной ветки разбирает команду
-Тогда коммит отбит, а чтение истории и поиск по дереву пропущены: голый поиск подстроки
-промахивался в обе стороны
+Given a commit is called with keys between the command and the verb, and next to it goes a read of
+the history with the word `commit` in an argument
+When the main branch guard takes the command apart
+Then the commit is refused, and the read of the history and the search are let through: a bare
+substring search missed both ways
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-835 — гейт пуша пишет строку наблюдения на каждый свой исход
+### SC-AK-835 — the push gate writes an observation line for every outcome of its own
 
-Дано набор гейта зелёный, красный либо ненайденный
-Когда идёт пуш
-Тогда в наблюдения дерева ложится строка рода `push-gate` с исходом — `green`, `red` либо
-`no-checks`, — и молчание перестаёт означать разом «всё зелено» и «проверять было нечем»
+Given the gate set is green, red or not found
+When the push goes
+Then a line of the kind `push-gate` with the outcome — `green`, `red` or `no-checks` — lands in the
+observations, and silence stops meaning both "everything is green" and "there was nothing to check"
 
-Покрыто: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
-### SC-AK-851 — у красного по вине самой проверки есть свой ход
+### SC-AK-851 — red through the fault of the check itself has a move of its own
 
-Дано набор гейта красный
-Когда гард запрещает пуш
-Тогда отказ называет три варианта: починить названное; починить саму проверку — разобрать отказы
-поимённо и показать разбор владельцу; либо принести владельцу цену обхода. Список известного при
-этом назван неверным вариантом: он хранит принятое, а не результаты сломанной проверки
+Given the gate set is red
+When the guard forbids the push
+Then the refusal names three options: fix what is named; fix the check itself — take the refusals
+apart by name and show the analysis to the owner; or bring the owner the price of a bypass. The known
+list is named as a wrong option at that: it keeps the accepted, not the results of a broken check
 
-Покрыто: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
-### SC-AK-872 — заведение ветки узнаётся и с флагом между глаголом и -b
+### SC-AK-872 — creating a branch is recognised with a flag between the verb and -b too
 
-Дано ветка заводится строкой `git checkout -q -b` либо `git switch -q -c`
-Когда её разбирают гард поставки, гард спора заявок, гард набора пуша, гард ожидания и страж
-выходов хода
-Тогда каждый судит её так же, как форму без флага: имя ветки и основание проверены, спор с
-открытой заявкой отбит, пуш новой ветки пропущен, взятая работа замечена
+Given the branch is created by the line `git checkout -q -b` or `git switch -q -c`
+When it is taken apart by the delivery, request conflict, push set and waiting guards and the
+watchman of the turn exits
+Then each judges it as the shape without the flag: the name and the base are checked, a conflict with
+an open request is refused, the push of a new branch passes, the work taken is noticed
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`,
+Covered: `projects/agent-kit/tests/git-guards.test.sh`,
 `projects/agent-kit/tests/git-guard-conflict.test.sh`,
 `projects/agent-kit/tests/git-guard-push-tests.test.sh`,
 `projects/agent-kit/tests/waiting-turn-guard.test.sh`,
 `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-882 — коммит под записью, которой дерево не объявляло
+### SC-AK-882 — a commit under a record the tree did not declare
 
-Дано дерево назвало профилем почты своих людей, а во вкладе ветки лежит коммит с чужой почтой
-Когда гард поставки судит отправку
-Тогда он отбивает её и называет коммит с его почтой: прежде судился только коммит, назвавшийся
-машинной записью, и запись, деревом не объявленная, проходила молча
+Given the tree named the mails of its people in the profile, and the contribution of the branch holds
+a commit with a foreign mail
+When the delivery guard judges the send
+Then it refuses it and names the commit with its mail: before, only a commit naming itself by the
+machine record was judged, and an undeclared record passed silently
 
-Дано почты людей профилем не названы
-Когда гард поставки судит ту же отправку
-Тогда он молчит: требовать известной подписи от каждого коммита значило бы отбивать работу,
-сделанную человеком своими руками
+Given the mails of the people are not named in the profile
+When the delivery guard judges the same send
+Then it stays silent: demanding a known signature of every commit would refuse work done by hand
 
-### SC-AK-884 — имя ветки с хвостом -b в доводе основания телом заявки не считается
+### SC-AK-884 — a branch name with the tail -b in the base argument does not count as a request body
 
-Дано тело заявки лежит в файле, а основанием названа ветка, чьё имя кончается на `-b`
-Когда гард судит открытие заявки — с доводами после имени и с именем последним словом
-Тогда он читает тело из файла и про раздел молчит; файл без раздела при том же имени отбит
+Given the body of the request lies in a file, and the base is named by a branch whose name ends with
+`-b`
+When the guard judges the opening of the request — with arguments after the name and with the name as
+the last word
+Then it reads the body from the file and stays silent about the section; a file without it refuses
 
-Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.

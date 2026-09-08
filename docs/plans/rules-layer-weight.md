@@ -1,235 +1,254 @@
-# Слой правил стоит захода дёшево: текст режется, смысл остаётся
+# The rules layer costs a session cheaply: the text is cut, the meaning stays
 
-Одной фразой: заход тратит на законы, правила и скилы вдвое меньше, чем сегодня, и ни одно
-требование при этом не пропадает.
+In one phrase: a session spends twice less on the laws, the rules and the skills than today, and not
+a single requirement is lost at that.
 
-Карточка эпика — задача RT-1125. Порядок задач держит эта запись.
+The card of the epic is the task RT-1125. The order of the tasks is held by this record.
 
-## Чем эпик обоснован
+## What the epic is grounded on
 
-Замеры сняты 25 августа 2026 года на этом дереве. Числа верны на этот день и пересчитываются
-командами, названными рядом.
+The measurements were taken on 25 August 2026 on this tree. The numbers are true for that day and are
+recounted by the commands named next to them.
 
-| Что                                                  |    Объём |
-| ---------------------------------------------------- | -------: |
-| Описания скилов — в системном промпте каждого захода |    41 КБ |
-| Словарь — хуком на старте захода                     |    30 КБ |
-| Карта хода и указатель законов — хуками на старте    |     8 КБ |
-| Одно правило при загрузке                            | 14–42 КБ |
-| Законы, все четырнадцать                             |   121 КБ |
-| Правила и паттерны, сто восемь файлов                |  1,42 МБ |
+| What                                                                   | The volume |
+| ---------------------------------------------------------------------- | ---------: |
+| The descriptions of the skills — in the system prompt of every session |      41 KB |
+| The glossary — by a hook at the start of a session                     |      30 KB |
+| The map of the turn and the index of the laws — by hooks at the start  |       8 KB |
+| One rule at a loading                                                  |   14–42 KB |
+| The laws, all fourteen                                                 |     121 KB |
+| The rules and the patterns, a hundred and eight files                  |    1.42 MB |
 
-Вес слоя — `find .claude/skills -name '*.md' -exec wc -c {} + | tail -1`, то же по
-`docs/constitution`. Вес описаний — `awk '/^description:/{s+=length($0)} END{print s}'` по
-файлам правил. Вывод хуков старта — запуском самих хуков с готовым вводом.
+The weight of the layer — `find .claude/skills -name '*.md' -exec wc -c {} + | tail -1`, the same by
+`docs/constitution`. The weight of the descriptions — `awk '/^description:/{s+=length($0)} END{print
+s}'` over the files of the rules. The output of the hooks of the start — by a launch of the hooks
+themselves with a ready input.
 
-Заход, в котором писан этот замысел, потратил 79 КБ на старте и 114 КБ на четыре правила —
-прежде чем дошёл до первой строки работы.
+The session this plan was written in spent 79 KB at the start and 114 KB on four rules — before it
+reached the first line of the work.
 
-Эпик о цене входа, закрытый 23 августа 2026 года, разносил текст по файлам так, чтобы заход брал
-часть, а не всё. Объём он не резал и записал это себе в раздел о том, чего не делает; слой после
-него стал тяжелее. Этот эпик берёт ровно то, что тот из себя исключил.
+The epic about the price of the entry, closed on 23 August 2026, laid the text out over the files so
+that a session takes a part, not everything. It did not cut the volume and wrote that into its own
+section about what it does not do; the layer became heavier after it. This epic takes exactly what
+that one excluded from itself.
 
-## Порядок задач
+## The order of the tasks
 
-| №   | Задача                                              | Почему здесь                                                                                      |
-| --- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| 1   | RT-1126 · Цена входа считается командой             | без числа ни одна следующая задача не докажет выигрыш                                             |
-| 2   | RT-1131 · Описания скилов обрезаны                  | 41 КБ в каждом заходе без исключения; ни от чего не зависит и даёт больше всех на один заход      |
-| 3   | RT-1132 · Форма сжатой статьи объявлена             | механизм, на котором стоят четыре следующие задачи: что остаётся в правиле, а что уезжает в холод |
-| 4   | RT-1133 · Показовое правило сжато целиком           | образец для остальных и первое настоящее число экономии; берётся самое тяжёлое из грузимых        |
-| 5   | RT-1134 · Крупные правила сжаты по образцу          | основной объём; нужен образец из задачи 4                                                         |
-| 6   | RT-1135 · Паттерны сжаты по образцу                 | сделана 25 августа: приёма хватило на 394 знака — вес паттернов лежит вне цены входа, см. ниже    |
-| 7   | RT-1136 · Законы сжаты                              | 121 КБ; идут после правил — статья закона правится, когда видно, во что она разворачивается ниже  |
-| 8   | RT-1137 · Словарь и карта хода обрезаны             | 38 КБ на старте каждого захода; независима от прочих                                              |
-| 9   | RT-1138 · Текст отказа гарда сокращён               | отказ вклеивает перечень статей поверх правила, которое грузится следом; сжатая статья дешевле    |
-| 10  | RT-1139 · Предел длины правила пересчитан по новому | закрепляет достигнутое: без предела текст отрастает обратно. Раньше покраснеет на несжатом        |
+| №   | Task                                                             | Why here                                                                                                                                   |
+| --- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | RT-1126 · The price of the entry is counted by a command         | without a number not a single next task will prove the gain                                                                                |
+| 2   | RT-1131 · The descriptions of the skills are cut                 | 41 KB in every session without exception; it depends on nothing and gives the most per session                                             |
+| 3   | RT-1132 · The shape of a compressed article is declared          | the mechanism the four next tasks stand on: what stays in the rule and what leaves for the cold                                            |
+| 4   | RT-1133 · The showing rule is compressed whole                   | the sample for the rest and the first real number of the saving; the heaviest of the loaded ones is taken                                  |
+| 5   | RT-1134 · The large rules are compressed by the sample           | the main volume; it needs the sample from the task 4                                                                                       |
+| 6   | RT-1135 · The patterns are compressed by the sample              | done on 25 August: the technique was enough for 394 characters — the weight of the patterns lies outside the price of the entry, see below |
+| 7   | RT-1136 · The laws are compressed                                | 121 KB; they go after the rules — an article of a law is edited when it is visible what it unfolds into below                              |
+| 8   | RT-1137 · The glossary and the map of the turn are cut           | 38 KB at the start of every session; independent of the rest                                                                               |
+| 9   | RT-1138 · The text of the refusal of a guard is shortened        | the refusal glues in the list of the articles over the rule that is loaded next; a compressed article is cheaper                           |
+| 10  | RT-1139 · The length limit of a rule is recounted by the new one | it nails down what is achieved: without a limit the text grows back. Earlier it will turn red on what is not compressed                    |
 
-Порядок назначен и держится до конца эпика. Пересмотр — решение владельца, и записывается он в
-ход работы той задачи, которая его вызвала.
+The order is assigned and holds to the end of the epic. A reconsideration is a decision of the owner,
+and it is written into the progress of the task that called it.
 
-## Что в эпик не входит
+## What is not in the epic
 
-- **Ни одно требование не снимается и ни один гард не ослабевает.** Пропавшая статья — промах, а
-  не экономия. Эпик режет довод, пример и пересказ происшествия, а не то, что требуется.
-- **Спеки доменов не трогаются.** Их 1,64 МБ, но целиком в заход они не грузятся — читаются
-  выборочно, и выгода там ниже, а риск потерять смысл выше.
-- **Текст не разносится по новым файлам.** Это делал прежний эпик, и слой от этого стал тяжелее.
-  Здесь текст режется; переезд довода в холодную часть — механизм задачи 3, а не способ считать
-  выигрыш.
-- **Раскладка, надстройки и карта гейта остаются как есть.** Задача про отказ меняет текст
-  отказа, а не то, что гард судит.
-- **Код приложения не трогается.** Правятся ресурсы пакета правил и тексты дерева.
+- **Not a single requirement is lifted and not a single guard weakens.** A lost article is a miss, not
+  a saving. The epic cuts an argument, an example and a retelling of an incident, not what is required.
+- **The specs of the domains are not touched.** There are 1.64 MB of them, but they are not loaded into
+  a session whole — they are read selectively, and the gain there is lower and the risk of losing the
+  meaning higher.
+- **The text is not laid out over new files.** The former epic did that, and the layer became heavier
+  from it. Here the text is cut; the moving of an argument into the cold part is the mechanism of the
+  task 3, not a way to count the gain.
+- **The layout, the overrides and the gate map stay as they are.** The task about the refusal changes
+  the text of the refusal, not what the guard judges.
+- **The code of the application is not touched.** The resources of the package of the rules and the
+  texts of the tree are edited.
 
-Границы перечитаны 26 августа 2026 года, на закрытии эпика, и все пять выдержаны. Две из них
-стоит прочитать вместе с тем, чем они обернулись.
+The boundaries were reread on 26 August 2026, at the closing of the epic, and all five held. Two of
+them are worth reading together with what they turned into.
 
-Текст по новым файлам не разносился, но холодные части у правил завелись — их девять
-(`ls .claude/skills/*/pitfalls.md`). Это тот самый механизм задачи 3: довод уезжает из правила,
-которое грузится всегда, в файл, который открывают по требованию. Выигрыш при этом считался по
-входу в работу, а не по тому, сколько знаков переехало.
+The text was not laid out over new files, but the rules got cold parts — there are nine of them
+(`ls .claude/skills/*/pitfalls.md`). That is the very mechanism of the task 3: an argument leaves the
+rule that is always loaded for a file that is opened on demand. The gain at that was counted by the
+entry into the work, not by how many characters moved.
 
-Спеки доменов не тронуты: их 134 файла и 1 642 676 байт — `find docs/specs -name '*.md' -exec
-wc -c {} + | tail -1`, — то есть больше всего слоя правил. В заход они целиком не грузятся, и
-эпик их не касался ни одной задачей.
+The specs of the domains are not touched: they are 134 files and 1 642 676 bytes — `find docs/specs
+-name '*.md' -exec wc -c {} + | tail -1` — that is, more than the whole rules layer. They are not
+loaded into a session whole, and the epic did not touch them by a single task.
 
-## Первый замер
+## The first measurement
 
-Снят 25 августа 2026 года на этом дереве командой `npm run agent-kit:cost`; машиночитаемо — она
-же с доводом `--json`. Считаны символы и байты: то, что берётся на месте, без сети и без платы.
+Taken on 25 August 2026 on this tree by the command `npm run agent-kit:cost`; machine-readably — the
+same one with the argument `--json`. The characters and the bytes are counted: what is taken in place,
+without the network and without a payment.
 
-| Что                                 | Символов |    Байтов |
-| ----------------------------------- | -------: | --------: |
-| Вход в работу                       |   51 174 |    79 946 |
-| Правило `git-workflow` со спутником |   57 843 |    88 274 |
-| Весь слой, 122 файла                |  987 752 | 1 540 813 |
+| What                                       | Characters |     Bytes |
+| ------------------------------------------ | ---------: | --------: |
+| The entry into the work                    |     51 174 |    79 946 |
+| The rule `git-workflow` with its companion |     57 843 |    88 274 |
+| The whole layer, 122 files                 |    987 752 | 1 540 813 |
 
-Байтов в полтора раза больше символов — это и есть видимая цена кириллицы. Она названа затем,
-чтобы её не приняли за довод к переводу: байт не токен, и о цене окна он не говорит.
+There are one and a half times more bytes than characters — that is the visible price of the Cyrillic.
+It is named so that it is not taken for an argument for a translation: a byte is not a token, and it
+says nothing about the price of the window.
 
-## Чем видно, что эпик кончился
+## What it is seen by that the epic is over
 
-Команда из задачи 1 на неделе после последней задачи даёт: вход в работу и вес одного правила
-ниже числа, назначенного владельцем от первого замера выше. Ни одна проверка дерева при этом не
-краснеет, и перечень принятого долга по длине пуст.
+The command from the task 1 in the week after the last task gives: the entry into the work and the
+weight of one rule below the number assigned by the owner from the first measurement above. Not a
+single check of the tree turns red at that, and the list of the accepted debt by the length is empty.
 
-Число цели назначает владелец после того, как первая задача научилась считать: назначать его
-раньше значило бы придумать его.
+The number of the goal is assigned by the owner after the first task has learnt to count: to assign it
+earlier would mean to invent it.
 
-## Чем эпик кончился
+## What the epic ended with
 
-Закрыт 26 августа 2026 года. Все одиннадцать задач влиты; замер снят той же командой
-`npm run agent-kit:cost`, что и первый, на вершине главной ветки.
+Closed on 26 August 2026. All eleven tasks are merged; the measurement is taken by the same command
+`npm run agent-kit:cost` as the first, at the tip of the main branch.
 
-| Что                                | 25 августа | 26 августа | Разница |
-| ---------------------------------- | ---------: | ---------: | ------: |
-| Вход в работу                      |     51 174 |     38 431 |  −24,9% |
-| Самое тяжёлое правило со спутником |     57 843 |     36 103 |  −37,6% |
-| Весь слой                          |    987 752 |    927 115 |   −6,1% |
+| What                                 | 25 August | 26 August | The difference |
+| ------------------------------------ | --------: | --------: | -------------: |
+| The entry into the work              |    51 174 |    38 431 |         −24.9% |
+| The heaviest rule with its companion |    57 843 |    36 103 |         −37.6% |
+| The whole layer                      |   987 752 |   927 115 |          −6.1% |
 
-Числа в символах: байты команда называет тоже, но о цене окна они не говорят.
+The numbers are in characters: the command names the bytes too, but they say nothing about the price
+of the window.
 
-Строка правила в оба дня мерит одну величину — вес худшего случая: команда сама берёт самое
-тяжёлое правило вместе со спутником, и в день заведения это была поставка, а в день закрытия —
-ведение работы.
+The line of the rule on both days measures one quantity — the weight of the worst case: the command
+itself takes the heaviest rule together with its companion, and on the day of the creation that was the
+delivery, and on the day of the closing — the conduct of the work.
 
-**Обещанного заглавием «вдвое» не вышло.** Вход упал на четверть, а не наполовину. Наполовину
-упало другое — цена решения, задевшего самое тяжёлое правило: 57 843 знака против 36 103, то
-есть почти вдвое. Куда ушёл остаток, видно по разделу «Что выяснилось по ходу»: заход платит
-описаниями скилов, словарём и картой хода, а тела паттернов и законов в цену входа не попадают
-вовсе — резать их для входа было бесполезно, и три задачи из одиннадцати дали слою объём, а
-входу почти ничего.
+**The "twice" promised by the title did not come out.** The entry fell by a quarter, not by a half. By
+a half fell something else — the price of a decision touching the heaviest rule: 57 843 characters
+against 36 103, that is, almost twice. Where the rest went is visible by the section "What came to
+light along the way": a session pays by the descriptions of the skills, the glossary and the map of the
+turn, and the bodies of the patterns and the laws do not enter the price of the entry at all — cutting
+them for the entry was useless, and three tasks of eleven gave the layer volume and the entry almost
+nothing.
 
-**Число цели так и не назначалось.** Владелец отложил его на первой задаче и подтвердил решение
-на закрытии: эпик закрывается по достигнутому. Сравнивать поэтому не с чем — раздел выше
-исполнен тем, что есть: замером до и после одной командой.
+**The number of the goal was never assigned.** The owner postponed it at the first task and confirmed
+the decision at the closing: the epic is closed by what is achieved. There is therefore nothing to
+compare with — the section above is carried out by what there is: a measurement before and after by one
+command.
 
-**Вход считается вместе с передачей прошлого захода.** Хук входа печатает её целиком, и она у
-каждой ветки своя: на ветке с передачей тот же замер дал 42 594 знака против 38 431 на ветке без
-неё. Число выше снято на ветке без передачи — иначе оно мерило бы длину чужого текста, а не вес
-слоя. Сравнивая замеры разных дней, ветку смотрят.
+**The entry is counted together with the handover of the past session.** The hook of the entry prints
+it whole, and every branch has its own: on a branch with a handover the same measurement gave 42 594
+characters against 38 431 on a branch without one. The number above was taken on a branch without a
+handover — otherwise it would measure the length of a foreign text, not the weight of the layer. When
+comparing the measurements of different days, the branch is looked at.
 
-### Чего эпик не дал
+### What the epic did not give
 
-Разбор сделан 26 августа 2026 года по вкладу каждой из одиннадцати задач: вклад считается как
-разница веса ресурсов пакета до вливания задачи и после него.
+The review was made on 26 August 2026 by the contribution of each of the eleven tasks: the contribution
+is counted as the difference of the weight of the resources of the package before the merging of the
+task and after it.
 
-**Сам пакет потяжелел на 5 123 байта.** Пять резавших задач сняли 12 014 байт, шесть
-объявлявших механизм — форму сжатой статьи, предел веса, текст отказа, счёт цены, привязки —
-добавили 17 137. Прежнему эпику этот ставил в упрёк ровно такой исход. Разница в том, куда лёг
-прирост: он в холодной части и в механике, а не в том, что заход грузит.
+**The package itself got heavier by 5 123 bytes.** Five cutting tasks removed 12 014 bytes, six
+declaring a mechanism — the shape of a compressed article, the limit of the weight, the text of the
+refusal, the count of the price, the bindings — added 17 137. This one reproached the former epic with
+exactly such an outcome. The difference is where the growth landed: it is in the cold part and in the
+mechanics, not in what a session loads.
 
-**Из тел правил ушло 12 634 байта, и 10 403 из них не срезаны, а переехали в холодные части.**
-Резом в собственном смысле слова оказалась пятая часть; остальное — перенос довода туда, откуда
-его берут по требованию. Для захода это выигрыш настоящий, но словом «сжато» он назван неточно.
+**12 634 bytes left the bodies of the rules, and 10 403 of them are not cut off but moved into the cold
+parts.** A cut in the proper sense of the word turned out to be a fifth part; the rest is the moving of
+an argument to where it is taken from on demand. For a session that is a real gain, but the word
+"compressed" names it inexactly.
 
-**Весь выигрыш входа дали две задачи из одиннадцати.** Вход считает описания скилов и вывод
-трёх хуков старта: описания обрезала RT-1131 (−4 354 знака), словарь и карту хода — RT-1137
-(−9 327). Девять остальных задач резали тела правил, законов и паттернов — то, что в цену входа
-не попадает вовсе. Порядок задач назначался до того, как это стало известно, и в разделе выше
-об этом сказано; здесь названа его цена числом.
+**The whole gain of the entry was given by two tasks of eleven.** The entry counts the descriptions of
+the skills and the output of three hooks of the start: the descriptions were cut by RT-1131 (−4 354
+characters), the glossary and the map of the turn — by RT-1137 (−9 327). The nine other tasks cut the
+bodies of the rules, the laws and the patterns — what does not enter the price of the entry at all. The
+order of the tasks was assigned before that became known, and the section above says so; here its price
+is named by a number.
 
-**Экономия не удерживается.** За те же сутки чужие работы дописали в тела правил больше, чем
-эпик срезал: `spec-driven` +4 684 байта, `turn-conduct` +3 004 против срезанных `git-workflow`
-−2 862 и `task-flow` −730; сумма тел правил в пакете выросла на 9 835 байт. Предел веса из
-RT-1139 — 22 000 знаков при самом тяжёлом правиле в 20 950 — запрещает рост, но достигнутого не
-закрепляет: между сегодняшним худшим случаем и пределом остаётся шестая часть свободного хода,
-а под самим пределом — ещё три четверти.
+**The saving does not hold.** Over the same day foreign works appended into the bodies of the rules more
+than the epic cut off: `spec-driven` +4 684 bytes, `turn-conduct` +3 004 against the cut-off
+`git-workflow` −2 862 and `task-flow` −730; the sum of the bodies of the rules in the package grew by
+9 835 bytes. The limit of the weight from RT-1139 — 22 000 characters at the heaviest rule of 20 950 —
+forbids the growth but does not nail down what is achieved: between today's worst case and the limit a
+sixth part of a free run is left, and under the limit itself another three quarters.
 
-**Заход выигрывает меньше, чем говорит строка про худший случай.** Пять правил, загруженных
-заходом, который эпик закрывал, стоили бы 78 093 знака в день заведения и стоят 75 489 — на
-3,3% меньше. Строка «−37,6%» верна для решения, задевшего самое тяжёлое правило, и только
-для него.
+**A session gains less than the line about the worst case says.** The five rules loaded by the session
+that closed the epic would have cost 78 093 characters on the day of the creation and cost 75 489 — 3.3%
+less. The line "−37.6%" is true for a decision touching the heaviest rule, and only for it.
 
-Перечень принятого долга по описаниям пуст — `.claude/rt-kit/description-debt.json`,
-`node tools/check-descriptions.mjs` говорит: описаний 77, все в пределе 300 знаков.
+The list of the accepted debt by the descriptions is empty — `.claude/rt-kit/description-debt.json`,
+`node tools/check-descriptions.mjs` says: the descriptions are 77, all inside the limit of 300
+characters.
 
-## Открытые вопросы
+## Open questions
 
-- **Q-1. На каком языке слой окажется после эпика. Закрыт 25 августа 2026 года: язык не
-  меняется.** Владелец разрешал перевод, если тот экономит, — а доказать экономию нечем.
-  Разница между письменностями видна только счётом токенов, счёт живёт у модели и стоит денег,
-  и платить за него владелец не будет. Сторонний офлайн-счётчик не годится: для этой модели он
-  занижает число тем сильнее, чем дальше текст от латиницы, то есть промахивается ровно там, где
-  решался бы вопрос. Перевод без числа — это догадка ценой всего слоя, и эпик её не делает.
-  Эпик режет объём, а не письменность.
-- **Q-2. Каким числом задаётся цель. Закрыт 26 августа 2026 года: числом она не задавалась.**
-  Владелец отложил назначение на первой задаче и на закрытии эпика подтвердил решение —
-  закрывать по достигнутому. Цена: выигрыш назван числами, а сошёлся он с ожиданием или нет,
-  сказать нечем. Назначать число задним числом отвергнуто: оно подгонялось бы под уже
-  полученный результат и не проверяло бы ничего.
-- **Q-3. Довод при статье уезжает в холодную часть целиком или сворачивается до строки. Закрыт
-  25 августа 2026 года на показовом правиле: нужны оба исхода, и делятся они почти пополам.**
-  Правило поставки сжато целиком: 24 415 знаков стало 20 052, снято 4 363. Из них в холодную
-  часть уехало 2 033 — случаи, числа и отвергнутые лекарства; остальные 2 330 не уехали никуда,
-  а свернулись до строки: это был повтор того, что уже сказано утверждением. Правило, требующее
-  одного исхода, увозило бы в холод повторы — и холодная часть росла бы быстрее, чем правило
-  худеет.
-- **Q-4. Что делать с проверкой слога, если слой уедет на другой язык. Закрыт вместе с Q-1:
-  слой остаётся русским, и проверка слога работает как прежде.**
+- **Q-1. Which language the layer will turn out in after the epic. Closed on 25 August 2026: the
+  language does not change.** The owner allowed a translation if it saves — and there is nothing to
+  prove the saving by. The difference between the writings is visible only by a count of the tokens, the
+  count lives at the model and costs money, and the owner will not pay for it. A third-party offline
+  counter does not fit: for this model it undercounts the more the further the text is from the Latin
+  alphabet, that is, it misses exactly where the question would be decided. A translation without a
+  number is a guess at the price of the whole layer, and the epic does not make it. The epic cuts the
+  volume, not the writing.
+- **Q-2. By which number the goal is set. Closed on 26 August 2026: it was not set by a number.** The
+  owner postponed the assignment at the first task and at the closing of the epic confirmed the decision
+  — to close by what is achieved. The price: the gain is named by numbers, and whether it coincided with
+  the expectation there is nothing to say by. To assign a number after the fact is rejected: it would be
+  fitted to the result already got and would check nothing.
+- **Q-3. Whether an argument at an article leaves for the cold part whole or folds to a line. Closed on
+  25 August 2026 on the showing rule: both outcomes are needed, and they divide almost in half.** The
+  rule of the delivery is compressed whole: 24 415 characters became 20 052, 4 363 were removed. Of them
+  2 033 left for the cold part — the cases, the numbers and the rejected medicines; the other 2 330 left
+  for nowhere but folded to a line: that was a repetition of what the statement already said. A rule
+  demanding one outcome would take the repetitions into the cold — and the cold part would grow faster
+  than the rule slims.
+- **Q-4. What to do with the check of the style if the layer leaves for another language. Closed
+  together with Q-1: the layer stays Russian, and the check of the style works as before.**
 
-## Что выяснилось по ходу
+## What came to light along the way
 
-**Тело паттерна в цену входа не входит.** Счёт входа собирает описания всех скилов и вывод трёх
-хуков старта — `glossary-load`, `turn-entry-load`, `constitution-index`; тела правил, паттернов и
-законов туда не попадают. Правило платит собой при загрузке, паттерн — при вызове по имени, закон
-приходит во вход одним индексом, а не текстом.
+**The body of a pattern does not enter the price of the entry.** The count of the entry gathers the
+descriptions of all the skills and the output of three hooks of the start — `glossary-load`,
+`turn-entry-load`, `constitution-index`; the bodies of the rules, the patterns and the laws do not get
+there. A rule pays by itself at a loading, a pattern — at a call by its name, a law comes into the entry
+as one index, not as a text.
 
-Отсюда порядок цены, и он не тот, что стоял в порядке задач: описания (RT-1131, сделано) → тела
-грузимых правил (RT-1133, RT-1134, сделано) → индекс законов и словарь (RT-1137) → всё
-остальное. Задачи 6 и 7 в этом ряду стоят последними, а не пятой и шестой: паттерн и закон
-телом заход не грузит.
+Hence the order of the price, and it is not the one that stood in the order of the tasks: the
+descriptions (RT-1131, done) → the bodies of the loaded rules (RT-1133, RT-1134, done) → the index of
+the laws and the glossary (RT-1137) → everything else. The tasks 6 and 7 stand last in that row, not
+fifth and sixth: a session does not load a pattern and a law by their bodies.
 
-**Треть текста, едущего в контекст, — пробелы выравнивания таблиц.** Форматтер добивает столбцы
-до общей ширины, и эти пробелы уезжают в каждый заход, не значая ничего: в словаре они дали
-6 616 знаков из 20 809, со строками-разделителями — 8 241, то есть сорок процентов файла.
-Перевод тех же записей в список «- **термин** — что это» срезал вход с 47 758 до 38 431 знака,
-не тронув ни единого слова. Резать содержание при этом почти не потребовалось: сжатие шести
-тяжёлых записей дало 200 знаков против девяти тысяч, взятых формой.
+**A third of the text travelling into the context is the spaces of the alignment of the tables.** The
+formatter pads the columns to a common width, and these spaces travel into every session meaning
+nothing: in the glossary they gave 6 616 characters of 20 809, with the lines of the separators — 8 241,
+that is, forty per cent of the file. The moving of the same records into a list "- **term** — what it
+is" cut the entry from 47 758 to 38 431 characters without touching a single word. Cutting the content
+was at that almost not needed: the compression of six heavy records gave 200 characters against the nine
+thousand taken by the form.
 
-Отсюда приём, который стоит попробовать на остальном: прежде чем резать смысл, посмотреть, во
-что обходится форма. Таблица оправдана там, где столбцов больше двух и их сравнивают глазами;
-двухколоночная таблица — это список, записанный вчетверо дороже.
+Hence a technique worth trying on the rest: before cutting the meaning, look at what the form costs. A
+table is justified where the columns are more than two and they are compared by the eyes; a two-column
+table is a list written four times dearer.
 
-**Искать в паттернах то же, что в правилах, бесполезно.** Поиск случаев и чисел по образцу дал
-13 кандидатов на 52 файла — против одиннадцати в одном только правиле хода. Вес паттерна лежит в
-порядке действий и в готовом коде, а это ровно то, ради чего его открывают.
+**Looking in the patterns for the same as in the rules is useless.** A search for the cases and the
+numbers by the sample gave 13 candidates over 52 files — against eleven in the rule of the turn alone.
+The weight of a pattern lies in the order of the actions and in the ready code, and that is exactly what
+it is opened for.
 
-**Треть веса таблицы markdown — пробелы выравнивания.** Форматтер добивает каждую клетку до
-общей ширины столбца, и на длинном тексте это выходит дороже самих слов. Перевод той же таблицы
-в список ни одного слова не трогает: словарь потерял 8 181 знак из 20 809, карта хода — 445,
-привязки компаньонов и спутников спеков — 191 820 (RT-1169). Связь при этом идёт по тексту
-утверждения, а не по форме строки, поэтому сверка учится читать обе формы и перевод идёт файл
-за файлом.
+**A third of the weight of a markdown table is the spaces of the alignment.** The formatter pads every
+cell to the common width of the column, and on a long text that comes out dearer than the words
+themselves. The moving of the same table into a list touches not a single word: the glossary lost 8 181
+characters of 20 809, the map of the turn — 445, the bindings of the companions and of the companions of
+the specs — 191 820 (RT-1169). The link at that goes by the text of the statement, not by the form of
+the line, so the checking learns to read both forms and the moving goes file by file.
 
-**Задача, родившаяся по ходу эпика, встаёт после назначенного порядка.** RT-1169 в перечне выше
-не стоит: приём нашёлся на восьмой задаче, а порядок назначен до первой. Порядок от этого не
-пересматривается — задача просто идёт одиннадцатой.
+**A task born along an epic stands after the assigned order.** RT-1169 does not stand in the list above:
+the technique was found at the eighth task, and the order was assigned before the first. The order is
+not reconsidered from that — the task simply goes eleventh.
 
-## Как ведётся правка
+## How the edit is conducted
 
-- **Источник — ресурсы пакета правил, а не разложенные копии.** Порядок один и тот же всегда:
-  правка, сборка, раскладка.
-- **Каждая задача несёт свою договорённость о продукте.** Решение владельца: слой правил — то,
-  что пакет везёт чужим деревьям, и правка его формы видна снаружи.
-- **Законы правятся без отдельного показа.** Решение владельца; смотрит он их на разборе заявки.
+- **The source is the resources of the package of the rules, not the laid-out copies.** The order is
+  always one and the same: the edit, the build, the layout.
+- **Every task carries its own product agreement.** A decision of the owner: the rules layer is what the
+  package carries to foreign trees, and an edit of its form is visible from outside.
+- **The laws are edited without a separate show.** A decision of the owner; they look at them at the
+  taking apart of the request.

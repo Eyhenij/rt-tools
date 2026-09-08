@@ -1,11 +1,11 @@
-# Предел длины описания правила — где исполняются правила
+# The length limit of a rule description — where the rules are carried out
 
-Первая колонка — правило дословно, как оно написано в разделе «Правила» спека рядом. Правило без
-строки и строка без правила — расхождение: спек обещает то, чего в коде нет, либо в коде стоит
-то, о чём спек молчит.
+The first column is the rule verbatim, as it is written in the "Rules" section of the spec next to
+it. A rule without a line and a line without a rule are a divergence: the spec promises what is not
+in the code, or the code holds what the spec is silent about.
 
-- **Описание правила не длиннее трёхсот знаков.** — `tools/check-descriptions.mjs:LIMIT` — предел в знаках; шапку каждого скила читает `descriptionOf`
-- **Описание отвечает на один вопрос — брать это правило или нет.** — **Не проверяется ничем.** Смысл описания машине не виден; держится чтением и формой из паттерна `spec-driven-rule`
-- **Длина описания считается командой, а не глазом.** — `tools/check-descriptions.mjs:main` — обход каталога скилов, список превысивших с числами; зовётся `check:descriptions`
-- **Описание, оставленное длиннее предела, стоит в перечне принятого долга поимённо.** — `tools/check-descriptions.mjs:debt` — перечень `.claude/rt-kit/description-debt.json`, имя скила и причина
-- **Правило по-прежнему находится по своей теме.** — **Не проверяется ничем.** Выбор правила делает заход, и сверить его не с чем
+- **The description of a rule is no longer than three hundred characters.** — `tools/check-descriptions.mjs:LIMIT` — the limit in characters; the header of every skill is read by `descriptionOf`
+- **The description answers one question — take this rule or not.** — **Not checked by a machine.** The meaning of a description is invisible to it; it is held by reading and by the shape from the pattern `spec-driven-rule`
+- **The length of a description is counted by a command, not by eye.** — `tools/check-descriptions.mjs:main` — a walk of the skills directory, a list of those that exceeded with their numbers; it is called by `check:descriptions`
+- **A description left longer than the limit stands in the list of the accepted debt by name.** — `tools/check-descriptions.mjs:debt` — the list `.claude/rt-kit/description-debt.json`, the name of the skill and the reason
+- **The rule is still found by its subject.** — **Not checked by a machine.** The pick of a rule is made by the session, and there is nothing to compare it against

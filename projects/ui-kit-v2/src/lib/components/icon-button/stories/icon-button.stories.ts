@@ -23,7 +23,7 @@ export default {
         },
         iconSize: { control: false },
         shape: {
-            options: ['circle', 'square'],
+            options: ['square', 'rounded-sm', 'rounded-lg', 'circle'],
             control: { type: 'select' },
         },
         type: {

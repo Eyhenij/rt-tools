@@ -1,137 +1,143 @@
-# Сценарии — рабочий порядок разбора груза
+# Scenarios — the working order of the sorting out of the cargo
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной. Префикс общий на домен: номера продолжают его нумерацию и
-после вливания поддомена не пересчитываются.
+The identifier goes at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason. The prefix is shared across the domain: the
+numbers continue its numbering and are not recounted after a merge of a subdomain.
 
-Порядок разбора груза исполняет агент, а не машина, и большая часть сценариев ниже прогоном не
-проверяется. Пометка при них говорит об этом прямо: она называет, чем сценарий подтверждается
-взамен — вызовом команды на живом грузе и чтением ответа приёма.
+The order of the sorting out of the cargo is carried out by an agent, not by a machine, and most of the
+scenarios below are not checked by a run. The mark at them says that directly: it names what the
+scenario is confirmed by instead — by a call of the command on live cargo and by reading the answer of
+the intake.
 
-### SC-MB-260 — разбор начинается с записей, которых никто не читал
+### SC-MB-260 — the sorting out starts with the records nobody read
 
-Дано в приёме лежат записи груза в разных состояниях
-Когда исполнитель садится разбирать груз
-Тогда список сужен отбором по состоянию «новое» и идёт порядком приезда
+Given records of the cargo in different states lie in the intake
+When the executor sits down to sort the cargo out
+Then the list is narrowed by the filter of the state "new" and goes by the order of the arrival
 
-Не покрыто: порядок исполняет агент, и прогоном он не проверяется — подтверждается разбором
-живого груза, при котором отобранный список показывает только неразобранное.
+Not covered: the order is carried out by an agent, and it is not checked by a run — it is confirmed by
+a sorting out of live cargo, at which the filtered list shows only what is not sorted out.
 
-### SC-MB-261 — взятие отчёта в работу заводит задачу и отмечает запись
+### SC-MB-261 — the taking of a report into work creates a task and marks the record
 
-Дано запись груза стоит в состоянии «новое», и исполнитель решил по ней работать
-Когда он берёт её в работу
-Тогда по записи заведена задача, и тем же ходом запись переведена в «в работе»
+Given a record of the cargo stands in the state "new", and the executor decided to work by it
+When they take it into work
+Then a task is created by the record, and by the same turn the record is moved into "in progress"
 
-Покрыто: `projects/agent-kit/tests/cargo-mark-guard.test.sh` — гард отметки груза не выпускает
-ход, взявший запись в работу без перевода состояния.
+Covered: `projects/agent-kit/tests/cargo-mark-guard.test.sh` — the guard of the mark of the cargo does
+not release a turn that took a record into work without a move of the state.
 
-### SC-MB-262 — записи одной правки отмечаются одной пачкой
+### SC-MB-262 — the records of one edit are marked by one bundle
 
-Дано несколько записей груза чинятся одной правкой
-Когда исполнитель берёт их в работу
-Тогда все они уезжают одним вызовом команды отметки и одной задачей
+Given several records of the cargo are fixed by one edit
+When the executor takes them into work
+Then all of them go away by one call of the command of the mark and by one task
 
-Не покрыто: порядок исполняет агент — подтверждается ответом команды, в котором число
-переведённых записей равно числу записей правки.
+Not covered: the order is carried out by an agent — it is confirmed by the answer of the command, in
+which the number of the moved records equals the number of the records of the edit.
 
-### SC-MB-263 — запись, по которой работы не будет, в «в работе» не уходит
+### SC-MB-263 — a record no work will be done by does not go into "in progress"
 
-Дано исполнитель прочитал запись и решил, что правки по ней не будет
-Когда он идёт дальше по списку
-Тогда состояние записи остаётся прежним, а решение остаётся открытым вопросом `Q-CT-1`
+Given the executor read the record and decided there will be no edit by it
+When they go on down the list
+Then the state of the record stays the former one, and the decision stays the open question `Q-CT-1`
 
-Не покрыто: состояния отказа набором не заведено, и проверять нечего, пока владелец не решил
-вопрос.
+Not covered: a state of a refusal is not created by the set, and there is nothing to check while the
+owner has not decided the question.
 
-### SC-MB-264 — «готово» ставится после слияния, а не после открытия заявки
+### SC-MB-264 — "ready" is put after the merge, not after the opening of the request
 
-Дано правка по записи груза лежит в открытой заявке и ещё не влита
-Когда исполнитель отмечает состояние
-Тогда запись остаётся в «в работе»; в «готово» она уходит после слияния правки в главную ветку
+Given the edit by the record of the cargo lies in an open request and is not merged yet
+When the executor marks the state
+Then the record stays in "in progress"; into "ready" it goes after the merge of the edit into the main
+branch
 
-Не покрыто: порядок исполняет агент — подтверждается двумя ответами приёма: до слияния и после.
+Not covered: the order is carried out by an agent — it is confirmed by two answers of the intake:
+before the merge and after it.
 
-### SC-MB-265 — переход в «готово» приезжает вместе с приёмом починки
+### SC-MB-265 — the transition into "ready" arrives together with the way of the fix
 
-Дано правка влита, и исполнитель переводит запись в «готово»
-Когда идёт вызов команды отметки
-Тогда вместе с состоянием едет приём починки, и приёмник строку принимает
+Given the edit is merged, and the executor moves the record into "ready"
+When the call of the command of the mark goes
+Then the way of the fix goes together with the state, and the intake accepts the string
 
-Не покрыто: своего теста у сценария нет. Отбой перехода без текста проверен спекой приёмника
-под своим номером, а то, что текст едет тем же вызовом, подтверждается ответом команды на живом
-грузе.
+Not covered: the scenario has no test of its own. The refusal of a transition without a text is checked
+by a spec of the intake under a number of its own, and that the text goes by the same call is confirmed
+by the answer of the command on live cargo.
 
-### SC-MB-266 — «выпущено» ставит тот, кто публикует, и с версией выпуска
+### SC-MB-266 — "released" is put by whoever publishes, and with the version of the release
 
-Дано редакция пакета опубликована, и в неё вошла починка по записи груза
-Когда публикующий отмечает состояние
-Тогда запись переведена в «выпущено», и у неё стоит версия того выпуска
+Given the edition of the package is published, and the fix by the record of the cargo entered it
+When whoever publishes marks the state
+Then the record is moved into "released", and the version of that release stands at it
 
-Не покрыто: порядок исполняет агент — подтверждается ответом приёма, в котором у записи стоят
-и состояние, и версия.
+Not covered: the order is carried out by an agent — it is confirmed by the answer of the intake, in
+which both the state and the version stand at the record.
 
-### SC-MB-267 — отбитая строка отметки разбирается, а не повторяется
+### SC-MB-267 — a refused row of the mark is taken apart, it is not repeated
 
-Дано вызов команды отметки вернул отбитую строку с причиной
-Когда исполнитель читает ответ
-Тогда он разбирает причину, а не шлёт тот же вызов заново
+Given the call of the command of the mark gave back a refused row with a reason
+When the executor reads the answer
+Then they take the reason apart, they do not send the same call anew
 
-Не покрыто: порядок исполняет агент — подтверждается тем, что за отбоем идёт правка вызова, а
-не его повтор.
+Not covered: the order is carried out by an agent — it is confirmed by an edit of the call going after
+a refusal, not a repeat of it.
 
-### SC-MB-268 — правило и паттерн разложены в дерево
+### SC-MB-268 — the rule and the pattern are laid out into the tree
 
-Дано ресурсы правила и паттерна лежат в наборе пакета
-Когда идёт раскладка ресурсов и её сверка
-Тогда оба лежат в дереве с шапкой раскладки, и сверка расхождения не находит
+Given the resources of the rule and of the pattern lie in the set of the package
+When the layout of the resources and its check go
+Then both lie in the tree with the header of the layout, and the check finds no divergence
 
-Не покрыто: раскладку отдельного ресурса тестом не проверяют — механика раскладки покрыта
-своими спеками, а этот сценарий подтверждается зелёной сверкой раскладки в гейте пуша.
+Not covered: the layout of a separate resource is not checked by a test — the mechanics of the layout
+are covered by specs of their own, and this scenario is confirmed by a green check of the layout in the
+gate of the push.
 
-### SC-MB-281 — работа по записи груза отдана, а состояние записи прежнее
+### SC-MB-281 — the work by a record of the cargo is handed in, and the state of the record is the former one
 
-Дано ход открыл заявку либо разобрал папку задачи, чей разбор просьбы называет ключи груза
-Когда гард судит завершение хода
-Тогда ход отбивается, отказ называет ключи записей и требует состояния «готово» вместе с приёмом
-починки; отметка, сделанная тем же ходом, ход отпускает
+Given the turn opened a request or took apart the task folder whose analysis of the request names the
+keys of the cargo
+When the guard judges the end of the turn
+Then the turn is refused, the refusal names the keys of the records and demands the state "ready"
+together with the way of the fix; a mark made by the same turn releases the turn
 
-Покрыто: `projects/agent-kit/tests/cargo-mark-guard.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-mark-guard.test.sh`.
 
-### SC-MB-282 — взятие в работу гардом не судится, а закрытие издателем считается отметкой
+### SC-MB-282 — the taking into work is not judged by the guard, and the closing by a publisher counts as a mark
 
-Дано ход завёл папку задачи с ключами груза и отметки не поставил
-Когда гард судит завершение хода
-Тогда ход отпускается: чужой записи «в работе» не поставить — закрытие издателем принимает только
-«готово» и «выпущено», и требовать взятия значило бы требовать невозможного. При отдаче работы
-закрытие издателем считается отметкой наравне с обычной
+Given the turn created a task folder with the keys of the cargo and put no mark
+When the guard judges the end of the turn
+Then the turn is released: "in progress" cannot be put at a foreign record — the closing by a publisher
+accepts only "ready" and "released", and demanding the taking would mean demanding the impossible. At a
+handing in of the work the closing by a publisher counts as a mark on a par with an ordinary one
 
-Покрыто: `projects/agent-kit/tests/cargo-mark-guard.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-mark-guard.test.sh`.
 
-### SC-MB-283 — обычный ход работы отметки не требует, а сухой прогон ею не считается
+### SC-MB-283 — an ordinary turn of the work demands no mark, and a dry run does not count as one
 
-Дано ход правил код и коммитил, а работы не отдавал; либо ход отдал работу и позвал отметку
-сухим прогоном
-Когда гард судит завершение хода
-Тогда первый отпускается — гард, спрашивающий отметку на каждом ходу, отбивал бы саму работу, —
-а второй отбивается: сухой прогон следа наружу не оставляет
+Given the turn edited code and committed, and handed no work in; or the turn handed the work in and
+called the mark by a dry run
+When the guard judges the end of the turn
+Then the first is released — a guard asking for a mark at every turn would refuse the work itself — and
+the second is refused: a dry run leaves no trace outward
 
-Покрыто: `projects/agent-kit/tests/cargo-mark-guard.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-mark-guard.test.sh`.
 
-### SC-MB-284 — задача не из груза гарда не получает
+### SC-MB-284 — a task not from the cargo gets no guard
 
-Дано ход отдал работу, а разбор просьбы ключей записей груза не называет либо называет признак
-короче полного
-Когда гард судит завершение хода
-Тогда ход отпускается: короткий признак ключом не считается — отметка с ним отбивается приёмом,
-и требовать его значило бы гонять исполнителя за отказом
+Given the turn handed the work in, and the analysis of the request names no keys of the records of the
+cargo or names a sign shorter than the full one
+When the guard judges the end of the turn
+Then the turn is released: a short sign does not count as a key — a mark with it is refused by the
+intake, and demanding it would mean driving the executor after a refusal
 
-Покрыто: `projects/agent-kit/tests/cargo-mark-guard.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-mark-guard.test.sh`.
 
-### SC-MB-285 — гард отпускает работу, когда судить нечем
+### SC-MB-285 — the guard releases the work when there is nothing to judge by
 
-Дано дерево не объявило команды отметки, записи хода нет либо идёт повторный заход по тому же ходу
-Когда гард судит завершение хода
-Тогда ход отпускается: сломанный гард не имеет права заклинить работу
+Given the tree declared no command of the mark, there is no record of the turn or a repeated pass over
+the same turn goes
+When the guard judges the end of the turn
+Then the turn is released: a broken guard has no right to jam the work
 
-Покрыто: `projects/agent-kit/tests/cargo-mark-guard.test.sh`.
+Covered: `projects/agent-kit/tests/cargo-mark-guard.test.sh`.

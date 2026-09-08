@@ -1,146 +1,162 @@
-# Сценарии — экзамен по загруженным правилам
+# Scenarios — the exam on the loaded rules
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной. Префикс общий на домен, и номера при переезде в поддомен не
-пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier stands at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason. The prefix is shared by the domain, and the
+numbers were not recounted on the move into the subdomain: the number ties a scenario to a test
+title.
 
-### SC-AK-312 — без экзамена правка отбивается
+### SC-AK-312 — without the exam an edit is refused
 
-Дано за сессию роль экзаменатора не вызывалась
-Когда правится файл
-Тогда гард отбивает правку и называет роль, которую надо позвать
+Given the examiner role was not called during the session
+When a file is edited
+Then the guard refuses the edit and names the role that has to be called
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-313 — сданный экзамен правку пропускает
+### SC-AK-313 — a passed exam lets an edit through
 
-Дано последний вердикт роли — полный балл
-Когда правится файл
-Тогда гард молчит
+Given the last verdict of the role is a full score
+When a file is edited
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-314 — неполный балл считается провалом
+### SC-AK-314 — a partial score counts as a failure
 
-Дано последний вердикт роли — неполный балл
-Когда правится файл
-Тогда гард отбивает правку и велит перечитать правило целиком, а не тот кусок, о котором
-спрашивали
+Given the last verdict of the role is a partial score
+When a file is edited
+Then the guard refuses the edit and orders re-reading the rule whole, not the piece that was asked
+about
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-315 — пересдача снимает прежний провал
+### SC-AK-315 — a retake lifts the former failure
 
-Дано после провала роль вынесла вердикт с полным баллом
-Когда правится файл
-Тогда гард молчит: судится последний вердикт
+Given after the failure the role gave a verdict with a full score
+When a file is edited
+Then the guard stays silent: the last verdict is judged
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-316 — провал после сдачи правку отбивает
+### SC-AK-316 — a failure after a pass refuses an edit
 
-Дано после сдачи роль вынесла вердикт с неполным баллом
-Когда правится файл
-Тогда гард отбивает правку: сданный однажды экзамен правку до конца сессии не держит
+Given after the pass the role gave a verdict with a partial score
+When a file is edited
+Then the guard refuses the edit: an exam passed once does not hold the edit until the end of the
+session
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-317 — черновик не снимается без второго экзамена
+### SC-AK-317 — the draft is not lifted without the second exam
 
-Дано за сессию экзамен сдан, но PR уже открыт, а после его открытия экзамена не было
-Когда снимается черновик
-Тогда гард отбивает снятие: между чтением правил поставки и этой минутой прошёл весь заход
+Given the exam was passed during the session, but the PR is already open, and after it was opened
+there was no exam
+When the draft is lifted
+Then the guard refuses the lifting: between reading the delivery rules and this minute the whole
+session went by
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-318 — экзамен после открытия PR снятие пропускает
+### SC-AK-318 — an exam after the PR is opened lets the lifting through
 
-Дано после открытия PR роль вынесла вердикт с полным баллом
-Когда снимается черновик
-Тогда гард молчит
+Given after the PR was opened the role gave a verdict with a full score
+When the draft is lifted
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-319 — без открытого PR второй экзамен не спрашивается
+### SC-AK-319 — without an open PR the second exam is not asked
 
-Дано PR за сессию не открывался
-Когда снимается черновик
-Тогда гард молчит: спрашивать не о чем
+Given no PR was opened during the session
+When the draft is lifted
+Then the guard stays silent: there is nothing to ask about
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-320 — прочие команды клиента не судятся
+### SC-AK-320 — the other commands of the client are not judged
 
-Дано команда клиента хостинга не снимает черновик
-Когда она запускается
-Тогда гард молчит: он судит снятие, а не всякий вызов
+Given a command of the hosting client does not lift a draft
+When it is run
+Then the guard stays silent: it judges the lifting, not every call
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-360 — выключенный деревом экзаменатор правку пропускает
+### SC-AK-360 — an examiner switched off by the tree lets an edit through
 
-Дано роль экзаменатора названа в списке выключенных ролей дерева
-Когда правится файл, а экзамена за сессию не было
-Тогда гард молчит
+Given the examiner role is named in the list of the tree's switched-off roles
+When a file is edited, and there was no exam during the session
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-361 — выключенная соседняя роль экзамен не отменяет
+### SC-AK-361 — a switched-off neighbouring role does not cancel the exam
 
-Дано в списке выключенных ролей стоит роль, при которой этот гард не стоит
-Когда правится файл, а экзамена за сессию не было
-Тогда гард отбивает правку
+Given the list of switched-off roles holds a role this guard does not stand at
+When a file is edited, and there was no exam during the session
+Then the guard refuses the edit
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-362 — настройка, которую не разобрать, роль не выключает
+### SC-AK-362 — a setting that cannot be parsed does not switch the role off
 
-Дано настройка дерева не разбирается
-Когда правится файл, а экзамена за сессию не было
-Тогда гард отбивает правку: сломанное чтение выключением не считается
+Given the setting of the tree does not parse
+When a file is edited, and there was no exam during the session
+Then the guard refuses the edit: a broken read does not count as switching off
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-757 — вердикт виден при любой форме доставки, а печатью строки не подделывается
+### SC-AK-757 — the verdict is visible in any shape of delivery and is not faked by printing a line
 
-Дано роль ответила вердиктом — строкой записи, полем результата вызова или записью хоста
-Когда гард судит правку файла
-Тогда он пропускает её при любой из трёх форм; тот же текст, напечатанный оболочкой или
-приехавший в тексте самого помощника, вердиктом не считается
+Given the role answered with a verdict — as a record line, as a field of the call result or as a
+record of the host
+When the guard judges an edit of a file
+Then it lets it through in any of the three shapes; the same text printed by the shell or arriving in
+the text of the helper itself does not count as a verdict
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-758 — настройка, которой гард выключается, этим гардом не запирается
+### SC-AK-758 — the setting the guard is switched off by is not locked by this guard
 
-Дано экзамена за сессию не было
-Когда правится настройка раскладки, надстройка профиля или передача захода
-Тогда гард молчит: иначе выключить его нечем, а дерево-потребитель заперто целиком. Обычный
-файл судится по-прежнему
+Given there was no exam during the session
+When the layout setting, the profile override or the session handover is edited
+Then the guard stays silent: otherwise there is nothing to switch it off with, and a consumer tree is
+locked whole. An ordinary file is judged as before
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-759 — запись файла вызовом оболочки судится наравне с правкой
+### SC-AK-759 — writing a file by a shell call is judged on a par with an edit
 
-Дано экзамена за сессию не было
-Когда файл пишется перенаправлением или правится на месте вызовом оболочки
-Тогда гард отбивает так же, как правку инструментом: дверь, судимая только по имени
-инструмента, обходится соседней командой. Команда без записи файла не судится
+Given there was no exam during the session
+When a file is written by a redirection or edited in place by a shell call
+Then the guard refuses the same way as an edit by a tool: a door judged only by the name of the tool
+is bypassed by a neighbouring command. A command without a file write is not judged
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-852 — у отказа есть выход, не требующий снимать защиту
+### SC-AK-852 — the refusal has an exit that does not demand lifting the protection
 
-Дано экзамена за сессию не было, а среда исполнения запрещает правку списка выключенных ролей
-Когда в теле последнего коммита ветки объявлен обход с причиной
-Тогда вызов проходит, и об обходе сообщается; без объявления и с подстановкой вместо причины
-правка по-прежнему запрещена
+Given there was no exam during the session, and the runtime environment forbids editing the list of
+switched-off roles
+When a bypass with a reason is declared in the body of the last commit of the branch
+Then the call passes, and the bypass is reported; without the declaration and with a substitution
+instead of a reason the edit is still forbidden
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
 
-### SC-AK-853 — снятием черновика считается вызов клиента, а не слова о нём
+### SC-AK-853 — a call of the client counts as lifting the draft, not words about it
 
-Дано команда всего лишь пишет о снятии черновика — поиском по дереву или строкой в файле
-Когда гард проверяет команду
-Тогда он пропускает: раньше отказ приходил и на попытку описать этот дефект
+Given a command merely writes about lifting a draft — by a search over the tree or by a line in a
+file
+When the guard checks the command
+Then it lets it through: before, the refusal arrived at an attempt to describe this defect too
 
-Покрыто: `projects/agent-kit/tests/exam-guard.test.sh`.
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
+
+### SC-AK-918 — a muted call is the named one, not all the answers at once
+
+Given a shell call went during the session, and after it the role answered with a full score
+When a file is edited
+Then the guard stays silent: one muted call does not carry away the answer of the role. A score
+printed by the shell after the answer of the role is not counted as before
+
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.

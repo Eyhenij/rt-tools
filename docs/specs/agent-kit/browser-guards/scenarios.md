@@ -1,125 +1,130 @@
-# Сценарии — гарды браузера
+# Scenarios — the browser guards
 
-Идентификатор ставится в начало заголовка теста через тире. Пока сценарий не покрыт, он несёт
-пометку «Не покрыто» с причиной. Префикс общий на домен, и номера при переезде в поддомен не
-пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier stands at the start of the test title, followed by a dash. While a scenario is not
+covered, it carries the mark "Not covered" with a reason. The prefix is shared by the domain, and
+the numbers were not recounted on the move into the subdomain: the number ties a scenario to a test
+title.
 
-### SC-AK-717 — профиль браузера берётся из переменной окружения
+### SC-AK-717 — the browser profile is taken from the environment variable
 
-Дано переменная окружения называет профиль Когда помощник спрашивают о закреплённом профиле Тогда он печатает
-названное переменной: она перебивает файл дерева
+Given an environment variable names the profile When the helper is asked about the pinned profile
+Then it prints what the variable named: it overrides the file of the tree
 
-### SC-AK-718 — профиль берётся из файла дерева, когда переменной нет
+### SC-AK-718 — the profile is taken from the file of the tree when there is no variable
 
-Дано переменной нет, а файл рядом с конфигом раскладки называет профиль Когда помощник спрашивают о закреплённом
-профиле Тогда он печатает содержимое файла без окружающих пробелов
+Given there is no variable, and the file next to the layout config names the profile When the helper
+is asked about the pinned profile Then it prints the content of the file without the surrounding
+spaces
 
-### SC-AK-719 — ненастроенное дерево слышит о своей ненастроенности
+### SC-AK-719 — an unconfigured tree hears that it is unconfigured
 
-Дано профиль не назван ни переменной, ни файлом Когда помощник спрашивают о закреплённом профиле Тогда он
-говорит в поток ошибок, чего не хватает, и всё равно уходит нулём: гарды по нему пропускают, а молчание читалось
-бы как разрешение водить браузер любым профилем
+Given the profile is named neither by a variable nor by a file When the helper is asked about the
+pinned profile Then it says into the error stream what is missing and still leaves with zero: the
+guards let through by it, and silence would read as permission to drive the browser by any profile
 
-### SC-AK-720 — слово о ненастроенности говорится один раз за заход
+### SC-AK-720 — the word about being unconfigured is said once per session
 
-Дано помощник уже сказал о ненастроенности в этом заходе Когда его спрашивают второй раз с тем же признаком
-захода Тогда он молчит: строка на каждый вызов тонет в выводе и перестаёт читаться
+Given the helper has already spoken about being unconfigured in this session When it is asked a
+second time with the same session sign Then it stays silent: a line on every call drowns in the
+output and stops being read
 
-Покрыто: `projects/agent-kit/tests/browser-device-id.test.sh`.
+Covered: `projects/agent-kit/tests/browser-device-id.test.sh`.
 
-### SC-AK-826 — слово «браузер» в имени правила или хука вопроса о выборе не делает
+### SC-AK-826 — the word "browser" in the name of a rule or of a hook does not make a choice question
 
-Дано вопрос о раскладке слоя правил, где в вариантах ответа стоят имя правила проверки в
-браузере и имя одного из гардов браузера
-Когда гард вопроса о выборе судит вызов
-Тогда он пропускает его: обойти отбой можно было бы только переписав вопрос без этого слова, то
-есть исказив его
+Given a question about the layout of the rules layer, whose answer options carry the name of the
+browser-check rule and the name of one of the browser guards
+When the guard of the choice question judges the call
+Then it lets it through: the refusal could be bypassed only by rewriting the question without that
+word, that is by distorting it
 
-Дано вопрос о поддерживаемых браузерах или о хранилище браузера
-Когда гард судит вызов
-Тогда он пропускает его: это вопросы о предмете работы, а не о том, каким профилем водить
+Given a question about the supported browsers or about browser storage
+When the guard judges the call
+Then it lets it through: these are questions about the subject of the work, not about which profile
+to drive by
 
-### SC-AK-827 — вопрос о выборе профиля отбивается
+### SC-AK-827 — a question about choosing a profile is refused
 
-Дано вопрос спрашивает, какой браузер использовать, — по-русски, по-английски, по признаку
-устройства или прямым «select the browser profile»
-Когда гард судит вызов
-Тогда он отбивает его: профиль закреплён, и ответом может быть только он
+Given the question asks which browser to use — in the owner's language, in English, by the device
+sign or by a plain "select the browser profile"
+When the guard judges the call
+Then it refuses it: the profile is pinned, and it can be the only answer
 
-### SC-AK-828 — отказ называет закреплённый признак устройства
+### SC-AK-828 — the refusal names the pinned device sign
 
-Дано вопрос о выборе браузера отбит
-Когда читается текст отказа
-Тогда в нём стоит сам признак устройства: отказ без действия обходят, а не исполняют
+Given a question about choosing a browser is refused
+When the text of the refusal is read
+Then the device sign itself stands in it: a refusal without an action is bypassed, not carried out
 
-### SC-AK-829 — без закреплённого профиля гард молчит
+### SC-AK-829 — without a pinned profile the guard stays silent
 
-Дано профиль не назван ни переменной, ни файлом дерева
-Когда гард судит вопрос о выборе браузера
-Тогда он пропускает его: спрашивать становится законно — закреплённого ответа нет
+Given the profile is named neither by a variable nor by a file of the tree
+When the guard judges a question about choosing a browser
+Then it lets it through: asking becomes lawful — there is no pinned answer
 
-Покрыто: `projects/agent-kit/tests/browser-guard-asking.test.sh`.
+Covered: `projects/agent-kit/tests/browser-guard-asking.test.sh`.
 
-### SC-AK-760 — браузер, поднятый библиотекой изнутри скрипта, отбивается
+### SC-AK-760 — a browser raised by a library from inside a script is refused
 
-Дано команда запускает интерпретатором файл, в котором стоит точка входа браузерной библиотеки
-Когда гард обходных путей судит команду
-Тогда он отбивает и называет файл: в строке команды такой запуск не виден вовсе — там стоят
-только имя интерпретатора и путь. Присоединение к уже поднятому браузеру отбивается так же,
-обёртка менеджера пакетов запуска не прячет, а скрипт без вождения и несуществующий файл
-проходят
+Given a command runs by an interpreter a file that holds the entry point of a browser library
+When the guard of bypass paths judges the command
+Then it refuses and names the file: in the command line such a launch is not visible at all — there
+stand only the interpreter name and a path. Attaching to an already raised browser is refused the
+same way, a package manager wrapper hides no launch, while a script without driving and a
+non-existent file pass
 
-Покрыто: `projects/agent-kit/tests/browser-guard-drivers.test.sh`.
+Covered: `projects/agent-kit/tests/browser-guard-drivers.test.sh`.
 
-### SC-AK-761 — код, переданный доводом вместо файла, судится тем же образцом
+### SC-AK-761 — code passed as an argument instead of a file is judged by the same sample
 
-Дано браузер поднимается кодом, переданным интерпретатору доводом
-Когда гард обходных путей судит команду
-Тогда он отбивает; поиск того же слова по дереву проходит — образец судится только вместе с
-именем интерпретатора и его флагом кода
+Given the browser is raised by code passed to the interpreter as an argument
+When the guard of bypass paths judges the command
+Then it refuses; a search for that same word across the tree passes — the sample is judged only
+together with the interpreter name and its code flag
 
-Покрыто: `projects/agent-kit/tests/browser-guard-drivers.test.sh`.
+Covered: `projects/agent-kit/tests/browser-guard-drivers.test.sh`.
 
-### SC-AK-762 — без названного профиля гард пропускает и запуск из кода
+### SC-AK-762 — without a named profile the guard lets through a launch from code too
 
-Дано профиль дерева не назван ни переменной, ни файлом
-Когда гард обходных путей судит запуск скрипта, поднимающего браузер
-Тогда он пропускает: предлагать взамен ему нечего, а слепой отказ заводил бы работу в тупик
+Given the profile of the tree is named neither by a variable nor by a file
+When the guard of bypass paths judges the launch of a script that raises the browser
+Then it lets it through: it has nothing to offer instead, and a blind refusal would lead the work
+into a dead end
 
-Покрыто: `projects/agent-kit/tests/browser-guard-drivers.test.sh`.
+Covered: `projects/agent-kit/tests/browser-guard-drivers.test.sh`.
 
-### SC-AK-838 — чужой профиль отбивается до вызова, и метки этот пропуск не оставляет
+### SC-AK-838 — a foreign profile is refused before the call, and this pass leaves no mark
 
-Дано дерево назвало закреплённый профиль браузера
-Когда гард судит выбор до вызова
-Тогда чужой профиль отбит, закреплённый пропущен, а метка свежести не поставлена ни в том, ни в
-другом случае: до вызова известно только то, что профиль запрашивали
+Given the tree named the pinned browser profile
+When the guard judges the choice before the call
+Then a foreign profile is refused, the pinned one is let through, and the freshness mark is set in
+neither case: before the call all that is known is that the profile was requested
 
-Покрыто: `projects/agent-kit/tests/browser-guard-device-id.test.sh`.
+Covered: `projects/agent-kit/tests/browser-guard-device-id.test.sh`.
 
-### SC-AK-839 — метка свежести ставится по исходу вызова
+### SC-AK-839 — the freshness mark is set by the outcome of the call
 
-Дано выбор закреплённого профиля уже сделан
-Когда гард судит ответ вызова
-Тогда состоявшееся подключение метит заход, а отказ выбора, отказ словами и пустой ответ метки
-не оставляют: гард свежести иначе пропускал бы состав вкладок, переход и снимок экрана в тот
-браузер, который расширение считает активным
+Given the choice of the pinned profile is already made
+When the guard judges the answer of the call
+Then a connection that took place marks the session, while a refused choice, a refusal in words and
+an empty answer leave no mark: otherwise the freshness guard would let the tab list, the navigation
+and the screenshot through into whichever browser the extension counts as active
 
-Покрыто: `projects/agent-kit/tests/browser-guard-device-id.test.sh`.
+Covered: `projects/agent-kit/tests/browser-guard-device-id.test.sh`.
 
-### SC-AK-862 — отказ по невыбранному браузеру приходит полем ответа
+### SC-AK-862 — a refusal about an unchosen browser arrives as a field of the answer
 
-Дано в заходе не было принятого выбора браузера
-Когда гард свежести судит вызов расширения
-Тогда он отбивает его полем ответа и уходит нулём, поток ошибок остаётся пустым, а причина
-называет закреплённый признак устройства и два законных хода: сказанного в поток ошибок
-исполнитель не видит и читает подряд падающие вызовы как поломку расширения
+Given there was no accepted browser choice in the session
+When the freshness guard judges a call of the extension
+Then it refuses it by a field of the answer and leaves with zero, the error stream stays empty, and
+the reason names the pinned device sign and two lawful moves: what is said into the error stream the
+executor does not see and reads the calls failing one after another as a breakage of the extension
 
-### SC-AK-863 — протухший выбор отбивается тем же каналом
+### SC-AK-863 — a stale choice is refused by the same channel
 
-Дано метка последнего выбора старше предела свежести
-Когда гард судит вызов расширения
-Тогда он отбивает тем же полем, называет возраст выбора и снимает метку; свежая метка вызов
-пропускает и обновляется, а без закреплённого профиля гард молчит
+Given the mark of the last choice is older than the freshness limit
+When the guard judges a call of the extension
+Then it refuses by the same field, names the age of the choice and removes the mark; a fresh mark
+lets the call through and is updated, and without a pinned profile the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/browser-guard-require-select.test.sh`.
+Covered: `projects/agent-kit/tests/browser-guard-require-select.test.sh`.

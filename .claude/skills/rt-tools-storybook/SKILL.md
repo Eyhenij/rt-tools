@@ -95,10 +95,31 @@ in its decorator: the next matrix of that same component comes up without it alr
 - **A story title starts with the atomic design level, not with a shared section.** There are four
   levels — atoms, molecules, organisms, templates — and between the level and the component name
   stands an optional subject group: buttons, form fields, navigation, data, files, dialog, side
-  panel, table, correspondence, desktop, frame. A child part stands in its parent's group and at
-  its level: a dialog's header next to the dialog, a menu item next to the menu. There is no shared
-  root above the levels, and the order of sections is set by `storySort` — alphabetically molecules
-  would stand before organisms.
+  panel, table, correspondence, desktop, frame. There is no shared root above the levels, and the
+  order of sections is set by `storySort` — alphabetically molecules would stand before organisms.
+
+- **The level follows from what the component is made of, not from how complex it feels.** There is
+  one sign, and it is asked of the component itself: what is it assembled from.
+
+    | Level         | Sign                                                                                          | Examples                          |
+    | ------------- | --------------------------------------------------------------------------------------------- | --------------------------------- |
+    | **Atoms**     | assembled from no other component of the kit — there is nothing left to take apart            | button, icon, input, spinner      |
+    | **Molecules** | assembled from atoms and solves one task; opens no overlay and does not live by a record list | labelled field, tabs, card        |
+    | **Organisms** | a self-contained piece of a screen: opens an overlay, holds its own state or lives by records  | table, dialog, side panel         |
+    | **Templates** | a whole screen out of ready components; it has no input axes at all                            | desktop, list page                |
+
+    A disputed case is decided top down: opens an overlay or lives by records — an organism, even if
+    there is little markup in it; neither of those, but another kit component stands inside — a
+    molecule; no kit inside — an atom. The number of inputs, the file length and "it is a simple
+    component after all" are not signs: by them the same component lands at different levels with
+    two authors, and a diverged level drags a rename of the references behind it.
+
+- **A child part stands in its parent's group; the level is given to it by that same sign of
+  composition.** A dialog's header next to the dialog, a menu item next to the menu — and most often
+  it is the same level: a part of a whole is assembled no more complexly than the whole. But an
+  assembling component legitimately stands a step above its part — a notification note is an atom, a
+  stack of notes above the page is a molecule — and the group stays shared at that. A diverged group
+  is the miss itself: the part is lost in the list where it is looked for next to the whole.
 - **A snapshot reference's name is the title's slug, so the level moves together with it.**
   Relaying the title without renaming the references leaves 445 files no story answers to: the run
   re-takes everything, and the directory audit turns red on each.

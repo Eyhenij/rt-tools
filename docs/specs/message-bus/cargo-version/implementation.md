@@ -1,25 +1,25 @@
-# Столбец, отбор и порядок по версии — где исполняются правила
+# The column, the filter and the order by the version — where the rules are carried out
 
-Первая колонка — правило дословно, как оно написано в разделе «Правила» спека. Правило без
-строки и строка без правила — расхождение: спек обещает то, чего в коде нет, либо в коде стоит
-то, о чём спек молчит.
+The first column is the rule verbatim, as it is written in the "Rules" section of the spec. A rule
+without a line and a line without a rule is a divergence: the spec promises what is not in the code,
+or the code holds what the spec is silent about.
 
-- **Версия выпуска видна столбцом у разборов и у предложений.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:IPostmortemListRow`
-- **Столбец версии стоит за столбцом состояния и входит в набор по умолчанию.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.columns.ts:POSTMORTEMS_COLUMNS`
-- **У записи без версии ячейка пуста.** — `libs/message-bus-api/proposals/data-access/src/lib/proposal.queries.ts:IProposalListRow`
-- **Столбец версии остаётся в настройке столбцов наравне с прочими.** — `libs/message-bus-admin/proposals/util/src/lib/proposal.columns.ts:PROPOSALS_COLUMNS`
-- **Отбор по версии кладёт в страницу раздел, а не страница знает его сама.** — `libs/message-bus-admin/postmortems/feature/list/src/lib/admin-postmortems-list.component.ts:AdminPostmortemsListComponent`
-- **Отбор по версии стоит третьим в полосе, правее отбора по состоянию.** — `libs/message-bus-admin/proposals/feature/list/src/lib/admin-proposals-list.component.ts:AdminProposalsListComponent`
-- **Отбор по версии есть у разделов разборов и предложений и только у них.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:AdminListScreenBase`
-- **Отбор перечисляет встретившиеся версии, а не все возможные.** — `libs/message-bus-api/cargo-state/feature/src/lib/cargo-versions.controller.ts:CargoVersionsController`
-- **Первым пунктом отбора стоят «все версии», вторым — «без версии».** — `libs/message-bus-common/src/lib/cargo-page.ts:CARGO_VERSION_NONE`
-- **Отбор по версии живёт в адресе раздела наравне со страницей, размером, порядком и прочими отборами.** — `libs/message-bus-admin/common/core/util/src/lib/list-query.ts:listQueryParams`
-- **Отбор по версии складывается с отбором по дереву и с отбором по состоянию.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:whereOf`
-- **Выбранная версия сбрасывает список на первую страницу.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:changeVersion`
-- **Версия, которой в списке версий нет, приёмнику посылается как есть и отдаёт пустой список.** — `libs/message-bus-common/src/lib/cargo-page.ts:cargoVersionFault`
-- **Список, пустой по отбору версии, объясняет это отбором.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:narrowed`
-- **Версия выпуска — сортируемое поле у разборов и у предложений.** — `libs/message-bus-common/src/lib/sortable.ts:POSTMORTEM_SORTABLE`
-- **Порядок по версии идёт номерами частей, а не буквами строки.** — `libs/message-bus-common/src/lib/release-version-order.ts:compareReleaseVersions`
-- **Версия, не разобравшаяся номерами, встаёт в конец порядка, а между собой такие идут по алфавиту.** — `libs/message-bus-common/src/lib/release-version-order.ts:releaseVersionKey`
-- **Записи без версии в порядке по версии идут последними при возрастании и первыми при убывании.** — `libs/message-bus-common/src/lib/release-version-order.ts:releaseVersionPageIds`
-- **Второй ключ порядка остаётся прежним — идентификатор записи.** — `libs/message-bus-api/proposals/data-access/src/lib/proposal.queries.ts:byColumn`
+- **The version of the release is visible as a column at the analyses and at the proposals.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:IPostmortemListRow`
+- **The column of the version stands after the column of the state and is in the set by default.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.columns.ts:POSTMORTEMS_COLUMNS`
+- **At a record without a version the cell is empty.** — `libs/message-bus-api/proposals/data-access/src/lib/proposal.queries.ts:IProposalListRow`
+- **The column of the version stays in the setting of the columns on a par with the rest.** — `libs/message-bus-admin/proposals/util/src/lib/proposal.columns.ts:PROPOSALS_COLUMNS`
+- **The filter by version is put into the page by the section, the page does not know it itself.** — `libs/message-bus-admin/postmortems/feature/list/src/lib/admin-postmortems-list.component.ts:AdminPostmortemsListComponent`
+- **The filter by version stands third in the strip, to the right of the filter by state.** — `libs/message-bus-admin/proposals/feature/list/src/lib/admin-proposals-list.component.ts:AdminProposalsListComponent`
+- **The filter by version is at the sections of the analyses and of the proposals and only at them.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:AdminListScreenBase`
+- **The filter lists the versions that met, not all the possible ones.** — `libs/message-bus-api/cargo-state/feature/src/lib/cargo-versions.controller.ts:CargoVersionsController`
+- **The first item of the filter is "все версии", the second "без версии".** — `libs/message-bus-common/src/lib/cargo-page.ts:CARGO_VERSION_NONE`
+- **The filter by version lives in the address of the section on a par with the page, the size, the order and the other filters.** — `libs/message-bus-admin/common/core/util/src/lib/list-query.ts:listQueryParams`
+- **The filter by version adds up with the filter by tree and with the filter by state.** — `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:whereOf`
+- **A chosen version resets the list to the first page.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:changeVersion`
+- **A version that is not in the list of the versions is sent to the intake as it is and gives back an empty list.** — `libs/message-bus-common/src/lib/cargo-page.ts:cargoVersionFault`
+- **A list empty by the filter of the version explains that by the filter.** — `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:narrowed`
+- **The version of the release is a sortable field at the analyses and at the proposals.** — `libs/message-bus-common/src/lib/sortable.ts:POSTMORTEM_SORTABLE`
+- **The order by version goes by the numbers of the parts, not by the letters of the string.** — `libs/message-bus-common/src/lib/release-version-order.ts:compareReleaseVersions`
+- **A version that was not taken apart by numbers stands at the end of the order, and among themselves such ones go by the alphabet.** — `libs/message-bus-common/src/lib/release-version-order.ts:releaseVersionKey`
+- **The records without a version in the order by version go last at an ascending order and first at a descending one.** — `libs/message-bus-common/src/lib/release-version-order.ts:releaseVersionPageIds`
+- **The second key of the order stays the former one — the identifier of the record.** — `libs/message-bus-api/proposals/data-access/src/lib/proposal.queries.ts:byColumn`

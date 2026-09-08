@@ -1,14 +1,14 @@
-# Признак применимости у статьи правила — где исполняются правила
+# The applicability sign at an article of a rule — where the rules are carried out
 
-Первая колонка — правило дословно, как оно написано в разделе «Правила» спека рядом. Правило без
-строки и строка без правила — расхождение: спек обещает то, чего в коде нет, либо в коде стоит
-то, о чём спек молчит.
+The first column is the rule verbatim, as it is written in the "Rules" section of the spec next to
+it. A rule without a line and a line without a rule are a divergence: the spec promises what is not
+in the code, or the code holds what the spec is silent about.
 
-- **Статья правила говорит о своей применимости сама, строкой признака при себе.** — `projects/agent-kit/assets/hooks/rule-article.sh:rt_rule_article_marks`
-- **Отказ называет подошедшие статьи заголовками, а не пересказывает их телом.** — `projects/agent-kit/assets/hooks/rule-article.sh:rt_rule_article_heads`
-- **Образец сверяется с путём правки как образец оболочки, а не поиском по словам.** — `projects/agent-kit/assets/hooks/rule-article.sh:rt_rule_articles`
-- **Образец без каталога сверяется и с именем файла.** — `projects/agent-kit/assets/hooks/rule-article.sh:edited`
-- **Раскрытие имён при разборе образцов выключено.** — `projects/agent-kit/assets/hooks/rule-article.sh:old_ifs`
-- **Сам признак в печатаемую статью не входит.** — `projects/agent-kit/assets/hooks/rule-article.sh:rt_rule_article_at`
-- **Статья без признака законна, и правило без единого признака — тоже.** — `projects/agent-kit/assets/hooks/skill-gate.sh:article`
-- **Статья снимает чтение правила целиком, а не сам отказ.** — `projects/agent-kit/assets/hooks/skill-gate.sh:reason`
+- **An article of a rule speaks of its own applicability itself, by a sign line at its side.** — `projects/agent-kit/assets/hooks/rule-article.sh:rt_rule_article_marks`
+- **The refusal names the matching articles by headings, it does not retell them by their body.** — `projects/agent-kit/assets/hooks/rule-article.sh:rt_rule_article_heads`
+- **The sample is compared against the path of the edit as a shell sample, not by a word search.** — `projects/agent-kit/assets/hooks/rule-article.sh:rt_rule_articles`
+- **A sample without a directory is compared against the file name too.** — `projects/agent-kit/assets/hooks/rule-article.sh:edited`
+- **The expansion of names at the parse of the samples is switched off.** — `projects/agent-kit/assets/hooks/rule-article.sh:old_ifs`
+- **The sign itself does not go into the printed article.** — `projects/agent-kit/assets/hooks/rule-article.sh:rt_rule_article_at`
+- **An article without a sign is lawful, and a rule without a single sign is too.** — `projects/agent-kit/assets/hooks/skill-gate.sh:article`
+- **The article lifts the reading of the whole rule, not the refusal itself.** — `projects/agent-kit/assets/hooks/skill-gate.sh:reason`

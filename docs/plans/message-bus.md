@@ -1,113 +1,121 @@
-# Приёмник груза: чтобы он не отказывал молча
+# The receiver of the cargo: so that it does not refuse silently
 
-Приёмник принимает груз с деревьев и отдаёт его человеку с экрана. Заводился он линией
-наблюдений — ради того, чтобы грузу было куда приезжать, — и всё, что не мешало грузу ехать,
-осталось за её границей. Этот эпик разбирает оставшееся.
+The receiver takes in the cargo from the trees and gives it out to a person from a screen. It was
+created by the line of the observations — for the sake of the cargo having somewhere to arrive — and
+everything that did not hinder the cargo from travelling stayed outside its boundary. This epic takes
+apart what is left.
 
-Общее у задач ниже одно: **приёмник обещает больше, чем подтверждено**. Договорённость о его
-узле лежит невлитой, хотя узел работает месяц; загрузка дампа не проверена ни разу; отказ
-хранилища не оставляет в логах ничего, по чему его можно узнать; сборка проходит без клиента
-хранилища и кладёт битый бандл. Каждое из этого по отдельности выглядит мелочью, а вместе они
-означают, что о состоянии приёмника нельзя судить по тому, что о нём написано.
+The tasks below have one thing in common: **the receiver promises more than is confirmed**. The
+agreement about its node lies unmerged, although the node has worked for a month; the loading of a
+dump is not checked once; a refusal of the storage leaves nothing in the logs it could be recognised
+by; the build passes without the client of the storage and lays a broken bundle. Each of these apart
+looks like a trifle, and together they mean that the state of the receiver cannot be judged by what
+is written about it.
 
-## Что уже стоит и работает
+## What already stands and works
 
-| Что            | Где                                                   | Состояние                                                      |
-| -------------- | ----------------------------------------------------- | -------------------------------------------------------------- |
-| приёмник       | арендованный узел, своё имя, TLS от проксировщика     | принимает груз трёх родов, переживает перезапуск узла          |
-| админка        | три раздела со списком, отбором по дереву и панелью   | вход паролем, учётные записи, сквозной набор из 27 спек        |
-| выкатка        | рабочий поток из главной ветки, образ по хешу коммита | первая выкатка сделана руками — правом на реестр образов       |
-| дамп           | сценарий на узле: выгрузка, загрузка, проба           | проба прогнана на копии состава прода; расписания выгрузки нет |
-| описание прода | устройство, путь запроса, разбор молчания             | пару «состав и его описание» стережёт гард документов          |
-| договорённость | спек домена и его спутники                            | влита задачей RT-734: правила, сценарии и привязки в спеке     |
+| What                              | Where                                                                   | The state                                                                                               |
+| --------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| the receiver                      | a rented node, a name of its own, TLS from the proxy                    | it takes in the cargo of three kinds, it outlives a restart of the node                                 |
+| the admin application             | three sections with a list, a selection by the tree and a panel         | the entry by a password, the accounts, an end-to-end set of 27 specs                                    |
+| the rollout                       | a working flow from the main branch, an image by the hash of the commit | the first rollout was made by hand — by a right to the registry of the images                           |
+| the dump                          | a scenario on the node: the unloading, the loading, a probe             | the probe was run on a copy of the composition of the production; there is no schedule of the unloading |
+| the description of the production | the device, the path of a request, the taking apart of the silence      | the pair "the composition and its description" is guarded by the guard of the documents                 |
+| the agreement                     | the spec of the domain and its companions                               | merged by the task RT-734: the rules, the scenarios and the bindings are in the spec                    |
 
-## Решения
+## Decisions
 
-- **Эпик разбирает приёмник, а не расширяет его.** Ни одной новой возможности здесь нет: всё,
-  что делается, либо подтверждает уже обещанное, либо снимает молчание. Новое — отдельными
-  задачами и после.
-- **Обещание, не подтверждённое прогоном, считается неподтверждённым, а не работающим.** Дамп
-  выгружается каждую ночь, и это ничего не говорит о том, что он загрузится: путь загрузки не
-  проходил ни разу, а гард разрушительных действий отбивает его наравне со сносом тома.
-- **Отказ, не оставивший следа, дороже отказа.** По логам приёмника сегодня нельзя отличить
-  недоступное хранилище от неверного запроса: обе стороны молчат одинаково.
-- **Договорённость вливается первой, а не последней.** Раздел «предложено, но ещё не выкачено»
-  описывает выкаченное, и чем он старше, тем убедительнее. Остальные задачи правят код, и
-  вливать спеку после них значит вливать её в третий раз переписанной.
+- **The epic takes the receiver apart, it does not widen it.** There is not a single new capability
+  here: everything that is done either confirms what is already promised or lifts the silence. The new
+  goes by tasks of their own and after.
+- **A promise not confirmed by a run is counted unconfirmed, not working.** The dump is unloaded every
+  night, and that says nothing about it loading: the path of the loading has not gone once, and the
+  guard of the destructive actions refuses it on a par with the removal of a volume.
+- **A refusal that left no trace is dearer than a refusal.** By the logs of the receiver today an
+  unavailable storage cannot be told from a wrong request: both sides are silent the same way.
+- **The agreement is merged first, not last.** The section "proposed but not rolled out yet" describes
+  what is rolled out, and the older it is, the more convincing it is. The rest of the tasks edit the
+  code, and to merge the spec after them means to merge it rewritten a third time.
 
-## Задачи
+## The tasks
 
-| №   | Задача                                                        | Почему здесь                                                                                                           |
-| --- | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| 1   | RT-734 — договорённость об узле влита в спек домена           | Текст, кода не трогает. Снимает ложь раздела «не выкачено» и даёт остальным задачам, с чем сверяться                   |
-| 2   | Отказ хранилища виден в логах — #692                          | Пока приёмник молчит об отказах, любая следующая проверка меряет не то. Требует первой только текстом                  |
-| 3   | Сборка не проходит без клиента хранилища — #691               | Битый бандл уезжает выкаткой молча. Откатывается сама по себе                                                          |
-| 4   | RT-1839 — загрузка дампа и выкатка конвейером прогнаны вживую | Два обещания, не подтверждённые ни разу. Идут последними: до них дерево должно собираться и логировать                 |
-| 5   | Спек домена поделён на поддомены                              | 800 строк в спеке и 692 в сценариях при пределе в 500: дописывают в конец, не перечитав начала. Идёт после правок кода |
+| №   | Task                                                                         | Why here                                                                                                                                                      |
+| --- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | RT-734 — the agreement about the node is merged into the spec of the domain  | A text, it does not touch the code. It lifts the lie of the section "not rolled out" and gives the rest of the tasks something to check against               |
+| 2   | A refusal of the storage is visible in the logs — #692                       | While the receiver is silent about the refusals, any next check measures the wrong thing. It demands the first one only by the text                           |
+| 3   | The build does not pass without the client of the storage — #691             | A broken bundle leaves by the rollout silently. It rolls back by itself                                                                                       |
+| 4   | RT-1839 — the loading of a dump and the rollout by the pipeline are run live | Two promises not confirmed once. They go last: before them the tree must build and log                                                                        |
+| 5   | The spec of the domain is divided into subdomains                            | 800 lines in the spec and 692 in the scenarios at a limit of 500: they append to the end without rereading the beginning. It goes after the edits of the code |
 
-Порядок держится до конца эпика. Пересмотр — решение владельца, и записывается он в ход работы
-той задачи, которая его вызвала.
+The order holds to the end of the epic. A reconsideration is a decision of the owner, and it is
+written into the progress of the task that called it.
 
-### Первая — договорённость об узле
+### The first — the agreement about the node
 
-Правила договорённости дописываются в спек домена, сценарии переезжают с прежними номерами,
-привязки проставляются на код, который уже есть. Каталог предложенного снимается.
+The rules of the agreement are appended into the spec of the domain, the scenarios move with their
+former numbers, the bindings are put onto the code that already exists. The directory of the proposed
+is removed.
 
-Закрыта, когда каталога предложенного в спеке домена нет, `npm run check:specs` не даёт новых
-расхождений, а сценарии узла ссылаются на живые места в коде.
+It is closed when there is no directory of the proposed in the spec of the domain, `npm run
+check:specs` gives no new divergences, and the scenarios of the node refer to live places in the code.
 
-### Вторая — отказ хранилища виден в логах
+### The second — a refusal of the storage is visible in the logs
 
-Сегодня отказ хранилища не оставляет ни класса ошибки, ни текста: по логам не отличить
-недоступное хранилище от неверного запроса. Задача #692.
+Today a refusal of the storage leaves neither the class of the error nor the text: by the logs an
+unavailable storage cannot be told from a wrong request. The task #692.
 
-Закрыта, когда отказ хранилища пишет класс ошибки и её текст, а спека на это есть.
+It is closed when a refusal of the storage writes the class of the error and its text, and there is a
+spec for that.
 
-### Третья — сборка без клиента хранилища
+### The third — the build without the client of the storage
 
-Клиент хранилища генерируется постустановкой и в историю не едет. Сборка приёмника при пустом
-его каталоге проходит зелёной и кладёт битый бандл — он уезжает выкаткой и падает уже на узле.
-Задача #691.
+The client of the storage is generated by the post-installation and does not travel into the history.
+The build of the receiver at an empty directory of it passes green and lays a broken bundle — it
+leaves by the rollout and falls already on the node. The task #691.
 
-Закрыта, когда сборка при пустом каталоге клиента отказывает и называет причину.
+It is closed when the build at an empty directory of the client refuses and names the reason.
 
-### Четвёртая — дамп и выкатка прогнаны вживую
+### The fourth — the dump and the rollout are run live
 
-Загрузка дампа не проверена ни разу: гард разрушительных действий отбивает и её, и снос тома, и
-очистку таблиц. Путь выкатки конвейером тоже не проверен — первая выкатка сделана руками,
-потому что у токена нет права записи в реестр образов.
+The loading of a dump is not checked once: the guard of the destructive actions refuses it, and the
+removal of a volume, and the clearing of the tables. The path of the rollout by the pipeline is not
+checked either — the first rollout was made by hand, because the token has no right of a write into
+the registry of the images.
 
-Закрыта, когда загрузка дампа возвращает свод и годность выданных токенов, а выкатка запущена
-из главной ветки рабочим потоком и дошла до узла.
+It is closed when the loading of a dump gives back a summary and the fitness of the issued tokens, and
+the rollout is started from the main branch by the working flow and reached the node.
 
-### Пятая — спек домена поделён на поддомены
+### The fifth — the spec of the domain is divided into subdomains
 
-Спек вырос до 800 строк при пределе в 500, сценарии — до 692; длиннее предела спек был и до
-вливания договорённости об узле, 588 строк. Ни одна сверка длину документа не считает, поэтому
-расти он может и дальше: к началу этой задачи он прибавил ещё сотню строк против того, что
-стояло здесь на планировании эпика. Идёт после задач, правящих код: делить текст, который они
-же и перепишут, значит делить дважды.
+The spec grew to 800 lines at a limit of 500, the scenarios — to 692; longer than the limit the spec
+was before the merging of the agreement about the node too, 588 lines. Not a single checking counts
+the length of a document, so it can grow further: by the beginning of this task it added another
+hundred lines against what stood here at the planning of the epic. It goes after the tasks editing the
+code: to divide a text they will rewrite themselves means to divide it twice.
 
-Закрыта, когда ни один файл спека не длиннее предела, префикс сценариев не поделён между
-поддоменами и `npm run check:specs` расхождений не прибавил.
+It is closed when not a single file of the spec is longer than the limit, the prefix of the scenarios
+is not divided between the subdomains and `npm run check:specs` added no divergences.
 
-## Чего этот эпик не делает
+## What this epic does not do
 
-- Не заводит приёмнику новых возможностей: ни новых родов груза, ни новых разделов админки.
-- Не трогает отправляющую сторону — она в пакете правил и закрыта своей линией.
-- Не разбирает ветку `RT-585-accounts-login-backup`: работа там доведена и ждёт слова владельца
-  на пуш, а не доделки.
-- Не заводит второго узла и не переносит приёмник: узел арендован и работает.
+- It creates no new capabilities for the receiver: neither new kinds of the cargo nor new sections of
+  the admin application.
+- It does not touch the sending side — it is in the package of the rules and is closed by a line of
+  its own.
+- It does not take apart the branch `RT-585-accounts-login-backup`: the work there is brought to an
+  end and waits for the word of the owner about a push, not for a finishing.
+- It creates no second node and does not move the receiver: the node is rented and works.
 
-## Открытые вопросы
+## Open questions
 
-Нет. Q-1 — чем подтвердить загрузку дампа, не портя принятого, — закрыт задачей RT-1839:
-проба идёт на одноразовом контейнере рядом командой `dump.sh probe`, и боевое хранилище не
-трогается.
+None. Q-1 — what to confirm the loading of a dump by without spoiling what is taken in — is closed by
+the task RT-1839: the probe goes on a disposable container next to it by the command `dump.sh probe`,
+and the live storage is not touched.
 
-## Чем эпик кончается
+## What the epic ends with
 
-Все пять задач закрыты записями в описании прошлого. Последний шаг — проба дампа на самом
-узле: `ssh message-bus 'bash /opt/message-bus/dump.sh probe'` после выкатки, которая привезёт
-сценарий; сошлось — эпик кончился, и карточку закрывает владелец. Выгрузка по расписанию, о
-которой говорил замысел, на узле не стояла и заведена задачей RT-1840.
+All five tasks are closed by records in the description of the past. The last step is a probe of the
+dump on the node itself: `ssh message-bus 'bash /opt/message-bus/dump.sh probe'` after the rollout
+that will bring the scenario; it coincided — the epic is over, and the card is closed by the owner.
+The unloading by a schedule the plan spoke of did not stand on the node and is created as the task
+RT-1840.

@@ -1,117 +1,122 @@
-# Сценарии — столбец, отбор и порядок по версии выпуска
+# Scenarios — the column, the filter and the order by the version of the release
 
-Идентификатор ставится в начало заголовка теста через тире. Номера продолжают общую нумерацию
-домена и при вливании в спек поддомена не меняются.
+The identifier goes at the start of the test title, followed by a dash. The numbers continue the shared
+numbering of the domain and do not change at a merge into the spec of a subdomain.
 
-Пока сценарий не покрыт, он несёт пометку «Не покрыто» с причиной. Сценарии, чьё «Тогда»
-называет человека и то, что он видит, закрываются сквозной спекой; замер в браузере идёт рядом
-с ней и заменой ей не считается. Пометок здесь не осталось: все восемнадцать закрыты — решения
-спеками общей либы и приёмника, путь человека — сквозным набором на стенде.
+While a scenario is not covered, it carries the mark "Not covered" with a reason. Scenarios whose
+"Then" names a person and what they get on the screen are closed by an end-to-end spec; a measurement
+in the browser goes next to it and does not count as a replacement of it. No marks are left here: all
+eighteen are closed — the decisions by the specs of the common lib and of the intake, the way of a
+person by the end-to-end set on the stand.
 
-### SC-MB-237 — версия выпуска видна столбцом за состоянием
+### SC-MB-237 — the version of the release is visible as a column after the state
 
-Дано раздел разборов происшествий открыт
-Когда владелец смотрит на строки списка
-Тогда за столбцом состояния стоит столбец «В какой версии» с версией выпущенных записей
+Given the section of the incident analyses is open
+When the owner looks at the rows of the list
+Then after the column of the state stands the column "В какой версии" with the version of the released
+records
 
-### SC-MB-238 — у записи без версии ячейка столбца пуста
+### SC-MB-238 — at a record without a version the cell of the column is empty
 
-Дано в списке есть запись, которую никто не выпускал
-Когда владелец смотрит на её строку
-Тогда ячейка версии пуста: ни прочерка, ни слова «нет» в ней не стоит
+Given there is a record in the list nobody released
+When the owner looks at its row
+Then the cell of the version is empty: neither a dash nor the word "no" stands in it
 
-### SC-MB-239 — отбор по версии стоит третьим в полосе над списком
+### SC-MB-239 — the filter by version stands third in the strip above the list
 
-Дано раздел разборов происшествий открыт
-Когда владелец смотрит на полосу над списком
-Тогда слева стоят три отбора подряд: по дереву, по состоянию и по версии
+Given the section of the incident analyses is open
+When the owner looks at the strip above the list
+Then three filters stand in a row on the left: by tree, by state and by version
 
-### SC-MB-240 — отбор перечисляет версии, встретившиеся в записях
+### SC-MB-240 — the filter lists the versions that met in the records
 
-Дано записи раздела несут две разные версии выпуска
-Когда владелец открывает список выбора версии
-Тогда в нём стоят обе эти версии и не стоит ни одной, которой в записях нет
+Given the records of the section carry two different versions of the release
+When the owner opens the list of the choice of the version
+Then both these versions stand in it and not a single one that is not in the records
 
-### SC-MB-241 — выбранная версия сужает список и встаёт в адрес
+### SC-MB-241 — a chosen version narrows the list and stands in the address
 
-Дано список раздела показан целиком
-Когда владелец выбирает версию выпуска
-Тогда в списке остаются только записи этой версии, а выбор стоит в адресе раздела
+Given the list of the section is shown whole
+When the owner chooses a version of the release
+Then only the records of that version stay in the list, and the choice stands in the address of the
+section
 
-### SC-MB-242 — «все версии» снимают отбор и убирают параметр из адреса
+### SC-MB-242 — "все версии" lifts the filter and removes the parameter from the address
 
-Дано список сужен версией
-Когда владелец выбирает «все версии»
-Тогда список показывает записи всех версий, а параметра отбора в адресе нет вовсе
+Given the list is narrowed by a version
+When the owner chooses "все версии"
+Then the list shows the records of all the versions, and there is no parameter of the filter in the
+address at all
 
-### SC-MB-243 — «без версии» сужает список до невыпущенных записей
+### SC-MB-243 — "без версии" narrows the list to the records that are not released
 
-Дано в разделе есть записи с версией и записи без неё
-Когда владелец выбирает «без версии»
-Тогда в списке остаются только записи с пустой ячейкой версии
+Given there are records with a version and records without one in the section
+When the owner chooses "без версии"
+Then only the records with an empty cell of the version stay in the list
 
-### SC-MB-244 — отбор по версии складывается с двумя другими отборами
+### SC-MB-244 — the filter by version adds up with the two other filters
 
-Дано список сужен деревом и состоянием
-Когда владелец выбирает версию
-Тогда в списке остаются записи, отвечающие всем трём условиям, и все три стоят в адресе
+Given the list is narrowed by tree and by state
+When the owner chooses a version
+Then the records answering all three conditions stay in the list, and all three stand in the address
 
-### SC-MB-245 — выбор версии возвращает список на первую страницу
+### SC-MB-245 — the choice of a version brings the list back to the first page
 
-Дано владелец стоит на второй странице списка
-Когда он выбирает версию
-Тогда список показывает первую страницу суженного списка, а не вторую
+Given the owner stands at the second page of the list
+When they choose a version
+Then the list shows the first page of the narrowed list, not the second
 
-### SC-MB-246 — отбор по версии переживает переход на другую страницу и возврат из панели
+### SC-MB-246 — the filter by version outlives a transition to another page and a return from the panel
 
-Дано список сужен версией и не помещается на одну страницу
-Когда владелец уходит на вторую страницу, открывает запись панелью и закрывает её
-Тогда список стоит на второй странице с тем же отбором
+Given the list is narrowed by a version and does not fit onto one page
+When the owner goes to the second page, opens a record by a panel and closes it
+Then the list stands at the second page with the same filter
 
-### SC-MB-247 — версия, которой в записях нет, отдаёт пустой список, а не отказ
+### SC-MB-247 — a version that is not in the records gives back an empty list, not a refusal
 
-Дано владелец открыл раздел ссылкой с версией, которой ни у одной записи нет
-Когда экран спрашивает страницу
-Тогда список пуст и объясняет это отбором, а отказа приёмника не приходит
+Given the owner opened the section by a link with a version that no record has
+When the screen asks for the page
+Then the list is empty and explains that by the filter, and no refusal of the intake comes
 
-### SC-MB-248 — заголовок столбца версии меняет порядок списка
+### SC-MB-248 — the heading of the column of the version changes the order of the list
 
-Дано раздел разборов происшествий открыт
-Когда владелец нажимает заголовок столбца версии
-Тогда список упорядочен по версии, и применённый порядок виден на самом заголовке
+Given the section of the incident analyses is open
+When the owner presses the heading of the column of the version
+Then the list is ordered by the version, and the applied order is visible at the heading itself
 
-### SC-MB-249 — порядок по версии идёт номерами, а не буквами
+### SC-MB-249 — the order by version goes by the numbers, not by the letters
 
-Дано в списке есть записи версий `0.9.0` и `0.10.0`
-Когда владелец упорядочивает список по версии по возрастанию
-Тогда `0.9.0` стоит выше `0.10.0`
+Given there are records of the versions `0.9.0` and `0.10.0` in the list
+When the owner orders the list by version ascending
+Then `0.9.0` stands above `0.10.0`
 
-### SC-MB-250 — версия вне числовой формы уходит в конец порядка
+### SC-MB-250 — a version outside the number form goes to the end of the order
 
-Дано в списке есть записи версий `0.10.0` и `hotfix-3`
-Когда владелец упорядочивает список по версии по возрастанию
-Тогда `hotfix-3` стоит последней, а не между числовыми версиями
+Given there are records of the versions `0.10.0` and `hotfix-3` in the list
+When the owner orders the list by version ascending
+Then `hotfix-3` stands last, not between the number versions
 
-### SC-MB-251 — записи без версии в порядке по версии идут последними
+### SC-MB-251 — the records without a version in the order by version go last
 
-Дано в списке есть выпущенные записи и записи без версии
-Когда владелец упорядочивает список по версии по возрастанию
-Тогда записи без версии стоят ниже всех выпущенных
+Given there are released records and records without a version in the list
+When the owner orders the list by version ascending
+Then the records without a version stand below all the released ones
 
-### SC-MB-252 — раздел сводок отбора по версии не показывает
+### SC-MB-252 — the section of the digests shows no filter by version
 
-Дано раздел сводок открыт
-Когда владелец смотрит на полосу над списком
-Тогда в ней стоит один отбор по дереву, и ни отбора по состоянию, ни отбора по версии рядом нет
+Given the section of the digests is open
+When the owner looks at the strip above the list
+Then one filter by tree stands in it, and there is neither a filter by state nor a filter by version
+next to it
 
-### SC-MB-253 — три отбора на узком экране переносятся, а не режутся
+### SC-MB-253 — the three filters on a narrow screen wrap, they are not cut
 
-Дано раздел разборов происшествий открыт на узком экране
-Когда владелец смотрит на полосу над списком
-Тогда все три отбора видны целиком, перенесённые на строки, и ни один не обрезан
+Given the section of the incident analyses is open on a narrow screen
+When the owner looks at the strip above the list
+Then all three filters are there whole, wrapped onto lines, and not one is cut
 
-### SC-MB-254 — операция отдаёт встретившиеся версии по роду груза
+### SC-MB-254 — the operation gives back the versions that met by the kind of the cargo
 
-Дано у разборов встречается версия, которой нет у предложений
-Когда экран раздела предложений спрашивает список версий
-Тогда в ответе этой версии нет
+Given a version met at the analyses that is not at the proposals
+When the screen of the section of the proposals asks for the list of the versions
+Then that version is not in the answer

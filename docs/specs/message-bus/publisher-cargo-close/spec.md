@@ -1,148 +1,157 @@
-# Закрытие записи груза издателем редакции
+# The closing of a record of the cargo by the publisher of an edition
 
-**Статус:** действует · **Ревизия:** 2026-08-28 · **Префикс сценариев:** `SC-MB`
-**Зависимости:** `agent-kit` (команда строки запуска, которой издатель зовёт закрытие)
-**Законы:** `access`, `observability`, `verifiability`, `code-structure`
-**Процедуры:** нет — операция объявлена контроллером приёмника
+**Status:** in force · **Revision:** 2026-08-28 · **Scenario prefix:** `SC-MB`
+**Depends on:** `agent-kit` (the command of the launch line the publisher calls the closing by)
+**Laws:** `access`, `observability`, `verifiability`, `code-structure`
+**Procedures:** none — the operation is declared by a controller of the intake
 
-Договорённость к поддомену «правка состояния деревом»: чем закрывается запись груза, приехавшая
-от чужого дерева, когда правка по ней вошла в редакцию пакета.
+An agreement to the subdomain "the edit of a state by a tree": what a record of the cargo that arrived
+from a foreign tree is closed by, when the edit by it entered an edition of the package.
 
-## Зачем
+## Why
 
-Состояние своей записи двигает отправившее дерево — это верно и остаётся. Но у записи есть
-второй читатель: издатель редакции. Предложение соседа входит в пакет у него, и правило разбора
-груза говорит прямо: «выпущено» ставит тот, кто публикует редакцию, тем же движением, что и
-публикацию.
+The state of its own record is moved by the tree that sent it — that is true and stays. But a record
+has a second reader: the publisher of the edition. The proposal of a neighbour enters the package at
+their place, and the rule of the sorting out of the cargo says directly: "released" is put by whoever
+publishes the edition, by the same movement as the publication.
 
-Сегодня у него нет ничего. Токеном соседа он не владеет, а своим двигать чужую запись нельзя:
-приём берёт дерево из токена и отвечает по чужой записи так же, как по ненайденной. Сто
-двенадцать записей соседа поэтому стоят в «новом», и тридцать три из них давно лежат в пакете.
-Список при этом врёт обеим сторонам: сосед видит своё предложение неразобранным, издатель — гору
-работы, которой нет.
+Today they have nothing. They do not own the token of the neighbour, and moving a foreign record by
+their own is not allowed: the intake takes the tree from the token and answers about a foreign record
+the same way as about one that was not found. A hundred and twelve records of the neighbour therefore
+stand in "new", and thirty-three of them have long lain in the package. The list at that lies to both
+sides: the neighbour gets their proposal as not sorted out, the publisher a mountain of work that does
+not exist.
 
-## Терминология
+## Terminology
 
-- **Издатель редакции** — человек, вошедший в админку приёма: он видит записи всех деревьев и
-  публикует редакции пакета. От дерева отличается способом представиться — вход, а не токен.
-- **Закрытие записи** — перевод чужой записи в «починено и не выпущено» или в «выпущено» с
-  приёмом починки и версией выпуска.
-- **Своё дерево записи** — дерево, приславшее запись. Его право двигать своё состояние
-  закрытием не отменяется.
-- **Признак записи в приёме** — то, чем запись названа у приёма. Не путать с ключом отметки:
-  тем запись двигает своё дерево, этим её закрывает издатель.
+- **The publisher of an edition** — a person who entered the admin application of the intake: they get
+  the records of all the trees and publish the editions of the package. They differ from a tree by the
+  way of introducing themselves — an entry, not a token.
+- **The closing of a record** — the move of a foreign record into "fixed and not released" or into
+  "released" with the way of the fix and the version of the release.
+- **The own tree of a record** — the tree that sent the record. Its right to move its own state is not
+  cancelled by the closing.
+- **The sign of a record in the intake** — what the record is named by at the intake. Not to be confused
+  with the key of the mark: by that one the record is moved by its own tree, by this one it is closed by
+  the publisher.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости        | В строке запуска                                       |
-| ----------------------- | ------------------------------------------------------ |
-| закрытие записи         | `npm run cargo:close -- --state fixed --proposal …`    |
-| вход издателя           | пара учётной записи службы, та же, что у чтения груза  |
-| признак записи в приёме | строка `in the intake <признак>` в выводе чтения груза |
+| In the agreement                   | In the launch line                                                             |
+| ---------------------------------- | ------------------------------------------------------------------------------ |
+| the closing of a record            | `npm run cargo:close -- --state fixed --proposal …`                            |
+| the entry of the publisher         | the pair of an account of the service, the same as at the reading of the cargo |
+| the sign of a record in the intake | the line `in the intake <sign>` in the output of the reading of the cargo      |
 
-## Правила
+## Rules
 
-- **Закрытие записи закрыто входом человека, а не токеном дерева.** Токен дерева отвечает за
-  своё, и открыть им чужую запись значило бы вернуть ровно то, от чего разведены два способа
-  представиться: утёкший токен двигал бы состояния всех деревьев разом.
-- **Издатель закрывает запись любого дерева, включая своё.** Разделять их нечем и незачем:
-  движение одно и то же, а признак дерева у записи и так виден.
-- **Закрытие ходит только вперёд и только по двум последним шагам.** «Починено и не выпущено» и
-  «выпущено» — состояния, которые ставит тот, кто починил и опубликовал; «в работе» остаётся
-  дереву, потому что означает взятую им работу.
-- **Приём починки обязателен при переходе в «починено и не выпущено», версия — при переходе в
-  «выпущено».** Правило разбора груза требует обоих у отправителя, и у издателя причин молчать
-  меньше: он как раз и знает, чем закрыто и в какой редакции.
-- **Закрытие называет, кто его сделал.** Запись хранит признак дерева, приславшего её, и это не
-  тот, кто её закрыл: сосед, увидевший свою запись выпущенной, должен понимать, что перевёл её
-  издатель, а не он сам забыл.
-- **Своё право дерева закрытие не отменяет.** Отправитель по-прежнему двигает свою запись
-  токеном; закрытие — второй путь, а не замена первому.
-- **Строка закрытия называет запись признаком из чтения, а не ключом отправителя.** Имя файла и
-  признак текста уникальны у своего дерева, а не в приёме: у двух деревьев они совпадают, и
-  названный ключ нашёл бы две записи вместо одной. Признак приезжает тем же чтением, каким
-  издатель груз и видит, и печатается рядом с записью.
-- **Закрытие приезжает пакетом.** Издатель закрывает разом всё, что вошло в редакцию: вызов на
-  запись стоил бы столько же, сколько сам разбор.
-- **Строка пакета отбивается сама по себе.** Причины те же, что у правки деревом: записи нет,
-  переход не разрешён, текста починки или версии не хватает.
-- **Ответ называет число переведённых, число уже стоявших и отбитые строки.** Читается он так
-  же, как ответ правки деревом: ноль переведённых — отказ, а не успех.
+- **The closing of a record is closed by the entry of a person, not by the token of a tree.** The token
+  of a tree answers for its own, and opening a foreign record by it would mean bringing back exactly
+  what the two ways of introducing oneself are set apart for: a leaked token would move the states of all
+  the trees at once.
+- **The publisher closes a record of any tree, including their own.** There is nothing and no reason to
+  separate them: the movement is one and the same, and the sign of the tree at a record is visible
+  anyway.
+- **The closing goes only forward and only over the two last steps.** "Fixed and not released" and
+  "released" are the states put by whoever fixed and published; "in progress" stays with the tree,
+  because it means work taken by it.
+- **The way of the fix is mandatory at the transition into "fixed and not released", the version at the
+  transition into "released".** The rule of the sorting out of the cargo demands both of the sender, and
+  the publisher has fewer reasons to stay silent: it is exactly they who know what it was closed by and
+  in which edition.
+- **The closing names who made it.** A record keeps the sign of the tree that sent it, and that is not
+  whoever closed it: a neighbour who gets their record released must understand that it was moved by the
+  publisher, not that they themselves forgot.
+- **The right of a tree of its own is not cancelled by the closing.** The sender still moves their record
+  by the token; the closing is a second way, not a replacement of the first.
+- **A row of the closing names the record by the sign from the reading, not by the key of the sender.**
+  The name of the file and the sign of the text are unique at their own tree, not in the intake: at two
+  trees they coincide, and a named key would find two records instead of one. The sign arrives by the
+  same reading the publisher gets the cargo by, and it is printed next to the record.
+- **The closing arrives as a bundle.** The publisher closes at once everything that entered the edition:
+  a call per record would cost as much as the sorting out itself.
+- **A row of the bundle is refused on its own.** The reasons are the same as at the edit by a tree: there
+  is no record, the transition is not allowed, the text of the fix or the version is missing.
+- **The answer names the number of the moved ones, the number of the ones that already stood there and
+  the refused rows.** It is read the same way as the answer of the edit by a tree: zero moved is a
+  refusal, not a success.
 
-## Что не входит
+## What is out of scope
 
-- **Правка текста чужой записи.** Издатель закрывает состояние, а не переписывает предложение:
-  текст принадлежит отправителю.
-- **Возврат чужой записи назад.** Из «выпущено» дороги нет ни у кого, а «в работе» ставит только
-  дерево — иначе издатель отменял бы чужую работу.
-- **Закрытие из админки нажатием.** Экран приёма читает; движение состояний идёт командой, как и
-  у дерева.
+- **The edit of the text of a foreign record.** The publisher closes the state, they do not rewrite the
+  proposal: the text belongs to the sender.
+- **Bringing a foreign record back.** From "released" there is no road for anybody, and "in progress" is
+  put only by the tree — otherwise the publisher would cancel foreign work.
+- **The closing from the admin application by a press.** The screen of the intake reads; the movement of
+  the states goes by a command, as at a tree.
 
-## Контракт
+## Contract
 
-Операция объявляется контроллером приёмника рядом с правкой состояния деревом и закрыта входом
-человека.
+The operation is declared by a controller of the intake next to the edit of a state by a tree and is
+closed by the entry of a person.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: приёмник отвечает кодом ответа HTTP, а не именованными кодами домена. Где закрытие
-обязано отказать вместо молчания:
+Not applicable: the intake answers with a code of the answer of HTTP, not with named codes of the
+domain. Where the closing is obliged to refuse instead of staying silent:
 
-| Что случилось                         | Код   | Что говорит                            |
-| ------------------------------------- | ----- | -------------------------------------- |
-| входа нет или он не годится           | `401` | вход нужен, а токен дерева не подходит |
-| форма пакета не сошлась               | `400` | причина и место строки                 |
-| записи с таким ключом нет вовсе       | `200` | строка отбита: записи нет              |
-| переход не разрешён порядком          | `200` | строка отбита: переход запрещён        |
-| нет приёма починки или версии выпуска | `200` | строка отбита: чего не хватает         |
+| What happened                                        | Code  | What it says                                           |
+| ---------------------------------------------------- | ----- | ------------------------------------------------------ |
+| there is no entry or it is not fit                   | `401` | an entry is needed, and a token of a tree does not fit |
+| the form of the bundle did not match                 | `400` | the reason and the place of the row                    |
+| there is no record with such a key at all            | `200` | the row is refused: there is no record                 |
+| the transition is not allowed by the order           | `200` | the row is refused: the transition is forbidden        |
+| there is no way of the fix or version of the release | `200` | the row is refused: what is missing                    |
 
-## Данные
+## Data
 
-Своего хранения нет. Правятся те же поля записи, что и правкой деревом: состояние, приём
-починки, версия выпуска. Прибавляется одно — признак того, что запись закрыл издатель, а не её
-дерево: колонка у обоих родов записей, пустая по умолчанию.
+There is no storage of its own. The same fields of a record are edited as at the edit by a tree: the
+state, the way of the fix, the version of the release. One is added — the sign that the record was
+closed by the publisher, not by its tree: a column at both kinds of records, empty by default.
 
-## Экраны и состояния
+## Screens and states
 
-Экран списка показывает признак закрытия издателем там же, где показывает состояние: иначе
-отправитель читает выпущенную запись как свою отметку.
+The screen of the list shows the sign of the closing by a publisher in the same place it shows the
+state: otherwise the sender reads a released record as their own mark.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Ответ операции одноязычный, как и у соседних операций приёма.
+The answer of the operation is single-language, as at the neighbouring operations of the intake.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо: операция без экрана.
+Not applicable: the operation has no screen.
 
-### Мультиобъектность
+### Several objects
 
-Записи всех деревьев доступны издателю одинаково: он владелец приёма, а не одно из деревьев.
+The records of all the trees are available to the publisher equally: they are the owner of the intake,
+not one of the trees.
 
-### Общее
+### Shared
 
-- Закрытие пишет строку журнала: кто закрыл, сколько записей, какого дерева.
-- Ограничение частоты — то же, что у соседних операций под входом.
+- The closing writes a row of the journal: who closed, how many records, of which tree.
+- The limit of the frequency is the same as at the neighbouring operations under the entry.
 
-## Решения
+## Decisions
 
-- **Второй путь, а не замена первого.** Отправитель остаётся хозяином своей записи; издатель
-  получает право ровно на два последних шага и только вперёд.
-- **Признак закрывшего хранится, а не выводится.** Вывести его из истории нечем: поле состояния
-  одно, и кто его двинул, после правки не видно никак.
+- **A second way, not a replacement of the first.** The sender stays the master of their record; the
+  publisher gets the right to exactly the two last steps and only forward.
+- **The sign of whoever closed is kept, it is not derived.** There is nothing to derive it from the
+  history by: the field of the state is one, and who moved it is not visible in any way after the edit.
 
-## Открытые вопросы
+## Open questions
 
-- Нужно ли сообщать отправителю о закрытии его записи иначе, чем видом в списке. Ответа пока
-  нет: почты у приёма нет вовсе, а вымышленный канал завёл бы вторую правду.
+- Whether the sender should be told about the closing of their record otherwise than by the look in the
+  list. There is no answer yet: the intake has no mail at all, and an invented channel would create a
+  second truth.
 
-## История изменений
+## History of changes
 
-- 2026-08-28 — договорённость заведена и влита в домен вместе с операцией закрытия, командой
-  строки запуска и признаком закрывшего в чтении.
+- 2026-08-28 — the agreement was created and merged into the domain together with the operation of the
+  closing, the command of the launch line and the sign of whoever closed in the reading.

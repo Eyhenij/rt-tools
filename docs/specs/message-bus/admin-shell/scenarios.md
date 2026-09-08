@@ -1,77 +1,79 @@
-# Сценарии — оболочка админки: разделы, профиль, тема и язык
+# Scenarios — the shell of the admin application: the sections, the profile, the theme and the language
 
-Идентификатор ставится в начало заголовка теста через тире. Номера продолжают общую нумерацию
-домена: поддомен нумеруется вместе с ним, а не заново.
+The identifier goes at the start of the test title, followed by a dash. The numbers continue the
+shared numbering of the domain: the subdomain is numbered together with it, not anew.
 
-### SC-MB-142 — разделы стоят верхним рядом, а левой колонки нет
+### SC-MB-142 — the sections stand as a top row, and there is no left column
 
-Дано владелец вошёл и открыл любой раздел
-Когда он смотрит на страницу
-Тогда разделы стоят полосой над содержимым, а колонки с ними слева на странице нет
+Given the owner entered and opened any section
+When they look at the page
+Then the sections stand as a strip above the content, and there is no column with them on the left of
+the page
 
-### SC-MB-143 — текущий раздел подсвечен и после перехода, и по прямой ссылке
+### SC-MB-143 — the current section is highlighted both after a transition and by a direct link
 
-Дано владелец открыл раздел прямой ссылкой, а затем перешёл в соседний пунктом верхнего ряда
-Когда он смотрит на верхний ряд
-Тогда подсвечен ровно тот пункт, чей раздел открыт, — и в первом случае, и во втором
+Given the owner opened a section by a direct link, and then went to a neighbouring one by an item of
+the top row
+When they look at the top row
+Then exactly the item whose section is open is highlighted — in the first case and in the second
 
-### SC-MB-144 — на узком экране те же разделы открываются кнопкой
+### SC-MB-144 — on a narrow screen the same sections open by a button
 
-Дано ширина окна узкая
-Когда владелец нажимает кнопку разделов в верхнем ряду
-Тогда открывается список тех же четырёх разделов, и переход по нему ведёт в раздел
+Given the width of the window is narrow
+When the owner presses the button of the sections in the top row
+Then a list of the same four sections opens, and a transition by it leads into a section
 
-### SC-MB-145 — нажатие на профиль открывает попап, а не выходит
+### SC-MB-145 — a press on the profile opens the popup, it does not exit
 
-Дано владелец вошёл
-Когда он нажимает на своё имя в верхнем ряду
-Тогда открывается попап с темой, языком и выходом, а вход остаётся принятым
+Given the owner entered
+When they press their own name in the top row
+Then a popup with the theme, the language and the exit opens, and the entry stays accepted
 
-### SC-MB-146 — выход идёт из попапа и уводит на экран входа
+### SC-MB-146 — the exit goes from the popup and leads away to the screen of the entry
 
-Дано попап профиля открыт
-Когда владелец выбирает выход
-Тогда вход обрывается, и владелец оказывается на экране входа
+Given the popup of the profile is open
+When the owner chooses the exit
+Then the entry is broken off, and the owner finds themselves at the screen of the entry
 
-### SC-MB-147 — тема переключается в попапе и переживает перезагрузку
+### SC-MB-147 — the theme is switched in the popup and outlives a reload
 
-Дано владелец вошёл и тема светлая
-Когда он переключает тему в попапе профиля и перезагружает страницу
-Тогда экран остаётся тёмным, а не возвращается к светлому
+Given the owner entered and the theme is light
+When they switch the theme in the popup of the profile and reload the page
+Then the screen stays dark, it does not come back to the light one
 
-### SC-MB-148 — тема переключается на экране входа
+### SC-MB-148 — the theme is switched on the screen of the entry
 
-Дано владелец стоит на экране входа
-Когда он переключает тему
-Тогда экран входа становится тёмным, и после входа тёмной остаётся и оболочка
+Given the owner stands at the screen of the entry
+When they switch the theme
+Then the screen of the entry becomes dark, and after the entry the shell stays dark too
 
-### SC-MB-149 — выбор языка меняет подписи кита, и только их
+### SC-MB-149 — the choice of the language changes the labels of the kit, and only them
 
-Дано владелец выбрал второй язык на экране входа
-Когда он входит и открывает список
-Тогда подписи, которые рисует кит, идут на выбранном языке, а заголовки разделов и вид дат
-остаются прежними
+Given the owner chose the second language on the screen of the entry
+When they enter and open a list
+Then the labels the kit draws go in the chosen language, and the headings of the sections and the
+shape of the dates stay the former ones
 
-### SC-MB-150 — выбор языка есть в попапе профиля и переживает перезагрузку
+### SC-MB-150 — the choice of the language is in the popup of the profile and outlives a reload
 
-Дано владелец вошёл
-Когда он меняет язык в попапе профиля и перезагружает страницу
-Тогда выбранный язык остался тем же, а не вернулся к первоначальному
+Given the owner entered
+When they change the language in the popup of the profile and reload the page
+Then the chosen language stayed the same, it did not come back to the initial one
 
-### SC-MB-151 — поля входа несут иконку и плейсхолдер
+### SC-MB-151 — the fields of the entry carry an icon and a placeholder
 
-Дано владелец стоит на экране входа
-Когда он смотрит на поля учётной записи и пароля
-Тогда у каждого есть иконка и подсказка внутри поля, а не одна подпись сбоку
+Given the owner stands at the screen of the entry
+When they look at the fields of the account and of the password
+Then each has an icon and a hint inside the field, not one label at the side
 
-### SC-MB-152 — заголовок вкладки называет приложение
+### SC-MB-152 — the heading of the tab names the application
 
-Дано открыта любая страница админки
-Когда владелец смотрит на заголовок вкладки браузера
-Тогда там стоит название приложения, а не имя проекта сборки
+Given any page of the admin application is open
+When the owner looks at the heading of the tab of the browser
+Then the name of the application stands there, not the name of the project of the build
 
-### SC-MB-153 — тост показывается один раз и в одном месте
+### SC-MB-153 — the toast is shown once and in one place
 
-Дано владелец отзывает приглашение
-Когда отзыв удался
-Тогда об этом говорит один тост в одном месте экрана, а не два в двух углах
+Given the owner revokes an invitation
+When the revocation succeeded
+Then one toast in one place of the screen says about it, not two in two corners

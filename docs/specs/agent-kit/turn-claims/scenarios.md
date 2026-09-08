@@ -1,231 +1,260 @@
-# Сценарии — утверждения владельцу
+# Scenarios — statements to the owner
 
-Идентификатор ставится в начало заголовка теста через тире. Префикс общий на домен, и номера при
-переезде в поддомен не пересчитывались: номер связывает сценарий с заголовком теста.
+The identifier goes at the start of the test title, followed by a dash. The prefix is shared across
+the domain, and the numbers were not recounted at the move into the subdomain: the number ties the
+scenario to the test title.
 
-### SC-AK-321 — найденный повтор ход не закрывает
+### SC-AK-321 — a repeat that was found does not close the turn
 
-Дано роль совести нашла в ходе повтор разобранного промаха
-Когда ход кончается, а по находке не сделано ничего
-Тогда гард возвращает ход вместе с находкой
+Given the role of the conscience found a repeat of a miss already taken apart in the turn
+When the turn ends, and nothing is done about the finding
+Then the guard gives the turn back together with the finding
 
-Покрыто: `projects/agent-kit/tests/conscience-guard.test.sh`.
+Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.
 
-### SC-AK-322 — заведённый разбор происшествия ход отпускает
+### SC-AK-322 — an incident analysis that was created lets the turn go
 
-Дано после находки заведён разбор происшествия
-Когда ход кончается
-Тогда гард молчит
+Given after the finding an incident analysis was created
+When the turn ends
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/conscience-guard.test.sh`.
+Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.
 
-### SC-AK-323 — названный владельцу повтор ход отпускает
+### SC-AK-323 — a repeat named to the owner lets the turn go
 
-Дано после находки повтор назван владельцу
-Когда ход кончается
-Тогда гард молчит: решение за исполнителем, а его дело — решать, зная
+Given after the finding the repeat was named to the owner
+When the turn ends
+Then the guard stays silent: the decision is the executor's, and their business is to decide knowing
 
-Покрыто: `projects/agent-kit/tests/conscience-guard.test.sh`.
+Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.
 
-### SC-AK-324 — при чистом ответе роли ход закрывается
+### SC-AK-324 — at a clean answer of the role the turn closes
 
-Дано роль ответила, что повтора нет
-Когда ход кончается
-Тогда гард молчит
+Given the role answered that there is no repeat
+When the turn ends
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/conscience-guard.test.sh`.
+Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.
 
-### SC-AK-325 — молчание роли ход закрывает
+### SC-AK-325 — the silence of the role closes the turn
 
-Дано роль за ход не вызывалась
-Когда ход кончается
-Тогда гард молчит: сломанная совесть не имеет права заклинить разговор
+Given the role was not called during the turn
+When the turn ends
+Then the guard stays silent: a broken conscience has no right to jam the conversation
 
-Покрыто: `projects/agent-kit/tests/conscience-guard.test.sh`.
+Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.
 
-### SC-AK-326 — повторный заход по тому же ходу не судится
+### SC-AK-326 — a second pass over the same turn is not judged
 
-Дано гард уже отбил этот ход
-Когда ход кончается снова
-Тогда гард молчит
+Given the guard already refused this turn
+When the turn ends again
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/conscience-guard.test.sh`.
+Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.
 
-### SC-AK-363 — выключенная деревом совесть ход отпускает
+### SC-AK-363 — a conscience switched off by the tree lets the turn go
 
-Дано дерево назвало совесть выключенной в своей настройке
-Когда ход кончается с неразобранной находкой
-Тогда гард молчит
+Given the tree named the conscience switched off in its setting
+When the turn ends with a finding not taken apart
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/conscience-guard.test.sh`.
+Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.
 
-### SC-AK-364 — выключенная соседняя роль находку не отменяет
+### SC-AK-364 — a neighbouring role switched off does not cancel the finding
 
-Дано дерево выключило другую роль, а совесть оставило
-Когда ход кончается с неразобранной находкой
-Тогда гард возвращает ход вместе с находкой
+Given the tree switched off another role and left the conscience
+When the turn ends with a finding not taken apart
+Then the guard gives the turn back together with the finding
 
-Покрыто: `projects/agent-kit/tests/conscience-guard.test.sh`.
+Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.
 
-### SC-AK-365 — настройка, которую не разобрать, роль не выключает
+### SC-AK-365 — a setting that cannot be parsed does not switch the role off
 
-Дано настройка дерева лежит, но не разбирается
-Когда ход кончается с неразобранной находкой
-Тогда гард возвращает ход вместе с находкой
+Given the setting of the tree lies there but is not parsed
+When the turn ends with a finding not taken apart
+Then the guard gives the turn back together with the finding
 
-Покрыто: `projects/agent-kit/tests/conscience-guard.test.sh`.
+Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.
 
-### SC-AK-415 — «проверено» без прогона набора ход не закрывает
+### SC-AK-415 — "checked" without a run of the suite does not close the turn
 
-Дано владельцу сказано, что всё проверено и тесты зелёные
-Когда за этот ход набор не гонялся
-Тогда гард возвращает ход и называет команду набора
+Given the owner was told that everything is checked and the tests are green
+When the suite was not run during this turn
+Then the guard gives the turn back and names the command of the suite
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-416 — «запушено» без вызова пуша ход не закрывает
+### SC-AK-416 — "pushed" without a call of the push does not close the turn
 
-Дано владельцу сказано, что ветка запушена
-Когда за этот ход пуш не вызывался
-Тогда гард возвращает ход и называет вызов пуша
+Given the owner was told that the branch is pushed
+When the push was not called during this turn
+Then the guard gives the turn back and names the call of the push
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-395 — «ветки сняты» без вызова удаления ход не закрывает
+### SC-AK-395 — "the branches are removed" without a call of the removal does not close the turn
 
-Дано владельцу сказано, что влитые ветки сняты
-Когда за этот ход удаление не вызывалось
-Тогда гард возвращает ход и называет вызов удаления
+Given the owner was told that the merged branches are removed
+When the removal was not called during this turn
+Then the guard gives the turn back and names the call of the removal
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-396 — «прогон зелёный» без вызова о прогоне ход не закрывает
+### SC-AK-396 — "the run is green" without a call about the run does not close the turn
 
-Дано владельцу сказано, что прогон зелёный
-Когда за этот ход прогон у хостинга не спрашивали
-Тогда гард возвращает ход и называет вызов о прогоне
+Given the owner was told that the run is green
+When the run was not asked of the hosting during this turn
+Then the guard gives the turn back and names the call about the run
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-397 — «в дереве этого нет» без поиска ход не закрывает
+### SC-AK-397 — "there is nothing of the kind in the tree" without a search does not close the turn
 
-Дано владельцу сказано, что в дереве этого нет
-Когда за этот ход по дереву не искали
-Тогда гард возвращает ход и называет команду поиска
+Given the owner was told that there is nothing of the kind in the tree
+When no search over the tree was made during this turn
+Then the guard gives the turn back and names the command of the search
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-398 — прогон набора «проверено» подтверждает
+### SC-AK-398 — a run of the suite confirms "checked"
 
-Дано за ход прогнан набор дерева
-Когда владельцу сказано, что всё проверено
-Тогда гард молчит
+Given the suite of the tree was run during the turn
+When the owner is told that everything is checked
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-399 — вызов пуша «запушено» подтверждает
+### SC-AK-399 — a call of the push confirms "pushed"
 
-Дано за ход вызван пуш ветки
-Когда владельцу сказано, что ветка запушена
-Тогда гард молчит
+Given a push of the branch was called during the turn
+When the owner is told that the branch is pushed
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-417 — вызов удаления «ветки сняты» подтверждает
+### SC-AK-417 — a call of the removal confirms "the branches are removed"
 
-Дано за ход вызвано удаление удалённой ветки
-Когда владельцу сказано, что влитые ветки сняты
-Тогда гард молчит
+Given a removal of a remote branch was called during the turn
+When the owner is told that the merged branches are removed
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-418 — поиск по дереву отрицание подтверждает
+### SC-AK-418 — a search over the tree confirms a negation
 
-Дано за ход по дереву искали
-Когда владельцу сказано, что в дереве этого нет
-Тогда гард молчит
+Given a search over the tree was made during the turn
+When the owner is told that there is nothing of the kind in the tree
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-419 — обещание проверить ход не задерживает
+### SC-AK-419 — a promise to check does not hold the turn
 
-Дано владельцу сказано, что набор будет прогнан
-Когда ход кончается
-Тогда гард молчит: о будущем врать нечем
+Given the owner was told that the suite will be run
+When the turn ends
+Then the guard stays silent: there is nothing to lie about the future with
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-420 — те же слова в выводе инструмента ход не задерживают
+### SC-AK-420 — the same words in the output of a tool do not hold the turn
 
-Дано слова об утверждении пришли ответом команды, а не сказаны владельцу
-Когда ход кончается
-Тогда гард молчит
+Given the words of a statement arrived as the answer of a command, they were not said to the owner
+When the turn ends
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-421 — повторный заход по тому же ходу не судится
+### SC-AK-421 — a second pass over the same turn is not judged
 
-Дано гард уже отбил этот ход
-Когда ход кончается снова
-Тогда гард молчит
+Given the guard already refused this turn
+When the turn ends again
+Then the guard stays silent
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-422 — отказ называет найденное утверждение
+### SC-AK-422 — the refusal names the statement it found
 
-Дано владельцу сказано, что ветка запушена, а пуша за ход не было
-Когда гард возвращает ход
-Тогда в тексте отказа стоит само сказанное слово
+Given the owner was told that the branch is pushed, and there was no push during the turn
+When the guard gives the turn back
+Then the said word itself stands in the text of the refusal
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-459 — гард судит одинаково в любой локали
+### SC-AK-459 — the guard judges the same in any locale
 
-Дано гард запущен там, где локаль не объявлена вовсе, — как это делает служба
-Когда владельцу сказано «В дереве этого нет», а команды поиска за ход не было
-Тогда ход возвращается тем же отказом, что и под локалью UTF-8
+Given the guard is launched where no locale is declared at all — as a service does it
+When the owner is told "there is nothing of the kind in the tree", and there was no command of a
+search during the turn
+Then the turn is given back by the same refusal as under a UTF-8 locale
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-579 — ход без текста ответа возвращается
+### SC-AK-579 — a turn without the text of the answer is given back
 
-Дано запись хода не отдала ни одного текста ответа владельцу
-Когда гард утверждения дождался предела попыток
-Тогда ход возвращается: пустая запись означает «прочитать нечего», а не «сказать было нечего»
+Given the record of the turn gave back not a single text of an answer to the owner
+When the guard of the statements waited out the limit of the attempts
+Then the turn is given back: an empty record means "there is nothing to read", not "there was
+nothing to say"
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-580 — повторный заход по тому же ходу текста не ждёт
+### SC-AK-580 — a second pass over the same turn waits for no text
 
-Дано ход уже был возвращён гардом утверждения
-Когда страж позван по нему второй раз
-Тогда ход проходит: гард сказал своё один раз и отпускает
+Given the turn was already given back by the guard of the statements
+When the guard is called over it a second time
+Then the turn passes: the guard said its word once and lets go
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-581 — слова об ожидании прогона требуют команды, его показывающей
+### SC-AK-581 — words about waiting for a run demand a command that shows it
 
-Дано владельцу сказано «жду прогона», а команды о прогоне за ход не было
-Когда гард утверждения судит завершение хода
-Тогда ход возвращается; с прочитанным прогоном те же слова проходят
+Given the owner was told "waiting for the run", and there was no command about the run during the
+turn
+When the guard of the statements judges the end of the turn
+Then the turn is given back; with the run read the same words pass
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-582 — «прогон ещё не встал» подтверждается так же
+### SC-AK-582 — "the run has not started yet" is confirmed the same way
 
-Дано владельцу сказано, что прогон на вершине не встал, а спрошен он не был
-Когда гард утверждения судит завершение хода
-Тогда ход возвращается; сверка очереди работ это утверждение подтверждает
+Given the owner was told that the run at the tip has not started, and it was not asked about
+When the guard of the statements judges the end of the turn
+Then the turn is given back; the check of the work queue confirms this statement
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-764 — чужое слово утверждением о дереве не считается
+### SC-AK-764 — someone else's word does not count as a statement about the tree
 
-Дано слово-утверждение стоит в ответе цитатой в кавычках, строкой цитирования, кодом или в
-предложении с условием
-Когда гард утверждения судит завершение хода
-Тогда ход проходит: гард, отбивающий цитату, учит не писать кавычек, а не проверять дерево. То
-же слово, сказанное от себя, отбивается по-прежнему, а отказ первым выходом называет снятие
-утверждения — запуск команды ради снятия отказа бывает опаснее того, что гард стережёт
+Given the word of a statement stands in the answer as a quotation in quotation marks, as a quoting
+line, as code or in a sentence with a condition
+When the guard of the statements judges the end of the turn
+Then the turn passes: a guard refusing a quotation teaches not to write quotation marks, not to
+check the tree. The same word said on one's own behalf is refused as before, and the refusal names as
+the first exit the removal of the statement — a launch of a command for the sake of lifting the
+refusal is sometimes more dangerous than what the guard watches
 
-Покрыто: `projects/agent-kit/tests/claim-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
+
+### SC-AK-915 — a file read with the mark in it does not hold the turn
+
+Given a record of the past naming the mark of the role was read during the turn
+When the turn ends
+Then the guard stays silent: a mark printed in the answer of a reading tool is not a finding
+
+Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.
+
+### SC-AK-916 — the mark in one's own text is not read as a finding
+
+Given the executor quoted the mark of the role in their own reply
+When the turn ends
+Then the guard stays silent: writing the needed line in a reply costs one move
+
+Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.
+
+### SC-AK-917 — the answer of the role holds the turn after a file with the mark was read
+
+Given a file with the mark was read during the turn, and then the role answered with a repeat
+When the turn ends, and nothing is done about the finding
+Then the guard gives the turn back: one muted call does not mute the answer of the role
+
+Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.

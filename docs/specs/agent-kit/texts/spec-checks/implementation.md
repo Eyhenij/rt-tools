@@ -1,37 +1,39 @@
-# Сверка спеков и адресов — где исполняются правила
+# The check of the specs and the addresses — where the rules are carried out
 
-Первая колонка — правило дословно, как оно написано в разделе «Правила» спека рядом. Правило без
-строки и строка без правила — расхождение: спек обещает то, чего в коде нет, либо в коде стоит
-то, о чём спек молчит.
+The first column is the rule verbatim, as it is written in the "Rules" section of the spec next to
+it. A rule without a line and a line without a rule are a divergence: the spec promises what is not
+in the code, or the code holds what the spec is silent about.
 
-Якорь здесь — слово, которое утверждение и держит. Сверка ищет его по всему файлу и любым словом
-удовлетворяется, поэтому имя поля из чужой строки проходит её так же, как нужное предложение, — и
-утверждение остаётся зелёным, когда сам текст роли переписан целиком.
+The anchor here is the word that holds the statement. The audit looks for it across the whole file
+and is satisfied by any word, so the name of a field from a foreign line passes it the same way the
+needed sentence does — and the statement stays green when the text of the role itself is rewritten
+whole.
 
-- **Поддомен сверяется наравне с доменом.** — `projects/agent-kit/assets/checks/check-specs.mjs:collectSpecDirs`
-- **Предложенный закон правила не требует.** — `projects/agent-kit/assets/checks/check-specs.mjs:isProposedLaw`
-- **Влитая договорённость ветку не запирает.** — `projects/agent-kit/assets/hooks/task-flow-draft-guard.sh:draft_path`
-- **Префикс сценариев занят одним спеком по всему дереву.** — `projects/agent-kit/assets/checks/check-specs.mjs:prefixOwners`
-- **Голое имя и каталог судятся наравне с полным путём.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:existsInTree`
-- **Дерево для сверки путей берётся у системы контроля версий, а не обходом каталогов.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:treeOfRepo`
-- **Папки задач выведены из сверки путей, как архив.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:isSkipped`
-- **Переносимый текст из сверки адресов выведен.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:isPortable`
-- **Полнота указателя каталога сверяется обеими сторонами.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:checkIndex`
-- **Расхождение указателя печатается своим списком со своим доводом.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:reportIndex`
-- **Привязками считаются строки одной таблицы компаньона, а не всякая строка, похожая на строку таблицы.** — `projects/agent-kit/assets/checks/spec-anchors.mjs:rowsOfMap`
-- **Компаньон правила без раздела привязок — отказ, а не молчание.** — `projects/agent-kit/assets/checks/spec-anchors.mjs:rowsOfMap`
-- **Заголовок раздела привязок и вердикт «не исполняется» читаются под двумя именами, английским и русским.** — `projects/agent-kit/assets/checks/check-specs.mjs:MAP_HEADINGS` — заголовок; вердикт — `projects/agent-kit/assets/checks/spec-common.mjs:VERDICT`; сценарий SC-AK-912
-- **Подзаголовок внутри раздела список пунктов не кончает, таблица кончает, и отказ о пустом разделе называет, что стоит вместо пунктов.** — `projects/agent-kit/assets/checks/spec-common.mjs:bulletsOf`
-- **Символом якоря считается любая буква, а не только латинская.** — `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`
-- **Имя в якоре записывается так, как объявлено в коде, решётку включая.** — `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`
-- **Алфавит не перечисляется списком.** — `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`
-- **Путь пары разбирается по-прежнему.** — `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`
-- **Номер сценария из одной цифры сверка видит наравне с двумя и тремя.** — `projects/agent-kit/assets/checks/spec-common.mjs:SCENARIO_HEADING`
-- **Номер сценария выдаётся один раз и повторно не используется.** — `projects/agent-kit/assets/rules/spec-driven.md:spec-driven`
-- **Сценарий и заголовок его теста правятся одним изменением.** — `projects/agent-kit/assets/patterns/spec-driven-domain.md:spec-driven-domain`
-- **Правило, чьи паттерны дерево пропустило при раскладке, паттерна не требует.** — `projects/agent-kit/assets/checks/check-specs.mjs:skippedPatterns`
-- **Вывод переносимого текста из сверки адресов старше нового требования.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:PORTABLE_DIRS`
-- **Таблица кодов отказа процедурой не считается.** — `projects/agent-kit/assets/checks/spec-contract.mjs:contractRows` — строка с числом во второй ячейке пропускается; сценарий SC-AK-688
-- **Договорённость, ждущая своего домена дольше месяца, называется отдельным разделом вывода.** — `projects/agent-kit/assets/checks/spec-proposed.mjs:STALE_PROPOSED_DAYS` — порог в сутках; сценарий `SC-AK-807`
-- **Возраст договорённости берётся из истории, а не со времени файла на диске.** — `projects/agent-kit/assets/checks/spec-proposed.mjs:lastCommits` — один проход по истории каталога спеков; сценарий `SC-AK-807`
-- **Отказом это не делается.** — `projects/agent-kit/assets/checks/spec-proposed.mjs:staleProposed` — раздел печатается после перечня расхождений и кода возврата не меняет; сценарий `SC-AK-808`
+- **A subdomain is checked on a par with a domain.** — `projects/agent-kit/assets/checks/check-specs.mjs:collectSpecDirs`
+- **A proposed law demands no rule.** — `projects/agent-kit/assets/checks/check-specs.mjs:isProposedLaw`
+- **A merged agreement does not lock the branch.** — `projects/agent-kit/assets/hooks/task-flow-draft-guard.sh:draft_path`
+- **A scenario prefix is taken by one spec across the whole tree.** — `projects/agent-kit/assets/checks/check-specs.mjs:prefixOwners`
+- **A bare name and a directory are judged on a par with a full path.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:existsInTree`
+- **The tree for the check of the paths is taken from the version control system, not by a walk of the directories.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:treeOfRepo`
+- **The task folders are taken out of the check of the paths, like the archive.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:isSkipped`
+- **A portable text is taken out of the check of the addresses.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:isPortable`
+- **The completeness of the pointer of a directory is checked from both sides.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:checkIndex`
+- **A divergence of the pointer is printed as a list of its own with an argument of its own.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:reportIndex`
+- **What count as bindings are the rows of one table of the companion, not every row that looks like a row of a table.** — `projects/agent-kit/assets/checks/spec-anchors.mjs:rowsOfMap`
+- **The companion of a rule without the section of the bindings is a refusal, not silence.** — `projects/agent-kit/assets/checks/spec-anchors.mjs:rowsOfMap`
+- **The heading of the section of the bindings and the verdict «not carried out» are read under two names, English and Russian.** — `projects/agent-kit/assets/checks/check-specs.mjs:MAP_HEADINGS` — the heading; the verdict — `projects/agent-kit/assets/checks/spec-common.mjs:VERDICT`; scenario SC-AK-912
+- **A subheading inside the section does not end the list of items, a table does, and the refusal about an empty section names what stands instead of the items.** — `projects/agent-kit/assets/checks/spec-common.mjs:bulletsOf`
+- **What counts as a symbol of an anchor is any letter, not only a Latin one.** — `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`
+- **A name in an anchor is written as it is declared in code, the hash included.** — `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`
+- **The alphabet is not listed as a list.** — `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`
+- **The path of the pair is parsed as before.** — `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`
+- **A scenario number of one digit the check sees on a par with two and three.** — `projects/agent-kit/assets/checks/spec-common.mjs:SCENARIO_HEADING`
+- **A scenario number is issued once and is not used a second time.** — `projects/agent-kit/assets/rules/spec-driven.md:spec-driven`
+- **A scenario and the title of its test are edited by one change.** — `projects/agent-kit/assets/patterns/spec-driven-domain.md:spec-driven-domain`
+- **A rule whose patterns the tree skipped at the layout demands no pattern.** — `projects/agent-kit/assets/checks/check-specs.mjs:skippedPatterns`
+- **The taking of a portable text out of the check of the addresses is older than the new requirement.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:PORTABLE_DIRS`
+- **A table of refusal codes does not count as a procedure.** — `projects/agent-kit/assets/checks/spec-contract.mjs:contractRows` — a row with a number in the second cell is skipped; scenario SC-AK-688
+- **An agreement waiting for its domain longer than a month is named by a section of its own in the output.** — `projects/agent-kit/assets/checks/spec-proposed.mjs:STALE_PROPOSED_DAYS` — the threshold in days; scenario `SC-AK-807`
+- **The age of an agreement is taken from the history, not from the time of the file on disk.** — `projects/agent-kit/assets/checks/spec-proposed.mjs:lastCommits` — one pass over the history of the specs directory; scenario `SC-AK-807`
+- **This is not made a refusal.** — `projects/agent-kit/assets/checks/spec-proposed.mjs:staleProposed` — the section is printed after the list of divergences and does not change the exit code; scenario `SC-AK-808`
+- **The key of a spec section is read under two names — the English one and the language of the owner.** — `projects/agent-kit/assets/checks/spec-common.mjs:REQUIRED_HEADINGS` — the list of pairs and the reading of a section by either of the names in `sectionOf`; scenarios `SC-AK-912`, `SC-AK-913`, `SC-AK-914`

@@ -1,499 +1,498 @@
-# Чтение принятого
+# The reading of what was taken in
 
-**Статус:** действует · **Ревизия:** 2026-08-21 · **Префикс сценариев:** `SC-MB`
-**Зависимости:** нет
-**Законы:** `frontend-application`, `reuse-first`, `lists`, `entity-editing`, `navigation`
-**Процедуры:** нет — операции объявлены контроллерами приёмника
+**Status:** in force · **Revision:** 2026-08-21 · **Scenario prefix:** `SC-MB`
+**Depends on:** none
+**Laws:** `frontend-application`, `reuse-first`, `lists`, `entity-editing`, `navigation`
+**Procedures:** none — the operations are declared by the controllers of the intake
 
-Поддомен домена «приёмник груза»: чем человек читает принятое. Чем он представляется приёмнику
-— вход, учётная запись и её команды — стоит поддоменом рядом:
-`docs/specs/message-bus/admin-auth/`. Общее — терминология домена, сквозные требования и
-решения — лежит в спеке домена рядом.
+A subdomain of the domain "the intake of the cargo": what a person reads what was taken in by. What
+they introduce themselves to the intake by — the entry, the account and its commands — stands as a
+subdomain next to it: `docs/specs/message-bus/admin-auth/`. What is shared — the terminology of the
+domain, the cross-cutting requirements and the decisions — lies in the spec of the domain next to it.
 
-## Зачем
+## Why
 
-Прочитать груз запросом к базе с самого узла может только тот, у кого есть доступ к узлу, а
-служба уезжает в интернет: знающая одни лишь токены деревьев, она отдавала бы принятое всякому,
-кто дошёл до её адреса, и не отвечала бы на вопрос, кто читал.
+Reading the cargo by a request to the database from the node itself can be done only by whoever has
+access to the node, while the service goes out into the internet: knowing the tokens of the trees
+alone, it would give what was taken in to anyone who reached its address and would not answer the
+question of who read it.
 
-Отсюда админка: что человек видит после входа. Разделов три — по роду груза; сам вход описан
-поддоменом рядом.
+Hence the admin application: what a person gets after the entry. There are three sections — by the
+kind of the cargo; the entry itself is described by the subdomain next to it.
 
-## Терминология
+## Terminology
 
-Словарь домена целиком — в спеке рядом. Здесь только то, что живёт в чтении:
+The vocabulary of the domain whole is in the spec next to it. Here only what lives in the reading:
 
-| Термин                  | Что это                                                                                        |
-| ----------------------- | ---------------------------------------------------------------------------------------------- |
-| Админка                 | Приложение, которым человек читает принятый груз. Правок груза в ней нет вовсе                 |
-| Раздел                  | Экран админки со своим адресом. В раздел ведёт пункт меню                                      |
-| Список                  | Страница раздела: строка на запись, тулбар над ней и пагинация под ней                         |
-| Панель подробностей     | Панель с одной записью целиком, выезжающая по нажатию на строку                                |
-| Отбор                   | Условие, сужающее список. Стоит в тулбаре и виден на экране                                    |
-| Страница списка         | Отрезок списка, приезжающий одним запросом. Номер страницы и размер называет запрос            |
-| Выборка                 | Страница, размер, сортировка и отбор вместе. Живёт в адресе раздела                            |
-| Слот                    | Место на общей странице, куда раздел кладёт свою разметку. Незанятый места не занимает         |
-| Хост списочной страницы | Тот, у кого страница спрашивает чтение, страницу, её размер, порядок и настройку столбцов      |
-| Подсказка заголовка     | Короткий текст при названии раздела: что в разделе лежит                                       |
-| Префикс раздела         | Короткое имя раздела, из которого собраны якоря проверки на его странице                       |
-| Якорь проверки          | Значение `qa-dataid` у элемента: им сквозная спека находит элемент, и им же он назван в замере |
-| Пустое состояние        | Вид раздела, у которого записей нет: значок, заголовок и слово о том, откуда записи берутся    |
-| Язык разметки           | Форма, которой экран объявляет готовый компонент: элемент кита, а не атрибут на своей разметке |
-| Раздел панели           | Часть панели подробностей со своим заголовком: свойства записи, её текст. Даёт компонент кита  |
-| Список свойств          | Пары «название — значение» внутри раздела панели. Даёт компонент кита                          |
-| Строка свойства         | Одна пара: название сверху, значение под ним. Пока чтение идёт, на месте значения — скелетон   |
-| Шапка раздела           | Верхний блок страницы: название раздела и подсказка при нём                                    |
-| Место действий          | Правая часть шапки: там встают действия над разделом целиком, если они у него есть             |
-| Образец                 | Шаблон списка в витрине второго кита: экран раздела, собранный из тех же компонентов           |
-| Отбор по состоянию      | Условие, сужающее список раздела до записей одного состояния. Стоит правее отбора по дереву    |
-| Снятый отбор            | Значение «все состояния»: список не сужен ничем, и в адресе параметра нет вовсе                |
-| Шаги разбора            | Порядок, в котором запись проходит состояния: новое, взято в разбор, починено, выпущено        |
+| Term                         | What it is                                                                                                                            |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| The admin application        | The application a person reads the taken-in cargo by. There are no edits of the cargo in it at all                                    |
+| A section                    | A screen of the admin application with an address of its own. An item of the menu leads into it                                       |
+| A list                       | The page of a section: a row per record, a toolbar above it and a pagination below it                                                 |
+| A panel of details           | A panel with one record whole, sliding out at a press on a row                                                                        |
+| A filter                     | A condition narrowing the list. It stands in the toolbar and is visible on the screen                                                 |
+| A page of a list             | A stretch of the list arriving by one request. The number of the page and the size are named by the request                           |
+| A selection                  | The page, the size, the sorting and the filter together. It lives in the address of the section                                       |
+| A slot                       | A place on the common page a section puts its markup into. An unoccupied one takes no place                                           |
+| The host of a list page      | The one the page asks for the reading, the page, its size, the order and the setting of the columns                                   |
+| A hint of the heading        | A short text at the name of a section: what lies in the section                                                                       |
+| The prefix of a section      | The short name of a section the anchors of a check on its page are put together from                                                  |
+| An anchor of a check         | The value of `qa-dataid` at an element: by it an end-to-end spec finds the element, and by it it is named in a measurement            |
+| An empty state               | The look of a section that has no records: a sign, a heading and a word about where the records come from                             |
+| The language of the markup   | The form a screen declares a ready component by: an element of the kit, not an attribute on markup of its own                         |
+| A section of the panel       | A part of the panel of details with a heading of its own: the properties of a record, its text. It is given by a component of the kit |
+| A list of the properties     | The pairs "name — value" inside a section of the panel. It is given by a component of the kit                                         |
+| A row of a property          | One pair: the name on top, the value under it. While the reading goes, a skeleton is in the place of the value                        |
+| The header of a section      | The upper block of the page: the name of the section and the hint at it                                                               |
+| The place of the actions     | The right part of the header: there stand the actions over the section whole, if it has any                                           |
+| The sample                   | The template of a list in the showcase of the second kit: a screen of a section put together from the same components                 |
+| The filter by state          | A condition narrowing the list of a section to the records of one state. It stands to the right of the filter by tree                 |
+| A lifted filter              | The value "all the states": the list is narrowed by nothing, and there is no parameter in the address at all                          |
+| The steps of the sorting out | The order a record goes through the states in: new, taken into the sorting out, fixed, released                                       |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости    | На экране                                                        |
-| ------------------- | ---------------------------------------------------------------- |
-| раздел              | пункт меню и страница за ним                                     |
-| панель подробностей | панель, выезжающая справа по нажатию на строку                   |
-| отбор по дереву     | выбор проекта в тулбаре над списком                              |
-| выборка             | параметры адреса: страница, размер, порядок, отбор               |
-| слот тулбара слева  | левая часть полосы над списком — там стоит отбор                 |
-| слот тулбара справа | правая часть той же полосы — там стоят кнопки                    |
-| слот над таблицей   | полоса между тулбаром и первой строкой списка                    |
-| подсказка заголовка | пояснение при названии раздела                                   |
-| шапка раздела       | крупное название сверху, серая строка под ним и место справа     |
-| хост                | сам раздел: страница видна человеку, хост — нет                  |
-| пустое состояние    | значок, строка «Записей нет» и строка о том, откуда они приходят |
-| раздел панели       | заголовок внутри выехавшей панели и то, что под ним              |
-| список свойств      | столбик пар «название и значение под ним»                        |
-| строка свойства     | одна такая пара                                                  |
-| состояние записи    | столбец «Состояние» в списке раздела                             |
-| новое               | «Новое» — запись приехала, и с ней ещё ничего не делали          |
-| в работе            | «В работе» — запись взята в разбор                               |
-| готово              | «Готово» — недочёт починен, но выпуска с починкой ещё не было    |
-| выпущено            | «Выпущено» — починка уехала выпуском                             |
+| In the agreement              | On the screen                                                                       |
+| ----------------------------- | ----------------------------------------------------------------------------------- |
+| a section                     | the item of the menu and the page behind it                                         |
+| a panel of details            | the panel sliding out on the right at a press on a row                              |
+| the filter by tree            | the choice of the project in the toolbar above the list                             |
+| the selection                 | the parameters of the address: the page, the size, the order, the filter            |
+| the left slot of the toolbar  | the left part of the strip above the list — there stands the filter                 |
+| the right slot of the toolbar | the right part of the same strip — there stand the buttons                          |
+| the slot above the table      | the strip between the toolbar and the first row of the list                         |
+| a hint of the heading         | the explanation at the name of the section                                          |
+| the header of a section       | the large name on top, the grey line under it and the place on the right            |
+| the host                      | the section itself: the page is visible to a person, the host is not                |
+| an empty state                | the sign, the line "Записей нет" and the line about where they come from            |
+| a section of the panel        | the heading inside the panel that slid out and what is under it                     |
+| a list of the properties      | the column of pairs "a name and a value under it"                                   |
+| a row of a property           | one such pair                                                                       |
+| the state of a record         | the column "Состояние" in the list of a section                                     |
+| new                           | "Новое" — the record arrived, and nothing was done with it yet                      |
+| in progress                   | "В работе" — the record is taken into the sorting out                               |
+| ready                         | "Готово" — the shortcoming is fixed, but there has been no release with the fix yet |
+| released                      | "Выпущено" — the fix went away with a release                                       |
 
-Дерево на экране зовётся проектом. Слово словаря проекта человеку не говорит ничего: он
-открывает админку, чтобы посмотреть на свои проекты, а не на деревья. Разбор промаха —
-запись «2026-08-19-tree-word-shown-to-users» в приёме.
+A tree is called a project on the screen. A word of the vocabulary of the project says nothing to a
+person: they open the admin application to look at their projects, not at trees. The analysis of the
+miss is the record "2026-08-19-tree-word-shown-to-users" in the intake.
 
-## Правила
+## Rules
 
-**Что админка показывает.**
+**What the admin application shows.**
 
-- **Админка читает груз и не правит его.** Приёмник принимает, админка читает: правка принятого
-  расходилась бы с деревом-источником молча, а следующий прогон её затирал.
-- **Пункт меню заводится вместе со своим экраном.** Пункт, ведущий в никуда, читается как
-  поломка, а не как обещание будущего раздела.
-- **Раздел открывается своим адресом — прямой ссылкой и после перезагрузки.** Раздел, живущий
-  вкладкой внутри чужого экрана, ссылкой не передаётся и перезагрузку не переживает.
-- **Выборка живёт в адресе раздела.** Страница, размер, сортировка и отбор стоят в адресе: иначе
-  перезагрузка на второй странице отобранного списка возвращает на первую, а ссылка на увиденное
-  не передаётся.
-- **Подписи экранов берутся из словаря приложения, а не пишутся в разметке.** Оттуда же берутся
-  подписи, которые рисует кит: иначе рядом с русскими заголовками встаёт английское умолчание
-  кита, и видно это только на собранном экране.
+- **The admin application reads the cargo and does not edit it.** An edit of what was taken in would
+  diverge from the tree of the source silently, and the next run would overwrite it.
+- **An item of the menu is created together with its screen.** An item leading nowhere reads as a
+  breakage, not as a promise of a future section.
+- **A section opens by an address of its own — by a direct link and after a reload.** A section living
+  as a tab inside a foreign screen is not passed by a link and does not outlive a reload.
+- **The selection lives in the address of the section.** Otherwise a reload at the second page of a
+  filtered list brings back to the first, and a link to what was seen is passed to nobody.
+- **The labels of the screens are taken from the dictionary of the application, they are not written in
+  the markup.** The labels the kit draws are taken from there too: otherwise the English default of the
+  kit stands next to Russian headings, and that is visible only on the assembled screen.
 
-**Списки груза.**
+**The lists of the cargo.**
 
-- **Каждый раздел собран одним и тем же списочным экраном.** Заголовок, тулбар, таблица и
-  переключатель страниц у всех разделов одни; переписанные заново, они расходятся молча.
-- **Таблицу раздел объявляет элементом кита, а не атрибутом на своей разметке.** Атрибут
-  оставляет разделу собственную разметку, которую кит не видит: оверлей чтения и карточки
-  узкого экрана он рисует узлами, которые детьми `<table>` не бывают, и на своей разметке не
-  показывает их вовсе. Расхождение вида тогда лечится в разделе, а не в ките, и лечится
-  столько раз, сколько разделов.
-- **Каждая запись показана отдельной строкой, а каждое её свойство — своим столбцом.**
-- **Нажатие на строку открывает панель подробностей.** Требование владельца: собранное иначе не
-  принимается. Действий над записью в строке нет — админка ничего не правит.
-- **Панель показывает запись целиком, а строка списка — нет.** Разбор приезжает текстом целиком, и
-  страница, несущая тексты всех своих строк, растёт весом без предела.
-- **Текст груза показывается разметкой, а не сырым текстом.** Разбирает её своя чистая функция с
-  закрытым перечнем: сырой HTML не разбирается вовсе и остаётся видимым текстом, поэтому дерево с
-  токеном исполнения своего текста в браузере вошедшего не получает.
-- **Перечень разметки закрыт и зашит в компоненте.** В вывод попадают заголовки, жирный, курсив,
-  зачёркнутый, списки простые и нумерованные, таблицы, код строкой и блоком, цитата и ссылка.
-  Входа, которым перечень задаётся, у компонента нет: настраивать нечего — нечем и ослабить.
-- **Размеченное содержимое строится узлами, а не вклеивается строкой.** Строку разметки не
-  отдаёт странице ни одна часть админки: дерево узлов рисует шаблон, и другого пути внутрь
-  страницы у текста груза нет.
-- **Картинки и вставки в вывод не попадают, а ссылка ведёт наружу тремя схемами.** Внешняя
-  картинка — это запрос в чужую сеть из браузера вошедшего; ссылкой становится адрес `http`,
-  `https` и `mailto`, адрес любой другой схемы остаётся видимым текстом.
-- **Блок кода моноширинный, одноцветный и прокручивается вбок сам.** Слово языка у ограды
-  разбирается и на вид не влияет: раскраска потребовала бы второй библиотеки в рантайме кита.
-  Длинная строка внутри блока ширину панели не растягивает.
-- **Одиночный перенос строки остаётся переносом.** Тексты груза пишут деревья, и перенос там
-  ставят осмысленно: строки сценария, перечисления, короткие заметки.
-- **Компонент показа один на все три раздела груза.** Собранные порознь, разборы, предложения и
-  сводки разошлись бы видом по одному.
-- **Сводка месяца приезжает телом прогона и объявляется блоком кода при переводе в текст.**
-  Разметкой её не пишет никто: дерево шлёт её полями. Показанная абзацем, она потеряла бы
-  отступы, которыми и разложена.
-- **Текста нет — нет и раздела панели.** Пустая строка, строка из одних пробелов и отсутствие
-  значения раздела про текст не рисуют вовсе; у сводки остаётся её строка о том, что сводки нет.
-- **Список приезжает страницами, а не целиком.** Число записей растёт с каждым деревом, и
-  «прочитать всё» упирается в вес ответа раньше, чем в терпение читающего.
-- **Размер страницы назван умолчанием и ограничен сверху.** Иначе правило о страницах обходится
-  одним запросом со страницей в сто тысяч строк — тот же неограниченный вес ответа, только через
-  параметр.
-- **Страница за пределом списка отвечает пустой страницей и общим числом, а не отказом.** Список,
-  укоротившийся между двумя запросами, — обычное дело; отказ на это читается как поломка.
-- **Порядок по умолчанию — свежие сверху, и он назван на экране.** У равных значений порядок
-  разводится вторым ключом: иначе одна и та же запись видна на двух страницах подряд, а соседняя
-  не видна ни на одной.
-- **Состояние записи приезжает чтением — и списком, и одной записью.** Список без него показывает
-  одинаковые строки, а панель записи отвечала бы о записи иначе, чем строка списка.
-- **Состояние видно столбцом в разделах разборов и предложений.** Без него память приёма о том,
-  на каком шаге стоит запись, человеку не видна вовсе, а список остаётся тем же, чем был.
-- **Слова состояний берутся из словаря приложения.** Написанные в разметке, они разойдутся между
-  столбцом и панелью записи, и первым это увидит человек.
-- **Человек меняет порядок заголовком столбца и видит, какой порядок применён.**
-- **Состав и порядок столбцов выбирает человек, и выбор сохраняется.** Ключ, под которым он
-  сохранён, — свой у каждого раздела.
-- **Отбор по дереву называет деревья именами, а не признаками.** Признак — хеш адреса
-  репозитория, и по нему человек не узнаёт своё дерево; отбирается при этом признак.
-- **Отбор переживает переход на другую страницу списка.** Сброшенный отбор замечают не сразу и
-  читают чужие строки как свои.
-- **Ответ, догнавший свой список после следующего запроса, не показывается.** Иначе строки
-  прежнего отбора встают под новым — и это не отличить от груза, приехавшего только что.
-- **Пока список читается, на месте строк видно, что идёт чтение.** Пустую область не отличить от
-  списка, в котором ничего нет.
-- **Пустой список объясняет, почему он пуст.** Отбор, не давший ни строки, и дерево, не
-  приславшее ни одной записи, — разные ответы, и второй означает исправную службу.
-- **Пустой список показывает пустое состояние, а не фразу внутри таблицы.** Фраза, стоящая на
-  месте строк, читается как одна из них, и пустой раздел от не догрузившегося не отличается
-  ничем: и то и другое — таблица без строк.
-- **Пустое состояние называет, откуда записи приходят.** «Записей нет» отвечает на вопрос
-  «сломано ли», но не на вопрос «что мне сделать»: у разделов груза записи приносит дерево, у
-  раздела приглашений — кнопка над списком.
-- **Не прочитавшийся список говорит почему, и попытка повторяется одним действием.** Пустой экран
-  после отказа службы читается как «записей нет» и уводит от настоящей причины.
-- **Закрытая панель возвращает список в том же состоянии.** Страница, отбор и сортировка после
-  закрытия те же: сброс на первую страницу превращает чтение десяти разборов подряд в десять
-  поисков.
-- **Записи, которой нет, панель не рисует пустой.** Ссылка на запись переживает её появление и
-  исчезновение, и пустая панель читается как поломка чтения.
-- **Вошедший видит груз всех деревьев.** Прав внутри админки нет: учётная запись принадлежит
-  службе, а не дереву, и отбор по дереву сужает показанное, а не доступ.
-- **Время показывается в поясе того, кто смотрит, а хранится во всемирном.** Пояс, выбранный
-  молча, сдвигает порядок «свежие сверху» на границе суток.
+- **Every section is put together by one and the same list screen.** The heading, the toolbar, the
+  table and the switch of the pages are one at all the sections; rewritten anew, they diverge silently.
+- **A section declares the table by an element of the kit, not by an attribute on its own markup.** An
+  attribute leaves the section markup of its own the kit does not see: the overlay of the reading and
+  the cards of a narrow screen it draws by nodes that are never children of a `<table>`. A divergence
+  of the look is then cured in the section, not in the kit, as many times as there are sections.
+- **Every record is shown by a row of its own, and every property of it by a column of its own.**
+- **A press on a row opens the panel of details.** A requirement of the owner. There are no actions
+  over a record in a row — the admin application edits nothing.
+- **The panel shows the record whole, and a row of the list does not.** An analysis arrives as text
+  whole, and a page carrying the texts of all its rows grows in weight without a limit.
+- **The text of the cargo is shown as markup, not as raw text.** It is taken apart by a pure function of
+  its own with a closed list: raw HTML is not taken apart at all and stays visible text, so a tree with
+  a token gets no execution of its text in the browser of whoever entered.
+- **The list of the markup is closed and sewn into the component.** Into the output get the headings,
+  the bold, the italic, the struck-through, the lists, the tables, the code in a line and in a block,
+  the quote and the link. The component has no input the list is set by: nothing to weaken either.
+- **The marked-up content is built by nodes, it is not glued in as a string.** Not a single part of the
+  admin application gives a string of markup to the page: the nodes are drawn by the template.
+- **The pictures and the embeds do not get into the output, and a link leads outward by three schemes.**
+  An external picture is a request into a foreign network from the browser of whoever entered. An
+  address of `http`, `https` and `mailto` becomes a link, any other scheme stays visible text.
+- **A block of code is monospaced, of one colour and scrolls sideways itself.** The word of the language
+  at the fence is taken apart and does not affect the look: colouring would demand a second library in
+  the runtime of the kit. A long line inside a block does not stretch the width of the panel.
+- **A single line break stays a break.** The texts of the cargo are written by trees, and a break there
+  is put on purpose: the lines of a scenario, enumerations, short notes.
+- **The component of the showing is one for all three sections of the cargo.** Put together apart, the
+  analyses, the proposals and the digests would diverge in look one at a time.
+- **The digest of a month arrives as the body of a run and is declared a block of code at the turning
+  into text.** Nobody writes it as markup: a tree sends it by fields. Shown as a paragraph, it would
+  lose the indents it is laid out by.
+- **There is no text — there is no section of the panel.** An empty string, a string of spaces alone and
+  an absence of the value do not draw the section about the text at all; at a digest its line about
+  there being no digest stays.
+- **The list arrives by pages, not whole.** The number of the records grows with every tree, and
+  "reading everything" runs into the weight of the answer earlier than into anybody's patience.
+- **The size of a page is named by a default and is limited from above.** Otherwise the rule about the
+  pages is gone around by a request with a page of a hundred thousand rows — through a parameter.
+- **A page past the end of the list answers with an empty page and the total number, not with a
+  refusal.** A list that got shorter between two requests is an ordinary thing; a refusal at that reads
+  as a breakage.
+- **The order by default is the fresh ones on top, and it is named on the screen.** At equal values the
+  order is set apart by a second key: otherwise one and the same record is visible on two pages in a
+  row, and the neighbouring one is visible on neither.
+- **The state of a record arrives by the reading — both by the list and by one record.** A list without
+  it shows equal rows, and the panel of a record would answer about the record otherwise than the row of
+  the list.
+- **The state is visible as a column at the sections of the analyses and of the proposals.** Without it
+  the memory of the intake about which step a record stands at is not visible to a person at all.
+- **The words of the states are taken from the dictionary of the application.** Written in the markup,
+  they will diverge between the column and the panel of a record, and the first to get that is a person.
+- **A person changes the order by the heading of a column and gets which order is applied.**
+- **The composition and the order of the columns are chosen by the person, and the choice is kept.** The
+  key it is kept under is of its own at every section.
+- **The filter by tree names the trees by names, not by signs.** A sign is the hash of the address of a
+  repository, and by it a person does not recognise their tree; the sign is what is filtered by at that.
+- **The filter outlives a transition to another page of the list.** A filter that was reset is not
+  noticed at once, and foreign rows are read as one's own.
+- **An answer that caught up with its list after the next request is not shown.** Otherwise the rows of
+  the former filter stand under the new one — and that cannot be told from cargo that arrived just now.
+- **While the list is being read, in the place of the rows it is visible that the reading goes.** An
+  empty area cannot be told from a list that has nothing in it.
+- **An empty list explains why it is empty.** A filter that gave not a row and a tree that sent not a
+  single record are different answers, and the second means a sound service.
+- **An empty list shows an empty state, not a phrase inside the table.** A phrase standing in the place
+  of the rows reads as one of them, and an empty section is no different from one that did not finish
+  loading: both are a table without rows.
+- **An empty state names where the records come from.** "There are no records" answers the question "is
+  it broken", but not the question "what am I to do": at the sections of the cargo the records are
+  brought by the tree, at the section of the invitations by the button above the list.
+- **A list that was not read says why, and the attempt is repeated by one action.** An empty screen
+  after a refusal of the service reads as "there are no records" and leads away from the real reason.
+- **A closed panel brings the list back in the same state.** A reset to the first page turns the reading
+  of ten analyses in a row into ten searches.
+- **A record that does not exist the panel does not draw as empty.** A link to a record outlives its
+  appearance and its disappearance, and an empty panel reads as a breakage of the reading.
+- **Whoever entered gets the cargo of all the trees.** An account belongs to the service, not to a tree,
+  and the filter by tree narrows what is shown, not the access.
+- **The time is shown in the zone of whoever is looking, and is kept in the universal one.** A zone
+  chosen silently shifts the order "the fresh ones on top" at the boundary of a day.
+- **The filter by state is put into the page by the section, the page does not know it itself.** By the
+  same technique the filter by tree stands there: the page knows nothing about the kinds of the filter,
+  and a second kind creates it neither an input nor an event.
+- **The filter by state stands to the right of the filter by tree, in the same slot of the toolbar.** Set
+  apart at different edges of the strip, they read as a filter and an action, not as two conditions.
+- **The filter by state is at the sections of the analyses and of the proposals and only at them.** A
+  record of a month has no state, and a filter by it would narrow by a condition it does not carry.
+- **The first item of the filter is "all the states".** A lifted filter is chosen by the same movement as
+  any state; a separate button of the reset is a second way to do the same, and a person looks for the
+  one that is not on the screen.
+- **The words of the states in the filter are the same as in the column and are taken from the dictionary
+  of the application.** Written in the markup, they will diverge between the filter and the column.
+- **The filter by state lives in the address of the section on a par with the page, the size and the
+  order.** Otherwise a reload brings back to the first page, and the link passes on the wrong list.
+- **A lifted filter does not stand in the address.** A value equal to the default is lifted by emptiness:
+  a link to a list that is not narrowed stays the same, from whichever side it is come to.
+- **The filter by state adds up with the filter by tree, it does not replace it.** Otherwise the second
+  choice silently lifts the first, and a person reads the cargo of a foreign tree as their own.
+- **A chosen state resets the list to the first page.** A narrowed list may have no former page at all,
+  and a person lands on an empty one.
+- **A word that is not in the set of the states the intake refuses with a refusal with the name of the
+  parameter.** A default substituted silently would show a list other than the one that was asked about.
+- **The screen does not send a foreign word from the address to the intake.** The address is edited by
+  hand, and an unreadable value is replaced with a lifted filter, not with a refusal onto an empty screen.
+- **A list that gave not a row at any filter explains that by the filter, not by an emptiness of the
+  service.** A tree that sent not a single record is another answer, and it means a sound service.
+- **The state is a sortable field at the analyses and at the proposals.** The person changes the order by
+  the heading of the column of the state, by the same movement as at the rest of the columns.
+- **The order by state goes by the steps of the sorting out, not by the alphabet.** A person reads the
+  states as a queue of work — new, taken, fixed, released — and the alphabet mixes that queue up.
 
-- **Отбор по состоянию кладёт в страницу раздел, а не страница знает его сама.** Тем же
-  приёмом, каким там стоит отбор по дереву: страница о видах отбора не знает ничего, и второй
-  вид не заводит ей ни входа, ни события.
-- **Отбор по состоянию стоит правее отбора по дереву, в том же слоте тулбара.** Разведённые по
-  разным краям полосы, два отбора читаются как отбор и действие над списком, а не как два
-  условия одного вопроса.
-- **Отбор по состоянию есть у разделов разборов и предложений и только у них.** У записи месяца
-  состояния нет вовсе, и отбор по нему сужал бы список условием, которого запись не несёт.
-- **Первым пунктом отбора стоят «все состояния».** Снятый отбор выбирается тем же движением, что
-  и любое состояние; отдельная кнопка сброса — второй способ сделать то же самое, и человек ищет
-  тот, которого на экране нет.
-- **Слова состояний в отборе — те же, что в столбце, и берутся из словаря приложения.**
-  Написанные в разметке, они разойдутся между отбором и столбцом, и первым это увидит человек.
-- **Отбор по состоянию живёт в адресе раздела наравне со страницей, размером и порядком.** Иначе
-  перезагрузка на второй странице отобранного списка возвращает на первую и показывает не то, а
-  ссылка на увиденное не передаётся никому.
-- **Снятый отбор в адресе не стоит.** Значение, равное умолчанию, снимается пустотой: ссылка на
-  несуженный список остаётся той же, с какой стороны на неё ни прийти.
-- **Отбор по состоянию складывается с отбором по дереву, а не заменяет его.** Выбранные вместе,
-  они сужают список обоими условиями; иначе второй выбор молча снимает первый, и человек читает
-  груз чужого дерева как свой.
-- **Выбранное состояние сбрасывает список на первую страницу.** У суженного списка прежней
-  страницы может не быть вовсе, и человек попадает на пустую.
-- **Слово, которого нет в наборе состояний, приёмник отбивает отказом с именем параметра.** Тем
-  же приёмом, каким он отбивает чужое поле порядка: молча подставленное умолчание показало бы
-  человеку не тот список, о котором он просил.
-- **Экран чужого слова в адресе приёмнику не посылает.** Адрес правит человек руками, и разбор
-  выборки на экране чистый: нечитаемое значение он заменяет снятым отбором, а не отказом на
-  пустой экран.
-- **Список, не давший ни строки при любом отборе, объясняет это отбором, а не пустотой службы.**
-  Дерево, не приславшее ни одной записи, — другой ответ, и он означает исправную службу; прежде
-  «сужено ли» решал один отбор по дереву.
-- **Состояние — сортируемое поле у разборов и у предложений.** Порядок человек меняет заголовком
-  столбца состояния, тем же движением, что и у остальных столбцов.
-- **Порядок по состоянию идёт шагами разбора, а не по алфавиту.** Человек читает состояния как
-  очередь работы — новое, взято в разбор, починено, выпущено, — и алфавит эту очередь
-  перемешивает.
+**The panel of details.**
 
-**Панель подробностей.**
+- **The sections of the panel are drawn by a ready component of the kit, not by a heading of one's own.**
+  Written by a tag of its own, a heading diverges from the neighbouring panels and is edited in each apart.
+- **The properties of a record are shown by a ready list of the kit, not by markup of a list of
+  definitions of one's own.** A handwritten list knows neither about the skeletons of the reading nor
+  about where the name stands at a value: both live in the kit and are changed there once.
+- **While the record is being read, a skeleton is in the place of the value.** An empty place in the
+  place of a value cannot be told from a record whose field is not filled in.
+- **The sign of a check stands at the panel, at its header and at every row of a property.** With a sign
+  at one value alone, a spec that needs the panel whole or its header cannot catch hold of them.
+- **The text of the fix is visible in the panel of details and is not visible in the list.** There are a
+  hundred rows in the list, and a text in a column would read as a fragment; the panel shows it whole.
+- **At a record without a text of the fix there is no row in the panel at all.** A label with an empty
+  value reads as "there was no fix", although the record may not be waiting for a fix yet.
+- **The version of the release is visible in the panel of details and is not visible in the list.** A
+  column under the version is the work of the task about the filter, not of this one.
+- **At a record without a version of the release there is no row in the panel at all.** A label with an
+  empty value reads as "there was no release", although the record may not be waiting for one yet.
 
-- **Разделы панели рисует готовый компонент кита, а не свой заголовок.** Написанный своим
-  тегом, заголовок расходится с соседними панелями кеглем, отступом и местом, и правится он
-  в каждой панели отдельно.
-- **Свойства записи показаны готовым списком кита, а не своей разметкой списка определений.**
-  Рукописный список не знает ни о скелетонах чтения, ни о том, где стоит название при
-  значении: и то и другое живёт в ките и меняется там один раз на все панели.
-- **Пока запись читается, на месте значения виден скелетон.** Пустое место на месте значения
-  не отличить от записи, у которой поле не заполнено.
-- **Признак проверки стоит на панели, её шапке и каждой строке свойства.** Признак на одном
-  значении отвечает на вопрос «что показано», но не на вопрос «чем показано»: спека, которой
-  нужна панель целиком или её шапка, зацепиться за них не может.
-- **Текст починки виден в панели подробностей и не виден в списке.** В списке сотня строк, и
-  текст в столбце читался бы обрывком; панель показывает запись целиком, и место ему там.
-- **У записи без текста починки строки в панели нет вовсе.** Подпись с пустым значением читается
-  как «починки не было», хотя запись может стоять в «новом» и починки ещё не ждать.
-- **Версия выпуска видна в панели подробностей и не видна в списке.** В списке сотня строк, и
-  столбец под версию — работа задачи об отборе, а не этой.
-- **У записи без версии выпуска строки в панели нет вовсе.** Подпись с пустым значением читается
-  как «выпуска не было», хотя запись может стоять в «новом» и выпуска ещё не ждать.
+**A refusal visible to a person.**
 
-**Отказ, видимый человеку.**
+- **A refusal of the service names the number of the request to a person, and the same number stands in
+  the journal.** Otherwise a breakage is told about by the words "it does not work", and there is nothing
+  to find it in the journal by.
+- **The waiting for an answer is limited by a term.** A request hanging without a limit looks the same as
+  a working service, and a person waits instead of repeating.
+- **The model of a record of the cargo carries the state as a value of a set, not as a string.** A value
+  outside the set is read as "new": shown as it is, it would reach the screen as a machine string.
+- **The admin application reads the same records the intake puts.** There is no second copy under the
+  reading: a copy that diverges would show yesterday's cargo as today's.
 
-- **Отказ службы называет человеку номер обращения, и тот же номер стоит в журнале.** Иначе о
-  поломке рассказывают словами «не работает», и найти её в журнале нечем.
-- **Ожидание ответа ограничено сроком.** Запрос, висящий без предела, выглядит так же, как
-  работающая служба, и человек ждёт вместо того, чтобы повторить.
-- **Модель записи груза несёт состояние значением набора, а не строкой.** Значение вне набора
-  читается как «новое»: показанное как есть, оно вышло бы на экран машинной строкой.
-- **Админка читает те же записи, что кладёт приём.** Второй копии под чтение нет: расходящаяся
-  копия показывала бы вчерашний груз как сегодняшний.
+The neighbouring subdomains: the common page of a list — `docs/specs/message-bus/admin-list-page/`; the
+shell of the application — `docs/specs/message-bus/admin-shell/`; the section of the invitations with its
+issuing and revocation — `docs/specs/message-bus/invites/`; the entry — `docs/specs/message-bus/admin-auth/`.
 
-Соседние поддомены: общая страница списка — `docs/specs/message-bus/admin-list-page/`; оболочка
-приложения — `docs/specs/message-bus/admin-shell/`; раздел приглашений с его выдачей и отзывом —
-`docs/specs/message-bus/invites/`; вход — `docs/specs/message-bus/admin-auth/`.
+## What is out of scope
 
-## Что не входит
+- **A digest over several trees and charts.** The word of the owner: the lists are shown, and a digest is
+  appointed when there are three trees.
+- **The entry and the accounts.** What a person introduces themselves to the intake by and how their
+  record is created — the subdomain `docs/specs/message-bus/admin-auth/`.
+- **The edit of the taken-in cargo.** The admin application reads, it does not edit — the state of a
+  record included.
+- **A multiple choice of the states in the filter.** The word of the owner: one state at a time, as at
+  the filter by tree. Two filters in one slot look the same and read as one.
+- **The filter by state at the section of the digests.** A record of a month has no field of the state.
+- **Remembering the filter between the sections.** The selection belongs to the address, and one filter
+  for three sections would mean that a section opened by a link shows not what is in the link.
+- **The column, the filter and the order by the version of the release.** The word of the owner: a task
+  of its own. It needs a migration with an index, and it rolls back apart.
+- **An entry of creating a record at the sections of the cargo.** A section that creates nothing needs no
+  button of creating. The only exception is the section of the invitations, described next to it.
+- **The section of the invitations itself.** Its list, revocation and issuing — the subdomain
+  `docs/specs/message-bus/invites/`.
+- **The filter by tree by chips, as at the sample.** The number of the trees is not limited, and a strip
+  of chips would go sideways; the filter stays a choice from a list.
+- **A slot of its own at the switch of the pages.** It stays at the page: the page arrives in the answer of
+  the intake, and the section decides nothing about it.
+- **The colouring of a block of code by languages.** The word of the owner: a second library in the
+  runtime of the kit for the sake of colour is not created.
+- **The folding of a long text of the cargo.** The panel shows it whole and scrolls it.
 
-- **Свод по нескольким деревьям и графики.** Слово владельца: показываются списки, а свод
-  назначается тогда, когда деревьев станет три.
-- **Вход и учётные записи.** Чем человек представляется приёмнику и как заводится его запись —
-  поддомен `docs/specs/message-bus/admin-auth/`.
-- **Правка принятого груза.** Админка читает, а не правит — состояние записи в том числе.
-- **Множественный выбор состояний в отборе.** Слово владельца: одно состояние за раз, как у
-  отбора по дереву. Два отбора в одном слоте выглядят одинаково и читаются как одно.
-- **Отбор по состоянию у раздела сводок.** У записи месяца поля состояния нет.
-- **Запоминание отбора между разделами.** Выборка принадлежит адресу раздела, и один отбор на
-  три раздела означал бы, что открытый по ссылке раздел показывает не то, что в ссылке.
-- **Столбец, отбор и порядок по версии выпуска.** Слово владельца: своя задача. Ей нужны
-  миграция с индексом и операция приёмника о встретившихся версиях, и откатывается она порознь.
-- **Вход создания записи у разделов груза.** Груз админка читает, а не создаёт: разделу, который
-  ничего не заводит, кнопка создания не нужна. Единственное исключение — раздел приглашений, и
-  описан он поддоменом рядом.
-- **Сам раздел приглашений.** Его список, отзыв и выдача — поддомен `docs/specs/message-bus/invites/`.
-- **Отбор по дереву чипами, как в образце.** Число деревьев не ограничено, и строка чипов
-  поехала бы; отбор остаётся выбором из списка.
-- **Свой слот у переключателя страниц.** Он остаётся у страницы: страница приезжает в ответе
-  приёмника, и раздел о ней не решает ничего.
-- **Раскраска блока кода по языкам.** Слово владельца: второй библиотеки в рантайме кита ради
-  цвета не заводится.
-- **Складывание длинного текста груза.** Панель показывает его целиком и прокручивает.
+## Contract
 
-## Контракт
+A person introduces themselves by the entry; a token of a tree does not open the operations of the
+reading. Without an entry not a single operation gives the cargo.
 
-Человек представляется входом; токен дерева операций чтения не открывает. Без входа не отдаёт
-груза ни одна операция.
+| Operation                | What it does                                                                  |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| GET /api/trees           | gives back the trees by names and signs — for the filter                      |
+| GET /api/postmortems     | a page of the analyses without the text whole, with the state of every record |
+| GET /api/postmortems/:id | one analysis with the text whole and its state                                |
+| GET /api/proposals       | a page of the proposals with the state of every record                        |
+| GET /api/proposals/:id   | one proposal whole and its state                                              |
+| GET /api/summaries       | a page of the records of the months without the digest whole                  |
+| GET /api/summaries/:id   | a record of a month with the digest whole                                     |
 
-| Операция                 | Что делает                                                        |
-| ------------------------ | ----------------------------------------------------------------- |
-| GET /api/trees           | отдаёт деревья именами и признаками — для отбора                  |
-| GET /api/postmortems     | страница разборов без текста целиком, со состоянием каждой записи |
-| GET /api/postmortems/:id | один разбор с текстом целиком и его состоянием                    |
-| GET /api/proposals       | страница предложений с состоянием каждой записи                   |
-| GET /api/proposals/:id   | одно предложение целиком и его состояние                          |
-| GET /api/summaries       | страница записей месяца без сводки целиком                        |
-| GET /api/summaries/:id   | запись месяца со сводкой целиком                                  |
+A page of a list is requested by the number, the size, the order and the filter — by tree, and at the
+analyses and the proposals also by state. The answer carries the rows and the total number of the
+records: without it the pagination does not know how many pages there are.
 
-Страница списка запрашивается номером, размером, порядком и отбором — по дереву, а у разборов и
-предложений ещё и по состоянию. Ответ несёт строки и общее число записей: без него пагинация не
-знает, сколько страниц.
+The parameter of the state is accepted by the page of the analyses and by the page of the proposals: one
+state from the set or nothing. It adds up with the parameter of the tree — named together, they narrow
+the selection by both conditions. The state also stands in the set of the sortable fields at both
+operations.
 
-Параметр состояния принимают страница разборов и страница предложений: одно состояние из набора
-либо ничего. Складывается он с параметром дерева — названные вместе, они сужают выборку обоими
-условиями. Состояние стоит и в наборе сортируемых полей у обеих операций.
+The operations of the section of the invitations — the reading of a page, the issuing and the revocation
+— stand in the subdomain next to it.
 
-Операции раздела приглашений — чтение страницы, выдача и отзыв — стоят в поддомене рядом.
+The common page of a list creates no operations of its own — it does not go to the intake at all. Its
+contract is what it has the right to ask of the host:
 
-Общая страница списка своих операций не заводит — к приёмнику она не ходит вовсе. Её контракт —
-то, что она вправе спросить у хоста:
+| What the page asks                 | What the host does                                                                                  |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------- |
+| to read the list anew              | the reading begins, and in the place of the rows it is visible that it goes                         |
+| to go to a page                    | it changes the address; the filter and the order stay the same                                      |
+| to change the size of the page     | it changes the address and brings back to the first: at a larger size the former one may not exist  |
+| to open the setting of the columns | it opens the panel of the kit for the table of this section                                         |
+| in which state the reading is      | it gives back the busyness, the refusal, the number of the page and the total number of the records |
 
-| Что страница спрашивает    | Что делает хост                                                                |
-| -------------------------- | ------------------------------------------------------------------------------ |
-| прочитать список заново    | чтение начинается, и на месте строк видно, что оно идёт                        |
-| перейти на страницу        | меняет адрес; отбор и порядок остаются теми же                                 |
-| сменить размер страницы    | меняет адрес и возвращает на первую: при большем размере прежней может не быть |
-| открыть настройку столбцов | открывает панель кита для таблицы этого раздела                                |
-| в каком состоянии чтение   | отдаёт занятость, отказ, номер страницы и общее число записей                  |
+### Refusal codes
 
-### Коды отказов
+Not applicable: the intake answers with a code of the answer of HTTP, not with named codes of the domain.
+Where the reading is obliged to refuse instead of staying silent:
 
-Не применимо: приёмник отвечает кодом ответа HTTP, а не именованными кодами домена. Где чтение
-обязано отказать вместо молчания:
+| What happened                                                            | Code  | What it says                                                    |
+| ------------------------------------------------------------------------ | ----- | --------------------------------------------------------------- |
+| there is no entry, it has expired or the record is taken off             | `401` | that the operation demands an entry                             |
+| a token of a tree was presented to an operation of the admin application | `401` | the same as without an entry                                    |
+| the number or the size of the page is not a number                       | `400` | which parameter was not taken apart and what its boundaries are |
+| the state came as a word outside the set                                 | `400` | which parameter was not taken apart and which values it has     |
+| the requested record does not exist                                      | `404` | that there is no record                                         |
+| the storage is unavailable                                               | `503` | that it was not read, and the number of the request             |
 
-| Что случилось                            | Код   | Что говорит                                             |
-| ---------------------------------------- | ----- | ------------------------------------------------------- |
-| входа нет, он просрочен или запись снята | `401` | что операция требует входа                              |
-| операции админки предъявлен токен дерева | `401` | то же, что и без входа                                  |
-| номер или размер страницы не число       | `400` | какой параметр не разобран и каковы его границы         |
-| состояние пришло словом вне набора       | `400` | какой параметр не разобран и какие значения у него есть |
-| запрошенной записи нет                   | `404` | что записи нет                                          |
-| хранилище недоступно                     | `503` | что не прочитано, и номер обращения                     |
+## Data
 
-## Данные
+The reading creates no tables of its own: it reads what the intake put. The account and the entry belong
+to the subdomain of the entry next to it: `docs/specs/message-bus/admin-auth/`.
 
-Своих таблиц чтение не заводит: оно читает то, что положил приём. Учётная запись и вход
-принадлежат поддомену входа рядом: `docs/specs/message-bus/admin-auth/`.
+No index under the filter by state is created. The lists go in hundreds of rows, not in millions, and a
+query by a column of a set costs less by a walk over the table than the keeping of an index at every
+record costs; when the lists grow, an index is created by a task of its own — together with the
+measurement that shows it is needed.
 
-Индекса под отбор по состоянию не заводится. Списки идут сотнями строк, а не миллионами, и
-запрос по колонке набора обходится обходом таблицы дешевле, чем стоит поддержание индекса на
-каждой записи; когда списки вырастут, индекс заводится своей задачей — вместе с замером, который
-покажет, что он нужен.
+## Screens and states
 
-## Экраны и состояния
+| Screen                             | States                                                                                                                               |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| The incident analyses              | reading · a page with rows · empty · empty by the filter · a refusal of the reading with a repeat                                    |
+| The proposals                      | the same five states                                                                                                                 |
+| The filter by state                | lifted · a state chosen · added to the filter by tree · at the digests there is none at all                                          |
+| The digests of the trees           | the same five states                                                                                                                 |
+| The panel of details               | reading · the record whole · there is no record · a refusal of the reading                                                           |
+| The text of the cargo in the panel | marked up · without markup · empty: there is no section · the digest as a block of code                                              |
+| The toolbar                        | the filters of the section on the left · the buttons of the section and the common ones on the right · the slot is occupied or empty |
+| The page of a section              | it fits into the window · it scrolls whole: the last row and the switch are visible                                                  |
+| The heading of a section           | the name alone · the name with a hint                                                                                                |
+| The place above the table          | empty and taking no place · occupied by what the section put there                                                                   |
+| The empty state                    | a sign, a heading and a line about where the records come from; there are no rows of the table                                       |
 
-| Экран                | Состояния                                                                          |
-| -------------------- | ---------------------------------------------------------------------------------- |
-| Разборы происшествий | чтение · страница со строками · пусто · пусто по отбору · отказ чтения с повтором  |
-| Предложения          | те же пять состояний                                                               |
-| Отбор по состоянию   | снят · выбрано состояние · сложен с отбором по дереву · у сводок его нет вовсе     |
-| Сводки деревьев      | те же пять состояний                                                               |
-| Панель подробностей  | чтение · запись целиком · записи нет · отказ чтения                                |
-| Текст груза в панели | размеченный · без разметки · пустой: раздела нет · сводка блоком кода              |
-| Тулбар               | отборы раздела слева · кнопки раздела и общие справа · слот занят или пуст         |
-| Страница раздела     | помещается в окно · прокручивается целиком: последняя строка и переключатель видны |
-| Заголовок раздела    | одно название · название с подсказкой                                              |
-| Место над таблицей   | пусто и места не занимает · занято тем, что раздел туда положил                    |
-| Пустое состояние     | значок, заголовок и строка о том, откуда записи приходят; строк таблицы нет        |
+The table of the states is checked by nothing: a state the code does not know how to come into reads here
+as a description of something working. The states are confirmed by scenarios and by a measurement in the
+browser.
 
-Таблицу состояний не сверяет ничто: состояние, в которое код не умеет приходить, читается здесь
-описанием работающего. Подтверждаются состояния сценариями и замером в браузере.
+## Cross-cutting requirements
 
-## Сквозные требования
+### Locales
 
-### Локали
-
-Язык один — русский. Подписи админки лежат в словаре приложения, а не в разметке. Оттуда же
-берутся подписи кита: у него свой словарь на восемь языков, и без этого пагинация и пустое
-состояние выходят по-английски рядом с русскими заголовками.
+The language is one — Russian. The labels of the admin application lie in the dictionary of the
+application, not in the markup. The labels of the kit are taken from there too: it has a dictionary of
+its own in eight languages, and without that the pagination and the empty state come out in English next
+to Russian headings.
 
 ### SEO
 
-Не применимо: всё, кроме экрана входа, стоит за входом, и поисковикам не показывается ничего.
+Not applicable: everything except the screen of the entry stands behind the entry, and nothing is shown
+to the search engines.
 
-### Мобильная раскладка
+### Mobile layout
 
-Строка списка на узком экране показывается карточкой — это вход таблицы кита, а не своя
-разметка. Экран, собранный мимо неё, узкую раскладку теряет молча.
+A row of a list on a narrow screen is shown as a card — this is an entry of the table of the kit, not
+markup of its own. A screen put together past it loses the narrow layout silently.
 
-Части тулбара на узком экране переносятся, а не режутся: отборы и кнопки на одной строке там не
-помещаются, а обрезанный тулбар прячет отбор, не сказав об этом. Отборов у разделов груза два, и
-на узком экране видны оба целиком. Подтверждается замером, а не взглядом.
+The parts of the toolbar on a narrow screen wrap, they are not cut: the filters and the buttons do not
+fit onto one line there, and a cut toolbar hides the filter without saying so. The sections of the cargo
+have two filters, and on a narrow screen both are visible whole. It is confirmed by a measurement, not by
+a look.
 
-### Мультиобъектность
+### Several objects
 
-Вошедший человек видит груз всех деревьев: учётная запись принадлежит службе, а не дереву, и
-отбор по дереву сужает показанное, а не доступ.
+A person who has entered gets the cargo of all the trees: an account belongs to the service, not to a
+tree, and the filter by tree narrows what is shown, not the access.
 
-## Решения
+## Decisions
 
-- **Три списочных экрана, а не один.** Слово владельца: разборы, предложения и сводки одной
-  работой. Отвергнуто: один экран с окупаемостью каркаса на нём.
-- **Вид списочного экрана — требование приёмки.** Слово владельца: таблица с тулбаром и
-  пагинацией, нажатие на строку открывает панель подробностей. Собранное иначе не принимается.
-- **Текст груза показывается разметкой, а сырой HTML остаётся текстом.** Слово владельца:
-  прежнее решение — показывать текстом — стояло на доводе безопасности, а довод снимается тем,
-  что разборщик сырого HTML не знает вовсе. Отвергнута чужая библиотека с выключенным сырым
-  HTML: безопасность держалась бы на её настройке.
-- **Выборка живёт в адресе.** Иначе правило о перезагрузке нарушается буквой. Цена: разбор и
-  сборка параметров адреса на каждом разделе.
-- **Порядок по умолчанию — свежие сверху, второй ключ — идентификатор записи.** Без второго
-  ключа записи с равным временем перескакивают между страницами.
-- **Отбор кладёт раздел.** Отвергнуто: оставить отбор в странице и завести вход «показывать ли
-  его» — тогда страница знает про каждый вид отбора, который когда-нибудь понадобится, и
-  разрастается вместе с их числом.
-- **Связь идёт хостом, а не входами и событиями на каждое действие.** Отвергнуто: оставить
-  события и дописывать по паре на действие — счёт входов и событий растёт с каждым действием, а
-  забытое подключение видно только на собранном экране.
-- **Отвечает хостом общая основа механики, а раздел указывает на себя одной строкой.** Иначе
-  нельзя: внедрение ищет то, что объявил сам экран, а основа селектора не имеет и объявить себя
-  за него не может. Отвергнуто: писать ответы в каждом экране — три повторения одного и того же,
-  расходящиеся по одному.
-- **Обновление и настройка столбцов остаются у страницы.** Отвергнуто: раздать их разделам
-  вместе с остальными кнопками — одинаковое, розданное трём, расходится.
-- **Якоря собираются из префикса раздела.** Цена: якоря общей страницы меняются на всех
-  разделах разом, и то, что на них ссылается, правится той же работой.
-- **Таблица объявляется элементом кита, а не атрибутом на своей разметке.** Отвергнуто:
-  оставить атрибут — на нём кит не показывает ни оверлея чтения, ни карточек узкого экрана,
-  потому что рисует их узлами, которые детьми `<table>` не бывают. Цена: у своего тега роли
-  таблицы нет, и её ставит сам кит — роли строк и ячеек даёт CDK, а роли таблицы у него не
-  бывает вовсе.
-- **Каркас перестаёт быть ростом с окно.** В этом режиме кит обрезает зону содержимого и ждёт
-  прокрутку от каждой зоны внутри; страница списка её не заводит, и строки просто пропадают.
-  Отвергнуто: оставить режим и завести прокрутку внутри зоны таблицы — тогда переключатель
-  страниц уезжает под нижний край.
-- **Правится общий вид страницы, а не четыре раздела.** Страница списка одна на все четыре, и
-  правка в ней не может разойтись между разделами. Отвергнуто: править разделы по одному — они
-  разошлись бы уже на втором.
-- **Пустота показывается отдельным видом, а не фразой внутри таблицы.** Отвергнуто: оставить
-  короткую фразу на месте строк — она читается как одна из записей, и пустой раздел выглядит
-  так же, как не догрузившийся. Цена: подпись пустоты стала двумя строками, и вторую каждый
-  раздел называет за себя.
-- **Отбор по состоянию — выбор одного значения.** Слово владельца. Отвергнуто: множественный
-  выбор — он расходится с соседним отбором и видом, и разбором адреса, а «всё, кроме
-  выпущенного» закрывается порядком по шагам разбора.
-- **Порядок по состоянию берётся из объявления набора в хранилище.** Перечисление объявлено в
-  порядке шагов разбора, и хранилище упорядочивает набор по объявлению: порядок выходит даром.
-  Отвергнуто: свой список порядка в коде — вторая копия того же знания, и расходятся такие копии
-  молча.
-- **Чужое слово в параметре отбивает приёмник, а экран его не посылает.** Две стороны отвечают
-  на разные вопросы: приёмник охраняет свой контракт, экран не роняет список на опечатку в
-  адресе. Отвергнуто: молча подставлять умолчание на приёмнике — тогда человек, попросивший
-  одно, получает другое и об этом не знает.
-- **Индекс под отбор по состоянию не заводится.** Размер списков этого не требует, а индекс
-  стоит записи на каждом приёме груза. Отвергнуто: завести впрок — впрок он и остался бы, а
-  замера, который показал бы нужду, нет.
+- **Three list screens, not one.** The word of the owner: the analyses, the proposals and the digests by
+  one piece of work. Rejected: one screen with the harness paying off on it.
+- **The look of a list screen is a requirement of the acceptance.** The word of the owner: a table with a
+  toolbar and a pagination, a press on a row opens the panel of details. What is put together otherwise
+  is not accepted.
+- **The text of the cargo is shown as markup, and raw HTML stays text.** The word of the owner: the
+  former decision — to show it as text — stood on an argument of security, and the argument is lifted by
+  the parser not knowing raw HTML at all. A foreign library with raw HTML switched off was rejected: the
+  security would stand on its setting.
+- **The selection lives in the address.** Otherwise the rule about a reload is broken to the letter. The
+  price: the taking apart and the putting together of the parameters of the address at every section.
+- **The order by default is the fresh ones on top, the second key is the identifier of the record.**
+  Without the second key records with equal time jump between the pages.
+- **The filter is put by the section.** Rejected: leaving the filter in the page and creating an input
+  "whether to show it" — then the page knows about every kind of filter that will ever be needed and
+  grows together with their number.
+- **The link goes by the host, not by inputs and events at every action.** Rejected: leaving the events
+  and appending a pair per action — the count of the inputs and the events grows with every action, while
+  a forgotten connecting is visible only on the assembled screen.
+- **The host is answered by the common base of the mechanics, and a section points at itself by one
+  line.** It cannot be otherwise: the injection looks for what the screen itself declared, and the base
+  has no selector and cannot declare itself for it. Rejected: writing the answers in every screen — three
+  repetitions of one and the same, diverging one at a time.
+- **The refreshing and the setting of the columns stay at the page.** Rejected: handing them out to the
+  sections together with the rest of the buttons — what is one and the same, handed out to three,
+  diverges.
+- **The anchors are put together from the prefix of the section.** The price: the anchors of the common
+  page change at all the sections at once, and what refers to them is edited by the same work.
+- **The table is declared by an element of the kit, not by an attribute on markup of one's own.**
+  Rejected: leaving the attribute — on it the kit shows neither the overlay of the reading nor the cards
+  of a narrow screen, because it draws them by nodes that are never children of a `<table>`. The price: a
+  tag of one's own has no role of a table, and the kit puts it itself — the roles of the rows and the
+  cells are given by the CDK, and it has no role of a table at all.
+- **The harness stops growing with the window.** In that mode the kit cuts the zone of the content and
+  waits for a scroll from every zone inside; the page of a list creates none, and the rows simply
+  disappear. Rejected: keeping the mode and creating a scroll inside the zone of the table — then the
+  switch of the pages goes away under the lower edge.
+- **The common look of the page is edited, not four sections.** The page of a list is one for all four,
+  and an edit in it cannot diverge between the sections. Rejected: editing the sections one at a time —
+  they would diverge already at the second one.
+- **The emptiness is shown by a look of its own, not by a phrase inside the table.** Rejected: leaving a
+  short phrase in the place of the rows — it reads as one of the records, and an empty section looks the
+  same as one that did not finish loading. The price: the label of the emptiness became two lines, and the
+  second one every section names for itself.
+- **The filter by state is a choice of one value.** The word of the owner. Rejected: a multiple choice —
+  it diverges from the neighbouring filter in look and in the taking apart of the address, while
+  "everything except the released" is closed by the order by the steps of the sorting out.
+- **The order by state is taken from the declaration of the set in the storage.** The enumeration is
+  declared in the order of the steps of the sorting out, and the storage orders the set by the
+  declaration: the order comes for free. Rejected: a list of the order of one's own in the code — a second
+  copy of the same knowledge, and such copies diverge silently.
+- **A foreign word in the parameter is refused by the intake, and the screen does not send it.** The two
+  sides answer different questions: the intake guards its contract, the screen does not fell the list at a
+  typo in the address. Rejected: substituting the default silently at the intake — then a person who asked
+  for one thing gets another and does not know about it.
+- **No index under the filter by state is created.** The size of the lists does not demand it, and an
+  index costs a write at every intake of the cargo. Rejected: creating it in advance — in advance it would
+  have stayed, and there is no measurement that would show the need.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом. Свой у чтения один:
+The open questions of the domain are shared, and they live in the spec next to it. The reading has one of
+its own:
 
-- **Q-31. Как показывается отбор, когда состояний станет больше четырёх.** Набор задан шагами
-  разбора и растёт вместе с ними; выбор одного значения из десяти читается хуже, чем из четырёх.
-  Решается тогда, когда набор вырастет.
+- **Q-31. How the filter is shown when there are more than four states.** The set is given by the steps of
+  the sorting out and grows together with them; a choice of one value out of ten reads worse than out of
+  four. It is decided when the set grows.
 
-## История изменений
+## History of changes
 
-- 2026-08-16 — поддомен выделен из спека домена, переросшего предел длины. Правила, сценарии и
-  привязки чтения переехали сюда прежними: номера сценариев не пересчитывались.
-- 2026-08-17 — влита договорённость задачи RT-780 о том, чем раздел говорит с общей страницей
-  списка: слоты тулбара и места над таблицей, хост списочной страницы, подсказка заголовка и
-  якоря от префикса раздела. Сценарии `SC-MB-110`…`SC-MB-116` переехали прежними номерами.
-- 2026-08-17 — влита договорённость задачи RT-781 о едином языке списков: таблица объявляется
-  элементом кита, якоря таблицы и строк собираются от префикса раздела, пустой список
-  показывает пустое состояние и называет, откуда записи приходят. Сценарии
-  `SC-MB-129`…`SC-MB-136` переехали прежними номерами. Два правила договорённости — об отборе
-  в слоте и о незанятом слоте — не переехали: они уже стоят здесь с RT-780, и их привязки
-  ведут в те же символы. Число разделов в пояснениях правил снято: их четыре, а стояло «три».
-- 2026-08-19 — влита договорённость задачи RT-878 о выдаче приглашения из админки, и тем же
-  движением раздел приглашений выделен в поддомен `docs/specs/message-bus/invites/`: с ним
-  спек перерастал предел длины. Правила раздела, сценарии `SC-MB-128` и
-  `SC-MB-154`…`SC-MB-162`, их привязки уехали туда прежними номерами. Здесь осталось общее
-  для всех разделов; пустое состояние раздела приглашений теперь называет кнопку, а не
-  команду узла. Подписи экранов переведены со слова словаря на слово человека — разбор
-  промаха в запись «2026-08-19-tree-word-shown-to-users» в приёме.
-- 2026-08-20 — влита договорённость задачи RT-944 о виде страницы списка: страница растёт под
-  содержимое и прокручивается целиком, шапка раздела сложена строкой с местом действий справа,
-  поля и кегль названия взяты у образца. Сценарии `SC-MB-163`…`SC-MB-166` переехали прежними
-  номерами. Правило о разделе без подсказки не переехало: оно уже стоит здесь и ведёт в тот же
-  символ.
-- 2026-08-21 — влиты два правила договорённости задачи RT-910: текст починки виден в панели
-  подробностей и не виден в списке, а у записи без текста строки в панели нет вовсе. Сценарии
-  `SC-MB-189` и `SC-MB-190` переехали прежними номерами; остальное той договорённости легло в
-  поддомен правки состояния и в спек пакета.
-- 2026-08-21 — влиты два правила договорённости задачи RT-911: версия выпуска видна в панели
-  подробностей и не видна в списке, а у записи без версии строки в панели нет вовсе. Сценарии
-  `SC-MB-205` и `SC-MB-206` переехали прежними номерами; остальное той договорённости легло в
-  поддомен правки состояния и в спек пакета.
-- 2026-08-21 — влита договорённость задачи RT-913 об отборе и порядке по состоянию записи: отбор
-  стоит в тулбаре правее отбора по дереву, живёт в адресе, складывается с отбором по дереву, а
-  состояние стало сортируемым полем с порядком по шагам разбора. Сценарии `SC-MB-222`…`SC-MB-236`
-  переехали прежними номерами. Три правила договорённости не переехали: об отборе, переживающем
-  переход на другую страницу и возврат из панели, о втором ключе порядка и о неизменном порядке
-  по умолчанию — все три уже стоят здесь и ведут в те же символы. Строка «Отбор по состоянию и
-  порядок по нему» снята из «Что не входит»: этой работой она стала входящей.
-- 2026-08-21 — вход, учётная запись и её команды выделены в поддомен
-  `docs/specs/message-bus/admin-auth/`: со влитой договорённостью об отборе по состоянию спек
-  перерастал предел длины. Правила входа, сценарии `SC-MB-33`…`SC-MB-45`, `SC-MB-56`…`SC-MB-61`,
-  `SC-MB-79` и `SC-MB-80`, их привязки, операции входа, коды его отказов и обе свои сущности
-  уехали туда прежними номерами.
+- 2026-08-16 — the subdomain was split out of the spec of the domain, which had outgrown the length limit.
+  The rules, the scenarios and the bindings of the reading moved here as they were: the scenario numbers
+  were not recounted.
+- 2026-08-17 — the agreement of the task RT-780 about what a section speaks to the common page of a list
+  by was merged: the slots of the toolbar and of the place above the table, the host of a list page, the
+  hint of the heading and the anchors from the prefix of the section. The scenarios `SC-MB-110`…`SC-MB-116`
+  moved with their former numbers.
+- 2026-08-17 — the agreement of the task RT-781 about the single language of the lists was merged: the
+  table is declared by an element of the kit, the anchors of the table and of the rows are put together
+  from the prefix of the section, an empty list shows an empty state and names where the records come
+  from. The scenarios `SC-MB-129`…`SC-MB-136` moved with their former numbers. Two rules — about the
+  filter in a slot and about an unoccupied slot — did not move: they already stand here since RT-780.
+  The number of the sections in the explanations of the rules was fixed to four.
+- 2026-08-19 — the agreement of the task RT-878 about the issuing of an invitation from the admin
+  application was merged, and by the same movement the section of the invitations was split into the
+  subdomain `docs/specs/message-bus/invites/`: with it the spec outgrew the length limit. The rules of the
+  section, the scenarios `SC-MB-128` and `SC-MB-154`…`SC-MB-162` and their bindings went there with their
+  former numbers; the empty state there now names the button, not the command of the node. The labels of
+  the screens were translated from the word of the vocabulary to the word of a person — the analysis of
+  the miss is the record "2026-08-19-tree-word-shown-to-users" in the intake.
+- 2026-08-20 — the agreement of the task RT-944 about the look of the page of a list was merged: the page
+  grows under the content and scrolls whole, the header of a section is folded as a row with the place of
+  the actions on the right, the margins are taken from the sample. The scenarios `SC-MB-163`…`SC-MB-166`
+  moved with their former numbers; the rule about a section without a hint already stands here.
+- 2026-08-21 — two rules of the agreement of the task RT-910 were merged: the text of the fix is visible
+  in the panel and not in the list, and at a record without a text there is no row at all. The scenarios
+  `SC-MB-189` and `SC-MB-190` moved with their former numbers; the rest went to the neighbouring specs.
+- 2026-08-21 — two rules of the agreement of the task RT-911 were merged: the version of the release is
+  visible in the panel and not in the list, and at a record without a version there is no row at all. The
+  scenarios `SC-MB-205` and `SC-MB-206` moved with their former numbers; the rest went to the neighbours.
+- 2026-08-21 — the agreement of the task RT-913 about the filter and the order by the state of a record was
+  merged: the filter stands in the toolbar to the right of the filter by tree, lives in the address, adds
+  up with the filter by tree, and the state became a sortable field with the order by the steps of the
+  sorting out. The scenarios `SC-MB-222`…`SC-MB-236` moved with their former numbers. Three rules of the
+  agreement did not move: about a filter outliving a transition to another page and a return from the
+  panel, about the second key of the order and about the unchanged order by default — all three already
+  stand here. The line about the filter by state left "What is out of scope": it became in scope.
+- 2026-08-21 — the entry, the account and its commands were split into the subdomain
+  `docs/specs/message-bus/admin-auth/`: with the merged agreement about the filter by state the spec
+  outgrew the length limit. The rules of the entry, the scenarios `SC-MB-33`…`SC-MB-45`,
+  `SC-MB-56`…`SC-MB-61`, `SC-MB-79` and `SC-MB-80`, their bindings, the operations of the entry, the codes
+  of its refusals and both entities of its own went there with their former numbers.

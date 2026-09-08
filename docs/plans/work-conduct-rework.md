@@ -1,159 +1,168 @@
-# Переработка ведения работы
+# The rework of the conduct of the work
 
-Разборы происшествий перестают повторяться оттого, что слой правил меняет поведение исполнителя,
-а не оттого, что в правило дописана ещё одна статья.
+The reviews of the incidents stop repeating because the rules layer changes the behaviour of the
+executor, not because one more article is appended into a rule.
 
-## Зачем
+## Why
 
-В приёме на 19 августа 2026 года лежат 49 разборов происшествий и 54 предложения от двух
-деревьев: от дерева-потребителя — 28 разборов и 15 предложений, от этого — 21 и 39. Собраны они
-за пять суток.
+In the intake as of 19 August 2026 lie 49 reviews of the incidents and 54 proposals from two trees:
+from the consumer tree — 28 reviews and 15 proposals, from this one — 21 and 39. They were gathered
+over five days.
 
-Приёмом груз не исчерпывался. На диске этого дерева лежат 38 разборов, а в приёме их было 21;
-семнадцатый и три предложения уехали туда отправкой по слову владельца — в приёме стало 50
-разборов и 57 предложений. Шестнадцать так и лежат только на диске: все они уже переехали в
-каталог разобранных, и отправитель их не берёт. Весь корпус — 66 разборов и 57 предложений, и
-считать надо по нему: разбор, оставшийся на диске, описывает такой же промах, как уехавший.
+The cargo was not exhausted by the intake. On the disk of this tree lie 38 reviews, and in the intake
+there were 21 of them; the seventeenth and three proposals left there by a sending at the word of the
+owner — in the intake there became 50 reviews and 57 proposals. Sixteen still lie on the disk alone:
+all of them have already moved into the directory of the taken apart, and the sender does not take
+them. The whole corpus is 66 reviews and 57 proposals, and the count must go by it: a review left on
+the disk describes the same kind of miss as one that left.
 
-Груз не рассыпан по всему слою правил, а сидит в двух его местах. На ведение работы приходится
-23 предложения из 54 — правило, три паттерна при нём, его закон и три гарда; на поставку — 14.
-Сорок три процента и двадцать шесть; на всё остальное вместе — тридцать один.
+The cargo is not scattered over the whole rules layer but sits in two of its places. To the conduct
+of the work fall 23 proposals of 54 — the rule, three patterns at it, its law and three guards; to
+the delivery — 14. Forty-three per cent and twenty-six; to all the rest together — thirty-one.
 
-Считать надо не предложения, а повторы. `next-task-taken-formally` приехал трижды — 17, 17 и 19
-августа, — и каждый раз с новым предложением дописать статью. В этом дереве разбор о замысле, написанном ради снятия отказа гарда, повторился в тот же день, что
-и был написан, — раскладкой, положенной раньше оформления работы.
+The count must go not by the proposals but by the repetitions. `next-task-taken-formally` arrived
+three times — on the 17th, the 17th and the 19th of August — and every time with a new proposal to
+append an article. In this tree the review about a plan written for the sake of lifting a refusal of
+a guard repeated on the same day it was written — by a layout laid earlier than the making up of the
+work.
 
-Локальный корпус говорит то же самое и громче. Из 38 разборов этого дерева двадцать уже переехали
-в каталог разобранных — то есть под каждый заведена задача. Среди них «Отчёт вместо работы»,
-«Отчёт вместо работы снова», «Ход кончается отчётом, работа стоит: четыре раза за один заход»,
-«Вопросы вместо работы», «Следующая задача названа вслух и не взята», «Ожидание чужого шага
-сделано содержанием хода». Заведены они с 13 августа — и ровно этот же промах приехал в приём 18
-и 19 августа от обоих деревьев.
+The local corpus says the same and louder. Of the 38 reviews of this tree twenty have already moved
+into the directory of the taken apart — that is, a task is created under each. Among them are "A
+report instead of the work", "A report instead of the work again", "The turn ends with a report, the
+work stands: four times in one session", "Questions instead of the work", "The next task is named
+aloud and not taken", "The waiting for a foreign step is made the content of the turn". They were
+created from the 13th of August — and exactly the same miss arrived in the intake on the 18th and the
+19th of August from both trees.
 
-Вот главное число эпика: работа по разборам велась, задачи заводились, статьи дописывались — и ни
-один класс промаха не закрылся.
+Here is the main number of the epic: the work by the reviews was going, the tasks were being created,
+the articles were being appended — and not a single class of a miss closed.
 
-Это и есть повод для эпика: слой правил уже описал каждый из этих промахов, и промахи от этого не
-прекратились.
+That is the ground for the epic: the rules layer has already described each of these misses, and the
+misses did not stop from that.
 
-## Что нашлось: пять групп
+## What was found: five groups
 
-Разборы делятся не по темам, а по механизму — по тому, чем именно промах кончился.
+The reviews are divided not by subjects but by the mechanism — by what exactly the miss ended with.
 
-| Группа                                   | Разборов | Механизм                                                                                              |
-| ---------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
-| Ход кончается вместо того, чтобы идти    | 27       | Артефакт шага создан — ветка, папка, колонка, PR, — и ход на этом кончился; работы по шагу нет        |
-| Артефакт поставки не в том состоянии     | 14       | PR открыт от вчерашней вершины, без ревьювера, не той записью, влит раньше уборки, ветка воссоздана   |
-| Слой правил чинится не там, где сломано  | 8        | Надстройка затёрта записью файла, пакетный текст правлен внутри надстройки, отбитая правка легла мимо |
-| Неудобное глушится, а не чинится         | 7        | Проверка заглушена, исключение линтера предложено вместо починки, красное списано на машину           |
-| Сказанное владельцу расходится с деревом | 10       | Готовым названо лежащее на диске, снятым — снятое только локально, проверенным — часть набора         |
+| The group                                          | Reviews | The mechanism                                                                                                                       |
+| -------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| The turn ends instead of going                     | 27      | The artefact of a step is created — a branch, a folder, a column, a PR — and the turn ended at that; there is no work by the step   |
+| The artefact of the delivery is in the wrong state | 14      | The PR is opened from yesterday's tip, without a reviewer, by the wrong account, merged before the tidying, the branch is recreated |
+| The rules layer is fixed not where it is broken    | 8       | The override is wiped by a write of the file, a package text is edited inside the override, a refused edit landed past it           |
+| What is inconvenient is muffled, not fixed         | 7       | A check is muffled, an exception of the linter is proposed instead of a fixing, the red is written off on the machine               |
+| What is said to the owner diverges from the tree   | 10      | What lies on the disk is called ready, what is removed only locally — removed, a part of the set — checked                          |
 
-Пять групп покрывают все 66 разборов целиком — 49 из приёма и 17 лежащих только на диске. Продуктовые дефекты — их два — стоят в группе
-последней: они разбираются кодом, а не правилами.
+The five groups cover all 66 reviews whole — 49 from the intake and 17 lying on the disk alone. The
+product defects — there are two of them — stand in the last group: they are taken apart by code, not
+by rules.
 
-## Почему их так много
+## Why there are so many of them
 
-Причина одна, и она не в исполнителе.
+The reason is one, and it is not in the executor.
 
-**Слой правил рос симптоматически.** Каждый разбор кончался предложением дописать статью или
-ловушку — в тот же ресурс, который промах уже описывал. Правило ведения работы доросло до
-семнадцати шагов, трёх десятков статей и дюжины ловушек. Текст такой длины читается один раз, в
-начале захода, и не перечитывается в ту минуту, когда принимается решение. Новая статья меняет
-текст и не меняет поведение — это видно прямо по грузу: три одинаковых разбора подряд, и три
-предложения дописать статью о том, о чём статья уже стояла.
+**The rules layer grew symptomatically.** Every review ended with a proposal to append an article or
+a pitfall — into the same resource the miss already described. The rule of the conduct of the work
+grew to seventeen steps, three dozen articles and a dozen pitfalls. A text of such a length is read
+once, at the start of the session, and is not reread in the minute when a decision is taken. A new
+article changes the text and does not change the behaviour — that is visible right by the cargo:
+three identical reviews in a row, and three proposals to append an article about what an article
+already stood about.
 
-Из этого следуют три вещи, и каждая держит свою группу промахов.
+Three things follow from that, and each holds its own group of the misses.
 
-- **Гарды судят артефакт, а не переход.** Они спрашивают «есть ли папка, ветка, колонка» и
-  никогда — «случился ли переход состояния». Исполнитель, которого судят по артефакту, артефакт и
-  производит: отсюда девятнадцать разборов первой группы, где ветка заведена, колонка переставлена,
-  а работы нет.
-- **Ход не считается учётной единицей.** Нигде не сказано, чем ход кончается законно. Поэтому
-  кончить его можно объявлением следующего шага, меню владельцу или ожиданием чужого шага — и
-  каждое из трёх выглядит завершённой работой. Гард ожидания заведён позже и латает часть случаев,
-  а не определяет их.
-- **Утверждение владельцу не выводится ни из чего.** Правило текстов само говорит, что ответ
-  владельцу не читает ни одна проверка. Отсюда пятая группа целиком.
+- **The guards judge an artefact, not a transition.** They ask "is there a folder, a branch, a
+  column" and never "did a transition of the state happen". An executor judged by an artefact is the
+  one who produces the artefact: hence the nineteen reviews of the first group, where the branch is
+  created, the column is moved, and there is no work.
+- **A turn is not counted a unit of the account.** Nowhere is it said what a turn ends with lawfully.
+  So it can be ended by a declaration of the next step, by a menu for the owner or by the waiting for
+  a foreign step — and each of the three looks like finished work. The guard of the waiting is created
+  later and patches a part of the cases instead of defining them.
+- **A claim to the owner is derived from nothing.** The rule of the texts says itself that a reply to
+  the owner is read by no check. Hence the fifth group whole.
 
-**Обратная связь слоя копит текст, а не исполнение.** Предложение считается закрытым, только войдя
-в ресурс пакета; пятьдесят четыре предложения лежат в очереди, и до тех пор промахи, которые их
-породили, ничем не закрыты. Разбор, кончившийся предложением, снаружи неотличим от разбора,
-кончившегося исправлением.
+**The feedback of the layer accumulates a text, not an execution.** A proposal is counted closed only
+having entered a resource of the package; fifty-four proposals lie in the queue, and until then the
+misses that gave birth to them are closed by nothing. A review that ended with a proposal is from
+outside indistinguishable from a review that ended with a fixing.
 
-## Решения
+## Decisions
 
-- **Единица ведения работы — состояние, а не шаг.** Список из семнадцати шагов заменяется
-  перечнем состояний работы с объявленным переходом между ними. Состояние объявляется машиночитаемо,
-  одной строкой в ходе работы, и гард судит переход: артефакт без перехода перестаёт быть
-  свидетельством того, что шаг сделан.
-- **У каждого состояния объявлено обязательное следующее действие, и «ждать» им не бывает
-  никогда.** Состояние, у которого следующее действие — ожидание чужого шага, объявляется
-  незаконным: у него называется действие, исполнимое сейчас. Это закрывает первую группу целиком,
-  вместо шести ловушек, латающих её по одной.
-- **Ход кончается только на разрешённом выходе.** Выходов четыре: вопрос, ответа на который в
-  правилах нет; отказ гарда; заполненное окно; работа отдана и следующая начата. Всё остальное —
-  продолжение хода. Сейчас это частично делает гард ожидания; здесь оно становится определением, а
-  не заплатой.
-- **Готовность к поставке — одно состояние, устанавливаемое один раз и целиком.** Основание ветки,
-  учётная запись, ревьювер, колонка, разобранная папка проверяются вместе, а не по одному в момент
-  вызова: условия поставки задаются в начале работы, а спрашиваются в конце — оттуда и вторая
-  группа.
-- **У красного назначено действие.** Отказ проверки оставляет ровно два законных хода: починить
-  код или принести владельцу цену обхода. Заглушить проверку без его слова нельзя, а сказанное
-  слово записывается там же, где заглушено.
-- **Утверждение о дереве выводится из команды.** Всё, что отчёт владельцу говорит о состоянии
-  дерева, несёт команду и её вывод. Сказанное без команды утверждением не считается.
-- **Предложение-повтор не дописывает статью.** Предложение, повторяющее уже стоящее утверждение,
-  либо превращает его в проверку или гард, либо отклоняется. Правило, доросшее до предела длины,
-  делится или переводится в исполнение — дописывать в него нельзя.
+- **The unit of the conduct of the work is a state, not a step.** The list of seventeen steps is
+  replaced by a list of the states of the work with a declared transition between them. A state is
+  declared machine-readably, by one line in the progress, and the guard judges the transition: an
+  artefact without a transition stops being an evidence that the step is done.
+- **Every state has a declared mandatory next action, and "to wait" is never one of them.** A state
+  whose next action is the waiting for a foreign step is declared unlawful: an action executable now is
+  named for it. This closes the first group whole, instead of six pitfalls patching it one by one.
+- **A turn ends only at a permitted exit.** The exits are four: a question there is no answer to in the
+  rules; a refusal of a guard; a filled window; the work is handed in and the next one is begun.
+  Everything else is a continuation of the turn. Now this is partly done by the guard of the waiting;
+  here it becomes a definition, not a patch.
+- **The readiness for the delivery is one state, set once and whole.** The base of the branch, the
+  account, the reviewer, the column, the taken-apart folder are checked together, not one at a time at
+  the minute of the call: the conditions of the delivery are set at the start of the work and asked at
+  the end — hence the second group.
+- **The red has an assigned action.** A refusal of a check leaves exactly two lawful turns: to fix the
+  code or to bring the owner the price of a bypass. A check must not be muffled without their word, and
+  the word said is written down there where it is muffled.
+- **A claim about the tree is derived from a command.** Everything the report to the owner says about
+  the state of the tree carries a command and its output. What is said without a command is not counted
+  a claim.
+- **A repeat proposal does not append an article.** A proposal repeating a claim that already stands
+  either turns it into a check or a guard, or is rejected. A rule grown to the length limit is divided
+  or moved into an execution — appending into it is not allowed.
 
-## Порядок
+## The order
 
-Карточка эпика — задача RT-896; каждая строка ниже заведена своей задачей.
+The card of the epic is the task RT-896; every line below is created by a task of its own.
 
-| №          | Задача                                                | Почему здесь                                                                                                     |
-| ---------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| 1 · RT-897 | Состояния работы вместо списка шагов                  | Основание для всех остальных: без объявленного состояния гардам нечего судить, кроме артефактов                  |
-| 2 · RT-898 | Разрешённые выходы хода и запрет ожидания             | Самая большая группа — 19 разборов. Ставит гард на завершение хода и снимает шесть ловушек, латающих её по одной |
-| 3 · RT-899 | Готовность к поставке одним состоянием                | 12 разборов. Правит поставку, поэтому идёт после того, как состояния объявлены                                   |
-| 4 · RT-900 | Назначенное действие у красного и у запрета           | 6 разборов. Задевает проверки и гарды, отдельно от ведения работы                                                |
-| 5 · RT-901 | Утверждение владельцу выводится из команды            | 5 разборов. Правит правило текстов и образец отчёта; ни на что не опирается                                      |
-| —          | Правка разложенного, надстроек и отправка предложений | Ушла в эпик RT-956 задачей RT-902: там же повтор-предложение, и обе про обратную связь слоя правил               |
-| —          | Предложение-повтор становится проверкой, а не статьёй | Ушла в эпик RT-956 задачей RT-903 и идёт там второй: судит место, куда ложится правка                            |
-| —          | Отметка о взятом в работу в самом приёме              | Ушла в эпик RT-907 задачей RT-908: там же приём починки, версия выпуска и показ разметкой                        |
+| №          | Task                                                                            | Why here                                                                                                                                    |
+| ---------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 · RT-897 | The states of the work instead of the list of the steps                         | The foundation for all the rest: without a declared state the guards have nothing to judge apart from the artefacts                         |
+| 2 · RT-898 | The permitted exits of a turn and the ban of the waiting                        | The largest group — 19 reviews. It puts a guard on the ending of a turn and lifts six pitfalls patching it one by one                       |
+| 3 · RT-899 | The readiness for the delivery by one state                                     | 12 reviews. It edits the delivery, so it goes after the states are declared                                                                 |
+| 4 · RT-900 | An assigned action at the red and at a ban                                      | 6 reviews. It touches the checks and the guards, apart from the conduct of the work                                                         |
+| 5 · RT-901 | A claim to the owner is derived from a command                                  | 5 reviews. It edits the rule of the texts and the sample of a report; it rests on nothing                                                   |
+| —          | The edit of what is laid out, of the overrides and the sending of the proposals | Left for the epic RT-956 as the task RT-902: the repeat proposal is there too, and both are about the feedback of the rules layer           |
+| —          | A repeat proposal becomes a check, not an article                               | Left for the epic RT-956 as the task RT-903 and goes there second: it judges the place the edit lands in                                    |
+| —          | The mark about what is taken into work in the intake itself                     | Left for the epic RT-907 as the task RT-908: the acceptance of a fixing, the version of the release and the showing by markup are there too |
 
-## Границы
+## The boundaries
 
-- **Закон в ветках не правится.** Статьи законов о ведении работы и о поставке приносятся
-  владельцу текстом; работа идёт дальше без них.
-- **Правится пакет, а не одно дерево.** Ведение работы — ресурс пакета, и промахи приехали из
-  двух деревьев сразу; починка в надстройке одного дерева второго не касается.
-- **Продуктовые дефекты сюда не входят.** Два разбора о показе и вёрстке заводятся своими
-  задачами.
-- **Разбор чужого груза не делает чужую работу.** Дерево-потребитель получает исправленную
-  редакцию пакета; задач в его очереди этот эпик не заводит.
+- **A law is not edited in the branches.** The articles of the laws about the conduct of the work and
+  about the delivery are brought to the owner as a text; the work goes on without them.
+- **The package is edited, not one tree.** The conduct of the work is a resource of the package, and
+  the misses arrived from two trees at once; a fixing in the override of one tree does not concern the
+  second.
+- **The product defects are not included here.** Two reviews about a showing and a layout are created
+  as tasks of their own.
+- **The taking apart of a foreign cargo does not do the foreign work.** The consumer tree gets a
+  corrected edition of the package; this epic creates no tasks in its queue.
 
-## Чем кончился
+## What it ended with
 
-20 августа 2026 года, пять задач из семи; две оставшиеся вынесены в свой эпик.
+20 August 2026, five tasks of seven; the two remaining are taken out into an epic of their own.
 
-| Задача                        | Чем кончилась                                                                                                                  |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| RT-897 — состояния            | Одиннадцать состояний работы вместо списка из семнадцати шагов; гард судит переход между ними                                  |
-| RT-898 — выходы хода          | У хода объявлены четыре законных выхода, и страж не выпускает ход, в котором по работе не сделано ничего                       |
-| RT-899 — готовность           | Условия поставки спрашиваются одним состоянием и там, где их ещё дёшево починить; отказ называет несошедшееся целиком          |
-| RT-900 — красное и отбитое    | У красной проверки и у отбитой правки есть назначенное действие; отказ гарда называет два законных хода и форму обхода         |
-| RT-901 — утверждение о дереве | Утверждение владельцу о дереве подтверждается командой хода, а не памятью; гард утверждения судит его вместе с проверкой слога |
-| —                             | Правки пяти задач собраны редакцией `0.10.0`; её выпуск ведёт задача RT-955                                                    |
+| Task                             | What it ended with                                                                                                                                              |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| RT-897 — the states              | Eleven states of the work instead of a list of seventeen steps; the guard judges the transition between them                                                    |
+| RT-898 — the exits of a turn     | A turn has four lawful exits declared, and the guard does not let out a turn in which nothing was done by the work                                              |
+| RT-899 — the readiness           | The conditions of the delivery are asked by one state and where they are still cheap to fix; the refusal names what did not coincide whole                      |
+| RT-900 — the red and the refused | A red check and a refused edit have an assigned action; the refusal of the guard names two lawful turns and the form of a bypass                                |
+| RT-901 — a claim about the tree  | A claim to the owner about the tree is confirmed by a command of the turn, not by memory; the guard of the claim judges it together with the check of the style |
+| —                                | The edits of the five tasks are gathered by the edition `0.10.0`; its release is led by the task RT-955                                                         |
 
-**Чего эпик не сделал.** Обратная связь слоя правил осталась там же, где была: правка разложенного
-и отправка предложений идут руками, а предложение-повтор дописывает статью вместо того, чтобы стать
-проверкой. Обе задачи стоят в эпике RT-956, замысел — `docs/plans/rules-feedback-loop.md`.
+**What the epic did not do.** The feedback of the rules layer stayed where it was: the edit of what is
+laid out and the sending of the proposals go by hand, and a repeat proposal appends an article instead
+of becoming a check. Both tasks stand in the epic RT-956, the plan is
+`docs/plans/rules-feedback-loop.md`.
 
-**Находки разбора работы правилами** лежат рядом — `docs/plans/work-conduct-rework-findings.md`:
-двенадцать штук по трём адресам, и владелец читает их разом.
+**The findings of the review of the work by the rules** lie next to it —
+`docs/plans/work-conduct-rework-findings.md`: twelve of them by three addresses, and the owner reads
+them at once.
 
-**Что оказалось дороже, чем в замысле.** Порядок задач держался, а число ходов на задачу — нет:
-каждая правка ведения работы старила раскладку всего дерева, и подъём редакции в конце переставил
-её всю разом. Признак «правится пакет, а не одно дерево» подтвердился: ни одна из пяти задач не
-кончилась надстройкой.
+**What turned out costlier than in the plan.** The order of the tasks held, but the number of the
+turns per task did not: every edit of the conduct of the work aged the layout of the whole tree, and
+the lifting of the edition at the end moved it all at once. The sign "the package is edited, not one
+tree" was confirmed: not one of the five tasks ended with an override.

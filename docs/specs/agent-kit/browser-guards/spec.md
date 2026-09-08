@@ -1,135 +1,148 @@
-# Гарды браузера
+# The browser guards
 
-**Статус:** действует · **Ревизия:** 2026-09-03 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `verifiability`, `work-conduct`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-09-03 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `verifiability`, `work-conduct`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Браузер водится одним закреплённым профилем: в нём стоят входы, расширения и настройки, ради
-которых дерево вообще смотрит на страницу. Соседний профиль отвечает пустой страницей или чужой
-учётной записью, и вывод, снятый на нём, говорит о чужом браузере. Поддомен называет, откуда
-берётся признак закреплённого профиля, чем отбивается уход в сторону — вопросом владельцу,
-чужим признаком, своим драйвером — и когда гарды молчат.
+The browser is driven by one pinned profile: it holds the sign-ins, the extensions and the settings
+the tree looks at a page for at all. A neighbouring profile answers with an empty page or with a
+foreign account, and output taken there speaks of a foreign browser. The subdomain names where the
+sign of the pinned profile comes from, what a step aside is refused by — a question to the owner, a
+foreign sign, a driver of one's own — and when the guards stay silent.
 
-Прочие гарды правки — соседний поддомен: их предмет не браузер, и растут они порознь.
+The other edit guards are a neighbouring subdomain: their subject is not the browser, and they grow
+apart.
 
-## Терминология
+## Terminology
 
-- **Закреплённый профиль** — признак устройства браузера, которым дереву разрешено водить.
-  Приходит переменной окружения или файлом дерева.
-- **Ненастроенное дерево** — дерево, не назвавшее профиля ни одним из двух способов. Гарды при
-  нём молчат: предлагать взамен им нечего.
-- **Свой драйвер** — запуск браузера библиотекой изнутри скрипта или кода, переданного доводом,
-  минуя расширение.
-- **Метка свежести** — след состоявшегося подключения к закреплённому профилю: по ней прочие
-  вызовы браузера понимают, что выбор уже сделан.
+- **Pinned profile** — the sign of the browser device the tree is allowed to drive. It arrives by an
+  environment variable or by a file of the tree.
+- **An unconfigured tree** — a tree that named a profile by neither of the two ways. The guards stay
+  silent at it: they have nothing to offer instead.
+- **A driver of one's own** — raising the browser by a library from inside a script or from code
+  passed as an argument, bypassing the extension.
+- **The freshness mark** — the trace of a connection to the pinned profile that took place: by it
+  the other browser calls learn that the choice is already made.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Интерфейса у гардов нет: их видит только исполнитель — текстом отказа в своём ходе.
+The guards have no interface: only the executor sees them — as the text of a refusal in their own
+turn.
 
-## Правила
+## Rules
 
-- **Признак закреплённого профиля берётся у переменной окружения, а при её отсутствии — у файла
-  дерева.** Два источника нужны затем, чтобы заход мог назвать профиль, не правя дерева.
-- **Ненастроенное дерево слышит о своей ненастроенности, но работу не теряет.** Помощник говорит
-  в поток ошибок, чего не хватает, и уходит нулём: молчание читалось бы как разрешение водить
-  браузер любым профилем.
-- **О ненастроенности говорится один раз за заход.** Строка на каждый вызов тонет в выводе и
-  перестаёт читаться.
-- **Вопрос владельцу о выборе браузера отбивается.** Профиль закреплён, и ответом может быть
-  только он; отказ называет сам признак устройства, иначе его обходят, а не исполняют.
-- **Слово «браузер» в имени правила или хука вопроса о выборе не делает.** Иначе обойти отказ
-  можно было бы только переписав вопрос без этого слова, то есть исказив его.
-- **Чужой признак устройства отбивается до вызова, а метка свежести ставится по его исходу.** До
-  вызова известно лишь то, что профиль запрашивали; метит заход состоявшееся подключение.
-- **Запуск браузера своим драйвером отбивается, и отказ называет файл.** В строке команды такой
-  запуск не виден вовсе — там стоят только имя интерпретатора и путь.
-- **Код, переданный интерпретатору доводом, судится тем же образцом, что и файл.** Образец
-  судится вместе с именем интерпретатора и его флагом кода, поэтому поиск того же слова по дереву
-  проходит.
-- **Без закреплённого профиля гарды пропускают и вопрос, и свой драйвер.** Предлагать взамен им
-  нечего, а слепой отказ заводил бы работу в тупик.
-- **Выбор браузера протухает, и вызов после перерыва требует выбрать заново.** Активный браузер
-  расширения за перерыв уплывает, а сделанный раньше выбор об этом молчит.
-- **Причина отказа по выбору приходит полем ответа.** Сказанное в поток ошибок до исполнителя не
-  доходит вовсе: он видит пустой вывод и читает подряд падающие вызовы браузера как поломку
-  расширения.
+- **The sign of the pinned profile is taken from the environment variable, and where there is none —
+  from the file of the tree.** Two sources are needed so that a session can name the profile without
+  editing the tree.
+- **An unconfigured tree hears that it is unconfigured but loses no work.** The helper says into the
+  error stream what is missing and leaves with zero: silence would read as permission to drive the
+  browser by any profile.
+- **The word about being unconfigured is said once per session.** A line on every call drowns in the
+  output and stops being read.
+- **A question to the owner about choosing a browser is refused.** The profile is pinned, and it can
+  be the only answer; the refusal names the device sign itself, otherwise it is bypassed rather than
+  carried out.
+- **The word "browser" in the name of a rule or of a hook does not make a question a choice
+  question.** Otherwise the refusal could be bypassed only by rewriting the question without that
+  word, that is by distorting it.
+- **A foreign device sign is refused before the call, and the freshness mark is set by its
+  outcome.** Before the call all that is known is that the profile was requested; the session is
+  marked by a connection that took place.
+- **Raising the browser by a driver of one's own is refused, and the refusal names the file.** In
+  the command line such a launch is not visible at all — there stand only the interpreter name and a
+  path.
+- **Code passed to the interpreter as an argument is judged by the same sample as a file.** The
+  sample is judged together with the interpreter name and its code flag, so a search for that same
+  word across the tree passes.
+- **Without a pinned profile the guards let through both the question and a driver of one's own.**
+  They have nothing to offer instead, and a blind refusal would lead the work into a dead end.
+- **The browser choice goes stale, and a call after a pause demands choosing anew.** The extension's
+  active browser drifts away over the pause, and a choice made earlier is silent about it.
+- **The reason for a refusal about the choice arrives as a field of the answer.** What is said into
+  the error stream does not reach the executor at all: they see empty output and read the browser
+  calls failing one after another as a breakage of the extension.
 
-## Что не входит
+## What is out of scope
 
-- Где подняты приложения дерева и чем меряется вёрстка — правило `browser-verification` и его
-  паттерны.
-- Содержание страницы и выводы о ней: гарды судят, чем водят браузер, а не что на экране.
+- Where the tree's applications are up and what the layout is measured with — the rule
+  `browser-verification` and its patterns.
+- The content of a page and the conclusions about it: the guards judge what the browser is driven
+  by, not what is on the screen.
 
-## Контракт
+## Contract
 
-Поверхность — события агента: вызовы расширения браузера, вопрос владельцу и команда оболочки.
-Ответ гарда — либо пропуск, либо отказ с текстом, называющим закреплённый признак устройства.
+The surface is the agent's events: calls of the browser extension, a question to the owner and a
+shell command. The guard's answer is either a pass or a refusal with a text naming the pinned device
+sign.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: гард отбивает вызов до его исполнения, и кода возврата команды у такого отказа нет.
+Not applicable: the guard refuses a call before it is carried out, and such a refusal has no command
+exit code.
 
-| Что случилось                      | Чем кончается | Что говорит                           |
-| ---------------------------------- | ------------- | ------------------------------------- |
-| запрошен чужой признак устройства  | отказ вызова  | закреплённый признак                  |
-| вопрос владельцу о выборе браузера | отказ вызова  | что профиль закреплён, и какой        |
-| запуск браузера своим драйвером    | отказ вызова  | файл или довод, где стоит точка входа |
-| профиль деревом не назван          | пропуск       | один раз за заход — чего не хватает   |
-| выбор браузера протух              | отказ вызова  | возраст выбора и закреплённый признак |
+| What happened                               | How it ends      | What it says                               |
+| ------------------------------------------- | ---------------- | ------------------------------------------ |
+| a foreign device sign was requested         | the call refused | the pinned sign                            |
+| a question to the owner about a browser     | the call refused | that the profile is pinned, and which one  |
+| the browser raised by a driver of one's own | the call refused | the file or argument the entry point is in |
+| the profile is not named by the tree        | a pass           | once per session — what is missing         |
+| the browser choice went stale               | the call refused | the age of the choice and the pinned sign  |
 
-## Данные
+## Data
 
-Своего хранилища нет: признак профиля читается из переменной окружения или файла дерева, метка
-свежести живёт в каталоге временных файлов и умирает вместе с заходом.
+There is no storage of its own: the profile sign is read from an environment variable or a file of
+the tree, the freshness mark lives in the temporary file directory and dies with the session.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: экранов нет.
+Not applicable: there are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-Гард отпускает действие, когда сам сломался: нет разборщика входа, пустой ввод, ненастроенное
-дерево — вызов разрешается. Сломанная проверка не имеет права заклинить работу.
+The guard lets the action through when it is itself broken: no input parser, empty input, an
+unconfigured tree — the call is allowed. A broken check has no right to jam the work.
 
-### Локали
+### Locales
 
-Не применимо: тексты отказов одноязычны.
+Not applicable: the refusal texts are single-language.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Гарды одни на все деревья, а признак профиля приходит от дерева. Дерево, его не назвавшее,
-гардов при нём не получает; своего признака у пакета нет.
+The guards are one set for all trees, and the profile sign arrives from the tree. A tree that did
+not name it gets no guards at it; the package has no sign of its own.
 
-## Решения
+## Decisions
 
-- **Профиль читается из переменной окружения раньше файла дерева.** Заход, которому нужен другой
-  профиль, называет его окружением и дерева не правит. Отвергнуто: один источник — файл.
-- **Ненастроенное дерево гарды пропускают, а не отбивают.** Отказ без названного взамен профиля
-  заводит работу в тупик. Отвергнуто: отбивать всё, пока профиль не назван.
-- **Вопрос о выборе судится словами вопроса, а не намерением.** Понимания смысла у гарда нет, и
-  набор образцов — единственное, чем вопрос отличается от разговора о браузерах. Отвергнуто:
-  судить по теме хода.
+- **The profile is read from the environment variable before the file of the tree.** A session that
+  needs another profile names it by the environment and edits no tree. Rejected: one source, the
+  file.
+- **An unconfigured tree the guards let through, not refuse.** A refusal without a profile named
+  instead leads the work into a dead end. Rejected: refusing everything while the profile is not
+  named.
+- **A question about the choice is judged by the words of the question, not by the intent.** The
+  guard has no understanding of meaning, and the set of samples is the only thing that tells a
+  question from a conversation about browsers. Rejected: judging by the topic of the turn.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом.
+The open questions of the domain are shared, and they live in the spec next to it.
 
-## История изменений
+## History of changes
 
-- 2026-09-04 — записаны свежесть выбора и канал причины отказа: гард свежести стоял в пакете с
-  самого начала, а спек о нём молчал.
-- 2026-09-03 — поддомен выделен из поддомена гардов правки, переросшего предел длины. Сценарии
-  переехали сюда прежними: номера не пересчитывались. Правила и привязки записаны при переезде —
-  прежде у этих гардов был перечень сценариев и не было ни одной статьи.
+- 2026-09-04 — the freshness of the choice and the channel of the refusal reason were written down:
+  the freshness guard stood in the package from the very beginning, and the spec was silent about it.
+- 2026-09-03 — the subdomain was split off from the subdomain of the edit guards, which had outgrown
+  the length limit. The scenarios moved here unchanged: the numbers were not recounted. The rules and
+  the bindings were written down on the move — before that these guards had a list of scenarios and
+  not a single article.

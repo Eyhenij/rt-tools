@@ -1,173 +1,187 @@
-# Чтение груза из приёма
+# Reading the cargo from the intake
 
-**Статус:** действует · **Ревизия:** 2026-08-24 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `work-conduct`, `verifiability`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-24 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `work-conduct`, `verifiability`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Приём груза был устроен в одну сторону: дерево слало разборы происшествий и предложения и
-двигало состояние своих записей, а прочитать, что у него в приёме лежит, не могло ничем — всё
-чтение закрыто входом человека. Порядок разбора из-за этого не исполнялся целиком: две с лишним
-сотни записей простояли новыми, потому что забрать их было нечем, а отмечались только те, чей
-файл ещё лежал у дерева на диске.
+The cargo intake was arranged one way only: a tree sent incident analyses and proposals and moved
+the state of its own records, and it had nothing to read with what lies in its intake — all reading
+is closed by a person's sign-in. Because of that the sorting-out order was not carried out whole:
+over two hundred records stood as new, because there was nothing to fetch them with, and only those
+whose file still lay on the tree's disk were marked.
 
-Поддомен называет, чем дерево забирает груз, чем это закрыто и в каком виде прочитанное годится
-для отметки. Отметка состояния — соседний предмет: там записи двигают, здесь их читают.
+The subdomain names what the tree fetches the cargo with, what that is closed by and in what shape
+what was read is fit for a mark. The state mark is a neighbouring subject: there the records are
+moved, here they are read.
 
-## Терминология
+## Terminology
 
-- **Груз** — записи, приехавшие в приём: разбор происшествия и предложение по слою правил.
-- **Учётная запись службы** — запись приёма, которой входит исполнитель. Не принадлежит
-  дереву: груз она видит весь, потому что чинит его одно дерево, а шлют несколько.
-- **Пара** — имя и пароль учётной записи службы, лежащие вне репозитория.
-- **Ключ отметки** — то, чем запись называют, когда двигают её состояние: у разбора
-  происшествия имя файла, у предложения признак его текста.
+- **Cargo** — the records that arrived in the intake: an incident analysis and a proposal about the
+  rules layer.
+- **A service account** — a record of the intake the executor signs in by. It does not belong to a
+  tree: it sees the cargo whole, because one tree fixes it while several send it.
+- **A pair** — the name and the password of the service account, lying outside the repository.
+- **The mark key** — what a record is named by when its state is moved: for an incident analysis the
+  name of the file, for a proposal the sign of its text.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Интерфейса у команды нет: её видит только исполнитель — строками своего вывода. Тот же груз
-человеку показывает админка приёма, и это соседний домен.
+The command has no interface: only the executor sees it — as the lines of its output. The same cargo
+is shown to a person by the admin panel of the intake, and that is a neighbouring domain.
 
-## Правила
+## Rules
 
-- **Груз забирается командой дерева, а не входом человека в админку.** Разбирает груз
-  исполнитель, и то, чего он не может прочитать, он не разбирает.
-- **Чтение закрыто входом учётной записи службы, а не токеном дерева.** Токен открывает приём
-  и только своего дерева, а разбирать приходится весь груз о ресурсах: шлют его несколько
-  деревьев, а чинит одно.
-- **Пара учётной записи лежит вне репозитория.** Тем же приёмом, что и токен: положенная в
-  дерево, она уезжает в историю и в каждую его копию, а отозвать её оттуда нечем.
-- **Отсутствие пары отбивается до сети, и отказ называет, где она лежит и чем заводится.**
-  Отказ без адреса оставляет исполнителя перед тем же вопросом, из-за которого вызов не прошёл.
-- **Незнакомый род груза отбивается до сети и перечисляет знакомые.** Родов два, и оба
-  называются словом; отбитый по опечатке вызов иначе выглядит пустым списком.
-- **Рядом с записью печатается тот ключ, которым её отмечают.** Ключ, посчитанный по своему
-  диску, находит только то, что там ещё лежит: удалённый файл разбора и переписанный текст
-  предложения не отмечаются никогда.
-- **Ключ предложения считается из его текста тем же приёмом, что на приёме.** Хранилище его не
-  отдаёт, а форма счёта объявлена одной стороной — приёмом, — и вторая обязана считать так же.
-- **Страница дочитывает тексты записей.** Список их не везёт, а без текста предложение видно,
-  но не отмечается: его ключ и есть признак текста. Обзор без текстов остаётся отдельным
-  доводом и о своей неполноте говорит сам.
-- **Запись, текст которой не дочитался, из списка не выпадает.** Она приезжает без ключа, и
-  строка о ней это говорит: молча пропав, она читалась бы разобранной.
-- **Отбор по состоянию и по дереву уезжает строкой запроса, а не отсеивается на своей
-  стороне.** Отсев после чтения показывал бы страницу, в которой нужных записей может не
-  оказаться вовсе, и счёт страниц врал бы вместе с ним.
-- **Запись, чья статья уже стоит в источниках пакета, отбирается командой, а не глазами.**
-  Правка приезжает редакцией позже отправки, и такая запись висит в «новом»: следующий заход
-  читает предложение, открывает ресурс и находит статью стоящей. За ночь так было пять раз
-  подряд на одном правиле.
-- **Отбор идёт по заголовку предложенной статьи и ничему сверх него.** Предложение везёт цитату,
-  у статьи есть заголовок, и он либо стоит в источниках, либо нет. Запись, чьё предложение легло
-  в дерево другими словами, командой не находится — это её граница, и вывод её называет.
-- **Отбор наружу не пишет ничего, а печатает вызовы отметки.** Ставит отметку команда отметки, и
-  зовёт её тот, кто перечень прочитал: отбор по заголовку — довод, а не подтверждение.
-- **Вызовов отметки печатается два: порядок состояний не перескакивается.** Приём отбивает
-  переход из «нового» прямо в «готово» построчно, и напечатанный один вызов отбивался бы целиком.
-- **Запись, взятая в работу, у которой работа кончилась, отбирается тем же вызовом.** Отметка
-  «готово» ставится шагом состояния `влито`, а ход о задаче кончается не всегда: за один разбор
-  сорок шесть записей простояли в «в работе» с правкой, лежащей в главной ветке. Признаков два и
-  берётся любой — заголовок статьи стоит в источниках либо полный ключ назван в описании
-  прошлого; второй ловит то, что легло в дерево другими словами.
-- **Ключ из описания прошлого судится полным.** Восьми знаков команде отметки не хватает: она
-  отвечает на короткий «такой записи у дерева нет», и собранный по нему перечень отбивался бы
-  строка за строкой.
-- **Ответ приёма, который не разобрался, отличается от отказа приёма.** Первое означает
-  промах разбора, второе — сработавшую проверку на той стороне, и чинятся они в разных местах.
+- **The cargo is fetched by a command of the tree, not by a person's sign-in to the admin panel.**
+  The cargo is sorted out by the executor, and what they cannot read they do not sort out.
+- **The reading is closed by the sign-in of a service account, not by the token of the tree.** The
+  token opens the intake and only of its own tree, while the whole cargo about resources has to be
+  sorted out: several trees send it, and one fixes it.
+- **The pair of the account lies outside the repository.** By the same technique as the token: put
+  into the tree, it leaves into the history and into every copy of it, and there is nothing to
+  revoke it from there with.
+- **A missing pair is refused before the network, and the refusal names where it lies and what it is
+  created by.** A refusal without an address leaves the executor before the same question the call
+  failed over.
+- **An unknown kind of cargo is refused before the network and lists the known ones.** There are two
+  kinds, and both are named by a word; a call refused over a typo would otherwise look like an empty
+  list.
+- **Next to a record the key it is marked by is printed.** A key counted by one's own disk finds only
+  what still lies there: a deleted analysis file and a rewritten proposal text are never marked.
+- **The key of a proposal is counted from its text by the same technique as at the intake.** The
+  storage does not give it out, and the shape of the count is declared by one side — by the intake —
+  and the second is bound to count the same way.
+- **A page reads the texts of the records through.** The list does not carry them, and without the
+  text a proposal is visible but not markable: its key is the sign of the text. An overview without
+  texts stays a separate argument and speaks of its own incompleteness itself.
+- **A record whose text was not read through does not drop out of the list.** It arrives without a
+  key, and the line about it says so: having vanished silently, it would read as sorted out.
+- **The filter by state and by tree leaves in the request line, it is not sifted on one's own
+  side.** Sifting after the reading would show a page in which the needed records may not be at all,
+  and the page count would lie along with it.
+- **A record whose article already stands in the sources of the package is picked by the command,
+  not by eye.** An edit arrives by an edition later than the send, and such a record hangs in "new":
+  the next session reads the proposal, opens the resource and finds the article standing. Over one
+  night that happened five times in a row on one rule.
+- **The pick goes by the title of the proposed article and by nothing beyond it.** A proposal carries
+  a quote, an article has a title, and it either stands in the sources or not. A record whose
+  proposal landed in the tree in other words is not found by the command — that is its boundary, and
+  the output names it.
+- **The pick writes nothing outward and prints the mark calls.** The mark is set by the mark command,
+  and it is called by whoever read the list: a pick by title is an argument, not a confirmation.
+- **Two mark calls are printed: the order of the states is not skipped over.** The intake refuses a
+  move from "new" straight into "done" line by line, and one printed call would be refused whole.
+- **A record taken into work whose work has ended is picked by the same call.** The mark "done" is
+  set by the state step `влито`, and the turn about a task does not always end: over one sorting out,
+  forty-six records stood in "in work" with the edit lying in the main branch. There are two signs
+  and either is taken — the article title stands in the sources, or the full key is named in the
+  archive; the second catches what landed in the tree in other words.
+- **A key from the archive is judged in full.** Eight characters are not enough for the mark command:
+  it answers a short one with "the tree has no such record", and a list gathered by it would be
+  refused line after line.
+- **An answer of the intake that did not parse differs from a refusal of the intake.** The first
+  means a miss of the parsing, the second a check that fired on that side, and they are fixed in
+  different places.
 
-## Состояния
+## States
 
-| Что случилось              | Что видит исполнитель                        |
-| -------------------------- | -------------------------------------------- |
-| пары нет                   | отказ с адресом пары и командой её заведения |
-| род назван не тем словом   | отказ с перечнем знакомых родов              |
-| пара не принята приёмом    | отказ с ответом приёма                       |
-| груз прочитан              | счёт всего, счёт страницы и записи с ключами |
-| текст записи не дочитался  | строка записи без ключа и словами об этом    |
-| под отбор не попало ничего | счёт «всего 0» и пустой список: это не отказ |
+| What happened                        | What the executor sees                                    |
+| ------------------------------------ | --------------------------------------------------------- |
+| there is no pair                     | a refusal with the address of the pair and its command    |
+| the kind is named by a wrong word    | a refusal with the list of known kinds                    |
+| the pair was not accepted            | a refusal with the answer of the intake                   |
+| the cargo was read                   | the total count, the page count and records with keys     |
+| a record's text was not read through | a line of the record without a key and words about it     |
+| nothing fell under the filter        | the count "total 0" and an empty list: this is no refusal |
 
-## Что не входит
+## What is out of scope
 
-- Отметка состояния записи: она идёт своей командой и своим ключом закрытия — токеном дерева.
-- Разбор самого груза: решить, что из прочитанного становится правкой, — это сведение
-  предложений, отдельный шаг правила.
-- Заведение учётной записи службы: её заводит команда приёма на своей стороне.
-- Показ груза человеку: это админка приёма, соседний домен.
+- The state mark of a record: it goes by its own command and its own closing key — the token of the
+  tree.
+- Sorting out the cargo itself: deciding what of what was read becomes an edit is the gathering of
+  proposals, a separate step of the rule.
+- Creating the service account: it is created by a command of the intake on its own side.
+- Showing the cargo to a person: that is the admin panel of the intake, a neighbouring domain.
 
-## Контракт
+## Contract
 
-Поверхность — строка запуска команды. Ответ — либо строки груза, либо отказ, называющий, чего
-не хватило. Наружу команда ходит входом и чтением списка приёма; ключей закрытия у неё два, и
-своего она не заводит: пара приходит из файла, названного настройкой дерева.
+The surface is the launch line of the command. The answer is either the lines of the cargo or a
+refusal naming what was missing. Outward the command goes by a sign-in and by reading the list of
+the intake; it has two closing keys, and it creates none of its own: the pair arrives from a file
+named by the setting of the tree.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: именованных кодов у команды нет — она отвечает нулём, когда груз прочитан, и
-единицей, когда не прочитан.
+Not applicable: the command has no named codes — it answers zero when the cargo is read and one when
+it is not.
 
-| Что случилось                             | Чем кончается | Что говорит                                 |
-| ----------------------------------------- | ------------- | ------------------------------------------- |
-| нет пары либо нет адреса приёма           | единица       | где это задаётся и чем заводится            |
-| род назван вне набора                     | единица       | перечень знакомых родов                     |
-| вход не принят                            | единица       | ответ приёма словами и его число            |
-| приём не ответил либо ответ не разобрался | единица       | что именно случилось, без домысла о причине |
-| груз прочитан, в том числе пустой         | ноль          | счёт и записи с их ключами                  |
+| What happened                                         | How it ends | What it says                                       |
+| ----------------------------------------------------- | ----------- | -------------------------------------------------- |
+| no pair or no address of the intake                   | one         | where this is set and what it is created by        |
+| the kind is named outside the set                     | one         | the list of known kinds                            |
+| the sign-in was not accepted                          | one         | the answer of the intake in words and its number   |
+| the intake did not answer or the answer did not parse | one         | what exactly happened, without guessing the reason |
+| the cargo was read, an empty one included             | zero        | the count and the records with their keys          |
 
-## Данные
+## Data
 
-Своего хранилища нет. Адрес приёма и путь к паре берутся из настройки дерева либо из
-окружения; сама пара — две строки файла вне репозитория. Прочитанное на диск не ложится: груз
-живёт в приёме, и вторая его копия у дерева расходилась бы с первой молча.
+There is no storage of its own. The address of the intake and the path to the pair are taken from
+the setting of the tree or from the environment; the pair itself is two lines of a file outside the
+repository. What was read does not land on the disk: the cargo lives in the intake, and a second
+copy of it at the tree would diverge from the first silently.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: экранов нет.
+Not applicable: there are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: вывод команды одноязычен.
+Not applicable: the output of the command is single-language.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Груз в приёме лежит от нескольких деревьев, и чтение видит их все: сузить список до одного
-дерева можно доводом, но по устройству доступ не сужается. Отметка при этом остаётся своей:
-двигать состояния соседа не вправе никто, и закрыта она токеном своего дерева.
+The cargo in the intake lies there from several trees, and the reading sees them all: the list can
+be narrowed to one tree by an argument, but by construction the access is not narrowed. The mark
+stays one's own at that: nobody has the right to move a neighbour's states, and it is closed by the
+token of one's own tree.
 
-## Решения
+## Decisions
 
-- **Читаем входом службы, а не токеном дерева.** Так решил владелец. Приёмник при этом не
-  правится ни на строку, и груз о ресурсах пакета виден целиком. Отвергнуто: чтение своих
-  записей токеном — оно уже и проще, но оставляет предложения соседей невидимыми тому, кто их
-  чинит. Отвергнуто: признак хозяина ресурсов у дерева — он требует правки хранилища, а чужие
-  разборы происшествий всё равно оставляет закрытыми.
-- **Ключ считается на стороне дерева, а не приезжает полем.** Отдать его строкой списка значило
-  бы править приём, а форма счёта уже объявлена приёмом и повторяется дословно.
-- **Тексты дочитываются страницей, а не по одной записи по требованию.** Открывать запись
-  отдельным вызовом не по чему: признака записи в выводе нет, а печатать рядом с ключом ещё и
-  его значило бы показывать два похожих значения, из которых одно ни для чего не годится.
-- **Пара читается двумя строками файла, а не одной с разделителем.** Пароль вправе держать
-  любой знак, и разделитель, встретившийся в нём, резал бы пару молча.
+- **We read by the sign-in of the service, not by the token of the tree.** So the owner decided. The
+  receiver is not edited by a single line at that, and the cargo about the package resources is
+  visible whole. Rejected: reading one's own records by the token — it is both simpler and leaves the
+  neighbours' proposals invisible to whoever fixes them. Rejected: a sign of the resource owner at
+  the tree — it demands editing the storage and leaves the foreign incident analyses closed anyway.
+- **The key is counted on the tree's side, it does not arrive as a field.** Giving it out as a line
+  of the list would mean editing the intake, and the shape of the count is already declared by the
+  intake and is repeated here verbatim.
+- **The texts are read through by the page, not one record at a time on demand.** There is nothing to
+  open a record by a separate call with: the output holds no sign of the record, and printing it next
+  to the key would mean showing two similar values of which one is fit for nothing.
+- **The pair is read as two lines of a file, not as one with a separator.** A password has the right
+  to hold any character, and a separator met inside it would cut the pair silently.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-CR-1` — прочитанное никуда не ложится, и разбор идёт в том же заходе. Заход, кончившийся
-  раньше разбора, начинает с чтения заново; сколько это стоит, пока не мерили.
-- `Q-CR-2` — записи, по которой работы не будет, отметить нечем: состояния отказа набор не
-  знает. Вопрос старше этого поддомена и решается владельцем.
+- `Q-CR-1` — what was read lands nowhere, and the sorting out goes in the same session. A session
+  that ended before the sorting out starts by reading anew; how much that costs has not been measured
+  yet.
+- `Q-CR-2` — there is nothing to mark a record no work will be done on with: the set knows no refusal
+  state. The question is older than this subdomain and is settled by the owner.
 
-## История изменений
+## History of changes
 
-- 2026-08-24 — поддомен заведён вместе с командой чтения: до неё дерево груза не читало вовсе.
+- 2026-08-24 — the subdomain was created together with the reading command: before it the tree read
+  no cargo at all.

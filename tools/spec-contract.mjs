@@ -1,4 +1,4 @@
-// rt-kit v0.25.0 · checks/spec-contract.mjs · 234b6f8b1522 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/spec-contract.mjs · 0d42e77f0101 · правится надстройкой, не здесь
 /**
  * The spec contract against what the code declares: the procedure table against the decorators,
  * the refusal codes against the throw points.
@@ -14,7 +14,7 @@ function procedureRootsOf(text) {
         return null;
     }
     const value = line.match(PROCEDURE_ROOTS)[1];
-    if (/^\s*нет\s*$/i.test(value.replace(/[`.]/g, ''))) {
+    if (/^\s*(?:none|нет)\s*$/i.test(value.replace(/[`.]/g, ''))) {
         return [];
     }
 
@@ -49,7 +49,7 @@ function declaredProcedures(roots) {
 /** Rows of the "Contract" table: the first cell is the procedure, the second is the right. */
 function contractRows(text) {
     const rows = [];
-    for (const [index, line] of sectionOf(text, '## Контракт').entries()) {
+    for (const [index, line] of sectionOf(text, ['## Contract', '## Контракт']).entries()) {
         if (!line.startsWith('|') || /^\|[\s:|-]+\|$/.test(line)) {
             continue;
         }
@@ -118,7 +118,7 @@ function checkContract(file, text, roots) {
 // ── 3. Refusal codes ──────────────────────────────────────────────────────────
 
 function checkRefusalCodes(file, text, roots) {
-    const section = sectionOf(text, '### Коды отказов');
+    const section = sectionOf(text, ['### Refusal codes', '### Коды отказов']);
     const bullets = bulletsOf(section);
     /**
      * "Not applicable" is a lawful answer here too. A domain that has procedures but not a single
@@ -128,10 +128,10 @@ function checkRefusalCodes(file, text, roots) {
      * refusal.
      */
     // Without `\b`: Cyrillic is not part of `\w`, so no word boundary arises after the word
-    const notApplicable = section.some((line) => /^Не применимо/.test(line.trim()));
+    const notApplicable = section.some((line) => /^(?:Not applicable|Не применимо)/.test(line.trim()));
     if (!bullets.length) {
         if (!notApplicable) {
-            report(file, 'the section `### Коды отказов` carries no code at all and no answer «Не применимо»');
+            report(file, 'the section `### Refusal codes` carries no code at all and no answer «Not applicable»');
         }
 
         return;

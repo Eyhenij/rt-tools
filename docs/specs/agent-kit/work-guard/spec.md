@@ -1,124 +1,136 @@
-# Гарды хода работы
+# The guards of the progress of the work
 
-**Статус:** действует · **Ревизия:** 2026-08-27 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `work-conduct`, `verifiability`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-27 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `work-conduct`, `verifiability`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Работа идёт много заходов, и между ними исполнитель не помнит ничего: замысел на диске —
-единственное, что переживает перерыв. Поддомен называет, чего гарды хода работы требуют от
-правки кода и где кончается их знание о работе.
+The work goes over many sessions, and between them the executor remembers nothing: the plan on the
+disk is the only thing that outlives a break. The subdomain names what the guards of the progress of
+the work demand of an edit of code and where their knowledge about the work ends.
 
-Требований два, и держат их два гарда: папка задачи с замыслом и объявленным состоянием — один,
-названная в замысле договорённость о продукте — другой. Разведены они затем, чтобы дерево могло
-отказаться от одного требования, сохранив второе.
+There are two requirements, and two guards hold them: the task folder with a plan and a declared
+state is one, the agreement about the product named in the plan is the other. They are separated so
+that the tree can refuse one requirement and keep the second.
 
-Гарды, судящие завершение хода, и гейт правил — соседние поддомены: там предмет другой.
+The guards judging the end of a turn and the rules gate are neighbouring subdomains: the subject
+there is different.
 
-## Терминология
+## Terminology
 
-- **Папка задачи** — каталог по имени ветки, где лежат разбор просьбы, замысел и ход работы.
-- **Состояние работы** — единица, которой работа ведётся; объявлено строкой в ходе работы.
-- **Отданная работа** — ветка, чей коммит разобрал папку задачи: замысла на диске больше нет.
-- **Договорённость о продукте** — черновик в каталоге «предложено» либо спек домена, названный
-  строкой замысла.
+- **A task folder** — a directory under the name of the branch, where the analysis of the request,
+  the plan and the progress of the work lie.
+- **A state of the work** — the unit the work is led by; it is declared by a line in the progress of
+  the work.
+- **Handed-in work** — a branch whose commit took the task folder apart: there is no plan on the disk
+  any more.
+- **An agreement about the product** — a draft in the "proposed" directory or a domain spec, named by
+  a line of the plan.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Интерфейса у гардов нет: их видит только исполнитель — текстом отказа в своём ходе.
+The guards have no interface: only the executor sees them — as the text of a refusal in their own
+turn.
 
-## Правила
+## Rules
 
-- **Код приложения не правится, пока нет папки задачи, замысла в ней и объявленного состояния.**
-  Артефакт на диске не говорит, дошла ли работа до правки кода: пустой замысел лежит так же, как
-  написанный, и требование снимает сам собой.
-- **Судится объявленный переход, а не наличие файлов.** Код правится в состояниях идущего этапа,
-  кончившихся этапов, отданной работы и кончившегося разбора; имя вне перечня состоянием не
-  считается.
-- **Отказ называет обязательное действие того состояния, которое объявлено.** Исполнитель,
-  которому сказано только «не в том состоянии», перепишет строку состояния вместо того, чтобы
-  сделать шаг.
-- **Папка, разобранная коммитом ветки, снимает требование замысла.** Уборка стоит до открытия
-  заявки, и правка по замечаниям разбора идёт без замысла на диске. Признак берётся из истории
-  ветки: снесённая, но не закоммиченная папка отданной работы не означает.
-- **Папка задачи едет в ветку коммитом, а не живёт в одном рабочем дереве.** Некоммиченная, она
-  проходит все требования диска без отказа, а признак отданной работы берётся из истории.
-- **Договорённость требуется по путям правки, а не по оценке задачи.** Правила, тексты, обвязка и
-  зависимости под требование не попадают: иначе разбор задачи нельзя было бы вести до заведения
-  ветки.
-- **Договорённость называется одним из двух видов — черновиком в каталоге «предложено» либо
-  спеком домена.** Требовать один вид значит навязывать способ записи вместе с проверкой.
-- **Названная договорённость обязана существовать на диске или в истории ветки.** Влитая с диска
-  уходит, а замысел ссылается на неё до конца работы.
-- **Обход требования договорённости — строка о неизменном поведении с причиной владельца.**
-  Пустая причина обходом не считается, и требования папки задачи обход не снимает.
-- **Правка, положенная командой оболочки, судится наравне с правкой инструментом.** Иначе отказ
-  обходится сменой не инструмента, а способа записи.
-- **Снятие пути, которого в истории нет, правкой продукта не считается.** Свой временный каталог
-  под корнем приложений — уборка за собой, а не изменение поведения.
-- **Разложенный слой правил судится наравне с кодом приложения.** Путями кода он не покрыт нигде,
-  а признак у него свой — шапка раскладки в начале файла.
+- **Application code is not edited while there is no task folder, no plan in it and no declared
+  state.** An artefact on the disk does not say whether the work reached the editing of code: an
+  empty plan lies the same as a written one and lifts the requirement by itself.
+- **What is judged is the declared transition, not the presence of files.** Code is edited in the
+  states of a stage in progress, of stages that have ended, of handed-in work and of an ended review;
+  a name outside the list does not count as a state.
+- **The refusal names the mandatory action of the state that is declared.** An executor who is told
+  only "the wrong state" will rewrite the line of the state instead of making the step.
+- **A folder taken apart by a commit of the branch lifts the requirement of the plan.** The tidying
+  stands before the opening of the request, and an edit by the remarks of the review goes without a
+  plan on the disk. The sign is taken from the history of the branch: a folder removed but not
+  committed does not mean handed-in work.
+- **The task folder goes into the branch by a commit, it does not live in one working tree.**
+  Uncommitted, it passes all the requirements of the disk without a refusal, and the sign of
+  handed-in work is taken from the history.
+- **The agreement is demanded by the paths of the edit, not by an appraisal of the task.** The rules,
+  the texts, the tooling and the dependencies do not fall under the requirement: otherwise the
+  analysis of a task could not be led before the branch is created.
+- **The agreement is named by one of two kinds — a draft in the "proposed" directory or a domain
+  spec.** Demanding one kind means imposing the way of writing together with the check.
+- **A named agreement must exist on the disk or in the history of the branch.** A merged one leaves
+  the disk, and the plan refers to it to the end of the work.
+- **The bypass of the requirement of the agreement is the line about unchanged behaviour with the
+  reason of the owner.** An empty reason is no bypass, and the bypass does not lift the requirement of
+  the task folder.
+- **An edit put by a shell command is judged on a par with an edit by a tool.** Otherwise the refusal
+  is gone around by changing not the tool but the way of writing.
+- **Removing a path that is not in the history does not count as an edit of the product.** A
+  temporary directory of one's own under the root of the applications is tidying after oneself, not a
+  change of behaviour.
+- **A laid-out rules layer is judged on a par with application code.** It is covered by the paths of
+  the code nowhere, and its sign is its own — the layout header at the start of the file.
 
-- **Ключи папки задачи читаются под двумя именами, английским и русским.** Образцы папки задачи
-  в пакете несут английские ключи — `## Where we stand`, `**State:**`, `**Draft:**`,
-  `**Behaviour:** unchanged`, — а папки дерева, заведённые до перевода слоя, русские. Хватает
-  любого из двух имён: иначе перевод образцов сделал бы невидимым состояние уже идущих работ.
+- **The keys of the task folder are read under two names, English and Russian.** The samples of a
+  task folder in the package carry the English keys — `## Where we stand`, `**State:**`, `**Draft:**`,
+  `**Behaviour:** unchanged` — and the folders of the tree created before the translation of the layer
+  the Russian ones. Either of the two names is enough: otherwise the translation of the samples would
+  make the state of the work already in progress invisible.
 
-## Что не входит
+## What is out of scope
 
-- Гарды завершения хода — соседний поддомен: там судится ход, а не место правки.
-- Гейт правил — соседний поддомен: он требует загруженного правила, а не замысла.
-- Проверки, которые гоняются командой: их предмет — дерево, а не правка.
+- The guards of the end of a turn — a neighbouring subdomain: there the turn is judged, not the place
+  of an edit.
+- The rules gate — a neighbouring subdomain: it demands a loaded rule, not a plan.
+- The checks run by a command: their subject is the tree, not an edit.
 
-## Контракт
+## Contract
 
-Поверхность — файлы хуков, которые дерево зовёт на событии правки. Отказ приходит решением
-`deny` с текстом причины; молчание означает, что правка разрешена.
+The surface is the files of the hooks the tree calls at the event of an edit. The refusal comes as
+the decision `deny` with the text of the reason; silence means the edit is allowed.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: гард отвечает решением и текстом причины, а не кодом.
+Not applicable: the guard answers with a decision and the text of a reason, not with a code.
 
-## Данные
+## Data
 
-Своих данных у гардов нет: они читают папку задачи, замысел, ход работы и историю ветки.
+The guards have no data of their own: they read the task folder, the plan, the progress of the work
+and the history of the branch.
 
-## Экраны и состояния
+## Screens and states
 
-Экранов нет.
+There are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Тексты отказов — на языке дерева.
+The texts of the refusals are in the language of the tree.
 
 ### SEO
 
-Не применимо: наружу гарды ничего не отдают.
+Not applicable: the guards give nothing outward.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо: гард судит одну правку одной ветки.
+Not applicable: a guard judges one edit of one branch.
 
-## Решения
+## Decisions
 
-- **Отказ в пользу работы.** Нет разборщика ввода, не git-репозиторий, чужой инструмент — гард
-  пропускает: сломанный гард не имеет права заклинить работу.
-- **Два требования — два гарда.** Одним файлом отказ от требования договорённости снимал заодно и
-  требование папки задачи, а держать их вместе дерево не просило никогда.
+- **Refusing in favour of the work.** There is no parser of the input, it is not a git repository, a
+  foreign tool — the guard lets it through: a broken guard has no right to jam the work.
+- **Two requirements — two guards.** By one file a refusal of the requirement of the agreement lifted
+  the requirement of the task folder along with it, and the tree never asked to hold them together.
 
-## Открытые вопросы
+## Open questions
 
-Нет.
+None.
 
-## История изменений
+## History of changes
 
-- 2026-08-27 — поддомен выделен из спека гардов: файл сценариев перерос предел длины, а предмет
-  в нём был двойной — гард, судящий место правки, и гард, судящий ход работы.
+- 2026-08-27 — the subdomain was split out of the spec of the guards: the scenario file had outgrown
+  the length limit, and the subject in it was double — the guard judging the place of an edit and the
+  guard judging the progress of the work.

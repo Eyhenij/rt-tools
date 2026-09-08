@@ -1,53 +1,54 @@
-# Груз наружу — где исполняются правила
+# Cargo outward — where the rules are carried out
 
-Первая колонка — правило дословно, как оно написано в разделе «Правила» спека рядом. Правило без
-строки и строка без правила — расхождение: спек обещает то, чего в коде нет, либо в коде стоит
-то, о чём спек молчит.
+The first column is the rule verbatim, as it is written in the "Rules" section of the spec next to
+it. A rule without a line and a line without a rule are a divergence: the spec promises what is not
+in the code, or the code holds what the spec is silent about.
 
-Якорь здесь — слово, которое утверждение и держит. Сверка ищет его по всему файлу и любым словом
-удовлетворяется, поэтому имя поля из чужой строки проходит её так же, как нужное предложение, — и
-утверждение остаётся зелёным, когда сам текст роли переписан целиком.
+The anchor here is the word that holds the statement. The audit looks for it across the whole file
+and is satisfied by any word, so the name of a field from a foreign line passes it the same way the
+needed sentence does — and the statement stays green when the text of the role itself is rewritten
+whole.
 
-- **Предложение выгружается файлом с адресом в заголовке.** — `projects/agent-kit/src/lib/proposals.ts:parseProposals`
-- **Роль разбора закрытой задачи файлов не пишет.** — `projects/agent-kit/assets/commands/skill-curator.md:proposals`
-- **Наружу уезжают только предложения с адресом «пакет».** — `projects/agent-kit/src/lib/shipment.ts:propose`
-- **Отправка отказывает, если в тексте предложения найден адрес дерева.** — `projects/agent-kit/src/lib/proposals.ts:leaksIn`
-- **Отправленное предложение помечается принявшим его месяцем и второй раз не уезжает.** — `projects/agent-kit/src/lib/proposals.ts:markSent`
-- **Адрес приёма читается из настройки дерева.** — `projects/agent-kit/src/lib/config.ts:intake`
-- **Наружу не уходит ничего, чего не отправил человек командой.** — `projects/agent-kit/src/lib/shipment.ts:propose`
-- **Незнакомый довод отправку кончает, а не пропускается молча.** — `projects/agent-kit/src/lib/argv.ts:unknownFlagsIn`
-- **Сведение отделяет пришедшее из нескольких деревьев от пришедшего из одного.** — `.claude/commands/agent-kit-digest.md:overrides`
-- **Выпуск версии остаётся отдельным решением владельца.** — `.claude/commands/agent-kit-digest.md:ARGUMENTS`
-- **Команда кладёт блок на диск и в сеть не ходит.** — `projects/agent-kit/assets/commands/feedback.md:propose`
-- **Блок собирает агент, а не человек.** — `projects/agent-kit/assets/commands/feedback.md:ARGUMENTS`
-- **Слово без ясного адреса не превращается в блок молча.** — `projects/agent-kit/assets/commands/feedback.md:ARGUMENTS`
-- **Блок ложится в файл сегодняшнего дня, а не в свой.** — `projects/agent-kit/assets/commands/feedback.md:date`
-- **Файл дня заводится с образца, если его ещё нет.** — `projects/agent-kit/assets/commands/feedback.md:cp`
-- **Текст блока проверяется на адрес дерева тем же, чем проверяется всё остальное.** — `projects/agent-kit/src/lib/proposals.ts:leaksIn`
-- **Команда говорит, куда лёг блок и чем он уедет.** — `projects/agent-kit/assets/commands/feedback.md:dry-run`
-- **Груз уезжает при каждом прогоне отправки, а предложения — когда они есть.** — `projects/agent-kit/src/lib/shipment.ts:shipmentsOf`
-- **Проверка на адрес дерева накрывает сводку и предложения, но не разбор происшествия.** — `projects/agent-kit/src/lib/shipment.ts:leaksOfCargo`
-- **Найденный в грузе адрес дерева отбивает отправку целиком, а не свой блок.** — `projects/agent-kit/src/lib/shipment.ts:propose`
-- **Груз уезжает в закрытый приём, а не в открытую очередь работ.** — `projects/agent-kit/src/lib/ship.ts:intakeUrl`
-- **Адрес приёма объявлен настройкой дерева, а не зашит в код пакета.** — `projects/agent-kit/src/lib/shipment.ts:IShipOptions`
-- **Дерево представляется приёму токеном, а реестр держит только его хеш.** — `projects/agent-kit/src/lib/cargo.ts:TREE_TOKEN_HEADER`
-- **Токен выдаётся и отзывается командами приёмника.** — `projects/agent-kit/src/lib/shipment.ts:readToken`
-- **Одна запись на пару «дерево — месяц»: нашлась — дописывается, не нашлась — заводится.** — `projects/agent-kit/src/lib/cargo.ts:IIntakeAccepted`
-- **Груз каждого рода принимается своей операцией.** — `projects/agent-kit/src/lib/ship.ts:httpShip`
-- **Выключатель наблюдений гасит и отправку целиком, вместе со снимком надстроек.** — `projects/agent-kit/src/lib/observations.ts:OBSERVATIONS_DIR`
-- **Дерево заводится двумя путями, и человек выбирает доводом.** — `projects/agent-kit/src/lib/enroll.ts:pathChosen`
-- **Выданный токен в сеть не уходит.** — `projects/agent-kit/src/lib/enroll.ts:accept`
-- **Два довода вместе отбиваются.** — `projects/agent-kit/src/lib/enroll.ts:pathChosen`
-- **Ни одного довода — отказ называет оба пути.** — `projects/agent-kit/src/lib/enroll.ts:pathChosen`
-- **Токен ложится на диск одинаково, каким бы путём ни пришёл.** — `projects/agent-kit/src/lib/enroll.ts:lay`
-- **Лежащий токен не перезаписывается молча ни у одного из путей.** — `projects/agent-kit/src/lib/enroll.ts:enroll`
-- **Проверки, общие обоим путям, стоят до развилки.** — `projects/agent-kit/src/lib/enroll.ts:enroll`
-- **Адрес приёма и запрет открытого пути требуются только обмену по коду.** — `projects/agent-kit/src/lib/enroll.ts:intakeAllowed`
-- **Блок предложения называет ближайшее утверждение ресурса, и цитата проверяется.** — `projects/agent-kit/src/lib/proposals.ts:nearestMissing`
-- **Похожесть текстов повтора не отличает, и порогом она не судится.** — `projects/agent-kit/src/lib/proposals.ts:NEAREST`
-- **Отбивается блок поимённо, а соседние едут.** — `projects/agent-kit/src/lib/shipment.ts:propose`
-- **Отбитый блок остаётся на диске с отметкой и причиной.** — `projects/agent-kit/src/lib/shipment.ts:markRefused`
-- **Проверка на адрес дерева судит все готовые блоки, а не одни уезжающие.** — `projects/agent-kit/src/lib/shipment.ts:leaksOfCargo`
-- **Настоящий прогон называет перечень груза до его результатов.** — `projects/agent-kit/src/lib/shipment.ts:manifest`
-- **Сухой прогон объявляется первой строкой, а не окончанием глагола.** — `projects/agent-kit/src/lib/shipment.ts:propose`
-- **Отказ по ненайденному адресу приёма называет, у кого его спросить.** — `projects/agent-kit/src/lib/enroll.ts:intakeReady` и `projects/agent-kit/src/lib/shipment.ts:refusal` — оба отказа называют владельца приёма и пару «код и адрес»; сценарий `SC-AK-855`
+- **A proposal is unloaded as a file with the address in the heading.** — `projects/agent-kit/src/lib/proposals.ts:parseProposals`
+- **The role of the closed-work review writes no files.** — `projects/agent-kit/assets/commands/skill-curator.md:proposals`
+- **Only proposals addressed "package" go outward.** — `projects/agent-kit/src/lib/shipment.ts:propose`
+- **The sending refuses if a tree address is found in the text of a proposal.** — `projects/agent-kit/src/lib/proposals.ts:leaksIn`
+- **A sent proposal is marked by the month that accepted it and does not go a second time.** — `projects/agent-kit/src/lib/proposals.ts:markSent`
+- **The intake address is read from a setting of the tree.** — `projects/agent-kit/src/lib/config.ts:intake`
+- **Nothing goes outward that a person did not send by a command.** — `projects/agent-kit/src/lib/shipment.ts:propose`
+- **An unfamiliar argument ends the sending, it is not skipped silently.** — `projects/agent-kit/src/lib/argv.ts:unknownFlagsIn`
+- **The summing-up tells what arrived from several trees from what arrived from one.** — `.claude/commands/agent-kit-digest.md:overrides`
+- **Releasing a version stays a separate decision of the owner.** — `.claude/commands/agent-kit-digest.md:ARGUMENTS`
+- **The command puts the block on disk and does not go into the network.** — `projects/agent-kit/assets/commands/feedback.md:propose`
+- **The block is assembled by the agent, not by the person.** — `projects/agent-kit/assets/commands/feedback.md:ARGUMENTS`
+- **A word without a clear address does not turn into a block silently.** — `projects/agent-kit/assets/commands/feedback.md:ARGUMENTS`
+- **The block lands in the file of today, not in a file of its own.** — `projects/agent-kit/assets/commands/feedback.md:date`
+- **The file of the day is created from a sample if it does not exist yet.** — `projects/agent-kit/assets/commands/feedback.md:cp`
+- **The text of a block is checked for a tree address by the same thing everything else is checked by.** — `projects/agent-kit/src/lib/proposals.ts:leaksIn`
+- **The command says where the block landed and what it will go away by.** — `projects/agent-kit/assets/commands/feedback.md:dry-run`
+- **The cargo goes away at every run of the sending, and the proposals — when there are any.** — `projects/agent-kit/src/lib/shipment.ts:shipmentsOf`
+- **The check for a tree address covers the digest and the proposals, but not an incident analysis.** — `projects/agent-kit/src/lib/shipment.ts:leaksOfCargo`
+- **A tree address found in the cargo refuses the whole sending, not its own block.** — `projects/agent-kit/src/lib/shipment.ts:propose`
+- **The cargo goes into a closed intake, not into an open work queue.** — `projects/agent-kit/src/lib/ship.ts:intakeUrl`
+- **The intake address is declared by a setting of the tree, not nailed into the package code.** — `projects/agent-kit/src/lib/shipment.ts:IShipOptions`
+- **The tree presents itself to the intake by a token, and the registry holds only its hash.** — `projects/agent-kit/src/lib/cargo.ts:TREE_TOKEN_HEADER`
+- **The token is issued and revoked by commands of the receiver.** — `projects/agent-kit/src/lib/shipment.ts:readToken`
+- **One record per pair "tree — month": found — appended to, not found — created.** — `projects/agent-kit/src/lib/cargo.ts:IIntakeAccepted`
+- **Cargo of each kind is accepted by an operation of its own.** — `projects/agent-kit/src/lib/ship.ts:httpShip`
+- **The switch of the observations puts out the sending whole too, together with the snapshot of the overrides.** — `projects/agent-kit/src/lib/observations.ts:OBSERVATIONS_DIR`
+- **A tree is created by two ways, and the person chooses by an argument.** — `projects/agent-kit/src/lib/enroll.ts:pathChosen`
+- **An issued token does not go into the network.** — `projects/agent-kit/src/lib/enroll.ts:accept`
+- **Two arguments together are refused.** — `projects/agent-kit/src/lib/enroll.ts:pathChosen`
+- **Not a single argument — the refusal names both ways.** — `projects/agent-kit/src/lib/enroll.ts:pathChosen`
+- **The token lands on disk the same way, by whichever way it came.** — `projects/agent-kit/src/lib/enroll.ts:lay`
+- **A token that lies there is not overwritten silently by either of the ways.** — `projects/agent-kit/src/lib/enroll.ts:enroll`
+- **The checks shared by both ways stand before the fork.** — `projects/agent-kit/src/lib/enroll.ts:enroll`
+- **The intake address and the ban on the open way are demanded only by the exchange by code.** — `projects/agent-kit/src/lib/enroll.ts:intakeAllowed`
+- **A proposal block names the nearest statement of the resource, and the quotation is checked.** — `projects/agent-kit/src/lib/proposals.ts:nearestMissing`
+- **Likeness of texts does not tell a repeat apart, and it is not judged by a threshold.** — `projects/agent-kit/src/lib/proposals.ts:NEAREST`
+- **A block is refused by name, and the neighbouring ones go.** — `projects/agent-kit/src/lib/shipment.ts:propose`
+- **A refused block stays on disk with a mark and a reason.** — `projects/agent-kit/src/lib/shipment.ts:markRefused`
+- **The check for a tree address judges all the ready blocks, not only the departing ones.** — `projects/agent-kit/src/lib/shipment.ts:leaksOfCargo`
+- **A real run names the list of the cargo before its results.** — `projects/agent-kit/src/lib/shipment.ts:manifest`
+- **A dry run is declared by the first line, not by the ending of a verb.** — `projects/agent-kit/src/lib/shipment.ts:propose`
+- **A refusal about a not-found intake address names whom to ask for it.** — `projects/agent-kit/src/lib/enroll.ts:intakeReady` and `projects/agent-kit/src/lib/shipment.ts:refusal` — both refusals name the owner of the intake and the pair "code and address"; scenario `SC-AK-855`

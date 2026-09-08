@@ -1,141 +1,154 @@
-# Экзамен по загруженным правилам
+# The exam on the loaded rules
 
-**Статус:** действует · **Ревизия:** 2026-08-23 · **Префикс сценариев:** `SC-AK`
-**Зависимости:** нет
-**Законы:** `verifiability`, `work-conduct`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-23 · **Scenario prefix:** `SC-AK`
+**Depends on:** none
+**Laws:** `verifiability`, `work-conduct`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Загруженное правило и прочитанное правило для дерева неразличимы: правило уезжает в контекст
-целиком, а исполняется выборочно. Экзамен спрашивает исполнителя по тому, что он за сессию
-загрузил, и до сдачи правка не идёт. Поддомен называет, когда экзамен спрашивается, что
-считается сдачей и чем роль выключается.
+A loaded rule and a read rule are indistinguishable to the tree: a rule travels into the context
+whole and is carried out selectively. The exam asks the executor about what they loaded during the
+session, and until it is passed no edit goes. The subdomain names when the exam is asked, what counts
+as passing and what switches the role off.
 
-Прочие гарды правки — соседний поддомен: там предмет другой, и растут они порознь.
+The other edit guards are a neighbouring subdomain: the subject there is different, and they grow
+apart.
 
-## Терминология
+## Terminology
 
-- **Экзамен** — вызов роли, которая спрашивает исполнителя по загруженным за сессию правилам и
-  выносит вердикт.
-- **Вердикт** — ответ роли: балл и слово о том, усвоено или нет.
-- **Сдача** — полный балл. Любой незасчитанный ответ сдачей не считается.
-- **Выключенная роль** — роль, названная в списке выключенных ролей дерева; гард при ней
-  выходит молча, а сама роль остаётся разложенной.
+- **The exam** — a call of the role that asks the executor about the rules loaded during the session
+  and gives a verdict.
+- **The verdict** — the answer of the role: a score and a word about whether it is learned or not.
+- **Passing** — a full score. Any answer not counted is not a pass.
+- **A switched-off role** — a role named in the list of the tree's switched-off roles; the guard at it
+  leaves silently, and the role itself stays laid out.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Интерфейса у экзамена нет: его видит только исполнитель — вопросами роли и текстом отказа в
-своём ходе.
+The exam has no interface: only the executor sees it — as the questions of the role and the text of a
+refusal in their own turn.
 
-## Правила
+## Rules
 
-- **Правка не идёт, пока за сессию не сдан экзамен по загруженным правилам.** Загруженное
-  правило и прочитанное правило неразличимы для дерева: правило уезжает в контекст целиком, а
-  исполняется выборочно.
-- **Сдачей считается только полный балл.** Любой незасчитанный ответ означает, что правило
-  перечитывается целиком, а не тот его кусок, о котором спрашивали: показанный ответ даёт знание
-  одной строки.
-- **Экзамен спрашивается дважды: на старте сессии и перед снятием черновика.** Между чтением
-  правил поставки и снятием черновика лежит весь заход, и первый экзамен о втором ничего не
-  говорит: спрашивают о разном.
-- **Второй экзамен спрашивается только там, где есть открытая заявка.** Без неё снимать нечего,
-  и требование отбивало бы вызовы, к готовности работы отношения не имеющие.
-- **Записи хода сводятся в один поток по порядку.** Команда и ответ инструмента лежат в разных
-  полях записи, и индекс из одного массива в другом не значит ничего: так вердикт, вынесенный до
-  открытия заявки, читался как вынесенный после.
-- **Судится последний вердикт роли, а не первый.** Иначе сданный однажды экзамен держал бы
-  правку до конца сессии, что бы дальше ни случилось.
-- **Роль, выключенная деревом, гарда при ней не держит.** Гард выходит молча, а сама роль
-  остаётся разложенной: выключается обязательность вызова, а не роль, и позвать её руками можно
-  в любую минуту.
-- **Настройка, которую не прочитать, роль не выключает.** Гард судит, как судил: сломанное
-  чтение, гасящее роль, выключало бы слой правил молча, и заметить это было бы нечем.
-- **Прочие команды клиента хостинга гард не судит.** Он стоит на снятии черновика, а не на
-  всяком вызове клиента.
-- **Вердикт второго экзамена ищется во всех формах записи хода, как и вердикт первого.** Роль,
-  работающая фоном, отдаёт результат уведомлением хоста: записи вида «ответ инструмента» у неё
-  нет, и узкая выборка, читавшая только команды и ответы, не засчитывала второй экзамен. Две
-  выборки отличаются точкой отсчёта, а не набором форм.
-- **У отказа есть выход, не требующий снимать защиту.** Список выключенных ролей лежит в настройке
-  дерева, и среда исполнения правку такого списка может запрещать своим механизмом: выход,
-  доступный только через выключение самой проверки, в такой среде не работает. Второй выход —
-  объявленный обход строкой в теле последнего коммита ветки: он остаётся в истории и виден
-  владельцу на странице заявки.
-- **Оба отказа называют, что путь через список выключенных требует снять защиту.** Иначе
-  исполнитель тратит ход на попытку, которую запрещает механизм за пределами слоя правил.
-- **Снятием черновика считается вызов клиента, а не вхождение слов.** Команда, которая пишет о
-  снятии, проверялась наравне с самим снятием, и отказ приходил на попытку описать этот дефект.
+- **No edit goes while the exam on the loaded rules is not passed during the session.** A loaded rule
+  and a read rule are indistinguishable to the tree: a rule travels into the context whole and is
+  carried out selectively.
+- **Only a full score counts as passing.** Any answer not counted means the rule is re-read whole, not
+  the piece of it that was asked about: an answer shown gives knowledge of one line.
+- **The exam is asked twice: at the start of the session and before the draft is lifted.** Between
+  reading the delivery rules and lifting the draft lies the whole session, and the first exam says
+  nothing about the second: they ask about different things.
+- **The second exam is asked only where there is an open request.** Without one there is nothing to
+  lift, and the demand would refuse calls that have nothing to do with the readiness of the work.
+- **The records of a turn are gathered into one stream in order.** A command and the answer of a tool
+  lie in different fields of the record, and an index from one array means nothing in another: that is
+  how a verdict given before a request was opened read as given after it.
+- **The last verdict of the role is judged, not the first.** Otherwise an exam passed once would hold
+  the edit open until the end of the session, whatever happened after.
+- **A role switched off by the tree holds no guard at it.** The guard leaves silently, and the role
+  itself stays laid out: what is switched off is the obligation to call it, not the role, and it can be
+  called by hand at any minute.
+- **A setting that cannot be read does not switch a role off.** The guard judges as it judged: a broken
+  read putting the role out would switch the rules layer off silently, and there would be nothing to
+  notice it by.
+- **The other commands of the hosting client the guard does not judge.** It stands at the lifting of a
+  draft, not at every call of the client.
+- **The verdict of the second exam is looked for in all the shapes of a turn record, as the verdict of
+  the first is.** A role working in the background gives its result back as a notification of the host:
+  it has no record of the kind "answer of a tool", and the narrow selection that read only commands and
+  answers did not count the second exam. Two selections differ by the point of reference, not by the
+  set of shapes.
+- **The answer of a tool that reads or writes files is not a verdict, and such a call is recognised
+  by its identifier.** Echoing the same line or reading a file that holds it would pass the guard,
+  and forgery would become the only reachable way. The identifier is bound by a name of its own: a
+  search of the list by the list itself answers zero, one such call mutes the answers of all the
+  rest, and the verdict is then looked for in the records of the host alone.
+- **The refusal has an exit that does not demand lifting the protection.** The list of switched-off
+  roles lies in the setting of the tree, and the runtime environment may forbid editing such a list by
+  a mechanism of its own: an exit available only through switching the check itself off does not work
+  in such an environment. The second exit is a declared bypass as a line in the body of the last commit
+  of the branch: it stays in the history and is visible to the owner on the page of the request.
+- **Both refusals say that the path through the list of switched-off roles demands lifting the
+  protection.** Otherwise the executor spends a turn on an attempt a mechanism outside the rules layer
+  forbids.
+- **A call of the client counts as lifting the draft, not an occurrence of words.** A command that
+  writes about the lifting was checked on a par with the lifting itself, and the refusal arrived at an
+  attempt to describe this defect.
 
-## Что не входит
+## What is out of scope
 
-- Содержание вопросов: их назначает роль, а не гард.
-- Оценка того, глубоко ли исполнитель понял правило: гард видит вердикт, а не понимание.
-- Правило, которое исполнитель прочитал файлом мимо загрузки: списка загруженного оно не
-  пополняет, и спросить о нём роли неоткуда.
+- The content of the questions: they are assigned by the role, not by the guard.
+- Judging whether the executor understood the rule deeply: the guard sees a verdict, not understanding.
+- A rule the executor read as a file past the loading: it adds nothing to the list of the loaded, and
+  there is nowhere for the role to ask about it from.
 
-## Контракт
+## Contract
 
-Поверхность — события агента: правка файла и вызов клиента хостинга, снимающий черновик. Ответ
-гарда — либо пропуск, либо отказ с текстом, называющим, чем отказ снимается.
+The surface is the events of the agent: editing a file and a call of the hosting client that lifts a
+draft. The answer of the guard is either a pass or a refusal with a text naming what the refusal is
+lifted by.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: гард отбивает вызов до его исполнения, и кода возврата команды у такого отказа нет.
+Not applicable: the guard refuses a call before it is carried out, and such a refusal has no command
+exit code.
 
-| Что случилось                         | Чем кончается | Что говорит                                     |
-| ------------------------------------- | ------------- | ----------------------------------------------- |
-| правка без сданного экзамена          | отказ вызова  | имя роли и то, что сдачей считается полный балл |
-| снятие черновика без второго экзамена | отказ вызова  | что спрашивается перед снятием                  |
-| роль выключена деревом                | пропуск       | ничего: гард выходит молча                      |
+| What happened                           | How it ends      | What it says                                          |
+| --------------------------------------- | ---------------- | ----------------------------------------------------- |
+| an edit without a passed exam           | the call refused | the name of the role and that passing is a full score |
+| lifting a draft without the second exam | the call refused | what is asked before the lifting                      |
+| the role is switched off by the tree    | a pass           | nothing: the guard leaves silently                    |
 
-## Данные
+## Data
 
-Своего хранилища нет: вердикт читается из записи хода, список выключенных ролей — из настройки
-дерева.
+There is no storage of its own: the verdict is read from the record of the turn, the list of
+switched-off roles from the setting of the tree.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: экранов нет.
+Not applicable: there are no screens.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-Гард отпускает действие, когда сам сломался: нет разборщика входа, пустой ввод, не тот каталог —
-ход разрешается. Сломанная проверка не имеет права заклинить работу.
+The guard lets the action through when it is itself broken: no input parser, empty input, the wrong
+directory — the move is allowed. A broken check has no right to jam the work.
 
-### Локали
+### Locales
 
-Не применимо: тексты отказов одноязычны.
+Not applicable: the refusal texts are single-language.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо.
+Not applicable.
 
-### Мультиобъектность
+### Several objects
 
-Гард один на все деревья, а список выключенных ролей приходит из настройки дерева. Дерево,
-выключившее роль, гарда при ней не получает; своего списка у пакета нет.
+The guard is one for all trees, and the list of switched-off roles arrives from the setting of the
+tree. A tree that switched the role off gets no guard at it; the package has no list of its own.
 
-## Решения
+## Decisions
 
-- **Экзамен спрашивается дважды, а не однажды.** Первый спрашивает по правилам, загруженным на
-  старте; второй — по правилам поставки, которые загружаются к концу работы. Отвергнуто: один
-  экзамен на сессию — он о втором наборе правил не говорит ничего.
-- **Судится последний вердикт, а не лучший.** Провал после сдачи означает, что правило успели
-  забыть; лучший вердикт держал бы правку открытой до конца сессии. Отвергнуто: любой сданный
-  вердикт за сессию.
-- **Выключение роли читается из настройки дерева, а не снятием файла роли.** Снятый файл убирает
-  роль вместе с возможностью её позвать. Отвергнуто: отказ от файла роли.
+- **The exam is asked twice, not once.** The first asks about the rules loaded at the start; the
+  second about the delivery rules, which are loaded towards the end of the work. Rejected: one exam per
+  session — it says nothing about the second set of rules.
+- **The last verdict is judged, not the best one.** A failure after a pass means the rule managed to be
+  forgotten; the best verdict would hold the edit open until the end of the session. Rejected: any
+  passed verdict during the session.
+- **Switching a role off is read from the setting of the tree, not from removing the file of the
+  role.** A removed file takes the role away together with the possibility of calling it. Rejected:
+  giving up the file of the role.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом.
+The open questions of the domain are shared, and they live in the spec next to it.
 
-## История изменений
+## History of changes
 
-- 2026-08-23 — поддомен выделен из поддомена гардов правки, переросшего предел длины. Правила,
-  сценарии и привязки экзамена переехали сюда прежними: номера сценариев не пересчитывались.
+- 2026-08-23 — the subdomain was split off from the subdomain of the edit guards, which had outgrown
+  the length limit. The rules, the scenarios and the bindings of the exam moved here unchanged: the
+  scenario numbers were not recounted.

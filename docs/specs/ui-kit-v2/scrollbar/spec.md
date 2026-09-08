@@ -1,115 +1,118 @@
-# Полоса прокрутки
+# The bar of the scroll
 
-**Статус:** действует · **Ревизия:** 31 августа 2026 · **Префикс сценариев:** `SC-UKV`
-**Зависимости:** нет
-**Законы:** `frontend-application`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 31 August 2026 · **Scenario prefix:** `SC-UKV`
+**Depends on:** none
+**Laws:** `frontend-application`
+**Procedures:** none
 
-Поддомен называет, как выглядит полоса прокрутки у зон кита и когда её видно.
+The subdomain names what the bar of the scroll at the zones of the kit looks like and when it is
+visible.
 
-## Зачем
+## Why
 
-Полоса прокрутки видна всегда: у каждой прокручиваемой зоны на экране стоит серая палка, даже
-когда на неё никто не смотрит. На экране с таблицей, панелью и списком таких палок три, и все они
-спорят за внимание с содержимым.
+The bar of the scroll is visible always: at every scrollable zone on the screen there stands a grey
+stick, even when nobody is looking at it. On a screen with a table, a panel and a list there are three
+such sticks, and all of them argue for the attention with the content.
 
-Прятать её целиком нельзя: пропадает единственный признак того, что зона вообще прокручивается, и
-единственный указатель на то, где человек внутри неё находится.
+Hiding it whole is not allowed: the only sign that a zone scrolls at all disappears, and so does the
+only pointer to where a person is inside it.
 
-Свойство, которым полосу клали поверх содержимого, из браузеров убрано. Приёмы, которыми его
-заменяют, показывают полосу вместе с её местом — и содержимое дёргается вбок на каждом наведении.
+The property the bar was laid over the content by is removed from the browsers. The techniques that
+replace it show the bar together with its place — and the content jerks sideways at every hovering.
 
-## Терминология
+## Terminology
 
-| Термин         | Что это                                                              |
-| -------------- | -------------------------------------------------------------------- |
-| зона прокрутки | элемент, содержимое которого длиннее его самого                      |
-| тихая полоса   | полоса, чьё место занято, а ползунок невидим, пока на зону не навели |
+| Term                 | What it is                                                                         |
+| -------------------- | ---------------------------------------------------------------------------------- |
+| a zone of the scroll | an element whose content is longer than itself                                     |
+| a quiet bar          | a bar whose place is taken and whose slider is invisible until the zone is hovered |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости | На экране                                      |
-| ---------------- | ---------------------------------------------- |
-| тихая полоса     | пустая дорожка вдоль края зоны                 |
-| проявленная      | ползунок цветом рамки, крепче — под указателем |
+| In the agreement | On the screen                                                    |
+| ---------------- | ---------------------------------------------------------------- |
+| a quiet bar      | an empty track along the edge of the zone                        |
+| shown            | the slider in the colour of a border, stronger under the pointer |
 
-## Правила
+## Rules
 
-- **Место под полосу занято всегда, видимым становится только ползунок.** Приём, показывающий
-  полосу вместе с её местом, сдвигает содержимое вбок на каждом наведении — и на экране со
-  списком внутри панели это заметно дважды за одно движение мыши.
-- **Ползунок проявляется при наведении на зону, а не на сам ползунок.** Навести на невидимое
-  нечем: наведение на ползунок годится, только когда он уже виден.
-- **Фокус внутри зоны показывает полосу наравне с наведением.** Прокрутка с клавиатуры идёт без
-  указателя, и человек иначе не видит ни того, где он в списке, ни того, что список вообще
-  прокручивается.
-- **Там, где наведения не бывает, полоса видна всегда.** На сенсорном экране наведения нет вовсе,
-  и тихая полоса осталась бы невидимой навсегда.
-- **Стандартные свойства полосы объявлены рядом с псевдоэлементами.** Одни понимает одна ветка
-  браузеров, другие — другая; написанные порознь, они расходятся видом, и половина читателей
-  видит системную полосу вместо китовой.
-- **Цвет ползунка берётся токеном рамки, а не своим значением.** Полоса — часть той же линии
-  границ, что и рамки полей; своё значение разошлось бы с ними при первой правке темы.
+- **The place under the bar is taken always, and only the slider becomes visible.** A technique showing
+  the bar together with its place moves the content sideways at every hovering — and on a screen with a
+  list inside a panel that is noticeable twice within one movement of the mouse.
+- **The slider is shown at a hovering over the zone, not over the slider itself.** There is nothing to
+  hover over what is invisible: hovering over the slider is good only when it is already visible.
+- **A focus inside the zone shows the bar on a par with a hovering.** The scroll from the keyboard goes
+  without a pointer, and a person otherwise sees neither where they are in the list nor that the list
+  scrolls at all.
+- **Where there is no hovering, the bar is visible always.** On a touch screen there is no hovering at
+  all, and a quiet bar would stay invisible forever.
+- **The standard properties of the bar are declared next to the pseudo-elements.** One branch of the
+  browsers understands the ones, another the others; written apart, they diverge in look, and half of
+  the readers see the bar of the system instead of the one of the kit.
+- **The colour of the slider is taken by the token of a border, not by a value of its own.** The bar is
+  a part of the same line of the boundaries as the borders of the fields; a value of its own would
+  diverge from them at the first edit of the theme.
 
-## Что не входит
+## What is out of scope
 
-- Своя полоса разметкой вместо системной: она перестаёт слушаться колеса, клавиш и жестов,
-  и чинить это приходится в коде каждой зоны.
-- Прятание полосы у отдельных компонентов: там, где полосы быть не должно вовсе, компонент
-  говорит это своим правилом.
+- A bar of one's own by markup instead of the one of the system: it stops obeying the wheel, the keys
+  and the gestures, and that has to be cured in the code of every zone.
+- The hiding of the bar at separate components: where the bar must not be at all, the component says so
+  by a rule of its own.
 
-## Контракт
+## Contract
 
-Не применимо: поверхность — слой оформления, процедур поддомен не обслуживает.
+Not applicable: the surface is the layer of the design, the subdomain serves no procedures.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо.
+Not applicable.
 
-## Данные
+## Data
 
-Не применимо.
+Not applicable.
 
-## Экраны и состояния
+## Screens and states
 
-| Состояние             | Что видно                                  |
-| --------------------- | ------------------------------------------ |
-| покой                 | место под полосу занято, ползунка не видно |
-| наведение на зону     | ползунок цветом рамки                      |
-| наведение на ползунок | ползунок крепче и толще                    |
-| фокус внутри зоны     | то же, что при наведении                   |
-| сенсорный экран       | ползунок виден всегда                      |
+| State                      | What is visible                                             |
+| -------------------------- | ----------------------------------------------------------- |
+| rest                       | the place under the bar is taken, the slider is not visible |
+| a hovering over the zone   | the slider in the colour of a border                        |
+| a hovering over the slider | the slider stronger and thicker                             |
+| a focus inside the zone    | the same as at a hovering                                   |
+| a touch screen             | the slider is visible always                                |
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо.
+Not applicable.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Ползунок виден всегда: наведения на сенсорном экране не бывает.
+The slider is visible always: there is no hovering on a touch screen.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо.
+Not applicable.
 
-## Решения
+## Decisions
 
-- **Место под полосу остаётся занятым** — иначе содержимое дёргается вбок на каждом наведении.
-  Отвергнуто: показывать полосу вместе с местом, как делают найденные приёмы.
-- **Полоса остаётся системной, а оформляется правилами** — своя полоса разметкой перестаёт
-  слушаться колеса, клавиш и жестов. Отвергнуто: чужая библиотека полосы прокрутки.
+- **The place under the bar stays taken** — otherwise the content jerks sideways at every hovering.
+  Rejected: showing the bar together with its place, as the techniques that were found do.
+- **The bar stays the one of the system and is designed by rules** — a bar of one's own by markup stops
+  obeying the wheel, the keys and the gestures. Rejected: a foreign library of a bar of the scroll.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-4` — нужна ли та же тихая полоса первому киту: у него своя раскладка стилей и свой набор
-  токенов. Работа идёт с допущением, что второй кит закрывает просьбу целиком.
+- `Q-4` — whether the first kit needs the same quiet bar: it has a layout of the styles of its own and a
+  set of tokens of its own. The work goes with the assumption that the second kit closes the request
+  whole.
 
-## История изменений
+## History of changes
 
-- 31 августа 2026 — заведён поддомен: тихая полоса, проявление при наведении и фокусе.
+- 31 August 2026 — the subdomain was created: the quiet bar, the showing at a hovering and at a focus.

@@ -1,345 +1,357 @@
-# Оформление кита
+# The design of the kit
 
-**Статус:** действует · **Ревизия:** 2026-08-17 · **Префикс сценариев:** `SC-UKV`
-**Зависимости:** служба темы кита и признак темы на корне страницы; свой список принятого рядом
-со своей проверкой стилей — `tools/styles-allowlist.json` занят проверкой классов вёрстки и не
-делится
-**Законы:** `verifiability`, `frontend-application`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-17 · **Scenario prefix:** `SC-UKV`
+**Depends on:** the service of the theme of the kit and the sign of the theme at the root of the page; a
+list of what is accepted of its own next to its own check of the styles — `tools/styles-allowlist.json`
+is taken by the check of the classes of the layout and is not shared
+**Laws:** `verifiability`, `frontend-application`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Оформление кита — его публичная поверхность наравне с компонентами: кит стоит на
-`ViewEncapsulation.None`, его правила глобальны, а всё, что меняется снаружи, меняется токенами.
+The design of the kit is its public surface on a par with the components: the kit stands on
+`ViewEncapsulation.None`, its rules are global, and everything that is changed from outside is changed
+by tokens.
 
-Поддомен называет, чем потребитель перекрашивает кит, какие имена обязаны существовать, что
-обязана сказать тёмная тема и в каком месте проверка обязана отказать вместо зелёного.
+The subdomain names what a consumer repaints the kit by, which names are obliged to exist, what the dark
+theme is obliged to say and in which place a check is obliged to refuse instead of going green.
 
-## Терминология
+## Terminology
 
-- **Шкала** — слой токенов со значениями: коды цветов, шаги отступов, размеры, длительности.
-  Ступень шкалы — один токен этого слоя.
-- **Назначение** — токен, говорящий не о значении, а о роли: фон поверхности, цвет опасного
-  действия, граница в фокусе. Значением назначения служит ступень шкалы.
-- **Свойство компонента** — токен, объявленный стилями одного компонента и настраивающий только
-  его.
-- **Бренд** — ступени цвета марки, которыми красятся действие, ссылка, граница в фокусе и
-  прозрачные оттенки того же цвета.
-- **Ручка потребителя** — токен, который кит намеренно не объявляет: значение приходит от
-  приложения, а пока его нет, работает запасное значение. Ширина панели, высота шапки и
-  начертание логотипа — ручки.
-- **Мёртвая ссылка** — обращение к токену, которого не объявляет ни один слой и который ручкой
-  не назван.
-- **Признак темы** — `data-theme='dark'` на корне страницы и равнозначный ему класс
-  `rt-theme-dark`. Признак ставит служба темы кита, набор токенов от него не зависит.
-- **Полнота тёмной темы** — свойство набора: у каждого цветового назначения светлой темы есть
-  либо переопределение в тёмной, либо названная причина, почему цвет в обеих темах один.
-- **Порог контраста** — отношение яркостей текста и его фона, ниже которого пара считается
-  нечитаемой. Здесь это 4.5:1.
-- **Список принятого** — перечень мест, накопленных до включения проверки. Проверка их
-  перечисляет числом, отказом не считает и падает на новом месте.
-- **Источник оформления** — узел, из которого собираются слои: ступени, назначения и ответ
-  тёмной темы рядом со своим назначением. Собранное правится в нём, а не на месте.
+- **A scale** — the layer of the tokens with the values: the codes of the colours, the steps of the
+  paddings, the sizes, the lengths. A step of a scale is one token of that layer.
+- **An appointment** — a token speaking not of a value but of a role: the ground of a surface, the colour
+  of a dangerous action, the border at a focus. A step of a scale serves as the value of an appointment.
+- **A property of a component** — a token declared by the styles of one component and setting only it.
+- **The brand** — the steps of the colour of the mark the action, the link, the border at a focus and the
+  transparent shades of the same colour are painted by.
+- **A handle of the consumer** — a token the kit does not declare on purpose: the value arrives from the
+  application, and while there is none, a spare value works. The width of a panel, the height of a header
+  and the face of a logo are handles.
+- **A dead reference** — an address to a token that is declared by no layer and is not named a handle.
+- **The sign of the theme** — `data-theme='dark'` at the root of the page and the class `rt-theme-dark`
+  equal to it. The sign is put by the service of the theme of the kit, the set of the tokens does not
+  depend on it.
+- **The completeness of the dark theme** — a property of the set: every colour appointment of the light
+  theme has either an override in the dark one or a named reason why the colour is one in both themes.
+- **The threshold of the contrast** — the ratio of the brightnesses of a text and its ground, below which
+  a pair counts as unreadable. Here it is 4.5:1.
+- **A list of what is accepted** — the list of the places accumulated before the switching on of a check.
+  The check lists them by a number, does not count them a refusal and falls at a new place.
+- **The source of the design** — the node the layers are put together from: the steps, the appointments
+  and the answer of the dark theme next to its own appointment. What is put together is edited in it, not
+  in its place.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Своего интерфейса у оформления нет. Человек видит вывод проверок оформления: перечень мест, имён
-токенов и пар «текст и фон», не взявших порог.
+The design has no interface of its own. A person sees the output of the checks of the design: the list of
+the places, of the names of the tokens and of the pairs "a text and a ground" that did not take the
+threshold.
 
-## Правила
+## Rules
 
-- **Потребитель перекрашивает кит объявлениями поверх него и кит не форкает.** Марка приходит
-  ступенями бренда, а не правкой шкалы синего: синий остаётся цветом, бренд — ролью, и
-  потребителю, у которого марка зелёная, незачем объявлять зелёный именем синего.
+- **The consumer repaints the kit by declarations over it and does not fork the kit.** The mark arrives by
+  the steps of the brand, not by an edit of the scale of the blue: the blue stays a colour, the brand a
+  role, and a consumer whose mark is green has no need to declare green by the name of blue.
 
-- **Бренд объявляется линейкой ступеней 50…950.** Ни одно назначение не берёт цвет марки мимо
-  линейки, и ни одна ступень линейки не выводится вычислением из другой: наведение и нажатие —
-  собственные ступени, а не осветлённая основная. Вычисляются только прозрачные оттенки.
+- **The brand is declared by a line of the steps 50…950.** Not a single appointment takes the colour of the
+  mark past the line, and not a single step of the line is derived by a computing from another one: the
+  hovering and the press are steps of their own, not a lightened main one. Only the transparent shades are
+  computed.
 
-- **Палитра держит одну роль, а ряд у палитр общий.** Ряд — одиннадцать ступеней 50…950;
-  палитра, в которой лежат цвет марки, фон переписки и тёмная подложка обвязки сразу, не
-  палитра: сменить в ней одно, не сдвинув остальное, нельзя.
+- **A palette holds one role, and the row at the palettes is common.** The row is eleven steps 50…950; a
+  palette in which the colour of the mark, the ground of a correspondence and the dark backing of the
+  harness lie at once is not a palette: one thing in it cannot be changed without moving the rest.
 
-- **Ступени палитры идут ровным рядом, а не подбираются по месту.** Светлота меняется
-  одинаковым шагом по всему ряду, тон и цветность общие. Ряд, собранный из чужих палитр разных
-  поколений и ручных подборов, выглядит шкалой, но выбрать из него нельзя.
+- **The steps of a palette go by an even row, they are not picked by the place.** The lightness changes by
+  an equal step over the whole row, the tone and the chroma are common. A row put together from foreign
+  palettes of different generations and hand-made pickings looks like a scale, but nothing can be chosen
+  from it.
 
-- **Прозрачный оттенок считается от своей ступени, а не повторяет её код цвета.** Повторённое
-  значение расходится с источником молча, и правка ступени оставляет оттенок прежним.
+- **A transparent shade is counted from its own step, it does not repeat its code of the colour.** A
+  repeated value diverges from the source silently, and an edit of the step leaves the shade the former one.
 
-- **Кольцо фокуса красится брендом.** Кольцо — самый заметный след цвета марки на экране, и
-  оставшееся синим оно спорит с перекрашенной кнопкой, которую обводит.
+- **The ring of the focus is painted by the brand.** The ring is the most noticeable trace of the colour of
+  the mark on the screen, and left blue it argues with the repainted button it outlines.
 
-- **Токен, на который кит ссылается, либо объявлен слоем оформления, либо назван ручкой
-  потребителя.** Третьего состояния нет: имя, не объявленное и не названное ручкой, — мёртвая
-  ссылка, и её значение приходит из запасного значения на месте.
+- **A token the kit refers to is either declared by the layer of the design or named a handle of the
+  consumer.** There is no third state: a name that is not declared and not named a handle is a dead
+  reference, and its value arrives from a spare value at the place.
 
-- **Ссылка на токен кита идёт без запасного значения.** Запасное значение скрывает мёртвую
-  ссылку, закрепляет цвет вне палитры и переживает смену темы: переопределение тёмной темы до
-  него не достаёт, потому что переопределять нечего.
+- **A reference to a token of the kit goes without a spare value.** A spare value hides a dead reference,
+  nails down a colour outside the palette and outlives a change of the theme: the override of the dark
+  theme does not reach it, because there is nothing to override.
 
-- **Запасное значение стоит только у ручки потребителя, и каждая ручка перечислена в
-  контракте.** Ручка — обещание потребителю, а не забытое объявление; неперечисленная ручка
-  неотличима от мёртвой ссылки, и проверке нечем их развести.
+- **A spare value stands only at a handle of the consumer, and every handle is listed in the contract.** A
+  handle is a promise to the consumer, not a forgotten declaration; a handle that is not listed cannot be
+  told from a dead reference, and the check has nothing to set them apart by.
 
-- **Токен объявляется слоем оформления, а не стилями компонента.** Потребитель, не подключивший
-  компонент, иначе не получает и его объявлений, а подключивший получает объявления от
-  компонента, о котором он не спрашивал. Свойство компонента при этом остаётся у компонента:
-  правило говорит про общие имена.
+- **A token is declared by the layer of the design, not by the styles of a component.** A consumer that did
+  not plug the component in otherwise does not get its declarations either, and one that plugged it in gets
+  the declarations of a component they did not ask about. A property of a component at that stays with the
+  component: the rule speaks of the common names.
 
-- **Значение живёт в шкале; назначение и переопределение темы ссылаются на ступень.** Литерал в
-  слое назначений отменяет весь смысл слоя: он не находится ни поиском по шкале, ни страницей
-  витрины, и меняется поштучно вместо одной ступени. Значение, которому ступени нет, заводит
-  ступень.
+- **The value lives in the scale; an appointment and an override of a theme refer to a step.** A literal in
+  the layer of the appointments cancels the whole sense of the layer: it is found neither by a search over
+  the scale nor by a page of the showcase, and it is changed one at a time instead of one step. A value that
+  has no step creates a step.
 
-- **Тёмная тема отвечает на каждое цветовое назначение светлой.** Ответ — либо переопределение,
-  либо названная причина, почему цвет общий для обеих тем. Ответ через цепочку ссылок считается
-  ответом. Молчание без причины читается как «цвет подходит обеим темам», и отличить его от
-  забытого нечем.
+- **The dark theme answers every colour appointment of the light one.** The answer is either an override or
+  a named reason why the colour is common to both themes. An answer through a chain of references counts as
+  an answer. Silence without a reason reads as "the colour suits both themes", and there is nothing to tell
+  it from a forgotten one by.
 
-- **Пара «цвет текста и его фон» держит контраст не ниже 4.5:1.** Порог назван здесь, потому что
-  в шкалах он жил комментариями рядом с двумя ступенями, а остальные пары не были подписаны ничем.
+- **A pair "the colour of a text and its ground" holds a contrast not below 4.5:1.** The threshold is named
+  here because in the scales it lived as comments next to two steps, and the rest of the pairs were labelled
+  by nothing.
 
-- **Литерал цвета и значение в свойстве оформления в стилях компонента отбиваются проверкой.**
-  Свойства оформления — отступ, скругление, кегль, толщина рамки, длительность. Размер числом —
-  `width`, `height`, `inline-size`, `outline` — проверка не судит: своей шкалы высот у кита пока
-  нет. Граница названа здесь, чтобы зелёный прогон не читался как «литералов не осталось».
+- **A literal of a colour and a value in a property of the design in the styles of a component are refused by
+  a check.** The properties of the design are the padding, the rounding, the size of the type, the thickness
+  of a border, the length. A size as a number — `width`, `height`, `inline-size`, `outline` — the check does
+  not judge: the kit has no scale of the heights of its own yet. The boundary is named here so that a green
+  run does not read as "no literals are left".
 
-- **Накопленное до включения проверки стоит поимённо в списке принятого.** Проверка включается в
-  тот же день, когда написана, а не после уборки: иначе течь закрывается тогда же, когда
-  закончится уборка, то есть неизвестно когда.
+- **What was accumulated before the switching on of a check stands by name in the list of what is accepted.**
+  The check is switched on the same day it is written, not after the cleaning: otherwise the leak is closed
+  at the same time the cleaning ends, that is, at an unknown time.
 
-- **Запись из списка принятого снимается вместе с починкой и обратно не заводится.** Список
-  только убывает. Пополняемый список — та же непроверенная россыпь литералов, только с
-  оглавлением.
+- **A record leaves the list of what is accepted together with the fixing and is not created back.** The list
+  only shrinks. A list that is added to is the same unchecked scattering of literals, only with a table of
+  contents.
 
-- **Шкала остаётся шкалой: ступень выбирается из ряда, а не дописывается под случай.** Ступень,
-  заведённая под одно место и названная числом между соседями, снимает у шкалы её единственное
-  свойство — из неё нельзя выбрать. Оттенок, нужный ровно одному назначению, живёт назначением
-  с говорящим именем.
+- **A scale stays a scale: a step is chosen from the row, it is not written in for the case.** A step created
+  for one place and named by a number between the neighbours takes off the scale its only property — nothing
+  can be chosen from it. A shade needed by exactly one appointment lives as an appointment with a speaking
+  name.
 
-- **Интерактивные контролы одного размера совпадают по высоте.** Высота приходит одной шкалой на
-  все контролы; кнопка, поле и выпадающий список в одной строке не расходятся на пиксели.
+- **The interactive controls of one size coincide in height.** The height arrives by one scale for all the
+  controls; a button, a field and a dropping list in one row do not diverge by pixels.
 
-- **Свойства компонента заводятся там, где компонент настраивают снаружи.** Не сплошным обходом:
-  правило, которое в день выхода нарушают шестьдесят пять файлов из семидесяти восьми, перестают
-  соблюдать за месяц. Заведённый набор при этом полон — компонент потребляет только свои
-  свойства, а не половину своих и половину назначений.
+- **The properties of a component are created where the component is set from outside.** Not by a solid walk:
+  a rule that on the day of its coming out is broken by sixty-five files out of seventy-eight stops being
+  kept within a month. The created set at that is complete — a component consumes only its own properties,
+  not half of its own and half of the appointments.
 
-- **Правило приложения выигрывает у правила кита без счёта специфичности.** Стили кита объявлены
-  слоем каскада; потребитель перебивает их обычным правилом, а не обходом чужой вёрстки и не
-  восклицательным знаком.
+- **A rule of the application wins over a rule of the kit without a count of the specificity.** The styles of
+  the kit are declared by a layer of the cascade; the consumer overrides them by an ordinary rule, not by a
+  walk of a foreign layout and not by an exclamation mark.
 
-- **Всё, что кит объявляет классами, доезжает до потребителя одной точкой входа.** Стили
-  компонента едут его бандлом, а раскладка, объявленная классами, — только агрегатором слоя
-  оформления: файл, до него не дописанный, лежит в дереве живым и не применяется нигде. Ни
-  сборка, ни линтер, ни снимки витрин этого не показывают — правила есть, они просто не
-  доставлены; видно это только у потребителя и только глазами.
+- **Everything the kit declares by classes reaches the consumer by one point of entry.** The styles of a
+  component go by its bundle, and the layout declared by classes only by the aggregator of the layer of the
+  design: a file that was not written into it lies alive in the tree and is applied nowhere. Neither the
+  build, nor the linter, nor the snapshots of the showcases show that — the rules are there, they are simply
+  not delivered; that is visible only at a consumer and only by the eyes.
 
-- **Слой оформления собирается из источника, а не правится в собранном виде.** Имя токена, к
-  которому обратились с опечаткой, роняет сборку, а не остаётся невидимым до взгляда на витрину.
-  Пара «светлая и тёмная» лежит в одном месте, поэтому забытая половина — отказ генерации, а не
-  пропущенная строка.
+- **The layer of the design is put together from the source, it is not edited in the put-together look.** The
+  name of a token addressed with a typo fells the build, it does not stay invisible until a look at the
+  showcase. The pair "the light and the dark one" lies in one place, so a forgotten half is a refusal of the
+  generation, not a skipped line.
 
-- **Вид компонента меняется только там, где это названо вслух.** Названо девять мест — от
-  отключённой кнопки, красившейся цветом вне палитры, до роли сведения, разведённой с маркой.
-  Всё остальное обязано пройти сверку кадров витрины без расхождений, а разошедшийся кадр значит
-  дефект правки.
+- **The look of a component changes only where that is named aloud.** Nine places are named — from a
+  switched-off button that was painted by a colour outside the palette to the role of a detail set apart from
+  the mark. Everything else is obliged to pass the checking of the frames of the showcase without divergences,
+  and a frame that diverged means a defect of the edit.
 
-- **Состояние выигрывает у оформления, а не стоит с ним наравне.** Отключённость, загрузка и
-  только-чтение отменяют заливку, обводку и палитру; обратного не бывает. Правила равной силы
-  разбираются порядком в файле, поэтому блок состояния стоит ниже всех вариантов оформления и
-  палитры того же блока.
+- **The state wins over the design, it does not stand with it on a par.** The switched-off state, the loading
+  and the read-only cancel the filling, the outline and the palette; the other way round does not happen. The
+  rules of equal strength are taken apart by the order in the file, so the block of the state stands below all
+  the variants of the design and the palette of the same block.
 
-- **Роль действия — пятёрка, а не один цвет.** Подложка, наведение, нажатие, подпись на них и
-  цвет роли на поверхности объявляются вместе и берутся компонентом целиком. Роль, у которой нет
-  ступени под нажатие, сливает нажатие с наведением.
+- **The role of an action is a five, not one colour.** The backing, the hovering, the press, the label on them
+  and the colour of the role on a surface are declared together and are taken by the component whole. A role
+  that has no step under the press merges the press with the hovering.
 
-- **Цвет роли на поверхности объявлен отдельно от её подложки.** Безфоновые оформления красят им
-  подпись и рамку. Роль, у которой своего цвета нет, разворачивает подложку в поверхность — и
-  подпись, взятая из подложки, ложится сама на себя.
+- **The colour of a role on a surface is declared apart from its backing.** The groundless designs paint the
+  label and the border by it. A role that has no colour of its own unfolds the backing into the surface — and
+  the label taken from the backing lies onto itself.
 
-## Что не входит
+## What is out of scope
 
-- **Первый кит и его оформление:** ни его токены, ни его проверки не трогаются. Девять имён,
-  которые объявляют оба кита, приняты списком: новое совпадение проверка отбивает.
-- **Переезд на чужую библиотеку тем:** устройство чужого кита взято образцом раскладки, а
-  зависимостью не становится — ни библиотека тем, ни её формат пресетов в кит не едут.
-- **Разбор накопленных литералов сплошным обходом:** заменён списком принятого. Течь закрывается
-  в первый день, а уборка идёт фоном.
-- **Настройка оформления кодом — провайдер и объект настроек над ролями в стилях:** отвергнута;
-  кит настраивается своими свойствами компонента, точечным переопределением.
-- **Совместимость имён токенов с выпущенной редакцией:** имена снимаются и переименовываются
-  свободно, пока потребительский код один. Слой алиасов не заводится; со вторым потребителем тот
-  же перенос станет ломающим изменением с запиской о переходе.
-- **Свойства компонента как выход источника:** третий слой живёт в стилях своего компонента
-  рядом со своими правилами и источником не собирается.
+- **The first kit and its design:** neither its tokens nor its checks are touched. The nine names both kits
+  declare are accepted by a list: a new coincidence is refused by the check.
+- **A move to a foreign library of the themes:** the arrangement of a foreign kit is taken as a sample of the
+  layout and does not become a dependency — neither the library of the themes nor its format of the presets
+  goes into the kit.
+- **The taking apart of the accumulated literals by a solid walk:** replaced by the list of what is accepted.
+  The leak is closed on the first day, and the cleaning goes in the background.
+- **The setting of the design by code — a provider and an object of the settings over the roles in the
+  styles:** rejected; the kit is set by its own properties of a component, by a pinpoint override.
+- **The compatibility of the names of the tokens with the released edition:** the names are lifted and renamed
+  freely while the consumer code is one. A layer of the aliases is not created; with a second consumer the same
+  carrying-over will become a breaking change with a note about the transition.
+- **The properties of a component as an output of the source:** the third layer lives in the styles of its own
+  component next to its own rules and is not put together from the source.
 
-## Контракт
+## Contract
 
-Оформление кит отдаёт одним файлом токенов, собранным из трёх слоёв: шкала, назначения светлой
-темы, переопределения тёмной. Подключается он целиком; отдельного подключения слоёв кит не
-обещает. Имена, из которых он собран, кит отдаёт и кодом — перечнем и типом.
+The design the kit gives out by one file of the tokens put together from three layers: the scale, the
+appointments of the light theme, the overrides of the dark one. It is plugged in whole; a separate plugging in
+of the layers the kit does not promise. The names it is put together from the kit gives out by code as well —
+by a list and by a type.
 
-Тёмная тема включается признаком темы на корне страницы — атрибутом или равнозначным классом.
-Признак ставит служба темы кита; потребитель вправе ставить его сам.
+The dark theme is switched on by the sign of the theme at the root of the page — by the attribute or by the
+class equal to it. The sign is put by the service of the theme of the kit; the consumer has the right to put it
+themselves.
 
-Бренд потребитель задаёт объявлением ступеней бренда после подключения файла токенов. Ничего,
-кроме этих объявлений, от него не требуется: назначения, прозрачные оттенки и кольцо фокуса
-берут цвет оттуда сами, в обеих темах.
+The brand the consumer sets by a declaration of the steps of the brand after the plugging in of the file of the
+tokens. Nothing besides those declarations is demanded of them: the appointments, the transparent shades and the
+ring of the focus take the colour from there themselves, in both themes.
 
-Ручки потребителя — токены, которые кит намеренно не объявляет и читает с запасным значением, —
-перечислены поимённо в документации оформления кита. Всё, чего в этом перечне нет, кит объявляет
-сам.
+The handles of the consumer — the tokens the kit does not declare on purpose and reads with a spare value — are
+listed by name in the documentation of the design of the kit. Everything that is not in that list the kit
+declares itself.
 
-Поверхность проверок оформления — линтер стилей на стилях кита, список принятого рядом с ним,
-проверки графа токенов, полноты тёмной темы, слоя каскада и сверка собранного с источником.
-Каждая отвечает кодом возврата и перечнем мест.
+The surface of the checks of the design is the linter of the styles on the styles of the kit, the list of what is
+accepted next to it, the checks of the graph of the tokens, of the completeness of the dark theme, of the layer
+of the cascade and the checking of what is put together against the source. Each answers with a code of return
+and a list of the places.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: проверки отвечают кодом возврата и перечнем мест, а не именованными кодами.
+Not applicable: the checks answer with a code of return and a list of the places, not with named codes.
 
-## Данные
+## Data
 
-Своего хранилища у оформления нет. Токены — текст трёх файлов стилей, собранных из источника и
-попадающих к потребителю одним файлом; ступени бренда потребитель держит у себя. Выбор темы
-хранит служба темы ключом устройства: набор токенов от места хранения не зависит, он зависит
-только от признака темы на корне страницы.
+The design has no storage of its own. The tokens are the text of three files of styles put together from the
+source and reaching the consumer as one file; the steps of the brand the consumer keeps at home. The choice of the
+theme is kept by the service of the theme by a key of the device: the set of the tokens does not depend on the
+place of the keeping, it depends only on the sign of the theme at the root of the page.
 
-Списки принятого — файлы репозитория рядом со своими проверками. Читаются на каждом прогоне и
-правятся только уменьшением.
+The lists of what is accepted are files of the repository next to their own checks. They are read at every run and
+are edited only by a shrinking.
 
-## Экраны и состояния
+## Screens and states
 
-Своего экрана у оформления нет. Состояния — у проверок.
+The design has no screen of its own. The states are those of the checks.
 
-| состояние                                                    | чем видно                                                   |
-| ------------------------------------------------------------ | ----------------------------------------------------------- |
-| литерал в стилях компонента, которого в списке принятого нет | линтер называет файл, строку и свойство, прогон красный     |
-| литерал, стоящий в списке принятого                          | прогон зелёный, число принятых мест в сводке                |
-| место починено, а запись в списке принятого осталась         | проверка называет запись, которой больше ничего не отвечает |
-| ссылка на токен, который не объявлен и не назван ручкой      | проверка называет имя токена и место ссылки                 |
-| запасное значение у ссылки, которая ручкой не названа        | проверка называет место                                     |
-| цветовое назначение светлой темы без ответа тёмной           | проверка называет имя назначения                            |
-| пометка «цвет общий» у назначения, которое тёмная правит     | проверка называет имя: пометка пережила правку и врёт       |
-| тёмный ответ, объявленный признаком темы в стилях компонента | проверка называет файл                                      |
-| ступень шкалы, переписанная тёмной темой                     | проверка называет имя ступени                               |
-| пара «текст и фон» ниже порога                               | считалка называет оба имени, отношение и тему               |
-| ступень, снятая с употребления, употреблена снова            | проверка называет имя и место                               |
-| опечатка в имени токена в источнике оформления               | сборка красная, собранные файлы не переписаны               |
-| собранный файл правлен руками                                | сверка называет файл и командует пересборкой                |
-| правило кита приехало мимо слоя каскада                      | проверка называет файл                                      |
-| вид компонента поехал                                        | кадр витрины расходится с эталоном, картинка различий       |
+| state                                                                              | what it is visible by                                                               |
+| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| a literal in the styles of a component that is not in the list of what is accepted | the linter names the file, the line and the property, the run is red                |
+| a literal standing in the list of what is accepted                                 | the run is green, the number of the accepted places in the summary                  |
+| the place is fixed, and the record in the list of what is accepted stayed          | the check names the record that nothing answers to any more                         |
+| a reference to a token that is not declared and not named a handle                 | the check names the name of the token and the place of the reference                |
+| a spare value at a reference that is not named a handle                            | the check names the place                                                           |
+| a colour appointment of the light theme without an answer of the dark one          | the check names the name of the appointment                                         |
+| the mark "the colour is common" at an appointment the dark one edits               | the check names the name: the mark outlived the edit and lies                       |
+| a dark answer declared by the sign of the theme in the styles of a component       | the check names the file                                                            |
+| a step of the scale rewritten by the dark theme                                    | the check names the name of the step                                                |
+| a pair "a text and a ground" below the threshold                                   | the counter names both names, the ratio and the theme                               |
+| a step taken out of use is used again                                              | the check names the name and the place                                              |
+| a typo in the name of a token in the source of the design                          | the build is red, the put-together files are not rewritten                          |
+| a put-together file edited by hand                                                 | the checking names the file and commands a rebuild                                  |
+| a rule of the kit arrived past the layer of the cascade                            | the check names the file                                                            |
+| the look of a component went wrong                                                 | the frame of the showcase diverges from the reference, a picture of the differences |
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: токены подписей не несут.
+Not applicable: the tokens carry no labels.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо: набор токенов от ширины окна не зависит; ширину называют сами компоненты своими
-медиазапросами.
+Not applicable: the set of the tokens does not depend on the width of the window; the width is named by the
+components themselves by their own media queries.
 
-### Мультиобъектность
+### Several objects
 
-Дерево держит два кита сразу, и они не делят ни селекторов, ни токенов. Девять имён, которые
-употребляют оба, приняты списком поимённо: новое совпадение проверка отбивает.
+The tree holds two kits at once, and they share neither selectors nor tokens. The nine names both use are accepted
+by a list by name: a new coincidence is refused by the check.
 
-## Решения
+## Decisions
 
-- **Бренд закрывается слоем токенов, а не настройкой из кода.** Слой токенов работает у
-  потребителя, который вовсе не пишет на Angular, и не требует ни провайдера, ни сборки.
-- **Проверка на литералы включается сразу, а накопленное уезжает в список принятого.** Обратный
-  порядок оставляет течь открытой на всё время уборки, а уборка по восьмидесяти семи файлам
-  растягивается непредсказуемо.
-- **Порог контраста считает машина, а не комментарий рядом со ступенью.** Порог один на все пары
-  — 4.5:1. Рукописные подсчёты не пересчитываются при правке значения и стареют молча.
-- **Нейтральный ряд цветности не несёт.** Тон и цветность у него общие, как у всякой палитры, но
-  цветность нулевая: серый остаётся серым в любой ступени. Взятые у одной из ступеней, они
-  красили светлый конец ряда синевой — а на нём стоят сразу три роли: фон поля ввода,
-  приглушённая поверхность и подсветка наведения. Все три разворачивались в одну ступень, и поле
-  ввода читалось насыщенным сине-серым блоком на почти белой странице. У тёмного конца та же
-  цветность незаметна, поэтому промах виден только в светлой теме. Отвергнуто: подобрать светлые
-  ступени вручную — ряд от этого перестаёт быть рядом, и выбрать из него снова нельзя.
+- **The brand is closed by a layer of the tokens, not by a setting from code.** A layer of the tokens works at a
+  consumer who does not write in Angular at all and demands neither a provider nor a build.
+- **The check for the literals is switched on at once, and what was accumulated goes away into the list of what is
+  accepted.** The reverse order leaves the leak open for the whole time of the cleaning, and a cleaning over
+  eighty-seven files stretches unpredictably.
+- **The threshold of the contrast is counted by a machine, not by a comment next to a step.** The threshold is one
+  for all the pairs — 4.5:1. Hand-written countings are not recounted at an edit of a value and grow stale silently.
+- **The neutral row carries no chroma.** Its tone and chroma are common, as at any palette, but the chroma is zero:
+  the grey stays grey at any step. Taken from one of the steps, they painted the light end of the row with blueness
+  — and on it stand three roles at once: the ground of a field of input, a muted surface and the highlight of a
+  hovering. All three unfolded into one step, and the field of input read as a saturated blue-grey block on an
+  almost white page. At the dark end the same chroma is not noticeable, so the miss is visible only in the light
+  theme. Rejected: to pick the light steps by hand — the row then stops being a row, and nothing can be chosen from
+  it again.
 
-- **Роль, которой ровный ряд не даёт ступени, закрывается прозрачным оттенком, а не правкой
-  шага.** Приглушённая поверхность и подсветка наведения лежат в полосе светлоты шириной 0.06 у
-  самого светлого конца, а шаг ровного ряда из одиннадцати ступеней — 0.0785: столько ступеней в
-  такую полосу не помещается. Оттенок над поверхностью даёт нужное значение и не трогает ряд.
-  Отвергнуто: сдвинуть шаг ради светлого конца — тогда тёмный конец перестаёт доходить до почти
-  чёрного.
+- **A role the even row gives no step to is closed by a transparent shade, not by an edit of the step.** The muted
+  surface and the highlight of the hovering lie in a band of the lightness 0.06 wide at the very light end, while
+  the step of an even row of eleven steps is 0.0785: that many steps do not fit into such a band. A shade over the
+  surface gives the needed value and does not touch the row. Rejected: to move the step for the sake of the light
+  end — then the dark end stops reaching the almost black.
 
-- **Ряд линейки считается, а не переносится с сегодняшних значений.** Светлота идёт ровными
-  шагами, тон и цветность взяты у цвета марки, сама марка стоит ступенью 500. Отвергнуто:
-  перенести прежние значения в новые имена — дешевле и не двигает ни пикселя, но закрепляет в
-  новой линейке ту же сборную солянку. Решение владельца: система важнее неподвижности кадров.
-- **Прозрачный оттенок записывается смешением с прозрачностью.** Форма одна на весь кит: проверка
-  контраста разбирает записанное значение, и вторая форма для неё — неразобранный цвет, то есть
-  пара, молча выпавшая из замера.
-- **Подложка обвязки цветом марки не красится.** Шапка и боковая навигация стоят на тёмной синеве,
-  и перекрасивший бренд не ждёт, что вместе с кнопкой сменится подложка шапки.
-- **Кольцо фокуса разобрано на цвет, толщину и смещение.** Составное значение с зашитой толщиной
-  не давало изменить толщину, не переписав тень в обеих темах.
-- **Полнота тёмной темы проверяется машиной.** Это сверка двух списков имён, а не суждение о
-  цвете: у неё нет спорных находок.
-- **Слой каскада вокруг стилей кита заведён после свойств компонента.** Слой меняет вид у
-  потребителя молча, без отказа сборки, и кадры витрины этого не поймают — чужих переопределений
-  в витрине нет. Поэтому он пошёл после того, как у потребителя появилось, чем настраивать
-  вместо перебивания.
-- **Источник оформления заведён последней работой линии, а не первой.** Решение владельца.
-  Генератор, написанный до уборки, закрепил бы кодом ту россыпь, ради разбора которой работа
-  затевалась; написанный после — снимает рукописный слой, в котором опечатка в имени ловится
-  глазами на витрине.
-- **Источником стал узловой модуль рядом со стилями, а не JSON и не типизированный модуль.**
-  JSON не держит комментариев, а ряды считаны в OKLCH и объясняются прозой; типизированный
-  модуль потянул бы в обвязку запускатель, которого у проверок дерева нет. Решение владельца.
-- **Собранное остаётся в репозитории под сверкой.** Витрина, среда разработки и все проверки
-  оформления читают файлы стилей с диска; снять их с диска значит переписать проверки заодно.
-  Правку в обход источника отбивает сверка.
-- **Вид кита сохраняется, и каждое исключение называется заранее.** Названо девять мест — от
-  отключённой кнопки до роли сведения, разведённой с маркой. Любое расхождение кадров, не
-  подведённое ни под одно из них, читается дефектом правки.
+- **The row of the line is counted, it is not carried over from today's values.** The lightness goes by even steps,
+  the tone and the chroma are taken from the colour of the mark, the mark itself stands as the step 500. Rejected:
+  to carry the former values over into the new names — it is cheaper and moves not a pixel, but nails down in the
+  new line the same hotchpotch. A decision of the owner: the system is more important than the immobility of the
+  frames.
+- **A transparent shade is written down by a mixing with a transparency.** The form is one for the whole kit: the
+  check of the contrast takes apart the written value, and a second form is for it an unparsed colour, that is, a
+  pair that silently fell out of the measurement.
+- **The backing of the harness is not painted by the colour of the mark.** The header and the side navigation stand
+  on a dark blueness, and whoever repainted the brand does not expect the backing of the header to change together
+  with the button.
+- **The ring of the focus is taken apart into the colour, the thickness and the offset.** A composite value with a
+  sewn-in thickness gave no way to change the thickness without rewriting the shadow in both themes.
+- **The completeness of the dark theme is checked by a machine.** It is a checking of two lists of names, not a
+  judgement about a colour: it has no disputable findings.
+- **The layer of the cascade around the styles of the kit was created after the properties of a component.** A layer
+  changes the look at a consumer silently, without a refusal of the build, and the frames of the showcase will not
+  catch that — there are no foreign overrides in the showcase. So it went after the consumer had got something to
+  set by instead of overriding.
+- **The source of the design was created by the last work of the line, not by the first.** A decision of the owner.
+  A generator written before the cleaning would have nailed down by code the very scattering for the sake of the
+  taking apart of which the work was begun; written after, it lifts the hand-written layer in which a typo in a name
+  is caught by the eyes on the showcase.
+- **The source became a node module next to the styles, not a JSON and not a typed module.** A JSON holds no
+  comments, and the rows are counted in OKLCH and explained by prose; a typed module would pull into the harness a
+  runner the checks of the tree have none of. A decision of the owner.
+- **What is put together stays in the repository under the checking.** The showcase, the environment of the
+  development and all the checks of the design read the files of the styles from the disk; to take them off the disk
+  means to rewrite the checks along with it. An edit past the source is refused by the checking.
+- **The look of the kit is kept, and every exception is named in advance.** Nine places are named — from a
+  switched-off button to the role of a detail set apart from the mark. Any divergence of the frames not brought
+  under one of them reads as a defect of the edit.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом.
+The open questions of the domain are shared, and they live in the spec next to it.
 
-## Замеры
+## Measurements
 
-Сняты 2026-08-13, после того как эпик по оформлению закрылся. Числа воспроизводятся командами из
-`implementation.md` рядом и прогонами проверок оформления.
+Taken 2026-08-13, after the epic on the design had closed. The numbers are reproduced by the commands from
+`implementation.md` next to it and by the runs of the checks of the design.
 
-| что                                                | значение |
-| -------------------------------------------------- | -------- |
-| файлов стилей у компонентов                        | 87       |
-| из них объявляют свои свойства компонента          | 61       |
-| пиксельных чисел в них, вне медиазапросов          | 193      |
-| литералов цвета в них                              | 3        |
-| обходов чужой вёрстки в них                        | 1        |
-| ступеней шкалы в источнике                         | 163      |
-| назначений светлой темы в источнике                | 213      |
-| ответов тёмной темы в источнике                    | 62       |
-| из них к своему светлому назначению                | 61       |
-| имён объявлено всего                               | 590      |
-| ручек потребителя                                  | 11       |
-| имён, употребляемых обоими китами, принято списком | 9        |
-| цветовых назначений светлой темы                   | 119      |
-| из них отвечено переопределением                   | 58       |
-| отвечено через цепочку ссылок                      | 17       |
-| помечено общими для обеих тем                      | 44       |
-| принято списком                                    | 0        |
-| тёмных ответов мимо слоя оформления, принято       | 6        |
-| пар «текст и фон» в перечне                        | 49       |
-| эталонных снимков витрины                          | 447      |
+| what                                                | value |
+| --------------------------------------------------- | ----- |
+| files of styles at the components                   | 87    |
+| of them declare their own properties of a component | 61    |
+| pixel numbers in them, outside the media queries    | 193   |
+| literals of a colour in them                        | 3     |
+| walks of a foreign layout in them                   | 1     |
+| steps of the scale in the source                    | 163   |
+| appointments of the light theme in the source       | 213   |
+| answers of the dark theme in the source             | 62    |
+| of them to their own light appointment              | 61    |
+| names declared in all                               | 590   |
+| handles of the consumer                             | 11    |
+| names used by both kits, accepted by a list         | 9     |
+| colour appointments of the light theme              | 119   |
+| of them answered by an override                     | 58    |
+| answered through a chain of references              | 17    |
+| marked as common to both themes                     | 44    |
+| accepted by a list                                  | 0     |
+| dark answers past the layer of the design, accepted | 6     |
+| pairs "a text and a ground" in the list             | 49    |
+| reference snapshots of the showcase                 | 447   |
 
-## История изменений
+## History of changes
 
-- 2026-08-17 — поддомен выделен из спека домена, переросшего предел длины. Правила, сценарии и
-  привязки оформления переехали сюда прежними: номера сценариев не пересчитывались.
+- 2026-08-17 — the subdomain was split out of the spec of the domain, which had outgrown the length limit. The
+  rules, the scenarios and the bindings of the design moved here as they were: the scenario numbers were not
+  recounted.

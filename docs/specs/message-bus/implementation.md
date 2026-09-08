@@ -1,9 +1,9 @@
-# message-bus — где исполняются правила
+# message-bus — where the rules are carried out
 
-Предметных правил у домена больше нет: они живут в поддоменах, и привязки лежат рядом с ними —
-`intake/implementation.md`, `admin/implementation.md`, `node/implementation.md`,
+The domain has no subject rules of its own any more: they live in the subdomains, and the bindings
+lie next to them — `intake/implementation.md`, `admin/implementation.md`, `node/implementation.md`,
 `journal/implementation.md`.
 
-Своё у домена одно — то, чем держится само деление.
+The domain has one thing of its own — what the division itself is held by.
 
-- **Префикс сценариев принадлежит домену вместе с поддоменами.** — `tools/check-specs.mjs:prefixOwners`
+- **The scenario prefix belongs to the domain together with its subdomains.** — `tools/check-specs.mjs:prefixOwners`

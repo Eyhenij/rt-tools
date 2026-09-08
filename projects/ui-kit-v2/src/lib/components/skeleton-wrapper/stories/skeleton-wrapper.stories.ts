@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtSkeletonWrapperComponent } from './component/test-skeleton-wrapper.component';
 
 export default {
-    title: 'Molecules/SkeletonWrapper',
+    title: 'Molecules/Feedback/SkeletonWrapper',
     component: TestRtSkeletonWrapperComponent,
     argTypes: {
         width: { control: { type: 'text' } },

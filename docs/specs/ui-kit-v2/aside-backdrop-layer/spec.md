@@ -1,97 +1,100 @@
-# Подложка панели и слои оформления
+# The backing of a panel and the layers of the design
 
-**Статус:** действует · **Ревизия:** 2026-09-05 · **Префикс сценариев:** `SC-UKV`
-**Зависимости:** правая панель каркаса и её постоянный оверлей; слои оформления кита
-**Законы:** `frontend-application`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-09-05 · **Scenario prefix:** `SC-UKV`
+**Depends on:** the right panel of the frame and its permanent overlay; the layers of the design of the kit
+**Laws:** `frontend-application`
+**Procedures:** none
 
-## Зачем
+## Why
 
-Каркас держит правую панель постоянным оверлеем: он создаётся, как только приложение объявило
-шаблон панели, и стоит закрытым, пока панель не открыли. Подложка такого оверлея обязана быть
-невидимой и не ловить нажатий — иначе она накрывает экран целиком, и приложение перестаёт
-отвечать на нажатия, ничем этого не показывая.
+The frame holds the right panel as a permanent overlay: it is created as soon as the application has
+declared the template of the panel, and stands closed until the panel is opened. The backing of such
+an overlay is obliged to be invisible and to catch no presses — otherwise it covers the screen whole,
+and the application stops answering presses without showing that by anything.
 
-Правила подложки лежат в слое оформления кита, а правила библиотеки оверлеев — вне слоя. Правило
-вне слоя сильнее любого слоевого, и порядок слоёв этого не меняет: у потребителя, который стили
-кита берёт слоями, подложка закрытой панели остаётся видимой и перехватывает нажатия.
+The rules of the backing lie in the layer of the design of the kit, and the rules of the library of
+the overlays lie outside the layer. A rule outside a layer is stronger than any layered one, and the
+order of the layers does not change that: at a consumer that takes the styles of the kit by layers,
+the backing of a closed panel stays visible and intercepts the presses.
 
-## Терминология
+## Terminology
 
-- **Подложка** — узел, который библиотека оверлеев кладёт под панель на весь экран.
-- **Постоянный оверлей** — оверлей, созданный вместе с объявлением шаблона панели и стоящий
-  закрытым, пока панель не открыта.
-- **Правило видимости** — то, что решает, видна ли подложка и ловит ли она нажатия.
-- **Правило оформления** — цвет, размытие и длительность перехода подложки.
+- **The backing** — the node the library of the overlays puts under the panel over the whole screen.
+- **A permanent overlay** — an overlay created together with the declaration of the template of the
+  panel and standing closed until the panel is opened.
+- **The rule of the visibility** — what decides whether the backing is visible and whether it catches
+  the presses.
+- **A rule of the design** — the colour, the blur and the length of the transition of the backing.
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Ничего своего на экране не появляется: речь о том, что закрытая панель не мешает работать со
-страницей.
+Nothing of its own appears on the screen: the matter is that a closed panel does not hinder the work
+with the page.
 
-## Правила
+## Rules
 
-- **Правило видимости подложки объявляется вне слоя.** Слоевое правило проигрывает неслоевому
-  независимо от специфичности, и подложка закрытой панели остаётся видимой у любого потребителя,
-  который берёт стили кита слоями.
-- **Правило видимости закрытой панели объявляется там же и по той же причине.** Панель шириной
-  во весь экран перекрывает страницу, пока её сдвиг не досчитан.
-- **Правила оформления остаются в слое.** Цвет, размытие и переход приложение переопределяет
-  своими правилами, и слой для этого и заведён.
+- **The rule of the visibility of the backing is declared outside the layer.** A layered rule loses to
+  a non-layered one regardless of the specificity, and the backing of a closed panel stays visible at
+  any consumer that takes the styles of the kit by layers.
+- **The rule of the visibility of a closed panel is declared there too and for the same reason.** A
+  panel as wide as the whole screen covers the page until its shift is counted out.
+- **The rules of the design stay in the layer.** The colour, the blur and the transition are overridden
+  by the application with its own rules, and the layer was created for exactly that.
 
-## Что не входит
+## What is out of scope
 
-Создание оверлея вместе с объявлением шаблона панели не меняется: он остаётся постоянным.
+The creating of the overlay together with the declaration of the template of the panel does not
+change: it stays permanent.
 
-## Контракт
+## Contract
 
-Не применимо: сетевых вызовов у панели нет.
+Not applicable: the panel has no calls of the network.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо.
+Not applicable.
 
-## Данные
+## Data
 
-Не применимо.
+Not applicable.
 
-## Экраны и состояния
+## Screens and states
 
-| Состояние панели | Подложка                                |
-| ---------------- | --------------------------------------- |
-| закрыта          | невидима, нажатий не ловит              |
-| открыта          | видима, нажатие по ней закрывает панель |
+| The state of the panel | The backing                             |
+| ---------------------- | --------------------------------------- |
+| closed                 | invisible, catches no presses           |
+| open                   | visible, a press on it closes the panel |
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: текста у подложки нет.
+Not applicable: the backing has no text.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-На узком экране панель занимает ширину экрана целиком, и правило видимости закрытой панели
-особенно важно: до конца сдвига она перекрывает страницу.
+On a narrow screen the panel takes the width of the screen whole, and the rule of the visibility of a
+closed panel is especially important there: until the end of the shift it covers the page.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо.
+Not applicable.
 
-## Решения
+## Decisions
 
-- **Выносятся ровно два правила, а не файл целиком.** Оформление в слое — то, ради чего слой
-  заведён: приложение переопределяет цвет и размытие своими правилами. Вынести всё значило бы
-  отобрать у приложения эту возможность.
+- **Exactly two rules are taken out, not the file whole.** The design in the layer is what the layer
+  was created for: the application overrides the colour and the blur by its own rules. To take
+  everything out would mean taking that possibility away from the application.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-UKV-1` — нужен ли слой самой библиотеке оверлеев. Решает владелец: правки чужого пакета
-  здесь не делается.
+- `Q-UKV-1` — whether the library of the overlays itself needs a layer. It is decided by the owner: an
+  edit of a foreign package is not made here.
 
-## История изменений
+## History of changes
 
-- 2026-09-05 — договорённость записана по задаче RT-1771.
+- 2026-09-05 — the agreement was written down by the task RT-1771.

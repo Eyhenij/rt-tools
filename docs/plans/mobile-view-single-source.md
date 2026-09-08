@@ -1,56 +1,59 @@
-# Узкий экран решается в одном месте
+# The narrow screen is decided in one place
 
-## Контекст
+## The context
 
-Кит спрашивал про узкий экран приложение: обязательный вход `isMobile` был у полутора десятков
-компонентов и передавался вниз по дереву от одного к другому. Приложение при этом мерило ширину
-как умело, кит своего мнения не имел, и достаточно было одного забытого `[isMobile]` в середине
-дерева, чтобы половина таблицы считала экран широким, а половина — узким.
+The kit asked the application about the narrow screen: a mandatory input `isMobile` stood at a dozen
+and a half components and was passed down the tree from one to another. The application at that
+measured the width as it could, the kit had no opinion of its own, and one forgotten `[isMobile]` in
+the middle of the tree was enough for half of a table to count the screen wide and half — narrow.
 
-Второй источник — стили. Часть мобильного вида уже жила в медиа-запросах по `$device-*`, часть
-ставилась модификатором из шаблона по тому же входу. Пороги совпадали случайно, а не по
-договорённости: медиа-запрос смотрел на свой, приложение — на что хотело.
+The second source is the styles. A part of the mobile look already lived in media queries by
+`$device-*`, a part was put by a modifier from the template by the same input. The thresholds
+coincided by accident, not by an agreement: the media query looked at its own, the application at
+whatever it wanted.
 
-Задача #120.
+The task #120.
 
-## Принятые решения
+## The accepted decisions
 
-1. **Признак узкого экрана даёт кит, а не приложение.** Меряет `BreakpointService` из
-   `@rt-tools/core` — служба, которая в дереве уже была и уже использовалась. Её порог,
-   `max-width: 599px`, совпадает с `media-breakpoint-down(vars.$device-xs)`.
-2. **Вход `isMobile` остаётся, но необязательным и снятым с употребления.** Переданное
-   приложением значение главнее замера: приложение, которое рисует кит в узкой панели на широком
-   экране, продолжает работать. Отвергнуто: снять вход сразу — так потребитель ломается без
-   перехода. Переход кончился задачей RT-302: вход снят, и раздел «Вход снят» ниже говорит, что
-   это значит для потребителя.
-3. **Вид решает CSS, поведение — служба.** Размер, отступ и раскладка объявляются
-   медиа-запросом; за условием в шаблоне остаётся то, чего CSS не делает: другая ветка дерева,
-   отключённая подсказка, другой обработчик.
+1. **The sign of a narrow screen is given by the kit, not by the application.** It is measured by
+   `BreakpointService` from `@rt-tools/core` — a service that was already in the tree and was already
+   used. Its threshold, `max-width: 599px`, coincides with `media-breakpoint-down(vars.$device-xs)`.
+2. **The input `isMobile` stays, but not mandatory and taken out of use.** A value passed by the
+   application is above the measurement: an application that draws the kit in a narrow panel on a wide
+   screen goes on working. Rejected: to remove the input at once — that way the consumer breaks
+   without a transition. The transition ended by the task RT-302: the input is removed, and the
+   section "The input is removed" below says what that means for the consumer.
+3. **The look is decided by CSS, the behaviour by the service.** The size, the padding and the layout
+   are declared by a media query; to the condition in the template is left what CSS does not do:
+   another branch of the tree, a switched-off hint, another handler.
 
-## Что считается сделанным
+## What counts as done
 
-- Ни один компонент кита не передаёт признак узкого экрана другому компоненту кита.
-- Размеры и раскладка узкого экрана не зависят от того, дало приложение вход или нет.
-- Договорённость записана правилом `styling-bem`, раздел «Узкий экран».
+- Not a single component of the kit passes the sign of a narrow screen to another component of the
+  kit.
+- The sizes and the layout of the narrow screen do not depend on whether the application gave the
+  input or not.
+- The agreement is written by the rule `styling-bem`, the section "The narrow screen".
 
 ---
 
-## Устройство
+## The device
 
-В компоненте:
+In a component:
 
 ```typescript
 readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
-/** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+/** The screen is narrow: the value of the input if the application gave it, otherwise the measurement of the kit. */
 protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
 ```
 
-Служба объявлена без корневой области, поэтому каждый внедряющий её компонент называет её в
-своих `providers`. Пропуск не видят ни сборка, ни типы, ни спеки — только отрисовка, падающая
-с `NG0201`.
+The service is declared without a root area, so every component injecting it names it in its own
+`providers`. The skip is seen neither by the build, nor by the types, nor by the specs — only by the
+drawing, which falls with `NG0201`.
 
-В стилях порог тот же, но записан мимо кода:
+In the styles the threshold is the same, but written past the code:
 
 ```scss
 @include mixins.media-breakpoint-down(vars.$device-xs) {
@@ -58,25 +61,25 @@ protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !
 }
 ```
 
-Правило, которое действует только на широком экране, объявляется запросом вверх
-(`media-breakpoint-up`), а не отменяется вторым правилом вниз: отмена оставляет в файле два
-места, где решается один вопрос.
+A rule acting only on a wide screen is declared by a query upward (`media-breakpoint-up`), not
+cancelled by a second rule downward: the cancelling leaves in the file two places where one question
+is decided.
 
-## Что поменялось у потребителя
+## What changed at the consumer
 
-- **`[isMobile]` больше не обязателен.** Приложение, которое его передавало, ничего не теряет.
-- **Кнопка копирования в ячейке таблицы** показывается на узком экране медиа-запросом, а не
-  модификатором из шаблона.
-- **Перенос пагинации в столбец** остался ответом на нехватку ширины под полный список страниц и
-  на узкий экран не распространяется — там списка нет вовсе.
-- **Три пользовательских свойства пагинации переименованы**: `-container-mobile-gap`,
-  `-paging-mobile-margin` и `-size-toggle-selector-mobile-margin` стали `-container-clipped-gap`,
-  `-paging-clipped-margin` и `-size-toggle-selector-clipped-margin`. Имена лгали: правила под
-  ними действуют выше мобильного порога, а не ниже.
-- **`RtuiTableComponent` и `RtuiDynamicListComponent` отдают наружу `narrow` вместо
-  `isMobile`** — это же имя стоит в договоре `ITableComponent`.
+- **`[isMobile]` is no longer mandatory.** An application that passed it loses nothing.
+- **The button of the copying in a cell of a table** is shown on a narrow screen by a media query, not
+  by a modifier from the template.
+- **The moving of the pagination into a column** stayed an answer to the lack of width under the full
+  list of the pages and does not spread to the narrow screen — there is no list there at all.
+- **Three user properties of the pagination are renamed**: `-container-mobile-gap`,
+  `-paging-mobile-margin` and `-size-toggle-selector-mobile-margin` became `-container-clipped-gap`,
+  `-paging-clipped-margin` and `-size-toggle-selector-clipped-margin`. The names lied: the rules under
+  them act above the mobile threshold, not below it.
+- **`RtuiTableComponent` and `RtuiDynamicListComponent` give outward `narrow` instead of `isMobile`**
+  — the same name stands in the contract `ITableComponent`.
 
-## Проверка
+## The check
 
 ```bash
 pnpm exec nx run-many -t lint typecheck test build --all --parallel
@@ -84,20 +87,24 @@ pnpm run lint:styles
 pnpm run test:visual
 ```
 
-Снимки витрины сняты на широком экране и про узкий не говорят ничего: окно браузера на macOS
-не сужается ниже 606px, и порог `599px` через него не достаётся. Узкий вид меряется драйвером
-витрины — приём записан в `.claude/skills/browser-verification/implementation.md`.
+The snapshots of the showcase are taken on a wide screen and say nothing about the narrow one: the
+window of the browser on macOS does not narrow below 606px, and the threshold `599px` is not reached
+through it. The narrow look is measured by the driver of the showcase — the technique is written in
+`.claude/skills/browser-verification/implementation.md`.
 
-## Вход снят
+## The input is removed
 
-Переходный вход прожил от задачи #120 до RT-302 и снят в крупном выпуске кита. Отдельной работой,
-а не тем же ходом, — потому что снятие ломает публичный договор семнадцати компонентов, и цена
-его выяснялась после того, как замер кита показал себя рабочим.
+The transitional input lived from the task #120 to RT-302 and is removed in a major release of the
+kit. By a work of its own, not by the same turn — because the removal breaks the public contract of
+seventeen components, and its price was found out after the measurement of the kit showed itself
+working.
 
-- **`narrow` читает только службу.** Перекрытия входом больше нет, и полосы ширин, где кит и
-  приложение считают экран по-разному, тоже.
-- **Мобильные истории витрины показывают узкий вид рамкой кадра.** Вход был единственным способом
-  показать его на широком окне; теперь узкий вид даёт сама ширина окна показа — рамка объявлена
-  в настройке показа именем `narrow` и берётся заведомо уже порога.
-- **Узкая панель на широком экране китом по-прежнему не различается.** Довод, которым вход
-  оставляли, никуда не делся; закрывают его контейнерные запросы, а не второй источник признака.
+- **`narrow` reads only the service.** There is no overriding by the input any more, and no bands of
+  widths where the kit and the application count the screen differently.
+- **The mobile stories of the showcase show the narrow look by the frame of the shot.** The input was
+  the only way to show it on a wide window; now the narrow look is given by the width of the window of
+  the show itself — the frame is declared in the setting of the show by the name `narrow` and is taken
+  knowingly narrower than the threshold.
+- **A narrow panel on a wide screen is still not told apart by the kit.** The argument the input was
+  left by has not gone anywhere; it is closed by container queries, not by a second source of the
+  sign.

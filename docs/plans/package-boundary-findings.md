@@ -1,26 +1,27 @@
-# Находки о слое правил — эпик границы пакета
+# The findings about the rules layer — the epic of the boundary of the package
 
-Замысел эпика уехал в описание прошлого и отстоял там свой срок: запись снята, а найти её можно
-в истории по имени задачи RT-1011. Находки остались здесь — читают их отдельно и после.
+The plan of the epic left for the description of the past and stood out its term there: the record
+is removed, and it can be found in the history by the name of the task RT-1011. The findings stayed
+here — they are read apart and after.
 
-## Разобрано 29 августа 2026 года задачей RT-1567
+## Taken apart on 29 August 2026 by the task RT-1567
 
-Семь пунктов задач RT-1015 и RT-1016 сведены с нынешними ресурсами пакета. Закрытыми оказались
-пять, и они сняты отсюда:
+Seven items of the tasks RT-1015 and RT-1016 were reconciled with the present resources of the
+package. Five turned out closed, and they are removed from here:
 
-| Пункт                                                | Чем закрыт                                                                                          |
-| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| гард судит пути из тела записываемого документа      | выемка путей отбрасывает тела документов; тело интерпретатора остаётся при своей команде            |
-| кэш сборки роняет гейт словами о неначатой раскладке | обе команды раскладки зовут чистую сборку — снос каталога и сборка мимо кэша                        |
-| хук форматирования правит чужие файлы                | состав индекса читается до коммита, а не после: `git diff --cached --stat` стоит в паттерне         |
-| снимок первого кита краснеет непостоянно             | ловушки правила проверки компонента: редкое расхождение видно серией, улика складывается вне дерева |
-| номера сценариев невлитой договорённости не видны    | свободный номер сценария ищется во всех ветках — задача RT-1205                                     |
+| Item                                                                             | What it is closed by                                                                                                                             |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| the guard judges the paths from the body of the document being written           | the taking out of the paths throws away the bodies of documents; the body of the interpreter stays at its own command                            |
+| the cache of the build fells the gate by words about a layout that was not begun | both commands of the layout call a clean build — the removal of the directory and a build past the cache                                         |
+| the hook of the formatting edits foreign files                                   | the composition of the index is read before the commit, not after: `git diff --cached --stat` stands in the pattern                              |
+| the snapshot of the first kit turns red unsteadily                               | the pitfalls of the rule of the checking of a component: a rare divergence is visible by a series, the evidence is put together outside the tree |
+| the numbers of the scenarios of an unmerged agreement are not visible            | a free number of a scenario is looked for across all the branches — the task RT-1205                                                             |
 
-Два внесены правкой ресурсов той же задачей:
+Two were brought in by an edit of the resources by the same task:
 
-| Пункт                                            | Куда легло                                                                             |
-| ------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| ожидание конца прогона обманывает кодом возврата | статья в паттерне заявки: итог прогона читается отдельным вызовом, а не кодом ожидания |
-| признак этапа обещает пустоту всего вывода       | ловушка правила ведения работы: признак пишется о своей половине вывода                |
+| Item                                                                | Where it landed                                                                                                               |
+| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| the waiting for the end of a run deceives by the code of the return | an article in the pattern of the request: the outcome of the run is read by a call of its own, not by the code of the waiting |
+| a sign of a stage promises the emptiness of the whole output        | a pitfall of the rule of the conduct of the work: a sign is written about its own half of the output                          |
 
-Неразобранного по этому эпику не осталось.
+Nothing unsorted is left by this epic.

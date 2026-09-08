@@ -1,407 +1,438 @@
-# Приём груза
+# The intake of the cargo
 
-**Статус:** действует · **Ревизия:** 2026-08-19 · **Префикс сценариев:** `SC-MB`
-**Зависимости:** `agent-kit` (что дерево о себе знает и что уезжает наружу)
-**Законы:** `verifiability`, `code-structure`, `lib-imports`, `entity-models`
-**Процедуры:** нет — операции объявлены контроллерами приёмника
+**Status:** in force · **Revision:** 2026-08-19 · **Scenario prefix:** `SC-MB`
+**Depends on:** `agent-kit` (what a tree knows about itself and what goes outward)
+**Laws:** `verifiability`, `code-structure`, `lib-imports`, `entity-models`
+**Procedures:** none — the operations are declared by the controllers of the intake
 
-Поддомен домена «приёмник груза»: чем приёмник принимает груз с деревьев и что делает с
-недоехавшим. Общее — терминология домена, сквозные требования и решения — лежит в спеке домена
-рядом.
+A subdomain of the domain "the intake of the cargo": what the intake takes the cargo from the trees in
+by and what it does with what did not arrive. What is shared — the terminology of the domain, the
+cross-cutting requirements and the decisions — lies in the spec of the domain next to it.
 
-## Зачем
+## Why
 
-Пакет правил стоит в нескольких деревьях, и то, чем в нём пользуются, известно только каждому
-дереву про себя. Груз уезжает прогоном отправки: сводка со снимком надстроек, предложения,
-разборы происшествий. Ехать ему было некуда — эта половина службы называет, куда именно.
+The rules package stands in several trees, and what is used in it is known only to every tree about
+itself. The cargo goes away by a run of the sending: a digest with a snapshot of the overrides,
+proposals, incident analyses. There was nowhere for it to go — this half of the service names where
+exactly.
 
-Здесь: что приёмник принимает, чем отличает одно дерево от другого, что делает с повторной
-отправкой и где обязан отказать вместо молчания.
+Here: what the intake takes in, what it tells one tree from another by, what it does with a repeated
+sending and where it is obliged to refuse instead of staying silent.
 
-## Терминология
+## Terminology
 
-Словарь домена целиком — в спеке рядом. Здесь только то, что живёт в приёме:
+The vocabulary of the domain whole is in the spec next to it. Here only what lives in the intake:
 
-| Термин             | Что это                                                                                            |
-| ------------------ | -------------------------------------------------------------------------------------------------- |
-| Груз               | То, что уезжает прогоном отправки: сводка со снимком надстроек, предложения, разборы происшествий  |
-| Род груза          | Одно из трёх: сводка, предложение, разбор происшествия. У каждого своя операция приёма             |
-| Дерево             | Запись о репозитории, от которого приезжает груз. Деревья различаются признаком, а не адресом      |
-| Токен дерева       | То, чем дерево представляется приёмнику. Приёмник держит только хеш; сам токен печатается один раз |
-| Запись месяца      | Свод одного дерева за один календарный месяц. Одна на пару «дерево — месяц»                        |
-| Прогон             | Одна отправка с дерева: до трёх запросов подряд, по одному на род груза                            |
-| Версия схемы груза | Номер формата запроса приёма. Меняется, когда меняется состав полей самого груза                   |
-| Запись груза       | Разбор происшествия или предложение. Сводка месяца записью груза в этом смысле не бывает           |
-| Состояние записи   | Шаг, на котором стоит разбор происшествия или предложение: новое, в работе, готово, выпущено       |
-| Сброс состояния    | Возврат записи в «новое» приездом, изменившим её текст                                             |
+| Term                                   | What it is                                                                                                                       |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Cargo                                  | What goes away by a run of the sending: a digest with a snapshot of the overrides, proposals, incident analyses                  |
+| A kind of cargo                        | One of three: a digest, a proposal, an incident analysis. Each has its own operation of the intake                               |
+| A tree                                 | A record about a repository the cargo arrives from. Trees are told apart by a sign, not by an address                            |
+| A token of a tree                      | What a tree introduces itself to the intake by. The intake holds only a hash; the token itself is printed once                   |
+| A record of a month                    | The digest of one tree over one calendar month. One per pair "tree — month"                                                      |
+| A run                                  | One sending from a tree: up to three requests in a row, one per kind of cargo                                                    |
+| The version of the schema of the cargo | The number of the format of the request of the intake. It changes when the composition of the fields of the cargo itself changes |
+| A record of the cargo                  | An incident analysis or a proposal. A digest of a month is never a record of the cargo in this sense                             |
+| The state of a record                  | The step an incident analysis or a proposal stands at: new, in progress, ready, released                                         |
+| A reset of the state                   | The return of a record into "new" by an arrival that changed its text                                                            |
 
-Приглашение и всё, что вокруг него, живёт здесь же: им дерево заводит себя само.
+The invitation and everything around it lives right here: by it a tree creates itself.
 
-| Термин                    | Что это                                                                                                       |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Приглашение               | Одноразовый код, выданный владельцем под одно дерево. Даёт право один раз получить токен и после этого гаснет |
-| Срок годности приглашения | Время, после которого приглашение не принимается, даже если им не пользовались                                |
-| Обращение за токеном      | Чем дерево просит токен: приглашение и признак дерева. Отвечает приём токеном либо отказом                    |
-| Погашенное приглашение    | Приглашение, по которому токен уже выдан. Не удаляется: по нему читается, когда и какое дерево завелось       |
-| Отозванное приглашение    | Приглашение, снятое владельцем до того, как им воспользовались                                                |
+| Term                                  | What it is                                                                                                                  |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| An invitation                         | A one-time code issued by the owner under one tree. It gives the right to get a token once and after that goes out          |
+| The term of validity of an invitation | The time after which the invitation is not accepted, even if it was not used                                                |
+| A request for a token                 | What a tree asks for a token by: the invitation and the sign of the tree. The intake answers with a token or with a refusal |
+| A used-up invitation                  | An invitation a token was already issued by. It is not deleted: by it is read when and which tree was created               |
+| A revoked invitation                  | An invitation taken off by the owner before it was used                                                                     |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-Своего интерфейса у приёма нет: поверхность — операции запроса и команды строки запуска. Что
-человек видит в админке — поддомен чтения принятого.
+The intake has no interface of its own: the surface is the operations of a request and the commands of
+the launch line. What a person gets in the admin application is the subdomain of the reading of what
+was taken in.
 
-## Правила
+## Rules
 
-**Форма груза.**
+**The form of the cargo.**
 
-- **Форма груза объявлена одним местом, и приёмник её не переобъявляет.** Типы едут из общей
-  либы, куда их кладёт эта работа, а пакет-отправитель берёт их оттуда же: своя копия чужого
-  типа расходится с оригиналом молча, а компилируется из них только одна.
-- **Груз каждого рода принимается своей операцией.** Сводка, предложение и разбор устроены
-  по-разному, и общая операция «принять что-нибудь» перекладывала бы разбор формы на приёмник.
-- **Приёмник не разбирает содержимого сводки.** Он проверяет обязательные поля своего рода, а
-  счётчики и снимок надстроек хранит как приехали: разбирает их тот, кто читает, а приёмник,
-  знающий поля наизусть, отказывал бы на каждой правке пакета.
-- **Версия схемы груза обязательна, а версии схемы строк наблюдения — часть содержимого.**
-  Первая говорит, чем разбирать запрос, и без неё приём отказывает; вторые приёмник не судит
-  вовсе.
-- **Груз незнакомой версии схемы принимается и помечается ею.** Отказ терял бы отрезок целиком,
-  а дерево о новой редакции пакета узнаёт не сразу и не всегда.
-- **Груз тяжелее предела не принимается.** Предел объявлен настройкой приёмника: без него
-  запрос произвольного размера кладёт службу на самом малом узле. Вес приехавшего называется
-  тогда, когда запрос объявил его сам, — обрезанное тело своего веса не знает.
+- **The form of the cargo is declared by one place, and the intake does not redeclare it.** The types
+  come from the common lib, where this work puts them, and the sending package takes them from there
+  too: a copy of a foreign type of one's own diverges from the original silently, while only one of
+  them compiles.
+- **Cargo of every kind is taken in by an operation of its own.** A digest, a proposal and an analysis
+  are arranged differently, and a common operation "take something in" would put the taking apart of
+  the form onto the intake.
+- **The intake does not take the content of the digest apart.** It checks the mandatory fields of its
+  kind, and keeps the counters and the snapshot of the overrides as they arrived: they are taken apart
+  by whoever reads, and an intake knowing the fields by heart would refuse at every edit of the
+  package.
+- **The version of the schema of the cargo is mandatory, and the versions of the schema of the rows of
+  the observations are a part of the content.** The first says what to take the request apart by, and
+  without it the intake refuses; the second the intake does not judge at all.
+- **Cargo of an unknown version of the schema is taken in and marked by it.** A refusal would lose the
+  stretch whole, and a tree learns about a new edition of the package not at once and not always.
+- **Cargo heavier than the limit is not taken in.** The limit is declared by a setting of the intake:
+  without it a request of an arbitrary size fells the service on the smallest node. The weight of what
+  arrived is named when the request declared it itself — a cut body does not know its weight.
 
-**Дерево и его токен.**
+**A tree and its token.**
 
-- **Дерево представляется токеном, а приёмник держит только его хеш.** Утёкшая выкатка или
-  снятый дамп базы доступа не дают: по хешу токен не восстанавливается.
-- **Токен печатается один раз, при выдаче.** Второй раз показать его неоткуда; потерянный не
-  восстанавливается, а замещается новым.
-- **У дерева годен один токен: новый замещает прежний, помечая его отозванным.** Иначе список
-  деревьев говорит о состоянии токена в единственном числе, а токенов у дерева несколько.
-- **Отозванный токен перестаёт приниматься сразу.** Дерево узнаёт об этом отказом отправки, а
-  не молчанием: молчаливый приём выброшенного груза выглядит работающей отправкой.
-- **Отозванный токен не удаляется.** Груз, приехавший по нему, остаётся читаемым: удалив
-  токен, приёмник потерял бы и то, кем присланы прежние записи.
-- **Признак дерева называется при заведении, а не берётся из первого груза.** Дерево считает
-  его у себя от адреса своего репозитория; приёмник, узнавший признак из груза, принял бы за
-  своё то, что прислали.
-- **Признак дерева в грузе сверяется с деревом токена.** Иначе дерево дописало бы чужую запись
-  месяца, назвавшись в грузе соседом.
-- **Заведение и отзыв токена дерева операцией запроса не делаются.** Токен дерева зовёт только
-  приём груза; выдавать и отзывать токены — дело команд, которые ходят к хранилищу напрямую.
+- **A tree introduces itself by a token, and the intake holds only its hash.** A leaked rollout or a
+  taken dump of the database gives no access: a token is not restored from a hash.
+- **The token is printed once, at the issuing.** There is nowhere to show it a second time from; a lost
+  one is not restored but replaced by a new one.
+- **A tree has one valid token: a new one replaces the former one, marking it as revoked.** Otherwise
+  the list of the trees speaks about the state of the token in the singular, while a tree has several
+  tokens.
+- **A revoked token stops being accepted at once.** A tree learns of that by a refusal of the sending,
+  not by silence: a silent intake of thrown-away cargo looks like a working sending.
+- **A revoked token is not deleted.** The cargo that arrived by it stays readable: having deleted the
+  token, the intake would lose also who the former records were sent by.
+- **The sign of a tree is named at the creating, it is not taken from the first cargo.** A tree counts
+  it at its own place from the address of its repository; an intake that learned the sign from the
+  cargo would take what was sent for its own.
+- **The sign of the tree in the cargo is checked against the tree of the token.** Otherwise a tree
+  would append to a foreign record of a month, having named itself a neighbour in the cargo.
+- **The creating and the revocation of a token of a tree are not done by an operation of a request.**
+  The token of a tree calls only the intake of the cargo; issuing and revoking the tokens is the
+  business of the commands that go to the storage directly.
 
-**Дерево заводит себя по приглашению.**
+**A tree creates itself by an invitation.**
 
-- **Токен выдаётся только по годному приглашению.** Обращение без приглашения, с погашенным,
-  просроченным или отозванным отвечает одинаково — отказом, не называя, что именно не сошлось.
-  Разница в ответах говорила бы, какие коды заведены.
-- **Приглашение гаснет в той же записи хранилища, которой выпущен токен.** Иначе два обращения,
-  пришедшие разом, получают по токену на одно приглашение: между проверкой и выдачей стоит
-  сеть, и второй запрос успевает пройти проверку до того, как первый погасил код.
-- **Имя дерева задаёт владелец при выдаче приглашения, а не обращение.** Имя — то, чем дерево
-  зовётся в админке и в сводках; принятое из обращения, оно позволяет назваться чужим именем
-  тому, кто добыл код.
-- **Признак дерева, уже заведённый, обращением не перезаводится.** Отказ, а не тихая выдача
-  нового токена: иначе добытый код угоняет существующее дерево вместе с его грузом.
-- **Приглашение годно ограниченное время.** Код, лежащий в переписке месяцами, ничем не
-  отличается от общего секрета установки.
-- **Обращение за токеном — публичная операция, заводящая запись, и закрыто ограничителем
-  частоты.** Права его не сторожат, и без предела скорость роста таблицы задаёт отправитель.
-- **В хранилище лежит только хеш приглашения.** Тем же приёмом, что и токен: снятый дамп не
-  даёт ни одного годного кода.
-- **Токен уходит дереву единственным ответом на обращение.** Второго пути забрать его нет — у
-  приёма его нет тоже.
-- **Обращение идёт только по защищённому соединению.** Пакет отбивает адрес приёма без TLS сам,
-  не доходя до сети; исключение — локальная машина, где приём поднят для проверки.
-- **Ни приглашение, ни токен не попадают в наблюдения и логи.** Пишется, что обращение пришло,
-  чем кончилось и какое дерево завелось, — сами значения вычищаются.
-- **Пакет не перезаписывает уже лежащий токен, не спросив.** Дерево с годным токеном, позвавшее
-  заведение второй раз, теряло бы связь с прежним грузом молча.
-- **Годное приглашение на имя одно, и держит это хранилище.** Два годных приглашения на одно
-  имя означали бы два дерева с одним именем. Держит ограничение отдельная колонка имени,
-  гаснущая в пусто при погашении и отзыве: уникальность пустых значений хранилище не считает, а
-  частичный уникальный индекс схема клиента не объявляет вовсе.
-- **Ссылка на заведённое дерево заполняется в момент погашения.** По ней читается, каким деревом
-  приглашение погашено; у непогашенного её нет.
-- **Приглашение выдают двое — команда узла и операция админки, — и решают они одно и то же.**
-  Свободно ли имя, каким будет код и до какого часа он годен, считает одно место на оба пути:
-  разойдясь, они отличались бы тем, что одному имя занято, а другому нет.
-- **Занятое имя отбивает выдачу целиком.** Занятым считается имя заведённого дерева и имя
-  годного приглашения: два дерева с одним именем ни завестись, ни различиться потом не смогут.
-  Чем именно имя занято, отказ называет — спрашивает вошедший владелец, которому и список
-  приглашений, и список деревьев виден целиком.
-- **Код уходит тому, кто позвал выдачу, и никуда больше.** В хранилище ложится только хеш;
-  печатает код тот, кто позвал, — команда строкой вывода, операция единственным ответом.
+- **A token is issued only by a valid invitation.** A request without an invitation, with a used-up, an
+  expired or a revoked one answers the same way — with a refusal, without naming what exactly did not
+  match. A difference of the answers would tell which codes are created.
+- **The invitation goes out in the same record of the storage the token is released by.** Otherwise two
+  requests that came at once get a token each by one invitation: between the check and the issuing
+  stands the network, and the second request has time to pass the check before the first one put the
+  code out.
+- **The name of the tree is set by the owner at the issuing of the invitation, not by the request.** The
+  name is what the tree is called by in the admin application and in the digests; accepted from the
+  request, it lets whoever obtained the code call themselves by a foreign name.
+- **A sign of a tree that is already created is not recreated by a request.** A refusal, not a silent
+  issuing of a new token: otherwise an obtained code hijacks an existing tree together with its cargo.
+- **An invitation is valid for a limited time.** A code lying in a correspondence for months is no
+  different from a shared secret of the installation.
+- **A request for a token is a public operation creating a record, and it is closed by a limiter of the
+  frequency.** Rights do not guard it, and without a limit the speed of the growth of the table is set
+  by the sender.
+- **Only the hash of the invitation lies in the storage.** By the same technique as the token: a taken
+  dump gives not a single valid code.
+- **The token goes away to the tree by the single answer to the request.** There is no second way to
+  take it — the intake has none either.
+- **The request goes only over a protected connection.** The package refuses an address of the intake
+  without TLS itself, without reaching the network; the exception is the local machine, where the
+  intake is raised for a check.
+- **Neither the invitation nor the token gets into the observations and the logs.** What is written is
+  that the request came, what it ended with and which tree was created — the values themselves are
+  cleaned away.
+- **The package does not overwrite a token that already lies there without asking.** A tree with a valid
+  token that called the creating a second time would lose the link with the former cargo silently.
+- **There is one valid invitation per name, and it is held by the storage.** Two valid invitations on
+  one name would mean two trees with one name. The constraint is held by a separate column of the name,
+  going out into emptiness at the using up and at the revocation: the storage does not count the
+  uniqueness of empty values, and a partial unique index the schema of the client does not declare at
+  all.
+- **The reference to the created tree is filled in at the minute of the using up.** By it is read which
+  tree the invitation was used up by; one not used up has none.
+- **The invitation is issued by two — the command of the node and the operation of the admin application
+  — and they decide one and the same.** Whether the name is free, what the code will be and until which
+  hour it is valid is counted by one place for both ways: having diverged, they would differ in that to
+  one the name is taken and to the other not.
+- **A taken name refuses the issuing whole.** Taken counts the name of a created tree and the name of a
+  valid invitation: two trees with one name will neither be created nor be told apart afterwards. What
+  exactly the name is taken by the refusal names — the asking is done by the owner who entered, to whom
+  both the list of the invitations and the list of the trees is visible whole.
+- **The code goes away to whoever called the issuing, and nowhere else.** Only the hash lands in the
+  storage; the code is printed by whoever called — the command by a line of the output, the operation by
+  the single answer.
 
-**Запись месяца.**
+**The record of a month.**
 
-- **Запись месяца одна на пару «дерево — месяц».** Нашлась — обновляется, не нашлась —
-  заводится. Новая запись на каждый прогон рассыпала бы месячную картину дерева по прогонам.
-- **Сводка последнего прогона замещает прежнюю целиком.** Счётчики, снимок надстроек и
-  невыбранное берутся из последнего прогона: отрезок сводки короче месяца, окна прогонов
-  перекрываются, и сложение завышало бы числа молча, а повтор после обрыва связи — удваивал.
-- **Предложения и разборы происшествий копятся, а не замещаются.** Сводка отвечает на вопрос
-  «как дела сейчас», эти два рода — «что случилось за месяц».
-- **Запись месяца помнит время последнего прогона.** Без него список деревьев не отвечает на
-  вопрос, отчитывается ли дерево вообще, а молчащее дерево неотличимо от исправного.
-- **Месяц берётся по часам приёмника, во всемирном времени.** Деревья стоят в разных поясах, и
-  граница месяца от отправителя кладёт две записи на один месяц; местное время узла переезд
-  узла не переживает.
-- **Наблюдения прошлого месяца, приехавшие первым прогоном нового, ложатся в новый.** Отрезок
-  сводки — несколько последних дней, и первого числа он в основном о прошлом месяце. Резать
-  его приёмник не может: он видит числа, а не строки, из которых те собраны.
-- **Одновременный приезд двух прогонов одного дерева разрешает хранилище, а не проверка
-  чтением.** Проигравший гонку перечитывает запись и обновляет её, а не отказывает: отказ на
-  ожидаемом случае терял бы прогон.
-- **Пара «дерево — месяц» уникальна.** Ограничение хранилища, а не проверка в коде: два прогона
-  из одного дерева приезжают одновременно, и проверка чтением их не разведёт.
+- **A record of a month is one per pair "tree — month".** Found — it is updated, not found — it is
+  created. A new record at every run would scatter the monthly picture of a tree over the runs.
+- **The digest of the last run replaces the former one whole.** The counters, the snapshot of the
+  overrides and what was not chosen are taken from the last run: the stretch of the digest is shorter
+  than a month, the windows of the runs overlap, and adding up would overstate the numbers silently,
+  while a repeat after a break of the connection would double them.
+- **The proposals and the incident analyses pile up, they are not replaced.** The digest answers the
+  question "how are things now", these two kinds "what happened over the month".
+- **A record of a month remembers the time of the last run.** Without it the list of the trees does not
+  answer the question of whether the tree reports at all, and a silent tree is indistinguishable from a
+  sound one.
+- **The month is taken by the clock of the intake, in universal time.** The trees stand in different
+  zones, and a boundary of a month from the sender puts two records onto one month; the local time of
+  the node does not outlive a move of the node.
+- **The observations of the past month that arrived by the first run of the new one land in the new
+  one.** The stretch of the digest is the last few days, and on the first day it is mostly about the
+  past month. The intake cannot cut it: it gets the numbers, not the rows they were gathered from.
+- **The simultaneous arrival of two runs of one tree is resolved by the storage, not by a check by
+  reading.** Whoever lost the race rereads the record and updates it, it does not refuse: a refusal at
+  an expected case would lose a run.
+- **The pair "tree — month" is unique.** A constraint of the storage, not a check in the code: two runs
+  from one tree arrive at once, and a check by reading would not set them apart.
 
-**Что делает приёмник с недоехавшим.**
+**What the intake does with what did not arrive.**
 
-- **Груз, не прошедший проверку формы, отбивается целиком в пределах своей операции.**
-  Межзапросной сделки не бывает: роды едут тремя запросами, и «принято два из трёх» — законное
-  состояние, о котором отправитель говорит владельцу сам.
-- **Все записи одной операции ложатся вместе или не ложатся вовсе.** Пять предложений, из
-  которых упало третье, оставили бы запись месяца в состоянии, которого не было ни до, ни
-  после.
-- **Предложения и разборы, приехавшие раньше сводки, заводят запись месяца сами.** Порядок
-  запросов прогона приёмник не назначает, а отказ «сводки ещё не было» превратил бы порядок в
-  скрытое требование.
-- **Отказ приёмника называет причину дереву, а не подробности своего устройства.** Дерево
-  печатает эту причину владельцу, и «внутренняя ошибка» в ней означает потерянный прогон.
-- **Каждый отказ записывается в журнал приёмника с родом груза и признаком дерева.** Ни токена,
-  ни текста груза там нет: журнал читают, чтобы понять, что сломалось, а не чтобы прочитать
-  чужое.
-- **Приёмник ничего не отдаёт без токена дерева.** Открытых операций у него нет вовсе, кроме
-  пробы живости.
-- **Проба живости отвечает только тогда, когда хранилище отвечает тоже.** Служба считается
-  поднятой, когда она выполнила задание, а не когда сообщила о готовности.
-- **Проба живости не называет ни редакции, ни состава — ни в теле, ни в заголовках ответа.**
-  Всё, кроме ответа «поднята», — подсказка тому, кто ищет вход.
+- **Cargo that did not pass the check of the form is refused whole within its own operation.** There is
+  no cross-request transaction: the kinds go by three requests, and "two out of three taken in" is a
+  lawful state the sender tells the owner about itself.
+- **All the records of one operation land together or do not land at all.** Five proposals of which the
+  third fell would leave the record of a month in a state that was neither before nor after.
+- **The proposals and the analyses that arrived before the digest create the record of a month
+  themselves.** The intake does not appoint the order of the requests of a run, and a refusal "there
+  has been no digest yet" would turn the order into a hidden requirement.
+- **A refusal of the intake names the reason to the tree, not the details of its own workings.** The
+  tree prints that reason to the owner, and an "internal error" in it means a lost run.
+- **Every refusal is written into the journal of the intake with the kind of the cargo and the sign of
+  the tree.** There is neither the token nor the text of the cargo there: the journal is read to
+  understand what broke, not to read what is somebody else's.
+- **The intake gives nothing without a token of a tree.** It has no open operations at all, apart from
+  the probe of liveness.
+- **The probe of liveness answers only when the storage answers too.** A service counts as raised when
+  it has carried its task out, not when it reported readiness.
+- **The probe of liveness names neither the edition nor the composition — neither in the body nor in the
+  headers of the answer.** Everything except the answer "raised" is a hint to whoever is looking for a
+  way in.
 
-**Разборы происшествий и предложения.**
+**The incident analyses and the proposals.**
 
-- **Разбор происшествия приезжает текстом целиком.** Приёмник закрытый и свой; шапка без
-  механизма промаха ничего не объясняет, а правило из разбора выводится по механизму.
-- **Проверка на адрес дерева разбор происшествия не накрывает.** Разбор по устройству называет
-  файлы дерева, где промах случился; накрытая проверка отбивала бы каждую отправку этого рода.
-  Требование стоит к отправителю: проверка живёт у него.
-- **Разбор опознаётся именем своего файла на дереве.** Заголовок правится вместе с текстом, а
-  имя файла переживает правку — по нему повторно приехавший разбор обновляет прежний.
-- **Повторно приехавший разбор обновляет прежний, а не заводит второй.** Он правится на дереве
-  после того, как уехал, и второй экземпляр читался бы как второе происшествие.
-- **Разбор, исчезнувший на дереве, у приёмника остаётся.** Приёмник принимает, а не следит:
-  удаление по молчанию отправителя стёрло бы записи первого же дерева, переставшего слать.
-- **Предложение опознаётся признаком — хешем своего текста, а не текстом в ограничении.** Тексты
-  предложений идут в килобайтах, а уникальность по такому полю упирается в предел размера строки
-  индекса: вставка отказала бы хранилищем на первом длинном предложении. Признак считает
-  приёмник.
-- **Признак предложения уникален в пределах дерева, а не записи месяца.** Дерево шлёт файл
-  предложений целиком, и повтор приезжает в любом месяце: граница месяца от него не защищает, а
-  по двум записям не видно, что это одно и то же.
-- **Уже лежавшее пропускается, а не отбивает запрос.** Повтор здесь — правило, а не промах
-  отправителя: отправитель узнаёт своё уехавшее по отметке в файле, а файл живёт в рабочем
-  дереве и теряется при переключении ветки.
-- **Ответ приёма на предложения называет, сколько записей легло и сколько уже лежало.** Иначе
-  отправитель печатает «уехало» и в том случае, когда нового не уехало ничего, а человек читает
-  это как принятое предложение.
-- **Предложение остаётся при своей записи месяца.** Уникальность держит дерево, а связь — нет:
-  по записи месяца видно, в каком месяце предложение приехало впервые.
-- **Предложение хранит ресурс, к которому относится.** Ради счёта «сколько деревьев правят это
-  место» эпик и заведён, а без ресурса он не берётся ниоткуда.
+- **An incident analysis arrives as text whole.** The intake is closed and one's own; a header without
+  the mechanics of the miss explains nothing, while a rule is derived from an analysis by the
+  mechanics.
+- **The check for the address of a tree does not cover an incident analysis.** An analysis by its very
+  nature names the files of the tree where the miss happened; a check that covered it would refuse
+  every sending of this kind. The requirement stands at the sender: the check lives at it.
+- **An analysis is recognised by the name of its file at the tree.** The heading is edited together with
+  the text, and the name of the file outlives the edit — by it an analysis that arrived a second time
+  updates the former one.
+- **An analysis that arrived a second time updates the former one, it does not create a second one.** It
+  is edited at the tree after it went away, and a second copy would read as a second incident.
+- **An analysis that disappeared at the tree stays at the intake.** The intake takes in, it does not
+  watch: a deletion by the silence of the sender would wipe the records of the very first tree that
+  stopped sending.
+- **A proposal is recognised by a sign — the hash of its text, not by the text in a constraint.** The
+  texts of the proposals go in kilobytes, and uniqueness by such a field runs into the limit of the size
+  of a row of an index: the insert would be refused by the storage at the first long proposal. The sign
+  is counted by the intake.
+- **The sign of a proposal is unique within the tree, not within the record of a month.** A tree sends
+  the file of the proposals whole, and a repeat arrives in any month: the boundary of a month does not
+  protect from it, and by two records there is no seeing that this is one and the same.
+- **What already lay there is skipped, it does not refuse the request.** A repeat here is the rule, not
+  a miss of the sender: the sender learns what went away by a mark in the file, and the file lives in
+  the working tree and is lost at a switch of the branch.
+- **The answer of the intake to the proposals names how many records landed and how many already lay
+  there.** Otherwise the sender prints "went away" also in the case when nothing new went away, and a
+  person reads that as an accepted proposal.
+- **A proposal stays at its record of a month.** The uniqueness is held by the tree, and the link is
+  not: by the record of a month it is visible in which month the proposal first arrived.
+- **A proposal keeps the resource it belongs to.** The epic is created for the sake of the count "how
+  many trees edit this place", and without the resource it comes from nowhere.
 
-**Состояние записи груза.**
+**The state of a record of the cargo.**
 
-- **Состояние есть у разбора происшествия и у предложения, а у сводки месяца его нет.** Сводка
-  отвечает на вопрос «как дела сейчас», и разбирать её нечего: состояние на ней читалось бы
-  утверждением о работе, которой не бывает.
-- **Состояний четыре, и других нет.** Готовое и выпущенное разведены не для порядка: между
-  починкой и выпуском стоит редакция пакета, и потребитель получает фикс только после раскладки
-  у себя.
-- **Состояние приходит перечислением, а не строкой в месте использования.** Строка, написанная в
-  запросе, в разметке и в сравнении, ни находится по дереву, ни правится разом.
-- **Приехавшая запись встаёт в «новое».** Умолчание объявлено хранилищем: запись без состояния
-  потребовала бы второго вида пустоты и проверки на каждом пути чтения.
-- **Записи, приехавшие до заведения поля, читаются как новые.** Приёмник не знает, что с ними
-  делали, и говорит об этом прямо, а не пустотой.
-- **Приезд, изменивший текст разбора, возвращает его в «новое».** Разбор опознаётся именем файла
-  и приезжает поверх прежнего; текст, ставший другим, разбирается заново.
-- **Приезд, не изменивший текста, состояния не трогает.** Прогон отправки везёт разборы целиком и
-  повторяется по расписанию: сброс на каждый приезд погасил бы все состояния первым же прогоном.
-- **Приём груза состояния не принимает.** Дерево присылает текст, а не суждение о том, разобран
-  ли он.
+- **A state is at an incident analysis and at a proposal, and a digest of a month has none.** The digest
+  answers the question "how are things now", and there is nothing to sort out in it: a state on it would
+  read as a statement about work that does not happen.
+- **There are four states, and there are no others.** The ready one and the released one are set apart
+  not for the sake of order: between the fix and the release stands the edition of the package, and the
+  consumer gets the fix only after the layout at their own place.
+- **The state comes as an enumeration, not as a string at the place of the use.** A string written in
+  the request, in the markup and in a comparison is neither found over the tree nor edited at once.
+- **A record that arrived stands in "new".** The default is declared by the storage: a record without a
+  state would demand a second kind of emptiness and a check at every way of the reading.
+- **The records that arrived before the creating of the field are read as new.** The intake does not
+  know what was done with them, and it says so directly, not by emptiness.
+- **An arrival that changed the text of an analysis brings it back into "new".** An analysis is
+  recognised by the name of the file and arrives on top of the former one; a text that became another
+  one is sorted out anew.
+- **An arrival that did not change the text does not touch the state.** The run of the sending carries
+  the analyses whole and repeats by a schedule: a reset at every arrival would put out all the states by
+  the very first run.
+- **The intake of the cargo does not accept a state.** A tree sends a text, not a judgement about
+  whether it was sorted out.
 
-## Что не входит
+## What is out of scope
 
-- **Правка принятого груза.** Приёмник принимает, админка читает; правок нет ни у той, ни у
-  другой стороны.
-- **Признак прогона и защита от повторной отправки.** Замещение сводки делает повтор
-  безвредным, а предложения и разборы отбираются по признаку и имени.
-- **Оповещения о приехавшем грузе.** Ни почты, ни оповещений: груз читают, когда за ним
-  приходят.
-- **Чистка старых записей по сроку.** Приёмник свой и малый; срок хранения назначается тогда,
-  когда объём станет виден.
-- **Ограничение частоты у операций, закрытых токеном.** Оно стоит у одного обращения за токеном
-  — единственной операции приёма, которую зовут без токена. Остальные закрыты им, и адрес узла
-  нигде не публикуется.
-- **Отзыв токенов операцией запроса.** Это дело команд строки запуска. Операцией выдаётся один
-  первый токен дерева, и то по приглашению, выданному владельцем той же командой.
-- **Срок годности самого токена дерева.** Токен годен, пока не отозван: срок требует продления,
-  иначе сводки перестают ездить посреди месяца и молча.
-- **Перевыпуск токена самим деревом.** Потерянный токен выдаётся новым приглашением от
-  владельца — иначе операция перевыпуска становится вторым путём к токену.
-- **Путь, которым дерево ставит состояние записи своим токеном.** Сегодня токен открывает только
-  приём груза, а состояние ставит тот, кто груз разбирает.
-- **История переходов состояния.** Хранится текущее состояние; запись о том, кто и когда его
-  сменил, не заводится.
-- **Смена имени и признака заведённого дерева.**
-- **Заведение учётных записей людей:** приглашение выдаётся дереву, а не человеку.
+- **The edit of the taken-in cargo.** The intake takes in, the admin application reads; there are no
+  edits at either side.
+- **A sign of a run and protection from a repeated sending.** The replacement of the digest makes a
+  repeat harmless, and the proposals and the analyses are picked out by the sign and by the name.
+- **Notifications about arrived cargo.** No mail and no notifications: the cargo is read when somebody
+  comes for it.
+- **The cleaning of old records by a term.** The intake is one's own and small; a term of keeping is
+  appointed when the volume becomes visible.
+- **A limit of the frequency at the operations closed by a token.** It stands at one request for a
+  token — the only operation of the intake called without a token. The rest are closed by it, and the
+  address of the node is published nowhere.
+- **The revocation of tokens by an operation of a request.** That is the business of the commands of the
+  launch line. By an operation one first token of a tree is issued, and that by an invitation issued by
+  the owner by the same command.
+- **A term of validity of the token of a tree itself.** A token is valid until it is revoked: a term
+  demands a renewal, otherwise the digests stop going in the middle of a month and silently.
+- **A reissuing of a token by the tree itself.** A lost token is issued by a new invitation from the
+  owner — otherwise the operation of the reissuing becomes a second way to a token.
+- **The way a tree puts the state of a record by its token.** Today the token opens the intake of the
+  cargo alone, and the state is put by whoever sorts the cargo out.
+- **The history of the transitions of the state.** The current state is kept; a record of who changed it
+  and when is not created.
+- **The change of the name and of the sign of a created tree.**
+- **The creating of the accounts of people:** an invitation is issued to a tree, not to a person.
 
-## Контракт
+## Contract
 
-Дерево представляется заголовком `X-Tree-Token`. Без токена любая операция приёма, кроме пробы
-живости, отказывает.
+A tree introduces itself by the header `X-Tree-Token`. Without a token any operation of the intake,
+apart from the probe of liveness, refuses.
 
-| Операция                     | Что делает                                                            |
-| ---------------------------- | --------------------------------------------------------------------- |
-| POST /api/intake/summary     | заводит или обновляет запись месяца сводкой последнего прогона        |
-| POST /api/intake/proposals   | кладёт к записи месяца предложения, которых у дерева ещё не было      |
-| POST /api/intake/postmortems | заводит или обновляет разборы происшествий дерева по именам их файлов |
-| POST /api/intake/enroll      | заводит дерево по годному приглашению и отдаёт его первый токен       |
-| GET /api/health              | отвечает, что служба поднята и хранилище отвечает                     |
+| Operation                    | What it does                                                                     |
+| ---------------------------- | -------------------------------------------------------------------------------- |
+| POST /api/intake/summary     | creates or updates the record of a month by the digest of the last run           |
+| POST /api/intake/proposals   | puts to the record of a month the proposals the tree did not have yet            |
+| POST /api/intake/postmortems | creates or updates the incident analyses of the tree by the names of their files |
+| POST /api/intake/enroll      | creates a tree by a valid invitation and gives back its first token              |
+| GET /api/health              | answers that the service is raised and the storage answers                       |
 
-Обращение за токеном — единственная операция приёма без токена дерева: у дерева его ещё нет.
-Закрыта она приглашением и ограничителем частоты, а несёт приглашение и признак дерева; имя в
-ней не передаётся вовсе — приём берёт его из приглашения.
+The request for a token is the only operation of the intake without a token of a tree: the tree does
+not have one yet. It is closed by the invitation and by a limiter of the frequency, and it carries the
+invitation and the sign of the tree; the name is not passed in it at all — the intake takes it from the
+invitation.
 
-Выдаёт, отзывает и перечисляет приглашения владелец командами строки запуска: `tree:invite
-<имя>` печатает код один раз, `tree:uninvite <имя>` отзывает, `tree:invites` показывает
-состояние каждого. Те же приглашения выдаёт и отзывает админка — операциями, закрытыми входом
-человека; их описывает поддомен чтения рядом. Узел при этом остаётся вторым путём: он доступен
-владельцу и тогда, когда админка не поднята.
+The owner issues, revokes and lists the invitations by the commands of the launch line: `tree:invite
+<name>` prints the code once, `tree:uninvite <name>` revokes, `tree:invites` shows the state of each of
+them. The same invitations are issued and revoked by the admin application — by operations closed by
+the entry of a person; they are described by the subdomain of the reading next to it. The node stays
+the second way at that: it is available to the owner also when the admin application is not raised.
 
-Обязательные поля по родам груза:
+The mandatory fields by the kinds of the cargo:
 
-| Род груза   | Что обязано быть в запросе                                                  |
-| ----------- | --------------------------------------------------------------------------- |
-| сводка      | версия схемы груза, признак дерева, счётчики, снимок надстроек, невыбранное |
-| предложения | версия схемы груза, признак дерева, список: текст, адрес, ресурс            |
-| разборы     | версия схемы груза, признак дерева, список: имя файла, текст целиком        |
+| Kind of cargo | What is obliged to be in the request                                                                                           |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| a digest      | the version of the schema of the cargo, the sign of the tree, the counters, the snapshot of the overrides, what was not chosen |
+| the proposals | the version of the schema of the cargo, the sign of the tree, the list: the text, the address, the resource                    |
+| the analyses  | the version of the schema of the cargo, the sign of the tree, the list: the name of the file, the text whole                   |
 
-Что внутри счётчиков и снимка — приёмник не судит.
+What is inside the counters and the snapshot the intake does not judge.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: приёмник отвечает кодом ответа HTTP, а не именованными кодами домена. Где приём
-обязан отказать вместо молчания:
+Not applicable: the intake answers with a code of the answer of HTTP, not with named codes of the
+domain. Where the intake is obliged to refuse instead of staying silent:
 
-| Что случилось                       | Код   | Что говорит                                                                               |
-| ----------------------------------- | ----- | ----------------------------------------------------------------------------------------- |
-| токена дерева в запросе нет         | `401` | что операция требует токен дерева                                                         |
-| токен не найден или отозван         | `401` | что токен не принят; какой именно — не называется                                         |
-| версия схемы груза не названа       | `400` | что версия обязательна                                                                    |
-| обязательного поля своего рода нет  | `400` | какого поля не хватает и у какого рода                                                    |
-| признак дерева не сошёлся с токеном | `400` | что признак в грузе принадлежит другому дереву                                            |
-| груз тяжелее предела                | `413` | предел, а вес — когда запрос объявил его сам                                              |
-| приглашение негодно                 | `401` | что оно не принято; ненайденное, погашенное, просроченное и отозванное отвечают одинаково |
-| признак дерева уже заведён          | `409` | что дерево с таким признаком есть                                                         |
-| обращений с ключа больше предела    | `429` | что обращения приходят слишком часто                                                      |
-| обращение без кода или без признака | `400` | чего не хватает                                                                           |
-| хранилище недоступно                | `503` | что груз не принят, и номер обращения                                                     |
-| остальное                           | `500` | что груз не принят; устройство приёмника не пересказывается                               |
+| What happened                                       | Code  | What it says                                                                                      |
+| --------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------- |
+| there is no token of a tree in the request          | `401` | that the operation demands a token of a tree                                                      |
+| the token is not found or is revoked                | `401` | that the token is not accepted; which of the two is not named                                     |
+| the version of the schema of the cargo is not named | `400` | that the version is mandatory                                                                     |
+| a mandatory field of its own kind is missing        | `400` | which field is missing and at which kind                                                          |
+| the sign of the tree did not match the token        | `400` | that the sign in the cargo belongs to another tree                                                |
+| the cargo is heavier than the limit                 | `413` | the limit, and the weight — when the request declared it itself                                   |
+| the invitation is not valid                         | `401` | that it is not accepted; a not-found, a used-up, an expired and a revoked one answer the same way |
+| the sign of the tree is already created             | `409` | that a tree with such a sign exists                                                               |
+| there are more requests from a key than the limit   | `429` | that the requests come too often                                                                  |
+| a request without a code or without a sign          | `400` | what is missing                                                                                   |
+| the storage is unavailable                          | `503` | that the cargo is not taken in, and the number of the request                                     |
+| everything else                                     | `500` | that the cargo is not taken in; the workings of the intake are not retold                         |
 
-Принято — `201` у заведённой записи месяца и `200` у обновлённой; в обоих случаях приёмник
-называет месяц и дерево, чтобы дерево напечатало это владельцу. У предложений он называет ещё
-два числа:
+Taken in — `201` at a created record of a month and `200` at an updated one; in both cases the intake
+names the month and the tree, so that the tree prints that to the owner. At the proposals it names two
+more numbers:
 
-| Поле ответа | Что значит                                                   |
-| ----------- | ------------------------------------------------------------ |
-| added       | сколько предложений легло записями этим запросом             |
-| known       | сколько приехало повторно: их признак у этого дерева уже был |
+| Field of the answer | What it means                                                       |
+| ------------------- | ------------------------------------------------------------------- |
+| added               | how many proposals landed as records by this request                |
+| known               | how many arrived a second time: their sign was already at this tree |
 
-## Данные
+## Data
 
-Хранилище — Postgres, схема правится миграциями. Колонок и индексов договорённость не
-называет: они в схеме, здесь — правило, которое ограничение выражает.
+The storage is Postgres, the schema is edited by migrations. The agreement names no columns and no
+indexes: they are in the schema, here is the rule the constraint expresses.
 
-| Сущность            | Что в ней                                                                                                              |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Дерево              | признак, читаемое имя, дата заведения                                                                                  |
-| Токен дерева        | хеш, дата выдачи, пометка отзыва с датой; дерево у токена одно                                                         |
-| Запись месяца       | дерево, месяц, счётчики, снимок надстроек, невыбранное, версия схемы, время прогона                                    |
-| Предложение         | запись месяца, дерево, текст, признак, адрес, ресурс, состояние, дата приезда                                          |
-| Разбор происшествия | дерево, имя файла, текст целиком, состояние, дата приезда, дата обновления                                             |
-| Приглашение         | хеш кода, имя будущего дерева, время выдачи, срок годности, время погашения, время отзыва, ссылка на заведённое дерево |
+| Entity               | What is in it                                                                                                                                                                             |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A tree               | the sign, the readable name, the date of the creating                                                                                                                                     |
+| A token of a tree    | the hash, the date of the issuing, the mark of the revocation with a date; a token has one tree                                                                                           |
+| A record of a month  | the tree, the month, the counters, the snapshot of the overrides, what was not chosen, the version of the schema, the time of the run                                                     |
+| A proposal           | the record of a month, the tree, the text, the sign, the address, the resource, the state, the date of the arrival                                                                        |
+| An incident analysis | the tree, the name of the file, the text whole, the state, the date of the arrival, the date of the update                                                                                |
+| An invitation        | the hash of the code, the name of the future tree, the time of the issuing, the term of validity, the time of the using up, the time of the revocation, the reference to the created tree |
 
-- **Пара «дерево — месяц» уникальна.** Ограничение хранилища, а не проверка в коде: два прогона
-  из одного дерева приезжают одновременно, и проверка чтением их не разведёт.
-- **Пара «дерево — имя файла разбора» уникальна.** По ней повторно приехавший разбор обновляет
-  прежний.
-- **Пара «дерево — признак предложения» уникальна.** Ею держится отбор уже приехавшего, и держит
-  её хранилище: два прогона одного дерева приезжают одновременно, и прочитанное первым устареет
-  раньше, чем он допишет своё.
-- **Дерево у предложения стоит своей колонкой, а не читается через запись месяца.** Ограничение
-  хранилища читает колонки одной строки, и уникальность по полю связанной записи не объявляется.
-- **Умолчание состояния держит хранилище, а не код.** Запись, заведённая мимо приёма — командой
-  узла или миграцией, — иначе приезжала бы без состояния, и читающий видел бы пустоту.
-- **Набор значений состояния держит хранилище.** Строка без ограничения принимает опечатку, и
-  находит её тот, кто читает список, а не тот, кто её положил.
-- **Снимок надстроек и счётчики хранятся как приехали.** Приёмник их не разбирает, и колонки
-  под каждое поле разъезжались бы с пакетом при первой же его правке.
+- **The pair "tree — month" is unique.** A constraint of the storage, not a check in the code: two runs
+  from one tree arrive at once, and a check by reading would not set them apart.
+- **The pair "tree — the name of the file of an analysis" is unique.** By it an analysis that arrived a
+  second time updates the former one.
+- **The pair "tree — the sign of a proposal" is unique.** By it the picking out of what already arrived
+  is held, and it is held by the storage: two runs of one tree arrive at once, and what the first read
+  goes stale before it appends its own.
+- **The tree at a proposal stands as a column of its own, it is not read through the record of a
+  month.** A constraint of the storage reads the columns of one row, and uniqueness by a field of a
+  linked record is not declared.
+- **The default of the state is held by the storage, not by the code.** A record created past the intake
+  — by a command of the node or by a migration — would otherwise arrive without a state, and whoever
+  reads would get emptiness.
+- **The set of the values of the state is held by the storage.** A string without a constraint accepts a
+  typo, and it is found by whoever reads the list, not by whoever put it there.
+- **The snapshot of the overrides and the counters are kept as they arrived.** The intake does not take
+  them apart, and columns under every field would drift from the package at its very first edit.
 
-## Экраны и состояния
+## Screens and states
 
-Не применимо: у приёма экранов нет. Экраны — поддомен чтения принятого.
+Not applicable: the intake has no screens. The screens are the subdomain of the reading of what was
+taken in.
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Язык один — русский; отказ приёма читает исполнитель дерева, а не гость.
+The language is one — Russian; a refusal of the intake is read by the executor of the tree, not by a
+guest.
 
 ### SEO
 
-Не применимо: служба закрытая, и поисковикам не показывается ничего.
+Not applicable: the service is closed, and nothing is shown to the search engines.
 
-### Мобильная раскладка
+### Mobile layout
 
-Не применимо: своих экранов нет.
+Not applicable: there are no screens of its own.
 
-### Мультиобъектность
+### Several objects
 
-Деревьев много, и каждое видит только свой груз: операция приёма работает от токена, а не от
-переданного признака дерева. Признак, названный в грузе, с деревом токена сверяется, и
-расхождение отбивает приём.
+There are many trees, and each one gets only its own cargo: the operation of the intake works from the
+token, not from the passed sign of the tree. The sign named in the cargo is checked against the tree of
+the token, and a divergence refuses the intake.
 
-## Решения
+## Decisions
 
-- **Приём всех трёх родов груза в первой ветке.** Роды отличаются формой записи, но не тем, как
-  приезжают. Отвергнуто: только сводка в первой ветке — тогда веток становится четыре.
-- **Сводка последнего прогона замещает прежнюю.** Решение владельца. Окна прогонов
-  перекрываются, и сложение завышало бы числа молча. Отвергнуто: сложение счётчиков; и хранение
-  прогонов порознь — оно отменяет одну запись на пару «дерево — месяц».
-- **Разбор происшествия уезжает текстом целиком.** Решение владельца. Шапка без механизма
-  промаха ничего не объясняет, а правило из разбора выводится по механизму.
-- **Признак предложения — хеш его текста, а область уникальности — дерево.** Уникальность по
-  полю в килобайты упирается в предел размера строки индекса, а граница месяца от повтора не
-  защищает: он приезжает в любом месяце. Отвергнуто: уникальность по паре «дерево — текст»;
-  признак, назначаемый отправителем.
-- **Ответ приёма расширяется, а не заводится вторым.** Отправитель уже читает этот ответ, и
-  второй запрос ради счёта повторов добавил бы прогону ещё одно место, где он рвётся.
-- **Первый токен выдаёт команда самого приложения.** Решение владельца. Отвергнуто: начальный
-  засев хранилища.
-- **Признак дерева называется доводом команды заведения.** Иначе приёмник узнаёт признак из
-  груза и принимает за своё присланное.
+- **The intake of all three kinds of cargo in the first branch.** The kinds differ by the form of the
+  record, but not by how they arrive. Rejected: the digest alone in the first branch — then the branches
+  become four.
+- **The digest of the last run replaces the former one.** A decision of the owner. The windows of the
+  runs overlap, and adding up would overstate the numbers silently. Rejected: adding up the counters;
+  and keeping the runs apart — it cancels one record per pair "tree — month".
+- **An incident analysis goes away as text whole.** A decision of the owner. A header without the
+  mechanics of the miss explains nothing, while a rule is derived from an analysis by the mechanics.
+- **The sign of a proposal is the hash of its text, and the area of uniqueness is the tree.** Uniqueness
+  by a field of kilobytes runs into the limit of the size of a row of an index, and the boundary of a
+  month does not protect from a repeat: it arrives in any month. Rejected: uniqueness by the pair "tree
+  — text"; a sign appointed by the sender.
+- **The answer of the intake is widened, not created as a second one.** The sender already reads this
+  answer, and a second request for the sake of the count of the repeats would add the run one more place
+  where it tears.
+- **The first token is issued by a command of the application itself.** A decision of the owner.
+  Rejected: an initial seeding of the storage.
+- **The sign of a tree is named as an argument of the command of the creating.** Otherwise the intake
+  learns the sign from the cargo and takes what was sent for its own.
 
-## Открытые вопросы
+## Open questions
 
-Открытые вопросы домена — общие, и живут они в спеке рядом.
+The open questions of the domain are shared, and they live in the spec next to it.
 
-## История изменений
+## History of changes
 
-- 2026-08-16 — поддомен выделен из спека домена, переросшего предел длины. Правила, сценарии и
-  привязки приёма переехали сюда прежними: номера сценариев не пересчитывались.
-- 2026-08-19 — влита договорённость задачи RT-878 в части выдачи: приглашение выдают два пути
-  одним решением, занятое имя отбивает выдачу и называет, чем занято. Сценарии выдачи стоят в
-  поддомене чтения: их «Тогда» называет человека и то, что он видит на экране.
+- 2026-08-16 — the subdomain was split out of the spec of the domain, which had outgrown the length
+  limit. The rules, the scenarios and the bindings of the intake moved here as they were: the scenario
+  numbers were not recounted.
+- 2026-08-19 — the agreement of the task RT-878 was merged in the part about the issuing: an invitation
+  is issued by two ways by one decision, a taken name refuses the issuing and names what it is taken by.
+  The scenarios of the issuing stand in the subdomain of the reading: their "Then" names a person and
+  what they get on the screen.

@@ -1,97 +1,101 @@
-# Поле ввода
+# The field of input
 
-**Статус:** действует · **Ревизия:** 2026-08-20 · **Префикс сценариев:** `SC-UKV`
-**Зависимости:** нет
-**Законы:** `frontend-application`, `reuse-first`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-08-20 · **Scenario prefix:** `SC-UKV`
+**Depends on:** none
+**Laws:** `frontend-application`, `reuse-first`
+**Procedures:** none
 
-Поддомен называет, чем поле ввода объявляет браузеру род вводимого значения и где проходит
-граница между этим объявлением и проверкой введённого.
+The subdomain names what a field of input declares the kind of the value being entered to the
+browser by and where the boundary runs between that declaration and the check of what was entered.
 
-## Зачем
+## Why
 
-У поля ввода четыре типа, и адреса среди них нет. Приложение, просящее ввести полный адрес
-страницы, ставит обычный текст: подсказки по клавиатуре на телефоне нет, разбора вставленного
-адреса — тоже, и сверять введённое приходится образцом в самом приложении.
+The field of input has four types, and there is no address among them. An application asking for the
+full address of a page puts ordinary text: there is no hint by the keyboard on a telephone, no taking
+apart of a pasted address either, and what was entered has to be checked against a sample in the
+application itself.
 
-## Терминология
+## Terminology
 
-| Термин     | Что это                                                   |
-| ---------- | --------------------------------------------------------- |
-| Тип поля   | Чем поле объявлено браузеру: текст, пароль, почта, время  |
-| Тип адреса | Тип поля, объявляющий браузеру, что вводят адрес страницы |
+| Term                | What it is                                                                              |
+| ------------------- | --------------------------------------------------------------------------------------- |
+| The type of a field | What the field is declared to the browser by: text, password, mail, time                |
+| The type of address | The type of a field declaring to the browser that an address of a page is being entered |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В спеке    | На экране                         |
-| ---------- | --------------------------------- |
-| Тип адреса | клавиатура для адреса на телефоне |
+| In the spec         | On the screen                              |
+| ------------------- | ------------------------------------------ |
+| The type of address | the keyboard for an address on a telephone |
 
-## Правила
+## Rules
 
-- **У поля ввода есть тип адреса, и он уезжает на нативное поле.** Браузер по нему даёт
-  подсказку по клавиатуре и разбирает вставленное; поле, объявленное текстом, не даёт ни того,
-  ни другого.
-- **Прежние четыре типа работают как раньше.** Пятый член перечня не трогает ни один из
-  прежних.
-- **Проверка введённого остаётся за приложением.** Тип объявляет браузеру род значения, а не
-  требование к нему: своя проверка формы у поля есть и от типа не зависит.
+- **The field of input has the type of address, and it goes away onto the native field.** By it the
+  browser gives a hint by the keyboard and takes apart what was pasted; a field declared as text
+  gives neither the one nor the other.
+- **The former four types work as before.** The fifth member of the enumeration touches none of the
+  former ones.
+- **The check of what was entered stays with the application.** The type declares the kind of the
+  value to the browser, not a requirement of it: the field has a check of the form of its own and it
+  does not depend on the type.
 
-## Что не входит
+## What is out of scope
 
-- Проверка адреса образцом внутри кита: род значения и требование к нему — разные вопросы.
-- Поле ввода первого кита: у него свой набор типов.
+- A check of the address against a sample inside the kit: the kind of a value and a requirement of it
+  are different questions.
+- The field of input of the first kit: it has a set of types of its own.
 
-## Контракт
+## Contract
 
-Не применимо: поверхность — входы компонента кита, процедур поддомен не обслуживает.
+Not applicable: the surface is the inputs of a component of the kit, the subdomain serves no
+procedures.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо.
+Not applicable.
 
-## Данные
+## Data
 
-Своих записей хранилища у поддомена нет.
+The subdomain has no records of the storage of its own.
 
-## Экраны и состояния
+## Screens and states
 
-| Тип поля | Что видно                                  |
-| -------- | ------------------------------------------ |
-| текст    | обычная клавиатура                         |
-| адрес    | клавиатура для адреса на телефоне          |
-| пароль   | точки вместо знаков и переключатель показа |
+| The type of a field | What is visible                                         |
+| ------------------- | ------------------------------------------------------- |
+| text                | the ordinary keyboard                                   |
+| address             | the keyboard for an address on a telephone              |
+| password            | dots instead of the characters and a switch of the show |
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: подписей поддомен не заводит.
+Not applicable: the subdomain creates no labels.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Ради неё тип адреса и заведён: подсказка по клавиатуре видна только на телефоне.
+The type of address was created for its sake: the hint by the keyboard is visible only on a telephone.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо.
+Not applicable.
 
-## Решения
+## Decisions
 
-- **Тип добавляется членом перечня, а не отдельным входом.** Довод: четыре прежних типа так и
-  устроены, а второй вход о том же породил бы два ответа на один вопрос. Отвергнуто: вход
-  «это адрес» рядом с типом.
+- **The type is added as a member of the enumeration, not as an input of its own.** The argument: the
+  four former types are arranged exactly so, and a second input about the same would give birth to two
+  answers to one question. Rejected: an input "this is an address" next to the type.
 
-## Открытые вопросы
+## Open questions
 
-- **`Q-9` — нужны ли полю остальные нативные типы: число, телефон, поиск.** Принято допущение,
-  что заводятся они по мере надобности, а не пачкой наперёд.
+- **`Q-9` — whether the field needs the rest of the native types: a number, a telephone, a search.**
+  The assumption accepted is that they are created as the need arises, not by a bundle in advance.
 
-## История изменений
+## History of changes
 
-- 2026-08-20 — заведён вливанием договорённости о типе адреса. Первый поддомен, который
-  описывает поверхность компонента, а не проверку показа.
+- 2026-08-20 — created by merging the agreement about the type of address. The first subdomain that
+  describes the surface of a component, not a check of the look.
