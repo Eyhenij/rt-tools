@@ -182,8 +182,7 @@ The epic plan names three things, and none is derived from the others:
 
 A set without an order is no order: two tasks whose order rested on understanding went into work the
 other way round, and the second was redone under the first. The assigned order holds to the end of
-the epic; a revision is the owner's decision, and it is written into the progress of the task that
-caused it.
+the epic; a revision is the owner's decision.
 
 The plan lies outside the task folder: that one dies with the very first merge. The directory for it
 is named by the rule's companion — the package has no path of its own.
@@ -198,13 +197,32 @@ the reader comes now from the epic, now from the card, and the second side exist
 them.
 
 **Next move:** the declared epic is committed together with the task numbers, and in the same turn
-its first task is taken — by creating the branch and the folder.
+its branch is taken.
+
+### State `эпик-заведён`: the branch of the epic
+
+```bash
+git checkout -b <КЛЮЧ>-<номер эпика>-<slug> origin/main
+```
+
+The branch is taken before the first task of the epic, not with it: taken later, it leaves the first
+task standing on the main branch, and the epic starts as half of itself already merged.
+
+The plan of the epic is committed into it and the branch is pushed at once — the branches of the
+tasks are taken from it, and one that exists only on the machine is a base nobody else has. The card
+names the branch: the reader comes to the epic from the queue, and the queue holds no branches.
+
+Nothing else is committed into the epic branch: it carries the plan and the merges of the tasks. An
+edit made in it directly reaches the main branch unreviewed.
+
+**Next move:** the first task of the epic is taken — the branch of the task from the branch of the
+epic, and the folder.
 
 ### State `договорённость-записана`: the task, the branch, the folder
 
 ```bash
 npm run task:new -- --title '<Что не так>' --slug <slug> --label documentation --label area:tooling < тело.md
-git checkout -b <КЛЮЧ>-<номер>-<slug>
+git checkout -b <КЛЮЧ>-<номер>-<slug> <ветка эпика>
 npm run task:move -- <номер> in-progress
 ```
 
