@@ -81,6 +81,10 @@ and names whom to ask.
 - **Dividing the cargo by trees.** Who sees the cargo of which tree stays as it is.
 - **The tree token.** The intake of the cargo is closed by it as before, and no right of a person
   opens it.
+- **The operations that serve several sections at once.** The list of trees and the list of cargo
+  versions fill the filters of every section, and the closing of records by a publisher touches two
+  kinds of cargo in one packet. One right of one section cannot be written on any of them, and they
+  stay closed by a sign-in; the question of what closes them is open below.
 
 ## Contract
 
@@ -144,6 +148,12 @@ Not applicable: there is one receiver and one set of sections in it.
 
 ## Open questions
 
+- **What closes an operation that serves several sections at once.** A declaration names one right,
+  while the list of trees and the list of versions are asked by the filters of all the sections, and
+  the closing of records by a publisher moves records of two kinds in one packet. Three answers are
+  visible — a right of its own for such an operation, a declaration of several rights of which any
+  one is enough, or a check inside by the parameter naming the section — and each of the three is
+  wider than this task.
 - **Whether a person without a single right should be told which rights exist at all.** Today the
   screen names whom to ask and nothing else. Naming the sections one has no access to would answer
   the question "what is here" — and would also give away what the receiver holds.

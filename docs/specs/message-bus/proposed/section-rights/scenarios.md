@@ -49,8 +49,6 @@ Given a signed-in person without the read right of a section
 When they call the operation the section lives by, bypassing the screens
 Then the answer is a refusal by a right, and the records of the section are not given away
 
-Not covered: the check is written by the task RT-1898.
-
 ### SC-MB-305 — a right taken away closes the section on the next move
 
 Given a person who has the section open and their right taken away meanwhile
@@ -64,12 +62,8 @@ When a right is written into an item
 Then it is a name of the closed set of rights, one for both sides, and a name outside the set does
 not compile
 
-Not covered: the check is written by the task RT-1898.
-
 ### SC-MB-307 — the stand gives its account every right
 
 Given the stand of the end-to-end suite is seeded
 When a person signs in on it
 Then all four sections are open to them: the suite checks the sections rather than the rights
-
-Not covered: the check is written by the task RT-1898.

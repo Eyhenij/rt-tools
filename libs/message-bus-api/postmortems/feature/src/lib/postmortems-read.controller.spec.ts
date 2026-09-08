@@ -1,6 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { describe, expect, it } from 'vitest';
 
+import { OPERATION_ACCESS, OPERATION_RIGHT } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPostmortemFullRow, IPostmortemListRow } from '@rt/message-bus-api/postmortems/data-access';
 import { ECargoState, IPage, PAGE_SIZE_DEFAULT, PAGE_SIZE_MAX } from '@rt/message-bus-common';
@@ -485,5 +486,13 @@ describe('PostmortemsReadController.one', () => {
 
     it('SC-MB-71 — записи, которой нет, отвечает отказ, а не пустая запись', async () => {
         await expect(controller().one('pm-нет-такого')).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('SC-MB-304 — список разборов закрыт правом чтения своего раздела, а не одним лишь входом', () => {
+        const access: unknown = Reflect.getMetadata(OPERATION_ACCESS, PostmortemsReadController.prototype.page);
+        const right: unknown = Reflect.getMetadata(OPERATION_RIGHT, PostmortemsReadController.prototype.page);
+
+        expect(access).toBe('permission');
+        expect(right).toBe('postmortems:read');
     });
 });

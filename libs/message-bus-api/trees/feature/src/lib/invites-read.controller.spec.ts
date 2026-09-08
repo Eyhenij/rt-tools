@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { OPERATION_ACCESS } from '@rt/message-bus-api/access/util';
+import { OPERATION_ACCESS, OPERATION_RIGHT } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { inviteCodeHash, inviteExpiry } from '@rt/message-bus-api/trees/util';
 import { ETreeInviteView, IPage, ITreeInviteIssued, ITreeInviteView } from '@rt/message-bus-common';
@@ -274,10 +274,20 @@ describe('InvitesReadController', () => {
         expect(db.invites).toEqual([]);
     });
 
-    it('SC-MB-161 — выдача объявлена закрытой входом человека, а не токеном дерева', () => {
+    it('SC-MB-161 — выдача объявлена закрытой правом, а не токеном дерева', () => {
         const access: unknown = Reflect.getMetadata(OPERATION_ACCESS, InvitesReadController.prototype.issue);
+        const right: unknown = Reflect.getMetadata(OPERATION_RIGHT, InvitesReadController.prototype.issue);
 
-        expect(access).toBe('session');
+        expect(access).toBe('permission');
+        expect(right).toBe('invites:manage');
+    });
+
+    it('SC-MB-304 — список приглашений закрыт правом чтения своего раздела', () => {
+        const access: unknown = Reflect.getMetadata(OPERATION_ACCESS, InvitesReadController.prototype.page);
+        const right: unknown = Reflect.getMetadata(OPERATION_RIGHT, InvitesReadController.prototype.page);
+
+        expect(access).toBe('permission');
+        expect(right).toBe('invites:read');
     });
 
     it('пустой список приглашений — это пустая страница, а не отказ', async () => {
