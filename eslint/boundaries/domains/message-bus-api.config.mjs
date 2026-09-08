@@ -278,8 +278,10 @@ export const messageBusApiBoundaries = [
     },
     { sourceTag: 'scope:message-bus-api-access-data-access', onlyDependOnLibsWithTags: [ACCESS_UTIL] },
     { sourceTag: 'scope:message-bus-api-access-api', onlyDependOnLibsWithTags: [ACCESS_UTIL, COMMON] },
-    // Метки объявления: чистые декораторы каркаса, ни базы, ни доменов
-    { sourceTag: 'scope:message-bus-api-access-util', onlyDependOnLibsWithTags: [] },
+    // Метки объявления: декораторы каркаса и имя права. Набор прав лежит в общей либе, потому
+    // что право называет и объявление операции, и пункт меню админки: второй список имён
+    // разошёлся бы с первым молча. Ни базы, ни доменных либ метки по-прежнему не видят
+    { sourceTag: 'scope:message-bus-api-access-util', onlyDependOnLibsWithTags: [COMMON] },
 
     // Хранилище: клиент лежит в слое утилит, служба над ним, модуль над службой. Доменных либ
     // домен не видит вовсе — его зовут, а не он зовёт

@@ -2,7 +2,8 @@ import { ExecutionContext, ForbiddenException, UnauthorizedException } from '@ne
 import { Reflector } from '@nestjs/core';
 import { describe, expect, it } from 'vitest';
 
-import { OPERATION_ACCESS, OPERATION_RIGHT, TOperationAccess, TRight } from '@rt/message-bus-api/access/util';
+import { OPERATION_ACCESS, OPERATION_RIGHT, TOperationAccess } from '@rt/message-bus-api/access/util';
+import { TRight } from '@rt/message-bus-common';
 import { IAccountBearingRequest, sessionTokenHash } from '@rt/message-bus-api/accounts/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { ITreeBearingRequest, treeTokenHash } from '@rt/message-bus-api/trees/util';
