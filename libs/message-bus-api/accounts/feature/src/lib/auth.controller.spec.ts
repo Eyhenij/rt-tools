@@ -21,6 +21,9 @@ interface IAccountRow {
     passwordHash: string;
     disabledAt: Date | null;
     lastLoginAt: Date | null;
+    /** Роль и точечные правки: их читает ответ о вошедшем. У записи без роли обоих нет. */
+    role?: { rights: string[] } | null;
+    permissions?: { right: string; granted: boolean }[];
 }
 
 /** Вход в хранилище: в нём лежит только хеш значения, а само значение уезжает в куку. */
@@ -168,7 +171,7 @@ describe('AuthController', () => {
         it('SC-MB-33 — годная пара заводит вход и отвечает именем вошедшего', async () => {
             const answered: ISessionAnswer = await auth.login({ name: NAME, password: PASSWORD }, response);
 
-            expect(answered).toEqual({ name: NAME });
+            expect(answered).toEqual({ name: NAME, rights: [] });
             expect(db.sessions).toHaveLength(1);
         });
 
@@ -199,7 +202,7 @@ describe('AuthController', () => {
         it('SC-MB-60 — вход по имени в другом регистре принимается как по названному', async () => {
             const answered: ISessionAnswer = await auth.login({ name: 'ВЛАДЕЛЕЦ', password: PASSWORD }, response);
 
-            expect(answered).toEqual({ name: NAME });
+            expect(answered).toEqual({ name: NAME, rights: [] });
         });
 
         it('SC-MB-34 — неверный пароль вход не заводит и причины не называет', async () => {
@@ -261,8 +264,26 @@ describe('AuthController', () => {
     });
 
     describe('session', () => {
-        it('SC-MB-33 — ответ о вошедшем называет имя и ничего сверх него', () => {
-            expect(auth.session(requestOf({ id: 'account-1', name: NAME, sessionId: 'session-1' }))).toEqual({ name: NAME });
+        it('SC-MB-296 — ответ несёт права, как их складывают роль и правки поверх неё', async () => {
+            db.accounts[0].role = { rights: ['postmortems:read', 'postmortems:manage'] };
+            db.accounts[0].permissions = [
+                { right: 'postmortems:manage', granted: false },
+                { right: 'invites:read', granted: true },
+            ];
+
+            await expect(auth.session(requestOf({ id: 'account-1', name: NAME, sessionId: 'session-1' }))).resolves.toEqual({
+                name: NAME,
+                rights: ['postmortems:read', 'invites:read'],
+            });
+        });
+
+        it('SC-MB-33 — ответ о вошедшем называет имя и права вошедшего, и ничего сверх них', async () => {
+            // У записи без роли и без точечных правок прав нет ни одного: это законное
+            // состояние, и пустой набор в ответе — не молчание, а ответ.
+            await expect(auth.session(requestOf({ id: 'account-1', name: NAME, sessionId: 'session-1' }))).resolves.toEqual({
+                name: NAME,
+                rights: [],
+            });
         });
     });
 });
