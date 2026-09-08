@@ -1,8 +1,13 @@
 # ADR 0001 — Replace Angular Material with in-house CDK primitives
 
-- **Status:** Accepted (plan)
+- **Status:** Superseded by `docs/adr/0003-one-ui-kit.md` (2026-09-07)
 - **Date:** 2026-07-20
 - **Scope:** `@rt-tools/ui-kit`, `@rt-tools/utils`
+
+> The kit this plan rebuilds is the one that gets dropped. ADR 0003 keeps a single kit — the second
+> one — and the first is never edited: not its internals, not its tokens, not its showcase. Nothing
+> below is carried out. It is kept for the measurements and for the reasoning about the safety net,
+> which the ported components still need.
 
 ## Context
 

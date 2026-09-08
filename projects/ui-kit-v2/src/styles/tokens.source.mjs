@@ -24,14 +24,20 @@
 import { scaleColor } from './tokens.scale-color.mjs';
 import { scaleMetrics } from './tokens.scale-metrics.mjs';
 import { scaleEffects } from './tokens.scale-effects.mjs';
+import { scaleMaterial } from './tokens.scale-material.mjs';
 import { lightColor } from './tokens.light-color.mjs';
 import { lightForms } from './tokens.light-forms.mjs';
 import { lightNavigation } from './tokens.light-navigation.mjs';
 import { lightField } from './tokens.light-field.mjs';
 
-export const scale = [...scaleColor, ...scaleMetrics, ...scaleEffects];
+export const scale = [...scaleColor, ...scaleMetrics, ...scaleEffects, ...scaleMaterial];
 
 export const light = [...lightColor, ...lightForms, ...lightNavigation, ...lightField];
 
 export { darkLayout } from './tokens.dark-layout.mjs';
 export { coarsePointer } from './tokens.coarse-pointer.mjs';
+
+/* Материальный набор — второй слой назначений. Стоит рядом с назначениями, а не внутри них:
+   имена он не заводит, а переопределяет, и генератор отбивает имя, которого нет в базовом
+   наборе. */
+export { material } from './tokens.material.mjs';
