@@ -15,8 +15,9 @@
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
+import { seedAccount } from './seed-account.mjs';
 import { checkNothingDrifts } from './seed-self-check.mjs';
-import { ACCOUNT, API_ORIGIN, ENROLLED_SLUG, INVITES, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
+import { API_ORIGIN, ENROLLED_SLUG, INVITES, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
 
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 
@@ -148,18 +149,8 @@ async function database() {
 /** Вычистка: набор начинает с пустого хранилища, чтобы числа на экране не зависели от прошлых прогонов. */
 async function wipe() {
     await sql(
-        'TRUNCATE TABLE "session", "account", "postmortem", "proposal", "month_record", "tree_invite", "tree_token", "tree" CASCADE;'
+        'TRUNCATE TABLE "session", "account_permission", "role", "account", "postmortem", "proposal", "month_record", "tree_invite", "tree_token", "tree" CASCADE;'
     );
-}
-
-/**
- * Учётная запись стенда.
- *
- * Пароль уходит команде через стандартный ввод — тем же путём, каким его вводит владелец: доводом
- * он остался бы и в истории оболочки, и в списке процессов машины.
- */
-async function account() {
-    await command(['account:add', ACCOUNT.name], `${ACCOUNT.password}\n`);
 }
 
 /**
@@ -472,7 +463,7 @@ async function states() {
 /** Засев целиком. Зовётся подъёмом стенда после того, как приёмник поднят. */
 export async function seed() {
     await wipe();
-    await account();
+    await seedAccount(command, sql);
     const tokens = await trees();
     await postmortems(tokens);
     await proposals(tokens);

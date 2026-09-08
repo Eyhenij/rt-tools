@@ -14,7 +14,7 @@
  */
 import { applyDecorators, CustomDecorator, SetMetadata } from '@nestjs/common';
 
-import { TRight } from './rights';
+import { TRight } from '@rt/message-bus-common';
 
 /**
  * Чем операция закрыта. Набор закрыт: другого способа представиться у приёмника нет.
