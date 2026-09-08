@@ -12,6 +12,7 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 
+import { iconMaterialDrawn } from './rt-icon-material-map';
 import { IRtIcon } from './rt-icon.model';
 import { RtIconRegistry } from './rt-icon.registry';
 
@@ -56,6 +57,15 @@ export class RtIconComponent {
 
     protected readonly href: Signal<string> = computed((): string => this.#registry.symbolHref(this.name()));
 
+    /**
+     * Есть ли у имени рисунок в материальном наборе. Набор закрывает не все имена кита — он
+     * слой переопределений, как набор оформления: имя без материального рисунка рисуется своим,
+     * и это не пробел.
+     */
+    protected readonly hasMaterial: Signal<boolean> = computed((): boolean => iconMaterialDrawn.has(this.name()));
+
+    protected readonly materialHref: Signal<string> = computed((): string => this.#registry.symbolHref(this.name(), 'material'));
+
     protected readonly sizePx: Signal<number> = computed((): number => SIZES[this.size()]);
 
     protected readonly colorValue: Signal<string> = computed((): string => COLORS[this.color()]);
@@ -85,6 +95,11 @@ export class RtIconComponent {
         // нарисовала. Смена имени просит новое — прежний символ остаётся в спрайте.
         effect((): void => {
             this.#registry.request(this.name());
+            // Материальный рисунок едет только туда, где набор объявлен разметкой: страница без
+            // признака набора платила бы за рисунок, которого не покажет.
+            if (this.hasMaterial() && this.#registry.hasMaterialPreset()) {
+                this.#registry.request(this.name(), 'material');
+            }
         });
     }
 }

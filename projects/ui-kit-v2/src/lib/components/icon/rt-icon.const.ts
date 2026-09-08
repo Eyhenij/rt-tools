@@ -12,3 +12,13 @@ export const RT_ICON_SPRITE_ID: string = 'rt-icon-sprite';
 
 /** Префикс `id` для inline-sprite символов. Изолирует от внешних `id` на странице. */
 export const RT_ICON_SYMBOL_ID_PREFIX: string = 'rt-icon-';
+
+/**
+ * Префикс `id` символов материального набора. Свой, а не общий: наборов на странице бывает два —
+ * признак набора стоит и на корне, и на контейнере, — а один `id` держит один рисунок. С общим
+ * префиксом второй набор молча забирал бы символ первого.
+ */
+export const RT_ICON_MATERIAL_SYMBOL_ID_PREFIX: string = 'rt-icon-material-';
+
+/** Селекторы, которыми страница объявляет материальный набор. */
+export const RT_ICON_MATERIAL_PRESET_SELECTOR: string = "[data-preset='material'],.rt-preset-material";

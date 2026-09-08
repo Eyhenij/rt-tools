@@ -70,3 +70,15 @@ export const iconMaterialMap: readonly IRtIconMaterialEntry[] = [
     { from: 'visibility', to: 'eye', why: 'глаз, один в один; есть двойник ico-eye' },
     { from: 'visibility_off', to: 'eye-slash', why: 'перечёркнутый глаз, один в один' },
 ];
+
+/**
+ * Имена кита, у которых в материальном наборе лежит свой рисунок.
+ *
+ * Считается из перечня, а не пишется списком: свой список разошёлся бы с перечнем молча — реестр
+ * ходил бы за файлом, которого нет, или не ходил бы за лежащим.
+ */
+export const iconMaterialDrawn: ReadonlySet<IRtIcon.Name> = new Set<IRtIcon.Name>(
+    iconMaterialMap
+        .map((entry: IRtIconMaterialEntry): IRtIcon.Name | null => entry.to)
+        .filter((name: IRtIcon.Name | null): name is IRtIcon.Name => name !== null)
+);
