@@ -48,10 +48,10 @@ import {
     numberFromTitle,
     taskDirs,
 } from './board.mjs';
-import { onlyIgnoredPaths } from './board-paths.mjs';
 import { checkBranchFolders } from './board-folders.mjs';
+import { checkConflicting, checkHeadRun } from './board-pull-state.mjs';
 import { checkLongWork } from './board-long-work.mjs';
-import { HAS_PIPELINE, deployLag, evictedOnHead, headCommittedAt, lastDeploy, runsOnHead, verdictOnHead } from './board-runs.mjs';
+import { HAS_PIPELINE, deployLag, lastDeploy } from './board-runs.mjs';
 import { checkEpicLinks } from './board-epics.mjs';
 import { similarTitles } from './board-titles.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
@@ -60,11 +60,6 @@ const IN_REVIEW = STATUS_OPTIONS[IN_REVIEW_STATUS].name;
 const TASKS_DIR = join(ROOT, CONFIG.tasksDir);
 /** Age of an abandoned draft after which it stops looking like one started today. */
 const DRAFT_DAYS = 7;
-/**
- * How long a head is given for a run to start behind it. The event does not reach the hosting
- * instantly, and an audit called right after a push would otherwise go red on a healthy branch.
- */
-const RUN_GRACE_MINUTES = 10;
 /**
  * The tree's pipeline. Runs are asked for only where they have somewhere to come from: a tree
  * without a pipeline would get a line for every open PR, and about nothing.
@@ -162,157 +157,6 @@ function folderInBranch(branch, options) {
     }
 }
 
-/**
- * The run on the head of an open PR.
- *
- * A silent page and a green run read the same, and the event does not always reach the hosting:
- * in the hour of its failures the push went through and no run started behind it. The audit names
- * such a head while the PR is still open — after the merge it is too late to learn about it.
- *
- * What counts is the fact of a run, not its colour. A running and a failed run are both visible
- * on the PR page; only absence is invisible, and the audit speaks of exactly that.
- *
- * A fresh head is not judged: time passes between the push and the run, and a red line in that
- * gap would mean "wait", not "fix".
- *
- * A conflicting PR gets no run at all, and the cause is not a lost event: the pipeline checks the
- * merge of the branch with its base, and under a conflict there is no merge. The advice to bring
- * the event back is followed literally and does not help — in one session a PR was closed and
- * reopened twice in a row, and the run started only after the main branch was merged in. So the
- * line names the cause that can be fixed.
- */
-function checkHeadRun(pull, options) {
-    if (checkEvicted(pull, options)) {
-        return;
-    }
-
-    if (runsOnHead(pull.headRefOid, options) > 0) {
-        checkReadyDraft(pull, options);
-        return;
-    }
-
-    const minutes = Math.floor((Date.now() - headCommittedAt(pull.headRefOid, options)) / 60000);
-    if (minutes < RUN_GRACE_MINUTES) {
-        return;
-    }
-
-    if (onlyIgnoredPaths(pull, options)) {
-        return;
-    }
-
-    if (pull.mergeable === 'CONFLICTING') {
-        report(
-            `PR #${pull.number}: there is no run on the tip ${pull.headRefOid.slice(0, 8)} and there will be none while it conflicts — ` +
-                `the pipeline checks the merge of the branch with the base, and there is no merge while it conflicts; merge the main branch in and push, ` +
-                `reopening the PR does not help here`
-        );
-
-        return;
-    }
-
-    // A PR on top of a neighbouring one gets no run: the workflow listens for PRs into the main
-    // branch and does not see events with another base. The line about a lost event is wrong
-    // here twice: the event was not lost, and closing and reopening will not bring it back — the
-    // advice is followed literally, no run starts, and on the second try the breakage is looked
-    // for in the hosting.
-    if (pull.baseRefName && pull.baseRefName !== MAIN_BRANCH) {
-        report(
-            `PR #${pull.number}: there is no run on the tip ${pull.headRefOid.slice(0, 8)} and there will be none — ` +
-                `the request is opened into the branch «${pull.baseRefName}», and the workflow listens to requests into the main one; ` +
-                `move the base to «${MAIN_BRANCH}» once the lower request is merged`
-        );
-
-        return;
-    }
-
-    report(
-        `PR #${pull.number}: there is no run on the tip ${pull.headRefOid.slice(0, 8)}, and it has lain there ${minutes} min — ` +
-            `the pipeline received no event; bring it back by a new commit or by reopening the PR ` +
-            `(gh pr close ${pull.number} && gh pr reopen ${pull.number})`
-    );
-}
-
-/**
- * A head run evicted from the pipeline queue.
- *
- * The queue group protects a running run and does not protect a waiting one: the hosting keeps
- * one waiting run per group, and the next one to start evicts the previous. The branch behind
- * such a run was not checked by a single line, yet by the work queue it looks checked — there is
- * a run on the head, and the audit counts exactly the fact.
- *
- * Judged before the absence of a run and before the colour: otherwise one head gets two lines
- * about one thing. Returns `true` when the line has been said, and the other head checks are
- * skipped.
- *
- * The line names both commands, in the order they are called. The guard refuses a rerun until the
- * output of that step has been read within the same turn, and the order in the line meets the
- * requirement by itself: the executor calls what is written and does not hit a refusal on the
- * second step.
- */
-function checkEvicted(pull, options) {
-    const evicted = evictedOnHead(pull.headRefOid, options);
-    if (evicted.length === 0) {
-        return false;
-    }
-
-    const run = evicted[0];
-    report(
-        `PR #${pull.number}: the run ${run} on the tip ${pull.headRefOid.slice(0, 8)} was pushed out of the pipeline queue — ` +
-            `it has zero steps, the branch was not checked, and in the list it looks failed; ` +
-            `read the run and restart it (gh run view ${run} && gh run rerun ${run})`
-    );
-    return true;
-}
-
-/**
- * Finished work left as a draft.
- *
- * On a draft the merge button is blocked by the hosting itself, so a green PR page allows the
- * owner nothing: a list in which everything is grey reads as "the work is not done". The
- * draft-lifting guard does not reach here — it judges one turn and stays silent while the branch
- * carries its task folder; the audit looks at the state of the whole queue.
- *
- * Four PRs stood as drafts for two days — the analysis is the record
- * "2026-08-18-ready-work-left-in-drafts" in the intake.
- */
-function checkReadyDraft(pull, options) {
-    if (pull.isDraft !== true) {
-        return;
-    }
-    if (verdictOnHead(pull.headRefOid, options) !== 'success') {
-        return;
-    }
-
-    report(
-        `PR #${pull.number}: the run on the tip ${pull.headRefOid.slice(0, 8)} is green, and the PR is a draft — ` +
-            `take the task folder apart and lift the draft (gh pr ready ${pull.number}) or tell the owner what you are waiting for`
-    );
-}
-
-/**
- * A PR that conflicts with the main branch.
- *
- * A conflict arrives in a handed-over PR through someone else's merge, without a single action by
- * its author: the base checked at opening goes stale the minute the owner merges a neighbouring
- * piece of work. The draft-lifting guard does not reach here — it judges one turn, and a PR stands
- * in the queue for days.
- *
- * Only a direct "conflicting" is judged: `UNKNOWN` means the hosting is still computing
- * mergeability, and a line about it would go red on every fresh head. Two PRs went to review with
- * a conflict this way — the analysis is the record
- * "2026-08-20-drafts-cleared-without-re-reading-pr-state" in the intake.
- */
-function checkConflicting(pull) {
-    if (pull.mergeable !== 'CONFLICTING') {
-        return;
-    }
-
-    report(
-        `PR #${pull.number}: it conflicts with the main branch — merge it into the task branch, resolve the conflict and push; ` +
-            `the owner cannot merge this request, and on the page that shows only inside it`
-    );
-}
-
 let checked = { issues: 0, pulls: 0, cargo: 0 };
 
 // Drafts are judged by the disk and so are checked always: no connection is needed for that.
@@ -381,10 +225,10 @@ try {
         // opened past the guard. Said after the merge, this line is no longer fixed by the same
         // PR: the work has moved on, and a second task is created for the clean-up.
         if (HAS_PIPELINE && pull.headRefOid) {
-            checkHeadRun(pull, options);
+            checkHeadRun(pull, report, MAIN_BRANCH, options);
         }
 
-        checkConflicting(pull);
+        checkConflicting(pull, report);
 
         // The PR falling behind the main branch: the guard judges the base once, at the minute of
         // opening, and a PR stands for days. Merged while behind, it carries into main a

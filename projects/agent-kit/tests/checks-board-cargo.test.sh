@@ -14,6 +14,7 @@ for f in rt-kit-checks.config.mjs; do cp "$CHECKS/$f" "$CARGO_TREE/tools/"; done
 cp "$CHECKS/board.github.mjs" "$CARGO_TREE/tools/board.mjs"
 cp "$CHECKS/board-gh.github.mjs" "$CARGO_TREE/tools/board-gh.mjs"
 cp "$CHECKS/board-runs.github.mjs" "$CARGO_TREE/tools/board-runs.mjs"
+cp "$CHECKS/board-pull-state.github.mjs" "$CARGO_TREE/tools/board-pull-state.mjs"
 cp "$CHECKS/board-paths.github.mjs" "$CARGO_TREE/tools/board-paths.mjs"
 cp "$CHECKS/board-titles.github.mjs" "$CARGO_TREE/tools/board-titles.mjs"
 cp "$CHECKS/board-epics.github.mjs" "$CARGO_TREE/tools/board-epics.mjs"

@@ -49,10 +49,10 @@ needed sentence — and the statement stays green when the text of the role itse
 - **The answer of the queue is put together into lines by a pure function.** — `projects/agent-kit/assets/checks/board.github.mjs:describeTaskState`
 - **Every state of the work has a section in the pattern that leads it.** — `projects/agent-kit/assets/checks/check-states.mjs:sectionsOf`
 - **A section about a state outside the list is the same divergence as a state without a section.** — `projects/agent-kit/assets/checks/check-states.mjs:known`
-- **A run at the tip of an open request pushed out of the queue of the pipeline is a divergence of the check.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkEvicted`
+- **A run at the tip of an open request pushed out of the queue of the pipeline is a divergence of the check.** — `projects/agent-kit/assets/checks/board-pull-state.github.mjs:checkEvicted`
 - **The pushing out is recognised by the number of the jobs of the run, not by the word of the cancellation.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:evictedOnHead`
 - **The number of the jobs is asked only of the cancelled runs of the tip.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:jobCount`
-- **The line of the pushing out names both commands and in the order they are called** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkEvicted`
+- **The line of the pushing out names both commands and in the order they are called** — `projects/agent-kit/assets/checks/board-pull-state.github.mjs:checkEvicted`
 - **The pushing out is judged before the colour and before the absence of a run.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkHeadRun`
 - **The mark of multi-session work is checked against the record in the line of the works both ways.** — `projects/agent-kit/assets/checks/board-long-work.github.mjs:checkLongWork` — scenario SC-AK-823
 - **What counts as a record in the line is a row where both the word of the mark and the number of the task stand.** — `projects/agent-kit/assets/checks/board-long-work.github.mjs:markedRows`
