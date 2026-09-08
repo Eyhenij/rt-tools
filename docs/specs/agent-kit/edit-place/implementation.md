@@ -23,5 +23,6 @@ The names of this tree: the source is `projects/agent-kit/assets/<resource>`, th
 is `.claude/rt-kit/overrides/`, the tree profile is `.claude/rt-kit/project.sh`, the setting of the
 formatter is `.prettierignore`.
 
+- **The parse of write targets is declared once, and every guard that judges an edit calls it.** — `projects/agent-kit/assets/hooks/write-targets.sh:rt_write_targets` — the shared helper without a hook declaration of its own; its suite is `projects/agent-kit/tests/shell-write-paths.test.sh`, scenarios `SC-AK-924`–`SC-AK-927`
 - **The body of an interpreter without a write gives out none of its paths.** — `projects/agent-kit/assets/hooks/write-targets.sh:writes` — the sign of a write inside a body; scenario `SC-AK-858`
 - **Muted output is never a sign of a write, inside a body either.** — `projects/agent-kit/assets/hooks/write-targets.sh:rt_write_targets` — the redirection is removed before the parse; scenario `SC-AK-858`
