@@ -13,7 +13,7 @@ WORK="$(fixture_tree)"
 cleanup() { rm -rf "$WORK"; }
 trap cleanup EXIT
 
-cp "$TOOLS/check-tokens-theme.mjs" "$WORK/tools/"
+cp "$TOOLS/check-tokens-theme.mjs" "$TOOLS/tokens-looks.mjs" "$WORK/tools/"
 
 STYLES="$WORK/projects/ui-kit-v2/src/styles"
 mkdir -p "$STYLES" "$WORK/projects/ui-kit-v2/src/lib"

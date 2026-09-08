@@ -35,6 +35,7 @@
     "check:tokens-graph": "node tools/check-tokens-graph.mjs",
     "check:tokens-theme": "node tools/check-tokens-theme.mjs",
     "check:preset-complete": "node tools/check-preset-complete.mjs",
+    "check:gradient-stops": "node tools/check-gradient-stops.mjs",
     "check:cascade-layer": "node tools/check-cascade-layer.mjs",
     "test:checks": "bash tools/tests/run.sh",
     "check:tokens-build": "node tools/build-tokens-v2.mjs --check",
