@@ -10,8 +10,15 @@
  */
 import { Body, Controller, Get, HttpCode, HttpStatus, Logger, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
 
-import { PublicOperation, SessionOperation } from '@rt/message-bus-api/access/util';
-import { createSession, findAccountByNameKey, IAccountForLogin, revokeSession } from '@rt/message-bus-api/accounts/data-access';
+import { PublicOperation, rightsOf, SessionOperation } from '@rt/message-bus-api/access/util';
+import {
+    createSession,
+    findAccountByNameKey,
+    findAccountRights,
+    IAccountForLogin,
+    IAccountRights,
+    revokeSession,
+} from '@rt/message-bus-api/accounts/data-access';
 import {
     accountNameKey,
     accountOf,
@@ -40,6 +47,14 @@ async function hold(ms: number): Promise<void> {
 /** Ответ о том, кто вошёл. Ни пароля, ни значения входа в нём нет и быть не может. */
 export interface ISessionAnswer {
     readonly name: string;
+    /**
+     * Права вошедшего целиком: набор его роли, сложенный с точечными правками.
+     *
+     * Ответом, а не выводом на стороне админки: складывать права второй раз значило бы завести
+     * вторую копию сложения, и разошлась бы она молча — экран показывал бы раздел, который
+     * приёмник отбивает.
+     */
+    readonly rights: readonly string[];
 }
 
 /** Куда каркас кладёт куку. Тип свой, а не привезённый: контроллеру нужны две операции из него. */
@@ -110,7 +125,7 @@ export class AuthController {
         this.#attempts.passed(accountNameKey(named.name));
         response.cookie(SESSION_COOKIE, token, cookieOptions(ttl));
 
-        return { name: account.name };
+        return { name: account.name, rights: await this.#rightsOf(account.id) };
     }
 
     /**
@@ -134,8 +149,24 @@ export class AuthController {
     /** Кто вошёл. Отвечает только живому входу: просроченный и оборванный сюда не доходят. */
     @Get('session')
     @SessionOperation()
-    public session(@Req() request: IAccountBearingRequest): ISessionAnswer {
-        return { name: accountOf(request).name };
+    public async session(@Req() request: IAccountBearingRequest): Promise<ISessionAnswer> {
+        const account: IRequestAccount = accountOf(request);
+
+        return { name: account.name, rights: await this.#rightsOf(account.id) };
+    }
+
+    /**
+     * Права записи одной строкой ответа.
+     *
+     * Читаются здесь же, при каждом ответе, а не запоминаются во входе: тем же приёмом их читает
+     * проверка доступа, и второй источник разошёлся бы с ней на первой же правке роли.
+     *
+     * Записи нет — прав нет: отвечать отказом здесь нечего, вход уже опознан проверкой.
+     */
+    async #rightsOf(accountId: string): Promise<readonly string[]> {
+        const rights: IAccountRights | null = await findAccountRights(this.#prisma, accountId);
+
+        return rights ? [...rightsOf(rights.roleRights, rights.edits)] : [];
     }
 
     /**
