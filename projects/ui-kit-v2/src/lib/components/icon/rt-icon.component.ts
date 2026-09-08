@@ -1,18 +1,23 @@
 import {
+    afterNextRender,
     ChangeDetectionStrategy,
     Component,
     computed,
     effect,
+    ElementRef,
     inject,
     input,
     InputSignal,
     InputSignalWithTransform,
     numberAttribute,
+    signal,
     Signal,
     ViewEncapsulation,
+    WritableSignal,
 } from '@angular/core';
 
 import { iconMaterialDrawn } from './rt-icon-material-map';
+import { RT_ICON_MATERIAL_PRESET_SELECTOR } from './rt-icon.const';
 import { IRtIcon } from './rt-icon.model';
 import { RtIconRegistry } from './rt-icon.registry';
 
@@ -54,17 +59,33 @@ const BEM_BLOCK: string = 'rt-icon';
 })
 export class RtIconComponent {
     readonly #registry: RtIconRegistry = inject(RtIconRegistry);
-
-    protected readonly href: Signal<string> = computed((): string => this.#registry.symbolHref(this.name()));
+    readonly #host: ElementRef<HTMLElement> = inject(ElementRef);
 
     /**
-     * Есть ли у имени рисунок в материальном наборе. Набор закрывает не все имена кита — он
-     * слой переопределений, как набор оформления: имя без материального рисунка рисуется своим,
-     * и это не пробел.
+     * Набор, объявленный разметкой над этим значком.
+     *
+     * Читается у разметки, а не выбирается стилями: ссылку на символ спрайта CSS подменить нечем,
+     * и второй `<use>` рядом с первым тоже не годится — он вечно указывает на символ, за которым
+     * никто не ходил, а обвязка снимков ждёт, пока нарисуется каждый.
+     *
+     * Спрашивается ближайший предок, а не корень страницы: признак набора стоит и на контейнере,
+     * и на одной странице законно живут оба набора рядом.
+     *
+     * Один раз после первой отрисовки: на сервере разметки нет вовсе, а признак набора страница
+     * по ходу жизни не переставляет — его ставит приложение своей разметкой.
      */
-    protected readonly hasMaterial: Signal<boolean> = computed((): boolean => iconMaterialDrawn.has(this.name()));
+    readonly #preset: WritableSignal<IRtIcon.Preset> = signal<IRtIcon.Preset>('base');
 
-    protected readonly materialHref: Signal<string> = computed((): string => this.#registry.symbolHref(this.name(), 'material'));
+    protected readonly href: Signal<string> = computed((): string => this.#registry.symbolHref(this.name(), this.preset()));
+
+    /**
+     * Набор, которым рисуется этот значок. Материальный закрывает не все имена кита — он слой
+     * переопределений, как набор оформления: имя без материального рисунка рисуется своим, и это
+     * не пробел.
+     */
+    protected readonly preset: Signal<IRtIcon.Preset> = computed((): IRtIcon.Preset =>
+        this.#preset() === 'material' && iconMaterialDrawn.has(this.name()) ? 'material' : 'base'
+    );
 
     protected readonly sizePx: Signal<number> = computed((): number => SIZES[this.size()]);
 
@@ -94,11 +115,14 @@ export class RtIconComponent {
         // Значок едет по запросу имени, а не вперёд всем набором: страница платит за то, что
         // нарисовала. Смена имени просит новое — прежний символ остаётся в спрайте.
         effect((): void => {
-            this.#registry.request(this.name());
-            // Материальный рисунок едет только туда, где набор объявлен разметкой: страница без
-            // признака набора платила бы за рисунок, которого не покажет.
-            if (this.hasMaterial() && this.#registry.hasMaterialPreset()) {
-                this.#registry.request(this.name(), 'material');
+            this.#registry.request(this.name(), this.preset());
+        });
+
+        // Разметка над значком видна только в браузере и только после первой отрисовки:
+        // контейнер с признаком набора рисует то же приложение.
+        afterNextRender((): void => {
+            if (this.#host.nativeElement.closest(RT_ICON_MATERIAL_PRESET_SELECTOR)) {
+                this.#preset.set('material');
             }
         });
     }

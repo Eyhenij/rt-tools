@@ -7,12 +7,7 @@ import { EMPTY, Observable, Subject, catchError, map, mergeMap, tap } from 'rxjs
 
 import { PlatformService } from '@rt-tools/core';
 
-import {
-    RT_ICON_MATERIAL_PRESET_SELECTOR,
-    RT_ICON_MATERIAL_SYMBOL_ID_PREFIX,
-    RT_ICON_SPRITE_ID,
-    RT_ICON_SYMBOL_ID_PREFIX,
-} from './rt-icon.const';
+import { RT_ICON_MATERIAL_SYMBOL_ID_PREFIX, RT_ICON_SPRITE_ID, RT_ICON_SYMBOL_ID_PREFIX } from './rt-icon.const';
 import { IRtIcon } from './rt-icon.model';
 
 /**
@@ -71,14 +66,6 @@ export class RtIconRegistry {
      */
     public symbolHref(name: IRtIcon.Name, preset: IRtIcon.Preset = 'base'): string {
         return `#${this.#symbolId(name, preset)}`;
-    }
-
-    /**
-     * Есть ли на странице материальный набор. Спрашивается у разметки, потому что признак ставит
-     * приложение разметкой: своей службы у набора нет — этим он и отличается от темы.
-     */
-    public hasMaterialPreset(): boolean {
-        return this.#platform.isPlatformBrowser && this.#doc.querySelector(RT_ICON_MATERIAL_PRESET_SELECTOR) !== null;
     }
 
     /**
