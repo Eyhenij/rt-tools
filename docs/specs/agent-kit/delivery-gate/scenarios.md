@@ -148,7 +148,7 @@ mention of the command inside a string is no call
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-932 — the repair named in the refusal passes
+### SC-AK-934 — the repair named in the refusal passes
 
 Given the contribution of the branch carries a commit of the machine record with a foreign mail
 When a commit call goes that rewrites the last commit and carries the declared mail in both
