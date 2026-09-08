@@ -363,6 +363,25 @@ sig "SC-AK-753 — переписывание последнего коммит�
     'git commit --amend --no-edit' deny
 sig "SC-AK-753 — слово команды внутри строки коммитом не считается" "$WRONG_SIG" \
     'echo "git commit -m x"' PASS
+
+# Починка, названная в самом отказе, — тоже коммит. Без исключения гард отбивал её вместе со
+# всеми, и выйти из круга его же способом было нельзя: расхождение снимается только коммитом,
+# а коммит отбит, пока расхождение есть. Узнаётся починка по объявленной почте в обеих
+# переменных рядом с правкой последнего коммита — подделать это значит поставить верную подпись.
+sig "SC-AK-938 — починка, названная в отказе, проходит" "$WRONG_SIG" \
+    "GIT_AUTHOR_EMAIL=\"$BOT_MAIL\" GIT_COMMITTER_EMAIL=\"$BOT_MAIL\" git commit --amend --no-edit --reset-author" PASS
+sig "SC-AK-938 — та же починка в одинарных кавычках" "$WRONG_SIG" \
+    "GIT_AUTHOR_EMAIL='$BOT_MAIL' GIT_COMMITTER_EMAIL='$BOT_MAIL' git commit --amend --no-edit --reset-author" PASS
+sig "SC-AK-938 — та же починка без кавычек" "$WRONG_SIG" \
+    "GIT_AUTHOR_EMAIL=$BOT_MAIL GIT_COMMITTER_EMAIL=$BOT_MAIL git commit --amend --no-edit --reset-author" PASS
+sig "SC-AK-938 — чужая почта в переменных починкой не считается" "$WRONG_SIG" \
+    "GIT_AUTHOR_EMAIL=\"$STRANGER_MAIL\" GIT_COMMITTER_EMAIL=\"$STRANGER_MAIL\" git commit --amend --no-edit" deny
+sig "SC-AK-938 — одна переменная из двух починкой не считается" "$WRONG_SIG" \
+    "GIT_AUTHOR_EMAIL=\"$BOT_MAIL\" git commit --amend --no-edit" deny
+sig "SC-AK-938 — верные переменные без правки последнего коммита не пропускают обычный коммит" "$WRONG_SIG" \
+    "GIT_AUTHOR_EMAIL=\"$BOT_MAIL\" GIT_COMMITTER_EMAIL=\"$BOT_MAIL\" git commit -m \"feat: следующая правка\"" deny
+sig "SC-AK-938 — верные переменные и правка коммита пуш всё равно не пропускают" "$WRONG_SIG" \
+    "GIT_AUTHOR_EMAIL=\"$BOT_MAIL\" GIT_COMMITTER_EMAIL=\"$BOT_MAIL\" git commit --amend --no-edit && git push origin RT-70-signature" deny
 rm -rf "$WRONG_SIG"
 
 RIGHT_SIG="$(sig_repo)"
