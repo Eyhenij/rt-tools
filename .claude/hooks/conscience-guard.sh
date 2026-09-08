@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/conscience-guard.sh · cc32b18ed206 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/conscience-guard.sh · f1e71e6e05a1 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: agents/conscience.md, hooks/roles.sh, hooks/deny-tail.sh
 # Guard of conscience: a turn in which the conscience role found a repeat of an analysed miss does
@@ -50,7 +50,19 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 
 # The turn is everything recorded after the owner's last real remark. A tool answer arrives under
 # the same role, so lines with `tool_result` do not count as a remark.
-verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
+#
+# The verdict of the role and the deed by the finding are read from different halves of the same
+# record. The verdict is looked for only where the role can answer: a marker printed by a tool
+# that reads and writes files, and a marker in the executor's own text, are not a verdict —
+# otherwise reading a file with that line stands for the role having found a repeat. The deed is
+# looked for over the whole record: the analysis is created by a command, and the word to the
+# owner lies in the reply text.
+found="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
+    def textof:
+        if type == "string" then .
+        elif type == "array" then (map(if type == "object" then (.text // "") else tostring end) | join("\n"))
+        else tostring end;
+
     def is_input:
         .type == "user"
         and ((.isCompactSummary // false) | not)
@@ -60,27 +72,59 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
 
     (map(is_input) | rindex(true)) as $i
     | (if $i == null then [] else .[$i:] end) as $turn
-    | [ $turn[]
-        | if .type == "assistant"
-          then ([(.message.content // [])[]
-                  | if .type == "tool_use" then (.input.command // "") else (.text // "") end] | join("\n"))
-          elif .type == "user"
-          then ([(.message.content // []) | select(type == "array") | .[]
-                   | select(.type == "tool_result") | .content
-                   | if type == "string" then . elif type == "array"
-                     then (map(if type == "object" then (.text // "") else tostring end) | join("\n"))
-                     else tostring end] | join("\n"))
-          else "" end ] as $flow
-    | ($flow | map(test("(СОВЕСТЬ|CONSCIENCE):[[:space:]]*(повтор|repeat)")) | index(true)) as $found
-    | if $found == null then "no-finding"
-      else ($flow[($found + 1):] | join("\n")
-            | if test("postmortems|разбор происшествия|analysis of the incident|(СОВЕСТЬ|CONSCIENCE): (разобрано|analysed)") then "analysed" else "standing" end)
+
+    # Tools that read and write files: their answer is not a verdict of the role. The same set the
+    # exam guard mutes — there the marker was forged by an echo, here it arrives by an honest
+    # reading of an archive record that names the marker in its list.
+    | ["Bash", "Read", "Grep", "Glob", "Edit", "Write", "MultiEdit", "NotebookEdit"] as $mute
+    | [ $turn[] | select(.type == "assistant") | (.message.content // [])[]
+          | select(.type == "tool_use") | select(.name as $n | $mute | index($n) != null) | (.id // "") ] as $muted
+
+    | [ $turn[] | {
+          say: (if .type == "assistant" then ""
+                elif .type == "user" then
+                    ([ ((.message.content // []) | if type == "array" then .[] else empty end
+                          | select(.type == "tool_result")
+                          | select(((.tool_use_id // "") | if . == "" then null else . end) as $id
+                                   | $id == null or ($muted | index($id)) == null)
+                          | .content | textof),
+                       (. as $rec
+                        | if ($rec.toolUseResult // null) == null then ""
+                          elif ([($rec.message.content // []) | if type == "array" then .[] else empty end
+                                  | select(.type == "tool_result") | (.tool_use_id // "")]
+                                | map(. as $id | $muted | index($id)) | any(. != null)) then ""
+                          else ($rec.toolUseResult | textof) end)
+                     ] | join("\n"))
+                # Host records — the role completion notice and the attachment: the host chooses
+                # their form, and they count whole.
+                else tostring end),
+          act: (if .type == "assistant"
+                then ([(.message.content // [])[]
+                        | if .type == "tool_use" then (.input.command // "") else (.text // "") end] | join("\n"))
+                elif .type == "user"
+                then ([(.message.content // []) | if type == "array" then .[] else empty end
+                         | select(.type == "tool_result") | .content | textof] | join("\n"))
+                else "" end)
+      } ] as $flow
+
+    | ($flow | map(.say | test("(СОВЕСТЬ|CONSCIENCE):[[:space:]]*(повтор|repeat)")) | index(true)) as $at
+    | if $at == null then "no-finding"
+      else (($flow[($at + 1):] | map(.act + "\n" + .say) | join("\n"))
+            | if test("postmortems|разбор происшествия|analysis of the incident|(СОВЕСТЬ|CONSCIENCE): (разобрано|analysed)")
+              then "analysed" else "standing" end)
+           # The refusal names the finding, and it is taken from the very answer that was judged:
+           # taken by a search over the record it would quote the file that was read.
+           + "\n"
+           + (($flow[$at].say | split("\n")) as $lines
+              | ($lines | map(test("(СОВЕСТЬ|CONSCIENCE):[[:space:]]*(повтор|repeat)")) | index(true)) as $line
+              | $lines[$line:($line + 4)] | join("\n"))
       end
 ' 2>/dev/null)"
 
+verdict="$(printf '%s\n' "$found" | head -1)"
 [ "$verdict" = "standing" ] || exit 0
 
-detail="$(tail -n 400 "$transcript" 2>/dev/null | grep -m1 -A3 -E '(СОВЕСТЬ|CONSCIENCE):[[:space:]]*(повтор|repeat)' | tr -d '\\"' | head -4)"
+detail="$(printf '%s\n' "$found" | tail -n +2)"
 
 reason="BLOCKED by conscience-guard: the conscience found in this turn a repeat of a miss already analysed, and nothing was done about it.
 
