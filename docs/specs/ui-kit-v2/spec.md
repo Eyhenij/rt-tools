@@ -5,9 +5,9 @@
 **Laws:** `verifiability`, `delivery`, `frontend-application`
 **Procedures:** none
 
-The domain holds four subjects: how the look of the kit is checked against snapshots, how its
-route panel gives way, what the kit promises about its own design and what a field of input declares
-the kind of the value being entered by. Each lives as a subdomain of its own.
+The subjects of the domain are listed by the table of the subdomains below, and each of them lives
+as a subdomain of its own. There is no count of them here on purpose: it ages with every new
+subdomain and has diverged once already.
 
 ## Why
 
@@ -34,24 +34,25 @@ visible at each subject is named by its subdomain.
 ## Rules
 
 The rules of the subjects live in the subdomains — the domain outgrew the length limit, and reading
-it whole for the sake of one detail became dearer than finding it. Three of them repeat the
-boundaries of the agreements the domain was put together from; the fourth was created by merging the
-agreement about the field of input and is the first to describe the surface of a component, not a
-check of the look.
+it whole for the sake of one detail became dearer than finding it. Some of the subdomains repeat the
+boundaries of the agreements the domain was put together from; some were created by merging an
+agreement about their own subject and describe the surface of a component, not a check of the look.
 
 - **The scenario prefix belongs to the domain together with the subdomains.** A domain is split when
   its spec has outgrown the length limit, and the scenarios move as they were: the number ties a
   scenario to the title of its test, and a numbering of its own at every subdomain would mean
   recounting all the numbers at once.
 
-| Subdomain                                           | About what                                                                                                                      |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| [The snapshots of the showcase](snapshots/spec.md)  | what is shot, what a frame is held between runs by, where the run is obliged to refuse                                          |
-| [The leaving of a route panel](aside/spec.md)       | whom the guard asks about the edits, the permission to leave, a cancel instead of a loss                                        |
-| [The design of the kit](tokens/spec.md)             | the brand and the palettes, the graph of the tokens, the completeness of the dark theme, the contrast, the layer of the cascade |
-| [The field of input](input/spec.md)                 | what the field declares the kind of the value to the browser by and where the promise of the kit ends                           |
-| [The actions at a reply](chat-actions/spec.md)      | what a consumer declares its own action at a reply of a correspondence by and where the boundary is                             |
-| [The field and a signal form](signal-forms/spec.md) | where a field of the set takes the state of the form from and what happens to both bindings                                     |
+| Subdomain                                                 | About what                                                                                                                      |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| [The snapshots of the showcase](snapshots/spec.md)        | what is shot, what a frame is held between runs by, where the run is obliged to refuse                                          |
+| [The leaving of a route panel](aside/spec.md)             | whom the guard asks about the edits, the permission to leave, a cancel instead of a loss                                        |
+| [The design of the kit](tokens/spec.md)                   | the brand and the palettes, the graph of the tokens, the completeness of the dark theme, the contrast, the layer of the cascade |
+| [The field of input](input/spec.md)                       | what the field declares the kind of the value to the browser by and where the promise of the kit ends                           |
+| [The actions at a reply](chat-actions/spec.md)            | what a consumer declares its own action at a reply of a correspondence by and where the boundary is                             |
+| [The field and a signal form](signal-forms/spec.md)       | where a field of the set takes the state of the form from and what happens to both bindings                                     |
+| [The form dictionary of a panel](form-dictionary/spec.md) | the hierarchy of the form of a panel, where the gap comes from, what the consumer does not write                                |
+| [The digits of a number field](number-grouping/spec.md)   | what a field separates the digits of a number by and where a consumer says a number is solid                                    |
 
 ## What is out of scope
 

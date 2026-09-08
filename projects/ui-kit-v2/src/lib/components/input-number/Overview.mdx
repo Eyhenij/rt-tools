@@ -83,6 +83,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `max`               | `number \| null`       | `null` (сторона не ограничена) |
 | `minFractionDigits` | `number`               | `0`                            |
 | `maxFractionDigits` | `number`               | `2`                            |
+| `grouped`           | `boolean`              | `true`                         |
+
+**Сплошное число объявляется входом `grouped`:** `false` снимает разделители разрядов и при
+наборе, и после ухода фокуса. Год, номер дома и код разрядами не читаются.
 
 **Точность фиксирована, а не задана диапазоном:** итоговое число знаков —
 `max(minFractionDigits, min(maxFractionDigits, 20))`, и оно же и нижняя, и верхняя граница.
