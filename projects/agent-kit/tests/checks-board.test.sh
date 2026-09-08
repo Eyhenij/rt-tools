@@ -205,6 +205,31 @@ report "SC-AK-919 — ни один названный документ сост
 
 rm -f "$BOARD_TREE/docs/adr/decision.md" "$BOARD_TREE/docs/plans/epic.md"
 
+# --- SC-AK-920 — принадлежность объявляется словом о задаче ------------------------------------
+# Номер эпика стоит в теле задачи и в объяснении, и в цитате отказа, и в перечне того, чего работа
+# не делает. Пока принадлежность читалась по упоминанию номера, всякая такая задача получала
+# ложную строку — и обе задачи, заведённые разбором этого же промаха, её получили.
+printf '%s\n' '# Замысел эпика' '' '| № | Задача |' '| - | ------ |' > "$BOARD_TREE/docs/plans/epic.md"
+
+export STUB_ISSUES="$(epic_issues 'Сверка дала четырнадцать ложных строк о составе эпика #700')"
+report "SC-AK-920 — упоминание номера в объяснении принадлежностью не считается" \
+    "$(board_says '#702: the body names the epic #700')" 0
+export STUB_ISSUES="$(epic_issues 'Вторая задача эпика #700, идёт после первой')"
+report "SC-AK-920 — объявленная принадлежность судится как прежде" \
+    "$(board_says '#702: the body names the epic #700')" 1
+
+# Обратная сторона читает то же объявление: замысел задачу называет, а тело её эпиком не объявляет.
+printf '%s\n' '# Замысел эпика' '' '| № | Задача |' '| - | ------ |' '| 1 | RT-702 |' \
+    > "$BOARD_TREE/docs/plans/epic.md"
+export STUB_ISSUES="$(epic_issues 'Сверка дала четырнадцать ложных строк о составе эпика #700')"
+report "SC-AK-920 — упоминание номера объявлением не считается и со стороны замысла" \
+    "$(board_says '#702: the plan of the epic #700 names the task')" 1
+export STUB_ISSUES="$(epic_issues 'Вторая задача эпика #700, идёт после первой')"
+report "SC-AK-920 — объявление со стороны замысла принимается" \
+    "$(board_says '#702: the plan of the epic #700 names the task')" 0
+
+rm -f "$BOARD_TREE/docs/plans/epic.md"
+
 board_config "$BOARD_CONFIG"
 export STUB_ISSUES="$saved_issues"
 export STUB_BOARD="$saved_board"

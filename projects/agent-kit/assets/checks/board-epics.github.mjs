@@ -45,6 +45,21 @@ function planRows(plan) {
 }
 
 /**
+ * The epic a task body declares itself under — or `undefined` where nothing is declared. With a
+ * number given, it answers whether that very epic is declared.
+ *
+ * Belonging is declared by a word about the task standing right before the word about the epic —
+ * the very shape the refusal dictates. Read by a bare mention of the number, every task that
+ * explains something about an epic got a false line: the number stands there in the reasoning, in
+ * a quoted refusal, in the list of what the work does not do. Both sides of the link read this one
+ * declaration: read differently, one side would demand what the other does not see.
+ */
+function declaredEpicOf(body, number = null) {
+    const named = body.match(new RegExp(`задач[аи]\\s+эпика?\\s+(?:#|${TASK_KEY}-)(\\d+)`, 'i'))?.[1];
+    return number === null ? named : named !== undefined && Number(named) === number;
+}
+
+/**
  * The link between a task and an epic, read in both directions.
  *
  * A task created under an epic names it in its body, and the epic plan names the task from its own
@@ -116,7 +131,7 @@ export function checkEpicLinks(open, report) {
             }
             listedBy.set(number, epic.number);
             const body = String(byNumber.get(number).body ?? '');
-            if (!new RegExp(`(?:#|${TASK_KEY}-)${epic.number}\\b`).test(body)) {
+            if (!declaredEpicOf(body, epic.number)) {
                 report(
                     `#${number}: the plan of the epic #${epic.number} names the task, and its body does not name the epic. Add the line «Задача эпика #${epic.number}, замысел — ${planPath}»`
                 );
@@ -131,7 +146,7 @@ export function checkEpicLinks(open, report) {
         if (epicNumbers.has(issue.number)) {
             continue;
         }
-        const named = String(issue.body ?? '').match(new RegExp(`эпика?\\s+(?:#|${TASK_KEY}-)(\\d+)`, 'i'))?.[1];
+        const named = declaredEpicOf(String(issue.body ?? ''));
         if (named === undefined || !epicNumbers.has(Number(named)) || unreadable.has(Number(named))) {
             continue;
         }

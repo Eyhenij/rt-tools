@@ -383,57 +383,6 @@ Then it stays silent: such a branch never has an event, and the advice to bring 
 executable. A file outside the list brings the demand back, and a composition that cannot be read is
 judged as before
 
-### SC-AK-733 — open tasks with matching titles are listed by a digest
-
-Given the work queue holds two open tasks about one and the same thing, named by different words
-When the work queue audit reads it
-Then it names them by one digest line and counts it as no divergence: matching words are a reason to
-look, not a sign of a duplicate, and a refusal would refuse the work at every series of similar
-tasks
-
-Covered: `projects/agent-kit/tests/checks-board.test.sh`.
-
-### SC-AK-751 — the link of a task with an epic is read both ways
-
-Given the label of an epic card is named by the setting of the tree, and the epic card names the
-path to its plan
-When the work queue audit reads the open tasks
-Then it names as a divergence both one-sided links — a task the epic plan names while the body of
-the epic does not, and a task the epic named in its body while the epic plan does not know it; a card
-without a path to a plan and a path without a file on the disk are each named by a line of their own.
-The label is not named — the link is not judged at all: there is nothing to tell an epic card from an
-ordinary task by
-
-Covered: `projects/agent-kit/tests/checks-board.test.sh`.
-
-### SC-AK-919 — the plan of an epic is the document that carries the makeup
-
-Given the card of an epic names its decision before its plan, and the decision has no table of tasks
-When the work queue audit reads the makeup of the epic
-Then it reads the plan and judges the link as before: none of the named documents on disk, and none
-of those on disk carrying the makeup, are named by lines of their own
-
-Covered: `projects/agent-kit/tests/checks-board.test.sh`.
-
-### SC-AK-752 — a branch of an open request lagging behind main is named by the audit
-
-Given the branch of an open request has fallen several commits behind the main branch
-When the work queue audit reads the open requests
-Then it names the number of the lag and says the run went from a base that is no longer in the main
-branch; on a branch without a lag and where there is nothing to compare with, it stays silent
-
-Covered: `projects/agent-kit/tests/checks-board.test.sh`.
-
-### SC-AK-774 — a call refused by the unavailability of the hosting is repeated
-
-Given the hosting answers with an unavailability code — a five hundredth, a gateway one or its
-timeout When the call goes from the work queue module Then it is repeated up to three times with a
-growing pause and passes as soon as the hosting answered; a refusal by right and by a non-existent
-record is not repeated at all, and unavailability longer than three attempts refuses — but exactly
-after three
-
-Covered: `projects/agent-kit/tests/checks-board.test.sh`.
-
 ### SC-AK-822 — a skip of the schema audit that became a refusal
 
 Given the database is unavailable, and the branch did not touch the storage
@@ -451,16 +400,6 @@ When the same audit is run
 Then it refuses the same way: the uncommitted leaves by the same push right after
 
 Covered: `projects/agent-kit/tests/checks-schema-drift.test.sh`.
-
-### SC-AK-845 — a request on top of a neighbouring one gets no run, and the audit names the reason
-
-Given a request is opened into the branch of a neighbouring request, not into main
-When the work queue audit checks its tip
-Then it names the base, reports that there will be no run and that this is fixed by moving the base
-after the lower request is merged; there is no advice to reopen the request. A request into the main
-branch is checked by the former line about a lost event
-
-Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
 ### SC-AK-869 — a record of seven days and an hour the cleanup removes, and the check stays silent
 
@@ -485,12 +424,3 @@ When the cleanup and the time check run
 Then neither of them names it
 
 Covered: `projects/agent-kit/tests/archive-age.test.sh`.
-
-### SC-AK-873 — the answer of the work queue helper says whose eyes the state was taken by
-
-Given a tree with the token of the machine record and a tree without it
-When the helper reads a task and a request
-Then a task with the token arrives with `viewer: machine`, without the token with `client`; a request
-in both trees is `client`, because it is read without the token
-
-Covered: `projects/agent-kit/tests/checks-board-pull.test.sh`.
