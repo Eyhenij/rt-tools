@@ -5,6 +5,9 @@
         "apps",
         "libs"
     ],
+    "testRoots": [
+        "tools"
+    ],
     "indexedDirs": [],
     "portableDirs": [
         "projects/agent-kit/assets"
