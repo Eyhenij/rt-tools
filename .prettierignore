@@ -88,6 +88,7 @@ tools/archive-prune.mjs
 tools/board-epics.mjs
 tools/board-gh.mjs
 tools/board-paths.mjs
+tools/board-pull-state.mjs
 tools/board-runs.mjs
 tools/board-titles.mjs
 tools/board-folders.mjs
