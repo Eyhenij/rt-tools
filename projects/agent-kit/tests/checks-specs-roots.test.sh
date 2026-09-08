@@ -38,8 +38,10 @@ specs_says() {
     (cd "$ROOTS_TREE" && node tools/check-specs.mjs 2>&1) | grep -cE "$1"
 }
 
-# Число мест у сценария: сверка его не печатает, а удвоенный обход виден только по нему.
-printf 'import { collectReferences } from "./spec-scenarios.mjs";\nconsole.log((collectReferences().get(process.argv[2]) ?? []).length);\n' \
+# Число мест у сценария: сверка его не печатает, а удвоенный обход виден только по нему. Число
+# печатается строкой: узел раскрашивает числовой довод, и под прогоном с включённым цветом проба
+# сравнивала бы номер вместе с управляющими знаками.
+printf 'import { collectReferences } from "./spec-scenarios.mjs";\nprocess.stdout.write(String((collectReferences().get(process.argv[2]) ?? []).length));\n' \
     > "$ROOTS_TREE/tools/places.mjs"
 places_of() {
     (cd "$ROOTS_TREE" && node tools/places.mjs "$1")
