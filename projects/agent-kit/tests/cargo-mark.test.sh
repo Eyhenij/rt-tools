@@ -65,6 +65,12 @@ mark_code() {
     echo $?
 }
 
+# Токен дерева ставит сам сценарий, а не берёт с машины. Отметка отбивает его отсутствие до
+# сети — раньше сухого прогона, — а лежит он файлом за пределами дерева: на машине без записи в
+# приёме восемь проверок этого набора краснели там, где ни отметка, ни набор не при чём, и
+# зелёными они были ровно на той машине, где кто-то однажды записался. Сценарий про сам отказ
+# ставит пустое значение так же явно.
+
 # SC-AK-430 — незнакомое состояние отбивается до сети
 MARK_PATTERN='there is no state'
 report "SC-AK-430 — незнакомое состояние названо" "$(mark_says --state nowhere --postmortem x.md)" 1
@@ -82,7 +88,7 @@ import('./dist/agent-kit/lib/shipment.js').then((m) => {
 " 2>/dev/null)"
 MARK_PATTERN="tree ${PACKAGE_SLUG}:"
 report "SC-AK-558 — отметка называет тот же признак, что отправка" \
-    "$(mark_says --state new --postmortem x.md --dry-run)" 1
+    "$(RT_TREE_TOKEN=x mark_says --state new --postmortem x.md --dry-run)" 1
 
 # SC-AK-431 — вызов без записей отбивается до сети
 MARK_PATTERN='there is nothing to mark'
@@ -91,28 +97,28 @@ report "SC-AK-431 — код возврата ненулевой" "$(mark_code -
 
 # SC-AK-428 — сухой прогон показывает собранный пакет и никуда не стучится
 MARK_PATTERN='it would have gone to'
-report "SC-AK-428 — сухой прогон называет адрес" "$(mark_says --state new --postmortem x.md --dry-run)" 1
+report "SC-AK-428 — сухой прогон называет адрес" "$(RT_TREE_TOKEN=x mark_says --state new --postmortem x.md --dry-run)" 1
 MARK_PATTERN='analyses 1, proposals 0'
-report "SC-AK-428 — пакет разобран по родам" "$(mark_says --state new --postmortem x.md --dry-run)" 1
-report "SC-AK-428 — код возврата нулевой" "$(mark_code --state new --postmortem x.md --dry-run)" 0
+report "SC-AK-428 — пакет разобран по родам" "$(RT_TREE_TOKEN=x mark_says --state new --postmortem x.md --dry-run)" 1
+report "SC-AK-428 — код возврата нулевой" "$(RT_TREE_TOKEN=x mark_code --state new --postmortem x.md --dry-run)" 0
 
 # SC-AK-544 — сухой прогон объявляется первой строкой, а не окончанием глагола
 MARK_PATTERN='^A DRY RUN — nothing left outward'
 report "SC-AK-544 — сухой прогон назван первой строкой" \
-    "$(mark_says --state new --postmortem x.md --dry-run)" 1
+    "$(RT_TREE_TOKEN=x mark_says --state new --postmortem x.md --dry-run)" 1
 MARK_PATTERN='without `--dry-run`'
 report "SC-AK-544 — назван и вызов, которым это отмечают" \
-    "$(mark_says --state new --postmortem x.md --dry-run)" 1
+    "$(RT_TREE_TOKEN=x mark_says --state new --postmortem x.md --dry-run)" 1
 
 # SC-AK-427 — записи разных родов едут одним вызовом
 MARK_PATTERN='analyses 2, proposals 1'
 report "SC-AK-427 — пачка собрана целиком" \
-    "$(mark_says --state new --postmortem a.md --postmortem b.md --proposal c --dry-run)" 1
+    "$(RT_TREE_TOKEN=x mark_says --state new --postmortem a.md --postmortem b.md --proposal c --dry-run)" 1
 
 # SC-AK-427 — приложенное значение едет полем строки, а не своим вызовом
 MARK_PATTERN='into «fixed»'
 report "SC-AK-427 — переход в починку собран" \
-    "$(mark_says --state fixed --postmortem a.md --fix 'статья правила' --dry-run)" 1
+    "$(RT_TREE_TOKEN=x mark_says --state fixed --postmortem a.md --fix 'статья правила' --dry-run)" 1
 
 # SC-MB-191 — команда строки запуска несёт текст починки доводом
 MARK_PATTERN='"fixNote":"статья правила"'
