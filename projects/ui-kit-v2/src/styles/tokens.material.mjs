@@ -141,6 +141,15 @@ export const material = [
         value: `var(--rt-mat-neutral-30)`,
     },
     {
+        lead: `    /* Заглушка загрузки: краски те же, что набор давал ей прежде через подложку и
+       рамку, — вид под набором от разведения концов не поехал. */`,
+        space: true,
+        name: `--rt-color-skeleton-base`,
+        value: `var(--rt-mat-neutral-10)`,
+    },
+    { name: `--rt-color-skeleton-wave`, value: `var(--rt-mat-neutral-25)` },
+
+    {
         lead: `    /* Кнопка и поле первого кита скруглены заметно сильнее: 1.5rem против 10px.
        Значение снято числом — ссылки на токены первого кита во второй кит не едут. */`,
         space: true,

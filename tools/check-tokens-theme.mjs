@@ -33,13 +33,26 @@
  *
  * A non-zero exit code and a list of the divergences.
  */
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { CONFIG, ROOT, allowlistOf, baselineOf, parseAllowlist } from './rt-kit-checks.config.mjs';
+import {
+    LOOKS,
+    SINGLE_VAR_RE,
+    colorOf,
+    dark,
+    declarations,
+    light,
+    linkOf,
+    luminance,
+    mixOf,
+    mixinBody,
+    over,
+    primitives,
+    read,
+} from './tokens-looks.mjs';
 
-/** The styling layer: the scale, the light theme's assignments, the dark theme's overrides. */
-const STYLES = 'projects/ui-kit-v2/src/styles';
 const COMPONENTS = 'projects/ui-kit-v2/src/lib';
 const PAIRS_FILE = 'tools/tokens-contrast-pairs.json';
 const COLORS_DOC = 'projects/ui-kit-v2/docs/Colors.mdx';
@@ -48,52 +61,8 @@ const ALLOWLIST = allowlistOf('tokens-theme');
 /** The contrast threshold, one for all the pairs. The owner's decision, the agreement's «Decisions» section. */
 const THRESHOLD = 4.5;
 
-const LIGHT_MIXIN = 'rt-theme-light-tokens';
-const DARK_MIXIN = 'rt-theme-dark-tokens';
-const PRESET_MIXIN = 'rt-preset-material-tokens';
-
-/**
- * The four looks a pair is measured in. The material preset is a second layer of assignments, and
- * the dark theme is stronger than it: a name the dark theme answers keeps the dark colour in the
- * material set too, and a name it stays silent about takes the preset's. So the fourth look is not
- * a repetition of the second — it is the only place where those two rules meet.
- */
-const LOOKS = ['light', 'dark', 'material', 'material dark'];
-
-/** A declaration with an optional mark of a shared colour on the same line. */
-const DECLARATION_RE = /^[ \t]*(--rt-[a-z0-9-]+)[ \t]*:[ \t]*([^;]+);[ \t]*(?:\/\* rt-theme-shared:[ \t]*([^*]*?)[ \t]*\*\/)?/gm;
 const COLOR_LITERAL_RE = /^(#[0-9a-f]{3,8}|rgba?\([^)]*\)|hsla?\([^)]*\)|linear-gradient\(.*\)|transparent)$/i;
-const SINGLE_VAR_RE = /^var\(\s*(--rt-[a-z0-9-]+)\s*\)$/;
-/**
- * A transparent shade counted from a colour: a share of the colour, the rest transparency. There is
- * one form, because the kit counts shades only that way; an unknown form stays unparsed, and a pair
- * with it is declared a divergence rather than passed over silently.
- */
-const COLOR_MIX_RE = /^color-mix\(\s*in\s+srgb\s*,\s*(.+?)\s+([\d.]+)%\s*,\s*transparent\s*\)$/i;
 const BLOCK_RE = /^--rt-([a-z0-9]+)-/;
-
-const read = (path) => readFileSync(join(ROOT, path), 'utf8');
-
-/** A mixin's body: from its heading to the line with the closing brace at zero indent. */
-function mixinBody(text, name) {
-    const start = text.indexOf(`@mixin ${name}`);
-    if (start < 0) {
-        return '';
-    }
-    const end = text.indexOf('\n}', start);
-
-    return text.slice(start, end < 0 ? undefined : end);
-}
-
-/** The declarations of a piece of text: name → value and the mark of a shared colour. */
-function declarations(text) {
-    const map = new Map();
-    for (const match of text.matchAll(DECLARATION_RE)) {
-        map.set(match[1], { value: match[2].trim().replace(/\s+/g, ' '), shared: match[3]?.trim() || null });
-    }
-
-    return map;
-}
 
 function scssFiles(dir) {
     const files = [];
@@ -110,28 +79,6 @@ function scssFiles(dir) {
     }
 
     return files;
-}
-
-const primitives = declarations(read(`${STYLES}/_primitives.scss`));
-const light = declarations(mixinBody(read(`${STYLES}/_semantic.scss`), LIGHT_MIXIN));
-const dark = declarations(mixinBody(read(`${STYLES}/_theme-dark.scss`), DARK_MIXIN));
-const preset = declarations(mixinBody(read(`${STYLES}/_preset-material.scss`), PRESET_MIXIN));
-
-/** A name's value in a look: the dark over the preset, the preset over the light, the scale under all. */
-const valueOf = (name, look) =>
-    (look.includes('dark') ? dark.get(name)?.value : undefined) ??
-    (look.includes('material') ? preset.get(name)?.value : undefined) ??
-    light.get(name)?.value ??
-    primitives.get(name)?.value;
-
-/** The reference chain of a value: only a whole reference, a compound value does not count as a chain. */
-const linkOf = (value) => value.match(SINGLE_VAR_RE)?.[1];
-
-/** The reading of a counted shade: from which colour it is counted and what share of it is taken. */
-function mixOf(value) {
-    const parts = value.match(COLOR_MIX_RE);
-
-    return parts ? { source: parts[1].trim(), share: Number(parts[2]) / 100 } : undefined;
 }
 
 /** Is the value a colour: a colour literal or a reference reaching a literal. */
@@ -180,74 +127,6 @@ function answerOf(name, accepted, seen = new Set()) {
     const upstream = answerOf(link, accepted, seen);
 
     return upstream ? { kind: upstream.kind === 'directly' ? 'through a chain' : upstream.kind, via: link } : null;
-}
-
-/** A colour parsed: r, g, b and the share of opacity. */
-function parseColor(text) {
-    const hex = text.match(/^#([0-9a-f]{3,8})$/i)?.[1];
-    if (hex) {
-        const full = hex.length <= 4 ? [...hex].map((char) => char + char).join('') : hex;
-        const channel = (index) => parseInt(full.slice(index * 2, index * 2 + 2), 16);
-
-        return { r: channel(0), g: channel(1), b: channel(2), a: full.length === 8 ? channel(3) / 255 : 1 };
-    }
-    const rgb = text.match(/^rgba?\(([^)]*)\)$/i)?.[1];
-    if (rgb) {
-        const parts = rgb.split(/[\s,/]+/).filter(Boolean);
-        const alpha = parts[3] ?? '1';
-
-        return {
-            r: Number(parts[0]),
-            g: Number(parts[1]),
-            b: Number(parts[2]),
-            a: alpha.endsWith('%') ? Number(alpha.slice(0, -1)) / 100 : Number(alpha),
-        };
-    }
-
-    return null;
-}
-
-/** A name's colour in a theme: by the chain of references down to a literal. */
-function colorOf(name, theme, seen = new Set()) {
-    const value = valueOf(name, theme);
-    if (!value || seen.has(name)) {
-        return null;
-    }
-    seen.add(name);
-    const mix = mixOf(value);
-    if (mix) {
-        const base = colorOfValue(mix.source, theme, seen);
-
-        return base ? { ...base, a: base.a * mix.share } : null;
-    }
-
-    return colorOfValue(value, theme, seen);
-}
-
-/** A value's colour: a reference goes further along the chain, a literal is parsed on the spot. */
-function colorOfValue(value, theme, seen) {
-    const link = linkOf(value);
-
-    return link ? colorOf(link, theme, seen) : parseColor(value);
-}
-
-/** A semi-transparent colour over an opaque one. */
-const over = (front, back) => ({
-    r: front.r * front.a + back.r * (1 - front.a),
-    g: front.g * front.a + back.g * (1 - front.a),
-    b: front.b * front.a + back.b * (1 - front.a),
-    a: 1,
-});
-
-/** The relative brightness by the WCAG definition. */
-function luminance({ r, g, b }) {
-    const channel = (value) => {
-        const part = value / 255;
-
-        return part <= 0.03928 ? part / 12.92 : ((part + 0.055) / 1.055) ** 2.4;
-    };
-
-    return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
 }
 
 const contrast = (first, second) => {

@@ -175,6 +175,12 @@
     --rt-color-bg-page-auth: var(--rt-neutral-50);
     --rt-color-bg-surface-auth-card: var(--rt-neutral-0);
 
+    /* Skeleton (rt-skeleton) — заглушка загрузки. Два конца перелива: покой и гребень
+       волны. Имена свои, а не роли подложки и рамки: в светлом наборе те ведут на одну краску,
+       и перелив между ними стоял ровной заливкой. */
+    --rt-color-skeleton-base: var(--rt-neutral-100);
+    --rt-color-skeleton-wave: var(--rt-neutral-50);
+
     /* Spacing aliases — named semantic aliases на primitive numeric scale */
     --rt-space-2xs: var(--rt-space-0-5); /* 2px */
     --rt-space-xs: var(--rt-space-1); /* 4px */

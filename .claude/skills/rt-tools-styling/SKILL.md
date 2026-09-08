@@ -208,6 +208,13 @@ The sections below are this tree's articles: the law's technique is named by the
   reason next to it in the source.
   <!-- rt-when: *.mjs -->
 
+- **A transition takes names of its own instead of borrowing two neighbouring roles.** A colour name
+  says a role, not a paint, and two roles are free to meet on one paint in one look and part in
+  another — each right in its own place. A gradient between them is then a flat fill, and nothing
+  sees it: the build assembles it, the styles linter judges the properties, and a still frame shows a
+  flat fill as a lawful one. What answers is the resolution of every end in every look.
+  <!-- rt-when: *.scss *.css *.mjs -->
+
 - **The readability threshold is counted in every look the kit can be drawn in, not in the two
   themes.** A preset is a second layer of assignments and the dark theme is stronger than it, so a
   kit with one preset has four looks, not three: a name the dark theme answers keeps the dark colour
