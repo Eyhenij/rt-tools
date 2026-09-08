@@ -59,6 +59,11 @@ refusal in their own turn.
   it has no record of the kind "answer of a tool", and the narrow selection that read only commands and
   answers did not count the second exam. Two selections differ by the point of reference, not by the
   set of shapes.
+- **The answer of a tool that reads or writes files is not a verdict, and such a call is recognised
+  by its identifier.** Echoing the same line or reading a file that holds it would pass the guard,
+  and forgery would become the only reachable way. The identifier is bound by a name of its own: a
+  search of the list by the list itself answers zero, one such call mutes the answers of all the
+  rest, and the verdict is then looked for in the records of the host alone.
 - **The refusal has an exit that does not demand lifting the protection.** The list of switched-off
   roles lies in the setting of the tree, and the runtime environment may forbid editing such a list by
   a mechanism of its own: an exit available only through switching the check itself off does not work

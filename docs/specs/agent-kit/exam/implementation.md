@@ -13,6 +13,7 @@ statement: a removed statement is removed together with its line.
 - **A role switched off by the tree holds no guard at it.** — `projects/agent-kit/assets/hooks/roles.sh:rt_role_off`
 - **A setting that cannot be read does not switch a role off.** — `projects/agent-kit/assets/hooks/roles.sh:rt_role_off`
 - **The verdict of the second exam is looked for in all the shapes of a turn record, as the verdict of the first is.** — `projects/agent-kit/assets/hooks/exam-guard.sh:after` — scenario SC-AK-318
+- **The answer of a tool that reads or writes files is not a verdict, and such a call is recognised by its identifier.** — `projects/agent-kit/assets/hooks/exam-guard.sh:verdict` — scenarios SC-AK-757, SC-AK-918
 - **The refusal has an exit that does not demand lifting the protection.** — `projects/agent-kit/assets/hooks/exam-guard.sh:rt_exam_declared_skip` — scenario SC-AK-852
 - **Both refusals say that the path through the list of switched-off roles demands lifting the protection.** — `projects/agent-kit/assets/hooks/exam-guard.sh:deny` — the text of both refusals; scenario SC-AK-852
 - **A call of the client counts as lifting the draft, not an occurrence of words.** — `projects/agent-kit/assets/hooks/exam-guard.sh:ready` — scenario SC-AK-853

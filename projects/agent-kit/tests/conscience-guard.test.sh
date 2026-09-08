@@ -44,6 +44,21 @@ ran() {
         '{type:"assistant",message:{content:[{type:"tool_use",name:"Bash",input:{command:$c}}]}}'
 }
 
+# Вызов инструмента и ответ на него связаны опознавателем: по нему гард и отличает ответ роли от
+# ответа читающего инструмента. Первый довод — опознаватель, второй у ответа — его текст.
+read_ran() {
+    jq -c -n --arg id "$1" \
+        '{type:"assistant",message:{content:[{type:"tool_use",id:$id,name:"Read",input:{file_path:"docs/archive/x.md"}}]}}'
+}
+role_ran() {
+    jq -c -n --arg id "$1" \
+        '{type:"assistant",message:{content:[{type:"tool_use",id:$id,name:"Task",input:{prompt:"совесть"}}]}}'
+}
+answered() {
+    jq -c -n --arg id "$1" --arg t "$2" \
+        '{type:"user",message:{content:[{type:"tool_result",tool_use_id:$id,content:$t}]}}'
+}
+
 input_stop() {
     jq -n --arg p "$1" --argjson a "${2:-false}" '{session_id:"tests",transcript_path:$p,stop_hook_active:$a}'
 }
@@ -79,6 +94,17 @@ expect_stop "SC-AK-324 — при чистом ответе роли ход за
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(said 'СОВЕСТЬ: чисто')")")" PASS
 expect_stop "SC-AK-325 — молчание роли ход закрывает" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply 'сделал')")")" PASS
+
+# --- маркер не из ответа роли ---------------------------------------------------------------
+# Записи архива называют маркер роли в перечне намеренно оставленной кириллицы, и всякий, кто их
+# прочитает, получал отказ по находке, которой не было.
+expect_stop "SC-AK-915 — прочитанный файл с маркером ход не держит" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(read_ran t1)" "$(answered t1 "$FOUND")")")" PASS
+expect_stop "SC-AK-916 — маркер в своём тексте вердиктом не считается" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply "в записи стоит строка $FOUND")")")" PASS
+expect_stop "SC-AK-917 — ответ роли держит ход и после прочитанного файла с маркером" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(read_ran t1)" "$(answered t1 "$FOUND")" \
+        "$(role_ran t2)" "$(answered t2 "$FOUND")" "$(reply 'Понял.')")")" BLOCK
 
 # --- роль выключена деревом -------------------------------------------------------------------
 # Дерево называет выключенные роли списком в своей настройке. При выключенной совести гард
