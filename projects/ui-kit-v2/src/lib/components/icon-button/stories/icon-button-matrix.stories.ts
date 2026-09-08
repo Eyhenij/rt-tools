@@ -37,4 +37,13 @@ export const States: TStory = {
     parameters: { pseudo: storyPseudoParameters('button') },
 };
 
+/**
+ * Свой набор оформления и материальный рядом. Спуск до `<button>` тот же, что у ряда
+ * взаимодействия: признак стоит на host компонента, а стилизован контрол внутри.
+ */
+export const Presets: TStory = {
+    args: { part: 'presets' },
+    parameters: { pseudo: storyPseudoParameters('button') },
+};
+
 export const Themes: TStory = { args: { part: 'themes' } };

@@ -18,6 +18,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { IRtIcon } from '../icon/rt-icon.model';
+import { RtRippleDirective } from '../ripple';
 import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { IRtIconButton } from './rt-icon-button.model';
 
@@ -48,6 +49,7 @@ const BEM_BLOCK: string = 'rt-icon-button';
     imports: [
         // standalone components / directives
         RtIconComponent,
+        RtRippleDirective,
         RtTooltipDirective,
         BlockDirective,
         ElemDirective,

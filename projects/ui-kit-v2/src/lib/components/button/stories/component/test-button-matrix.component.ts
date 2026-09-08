@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryGridComponent } from '../../../../../showcase/story-grid.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
@@ -8,7 +9,8 @@ import { RtButtonDirective } from '../../rt-button.directive';
 import { IButton } from '../../rt-button.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TButtonMatrixPart = 'appearance' | 'disabled' | 'pressed' | 'size' | 'icon' | 'rounded' | 'loading' | 'states' | 'themes';
+export type TButtonMatrixPart =
+    'appearance' | 'disabled' | 'pressed' | 'size' | 'icon' | 'rounded' | 'loading' | 'states' | 'presets' | 'themes';
 
 /** Случай иконки — не значение оси, а различимая комбинация подписи и стороны. */
 interface IButtonIconCase {
@@ -117,6 +119,25 @@ interface IButtonIconCase {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Взаимодействие в обоих наборах">
+                    <ng-template>
+                        @for (appearance of appearances; track appearance) {
+                            <app-story-row [caption]="appearance" [items]="states" [itemLabel]="stateLabel">
+                                <ng-template let-state>
+                                    <button
+                                        rtButton
+                                        label="Сохранить"
+                                        aria-label="Сохранить"
+                                        [appearance]="appearance"
+                                        [attr.data-story-state]="state.state"></button>
+                                </ng-template>
+                            </app-story-row>
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Палитра в обеих темах">
                     <ng-template>
@@ -135,6 +156,7 @@ interface IButtonIconCase {
 
         // showcase
         StoryGridComponent,
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],
