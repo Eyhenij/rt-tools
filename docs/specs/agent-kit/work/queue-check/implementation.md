@@ -15,3 +15,4 @@ statement: a removed statement is removed together with its line.
 - **A conflicting open PR is a divergence of the check.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkConflicting`
 - **Mergeability that was not counted does not count as a conflict.** — `projects/agent-kit/assets/checks/board.github.mjs:conflicting`
 - **At a conflicting request the reason named is the conflict, not the loss of the event.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkHeadRun` — the line about the conflict is printed instead of the line about the event; scenarios SC-AK-670…672
+- **A card carrying a title with a number is a task, whatever marks it wears.** — `projects/agent-kit/assets/checks/check-board.github.mjs:isCargo` — the mark sifts out only a card without a title with a number; scenario `SC-AK-923`

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-board.github.mjs · 10c8d7530ca2 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-board.github.mjs · 23083f9089ff · правится надстройкой, не здесь
 /**
  * Audit of the work queue against what the delivery law requires of a task and its PR.
  *
@@ -84,8 +84,20 @@ const RUN_GRACE_MINUTES = 10;
  *
  * The label name names the tree: each has its own, and an invented default would match nothing
  * and silently switch the filtering off. A tree that names no label is judged as before.
+ *
+ * The label alone is not enough to recognise cargo: a tree puts it on the tasks that grew out of
+ * cargo too — that is how the reader sees where the work came from. Read by the label alone, such
+ * a task fell out of the whole task half at once: neither the executor, nor the board, nor the
+ * link with an epic, nor a matching title was asked about it, and a request about it got the line
+ * "the task is not among the open ones". So a title with a number outweighs the label: that is
+ * what the tree itself tells a task by.
  */
 const CARGO_LABELS = new Set(CONFIG.board?.cargoLabels ?? []);
+
+/** A record of the cargo: the label of one, and no title of a task. */
+function isCargo(issue) {
+    return numberFromTitle(issue.title) === null && (issue.labels ?? []).some((label) => CARGO_LABELS.has(label.name));
+}
 
 const DEPLOY_WORKFLOW = CONFIG.deploy?.workflow ?? '';
 const MAIN_BRANCH = CONFIG.deploy?.mainBranch ?? 'main';
@@ -314,10 +326,11 @@ try {
     const board = fetchBoard(options);
     const issues = fetchIssues('all', options);
     const allOpen = issues.filter((issue) => issue.state === 'OPEN');
-    // Filtering happens once and before all task checks: a labelled record is not a task as a
-    // whole, not by half — it is judged neither by title, nor by executor, nor by the board, nor
-    // by the digest of matching titles, nor by the link to an epic.
-    const open = CARGO_LABELS.size === 0 ? allOpen : allOpen.filter((issue) => !(issue.labels ?? []).some((label) => CARGO_LABELS.has(label.name)));
+    // Filtering happens once and before all task checks: a cargo record is not a task as a whole,
+    // not by half — it is judged neither by title, nor by executor, nor by the board, nor by the
+    // digest of matching titles, nor by the link to an epic. A card with a title of a task is not
+    // such a record, whatever labels it wears.
+    const open = CARGO_LABELS.size === 0 ? allOpen : allOpen.filter((issue) => !isCargo(issue));
     const pulls = fetchOpenPulls(options);
     checked = { issues: issues.length, pulls: pulls.length, cargo: allOpen.length - open.length };
 
