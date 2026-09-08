@@ -1,4 +1,4 @@
-// rt-kit v0.25.0 · checks/spec-common.mjs · 028a7b0f66df · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/spec-common.mjs · 02488db9f2ec · правится надстройкой, не здесь
 /**
  * What is shared by every subject of the spec audit: what counts as a domain, how the tree is
  * read and how a document is cut into sections and bullets.
@@ -23,8 +23,18 @@ const NOT_DOMAINS = ['_template'];
  * Where tests are searched for. Taken from the setting of the tree, not from the code: roots
  * hardwired here silently found no test at all in a tree that keeps its code differently — and
  * every scenario looked uncovered while the test for it stood right there.
+ *
+ * Two lists, not one: the suites of a tree's own checks lie next to the tooling, outside the
+ * source roots, and a suite lying there was invisible while the roots were read from one setting.
+ * What came of that is indistinguishable from a real hole — the scenario stands as uncovered, the
+ * suite is written and green, and the list of the uncovered stops meaning anything.
+ *
+ * A root lying inside another named root is dropped: otherwise a tree that named both a source
+ * root and a suite directory inside it gets every reference twice.
  */
-const TEST_ROOTS = CONFIG.sourceRoots;
+const TEST_ROOTS = [...new Set([...CONFIG.sourceRoots, ...CONFIG.testRoots])].filter(
+    (root, _index, roots) => !roots.some((other) => other !== root && root.startsWith(`${other}/`))
+);
 /** Where the call of a symbol from a binding is searched for. */
 const SOURCE_ROOTS = [...CONFIG.sourceRoots, ...(CONFIG.schemaFile ? [CONFIG.schemaFile.split('/')[0]] : [])];
 const SKIPPED_DIRS = CONFIG.skippedDirs;
