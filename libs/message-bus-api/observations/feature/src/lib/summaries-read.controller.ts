@@ -10,7 +10,7 @@
  */
 import { BadRequestException, Controller, Get, NotFoundException, Param, Query } from '@nestjs/common';
 
-import { SessionOperation } from '@rt/message-bus-api/access/util';
+import { RequiresRight } from '@rt/message-bus-api/access/util';
 import { IMonthRecordFullRow, IMonthRecordListRow, readMonthRecord, readMonthRecords } from '@rt/message-bus-api/observations/data-access';
 
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
@@ -32,7 +32,7 @@ export class SummariesReadController {
      * обычное дело, и отказ на это читался бы как поломка.
      */
     @Get()
-    @SessionOperation()
+    @RequiresRight('summaries:read')
     public async page(@Query() query: Record<string, unknown>): Promise<IPage<IMonthRecordListRow>> {
         const fault: string | null = pageFault(query, MONTH_RECORD_SORTABLE);
 
@@ -45,7 +45,7 @@ export class SummariesReadController {
 
     /** Одна запись месяца целиком. Записи, которой нет, отвечает отказ, а не пустая панель. */
     @Get(':id')
-    @SessionOperation()
+    @RequiresRight('summaries:read')
     public async one(@Param('id') id: string): Promise<IMonthRecordFullRow> {
         const found: IMonthRecordFullRow | null = await readMonthRecord(this.#prisma, id);
 

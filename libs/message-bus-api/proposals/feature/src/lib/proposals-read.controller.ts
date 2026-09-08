@@ -7,7 +7,7 @@
  */
 import { BadRequestException, Controller, Get, NotFoundException, Param, Query } from '@nestjs/common';
 
-import { SessionOperation } from '@rt/message-bus-api/access/util';
+import { RequiresRight } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IProposalFullRow, IProposalListRow, readProposal, readProposals } from '@rt/message-bus-api/proposals/data-access';
 
@@ -29,7 +29,7 @@ export class ProposalsReadController {
      * обычное дело, и отказ на это читался бы как поломка.
      */
     @Get()
-    @SessionOperation()
+    @RequiresRight('proposals:read')
     public async page(@Query() query: Record<string, unknown>): Promise<IPage<IProposalListRow>> {
         const fault: string | null = cargoPageFault(query, PROPOSAL_SORTABLE);
 
@@ -42,7 +42,7 @@ export class ProposalsReadController {
 
     /** Одно предложение целиком. Записи, которой нет, отвечает отказ, а не пустая панель. */
     @Get(':id')
-    @SessionOperation()
+    @RequiresRight('proposals:read')
     public async one(@Param('id') id: string): Promise<IProposalFullRow> {
         const found: IProposalFullRow | null = await readProposal(this.#prisma, id);
 

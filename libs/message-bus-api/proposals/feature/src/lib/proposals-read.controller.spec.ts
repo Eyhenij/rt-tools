@@ -1,6 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { describe, expect, it } from 'vitest';
 
+import { OPERATION_ACCESS, OPERATION_RIGHT } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IProposalFullRow, IProposalListRow } from '@rt/message-bus-api/proposals/data-access';
 import { ECargoState, IPage } from '@rt/message-bus-common';
@@ -324,5 +325,15 @@ describe('ProposalsReadController.one', () => {
 
     it('SC-MB-71 — записи, которой нет, отвечает отказ, а не пустая запись', async () => {
         await expect(controller().one('pr-нет-такого')).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('SC-MB-304 — список предложений закрыт правом чтения своего раздела, а не одним лишь входом', () => {
+        // Скрытый пункт меню при открытой операции закрывает раздел лишь на вид: данные
+        // отдаются по прямому запросу любому вошедшему.
+        const access: unknown = Reflect.getMetadata(OPERATION_ACCESS, ProposalsReadController.prototype.page);
+        const right: unknown = Reflect.getMetadata(OPERATION_RIGHT, ProposalsReadController.prototype.page);
+
+        expect(access).toBe('permission');
+        expect(right).toBe('proposals:read');
     });
 });

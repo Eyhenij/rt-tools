@@ -10,7 +10,7 @@
  */
 import { BadRequestException, Controller, Get, NotFoundException, Param, Query } from '@nestjs/common';
 
-import { SessionOperation } from '@rt/message-bus-api/access/util';
+import { RequiresRight } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPostmortemFullRow, IPostmortemListRow, readPostmortem, readPostmortems } from '@rt/message-bus-api/postmortems/data-access';
 
@@ -32,7 +32,7 @@ export class PostmortemsReadController {
      * обычное дело, и отказ на это читался бы как поломка.
      */
     @Get()
-    @SessionOperation()
+    @RequiresRight('postmortems:read')
     public async page(@Query() query: Record<string, unknown>): Promise<IPage<IPostmortemListRow>> {
         const fault: string | null = cargoPageFault(query, POSTMORTEM_SORTABLE);
 
@@ -45,7 +45,7 @@ export class PostmortemsReadController {
 
     /** Один разбор целиком. Записи, которой нет, отвечает отказ, а не пустая панель. */
     @Get(':id')
-    @SessionOperation()
+    @RequiresRight('postmortems:read')
     public async one(@Param('id') id: string): Promise<IPostmortemFullRow> {
         const found: IPostmortemFullRow | null = await readPostmortem(this.#prisma, id);
 
