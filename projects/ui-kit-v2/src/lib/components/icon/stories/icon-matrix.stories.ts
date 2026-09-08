@@ -42,5 +42,12 @@ export const MaterialMap: TStory = { args: { part: 'material' } };
  */
 export const MaterialGlyphs: TStory = { args: { part: 'presets' } };
 
+/**
+ * Оси размера и цвета в обоих наборах. Набор их не меняет: рисунок обоих наборов красится
+ * `currentColor` и тянется своим `viewBox`. Показывается отдельной историей, а не рядом с парой
+ * рисунков: обвязка снимает первый корень показа на странице, и вторая пара в кадр не попадала.
+ */
+export const MaterialAxes: TStory = { args: { part: 'preset-axes' } };
+
 /** Знаки соцсетей: заливка в файле, ось цвета не действует — показываются парой тем. */
 export const Social: TStory = { args: { part: 'social' } };

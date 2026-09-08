@@ -1,8 +1,10 @@
 # Material drawings of the second icon set
 
 The files next to this notice come from Google's Material Symbols — the `materialsymbolsoutlined`
-family, size 24 — and are licensed under Apache License 2.0. The upstream project is
-`google/material-design-icons`; its license text lives there.
+family, size 24 — and are licensed under Apache License 2.0. The upstream project is Google's
+material-design-icons repository on GitHub; its license text lives there. The name is written
+without backticks on purpose: it is a project on a foreign host, not a path in this tree, and the
+address check judges a backticked name as a path here.
 
 Two things were changed on the way in and nothing else:
 

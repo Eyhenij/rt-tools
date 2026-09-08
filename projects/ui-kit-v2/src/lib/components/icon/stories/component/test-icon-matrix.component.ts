@@ -10,7 +10,7 @@ import { RtIconComponent } from '../../rt-icon.component';
 import { IRtIcon } from '../../rt-icon.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TIconMatrixPart = 'catalog' | 'size' | 'color' | 'rotate' | 'themes' | 'social' | 'material' | 'presets';
+export type TIconMatrixPart = 'catalog' | 'size' | 'color' | 'rotate' | 'themes' | 'social' | 'material' | 'presets' | 'preset-axes';
 
 /** Категория набора со своими именами — строка каталога. */
 interface IIconCategoryGroup {
@@ -121,6 +121,34 @@ interface IIconCategoryGroup {
                 <p class="app-icon-matrix__note">
                     Набор рисунков выбирается вместе с набором оформления: признак стоит на половине, и кит меняет рисунок сам. Имена,
                     которых в материальном наборе нет, рисуются своим — набор слой переопределений, а не второй полный каталог.
+                </p>
+            }
+
+            @case ('preset-axes') {
+                <app-story-presets caption="Размер и цвет в обоих наборах: оси набором не меняются">
+                    <ng-template>
+                        <app-story-row caption="Размер" [items]="sizes">
+                            <ng-template let-size>
+                                <rt-icon name="trash" [size]="size" />
+                            </ng-template>
+                        </app-story-row>
+
+                        <app-story-row caption="Цвет" [items]="colors">
+                            <ng-template let-color>
+                                <rt-icon name="trash" size="lg" [color]="color" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+
+                <p class="app-icon-matrix__note">
+                    Размер и цвет набором не меняются: рисунок обоих наборов красится
+                    <code>currentColor</code>
+                    и тянется своим
+                    <code>viewBox</code>
+                    — оси действуют одинаково.
+                    <code>inverse</code>
+                    рассчитан на тёмную подложку и на светлой сливается с фоном в обеих половинах: это его штатный вид.
                 </p>
             }
 
