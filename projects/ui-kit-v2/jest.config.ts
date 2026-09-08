@@ -25,7 +25,6 @@ export default {
     ],
     moduleNameMapper: {
         '^@angular/cdk/([\\w-]+)$': '<rootDir>/../../node_modules/@angular/cdk/fesm2022/$1.mjs',
-        '^@angular/material/([\\w-]+)$': '<rootDir>/../../node_modules/@angular/material/fesm2022/$1.mjs',
         // Without these, jest resolves the sibling packages through node_modules and the specs run
         // against the last published versions instead of the working tree — a change in core or
         // utils would look green here while being untested. The compiler already maps them to
