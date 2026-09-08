@@ -195,8 +195,3 @@ Given the styles of the kit hold a gradient written with two or more different e
 When the ends are resolved in each of the four looks
 Then a look in which they all come out one paint fells the run, and the refusal names the file, the line, the
 look and the paint
-
-Not covered: the set is written and green — `tools/tests/check-gradient-stops.test.sh`,
-twenty-two cases, called by `pnpm run test:checks`. The collector walks shell sets only under the source roots
-of the applications, and the sets over this tree's checks lie next to the rest of the tooling; it cannot see
-them. Task RT-1910.

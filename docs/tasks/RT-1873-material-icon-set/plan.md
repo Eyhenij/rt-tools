@@ -1,50 +1,67 @@
 # Plan
 
 **Task:** RT-1873 · **Branch:** RT-1873-material-icon-set
-**Draft:** `docs/specs/ui-kit-v2/proposed/icon-mapping/`
+**Spec:** `docs/specs/ui-kit-v2/proposed/material-preset/`
 **Behaviour:** changes
-
-Замысел ещё не написан: просьба не разобрана. Договорённость о соответствии значков будет названа
-здесь тем же ходом, каким её напишут.
-
-A tree that writes the agreement straight into the domain spec names it instead of the draft:
-`**Spec:** `<path to the spec>``.
-
-Work that does not touch application code needs no agreement — then instead of the draft line
-stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is not accepted.
-
-After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
-along the way.
 
 ## Task footprint
 
-<What the work touches. Filled in by exploration before the grill and confirmed by the owner. By
-this same table, at closing, one sees what of the specs, rules and patterns has gone stale: what
-is named here is read twice — before the work and after it.>
-
-| What  | Where                         |
-| ----- | ----------------------------- |
-| Specs | `docs/specs/<domain>/`        |
-| Laws  | `docs/constitution/<name>.md` |
-| Rules | `.claude/skills/<name>/`      |
-| Code  | `projects/<package>/`         |
+| What                         | Where                                                 |
+| ---------------------------- | ----------------------------------------------------- |
+| Договорённость линии         | `docs/specs/ui-kit-v2/proposed/material-preset/`      |
+| Перечень имён и соответствие | `projects/ui-kit-v2/src/lib/components/icon/`         |
+| Показ на витрине             | `projects/ui-kit-v2/src/lib/components/icon/stories/` |
+| Проверка соответствия        | `tools/`                                              |
 
 ## What counts as done
 
-- <a statement that can be checked>
+- У каждого литерального имени значка первого кита либо записана пара, либо записана причина, по
+  которой пары нет. Молчания нет ни у одного имени.
+- Каждая пара ведёт на имя, которое есть и в союзе имён, и файлом в наборе. Это подтверждено
+  прогоном, а не чтением.
+- Пары видны на витрине рядом, в обеих темах: владелец смотрит глазами, а не читает таблицу.
+- Проверка стоит в наборе гейта пуша и шагом конвейера, а не только в цели, которую зовут руками.
 
 ## Stages
 
-### 1. <name>
+### 1. Перечень пар заведён файлом
 
-- **What is done:** <in one phrase>
-- **Readiness sign:** <what must become true>
-- **Verified by:** `<command>` — <what in its output means "it matched">
+- **What is done:** рядом с союзом имён заводится файл соответствия: имя первого кита, имя
+  второго и довод к каждой паре; имена без пары стоят там же со своей причиной.
+- **Readiness sign:** в файле 31 запись — 28 с парой и 3 с причиной.
+- **Verified by:** `pnpm exec nx run @rt-tools/ui-kit-v2:typecheck` — ноль ошибок типов; числа
+  записей называет вывод проверки этапа 2.
 
-The command is written in backticks: the turn exit guard reads it and does not let out a turn in
-which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything.
+### 2. Проверка держит перечень
+
+- **What is done:** заводится проверка: каждая пара ведёт на имя из союза и на существующий файл,
+  имена первого кита не повторяются, у имени без пары причина не пуста. Проверка встаёт в набор
+  гейта пуша и шагом конвейера.
+- **Readiness sign:** проверка зелена на нынешнем перечне и отказывает на подделанном.
+- **Verified by:** `node tools/check-icon-map.mjs` — печатает число пар и число имён без пары,
+  код возврата 0. Обратная сторона показывается тем же вызовом на временно испорченной записи.
+
+### 3. Пары видны на витрине в обеих темах
+
+- **What is done:** к матрицам значка добавляется история, показывающая все пары рядом — имя
+  первого кита и рисунок второго, — и показывается она через сравнение тем.
+- **Readiness sign:** история собирается и стоит в списке историй значка.
+- **Verified by:** `pnpm run build-storybook:ui-kit-v2` — сборка витрины проходит; саму историю
+  владелец смотрит глазами.
+
+### 4. Договорённость знает про место файла
+
+- **What is done:** в спеке линии строка о том, что перечень соответствий места в дереве ещё не
+  имеет, заменяется на адрес заведённого файла и привязку к проверке.
+- **Readiness sign:** этой строки в разделе о нерешённом больше нет.
+- **Verified by:** `node tools/check-doc-paths.mjs` — адреса, названные в текстах, существуют.
 
 ## What this work does not do
 
-- <neighbouring work that is not dragged in here, and where it is created>
+- **Не рисует три недостающих значка.** `delete_forever`, `drag_handle` и `open_with` записаны
+  причиной: рисовать в рисовке набора — работа рисующего, и она вынесена владельцу.
+- **Не трогает первый кит.** Он заморожен и снимается последним шагом эпика.
+- **Не переносит ни одного семейства.** Соответствие идёт до переноса и лишь называет, чем
+  заменять.
+- **Не закрывает имена, которые подставляются выражением.** Их 13 в 19 местах, и владелец вынес
+  их за границу задачи.

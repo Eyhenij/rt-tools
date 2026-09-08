@@ -28,5 +28,12 @@ export const Rotate: TStory = { args: { part: 'rotate' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };
 
+/**
+ * Чем закрывается значок первого кита. Пара выбрана по смыслу, и судить её можно только глазами:
+ * проверка держит лишь то, что имя существует и файл на месте. Прочерк — имя, которому рисунка в
+ * наборе нет вовсе.
+ */
+export const MaterialMap: TStory = { args: { part: 'material' } };
+
 /** Знаки соцсетей: заливка в файле, ось цвета не действует — показываются парой тем. */
 export const Social: TStory = { args: { part: 'social' } };
