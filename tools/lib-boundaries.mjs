@@ -1,4 +1,4 @@
-// rt-kit v0.25.0 · checks/lib-boundaries.mjs · 0ca76a6204fb · правится надстройкой, не здесь
+// rt-kit v0.26.0 · checks/lib-boundaries.mjs · 0ca76a6204fb · правится надстройкой, не здесь
 /**
  * Boundaries and tags: where a lib is described as a source, whose dependency list must stay empty
  * and what the family base sees. All three subjects read the same files

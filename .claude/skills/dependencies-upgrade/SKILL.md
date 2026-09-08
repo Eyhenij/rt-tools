@@ -4,7 +4,7 @@ kind: pattern
 rule: dependencies
 description: Pattern of rule dependencies. Load when raising package versions — choosing the upper bound by peer ranges, the order of checks, the reformatting boundary after a formatter upgrade, handling new linter rules. Not for the branch and commit — pattern git-workflow-commit; for the PR — git-workflow-pr.
 ---
-<!-- rt-kit v0.25.0 · patterns/dependencies-upgrade.md · 53e98dc24268 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · patterns/dependencies-upgrade.md · 53e98dc24268 · правится надстройкой, не здесь -->
 
 # Raising versions
 

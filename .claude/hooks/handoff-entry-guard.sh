@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/handoff-entry-guard.sh · ecd3ce39d6ab · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/handoff-entry-guard.sh · ecd3ce39d6ab · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit
 # Requires: rules/task-flow.md, hooks/deny-tail.sh
 # Handover entry guard: a session started from a handover edits no file until the work-conduct rule

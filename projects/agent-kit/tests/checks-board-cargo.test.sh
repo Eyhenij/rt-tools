@@ -14,6 +14,7 @@ for f in rt-kit-checks.config.mjs; do cp "$CHECKS/$f" "$CARGO_TREE/tools/"; done
 cp "$CHECKS/board.github.mjs" "$CARGO_TREE/tools/board.mjs"
 cp "$CHECKS/board-gh.github.mjs" "$CARGO_TREE/tools/board-gh.mjs"
 cp "$CHECKS/board-runs.github.mjs" "$CARGO_TREE/tools/board-runs.mjs"
+cp "$CHECKS/board-pull-state.github.mjs" "$CARGO_TREE/tools/board-pull-state.mjs"
 cp "$CHECKS/board-paths.github.mjs" "$CARGO_TREE/tools/board-paths.mjs"
 cp "$CHECKS/board-titles.github.mjs" "$CARGO_TREE/tools/board-titles.mjs"
 cp "$CHECKS/board-epics.github.mjs" "$CARGO_TREE/tools/board-epics.mjs"
@@ -80,6 +81,23 @@ report "SC-AK-796 — число отсеянных записей назван�
 # SC-AK-796 — отсеивать нечего: строки нет вовсе
 export STUB_ISSUES='[{"number":700,"title":"[RT-700] Задача","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]}]'
 report "SC-AK-796 — без груза строки о нём нет" "$(cargo_says 'cargo records in the queue')" 0
+
+# --- SC-AK-923 — задача с меткой груза судится задачей ---------------------------------------
+#
+# Дерево ставит метку груза и на задачи, выросшие из груза: так читателю видно, откуда работа.
+# Читаемая по одной метке, такая задача выпадала из всей задачной половины разом, а заявка о ней
+# давала строку «задачи нет среди открытых».
+
+export STUB_ISSUES='[{"number":700,"title":"[RT-700] Задача","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]},{"number":838,"title":"[RT-838] Задача из груза","state":"OPEN","assignees":[],"labels":[{"name":"agent-kit-feedback"}]}]'
+cargo_config "$LABELLED"
+report "SC-AK-923 — задача с меткой груза судится по исполнителю" "$(cargo_says '#838: the task has no assignee')" 1
+report "SC-AK-923 — и по доске" "$(cargo_says '#838: the task is not on the board')" 1
+report "SC-AK-923 — грузом она не считается" "$(cargo_says 'cargo records in the queue')" 0
+
+# Запись груза рядом с ней отсеивается по-прежнему: признаки не мешают друг другу.
+export STUB_ISSUES='[{"number":838,"title":"[RT-838] Задача из груза","state":"OPEN","assignees":[{"login":"probe"}],"labels":[{"name":"agent-kit-feedback"}]},{"number":837,"title":"предложение: гард ожидания","state":"OPEN","assignees":[],"labels":[{"name":"agent-kit-feedback"}]}]'
+report "SC-AK-923 — запись груза рядом отсеяна" "$(cargo_says '#837')" 0
+report "SC-AK-923 — отсеяна ровно одна" "$(cargo_says 'cargo records in the queue 1')" 1
 
 rm -rf "$CARGO_TREE"
 

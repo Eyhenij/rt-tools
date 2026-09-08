@@ -4,7 +4,7 @@ kind: pattern
 rule: lib-layers
 description: Pattern of rule lib-layers. Load when moving code or a symbol between libs — where to start, in which order to move domains, what to do with boundaries, imports and the README of both libs, and what to check with. Creating and removing a lib itself — pattern lib-layers-new.
 ---
-<!-- rt-kit v0.25.0 · patterns/lib-layers-move.md · 314217994602 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · patterns/lib-layers-move.md · 314217994602 · правится надстройкой, не здесь -->
 
 # Moving code between libs
 

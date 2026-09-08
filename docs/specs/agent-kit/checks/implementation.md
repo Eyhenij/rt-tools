@@ -47,7 +47,6 @@ whole.
 - **An empty field of a sign does not slide into the neighbouring one.** — `projects/agent-kit/assets/hooks/reuse-first-guard.sh:cancel`
 - **A guard that got not a single sign says so.** — `projects/agent-kit/assets/hooks/reuse-first-guard.sh:signals_seen`
 - **The guard on an edit and the sweeping check read the same fields of a sign.** — `projects/agent-kit/assets/hooks/reuse-first-guard.sh:rt_backend_roots`
-- **A request opened not into the main branch is named by a line of its own.** — `projects/agent-kit/assets/checks/check-board.github.mjs:baseRefName` — the base arrives by the same request as the other fields of the request; scenario SC-AK-845
 - **The check of the archive keeping time demands a day later than the cleanup removes.** — `projects/agent-kit/assets/checks/archive-age.mjs:CHECK_GRACE_DAYS` — the check calls the shared pick with a margin, the cleanup without one; scenarios SC-AK-869, SC-AK-870, SC-AK-871
-- **The answer of the work queue helper says whose eyes the state was taken by.** — `projects/agent-kit/assets/checks/board.github.mjs:viewerOf` — the field is set by `taskState` and `pullState`; scenario SC-AK-873
-- **The plan of an epic is the document that carries the makeup, not the first path in the card.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkEpicLinks` — the table is read by `planRows`; scenario SC-AK-919
+- **The roots under which suites are searched for are declared apart from the source roots and are added to them.** — `projects/agent-kit/assets/checks/spec-common.mjs:TEST_ROOTS` — the key is `testRoots`, its default is in `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:DEFAULTS`; scenario `SC-AK-921`
+- **A root lying inside another named root is walked once.** — `projects/agent-kit/assets/checks/spec-common.mjs:TEST_ROOTS` — the roots are deduplicated, and a root with another named one as its prefix is dropped; scenario `SC-AK-922`

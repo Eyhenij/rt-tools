@@ -2,6 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { describe, expect, it } from 'vitest';
 
 import { IMonthRecordFullRow, IMonthRecordListRow } from '@rt/message-bus-api/observations/data-access';
+import { OPERATION_ACCESS, OPERATION_RIGHT } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPage } from '@rt/message-bus-common';
 
@@ -180,5 +181,15 @@ describe('SummariesReadController.one', () => {
 
     it('SC-MB-71 — записи, которой нет, отвечает отказ, а не пустая запись', async () => {
         await expect(controller().one('mr-нет-такой')).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('SC-MB-304 — список сводок закрыт правом чтения своего раздела, а не одним лишь входом', () => {
+        // Скрытый пункт меню при открытой операции закрывает раздел лишь на вид: данные
+        // отдаются по прямому запросу любому вошедшему.
+        const access: unknown = Reflect.getMetadata(OPERATION_ACCESS, SummariesReadController.prototype.page);
+        const right: unknown = Reflect.getMetadata(OPERATION_RIGHT, SummariesReadController.prototype.page);
+
+        expect(access).toBe('permission');
+        expect(right).toBe('summaries:read');
     });
 });

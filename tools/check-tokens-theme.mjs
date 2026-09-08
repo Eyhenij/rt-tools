@@ -22,8 +22,8 @@
  *    The component's own property is lawful at that — the component is tuned by it.
  * 5. An override of a scale step by the dark theme: the scale is unchanging, the theme is held by the
  *    assignments.
- * 6. A pair «the text colour and its background» below the threshold 4.5:1 — in either of the two
- *    themes.
+ * 6. A pair «the text colour and its background» below the threshold 4.5:1 — in any of the four
+ *    looks: the light theme, the dark one, the material preset and the preset under the dark theme.
  * 7. A divergence of the list of pairs from the measurement table in `Colors.mdx`: no two lists about
  *    one and the same thing are created without a matching.
  *
@@ -33,13 +33,26 @@
  *
  * A non-zero exit code and a list of the divergences.
  */
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { CONFIG, ROOT, allowlistOf, baselineOf, parseAllowlist } from './rt-kit-checks.config.mjs';
+import {
+    LOOKS,
+    SINGLE_VAR_RE,
+    colorOf,
+    dark,
+    declarations,
+    light,
+    linkOf,
+    luminance,
+    mixOf,
+    mixinBody,
+    over,
+    primitives,
+    read,
+} from './tokens-looks.mjs';
 
-/** The styling layer: the scale, the light theme's assignments, the dark theme's overrides. */
-const STYLES = 'projects/ui-kit-v2/src/styles';
 const COMPONENTS = 'projects/ui-kit-v2/src/lib';
 const PAIRS_FILE = 'tools/tokens-contrast-pairs.json';
 const COLORS_DOC = 'projects/ui-kit-v2/docs/Colors.mdx';
@@ -48,43 +61,8 @@ const ALLOWLIST = allowlistOf('tokens-theme');
 /** The contrast threshold, one for all the pairs. The owner's decision, the agreement's «Decisions» section. */
 const THRESHOLD = 4.5;
 
-const LIGHT_MIXIN = 'rt-theme-light-tokens';
-const DARK_MIXIN = 'rt-theme-dark-tokens';
-
-/** A declaration with an optional mark of a shared colour on the same line. */
-const DECLARATION_RE = /^[ \t]*(--rt-[a-z0-9-]+)[ \t]*:[ \t]*([^;]+);[ \t]*(?:\/\* rt-theme-shared:[ \t]*([^*]*?)[ \t]*\*\/)?/gm;
 const COLOR_LITERAL_RE = /^(#[0-9a-f]{3,8}|rgba?\([^)]*\)|hsla?\([^)]*\)|linear-gradient\(.*\)|transparent)$/i;
-const SINGLE_VAR_RE = /^var\(\s*(--rt-[a-z0-9-]+)\s*\)$/;
-/**
- * A transparent shade counted from a colour: a share of the colour, the rest transparency. There is
- * one form, because the kit counts shades only that way; an unknown form stays unparsed, and a pair
- * with it is declared a divergence rather than passed over silently.
- */
-const COLOR_MIX_RE = /^color-mix\(\s*in\s+srgb\s*,\s*(.+?)\s+([\d.]+)%\s*,\s*transparent\s*\)$/i;
 const BLOCK_RE = /^--rt-([a-z0-9]+)-/;
-
-const read = (path) => readFileSync(join(ROOT, path), 'utf8');
-
-/** A mixin's body: from its heading to the line with the closing brace at zero indent. */
-function mixinBody(text, name) {
-    const start = text.indexOf(`@mixin ${name}`);
-    if (start < 0) {
-        return '';
-    }
-    const end = text.indexOf('\n}', start);
-
-    return text.slice(start, end < 0 ? undefined : end);
-}
-
-/** The declarations of a piece of text: name → value and the mark of a shared colour. */
-function declarations(text) {
-    const map = new Map();
-    for (const match of text.matchAll(DECLARATION_RE)) {
-        map.set(match[1], { value: match[2].trim().replace(/\s+/g, ' '), shared: match[3]?.trim() || null });
-    }
-
-    return map;
-}
 
 function scssFiles(dir) {
     const files = [];
@@ -101,24 +79,6 @@ function scssFiles(dir) {
     }
 
     return files;
-}
-
-const primitives = declarations(read(`${STYLES}/_primitives.scss`));
-const light = declarations(mixinBody(read(`${STYLES}/_semantic.scss`), LIGHT_MIXIN));
-const dark = declarations(mixinBody(read(`${STYLES}/_theme-dark.scss`), DARK_MIXIN));
-
-/** A name's value in a theme: the dark over the light, the scale under both. */
-const valueOf = (name, theme) =>
-    (theme === 'dark' ? dark.get(name)?.value : undefined) ?? light.get(name)?.value ?? primitives.get(name)?.value;
-
-/** The reference chain of a value: only a whole reference, a compound value does not count as a chain. */
-const linkOf = (value) => value.match(SINGLE_VAR_RE)?.[1];
-
-/** The reading of a counted shade: from which colour it is counted and what share of it is taken. */
-function mixOf(value) {
-    const parts = value.match(COLOR_MIX_RE);
-
-    return parts ? { source: parts[1].trim(), share: Number(parts[2]) / 100 } : undefined;
 }
 
 /** Is the value a colour: a colour literal or a reference reaching a literal. */
@@ -167,74 +127,6 @@ function answerOf(name, accepted, seen = new Set()) {
     const upstream = answerOf(link, accepted, seen);
 
     return upstream ? { kind: upstream.kind === 'directly' ? 'through a chain' : upstream.kind, via: link } : null;
-}
-
-/** A colour parsed: r, g, b and the share of opacity. */
-function parseColor(text) {
-    const hex = text.match(/^#([0-9a-f]{3,8})$/i)?.[1];
-    if (hex) {
-        const full = hex.length <= 4 ? [...hex].map((char) => char + char).join('') : hex;
-        const channel = (index) => parseInt(full.slice(index * 2, index * 2 + 2), 16);
-
-        return { r: channel(0), g: channel(1), b: channel(2), a: full.length === 8 ? channel(3) / 255 : 1 };
-    }
-    const rgb = text.match(/^rgba?\(([^)]*)\)$/i)?.[1];
-    if (rgb) {
-        const parts = rgb.split(/[\s,/]+/).filter(Boolean);
-        const alpha = parts[3] ?? '1';
-
-        return {
-            r: Number(parts[0]),
-            g: Number(parts[1]),
-            b: Number(parts[2]),
-            a: alpha.endsWith('%') ? Number(alpha.slice(0, -1)) / 100 : Number(alpha),
-        };
-    }
-
-    return null;
-}
-
-/** A name's colour in a theme: by the chain of references down to a literal. */
-function colorOf(name, theme, seen = new Set()) {
-    const value = valueOf(name, theme);
-    if (!value || seen.has(name)) {
-        return null;
-    }
-    seen.add(name);
-    const mix = mixOf(value);
-    if (mix) {
-        const base = colorOfValue(mix.source, theme, seen);
-
-        return base ? { ...base, a: base.a * mix.share } : null;
-    }
-
-    return colorOfValue(value, theme, seen);
-}
-
-/** A value's colour: a reference goes further along the chain, a literal is parsed on the spot. */
-function colorOfValue(value, theme, seen) {
-    const link = linkOf(value);
-
-    return link ? colorOf(link, theme, seen) : parseColor(value);
-}
-
-/** A semi-transparent colour over an opaque one. */
-const over = (front, back) => ({
-    r: front.r * front.a + back.r * (1 - front.a),
-    g: front.g * front.a + back.g * (1 - front.a),
-    b: front.b * front.a + back.b * (1 - front.a),
-    a: 1,
-});
-
-/** The relative brightness by the WCAG definition. */
-function luminance({ r, g, b }) {
-    const channel = (value) => {
-        const part = value / 255;
-
-        return part <= 0.03928 ? part / 12.92 : ((part + 0.055) / 1.055) ** 2.4;
-    };
-
-    return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
 }
 
 const contrast = (first, second) => {
@@ -315,14 +207,14 @@ const docLines = doc.split('\n');
 const measured = [];
 
 for (const pair of pairs) {
-    for (const theme of ['light', 'dark']) {
+    for (const theme of LOOKS) {
         const page = colorOf('--rt-color-bg-page', theme);
         const backdrop = colorOf(pair.bg, theme);
         const ink = colorOf(pair.text, theme);
         if (!backdrop || !ink) {
             add(
                 `a pair without a colour ${pair.text} on ${pair.bg}`,
-                `${pair.text} on ${pair.bg} — the colour does not resolve to a code in either theme: the list of pairs named a name the layer does not declare`
+                `${pair.text} on ${pair.bg} — the colour does not resolve to a code in the ${theme} look: the list of pairs named a name the layer does not declare`
             );
             break;
         }
@@ -332,7 +224,7 @@ for (const pair of pairs) {
         if (ratio < THRESHOLD) {
             add(
                 `contrast ${pair.text} on ${pair.bg} in the ${theme}`,
-                `${pair.text} on ${pair.bg} in the ${theme} theme — ${ratio.toFixed(2)}:1 at the threshold ${THRESHOLD}:1`
+                `${pair.text} on ${pair.bg} in the ${theme} look — ${ratio.toFixed(2)}:1 at the threshold ${THRESHOLD}:1`
             );
         }
     }
@@ -384,6 +276,6 @@ console.log(
         `${acceptedOf('a dark block ') + acceptedOf('a scale step in the dark ')}`
 );
 console.log(
-    `check-tokens-theme: contrast pairs ${pairs.length} in two themes, the threshold ${THRESHOLD}:1 — ` +
+    `check-tokens-theme: contrast pairs ${pairs.length} in ${LOOKS.length} looks, the threshold ${THRESHOLD}:1 — ` +
         `below the threshold ${acceptedOf('contrast ')}, and all are accepted by the list`
 );

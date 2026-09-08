@@ -1,6 +1,6 @@
-/* Назначения светлой темы: цвет. Подложка, текст, рамка, роли действия, кольцо фокуса,
-   рельса шагов, состояния, переписка и особые поверхности — вместе с ответом тёмной темы в
-   поле `dark`.
+/* Назначения светлой темы: цвет ролей палитры. Подложка, текст, рамка, роли действия, кольцо
+   фокуса и состояния — вместе с ответом тёмной темы в поле `dark`. Цвет названных частей кита —
+   рельсы шагов, переписки, поверхности входа — лежит рядом, в `tokens.light-parts.mjs`.
 
    Часть источника свойств оформления — входом остаётся `tokens.source.mjs`, он же собирает
    `light` из этой части и соседних. */
@@ -361,41 +361,6 @@ export const lightColor = [
         0 0 0 calc(var(--rt-focus-ring-offset) + var(--rt-focus-ring-width)) var(--rt-focus-ring-color-danger)`,
     },
     {
-        lead: `    /* Stepper (rt-stepper) — рельса прогресса. Текущий шаг — янтарный (одинаков
-       в обеих темах); трек/прогресс переопределяются в dark на приглушённые. */`,
-        space: true,
-        name: `--rt-color-stepper-current`,
-        value: `var(--rt-amber-400)`,
-        note: `rt-theme-shared: янтарь текущего шага один в обеих темах`,
-    },
-    {
-        name: `--rt-color-stepper-current-subtle`,
-        value: `var(--rt-overlay-amber-16)`,
-        note: `rt-theme-shared: янтарь текущего шага один в обеих темах`,
-    },
-    {
-        name: `--rt-color-stepper-track`,
-        value: `var(--rt-gray-350)`,
-        dark: `var(--rt-navy-600)`,
-    },
-    {
-        name: `--rt-color-stepper-progress`,
-        value: `var(--rt-color-action-primary)`,
-        dark: `var(--rt-slate-300)`,
-    },
-    {
-        lead: `    /* Step-indicator ring — halo вокруг активного пункта rt-stepper. */`,
-        space: true,
-        name: `--rt-shadow-step-indicator`,
-        value: `0 0 0 4px var(--rt-color-stepper-current-subtle)`,
-    },
-    {
-        lead: `    /* Status-dot ring — halo вокруг точки «объект занят сейчас». */`,
-        space: true,
-        name: `--rt-shadow-status-dot`,
-        value: `0 0 0 3px var(--rt-color-state-success-bg)`,
-    },
-    {
         lead: `    /* State */`,
         space: true,
         name: `--rt-color-state-success`,
@@ -449,51 +414,5 @@ export const lightColor = [
         name: `--rt-color-state-info-bg`,
         value: `var(--rt-info-50)`,
         dark: `color-mix(in srgb, var(--rt-info-500) 12%, transparent)`,
-    },
-    {
-        lead: `    /* Chat — пузыри переписки. Входящее и своё различаются фоном, а не рамкой:
-       рамка на каждом пузыре дробит ленту. Отметка прочтения синяя — единственный
-       цветной элемент подвала пузыря, остальные статусы приглушены. */`,
-        space: true,
-        name: `--rt-chat-bubble-in-bg`,
-        value: `var(--rt-brand-50)`,
-        dark: `color-mix(in srgb, var(--rt-brand-500) 12%, transparent)`,
-    },
-    {
-        name: `--rt-chat-bubble-in-author`,
-        value: `var(--rt-brand-700)`,
-        dark: `var(--rt-brand-300)`,
-    },
-    {
-        name: `--rt-chat-bubble-own-bg`,
-        value: `var(--rt-neutral-100)`,
-        dark: `var(--rt-charcoal-950)`,
-    },
-    {
-        name: `--rt-chat-bubble-own-author`,
-        value: `var(--rt-neutral-500)`,
-        dark: `var(--rt-overlay-white-40)`,
-    },
-    {
-        name: `--rt-chat-bubble-date`,
-        value: `var(--rt-color-text-muted)`,
-        dark: `var(--rt-overlay-white-40)`,
-    },
-    {
-        name: `--rt-chat-status-read`,
-        value: `var(--rt-brand-400)`,
-        dark: `var(--rt-brand-300)`,
-    },
-    {
-        lead: `    /* Special — Auth surface (gradient bg + transparent card в dark) */`,
-        space: true,
-        name: `--rt-color-bg-page-auth`,
-        value: `var(--rt-neutral-50)`,
-        dark: `linear-gradient(156deg, var(--rt-neutral-950) 12.68%, var(--rt-navy-900) 99.28%)`,
-    },
-    {
-        name: `--rt-color-bg-surface-auth-card`,
-        value: `var(--rt-neutral-0)`,
-        dark: `transparent`,
     },
 ];

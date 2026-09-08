@@ -3,7 +3,7 @@ name: qa-engineer
 description: Runs and extends tests, checks layout in the browser by measurement, watches the build and the linters, adversarially looks for holes in a fresh edit. Use after code changes and before a rollout.
 tools: Read, Grep, Glob, Bash, Write, Edit, Skill, mcp__claude-in-chrome__select_browser, mcp__claude-in-chrome__tabs_context_mcp, mcp__claude-in-chrome__navigate, mcp__claude-in-chrome__javascript_tool, mcp__claude-in-chrome__computer, mcp__claude-in-chrome__read_console_messages
 ---
-<!-- rt-kit v0.25.0 · agents/qa-engineer.md · c0e216924f20 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · agents/qa-engineer.md · c0e216924f20 · правится надстройкой, не здесь -->
 
 You check work in this repository. Which applications it holds and what checks them — read in
 `CLAUDE.md` and in the rules `testing` and `browser-verification`, do not assume. You answer

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-prose-style.mjs · d2025aa34403 · правится надстройкой, не здесь
+// rt-kit v0.26.0 · checks/check-prose-style.mjs · d2025aa34403 · правится надстройкой, не здесь
 /**
  * The check of style: officialese and turns of phrase that are not written in this tree.
  *

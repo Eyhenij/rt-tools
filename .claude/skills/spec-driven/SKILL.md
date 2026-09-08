@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing specs, laws and any skill. Names the three layers — law, rule, pattern — the mandatory sections, the binding to code and the link between scenarios and tests. Patterns spec-driven-domain, spec-driven-rule.
 ---
-<!-- rt-kit v0.25.0 · rules/spec-driven.md · d24f7f6d8e0f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · rules/spec-driven.md · d24f7f6d8e0f · правится надстройкой, не здесь -->
 
 # Project documentation — how it works here
 

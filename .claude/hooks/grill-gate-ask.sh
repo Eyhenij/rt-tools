@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/grill-gate-ask.sh · 9ccdeb685920 · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/grill-gate-ask.sh · 9ccdeb685920 · правится надстройкой, не здесь
 # rt-hook: PreToolUse AskUserQuestion
 # Requires: hooks/grill-gate.sh
 # The half of the conversation guard that stands on the question tool: the menu is judged before it

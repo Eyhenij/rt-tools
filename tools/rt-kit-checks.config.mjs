@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/rt-kit-checks.config.mjs · 40e1a10d5d4a · правится надстройкой, не здесь
+// rt-kit v0.26.0 · checks/rt-kit-checks.config.mjs · db488bcc50e5 · правится надстройкой, не здесь
 /**
  * Check settings: what counts as sources, where not to go and where the debt lists lie.
  *
@@ -31,6 +31,16 @@ const CONFIG_PATH = '.claude/rt-kit/checks.json';
 const DEFAULTS = {
     /** Where the code the checks read lies. */
     sourceRoots: ['apps', 'libs'],
+    /**
+     * Where suites lie beyond the source roots. A tree checks its own checks by suites that lie
+     * next to the tooling, and the tooling is not application code: named among the source roots,
+     * it would fall under every check that reads them. So the roots of suites are declared apart
+     * and are added to the source roots, not put in place of them — a tree that named one root
+     * would otherwise lose all the rest silently.
+     *
+     * Empty — the suites are searched for under the source roots alone, as before.
+     */
+    testRoots: [],
     /** Where never to go: the build, the dependencies, the generated. */
     skippedDirs: ['node_modules', 'dist', '.git', '.nx', 'tmp', 'coverage', 'worktrees', 'gen', 'generated'],
     /** Where the project texts lie. */
