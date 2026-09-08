@@ -17,7 +17,11 @@
     </ng-container>
 
     <ng-container *rtContainerContent>
-        <router-outlet />
+        @if (noSections()) {
+            <rt-empty-state qa-dataid="container-no-sections" icon="ico-warning" [title]="noSectionsTitle" [description]="noSectionsFrom" />
+        } @else {
+            <router-outlet />
+        }
     </ng-container>
 
     <ng-container *rtContainerRightSidenav>

@@ -165,6 +165,12 @@ threshold.
   label and the border by it. A role that has no colour of its own unfolds the backing into the surface — and
   the label taken from the backing lies onto itself.
 
+- **The ends of a transition are set apart in every look, not only in the one that was looked at.** A colour
+  name says a role, not a paint, and two roles are free to meet on one paint in one look and part in another —
+  each of them right in its own place. The transition between them is then a flat fill, and nothing sees it: the
+  build assembles it, the styles linter judges the properties, and a still frame shows a flat fill as a lawful
+  one. A transition needing ends of its own gets names of its own rather than borrowing two neighbouring roles.
+
 ## What is out of scope
 
 - **The first kit and its design:** neither its tokens nor its checks are touched. The nine names both kits

@@ -84,6 +84,8 @@ export type TRtDesignTokenName =
     | '--rt-color-border-focus'
     | '--rt-color-border-strong'
     | '--rt-color-border-subtle'
+    | '--rt-color-skeleton-base'
+    | '--rt-color-skeleton-wave'
     | '--rt-color-state-danger'
     | '--rt-color-state-danger-bg'
     | '--rt-color-state-error-text'
@@ -533,6 +535,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-color-border-focus',
     '--rt-color-border-strong',
     '--rt-color-border-subtle',
+    '--rt-color-skeleton-base',
+    '--rt-color-skeleton-wave',
     '--rt-color-state-danger',
     '--rt-color-state-danger-bg',
     '--rt-color-state-error-text',
