@@ -181,3 +181,14 @@ Then it catches them on a par with the package ones, and the package ones stay a
 sample does not drop the check, and the rest of the words are judged as before
 
 Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
+
+### SC-AK-928 — a document written by a shell command is judged the same
+
+Given a document is written by a redirection or by the body of a heredoc, and the text carries
+officialese
+When the guard of the wording checks the call
+Then it refuses it: the target is taken by the shared parse of write targets, and the new text is the
+body of the command. A read, a write to a file that is not a document, and a write to the description
+of the past pass as before
+
+Covered: `projects/agent-kit/tests/prose-style-guard.test.sh`.

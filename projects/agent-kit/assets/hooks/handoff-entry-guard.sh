@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# rt-hook: PreToolUse Edit|Write|MultiEdit
-# Requires: rules/task-flow.md, hooks/deny-tail.sh
+# rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# Requires: rules/task-flow.md, hooks/deny-tail.sh, hooks/write-targets.sh
 # Handover entry guard: a session started from a handover edits no file until the work-conduct rule
 # is loaded.
 #
@@ -26,9 +26,27 @@ input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
+rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# The write targets are taken by the shared parse: the same sign serves the guard of the place of an
+# edit, and two copies of it would let through different shapes of a write. No file — a silent
+# default remains, so that the guard does not break on an incomplete layout.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/write-targets.sh" ] && . "$rt_hooks_dir/write-targets.sh" 2>/dev/null
+command -v rt_write_targets >/dev/null 2>&1 || rt_write_targets() { cat >/dev/null; }
+
 tool="$(rt_hook_tool)"
 case "$tool" in
     Edit | Write | MultiEdit) ;;
+    # A write by a shell command is the same edit of a file: the same session with the name of the
+    # shell instead of the name of the edit worked past the rule whole. A command that writes
+    # nothing the guard does not wake: it must not get in the way of reading the tree, which is
+    # exactly what the order of entry begins with.
+    Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool)
+        cmd="$(rt_hook_cmd)"
+        [ -z "$cmd" ] && exit 0
+        [ -n "$(printf '%s' "$cmd" | rt_write_targets)" ] || exit 0
+        ;;
     *) exit 0 ;;
 esac
 

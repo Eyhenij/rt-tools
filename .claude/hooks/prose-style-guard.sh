@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/prose-style-guard.sh · 246735b312ed · правится надстройкой, не здесь
-# rt-hook: PreToolUse Edit|Write|MultiEdit
-# Requires: checks/check-prose-style.mjs, hooks/deny-tail.sh
+# rt-kit v0.26.0 · hooks/prose-style-guard.sh · dfd0f69c4188 · правится надстройкой, не здесь
+# rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# Requires: checks/check-prose-style.mjs, hooks/deny-tail.sh, hooks/write-targets.sh
 # Prose guard: officialese and words that are not written in this tree do not reach the file.
 #
 # The rule about texts demands plain words, and this was held only by the memory of whoever writes:
@@ -11,6 +11,11 @@
 # Only the new text of the edit is judged, not the whole file: what has accumulated is fixed by a
 # separate piece of work, and refusing an edit of a neighbouring line because of it would make the
 # guard bypassed out of necessity.
+#
+# A write by a shell command is judged the same as one by the edit tool: the same text with the name
+# of the shell instead of the name of the edit gave silence, and a document written by a heredoc
+# went past the wording convention whole. The path is taken by the shared parse of write targets,
+# and the new text is the body of the command — the written text stands inside it.
 #
 # FAIL-OPEN: no node, no check, a foreign tool, not `.md` → pass.
 
@@ -27,13 +32,34 @@ input="$RT_HOOK_INPUT"
 command -v jq >/dev/null 2>&1 || exit 0
 command -v node >/dev/null 2>&1 || exit 0
 
+rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# The write targets are taken by the shared parse: the same sign serves the guard of the place of an
+# edit, and two copies of it would let through different shapes of a write. No file — a silent
+# default remains, so that the guard does not break on an incomplete layout.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/write-targets.sh" ] && . "$rt_hooks_dir/write-targets.sh" 2>/dev/null
+command -v rt_write_targets >/dev/null 2>&1 || rt_write_targets() { cat >/dev/null; }
+
 tool="$(rt_hook_tool)"
 case "$tool" in
-    Edit | Write | MultiEdit) ;;
+    Edit | Write | MultiEdit)
+        path="$(rt_hook_file)"
+        added="$(printf '%s' "$input" | jq -r '.tool_input.new_string // .tool_input.content // ([.tool_input.edits[]?.new_string] | join("\n")) // empty' 2>/dev/null)"
+        ;;
+    Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool)
+        cmd="$(rt_hook_cmd)"
+        [ -z "$cmd" ] && exit 0
+        # The first document among the write targets. A command writing several is judged by one of
+        # them: the text is one for the whole command, and a second refusal would repeat the first.
+        path="$(printf '%s' "$cmd" | rt_write_targets | grep -m1 '\.md$')"
+        # The new text is the body of the command: the written text stands inside it, and the
+        # findings of the check name the very lines that go into the file.
+        added="$cmd"
+        ;;
     *) exit 0 ;;
 esac
 
-path="$(rt_hook_file)"
 case "$path" in
     *.md) ;;
     *) exit 0 ;;
@@ -42,13 +68,10 @@ esac
 # The archive and the task folders are not judged: the archive is not edited at all, and the
 # progress is written in haste and lives until the merge.
 case "$path" in
-    */docs/archive/* | */docs/tasks/*) exit 0 ;;
+    */docs/archive/* | */docs/tasks/* | docs/archive/* | docs/tasks/*) exit 0 ;;
 esac
 
-added="$(printf '%s' "$input" | jq -r '.tool_input.new_string // .tool_input.content // ([.tool_input.edits[]?.new_string] | join("\n")) // empty' 2>/dev/null)"
 [ -z "$added" ] && exit 0
-
-rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 check=""
 for candidate in "$rt_hooks_dir/../checks/check-prose-style.mjs" "$rt_hooks_dir/../rt-kit/checks/check-prose-style.mjs" "${CLAUDE_PROJECT_DIR:-.}/tools/check-prose-style.mjs"; do
     [ -f "$candidate" ] && check="$candidate" && break
