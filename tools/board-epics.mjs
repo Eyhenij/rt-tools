@@ -1,4 +1,4 @@
-// rt-kit v0.25.0 · checks/board-epics.github.mjs · def570619702 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/board-epics.github.mjs · e942cbc092a9 · правится надстройкой, не здесь
 /**
  * The link between a task and an epic. Lives in a file of its own: the work queue audit stands at
  * the length limit even without it, and these two checks are read separately.
@@ -81,14 +81,29 @@ export function checkEpicLinks(open, report) {
     const unreadable = new Set();
 
     for (const epic of epics) {
-        const planPath = String(epic.body ?? '').match(/(?:^|[\s(`])([\w.-]+(?:\/[\w.-]+)+\.md)/)?.[1] ?? null;
-        if (planPath === null) {
+        const named = [...String(epic.body ?? '').matchAll(/(?:^|[\s(`])([\w.-]+(?:\/[\w.-]+)+\.md)/g)].map((match) => match[1]);
+        if (named.length === 0) {
             report(`#${epic.number}: the epic card names no path to the plan — there is nowhere to read what the epic holds`);
             unreadable.add(epic.number);
             continue;
         }
-        if (!existsSync(join(ROOT, planPath))) {
-            report(`#${epic.number}: the epic plan «${planPath}» is not on disk — the card points into emptiness`);
+
+        // The plan is the document that carries the makeup, not the first path in the body. A card
+        // names its decision next to its plan, and the decision has no table of tasks: read as the
+        // plan, it made the makeup empty and every open task of the epic read as not belonging to
+        // it — fourteen false lines at once, and the true ones drowned among them.
+        const onDisk = named.filter((path) => existsSync(join(ROOT, path)));
+        if (onDisk.length === 0) {
+            report(`#${epic.number}: the epic plan «${named[0]}» is not on disk — the card points into emptiness`);
+            unreadable.add(epic.number);
+            continue;
+        }
+
+        const planPath = onDisk.find((path) => planRows(readFileSync(join(ROOT, path), 'utf8')) !== '') ?? null;
+        if (planPath === null) {
+            report(
+                `#${epic.number}: none of the documents the card names carries the makeup of the epic — «${onDisk.join('», «')}». The makeup is a table with a task column`
+            );
             unreadable.add(epic.number);
             continue;
         }

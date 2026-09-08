@@ -406,6 +406,15 @@ ordinary task by
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
+### SC-AK-919 — the plan of an epic is the document that carries the makeup
+
+Given the card of an epic names its decision before its plan, and the decision has no table of tasks
+When the work queue audit reads the makeup of the epic
+Then it reads the plan and judges the link as before: none of the named documents on disk, and none
+of those on disk carrying the makeup, are named by lines of their own
+
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+
 ### SC-AK-752 — a branch of an open request lagging behind main is named by the audit
 
 Given the branch of an open request has fallen several commits behind the main branch
