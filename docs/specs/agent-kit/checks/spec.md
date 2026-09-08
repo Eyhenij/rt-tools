@@ -217,6 +217,19 @@ outward is watched by is said by the subdomain of the delivery guards.
   branch. The pick is the same on both sides, the difference is in the margin, and everything the check
   names the cleanup removes.
 
+- **The roots under which suites are searched for are declared apart from the source roots and are
+  added to them.** A tree checks its own checks by suites lying next to the tooling, and the
+  tooling is not application code: named among the source roots, it would fall under every check
+  that reads them. Read from one setting, such a suite was invisible, and the scenario under it
+  stood as uncovered next to one for which no suite was written at all — the list of the uncovered
+  stops meaning anything with the third such line. Added, not put in place of: a tree that named
+  one root would otherwise lose all the rest silently, and every scenario would look uncovered
+  while its test stood right there.
+- **A root lying inside another named root is walked once.** The two lists are the tree's own
+  words, and nothing keeps it from naming a suite directory inside a source root. Walked twice, it
+  gives every reference twice: coverage counts places, and a refusal names a place the tree has
+  only one of.
+
 ## What is out of scope
 
 - The scenarios of the uniformity signs — the subdomain `reuse` next to it: there are fifteen of

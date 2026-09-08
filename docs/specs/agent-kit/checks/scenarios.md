@@ -446,3 +446,20 @@ When the cleanup and the time check run
 Then neither of them names it
 
 Covered: `projects/agent-kit/tests/archive-age.test.sh`.
+
+### SC-AK-921 — a suite next to the tooling is seen by the root the tree declared
+
+Given a suite with a scenario number lies outside the source roots, and the tree named its root
+When the spec audit runs
+Then it counts the scenario covered and names that very suite; without the named root it sees
+neither
+
+Covered: `projects/agent-kit/tests/checks-specs-roots.test.sh`.
+
+### SC-AK-922 — a root inside another named root is walked once
+
+Given the tree named a suite root lying inside a source root
+When the spec audit gathers the mentions of a scenario
+Then the reference is counted once, not twice
+
+Covered: `projects/agent-kit/tests/checks-specs-roots.test.sh`.
