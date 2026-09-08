@@ -53,7 +53,7 @@ report "SC-AK-822 — правка текстов пропуска не отме
 
 rm -rf "$SD_TREE"
 
-# --- SC-AK-924, SC-AK-925 — теневая база и разбор отказа развёртывания ----------------------
+# --- SC-AK-932, SC-AK-933 — теневая база и разбор отказа развёртывания ----------------------
 #
 # Живой базы у набора по-прежнему нет: клиент хранилища подменяется заглушкой в дереве фикстуры,
 # а `npx` — оболочкой на PATH. Так видно и то, какие запросы проверка шлёт серверу, и то, каким
@@ -104,15 +104,15 @@ stub_queries() {
 }
 
 sd_out="$(stub_says 'Error: P1001: Can not reach database server' 1)"
-report "SC-AK-924 — теневая база заводится своей командой" "$(stub_queries '^CREATE DATABASE ')" 1
-report "SC-AK-924 — и снимается до того, как её завести" "$(stub_queries '^DROP DATABASE IF EXISTS ')" 2
-report "SC-AK-925 — P1001 назван поломкой проверки" "$(printf '%s' "$sd_out" | grep -c 'defect of the check')" 1
-report "SC-AK-925 — и не выдан за расхождение миграций" "$(printf '%s' "$sd_out" | grep -c 'do not apply to a clean database')" 0
+report "SC-AK-932 — теневая база заводится своей командой" "$(stub_queries '^CREATE DATABASE ')" 1
+report "SC-AK-932 — и снимается до того, как её завести" "$(stub_queries '^DROP DATABASE IF EXISTS ')" 2
+report "SC-AK-933 — P1001 назван поломкой проверки" "$(printf '%s' "$sd_out" | grep -c 'defect of the check')" 1
+report "SC-AK-933 — и не выдан за расхождение миграций" "$(printf '%s' "$sd_out" | grep -c 'do not apply to a clean database')" 0
 
 sd_out="$(stub_says 'Error: relation "A" already exists' 1)"
-report "SC-AK-925 — прочий отказ развёртывания остаётся отказом миграций" \
+report "SC-AK-933 — прочий отказ развёртывания остаётся отказом миграций" \
     "$(printf '%s' "$sd_out" | grep -c 'do not apply to a clean database')" 1
-report "SC-AK-925 — и не назван поломкой проверки" "$(printf '%s' "$sd_out" | grep -c 'defect of the check')" 0
+report "SC-AK-933 — и не назван поломкой проверки" "$(printf '%s' "$sd_out" | grep -c 'defect of the check')" 0
 
 rm -rf "$SD_STUB"
 
