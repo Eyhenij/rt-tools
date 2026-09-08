@@ -12,15 +12,11 @@ Given a signed-in person whose rights hold the read right of a section
 When the admin panel draws the top row and the person presses the item
 Then the item is in the row, and its address opens the screen of the section
 
-Not covered: the check is written by the task RT-1898.
-
 ### SC-MB-299 — a section whose right is not held is not shown
 
 Given a signed-in person whose rights do not hold the read right of a section
 When the admin panel draws the top row
 Then the item of that section is absent from the row entirely
-
-Not covered: the check is written by the task RT-1898.
 
 ### SC-MB-300 — the address of a closed section does not open by a direct link
 
@@ -36,16 +32,12 @@ Given the answer about the signed-in person has not arrived yet
 When the admin panel draws the top row
 Then every item is in the row: the rights are unknown rather than absent
 
-Not covered: the check is written by the task RT-1898.
-
 ### SC-MB-302 — a person to whom no section is open sees the admin panel without sections
 
 Given a signed-in person whose rights hold not one read right of a section
 When the admin panel comes up
 Then the top row holds their name and the way out and not a single item, and the body says access
 has not been given and whom to ask
-
-Not covered: the check is written by the task RT-1898.
 
 ### SC-MB-303 — the root leads into the first open section
 

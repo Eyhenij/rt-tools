@@ -131,6 +131,9 @@ export const messageBusAdminBoundaries = [
 
     // Оболочка: она знает, кто вошёл, куда его вывести при выходе, из чего собрано меню и чем
     // рисуется шапка. Сама шапка предмета не знает — разделы и вошедший приходят к ней входами
+    // Оболочка видит словарь по той же причине, что шапка и меню: свою подпись она показывает
+    // одну — экран для того, кому не открыт ни один раздел, — и написанная разметкой она
+    // разошлась бы с остальными подписями админки молча
     {
         sourceTag: 'scope:message-bus-admin-common-container-feature',
         onlyDependOnLibsWithTags: [
@@ -139,6 +142,7 @@ export const messageBusAdminBoundaries = [
             AUTH_DATA_ACCESS,
             AUTH_UTIL,
             CONTAINER_UTIL,
+            CORE_UTIL,
             PACKAGE,
         ],
     },
@@ -151,10 +155,12 @@ export const messageBusAdminBoundaries = [
         onlyDependOnLibsWithTags: [PACKAGE],
     },
     // Меню видит словарь: подписи разделов оно берёт оттуда же, откуда их берут сами разделы, —
-    // переписанные в декларации литералом, они расходятся с заголовком экрана молча
+    // переписанные в декларации литералом, они расходятся с заголовком экрана молча. Общую либу
+    // оно видит ради имени права: тем же именем приёмник закрывает свою операцию, и свой список
+    // имён в админке разошёлся бы с ним молча
     {
         sourceTag: 'scope:message-bus-admin-common-container-util',
-        onlyDependOnLibsWithTags: [CORE_UTIL, PACKAGE],
+        onlyDependOnLibsWithTags: [CONTRACT, CORE_UTIL, PACKAGE],
     },
     {
         sourceTag: 'scope:message-bus-admin-common-container-api',
