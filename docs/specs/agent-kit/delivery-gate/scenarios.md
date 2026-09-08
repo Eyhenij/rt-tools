@@ -148,6 +148,18 @@ mention of the command inside a string is no call
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
+### SC-AK-932 — the repair named in the refusal passes
+
+Given the contribution of the branch carries a commit of the machine record with a foreign mail
+When a commit call goes that rewrites the last commit and carries the declared mail in both
+signature variables — in double quotes, in single ones or without any
+Then the guard lets it through: this is the very repair its own refusal names, and without the
+exception it refused the repair together with the miss. A foreign mail in the variables, one
+variable of two, the right variables without the rewrite, and a call carrying the rewrite together
+with a send are all refused as before: the divergence is removed before the contribution leaves
+
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
+
 ### SC-AK-198 — the work queue does without the token of the machine record
 
 Given the tree named no token of a machine record
