@@ -19,3 +19,11 @@ addition of rights, the check of access by a right, and what the admin panel is 
 - **A token of a tree carries no rights and opens no operation declared by a right.** — `libs/message-bus-api/access/feature/src/lib/access.guard.ts:AccessGuard`
 - **The answer about the signed-in person carries their rights whole.** — `libs/message-bus-api/accounts/feature/src/lib/auth.controller.ts:ISessionAnswer`
 - **Until the rights are received the admin panel hides nothing.** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:allows`
+- **A menu item carries the right that opens its section, and the address is closed by that same declaration.** — `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:IAdminMenuItem`
+- **An item whose right the signed-in person does not hold is not drawn.** — `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts:sections`
+- **The address of a closed section does not open by a direct link either.** — `libs/message-bus-admin/auth/shell/src/lib/section-access.ts:sectionRightGuard`
+- **A person to whom no section is open sees the admin panel without sections, with their name and the way out.** — `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts:noSections`
+- **The root of the admin panel leads into the first section open to the person, not into the first of the list.** — `libs/message-bus-admin/auth/shell/src/lib/section-access.ts:firstOpenSectionPath`
+- **The operations a section lives by are closed by the read right of that section.** — `libs/message-bus-api/postmortems/feature/src/lib/postmortems-read.controller.ts:PostmortemsReadController` — the same declaration stands on the reading of the proposals, of the summaries and of the invitations; the issuing and the revocation of an invitation are closed by the right of editing that section
+- **The set of rights is declared once and read by both sides.** — `libs/message-bus-common/src/lib/rights.ts:RIGHTS`
+- **A right taken away closes the section on the next move, not on the next sign-in.** — `libs/message-bus-admin/auth/shell/src/lib/section-access.ts:sectionRightGuard`

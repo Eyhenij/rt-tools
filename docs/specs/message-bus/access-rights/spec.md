@@ -76,6 +76,33 @@ that opened or did not.
 - **Until the rights are received the admin panel hides nothing.** An empty menu after a network
   failure looks like a broken admin panel and leaves no way out.
 
+**The sections closed by a right.**
+
+- **A menu item carries the right that opens its section, and the address is closed by that same
+  declaration.** A second declaration of the link "an address and a right" — next to the routes —
+  diverges from the first silently, and the result is "the item is not visible, and the page
+  opens".
+- **An item whose right the signed-in person does not hold is not drawn.** Not drawn greyed out,
+  not drawn with a hint: the admin panel of the receiver has no sections a person may ask for.
+- **The address of a closed section does not open by a direct link either.** The check by a right
+  stands on the children of the closed branch rather than on the branch itself: a check of the
+  branch runs once per page load and does not see moves between sections.
+- **A person to whom no section is open sees the admin panel without sections, with their name and
+  the way out.** They signed in, and the sign-in is not a defect: what is missing is the rights,
+  and the screen says so instead of showing an empty page.
+- **The root of the admin panel leads into the first section open to the person, not into the first
+  of the list.** Otherwise whoever has no right for the first one lands on a refusal right after
+  signing in.
+- **The operations a section lives by are closed by the read right of that section.** A hidden item
+  by an open operation closes the section only in appearance: the data is given away by a direct
+  request to whoever signed in.
+- **The set of rights is declared once and read by both sides.** The receiver names the rights of
+  the operations, the admin panel the rights of the items; a second list of names diverges from the
+  first silently, and both sides stay green — one closes by its name, the other asks by its own.
+- **A right taken away closes the section on the next move, not on the next sign-in.** The rights
+  arrive with the answer about the signed-in person, and the check by a right asks the store, which
+  that answer fills.
+
 ## What is out of scope
 
 - **The screens.** The list of people, the panel of creating them and the page of roles are the
@@ -86,6 +113,10 @@ that opened or did not.
   `Q-A-2`.
 - **A second ownership.** The law speaks of a role per ownership; here there is one receiver and
   one set of roles in it.
+- **The operations that serve several sections at once.** The list of trees and the list of cargo
+  versions fill the filters of every section, and the closing of records by a publisher touches two
+  kinds of cargo in one packet. One right of one section cannot be written on any of them, and they
+  stay closed by a sign-in; the question of what closes them is open below.
 
 ## Contract
 
@@ -117,8 +148,14 @@ nothing declares is not a right but a typo.
 
 ## Screens and states
 
-This agreement adds no screen. The only thing a person sees by it is a section that opened or a
-refusal that came instead.
+No screen of its own is added. What the rights change is what the admin panel shows of the ones it
+has:
+
+| The state of the person                               | What the top row shows               | What the body shows                                           |
+| ----------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------- |
+| the answer about the signed-in person has not arrived | all the items                        | what the address asks for                                     |
+| some sections are open                                | the items of the open sections alone | the section the address names, or the first open one          |
+| no section is open                                    | the name and the way out, no items   | a word that access has not been given, and whom to ask for it |
 
 ## Cross-cutting requirements
 
@@ -151,9 +188,25 @@ There is one receiver, and the roles in it are shared. Several ownerships are ou
   created that no operation reads, and it would look like a right.
 - **The refusal by a right does not name the right.** The difference of refusals is a way to read a
   foreign account's rights one request at a time.
+- **The right stands at the menu item rather than at the route.** The item already carries the
+  address, and the check reads the right from it: one declaration instead of two that diverge.
+- **The item is hidden rather than shown disabled.** A disabled item tells a person about a section
+  they will not be given anyway; the admin panel of the receiver shows what one may work with.
+- **The root leads into the first open section rather than into a fixed one.** A fixed root would
+  meet with a refusal exactly those whose rights start from the second section.
+- **The screen without sections is a screen, not a redirect to the sign-in.** Whoever signed in and
+  was thrown back to the sign-in reads it as a broken sign-in and repeats it.
 
 ## Open questions
 
+- **What closes an operation that serves several sections at once.** A declaration names one right,
+  while the list of trees and the list of versions are asked by the filters of all the sections, and
+  the closing of records by a publisher moves records of two kinds in one packet. Three answers are
+  visible — a right of its own for such an operation, a declaration of several rights of which any
+  one is enough, or a check inside by the parameter naming the section.
+- **Whether a person without a single right should be told which rights exist at all.** Today the
+  screen names whom to ask and nothing else. Naming the sections one has no access to would answer
+  the question "what is here" — and would also give away what the receiver holds.
 - **Whether the roles are created by the owner or come with the receiver.** A set that comes with
   the receiver is ready to work at once and goes stale as sections are added; created ones are
   empty on a fresh node. Decided by the task of the page of roles, `#1901`.
@@ -161,3 +214,4 @@ There is one receiver, and the roles in it are shared. Several ownerships are ou
 ## History of changes
 
 - 8 September 2026 — written as a draft of the task RT-1897.
+- 8 September 2026 — the sections closed by a right joined it from the draft of the task RT-1898.
