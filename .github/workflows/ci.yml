@@ -174,6 +174,28 @@ jobs:
             - name: Profile drift
               run: node tools/check-profile-drift.mjs
 
+            # Цепочка переездов хранилища на чистой базе. Порядок применения задан временем
+            # создания, и переезд из ветки, начатой раньше, встаёт до того, от которого зависит:
+            # на развёрнутой базе разработчика это не видно вовсе, а на чистой — падает, то есть
+            # впервые на выкатке. В гейте пуша проверка стоит с самого её появления, а здесь её
+            # не было: у машины, которая толкает ветку, база может быть погашена — тогда гейт
+            # законно пропускает, и цепочку не проверяет никто.
+            - name: Migrations against a clean database
+              if: steps.scope.outputs.docs_only != 'true'
+              # Порт и имя контейнера свои, не рабочие: раннер стоит на машине разработчика, и
+              # порт 55432 занят его собственной базой — шаг забрал бы её у него или не поднялся
+              # бы вовсе.
+              env:
+                  DATABASE_URL: postgresql://message_bus:message_bus@localhost:55452/message_bus
+              run: |
+                  docker rm -f rt-ci-schema >/dev/null 2>&1 || true
+                  docker run -d --rm --name rt-ci-schema \
+                      -e POSTGRES_USER=message_bus -e POSTGRES_PASSWORD=message_bus \
+                      -e POSTGRES_DB=message_bus -p 55452:5432 postgres:16-alpine >/dev/null
+                  until docker exec rt-ci-schema pg_isready -U message_bus >/dev/null 2>&1; do sleep 1; done
+                  node tools/check-schema-drift.mjs
+                  docker rm -f rt-ci-schema >/dev/null 2>&1 || true
+
             # Объявление гарда против того, на что ветвится его тело. Ветка, которой нет в
             # объявлении, не исполняется ни разу — под этим именем гард не зовут, — а снаружи он
             # выглядит работающим: путь назван, файл разложен, набор сценариев зелёный.

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/git-guard-delivery-signature.sh · fb6d7a7a5daa · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/git-guard-delivery-signature.sh · d23f582104b2 · правится надстройкой, не здесь
 # The signature of a machine commit for the delivery guard: whose commit it is, whether it is signed
 # with the right mail and what to do if it is not.
 #
@@ -76,6 +76,33 @@ if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git([[:space:]]|\$)" \
         bot_login="${commit_email%%@*}"
         bot_login="${bot_login##*+}"
 
+        # The repair named in the refusal is itself a commit, and without this exception the guard
+        # refused it together with everything else: the divergence is removed only by a commit,
+        # and a commit is refused while the divergence is there. The circle closed, and there was
+        # no way out of it by the guard's own means — the second advice, rewriting the whole
+        # contribution, demands a clean working tree, and saving the work is a commit too.
+        #
+        # The repair is recognised not by trusting the line — the note above rightly refuses that —
+        # but by the declared mail: the guard looks in the call for exactly the address it declared
+        # itself, in both variables at once, next to a rewrite of the last commit. Faking that means
+        # putting the right signature, that is doing precisely what the guard demands.
+        #
+        # The quotes are stripped before matching: the same command is typed with double quotes,
+        # with single ones and without any, and a sign counting on one form stays silent on the
+        # other two — that is, refuses the repair again and says nothing about why.
+        # A push is never a repair, whatever stands in its variables: the divergence has to be
+        # removed BEFORE the contribution leaves, and after it only a force push helps. Without
+        # this line a compound call carrying both the rewrite and the push would take the whole
+        # exception onto the push as well.
+        repair=''
+        probe="$(printf '%s' "$cmd" | tr -d "\"'")"
+        if ! printf '%s' "$probe" | sed -E 's/git[[:space:]]+stash[[:space:]]+push/git stash/g' | grep -qE '(^|[[:space:]])push([[:space:]]|$)' \
+            && printf '%s' "$probe" | grep -qF "GIT_AUTHOR_EMAIL=${commit_email}" \
+            && printf '%s' "$probe" | grep -qF "GIT_COMMITTER_EMAIL=${commit_email}" \
+            && printf '%s' "$probe" | grep -qE '(^|[[:space:]])--amend([[:space:]]|$)'; then
+            repair=1
+        fi
+
         strangers=''
         while IFS="$(printf '\t')" read -r short author email; do
             [ -z "$short" ] && continue
@@ -113,12 +140,12 @@ $(git log --format='%h%x09%an%x09%ae' "origin/${main_branch}..HEAD" 2>/dev/null)
 EOF
         fi
 
-        [ -n "$unknown" ] \
+        [ -n "$unknown" ] && [ -z "$repair" ] \
             && deny "BLOCKED: a commit of the contribution is signed by an account the tree never declared. Known are the machine account ${commit_email} and the emails of people named by the profile; everything else the hosting attributes to whoever owns that address, and from inside the history the miss is invisible. Diverging: ${unknown}. Rewrite the signature before the push, after it only a force push fixes this:
     the last commit — GIT_AUTHOR_EMAIL=\"${commit_email}\" GIT_COMMITTER_EMAIL=\"${commit_email}\" git commit --amend --no-edit --reset-author
     the whole contribution of the branch — git filter-branch -f --env-filter 'GIT_AUTHOR_EMAIL=\"${commit_email}\"; GIT_COMMITTER_EMAIL=\"${commit_email}\"' origin/${main_branch}..HEAD"
 
-        [ -n "$strangers" ] \
+        [ -n "$strangers" ] && [ -z "$repair" ] \
             && deny "BLOCKED: a machine commit is signed by an email other than the one the tree declared. The hosting matches a service address by the number in it, and a commit with a foreign number it attributes to an outside person — from inside the miss is invisible, because the name of the account next to it is right. Diverging: ${strangers}. Declared: ${commit_email} — the email is taken from there, not typed from memory. Rewrite the signature before the push, after it only a force push fixes this:
     the last commit — GIT_AUTHOR_NAME=\"${bot_login}\" GIT_AUTHOR_EMAIL=\"${commit_email}\" GIT_COMMITTER_NAME=\"${bot_login}\" GIT_COMMITTER_EMAIL=\"${commit_email}\" git commit --amend --no-edit --reset-author
     the whole contribution of the branch — git filter-branch -f --env-filter 'GIT_AUTHOR_EMAIL=\"${commit_email}\"; GIT_COMMITTER_EMAIL=\"${commit_email}\"' origin/${main_branch}..HEAD"

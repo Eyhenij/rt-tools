@@ -196,4 +196,4 @@ When the ends are resolved in each of the four looks
 Then a look in which they all come out one paint fells the run, and the refusal names the file, the line, the
 look and the paint
 
-Covered: `tools/tests/check-gradient-stops.test.sh`.
+Covered: `tools/tests/check-gradient-stops.test.sh` — twenty-two cases, called by `pnpm run test:checks`.
