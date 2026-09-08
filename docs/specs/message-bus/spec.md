@@ -135,6 +135,7 @@ the limit is split further by the same technique.
 | [The section of the invitations](invites/spec.md)                       | the list of the invitations, the revocation, the issuing by a panel, the showing of the code once          |
 | [The shell of the admin application](admin-shell/spec.md)               | the top row of the sections, the popup of the profile, the theme and the language, the screen of the entry |
 | [What the intake writes about itself](journal/spec.md)                  | the row of the journal, the taken-apart reason, the cleaning of the fields                                 |
+| [A right, a role and the check that reads them](access-rights/spec.md)  | what a person may do after the entry: the closed set of rights, the role, the pointed edits over it        |
 
 ## What is out of scope
 

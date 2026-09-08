@@ -11,11 +11,22 @@
  *
  * Отказ не называет, что именно не сошлось: ненайденный токен, отозванный, просроченный вход и
  * отключённая запись отвечают одинаково. Иначе по разнице ответов проверяется, что заведено.
+ *
+ * Отказов при этом два, а не один, и разводятся они по вопросу, а не по подробности: «ты не
+ * представился» лечится входом, «тебе это не положено» входом не лечится. Какого именно права не
+ * хватило, второй отказ тоже не называет — по разнице ответов иначе читается набор прав чужой
+ * записи, по запросу за раз.
  */
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { findSessionByHash, ISessionForRequest, requestAccountOf } from '@rt/message-bus-api/accounts/data-access';
+import {
+    findAccountRights,
+    findSessionByHash,
+    IAccountRights,
+    ISessionForRequest,
+    requestAccountOf,
+} from '@rt/message-bus-api/accounts/data-access';
 import {
     IAccountBearingRequest,
     rememberAccount,
@@ -23,7 +34,7 @@ import {
     sessionCookieOf,
     sessionTokenHash,
 } from '@rt/message-bus-api/accounts/util';
-import { OPERATION_ACCESS, TOperationAccess } from '@rt/message-bus-api/access/util';
+import { hasRight, OPERATION_ACCESS, OPERATION_RIGHT, rightsOf, TOperationAccess, TRight } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { findTreeByTokenHash } from '@rt/message-bus-api/trees/data-access';
 import { IRequestTree, ITreeBearingRequest, rememberTree, treeTokenHash } from '@rt/message-bus-api/trees/util';
@@ -68,6 +79,9 @@ export class AccessGuard implements CanActivate {
 
                 return true;
 
+            case 'permission':
+                return this.#byRight(context, request);
+
             default:
                 // Не объявлено ничего. Это дефект приложения, а не ошибка вызывающего, и
                 // отвечать ему нечем: доступ, выведенный за автора, и есть та самая открытая
@@ -79,6 +93,43 @@ export class AccessGuard implements CanActivate {
     /** Метка стоит либо на самой операции, либо на всём контроллере — читаются оба места. */
     #accessOf(context: ExecutionContext): TOperationAccess | undefined {
         return this.#reflector.getAllAndOverride<TOperationAccess>(OPERATION_ACCESS, [context.getHandler(), context.getClass()]);
+    }
+
+    /** Право операции — оттуда же, откуда и вид доступа. */
+    #rightOf(context: ExecutionContext): TRight | undefined {
+        return this.#reflector.getAllAndOverride<TRight>(OPERATION_RIGHT, [context.getHandler(), context.getClass()]);
+    }
+
+    /**
+     * Операция, закрытая правом: сначала вход, потом право.
+     *
+     * Права читаются здесь, а не берутся из входа: вход живёт часами, и снятое право иначе
+     * держало бы раздел открытым до конца дня.
+     *
+     * Роли у записи нет — прав нет ни одного, и это не поломка: человек вошёл, а раздела не
+     * видит. Правом, о котором роль молчит, операция не открывается: молчание — не разрешение.
+     */
+    async #byRight(context: ExecutionContext, request: TIncomingRequest): Promise<boolean> {
+        const right: TRight | undefined = this.#rightOf(context);
+
+        if (!right) {
+            // Вид доступа объявлен, а право рядом не названо. Это дефект приложения, и отвечать
+            // вызывающему нечем: операция, открытая по недописанному объявлению, и есть та самая
+            // дыра, от которой умолчание «закрыто» защищает
+            throw new UnauthorizedException('операция доступа не объявила');
+        }
+
+        const session: ISessionForRequest = await this.#sessionOf(request);
+
+        rememberAccount(request, requestAccountOf(session));
+
+        const rights: IAccountRights | null = await findAccountRights(this.#prisma, session.account.id);
+
+        if (!rights || !hasRight(rightsOf(rights.roleRights, rights.edits), right)) {
+            throw new ForbiddenException('операция требует права');
+        }
+
+        return true;
     }
 
     /**
