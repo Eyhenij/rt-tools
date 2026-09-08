@@ -150,6 +150,11 @@ verdict="$(jq -s -r '
         elif type == "array" then (map(if type == "object" then (.text // "") else tostring end) | join("\n"))
         else tostring end;
 
+    # The call whose answer is discarded is recognised by its identifier, and the identifier is
+    # bound by a name: a dot after a pipe means the list itself, the search over it answers zero
+    # on any non-empty list, and every answer of every tool gets muted at once — that is, the
+    # verdict is looked for in the host records alone.
+    #
     # Tools that read and write files: their result does not count as a verdict — otherwise
     # echoing the same line or reading a file with it passes the guard, and the real verdict
     # does not.
@@ -164,7 +169,8 @@ verdict="$(jq -s -r '
           elif .type == "user" then
               ([ ((.message.content // []) | if type == "array" then .[] else empty end
                     | select(.type == "tool_result")
-                    | select((.tool_use_id // "") | if . == "" then true else ($muted | index(.)) == null end)
+                    | select(((.tool_use_id // "") | if . == "" then null else . end) as $id
+                             | $id == null or ($muted | index($id)) == null)
                     | .content | textof),
                  ((.message.content // "") | if type == "string" then . else "" end),
                  # The call result field: the same record, another form. Discarded only when
@@ -173,7 +179,7 @@ verdict="$(jq -s -r '
                   | if ($rec.toolUseResult // null) == null then ""
                     elif ([($rec.message.content // []) | if type == "array" then .[] else empty end
                             | select(.type == "tool_result") | (.tool_use_id // "")]
-                          | map($muted | index(.)) | any(. != null)) then ""
+                          | map(. as $id | $muted | index($id)) | any(. != null)) then ""
                     else ($rec.toolUseResult | textof) end)
                ] | join("\n"))
           # Host records — the role completion notice and the attachment: the host chooses their
@@ -216,14 +222,15 @@ if [ "$ready" = "1" ]; then
                     elif .type == "user" then
                         ([ ((.message.content // []) | if type == "array" then .[] else empty end
                               | select(.type == "tool_result")
-                              | select((.tool_use_id // "") | if . == "" then true else ($muted | index(.)) == null end)
+                              | select(((.tool_use_id // "") | if . == "" then null else . end) as $id
+                                       | $id == null or ($muted | index($id)) == null)
                               | .content | textof),
                            ((.message.content // "") | if type == "string" then . else "" end),
                            (. as $rec
                             | if ($rec.toolUseResult // null) == null then ""
                               elif ([($rec.message.content // []) | if type == "array" then .[] else empty end
                                       | select(.type == "tool_result") | (.tool_use_id // "")]
-                                    | map($muted | index(.)) | any(. != null)) then ""
+                                    | map(. as $id | $muted | index($id)) | any(. != null)) then ""
                               else ($rec.toolUseResult | textof) end)
                          ] | join("\n"))
                     else tostring end)
