@@ -4,7 +4,7 @@ kind: pattern
 rule: testing
 description: Pattern of rule testing. Load when creating or editing *.spec.ts under Vitest — the ready-made layout of describe and it, the fixture builder, the scenario id in the title, a Connect procedure test with a hand-written database double. Not for end-to-end tests — that is pattern testing-e2e.
 ---
-<!-- rt-kit v0.25.0 · patterns/testing-unit.md · 76cd21c3137f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · patterns/testing-unit.md · 76cd21c3137f · правится надстройкой, не здесь -->
 
 # A test on a pure function and on a procedure
 

@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when the main branch is merged into a task branch and a conflict is resolved — the merge order, handling by file kind, checking what was appended against the work queue, re-reading the body of the open PR. Branch and commit — pattern git-workflow-commit.
 ---
-<!-- rt-kit v0.25.0 · patterns/git-workflow-merge.md · 6424e3b8fd97 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · patterns/git-workflow-merge.md · 6424e3b8fd97 · правится надстройкой, не здесь -->
 
 # Merging the main branch into the task branch
 

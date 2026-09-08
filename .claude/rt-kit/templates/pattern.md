@@ -4,7 +4,7 @@ kind: pattern
 rule: <rule-name>
 description: Pattern of rule <rule-name>. Load <when> — <what it gives>. Not for <the neighbouring case> — that is pattern <neighbour name>.
 ---
-<!-- rt-kit v0.25.0 · templates/pattern.md · 66fefb44a103 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · templates/pattern.md · 66fefb44a103 · правится надстройкой, не здесь -->
 
 # <What is assembled>
 

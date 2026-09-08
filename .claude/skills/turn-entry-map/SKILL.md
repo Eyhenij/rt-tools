@@ -4,7 +4,7 @@ kind: pattern
 rule: turn-entry
 description: Pattern of rule turn-entry. Load when editing the turn map and the hook that serves it — what goes into the map, how it differs from a rule, how the hook stays silent about what is missing and how that is checked. Not for the shape of the handover itself — that is pattern task-flow-handoff.
 ---
-<!-- rt-kit v0.25.0 · patterns/turn-entry-map.md · f32d338c4fa7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · patterns/turn-entry-map.md · f32d338c4fa7 · правится надстройкой, не здесь -->
 
 # The turn map and its serving — ready-made code
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/stand-login-guard.sh · 347ce5324879 · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/stand-login-guard.sh · 347ce5324879 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh
 # Guard of signing in to the stand. The Stop event. It does not let a turn end in which the executor

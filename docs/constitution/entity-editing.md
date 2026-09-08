@@ -1,4 +1,4 @@
-<!-- rt-kit v0.25.0 · laws/entity-editing.md · 1b9ca1e1e06f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · laws/entity-editing.md · 1b9ca1e1e06f · правится надстройкой, не здесь -->
 # Law on entity editing
 
 How the application behaves when the user creates or changes a record. It behaves the same
