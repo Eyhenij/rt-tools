@@ -53,4 +53,67 @@ report "SC-AK-822 — правка текстов пропуска не отме
 
 rm -rf "$SD_TREE"
 
+# --- SC-AK-924, SC-AK-925 — теневая база и разбор отказа развёртывания ----------------------
+#
+# Живой базы у набора по-прежнему нет: клиент хранилища подменяется заглушкой в дереве фикстуры,
+# а `npx` — оболочкой на PATH. Так видно и то, какие запросы проверка шлёт серверу, и то, каким
+# словом она называет отказ развёртывания.
+SD_STUB="$(mktemp -d)"
+mkdir -p "$SD_STUB/tools" "$SD_STUB/prisma" "$SD_STUB/node_modules/pg" "$SD_STUB/bin"
+cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-schema-drift.mjs" "$SD_STUB/tools/"
+printf 'model A {\n  id Int @id\n}\n' > "$SD_STUB/prisma/schema.prisma"
+
+# Заглушка клиента хранилища: соединение удаётся, а запросы уходят в файл — их и судит набор.
+printf '{"name":"pg","version":"0.0.0","main":"index.cjs"}\n' > "$SD_STUB/node_modules/pg/package.json"
+cat > "$SD_STUB/node_modules/pg/index.cjs" <<'STUB'
+const { appendFileSync } = require('node:fs');
+
+class Client {
+    async connect() {}
+
+    async query(text) {
+        appendFileSync(process.env.SD_QUERIES, `${text}\n`);
+
+        return { rows: [] };
+    }
+
+    async end() {}
+}
+
+module.exports = { Client };
+STUB
+
+# Оболочка вместо `npx`: чем она отвечает, задаёт набор перед вызовом.
+cat > "$SD_STUB/bin/npx" <<'FAKE'
+#!/usr/bin/env bash
+printf '%s\n' "$SD_NPX_SAYS" >&2
+exit "${SD_NPX_CODE:-0}"
+FAKE
+chmod +x "$SD_STUB/bin/npx"
+
+stub_says() {
+    : > "$SD_STUB/queries"
+    (cd "$SD_STUB" && env PATH="$SD_STUB/bin:$PATH" SD_QUERIES="$SD_STUB/queries" \
+        SD_NPX_SAYS="$1" SD_NPX_CODE="$2" \
+        DATABASE_URL='postgresql://u:p@localhost:5432/probe' \
+        node tools/check-schema-drift.mjs 2>&1)
+}
+
+stub_queries() {
+    grep -cE "$1" "$SD_STUB/queries"
+}
+
+sd_out="$(stub_says 'Error: P1001: Can not reach database server' 1)"
+report "SC-AK-924 — теневая база заводится своей командой" "$(stub_queries '^CREATE DATABASE ')" 1
+report "SC-AK-924 — и снимается до того, как её завести" "$(stub_queries '^DROP DATABASE IF EXISTS ')" 2
+report "SC-AK-925 — P1001 назван поломкой проверки" "$(printf '%s' "$sd_out" | grep -c 'defect of the check')" 1
+report "SC-AK-925 — и не выдан за расхождение миграций" "$(printf '%s' "$sd_out" | grep -c 'do not apply to a clean database')" 0
+
+sd_out="$(stub_says 'Error: relation "A" already exists' 1)"
+report "SC-AK-925 — прочий отказ развёртывания остаётся отказом миграций" \
+    "$(printf '%s' "$sd_out" | grep -c 'do not apply to a clean database')" 1
+report "SC-AK-925 — и не назван поломкой проверки" "$(printf '%s' "$sd_out" | grep -c 'defect of the check')" 0
+
+rm -rf "$SD_STUB"
+
 suite_result "проверки: схема и миграции"

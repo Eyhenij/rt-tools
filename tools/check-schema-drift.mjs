@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-schema-drift.mjs · fe65f31ea930 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-schema-drift.mjs · d21a1794951e · правится надстройкой, не здесь
 /**
  * The check that the migrations and `prisma/schema.prisma` describe one and the same database.
  *
@@ -216,13 +216,29 @@ async function main() {
         // The identifier is quoted: the database name comes from the address, not from the text of the query
         const quoted = `"${shadowName.replace(/"/g, '""')}"`;
         await client.query(`DROP DATABASE IF EXISTS ${quoted}`);
+        // The shadow database is created here rather than left to `migrate deploy`. The seventh
+        // edition of the client goes to the storage through an adapter and creates nothing: a
+        // missing database it answers with `P1001`, «Can't reach database server», while the server
+        // answers and the port is open. Read as it is written, that refusal says the machine has no
+        // storage at all — and the check created to catch a migration that falls on a clean database
+        // stayed silent about exactly that.
+        await client.query(`CREATE DATABASE ${quoted}`);
 
         try {
-            // `migrate deploy` starts the database itself: no creation command of our own is needed
             const deploy = prisma(['migrate', 'deploy'], shadowUrl);
             if (deploy.status !== 0) {
-                console.error('check-schema-drift: the migrations do not apply to a clean database\n');
-                console.error(`${deploy.stdout ?? ''}${deploy.stderr ?? ''}`);
+                const said = `${deploy.stdout ?? ''}${deploy.stderr ?? ''}`;
+                // `P1001` names an unreachable server, and the client says it about a missing
+                // database too — the two are indistinguishable in its answer. The shadow database
+                // was created a line above, so here it means the check itself, not the migrations:
+                // said as a refusal of the migrations, it sends whoever reads it to look for a
+                // divergence that does not exist.
+                console.error(
+                    said.includes('P1001')
+                        ? 'check-schema-drift: the shadow database did not answer, and this is a defect of the check rather than of the migrations\n'
+                        : 'check-schema-drift: the migrations do not apply to a clean database\n'
+                );
+                console.error(said);
 
                 return 1;
             }

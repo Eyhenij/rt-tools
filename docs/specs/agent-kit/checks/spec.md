@@ -178,6 +178,14 @@ outward is watched by is said by the subdomain of the delivery guards.
 - **A refusal about an unavailable database names what to raise it with.** Said only as "nowhere", it
   reads as permission: the executor is not obliged to raise the database, and the gate is green at
   that.
+- **The shadow database is created by the check itself.** A client that goes to the storage through
+  an adapter creates nothing, and a database that is not there it names by the code of an unreachable
+  server: the check left the creation to the deploy command and read its own miss as a defect of the
+  machine.
+- **A refusal of the deploy command about an unreachable server is told from a divergence of the
+  migrations.** One code stands for both, and after the creation of the shadow database it means the
+  check, not the chain: said as a refusal of the migrations, it sends the reader to look for a
+  divergence that does not exist.
 
 - **An empty name in the setting is asked about apart from a non-existent file.** Glued to the root
   of the tree, an empty name gives the root itself, and it is always there: the check reads that as
