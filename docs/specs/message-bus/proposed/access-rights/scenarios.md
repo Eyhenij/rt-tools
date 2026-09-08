@@ -66,8 +66,6 @@ Given an account with a role and pointed edits over it
 When the admin panel asks who signed in
 Then the answer holds the rights of that person as the role and the edits over it add up to
 
-Not covered: the check is written by the task RT-1897.
-
 ### SC-MB-297 — a right that no operation declares is not accepted into a role
 
 Given a name that is not in the closed set of rights

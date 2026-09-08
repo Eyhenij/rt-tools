@@ -5,10 +5,11 @@
 Переписывается каждым заходом, а не дописывается.
 
 - **State:** `этап-идёт`
-- **Этап:** 3 из 5 — проверка доступа судит по праву
-- **Сделано:** разобрана просьба владельца, заведён эпик #1896 и шесть его задач, написан замысел
-  эпика `docs/plans/message-bus-access-rights.md`, заведена папка этой задачи.
-- **Следующий шаг:** этап 4 — права вошедшего приезжают в админку ответом о том, кто вошёл.
+- **Этап:** 4 из 5 — права вошедшего приезжают в админку
+- **Сделано:** этапы 1–4: черновик договорённости, хранение роли и точечных правок, проверка
+  доступа по праву, права вошедшего в ответе о том, кто вошёл, и в хранилище входа админки.
+- **Следующий шаг:** этап 5 — черновик договорённости вливается в спеку домена, а из спутника
+  правила `permissions` уходит строка о том, что прав здесь нет.
 - **Незакоммиченное:** нет.
 - **Ждём владельца:** нет.
 - **Заявка:** ещё не открыта.
@@ -38,3 +39,44 @@
   403 отдельно от 401 в проверке доступа. Спеки: 13 и 22 прошли, соседние 36 не тронуты. Десять
   сценариев из одиннадцати сняли отметку «не покрыто».
 - Заведены задачи #1896 (эпик), #1897, #1898, #1899, #1900, #1901, #1902.
+- Этап 4: ответ о том, кто вошёл, несёт имя и права — `ISessionAnswer`; тем же ответом отвечает и
+  вход. В админке права держит хранилище входа, а `allows` до ответа приёмника не скрывает
+  ничего. Спеки: 37 приёмника и 10 админки прошли. Сценарий SC-MB-296 снял отметку «не покрыто»,
+  и две последние привязки спутника черновика встали на символ.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-worktree-2
+**Branch:** RT-1897-rights-and-roles
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 3 из 5 — проверка доступа судит по праву
+- **Next step:** этап 4 — права вошедшего приезжают в админку ответом о том, кто вошёл.
+
+The progress in full — `docs/tasks/RT-1897-rights-and-roles/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M libs/message-bus-api/accounts/feature/src/lib/auth.controller.spec.ts
+ M libs/message-bus-api/accounts/feature/src/lib/auth.controller.ts
+?? docs/tasks/RT-1889-form-dictionary-modifiers/
+```
+
+### Commits over the main branch
+
+```
+ac4284b28 feat(rt:message-bus): проверка доступа судит по праву и разводит два отказа
+76be4097b feat(rt:agent-kit): заведена роль «стыд» — напоминает о своих провалах до шага, а не после
+4d52cea7a feat(rt:message-bus): у записи человека появились роль и точечные правки прав
+569270609 docs: сняты записи архива, которым вышел срок
+af19b5c34 docs(rt:message-bus): замысел эпика о правах и черновик договорённости
+20c356932 docs: заведена папка задачи RT-1897
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
