@@ -13,6 +13,10 @@ import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
  * The label of an epic card. Not named — the link is not judged: there would be nothing left to
  * tell an epic card from an ordinary task by.
  */
+// Чтение объявления переехало в свой модуль, а звали его отсюда: имя оставлено на прежнем месте,
+// чтобы соседям не пришлось знать о переезде.
+export { declaredEpicOf };
+
 const EPIC_LABEL = CONFIG.board?.epicLabel ?? '';
 
 /** The labels of the cargo of the trees: those records are not tasks and are not judged as such. */

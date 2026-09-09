@@ -1,4 +1,4 @@
-// rt-kit v0.26.0 · checks/board-epics.github.mjs · 3d04cf4cefe3 · правится надстройкой, не здесь
+// rt-kit v0.26.0 · checks/board-epics.github.mjs · 5bac3b1f2c5a · правится надстройкой, не здесь
 /**
  * The link between a task and an epic. Lives in a file of its own: the work queue audit stands at
  * the length limit even without it, and these two checks are read separately.
@@ -14,6 +14,10 @@ import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
  * The label of an epic card. Not named — the link is not judged: there would be nothing left to
  * tell an epic card from an ordinary task by.
  */
+// Чтение объявления переехало в свой модуль, а звали его отсюда: имя оставлено на прежнем месте,
+// чтобы соседям не пришлось знать о переезде.
+export { declaredEpicOf };
+
 const EPIC_LABEL = CONFIG.board?.epicLabel ?? '';
 
 /** The labels of the cargo of the trees: those records are not tasks and are not judged as such. */

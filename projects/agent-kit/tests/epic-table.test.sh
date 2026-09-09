@@ -14,6 +14,8 @@ cp "$CHECKS/board.github.mjs" "$ET_TREE/tools/board.mjs"
 cp "$CHECKS/board-gh.github.mjs" "$ET_TREE/tools/board-gh.mjs"
 cp "$CHECKS/board-runs.github.mjs" "$ET_TREE/tools/board-runs.mjs"
 cp "$CHECKS/board-epics.github.mjs" "$ET_TREE/tools/board-epics.mjs"
+cp "$CHECKS/board-epic-link.github.mjs" "$ET_TREE/tools/board-epic-link.mjs"
+cp "$CHECKS/board-task-dirs.github.mjs" "$ET_TREE/tools/board-task-dirs.mjs"
 cp "$CHECKS/epic-table.github.mjs" "$ET_TREE/tools/epic-table.mjs"
 
 git -C "$ET_TREE" init -q 2>/dev/null
