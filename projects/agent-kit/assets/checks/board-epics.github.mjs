@@ -224,3 +224,60 @@ export function checkEpicPullBase(open, pulls, report) {
     }
 }
 
+/**
+ * Two states of an epic that nothing sees.
+ *
+ * **An epic without a branch.** Its branch is taken before the first of its tasks, and one that was
+ * not taken leaves every task standing on the main branch: the epic is then merged piece by piece,
+ * and there is nothing left to hand in whole. The card says nothing about a branch, and the list of
+ * requests shows none while no request is open from it.
+ *
+ * **An epic whose tasks are over.** Its request into the main branch opens when the last folder is
+ * taken apart, and until it opens the work of the whole epic lies outside the main branch while
+ * looking finished: every task is closed, the board is empty, and only the epic card stays open.
+ *
+ * Both are read by the same two things: the open tasks of the epic and the open requests. The
+ * branch of the epic is recognised by its number in the name — the audit reads the queue and does
+ * not go to the tree.
+ */
+export function checkEpicState(open, pulls, report) {
+    if (!EPIC_LABEL) {
+        return;
+    }
+
+    const epics = open.filter((issue) => (issue.labels ?? []).some((label) => label.name === EPIC_LABEL));
+    if (epics.length === 0) {
+        return;
+    }
+
+    const claimed = new Map();
+    for (const issue of open) {
+        const named = declaredEpicOf(String(issue.body ?? ''));
+        if (named !== undefined) {
+            claimed.set(issue.number, Number(named));
+        }
+    }
+
+    for (const epic of epics) {
+        const prefix = `${TASK_KEY}-${epic.number}-`;
+        const fromEpic = pulls.filter((pull) => String(pull.headRefName ?? '').startsWith(prefix));
+        const intoEpic = pulls.filter((pull) => String(pull.baseRefName ?? '').startsWith(prefix));
+        const tasksLeft = [...claimed.entries()].filter(([, number]) => number === epic.number);
+
+        // A branch of the epic shows in a request either way: one from it, or one into it. Neither
+        // — and there is nothing in the queue to say the branch exists at all.
+        if (fromEpic.length === 0 && intoEpic.length === 0) {
+            report(
+                `#${epic.number}: the epic has no branch in the requests — neither one from it nor one into it. The branch of an epic is taken before its first task, and without it every task stands on the main branch`
+            );
+            continue;
+        }
+
+        if (tasksLeft.length === 0 && fromEpic.length === 0) {
+            report(
+                `#${epic.number}: the tasks of the epic are over, and no request from its branch is open. Until it opens, the work of the whole epic lies outside the main branch while looking finished`
+            );
+        }
+    }
+}
+
