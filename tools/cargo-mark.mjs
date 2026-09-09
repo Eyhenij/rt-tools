@@ -33,6 +33,10 @@ const RELEASE_FLAG = '--release';
 const QUARANTINE_FLAG = '--quarantine-note';
 const DRY_RUN_FLAG = '--dry-run';
 const STATE_FLAG = '--state';
+const SPEC_FLAG = '--spec';
+
+/** The state a record moves into when the work by it is taken: before it stands the comparison. */
+const WORK_STATE = 'in_work';
 
 const ROOT = resolve(process.cwd());
 const CONFIG = join(ROOT, '.claude/rt-kit.json');
@@ -203,6 +207,34 @@ export async function mark(options) {
         };
     }
 
+    // The comparison with the spec stands before the work, and its trace is the named spec. Without
+    // it the move says "this is taken" and stays silent about what the proposal was judged against:
+    // the comparison then lives one session, and the next sorting out starts from the complaint text
+    // again. An analysis is not asked for a spec — it says what happened, not how the package should
+    // work, and there is nothing to compare it with.
+    const proposals = options.items.filter((one) => one.kind === 'proposal');
+
+    if (options.state === WORK_STATE && proposals.length > 0 && !options.spec) {
+        return {
+            code: REFUSED,
+            lines: [
+                `a proposal does not go into «${WORK_STATE}» while the spec it is compared with is not named`,
+                `the spec is named \`${SPEC_FLAG} <path>\`; it is found by the resource of the record — \`npm run specs:for -- <resource>\``,
+                'not one spec speaks of the resource — the question goes to the person: the goal is not written from the complaint text',
+            ],
+        };
+    }
+
+    if (options.spec && !existsSync(join(ROOT, options.spec))) {
+        return {
+            code: REFUSED,
+            lines: [
+                `there is no file \`${options.spec}\` — the named spec is checked before the network`,
+                'a path typed from memory looks the same as a read one, and past the intake nothing checks it any more',
+            ],
+        };
+    }
+
     if (!options.token) {
         return {
             code: REFUSED,
@@ -278,6 +310,7 @@ async function main() {
             releaseVersion: valueOf(argv, RELEASE_FLAG),
             quarantineNote: valueOf(argv, QUARANTINE_FLAG),
         }),
+        spec: valueOf(argv, SPEC_FLAG),
         dryRun: argv.includes(DRY_RUN_FLAG),
         call: callIntake,
     });

@@ -152,6 +152,17 @@ flowchart TD
   divides what came in into what repeated and what was one-off and decides what becomes an edit;
   the sorting out marks the state of every record. The gathering is called once every few days over
   a stretch, the sorting out every time work is taken.
+- **A proposal is compared with the spec about its resource before it becomes work.** The spec is
+  found by the entry command, not by memory: the memory of a session ends with the session, and the
+  next sorting out of the same record judges by the complaint text again.
+- **The outcomes of the comparison are three, and they are named in advance.** The spec is right —
+  the proposal is disputable and does not become work. The spec is wrong — it is corrected, and the
+  behaviour after it. The spec is silent — the question goes to the person, and their word says
+  which of the other two this becomes. A list written after the fact is assigned by whoever it suits.
+- **The move of a proposal into work names the spec it was compared with.** Without it the move says
+  "this is taken" and stays silent about what the proposal was judged against: the comparison then
+  lives one session. The mark command refuses such a move before the network; an analysis is not
+  asked for a spec — there is nothing to compare it with.
 
 ## An incident analysis: what is in it and where it lives
 
