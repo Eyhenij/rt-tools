@@ -29,6 +29,8 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { openStory } from './showcase-probe.mjs';
+
 /** A story whose root is higher than the base window: the set of the social signs, 1072 px tall. */
 const STORY = 'atoms-icon--social';
 
@@ -48,6 +50,9 @@ const RUNNER = 'projects/ui-kit-v2/.storybook/test-runner.ts';
 
 /** The sign of the showing root — the same one the harness shoots by. */
 const ROOT_SELECTOR = '[data-story-root]';
+
+/** The late boundary of the wait for the root — a limit, not a measure. */
+const ROOT_TIMEOUT_MS = 30_000;
 
 /**
  * The browser driver arrives as a dependency of the snapshot runner rather than by the tree's manifest.
@@ -121,9 +126,8 @@ async function heightAroundTheShot(browser, grow) {
     const context = await browser.newContext({ viewport: { ...VIEWPORT } });
     const page = await context.newPage();
 
-    await page.goto(`${URL}/iframe.html?id=${STORY}&viewMode=story`, { waitUntil: 'load' });
+    await openStory(page, { url: URL, story: STORY, selector: ROOT_SELECTOR, timeoutMs: ROOT_TIMEOUT_MS });
     const node = page.locator(ROOT_SELECTOR).first();
-    await node.waitFor();
     await page.evaluate(() => document.fonts.ready);
     await page.addStyleTag({ content: '*,*::before,*::after{animation-duration:0s!important;transition-duration:0s!important}' });
     await page.waitForTimeout(SETTLE_MS);

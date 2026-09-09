@@ -389,3 +389,17 @@ it active
 Then the submenu is empty and the panel is not marked as open
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
+### SC-UK-60 — the panel of the submenu keeps its place at a walk of the strip
+
+Given an open submenu of a section
+When the active item of the submenu is brought into the visible part, as it is at every change of the section
+Then the panel stays where it stood, and the container of the drawer is not scrolled: a panel returned into
+the flow stands over the content of the container and makes the container twice as tall as itself, and then
+one bringing into view carries the panel upwards by the width of the strip and does not bring it back
+
+Not covered: the drift is held by the placement of the drawer, and the styles of a component are not applied
+in a spec — the container there has no height of its own, and there is nothing to measure. Closed by the show
+`SubMenuKeepsItsPlace` (`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): it measures
+the height of the content of the container against its own, and the top of the panel before and after the
+bringing of an item into view.
