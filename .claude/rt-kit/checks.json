@@ -84,6 +84,7 @@
             "Icon map": "node tools/check-icon-map.mjs",
             "Preset stories": "node tools/check-preset-stories.mjs",
             "Showcase links": "node tools/check-showcase-links.mjs",
+            "Kit two coverage": "node tools/check-kit-coverage.mjs",
             "Test, Lint, Typecheck, Build": "pnpm exec nx affected -t lint typecheck test build --parallel",
             "Hook suites": "pnpm exec nx affected -t test-hooks",
             "Stylelint": "pnpm run lint:styles",
