@@ -385,3 +385,52 @@ When the same check is run
 Then it does not count as a divergence: the rollout may still end in success
 
 Covered: `projects/agent-kit/tests/checks-board-long-work.test.sh`.
+
+### SC-AK-936 — the command creates an epic
+
+Given the tree named the label of an epic and the directory of plans
+When the command of creating is called with the argument about an epic
+Then the card is created with the label of an epic, a draft of the plan is laid in the directory of
+plans with the number and the branch filled in, the body of the card names the path to it, and the
+printed line of the branch takes the main branch as its base
+
+Covered: `projects/agent-kit/tests/task-new-epic.test.sh`.
+
+### SC-AK-937 — an epic that cannot be created is refused before the card
+
+Given the tree named no label of an epic, or no directory of plans, or the call carries no short
+name
+When the command of creating is called with the argument about an epic
+Then no card is created at all, and the refusal names the missing setting or the missing argument
+
+Covered: `projects/agent-kit/tests/task-new-epic.test.sh`.
+
+### SC-AK-938 — a task is created under an epic
+
+Given a card of an epic with the label and a plan naming the branch of the epic
+When the command of creating is called with the number of that epic
+Then the body of the task declares the epic in the shape the audit reads, and the printed line of
+the branch takes the branch of the epic as its base
+
+Given the named card carries no label of an epic
+When the same call goes
+Then no task is created, and the refusal says the card is not an epic
+
+Covered: `projects/agent-kit/tests/task-new-epic.test.sh`.
+
+### SC-AK-939 — a task outside an epic is not created
+
+Given the tree named the label of an epic
+When the command of creating is called without an epic and without the word of the owner
+Then no card is created, and the refusal names both ways out — to name the epic and to name the word
+of the owner
+
+Given the word of the owner is named
+When the same call goes
+Then the task is created, and the word of the owner stands in its body
+
+Given the tree named no label of an epic
+When the same call goes without an epic
+Then the task is created as before
+
+Covered: `projects/agent-kit/tests/task-new-epic.test.sh`.

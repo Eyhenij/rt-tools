@@ -76,7 +76,7 @@ command, and an MR does not open without them:
 GITLAB_TOKEN="$TOKEN" glab mr create \
     --title '[<КЛЮЧ>-86] Письмо владельцу с незаполненным адресом попадает в логи' \
     --assignee <бот> --reviewer <владелец> --label bug --label area:api \
-    --target-branch main --remove-source-branch \
+    --target-branch <ветка эпика> --remove-source-branch \
     --description 'Closes #86
 
 …'

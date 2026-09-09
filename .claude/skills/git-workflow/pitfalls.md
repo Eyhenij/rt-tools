@@ -1,4 +1,4 @@
-<!-- rt-kit v0.26.0 · pitfalls/git-workflow.github.md · 4d82e2e97f29 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · pitfalls/git-workflow.github.md · 0e7693d56761 · правится надстройкой, не здесь -->
 # Delivery — cold part
 
 Pitfalls: traps already stepped on in a tree on GitHub. Loaded not with the rule but on demand —
@@ -267,6 +267,13 @@ a guard.
   "no such command" — even though the tree has it and it is written correctly. This reads as a
   broken command and is cured by the directory: the path to it is named from the root, and it is
   called from there.
+
+## The active account of the host client
+
+A client login as the machine account hijacks every neighbouring session on the machine: a
+neighbour with rights to one repository reads its task as nonexistent, and from inside the tree
+the miss is invisible — the answer is an ordinary "not found". That is why the account is
+substituted per call and never made active, even when the active one is already right.
 
 ## Traps of this machine
 
