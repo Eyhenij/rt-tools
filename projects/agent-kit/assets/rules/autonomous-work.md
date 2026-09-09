@@ -16,7 +16,7 @@ work. The course of work itself — rule `task-flow`, the end of a turn — `tur
 
 | In the law | Here |
 | --- | --- |
-| an autonomous session | the owner's request to work without them, stated in words and with a time boundary |
+| an autonomous session | the owner's request to work without them, stated in words and with a time boundary; started by the command `/night` |
 | a default instead of a question | a "Decisions" line in the grill: what was taken, the reason and the cost of a mistake |
 | work visible from outside | pushing a branch, opening a PR, merging, publishing the package, sending cargo |
 | a chain | the branch of each next piece of work is created from the branch of the previous one |
@@ -51,6 +51,18 @@ flowchart TD
 
 ## How the law applies here
 
+- **The session is started by the command `/night`, and the time boundary goes to it as an
+  argument.** Before it there was no launch at all: the order of the night lay in the texts, and
+  every session assembled it from memory — what was forgotten showed only in the morning, by a
+  branch that cannot be merged or by work missing from the list. The command takes the boundary,
+  raises this rule and the pattern, makes the checks that cost a whole night if met at three
+  o'clock, and creates the file of the morning list.
+- **The command called without a boundary asks the owner for one and starts nothing.** They are
+  still here at that minute; by morning there is nobody to ask, and a session without a boundary is
+  work without an end.
+- **The command does not repeat the order of the night.** It raises the rule and the pattern:
+  rewritten into the command, the order would become a second source and diverge from the first
+  silently.
 - **The branch of the next work is created from the previous one, not from main.** The first — from
   main, each next — from the tip of the previous: `git checkout -b <ключ>-<номер>-<slug> <прошлая
   ветка>`. The owner merges them in turn from the bottom up, and each PR stands on the previous one.
@@ -74,8 +86,8 @@ flowchart TD
 
 ## What of the law is not here
 
-Nothing checks the session's time boundary: the session ends when the work is over or the owner said
-a word. Keeping the ban on what is visible from outside is held the same way — by the rule, not by a
+Nothing checks the session's time boundary: the command asks for it and writes it down, and after
+that the session ends when the work is over or the owner said a word. Keeping the ban on what is visible from outside is held the same way — by the rule, not by a
 guard: the push command is no different from the one made by day.
 
 ## Patterns
