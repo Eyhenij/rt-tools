@@ -20,6 +20,10 @@ export enum ECargoStateDenial {
     NoReleaseVersion = 'no-release-version',
     /** Версия выпуска приехала с переходом, который к выпуску не относится. */
     ExtraReleaseVersion = 'extra-release-version',
+    /** Запись кладут в карантин, а чем она спорна — не сказано. */
+    NoQuarantineNote = 'no-quarantine-note',
+    /** Причина карантина приехала с переходом, который к карантину не относится. */
+    ExtraQuarantineNote = 'extra-quarantine-note',
 }
 
 /** Отбитая строка: место в пакете, род записи, ключ и причина. */

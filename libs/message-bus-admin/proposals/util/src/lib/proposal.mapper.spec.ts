@@ -54,6 +54,7 @@ describe('ProposalShortMapper', () => {
             'arrivedAt',
             'closedByPublisher',
             'id',
+            'quarantineNote',
             'releaseVersion',
             'resource',
             'state',

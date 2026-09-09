@@ -28,7 +28,7 @@ import { createServer } from 'node:net';
  */
 const KITS = {
     'ui-kit': { target: '@rt-tools/ui-kit:storybook', snapshots: 'test:visual', probes: ['check:paint'] },
-    'ui-kit-v2': { target: '@rt-tools/ui-kit-v2:storybook', snapshots: 'test:visual:v2', probes: ['check:icons'] },
+    'ui-kit-v2': { target: '@rt-tools/ui-kit-v2:storybook', snapshots: 'test:visual:v2', probes: ['check:icons', 'check:window'] },
 };
 
 /** The waiting limit for the showcase to come up. Not a measure of readiness but a sign that it did not. */

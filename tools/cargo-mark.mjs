@@ -30,6 +30,7 @@ const POSTMORTEM_FLAG = '--postmortem';
 const PROPOSAL_FLAG = '--proposal';
 const FIX_FLAG = '--fix';
 const RELEASE_FLAG = '--release';
+const QUARANTINE_FLAG = '--quarantine-note';
 const DRY_RUN_FLAG = '--dry-run';
 const STATE_FLAG = '--state';
 const SPEC_FLAG = '--spec';
@@ -48,6 +49,8 @@ const DENIAL_WORDS = {
     'extra-fix-note': 'the argument `--fix` arrived not with a move into the fix',
     'no-release-version': 'a move into the release without the argument `--release`',
     'extra-release-version': 'the argument `--release` arrived not with a move into the release',
+    'no-quarantine-note': 'a move into the quarantine without the argument `--quarantine-note`',
+    'extra-quarantine-note': 'the argument `--quarantine-note` arrived not with a move into the quarantine',
 };
 
 /** The package's cargo shape: the schema version and the state list. Not built — the command says so. */
@@ -70,7 +73,7 @@ function valueOf(argv, flag) {
 }
 
 /** The records named by the launch line's arguments: each has its kind, the order as named. */
-export function itemsOf(argv, state, attached = { fixNote: '', releaseVersion: '' }) {
+export function itemsOf(argv, state, attached = { fixNote: '', releaseVersion: '', quarantineNote: '' }) {
     const items = [];
 
     for (let at = 0; at < argv.length; at += 1) {
@@ -86,6 +89,7 @@ export function itemsOf(argv, state, attached = { fixNote: '', releaseVersion: '
                 state,
                 ...(attached.fixNote ? { fixNote: attached.fixNote } : {}),
                 ...(attached.releaseVersion ? { releaseVersion: attached.releaseVersion } : {}),
+                ...(attached.quarantineNote ? { quarantineNote: attached.quarantineNote } : {}),
             });
         }
     }
@@ -301,7 +305,11 @@ async function main() {
         state,
         schema: CARGO_SCHEMA_VERSION,
         states: CARGO_STATES,
-        items: itemsOf(argv, state, { fixNote: valueOf(argv, FIX_FLAG), releaseVersion: valueOf(argv, RELEASE_FLAG) }),
+        items: itemsOf(argv, state, {
+            fixNote: valueOf(argv, FIX_FLAG),
+            releaseVersion: valueOf(argv, RELEASE_FLAG),
+            quarantineNote: valueOf(argv, QUARANTINE_FLAG),
+        }),
         spec: valueOf(argv, SPEC_FLAG),
         dryRun: argv.includes(DRY_RUN_FLAG),
         call: callIntake,

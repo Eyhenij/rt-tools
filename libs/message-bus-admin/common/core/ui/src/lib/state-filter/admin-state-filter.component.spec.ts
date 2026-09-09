@@ -31,13 +31,14 @@ describe('AdminStateFilterComponent', () => {
         TestBed.resetTestingModule();
     });
 
-    it('SC-MB-222 — отбор предлагает все четыре состояния, а первым — снятый отбор', () => {
+    it('SC-MB-222 — отбор предлагает весь набор состояний, а первым — снятый отбор', () => {
         expect(optionsOf(fixture).map((option: IRtSelect.Option<string>): string => option.value)).toEqual([
             '',
             'new',
             'in_work',
             'fixed',
             'released',
+            'quarantined',
         ]);
     });
 

@@ -40,3 +40,46 @@ cases needed by whoever sorts out a red snapshot, not by whoever writes a spec.
 - **What drifts in a screen frame.** Of the three divergences in the admin panel's suite not one was
   a screen defect: the colour from the display profile, the column width from the value of the
   current moment, the order of the rows from the seeding.
+
+## A divergence that came from the neighbouring story
+
+Seven stories of the second showcase diverged at once, and none of them had been edited. Six were
+renamed, one was new; the content of all seven stayed as it was. Five candidates were refuted one by
+one: the style tag of the frame preparation, the pointer taken into a corner, the animations driven
+to the end, the sign of the styling set, the scroll to the top. Each was switched off in turn, and
+each time the seven stayed.
+
+The carrier was found by a measurement of the node around the shot rather than by reading the code.
+The height before the frame and after it:
+
+```
+atoms-forms-textarea--presets  box=812->810   y=16->0
+atoms-icon--social             box=1072->1070 y=16->0
+atoms-icon--themes             box=710->710   y=16->10
+```
+
+The base window is 1280×720, and every one of those nodes is higher. The browser takes such a frame
+by substituting the window, the page gets a `resize`, and it loses two pixels of height and sixteen
+of scroll. The next story is shot by an already shifted page, so the divergence lands on it and not
+on the tall one.
+
+With the window widened to the node the height holds and matches a measurement of the same story
+opened on a page of its own: 150 against 148 at the button, 736 against 734, 395 against 391, 923
+against 919. All four old references were short. The whole catalogue held 70 such: they were re-taken
+by families, one family per call, and 38 more frames moved within the threshold.
+
+The lesson is in the order of sorting out. A divergence at a story nobody edited is asked first about
+its neighbour above, and the node is measured around the shot before a single wait is switched off.
+The five refuted candidates cost about two hours.
+
+## What was cut from the articles
+
+- **The cycle of matching frames against a shot beyond the window.** The shift under the shutter is
+  steady: the second and third frames match each other, and a cycle would hand back exactly the
+  shifted one. Measured on the ribbon of the photo viewer — it lost its scroll, 2624 to 2, and the
+  first snapshot of the set instead of the last got into the frame while the page height went away
+  by two pixels. After the widened window three frames in a row coincided pixel for pixel, and the
+  ribbon stayed at the last snapshot.
+- **The derivative of the seeded time.** The divergence does not arrive for months and then turns
+  the frame red on a day when not a line was added to the tree: the month changed on the screen
+  while the reference stayed as it was.
