@@ -23,10 +23,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Когда не применять
 
-- **Одна строка** — [`rt-input`](./?path=/docs/components-input-overview--docs): многострочное
+- **Одна строка** — [`rt-input`](./?path=/docs/atoms-forms-input-overview--docs): многострочное
   поле под короткое значение обещает объём, которого не ждут.
-- **Форматированный текст** — [`rt-rich-editor`](./?path=/docs/components-richeditor--docs).
-- **Сообщение в переписке** — [`rt-message-composer`](./?path=/docs/components-messagecomposer--docs).
+- **Форматированный текст** — [`rt-rich-editor`](./?path=/docs/organisms-chat-richeditor-overview--docs).
+- **Сообщение в переписке** — [`rt-message-composer`](./?path=/docs/organisms-chat-messagecomposer-overview--docs).
 
 ## Оси
 
@@ -58,7 +58,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 **Два разных «только чтение», и это не одно и то же.** Вход `readonly` оставляет поле полем:
 рамка на месте, текст выделяется, набирать нельзя. `[readonly]` на
-[`rt-field`](./?path=/docs/components-field-overview--docs) убирает поле совсем и печатает
+[`rt-field`](./?path=/docs/molecules-forms-field-overview--docs) убирает поле совсем и печатает
 значение обычным текстом. В матрице **States** показаны оба.
 
 Фокус здесь — `:focus-visible` на самом `<textarea>`, а не `:focus-within` на коробке, как у
@@ -108,5 +108,5 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Рядом
 
-- [`rt-field`](./?path=/docs/components-field-overview--docs) — подпись, звёздочка, ошибка, режим чтения.
-- [`rt-input`](./?path=/docs/components-input-overview--docs) — однострочный ввод.
+- [`rt-field`](./?path=/docs/molecules-forms-field-overview--docs) — подпись, звёздочка, ошибка, режим чтения.
+- [`rt-input`](./?path=/docs/atoms-forms-input-overview--docs) — однострочный ввод.

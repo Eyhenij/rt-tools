@@ -96,6 +96,23 @@ function overrideFiles(dir: string): readonly string[] {
 }
 
 /**
+ * Все пометки надстроек дерева.
+ *
+ * Нужны команде судьбы: она сводит их с записями приёма, а «снимать сейчас или ждать редакции»
+ * решает потом — по разложенному. Отдельный обход ради этого не заводится: список тот же.
+ */
+export function overrideMarks(root: string): readonly IOverrideMark[] {
+    const dir: string = join(root, OVERRIDES_DIR);
+    const found: IOverrideMark[] = [];
+
+    for (const path of overrideFiles(dir)) {
+        found.push(...marksOfOverride(readFileSync(path, 'utf8'), relative(root, path)));
+    }
+
+    return found;
+}
+
+/**
  * Надстройки, чья статья в новой редакции пакета уже есть.
  *
  * `assetsDir` — каталог ресурсов той редакции, которая раскладывается сейчас: сравнение идёт с

@@ -169,6 +169,7 @@ node tools/check-preset-complete.mjs
 node tools/check-gradient-stops.mjs
 node tools/check-icon-map.mjs
 node tools/check-preset-stories.mjs
+node tools/check-showcase-links.mjs
 node tools/check-kit-shot-pairs.mjs
 node tools/check-tokens-styles.mjs
 node tools/check-cascade-layer.mjs

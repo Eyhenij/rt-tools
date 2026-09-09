@@ -67,7 +67,9 @@ async function loadChromium() {
         }
     }
 
-    console.error('\n  The browser driver is found neither by name nor in the pnpm links directory. Install the dependencies: pnpm install\n');
+    console.error(
+        '\n  The browser driver is found neither by name nor in the pnpm links directory. Install the dependencies: pnpm install\n'
+    );
     process.exit(1);
 }
 

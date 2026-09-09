@@ -37,6 +37,16 @@ export let sent: IShipment[] = [];
 let root: string = '';
 let env: IEnvironment = { root: '', version: VERSION, assetsDir: ASSETS };
 
+/**
+ * Окружение одноразового дерева: корень, редакция и каталог ресурсов пакета.
+ *
+ * Спрашивается, а не собирается вызывающим: каталог ресурсов у фикстуры настоящий, и вторая его
+ * сборка разошлась бы с этой молча — проба судила бы раскладку, которой в дереве нет.
+ */
+export function treeEnv(): IEnvironment {
+    return env;
+}
+
 /** Корень одноразового дерева: он меняется каждой спекой, поэтому спрашивается, а не хранится. */
 export function treeRoot(): string {
     return root;

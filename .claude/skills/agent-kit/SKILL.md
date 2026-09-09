@@ -2,7 +2,7 @@
 name: agent-kit
 description: The portable rules layer of the agent — laws, rules, hooks and checks shipped by the package and adjusted by the tree through overrides. Load when a file with the rt-kit header is edited, the package is upgraded or the layout audit refuses. The shape of a new skill — write-a-skill.
 ---
-<!-- rt-kit v0.26.0 · skills/agent-kit.md · d22631b480fc · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · skills/agent-kit.md · 8d7d9924e697 · правится надстройкой, не здесь -->
 
 # The portable rules layer
 
@@ -83,6 +83,7 @@ npx agent-kit sync --check  # write nothing, refuse on a divergence
 npx agent-kit stats         # what was used, what never, what people stumbled on
 npx agent-kit enroll --code <code>  # enrol the tree in the intake and put its token
 npx agent-kit propose       # send the cargo to the intake: the digest, proposals and analyses
+npx agent-kit fate          # the fate of one's own records and the overrides that are due to be lifted
 npx agent-kit adopt [files] # hand the package your own file lying on its path
 ```
 
@@ -231,6 +232,14 @@ name, the token they issue as a one-off invitation code — the code enrols the 
 and puts the token into the file of the key `token`. Before the invitation the send refuses by
 design, not by misconfiguration.
 
+**The fate of its own records the tree asks by `agent-kit fate`.** The command reads the intake by
+the token — the same one the cargo goes under — and prints every record with its state, what it was
+fixed by and the version of the release. Under a record stands the override the mark of its section
+ties to it: it is lifted now when the article already lies in the laid-out edition, and it waits for
+an installation when the fix came out and has not reached this tree. A mark the intake gave no
+record for is named apart. The command lifts nothing itself: the mark holds one article, and the
+section may have been written into since.
+
 **The tree sign is computed by the sender, not by a person.** It is derived from the repository
 address, and the intake record is created by exactly it: a tree enrolled under its own word the
 intake does not recognise. What would go and under which sign is printed by the dry run.
@@ -304,24 +313,3 @@ work until the role has had its say. A tree it gets in the way of names it by th
 - **It differs from dropping by the `skip` key in that it removes nothing.** A drop does not put
   the role file at all: there is nobody left to call, and the guard next to it stays and keeps
   refusing. Here it is the other way round — the role is in place, the guard is silent.
-
-## Layout pitfalls
-
-- **The glossary is as much a laid-out resource as a rule.** The startup hook puts it into the
-  context in full, before the first reply, and so it looks like an ordinary tree document; it has
-  a header, but it reads as a service line. A new word goes into the glossary override, as a
-  section of its own.
-
-- **A file write by a shell command is checked on all paths named in its body.** The gate takes
-  the paths out of the command text and reads the document body in full if the command holds an
-  interpreter name; an import line of a laid-out module then demands a second rule, and one is
-  demanded at a time — two refusals in a row, and each loses the written body. The edit tool is
-  checked by its one path; a shell redirect is for what does not become a tree file.
-- **Your own thing standing next to the laid-out repeats its mechanics silently.** Parsing the
-  list of the known, the source roots and the debt snapshot is given by the checks config
-  module; a second such parser in your own check is seen by neither the layout audit nor the
-  duplicate check. Before starting your own, look at what the checks config module exports.
-- **A rule loaded by a tool may be shown not in full, and the cut is marked by nothing.** A long
-  file comes into the context cut at a line, and the cut falls on the tail — where the override
-  sections are appended at the end. The shown lines are compared with the file length by one
-  command; if they differ, the file is read to the end.

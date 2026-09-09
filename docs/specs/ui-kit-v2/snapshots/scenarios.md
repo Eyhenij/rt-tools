@@ -223,4 +223,3 @@ already shifted page, so a rearrangement of the stories in the file moved seven 
 touched. With the widened window the height holds — 890 became 892, 710 became 712 — and coincides
 with a measurement of the same story opened on a page of its own, where nothing had been shot before
 it.
-
