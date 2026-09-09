@@ -46,3 +46,8 @@ whole.
 - **The guard once per session names what its set is narrower than the pipeline by.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:gap_mark` — the mark lives in the temporary file directory and is keyed by the session sign; scenario SC-AK-820
 - **A refusal of the push gate names three moves, not two.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:reason` — scenario SC-AK-851
 - **What is disputed is not put into the known list.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:ALLOWLIST` — the same is said in the refusal text of the address check; scenario SC-AK-851
+- **The base of a new task branch is judged against the branch of its epic, not against the main branch.** — `projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh:rt_epic_base` — scenario SC-AK-942
+- **The freshness of the main branch moves to the branch of the epic together with the base.** — `projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh:rt_epic_base`
+- **The branch of an epic is looked for among the remote refs, and neither absence nor a second one is guessed at.** — `projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh:rt_epic_branch`
+- **The epic of a task is declared by one shape, and it is read in one place.** — `projects/agent-kit/assets/checks/board-epic-link.github.mjs:declaredEpicOf` — scenario SC-AK-940
+- **The state of a task carries the number of its epic.** — `projects/agent-kit/assets/checks/board.github.mjs:taskState` — scenario SC-AK-941

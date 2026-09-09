@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/git-guard-delivery.sh · 63ff954667dd · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/git-guard-delivery.sh · a7db4484aa90 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
 #
 # The delivery law demands three things nothing usually checks: an edit starts from a task visible
@@ -169,6 +169,12 @@ fault() {
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/git-guard-delivery-folder.sh" ] && . "$rt_hooks_dir/git-guard-delivery-folder.sh" 2>/dev/null
 
+# The epic of a task: the same technique as with the folder. It is sourced before the branch block —
+# there the base of a new branch is judged, and with an epic it is judged against the branch of the
+# epic. No helper — the epic is not judged, and the base is asked against the main branch as before.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/git-guard-delivery-epic.sh" ] && . "$rt_hooks_dir/git-guard-delivery-epic.sh" 2>/dev/null
+
 # A conflicting PR of one's own: the same technique as with the folder and the signature. The helper
 # is called before all the tiers below and judges not the readiness of this work but the right to
 # take the next one: while what was handed over conflicts, it is fixed by the first action of the
@@ -239,7 +245,11 @@ if [ -n "$branch_arg" ]; then
     if [ -n "$number_arg" ]; then
         rt_task_branch_ok "$branch_arg" \
             || deny "BLOCKED: the branch name «${branch_arg}» is not of the form accepted here. The branch number is the same as the number of the task and of the title of the merge request."
+        state=''
         check_task "$number_arg" "the branch «${branch_arg}»"
+        # The epic of the task: with one, the base is judged against the branch of the epic, and the
+        # freshness of the main branch moves there too — see `git-guard-delivery-epic.sh`.
+        epic_arg="$(printf '%s' "$state" | jq -r '.epic // empty' 2>/dev/null)"
 
         # The delivery conditions already known here are checked here. After the work is done, the
         # base is fixed by a merge with conflict resolution, and the commit signature by rewriting
@@ -250,7 +260,9 @@ if [ -n "$branch_arg" ]; then
         # base fresh — `git checkout -b <branch> origin/<main>` — would be forbidden.
         base_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\4/p' | head -1)"
         base_ref="${base_arg:-HEAD}"
-        if git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
+        if [ -n "$epic_arg" ] && command -v rt_epic_base >/dev/null 2>&1; then
+            rt_epic_base "$epic_arg" "$base_ref" "$branch_arg"
+        elif git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
             && git rev-parse --verify --quiet "$base_ref" >/dev/null 2>&1 \
             && ! git merge-base --is-ancestor "origin/${main_branch}" "$base_ref" 2>/dev/null; then
             behind="$(git rev-list --count "${base_ref}..origin/${main_branch}" 2>/dev/null)"

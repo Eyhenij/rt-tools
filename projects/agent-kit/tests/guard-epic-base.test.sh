@@ -12,6 +12,7 @@ cp "$CHECKS/rt-kit-checks.config.mjs" "$GE_TREE/tools/"
 cp "$CHECKS/board.github.mjs" "$GE_TREE/tools/board.mjs"
 cp "$CHECKS/board-gh.github.mjs" "$GE_TREE/tools/board-gh.mjs"
 cp "$CHECKS/board-epic-link.github.mjs" "$GE_TREE/tools/board-epic-link.mjs"
+cp "$CHECKS/board-task-dirs.github.mjs" "$GE_TREE/tools/board-task-dirs.mjs"
 
 cat > "$GE_TREE/.claude/rt-kit/checks.json" <<'CFG'
 {
@@ -80,5 +81,45 @@ ge_state() {
 report "SC-AK-941 — состояние задачи несёт номер её эпика" "$(ge_state '"Задача эпика #1921"')" 1921
 report "SC-AK-941 — у задачи вне эпика поле пустое" "$(ge_state '"Работа вне эпика — владелец попросил отдельно"')" 'нет'
 
+# --- SC-AK-942 — ветка задачи берётся от ветки эпика ------------------------------------
+#
+# Гард судил основание только по главной и ветку задачи, отведённую от главной вместо ветки эпика,
+# пропускал молча. Такая ветка оставляет эпик наполовину влитым до того, как сделана его последняя
+# задача: слияние эпика не несёт из неё ничего.
+GE_REPO="$(fixture_repo_branched main RT-1921-work-by-epics)"
+mkdir -p "$GE_REPO/.claude/rt-kit"
+printf '{"board":{"taskKey":"RT","owner":"o","repo":"r"}}\n' > "$GE_REPO/.claude/rt-kit/checks.json"
+# Двойник помощника очереди: отвечает состоянием задачи, которое набор задаёт окружением.
+printf 'rt_task_state() { printf %%s "$GE_TASK_STATE"; }\n' > "$GE_REPO/.claude/rt-kit/project.sh"
+# У ветки эпика есть свой коммит — иначе главная её содержит, и судить нечего.
+fixture_commit "$GE_REPO" "docs/plans/work-by-epics.md" "план эпика" "docs: план эпика"
+# Удалённые ссылки заводятся руками: гард смотрит только на них — ветка, живущая на одной машине,
+# основание, которого нет ни у кого другого.
+git -C "$GE_REPO" update-ref refs/remotes/origin/main "$(git -C "$GE_REPO" rev-parse main)"
+git -C "$GE_REPO" update-ref refs/remotes/origin/RT-1921-work-by-epics "$(git -C "$GE_REPO" rev-parse HEAD)"
+
+ge_decision() {
+    jq -n --arg c "git checkout -b RT-1925-guard-judges-epic-base $2" --arg d "$GE_REPO" \
+        '{session_id:"tests",tool_name:"Bash",tool_input:{command:$c},cwd:$d}' \
+        | ( cd "$GE_REPO" && GE_TASK_STATE="$1" "$HOOKS/git-guard-delivery.sh" 2>/dev/null )
+}
+
+GE_WITH_EPIC='{"exists":true,"open":true,"onBoard":true,"assigned":true,"numbered":true,"epic":"1921"}'
+GE_NO_EPIC='{"exists":true,"open":true,"onBoard":true,"assigned":true,"numbered":true,"epic":null}'
+
+GE_OUT="$(ge_decision "$GE_WITH_EPIC" origin/main)"
+if [ -n "$GE_OUT" ]; then got="отбито"; else got="прошло"; fi
+report "SC-AK-942 — ветка задачи от главной отбита" "$got" "отбито"
+
+if printf '%s' "$GE_OUT" | grep -q 'RT-1921-work-by-epics'; then got="есть"; else got="нет"; fi
+report "SC-AK-942 — отказ называет ветку эпика" "$got" "есть"
+
+if [ -z "$(ge_decision "$GE_WITH_EPIC" origin/RT-1921-work-by-epics)" ]; then got="прошло"; else got="отбито"; fi
+report "SC-AK-942 — ветка от ветки эпика проходит" "$got" "прошло"
+
+if [ -z "$(ge_decision "$GE_NO_EPIC" origin/main)" ]; then got="прошло"; else got="отбито"; fi
+report "SC-AK-942 — у задачи без эпика основание судится по главной, как прежде" "$got" "прошло"
+
+rm -rf "$GE_REPO"
 rm -rf "$GE_TREE"
 suite_result "гард поставки: эпик задачи"

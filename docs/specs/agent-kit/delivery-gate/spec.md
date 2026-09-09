@@ -193,6 +193,25 @@ refuses the push.
 - **What is disputed is not put into the known list.** The list keeps the accepted, not the results
   of a broken check.
 
+- **The epic of a task is declared by one shape, and it is read in one place.** Three readers need
+  it — the creating command writes the declaration, the queue audit judges the link both ways, the
+  guard takes the base of a branch by it. Read in two places, one shape diverges silently: one side
+  demands what the other does not see.
+- **The state of a task carries the number of its epic.** The guard has no other road to the epic:
+  the work queue holds neither branches nor kinship of cards, and a second asking for the body would
+  cost an extra call and diverge from the first.
+- **The base of a new task branch is judged against the branch of its epic, not against the main
+  branch.** A task branched from the main one leaves its epic half merged before the epic itself is
+  handed in: the merge of the epic then carries nothing of that task, and the guard used to let this
+  through in silence.
+- **The freshness of the main branch moves to the branch of the epic together with the base.** Asked
+  of the base of a task branch, it left the executor either waiting for the epic branch to catch up
+  or taking the base from the main one — that is, doing what the previous statement forbids. Asked of
+  the epic, it is fixed by one merge, and the branches of all its tasks get it at once.
+- **The branch of an epic is looked for among the remote refs, and neither absence nor a second one
+  is guessed at.** A branch living on one machine is a base nobody else has; two branches of one epic
+  give no way to tell which the task grows from. Both are named by a refusal of their own.
+
 ## What is out of scope
 
 - Signing a commit by a key: the key lies outside the tree, and the machine record has nothing to

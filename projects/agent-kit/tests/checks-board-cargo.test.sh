@@ -13,6 +13,7 @@ mkdir -p "$CARGO_TREE/tools" "$CARGO_TREE/.claude/rt-kit" "$CARGO_TREE/docs/task
 for f in rt-kit-checks.config.mjs; do cp "$CHECKS/$f" "$CARGO_TREE/tools/"; done
 cp "$CHECKS/board.github.mjs" "$CARGO_TREE/tools/board.mjs"
 cp "$CHECKS/board-epic-link.github.mjs" "$CARGO_TREE/tools/board-epic-link.mjs"
+cp "$CHECKS/board-task-dirs.github.mjs" "$CARGO_TREE/tools/board-task-dirs.mjs"
 cp "$CHECKS/board-gh.github.mjs" "$CARGO_TREE/tools/board-gh.mjs"
 cp "$CHECKS/board-runs.github.mjs" "$CARGO_TREE/tools/board-runs.mjs"
 cp "$CHECKS/board-pull-state.github.mjs" "$CARGO_TREE/tools/board-pull-state.mjs"

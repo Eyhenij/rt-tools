@@ -415,3 +415,45 @@ the last word
 Then it reads the body from the file and stays silent about the section; a file without it refuses
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
+
+### SC-AK-940 — the epic of a task is declared by one shape, and it is read in one place
+
+Given a task body naming its epic — by the number with a hash or with the task key, in either case
+of the word about the task
+When the declaration is read
+Then the number of the epic comes back
+
+Given the body only mentions a number — in reasoning, in a quoted refusal, in the list of what the
+work does not do
+When the same reading goes
+Then no epic comes back: a mention is not a declaration
+
+Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
+
+### SC-AK-941 — the state of a task carries the number of its epic
+
+Given a task whose body declares an epic
+When the work queue helper is asked for the state of the task
+Then the state carries the number of the epic as a field of its own
+
+Given a task outside an epic
+When the same asking goes
+Then the field is empty, and that is not a refusal
+
+Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
+
+### SC-AK-942 — the branch of a task is taken from the branch of its epic
+
+Given a task whose state names an epic, and the branch of that epic is in the remote
+When the guard judges the creation of a branch from the main one
+Then it refuses and names the branch of the epic
+
+Given the same branch is created from the branch of the epic
+When the guard judges it
+Then it lets it through
+
+Given the state of the task names no epic
+When the guard judges the creation of a branch from the main one
+Then the base is judged against the main branch, as before
+
+Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.

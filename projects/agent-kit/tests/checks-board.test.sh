@@ -15,6 +15,7 @@ mkdir -p "$BOARD_TREE/tools" "$BOARD_TREE/.claude/rt-kit" "$BOARD_TREE/docs/task
 cp "$CHECKS/rt-kit-checks.config.mjs" "$BOARD_TREE/tools/"
 cp "$CHECKS/board.github.mjs" "$BOARD_TREE/tools/board.mjs"
 cp "$CHECKS/board-epic-link.github.mjs" "$BOARD_TREE/tools/board-epic-link.mjs"
+cp "$CHECKS/board-task-dirs.github.mjs" "$BOARD_TREE/tools/board-task-dirs.mjs"
 cp "$CHECKS/board-gh.github.mjs" "$BOARD_TREE/tools/board-gh.mjs"
 cp "$CHECKS/board-runs.github.mjs" "$BOARD_TREE/tools/board-runs.mjs"
 cp "$CHECKS/board-pull-state.github.mjs" "$BOARD_TREE/tools/board-pull-state.mjs"
