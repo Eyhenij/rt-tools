@@ -1,7 +1,7 @@
 # Замысел
 
 **Задача:** RT-1963 · **Ветка:** RT-1963-aside-survives-owner
-**Спека:** `docs/specs/ui-kit/spec.md`
+**Spec:** `docs/specs/ui-kit/spec.md`
 **Поведение:** меняется
 
 ## След задачи
