@@ -387,7 +387,7 @@ export async function moveProposalStates(
     });
     const written: ICargoStateAsk[] = judged
         .filter((one: { ask: ICargoStateAsk; outcome: ICargoStateOutcome }): boolean =>
-            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion)
+            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion, one.ask.quarantineNote)
         )
         .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
 
@@ -445,7 +445,7 @@ export async function closeProposals(prisma: PrismaService, asked: readonly ICar
     });
     const written: ICargoStateAsk[] = judged
         .filter((one: { ask: ICargoStateAsk; outcome: ICargoCloseOutcome }): boolean =>
-            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion)
+            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion, one.ask.quarantineNote)
         )
         .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
 
