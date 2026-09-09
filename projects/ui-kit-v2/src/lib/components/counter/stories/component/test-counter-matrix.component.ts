@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtCounterComponent } from '../../rt-counter.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TCounterMatrixPart = 'bounds' | 'value' | 'states' | 'themes';
+export type TCounterMatrixPart = 'bounds' | 'value' | 'states' | 'presets' | 'themes';
 
 /** Положение счётчика относительно границ — оно и решает, какая кнопка погашена. */
 interface ICounterCase {
@@ -70,6 +71,21 @@ function count(value: number): FormControl<number> {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Счётчик в обоих наборах">
+                    <ng-template>
+                        @for (stateCase of stateCases; track stateCase.name) {
+                            <rt-counter
+                                [ariaLabel]="stateCase.name"
+                                [min]="stateCase.min"
+                                [max]="stateCase.max"
+                                [disabled]="stateCase.disabled"
+                                [formControl]="stateCase.control" />
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Счётчик в обеих темах">
                     <ng-template>
@@ -95,6 +111,7 @@ function count(value: number): FormControl<number> {
         RtCounterComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

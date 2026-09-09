@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtAsideSectionComponent } from '../../../aside-section/rt-aside-section.component';
 import { RtAsideFooterComponent } from '../../footer/rt-aside-footer.component';
@@ -9,7 +10,7 @@ import { RtAsideHeaderComponent } from '../../header/rt-aside-header.component';
 import { TRtAsideContentLayout, TRtAsideSize, RtAsideComponent } from '../../rt-aside.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TAsideMatrixPart = 'size' | 'width' | 'layout' | 'themes';
+export type TAsideMatrixPart = 'size' | 'width' | 'layout' | 'presets' | 'themes';
 
 /** Раскладка содержимого: с вкладками содержимое не прокручивается целиком, а отдаёт прокрутку внутрь. */
 interface IAsideLayoutCase {
@@ -82,6 +83,28 @@ interface IAsideLayoutCase {
                     </app-story-row>
                 }
 
+                @case ('presets') {
+                    <app-story-presets caption="Панель в обоих наборах">
+                        <ng-template>
+                            <rt-aside size="sm" ariaLabel="Карточка тура">
+                                <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
+                                <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                <rt-aside-footer>
+                                    <button
+                                        rtButton
+                                        asideDismiss
+                                        type="button"
+                                        theme="secondary"
+                                        appearance="text"
+                                        label="Закрыть"
+                                        aria-label="Закрыть"></button>
+                                    <button rtButton asidePrimary type="button" label="Сохранить" aria-label="Сохранить"></button>
+                                </rt-aside-footer>
+                            </rt-aside>
+                        </ng-template>
+                    </app-story-presets>
+                }
+
                 @case ('themes') {
                     <app-story-themes caption="Панель в обеих темах">
                         <ng-template>
@@ -123,6 +146,7 @@ interface IAsideLayoutCase {
         RtButtonDirective,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

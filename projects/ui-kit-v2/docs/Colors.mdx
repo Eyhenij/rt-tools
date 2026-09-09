@@ -2,6 +2,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 import * as s from './_style';
 import { readTokens } from './_tokens';
+import presetStories from '../../../tools/preset-stories-allowlist.json';
 
 <Meta title="Foundation/Design Tokens/Colors" />
 
@@ -275,3 +276,34 @@ export const Contrast = () => {
 </p>
 
 <Contrast />
+
+export const WithoutPair = () => {
+    const rows = Object.entries(presetStories.accepted).sort(([left], [right]) => left.localeCompare(right));
+    return (
+        <table style={s.table}>
+            <thead>
+                <tr>
+                    <th style={s.th}>семейство</th>
+                    <th style={s.th}>почему пары нет</th>
+                </tr>
+            </thead>
+            <tbody>
+                {rows.map(([family, entry]) => (
+                    <tr key={family}>
+                        <td style={s.td}>{family}</td>
+                        <td style={s.td}>{entry.reason}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
+};
+
+<p style={s.intro}>
+    Семейства, у которых показа двух наборов нет. Набор переписывает цветовые назначения, а стили этих семейств ни одного такого имени не
+    читают — ни прямо, ни через свои свойства: обе половины пары вышли бы одинаковыми, и эталон такой истории остался бы зелёным при любой
+    поломке набора. Перечень тот же, что читает проверка `tools/check-preset-stories.mjs`: страница берёт его из её списка принятого, а не
+    выписывает рядом. Семейство, у которого набор что-то переписывает, из списка выпадает и обязано показать пару.
+</p>
+
+<WithoutPair />

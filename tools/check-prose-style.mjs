@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.26.0 · checks/check-prose-style.mjs · d2025aa34403 · правится надстройкой, не здесь
+// rt-kit v0.26.0 · checks/check-prose-style.mjs · 2b4dda1a710d · правится надстройкой, не здесь
 /**
  * The check of style: officialese and turns of phrase that are not written in this tree.
  *
@@ -17,7 +17,8 @@
  * by that. This is its boundary, not its promise.
  *
  * A non-zero return code and a list of findings: the file, the line, what was found, what to
- * replace it with.
+ * replace it with. Called with `--json`, it reads the text from the input and prints the findings
+ * as data with a zero code: a machine decides for itself what to do about them.
  *
  * Word boundaries are written with a look at letters, not `\b`: it counts by ASCII, Cyrillic does
  * not fall under `\w`, and a pattern with it silently never fires once.
@@ -28,6 +29,9 @@ import { CONFIG } from './rt-kit-checks.config.mjs';
 
 /** The sentence length limit in words. Beyond it the reader loses the beginning. */
 const WORDS_LIMIT = 40;
+
+/** The argument by which the check is asked for findings as data: the text comes in on the input. */
+const JSON_FLAG = '--json';
 
 /**
  * The signs of officialese. Each is a pattern and what to replace it with: without a replacement
@@ -215,8 +219,20 @@ export function checkProse(text) {
     );
 }
 
-const files = process.argv.slice(2);
-if (files.length > 0) {
+// Запуск строкой отличается от вызова из другого модуля именем в строке запуска: без этого
+// условия модуль, который просто позвали, читал бы доводы чужой команды как имена файлов — и
+// падал бы на первом же из них. Тот же приём стоит у команд груза.
+const called = process.argv[1]?.endsWith('check-prose-style.mjs') === true;
+const asked = called ? process.argv.slice(2) : [];
+const files = asked.filter((one) => one !== JSON_FLAG);
+
+// Ответ машине: текст приходит на вход, находки уходят разбором. Так проверку зовёт тот, кто
+// держит текст в памяти, а не на диске: уезжающий груз лежит блоками внутри файла дня, и
+// именами файлов его не назвать. Код возврата тут нулевой всегда — находка машине не отказ, а
+// данные: отказ по ней выносит зовущий.
+if (asked.includes(JSON_FLAG)) {
+    process.stdout.write(JSON.stringify(checkProse(readFileSync(0, 'utf8'))));
+} else if (files.length > 0) {
     const problems = files.flatMap((file) =>
         checkProse(readFileSync(file, 'utf8')).map((p) => `  ${file}:${p.line} — «${p.what}» → ${p.fix}`)
     );

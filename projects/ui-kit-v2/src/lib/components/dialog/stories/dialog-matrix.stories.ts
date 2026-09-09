@@ -28,4 +28,6 @@ export const Width: TStory = { args: { part: 'width' } };
 /** Шапка и подвал необязательны: без них окно выглядит иначе. */
 export const Parts: TStory = { args: { part: 'parts' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

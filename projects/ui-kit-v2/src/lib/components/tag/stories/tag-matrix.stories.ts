@@ -27,4 +27,6 @@ export const Icon: TStory = { args: { part: 'icon' } };
 
 export const Closable: TStory = { args: { part: 'closable' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

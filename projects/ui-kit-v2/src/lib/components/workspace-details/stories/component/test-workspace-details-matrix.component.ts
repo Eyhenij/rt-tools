@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtWorkspaceDetailsComponent } from '../../rt-workspace-details.component';
 import { IRtWorkspaceDetails } from '../../rt-workspace-details.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TWorkspaceDetailsMatrixPart = 'blocks' | 'tabs' | 'loading' | 'actions' | 'audit' | 'themes';
+export type TWorkspaceDetailsMatrixPart = 'blocks' | 'tabs' | 'loading' | 'actions' | 'audit' | 'presets' | 'themes';
 
 const ROWS: readonly IRtWorkspaceDetails.Row[] = [
     { label: 'Номер', value: '2024-118' },
@@ -125,6 +126,22 @@ const AUDIT: IRtWorkspaceDetails.Audit = {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Панель в обоих наборах">
+                    <ng-template>
+                        <div style="width: 20rem">
+                            <rt-workspace-details
+                                title="Договор №2024-118"
+                                [entityId]="118"
+                                [rows]="rows"
+                                [money]="money"
+                                [toggles]="toggles"
+                                [actions]="actions" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Панель в обеих темах">
                     <ng-template>
@@ -148,6 +165,7 @@ const AUDIT: IRtWorkspaceDetails.Audit = {
         RtWorkspaceDetailsComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

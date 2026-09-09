@@ -3,13 +3,14 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { STORY_FIELD_WIDTH_WIDE } from '../../../../../showcase/story-metrics';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { IQuillDelta } from '../../../../util';
 import { RtFieldComponent } from '../../../field/rt-field.component';
 import { TRtRichEditorToolbar, RtRichEditorComponent } from '../../rt-rich-editor.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TRichEditorMatrixPart = 'toolbar' | 'filling' | 'states' | 'themes';
+export type TRichEditorMatrixPart = 'toolbar' | 'filling' | 'states' | 'presets' | 'themes';
 
 /** Случай с подписью и своим значением — моделью Quill, а не HTML. */
 interface IRichEditorCase {
@@ -111,6 +112,15 @@ function invalid(): FormControl<IQuillDelta | null> {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Редактор в обоих наборах">
+                    <ng-template>
+                        <rt-rich-editor placeholder="Опишите задачу" toolbar="minimal" [formControl]="themeEmpty" />
+                        <rt-rich-editor placeholder="Опишите задачу" toolbar="minimal" [formControl]="themeFilled" />
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Редактор в обеих темах">
                     <ng-template>
@@ -131,6 +141,7 @@ function invalid(): FormControl<IQuillDelta | null> {
         RtRichEditorComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

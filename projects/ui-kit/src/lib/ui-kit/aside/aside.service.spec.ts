@@ -1,8 +1,10 @@
 import { Overlay } from '@angular/cdk/overlay';
-import { Component } from '@angular/core';
+import { Component, createEnvironmentInjector, EnvironmentInjector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Event, NavigationEnd, Router } from '@angular/router';
 import { Subject } from 'rxjs';
+
+import { IRtUiConfig, RT_UI_CONFIG } from '../config';
 
 import { RtAsideService } from './aside.service';
 import { ASIDE_REF, AsideRef, IAsideConfig } from './aside.types';
@@ -51,15 +53,22 @@ class OverlayStub {
 describe('RtAsideService', () => {
     let overlay: OverlayStub;
     let service: RtAsideService;
+    /** Двойник маршрутизатора: смену маршрута спека издаёт сама — настоящий её здесь не издаёт. */
+    let routerEvents: Subject<Event>;
+    /** Настройка приложения: проба ставит свою до подъёма службы. */
+    let uiConfig: IRtUiConfig.Config;
 
     beforeEach(() => {
         jest.useFakeTimers();
         overlay = new OverlayStub();
+        routerEvents = new Subject<Event>();
+        uiConfig = {};
 
         TestBed.configureTestingModule({
             providers: [
                 RtAsideService,
-                provideRouter([]),
+                { provide: RT_UI_CONFIG, useFactory: (): IRtUiConfig.Config => uiConfig },
+                { provide: Router, useValue: { events: routerEvents.asObservable() } },
                 {
                     provide: Overlay,
                     useValue: {
@@ -113,6 +122,51 @@ describe('RtAsideService', () => {
         open();
 
         overlay.backdrop.next(new MouseEvent('click'));
+        jest.advanceTimersByTime(400);
+
+        expect(overlay.detached).toBe(true);
+    });
+
+    it('SC-UK-58: настройка приложения возвращает закрытие по клавише', () => {
+        // Настройка правится на месте, а не подменяется: службу стенд поднял в beforeEach, и
+        // ссылку на настройку она уже держит.
+        uiConfig.components = { aside: { closeOnEscape: true } };
+        open();
+
+        overlay.keydown.next(new KeyboardEvent('keydown', { key: 'Escape' }));
+        jest.advanceTimersByTime(400);
+
+        expect(overlay.detached).toBe(true);
+    });
+
+    it('SC-UK-59: довод вызова сильнее настройки приложения', () => {
+        uiConfig.components = { aside: { closeOnEscape: true } };
+        open({ closeOnEscape: false });
+
+        overlay.keydown.next(new KeyboardEvent('keydown', { key: 'Escape' }));
+        jest.advanceTimersByTime(400);
+
+        expect(overlay.detached).toBe(false);
+    });
+
+    it('SC-UK-56: смена маршрута открытую шторку снимает', () => {
+        open();
+
+        routerEvents.next(new NavigationEnd(1, '/from', '/to'));
+        jest.advanceTimersByTime(400);
+
+        expect(overlay.detached).toBe(true);
+    });
+
+    it('SC-UK-57: гибель того, кто выдал службу, шторку на экране не запирает', () => {
+        // Служба объявлена без корневого уровня, и потребитель кладёт её в компонент экрана.
+        // Здесь это свой инжектор: маршрутизатор гасит компонент раньше, чем издаёт событие.
+        const owner: EnvironmentInjector = createEnvironmentInjector([RtAsideService], TestBed.inject(EnvironmentInjector));
+        const ownService: RtAsideService = owner.get(RtAsideService);
+
+        ownService.open<TestContentComponent, null, null>(TestContentComponent, 'right', null).subscribe();
+        owner.destroy();
+        routerEvents.next(new NavigationEnd(1, '/from', '/to'));
         jest.advanceTimersByTime(400);
 
         expect(overlay.detached).toBe(true);

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtDialogRef } from '../../../dialog/rt-dialog-ref';
 import { RT_DIALOG_DATA } from '../../../dialog/rt-dialog.tokens';
@@ -11,7 +12,7 @@ import { STORY_PHOTOS } from './test-photo-viewer.component';
 const VIEWER_TEMPLATE: string = '<rt-photo-viewer />';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TPhotoViewerMatrixPart = 'start' | 'single' | 'themes';
+export type TPhotoViewerMatrixPart = 'start' | 'single' | 'presets' | 'themes';
 
 /** Ссылка на окно, ничего не закрывающая: настоящая убрала бы показ от первого нажатия. */
 const STORY_DIALOG_REF: Pick<RtDialogRef, 'close'> = { close: (): void => undefined };
@@ -79,6 +80,16 @@ class PhotoViewerSingleComponent {}
                 <app-photo-viewer-single />
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Просмотрщик в обоих наборах">
+                    <ng-template>
+                        <div style="position: relative; width: 22rem; height: 16rem; overflow: hidden">
+                            <app-photo-viewer-first />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Просмотрщик в обеих темах">
                     <ng-template>
@@ -98,6 +109,7 @@ class PhotoViewerSingleComponent {}
         PhotoViewerSingleComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryThemesComponent,
     ],
 })

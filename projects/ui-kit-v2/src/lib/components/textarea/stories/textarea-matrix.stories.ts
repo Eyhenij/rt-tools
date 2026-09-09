@@ -37,4 +37,6 @@ export const States: TStory = {
     parameters: { pseudo: storyPseudoParameters('.rt-textarea__control') },
 };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

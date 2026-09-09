@@ -3,6 +3,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { STORY_FIELD_WIDTH_WIDE } from '../../../../../showcase/story-metrics';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtFieldComponent } from '../../../field/rt-field.component';
 import { RtFileInputComponent } from '../../rt-file-input.component';
@@ -11,7 +12,7 @@ import { RtFileInputComponent } from '../../rt-file-input.component';
 const CONTRACT_FILE: string = 'Договор №4512.pdf';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TFileInputMatrixPart = 'filling' | 'button' | 'states' | 'themes';
+export type TFileInputMatrixPart = 'filling' | 'button' | 'states' | 'presets' | 'themes';
 
 /** Случай с подписью и своим набором файлов: значение поля — массив `File`. */
 interface IFileInputCase {
@@ -104,6 +105,20 @@ function invalid(): FormControl<File[]> {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Поле в обоих наборах">
+                    <ng-template>
+                        @for (themeCase of themeCases; track themeCase.name) {
+                            <rt-file-input
+                                [multiple]="true"
+                                [disabled]="themeCase.disabled"
+                                [ariaLabel]="themeCase.name"
+                                [formControl]="themeCase.control" />
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Поле в обеих темах">
                     <ng-template>
@@ -129,6 +144,7 @@ function invalid(): FormControl<File[]> {
         RtFileInputComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

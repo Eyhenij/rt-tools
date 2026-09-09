@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtBottomSheetComponent } from '../../rt-bottom-sheet.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TBottomSheetMatrixPart = 'open' | 'content' | 'themes';
+export type TBottomSheetMatrixPart = 'open' | 'content' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-bottom-sheet` для витрины.
@@ -71,6 +72,20 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'themes';
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Лист в обоих наборах">
+                    <ng-template>
+                        <div
+                            style="position: relative; height: 16rem; width: 18rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
+                            <rt-bottom-sheet open>
+                                <span sheetHeader>Действия с договором</span>
+                                <button rtButton label="Скачать" aria-label="Скачать" appearance="text"></button>
+                            </rt-bottom-sheet>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Лист в обеих темах">
                     <ng-template>
@@ -95,6 +110,7 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'themes';
         RtButtonDirective,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

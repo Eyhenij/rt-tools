@@ -24,4 +24,6 @@ export const Content: TStory = { args: { part: 'content' } };
 /** Разделы друг под другом: расстояние между ними — то, ради чего компонент заведён. */
 export const Stack: TStory = { args: { part: 'stack' }, parameters: { snapshot: { fullPage: true } } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

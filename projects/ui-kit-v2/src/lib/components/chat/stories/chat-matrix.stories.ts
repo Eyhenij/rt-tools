@@ -45,4 +45,6 @@ export const Header: TStory = { args: { part: 'header' } };
 
 export const Loading: TStory = { args: { part: 'loading' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

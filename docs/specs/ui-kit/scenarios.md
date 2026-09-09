@@ -111,6 +111,38 @@ Then the curtain closes and gives back an answer
 
 Covered: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
 
+### SC-UK-58 — a setting of the application brings the closing by a key back
+
+Given the application named the closing by a key in the settings of the kit
+When the curtain is opened without an argument about the key and Esc is pressed
+Then the curtain closes
+
+Covered: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
+
+### SC-UK-59 — the argument of the call is stronger than the setting of the application
+
+Given the application named the closing by a key in the settings of the kit
+When the curtain is opened with the argument forbidding the key and Esc is pressed
+Then the curtain stays open
+
+Covered: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
+
+### SC-UK-56 — a leaving by a route closes an open curtain
+
+Given the curtain is open
+When the router gives out the end of a transition
+Then the curtain closes
+
+Covered: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
+
+### SC-UK-57 — the death of the one who gave out the service does not lock the curtain on the screen
+
+Given the curtain is open by a service given out by the component of the screen
+When that component dies and the router gives out the end of a transition after it
+Then the curtain is taken off the screen
+
+Covered: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
+
 ## A sorting by a column the table does not have
 
 ### SC-UK-13 — a sorting by a declared column goes away to the consumer

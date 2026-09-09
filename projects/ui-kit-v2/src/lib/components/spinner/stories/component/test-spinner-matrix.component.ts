@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtSpinnerComponent } from '../../rt-spinner.component';
 import { IRtSpinner } from '../../rt-spinner.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TSpinnerMatrixPart = 'color' | 'diameter' | 'themes';
+export type TSpinnerMatrixPart = 'color' | 'diameter' | 'presets' | 'themes';
 
 /**
  * Матрицы `rt-spinner` для витрины.
@@ -39,6 +40,18 @@ export type TSpinnerMatrixPart = 'color' | 'diameter' | 'themes';
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Палитра в обоих наборах">
+                    <ng-template>
+                        @for (color of colors; track color) {
+                            <span class="app-spinner-matrix__pad" [class.app-spinner-matrix__pad--primary]="color === 'on-primary'">
+                                <rt-spinner [color]="color" />
+                            </span>
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Палитра в обеих темах">
                     <ng-template>
@@ -69,6 +82,7 @@ export type TSpinnerMatrixPart = 'color' | 'diameter' | 'themes';
         RtSpinnerComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

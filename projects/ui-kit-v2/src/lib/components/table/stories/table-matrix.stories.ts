@@ -36,4 +36,6 @@ export const Clickable: TStory = { args: { part: 'clickable' } };
 /** Своя карточка против авто-карточки: обе видны только на узком кадре — на широком там таблица. */
 export const Cards: TStory = { args: { part: 'cards' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };
