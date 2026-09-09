@@ -50,7 +50,7 @@ describe('ECargoState против набора хранилища', () => {
         expect(schemaEnum()).toEqual(Object.values(ECargoState));
     });
 
-    it('SC-MB-231 — набор хранилища объявлен шагами разбора: по нему и идёт порядок', () => {
-        expect(schemaEnum()).toEqual(['new', 'in_work', 'fixed', 'released']);
+    it('SC-MB-231 — набор хранилища объявлен шагами разбора, и карантин стоит после них', () => {
+        expect(schemaEnum()).toEqual(['new', 'in_work', 'fixed', 'released', 'quarantined']);
     });
 });

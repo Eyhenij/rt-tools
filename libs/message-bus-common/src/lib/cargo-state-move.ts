@@ -46,6 +46,18 @@ export function cargoStateMove(from: ECargoState, to: ECargoState): ECargoStateM
         return ECargoStateMove.Allowed;
     }
 
+    // Карантин стоит в стороне от порядка шагов: в него запись уходит только из «нового», и
+    // возвращается только туда же. Вперёд из него дороги нет — она означала бы починку того, о чём
+    // решили, что чинить нечего; а из «в работе» в карантин ходить незачем: для брошенной работы
+    // уже есть возврат в «новое».
+    if (from === ECargoState.Quarantined) {
+        return to === ECargoState.New ? ECargoStateMove.Allowed : ECargoStateMove.Denied;
+    }
+
+    if (to === ECargoState.Quarantined) {
+        return from === ECargoState.New ? ECargoStateMove.Allowed : ECargoStateMove.Denied;
+    }
+
     const next: ECargoState | undefined = CARGO_STATE_ORDER[CARGO_STATE_ORDER.indexOf(from) + 1];
 
     return to === next ? ECargoStateMove.Allowed : ECargoStateMove.Denied;
@@ -73,6 +85,13 @@ export function cargoCloseMove(from: ECargoState, to: ECargoState): ECargoStateM
 
     if (from === to) {
         return ECargoStateMove.Same;
+    }
+
+    // Запись в карантине издателю не закрывается: карантина нет в порядке шагов вовсе, и место
+    // прежнего состояния вышло бы отрицательным — то есть меньше любого, и закрытие прошло бы.
+    // Спорную запись достаёт из карантина дерево, а не тот, кто выпустил редакцию.
+    if (from === ECargoState.Quarantined) {
+        return ECargoStateMove.Denied;
     }
 
     return CARGO_STATE_ORDER.indexOf(to) > CARGO_STATE_ORDER.indexOf(from) ? ECargoStateMove.Allowed : ECargoStateMove.Denied;

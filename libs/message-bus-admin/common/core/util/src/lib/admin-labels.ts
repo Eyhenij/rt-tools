@@ -74,6 +74,7 @@ export const ADMIN_LABELS = {
     cargoStateInWork: 'В работе',
     cargoStateFixed: 'Готово',
     cargoStateReleased: 'Выпущено',
+    cargoStateQuarantined: 'В карантине',
 
     inviteStateWaiting: 'Ждёт',
     inviteStateRedeemed: 'Погашено',

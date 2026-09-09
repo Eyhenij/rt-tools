@@ -3,11 +3,11 @@
 The identifier stands at the start of the test title, followed by a dash. While a scenario is not
 covered, it carries the mark "Not covered" with a reason. The prefix is shared by the domain.
 
-### SC-MB-309 — a record goes into the quarantine from "new" and carries the reason
+### SC-MB-309 — a row into the quarantine with a reason is accepted
 
-Given a record of a tree stands in "new" and the row of the edit names the quarantine and the reason
-When the edit goes
-Then the record is moved, and the reason lies at it
+Given the row of the edit names the quarantine and carries the reason
+When the row is judged before the storage
+Then it is accepted: the reason travels with the record
 
 Covered: `libs/message-bus-common/src/lib/cargo-quarantine-note.spec.ts`.
 
