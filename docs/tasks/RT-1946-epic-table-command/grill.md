@@ -1,33 +1,57 @@
 # Grill
 
-<Work begun from cargo that arrived names its records here — by full keys, as the intake reading
-prints them. Eight characters are not enough: a mark with a short key is refused with the line
-«the tree has no such record». This file leaves for the archive, and after the folder is taken apart
-the keys live only here.>
-
 ## The owner request
 
-> <verbatim, in the owner's language, without retelling>
+Задача эпика RT-1940, карточка RT-1946. Слова владельца из просьбы об эпике — имя чужого дерева
+заменено на «дерево-образец», остальное дословно:
+
+> изучи как это сделано на дереве-образце - там агент выводит таблицу с задачами эпика и кратким
+> описанием и статусами задач - нужно предоставить такой функционал для всех потребителей через
+> agent kit.
+
+Карточка задачи говорит то же своими словами: таблица задач эпика собирается по памяти захода, а
+нужна команда, и статья об эпике должна встать в правило.
 
 ## What the tree already has
 
-<Findings of the exploration: specs on the subject, the laws and rules the work touches, a
-ready-made sample nearby. Filled in before the first question to the owner.>
+- Правило `status-report` и приём `status-report-table` рядом с ним: там стоит образец таблицы и
+  перечень вызовов на каждую клетку — ветка, состояние заявки, прогон на вершине, задача на доске,
+  порядок задач из замысла эпика. Оба ресурса разложены из пакета.
+- `tools/board.mjs` отдаёт всё, чем клетка заполняется: `fetchIssue`, `taskState`,
+  `describeTaskState`, `pullState`, `fetchBoard`, `TASK_KEY`, `numberFromBranch`. Рядом
+  `tools/board-runs.mjs` — `runsOnHead`, `verdictOnHead`, `evictedOnHead`.
+- `tools/board-epics.mjs` читает состав эпика из замысла: строки таблицы с колонкой «Задача» и
+  объявление принадлежности в теле карточки задачи. Путь к замыслу берётся из тела карточки эпика.
+- Дерево-образец собрано тем же пакетом и своей команды для таблицы не имеет: там таблицу тоже
+  собирает заход по приёму. Образцом служит вид таблицы, а не готовое средство.
+- Команды пакета лежат в `projects/agent-kit/assets/checks/`, раскладываются в `tools/` и зовутся
+  строкой в `package.json`. Ходящие к хостингу названы с признаком хостинга в имени.
+- Пробы таких команд — оболочечные наборы в `projects/agent-kit/tests/`, ближайший образец —
+  `specs-for.test.sh`.
 
 ## What the rules already say
 
-<What was found in the laws and rules on the subject of the question. The owner is not asked
-what already has a written answer.>
+- `status-report`: состояние показывается таблицей, эпик описывается абзацем над ней, задачи
+  перечисляются все и в порядке замысла, клетка состояния несёт число из вывода команды.
+- `task-flow`: следующая задача берётся из замысла эпика, а не из списка открытых.
+- `agent-kit`: что живёт в пакете, а что в дереве, решает проверка границы.
 
 ## Questions and answers
 
-**<question>**
-<the owner's answer in their words>
+Владельцу вопросов не задавалось: просьба названа в эпике, а всё, что оставалось выяснить, лежит в
+дереве и прочитано.
 
 ## Decisions
 
-- **<decision>** — <reason>. Rejected: <what and why>.
-
-## What is left unclear
-
-- <a question that was not asked, and why it does not block the work>
+- **Команда живёт в пакете, в слое проверок** — просьба прямо говорит «через agent kit», а всё,
+  чем клетка заполняется, уже лежит в разложенных `tools/board*.mjs`. Отвергнуто: команда рядом с
+  `fate` — у той стороны нет ни клиента хостинга, ни настройки доски.
+- **Имя файла несёт признак хостинга** — команда ходит к хостингу, рядом так же собраны
+  `board.github.mjs` и `check-board.github.mjs`.
+- **Эпик без довода берётся из текущей ветки** — номер ветки даёт задачу, тело задачи объявляет
+  эпик, тело эпика называет замысел. Довод с номером остаётся: с чужой ветки таблица тоже нужна.
+- **Порядок задач берётся из замысла, состояние — у хостинга** — так велит приём, и по номерам с
+  доски порядок не восстановить.
+- **Печатается готовый ответ: абзац об эпике и таблица** — заход отдаёт вывод владельцу как есть.
+  Иначе половина работы команды снова ляжет на память захода.
+- **Команда ничего не двигает** — ни столбца, ни черновика: она отвечает на вопрос «где работа».

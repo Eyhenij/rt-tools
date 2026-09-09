@@ -2,23 +2,30 @@
 
 ## Where we stand
 
-Rewritten by every session, not appended to.
-
-- **State:** `этап-идёт`
-- **Stage:** <number> of <total> — <name>
-- **Done:** <briefly>
-- **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
-- **Waiting for the owner:** <what exactly, or "no">
-- **PR:** <number and state, or "not open yet">
+- **State:** `этапы-кончились`
+- **Stage:** 5 of 5 — статья в правиле и привязки
+- **Done:** заведён поддомен `epic-table` с девятью сценариями; команда `tools/epic-table.mjs`
+  собирает таблицу задач эпика; набор из 25 проб зелёный; статья о команде встала в правило
+  отчёта, приём рядом называет вызов; привязки заполнены.
+- **Next step:** прогон затронутого, разбор папки, заявка черновиком.
+- **Uncommitted:** ничего.
+- **Waiting for the owner:** нет.
+- **PR:** ещё не открыта.
 
 ## Decisions along the way
 
-- **<decision>** — <reason>. Affected stage of the plan: <number>.
+- **Чтение замысла эпика вынесено в `planPathOf` рядом со сверкой связей** — второй читатель той
+  же карточки разошёлся бы с первым молча. Затронутый этап замысла: 2.
+- **Одноразовое дерево пробы получает первый коммит** — без него ветки нет как ссылки, и возврат
+  на неё молчит, а следом краснеет половина сценариев. Затронутый этап замысла: 2.
+- **Клетка состояния называет итог прогона словом владельца** — «зелёный», «красный», «идёт»:
+  слово хостинга владельцу ничего не говорит. Затронутый этап замысла: 3.
 
 ## Sessions
 
-### <date>
+### 2026-09-09
 
-- <what was done, in numbers: files, commits, what is green>
-- <what we stumbled on and what caught it>
+- Спека, сценарии и спутник поддомена; команда на 218 строк; набор проб на 25 сценариев.
+- Правило `status-report` получило статью о команде, приём — строку вызова.
+- Своды: `npm run check:specs` — ноль, `npm run check:boundary` — ноль, `npm run agent-kit:check` —
+  разложенное сходится, `bash projects/agent-kit/tests/run.sh` — все наборы зелёные.
