@@ -11,4 +11,8 @@ describe('cargoStateLabel', () => {
         expect(cargoStateLabel(ECargoState.Fixed)).toBe('Готово');
         expect(cargoStateLabel(ECargoState.Released)).toBe('Выпущено');
     });
+
+    it('SC-MB-316 — у карантина тоже своё слово человека', () => {
+        expect(cargoStateLabel(ECargoState.Quarantined)).toBe('В карантине');
+    });
 });

@@ -48,8 +48,13 @@
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-version'">{{ row.releaseVersion }}</td>
         </ng-container>
 
+        <ng-container cdkColumnDef="quarantineNote">
+            <th *cdkHeaderCellDef cdk-header-cell>{{ columns[5].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-quarantine-note'">{{ row.quarantineNote }}</td>
+        </ng-container>
+
         <ng-container cdkColumnDef="arrivedAt">
-            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="arrivedAt">{{ columns[5].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="arrivedAt">{{ columns[6].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-arrived'">{{ row.arrivedAt | adminMoment }}</td>
         </ng-container>
 

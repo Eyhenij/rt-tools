@@ -1,3 +1,48 @@
+# [0.10.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.9.0...rt-ui-kit-v2@0.10.0) (2026-09-09)
+
+# [0.9.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.8.1...rt-ui-kit-v2@0.9.0) (2026-09-09)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** матрица наборов не режется краем половины, оба эталона сняты ([8948bed](https://github.com/Eyhenij/rt-tools/commit/8948bed26a69d7ae0d742e3d73a6647fdd489913))
+- **rt:ui-kit-v2:** набор рисунков читается у разметки, а не выбирается стилями ([0cb0c0e](https://github.com/Eyhenij/rt-tools/commit/0cb0c0e570346bed8915dbfb758542ca4dd11231))
+- **rt:ui-kit-v2:** не приехавший материальный рисунок закрывается своим ([25431f5](https://github.com/Eyhenij/rt-tools/commit/25431f56cd0aca0465c8deec10b578377b9e39ac))
+- **rt:ui-kit-v2:** подложка закрытой панели не ловит нажатия у потребителя со слоями ([23aeb95](https://github.com/Eyhenij/rt-tools/commit/23aeb952d164c2068bbc0d0e7d2f43e8a2a55929))
+- **rt:ui-kit-v2:** полоса прокрутки молчит в покое и проявляется наведением ([074b544](https://github.com/Eyhenij/rt-tools/commit/074b544caeb7bf2f6b94850c98544488fc1a50ad)), closes [#34](https://github.com/Eyhenij/rt-tools/issues/34)
+- **rt:ui-kit-v2:** пояс и язык съёмки заданы обвязкой, а не машиной ([17dab22](https://github.com/Eyhenij/rt-tools/commit/17dab2288ea6c8032f28d6d4686f7baae290ec12))
+- **rt:ui-kit-v2:** признак уровня записан в правило, обе разъехавшиеся пары выправлены ([fff16d9](https://github.com/Eyhenij/rt-tools/commit/fff16d994766577705fdf7a6f833743d007c0390))
+- **rt:ui-kit-v2:** стили волны подключены к слою оформления кита ([4d2d2fc](https://github.com/Eyhenij/rt-tools/commit/4d2d2fc0e03bd21ac6f9354b1ed6d5f024f33210))
+- **rt:ui-kit-v2:** у волны заглушки своя пара имён цвета, и в светлом виде они разведены ([193e3b8](https://github.com/Eyhenij/rt-tools/commit/193e3b84551b4164ffe27e7eb32ab365bd3c9ae5)), closes [#e0e0e0](https://github.com/Eyhenij/rt-tools/issues/e0e0e0) [#e0e0e0](https://github.com/Eyhenij/rt-tools/issues/e0e0e0)
+
+### Features
+
+- **rt:agent-kit:** сборщик слоя оформления печатает вывод по-английски ([1c7f447](https://github.com/Eyhenij/rt-tools/commit/1c7f44792df3d79b90665239b4e016a99fb7777b))
+- **rt:core:** входы компонента, созданного в коде, проверяются сборкой ([61db5b1](https://github.com/Eyhenij/rt-tools/commit/61db5b189e083ca0ed5d89aa6e898b999cfa2e75)), closes [#7](https://github.com/Eyhenij/rt-tools/issues/7)
+- **rt:ui-kit-v2:** в наборе значков двенадцать знаков соцсетей в фирменных цветах ([c70e337](https://github.com/Eyhenij/rt-tools/commit/c70e337904dadb83e2545d6f855422bbf70c1d88))
+- **rt:ui-kit-v2:** витрина показывает один значок в двух наборах рядом ([07a6cec](https://github.com/Eyhenij/rt-tools/commit/07a6cec6276c8996a509134de7f64922685169a7))
+- **rt:ui-kit-v2:** значку первого кита назначена пара в наборе второго ([919e719](https://github.com/Eyhenij/rt-tools/commit/919e719548c307b7080f837c285e3eb5a957f3dd))
+- **rt:ui-kit-v2:** значок выбирает набор рисунков вместе с набором оформления ([898521a](https://github.com/Eyhenij/rt-tools/commit/898521a819805e6c9d337c7355a6cdd8cb318b4b))
+- **rt:ui-kit-v2:** импорт Material во втором ките отбивается линтером ([ea31410](https://github.com/Eyhenij/rt-tools/commit/ea31410da10ad5612ac78fe1a9930eab9ea4d80c))
+- **rt:ui-kit-v2:** кнопка и кнопка-значок отвечают на нажатие волной ([3940dd9](https://github.com/Eyhenij/rt-tools/commit/3940dd98c2e9cd7cc89332dbddb7556e30cd0157))
+- **rt:ui-kit-v2:** кнопка с подписью знает своё положение ([fcf5285](https://github.com/Eyhenij/rt-tools/commit/fcf5285b4c718f2975c3e1e4abff396668a19171)), closes [#29](https://github.com/Eyhenij/rt-tools/issues/29)
+- **rt:ui-kit-v2:** материальный набор оформления и признак набора на странице ([308bc73](https://github.com/Eyhenij/rt-tools/commit/308bc73439ca730a520a60997a8a79d95f9acd28))
+- **rt:ui-kit-v2:** метка вкладки получила подсказку и подпись для чтения с экрана ([5659ae4](https://github.com/Eyhenij/rt-tools/commit/5659ae4d9f983e95b13f5a654d64c00c044864ab))
+- **rt:ui-kit-v2:** молчание материального набора о цвете отбивается проверкой ([c6be55d](https://github.com/Eyhenij/rt-tools/commit/c6be55d73726fa70fa9ba773dcc37e178330e717))
+- **rt:ui-kit-v2:** молчание набора у двух янтарных имён названо причиной ([d28e1a1](https://github.com/Eyhenij/rt-tools/commit/d28e1a15fd8dbb6da45fab09db05884ccdcc2c43))
+- **rt:ui-kit-v2:** переключатель умеет множественный выбор и недоступный сегмент ([61b7262](https://github.com/Eyhenij/rt-tools/commit/61b7262837e6bf9ea94f9d77903ce01cb7b633fa)), closes [#88](https://github.com/Eyhenij/rt-tools/issues/88)
+- **rt:ui-kit-v2:** порог читаемости считается и в материальном наборе ([0f66134](https://github.com/Eyhenij/rt-tools/commit/0f66134ab11411d0a54f6468c49e13c8a4bc5376))
+- **rt:ui-kit-v2:** проверка полноты набора стоит в гарде и в конвейере ([1d8107a](https://github.com/Eyhenij/rt-tools/commit/1d8107a9d7b9c51ac1aac9f84cdab452a4df7f3e))
+- **rt:ui-kit-v2:** рисунки Material легли в дерево вторым набором значков ([40d62d4](https://github.com/Eyhenij/rt-tools/commit/40d62d4433a516ebc680fc175bcf6cf16760e872))
+- **rt:ui-kit-v2:** свой набор оформления и материальный стоят рядом в витрине ([1763a80](https://github.com/Eyhenij/rt-tools/commit/1763a8033b1ad5da1958a6422d9159a6faafdae0))
+- **rt:ui-kit-v2:** сжатая полоса шапки показана витриной ([140b1d6](https://github.com/Eyhenij/rt-tools/commit/140b1d64a4f3b9022b6e437cce2ae01f17bbb604))
+- **rt:ui-kit-v2:** скругление контрола стало назначением, набор ставит ему 1.5rem ([e3ae5b0](https://github.com/Eyhenij/rt-tools/commit/e3ae5b07626a2b75825fa33727a47133c4c4d058))
+- **rt:ui-kit-v2:** словарь формы панели объявлен в ките ([eee0158](https://github.com/Eyhenij/rt-tools/commit/eee01588daa79e4441e798d6e6a49a657b2c27fc))
+- **rt:ui-kit-v2:** словарь формы получил виды строки, элемента ряда и рамку записи ([7284f89](https://github.com/Eyhenij/rt-tools/commit/7284f8925dd7db2dbd92d27593906dae95d1b4c7))
+- **rt:ui-kit-v2:** у кнопки-значка ровный ряд форм и своё свойство тени ([9dc1863](https://github.com/Eyhenij/rt-tools/commit/9dc1863e11cf1f7f93b67ce951532eb49cc0a332))
+- **rt:ui-kit-v2:** у кнопки-значка четыре формы вместо двух ([abc2496](https://github.com/Eyhenij/rt-tools/commit/abc24968e003bc68ad4e064cf2cfbbb4e3ac4208))
+- **rt:ui-kit-v2:** числовое поле умеет обходиться без разделителей разрядов ([018c366](https://github.com/Eyhenij/rt-tools/commit/018c366da1adcdc292b0ba4a3fbd0fa24b94f1ec))
+- **rt:ui-kit-v2:** шапка липнет к верху и сжимается в полосу ([f7d76ad](https://github.com/Eyhenij/rt-tools/commit/f7d76ad249c6c69167a43c90e66cfd32236db300))
+
 ## [0.8.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.8.0...rt-ui-kit-v2@0.8.1) (2026-09-03)
 
 ### Bug Fixes

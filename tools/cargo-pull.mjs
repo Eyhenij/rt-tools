@@ -220,7 +220,25 @@ function listLine(kind, row, key, glimpse) {
     const title = KINDS[kind].titleOf(row);
     const named = title === key ? '' : `${title} · `;
 
-    return `  ${key || '(there is no key: the text is not read on)'}\n    ${named}${row.tree?.slug ?? '?'} · ${row.state}${closedMark(row)} · in the intake ${row.id ?? '?'}${tail}`;
+    return `  ${key || '(there is no key: the text is not read on)'}\n    ${named}${row.tree?.slug ?? '?'} · ${row.state}${closedMark(row)}${quarantineMark(row)} · in the intake ${row.id ?? '?'}${tail}`;
+}
+
+/**
+ * What makes the record disputable: it stands next to the state of the quarantine, in the list row.
+ *
+ * Without it the list of the quarantine answers only «this one is disputable» and stays silent
+ * about what by — and the record is taken apart anew, which is what the quarantine was started
+ * against. It is cut to the width of the row by the same measure as the beginning of the text: a
+ * reason of several lines would break the row apart.
+ */
+function quarantineMark(row) {
+    const said = String(row.quarantineNote ?? '').trim();
+
+    if (!said) {
+        return '';
+    }
+
+    return ` · disputable: ${said.length > GLIMPSE ? `${said.slice(0, GLIMPSE)}…` : said}`;
 }
 
 /**
@@ -244,6 +262,7 @@ function fullLines(kind, row, key) {
         `  tree: ${row.tree?.slug ?? '?'} · state: ${row.state}${closedMark(row)} · arrived: ${row.arrivedAt ?? '?'}`,
         ...(row.fixNote ? [`  fixed by: ${row.fixNote}`] : []),
         ...(row.releaseVersion ? [`  released in: ${row.releaseVersion}`] : []),
+        ...(row.quarantineNote ? [`  disputable: ${row.quarantineNote}`] : []),
         '',
         String(row.text ?? '').trimEnd(),
         '',

@@ -14,9 +14,11 @@ import { ECargoStateBodyFault, ICargoStateLine } from '@rt/message-bus-api/cargo
 import {
     CARGO_RELEASE_VERSION_LIMIT,
     cargoFixNoteFault,
+    cargoQuarantineNoteFault,
     cargoReleaseVersionFault,
     ECargoFixNoteFault,
     ECargoKind,
+    ECargoQuarantineNoteFault,
     ECargoReleaseVersionFault,
     ECargoStateMove,
     ICargoStateAsk,
@@ -26,6 +28,12 @@ import {
 const FIX_NOTE_DENIAL: Readonly<Record<ECargoFixNoteFault, ECargoStateDenial>> = {
     [ECargoFixNoteFault.Missing]: ECargoStateDenial.NoFixNote,
     [ECargoFixNoteFault.Unexpected]: ECargoStateDenial.ExtraFixNote,
+};
+
+/** Причина отбоя по причине карантина, названная так, как её читает вызывающий. */
+const QUARANTINE_NOTE_DENIAL: Readonly<Record<ECargoQuarantineNoteFault, ECargoStateDenial>> = {
+    [ECargoQuarantineNoteFault.Missing]: ECargoStateDenial.NoQuarantineNote,
+    [ECargoQuarantineNoteFault.Unexpected]: ECargoStateDenial.ExtraQuarantineNote,
 };
 
 /** Причина отбоя по версии выпуска, названная так, как её читает вызывающий. */
@@ -56,6 +64,8 @@ export function cargoLinesFaultMessage(fault: ECargoStateBodyFault, at: number |
             return `в грузе рода «${kind}»${where} поле fixNote ожидается строкой`;
         case ECargoStateBodyFault.BadReleaseVersion:
             return `в грузе рода «${kind}»${where} поле releaseVersion ожидается строкой`;
+        case ECargoStateBodyFault.BadQuarantineNote:
+            return `в грузе рода «${kind}»${where} поле quarantineNote ожидается строкой`;
         case ECargoStateBodyFault.LongReleaseVersion:
             return `в грузе рода «${kind}»${where} версия выпуска длиннее ${CARGO_RELEASE_VERSION_LIMIT} знаков`;
         default:
@@ -81,7 +91,10 @@ export function cargoLinesValueDenials(lines: readonly ICargoStateLine[]): Map<n
         const byNote: ECargoFixNoteFault | null = cargoFixNoteFault(line.state, line.fixNote);
         const byVersion: ECargoReleaseVersionFault | null = cargoReleaseVersionFault(line.state, line.releaseVersion);
 
-        const byVersionDenial: ECargoStateDenial | null = byVersion === null ? null : RELEASE_VERSION_DENIAL[byVersion];
+        const byQuarantine: ECargoQuarantineNoteFault | null = cargoQuarantineNoteFault(line.state, line.quarantineNote);
+
+        const byQuarantineDenial: ECargoStateDenial | null = byQuarantine === null ? null : QUARANTINE_NOTE_DENIAL[byQuarantine];
+        const byVersionDenial: ECargoStateDenial | null = byVersion === null ? byQuarantineDenial : RELEASE_VERSION_DENIAL[byVersion];
         const denial: ECargoStateDenial | null = byNote === null ? byVersionDenial : FIX_NOTE_DENIAL[byNote];
 
         if (denial !== null) {
@@ -157,5 +170,6 @@ export function cargoLinesAsked(lines: readonly ICargoStateLine[], kind: ECargoK
             state: line.state,
             fixNote: line.fixNote,
             releaseVersion: line.releaseVersion,
+            quarantineNote: line.quarantineNote,
         }));
 }
