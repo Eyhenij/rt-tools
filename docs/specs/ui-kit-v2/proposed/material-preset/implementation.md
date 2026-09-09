@@ -19,6 +19,7 @@
 | материальный рисунок значка                                    | набор `projects/ui-kit-v2/src/assets/icons-material`                   |
 | набор рисунков выбирается вместе с набором оформления          | `projects/ui-kit-v2/src/lib/components/icon/rt-icon.component.ts`      |
 | витрина показывает два набора рядом                            | `tools/check-preset-stories.mjs`                                       |
+| причина у семейства без пары читается на витрине               | `projects/ui-kit-v2/docs/Colors.mdx` — берёт список у той же проверки  |
 
 ## Что ещё не решено
 
