@@ -21,6 +21,9 @@ export class RtAsideService {
     /** Источник открытий: метод толкает сюда поток закрытия новой панели, и больше ничего. */
     readonly #closesSource: Subject<Observable<unknown>> = new Subject<Observable<unknown>>();
 
+    /** Открытые сейчас панели: по гибели того, кто службу выдал, снимать нужно каждую. */
+    readonly #open: Set<OverlayRef> = new Set<OverlayRef>();
+
     /**
      * Закрытие каждой открытой панели объявлено один раз, а не заводится вызовом открытия.
      *
@@ -29,6 +32,7 @@ export class RtAsideService {
      */
     constructor() {
         this.#closesSource.pipe(mergeAll(), takeUntilDestroyed(this.#destroyRef)).subscribe();
+        this.#destroyRef.onDestroy((): void => this.#closeOpened());
     }
 
     /**
@@ -56,6 +60,7 @@ export class RtAsideService {
         const portal: ComponentPortal<RtuiAsidePanelComponent> = this.#createPortal(asideRef);
         const componentRef: ComponentRef<RtuiAsidePanelComponent> = overlayRef.attach(portal);
 
+        this.#open.add(overlayRef);
         this.#closesSource.next(this.#closeOnFirstEvent(overlayRef, componentRef, answer, config));
 
         return answer ? answer.asObservable() : of(null);
@@ -80,6 +85,7 @@ export class RtAsideService {
         ).pipe(
             take(1),
             tap((): void => {
+                this.#open.delete(overlayRef);
                 componentRef.instance.startExitAnimation();
                 overlayRef.detach();
                 answer.complete();
@@ -89,6 +95,26 @@ export class RtAsideService {
                 overlayRef.dispose();
             })
         );
+    }
+
+    /**
+     * Снятие всех открытых панелей по гибели того, кто службу выдал.
+     *
+     * Службу кладут в компонент экрана, и маршрутизатор гасит компонент раньше, чем издаёт смену
+     * маршрута: подписка на закрытия рвётся вместе с ним, событие приходит некому, а панель с
+     * подложкой остаётся поверх нового экрана — ни подложка, ни клавиша, ни кнопка внутри уже не
+     * работают. Здесь панель снимается прямо гибелью владельца, не дожидаясь события.
+     *
+     * Без выхода анимацией: содержимое панели гибнет вместе с тем, кто её открыл, и показывать
+     * выход уже нечем.
+     */
+    #closeOpened(): void {
+        for (const overlayRef of this.#open) {
+            overlayRef.detach();
+            overlayRef.dispose();
+        }
+
+        this.#open.clear();
     }
 
     /**
