@@ -111,6 +111,22 @@ Then the curtain closes and gives back an answer
 
 Covered: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
 
+### SC-UK-56 — a leaving by a route closes an open curtain
+
+Given the curtain is open
+When the router gives out the end of a transition
+Then the curtain closes
+
+Covered: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
+
+### SC-UK-57 — the death of the one who gave out the service does not lock the curtain on the screen
+
+Given the curtain is open by a service given out by the component of the screen
+When that component dies and the router gives out the end of a transition after it
+Then the curtain is taken off the screen
+
+Covered: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
+
 ## A sorting by a column the table does not have
 
 ### SC-UK-13 — a sorting by a declared column goes away to the consumer
