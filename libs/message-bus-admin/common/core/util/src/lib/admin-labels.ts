@@ -65,6 +65,7 @@ export const ADMIN_LABELS = {
     // Один ключ на все показы версии: столбец списка, отбор над ним и строка панели. Второе
     // объявление разошлось бы с первым молча, и человек читал бы одно и то же поле двумя словами.
     releaseVersion: 'В какой версии',
+    quarantineNote: 'Чем спорна',
 
     // Приписка к состоянию, а не свой столбец: список отвечает на вопрос «где стоит запись», и
     // закрытие издателем — часть того же ответа
@@ -74,6 +75,7 @@ export const ADMIN_LABELS = {
     cargoStateInWork: 'В работе',
     cargoStateFixed: 'Готово',
     cargoStateReleased: 'Выпущено',
+    cargoStateQuarantined: 'В карантине',
 
     inviteStateWaiting: 'Ждёт',
     inviteStateRedeemed: 'Погашено',

@@ -71,3 +71,15 @@ by families, one family per call, and 38 more frames moved within the threshold.
 The lesson is in the order of sorting out. A divergence at a story nobody edited is asked first about
 its neighbour above, and the node is measured around the shot before a single wait is switched off.
 The five refuted candidates cost about two hours.
+
+## What was cut from the articles
+
+- **The cycle of matching frames against a shot beyond the window.** The shift under the shutter is
+  steady: the second and third frames match each other, and a cycle would hand back exactly the
+  shifted one. Measured on the ribbon of the photo viewer — it lost its scroll, 2624 to 2, and the
+  first snapshot of the set instead of the last got into the frame while the page height went away
+  by two pixels. After the widened window three frames in a row coincided pixel for pixel, and the
+  ribbon stayed at the last snapshot.
+- **The derivative of the seeded time.** The divergence does not arrive for months and then turns
+  the frame red on a day when not a line was added to the tree: the month changed on the screen
+  while the reference stayed as it was.

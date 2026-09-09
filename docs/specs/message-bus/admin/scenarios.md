@@ -433,9 +433,10 @@ Then the list is ordered by the state, and the applied order is visible on the h
 
 ### SC-MB-231 — the order by state goes by the steps of the sorting out
 
-Given there are records of all four states in the list
+Given there are records of every state in the list
 When the owner orders the list by the state ascending
-Then the records go new, then taken into the sorting out, then fixed, then released
+Then the records go new, then taken into the sorting out, then fixed, then released, and the
+quarantine stands after them: it is not a step of the order and has no place among them
 
 ### SC-MB-232 — the intake refuses a word outside the set of the states
 

@@ -81,3 +81,22 @@ describe('cargoStateData', () => {
         expect(cargoStateData(ask(null, null))).toEqual({ state: ECargoState.Released });
     });
 });
+
+describe('cargoStateMove — карантин', () => {
+    it('SC-MB-312 — вперёд из карантина запись не идёт', () => {
+        expect(cargoStateMove(ECargoState.Quarantined, ECargoState.Fixed)).toBe(ECargoStateMove.Denied);
+        expect(cargoStateMove(ECargoState.Quarantined, ECargoState.Released)).toBe(ECargoStateMove.Denied);
+        expect(cargoStateMove(ECargoState.Quarantined, ECargoState.InWork)).toBe(ECargoStateMove.Denied);
+    });
+
+    it('SC-MB-313 — из карантина запись возвращается в новое', () => {
+        expect(cargoStateMove(ECargoState.Quarantined, ECargoState.New)).toBe(ECargoStateMove.Allowed);
+    });
+
+    it('SC-MB-314 — в карантин запись уходит только из нового', () => {
+        expect(cargoStateMove(ECargoState.New, ECargoState.Quarantined)).toBe(ECargoStateMove.Allowed);
+        expect(cargoStateMove(ECargoState.InWork, ECargoState.Quarantined)).toBe(ECargoStateMove.Denied);
+        expect(cargoStateMove(ECargoState.Fixed, ECargoState.Quarantined)).toBe(ECargoStateMove.Denied);
+        expect(cargoStateMove(ECargoState.Released, ECargoState.Quarantined)).toBe(ECargoStateMove.Denied);
+    });
+});

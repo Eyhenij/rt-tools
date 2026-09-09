@@ -106,12 +106,11 @@ Four checks do not replace one another, and the choice between them is not a mat
 - **A shot beyond the window touches the page under the shutter, and that is cured not by a cycle
   but by the window.** A frame wider or taller than the window the browser takes by substituting the
   window for the duration of the frame: the page gets a `resize`, and everything computed from the
-  window sizes moves right inside the frame. A cycle until two frames in a row match is no cure here
-  but a pinning of the breakage: the shift is steady, the second and third frames match each other,
-  and the cycle would return exactly the shifted one. It is cured by the reverse order — the window
-  is widened **before** the frame, the showing is waited for settled, and an ordinary frame is
-  taken: the same motion, made in advance, loses no scrolling. The consequence is visible in the
-  reference: `100vh` and `100vw` of such a story are computed from the widened window.
+  window sizes moves right inside the frame. A cycle of matching frames pins the breakage instead of
+  curing it — the shift is steady, and the cycle returns exactly the shifted frame. The cure is the
+  reverse order: the window is widened **before** the frame, the showing is waited for settled, and
+  an ordinary frame is taken. The consequence is visible in the reference — `100vh` and `100vw` of
+  such a story are computed from the widened window.
 - **A frame of a node beyond the window is cured the same way.** The article above reads as being
   about a whole page. A node taller than the window goes past its bounds no less. The cure was
   written for one frame of the two, and the second lived on with the defect while the article did
@@ -119,11 +118,10 @@ Four checks do not replace one another, and the choice between them is not a mat
   higher than the node, and a superfluous growth changes everything computed from the window at
   stories that did not ask for it.
 - **The trace of such a shot is left at the story after the tall one.** The tall one is shot by a
-  shifted page and comes out two pixels short. The page keeps the shift, and the next story is shot
-  by it too. So the divergence lands on a neighbour whose content nobody touched. A rearrangement of
-  the stories in the file then moves frames nobody edited, and a rename of an old story reads as its
-  breakage. What tells one from the other is a measurement of the node before the frame and after
-  it: a height that changed across the shutter names the shot, not the layout.
+  shifted page; the page keeps the shift, and the next story is shot by it too. So the divergence
+  lands on a neighbour whose content nobody touched, and a rearrangement of the stories in the file
+  moves frames nobody edited. What tells one from the other is a measurement of the node before the
+  frame and after it: a height that changed across the shutter names the shot, not the layout.
 - **A frame is assembled from what lies in the tree, and the harness cuts the shot off from a
   foreign network.** Everything that travels from outside brings a foreign availability into the
   frame: not having arrived, it leaves an empty place, and the snapshot diverges where nobody
@@ -210,12 +208,10 @@ Four checks do not replace one another, and the choice between them is not a mat
   and a drifting value inside it moves its neighbours past the mask. What drifts is cured in the
   seeding — by a constant value — and then no mask is needed at all.
 - **Not only time is made constant but everything the application derived from it.** The application
-  counts from its clock and computes the derivative — the month key, the deadline, the freshness
-  sign — at the minute of writing. A seeding that edits the times after the write does not move the
-  derivative: it was computed earlier and lies in the next column. The divergence does not arrive
-  for months, and then the frame turns red on a day when not a line was added to the tree: the month
-  changed on the screen while the reference stayed as it was. The miss has its own sign, visible at
-  once by comparing two columns — the derivative stopped matching what it had to be derived from.
+  computes the derivative — the month key, the deadline, the freshness sign — at the minute of
+  writing, so a seeding that edits the times after the write leaves it as it was. Otherwise the frame
+  turns red months later on a day when not a line was added to the tree. The sign is visible by
+  comparing two columns: the derivative stopped matching what it had to be derived from.
 - **The seeding checks itself instead of relying on the frame.** The frame says "it became
   different" and is silent about why; a seeding refusal names the reason in words and arrives at the
   stand's startup, before a single frame is taken. The sign is taken so that it holds on any run

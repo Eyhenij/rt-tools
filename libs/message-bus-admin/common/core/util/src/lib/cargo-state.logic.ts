@@ -25,6 +25,8 @@ export function cargoStateLabel(state: ECargoState): string {
             return adminLabel('cargoStateFixed');
         case ECargoState.Released:
             return adminLabel('cargoStateReleased');
+        case ECargoState.Quarantined:
+            return adminLabel('cargoStateQuarantined');
         default:
             return adminLabel('cargoStateNew');
     }
