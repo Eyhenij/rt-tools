@@ -77,3 +77,51 @@ rt_epic_base() {
 
     return 0
 }
+
+# The base of a request about a task of an epic.
+#
+# A request of a task goes into the branch of its epic, and one opened into the main branch takes
+# the task past the epic: the epic is then handed in without it, and the reviewer sees the edit
+# next to everything that lies in the main branch and not in the epic. The guard let any base
+# through and asked only that the main branch be merged in.
+#
+# The freshness asked here is of the epic, not of the main branch: the request goes into the epic,
+# and it is the divergence with the epic that shows in the diff. The main branch reaches the task
+# through the epic — that is the same order as at the creation of the branch.
+#
+# Arguments: the number of the epic and the text of the command.
+rt_epic_pull_base() {
+    _epic="$1"
+    _cmd="$2"
+    [ -n "$_epic" ] || return 0
+
+    _epic_branch="$(rt_epic_branch "$_epic")"
+    case "$_epic_branch" in
+        '' | *' '*) return 0 ;;
+    esac
+
+    # The base named by the command. Absent — the hosting takes the default branch of the
+    # repository, that is the main one: the very case this condition is about.
+    _base=''
+    if command -v perl >/dev/null 2>&1; then
+        _base="$(printf '%s' "$_cmd" | perl -0ne '
+            if (/(?:^|\s)(?:--base|-B)(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/s) {
+                print defined $1 ? $1 : (defined $2 ? $2 : $3);
+            }
+        ' 2>/dev/null)"
+    fi
+
+    if [ "$_base" != "$_epic_branch" ]; then
+        fault "the request of a task of the epic #${_epic} goes into the branch of the epic «${_epic_branch}», and the base here is ${_base:-the default branch of the repository}. A request into the main branch takes the task past its epic: the epic is handed in without it. Name the base: --base ${_epic_branch}."
+        return 0
+    fi
+
+    if git rev-parse --verify --quiet "origin/${_epic_branch}" >/dev/null 2>&1 \
+        && ! git merge-base --is-ancestor "origin/${_epic_branch}" HEAD 2>/dev/null; then
+        _behind="$(git rev-list --count "HEAD..origin/${_epic_branch}" 2>/dev/null)"
+        fault "the branch of the epic «${_epic_branch}» has moved ahead by ${_behind:-several} commits and is not merged into this branch. The reviewer would see the edit mixed with someone else's: git fetch origin && git merge origin/${_epic_branch}."
+    fi
+
+    return 0
+}
+

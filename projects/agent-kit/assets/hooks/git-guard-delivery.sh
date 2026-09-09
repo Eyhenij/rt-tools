@@ -339,6 +339,13 @@ rt_task_branch_ok "$branch" \
 
 number="$(rt_task_branch_number "$branch")"
 
+# The work queue is asked here and not at the end of the block: the epic of the task decides what
+# the base of the request is judged against, and that judging stands above. The call is one — the
+# state stays in `state` and the tail of the block reads the same answer.
+state=''
+check_task "$number" "the request from the branch «${branch}»" yes
+epic_pull="$(printf '%s' "$state" | jq -r '.epic // empty' 2>/dev/null)"
+
 title=''
 if command -v perl >/dev/null 2>&1; then
     title="$(printf '%s' "$cmd" | perl -0ne '
@@ -370,7 +377,9 @@ fi
 # the remote reference: without it, silence means only "the local reference is not older than the
 # branch", while it reads as "the main branch is merged in". No answer from the network — a silent
 # skip; the waiting limit is set by git variables, an external `timeout` is not on every machine.
-if git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
+if [ -n "$epic_pull" ] && command -v rt_epic_pull_base >/dev/null 2>&1; then
+    rt_epic_pull_base "$epic_pull" "$cmd"
+elif git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
     && ! git merge-base --is-ancestor "origin/${main_branch}" HEAD 2>/dev/null; then
     behind="$(git rev-list --count "HEAD..origin/${main_branch}" 2>/dev/null)"
     fault "«${main_branch}» has moved ahead by ${behind:-several} commits and is not merged into the branch. A PR from a diverged branch shows the reviewer the edit mixed with someone else, and the checks on it run from a stale base. Merge it in and repeat: git fetch origin && git merge origin/${main_branch} — the order and the resolving of the conflict are in the pattern git-workflow-merge."
@@ -449,7 +458,6 @@ if [ -n "$pull_body_section" ]; then
     fi
 fi
 
-check_task "$number" "the request from the branch «${branch}»" yes
 
 # The task folder is taken apart before the PR opens, not after the approval: the owner merges as
 # soon as he sees green, and no room is left for a closing commit — three times in a row the folder

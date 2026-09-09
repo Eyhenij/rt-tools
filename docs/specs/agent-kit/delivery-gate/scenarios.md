@@ -457,3 +457,19 @@ When the guard judges the creation of a branch from the main one
 Then the base is judged against the main branch, as before
 
 Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
+
+### SC-AK-943 — the request of a task of an epic goes into the branch of the epic
+
+Given a task whose state names an epic, and the branch of that epic is in the remote
+When the guard judges the opening of a request with the main branch as its base
+Then it refuses and names the branch of the epic
+
+Given the base named is the branch of the epic
+When the guard judges the same opening
+Then it does not refuse over the base
+
+Given the state of the task names no epic
+When the guard judges the opening with the main branch as its base
+Then the base is not judged at all
+
+Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.

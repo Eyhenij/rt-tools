@@ -200,6 +200,13 @@ refuses the push.
 - **The state of a task carries the number of its epic.** The guard has no other road to the epic:
   the work queue holds neither branches nor kinship of cards, and a second asking for the body would
   cost an extra call and diverge from the first.
+- **The base of a request about a task of an epic is the branch of that epic.** A request into the
+  main branch takes the task past its epic: the epic is handed in without it, and the reviewer sees
+  the edit next to everything lying in the main branch and not in the epic. A base not named at all
+  is the same case — the hosting takes the default branch of the repository.
+- **The freshness asked before a request of such a task is the epic's, not the main branch's.** The
+  request goes into the epic, and it is the divergence with the epic that shows in the diff; the main
+  branch reaches the task through the epic.
 - **The base of a new task branch is judged against the branch of its epic, not against the main
   branch.** A task branched from the main one leaves its epic half merged before the epic itself is
   handed in: the merge of the epic then carries nothing of that task, and the guard used to let this

@@ -120,6 +120,40 @@ report "SC-AK-942 — ветка от ветки эпика проходит" "$
 if [ -z "$(ge_decision "$GE_NO_EPIC" origin/main)" ]; then got="прошло"; else got="отбито"; fi
 report "SC-AK-942 — у задачи без эпика основание судится по главной, как прежде" "$got" "прошло"
 
+
+# --- SC-AK-943 — заявка задачи идёт в ветку эпика ---------------------------------------
+#
+# Гард пропускал любое основание и требовал только влитой главной. Заявка в главную уносит задачу
+# мимо её эпика: эпик отдаётся без неё, а обозреватель видит правку рядом со всем, что лежит в
+# главной и не лежит в эпике.
+git -C "$GE_REPO" checkout -q -b RT-1925-guard-judges-epic-base 2>/dev/null
+git -C "$GE_REPO" update-ref refs/remotes/origin/RT-1921-work-by-epics "$(git -C "$GE_REPO" rev-parse HEAD)"
+
+ge_pull() {
+    jq -n --arg c "$2" --arg d "$GE_REPO" \
+        '{session_id:"tests",tool_name:"Bash",tool_input:{command:$c},cwd:$d}' \
+        | ( cd "$GE_REPO" && GE_TASK_STATE="$1" "$HOOKS/git-guard-delivery.sh" 2>/dev/null )
+}
+
+GE_PR_MAIN="gh pr create --base main --title '[RT-1925] Что-то' --body 'тело
+## Оставшийся шаг
+не осталось'"
+GE_PR_EPIC="gh pr create --base RT-1921-work-by-epics --title '[RT-1925] Что-то' --body 'тело
+## Оставшийся шаг
+не осталось'"
+
+GE_OUT="$(ge_pull "$GE_WITH_EPIC" "$GE_PR_MAIN")"
+if printf '%s' "$GE_OUT" | grep -q 'RT-1921-work-by-epics'; then got="отбито"; else got="прошло"; fi
+report "SC-AK-943 — заявка с основанием «главная» отбита и названа ветка эпика" "$got" "отбито"
+
+GE_OUT="$(ge_pull "$GE_WITH_EPIC" "$GE_PR_EPIC")"
+if printf '%s' "$GE_OUT" | grep -q 'базе\|base here\|--base'; then got="отбито"; else got="прошло"; fi
+report "SC-AK-943 — заявка с основанием ветки эпика по основанию не отбита" "$got" "прошло"
+
+GE_OUT="$(ge_pull "$GE_NO_EPIC" "$GE_PR_MAIN")"
+if printf '%s' "$GE_OUT" | grep -q 'RT-1921-work-by-epics'; then got="отбито"; else got="прошло"; fi
+report "SC-AK-943 — у задачи без эпика основание заявки не судится" "$got" "прошло"
+
 rm -rf "$GE_REPO"
 rm -rf "$GE_TREE"
 suite_result "гард поставки: эпик задачи"
