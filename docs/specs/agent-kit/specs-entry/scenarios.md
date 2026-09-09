@@ -37,6 +37,15 @@ Then the exit code is not zero, and the output names what was looked for
 
 Covered: `projects/agent-kit/tests/specs-for.test.sh`.
 
+### SC-AK-989 — a gap in the specs is told from a name the package does not carry
+
+Given the package carries the asked file and not one binding names it
+When the command is called with that name
+Then the answer says that no spec speaks of it, names how many such resources there are and ends
+with a code of its own — the one a name the package does not carry never ends with
+
+Covered: `projects/agent-kit/tests/specs-for.test.sh`.
+
 ### SC-AK-944 — a file two subdomains speak of comes back with both
 
 Given the companions of two subdomains bind statements to one file
