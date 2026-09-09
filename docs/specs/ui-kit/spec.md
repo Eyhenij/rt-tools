@@ -84,6 +84,9 @@ outgrew the length limit. The table of the subdomains stands after the rules.
   working and comes alive at the first edit next to it.
 - **A programmatic closing is not put out by the setting.** A consumer closing the curtain by their own code
   says about their intent openly, and the ban of the sources does not concern them.
+- **The curtain does not outlive the one who opened it.** The service is put into the component of the
+  screen, and the router puts the component out before it gives out the change of the route: the curtain
+  stayed over the new screen, and neither the backing, nor the key, nor the button inside worked.
 
 - **The table gives the sorting only by the column it draws itself.** The name of the column arrives to it as
   a string, and outward it goes as a key of a record: a column that is not in the set went away to the
