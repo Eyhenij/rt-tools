@@ -195,7 +195,7 @@ async function storedRows(
  * Состояние приезжает значением колонки и переводится в набор общей либы: набор объявлен дважды —
  * хранилищем и общей либой, — и читающая сторона знает только второй.
  */
-export function listRowOf(row: IProposalStored): IProposalListRow {
+export function proposalListRowOf(row: IProposalStored): IProposalListRow {
     return {
         id: row.id,
         tree: row.record.tree,
@@ -213,7 +213,7 @@ export function listRowOf(row: IProposalStored): IProposalListRow {
 async function byColumn(prisma: PrismaService, where: IProposalWhere, asked: ICargoPageAsked): Promise<IProposalListRow[]> {
     const rows: IProposalStored[] = await storedRows(prisma, where, [orderOf(asked), { id: asked.dir }], pageSkip(asked), asked.size);
 
-    return rows.map(listRowOf);
+    return rows.map(proposalListRowOf);
 }
 
 /**
@@ -240,7 +240,7 @@ async function byVersion(prisma: PrismaService, where: IProposalWhere, asked: IC
     return ids
         .map((id: string): IProposalStored | undefined => byId.get(id))
         .filter((row: IProposalStored | undefined): row is IProposalStored => row !== undefined)
-        .map(listRowOf);
+        .map(proposalListRowOf);
 }
 
 /**
@@ -318,7 +318,7 @@ export async function readProposal(prisma: PrismaService, id: string): Promise<I
         },
     });
 
-    return found ? { ...listRowOf(found), text: found.text, month: found.record.month, fixNote: found.fixNote } : null;
+    return found ? { ...proposalListRowOf(found), text: found.text, month: found.record.month, fixNote: found.fixNote } : null;
 }
 
 /** Чем кончилась вставка: сколько записей легло и сколько приехало повторно. */

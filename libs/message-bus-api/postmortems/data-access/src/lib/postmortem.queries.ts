@@ -192,7 +192,7 @@ async function storedRows(
  * Состояние приезжает значением колонки и переводится в набор общей либы: набор объявлен дважды —
  * хранилищем и общей либой, — и читающая сторона знает только второй.
  */
-export function listRowOf(row: IPostmortemStored): IPostmortemListRow {
+export function postmortemListRowOf(row: IPostmortemStored): IPostmortemListRow {
     return {
         id: row.id,
         tree: row.tree,
@@ -210,7 +210,7 @@ export function listRowOf(row: IPostmortemStored): IPostmortemListRow {
 async function byColumn(prisma: PrismaService, where: IPostmortemWhere, asked: ICargoPageAsked): Promise<IPostmortemListRow[]> {
     const rows: IPostmortemStored[] = await storedRows(prisma, where, [orderOf(asked), { id: asked.dir }], pageSkip(asked), asked.size);
 
-    return rows.map(listRowOf);
+    return rows.map(postmortemListRowOf);
 }
 
 /**
@@ -237,7 +237,7 @@ async function byVersion(prisma: PrismaService, where: IPostmortemWhere, asked: 
     return ids
         .map((id: string): IPostmortemStored | undefined => byId.get(id))
         .filter((row: IPostmortemStored | undefined): row is IPostmortemStored => row !== undefined)
-        .map(listRowOf);
+        .map(postmortemListRowOf);
 }
 
 /**
@@ -302,7 +302,7 @@ export async function readPostmortem(prisma: PrismaService, id: string): Promise
         },
     });
 
-    return found ? { ...listRowOf(found), text: found.text, fixNote: found.fixNote } : null;
+    return found ? { ...postmortemListRowOf(found), text: found.text, fixNote: found.fixNote } : null;
 }
 
 /**

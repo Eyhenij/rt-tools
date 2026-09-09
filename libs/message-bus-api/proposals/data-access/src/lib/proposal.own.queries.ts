@@ -7,7 +7,7 @@
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPage, IPageAsked, ITreeChoice, pageSkip } from '@rt/message-bus-common';
 
-import { IProposalFullRow, IProposalStored, listRowOf } from './proposal.queries';
+import { IProposalFullRow, IProposalStored, proposalListRowOf } from './proposal.queries';
 
 /** Что приносит запрос своей страницы: поля строки списка плюс текст, починка и запись месяца. */
 type TOwnProposalStored = IProposalStored & { text: string; fixNote: string | null; record: { tree: ITreeChoice; month: string } };
@@ -46,7 +46,7 @@ export async function readOwnProposals(prisma: PrismaService, slug: string, aske
         page: asked.page,
         size: asked.size,
         rows: rows.map((row: TOwnProposalStored): IProposalFullRow => ({
-            ...listRowOf(row),
+            ...proposalListRowOf(row),
             text: row.text,
             month: row.record.month,
             fixNote: row.fixNote,

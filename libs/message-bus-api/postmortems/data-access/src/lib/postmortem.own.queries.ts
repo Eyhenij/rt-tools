@@ -7,7 +7,7 @@
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPage, IPageAsked, pageSkip } from '@rt/message-bus-common';
 
-import { IPostmortemFullRow, IPostmortemStored, listRowOf } from './postmortem.queries';
+import { IPostmortemFullRow, IPostmortemStored, postmortemListRowOf } from './postmortem.queries';
 
 /** Что приносит запрос своей страницы: поля строки списка плюс текст и починка. */
 type TOwnPostmortemStored = IPostmortemStored & { text: string; fixNote: string | null };
@@ -45,6 +45,10 @@ export async function readOwnPostmortems(prisma: PrismaService, slug: string, as
         total,
         page: asked.page,
         size: asked.size,
-        rows: rows.map((row: TOwnPostmortemStored): IPostmortemFullRow => ({ ...listRowOf(row), text: row.text, fixNote: row.fixNote })),
+        rows: rows.map((row: TOwnPostmortemStored): IPostmortemFullRow => ({
+            ...postmortemListRowOf(row),
+            text: row.text,
+            fixNote: row.fixNote,
+        })),
     };
 }
