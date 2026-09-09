@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.26.0 · rules/turn-conduct.md · cd6529db151f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · rules/turn-conduct.md · 66e9427fc420 · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -162,6 +162,13 @@ flowchart TD
   The guard reads the previous stage number from the branch history and holds a turn where the
   number grew and the command did not run: a session later, marked from memory cannot be told from
   checked.
+- **The end of an epic is a stop, and it is the one lawful waiting for a word.** Every task of the
+  epic is merged or handed over, so there is no next task to take: a guard refuses taking one, and
+  the two guards that judge the end of a turn let the stop through by the same reading. The turn
+  shows the table of the epic's tasks, says what was done on each and what confirms it, and says
+  outright that the session waits for orders.
+  <!-- rt-when: ответ владельцу о состоянии работы -->
+
 - **The word about a stop the guard reads from the owner, not from the executor.** Otherwise the
   stop is declared by whoever finds it convenient, and the ban holds until the first inconvenience.
 - **The phrase "waiting for your word" is a stop declared by the executor, and the guard refuses it
