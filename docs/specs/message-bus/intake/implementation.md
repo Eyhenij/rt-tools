@@ -62,7 +62,7 @@ or the code holds what the spec is silent about.
 - **A taken name refuses the issuing whole.** — `libs/message-bus-api/trees/feature/src/lib/invite-issue.ts:issueInvite`
 - **The code goes away to whoever called the issuing, and nowhere else.** — `libs/message-bus-api/trees/feature/src/lib/invites-read.controller.ts:issue`
 - **A state is at an incident analysis and at a proposal, and a digest of a month has none.** — `prisma/schema.prisma:Postmortem`
-- **There are four states, and there are no others.** — `libs/message-bus-common/src/lib/cargo-state.ts:ECargoState`
+- **There are five states, and there are no others.** — `libs/message-bus-common/src/lib/cargo-state.ts:ECargoState`
 - **The state comes as an enumeration, not as a string at the place of the use.** — `libs/message-bus-common/src/lib/cargo-state.ts:cargoStateOf`
 - **A record that arrived stands in "new".** — `prisma/schema.prisma:CargoState`
 - **The records that arrived before the creating of the field are read as new.** — `prisma/migrations/20260820103518_cargo_record_state/migration.sql:CargoState`

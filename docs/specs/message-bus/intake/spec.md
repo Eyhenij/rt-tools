@@ -235,9 +235,11 @@ was taken in.
 - **A state is at an incident analysis and at a proposal, and a digest of a month has none.** The digest
   answers the question "how are things now", and there is nothing to sort out in it: a state on it would
   read as a statement about work that does not happen.
-- **There are four states, and there are no others.** The ready one and the released one are set apart
+- **There are five states, and there are no others.** The ready one and the released one are set apart
   not for the sake of order: between the fix and the release stands the edition of the package, and the
-  consumer gets the fix only after the layout at their own place.
+  consumer gets the fix only after the layout at their own place. The fifth is the quarantine, and it
+  stands outside the order of the steps: a record goes into it from "new" and comes back only there.
+  The subdomain about it is next door.
 - **The state comes as an enumeration, not as a string at the place of the use.** A string written in
   the request, in the markup and in a comparison is neither found over the tree nor edited at once.
 - **A record that arrived stands in "new".** The default is declared by the storage: a record without a

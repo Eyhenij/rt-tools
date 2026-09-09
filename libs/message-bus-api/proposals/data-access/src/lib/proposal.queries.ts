@@ -57,6 +57,13 @@ export interface IProposalListRow {
     /** В какой версии искать фикс. Пусто у записи, которую никто не выпускал: столбец её не заполняет. */
     readonly releaseVersion: string | null;
     /**
+     * Чем запись спорна. Пусто у записи, которая в карантине не была.
+     *
+     * Едет строкой списка по тому же доводу, что и версия выпуска: свою запись отправитель видит
+     * именно списком, и без этого поля карантин читается им как состояние без ответа на «почему».
+     */
+    readonly quarantineNote: string | null;
+    /**
      * Закрыл ли запись издатель редакции, а не приславшее её дерево.
      *
      * Едет строкой списка, а не одной записью: своё предложение отправитель видит именно списком,
@@ -140,6 +147,7 @@ export interface IProposalStored {
     address: string;
     state: string;
     releaseVersion: string | null;
+    quarantineNote: string | null;
     closedByPublisher: boolean;
     arrivedAt: Date;
     record: { tree: ITreeChoice };
@@ -173,6 +181,7 @@ async function storedRows(
             address: true,
             state: true,
             releaseVersion: true,
+            quarantineNote: true,
             closedByPublisher: true,
             arrivedAt: true,
             record: { select: { tree: { select: { slug: true, name: true } } } },
@@ -194,6 +203,7 @@ export function listRowOf(row: IProposalStored): IProposalListRow {
         address: row.address,
         state: cargoStateOf(row.state),
         releaseVersion: row.releaseVersion,
+        quarantineNote: row.quarantineNote,
         closedByPublisher: row.closedByPublisher,
         arrivedAt: row.arrivedAt,
     };
@@ -287,6 +297,7 @@ export async function readProposal(prisma: PrismaService, id: string): Promise<I
         state: string;
         fixNote: string | null;
         releaseVersion: string | null;
+        quarantineNote: string | null;
         closedByPublisher: boolean;
         arrivedAt: Date;
         record: { month: string; tree: ITreeChoice };
@@ -300,6 +311,7 @@ export async function readProposal(prisma: PrismaService, id: string): Promise<I
             state: true,
             fixNote: true,
             releaseVersion: true,
+            quarantineNote: true,
             closedByPublisher: true,
             arrivedAt: true,
             record: { select: { month: true, tree: { select: { slug: true, name: true } } } },
@@ -387,7 +399,7 @@ export async function moveProposalStates(
     });
     const written: ICargoStateAsk[] = judged
         .filter((one: { ask: ICargoStateAsk; outcome: ICargoStateOutcome }): boolean =>
-            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion)
+            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion, one.ask.quarantineNote)
         )
         .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
 
@@ -445,7 +457,7 @@ export async function closeProposals(prisma: PrismaService, asked: readonly ICar
     });
     const written: ICargoStateAsk[] = judged
         .filter((one: { ask: ICargoStateAsk; outcome: ICargoCloseOutcome }): boolean =>
-            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion)
+            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion, one.ask.quarantineNote)
         )
         .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
 

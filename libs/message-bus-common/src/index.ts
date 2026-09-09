@@ -1,6 +1,7 @@
 export * from './lib/cargo';
 export * from './lib/cargo-fault';
 export * from './lib/cargo-fix-note';
+export * from './lib/cargo-quarantine-note';
 export * from './lib/cargo-kind';
 export * from './lib/cargo-page';
 export * from './lib/cargo-release-version';

@@ -53,6 +53,13 @@ export interface IPostmortemListRow {
     /** В какой версии искать фикс. Пусто у записи, которую никто не выпускал: столбец её не заполняет. */
     readonly releaseVersion: string | null;
     /**
+     * Чем запись спорна. Пусто у записи, которая в карантине не была.
+     *
+     * Едет строкой списка по тому же доводу, что и версия выпуска: свою запись отправитель видит
+     * именно списком, и без этого поля карантин читается им как состояние без ответа на «почему».
+     */
+    readonly quarantineNote: string | null;
+    /**
      * Закрыл ли запись издатель редакции, а не приславшее её дерево.
      *
      * Едет строкой списка, а не одной записью: свой разбор отправитель видит именно списком, и
@@ -133,6 +140,7 @@ export interface IPostmortemStored {
     file: string;
     state: string;
     releaseVersion: string | null;
+    quarantineNote: string | null;
     closedByPublisher: boolean;
     arrivedAt: Date;
     updatedAt: Date;
@@ -169,6 +177,7 @@ async function storedRows(
             file: true,
             state: true,
             releaseVersion: true,
+            quarantineNote: true,
             closedByPublisher: true,
             arrivedAt: true,
             updatedAt: true,
@@ -190,6 +199,7 @@ export function listRowOf(row: IPostmortemStored): IPostmortemListRow {
         file: row.file,
         state: cargoStateOf(row.state),
         releaseVersion: row.releaseVersion,
+        quarantineNote: row.quarantineNote,
         closedByPublisher: row.closedByPublisher,
         arrivedAt: row.arrivedAt,
         updatedAt: row.updatedAt,
@@ -284,6 +294,7 @@ export async function readPostmortem(prisma: PrismaService, id: string): Promise
             state: true,
             fixNote: true,
             releaseVersion: true,
+            quarantineNote: true,
             closedByPublisher: true,
             arrivedAt: true,
             updatedAt: true,
@@ -382,7 +393,7 @@ export async function movePostmortemStates(
     });
     const written: ICargoStateAsk[] = judged
         .filter((one: { ask: ICargoStateAsk; outcome: ICargoStateOutcome }): boolean =>
-            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion)
+            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion, one.ask.quarantineNote)
         )
         .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
 
@@ -436,7 +447,7 @@ export async function closePostmortems(prisma: PrismaService, asked: readonly IC
     });
     const written: ICargoStateAsk[] = judged
         .filter((one: { ask: ICargoStateAsk; outcome: ICargoCloseOutcome }): boolean =>
-            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion)
+            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion, one.ask.quarantineNote)
         )
         .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
 

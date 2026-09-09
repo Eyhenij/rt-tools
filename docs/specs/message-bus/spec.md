@@ -127,6 +127,7 @@ the limit is split further by the same technique.
 | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | [The intake of the cargo](intake/spec.md)                               | the form of the cargo, the tree and the token, the record of a month, what did not arrive                  |
 | [The edit of a state by a tree](cargo-state/spec.md)                    | the bundle of rows of the edit, the order of the transitions, a refused row and the journal                |
+| [The quarantine of a disputable record](cargo-quarantine/spec.md)       | the fifth state, the reason at the move and the return into «new»                                          |
 | [The closing of a record by a publisher](publisher-cargo-close/spec.md) | the second way to a state: a foreign record, the entry of a person, two steps                              |
 | [The reading of what was taken in](admin/spec.md)                       | the entry of a person, the sections of the admin application, the lists, a refusal visible to a person     |
 | [The version of the release in the lists](cargo-version/spec.md)        | the column of the version, the filter by it and the order by the numbers of the parts                      |

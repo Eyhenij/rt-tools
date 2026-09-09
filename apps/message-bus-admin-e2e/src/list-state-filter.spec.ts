@@ -14,12 +14,13 @@ import { columnTexts, openSection, pickState, pickTree, qa, queryOf, rowsOf, SEC
  */
 
 /** Слова состояний — те же, что человек читает в столбце и в отборе. */
-const STATE: Readonly<Record<'all' | 'new' | 'inWork' | 'fixed' | 'released', string>> = Object.freeze({
+const STATE: Readonly<Record<'all' | 'new' | 'inWork' | 'fixed' | 'released' | 'quarantined', string>> = Object.freeze({
     all: 'Все состояния',
     new: 'Новое',
     inWork: 'В работе',
     fixed: 'Готово',
     released: 'Выпущено',
+    quarantined: 'В карантине',
 });
 
 /** Сколько разборов стенда стоит в работе: столько же строк остаётся от отбора. */
@@ -55,6 +56,7 @@ test.describe('отбор по состоянию', () => {
             STATE.inWork,
             STATE.fixed,
             STATE.released,
+            STATE.quarantined,
         ]);
     });
 
