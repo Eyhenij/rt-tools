@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing any .md including specs, and also code comments, commit bodies and PR descriptions. Names the path check, the pairs of an edit and its document, and what nothing checks in this tree. Ready-made wording is in pattern doc-style-write.
 ---
-<!-- rt-kit v0.26.0 · rules/doc-style.md · 153bc1d69898 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · rules/doc-style.md · 2528f8240f60 · правится надстройкой, не здесь -->
 
 # Project texts — how it works here
 
@@ -229,10 +229,13 @@ written in.
 
 ## What of the law is not here
 
-None of the wording agreements is checked: one sentence per rule, plain words, no claims about
-the future, freshness of a number in the text. The last two the law leaves with the author
-explicitly: an open question is written in the same words as a promise, and a date and an id are
-numbers like the ones that get recomputed.
+Part of the wording agreements is checked, and part is not. The wording check sees the listed
+signs — officialese, a word not written here, a sentence over the limit — and it is called twice:
+by the guard on an edit of a `.md` of the tree, and by the send on a cargo record leaving for the
+intake. What is left with the author is one sentence per rule, no claims about the future and
+freshness of a number in the text. The last two the law leaves with the author explicitly: an
+open question is written in the same words as a promise, and a date and an id are numbers like
+the ones that get recomputed.
 
 No check reads the reply to the owner, and the misses in it are the same as in tree text: an
 invented fact served alongside a verified one, and an appraisal of someone else's decision

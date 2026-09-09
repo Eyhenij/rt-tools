@@ -179,6 +179,20 @@ brings them in a batch, and a remark made in the middle of work is put by the ag
 the `/feedback` command. Both write into one file of the day and in one form; neither goes to
 the network — the send carries them away.
 
+**The wording of a record is judged by the send, not only by the guard on an edit.** The guard
+stands on a `.md` of the tree, and a record leaves by a command — that is, past it. The send calls
+the wording check laid out in the tree on the text of every record: one with findings does not
+leave and is named by its file, its line and the first finding, while the rest of the batch goes.
+A refused record stays lying on the disk with the mark «отбито» and leaves after the fix. A tree
+that laid out no such check sends as before and says so by a line: silence about it would read as
+a check that found nothing.
+
+**The text of a record is written by the role `cargo-writer`, and it writes no files.** The
+record is read by a person who knows neither this task nor this tree, while it is written by a
+session thinking in the words of the rules layer. The role writes into the ready-made shape —
+its own shape gets the block refused by the quote — and hands the text back: putting it on the
+disk belongs to whoever answers for the send.
+
 Every record carries four lines: **place** — where the edit goes in the resource, **reason** —
 what went wrong without it, **closest** — the exact quote of the resource line this is closest
 to, and **what it closes** — which overrides of the tree are lifted when the edit arrives as a
