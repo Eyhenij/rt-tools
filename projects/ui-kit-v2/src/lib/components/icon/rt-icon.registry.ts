@@ -7,7 +7,7 @@ import { EMPTY, Observable, Subject, catchError, map, mergeMap, tap } from 'rxjs
 
 import { PlatformService } from '@rt-tools/core';
 
-import { RT_ICON_SPRITE_ID, RT_ICON_SYMBOL_ID_PREFIX } from './rt-icon.const';
+import { RT_ICON_MATERIAL_SYMBOL_ID_PREFIX, RT_ICON_SPRITE_ID, RT_ICON_SYMBOL_ID_PREFIX } from './rt-icon.const';
 import { IRtIcon } from './rt-icon.model';
 
 /**
@@ -20,25 +20,38 @@ export const RT_ICONS_BASE_URL: InjectionToken<string> = new InjectionToken<stri
     factory: (): string => '/icons',
 });
 
+/**
+ * Адрес материального набора значков. Отдельный от своего: два набора стоят рядом, и приложение
+ * кладёт их двумя папками.
+ */
+export const RT_ICONS_MATERIAL_BASE_URL: InjectionToken<string> = new InjectionToken<string>('RT_ICONS_MATERIAL_BASE_URL', {
+    providedIn: 'root',
+    factory: (): string => '/icons-material',
+});
+
 @Injectable({ providedIn: 'root' })
 export class RtIconRegistry {
     readonly #http: HttpClient = inject(HttpClient);
     readonly #doc: Document = inject(DOCUMENT);
     readonly #baseUrl: string = inject(RT_ICONS_BASE_URL);
+    readonly #materialBaseUrl: string = inject(RT_ICONS_MATERIAL_BASE_URL);
     readonly #platform: PlatformService = inject(PlatformService);
 
-    /** Имена, за которыми уже сходили: второй раз в сеть за ними не ходят. */
-    readonly #requested: Set<IRtIcon.Name> = new Set<IRtIcon.Name>();
+    /**
+     * Имена, за которыми уже сходили: второй раз в сеть за ними не ходят. Ключ несёт набор —
+     * одно имя приезжает двумя разными рисунками, и общий ключ отдал бы второму первый.
+     */
+    readonly #requested: Set<string> = new Set<string>();
 
     /** Имена, которые попросила разметка. Загрузку по ним ведёт подписка из конструктора. */
-    readonly #requestSource: Subject<IRtIcon.Name> = new Subject<IRtIcon.Name>();
+    readonly #requestSource: Subject<IRtIconRequest> = new Subject<IRtIconRequest>();
 
     constructor() {
         // Потоки складываются, а не вытесняют друг друга: странице нужны все спрошенные
         // значки, а не последний из них.
         this.#requestSource
             .pipe(
-                mergeMap((name: IRtIcon.Name): Observable<void> => this.#load(name)),
+                mergeMap((asked: IRtIconRequest): Observable<void> => this.#load(asked)),
                 takeUntilDestroyed()
             )
             .subscribe();
@@ -46,9 +59,13 @@ export class RtIconRegistry {
 
     /**
      * Имя symbol для `<use href="#X">`. Возвращает строку с ведущим `#`.
+     *
+     * Набор назван явно, а не выведен из страницы: одна и та же страница держит оба набора
+     * рядом — признак стоит и на корне, и на контейнере, — и вывод по странице дал бы обоим
+     * один ответ.
      */
-    public symbolHref(name: IRtIcon.Name): string {
-        return `#${RT_ICON_SYMBOL_ID_PREFIX}${name}`;
+    public symbolHref(name: IRtIcon.Name, preset: IRtIcon.Preset = 'base'): string {
+        return `#${this.#symbolId(name, preset)}`;
     }
 
     /**
@@ -58,24 +75,41 @@ export class RtIconRegistry {
      * браузер дорисовывает её, когда символ приезжает. Подписка живёт здесь и только здесь —
      * иначе каждая разметка гасила бы её сама, а таких мест у значка два.
      */
-    public request(name: IRtIcon.Name): void {
+    public request(name: IRtIcon.Name, preset: IRtIcon.Preset = 'base'): void {
+        const id: string = this.#symbolId(name, preset);
         // На сервере относительных запросов к статике нет вовсе: значок дорисуется после
         // гидрации, когда разметка попросит его снова уже в браузере.
-        if (!this.#platform.isPlatformBrowser || this.#requested.has(name)) {
+        if (!this.#platform.isPlatformBrowser || this.#requested.has(id)) {
             return;
         }
-        this.#requested.add(name);
+        this.#requested.add(id);
         // Символ уже лежит в спрайте страницы: его положила соседняя история витрины или
         // сама страница до старта приложения. Запроса не уходит вовсе.
-        if (this.#doc.getElementById(`${RT_ICON_SYMBOL_ID_PREFIX}${name}`)) {
+        if (this.#doc.getElementById(id)) {
             return;
         }
-        this.#requestSource.next(name);
+        this.#requestSource.next({ name, preset });
     }
 
-    #load(name: IRtIcon.Name): Observable<void> {
-        return this.#http.get(`${this.#baseUrl}/${name}.svg`, { responseType: 'text' }).pipe(
-            tap((raw: string): void => this.#mountSymbol(name, raw)),
+    #load(asked: IRtIconRequest): Observable<void> {
+        const base: string = asked.preset === 'material' ? this.#materialBaseUrl : this.#baseUrl;
+
+        return this.#http.get(`${base}/${asked.name}.svg`, { responseType: 'text' }).pipe(
+            tap((raw: string): void => this.#mountSymbol(asked, raw)),
+            map((): void => undefined),
+            // Материальный рисунок, который не приехал, закрывается своим. Материальный набор —
+            // слой переопределений: имени, которого в нём нет, кит и так рисует свой рисунок, и
+            // не приехавший файл обязан вести себя так же. Иначе страница, объявившая набор, но
+            // не опубликовавшая его папку, показывает пустое место там, где обещан значок, —
+            // разметка при этом верна, и промах виден только глазами.
+            catchError((): Observable<void> => (asked.preset === 'material' ? this.#loadOwnInto(asked) : EMPTY))
+        );
+    }
+
+    /** Свой рисунок под именем символа материального набора: подмена ссылки разметке не нужна. */
+    #loadOwnInto(asked: IRtIconRequest): Observable<void> {
+        return this.#http.get(`${this.#baseUrl}/${asked.name}.svg`, { responseType: 'text' }).pipe(
+            tap((raw: string): void => this.#mountSymbol(asked, raw)),
             map((): void => undefined),
             // Отказ одного имени гасит только его значок: иначе один промах в наборе ронял бы
             // всю страницу, а соседние значки уже приехали.
@@ -83,9 +117,14 @@ export class RtIconRegistry {
         );
     }
 
-    #mountSymbol(name: IRtIcon.Name, raw: string): void {
+    #symbolId(name: IRtIcon.Name, preset: IRtIcon.Preset): string {
+        const prefix: string = preset === 'material' ? RT_ICON_MATERIAL_SYMBOL_ID_PREFIX : RT_ICON_SYMBOL_ID_PREFIX;
+        return `${prefix}${name}`;
+    }
+
+    #mountSymbol(asked: IRtIconRequest, raw: string): void {
         const symbol: SVGSymbolElement = this.#doc.createElementNS('http://www.w3.org/2000/svg', 'symbol');
-        symbol.id = `${RT_ICON_SYMBOL_ID_PREFIX}${name}`;
+        symbol.id = this.#symbolId(asked.name, asked.preset);
         symbol.setAttribute('viewBox', this.#viewBox(raw));
         symbol.innerHTML = this.#inner(raw);
         this.#sprite().appendChild(symbol);
@@ -118,4 +157,10 @@ export class RtIconRegistry {
         this.#doc.body.insertBefore(sprite, this.#doc.body.firstChild);
         return sprite;
     }
+}
+
+/** Что просит разметка: имя значка и набор, из которого берётся рисунок. */
+interface IRtIconRequest {
+    readonly name: IRtIcon.Name;
+    readonly preset: IRtIcon.Preset;
 }

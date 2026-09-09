@@ -1,4 +1,4 @@
-// rt-kit v0.26.0 · checks/board-epics.github.mjs · 1af240f715e7 · правится надстройкой, не здесь
+// rt-kit v0.26.0 · checks/board-epics.github.mjs · c67d1c33deb1 · правится надстройкой, не здесь
 /**
  * The link between a task and an epic. Lives in a file of its own: the work queue audit stands at
  * the length limit even without it, and these two checks are read separately.
@@ -6,6 +6,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { declaredEpicOf } from './board-epic-link.mjs';
 import { TASK_KEY } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
@@ -43,21 +44,6 @@ function planRows(plan) {
         rows.push(line);
     }
     return rows.join('\n');
-}
-
-/**
- * The epic a task body declares itself under — or `undefined` where nothing is declared. With a
- * number given, it answers whether that very epic is declared.
- *
- * Belonging is declared by a word about the task standing right before the word about the epic —
- * the very shape the refusal dictates. Read by a bare mention of the number, every task that
- * explains something about an epic got a false line: the number stands there in the reasoning, in
- * a quoted refusal, in the list of what the work does not do. Both sides of the link read this one
- * declaration: read differently, one side would demand what the other does not see.
- */
-function declaredEpicOf(body, number = null) {
-    const named = body.match(new RegExp(`задач[аи]\\s+эпика?\\s+(?:#|${TASK_KEY}-)(\\d+)`, 'i'))?.[1];
-    return number === null ? named : named !== undefined && Number(named) === number;
 }
 
 /**

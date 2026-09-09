@@ -1,4 +1,4 @@
-<!-- rt-kit v0.26.0 · laws/delivery.md · 1d4c28225f2e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · laws/delivery.md · f66c034b61bf · правится надстройкой, не здесь -->
 # Law on delivery
 
 How a change reaches the running application. The law covers both the history of changes and what
@@ -10,6 +10,27 @@ application stops responding, and the reason is found from the history.
   did not reach the queue is seen by no one, and no work was planned behind it.
 - **A change reaches the main branch only through a separate branch.** A direct write to main takes
   away both the discussion and the chance to roll the change back in one move.
+- **A change belongs to an epic, and the epic is the unit of delivery.** One task changes the
+  application no less than a series of them, and merged on its own it reaches the main branch as
+  half of a thought: the rest of the series arrives later, or never, and the main branch holds a
+  state nobody planned. An epic names what the whole is, so that the main branch takes it whole or
+  does not take it. Work outside an epic exists only by the owner's word about that work.
+- **An epic has a branch of its own, and it is taken from the main branch.** Without it the epic
+  lives as a plan alone, and a plan is not merged: its tasks stand on the main branch apart from one
+  another, half a finished epic is already rolled out while the rest is being written, and a
+  rollback goes task by task.
+- **The branch of a task is taken from the branch of its epic, and the PR of the task goes there.**
+  Taken from the main branch, a task branch carries into the main branch what the epic has not
+  finished; opened into the main branch, its PR makes the epic branch a copy nobody merges.
+- **The PR of an epic into the main branch opens after the folders of all its tasks are taken
+  apart.** What lies in them explains the decisions of one piece of work and dies with it: what is
+  worth keeping leaves for the description of the past by that same moment. An epic branch that
+  reaches the main branch with those folders in it carries into the whole tree what one branch
+  needed.
+- **The main branch is merged into the branch of the epic, and the branch of the epic into the
+  branches of its tasks.** An epic outlives one task, and by its end its branch has fallen behind
+  everything the neighbours merged; a task branch that took the epic branch before that never sees
+  the lag. Both merges go while the work runs, not before the hand-over.
 - **The work queue holds tasks, not PRs about them.** A task and its PR share one number and one
   fate, so a second card about the same work adds nothing — it doubles the queue and lies about its
   length. The queue is read to see what is done and what remains; a PR answers a different question
@@ -36,7 +57,8 @@ application stops responding, and the reason is found from the history.
   the more surely, the closer the work is by subject. It is not the changes that diverge but the
   lines both wrote to. The cost does not vanish but moves: the one who branches pays it once,
   instead of the one who merges paying it as many times as there are open PRs. The first work of a
-  series branches from main, and so does any work not connected to the previous one.
+  series branches from the branch of its epic, and so does any work not connected to the previous
+  one.
 - **A series of branches is handed over bottom up, and the order is named to the owner.** The PR of
   each stands on the previous one, not on main, so one merged out of order drags along everything
   beneath it. The order is known to the one who branched and invisible to the one who merges:

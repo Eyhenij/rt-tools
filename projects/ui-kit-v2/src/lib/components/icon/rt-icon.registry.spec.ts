@@ -5,7 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { PlatformService } from '@rt-tools/core';
 
 import { provideRtKitTesting } from '../../../testing/rt-kit-testing';
-import { RT_ICON_SPRITE_ID, RT_ICON_SYMBOL_ID_PREFIX } from './rt-icon.const';
+import { RT_ICON_MATERIAL_SYMBOL_ID_PREFIX, RT_ICON_SPRITE_ID, RT_ICON_SYMBOL_ID_PREFIX } from './rt-icon.const';
 import { IRtIcon } from './rt-icon.model';
 import { RtIconRegistry } from './rt-icon.registry';
 
@@ -79,6 +79,26 @@ describe('RtIconRegistry', (): void => {
         serve(harness, 'spinner');
 
         expect(symbolsInSprite()).toEqual([`${RT_ICON_SYMBOL_ID_PREFIX}check`, `${RT_ICON_SYMBOL_ID_PREFIX}spinner`]);
+    });
+
+    it('SC-UKV-130 — не приехавший материальный рисунок закрывается своим', (): void => {
+        const harness: IHarness = setup();
+
+        harness.registry.request('close', 'material');
+        harness.http.expectOne('/icons-material/close.svg').flush('нет такого файла', { status: 404, statusText: 'Not Found' });
+        harness.http.expectOne('/icons/close.svg').flush(SVG);
+
+        expect(symbolsInSprite()).toEqual([`${RT_ICON_MATERIAL_SYMBOL_ID_PREFIX}close`]);
+    });
+
+    it('SC-UKV-60 — отказ своего имени вторым запросом не закрывается', (): void => {
+        const harness: IHarness = setup();
+
+        harness.registry.request('close');
+        harness.http.expectOne('/icons/close.svg').flush('нет такого файла', { status: 404, statusText: 'Not Found' });
+
+        harness.http.verify();
+        expect(symbolsInSprite()).toEqual([]);
     });
 
     it('SC-UKV-62 — смена имени тянет новое, а прежний символ остаётся', (): void => {

@@ -65,6 +65,7 @@ silent about.
 - **A spec declares the laws it applies, and the link is checked both ways.** — `tools/check-specs.mjs:checkSpecLaws` — the line `**Законы:**` in `spec.md` is matched against the laws named in the spec text.
 
 - **A check nailed to a resource name breaks when the resource is split, and this has to be known before the edit.** — **Not checked.** The resource names stand in `tools/check-states.mjs`, `tools/check-state-next.mjs` and in the suite probes under `projects/agent-kit/tests/`; a machine has nothing to tell a mention nailed to a name from a lawful one — it is found by a search over the whole tree before the split
+- **The spec speaking of a resource is found by a command, not by walking the subdomains.** — `tools/specs-for.mjs:main` — the bindings of every companion under `docs/specs/`; the uncovered are counted by the directories of the key `portableDirs`
 
 - **The first column of the companion is the article text copied, not retold.** — **Not checked.** `tools/check-specs.mjs` looks for the article by its text and turns red on one not found; a line standing next to the right article and describing something else is indistinguishable to the check from a right one
 
