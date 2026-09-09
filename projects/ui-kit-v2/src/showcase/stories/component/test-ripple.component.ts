@@ -21,13 +21,7 @@ export interface IRtRippleCell {
  */
 @Component({
     selector: 'app-ripple',
-    template: `
-        <app-story-row caption="Волна нажатия: обычная кнопка и кнопка с отключённой волной" [items]="cells" [itemLabel]="labelOf">
-            <ng-template let-cell>
-                <button #host rtButton rtRipple aria-label="Кнопка витрины" [label]="cell.label" [rippleDisabled]="cell.off"></button>
-            </ng-template>
-        </app-story-row>
-    `,
+    templateUrl: './test-ripple.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [RtButtonDirective, RtRippleDirective, StoryRowComponent],
