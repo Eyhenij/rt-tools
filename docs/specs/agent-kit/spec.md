@@ -78,6 +78,7 @@ subdomains are the ones the rule groups had already drawn.
 | [The boundary of the package](package-boundary/spec.md)                  | what is carried to a consumer and what stays with the package's own tree, the sign and check     |
 | [The cost of context](context-cost/spec.md)                              | what the weight of the input, of a rule and of the layer is counted by; why on the spot          |
 | [The publish checks](publish-checks/spec.md)                             | imports from neighbours against the published version of the neighbour, the lock after publish   |
+| [The entry into the specs by a resource name](specs-entry/spec.md)       | by the name of a resource the spec about it is found; the resources no spec speaks of            |
 | [The judgement of a proposal against the spec](proposal-verdict/spec.md) | the comparison of a proposal with the spec, the three outcomes and the trace of the comparison   |
 
 ## What is out of scope
