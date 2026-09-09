@@ -55,18 +55,25 @@ report "SC-AK-971 — пустое тело не даёт эпика" "$(GE_BODY
 #
 # Гарду больше неоткуда взять эпик: очередь не хранит ни веток, ни родства карточек. Второй заход
 # за телом задачи стоил бы лишнего вызова и разошёлся бы с первым.
+# Двойник отвечает про тот номер, о котором спросили. Прежде он всегда говорил про сорок второй, и
+# гард, спрошенный о задаче ветки, читал ответ как «такой задачи нет»: условия поставки не сходились
+# ещё до эпика, и сценарии эпика краснели чужой причиной.
 cat > "$GE_TREE/gh" <<'STUB'
 #!/usr/bin/env bash
 all="$*"
+num="$(printf '%s' "$all" | sed -n 's/.*issue view \([0-9][0-9]*\).*/\1/p')"
+[ -z "$num" ] && num="$(printf '%s' "$all" | sed -n 's/.*[^0-9]\([0-9][0-9]*\)[^0-9]*$/\1/p')"
+[ -z "$num" ] && num=42
 case "$all" in
     *"issue view"*)
-        printf '%s' '{"number":42,"title":"[RT-42] Что-то не так","state":"OPEN","assignees":[{"login":"bot"}],"labels":[],"body":'
+        printf '%s' "{\"number\":$num,\"title\":\"[RT-$num] Что-то не так\",\"state\":\"OPEN\",\"assignees\":[{\"login\":\"bot\"}],\"labels\":[],\"body\":"
         printf '%s' "$GE_ISSUE_BODY"
         printf '%s\n' '}'
         ;;
     *'node(id:'*)
         printf '%s' '{"data":{"node":{"items":{"pageInfo":{"hasNextPage":false,"endCursor":null},'
-        printf '%s\n' '"nodes":[{"id":"IT_1","status":{"name":"Backlog"},"content":{"__typename":"Issue","number":42}}]}}}}'
+        printf '%s' '"nodes":[{"id":"IT_1","status":{"name":"In progress"},"content":{"__typename":"Issue","number":42}},'
+        printf '%s\n' "{\"id\":\"IT_2\",\"status\":{\"name\":\"In progress\"},\"content\":{\"__typename\":\"Issue\",\"number\":${GE_BOARD_NUMBER:-42}}}]}}}}"
         ;;
     *) printf '{"data":{}}\n' ;;
 esac
@@ -105,20 +112,24 @@ git -C "$GE_REPO" update-ref refs/remotes/origin/RT-1921-work-by-epics "$(git -C
 ge_decision() {
     jq -n --arg c "git checkout -b RT-1925-guard-judges-epic-base $2" --arg d "$GE_REPO" \
         '{session_id:"tests",tool_name:"Bash",tool_input:{command:$c},cwd:$d}' \
-        | ( cd "$GE_REPO" && GE_TASK_STATE="$1" GH_BIN="$GE_TREE/gh" RT_GH_RETRY_MS=1 \
-            "$HOOKS/git-guard-delivery.sh" 2>/dev/null )
+        | ( cd "$GE_REPO" && GE_TASK_STATE="$1" GH_BIN="$GE_TREE/gh" GE_BOARD_NUMBER=1925 \
+            RT_GH_RETRY_MS=1 "$HOOKS/git-guard-delivery.sh" 2>/dev/null )
 }
 
 # Три сценария ниже ждут, что гард промолчит. Не дождавшись, они называют его первую строку, а не
 # слово «отбито»: гейт пуша показывает только хвост вывода, и без этой строки разбор начинался с
 # догадок о том, на что гард отбил на самом деле.
 ge_silent() {
-    local out="$1"
+    local out="$1" reason
     if [ -z "$out" ]; then
         printf 'прошло'
-    else
-        printf '%s' "$out" | head -c 160 | tr '\n' ' '
+        return 0
     fi
+    # Гард отвечает решением в JSON. Из него берётся сам довод: обёртка занимает место, а нужен
+    # перечень несошедшихся условий — он в конце, за общей строкой отказа.
+    reason="$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecisionReason // empty' 2>/dev/null)"
+    [ -z "$reason" ] && reason="$out"
+    printf '%s' "$reason" | tr '\n' ' ' | head -c 600
 }
 
 GE_WITH_EPIC='{"exists":true,"open":true,"onBoard":true,"assigned":true,"numbered":true,"epic":"1921"}'
@@ -149,8 +160,8 @@ git -C "$GE_REPO" update-ref refs/remotes/origin/RT-1921-work-by-epics "$(git -C
 ge_pull() {
     jq -n --arg c "$2" --arg d "$GE_REPO" \
         '{session_id:"tests",tool_name:"Bash",tool_input:{command:$c},cwd:$d}' \
-        | ( cd "$GE_REPO" && GE_TASK_STATE="$1" GH_BIN="$GE_TREE/gh" RT_GH_RETRY_MS=1 \
-            "$HOOKS/git-guard-delivery.sh" 2>/dev/null )
+        | ( cd "$GE_REPO" && GE_TASK_STATE="$1" GH_BIN="$GE_TREE/gh" GE_BOARD_NUMBER=1925 \
+            RT_GH_RETRY_MS=1 "$HOOKS/git-guard-delivery.sh" 2>/dev/null )
 }
 
 GE_PR_MAIN="gh pr create --base main --title '[RT-1925] Что-то' --body 'тело
