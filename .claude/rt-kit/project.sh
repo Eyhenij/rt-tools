@@ -87,6 +87,7 @@ RT_PULL_BODY_SECTION='^##[[:space:]]+Оставшийся шаг[[:space:]]*$'
 # One column is judged. «🆕 New», where the board rule puts a task rather than the creating command,
 # stays covered by nothing: the guard matches the whole name and knows no second one.
 RT_BOARD_BACKLOG='📋 Backlog'
+RT_BOARD_EPIC_LABEL='epic'
 
 # What the records about finished work that outstayed their retention are removed by. The work
 # guard does not judge this command: the records age by the calendar, and the retention step turns

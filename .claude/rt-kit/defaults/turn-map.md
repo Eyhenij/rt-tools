@@ -1,4 +1,4 @@
-<!-- rt-kit v0.26.0 · defaults/turn-map.md · 8b84ca5102cf · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · defaults/turn-map.md · 891187ca0803 · правится надстройкой, не здесь -->
 # Turn map
 
 This is not the rule but its short digest: the rule explains, the map names. The full text is
@@ -11,8 +11,9 @@ mandatory action is done, the work stays in the same state.
 ## States and mandatory actions
 
 - `просьба-не-разобрана` — explore the tree, then ask; leads `task-flow-start`
+- `эпик-заведён` — take the epic branch from the main branch; leads `task-flow-start`
 - `разбор-закрыт` — the product agreement or the reason there is none; leads `task-flow-start`
-- `договорённость-записана` — create the task, the branch and the folder; leads `task-flow-start`
+- `договорённость-записана` — create the task, the branch from the epic branch, and the folder; leads `task-flow-start`
 - `задача-взята` — write the plan; leads `task-flow-start`
 - `замысел-записан` — do the first stage; leads `task-flow-start`
 - `этап-идёт` — finish the stage and mark it in the progress; leads `task-flow-resume`
@@ -21,6 +22,7 @@ mandatory action is done, the work stays in the same state.
 - `разбор-кончился` — merge the agreement, bring the texts up to date, take the folder apart; leads `task-flow-close`
 - `папка-разобрана` — leave draft and ask for the merge; leads `task-flow-archive`
 - `влито` — the rules review of the work and the queue audit; leads `task-flow-archive`
+- `задачи-эпика-кончились` — open the PR of the epic into the main branch; leads `task-flow-close`
 
 No state has a mandatory action that sounds like "wait". The run, the owner's review and the
 merge go on without the executor and do not get faster from being watched.

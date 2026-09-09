@@ -83,3 +83,16 @@ The five refuted candidates cost about two hours.
 - **The derivative of the seeded time.** The divergence does not arrive for months and then turns
   the frame red on a day when not a line was added to the tree: the month changed on the screen
   while the reference stayed as it was.
+- **The markup the icon wait let through and the markup it did not.** An icon drawn by a directive
+  without a host of its own the wait let through, while the same icon in a component with a host it
+  did not. A probe that took a story with a host is green on an unfixed harness too.
+- **The chance a single measurement rides on.** The probe demands that the frame without the wait
+  diverge from the frame after it, and that frame sometimes manages to draw itself — by that same
+  chance once in fifty. A refusal on a single match reads as a broken check rather than as its
+  condition, because a repeated call of the same command passes green.
+- **How the commented-out call was caught.** Not by reading the code but by checking the reverse
+  side: the guarded call was removed from the harness, and the probe stayed green.
+- **What a stale showcase looks like from the outside.** The page hangs with the sign of preparing,
+  its hot update answers with a four hundred, and the count of the showing roots is zero. Five runs
+  of the window probe against such a showcase gave five refusals, three runs against a freshly
+  raised one gave three green. No edit in the tree caused either.

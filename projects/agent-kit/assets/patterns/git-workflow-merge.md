@@ -2,10 +2,10 @@
 name: git-workflow-merge
 kind: pattern
 rule: git-workflow
-description: Pattern of rule git-workflow. Load when the main branch is merged into a task branch and a conflict is resolved — the merge order, handling by file kind, checking what was appended against the work queue, re-reading the body of the open PR. Branch and commit — pattern git-workflow-commit.
+description: Pattern of rule git-workflow. Load when the base of a branch is merged into it and a conflict is resolved — the merge order, handling by file kind, checking what was appended against the work queue, re-reading the body of the open request. Branch and commit — pattern git-workflow-commit.
 ---
 
-# Merging the main branch into the task branch
+# Merging the base of a branch into it
 
 Pattern of the rule `git-workflow`. What must be true — the law
 `docs/constitution/delivery.md`.
@@ -18,7 +18,10 @@ out in that tree.
 ## When to use
 
 - The PR is marked conflicting, and it must be brought back to a mergeable state.
-- The main branch moved ahead, and the task branch must be caught up before the checks.
+- The base of the branch moved ahead, and the branch must be caught up before the checks: for a
+  task branch the base is the branch of its epic, for an epic branch the main one.
+- The main branch moved ahead, and the whole epic must be caught up: the main branch is merged
+  into the epic branch, and the epic branch into the branches of its unfinished tasks.
 - A commit is carried over by a cherry-pick.
 
 ## Order
@@ -27,7 +30,7 @@ out in that tree.
 git fetch origin
 GIT_AUTHOR_NAME="<бот>" GIT_AUTHOR_EMAIL="<номер>+<бот>@users.noreply.github.com" \
 GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<номер>+<бот>@users.noreply.github.com" \
-    git merge origin/main --no-edit
+    git merge origin/<база> --no-edit
 git diff --name-only --diff-filter=U     # what ended up in conflict
 ```
 
@@ -89,7 +92,7 @@ The task carries the same content — the branch's side is not carried over:
 git checkout --theirs docs/BACKLOG.md && git add docs/BACKLOG.md
 ```
 
-In a merge `--theirs` is the merged-in main branch and `--ours` is the task branch; in a rebase
+In a merge `--theirs` is the merged-in base and `--ours` is the branch standing on it; in a rebase
 the sides swap. The wrong side taken erases work silently.
 
 ## Checks after the resolution

@@ -9,6 +9,7 @@ statement: a removed statement is removed together with its line.
 - **The tail is matched by whole segments of the path.** — `projects/agent-kit/assets/checks/specs-for.mjs:segmentsOf` — the path is cut into segments before the match; scenario `SC-AK-942`
 - **The answer names the statements about that very file, not the whole spec.** — `projects/agent-kit/assets/checks/specs-for.mjs:entry` — grouped by spec; scenario `SC-AK-944`
 - **A name matched by nothing ends with a refusal, not with an empty answer.** — `projects/agent-kit/assets/checks/specs-for.mjs:entry` — code one and the name that was looked for; scenario `SC-AK-943`
+- **A gap in the specs is told from a name the package does not carry, and by the exit code.** — `projects/agent-kit/assets/checks/specs-for.mjs:absent` — the carried file gets its own code and the count of such resources; scenario `SC-AK-989`
 - **Called without a name, the command names the resources no spec speaks of.** — `projects/agent-kit/assets/checks/specs-for.mjs:uncovered` — scenario `SC-AK-945`
 - **The uncovered are counted by what the package carries, not by the files the bindings name.** — `projects/agent-kit/assets/checks/specs-for.mjs:carried` — the directories of the sources of portable texts named by the tree; scenario `SC-AK-946`
 

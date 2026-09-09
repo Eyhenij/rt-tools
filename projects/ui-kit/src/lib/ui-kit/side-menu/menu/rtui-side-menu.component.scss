@@ -266,7 +266,12 @@ $side-menu: (
             // Component-local elevation token for the slide-out sub-menu drawer.
             --rt-side-menu-sub-content-shadow: 14px 0 28px rgb(0 0 0 / 25%), 10px 0 10px rgb(0 0 0 / 22%);
 
-            position: relative;
+            // Расположение шторки оставлено за Material: `absolute` с растяжкой по верху и низу, а
+            // место под боковую шторку оно освобождает отступом на содержимом контейнера. Стоявший
+            // здесь `relative` возвращал шторку в поток, она вставала над содержимым, и контейнер
+            // получал вдвое большую высоту прокрутки. Прокручивать его хватало одного
+            // `scrollIntoView` на активном пункте подменю: панель уезжала вверх на ширину рельсы и
+            // обратно не возвращалась.
             width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
             min-width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
             height: 100%;

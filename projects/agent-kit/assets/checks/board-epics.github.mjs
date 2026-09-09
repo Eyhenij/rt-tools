@@ -5,14 +5,22 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { TASK_KEY } from './board.mjs';
+import { declaredEpicOf } from './board-epic-link.mjs';
+import { numberFromTitle, TASK_KEY } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 /**
  * The label of an epic card. Not named — the link is not judged: there would be nothing left to
  * tell an epic card from an ordinary task by.
  */
+// Чтение объявления переехало в свой модуль, а звали его отсюда: имя оставлено на прежнем месте,
+// чтобы соседям не пришлось знать о переезде.
+export { declaredEpicOf };
+
 const EPIC_LABEL = CONFIG.board?.epicLabel ?? '';
+
+/** The labels of the cargo of the trees: those records are not tasks and are not judged as such. */
+const CARGO_LABELS = CONFIG.board?.cargoLabels ?? [];
 
 /**
  * The rows of the epic makeup — those standing in the table with the task column.
@@ -42,21 +50,6 @@ export function planRows(plan) {
         rows.push(line);
     }
     return rows.join('\n');
-}
-
-/**
- * The epic a task body declares itself under — or `undefined` where nothing is declared. With a
- * number given, it answers whether that very epic is declared.
- *
- * Belonging is declared by a word about the task standing right before the word about the epic —
- * the very shape the refusal dictates. Read by a bare mention of the number, every task that
- * explains something about an epic got a false line: the number stands there in the reasoning, in
- * a quoted refusal, in the list of what the work does not do. Both sides of the link read this one
- * declaration: read differently, one side would demand what the other does not see.
- */
-export function declaredEpicOf(body, number = null) {
-    const named = body.match(new RegExp(`задач[аи]\\s+эпика?\\s+(?:#|${TASK_KEY}-)(\\d+)`, 'i'))?.[1];
-    return number === null ? named : named !== undefined && Number(named) === number;
 }
 
 /**
@@ -168,4 +161,141 @@ export function checkEpicLinks(open, report) {
             report(`#${issue.number}: the body names the epic #${named}, and its plan does not carry the task — «take the next one» will not give it out`);
         }
     }
+
+    checkTasksOutsideEpics(open, epicNumbers, report);
 }
+
+/**
+ * The word by which a task declares itself as work outside an epic. It is written by the creating
+ * command from the word of the owner, and the audit reads exactly that shape: work outside an epic
+ * is lawful, and only the owner names it as such.
+ */
+const OUTSIDE_EPIC = /работа\s+вне\s+эпика/i;
+
+/**
+ * A task belonging to no epic and carrying no word of the owner about work outside one.
+ *
+ * The delivery guard refuses such a task at the creating command, and only there: a card made
+ * through the web goes past every guard, and one created before this order came in has neither
+ * line. By the queue it reads as ordinary work, and that nothing stands behind it shows nowhere —
+ * the audit is the only reader that comes for exactly this.
+ *
+ * The cargo of the trees is not judged: those records are not tasks at all — they have no title
+ * with a number, no executor and no place on the board, and never will.
+ */
+function checkTasksOutsideEpics(open, epicNumbers, report) {
+    for (const issue of open) {
+        if (epicNumbers.has(issue.number)) {
+            continue;
+        }
+        if ((issue.labels ?? []).some((label) => CARGO_LABELS.includes(label.name))) {
+            continue;
+        }
+        const body = String(issue.body ?? '');
+        if (declaredEpicOf(body) !== undefined || OUTSIDE_EPIC.test(body)) {
+            continue;
+        }
+        report(
+            `#${issue.number}: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»`
+        );
+    }
+}
+
+/**
+ * The base of an open request about a task of an epic.
+ *
+ * The delivery guard judges this at the opening, and only there: a request opened by a person from
+ * the hosting page goes past it, and one opened before this order came in carries the base it was
+ * opened with. In the list of requests the base is not shown at all — the reader sees the title and
+ * the branch, and a request going into the main branch past its epic looks like every other.
+ *
+ * The branch of the epic is recognised by its number in the name, not by a list of refs: the audit
+ * reads the queue and does not go to the tree, and a base carrying the number of the epic is its
+ * branch — a task and its epic never share a number.
+ */
+export function checkEpicPullBase(open, pulls, report) {
+    if (!EPIC_LABEL) {
+        return;
+    }
+
+    const epicOf = new Map();
+    for (const issue of open) {
+        const named = declaredEpicOf(String(issue.body ?? ''));
+        if (named !== undefined) {
+            epicOf.set(issue.number, Number(named));
+        }
+    }
+
+    for (const pull of pulls) {
+        const number = numberFromTitle(pull.title);
+        if (number === null || !epicOf.has(number)) {
+            continue;
+        }
+        const epic = epicOf.get(number);
+        const base = String(pull.baseRefName ?? '');
+        if (base.startsWith(`${TASK_KEY}-${epic}-`)) {
+            continue;
+        }
+        report(
+            `PR #${pull.number}: the task #${number} belongs to the epic #${epic}, and the base of the request is «${base}». A request past the epic takes the task out of it: the epic is handed in without it`
+        );
+    }
+}
+
+/**
+ * Two states of an epic that nothing sees.
+ *
+ * **An epic without a branch.** Its branch is taken before the first of its tasks, and one that was
+ * not taken leaves every task standing on the main branch: the epic is then merged piece by piece,
+ * and there is nothing left to hand in whole. The card says nothing about a branch, and the list of
+ * requests shows none while no request is open from it.
+ *
+ * **An epic whose tasks are over.** Its request into the main branch opens when the last folder is
+ * taken apart, and until it opens the work of the whole epic lies outside the main branch while
+ * looking finished: every task is closed, the board is empty, and only the epic card stays open.
+ *
+ * Both are read by the same two things: the open tasks of the epic and the open requests. The
+ * branch of the epic is recognised by its number in the name — the audit reads the queue and does
+ * not go to the tree.
+ */
+export function checkEpicState(open, pulls, report) {
+    if (!EPIC_LABEL) {
+        return;
+    }
+
+    const epics = open.filter((issue) => (issue.labels ?? []).some((label) => label.name === EPIC_LABEL));
+    if (epics.length === 0) {
+        return;
+    }
+
+    const claimed = new Map();
+    for (const issue of open) {
+        const named = declaredEpicOf(String(issue.body ?? ''));
+        if (named !== undefined) {
+            claimed.set(issue.number, Number(named));
+        }
+    }
+
+    for (const epic of epics) {
+        const prefix = `${TASK_KEY}-${epic.number}-`;
+        const fromEpic = pulls.filter((pull) => String(pull.headRefName ?? '').startsWith(prefix));
+        const intoEpic = pulls.filter((pull) => String(pull.baseRefName ?? '').startsWith(prefix));
+        const tasksLeft = [...claimed.entries()].filter(([, number]) => number === epic.number);
+
+        // A branch of the epic shows in a request either way: one from it, or one into it. Neither
+        // — and there is nothing in the queue to say the branch exists at all.
+        if (fromEpic.length === 0 && intoEpic.length === 0) {
+            report(
+                `#${epic.number}: the epic has no branch in the requests — neither one from it nor one into it. The branch of an epic is taken before its first task, and without it every task stands on the main branch`
+            );
+            continue;
+        }
+
+        if (tasksLeft.length === 0 && fromEpic.length === 0) {
+            report(
+                `#${epic.number}: the tasks of the epic are over, and no request from its branch is open. Until it opens, the work of the whole epic lies outside the main branch while looking finished`
+            );
+        }
+    }
+}
+

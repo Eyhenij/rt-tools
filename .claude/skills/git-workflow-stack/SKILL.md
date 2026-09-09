@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when pieces of work follow one another or more than two branches already stand on one base — chained branching from the previous one, the PR base, merging bottom-up, re-merging main on an actual conflict. One conflict — pattern git-workflow-merge.
 ---
-<!-- rt-kit v0.26.0 · patterns/git-workflow-stack.md · b710208b4234 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · patterns/git-workflow-stack.md · 961783e39b84 · правится надстройкой, не здесь -->
 
 # A stack of PRs from one base
 
@@ -23,25 +23,28 @@ out in that tree.
 - Several works were done in one session, and they lie in the tree unpublished.
 - It is decided in which order to hand the accumulated over to the owner.
 
-## A chain: branch from the previous one, not from main
+## A chain: branch from the previous one, not from the epic branch
 
 A stack from one base is what to avoid. Works that go one after another branch one after
 another:
 
 ```bash
-# the first work of the chain — from main, as usual
-git checkout -b <КЛЮЧ>-<номер>-<slug> origin/main
+# the first work of the chain — from the epic branch, as usual
+git checkout -b <КЛЮЧ>-<номер>-<slug> <ветка эпика>
 
-# each next one — from the previous branch, not from origin/main
+# each next one — from the previous branch, not from the epic branch
 git checkout -b <КЛЮЧ>-<следующий>-<slug> <КЛЮЧ>-<номер>-<slug>
 ```
+
+A chain lives inside one epic: every branch of it stands, directly or through its neighbours, on
+the epic branch, and the lowest request of the chain has that branch as its base.
 
 The previous edit then lies in the common ancestor, and two different changes of one file never
 have to be reconciled at all. The divergence surfaces at branching — at the one who has both
 edits as their own and at hand — not at the merge, at the owner, who has neither.
 
-From main branch the first work of the chain and any work that does not touch the previous one:
-a chain is about neighbouring works, not about all in a row.
+From the epic branch the first work of the chain and any work that does not touch the previous
+one: a chain is about neighbouring works, not about all in a row.
 
 ## A chain PR stands on the previous branch
 
@@ -49,15 +52,16 @@ a chain is about neighbouring works, not about all in a row.
 gh pr create --base <предыдущая ветка> --title '[<КЛЮЧ>-<номер>] <что сделано>' --body-file <файл>
 ```
 
-Main is not set as the base: the review then shows the own edit mixed with all under it. The
-host retargets a merged lower one itself — its heir PR's base becomes main.
+Neither the main branch nor the epic branch is set as the base here: the review then shows the own
+edit mixed with all under it. The host retargets a merged lower one itself — the base of its heir
+becomes the base of the merged one, that is, the epic branch.
 
 The merge order stands in every PR body as the line "stands on #<number>, merge after it": the
 owner merges by the list, and branch kinship is invisible in the list.
 
 **The tree's pipeline is checked for whether it listens to a PR with such a base.** The host
 sends the PR event with a base filter, and a tree that left only the main branch in the filter
-gives the whole chain no runs at all: the PR stands green-and-empty, and there is nothing to
+gives neither the chain nor a single task of an epic any run at all: the PR stands green-and-empty, and there is nothing to
 bring the event back — neither a new commit nor reclosing the PR changes the base. This is asked
 before the chain is created: from the pipeline settings, not from the PR page, where a missing
 run looks the same as waiting for one.

@@ -99,7 +99,7 @@ command is rejected whole — the branch does not exist in it yet:
 
 ```bash
 ✗ git checkout -b <КЛЮЧ>-85-guest-token && git commit -m 'feat(admin): …'
-✓ git checkout -b <КЛЮЧ>-85-guest-token
+✓ git checkout -b <КЛЮЧ>-85-guest-token <ветка эпика>
 ✓ git commit -F -
 ```
 
