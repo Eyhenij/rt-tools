@@ -128,7 +128,7 @@ function whereOf(asked: ICargoPageAsked): IPostmortemWhere {
 }
 
 /** Разбор, каким его отдаёт хранилище строке списка: значения колонок, ещё не переведённые. */
-interface IPostmortemStored {
+export interface IPostmortemStored {
     id: string;
     file: string;
     state: string;
@@ -183,7 +183,7 @@ async function storedRows(
  * Состояние приезжает значением колонки и переводится в набор общей либы: набор объявлен дважды —
  * хранилищем и общей либой, — и читающая сторона знает только второй.
  */
-function listRowOf(row: IPostmortemStored): IPostmortemListRow {
+export function listRowOf(row: IPostmortemStored): IPostmortemListRow {
     return {
         id: row.id,
         tree: row.tree,
