@@ -56,6 +56,12 @@ through the executor.
   refusal itself dictates, and both sides of the link read that one shape: read differently, one
   side would demand what the other does not see.
 
+- **The base of an open request about a task of an epic is judged by the audit.** The guard judges
+  it at the opening, and only there: a request opened by a person from the hosting page goes past
+  it. In the list of requests the base is not shown at all, and one going into the main branch past
+  its epic looks like every other.
+- **The branch of an epic is recognised by its number in the name of the base.** The audit reads the
+  queue and does not go to the tree; a task and its epic never share a number.
 - **A task naming neither an epic nor the word of the owner is a divergence.** The guard refuses
   such a task at the creating command, and only there: a card made through the web goes past every
   guard, and one created before this order came in has neither line. By the queue it reads as

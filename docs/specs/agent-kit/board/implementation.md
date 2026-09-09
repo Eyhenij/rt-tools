@@ -9,3 +9,5 @@ statement: a removed statement is removed together with its line.
 - **Belonging to an epic is declared by a word about the task, not by a mention of the number.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:declaredEpicOf` — both sides call it; scenario SC-AK-920
 - **A task naming neither an epic nor the word of the owner is a divergence.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkTasksOutsideEpics` — scenario SC-AK-945
 - **The cargo of the trees is not judged by this line.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:CARGO_LABELS`
+- **The base of an open request about a task of an epic is judged by the audit.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkEpicPullBase` — scenario SC-AK-946
+- **The branch of an epic is recognised by its number in the name of the base.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkEpicPullBase`

@@ -6,7 +6,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { declaredEpicOf } from './board-epic-link.mjs';
-import { TASK_KEY } from './board.mjs';
+import { numberFromTitle, TASK_KEY } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 /**
@@ -182,3 +182,45 @@ function checkTasksOutsideEpics(open, epicNumbers, report) {
         );
     }
 }
+
+/**
+ * The base of an open request about a task of an epic.
+ *
+ * The delivery guard judges this at the opening, and only there: a request opened by a person from
+ * the hosting page goes past it, and one opened before this order came in carries the base it was
+ * opened with. In the list of requests the base is not shown at all — the reader sees the title and
+ * the branch, and a request going into the main branch past its epic looks like every other.
+ *
+ * The branch of the epic is recognised by its number in the name, not by a list of refs: the audit
+ * reads the queue and does not go to the tree, and a base carrying the number of the epic is its
+ * branch — a task and its epic never share a number.
+ */
+export function checkEpicPullBase(open, pulls, report) {
+    if (!EPIC_LABEL) {
+        return;
+    }
+
+    const epicOf = new Map();
+    for (const issue of open) {
+        const named = declaredEpicOf(String(issue.body ?? ''));
+        if (named !== undefined) {
+            epicOf.set(issue.number, Number(named));
+        }
+    }
+
+    for (const pull of pulls) {
+        const number = numberFromTitle(pull.title);
+        if (number === null || !epicOf.has(number)) {
+            continue;
+        }
+        const epic = epicOf.get(number);
+        const base = String(pull.baseRefName ?? '');
+        if (base.startsWith(`${TASK_KEY}-${epic}-`)) {
+            continue;
+        }
+        report(
+            `PR #${pull.number}: the task #${number} belongs to the epic #${epic}, and the base of the request is «${base}». A request past the epic takes the task out of it: the epic is handed in without it`
+        );
+    }
+}
+

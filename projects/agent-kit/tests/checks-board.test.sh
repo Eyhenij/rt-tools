@@ -185,6 +185,25 @@ report "SC-AK-945 — карточка эпика этой строки не п�
 
 export STUB_ISSUES="$(epic_issues 'Задача эпика #700, замысел — docs/plans/epic.md')"
 
+# --- SC-AK-946 — основание заявки задачи эпика ------------------------------------------
+#
+# Гард судит это при открытии, и только там: заявка, открытая человеком со страницы хостинга,
+# проходит мимо него, а открытая до этого порядка несёт то основание, с каким открыта. В списке
+# заявок основание не показано вовсе.
+saved_pulls_epic="$STUB_PULLS"
+epic_pull() {
+    printf '[{"number":703,"title":"[RT-702] Задача","headRefName":"RT-702-probe","headRefOid":"%s","isDraft":true,"body":"Closes #702","baseRefName":"%s"}]' \
+        "$HEAD_SHA" "$1"
+}
+
+export STUB_PULLS="$(epic_pull main)"
+report "SC-AK-946 — заявка мимо ветки эпика названа" "$(board_says 'PR #703: the task #702 belongs to the epic #700')" 1
+
+export STUB_PULLS="$(epic_pull RT-700-work-by-epics)"
+report "SC-AK-946 — заявка в ветку эпика молчит" "$(board_says 'PR #703: the task #702 belongs to the epic #700')" 0
+
+export STUB_PULLS="$saved_pulls_epic"
+
 # Обратная сторона: тело эпик называет, а линия работ эпика этой задачи не знает.
 printf '%s\n' '# Замысел эпика' '' '| № | Задача |' '| - | ------ |' > "$BOARD_TREE/docs/plans/epic.md"
 report "SC-AK-751 — тело называет эпик, а в замысле задачи нет" \

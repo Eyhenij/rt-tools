@@ -98,3 +98,15 @@ When the same audit runs
 Then it gets no such line: an epic has no epic of its own
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+
+### SC-AK-946 — the base of an open request about a task of an epic
+
+Given an open request about a task whose body names an epic, and its base is the main branch
+When the work queue audit runs
+Then it names the request by a line of its own
+
+Given the base carries the number of the epic — that is, it is the branch of the epic
+When the same audit runs
+Then it stays silent
+
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
