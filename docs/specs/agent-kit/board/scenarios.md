@@ -82,3 +82,53 @@ Then a task with the token arrives with `viewer: machine`, without the token wit
 in both trees is `client`, because it is read without the token
 
 Covered: `projects/agent-kit/tests/checks-board-pull.test.sh`.
+
+### SC-AK-953 — a task naming neither an epic nor the word of the owner
+
+Given an open task whose body names no epic and carries no word of the owner about work outside one
+When the work queue audit runs
+Then it names the task by a line of its own and names both lines that fix it
+
+Given the body carries the word of the owner about work outside an epic
+When the same audit runs
+Then it stays silent: work outside an epic is lawful, and only the owner names it as such
+
+Given the card carries the label of an epic
+When the same audit runs
+Then it gets no such line: an epic has no epic of its own
+
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+
+### SC-AK-954 — the base of an open request about a task of an epic
+
+Given an open request about a task whose body names an epic, and its base is the main branch
+When the work queue audit runs
+Then it names the request by a line of its own
+
+Given the base carries the number of the epic — that is, it is the branch of the epic
+When the same audit runs
+Then it stays silent
+
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+
+### SC-AK-955 — an epic without a branch and an epic whose tasks are over
+
+Given a card with the label of an epic, and no open request either from its branch or into it
+When the work queue audit runs
+Then it names the epic by a line of its own: without a branch every task of it stands on the main
+branch
+
+Given a request into the branch of the epic is open
+When the same audit runs
+Then it stays silent about the branch
+
+Given no open task of the epic is left, and no request from its branch is open
+When the same audit runs
+Then it names the epic by a line of its own: the work of the whole epic lies outside the main branch
+while looking finished
+
+Given a request from the branch of the epic is open
+When the same audit runs
+Then it stays silent
+
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.

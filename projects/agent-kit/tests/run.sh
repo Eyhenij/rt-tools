@@ -17,8 +17,12 @@ command -v jq >/dev/null 2>&1 || {
 unset RT_HOOK_INPUT RT_HOOK_TOOL RT_HOOK_CMD RT_HOOK_FILE RT_HOOK_CWD RT_HOOK_PARSED
 
 failed=0
+red=""
 for suite in *.test.sh; do
-    bash "$suite" || failed=$((failed + 1))
+    bash "$suite" || {
+        failed=$((failed + 1))
+        red="$red $suite"
+    }
     echo
 done
 
@@ -27,5 +31,7 @@ if [ "$failed" -eq 0 ]; then
     exit 0
 fi
 
-echo "НАБОРОВ С ПРОВАЛАМИ: $failed"
+# Имена красных печатаются последней строкой. Гейт пуша показывает хвост вывода, и без этой
+# строки отказ называл число наборов, но не их: искать красный приходилось прогоном заново.
+echo "НАБОРОВ С ПРОВАЛАМИ: $failed —$red"
 exit 1
