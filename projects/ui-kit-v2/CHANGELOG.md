@@ -1,3 +1,5 @@
+# [0.10.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.9.0...rt-ui-kit-v2@0.10.0) (2026-09-09)
+
 # [0.9.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.8.1...rt-ui-kit-v2@0.9.0) (2026-09-09)
 
 ### Bug Fixes
