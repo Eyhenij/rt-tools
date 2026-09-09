@@ -2,7 +2,7 @@
 name: agent-kit
 description: The portable rules layer of the agent — laws, rules, hooks and checks shipped by the package and adjusted by the tree through overrides. Load when a file with the rt-kit header is edited, the package is upgraded or the layout audit refuses. The shape of a new skill — write-a-skill.
 ---
-<!-- rt-kit v0.26.0 · skills/agent-kit.md · 3278b52ebf23 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · skills/agent-kit.md · 8d7d9924e697 · правится надстройкой, не здесь -->
 
 # The portable rules layer
 
@@ -313,24 +313,3 @@ work until the role has had its say. A tree it gets in the way of names it by th
 - **It differs from dropping by the `skip` key in that it removes nothing.** A drop does not put
   the role file at all: there is nobody left to call, and the guard next to it stays and keeps
   refusing. Here it is the other way round — the role is in place, the guard is silent.
-
-## Layout pitfalls
-
-- **The glossary is as much a laid-out resource as a rule.** The startup hook puts it into the
-  context in full, before the first reply, and so it looks like an ordinary tree document; it has
-  a header, but it reads as a service line. A new word goes into the glossary override, as a
-  section of its own.
-
-- **A file write by a shell command is checked on all paths named in its body.** The gate takes
-  the paths out of the command text and reads the document body in full if the command holds an
-  interpreter name; an import line of a laid-out module then demands a second rule, and one is
-  demanded at a time — two refusals in a row, and each loses the written body. The edit tool is
-  checked by its one path; a shell redirect is for what does not become a tree file.
-- **Your own thing standing next to the laid-out repeats its mechanics silently.** Parsing the
-  list of the known, the source roots and the debt snapshot is given by the checks config
-  module; a second such parser in your own check is seen by neither the layout audit nor the
-  duplicate check. Before starting your own, look at what the checks config module exports.
-- **A rule loaded by a tool may be shown not in full, and the cut is marked by nothing.** A long
-  file comes into the context cut at a line, and the cut falls on the tail — where the override
-  sections are appended at the end. The shown lines are compared with the file length by one
-  command; if they differ, the file is read to the end.
