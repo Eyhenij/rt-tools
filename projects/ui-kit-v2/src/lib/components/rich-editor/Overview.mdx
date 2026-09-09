@@ -23,9 +23,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Когда не применять
 
-- **Простой текст** — [`rt-textarea`](./?path=/docs/components-textarea-overview--docs): тулбар
+- **Простой текст** — [`rt-textarea`](./?path=/docs/atoms-forms-textarea-overview--docs): тулбар
   форматирования обещает разметку, которой в значении не будет.
-- **Только показать написанное** — [`rt-delta-view`](./?path=/docs/components-deltaview-overview--docs):
+- **Только показать написанное** — [`rt-delta-view`](./?path=/docs/molecules-data-deltaview-overview--docs):
   та же модель без редактирования и без загрузки Quill.
 
 ## Оси
@@ -59,7 +59,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 **Режима чтения у редактора нет вовсе.** `[readonly]` на `rt-field` он принимает и игнорирует:
 его шаблон — одна поверхность Quill, подменять её плоским текстом нечем. Форма, которой нужен
-неизменяемый текст, показывает [`rt-delta-view`](./?path=/docs/components-deltaview-overview--docs),
+неизменяемый текст, показывает [`rt-delta-view`](./?path=/docs/molecules-data-deltaview-overview--docs),
 а не редактор.
 
 Наведение и фокус принадлежат поверхности Quill и приходят из его темы, а не из SCSS кита,
@@ -113,6 +113,6 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Рядом
 
-- [`rt-delta-view`](./?path=/docs/components-deltaview-overview--docs) — показ той же модели без редактирования.
-- [`rt-textarea`](./?path=/docs/components-textarea-overview--docs) — когда форматирование не нужно.
-- [`rt-message-composer`](./?path=/docs/components-messagecomposer--docs) — редактор в режиме переписки.
+- [`rt-delta-view`](./?path=/docs/molecules-data-deltaview-overview--docs) — показ той же модели без редактирования.
+- [`rt-textarea`](./?path=/docs/atoms-forms-textarea-overview--docs) — когда форматирование не нужно.
+- [`rt-message-composer`](./?path=/docs/organisms-chat-messagecomposer-overview--docs) — редактор в режиме переписки.

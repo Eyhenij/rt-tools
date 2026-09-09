@@ -5,10 +5,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 <Title>Popover — `[rtPopover]`</Title>
 
 Примитив плавающей панели поверх CDK Overlay. Привязывает `<ng-template>` к элементу, на котором
-висит. На нём стоят [`rt-select`](./?path=/docs/components-select-overview--docs),
-[`rt-multiselect`](./?path=/docs/components-multiselect-overview--docs),
-[`rt-autocomplete`](./?path=/docs/components-autocomplete-overview--docs) и пояснение в
-[`rt-field`](./?path=/docs/components-field-overview--docs).
+висит. На нём стоят [`rt-select`](./?path=/docs/molecules-forms-select-overview--docs),
+[`rt-multiselect`](./?path=/docs/molecules-forms-multiselect-overview--docs),
+[`rt-autocomplete`](./?path=/docs/molecules-forms-autocomplete-overview--docs) и пояснение в
+[`rt-field`](./?path=/docs/molecules-forms-field-overview--docs).
 
 ```html
 <button rtButton label="Открыть" rtPopoverTrigger="click" rtPopoverWidth="trigger" [rtPopover]="tpl"></button>
@@ -24,10 +24,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Когда не применять
 
-- **Короткая строка-подсказка** — [`[rtTooltip]`](./?path=/docs/components-tooltip-overview--docs).
-- **Меню действий** — [`rt-menu`](./?path=/docs/components-menu-overview--docs): там уже есть
+- **Короткая строка-подсказка** — [`[rtTooltip]`](./?path=/docs/atoms-tooltip-overview--docs).
+- **Меню действий** — [`rt-menu`](./?path=/docs/molecules-navigation-menu-overview--docs): там уже есть
   и пункты, и подтверждение, и закрытие по выбору.
-- **Подтверждение действия** — [`[rtConfirm]`](./?path=/docs/components-confirmpopover-overview--docs).
+- **Подтверждение действия** — [`[rtConfirm]`](./?path=/docs/organisms-dialog-confirm-overview--docs).
 
 ## Оси
 
@@ -74,7 +74,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
   так это и сделано в списке и в меню.
 - `Escape` закрывает панель в любом режиме.
 - Фокус директива не переносит и не удерживает: панели, которой нужна ловушка фокуса, нужен
-  [`rt-dialog`](./?path=/docs/components-dialog-overview--docs), а не поповер.
+  [`rt-dialog`](./?path=/docs/organisms-dialog-dialog-overview--docs), а не поповер.
 
 ## Оформление
 
@@ -113,6 +113,6 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Рядом
 
-- [`[rtTooltip]`](./?path=/docs/components-tooltip-overview--docs) — та же механика для короткой строки.
-- [`rt-menu`](./?path=/docs/components-menu-overview--docs) — готовое меню действий.
-- [`[rtConfirm]`](./?path=/docs/components-confirmpopover-overview--docs) — панель подтверждения.
+- [`[rtTooltip]`](./?path=/docs/atoms-tooltip-overview--docs) — та же механика для короткой строки.
+- [`rt-menu`](./?path=/docs/molecules-navigation-menu-overview--docs) — готовое меню действий.
+- [`[rtConfirm]`](./?path=/docs/organisms-dialog-confirm-overview--docs) — панель подтверждения.

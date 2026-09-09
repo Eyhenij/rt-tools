@@ -6,7 +6,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 Шапка боковой панели: стрелка возврата, надзаголовок, заголовок, ряд бэйджей и место под
 действия. Ставится первым узлом внутри
-[`rt-aside`](./?path=/docs/components-aside-overview--docs).
+[`rt-aside`](./?path=/docs/organisms-aside-aside-overview--docs).
 
 ```html
 <rt-aside ariaLabel="Карточка тура">
@@ -24,9 +24,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Когда не применять
 
-- **Шапка модального окна** — [`rt-dialog-header`](./?path=/docs/components-dialogheader-overview--docs):
+- **Шапка модального окна** — [`rt-dialog-header`](./?path=/docs/organisms-dialog-dialogheader-overview--docs):
   там вместо стрелки возврата крестик, и бэйджей нет.
-- **Заголовок раздела внутри панели** — [`rt-aside-section`](./?path=/docs/components-asidesection-overview--docs).
+- **Заголовок раздела внутри панели** — [`rt-aside-section`](./?path=/docs/organisms-aside-asidesection-overview--docs).
 
 ## Оси
 
@@ -37,7 +37,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | загрузка  | загружено, загрузка                              | загружено |
 
 **Оси, которых не видно.** Вид бэйджа (палитра, форма, иконка) задаёт не шапка, а сам бэйдж —
-это те же входы, что у [`rt-tag`](./?path=/docs/components-tag-overview--docs), и показаны они
+это те же входы, что у [`rt-tag`](./?path=/docs/atoms-tag-overview--docs), и показаны они
 там. Действия справа приходят проекцией `[asideActions]`: их вид решает тот, кто их кладёт.
 
 **Шапка показана без вмещающей панели.** Она самостоятельный компонент; как она выглядит внутри
@@ -50,11 +50,11 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | обычное   | —              | заголовок текстом                                   |
 | загрузка  | вход `loading` | заголовок подменяется заглушкой, остальное на месте |
 
-Стрелка возврата живёт состояниями [`rt-icon-button`](./?path=/docs/components-iconbutton-overview--docs):
+Стрелка возврата живёт состояниями [`rt-icon-button`](./?path=/docs/atoms-buttons-iconbutton-overview--docs):
 наведение, нажатие, фокус с клавиши.
 
 Заглушка загрузки нарисована
-[`rt-skeleton-wrapper`](./?path=/docs/components-skeletonwrapper-overview--docs) — она держит
+[`rt-skeleton-wrapper`](./?path=/docs/molecules-feedback-skeletonwrapper-overview--docs) — она держит
 размер заголовка, поэтому шапка при загрузке не прыгает.
 
 ## Доступность
@@ -90,6 +90,6 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Рядом
 
-- [`rt-aside`](./?path=/docs/components-aside-overview--docs) — панель, в которую эта шапка ставится.
-- [`rt-tag`](./?path=/docs/components-tag-overview--docs) — чем нарисованы бэйджи.
-- [`rt-skeleton-wrapper`](./?path=/docs/components-skeletonwrapper-overview--docs) — чем нарисована заглушка загрузки.
+- [`rt-aside`](./?path=/docs/organisms-aside-aside-overview--docs) — панель, в которую эта шапка ставится.
+- [`rt-tag`](./?path=/docs/atoms-tag-overview--docs) — чем нарисованы бэйджи.
+- [`rt-skeleton-wrapper`](./?path=/docs/molecules-feedback-skeletonwrapper-overview--docs) — чем нарисована заглушка загрузки.
