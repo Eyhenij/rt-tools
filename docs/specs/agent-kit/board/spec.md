@@ -62,6 +62,13 @@ through the executor.
   its epic looks like every other.
 - **The branch of an epic is recognised by its number in the name of the base.** The audit reads the
   queue and does not go to the tree; a task and its epic never share a number.
+- **An epic with no branch in the requests is a divergence.** Its branch is taken before the first
+  of its tasks, and one not taken leaves every task standing on the main branch: the epic is then
+  merged piece by piece, and there is nothing left to hand in whole. The card says nothing about a
+  branch, and the queue holds no branch names.
+- **An epic whose tasks are over and whose request is not open is a divergence.** Until it opens,
+  the work of the whole epic lies outside the main branch while looking finished: the board is
+  empty, and only the epic card stays open.
 - **A task naming neither an epic nor the word of the owner is a divergence.** The guard refuses
   such a task at the creating command, and only there: a card made through the web goes past every
   guard, and one created before this order came in has neither line. By the queue it reads as

@@ -11,3 +11,5 @@ statement: a removed statement is removed together with its line.
 - **The cargo of the trees is not judged by this line.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:CARGO_LABELS`
 - **The base of an open request about a task of an epic is judged by the audit.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkEpicPullBase` — scenario SC-AK-946
 - **The branch of an epic is recognised by its number in the name of the base.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkEpicPullBase`
+- **An epic with no branch in the requests is a divergence.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkEpicState` — scenario SC-AK-947
+- **An epic whose tasks are over and whose request is not open is a divergence.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkEpicState`
