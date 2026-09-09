@@ -53,6 +53,11 @@ There is no interface: the entry is the output of a command in the executor's ow
 - **A name matched by nothing ends with a refusal, not with an empty answer.** An empty answer reads
   as "no spec speaks of it", and a typo in the name looks exactly the same. The refusal names what was
   looked for.
+- **A gap in the specs is told from a name the package does not carry, and by the exit code.** Both
+  outcomes have no binding behind them, and answered by one code they read alike: a hole in the specs
+  looks like one's own typo, and the taking apart goes back to memory. The answer about a carried
+  file says that no spec speaks of it and names how many such resources there are; the code differs
+  from the refusal's, because what reads the answer is a run, not only a person.
 - **Called without a name, the command names the resources no spec speaks of.** Which of them is a
   gap and which is a lawful case is decided by the taking apart of the complaint; the work of the
   command is to show that the entry here is empty before the answer is written by memory.

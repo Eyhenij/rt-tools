@@ -267,3 +267,9 @@ a guard.
   broken command and is cured by the directory: the path to it is named from the root, and it is
   called from there.
 
+## The active account of the host client
+
+A client login as the machine account hijacks every neighbouring session on the machine: a
+neighbour with rights to one repository reads its task as nonexistent, and from inside the tree
+the miss is invisible — the answer is an ordinary "not found". That is why the account is
+substituted per call and never made active, even when the active one is already right.

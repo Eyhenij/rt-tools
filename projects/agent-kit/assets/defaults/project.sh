@@ -347,6 +347,13 @@ RT_PULL_BODY_SECTION="${RT_PULL_BODY_SECTION:-}"
 RT_TASK_MOVE_CMD="${RT_TASK_MOVE_CMD:-npm run task:move}"
 RT_BOARD_BACKLOG="${RT_BOARD_BACKLOG:-}"
 
+# The label of an epic card: by it the guard tells the branch of an epic from the branch of a task,
+# and the branch of an epic is judged by other conditions — its request goes into the main branch,
+# and it opens only when the folders of all its tasks are taken apart. The word is each tree's own,
+# and the default is empty: a tree that has not named it keeps no epics, and the conditions about
+# them are not judged at all.
+RT_BOARD_EPIC_LABEL="${RT_BOARD_EPIC_LABEL:-}"
+
 # The email the machine account's commit is signed with. As a whole value, not a pattern: the
 # hosting's service address consists of a number, a login and a domain, and is matched by the number
 # — nobody checks the login next to it. A "number, plus, login" pattern would pass with someone

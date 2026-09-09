@@ -123,11 +123,10 @@ The folder is taken apart and pushed, the work is cleaned up behind — the PR o
 this minute the work waits for the owner, not for the machine, and the session does not end on it:
 the next task is taken by the same move, pattern `task-flow-resume`.
 
-**Readiness is measured by what is told, not by what has passed.** The list of what is done by the
-opening reads as a list of mandatory checks, and its boundary is not visible. It exists: a check the
-executor cannot pass for a reason outside the work — a refused permission, an unreachable
-environment, a key held by a person — does not cancel readiness. It goes into "Not run" and into
-"Remaining step", named together with the reason; silence about it reads as passed.
+**Readiness is measured by what is told, not by what has passed.** A check the executor cannot pass
+for a reason outside the work — a refused permission, an unreachable environment, a key held by a
+person — does not cancel readiness: it goes into "Not run" and into "Remaining step" with the
+reason. Silence about it reads as passed.
 
 There is no state on disk any more — the progress left with the folder. This is the price of the
 cleanup standing before the PR. The tail of four steps — open the PR, wait for the run, lift the
@@ -254,11 +253,9 @@ what was opened are different things, and the second is checked only from the re
 invisible PR gives itself away by nothing — it is in the answer to its author, it carries labels,
 and the owner's review queue is simply empty.
 
-There is nothing to check this by machine, and there will be no check: no audit reads the PR body,
-and the host asks about nothing but the title. The requirement is held by the same thing as the
-spoken word — by whoever writes the body. The difference between them is one, and it is all. The
-owner reads a message only if they return to the conversation, and the section they see where they
-look when pressing the button.
+There is nothing to check this by machine: no audit reads the request body, and the host asks about
+nothing but the title. The owner reads a message only if they return to the conversation, and the
+section they see where they look when pressing the button.
 
 ### An edit after remarks goes without a plan on disk
 
@@ -266,20 +263,43 @@ The review returned remarks, or the run went red — it is fixed in the same bra
 longer there, and the folder is not assembled again: the progress guard lets the edit through on the
 sign from the branch history. What exactly is fixed is taken from the remark, not from the plan.
 
-Main merged in to look at something is the same edit as main merged in for the work, and it leaves
-by the same turn. A merge left in the working copy is either pushed in the same turn or not made —
-otherwise the owner sees the old state and decides by it.
+A merge left in the working copy is either pushed in the same turn or not made — otherwise the owner
+sees the old state and decides by it.
 
 **Next move:** the run is green and there are no remarks — the draft is lifted, and the owner is
 told the work is ready.
+
+## State `задачи-эпика-кончились`: the epic is handed in by a request into the main branch
+
+Every task of the epic is merged into its branch and every folder is taken apart — only then does
+the epic branch get a request of its own, and its base is the main branch. Until that minute the
+branch is not offered to a person at all: the merge button on it means the whole epic, and there is
+nothing to press it for while a task is still being written.
+
+Before opening, three things are checked by a command rather than by memory:
+
+```bash
+gh pr list --base <ветка эпика> --state open      # no task of the epic is left unmerged
+git ls-tree -r --name-only HEAD -- docs/tasks/    # no folder of a task of this epic is left
+git fetch origin && git merge origin/main         # the main branch is merged into the epic branch
+```
+
+A folder left in the epic branch reaches the main branch with it: what one branch needed becomes the
+tree's for good. A foreign folder, arrived with a merge of the main branch, is not touched.
+
+The body is written the same way as a task's, and its "Что сделано" is the list of the tasks by
+number: the reviewer opens one page instead of five. The plan of the epic stays in the tree — it
+outlives the branch.
+
+**Next move:** the request is open as a draft, the run is awaited, the draft is lifted, and the
+owner is asked to merge — by the number, in one turn.
 
 ## Common misses
 
 - **The texts are edited before the folder is taken apart:** the list of what to re-read lies in the
   plan, and the taking-apart deletes it.
-- **A decisions entry repeating a rule's article word for word is no reason next to it.** The rule
-  comes into the context by itself, the spec — only when opened; the pair diverges in silence. Such
-  an entry leaves whole, even if the section goes empty; a reason the article does not state is
+- **A decisions entry repeating a rule's article word for word is no reason next to it.** Such an
+  entry leaves whole, even if the section goes empty; a reason the article does not state is
   appended to the article.
 - **The PR body stays older than the taking-apart.** The taking-apart is the last commit of the
   branch, and it makes untrue everything the body promised to do before the merge. The reviewer
@@ -292,12 +312,11 @@ told the work is ready.
 - **"Audited" cannot be said without opening the file.** The rule is read whole: a stale statement
   stands among true ones and differs from them by nothing.
 - **The merge is not done after the merge into main.** Main then holds a "proposed, not yet rolled
-  out" section with what has been working for a month: a silent lie, the more convincing the older.
-- **Scenario numbers are not renumbered at the merge.** The id is the key of the link to the tests,
-  and a shift breaks the audit for the neighbours.
+  out" section with what has been working for a month.
+- **Scenario numbers are not renumbered at the merge.** The id is the key of the link to the tests.
 - **"What is not included" is read whole after the merge, not appended to.** The feature's
-  boundaries land next to the domain's. Half repeat what stood there in other words, and the line
-  "this section does not exist yet" becomes a lie by the very work that merges it. The spec audit
+  boundaries land next to the domain's, and the line "this section does not exist yet" becomes a lie
+  by the very work that merges it. The spec audit
   does not look there.
 - **One's own line of the work queue audit is found by name** — by the task number and the branch
   name. The audit answers for the whole tree, and one closing had eight of someone else's folders

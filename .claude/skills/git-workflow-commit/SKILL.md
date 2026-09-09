@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for creating a task and a branch, commit and push — the creation command with all four steps, moving the column, merging two tasks into one, working as the machine account, skipping the document requirement. Opening a PR — pattern git-workflow-pr.
 ---
-<!-- rt-kit v0.26.0 · patterns/git-workflow-commit.github.md · 9242f11a4370 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · patterns/git-workflow-commit.github.md · 8579d0e6143e · правится надстройкой, не здесь -->
 
 # Task, branch and commit
 
@@ -64,12 +64,15 @@ and merging two tasks into one afterwards is done by hand.
 
 
 ```bash
-npm run task:new -- --title 'Письма владельцу не уходят молча' \
+npm run task:new -- --epic-of <номер эпика> --title 'Письма владельцу не уходят молча' \
     --label bug --label area:api --slug mail-owner-silence < описание.md
 ```
 
 The body is read from standard input, `--slug` is optional and goes only into the hint with the
-branch name. Author and assignee — the machine account; the command reads the token itself, from
+branch name. The epic is named by `--epic-of`, and the command writes the line about it into the
+body itself and prints the branch line from the branch of the epic; work outside an epic goes by
+`--outside-epic '<слово владельца>'`, and without either of the two the call is refused before the
+card is created. The epic itself is created by the same command with `--epic`. Author and assignee — the machine account; the command reads the token itself, from
 a file outside the repository.
 
 The script under this command is created by the project — the package does not ship it. What it
@@ -147,6 +150,10 @@ command is rejected whole — the branch does not exist in it yet:
 ✓ git checkout -b <КЛЮЧ>-85-guest-token
 ✓ git commit -F -
 ```
+
+The base is the epic branch, not the main branch — `git checkout -b <КЛЮЧ>-85-guest-token
+<ветка эпика>`. From the main branch only the epic branch itself is taken: a task branched from it
+carries into it what the epic has not finished.
 
 The name — `<КЛЮЧ>-<номер задачи>-<короткий-slug>`, the slug in lowercase Latin letters joined by
 hyphens. The delivery guard parses it on the spot and refuses a miss in the form before the first

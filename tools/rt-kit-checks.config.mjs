@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.26.0 · checks/rt-kit-checks.config.mjs · db488bcc50e5 · правится надстройкой, не здесь
+// rt-kit v0.26.0 · checks/rt-kit-checks.config.mjs · 1fe0312f4c05 · правится надстройкой, не здесь
 /**
  * Check settings: what counts as sources, where not to go and where the debt lists lie.
  *
@@ -80,6 +80,18 @@ const DEFAULTS = {
     /** Where the domain specs lie; empty — the tree has none, and the spec audit is not run. */
     specsDir: 'docs/specs',
     tasksDir: 'docs/tasks',
+    /**
+     * Where the plans of work wider than one task live: the plan of an epic and the plan of work
+     * that does not fit into one session lie side by side there.
+     *
+     * The creating command needs it, the audit does not: the audit takes the path to a plan from
+     * the body of the epic card, and that stays the only truth about an epic already created. This
+     * key says only where a new plan is put — a directory that has not been named refuses the
+     * creation of an epic instead of scattering plans across the tree.
+     *
+     * Empty — the tree has no such directory, and an epic is not created by the command.
+     */
+    plansDir: '',
     /** Where the lists of accepted debts are put. */
     allowlistDir: 'tools',
     /**
@@ -217,6 +229,7 @@ const DEFAULTS = {
      */
     longWork: {
         label: '',
+        /** Empty — the tree's `plansDir` is taken: one directory is not named twice. */
         plansDir: '',
     },
     /** The work queue: the owner, the repository, the board and the machine account. */
