@@ -13,6 +13,8 @@ mkdir -p "$TN_TREE/tools" "$TN_TREE/.claude/rt-kit"
 cp "$CHECKS/rt-kit-checks.config.mjs" "$TN_TREE/tools/"
 cp "$CHECKS/board.github.mjs" "$TN_TREE/tools/board.mjs"
 cp "$CHECKS/board-gh.github.mjs" "$TN_TREE/tools/board-gh.mjs"
+cp "$CHECKS/board-epic-link.github.mjs" "$TN_TREE/tools/board-epic-link.mjs"
+cp "$CHECKS/board-task-dirs.github.mjs" "$TN_TREE/tools/board-task-dirs.mjs"
 cp "$CHECKS/task-new.github.mjs" "$TN_TREE/tools/task-new.mjs"
 
 # Настройки дерева-фикстуры: своя очередь работ, своя метка эпика, свой каталог планов.
