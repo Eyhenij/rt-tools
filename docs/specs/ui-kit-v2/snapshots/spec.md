@@ -80,13 +80,13 @@ as an attachment.
   consequence is named here because it is visible in the reference: `100vh` and `100vw` of such a story are
   counted from the widened window, and the show takes the frame whole.
 
-  This holds for both frames of the showcase, and the rule is one for them because the shutter is one. A
-  frame of a whole page is widened to the page; a frame by the root of the show — to that root, not to the
-  page: the page happens to be higher than the root being shot, and a superfluous growth of the window
-  would change everything counted from the window at stories that did not ask for it. Named apart because
-  the miss lands not where the high show stands: the neighbouring story is shot by a page already shifted,
-  and the divergence comes to the story next in the file. A rearrangement of the stories then moves frames
-  nobody touched.
+    This holds for both frames of the showcase, and the rule is one for them because the shutter is one. A
+    frame of a whole page is widened to the page; a frame by the root of the show — to that root, not to the
+    page: the page happens to be higher than the root being shot, and a superfluous growth of the window
+    would change everything counted from the window at stories that did not ask for it. Named apart because
+    the miss lands not where the high show stands: the neighbouring story is shot by a page already shifted,
+    and the divergence comes to the story next in the file. A rearrangement of the stories then moves frames
+    nobody touched.
 
 - **A frame of a threshold is taken at every threshold the component itself names.** One additional frame
   at a component with three media queries would leave two branches of the layout unchecked and would show
@@ -178,6 +178,11 @@ as an attachment.
   apart only by the content; a run pointed at a foreign one or at one left from the last time gives either a
   mountain of stories that were not found or a checking of foreign frames, and the reason is looked for in the
   harness.
+
+- **A probe of the harness pointed at a showcase that serves no story names that showcase, not the harness.**
+  A showcase goes stale by itself: after a switch of the branch its hot update loses a chunk, every story hangs
+  at preparing for ever, and no edit in the tree caused it. A probe that dies there with a bare failure of a
+  wait speaks of its own code, and the push gate then refuses a push for a reason that is not true.
 
 Below are the rules of the design of the kit: in the same list, because the binding to the code is read by a
 machine, and a heading inside a list breaks its reading off.
