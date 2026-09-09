@@ -20,6 +20,7 @@ receiving side stands — and both lie in one repository.
 - **the close command** — `npm run cargo:close` — the edition's publisher closes a neighbour's records by it
 - **the service account's pair** — two lines in `~/.config/message-bus-cargo-account`; the path is the key `account`
 - **new, in work, done, released** — the `--state` arguments: `new`, `in_work`, `fixed`, `released`
+- **the quarantine** — the `--state` argument `quarantined`; the reason travels by the argument `--quarantine-note`
 - **an incident analysis** — a record in the intake; its key is the name of the file it travelled by. No analyses lie on the tree's disk: a draft is written into a directory outside the history and is removed together with the send
 - **a proposal** — a file in `.claude/rt-kit/proposals/`; the record's key is the text's sign
 
@@ -43,7 +44,7 @@ here" (the bold part of the item). An article without a line and a line without 
 divergence: the rule promises what the tree does not have, or the tree holds what the rule is
 silent about.
 
-Eight articles out of twenty are not held by a machine, and the line next to them says so
+Eleven articles out of twenty-four are not held by a machine, and the line next to them says so
 outright. That is a property of the subject: the cargo is sorted out by an agent, and it has no
 sign of "read and decided".
 
@@ -52,6 +53,8 @@ sign of "read and decided".
 - **Cargo standing in the queue from former times is not judged as a task.** — `projects/agent-kit/assets/checks/check-board.github.mjs:CARGO_LABELS` — the audit sifts records by the labels from the key `board.cargoLabels` of the tree's settings and names the number sifted out
 - **Sorting out starts with what is not sorted out.** — `libs/message-bus-common/src/lib/cargo-page.ts:cargoPageAsked` — the filter by state
 - **What is already sorted out is asked of the intake rather than recalled.** — `tools/cargo-pull.mjs:query` — the filter by state travels as a query string
+- **A record found disputable goes into the quarantine, and the move carries the reason.** — `libs/message-bus-common/src/lib/cargo-quarantine-note.ts:cargoQuarantineNoteFault`. The order of the moves is `libs/message-bus-common/src/lib/cargo-state-move.ts:cargoStateMove`, the agreement is `docs/specs/message-bus/cargo-quarantine/`
+- **A record of the quarantine is not taken into work by the executor's own decision.** — **Not checked by anything.** The intake lets the return into "new" through without asking whose word it is. Who asked for it is visible only in its journal — the open question `Q-CQ-1` of the agreement
 - **To take a report into work means to create a task for it.** — **Not checked by anything.** The cargo mark guard reads the link "task — record" from the grill of the request. It judges handing over the work rather than taking it. "In work" cannot be set on a foreign record: closing by the publisher accepts only "done" and "released". Scenario SC-MB-282
 - **The task and the mark go in one turn.** — `.claude/hooks/cargo-mark-guard.sh:verdict` — a turn that handed over the work on a cargo record is not let out without a mark in that same turn. A dry run does not count as a mark. Scenarios SC-MB-281, SC-MB-283
 - **One edit — one task, however many cargo records called for it.** — **Not checked by anything.** The same requirement stands as an article of the rule `git-workflow`
@@ -99,6 +102,6 @@ sign of "read and decided".
 - `.claude/hooks/cargo-mark-guard.sh` — the turn-exit guard: a turn that handed over the work on a
   cargo record does not end without moving its state. The scenarios are the suite
   `projects/agent-kit/tests/cargo-mark-guard.test.sh`.
-- The rest of the order is checked by nothing: seven articles out of twenty are held by text. A
+- The rest of the order is checked by nothing: eleven articles out of twenty-four are held by text. A
   skipped step is visible in the intake itself — by a record whose edit is merged while the state
   is as before.

@@ -82,11 +82,16 @@ and which rows were refused.
 
 ### Refusal codes
 
-| What happened                                        | Code        | What it says                               |
-| ---------------------------------------------------- | ----------- | ------------------------------------------ |
-| a move into the quarantine without a reason          | row refused | the reason of the refusal by name          |
-| a reason with a move that is not into the quarantine | row refused | the reason of the refusal by name          |
-| a move forward out of the quarantine                 | row refused | the transition is not allowed by the order |
+Not applicable: the subdomain adds no code of the answer of its own. The form of the request stays
+right, so every refusal here is a refusal of a row inside an answer of `200`, and the tree reads it
+in the list of the refused ones.
+
+| What happened                                        | Code  | What it says                               |
+| ---------------------------------------------------- | ----- | ------------------------------------------ |
+| a move into the quarantine without a reason          | `200` | the reason of the refusal by name          |
+| a reason with a move that is not into the quarantine | `200` | the reason of the refusal by name          |
+| a move forward out of the quarantine                 | `200` | the transition is not allowed by the order |
+| the reason was sent not as a string                  | `400` | which field is expected as a string        |
 
 ## Data
 

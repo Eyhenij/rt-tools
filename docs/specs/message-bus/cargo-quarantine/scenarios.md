@@ -67,3 +67,11 @@ When the row is drawn
 Then the state column carries the word of the language of the person, not the machine string
 
 Covered: `libs/message-bus-admin/common/core/util/src/lib/cargo-state.logic.spec.ts`.
+
+### SC-MB-317 — the reason travels by an argument of the launch line
+
+Given the tree marks its record into the quarantine and names the reason by an argument
+When the mark command assembles the body of the request
+Then the reason lies as a field of the row, and without the argument the field is not there at all
+
+Covered: `projects/agent-kit/tests/cargo-mark.test.sh`.
