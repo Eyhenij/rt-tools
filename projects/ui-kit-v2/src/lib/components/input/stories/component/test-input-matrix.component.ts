@@ -3,6 +3,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { STORY_FIELD_WIDTH } from '../../../../../showcase/story-metrics';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IStoryState, STORY_FIELD_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtFieldComponent } from '../../../field/rt-field.component';
@@ -11,7 +12,7 @@ import { RtInputComponent } from '../../rt-input.component';
 import { IRtInput } from '../../rt-input.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TInputMatrixPart = 'size' | 'type' | 'icons' | 'filling' | 'bordered' | 'states' | 'themes';
+export type TInputMatrixPart = 'size' | 'type' | 'icons' | 'filling' | 'bordered' | 'states' | 'presets' | 'themes';
 
 /** Тип поля вместе с правдоподобным значением: пустое поле всех четырёх типов выглядит одинаково. */
 interface IInputTypeCase {
@@ -170,6 +171,21 @@ function invalid(): FormControl<string> {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Поле в обоих наборах">
+                    <ng-template>
+                        @for (themeCase of themeCases; track themeCase.name) {
+                            <rt-input
+                                placeholder="Введите значение"
+                                iconLeft="ico-search"
+                                [disabled]="themeCase.disabled"
+                                [ariaLabel]="themeCase.name"
+                                [formControl]="themeCase.control" />
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Поле в обеих темах">
                     <ng-template>
@@ -196,6 +212,7 @@ function invalid(): FormControl<string> {
         RtInputComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

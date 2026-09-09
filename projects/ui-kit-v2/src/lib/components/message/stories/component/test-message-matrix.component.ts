@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryGridComponent } from '../../../../../showcase/story-grid.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { IRtTag } from '../../../tag/rt-tag.model';
 import { RtMessageComponent } from '../../rt-message.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TMessageMatrixPart = 'severity' | 'icon' | 'closable' | 'content' | 'themes';
+export type TMessageMatrixPart = 'severity' | 'icon' | 'closable' | 'content' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-message` для витрины.
@@ -78,6 +79,18 @@ export type TMessageMatrixPart = 'severity' | 'icon' | 'closable' | 'content' | 
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Сообщения в обоих наборах">
+                    <ng-template>
+                        <div style="display: grid; gap: 0.5rem; width: 20rem">
+                            @for (severity of severities; track severity) {
+                                <rt-message [severity]="severity">Договор подписан</rt-message>
+                            }
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Сообщения в обеих темах">
                     <ng-template>
@@ -98,6 +111,7 @@ export type TMessageMatrixPart = 'severity' | 'icon' | 'closable' | 'content' | 
 
         // showcase
         StoryGridComponent,
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

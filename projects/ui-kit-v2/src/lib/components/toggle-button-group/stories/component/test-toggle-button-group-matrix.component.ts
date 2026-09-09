@@ -2,13 +2,15 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { STORY_FIELD_WIDTH_WIDE } from '../../../../../showcase/story-metrics';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { IRtToggleButtonGroup } from '../../rt-toggle-button-group.model';
 import { RtToggleButtonGroupComponent } from '../../rt-toggle-button-group.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TToggleButtonGroupMatrixPart = 'size' | 'options' | 'value' | 'fullWidth' | 'multiple' | 'disabledOption' | 'states' | 'themes';
+export type TToggleButtonGroupMatrixPart =
+    'size' | 'options' | 'value' | 'fullWidth' | 'multiple' | 'disabledOption' | 'states' | 'presets' | 'themes';
 
 /** Набор сегментов: подписи, подписи с иконками, две штуки против пяти. */
 interface IGroupOptionsCase {
@@ -137,6 +139,16 @@ const VIEW: ReadonlyArray<IRtToggleButtonGroup.Option> = [
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Группа в обоих наборах">
+                    <ng-template>
+                        <rt-toggle-button-group ariaLabel="Период" value="week" [options]="period" />
+                        <rt-toggle-button-group ariaLabel="Вид" value="grid" [options]="view" />
+                        <rt-toggle-button-group disabled ariaLabel="Отключена" value="week" [options]="period" />
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Группа в обеих темах">
                     <ng-template>
@@ -154,6 +166,7 @@ const VIEW: ReadonlyArray<IRtToggleButtonGroup.Option> = [
         RtToggleButtonGroupComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

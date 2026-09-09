@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtMoneyListComponent } from '../../rt-money-list.component';
 import { RtMoneyRowComponent } from '../../rt-money-row.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TMoneyListMatrixPart = 'total' | 'loading' | 'length' | 'edges' | 'themes';
+export type TMoneyListMatrixPart = 'total' | 'loading' | 'length' | 'edges' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-money-list` и `rt-money-row` для витрины.
@@ -101,6 +102,21 @@ export type TMoneyListMatrixPart = 'total' | 'loading' | 'length' | 'edges' | 't
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Список в обоих наборах">
+                    <ng-template>
+                        <div style="width: 20rem">
+                            <rt-money-list>
+                                @for (row of rows; track row.label) {
+                                    <rt-money-row [label]="row.label">{{ row.value }}</rt-money-row>
+                                }
+                                <rt-money-row total label="Итого">148 000 ₽</rt-money-row>
+                            </rt-money-list>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Список в обеих темах">
                     <ng-template>
@@ -124,6 +140,7 @@ export type TMoneyListMatrixPart = 'total' | 'loading' | 'length' | 'edges' | 't
         RtMoneyRowComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

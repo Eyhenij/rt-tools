@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtAsideSectionComponent } from '../../rt-aside-section.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TAsideSectionMatrixPart = 'heading' | 'content' | 'stack' | 'themes';
+export type TAsideSectionMatrixPart = 'heading' | 'content' | 'stack' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-aside-section` для витрины.
@@ -58,6 +59,16 @@ export type TAsideSectionMatrixPart = 'heading' | 'content' | 'stack' | 'themes'
                 </div>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Раздел в обоих наборах">
+                    <ng-template>
+                        <div style="width: 18rem">
+                            <rt-aside-section heading="Договор">№2024-118 от 14 марта</rt-aside-section>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Раздел в обеих темах">
                     <ng-template>
@@ -75,6 +86,7 @@ export type TAsideSectionMatrixPart = 'heading' | 'content' | 'stack' | 'themes'
         RtAsideSectionComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

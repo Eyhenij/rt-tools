@@ -23,4 +23,6 @@ export const Baseline: TStory = { args: { part: 'baseline' } };
 
 export const Parts: TStory = { args: { part: 'parts' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

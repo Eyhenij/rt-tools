@@ -3,6 +3,7 @@ import { FormControl, ReactiveFormsModule, ValidatorFn, Validators } from '@angu
 
 import { STORY_FIELD_WIDTH } from '../../../../../showcase/story-metrics';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtInputComponent } from '../../../input/rt-input.component';
 import { RtFieldHintDirective } from '../../rt-field-hint.directive';
@@ -12,7 +13,7 @@ import { RtFieldComponent } from '../../rt-field.component';
 const HINT_TEXT: string = 'Рабочая, не личная';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TFieldMatrixPart = 'anatomy' | 'required' | 'error' | 'hint' | 'modes' | 'states' | 'themes';
+export type TFieldMatrixPart = 'anatomy' | 'required' | 'error' | 'hint' | 'modes' | 'states' | 'presets' | 'themes';
 
 /** Случай анатомии: какие части поля объявлены. */
 interface IFieldAnatomyCase {
@@ -157,6 +158,25 @@ function failing(validators: ValidatorFn[] = [Validators.required], value: strin
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Поле в обоих наборах">
+                    <ng-template>
+                        <rt-field label="Город" hint="Как в адресе доставки">
+                            <rt-input placeholder="Москва" [formControl]="themeNormal" />
+                        </rt-field>
+                        <rt-field label="Почта" [errors]="emailErrors">
+                            <rt-input type="email" [formControl]="themeInvalid" />
+                        </rt-field>
+                        <rt-field label="Город" [readonly]="true">
+                            <rt-input [formControl]="themeReadonly" />
+                        </rt-field>
+                        <rt-field label="Город" hint="Как в адресе доставки" [loading]="true">
+                            <rt-input [formControl]="themeLoading" />
+                        </rt-field>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Поле в обеих темах">
                     <ng-template>
@@ -188,6 +208,7 @@ function failing(validators: ValidatorFn[] = [Validators.required], value: strin
         RtInputComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

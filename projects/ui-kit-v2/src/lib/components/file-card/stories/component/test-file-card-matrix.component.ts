@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryGridComponent } from '../../../../../showcase/story-grid.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
@@ -8,7 +9,7 @@ import { RtFileCardComponent } from '../../rt-file-card.component';
 import { IRtFileCard } from '../../rt-file-card.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TFileCardMatrixPart = 'size' | 'actions' | 'name' | 'weight' | 'states' | 'disabled' | 'themes';
+export type TFileCardMatrixPart = 'size' | 'actions' | 'name' | 'weight' | 'states' | 'disabled' | 'presets' | 'themes';
 
 /** Случай имени файла: имя для подписи ячейки, само имя и вес. */
 interface IFileNameCase {
@@ -103,6 +104,16 @@ interface IFileNameCase {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Карточка в обоих наборах">
+                    <ng-template>
+                        <div style="width: 17rem">
+                            <rt-file-card showDownload showRemove name="договор-2024-118.pdf" [sizeBytes]="248000" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Карточка в обеих темах">
                     <ng-template>
@@ -121,6 +132,7 @@ interface IFileNameCase {
 
         // showcase
         StoryGridComponent,
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

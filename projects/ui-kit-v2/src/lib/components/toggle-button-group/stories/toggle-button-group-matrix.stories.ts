@@ -44,4 +44,6 @@ export const States: TStory = {
     parameters: { pseudo: storyPseudoParameters('.rt-toggle-button-group__button') },
 };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtSplitButtonComponent } from '../../rt-split-button.component';
 import { IRtSplitButton } from '../../rt-split-button.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TSplitButtonMatrixPart = 'theme' | 'size' | 'states' | 'themes' | 'panel';
+export type TSplitButtonMatrixPart = 'theme' | 'size' | 'states' | 'presets' | 'themes' | 'panel';
 
 /** Состояние, которое задаётся не псевдоклассом, а входом. */
 interface ISplitButtonStateCase {
@@ -67,6 +68,16 @@ interface ISplitButtonStateCase {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Кнопка в обоих наборах">
+                    <ng-template>
+                        <rt-split-button label="Сохранить" [menuItems]="menuItems" />
+                        <rt-split-button label="Удалить" theme="danger" [menuItems]="menuItems" />
+                        <rt-split-button label="Сохранение…" [loading]="true" [menuItems]="menuItems" />
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Кнопка в обеих темах">
                     <ng-template>
@@ -98,6 +109,7 @@ interface ISplitButtonStateCase {
         RtSplitButtonComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

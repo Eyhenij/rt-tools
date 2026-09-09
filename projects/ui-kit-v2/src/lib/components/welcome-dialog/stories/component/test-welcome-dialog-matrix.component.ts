@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtDialogRef } from '../../../dialog/rt-dialog-ref';
 import { RT_DIALOG_DATA } from '../../../dialog/rt-dialog.tokens';
@@ -10,7 +11,7 @@ import { IRtWelcomeDialog, RtWelcomeDialogComponent } from '../../rt-welcome-dia
 const CASE_TEMPLATE: string = '<app-welcome-dialog-case />';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TWelcomeDialogMatrixPart = 'text' | 'cta' | 'edges' | 'themes';
+export type TWelcomeDialogMatrixPart = 'text' | 'cta' | 'edges' | 'presets' | 'themes';
 
 /**
  * Ссылка на окно, ничего не закрывающая.
@@ -148,6 +149,14 @@ class WelcomeDialogEmptyComponent {}
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Окно приветствия в обоих наборах">
+                    <ng-template>
+                        <app-welcome-dialog-full />
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Окно приветствия в обеих темах">
                     <ng-template>
@@ -166,6 +175,7 @@ class WelcomeDialogEmptyComponent {}
         WelcomeDialogEmptyComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

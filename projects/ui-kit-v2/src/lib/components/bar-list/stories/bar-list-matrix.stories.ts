@@ -25,4 +25,6 @@ export const Length: TStory = { args: { part: 'length' } };
 
 export const Empty: TStory = { args: { part: 'empty' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtBarListComponent } from '../../rt-bar-list.component';
 import { IRtBarList } from '../../rt-bar-list.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TBarListMatrixPart = 'share' | 'meta' | 'length' | 'empty' | 'themes';
+export type TBarListMatrixPart = 'share' | 'meta' | 'length' | 'empty' | 'presets' | 'themes';
 
 /** Случай списка: имя для подписи ячейки и сами строки. */
 interface IBarListCase {
@@ -79,6 +80,16 @@ function withoutMeta(row: IRtBarList.Row): IRtBarList.Row {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Список в обоих наборах">
+                    <ng-template>
+                        <div style="width: 20rem">
+                            <rt-bar-list title="Заявки по городам" [rows]="rows" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Список в обеих темах">
                     <ng-template>
@@ -96,6 +107,7 @@ function withoutMeta(row: IRtBarList.Row): IRtBarList.Row {
         RtBarListComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

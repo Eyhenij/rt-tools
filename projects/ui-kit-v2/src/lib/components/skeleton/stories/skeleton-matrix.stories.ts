@@ -23,4 +23,6 @@ export const Radius: TStory = { args: { part: 'radius' } };
 
 export const Animation: TStory = { args: { part: 'animation' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

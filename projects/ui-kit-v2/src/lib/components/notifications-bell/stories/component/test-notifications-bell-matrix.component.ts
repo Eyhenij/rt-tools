@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtNotificationsBellComponent } from '../../rt-notifications-bell.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TNotificationsBellMatrixPart = 'unread' | 'states' | 'themes';
+export type TNotificationsBellMatrixPart = 'unread' | 'states' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-notifications-bell` для витрины.
@@ -37,6 +38,15 @@ export type TNotificationsBellMatrixPart = 'unread' | 'states' | 'themes';
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Колокольчик в обоих наборах">
+                    <ng-template>
+                        <rt-notifications-bell ariaLabel="Уведомления" />
+                        <rt-notifications-bell unread ariaLabel="Уведомления" />
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Колокольчик в обеих темах">
                     <ng-template>
@@ -53,6 +63,7 @@ export type TNotificationsBellMatrixPart = 'unread' | 'states' | 'themes';
         RtNotificationsBellComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

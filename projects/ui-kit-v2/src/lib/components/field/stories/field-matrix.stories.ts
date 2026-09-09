@@ -32,4 +32,6 @@ export const Modes: TStory = { args: { part: 'modes' } };
 
 export const States: TStory = { args: { part: 'states' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };
