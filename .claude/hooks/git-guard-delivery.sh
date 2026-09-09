@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/git-guard-delivery.sh · 63ff954667dd · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/git-guard-delivery.sh · 2a8e411ed581 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
 #
 # The delivery law demands three things nothing usually checks: an edit starts from a task visible
@@ -108,6 +108,7 @@ task_move="${RT_TASK_MOVE_CMD:-npm run task:move}"
 # a tree names its columns in its own words, and an invented name would match nothing and would
 # silently switch the check off.
 backlog_column="${RT_BOARD_BACKLOG:-}"
+epic_label="${RT_BOARD_EPIC_LABEL:-}"
 task_bot="${RT_TASK_BOT:-}"
 # The identity of the call arrives through the environment, not as a word in the line: from the
 # command text only one thing is visible — whether the token is substituted explicitly. A tree that
@@ -168,6 +169,12 @@ fault() {
 # and `fault` — both are called from inside it.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/git-guard-delivery-folder.sh" ] && . "$rt_hooks_dir/git-guard-delivery-folder.sh" 2>/dev/null
+
+# The epic of a task: the same technique as with the folder. It is sourced before the branch block —
+# there the base of a new branch is judged, and with an epic it is judged against the branch of the
+# epic. No helper — the epic is not judged, and the base is asked against the main branch as before.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/git-guard-delivery-epic.sh" ] && . "$rt_hooks_dir/git-guard-delivery-epic.sh" 2>/dev/null
 
 # A conflicting PR of one's own: the same technique as with the folder and the signature. The helper
 # is called before all the tiers below and judges not the readiness of this work but the right to
@@ -239,7 +246,11 @@ if [ -n "$branch_arg" ]; then
     if [ -n "$number_arg" ]; then
         rt_task_branch_ok "$branch_arg" \
             || deny "BLOCKED: the branch name «${branch_arg}» is not of the form accepted here. The branch number is the same as the number of the task and of the title of the merge request."
+        state=''
         check_task "$number_arg" "the branch «${branch_arg}»"
+        # The epic of the task: with one, the base is judged against the branch of the epic, and the
+        # freshness of the main branch moves there too — see `git-guard-delivery-epic.sh`.
+        epic_arg="$(printf '%s' "$state" | jq -r '.epic // empty' 2>/dev/null)"
 
         # The delivery conditions already known here are checked here. After the work is done, the
         # base is fixed by a merge with conflict resolution, and the commit signature by rewriting
@@ -250,7 +261,9 @@ if [ -n "$branch_arg" ]; then
         # base fresh — `git checkout -b <branch> origin/<main>` — would be forbidden.
         base_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\4/p' | head -1)"
         base_ref="${base_arg:-HEAD}"
-        if git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
+        if [ -n "$epic_arg" ] && command -v rt_epic_base >/dev/null 2>&1; then
+            rt_epic_base "$epic_arg" "$base_ref" "$branch_arg"
+        elif git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
             && git rev-parse --verify --quiet "$base_ref" >/dev/null 2>&1 \
             && ! git merge-base --is-ancestor "origin/${main_branch}" "$base_ref" 2>/dev/null; then
             behind="$(git rev-list --count "${base_ref}..origin/${main_branch}" 2>/dev/null)"
@@ -328,6 +341,16 @@ rt_task_branch_ok "$branch" \
 
 number="$(rt_task_branch_number "$branch")"
 
+# The work queue is asked here and not at the end of the block: the epic of the task decides what
+# the base of the request is judged against, and that judging stands above. The call is one — the
+# state stays in `state` and the tail of the block reads the same answer.
+state=''
+check_task "$number" "the request from the branch «${branch}»" yes
+epic_pull="$(printf '%s' "$state" | jq -r '.epic // empty' 2>/dev/null)"
+# The branch of an epic itself: its request goes into the main branch, and it opens only when the
+# folders of all its tasks are taken apart.
+command -v rt_epic_own_pull >/dev/null 2>&1 && rt_epic_own_pull "$state"
+
 title=''
 if command -v perl >/dev/null 2>&1; then
     title="$(printf '%s' "$cmd" | perl -0ne '
@@ -359,7 +382,9 @@ fi
 # the remote reference: without it, silence means only "the local reference is not older than the
 # branch", while it reads as "the main branch is merged in". No answer from the network — a silent
 # skip; the waiting limit is set by git variables, an external `timeout` is not on every machine.
-if git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
+if [ -n "$epic_pull" ] && command -v rt_epic_pull_base >/dev/null 2>&1; then
+    rt_epic_pull_base "$epic_pull" "$cmd"
+elif git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
     && ! git merge-base --is-ancestor "origin/${main_branch}" HEAD 2>/dev/null; then
     behind="$(git rev-list --count "HEAD..origin/${main_branch}" 2>/dev/null)"
     fault "«${main_branch}» has moved ahead by ${behind:-several} commits and is not merged into the branch. A PR from a diverged branch shows the reviewer the edit mixed with someone else, and the checks on it run from a stale base. Merge it in and repeat: git fetch origin && git merge origin/${main_branch} — the order and the resolving of the conflict are in the pattern git-workflow-merge."
@@ -438,7 +463,6 @@ if [ -n "$pull_body_section" ]; then
     fi
 fi
 
-check_task "$number" "the request from the branch «${branch}»" yes
 
 # The task folder is taken apart before the PR opens, not after the approval: the owner merges as
 # soon as he sees green, and no room is left for a closing commit — three times in a row the folder
