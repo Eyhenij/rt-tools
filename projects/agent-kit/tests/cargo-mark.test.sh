@@ -133,6 +133,17 @@ MARK_PATTERN='"releaseVersion":"rt-agent-kit@0.11.0"'
 report "SC-MB-207 — версия выпуска легла полем строки" \
     "$(RT_TREE_TOKEN=x mark_body --state released --postmortem a.md --release 'rt-agent-kit@0.11.0')" 1
 
+# SC-MB-317 — команда строки запуска несёт причину карантина доводом
+MARK_PATTERN='"quarantineNote":"спорно: правило говорит обратное"'
+report "SC-MB-317 — причина карантина легла полем строки" \
+    "$(RT_TREE_TOKEN=x mark_body --state quarantined --proposal ключ --quarantine-note 'спорно: правило говорит обратное')" 1
+MARK_PATTERN='quarantineNote'
+report "SC-MB-317 — без довода поля нет" \
+    "$(RT_TREE_TOKEN=x mark_body --state quarantined --proposal ключ)" 0
+MARK_PATTERN='into «quarantined»'
+report "SC-MB-317 — карантин знаком набору состояний" \
+    "$(RT_TREE_TOKEN=x mark_says --state quarantined --proposal ключ --quarantine-note 'спорно' --dry-run)" 1
+
 # SC-AK-429 — без токена дерева отметка отказывает до сети
 MARK_PATTERN='there is no tree token'
 report "SC-AK-429 — отсутствие токена названо" \

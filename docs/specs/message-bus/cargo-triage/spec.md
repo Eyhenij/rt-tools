@@ -184,7 +184,7 @@ of the mark names the tree by the sign from the token, and each of them edits on
 ## Decisions
 
 - **The order lands as a rule of its own with a pattern at it, not as a pattern at the leading of the
-  work.** The subject has four states of a record, marks of its own and a version of the release of its
+  work.** The subject has five states of a record, marks of its own and a version of the release of its
   own; as a pattern at a foreign rule it would stand in one row with the start, the return and the
   closing of work, while it speaks of something else. Rejected also: appending to the command of the
   digest of the proposals — it is called once in a few days over a stretch, while the sorting out of the

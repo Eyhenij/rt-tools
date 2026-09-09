@@ -49,6 +49,7 @@ describe('PostmortemShortMapper', () => {
             'closedByPublisher',
             'file',
             'id',
+            'quarantineNote',
             'releaseVersion',
             'state',
             'stateLabel',

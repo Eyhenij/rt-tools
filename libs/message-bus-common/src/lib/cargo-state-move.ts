@@ -46,6 +46,18 @@ export function cargoStateMove(from: ECargoState, to: ECargoState): ECargoStateM
         return ECargoStateMove.Allowed;
     }
 
+    // Карантин стоит в стороне от порядка шагов: в него запись уходит только из «нового», и
+    // возвращается только туда же. Вперёд из него дороги нет — она означала бы починку того, о чём
+    // решили, что чинить нечего; а из «в работе» в карантин ходить незачем: для брошенной работы
+    // уже есть возврат в «новое».
+    if (from === ECargoState.Quarantined) {
+        return to === ECargoState.New ? ECargoStateMove.Allowed : ECargoStateMove.Denied;
+    }
+
+    if (to === ECargoState.Quarantined) {
+        return from === ECargoState.New ? ECargoStateMove.Allowed : ECargoStateMove.Denied;
+    }
+
     const next: ECargoState | undefined = CARGO_STATE_ORDER[CARGO_STATE_ORDER.indexOf(from) + 1];
 
     return to === next ? ECargoStateMove.Allowed : ECargoStateMove.Denied;
@@ -75,6 +87,13 @@ export function cargoCloseMove(from: ECargoState, to: ECargoState): ECargoStateM
         return ECargoStateMove.Same;
     }
 
+    // Запись в карантине издателю не закрывается: карантина нет в порядке шагов вовсе, и место
+    // прежнего состояния вышло бы отрицательным — то есть меньше любого, и закрытие прошло бы.
+    // Спорную запись достаёт из карантина дерево, а не тот, кто выпустил редакцию.
+    if (from === ECargoState.Quarantined) {
+        return ECargoStateMove.Denied;
+    }
+
     return CARGO_STATE_ORDER.indexOf(to) > CARGO_STATE_ORDER.indexOf(from) ? ECargoStateMove.Allowed : ECargoStateMove.Denied;
 }
 
@@ -94,6 +113,11 @@ export interface ICargoStateAsk {
      * здесь пусто, и лежащая у записи версия правку не трогает.
      */
     readonly releaseVersion: string | null;
+    /**
+     * Чем запись спорна. Приезжает только с переходом в карантин — при остальных здесь пусто, и
+     * лежащая у записи причина правку не трогает.
+     */
+    readonly quarantineNote: string | null;
 }
 
 /**
@@ -108,8 +132,15 @@ export interface ICargoStateAsk {
  * Стоит рядом с решением о переходе, а не при одном из приложенных значений: их два, у каждого
  * своё решение о годности, а вопрос «пишем ли строку» на оба один.
  */
-export function cargoStateWrites(move: ECargoStateMove | null, fixNote: string | null, releaseVersion: string | null): boolean {
-    return move === ECargoStateMove.Allowed || (move === ECargoStateMove.Same && (fixNote !== null || releaseVersion !== null));
+export function cargoStateWrites(
+    move: ECargoStateMove | null,
+    fixNote: string | null,
+    releaseVersion: string | null,
+    quarantineNote: string | null = null
+): boolean {
+    const attached: boolean = fixNote !== null || releaseVersion !== null || quarantineNote !== null;
+
+    return move === ECargoStateMove.Allowed || (move === ECargoStateMove.Same && attached);
 }
 
 /** Что ложится в запись: состояние и те приложенные значения, которые строка принесла. */
@@ -117,6 +148,7 @@ export interface ICargoStateData {
     readonly state: ECargoState;
     readonly fixNote?: string;
     readonly releaseVersion?: string;
+    readonly quarantineNote?: string;
 }
 
 /**
@@ -134,6 +166,7 @@ export function cargoStateData(ask: ICargoStateAsk): ICargoStateData {
         state: ask.state,
         ...(ask.fixNote === null ? {} : { fixNote: ask.fixNote }),
         ...(ask.releaseVersion === null ? {} : { releaseVersion: ask.releaseVersion }),
+        ...(ask.quarantineNote === null ? {} : { quarantineNote: ask.quarantineNote }),
     };
 }
 
