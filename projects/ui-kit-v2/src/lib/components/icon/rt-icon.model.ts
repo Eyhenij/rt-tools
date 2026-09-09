@@ -12,6 +12,9 @@ export namespace IRtIcon {
     /** Доступные размеры. Маппинг на пиксели — в `rt-icon.component.ts`. */
     export type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
+    /** Набор рисунков: свой набор кита либо материальный. */
+    export type Preset = 'base' | 'material';
+
     /** Семантические цвета. Маппинг на CSS-переменные `--rt-icon-color-*` — в `rt-icon.component.ts`. */
     export type Color = 'current' | 'muted' | 'info' | 'success' | 'warning' | 'danger' | 'inverse';
 }
