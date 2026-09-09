@@ -13,11 +13,20 @@
  *
  *   npm run task:new -- --title 'Letters to the owner are not sent' --label bug --label area:api
  *   npm run task:new -- --title '…' --slug mail-owner-silence < description.md
+ *   npm run task:new -- --epic --title 'Delivery goes by epics' --slug work-by-epics
  *
  * The body is read from standard input. The author and the assignee are the bot account, the same
  * one the commits go from; `--assignee` overrides the assignee.
+ *
+ * With `--epic` the same four steps create an epic — the card the tasks of a piece of work wider
+ * than one branch hang on. Three things are added to them: the epic label, without which the audit
+ * has nothing to tell an epic card from an ordinary task by; a draft of the plan in the tree's
+ * plans directory, because the card carries neither the makeup of the epic nor the order of its
+ * tasks; and the path to that draft in the card body — the audit reads the plan by it, and a card
+ * without the path points into emptiness. The branch line printed at the end is taken from the main
+ * branch: the branch of an epic is the base for the branches of its tasks.
  */
-import { cpSync, existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -40,9 +49,18 @@ import {
     taskState,
     unstampFolder,
 } from './board.mjs';
+import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
+
+/**
+ * What an epic is created by: the label of its card and the directory its plan is put in. Both are
+ * each tree's own words, and neither has a default — a plan laid at a guessed address is found by
+ * nobody, and a card without the label is an ordinary task to the audit.
+ */
+const EPIC_LABEL = CONFIG.board?.epicLabel ?? '';
+const PLANS_DIR = CONFIG.plansDir ?? '';
 
 function parseArgs(argv) {
-    const args = { labels: [], assignee: BOT, title: null, slug: null };
+    const args = { labels: [], assignee: BOT, title: null, slug: null, epic: false };
     for (let index = 0; index < argv.length; index += 1) {
         const value = argv[index + 1];
         switch (argv[index]) {
@@ -61,6 +79,9 @@ function parseArgs(argv) {
             case '--slug':
                 args.slug = value;
                 index += 1;
+                break;
+            case '--epic':
+                args.epic = true;
                 break;
             default:
                 fail(`unknown flag ${argv[index]}`);
@@ -97,6 +118,37 @@ if (args.slug !== null && !/^[a-z0-9][a-z0-9-]*$/.test(args.slug)) {
 }
 
 /**
+ * Everything an epic cannot be created without is asked before the creation, not after it: a card
+ * already made cannot be taken off the board by anyone but an administrator, and a refusal after
+ * the call leaves an epic without a plan and without a label — that is, invisible to the audit as
+ * an epic at all.
+ */
+if (args.epic) {
+    if (!EPIC_LABEL) {
+        fail('the label of an epic card is not named — `board.epicLabel` in the check settings. Without it the audit has nothing to tell an epic from an ordinary task by');
+    }
+    if (!PLANS_DIR) {
+        fail('the directory of plans is not named — `plansDir` in the check settings. The plan of an epic lies outside the task folder: the folder dies with the merge, the epic outlives it');
+    }
+    if (!args.slug) {
+        fail('--slug <short-slug> is required for an epic: the plan file and the branch of the epic are named by it');
+    }
+}
+
+/** The label goes with the card, and the audit finds the epic by it — no second way. */
+const labels = args.epic && !args.labels.includes(EPIC_LABEL) ? [...args.labels, EPIC_LABEL] : args.labels;
+
+/**
+ * The plan of the epic and the line about it in the card body.
+ *
+ * The audit takes the path to the plan from the body: the card has to name it anyway, and a
+ * setting read instead would become a second truth about where the plan of this very epic lies. So
+ * the path is written into the body by the same call that creates the file.
+ */
+const planPath = args.epic ? `${PLANS_DIR.replace(/\/+$/, '')}/${args.slug}.md` : null;
+const body = args.epic ? `${readBody()}\n\nЗамысел эпика — ${planPath}`.trim() : readBody();
+
+/**
  * The token of the machine account is optional: a tree that has not named it creates the task
  * under the account the hosting client is logged in as. Demanding the token would hold task
  * creation in a tree that has not created a machine account, and in a tree whose account the
@@ -116,10 +168,10 @@ try {
             '--title',
             args.title,
             '--body',
-            readBody(),
+            body,
             '--assignee',
             args.assignee,
-            ...args.labels.flatMap((label) => ['--label', label]),
+            ...labels.flatMap((label) => ['--label', label]),
         ],
         { token }
     ).trim();
@@ -210,7 +262,59 @@ function adoptDraft() {
     }
 }
 
-adoptDraft();
+/**
+ * The draft of the epic plan. It is assembled here and not copied from a sample: the sample would
+ * have to be laid out at a fixed address, while the directory of plans is each tree's own — and a
+ * draft assembled here comes with the number, the title and the branch already filled in, which a
+ * copied one would leave to be typed by hand.
+ *
+ * An existing file is not overwritten: a plan written before the card is a lawful order — the
+ * makeup is thought out first, and the card is created under a ready one.
+ */
+function writeEpicPlan() {
+    const path = join(ROOT, planPath);
+    if (existsSync(path)) {
+        console.log(`\nThe plan of the epic is already in place: ${planPath}`);
+        return;
+    }
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(
+        path,
+        [
+            `# ${args.title}`,
+            '',
+            `**Эпик:** ${TASK_KEY}-${number} · **Ветка:** ${branch}`,
+            '',
+            '## Что даёт',
+            '',
+            '<Возможность, ради которой эпик заведён: что владелец получит и чего не может сегодня.>',
+            '',
+            '## Как стоят ветки',
+            '',
+            `Ветка эпика отведена от главной, ветки задач — от неё, заявки задач идут в неё. <Стопкой`,
+            'ветки задач стоят или каждая от ветки эпика — решает этот план, а не тот, кто заводит',
+            'ветку.>',
+            '',
+            '## Состав',
+            '',
+            '| #   | Задача                                   | Состояние |',
+            '| --- | ---------------------------------------- | --------- |',
+            `| 1   | ${TASK_KEY}-<номер> — <что делает>        | впереди   |`,
+            '',
+            '## Чего эпик не делает',
+            '',
+            '- <Что лежит рядом и в эпик не входит.>',
+            '',
+        ].join('\n')
+    );
+    console.log(`\nThe draft of the epic plan: ${planPath}`);
+}
+
+if (args.epic) {
+    writeEpicPlan();
+} else {
+    adoptDraft();
+}
 
 console.log(`[${TASK_KEY}-${number}] ${args.title}`);
 console.log(`https://github.com/${OWNER}/${REPO}/issues/${number}`);
@@ -258,7 +362,13 @@ for (const line of answer.lines) {
     (answer.ok ? console.log : console.error)(`task-new: ${line}`);
 }
 
-console.log(`\nThe branch is created by a separate call:\n  git checkout -b ${branch}`);
+/**
+ * The branch of an epic is taken from the main branch, and the branches of its tasks from it: a
+ * base named here saves the executor from taking it from the working copy, where any branch may be
+ * checked out at that minute.
+ */
+const base = args.epic ? ` origin/${CONFIG.deploy?.mainBranch || 'main'}` : '';
+console.log(`\nThe branch is created by a separate call:\n  git checkout -b ${branch}${base}`);
 console.log(`A task taken into work is moved on the board:\n  npm run task:move -- ${number} ${IN_PROGRESS_STATUS}`);
 
 if (!answer.ok) {
