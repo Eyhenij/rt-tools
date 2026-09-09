@@ -111,6 +111,22 @@ Then the curtain closes and gives back an answer
 
 Covered: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
 
+### SC-UK-58 — a setting of the application brings the closing by a key back
+
+Given the application named the closing by a key in the settings of the kit
+When the curtain is opened without an argument about the key and Esc is pressed
+Then the curtain closes
+
+Covered: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
+
+### SC-UK-59 — the argument of the call is stronger than the setting of the application
+
+Given the application named the closing by a key in the settings of the kit
+When the curtain is opened with the argument forbidding the key and Esc is pressed
+Then the curtain stays open
+
+Covered: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
+
 ### SC-UK-56 — a leaving by a route closes an open curtain
 
 Given the curtain is open

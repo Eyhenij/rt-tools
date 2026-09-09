@@ -486,7 +486,7 @@ argument and an edit in place stay writes
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
-### SC-AK-979 — the scenario suite is not moved by the environment standing around it
+### SC-AK-999 — the scenario suite is not moved by the environment standing around it
 
 Given the environment holds `GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE` or `CLAUDE_PROJECT_DIR`
 pointing at a foreign tree

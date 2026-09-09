@@ -416,7 +416,7 @@ Then it reads the body from the file and stays silent about the section; a file 
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-971 — the epic of a task is declared by one shape, and it is read in one place
+### SC-AK-991 — the epic of a task is declared by one shape, and it is read in one place
 
 Given a task body naming its epic — by the number with a hash or with the task key, in either case
 of the word about the task
@@ -430,7 +430,7 @@ Then no epic comes back: a mention is not a declaration
 
 Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
 
-### SC-AK-972 — the state of a task carries the number of its epic
+### SC-AK-992 — the state of a task carries the number of its epic
 
 Given a task whose body declares an epic
 When the work queue helper is asked for the state of the task
@@ -442,7 +442,7 @@ Then the field is empty, and that is not a refusal
 
 Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
 
-### SC-AK-973 — the branch of a task is taken from the branch of its epic
+### SC-AK-993 — the branch of a task is taken from the branch of its epic
 
 Given a task whose state names an epic, and the branch of that epic is in the remote
 When the guard judges the creation of a branch from the main one
@@ -458,7 +458,7 @@ Then the base is judged against the main branch, as before
 
 Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
 
-### SC-AK-974 — the request of a task of an epic goes into the branch of the epic
+### SC-AK-994 — the request of a task of an epic goes into the branch of the epic
 
 Given a task whose state names an epic, and the branch of that epic is in the remote
 When the guard judges the opening of a request with the main branch as its base
@@ -474,7 +474,7 @@ Then the base is not judged at all
 
 Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
 
-### SC-AK-975 — the request of an epic waits for the folders of its tasks to be taken apart
+### SC-AK-995 — the request of an epic waits for the folders of its tasks to be taken apart
 
 Given the branch of a card carrying the label of an epic, and a folder of a task is committed into
 that branch

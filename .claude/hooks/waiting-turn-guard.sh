@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/waiting-turn-guard.sh · 4b3d044410ae · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/waiting-turn-guard.sh · 0aa19a4bf379 · правится надстройкой, не здесь
 # rt-hook: Stop
-# Requires: hooks/deny-tail.sh
+# Requires: hooks/deny-tail.sh, hooks/epic-over.sh
 # Waiting guard: a turn that tells the owner about someone else's step does not end until it holds
 # at least one action on the next task. Stop.
 #
@@ -223,6 +223,16 @@ case "$verdict" in
     owe:run) said="a red run was read in this turn" ;;
     *) exit 0 ;;
 esac
+
+# The end of an epic: there the next task is exactly what is not taken — the guard of the stop
+# refuses taking it — and demanding it here would leave the turn with no lawful end. The reading is
+# shared with that guard and is asked right before the refusal: it goes to the hosting, and every
+# turn must not pay for it.
+# shellcheck disable=SC1090
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/epic-over.sh" 2>/dev/null || true
+if command -v rt_epic_over >/dev/null 2>&1 && rt_epic_over; then
+    exit 0
+fi
 
 reason="BLOCKED by waiting-turn-guard: ${said}, and there is not a single action about the next task in it. Waiting for someone else's step is not what a session is spent on: the run, the review and the merge go on elsewhere and do not get faster from being watched.
 

@@ -1,4 +1,4 @@
-// rt-kit v0.26.0 · checks/board-epics.github.mjs · 9018d0f6dfef · правится надстройкой, не здесь
+// rt-kit v0.26.0 · checks/board-epics.github.mjs · 3d04cf4cefe3 · правится надстройкой, не здесь
 /**
  * The link between a task and an epic. Lives in a file of its own: the work queue audit stands at
  * the length limit even without it, and these two checks are read separately.
@@ -27,7 +27,7 @@ const CARGO_LABELS = CONFIG.board?.cargoLabels ?? [];
  * task out of everything it mentioned — the previous epic its findings grew from, a review, a task
  * of a neighbouring tree.
  */
-function planRows(plan) {
+export function planRows(plan) {
     const rows = [];
     let inside = false;
     for (const line of plan.split('\n')) {
@@ -47,6 +47,39 @@ function planRows(plan) {
         rows.push(line);
     }
     return rows.join('\n');
+}
+
+/**
+ * The plan of an epic named by its own card, and the reason there is none.
+ *
+ * The plan is the document that carries the makeup, not the first path in the body. A card names
+ * its decision next to its plan, and the decision has no table of tasks: read as the plan, it made
+ * the makeup empty and every open task of the epic read as not belonging to it — fourteen false
+ * lines at once, and the true ones drowned among them.
+ *
+ * A path counts as a spelling with a directory: a bare file name occurs in the body in prose and
+ * would lead the reader to the very first mention.
+ */
+export function planPathOf(body) {
+    const named = [...String(body ?? '').matchAll(/(?:^|[\s(`])([\w.-]+(?:\/[\w.-]+)+\.md)/g)].map((match) => match[1]);
+    if (named.length === 0) {
+        return { path: null, why: 'the epic card names no path to the plan — there is nowhere to read what the epic holds' };
+    }
+
+    const onDisk = named.filter((path) => existsSync(join(ROOT, path)));
+    if (onDisk.length === 0) {
+        return { path: null, why: `the epic plan «${named[0]}» is not on disk — the card points into emptiness` };
+    }
+
+    const carrying = onDisk.find((path) => planRows(readFileSync(join(ROOT, path), 'utf8')) !== '') ?? null;
+    if (carrying === null) {
+        return {
+            path: null,
+            why: `none of the documents the card names carries the makeup of the epic — «${onDisk.join('», «')}». The makeup is a table with a task column`,
+        };
+    }
+
+    return { path: carrying, why: '' };
 }
 
 /**
@@ -85,33 +118,14 @@ export function checkEpicLinks(open, report) {
     const unreadable = new Set();
 
     for (const epic of epics) {
-        const named = [...String(epic.body ?? '').matchAll(/(?:^|[\s(`])([\w.-]+(?:\/[\w.-]+)+\.md)/g)].map((match) => match[1]);
-        if (named.length === 0) {
-            report(`#${epic.number}: the epic card names no path to the plan — there is nowhere to read what the epic holds`);
+        const found = planPathOf(epic.body);
+        if (found.path === null) {
+            report(`#${epic.number}: ${found.why}`);
             unreadable.add(epic.number);
             continue;
         }
 
-        // The plan is the document that carries the makeup, not the first path in the body. A card
-        // names its decision next to its plan, and the decision has no table of tasks: read as the
-        // plan, it made the makeup empty and every open task of the epic read as not belonging to
-        // it — fourteen false lines at once, and the true ones drowned among them.
-        const onDisk = named.filter((path) => existsSync(join(ROOT, path)));
-        if (onDisk.length === 0) {
-            report(`#${epic.number}: the epic plan «${named[0]}» is not on disk — the card points into emptiness`);
-            unreadable.add(epic.number);
-            continue;
-        }
-
-        const planPath = onDisk.find((path) => planRows(readFileSync(join(ROOT, path), 'utf8')) !== '') ?? null;
-        if (planPath === null) {
-            report(
-                `#${epic.number}: none of the documents the card names carries the makeup of the epic — «${onDisk.join('», «')}». The makeup is a table with a task column`
-            );
-            unreadable.add(epic.number);
-            continue;
-        }
-
+        const planPath = found.path;
         const plan = readFileSync(join(ROOT, planPath), 'utf8');
         const mentions = planRows(plan).matchAll(new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`, 'g'));
         const numbers = new Set([...mentions].map((match) => Number(match[1])));

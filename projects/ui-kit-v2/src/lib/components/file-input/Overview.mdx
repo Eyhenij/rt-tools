@@ -20,9 +20,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Когда не применять
 
-- **Файлы перетаскивают в область** — [`rt-file-drop`](./?path=/docs/components-filedrop--docs).
-- **Только показать уже загруженное** — [`rt-file-list`](./?path=/docs/components-filelist--docs)
-  с [`rt-file-card`](./?path=/docs/components-filecard--docs): поле выбора здесь лишнее.
+- **Файлы перетаскивают в область** — [`rt-file-drop`](./?path=/docs/organisms-filedrop-overview--docs).
+- **Только показать уже загруженное** — [`rt-file-list`](./?path=/docs/molecules-files-filelist-overview--docs)
+  с [`rt-file-card`](./?path=/docs/molecules-files-filecard-overview--docs): поле выбора здесь лишнее.
 
 ## Оси
 
@@ -49,8 +49,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | только чтение | `[readonly]` на вмещающем `rt-field` | плоский перечень имён, пустое — прочерком     |
 
 Своих состояний взаимодействия у поля нет: наведение, нажатие и фокус принадлежат кнопке
-[`[rtButton]`](./?path=/docs/components-button-overview--docs) и карточкам
-[`rt-file-card`](./?path=/docs/components-filecard--docs) и показаны в их матрицах.
+[`[rtButton]`](./?path=/docs/atoms-buttons-button-overview--docs) и карточкам
+[`rt-file-card`](./?path=/docs/molecules-files-filecard-overview--docs) и показаны в их матрицах.
 
 **Удаление файла сбрасывает значение нативного поля.** Иначе повторный выбор того же файла не
 дал бы события `change`, и вернуть только что удалённое было бы нельзя.
@@ -99,6 +99,6 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Рядом
 
-- [`rt-file-drop`](./?path=/docs/components-filedrop--docs) — приём файлов перетаскиванием.
-- [`rt-file-card`](./?path=/docs/components-filecard--docs) — чем нарисован каждый выбранный файл.
-- [`rt-field`](./?path=/docs/components-field-overview--docs) — подпись, ошибка, режим чтения.
+- [`rt-file-drop`](./?path=/docs/organisms-filedrop-overview--docs) — приём файлов перетаскиванием.
+- [`rt-file-card`](./?path=/docs/molecules-files-filecard-overview--docs) — чем нарисован каждый выбранный файл.
+- [`rt-field`](./?path=/docs/molecules-forms-field-overview--docs) — подпись, ошибка, режим чтения.

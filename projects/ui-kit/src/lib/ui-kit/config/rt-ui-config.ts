@@ -44,10 +44,23 @@ export namespace IRtUiConfig {
         appearance?: MatFormFieldAppearance;
     }
 
+    /** Per-instance-overridable defaults for the aside curtain. */
+    export interface Aside {
+        /**
+         * Whether Esc closes an open curtain.
+         *
+         * The kit default is `false`: the key is pressed to lift a hint or to leave a field, and
+         * the whole panel closed together with what was entered. An application that needs the
+         * former behaviour names it here once instead of naming it at every call.
+         */
+        closeOnEscape?: boolean;
+    }
+
     /** Component-level settings. Each entry overrides `global` for that component only. */
     export interface Components {
         button?: Button;
         dynamicSelectors?: DynamicSelectors;
+        aside?: Aside;
     }
 
     export interface Config {

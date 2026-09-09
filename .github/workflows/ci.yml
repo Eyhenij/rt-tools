@@ -229,6 +229,8 @@ jobs:
             # держит не сборку набора, а то, что человеку есть на что посмотреть.
             - name: Preset stories
               run: node tools/check-preset-stories.mjs
+            - name: Showcase links
+              run: node tools/check-showcase-links.mjs
 
             # `typecheck` проверяет типы там, где их не проверяет ничто другое:
             # Jest транспилирует спеки без проверки типов, а ESLint здесь не
