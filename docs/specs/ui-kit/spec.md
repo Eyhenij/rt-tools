@@ -84,6 +84,10 @@ outgrew the length limit. The table of the subdomains stands after the rules.
   working and comes alive at the first edit next to it.
 - **A programmatic closing is not put out by the setting.** A consumer closing the curtain by their own code
   says about their intent openly, and the ban of the sources does not concern them.
+- **The closing by a key comes back by a setting of the application, not by an argument at every
+  call.** The setting arrived as an optional argument, and the default changed to the opposite: every
+  existing call keeps compiling and silently loses the closing by a key. The argument of the call stays
+  stronger than the setting, and the default of the kit does not change.
 - **The curtain does not outlive the one who opened it.** The service is put into the component of the
   screen, and the router puts the component out before it gives out the change of the route: the curtain
   stayed over the new screen, and neither the backing, nor the key, nor the button inside worked.
