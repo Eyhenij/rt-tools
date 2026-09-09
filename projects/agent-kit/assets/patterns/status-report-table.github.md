@@ -18,6 +18,17 @@ Pattern of the rule `status-report`. What must be true — the work-conduct law.
 
 ## Calls
 
+The whole table at once — the command of the checks layer: it takes the order of the tasks from the
+epic plan, the state of each of them from the hosting, and prints the paragraph and the table ready
+to be carried to the owner. The tree names the call in the companion of the rule.
+
+```bash
+<the command of the tree> [<the number of the epic>]
+```
+
+Everything below is what the command is assembled from: it is asked by hand where the answer is not
+about an epic — one task, one branch, one run.
+
 The branch, its commits beyond main, what is uncommitted and the tip:
 
 ```bash
