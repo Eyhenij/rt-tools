@@ -19,11 +19,11 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { OfflineError, botToken, gh, ghJson, graphql } from './board-gh.mjs';
+import { declaredEpicOf } from './board-epic-link.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 // The client leaves here under its old name: three neighbouring modules and the tree's commands
-// call it from the board module, and rewriting them for the moved declaration would mean paying
-// for the file split twice.
+// call it from the board module, and rewriting them would mean paying for the split twice.
 export { OfflineError, botToken, gh, ghJson, graphql };
 
 /**
@@ -147,7 +147,7 @@ export function fetchIssues(state, options) {
 
 export function fetchIssue(number, options) {
     try {
-        return ghJson(['issue', 'view', String(number), '--json', 'number,title,state,assignees,labels'], options);
+        return ghJson(['issue', 'view', String(number), '--json', 'number,title,state,assignees,labels,body'], options);
     } catch (error) {
         if (error instanceof OfflineError) {
             throw error;
@@ -377,6 +377,7 @@ export function taskState(number, options) {
         assignees: issue.assignees.map((assignee) => assignee.login),
         numbered: numberFromTitle(issue.title) === issue.number,
         labels: issue.labels.map((label) => label.name),
+        epic: declaredEpicOf(issue.body) ?? null,
     };
 }
 

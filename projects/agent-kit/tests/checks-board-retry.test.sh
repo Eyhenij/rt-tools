@@ -19,6 +19,7 @@ RETRY_TREE="$(mktemp -d)"
 mkdir -p "$RETRY_TREE/tools"
 cp "$CHECKS/rt-kit-checks.config.mjs" "$RETRY_TREE/tools/"
 cp "$CHECKS/board.github.mjs" "$RETRY_TREE/tools/board.mjs"
+cp "$CHECKS/board-epic-link.github.mjs" "$RETRY_TREE/tools/board-epic-link.mjs"
 cp "$CHECKS/board-gh.github.mjs" "$RETRY_TREE/tools/board-gh.mjs"
 RETRY_CALLS="$RETRY_TREE/calls"
 

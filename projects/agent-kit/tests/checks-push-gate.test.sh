@@ -106,6 +106,7 @@ rm -rf "$GATE_TREE"
 BOARD_TREE="$(mktemp -d)"
 mkdir -p "$BOARD_TREE/tools" "$BOARD_TREE/.claude/rt-kit" "$BOARD_TREE/bin"
 cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/board.github.mjs" "$CHECKS/board-gh.github.mjs" "$BOARD_TREE/tools/"
+cp "$CHECKS/board-epic-link.github.mjs" "$BOARD_TREE/tools/board-epic-link.mjs"
 mv "$BOARD_TREE/tools/board.github.mjs" "$BOARD_TREE/tools/board.mjs"
 mv "$BOARD_TREE/tools/board-gh.github.mjs" "$BOARD_TREE/tools/board-gh.mjs"
 
