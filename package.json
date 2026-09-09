@@ -56,6 +56,7 @@
     "check:package-imports": "node tools/check-package-imports.mjs",
     "check:paint": "STORYBOOK_URL=${STORYBOOK_URL:-http://localhost:6006} node tools/snapshot-paint-probe.mjs",
     "check:icons": "STORYBOOK_URL=${STORYBOOK_URL:-http://localhost:6007} node tools/snapshot-icon-probe.mjs",
+    "check:window": "STORYBOOK_URL=${STORYBOOK_URL:-http://localhost:6007} node tools/snapshot-window-probe.mjs",
     "check:turn-map": "node tools/check-turn-map.mjs",
     "check:profile-drift": "node tools/check-profile-drift.mjs",
     "check:hook-scope": "node tools/check-hook-scope.mjs",
