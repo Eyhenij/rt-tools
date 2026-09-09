@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Набор о самой обвязке наборов: переживает ли она окружение git, оставленное снаружи.
+# Набор о самой обвязке наборов: переживает ли она окружение, оставленное снаружи живым заходом.
 #
 # Закрывает SC-AK-979 спека `docs/specs/agent-kit/guards`.
 #
@@ -23,8 +23,11 @@ git -C "$FOREIGN" init -q
 git -C "$FOREIGN" -c user.name=probe -c user.email=probe@example.com commit -q --allow-empty -m start
 BEFORE="$(git -C "$FOREIGN" rev-list --count HEAD)"
 
-for name in GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE; do
-    if env "$name=$FOREIGN/.git" bash "$VICTIM" >/dev/null 2>&1; then
+# У каждой переменной своё значение: git ждёт каталог репозитория, корень дерева — обычный каталог.
+for pair in "GIT_DIR=$FOREIGN/.git" "GIT_WORK_TREE=$FOREIGN" "GIT_INDEX_FILE=$FOREIGN/.git/index" \
+    "CLAUDE_PROJECT_DIR=$FOREIGN"; do
+    name="${pair%%=*}"
+    if env "$pair" bash "$VICTIM" >/dev/null 2>&1; then
         got="прошёл"
     else
         got="отбит"

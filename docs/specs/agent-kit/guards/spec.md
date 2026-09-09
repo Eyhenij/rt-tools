@@ -58,12 +58,13 @@ the work.
   stands on one machine, and a run going next to it takes the assigned number: the double falls with
   the refusal "the address is taken", and with it every check of the suite. The run turns red over a
   cause that is not in the edit, and that reads as a breakage of the branch.
-- **The scenario suite runs its fixtures on its own repositories, whatever git environment stands
-  around it.** A suite is run from inside a live session — the push gate goes from under the very
-  dispatcher — and `GIT_DIR`, `GIT_WORK_TREE` and `GIT_INDEX_FILE` standing there override the path
-  of every fixture call. Two things follow, and the second is the worse: the suite reddens on a
-  sound guard only from inside that environment, and the commits of its fixtures land in the real
-  tree.
+- **The scenario suite runs its fixtures on its own tree, whatever environment stands around it.**
+  A suite is run from inside a live session — the push gate goes from under the very dispatcher —
+  and the variables standing there override the fixture. `GIT_DIR`, `GIT_WORK_TREE` and
+  `GIT_INDEX_FILE` send every fixture call into the real repository, and `CLAUDE_PROJECT_DIR` sends
+  the guard for its profile there: it then judges the real work queue instead of the fixture. Both
+  redden a sound guard only from inside that environment, and the first also lands the commits of
+  the fixtures in the real tree.
 - **A suite that accumulates a count of checks gives that count back by the exit code.** The count
   lives in a variable of the harness, and one line of the total moves it onto the code; without it the
   suite ends with whatever stood last — that is, always with zero. A check that failed is printed as a

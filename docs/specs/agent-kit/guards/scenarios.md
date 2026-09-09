@@ -486,12 +486,12 @@ argument and an edit in place stay writes
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
-### SC-AK-979 — the scenario suite is not moved by the git environment standing around it
+### SC-AK-979 — the scenario suite is not moved by the environment standing around it
 
-Given the environment holds `GIT_DIR`, `GIT_WORK_TREE` or `GIT_INDEX_FILE` pointing at a foreign
-repository
+Given the environment holds `GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE` or `CLAUDE_PROJECT_DIR`
+pointing at a foreign tree
 When a suite of the scenarios of the guards is run
-Then it passes the same as without them, and not a single commit of its fixtures lands in the
-repository those variables point at
+Then it passes the same as without them, and not a single commit of its fixtures lands in the tree
+those variables point at
 
 Covered: `projects/agent-kit/tests/suite-git-env.test.sh`.
