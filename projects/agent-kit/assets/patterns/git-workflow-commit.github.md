@@ -63,12 +63,15 @@ and merging two tasks into one afterwards is done by hand.
 
 
 ```bash
-npm run task:new -- --title 'Письма владельцу не уходят молча' \
+npm run task:new -- --epic-of <номер эпика> --title 'Письма владельцу не уходят молча' \
     --label bug --label area:api --slug mail-owner-silence < описание.md
 ```
 
 The body is read from standard input, `--slug` is optional and goes only into the hint with the
-branch name. Author and assignee — the machine account; the command reads the token itself, from
+branch name. The epic is named by `--epic-of`, and the command writes the line about it into the
+body itself and prints the branch line from the branch of the epic; work outside an epic goes by
+`--outside-epic '<слово владельца>'`, and without either of the two the call is refused before the
+card is created. The epic itself is created by the same command with `--epic`. Author and assignee — the machine account; the command reads the token itself, from
 a file outside the repository.
 
 The script under this command is created by the project — the package does not ship it. What it

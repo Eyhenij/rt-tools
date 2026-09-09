@@ -9,6 +9,7 @@
         "tools"
     ],
     "indexedDirs": [],
+    "plansDir": "docs/plans",
     "portableDirs": [
         "projects/agent-kit/assets"
     ],

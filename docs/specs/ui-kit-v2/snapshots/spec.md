@@ -80,13 +80,13 @@ as an attachment.
   consequence is named here because it is visible in the reference: `100vh` and `100vw` of such a story are
   counted from the widened window, and the show takes the frame whole.
 
-  This holds for both frames of the showcase, and the rule is one for them because the shutter is one. A
-  frame of a whole page is widened to the page; a frame by the root of the show — to that root, not to the
-  page: the page happens to be higher than the root being shot, and a superfluous growth of the window
-  would change everything counted from the window at stories that did not ask for it. Named apart because
-  the miss lands not where the high show stands: the neighbouring story is shot by a page already shifted,
-  and the divergence comes to the story next in the file. A rearrangement of the stories then moves frames
-  nobody touched.
+    This holds for both frames of the showcase, and the rule is one for them because the shutter is one. A
+    frame of a whole page is widened to the page; a frame by the root of the show — to that root, not to the
+    page: the page happens to be higher than the root being shot, and a superfluous growth of the window
+    would change everything counted from the window at stories that did not ask for it. Named apart because
+    the miss lands not where the high show stands: the neighbouring story is shot by a page already shifted,
+    and the divergence comes to the story next in the file. A rearrangement of the stories then moves frames
+    nobody touched.
 
 - **A frame of a threshold is taken at every threshold the component itself names.** One additional frame
   at a component with three media queries would leave two branches of the layout unchecked and would show
