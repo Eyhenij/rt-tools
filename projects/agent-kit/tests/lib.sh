@@ -21,6 +21,14 @@ ASSETS="$(cd "$(dirname "${BASH_SOURCE[0]}")/../assets" && pwd)"
 # запустили.
 unset RT_HOOK_INPUT RT_HOOK_TOOL RT_HOOK_CMD RT_HOOK_FILE RT_HOOK_CWD RT_HOOK_PARSED
 
+# Окружение git снимается по той же причине и с большей ценой. Сценарии заводят одноразовые
+# репозитории и говорят с ними через `git -C <путь>`, а `GIT_DIR`, `GIT_WORK_TREE` и
+# `GIT_INDEX_FILE` этот путь перебивают: вызов уходит в тот репозиторий, на который указывают они.
+# Набор тогда краснеет на верном гарде — и краснеет только изнутри чужого окружения, при любом
+# прямом запуске он зелёный. Хуже другое: коммиты фикстур ложатся в настоящее дерево.
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_OBJECT_DIRECTORY GIT_ALTERNATE_OBJECT_DIRECTORIES
+unset GIT_COMMON_DIR GIT_NAMESPACE GIT_CEILING_DIRECTORIES GIT_PREFIX
+
 # Локаль исполнения набора. Сценарии ищут в выводе те же слова, какими написаны образцы гардов,
 # и `grep -i` складывает их регистр только под UTF-8: под локалью C набор краснеет на верном
 # гарде. Помощник тот же, что подключают сами гарды.
