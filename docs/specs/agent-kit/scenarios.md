@@ -31,6 +31,7 @@ table.
 | [The rules gate](rule-gate/scenarios.md)                                        | `rule-gate/`               |
 | [The length limit of a rule description](skill-description-limit/scenarios.md)  | `skill-description-limit/` |
 | [The state boundary in the texts of work](state-boundary/scenarios.md)          | `state-boundary/`          |
+| [The entry into the specs by a resource name](specs-entry/scenarios.md)         | `specs-entry/`             |
 | [The texts of the rules layer](texts/scenarios.md)                              | `texts/`                   |
 | [The audit of specs and addresses](texts/spec-checks/scenarios.md)              | `texts/spec-checks/`       |
 | [Claims to the owner](turn-claims/scenarios.md)                                 | `turn-claims/`             |
