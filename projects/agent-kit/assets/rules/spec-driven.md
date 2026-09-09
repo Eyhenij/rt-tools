@@ -216,6 +216,13 @@ flowchart TD
   the name across the whole tree: otherwise red arrives one check per run — that is how splitting
   one rule took down three.
 
+- **The spec speaking of a resource is found by a command, not by walking the subdomains.** A domain
+  grows into dozens of subdomains, and the one needed is told from the rest only by reading: whoever
+  takes apart a complaint about a file pays the whole window for that and therefore judges by memory.
+  The command reads the bindings of the companions — the very ones the audit keeps fresh — and,
+  called without a name, names the resources no spec speaks of.
+  <!-- rt-when: *.md -->
+
 ## The shape of a compressed article
 
 A rule loads whole into a session and pays for it every session, whatever the session works on. A
