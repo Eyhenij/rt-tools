@@ -45,6 +45,13 @@ flowchart TD
 
 ## How the law applies here
 
+- **The table is assembled by a command, not by the memory of the session.** A session that has just
+  started remembers no order of calls, and one that has worked for hours folds the answers otherwise
+  than the previous one: two answers about one and the same work then disagree. The command takes the
+  order of the tasks from the epic plan and the state of each of them from the hosting; the tree
+  names the call in the companion.
+  <!-- rt-when: ответ владельцу о состоянии работы -->
+
 - **The work state is shown as a table, not as prose.** A retelling the owner reads whole to find
   one row, and next time does not read at all.
   <!-- rt-when: ответ владельцу о состоянии работы -->

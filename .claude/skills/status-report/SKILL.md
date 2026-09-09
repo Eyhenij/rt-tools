@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law. Load when the owner asked where the work stands — "what is the status", "which epic", "what are you doing now". Names the shape of the reply — a paragraph about the epic and a table of its tasks — and what backs a cell about the tree. Pattern status-report-table.
 ---
-<!-- rt-kit v0.26.0 · rules/status-report.md · 63f1906635db · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · rules/status-report.md · e8e0bcc528e0 · правится надстройкой, не здесь -->
 
 # Status report — how it works here
 
@@ -45,6 +45,13 @@ flowchart TD
 ```
 
 ## How the law applies here
+
+- **The table is assembled by a command, not by the memory of the session.** A session that has just
+  started remembers no order of calls, and one that has worked for hours folds the answers otherwise
+  than the previous one: two answers about one and the same work then disagree. The command takes the
+  order of the tasks from the epic plan and the state of each of them from the hosting; the tree
+  names the call in the companion.
+  <!-- rt-when: ответ владельцу о состоянии работы -->
 
 - **The work state is shown as a table, not as prose.** A retelling the owner reads whole to find
   one row, and next time does not read at all.

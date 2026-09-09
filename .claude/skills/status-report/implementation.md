@@ -33,6 +33,7 @@ here» (the bold part of the item). An article without a line and a line without
 divergence: the rule promises what the tree does not have, or the tree holds what the rule is
 silent about.
 
+- **The table is assembled by a command, not by the memory of the session.** — `tools/epic-table.mjs:epicTable` — `npm run epic:table [<номер эпика>]`; without a number the epic is taken from the current branch
 - **The work state is shown as a table, not as prose.** — **Not checked.** The reply to the owner does not land in the tree, and there is nothing to read it with; it is held by the memory of whoever answers.
 - **The epic itself is described by text above the table, not by a row in it.** — **Not checked.** The form of the reply to the owner is read by no audit; it is held by the memory of whoever answers.
 - **The epic's tasks are listed all, and in the order the plan assigned them.** — **Not checked.** The order stands in the epic plan — `docs/plans/` — but there is nobody to reconcile the reply text with it.
