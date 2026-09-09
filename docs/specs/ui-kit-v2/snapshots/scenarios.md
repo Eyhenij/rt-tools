@@ -206,3 +206,21 @@ after that an ordinary frame is shot; the scroll of the inner ribbons and the he
 change at that
 
 Not covered: it cannot be closed by a test with an identifier — it is checked by the run of the snapshots. Checked by a measurement: at a shooting past the bounds of the window the ribbon of the viewer of the photos lost its scroll — 2624 to 2 — and the first snapshot of the set instead of the last got into the frame, while the height of the page went away by two pixels; after the widened window three frames in a row coincided pixel for pixel, and the ribbon stayed at the last snapshot.
+
+### SC-UKV-131 — a frame by the root of the show is shot by a window widened to that root
+
+Given a story whose root of the show is higher than the base window
+When the run of the snapshots reaches that story
+Then the window is widened to the sizes of the root, the show is waited for as having stood, and only
+after that an ordinary frame is shot; the height of the root does not change between the measurement
+before the frame and the one after it, and the scroll of the page does not go away
+
+Not covered: it cannot be closed by a test with an identifier — it is checked by the run of the
+snapshots. Checked by a measurement: at a shooting past the bounds of the window the root lost two
+pixels of height between the measurement before the frame and the one after it — 812 to 810, 1072 to
+1070 — and the page went away by sixteen pixels of scroll; the neighbouring story was then shot by an
+already shifted page, so a rearrangement of the stories in the file moved seven frames nobody had
+touched. With the widened window the height holds — 890 became 892, 710 became 712 — and coincides
+with a measurement of the same story opened on a page of its own, where nothing had been shot before
+it.
+
