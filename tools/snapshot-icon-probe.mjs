@@ -31,6 +31,8 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { openStory } from './showcase-probe.mjs';
+
 /** The story the former wait did not see: zero icon hosts and seven drawn icons. */
 const STORY = 'molecules-forms-splitbutton--states';
 
@@ -158,8 +160,7 @@ const browser = await chromium.launch();
 try {
     /** The page is prepared as the harness does, but without the icon wait. */
     const prepare = async (page) => {
-        await page.goto(`${URL}/iframe.html?id=${STORY}&viewMode=story`, { waitUntil: 'load' });
-        await page.waitForSelector(ROOT_SELECTOR, { timeout: ICONS_TIMEOUT_MS });
+        await openStory(page, { url: URL, story: STORY, selector: ROOT_SELECTOR, timeoutMs: ICONS_TIMEOUT_MS });
         await page.addStyleTag({
             content:
                 '*,*::before,*::after{animation-duration:0s !important;animation-delay:0s !important;transition-duration:0s !important;transition-delay:0s !important;caret-color:transparent !important;}',
