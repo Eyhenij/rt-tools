@@ -1,3 +1,12 @@
+# [0.5.0](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.4.0...rt-core@0.5.0) (2026-09-09)
+
+### Features
+
+- **rt:core:** входы компонента, созданного в коде, проверяются сборкой ([61db5b1](https://github.com/Eyhenij/rt-tools/commit/61db5b189e083ca0ed5d89aa6e898b999cfa2e75)), closes [#7](https://github.com/Eyhenij/rt-tools/issues/7)
+- **rt:core:** локальное значение шаблона называется именем ([32e4ca5](https://github.com/Eyhenij/rt-tools/commit/32e4ca5c8119fade1673518964f42e20d73e4524)), closes [#101](https://github.com/Eyhenij/rt-tools/issues/101)
+- **rt:core:** часовой пояс читателя спрашивается через службу ([6cc085f](https://github.com/Eyhenij/rt-tools/commit/6cc085fb60dc069ae53c725b36b0e508570764d8)), closes [#97](https://github.com/Eyhenij/rt-tools/issues/97)
+- **rt:utils:** импорты переехавшего переставляет инструмент дерева ([8d5beb0](https://github.com/Eyhenij/rt-tools/commit/8d5beb0ce4dddeeff431d17561e99296125f9b16)), closes [#220](https://github.com/Eyhenij/rt-tools/issues/220)
+
 # [0.4.0](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.3.1...rt-core@0.4.0) (2026-09-03)
 
 ### Features
