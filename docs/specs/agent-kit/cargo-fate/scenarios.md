@@ -9,7 +9,7 @@ Given the intake holds a record of this tree, fixed and released
 When the command of the fate is called
 Then the line about the record names its state, what it was fixed by and the version of the release
 
-Не покрыто: пробы пишутся третьим этапом задачи.
+Covered: `projects/agent-kit/src/lib/fate.spec.ts`.
 
 ### SC-AK-962 — an override is named next to the record its mark ties it to
 
@@ -17,7 +17,7 @@ Given a section of an override carries the mark of the article of a sent proposa
 When the command of the fate is called
 Then the section is named next to the record whose text holds that article
 
-Не покрыто: пробы пишутся четвёртым этапом задачи.
+Covered: `projects/agent-kit/src/lib/fate.spec.ts`.
 
 ### SC-AK-963 — a section whose article the laid-out edition already holds is named for lifting
 
@@ -25,7 +25,7 @@ Given the article of the mark stands in the resource of the laid-out edition
 When the command of the fate is called
 Then the section is named among those to be lifted now
 
-Не покрыто: пробы пишутся четвёртым этапом задачи.
+Covered: `projects/agent-kit/src/lib/fate.spec.ts`.
 
 ### SC-AK-964 — a released fix that has not reached the tree is named as an update
 
@@ -33,7 +33,7 @@ Given the record is released, and the laid-out edition does not hold the article
 When the command of the fate is called
 Then the line about the section says an installation is due, not a lifting
 
-Не покрыто: пробы пишутся четвёртым этапом задачи.
+Covered: `projects/agent-kit/src/lib/fate.spec.ts`.
 
 ### SC-AK-965 — a mark without a record of its own is named apart
 
@@ -41,7 +41,7 @@ Given the mark of a section names an article no record of the answer holds
 When the command of the fate is called
 Then the section is named in a part of its own, and the output says the intake gave no record for it
 
-Не покрыто: пробы пишутся четвёртым этапом задачи.
+Covered: `projects/agent-kit/src/lib/fate.spec.ts`.
 
 ### SC-AK-966 — the command changes no file of the tree
 
@@ -49,7 +49,7 @@ Given the tree holds overrides with marks, and the intake answered with records
 When the command of the fate is over
 Then the files of the overrides lie unchanged
 
-Не покрыто: пробы пишутся четвёртым этапом задачи.
+Covered: `projects/agent-kit/src/lib/fate.spec.ts`.
 
 ### SC-AK-967 — without a token or an address the call does not go into the network
 
@@ -57,4 +57,4 @@ Given the tree has named no token or no intake address
 When the command of the fate is called
 Then it refuses before the request, names where they live and ends with a non-zero code
 
-Не покрыто: пробы пишутся третьим этапом задачи.
+Covered: `projects/agent-kit/src/lib/fate.spec.ts`.
