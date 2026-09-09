@@ -1,3 +1,17 @@
+# [0.6.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.5.1...rt-tools@0.6.0) (2026-09-09)
+
+### Bug Fixes
+
+- **rt:ui-kit:** выбранная тягой ширина подменю заменяет заданную оформлением ([87bd7ca](https://github.com/Eyhenij/rt-tools/commit/87bd7ca9ec71617b29ab49ff013e4f9f799baed8))
+- **rt:ui-kit:** закреплённое подменю не держит место, когда показывать нечего ([63c2300](https://github.com/Eyhenij/rt-tools/commit/63c23002c3a6c025bf3b129710823962ef1496a4))
+- **rt:ui-kit:** закреплённое подменю помечено залитым значком, а не только цветом ([e978a28](https://github.com/Eyhenij/rt-tools/commit/e978a28ed48faf73f48b1f61e79d0a6618d325ce))
+- **rt:ui-kit:** нижний предел ширины подменю оставлен за оформлением, как решено в RT-1673 ([33e8df9](https://github.com/Eyhenij/rt-tools/commit/33e8df9de86dfc502ee284c90370cc490cc04a62))
+- **rt:ui-kit:** шторка не переживает того, кто её открыл ([9314350](https://github.com/Eyhenij/rt-tools/commit/9314350ed59dc27af32fce093bd813f75be1ea76))
+
+### Features
+
+- **rt:ui-kit:** вид поля ввода задаётся настройкой кита ([59322ba](https://github.com/Eyhenij/rt-tools/commit/59322ba46dc2b6abbe908edb83902acc416558ee)), closes [#8](https://github.com/Eyhenij/rt-tools/issues/8)
+
 ## [0.5.1](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.5.0...rt-tools@0.5.1) (2026-09-04)
 
 ### Bug Fixes
