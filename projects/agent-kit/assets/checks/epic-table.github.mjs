@@ -25,6 +25,9 @@ import { declaredEpicOf, planPathOf, planRows } from './board-epics.mjs';
 import { verdictOnHead } from './board-runs.mjs';
 import { ROOT } from './rt-kit-checks.config.mjs';
 
+/** The machine mode: the numbers of the unfinished tasks instead of the table for the owner. */
+const UNFINISHED = '--unfinished';
+
 /** The machine account's token is substituted per call, as everywhere in the work with the queue. */
 const OPTIONS = { token: botToken() };
 
@@ -121,6 +124,10 @@ function nameOf(title) {
 /**
  * One row of the table filled from the hosting: the name of the task and the state cell.
  *
+ * A task is counted finished by the same reading the cell is written by: merged, or handed over by
+ * a request. Waiting for a merge is not work — the executor has nothing left to do about it, and
+ * the work of the epic is over exactly at that minute.
+ *
  * The run is asked by the head of the request, not by the branch: the list of the runs of a branch
  * answers about the last commit that started one, and a green run of a commit gone by then reads as
  * a green head.
@@ -128,23 +135,23 @@ function nameOf(title) {
 function rowOf(number, board, pulls) {
     const issue = issueOf(number);
     if (!issue) {
-        return { name: '—', state: 'не заведена' };
+        return { name: '—', state: 'не заведена', finished: false };
     }
 
     const name = nameOf(issue.title);
     if (issue.state !== 'OPEN') {
-        return { name, state: 'влито' };
+        return { name, state: 'влито', finished: true };
     }
 
     const pull = pulls.find((one) => numberFromTitle(String(one.title ?? '')) === number);
     if (!pull) {
         const column = board.items.get(number)?.status ?? null;
-        return { name, state: column ? `в очереди, столбец «${column}»` : 'заведена, столбца нет' };
+        return { name, state: column ? `в очереди, столбец «${column}»` : 'заведена, столбца нет', finished: false };
     }
 
     const verdict = verdictOnHead(pull.headRefOid, OPTIONS);
     const draft = pull.isDraft === true ? 'черновик' : 'готова к слиянию';
-    return { name, state: `заявка #${pull.number} ${draft}, прогон на вершине ${VERDICT[verdict] ?? verdict}` };
+    return { name, state: `заявка #${pull.number} ${draft}, прогон на вершине ${VERDICT[verdict] ?? verdict}`, finished: true };
 }
 
 /**
@@ -185,45 +192,77 @@ function tableOf(rows) {
     return [...head, ...body];
 }
 
-/** The lines of the answer, or the refusal with the reason: the caller prints and ends. */
-export function epicTable(argv) {
+/**
+ * The epic, its plan and the rows filled from the hosting — or the reason there is nothing to
+ * assemble. Both answers of the command stand on this one reading: assembled twice, they would
+ * count a task finished differently.
+ */
+function gathered(argv) {
     const asked = epicAsked(argv);
     if (asked.number === null) {
-        return { ok: false, lines: [asked.why] };
+        return { ok: false, why: asked.why };
     }
 
     const epic = issueOf(asked.number);
     if (!epic) {
-        return { ok: false, lines: [`у хостинга нет карточки эпика #${asked.number}`] };
+        return { ok: false, why: `у хостинга нет карточки эпика #${asked.number}` };
     }
 
     const found = planPathOf(epic.body);
     if (found.path === null) {
-        return { ok: false, lines: [`карточка эпика #${asked.number}: ${found.why}`] };
+        return { ok: false, why: `карточка эпика #${asked.number}: ${found.why}` };
     }
 
     const plan = readFileSync(join(ROOT, found.path), 'utf8');
     const rows = makeupOf(plan);
     if (rows.length === 0) {
-        return { ok: false, lines: [`замысел «${found.path}» не несёт состава эпика: состав — таблица со столбцом задач`] };
+        return { ok: false, why: `замысел «${found.path}» не несёт состава эпика: состав — таблица со столбцом задач` };
     }
 
     const board = fetchBoard(OPTIONS);
     const pulls = fetchOpenPulls(OPTIONS);
-    const filled = rows.map((row) => ({ ...row, ...rowOf(row.number, board, pulls) }));
-    return { ok: true, lines: [paragraphOf(epic, plan, filled), '', ...tableOf(filled)] };
+    return { ok: true, why: '', epic, plan, rows: rows.map((row) => ({ ...row, ...rowOf(row.number, board, pulls) })) };
+}
+
+/** The lines of the answer, or the refusal with the reason: the caller prints and ends. */
+export function epicTable(argv) {
+    const found = gathered(argv);
+    if (!found.ok) {
+        return { ok: false, lines: [found.why] };
+    }
+
+    return { ok: true, lines: [paragraphOf(found.epic, found.plan, found.rows), '', ...tableOf(found.rows)] };
+}
+
+/**
+ * The numbers of the tasks of the epic that are not finished, one per line — the machine answer for
+ * the guard of the stop.
+ *
+ * It is a mode of this very command, not a reader of its own: a second reading of the same tasks
+ * would diverge from the printed table in silence, and the guard would refuse work the table calls
+ * unfinished. An empty answer with the zero code means the epic is over.
+ */
+export function unfinished(argv) {
+    const found = gathered(argv);
+    if (!found.ok) {
+        return { ok: false, lines: [found.why] };
+    }
+
+    return { ok: true, lines: found.rows.filter((row) => row.finished !== true).map((row) => String(row.number)) };
 }
 
 const isEntryPoint = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
 
 if (isEntryPoint) {
+    const argv = process.argv.slice(2);
+    const asked = argv.filter((one) => one !== UNFINISHED);
     let outcome;
     try {
-        outcome = epicTable(process.argv.slice(2));
+        outcome = argv.includes(UNFINISHED) ? unfinished(asked) : epicTable(asked);
     } catch (error) {
         const why = error instanceof OfflineError ? error.message : String(error?.message ?? error);
         outcome = { ok: false, lines: [`состояние спросить нечем: ${why}`, 'таблица не печатается: пустая читается как пустой эпик'] };
     }
-    process.stdout.write(`${outcome.lines.join('\n')}\n`);
+    process.stdout.write(outcome.lines.length === 0 ? '' : `${outcome.lines.join('\n')}\n`);
     process.exit(outcome.ok ? 0 : 1);
 }

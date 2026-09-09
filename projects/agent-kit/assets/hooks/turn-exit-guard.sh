@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
-# Requires: hooks/deny-tail.sh, hooks/turn-exit-patterns.sh
+# Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
 # handed over. Stop.
 #
@@ -261,6 +261,10 @@ fi
 # Incident analysis — the record
 # "2026-09-04-hod-konchalsya-ozhidaniem-pri-deystvuyushchem-ukazanii" in the intake.
 awaits_word="$(printf '%s' "$verdict" | jq -r '.awaits_word // false' 2>/dev/null)"
+# At the end of an epic waiting for the word of the owner is the work itself: the reading of that
+# lies with the patterns and is shared with the guard of the stop.
+[ "$awaits_word" = "true" ] && rt_te_epic_over && awaits_word=false
+
 if [ "$awaits_word" = "true" ]; then
     rt_te_deny "BLOCKED by turn-exit-guard: the turn ended with words about waiting for the word of the owner, and the word about stopping the guard reads from the owner: in this turn they announced no stop, and no question was put to them by the tool.
 
