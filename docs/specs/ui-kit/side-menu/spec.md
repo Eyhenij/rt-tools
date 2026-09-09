@@ -77,6 +77,12 @@ consumer, the address of the active item the kit does not count.
   way.
 - **On a narrow screen there is no pinning, and there is a search.** The submenu there takes the screen
   whole, and there is nothing to pin; there is no switch in the narrow layout at all.
+- **The submenu keeps its place while the pointer walks the strip.** Moving across the items of the first
+  level one after another moved the panel upwards by the width of the strip, and it did not come back: the
+  head of the panel with the search field left above the top edge of the screen. The panel is laid out by
+  the drawer of the framework, which puts it over its container rather than into the flow; a panel put into
+  the flow makes the container twice as tall as the screen, and then one bringing of the active item into
+  view scrolls the container together with the panel.
 - **The handle of the pull is caught wider than it is visible.** The zone of the catching and the visible
   strip are two different numbers: into four pixels the cursor does not land at the first try, and a miss
   past the handle lands into the panel, that is, instead of a pull a person presses an item. The zone is
@@ -162,3 +168,4 @@ The subdomain has no open questions.
 - 2026-09-06 — the subdomain was split out of the spec of the first kit, which had outgrown the length
   limit. The rules, the scenarios and the bindings about the second level of the side menu moved as they
   were: the scenario numbers were not recounted.
+- 2026-09-09 — the submenu stopped drifting upwards at a walk of the strip (RT-1975).
