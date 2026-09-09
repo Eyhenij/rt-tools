@@ -85,12 +85,14 @@ the exit code says whether the entry was found.
 
 ### Refusal codes
 
-| What happened                   | How it ends | What it says                                         |
-| ------------------------------- | ----------- | ---------------------------------------------------- |
-| the name is matched by bindings | code zero   | the subdomain, the statements and the addresses      |
-| the name is matched by nothing  | code one    | what was looked for and how the uncovered are listed |
-| called without a name           | code zero   | the resources no spec speaks of, one per line        |
-| there are no specs in the tree  | code zero   | nothing: there is nothing to assemble the entry from |
+Not applicable: the command answers with an exit code and a text, not with named codes.
+
+| What happened                   | Code | What it says                                         |
+| ------------------------------- | ---- | ---------------------------------------------------- |
+| the name is matched by bindings | `0`  | the subdomain, the statements and the addresses      |
+| the name is matched by nothing  | `1`  | what was looked for and how the uncovered are listed |
+| called without a name           | `0`  | the resources no spec speaks of, one per line        |
+| there are no specs in the tree  | `0`  | nothing: there is nothing to assemble the entry from |
 
 ## Data
 

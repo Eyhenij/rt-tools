@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing specs, laws and any skill. Names the three layers — law, rule, pattern — the mandatory sections, the binding to code and the link between scenarios and tests. Patterns spec-driven-domain, spec-driven-rule.
 ---
-<!-- rt-kit v0.26.0 · rules/spec-driven.md · d24f7f6d8e0f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · rules/spec-driven.md · 197b5d373058 · правится надстройкой, не здесь -->
 
 # Project documentation — how it works here
 
@@ -216,6 +216,13 @@ flowchart TD
   checks, in the probes of their suites and in the state tables. So a split starts with a search for
   the name across the whole tree: otherwise red arrives one check per run — that is how splitting
   one rule took down three.
+
+- **The spec speaking of a resource is found by a command, not by walking the subdomains.** A domain
+  grows into dozens of subdomains, and the one needed is told from the rest only by reading: whoever
+  takes apart a complaint about a file pays the whole window for that and therefore judges by memory.
+  The command reads the bindings of the companions — the very ones the audit keeps fresh — and,
+  called without a name, names the resources no spec speaks of.
+  <!-- rt-when: *.md -->
 
 ## The shape of a compressed article
 
