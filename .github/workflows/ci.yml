@@ -231,6 +231,11 @@ jobs:
               run: node tools/check-preset-stories.mjs
             - name: Showcase links
               run: node tools/check-showcase-links.mjs
+            # Пары кадров двух китов. Расхождение вида после переноса семейства видит только тот,
+            # кто помнит, как было; перечень говорит, какой кадр с каким смотреть, и переживает
+            # чужую память.
+            - name: Kit shot pairs
+              run: node tools/check-kit-shot-pairs.mjs
 
             - name: Kit two coverage
               run: node tools/check-kit-coverage.mjs

@@ -1,0 +1,106 @@
+{
+  "families": [
+    {
+      "family": "scrollable",
+      "title": "Прокрутка",
+      "task": "RT-1878",
+      "kitOne": [
+        "components-scrollable--all-parts",
+        "components-scrollable--content-only",
+        "components-scrollable--header-and-content",
+        "components-scrollable--long-content",
+        "components-scrollable--short-content"
+      ],
+      "kitTwo": [],
+      "reason": "переноса ещё не было: семейства прокрутки во втором ките нет вовсе"
+    },
+    {
+      "family": "info-badge",
+      "title": "Значок-бейдж",
+      "task": "RT-1879",
+      "kitOne": [
+        "components-infobadge--info-badge-bold",
+        "components-infobadge--info-badge-colors",
+        "components-infobadge--info-badge-ellipsis",
+        "components-infobadge--info-badge-sizes",
+        "components-infobadge--info-badge-with-icon"
+      ],
+      "kitTwo": [],
+      "reason": "переноса ещё не было: у второго кита есть свой живой значок, но это другое семейство"
+    },
+    {
+      "family": "action-bar",
+      "title": "Полоса действий",
+      "task": "RT-1880",
+      "kitOne": [
+        "components-actionbar--close",
+        "components-actionbar--counter",
+        "components-actionbar--counter-wrapped",
+        "components-actionbar--counter-zero",
+        "components-actionbar--menu-action",
+        "components-actionbar--no-actions",
+        "components-actionbar--plain-actions",
+        "components-actionbar--styled-action",
+        "components-actionbar--tablet"
+      ],
+      "kitTwo": [],
+      "reason": "переноса ещё не было"
+    },
+    {
+      "family": "image-uploader",
+      "title": "Загрузчик изображений",
+      "task": "RT-1881",
+      "kitOne": ["components-imageupload--image-cropper", "components-imageupload--image-upload"],
+      "kitTwo": [],
+      "reason": "переноса ещё не было"
+    },
+    {
+      "family": "side-menu",
+      "title": "Боковое меню",
+      "task": "RT-1883",
+      "kitOne": [
+        "components-sidemenu--default",
+        "components-sidemenu--default-active-menu",
+        "components-sidemenu--menu-resizer-grab",
+        "components-sidemenu--menu-scroll-hint",
+        "components-sidemenu--menu-scrollbar",
+        "components-sidemenu--mobile",
+        "components-sidemenu--mobile-active-menu",
+        "components-sidemenu--sub-menu-held-by-search",
+        "components-sidemenu--sub-menu-hovered",
+        "components-sidemenu--sub-menu-long-title",
+        "components-sidemenu--sub-menu-pinned",
+        "components-sidemenu--sub-menu-search-empty",
+        "components-sidemenu--sub-menu-search-matches",
+        "components-sidemenu--sub-menu-wide"
+      ],
+      "kitTwo": [],
+      "reason": "переноса ещё не было: он идёт только по требованию приложения"
+    },
+    {
+      "family": "dynamic-selectors",
+      "title": "Динамические селекторы",
+      "task": "RT-1884",
+      "kitOne": [
+        "components-dynamicselector--no-data",
+        "components-dynamicselector--selector",
+        "components-dynamicselector--selector-placeholder",
+        "components-dynamicselector--selector-popup",
+        "components-dynamicselector--selector-single-mode",
+        "components-dynamicselector--selector-with-additional",
+        "components-dynamicselector--selector-with-custom-title",
+        "components-dynamicselector--selector-with-readonly"
+      ],
+      "kitTwo": [],
+      "reason": "переноса ещё не было: он идёт только по требованию приложения"
+    },
+    {
+      "family": "aside",
+      "title": "Шторка",
+      "task": "RT-1875",
+      "kitOne": ["components-aside--aside", "components-aside--aside-opened"],
+      "kitTwo": ["organisms-aside-aside--layout", "organisms-aside-aside--size", "organisms-aside-aside--themes"],
+      "reason": ""
+    }
+  ]
+}
