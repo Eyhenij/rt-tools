@@ -181,6 +181,43 @@ async function fitViewportToPage(page: Page, identifier: string): Promise<void> 
 }
 
 /**
+ * Раздвигает окно до снимаемого узла, чтобы кадр по узлу снимался обычной съёмкой.
+ *
+ * То же, что делает подгонка под страницу, и по той же причине: узел выше окна браузер снимает,
+ * подменяя окно на время кадра, — страница получает `resize` и уезжает прямо под затвором. Замер
+ * поймал это на семи историях сразу: узел терял два пикселя высоты между замером до кадра и
+ * замером после него (812 → 810, 1072 → 1070), а страница уползала на 16 пикселей прокрутки.
+ * Соседняя история после такого кадра снималась уже сдвинутой, поэтому расхождение приходило не
+ * туда, где стоял высокий показ, а к следующей за ним истории — и выглядело её поломкой.
+ *
+ * Раздвигается окно под **узел**, а не под страницу: страница бывает выше снимаемого узла, и
+ * лишний рост окна менял бы всё, что от окна считается, у историй, которым это не нужно. Окно
+ * только растёт — сужение проверило бы ту сторону порога ширины, о которой история не просила.
+ */
+async function fitViewportToNode(page: Page, identifier: string, selector: string): Promise<void> {
+    for (let attempt: number = 0; attempt < FIT_ATTEMPTS; attempt++) {
+        const view: { width: number; height: number } | null = page.viewportSize();
+        if (view === null) {
+            return;
+        }
+
+        const box: { width: number; height: number } | null = await page.locator(selector).first().boundingBox();
+        if (box === null) {
+            return;
+        }
+
+        const width: number = Math.ceil(box.width);
+        const height: number = Math.ceil(box.height);
+        if (width <= view.width && height <= view.height) {
+            return;
+        }
+
+        await page.setViewportSize({ width: Math.max(view.width, width), height: Math.max(view.height, height) });
+        await quiet(page, identifier);
+    }
+}
+
+/**
  * Снимает кадр по корню показа и сверяет его с эталоном.
  *
  * Кадр берётся по корню, а не по всей странице: порог считается от площади кадра, и в странице,
@@ -199,6 +236,7 @@ async function shoot(page: Page, identifier: string, fullPage: boolean): Promise
                     `Объяви кадр целой страницы параметром snapshot.fullPage либо покажи компонент сеткой из src/showcase.`
             );
         }
+        await fitViewportToNode(page, identifier, ROOT_SELECTOR);
         image = await page.locator(ROOT_SELECTOR).first().screenshot();
     }
 
