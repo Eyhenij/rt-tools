@@ -4,19 +4,27 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `<name from the state list of rule task-flow>`
-- **Stage:** <number> of <total> — <name>
-- **Done:** <briefly>
-- **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
-- **Waiting for the owner:** <what exactly, or "no">
-- **PR:** <number and state, or "not open yet">
+- **State:** `этап-идёт`
+- **Stage:** 1 of 2 — Три исхода в команде и пробы под них
+- **Done:** заведён эпик RT-1976 и семь его задач, замысел лежит в дереве
+- **Next step:** развести три исхода в команде входа в спеки и завести пробы под каждый
+- **Uncommitted:** нет
+- **Waiting for the owner:** нет
+- **PR:** ещё не открыт
 
 ## Decisions along the way
 
-- **<decision>** — <reason>. Affected stage of the plan: <number>.
+- **Черновика договорённости нет** — правка идёт в слое правил и кода приложения не касается;
+  статьи ложатся в спеку поддомена, которая уже есть. Затронут этап плана: 2.
 
 ## Sessions
+
+### 2026-09-09
+
+- Заведён эпик RT-1976: карточка с просьбой владельца, замысел на семь задач, задачи RT-1980 …
+  RT-1986 цепью.
+- Мера посчитана командой: вход в спеки без имени печатает 162 ресурса пакета, о которых не
+  говорит ни одна спека.
 
 ### <date>
 

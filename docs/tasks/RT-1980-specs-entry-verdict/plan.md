@@ -1,47 +1,51 @@
 # Plan
 
 **Task:** RT-1980 · **Branch:** RT-1980-specs-entry-verdict
-**Draft:** `<path to the product agreement>`
-**Behaviour:** changes
+**Spec:** `docs/specs/agent-kit/specs-entry/spec.md`
+**Behaviour:** unchanged — правка идёт в слое правил, приложения она не касается
 
-A tree that writes the agreement straight into the domain spec names it instead of the draft:
-`**Spec:** `<path to the spec>``.
-
-Work that does not touch application code needs no agreement — then instead of the draft line
-stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is not accepted.
-
-After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
-along the way.
+Работа правит команду пакета и её спеку. Кода приложения — `apps/**`, `libs/**` — она не трогает,
+поэтому отдельного черновика договорённости нет: статьи ложатся в спеку поддомена, которая уже
+есть.
 
 ## Task footprint
 
-<What the work touches. Filled in by exploration before the grill and confirmed by the owner. By
-this same table, at closing, one sees what of the specs, rules and patterns has gone stale: what
-is named here is read twice — before the work and after it.>
-
-| What  | Where                         |
-| ----- | ----------------------------- |
-| Specs | `docs/specs/<domain>/`        |
-| Laws  | `docs/constitution/<name>.md` |
-| Rules | `.claude/skills/<name>/`      |
-| Code  | `projects/<package>/`         |
+| Что       | Где                                              |
+| --------- | ------------------------------------------------ |
+| Спека     | `docs/specs/agent-kit/specs-entry/`              |
+| Исходник  | `projects/agent-kit/assets/checks/specs-for.mjs` |
+| Разложено | `tools/specs-for.mjs`                            |
+| Пробы     | `projects/agent-kit/tests/`                      |
+| Замысел   | `docs/plans/agent-kit-spec-coverage.md`          |
 
 ## What counts as done
 
-- <a statement that can be checked>
+- На покрытом имени команда отдаёт спеку и статьи о нём — как отдавала.
+- На имени ресурса, который пакет везёт, а спеки о нём нет, команда говорит именно это и называет,
+  сколько таких ресурсов всего.
+- На имени, которого пакет не везёт, команда отказывает — как отказывала.
+- Три случая различаются кодом выхода, а не только словами: разбор жалобы читает код.
 
 ## Stages
 
-### 1. <name>
+### 1. Три исхода в команде и пробы под них
 
-- **What is done:** <in one phrase>
-- **Readiness sign:** <what must become true>
-- **Verified by:** `<command>` — <what in its output means "it matched">
+- **What is done:** ответ команды разделён на три случая; имя, которого пакет не везёт, отличается
+  от ресурса без спеки.
+- **Readiness sign:** проба на каждый из трёх случаев, и каждая падает, если исход убрать.
+- **Verified by:** `bash projects/agent-kit/tests/specs-for.test.sh` — «no findings» и число проб
+  не меньше трёх.
 
-The command is written in backticks: the turn exit guard reads it and does not let out a turn in
-which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything.
+### 2. Спека, раскладка и набор
+
+- **What is done:** статьи о трёх исходах записаны в спеку поддомена, сценарии заведены и связаны;
+  пакет собран и разложен.
+- **Readiness sign:** аудит спек не называет несвязанных сценариев этого поддомена, раскладка
+  сходится.
+- **Verified by:** `npm run check:specs && pnpm run agent-kit:check` — обе без расхождений.
 
 ## What this work does not do
 
-- <neighbouring work that is not dragged in here, and where it is created>
+- Не заводит ни одной недостающей спеки: это задачи RT-1981 … RT-1985.
+- Не ставит проверку покрытия в набор перед отправкой: это RT-1986.
+- Не трогает разбор жалобы: правило разбора уже написано и живёт отдельно.
