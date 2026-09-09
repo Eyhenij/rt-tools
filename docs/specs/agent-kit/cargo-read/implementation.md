@@ -13,6 +13,7 @@ statement: a removed statement is removed together with its line.
 - **A page reads the texts of the records through.** — `tools/cargo-pull.mjs:withTexts`
 - **A record whose text was not read through does not drop out of the list.** — `tools/cargo-pull.mjs:withTexts`
 - **The filter by state and by tree leaves in the request line, it is not sifted on one's own side.** — `tools/cargo-pull.mjs:query`
+- **The reason of the quarantine is printed next to the record, in the row and in the record whole.** — `tools/cargo-pull.mjs:quarantineMark` and `tools/cargo-pull.mjs:fullLines`
 - **An answer of the intake that did not parse differs from a refusal of the intake.** — `tools/cargo-pull.mjs:read`
 
 The names of this tree: the reading command is `npm run cargo:pull`, the mark command is

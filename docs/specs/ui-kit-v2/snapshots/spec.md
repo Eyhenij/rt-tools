@@ -70,15 +70,23 @@ as an attachment.
   area of the frame: in a page where a grid takes a small share, a cell that went wrong passes silently.
   The area of the frame decides that more surely than a picking of a number.
 
-- **A frame of a whole page is shot by a window widened to it, not by a shooting past the bounds of the
-  window.** A shooting past the bounds of the window not only shoots the page but touches it: the browser
-  substitutes the window for the time of the frame, the page gets a `resize`, and what is counted from the
-  sizes of the window slides right under the shutter — a ribbon of the show loses its scroll, the height
-  goes away by a pixel or two. Whether the shift manages to lie into the raster is decided by a race, so
-  the story goes red inconstantly and every time another one looks guilty. The same movement made before
-  the frame and with a waiting for the show to stand after it does not lose the scroll. The consequence is
-  named here because it is visible in the reference: `100vh` and `100vw` of such a story are counted from
-  the widened window, and the show takes the frame whole.
+- **Any frame beyond the bounds of the window is shot by a window widened to it, not by a shooting past
+  those bounds.** A shooting past the bounds of the window not only shoots the page but touches it: the
+  browser substitutes the window for the time of the frame, the page gets a `resize`, and what is counted
+  from the sizes of the window slides right under the shutter — a ribbon of the show loses its scroll, the
+  height goes away by a pixel or two. Whether the shift manages to lie into the raster is decided by a
+  race, so the story goes red inconstantly and every time another one looks guilty. The same movement made
+  before the frame and with a waiting for the show to stand after it does not lose the scroll. The
+  consequence is named here because it is visible in the reference: `100vh` and `100vw` of such a story are
+  counted from the widened window, and the show takes the frame whole.
+
+    This holds for both frames of the showcase, and the rule is one for them because the shutter is one. A
+    frame of a whole page is widened to the page; a frame by the root of the show — to that root, not to the
+    page: the page happens to be higher than the root being shot, and a superfluous growth of the window
+    would change everything counted from the window at stories that did not ask for it. Named apart because
+    the miss lands not where the high show stands: the neighbouring story is shot by a page already shifted,
+    and the divergence comes to the story next in the file. A rearrangement of the stories then moves frames
+    nobody touched.
 
 - **A frame of a threshold is taken at every threshold the component itself names.** One additional frame
   at a component with three media queries would leave two branches of the layout unchecked and would show

@@ -25,6 +25,7 @@ import {
 import { IEnvironment, IOutcomeOfCommand } from './commands.js';
 import { CONFIG_PATH, IConfig, readConfig } from './config.js';
 import { IReadResult, ISummary, readObservations, summarize } from './observations.js';
+import { IRefusedAnalysis, proseCheckOf, proseWhy, refusedAnalysesOf, TProseCheck } from './cargo-prose.js';
 import { ILeak, IProposal, leaksIn, markSent, marksOf, nearestMissing, readProposals, TO_PACKAGE } from './proposals.js';
 import { IShipment, IShipped, readToken, TShip } from './ship.js';
 import { laidOutSkills, packagedNames, treeSnapshot, unpickedOf } from './snapshot.js';
@@ -148,6 +149,33 @@ export function readPostmortems(root: string, dir: string): IPostmortemItem[] {
             .sort(byText)
             .map((file: string): IPostmortemItem => ({ file, text: readFileSync(join(path, file), 'utf8') }))
     );
+}
+
+/**
+ * Строки об отбитом: по строке на запись и одна на дерево, где судить было нечем.
+ *
+ * Печатаются они обоими прогонами: сухой показывает, что уехало бы, — и отбитое к этому
+ * относится наравне с уезжающим. Молчание о неразложенной проверке читалось бы как проверка,
+ * ничего не нашедшая.
+ */
+function refusalLines(
+    refused: readonly IRefusedProposal[],
+    analyses: readonly IRefusedAnalysis[],
+    prose: TProseCheck,
+    dir: string
+): readonly string[] {
+    const missing: readonly string[] = prose === null ? ['  слог не судился: проверка слога в дереве не разложена'] : [];
+
+    return [
+        ...refused.map((one: IRefusedProposal): string => `  отбито ${one.proposal.file}:${one.proposal.line} — ${one.why}`),
+        ...analyses.map((one: IRefusedAnalysis): string => `  отбито ${dir}/${one.file} — ${one.why}`),
+        ...missing,
+    ];
+}
+
+/** Разборы, которые уезжают: те, что не отбиты по слогу. */
+function sentAnalyses(analyses: readonly IPostmortemItem[], refused: readonly IRefusedAnalysis[]): readonly IPostmortemItem[] {
+    return analyses.filter((one: IPostmortemItem): boolean => !refused.some((bad: IRefusedAnalysis): boolean => bad.file === one.file));
 }
 
 /** Что уезжает и в каком порядке: сводка первой — ею заводится запись месяца. */
@@ -388,8 +416,15 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
     // одной статьёй о том, о чём статья уже стоит, снаружи неотличим от разбора, кончившегося
     // исправлением. Отбивается он поимённо, а остальные едут: один непрочитанный ресурс не
     // повод задержать чужую работу.
+    // Слог судится тем же отбором: запись груза читает человек, а пишет её заход — словами слоя
+    // правил. Проверка берётся разложенной в дерево: её признаки лежат в настройке дерева, и
+    // дерево без неё отправляет как прежде.
+    const prose: TProseCheck = proseCheckOf(root, config.layout.checks);
     const refused: readonly IRefusedProposal[] = ready
-        .map((entry: IProposal): IRefusedProposal => ({ proposal: entry, why: nearestMissing(entry, assetsDir) }))
+        .map((entry: IProposal): IRefusedProposal => ({
+            proposal: entry,
+            why: nearestMissing(entry, assetsDir) || proseWhy(prose, entry.body),
+        }))
         .filter((entry: IRefusedProposal): boolean => Boolean(entry.why));
     const mine: readonly IProposal[] = ready.filter(
         (entry: IProposal): boolean => !refused.some((one: IRefusedProposal): boolean => one.proposal === entry)
@@ -399,7 +434,9 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
         schema: CARGO_SCHEMA_VERSION,
         items: mine.map((entry: IProposal): IProposalItem => ({ text: entry.body, address: entry.address, resource: entry.resource })),
     };
-    const postmortems: IPostmortemsCargo = { tree, schema: CARGO_SCHEMA_VERSION, items: readPostmortems(root, config.postmortems) };
+    const analyses: readonly IPostmortemItem[] = readPostmortems(root, config.postmortems);
+    const refusedAnalyses: readonly IRefusedAnalysis[] = refusedAnalysesOf(prose, analyses);
+    const postmortems: IPostmortemsCargo = { tree, schema: CARGO_SCHEMA_VERSION, items: sentAnalyses(analyses, refusedAnalyses) };
 
     // Проверка на адрес дерева судит все готовые блоки, а не одни уезжающие: отбитый по цитате
     // лежит на диске и уедет, как только его починят, — а найденная в нём утечка отбивает
@@ -418,9 +455,7 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
     const listed: readonly string[] = manifest(going, cargo, proposals, postmortems);
     // Отбитое называется обоими прогонами: сухой показывает, что уехало бы, — и отбитое к этому
     // относится наравне с уезжающим.
-    const refusedLines: readonly string[] = refused.map(
-        (one: IRefusedProposal): string => `  отбито ${one.proposal.file}:${one.proposal.line} — ${one.why}`
-    );
+    const refusedLines: readonly string[] = refusalLines(refused, refusedAnalyses, prose, config.postmortems);
 
     if (options.dryRun) {
         return {

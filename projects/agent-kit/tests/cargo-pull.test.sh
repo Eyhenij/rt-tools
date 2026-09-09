@@ -33,8 +33,19 @@ const http = require('node:http');
 const fs = require('node:fs');
 const asked = process.argv[1];
 const empty = process.argv[2] === 'empty';
+// Запись карантина: у неё своё состояние и причина — ими двумя она от прочих и отличается.
+const held = process.argv[2] === 'quarantine';
 const TEXT = 'первая строка текста\nвторая строка';
-const row = (id) => ({ id, tree: { slug: 'своё-дерево' }, resource: 'rules/probe.md', address: 'пакет', state: 'new', arrivedAt: '2026-08-24' });
+const NOTE = 'спорно: правило уже говорит обратное';
+const row = (id) => ({
+    id,
+    tree: { slug: 'своё-дерево' },
+    resource: 'rules/probe.md',
+    address: 'пакет',
+    state: held ? 'quarantined' : 'new',
+    arrivedAt: '2026-08-24',
+    ...(held ? { quarantineNote: NOTE } : {}),
+});
 const post = (id) => ({ ...row(id), file: '2026-08-24-probe.md', text: TEXT });
 const server = http.createServer((req, res) => {
     fs.appendFileSync(asked, req.url + '\n');
@@ -131,6 +142,9 @@ report "SC-AK-567 — тексты целиком печатаются по св
 report "SC-AK-567 — без него запись выходит одной строкой" \
     "$(pull_says 'вторая строка' --kind proposal)" 0
 
+report "SC-AK-953 — у записи вне карантина причины не печатается" \
+    "$(pull_says 'disputable' --kind proposal --state new)" 0
+
 report "SC-AK-568 — прочитанный груз кончается нулём" \
     "$(pull_code --kind proposal --state new)" "код:0"
 
@@ -143,6 +157,19 @@ report "SC-AK-568 — пустая выборка отказом не счита
     "$(pull_code --kind proposal --state released)" "код:0"
 report "SC-AK-568 — и счёт она печатает" \
     "$(pull_says 'in all 0' --kind proposal --state released)" 1
+
+stop
+
+# Карантин: та же команда отбором по состоянию. Причина стоит у записи и в списке, и целиком.
+
+serve quarantine
+
+report "SC-AK-953 — причина карантина стоит у записи в списке" \
+    "$(pull_says 'disputable: спорно' --kind proposal --state quarantined)" 1
+report "SC-AK-953 — и у записи целиком" \
+    "$(pull_says 'disputable: спорно' --kind proposal --state quarantined --text)" 1
+report "SC-AK-953 — состояние карантина уезжает строкой запроса" \
+    "$(: > "$ASKED"; pull_says 'THE READING' --kind proposal --state quarantined >/dev/null; grep -cE 'state=quarantined' "$ASKED")" 1
 
 stop
 

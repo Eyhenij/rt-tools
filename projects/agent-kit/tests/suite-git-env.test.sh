@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Набор о самой обвязке наборов: переживает ли она окружение git, оставленное снаружи.
 #
-# Закрывает SC-AK-956 спека `docs/specs/agent-kit/guards`.
+# Закрывает SC-AK-979 спека `docs/specs/agent-kit/guards`.
 #
 # Судится соседний набор, а не гард: сценарии заводят одноразовые репозитории и говорят с ними
 # через `git -C <путь>`, а `GIT_DIR`, `GIT_WORK_TREE` и `GIT_INDEX_FILE` этот путь перебивают.
@@ -29,13 +29,13 @@ for name in GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE; do
     else
         got="отбит"
     fi
-    report "SC-AK-956 — набор проходит при выставленной $name" "$got" "прошёл"
+    report "SC-AK-979 — набор проходит при выставленной $name" "$got" "прошёл"
 done
 
 # Второй признак, и он дороже первого: даже пройдя, набор не имеет права оставить след снаружи.
-report "SC-AK-956 — в чужом репозитории не прибавилось коммитов" \
+report "SC-AK-979 — в чужом репозитории не прибавилось коммитов" \
     "$(git -C "$FOREIGN" rev-list --count HEAD)" "$BEFORE"
-report "SC-AK-956 — в чужом репозитории не завелось веток" \
+report "SC-AK-979 — в чужом репозитории не завелось веток" \
     "$(git -C "$FOREIGN" for-each-ref --format='%(refname:short)' refs/heads | wc -l | tr -d ' ')" "1"
 
 suite_result "обвязка наборов и окружение git"

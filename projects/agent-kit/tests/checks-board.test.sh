@@ -105,25 +105,25 @@ report "SC-AK-751 — названа строка, которой это чин�
 export STUB_ISSUES="$(epic_issues 'Задача эпика #700, замысел — docs/plans/epic.md')"
 report "SC-AK-751 — двусторонняя привязка молчит" "$(board_says 'эпик')" 0
 
-# --- SC-AK-953 — задача без эпика и без слова владельца ---------------------------------
+# --- SC-AK-976 — задача без эпика и без слова владельца ---------------------------------
 #
 # Гард отбивает такую задачу у команды заведения, и только там: карточка, заведённая через веб,
 # проходит мимо всех гардов, а заведённая до этого порядка не несёт ни одной из двух строк. По
 # очереди она читается обычной работой, и то, что за ней ничего не стоит, не видно нигде.
 export STUB_ISSUES="$(epic_issues 'Повод и разбор')"
-report "SC-AK-953 — задача без эпика названа" "$(board_says '#702: the task names no epic')" 1
-report "SC-AK-953 — названы обе строки, которыми это чинится" "$(board_says 'Работа вне эпика')" 1
+report "SC-AK-976 — задача без эпика названа" "$(board_says '#702: the task names no epic')" 1
+report "SC-AK-976 — названы обе строки, которыми это чинится" "$(board_says 'Работа вне эпика')" 1
 
 # Слово владельца о работе вне эпика — законный второй выход, и он молчит.
 export STUB_ISSUES="$(epic_issues 'Работа вне эпика — владелец попросил отдельно')"
-report "SC-AK-953 — со словом владельца сверка молчит" "$(board_says '#702: the task names no epic')" 0
+report "SC-AK-976 — со словом владельца сверка молчит" "$(board_says '#702: the task names no epic')" 0
 
 # Карточка самого эпика задачей не считается: эпика у эпика нет.
-report "SC-AK-953 — карточка эпика этой строки не получает" "$(board_says '#700: the task names no epic')" 0
+report "SC-AK-976 — карточка эпика этой строки не получает" "$(board_says '#700: the task names no epic')" 0
 
 export STUB_ISSUES="$(epic_issues 'Задача эпика #700, замысел — docs/plans/epic.md')"
 
-# --- SC-AK-954 — основание заявки задачи эпика ------------------------------------------
+# --- SC-AK-977 — основание заявки задачи эпика ------------------------------------------
 #
 # Гард судит это при открытии, и только там: заявка, открытая человеком со страницы хостинга,
 # проходит мимо него, а открытая до этого порядка несёт то основание, с каким открыта. В списке
@@ -135,30 +135,30 @@ epic_pull() {
 }
 
 export STUB_PULLS="$(epic_pull main)"
-report "SC-AK-954 — заявка мимо ветки эпика названа" "$(board_says 'PR #703: the task #702 belongs to the epic #700')" 1
+report "SC-AK-977 — заявка мимо ветки эпика названа" "$(board_says 'PR #703: the task #702 belongs to the epic #700')" 1
 
 export STUB_PULLS="$(epic_pull RT-700-work-by-epics)"
-report "SC-AK-954 — заявка в ветку эпика молчит" "$(board_says 'PR #703: the task #702 belongs to the epic #700')" 0
+report "SC-AK-977 — заявка в ветку эпика молчит" "$(board_says 'PR #703: the task #702 belongs to the epic #700')" 0
 
 export STUB_PULLS="$saved_pulls_epic"
 
-# --- SC-AK-955 --- ветка эпика и его заявка ----------------------------------------------------
+# --- SC-AK-978 --- ветка эпика и его заявка ----------------------------------------------------
 # Ветка эпика заводится до его первой задачи. Незаведённая оставляет каждую задачу стоять на
 # главной, и в списке заявок её не видно.
-report "SC-AK-955 — эпик без ветки в заявках назван" "$(board_says '#700: the epic has no branch in the requests')" 1
+report "SC-AK-978 — эпик без ветки в заявках назван" "$(board_says '#700: the epic has no branch in the requests')" 1
 
 # Заявка задачи в ветку эпика — ветка есть.
 export STUB_PULLS="$(epic_pull RT-700-work-by-epics)"
-report "SC-AK-955 — заявка в ветку эпика ветку показывает" "$(board_says '#700: the epic has no branch in the requests')" 0
+report "SC-AK-978 — заявка в ветку эпика ветку показывает" "$(board_says '#700: the epic has no branch in the requests')" 0
 
 # Задач эпика в очереди не осталось, а заявки от его ветки нет. По доске эпик выглядит
 # законченным, а работа целиком лежит вне главной.
 export STUB_ISSUES='[{"number":700,"title":"[RT-700] Эпик","state":"OPEN","assignees":[{"login":"probe"}],"labels":[{"name":"epic"}],"body":"Замысел — docs/plans/epic.md"}]'
-report "SC-AK-955 — эпик с кончившимися задачами назван" "$(board_says '#700: the tasks of the epic are over')" 1
+report "SC-AK-978 — эпик с кончившимися задачами назван" "$(board_says '#700: the tasks of the epic are over')" 1
 
 # Заявка от ветки эпика открыта — сверка молчит.
 export STUB_PULLS="$(printf '[{"number":705,"title":"[RT-700] Эпик","headRefName":"RT-700-work-by-epics","headRefOid":"%s","isDraft":true,"body":"Closes #700","baseRefName":"main"}]' "$HEAD_SHA")"
-report "SC-AK-955 — с открытой заявкой эпика сверка молчит" "$(board_says '#700: the tasks of the epic are over')" 0
+report "SC-AK-978 — с открытой заявкой эпика сверка молчит" "$(board_says '#700: the tasks of the epic are over')" 0
 
 export STUB_ISSUES="$(epic_issues 'Задача эпика #700, замысел — docs/plans/epic.md')"
 export STUB_PULLS="$saved_pulls_epic"

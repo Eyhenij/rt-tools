@@ -46,3 +46,11 @@ describe('cargoCloseData', () => {
         });
     });
 });
+
+describe('cargoCloseMove — карантин', () => {
+    it('SC-MB-315 — издатель карантина не ставит и запись из него не закрывает', () => {
+        expect(cargoCloseMove(ECargoState.New, ECargoState.Quarantined)).toBe(ECargoStateMove.Denied);
+        expect(cargoCloseMove(ECargoState.Quarantined, ECargoState.Fixed)).toBe(ECargoStateMove.Denied);
+        expect(cargoCloseMove(ECargoState.Quarantined, ECargoState.Released)).toBe(ECargoStateMove.Denied);
+    });
+});
