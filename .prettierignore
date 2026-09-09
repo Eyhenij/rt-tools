@@ -86,6 +86,8 @@ tools/signals/
 tools/archive-age.mjs
 tools/archive-prune.mjs
 tools/board-epics.mjs
+tools/board-epic-link.mjs
+tools/board-task-dirs.mjs
 tools/board-gh.mjs
 tools/board-paths.mjs
 tools/board-pull-state.mjs
