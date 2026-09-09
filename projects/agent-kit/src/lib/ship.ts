@@ -144,3 +144,67 @@ export const httpShip: TShip = async (intake: string, token: string, shipment: I
 /** Два числа и отбитые строки из ответа приёма. Ответ не тем — пусто. */
 
 /** Запрос правки состояния. Токен уезжает заголовком и в теле не появляется ни разу. */
+
+/** Сколько записей просить одной страницей: столько же приём отдаёт наибольшей страницей. */
+const OWN_PAGE_SIZE: number = 100;
+
+/** Одна своя запись, как её отдаёт приём. */
+export interface IOwnRecord {
+    readonly id: string;
+    /** Род записи словом приёма: предложение либо разбор происшествия. */
+    readonly kind: string;
+    /** Чем запись названа: имя файла у разбора, имя ресурса у предложения. */
+    readonly name: string;
+    readonly state: string;
+    readonly fixNote: string | null;
+    readonly releaseVersion: string | null;
+    readonly text: string;
+}
+
+/** Чем кончилось чтение своих записей. Отказ — такой же ответ, как страница: его печатает вызывающий. */
+export interface IOwnRead {
+    readonly ok: boolean;
+    readonly status: number;
+    readonly said: string;
+    readonly rows: readonly IOwnRecord[];
+    readonly total: number;
+}
+
+/** Чем читаются свои записи. Двойник в спеке — того же вида. */
+export type TReadOwn = (intake: string, token: string, kind: string, page: number) => Promise<IOwnRead>;
+
+/** Записи и их число из ответа приёма. Ответ не тем — пустая страница. */
+function ownRowsOf(text: string): { rows: readonly IOwnRecord[]; total: number } {
+    try {
+        const said: Record<string, unknown> = JSON.parse(text) as Record<string, unknown>;
+        const rows: unknown = said['rows'];
+
+        return {
+            rows: Array.isArray(rows) ? (rows as readonly IOwnRecord[]) : [],
+            total: typeof said['total'] === 'number' ? said['total'] : 0,
+        };
+    } catch {
+        return { rows: [], total: 0 };
+    }
+}
+
+/**
+ * Запрос своих записей. Токен уезжает заголовком и в строке запроса не появляется ни разу.
+ *
+ * Дерево в запросе не называется: приём берёт его из токена, и довод с именем дерева отдал бы
+ * записи соседа тому, кто попросит.
+ */
+export const httpReadOwn: TReadOwn = async (intake: string, token: string, kind: string, page: number): Promise<IOwnRead> => {
+    const url: string = `${intakeUrl(intake, 'mine')}?kind=${encodeURIComponent(kind)}&page=${page}&size=${OWN_PAGE_SIZE}`;
+    let answer: Response;
+
+    try {
+        answer = await fetch(url, { headers: { [TREE_TOKEN_HEADER]: token }, signal: AbortSignal.timeout(SHIP_TIMEOUT_MS) });
+    } catch (error: unknown) {
+        return { ok: false, status: 0, said: (error as Error).message, rows: [], total: 0 };
+    }
+
+    const text: string = await answer.text();
+
+    return { ok: answer.ok, status: answer.status, said: saidOf(text), ...(answer.ok ? ownRowsOf(text) : { rows: [], total: 0 }) };
+};
