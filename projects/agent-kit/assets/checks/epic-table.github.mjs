@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// rt-kit v0.26.0 · checks/epic-table.github.mjs · ca65adf7e1b9 · правится надстройкой, не здесь
 /**
  * The table of the epic's tasks: the order from the plan, the state from the hosting.
  *
@@ -82,7 +83,10 @@ function epicAsked(argv) {
 
     const declared = declaredEpicOf(String(issue.body ?? ''));
     if (declared === undefined) {
-        return { number: null, why: `задача #${number} не объявляет эпика — в теле задачи под эпиком стоит строка «Задача эпика #<номер>»` };
+        return {
+            number: null,
+            why: `задача #${number} не объявляет эпика — в теле задачи под эпиком стоит строка «Задача эпика #<номер>»`,
+        };
     }
 
     return { number: Number(declared), why: '' };
@@ -93,7 +97,10 @@ function makeupOf(plan) {
     const key = new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`);
     const rows = [];
     for (const line of planRows(plan).split('\n')) {
-        const cells = line.split('|').slice(1, -1).map((cell) => cell.trim());
+        const cells = line
+            .split('|')
+            .slice(1, -1)
+            .map((cell) => cell.trim());
         if (cells.length < 2 || cells.every((cell) => /^:?-+:?$/.test(cell))) {
             continue;
         }
@@ -152,7 +159,11 @@ function whyOf(plan) {
         return '';
     }
 
-    const rest = plan.slice(section.index + section[0].length).split(/\n\s*\n/).find((piece) => piece.trim() !== '') ?? '';
+    const rest =
+        plan
+            .slice(section.index + section[0].length)
+            .split(/\n\s*\n/)
+            .find((piece) => piece.trim() !== '') ?? '';
     const sentence = rest.trim().replace(/\s+/g, ' ');
     const end = sentence.indexOf('. ');
     return end === -1 ? sentence : sentence.slice(0, end + 1);
