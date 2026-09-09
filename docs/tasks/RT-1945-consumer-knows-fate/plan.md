@@ -1,47 +1,71 @@
 # Plan
 
-**Task:** <KEY>-<number> · **Branch:** <branch>
+**Task:** RT-1945 · **Branch:** RT-1945-consumer-knows-fate
 **Spec:** `docs/specs/agent-kit/cargo-fate/spec.md`
 **Behaviour:** changes
 
-A tree that writes the agreement straight into the domain spec names it instead of the draft:
-`**Spec:** `<path to the spec>``.
-
-Work that does not touch application code needs no agreement — then instead of the draft line
-stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is not accepted.
-
-After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
-along the way.
-
 ## Task footprint
 
-<What the work touches. Filled in by the exploration before the grill and confirmed by the owner.
-By this same table, at closing, one looks at which of the specs, rules and patterns went stale:
-what is named here is read twice — before the work and after it.>
-
-| What  | Where                        |
-| ----- | ---------------------------- |
-| Specs | <domains the work touches>   |
-| Laws  | <laws along its footprint>   |
-| Rules | <rules and their companions> |
-| Code  | <libs and applications>      |
+| What  | Where                                                                                |
+| ----- | ------------------------------------------------------------------------------------ |
+| Specs | `docs/specs/agent-kit/cargo-fate/`, `docs/specs/message-bus/own-cargo-read/`         |
+| Laws  | `work-conduct`, `verifiability`, `access`                                            |
+| Rules | `.claude/skills/agent-kit/`, `.claude/skills/cargo-triage/`                          |
+| Code  | `libs/message-bus-api/`, `projects/agent-kit/src/lib/`, `projects/agent-kit/assets/` |
 
 ## What counts as done
 
-- <a statement that can be checked>
+- Приёмник отдаёт записи дерева по его токену и только его записи.
+- Команда пакета показывает запись, её состояние, починку и версию выпуска.
+- Рядом с записью названа надстройка, привязанная к ней пометкой раздела.
+- Надстройка, чья статья пришла в разложенную редакцию, названа на снятие; выпущенная починка при
+  отставшей редакции названа обновлением, а не снятием.
+- Пометка, записи для которой приём не отдал, названа отдельной строкой.
+- Команда ничего не снимает и не правит.
 
 ## Stages
 
-### 1. <name>
+### 1. Договорённость обеих сторон
 
-- **What is done:** <in one phrase>
-- **Readiness sign:** <what must become true>
-- **Verified by:** `<command>` — <what in its output means "it matched">
+- **What is done:** заводятся два поддомена — чтение своих записей в приёмнике и команда судьбы в
+  пакете; сценарии берут свободные номера от `SC-MB-318` и `SC-AK-961`.
+- **Readiness sign:** обе спеки называют, чем закрыто чтение, что показывает команда и чего она не
+  делает.
+- **Verified by:** `npm run check:specs` — поддомены названы без пропущенных разделов.
 
-The command is written in backticks: the turn exit guard reads it and does not let out a turn in
-which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything.
+### 2. Приёмник отдаёт свои записи по токену
+
+- **What is done:** управление чтения, закрытое меткой токена дерева; отбор по дереву ставит само
+  управление, а не запрос; ответ несёт состояние, починку и версию выпуска.
+- **Readiness sign:** запрос с токеном одного дерева не отдаёт записей другого.
+- **Verified by:** `pnpm exec nx test message-bus-api-cargo-state-feature` — пробы управления
+  зелёные.
+
+### 3. Команда судьбы в пакете
+
+- **What is done:** команда читает приёмник по токену дерева и печатает записи с состоянием,
+  починкой и версией выпуска; отказ без токена и без адреса идёт до сети.
+- **Readiness sign:** вывод показывает записи дерева, отказ называет, где лежат токен и адрес.
+- **Verified by:** `pnpm exec nx test @rt-tools/agent-kit --skip-nx-cache` — пробы команды зелёные.
+
+### 4. Надстройки рядом с записями
+
+- **What is done:** пометки разделов сводятся с записями приёма; названо, что снимается сейчас, что
+  ждёт обновления и какая пометка осталась без записи.
+- **Readiness sign:** три части вывода видны на дереве с надстройкой, записью и разложенной
+  редакцией.
+- **Verified by:** `pnpm exec nx test @rt-tools/agent-kit --skip-nx-cache` — пробы свода зелёные.
+
+### 5. Привязки и своды
+
+- **What is done:** спутники обоих поддоменов заполняются привязками; статья о судьбе своих записей
+  встаёт в правило `agent-kit`.
+- **Readiness sign:** проверка спек не называет ни одной статьи без привязки и ни одного сценария
+  без пробы.
+- **Verified by:** `npm run check:specs` — код ноль.
 
 ## What this work does not do
 
-- <neighbouring work that is not dragged in here, and where it is created>
+- Не снимает надстройки командой: раздел снимает человек, а пометка держит одну статью.
+- Не даёт потребителю чтения чужих записей: приёмник отдаёт только записи дерева, чей токен пришёл.
+- Не заводит показа судьбы в админке: там записи уже видны хозяину приёмника.
