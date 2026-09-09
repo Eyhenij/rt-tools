@@ -25,6 +25,17 @@ Given one of the names that were asked for has no file on the server
 When the page draws it together with two others
 Then the two other icons are drawn, and the third stays an empty place of its own size
 
+### SC-UKV-130 — a material drawing that did not arrive is closed by the own one
+
+Given the page declared the material preset, and the application did not publish the material set
+When the page draws an icon that has a material drawing in the tree
+Then the request goes to the own set after the refusal, and the icon is drawn by the own drawing:
+the material set is a layer of overrides, and a name it lacks the kit already draws by its own —
+a file that did not arrive behaves the same. Without it the page shows an empty place where a
+drawing was promised, and the markup is right at that
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`.
+
 ### SC-UKV-61 — an icon asked for by two markups at once goes by one request
 
 Given the component of an icon and a button drawing an icon itself stand on the page with one and the

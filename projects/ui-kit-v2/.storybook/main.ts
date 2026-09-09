@@ -47,7 +47,12 @@ const config: StorybookConfig = {
     },
     // rt-icon забирает набор по HTTP с `/icons/<имя>.svg` и склеивает в inline-sprite.
     // Отдаём каталог пакета той же статикой, что публикует у себя приложение.
-    staticDirs: [{ from: '../src/assets/icons', to: '/icons' }],
+    staticDirs: [
+        { from: '../src/assets/icons', to: '/icons' },
+        // Второй набор значков отдаётся рядом с первым: без него материальная половина показа
+        // молча рисует свои значки, и пара наборов выглядит совпадающей.
+        { from: '../src/assets/icons-material', to: '/icons-material' },
+    ],
     webpackFinal: async (config) => {
         const definePlugin = config.plugins?.find((plugin) => plugin?.constructor?.name === 'DefinePlugin');
         if (definePlugin && (definePlugin as any).definitions) {
