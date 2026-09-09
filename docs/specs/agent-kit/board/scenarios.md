@@ -83,7 +83,7 @@ in both trees is `client`, because it is read without the token
 
 Covered: `projects/agent-kit/tests/checks-board-pull.test.sh`.
 
-### SC-AK-953 — a task naming neither an epic nor the word of the owner
+### SC-AK-976 — a task naming neither an epic nor the word of the owner
 
 Given an open task whose body names no epic and carries no word of the owner about work outside one
 When the work queue audit runs
@@ -99,7 +99,7 @@ Then it gets no such line: an epic has no epic of its own
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-954 — the base of an open request about a task of an epic
+### SC-AK-977 — the base of an open request about a task of an epic
 
 Given an open request about a task whose body names an epic, and its base is the main branch
 When the work queue audit runs
@@ -111,7 +111,7 @@ Then it stays silent
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-955 — an epic without a branch and an epic whose tasks are over
+### SC-AK-978 — an epic without a branch and an epic whose tasks are over
 
 Given a card with the label of an epic, and no open request either from its branch or into it
 When the work queue audit runs
