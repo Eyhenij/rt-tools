@@ -43,6 +43,15 @@ const PRESET_SOURCE = 'projects/ui-kit-v2/src/styles/tokens.material.mjs';
 const STYLES = 'projects/ui-kit-v2/src/styles';
 const PRESET_PART = "part: 'presets'";
 const ALLOWLIST = allowlistOf('preset-stories');
+/**
+ * The showcase page where a reader meets the same list.
+ *
+ * A reason living only next to the check is read by whoever opens the check. Whoever looks at the
+ * showcase and finds no pair at a family has nowhere to learn why, and the silence reads as a gap.
+ * So the page renders the very same list rather than writing its own copy: two lists would diverge
+ * on the first family, and nothing would say which of them is right.
+ */
+const DOC_PAGE = 'projects/ui-kit-v2/docs/Colors.mdx';
 
 skipUnless(existsSync(join(ROOT, COMPONENTS)) && existsSync(join(ROOT, PRESET_SOURCE)), `the directory ${COMPONENTS}`);
 
@@ -145,7 +154,12 @@ if (process.argv.includes('--baseline')) {
     process.exit(0);
 }
 
+// The page is asked whether it still reads this list. It is unlinked by one line, and after that
+// the page keeps its section and shows what the file held on the day of the unlinking.
+const pageReadsList = readFileSync(join(ROOT, DOC_PAGE), 'utf8').includes(ALLOWLIST.replace(/^tools\//, ''));
+
 const problems = [
+    ...(pageReadsList ? [] : [`${DOC_PAGE}: the page no longer reads ${ALLOWLIST}, and the reasons reach a reader of the showcase from nowhere`]),
     ...missing
         .filter((family) => !list.debt.has(family))
         .map((family) => `${relative(ROOT, join(root, family))}: the preset rewrites what these styles read, and no story shows both halves`),
