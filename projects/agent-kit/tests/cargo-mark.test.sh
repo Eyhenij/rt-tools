@@ -171,6 +171,55 @@ kill "$FAKE_PID" 2>/dev/null
 wait "$FAKE_PID" 2>/dev/null
 rm -f "$FAKE_PORT_FILE" "$BODY_PORT"
 
+# --- SC-AK-948…952 — сверка предложения со спекой стоит до работы --------------------------
+#
+# Отказы идут до сети: токен здесь ставится, чтобы проверялась именно сверка, а не его отсутствие.
+
+spec_says() {
+    (cd "$TREE_ROOT" && RT_TREE_TOKEN=x node "$MARK" "$@" 2>&1) | grep -cE "$SPEC_PATTERN"
+}
+
+spec_code() {
+    (cd "$TREE_ROOT" && RT_TREE_TOKEN=x node "$MARK" "$@" >/dev/null 2>&1)
+    echo $?
+}
+
+LIVE_SPEC="docs/specs/agent-kit/proposal-verdict/spec.md"
+
+SPEC_PATTERN='while the spec it is compared with is not named'
+report "SC-AK-948 — предложение без спеки в работу не идёт" \
+    "$(spec_says --state in_work --proposal ключ --dry-run)" 1
+report "SC-AK-948 — код возврата ненулевой" "$(spec_code --state in_work --proposal ключ --dry-run)" 1
+
+SPEC_PATTERN='npm run specs:for'
+report "SC-AK-948 — отказ называет, чем спека находится" \
+    "$(spec_says --state in_work --proposal ключ --dry-run)" 1
+
+SPEC_PATTERN='the question goes to the person'
+report "SC-AK-948 — и называет исход, когда спеки нет вовсе" \
+    "$(spec_says --state in_work --proposal ключ --dry-run)" 1
+
+SPEC_PATTERN='the named spec is checked before the network'
+report "SC-AK-949 — выдуманный путь отбивается до сети" \
+    "$(spec_says --state in_work --proposal ключ --spec docs/specs/нет-такой/spec.md --dry-run)" 1
+report "SC-AK-949 — код возврата ненулевой" \
+    "$(spec_code --state in_work --proposal ключ --spec docs/specs/нет-такой/spec.md --dry-run)" 1
+
+SPEC_PATTERN='A DRY RUN'
+report "SC-AK-950 — с названной спекой ход прежний" \
+    "$(spec_says --state in_work --proposal ключ --spec "$LIVE_SPEC" --dry-run)" 1
+report "SC-AK-950 — код нулевой" \
+    "$(spec_code --state in_work --proposal ключ --spec "$LIVE_SPEC" --dry-run)" 0
+
+report "SC-AK-951 — разбор происшествия спеки не требует" \
+    "$(spec_says --state in_work --postmortem 2026-01-01-имя.md --dry-run)" 1
+report "SC-AK-951 — код нулевой" "$(spec_code --state in_work --postmortem 2026-01-01-имя.md --dry-run)" 0
+
+report "SC-AK-952 — переход в починку спеки не требует" \
+    "$(spec_says --state fixed --proposal ключ --fix 'статья правила' --dry-run)" 1
+report "SC-AK-952 — код нулевой" \
+    "$(spec_code --state fixed --proposal ключ --fix 'статья правила' --dry-run)" 0
+
 # Итог набора и его код возврата. Без этой строки набор кончался снятием двойника — то есть
 # всегда нулём: провалившаяся проверка печаталась строкой и на цвет прогона не влияла никак,
 # а общий прогон считал набор зелёным всегда.
