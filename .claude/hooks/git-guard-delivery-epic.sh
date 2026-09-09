@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/git-guard-delivery-epic.sh · 0cb4971620cb · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/git-guard-delivery-epic.sh · f25db82e2729 · правится надстройкой, не здесь
 # Delivery conditions about the epic of a task. NOT a guard: it has no `rt-hook:` declaration and
 # it hooks into no agent event. The delivery guard sources it — the same way it sources the task
 # folder conditions and the signature.
@@ -122,6 +122,46 @@ rt_epic_pull_base() {
         _behind="$(git rev-list --count "HEAD..origin/${_epic_branch}" 2>/dev/null)"
         fault "the branch of the epic «${_epic_branch}» has moved ahead by ${_behind:-several} commits and is not merged into this branch. The reviewer would see the edit mixed with someone else's: git fetch origin && git merge origin/${_epic_branch}."
     fi
+
+    return 0
+}
+
+# The request of an epic itself: it goes into the main branch, and it opens only when the folders
+# of all its tasks are taken apart.
+#
+# The folder guard reads the folder of one task — by the name of the branch — and the branch of an
+# epic has none of its own: every folder lying there belongs to a task of the epic whose work is
+# not closed. Merged into the main branch, such an epic carries the folders of unfinished tasks
+# there, and the reader of the main branch has no way to tell them from current work.
+#
+# The epic is recognised by the label of its card, not by the shape of the branch name: the branch
+# of an epic and the branch of a task are named alike, and the label is the only thing that tells
+# them apart. The tree has not named the label — the condition is not judged at all.
+#
+# Arguments: the state of the card of the current branch, as the work queue answered it.
+rt_epic_own_pull() {
+    _state="$1"
+    [ -n "$epic_label" ] || return 0
+    [ -n "$_state" ] || return 0
+    [ -n "$tasks_dir" ] || return 0
+
+    printf '%s' "$_state" | jq -e --arg l "$epic_label" '(.labels // []) | index($l)' >/dev/null 2>&1 || return 0
+
+    _folders="$(git ls-tree -d --name-only HEAD -- "$tasks_dir" 2>/dev/null)"
+    [ -n "$_folders" ] || return 0
+
+    # What lies in the tasks directory of the branch, one level down: the sample and the index of
+    # the directory are not folders of tasks and do not hold the request.
+    _left=''
+    for _entry in $(git ls-tree -d --name-only "HEAD:${tasks_dir}" 2>/dev/null); do
+        case "$_entry" in
+            _template | _draft-*) continue ;;
+        esac
+        _left="${_left}${_left:+, }${_entry}"
+    done
+    [ -n "$_left" ] || return 0
+
+    fault "the branch of the epic still carries the folders of its tasks — ${_left}. The request of an epic opens when the last of its folders is taken apart: merged as it is, the epic takes the folders of unfinished work into the main branch, and the reader has no way to tell them from current work."
 
     return 0
 }

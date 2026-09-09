@@ -207,6 +207,13 @@ refuses the push.
 - **The freshness asked before a request of such a task is the epic's, not the main branch's.** The
   request goes into the epic, and it is the divergence with the epic that shows in the diff; the main
   branch reaches the task through the epic.
+- **The request of an epic opens when the folders of all its tasks are taken apart.** The folder
+  guard reads the folder of one task, by the name of the branch, and the branch of an epic has none
+  of its own: every folder lying there belongs to a task whose work is not closed, and merged as it
+  is the epic carries them into the main branch.
+- **An epic is recognised by the label of its card, not by the shape of the branch name.** The branch
+  of an epic and the branch of a task are named alike; the tree names the label itself, and one that
+  has not named it is not judged by this condition at all.
 - **The base of a new task branch is judged against the branch of its epic, not against the main
   branch.** A task branched from the main one leaves its epic half merged before the epic itself is
   handed in: the merge of the epic then carries nothing of that task, and the guard used to let this

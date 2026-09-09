@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/git-guard-delivery.sh · 0fc65de9cccc · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/git-guard-delivery.sh · 2a8e411ed581 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
@@ -108,6 +108,7 @@ task_move="${RT_TASK_MOVE_CMD:-npm run task:move}"
 # a tree names its columns in its own words, and an invented name would match nothing and would
 # silently switch the check off.
 backlog_column="${RT_BOARD_BACKLOG:-}"
+epic_label="${RT_BOARD_EPIC_LABEL:-}"
 task_bot="${RT_TASK_BOT:-}"
 # The identity of the call arrives through the environment, not as a word in the line: from the
 # command text only one thing is visible — whether the token is substituted explicitly. A tree that
@@ -346,6 +347,9 @@ number="$(rt_task_branch_number "$branch")"
 state=''
 check_task "$number" "the request from the branch «${branch}»" yes
 epic_pull="$(printf '%s' "$state" | jq -r '.epic // empty' 2>/dev/null)"
+# The branch of an epic itself: its request goes into the main branch, and it opens only when the
+# folders of all its tasks are taken apart.
+command -v rt_epic_own_pull >/dev/null 2>&1 && rt_epic_own_pull "$state"
 
 title=''
 if command -v perl >/dev/null 2>&1; then

@@ -473,3 +473,20 @@ When the guard judges the opening with the main branch as its base
 Then the base is not judged at all
 
 Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
+
+### SC-AK-944 — the request of an epic waits for the folders of its tasks to be taken apart
+
+Given the branch of a card carrying the label of an epic, and a folder of a task is committed into
+that branch
+When the guard judges the opening of a request into the main branch
+Then it refuses and names the folder
+
+Given the folder is taken apart by a commit of the branch
+When the guard judges the same opening
+Then it does not refuse over the folders
+
+Given the card carries no label of an epic
+When the guard judges the same opening with a folder in the branch
+Then this condition is not judged at all
+
+Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.

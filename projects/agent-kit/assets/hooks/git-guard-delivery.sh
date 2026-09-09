@@ -107,6 +107,7 @@ task_move="${RT_TASK_MOVE_CMD:-npm run task:move}"
 # a tree names its columns in its own words, and an invented name would match nothing and would
 # silently switch the check off.
 backlog_column="${RT_BOARD_BACKLOG:-}"
+epic_label="${RT_BOARD_EPIC_LABEL:-}"
 task_bot="${RT_TASK_BOT:-}"
 # The identity of the call arrives through the environment, not as a word in the line: from the
 # command text only one thing is visible — whether the token is substituted explicitly. A tree that
@@ -345,6 +346,9 @@ number="$(rt_task_branch_number "$branch")"
 state=''
 check_task "$number" "the request from the branch «${branch}»" yes
 epic_pull="$(printf '%s' "$state" | jq -r '.epic // empty' 2>/dev/null)"
+# The branch of an epic itself: its request goes into the main branch, and it opens only when the
+# folders of all its tasks are taken apart.
+command -v rt_epic_own_pull >/dev/null 2>&1 && rt_epic_own_pull "$state"
 
 title=''
 if command -v perl >/dev/null 2>&1; then

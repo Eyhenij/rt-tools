@@ -90,7 +90,7 @@ GE_REPO="$(fixture_repo_branched main RT-1921-work-by-epics)"
 mkdir -p "$GE_REPO/.claude/rt-kit"
 printf '{"board":{"taskKey":"RT","owner":"o","repo":"r"}}\n' > "$GE_REPO/.claude/rt-kit/checks.json"
 # Двойник помощника очереди: отвечает состоянием задачи, которое набор задаёт окружением.
-printf 'rt_task_state() { printf %%s "$GE_TASK_STATE"; }\n' > "$GE_REPO/.claude/rt-kit/project.sh"
+printf 'rt_task_state() { printf %%s "$GE_TASK_STATE"; }\nRT_BOARD_EPIC_LABEL=epic\nRT_TASKS_DIR=docs/tasks\n' > "$GE_REPO/.claude/rt-kit/project.sh"
 # У ветки эпика есть свой коммит — иначе главная её содержит, и судить нечего.
 fixture_commit "$GE_REPO" "docs/plans/work-by-epics.md" "план эпика" "docs: план эпика"
 # Удалённые ссылки заводятся руками: гард смотрит только на них — ветка, живущая на одной машине,
@@ -153,6 +153,35 @@ report "SC-AK-943 — заявка с основанием ветки эпика
 GE_OUT="$(ge_pull "$GE_NO_EPIC" "$GE_PR_MAIN")"
 if printf '%s' "$GE_OUT" | grep -q 'RT-1921-work-by-epics'; then got="отбито"; else got="прошло"; fi
 report "SC-AK-943 — у задачи без эпика основание заявки не судится" "$got" "прошло"
+
+
+# --- SC-AK-944 — заявка эпика ждёт разбора папок его задач ------------------------------
+#
+# Гард папок читает папку одной задачи — по имени ветки, — а у ветки эпика своей нет: всякая
+# лежащая там папка принадлежит задаче эпика, работа по которой не закрыта. Влитый как есть, эпик
+# уносит папки незаконченных работ в главную.
+git -C "$GE_REPO" checkout -q RT-1921-work-by-epics 2>/dev/null
+fixture_commit "$GE_REPO" "docs/tasks/RT-1930-something/plan.md" "замысел" "docs: папка задачи"
+
+GE_EPIC_CARD='{"exists":true,"open":true,"onBoard":true,"assigned":true,"numbered":true,"labels":["epic"]}'
+GE_EPIC_PR="gh pr create --base main --title '[RT-1921] Работа ведётся эпиками' --body 'тело
+## Оставшийся шаг
+не осталось'"
+
+GE_OUT="$(ge_pull "$GE_EPIC_CARD" "$GE_EPIC_PR")"
+if printf '%s' "$GE_OUT" | grep -q 'RT-1930-something'; then got="отбито"; else got="прошло"; fi
+report "SC-AK-944 — заявка эпика с папкой задачи отбита и папка названа" "$got" "отбито"
+
+fixture_remove "$GE_REPO" "docs/tasks/RT-1930-something" "docs: папка задачи разобрана"
+GE_OUT="$(ge_pull "$GE_EPIC_CARD" "$GE_EPIC_PR")"
+if printf '%s' "$GE_OUT" | grep -q 'папк\|folders of its tasks'; then got="отбито"; else got="прошло"; fi
+report "SC-AK-944 — без папок заявка эпика по этому условию не отбита" "$got" "прошло"
+
+# Карточка без метки эпика — обычная задача, и это условие её не касается.
+fixture_commit "$GE_REPO" "docs/tasks/RT-1930-something/plan.md" "замысел" "docs: папка задачи снова"
+GE_OUT="$(ge_pull "$GE_NO_EPIC" "$GE_EPIC_PR")"
+if printf '%s' "$GE_OUT" | grep -q 'RT-1930-something'; then got="отбито"; else got="прошло"; fi
+report "SC-AK-944 — у карточки без метки эпика это условие не судится" "$got" "прошло"
 
 rm -rf "$GE_REPO"
 rm -rf "$GE_TREE"

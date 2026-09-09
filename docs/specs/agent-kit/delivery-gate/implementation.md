@@ -53,3 +53,5 @@ whole.
 - **The state of a task carries the number of its epic.** — `projects/agent-kit/assets/checks/board.github.mjs:taskState` — scenario SC-AK-941
 - **The base of a request about a task of an epic is the branch of that epic.** — `projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh:rt_epic_pull_base` — scenario SC-AK-943
 - **The freshness asked before a request of such a task is the epic's, not the main branch's.** — `projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh:rt_epic_pull_base`
+- **The request of an epic opens when the folders of all its tasks are taken apart.** — `projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh:rt_epic_own_pull` — scenario SC-AK-944
+- **An epic is recognised by the label of its card, not by the shape of the branch name.** — `projects/agent-kit/assets/defaults/project.sh:RT_BOARD_EPIC_LABEL`
