@@ -14,6 +14,8 @@
  *   npm run task:new -- --title 'Letters to the owner are not sent' --label bug --label area:api
  *   npm run task:new -- --title '…' --slug mail-owner-silence < description.md
  *   npm run task:new -- --epic --title 'Delivery goes by epics' --slug work-by-epics
+ *   npm run task:new -- --epic-of 1921 --title '…' --slug command-creates-epic
+ *   npm run task:new -- --outside-epic 'the owner asked for it apart' --title '…'
  *
  * The body is read from standard input. The author and the assignee are the bot account, the same
  * one the commits go from; `--assignee` overrides the assignee.
@@ -25,6 +27,12 @@
  * tasks; and the path to that draft in the card body — the audit reads the plan by it, and a card
  * without the path points into emptiness. The branch line printed at the end is taken from the main
  * branch: the branch of an epic is the base for the branches of its tasks.
+ *
+ * With `--epic-of <number>` the created task is a task of that epic: the body says so in the very
+ * shape the audit reads the link by, and the printed branch line takes the branch of the epic as
+ * its base. Both are written here and not left to the executor's hand: the shape of the line is
+ * read by a machine from two sides at once, and the base of the branch is otherwise taken from the
+ * working copy, where at that minute any branch may be checked out.
  */
 import { cpSync, existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -60,7 +68,7 @@ const EPIC_LABEL = CONFIG.board?.epicLabel ?? '';
 const PLANS_DIR = CONFIG.plansDir ?? '';
 
 function parseArgs(argv) {
-    const args = { labels: [], assignee: BOT, title: null, slug: null, epic: false };
+    const args = { labels: [], assignee: BOT, title: null, slug: null, epic: false, epicOf: null, outsideEpic: null };
     for (let index = 0; index < argv.length; index += 1) {
         const value = argv[index + 1];
         switch (argv[index]) {
@@ -82,6 +90,14 @@ function parseArgs(argv) {
                 break;
             case '--epic':
                 args.epic = true;
+                break;
+            case '--epic-of':
+                args.epicOf = Number(value);
+                index += 1;
+                break;
+            case '--outside-epic':
+                args.outsideEpic = value ?? '';
+                index += 1;
                 break;
             default:
                 fail(`unknown flag ${argv[index]}`);
@@ -118,6 +134,37 @@ if (args.slug !== null && !/^[a-z0-9][a-z0-9-]*$/.test(args.slug)) {
 }
 
 /**
+ * A task outside an epic is not created — that is the whole of the requirement, and the refusal
+ * carries both lawful ways out of it, because in the shape «name the epic» alone it is read as
+ * "there is no way out" and gets bypassed by a call to the hosting past this command.
+ *
+ * The owner's word is the second way, and it goes into the call as text: work outside an epic
+ * happens — a one-line fix, a report from the outside — and only the owner names it as such. An
+ * empty reason is not a reason: it is indistinguishable from a flag typed to get past a refusal.
+ *
+ * A tree that has not named the epic label lives as before: there epics do not exist at all, and
+ * demanding one of every task would stop the work of every such tree on the day of installation.
+ */
+if (EPIC_LABEL && !args.epic && args.epicOf === null && args.outsideEpic === null) {
+    fail(
+        'a task outside an epic is not taken. Two ways: name the epic — `--epic-of <number>` — or name the word of the owner about work outside an epic — `--outside-epic "<the reason of the owner>"`'
+    );
+}
+if (args.outsideEpic !== null && args.outsideEpic.trim() === '') {
+    fail('--outside-epic "<the reason of the owner>": an empty reason is indistinguishable from a flag typed to get past the refusal');
+}
+if (args.outsideEpic !== null && (args.epic || args.epicOf !== null)) {
+    fail('--outside-epic goes with neither --epic nor --epic-of: work is either under an epic or outside one, and the word of the owner is needed only for the second');
+}
+
+if (args.epic && args.epicOf !== null) {
+    fail('--epic and --epic-of together: an epic is not a task of an epic. An epic inside an epic is not a shape this order knows');
+}
+if (args.epicOf !== null && !Number.isInteger(args.epicOf)) {
+    fail('--epic-of <number>: the number of the epic card, as it stands in the work queue');
+}
+
+/**
  * Everything an epic cannot be created without is asked before the creation, not after it: a card
  * already made cannot be taken off the board by anyone but an administrator, and a refusal after
  * the call leaves an epic without a plan and without a label — that is, invisible to the audit as
@@ -139,16 +186,6 @@ if (args.epic) {
 const labels = args.epic && !args.labels.includes(EPIC_LABEL) ? [...args.labels, EPIC_LABEL] : args.labels;
 
 /**
- * The plan of the epic and the line about it in the card body.
- *
- * The audit takes the path to the plan from the body: the card has to name it anyway, and a
- * setting read instead would become a second truth about where the plan of this very epic lies. So
- * the path is written into the body by the same call that creates the file.
- */
-const planPath = args.epic ? `${PLANS_DIR.replace(/\/+$/, '')}/${args.slug}.md` : null;
-const body = args.epic ? `${readBody()}\n\nЗамысел эпика — ${planPath}`.trim() : readBody();
-
-/**
  * The token of the machine account is optional: a tree that has not named it creates the task
  * under the account the hosting client is logged in as. Demanding the token would hold task
  * creation in a tree that has not created a machine account, and in a tree whose account the
@@ -156,6 +193,69 @@ const body = args.epic ? `${readBody()}\n\nЗамысел эпика — ${planP
  * is read off the task itself.
  */
 const token = botToken() ?? undefined;
+
+/**
+ * The plan of the epic and the line about it in the card body.
+ *
+ * The audit takes the path to the plan from the body: the card has to name it anyway, and a
+ * setting read instead would become a second truth about where the plan of this very epic lies. So
+ * the path is written into the body by the same call that creates the file.
+ */
+const planPath = args.epic ? `${PLANS_DIR.replace(/\/+$/, '')}/${args.slug}.md` : null;
+
+/**
+ * The epic the task is created under, read from its card.
+ *
+ * The link is declared by the task body, and the audit reads exactly one shape of it: the word
+ * about the task standing right before the word about the epic. Written by hand, the line comes
+ * out in a shape of its own once out of three, and the audit then says the task belongs to no epic
+ * while the executor sees the epic named in the body.
+ *
+ * The path to the plan is taken from the epic card, as the audit takes it — a second address here
+ * would diverge from the first one silently. The branch of the epic is read from the plan: the
+ * plan names it, and the queue does not know branch names at all.
+ */
+function epicOfCard(epicNumber) {
+    const card = ghJson(['issue', 'view', String(epicNumber), '--json', 'number,title,labels,body'], { token });
+    const labelled = (card.labels ?? []).some((label) => label.name === EPIC_LABEL);
+    if (!labelled) {
+        fail(`#${epicNumber} is not an epic: the card carries no label «${EPIC_LABEL}». A task hangs on an epic, and an epic is what the audit reads by that label`);
+    }
+    const named = String(card.body ?? '').match(/(?:^|[\s(`])([\w.-]+(?:\/[\w.-]+)+\.md)/);
+    const plan = named ? named[1] : null;
+    if (plan === null) {
+        fail(`the card of the epic #${epicNumber} names no path to its plan — there is nowhere to read what the epic holds, and the branch of the epic is named there too`);
+    }
+    return { plan, branch: epicBranchOf(plan, epicNumber) };
+}
+
+/**
+ * The branch of the epic, read from the header of its plan.
+ *
+ * Three spellings are accepted: the one this command writes, the bare word about a branch and the
+ * English one — the plans of a tree are translated one at a time, and a single spelling would take
+ * every plan but the freshest out of the reading in silence.
+ */
+function epicBranchOf(plan, epicNumber) {
+    const path = join(ROOT, plan);
+    if (!existsSync(path)) {
+        return null;
+    }
+    const named = readFileSync(path, 'utf8').match(
+        new RegExp(`\\*\\*(?:Ветка эпика|Ветка|Branch):\\*\\*\\s*\`?(${TASK_KEY}-${epicNumber}-[a-z0-9][a-z0-9-]*)\`?`)
+    );
+    return named ? named[1] : null;
+}
+
+const epic = args.epicOf === null ? null : epicOfCard(args.epicOf);
+const body = [
+    readBody(),
+    args.epic ? `Замысел эпика — ${planPath}` : '',
+    epic ? `Задача эпика #${args.epicOf}, замысел — ${epic.plan}` : '',
+    args.outsideEpic ? `Работа вне эпика — ${args.outsideEpic}` : '',
+]
+    .filter((part) => part !== '')
+    .join('\n\n');
 
 let number = null;
 try {
@@ -283,7 +383,7 @@ function writeEpicPlan() {
         [
             `# ${args.title}`,
             '',
-            `**Эпик:** ${TASK_KEY}-${number} · **Ветка:** ${branch}`,
+            `**Эпик:** ${TASK_KEY}-${number} · **Ветка эпика:** \`${branch}\``,
             '',
             '## Что даёт',
             '',
@@ -367,7 +467,10 @@ for (const line of answer.lines) {
  * base named here saves the executor from taking it from the working copy, where any branch may be
  * checked out at that minute.
  */
-const base = args.epic ? ` origin/${CONFIG.deploy?.mainBranch || 'main'}` : '';
+const base = args.epic ? ` origin/${CONFIG.deploy?.mainBranch || 'main'}` : epic?.branch ? ` ${epic.branch}` : '';
+if (epic && !epic.branch) {
+    console.error(`task-new: the plan «${epic.plan}» does not name the branch of the epic — the base of the branch is taken by hand, and it is the branch of the epic, not the main one`);
+}
 console.log(`\nThe branch is created by a separate call:\n  git checkout -b ${branch}${base}`);
 console.log(`A task taken into work is moved on the board:\n  npm run task:move -- ${number} ${IN_PROGRESS_STATUS}`);
 
