@@ -31,6 +31,7 @@ export async function readOwnPostmortems(prisma: PrismaService, slug: string, as
             state: true,
             fixNote: true,
             releaseVersion: true,
+            quarantineNote: true,
             closedByPublisher: true,
             arrivedAt: true,
             updatedAt: true,

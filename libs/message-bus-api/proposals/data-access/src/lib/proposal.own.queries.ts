@@ -32,6 +32,7 @@ export async function readOwnProposals(prisma: PrismaService, slug: string, aske
             state: true,
             fixNote: true,
             releaseVersion: true,
+            quarantineNote: true,
             closedByPublisher: true,
             arrivedAt: true,
             record: { select: { month: true, tree: { select: { slug: true, name: true } } } },
