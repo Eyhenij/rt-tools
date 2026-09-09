@@ -3,11 +3,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { IPageModel } from '@rt-tools/utils';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtPaginationComponent } from '../../rt-pagination.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TPaginationMatrixPart = 'position' | 'total' | 'loading' | 'container' | 'edges' | 'themes';
+export type TPaginationMatrixPart = 'position' | 'total' | 'loading' | 'container' | 'edges' | 'presets' | 'themes';
 
 /** Случай полосы: имя для подписи ячейки и модель страницы. */
 interface IPaginationCase {
@@ -76,6 +77,14 @@ const PER_PAGE: readonly number[] = [20, 50, 100];
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Полоса в обоих наборах">
+                    <ng-template>
+                        <rt-pagination [pageModel]="middle" [perPageOptions]="perPage" />
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Полоса в обеих темах">
                     <ng-template>
@@ -91,6 +100,7 @@ const PER_PAGE: readonly number[] = [20, 50, 100];
         RtPaginationComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

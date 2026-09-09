@@ -58,6 +58,10 @@ is shown to a person by the admin panel of the intake, and that is a neighbourin
   texts stays a separate argument and speaks of its own incompleteness itself.
 - **A record whose text was not read through does not drop out of the list.** It arrives without a
   key, and the line about it says so: having vanished silently, it would read as sorted out.
+- **The reason of the quarantine is printed next to the record, in the row and in the record
+  whole.** A list of the disputable naming no reason answers only "this one is disputable", and the
+  record is taken apart anew — which is what the quarantine was started against. The row carries the
+  reason cut to its width, the record whole carries it as it lies.
 - **The filter by state and by tree leaves in the request line, it is not sifted on one's own
   side.** Sifting after the reading would show a page in which the needed records may not be at all,
   and the page count would lie along with it.
@@ -94,6 +98,7 @@ is shown to a person by the admin panel of the intake, and that is a neighbourin
 | the pair was not accepted            | a refusal with the answer of the intake                   |
 | the cargo was read                   | the total count, the page count and records with keys     |
 | a record's text was not read through | a line of the record without a key and words about it     |
+| the filter names the quarantine      | the records of the quarantine, each with its reason       |
 | nothing fell under the filter        | the count "total 0" and an empty list: this is no refusal |
 
 ## What is out of scope
@@ -178,10 +183,10 @@ token of one's own tree.
 - `Q-CR-1` — what was read lands nowhere, and the sorting out goes in the same session. A session
   that ended before the sorting out starts by reading anew; how much that costs has not been measured
   yet.
-- `Q-CR-2` — there is nothing to mark a record no work will be done on with: the set knows no refusal
-  state. The question is older than this subdomain and is settled by the owner.
 
 ## History of changes
 
 - 2026-08-24 — the subdomain was created together with the reading command: before it the tree read
   no cargo at all.
+- 2026-09-09 — the reading prints the reason of the quarantine next to the record; `Q-CR-2` is
+  closed: a record no work will be done on goes into the quarantine.

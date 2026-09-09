@@ -14,6 +14,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ISortModel, EListSortOrder } from '@rt-tools/utils';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtTableCardDirective } from '../../rt-table-card.directive';
 import { RtTableComponent } from '../../rt-table.component';
@@ -23,7 +24,7 @@ import { IRtTable } from '../../rt-table.model';
 const EMPTY_MESSAGE: string = 'Договоров пока нет';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTableMatrixPart = 'density' | 'loading' | 'sort' | 'empty' | 'clickable' | 'cards' | 'themes';
+export type TTableMatrixPart = 'density' | 'loading' | 'sort' | 'empty' | 'clickable' | 'cards' | 'presets' | 'themes';
 
 /** Строка витрины: то, что показывают ячейки. */
 interface ITableRow {
@@ -248,6 +249,29 @@ const COLUMNS_CONFIG: readonly IRtTable.ColumnConfig[] = [
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Таблица в обоих наборах">
+                    <ng-template>
+                        <table rt-table ariaLabel="Договоры" [dataSource]="rows" [columns]="columns" [columnsConfig]="columnsConfig">
+                            <ng-container cdkColumnDef="title">
+                                <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
+                                <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+                            </ng-container>
+                            <ng-container cdkColumnDef="city">
+                                <th *cdkHeaderCellDef cdk-header-cell>Город</th>
+                                <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
+                            </ng-container>
+                            <ng-container cdkColumnDef="sum">
+                                <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
+                                <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
+                            </ng-container>
+                            <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+                            <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+                        </table>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Таблица в обеих темах">
                     <ng-template>
@@ -290,6 +314,7 @@ const COLUMNS_CONFIG: readonly IRtTable.ColumnConfig[] = [
         CdkRowDef,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

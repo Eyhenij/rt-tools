@@ -24,4 +24,6 @@ export const Cta: TStory = { args: { part: 'cta' } };
 /** Пустой текст стоит рядом с одним абзацем: без пары пустое окно выглядит исправным. */
 export const Edges: TStory = { args: { part: 'edges' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

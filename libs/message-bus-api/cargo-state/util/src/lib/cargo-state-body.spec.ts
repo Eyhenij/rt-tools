@@ -20,8 +20,17 @@ describe('cargoStateBody', () => {
                 state: ECargoState.InWork,
                 fixNote: null,
                 releaseVersion: null,
+                quarantineNote: null,
             },
-            { at: 1, kind: ECargoKind.Proposal, key: 'ab12cd34', state: ECargoState.InWork, fixNote: null, releaseVersion: null },
+            {
+                at: 1,
+                kind: ECargoKind.Proposal,
+                key: 'ab12cd34',
+                state: ECargoState.InWork,
+                fixNote: null,
+                releaseVersion: null,
+                quarantineNote: null,
+            },
         ]);
     });
 

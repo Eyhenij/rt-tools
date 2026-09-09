@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtCollapsibleTextComponent } from '../../rt-collapsible-text.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TCollapsibleTextMatrixPart = 'clamp' | 'paragraphs' | 'width' | 'edges' | 'themes';
+export type TCollapsibleTextMatrixPart = 'clamp' | 'paragraphs' | 'width' | 'edges' | 'presets' | 'themes';
 
 /** Случай текста: имя для подписи ячейки, абзацы и предел строк. */
 interface ICollapsibleTextCase {
@@ -69,6 +70,16 @@ const SHORT: string = 'Подписан 14 марта.';
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Текст в обоих наборах">
+                    <ng-template>
+                        <div style="width: 18rem">
+                            <rt-collapsible-text [paragraphs]="longParagraph" [clampLines]="3" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Текст в обеих темах">
                     <ng-template>
@@ -86,6 +97,7 @@ const SHORT: string = 'Подписан 14 марта.';
         RtCollapsibleTextComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

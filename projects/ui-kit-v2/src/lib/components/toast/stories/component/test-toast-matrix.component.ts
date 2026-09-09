@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { INotification } from '../../../../platform/notification.model';
 import { StoryGridComponent } from '../../../../../showcase/story-grid.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtToastComponent } from '../../rt-toast.component';
@@ -11,7 +12,7 @@ import { IRtToaster } from '../../rt-toaster.model';
 const TOAST_MESSAGE: string = 'Договор сохранён';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TToastMatrixPart = 'severity' | 'parts' | 'actions' | 'edges' | 'themes';
+export type TToastMatrixPart = 'severity' | 'parts' | 'actions' | 'edges' | 'presets' | 'themes';
 
 /**
  * Ничего не делающее действие: в витрине важен вид кнопки, а не её последствие.
@@ -116,6 +117,28 @@ const noop: () => void = (): void => undefined;
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Плашки в обоих наборах">
+                    <ng-template>
+                        <div style="display: grid; gap: 0.5rem; width: 20rem">
+                            @for (severity of severities; track severity) {
+                                <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
+                                    <rt-toast
+                                        [toast]="toastOf(severity, false)"
+                                        [index]="0"
+                                        [totalToasts]="1"
+                                        [heights]="heights"
+                                        [expanded]="false"
+                                        [interacting]="true"
+                                        [visibleToasts]="3"
+                                        [duration]="0" />
+                                </div>
+                            }
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Плашки в обеих темах">
                     <ng-template>
@@ -146,6 +169,7 @@ const noop: () => void = (): void => undefined;
 
         // showcase
         StoryGridComponent,
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

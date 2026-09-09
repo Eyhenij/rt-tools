@@ -126,3 +126,12 @@ Then a short one is not gathered at all, and a full one is: the mark command acc
 one and answers a short one with "the tree has no such record"
 
 Covered: `projects/agent-kit/tests/cargo-fixed.test.sh`.
+
+### SC-AK-953 — the reason of the quarantine stands next to the record
+
+Given a record of the cargo stands in the quarantine and carries the reason
+When the cargo is read with the filter on that state
+Then the reason stands next to the record — in the row of the list and in the record whole; a
+record outside the quarantine prints none
+
+Covered: `projects/agent-kit/tests/cargo-pull.test.sh`.

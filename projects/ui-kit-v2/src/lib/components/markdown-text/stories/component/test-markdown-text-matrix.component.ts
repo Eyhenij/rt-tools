@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtMarkdownTextComponent } from '../../rt-markdown-text.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TMarkdownTextMatrixPart = 'blocks' | 'inline' | 'outside' | 'edges' | 'themes';
+export type TMarkdownTextMatrixPart = 'blocks' | 'inline' | 'outside' | 'edges' | 'presets' | 'themes';
 
 /** Случай показа: имя для подписи ячейки и текст, который в неё кладут. */
 interface IMarkdownCase {
@@ -69,6 +70,16 @@ const LONG_CODE: string = '```\ndocker compose -f docker-compose.prod.yml --env-
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Разметка в обоих наборах">
+                    <ng-template>
+                        <div style="width: 20rem">
+                            <rt-markdown-text [text]="wholeText" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Разметка в обеих темах">
                     <ng-template>
@@ -86,6 +97,7 @@ const LONG_CODE: string = '```\ndocker compose -f docker-compose.prod.yml --env-
         RtMarkdownTextComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

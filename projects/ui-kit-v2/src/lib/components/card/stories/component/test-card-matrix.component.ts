@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtCardComponent } from '../../rt-card.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TCardMatrixPart = 'header' | 'slots' | 'clickable' | 'states' | 'themes';
+export type TCardMatrixPart = 'header' | 'slots' | 'clickable' | 'states' | 'presets' | 'themes';
 
 /** Случай шапки: имя для подписи ячейки и значение входа. */
 interface ICardHeaderCase {
@@ -83,6 +84,19 @@ interface ICardHeaderCase {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Карточка в обоих наборах">
+                    <ng-template>
+                        <div style="width: 16rem">
+                            <rt-card header="Договор">
+                                Подписан 14 марта
+                                <span rtCardFooter>Действует до 14 марта 2027</span>
+                            </rt-card>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Карточка в обеих темах">
                     <ng-template>
@@ -103,6 +117,7 @@ interface ICardHeaderCase {
         RtCardComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

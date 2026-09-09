@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtStepperComponent } from '../../rt-stepper.component';
 import { IRtStepper } from '../../rt-stepper.model';
@@ -9,7 +10,7 @@ import { IRtStepper } from '../../rt-stepper.model';
 const STEP_DESCRIPTION: string = 'Готовим договор и согласуем условия.';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TStepperMatrixPart = 'position' | 'length' | 'description' | 'edges' | 'themes';
+export type TStepperMatrixPart = 'position' | 'length' | 'description' | 'edges' | 'presets' | 'themes';
 
 /** Случай набора шагов: имя для подписи ячейки, сам набор и номер текущего шага. */
 interface IStepperCase {
@@ -78,6 +79,16 @@ const STEPS_FIVE: readonly IRtStepper.Step[] = [
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Полоса в обоих наборах">
+                    <ng-template>
+                        <div style="width: 26rem">
+                            <rt-stepper [steps]="stepsThree" [currentIndex]="1" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Полоса в обеих темах">
                     <ng-template>
@@ -95,6 +106,7 @@ const STEPS_FIVE: readonly IRtStepper.Step[] = [
         RtStepperComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

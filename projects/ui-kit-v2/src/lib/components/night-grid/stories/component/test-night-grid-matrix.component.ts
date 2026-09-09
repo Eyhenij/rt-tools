@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtNightGridComponent } from '../../rt-night-grid.component';
 import { IRtNightGrid } from '../../rt-night-grid.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TNightGridMatrixPart = 'state' | 'length' | 'states' | 'edges' | 'themes';
+export type TNightGridMatrixPart = 'state' | 'length' | 'states' | 'edges' | 'presets' | 'themes';
 
 /** Случай сетки: имя для подписи ячейки и сами клетки. */
 interface INightGridCase {
@@ -81,6 +82,16 @@ function month(count: number, pick: (index: number) => IRtNightGrid.State): read
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Сетка в обоих наборах">
+                    <ng-template>
+                        <div style="width: 16rem">
+                            <rt-night-grid ariaLabel="Март" [cells]="mixed" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Сетка в обеих темах">
                     <ng-template>
@@ -98,6 +109,7 @@ function month(count: number, pick: (index: number) => IRtNightGrid.State): read
         RtNightGridComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

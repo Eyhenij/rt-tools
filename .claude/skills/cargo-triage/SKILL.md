@@ -42,7 +42,7 @@ before it.
 flowchart TD
     A[A cargo record arrived in the intake] --> B[The read command takes the records: filtered by "new", in arrival order]
     B --> C{There will be work on the record}
-    C -->|No| D[The state does not move: no refusal state is started in the set]
+    C -->|No| D[The record goes into the quarantine, and the move carries the reason]
     C -->|Yes| E[A task is created, and in the same turn the record moves to "in work"]
     E --> F[The work goes the usual way: a branch, a task folder, a plan]
     F --> G{The edit is merged into the main branch}
@@ -77,6 +77,15 @@ flowchart TD
   session, the executor's memory does not: having sorted out the cargo today, tomorrow one starts
   from nothing. It is asked by the same read the cargo is taken by — a second call with a different
   filter, not a query to the storage.
+- **A record found disputable goes into the quarantine, and the move carries the reason.** The
+  quarantine is a fifth state of the intake: into it a record goes from "new" and returns only
+  there, by the word of a person. Left in "new", such a record is taken apart anew every sorting
+  out; marked "in work", it lies — no work by it is going. The move without the reason is refused
+  row by row: a state with no answer to "what makes it disputable" costs the next sorting out the
+  same reading.
+- **A record of the quarantine is not taken into work by the executor's own decision.** It is
+  returned into "new" by the word of a person, and only after that it becomes work. Taken straight
+  from the quarantine, it would skip the very comparison with the agreement it was quarantined by.
 - **To take a report into work means to create a task for it.** The mark "in work" without a task
   says somebody took the record and stays silent about where that work goes; a task without the
   mark leaves the record among what is not sorted out, and the next session sorts it out anew.
@@ -143,6 +152,17 @@ flowchart TD
   divides what came in into what repeated and what was one-off and decides what becomes an edit;
   the sorting out marks the state of every record. The gathering is called once every few days over
   a stretch, the sorting out every time work is taken.
+- **A proposal is compared with the spec about its resource before it becomes work.** The spec is
+  found by the entry command, not by memory: the memory of a session ends with the session, and the
+  next sorting out of the same record judges by the complaint text again.
+- **The outcomes of the comparison are three, and they are named in advance.** The spec is right —
+  the proposal is disputable and does not become work. The spec is wrong — it is corrected, and the
+  behaviour after it. The spec is silent — the question goes to the person, and their word says
+  which of the other two this becomes. A list written after the fact is assigned by whoever it suits.
+- **The move of a proposal into work names the spec it was compared with.** Without it the move says
+  "this is taken" and stays silent about what the proposal was judged against: the comparison then
+  lives one session. The mark command refuses such a move before the network; an analysis is not
+  asked for a spec — there is nothing to compare it with.
 
 ## An incident analysis: what is in it and where it lives
 
@@ -201,10 +221,10 @@ whose edit is merged while the state is as before: it names the skipped step its
 list is looked at with a filter. The second is the number of records in "new": a growing one means
 the sorting out is not going at all.
 
-A record there will be no work on has nothing to be marked with: the set knows no refusal state.
-"New" leaves it among what is not sorted out forever, "in work" lies. That is an open question of
-the agreement rather than a default of the rule: such a record is sorted out anew every time until
-the owner decides.
+A record there will be no work on goes into the quarantine, and nothing checks that it went there:
+the decision is the executor's, and a record left in "new" is indistinguishable from one nobody has
+reached yet. What the quarantine gives is the state itself and the reason at it — the next sorting
+out sees the record taken apart and does not read it a second time.
 
 ## Patterns
 

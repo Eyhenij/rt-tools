@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { IQuillDelta } from '../../../../util/quill-delta.model';
 import { RtDeltaViewComponent } from '../../rt-delta-view.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TDeltaViewMatrixPart = 'formats' | 'blocks' | 'empty' | 'themes';
+export type TDeltaViewMatrixPart = 'formats' | 'blocks' | 'empty' | 'presets' | 'themes';
 
 /** Случай модели: подпись для ряда и сама модель. */
 interface IDeltaCase {
@@ -53,6 +54,14 @@ interface IDeltaCase {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Разметка в обоих наборах">
+                    <ng-template>
+                        <rt-delta-view [delta]="mixed" />
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Разметка в обеих темах">
                     <ng-template>
@@ -77,6 +86,7 @@ interface IDeltaCase {
         RtDeltaViewComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],
