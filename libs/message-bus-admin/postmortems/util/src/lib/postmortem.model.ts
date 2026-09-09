@@ -26,6 +26,7 @@ export namespace IPostmortem {
             readonly file: string;
             readonly state: string;
             readonly releaseVersion: string | null;
+            readonly quarantineNote: string | null;
             readonly closedByPublisher: boolean;
             readonly arrivedAt: string;
             readonly updatedAt: string;
@@ -51,6 +52,11 @@ export namespace IPostmortem {
              * столбца тогда пуста — ни прочерка, ни слова «нет» в ней не стоит.
              */
             readonly releaseVersion: string;
+            /**
+             * Чем запись спорна. Пустая строка означает, что в карантине она не была: ячейка
+             * столбца тогда пуста — ни прочерка, ни слова «нет» в ней не стоит.
+             */
+            readonly quarantineNote: string;
             /**
              * Закрыл ли запись издатель редакции, а не приславшее её дерево. Показывается там же,
              * где состояние: без этого отправитель читает выпущенную запись как свою отметку.

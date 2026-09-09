@@ -43,6 +43,9 @@ interface — the executor sees it as lines of the answer.
   one command, and the release mark does not force it to assemble the request body by hand. The
   argument is named by the release, not by the version: `--version` on a launch-line command reads
   as "show your version".
+- **The launch-line command carries the reason of the quarantine as an argument.** The tree calls
+  the edit by one command, and a move into the quarantine does not force it to assemble the request
+  body by hand.
 - **The records are named by the same keys they arrived by.** An incident analysis by the name of
   its file, a proposal by the sign of its text.
 - **The sign of a proposal is counted the same way as at the intake.** Having diverged, the sides

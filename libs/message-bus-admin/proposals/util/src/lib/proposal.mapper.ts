@@ -33,6 +33,7 @@ export class ProposalShortMapper extends BaseMapper<IProposal.Short.State> {
             state: cargoState,
             stateLabel: cargoStateLabel(cargoState),
             releaseVersion: this.typeCast.getAsString(data.releaseVersion),
+            quarantineNote: this.typeCast.getAsString(data.quarantineNote),
             closedByPublisher: this.typeCast.getAsBoolean(data.closedByPublisher),
             arrivedAt: new Date(this.typeCast.getAsString(data.arrivedAt)),
         };

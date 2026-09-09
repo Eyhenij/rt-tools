@@ -450,7 +450,8 @@ its own:
 
 - **Q-31. How the filter is shown when there are more than four states.** The set is given by the steps of
   the sorting out and grows together with them; a choice of one value out of ten reads worse than out of
-  four. It is decided when the set grows.
+  four. The set has grown to five — the quarantine was added to it — and the filter shows them as before:
+  the question stands open until the reading becomes worse than a list of five.
 
 ## History of changes
 

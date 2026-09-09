@@ -19,3 +19,4 @@ statement: a removed statement is removed together with its line.
 - **The intake answers with a count, and the command retells it to the person.** — `tools/cargo-mark.mjs:mark`
 - **The launch-line command carries the fix text as an argument.** — `tools/cargo-mark.mjs:FIX_FLAG` — the argument is read by the launch line and lands on every record of the call
 - **The launch-line command carries the release version as an argument.** — `tools/cargo-mark.mjs:RELEASE_FLAG` — the argument is read by the launch line and lands on every record of the call
+- **The launch-line command carries the reason of the quarantine as an argument.** — `tools/cargo-mark.mjs:QUARANTINE_FLAG` — the argument is read by the launch line and lands on every record of the call

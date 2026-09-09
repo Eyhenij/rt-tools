@@ -31,6 +31,11 @@ export interface ICargoStateLine {
      * текст починки: пробелы — пустота, форма не разбирается вовсе.
      */
     readonly releaseVersion: string | null;
+    /**
+     * Чем запись спорна. Поле необязательное и приходит сюда тем же приёмом, что и текст починки:
+     * пробелы — пустота, иначе требование причины обходилось бы одним пробелом.
+     */
+    readonly quarantineNote: string | null;
 }
 
 /** Почему пакет не разобрался. Отбивает он весь запрос: годных строк в нём ещё не выделено. */
@@ -51,6 +56,8 @@ export enum ECargoStateBodyFault {
     BadReleaseVersion = 'bad-release-version',
     /** Версия выпуска длиннее предела: вместо метки приехало что-то другое. */
     LongReleaseVersion = 'long-release-version',
+    /** Причина карантина прислана не строкой. Форма запроса при этом неверна, и отбивается он весь. */
+    BadQuarantineNote = 'bad-quarantine-note',
 }
 
 /** Чем кончился разбор пакета: либо строки, либо причина с местом промаха. */
@@ -66,6 +73,9 @@ const LINE_FIELDS: readonly string[] = ['kind', 'key', 'state'];
 
 /** Поле текста починки. Стоит отдельно от обязательных: строка без него законна. */
 const FIX_NOTE_FIELD: string = 'fixNote';
+
+/** Поле причины карантина. Стоит отдельно от обязательных по той же причине. */
+const QUARANTINE_NOTE_FIELD: string = 'quarantineNote';
 
 /** Набор состояний целиком. Незнакомое отбивает запрос, а не ложится в колонку опечаткой. */
 const STATES: readonly ECargoState[] = Object.values(ECargoState);
@@ -120,25 +130,32 @@ function stringOf(raw: TCargoBody, field: string): { readonly value: string | nu
 function attachedOf(raw: TCargoBody): {
     readonly fixNote: string | null;
     readonly releaseVersion: string | null;
+    readonly quarantineNote: string | null;
     readonly fault: ECargoStateBodyFault | null;
 } {
     const fixNote: { value: string | null; bad: boolean } = stringOf(raw, FIX_NOTE_FIELD);
 
     if (fixNote.bad) {
-        return { fixNote: null, releaseVersion: null, fault: ECargoStateBodyFault.BadFixNote };
+        return { fixNote: null, releaseVersion: null, quarantineNote: null, fault: ECargoStateBodyFault.BadFixNote };
     }
 
     const releaseVersion: { value: string | null; bad: boolean } = stringOf(raw, CARGO_RELEASE_VERSION_FIELD);
 
     if (releaseVersion.bad) {
-        return { fixNote: null, releaseVersion: null, fault: ECargoStateBodyFault.BadReleaseVersion };
+        return { fixNote: null, releaseVersion: null, quarantineNote: null, fault: ECargoStateBodyFault.BadReleaseVersion };
     }
 
     if (releaseVersion.value !== null && releaseVersion.value.length > CARGO_RELEASE_VERSION_LIMIT) {
-        return { fixNote: null, releaseVersion: null, fault: ECargoStateBodyFault.LongReleaseVersion };
+        return { fixNote: null, releaseVersion: null, quarantineNote: null, fault: ECargoStateBodyFault.LongReleaseVersion };
     }
 
-    return { fixNote: fixNote.value, releaseVersion: releaseVersion.value, fault: null };
+    const quarantineNote: { value: string | null; bad: boolean } = stringOf(raw, QUARANTINE_NOTE_FIELD);
+
+    if (quarantineNote.bad) {
+        return { fixNote: null, releaseVersion: null, quarantineNote: null, fault: ECargoStateBodyFault.BadQuarantineNote };
+    }
+
+    return { fixNote: fixNote.value, releaseVersion: releaseVersion.value, quarantineNote: quarantineNote.value, fault: null };
 }
 
 /**
@@ -164,14 +181,26 @@ function lineOf(raw: unknown): { readonly line: Omit<ICargoStateLine, 'at'> | nu
         return { line: null, fault: ECargoStateBodyFault.UnknownState };
     }
 
-    const attached: { fixNote: string | null; releaseVersion: string | null; fault: ECargoStateBodyFault | null } = attachedOf(raw);
+    const attached: {
+        fixNote: string | null;
+        releaseVersion: string | null;
+        quarantineNote: string | null;
+        fault: ECargoStateBodyFault | null;
+    } = attachedOf(raw);
 
     if (attached.fault !== null) {
         return { line: null, fault: attached.fault };
     }
 
     return {
-        line: { kind, state, key: String(raw['key']), fixNote: attached.fixNote, releaseVersion: attached.releaseVersion },
+        line: {
+            kind,
+            state,
+            key: String(raw['key']),
+            fixNote: attached.fixNote,
+            releaseVersion: attached.releaseVersion,
+            quarantineNote: attached.quarantineNote,
+        },
         fault: null,
     };
 }

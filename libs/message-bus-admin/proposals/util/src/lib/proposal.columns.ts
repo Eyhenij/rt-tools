@@ -30,5 +30,6 @@ export const PROPOSALS_COLUMNS: readonly IRtTable.ColumnConfig[] = Object.freeze
     { key: 'address', label: adminLabel('columnAddress'), sortable: true },
     { key: 'state', label: adminLabel('columnState'), sortable: true },
     { key: 'releaseVersion', label: adminLabel('releaseVersion'), sortable: true },
+    { key: 'quarantineNote', label: adminLabel('quarantineNote'), sortable: false },
     { key: 'arrivedAt', label: adminLabel('columnArrivedAt'), sortable: true },
 ]);
