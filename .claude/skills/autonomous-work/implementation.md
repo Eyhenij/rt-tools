@@ -4,23 +4,24 @@ The names and bindings of this tree, next to the rule `SKILL.md` beside it.
 
 ## What it is called here
 
-| In the rule             | Here                                                                        |
-| ----------------------- | --------------------------------------------------------------------------- |
-| the run task key        | `RT-<number>`; the branch is `RT-<number>-<slug>`                           |
-| the work queue          | the project board on GitHub; the columns are moved by `npm run task:move`   |
-| the morning list        | the last reply of the session to the owner; a line per closed piece of work |
-| description of the past | `docs/archive/RT-<number>-<slug>.md`                                        |
-| the task folder         | `docs/tasks/RT-<number>-<slug>/` — the grill, the plan, the progress        |
+| In the rule             | Here                                                                                                                          |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| the run task key        | `RT-<number>`; the branch is `RT-<number>-<slug>`                                                                             |
+| the work queue          | the project board on GitHub; the columns are moved by `npm run task:move`                                                     |
+| the morning list        | `.claude/handoff/<год>-<месяц>-<день>-ночь.md`, and the last reply of the session repeats it; a line per closed piece of work |
+| description of the past | `docs/archive/RT-<number>-<slug>.md`                                                                                          |
+| the task folder         | `docs/tasks/RT-<number>-<slug>/` — the grill, the plan, the progress                                                          |
 
 ## Where it lives
 
-| What                            | Where                                    |
-| ------------------------------- | ---------------------------------------- |
-| the task folder sample          | `docs/tasks/_template/`                  |
-| creating a task                 | `npm run task:new`                       |
-| moving the column               | `npm run task:move -- <number> <column>` |
-| running the rules package suite | `bash projects/agent-kit/tests/run.sh`   |
-| the layout audit                | `pnpm run agent-kit:check`               |
+| What                            | Where                                              |
+| ------------------------------- | -------------------------------------------------- |
+| starting the night              | the command `/night` — `.claude/commands/night.md` |
+| the task folder sample          | `docs/tasks/_template/`                            |
+| creating a task                 | `npm run task:new`                                 |
+| moving the column               | `npm run task:move -- <number> <column>`           |
+| running the rules package suite | `bash projects/agent-kit/tests/run.sh`             |
+| the layout audit                | `pnpm run agent-kit:check`                         |
 
 ## Where the articles are carried out
 
@@ -35,7 +36,10 @@ article.
 - **The readiness sign is named as a command before the stage begins.** — `.claude/hooks/turn-exit-guard.sh:rt_te_deny` — the turn-exit guard reads the command from the line «Verified by» of the plan and does not release a turn where a stage is declared closed and the command was never run
 - **A red run is fixed in the same branch, not postponed.** — `.claude/rt-kit/project.sh:rt_push_checks` — the push gate set; at night it runs by the same call as in the daytime
 - **A guard's refusal is a work step, not the end of the session.** — **Not checked.** The guard does not know what happened after its refusal; it is held by technique
-- **The morning list is written along the way, not recalled at the end.** — **Not checked.** It is assembled from the section «Sessions» of the progress — `docs/tasks/RT-<number>-<slug>/progress.md`; that it was written in time is invisible to a machine
+- **The morning list is written along the way, not recalled at the end.** — **Not checked.** The file is created by the command `/night`; that it was appended in time is invisible to a machine
+- **The session is started by the command `/night`, and the time boundary goes to it as an argument.** — `.claude/commands/night.md:ARGUMENTS` — the laid-out copy of the package command; the boundary comes in the arguments
+- **The command called without a boundary asks the owner for one and starts nothing.** — **Not checked.** No guard reads the arguments of a command; it is held by the text of the command
+- **The command does not repeat the order of the night.** — **Not checked.** The command raises the rule and the pattern; the absence of a second source is judged by reading
 
 ## What else is worth knowing when reading the code
 
