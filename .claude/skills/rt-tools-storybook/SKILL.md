@@ -92,6 +92,16 @@ in its decorator: the next matrix of that same component comes up without it alr
   sets in an application, so the showcase renders what a consumer gets.
 - Sidebar order is fixed by `storySort`: `Foundation` (Design Tokens: Overview,
   Colors, Semantic, Spacing, Theming) → `Atoms` → `Molecules` → `Organisms` → `Templates` → the rest.
+- **A link between the showcase's pages dies with a rename of a section.** The address is not a path
+  in the tree: it comes from the page's title. So the address check does not see such a link. A dead
+  one looks exactly like a live one. The page is drawn whole, and the miss shows only to whoever
+  pressed it. Laying the sections out by the levels of atomic design killed every link of the kit at
+  once, 346 of them, and nothing turned red. The addresses are derived by the showcase's own helper.
+  A rule written out next to the check diverges on the first title with a capital letter in the
+  middle of a word.
+- **A link to a family that has not migrated is not written at all.** An address that will exist some
+  day reads the same as a dead one. No rename cures it. Such a family is named in words, with the
+  number of the task that brings it.
 - **A story title starts with the atomic design level, not with a shared section.** There are four
   levels — atoms, molecules, organisms, templates — and between the level and the component name
   stands an optional subject group: buttons, form fields, navigation, data, files, dialog, side

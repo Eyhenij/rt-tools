@@ -5,7 +5,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 <Title>SkeletonWrapper — `rt-skeleton-wrapper`</Title>
 
 Развилка «загрузка ↔ содержимое»: пока идёт загрузка, рисует
-[`rt-skeleton`](./?path=/docs/components-skeleton-overview--docs), иначе — проекцию.
+[`rt-skeleton`](./?path=/docs/atoms-feedback-skeleton-overview--docs), иначе — проекцию.
 
 ```html
 <rt-skeleton-wrapper width="240px" height="16px" [isLoading]="!tour()">{{ tour()?.title }}</rt-skeleton-wrapper>
@@ -20,8 +20,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 ## Когда не применять
 
 - **Заглушка без пары** — сетка карточек-призраков рисуется прямым
-  [`rt-skeleton`](./?path=/docs/components-skeleton-overview--docs): решать здесь нечего.
-- **Ожидание без формы** — [`rt-spinner`](./?path=/docs/components-spinner-overview--docs).
+  [`rt-skeleton`](./?path=/docs/atoms-feedback-skeleton-overview--docs): решать здесь нечего.
+- **Ожидание без формы** — [`rt-spinner`](./?path=/docs/atoms-feedback-spinner-overview--docs).
 
 ## Оси
 
@@ -50,7 +50,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 Компонент не объявляет ни роли, ни живой области. Пока идёт загрузка, содержимого для
 скринридера нет — как и заглушки, которая от него скрыта. Если о загрузке нужно сообщить
-словами, рядом ставится [`rt-spinner`](./?path=/docs/components-spinner-overview--docs) с его
+словами, рядом ставится [`rt-spinner`](./?path=/docs/atoms-feedback-spinner-overview--docs) с его
 ролью `status`.
 
 ## Оформление
@@ -75,5 +75,5 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Рядом
 
-- [`rt-skeleton`](./?path=/docs/components-skeleton-overview--docs) — сама заглушка.
-- [`rt-spinner`](./?path=/docs/components-spinner-overview--docs) — кольцо вместо формы.
+- [`rt-skeleton`](./?path=/docs/atoms-feedback-skeleton-overview--docs) — сама заглушка.
+- [`rt-spinner`](./?path=/docs/atoms-feedback-spinner-overview--docs) — кольцо вместо формы.

@@ -31,6 +31,8 @@ The first column is the article verbatim, as it is written in the rule's section
 applies here". An article without a line and a line without an article are a divergence.
 
 - **Each kit has a showcase of its own, and they share nothing.** — `projects/ui-kit-v2/.storybook/main.ts:stories` — each showcase has its own set of paths. The second config lies with the first kit, and the ports and commands are kept apart in `package.json`.
+- **A link between the showcase's pages dies with a rename of a section.** — `tools/check-showcase-links.mjs`. It derives the page addresses by the showcase's own helper. Every link of an overview is matched against them. The step stands in the pipeline and in the push gate set.
+- **A link to a family that has not migrated is not written at all.** — **Not checked by anything.** Such a family looks to the check like a renamed section: an address with no page. Held by the article: the family is named in words, and the task number stands next to it.
 - **A story targets the wrapper, not the kit's component.** — **Not checked by anything.** A story targeting the kit's component directly builds and draws; it is caught by reading. The wrappers lie in `stories/component/` at every component.
 - **A component is covered when every input axis is shown at every value at once.** — `tools/verify-ui-kit-v2-docs.cjs:BASE_SECTION` — the overview page's input table is matched against the `input()` of that folder's components. The completeness of the axes is judged by reading.
 - **Axes are crossed only where they visibly affect one another.** — **Not checked by anything.** How axes affect one another is visible by eye, not to a machine. The decision and its price — `docs/adr/0002-ui-kit-v2-state-coverage.md`.

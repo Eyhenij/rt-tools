@@ -18,11 +18,11 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 ## Когда применять
 
 - Небольшое целое, которое набирают на один-два шага: количество гостей, мест, штук.
-- Строка списка настроек — вместе с [`rt-counter-row`](./?path=/docs/components-counterrow-overview--docs).
+- Строка списка настроек — вместе с [`rt-counter-row`](./?path=/docs/molecules-forms-counterrow-overview--docs).
 
 ## Когда не применять
 
-- **Число набирают, а не наращивают** — [`rt-input-number`](./?path=/docs/components-inputnumber-overview--docs):
+- **Число набирают, а не наращивают** — [`rt-input-number`](./?path=/docs/atoms-forms-inputnumber-overview--docs):
   дойти шагами до 1500 нельзя.
 - **Дробное значение** — здесь нет ни дробной части, ни маски: шаг всегда целый.
 
@@ -47,7 +47,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 ## Состояния
 
 Своих состояний взаимодействия у счётчика нет: наведение, нажатие и фокус принадлежат кнопкам
-[`rt-icon-button`](./?path=/docs/components-iconbutton-overview--docs) и показаны в их матрице.
+[`rt-icon-button`](./?path=/docs/atoms-buttons-iconbutton-overview--docs) и показаны в их матрице.
 Собственных состояний три, и все они — про доступность шага.
 
 | состояние        | чем задаётся                    | что видно           |
@@ -72,7 +72,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 ## Оформление
 
 Кнопки и значение — элементы блока `rt-counter`; сами кнопки нарисованы
-[`rt-icon-button`](./?path=/docs/components-iconbutton-overview--docs) в облике `secondary`
+[`rt-icon-button`](./?path=/docs/atoms-buttons-iconbutton-overview--docs) в облике `secondary`
 размера `sm`, поэтому счётчик наследует их палитру и кольцо фокуса.
 
 ## Входы
@@ -94,6 +94,6 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Рядом
 
-- [`rt-input-number`](./?path=/docs/components-inputnumber-overview--docs) — когда число набирают.
-- [`rt-counter-row`](./?path=/docs/components-counterrow-overview--docs) — строка с подписью, куда счётчик кладут.
-- [`rt-icon-button`](./?path=/docs/components-iconbutton-overview--docs) — чем нарисованы «−» и «+».
+- [`rt-input-number`](./?path=/docs/atoms-forms-inputnumber-overview--docs) — когда число набирают.
+- [`rt-counter-row`](./?path=/docs/molecules-forms-counterrow-overview--docs) — строка с подписью, куда счётчик кладут.
+- [`rt-icon-button`](./?path=/docs/atoms-buttons-iconbutton-overview--docs) — чем нарисованы «−» и «+».

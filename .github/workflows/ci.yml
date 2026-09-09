@@ -224,6 +224,9 @@ jobs:
             - name: Icon map
               run: node tools/check-icon-map.mjs
 
+            - name: Showcase links
+              run: node tools/check-showcase-links.mjs
+
             # `typecheck` проверяет типы там, где их не проверяет ничто другое:
             # Jest транспилирует спеки без проверки типов, а ESLint здесь не
             # type-aware, так что спека могла годами гонять форму, которой по
