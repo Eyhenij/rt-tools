@@ -27,6 +27,7 @@ table.
 | [Cargo outward](observations/cargo/scenarios.md)                                | `observations/cargo/`      |
 | [The boundary of the rules package](package-boundary/scenarios.md)              | `package-boundary/`        |
 | [The prose guard](prose-guard/scenarios.md)                                     | `prose-guard/`             |
+| [The judgement of a proposal against the spec](proposal-verdict/scenarios.md)   | `proposal-verdict/`        |
 | [The applicability sign at a rule article](rule-article/scenarios.md)           | `rule-article/`            |
 | [The rules gate](rule-gate/scenarios.md)                                        | `rule-gate/`               |
 | [The length limit of a rule description](skill-description-limit/scenarios.md)  | `skill-description-limit/` |

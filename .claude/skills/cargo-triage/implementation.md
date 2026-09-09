@@ -69,6 +69,9 @@ sign of "read and decided".
 - **The command's answer is read, not assumed.** — **Not checked by anything.** The answer is printed, and whether it was read nothing judges
 - **The release version is named by one number, without the package name.** — **Not checked by anything.** The intake holds the version's length and leaves the form to the tree. Each has its own, and a shared ban would refuse a neighbour's records. It is held by a sample in the pattern `cargo-triage-mark`, which is where the string is taken from
 - **Sorting out the cargo and gathering the proposals are two different steps.** — **Not checked by anything.** The gathering command refers to this rule and does not repeat the order
+- **A proposal is compared with the spec about its resource before it becomes work.** — `tools/cargo-mark.mjs:WORK_STATE` — the state the comparison stands before; the spec is found by the entry command named in the refusal.
+- **The outcomes of the comparison are three, and they are named in advance.** — **Not checked by anything.** The outcome is chosen by the executor reading the spec. The machine sees the move and the named spec.
+- **The move of a proposal into work names the spec it was compared with.** — `tools/cargo-mark.mjs:SPEC_FLAG` — the refusal goes before the network; scenarios `SC-AK-948`…`SC-AK-952`.
 
 ## What else is worth knowing when reading the code
 
