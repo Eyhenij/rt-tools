@@ -1,47 +1,60 @@
 # Plan
 
-**Task:** <KEY>-<number> · **Branch:** <branch>
+**Task:** RT-1947 · **Branch:** RT-1947-epic-ends-with-stop
 **Spec:** `docs/specs/agent-kit/epic-stop/spec.md`
 **Behaviour:** changes
 
-A tree that writes the agreement straight into the domain spec names it instead of the draft:
-`**Spec:** `<path to the spec>``.
-
-Work that does not touch application code needs no agreement — then instead of the draft line
-stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is not accepted.
-
-After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
-along the way.
-
 ## Task footprint
 
-<What the work touches. Filled in by exploration before the grill and confirmed by the owner. By
-this same table, at closing, one sees what of the specs, rules and patterns has gone stale: what
-is named here is read twice — before the work and after it.>
-
-| What  | Where                         |
-| ----- | ----------------------------- |
-| Specs | `docs/specs/<domain>/`        |
-| Laws  | `docs/constitution/<name>.md` |
-| Rules | `.claude/skills/<name>/`      |
-| Code  | `projects/<package>/`         |
+| What  | Where                                                           |
+| ----- | --------------------------------------------------------------- |
+| Specs | `docs/specs/agent-kit/epic-stop/`                               |
+| Laws  | `work-conduct`                                                  |
+| Rules | `.claude/skills/turn-conduct/`, `.claude/skills/task-flow/`     |
+| Code  | `projects/agent-kit/assets/hooks/`, `projects/agent-kit/tests/` |
 
 ## What counts as done
 
-- <a statement that can be checked>
+- Взятие новой работы при кончившемся эпике отбивается, и отказ называет остановку.
+- Незаконченная задача эпика оставляет работу разрешённой.
+- Отказ называет команду таблицы и строку ожидания приказа.
+- Слово владельца о следующей работе в том же ходе отказ снимает.
+- Дерево без эпиков и заход без задачи гардом не судятся.
+- Статья об остановке стоит в правиле хода и названа привязкой.
 
 ## Stages
 
-### 1. <name>
+### 1. Договорённость обеих сторон
 
-- **What is done:** <in one phrase>
-- **Readiness sign:** <what must become true>
-- **Verified by:** `<command>` — <what in its output means "it matched">
+- **What is done:** заводится поддомен `epic-stop`: что считается концом эпика, что отбивается,
+  чем отказ снимается; сценарии берут свободные номера от `SC-AK-978`.
+- **Readiness sign:** спека называет вход гарда, признак конца, состав отказа и то, чего гард не
+  судит.
+- **Verified by:** `npm run check:specs` — поддомен назван без пропущенных разделов.
 
-The command is written in backticks: the turn exit guard reads it and does not let out a turn in
-which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything.
+### 2. Гард остановки
+
+- **What is done:** гард на взятии новой работы: считает состояние задач эпика и отбивает взятие,
+  когда незаконченных не осталось; отказ называет команду таблицы и строку ожидания приказа.
+- **Readiness sign:** взятие работы при кончившемся эпике отбито, при незаконченном — пропущено.
+- **Verified by:** `bash projects/agent-kit/tests/epic-stop-guard.test.sh` — пробы гарда зелёные.
+
+### 3. Слово владельца и границы
+
+- **What is done:** отказ снимается словом владельца о следующей работе в том же ходе; дерево без
+  эпиков, ход без задачи и повторный проход не судятся.
+- **Readiness sign:** три границы закрыты пробами, и ни одна не отбивает работу зря.
+- **Verified by:** `bash projects/agent-kit/tests/run.sh` — все наборы пакета зелёные.
+
+### 4. Статья в правиле и привязки
+
+- **What is done:** статья об остановке в конце эпика встаёт в правило хода, спутник поддомена
+  заполняется привязками, гард объявлен в раскладке.
+- **Readiness sign:** проверка спек не называет ни одной статьи без привязки.
+- **Verified by:** `npm run check:specs && npm run agent-kit:check` — код ноль.
 
 ## What this work does not do
 
-- <neighbouring work that is not dragged in here, and where it is created>
+- Не трогает вид таблицы: её собирает команда из предыдущей задачи.
+- Не закрывает карточку эпика: закрывает её человек, увидев остановку.
+- Не судит текст ответа владельцу: машине он не виден, и гард стоит на взятии работы.
