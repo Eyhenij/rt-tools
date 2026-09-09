@@ -66,6 +66,15 @@ report "SC-AK-943 — код не нулевой" "$(sf_code hooks/нет-так
 report "SC-AK-943 — отказ называет, что искали" "$(sf_says hooks/нет-такого.sh | grep -cF 'hooks/нет-такого.sh')" 1
 report "SC-AK-943 — отказ называет вызов без имени" "$(sf_says hooks/нет-такого.sh | grep -cF 'without a name')" 1
 
+# --- SC-AK-989 — ресурс без спеки отличается от имени, которого пакет не везёт -------------
+report "SC-AK-989 — непокрытый ресурс отвечает своим кодом" "$(sf_code rules/lonely.md)" 3
+report "SC-AK-989 — ответ говорит, что спеки о нём нет" "$(sf_says rules/lonely.md | grep -cF 'not one spec speaks of it')" 1
+report "SC-AK-989 — ответ называет полный путь ресурса" "$(sf_says rules/lonely.md | grep -cF 'pkg/assets/rules/lonely.md')" 1
+report "SC-AK-989 — ответ называет, сколько таких всего" "$(sf_says rules/lonely.md | grep -cF 'Such resources: 1')" 1
+report "SC-AK-989 — незаведённое имя отвечает другим кодом" "$(sf_code rules/нет-такого.md)" 1
+report "SC-AK-989 — незаведённое имя говорит, что пакет его не везёт" "$(sf_says rules/нет-такого.md | grep -cF 'carries no')" 1
+report "SC-AK-989 — покрытый ресурс отвечает нулём" "$(sf_code hooks/a-guard.sh)" 0
+
 # --- SC-AK-944 — файл, о котором говорят два поддомена, возвращается с обоими --------------
 report "SC-AK-944 — назван первый поддомен" "$(sf_says hooks/shared.sh | grep -cxF 'docs/specs/dom/one/spec.md')" 1
 report "SC-AK-944 — назван второй поддомен" "$(sf_says hooks/shared.sh | grep -cxF 'docs/specs/dom/two/spec.md')" 1
