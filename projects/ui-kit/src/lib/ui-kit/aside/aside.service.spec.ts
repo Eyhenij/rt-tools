@@ -4,6 +4,8 @@ import { TestBed } from '@angular/core/testing';
 import { Event, NavigationEnd, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 
+import { IRtUiConfig, RT_UI_CONFIG } from '../config';
+
 import { RtAsideService } from './aside.service';
 import { ASIDE_REF, AsideRef, IAsideConfig } from './aside.types';
 
@@ -53,15 +55,19 @@ describe('RtAsideService', () => {
     let service: RtAsideService;
     /** Двойник маршрутизатора: смену маршрута спека издаёт сама — настоящий её здесь не издаёт. */
     let routerEvents: Subject<Event>;
+    /** Настройка приложения: проба ставит свою до подъёма службы. */
+    let uiConfig: IRtUiConfig.Config;
 
     beforeEach(() => {
         jest.useFakeTimers();
         overlay = new OverlayStub();
         routerEvents = new Subject<Event>();
+        uiConfig = {};
 
         TestBed.configureTestingModule({
             providers: [
                 RtAsideService,
+                { provide: RT_UI_CONFIG, useFactory: (): IRtUiConfig.Config => uiConfig },
                 { provide: Router, useValue: { events: routerEvents.asObservable() } },
                 {
                     provide: Overlay,
@@ -119,6 +125,28 @@ describe('RtAsideService', () => {
         jest.advanceTimersByTime(400);
 
         expect(overlay.detached).toBe(true);
+    });
+
+    it('SC-UK-58: настройка приложения возвращает закрытие по клавише', () => {
+        // Настройка правится на месте, а не подменяется: службу стенд поднял в beforeEach, и
+        // ссылку на настройку она уже держит.
+        uiConfig.components = { aside: { closeOnEscape: true } };
+        open();
+
+        overlay.keydown.next(new KeyboardEvent('keydown', { key: 'Escape' }));
+        jest.advanceTimersByTime(400);
+
+        expect(overlay.detached).toBe(true);
+    });
+
+    it('SC-UK-59: довод вызова сильнее настройки приложения', () => {
+        uiConfig.components = { aside: { closeOnEscape: true } };
+        open({ closeOnEscape: false });
+
+        overlay.keydown.next(new KeyboardEvent('keydown', { key: 'Escape' }));
+        jest.advanceTimersByTime(400);
+
+        expect(overlay.detached).toBe(false);
     });
 
     it('SC-UK-56: смена маршрута открытую шторку снимает', () => {

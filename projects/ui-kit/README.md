@@ -33,11 +33,20 @@ bootstrapApplication(AppComponent, {
     providers: [
         provideRtUi({
             global: { theme: 'auto', design: 'custom' },
-            components: { button: { size: 'md', appearance: 'solid' } },
+            components: {
+                button: { size: 'md', appearance: 'solid' },
+                aside: { closeOnEscape: true },
+            },
         }),
     ],
 });
 ```
+
+Since 0.5.0 Esc does not close an open aside curtain: the key is pressed to lift a hint or to leave a
+field, and the whole panel closed together with what was entered. The signature did not change, so an
+existing call keeps compiling and silently loses the closing by a key. An application that needs the
+former behaviour names `components.aside.closeOnEscape` once, as above; a single call names
+`closeOnEscape` in its own argument, and that argument wins over the setting.
 
 Import the design-token stylesheet so components and your own styles share the same `--rt-*` variables:
 

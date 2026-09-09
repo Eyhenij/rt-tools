@@ -6,6 +6,8 @@ import { Event, NavigationEnd, Router } from '@angular/router';
 import { EMPTY, merge, Observable, of, Subject } from 'rxjs';
 import { delay, filter, mergeAll, take, tap } from 'rxjs/operators';
 
+import { IRtUiConfig, RT_UI_CONFIG } from '../config';
+
 import { ASIDE_REF, IAsideConfig, TAsidePositions, AsideRef } from './aside.types';
 import { RtuiAsidePanelComponent } from './components/panel/aside-panel.component';
 
@@ -13,6 +15,7 @@ import { RtuiAsidePanelComponent } from './components/panel/aside-panel.componen
 export class RtAsideService {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #router: Router = inject(Router);
+    readonly #uiConfig: IRtUiConfig.Config = inject(RT_UI_CONFIG);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
     /** Источник открытий: метод толкает сюда поток закрытия новой панели, и больше ничего. */
@@ -122,7 +125,10 @@ export class RtAsideService {
      */
     #closesOf(overlayRef: OverlayRef, config: IAsideConfig): Observable<unknown> {
         const backdrop$: Observable<MouseEvent> = config.closeOnBackdropClick === false ? EMPTY : overlayRef.backdropClick();
-        const escape$: Observable<KeyboardEvent> = config.closeOnEscape
+        // Довод вызова сильнее настройки приложения: порядок разрешения у кита один — довод
+        // вызова, затем настройка приложения, затем умолчание кита.
+        const closeOnEscape: boolean = config.closeOnEscape ?? this.#uiConfig.components?.aside?.closeOnEscape ?? false;
+        const escape$: Observable<KeyboardEvent> = closeOnEscape
             ? overlayRef.keydownEvents().pipe(filter((keyEvent: KeyboardEvent): boolean => keyEvent.key === 'Escape'))
             : EMPTY;
 
