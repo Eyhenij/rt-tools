@@ -223,3 +223,16 @@ already shifted page, so a rearrangement of the stories in the file moved seven 
 touched. With the widened window the height holds — 890 became 892, 710 became 712 — and coincides
 with a measurement of the same story opened on a page of its own, where nothing had been shot before
 it.
+
+### SC-UKV-132 — a probe pointed at a showcase without stories names the showcase, not the harness
+
+Given a probe of the snapshot harness and a showcase at the named address that shows no story
+When the probe opens a story on that showcase and waits for the root of the show
+Then the probe leaves with a refusal that names the address, how many roots the page holds, whether the
+story is still at preparing and which requests the showcase refused; a failure that is not a running-out
+of the wait is not turned into such a refusal and goes on untouched
+
+Covered by `tools/tests/showcase-probe.test.sh` — ten outcomes over a substituted page, without a browser;
+the set is not seen by the gatherer of the coverage. Checked on the spot: a page holding the sign of
+preparing and one refused request got out of both probes of the second showcase the same named refusal and
+the code one, in place of the former bare failure of the wait.

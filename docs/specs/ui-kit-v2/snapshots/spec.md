@@ -179,6 +179,11 @@ as an attachment.
   mountain of stories that were not found or a checking of foreign frames, and the reason is looked for in the
   harness.
 
+- **A probe of the harness pointed at a showcase that serves no story names that showcase, not the harness.**
+  A showcase goes stale by itself: after a switch of the branch its hot update loses a chunk, every story hangs
+  at preparing for ever, and no edit in the tree caused it. A probe that dies there with a bare failure of a
+  wait speaks of its own code, and the push gate then refuses a push for a reason that is not true.
+
 Below are the rules of the design of the kit: in the same list, because the binding to the code is read by a
 machine, and a heading inside a list breaks its reading off.
 

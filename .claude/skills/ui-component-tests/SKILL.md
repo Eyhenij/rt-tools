@@ -150,21 +150,22 @@ Four checks do not replace one another, and the choice between them is not a mat
   a rollback by an edit, the second a rollback in substance: the call is in place, and it waits for
   the wrong thing.
 - **A probe judges the markup it was created for.** A miss happens with one kind of markup and not
-  with a neighbouring one: an icon drawn by a directive without a host of its own the wait let
-  through, while the same icon in a component with a host it did not. A probe that took a story with
-  a host is green on an unfixed harness too. So it not only opens the story but asks it: is this the
-  markup — and refuses when the story changed it for a neighbouring one.
-- **A probe judging by one measurement inherits the very rarity it guards against.** It demands that
-  the frame without the wait diverge from the frame after it — and that one sometimes manages to
-  draw itself, by that same chance once in fifty. A single match then refuses a push on a tree with
-  nothing to answer for, and a repeated call of the same command passes green: that reads as a
-  broken check rather than as its condition. The measurements are taken one after another until they
-  diverge, and the refusal comes only when they all matched; the refusal names how many
-  measurements were taken.
+  with a neighbouring one, and a probe that took the wrong story is green on an unfixed harness. So
+  it not only opens the story but asks it: is this the markup — and refuses when the story changed
+  it for a neighbouring one.
+- **A probe judging by one measurement inherits the very rarity it guards against.** A single match
+  refuses a push on a tree with nothing to answer for, while the same command passes green on the
+  next call. The measurements are taken one after another until they diverge; the refusal comes
+  only when they all matched, and it names how many were taken.
+- **A probe names the state of the showcase it was pointed at, not only the state of the harness.**
+  A showcase goes stale by itself: after a branch switch its hot update loses a chunk, and every
+  story hangs at preparing. A probe that dies there with the bare failure of a wait speaks of its
+  own code, so the gate refuses a push for a reason that is not true. The wait is wrapped, and its
+  refusal names the address, the count of the showing roots, whether the story is still preparing
+  and which requests the showcase refused.
 - **A probe reading the harness as text separates the code from the explanations.** A word search
   over the whole file finds them in a commented-out line too: a call taken out by one slash reads as
-  live, and the probe stays green on exactly the rollback it stands for. This was caught not by
-  reading the code but by checking the reverse side — by removing the guarded call from the harness.
+  live, and the probe stays green on exactly the rollback it stands for.
 - **A reference is taken after the frame has been looked at, not before.** A shot pins down what got
   drawn: an empty frame becomes the sample, and afterwards the run is eternally green on emptiness.
   The order is one — a raised showcase, the eyes, then the reference. References are taken in a
