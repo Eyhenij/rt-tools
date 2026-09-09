@@ -29,10 +29,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Когда не применять
 
-- **Нужен ввод, а не «да/нет»** — [`rt-dialog`](./?path=/docs/components-dialog-overview--docs).
+- **Нужен ввод, а не «да/нет»** — [`rt-dialog`](./?path=/docs/organisms-dialog-dialog-overview--docs).
 - **Подтверждение у пункта меню** — там своё, и **диалогом**, а не поповером: пункт исчезает
   вместе с закрывшимся меню, и панели было бы не на чем держаться. См.
-  [`rt-menu`](./?path=/docs/components-menu-overview--docs).
+  [`rt-menu`](./?path=/docs/molecules-navigation-menu-overview--docs).
 - **Действие обратимое** — подтверждение здесь лишний шаг: хватит отмены после действия.
 
 ## Оси
@@ -70,12 +70,12 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Доступность
 
-- Кнопки панели — обычные [`[rtButton]`](./?path=/docs/components-button-overview--docs) с
+- Кнопки панели — обычные [`[rtButton]`](./?path=/docs/atoms-buttons-button-overview--docs) с
   доступными именами; тон меняет только палитру подтверждающей.
 - `Escape` закрывает панель.
 - Заголовок и вопрос — обычный текст: панель не диалог, фокус она не удерживает. Если решение
   требует внимания и ловушки фокуса, нужен
-  [`rt-dialog`](./?path=/docs/components-dialog-overview--docs).
+  [`rt-dialog`](./?path=/docs/organisms-dialog-dialog-overview--docs).
 
 ## Оформление
 
@@ -118,6 +118,6 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Рядом
 
-- [`rt-dialog`](./?path=/docs/components-dialog-overview--docs) — когда решению нужен фокус и ввод.
-- [`rt-menu`](./?path=/docs/components-menu-overview--docs) — подтверждение у пункта меню, диалогом.
-- [`[rtPopover]`](./?path=/docs/components-popover-overview--docs) — примитив, на котором это стоит.
+- [`rt-dialog`](./?path=/docs/organisms-dialog-dialog-overview--docs) — когда решению нужен фокус и ввод.
+- [`rt-menu`](./?path=/docs/molecules-navigation-menu-overview--docs) — подтверждение у пункта меню, диалогом.
+- [`[rtPopover]`](./?path=/docs/atoms-popover-overview--docs) — примитив, на котором это стоит.
