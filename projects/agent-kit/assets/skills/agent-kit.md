@@ -82,6 +82,7 @@ npx agent-kit sync --check  # write nothing, refuse on a divergence
 npx agent-kit stats         # what was used, what never, what people stumbled on
 npx agent-kit enroll --code <code>  # enrol the tree in the intake and put its token
 npx agent-kit propose       # send the cargo to the intake: the digest, proposals and analyses
+npx agent-kit fate          # the fate of one's own records and the overrides that are due to be lifted
 npx agent-kit adopt [files] # hand the package your own file lying on its path
 ```
 
@@ -215,6 +216,14 @@ Both values come from the intake owner and are not invented by the consumer: the
 name, the token they issue as a one-off invitation code — the code enrols the tree in the intake
 and puts the token into the file of the key `token`. Before the invitation the send refuses by
 design, not by misconfiguration.
+
+**The fate of its own records the tree asks by `agent-kit fate`.** The command reads the intake by
+the token — the same one the cargo goes under — and prints every record with its state, what it was
+fixed by and the version of the release. Under a record stands the override the mark of its section
+ties to it: it is lifted now when the article already lies in the laid-out edition, and it waits for
+an installation when the fix came out and has not reached this tree. A mark the intake gave no
+record for is named apart. The command lifts nothing itself: the mark holds one article, and the
+section may have been written into since.
 
 **The tree sign is computed by the sender, not by a person.** It is derived from the repository
 address, and the intake record is created by exactly it: a tree enrolled under its own word the
