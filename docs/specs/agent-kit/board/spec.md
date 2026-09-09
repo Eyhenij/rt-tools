@@ -56,6 +56,13 @@ through the executor.
   refusal itself dictates, and both sides of the link read that one shape: read differently, one
   side would demand what the other does not see.
 
+- **A task naming neither an epic nor the word of the owner is a divergence.** The guard refuses
+  such a task at the creating command, and only there: a card made through the web goes past every
+  guard, and one created before this order came in has neither line. By the queue it reads as
+  ordinary work, and that nothing stands behind it shows nowhere.
+- **The cargo of the trees is not judged by this line.** Those records are not tasks at all — no
+  title with a number, no executor, no place on the board.
+
 ## What is out of scope
 
 - The checks that read the tree without the network: a neighbouring subdomain.

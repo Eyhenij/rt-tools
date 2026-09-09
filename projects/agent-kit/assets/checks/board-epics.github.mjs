@@ -15,6 +15,9 @@ import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
  */
 const EPIC_LABEL = CONFIG.board?.epicLabel ?? '';
 
+/** The labels of the cargo of the trees: those records are not tasks and are not judged as such. */
+const CARGO_LABELS = CONFIG.board?.cargoLabels ?? [];
+
 /**
  * The rows of the epic makeup — those standing in the table with the task column.
  *
@@ -139,5 +142,43 @@ export function checkEpicLinks(open, report) {
         if (listedBy.get(issue.number) !== Number(named)) {
             report(`#${issue.number}: the body names the epic #${named}, and its plan does not carry the task — «take the next one» will not give it out`);
         }
+    }
+
+    checkTasksOutsideEpics(open, epicNumbers, report);
+}
+
+/**
+ * The word by which a task declares itself as work outside an epic. It is written by the creating
+ * command from the word of the owner, and the audit reads exactly that shape: work outside an epic
+ * is lawful, and only the owner names it as such.
+ */
+const OUTSIDE_EPIC = /работа\s+вне\s+эпика/i;
+
+/**
+ * A task belonging to no epic and carrying no word of the owner about work outside one.
+ *
+ * The delivery guard refuses such a task at the creating command, and only there: a card made
+ * through the web goes past every guard, and one created before this order came in has neither
+ * line. By the queue it reads as ordinary work, and that nothing stands behind it shows nowhere —
+ * the audit is the only reader that comes for exactly this.
+ *
+ * The cargo of the trees is not judged: those records are not tasks at all — they have no title
+ * with a number, no executor and no place on the board, and never will.
+ */
+function checkTasksOutsideEpics(open, epicNumbers, report) {
+    for (const issue of open) {
+        if (epicNumbers.has(issue.number)) {
+            continue;
+        }
+        if ((issue.labels ?? []).some((label) => CARGO_LABELS.includes(label.name))) {
+            continue;
+        }
+        const body = String(issue.body ?? '');
+        if (declaredEpicOf(body) !== undefined || OUTSIDE_EPIC.test(body)) {
+            continue;
+        }
+        report(
+            `#${issue.number}: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»`
+        );
     }
 }

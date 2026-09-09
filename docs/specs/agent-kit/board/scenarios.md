@@ -82,3 +82,19 @@ Then a task with the token arrives with `viewer: machine`, without the token wit
 in both trees is `client`, because it is read without the token
 
 Covered: `projects/agent-kit/tests/checks-board-pull.test.sh`.
+
+### SC-AK-945 — a task naming neither an epic nor the word of the owner
+
+Given an open task whose body names no epic and carries no word of the owner about work outside one
+When the work queue audit runs
+Then it names the task by a line of its own and names both lines that fix it
+
+Given the body carries the word of the owner about work outside an epic
+When the same audit runs
+Then it stays silent: work outside an epic is lawful, and only the owner names it as such
+
+Given the card carries the label of an epic
+When the same audit runs
+Then it gets no such line: an epic has no epic of its own
+
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
