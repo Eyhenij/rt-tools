@@ -1,0 +1,5 @@
+<app-story-row caption="Волна нажатия: обычная кнопка и кнопка с отключённой волной" [items]="cells" [itemLabel]="labelOf">
+    <ng-template let-cell>
+        <button #host rtButton rtRipple aria-label="Кнопка витрины" [label]="cell.label" [rippleDisabled]="cell.off"></button>
+    </ng-template>
+</app-story-row>

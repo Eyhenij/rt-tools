@@ -237,6 +237,9 @@ jobs:
             - name: Kit shot pairs
               run: node tools/check-kit-shot-pairs.mjs
 
+            - name: Kit two coverage
+              run: node tools/check-kit-coverage.mjs
+
             # `typecheck` проверяет типы там, где их не проверяет ничто другое:
             # Jest транспилирует спеки без проверки типов, а ESLint здесь не
             # type-aware, так что спека могла годами гонять форму, которой по
