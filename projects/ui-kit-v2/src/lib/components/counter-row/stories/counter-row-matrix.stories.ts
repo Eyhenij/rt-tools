@@ -26,4 +26,6 @@ export const Content: TStory = { args: { part: 'content' } };
 
 export const List: TStory = { args: { part: 'list' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

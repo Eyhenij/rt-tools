@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtDialogFooterComponent } from '../../footer/rt-dialog-footer.component';
 import { RtDialogHeaderComponent } from '../../header/rt-dialog-header.component';
@@ -9,7 +10,7 @@ import { RtDialogComponent } from '../../rt-dialog.component';
 import { TRtDialogSize } from '../../rt-dialog.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TDialogMatrixPart = 'size' | 'width' | 'parts' | 'themes';
+export type TDialogMatrixPart = 'size' | 'width' | 'parts' | 'presets' | 'themes';
 
 /** Наполнение окна: шапка и подвал необязательны, и без них окно выглядит иначе. */
 interface IDialogPartsCase {
@@ -92,6 +93,27 @@ interface IDialogPartsCase {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Окно в обоих наборах">
+                    <ng-template>
+                        <rt-dialog size="sm" ariaLabel="Удаление">
+                            <rt-dialog-header title="Удалить запись?" />
+                            <p class="app-dialog-matrix__text">Действие необратимо.</p>
+                            <rt-dialog-footer>
+                                <button
+                                    rtButton
+                                    type="button"
+                                    theme="secondary"
+                                    appearance="text"
+                                    label="Отмена"
+                                    aria-label="Отмена"></button>
+                                <button rtButton type="button" theme="danger" label="Удалить" aria-label="Удалить"></button>
+                            </rt-dialog-footer>
+                        </rt-dialog>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Окно в обеих темах">
                     <ng-template>
@@ -135,6 +157,7 @@ interface IDialogPartsCase {
         RtDialogHeaderComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

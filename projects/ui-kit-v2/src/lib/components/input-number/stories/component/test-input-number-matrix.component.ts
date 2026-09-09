@@ -3,6 +3,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { STORY_FIELD_WIDTH } from '../../../../../showcase/story-metrics';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IStoryState, STORY_FIELD_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtFieldComponent } from '../../../field/rt-field.component';
@@ -11,7 +12,7 @@ import { IRtInput } from '../../../input/rt-input.model';
 import { RtInputNumberComponent } from '../../rt-input-number.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TInputNumberMatrixPart = 'size' | 'prefix' | 'fraction' | 'filling' | 'bordered' | 'states' | 'themes';
+export type TInputNumberMatrixPart = 'size' | 'prefix' | 'fraction' | 'filling' | 'bordered' | 'states' | 'presets' | 'themes';
 
 /** Случай с подписью и своим значением: у числового поля значение приходит только формой. */
 interface IInputNumberCase {
@@ -150,6 +151,21 @@ function invalid(): FormControl<number | null> {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Поле в обоих наборах">
+                    <ng-template>
+                        @for (themeCase of themeCases; track themeCase.name) {
+                            <rt-input-number
+                                placeholder="0"
+                                prefix="₽"
+                                [disabled]="themeCase.disabled"
+                                [ariaLabel]="themeCase.name"
+                                [formControl]="themeCase.control" />
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Поле в обеих темах">
                     <ng-template>
@@ -176,6 +192,7 @@ function invalid(): FormControl<number | null> {
         RtInputNumberComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

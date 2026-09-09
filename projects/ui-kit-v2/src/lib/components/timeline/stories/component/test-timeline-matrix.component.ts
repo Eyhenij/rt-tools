@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtTimelineComponent } from '../../rt-timeline.component';
 import { IRtTimeline } from '../../rt-timeline.model';
@@ -21,7 +22,7 @@ const SECOND_TIME: string = '14 марта, 16:02';
 const LEGAL_ACTOR: string = 'Юридический отдел';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTimelineMatrixPart = 'status' | 'fields' | 'length' | 'edges' | 'themes';
+export type TTimelineMatrixPart = 'status' | 'fields' | 'length' | 'edges' | 'presets' | 'themes';
 
 /** Случай ленты: имя для подписи ячейки и сам набор шагов. */
 interface ITimelineCase {
@@ -81,6 +82,16 @@ const STEPS_MIXED: readonly IRtTimeline.Step[] = [
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Лента в обоих наборах">
+                    <ng-template>
+                        <div style="width: 20rem">
+                            <rt-timeline [steps]="stepsMixed" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Лента в обеих темах">
                     <ng-template>
@@ -98,6 +109,7 @@ const STEPS_MIXED: readonly IRtTimeline.Step[] = [
         RtTimelineComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

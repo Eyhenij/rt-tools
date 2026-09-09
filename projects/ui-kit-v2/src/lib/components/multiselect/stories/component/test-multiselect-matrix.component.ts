@@ -4,6 +4,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { STORY_FIELD_WIDTH } from '../../../../../showcase/story-metrics';
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IStoryState, STORY_TRIGGER_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtFieldComponent } from '../../../field/rt-field.component';
@@ -12,7 +13,7 @@ import { IRtSelect } from '../../../select/rt-select.model';
 import { RtMultiselectComponent } from '../../rt-multiselect.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TMultiselectMatrixPart = 'size' | 'chips' | 'bordered' | 'states' | 'themes' | 'panel';
+export type TMultiselectMatrixPart = 'size' | 'chips' | 'bordered' | 'states' | 'presets' | 'themes' | 'panel';
 
 /** Что показывает открытая панель: набор вариантов или его отсутствие. */
 export type TMultiselectPanelCase = 'options' | 'empty';
@@ -146,6 +147,21 @@ function invalid(): FormControl<readonly string[] | null> {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Триггер в обоих наборах">
+                    <ng-template>
+                        @for (themeCase of themeCases; track themeCase.name) {
+                            <rt-multiselect
+                                placeholder="Выберите города"
+                                [ariaLabel]="themeCase.name"
+                                [disabled]="themeCase.disabled"
+                                [options]="options"
+                                [formControl]="themeCase.control" />
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Триггер в обеих темах">
                     <ng-template>
@@ -191,6 +207,7 @@ function invalid(): FormControl<readonly string[] | null> {
         RtMultiselectComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

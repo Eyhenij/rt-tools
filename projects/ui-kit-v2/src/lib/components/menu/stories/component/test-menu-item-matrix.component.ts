@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import {
     IStoryState,
     STORY_STATE_DEFAULT,
@@ -13,7 +14,7 @@ import { IRtIcon } from '../../../icon/rt-icon.model';
 import { RtMenuItemComponent } from '../../rt-menu-item.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TMenuItemMatrixPart = 'kinds' | 'states' | 'themes';
+export type TMenuItemMatrixPart = 'kinds' | 'states' | 'presets' | 'themes';
 
 /** Вид пункта: иконка, деструктивность и недоступность вместе — порознь они не бывают. */
 interface IMenuItemKindCase {
@@ -65,6 +66,20 @@ interface IMenuItemKindCase {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Виды пунктов в обоих наборах">
+                    <ng-template>
+                        @for (kindCase of kindCases; track kindCase.name) {
+                            <rt-menu-item
+                                [label]="kindCase.label"
+                                [icon]="kindCase.icon"
+                                [danger]="kindCase.danger"
+                                [disabled]="kindCase.disabled" />
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Виды пунктов в обеих темах">
                     <ng-template>
@@ -86,6 +101,7 @@ interface IMenuItemKindCase {
         RtMenuItemComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

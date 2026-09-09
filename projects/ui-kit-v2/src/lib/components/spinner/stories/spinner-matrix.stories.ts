@@ -21,4 +21,6 @@ export const Color: TStory = { args: { part: 'color' } };
 
 export const Diameter: TStory = { args: { part: 'diameter' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

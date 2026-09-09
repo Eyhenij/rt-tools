@@ -3,6 +3,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { STORY_FIELD_WIDTH_WIDE } from '../../../../../showcase/story-metrics';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IStoryState, STORY_CONTROL_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtFieldComponent } from '../../../field/rt-field.component';
@@ -13,7 +14,7 @@ import { TRtTextareaResize, RtTextareaComponent } from '../../rt-textarea.compon
 const SHORT_TEXT: string = 'Согласовано.';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTextareaMatrixPart = 'size' | 'rows' | 'resize' | 'filling' | 'bordered' | 'states' | 'themes';
+export type TTextareaMatrixPart = 'size' | 'rows' | 'resize' | 'filling' | 'bordered' | 'states' | 'presets' | 'themes';
 
 /** Случай с подписью и своим значением: без набранного текста ось высоты не видно. */
 interface ITextareaCase {
@@ -142,6 +143,21 @@ function invalid(): FormControl<string> {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Поле в обоих наборах">
+                    <ng-template>
+                        @for (themeCase of themeCases; track themeCase.name) {
+                            <rt-textarea
+                                placeholder="Комментарий"
+                                [rows]="2"
+                                [disabled]="themeCase.disabled"
+                                [ariaLabel]="themeCase.name"
+                                [formControl]="themeCase.control" />
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Поле в обеих темах">
                     <ng-template>
@@ -168,6 +184,7 @@ function invalid(): FormControl<string> {
         RtTextareaComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

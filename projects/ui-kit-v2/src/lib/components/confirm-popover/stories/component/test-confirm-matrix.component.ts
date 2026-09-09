@@ -3,13 +3,14 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RtIconButtonComponent } from '../../../icon-button/rt-icon-button.component';
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtConfirmPopoverComponent } from '../../rt-confirm-popover.component';
 import { IRtConfirmPopover } from '../../rt-confirm-popover.model';
 import { RtConfirmDirective } from '../../rt-confirm.directive';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TConfirmMatrixPart = 'tone' | 'content' | 'themes' | 'panel';
+export type TConfirmMatrixPart = 'tone' | 'content' | 'presets' | 'themes' | 'panel';
 
 /** Тон подтверждающей кнопки — единственное, что окрашивает панель. */
 interface IConfirmToneCase {
@@ -64,6 +65,18 @@ interface IConfirmContentCase {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Панель в обоих наборах">
+                    <ng-template>
+                        <rt-confirm-popover
+                            title="Удаление"
+                            message="Удалить запись? Действие необратимо."
+                            confirmLabel="Удалить"
+                            cancelLabel="Отмена" />
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Панель в обеих темах">
                     <ng-template>
@@ -108,6 +121,7 @@ interface IConfirmContentCase {
         RtIconButtonComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

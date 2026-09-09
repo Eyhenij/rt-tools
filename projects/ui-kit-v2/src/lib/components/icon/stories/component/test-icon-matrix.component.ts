@@ -15,13 +15,13 @@ export type TIconMatrixPart =
     | 'size'
     | 'color'
     | 'rotate'
-    | 'themes'
     | 'social'
-    | 'material'
-    | 'material-catalog'
-    | 'material-themes'
     | 'presets'
-    | 'preset-axes';
+    | 'preset-axes'
+    | 'material-set'
+    | 'material-themes'
+    | 'migration-map'
+    | 'themes';
 
 /** Категория набора со своими именами — строка каталога. */
 interface IIconCategoryGroup {
@@ -81,72 +81,14 @@ interface IIconCategoryGroup {
                 </app-story-row>
             }
 
-            @case ('themes') {
-                <app-story-themes caption="Цвет в обеих темах">
+            @case ('social') {
+                <app-story-themes caption="Знаки соцсетей в обеих темах: цвет задан в файле, тема его не трогает">
                     <ng-template>
-                        @for (color of colors; track color) {
-                            <rt-icon name="alarm-clock" size="lg" [color]="color" />
+                        @for (name of socialNames; track name) {
+                            <rt-icon size="lg" [name]="name" />
                         }
                     </ng-template>
                 </app-story-themes>
-            }
-
-            @case ('material') {
-                <app-story-themes caption="Чем закрывается значок первого кита: имя оттуда — рисунок отсюда">
-                    <ng-template>
-                        <div class="app-icon-matrix__map">
-                            @for (entry of materialMap; track entry.from) {
-                                <div class="app-icon-matrix__pair">
-                                    @if (entry.to) {
-                                        <rt-icon size="lg" [name]="entry.to" />
-                                    } @else {
-                                        <span class="app-icon-matrix__gap">—</span>
-                                    }
-                                    <code>{{ entry.from }}</code>
-                                </div>
-                            }
-                        </div>
-                    </ng-template>
-                </app-story-themes>
-
-                <p class="app-icon-matrix__note">
-                    Прочерк — имя, которому рисунка в наборе нет вовсе: его дорисовывают. Пара выбрана по смыслу, и смотреть её надо
-                    глазами: проверка держит только то, что имя существует и файл на месте.
-                </p>
-            }
-
-            @case ('material-catalog') {
-                <div data-preset="material">
-                    <app-story-row caption="Материальный набор целиком" [items]="materialDrawn">
-                        <ng-template let-name>
-                            <rt-icon size="lg" [name]="name" />
-                        </ng-template>
-                    </app-story-row>
-                </div>
-
-                <p class="app-icon-matrix__note">
-                    Двадцать восемь имён — всё, что закрыто рисунком Material. Остальные три с лишним сотни имён кита набор не трогает: он
-                    слой переопределений, и они рисуются своим рисунком под тем же признаком набора.
-                </p>
-            }
-
-            @case ('material-themes') {
-                <app-story-themes caption="Материальный набор в обеих темах">
-                    <ng-template>
-                        <div data-preset="material">
-                            @for (name of materialDrawn; track name) {
-                                <rt-icon size="lg" [name]="name" />
-                            }
-                        </div>
-                    </ng-template>
-                </app-story-themes>
-
-                <p class="app-icon-matrix__note">
-                    Рисунок красится
-                    <code>currentColor</code>
-                    и в тёмной теме берёт её цвет текста — своего цвета у него нет. Тёмная тема выигрывает у набора: это её правило, а не
-                    пропуск материального набора.
-                </p>
             }
 
             @case ('presets') {
@@ -197,11 +139,69 @@ interface IIconCategoryGroup {
                 </p>
             }
 
-            @case ('social') {
-                <app-story-themes caption="Знаки соцсетей в обеих темах: цвет задан в файле, тема его не трогает">
-                    <ng-template>
-                        @for (name of socialNames; track name) {
+            @case ('material-set') {
+                <div data-preset="material">
+                    <app-story-row caption="Материальный набор целиком" [items]="materialDrawn">
+                        <ng-template let-name>
                             <rt-icon size="lg" [name]="name" />
+                        </ng-template>
+                    </app-story-row>
+                </div>
+
+                <p class="app-icon-matrix__note">
+                    Двадцать восемь имён — всё, что закрыто рисунком Material. Остальные три с лишним сотни имён кита набор не трогает: он
+                    слой переопределений, и они рисуются своим рисунком под тем же признаком набора.
+                </p>
+            }
+
+            @case ('material-themes') {
+                <app-story-themes caption="Материальный набор в обеих темах">
+                    <ng-template>
+                        <div data-preset="material">
+                            @for (name of materialDrawn; track name) {
+                                <rt-icon size="lg" [name]="name" />
+                            }
+                        </div>
+                    </ng-template>
+                </app-story-themes>
+
+                <p class="app-icon-matrix__note">
+                    Рисунок красится
+                    <code>currentColor</code>
+                    и в тёмной теме берёт её цвет текста — своего цвета у него нет. Тёмная тема выигрывает у набора: это её правило, а не
+                    пропуск материального набора.
+                </p>
+            }
+
+            @case ('migration-map') {
+                <app-story-themes caption="Чем закрывается значок первого кита: имя оттуда — рисунок отсюда">
+                    <ng-template>
+                        <div class="app-icon-matrix__map">
+                            @for (entry of materialMap; track entry.from) {
+                                <div class="app-icon-matrix__pair">
+                                    @if (entry.to) {
+                                        <rt-icon size="lg" [name]="entry.to" />
+                                    } @else {
+                                        <span class="app-icon-matrix__gap">—</span>
+                                    }
+                                    <code>{{ entry.from }}</code>
+                                </div>
+                            }
+                        </div>
+                    </ng-template>
+                </app-story-themes>
+
+                <p class="app-icon-matrix__note">
+                    Прочерк — имя, которому рисунка в наборе нет вовсе: его дорисовывают. Пара выбрана по смыслу, и смотреть её надо
+                    глазами: проверка держит только то, что имя существует и файл на месте.
+                </p>
+            }
+
+            @case ('themes') {
+                <app-story-themes caption="Цвет в обеих темах">
+                    <ng-template>
+                        @for (color of colors; track color) {
+                            <rt-icon name="alarm-clock" size="lg" [color]="color" />
                         }
                     </ng-template>
                 </app-story-themes>

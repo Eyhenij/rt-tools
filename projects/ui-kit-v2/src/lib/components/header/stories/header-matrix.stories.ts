@@ -23,4 +23,6 @@ export const Invite: TStory = { args: { part: 'invite' } };
 
 export const Bell: TStory = { args: { part: 'bell' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

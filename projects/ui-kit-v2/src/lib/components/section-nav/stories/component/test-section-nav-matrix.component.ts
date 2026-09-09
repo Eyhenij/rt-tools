@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtSectionNavComponent } from '../../rt-section-nav.component';
 import { IRtSectionNav } from '../../rt-section-nav.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TSectionNavMatrixPart = 'active' | 'length' | 'states' | 'edges' | 'themes';
+export type TSectionNavMatrixPart = 'active' | 'length' | 'states' | 'edges' | 'presets' | 'themes';
 
 /** Случай набора плиток: имя для подписи ячейки и сам набор. */
 interface ISectionNavCase {
@@ -66,6 +67,16 @@ const ITEMS: readonly IRtSectionNav.Item[] = [
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Навигация в обоих наборах">
+                    <ng-template>
+                        <div style="width: 18rem">
+                            <rt-section-nav [items]="items" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Навигация в обеих темах">
                     <ng-template>
@@ -83,6 +94,7 @@ const ITEMS: readonly IRtSectionNav.Item[] = [
         RtSectionNavComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryGridComponent } from '../../../../../showcase/story-grid.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { TRtSkeletonRadius, TRtSkeletonShape, TRtSkeletonSize, RtSkeletonComponent } from '../../rt-skeleton.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TSkeletonMatrixPart = 'shape' | 'radius' | 'animation' | 'themes';
+export type TSkeletonMatrixPart = 'shape' | 'radius' | 'animation' | 'presets' | 'themes';
 
 /**
  * Матрицы `rt-skeleton` для витрины.
@@ -45,6 +46,16 @@ export type TSkeletonMatrixPart = 'shape' | 'radius' | 'animation' | 'themes';
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Фигуры в обоих наборах">
+                    <ng-template>
+                        @for (shape of shapes; track shape) {
+                            <rt-skeleton width="160px" height="24px" size="lg" [shape]="shape" />
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Фигуры в обеих темах">
                     <ng-template>
@@ -63,6 +74,7 @@ export type TSkeletonMatrixPart = 'shape' | 'radius' | 'animation' | 'themes';
 
         // showcase
         StoryGridComponent,
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

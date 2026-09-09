@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryGridComponent } from '../../../../../showcase/story-grid.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { IRtIcon } from '../../../icon';
@@ -8,7 +9,7 @@ import { RtTagComponent } from '../../rt-tag.component';
 import { IRtTag } from '../../rt-tag.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTagMatrixPart = 'severity' | 'shape' | 'radius' | 'icon' | 'closable' | 'themes';
+export type TTagMatrixPart = 'severity' | 'shape' | 'radius' | 'icon' | 'closable' | 'presets' | 'themes';
 
 /** Случай иконки — не значение оси, а различимая комбинация сторон. */
 interface ITagIconCase {
@@ -70,6 +71,16 @@ interface ITagIconCase {
                 </app-story-grid>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Палитра в обоих наборах">
+                    <ng-template>
+                        @for (severity of severities; track severity) {
+                            <rt-tag [value]="severity" [severity]="severity" />
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Палитра в обеих темах">
                     <ng-template>
@@ -88,6 +99,7 @@ interface ITagIconCase {
 
         // showcase
         StoryGridComponent,
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

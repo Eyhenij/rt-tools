@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtContainerComponent } from '../../rt-container.component';
 import {
@@ -12,7 +13,7 @@ import {
 } from '../../rt-container.directives';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TContainerMatrixPart = 'zones' | 'themes';
+export type TContainerMatrixPart = 'zones' | 'presets' | 'themes';
 
 /** Какие зоны объявлены: необъявленная зона не создаёт пустого узла, и каркас меняет вид. */
 interface IContainerZonesCase {
@@ -69,6 +70,29 @@ interface IContainerZonesCase {
                         </div>
                     </ng-template>
                 </app-story-row>
+            }
+
+            @case ('presets') {
+                <app-story-presets caption="Каркас в обоих наборах">
+                    <ng-template>
+                        <div class="app-container-matrix__frame">
+                            <rt-container height="auto">
+                                <ng-template rtContainerHeader>
+                                    <div class="app-container-matrix__band">шапка</div>
+                                </ng-template>
+                                <ng-template rtContainerLeftSidenav>
+                                    <div class="app-container-matrix__band app-container-matrix__band--tall">меню</div>
+                                </ng-template>
+                                <ng-template rtContainerToolbarLeft>
+                                    <div class="app-container-matrix__band">фильтр</div>
+                                </ng-template>
+                                <ng-template rtContainerContent>
+                                    <div class="app-container-matrix__band app-container-matrix__band--tall">содержимое</div>
+                                </ng-template>
+                            </rt-container>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
             }
 
             @case ('themes') {
@@ -131,6 +155,7 @@ interface IContainerZonesCase {
         RtContainerToolbarRightDirective,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

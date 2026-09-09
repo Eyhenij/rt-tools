@@ -4,6 +4,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { STORY_FIELD_WIDTH } from '../../../../../showcase/story-metrics';
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IStoryState, STORY_TRIGGER_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtFieldComponent } from '../../../field/rt-field.component';
@@ -12,7 +13,7 @@ import { RtSelectComponent } from '../../rt-select.component';
 import { IRtSelect } from '../../rt-select.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TSelectMatrixPart = 'size' | 'filling' | 'bordered' | 'states' | 'themes' | 'panel';
+export type TSelectMatrixPart = 'size' | 'filling' | 'bordered' | 'states' | 'presets' | 'themes' | 'panel';
 
 /** Что показывает открытая панель: обычный список, список с фильтром, пустой набор. */
 export type TSelectPanelCase = 'options' | 'filter' | 'empty';
@@ -151,6 +152,21 @@ function invalid(): FormControl<string | null> {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Триггер в обоих наборах">
+                    <ng-template>
+                        @for (themeCase of themeCases; track themeCase.name) {
+                            <rt-select
+                                placeholder="Выберите город"
+                                [ariaLabel]="themeCase.name"
+                                [disabled]="themeCase.disabled"
+                                [options]="options"
+                                [formControl]="themeCase.control" />
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Триггер в обеих темах">
                     <ng-template>
@@ -197,6 +213,7 @@ function invalid(): FormControl<string | null> {
         RtSelectComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtDetailListComponent } from '../../rt-detail-list.component';
 import { RtDetailRowComponent } from '../../rt-detail-row.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TDetailListMatrixPart = 'loading' | 'value' | 'length' | 'edges' | 'themes';
+export type TDetailListMatrixPart = 'loading' | 'value' | 'length' | 'edges' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-detail-list` и `rt-detail-row` для витрины.
@@ -100,6 +101,20 @@ export type TDetailListMatrixPart = 'loading' | 'value' | 'length' | 'edges' | '
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Список в обоих наборах">
+                    <ng-template>
+                        <div style="width: 20rem">
+                            <rt-detail-list>
+                                @for (row of rows; track row.label) {
+                                    <rt-detail-row [label]="row.label">{{ row.value }}</rt-detail-row>
+                                }
+                            </rt-detail-list>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Список в обеих темах">
                     <ng-template>
@@ -122,6 +137,7 @@ export type TDetailListMatrixPart = 'loading' | 'value' | 'length' | 'edges' | '
         RtDetailRowComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

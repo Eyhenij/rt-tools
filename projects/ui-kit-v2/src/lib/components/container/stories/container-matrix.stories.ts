@@ -26,4 +26,6 @@ type TStory = StoryObj<TestRtContainerMatrixComponent>;
 /** Необъявленная зона не создаёт пустого узла — каркас состоит ровно из того, что передали. */
 export const Zones: TStory = { args: { part: 'zones' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };
