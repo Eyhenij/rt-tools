@@ -98,10 +98,27 @@ fixture_commit "$GE_REPO" "docs/plans/work-by-epics.md" "план эпика" "d
 git -C "$GE_REPO" update-ref refs/remotes/origin/main "$(git -C "$GE_REPO" rev-parse main)"
 git -C "$GE_REPO" update-ref refs/remotes/origin/RT-1921-work-by-epics "$(git -C "$GE_REPO" rev-parse HEAD)"
 
+# Двойник хостинга ставится и здесь. Гард поставки судит не только эпик: он спрашивает хостинг о
+# своих конфликтующих заявках и отбивает заведение ветки, пока такая стоит. Без двойника вердикт
+# зависел от того, что в очереди работ сегодня, — набор краснел изнутри гейта пуша и был зелёным
+# при прямом запуске, потому что в гейт он входит ровно тогда, когда заявка и конфликтует.
 ge_decision() {
     jq -n --arg c "git checkout -b RT-1925-guard-judges-epic-base $2" --arg d "$GE_REPO" \
         '{session_id:"tests",tool_name:"Bash",tool_input:{command:$c},cwd:$d}' \
-        | ( cd "$GE_REPO" && GE_TASK_STATE="$1" "$HOOKS/git-guard-delivery.sh" 2>/dev/null )
+        | ( cd "$GE_REPO" && GE_TASK_STATE="$1" GH_BIN="$GE_TREE/gh" RT_GH_RETRY_MS=1 \
+            "$HOOKS/git-guard-delivery.sh" 2>/dev/null )
+}
+
+# Три сценария ниже ждут, что гард промолчит. Не дождавшись, они называют его первую строку, а не
+# слово «отбито»: гейт пуша показывает только хвост вывода, и без этой строки разбор начинался с
+# догадок о том, на что гард отбил на самом деле.
+ge_silent() {
+    local out="$1"
+    if [ -z "$out" ]; then
+        printf 'прошло'
+    else
+        printf '%s' "$out" | head -c 160 | tr '\n' ' '
+    fi
 }
 
 GE_WITH_EPIC='{"exists":true,"open":true,"onBoard":true,"assigned":true,"numbered":true,"epic":"1921"}'
@@ -117,7 +134,7 @@ report "SC-AK-973 — отказ называет ветку эпика" "$got" 
 if [ -z "$(ge_decision "$GE_WITH_EPIC" origin/RT-1921-work-by-epics)" ]; then got="прошло"; else got="отбито"; fi
 report "SC-AK-973 — ветка от ветки эпика проходит" "$got" "прошло"
 
-if [ -z "$(ge_decision "$GE_NO_EPIC" origin/main)" ]; then got="прошло"; else got="отбито"; fi
+got="$(ge_silent "$(ge_decision "$GE_NO_EPIC" origin/main)")"
 report "SC-AK-973 — у задачи без эпика основание судится по главной, как прежде" "$got" "прошло"
 
 
@@ -132,7 +149,8 @@ git -C "$GE_REPO" update-ref refs/remotes/origin/RT-1921-work-by-epics "$(git -C
 ge_pull() {
     jq -n --arg c "$2" --arg d "$GE_REPO" \
         '{session_id:"tests",tool_name:"Bash",tool_input:{command:$c},cwd:$d}' \
-        | ( cd "$GE_REPO" && GE_TASK_STATE="$1" "$HOOKS/git-guard-delivery.sh" 2>/dev/null )
+        | ( cd "$GE_REPO" && GE_TASK_STATE="$1" GH_BIN="$GE_TREE/gh" RT_GH_RETRY_MS=1 \
+            "$HOOKS/git-guard-delivery.sh" 2>/dev/null )
 }
 
 GE_PR_MAIN="gh pr create --base main --title '[RT-1925] Что-то' --body 'тело
@@ -151,7 +169,7 @@ if printf '%s' "$GE_OUT" | grep -q 'базе\|base here\|--base'; then got="от
 report "SC-AK-974 — заявка с основанием ветки эпика по основанию не отбита" "$got" "прошло"
 
 GE_OUT="$(ge_pull "$GE_NO_EPIC" "$GE_PR_MAIN")"
-if printf '%s' "$GE_OUT" | grep -q 'RT-1921-work-by-epics'; then got="отбито"; else got="прошло"; fi
+if printf '%s' "$GE_OUT" | grep -q 'RT-1921-work-by-epics'; then got="$(ge_silent "$GE_OUT")"; else got="прошло"; fi
 report "SC-AK-974 — у задачи без эпика основание заявки не судится" "$got" "прошло"
 
 
@@ -174,13 +192,13 @@ report "SC-AK-975 — заявка эпика с папкой задачи от�
 
 fixture_remove "$GE_REPO" "docs/tasks/RT-1930-something" "docs: папка задачи разобрана"
 GE_OUT="$(ge_pull "$GE_EPIC_CARD" "$GE_EPIC_PR")"
-if printf '%s' "$GE_OUT" | grep -q 'папк\|folders of its tasks'; then got="отбито"; else got="прошло"; fi
+if printf '%s' "$GE_OUT" | grep -q 'папк\|folders of its tasks'; then got="$(ge_silent "$GE_OUT")"; else got="прошло"; fi
 report "SC-AK-975 — без папок заявка эпика по этому условию не отбита" "$got" "прошло"
 
 # Карточка без метки эпика — обычная задача, и это условие её не касается.
 fixture_commit "$GE_REPO" "docs/tasks/RT-1930-something/plan.md" "замысел" "docs: папка задачи снова"
 GE_OUT="$(ge_pull "$GE_NO_EPIC" "$GE_EPIC_PR")"
-if printf '%s' "$GE_OUT" | grep -q 'RT-1930-something'; then got="отбито"; else got="прошло"; fi
+if printf '%s' "$GE_OUT" | grep -q 'RT-1930-something'; then got="$(ge_silent "$GE_OUT")"; else got="прошло"; fi
 report "SC-AK-975 — у карточки без метки эпика это условие не судится" "$got" "прошло"
 
 rm -rf "$GE_REPO"
