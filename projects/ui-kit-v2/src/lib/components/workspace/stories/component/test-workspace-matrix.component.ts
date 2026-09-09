@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtWorkspaceComponent } from '../../rt-workspace.component';
 import { RtWorkspaceAsideDirective, RtWorkspaceCenterDirective, RtWorkspaceListDirective } from '../../rt-workspace.directives';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'themes';
+export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-workspace` для витрины.
@@ -108,6 +109,26 @@ export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'themes';
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Рабочий стол в обоих наборах">
+                    <ng-template>
+                        <div style="height: 16rem; width: 30rem; border: 1px dashed var(--rt-color-border-subtle)">
+                            <rt-workspace hasActive>
+                                <ng-template rtWorkspaceList>
+                                    <div style="padding: 0.5rem">Список</div>
+                                </ng-template>
+                                <ng-template rtWorkspaceCenter>
+                                    <div style="padding: 0.5rem">Содержимое</div>
+                                </ng-template>
+                                <ng-template rtWorkspaceAside>
+                                    <div style="padding: 0.5rem">Подробности</div>
+                                </ng-template>
+                            </rt-workspace>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Рабочий стол в обеих темах">
                     <ng-template>
@@ -140,6 +161,7 @@ export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'themes';
         RtWorkspaceListDirective,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

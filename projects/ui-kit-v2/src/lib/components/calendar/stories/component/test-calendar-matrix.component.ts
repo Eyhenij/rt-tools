@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtCalendarComponent } from '../../rt-calendar.component';
 import { ERtCalendarDayState, IRtCalendar } from '../../rt-calendar.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TCalendarMatrixPart = 'dayState' | 'range' | 'months' | 'nav' | 'sublabels' | 'edges' | 'themes';
+export type TCalendarMatrixPart = 'dayState' | 'range' | 'months' | 'nav' | 'sublabels' | 'edges' | 'presets' | 'themes';
 
 const WEEKDAYS: readonly string[] = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
@@ -93,6 +94,16 @@ function month(key: string, label: string, leading: number, pick: (index: number
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Календарь в обоих наборах">
+                    <ng-template>
+                        <div style="width: 20rem">
+                            <rt-calendar [months]="[mixedMonth]" [weekdayLabels]="weekdays" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Календарь в обеих темах">
                     <ng-template>
@@ -110,6 +121,7 @@ function month(key: string, label: string, leading: number, pick: (index: number
         RtCalendarComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

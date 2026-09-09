@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtIconButtonComponent } from '../../../icon-button/rt-icon-button.component';
 import { RtToggleButtonGroupComponent } from '../../../toggle-button-group/rt-toggle-button-group.component';
@@ -10,7 +11,7 @@ import { IRtPageHeader } from '../../rt-page-header.model';
 import { RtPageHeaderComponent } from '../../rt-page-header.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TPageHeaderMatrixPart = 'items' | 'user' | 'themes' | 'panel' | 'compact';
+export type TPageHeaderMatrixPart = 'items' | 'user' | 'presets' | 'themes' | 'panel' | 'compact';
 
 /** Признак прокручиваемой обёртки сжатой истории: по нему шаг `play` прокручивает страницу. */
 export const PAGE_HEADER_COMPACT_SCROLL_ATTRIBUTE: string = 'data-story-scroll';
@@ -59,6 +60,14 @@ interface IPageHeaderUserCase {
                         <rt-page-header ariaLabel="Разделы" [items]="flatItems" [user]="userCase.user" [userTitle]="userCase.userTitle" />
                     </ng-template>
                 </app-story-row>
+            }
+
+            @case ('presets') {
+                <app-story-presets caption="Полоса разделов в обоих наборах">
+                    <ng-template>
+                        <rt-page-header ariaLabel="Разделы" [items]="mixedItems" [user]="user" />
+                    </ng-template>
+                </app-story-presets>
             }
 
             @case ('themes') {
@@ -129,6 +138,7 @@ interface IPageHeaderUserCase {
         RtIconButtonComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

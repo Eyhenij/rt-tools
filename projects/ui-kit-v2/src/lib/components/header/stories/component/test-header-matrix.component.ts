@@ -2,12 +2,13 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RtNotificationsBellComponent } from '../../../notifications-bell/rt-notifications-bell.component';
 import { StoryGridComponent } from '../../../../../showcase/story-grid.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtHeaderComponent } from '../../rt-header.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type THeaderMatrixPart = 'back' | 'invite' | 'bell' | 'themes';
+export type THeaderMatrixPart = 'back' | 'invite' | 'bell' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-header` для витрины.
@@ -69,6 +70,16 @@ export type THeaderMatrixPart = 'back' | 'invite' | 'bell' | 'themes';
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Шапка в обоих наборах">
+                    <ng-template>
+                        <rt-header canGoBack showInvite>
+                            <rt-notifications-bell rtHeaderBell unread ariaLabel="Уведомления" />
+                        </rt-header>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Шапка в обеих темах">
                     <ng-template>
@@ -88,6 +99,7 @@ export type THeaderMatrixPart = 'back' | 'invite' | 'bell' | 'themes';
 
         // showcase
         StoryGridComponent,
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

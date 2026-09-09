@@ -17,7 +17,8 @@ import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, list, stats, sync
 import { CONFIG_PATH, IConfig, readConfig } from '../lib/config.js';
 import { costLines, costOf, CostUnavailableError, ICost } from '../lib/cost.js';
 import { enroll, httpEnroll } from '../lib/enroll.js';
-import { httpShip } from '../lib/ship.js';
+import { httpReadOwn, httpShip } from '../lib/ship.js';
+import { fate } from '../lib/fate.js';
 import { propose, treeSlugOf } from '../lib/shipment.js';
 import { DEFAULT_DAYS } from '../lib/observations.js';
 import { staleBuild } from '../lib/freshness.js';
@@ -41,6 +42,7 @@ const USAGE: readonly string[] = [
     '  stats --days N  за сколько дней; без довода — за три',
     '  stats --json    то же машиночитаемо — этим сводку прикладывают к предложению',
     '  propose         отправить груз в приём: сводку со снимком надстроек, предложения и разборы',
+    '  fate            судьба своих записей в приёме и надстройки, которые пора снять',
     '  propose --dry-run   показать, что уехало бы, и ничего не отправлять',
     '  adopt [файлы]   отдать пакету файлы, лежащие на его путях не от него',
     '  enroll --code <код>    завести дерево по приглашению владельца: обмен кода на токен',
@@ -332,6 +334,11 @@ async function runPropose(env: IEnvironment, argv: readonly string[]): Promise<I
     });
 }
 
+/** Судьба своих записей: чтение приёма по токену дерева и надстройки под ними. */
+function runFate(env: IEnvironment): Promise<IOutcomeOfCommand> {
+    return fate(env, { read: httpReadOwn });
+}
+
 /** Приписка дерева к приёмнику по коду приглашения. */
 async function runEnroll(env: IEnvironment, argv: readonly string[]): Promise<IOutcomeOfCommand> {
     const config: IConfig | null = readConfig(env.root);
@@ -363,6 +370,7 @@ const COMMANDS: Readonly<Record<string, TCommandRun>> = {
     cost: runCost,
     stats: runStats,
     propose: runPropose,
+    fate: runFate,
     enroll: runEnroll,
     doctor: (env: IEnvironment): IOutcomeOfCommand => doctor(env),
     adopt: (env: IEnvironment, argv: readonly string[]): IOutcomeOfCommand =>

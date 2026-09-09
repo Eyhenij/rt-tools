@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtTagComponent } from '../../../tag/rt-tag.component';
 import { RtInfoItemComponent } from '../../rt-info-item.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TInfoItemMatrixPart = 'loading' | 'grow' | 'content' | 'themes';
+export type TInfoItemMatrixPart = 'loading' | 'grow' | 'content' | 'presets' | 'themes';
 
 /**
  * Матрицы `rt-info-item` для витрины.
@@ -65,6 +66,16 @@ export type TInfoItemMatrixPart = 'loading' | 'grow' | 'content' | 'themes';
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Загрузка и значение в обоих наборах">
+                    <ng-template>
+                        @for (loading of loadingStates; track loading) {
+                            <rt-info-item label="Тариф" [loading]="loading">Годовой</rt-info-item>
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Загрузка и значение в обеих темах">
                     <ng-template>
@@ -109,6 +120,7 @@ export type TInfoItemMatrixPart = 'loading' | 'grow' | 'content' | 'themes';
         RtTagComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

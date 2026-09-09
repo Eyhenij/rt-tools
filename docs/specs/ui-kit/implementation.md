@@ -19,6 +19,8 @@ the subdomain — `side-menu/implementation.md`.
 - **A click on the backing and a leaving by a route close the curtain as before.** — `projects/ui-kit/src/lib/ui-kit/aside/aside.service.ts:closesOf`
 - **A forbidden source is not subscribed to at all.** — `projects/ui-kit/src/lib/ui-kit/aside/aside.service.ts:closesOf`
 - **A programmatic closing is not put out by the setting.** — `projects/ui-kit/src/lib/ui-kit/aside/aside.service.ts:open`
+- **The closing by a key comes back by a setting of the application, not by an argument at every call.** — `projects/ui-kit/src/lib/ui-kit/config/rt-ui-config.ts:Aside`
+- **The curtain does not outlive the one who opened it.** — `projects/ui-kit/src/lib/ui-kit/aside/aside.service.ts:closeOpened`
 - **The table gives the sorting only by the column it draws itself.** — `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.ts:onSortChange`
 - **The name is checked against the same set of the columns the table draws.** — `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.ts:sortOfKnownColumn`
 - **A name that did not coincide does not go outward at all.** — `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.ts:sortOfKnownColumn`

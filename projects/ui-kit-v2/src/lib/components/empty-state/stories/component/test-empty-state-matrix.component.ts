@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { RtEmptyStateComponent } from '../../rt-empty-state.component';
@@ -9,7 +10,7 @@ import { RtEmptyStateComponent } from '../../rt-empty-state.component';
 const EMPTY_TITLE: string = 'Файлов нет';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TEmptyStateMatrixPart = 'parts' | 'slots' | 'themes';
+export type TEmptyStateMatrixPart = 'parts' | 'slots' | 'presets' | 'themes';
 
 /** Случай состава: какие из необязательных частей заполнены. */
 interface IEmptyStatePartsCase {
@@ -63,6 +64,14 @@ interface IEmptyStatePartsCase {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Заглушка в обоих наборах">
+                    <ng-template>
+                        <rt-empty-state icon="folder" title="Файлов нет" description="Прикрепите первый документ" />
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Заглушка в обеих темах">
                     <ng-template>
@@ -81,6 +90,7 @@ interface IEmptyStatePartsCase {
         RtButtonDirective,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

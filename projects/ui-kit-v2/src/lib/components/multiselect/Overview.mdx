@@ -21,9 +21,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Когда не применять
 
-- **Одно значение** — [`rt-select`](./?path=/docs/components-select-overview--docs).
-- **Набор ищется на сервере** — [`rt-autocomplete`](./?path=/docs/components-autocomplete-overview--docs).
-- **Два-три независимых признака** — [`rt-checkbox`](./?path=/docs/components-checkbox-overview--docs):
+- **Одно значение** — [`rt-select`](./?path=/docs/molecules-forms-select-overview--docs).
+- **Набор ищется на сервере** — [`rt-autocomplete`](./?path=/docs/molecules-forms-autocomplete-overview--docs).
+- **Два-три независимых признака** — [`rt-checkbox`](./?path=/docs/atoms-forms-checkbox-overview--docs):
   раскрывать список ради двух флажков дороже, чем показать оба.
 
 ## Оси
@@ -72,14 +72,14 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 - Опции поодиночке не фокусируются: подсвеченная называется через `aria-activedescendant` на
   триггере. Флажок внутри опции исключён из таб-порядка — он рисует состояние, а не принимает
   жест.
-- Клавиатура как у [`rt-select`](./?path=/docs/components-select-overview--docs), с одним
+- Клавиатура как у [`rt-select`](./?path=/docs/molecules-forms-select-overview--docs), с одним
   отличием: `Enter` и `Space` **переключают** подсвеченную опцию, оставляя список открытым.
 - Крестик на фишке снимает выбор и **не раскрывает список**, хотя фишка и лежит внутри кнопки.
 
 ## Оформление
 
 Триггер берёт общую группу свойств полей кита (`--rt-input-*`), фишку рисует
-[`rt-tag`](./?path=/docs/components-tag-overview--docs) с `severity="info"`, панель —
+[`rt-tag`](./?path=/docs/atoms-tag-overview--docs) с `severity="info"`, панель —
 `--rt-color-bg-surface`, `--rt-color-border-subtle`, `--rt-shadow-md`.
 
 **Панели нет в светло-тёмной паре.** Она рисуется в контейнере оверлеев CDK — за пределами
@@ -115,6 +115,6 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Рядом
 
-- [`rt-select`](./?path=/docs/components-select-overview--docs) — тот же список для одного значения.
-- [`rt-tag`](./?path=/docs/components-tag-overview--docs) — чем нарисована фишка выбранного.
-- [`rt-field`](./?path=/docs/components-field-overview--docs) — подпись, звёздочка, текст ошибки, режим чтения.
+- [`rt-select`](./?path=/docs/molecules-forms-select-overview--docs) — тот же список для одного значения.
+- [`rt-tag`](./?path=/docs/atoms-tag-overview--docs) — чем нарисована фишка выбранного.
+- [`rt-field`](./?path=/docs/molecules-forms-field-overview--docs) — подпись, звёздочка, текст ошибки, режим чтения.

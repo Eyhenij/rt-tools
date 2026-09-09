@@ -2,12 +2,13 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { STORY_DRAG_ATTRIBUTE } from '../../../../../showcase/story-drag';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtFileDropComponent } from '../../rt-file-drop.component';
 import { IRtFileDrop } from '../../rt-file-drop.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TFileDropMatrixPart = 'resting' | 'dragging' | 'zones' | 'themes';
+export type TFileDropMatrixPart = 'resting' | 'dragging' | 'zones' | 'presets' | 'themes';
 
 /** Область в покое: пока файл не тащат, видно только содержимое — и отключённость на нём не видна. */
 interface IFileDropRestingCase {
@@ -72,6 +73,18 @@ interface IFileDropDraggingCase {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Подсказка в обоих наборах">
+                    <ng-template>
+                        <div class="app-file-drop-matrix__pane">
+                            <rt-file-drop [attr.data-story-drag]="dragAttribute">
+                                <div class="app-file-drop-matrix__content">Форма заявки</div>
+                            </rt-file-drop>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Подсказка в обеих темах">
                     <ng-template>
@@ -120,6 +133,7 @@ interface IFileDropDraggingCase {
         RtFileDropComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

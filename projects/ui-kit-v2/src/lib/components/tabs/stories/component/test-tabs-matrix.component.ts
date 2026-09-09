@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtTabDirective } from '../../rt-tab.directive';
 import { RtTabsComponent } from '../../rt-tabs.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | 'edges' | 'themes';
+export type TTabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | 'edges' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-tabs` и `[rtTab]` для витрины.
@@ -132,6 +133,20 @@ export type TTabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | '
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Вкладки в обоих наборах">
+                    <ng-template>
+                        <div style="width: 24rem">
+                            <rt-tabs activeId="a">
+                                <ng-template rtTab="a" label="Обзор" icon="ico-listing">Содержимое</ng-template>
+                                <ng-template rtTab="b" label="Участники" [badge]="3">Содержимое</ng-template>
+                                <ng-template rtTab="c" disabled label="Отключённая">Содержимое</ng-template>
+                            </rt-tabs>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Вкладки в обеих темах">
                     <ng-template>
@@ -156,6 +171,7 @@ export type TTabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | '
         RtTabDirective,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

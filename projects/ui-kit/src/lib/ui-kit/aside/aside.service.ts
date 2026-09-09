@@ -6,6 +6,8 @@ import { Event, NavigationEnd, Router } from '@angular/router';
 import { EMPTY, merge, Observable, of, Subject } from 'rxjs';
 import { delay, filter, mergeAll, take, tap } from 'rxjs/operators';
 
+import { IRtUiConfig, RT_UI_CONFIG } from '../config';
+
 import { ASIDE_REF, IAsideConfig, TAsidePositions, AsideRef } from './aside.types';
 import { RtuiAsidePanelComponent } from './components/panel/aside-panel.component';
 
@@ -13,10 +15,14 @@ import { RtuiAsidePanelComponent } from './components/panel/aside-panel.componen
 export class RtAsideService {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #router: Router = inject(Router);
+    readonly #uiConfig: IRtUiConfig.Config = inject(RT_UI_CONFIG);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
     /** Источник открытий: метод толкает сюда поток закрытия новой панели, и больше ничего. */
     readonly #closesSource: Subject<Observable<unknown>> = new Subject<Observable<unknown>>();
+
+    /** Открытые сейчас панели: по гибели того, кто службу выдал, снимать нужно каждую. */
+    readonly #open: Set<OverlayRef> = new Set<OverlayRef>();
 
     /**
      * Закрытие каждой открытой панели объявлено один раз, а не заводится вызовом открытия.
@@ -26,6 +32,7 @@ export class RtAsideService {
      */
     constructor() {
         this.#closesSource.pipe(mergeAll(), takeUntilDestroyed(this.#destroyRef)).subscribe();
+        this.#destroyRef.onDestroy((): void => this.#closeOpened());
     }
 
     /**
@@ -53,6 +60,7 @@ export class RtAsideService {
         const portal: ComponentPortal<RtuiAsidePanelComponent> = this.#createPortal(asideRef);
         const componentRef: ComponentRef<RtuiAsidePanelComponent> = overlayRef.attach(portal);
 
+        this.#open.add(overlayRef);
         this.#closesSource.next(this.#closeOnFirstEvent(overlayRef, componentRef, answer, config));
 
         return answer ? answer.asObservable() : of(null);
@@ -77,6 +85,7 @@ export class RtAsideService {
         ).pipe(
             take(1),
             tap((): void => {
+                this.#open.delete(overlayRef);
                 componentRef.instance.startExitAnimation();
                 overlayRef.detach();
                 answer.complete();
@@ -89,6 +98,26 @@ export class RtAsideService {
     }
 
     /**
+     * Снятие всех открытых панелей по гибели того, кто службу выдал.
+     *
+     * Службу кладут в компонент экрана, и маршрутизатор гасит компонент раньше, чем издаёт смену
+     * маршрута: подписка на закрытия рвётся вместе с ним, событие приходит некому, а панель с
+     * подложкой остаётся поверх нового экрана — ни подложка, ни клавиша, ни кнопка внутри уже не
+     * работают. Здесь панель снимается прямо гибелью владельца, не дожидаясь события.
+     *
+     * Без выхода анимацией: содержимое панели гибнет вместе с тем, кто её открыл, и показывать
+     * выход уже нечем.
+     */
+    #closeOpened(): void {
+        for (const overlayRef of this.#open) {
+            overlayRef.detach();
+            overlayRef.dispose();
+        }
+
+        this.#open.clear();
+    }
+
+    /**
      * Источники закрытия, которые потребитель разрешил настройкой открытия.
      *
      * Запрещённый источник не подписывается вовсе: подписка, которая приходит и ничего не
@@ -96,7 +125,10 @@ export class RtAsideService {
      */
     #closesOf(overlayRef: OverlayRef, config: IAsideConfig): Observable<unknown> {
         const backdrop$: Observable<MouseEvent> = config.closeOnBackdropClick === false ? EMPTY : overlayRef.backdropClick();
-        const escape$: Observable<KeyboardEvent> = config.closeOnEscape
+        // Довод вызова сильнее настройки приложения: порядок разрешения у кита один — довод
+        // вызова, затем настройка приложения, затем умолчание кита.
+        const closeOnEscape: boolean = config.closeOnEscape ?? this.#uiConfig.components?.aside?.closeOnEscape ?? false;
+        const escape$: Observable<KeyboardEvent> = closeOnEscape
             ? overlayRef.keydownEvents().pipe(filter((keyEvent: KeyboardEvent): boolean => keyEvent.key === 'Escape'))
             : EMPTY;
 

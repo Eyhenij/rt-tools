@@ -4,13 +4,14 @@ import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { RtIconButtonComponent } from '../../../icon-button/rt-icon-button.component';
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtTooltipComponent } from '../../rt-tooltip.component';
 import { RtTooltipDirective } from '../../rt-tooltip.directive';
 import { IRtTooltip } from '../../rt-tooltip.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTooltipMatrixPart = 'placement' | 'text' | 'hosts' | 'themes';
+export type TTooltipMatrixPart = 'placement' | 'text' | 'hosts' | 'presets' | 'themes';
 
 /** Сторона вместе с подписью: значение оси — строка, а подпись должна называть её по-русски. */
 interface ITooltipPlacementCase {
@@ -120,6 +121,14 @@ interface ITooltipTextCase {
                 </div>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Панель подсказки в обоих наборах">
+                    <ng-template>
+                        <rt-tooltip />
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Панель подсказки в обеих темах">
                     <ng-template>
@@ -145,6 +154,7 @@ interface ITooltipTextCase {
         RtTooltipDirective,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

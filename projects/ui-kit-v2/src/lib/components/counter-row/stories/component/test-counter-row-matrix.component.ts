@@ -3,13 +3,14 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { STORY_FIELD_WIDTH_WIDE } from '../../../../../showcase/story-metrics';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtCounterComponent } from '../../../counter/rt-counter.component';
 import { RtToggleSwitchComponent } from '../../../toggle-switch/rt-toggle-switch.component';
 import { RtCounterRowComponent } from '../../rt-counter-row.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TCounterRowMatrixPart = 'anatomy' | 'content' | 'list' | 'themes';
+export type TCounterRowMatrixPart = 'anatomy' | 'content' | 'list' | 'presets' | 'themes';
 
 /** Случай анатомии: есть ли под подписью пояснение и насколько длинна подпись. */
 interface ICounterRowCase {
@@ -88,6 +89,18 @@ function count(value: number): FormControl<number> {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Список в обоих наборах">
+                    <ng-template>
+                        @for (item of listItems; track item.label) {
+                            <rt-counter-row [label]="item.label" [hint]="item.hint">
+                                <rt-counter [ariaLabel]="item.label" [min]="item.min" [formControl]="item.control" />
+                            </rt-counter-row>
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Список в обеих темах">
                     <ng-template>
@@ -120,6 +133,7 @@ function count(value: number): FormControl<number> {
         RtToggleSwitchComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

@@ -24,4 +24,6 @@ export const Width: TStory = { args: { part: 'width' } };
 /** Пустая заметка стоит рядом с полной: подложка остаётся, и пропуск виден только парой. */
 export const Edges: TStory = { args: { part: 'edges' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

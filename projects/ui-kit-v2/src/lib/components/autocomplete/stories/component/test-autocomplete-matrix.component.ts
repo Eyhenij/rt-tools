@@ -4,6 +4,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { STORY_FIELD_WIDTH } from '../../../../../showcase/story-metrics';
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IStoryState, STORY_FIELD_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtFieldComponent } from '../../../field/rt-field.component';
@@ -12,7 +13,7 @@ import { IRtInput } from '../../../input/rt-input.model';
 import { RtAutocompleteComponent } from '../../rt-autocomplete.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TAutocompleteMatrixPart = 'size' | 'filling' | 'bordered' | 'states' | 'themes' | 'panel';
+export type TAutocompleteMatrixPart = 'size' | 'filling' | 'bordered' | 'states' | 'presets' | 'themes' | 'panel';
 
 /** Что показывает открытая панель: подсказки, своя разметка подсказки, ничего не найдено. */
 export type TAutocompletePanelCase = 'suggestions' | 'template' | 'empty';
@@ -158,6 +159,23 @@ function invalid(): FormControl<string | null> {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Поле в обоих наборах">
+                    <ng-template>
+                        @for (themeCase of themeCases; track themeCase.name) {
+                            <rt-autocomplete
+                                placeholder="Начните вводить город"
+                                iconLeft="ico-search"
+                                [ariaLabel]="themeCase.name"
+                                [disabled]="themeCase.disabled"
+                                [suggestions]="suggestions"
+                                [displayWith]="displayWith"
+                                [formControl]="themeCase.control" />
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Поле в обеих темах">
                     <ng-template>
@@ -220,6 +238,7 @@ function invalid(): FormControl<string | null> {
         RtIconComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

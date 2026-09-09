@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { StoryGridComponent } from '../../../../../showcase/story-grid.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { IStoryState, STORY_CONTROL_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtCheckboxComponent } from '../../rt-checkbox.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TCheckboxMatrixPart = 'value' | 'label' | 'states' | 'themes';
+export type TCheckboxMatrixPart = 'value' | 'label' | 'states' | 'presets' | 'themes';
 
 /**
  * Положение чекбокса: значение и смешанность вместе, потому что порознь они не бывают —
@@ -91,6 +92,21 @@ function checked(value: boolean): FormControl<boolean> {
                 </app-story-grid>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Положения в обоих наборах">
+                    <ng-template>
+                        @for (valueCase of valueCases; track valueCase.name) {
+                            <rt-checkbox
+                                [ariaLabel]="valueCase.name"
+                                [indeterminate]="valueCase.indeterminate"
+                                [formControl]="valueCase.control">
+                                {{ valueCase.name }}
+                            </rt-checkbox>
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Положения в обеих темах">
                     <ng-template>
@@ -117,6 +133,7 @@ function checked(value: boolean): FormControl<boolean> {
 
         // showcase
         StoryGridComponent,
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

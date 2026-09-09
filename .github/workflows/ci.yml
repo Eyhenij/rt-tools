@@ -224,6 +224,14 @@ jobs:
             - name: Icon map
               run: node tools/check-icon-map.mjs
 
+            # Витрина показывает оба набора оформления рядом. Расхождение двух наборов — единственное,
+            # чего не увидеть, глядя на один из них: одна половина читается как «так и было». Проверка
+            # держит не сборку набора, а то, что человеку есть на что посмотреть.
+            - name: Preset stories
+              run: node tools/check-preset-stories.mjs
+            - name: Showcase links
+              run: node tools/check-showcase-links.mjs
+
             # `typecheck` проверяет типы там, где их не проверяет ничто другое:
             # Jest транспилирует спеки без проверки типов, а ESLint здесь не
             # type-aware, так что спека могла годами гонять форму, которой по

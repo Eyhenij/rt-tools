@@ -58,4 +58,6 @@ export const Hosts: TStory = {
  * контейнер CDK — за пределы блока, которому пара назначает свойства темы. Подложка панели
  * инверсная, и в паре видно, что инверсия разворачивается вместе с темой.
  */
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

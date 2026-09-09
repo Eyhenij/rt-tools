@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtMenuItemComponent } from '../../../menu/rt-menu-item.component';
 import { RtChatMessageActionsDirective } from '../../rt-chat-message-actions.directive';
@@ -8,7 +9,8 @@ import { RtChatComponent } from '../../rt-chat.component';
 import { ERtChatMessageStatus, IRtChat } from '../../rt-chat.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TChatMatrixPart = 'thread' | 'messageKind' | 'status' | 'messageActions' | 'reply' | 'header' | 'loading' | 'themes';
+export type TChatMatrixPart =
+    'thread' | 'messageKind' | 'status' | 'messageActions' | 'reply' | 'header' | 'loading' | 'presets' | 'themes';
 
 const NOW: string = '2026-03-14T16:02:00.000Z';
 
@@ -151,6 +153,16 @@ const MESSAGES: readonly IRtChat.Message[] = [
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Переписка в обоих наборах">
+                    <ng-template>
+                        <div style="width: 24rem; height: 22rem">
+                            <rt-chat hasThread canReply title="Договор №2024-118" placeholder="Написать сообщение" [messages]="messages" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Переписка в обеих темах">
                     <ng-template>
@@ -170,6 +182,7 @@ const MESSAGES: readonly IRtChat.Message[] = [
         RtMenuItemComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

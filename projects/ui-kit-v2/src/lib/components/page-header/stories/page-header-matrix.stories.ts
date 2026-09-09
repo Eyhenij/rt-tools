@@ -28,6 +28,8 @@ export const Items: TStory = { args: { part: 'items' } };
 /** Блок пользователя справа: без него, с инициалом, без инициала. */
 export const User: TStory = { args: { part: 'user' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };
 
 /**

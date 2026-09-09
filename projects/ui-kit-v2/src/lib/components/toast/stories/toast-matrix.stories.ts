@@ -28,4 +28,6 @@ export const Actions: TStory = { args: { part: 'actions' } };
 
 export const Edges: TStory = { args: { part: 'edges' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

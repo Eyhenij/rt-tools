@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtMessageComposerComponent } from '../../rt-message-composer.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TMessageComposerMatrixPart = 'state' | 'attachments' | 'formatting' | 'rows' | 'themes';
+export type TMessageComposerMatrixPart = 'state' | 'attachments' | 'formatting' | 'rows' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-message-composer` для витрины.
@@ -56,6 +57,16 @@ export type TMessageComposerMatrixPart = 'state' | 'attachments' | 'formatting' 
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Поле в обоих наборах">
+                    <ng-template>
+                        <div style="width: 22rem">
+                            <rt-message-composer attachments placeholder="Написать сообщение" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Поле в обеих темах">
                     <ng-template>
@@ -73,6 +84,7 @@ export type TMessageComposerMatrixPart = 'state' | 'attachments' | 'formatting' 
         RtMessageComposerComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

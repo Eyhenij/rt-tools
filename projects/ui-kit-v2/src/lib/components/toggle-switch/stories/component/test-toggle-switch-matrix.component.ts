@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { StoryGridComponent } from '../../../../../showcase/story-grid.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { IStoryState, STORY_CONTROL_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
@@ -10,7 +11,7 @@ import { IRtToggleSwitch } from '../../rt-toggle-switch.model';
 import { RtToggleSwitchComponent } from '../../rt-toggle-switch.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TToggleSwitchMatrixPart = 'size' | 'value' | 'icons' | 'states' | 'themes';
+export type TToggleSwitchMatrixPart = 'size' | 'value' | 'icons' | 'states' | 'presets' | 'themes';
 
 /** Положение тумблера: выключено или включено. */
 interface IToggleValueCase {
@@ -98,6 +99,22 @@ function on(value: boolean): FormControl<boolean> {
                 </app-story-grid>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Тумблер в обоих наборах">
+                    <ng-template>
+                        @for (valueCase of valueCases; track valueCase.name) {
+                            <rt-toggle-switch
+                                size="md"
+                                iconOff="ico-notificationOff"
+                                iconOn="ico-notification"
+                                [ariaLabel]="valueCase.name"
+                                [formControl]="valueCase.control" />
+                        }
+                        <rt-toggle-switch ariaLabel="отключён" size="md" [disabled]="true" [formControl]="disabledValue" />
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Тумблер в обеих темах">
                     <ng-template>
@@ -125,6 +142,7 @@ function on(value: boolean): FormControl<boolean> {
 
         // showcase
         StoryGridComponent,
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

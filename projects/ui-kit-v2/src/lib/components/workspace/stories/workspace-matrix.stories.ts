@@ -29,4 +29,6 @@ export const Active: TStory = { args: { part: 'active' } };
 
 export const Widths: TStory = { args: { part: 'widths' } };
 
+export const Presets: TStory = { args: { part: 'presets' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

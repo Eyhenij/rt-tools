@@ -3,6 +3,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { STORY_FIELD_WIDTH } from '../../../../../showcase/story-metrics';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IStoryState, STORY_FIELD_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtFieldComponent } from '../../../field/rt-field.component';
@@ -14,7 +15,7 @@ import { RtDatePickerComponent } from '../../rt-date-picker.component';
 const SAMPLE_DATE: string = '2026-03-15';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TDatePickerMatrixPart = 'size' | 'type' | 'filling' | 'bordered' | 'states' | 'themes';
+export type TDatePickerMatrixPart = 'size' | 'type' | 'filling' | 'bordered' | 'states' | 'presets' | 'themes';
 
 /** Случай с подписью и своим значением — ISO-строкой, ровно такой, какую отдаёт нативное поле. */
 interface IDatePickerCase {
@@ -130,6 +131,19 @@ function invalid(): FormControl<string> {
                 </app-story-row>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Поле в обоих наборах">
+                    <ng-template>
+                        @for (themeCase of themeCases; track themeCase.name) {
+                            <rt-date-picker
+                                [disabled]="themeCase.disabled"
+                                [ariaLabel]="themeCase.name"
+                                [formControl]="themeCase.control" />
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Поле в обеих темах">
                     <ng-template>
@@ -154,6 +168,7 @@ function invalid(): FormControl<string> {
         RtFieldComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],
