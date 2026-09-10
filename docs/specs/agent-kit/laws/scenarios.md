@@ -10,7 +10,7 @@ Then it holds no path, no file name and no binding to a symbol
 
 Covered: `projects/agent-kit/tests/laws-kind.test.sh`.
 
-### SC-AK-991 — a law holds the articles section and nothing but open questions besides it
+### SC-AK-1001 — a law holds the articles section and nothing but open questions besides it
 
 Given a law of the package
 When its sections are listed
@@ -18,7 +18,7 @@ Then the articles section is present and not empty, and any other section is the
 
 Covered: `projects/agent-kit/tests/laws-kind.test.sh`.
 
-### SC-AK-992 — a law name is unique across both layers of the constitution
+### SC-AK-1002 — a law name is unique across both layers of the constitution
 
 Given the laws of the shared layer and of the application layer
 When their names are gathered together
@@ -26,7 +26,7 @@ Then not one name is met twice
 
 Covered: `projects/agent-kit/tests/laws-kind.test.sh`.
 
-### SC-AK-993 — a law needing a trait of the tree names it in its file name
+### SC-AK-1003 — a law needing a trait of the tree names it in its file name
 
 Given a law whose articles hold only where the tree has a storage, an admin panel or an application
 When the name of its file is read
@@ -35,7 +35,7 @@ law
 
 Covered: `projects/agent-kit/tests/laws-kind.test.sh`.
 
-### SC-AK-994 — a law without a rule under it declares itself an agreement before the code
+### SC-AK-1004 — a law without a rule under it declares itself an agreement before the code
 
 Given a law not one rule declares
 When its header is read
@@ -43,7 +43,7 @@ Then a status line says it is an agreement written before the code
 
 Covered: `projects/agent-kit/tests/laws-kind.test.sh`.
 
-### SC-AK-995 — the index of the laws is printed from the directory, not from a list
+### SC-AK-1005 — the index of the laws is printed from the directory, not from a list
 
 Given the laid-out directory of the laws
 When the session start prints the index
@@ -52,7 +52,7 @@ own
 
 Covered: `projects/agent-kit/tests/laws-kind.test.sh`.
 
-### SC-AK-996 — the entry into the specs answers about a law with a spec, not with a gap
+### SC-AK-1006 — the entry into the specs answers about a law with a spec, not with a gap
 
 Given the name of any law of the package
 When the entry into the specs is called with that name
