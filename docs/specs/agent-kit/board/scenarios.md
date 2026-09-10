@@ -132,3 +132,13 @@ When the same audit runs
 Then it stays silent
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+
+### SC-AK-1089 — the creating command and the audit read the path to the plan alike
+
+Given the card of an epic names two documents — a law and the plan — and the law stands first
+When a task of that epic is created
+Then its body carries the document that holds the makeup, not the law, and the branch of the epic
+is read from that same document: read by its own way, the command wrote the law into every task of
+the epic while both sides answered as usual
+
+Covered: `projects/agent-kit/tests/task-new-epic.test.sh`.

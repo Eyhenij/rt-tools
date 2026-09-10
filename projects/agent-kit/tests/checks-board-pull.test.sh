@@ -18,6 +18,7 @@ pull_tree() {
     cp "$CHECKS/rt-kit-checks.config.mjs" "$dir/tools/"
     cp "$CHECKS/board.github.mjs" "$dir/tools/board.mjs"
     cp "$CHECKS/board-epic-link.github.mjs" "$dir/tools/board-epic-link.mjs"
+    cp "$CHECKS/board-epic-plan.github.mjs" "$dir/tools/board-epic-plan.mjs"
     cp "$CHECKS/board-task-dirs.github.mjs" "$dir/tools/board-task-dirs.mjs"
     cp "$CHECKS/board-gh.github.mjs" "$dir/tools/board-gh.mjs"
     printf '%s\n' '{"board":{"owner":"probe","repo":"tree","taskKey":"RT","tokenPath":""}}' \

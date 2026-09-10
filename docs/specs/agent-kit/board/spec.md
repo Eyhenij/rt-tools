@@ -42,6 +42,14 @@ through the executor.
   machine record is limited by the hosting took a person's picture for a checked one. The field
   `viewer` in the answer is `machine` or `client`; the login is not printed, fetching it would take a
   second request to the network.
+- **The creating command and the audit read the path to the plan by one and the same move.** A
+  value declared by one side of an exchange is not computed anew by the other: the audit took the
+  document carrying the makeup, while the command took the first path in the card body, and a card
+  naming a law before its plan wrote that law into every task of the epic. The branch of the epic
+  was then read from the law and came back empty. Both sides answered as usual, and the miss showed
+  only by reading a created task. The makeup is demanded of the audit and not of the command: the
+  command creates the tasks, and their numbers land in the plan after — demanded at creation, the
+  requirement would refuse the very first task of every epic.
 - **The plan of an epic is the document that carries the makeup, not the first path in the card.** A
   card names its decision next to its plan, and the decision has no table of tasks: read as the
   plan, it makes the makeup empty and every open task of the epic reads as not belonging to it —
