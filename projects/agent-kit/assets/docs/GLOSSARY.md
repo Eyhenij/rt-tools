@@ -70,56 +70,56 @@ one, so that the same notion does not arrive under three names.
 | ----------------- | ------------------------- |
 | application laws  | законы приложения         |
 | archive           | архив                     |
-| audit             | сверка                    |
+| audit             | аудит                         |
 | binding           | привязка                  |
 | check             | проверка                  |
-| companion         | компаньон                 |
+| companion         | файл привязок                 |
 | digest            | сводка                    |
 | disabled role     | выключенная роль          |
 | domain            | домен                     |
 | draft             | черновик                  |
 | epic              | эпик                      |
 | executor          | исполнитель               |
-| fail-open         | отказ в пользу работы     |
-| gate              | гейт                      |
-| grill             | разбор                    |
-| guard             | гард                      |
+| fail-open         | пропуск при ошибке            |
+| gate              | проверка перед push           |
+| grill             | уточнение задачи              |
+| guard             | блокирующая проверка          |
 | handover          | передача                  |
 | hook              | хук                       |
-| laid-out file     | разложенный файл          |
+| laid-out file     | файл, установленный из пакета |
 | law               | закон                     |
-| layout            | раскладка                 |
-| measurement       | замер                     |
+| layout            | установка файлов из пакета    |
+| measurement       | измерение                     |
 | merge             | слияние                   |
 | observation       | наблюдение                |
-| override          | надстройка                |
+| override          | переопределение               |
 | owner             | владелец                  |
 | pattern           | паттерн                   |
 | pipeline, step    | конвейер, шаг             |
-| plan              | замысел                   |
-| PR                | PR, заявка                |
-| product agreement | договорённость о продукте |
+| plan              | план                          |
+| PR                | PR                            |
+| product agreement | описание фичи                 |
 | progress          | ход работы                |
 | proposal          | предложение               |
-| remark            | слово                     |
+| remark            | замечание                     |
 | resource          | ресурс                    |
 | role              | роль                      |
 | rollout           | выкатка                   |
 | rule              | правило                   |
 | rules layer       | слой правил               |
-| run               | прогон                    |
+| run               | запуск тестов                 |
 | scenario          | сценарий                  |
-| session           | заход                     |
-| sidecar           | спутник                   |
-| skill             | скил                      |
-| spec              | спек                      |
+| session           | сессия                        |
+| sidecar           | соседний файл                 |
+| skill             | навык                         |
+| spec              | описание                      |
 | stand             | стенд                     |
 | task              | задача                    |
 | task folder       | папка задачи              |
-| task footprint    | след задачи               |
+| task footprint    | что задача затрагивает        |
 | tree              | дерево                    |
-| window fill       | заполнение окна           |
-| work queue        | очередь работ             |
+| window fill       | заполнение окна контекста     |
+| work queue        | список задач                  |
 | work state        | состояние работы          |
 
 ## Not written here
