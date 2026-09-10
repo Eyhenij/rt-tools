@@ -5,16 +5,22 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** <number> of <total> — <name>
-- **Done:** <briefly>
-- **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
-- **Waiting for the owner:** <what exactly, or "no">
-- **PR:** <number and state, or "not open yet">
+- **Stage:** 3 из 3 — аудит доски
+- **Done:** привязка при заведении задачи, привязка задним числом у семи эпиков, проверка в аудите доски и пробы к ней
+- **Next step:** разобрать папку и открыть PR
+- **Uncommitted:** нет
+- **Waiting for the owner:** нет
+- **PR:** ещё не открыт
 
 ## Decisions along the way
 
-- **<decision>** — <reason>. Affected stage of the plan: <number>.
+- **Закрытые задачи привязываются тоже** — полоса прогресса на карточке доски считает их, и эпик
+  с непривязанными закрытыми задачами показывает долю ниже настоящей. Затронутый шаг плана: 2.
+- **Состав берётся из плана эпика, а не из тел задач** — так же читает и остальной аудит доски.
+  Тело задачи объявляет эпик в свободной форме, и по нему состав выходит короче. Затронутый шаг
+  плана: 3.
+- **Отказ вызова к хостингу проверку не роняет** — у эпика #2004 плана нет на диске этой ветки, и
+  строка о нём повторялась бы каждый раз. Затронутый шаг плана: 3.
 
 ## Sessions
 
