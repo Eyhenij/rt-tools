@@ -9,7 +9,7 @@ Given the roles of the package
 When their headers are read
 Then each names itself and the tools it is allowed
 
-Not covered: the suite of the kind is written by the second stage of this work.
+Covered: `projects/agent-kit/tests/roles-kind.test.sh`.
 
 ### SC-AK-1048 — a role description says when it is called
 
@@ -17,7 +17,7 @@ Given the roles of the package
 When their descriptions are read
 Then each names the case it is called in
 
-Not covered: the suite of the kind is written by the second stage of this work.
+Covered: `projects/agent-kit/tests/roles-kind.test.sh`.
 
 ### SC-AK-1049 — a role that writes no files declares no writing tools
 
@@ -25,7 +25,7 @@ Given a role whose description says it writes no files
 When its declared tools are read
 Then none of them writes
 
-Not covered: the suite of the kind is written by the second stage of this work.
+Covered: `projects/agent-kit/tests/roles-kind.test.sh`.
 
 ### SC-AK-1050 — a skill without a law declares no law
 
@@ -33,7 +33,7 @@ Given the skills of the package that stand under no law
 When their headers are read
 Then none declares a law
 
-Not covered: the suite of the kind is written by the second stage of this work.
+Covered: `projects/agent-kit/tests/roles-kind.test.sh`.
 
 ### SC-AK-1051 — a skill without a law wears neither kind of the ladder
 
@@ -41,7 +41,7 @@ Given the skills of the package that stand under no law
 When their headers are read
 Then none declares itself a rule or a pattern
 
-Not covered: the suite of the kind is written by the second stage of this work.
+Covered: `projects/agent-kit/tests/roles-kind.test.sh`.
 
 ### SC-AK-1052 — a command declares what it does and what it takes
 
@@ -49,7 +49,7 @@ Given the commands of the package
 When their headers are read
 Then each carries the description and the hint about the argument
 
-Not covered: the suite of the kind is written by the second stage of this work.
+Covered: `projects/agent-kit/tests/roles-kind.test.sh`.
 
 ### SC-AK-1053 — a blank carries places for filling
 
@@ -57,7 +57,7 @@ Given the blanks of the package
 When their text is read
 Then each carries at least one place in angle brackets
 
-Not covered: the suite of the kind is written by the second stage of this work.
+Covered: `projects/agent-kit/tests/roles-kind.test.sh`.
 
 ### SC-AK-1054 — a blank of a task folder carries no layout header of its own
 
@@ -65,7 +65,7 @@ Given the blank of a task folder as it lies in the package sources
 When its first line is read
 Then it is not the header of the layout
 
-Not covered: the suite of the kind is written by the second stage of this work.
+Covered: `projects/agent-kit/tests/roles-kind.test.sh`.
 
 ### SC-AK-1055 — a declaration of the tree reads as data
 
@@ -73,7 +73,7 @@ Given the declarations of the tree
 When they are read
 Then each is data the layout and the guards read alike
 
-Not covered: the suite of the kind is written by the second stage of this work.
+Covered: `projects/agent-kit/tests/roles-kind.test.sh`.
 
 ### SC-AK-1056 — the entry into the specs answers zero for all four kinds
 
@@ -81,7 +81,7 @@ Given every role, skill, command, blank and declaration the package ships
 When the entry into the specs is asked by its name
 Then the exit code is zero and this spec is named
 
-Not covered: the suite of the kind is written by the second stage of this work.
+Covered: `projects/agent-kit/tests/roles-kind.test.sh`.
 
 ### SC-AK-1057 — the measure of the uncovered shows zero
 
@@ -89,4 +89,4 @@ Given the whole of what the package ships
 When the entry into the specs is called without a name
 Then the list is empty
 
-Not covered: the suite of the kind is written by the second stage of this work.
+Covered: `projects/agent-kit/tests/roles-kind.test.sh`.
