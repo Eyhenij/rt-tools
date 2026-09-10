@@ -2,23 +2,22 @@
 
 ## Where we stand
 
-Rewritten by every session, not appended to.
-
-- **State:** `<name from the state list of rule task-flow>`
-- **Stage:** <number> of <total> — <name>
-- **Done:** <briefly>
-- **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
-- **Waiting for the owner:** <what exactly, or "no">
-- **PR:** <number and state, or "not open yet">
+- **State:** `замысел-записан`
+- **Stage:** 0 of 3 — план записан, первый этап не начат
+- **Done:** папка задачи легла в свою ветку, разбор и замысел записаны
+- **Next step:** обернуть каждую матрицу кнопки парой половин
+- **Uncommitted:** нет
+- **Waiting for the owner:** нет
+- **PR:** ещё не открыт
 
 ## Decisions along the way
 
-- **<decision>** — <reason>. Affected stage of the plan: <number>.
+- **Показ пары берётся готовый** — половины уже умеют вставать рядом или одна под другой по
+  наполнению. Affected stage of the plan: 1.
 
 ## Sessions
 
-### <date>
+### 2026-09-10
 
-- <what was done, in numbers: files, commits, what is green>
-- <what we stumbled on and what caught it>
+- Папка задачи разнесена в свою ветку: заведена она была из ветки соседней задачи и висела там
+- Записаны разбор и замысел на три этапа

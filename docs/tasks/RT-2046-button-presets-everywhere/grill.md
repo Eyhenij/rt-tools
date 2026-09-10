@@ -1,33 +1,42 @@
 # Grill
 
-<Work begun from cargo that arrived names its records here — by full keys, as the intake reading
-prints them. Eight characters are not enough: a mark with a short key is refused with the line
-«the tree has no such record». This file leaves for the archive, and after the folder is taken apart
-the keys live only here.>
-
 ## The owner request
 
-> <verbatim, in the owner's language, without retelling>
+> стори по кнопкам нужно показывать базовый вид как сейсас и маткриал вид новый ряом или ниже в
+> зависимости от наполнения, сейчас на кнопках это сделано только для Presets
 
 ## What the tree already has
 
-<Findings of the exploration: specs on the subject, the laws and rules the work touches, a
-ready-made sample nearby. Filled in before the first question to the owner.>
+- `projects/ui-kit-v2/src/showcase/story-presets.component.ts` — пара половин, свой набор и
+  материальный. Половины лежат в сетке `repeat(auto-fit, minmax(18rem, 1fr))`: помещаются —
+  встают рядом, не помещаются — одна под другой. Это ровно то, что просит владелец.
+- У кнопок десять историй: `Playground`, `Appearance`, `Size`, `Icon`, `Rounded`, `Loading`,
+  `Disabled`, `Pressed`, `States`, `Presets`, `Themes`. Пару половин показывает одна — `Presets`.
+- Назначения половин прибиты в `projects/ui-kit-v2/.storybook/storybook.scss`: кит вешает их на
+  корень страницы, и скоупнуть их можно только из глобального стиля.
+- Эталонных кадров у кнопок восемь.
 
 ## What the rules already say
 
-<What was found in the laws and rules on the subject of the question. The owner is not asked
-what already has a written answer.>
+- Правило показа: оси перемножаются только там, где они видимо влияют друг на друга; полное
+  произведение отвергнуто — на кнопке это больше тысячи ячеек.
+- Правило показа: эталон снимается после осмотра кадра, а не до него.
+- Пара половин смотрится при светлой теме в тулбаре: при тёмной правила вида
+  `[data-theme='dark']` продолжают доставать обе половины от корня страницы.
 
 ## Questions and answers
 
-**<question>**
-<the owner's answer in their words>
+Вопросов владельцу нет: просьба сказана целиком, и способ показа в дереве уже есть.
 
 ## Decisions
 
-- **<decision>** — <reason>. Rejected: <what and why>.
+- **Показ пары берётся готовый, а не пишется заново** — половины уже умеют вставать рядом или
+  одна под другой по наполнению, и это то самое поведение, о котором сказал владелец.
+- **Ось набора не перемножается с осями кнопки** — пара оборачивает готовую матрицу целиком.
+  Перемножение удвоило бы число ячеек в каждой матрице и упёрлось бы в тот же отказ, из-за
+  которого отвергнуто полное произведение осей.
 
 ## What is left unclear
 
-- <a question that was not asked, and why it does not block the work>
+- Распространять ли это на остальные семейства кита. Владелец сказал про кнопки; после кнопок
+  видно будет, во что это обходится, и решение по остальным — отдельная задача.

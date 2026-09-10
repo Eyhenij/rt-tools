@@ -1,47 +1,48 @@
 # Plan
 
 **Task:** RT-2046 · **Branch:** RT-2046-button-presets-everywhere
-**Draft:** `<path to the product agreement>`
-**Behaviour:** changes
-
-A tree that writes the agreement straight into the domain spec names it instead of the draft:
-`**Spec:** `<path to the spec>``.
-
-Work that does not touch application code needs no agreement — then instead of the draft line
-stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is not accepted.
-
-After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
-along the way.
+**Behaviour:** unchanged — по слову владельца «стори по кнопкам нужно показывать базовый вид как
+сейчас и материальный вид новый рядом или ниже»: работа меняет показ на витрине, сам кит не
+трогает.
 
 ## Task footprint
 
-<What the work touches. Filled in by exploration before the grill and confirmed by the owner. By
-this same table, at closing, one sees what of the specs, rules and patterns has gone stale: what
-is named here is read twice — before the work and after it.>
-
-| What  | Where                         |
-| ----- | ----------------------------- |
-| Specs | `docs/specs/<domain>/`        |
-| Laws  | `docs/constitution/<name>.md` |
-| Rules | `.claude/skills/<name>/`      |
-| Code  | `projects/<package>/`         |
+| What  | Where                                                   |
+| ----- | ------------------------------------------------------- |
+| Rules | `.claude/skills/rt-tools-storybook/`                    |
+| Code  | `projects/ui-kit-v2/src/lib/components/button/stories/` |
+| Code  | `projects/ui-kit-v2/src/showcase/`                      |
 
 ## What counts as done
 
-- <a statement that can be checked>
+- Каждая история кнопок показывает оба набора: свой и материальный.
+- Половины встают рядом, когда помещаются, и одна под другой, когда нет.
+- Эталонные кадры кнопок сняты заново — после осмотра.
+- Правило показа называет, когда пара половин оборачивает матрицу целиком.
 
 ## Stages
 
-### 1. <name>
+### 1. Пара половин оборачивает каждую матрицу кнопки
 
-- **What is done:** <in one phrase>
-- **Readiness sign:** <what must become true>
-- **Verified by:** `<command>` — <what in its output means "it matched">
+- **What is done:** каждый случай матрицы кнопки нарисован внутри пары половин.
+- **Readiness sign:** витрина собирается, в каждой истории кнопок две половины.
+- **Verified by:** `pnpm run build-storybook:ui-kit-v2` — сборка проходит.
 
-The command is written in backticks: the turn exit guard reads it and does not let out a turn in
-which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything.
+### 2. Осмотр кадров и снятие эталонов
+
+- **What is done:** кадры осмотрены, эталоны сняты заново.
+- **Readiness sign:** ни одна история кнопок не рисует пустоту, эталоны лежат рядом.
+- **Verified by:** `node tools/visual-snapshots-v2.mjs --update 'button-matrix.stories.ts'` —
+  эталоны записаны.
+
+### 3. Тексты и набор перед push
+
+- **What is done:** правило показа приведено к сделанному, набор проверок зелёный.
+- **Readiness sign:** проверки проходят.
+- **Verified by:** `pnpm run check:affected` — код выхода 0.
 
 ## What this work does not do
 
-- <neighbouring work that is not dragged in here, and where it is created>
+- Не трогает остальные семейства кита: владелец сказал про кнопки. Решение по остальным — после
+  того, как на кнопках видно цену.
+- Не перемножает ось набора с осями кнопки: пара оборачивает матрицу целиком.
