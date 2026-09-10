@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.26.0 · checks/check-board.github.mjs · 9e9edca9933f · правится надстройкой, не здесь
+// rt-kit v0.27.0 · checks/check-board.github.mjs · 9e9edca9933f · правится надстройкой, не здесь
 /**
  * Audit of the work queue against what the delivery law requires of a task and its PR.
  *

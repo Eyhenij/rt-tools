@@ -1,4 +1,4 @@
-// rt-kit v0.26.0 · checks/board-paths.github.mjs · 7c7a8bfe33bf · правится надстройкой, не здесь
+// rt-kit v0.27.0 · checks/board-paths.github.mjs · 7c7a8bfe33bf · правится надстройкой, не здесь
 // The paths the pipeline does not listen to, and a PR whose contribution lies entirely under them.
 //
 // Moved out of the queue audit into a module of its own: parsing the pipeline patterns has nothing

@@ -4,7 +4,7 @@ kind: pattern
 rule: doc-style
 description: Pattern of rule doc-style. Load when writing any project prose — rules, specs, README, code comments, commit bodies, PR descriptions. Samples of "so" and "not so" for each wording convention. Not for the structure of a spec — that is rule spec-driven.
 ---
-<!-- rt-kit v0.26.0 · patterns/doc-style-write.md · 6d62745fd39d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · patterns/doc-style-write.md · 6d62745fd39d · правится надстройкой, не здесь -->
 
 # How to word
 

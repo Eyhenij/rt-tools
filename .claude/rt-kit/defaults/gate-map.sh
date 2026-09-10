@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · defaults/gate-map.sh · 2b3370c717b6 · правится надстройкой, не здесь
+# rt-kit v0.27.0 · defaults/gate-map.sh · 2b3370c717b6 · правится надстройкой, не здесь
 # Map "what is edited — which rule". The package default: real paths, not samples.
 #
 # The trees of this workshop are built alike — Nx, `apps/` and `libs/`, the same extensions and the
