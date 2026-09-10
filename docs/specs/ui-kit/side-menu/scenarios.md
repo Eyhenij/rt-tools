@@ -114,11 +114,8 @@ Then the folder stays with those two items alone: only rows carrying the query a
 the path to them rather than an exception from that rule
 
 And given the folder "Сохранённое" whose own label coincided while nothing inside it did
-Then the folder stays as a single row without items: it was looked for by name and must be found, and the
-items that do not carry the query are not shown under it
-
-And given an item that has no submenu at all
-Then it stays an item: an empty submenu is not ascribed to it
+Then the folder stays as a single row without items: it was looked for by name and must be found. An item
+that has no submenu at all stays an item — an empty submenu is not ascribed to it
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`,
 `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
@@ -174,15 +171,10 @@ the inset of the magnifier is its own rather than what is left after the wrapper
 
 Not covered: an inset is a computed value of the layout, and the styles of a component are not applied in a
 spec — there is nothing to measure there. Closed by a measurement on the showcase, the story
-`SubMenuSearchMatches`: the cross stands at 9.59 px from the right edge of the field — that is the geometry
-of the ready-made button rather than a step of the scale — and the magnifier is brought to the nearest step,
-ten; the divergence of 0.41 px is not visible to the eye.
-
-The wrapper of the ready-made field carries a side inset of its own, and its value depends on the set the
-consumer took: nought on the showcase, twelve in the application. So the inset of the icon alone was the whole
-inset here and only a part of it there — the magnifier stood at twenty-two against 9.6 of the cross, and the
-showcase said nothing about that. The inset of the wrapper is zeroed, and the measurement is repeated with it
-returned: with the inset of the wrapper the magnifier stands at twenty-two, with the zeroing at ten.
+`SubMenuSearchMatches`: the cross stands at 9.59 px from the right edge of the field — the geometry of the
+ready-made button rather than a step of the scale — and the magnifier at ten, the nearest step. The inset of
+the wrapper of the ready-made field is zeroed, so the inset of the icon is the whole inset: returned by the
+measurement, it puts the magnifier at twenty-two — the number the consumer saw.
 
 ### SC-UK-68 — the item under the highlight of the keyboard is marked on the screen
 
