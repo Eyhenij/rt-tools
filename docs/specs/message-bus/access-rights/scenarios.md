@@ -133,3 +133,17 @@ not compile
 Given the stand of the end-to-end suite is seeded
 When a person signs in on it
 Then all four sections are open to them: the suite checks the sections rather than the rights
+
+### SC-MB-323 — the rights model arriving keeps the access of those who already had it
+
+Given accounts created before the rights, each of which saw every section
+When the migration that brings the rights model is applied
+Then the role of the former access appears with every right of the closed set, and every account
+without a role points at it: the sign-in of such a person opens the sections again. An account that
+already has a role is not touched, and a second application of the migration adds no second role
+
+Покрытие: частичное — the test reads the migration and checks what it states: the set of rights
+against the closed set, the update limited to accounts without a role, and the repeat application.
+The applying itself on a database is not run by it.
+
+Covered: `libs/message-bus-common/src/lib/rights-backfill.spec.ts`.

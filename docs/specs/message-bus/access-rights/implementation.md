@@ -27,3 +27,4 @@ addition of rights, the check of access by a right, and what the admin panel is 
 - **The operations a section lives by are closed by the read right of that section.** — `libs/message-bus-api/postmortems/feature/src/lib/postmortems-read.controller.ts:PostmortemsReadController` — the same declaration stands on the reading of the proposals, of the summaries and of the invitations; the issuing and the revocation of an invitation are closed by the right of editing that section
 - **The set of rights is declared once and read by both sides.** — `libs/message-bus-common/src/lib/rights.ts:RIGHTS`
 - **A right taken away closes the section on the next move, not on the next sign-in.** — `libs/message-bus-admin/auth/shell/src/lib/section-access.ts:sectionRightGuard`
+- **The arrival of the rights model does not take the access away from those who already had it.** — `prisma/migrations/20260910090000_rights_backfill/migration.sql:owner` — scenario `SC-MB-323`
