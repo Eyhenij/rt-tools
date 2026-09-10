@@ -5,26 +5,10 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtCalendarComponent } from '../../rt-calendar.component';
 import { ERtCalendarDayState, IRtCalendar } from '../../rt-calendar.model';
+import { CALENDAR_WEEKDAYS, calendarDay, calendarMonth } from './calendar.fixture';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TCalendarMatrixPart = 'dayState' | 'range' | 'months' | 'nav' | 'sublabels' | 'edges' | 'presets' | 'themes';
-
-const WEEKDAYS: readonly string[] = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-
-/** Собирает день с заданным состоянием. */
-function day(dayOfMonth: number, state: ERtCalendarDayState, sublabel: string = '', disabled: boolean = false): IRtCalendar.Day {
-    return { key: `d-${dayOfMonth}`, dayOfMonth, sublabel, state, disabled };
-}
-
-/** Собирает месяц из тридцати дней, раздавая состояния функцией. */
-function month(key: string, label: string, leading: number, pick: (index: number) => IRtCalendar.Day): IRtCalendar.Month {
-    return {
-        key,
-        label,
-        leadingBlanks: Array.from({ length: leading }, (_: unknown, index: number): number => index),
-        days: Array.from({ length: 30 }, (_: unknown, index: number): IRtCalendar.Day => pick(index)),
-    };
-}
 
 /**
  * Матрицы состояний `rt-calendar` для витрины.
@@ -129,14 +113,14 @@ function month(key: string, label: string, leading: number, pick: (index: number
 export class TestRtCalendarMatrixComponent {
     public part: TCalendarMatrixPart = 'dayState';
 
-    public readonly weekdays: readonly string[] = WEEKDAYS;
+    public readonly weekdays: readonly string[] = CALENDAR_WEEKDAYS;
 
-    public readonly plainMonth: IRtCalendar.Month = month('plain', 'Март 2026', 2, (index: number): IRtCalendar.Day =>
-        day(index + 1, ERtCalendarDayState.Free)
+    public readonly plainMonth: IRtCalendar.Month = calendarMonth('plain', 'Март 2026', 2, (index: number): IRtCalendar.Day =>
+        calendarDay(index + 1, ERtCalendarDayState.Free)
     );
 
     /** Состояния показаны целым месяцем: соседние дни различаются только рядом друг с другом. */
-    public readonly mixedMonth: IRtCalendar.Month = month('mixed', 'Март 2026', 2, (index: number): IRtCalendar.Day => {
+    public readonly mixedMonth: IRtCalendar.Month = calendarMonth('mixed', 'Март 2026', 2, (index: number): IRtCalendar.Day => {
         const states: readonly ERtCalendarDayState[] = [
             ERtCalendarDayState.Past,
             ERtCalendarDayState.Free,
@@ -144,14 +128,14 @@ export class TestRtCalendarMatrixComponent {
             ERtCalendarDayState.Blocked,
         ];
         const state: ERtCalendarDayState = states[index % states.length];
-        return day(index + 1, state, '', state === ERtCalendarDayState.Blocked);
+        return calendarDay(index + 1, state, '', state === ERtCalendarDayState.Blocked);
     });
 
     public readonly dayStateMonths: readonly IRtCalendar.Month[] = [
-        month('free', 'Всё свободно', 2, (index: number): IRtCalendar.Day => day(index + 1, ERtCalendarDayState.Free)),
-        month('busy', 'Всё занято', 2, (index: number): IRtCalendar.Day => day(index + 1, ERtCalendarDayState.Busy)),
-        month('past', 'Прошедшие дни', 2, (index: number): IRtCalendar.Day => day(index + 1, ERtCalendarDayState.Past)),
-        month('mix', 'Вперемешку', 2, (index: number): IRtCalendar.Day => {
+        calendarMonth('free', 'Всё свободно', 2, (index: number): IRtCalendar.Day => calendarDay(index + 1, ERtCalendarDayState.Free)),
+        calendarMonth('busy', 'Всё занято', 2, (index: number): IRtCalendar.Day => calendarDay(index + 1, ERtCalendarDayState.Busy)),
+        calendarMonth('past', 'Прошедшие дни', 2, (index: number): IRtCalendar.Day => calendarDay(index + 1, ERtCalendarDayState.Past)),
+        calendarMonth('mix', 'Вперемешку', 2, (index: number): IRtCalendar.Day => {
             const states: readonly ERtCalendarDayState[] = [
                 ERtCalendarDayState.Past,
                 ERtCalendarDayState.Free,
@@ -159,44 +143,48 @@ export class TestRtCalendarMatrixComponent {
                 ERtCalendarDayState.Blocked,
             ];
             const state: ERtCalendarDayState = states[index % states.length];
-            return day(index + 1, state, '', state === ERtCalendarDayState.Blocked);
+            return calendarDay(index + 1, state, '', state === ERtCalendarDayState.Blocked);
         }),
     ];
 
     /** Начало, середина и конец отрезка вне самого отрезка не читаются — поэтому он показан целиком. */
     public readonly rangeMonths: readonly IRtCalendar.Month[] = [
-        month('range', 'Отрезок 8–14', 2, (index: number): IRtCalendar.Day => {
+        calendarMonth('range', 'Отрезок 8–14', 2, (index: number): IRtCalendar.Day => {
             const dayOfMonth: number = index + 1;
             if (dayOfMonth === 8) {
-                return day(dayOfMonth, ERtCalendarDayState.Start);
+                return calendarDay(dayOfMonth, ERtCalendarDayState.Start);
             }
             if (dayOfMonth === 14) {
-                return day(dayOfMonth, ERtCalendarDayState.End);
+                return calendarDay(dayOfMonth, ERtCalendarDayState.End);
             }
             if (dayOfMonth > 8 && dayOfMonth < 14) {
-                return day(dayOfMonth, ERtCalendarDayState.InRange);
+                return calendarDay(dayOfMonth, ERtCalendarDayState.InRange);
             }
-            return day(dayOfMonth, ERtCalendarDayState.Free);
+            return calendarDay(dayOfMonth, ERtCalendarDayState.Free);
         }),
-        month('one-day', 'Отрезок из одного дня', 2, (index: number): IRtCalendar.Day =>
-            index + 1 === 8 ? day(8, ERtCalendarDayState.Start) : day(index + 1, ERtCalendarDayState.Free)
+        calendarMonth('one-day', 'Отрезок из одного дня', 2, (index: number): IRtCalendar.Day =>
+            index + 1 === 8 ? calendarDay(8, ERtCalendarDayState.Start) : calendarDay(index + 1, ERtCalendarDayState.Free)
         ),
     ];
 
-    public readonly pricedMonth: IRtCalendar.Month = month('priced', 'С ценами', 2, (index: number): IRtCalendar.Day =>
-        day(index + 1, ERtCalendarDayState.Free, `${4 + (index % 3)} ₽`)
+    public readonly pricedMonth: IRtCalendar.Month = calendarMonth('priced', 'С ценами', 2, (index: number): IRtCalendar.Day =>
+        calendarDay(index + 1, ERtCalendarDayState.Free, `${4 + (index % 3)} ₽`)
     );
 
     public readonly threeMonths: readonly IRtCalendar.Month[] = [
-        month('m1', 'Март 2026', 2, (index: number): IRtCalendar.Day => day(index + 1, ERtCalendarDayState.Free)),
-        month('m2', 'Апрель 2026', 5, (index: number): IRtCalendar.Day => day(index + 1, ERtCalendarDayState.Free)),
-        month('m3', 'Май 2026', 0, (index: number): IRtCalendar.Day => day(index + 1, ERtCalendarDayState.Busy)),
+        calendarMonth('m1', 'Март 2026', 2, (index: number): IRtCalendar.Day => calendarDay(index + 1, ERtCalendarDayState.Free)),
+        calendarMonth('m2', 'Апрель 2026', 5, (index: number): IRtCalendar.Day => calendarDay(index + 1, ERtCalendarDayState.Free)),
+        calendarMonth('m3', 'Май 2026', 0, (index: number): IRtCalendar.Day => calendarDay(index + 1, ERtCalendarDayState.Busy)),
     ];
 
     public readonly edgeMonths: readonly (IRtCalendar.Month | null)[] = [
         null,
-        month('no-lead', 'Без пустых клеток', 0, (index: number): IRtCalendar.Day => day(index + 1, ERtCalendarDayState.Free)),
-        month('six-lead', 'Шесть пустых клеток', 6, (index: number): IRtCalendar.Day => day(index + 1, ERtCalendarDayState.Free)),
+        calendarMonth('no-lead', 'Без пустых клеток', 0, (index: number): IRtCalendar.Day =>
+            calendarDay(index + 1, ERtCalendarDayState.Free)
+        ),
+        calendarMonth('six-lead', 'Шесть пустых клеток', 6, (index: number): IRtCalendar.Day =>
+            calendarDay(index + 1, ERtCalendarDayState.Free)
+        ),
         {
             key: 'empty-days',
             label: 'Месяц без дней',

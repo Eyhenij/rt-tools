@@ -7,29 +7,13 @@ import { RtMenuItemComponent } from '../../../menu/rt-menu-item.component';
 import { RtChatMessageActionsDirective } from '../../rt-chat-message-actions.directive';
 import { RtChatComponent } from '../../rt-chat.component';
 import { ERtChatMessageStatus, IRtChat } from '../../rt-chat.model';
+import { CHAT_MESSAGES, CHAT_PEER } from './chat.fixture';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TChatMatrixPart =
     'thread' | 'messageKind' | 'status' | 'messageActions' | 'reply' | 'header' | 'loading' | 'presets' | 'themes';
 
 const NOW: string = '2026-03-14T16:02:00.000Z';
-
-/** Автор чужих реплик: имя одно на все матрицы — разные читались бы как разные собеседники. */
-const PEER: string = 'Петрова А. С.';
-
-const MESSAGES: readonly IRtChat.Message[] = [
-    { id: 1, author: 'Система', own: false, system: true, text: 'Переписка создана', createdAt: NOW },
-    { id: 2, author: PEER, own: false, text: 'Добрый день! Договор на согласовании.', createdAt: NOW },
-    { id: 3, author: 'Вы', own: true, status: ERtChatMessageStatus.Read, text: 'Спасибо, ждём.', createdAt: NOW },
-    {
-        id: 4,
-        author: PEER,
-        own: false,
-        text: 'Приложила подписанный экземпляр.',
-        createdAt: NOW,
-        attachments: [{ id: 1, name: 'договор-2024-118.pdf', publicId: 'p1' }],
-    },
-];
 
 /**
  * Матрицы состояний `rt-chat` для витрины.
@@ -190,7 +174,7 @@ const MESSAGES: readonly IRtChat.Message[] = [
 export class TestRtChatMatrixComponent {
     public part: TChatMatrixPart = 'thread';
 
-    public readonly messages: readonly IRtChat.Message[] = MESSAGES;
+    public readonly messages: readonly IRtChat.Message[] = CHAT_MESSAGES;
     public readonly none: readonly IRtChat.Message[] = [];
 
     /** Все четыре состояния своего сообщения: чужому сообщать о доставке нечего. */
@@ -204,12 +188,12 @@ export class TestRtChatMatrixComponent {
     public readonly threadCases: readonly { name: string; hasThread: boolean; messages: readonly IRtChat.Message[] }[] = [
         { name: 'переписка не выбрана', hasThread: false, messages: [] },
         { name: 'выбрана и пуста', hasThread: true, messages: [] },
-        { name: 'выбрана с сообщениями', hasThread: true, messages: MESSAGES },
+        { name: 'выбрана с сообщениями', hasThread: true, messages: CHAT_MESSAGES },
     ];
 
     /** Две реплики: своя и чужая — на них видно, как признак гасит точку действий у одной. */
     public readonly actionMessages: readonly IRtChat.Message[] = [
-        { id: 21, author: PEER, own: false, text: 'Договор на согласовании', createdAt: NOW },
+        { id: 21, author: CHAT_PEER, own: false, text: 'Договор на согласовании', createdAt: NOW },
         { id: 22, author: 'Вы', own: true, status: ERtChatMessageStatus.Read, text: 'Спасибо, ждём', createdAt: NOW },
     ];
 
