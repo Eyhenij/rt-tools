@@ -154,6 +154,14 @@ a guard.
 
 - **A write limit is told from exhaustion by the limits answer.** There it is zero.
 
+- **At branch creation the column is not asked.** Nothing has moved it yet.
+
+- **A fresh tip is given time before the audit counts it as running no checks.**
+
+- **A machine signature sends git to the key agent.** A locked agent brings the whole suite down.
+
+- **A run pushed out of the queue has zero steps.** That is what tells it from a failed one.
+
 - **A refusal at the merge remains the second line.** A person merges as soon as they see green,
   and the second line is simply never reached.
 

@@ -36,6 +36,9 @@ own turn.
   it; there is nowhere else to learn it from before the call runs.
 - **Without a move the tree of the session answers.** That is the former behaviour, and the whole
   of it stays for the ordinary case.
+- **A second working copy is for reading, and a sending call goes from the copy of the session.**
+  The gate of the checks runs its set where the session was started: from a second copy a foreign
+  tree is judged, and the contribution actually leaving passes unchecked.
 - **A tree that declared no profile is not judged by the form at all.** A foreign tree is not
   accountable to this guard, and a refusal on a lawful name has no bypass.
 

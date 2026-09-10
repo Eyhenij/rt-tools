@@ -28,3 +28,21 @@ When the guard judges the creation of the branch
 Then the form is not judged: a foreign tree is not accountable to this guard
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
+
+### SC-AK-1077 — a call from a second working copy is refused
+
+Given the command moves into another working copy of a tree and sends the branch from there
+When the gate judges the call
+Then it refuses and names both copies: the set runs where the session was started, so someone
+else's uncommitted work would refuse the call while the contribution actually leaving passes
+unchecked
+
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+
+### SC-AK-1078 — a move inside one's own root refuses nothing
+
+Given the command moves into the root of the same working copy, or carries no move at all
+When the gate judges the call
+Then everything goes as before: the set runs and decides by its own outcome
+
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.

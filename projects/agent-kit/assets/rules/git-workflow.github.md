@@ -132,14 +132,13 @@ flowchart TD
 - **A refusal is read before it is bypassed by a second way.** It can be an early sign of a write
   limit, and a bypass by another call carries the sign away: the discrepancy surfaces at the owner.
 - **The branch number and the PR title number are checked on the spot, the task state — by the
-  board.** The format is read from the command text and works offline; the rest needs something to
-  ask with, and without it the second tier is skipped silently.
+  board.** The format is read from the command text and works offline; the second tier needs
+  something to ask with.
 - **The task column moves in the same motion as the work.** Branch created — the task is in
   progress, PR opened — awaiting review; the move command does it, not GraphQL calls from memory.
   The move follows the step at once: the queue is read between steps, not after.
 - **A task left in the first column opens no PR.** By the work queue it reads as not taken, though
-  the work is done and published. At branch creation the column is not asked — nothing has moved it
-  yet. The tree names the first column itself; unnamed — not judged.
+  the work is done and published. The tree names the first column itself; unnamed — not judged.
 - **The board holds tasks, not PRs about them.** A PR card has no column and never leaves the queue.
   The queue audit finds such cards, a line each.
 - **A lagging column is found by the queue audit, not by eye.** It judges the column by the PR both
@@ -154,13 +153,12 @@ flowchart TD
   the board and the sessions line in the epic plan say the same to two readers. Only what
   legitimately does not split is marked.
 - **The tip of an open PR without a run is seen by the work queue audit.** A page without a run
-  looks the same as with a green one: no colour in either. The audit asks the tip, counts the fact
-  of a run, not the colour, and gives a fresh tip time.
+  looks the same as with a green one. The audit counts the fact of a run, not the colour.
 - **A PR whose base is not the main branch is checked by the same set as a PR into main.** The
   pipeline trigger reads the base, and an empty checks field reads as waiting in the queue. Asked
   before the first PR of an epic opens — pattern `git-workflow-stack`.
 - **A run pushed out of the pipeline queue gets a separate audit line.** It looks failed though it
-  never checked the branch; the step count tells them apart — it has zero.
+  never checked the branch; the step count tells them apart.
 - **A draft with a green run on its tip is an audit discrepancy.** A green page permits nothing: the
   host locks the button. Within a turn the guard closes this, between turns — the audit.
 - **One's own drafts are judged all at once, not only the checked-out branch's.** Two signs — a
@@ -252,11 +250,10 @@ flowchart TD
 - **The machine commit's email is copied from the companion, not typed from memory.** The address
   `<число>+<логин>@users.noreply.github.com` matches by the number: with a foreign one the commit
   leaves signed by a stranger. The tree profile holds the same line, and the guard refuses the push.
-- **The identity of the machine account is confirmed by the host's answer, not by recognising a
-  string:** asked with the token, login and number come together.
-- **Guard scenarios set the git settings themselves, not take them from the machine.** A machine
-  signature sends git to the key agent, and a locked agent brings the set down; author, email and
-  signature go as `-c` flags.
+- **The identity of the machine account is confirmed by the host's answer:** asked with the token,
+  login and number come together.
+- **Guard scenarios set the git settings themselves, not take them from the machine.** Author, email
+  and signature go as `-c` flags.
 
 - **Every commit of the branch's contribution is signed by the machine account, and the push set
   checks it.** The guard judges a commit that named itself as it; one signed by a person passes by.
@@ -267,6 +264,9 @@ flowchart TD
 - **Reviewers are asked by a REST call, not by the client's selection.** Its fields come from
   GraphQL, which the account has no rights to: "matched" cannot be told from "nothing to ask with".
 
+- **A second working copy is for reading, and the call goes from the copy the session stands in.**
+  The gate runs its set where the session was started: someone else's uncommitted work refuses the
+  call, and its own contribution passes unchecked. The result of the merge is brought back first.
 - **The working tree is not emptied for a tool run.** The comparison goes on a second copy: stashing
   takes uncommitted work where neither the tree state nor the audit sees it.
 

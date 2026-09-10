@@ -1,4 +1,4 @@
-<!-- rt-kit v0.27.0 · pitfalls/git-workflow.github.md · 5c4cc733b818 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · pitfalls/git-workflow.github.md · bbf5c876a3f5 · правится надстройкой, не здесь -->
 # Delivery — cold part
 
 Pitfalls: traps already stepped on in a tree on GitHub. Loaded not with the rule but on demand —
@@ -154,6 +154,14 @@ a guard.
   permission.
 
 - **A write limit is told from exhaustion by the limits answer.** There it is zero.
+
+- **At branch creation the column is not asked.** Nothing has moved it yet.
+
+- **A fresh tip is given time before the audit counts it as running no checks.**
+
+- **A machine signature sends git to the key agent.** A locked agent brings the whole suite down.
+
+- **A run pushed out of the queue has zero steps.** That is what tells it from a failed one.
 
 - **A refusal at the merge remains the second line.** A person merges as soon as they see green,
   and the second line is simply never reached.
