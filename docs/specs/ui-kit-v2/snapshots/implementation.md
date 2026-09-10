@@ -28,7 +28,7 @@ tree, or the tree holds what the spec is silent about.
 - **A reshooting goes by a named story.** — `tools/visual-snapshots-v2.mjs:updateOne`; the reshooting of the catalogue — `tools/visual-snapshots-v2.mjs:updateAll`; scenario `SC-UKV-20`
 - **The language of the labels in a frame is one and is appointed by the harness.** — `projects/ui-kit-v2/.storybook/preview.ts:showcaseTranslator`; scenario `SC-UKV-17`
 - **The theme of a matrix is one and is appointed by the harness.** — `projects/ui-kit-v2/src/showcase/story-themes.component.ts:StoryThemesComponent`; scenario `SC-UKV-09`
-- **An empty show does not become a reference.** — `projects/ui-kit-v2/src/lib/components/bar-list/stories/bar-list.stories.ts:storySnapshotSkip` and seventeen more such marks; scenario `SC-UKV-14`
+- **An empty show does not become a reference.** — `projects/ui-kit-v2/src/lib/components/tabs/stories/tabs.stories.ts:storySnapshotSkip` and 59 more such marks; scenario `SC-UKV-14`
 - **The number of the stories opened at once is set by the run, not by the machine.** — `tools/visual-snapshots-v2.mjs:MAX_WORKERS`; scenario `SC-UKV-06`
 - **The readiness of an icon is checked by a drawn icon, not by a sign of the loading.** — `projects/ui-kit-v2/.storybook/snapshot-wait.ts:drawnIcons` — the icon is looked for by the link into the set, `projects/ui-kit-v2/.storybook/snapshot-wait.ts:ICON_USE_SELECTOR`; scenario `SC-UKV-06`
 - **The run refuses if the wrong showcase is at the named address.** — `tools/visual-snapshots-v2.mjs:requireOwnShowcase`; scenario `SC-UKV-18`
