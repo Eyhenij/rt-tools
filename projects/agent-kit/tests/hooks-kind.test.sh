@@ -46,18 +46,12 @@ done
 report "SC-AK-1037 — помощники говорят о себе" "$silent_helpers" 0
 
 # --- SC-AK-1038 — страж отбивает в пользу работы ------------------------------------------------
-# Тот же долг и тот же порядок: четыре стража из тридцати об отказе в пользу работы молчат.
-FAILOPEN_SILENT='browser-guard-device-id.sh dev-server-guard.sh skill-loaded.sh stand-login-guard.sh'
 silent_failopen=0
 for hook in "$HOOK_DIR"/*.sh; do
     is_guard "$hook" || continue
-    name="$(basename "$hook")"
-    case " $FAILOPEN_SILENT " in
-        *" $name "*) continue ;;
-    esac
     grep -qiE 'FAIL-OPEN|fail-open' "$hook" || silent_failopen=$((silent_failopen + 1))
 done
-report "SC-AK-1038 — новых стражей без отказа в пользу работы нет" "$silent_failopen" 0
+report "SC-AK-1038 — отказ в пользу работы объявлен каждым стражем" "$silent_failopen" 0
 
 # --- SC-AK-1039 — отказ называет законные ходы --------------------------------------------------
 # Общий хвост отказа лежит в одном помощнике: страж, который его не зовёт и не пишет свой,
