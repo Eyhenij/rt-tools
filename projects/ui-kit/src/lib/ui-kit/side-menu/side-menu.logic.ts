@@ -5,6 +5,18 @@ import { ISideMenu } from './side-menu.types';
  *
  * Считается здесь, а не в шаблоне: разметка меню держит две раскладки разом, и ветвление отбора
  * в ней читается хуже вызова.
+ *
+ * Отбор спускается внутрь папок на любую глубину: потребитель кладёт в `submenu` папки то, что
+ * человек и ищет по имени, и по одному верхнему уровню такой пункт совпасть не мог по построению —
+ * поиск находил только саму папку.
+ *
+ * Папка остаётся в списке по двум разным поводам, и содержимое у неё при этом разное. Совпала сама
+ * подпись папки — папка отдаётся целиком: человек искал папку и ждёт увидеть то, что в ней лежит, а
+ * не её же имя над пустотой. Совпал только кто-то внутри — папка отдаётся с отобранными пунктами:
+ * иначе одно совпадение вытаскивает на экран весь остальной её состав.
+ *
+ * Отобранная папка — новый объект: правка `submenu` на месте переписала бы набор, который дал
+ * потребитель, и стёртый запрос вернул бы урезанное меню.
  */
 export function filterSubMenuItems(items: ReadonlyArray<ISideMenu.Item>, query: string): ISideMenu.Item[] {
     const needle: string = query.trim().toLowerCase();
@@ -13,7 +25,41 @@ export function filterSubMenuItems(items: ReadonlyArray<ISideMenu.Item>, query: 
         return [...items];
     }
 
-    return items.filter((item: ISideMenu.Item): boolean => !!item.name?.toLowerCase().includes(needle));
+    return items.reduce((kept: ISideMenu.Item[], item: ISideMenu.Item): ISideMenu.Item[] => {
+        if (item.name?.toLowerCase().includes(needle)) {
+            kept.push(item);
+
+            return kept;
+        }
+
+        const inside: ISideMenu.Item[] = item.submenu?.length ? filterSubMenuItems(item.submenu, query) : [];
+
+        if (inside.length) {
+            kept.push({ ...item, submenu: inside });
+        }
+
+        return kept;
+    }, []);
+}
+
+/**
+ * Папки отобранного списка — те, что должны стоять раскрытыми.
+ *
+ * Считается по уже отобранному списку, а не по исходному: в отобранном остались ровно те папки, в
+ * которых что-то нашлось, и раскрывать больше нечего. Пустой запрос сюда не попадает вовсе — тогда
+ * раскрытость берётся прежняя, та, что была до набора.
+ *
+ * Возвращаются номера, а не сами пункты: отобранный список пересобирается на каждую букву запроса,
+ * и ссылка на пункт такой пересборки не переживает.
+ */
+export function subMenuIdsToExpand(items: ReadonlyArray<ISideMenu.Item>): Array<string | number> {
+    return items.reduce((ids: Array<string | number>, item: ISideMenu.Item): Array<string | number> => {
+        if (item.submenu?.length) {
+            ids.push(item.id, ...subMenuIdsToExpand(item.submenu));
+        }
+
+        return ids;
+    }, []);
 }
 
 /**
