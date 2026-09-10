@@ -378,3 +378,22 @@ Then the path is taken as named, not glued with the root of the tree: glued, it 
 inside the repository, from where it goes away into history by the very first adding command
 
 Covered: `projects/agent-kit/src/lib/enroll.spec.ts`.
+
+### SC-AK-1090 — the blocks judged already sent are named by both runs
+
+Given a block of proposals carries a mark written by hand
+When the sending runs, dry or real
+Then the output names the count of the skipped and the block itself, and says the mark was written
+by hand: the field used to be read by its presence, so such a block never went and the dry run did
+not show it
+
+Given not a single block was skipped
+When the sending runs
+Then the count of the skipped is printed all the same: silence about it reads as "there was nothing
+to skip"
+
+Given the mark carries the value the sending itself writes
+When the sending runs
+Then the block is named among the skipped and is not called written by hand
+
+Covered: `projects/agent-kit/src/lib/shipment-skipped.spec.ts`.
