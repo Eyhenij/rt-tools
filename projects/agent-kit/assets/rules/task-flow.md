@@ -190,6 +190,17 @@ flowchart TD
 - **A taken task does not end a turn.** Creating the task, the branch, the column and the folder is
   preparation: the work moves to the written-plan state, where the action is different. The
   turn-exit guard names the first stage in its refusal.
+- **The stages of a plan cover its done-sign whole.** A sign written wider than the sum of the
+  stages means a part of the order is given to no step at all: every stage closes, the run is
+  green, and half the order is not done. Either the stages are written up to the sign, or the sign
+  is narrowed to what the stages give.
+- **A stage's readiness sign is taken from the output of a command run while the plan is written.**
+  Written by a guess, it is checked at the stage itself — latest of everything that depended on it.
+  Some lines come not from the work but from an unconfigured tree, and no stage puts them out.
+- **A plan for work that ports a technique from outside is written by a measurement of one's own
+  code.** Reading the sample says how the sample is built; what of it is needed here is said by a
+  count over one's own files. A hierarchy ported word for word looks whole exactly until the first
+  place the sample never had.
 - **Waiting for one part of a stage is never a stop of the stage.** The parts independent of what is
   awaited are done in the same turn; the owner is told what is done and what is left for their step.
   A refused command reads the same: everything else is done first.
@@ -217,21 +228,18 @@ flowchart TD
   merged.
 - **The next task is taken from the epic plan, and the work queue list is asked only where there is
   no epic.** By a list of numbers the first task of someone else's epic cannot be told from one's
-  own. A finished epic is named to the owner by the same turn that takes work outside it.
-- **An epic is not closed by a sign confirmed by reading alone.** What is checkable by eye is called
-  checked only together with a command and its output.
+  own.
+- **An epic is not closed by a sign confirmed by reading alone.** What is checkable by eye is
+  called checked only with a command and its output.
 - **The tasks of an epic are created all at once, by the same turn as the epic itself.** Creating
-  them one at a time hides the volume. The numbers return to the order section by the same edit.
+  them one at a time hides the volume.
 - **A task of an epic is linked to the epic card as a sub-issue, not only named in the plan.** The
-  plan and the task body are text, and the board reads neither: on the board a task of an epic looks
-  exactly like a task outside one, and the makeup and the share of what is done are assembled by
-  hand from the list of open cards. Closed tasks are linked too — the share counts them.
+  board reads no text: without the link a task of an epic looks exactly like a task outside one.
+  Closed tasks are linked too — the share of what is done counts them.
 
 - **The epic plan names how the branches of its tasks stand, on a par with their order.** Two
-  arrangements, and both live inside the epic: each branch from the epic branch, or a stack — each
-  from the previous. The task order says nothing about this. The stack costs more, its price is
-  listed in the cold part; the arrangement written in the plan is the epic's decision, not that of
-  whoever creates the branch.
+  arrangements: each branch from the epic branch, or a stack — each from the previous. The
+  arrangement written in the plan is the epic's decision, not that of whoever creates the branch.
 - **The PR of the epic opens when its last folder is taken apart, and not a task earlier.** A folder
   left in the epic branch reaches the main branch with it: what one branch needed becomes the tree's
   for good. Until then the epic branch is not offered to a person at all — the merge button on it
@@ -240,15 +248,13 @@ flowchart TD
   not hold the task order, and the task folder would hold it only until the first merge; the
   directory — in the rule's companion. What the owner names along the way is appended there by the
   turn that accepted it.
-- **Building by a sample begins with reading the sample itself, not a retelling of it.** A retelling
-  in the grill and in the epic plan is not the sample. The repeated part is opened whole, by walking
-  the directories.
+- **Building by a sample begins with reading the sample itself, not a retelling of it.** The
+  repeated part is opened whole, by walking the directories.
 - **What acts on the tree, not on the edit, lies outside the index.** The path to the sample and the
   permission to work outside the epic do not belong to the branch and live next to the handover. A
   number in the permitted list repeats the owner's word, not replaces it.
 - **Closed work is reviewed by the rules, and this is a closing step, not a separate request.** What
-  was loaded and what was missing is seen only by the session that led the work. The review ends
-  with an edit of the rules layer or a proposal outward.
+  was loaded and what was missing is seen only by the session that led the work.
 - **The review of closed work goes to the background, and the executor takes the next task.** The
   role works in a turn of its own; the digest is gathered before the launch, the findings are
   accepted in one turn.

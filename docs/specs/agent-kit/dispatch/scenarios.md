@@ -139,3 +139,16 @@ Then it stops at the ban and gives it back whole: glued with the output of the n
 such an answer does not parse at all, and the refusal vanishes
 
 Covered: `projects/agent-kit/tests/dispatch.test.sh`.
+
+### SC-AK-1080 — an entry is written only for the dispatcher that lies on disk
+
+Given the tree did not take the dispatcher, and it is not on disk
+When the layout runs
+Then no entry is written into the setting: a setting calling a file that is not there looks working
+from the outside, and an entry removed by hand used to come back on the very next layout
+
+Given the dispatcher lies on disk
+When the layout runs
+Then the entry is written as before
+
+Covered: `projects/agent-kit/src/lib/hooks-map.spec.ts`.

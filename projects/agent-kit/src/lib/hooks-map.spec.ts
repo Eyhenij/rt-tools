@@ -118,12 +118,23 @@ describe('driftedMatchers', () => {
     });
 });
 
-/** Дерево с настройкой названного содержимого. Текстом, а не объектом: судится и неразбираемая. */
-function treeWithSettings(text: string): string {
+/**
+ * Дерево с настройкой названного содержимого. Текстом, а не объектом: судится и неразбираемая.
+ *
+ * Диспетчер кладётся на диск: запись дописывается только тому, кто там лежит, и дерево без него
+ * настройки не получает вовсе.
+ */
+function treeWithSettings(text: string, withDispatcher: boolean = true): string {
     const root: string = mkdtempSync(join(tmpdir(), 'rt-hooks-'));
     const path: string = join(root, SETTINGS_PATH);
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(path, text);
+
+    if (withDispatcher) {
+        const dispatcher: string = join(root, DISPATCH_PATH);
+        mkdirSync(dirname(dispatcher), { recursive: true });
+        writeFileSync(dispatcher, '#!/usr/bin/env bash\nexit 0\n');
+    }
 
     return root;
 }
@@ -139,6 +150,31 @@ describe('bindDispatch', () => {
             expect(bound.added).toEqual(['PostToolUse', 'PreToolUse']);
             expect(settingsOf(root)).toContain(`${DISPATCH_PATH} PreToolUse`);
             expect(settingsOf(root)).toContain(`${DISPATCH_PATH} PostToolUse`);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('SC-AK-1080 — дерево без диспетчера записи не получает', (): void => {
+        const root: string = treeWithSettings('{\n  "hooks": {}\n}\n', false);
+        try {
+            const bound: IBindResult = bindDispatch(bindingsOf(TWO_EVENTS, GUARD), root);
+
+            expect(bound.missing).toBe(true);
+            expect(bound.added).toEqual([]);
+            expect(settingsOf(root)).not.toContain(DISPATCH_PATH);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('SC-AK-1080 — с диспетчером на диске запись дописывается', (): void => {
+        const root: string = treeWithSettings('{\n  "hooks": {}\n}\n');
+        try {
+            const bound: IBindResult = bindDispatch(bindingsOf(TWO_EVENTS, GUARD), root);
+
+            expect(bound.missing).toBe(false);
+            expect(settingsOf(root)).toContain(DISPATCH_PATH);
         } finally {
             rmSync(root, { recursive: true, force: true });
         }
