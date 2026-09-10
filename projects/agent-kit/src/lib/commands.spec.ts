@@ -667,6 +667,36 @@ describe('doctor', () => {
         expect(said_).toContain('laws/delivery.md · ## Articles');
     });
 
+    it('SC-AK-1082 — по снимку прежней редакции названы статьи, дописанные в замещённый раздел', () => {
+        start(['laws/delivery.md']);
+        put(join(OVERRIDES_DIR, 'laws/delivery.md'), '## Articles\n\nСвои статьи.\n');
+        // Снимок прежней редакции: тот самый, что снимается первым шагом подъёма версии.
+        const since: string = mkdtempSync(join(tmpdir(), 'rt-since-'));
+        mkdirSync(join(since, 'laws'), { recursive: true });
+        writeFileSync(join(since, 'laws/delivery.md'), '## Articles\n\n- **Прежняя статья.** Текст.\n');
+        // Новая редакция пакета дописала в тот же раздел ещё одну статью.
+        const current: string = readFileSync(join(ASSETS, 'laws/delivery.md'), 'utf8');
+        writeFileSync(join(ASSETS, 'laws/delivery.md'), '## Articles\n\n- **Прежняя статья.** Текст.\n- **Дописанная статья.** Текст.\n');
+
+        try {
+            const said_: string = said(doctor(env, since));
+
+            expect(said_).toContain('новая редакция дописала в замещённые разделы статей: 1');
+            expect(said_).toContain('Дописанная статья.');
+            expect(said_).not.toContain('Прежняя статья.');
+        } finally {
+            writeFileSync(join(ASSETS, 'laws/delivery.md'), current);
+            rmSync(since, { recursive: true, force: true });
+        }
+    });
+
+    it('SC-AK-1082 — без довода со снимком разбор состояния прежний', () => {
+        start(['laws/delivery.md']);
+        put(join(OVERRIDES_DIR, 'laws/delivery.md'), '## Articles\n\nСвои статьи.\n');
+
+        expect(said(doctor(env))).not.toContain('снимок прежней редакции прочитан');
+    });
+
     it('SC-AK-716 — дерево без надстроек о замещённом молчит', () => {
         start(['laws/delivery.md']);
 
