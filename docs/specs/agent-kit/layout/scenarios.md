@@ -30,11 +30,6 @@ management, and its former content is not lost silently
 Given the tree named in an override one key of a nested object of the check settings When the settings
 are assembled Then the other keys of the same object keep their values
 
-### SC-AK-08 — a divergence of the body at a matching header is visible to `doctor`
-
-Given the version in the header of a laid-out file matches the package one, and the body diverged When
-`doctor` runs Then the divergence is named
-
 ### SC-AK-09 — the backend root is read from the setting, not hardwired
 
 Given the tree keeps the backend not by the path the package counts as the default When the layers
@@ -456,39 +451,5 @@ Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
 Given the tree declared the edition by a range, declared no package at all or the package named no name
 of its own When the layout is called Then it goes as before: a range covers several editions and both are
 declared rightly, and without a name the package would not find itself in the dependencies of the tree
-
-Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
-
-### SC-AK-886 — a hook lands executable even with a lost bit at the source
-
-Given a file of the hooks directory in the package lies without the right to be executed
-When the layout runs
-Then the laid-out copy gets the right to be executed: otherwise the guard does not start at all and
-looks installed — the file is in place, the layout reported, and the guards by construction stay silent
-
-Given a check in the package lies without the right to be executed
-When the layout runs
-Then the laid-out copy does not get it: part of the checks are called by the executor, and they need no
-bit
-
-Given a check in the package lies with the right to be executed
-When the layout runs
-Then the laid-out copy keeps it
-
-Covered: `projects/agent-kit/src/lib/sync.spec.ts`.
-
-### SC-AK-887 — a removed right to run the layout brings back
-
-Given a laid-out hook is whole in body, and the execution bit is removed from it When the layout is
-called Then the right comes back, and the body is not rewritten: what has to be fixed is the run, not the
-text
-
-Covered: `projects/agent-kit/src/lib/plan.spec.ts`, `projects/agent-kit/src/lib/commands.spec.ts`.
-
-### SC-AK-888 — the audit does not stay silent about a removed right
-
-Given a laid-out hook lies without the right to run When the layout audit is run Then it names this file
-as a divergence and answers with a non-zero code: a hook registered by a command without the bit does not
-start at all and looks installed
 
 Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
