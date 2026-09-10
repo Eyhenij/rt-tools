@@ -12,6 +12,19 @@ Rewritten by every session, not appended to.
 - **Waiting for the owner:** <what exactly, or "no">
 - **PR:** <number and state, or "not open yet">
 
+## Steps
+
+The steps of the plan, all of them, with a mark each. Rewritten by every turn that moves the work.
+
+- `[x]` done · `[>]` going on right now · `[ ]` not begun
+
+Exactly one step carries `[>]`. The numbers and the names are copied from the plan and not
+reworded: a check matches the two lists, and the turn exit guard counts what is not done yet.
+
+- [x] 1.1 <name of the first step of the first stage>
+- [>] 1.2 <name of the second step of the first stage>
+- [ ] 2.1 <name of the first step of the second stage>
+
 ## Decisions along the way
 
 - **<decision>** — <reason>. Affected stage of the plan: <number>.

@@ -199,6 +199,14 @@ flowchart TD
   does not do, and is filed as a task.
 - **Done work is marked only in the progress.** "Where we stand" is rewritten by every session, not
   appended: it is the first thing the next session reads.
+- **The plan names the steps of every stage, and the progress mirrors them with a mark each.** The
+  plan is not edited after it is written, the marks change with every turn. A step is named by what
+  is done: a line nobody can call done is not a step.
+- **The numbers and the names of the steps are copied from the plan, not reworded.** A reworded name
+  reads as a different step, and the count of what is left answers about something else. A check
+  matches the two lists.
+- **Exactly one step carries the mark of going on right now, while any step is not done.** Marked on
+  none, the progress says the work stands; marked on two, it says nothing at all.
 - **A word for a new notion is looked up in the tree's glossary.** The package carries the common
   part, the tree appends the subject part by an override; the glossary goes into the context whole
   at session start, so "did not read it" is never a ground.
