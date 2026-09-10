@@ -77,6 +77,10 @@ flowchart TD
 - **A domain is started for a subject, not for mechanics.** Mechanics shared by several domains ride
   into the lib that already sees them. On the frontend that is the family base, on the backend the
   `util` layer listed with every domain.
+- **The name of a lib is what its manifest declares, and the path only suggests it.** The tag and
+  the import alias are derived from that name, and the audit reads all three from the manifest and
+  the list of paths instead of assembling them from the directory. Where the manifest declares no
+  name, the path says what the name must become.
 - **A domain with exactly one non-empty layer is listed as a line with a reason.** Otherwise it
   cannot be told from a slot: both have empty layers, and a barrel lies in both.
 

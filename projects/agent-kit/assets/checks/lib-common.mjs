@@ -101,9 +101,51 @@ const isSingleLayerDomain = (path) => matches(pathsOf('singleLayerDomains'), pat
 /** Paths the lib walk must skip */
 const isIgnoredLib = (path) => isNotDomain(path) || isLegacyDomain(path) || isLegacyLib(path);
 
+/**
+ * The formula: what the name, the tag and the alias of a lib must become where the tree declared
+ * nothing. It is not the name itself — the name is what the tree wrote down. A tree that names its
+ * libs otherwise used to redden on flat ground, and the only way to silence that was the exceptions
+ * list.
+ */
 const projectName = (libPath) => libPath.replace(/^libs\//, '').replaceAll('/', '-');
 const projectTag = (libPath) => `scope:${projectName(libPath)}`;
 const importAlias = (libPath) => `${CONFIG.importScope}/${libPath.slice(`${LIBS_ROOT}/`.length)}`;
+
+/** The name the lib declared in its manifest; an empty string when it declared none. */
+function declaredName(libPath) {
+    if (!existsSync(join(ROOT, libPath, 'project.json'))) {
+        return '';
+    }
+    try {
+        return String(readJson(`${libPath}/project.json`).name ?? '');
+    } catch {
+        // Unreadable JSON is the business of the manifest check, and it says so in its own words:
+        // here a refusal would take down the whole walk over the neighbouring libs as well.
+        return '';
+    }
+}
+
+/** The name of the lib: the declared one, and the formula only where nothing is declared. */
+const libName = (libPath) => declaredName(libPath) || projectName(libPath);
+/** The tag of the lib: derived from its own name, not from its path. */
+const libTag = (libPath) => `scope:${libName(libPath)}`;
+
+/**
+ * The alias `tsconfig.base.json` points at this lib by. It is looked for by what it points at, not
+ * by its spelling: a lib is reachable by an alias or it is not, and how the tree spells the alias is
+ * the tree's own business. An empty string means no alias points here.
+ */
+function declaredAlias(libPath) {
+    const target = `./${libPath}/src/index.ts`;
+    let paths = {};
+    try {
+        paths = readJson('tsconfig.base.json').compilerOptions.paths ?? {};
+    } catch {
+        return '';
+    }
+
+    return Object.keys(paths).find((alias) => paths[alias]?.[0] === target) ?? '';
+}
 
 /**
  * The files of a lib, except the barrel: an empty layer has a barrel just as a filled one does, and
@@ -157,5 +199,9 @@ export {
     projectName,
     projectTag,
     importAlias,
+    declaredName,
+    declaredAlias,
+    libName,
+    libTag,
     sourceCount,
 };

@@ -17,6 +17,9 @@ whole.
 - **An override of the check settings merges by nested keys.** — `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:mergeDeep`
 - **The package does not know the layout of a foreign tree.** — `projects/agent-kit/assets/checks/lib-common.mjs:LIBS_ROOT`
 - **The package does not know the words of a foreign tree either.** — `projects/agent-kit/assets/checks/lib-common.mjs:LIB_PREFIX`
+- **The name of a lib is read from what the tree declared, not derived from its path.** — `projects/agent-kit/assets/checks/lib-common.mjs:declaredName` — scenario `SC-AK-1092`
+- **The formula over the path speaks where the tree declared nothing.** — `projects/agent-kit/assets/checks/lib-common.mjs:libName` — scenario `SC-AK-1092`
+- **The alias of a lib is looked for by what it points at, not by its spelling.** — `projects/agent-kit/assets/checks/lib-common.mjs:declaredAlias` — scenario `SC-AK-1092`
 - **The first installation demands no prose written by hand.** — `projects/agent-kit/src/lib/companion.ts:draftOf`
 - **A requirement of a resource is named in the resource itself, it is not derived by reading.** — `projects/agent-kit/src/lib/catalog.ts:requiresOf`
 - **A broken link is a warning, not a refusal.** — `projects/agent-kit/src/lib/catalog.ts:brokenLinks`

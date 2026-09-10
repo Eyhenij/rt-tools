@@ -111,6 +111,15 @@ Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.
 Given the refusal holds both a law and a rule at it When the layout runs Then it puts what is picked and
 leaves with zero: a surplus line is a warning, not a refusal
 
+### SC-AK-1092 — the lib audit reads the declared name, tag and alias
+
+Given a lib whose manifest declares a name other than the one the path formula would give it When
+the lib audit judges the lib Then it names no divergence about the name, and it judges the tag
+against the declared name and not against the path. A lib whose manifest declares no name at all is
+named, and the refusal says what the name must become by the path. The alias is looked for by what
+it points at: an alias spelled otherwise but pointing at the barrel of the lib is no divergence,
+and a lib nothing points at is named together with the alias the formula would give it
+
 Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
 
 ### SC-AK-124 — a refusal line without a resource in the catalogue is named by the same warning

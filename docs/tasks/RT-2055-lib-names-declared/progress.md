@@ -4,12 +4,12 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `замысел-записан`
-- **Stage:** 0 of 3 — the plan is written, no stage begun
+- **State:** `этап-идёт`
+- **Stage:** 2 of 3 — the spec of the layout names the new behaviour
 - **Done:** the record was read whole, its consumers in the checks found — three files, one of them
   the only judge
-- **Next step:** stage 1 — the audit reads the declared name, tag and alias
-- **Uncommitted:** the task folder itself
+- **Next step:** stage 3 — layout, checks, the intake and the makeup
+- **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
@@ -17,6 +17,19 @@ Rewritten by every session, not appended to.
 
 - **The alias is found by what it points at, not by its spelling** — a lib is reachable by an alias
   or it is not, and how the tree spells it is the tree's own business. Affected stage of the plan: 1.
+
+## Stages done
+
+- **1. The audit reads the declared name, tag and alias** — `lib-common.mjs` gained `declaredName`,
+  `declaredAlias`, `libName` and `libTag`; the formula stayed as the fallback and as the wording of
+  the verdict for a lib that declared nothing. `lib-manifests.mjs` and `lib-boundaries.mjs` moved
+  onto the read values. Checked by `bash projects/agent-kit/tests/checks-lib-layers.test.sh` — 17
+  probes, no failures (10 before the stage), and by `node tools/check-lib-layers.mjs` on this tree —
+  80 libs, no divergences.
+- **2. The spec of the layout names the new behaviour** — three articles, their bindings and
+  `SC-AK-1092` in `docs/specs/agent-kit/layout/`, and one article in the rule of lib layers with a
+  line in its companion. Checked by `npm run check:specs` — 1549 scenarios, no divergences, the new
+  one is covered.
 
 ## Sessions
 
