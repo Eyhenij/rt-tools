@@ -49,21 +49,24 @@ section of its own.
 - **A rule names its patterns in a section of its own.** The audit finds them by the header field, a
   person by that section: without it the ready-made code is found only by whoever already knows it
   is there.
-- **A cold part belongs to exactly one rule and is named after it.** Two rules over one cold part
-  leave no way to say which of them the pitfall belongs to; a cold part named otherwise is not found
-  by the rule at all.
+- **A cold part belongs to exactly one resource and is named after it.** Usually that is a rule, and
+  where there is no law above the subject — the skill itself. Two owners over one cold part leave no
+  way to say which of them the pitfall belongs to; named otherwise, it is not found at all.
 - **A cold part holds explanation, not requirement.** A statement absent from the rule promises what
   the session loading the rule will not see: whatever can be decided by the cold part must be
   decidable by the rule.
+- **A cold part names the resource its statements stand in.** Read on its own — and it is read
+  exactly on its own, on demand — it gives no way back to the text that holds the requirements.
 - **A rule with a cold part names it in its header.** The gate refusal calls the rule, and the rule
   itself speaks of the third file: nothing else points at it.
 - **A pattern and a cold part are described by one subdomain.** Both live next to a rule and do not
   exist without one; described apart, they would repeat the statements about that tie twice.
 - **A pattern of a platform ships in an edition per platform, on a par with its rule.** The rule and
   its ready-made code cannot diverge by host: the tree takes one edition of both.
-- **A name of a pattern is one across the whole tree.** It stands in the rule's own section, in the
-  audit and in the probes of the suites: a rename apart from them leaves the ready-made code
-  unreachable while every check stays green.
+- **A name of a pattern is not taken by two different patterns.** It stands in the rule's own
+  section, in the audit and in the probes of the suites: a name shared by two leaves the ready-made
+  code unreachable while every check stays green. The editions of one subject share a name lawfully
+  — the tree lays out exactly one of them.
 
 ## What is out of scope
 
