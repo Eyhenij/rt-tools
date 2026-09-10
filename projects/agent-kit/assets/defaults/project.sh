@@ -28,6 +28,12 @@ rt_runner() {
 # than naming none.
 RT_STANDS="${RT_STANDS:-}"
 
+# Who raises those stands. `owner` — the tree's own applications are up and any raise is refused;
+# `session` — nobody raises them here but the session, and only a raise over a taken port is
+# refused. The default is silent, and the guard reads silence as `owner`: a tree that sets nothing
+# keeps the behaviour it has today.
+RT_STANDS_RAISED_BY="${RT_STANDS_RAISED_BY:-}"
+
 # Where the tree's checks and the scenario set of its guards lie. A check the tree does not have is
 # not called by the push gate: the list is printed from what lies on disk.
 RT_CHECKS_DIR="${RT_CHECKS_DIR:-tools}"
