@@ -96,6 +96,93 @@ Then that item is not given back
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
 
+### SC-UK-61 — the filter goes down into the folders of the submenu
+
+Given a submenu with the folder "Сохранённое" and the item "Круговая диаграмма" inside it, and the query
+"круговая"
+When the filter goes
+Then the folder stays, and inside it only that item is left
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`,
+`projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
+### SC-UK-62 — a folder whose own label coincided is given back whole
+
+Given a submenu with the folder "Сохранённое" of three items and the query "сохранён"
+When the filter goes
+Then the folder stays with all three items: the person looked for the folder and waits to see what lies in
+it, not its own name over emptiness
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`,
+`projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
+### SC-UK-63 — a folder that survived the filter stands open
+
+Given a submenu with a folder and a query an item inside it answers to
+When the query is typed
+Then the folder stands open and the found item is on the screen without one more press; an emptied query
+gives the former openness back — the one that was there before the typing
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`,
+`projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
+### SC-UK-64 — the arrows walk the visible list of the submenu
+
+Given an open submenu with a folder inside it
+When the arrow down is pressed in the field of the search
+Then the highlight moves down the list the way it stands on the screen: it goes inside a folder only while
+that folder is open, and the arrow to the right opens the highlighted folder, the one to the left closes it —
+including a folder opened not by the keyboard
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`,
+`projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-keyboard.spec.ts`,
+`projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.keyboard.spec.ts`.
+
+### SC-UK-65 — Enter opens the highlighted item, Escape empties the query
+
+Given an open submenu and a highlighted item
+When Enter is pressed
+Then an item with an address of its own is opened by the very press of its row, and a folder is opened
+instead; Escape empties the query and takes off everything the keyboard has done
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-keyboard.spec.ts`,
+`projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.keyboard.spec.ts`.
+
+### SC-UK-66 — a letter reaches the field untouched, and the highlight outlives the typing
+
+Given an open submenu and a highlighted item
+When a letter is typed in the field of the search
+Then the key is not eaten and the default is not cancelled — otherwise the field would stop taking the
+typing — and the highlight stays where it was
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-keyboard.spec.ts`,
+`projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.keyboard.spec.ts`.
+
+### SC-UK-67 — the magnifier and the cross of the emptying stand at one inset from their edges
+
+Given an open submenu and a typed query, so that the cross of the emptying is on the screen
+When the insets are measured from the edges of the field
+Then the magnifier at the left edge and the cross at the right edge stand at the same distance from them
+
+Not covered: an inset is a computed value of the layout, and the styles of a component are not applied in a
+spec — there is nothing to measure there. Closed by a measurement on the showcase, the story
+`SubMenuSearchMatches`: the cross stands at 9.59 px from the right edge of the field — that is the geometry
+of the ready-made button rather than a step of the scale — and the magnifier is brought to the nearest step,
+ten; the divergence of 0.41 px is not visible to the eye. The former inset of the magnifier was twelve.
+
+### SC-UK-68 — the item under the highlight of the keyboard is marked on the screen
+
+Given an open submenu and a press of the arrow down
+When the highlight lands on an item
+Then the item is marked by a ring rather than by a fill: the fill is already taken by the active address, and
+two different meanings by one look would read as one
+
+Not covered: a spec does not apply the styles of a component, and a mark is what a person sees.
+Closed by the story `SubMenuKeyboardHighlight`
+(`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): it presses the arrow down and
+waits for the marked item before the frame. Written after a frame that showed the list without a single mark
+— the width of the ring was taken from a token this kit does not have.
+
 ### SC-UK-28 — there are no coincidences — the submenu says so by a line
 
 Given an open submenu and a query no item answers to

@@ -12,6 +12,7 @@ addition of rights, the check of access by a right, and what the admin panel is 
 - **The rights of a person are the rights of their role with their pointed edits applied over them.** — `libs/message-bus-common/src/lib/rights.ts:rightsOf`
 - **A right the role says nothing about counts as not given.** — `libs/message-bus-common/src/lib/rights.ts:hasRight`
 - **A person without a role has no rights at all.** — `libs/message-bus-common/src/lib/rights.ts:rightsOf`
+- **The rights are given by the same change that closed the operations.** — `prisma/migrations/20260910100000_grant_rights_to_existing_accounts/migration.sql:roleId`
 - **An operation declares its access by one mark, and a fourth kind of mark appears — by a right.** — `libs/message-bus-api/access/util/src/lib/operation-access.ts:RequiresRight`
 - **The rights are read on every call rather than taken from the issued sign-in.** — `libs/message-bus-api/accounts/data-access/src/lib/account.queries.ts:findAccountRights`
 - **A request without a sign-in is refused as unauthenticated, and a sign-in without a right as permission denied.** — `libs/message-bus-api/access/feature/src/lib/access.guard.ts:AccessGuard`
@@ -27,4 +28,3 @@ addition of rights, the check of access by a right, and what the admin panel is 
 - **The operations a section lives by are closed by the read right of that section.** — `libs/message-bus-api/postmortems/feature/src/lib/postmortems-read.controller.ts:PostmortemsReadController` — the same declaration stands on the reading of the proposals, of the summaries and of the invitations; the issuing and the revocation of an invitation are closed by the right of editing that section
 - **The set of rights is declared once and read by both sides.** — `libs/message-bus-common/src/lib/rights.ts:RIGHTS`
 - **A right taken away closes the section on the next move, not on the next sign-in.** — `libs/message-bus-admin/auth/shell/src/lib/section-access.ts:sectionRightGuard`
-- **The arrival of the rights model does not take the access away from those who already had it.** — `prisma/migrations/20260910090000_rights_backfill/migration.sql:owner` — scenario `SC-MB-323`

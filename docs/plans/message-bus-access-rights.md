@@ -59,6 +59,13 @@ of them may do a thing the owner sets from a screen rather than from a database 
 
 ## What was found along the way
 
+- **Two migrations of one backfill met at the merge of the main branch into the epic branch.** The
+  epic branch carried `20260910090000_rights_backfill`, the main branch
+  `20260910100000_grant_rights_to_existing_accounts`; the second creates a role for the cargo triage
+  besides the owner one. Applied one after the other, the first would give the triage account the
+  owner role, and the second would no longer see it: both look for an empty role. The branch's own
+  migration is removed, the tests move onto the one that is in the main branch — and gain what it
+  answers for on its own: the order of the two updates.
 - **#2018 — the rights migration took the access away from everybody.** Task 1 created the tables
   and the column and put not a single row: every account made before it keeps an empty role, that is
   no rights at all, and the panel shows no section. It is fixed by a follow-up migration that

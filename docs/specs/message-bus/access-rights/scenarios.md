@@ -136,11 +136,14 @@ Then all four sections are open to them: the suite checks the sections rather th
 
 ### SC-MB-323 — the rights model arriving keeps the access of those who already had it
 
-Given accounts created before the rights, each of which saw every section
-When the migration that brings the rights model is applied
+Given accounts created before the rights, each of which saw every section, and among them the
+service account of the cargo triage
+When the migration that grants the rights to the existing accounts is applied
 Then the role of the former access appears with every right of the closed set, and every account
-without a role points at it: the sign-in of such a person opens the sections again. An account that
-already has a role is not touched, and a second application of the migration adds no second role
+without a role points at it: the sign-in of such a person opens the sections again. The service
+account of the triage gets a role of its own — reading and marking the cargo, and nothing else. An
+account that already has a role is not touched, and a second application of the migration adds no
+second role
 
 Покрытие: частичное — the test reads the migration and checks what it states: the set of rights
 against the closed set, the update limited to accounts without a role, and the repeat application.
