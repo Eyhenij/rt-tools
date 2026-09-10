@@ -56,11 +56,17 @@
                 </div>
             }
         </mat-list-item>
-    } @else if (item?.submenu?.length) {
+    } @else if (item?.submenu) {
+        <!--
+            Папка рисуется и с пустым составом: отбор оставляет так ту, что совпала подписью, а
+            внутри не нашлось никого — человек искал её по имени и должен её найти. Шеврон у такой
+            папки убран: раскрывать нечего, и стрелка обещала бы содержимое.
+        -->
         <mat-expansion-panel
             #panel
             rtBlock="rtui-side-menu-expand-sub-item"
             [rtMod]="{ fixed: isSubMenuXScrollEnabled() }"
+            [hideToggle]="!item.submenu.length"
             [expanded]="menuRef.expandedMenuIds().includes(item.id)">
             <mat-expansion-panel-header
                 rtBlock="rtui-side-menu-expand-sub-item-header"
@@ -93,7 +99,7 @@
                 }
             </mat-expansion-panel-header>
 
-            @if (panel?.expanded) {
+            @if (panel?.expanded && item?.submenu?.length) {
                 <mat-nav-list>
                     @for (item of item?.submenu; track i; let i = $index) {
                         <ng-container *ngTemplateOutlet="listElemTpl; context: { $implicit: item }" />
