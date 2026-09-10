@@ -273,3 +273,10 @@ A client login as the machine account hijacks every neighbouring session on the 
 neighbour with rights to one repository reads its task as nonexistent, and from inside the tree
 the miss is invisible — the answer is an ordinary "not found". That is why the account is
 substituted per call and never made active, even when the active one is already right.
+
+- **Why a neighbouring runner rewrites a ready-made step's default.** On a machine with several
+  runners any path from the home directory is shared, so the version a neighbouring run installs
+  lands under the same path and is picked up by the next run of any project.
+- **What the second tier of the delivery guard cannot ask without a network.** Task, column,
+  assignee and review live at the hosting: with no network and no token that tier is skipped, and
+  the skip is silent.
