@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
-import { storySnapshotSkip } from '../../../../showcase';
+import { CALENDAR_MONTH, CALENDAR_WEEKDAYS } from './component/calendar.fixture';
 import { TestRtCalendarComponent } from './component/test-calendar.component';
 
 export default {
@@ -20,16 +20,13 @@ export default {
 type TStory = StoryObj<TestRtCalendarComponent>;
 
 export const Default: TStory = {
-    parameters: storySnapshotSkip(
-        'обёртка отдаёт пустой `months`, и в кадре только стрелки перелистывания; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
-    ),
     args: {
-        months: [],
-        weekdayLabels: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
-        canPrev: false,
-        canNext: false,
-        prevAriaLabel: '',
-        nextAriaLabel: '',
+        months: [CALENDAR_MONTH],
+        weekdayLabels: CALENDAR_WEEKDAYS,
+        canPrev: true,
+        canNext: true,
+        prevAriaLabel: 'Предыдущий месяц',
+        nextAriaLabel: 'Следующий месяц',
         sublabelsLoading: false,
     },
 };
