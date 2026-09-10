@@ -91,6 +91,11 @@ consumer, the address of the active item the kit does not count.
   very row a pointer would press — a press assembled in code would go past everything hanging on the real one.
   The highlight is kept by the number of the item, not by a reference to it and not by its place in the list:
   the visible list is rebuilt at every letter of the query.
+- **The magnifier and the cross of the emptying stand at one inset from their edges.** The inset of the cross
+  comes from the geometry of the ready-made button rather than from a step of the scale, so the magnifier is
+  brought to the nearest step by a measurement on the showcase, not by a number chosen by the eye.
+- **The item under the highlight of the keyboard is marked by a ring, not by a fill.** The fill is already
+  taken by the active address, and two different meanings by one look would read as one.
 - **The query lives while the submenu is open.** It is not a preference: a submenu closed and opened anew
   shows the list whole.
 - **The labels of the field, of the switch and of the empty filter are sewn in in English.** The kit has no

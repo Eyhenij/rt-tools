@@ -158,6 +158,31 @@ typing — and the highlight stays where it was
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-keyboard.spec.ts`,
 `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.keyboard.spec.ts`.
 
+### SC-UK-67 — the magnifier and the cross of the emptying stand at one inset from their edges
+
+Given an open submenu and a typed query, so that the cross of the emptying is on the screen
+When the insets are measured from the edges of the field
+Then the magnifier at the left edge and the cross at the right edge stand at the same distance from them
+
+Not covered: an inset is a computed value of the layout, and the styles of a component are not applied in a
+spec — there is nothing to measure there. Closed by a measurement on the showcase, the story
+`SubMenuSearchMatches`: the cross stands at 9.59 px from the right edge of the field — that is the geometry
+of the ready-made button rather than a step of the scale — and the magnifier is brought to the nearest step,
+ten; the divergence of 0.41 px is not visible to the eye. The former inset of the magnifier was twelve.
+
+### SC-UK-68 — the item under the highlight of the keyboard is marked on the screen
+
+Given an open submenu and a press of the arrow down
+When the highlight lands on an item
+Then the item is marked by a ring rather than by a fill: the fill is already taken by the active address, and
+two different meanings by one look would read as one
+
+Not covered: a spec does not apply the styles of a component, and a mark is what a person sees.
+Closed by the story `SubMenuKeyboardHighlight`
+(`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): it presses the arrow down and
+waits for the marked item before the frame. Written after a frame that showed the list without a single mark
+— the width of the ring was taken from a token this kit does not have.
+
 ### SC-UK-28 — there are no coincidences — the submenu says so by a line
 
 Given an open submenu and a query no item answers to

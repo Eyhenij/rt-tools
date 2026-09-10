@@ -44,10 +44,13 @@
 
         // Пункт под подсветкой клавиатуры. Отмечен рамкой, а не заливкой: заливка здесь уже занята
         // активным адресом, и два разных смысла одним видом читались бы как один.
+        // Толщина стоит числом: у этого кита набор токенов разводит только цвета рамок, шкалы
+        // толщин в нём нет вовсе — взятый оттуда токен приходит пустым, и рамка не рисуется вовсе.
+        // Так и вышло: первый кадр показал список без единой отметки.
         &--highlighted {
             border-radius: var(--rt-radius-xl);
-            outline: var(--rt-border-width-medium) solid var(--rt-border-focus);
-            outline-offset: calc(-1 * var(--rt-border-width-medium));
+            outline: 2px solid var(--rt-border-focus);
+            outline-offset: -2px;
         }
 
         .rtui-side-menu-sub-item-title {
@@ -121,8 +124,8 @@
             // ходьбу стрелками наравне с ним.
             &--highlighted {
                 border-radius: var(--rt-radius-xl);
-                outline: var(--rt-border-width-medium) solid var(--rt-border-focus);
-                outline-offset: calc(-1 * var(--rt-border-width-medium));
+                outline: 2px solid var(--rt-border-focus);
+                outline-offset: -2px;
             }
 
             &__icon {
