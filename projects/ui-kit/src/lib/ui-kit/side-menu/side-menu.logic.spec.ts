@@ -4,11 +4,13 @@ import {
     readSubMenuMode,
     readSubMenuWidth,
     splitSubMenuTitle,
+    stepSubMenuHighlight,
     subMenuIdsToExpand,
     SUB_MENU_MODE_KEY,
     SUB_MENU_WIDTH_KEY,
     SUB_MENU_WIDTH_MAX,
     SUB_MENU_WIDTH_MIN,
+    walkSubMenuItems,
     writeSubMenuMode,
     writeSubMenuWidth,
 } from './side-menu.logic';
@@ -313,5 +315,68 @@ describe('SC-UK-36 — отметка совпавшего в подписи', (
 
     it('пустая подпись отдаёт пустой список: рисовать нечего', () => {
         expect(splitSubMenuTitle('', 'ме')).toEqual([]);
+    });
+});
+
+describe('walkSubMenuItems', (): void => {
+    it('SC-UK-64 — закрытая папка стоит в списке одной строкой', (): void => {
+        expect(walkSubMenuItems(NESTED, []).map((item: ISideMenu.Item): string | number => item.id)).toEqual([
+            'dashboard',
+            'create',
+            'saved',
+        ]);
+    });
+
+    it('SC-UK-64 — раскрытая папка отдаёт свои пункты следом за собой', (): void => {
+        expect(walkSubMenuItems(NESTED, ['saved']).map((item: ISideMenu.Item): string | number => item.id)).toEqual([
+            'dashboard',
+            'create',
+            'saved',
+            'pie',
+            'bars',
+            'past',
+        ]);
+    });
+
+    it('SC-UK-64 — вложенная раскрытая папка спускается тем же правилом', (): void => {
+        expect(walkSubMenuItems(NESTED, ['saved', 'past']).map((item: ISideMenu.Item): string | number => item.id)).toEqual([
+            'dashboard',
+            'create',
+            'saved',
+            'pie',
+            'bars',
+            'past',
+            'y2024',
+        ]);
+    });
+});
+
+describe('stepSubMenuHighlight', (): void => {
+    const WALK: ISideMenu.Item[] = walkSubMenuItems(NESTED, ['saved']);
+
+    it('SC-UK-64 — подсветки нет: стрелка вниз берёт первый пункт, вверх последний', (): void => {
+        expect(stepSubMenuHighlight(WALK, null, 1)).toBe('dashboard');
+        expect(stepSubMenuHighlight(WALK, null, -1)).toBe('past');
+    });
+
+    it('SC-UK-64 — шаг идёт по видимому списку, внутрь раскрытой папки тоже', (): void => {
+        expect(stepSubMenuHighlight(WALK, 'saved', 1)).toBe('pie');
+        expect(stepSubMenuHighlight(WALK, 'pie', -1)).toBe('saved');
+    });
+
+    it('SC-UK-64 — у краёв ходьба останавливается и не заворачивается на другой конец', (): void => {
+        expect(stepSubMenuHighlight(WALK, 'dashboard', -1)).toBe('dashboard');
+        expect(stepSubMenuHighlight(WALK, 'past', 1)).toBe('past');
+    });
+
+    it('SC-UK-64 — в пустом списке подсвечивать нечего', (): void => {
+        // Утверждение об отсутствии идёт в паре с положительным: на непустом списке шаг работает.
+        expect(stepSubMenuHighlight(WALK, null, 1)).not.toBeNull();
+        expect(stepSubMenuHighlight([], null, 1)).toBeNull();
+    });
+
+    it('SC-UK-64 — номер, которого в видимом списке нет, читается как отсутствие подсветки', (): void => {
+        // Список пересобирается на каждую букву запроса, и прежний пункт из него уходит.
+        expect(stepSubMenuHighlight(WALK, 'нет такого пункта', 1)).toBe('dashboard');
     });
 });

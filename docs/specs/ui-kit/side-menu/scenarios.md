@@ -126,6 +126,38 @@ gives the former openness back — the one that was there before the typing
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`,
 `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
+### SC-UK-64 — the arrows walk the visible list of the submenu
+
+Given an open submenu with a folder inside it
+When the arrow down is pressed in the field of the search
+Then the highlight moves down the list the way it stands on the screen: it goes inside a folder only while
+that folder is open, and the arrow to the right opens the highlighted folder, the one to the left closes it —
+including a folder opened not by the keyboard
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`,
+`projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-keyboard.spec.ts`,
+`projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.keyboard.spec.ts`.
+
+### SC-UK-65 — Enter opens the highlighted item, Escape empties the query
+
+Given an open submenu and a highlighted item
+When Enter is pressed
+Then an item with an address of its own is opened by the very press of its row, and a folder is opened
+instead; Escape empties the query and takes off everything the keyboard has done
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-keyboard.spec.ts`,
+`projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.keyboard.spec.ts`.
+
+### SC-UK-66 — a letter reaches the field untouched, and the highlight outlives the typing
+
+Given an open submenu and a highlighted item
+When a letter is typed in the field of the search
+Then the key is not eaten and the default is not cancelled — otherwise the field would stop taking the
+typing — and the highlight stays where it was
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-keyboard.spec.ts`,
+`projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.keyboard.spec.ts`.
+
 ### SC-UK-28 — there are no coincidences — the submenu says so by a line
 
 Given an open submenu and a query no item answers to

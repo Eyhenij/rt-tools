@@ -29,6 +29,8 @@ export class BreakpointServiceStub {
     }
 }
 
+const SEARCH_FIELD: string = '[qa-dataid="side-menu-search"]';
+
 export const ITEMS: ISideMenu.Item[] = [
     {
         id: 'refs',
@@ -143,7 +145,7 @@ export function hoverFirstItem(fixture: ComponentFixture<HostComponent>): void {
 }
 
 export function typeInSearch(fixture: ComponentFixture<HostComponent>, query: string): void {
-    const field: HTMLInputElement = fixture.nativeElement.querySelector('[qa-dataid="side-menu-search"]') as HTMLInputElement;
+    const field: HTMLInputElement = fixture.nativeElement.querySelector(SEARCH_FIELD) as HTMLInputElement;
 
     expect(field).not.toBeNull();
 
@@ -162,7 +164,7 @@ export function leavePanel(fixture: ComponentFixture<HostComponent>): void {
 
 /** Нажатие в поле поиска — то самое, с которого человек начинает набор. */
 export function focusSearch(fixture: ComponentFixture<HostComponent>): void {
-    const field: HTMLInputElement = fixture.nativeElement.querySelector('[qa-dataid="side-menu-search"]') as HTMLInputElement;
+    const field: HTMLInputElement = fixture.nativeElement.querySelector(SEARCH_FIELD) as HTMLInputElement;
 
     expect(field).not.toBeNull();
 
@@ -206,4 +208,30 @@ export function expandedFolderTitles(fixture: ComponentFixture<HostComponent>): 
 
             return (title?.textContent ?? '').trim();
         });
+}
+
+/** Нажатие клавиши в поле поиска. Отдаёт само событие: съедена клавиша или нет, видно по нему. */
+export function pressKeyInSearch(fixture: ComponentFixture<HostComponent>, key: string): KeyboardEvent {
+    const field: HTMLInputElement = fixture.nativeElement.querySelector(SEARCH_FIELD) as HTMLInputElement;
+    const event: KeyboardEvent = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+
+    field.dispatchEvent(event);
+    fixture.detectChanges();
+
+    return event;
+}
+
+/** Подписи пунктов под подсветкой клавиатуры. */
+export function highlightedTitles(fixture: ComponentFixture<HostComponent>): string[] {
+    const marked: HTMLElement[] = Array.from(
+        fixture.nativeElement.querySelectorAll('.rtui-side-menu-sub-item--highlighted, .rtui-side-menu-expand-sub-item-header--highlighted')
+    );
+
+    return marked.map((node: HTMLElement): string => {
+        const title: HTMLElement | null = node.querySelector(
+            '.rtui-side-menu-sub-item-title__text, .rtui-side-menu-expand-sub-item-header__title'
+        );
+
+        return (title?.textContent ?? '').trim();
+    });
 }

@@ -212,3 +212,53 @@ export function splitSubMenuTitle(name: string, query: string): ISubMenuTitlePar
 
     return parts;
 }
+
+/**
+ * Пункты подменю в том порядке, в каком они стоят на экране.
+ *
+ * Внутрь папки список спускается, только если та раскрыта: закрытая папка — одна строка, и ходьба
+ * стрелками обязана идти по видимому, а не по всему набору. Иначе подсветка пропадает внутри
+ * свёрнутого раздела, и человек нажимает стрелку в пустоту.
+ */
+export function walkSubMenuItems(items: ReadonlyArray<ISideMenu.Item>, expandedIds: ReadonlyArray<string | number>): ISideMenu.Item[] {
+    return items.reduce((walk: ISideMenu.Item[], item: ISideMenu.Item): ISideMenu.Item[] => {
+        walk.push(item);
+
+        if (item.submenu?.length && expandedIds.includes(item.id)) {
+            walk.push(...walkSubMenuItems(item.submenu, expandedIds));
+        }
+
+        return walk;
+    }, []);
+}
+
+/**
+ * Куда уходит подсветка на шаг стрелкой.
+ *
+ * Считается по номеру пункта, а не по его месту в массиве: видимый список пересобирается на каждую
+ * букву запроса, и место переживает такую пересборку иначе, чем номер.
+ *
+ * Подсветки ещё нет — стрелка вниз берёт первый пункт, стрелка вверх последний: человек нажал
+ * стрелку, чтобы попасть в список, и обе стороны у него равноправны. У краёв ходьба
+ * останавливается и не заворачивается на другой конец: заворот уводит взгляд через всю панель
+ * тогда, когда человек всего лишь дошёл до низа.
+ */
+export function stepSubMenuHighlight(
+    walk: ReadonlyArray<ISideMenu.Item>,
+    highlightedId: string | number | null,
+    step: number
+): string | number | null {
+    if (walk.length === 0) {
+        return null;
+    }
+
+    const at: number = walk.findIndex((item: ISideMenu.Item): boolean => item.id === highlightedId);
+
+    if (at === -1) {
+        return step > 0 ? walk[0].id : walk[walk.length - 1].id;
+    }
+
+    const next: number = Math.min(walk.length - 1, Math.max(0, at + step));
+
+    return walk[next].id;
+}

@@ -15,6 +15,7 @@ import { InjectionToken, Signal } from '@angular/core';
 export interface IRtuiSideMenuHost {
     readonly activeMenuIds: Signal<Array<string | number>>;
     readonly expandedMenuIds: Signal<Array<string | number>>;
+    readonly highlightedMenuId: Signal<string | number | null>;
     readonly subMenuQuery: Signal<string>;
 }
 

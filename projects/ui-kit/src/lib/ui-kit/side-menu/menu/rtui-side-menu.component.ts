@@ -31,8 +31,7 @@ import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '
 import { TNullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
-import { clampSubMenuWidth, SUB_MENU_WIDTH_MIN } from '../side-menu.logic';
-import { filterSubMenuItems, subMenuIdsToExpand } from '../side-menu.logic';
+import { clampSubMenuWidth, filterSubMenuItems, subMenuIdsToExpand, SUB_MENU_WIDTH_MIN } from '../side-menu.logic';
 import { ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 import {
     RtuiScrollableContainerComponent,
@@ -43,6 +42,7 @@ import {
 import { RtuiButtonComponent } from '../../buttons/unified-button/rtui-button.component';
 import { RtuiClearButtonComponent } from '../../table/components/clear-search-button/rtui-clear-button.component';
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
+import { pressSubMenuRow, SubMenuKeyboard } from './sub-menu-keyboard';
 
 @Directive({
     selector: '[rtuiSideMenuHeader]',
@@ -117,6 +117,16 @@ export class RtuiSideMenuComponent {
     readonly #hoverOpened: WritableSignal<boolean> = signal(false);
 
     /**
+     * Ходьба по подменю с клавиатуры. Открывает подсвеченный пункт настоящим нажатием его строки:
+     * так переход идёт ровно той же дорогой, что и у мыши, — вместе с закрытием подменю и уходом
+     * просьбы наружу.
+     */
+    readonly #keyboard: SubMenuKeyboard = new SubMenuKeyboard({
+        open: (item: ISideMenu.Item): void => pressSubMenuRow(this.subMenuPanelRef()?.nativeElement ?? null, item),
+        clearQuery: (): void => this.onSubMenuSearch(''),
+    });
+
+    /**
      * Человек работает с полем поиска, и подменю держится открытым, пока он не уйдёт нажатием
      * наружу.
      *
@@ -155,11 +165,9 @@ export class RtuiSideMenuComponent {
     });
 
     /**
-     * Ширина подменю в оформлении. Своего выбора нет — переменная не ставится вовсе, и ширину
-     * берёт набор токенов: своё число здесь подменило бы его молча.
-     */
-    /**
-     * Натянутая ширина панели. Кладётся своим свойством, а не тем, каким ширину задаёт
+     * Натянутая ширина панели. Своего выбора нет — переменная не ставится вовсе, и ширину берёт
+     * набор токенов: своё число здесь подменило бы его молча.
+     * Кладётся своим свойством, а не тем, каким ширину задаёт
      * потребитель: панель берёт наибольшее из двух, и заданная оформлением ширина остаётся нижним
      * пределом сама по себе. Числом в ките этот предел назвать нечем — ширину знает потребитель.
      */
@@ -212,13 +220,14 @@ export class RtuiSideMenuComponent {
      */
     public readonly expandedMenuIds: Signal<Array<string | number>> = computed((): Array<string | number> => {
         const active: Array<string | number> = this.activeMenuIds();
+        const found: Array<string | number> = this.subMenuQuery().trim() === '' ? [] : subMenuIdsToExpand(this.visibleSubMenuItems());
+        const closed: Array<string | number> = this.#keyboard.closedIds();
 
-        if (this.subMenuQuery().trim() === '') {
-            return active;
-        }
-
-        return [...active, ...subMenuIdsToExpand(this.visibleSubMenuItems())];
+        return [...active, ...found, ...this.#keyboard.openedIds()].filter((id: string | number): boolean => !closed.includes(id));
     });
+
+    /** Пункт под подсветкой клавиатуры. Публично: отмечает его подпункт, своего состояния у него нет. */
+    public readonly highlightedMenuId: Signal<string | number | null> = this.#keyboard.highlightedId;
     public readonly headerTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuHeaderDirective, {
         read: TemplateRef,
     });
@@ -352,6 +361,7 @@ export class RtuiSideMenuComponent {
         this.subMenuQuery.set('');
         this.#hoverOpened.set(false);
         this.#searchHeld.set(false);
+        this.#keyboard.reset();
     }
 
     /**
@@ -399,6 +409,22 @@ export class RtuiSideMenuComponent {
     public onSubMenuSearch(query: string): void {
         this.subMenuQuery.set(query);
         this.onSearchHold();
+        // Видимый список пересобрался: подсветка и раскрытое стрелками к нему больше не относятся.
+        this.#keyboard.reset();
+    }
+
+    /**
+     * Нажата клавиша в поле поиска. Поле фокуса не теряет и раздаёт клавиши списку: иначе набор
+     * запроса прерывался бы на первой же стрелке. Умолчание отменяется только у съеденной клавиши —
+     * буквы уходят полю нетронутыми.
+     */
+    public onSearchKeydown(event: KeyboardEvent): void {
+        if (!this.#keyboard.press(event.key, this.visibleSubMenuItems(), this.expandedMenuIds())) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
     }
 
     public closeMobileMenu(): void {

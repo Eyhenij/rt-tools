@@ -81,6 +81,16 @@ consumer, the address of the active item the kit does not count.
   activity: active stays the address the person stands on, and one value for both would open only the folder
   of the current address — that is, hide exactly what was looked for. An empty query gives the former
   openness back.
+- **The field of the search owns the focus and hands the keys to the list.** The focus never leaves the
+  field, so the typing keeps working between presses of the arrows; the focus set on the items of the list
+  would break the typing of the query at the very first arrow. Only the keys the walk goes by are eaten — the
+  rest reach the field untouched and cancel no default.
+- **The arrows walk the visible list, Enter opens the highlighted item, Escape empties the query.** The
+  highlight goes down the list the way it stands on the screen and enters a folder only while that folder is
+  open; the arrow to the right opens the highlighted folder, the one to the left closes it. Enter presses the
+  very row a pointer would press — a press assembled in code would go past everything hanging on the real one.
+  The highlight is kept by the number of the item, not by a reference to it and not by its place in the list:
+  the visible list is rebuilt at every letter of the query.
 - **The query lives while the submenu is open.** It is not a preference: a submenu closed and opened anew
   shows the list whole.
 - **The labels of the field, of the switch and of the empty filter are sewn in in English.** The kit has no
