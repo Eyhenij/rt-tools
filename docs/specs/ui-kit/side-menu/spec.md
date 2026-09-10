@@ -70,6 +70,17 @@ consumer, the address of the active item the kit does not count.
 - **The filter goes by a substring of the label without a count of the case, and an empty query shows
   everything.** There are no coincidences — the submenu says so by a line: an empty panel cannot be told
   from a breakage.
+- **The filter goes down into the folders of the submenu, and a folder stays by two different occasions.** A
+  consumer puts what a person looks for by name inside a folder, so a filter over the top level alone could
+  not match it by construction. The label of the folder itself coincided — the folder is given back whole:
+  the person looked for the folder and waits to see what lies in it. Only somebody inside coincided — the
+  folder is given back with the filtered items: otherwise one coincidence drags the whole rest of its makeup
+  onto the screen.
+- **A folder that survived the filter stands open.** The found item lies behind a closed header otherwise,
+  and the person needs one more press to see what they have already found. Openness is not the same as
+  activity: active stays the address the person stands on, and one value for both would open only the folder
+  of the current address — that is, hide exactly what was looked for. An empty query gives the former
+  openness back.
 - **The query lives while the submenu is open.** It is not a preference: a submenu closed and opened anew
   shows the list whole.
 - **The labels of the field, of the switch and of the empty filter are sewn in in English.** The kit has no

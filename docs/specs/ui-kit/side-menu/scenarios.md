@@ -96,6 +96,36 @@ Then that item is not given back
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
 
+### SC-UK-61 — the filter goes down into the folders of the submenu
+
+Given a submenu with the folder "Сохранённое" and the item "Круговая диаграмма" inside it, and the query
+"круговая"
+When the filter goes
+Then the folder stays, and inside it only that item is left
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`,
+`projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
+### SC-UK-62 — a folder whose own label coincided is given back whole
+
+Given a submenu with the folder "Сохранённое" of three items and the query "сохранён"
+When the filter goes
+Then the folder stays with all three items: the person looked for the folder and waits to see what lies in
+it, not its own name over emptiness
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`,
+`projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
+### SC-UK-63 — a folder that survived the filter stands open
+
+Given a submenu with a folder and a query an item inside it answers to
+When the query is typed
+Then the folder stands open and the found item is on the screen without one more press; an emptied query
+gives the former openness back — the one that was there before the typing
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`,
+`projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
 ### SC-UK-28 — there are no coincidences — the submenu says so by a line
 
 Given an open submenu and a query no item answers to
