@@ -1,4 +1,4 @@
-// rt-kit v0.27.0 · checks/spec-common.mjs · 40b0ab84d43e · правится надстройкой, не здесь
+// rt-kit v0.27.0 · checks/spec-common.mjs · a5b8b820c873 · правится надстройкой, не здесь
 /**
  * What is shared by every subject of the spec audit: what counts as a domain, how the tree is
  * read and how a document is cut into sections and bullets.
@@ -54,6 +54,22 @@ const SCENARIO_HEADING = /^###\s+(SC-([A-Z]{2,6})-(\d{1,4}))\s+—\s+(.+?)\s*$/;
  * untranslated domains out of the audit silently: the heading is not found, the statements and the
  * scenarios are not read, and the audit stays green about a domain it no longer sees.
  */
+/**
+ * A file that only serves the tests. A test is not a call from the application: a symbol declared
+ * and met nowhere but in the test next to it is an intention, and by such a meeting a live symbol
+ * cannot be told from a forgotten one.
+ *
+ * Besides the tests themselves this counts the harness the tree named by the key `harnessDirs` —
+ * a directory or a single file: a snapshot harness, a fixture builder. Their symbols are called
+ * by tests by their very purpose. The list is named narrowly: a showcase directory taken whole
+ * carries the stories with it, and a story calling a component is a real call.
+ */
+const HARNESS_DIRS = CONFIG.harnessDirs ?? [];
+
+function isTestFile(path) {
+    return /\.(?:spec|test|e2e)\.[jt]s$|(?:^|\/)tests?\/|-e2e\//.test(path) || HARNESS_DIRS.some((named) => path === named || path.startsWith(`${named}/`));
+}
+
 /** The mark of a knowingly uncovered scenario; the reason is mandatory */
 const UNCOVERED = /^(?:Not covered|Не покрыто):\s*\S/;
 /** The test exists, but checks not everything promised or goes another way */
@@ -249,6 +265,7 @@ function bulletsOf(lines) {
 
 export {
     SPECS_DIR,
+    isTestFile,
     CONSTITUTION_DIR,
     NOT_DOMAINS,
     TEST_ROOTS,

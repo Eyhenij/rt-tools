@@ -34,7 +34,7 @@ whole.
 - **The package remembers the names that left it.** — `projects/agent-kit/src/lib/sync.ts:retiredOf`
 - **What the cascade removed stays on the disk and is named apart from the abandoned.** — `projects/agent-kit/src/lib/sync.ts:leftOnDisk`
 - **A short name from the preamble is resolved by the last link of the name inside its own kind.** — `projects/agent-kit/src/lib/cascade.ts:shortNameOf`
-- **Two resources of one kind with the same last link of the name are a refusal of the set.** — `projects/agent-kit/src/lib/integrity.ts:ambiguousNames`
+- **Two resources of one kind with the same last link of the name are a refusal of the set.** — **Не исполняется** — функция `ambiguousNames` написана и покрыта тестом, а ни установка файлов, ни `doctor` её не зовут: набор с двусмысленным именем проходит молча. Задача #2041.
 - **A parent with several kinds is rejected only when not one of its kinds is picked.** — `projects/agent-kit/src/lib/cascade.ts:cascadeCuts`
 - **A removed grandchild is named by both: by the nearest parent and by the rejected root.** — `projects/agent-kit/src/lib/cascade.ts:ICascadeCut`
 - **A pick that takes nothing after the cascade is named aloud.** — `projects/agent-kit/src/lib/cascade.ts:namedButCut`

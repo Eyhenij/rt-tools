@@ -53,6 +53,22 @@ const SCENARIO_HEADING = /^###\s+(SC-([A-Z]{2,6})-(\d{1,4}))\s+—\s+(.+?)\s*$/;
  * untranslated domains out of the audit silently: the heading is not found, the statements and the
  * scenarios are not read, and the audit stays green about a domain it no longer sees.
  */
+/**
+ * A file that only serves the tests. A test is not a call from the application: a symbol declared
+ * and met nowhere but in the test next to it is an intention, and by such a meeting a live symbol
+ * cannot be told from a forgotten one.
+ *
+ * Besides the tests themselves this counts the harness the tree named by the key `harnessDirs` —
+ * a directory or a single file: a snapshot harness, a fixture builder. Their symbols are called
+ * by tests by their very purpose. The list is named narrowly: a showcase directory taken whole
+ * carries the stories with it, and a story calling a component is a real call.
+ */
+const HARNESS_DIRS = CONFIG.harnessDirs ?? [];
+
+function isTestFile(path) {
+    return /\.(?:spec|test|e2e)\.[jt]s$|(?:^|\/)tests?\/|-e2e\//.test(path) || HARNESS_DIRS.some((named) => path === named || path.startsWith(`${named}/`));
+}
+
 /** The mark of a knowingly uncovered scenario; the reason is mandatory */
 const UNCOVERED = /^(?:Not covered|Не покрыто):\s*\S/;
 /** The test exists, but checks not everything promised or goes another way */
@@ -248,6 +264,7 @@ function bulletsOf(lines) {
 
 export {
     SPECS_DIR,
+    isTestFile,
     CONSTITUTION_DIR,
     NOT_DOMAINS,
     TEST_ROOTS,
