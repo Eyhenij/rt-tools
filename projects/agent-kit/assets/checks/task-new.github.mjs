@@ -294,6 +294,18 @@ try {
         `mutation { updateProjectV2ItemFieldValue(input: {projectId: "${PROJECT_ID}", itemId: "${itemId}", fieldId: "${STATUS_FIELD_ID}", value: {singleSelectOptionId: "${BACKLOG_OPTION_ID}"}}) { projectV2Item { id } } }`,
         { token }
     );
+
+    // The task of an epic becomes a sub-issue of the epic card. The line in the body says the same
+    // thing, but only to whoever opens the task: the board shows neither the makeup of an epic nor
+    // how much of it is done, and the count has to be assembled by hand from the list of open
+    // tasks. A sub-issue is the hosting's own link — the epic card gets the list and the progress,
+    // the task gets the line about its parent, and the board card gets the "done of total" bar.
+    //
+    // The link is asked by the numeric id of the task, not by its number: the endpoint takes the id.
+    if (args.epicOf !== null) {
+        const subId = ghJson(['api', `repos/${OWNER}/${REPO}/issues/${number}`, '--jq', '{id:.id}'], { token }).id;
+        gh(['api', '-X', 'POST', `repos/${OWNER}/${REPO}/issues/${args.epicOf}/sub_issues`, '-F', `sub_issue_id=${subId}`], { token });
+    }
 } catch (error) {
     const reason = error instanceof OfflineError ? `no connection to GitHub: ${error.message}` : String(error.message ?? error);
     if (number === null) {

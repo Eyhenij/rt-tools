@@ -6,7 +6,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { declaredEpicOf } from './board-epic-link.mjs';
-import { numberFromTitle, TASK_KEY } from './board.mjs';
+import { ghJson, numberFromTitle, OfflineError, OWNER, REPO, TASK_KEY } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 /**
@@ -198,6 +198,65 @@ function checkTasksOutsideEpics(open, epicNumbers, report) {
         report(
             `#${issue.number}: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»`
         );
+    }
+}
+
+/**
+ * The tasks of an epic linked to its card as sub-issues.
+ *
+ * The plan of the epic holds the makeup, and the body of a task names the epic — but both are
+ * text, and the board reads neither. On the board a task of an epic looks exactly like a task
+ * outside one: the epic card shows no list of its tasks, no count of the done ones, and whoever
+ * looks at the board assembles both by hand from the list of open cards.
+ *
+ * A sub-issue is the hosting's own link between two cards, and it fills all three at once: the
+ * epic card gets the list, the task card gets the line about its parent, and the board card gets
+ * the "done of total" bar.
+ *
+ * The list of the epic's tasks is taken from its plan, as everywhere in this audit — the plan is
+ * the makeup. Closed tasks are judged too, unlike the rest of the audit: the bar counts them, and
+ * an epic whose closed tasks are not linked shows a share lower than the true one.
+ *
+ * Arguments: the open cards, the reporting function, the call options of the hosting client.
+ */
+export function checkEpicSubIssues(open, report, options) {
+    if (!EPIC_LABEL || !OWNER || !REPO) {
+        return;
+    }
+
+    const epics = open.filter((issue) => (issue.labels ?? []).some((label) => label.name === EPIC_LABEL));
+    for (const epic of epics) {
+        const found = planPathOf(epic.body);
+        if (found.path === null) {
+            // The unread plan has already been reported by a line of its own in the link check.
+            continue;
+        }
+
+        const rows = planRows(readFileSync(join(ROOT, found.path), 'utf8'));
+        const named = new Set([...rows.matchAll(new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`, 'g'))].map((match) => Number(match[1])));
+        named.delete(epic.number);
+        if (named.size === 0) {
+            continue;
+        }
+
+        let linked;
+        try {
+            linked = new Set(ghJson(['api', `repos/${OWNER}/${REPO}/issues/${epic.number}/sub_issues`, '--jq', '[.[].number]'], options));
+        } catch (error) {
+            if (error instanceof OfflineError) {
+                throw error;
+            }
+            // The hosting has no such link at all, or the call is refused: this is not a
+            // discrepancy of the tree, and a line about it would repeat every run.
+            continue;
+        }
+
+        const missing = [...named].filter((number) => !linked.has(number)).sort((left, right) => left - right);
+        if (missing.length > 0) {
+            report(
+                `#${epic.number}: the plan names tasks that are not sub-issues of the epic card — ${missing.map((number) => `#${number}`).join(', ')}. On the board the epic then shows neither its makeup nor how much of it is done`
+            );
+        }
     }
 }
 

@@ -435,6 +435,26 @@ export STUB_PULL_BEHIND=""
 report "SC-AK-752 — пустой ответ судится как ноль" "$(board_says 'lags «main»')" 0
 export STUB_PULL_BEHIND=0
 
+# --- SC-AK-1062 — задачи эпика привязаны к его карточке подзадачами ----------------------------
+# Замысел держит состав, а доска его не читает: на доске задача эпика выглядит как задача вне
+# эпика. Подзадача — родная связь хостинга, и она даёт карточке эпика перечень, а карточке
+# доски — полосу «сделано из всего».
+board_config "$EPIC_CONFIG"
+mkdir -p "$BOARD_TREE/docs/plans"
+printf '%s\n' '# Замысел эпика' '' '| № | Задача |' '| - | ------ |' '| 1 | RT-702 |' \
+    > "$BOARD_TREE/docs/plans/epic.md"
+export STUB_ISSUES="$(epic_issues 'Задача эпика #700, замысел — docs/plans/epic.md')"
+export STUB_PULLS="$saved_pulls_epic"
+
+export STUB_SUB_ISSUES='[]'
+report "SC-AK-1062 — непривязанная задача эпика названа" \
+    "$(board_says '#700: the plan names tasks that are not sub-issues of the epic card — #702')" 1
+report "SC-AK-1062 — расхождением это считается" "$(board_code)" 1
+
+export STUB_SUB_ISSUES='[702]'
+report "SC-AK-1062 — привязанная задача молчит" "$(board_says 'not sub-issues of the epic card')" 0
+export STUB_SUB_ISSUES='[]'
+
 rm -rf "$BOARD_TREE"
 
 suite_result "сверка очереди работ"
