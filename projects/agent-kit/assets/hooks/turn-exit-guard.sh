@@ -162,79 +162,12 @@ next_step=""
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/turn-exit-patterns.sh" 2>/dev/null || exit 0
 [ -n "${work_re:-}" ] || exit 0
 
-verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re" --arg read "$read_re" --arg part "$part_re" --arg wait "$wait_re" --arg handover "$handover_re" --arg started "$started_re" --arg promise "$promise_re" --arg standing "$standing_work_re" '
-    def is_input:
-        .type == "user"
-        and ((.isCompactSummary // false) | not)
-        and (((.message.content // []) | if type == "array"
-                then ([.[] | select(.type == "tool_result")] | length)
-                else 0 end) == 0);
-
-    (map(is_input) | rindex(true)) as $i
-    | (if $i == null then [] else .[$i:] end) as $turn
-    | [$turn[] | select(.type == "assistant") | (.message.content // [])[] | select(.type == "tool_use")] as $uses
-    # An edit of a file is work by definition, whatever tool it goes through.
-    | ($uses | map(.name // "") | any(test("^(Edit|Write|MultiEdit|NotebookEdit)$"))) as $edited
-    | ($uses | map(.name // "") | any(test("AskUserQuestion"))) as $asked
-    | ($uses | map((.input.command // "")) | join("\n")) as $ran
-    # Work is a part of the command that matched the work pattern and did not match the exploration
-    # pattern: switching a branch and reading history in the same turn do not become work.
-    | ([$ran | splits($part)] | map(test($work) and (test($read) | not)) | any) as $ran_work
-    # The last action of the turn. Waiting for a step by anyone else is never the end of a turn,
-    # however much work there was before: the work stays exactly where it stood.
-    | ([$uses[] | select((.name // "") == "Bash") | ((.input.command // "") + (if (.input.run_in_background // false) then " &" else "" end))] | last // "") as $last
-    | ([$uses[] | (.name // "")] | last // "") as $last_name
-    | (($last_name == "Bash") and ($last | test($wait))) as $waited
-    # Handing the work over: the tail of the turn after the PR was opened. Everything before it was
-    # done on the task handed in and says nothing about the next one.
-    | ([$uses[] | select((.name // "") == "Bash") | (.input.command // "")]) as $cmds
-    | (($cmds | map(test($handover)) | index(true))) as $handover_at
-    | ($handover_at != null) as $handed_over
-    | (if $handover_at == null then [] else $cmds[$handover_at:] end) as $tail
-    | (($tail | map(test($started)) | any)
-        or ($uses | map(.name // "") | any(test("^(Edit|Write|MultiEdit|NotebookEdit)$")))) as $started_next
-    # THE LAST ACTION OF THE TURN is the shared sign, and the particular tiers below only derive an
-    # understandable refusal from it. Nine incident analyses in a day describe nine different stops,
-    # and in all nine the last action of the turn was a text to the owner: a report, a summary, an
-    # announcement of intent. A tier for every kind of stop is an endless race: there are as many
-    # kinds as there are reasons to start talking. Hence one sign — the LAST action must be work.
-    | ([$uses[] | (.name // "")] | last // "") as $last_tool
-    | (($last_tool | test("^(Edit|Write|MultiEdit|NotebookEdit)$"))
-        or ([$last | splits($part)] | map(test($work) and (test($read) | not)) | any)) as $ended_working
-    # A guard refusal and a session handover — both end the turn by the rule.
-    | ([$turn[] | select(.type == "user") | .message.content // [] | select(type == "array") | .[]
-          | select(.type == "tool_result") | .content
-          | if type == "string" then .
-            elif type == "array" then (map(if type == "object" then (.text // "") else tostring end) | join("\n"))
-            else tostring end] | join("\n")) as $out
-    | (($out | test("BLOCKED by|Refused by the rules gate|Отбито гейтом")) or ($ran | test("BLOCKED by"))) as $denied
-    | ($ran | test("handoff")) as $handed
-    # The word of the owner about stopping: the reply itself is judged, not its retelling.
-    | ([$turn[] | select(.type == "user") | .message.content
-          | if type == "string" then . elif type == "array"
-            then (map(if type == "object" then (.text // "") else "" end) | join("\n")) else "" end] | join("\n")) as $said
-    | ([.[] | select(.type == "user") | .message.content
-          | if type == "string" then . elif type == "array"
-            then (map(if type == "object" then (.text // "") else "" end) | join("\n")) else "" end] | join("\n")) as $session_said
-    | ($session_said | test($standing)) as $standing_work
-    | (($said | test("останов|стоп|хватит|подожди|не надо|прерв|отложи")) and ($said | test($standing) | not)) as $told_stop
-    # A question refused by the conversation guard, and a question appended as prose at the end of
-    # the reply. The conversation guard judges the call of the question tool and does not see prose
-    # at all: a refused question came back in the same wording one turn later and passed freely.
-    | ($out | test("BLOCKED by grill-gate")) as $ask_denied
-    | ([$turn[] | select(.type == "assistant") | (.message.content // [])[]
-          | select(.type == "text") | (.text // "")] | last // "") as $last_say
-    | (($last_say | test("\\?[[:space:]]*$")) and $ask_denied) as $asked_in_prose
-    # Waiting for the word of the owner, announced by the executor. That word is read from
-    # the owner: without his word in the turn and without a question to him through the tool, the
-    # phrase "waiting for your word" is a stop announced by the one it suits. The set of patterns is
-    # named and closed.
-    | (($last_say | test("[Жж]ду (твоего|вашего|его|её) (слова|указани|решени|ответа|команды|отмашки)|[Жж]ду слова владельца|[Жж]ду, что скаж|[Оо]стаюсь ждать|[Бб]уду ждать (твоего|вашего)"))
-        and (($asked or $told_stop or $handed) | not)) as $awaits_word
-    | ($last_say | test($promise)) as $promised
-    | (($last_name == "Bash") and ($last | test($started)) and ($handed_over | not)) as $only_took
-    | { promised: $promised, only_took: $only_took, standing_work: $standing_work, worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, asked_in_prose: $asked_in_prose, awaits_word: $awaits_word, ran: $ran }
-' 2>/dev/null)"
+# The parsing of the turn record lies in a neighbouring file: the guard crossed the file length
+# limit, and the parsing reads apart from the tiers that apply its answer. Without the file the
+# guard stays silent — fail-open, as on any breakage of its own.
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/turn-exit-verdict.sh" 2>/dev/null || exit 0
+command -v rt_te_verdict >/dev/null 2>&1 || exit 0
+rt_te_verdict
 
 [ -z "$verdict" ] && exit 0
 
