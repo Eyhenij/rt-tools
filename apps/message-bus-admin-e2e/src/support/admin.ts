@@ -118,8 +118,14 @@ export function rowsOf(page: Page, section: TSectionName): Locator {
     return qa(page, SECTION[section].row);
 }
 
-/** Пара входа: имя записи и её пароль. Ими стенд знает и себя, и засеянных людей. */
-export interface ISignInPair {
+/**
+ * Пара входа: имя записи и её пароль.
+ *
+ * Названа не так, как то же самое зовётся в домене входа админки, и намеренно: набор в либы
+ * приложения не смотрит — он говорит с ним по сети, как человек. Одно имя на два объявления
+ * прочиталось бы общим типом, которого нет, и проверка повторов отбивает его прямо на пуше.
+ */
+export interface IStandSignInPair {
     readonly name: string;
     readonly password: string;
 }
@@ -133,7 +139,7 @@ export interface ISignInPair {
  * Пара приезжает доводом, а умолчание — запись самого набора: у неё права на все разделы, и ею
  * идёт весь набор, кроме проверок того, что видит человек без права.
  */
-export async function signIn(page: Page, account: ISignInPair = ACCOUNT): Promise<void> {
+export async function signIn(page: Page, account: IStandSignInPair = ACCOUNT): Promise<void> {
     await qa(page, 'sign-in-name').locator('input').fill(account.name);
     await qa(page, 'sign-in-password').locator('input').fill(account.password);
     await qa(page, 'sign-in-submit').click();
