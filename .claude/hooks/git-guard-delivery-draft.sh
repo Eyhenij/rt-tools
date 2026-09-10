@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/git-guard-delivery-draft.sh · 84a48f2eaa4e · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/git-guard-delivery-draft.sh · b3a995b99000 · правится надстройкой, не здесь
 # Leaving draft, for the delivery guard: does the PR have a review, does it conflict, and was it
 # opened by the right account.
+#
+# NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The delivery guard
+# sources it — one tier of its verdict, moved out when the guard reached its length limit.
 #
 # There is deliberately no `# rt-hook:` line here: the event and the call pattern are declared by
 # the guard itself, while a helper next to it registers as no hook and decides nothing on its own.
