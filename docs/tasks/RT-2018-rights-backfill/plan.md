@@ -1,47 +1,57 @@
 # Plan
 
 **Task:** RT-2018 · **Branch:** RT-2018-rights-backfill
-**Draft:** `<path to the product agreement>`
-**Behaviour:** changes
-
-A tree that writes the agreement straight into the domain spec names it instead of the draft:
-`**Spec:** `<path to the spec>``.
-
-Work that does not touch application code needs no agreement — then instead of the draft line
-stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is not accepted.
-
-After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
-along the way.
+**Spec:** `docs/specs/message-bus/access-rights/spec.md`
+**Behaviour:** changes — записи, заведённые до правки прав, снова видят разделы
 
 ## Task footprint
 
-<What the work touches. Filled in by exploration before the grill and confirmed by the owner. By
-this same table, at closing, one sees what of the specs, rules and patterns has gone stale: what
-is named here is read twice — before the work and after it.>
-
-| What  | Where                         |
-| ----- | ----------------------------- |
-| Specs | `docs/specs/<domain>/`        |
-| Laws  | `docs/constitution/<name>.md` |
-| Rules | `.claude/skills/<name>/`      |
-| Code  | `projects/<package>/`         |
+| Что      | Где                                         |
+| -------- | ------------------------------------------- |
+| Спека    | `docs/specs/message-bus/access-rights/`     |
+| Миграция | `prisma/migrations/`                        |
+| Права    | `libs/message-bus-common/src/lib/rights.ts` |
+| Засев    | `apps/message-bus-admin-e2e/stand/`         |
 
 ## What counts as done
 
-- <a statement that can be checked>
+- В базе есть роль владельца со всеми правами закрытого набора.
+- Записи без роли получили её; запись с уже назначенной ролью не тронута.
+- Спека говорит, что появление модели доступа не отбирает доступ у тех, у кого он был.
+- Владелец входит на проде и видит разделы — подтверждается запросом к базе прода.
 
 ## Stages
 
-### 1. <name>
+### 1. Правило и сценарий в спеке
 
-- **What is done:** <in one phrase>
-- **Readiness sign:** <what must become true>
-- **Verified by:** `<command>` — <what in its output means "it matched">
+- **Steps:**
+    1. правило о переносе прежнего доступа в разделе о роли
+    2. сценарий на перенос, привязка в спутнике
+- **What is done:** обещание записано словом, а не только кодом миграции.
+- **Readiness sign:** проверка спек зелёная, сценарий связан с пробой.
+- **Verified by:** `node tools/check-specs.mjs` — без расхождений по этой спеке.
 
-The command is written in backticks: the turn exit guard reads it and does not let out a turn in
-which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything.
+### 2. Миграция
+
+- **Steps:**
+    1. миграция заводит роль владельца со всеми правами набора
+    2. миграция проставляет роль записям без роли
+    3. набор прав миграции сверен с закрытым набором в коде
+- **What is done:** правка уезжает выкаткой сама, руками на узле ничего не делается.
+- **Readiness sign:** миграция прогоняется на пустой базе и на базе с записью без роли.
+- **Verified by:** `pnpm exec prisma migrate deploy` на одноразовой базе — без отказа.
+
+### 3. Проба
+
+- **Steps:**
+    1. проба на перенос прежнего доступа
+    2. проба краснеет на снятом переносе
+- **What is done:** обещание накрыто, а не держится памятью.
+- **Readiness sign:** проба зелёная, на снятой миграции красная.
+- **Verified by:** `pnpm exec nx test @rt/message-bus-api` — набор прав зелёный.
 
 ## What this work does not do
 
-- <neighbouring work that is not dragged in here, and where it is created>
+- Не заводит экран ролей и назначение роли из веба: это задача RT-1901.
+- Не заводит команду роли в приёмнике: команды снимаются задачей RT-1902.
+- Не делит груз по деревьям и не трогает токен дерева.

@@ -4,21 +4,31 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `<name from the state list of rule task-flow>`
-- **Stage:** <number> of <total> — <name>
-- **Done:** <briefly>
-- **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
-- **Waiting for the owner:** <what exactly, or "no">
-- **PR:** <number and state, or "not open yet">
+- **State:** `замысел-записан`
+- **Stage:** 1 of 3 — Правило и сценарий в спеке
+- **Done:** разбор и замысел записаны, ветка эпика заведена и отправлена, задача в столбце работы
+- **Next step:** правило о переносе прежнего доступа в спеке прав
+- **Uncommitted:** папка задачи
+- **Waiting for the owner:** вывод запроса к базе прода — есть ли записи без роли
+- **PR:** ещё не открыт
+
+## Steps
+
+- [ ] 1.1 правило о переносе прежнего доступа в разделе о роли
+- [ ] 1.2 сценарий на перенос, привязка в спутнике
+- [ ] 2.1 миграция заводит роль владельца со всеми правами набора
+- [ ] 2.2 миграция проставляет роль записям без роли
+- [ ] 2.3 набор прав миграции сверен с закрытым набором в коде
+- [ ] 3.1 проба на перенос прежнего доступа
+- [ ] 3.2 проба краснеет на снятом переносе
 
 ## Decisions along the way
 
-- **<decision>** — <reason>. Affected stage of the plan: <number>.
+- **Ветка эпика RT-1896 заведена этой задачей** — эпик шёл без своей ветки, две первые задачи
+  уехали в главную напрямую. Affected stage of the plan: 1.
 
 ## Sessions
 
-### <date>
+### 2026-09-10
 
-- <what was done, in numbers: files, commits, what is green>
-- <what we stumbled on and what caught it>
+- Папка заведена, замысел записан, ветка эпика отведена от главной и отправлена.
