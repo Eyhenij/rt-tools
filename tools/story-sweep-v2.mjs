@@ -16,6 +16,12 @@
  *
  * An error in the console matters more than the area: a wreck's area happens to be non-zero too.
  *
+ * The overview pages are swept together with the stories, by the same call. Nothing else opens them
+ * at all: the input-table audit next to them reads files rather than the browser, and the snapshot
+ * run walks stories only. Three foundation pages drew an error in the console for as long as that
+ * lasted, and every check of the tree was green about them. A second sweep of their own would part
+ * from this one at the first edit of a wait: what is cured in one lives on in the other.
+ *
  * The sweep does not replace the eyes. It says where there is nothing to look at; that what is shown
  * is shown rightly is answered only by looking at the frames.
  *
@@ -75,13 +81,17 @@ async function loadChromium() {
 }
 
 /**
- * It recognises the showcase by its story index.
+ * It recognises the showcase by its index.
  *
- * The sign is the source path: at the second kit every story lies under `projects/ui-kit-v2/`.
- * Titles are no good for this — `Components/Button` exists at both kits, and a sweep pointed at a
- * foreign showcase would report about foreign stories as about its own.
+ * The sign is the source path: at the second kit every story and every overview page lies under
+ * `projects/ui-kit-v2/`. Titles are no good for this — `Components/Button` exists at both kits, and
+ * a sweep pointed at a foreign showcase would report about foreign showings as about its own.
+ *
+ * Belonging is judged by the stories alone. A showcase always has them, while a tree may have no
+ * overview page at all, and a diagnosis «this is not our showcase» derived from an empty set names
+ * a breakage that is not there.
  */
-async function ownStories() {
+async function ownShowings() {
     let index;
 
     try {
@@ -94,14 +104,15 @@ async function ownStories() {
         fail(`At the address ${URL} nobody answers (${error.message}). Raise the showcase: pnpm run storybook:ui-kit-v2`);
     }
 
-    const entries = Object.values(index.entries ?? {}).filter((entry) => entry.type === 'story');
-    if (entries.length === 0) {
+    const entries = Object.values(index.entries ?? {}).filter((entry) => entry.type === 'story' || entry.type === 'docs');
+    const stories = entries.filter((entry) => entry.type === 'story');
+    if (stories.length === 0) {
         fail(`At the address ${URL} the showcase has not one story — there is nothing to sweep.`);
     }
 
     const own = entries.filter((entry) => (entry.importPath ?? '').includes(OWN_IMPORT_MARKER));
-    if (own.length === 0) {
-        const sample = entries[0]?.importPath ?? '—';
+    if (own.some((entry) => entry.type === 'story') === false) {
+        const sample = stories[0]?.importPath ?? '—';
         fail(
             `At the address ${URL} it is not the second kit's showcase that answers: the stories come from «${sample}», and were expected from «${OWN_IMPORT_MARKER}».`
         );
@@ -111,10 +122,14 @@ async function ownStories() {
 }
 
 /**
- * The area of what the story drew.
+ * The area of what the showing drew.
  *
  * The showing root is the harness's host, and it is also the snapshot's frame area. For a story
  * drawing itself past the harness, the showcase's own root is measured: such a story is shot whole too.
+ * An overview page has a root of its own, and the root is chosen by the mode rather than by the
+ * first node that turned up. Both containers stand in the markup of any page at once, and the idle
+ * one has zero area: a chain of selectors returns it and reports an empty frame on a page that drew
+ * everything. Ninety-two stories came out empty that way, and all of them draw.
  *
  * A zero root height does not yet mean an empty showing. A toast, a bottom sheet and everything a
  * component nails to the window itself stand outside the flow — the root above such content
@@ -122,14 +137,17 @@ async function ownStories() {
  * altogether. So at an empty root the largest drawn node inside the showing and inside the overlay
  * container is measured: an empty showing has nothing to measure at all — there is not one node with an area.
  */
-const measureShownArea = () => {
+const measureShownArea = (mode) => {
     const area = (node) => {
         const box = node.getBoundingClientRect();
 
         return Math.round(box.width * box.height);
     };
 
-    const root = document.querySelector('[data-story-root]') ?? document.querySelector('#storybook-root');
+    const root =
+        mode === 'docs'
+            ? document.querySelector('#storybook-docs')
+            : (document.querySelector('[data-story-root]') ?? document.querySelector('#storybook-root'));
 
     if (root === null) {
         return 0;
@@ -147,9 +165,11 @@ const measureShownArea = () => {
 };
 
 const chromium = await loadChromium();
-const stories = await ownStories();
+const showings = await ownShowings();
+const storyCount = showings.filter((showing) => showing.type === 'story').length;
+const docsCount = showings.length - storyCount;
 
-console.log(`The second kit's showcase on ${URL}: stories ${stories.length}. The sweep is begun.`);
+console.log(`The second kit's showcase on ${URL}: stories ${storyCount}, overview pages ${docsCount}. The sweep is begun.`);
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
@@ -168,31 +188,35 @@ page.on('pageerror', (error) => remember(error.message));
 
 const broken = [];
 
-for (const story of stories) {
+for (const showing of showings) {
     errors.length = 0;
 
-    await page.goto(`${URL}/iframe.html?id=${story.id}&viewMode=story`, { waitUntil: 'networkidle' });
+    // An overview page is asked for by the same address in another mode: asked for as a story, it
+    // gives an empty root and reads as a page that drew nothing.
+    const mode = showing.type === 'docs' ? 'docs' : 'story';
+
+    await page.goto(`${URL}/iframe.html?id=${showing.id}&viewMode=${mode}`, { waitUntil: 'networkidle' });
     // The error arrives in the console later than the page's readiness: without this pause `NG0950`
     // goes not to the story it happened on but to the next one.
     await page.waitForTimeout(150);
 
-    const area = await page.evaluate(measureShownArea);
+    const area = await page.evaluate(measureShownArea, mode);
 
     if (area < MIN_AREA || errors.length > 0) {
-        broken.push({ id: story.id, area, error: errors[0] });
+        broken.push({ id: showing.id, area, error: errors[0] });
     }
 }
 
 await browser.close();
 
 if (broken.length === 0) {
-    console.log(`There are no empty showings and no drawing errors: ${stories.length} stories.`);
+    console.log(`There are no empty showings and no drawing errors: ${storyCount} stories and ${docsCount} overview pages.`);
     process.exit(0);
 }
 
 const lines = broken.map(({ id, area, error }) => `${id} — area ${area}${error === undefined ? '' : `, ${error.split('\n')[0]}`}`);
 
 fail(
-    `Stories with an empty showing or a drawing error: ${broken.length} of ${stories.length}.\n    ${lines.join('\n    ')}\n\n` +
+    `Showings with an empty frame or a drawing error: ${broken.length} of ${showings.length}.\n    ${lines.join('\n    ')}\n\n` +
         `  While this is not sorted out, the references must not be taken: the shot pins the emptiness down, and the run becomes eternally green.`
 );

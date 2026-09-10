@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
-import { storySnapshotSkip } from '../../../../showcase';
+import { BAR_LIST_ROWS } from './component/bar-list.fixture';
 import { TestRtBarListComponent } from './component/test-bar-list.component';
 
 export default {
@@ -16,11 +16,10 @@ export default {
 type TStory = StoryObj<TestRtBarListComponent>;
 
 export const Default: TStory = {
-    parameters: storySnapshotSkip(
-        'обёртка отдаёт пустой `rows`, и вместо списка в кадре пустое состояние; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
-    ),
+    // Показ рисует не сетка витрины: компонент занимает всю ширину сам. Отсюда кадр целой страницей.
+    parameters: { snapshot: { fullPage: true } },
     args: {
-        rows: [],
+        rows: BAR_LIST_ROWS,
         title: 'Заголовок',
         emptyText: 'Ничего не найдено',
     },

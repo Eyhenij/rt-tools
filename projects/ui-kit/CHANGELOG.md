@@ -1,3 +1,9 @@
+## [0.7.1](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.7.0...rt-tools@0.7.1) (2026-09-10)
+
+### Bug Fixes
+
+- **rt:ui-kit:** поиск подменю оставляет только совпавшие строки, лупа встаёт на отступ крестика ([4a470f3](https://github.com/Eyhenij/rt-tools/commit/4a470f3d5220d5887b2a9fbce8ccd90cc5ba522c))
+
 # [0.7.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.6.1...rt-tools@0.7.0) (2026-09-10)
 
 ### Bug Fixes

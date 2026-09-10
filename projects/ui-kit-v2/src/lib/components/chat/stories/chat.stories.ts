@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
 import { storyWidthAtLeast } from '../../../../showcase';
+import { CHAT_MESSAGES } from './component/chat.fixture';
 import { TestRtChatComponent } from './component/test-chat.component';
 
 export default {
@@ -38,16 +39,16 @@ type TStory = StoryObj<TestRtChatComponent>;
 
 export const Default: TStory = {
     args: {
-        messages: [],
+        messages: CHAT_MESSAGES,
         loading: false,
         fetching: false,
-        canReply: false,
+        canReply: true,
         replyBlockReason: null,
         sending: false,
         placeholder: 'Введите значение',
         title: 'Заголовок',
         emptyHint: '',
-        hasThread: false,
+        hasThread: true,
         attachments: false,
         accept: '',
         richComposer: false,
