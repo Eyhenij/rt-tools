@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.26.0 · checks/check-states.mjs · 552df7380d10 · правится надстройкой, не здесь
+// rt-kit v0.27.0 · checks/check-states.mjs · 552df7380d10 · правится надстройкой, не здесь
 /**
  * The audit of the list of work states against the pattern sections that lead them.
  *

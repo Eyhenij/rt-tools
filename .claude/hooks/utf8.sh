@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/utf8.sh · 011f00d0b621 · правится надстройкой, не здесь
+# rt-kit v0.27.0 · hooks/utf8.sh · 011f00d0b621 · правится надстройкой, не здесь
 # The locale a guard runs in. Sourced as the first line of the body: `. "<guards directory>/utf8.sh"`.
 #
 # NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The guards source it

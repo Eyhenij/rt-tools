@@ -1,4 +1,4 @@
-// rt-kit v0.26.0 · checks/spec-anchors.mjs · d0882748aa8d · правится надстройкой, не здесь
+// rt-kit v0.27.0 · checks/spec-anchors.mjs · d0882748aa8d · правится надстройкой, не здесь
 /**
  * The binding of a rule to code and the laws a spec applies.
  *

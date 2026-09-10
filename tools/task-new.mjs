@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.26.0 · checks/task-new.github.mjs · bd2acfac1001 · правится надстройкой, не здесь
+// rt-kit v0.27.0 · checks/task-new.github.mjs · bd2acfac1001 · правится надстройкой, не здесь
 /**
  * Creating the task an edit starts with.
  *

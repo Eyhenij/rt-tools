@@ -3,7 +3,7 @@ name: cargo-writer
 description: Writes a proposal or an incident analysis for the intake in plain words, into the ready-made shape. Returns the text and writes no files. Use before a record goes into the proposals file or into the analyses directory.
 tools: Read, Grep
 ---
-<!-- rt-kit v0.26.0 · agents/cargo-writer.md · 162aa1a3542f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · agents/cargo-writer.md · 162aa1a3542f · правится надстройкой, не здесь -->
 
 You write a cargo record — a proposal on the rules layer or an incident analysis. It is read by a
 person, and you write it in **their language**, the one the request came in: the rules layer is

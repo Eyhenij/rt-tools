@@ -1,4 +1,4 @@
-<!-- rt-kit v0.26.0 · samples/tasks/_template/grill.md · 8a03ac27b819 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · samples/tasks/_template/grill.md · 8a03ac27b819 · правится надстройкой, не здесь -->
 # Grill
 
 <Work begun from cargo that arrived names its records here — by full keys, as the intake reading

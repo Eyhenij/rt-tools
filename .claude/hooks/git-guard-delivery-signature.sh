@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/git-guard-delivery-signature.sh · fefc08d23d99 · правится надстройкой, не здесь
+# rt-kit v0.27.0 · hooks/git-guard-delivery-signature.sh · fefc08d23d99 · правится надстройкой, не здесь
 # The signature of a machine commit for the delivery guard: whose commit it is, whether it is signed
 # with the right mail and what to do if it is not.
 #

@@ -4,7 +4,7 @@ kind: rule
 law: frontend-application
 description: Rule under the frontend-application law. Load when editing any *.scss and a component template. Names the BEM directives, the styling tokens, the shared layout layer of the application and the check for a class without a rule. Ready-made code in patterns styling-bem-layout and -component.
 ---
-<!-- rt-kit v0.26.0 · rules/styling-bem.md · 5b75223c303f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · rules/styling-bem.md · 5b75223c303f · правится надстройкой, не здесь -->
 
 # Styling — how it works here
 
