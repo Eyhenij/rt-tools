@@ -104,6 +104,13 @@ layer; such a domain is usually one, and it stands in the exceptions list with a
   its contract with the consumer: a lost field in `*.State` is not an error while there is no
   calling code. The first importer is the first check — the models layer is accepted after `nx
   build` and a live run of the scenario, not by a green `lint test`.
+- **A configuration a target does not declare is a default, not a refusal.** The builder drops an
+  unknown name silently: the exit code is zero, the artefact is built by the default, and only the
+  line of the build output, where the target is named without a configuration, tells this from a
+  real build. Hence the reading rule: what is built with is said by the build output, not by the
+  list of configurations in the target manifest — that one says what may be called, not what is
+  called. A rollout pipeline called a server build with a production setting the target did not
+  have, and for half a year the line promised what it did not do.
 - **A check is accepted on a violation, not on a green run.** The violation is introduced by hand,
   the run turns red, the edit is reverted. The checks in `tools/` have no tests, and this is the
   only acceptance.

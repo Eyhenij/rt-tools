@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/skill-gate.sh · 35c8394201b0 · правится надстройкой, не здесь
+# rt-kit v0.27.0 · hooks/skill-gate.sh · 29b41c521d96 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*
 # Requires: hooks/deny-tail.sh
 # The rules gate: it does not let a file be edited until the rule it falls under has been loaded.
@@ -8,6 +8,13 @@
 # rush, so the requirement is held by a hook: an edit is refused ONCE per session for each area,
 # and after the rule is loaded the same area passes silently — there are no repeats, and it costs
 # almost nothing.
+#
+# One thing does cancel the mark, and on purpose: compaction or clearing of the session window.
+# `hooks/skill-gate-rearm.sh` removes the record then, and every area asks for its rule once more.
+# The mark says "the rule is in the window", not "the rule was once read": after the compaction the
+# text is gone from the window, and a gate that kept letting through would be letting the session
+# work from a retelling. The re-arming is told to the session in words, so that it is not read as
+# breakage.
 #
 # The "file — rule" map lives not here but in two files next door, and that is not duplication.
 # The default — `.claude/rt-kit/defaults/gate-map.sh` — is carried by the package: the trees of

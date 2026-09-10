@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when pieces of work follow one another or more than two branches already stand on one base — chained branching from the previous one, the PR base, merging bottom-up, re-merging main on an actual conflict. One conflict — pattern git-workflow-merge.
 ---
-<!-- rt-kit v0.27.0 · patterns/git-workflow-stack.md · 961783e39b84 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · patterns/git-workflow-stack.md · 971ee0189f1e · правится надстройкой, не здесь -->
 
 # A stack of PRs from one base
 
@@ -53,8 +53,21 @@ gh pr create --base <предыдущая ветка> --title '[<КЛЮЧ>-<но
 ```
 
 Neither the main branch nor the epic branch is set as the base here: the review then shows the own
-edit mixed with all under it. The host retargets a merged lower one itself — the base of its heir
-becomes the base of the merged one, that is, the epic branch.
+edit mixed with all under it.
+
+**The base of the heir is retargeted by hand, by the same motion that merges the lower one.** The
+host does it itself only when the merged branch is deleted; a branch is usually left after the
+merge, and then the heir keeps standing on it — the upper PR merges into the neighbour and not into
+the epic branch. A chain of nine went through this: the base moved by itself in none of the nine.
+
+```bash
+# right after the lower PR is merged — the base of the heir moves to where the lower one stood
+gh api repos/<владелец>/<дерево>/pulls/<номер наследника> -X PATCH -f base=<основание нижней>
+```
+
+From the browser the same is done by editing the PR heading, where the base stands as a dropdown.
+The miss turns red nowhere: the PR looks merged, the task closes by its `Closes` line, and the work
+is not where it was meant to go.
 
 The merge order stands in every PR body as the line "stands on #<number>, merge after it": the
 owner merges by the list, and branch kinship is invisible in the list.

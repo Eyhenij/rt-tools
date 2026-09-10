@@ -59,6 +59,12 @@ procedures in one by one through `router.rpc`.
 
 - A third suffix: `*.rpc.ts` and `*.connect.ts` are the previous names, they leave together with
   the last domain moved, and no new such files are created.
+- A right written in the mark by a constant: the contract audit reads the mark as text and does not
+  find at all what was taken out into a name. Openness and the right are written as a string at the
+  place of the declaration — even where a constant with that very value is declared next to it.
+- A sample call of the mark written as an explanation next to the real mark: the parser takes the
+  first match in the file, and the right from the comment goes into the audit. A sample belongs in
+  the pattern, not in the file of the procedure.
 - `inject()` in a procedure class: on the backend dependencies go through the constructor.
 - The body in a closure inside the router registration: a test cannot reach it.
 - A procedure without an access declaration: the application does not start.
