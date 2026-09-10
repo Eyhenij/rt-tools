@@ -168,6 +168,14 @@ flowchart TD
   outright that the session waits for orders.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
+- **An epic that goes on forbids a stop, and a turn that did work is no exception.** The reading of
+  the epic used to be asked in one direction only — to permit a stop once the epic was over — and
+  nobody asked it the other way. A turn that made a commit and then reported passes every tier by
+  the letter: there was work, and it stood last. Yet the plan's next step was busy with nothing, and
+  to the owner the turn reads as a stop; it repeated four times in one day. Lawful exits stay as
+  they were: a question through the tool, another guard's refusal, a session handover and the
+  owner's own word.
+
 - **The word about a stop the guard reads from the owner, not from the executor.** Otherwise the
   stop is declared by whoever finds it convenient, and the ban holds until the first inconvenience.
 - **The phrase "waiting for your word" is a stop declared by the executor, and the guard refuses it

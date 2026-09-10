@@ -13,3 +13,4 @@ statement: a removed statement is removed together with its line.
 - **The reading is asked right before a refusal, not on every turn.** — `projects/agent-kit/assets/hooks/waiting-turn-guard.sh:rt_epic_over` — the call stands after the verdict, before the refusal text
 - **A branch without a task number and a tree without epics are not judged.** — `projects/agent-kit/assets/hooks/epic-stop-guard.sh:table` — no command laid out, no number in the branch — the call goes through; scenario `SC-AK-984`
 - **An inability to ask the hosting lets the work through.** — `projects/agent-kit/assets/hooks/epic-stop-guard.sh:asked` — a non-zero code of the command; scenario `SC-AK-985`
+- **An epic that goes on forbids a stop, and a turn that did work is no exception.** — `projects/agent-kit/assets/hooks/epic-over.sh:rt_epic_unfinished` — the count is printed, the code says whether the reading happened; scenario `SC-AK-1007`
