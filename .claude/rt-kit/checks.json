@@ -8,6 +8,9 @@
     "testRoots": [
         "tools"
     ],
+    "harnessDirs": [
+        "projects/ui-kit-v2/src/showcase/story-snapshot.ts"
+    ],
     "indexedDirs": [],
     "plansDir": "docs/plans",
     "portableDirs": [

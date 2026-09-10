@@ -38,7 +38,8 @@ silent about.
 
 - **The set of spec sections is fixed in advance, and a missing section is a refusal.** — `tools/check-specs.mjs:REQUIRED_HEADINGS` — the section set of a domain spec. For rules and patterns the set is given by the templates in `.claude/rt-kit/templates/` and is not held by a refusal.
 - **Every statement is bound to a place in code, and the link is checked both ways.** — `tools/check-specs.mjs:checkRuleImplementation` — an article without a line and a line without an article are both named.
-- **A binding does not lead into code nobody calls:** — `tools/spec-anchors.mjs:codeOf` — comments are cleared out, and a symbol declared in its own file and occurring nowhere else is named a dead binding.
+- **A binding does not lead into code nobody calls, and a test is not a call.** — `tools/spec-anchors.mjs:checkTracedAnchors` — liveness is counted by files that are not tests. The harness named by `harnessDirs` counts whole, and so does a published file.
+- **A verdict is put by substance, not by the form of the address.** — `tools/spec-common.mjs:ANCHOR` — the form takes a file name with an extension and whole without a dot.
 - **A "not carried out" binding moves together with its article.** — `tools/check-specs.mjs:checkRuleImplementation` — the audit names a binding without an item, and a companion line removed apart turns red exactly here.
 - **The procedure table is checked against the decorators both ways, the permission together with the name.** — **Not applicable.** There are no server-side procedures in the tree. The closest carrying out on another subject: `tools/verify-ui-kit-v2-docs.cjs` audits the input tables against the components themselves.
 - **There are two layers of laws, and a law name is one for both.** — `tools/check-specs.mjs:laws` — the shared layer in the root of the constitution, the application law in `application/`; the name is one for both layers.

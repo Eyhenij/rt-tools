@@ -52,7 +52,7 @@ import { checkRuleImplementation, checkSpecLaws, checkTracedAnchors } from './sp
 import { CONSTITUTION_DIR, REQUIRED_HEADINGS, SPECS_DIR, collectDomains, exists, problems, read, report, walk } from './spec-common.mjs';
 import { checkContract, checkRefusalCodes, procedureRootsOf } from './spec-contract.mjs';
 import { proposedGroups, staleProposed } from './spec-proposed.mjs';
-import { collectReferences, parseScenarios, promisesScreen } from './spec-scenarios.mjs';
+import { collectReferences, parseScenarios, promisesScreen, unparsedHeadings } from './spec-scenarios.mjs';
 
 // ── run ───────────────────────────────────────────────────────────────────────
 
@@ -157,6 +157,13 @@ for (const domain of domains) {
     }
 
     const found = walk(base, (name) => name === 'scenarios.md').flatMap(parseScenarios);
+
+    // A heading the template did not take starts no scenario and, left unnamed, takes it out of
+    // the count silently: the coverage marks under it are not read either, and a test referring to
+    // its number does not turn red — references are looked for among the parsed ones.
+    for (const heading of walk(base, (name) => name === 'scenarios.md').flatMap(unparsedHeadings)) {
+        report(`${heading.file}:${heading.line}`, `the scenario heading is not taken by the template and counts as ordinary prose: ${heading.text}`);
+    }
 
     // The prefix belongs to the domain together with its subdomains, not to a separate directory.
     // A domain is split when its spec has outgrown the length limit, and the scenarios move into
