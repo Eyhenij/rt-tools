@@ -4,7 +4,7 @@ kind: rule
 law: <law>
 description: Rule under the law "<Law title>". Load when <when> — <by which technique it is done>. Ready-made code — in patterns <names>.
 ---
-<!-- rt-kit v0.26.0 · templates/rule.md · 8a59601860bf · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · templates/rule.md · 8a59601860bf · правится надстройкой, не здесь -->
 
 # <What the law is about> — by which technique
 

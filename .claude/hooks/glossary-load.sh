@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/glossary-load.sh · 6b9014a7042e · правится надстройкой, не здесь
+# rt-kit v0.27.0 · hooks/glossary-load.sh · 6b9014a7042e · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # SessionStart: the project glossary goes into the context in full, on every session start.
 #

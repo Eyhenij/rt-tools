@@ -2,7 +2,7 @@
 description: A remark about the rules layer, made in the middle of work, lands as a block in the proposals file
 argument-hint: '<what gets in the way, what was missing, what went wrong>'
 ---
-<!-- rt-kit v0.26.0 · commands/feedback.md · 1b5d29cf79bd · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · commands/feedback.md · 1b5d29cf79bd · правится надстройкой, не здесь -->
 
 Put the user's remark as a block into the proposals file. The remark: `$ARGUMENTS`
 

@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing any .md including specs, and also code comments, commit bodies and PR descriptions. Names the path check, the pairs of an edit and its document, and what nothing checks in this tree. Ready-made wording is in pattern doc-style-write.
 ---
-<!-- rt-kit v0.26.0 · rules/doc-style.md · 2528f8240f60 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · rules/doc-style.md · 2528f8240f60 · правится надстройкой, не здесь -->
 
 # Project texts — how it works here
 

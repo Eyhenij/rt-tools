@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/skill-loaded.sh · 8e19cffac365 · правится надстройкой, не здесь
+# rt-kit v0.27.0 · hooks/skill-loaded.sh · 8e19cffac365 · правится надстройкой, не здесь
 # rt-hook: PostToolUse Skill
 # The record of a loaded rule. PostToolUse on the `Skill` tool.
 #

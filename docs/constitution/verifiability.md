@@ -1,4 +1,4 @@
-<!-- rt-kit v0.26.0 · laws/verifiability.md · dbc48612e558 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · laws/verifiability.md · dbc48612e558 · правится надстройкой, не здесь -->
 # Law on verifiability
 
 What counts as confirmation that work is done. The law is needed because a retelling looks as

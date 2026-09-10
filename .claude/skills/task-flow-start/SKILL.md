@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
-<!-- rt-kit v0.26.0 · patterns/task-flow-start.md · bdad1d40c7f9 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · patterns/task-flow-start.md · bdad1d40c7f9 · правится надстройкой, не здесь -->
 
 # Starting the work
 

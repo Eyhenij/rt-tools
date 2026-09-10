@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.26.0 · checks/check-turn-map.mjs · b1a4ec3ca7e6 · правится надстройкой, не здесь
+// rt-kit v0.27.0 · checks/check-turn-map.mjs · b1a4ec3ca7e6 · правится надстройкой, не здесь
 /**
  * The check of the turn map: its size and its completeness.
  *

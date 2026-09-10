@@ -1,4 +1,4 @@
-<!-- rt-kit v0.26.0 · laws/navigation.md · 03e5deb4df4a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · laws/navigation.md · 03e5deb4df4a · правится надстройкой, не здесь -->
 # Law on section navigation
 
 How a user finds a section and gets into it. The rules are common to all sections at once: a
