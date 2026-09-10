@@ -15,9 +15,9 @@
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-import { seedAccount } from './seed-account.mjs';
+import { seedAccount, seedPeople } from './seed-account.mjs';
 import { checkNothingDrifts } from './seed-self-check.mjs';
-import { API_ORIGIN, ENROLLED_SLUG, INVITES, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
+import { ACCOUNT, API_ORIGIN, ENROLLED_SLUG, INVITES, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
 
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 
@@ -464,6 +464,7 @@ async function states() {
 export async function seed() {
     await wipe();
     await seedAccount(command, sql);
+    await seedPeople(command, sql);
     const tokens = await trees();
     await postmortems(tokens);
     await proposals(tokens);
@@ -472,7 +473,7 @@ export async function seed() {
     await keys();
     await moments();
     await states();
-    await checkNothingDrifts(sql);
+    await checkNothingDrifts(sql, ACCOUNT.name);
 }
 
 /** Подготовка хранилища: база и схема. Идёт до подъёма приёмника — он ждёт готовой схемы. */

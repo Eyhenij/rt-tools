@@ -137,6 +137,7 @@ the limit is split further by the same technique.
 | [The shell of the admin application](admin-shell/spec.md)               | the top row of the sections, the popup of the profile, the theme and the language, the screen of the entry |
 | [What the intake writes about itself](journal/spec.md)                  | the row of the journal, the taken-apart reason, the cleaning of the fields                                 |
 | [A right, a role and the check that reads them](access-rights/spec.md)  | what a person may do after the entry: the closed set of rights, the role, the pointed edits over it        |
+| [The list of people](people-list/spec.md)                               | who reaches the cargo: the name, the role, the state of the record and the last sign-in                    |
 
 ## What is out of scope
 
@@ -411,3 +412,9 @@ not to a tree, and a filter by tree narrows what is shown, not the access.
   as its own mark. The agreement was not merged into the spec of the edit of a state: the operations
   have different ways of introducing themselves and a different order of the transitions, and together
   they outgrew the length limit.
+- 2026-09-10 — the task RT-1899 created the subdomain about the list of people: the receiver answers
+  with a page of accounts — the name, the role, the state and the last sign-in — and the admin panel
+  shows them as a fifth section. Both sides are closed by the right `accounts:read`: without it the
+  item is not in the row and the address does not open. The agreement was not merged into the spec of
+  the rights: that one describes what a person may do after the entry, and together they outgrow the
+  length limit.

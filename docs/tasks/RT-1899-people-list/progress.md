@@ -8,9 +8,11 @@ Rewritten by every session, not appended to.
 - **Stage:** 4 of 4 — Закрытие
 - **Done:** этапы 1–3 — договорённость, операция чтения, закрытая правом, и раздел админки:
   пункт меню, адрес, экран списка. 45 тестов домена и 36 тестов админки зелёные, без пункта меню
-  красных 4
-- **Next step:** этап 4 — договорённость в описание домена и сквозной тест на раздел
-- **Uncommitted:** нет — ветка отправлена
+  красных 4. Этап 4: договорённость влита в описание домена подобластью `people-list`, сквозная
+  спека раздела написана, стенд засевает людей
+- **Next step:** прогнать `pnpm exec nx e2e message-bus-admin-e2e` и перезаснять эталоны кадров:
+  пятый пункт ряда разделов двигает каждый кадр, где виден верхний ряд
+- **Uncommitted:** сквозная спека раздела, засев людей на стенде, перенос договорённости
 - **Waiting for the owner:** ничего
 - **PR:** ещё не открыт
 
@@ -22,7 +24,7 @@ Rewritten by every session, not appended to.
 - [x] 2.2 тесты на операцию: без права отказ, с правом список
 - [x] 3.1 раздел админки: пункт меню, адрес, экран списка
 - [x] 3.2 тесты экрана
-- [ ] 4.1 договорённость влита в описание домена
+- [x] 4.1 договорённость влита в описание домена
 - [ ] 4.2 сквозной тест на раздел
 
 ## Decisions along the way
@@ -59,3 +61,52 @@ Rewritten by every session, not appended to.
   её форму, и раздел, отвечающий массивом, пришлось бы читать в обход неё.
 - Раздел админки собран: пять либ по сетке слоёв, пункт меню с правом `accounts:read`, маршрут,
   экран списка и его тесты.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools
+**Branch:** RT-1899-people-list
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 4 of 4 — Закрытие
+- **Next step:** этап 4 — договорённость в описание домена и сквозной тест на раздел
+- **PR:** ещё не открыт
+
+The progress in full — `docs/tasks/RT-1899-people-list/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+none
+```
+
+### Commits over the main branch
+
+```
+4b38e8d53 feat(rt:message-bus): раздел людей в админке — пункт меню, адрес и экран списка
+94b81c798 feat(rt:message-bus): список людей приезжает страницей, как остальные разделы админки
+8e0965264 docs(rt:message-bus): ход RT-1899 записал слияние и починку сборки
+4481c395f fix(rt:message-bus): чтение людей берёт свой тип из слоя util
+1e4d8cbe0 docs(rt:message-bus): ход эпика RT-1896 записал слияние с главной
+d76958e84 Merge branch 'RT-1896-access-rights' into RT-1899-people-list
+b94962beb Merge remote-tracking branch 'origin/main' into RT-1896-access-rights
+1d10f3712 feat(rt:message-bus): приёмник отдаёт список людей, закрытый правом чтения
+fdf676cd1 docs(rt:message-bus): ход задачи RT-1899 отмечен
+511d8e50f docs(rt:message-bus): договорённость о разделе со списком людей
+07303994d docs(rt:message-bus): папка задачи RT-1899 заведена
+66b1afeec Merge remote-tracking branch 'origin/main' into RT-1896-access-rights
+f8a9d63c2 [RT-2018] Вход открывает разделы: миграция прав возвращает доступ (#2022)
+0a0ad1586 docs(rt:message-bus): папка ветки эпика RT-1896 заведена
+21f196bdb docs(rt:message-bus): папка задачи RT-2018 разобрана
+19b44f6cd fix(rt:message-bus): миграция прав возвращает доступ тем, у кого он был
+d88caeaec docs(rt:message-bus): папка задачи RT-2018 заведена
+53e5ec426 Merge remote-tracking branch 'origin/main' into RT-1896-access-rights
+9ed15dac6 docs: замысел эпика RT-1896 называет свою ветку и находку
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

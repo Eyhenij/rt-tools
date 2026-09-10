@@ -1,6 +1,6 @@
 # The list of people
 
-**Status:** proposed · **Revision:** 10 September 2026 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 10 September 2026 · **Scenario prefix:** `SC-MB`
 **Depends on:** `access-rights`
 **Laws:** `lists`, `navigation`, `access`
 **Procedures:** none
@@ -52,10 +52,13 @@ asks it from the section and shows the answer.
 
 ### Refusal codes
 
-| What happened                    | How it ends | What it says                     |
-| -------------------------------- | ----------- | -------------------------------- |
-| a request without a sign-in      | 401         | that nobody introduced themself  |
-| a sign-in without the read right | 403         | that the operation needs a right |
+Not applicable: the receiver answers with a code of the answer of HTTP, not with named codes of the
+domain. Where the reading is obliged to refuse instead of staying silent:
+
+| What happened                    | Code  | What it says                     |
+| -------------------------------- | ----- | -------------------------------- |
+| a request without a sign-in      | `401` | that nobody introduced themself  |
+| a sign-in without the read right | `403` | that the operation needs a right |
 
 ## Data
 
@@ -105,3 +108,7 @@ One receiver and one list of people in it.
 ## History of changes
 
 - 2026-09-10 — the agreement was written before the code.
+- 2026-09-10 — the agreement was merged into the domain as a subdomain of its own: the receiver
+  answers with a page of people, the admin panel shows the section, and both are closed by the right
+  `accounts:read` (RT-1899). It was not merged into the spec of the rights next to it: that one
+  describes what a person may do after the entry, and together they outgrow the length limit.

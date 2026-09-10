@@ -33,9 +33,10 @@ export type TPageMark = 'hint' | 'columns' | 'refresh' | 'fault' | 'retry';
 
 /**
  * Имя раздела. Три раздела груза собраны одним и тем же списочным экраном; четвёртый — тем же,
- * но без отбора по дереву и без панели: приглашение ждёт дерева, которого ещё нет.
+ * но без отбора по дереву и без панели: приглашение ждёт дерева, которого ещё нет. Пятый, люди,
+ * не имеет ни отбора, ни панели, ни единого нажатия в строке: он только читает.
  */
-export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'invites';
+export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'invites' | 'people';
 
 /** Разделы админки: адрес, заголовок экрана и `qa-dataid` его таблицы и строк. */
 export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.freeze({
@@ -74,6 +75,16 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
         // молча ничего не находила.
         details: '',
     }),
+    people: Object.freeze({
+        path: SECTIONS.people,
+        title: 'Люди',
+        prefix: 'people',
+        table: 'people-table',
+        row: 'people-row',
+        // Панели подробностей у человека нет: всё известное о нём стоит в строке, а заводит и
+        // отключает запись команда строки запуска на узле приёмника.
+        details: '',
+    }),
 });
 
 /** Узел по метке проверки: ею размечены все места, за которые набор держится. */
@@ -107,15 +118,24 @@ export function rowsOf(page: Page, section: TSectionName): Locator {
     return qa(page, SECTION[section].row);
 }
 
+/** Пара входа: имя записи и её пароль. Ими стенд знает и себя, и засеянных людей. */
+export interface ISignInPair {
+    readonly name: string;
+    readonly password: string;
+}
+
 /**
  * Вход парой стенда.
  *
  * Ждёт ухода с экрана входа: форма отвечает не мгновенно, и следующий шаг, начатый раньше,
  * читает ещё старую страницу.
+ *
+ * Пара приезжает доводом, а умолчание — запись самого набора: у неё права на все разделы, и ею
+ * идёт весь набор, кроме проверок того, что видит человек без права.
  */
-export async function signIn(page: Page): Promise<void> {
-    await qa(page, 'sign-in-name').locator('input').fill(ACCOUNT.name);
-    await qa(page, 'sign-in-password').locator('input').fill(ACCOUNT.password);
+export async function signIn(page: Page, account: ISignInPair = ACCOUNT): Promise<void> {
+    await qa(page, 'sign-in-name').locator('input').fill(account.name);
+    await qa(page, 'sign-in-password').locator('input').fill(account.password);
     await qa(page, 'sign-in-submit').click();
     await page.waitForURL((url: URL): boolean => !url.pathname.startsWith(SIGN_IN_PATH));
 }
