@@ -34,11 +34,13 @@ export const ADMIN_LABELS = {
     sectionProposals: 'Предложения',
     sectionSummaries: 'Сводки проектов',
     sectionInvites: 'Приглашения',
+    sectionPeople: 'Люди',
 
     hintPostmortems: 'Что и почему сломалось в проектах — по разбору на происшествие',
     hintProposals: 'Что проекты предлагают править в слое правил',
     hintSummaries: 'Свод одного проекта за календарный месяц — по записи на пару',
     hintInvites: 'Чем проект подключает себя сам. Выдаётся здесь же кнопкой «Пригласить проект»',
+    hintPeople: 'Кто входит в приёмник, с какой ролью и когда входил в последний раз',
 
     filterTree: 'Проект',
     filterTreeAll: 'Все проекты',
@@ -61,6 +63,10 @@ export const ADMIN_LABELS = {
     columnIssuedAt: 'Выдано',
     columnExpiresAt: 'Годно до',
     columnInviteTree: 'Заведённый проект',
+    columnPersonName: 'Имя',
+    columnPersonRole: 'Роль',
+    columnPersonState: 'Состояние',
+    columnLastLoginAt: 'Последний вход',
     columnState: 'Состояние',
     // Один ключ на все показы версии: столбец списка, отбор над ним и строка панели. Второе
     // объявление разошлось бы с первым молча, и человек читал бы одно и то же поле двумя словами.
@@ -101,6 +107,15 @@ export const ADMIN_LABELS = {
     inviteRevokeDone: 'Приглашение для «{{name}}» отозвано',
     inviteRevokeFailed: 'Отозвать приглашение не удалось',
 
+    // Роли нет — это состояние записи, а не пропуск: словом его называет экран, приёмник
+    // отдаёт пустоту. Тем же приёмом называется запись, которой ещё не входили.
+    personRoleNone: 'Роли нет',
+    personStateLive: 'Действует',
+    personStateDisabled: 'Отключена',
+    personNeverLoggedIn: 'Не входили',
+
+    listEmptyPeople: 'Записей людей нет',
+    listEmptyPeopleFrom: 'Заводятся командой строки запуска на узле приёмника',
     listEmptyInvites: 'Приглашений нет',
     listEmptyInvitesFrom: 'Выдаются кнопкой «Пригласить проект» над списком',
     listEmpty: 'Записей нет',

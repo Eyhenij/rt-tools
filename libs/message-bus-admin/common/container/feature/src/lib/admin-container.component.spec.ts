@@ -70,9 +70,9 @@ describe('AdminContainerComponent', () => {
     });
 
     it('SC-MB-142 — разделы приходят в шапку декларацией меню, а колонки с ними нет', () => {
-        signedInWith(['postmortems:read', 'proposals:read', 'summaries:read', 'invites:read']);
+        signedInWith(['postmortems:read', 'proposals:read', 'summaries:read', 'invites:read', 'accounts:read']);
 
-        expect(shownSections().length).toBe(4);
+        expect(shownSections().length).toBe(5);
         expect(fixture.debugElement.query(By.css('rt-section-nav'))).toBeNull();
     });
 
@@ -89,10 +89,25 @@ describe('AdminContainerComponent', () => {
         expect(fixture.debugElement.query(By.css('[qa-dataid="container-no-sections"]'))).toBeNull();
     });
 
+    it('SC-MB-325 — раздел людей стоит в шапке у того, у кого есть `accounts:read`', () => {
+        signedInWith(['accounts:read']);
+
+        expect(shownSections()).toEqual(['Люди']);
+    });
+
+    it('SC-MB-325 — раздела людей без этого права в шапке нет вовсе', () => {
+        signedInWith(['postmortems:read']);
+
+        // Сперва положительное: разделы вообще показываются — иначе проверка на отсутствие
+        // зеленела бы и на шапке, потерявшей меню целиком.
+        expect(shownSections()).toContain('Разборы происшествий');
+        expect(shownSections()).not.toContain('Люди');
+    });
+
     it('SC-MB-301 — пока ответ о вошедшем не приехал, не скрывается ничего', () => {
         // Права неизвестны, а не пусты: скрыв по пустому набору, админка спрятала бы разделы у
         // того, у кого они есть, — и человек остался бы на пустом экране без выхода с него.
-        expect(shownSections().length).toBe(4);
+        expect(shownSections().length).toBe(5);
     });
 
     it('SC-MB-302 — вошедшему без единого права разделов не показывают, а говорят, что доступа нет', () => {

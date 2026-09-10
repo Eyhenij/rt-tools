@@ -1,4 +1,5 @@
 import { Route } from '@angular/router';
+import { PEOPLE_ROUTE, peopleRoutes } from '@rt/message-bus-admin/accounts/shell';
 import { authRoutes, firstOpenSectionPath, sectionRightGuard, sessionGuard } from '@rt/message-bus-admin/auth/shell';
 import { COLUMNS_ROUTE } from '@rt/message-bus-admin/common/core/util';
 import { INVITES_ROUTE, invitesRoutes } from '@rt/message-bus-admin/invites/shell';
@@ -61,10 +62,12 @@ export const appRoutes: Route[] = [
             columnsRoute(PROPOSALS_ROUTE),
             columnsRoute(SUMMARIES_ROUTE),
             columnsRoute(INVITES_ROUTE),
+            columnsRoute(PEOPLE_ROUTE),
             ...postmortemsRoutes,
             ...proposalsRoutes,
             ...summariesRoutes,
             ...invitesRoutes,
+            ...peopleRoutes,
             { path: '', pathMatch: 'full', redirectTo: (): string => firstOpenSectionPath() },
         ],
     },
