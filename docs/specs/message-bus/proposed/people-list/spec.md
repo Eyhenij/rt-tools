@@ -1,85 +1,107 @@
-<!-- rt-kit v0.27.0 · samples/specs/_template/spec.md · d281e58fe4b7 · правится надстройкой, не здесь -->
+# The list of people
 
-# <Domain>
-
-**Status:** in force · **Revision:** <date> · **Scenario prefix:** `SC-<PREFIX>`
-**Depends on:** <domains without which this one does not work, or "none">
-**Laws:** `<law>`, `<law>`
-**Procedures:** <libs whose procedures the domain serves, or "none">
-
-The sections below are all mandatory: a missing section is a refusal, and "not applicable" is a
-lawful answer. The product agreement written before the code lies in `proposed/<feature>/` of this
-same domain and merges here by the last commit of the PR — with the scenario numbers unchanged.
+**Status:** proposed · **Revision:** 10 September 2026 · **Scenario prefix:** `SC-MB`
+**Depends on:** `access-rights`
+**Laws:** `lists`, `navigation`, `access`
+**Procedures:** none
 
 ## Why
 
-<What the domain solves and what its absence costs. Not a retelling of the implementation.>
+Who is created in the receiver is not visible from the admin panel at all: the list of people exists
+only as a command on the node. Whether an account is disabled or in force, whether anybody ever
+signed in with it — the same way.
+
+The section answers one question: who has access to the cargo. It is the first screen of the rights
+half of the epic, and the editing screens go after it — there must be somebody to assign a role to.
 
 ## Terminology
 
-| Term   | What it is |
-| ------ | ---------- |
-| <term> | <meaning>  |
+- **A person** — an account of the receiver: a name, a role, a state and the last sign-in.
+- **The state of an account** — in force or disabled. A disabled one signs in nowhere, and its
+  earlier sign-ins are cut.
+- **The last sign-in** — empty means the account never signed in.
 
 ### What it is called in the interface
 
-| In the agreement | On the screen |
-| ---------------- | ------------- |
-| <term>           | <label>       |
+The section is called "Люди". The column of the state says "Действует" or "Отключена"; an account
+that never signed in shows a dash instead of a date.
 
 ## Rules
 
-- **<a statement about the product>.** <Reason: what happens if this is not kept.> Every
-  statement gets a `file:symbol` binding line in `implementation.md` next to it.
+- **The section shows the name, the role, the state and the last sign-in.** These four answer who
+  has access and whether that access is alive; the rest is asked of the editing screens.
+- **The section is closed by the right `accounts:read`.** The list itself says who reaches the
+  cargo, so a signed-in person without that right neither sees the item nor opens the address.
+- **The receiver's read operation is closed by the same right.** Otherwise the section is hidden and
+  its data is given away by a direct request.
+- **A person without a role is shown as without a role, not as an empty cell.** An empty cell reads
+  as a defect of the screen; "роли нет" is the answer.
+- **The list only reads.** Creating, disabling and changing a password come with the next task: it
+  must first be visible whom you are editing.
 
 ## What is out of scope
 
-- <a neighbouring area and where to go for it>
+- Creating a person, disabling them and changing a password — the task after this one.
+- The page of roles and rights — the task after that.
+- Dividing the cargo by trees: the list says who has access, not to what.
 
 ## Contract
 
-<The domain's procedures as a table: name, what it takes, what it returns. No procedures — "not applicable".>
+The surface is one read operation of the receiver: it answers with a page of people. The admin panel
+asks it from the section and shows the answer.
 
 ### Refusal codes
 
-| Code   | When                   |
-| ------ | ---------------------- |
-| <code> | <what it is thrown on> |
+| What happened                    | How it ends | What it says                     |
+| -------------------------------- | ----------- | -------------------------------- |
+| a request without a sign-in      | 401         | that nobody introduced themself  |
+| a sign-in without the read right | 403         | that the operation needs a right |
 
 ## Data
 
-<Storage records the domain owns. None of its own — "not applicable".>
+Nothing new is stored. The four fields are read from the account and from its role.
 
 ## Screens and states
 
-<The domain's screens and the states of each: empty, loading, failure, ready. No screens — "not applicable".>
+| State               | What is on the screen                                  |
+| ------------------- | ------------------------------------------------------ |
+| the list is loading | the table skeleton                                     |
+| there are people    | the rows: name, role, state, last sign-in              |
+| the request refused | a message and a repeat, the rows are not shown         |
+| no right            | the item is not in the menu, the address does not open |
 
 ## Cross-cutting requirements
 
+The right is read on every call, not taken from the issued sign-in.
+
 ### Locales
 
-<What is translated and where the keys live.>
+The section labels live in the admin dictionary alongside the other four sections.
 
 ### SEO
 
-<Titles, addresses, markup. Not applicable — written just so.>
+Not applicable: the admin panel is closed.
 
 ### Mobile layout
 
-<What changes on a narrow screen.>
+The table scrolls sideways, as in the other sections.
 
 ### Several objects
 
-<What the domain has of its own for each owned object.>
+One receiver and one list of people in it.
 
 ## Decisions
 
-- **<decision>** — <reason>. Rejected: <alternative and why>.
+- **The section is closed by a right, not by a sign-in.** Rejected: showing it to everyone signed in
+  — the list itself is the answer to who reaches the cargo.
+- **The list only reads.** Rejected: making it at once with the editing panel — then nothing would
+  be checkable separately, and the screen is needed before the editing.
 
 ## Open questions
 
-- `Q-<number>` — <the question and the assumption the work goes with>.
+- Whether to show the pointed edits of rights over a role. It does not hold the work: the edits are
+  made by the task of the roles page, and until it there is nowhere to create them.
 
 ## History of changes
 
-- <date> — <what changed>.
+- 2026-09-10 — the agreement was written before the code.
