@@ -54,6 +54,14 @@ const SCENARIO_HEADING = /^###\s+(SC-([A-Z]{2,6})-(\d{1,4}))\s+—\s+(.+?)\s*$/;
  * scenarios are not read, and the audit stays green about a domain it no longer sees.
  */
 /**
+ * The code of a file without its explanations. A declaration read as text — a right at a
+ * procedure, a boundary tag in a linter setting — is looked for here and not in the raw text: a
+ * sample call written in an explanation next to the real mark substitutes itself for it, and the
+ * right of a comment travels into the audit. Caught on a live one.
+ */
+const codeOf = (text) => text.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:`'"])\/\/.*$/gm, '$1');
+
+/**
  * A file that only serves the tests. A test is not a call from the application: a symbol declared
  * and met nowhere but in the test next to it is an intention, and by such a meeting a live symbol
  * cannot be told from a forgotten one.
@@ -264,6 +272,7 @@ function bulletsOf(lines) {
 
 export {
     SPECS_DIR,
+    codeOf,
     isTestFile,
     CONSTITUTION_DIR,
     NOT_DOMAINS,

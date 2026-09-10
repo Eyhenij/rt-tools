@@ -1,4 +1,4 @@
-// rt-kit v0.27.0 · checks/spec-common.mjs · a5b8b820c873 · правится надстройкой, не здесь
+// rt-kit v0.27.0 · checks/spec-common.mjs · 915abfb9279b · правится надстройкой, не здесь
 /**
  * What is shared by every subject of the spec audit: what counts as a domain, how the tree is
  * read and how a document is cut into sections and bullets.
@@ -54,6 +54,14 @@ const SCENARIO_HEADING = /^###\s+(SC-([A-Z]{2,6})-(\d{1,4}))\s+—\s+(.+?)\s*$/;
  * untranslated domains out of the audit silently: the heading is not found, the statements and the
  * scenarios are not read, and the audit stays green about a domain it no longer sees.
  */
+/**
+ * The code of a file without its explanations. A declaration read as text — a right at a
+ * procedure, a boundary tag in a linter setting — is looked for here and not in the raw text: a
+ * sample call written in an explanation next to the real mark substitutes itself for it, and the
+ * right of a comment travels into the audit. Caught on a live one.
+ */
+const codeOf = (text) => text.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:`'"])\/\/.*$/gm, '$1');
+
 /**
  * A file that only serves the tests. A test is not a call from the application: a symbol declared
  * and met nowhere but in the test next to it is an intention, and by such a meeting a live symbol
@@ -265,6 +273,7 @@ function bulletsOf(lines) {
 
 export {
     SPECS_DIR,
+    codeOf,
     isTestFile,
     CONSTITUTION_DIR,
     NOT_DOMAINS,

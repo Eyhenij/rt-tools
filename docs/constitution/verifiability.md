@@ -1,4 +1,4 @@
-<!-- rt-kit v0.27.0 · laws/verifiability.md · dbc48612e558 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · laws/verifiability.md · 3783cdf1d827 · правится надстройкой, не здесь -->
 # Law on verifiability
 
 What counts as confirmation that work is done. The law is needed because a retelling looks as
@@ -100,6 +100,16 @@ that "should work" and code that was checked look the same in the history.
   the analysis — how many lines, of what kind, how their falsity is proven — and fixes the check
   itself. The known list is not used for this: it holds what was accepted, not the results of a
   broken check.
+- **A check that did not find what to compare says so and does not count as matched.** An empty
+  input is three different states — there is no subject at all, the subject is declared and not
+  found, the declaration was not parsed — and merged into one they give a green where nothing was
+  compared. The lawful answer "there is nothing to compare" is said by a word in the text being
+  checked, not derived from an empty parse.
+- **A declaration read by a check as text is written as a literal in the place of the
+  declaration.** What is moved into a constant or assembled by an expression such a check does not
+  see at all: the application works, the check is silent, and the miss shows itself by nothing.
+  Where a value has to be a literal, that is said in the same place where it is said what declares
+  it.
 - **A decision that depends on the current moment gets the moment from outside.** Otherwise it can
   be checked only by turning the clock, and a turned clock acts on everything that happens to be
   nearby: the check starts depending on what has no relation to it.

@@ -1,4 +1,4 @@
-// rt-kit v0.27.0 · checks/spec-anchors.mjs · 688ff9f100d3 · правится надстройкой, не здесь
+// rt-kit v0.27.0 · checks/spec-anchors.mjs · 5d7242ff9205 · правится надстройкой, не здесь
 /**
  * The binding of a rule to code and the laws a spec applies.
  *
@@ -14,6 +14,7 @@ import {
     VERDICT,
     VERDICT_MIN,
     bulletsOf,
+    codeOf,
     exists,
     isTestFile,
     read,
@@ -205,7 +206,6 @@ function checkRuleImplementation(specFile, text, mapFile, heading = ['## Rules',
  * Code without comments. A symbol named in an explanation is called by nobody, and dead code
  * usually has more explanations than live code does.
  */
-const codeOf = (text) => text.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:`'"])\/\/.*$/gm, '$1');
 
 const DECLARATION_MODIFIERS = '(?:export|declare|abstract|public|private|protected|static|readonly|override|async|accessor)';
 

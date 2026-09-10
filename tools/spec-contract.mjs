@@ -1,9 +1,9 @@
-// rt-kit v0.27.0 · checks/spec-contract.mjs · 50f26f9f0462 · правится надстройкой, не здесь
+// rt-kit v0.27.0 · checks/spec-contract.mjs · bb6a80a0caa2 · правится надстройкой, не здесь
 /**
  * The spec contract against what the code declares: the procedure table against the decorators,
  * the refusal codes against the throw points.
  */
-import { BACKTICKED, PROCEDURE_ROOTS, bulletsOf, read, report, sectionOf, walk } from './spec-common.mjs';
+import { BACKTICKED, PROCEDURE_ROOTS, bulletsOf, codeOf, read, report, sectionOf, walk } from './spec-common.mjs';
 
 // ── 2. The contract against the decorators ────────────────────────────────────
 
@@ -45,7 +45,9 @@ function declaredProcedures(roots) {
     const found = new Map();
     for (const root of roots) {
         for (const file of walk(root, (name) => name.endsWith('.procedure.ts'))) {
-            const text = read(file);
+            // Without the explanations: a sample call written next to the real mark used to substitute
+            // itself for it, and the right of a comment travelled into the audit.
+            const text = codeOf(read(file));
             const method = text.match(/\.method\.([A-Za-z_]\w*)/);
             if (!method) {
                 continue;
