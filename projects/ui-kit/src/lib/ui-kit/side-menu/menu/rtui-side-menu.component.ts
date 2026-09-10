@@ -32,7 +32,7 @@ import { TNullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
 import { clampSubMenuWidth, SUB_MENU_WIDTH_MIN } from '../side-menu.logic';
-import { filterSubMenuItems } from '../side-menu.logic';
+import { filterSubMenuItems, subMenuIdsToExpand } from '../side-menu.logic';
 import { ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 import {
     RtuiScrollableContainerComponent,
@@ -200,6 +200,25 @@ export class RtuiSideMenuComponent {
     protected readonly visibleSubMenuItems: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] =>
         filterSubMenuItems(this.isPinned() ? this.#pinnedSubMenu() : (this.selectedSubMenu() ?? []), this.subMenuQuery())
     );
+
+    /**
+     * Какие папки подменю стоят раскрытыми. Публично: подпункт берёт раскрытость отсюда — своей у
+     * него нет, а его собственная разметка вложена в него же на любую глубину.
+     *
+     * Пустой запрос отдаёт прежнюю раскрытость, ту, что была до набора: раскрытым остаётся только
+     * раздел текущего адреса. Непустой добавляет к ней все папки, в которых нашлось совпадение, —
+     * иначе результат поиска лежит за закрытым заголовком и человеку нужно нажать ещё раз, чтобы
+     * увидеть то, что он уже нашёл.
+     */
+    public readonly expandedMenuIds: Signal<Array<string | number>> = computed((): Array<string | number> => {
+        const active: Array<string | number> = this.activeMenuIds();
+
+        if (this.subMenuQuery().trim() === '') {
+            return active;
+        }
+
+        return [...active, ...subMenuIdsToExpand(this.visibleSubMenuItems())];
+    });
     public readonly headerTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuHeaderDirective, {
         read: TemplateRef,
     });
