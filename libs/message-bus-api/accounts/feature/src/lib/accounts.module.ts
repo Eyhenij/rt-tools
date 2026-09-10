@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { AccountsReadController } from './accounts-read.controller';
 import { AccountStartupService } from './account-startup.service';
 import { AuthController } from './auth.controller';
 import { LoginAttemptsService } from './login-attempts.service';
@@ -13,7 +14,7 @@ import { LoginAttemptsService } from './login-attempts.service';
  * запуске `account:list` было бы нечем — она о них и говорит.
  */
 @Module({
-    controllers: [AuthController],
+    controllers: [AuthController, AccountsReadController],
     providers: [AccountStartupService, LoginAttemptsService],
 })
 export class AccountsModule {}

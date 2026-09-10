@@ -8,7 +8,7 @@
  * Записи учётных записей делают команды строки запуска: заведения из веба нет вовсе.
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { IAccountSummaryRow, IRequestAccount } from '@rt/message-bus-api/accounts/util';
+import { IAccountSummaryRow, IPersonRow, IPersonSource, IRequestAccount, personRowOf } from '@rt/message-bus-api/accounts/util';
 
 /** Учётная запись, которую заводит команда: имя, его приведённый вид и хеш пароля. */
 export interface INewAccount {
@@ -77,6 +77,22 @@ export async function listAccounts(prisma: PrismaService): Promise<IAccountSumma
         orderBy: { name: 'asc' },
         select: { name: true, disabledAt: true, lastLoginAt: true },
     });
+}
+
+/**
+ * Записи для раздела админки: то же самое плюс роль.
+ *
+ * Отдельной выборкой, а не доводом к списку команд: команда печатает в терминал и роли не знает,
+ * и общая выборка возила бы роль туда, где её некуда деть. Порядок по имени тот же — список
+ * читает человек, и порядок заведения ему ничего не говорит.
+ */
+export async function readPeople(prisma: PrismaService): Promise<IPersonRow[]> {
+    const rows: IPersonSource[] = await prisma.account.findMany({
+        orderBy: { name: 'asc' },
+        select: { name: true, disabledAt: true, lastLoginAt: true, role: { select: { name: true } } },
+    });
+
+    return rows.map(personRowOf);
 }
 
 /** Сколько записей заведено. Спрашивается при старте: свежая служба говорит, что входить некем. */
