@@ -39,9 +39,10 @@ command that called it.
 
 ## Rules
 
-- **A guard declares the event and the tools it stands on in its header.** The layout puts the call
-  into the agent settings from that line; without it the guard is laid out and never called, and
-  from the outside it is indistinguishable from a working one.
+- **A guard declares the event it stands on in its header, and the tools where the event takes
+  them.** The layout puts the call into the agent settings from that line; without it the guard is
+  laid out and never called, and from the outside it is indistinguishable from a working one. The
+  end-of-turn event takes no tool matcher, and a line naming only the event is whole there.
 - **A helper next to a guard declares no event and says so in its own first lines.** Read as a
   guard, it is looked for in the settings and counted as a lost call.
 - **A guard fails in favour of the work.** Any error and any unrecognised path let the call through:

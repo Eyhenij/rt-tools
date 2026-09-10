@@ -3,7 +3,7 @@
 Every statement of the spec and the place it is carried out. Both kinds are executable, so the
 address of a statement is the file and the symbol or the header line it is carried out by.
 
-- **A guard declares the event and the tools it stands on in its header.** — `projects/agent-kit/assets/hooks/browser-guard-no-listing.sh:rt-hook` — `projects/agent-kit/assets/hooks/commit-msg.sh:hook` — `projects/agent-kit/assets/hooks/dev-server-guard.sh:rt-hook` — scenario `SC-AK-1036`
+- **A guard declares the event it stands on in its header, and the tools where the event takes them.** — `projects/agent-kit/assets/hooks/browser-guard-no-listing.sh:rt-hook` — `projects/agent-kit/assets/hooks/commit-msg.sh:hook` — `projects/agent-kit/assets/hooks/dev-server-guard.sh:rt-hook` — scenario `SC-AK-1036`
 - **A helper next to a guard declares no event and says so in its own first lines.** — `projects/agent-kit/assets/hooks/grill-gate-ask.sh:guard` — `projects/agent-kit/assets/hooks/guard-note.sh:guard` — scenario `SC-AK-1037`
 - **A guard fails in favour of the work.** — `projects/agent-kit/assets/hooks/skill-gate-rearm.sh:exit` — `projects/agent-kit/assets/hooks/skill-loaded.sh:exit` — scenario `SC-AK-1038`
 - **A guard's refusal names the two lawful moves, and the lawful form of the bypass where there is one.** — `projects/agent-kit/assets/hooks/sql-guard-parse.sh:printf` — `projects/agent-kit/assets/hooks/sql-guard-request.sh:deny` — scenario `SC-AK-1039`
