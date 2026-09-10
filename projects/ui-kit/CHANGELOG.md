@@ -1,3 +1,26 @@
+## [0.6.1](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.6.0...rt-tools@0.6.1) (2026-09-10)
+
+### Bug Fixes
+
+- **rt:ui-kit:** подменю не уезжает вверх при проходе по рельсе ([658f8fb](https://github.com/Eyhenij/rt-tools/commit/658f8fb1ad55bb04acc61a80238637122114d380)), closes [#1975](https://github.com/Eyhenij/rt-tools/issues/1975)
+
+### Documentation
+
+- **rt:ui-kit:** настройка панели названа в спеке и в примечании кита ([4fd2655](https://github.com/Eyhenij/rt-tools/commit/4fd2655571e01da12e0df2c9c3817a5311af7598))
+
+### Features
+
+- **rt:ui-kit:** закрытие шторки по клавише возвращается настройкой приложения ([829c928](https://github.com/Eyhenij/rt-tools/commit/829c928253cd18962cf3a3c322ecd31fe84a9e78))
+
+### BREAKING CHANGES
+
+- **rt:ui-kit:** Esc больше не закрывает шторку. Подпись вызова не изменилась, поэтому сборка и
+  типы об этом молчат. Прежнее поведение возвращается настройкой приложения components.aside.closeOnEscape
+  или доводом closeOnEscape у отдельного вызова.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01HHarB7kBpCobgCTZMnsGoX
+
 # [0.6.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.5.1...rt-tools@0.6.0) (2026-09-09)
 
 ### Bug Fixes
