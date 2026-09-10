@@ -53,6 +53,11 @@ that opened or did not.
   absent right and one outright taken away mean the same.
 - **A person without a role has no rights at all.** They sign in and see the sections none of which
   their rights name; this is a lawful state, not a defect.
+- **The rights are given by the same change that closed the operations.** Closing alone leaves
+  every account that existed before it with an empty role, that is with no rights at all, and the
+  intake answers a refusal to everyone, the owner included. The state before the closing is
+  restored by the change itself, not by a query afterwards: a query is made on one machine and is
+  absent from every other copy of the storage.
 
 **The check.**
 
