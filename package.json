@@ -59,6 +59,7 @@
     "check:window": "STORYBOOK_URL=${STORYBOOK_URL:-http://localhost:6007} node tools/snapshot-window-probe.mjs",
     "check:turn-map": "node tools/check-turn-map.mjs",
         "check:work-steps": "node tools/check-work-steps.mjs",
+        "check:spec-coverage": "node tools/check-spec-coverage.mjs",
     "check:profile-drift": "node tools/check-profile-drift.mjs",
     "check:hook-scope": "node tools/check-hook-scope.mjs",
     "check:state-next": "node tools/check-state-next.mjs",
