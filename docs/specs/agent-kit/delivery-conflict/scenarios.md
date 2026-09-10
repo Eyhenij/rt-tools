@@ -71,3 +71,30 @@ Then the guard lets the call through: refusing work on the silence of the networ
 stopping it every time there is nothing to check it against
 
 Covered: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
+
+### SC-AK-1071 — a conflicting request of a neighbouring session refuses no work
+
+Given an open request of the machine account is marked conflicting, and its branch was never led by
+this working copy
+When the executor creates a task or a branch for one
+Then the guard lets the call through: the branch is led by another session, it holds its own commits
+there, and a merge of the main branch from the side takes that work away
+
+Covered: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
+
+### SC-AK-1072 — a neighbour's conflict is named and not kept quiet
+
+Given the same request of a neighbouring session
+When the guard lets the work through
+Then the number and the branch are named, together with the line that the branch is led by another
+session: the one leading it learns of the conflict from nowhere else
+
+Covered: `projects/agent-kit/tests/git-guard-conflict.test.sh`.
+
+### SC-AK-1073 — a conflict of one's own carries no line about a neighbour's
+
+Given every conflicting request belongs to a branch this working copy led
+When the executor calls any command
+Then nothing is said about a neighbour's request: there is none
+
+Covered: `projects/agent-kit/tests/git-guard-conflict.test.sh`.

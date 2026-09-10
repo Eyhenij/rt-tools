@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/git-guard-delivery.sh · 4c0be0193ab8 · правится надстройкой, не здесь
+# rt-kit v0.27.0 · hooks/git-guard-delivery.sh · 59e33b9d7252 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
@@ -146,6 +146,12 @@ deny() {
     [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
     reason="$1"
     command -v rt_deny_tail >/dev/null 2>&1 && reason="$1 $(rt_deny_tail "$2")"
+    # A neighbour's conflict travels inside the refusal: the guard says one thing per call, and a
+    # second JSON document next to the first is read as plain text — that is, as no refusal at all.
+    [ -n "${rt_delivery_neighbour_note:-}" ] && reason="${reason}
+
+${rt_delivery_neighbour_note}"
+    rt_delivery_said=1
 
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The delivery guard."}}\n'
@@ -157,6 +163,18 @@ deny() {
 # although everything that did not come together is known already on the first round. Readiness for
 # delivery is one state, and it is named whole.
 faults=''
+
+# A conflicting request of a neighbouring session refuses nothing and is said aloud all the same:
+# the session leading that branch learns of the conflict from nowhere else. The guard leaves by a
+# dozen paths, and the note is printed from the exit of any of them — but only where nothing was
+# refused: two JSON documents in a row are read as plain text, that is, as no refusal at all.
+rt_delivery_note_out() {
+    [ -n "${rt_delivery_said:-}" ] && return 0
+    [ -z "${rt_delivery_neighbour_note:-}" ] && return 0
+    jq -n --arg c "$rt_delivery_neighbour_note" \
+        '{hookSpecificOutput:{hookEventName:"PreToolUse",additionalContext:$c}}' 2>/dev/null
+}
+trap rt_delivery_note_out EXIT
 
 fault() {
     faults="${faults}${faults:+

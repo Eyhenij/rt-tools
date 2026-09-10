@@ -175,6 +175,12 @@ flowchart TD
   that.** While the handed-over conflicts, a person cannot merge it. Work here means creating a task
   or a branch, moving the column to in progress and opening a PR; what fixes the conflict goes as
   before.
+- **A conflicting PR of a neighbouring session is not one's own.** The machine account is one per
+  tree, and several sessions work over it at once: by the account alone one's own work looks exactly
+  like a neighbour's. The session credited with a neighbour's conflict has nothing to fix it with —
+  the branch is led by somebody else, and a merge from the side takes their commits away. One's own
+  branch is the one this working copy led; a neighbour's PR is named to the owner, and work is taken
+  as usual.
 - **A conflicting open PR is a work queue audit discrepancy.** The conflict arrives with someone
   else's merge and is invisible in the list: the host shows the mark only inside the PR.
 - **A document goes in the same commit as the edit.** The bypass is the line `Docs-skip: <reason>`
