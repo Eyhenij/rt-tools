@@ -1,6 +1,6 @@
 # A right, a role and the check that reads them
 
-**Status:** in force · **Revision:** 8 September 2026 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 10 September 2026 · **Scenario prefix:** `SC-MB`
 **Depends on:** `docs/specs/message-bus/admin-auth/spec.md`
 **Laws:** `access`
 **Procedures:** none — the operations are declared by the controllers of the receiver
@@ -53,6 +53,12 @@ that opened or did not.
   absent right and one outright taken away mean the same.
 - **A person without a role has no rights at all.** They sign in and see the sections none of which
   their rights name; this is a lawful state, not a defect.
+- **The arrival of the rights model does not take the access away from those who already had it.**
+  A person created before the rights had every section, and an empty role turns that into nothing:
+  the sign-in still works while the panel shows no section at all. So the migration that brings the
+  model carries the former access over in the same move — it creates the role of the former access
+  and points at it every account that has none. A person created after the rights is not affected:
+  they never had that access.
 
 **The check.**
 
