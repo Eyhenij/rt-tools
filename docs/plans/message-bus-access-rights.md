@@ -39,10 +39,12 @@ of them may do a thing the owner sets from a screen rather than from a database 
   not there, they are the only way in; while they stand next to the screens, one action has two
   paths and they drift apart in silence. Their removal is the last task, and it also closes the
   hole they were holding: there is nobody to create the first record from the web.
-- **The branches stand each on the main branch, not in a stack.** The tasks are merged in the order
+- **The branches stand each on the epic branch, not in a stack.** The tasks are merged in the order
   of the table, and the next branch is created after the previous one is merged: everything from
   the second onward stands on the rights of the first, and a stack of six would mean six requests
-  the run stalls on at once.
+  the run stalls on at once. The epic branch is `RT-1896-access-rights`, taken from the main branch
+  after the first two tasks had already been merged straight into it: those two are not in it, and
+  it starts from a main branch that already carries them.
 
 ## The tasks
 
@@ -54,6 +56,13 @@ of them may do a thing the owner sets from a screen rather than from a database 
 | 4   | #1900 — creating, disabling and changing a password from a screen         | The three actions of the launch line move to a panel next to the list                                                                              |
 | 5   | #1901 — the page of roles and rights                                      | The set of a role and the pointed edits over it. It goes after the list: there must be somebody to assign a role to                                |
 | 6   | #1902 — the commands are removed, the first record gets a path of its own | Last: until then the commands are the only way in when the admin panel does not come up                                                            |
+
+## What was found along the way
+
+- **#2018 — the rights migration took the access away from everybody.** Task 1 created the tables
+  and the column and put not a single row: every account made before it keeps an empty role, that is
+  no rights at all, and the panel shows no section. It is fixed by a follow-up migration that
+  carries the former access over. Found on production by the owner.
 
 The order holds to the end of the epic. A reconsideration is the owner's decision, not the
 executor's.
