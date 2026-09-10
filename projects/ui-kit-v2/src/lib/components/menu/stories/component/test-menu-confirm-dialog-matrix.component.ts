@@ -115,11 +115,21 @@ export class TestRtMenuConfirmDialogMatrixComponent {
         { name: 'опасное действие', data: confirmData({ tone: 'danger' }) },
         {
             name: 'предупреждение',
-            data: confirmData({ tone: 'warning', title: 'Снять с публикации?', confirmLabel: 'Снять' }),
+            data: confirmData({
+                tone: 'warning',
+                title: 'Снять с публикации?',
+                message: 'Заявка перестанет показываться в поиске. Вернуть её на место можно в любой момент.',
+                confirmLabel: 'Снять',
+            }),
         },
         {
             name: 'обычное подтверждение',
-            data: confirmData({ tone: 'primary', title: 'Отправить заявку?', confirmLabel: 'Отправить' }),
+            data: confirmData({
+                tone: 'primary',
+                title: 'Отправить заявку?',
+                message: 'Заявка уйдёт на согласование. Пока её не посмотрели, правки ещё можно внести.',
+                confirmLabel: 'Отправить',
+            }),
         },
     ];
 
