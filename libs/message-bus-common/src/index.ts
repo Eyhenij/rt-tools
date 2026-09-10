@@ -11,6 +11,7 @@ export * from './lib/cargo-state';
 export * from './lib/cargo-state-move';
 export * from './lib/month';
 export * from './lib/page';
+export * from './lib/person-view';
 export * from './lib/rights';
 export * from './lib/sortable';
 export * from './lib/tree-choice';

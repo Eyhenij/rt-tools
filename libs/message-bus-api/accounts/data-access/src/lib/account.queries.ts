@@ -8,7 +8,8 @@
  * Записи учётных записей делают команды строки запуска: заведения из веба нет вовсе.
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { IAccountSummaryRow, IPersonRow, IPersonSource, IRequestAccount, personRowOf } from '@rt/message-bus-api/accounts/util';
+import { IAccountSummaryRow, IPersonSource, IRequestAccount, personRowOf } from '@rt/message-bus-api/accounts/util';
+import { IPage, IPageAsked, IPersonView, pageSkip, TPageDirection } from '@rt/message-bus-common';
 
 /** Учётная запись, которую заводит команда: имя, его приведённый вид и хеш пароля. */
 export interface INewAccount {
@@ -80,19 +81,49 @@ export async function listAccounts(prisma: PrismaService): Promise<IAccountSumma
 }
 
 /**
- * Записи для раздела админки: то же самое плюс роль.
+ * Первая ступень порядка людей. Вторая — всегда имя: оно уникально, и им запрос кончает порядок.
+ *
+ * Пустой последний вход уезжает в конец при любом направлении: хранилище кладёт пустоту первой
+ * при убывании, и список открывался бы теми, кто не входил ни разу, — а спрашивают его о том,
+ * кто ходит.
+ */
+type TPersonOrder =
+    | { readonly lastLoginAt: { readonly sort: TPageDirection; readonly nulls: 'last' } }
+    | { readonly disabledAt: { readonly sort: TPageDirection; readonly nulls: 'last' } }
+    | { readonly name: TPageDirection };
+
+/** Порядок по названному полю. Умолчание — последний вход: кто ходит, человеку нужнее. */
+function orderOf(asked: IPageAsked): TPersonOrder {
+    switch (asked.sort) {
+        case 'name':
+            return { name: asked.dir };
+        case 'disabledAt':
+            return { disabledAt: { sort: asked.dir, nulls: 'last' } };
+        default:
+            return { lastLoginAt: { sort: asked.dir, nulls: 'last' } };
+    }
+}
+
+/**
+ * Страница людей для раздела админки: то же самое плюс роль.
  *
  * Отдельной выборкой, а не доводом к списку команд: команда печатает в терминал и роли не знает,
- * и общая выборка возила бы роль туда, где её некуда деть. Порядок по имени тот же — список
- * читает человек, и порядок заведения ему ничего не говорит.
+ * и общая выборка возила бы роль туда, где её некуда деть.
+ *
+ * Приезжает страницей, как и остальные списки админки, хотя людей у приёмника десятки: страницу,
+ * порядок и повтор чтения экрану даёт одна общая основа, и список, отвечающий не её формой,
+ * пришлось бы читать в обход неё.
  */
-export async function readPeople(prisma: PrismaService): Promise<IPersonRow[]> {
+export async function readPeople(prisma: PrismaService, asked: IPageAsked): Promise<IPage<IPersonView>> {
+    const total: number = await prisma.account.count();
     const rows: IPersonSource[] = await prisma.account.findMany({
-        orderBy: { name: 'asc' },
         select: { name: true, disabledAt: true, lastLoginAt: true, role: { select: { name: true } } },
+        orderBy: [orderOf(asked), { name: 'asc' }],
+        skip: pageSkip(asked),
+        take: asked.size,
     });
 
-    return rows.map(personRowOf);
+    return { rows: rows.map(personRowOf), page: asked.page, size: asked.size, total };
 }
 
 /** Сколько записей заведено. Спрашивается при старте: свежая служба говорит, что входить некем. */
