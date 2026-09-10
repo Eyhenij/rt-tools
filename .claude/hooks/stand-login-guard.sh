@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/stand-login-guard.sh · 347ce5324879 · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/stand-login-guard.sh · 216cafb487b3 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh
 # Guard of signing in to the stand. The Stop event. It does not let a turn end in which the executor
@@ -25,6 +25,9 @@
 #
 # On an error the guard passes: on a failure, a missing turn record and a repeated call the turn is
 # ALLOWED. A broken guard must not block the conversation.
+#
+# FAIL-OPEN: no input, no jq, an already active turn — the turn ends as it did. A guard of the end
+# of a turn that refuses on doubt leaves the session with no lawful end at all.
 
 # The guard's name for the observations: it is written by the shared deny tail.
 RT_GUARD_NAME=stand-login-guard

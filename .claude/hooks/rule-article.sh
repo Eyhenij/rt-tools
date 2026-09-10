@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/rule-article.sh · 4df1cb899ad4 · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/rule-article.sh · 7d6519c66cc6 · правится надстройкой, не здесь
 # Parsing the applicability sign of a rule article. A helper: it declares no event of its own, and
 # is sourced by whoever needs the text of an article — the rules gate in its refusal.
+#
+# NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The rules gate
+# sources it: an article says whether it applies itself, and the parsing of that lives here.
 #
 # A rule weighs from twenty to sixty kilobytes, while one of its articles covers a particular edit.
 # A refusal that calls the whole rule pays the full price of the rule for the decision — and teaches

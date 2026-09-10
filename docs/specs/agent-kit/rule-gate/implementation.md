@@ -20,3 +20,5 @@ statement: a removed statement is removed together with its line.
 - **A command publishing the body of a task or a request demands the rule of the wording.** — `projects/agent-kit/assets/defaults/gate-map.sh:doc-style-human` — scenario SC-AK-850
 - **Two signs are judged at once: the call of the client and the body in the arguments.** — `projects/agent-kit/assets/defaults/gate-map.sh:rt_gate_invokes` — scenario SC-AK-850
 - **An interpreter is checked by its body, not by its name.** — `projects/agent-kit/assets/defaults/shell.sh:interp` — a document at the input and code as an argument; scenario `SC-AK-857`
+- **The gate forgets the loaded rules when the text of the rules leaves the session.** — `projects/agent-kit/assets/hooks/skill-gate-rearm.sh:sid` — scenario `SC-AK-1049`
+- **The forgetting is told to the session in words.** — `projects/agent-kit/assets/hooks/skill-gate-rearm.sh:additionalContext` — scenario `SC-AK-1050`
