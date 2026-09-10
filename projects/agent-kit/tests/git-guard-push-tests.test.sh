@@ -37,6 +37,24 @@ printf 'rt_push_checks() { printf "%%s\\n" true; }\n' > "$RED_GATE/.claude/rt-ki
 gate "зелёный набор пуш не задерживает" "$RED_GATE" 'git push origin RT-72-gate' PASS
 rm -rf "$RED_GATE"
 
+# --- SC-AK-1077, SC-AK-1078. Вызов из второй рабочей копии ------------------------------------
+# Вторую копию берут для чтения: слияние главной идёт на ней, пока в копии сессии лежит чужая
+# незакоммиченная работа. Вызов, сделанный оттуда, судился копией сессии — то есть чужим деревом:
+# её устаревший архив и недописанное описание отбивали вызов, а вклад, который уезжал на хостинг,
+# не проверялся вовсе.
+SECOND="$(fixture_repo RT-73-second)"
+GREEN_GATE="$(fixture_repo RT-73-gate)"
+mkdir -p "$GREEN_GATE/.claude/rt-kit"
+printf 'rt_push_checks() { printf "%%s\\n" true; }\n' > "$GREEN_GATE/.claude/rt-kit/project.sh"
+
+gate "SC-AK-1077 — вызов из второй копии отбит" "$GREEN_GATE" \
+    "cd $SECOND && git push origin RT-73-second" deny
+gate "SC-AK-1078 — переход в свой же корень вызов не отбивает" "$GREEN_GATE" \
+    "cd $GREEN_GATE && git push origin RT-73-gate" PASS
+gate "SC-AK-1078 — вызов без перехода идёт как прежде" "$GREEN_GATE" \
+    'git push origin RT-73-gate' PASS
+rm -rf "$SECOND" "$GREEN_GATE"
+
 # --- SC-AK-851. У красного по вине самой проверки есть свой ход --------------------------------
 # Гард проверяет код возврата и двух родов красного не различает. Когда ошибается сама проверка,
 # текст «почини и пушь снова» велит чинить код, которого никто не трогал: разобранный однажды
