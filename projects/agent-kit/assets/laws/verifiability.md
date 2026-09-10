@@ -78,6 +78,11 @@ that "should work" and code that was checked look the same in the history.
   tool's settings, not bypassed in every place.** The bypass has to be repeated as many times as
   there are such places, and none of them says why: from outside it looks like the author's mistake,
   not a decision.
+- **A check and a guard outrank the executor's judgement of their own work.** The executor judges
+  their own code with an interest: they remember the intent and see it instead of the result, while
+  the check reads only the result. A divergence is closed by an edit of the code, and the
+  executor's argument that the check is wrong is no argument at all — neither in their own decision
+  nor in a question to the owner.
 - **A red check means wrong code, not a wrong check.** A place taken out from under the check so
   that it goes quiet fixes the reading, not what the check pointed at: the code stays the same, and
   nobody has a signal about it any more. There is one move out of a red check — fix what it pointed

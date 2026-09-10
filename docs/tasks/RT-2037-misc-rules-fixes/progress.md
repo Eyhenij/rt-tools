@@ -20,6 +20,12 @@ Rewritten by every session, not appended to.
   weight limit, and three more articles took it over. The arguments of fourteen articles were cut
   to their price of the miss, and the retargeting call moved to the pattern of the chain, where the
   ready-made code belongs. No statement was removed. Affected stage of the plan: 2.
+- **The law article goes to the owner inside the PR, not past them** — an article of a law is an
+  agreement with the owner, and the rule of work conduct says a law is not edited in the branch.
+  Here the law is a package resource, and the owner ordered the whole intake taken into work; the
+  edit therefore stays in the branch and its ready-made text stands in the PR body under a heading
+  of its own, so that the owner strikes it by one word if they disagree. Affected stage of the
+  plan: 3.
 - **The row of the epic plan is corrected to eleven records** — nine were counted before the last
   two trees sent their cargo. Affected stage of the plan: 5.
 
@@ -30,6 +36,13 @@ Rewritten by every session, not appended to.
   `docs/specs/agent-kit/dev-server/`. Checked by
   `bash projects/agent-kit/tests/dev-server-guard.test.sh` — 30 probes, no failures (23 before the
   stage), and by `npm run check:specs` — 1548 scenarios, the new one is covered.
+
+- **3. The law article and four articles of rules** — record 8 into the law of verifiability,
+  record 9 into the rule about texts, record 3 into the rule of lib layers, record 11 into the rule
+  of verification, record 10 into the header of the rules gate. Checked by `npm run check:specs` —
+  1549 scenarios, no divergences; `npm run check:docs` — 582 documents; `node
+tools/check-file-size.mjs` — longer than the limit 0; `bash
+projects/agent-kit/tests/skill-gate.test.sh` — 89 probes, no failures.
 
 ## Sessions
 
