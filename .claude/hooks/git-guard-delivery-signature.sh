@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/git-guard-delivery-signature.sh · d23f582104b2 · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/git-guard-delivery-signature.sh · fefc08d23d99 · правится надстройкой, не здесь
 # The signature of a machine commit for the delivery guard: whose commit it is, whether it is signed
 # with the right mail and what to do if it is not.
+#
+# NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The delivery guard
+# sources it — one tier of its verdict, moved out when the guard reached its length limit.
 #
 # There is deliberately no `# rt-hook:` line here: the event and the call pattern are declared by the
 # guard itself, and a helper next to it is not registered as a hook and decides nothing alone. It is

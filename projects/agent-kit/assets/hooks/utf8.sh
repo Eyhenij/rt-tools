@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # The locale a guard runs in. Sourced as the first line of the body: `. "<guards directory>/utf8.sh"`.
 #
+# NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The guards source it
+# as the first line of their body: the locale is one for all of them.
+#
 # Guard patterns are written in the words of the language the tree speaks, and matching against
 # them depends on the process locale. In the C locale case folding works only for Latin letters:
 # «В дереве этого нет» is not found under the pattern `(в дереве|здесь)…` at all, the guard exits
