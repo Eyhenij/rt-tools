@@ -1,3 +1,15 @@
+# [0.7.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.6.1...rt-tools@0.7.0) (2026-09-10)
+
+### Bug Fixes
+
+- **rt:ui-kit:** лупа и крестик поиска стоят на одинаковом отступе ([60e2056](https://github.com/Eyhenij/rt-tools/commit/60e2056cfee97859f49db54665a9ce8c8d11d3db))
+- **rt:ui-kit:** найденное поиском видно сразу — папка раскрыта ([b1e926a](https://github.com/Eyhenij/rt-tools/commit/b1e926a159bf09423ae5e8dec647d899efbfe562))
+- **rt:ui-kit:** поиск в боковом меню спускается внутрь папок ([6153ad5](https://github.com/Eyhenij/rt-tools/commit/6153ad57edd57909bf0c3627191c562529fa5cb9))
+
+### Features
+
+- **rt:ui-kit:** по подменю бокового меню можно ходить с клавиатуры ([4241337](https://github.com/Eyhenij/rt-tools/commit/4241337f12106b6b6c0d2b607a10856ffc121b7f))
+
 ## [0.6.1](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.6.0...rt-tools@0.6.1) (2026-09-10)
 
 ### Bug Fixes
