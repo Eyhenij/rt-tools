@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/git-guard-delivery-conflict.sh · 5a5453913686 · правится надстройкой, не здесь
+# rt-kit v0.27.0 · hooks/git-guard-delivery-conflict.sh · 2f998e969d26 · правится надстройкой, не здесь
 # A conflicting PR of one's own, for the delivery guard: while at least one handed-over piece of
 # work is marked conflicting, a new one is not taken.
 #
@@ -60,6 +60,16 @@ rt_delivery_led_branch() {
             /checkout: moving from /  { if ($NF == branch) { found = 1 } }
             END                       { exit found ? 0 : 1 }
         '
+}
+
+# The note about a neighbour's conflict, printed from the exit of the guard by whichever path it
+# leaves — but only where nothing was refused: two JSON documents in a row are read as plain text,
+# that is, as no refusal at all. A refusal carries the note inside itself.
+rt_delivery_note_out() {
+    [ -n "${rt_delivery_said:-}" ] && return 0
+    [ -z "${rt_delivery_neighbour_note:-}" ] && return 0
+    jq -n --arg c "$rt_delivery_neighbour_note" \
+        '{hookSpecificOutput:{hookEventName:"PreToolUse",additionalContext:$c}}' 2>/dev/null
 }
 
 rt_delivery_conflict() {

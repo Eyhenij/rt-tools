@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for creating a task and a branch, commit, push, opening a PR and merging. Names the one-to-one pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — rule deploy-flow.
 ---
-<!-- rt-kit v0.27.0 · rules/git-workflow.github.md · fa661cd97e4e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · rules/git-workflow.github.md · fb385749d2b4 · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -97,8 +97,7 @@ flowchart TD
   green on its own, and they collide on what one branch cannot show.
 - **The next work's branch is taken from the previous one while the chain is unbroken.** `git
   checkout -b <КЛЮЧ>-<номер>-<slug> <предыдущая ветка>`; from the epic branch — only the chain's
-  first work, otherwise the first merge diverges the rest at once. A chain is set up inside one
-  epic and only where the next task edits what the previous one wrote.
+  first work. A chain is set up inside one epic, where the next task edits what the previous wrote.
 - **A PR in a chain has the previous branch as its base, not main.** `gh pr create --base
   <предыдущая ветка>` — otherwise the review shows the edit mixed with all under it. The host
   retargets the base of a merged lower one itself.
@@ -111,9 +110,11 @@ flowchart TD
   owner resolving the same at merge time owns neither.
 - **Unmet delivery conditions are named in one refusal.** The guard collects and prints them at
   once: everything unmet is known on the first call.
-- **A condition known at the start of work is asked at the start.** Creating a branch — also with a
-  flag between the verb and `-b` — refuses a base without main's tip and a foreign email in the
-  signature: at push time the fix costs more.
+- **A condition known at the start of work is asked at the start.** Creating a branch refuses a base
+  without main's tip and a foreign email in the signature: at push time the fix costs more.
+- **The form of a branch name is judged by the tree the command runs in.** A session works in a
+  neighbouring tree by the owner's word, and the task key there is its own; a tree with no profile
+  is not judged at all. A refusal on a lawful name stops the work whole and has no bypass.
 - **The base judged is the one named by the command, not the tip of the working copy.** A branch is
   also created straight from `origin/main` — that very command takes the base fresh. A base the tree
   knows nothing of is not judged at all.
@@ -125,13 +126,12 @@ flowchart TD
 - **An unset key refuses work with the queue on the spot.** No default on purpose: a title from an
   empty value matches nothing, and a real discrepancy drowns among false lines.
 - **A created task is confirmed by the work queue's answer, not by the creation command's output.**
-  A printed number means "the call went through": a task can be created and never reach the board.
+  A task can be created and never reach the board.
 - **The visibility of what was created is checked by the side it is meant for.** A PR is read by a
   person, a task by the work queue, and both read with a token other than the creating one. Whose
   eyes took the answer, its `viewer` field says.
 - **A refusal is read before it is bypassed by a second way.** It can be an early sign of a write
   limit, and a bypass by another call carries the sign away: the discrepancy surfaces at the owner.
-  A limit is told from exhaustion by the limits answer — there it is zero.
 - **The branch number and the PR title number are checked on the spot, the task state — by the
   board.** The format is read from the command text and works offline; the rest needs something to
   ask with, and without it the second tier is skipped silently.
@@ -173,15 +173,11 @@ flowchart TD
   known merge.** A PR goes stale with no action by its author: a neighbouring work merged — the rest
   lagged that second. Technique — `git-workflow-freshness`.
 - **One's own conflicting PR is fixed by the turn's first action, and no new work is taken before
-  that.** While the handed-over conflicts, a person cannot merge it. Work here means creating a task
-  or a branch, moving the column to in progress and opening a PR; what fixes the conflict goes as
-  before.
-- **A conflicting PR of a neighbouring session is not one's own.** The machine account is one per
-  tree, and several sessions work over it at once: by the account alone one's own work looks exactly
-  like a neighbour's. The session credited with a neighbour's conflict has nothing to fix it with —
-  the branch is led by somebody else, and a merge from the side takes their commits away. One's own
-  branch is the one this working copy led; a neighbour's PR is named to the owner, and work is taken
-  as usual.
+  that.** Work here means creating a task or a branch, moving the column to in progress and opening
+  a PR; what fixes the conflict goes as before.
+- **A conflicting PR of a neighbouring session is not one's own.** One's own branch is the one this
+  working copy led; the machine account is shared and tells nothing apart. A neighbour's PR is named
+  to the owner, and work is taken as usual: a merge from the side takes their commits away.
 - **A conflicting open PR is a work queue audit discrepancy.** The conflict arrives with someone
   else's merge and is invisible in the list: the host shows the mark only inside the PR.
 - **A document goes in the same commit as the edit.** The bypass is the line `Docs-skip: <reason>`
@@ -194,11 +190,9 @@ flowchart TD
   unit tests read only what a test imports: a type error in uncovered code lives until the image
   build — that is, the merge.
 - **On a machine with several runners, any path from the home directory is shared.** Install
-  directory, container name and builder name are per project and fixed; a temporary directory will
-  not do — the package store lives there.
+  directory, container name and builder name are per project and fixed.
 - **The push gate set is never narrower than the pipeline set.** A pipeline step with neither a line
-  in the set nor a declared exclusion with a reason refuses the push instead of printing next to it:
-  a warning reads as permission.
+  in the set nor a declared exclusion with a reason refuses the push: a warning reads as permission.
 - **The gate set calls the package default instead of listing it line by line.** Rewritten as lines,
   it leaves tomorrow's hole: a check the package adds never reaches the tree. Sifting out of the
   default is legitimate, by name and with a reason.
@@ -243,10 +237,8 @@ flowchart TD
   and about this PR; said about one, it does not carry to the next, and silence is never permission.
 - **The identity of the call opening a PR is guarded by the delivery guard, not by the executor's
   memory.** It comes from the environment and shows in the command text only by an explicit token
-  substitution. What the guard judges is the clash with the reviewer, not the name of the account: a
-  PR opened by another account is lawful while its reviewer is somebody else, and the machine
-  account is named aloud rather than demanded. Where there is nothing to learn the author by, the
-  substitution is demanded outright.
+  substitution. Judged is the clash with the reviewer, not the account name; where there is nothing
+  to learn the author by, the substitution is demanded outright.
 - **The host client's active account is chosen per machine, not per tree; the machine account is
   substituted per call, never made active.** A login as the machine account hijacks every
   neighbouring session on the machine. Substitution is mandatory even with an active account.

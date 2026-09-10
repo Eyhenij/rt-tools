@@ -61,6 +61,16 @@ rt_delivery_led_branch() {
         '
 }
 
+# The note about a neighbour's conflict, printed from the exit of the guard by whichever path it
+# leaves — but only where nothing was refused: two JSON documents in a row are read as plain text,
+# that is, as no refusal at all. A refusal carries the note inside itself.
+rt_delivery_note_out() {
+    [ -n "${rt_delivery_said:-}" ] && return 0
+    [ -z "${rt_delivery_neighbour_note:-}" ] && return 0
+    jq -n --arg c "$rt_delivery_neighbour_note" \
+        '{hookSpecificOutput:{hookEventName:"PreToolUse",additionalContext:$c}}' 2>/dev/null
+}
+
 rt_delivery_conflict() {
     # The sign of taking work is read from the text of the command and stands first: the query goes
     # to the network, and paying for it on every shell command is not allowed.

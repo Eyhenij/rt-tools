@@ -163,18 +163,6 @@ ${rt_delivery_neighbour_note}"
 # delivery is one state, and it is named whole.
 faults=''
 
-# A conflicting request of a neighbouring session refuses nothing and is said aloud all the same:
-# the session leading that branch learns of the conflict from nowhere else. The guard leaves by a
-# dozen paths, and the note is printed from the exit of any of them — but only where nothing was
-# refused: two JSON documents in a row are read as plain text, that is, as no refusal at all.
-rt_delivery_note_out() {
-    [ -n "${rt_delivery_said:-}" ] && return 0
-    [ -z "${rt_delivery_neighbour_note:-}" ] && return 0
-    jq -n --arg c "$rt_delivery_neighbour_note" \
-        '{hookSpecificOutput:{hookEventName:"PreToolUse",additionalContext:$c}}' 2>/dev/null
-}
-trap rt_delivery_note_out EXIT
-
 fault() {
     faults="${faults}${faults:+
 }— $1"
@@ -198,7 +186,15 @@ fault() {
 # take the next one: while what was handed over conflicts, it is fixed by the first action of the
 # turn. No helper — the tier is not judged, and the work goes on.
 # shellcheck disable=SC1090
+# The tree the command runs in: the form of a branch name is judged by its profile, not by the
+# profile of the tree the session was started from. No helper — the form is judged as before.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/git-guard-delivery-tree.sh" ] && . "$rt_hooks_dir/git-guard-delivery-tree.sh" 2>/dev/null
+command -v rt_delivery_branch_form_ok >/dev/null 2>&1 \
+    || rt_delivery_branch_form_ok() { rt_task_branch_ok "$1"; }
+
 [ -f "$rt_hooks_dir/git-guard-delivery-conflict.sh" ] && . "$rt_hooks_dir/git-guard-delivery-conflict.sh" 2>/dev/null
+command -v rt_delivery_note_out >/dev/null 2>&1 && trap rt_delivery_note_out EXIT
 command -v rt_delivery_conflict >/dev/null 2>&1 && rt_delivery_conflict
 
 # The refusal on what has piled up. Empty — the calling side goes on.
@@ -261,7 +257,7 @@ if [ -n "$branch_arg" ]; then
     # number at all.
     number_arg="$(rt_task_branch_number "$branch_arg")"
     if [ -n "$number_arg" ]; then
-        rt_task_branch_ok "$branch_arg" \
+        rt_delivery_branch_form_ok "$branch_arg" \
             || deny "BLOCKED: the branch name «${branch_arg}» is not of the form accepted here. The branch number is the same as the number of the task and of the title of the merge request."
         state=''
         check_task "$number_arg" "the branch «${branch_arg}»"

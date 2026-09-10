@@ -131,6 +131,29 @@ Here moved the cases, numbers and rejected remedies that used to stand next to t
 articles. No edit decision rests on them: they are for whoever investigates a miss or argues with
 a guard.
 
+- **A PR opened by another account is lawful while its reviewer is somebody else.** The clash the
+  guard judges is that of author and reviewer, not the account name: the machine account is named
+  aloud rather than demanded.
+
+- **A chain branched from the epic branch twice diverges at the first merge.** The rest of the
+  branches then stand on a base that is gone.
+
+- **While the handed-over conflicts, a person cannot merge it.** New work adds one more branch to
+  the same queue instead of fixing that.
+
+- **A flag between the verb and `-b` is the same branch creation.** The guard used to judge only the
+  form without a flag.
+
+- **A printed task number means only that the call went through.** The board is a separate service,
+  and a task lands on it only when added.
+
+- **A temporary directory will not do for a runner's paths.** The package store lives there.
+
+- **A pipeline step printed next to the push instead of refusing it is skipped.** A warning reads as
+  permission.
+
+- **A write limit is told from exhaustion by the limits answer.** There it is zero.
+
 - **A refusal at the merge remains the second line.** A person merges as soon as they see green,
   and the second line is simply never reached.
 
