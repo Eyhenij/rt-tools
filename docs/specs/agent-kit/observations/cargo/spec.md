@@ -80,6 +80,17 @@ subdomain "Observations" next to it.
   writes.
 - **A sent proposal is marked by the month that accepted it and does not go a second time.**
   Otherwise a second launch of the command puts a second record about one edit into the intake.
+- **Both runs name the blocks judged already sent, and zero of them is named too.** The mark field
+  was read by its presence, and its value was of no concern: one written by hand — and it gets
+  written by whoever fills the field out of habit — meant "gone", so the block never went, and the
+  dry run did not show it either. Twenty-six blocks lay like that over nine days in one tree, and
+  from outside it looked as if no reviews had happened at all. Silence about the skipped reads as
+  "there was nothing to skip", and the reader has nothing to tell one from the other by.
+- **A mark whose value the sending never writes is named as written by hand.** The sending writes
+  its own value in one form; everything else in that field was put there by a person, and almost
+  always it is the word "нет", meaning exactly the opposite of what it says. The form is declared
+  once and next to its reader: an own copy of it would drift silently, and a block with a real mark
+  would read as written by hand while a hand-written one stopped being named.
 - **The intake address is read from a setting of the tree.** Nailed into the code, it would name a
   foreign tree in the package texts, and it would leave the tree no choice of where to send.
 - **Nothing goes outward that a person did not send by a command.** Not one guard goes into the
