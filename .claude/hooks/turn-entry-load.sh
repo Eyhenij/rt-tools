@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/turn-entry-load.sh · 4ee1826143b2 · правится надстройкой, не здесь
+# rt-kit v0.27.0 · hooks/turn-entry-load.sh · 4ee1826143b2 · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # Requires: hooks/handoff-write.sh
 # SessionStart: the handover of the previous session and the turn map travel into the context on

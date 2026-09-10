@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load when editing any test file and anything in the tree's end-to-end suites. Names the scenario id in the title, moving a decision into a pure function and what an end-to-end test closes. Patterns testing-unit, testing-e2e.
 ---
-<!-- rt-kit v0.26.0 · rules/testing.md · 40e57d6b8ed2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · rules/testing.md · 40e57d6b8ed2 · правится надстройкой, не здесь -->
 
 # Verifiability — how it works here
 

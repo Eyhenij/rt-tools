@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/reuse-first-guard.sh · c803dc18d4fe · правится надстройкой, не здесь
+# rt-kit v0.27.0 · hooks/reuse-first-guard.sh · c803dc18d4fe · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh
 # The "nothing is written from scratch" guard. PreToolUse on an edit of code and markup.

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/waiting-turn-guard.sh · 0aa19a4bf379 · правится надстройкой, не здесь
+# rt-kit v0.27.0 · hooks/waiting-turn-guard.sh · 0aa19a4bf379 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh
 # Waiting guard: a turn that tells the owner about someone else's step does not end until it holds

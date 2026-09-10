@@ -4,7 +4,7 @@ kind: pattern
 rule: entity-conventions
 description: Pattern of rule entity-conventions. Load when assembling or editing the record create-and-edit panel — the ready-made route in the ro outlet, inheriting the shared base, runMutation, the unsaved edits guard, header and footer, leaving for a linked record. Not for the store — pattern entity-store.
 ---
-<!-- rt-kit v0.26.0 · patterns/entity-aside.md · 05314ce277ff · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · patterns/entity-aside.md · 05314ce277ff · правится надстройкой, не здесь -->
 
 # The record edit panel
 

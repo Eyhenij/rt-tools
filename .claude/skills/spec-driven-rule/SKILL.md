@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Pattern of rule spec-driven. Load when creating or editing a law in docs/constitution, a rule or a pattern in .claude/skills — ready-made headers, the section set of each layer, the binding table, the sign that a rule is due for splitting. Not for a domain spec — that is pattern spec-driven-domain.
 ---
-<!-- rt-kit v0.26.0 · patterns/spec-driven-rule.md · 156da013b1cb · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · patterns/spec-driven-rule.md · 156da013b1cb · правится надстройкой, не здесь -->
 
 # Law, rule and pattern
 

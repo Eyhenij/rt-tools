@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load before a push, when taking a task and after every known merge — reading all your open PRs at once, telling lag apart from a conflict in files, checking the local head against the hosting.
 ---
-<!-- rt-kit v0.26.0 · patterns/git-workflow-freshness.md · d4d8e242afb8 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · patterns/git-workflow-freshness.md · d4d8e242afb8 · правится надстройкой, не здесь -->
 
 # Freshness of open PRs
 

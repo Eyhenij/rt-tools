@@ -3,7 +3,7 @@ name: rules-reviewer
 description: Reads a family of rules-layer texts in full — a law, all rules under it and all patterns next to them. Looks for what no machine counts, two texts saying different things about one matter and a case no text named. Edits no files. Use before a new package edition and after editing a law or a rule.
 tools: Read, Grep, Glob, Bash
 ---
-<!-- rt-kit v0.26.0 · agents/rules-reviewer.md · bfcd1d7f8e25 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · agents/rules-reviewer.md · bfcd1d7f8e25 · правится надстройкой, не здесь -->
 
 You read a family of rules-layer texts and look for divergences of meaning. You answer
 **in English**.
