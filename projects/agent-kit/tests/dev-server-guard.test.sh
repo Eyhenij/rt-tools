@@ -103,4 +103,60 @@ else
 fi
 report "SC-AK-1055 — сборка внутри обёртки проходит" "$got" "PASS"
 
+# --- SC-AK-1091. Кто поднимает стенды, решает дерево ---------------------------------------
+
+# Профиль дерева, который никто не задал, читается как прежнее поведение.
+say "SC-AK-1091 — незаданный ключ оставляет прежний отказ" DENY 'nx serve admin'
+
+profile() {
+    local raiser="$1" stands="$2" cmd="$3" got
+    if input_cmd "$cmd" Bash "$tree" \
+        | RT_STANDS="$stands" RT_STANDS_RAISED_BY="$raiser" "$HOOKS/dev-server-guard.sh" >/dev/null 2>&1; then
+        got="PASS"
+    else
+        got="DENY"
+    fi
+    printf '%s' "$got"
+}
+
+got="$(profile owner 'витрина http://localhost:6006' 'nx serve admin')"
+report "SC-AK-1091 — при «owner» подъём отбит и на свободном порту" "$got" "DENY"
+
+# Порт заведомо свободен: гард отбивает только занятый.
+free_port=""
+for candidate in 45231 45232 45233 45234; do
+    lsof -nP -iTCP:"$candidate" -sTCP:LISTEN >/dev/null 2>&1 || { free_port="$candidate"; break; }
+done
+got="$(profile session "стенд http://localhost:${free_port:-45231}" 'nx serve admin')"
+report "SC-AK-1091 — при «session» свободный порт проходит" "$got" "PASS"
+
+got="$(profile session "стенд http://localhost:${free_port:-45231}" 'npm run dev')"
+report "SC-AK-1091 — при «session» проходит и бегунок пакета" "$got" "PASS"
+
+# Настоящий слушатель: без него сказать «порт занят» нечем.
+python3 -m http.server "${free_port:-45231}" --bind 127.0.0.1 >/dev/null 2>&1 &
+listener=$!
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+    lsof -nP -iTCP:"${free_port:-45231}" -sTCP:LISTEN >/dev/null 2>&1 && break
+    sleep 0.2
+done
+
+got="$(profile session "стенд http://localhost:${free_port:-45231}" 'nx serve admin')"
+report "SC-AK-1091 — при «session» занятый порт отбит" "$got" "DENY"
+
+reason="$(input_cmd 'nx serve admin' Bash "$tree" \
+    | RT_STANDS="стенд http://localhost:${free_port:-45231}" RT_STANDS_RAISED_BY=session \
+        "$HOOKS/dev-server-guard.sh" 2>&1 >/dev/null)"
+if printf '%s' "$reason" | grep -q "${free_port:-45231}"; then got="есть"; else got="нет"; fi
+report "SC-AK-1091 — отказ при «session» называет занятый порт" "$got" "есть"
+
+# Владелец поднимает стенды — текст отказа прежний, о занятом порте в нём ни слова.
+reason="$(input_cmd 'nx serve admin' Bash "$tree" \
+    | RT_STANDS="стенд http://localhost:${free_port:-45231}" "$HOOKS/dev-server-guard.sh" 2>&1 >/dev/null)"
+if printf '%s' "$reason" | grep -q 'raised by the owner'; then got="есть"; else got="нет"; fi
+report "SC-AK-1091 — при «owner» текст отказа прежний" "$got" "есть"
+
+kill "$listener" 2>/dev/null
+wait "$listener" 2>/dev/null
+
 suite_result "страж второго сервера разработки"

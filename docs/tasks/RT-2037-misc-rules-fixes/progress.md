@@ -4,13 +4,13 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `замысел-записан`
-- **Stage:** 0 of 5 — the plan is written, no stage begun
+- **State:** `этап-идёт`
+- **Stage:** 1 of 5 — the dev server guard asks the tree who raises the stands
 - **Done:** the eleven cargo records of this row are read whole, each checked against the line of
   its resource it names; two of them got a verdict without code — record 5 is already carried out
   by this edition, record 10 asks for the opposite of a deliberate decision
-- **Next step:** stage 1 — the profile key of the dev server guard
-- **Uncommitted:** the task folder itself
+- **Next step:** stage 2 — three articles of the delivery rule
+- **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
@@ -18,6 +18,14 @@ Rewritten by every session, not appended to.
 
 - **The row of the epic plan is corrected to eleven records** — nine were counted before the last
   two trees sent their cargo. Affected stage of the plan: 5.
+
+## Stages done
+
+- **1. The dev server guard asks the tree who raises the stands** — the profile key
+  `RT_STANDS_RAISED_BY` next to the stand list, the articles, the bindings and `SC-AK-1091` in
+  `docs/specs/agent-kit/dev-server/`. Checked by
+  `bash projects/agent-kit/tests/dev-server-guard.test.sh` — 30 probes, no failures (23 before the
+  stage), and by `npm run check:specs` — 1548 scenarios, the new one is covered.
 
 ## Sessions
 
