@@ -20,6 +20,8 @@ export default {
 type TStory = StoryObj<TestRtCalendarComponent>;
 
 export const Default: TStory = {
+    // Показ рисует не сетка витрины: календарь занимает всю ширину сам. Отсюда кадр целой страницей.
+    parameters: { snapshot: { fullPage: true } },
     args: {
         months: [CALENDAR_MONTH],
         weekdayLabels: CALENDAR_WEEKDAYS,

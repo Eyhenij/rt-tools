@@ -16,6 +16,8 @@ export default {
 type TStory = StoryObj<TestRtBarListComponent>;
 
 export const Default: TStory = {
+    // Показ рисует не сетка витрины: компонент занимает всю ширину сам. Отсюда кадр целой страницей.
+    parameters: { snapshot: { fullPage: true } },
     args: {
         rows: BAR_LIST_ROWS,
         title: 'Заголовок',
