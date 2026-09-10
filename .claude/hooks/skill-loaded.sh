@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/skill-loaded.sh · 11307eb120cc · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/skill-loaded.sh · 8e19cffac365 · правится надстройкой, не здесь
 # rt-hook: PostToolUse Skill
 # The record of a loaded rule. PostToolUse on the `Skill` tool.
 #
@@ -7,6 +7,10 @@
 # tell about its past calls. So the load is recorded here, per session.
 #
 # The hook only observes: it always passes and refuses nothing.
+#
+# FAIL-OPEN: no input, no name of the rule, no way to write the record — the call goes through. The
+# record is a note for the gate, not a permission: a rule not written down is demanded a second
+# time, and that costs one refusal, not the work.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
