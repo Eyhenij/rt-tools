@@ -176,13 +176,17 @@ interface IButtonIconCase {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Палитра в обеих темах">
+                <app-story-presets caption="Палитра в обеих темах и обоих наборах">
                     <ng-template>
-                        @for (theme of themes; track theme) {
-                            <button rtButton [attr.aria-label]="theme" [label]="theme" [theme]="theme"></button>
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (theme of themes; track theme) {
+                                    <button rtButton [attr.aria-label]="theme" [label]="theme" [theme]="theme"></button>
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,
