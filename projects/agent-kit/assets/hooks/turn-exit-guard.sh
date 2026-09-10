@@ -451,9 +451,7 @@ if [ "$worked" = "true" ] && [ "$handed_over" != "true" ]; then
     if [ -n "$unpushed" ] && [ "$unpushed" -gt 0 ] 2>/dev/null; then
         reason="BLOCKED by turn-exit-guard: there was work in the turn, but it stayed in the working tree — commits not handed over: ${unpushed}.
 
-The owner sees the former state and reads it as «nothing was done». Two moves from here: bring the work to the hosting — push the branch and open a request — or remove what was done if it is not needed.
-
-What is left in the tree is named with a reason — in the words of the owner, not as a list of leftovers.
+The owner sees the former state and reads it as «nothing was done». Two moves from here: bring the work to the hosting — push the branch and open a request — or remove what was done if it is not needed. What is left in the tree is named with a reason — in the words of the owner, not as a list of leftovers.
 
 The guard judges one turn: the next session is not refused."
 
@@ -461,6 +459,7 @@ The guard judges one turn: the next session is not refused."
     fi
 fi
 
+_epic_left="$(rt_te_epic_left 2>/dev/null)" && [ "${_epic_left:-0}" -gt 0 ] 2>/dev/null && rt_te_deny "$(rt_te_epic_reason "$_epic_left" "$next_step")" "the epic is not over: ${_epic_left} of its tasks are unfinished."
 [ "$worked" = "true" ] && exit 0
 
 if [ "$archived" = "true" ]; then

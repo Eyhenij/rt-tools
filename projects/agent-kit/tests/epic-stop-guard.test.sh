@@ -136,6 +136,24 @@ stop_turn "SC-AK-988 — при живом эпике объявленная о�
 export STUB_LEFT=''
 stop_turn "SC-AK-988 — при кончившемся эпике остановка законна" turn-exit-guard.sh "$(stop_input "$WAITED")" PASS
 
+# --- SC-AK-1007 — незакрытый эпик не выпускает ход, кончившийся работой и отчётом -------------
+# Ход, в котором работа была, последним действием была команда, а после неё отчёт владельцу. Все
+# прежние ярусы такой ход выпускали: по букве правила он законен. Эпик при этом шёл, и следующий
+# шаг замысла не был занят ничем — владелец читал такой ход как остановку.
+WORKED_THEN_TOLD="$(turn "$(said 'работай')" "$(called 'git commit -m проба')" "$(spoke 'Сделал кусок. Дальше пишу спеку.')")"
+
+export STUB_LEFT='1947'
+stop_turn "SC-AK-1007 — при живом эпике ход с отчётом отбит" turn-exit-guard.sh "$(stop_input "$WORKED_THEN_TOLD")" BLOCK
+export STUB_LEFT=''
+stop_turn "SC-AK-1007 — при кончившемся эпике тот же ход законен" turn-exit-guard.sh "$(stop_input "$WORKED_THEN_TOLD")" PASS
+
+# Слово владельца об остановке снимает ярус: он читает слово с их стороны, а не с исполнительской.
+TOLD_STOP="$(turn "$(said 'остановись, дальше не надо')" "$(called 'git commit -m проба')" "$(spoke 'Останавливаюсь.')")"
+
+export STUB_LEFT='1947'
+stop_turn "SC-AK-1007 — слово владельца снимает ярус" turn-exit-guard.sh "$(stop_input "$TOLD_STOP")" PASS
+export STUB_LEFT=''
+
 rm -rf "$TURNS"
 
 rm -rf "$STOP_TREE"

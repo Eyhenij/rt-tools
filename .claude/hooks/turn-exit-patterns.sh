@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/turn-exit-patterns.sh · 89dfa60f2f6d · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/turn-exit-patterns.sh · 3dbbfddaefd0 · правится надстройкой, не здесь
 # The patterns of the turn-exit guard. NOT a guard: it has no `rt-hook:` declaration and hooks into
 # no agent event. The turn-exit guard sources it — the same way guards source the shared reading of
 # the input and the deny tail. It was moved out when the guard outgrew the file length limit: the
@@ -61,4 +61,35 @@ rt_te_epic_over() {
     . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/epic-over.sh" 2>/dev/null || return 1
     command -v rt_epic_over >/dev/null 2>&1 || return 1
     rt_epic_over
+}
+
+# How many tasks of the epic are left. Prints the number and answers non-zero when the reading did
+# not happen at all: a tier that refuses a turn must tell "the epic goes on" from "there is nothing
+# to ask with".
+rt_te_epic_left() {
+    # shellcheck disable=SC1090
+    . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/epic-over.sh" 2>/dev/null || return 1
+    command -v rt_epic_unfinished >/dev/null 2>&1 || return 1
+    rt_epic_unfinished
+}
+
+# The refusal about an epic that goes on. The text lies here and not in the guard: the guard stands
+# at its length limit, and a tier written there in full would push the laid-out copy over it.
+#
+# Why the tier exists. The other tiers judge the current task and the current turn: the state, the
+# folder, the last action. All of them stayed silent on a turn that did work, ended with a commit
+# and then reported — and by the letter of the rule such a turn is lawful. Yet the epic went on, the
+# next step stood written in the plan and was busy with nothing, and the owner read the turn as a
+# stop. It repeated four times in one day.
+#
+# The reading is inverted here on purpose: the state of the epic was already asked in this guard,
+# but only to PERMIT a stop at the end of an epic. Nobody asked it the other way round.
+rt_te_epic_reason() {
+    printf '%s' "BLOCKED by turn-exit-guard: the epic is not over — ${1} of its tasks are unfinished, and the turn ends without the word of the owner about stopping.
+
+Work is not finished while the epic holds tasks. A turn that did work and then reported is no exception: the report ends the account, not the work, and the next step of the plan was busy with nothing.
+
+The unfinished tasks are printed by «npm run epic:table»; the next step is written in the progress: ${2}
+
+Do it in this same turn. Lawful exits stay as they were: a question to the owner through the tool, a refusal of another guard, a session handover, and the owner's own word about stopping — the guard reads that word from them, not from a retelling."
 }
