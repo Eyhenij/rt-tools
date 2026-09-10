@@ -22,6 +22,9 @@ divergence.
 
 - **Someone else's step is of two kinds, and the second never ends by itself.** — Not checked: a refused permission is indistinguishable to a guard from an ongoing run. What was not passed is named by a section of the request body — it is refused by `.claude/hooks/git-guard-delivery.sh`.
 - **A summary of someone else's step.** — `.claude/hooks/waiting-turn-guard.sh:taken_re` — a turn in which a PR was opened or a red run was read does not close without an action on the next task
+- **A promise to do the work in the next turn is an announcement of intent.** — `.claude/hooks/turn-exit-patterns.sh:promise_re` — looked for in the last text of the executor.
+- **An order named by a number or by the word "all" is counted aloud before the turn ends.** — **Not checked by anything.** The size of the order is written nowhere in the tree.
+- **The owner's word to work without stops holds until they cancel it themselves.** — `.claude/hooks/turn-exit-patterns.sh:standing_work_re` — read from the replies of the owner.
 - **A declaration of intent.** — `.claude/hooks/waiting-turn-guard.sh:taken_re` — words about a taken task are not counted as an action by the guard; commands are
 - **Work named as a command is run in the turn that names it.** — **Not checked.** The guard sees the commands of the turn and does not reconcile the command named in the reply with the one run: an empty turn it refuses, and a turn where something else was run it does not
 - **One's own unclosed step is not handed to the owner.** — **Not checked.** The turn exit guard answers the question «was there work», and about a turn where there was work but the handing over was not done it says «yes»; the delivery guard is silent about an uncalled command by design

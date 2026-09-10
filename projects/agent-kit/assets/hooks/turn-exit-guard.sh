@@ -162,7 +162,7 @@ next_step=""
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/turn-exit-patterns.sh" 2>/dev/null || exit 0
 [ -n "${work_re:-}" ] || exit 0
 
-verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re" --arg read "$read_re" --arg part "$part_re" --arg wait "$wait_re" --arg handover "$handover_re" --arg started "$started_re" '
+verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re" --arg read "$read_re" --arg part "$part_re" --arg wait "$wait_re" --arg handover "$handover_re" --arg started "$started_re" --arg promise "$promise_re" --arg standing "$standing_work_re" '
     def is_input:
         .type == "user"
         and ((.isCompactSummary // false) | not)
@@ -182,8 +182,9 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
     | ([$ran | splits($part)] | map(test($work) and (test($read) | not)) | any) as $ran_work
     # The last action of the turn. Waiting for a step by anyone else is never the end of a turn,
     # however much work there was before: the work stays exactly where it stood.
-    | ([$uses[] | select((.name // "") == "Bash") | (.input.command // "")] | last // "") as $last
-    | ($last | test($wait)) as $waited
+    | ([$uses[] | select((.name // "") == "Bash") | ((.input.command // "") + (if (.input.run_in_background // false) then " &" else "" end))] | last // "") as $last
+    | ([$uses[] | (.name // "")] | last // "") as $last_name
+    | (($last_name == "Bash") and ($last | test($wait))) as $waited
     # Handing the work over: the tail of the turn after the PR was opened. Everything before it was
     # done on the task handed in and says nothing about the next one.
     | ([$uses[] | select((.name // "") == "Bash") | (.input.command // "")]) as $cmds
@@ -212,7 +213,11 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
     | ([$turn[] | select(.type == "user") | .message.content
           | if type == "string" then . elif type == "array"
             then (map(if type == "object" then (.text // "") else "" end) | join("\n")) else "" end] | join("\n")) as $said
-    | ($said | test("останов|стоп|хватит|подожди|не надо|прерв|отложи")) as $told_stop
+    | ([.[] | select(.type == "user") | .message.content
+          | if type == "string" then . elif type == "array"
+            then (map(if type == "object" then (.text // "") else "" end) | join("\n")) else "" end] | join("\n")) as $session_said
+    | ($session_said | test($standing)) as $standing_work
+    | (($said | test("останов|стоп|хватит|подожди|не надо|прерв|отложи")) and ($said | test($standing) | not)) as $told_stop
     # A question refused by the conversation guard, and a question appended as prose at the end of
     # the reply. The conversation guard judges the call of the question tool and does not see prose
     # at all: a refused question came back in the same wording one turn later and passed freely.
@@ -226,7 +231,9 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
     # named and closed.
     | (($last_say | test("[Жж]ду (твоего|вашего|его|её) (слова|указани|решени|ответа|команды|отмашки)|[Жж]ду слова владельца|[Жж]ду, что скаж|[Оо]стаюсь ждать|[Бб]уду ждать (твоего|вашего)"))
         and (($asked or $told_stop or $handed) | not)) as $awaits_word
-    | { worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, asked_in_prose: $asked_in_prose, awaits_word: $awaits_word, ran: $ran }
+    | ($last_say | test($promise)) as $promised
+    | (($last_name == "Bash") and ($last | test($started)) and ($handed_over | not)) as $only_took
+    | { promised: $promised, only_took: $only_took, standing_work: $standing_work, worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, asked_in_prose: $asked_in_prose, awaits_word: $awaits_word, ran: $ran }
 ' 2>/dev/null)"
 
 [ -z "$verdict" ] && exit 0
@@ -261,9 +268,53 @@ fi
 # Incident analysis — the record
 # "2026-09-04-hod-konchalsya-ozhidaniem-pri-deystvuyushchem-ukazanii" in the intake.
 awaits_word="$(printf '%s' "$verdict" | jq -r '.awaits_word // false' 2>/dev/null)"
+standing_work="$(printf '%s' "$verdict" | jq -r '.standing_work // false' 2>/dev/null)"
+promised="$(printf '%s' "$verdict" | jq -r '.promised // false' 2>/dev/null)"
+only_took="$(printf '%s' "$verdict" | jq -r '.only_took // false' 2>/dev/null)"
+
+# A promise to do the work in the next turn. The same announcement of intent as a command named and
+# not run: the tier stands before the lawful exits, because the promise most often stands next to a
+# report about what was done, and by the fullness of the turn it is indistinguishable from a finish.
+if [ "$promised" = "true" ] && [ "$released" != "true" ]; then
+    rt_te_deny "BLOCKED by turn-exit-guard: the reply ends with a promise to do the work in the next turn.
+
+A promise is the same announcement of intent as a command named and not run, and it only sounds politer. An offer to the owner to object to the announced intent is part of the promise, not a question: a turn ends with a question when the work does not go without the answer.
+
+Do the promised in this same turn, and the account of it can come after.
+
+The next step is written in the progress: ${next_step}
+
+The guard judges one turn: the next session is not refused." "the turn ended with a promise to do the work in the next turn."
+fi
+
+# Taking a task as the last action of the turn. Creating the task, the branch and the move of the
+# column is preparation, and the work of the taken task did not begin. Taking it after handed-over
+# work is a lawful end: there the taking answers for the handed-over one.
+if [ "$only_took" = "true" ] && [ "$released" != "true" ]; then
+    rt_te_deny "BLOCKED by turn-exit-guard: the last action of the turn is taking a task, and the work of the taken task was not begun.
+
+Creating the task, the branch and moving the column is preparation for work, not work. To the owner a report about a taken task is indistinguishable from a stop: they see the executor standing still.
+
+Write the plan and begin its first stage in this same turn.
+
+The guard judges one turn: the next session is not refused." "the turn ended with taking a task."
+fi
 # At the end of an epic waiting for the word of the owner is the work itself: the reading of that
 # lies with the patterns and is shared with the guard of the stop.
 [ "$awaits_word" = "true" ] && rt_te_epic_over && awaits_word=false
+
+# The owner said to work without stops and did not cancel it. Their word holds until they cancel
+# it, and a turn ending with waiting for that same word invents the cancellation. Judged whether or
+# not there was work in the turn: the work stood three turns in a row, and each of them was full.
+if [ "$standing_work" = "true" ] && [ "$awaits_word" = "true" ]; then
+    rt_te_deny "BLOCKED by turn-exit-guard: the turn ended with waiting for the word of the owner, and the owner said in this session to work without stops and did not cancel it.
+
+Their word holds until they cancel it themselves, and a new fact against it is a line about the price in the reply, not waiting. A decision the tree does not hold is needed — then ask the question by the tool.
+
+The next step is written in the progress: ${next_step}
+
+The guard judges one turn: the next session is not refused." "the turn ended with waiting under the standing word of the owner to work."
+fi
 
 if [ "$awaits_word" = "true" ]; then
     rt_te_deny "BLOCKED by turn-exit-guard: the turn ended with words about waiting for the word of the owner, and the word about stopping the guard reads from the owner: in this turn they announced no stop, and no question was put to them by the tool.
