@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/turn-exit-patterns.sh · 89dfa60f2f6d · правится надстройкой, не здесь
+# rt-kit v0.27.0 · hooks/turn-exit-patterns.sh · d79a4139e7e7 · правится надстройкой, не здесь
 # The patterns of the turn-exit guard. NOT a guard: it has no `rt-hook:` declaration and hooks into
 # no agent event. The turn-exit guard sources it — the same way guards source the shared reading of
 # the input and the deny tail. It was moved out when the guard outgrew the file length limit: the
@@ -46,7 +46,24 @@ part_re='&&|\|\||;|\n'
 # resolved, a commit and a push were made, and the last action became a loop until the run was ready
 # passed it whole — there was work, and plenty. It is exactly that fullness that deceives: the
 # emptiness behind such a turn is not visible.
-wait_re='gh[[:space:]]+(run[[:space:]]+watch|pr[[:space:]]+checks[^|]*--watch)|until[[:space:]].*sleep|while[[:space:]].*sleep|^[[:space:]]*sleep[[:space:]]'
+# Two more kinds of last action were added after an analysis. The first is a run of the checks
+# started in the background: the guard is given the background sign appended to the command, and on
+# the foreground the same command stays work — it holds the turn to its own end. The second is a
+# read of a background task's log: the run was started, the log was read, a report was written, and
+# the tree did not change by a single sign; such a turn stands exactly as long as an empty one.
+wait_re='gh[[:space:]]+(run[[:space:]]+watch|pr[[:space:]]+checks[^|]*--watch)|until[[:space:]].*sleep|while[[:space:]].*sleep|^[[:space:]]*sleep[[:space:]]|(nx[[:space:]]+(affected|run-many|test|build|lint|e2e)|npm[[:space:]]+run[[:space:]]+(lint|test|check:|e2e)|pnpm[[:space:]]+run|playwright[[:space:]]+test|vitest|jest|bash[[:space:]].*tests?/)[^&]*&[[:space:]]*$|(cat|tail|head|less|grep)[^|]*\.(log|output)([[:space:]]|$)|tasks/[A-Za-z0-9]+\.output'
+
+# A promise to do the work in the next turn. The same announcement of intent as a command named and
+# not run, only it sounds politer and is therefore recognised as a stop less often. An offer to the
+# owner to object to the announced intent is part of the promise, not a question: a turn ends with a
+# question when the work does not go without the answer, and here it did go.
+promise_re='следующим ходом|в следующий раз|дальше возьму|дальше допишу|допишу остальн|доделаю остальн|доделаю в следующ|продолжу в следующ|беру[^.]{0,40}следующим|возьму[^.]{0,40}следующим'
+
+# The owner's standing word to work without stops. It holds until they cancel it, and a turn that
+# ended with waiting for their word invents that cancellation. Without this the word about a stop
+# was read out of it by the piece «останов» in «без остановок» — the instruction to work was taken
+# for its opposite.
+standing_work_re='работай[^.]{0,40}(без остановок|без пауз|сам)|не останавливайся|продолжай[^.]{0,40}(без остановок|без пауз)|работай дальше'
 
 # Handing work over and starting the next. The rule calls handed-over work a lawful end of a turn —
 # but on a condition: the next one is started, and an ACTION has been done on it, not spoken.
