@@ -25,7 +25,7 @@ it refuses with.
 - **The task folders** — `docs/tasks/`, the sample is `docs/tasks/_template/`
 - **The product agreement before the code** — `docs/specs/<package>/proposed/<feature>/`
 - **The package spec** — `docs/specs/<package>/`
-- **The epic plan** — `docs/plans/`
+- **The epic plan** — `docs/plans/`, named by the key `plansDir` in `.claude/rt-kit/checks.json`: the creation command lays the draft of a plan there
 - **The review roles** — `.claude/agents/spec-writer.md`, `.claude/agents/spec-critic.md`
 - **The pipeline after the grill** — `.claude/workflows/plan.js`
 
@@ -101,11 +101,14 @@ articles of the rule have no bindings — that is the debt that lay here before 
 - **A taken task does not end a turn.** — `.claude/hooks/turn-exit-guard.sh:first_stage` — a turn that declared the written plan is refused before the second sign; the scenarios are `projects/agent-kit/tests/turn-exit-guard.test.sh`
 - **A finding made mid-stage is checked against the plan's exit conditions before the first edit.** — **Not checked.** Before the first edit the finding is not in the tree at all, and after it the guard sees the edit and does not know whether the plan named it. The files of a neighbouring piece of work differ in nothing from one own. It is held by reconciling with the list of stages, not by a sign.
 - **Done work is marked only in the progress.** — **Not checked.** A second record of what is done — in the commit body, in the PR description — has nothing for a machine to reconcile it with
+- **Work begins with the epic, and a task outside one is not taken.** — `tools/task-new.mjs:outsideEpic` — the creation command refuses a task named by no epic and names both ways out: the number of the epic or the word of the owner about work outside one. What is created past the command is named by `tools/board-epics.mjs:checkTasksOutsideEpics`: a card made through the web reaches no guard, and the audit reads it on the board.
+- **The epic branch is taken before the first task of the epic, not with it.** — `tools/board-epics.mjs:checkEpicState` — the audit names an epic whose branch shows in no request, neither one from it nor one into it. The delivery guard judges the base of a task branch against the epic branch, and the branch of the epic itself it does not demand.
+- **The PR of the epic opens when its last folder is taken apart, and not a task earlier.** — `.claude/hooks/git-guard-delivery-folder.sh:rt_delivery_open_folder` — the guard refuses opening while the branch carries a task folder. That the tasks of the epic are over is read by `tools/board-epics.mjs:checkEpicState` from the queue: no open task of the epic is left, and no request from its branch is open.
 - **The next task is taken from the epic plan, and the work queue list is asked only where there is no epic.** — **Not checked.** The epic plan lies in `docs/plans/`, and a call to the work queue is indistinguishable to a machine from a call with the plan open next to it. It is held by the order of the returning-to-work pattern
 - **An epic is not closed by a sign confirmed by reading alone.** — **Not checked.** The sign of the end of an epic is prose in its plan; a machine has nothing to tell what was read from what was checked. It is held by naming every sign aloud, together with a command or a measurement, when the epic is closed
 - **The tasks of an epic are created all at once, by the same turn as the epic itself.** — **Not checked.** The work queue audit judges the epic label against the plan only by the pair «card and plan», and it does not reconcile the makeup of tasks with the order table. Whether one of ten was created or all ten is invisible to it
 - **The epic plan names how the branches of its tasks stand, on a par with their order.** — **Not checked.** The epic plans lie in `docs/plans/`, and they have no line about the arrangement of branches. The work queue audit reads the makeup of tasks, not the base of their branches. It is held by the article; the price of the arrangement shows only after the requests are opened — by how many of them the run stalled on.
-- **The epic plan lies where it is found without the network and after the merge.** — **Not checked.** The plans directory here is `docs/plans/`, but there is nothing to check that the plan of this very epic lies in it
+- **The epic plan lies where it is found without the network and after the merge.** — `tools/task-new.mjs:writeEpicPlan` — the command lays the draft in the directory named by `plansDir` and writes the path to it into the card; a plan moved by hand afterwards nothing checks
 - **Closed work is reviewed by the rules, and this is a closing step, not a separate request.** — **Not checked.** Starting the review role is a move of the executor, and it leaves no trace in the tree; the technique is the command `/skill-curator`
 - **Two requirements — two guards, and one can be lifted without losing the other.** — `.claude/hooks/task-flow-draft-guard.sh:draft` — the agreement is judged by its own guard, and the task folder and the state by `.claude/hooks/task-flow-guard.sh:folder_archived`; the parsing of the call is shared — `.claude/hooks/task-flow-context.sh:rt_task_flow_context`
 - **The agreement is required by the edit paths, not by an appraisal of the task.** — `.claude/hooks/task-flow-context.sh:rt_tf_candidates` — the edit paths are judged; the bypass is the line about behaviour in the plan header
@@ -148,8 +151,13 @@ code before the plan — have been carried out since edition 0.4.0 of the packag
 
 - **`docs/plans/` is older than this rule.** There lie the epic plans — works each of which is
   wider than one branch; the task folder neither cancels nor duplicates them — it is about one
-  branch. The plan of a new epic goes there too: a card with the `epic` label in the work queue says
-  it exists, and the task order is held by that record.
+  branch. The plan of a new epic goes there too, and the creation command lays a draft there itself:
+  a card with the `epic` label in the work queue says the epic exists, and the task order is held by
+  that record.
+- **The branch of an epic is read from the header of its plan.** The line `**Ветка эпика:**` with
+  the branch name; the queue holds no branch names at all, so the command of creating a task under
+  an epic takes the base of the branch from there. A plan without that line leaves the executor to
+  name the base by hand — the command says so aloud.
 - **The task number comes from GitHub, not from the folder name.** Until the task is created, the
   folder is called `docs/tasks/_draft-<slug>/` and does not travel into history.
 

@@ -485,3 +485,13 @@ Then it does not count as a write; an interpreter with a document at the input, 
 argument and an edit in place stay writes
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.
+
+### SC-AK-999 — the scenario suite is not moved by the environment standing around it
+
+Given the environment holds `GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE` or `CLAUDE_PROJECT_DIR`
+pointing at a foreign tree
+When a suite of the scenarios of the guards is run
+Then it passes the same as without them, and not a single commit of its fixtures lands in the tree
+those variables point at
+
+Covered: `projects/agent-kit/tests/suite-git-env.test.sh`.

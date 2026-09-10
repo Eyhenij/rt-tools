@@ -106,6 +106,8 @@ rm -rf "$GATE_TREE"
 BOARD_TREE="$(mktemp -d)"
 mkdir -p "$BOARD_TREE/tools" "$BOARD_TREE/.claude/rt-kit" "$BOARD_TREE/bin"
 cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/board.github.mjs" "$CHECKS/board-gh.github.mjs" "$BOARD_TREE/tools/"
+cp "$CHECKS/board-epic-link.github.mjs" "$BOARD_TREE/tools/board-epic-link.mjs"
+cp "$CHECKS/board-task-dirs.github.mjs" "$BOARD_TREE/tools/board-task-dirs.mjs"
 mv "$BOARD_TREE/tools/board.github.mjs" "$BOARD_TREE/tools/board.mjs"
 mv "$BOARD_TREE/tools/board-gh.github.mjs" "$BOARD_TREE/tools/board-gh.mjs"
 
@@ -118,9 +120,11 @@ chmod +x "$BOARD_TREE/bin/gh"
 printf '%s\n' '{"board":{"owner":"o","repo":"r","projectId":"P","statusFieldId":"F","statusOptions":{"in-progress":{"id":"i","name":"In progress"}},"taskKey":"RT"}}' \
     > "$BOARD_TREE/.claude/rt-kit/checks.json"
 
+# Токен машинной записи снимается с окружения на время вызова: проба судит настройку фикстуры, а
+# не машину. Живой заход держит его в окружении, и без снятия проба читала бы чужой токен своим.
 board_move() {
-    (cd "$BOARD_TREE" && GH_BIN="$BOARD_TREE/bin/gh" GH_SEEN="$BOARD_TREE/seen" \
-        node tools/board.mjs move 1 in-progress 2>&1)
+    (cd "$BOARD_TREE" && env -u GH_TOKEN -u GITHUB_TOKEN GH_BIN="$BOARD_TREE/bin/gh" \
+        GH_SEEN="$BOARD_TREE/seen" node tools/board.mjs move 1 in-progress 2>&1)
 }
 
 BOARD_SAID="$(board_move)"

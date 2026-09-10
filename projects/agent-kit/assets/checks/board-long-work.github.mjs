@@ -19,9 +19,13 @@ import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
  * The label of a multi-session card and the directory of work plans. Either of the two not named —
  * the link is not judged at all: there would be nothing to tell a multi-session card from an
  * ordinary one by, and every tree has its own directory of plans.
+ *
+ * The directory is taken from the tree's common one where the long work key does not name its own:
+ * the plan of an epic and the plan of many-session work lie side by side, and one directory named
+ * twice diverges by one of the two names.
  */
 const LONG_LABEL = CONFIG.longWork?.label ?? '';
-const PLANS_DIR = CONFIG.longWork?.plansDir ?? '';
+const PLANS_DIR = CONFIG.longWork?.plansDir || CONFIG.plansDir || '';
 
 /** Work plan lines carrying the label word: only they count as an entry about several sessions. */
 function markedRows() {

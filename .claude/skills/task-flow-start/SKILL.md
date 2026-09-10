@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
-<!-- rt-kit v0.26.0 · patterns/task-flow-start.md · 90055ae949d2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.26.0 · patterns/task-flow-start.md · bdad1d40c7f9 · правится надстройкой, не здесь -->
 
 # Starting the work
 
@@ -168,49 +168,63 @@ The grill ended with one task — the step is skipped. Several came out, and the
 matters — the epic is declared here, before the first of them, and twice. As a card in the work
 queue with the epic label, and as a plan next to it.
 
-The epic plan names three things, and none is derived from the others:
-
-```markdown
-# <Возможность, которая разрабатывается>
-
-Одной фразой: что у владельца появится, когда эпик кончится.
-
-| №   | Задача       | Почему здесь             |
-| --- | ------------ | ------------------------ |
-| 1   | <что делает> | <на чём стоят следующие> |
-| 2   | <что делает> | <что из первой ей нужно> |
+```bash
+npm run task:new -- --epic --title '<Возможность, которая разрабатывается>' --slug <slug> < тело.md
 ```
 
-A set without an order is no order: two tasks whose order rested on understanding went into work the
-other way round, and the second was redone under the first. The assigned order holds to the end of
-the epic; a revision is the owner's decision, and it is written into the progress of the task that
-caused it.
+The call puts the epic label on the card, lays a draft of the plan in the tree's directory of plans
+and writes the path to it into the body: the audit reads the plan by that path, and a card without
+it points into emptiness. Everything the epic cannot be created without is asked before the card is
+made — an administrator alone can take a made one off the board.
 
-The plan lies outside the task folder: that one dies with the very first merge. The directory for it
-is named by the rule's companion — the package has no path of its own.
+The draft is filled in by hand, and three things in it are derived from nothing: the opportunity in
+one phrase, the makeup of the tasks in order, and how the branches of the tasks stand. A set without
+an order is no order: two tasks whose order rested on understanding went into work the other way
+round, and the second was redone under the first. The assigned order holds to the end of the epic; a
+revision is the owner's decision.
 
-The cards are created for all the tasks at once, right here: by the task creation call for every row
-of the table, with the epic label. The issued numbers return to the same table — as a column or a
-prefix to the name — and from this minute "take the next" answers with a number, not a name.
-
-A task under an epic names it in its body — the card number and the path to the plan in one line —
-and the plan names the task from its side. A one-sided binding looks as whole as a two-sided one:
-the reader comes now from the epic, now from the card, and the second side exists for only one of
-them.
+The cards are created for all the tasks at once, right here — by the same call with `--epic-of`, for
+every row of the makeup. The issued numbers return to the same table, and from this minute "take the
+next" answers with a number, not a name.
 
 **Next move:** the declared epic is committed together with the task numbers, and in the same turn
-its first task is taken — by creating the branch and the folder.
+its branch is taken.
+
+### State `эпик-заведён`: the branch of the epic
+
+```bash
+git checkout -b <КЛЮЧ>-<номер эпика>-<slug> origin/main
+```
+
+The branch is taken before the first task of the epic, not with it: taken later, it leaves the first
+task standing on the main branch, and the epic starts as half of itself already merged.
+
+The plan of the epic is committed into it and the branch is pushed at once — the branches of the
+tasks are taken from it, and one that exists only on the machine is a base nobody else has. The card
+names the branch: the reader comes to the epic from the queue, and the queue holds no branches.
+
+Nothing else is committed into the epic branch: it carries the plan and the merges of the tasks. An
+edit made in it directly reaches the main branch unreviewed.
+
+**Next move:** the first task of the epic is taken — the branch of the task from the branch of the
+epic, and the folder.
 
 ### State `договорённость-записана`: the task, the branch, the folder
 
 ```bash
-npm run task:new -- --title '<Что не так>' --slug <slug> --label documentation --label area:tooling < тело.md
-git checkout -b <КЛЮЧ>-<номер>-<slug>
+npm run task:new -- --epic-of <номер эпика> --title '<Что не так>' --slug <slug> --label area:tooling < тело.md
+git checkout -b <КЛЮЧ>-<номер>-<slug> <ветка эпика>
 npm run task:move -- <номер> in-progress
 ```
 
 The body comes as a file and is never empty: an empty task tells nothing to the executor or the
 owner, and it can be filled in later only on the owner's word.
+
+The call writes the line about the epic into the body itself and prints the branch line with the
+branch of the epic as its base: the shape of that line is read by a machine from both sides, and by
+hand it comes out in a shape of its own once out of three. Work outside an epic goes by the same
+call with `--outside-epic '<слово владельца>'` — a refusal without that second way out is read as
+"there is no way" and gets bypassed by a call to the hosting past this command.
 
 `task:new` renames `_draft-<slug>` to `<КЛЮЧ>-<номер>-<slug>` and fills in the plan header. The
 branch is created by a second call: a compound "create and commit at once" is refused by the

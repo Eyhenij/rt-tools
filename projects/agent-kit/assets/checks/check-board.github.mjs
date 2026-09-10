@@ -52,7 +52,7 @@ import { checkBranchFolders } from './board-folders.mjs';
 import { checkConflicting, checkHeadRun } from './board-pull-state.mjs';
 import { checkLongWork } from './board-long-work.mjs';
 import { HAS_PIPELINE, deployLag, lastDeploy } from './board-runs.mjs';
-import { checkEpicLinks } from './board-epics.mjs';
+import { checkEpicLinks, checkEpicPullBase, checkEpicState } from './board-epics.mjs';
 import { similarTitles } from './board-titles.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
@@ -197,6 +197,8 @@ try {
 
     similarTitles(open);
     checkEpicLinks(open, report);
+    checkEpicPullBase(open, pulls, report);
+    checkEpicState(open, pulls, report);
     checkLongWork(open, report);
 
     const openNumbers = new Set(open.map((issue) => issue.number));
