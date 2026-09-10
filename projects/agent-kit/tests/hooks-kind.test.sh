@@ -117,18 +117,13 @@ report "SC-AK-1043 — проверки говорят вслух" "$silent_empt
 
 # --- SC-AK-1044 — у каждого стража есть набор проб ----------------------------------------------
 # Набор находится по упоминанию имени стража в любом наборе проб пакета.
-# Четыре стража проб не имеют, и это долг, а не решение. Список только убывает.
-NO_SUITE='browser-guard-no-listing.sh dev-server-guard.sh skill-gate-rearm.sh sql-guard.sh'
 unguarded=0
 for hook in "$HOOK_DIR"/*.sh; do
     is_guard "$hook" || continue
     name="$(basename "$hook")"
-    case " $NO_SUITE " in
-        *" $name "*) continue ;;
-    esac
     grep -qrF "$name" "$TESTS_DIR"/*.test.sh 2>/dev/null || unguarded=$((unguarded + 1))
 done
-report "SC-AK-1044 — новых стражей без проб нет" "$unguarded" 0
+report "SC-AK-1044 — стражей без проб не осталось" "$unguarded" 0
 
 # --- SC-AK-1045 — признаки лежат данными, а не кодом --------------------------------------------
 not_data=0
