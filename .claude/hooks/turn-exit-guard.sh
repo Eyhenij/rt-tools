@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/turn-exit-guard.sh · 41baf1cb57bb · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/turn-exit-guard.sh · d6e341be253d · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
@@ -460,6 +460,7 @@ The guard judges one turn: the next session is not refused."
     fi
 fi
 
+_steps_left="$(rt_te_steps_left "$progress" 2>/dev/null)" && [ "${_steps_left:-0}" -gt 0 ] 2>/dev/null && rt_te_deny "$(rt_te_steps_reason "$_steps_left" "$(rt_te_step_now "$progress")")" "${_steps_left} steps of the plan are not done."
 _epic_left="$(rt_te_epic_left 2>/dev/null)" && [ "${_epic_left:-0}" -gt 0 ] 2>/dev/null && rt_te_deny "$(rt_te_epic_reason "$_epic_left" "$next_step")" "the epic is not over: ${_epic_left} of its tasks are unfinished."
 [ "$worked" = "true" ] && exit 0
 

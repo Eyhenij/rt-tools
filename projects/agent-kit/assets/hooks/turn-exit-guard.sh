@@ -459,6 +459,7 @@ The guard judges one turn: the next session is not refused."
     fi
 fi
 
+_steps_left="$(rt_te_steps_left "$progress" 2>/dev/null)" && [ "${_steps_left:-0}" -gt 0 ] 2>/dev/null && rt_te_deny "$(rt_te_steps_reason "$_steps_left" "$(rt_te_step_now "$progress")")" "${_steps_left} steps of the plan are not done."
 _epic_left="$(rt_te_epic_left 2>/dev/null)" && [ "${_epic_left:-0}" -gt 0 ] 2>/dev/null && rt_te_deny "$(rt_te_epic_reason "$_epic_left" "$next_step")" "the epic is not over: ${_epic_left} of its tasks are unfinished."
 [ "$worked" = "true" ] && exit 0
 
