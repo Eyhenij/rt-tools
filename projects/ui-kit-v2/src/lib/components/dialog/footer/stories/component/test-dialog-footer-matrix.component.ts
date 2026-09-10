@@ -31,6 +31,7 @@ interface IDialogFooterContentCase {
  */
 @Component({
     selector: 'app-dialog-footer-matrix',
+    // native-ok: обёртка истории витрины — показ живёт рядом с историей, а не отдельным файлом разметки
     template: `
         @switch (part) {
             @case ('content') {
@@ -74,6 +75,7 @@ interface IDialogFooterContentCase {
             }
         }
     `,
+    // native-ok: обёртка истории витрины — правила ячейки живут рядом с показом, а не отдельным файлом
     styles: `
         /* Ячейка ряда центрирует содержимое, а раскладка футера — «к правому краю»: взятый по
            начинке, он показал бы не прижатие, а его отсутствие. */

@@ -52,6 +52,7 @@ function confirmData(patch: Partial<IRtMenu.ConfirmData>): IRtMenu.ConfirmData {
  */
 @Component({
     selector: 'app-menu-confirm-dialog-matrix',
+    // native-ok: обёртка истории витрины — показ живёт рядом с историей, а не отдельным файлом разметки
     template: `
         @switch (part) {
             @case ('tone') {

@@ -33,6 +33,7 @@ function storyDialogRef(): RtDialogRef<never> {
  */
 @Component({
     selector: 'app-aside-unsaved-dialog-matrix',
+    // native-ok: обёртка истории витрины — показ живёт рядом с историей, а не отдельным файлом разметки
     template: `
         @switch (part) {
             @case ('outcomes') {
@@ -59,6 +60,7 @@ function storyDialogRef(): RtDialogRef<never> {
             }
         }
     `,
+    // native-ok: обёртка истории витрины — правила ячейки живут рядом с показом, а не отдельным файлом
     styles: `
         .app-aside-unsaved-dialog-matrix__single {
             display: grid;
