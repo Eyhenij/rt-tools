@@ -159,8 +159,9 @@ verdict="$(jq -s -r '
     # echoing the same line or reading a file with it passes the guard, and the real verdict
     # does not.
     ["Bash", "Read", "Grep", "Glob", "Edit", "Write", "MultiEdit", "NotebookEdit"] as $mute
-    | [.[] | select(.type == "assistant") | (.message.content // [])[]
-         | select(.type == "tool_use") | select(.name as $n | $mute | index($n) != null) | (.id // "")] as $muted
+    | ([.[] | select(.type == "assistant") | (.message.content // [])[]
+         | select(.type == "tool_use") | select(.name as $n | $mute | index($n) != null)
+         | {key: (.id // ""), value: true}] | from_entries) as $muted
 
     | [ .[]
         # The assistant text is never a verdict: writing the needed line in a reply costs one
@@ -169,8 +170,7 @@ verdict="$(jq -s -r '
           elif .type == "user" then
               ([ ((.message.content // []) | if type == "array" then .[] else empty end
                     | select(.type == "tool_result")
-                    | select(((.tool_use_id // "") | if . == "" then null else . end) as $id
-                             | $id == null or ($muted | index($id)) == null)
+                    | select((.tool_use_id // "") | if . == "" then true else ($muted[.] | not) end)
                     | .content | textof),
                  ((.message.content // "") | if type == "string" then . else "" end),
                  # The call result field: the same record, another form. Discarded only when
@@ -179,7 +179,7 @@ verdict="$(jq -s -r '
                   | if ($rec.toolUseResult // null) == null then ""
                     elif ([($rec.message.content // []) | if type == "array" then .[] else empty end
                             | select(.type == "tool_result") | (.tool_use_id // "")]
-                          | map(. as $id | $muted | index($id)) | any(. != null)) then ""
+                          | map($muted[.] // false) | any) then ""
                     else ($rec.toolUseResult | textof) end)
                ] | join("\n"))
           # Host records — the role completion notice and the attachment: the host chooses their
@@ -208,8 +208,9 @@ if [ "$ready" = "1" ]; then
         # commands and the tool results, and the second exam in such a tree did not count: five
         # rounds with a full verdict let no edit through.
         ["Bash", "Read", "Grep", "Glob", "Edit", "Write", "MultiEdit", "NotebookEdit"] as $mute
-        | [.[] | select(.type == "assistant") | (.message.content // [])[]
-             | select(.type == "tool_use") | select(.name as $n | $mute | index($n) != null) | (.id // "")] as $muted
+        | ([.[] | select(.type == "assistant") | (.message.content // [])[]
+             | select(.type == "tool_use") | select(.name as $n | $mute | index($n) != null)
+             | {key: (.id // ""), value: true}] | from_entries) as $muted
 
         # A record gives two strings: the command — by it the moment of opening the PR is found —
         # and the verdict, checked by the same rules as in the wide selection. The order is the
@@ -222,15 +223,14 @@ if [ "$ready" = "1" ]; then
                     elif .type == "user" then
                         ([ ((.message.content // []) | if type == "array" then .[] else empty end
                               | select(.type == "tool_result")
-                              | select(((.tool_use_id // "") | if . == "" then null else . end) as $id
-                                       | $id == null or ($muted | index($id)) == null)
+                              | select((.tool_use_id // "") | if . == "" then true else ($muted[.] | not) end)
                               | .content | textof),
                            ((.message.content // "") | if type == "string" then . else "" end),
                            (. as $rec
                             | if ($rec.toolUseResult // null) == null then ""
                               elif ([($rec.message.content // []) | if type == "array" then .[] else empty end
                                       | select(.type == "tool_result") | (.tool_use_id // "")]
-                                    | map(. as $id | $muted | index($id)) | any(. != null)) then ""
+                                    | map($muted[.] // false) | any) then ""
                               else ($rec.toolUseResult | textof) end)
                          ] | join("\n"))
                     else tostring end)
