@@ -1,0 +1,15 @@
+# Implementation — the rules the package ships
+
+Every statement of the spec and the place it is carried out. A rule is text, so the address of a
+statement is the rule file and the word in it the statement speaks of.
+
+- **A rule declares the law it is written under, and there is exactly one.** — `projects/agent-kit/assets/rules/angular-patterns.md:law` — `projects/agent-kit/assets/rules/api-layer.md:law` — `projects/agent-kit/assets/rules/autonomous-work.md:law` — scenario `SC-AK-1016`
+- **A rule says by which technique the law is kept, and it may name addresses — that is what tells it from the law.** — `projects/agent-kit/assets/rules/component-structure.md:applies` — `projects/agent-kit/assets/rules/dependencies.md:applies` — `projects/agent-kit/assets/rules/entity-models.md:applies` — scenario `SC-AK-1017`
+- **The tree's own names live in the companion next to the rule, not in the rule itself.** — `projects/agent-kit/assets/rules/lib-layers.md:lives` — `projects/agent-kit/assets/rules/lists.md:lives` — `projects/agent-kit/assets/rules/navigation.md:lives` — scenario `SC-AK-1018`
+- **A rule's description answers one question — load this rule or not.** — `projects/agent-kit/assets/rules/platform-access.md:description` — `projects/agent-kit/assets/rules/reuse-first.md:description` — `projects/agent-kit/assets/rules/shared-code.md:description` — scenario `SC-AK-1019`
+- **A rule has at least one pattern next to it, and the pattern declares its rule.** — `projects/agent-kit/assets/rules/status-report.md:Patterns` — `projects/agent-kit/assets/rules/turn-entry.md:Patterns` — `projects/agent-kit/assets/rules/typescript-conventions.md:Patterns` — scenario `SC-AK-1020`
+- **A rule says what of its law is not kept here.** — `projects/agent-kit/assets/rules/browser-verification.md:applies` — `projects/agent-kit/assets/rules/testing.md:applies` — scenario `SC-AK-1021`
+- **A rule marked by a trait reaches only a tree that declared that trait.** — `projects/agent-kit/assets/rules/entity-conventions.needs-admin.md:law` — `projects/agent-kit/assets/rules/observability.needs-app.md:law` — `projects/agent-kit/assets/traits.json:admin` — scenario `SC-AK-1022`
+- **A rule of a platform ships in an edition per platform, and the tree takes exactly one.** — `projects/agent-kit/assets/rules/deploy-flow.azure.md:law` — `projects/agent-kit/assets/rules/deploy-flow.github.md:law` — `projects/agent-kit/assets/rules/deploy-flow.gitlab.md:law` — `projects/agent-kit/assets/rules/git-workflow.azure.md:law` — `projects/agent-kit/assets/rules/git-workflow.gitlab.md:law` — scenario `SC-AK-1023`
+- **What is not read when deciding leaves for the cold part next to the rule.** — `projects/agent-kit/assets/rules/styling-bem.md:Cold` — `projects/agent-kit/assets/rules/turn-conduct.md:Cold` — scenario `SC-AK-1024`
+- **A rule is named by its subject, and the name is one across the whole tree.** — `projects/agent-kit/assets/defaults/gate-map.sh:skill_for` — the map names the rule by the same word; scenario `SC-AK-1025`

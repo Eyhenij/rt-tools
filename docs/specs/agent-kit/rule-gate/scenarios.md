@@ -199,3 +199,21 @@ Then it demands the rule of the wording and its pattern about texts for a person
 body and a mention of such a command in a search demand no rule: both signs are checked at once
 
 Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
+
+### SC-AK-1049 — the record of loaded rules is removed on compaction
+
+Given the gate holds a record of the rules loaded in this session When the session reports a
+compaction or a clearing Then the record is removed and every area asks for its rule anew: the sign
+of the session stayed as it was, while the text of the rules left the context
+
+### SC-AK-1050 — the re-arming is told to the session in words
+
+Given the record is removed When the answer of the hook is read Then it carries a line about the
+re-arming: a silent one reads as breakage — the summary says the rules are loaded, and the gate
+answers that they are not
+
+Given the input carries no sign of the session, or there is no input at all When the hook judges the
+call Then it removes nothing and leaves with zero: it is a removal of a temporary file, and it
+refuses nothing
+
+Covered: `projects/agent-kit/tests/skill-gate-rearm.test.sh`.

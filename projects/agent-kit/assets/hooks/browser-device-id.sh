@@ -2,6 +2,10 @@
 # Local value: .claude/rt-kit/browser-device-id — without it the browser guards let any profile through
 # Shared helper: prints the id of the pinned browser profile.
 #
+# NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The browser guards
+# source it: the pinned device is one for all of them, and read three ways it would diverge three
+# ways.
+#
 # The id is local to the machine and does not go into the package at all. It is taken from an
 # environment variable, and if that is missing — from a file next to the layout config. Nothing in
 # either place — all browser guards pass: a guard that cannot name the wanted profile offers nothing

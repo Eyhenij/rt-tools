@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/utf8.sh · b038f9712c13 · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/utf8.sh · 011f00d0b621 · правится надстройкой, не здесь
 # The locale a guard runs in. Sourced as the first line of the body: `. "<guards directory>/utf8.sh"`.
+#
+# NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The guards source it
+# as the first line of their body: the locale is one for all of them.
 #
 # Guard patterns are written in the words of the language the tree speaks, and matching against
 # them depends on the process locale. In the C locale case folding works only for Latin letters:

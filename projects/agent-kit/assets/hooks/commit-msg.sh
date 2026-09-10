@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Commit message check. A hook of git itself, not of the agent.
 #
+# NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The version control
+# calls it as its own hook, not the agent: it judges the message of a commit already written.
+#
 # A versioned template: the git hooks directory of the working copy is not versioned, so the file
 # is put there separately — by the prepare script when dependencies are installed. Reinstall by
 # hand if the prepare step did not run for some reason:

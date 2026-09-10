@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/git-guard-delivery-conflict.sh · 5dcf3b97e674 · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/git-guard-delivery-conflict.sh · b80611bb29c9 · правится надстройкой, не здесь
 # A conflicting PR of one's own, for the delivery guard: while at least one handed-over piece of
 # work is marked conflicting, a new one is not taken.
+#
+# NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The delivery guard
+# sources it — one tier of its verdict, moved out when the guard reached its length limit.
 #
 # There is deliberately no `# rt-hook:` line here: the event and the call pattern are declared by
 # the guard itself, while a helper next to it registers as no hook and decides nothing on its own.

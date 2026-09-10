@@ -14,6 +14,10 @@
 # Where exactly the applications are raised is known to the project profile:
 # .claude/rt-kit/project.sh, variable RT_STANDS. No profile — the refusal text stays general, the
 # guard itself works.
+#
+# FAIL-OPEN: an unrecognised command, no way to ask the ports, a raise the tree knows nothing of —
+# the call goes through. The price of a miss here is a second server on a busy port; the price of a
+# wrong refusal is a guard nobody keeps.
 
 # Its own name in the observations: the refusal is written by the shared deny tail, not by the
 # guard itself.

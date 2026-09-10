@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/skill-gate-layers.sh · 15690dc11cb4 · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/skill-gate-layers.sh · d1365dcac1f2 · правится надстройкой, не здесь
 # Layers of the rules gate: requirements that come ON TOP of the domain one.
+#
+# NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The rules gate
+# sources it: the layers over the domain rule are a dozen and a half, and together they do not fit
+# into a map read whole.
 #
 # The domain rule is chosen once by the file path — an edit has one subject, and there is one
 # rule for it. There are a dozen and a half layers on top of it: access to the runtime is visible

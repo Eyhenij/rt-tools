@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/browser-device-id.sh · 62bd6cbd3992 · правится надстройкой, не здесь
+# rt-kit v0.26.0 · hooks/browser-device-id.sh · 79faec8487b8 · правится надстройкой, не здесь
 # Local value: .claude/rt-kit/browser-device-id — without it the browser guards let any profile through
 # Shared helper: prints the id of the pinned browser profile.
+#
+# NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The browser guards
+# source it: the pinned device is one for all of them, and read three ways it would diverge three
+# ways.
 #
 # The id is local to the machine and does not go into the package at all. It is taken from an
 # environment variable, and if that is missing — from a file next to the layout config. Nothing in

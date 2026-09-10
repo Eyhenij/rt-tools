@@ -9,6 +9,7 @@ in the code, or the code holds what the spec is silent about.
 - **The word about being unconfigured is said once per session.** — `projects/agent-kit/assets/hooks/browser-device-id.sh:marker`
 - **A question to the owner about choosing a browser is refused.** — `projects/agent-kit/assets/hooks/browser-guard-no-asking.sh:questions`
 - **The word "browser" in the name of a rule or of a hook does not make a question a choice question.** — `projects/agent-kit/assets/hooks/browser-guard-no-asking.sh:questions`
+- **Listing and switching browsers is refused: the profile is picked by the pinned sign alone.** — `projects/agent-kit/assets/hooks/browser-guard-no-listing.sh:device_id`
 - **A foreign device sign is refused before the call, and the freshness mark is set by its outcome.** — `projects/agent-kit/assets/hooks/browser-guard-device-id.sh:requested`
 - **Raising the browser by a driver of one's own is refused, and the refusal names the file.** — `projects/agent-kit/assets/hooks/browser-guard-no-other-drivers.sh:launch`
 - **Code passed to the interpreter as an argument is judged by the same sample as a file.** — `projects/agent-kit/assets/hooks/browser-guard-no-other-drivers.sh:launch`
