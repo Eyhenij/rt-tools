@@ -48,7 +48,7 @@
   applied».
 - `SELECT "key", "name", array_length("rights", 1) FROM "role"` — `cargo-triage | Разбор груза | 5`
   и `owner | Владелец | 10`.
-- Повторный прогон тела миграции через psql — `INSERT 0 0`, `INSERT 0 0`, `UPDATE 0`, `UPDATE 0`.
+- Повторное применение тела миграции через psql — `INSERT 0 0`, `INSERT 0 0`, `UPDATE 0`, `UPDATE 0`.
 
 ## На что наткнулись
 
