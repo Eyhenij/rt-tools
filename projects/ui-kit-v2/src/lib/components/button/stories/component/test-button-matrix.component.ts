@@ -34,93 +34,130 @@ interface IButtonIconCase {
     template: `
         @switch (part) {
             @case ('appearance') {
-                <app-story-grid caption="Палитра × внешний вид" [rows]="themes" [columns]="appearances">
-                    <ng-template let-theme let-appearance="col">
-                        <button rtButton [attr.aria-label]="theme" [label]="theme" [theme]="theme" [appearance]="appearance"></button>
+                <app-story-presets caption="Палитра × внешний вид в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="themes" [columns]="appearances">
+                            <ng-template let-theme let-appearance="col">
+                                <button
+                                    rtButton
+                                    [attr.aria-label]="theme"
+                                    [label]="theme"
+                                    [theme]="theme"
+                                    [appearance]="appearance"></button>
+                            </ng-template>
+                        </app-story-grid>
                     </ng-template>
-                </app-story-grid>
+                </app-story-presets>
             }
 
             @case ('disabled') {
-                <app-story-grid caption="Палитра × отключённость" [rows]="themes" [columns]="appearances">
-                    <ng-template let-theme let-appearance="col">
-                        <button
-                            rtButton
-                            disabled
-                            [attr.aria-label]="theme"
-                            [label]="theme"
-                            [theme]="theme"
-                            [appearance]="appearance"></button>
+                <app-story-presets caption="Палитра × отключённость в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="themes" [columns]="appearances">
+                            <ng-template let-theme let-appearance="col">
+                                <button
+                                    rtButton
+                                    disabled
+                                    [attr.aria-label]="theme"
+                                    [label]="theme"
+                                    [theme]="theme"
+                                    [appearance]="appearance"></button>
+                            </ng-template>
+                        </app-story-grid>
                     </ng-template>
-                </app-story-grid>
+                </app-story-presets>
             }
 
             @case ('pressed') {
-                <app-story-grid caption="Оформление × положение" [rows]="appearances" [columns]="pressedCases" [columnLabel]="pressedLabel">
-                    <ng-template let-appearance let-pressedCase="col">
-                        <button
-                            rtButton
-                            [attr.aria-label]="appearance"
-                            [label]="appearance"
-                            [appearance]="appearance"
-                            [pressed]="pressedCase.value"></button>
+                <app-story-presets caption="Оформление × положение в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="appearances" [columns]="pressedCases" [columnLabel]="pressedLabel">
+                            <ng-template let-appearance let-pressedCase="col">
+                                <button
+                                    rtButton
+                                    [attr.aria-label]="appearance"
+                                    [label]="appearance"
+                                    [appearance]="appearance"
+                                    [pressed]="pressedCase.value"></button>
+                            </ng-template>
+                        </app-story-grid>
                     </ng-template>
-                </app-story-grid>
+                </app-story-presets>
             }
 
             @case ('size') {
-                <app-story-grid caption="Размер × внешний вид" [rows]="sizes" [columns]="appearances">
-                    <ng-template let-size let-appearance="col">
-                        <button rtButton label="Сохранить" aria-label="Сохранить" [size]="size" [appearance]="appearance"></button>
+                <app-story-presets caption="Размер × внешний вид в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="sizes" [columns]="appearances">
+                            <ng-template let-size let-appearance="col">
+                                <button rtButton label="Сохранить" aria-label="Сохранить" [size]="size" [appearance]="appearance"></button>
+                            </ng-template>
+                        </app-story-grid>
                     </ng-template>
-                </app-story-grid>
+                </app-story-presets>
             }
 
             @case ('icon') {
-                <app-story-row caption="Иконка" [items]="iconCases" [itemLabel]="iconCaseLabel">
-                    <ng-template let-iconCase>
-                        <button
-                            rtButton
-                            [attr.aria-label]="iconCase.name"
-                            [label]="iconCase.label"
-                            [icon]="iconCase.icon"
-                            [iconPos]="iconCase.iconPos"></button>
+                <app-story-presets caption="Иконка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="iconCases" [itemLabel]="iconCaseLabel">
+                            <ng-template let-iconCase>
+                                <button
+                                    rtButton
+                                    [attr.aria-label]="iconCase.name"
+                                    [label]="iconCase.label"
+                                    [icon]="iconCase.icon"
+                                    [iconPos]="iconCase.iconPos"></button>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('rounded') {
-                <app-story-row caption="Скругление" [items]="rounded" [itemLabel]="roundedLabel">
-                    <ng-template let-value>
-                        <button rtButton label="Сохранить" aria-label="Сохранить" [rounded]="value"></button>
+                <app-story-presets caption="Скругление в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="rounded" [itemLabel]="roundedLabel">
+                            <ng-template let-value>
+                                <button rtButton label="Сохранить" aria-label="Сохранить" [rounded]="value"></button>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('loading') {
-                <app-story-row caption="Загрузка" [items]="appearances">
-                    <ng-template let-appearance>
-                        <button rtButton loading label="Сохранение…" aria-label="Сохранение" [appearance]="appearance"></button>
+                <app-story-presets caption="Загрузка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="appearances">
+                            <ng-template let-appearance>
+                                <button rtButton loading label="Сохранение…" aria-label="Сохранение" [appearance]="appearance"></button>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Взаимодействие" [items]="states" [itemLabel]="stateLabel">
-                    <ng-template let-state>
-                        <button rtButton label="Сохранить" aria-label="Сохранить" [attr.data-story-state]="state.state"></button>
-                    </ng-template>
-                </app-story-row>
+                <app-story-presets caption="Взаимодействие и отключение в обоих наборах">
+                    <ng-template>
+                        <app-story-row caption="Взаимодействие" [items]="states" [itemLabel]="stateLabel">
+                            <ng-template let-state>
+                                <button rtButton label="Сохранить" aria-label="Сохранить" [attr.data-story-state]="state.state"></button>
+                            </ng-template>
+                        </app-story-row>
 
-                <app-story-row caption="Отключение" [items]="appearances">
-                    <ng-template let-appearance>
-                        <button rtButton disabled label="Отключена" aria-label="Отключена" [appearance]="appearance"></button>
+                        <app-story-row caption="Отключение" [items]="appearances">
+                            <ng-template let-appearance>
+                                <button rtButton disabled label="Отключена" aria-label="Отключена" [appearance]="appearance"></button>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
-                <app-story-presets caption="Взаимодействие в обоих наборах">
+                <app-story-presets caption="Взаимодействие по видам оформления в обоих наборах">
                     <ng-template>
                         @for (appearance of appearances; track appearance) {
                             <app-story-row [caption]="appearance" [items]="states" [itemLabel]="stateLabel">
