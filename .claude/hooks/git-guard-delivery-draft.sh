@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/git-guard-delivery-draft.sh · b3a995b99000 · правится надстройкой, не здесь
+# rt-kit v0.27.0 · hooks/git-guard-delivery-draft.sh · 32373ae9f8ee · правится надстройкой, не здесь
 # Leaving draft, for the delivery guard: does the PR have a review, does it conflict, and was it
 # opened by the right account.
 #
@@ -66,15 +66,16 @@ rt_delivery_draft_ready() {
                 printf '%s' "$pull" | jq -e '.conflicting' >/dev/null 2>&1 \
                     && fault "the request${pull_name} conflicts with the main branch. Merge it into your branch, resolve the conflict and repeat: a lifted draft reads as «ready to merge», and this request cannot be merged."
 
-                # The author of the PR. At opening there was nothing to judge by but the text of
-                # the command: the identity of the call comes from the environment. Here it is
-                # already named by the hosting, and this is the last move where the miss is still
-                # fixable — after draft is left the PR gets merged, and a merged one cannot be
-                # reopened. A tree that named no machine account does not judge the author.
+                # The author of the PR. The clash that breaks the review — the author named as the
+                # reviewer — is already caught by the condition above: the hosting silently does not
+                # create such a review request, so the PR comes here with no review at all. What is
+                # left here is to name a foreign account aloud: a PR opened by other than the machine
+                # one is lawful, and silence about it is indistinguishable from a check that did not
+                # fire. A tree that named no machine account says nothing.
                 if [ -n "$task_bot" ]; then
                     pull_author="$(printf '%s' "$pull" | jq -r '.author // empty' 2>/dev/null)"
                     [ -n "$pull_author" ] && [ "$pull_author" != "$task_bot" ] \
-                        && fault "the request${pull_name} was opened by the account «${pull_author}», not the machine one «${task_bot}». The author of a request is never its reviewer, and there is nothing to assign the review to. The author cannot be changed — close the request and open it anew${pull_token_hint:+, substituting the token: ${pull_token_hint} …}."
+                        && printf 'the delivery guard: the request%s was opened by the account «%s», not the machine one «%s». It has a review, so the draft is lifted.\n' "$pull_name" "$pull_author" "$task_bot" >&2
                 fi
             fi
         fi

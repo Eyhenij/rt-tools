@@ -42,6 +42,17 @@
             min-width: min(var(--rt-side-menu-sub-menu-item-width), 100%);
         }
 
+        // Пункт под подсветкой клавиатуры. Отмечен рамкой, а не заливкой: заливка здесь уже занята
+        // активным адресом, и два разных смысла одним видом читались бы как один.
+        // Толщина стоит числом: у этого кита набор токенов разводит только цвета рамок, шкалы
+        // толщин в нём нет вовсе — взятый оттуда токен приходит пустым, и рамка не рисуется вовсе.
+        // Так и вышло: первый кадр показал список без единой отметки.
+        &--highlighted {
+            border-radius: var(--rt-radius-xl);
+            outline: 2px solid var(--rt-border-focus);
+            outline-offset: -2px;
+        }
+
         .rtui-side-menu-sub-item-title {
             display: flex;
             align-items: center;
@@ -107,6 +118,14 @@
 
             &--activated {
                 background-color: var(--mat-list-active-indicator-color);
+            }
+
+            // Отметка подсветки — та же, что у пункта со ссылкой: заголовок папки попадает под
+            // ходьбу стрелками наравне с ним.
+            &--highlighted {
+                border-radius: var(--rt-radius-xl);
+                outline: 2px solid var(--rt-border-focus);
+                outline-offset: -2px;
             }
 
             &__icon {
