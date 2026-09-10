@@ -26,6 +26,17 @@ A rule under the "Law on verifiability", the section about showing a visible sta
   coverage.
 - **A story that draws an empty collection is not coverage.** First plausible data, then the
   matrix.
+- **A styling preset wraps the whole matrix as a pair of halves; it never becomes an axis inside
+  it.** A preset is a second layer of assignments over the same markup and the same sizes. Crossed
+  with an axis it doubles every cell, and two halves of one row then read as two values of that
+  axis instead of one showing under two sets.
+- **The pair belongs to every story of a family the preset touches, not to one story of the ten.**
+  A single preset story shows the pair on the values it picked itself, and every other axis of that
+  component stays shown in one set: a preset repainting the pressed look, the loading look or the
+  round shape has nowhere to be seen.
+- **The halves wrap by the width of their own content, not by a threshold in a length unit.** A
+  grid of fixed columns cuts a wide matrix at the same column in both halves at once, and a
+  clipping equal on both sides reads as intended rather than as a defect.
 - **The grid is drawn by the shared showing harness, not by the markup of every story.**
   Otherwise the same thing is shown in seventy ways and diverges at the first edit.
 - **A provider without which the component does not come up stands in `preview.ts`, not as one
@@ -157,6 +168,11 @@ Rules that decide what goes in a matrix:
   cartesian product is explicitly rejected — see ADR 0002 decision 3.
 - **An axis you cannot show is declared, not skipped.** Say so in `Overview` with
   the reason; a silent gap looks exactly like coverage.
+- **Wrap the matrix in the pair of preset halves; never make the preset an axis.** A preset
+  leaves the markup and the sizes alone, so crossed with an axis it only doubles the cells.
+- **The pair goes on every story of a touched family, not on one of them.** A lone `Presets`
+  story leaves every other axis shown in one set.
+
 - **A story that renders an empty collection is not coverage.** Ten stories
   currently pass an empty array and paint nothing (`UI-KIT-V2-ISSUES.md` §2.3);
   seed a realistic fixture instead.
