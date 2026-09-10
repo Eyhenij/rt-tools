@@ -46,6 +46,14 @@ Four checks do not replace one another, and the choice between them is not a mat
   answer whether there is anything in the frame at all. Between "the run passed" and "what was shown
   is shown" there is nothing in this tree but the sweep — `pnpm run test:stories:v2`, sorted out in
   the pattern `ui-component-tests-visual`.
+- **The sweep opens the overview pages too, and by the same call.** Nothing else opens them: the
+  input-table audit reads files rather than the browser, and the snapshot run walks stories only.
+  Three foundation pages drew an error in the console, and every check of the tree was green about
+  them. A sweep of their own would part from this one at the first edit of a wait.
+- **The showing root is chosen by the mode, not by the first node a chain of selectors finds.** The
+  story container and the overview container both stand in the markup of any page at once, and the
+  idle one has zero area: a chain returns it and calls an empty frame on a page that drew
+  everything. Ninety-two stories were reported empty that way, and all of them draw.
 - **A state invisible in the frame is not checked by a snapshot.** A button under hover, a panel in
   an overlay, the branch after a file is chosen — they exist in the markup and not in the snapshot.
   Such a state gets a story of its own rather than being credited with a neighbour's coverage.
