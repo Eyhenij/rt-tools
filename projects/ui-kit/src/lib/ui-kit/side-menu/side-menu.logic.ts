@@ -10,10 +10,14 @@ import { ISideMenu } from './side-menu.types';
  * человек и ищет по имени, и по одному верхнему уровню такой пункт совпасть не мог по построению —
  * поиск находил только саму папку.
  *
- * Папка остаётся в списке по двум разным поводам, и содержимое у неё при этом разное. Совпала сама
- * подпись папки — папка отдаётся целиком: человек искал папку и ждёт увидеть то, что в ней лежит, а
- * не её же имя над пустотой. Совпал только кто-то внутри — папка отдаётся с отобранными пунктами:
- * иначе одно совпадение вытаскивает на экран весь остальной её состав.
+ * В выдаче стоят только строки, содержащие запрос. Папка — не исключение из этого, а путь к
+ * совпавшим детям: она остаётся, чтобы человек видел, где найденное лежит, а её состав отбирается
+ * тем же правилом. Иначе одно совпадение по имени папки вытаскивает на экран весь её состав, и
+ * человек читает как найденное то, в чём запроса нет.
+ *
+ * Совпавшая по имени папка, внутри которой не совпал никто, остаётся одной строкой без детей: её
+ * искали по имени, и она должна найтись. Пункт без детей в исходном наборе так и остаётся пунктом
+ * — пустого списка ему не приписывается.
  *
  * Отобранная папка — новый объект: правка `submenu` на месте переписала бы набор, который дал
  * потребитель, и стёртый запрос вернул бы урезанное меню.
@@ -26,16 +30,17 @@ export function filterSubMenuItems(items: ReadonlyArray<ISideMenu.Item>, query: 
     }
 
     return items.reduce((kept: ISideMenu.Item[], item: ISideMenu.Item): ISideMenu.Item[] => {
-        if (item.name?.toLowerCase().includes(needle)) {
-            kept.push(item);
+        const isFolder: boolean = Boolean(item.submenu?.length);
+        const inside: ISideMenu.Item[] = isFolder ? filterSubMenuItems(item.submenu ?? [], query) : [];
+
+        if (inside.length) {
+            kept.push({ ...item, submenu: inside });
 
             return kept;
         }
 
-        const inside: ISideMenu.Item[] = item.submenu?.length ? filterSubMenuItems(item.submenu, query) : [];
-
-        if (inside.length) {
-            kept.push({ ...item, submenu: inside });
+        if (item.name?.toLowerCase().includes(needle)) {
+            kept.push(isFolder ? { ...item, submenu: [] } : item);
         }
 
         return kept;
