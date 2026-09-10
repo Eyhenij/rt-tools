@@ -38,22 +38,12 @@ done
 report "SC-AK-1036 — объявление называет событие и, где надо, инструменты" "$half_declared" 0
 
 # --- SC-AK-1037 — помощник говорит о себе, что он не страж -------------------------------------
-# Долг известен и назван поимённо: тринадцать помощников из двадцати пяти о себе молчат. Список
-# только убывает — новый помощник, который о себе не сказал, роняет пробу.
-HELPERS_SILENT='browser-device-id.sh commit-msg.sh git-guard-delivery-conflict.sh
-git-guard-delivery-draft.sh git-guard-delivery-signature.sh rule-article.sh skill-gate-layers.sh
-sql-guard-parse.sh sql-guard-request.sh sql-guard-target.sh sql-guard-write.sh utf8.sh
-write-targets.sh'
 silent_helpers=0
 for hook in "$HOOK_DIR"/*.sh; do
     is_guard "$hook" && continue
-    name="$(basename "$hook")"
-    case " $(printf '%s' "$HELPERS_SILENT" | tr '\n' ' ') " in
-        *" $name "*) continue ;;
-    esac
     head -12 "$hook" | grep -qiE 'not a guard|hooks into no' || silent_helpers=$((silent_helpers + 1))
 done
-report "SC-AK-1037 — новых молчащих помощников нет" "$silent_helpers" 0
+report "SC-AK-1037 — помощники говорят о себе" "$silent_helpers" 0
 
 # --- SC-AK-1038 — страж отбивает в пользу работы ------------------------------------------------
 # Тот же долг и тот же порядок: четыре стража из тридцати об отказе в пользу работы молчат.
