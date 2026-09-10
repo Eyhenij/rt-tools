@@ -44,6 +44,12 @@ Rewritten by every session, not appended to.
 tools/check-file-size.mjs` — longer than the limit 0; `bash
 projects/agent-kit/tests/skill-gate.test.sh` — 89 probes, no failures.
 
+- **4. Two patterns** — record 4: a fourth place where stale text lies is the companion, and the
+  search line for companions stands under the command; record 7: two misses in declaring a right of
+  a procedure. The pattern of closing outgrew the line limit by the addition and was compressed by
+  eight lines. Checked by `node tools/check-file-size.mjs` — longer than the limit 0; `npm run
+check:specs` — 1549 scenarios, no divergences; `npm run check:docs` — 582 documents.
+
 ## Sessions
 
 ### 2026-09-11

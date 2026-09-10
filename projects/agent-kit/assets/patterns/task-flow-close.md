@@ -90,20 +90,25 @@ and all the rules need not be read.
 | an application law and a general law | **the file is not edited**: the owner gets the text of the article, the work goes on without it |
 | the product overview document | a new feature is appended as a line; the line about a lifted one is edited |
 
-What is stale lies most often in three places, and all three are read whole:
+What is stale lies most often in four places, and all four are read whole:
 
 - **"What of the law is not here" in a rule.** The spec audit does not read this section, so an
   untruth lives there as long as it likes. For three tasks in a row a rule wrote that the tree
   lacked the needed mechanism — and it was there;
 - **"What is not included" in a domain spec.** A task boundary was written there, and the task is
   long closed;
-- **"Where it lives" in a rule.** Files move, the paths in the table stay.
+- **"Where it lives" in a rule.** Files move, the paths in the table stay;
+- **A statement of a companion about what the tree does not have.** It is written when the subject
+  does not exist yet and lives on words about emptiness — no domain specs here, not a scenario
+  created, six records. One piece of work creates the subject, and nobody rereads the companion.
 
 ```bash
 # where the rule and the specs speak of what the work touched
 grep -rn -i "<слово работы>" <каталог правил>/*/SKILL.md docs/specs/*/spec.md
 # the section nothing audits — read whole by eye
 grep -rn -A3 "What of the law is not here" <каталог правил>/<правило>/SKILL.md
+# the companions: statements about emptiness and counts, checked by nothing
+grep -rn -iE "(нет|ни одного|пока|всего|записей) [0-9]*" <каталог правил>/*/implementation.md
 ```
 
 **A law is not edited in the branch.** An article of a law is an agreement with the owner, and the
@@ -296,33 +301,28 @@ owner is asked to merge — by the number, in one turn.
 
 ## Common misses
 
-- **The texts are edited before the folder is taken apart:** the list of what to re-read lies in the
-  plan, and the taking-apart deletes it.
-- **A decisions entry repeating a rule's article word for word is no reason next to it.** Such an
-  entry leaves whole, even if the section goes empty; a reason the article does not state is
-  appended to the article.
+- **The texts are edited before the folder is taken apart:** the list lies in the plan, which the
+  taking-apart deletes.
+- **A decisions entry repeating a rule's article word for word is no reason next to it.** It leaves
+  whole even if the section empties; a reason the article lacks is appended to it.
 - **The PR body stays older than the taking-apart.** The taking-apart is the last commit of the
-  branch, and it makes untrue everything the body promised to do before the merge. The reviewer
-  reads the list of what is left as what is left, so the body is edited in the same turn.
-- **A rule statement is lifted together with its binding line.** The link goes by text: a line
-  without a statement and a statement without a line redden the spec audit alike.
-- **The section "What of the law is not here" is read by eye, grep does not help here.** The word to
-  search for is not the one expected. A rule referred to an article the law does not have, and by
-  the word of its theme that line was found — while the untruth was elsewhere.
+  branch and makes untrue everything the body promised to do before the merge; it is edited in the
+  same turn.
+- **A rule statement is lifted together with its binding line.** The link goes by text, and either
+  half alone reddens the spec audit.
+- **The section "What of the law is not here" is read by eye, grep does not help here.** The word
+  to search for is not the one expected, and the untruth is not where the theme word leads.
 - **"Audited" cannot be said without opening the file.** The rule is read whole: a stale statement
-  stands among true ones and differs from them by nothing.
-- **The merge is not done after the merge into main.** Main then holds a "proposed, not yet rolled
-  out" section with what has been working for a month.
+  stands among true ones and differs by nothing.
+- **The merge is not done after the merge into main:** main then holds a "proposed, not rolled out" section with what has worked for a month.
 - **Scenario numbers are not renumbered at the merge.** The id is the key of the link to the tests.
 - **"What is not included" is read whole after the merge, not appended to.** The feature's
   boundaries land next to the domain's, and the line "this section does not exist yet" becomes a lie
-  by the very work that merges it. The spec audit
-  does not look there.
+  by the very work that merges it. The spec audit does not look there.
 - **One's own line of the work queue audit is found by name** — by the task number and the branch
-  name. The audit answers for the whole tree, and one closing had eight of someone else's folders
-  against one of its own.
+  name: the audit answers for the whole tree.
 - **The pair "size label — line in the epic plan" breaks from both sides.** A task on the trail of a
-  closed one inherits the label without the line about sessions. A closed epic takes the line away
-  from everyone who carries it.
-- **A rule without a binding does not enter the domain spec.** There is no code carrying it out — so
-  it is an intent, and its place is the domain's open questions.
+  closed one inherits the label without the line about sessions, and a closed epic takes the line
+  away from everyone who carries it.
+- **A rule without a binding does not enter the domain spec.** Nothing carries it out, so it is an
+  intent, and its place is the domain's open questions.
