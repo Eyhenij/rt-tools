@@ -16,6 +16,10 @@ Rewritten by every session, not appended to.
 
 ## Decisions along the way
 
+- **The delivery rule was compressed to make room for its new articles** — it stood at the prose
+  weight limit, and three more articles took it over. The arguments of fourteen articles were cut
+  to their price of the miss, and the retargeting call moved to the pattern of the chain, where the
+  ready-made code belongs. No statement was removed. Affected stage of the plan: 2.
 - **The row of the epic plan is corrected to eleven records** — nine were counted before the last
   two trees sent their cargo. Affected stage of the plan: 5.
 
