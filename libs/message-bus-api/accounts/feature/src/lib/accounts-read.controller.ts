@@ -11,7 +11,8 @@
 import { Controller, Get } from '@nestjs/common';
 
 import { RequiresRight } from '@rt/message-bus-api/access/util';
-import { IPersonRow, readPeople } from '@rt/message-bus-api/accounts/data-access';
+import { readPeople } from '@rt/message-bus-api/accounts/data-access';
+import { IPersonRow } from '@rt/message-bus-api/accounts/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 
 @Controller('accounts')
