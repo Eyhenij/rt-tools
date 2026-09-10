@@ -176,6 +176,11 @@ flowchart TD
   they were: a question through the tool, another guard's refusal, a session handover and the
   owner's own word.
 
+- **A step of the plan that is not done forbids a stop, and a report about the done is not an
+  exception.** The tier about the epic judges the whole and says nothing about a turn inside one
+  task: an epic holds a single task as lawfully as ten, and the work inside it breaks off in the
+  middle all the same. The count is read from the progress, the same list a check matches against
+  the plan; lawful exits stay as they were.
 - **The word about a stop the guard reads from the owner, not from the executor.** Otherwise the
   stop is declared by whoever finds it convenient, and the ban holds until the first inconvenience.
 - **The phrase "waiting for your word" is a stop declared by the executor, and the guard refuses it
