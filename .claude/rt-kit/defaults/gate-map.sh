@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · defaults/gate-map.sh · 2b3370c717b6 · правится надстройкой, не здесь
+# rt-kit v0.27.0 · defaults/gate-map.sh · 45930c8a7507 · правится надстройкой, не здесь
 # Map "what is edited — which rule". The package default: real paths, not samples.
 #
 # The trees of this workshop are built alike — Nx, `apps/` and `libs/`, the same extensions and the
@@ -91,7 +91,11 @@ skill_for_default() {
                 # the signs it judges by are declared in the rule's binding. Editing a sign in a
                 # check, one opens the second place next to it — otherwise they drift apart
                 # silently, and the check counts as a refusal what the rule allows.
-                */check-specs.mjs) printf '%s\n' 'spec-driven' ;;
+                # The parsing of the spec audit lies not in the file with the `check-` prefix but
+                # in the helpers next to it: anchors, contract, scenarios, the shared part. They
+                # carry out the articles of the rule, and by name alone they matched no branch.
+                */check-specs.mjs | */spec-anchors.mjs | */spec-common.mjs | */spec-contract.mjs | */spec-scenarios.mjs | */specs-for.mjs)
+                    printf '%s\n' 'spec-driven' ;;
                 */check-doc-paths.mjs | */doc-paths-allowlist.json | */check-file-size.mjs)
                     printf '%s\n' 'doc-style' ;;
                 */check-styles.mjs | */styles-allowlist.json | */stylelint-rules/*)
