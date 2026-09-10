@@ -222,6 +222,10 @@ flowchart TD
   checked only together with a command and its output.
 - **The tasks of an epic are created all at once, by the same turn as the epic itself.** Creating
   them one at a time hides the volume. The numbers return to the order section by the same edit.
+- **A task of an epic is linked to the epic card as a sub-issue, not only named in the plan.** The
+  plan and the task body are text, and the board reads neither: on the board a task of an epic looks
+  exactly like a task outside one, and the makeup and the share of what is done are assembled by
+  hand from the list of open cards. Closed tasks are linked too — the share counts them.
 
 - **The epic plan names how the branches of its tasks stand, on a par with their order.** Two
   arrangements, and both live inside the epic: each branch from the epic branch, or a stack — each

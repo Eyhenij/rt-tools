@@ -35,6 +35,7 @@ case "$args" in
     "issue list"*) printf '%s' "$STUB_ISSUES" ;;
     "pr list"*) printf '%s' "$STUB_PULLS" ;;
     "pr view"*files*) printf '%s' "${STUB_FILES}" ;;
+    *sub_issues*) printf '%s\n' "${STUB_SUB_ISSUES:-[]}" ;;
     *contents*) printf 'Not Found\n' >&2; exit 1 ;;
     *actions/workflows/*runs*) printf '%s\n' "$STUB_DEPLOY" ;;
     *actions/runs/*/jobs*) printf '%s\n' "${STUB_JOBS:-0}" ;;
