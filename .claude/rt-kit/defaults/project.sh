@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · defaults/project.sh · d8a2f7483dc8 · правится надстройкой, не здесь
+# rt-kit v0.26.0 · defaults/project.sh · 6f3ad0b5488c · правится надстройкой, не здесь
 # Tree profile: what checks an edit here and what counts as reinvention.
 #
 # The package default. Everything the trees of this workshop have in common lives here: the Nx
@@ -96,7 +96,7 @@ rt_push_checks_default() {
 
     for check in check-doc-paths check-specs check-file-size check-dupes check-styles \
         check-glossary check-lib-layers check-reuse check-schema-drift check-states check-state-next \
-        check-turn-map check-archive-age check-profile-drift check-hook-scope check-push-gate; do
+        check-turn-map check-work-steps check-archive-age check-profile-drift check-hook-scope check-push-gate; do
         [ -f "$root/$RT_CHECKS_DIR/$check.mjs" ] && printf '%s\n' "node $RT_CHECKS_DIR/$check.mjs"
     done
 
