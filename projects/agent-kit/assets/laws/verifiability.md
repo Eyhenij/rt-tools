@@ -80,9 +80,11 @@ that "should work" and code that was checked look the same in the history.
   not a decision.
 - **A red check means wrong code, not a wrong check.** A place taken out from under the check so
   that it goes quiet fixes the reading, not what the check pointed at: the code stays the same, and
-  nobody has a signal about it any more. The known list is accumulated by the day the check is
-  created and only shrinks; disagreement with the check itself is a question to the owner, not a
-  line in the list.
+  nobody has a signal about it any more. There is one move out of a red check — fix what it pointed
+  at. Stopping the work and a question to the owner are not a move: the question names them a
+  choice that does not exist, and it costs as much as the fix. The known list is accumulated by the
+  day the check is created and only shrinks — it is not added to by the executor's decision, nor by
+  the word of the owner: a line in it silences the signal about code that stayed the same.
 - **The usefulness of a rule is confirmed by observing how it is used, not by an opinion about it.**
   A rule that was never opened and a rule half the work rests on look the same in the text — and
   what gets edited first is usually what was remembered, not what gets in the way. Observation is
@@ -134,7 +136,8 @@ that "should work" and code that was checked look the same in the history.
   indistinguishable from one the tree never had at all: the run is green because nobody called it.
   The neighbouring article judges a place taken out from under the check — here it is not a place
   that is taken out but the whole check, and no trace remains in the code. The discrepancy is closed
-  by what the check pointed at, and disagreement with the check itself is a question to the owner.
+  by what the check pointed at: the check is returned to the set, and the discrepancy under it is
+  fixed.
 - **A change to the look is checked at every layout threshold, not at one width.** Thresholds are
   the places where the layout changes, and a slip lives exactly there: on either side of the
   threshold the layout is assembled differently, and in the middle it looks correct. A change
