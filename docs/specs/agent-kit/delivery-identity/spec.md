@@ -16,6 +16,11 @@ The miss surfaces one step later, at assigning a reviewer: the author of a reque
 reviewer. It is fixed only by reopening — the author of a request cannot be changed — so the identity
 has to be judged before the call, not after.
 
+What is judged is that clash, not the name of the record. A request opened by a record other than
+the machine one is lawful whenever its reviewer is somebody else: the hosting creates the review
+request, the work is reviewed, nothing is lost. Judging the name instead refuses such a call and
+leaves the tree with no way to deliver at all on a machine that holds no token.
+
 The subdomain names what the identity of a call is judged by, by which sign the guard recognises its
 own business in a command at all, and where the last line stands at which the miss is still fixable.
 
@@ -34,9 +39,15 @@ own turn.
 
 ## Rules
 
-- **A request opened without the substitution of the machine record token is refused.** The text of
-  the command is judged, not the answer of the hosting: there is no asking whose token the call will
-  go by before it is carried out.
+- **A request whose author would be its own reviewer is refused.** That is the whole subject: the
+  hosting accepts such a review request and silently does not create it, and the author of a request
+  cannot be changed afterwards.
+- **A request opened by a record other than the machine one passes, and the record is named aloud.**
+  What matters is the clash with the reviewer, not the name; silence about a foreign record, though,
+  is indistinguishable from a check that did not fire.
+- **When there is nothing to learn the author by, the substitution of the machine record token is
+  demanded.** No helper to ask the hosting with, or an empty answer from it, means the author stays
+  unknown — and then the only lawful call is the one that names the record in its own text.
 - **The refusal names the token variable and prints a ready substitution line.** A demand that names
   no way to fulfil it is carried out by memory, and memory is exactly what failed here.
 - **A tree that named no token variable gets no demand.** For such a tree the identity of a call
@@ -48,19 +59,22 @@ own turn.
 - **A mention of the command name inside a string does not count as a command.** The sign allows a
   directory before the name and allows no crossing over a space: a part of a path stays inside one
   word.
-- **The draft is not lifted from a request opened by other than the machine record.** This is the
-  last line at which the miss is still fixable by reopening: after the draft is lifted the request is
+- **The draft is not lifted from a request whose author is also its reviewer.** This is the last
+  line at which the miss is still fixable by reopening: after the draft is lifted the request is
   merged, and a merged one cannot be reopened.
-- **The refusal at lifting the draft names both records and the reopening.** An executor who heard
-  only "the wrong record" looks for a way to change the author — there is no way.
+- **A draft whose author is not the machine record is lifted, and the record is named aloud.** The
+  same reason as at the opening: the clash is what breaks the review, not the name.
+- **The refusal at lifting a request without a review names the reviewer and the request.** That is
+  where the clash surfaces: the hosting created no review request, and an executor who heard only
+  "the wrong record" would look for a way to change the author — there is no way.
 - **Who will come by the token is asked of the hosting, it is not derived from the text of the
   command.** The substitution speaks of an intent: it reads a file, and the file may not be on the
   machine — then the value is empty, the client answers from the signed-in record, and the request
   comes out from the owner at a command that looks right. Such a request has no reviewer, its author
   cannot be changed, and it is fixed only by reopening.
 - **The tree asks, not the package.** The hosting, the client and the path to the token are each
-  their own; the package holds the check of the answer against the machine record and does not know
-  how to get it.
+  their own; the package holds the check of the answer against the reviewer and does not know how to
+  get it.
 - **An empty answer stops no work, and it is reported.** "Asking did not work" and "the check came
   together" stay silent alike, so the skip reports itself by a line.
 - **The delivery rule says that the active record of the hosting client is picked per machine, not
@@ -118,9 +132,13 @@ Not applicable: the guard judges one command of one turn.
 
 ## Decisions
 
-- **The identity is judged by the text of the command, not by the answer of the hosting.** There is
-  no asking whose token the call will go by before it is carried out, and after it is carried out the
-  request is already open.
+- **The identity is judged against the reviewer, not against the name of the machine record.** The
+  name is what the tree conducts its work by; the review is what a request is opened for. Rejected:
+  demanding the machine record outright — on a machine that holds no token that refuses every call,
+  including the one whose reviewer is somebody else entirely.
+- **The answer of the hosting is asked first, and the text of the command is the fallback.** The
+  text speaks of an intent: a substitution that read a file which is not on the machine leaves the
+  value empty, and the client answers from the signed-in record.
 - **The command boundary is declared in one place for all the guards.** Having diverged, the copies
   are fixed one at a time and stay silent about the rest being left blind.
 - **The sign errs towards a surplus firing.** A guard that did not recognise a call stays silent and
@@ -138,6 +156,9 @@ None.
 - 2026-09-06 — the delivery rule says that the active record of the client is picked per machine: in
   a consumer tree, signing the client in under the machine record took the identity away from the
   neighbouring sessions.
+- 2026-09-10 — the judgement moved from the name of the machine record to the clash with the
+  reviewer: on a machine holding no token the former sign refused every call, including one whose
+  reviewer was somebody else, and the tree had no way to deliver at all.
 
 ## Scenarios
 

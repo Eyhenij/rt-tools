@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for creating a task and a branch, commit, push, opening a PR and merging. Names the one-to-one pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — rule deploy-flow.
 ---
-<!-- rt-kit v0.27.0 · rules/git-workflow.github.md · 6b8098186feb · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · rules/git-workflow.github.md · 1e7cf7a08c4e · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -133,9 +133,8 @@ flowchart TD
   limit, and a bypass by another call carries the sign away: the discrepancy surfaces at the owner.
   A limit is told from exhaustion by the limits answer — there it is zero.
 - **The branch number and the PR title number are checked on the spot, the task state — by the
-  board.** The format is read from the command text and works offline; task, column, assignee and
-  review — only with something to ask with. No network or token — the second tier is skipped
-  silently.
+  board.** The format is read from the command text and works offline; the rest needs something to
+  ask with, and without it the second tier is skipped silently.
 - **The task column moves in the same motion as the work.** Branch created — the task is in
   progress, PR opened — awaiting review; the move command does it, not GraphQL calls from memory.
   The move follows the step at once: the queue is read between steps, not after.
@@ -188,10 +187,9 @@ flowchart TD
 - **The build is in the set on a par with lint and unit tests.** The linter does not read types, and
   unit tests read only what a test imports: a type error in uncovered code lives until the image
   build — that is, the merge.
-- **On a machine with several runners, any path from the home directory is shared.** A neighbouring
-  run rewrites a ready-made step's default to its own version. Install directory, container name and
-  builder name are per project and fixed; a temporary directory will not do — the package store
-  lives there.
+- **On a machine with several runners, any path from the home directory is shared.** Install
+  directory, container name and builder name are per project and fixed; a temporary directory will
+  not do — the package store lives there.
 - **The push gate set is never narrower than the pipeline set.** A pipeline step with neither a line
   in the set nor a declared exclusion with a reason refuses the push instead of printing next to it:
   a warning reads as permission.
@@ -239,8 +237,10 @@ flowchart TD
   and about this PR; said about one, it does not carry to the next, and silence is never permission.
 - **The identity of the call opening a PR is guarded by the delivery guard, not by the executor's
   memory.** It comes from the environment and shows in the command text only by an explicit token
-  substitution. The guard asks the host about the author at draft lifting: a merged PR cannot be
-  reopened.
+  substitution. What the guard judges is the clash with the reviewer, not the name of the account: a
+  PR opened by another account is lawful while its reviewer is somebody else, and the machine
+  account is named aloud rather than demanded. Where there is nothing to learn the author by, the
+  substitution is demanded outright.
 - **The host client's active account is chosen per machine, not per tree; the machine account is
   substituted per call, never made active.** A login as the machine account hijacks every
   neighbouring session on the machine. Substitution is mandatory even with an active account.

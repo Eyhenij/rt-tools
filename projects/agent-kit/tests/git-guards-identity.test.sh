@@ -31,7 +31,7 @@ pr_token() {
     report "$label" "${out:-PASS}" "$want"
 }
 
-pr_token "SC-AK-480 — заявка без подстановки токена отбивается" \
+pr_token "SC-AK-480 — вызов, автора которого не узнать и токен не назван, не проходит" \
     "$OPEN --title \"[RT-74] Сделано\" --body x" deny
 pr_token "SC-AK-481 — заявка с подстановкой токена проходит" \
     "GH_TOKEN=\$TOKEN $OPEN --title \"[RT-74] Сделано\" --body x" PASS
@@ -68,33 +68,39 @@ ask_pr() {
     report "$label" "${out:-PASS}" "$want"
 }
 
+# Судится не имя записи, а совпадение с ревьювером: заявка от чужой записи законна, пока
+# рецензент — кто-то другой.
+ask_pr_reviewer() {
+    local label="$1" reviewer="$2" want="$3" out
+    out="$(CLAUDE_PROJECT_DIR="$ASK_PR" input_cmd "GH_TOKEN=\$TOKEN $OPEN --title \"[RT-1695] Сделано\" --reviewer $reviewer --body x" Bash "$ASK_PR" \
+        | CLAUDE_PROJECT_DIR="$ASK_PR" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
+        | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
+    report "$label" "${out:-PASS}" "$want"
+}
+
 ask_profile "машинная"
 ask_pr "SC-AK-842 — логин машинной записи вызов пропускает" PASS
+ask_pr_reviewer "SC-AK-842 — логин, отличный от рецензента, вызов пропускает" владелец PASS
 
 ask_profile "владелец"
-ask_pr "SC-AK-842 — чужой логин вызов запрещает" deny
-CLAUDE_PROJECT_DIR="$ASK_PR" expect_reason "SC-AK-842 — отказ называет обе записи" \
+ask_pr_reviewer "SC-AK-1064 — логин, совпавший с рецензентом, вызов запрещает" владелец deny
+CLAUDE_PROJECT_DIR="$ASK_PR" expect_reason "SC-AK-1064 — отказ называет запись и переоткрытие" \
     git-guard-delivery.sh \
-    "$(input_cmd "GH_TOKEN=\$TOKEN $OPEN --title \"[RT-1695] Сделано\" --body x" Bash "$ASK_PR")" \
-    'владелец.*машинная'
+    "$(input_cmd "GH_TOKEN=\$TOKEN $OPEN --title \"[RT-1695] Сделано\" --reviewer владелец --body x" Bash "$ASK_PR")" \
+    'reopening'
 
-# Спросить не удалось — вызов проходит, и гард сообщает об этом: молчаливый пропуск неотличим
-# от сошедшейся сверки.
-ask_profile ""
-ask_pr "SC-AK-843 — пустой ответ работу не останавливает" PASS
-said="$(CLAUDE_PROJECT_DIR="$ASK_PR" input_cmd "GH_TOKEN=\$TOKEN $OPEN --title \"[RT-1695] Сделано\" --body x" Bash "$ASK_PR" \
+# Чужая запись при другом рецензенте проходит, и о ней говорится вслух.
+ask_pr_reviewer "SC-AK-1065 — чужая запись при другом рецензенте проходит" третий PASS
+said="$(CLAUDE_PROJECT_DIR="$ASK_PR" input_cmd "GH_TOKEN=\$TOKEN $OPEN --title \"[RT-1695] Сделано\" --reviewer третий --body x" Bash "$ASK_PR" \
     | CLAUDE_PROJECT_DIR="$ASK_PR" "$HOOKS/git-guard-delivery.sh" 2>&1 >/dev/null)"
 case "$said" in
-    *'could not be asked'*) report "SC-AK-843 — о пропуске сообщается" да да ;;
-    *) report "SC-AK-843 — о пропуске сообщается" "$said" да ;;
+    *'владелец'*'машинная'*) report "SC-AK-1065 — о чужой записи говорится вслух" да да ;;
+    *) report "SC-AK-1065 — о чужой записи говорится вслух" "$said" да ;;
 esac
 
-# Дерево без машинной записи второго яруса не получает: сравнивать ответ не с чем.
-{
-    printf 'RT_PULL_TOKEN_VAR="GH_TOKEN"\n'
-    printf 'rt_pull_token_login() { printf "%%s" "владелец"; }\n'
-} > "$ASK_PR/.claude/rt-kit/project.sh"
-ask_pr "SC-AK-843 — без машинной записи сверка не выполняется" PASS
+# Спросить не удалось — судится текст команды: с подстановкой токена вызов проходит.
+ask_profile ""
+ask_pr "SC-AK-843 — при пустом ответе судится текст команды" PASS
 rm -rf "$ASK_PR"
 
 # Дерево без машинной записи требования не получает: у него личность вызова ничего не значит.
@@ -128,11 +134,13 @@ ready_author() {
 }
 
 author_profile owner
-ready_author "SC-AK-485 — черновик не снимается с заявки, открытой не машинной записью" deny
-CLAUDE_PROJECT_DIR="$AUTHOR_PR" expect_reason "SC-AK-486 — отказ называет обе записи и переоткрытие" \
-    git-guard-delivery.sh \
-    "$(input_cmd 'gh pr ready 9' Bash "$AUTHOR_PR")" \
-    'open it anew'
+ready_author "SC-AK-485 — черновик заявки от чужой записи снимается, запись названа" PASS
+said="$(CLAUDE_PROJECT_DIR="$AUTHOR_PR" input_cmd 'gh pr ready 9' Bash "$AUTHOR_PR" \
+    | CLAUDE_PROJECT_DIR="$AUTHOR_PR" "$HOOKS/git-guard-delivery.sh" 2>&1 >/dev/null)"
+case "$said" in
+    *'owner'*'bot'*) report "SC-AK-485 — о чужой записи говорится вслух" да да ;;
+    *) report "SC-AK-485 — о чужой записи говорится вслух" "$said" да ;;
+esac
 
 author_profile bot
 ready_author "SC-AK-487 — заявка машинной записи черновик снимает" PASS
