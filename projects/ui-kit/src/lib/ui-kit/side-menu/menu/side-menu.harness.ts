@@ -29,6 +29,8 @@ export class BreakpointServiceStub {
     }
 }
 
+const SEARCH_FIELD: string = '[qa-dataid="side-menu-search"]';
+
 export const ITEMS: ISideMenu.Item[] = [
     {
         id: 'refs',
@@ -42,10 +44,34 @@ export const ITEMS: ISideMenu.Item[] = [
     { id: 'reports', name: 'Отчёты', icon: 'insights', link: '/reports' },
 ];
 
+/**
+ * Набор с папкой внутри подменю: потребитель кладёт то, что человек ищет по имени, именно туда, и
+ * без такого набора спуск отбора внутрь папок проверить нечем.
+ */
+export const NESTED_ITEMS: ISideMenu.Item[] = [
+    {
+        id: 'refs',
+        name: 'Справочники',
+        icon: 'menu_book',
+        submenu: [
+            { id: 'rates', name: 'Курсы валют', link: '/rates' },
+            {
+                id: 'saved',
+                name: 'Сохранённое',
+                submenu: [
+                    { id: 'pie', name: 'Круговая диаграмма', link: '/saved/pie' },
+                    { id: 'bars', name: 'Столбцы по месяцам', link: '/saved/bars' },
+                ],
+            },
+        ],
+    },
+    { id: 'reports', name: 'Отчёты', icon: 'insights', link: '/reports' },
+];
+
 @Component({
     template: `
         <rtui-side-menu
-            [menuItems]="items"
+            [menuItems]="items()"
             [activeMenuIds]="active()"
             [subMenuMode]="mode()"
             [subMenuWidth]="width()"
@@ -55,7 +81,7 @@ export const ITEMS: ISideMenu.Item[] = [
     imports: [RtuiSideMenuComponent],
 })
 export class HostComponent {
-    public readonly items: ISideMenu.Item[] = ITEMS;
+    public readonly items: WritableSignal<ISideMenu.Item[]> = signal(ITEMS);
     public readonly active: WritableSignal<Array<string | number>> = signal([]);
     public readonly mode: WritableSignal<ISideMenu.SubMenuMode> = signal('hover');
     public readonly width: WritableSignal<number | null> = signal(null);
@@ -66,7 +92,12 @@ export interface ISetup {
     host: HostComponent;
 }
 
-export function setup(mode: ISideMenu.SubMenuMode = 'hover', active: Array<string | number> = [], narrow: boolean = false): ISetup {
+export function setup(
+    mode: ISideMenu.SubMenuMode = 'hover',
+    active: Array<string | number> = [],
+    narrow: boolean = false,
+    items: ISideMenu.Item[] = ITEMS
+): ISetup {
     const breakpoints: BreakpointServiceStub = new BreakpointServiceStub();
 
     breakpoints.narrow.set(narrow);
@@ -90,6 +121,7 @@ export function setup(mode: ISideMenu.SubMenuMode = 'hover', active: Array<strin
 
     const fixture: ComponentFixture<HostComponent> = TestBed.createComponent(HostComponent);
 
+    fixture.componentInstance.items.set(items);
     fixture.componentInstance.mode.set(mode);
     fixture.componentInstance.active.set(active);
     fixture.detectChanges();
@@ -113,7 +145,7 @@ export function hoverFirstItem(fixture: ComponentFixture<HostComponent>): void {
 }
 
 export function typeInSearch(fixture: ComponentFixture<HostComponent>, query: string): void {
-    const field: HTMLInputElement = fixture.nativeElement.querySelector('[qa-dataid="side-menu-search"]') as HTMLInputElement;
+    const field: HTMLInputElement = fixture.nativeElement.querySelector(SEARCH_FIELD) as HTMLInputElement;
 
     expect(field).not.toBeNull();
 
@@ -132,7 +164,7 @@ export function leavePanel(fixture: ComponentFixture<HostComponent>): void {
 
 /** Нажатие в поле поиска — то самое, с которого человек начинает набор. */
 export function focusSearch(fixture: ComponentFixture<HostComponent>): void {
-    const field: HTMLInputElement = fixture.nativeElement.querySelector('[qa-dataid="side-menu-search"]') as HTMLInputElement;
+    const field: HTMLInputElement = fixture.nativeElement.querySelector(SEARCH_FIELD) as HTMLInputElement;
 
     expect(field).not.toBeNull();
 
@@ -154,4 +186,52 @@ export function clickRailItem(fixture: ComponentFixture<HostComponent>, index: n
 
     items[index].dispatchEvent(new MouseEvent('click', { bubbles: true }));
     fixture.detectChanges();
+}
+
+/** Подписи пунктов подменю в том порядке, в каком они стоят на экране. */
+export function subItemTitles(fixture: ComponentFixture<HostComponent>): string[] {
+    const titles: HTMLElement[] = Array.from(
+        fixture.nativeElement.querySelectorAll('.rtui-side-menu-sub-item-title__text, .rtui-side-menu-expand-sub-item-header__title')
+    );
+
+    return titles.map((node: HTMLElement): string => (node.textContent ?? '').trim());
+}
+
+/** Заголовки раскрытых папок подменю: раскрытость видно по признаку самой панели. */
+export function expandedFolderTitles(fixture: ComponentFixture<HostComponent>): string[] {
+    const panels: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('.rtui-side-menu-expand-sub-item'));
+
+    return panels
+        .filter((panel: HTMLElement): boolean => panel.classList.contains('mat-expanded'))
+        .map((panel: HTMLElement): string => {
+            const title: HTMLElement | null = panel.querySelector('.rtui-side-menu-expand-sub-item-header__title');
+
+            return (title?.textContent ?? '').trim();
+        });
+}
+
+/** Нажатие клавиши в поле поиска. Отдаёт само событие: съедена клавиша или нет, видно по нему. */
+export function pressKeyInSearch(fixture: ComponentFixture<HostComponent>, key: string): KeyboardEvent {
+    const field: HTMLInputElement = fixture.nativeElement.querySelector(SEARCH_FIELD) as HTMLInputElement;
+    const event: KeyboardEvent = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+
+    field.dispatchEvent(event);
+    fixture.detectChanges();
+
+    return event;
+}
+
+/** Подписи пунктов под подсветкой клавиатуры. */
+export function highlightedTitles(fixture: ComponentFixture<HostComponent>): string[] {
+    const marked: HTMLElement[] = Array.from(
+        fixture.nativeElement.querySelectorAll('.rtui-side-menu-sub-item--highlighted, .rtui-side-menu-expand-sub-item-header--highlighted')
+    );
+
+    return marked.map((node: HTMLElement): string => {
+        const title: HTMLElement | null = node.querySelector(
+            '.rtui-side-menu-sub-item-title__text, .rtui-side-menu-expand-sub-item-header__title'
+        );
+
+        return (title?.textContent ?? '').trim();
+    });
 }
