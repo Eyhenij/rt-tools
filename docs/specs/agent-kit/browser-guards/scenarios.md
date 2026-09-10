@@ -93,6 +93,20 @@ into a dead end
 
 Covered: `projects/agent-kit/tests/browser-guard-drivers.test.sh`.
 
+### SC-AK-1047 — a listing and a switch of browsers are refused, and the refusal names the pinned sign
+
+Given the tree named the pinned browser profile When a listing of the connected browsers or a switch
+to another one is asked Then the call is refused and the pinned sign stands in the text: the names a
+listing returns identify nothing, and a pick out of them lands in a profile nobody signed in to
+
+### SC-AK-1048 — without a pinned profile a listing goes through
+
+Given the profile is named neither by a variable nor by a file of the tree When a listing of the
+browsers is asked Then it goes through: the guard has nothing to name instead, and a blind refusal
+would leave the work without any way at all
+
+Covered: `projects/agent-kit/tests/browser-guard-no-listing.test.sh`.
+
 ### SC-AK-838 — a foreign profile is refused before the call, and this pass leaves no mark
 
 Given the tree named the pinned browser profile
