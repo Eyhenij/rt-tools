@@ -47,8 +47,10 @@ test.describe('раздел людей', () => {
         await expect(personCell(page, PEOPLE.watcher.name, 'role')).toHaveText(WATCHER_ROLE);
         await expect(personCell(page, PEOPLE.watcher.name, 'state')).toHaveText('Действует');
 
-        // Время последнего входа показано днём и минутами в поясе смотрящего, а не строкой ответа
-        await expect(personCell(page, PEOPLE.disabled.name, 'last-login')).toHaveText(/^\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}$/);
+        // Время последнего входа показано днём и минутами в поясе смотрящего, а не строкой ответа.
+        // Пробелы по краям ячейки нарочно допущены: образцом текста они не сводятся, как сводятся
+        // строкой, а разметка ячейки кладёт значение с переносами.
+        await expect(personCell(page, PEOPLE.disabled.name, 'last-login')).toHaveText(/^\s*\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}\s*$/);
     });
 
     test('SC-MB-324 — отключённая запись и запись без роли отдают свои пустоты словами, а не пропадают', async ({
@@ -100,7 +102,7 @@ test.describe('раздел людей', () => {
         // Порядок по имени детерминирован целиком: он не зависит от того, кто входил последним
         await expect
             .poll(async (): Promise<string[]> => columnTexts(page, 'people-cell-name'))
-            .toEqual([ACCOUNT.name, PEOPLE.roleless.name, PEOPLE.disabled.name, PEOPLE.watcher.name]);
+            .toEqual([ACCOUNT.name, PEOPLE.roleless.name, PEOPLE.watcher.name, PEOPLE.disabled.name]);
     });
 
     test('SC-MB-325 — без права `accounts:read` пункта раздела нет и адрес не открывается', async ({ page }: { page: Page }) => {
