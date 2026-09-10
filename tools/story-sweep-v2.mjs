@@ -126,8 +126,10 @@ async function ownShowings() {
  *
  * The showing root is the harness's host, and it is also the snapshot's frame area. For a story
  * drawing itself past the harness, the showcase's own root is measured: such a story is shot whole too.
- * An overview page has a root of its own — the showcase draws it outside the story root, and
- * measured by the story root it would come out empty on every page at once.
+ * An overview page has a root of its own, and the root is chosen by the mode rather than by the
+ * first node that turned up. Both containers stand in the markup of any page at once, and the idle
+ * one has zero area: a chain of selectors returns it and reports an empty frame on a page that drew
+ * everything. Ninety-two stories came out empty that way, and all of them draw.
  *
  * A zero root height does not yet mean an empty showing. A toast, a bottom sheet and everything a
  * component nails to the window itself stand outside the flow — the root above such content
@@ -135,7 +137,7 @@ async function ownShowings() {
  * altogether. So at an empty root the largest drawn node inside the showing and inside the overlay
  * container is measured: an empty showing has nothing to measure at all — there is not one node with an area.
  */
-const measureShownArea = () => {
+const measureShownArea = (mode) => {
     const area = (node) => {
         const box = node.getBoundingClientRect();
 
@@ -143,9 +145,9 @@ const measureShownArea = () => {
     };
 
     const root =
-        document.querySelector('[data-story-root]') ??
-        document.querySelector('#storybook-docs') ??
-        document.querySelector('#storybook-root');
+        mode === 'docs'
+            ? document.querySelector('#storybook-docs')
+            : (document.querySelector('[data-story-root]') ?? document.querySelector('#storybook-root'));
 
     if (root === null) {
         return 0;
@@ -198,7 +200,7 @@ for (const showing of showings) {
     // goes not to the story it happened on but to the next one.
     await page.waitForTimeout(150);
 
-    const area = await page.evaluate(measureShownArea);
+    const area = await page.evaluate(measureShownArea, mode);
 
     if (area < MIN_AREA || errors.length > 0) {
         broken.push({ id: showing.id, area, error: errors[0] });
