@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/reuse-first-guard.sh · c803dc18d4fe · правится надстройкой, не здесь
+# rt-kit v0.27.0 · hooks/reuse-first-guard.sh · 086ba22ff379 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh
 # The "nothing is written from scratch" guard. PreToolUse on an edit of code and markup.
@@ -201,7 +201,10 @@ rt_bundles=''
 rt_own_signals=''
 rt_backend_roots=''
 if [ -f "$rt_checks_json" ]; then
-    rt_bundles="$(jq -r '.reuse.bundles[]? // empty' "$rt_checks_json" 2>/dev/null | tr '\n' ' ')"
+    # A bundle is declared either by the name alone or by a pair of the name and the area of the
+    # tree. Both forms are read into one shape — the name, a tab, the area as a list: further on the
+    # area goes onto the sign itself, and there it is read the same way the full check reads it.
+    rt_bundles="$(jq -r '.reuse.bundles[]? | if type == "object" then "\(.name // "")\t\((.roots // []) | if type == "string" then [.] else . end | tojson)" else "\(.)\t[]" end' "$rt_checks_json" 2>/dev/null)"
     own="$(jq -r '.reuse.signals // empty' "$rt_checks_json" 2>/dev/null)"
     [ -n "$own" ] && rt_own_signals="${CLAUDE_PROJECT_DIR:-.}/$own"
     # By the same key the full check reads them: a second declaration of the same roots would
@@ -220,10 +223,15 @@ signals_json() {
     [ -n "$rt_signals_dir" ] || return 0
     [ -d "$rt_signals_dir" ] || return 0
     # The layout header is stripped before parsing: JSON has no comment, and the parse falls on it.
-    for name in $rt_bundles; do
+    while IFS="$(printf '\t')" read -r name roots; do
+        [ -z "$name" ] && continue
         file="$rt_signals_dir/$name.json"
-        [ -f "$file" ] && grep -v '^# rt-kit ' "$file" | jq -c '.signals[]?' 2>/dev/null
-    done
+        [ -f "$file" ] || continue
+        grep -v '^# rt-kit ' "$file" \
+            | jq -c --argjson roots "${roots:-[]}" '.signals[]? | if ($roots | length) > 0 then .roots = $roots else . end' 2>/dev/null
+    done <<BUNDLES
+$rt_bundles
+BUNDLES
     [ -n "$rt_own_signals" ] && [ -f "$rt_own_signals" ] && grep -v '^# rt-kit ' "$rt_own_signals" | jq -c '.signals[]?' 2>/dev/null
 }
 
@@ -253,6 +261,23 @@ while IFS= read -r signal; do
             case "$rel_path" in "$backend_root"*) skip_backend=1 ;; esac
         done
         [ -n "$skip_backend" ] && continue
+    fi
+
+    # The area of the tree the bundle was declared with. A tree has more than one source of look
+    # oftener than one, and a sign of the first answers falsely over the second: an application
+    # assembled from another set of ready-made code drops out of the judging by the declaration.
+    # The full check reads the same field — they must not diverge. The boundary is judged by the
+    # directory: `apps/admin` must not take in `apps/administration`.
+    roots="$(printf '%s' "$signal" | jq -r '.roots[]? // empty' 2>/dev/null)"
+    if [ -n "$roots" ]; then
+        inside=''
+        while IFS= read -r area; do
+            [ -z "$area" ] && continue
+            case "$rel_path" in "$area" | "$area"/*) inside=1 ;; esac
+        done <<AREAS
+$roots
+AREAS
+        [ -z "$inside" ] && continue
     fi
 
     # The name pattern is checked against the path from the root of the tree, not against the file

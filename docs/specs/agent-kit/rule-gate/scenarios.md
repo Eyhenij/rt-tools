@@ -217,3 +217,16 @@ call Then it removes nothing and leaves with zero: it is a removal of a temporar
 refuses nothing
 
 Covered: `projects/agent-kit/tests/skill-gate-rearm.test.sh`.
+
+### SC-AK-1088 — the subject of the rollout rule is demanded by the rollout rule
+
+Given an edit of the image description, of the compose file, of the proxy config or of the sample of
+the production environment When the gate picks the rule Then it demands the rule of the rollout: the
+rule about tasks and branches says nothing about the server, the ports or the variables the image is
+raised with
+
+Given an edit of the pipeline When the gate picks the rule Then it demands the rule of the rollout
+first and the rule about tasks and branches after it: the pipeline says both what runs before the
+merge and what reaches production after it
+
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
