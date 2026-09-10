@@ -1,4 +1,4 @@
-// rt-kit v0.27.0 · checks/spec-scenarios.mjs · 62997dc01865 · правится надстройкой, не здесь
+// rt-kit v0.27.0 · checks/spec-scenarios.mjs · 3f91d98552f1 · правится надстройкой, не здесь
 /**
  * The scenarios of a domain and the level of their binding: what a scenario promises, by which test
  * it is covered and whether the test is not switched off by an environment variable.
@@ -18,6 +18,29 @@ import {
 } from './spec-common.mjs';
 
 // ── 4. Scenarios and the level of binding ──────────────────────────────────────
+
+
+/**
+ * A line begun as a scenario heading. By it a heading the template did not take is told from
+ * ordinary prose: silence about such a line makes the audit's answer a statement about what it
+ * managed to parse, not about what lies in the tree. A subdomain named with a five-letter prefix
+ * passed green with thirteen of its scenarios not counted at all.
+ */
+const SCENARIO_HEADING_START = /^###\s+SC-/;
+
+/** The headings of a file that begin as a scenario and are not taken by the template. */
+function unparsedHeadings(file) {
+    const found = [];
+    read(file)
+        .split('\n')
+        .forEach((line, index) => {
+            if (SCENARIO_HEADING_START.test(line) && !SCENARIO_HEADING.test(line)) {
+                found.push({ file, line: index + 1, text: line.trim() });
+            }
+        });
+
+    return found;
+}
 
 function parseScenarios(file) {
     const lines = read(file).split('\n');
@@ -222,4 +245,4 @@ function collectReferences() {
     return references;
 }
 
-export { collectReferences, parseScenarios, promisesScreen };
+export { collectReferences, parseScenarios, promisesScreen, unparsedHeadings };

@@ -41,11 +41,12 @@ const SKIPPED_DIRS = CONFIG.skippedDirs;
 /**
  * `### SC-BK-03 — a request for dates already taken`
  *
- * The number is accepted from one digit to three. A heading that did not match the template starts
- * no scenario and gives no refusal: a tree that numbered its scenarios from one would lose the
- * first nine of them silently — neither in coverage nor in debts, with a green audit.
+ * The number is accepted from one digit to four, the prefix from two letters to six. A heading the
+ * template did not take used to start no scenario and give no refusal: this tree crossed a
+ * thousand scenarios and lost the whole thousandth series at once — neither in coverage nor in
+ * debts, with a green audit. Now such a heading is named as a discrepancy of its own.
  */
-const SCENARIO_HEADING = /^###\s+(SC-([A-Z]{2,4})-(\d{1,3}))\s+—\s+(.+?)\s*$/;
+const SCENARIO_HEADING = /^###\s+(SC-([A-Z]{2,6})-(\d{1,4}))\s+—\s+(.+?)\s*$/;
 /**
  * The keys of a spec are read under two names, English and the owner's. A tree translates its
  * specs one domain at a time, and a key that moved instead of learning the second name takes the
@@ -57,7 +58,7 @@ const UNCOVERED = /^(?:Not covered|Не покрыто):\s*\S/;
 /** The test exists, but checks not everything promised or goes another way */
 const PARTIAL = /^(?:Coverage:\s*partial|Покрытие:\s*частичное)\s*—\s*\S/;
 /** A mention of the scenario in the title of a test; the number is as long as in the heading */
-const SCENARIO_REFERENCE = /\bSC-[A-Z]{2,4}-\d{1,3}\b/g;
+const SCENARIO_REFERENCE = /\bSC-[A-Z]{2,6}-\d{1,4}\b/g;
 /** The promise line of a scenario; its continuations go with an indent */
 const PROMISE = /^(?:Then|Тогда)\s+\S/;
 /**
@@ -93,7 +94,14 @@ const E2E_ROOTS = CONFIG.e2eRoots;
 // there is nothing else to bind to — an element has neither a method nor a field. Before, such a
 // binding did not match the template, and the audit said there was no binding at all; a session
 // went on rewriting a table of bindings that was right.
-const ANCHOR = /`([\w./-]+\.[A-Za-z]{2,10}):(#?\p{L}[\p{L}\p{N}_-]*|#?_[\w-]*|\d+|\.[\p{L}\p{N}_-]+)`/gu;
+// The name of a file is written in two shapes: with an extension, and whole without a dot —
+// that is how an image description, a proxy config and a build file are named. A statement
+// carried out exactly there had nothing to address it by, and stood under the verdict «not
+// checked» while the article was carried out: the form called such an address the absence of
+// one. The second shape takes a word with a capital letter — that is what tells the name of
+// such a file from an ordinary word of prose standing in backticks next to a colon.
+const ANCHOR =
+    /`((?:[\w./-]+\.[A-Za-z]{2,10}|(?:[\w./-]*\/)?[A-Z][\w-]*)):(#?\p{L}[\p{L}\p{N}_-]*|#?_[\w-]*|\d+|\.[\p{L}\p{N}_-]+)`/gu;
 /**
  * An explicit verdict instead of an anchor: an article that has nowhere to be carried out in the
  * tree. That happens lawfully — the rule speaks of a service the tree does not keep, or of a human
