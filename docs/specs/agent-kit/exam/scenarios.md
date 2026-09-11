@@ -160,3 +160,13 @@ Then the guard stays silent: one muted call does not carry away the answer of th
 printed by the shell after the answer of the role is not counted as before
 
 Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
+
+### SC-AK-1084 — a grown session record is taken apart within the time allowed
+
+Given the session record holds more than a thousand entries and over a thousand muted calls
+When the guard checks an edit
+Then the verdict is the same as on a short record, and the taking apart fits into the time allowed:
+the muted calls are looked up by key, not by walking the list anew on every entry — a guard that
+does not make it in time is worse than an absent one, because the work goes past it silently
+
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.

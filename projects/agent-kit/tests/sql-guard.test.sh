@@ -117,6 +117,12 @@ shell "SC-AK-1061 — миграция на незнакомый адрес сп
 shell "SC-AK-1061 — неразрешимый адрес миграции спрошен" ask 'pnpm exec prisma migrate deploy'
 shell "SC-AK-1061 — миграция рядом со второй записью не проходит" ask \
     'DATABASE_URL=postgres://app@localhost:55432/app pnpm exec prisma migrate deploy && psql -d app -c "insert into bookings (id) values (1)"'
+shell "SC-AK-1061 — миграция рядом с доставкой файла не проходит" ask \
+    'DATABASE_URL=postgres://app@localhost:55432/app pnpm exec prisma migrate deploy && psql -d app -f /tmp/fix.sql'
+# Имя файла нарочно не `copy.sql`: слово `copy` — глагол записи, и страж находит его в пути,
+# отчего проба краснела бы по причине, к снятию дампа не относящейся.
+shell "SC-AK-1061 — миграция рядом со снятием дампа проходит" PASS \
+    'DATABASE_URL=postgres://app@localhost:55432/app pnpm exec prisma migrate deploy && pg_dump -d app -f /tmp/snapshot.sql'
 shell "SC-AK-1061 — пересоздание базы отбито" deny 'pnpm exec prisma migrate reset'
 
 # --- SC-AK-1062. Одноразовая база ничего не спрашивает --------------------------------------

@@ -146,3 +146,22 @@ Then inside the bundle the sign judges as before, and the source folder of the r
 count as a divergence — both read the sample the same way
 
 Covered: `projects/agent-kit/tests/checks-reuse.test.sh`, `projects/agent-kit/tests/reuse-guard.test.sh`.
+
+### SC-AK-1085 — a bundle is declared with the area of the tree it holds over
+
+Given the tree declared a bundle together with a directory of the tree, and two applications lie in
+the tree
+When the sweeping uniformity check runs and an edit of the same file passes the guard
+Then inside the area the sign judges, the application outside the area drops out of the walk, and a
+neighbouring directory whose name starts the same is not taken in
+
+Covered: `projects/agent-kit/tests/checks-reuse.test.sh`, `projects/agent-kit/tests/reuse-guard.test.sh`.
+
+### SC-AK-1086 — one bundle declared twice takes the run down
+
+Given the same bundle is declared twice, with different areas
+When the sweeping uniformity check runs
+Then the run is refused and the refusal names the bundle: a second declaration would take the first
+away silently, and the area named there would be left judged by nothing
+
+Covered: `projects/agent-kit/tests/checks-reuse.test.sh`.

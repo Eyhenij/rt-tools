@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — the part about the rollout. Load when an edit goes to production — merge into the main branch, the pipeline, images and tags, storage migrations. Patterns git-workflow-migration, -restart, -docker, -secrets. Task and branch — rule git-workflow.
 ---
-<!-- rt-kit v0.27.0 · rules/deploy-flow.github.md · cd1c4a75e71f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · rules/deploy-flow.github.md · 8e00d8ca5bc9 · правится надстройкой, не здесь -->
 
 # Rollout — how it works here
 
@@ -116,6 +116,12 @@ flowchart TD
 - **A PR is checked before the merge by the same pipeline as the main branch.** Checks and image
   builds go on the `pull_request` event, the rollout does not: it is held by the main-branch
   condition on its step, and a PR image does not leave for the registry.
+- **Which PRs the pipeline wakes for is named by the tree, and it sets the order of handing in.**
+  A base filter is not a detail of the settings: a PR the pipeline does not wake for has nothing
+  to wait for, and a draft on it costs a locked button and an extra turn. A tree with a single
+  runner pays a whole run for every PR into an epic branch, and pays it for checks the push gate
+  has already run on the same machine; a tree with runners to spare buys the earlier refusal. The
+  answer is written in the pipeline file next to the trigger, together with what is lost by it.
 - **A divergence of production from the main branch is visible by the work queue audit.** A task
   leaves the queue by a merge, but a merge is not yet production: a failed or unstarted rollout
   touches neither the task nor its column, and there is nowhere to notice it. The audit asks for

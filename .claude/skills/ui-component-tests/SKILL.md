@@ -46,6 +46,12 @@ Four checks do not replace one another, and the choice between them is not a mat
   answer whether there is anything in the frame at all. Between "the run passed" and "what was shown
   is shown" there is nothing in this tree but the sweep — `pnpm run test:stories:v2`, sorted out in
   the pattern `ui-component-tests-visual`.
+- **The sweep opens the overview pages too, and by the same call.** Nothing else opens them at all,
+  so an error there stays invisible while every check of the tree is green. A sweep of their own
+  would part from this one at the first edit of a wait.
+- **The showing root is chosen by the mode, not by the first node a chain of selectors finds.** Both
+  containers stand in the markup of any page at once, and the idle one has zero area: a chain
+  returns it and calls an empty frame on a page that drew everything.
 - **A state invisible in the frame is not checked by a snapshot.** A button under hover, a panel in
   an overlay, the branch after a file is chosen — they exist in the markup and not in the snapshot.
   Such a state gets a story of its own rather than being credited with a neighbour's coverage.
@@ -104,19 +110,16 @@ Four checks do not replace one another, and the choice between them is not a mat
   which attempt, the window and page sizes, the point density, the worker's number — into a
   directory outside the repository, which the next run does not touch.
 - **A shot beyond the window touches the page under the shutter, and that is cured not by a cycle
-  but by the window.** A frame wider or taller than the window the browser takes by substituting the
-  window for the duration of the frame: the page gets a `resize`, and everything computed from the
-  window sizes moves right inside the frame. A cycle of matching frames pins the breakage instead of
-  curing it — the shift is steady, and the cycle returns exactly the shifted frame. The cure is the
-  reverse order: the window is widened **before** the frame, the showing is waited for settled, and
-  an ordinary frame is taken. The consequence is visible in the reference — `100vh` and `100vw` of
-  such a story are computed from the widened window.
-- **A frame of a node beyond the window is cured the same way.** The article above reads as being
-  about a whole page. A node taller than the window goes past its bounds no less. The cure was
-  written for one frame of the two, and the second lived on with the defect while the article did
-  not name it. The window is widened to the node being shot, not to the page: the page happens to be
-  higher than the node, and a superfluous growth changes everything computed from the window at
-  stories that did not ask for it.
+  but by the window.** The browser substitutes the window for the duration of such a frame, the page
+  gets a `resize`, and everything computed from the window sizes moves right inside the frame. A
+  cycle of matching frames pins the shift instead of curing it. The cure is the reverse order: the
+  window is widened **before** the frame, the showing is waited for settled, and an ordinary frame is
+  taken. The consequence is visible in the reference — `100vh` and `100vw` of such a story are
+  computed from the widened window.
+- **A frame of a node beyond the window is cured the same way.** A node taller than the window goes
+  past its bounds no less than a whole page. The window is widened to the node being shot, not to
+  the page: a superfluous growth changes everything computed from the window at stories that did not
+  ask for it.
 - **The trace of such a shot is left at the story after the tall one.** The tall one is shot by a
   shifted page; the page keeps the shift, and the next story is shot by it too. So the divergence
   lands on a neighbour whose content nobody touched, and a rearrangement of the stories in the file
@@ -198,13 +201,8 @@ Four checks do not replace one another, and the choice between them is not a mat
   all.
 - **What drifts in a screen frame is removed by name, not covered by a threshold.** A threshold lets
   an eaten padding through together with the drifting value, so it is held at zero and the cause is
-  looked for to the end. The order of sorting out is one — compare the frames pixel by pixel and see
-  where exactly they diverged and by how much. A unit or two per channel on the anti-aliased corners
-  is colour, not layout: the browser takes the profile from the machine's display, and the profile
-  is named explicitly. A shift of the whole frame by a pixel is width: the table lays the columns
-  out by content, and a value computed from the current moment moves the frame whole. The order of
-  the rows is the seeding: the record key is created anew by every run, and the handing out by it is
-  random.
+  looked for to the end. The order of sorting out is one: compare the frames pixel by pixel and see
+  where exactly they diverged and by how much. What each kind of divergence means — the cold part.
 - **A mask covers the content but not the width.** A column under a mask takes its place as before,
   and a drifting value inside it moves its neighbours past the mask. What drifts is cured in the
   seeding — by a constant value — and then no mask is needed at all.

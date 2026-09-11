@@ -1,4 +1,4 @@
-<!-- rt-kit v0.27.0 · laws/delivery.md · f66c034b61bf · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · laws/delivery.md · bfdfd0a86404 · правится надстройкой, не здесь -->
 # Law on delivery
 
 How a change reaches the running application. The law covers both the history of changes and what
@@ -136,16 +136,24 @@ application stops responding, and the reason is found from the history.
   PR is open, the work does not count as done: there is no review of it, and the person does not
   know about it. The PR is opened in the same turn in which the executor says the work is handed
   over — not in the next session and not on a reminder.
-- **A PR not ready to merge is marked as a draft.** An open PR reads as an invitation to merge, and
-  a person presses merge without asking whether the work is finished. The draft separates two states
-  that otherwise look the same: the change is put up for viewing — and the change is ready to go to
-  the main branch. Everything that waits for a run, for rework or for an answer to a question is
-  marked with it; the question is asked in the PR itself, not kept in the executor's head.
+- **A PR that waits for something is marked as a draft, and one that waits for nothing opens
+  ready.** An open PR reads as an invitation to merge, and a person presses merge without asking
+  whether the work is finished. The draft separates two states that otherwise look the same: the
+  change is put up for viewing — and the change is ready to go to the main branch. It is set on
+  what waits for a run, for rework or for an answer to a question; the question is asked in the PR
+  itself, not kept in the executor's head. Where there is nothing to wait for, a draft costs an
+  extra turn and a locked button, and it shows the owner work in progress where the work is done.
+- **Where the run comes from is part of the order of handing in, and the tree names it.** The
+  draft holds because the run is had on the PR itself: to get it the PR must be opened, and an
+  opened one already reads as an invitation. A tree whose pipeline wakes earlier — or does not wake
+  on this kind of PR at all — has nothing for the draft to wait for there, and the PR opens ready.
+  A law that named one source of the run would promise the other tree an order it cannot carry out.
 - **Lifting the draft is a separate turn, and with it the executor answers for readiness.** The
   draft is lifted when the checks have passed, no rework remains and the work matches what the task
   was created for. While it stands, the executor's silence means "not ready yet", and the person has
   to ask nothing; after it is lifted, silence means "can be merged", and the price of a mistake here
-  is a change in the main branch.
+  is a change in the main branch. A PR opened ready carries the same answer, given at the minute of
+  opening.
 - **A PR about what was done stays true until the merge itself.** It describes the tree on the day
   it was written, and waits for review for days. In that time the main branch is merged into the
   branch, and the PR's statement about neighbouring files becomes false silently — no check reads PR

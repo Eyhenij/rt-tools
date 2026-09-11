@@ -22,6 +22,9 @@ divergence.
 
 - **Someone else's step is of two kinds, and the second never ends by itself.** — Not checked: a refused permission is indistinguishable to a guard from an ongoing run. What was not passed is named by a section of the request body — it is refused by `.claude/hooks/git-guard-delivery.sh`.
 - **A summary of someone else's step.** — `.claude/hooks/waiting-turn-guard.sh:taken_re` — a turn in which a PR was opened or a red run was read does not close without an action on the next task
+- **A promise to do the work in the next turn is an announcement of intent.** — `.claude/hooks/turn-exit-patterns.sh:promise_re` — looked for in the last text of the executor.
+- **An order named by a number or by the word "all" is counted aloud before the turn ends.** — **Not checked by anything.** The size of the order is written nowhere in the tree.
+- **The owner's word to work without stops holds until they cancel it themselves.** — `.claude/hooks/turn-exit-patterns.sh:standing_work_re` — read from the replies of the owner.
 - **A declaration of intent.** — `.claude/hooks/waiting-turn-guard.sh:taken_re` — words about a taken task are not counted as an action by the guard; commands are
 - **Work named as a command is run in the turn that names it.** — **Not checked.** The guard sees the commands of the turn and does not reconcile the command named in the reply with the one run: an empty turn it refuses, and a turn where something else was run it does not
 - **One's own unclosed step is not handed to the owner.** — **Not checked.** The turn exit guard answers the question «was there work», and about a turn where there was work but the handing over was not done it says «yes»; the delivery guard is silent about an uncalled command by design
@@ -37,7 +40,7 @@ divergence.
 - **Work left in the working tree does not end the turn.** — `.claude/hooks/turn-exit-guard.sh:rt_te_deny` — the tier reads `@{u}..HEAD` locally and stays silent where there is no remote ref
 - **Turn exits are watched by a guard, not by the executor's memory.** — `.claude/hooks/turn-exit-guard.sh:verdict` — a turn without an edit and without a command that changes the tree is returned to the executor
 - **The end of an epic is a stop, and it is the one lawful waiting for a word.** — `.claude/hooks/epic-stop-guard.sh:rt_epic_over` — taking new work after the end of an epic is refused, and the two guards of the turn end let the stop through by the same reading
-- **The word about a stop the guard reads from the owner, not from the executor.** — `.claude/hooks/turn-exit-guard.sh:told_stop` — the owner remark is judged, not the reply text
+- **The word about a stop the guard reads from the owner, not from the executor.** — `.claude/hooks/turn-exit-verdict.sh:told_stop` — the owner remark is judged, not the reply text
 - **The phrase "waiting for your word" is a stop declared by the executor, and the guard refuses it by name.** — `.claude/hooks/turn-exit-guard.sh:awaits_word` — the set of phrase samples is named in the parsing of the turn record; the tier stands before the lawful exits
 - **Work without a branch and without a task folder is judged by the same guard by the second sign.** — `.claude/hooks/turn-exit-guard.sh:state` — the branch, the task folder and the state line are taken while they exist; an empty state does not end the turn but moves the judgement to the sign of work
 - **A taken task is not yet begun work, and the turn does not end on it.** — `.claude/hooks/turn-exit-guard.sh:task_key` — the task key is taken from `.claude/rt-kit/checks.json`, the branch is matched against the sample `<KEY>-<number>-`, and the sign is the absence of the directory `docs/tasks/<branch>`

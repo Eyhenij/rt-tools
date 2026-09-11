@@ -9,7 +9,7 @@
  * репозиторий целиком, и запрет называть чужое дерево обязан держаться проверкой, а не памятью
  * того, кто пишет.
  */
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { byText } from './order.js';
 
@@ -264,4 +264,51 @@ export function markSent(text: string, proposal: IProposal, url: string, field: 
     lines.splice(proposal.line + shift, 0, `- **${field}:** ${url}`);
 
     return lines.join('\n');
+}
+
+/**
+ * Значение пометки, которое ставит сама отправка, и его образец.
+ *
+ * Форма объявлена один раз и рядом: пишет её простановка, читает её вывод о пропущенном, и своя
+ * копия у второго разошлась бы с первой молча — блок с настоящей пометкой стал бы «поставленным
+ * рукой», а поставленный рукой перестал бы называться.
+ */
+export function ownMark(month: string): string {
+    return `приём:${month}`;
+}
+
+const OWN_MARK: RegExp = /^приём:/;
+
+/**
+ * Блоки, которые отбор счёл уже уехавшими, — с их файлом, строкой и значением пометки.
+ *
+ * Поле пометки читалось по наличию, и значение ей было безразлично: поставленная рукой — а её
+ * ставят, заполняя поле по привычке, — она означала «уехало», и блок не ехал никогда. Сухой прогон
+ * его тоже не показывал, поэтому снаружи всё выглядело так, будто разборов просто не было.
+ *
+ * Ноль пропущенных печатается тоже: молчание о пропущенном читается как «пропускать было нечего»,
+ * и отличить одно от другого читателю нечем.
+ *
+ * Пометка не своей формы называется отдельно. Своё значение отправка пишет одной формой —
+ * `приём:<месяц>`; всё прочее поставлено рукой, и почти всегда это слово «нет», означающее ровно
+ * обратное написанному.
+ */
+export function skippedAsSentLines(skipped: readonly IProposal[]): readonly string[] {
+    return [
+        `пропущено как отправленное: ${skipped.length}`,
+        ...skipped.map((entry: IProposal): string => {
+            const own: boolean = OWN_MARK.test(entry.sent);
+            const said: string = own ? '' : ' — поставлена рукой: своё значение отправка пишет как «приём:<месяц>»';
+
+            return `  ${entry.file}:${entry.line} — пометка «${entry.sent}»${said}`;
+        }),
+    ];
+}
+
+/** Пометка об отправке: по ней предложение второй раз не уезжает. */
+export function markProposals(root: string, proposals: readonly IProposal[], mark: string): void {
+    for (const proposal of proposals) {
+        const path: string = join(root, proposal.file);
+        writeFileSync(path, markSent(readFileSync(path, 'utf8'), proposal, mark), 'utf8');
+    }
 }
