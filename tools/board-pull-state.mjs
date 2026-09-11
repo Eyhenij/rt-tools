@@ -1,4 +1,4 @@
-// rt-kit v0.27.0 · checks/board-pull-state.github.mjs · bdc7cafc3e41 · правится надстройкой, не здесь
+// rt-kit v0.27.0 · checks/board-pull-state.github.mjs · 98b972d989a6 · правится надстройкой, не здесь
 /**
  * The state of an open request read by its tip: a run pushed out of the queue, a missing run, a
  * finished piece of work left as a draft, a conflict. Lives in a file of its own — the audit of
@@ -65,18 +65,13 @@ export function checkHeadRun(pull, report, mainBranch, options) {
         return;
     }
 
-    // A PR on top of a neighbouring one gets no run: the workflow listens for PRs into the main
-    // branch and does not see events with another base. The line about a lost event is wrong
-    // here twice: the event was not lost, and closing and reopening will not bring it back — the
-    // advice is followed literally, no run starts, and on the second try the breakage is looked
-    // for in the hosting.
+    // A PR whose base is not the main branch gets no run at all: the workflow listens for PRs
+    // into the main branch and does not see events with another base. That is the order of
+    // handing in, not a discrepancy — every task of an epic is handed in exactly so — and the
+    // audit says nothing about it. The former line was wrong three times over: the event was not
+    // lost, reopening will not bring it back, and the base of a task request stays the epic
+    // branch to the merge.
     if (pull.baseRefName && pull.baseRefName !== mainBranch) {
-        report(
-            `PR #${pull.number}: there is no run on the tip ${pull.headRefOid.slice(0, 8)} and there will be none — ` +
-                `the request is opened into the branch «${pull.baseRefName}», and the workflow listens to requests into the main one; ` +
-                `move the base to «${mainBranch}» once the lower request is merged`
-        );
-
         return;
     }
 
