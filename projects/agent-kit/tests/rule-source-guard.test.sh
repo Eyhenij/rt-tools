@@ -56,6 +56,16 @@ report "SC-AK-534 — и адрес надстройки" "$(says "$(edit_in .cl
 report "SC-AK-534 — разложенная проверка судится наравне" "$(decision "$(edit_in tools/probe.mjs)")" deny
 report "SC-AK-535 — свой файл дерева правится как обычно" "$(decision "$(edit_in docs/plan.md)")" PASS
 
+# SC-AK-1081. Надстройка сливается по разделам «## », и это верно только для текста. У сценария
+# оболочки и у файла проверки разделов нет вовсе: исполнитель, посланный писать туда надстройку,
+# узнаёт об этом от следующей раскладки, то есть позже всего.
+report "SC-AK-1081 — тексту отказ обещает слияние по разделам" \
+    "$(says "$(edit_in .claude/skills/probe/SKILL.md)" 'merges by the section')" 1
+report "SC-AK-1081 — файлу без разделов слияние не обещается" \
+    "$(says "$(edit_in tools/probe.mjs)" 'merges by the section')" 0
+report "SC-AK-1081 — и сказано, что надстройки под этот род ресурса нет" \
+    "$(says "$(edit_in tools/probe.mjs)" 'has no override by sections')" 1
+
 # Та же правка командой оболочки: гард судит запись, а не инструмент.
 report "SC-AK-536 — запись командой в разложенную копию отбивается" \
     "$(decision "$(cmd_in 'printf x > tools/probe.mjs')")" deny

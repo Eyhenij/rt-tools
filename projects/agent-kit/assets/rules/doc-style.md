@@ -174,6 +174,12 @@ flowchart TD
   the run turned red for something other than the branch's change.
   <!-- rt-when: *.md -->
 
+- **The removal by expiry is not carried by whichever branch pushed first.** The check stands in the
+  gate of every branch, so the cleanup lands in the first work to reach a push and travels to the
+  reviewer inside an edit that has nothing to do with it. Either the cleanup is work of its own with
+  a task of its own, or the check refuses the run and not the push.
+  <!-- rt-when: *.md -->
+
 - **A link to a record of the past in a live text lives exactly until the record's expiry.** The
   address check does not read the archive at all, so the dead link turns red not there but in the
   text that referenced it. A live text names the decision in words, not by the record's address.

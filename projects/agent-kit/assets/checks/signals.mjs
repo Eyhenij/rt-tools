@@ -38,14 +38,38 @@ function parseSignals(text) {
     return JSON.parse(text.replace(/^#[^\n]*\n/, '')).signals ?? [];
 }
 
-function readBundle(name) {
-    const path = join(BUNDLES_DIR, `${name}.json`);
-    if (!existsSync(path)) {
-        const known = bundleNames().join(', ') || 'none';
-        throw new Error(`the bundle of signs «${name}» is not found at the package; there are: ${known}`);
+/**
+ * The name of a bundle and the area of the tree it applies to.
+ *
+ * A bundle is declared either by the name alone or by a pair of the name and the area — a directory
+ * or a list of them. There is more than one source of look in a tree oftener than one: the owner
+ * panel is assembled from one set of ready-made code, the public site from another, and a sign of
+ * the first answers falsely over the second. Without an area such a tree has a single move — not to
+ * declare the bundle at all, and then nothing catches a bypass of the ready-made in the area where
+ * the bundle does hold. An area is not written for a tree with one source of look: an empty list
+ * means the whole tree, exactly as before.
+ */
+function bundleOf(declared) {
+    if (typeof declared === 'string') {
+        return { name: declared, roots: [] };
     }
 
-    return parseSignals(readFileSync(path, 'utf8'));
+    const roots = declared?.roots ?? [];
+
+    return { name: declared?.name, roots: typeof roots === 'string' ? [roots] : roots };
+}
+
+function readBundle(declared) {
+    const { name, roots } = bundleOf(declared);
+    const path = name ? join(BUNDLES_DIR, `${name}.json`) : '';
+    if (!path || !existsSync(path)) {
+        const known = bundleNames().join(', ') || 'none';
+        throw new Error(`the bundle of signs «${name ?? ''}» is not found at the package; there are: ${known}`);
+    }
+
+    // The area goes onto the sign, not next to it: further on the signs of all the bundles lie in
+    // one list, and by the sign alone there would be no telling which bundle it came from.
+    return parseSignals(readFileSync(path, 'utf8')).map((signal) => (roots.length > 0 ? { ...signal, roots } : signal));
 }
 
 /** A sign that looks for a native tag: `<input\\b`, `<textarea\\b`, `<select\\b`. */
@@ -109,6 +133,16 @@ export function withKitDirectives(signals, directives) {
  */
 export function loadSignals(config, root) {
     const declared = config.bundles ?? [];
+    const names = declared.map((one) => bundleOf(one).name);
+    const twice = names.find((name, index) => names.indexOf(name) !== index);
+    if (twice) {
+        throw new Error(
+            `the bundle of signs «${twice}» is declared twice. A bundle carries one area of the tree: ` +
+                `declared a second time, it takes the first declaration away silently, and the area named ` +
+                `there is left judged by nothing. Two areas of one bundle are written as one list of directories.`
+        );
+    }
+
     const signals = declared.flatMap(readBundle);
 
     const ownPath = config.signals ? join(root, config.signals) : null;

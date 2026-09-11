@@ -1,6 +1,6 @@
 # The uniformity signs
 
-**Status:** in force · **Revision:** 2026-08-30 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-09-10 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `reuse-first`, `verifiability`
 **Procedures:** none
@@ -60,6 +60,18 @@ the tree up.
   and inside the bundle itself nothing caught a bypass of the ready-made. A sign carries a reverse
   path sample next to the direct one, and the sweeping check and the guard on an edit read it the
   same way.
+- **A bundle is declared with the area of the tree it holds over — a directory or a list of them.**
+  There is more than one source of appearance in a tree oftener than one, and a sign of the first
+  answers falsely over the second. Without an area such a tree has a single move — not to declare the
+  bundle at all, and then nothing catches a bypass of the ready-made in the area where the bundle
+  does hold. An application outside the area drops out of the walk by the declaration. The boundary
+  is judged by the directory, not by the beginning of the string: a neighbouring application whose
+  name starts the same is not taken in. An area is not written for a tree with one source of
+  appearance — a bundle without one holds over the whole tree, as before.
+- **One bundle carries one area, and a second declaration of it is a refusal.** Declared a second
+  time, it takes the first declaration away silently, and the area named there is left judged by
+  nothing — the check answers as usual and reads not a file of it. Two areas of one bundle are
+  written as one list of directories.
 - **A sign naming a global judges the position of the name, not a substring.** A name inside a
   quoted string, an access through a field of an object and a declaration of one's own with the same
   name are never a global: the first is text, the second is the injected token the rule prescribes,
@@ -86,6 +98,8 @@ diverge.
   those that are there.
 - `0` — the file of one's own signs is named but not found: the work goes on, a skip is cheaper than
   a stop.
+- `1` — one bundle is declared twice: the refusal names the bundle and says that two areas of one
+  bundle are written as one list.
 
 ## Data
 
@@ -113,7 +127,8 @@ Not applicable.
 
 ### Several objects
 
-Not applicable: the signs are one set for the whole tree.
+A tree holds more than one source of appearance: a bundle is declared with the area it holds over,
+and each application is judged by its own set of signs.
 
 ## Decisions
 
@@ -127,10 +142,9 @@ Not applicable: the signs are one set for the whole tree.
 
 - 2026-08-30 — the subdomain was split off from the checks spec: the scenario file outgrew the length
   limit, and the signs grow in their own order.
+- 2026-09-10 — a bundle is declared with the area of the tree it holds over; that closes the question
+  about the scope of a bundle.
 
 ## Open questions
 
-- The scope of a bundle — today it is expressed only by whether the tree takes the bundle whole or
-  does not take it at all. The sign about the browser window is not asked of code that gives out no
-  markup, and that is expressed by cutting off the server roots at the sign itself, not by a property
-  of the bundle.
+- None: the question about the scope of a bundle is closed by the area of the declaration.

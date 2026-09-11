@@ -1,6 +1,6 @@
 # Laying resources out into the tree
 
-**Status:** in force · **Revision:** 2026-08-17 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-09-11 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `verifiability`, `project-documentation`
 **Procedures:** none
@@ -95,6 +95,16 @@ The subdomain has no interface beyond the launch line.
   the tree; named by a default, they turn red on every lib of the very first tree whose words are its
   own. What the tree did not name is not judged at all: silence is "there is no rule about this", not
   "the rule is kept".
+- **The name of a lib is read from what the tree declared, not derived from its path.** The name,
+  the tag and the import alias are already written down — in the manifest of the lib and in the list
+  of paths. A tree that named a lib otherwise used to redden on flat ground, and the only way to
+  silence that was the exceptions list.
+- **The formula over the path speaks where the tree declared nothing.** A lib without a name in its
+  manifest is named by it: the refusal says what the name must become. So the formula stays useful
+  and stops being a judge of what is already written down.
+- **The alias of a lib is looked for by what it points at, not by its spelling.** A lib is reachable
+  by an alias or it is not; how the tree spells the alias is the tree's own business. The lib
+  nothing points at is named together with the alias the formula would give it.
 - **The first installation demands no prose written by hand.** The drafts of the companions are created
   by a command; a person fills them, but not from a blank page and not by a sample out of their head.
 - **A requirement of a resource is named in the resource itself, it is not derived by reading.** A link

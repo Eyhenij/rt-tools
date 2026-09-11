@@ -12,7 +12,7 @@ export CLAUDE_PROJECT_DIR="$TREE"
 # Правила, которые в этом дереве есть. Всё, что карта назовёт сверх них, гейт требовать не
 # вправе: дерево отказалось от предметного слоя списком, и загружать такое имя нечем.
 for rule in testing component-structure styling-bem typescript-conventions angular-patterns \
-    doc-style spec-driven task-flow dependencies platform-access git-workflow shared-code; do
+    doc-style spec-driven task-flow dependencies platform-access git-workflow shared-code deploy-flow; do
     mkdir -p "$TREE/.claude/skills/$rule"
     printf -- '---\nname: %s\nkind: rule\n---\n' "$rule" > "$TREE/.claude/skills/$rule/SKILL.md"
 done
@@ -65,6 +65,22 @@ g "скрипт в манифесте" "$TREE/package.json" PASS '"test:visual":
 g "SC-AK-800 — своя версия в манифесте" "$TREE/package.json" PASS '"version": "0.19.0"'
 g "SC-AK-800 — чужая версия рядом со своей" "$TREE/package.json" dependencies '"version": "0.19.0",
     "dependencies": { "prettier": "3.9.6" }'
+
+# SC-AK-1088 — предмет правила о выкатке карта отдавала правилу о задачах и ветках. Образ, конфиг
+# прокси и образец окружения прода говорят о сервере, портах и переменных, с которыми образ
+# поднимают, — правило о задачах и ветках об этом молчит, а написанное в этих файлах до выкатки не
+# видит никто.
+g "SC-AK-1088 — описание образа" "$TREE/deploy/api.Dockerfile" deploy-flow
+g "SC-AK-1088 — состав образов" "$TREE/docker-compose.prod.yml" deploy-flow
+g "SC-AK-1088 — конфиг прокси" "$TREE/deploy/Caddyfile" deploy-flow
+g "SC-AK-1088 — конфиг второго прокси" "$TREE/deploy/nginx.conf" deploy-flow
+g "SC-AK-1088 — образец окружения прода" "$TREE/.env.prod.example" deploy-flow
+# У конвейера предмета два сразу: какие проверки идут до слияния и что попадает на прод после. Карта
+# называет оба имени, правило о выкатке первым, и требуется первое незагруженное.
+g "SC-AK-1088 — конвейер зовёт правило о выкатке первым" "$TREE/.github/workflows/ci.yml" deploy-flow
+gate_session_load deploy-flow
+g "SC-AK-1088 — следом конвейер зовёт правило о задачах и ветках" "$TREE/.github/workflows/ci.yml" git-workflow
+gate_session_reset
 
 # --- правило вступает от того, ЧТО пишут ----------------------------------------------
 # Обращение к среде исполнения приходит в обычный сервис, и по имени файла его не видно. Карта

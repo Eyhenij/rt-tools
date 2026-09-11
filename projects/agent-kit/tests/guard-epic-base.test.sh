@@ -12,6 +12,7 @@ cp "$CHECKS/rt-kit-checks.config.mjs" "$GE_TREE/tools/"
 cp "$CHECKS/board.github.mjs" "$GE_TREE/tools/board.mjs"
 cp "$CHECKS/board-gh.github.mjs" "$GE_TREE/tools/board-gh.mjs"
 cp "$CHECKS/board-epic-link.github.mjs" "$GE_TREE/tools/board-epic-link.mjs"
+cp "$CHECKS/board-epic-plan.github.mjs" "$GE_TREE/tools/board-epic-plan.mjs"
 cp "$CHECKS/board-task-dirs.github.mjs" "$GE_TREE/tools/board-task-dirs.mjs"
 
 cat > "$GE_TREE/.claude/rt-kit/checks.json" <<'CFG'

@@ -19,7 +19,7 @@ statement: a removed statement is removed together with its line.
 - **A turn with a question to the owner is checked at the tool of the question, not at the end of the turn.** — `projects/agent-kit/assets/hooks/grill-gate.sh:grill-gate`
 - **A turn in which nothing was done about the work does not end.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:verdict`
 - **What counts as work is an edit of a file and a command that changes the tree.** — `projects/agent-kit/assets/hooks/turn-exit-patterns.sh:work_re`
-- **A word about a stop is judged by the remark of the owner, not by the words of the executor.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:told_stop`
+- **A word about a stop is judged by the remark of the owner, not by the words of the executor.** — `projects/agent-kit/assets/hooks/turn-exit-verdict.sh:told_stop`
 - **A turn that ended with words about waiting for the word of the owner is not let go without their word or a question to them by a tool.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:awaits_word` — the set of the samples of the phrase; the tier stands before the lawful exits; scenario SC-AK-891
 - **Work handed in and merged the guard does not judge.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:state`
 - **A turn that declared a written plan does not end at all.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:first_stage` — the branch refuses the turn before the second sign and takes the heading of the first stage from the plan; scenarios SC-AK-591…593

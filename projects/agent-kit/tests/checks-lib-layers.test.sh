@@ -46,6 +46,67 @@ layers_config ',"libPrefix":"vm","barrelFiles":["index.ts","public-api.ts"]'
 report "SC-AK-265 — чужая приставка названа" "$(layers_says 'prefix «own» instead of the mandatory «vm»')" 1
 report "SC-AK-266 — названный барель собственный файл пропускает" "$(layers_says 'public-api\.ts: a re-export')" 0
 
+# --- SC-AK-1087 — пустой обход отказывает, а не отвечает «расхождений нет» --------------------
+#
+# Пропуск выше говорит, что раскладки либ у дерева нет вовсе. Здесь корни на месте, а обход вернулся
+# пустым: имена семей взяты из настройки, и дерево, переименовавшее семью, держит умолчание пакета.
+# Строка «0 либ, расхождений нет» от честного нуля не отличается, а проверка стоит в проверке перед
+# push — её молчание читается как её зелёный ответ.
+
+layers_code() {
+    (cd "$LAYERS_TREE" && node tools/check-lib-layers.mjs >/dev/null 2>&1)
+    printf '%s' "$?"
+}
+
+layers_config ''
+report "SC-AK-1087 — дерево с либами до отказов об обходе не доходит" \
+    "$(layers_says 'not a single lib was met|is declared by the key')" 0
+
+printf '{"sourceRoots":["libs"],"families":["alpha","beta"],"apiFamily":"api","libsRoot":"libs"}\n' \
+    > "$LAYERS_TREE/.claude/rt-kit/checks.json"
+mkdir -p "$LAYERS_TREE/libs/gamma"
+report "SC-AK-1087 — объявленная семья без каталога отбивает прогон" "$(layers_code)" 1
+report "SC-AK-1087 — отказ называет каталог семьи" "$(layers_says 'libs/beta')" 1
+
+printf '{"sourceRoots":["libs"],"families":["gamma"],"apiFamily":"api","libsRoot":"libs"}\n' \
+    > "$LAYERS_TREE/.claude/rt-kit/checks.json"
+report "SC-AK-1087 — корень без единой либы отбивает прогон" "$(layers_code)" 1
+report "SC-AK-1087 — отказ называет пройденные корни" "$(layers_says 'not a single lib was met')" 1
+
+# --- SC-AK-1092 — аудит читает объявленное имя, тег и алиас ----------------------------------
+#
+# Имя, тег и алиас у либы уже записаны — в манифесте и в списке путей. Аудит собирал их заново из
+# пути, и дерево, назвавшее либу иначе, краснело на ровном месте: погасить это можно было только
+# списком исключений. Формула остаётся там, где не объявлено ничего: она называет, каким имя
+# должно стать.
+
+LIB_DIR="$LAYERS_TREE/libs/alpha/auth/util"
+layers_config ''
+
+printf '{"name":"своя-либа","sourceRoot":"libs/alpha/auth/util/src","tags":["scope:своя-либа"]}\n' \
+    > "$LIB_DIR/project.json"
+report "SC-AK-1092 — своё имя не считается расхождением" "$(layers_says 'the project name')" 0
+report "SC-AK-1092 — тег судится по имени либы, а не по пути" "$(layers_says 'does not match the name of the lib')" 0
+
+printf '{"name":"своя-либа","sourceRoot":"libs/alpha/auth/util/src","tags":["scope:alpha-auth-util"]}\n' \
+    > "$LIB_DIR/project.json"
+report "SC-AK-1092 — тег, разошедшийся с именем, назван" "$(layers_says 'does not match the name of the lib')" 1
+
+printf '{"sourceRoot":"libs/alpha/auth/util/src","tags":["scope:alpha-auth-util"]}\n' \
+    > "$LIB_DIR/project.json"
+report "SC-AK-1092 — либа без объявленного имени названа" "$(layers_says 'declares no project name')" 1
+report "SC-AK-1092 — отказ говорит, каким имя должно стать" "$(layers_says 'alpha-auth-util')" 1
+
+printf '{"name":"своя-либа","sourceRoot":"libs/alpha/auth/util/src","tags":["scope:своя-либа"]}\n' \
+    > "$LIB_DIR/project.json"
+printf '{"compilerOptions":{"paths":{"@своё/что-угодно":["./libs/alpha/auth/util/src/index.ts"]}}}\n' \
+    > "$LAYERS_TREE/tsconfig.base.json"
+report "SC-AK-1092 — алиас найден по тому, куда указывает" "$(layers_says 'names no alias pointing at')" 0
+
+printf '{"compilerOptions":{"paths":{"@своё/что-угодно":["./libs/alpha/auth/other/src/index.ts"]}}}\n' \
+    > "$LAYERS_TREE/tsconfig.base.json"
+report "SC-AK-1092 — либа без единого алиаса названа" "$(layers_says 'names no alias pointing at')" 1
+
 rm -rf "$LAYERS_TREE"
 
 suite_result "проверки: раскладка"

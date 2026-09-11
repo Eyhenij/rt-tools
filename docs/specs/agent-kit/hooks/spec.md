@@ -61,6 +61,12 @@ command that called it.
   without a list gives nothing to fix by; a list without a code passes the push gate.
 - **A check that has nothing to read answers zero and says so.** Silence reads as "nothing found",
   and a check switched off by an empty setting stays green for as long as it lives.
+- **A check whose walk came back empty refuses; it does not answer zero.** The skip above is
+  declared before the walk and says the tree has no such subject at all. Here the subject is in
+  place, the roots are read, and the walk met nothing: a name in the settings goes past a directory
+  the tree renamed, and the line "0 read, no divergences" is indistinguishable from an honest zero.
+  The refusal names the roots walked and the settings keys they come from — it is read by whoever
+  sets the tree up, and by nobody else.
 - **What a check judges by is kept apart from the code that judges.** The signs are data: a tree
   adds its own by a file, and a matching key replaces the package one.
 - **A guard and a check are described by one subdomain.** Both are executable, both are called from

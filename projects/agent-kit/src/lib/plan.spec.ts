@@ -50,6 +50,17 @@ describe('planFile', () => {
         expect(plan('Новое тело.\n', laid('Тело.\n').replace('Тело.', 'Тело правленое.')).outcome).toBe('drift');
     });
 
+    it('SC-AK-1079 — тело совпало с пакетным, а шапка с ним разошлась: файл кладётся заново', () => {
+        const planned: IPlanned = plan('Тело.\n', laid('Тело.\n', VERSION, digestOf('Другое тело.\n')));
+
+        expect(planned.outcome).toBe('stamp');
+        expect(planned.content).toContain('Тело.');
+    });
+
+    it('SC-AK-1079 — отличие в теле остаётся правкой руками', () => {
+        expect(plan('Тело.\n', laid('Тело.\n').replace('Тело.', 'Тело правленое.')).outcome).toBe('drift');
+    });
+
     it('файл без шапки положен не пакетом и не трогается', () => {
         const planned: IPlanned = plan('Тело.\n', 'Чужой файл.\n');
 

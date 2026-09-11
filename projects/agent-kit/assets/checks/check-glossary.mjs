@@ -45,6 +45,13 @@ const GLOSSARY = 'docs/GLOSSARY.md';
 const SECTIONS = ['## Not written here', '## Так не пишем'];
 /** A pair of the glossary: `- **left** — right`. On the left there may be several words by comma. */
 const PAIR = /^-\s+\*\*(.+?)\*\*\s+—/;
+/**
+ * The same pair written as a table row: `| left | right |`. The form is the tree's to choose, and a
+ * section set as a table used to read as empty — the check then declared a skip and stood in the
+ * gate next to the passed ones without judging a single word. The header row and the delimiter row
+ * are sifted out by the same expression: neither holds a word in bold or in backticks.
+ */
+const ROW = /^\|\s*(?:\*\*(.+?)\*\*|`(.+?)`)\s*\|/;
 /** A bracketed clarification at a word: one meaning of two is forbidden, and search cannot part them. */
 const HINT = /\([^)]*\)\s*$/;
 
@@ -73,11 +80,12 @@ function forbiddenWords(text) {
         if (line.startsWith('## ')) {
             break;
         }
-        const found = PAIR.exec(line);
+        const found = PAIR.exec(line) ?? ROW.exec(line);
         if (!found) {
             continue;
         }
-        for (const part of found[1].split(',')) {
+        const left = found[1] ?? found[2] ?? found[3];
+        for (const part of left.split(',')) {
             const word = part.trim();
             if (!word) {
                 continue;

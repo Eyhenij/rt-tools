@@ -9,11 +9,18 @@
 
 echo "конфликт раньше новой работы"
 
-# Дерево фикстуры со своим ответом опроса. Довод — то, что печатает опрос: пустая строка значит
-# «конфликтующих нет», а отказ кода возврата подставляется отдельным деревом ниже.
+# Дерево фикстуры со своим ответом опроса. Первый довод — то, что печатает опрос: пустая строка
+# значит «конфликтующих нет», а отказ кода возврата подставляется отдельным деревом ниже. Второй
+# довод — ветка, которую эта рабочая копия вела: без него всякая названная заявка считается
+# соседской, потому что записи переходов у копии нет.
 conflict_tree() {
-    local dir
-    dir="$(fixture_repo main)"
+    local dir led
+    led="$2"
+    dir="$(fixture_repo_branched main probe-start)"
+    if [ -n "$led" ]; then
+        git -C "$dir" checkout -q -b "$led" 2>/dev/null
+        git -C "$dir" checkout -q probe-start 2>/dev/null
+    fi
     mkdir -p "$dir/.claude/rt-kit"
     cat > "$dir/.claude/rt-kit/project.sh" <<EOF
 rt_conflicting_pulls() {
@@ -40,8 +47,19 @@ dlv_reason() {
     report "$label" "$got" "есть"
 }
 
-STUCK="$(conflict_tree '#1529 RT-1527-probe')"
+dlv_context() {
+    local label="$1" dir="$2" cmd="$3" pattern="$4" got
+    if CLAUDE_PROJECT_DIR="$dir" input_cmd "$cmd" Bash "$dir" \
+        | CLAUDE_PROJECT_DIR="$dir" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
+        | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null \
+        | grep -qE "$pattern"; then got="есть"; else got="нет"; fi
+    report "$label" "$got" "есть"
+}
+
+STUCK="$(conflict_tree '#1529 RT-1527-probe' RT-1527-probe)"
 CLEAN="$(conflict_tree '')"
+# Заявка соседней сессии: ветку эта копия не вела, и работу такая заявка не запрещает.
+NEIGHBOUR="$(conflict_tree '#1530 RT-1528-neighbour')"
 
 # SC-AK-786 — заведение ветки под задачу при своей конфликтующей заявке
 dlv "SC-AK-786 — заведение ветки под задачу отбито" "$STUCK" \
@@ -100,6 +118,29 @@ BARE="$(fixture_repo main)"
 dlv "SC-AK-793 — дерево без опроса взятие работы пропускает" "$BARE" \
     'npm run task:new -- --title x' PASS
 
-rm -rf "$STUCK" "$CLEAN" "$SILENT" "$BARE"
+# SC-AK-1071 — заявка, ветку которой эта копия не вела, работу не запрещает: чинить её нечем.
+dlv "SC-AK-1071 — соседская заявка заведение задачи не запрещает" "$NEIGHBOUR" \
+    'npm run task:new -- --title x' PASS
+dlv "SC-AK-1071 — соседская заявка заведение ветки не запрещает" "$NEIGHBOUR" \
+    'git checkout -b RT-1531-next origin/main' PASS
+
+# SC-AK-1072 — молчать о ней нельзя: ведущая ветку сессия узнаёт о конфликте больше ниоткуда.
+dlv_context "SC-AK-1072 — соседская заявка названа номером и веткой" "$NEIGHBOUR" \
+    'npm run task:new -- --title x' '#1530 RT-1528-neighbour'
+dlv_context "SC-AK-1072 — сказано, что ветку ведёт другая сессия" "$NEIGHBOUR" \
+    'npm run task:new -- --title x' 'led by another session'
+
+# SC-AK-1073 — своя заявка добавочного сведения о соседской не получает: соседских нет.
+dlv_context_absent() {
+    local label="$1" dir="$2" cmd="$3" got
+    got="$(CLAUDE_PROJECT_DIR="$dir" input_cmd "$cmd" Bash "$dir" \
+        | CLAUDE_PROJECT_DIR="$dir" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
+        | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null)"
+    report "$label" "${got:-пусто}" "пусто"
+}
+dlv_context_absent "SC-AK-1073 — при своей заявке о соседской не говорится" "$STUCK" \
+    'git fetch origin'
+
+rm -rf "$STUCK" "$CLEAN" "$NEIGHBOUR" "$SILENT" "$BARE"
 
 suite_result "конфликт раньше новой работы"

@@ -35,4 +35,12 @@ Given a raise of a server is passed as a nested string of the universal executor
 judges the call Then it refuses it: the runner name stands right after a quote, and without parsing
 the nested command no rule of the guard reaches it
 
+### SC-AK-1091 — who raises the stands is answered by the tree
+
+Given the tree profile says the session raises the stands When the guard judges a raise Then it
+refuses it only while a port of the stand list is taken, and the refusal names that port and the
+way to ask what holds it. A free port passes: nobody but the session raises anything here. A tree
+that set nothing keeps the former behaviour whole — any raise is refused, and the text of the
+refusal names the addresses of the raised applications
+
 Covered: `projects/agent-kit/tests/dev-server-guard.test.sh`.
