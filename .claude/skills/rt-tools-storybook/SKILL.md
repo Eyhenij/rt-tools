@@ -26,6 +26,15 @@ A rule under the "Law on verifiability", the section about showing a visible sta
   coverage.
 - **A story that draws an empty collection is not coverage.** First plausible data, then the
   matrix.
+- **A component is counted apart from its family, and a component the family shows is not
+  covered by that.** A family reaches the showcase by an overview page and a stories folder.
+  Everything inside it then counts as shown, including a component that is the subject of no
+  story and gets into a frame only inside a neighbour's wrapper. The two counts diverged by
+  thirty where the family count was green.
+- **A component shown inside a neighbour's story is named, not left to be guessed.** A pair
+  belongs in one frame — a projected hint against a string one — and pulled apart it shows
+  neither side against the other. Which story shows it is written down, so that the day the
+  neighbour's story is rewritten the count says so.
 - **The grid is drawn by the shared showing harness, not by the markup of every story.**
   Otherwise the same thing is shown in seventy ways and diverges at the first edit.
 - **A provider without which the component does not come up stands in `preview.ts`, not as one
