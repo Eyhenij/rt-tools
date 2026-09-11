@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · defaults/gate-map.sh · 2b3370c717b6 · правится надстройкой, не здесь
+# rt-kit v0.27.0 · defaults/gate-map.sh · 04cf365641de · правится надстройкой, не здесь
 # Map "what is edited — which rule". The package default: real paths, not samples.
 #
 # The trees of this workshop are built alike — Nx, `apps/` and `libs/`, the same extensions and the
@@ -91,7 +91,11 @@ skill_for_default() {
                 # the signs it judges by are declared in the rule's binding. Editing a sign in a
                 # check, one opens the second place next to it — otherwise they drift apart
                 # silently, and the check counts as a refusal what the rule allows.
-                */check-specs.mjs) printf '%s\n' 'spec-driven' ;;
+                # The parsing of the spec audit lies not in the file with the `check-` prefix but
+                # in the helpers next to it: anchors, contract, scenarios, the shared part. They
+                # carry out the articles of the rule, and by name alone they matched no branch.
+                */check-specs.mjs | */spec-anchors.mjs | */spec-common.mjs | */spec-contract.mjs | */spec-scenarios.mjs | */specs-for.mjs)
+                    printf '%s\n' 'spec-driven' ;;
                 */check-doc-paths.mjs | */doc-paths-allowlist.json | */check-file-size.mjs)
                     printf '%s\n' 'doc-style' ;;
                 */check-styles.mjs | */styles-allowlist.json | */stylelint-rules/*)
@@ -111,13 +115,24 @@ skill_for_default() {
                 # rule at hand. The rule lives with the delivery.
                 */schema.prisma | */prisma/migrations/* | */prisma.config.ts)
                     printf '%s\n' 'git-workflow' ;;
-                # The pipeline and the image: the checks decide what runs before the merge at all,
-                # and the image decides what arrives on production. Both were edited without a
-                # single delivery rule.
+                # The pipeline carries two subjects at once: which checks run before the merge —
+                # that is the hand-over rule — and what reaches production after it, which is the
+                # rollout rule. Both names are printed, the rollout one first: the set before a push
+                # is written by the executor every day, while the rollout steps are read once and
+                # are the ones edited blindly.
                 */.github/workflows/*.yml | */.gitlab-ci.yml | */azure-pipelines*.yml)
+                    printf '%s\n' 'deploy-flow'
                     printf '%s\n' 'git-workflow' ;;
+
+                # The image, the proxy config and the sample of the production environment are the
+                # rollout's own subject, and the branch used to hand them to the rule about tasks
+                # and branches: it says nothing about the server, the ports or the variables the
+                # image is raised with. What is written into these files is seen by nobody until the
+                # rollout, and by then it is production that answers.
                 */Dockerfile | */*.Dockerfile | */docker-compose*.yml | */docker-compose*.yaml)
-                    printf '%s\n' 'git-workflow' ;;
+                    printf '%s\n' 'deploy-flow' ;;
+                */Caddyfile | */nginx.conf | */*.nginx.conf | */nginx/*.conf | */.env.*.example)
+                    printf '%s\n' 'deploy-flow' ;;
 
                 # An end-to-end spec checks a running application, not a class: by file name it is
                 # no different from an ordinary module, and without this branch it would go to the

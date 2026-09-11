@@ -13,6 +13,8 @@ whole.
 - **The role of the closed-work review writes no files.** — `projects/agent-kit/assets/commands/skill-curator.md:proposals`
 - **Only proposals addressed "package" go outward.** — `projects/agent-kit/src/lib/shipment.ts:propose`
 - **The sending refuses if a tree address is found in the text of a proposal.** — `projects/agent-kit/src/lib/proposals.ts:leaksIn`
+- **Both runs name the blocks judged already sent, and zero of them is named too.** — `projects/agent-kit/src/lib/proposals.ts:skippedAsSentLines` — the selection is split in two by `projects/agent-kit/src/lib/shipment.ts:skipped`, and the lines go into the output of both runs; scenario SC-AK-1090
+- **A mark whose value the sending never writes is named as written by hand.** — `projects/agent-kit/src/lib/proposals.ts:ownMark` — the form is written by `markProposals` and read by `OWN_MARK` in the same module; scenario SC-AK-1090
 - **A sent proposal is marked by the month that accepted it and does not go a second time.** — `projects/agent-kit/src/lib/proposals.ts:markSent`
 - **The intake address is read from a setting of the tree.** — `projects/agent-kit/src/lib/config.ts:intake`
 - **Nothing goes outward that a person did not send by a command.** — `projects/agent-kit/src/lib/shipment.ts:propose`

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/git-guard-delivery.sh · 4c0be0193ab8 · правится надстройкой, не здесь
+# rt-kit v0.27.0 · hooks/git-guard-delivery.sh · 9724e113d326 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
@@ -146,6 +146,12 @@ deny() {
     [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
     reason="$1"
     command -v rt_deny_tail >/dev/null 2>&1 && reason="$1 $(rt_deny_tail "$2")"
+    # A neighbour's conflict travels inside the refusal: the guard says one thing per call, and a
+    # second JSON document next to the first is read as plain text — that is, as no refusal at all.
+    [ -n "${rt_delivery_neighbour_note:-}" ] && reason="${reason}
+
+${rt_delivery_neighbour_note}"
+    rt_delivery_said=1
 
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The delivery guard."}}\n'
@@ -181,7 +187,15 @@ fault() {
 # take the next one: while what was handed over conflicts, it is fixed by the first action of the
 # turn. No helper — the tier is not judged, and the work goes on.
 # shellcheck disable=SC1090
+# The tree the command runs in: the form of a branch name is judged by its profile, not by the
+# profile of the tree the session was started from. No helper — the form is judged as before.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/git-guard-delivery-tree.sh" ] && . "$rt_hooks_dir/git-guard-delivery-tree.sh" 2>/dev/null
+command -v rt_delivery_branch_form_ok >/dev/null 2>&1 \
+    || rt_delivery_branch_form_ok() { rt_task_branch_ok "$1"; }
+
 [ -f "$rt_hooks_dir/git-guard-delivery-conflict.sh" ] && . "$rt_hooks_dir/git-guard-delivery-conflict.sh" 2>/dev/null
+command -v rt_delivery_note_out >/dev/null 2>&1 && trap rt_delivery_note_out EXIT
 command -v rt_delivery_conflict >/dev/null 2>&1 && rt_delivery_conflict
 
 # The refusal on what has piled up. Empty — the calling side goes on.
@@ -244,7 +258,7 @@ if [ -n "$branch_arg" ]; then
     # number at all.
     number_arg="$(rt_task_branch_number "$branch_arg")"
     if [ -n "$number_arg" ]; then
-        rt_task_branch_ok "$branch_arg" \
+        rt_delivery_branch_form_ok "$branch_arg" \
             || deny "BLOCKED: the branch name «${branch_arg}» is not of the form accepted here. The branch number is the same as the number of the task and of the title of the merge request."
         state=''
         check_task "$number_arg" "the branch «${branch_arg}»"

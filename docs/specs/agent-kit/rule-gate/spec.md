@@ -36,6 +36,15 @@ The gate has no interface: only the executor sees it — as the text of a refusa
   rules about types and about styling, and the comments retell those rules by name.
 - **The check of repeats demands the rule whose signs it carries out, and only it.** Two refusals in
   a row at an edit of two lines of a comment cost a session, and the second rule read is of no use.
+- **The image, the proxy config and the sample of the production environment demand the rule of the
+  rollout.** They speak of the server, the ports and the variables the image is raised with, and the
+  rule about tasks and branches is silent about all three: it was demanded there because both live
+  next to the merge. What is written into these files nobody sees until the rollout, and by then it
+  is production that answers.
+- **The pipeline demands two rules, and the rollout one goes first.** Its subject is double: which
+  checks run before the merge, and what reaches production after it. The set before a push is
+  written by the executor every day, while the rollout steps are read once and are the ones edited
+  blindly.
 - **Creating a working tree loads the rule of delivery.** A fresh tree looks ready and runs into the
   shortage not at once but at the first guard that needs a key.
 - **The layers on top of the domain rule are declared by a file of their own, not by lines in the

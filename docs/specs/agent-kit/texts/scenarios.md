@@ -254,6 +254,16 @@ another word stays silent
 
 Covered: `projects/agent-kit/tests/checks-glossary.test.sh`.
 
+### SC-AK-1083 — the section of forbidden words is read as a table as well as a list of pairs
+
+Given the tree set the section of forbidden words as a table of two columns, not as a list of pairs
+When the check of the glossary goes
+Then a forbidden word from the table counts as a divergence and an accepted word does not: set as a
+table, the section used to read as empty, and the check declared a skip while standing in the gate
+next to the passed ones
+
+Covered: `projects/agent-kit/tests/checks-glossary.test.sh`.
+
 ### SC-AK-691 — a word with a refinement is not judged by a search and is named aloud
 
 Given a forbidden word carries a refinement in brackets: one meaning of two is forbidden

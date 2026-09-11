@@ -1,4 +1,4 @@
-<!-- rt-kit v0.27.0 · pitfalls/git-workflow.github.md · 54932b1203c5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · pitfalls/git-workflow.github.md · bbf5c876a3f5 · правится надстройкой, не здесь -->
 # Delivery — cold part
 
 Pitfalls: traps already stepped on in a tree on GitHub. Loaded not with the rule but on demand —
@@ -131,6 +131,37 @@ The rule is `git-workflow`; the articles that hold the law stand there.
 Here moved the cases, numbers and rejected remedies that used to stand next to the rule's
 articles. No edit decision rests on them: they are for whoever investigates a miss or argues with
 a guard.
+
+- **A PR opened by another account is lawful while its reviewer is somebody else.** The clash the
+  guard judges is that of author and reviewer, not the account name: the machine account is named
+  aloud rather than demanded.
+
+- **A chain branched from the epic branch twice diverges at the first merge.** The rest of the
+  branches then stand on a base that is gone.
+
+- **While the handed-over conflicts, a person cannot merge it.** New work adds one more branch to
+  the same queue instead of fixing that.
+
+- **A flag between the verb and `-b` is the same branch creation.** The guard used to judge only the
+  form without a flag.
+
+- **A printed task number means only that the call went through.** The board is a separate service,
+  and a task lands on it only when added.
+
+- **A temporary directory will not do for a runner's paths.** The package store lives there.
+
+- **A pipeline step printed next to the push instead of refusing it is skipped.** A warning reads as
+  permission.
+
+- **A write limit is told from exhaustion by the limits answer.** There it is zero.
+
+- **At branch creation the column is not asked.** Nothing has moved it yet.
+
+- **A fresh tip is given time before the audit counts it as running no checks.**
+
+- **A machine signature sends git to the key agent.** A locked agent brings the whole suite down.
+
+- **A run pushed out of the queue has zero steps.** That is what tells it from a failed one.
 
 - **A refusal at the merge remains the second line.** A person merges as soon as they see green,
   and the second line is simply never reached.

@@ -14,6 +14,7 @@ cp "$CHECKS/rt-kit-checks.config.mjs" "$TN_TREE/tools/"
 cp "$CHECKS/board.github.mjs" "$TN_TREE/tools/board.mjs"
 cp "$CHECKS/board-gh.github.mjs" "$TN_TREE/tools/board-gh.mjs"
 cp "$CHECKS/board-epic-link.github.mjs" "$TN_TREE/tools/board-epic-link.mjs"
+cp "$CHECKS/board-epic-plan.github.mjs" "$TN_TREE/tools/board-epic-plan.mjs"
 cp "$CHECKS/board-task-dirs.github.mjs" "$TN_TREE/tools/board-task-dirs.mjs"
 cp "$CHECKS/task-new.github.mjs" "$TN_TREE/tools/task-new.mjs"
 
@@ -53,7 +54,7 @@ case "$all" in
     *"issue view 1921"*)
         printf '%s' '{"number":1921,"title":"[RT-1921] Поставка идёт эпиками","labels":['
         printf '%s' "$TN_EPIC_LABELS"
-        printf '%s\n' '],"body":"Замысел эпика — docs/plans/work-by-epics.md"}'
+        printf '%s\n' "],\"body\":\"${TN_EPIC_BODY:-План эпика — docs/plans/work-by-epics.md}\"}"
         ;;
     *"issue view"*)
         printf '%s\n' '{"number":4242,"title":"[RT-4242] Поставка идёт эпиками","state":"OPEN","assignees":[{"login":"bot"}],"labels":[{"name":"epic"}]}'
@@ -218,6 +219,35 @@ tn_config 'docs/plans' ''
 TN_OUT="$(tn_run --title 'Письма владельцу не уходят' --slug mail-silence)"
 if [ -f "$TN_CREATED" ]; then got="создана"; else got="нет"; fi
 report "SC-AK-939 — без метки эпика в дереве задача заводится как прежде" "$got" "создана"
+
+# --- SC-AK-1089 — путь плана читают одним ходом команда и аудит ------------------------------
+#
+# Тело карточки эпика называет и закон, и план, и порядок в теле не обещан ничем. Аудит эпиков
+# берёт тот из названных документов, который несёт состав эпика; команда читала то же тело первым
+# попавшимся путём. Карточка, назвавшая закон первым, давала каждой задаче эпика путь закона, а
+# ветку эпика читать становилось неоткуда: обе стороны отвечали как обычно.
+tn_config
+tn_two_paths() {
+    rm -rf "$TN_TREE/docs" "$TN_CREATED"
+    mkdir -p "$TN_TREE/docs/constitution" "$TN_TREE/docs/plans"
+    printf '# Закон о поставке\n\nСтатьи закона.\n' > "$TN_TREE/docs/constitution/delivery.md"
+    printf '# Поставка идёт эпиками\n\n**Эпик:** RT-1921 · **Ветка эпика:** `RT-1921-work-by-epics`\n\n| № | Задача | Состояние |\n| --- | --- | --- |\n| 1 | RT-1 — первая | впереди |\n' \
+        > "$TN_TREE/docs/plans/work-by-epics.md"
+    ( cd "$TN_TREE" && TN_CREATED="$TN_CREATED" TN_EPIC_LABELS='{"name":"epic"}' GH_BIN="$TN_TREE/gh" RT_GH_RETRY_MS=1 \
+        TN_EPIC_BODY='Закон — docs/constitution/delivery.md, порядок работ — docs/plans/work-by-epics.md' \
+        node tools/task-new.mjs --epic-of 1921 --title 'Команда заводит эпик' --slug command-creates-epic \
+        < /dev/null 2>&1 )
+}
+
+TN_TWO="$(tn_two_paths)"
+if grep -q 'Задача эпика #1921' "$TN_CREATED" 2>/dev/null && grep -q 'docs/plans/work-by-epics.md' "$TN_CREATED" 2>/dev/null; then
+    got="есть"
+else got="нет"; fi
+report "SC-AK-1089 — в теле задачи стоит документ с составом эпика" "$got" "есть"
+if grep -q 'docs/constitution/delivery.md' "$TN_CREATED" 2>/dev/null; then got="есть"; else got="нет"; fi
+report "SC-AK-1089 — закон в тело задачи не попал" "$got" "нет"
+if printf '%s' "$TN_TWO" | grep -q 'RT-1921-work-by-epics'; then got="есть"; else got="нет"; fi
+report "SC-AK-1089 — ветка эпика прочитана из того же документа" "$got" "есть"
 
 rm -rf "$TN_TREE"
 suite_result "заведение эпика"

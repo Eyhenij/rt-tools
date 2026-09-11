@@ -12,6 +12,7 @@ mkdir -p "$LW_TREE/tools" "$LW_TREE/.claude/rt-kit" "$LW_TREE/docs/tasks" "$LW_T
 cp "$CHECKS/rt-kit-checks.config.mjs" "$LW_TREE/tools/"
 cp "$CHECKS/board.github.mjs" "$LW_TREE/tools/board.mjs"
 cp "$CHECKS/board-epic-link.github.mjs" "$LW_TREE/tools/board-epic-link.mjs"
+cp "$CHECKS/board-epic-plan.github.mjs" "$LW_TREE/tools/board-epic-plan.mjs"
 cp "$CHECKS/board-task-dirs.github.mjs" "$LW_TREE/tools/board-task-dirs.mjs"
 cp "$CHECKS/board-gh.github.mjs" "$LW_TREE/tools/board-gh.mjs"
 cp "$CHECKS/board-runs.github.mjs" "$LW_TREE/tools/board-runs.mjs"

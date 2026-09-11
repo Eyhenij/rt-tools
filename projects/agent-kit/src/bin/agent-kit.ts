@@ -372,7 +372,7 @@ const COMMANDS: Readonly<Record<string, TCommandRun>> = {
     propose: runPropose,
     fate: runFate,
     enroll: runEnroll,
-    doctor: (env: IEnvironment): IOutcomeOfCommand => doctor(env),
+    doctor: (env: IEnvironment, argv: readonly string[]): IOutcomeOfCommand => doctor(env, optionOf(argv, '--since', '')),
     adopt: (env: IEnvironment, argv: readonly string[]): IOutcomeOfCommand =>
         adopt(
             env,
