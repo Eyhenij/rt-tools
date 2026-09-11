@@ -65,34 +65,34 @@ export const none = () => null;
 
 <Title>Spacing & Effects — Размеры, типографика и эффекты</Title>
 
-<p style={s.intro}>
+<div style={s.intro}>
     Отступы, скругления, кегль, тени и ярусы наложения заданы свойствами. Магическое число в стилях компонента (<code>padding: 13px</code>)
     — отступление от шкалы, которое дальше уже не сходится с соседним экраном.
-</p>
+</div>
 
 <h2 style={s.section}>Шкала отступов</h2>
 
-<p style={s.intro}>
+<div style={s.intro}>
     Ряд идёт шагом <strong>4px</strong> без промежуточных ступеней. Значение между двумя соседними ступень себе не заводит, а округляется к
     ближайшей — при равенстве вверх: ряд, в который дописывают по месту, выглядит шкалой, но выбрать из него нельзя.
-</p>
+</div>
 
 <Rows prefix="--rt-space-" measure={bar} />
 
 <h2 style={s.section}>Габариты</h2>
 
-<p style={s.intro}>
+<div style={s.intro}>
     Ширина, высота и сторона квадратного узла там, где их задаёт не содержимое. Множитель тот же, что у отступов: ступень N равна N × 4px.
-</p>
+</div>
 
 <Rows prefix="--rt-size-" measure={bar} />
 
 <h2 style={s.section}>Высоты контролов</h2>
 
-<p style={s.intro}>
+<div style={s.intro}>
     Одна шкала на кнопку, иконочную кнопку и семейство полей: контролы одного размера стоят в строке рядом и обязаны совпадать по высоте.
     Ряд идёт шагом 8px и ложится на сетку отступов.
-</p>
+</div>
 
 <Rows prefix="--rt-control-height-" measure={bar} />
 
@@ -118,9 +118,9 @@ export const none = () => null;
 
 <h2 style={s.section}>Ярусы наложения</h2>
 
-<p style={s.intro}>
+<div style={s.intro}>
     Числа заданы шкалой, а не подобраны на месте: слой, назначенный на глаз, всплывает над диалогом ровно там, где этого никто не проверял.
-</p>
+</div>
 
 <Rows prefix="--rt-z-" measure={none} />
 
@@ -130,10 +130,10 @@ export const none = () => null;
 
 <h2 style={s.section}>Пороги ширины</h2>
 
-<p style={s.intro}>
+<div style={s.intro}>
     Свойства CSS в <code>@media</code> не работают, поэтому пороги остаются переменными препроцессора и в <code>tokens.css</code> не
     попадают.
-</p>
+</div>
 
 export const mediaSample = [
     "@use 'pkg:@rt-tools/ui-kit-v2/styles/breakpoints' as bp;",

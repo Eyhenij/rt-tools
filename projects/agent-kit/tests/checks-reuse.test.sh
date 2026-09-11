@@ -90,6 +90,37 @@ rm -f "$REUSE_TREE/libs/alpha/src/"*.html
 html_in kit '<button rtButton>ок</button>'
 report "SC-AK-817 — своё вырезание набора остаётся в силе" "$(says 'button')" 0
 
+# --- SC-AK-1085 — набор объявлен вместе с областью дерева -------------------------------------
+# Источников вида в дереве бывает два: панель владельца собрана одним набором готового, публичная
+# часть — другим, и признак первого над вторым отвечает ложно. Без области у дерева один ход — не
+# объявлять набор вовсе, и тогда обход готового не ловит ничто и в той области, где набор верен.
+mkdir -p "$REUSE_TREE/libs/beta/src" "$REUSE_TREE/libs/alphabet/src"
+at_in() { printf '%s\n' "$2" > "$REUSE_TREE/$1"; }
+
+config_with '[{"name":"ui-kit-v2","roots":["libs/alpha"]}]'
+at_in 'libs/alpha/src/form.html' '<input type="text">'
+at_in 'libs/beta/src/form.html' '<input type="text">'
+report "SC-AK-1085 — внутри области признак судит" "$(says 'input ×1 @ libs/alpha/src/form.html')" 1
+report "SC-AK-1085 — вне области то же приложение не судится" "$(says '@ libs/beta/')" 0
+
+config_with '[{"name":"ui-kit-v2","roots":["libs/alpha","libs/beta"]}]'
+report "SC-AK-1085 — вторая область объявлена и судится" "$(says '@ libs/beta/')" 1
+
+# Граница области — каталог, а не начало строки: иначе соседнее приложение судится набором, из
+# которого оно не собрано.
+config_with '[{"name":"ui-kit-v2","roots":["libs/alpha"]}]'
+at_in 'libs/alphabet/src/form.html' '<input type="text">'
+report "SC-AK-1085 — соседний каталог с тем же началом имени не захвачен" "$(says '@ libs/alphabet/')" 0
+
+# Объявление тем же именем во второй раз молча уносит первое: область, названная там, остаётся
+# несудимой ничем.
+config_with '[{"name":"ui-kit-v2","roots":["libs/alpha"]},{"name":"ui-kit-v2","roots":["libs/beta"]}]'
+report "SC-AK-1086 — дважды объявленный набор отбивает прогон" "$(code_of)" 1
+report "SC-AK-1086 — отказ называет набор" "$(says 'ui-kit-v2.*declared twice')" 1
+
+rm -f "$REUSE_TREE/libs/alpha/src/form.html" "$REUSE_TREE/libs/beta/src/form.html" \
+    "$REUSE_TREE/libs/alphabet/src/form.html"
+
 # --- SC-AK-874 — папка источника готового выведена из-под признака ---------------------------
 #
 # Дерево, которое готовое само и пишет, до этого выбирало между «шумит на каждом своём файле» и

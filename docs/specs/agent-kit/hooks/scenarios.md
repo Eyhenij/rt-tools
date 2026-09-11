@@ -90,3 +90,14 @@ When the entry into the specs is asked by its name
 Then the exit code is zero and this spec is named
 
 Covered: `projects/agent-kit/tests/hooks-kind.test.sh`.
+
+### SC-AK-1087 — a walk that met nothing refuses instead of answering zero
+
+Given the settings name a family of libs the tree holds no directory for, and a root that holds not
+a single lib
+When the check of the lib layout runs
+Then it refuses and names the family and the roots walked; a tree with libs gets neither refusal —
+a green answer without a lib read is indistinguishable from an honest zero, and the check stands in
+the push gate
+
+Covered: `projects/agent-kit/tests/checks-lib-layers.test.sh`.

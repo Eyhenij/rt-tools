@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for opening a PR and everything around it — title format, draft and leaving it, the link to the task, reviewer and labels, a body sample, reading the PR state, the checklist. Creating the task and committing — pattern git-workflow-commit.
 ---
-<!-- rt-kit v0.27.0 · patterns/git-workflow-pr.github.md · 57c63e2e4876 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · patterns/git-workflow-pr.github.md · ff023642c7b5 · правится надстройкой, не здесь -->
 
 # The PR
 
@@ -49,24 +49,41 @@ Type and scope — `fix(site):`, `docs(common):` — do not go into the PR title
 subject format, and `commitlint` checks it there. In the PR list it takes room and adds nothing:
 the kind of edit and the area are already visible by the labels.
 
-## What is not ready to merge opens as a draft
+## A draft where a run is waited for, ready where it is not
 
 A code edit is handed to a person by an open PR: a pushed branch is shown to them nowhere. An
 open PR reads as an invitation to merge, so unfinished work opens it as a draft — the host locks
-a draft's merge button itself:
+a draft's merge button itself.
+
+**Which bases the pipeline wakes for is read from its file, not from memory.** That one line decides
+which of the two orders applies, and taking the wrong one means either waiting for a run that never
+comes or handing over unchecked work as finished:
+
+```bash
+# the bases the checks wake for; nothing printed means every base
+sed -n '/^on:/,/^[a-z]/p' .github/workflows/<файл конвейера>
+```
+
+A base the pipeline wakes for — the PR opens as a draft, and the draft is lifted on the green run:
 
 ```bash
 GH_TOKEN="$TOKEN" gh pr create --draft --base <ветка эпика> --title '[<КЛЮЧ>-86] …' --body-file тело.md
 ```
 
-**The base is the epic branch, and it is named by the command.** Without `--base` the host takes
-the default branch of the repository, that is the main branch: the request then carries the task
-past the epic, and the epic branch stays a copy nobody merges. The epic's own request is the only
-one whose base is the main branch, and it opens when the last folder of its tasks is taken apart.
+A base it does not wake for — nothing to wait for, and the PR opens without the draft key. The push
+gate is then the only blocking check behind the work, green before the branch is sent:
 
-Everything waiting for a pipeline run, a rework or an answer to a question goes as a draft. The
-question is asked in the PR itself, not kept in the executor's head: a person reads the PR, not
-the session's conversation.
+```bash
+GH_TOKEN="$TOKEN" gh pr create --base <ветка эпика> --title '[<КЛЮЧ>-86] …' --body-file тело.md
+```
+
+**The base is the epic branch, and it is named by the command.** Without `--base` the host takes
+the repository's default branch: the request then carries the task past the epic, and the epic
+branch stays a copy nobody merges. The epic's own request is the only one based on the main branch,
+and it opens when the last folder of its tasks is taken apart.
+
+Everything waiting for a pipeline run, a rework or an answer goes as a draft, and the question is
+asked in the PR itself: a person reads the PR, not the session's conversation.
 
 The draft is lifted by a separate call, and that is the very turn in which the executor says the
 solution is ready:
@@ -76,8 +93,9 @@ GH_TOKEN="$TOKEN" gh pr ready 86
 ```
 
 Before the lifting the executor's silence means "not ready yet", after — "may be merged".
-Lifting the draft and asking to merge go in one turn: a lifted draft nobody told the person
-about waits for review just like one not lifted.
+Lifting the draft and asking to merge go in one turn: a lifted draft nobody told the person about
+waits for review just like one not lifted. A PR opened without the draft key needs no such call,
+and the request to merge goes in the turn that opened it.
 
 ## The PR is attached to the task
 
@@ -273,10 +291,14 @@ push gate — below is what it does not know.
     the showcase snapshots: since the merge the pipeline runs them on its code, and the red
     comes to its PR.
 
-This list is about lifting the draft, not about opening it. The PR opens as a draft earlier:
-while work goes on, the person is shown what already exists together with what is still missing.
-Items 1–15 are passed before `gh pr ready`, and an unmet item means the draft is not lifted — not
-that the PR does not open.
+Where the pipeline wakes for this base, the list is about lifting the draft: the PR opens as a
+draft earlier, while work goes on, and the person is shown what exists together with what is
+still missing. Items 1–15 are then passed before `gh pr ready`, and an unmet item means the draft
+is not lifted — not that the PR does not open.
+
+Where it does not wake, the same list is about opening: there is no second state to hold the work
+in, so an unmet item means the PR does not open yet. Item 1 changes with it — no run is asked for,
+and its place is taken by the push gate, green before the sending.
 
 Right after publishing the task is moved to review — `npm run task:move -- <номер>
 in-review` — and `npm run check:board` is run once more: before the PR opens it does not judge
@@ -285,10 +307,9 @@ the column, after the opening it sees the discrepancy.
 What was done by reasoning and what was done by measurement are told apart plainly in the PR
 body: the unchecked named as checked, the reviewer takes as checked.
 
-**The "What confirms it" section names what was not run too.** A list of one run cannot be told
-from the full set, and by it the reviewer decides what need not be rechecked. The price of a
-mistake here is not a red pipeline but trust in the section: once read as complete, from then on
-it is rechecked whole.
+**The "What confirms it" section names what was not run too.** A list of one run cannot be told from
+the full set, and by it the reviewer decides what need not be rechecked. The price of a mistake here
+is trust in the section: once read as complete, from then on it is rechecked whole.
 
 ## Common misses
 

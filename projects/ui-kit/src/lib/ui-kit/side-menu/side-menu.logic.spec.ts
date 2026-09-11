@@ -77,6 +77,22 @@ const NESTED: ReadonlyArray<ISideMenu.Item> = [
     },
 ];
 
+/**
+ * Набор, в котором подпись папки совпадает с запросом вместе с частью её детей: на нём видно, что
+ * состав папки отбирается тем же правилом, что и всё остальное.
+ */
+const MATCHING_FOLDER: ReadonlyArray<ISideMenu.Item> = [
+    {
+        id: 'reports',
+        name: 'Отчёты',
+        submenu: [
+            { id: 'weekly', name: 'Отчёт за неделю', link: '/reports/weekly' },
+            { id: 'monthly', name: 'Отчёт за месяц', link: '/reports/monthly' },
+            { id: 'guests', name: 'Гости и заезды', link: '/reports/guests' },
+        ],
+    },
+];
+
 describe('filterSubMenuItems — спуск внутрь папок', (): void => {
     it('SC-UK-61 — совпал пункт внутри папки: папка остаётся, и в ней только совпавшее', (): void => {
         const found: ISideMenu.Item[] = filterSubMenuItems(NESTED, 'круговая');
@@ -102,13 +118,31 @@ describe('filterSubMenuItems — спуск внутрь папок', (): void =
         expect(filterSubMenuItems(NESTED, 'такого пункта нет').length).toBe(0);
     });
 
-    it('SC-UK-62 — совпала подпись самой папки: папка отдаётся целиком', (): void => {
-        // Человек искал папку и ждёт увидеть то, что в ней лежит, а не её же имя над пустотой.
+    it('SC-UK-62 — совпала подпись самой папки: в ней остаются только совпавшие дети', (): void => {
+        // Иначе одно совпадение по имени папки вытаскивает на экран весь её состав, и человек
+        // читает как найденное то, в чём запроса нет.
+        const found: ISideMenu.Item[] = filterSubMenuItems(MATCHING_FOLDER, 'отчёт');
+
+        expect(found.length).toBe(1);
+        expect(found[0].id).toBe('reports');
+        expect(found[0].submenu?.map((item: ISideMenu.Item): string => String(item.id))).toEqual(['weekly', 'monthly']);
+    });
+
+    it('SC-UK-62 — совпала подпись папки, а внутри никто: папка стоит одной строкой', (): void => {
+        // Её искали по имени, и она должна найтись; детей, в которых запроса нет, при ней не будет.
         const found: ISideMenu.Item[] = filterSubMenuItems(NESTED, 'сохранён');
 
         expect(found.length).toBe(1);
         expect(found[0].id).toBe('saved');
-        expect(found[0].submenu?.length).toBe(3);
+        expect(found[0].submenu).toEqual([]);
+    });
+
+    it('SC-UK-62 — совпавший пункт без детей остаётся пунктом, а не пустой папкой', (): void => {
+        const found: ISideMenu.Item[] = filterSubMenuItems(NESTED, 'создание');
+
+        expect(found.length).toBe(1);
+        expect(found[0].id).toBe('create');
+        expect(found[0].submenu).toBeUndefined();
     });
 
     it('SC-UK-61 — верхний уровень отбирается по-прежнему', (): void => {

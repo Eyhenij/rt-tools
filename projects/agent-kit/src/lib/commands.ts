@@ -27,6 +27,7 @@ import {
     TWeights,
 } from './observations.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
+import { ISection, parseDocument } from './sections.js';
 import { IOverrideMark, staleOverrides } from './override-marks.js';
 import { pushGateLines } from './push-gate.js';
 import { laidOutSkills, treeSnapshot } from './snapshot.js';
@@ -65,6 +66,7 @@ const DONE_WORD: Readonly<Record<TOutcome, string>> = {
     create: 'положен',
     update: 'переложен',
     drift: 'правлен руками',
+    stamp: 'шапка переписана',
     foreign: 'положен не пакетом',
     permission: 'право на запуск возвращено',
     ok: 'без изменений',
@@ -79,6 +81,7 @@ const STATE_WORD: Readonly<Record<TOutcome, string>> = {
     create: 'нет в дереве',
     update: 'отстал от пакета',
     drift: 'правлен руками',
+    stamp: 'шапка разошлась с телом',
     foreign: 'положен не пакетом',
     permission: 'лежит без права на запуск',
     ok: 'на месте',
@@ -353,8 +356,15 @@ function strangeTraits(config: IConfig, assetsDir: string): readonly string[] {
  * выводом, каким видит положенные файлы, — а не следующим просмотром истории.
  */
 const boundLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => {
-    if (result.bound === null || (!result.bound.added.length && !result.bound.unreadable)) {
+    if (result.bound === null || (!result.bound.added.length && !result.bound.unreadable && !result.bound.missing)) {
         return [];
+    }
+
+    if (result.bound.missing) {
+        return [
+            `диспетчера событий нет на диске — записи в \`${SETTINGS_PATH}\` не делалось`,
+            '  дерево его не брало: настройка, зовущая отсутствующий файл, выглядит работающей',
+        ];
     }
 
     return result.bound.unreadable
@@ -1191,7 +1201,67 @@ function replacedLines(config: IConfig, assetsDir: string, root: string): readon
     ];
 }
 
-export function doctor(env: IEnvironment): IOutcomeOfCommand {
+/** Зачин статьи: жирное утверждение в начале пункта — по нему статью и узнают в двух редакциях. */
+const ARTICLE: RegExp = /^\s*[-*]\s+\*\*(.+?)\*\*/;
+
+/** Заголовки статей одного раздела ресурса. Нет такого ресурса или раздела — пусто. */
+function articlesOfSection(file: string, heading: string): readonly string[] {
+    if (!existsSync(file)) {
+        return [];
+    }
+
+    const found: ISection | undefined = parseDocument(readFileSync(file, 'utf8')).sections.find(
+        (one: ISection): boolean => one.heading === heading
+    );
+    if (!found) {
+        return [];
+    }
+
+    return found.body
+        .split('\n')
+        .map((line: string): RegExpMatchArray | null => ARTICLE.exec(line))
+        .filter((match: RegExpMatchArray | null): match is RegExpMatchArray => match !== null)
+        .map((match: RegExpMatchArray): string => match[1].trim());
+}
+
+/**
+ * Статьи, дописанные новой редакцией внутрь замещённого раздела.
+ *
+ * Совпавший заголовок замещает раздел целиком, и дописанное пакетом пропадает молча: раскладка
+ * сходится, заголовки совпадают, а утверждений нет. Прежней редакции у машины нет — но снимок
+ * снимается первым же шагом подъёма версии и лежит на диске: он и подаётся доводом. Без довода
+ * поведение прежнее.
+ */
+function addedInReplacedLines(config: IConfig, assetsDir: string, root: string, since: string): readonly string[] {
+    const replaced: readonly ICargoOverride[] = treeSnapshot(config, assetsDir, root).filter(
+        (one: ICargoOverride): boolean => one.kind === 'replace'
+    );
+
+    const found: string[] = [];
+    for (const one of replaced) {
+        // Замещение всегда несёт заголовок; проверка стоит потому, что род правки надстройки
+        // объявлен одним типом на все три — у дописывания и снятия заголовка может не быть.
+        const heading: string | null = one.section;
+        if (heading === null) {
+            continue;
+        }
+
+        const before: ReadonlySet<string> = new Set(articlesOfSection(join(since, one.resource), heading));
+        for (const article of articlesOfSection(join(assetsDir, one.resource), heading)) {
+            if (!before.has(article)) {
+                found.push(`  ${one.resource} · ${one.section} · ${article}`);
+            }
+        }
+    }
+
+    if (!found.length) {
+        return [`снимок прежней редакции прочитан: новая редакция в замещённые разделы ничего не дописала`];
+    }
+
+    return [`новая редакция дописала в замещённые разделы статей: ${found.length} — надстройка замещает их молча`, ...found];
+}
+
+export function doctor(env: IEnvironment, since: string = ''): IOutcomeOfCommand {
     const { root, version, assetsDir } = env;
     const config: IConfig | null = readConfig(root);
     if (!config) {
@@ -1261,6 +1331,7 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
         ...pushGateLines(root, config.layout.defaults ?? DEFAULT_LAYOUT.defaults),
         ...localValueLines(root, assetsDir, config),
         ...replacedLines(config, assetsDir, root),
+        ...(since ? addedInReplacedLines(config, assetsDir, root, since) : []),
         ...thresholdLines(root),
         `значений в конфиге: ${Object.keys(config.vars).length}`,
         ...chosen,

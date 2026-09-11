@@ -295,6 +295,11 @@ export interface IBindResult {
      * своим разбором она их теряет молча.
      */
     readonly unreadable: boolean;
+    /**
+     * Диспетчера нет на диске: записывать вызов некуда. Настройка, зовущая отсутствующий файл,
+     * хуже отсутствующей записи — снаружи она выглядит работающей.
+     */
+    readonly missing: boolean;
 }
 
 /**
@@ -312,12 +317,19 @@ export interface IBindResult {
  * снятом говорит, а не возвращает его.
  */
 export function bindDispatch(bindings: readonly IHookBinding[], root: string): IBindResult {
+    // Запись дописывается только тому диспетчеру, который лежит на диске. Дерево, не взявшее его
+    // в перечень, получало настройку с вызовом отсутствующего файла: снятые рукой записи
+    // возвращались следующей же раскладкой.
+    if (!existsSync(join(root, DISPATCH_PATH))) {
+        return { added: [], unreadable: false, missing: true };
+    }
+
     const path: string = join(root, SETTINGS_PATH);
     const text: string = existsSync(path) ? readFileSync(path, 'utf8') : '{}\n';
     const settings: Record<string, unknown> | null = readSettings(text);
 
     if (settings === null) {
-        return { added: [], unreadable: true };
+        return { added: [], unreadable: true, missing: false };
     }
 
     const events: readonly string[] = [...new Set(bindings.map((binding: IHookBinding): string => binding.event))]
@@ -325,7 +337,7 @@ export function bindDispatch(bindings: readonly IHookBinding[], root: string): I
         .sort((left: string, right: string): number => left.localeCompare(right));
 
     if (!events.length) {
-        return { added: [], unreadable: false };
+        return { added: [], unreadable: false, missing: false };
     }
 
     const hooks: Record<string, unknown> = { ...((settings['hooks'] ?? {}) as Record<string, unknown>) };
@@ -342,5 +354,5 @@ export function bindDispatch(bindings: readonly IHookBinding[], root: string): I
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(path, JSON.stringify({ ...settings, hooks }, null, indentOf(text)) + '\n', 'utf8');
 
-    return { added: events, unreadable: false };
+    return { added: events, unreadable: false, missing: false };
 }

@@ -232,6 +232,26 @@ export const SubMenuSearchMatches: TStory = {
 };
 
 /**
+ * Папка совпала подписью, а внутри не совпал никто: на экране одна её строка, без состава и без
+ * шеврона. Заведена ради кадра: ни одна другая история этого состояния не показывает, и отбор,
+ * снова отдающий папку целиком, не был бы виден ничем.
+ */
+export const SubMenuFolderMatchedAlone: TStory = {
+    args: {
+        activeMenuIds: [24],
+        subMenuMode: 'pinned',
+        isSubMenuXScrollEnabled: true,
+        isMainMenuIconsOutlined: false,
+        isSubMenuIconsOutlined: false,
+        isSubMenuButtonIconsOutlined: false,
+        isSubMenuTooltipsShown: true,
+    },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await typeInSubMenuSearch(canvasElement, 'level 1');
+    },
+};
+
+/**
  * Подсветка клавиатуры. Заведена ради кадра: подсвеченный пункт живёт только между нажатиями
  * клавиш, и ни одна другая история его не показывает — значит, отметка не проверялась бы ничем.
  */

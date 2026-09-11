@@ -56,6 +56,7 @@ report "вложенное: сам объект не пропал" "$(value_of b
 printf '{"board":{"taskKey":"RT"},"tasksDir":"docs/tasks"}\n' > "$TREE/.claude/rt-kit/checks.json"
 cp "$CHECKS/board.github.mjs" "$TREE/tools/board.mjs"
 cp "$CHECKS/board-epic-link.github.mjs" "$TREE/tools/board-epic-link.mjs"
+cp "$CHECKS/board-epic-plan.github.mjs" "$TREE/tools/board-epic-plan.mjs"
 cp "$CHECKS/board-task-dirs.github.mjs" "$TREE/tools/board-task-dirs.mjs"
 cp "$CHECKS/board-gh.github.mjs" "$TREE/tools/board-gh.mjs"
 mkdir -p "$TREE/docs/tasks/RT-40-plain" "$TREE/docs/tasks/chore/41-nested" \
@@ -99,6 +100,7 @@ rm -rf "$TREE/docs" "$TREE/tools/board.mjs"
 printf '{"board":{"taskKey":"RT"}}\n' > "$TREE/.claude/rt-kit/checks.json"
 cp "$CHECKS/board.github.mjs" "$TREE/tools/board.mjs"
 cp "$CHECKS/board-epic-link.github.mjs" "$TREE/tools/board-epic-link.mjs"
+cp "$CHECKS/board-epic-plan.github.mjs" "$TREE/tools/board-epic-plan.mjs"
 cp "$CHECKS/board-task-dirs.github.mjs" "$TREE/tools/board-task-dirs.mjs"
 cp "$CHECKS/board-gh.github.mjs" "$TREE/tools/board-gh.mjs"
 

@@ -106,12 +106,16 @@ Then the folder stays, and inside it only that item is left
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`,
 `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-62 — a folder whose own label coincided is given back whole
+### SC-UK-62 — a folder whose own label coincided keeps only the items that coincided
 
-Given a submenu with the folder "Сохранённое" of three items and the query "сохранён"
+Given a submenu with the folder "Отчёты" of three items, two of which carry the query "отчёт"
 When the filter goes
-Then the folder stays with all three items: the person looked for the folder and waits to see what lies in
-it, not its own name over emptiness
+Then the folder stays with those two items alone: only rows carrying the query are shown, and a folder is
+the path to them rather than an exception from that rule
+
+And given the folder "Сохранённое" whose own label coincided while nothing inside it did
+Then the folder stays as a single row without items: it was looked for by name and must be found. An item
+that has no submenu at all stays an item — an empty submenu is not ascribed to it
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`,
 `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
@@ -162,13 +166,15 @@ Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-keyboard.spec.t
 
 Given an open submenu and a typed query, so that the cross of the emptying is on the screen
 When the insets are measured from the edges of the field
-Then the magnifier at the left edge and the cross at the right edge stand at the same distance from them
+Then the magnifier at the left edge and the cross at the right edge stand at the same distance from them, and
+the inset of the magnifier is its own rather than what is left after the wrapper of the ready-made field
 
 Not covered: an inset is a computed value of the layout, and the styles of a component are not applied in a
 spec — there is nothing to measure there. Closed by a measurement on the showcase, the story
-`SubMenuSearchMatches`: the cross stands at 9.59 px from the right edge of the field — that is the geometry
-of the ready-made button rather than a step of the scale — and the magnifier is brought to the nearest step,
-ten; the divergence of 0.41 px is not visible to the eye. The former inset of the magnifier was twelve.
+`SubMenuSearchMatches`: the cross stands at 9.59 px from the right edge of the field — the geometry of the
+ready-made button rather than a step of the scale — and the magnifier at ten, the nearest step. The inset of
+the wrapper of the ready-made field is zeroed, so the inset of the icon is the whole inset: returned by the
+measurement, it puts the magnifier at twenty-two — the number the consumer saw.
 
 ### SC-UK-68 — the item under the highlight of the keyboard is marked on the screen
 
