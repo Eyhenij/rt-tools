@@ -31,10 +31,12 @@ through the executor.
 
 ## Rules
 
-- **A request opened not into the main branch is named by a line of its own.** It will have no run:
-  the pipeline listens to requests into main and does not see events with another base. A line about a
-  lost event would be wrong twice over: the event was not lost, and reopening will not bring it back.
-  This is fixed by moving the base after the lower request is merged.
+- **A request whose base is not the main branch is not counted as lacking a run.** The pipeline
+  listens to requests into the main branch and sees no event with another base, so a request into
+  an epic branch lawfully has no run at all — that is the order of handing in, and the audit is
+  silent about it. A line here would stand on every task of every epic and teach to skip the
+  audit; and the advice to move the base is wrong outright: the base of a task request stays the
+  epic branch to the merge.
 - **The answer of the work queue helper says whose eyes the state was taken by.** The helper reads a
   task by the token of the machine record, and a request without a token, as whoever the client is
   signed in under: the parse fields need rights over the accounts of the organisation, which the

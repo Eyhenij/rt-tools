@@ -3,7 +3,7 @@
 A statement of the spec and the place where it is carried out. The link goes by the text of the
 statement: a removed statement is removed together with its line.
 
-- **A request opened not into the main branch is named by a line of its own.** — `projects/agent-kit/assets/checks/board-pull-state.github.mjs:baseRefName` — the base arrives by the same request as the other fields of the request; scenario SC-AK-845
+- **A request whose base is not the main branch is not counted as lacking a run.** — `projects/agent-kit/assets/checks/board-pull-state.github.mjs:baseRefName` — the base arrives by the same request as the other fields of the request; scenario SC-AK-845
 - **The answer of the work queue helper says whose eyes the state was taken by.** — `projects/agent-kit/assets/checks/board.github.mjs:viewerOf` — the field is set by `taskState` and `pullState`; scenario SC-AK-873
 - **The creating command and the audit read the path to the plan by one and the same move.** — `projects/agent-kit/assets/checks/board-epic-plan.github.mjs:planPathOf` — one module, called by the audit `board-epics.github.mjs` and by the creating command `task-new.github.mjs`; the makeup is demanded by the argument `makeupRequired`; scenario SC-AK-1089
 - **The plan of an epic is the document that carries the makeup, not the first path in the card.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkEpicLinks` — the table is read by `planRows`; scenario SC-AK-919

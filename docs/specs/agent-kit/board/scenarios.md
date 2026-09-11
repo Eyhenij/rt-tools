@@ -64,13 +64,13 @@ after three
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-845 — a request on top of a neighbouring one gets no run, and the audit names the reason
+### SC-AK-845 — a request whose base is not the main branch is not counted as lacking a run
 
-Given a request is opened into the branch of a neighbouring request, not into main
+Given a request is opened into a branch other than the main one
 When the work queue audit checks its tip
-Then it names the base, reports that there will be no run and that this is fixed by moving the base
-after the lower request is merged; there is no advice to reopen the request. A request into the main
-branch is checked by the former line about a lost event
+Then it says nothing about that request: the pipeline sees no event with such a base, and having
+no run there is the order of handing in. A request into the main branch is still judged by the
+line about a lost event
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 

@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for creating a task and a branch, commit, push, opening a PR and merging. Names the one-to-one pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — rule deploy-flow.
 ---
-<!-- rt-kit v0.27.0 · rules/git-workflow.github.md · bbfef3d52108 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · rules/git-workflow.github.md · b05cb6091072 · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -151,47 +151,48 @@ flowchart TD
 - **Work that one session cannot close is marked in two places, and they are audited.** The board
   label and the sessions line in the epic plan say the same to two readers; only what legitimately
   does not split is marked.
-- **The tip of an open PR without a run is seen by the work queue audit.** A page without a run
-  looks the same as with a green one. The audit counts the fact of a run, not the colour.
-- **A PR whose base is not the main branch is checked by the same set as a PR into main.** The
-  pipeline trigger reads the base, and an empty checks field reads as waiting in the queue. Asked
-  before the first PR of an epic opens — pattern `git-workflow-stack`.
+- **The tip of an open PR without a run is seen by the work queue audit, unless the pipeline does
+  not wake for its base.** A page without a run looks the same as with a green one; where no run
+  comes at all, its absence tells nothing and the audit is silent about that PR.
+- **What checks a PR whose base is not the main branch is asked before the first PR of an epic
+  opens.** The trigger reads the base: it either wakes for such a PR as for one into main, or does
+  not wake at all, and then the push gate is the only check behind the work — pattern
+  `git-workflow-stack`.
 - **A run pushed out of the pipeline queue gets a separate audit line.** It looks failed though it
-  never checked the branch: the step count tells them apart.
+  never checked the branch, and the step count tells them apart.
 - **A draft with a green run on its tip is an audit discrepancy.** A green page permits nothing: the
   host locks the button.
 - **One's own drafts are judged all at once, not only the checked-out branch's.** Two signs — a
-  green run on the tip and a task folder taken apart; a folder still there means ongoing work.
+  green run on the tip and a folder taken apart; a folder still there means ongoing work.
 - **Opening a PR is refused while the branch carries its task folder.** Opening is the last point
   where the executor still sees the refusal.
 - **One's own open PRs are reread in three places: before a push, on taking a task and after every
-  known merge.** A PR goes stale with no action by its author: a neighbouring work merged — the rest
-  lagged that second. Technique — `git-workflow-freshness`.
+  known merge.** A PR goes stale with no action by its author: a neighbouring work merged, and the
+  rest lagged that second. Technique — `git-workflow-freshness`.
 - **One's own conflicting PR is fixed by the turn's first action, and no new work is taken before
-  that.** Work here means creating a task or a branch, moving the column to in progress and opening a
-  PR; what fixes the conflict goes as before.
+  that.** Work here means creating a task or a branch, moving the column and opening a PR.
 - **A conflicting PR of a neighbouring session is not one's own.** One's own branch is the one this
-  working copy led; the machine account is shared and tells nothing apart. A neighbour's PR is named
-  to the owner, and work is taken as usual.
+  working copy led — the machine account is shared and tells nothing apart. A neighbour's PR is
+  named to the owner, and work is taken as usual.
 - **A conflicting open PR is a work queue audit discrepancy.** The conflict arrives with someone
-  else's merge and is invisible in the list: the host shows the mark only inside the PR.
+  else's merge, and the host shows the mark only inside the PR.
 - **A document goes in the same commit as the edit.** The bypass is the line `Docs-skip: <reason>`
   in the commit body; an empty reason is not accepted.
 - **The commit subject is checked against the format on the spot.** A subject parsed by type and
   scope is read as a list, free text — only whole.
 - **Before a push all linters are run, not one.** The code linter usually does not read style files
   at all; without a second run nothing checks the styling rules.
-- **The build is in the set on a par with lint and unit tests.** The linter does not read types, and
-  unit tests read only what a test imports: a type error in uncovered code lives until the merge.
+- **The build is in the set on a par with lint and unit tests.** The linter does not read types,
+  and a type error in uncovered code lives until the merge.
 - **On a machine with several runners, any path from the home directory is shared.** Install
-  directory, container name and builder name are per project and fixed.
-- **The push gate set is never narrower than the pipeline set.** A pipeline step with neither a line
-  in the set nor a declared exclusion with a reason refuses the push: a warning reads as permission.
-- **The gate set calls the package default instead of listing it line by line.** Rewritten as lines,
-  it leaves tomorrow's hole: a check the package adds never reaches the tree. Sifting out of the
-  default is legitimate, by name and with a reason.
+  directory, container name and builder name are per project.
+- **The push gate set is never narrower than the pipeline set.** A pipeline step with neither a
+  line in the set nor a declared exclusion refuses the push: a warning reads as permission.
+- **The gate set calls the package default instead of listing it line by line.** Rewritten as
+  lines, it leaves tomorrow's hole: a check the package adds never reaches the tree. Sifting out is
+  legitimate, by name and with a reason.
 - **The final set before a push is read from the state review, not assembled in the head.** The "set
-  before push" section prints it whole and names what the default printed and the set did not take.
+  before push" section prints it whole, naming what the default gave and the set did not take.
 - **An exclusion reason naming a task is judged on whether that task is alive.** A dead number
   silently makes the exclusion perpetual.
 - **The layout audit stands in the push gate set on a par with lint and the build.** An edit past the
