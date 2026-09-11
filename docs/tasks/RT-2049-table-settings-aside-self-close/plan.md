@@ -1,47 +1,49 @@
 # Plan
 
 **Task:** RT-2049 · **Branch:** RT-2049-table-settings-aside-self-close
-**Draft:** `<path to the product agreement>`
-**Behaviour:** changes
-
-A tree that writes the agreement straight into the domain spec names it instead of the draft:
-`**Spec:** `<path to the spec>``.
-
-Work that does not touch application code needs no agreement — then instead of the draft line
-stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is not accepted.
-
-After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
-along the way.
+**Behaviour:** unchanged — панель настройки колонок работает у потребителя как прежде; работа
+нужна, чтобы её вид попал в кадр. Правка кита допускается только там, где замер покажет, что
+закрывает себя сам кит, и тогда она пойдёт со своим спеком.
 
 ## Task footprint
 
-<What the work touches. Filled in by exploration before the grill and confirmed by the owner. By
-this same table, at closing, one sees what of the specs, rules and patterns has gone stale: what
-is named here is read twice — before the work and after it.>
-
-| What  | Where                         |
-| ----- | ----------------------------- |
-| Specs | `docs/specs/<domain>/`        |
-| Laws  | `docs/constitution/<name>.md` |
-| Rules | `.claude/skills/<name>/`      |
-| Code  | `projects/<package>/`         |
+| What  | Where                                                                      |
+| ----- | -------------------------------------------------------------------------- |
+| Specs | `docs/specs/ui-kit-v2/`                                                    |
+| Rules | `.claude/skills/rt-tools-storybook/`, `.claude/skills/ui-component-tests/` |
+| Code  | `projects/ui-kit-v2/src/lib/components/table/settings-aside/`              |
+| Code  | `projects/ui-kit-v2/src/showcase/templates/bookings/`                      |
 
 ## What counts as done
 
-- <a statement that can be checked>
+- Замер называет, кто гасит панель: реестр, маршрут или пересоздание таблицы.
+- У панели есть история, и её кадр показывает список колонок.
+- Панель снята из списка непоказанных компонентов, и проверка покрытия зелёная.
 
 ## Stages
 
-### 1. <name>
+### 1. Замер: кто гасит панель
 
-- **What is done:** <in one phrase>
-- **Readiness sign:** <what must become true>
-- **Verified by:** `<command>` — <what in its output means "it matched">
+- **What is done:** на поднятой витрине панель открывается, и записывается, в каком порядке
+  меняются `active` реестра, регистрация таблицы и узел панели.
+- **Readiness sign:** названа одна причина из трёх, и она подтверждена числом, а не рассуждением.
+- **Verified by:** `node tools/story-sweep-v2.mjs` — обход витрины проходит, панель в замере
+  прожила до конца или названа минута её гашения.
 
-The command is written in backticks: the turn exit guard reads it and does not let out a turn in
-which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything.
+### 2. Починка по найденной причине
+
+- **What is done:** устранена названная причина — в ките либо в показе.
+- **Readiness sign:** панель доживает до кадра; если правка в ките, у неё есть спека и тест.
+- **Verified by:** `pnpm exec nx run @rt-tools/ui-kit-v2:test` — спеки зелёные.
+
+### 3. История, эталон и снятие из списка
+
+- **What is done:** заведена история панели с объявленным узлом оверлея, эталон снят после
+  осмотра, панель убрана из `notShownComponents`.
+- **Readiness sign:** проверка покрытия зелёная, снимки сходятся.
+- **Verified by:** `pnpm run check:affected` — код выхода 0.
 
 ## What this work does not do
 
-- <neighbouring work that is not dragged in here, and where it is created>
+- Не трогает соседнюю панель тела списка: у неё своя история, и кадр её берёт.
+- Не чинит обрез кадра по рамке узла — это задача RT-2058.

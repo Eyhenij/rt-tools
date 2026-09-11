@@ -2,23 +2,24 @@
 
 ## Where we stand
 
-Rewritten by every session, not appended to.
-
-- **State:** `<name from the state list of rule task-flow>`
-- **Stage:** <number> of <total> — <name>
-- **Done:** <briefly>
-- **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
-- **Waiting for the owner:** <what exactly, or "no">
-- **PR:** <number and state, or "not open yet">
+- **State:** `замысел-записан`
+- **Stage:** 0 of 3 — план написан, работа не начата
+- **Done:** разбор закрыт, замысел на три этапа записан
+- **Next step:** замер на поднятой витрине — кто гасит панель
+- **Uncommitted:** нет
+- **Waiting for the owner:** нет
+- **PR:** ещё не открыт
 
 ## Decisions along the way
 
-- **<decision>** — <reason>. Affected stage of the plan: <number>.
+- **Сначала замер, потом правка** — в RT-2021 перепробованы четыре лечения вслепую, и ни одно не
+  помогло. Affected stage of the plan: 1.
 
 ## Sessions
 
-### <date>
+### 2026-09-11
 
-- <what was done, in numbers: files, commits, what is green>
-- <what we stumbled on and what caught it>
+- Основа эпика подтянута: в неё влита главная ветка, а сама она — в эту
+- Прочитаны панель и реестр: панель закрывает себя сама, когда регистрация таблицы исчезла, а
+  реестр обнуляет активную таблицу при её снятии с учёта
+- Записаны разбор и замысел на три этапа

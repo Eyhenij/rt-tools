@@ -1,33 +1,53 @@
 # Grill
 
-<Work begun from cargo that arrived names its records here — by full keys, as the intake reading
-prints them. Eight characters are not enough: a mark with a short key is refused with the line
-«the tree has no such record». This file leaves for the archive, and after the folder is taken apart
-the keys live only here.>
-
 ## The owner request
 
-> <verbatim, in the owner's language, without retelling>
+Задача заведена исполнителем по ходу работы RT-2021 и стоит в плане эпика строкой 6.8. Прямых слов
+владельца о ней нет: она вышла из его более раннего требования закрыть дыры покрытия витрины —
+
+> овервью с ошибками!!! закрываем дыры
+
+Панель настройки колонок — единственный компонент кита, которому история так и не написана: кадр её
+не берёт.
 
 ## What the tree already has
 
-<Findings of the exploration: specs on the subject, the laws and rules the work touches, a
-ready-made sample nearby. Filled in before the first question to the owner.>
+- `projects/ui-kit-v2/src/lib/components/table/settings-aside/rt-table-settings-aside.component.ts`
+  — сама панель. Наследует `RtRouteAsideComponent`: открывается навигацией на `(ro:table-settings)`.
+- `projects/ui-kit-v2/src/lib/components/table/rt-table-settings.registry.ts` — реестр. Таблица
+  записывается в него на старте и снимается на разрушении; снятие активной таблицы обнуляет
+  `active`.
+- Панель закрывает себя сама, когда регистрация исчезла: в конструкторе стоит `effect`, и при
+  `registration === null` у панели, открытой штатно, вызывается `onClose()`. Это лечило уход со
+  страницы таблицы.
+- `projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts` —
+  единственный показ, где панель вообще открывается: страница зовёт `setActive` и переходит на
+  адрес панели.
+- Соседняя панель тела списка — `settings-panel` — свою историю имеет, и кадр её берёт. Она не
+  route-driven и в реестр не смотрит.
 
 ## What the rules already say
 
-<What was found in the laws and rules on the subject of the question. The owner is not asked
-what already has a written answer.>
+- Правило показа: компонент, чью историю показывает сосед, называется в списке, а не угадывается.
+  Сейчас панель стоит в `tools/kit-coverage-allowlist.json` под ключом `notShownComponents` с
+  причиной и ссылкой на эту задачу.
+- Правило проверки компонента: панель, открытая историей, доживает до кадра только там, где это
+  объявлено, — историей называется узел панели как параметр съёмки, и обвязка отказывается, когда
+  к моменту кадра его нет.
+- Правило проверки компонента: состояние, невидимое в кадре, снимком не проверяется.
 
 ## Questions and answers
 
-**<question>**
-<the owner's answer in their words>
+Вопросов владельцу нет: что не работает, видно замером, а не его словом.
 
 ## Decisions
 
-- **<decision>** — <reason>. Rejected: <what and why>.
+- **Сначала замер, потом правка** — в RT-2021 перепробованы четыре лечения вслепую, и ни одно не
+  помогло: перенос истории в начало файла, снятие подмены адреса, гашение оверлеев и вызов
+  `setActive` на самой странице. Отвергнуто: пятая попытка вслепую.
 
 ## What is left unclear
 
-- <a question that was not asked, and why it does not block the work>
+- Чинить кит или витрину. Панель закрывает себя по исчезновению регистрации, а на витрине таблица
+  может пересоздаваться там, где на живой странице не пересоздаётся. Что из этого происходит на
+  самом деле, скажет замер первого этапа.
