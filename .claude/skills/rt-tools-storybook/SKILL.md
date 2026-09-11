@@ -26,6 +26,15 @@ A rule under the "Law on verifiability", the section about showing a visible sta
   coverage.
 - **A story that draws an empty collection is not coverage.** First plausible data, then the
   matrix.
+- **A component is counted apart from its family, and a component the family shows is not
+  covered by that.** A family reaches the showcase by an overview page and a stories folder.
+  Everything inside it then counts as shown, including a component that is the subject of no
+  story and gets into a frame only inside a neighbour's wrapper. The two counts diverged by
+  thirty where the family count was green.
+- **A component shown inside a neighbour's story is named, not left to be guessed.** A pair
+  belongs in one frame — a projected hint against a string one — and pulled apart it shows
+  neither side against the other. Which story shows it is written down, so that the day the
+  neighbour's story is rewritten the count says so.
 - **A styling preset wraps the whole matrix as a pair of halves; it never becomes an axis inside
   it.** A preset is a second layer of assignments over the same markup and the same sizes. Crossed
   with an axis it doubles every cell, and two halves of one row then read as two values of that

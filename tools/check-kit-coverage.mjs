@@ -20,6 +20,8 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { declarationsOf, storySubjectsOf } from './kit-coverage-components.mjs';
+
 const ROOT = process.cwd();
 
 /** Where the families of the second kit lie. */
@@ -45,6 +47,20 @@ const accepted = list.notShown;
  * not apply to it. From the folder of the family that looks exactly like a gap.
  */
 const atFoundation = list.shownAtFoundation ?? {};
+
+/**
+ * Components with no story of their own, with the reason for each. A separate list from the
+ * families one: all of these lie inside families that reach the showcase, and the family count
+ * sees none of them.
+ */
+const acceptedComponents = list.notShownComponents ?? {};
+
+/**
+ * Components shown inside a neighbour's story on purpose, with the story file that shows them.
+ * A pair is best read together — a projected hint next to a string one — and pulled apart it
+ * shows neither side against the other.
+ */
+const shownWithin = list.shownWithin ?? {};
 
 const families = readdirSync(join(ROOT, FAMILIES), { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
@@ -101,6 +117,46 @@ for (const family of Object.keys(accepted)) {
     }
 }
 
+/**
+ * The second question, asked of components rather than families: is this component the subject of
+ * a story. Asked apart because the family answer said yes about thirty components that had no
+ * story at all — every one of them lay inside a family that reaches the showcase.
+ */
+const declared = declarationsOf(ROOT, FAMILIES);
+const subjects = storySubjectsOf(ROOT, [FAMILIES, 'projects/ui-kit-v2/src/showcase']);
+const storyless = declared.filter((item) => !subjects.has(item.name));
+const storylessSelectors = new Set(storyless.map((item) => item.selector));
+
+for (const item of storyless) {
+    const within = shownWithin[item.selector];
+
+    if (within !== undefined) {
+        if (!existsSync(join(ROOT, within))) {
+            problems.push(`«${item.selector}»: the story «${within}» that shows it is named in the list and is not in the tree`);
+        }
+        continue;
+    }
+
+    if (!acceptedComponents[item.selector]) {
+        problems.push(`«${item.selector}» (${item.path}): the subject of no story and no reason in the list — a silent gap looks exactly like coverage`);
+    }
+}
+
+for (const selector of Object.keys(acceptedComponents)) {
+    if (!storylessSelectors.has(selector)) {
+        problems.push(`«${selector}»: named in the component list, and it either is the subject of a story now or is gone from the kit — remove the line`);
+    }
+    if (!acceptedComponents[selector]) {
+        problems.push(`«${selector}»: the reason is empty; an empty reason is not accepted`);
+    }
+}
+
+for (const selector of Object.keys(shownWithin)) {
+    if (!storylessSelectors.has(selector)) {
+        problems.push(`«${selector}»: named as shown inside a neighbour's story, and it has a story of its own now — remove the line`);
+    }
+}
+
 if (problems.length > 0) {
     console.error(`\ncheck-kit-coverage: divergences ${problems.length}\n`);
     for (const problem of problems) {
@@ -114,4 +170,9 @@ console.log(
     `check-kit-coverage: families of the second kit ${families.length}, reaching the showcase ${shown}; ` +
         `shown at the foundation level ${Object.keys(atFoundation).length}, ` +
         `not reaching and named with a reason ${Object.keys(accepted).length}`
+);
+console.log(
+    `check-kit-coverage: components and directives ${declared.length}, the subject of a story ${declared.length - storyless.length}; ` +
+        `shown inside a neighbour's story ${Object.keys(shownWithin).length}, ` +
+        `named with a reason ${Object.keys(acceptedComponents).length}`
 );
