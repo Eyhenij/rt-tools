@@ -35,21 +35,35 @@ interface IIconButtonFlagCase {
     template: `
         @switch (part) {
             @case ('variant') {
-                <app-story-grid caption="Палитра × форма" [rows]="variants" [columns]="shapes">
-                    <ng-template let-variant let-shape="col">
-                        <rt-icon-button icon="pencil" [ariaLabel]="variant" [variant]="variant" [shape]="shape" />
+                <app-story-presets caption="Палитра × форма в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="variants" [columns]="shapes">
+                            <ng-template let-variant let-shape="col">
+                                <rt-icon-button icon="pencil" [ariaLabel]="variant" [variant]="variant" [shape]="shape" />
+                            </ng-template>
+                        </app-story-grid>
                     </ng-template>
-                </app-story-grid>
+                </app-story-presets>
             }
 
             @case ('size') {
-                <app-story-row caption="Размер" [items]="sizes">
-                    <ng-template let-size>
-                        <rt-icon-button icon="pencil" ariaLabel="Править" variant="secondary" [size]="size" />
+                <app-story-presets caption="Размер в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="sizes">
+                            <ng-template let-size>
+                                <rt-icon-button icon="pencil" ariaLabel="Править" variant="secondary" [size]="size" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
+            <!-- Пары наборов здесь нет, и это решение, а не пропуск: матрица занимает всю ширину
+                 страницы, а половина пары добавляет к ней свои поля — содержимое уходит за край, и
+                 кадр по корню показа режет его молча, одинаково у обеих половин. Набор при этом
+                 переписывает цвет, скругление и тень и не трогает размеры — ровно ту ось, ради
+                 которой матрица и заведена. Значок в материальном наборе виден на соседней
+                 истории «Размер». -->
             @case ('iconSize') {
                 <app-story-grid caption="Размер кнопки × размер иконки" [rows]="sizes" [columns]="iconSizes" [columnLabel]="iconSizeLabel">
                     <ng-template let-size let-iconSize="col">
@@ -59,34 +73,50 @@ interface IIconButtonFlagCase {
             }
 
             @case ('shape') {
-                <app-story-row caption="Форма" [items]="shapes">
-                    <ng-template let-shape>
-                        <rt-icon-button icon="pencil" ariaLabel="Править" variant="primary" [shape]="shape" />
+                <app-story-presets caption="Форма в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="shapes">
+                            <ng-template let-shape>
+                                <rt-icon-button icon="pencil" ariaLabel="Править" variant="primary" [shape]="shape" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('flags') {
-                <app-story-grid caption="Признак × палитра" [rows]="flagCases" [columns]="variants" [rowLabel]="flagCaseLabel">
-                    <ng-template let-flagCase let-variant="col">
-                        <rt-icon-button
-                            icon="pencil"
-                            [ariaLabel]="flagCase.name"
-                            [variant]="variant"
-                            [loading]="flagCase.loading"
-                            [disabled]="flagCase.disabled"
-                            [active]="flagCase.active"
-                            [indicator]="flagCase.indicator" />
+                <app-story-presets caption="Признак × палитра в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="flagCases" [columns]="variants" [rowLabel]="flagCaseLabel">
+                            <ng-template let-flagCase let-variant="col">
+                                <rt-icon-button
+                                    icon="pencil"
+                                    [ariaLabel]="flagCase.name"
+                                    [variant]="variant"
+                                    [loading]="flagCase.loading"
+                                    [disabled]="flagCase.disabled"
+                                    [active]="flagCase.active"
+                                    [indicator]="flagCase.indicator" />
+                            </ng-template>
+                        </app-story-grid>
                     </ng-template>
-                </app-story-grid>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Взаимодействие" [items]="states" [itemLabel]="stateLabel">
-                    <ng-template let-state>
-                        <rt-icon-button icon="pencil" ariaLabel="Править" variant="secondary" [attr.data-story-state]="state.state" />
+                <app-story-presets caption="Взаимодействие в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="states" [itemLabel]="stateLabel">
+                            <ng-template let-state>
+                                <rt-icon-button
+                                    icon="pencil"
+                                    ariaLabel="Править"
+                                    variant="secondary"
+                                    [attr.data-story-state]="state.state" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
 
                 <p class="app-icon-button-matrix__note">
                     Признак ставится на host компонента, а стилизована внутри него настоящая
@@ -114,13 +144,17 @@ interface IIconButtonFlagCase {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Палитра в обеих темах">
+                <app-story-presets caption="Палитра в обеих темах и обоих наборах">
                     <ng-template>
-                        @for (variant of variants; track variant) {
-                            <rt-icon-button icon="pencil" [ariaLabel]="variant" [variant]="variant" />
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (variant of variants; track variant) {
+                                    <rt-icon-button icon="pencil" [ariaLabel]="variant" [variant]="variant" />
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,
