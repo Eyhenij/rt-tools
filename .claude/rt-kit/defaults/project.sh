@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · defaults/project.sh · d8a2f7483dc8 · правится надстройкой, не здесь
+# rt-kit v0.27.0 · defaults/project.sh · cdd93b3104d6 · правится надстройкой, не здесь
 # Tree profile: what checks an edit here and what counts as reinvention.
 #
 # The package default. Everything the trees of this workshop have in common lives here: the Nx
@@ -28,6 +28,12 @@ rt_runner() {
 # Ports differ from tree to tree, so the default stays silent: naming someone else's port is worse
 # than naming none.
 RT_STANDS="${RT_STANDS:-}"
+
+# Who raises those stands. `owner` — the tree's own applications are up and any raise is refused;
+# `session` — nobody raises them here but the session, and only a raise over a taken port is
+# refused. The default is silent, and the guard reads silence as `owner`: a tree that sets nothing
+# keeps the behaviour it has today.
+RT_STANDS_RAISED_BY="${RT_STANDS_RAISED_BY:-}"
 
 # Where the tree's checks and the scenario set of its guards lie. A check the tree does not have is
 # not called by the push gate: the list is printed from what lies on disk.

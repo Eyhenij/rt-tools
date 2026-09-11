@@ -1,4 +1,4 @@
-<!-- rt-kit v0.27.0 · pitfalls/task-flow.md · 164d591647e6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · pitfalls/task-flow.md · dffc1687bff9 · правится надстройкой, не здесь -->
 # Work conduct — cold part
 
 Pitfalls and behaviour from incident analyses. Loaded not with the rule but on demand: an ordinary
@@ -51,11 +51,9 @@ The rule is `task-flow`; the articles that hold the law stand there.
   the node was moved to another place in the markup. The owner rejected both and named the needed
   way himself. Ask before the edit, do not show the measurement after.
 - **A path offered to a person is judged by the number of their steps and by what they must have to
-  walk it.** From the code side an option looks cheap — "fewer paths", "the launch line is
-  untouched" — while for a person it costs a visit to the server: issuing a token stood as
-  recommended, and for it the owner would have had to go over ssh into a running container. The
-  price is named from the side of the one who will walk it; a retelling of the order without it the
-  owner reads as approval.
+  walk it.** From the code side an option looks cheap while for a person it costs a visit to the
+  server. The price is named from the side of the one who will walk it; a retelling of the order
+  without it the owner reads as approval.
 - **The epic on the theme is read before the layout is decided.** The epic plan holds decisions that
   survived a dozen tasks, and code exploration does not find them: a withdrawn decision leaves no
   trace in the tree. A domain created by the generator and torn down half an hour later stood in the
@@ -116,11 +114,9 @@ The rule is `task-flow`; the articles that hold the law stand there.
   moved nothing.
 
 - **One's own temporary files go outside the code tree — otherwise their removal is judged as an
-  edit of the application.** The write sign counts a deletion as a write, and that is on purpose:
-  something removed without a plan leaves no trace. The sign has nothing to tell one's own temporary
-  directory from a domain directory — both paths sit under the same root — and the guard demands a
-  plan for cleaning up a draft. The directory is named by the tree's profile, and it lies outside
-  the code tree.
+  edit of the application.** The write sign counts a deletion as a write on purpose, and it has
+  nothing to tell one's own temporary directory from a domain directory. The directory is named by
+  the tree's profile, and it lies outside the code tree.
 
 - **A task body written ahead of the plan names the method, and the method goes stale before the
   defect.** A task of a series is created weeks before it is taken; by that day the proposed method
@@ -134,11 +130,10 @@ The rule is `task-flow`; the articles that hold the law stand there.
   passed is written into the PR body, where the reviewer reads it.
 
 - **The owner's word about how something is arranged is a framing, not a decision.** What they named
-  usually already lives in the tree under that very word: it has a name on screen, a section in the
-  spec and a field in the model, and checking costs one search. Interpreted by the nearest code, the
-  word looks like a fulfilled request right up to acceptance: the edit is merged by then, and the
-  owner got work in someone else's console instead of a field in the application. Did the reading
-  diverge from the tree — the owner is asked, and asked before the edit.
+  usually already lives in the tree under that very word — a name on screen, a spec section, a model
+  field — and checking costs one search. Interpreted by the nearest code, the word looks like a
+  fulfilled request right up to acceptance. Did the reading diverge — the owner is asked before the
+  edit.
 
 - **An instruction to work by the flow is an instruction to do its steps, including those that
   change history.** Marking a stage, pushing the branch and opening the PR are prescribed by the
@@ -162,18 +157,16 @@ The rule is `task-flow`; the articles that hold the law stand there.
   not catch this loss: the work loses to neighbouring assignments within the hour, and the week
   passes afterwards.
 - **A stack of branches costs more, and its price is named.** A PR into a neighbouring branch does
-  not start the pipeline declared for the main base; merging the base branch closes the next PR as
-  merged although its edits are not in main; a conflict from someone else's merge is resolved anew
-  in every branch of the stack. An arrangement chosen silently collects the whole price and shows
-  none of its parts. Tasks that follow one another in code lawfully live as branches from main, as
-  long as the next edit does not rest on the code of the previous one.
+  not start the pipeline declared for the main base; merging the base closes the next PR as merged
+  although its edits are not in main; a conflict is resolved anew in every branch of the stack.
+  Tasks that follow one another in code lawfully live as branches from main, as long as the next
+  edit does not rest on the code of the previous one.
 
 - **A find in the middle of a stage feels like part of the current work when the subject is
   adjacent.** It has no sign of its own: before the first edit the find is not in the tree, and
   after it the files of neighbouring work do not differ from one's own. So the plan's list of exit
-  conditions is checked, not the feeling. Once such an edit was stopped by an unrelated refusal by
-  file kind, not by a check against the plan: without it, it would have gone into someone else's
-  branch, and the two pieces of work would have had no separate rollback.
+  conditions is checked, not the feeling — otherwise the two pieces of work lose their separate
+  rollback.
 
 ## Executor behaviour — from incident analyses
 
@@ -315,3 +308,12 @@ they are for whoever investigates a miss or argues with a guard.
   is two motions, and done by half it leaves the task in two sets at once: the epic looks unclosed
   with all its work done. The total is written where the set is edited: postponed, it is written
   from memory of how many tasks there were, not how many remain.
+- **A run of the readiness command while writing the plan costs a minute** and shows the cause of
+  the line in the command's own output, where a guess shows nothing.
+- **Without the sub-issue link the makeup of an epic is assembled by hand**, from the list of open
+  cards, one card at a time.
+- **The task order says nothing about how the branches stand**, and the numbers of the created
+  tasks return to the order section by the same edit.
+- **A finished epic is named to the owner by the same turn that takes work outside it.**
+- **A retelling of a sample in the grill and in the epic plan is not the sample.**
+- **The review of closed work ends with an edit of the rules layer or a proposal outward.**

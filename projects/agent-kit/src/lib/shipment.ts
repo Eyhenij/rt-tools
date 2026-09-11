@@ -26,7 +26,19 @@ import { IEnvironment, IOutcomeOfCommand } from './commands.js';
 import { CONFIG_PATH, IConfig, readConfig } from './config.js';
 import { IReadResult, ISummary, readObservations, summarize } from './observations.js';
 import { IRefusedAnalysis, proseCheckOf, proseWhy, refusedAnalysesOf, TProseCheck } from './cargo-prose.js';
-import { ILeak, IProposal, leaksIn, markSent, marksOf, nearestMissing, readProposals, TO_PACKAGE } from './proposals.js';
+import {
+    ILeak,
+    IProposal,
+    leaksIn,
+    markProposals,
+    markSent,
+    marksOf,
+    nearestMissing,
+    ownMark,
+    readProposals,
+    skippedAsSentLines,
+    TO_PACKAGE,
+} from './proposals.js';
 import { IShipment, IShipped, readToken, TShip } from './ship.js';
 import { laidOutSkills, packagedNames, treeSnapshot, unpickedOf } from './snapshot.js';
 import { byText } from './order.js';
@@ -260,16 +272,6 @@ function manifest(
     return going.map((shipment: IShipment): string => `  ${shipment.operation} — ${describe(shipment, summary, proposals, postmortems)}`);
 }
 
-/** Пометка об отправке: по ней предложение второй раз не уезжает. */
-function markProposals(root: string, proposals: readonly IProposal[], shipped: IShipped): void {
-    const mark: string = `приём:${shipped.accepted?.month ?? 'принято'}`;
-
-    for (const proposal of proposals) {
-        const path: string = join(root, proposal.file);
-        writeFileSync(path, markSent(readFileSync(path, 'utf8'), proposal, mark), 'utf8');
-    }
-}
-
 /**
  * Что приём сказал о принятом: месяц записи, судьба самой записи и — у предложений — счёт
  * легшего и уже лежавшего.
@@ -348,7 +350,7 @@ async function send(
         done.push(`  ${shipment.kind} → ${accepted(shipped)}`);
 
         if (shipment.operation === 'proposals') {
-            markProposals(root, proposals, shipped);
+            markProposals(root, proposals, ownMark(shipped.accepted?.month ?? 'принято'));
         }
     }
 
@@ -409,9 +411,9 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
         packagedNames(config, assetsDir)
     );
 
-    const ready: readonly IProposal[] = readProposals(root).filter(
-        (entry: IProposal): boolean => entry.address === TO_PACKAGE && !entry.sent
-    );
+    const addressed: readonly IProposal[] = readProposals(root).filter((entry: IProposal): boolean => entry.address === TO_PACKAGE);
+    const ready: readonly IProposal[] = addressed.filter((entry: IProposal): boolean => !entry.sent);
+    const skipped: readonly IProposal[] = addressed.filter((entry: IProposal): boolean => Boolean(entry.sent));
     // Блок, не назвавший ближайшего утверждения ресурса, не уезжает: разбор, кончившийся ещё
     // одной статьёй о том, о чём статья уже стоит, снаружи неотличим от разбора, кончившегося
     // исправлением. Отбивается он поимённо, а остальные едут: один непрочитанный ресурс не
@@ -453,6 +455,7 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
     const going: readonly IShipment[] = shipmentsOf(cargo, proposals, postmortems);
 
     const listed: readonly string[] = manifest(going, cargo, proposals, postmortems);
+    const skippedLines: readonly string[] = skippedAsSentLines(skipped);
     // Отбитое называется обоими прогонами: сухой показывает, что уехало бы, — и отбитое к этому
     // относится наравне с уезжающим.
     const refusedLines: readonly string[] = refusalLines(refused, refusedAnalyses, prose, config.postmortems);
@@ -465,6 +468,7 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
                 `уехало бы в ${config.intake}, дерево ${tree}:`,
                 ...listed,
                 ...refusedLines,
+                ...skippedLines,
                 ...(read.silent ? ['наблюдений не велось ни разу — сводка уезжает снимком надстроек'] : []),
                 // Токен сухой прогон не проверяет: приём отвечает о нём только на настоящем
                 // вызове. Молчание об этом читалось как «отправка пройдёт», и заход узнавал об
@@ -482,6 +486,7 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
     const outcome: IOutcomeOfCommand = await send(root, config.intake, tree, token, options.ship, going, mine, [
         ...listed,
         ...refusedLines,
+        ...skippedLines,
     ]);
 
     return outcome;

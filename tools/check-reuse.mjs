@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.27.0 · checks/check-reuse.mjs · 6d1acc6e9b26 · правится надстройкой, не здесь
+// rt-kit v0.27.0 · checks/check-reuse.mjs · e67cdbeaaeea · правится надстройкой, не здесь
 /**
  * The sweeping check that the ready-made was not bypassed.
  *
@@ -12,7 +12,9 @@
  * The signs do not lie here: they are declared as bundles per package of rt-tools, and the tree
  * names in the setting of the checks the ones it takes. The same list is read by the guard — they
  * must not diverge, otherwise an edit passes the guard and falls on the gate. Its own signs the
- * tree appends by a file of its own.
+ * tree appends by a file of its own. A bundle is declared with the area of the tree it holds over:
+ * an application assembled from another set of ready-made code drops out of the walk by the
+ * declaration, not by the tree declining to declare the bundle at all.
  *
  * There are two differences from the guard. The first: the inventory of the kit is not read — the
  * guard asks the disk because it answers for one edit, while a sweeping check cares about what has
@@ -113,6 +115,21 @@ function withoutMarked(text) {
     return lines.filter((line, index) => !line.includes('native-ok') && !lines[index - 1]?.includes('native-ok')).join('\n');
 }
 
+/**
+ * Whether the file lies in the area the sign was declared with.
+ *
+ * The boundary is judged by the directory, not by the beginning of the string: `apps/admin` must
+ * not take in `apps/administration`, otherwise a neighbouring application gets judged by a set of
+ * ready-made code it was never assembled from. A sign without an area holds over the whole tree.
+ */
+function within(path, roots) {
+    if (!roots || roots.length === 0) {
+        return true;
+    }
+
+    return roots.some((area) => path === area || path.startsWith(area.endsWith('/') ? area : `${area}/`));
+}
+
 const allowlist = parseAllowlist('reuse');
 const known = allowlist.keys;
 const debt = new Set(allowlist.debt.keys());
@@ -127,7 +144,14 @@ for (const root of SOURCE_ROOTS) {
             // itself takes the folders of the source of that ready-made out from under the sign,
             // not the bundle whole.
             const excluded = signal.exceptNamed && new RegExp(signal.exceptNamed).test(path);
-            if (!path.endsWith(signal.ext) || skipped || excluded || (signal.onlyNamed && !new RegExp(signal.onlyNamed).test(path))) {
+            const outside = !within(path, signal.roots);
+            if (
+                !path.endsWith(signal.ext) ||
+                skipped ||
+                excluded ||
+                outside ||
+                (signal.onlyNamed && !new RegExp(signal.onlyNamed).test(path))
+            ) {
                 continue;
             }
             const times = found(signal, text);

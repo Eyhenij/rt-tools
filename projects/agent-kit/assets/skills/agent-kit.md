@@ -49,6 +49,10 @@ layout is worse than a whole one. Either the override here or the resource itsel
 and that is the work of the tree where the package lives as sources; nothing is said about it
 here.
 
+**A file whose body matches the package is never a refusal.** The header alone diverged from the
+body — the layout puts it again and says the header went stale. The word "edited by hand" stays
+for a file whose body differs, and it sends the reader looking for an edit that is there.
+
 **A layout is an edit of the tree, not a service call:** it rewrites hundreds of tracked files at
 once, so the work is set up before `sync`, by the same rules as any other.
 
@@ -58,9 +62,14 @@ push gate: an edition bumped without a layout turns the main branch red and lock
 **The layout puts the hook declaration together with the hook itself.** A hook is called by an
 entry in the agent settings, and one laid out without it is indistinguishable from the outside
 from a working one. The layout appends an entry for every event missing from the settings and
-reports it. The edit only adds: entries are neither rewritten nor removed, what the tree removed
-does not come back, and settings that cannot be parsed as JSON the package does not touch — it
-prints a ready-made piece to enter by hand.
+reports it. The edit only adds: entries are neither rewritten nor removed, and settings that
+cannot be parsed as JSON the package does not touch — it prints a ready-made piece to enter by
+hand.
+
+**An entry is written only for the dispatcher that lies on disk.** A tree that did not take it
+used to get settings calling a file that is not there — and such settings look working from the
+outside. The layout holds no list of what the tree removed, so a hand-removed entry comes back on
+the next layout: it is removed together with the dispatcher, not on its own.
 
 **This is held by the edit-location guard, not by memory.** It refuses an edit of a file with the
 layout header at the minute of the edit and names the address: the source, if the tree holds
@@ -77,6 +86,7 @@ the size of what would be wiped. Appending at the end and editing in place pass.
 
 ```bash
 npx agent-kit doctor        # what is laid out, what lags, what lies from a dropped resource
+npx agent-kit doctor --since <path>  # the same, plus what a new edition added into a replaced section
 npx agent-kit sync          # lay out
 npx agent-kit sync --check  # write nothing, refuse on a divergence
 npx agent-kit stats         # what was used, what never, what people stumbled on
@@ -122,7 +132,10 @@ So the bump takes three steps, and the first goes before the installation.
    "resource · heading". Each is read in the snapshot and in the new edition: what the package
    added is added to the override by hand.
 
-Neither `doctor` nor `sync --check` audits this itself: they have no former edition.
+The snapshot is given to the state review as an argument — `agent-kit doctor --since <path to the
+snapshot>` — and it names the articles the new edition added inside a replaced section: the
+resource, the heading and the opening of the article. Without the argument the review is as
+before.
 
 For every named section the articles are compared, not the headings: the heading is exactly
 what matched, that is what replaced the section. A ready-made pair of commands is in the cold

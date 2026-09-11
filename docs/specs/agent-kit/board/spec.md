@@ -31,10 +31,12 @@ through the executor.
 
 ## Rules
 
-- **A request opened not into the main branch is named by a line of its own.** It will have no run:
-  the pipeline listens to requests into main and does not see events with another base. A line about a
-  lost event would be wrong twice over: the event was not lost, and reopening will not bring it back.
-  This is fixed by moving the base after the lower request is merged.
+- **A request whose base is not the main branch is not counted as lacking a run.** The pipeline
+  listens to requests into the main branch and sees no event with another base, so a request into
+  an epic branch lawfully has no run at all — that is the order of handing in, and the audit is
+  silent about it. A line here would stand on every task of every epic and teach to skip the
+  audit; and the advice to move the base is wrong outright: the base of a task request stays the
+  epic branch to the merge.
 - **The answer of the work queue helper says whose eyes the state was taken by.** The helper reads a
   task by the token of the machine record, and a request without a token, as whoever the client is
   signed in under: the parse fields need rights over the accounts of the organisation, which the
@@ -42,6 +44,14 @@ through the executor.
   machine record is limited by the hosting took a person's picture for a checked one. The field
   `viewer` in the answer is `machine` or `client`; the login is not printed, fetching it would take a
   second request to the network.
+- **The creating command and the audit read the path to the plan by one and the same move.** A
+  value declared by one side of an exchange is not computed anew by the other: the audit took the
+  document carrying the makeup, while the command took the first path in the card body, and a card
+  naming a law before its plan wrote that law into every task of the epic. The branch of the epic
+  was then read from the law and came back empty. Both sides answered as usual, and the miss showed
+  only by reading a created task. The makeup is demanded of the audit and not of the command: the
+  command creates the tasks, and their numbers land in the plan after — demanded at creation, the
+  requirement would refuse the very first task of every epic.
 - **The plan of an epic is the document that carries the makeup, not the first path in the card.** A
   card names its decision next to its plan, and the decision has no table of tasks: read as the
   plan, it makes the makeup empty and every open task of the epic reads as not belonging to it —
