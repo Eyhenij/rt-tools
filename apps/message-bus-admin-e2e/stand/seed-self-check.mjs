@@ -28,10 +28,14 @@ const FAR_FUTURE = '2030-01-01';
  * обязаны были вывести: постоянное время рядом с месяцем, посчитанным приёмом, выглядит целым,
  * пока эти два не сравнить между собой.
  *
+ * Запись самого набора из счёта выведена по имени: ею идёт каждый вход прогона, и время
+ * последнего входа у неё сегодняшнее по существу — закрепить его нечем. Остальные записи судятся
+ * наравне со всеми: их время последнего входа стоит колонкой в разделе людей.
+ *
  * Отказ приходит здесь, при подъёме стенда, и называет причину словами — вместо трёх кадров,
  * разошедшихся на одной цифре и не сказавших о вёрстке ничего.
  */
-export async function checkNothingDrifts(sql) {
+export async function checkNothingDrifts(sql, own) {
     await sql(
         [
             'DO $$',
@@ -45,6 +49,8 @@ export async function checkNothingDrifts(sql) {
             '        UNION ALL SELECT "ranAt" FROM "month_record"',
             '        UNION ALL SELECT "issuedAt" FROM "tree_invite"',
             '        UNION ALL SELECT "expiresAt" FROM "tree_invite"',
+            `        UNION ALL SELECT "lastLoginAt" FROM "account" WHERE "name" <> '${own}'`,
+            `        UNION ALL SELECT "disabledAt" FROM "account" WHERE "name" <> '${own}'`,
             '    ) AS shown',
             `    WHERE shown.at >= CURRENT_DATE AND shown.at < TIMESTAMP '${FAR_FUTURE}';`,
             '    IF drifted > 0 THEN',

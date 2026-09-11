@@ -81,6 +81,17 @@ const INVITES_UTIL = 'scope:message-bus-admin-invites-util';
 const INVITES_API = 'scope:message-bus-admin-invites-api';
 const INVITES_DATA_ACCESS = 'scope:message-bus-admin-invites-data-access';
 
+/**
+ * Раздел людей: модели и решения раздела, стор списка, экран и маршрут.
+ *
+ * Слоёв меньше, чем у соседей: своего вида у него нет — ячейки строки показывают готовые поля, — и
+ * своего обращения к приёмнику нет тоже: список читает общая основа стора, а правок над записями у
+ * раздела не бывает вовсе. Заводит, отключает и меняет пароль команда строки запуска на узле
+ * приёмника.
+ */
+const PEOPLE_UTIL = 'scope:message-bus-admin-accounts-util';
+const PEOPLE_DATA_ACCESS = 'scope:message-bus-admin-accounts-data-access';
+
 export const messageBusAdminBoundaries = [
     // Приложение видит маршруты домена входа и оболочку. Экраны оно не знает ни одного: их
     // приносит отложенная загрузка по маршруту, объявленному тем, чей это экран.
@@ -97,6 +108,7 @@ export const messageBusAdminBoundaries = [
             'scope:message-bus-admin-proposals-shell',
             'scope:message-bus-admin-summaries-shell',
             'scope:message-bus-admin-invites-shell',
+            'scope:message-bus-admin-accounts-shell',
             CORE_UTIL,
             PACKAGE,
         ],
@@ -396,5 +408,34 @@ export const messageBusAdminBoundaries = [
             CORE_UTIL,
             PACKAGE,
         ],
+    },
+
+    // Раздел людей. Лесенка короче остальных: ни своего слоя вида, ни своего обращения к
+    // приёмнику — список читает общая основа стора, а правок над записями у раздела нет ни одной
+    {
+        sourceTag: 'scope:message-bus-admin-accounts-util',
+        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    // Слои обращения и вида у раздела пусты, но теги их выписаны наравне с остальными: молчание
+    // про либу проверка слоёв читает как «прав ей не давали», а не как «прав ей не нужно»
+    {
+        sourceTag: 'scope:message-bus-admin-accounts-api',
+        onlyDependOnLibsWithTags: [PEOPLE_UTIL, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-accounts-ui',
+        onlyDependOnLibsWithTags: [PEOPLE_UTIL, CORE_UI, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-accounts-data-access',
+        onlyDependOnLibsWithTags: [PEOPLE_UTIL, CORE_DATA_ACCESS, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-accounts-feature-list',
+        onlyDependOnLibsWithTags: [PEOPLE_DATA_ACCESS, PEOPLE_UTIL, CORE_FEATURE, CORE_UI, CORE_DATA_ACCESS, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-accounts-shell',
+        onlyDependOnLibsWithTags: ['scope:message-bus-admin-accounts-feature-list', PEOPLE_UTIL, CORE_UTIL, PACKAGE],
     },
 ];
