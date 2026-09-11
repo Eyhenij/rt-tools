@@ -175,6 +175,9 @@ Four checks do not replace one another, and the choice between them is not a mat
   batch only for stories that have already been looked over.
 - **A reference is re-taken deliberately and one at a time.** Re-taking everything at once erases
   the divergence that was not expected too.
+- **A reference is taken from the same showcase the gate raises.** The tree assembles two, and at
+  one markup their raster differs by a point or two. From the wrong one a reference comes out green
+  here and red at the gate.
 - **A one-off check script does not travel into the repository.** It lives in a temporary directory:
   it is the proof of one edit, not a check of the tree. A check that will be called on the next wave
   too is no one-off script: its place is next to the snapshot runner, as a separate command.
