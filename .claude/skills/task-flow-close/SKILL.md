@@ -2,9 +2,9 @@
 name: task-flow-close
 kind: pattern
 rule: task-flow
-description: Pattern of rule task-flow. Load when bringing work to readiness — merging the product agreement into the domain spec, bringing the domain texts up to date with what was done, opening the PR as a draft and leaving draft. Taking the task folder apart — pattern task-flow-archive.
+description: Pattern of rule task-flow. Load when bringing work to readiness — merging the product agreement into the domain spec, bringing the domain texts up to date with what was done, opening the PR as a draft or ready by its base and leaving draft.
 ---
-<!-- rt-kit v0.27.0 · patterns/task-flow-close.md · 13ea73d953e4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · patterns/task-flow-close.md · de2d00505ac3 · правится надстройкой, не здесь -->
 
 # Closing the work
 
@@ -19,7 +19,7 @@ Pattern of the rule `task-flow`. What must be true meanwhile — the law
   commit.
 - The domain texts are brought up to what the work did.
 - The gate suite is run whole — after the merge and the texts, not before them.
-- The task folder is taken apart, and the PR opens as a draft.
+- The task folder is taken apart, and the PR opens — a draft or ready, by the base.
 - The run on the head is green, and the draft is lifted from the PR.
 
 Taking the folder itself apart is not here — that is pattern `task-flow-archive`. It stands between
@@ -125,9 +125,11 @@ nothing was changed — why. The form of the section — pattern `git-workflow-p
 
 ## State `папка-разобрана`: the work is handed in by a PR
 
-The folder is taken apart and pushed, the work is cleaned up behind — the PR opens as a draft. From
-this minute the work waits for the owner, not for the machine, and the session does not end on it:
-the next task is taken by the same move, pattern `task-flow-resume`.
+The folder is taken apart and pushed, the work is cleaned up behind — and the PR opens. Whether it
+opens as a draft is decided by the bases the pipeline wakes for: where a run comes, a draft, and it
+is lifted on the green; where none comes, the PR opens ready and the push gate is the check behind
+it. From this minute the work waits for the owner, not for the machine, and the session does not end
+on it: the next task is taken by the same move, pattern `task-flow-resume`.
 
 **Readiness is measured by what is told, not by what has passed.** A check the executor cannot pass
 for a reason outside the work — a refused permission, an unreachable environment, a key held by a
@@ -135,8 +137,9 @@ person — does not cancel readiness: it goes into "Not run" and into "Remaining
 reason. Silence about it reads as passed.
 
 There is no state on disk any more — the progress left with the folder. This is the price of the
-cleanup standing before the PR. The tail of four steps — open the PR, wait for the run, lift the
-draft, ask to merge — is held by this pattern, not by a line in a file. The guard counts the work
+cleanup standing before the PR. The tail — open the PR, wait for the run, lift the draft, ask to
+merge, and without a run the first and the last of those — is held by this pattern, not by a line in
+a file. The guard counts the work
 handed in by the branch history: a folder removed by its commit is the sign.
 
 ### The section on the remaining step is written in the PR body, not appended later
@@ -163,10 +166,19 @@ The draft is lifted — the section is rewritten by the same call that edits the
 Не осталось: прогон зелёный, черновик снят. Можно вливать.
 ```
 
+Where the pipeline does not wake for this base, the PR opens with the section already in this
+second form: nothing is left to wait for, and the check standing behind it is the push gate.
+
+```markdown
+## Оставшийся шаг
+
+Не осталось: набор проверок перед push зелёный, CI на эту базу не ходит. Можно вливать.
+```
+
 The section heading and the words of both samples are written in the language of the PR, not the
 language of the pattern. The samples are set in the language of this tree's PRs and are carried over
 whole — the order of thoughts, the wording and the heading, the heading last. It looks like part of
-the form, not part of the text. The same holds for the two messages to the owner below: they are
+the form, not part of the text. The same holds for the messages to the owner below: they are
 samples of **what** is said, not of which words.
 
 The section is neither left empty nor removed altogether: a missing section and "no steps left" read
@@ -180,14 +192,21 @@ PR's language, and the package knows no foreign words; unnamed, the section is n
 The work queue audit still does not read the body: the miss is caught at the minute of opening, that
 is, where one call still fixes it.
 
+An open PR is re-read by the account that will merge it, not by the one that opened it. The host's
+answer to the author says only that the call went through: the right to open and the visibility of
+what was opened are different things, and the second is checked only from the reader's side. An
+invisible PR gives itself away by nothing — it is in the answer to its author, it carries labels,
+and the owner's review queue is simply empty.
+
 The difference between the section and the spoken word is one, and it is all. The owner reads a
 message only if they return to the conversation, and the section they see where they look when
 pressing the button.
 
-### Two messages to the owner, and the run between them
+### The messages to the owner, and the run between them
 
-Both are mandatory, and the order between them is one. Neither replaces the other: the first says
-the work is handed in and what it waits for, the second — that it is ready.
+Where the pipeline wakes for this base both are mandatory, and the order between them is one.
+Neither replaces the other: the first says the work is handed in and what it waits for, the second
+— that it is ready. Where no run comes, there is nothing between them, and they are written as one.
 
 Right after the PR opens:
 
@@ -195,6 +214,15 @@ Right after the PR opens:
 PR #<номер> открыт черновиком, папка задачи уже разобрана — за работой убрано. Жду прогона:
 пока он идёт, о работе известно только то, что она запушена. Как закончится — сниму черновик и
 попрошу тебя влить. Следующая задача уже взята: #<номер>, ветка <имя ветки>.
+```
+
+Где CI на эту базу не просыпается, оба сообщения складываются в одно — его пишут тем же ходом,
+каким открыли PR:
+
+```
+PR #<номер> открыт и готов к слиянию: набор проверок перед push зелёный, папка задачи разобрана.
+CI на PR в ветку эпика у нас не ходит — влей его, пожалуйста. Следующая задача уже взята:
+#<номер>, ветка <имя ветки>.
 ```
 
 The last line names what is taken, not an intent to take, and that is no figure of speech. A sample
@@ -222,47 +250,6 @@ merging by a green page.
 Between the two messages the executor does not wait: the work is handed in for review, and the next
 task is taken by the same move. They return to the PR by the turn that reads the end of the run.
 
-### The work state stands as a section in the PR body
-
-Saying it aloud is not enough, and the requirement does not hold on that alone. A message lives
-until the next message, and the merge decision is taken on the PR page — there is no conversation
-there at all. The section stands last and says exactly one thing: is anything left before the merge.
-
-```markdown
-## Оставшийся шаг
-
-Папка задачи разобрана коммитом `<sha>` — за работой убрано. Осталось дождаться прогона и снять
-черновик; до этого кнопка слияния заблокирована хостингом.
-```
-
-The draft is lifted — the section is rewritten by the same call that edits the body:
-
-```markdown
-## Оставшийся шаг
-
-Не осталось: прогон зелёный, черновик снят. Можно вливать.
-```
-
-The section heading and the words of both samples are written in the language of the PR, not the
-language of the pattern. The samples are set in the language of this tree's PRs and are carried over
-whole — the order of thoughts, the wording and the heading, the heading last. It looks like part of
-the form, not part of the text. The same holds for the two messages to the owner above: they are
-samples of **what** is said, not of which words.
-
-The section is neither left empty nor removed altogether: a missing section and "no steps left" read
-the same and mean different things. The full sample of a PR body — in the pattern for creating a
-commit and a PR, if the tree laid it out.
-
-An open PR is re-read by the account that will merge it, not by the one that opened it. The host's
-answer to the author says only that the call went through: the right to open and the visibility of
-what was opened are different things, and the second is checked only from the reader's side. An
-invisible PR gives itself away by nothing — it is in the answer to its author, it carries labels,
-and the owner's review queue is simply empty.
-
-There is nothing to check this by machine: no audit reads the request body, and the host asks about
-nothing but the title. The owner reads a message only if they return to the conversation, and the
-section they see where they look when pressing the button.
-
 ### An edit after remarks goes without a plan on disk
 
 The review returned remarks, or the run went red — it is fixed in the same branch. The plan is no
@@ -273,7 +260,7 @@ A merge left in the working copy is either pushed in the same turn or not made �
 sees the old state and decides by it.
 
 **Next move:** the run is green and there are no remarks — the draft is lifted, and the owner is
-told the work is ready.
+told the work is ready. Where no run comes, the same move follows the fix itself.
 
 ## State `задачи-эпика-кончились`: the epic is handed in by a request into the main branch
 

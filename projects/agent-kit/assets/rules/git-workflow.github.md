@@ -56,12 +56,12 @@ flowchart TD
     D -->|Yes| E[Main is merged in, the gate set is run whole]
     E --> F{The branch carries a task number}
     F -->|No| G[The delivery guard refuses the opening: nothing in the queue stands behind the edit]
-    F -->|Yes| H[The PR opens; what is not ready to merge goes as a draft]
+    F -->|Yes| H[The PR opens: a draft where a run is waited for, ready where the pipeline does not wake]
     H --> I[The task column moves to review, the executor takes the next task]
     I --> J{The run and the review are over}
     J -->|Run red| K[Fixed in the same branch]
     K --> J
-    J -->|Green| L[The last commit takes the task folder apart, the draft is lifted]
+    J -->|Green| L[The last commit takes the task folder apart, and the draft, if there was one, is lifted]
     L --> M[A person presses the merge into the epic branch: the executor asks and names the number]
     M --> N{Tasks of the epic are left}
     N -->|Yes| B
@@ -80,8 +80,7 @@ flowchart TD
   checkout -b <КЛЮЧ>-<номер задачи>-<slug> <ветка эпика>`; from `main` only the epic branch itself is
   taken — a task branched from `main` carries into it what the epic has not finished.
 - **The PR of a task has the epic branch as its base — `gh pr create --base <ветка эпика>`.** Opened
-  into `main`, it leaves the epic branch a copy nobody merges: half the epic is rolled out while the
-  rest is written.
+  into `main`, it leaves the epic branch a copy nobody merges.
 - **The PR of an epic into the main branch opens after all its tasks are merged and their folders
   are taken apart.** The merge button there means the whole epic, and there is nothing to press it
   for while a task of it is still written.
@@ -101,8 +100,8 @@ flowchart TD
   usually left: a live base sends the upper PR into the neighbour and not into main. So the base is
   retargeted by the same motion that merges the lower one — the call is in the pattern. Nothing
   turns red at this: the PR looks merged and the task closes.
-- **A chain is merged bottom-up, and the order stands in every PR body.** Branch kinship is invisible
-  in the list: the line "stands on #<number>" is the only place the owner reads it.
+- **A chain is merged bottom-up, and the order stands in every PR body.** Branch kinship is
+  invisible in the list, and the line "stands on #<number>" is the only place it is read.
 - **The lower branch of a chain does not rewrite history — neither `rebase` nor a force push.** The
   host closes the upper PR as merged once its diff goes empty. A lagging branch is fixed by merging
   main in.
@@ -143,26 +142,25 @@ flowchart TD
 - **A lagging column is found by the queue audit, not by eye.** It judges the column by the PR both
   ways: an open PR with the task not in review, and review with no open PR.
 - **A branch with an open PR lags behind its base silently.** The guard judges the base once, at
-  opening, and the run does not see what merged after either. The work queue audit counts the lag.
+  opening, and the run does not see what merged after. The work queue audit counts the lag.
 - **The link between a task and an epic is read by the audit both ways.** A one-sided binding looks
-  as whole as a two-sided one: the reader comes now from the epic plan, now from the card.
+  as whole as a two-sided one.
 - **Tasks fixed by one edit are merged before the merge.** The second is erased with its number, and
   the missing is added to the first: after the merge the branch went in whole.
-- **Work that one session cannot close is marked in two places, and they are audited.** The label on
-  the board and the sessions line in the epic plan say the same to two readers. Only what
-  legitimately does not split is marked.
+- **Work that one session cannot close is marked in two places, and they are audited.** The board
+  label and the sessions line in the epic plan say the same to two readers; only what legitimately
+  does not split is marked.
 - **The tip of an open PR without a run is seen by the work queue audit.** A page without a run
   looks the same as with a green one. The audit counts the fact of a run, not the colour.
 - **A PR whose base is not the main branch is checked by the same set as a PR into main.** The
   pipeline trigger reads the base, and an empty checks field reads as waiting in the queue. Asked
   before the first PR of an epic opens — pattern `git-workflow-stack`.
 - **A run pushed out of the pipeline queue gets a separate audit line.** It looks failed though it
-  never checked the branch; the step count tells them apart.
+  never checked the branch: the step count tells them apart.
 - **A draft with a green run on its tip is an audit discrepancy.** A green page permits nothing: the
-  host locks the button. Within a turn the guard closes this, between turns — the audit.
+  host locks the button.
 - **One's own drafts are judged all at once, not only the checked-out branch's.** Two signs — a
-  green run on the tip and a task folder taken apart in the branch; a folder still there means
-  ongoing work.
+  green run on the tip and a task folder taken apart; a folder still there means ongoing work.
 - **Opening a PR is refused while the branch carries its task folder.** Opening is the last point
   where the executor still sees the refusal.
 - **One's own open PRs are reread in three places: before a push, on taking a task and after every
@@ -194,9 +192,9 @@ flowchart TD
 - **The final set before a push is read from the state review, not assembled in the head.** The "set
   before push" section prints it whole and names what the default printed and the set did not take.
 - **An exclusion reason naming a task is judged on whether that task is alive.** A dead number
-  silently makes the exclusion perpetual. Asked by the same tier as the task state at the guard.
-- **The layout audit stands in the push gate set on a par with lint and the build.** An edit past
-  the source piles up silently, and the audit is not in the pipeline.
+  silently makes the exclusion perpetual.
+- **The layout audit stands in the push gate set on a par with lint and the build.** An edit past the
+  source piles up silently, and the audit is not in the pipeline.
 - **After merging the base in, the check set is revised by what the branch now carries.** Checking by
   what the author edited means checking half: the branch answers whole.
 - **The main branch is taken by the remote ref — in words and in actions.** The local one is
@@ -205,13 +203,16 @@ flowchart TD
   inbox and has no discussion, and the PR opens in the turn the executor says the work is handed
   over.
 - **What is not ready to merge opens as a draft — `gh pr create --draft`.** The host locks a draft's
-  merge button, so "put up for viewing" and "may be merged" stop looking alike. Everything waiting
-  for a run, a rework or an answer goes as a draft.
+  merge button: everything waiting for a run, a rework or an answer goes as a draft.
+- **A PR the pipeline does not wake for opens ready, without `--draft`.** Which bases it wakes for
+  is read from the pipeline file, not from memory: where no run comes, the draft waits for nothing
+  and costs a locked button and a second turn. The opening carries the answer for readiness, and
+  the reviewer is set in the same turn.
 - **The PR body is written in the turn the PR opens, and next to the sample.** A blank from the day
-  before diverges from the sample, and nobody reads a ready-looking text twice.
+  before diverges from it, and nobody reads a ready-looking text twice.
 - **The draft is lifted by a separate call — `gh pr ready <номер>`.** With it the executor answers
   for readiness: checks passed, no rework left, the work matches the task. Lifting the draft and
-  asking to merge are one turn.
+  asking to merge are one turn, and a PR opened ready needs no such call.
 - **The draft is not lifted from a branch that does not merge.** A green run says "not broken",
   mergeability says "the button can be pressed", and the owner needs the second. Asked from the
   host's `mergeable` field; a local merge does not derive it.
