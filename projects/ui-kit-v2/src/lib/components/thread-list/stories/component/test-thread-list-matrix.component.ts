@@ -41,67 +41,87 @@ const ROWS: readonly IThreadRow[] = [
     template: `
         @switch (part) {
             @case ('rowState') {
-                <div style="width: 22rem; height: 22rem">
-                    <rt-thread-list searchPlaceholder="Поиск" [rows]="rows" [activeId]="2">
-                        <ng-template rtThreadListRow let-row>
-                            <div style="display: grid; gap: 0.125rem">
-                                <strong>{{ row.title }}</strong>
-                                <span style="color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)">{{ row.meta }}</span>
-                            </div>
-                        </ng-template>
-                    </rt-thread-list>
-                </div>
-            }
-
-            @case ('loading') {
-                <app-story-row caption="Загрузка и догрузка" slotWidth="20rem" [items]="loadingCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <div style="height: 20rem">
-                            <rt-thread-list
-                                searchPlaceholder="Поиск"
-                                [rows]="item.empty ? none : rows"
-                                [loading]="item.loading"
-                                [fetching]="item.fetching">
+                <app-story-presets caption="Состояние строки в обоих наборах">
+                    <ng-template>
+                        <div style="width: 22rem; height: 22rem">
+                            <rt-thread-list searchPlaceholder="Поиск" [rows]="rows" [activeId]="2">
                                 <ng-template rtThreadListRow let-row>
                                     <div style="display: grid; gap: 0.125rem">
                                         <strong>{{ row.title }}</strong>
-                                        <span style="color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)">
-                                            {{ row.meta }}
-                                        </span>
+                                        <span style="color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)">{{ row.meta }}</span>
                                     </div>
                                 </ng-template>
                             </rt-thread-list>
                         </div>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
+            }
+
+            @case ('loading') {
+                <app-story-presets caption="Загрузка и догрузка в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="loadingCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <div style="height: 20rem">
+                                    <rt-thread-list
+                                        searchPlaceholder="Поиск"
+                                        [rows]="item.empty ? none : rows"
+                                        [loading]="item.loading"
+                                        [fetching]="item.fetching">
+                                        <ng-template rtThreadListRow let-row>
+                                            <div style="display: grid; gap: 0.125rem">
+                                                <strong>{{ row.title }}</strong>
+                                                <span style="color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)">
+                                                    {{ row.meta }}
+                                                </span>
+                                            </div>
+                                        </ng-template>
+                                    </rt-thread-list>
+                                </div>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
             }
 
             @case ('more') {
-                <app-story-row caption="Догрузка по требованию" slotWidth="20rem" [items]="moreCases" [itemLabel]="moreLabel">
-                    <ng-template let-value>
-                        <div style="height: 20rem">
-                            <rt-thread-list searchPlaceholder="Поиск" [rows]="rows" [hasMore]="value">
-                                <ng-template rtThreadListRow let-row>
-                                    <strong>{{ row.title }}</strong>
-                                </ng-template>
-                            </rt-thread-list>
-                        </div>
+                <app-story-presets caption="Догрузка по требованию в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="moreCases" [itemLabel]="moreLabel">
+                            <ng-template let-value>
+                                <div style="height: 20rem">
+                                    <rt-thread-list searchPlaceholder="Поиск" [rows]="rows" [hasMore]="value">
+                                        <ng-template rtThreadListRow let-row>
+                                            <strong>{{ row.title }}</strong>
+                                        </ng-template>
+                                    </rt-thread-list>
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('empty') {
-                <app-story-row caption="Пустой список" slotWidth="20rem" [items]="emptyCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <div style="height: 20rem">
-                            <rt-thread-list searchPlaceholder="Поиск" [rows]="none" [emptyText]="item.text" [filtersActive]="item.filters">
-                                <ng-template rtThreadListRow let-row>
-                                    <strong>{{ row.title }}</strong>
-                                </ng-template>
-                            </rt-thread-list>
-                        </div>
+                <app-story-presets caption="Пустой список в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="emptyCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <div style="height: 20rem">
+                                    <rt-thread-list
+                                        searchPlaceholder="Поиск"
+                                        [rows]="none"
+                                        [emptyText]="item.text"
+                                        [filtersActive]="item.filters">
+                                        <ng-template rtThreadListRow let-row>
+                                            <strong>{{ row.title }}</strong>
+                                        </ng-template>
+                                    </rt-thread-list>
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -124,22 +144,26 @@ const ROWS: readonly IThreadRow[] = [
             }
 
             @case ('themes') {
-                <app-story-themes caption="Список в обеих темах">
+                <app-story-presets caption="Список в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 20rem; height: 20rem">
-                            <rt-thread-list searchPlaceholder="Поиск" [rows]="rows" [activeId]="2">
-                                <ng-template rtThreadListRow let-row>
-                                    <div style="display: grid; gap: 0.125rem">
-                                        <strong>{{ row.title }}</strong>
-                                        <span style="color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)">
-                                            {{ row.meta }}
-                                        </span>
-                                    </div>
-                                </ng-template>
-                            </rt-thread-list>
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 20rem; height: 20rem">
+                                    <rt-thread-list searchPlaceholder="Поиск" [rows]="rows" [activeId]="2">
+                                        <ng-template rtThreadListRow let-row>
+                                            <div style="display: grid; gap: 0.125rem">
+                                                <strong>{{ row.title }}</strong>
+                                                <span style="color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)">
+                                                    {{ row.meta }}
+                                                </span>
+                                            </div>
+                                        </ng-template>
+                                    </rt-thread-list>
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,
