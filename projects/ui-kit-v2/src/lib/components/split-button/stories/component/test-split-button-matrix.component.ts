@@ -35,37 +35,49 @@ interface ISplitButtonStateCase {
     template: `
         @switch (part) {
             @case ('theme') {
-                <app-story-row caption="Палитра" [items]="themes">
-                    <ng-template let-theme>
-                        <rt-split-button label="Сохранить" [theme]="theme" [menuItems]="menuItems" />
+                <app-story-presets caption="Палитра в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="themes">
+                            <ng-template let-theme>
+                                <rt-split-button label="Сохранить" [theme]="theme" [menuItems]="menuItems" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('size') {
-                <app-story-row caption="Размер" [items]="sizes">
-                    <ng-template let-size>
-                        <rt-split-button label="Сохранить" [size]="size" [menuItems]="menuItems" />
+                <app-story-presets caption="Размер в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="sizes">
+                            <ng-template let-size>
+                                <rt-split-button label="Сохранить" [size]="size" [menuItems]="menuItems" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Взаимодействие" [items]="states" [itemLabel]="stateLabel">
-                    <ng-template let-state>
-                        <rt-split-button label="Сохранить" [menuItems]="menuItems" [attr.data-story-state]="state.state" />
-                    </ng-template>
-                </app-story-row>
+                <app-story-presets caption="Взаимодействие в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="states" [itemLabel]="stateLabel">
+                            <ng-template let-state>
+                                <rt-split-button label="Сохранить" [menuItems]="menuItems" [attr.data-story-state]="state.state" />
+                            </ng-template>
+                        </app-story-row>
 
-                <app-story-row caption="Загрузка и недоступность" [items]="stateCases" [itemLabel]="caseLabel">
-                    <ng-template let-stateCase>
-                        <rt-split-button
-                            label="Сохранить"
-                            [loading]="stateCase.loading"
-                            [disabled]="stateCase.disabled"
-                            [menuItems]="menuItems" />
+                        <app-story-row caption="Загрузка и недоступность" [items]="stateCases" [itemLabel]="caseLabel">
+                            <ng-template let-stateCase>
+                                <rt-split-button
+                                    label="Сохранить"
+                                    [loading]="stateCase.loading"
+                                    [disabled]="stateCase.disabled"
+                                    [menuItems]="menuItems" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -79,13 +91,17 @@ interface ISplitButtonStateCase {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Кнопка в обеих темах">
+                <app-story-presets caption="Кнопка в обеих темах и обоих наборах">
                     <ng-template>
-                        <rt-split-button label="Сохранить" [menuItems]="menuItems" />
-                        <rt-split-button label="Удалить" theme="danger" [menuItems]="menuItems" />
-                        <rt-split-button label="Сохранение…" [loading]="true" [menuItems]="menuItems" />
+                        <app-story-themes>
+                            <ng-template>
+                                <rt-split-button label="Сохранить" [menuItems]="menuItems" />
+                                <rt-split-button label="Удалить" theme="danger" [menuItems]="menuItems" />
+                                <rt-split-button label="Сохранение…" [loading]="true" [menuItems]="menuItems" />
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
 
             @case ('panel') {
