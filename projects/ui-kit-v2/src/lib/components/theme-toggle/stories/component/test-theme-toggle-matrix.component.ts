@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { RtThemeToggleComponent } from '../../rt-theme-toggle.component';
 import { IRtThemeToggle } from '../../rt-theme-toggle.model';
@@ -21,11 +22,15 @@ export type TThemeToggleMatrixPart = 'appearance';
     template: `
         @switch (part) {
             @case ('appearance') {
-                <app-story-row caption="Вид" [items]="appearances">
-                    <ng-template let-appearance>
-                        <rt-theme-toggle [appearance]="appearance" />
+                <app-story-presets caption="Вид в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="appearances">
+                            <ng-template let-appearance>
+                                <rt-theme-toggle [appearance]="appearance" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
 
                 <p class="app-theme-toggle-matrix__note">
                     Оба вида ходят в одну службу: переключите любой — второй переедет следом, а вместе с ними и вся витрина. Иконка
@@ -50,6 +55,8 @@ export type TThemeToggleMatrixPart = 'appearance';
         RtThemeToggleComponent,
 
         // showcase
+
+        StoryPresetsComponent,
         StoryRowComponent,
     ],
 })
