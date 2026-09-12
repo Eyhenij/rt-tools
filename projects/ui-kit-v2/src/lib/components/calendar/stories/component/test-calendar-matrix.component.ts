@@ -25,57 +25,81 @@ export type TCalendarMatrixPart = 'dayState' | 'range' | 'months' | 'nav' | 'sub
     template: `
         @switch (part) {
             @case ('dayState') {
-                <app-story-row caption="Состояние дня" slotWidth="20rem" [items]="dayStateMonths" [itemLabel]="monthLabel">
-                    <ng-template let-item>
-                        <rt-calendar [months]="[item]" [weekdayLabels]="weekdays" />
+                <app-story-presets caption="Состояние дня в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="dayStateMonths" [itemLabel]="monthLabel">
+                            <ng-template let-item>
+                                <rt-calendar [months]="[item]" [weekdayLabels]="weekdays" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('range') {
-                <app-story-row caption="Отрезок дат" slotWidth="20rem" [items]="rangeMonths" [itemLabel]="monthLabel">
-                    <ng-template let-item>
-                        <rt-calendar [months]="[item]" [weekdayLabels]="weekdays" />
+                <app-story-presets caption="Отрезок дат в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="rangeMonths" [itemLabel]="monthLabel">
+                            <ng-template let-item>
+                                <rt-calendar [months]="[item]" [weekdayLabels]="weekdays" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('months') {
-                <app-story-row caption="Сколько месяцев показано" [items]="monthCounts" [itemLabel]="countLabel">
-                    <ng-template let-count>
-                        <rt-calendar [months]="threeMonths.slice(0, count)" [weekdayLabels]="weekdays" />
+                <app-story-presets caption="Сколько месяцев показано в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="monthCounts" [itemLabel]="countLabel">
+                            <ng-template let-count>
+                                <rt-calendar [months]="threeMonths.slice(0, count)" [weekdayLabels]="weekdays" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('nav') {
-                <app-story-row caption="Стрелки месяцев" slotWidth="20rem" [items]="navCases" [itemLabel]="navLabel">
-                    <ng-template let-item>
-                        <rt-calendar
-                            prevAriaLabel="Предыдущий месяц"
-                            nextAriaLabel="Следующий месяц"
-                            [months]="[plainMonth]"
-                            [weekdayLabels]="weekdays"
-                            [canPrev]="item.prev"
-                            [canNext]="item.next" />
+                <app-story-presets caption="Стрелки месяцев в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="navCases" [itemLabel]="navLabel">
+                            <ng-template let-item>
+                                <rt-calendar
+                                    prevAriaLabel="Предыдущий месяц"
+                                    nextAriaLabel="Следующий месяц"
+                                    [months]="[plainMonth]"
+                                    [weekdayLabels]="weekdays"
+                                    [canPrev]="item.prev"
+                                    [canNext]="item.next" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('sublabels') {
-                <app-story-row caption="Подписи под числами" slotWidth="20rem" [items]="sublabelCases" [itemLabel]="sublabelLabel">
-                    <ng-template let-value>
-                        <rt-calendar [months]="[pricedMonth]" [weekdayLabels]="weekdays" [sublabelsLoading]="value" />
+                <app-story-presets caption="Подписи под числами в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="sublabelCases" [itemLabel]="sublabelLabel">
+                            <ng-template let-value>
+                                <rt-calendar [months]="[pricedMonth]" [weekdayLabels]="weekdays" [sublabelsLoading]="value" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('edges') {
-                <app-story-row caption="Края" slotWidth="20rem" [items]="edgeMonths" [itemLabel]="monthLabel">
-                    <ng-template let-item>
-                        <rt-calendar [months]="item === null ? [] : [item]" [weekdayLabels]="weekdays" />
+                <app-story-presets caption="Края в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="edgeMonths" [itemLabel]="monthLabel">
+                            <ng-template let-item>
+                                <rt-calendar [months]="item === null ? [] : [item]" [weekdayLabels]="weekdays" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -89,13 +113,17 @@ export type TCalendarMatrixPart = 'dayState' | 'range' | 'months' | 'nav' | 'sub
             }
 
             @case ('themes') {
-                <app-story-themes caption="Календарь в обеих темах">
+                <app-story-presets caption="Календарь в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 20rem">
-                            <rt-calendar [months]="[mixedMonth]" [weekdayLabels]="weekdays" />
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 20rem">
+                                    <rt-calendar [months]="[mixedMonth]" [weekdayLabels]="weekdays" />
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

@@ -46,47 +46,59 @@ function count(value: number): FormControl<number> {
     template: `
         @switch (part) {
             @case ('anatomy') {
-                <app-story-row caption="Анатомия" [items]="anatomyCases" [itemLabel]="caseLabel" [slotWidth]="rowWidth">
-                    <ng-template let-anatomyCase>
-                        <div class="app-counter-row-matrix__box">
-                            <rt-counter-row [label]="anatomyCase.label" [hint]="anatomyCase.hint">
-                                <rt-counter [ariaLabel]="anatomyCase.label" [formControl]="anatomyCase.control" />
-                            </rt-counter-row>
-                        </div>
+                <app-story-presets caption="Анатомия в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="anatomyCases" [itemLabel]="caseLabel" [slotWidth]="rowWidth">
+                            <ng-template let-anatomyCase>
+                                <div class="app-counter-row-matrix__box">
+                                    <rt-counter-row [label]="anatomyCase.label" [hint]="anatomyCase.hint">
+                                        <rt-counter [ariaLabel]="anatomyCase.label" [formControl]="anatomyCase.control" />
+                                    </rt-counter-row>
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('content') {
-                <app-story-row caption="Что кладут внутрь" [items]="contentNames" [slotWidth]="rowWidth">
-                    <ng-template let-contentName>
-                        <div class="app-counter-row-matrix__box">
-                            @if (contentName === 'тумблер') {
-                                <rt-counter-row label="Уведомления" hint="Письма о новых заявках">
-                                    <rt-toggle-switch ariaLabel="Уведомления" [formControl]="notify" />
-                                </rt-counter-row>
-                            } @else {
-                                <rt-counter-row label="Гостей" hint="Не больше четырёх">
-                                    <rt-counter ariaLabel="Гостей" [min]="1" [max]="4" [formControl]="guests" />
-                                </rt-counter-row>
-                            }
-                        </div>
+                <app-story-presets caption="Что кладут внутрь в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="contentNames" [slotWidth]="rowWidth">
+                            <ng-template let-contentName>
+                                <div class="app-counter-row-matrix__box">
+                                    @if (contentName === 'тумблер') {
+                                        <rt-counter-row label="Уведомления" hint="Письма о новых заявках">
+                                            <rt-toggle-switch ariaLabel="Уведомления" [formControl]="notify" />
+                                        </rt-counter-row>
+                                    } @else {
+                                        <rt-counter-row label="Гостей" hint="Не больше четырёх">
+                                            <rt-counter ariaLabel="Гостей" [min]="1" [max]="4" [formControl]="guests" />
+                                        </rt-counter-row>
+                                    }
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('list') {
-                <app-story-row caption="Список подряд" [items]="listNames" [slotWidth]="rowWidth">
+                <app-story-presets caption="Список подряд в обоих наборах">
                     <ng-template>
-                        <div class="app-counter-row-matrix__box">
-                            @for (item of listItems; track item.label) {
-                                <rt-counter-row [label]="item.label" [hint]="item.hint">
-                                    <rt-counter [ariaLabel]="item.label" [min]="item.min" [formControl]="item.control" />
-                                </rt-counter-row>
-                            }
-                        </div>
+                        <app-story-row [items]="listNames" [slotWidth]="rowWidth">
+                            <ng-template>
+                                <div class="app-counter-row-matrix__box">
+                                    @for (item of listItems; track item.label) {
+                                        <rt-counter-row [label]="item.label" [hint]="item.hint">
+                                            <rt-counter [ariaLabel]="item.label" [min]="item.min" [formControl]="item.control" />
+                                        </rt-counter-row>
+                                    }
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -102,15 +114,19 @@ function count(value: number): FormControl<number> {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Список в обеих темах">
+                <app-story-presets caption="Список в обеих темах в обоих наборах">
                     <ng-template>
-                        @for (item of listItems; track item.label) {
-                            <rt-counter-row [label]="item.label" [hint]="item.hint">
-                                <rt-counter [ariaLabel]="item.label" [min]="item.min" [formControl]="item.control" />
-                            </rt-counter-row>
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (item of listItems; track item.label) {
+                                    <rt-counter-row [label]="item.label" [hint]="item.hint">
+                                        <rt-counter [ariaLabel]="item.label" [min]="item.min" [formControl]="item.control" />
+                                    </rt-counter-row>
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

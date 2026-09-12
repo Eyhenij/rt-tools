@@ -46,3 +46,53 @@
 - Не затронуто 14 семейств: полоса прокрутки, логотип, скелетон и его обёртка, область текста,
   переключатель, разница значений, список подробностей, колокольчик, просмотрщик фото, текстовый
   редактор — и три семейства группы кнопок, у которых пара уже стоит
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-2057-presets-across-families
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 2 of 3 — обёртка по волнам
+- **Next step:** вторая волна обёртки — следующие семейства из списка затронутых
+- **PR:** ещё не открыт
+
+The progress in full — `docs/tasks/RT-2057-presets-across-families/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+none
+```
+
+### Commits over the main branch
+
+```
+36e35a8c1 feat(rt:ui-kit-v2): пять семейств форм показывают оба набора оформления
+c181f4c80 docs(rt:ui-kit-v2): план RT-2057 написан, счёт по семействам сделан
+816b14059 docs: папка задачи RT-2074 убрана из чужой ветки
+c14928bb7 docs(rt:ui-kit-v2): заведена папка задачи RT-2057
+778bcfdce Merge remote-tracking branch 'origin/main' into RT-1870-one-kit
+346109a2e [RT-2046] Вся группа кнопок показывает свой набор оформления и материальный (#2060)
+f94c17b8b docs(rt:ui-kit-v2): правило проверки называет, с какой витрины снимается эталон
+44c923e10 test(rt:ui-kit-v2): эталоны переписки сняты с той же витрины, какую поднимает гард
+19d8b8373 Merge branch RT-1870-one-kit into RT-2046-button-presets-everywhere
+b74d682bc [RT-2021] Шесть компонентов получили свой показ, а проверка покрытия — счёт по компонентам (#2050)
+2fe74fc31 Merge branch RT-1870-one-kit into RT-2046-button-presets-everywhere
+0cfc02ae3 Merge branch RT-1870-one-kit into RT-2021-storyless-components
+ce40cf486 Merge branch main into RT-1870-one-kit
+9c3ae7138 docs(rt:ui-kit-v2): папка задачи RT-2046 разобрана
+8d45f705e feat(rt:ui-kit-v2): вся группа кнопок показывает свой набор оформления и материальный
+f7f796c61 docs(rt:ui-kit-v2): правило показа называет, когда пара наборов оборачивает матрицу
+2627d9bb5 test(rt:ui-kit-v2): восемь эталонов переписки сняты после осмотра пар кадров
+a52266a58 feat(rt:ui-kit-v2): все истории кнопок показывают свой набор оформления и материальный
+5ad0010e6 Merge branch 'RT-1870-one-kit' into RT-2046-button-presets-everywhere
+bdd133668 Merge remote-tracking branch 'origin/RT-1870-one-kit' into RT-1870-one-kit
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
