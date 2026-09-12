@@ -32,56 +32,72 @@ interface ICardHeaderCase {
     template: `
         @switch (part) {
             @case ('header') {
-                <app-story-row caption="Заголовок" slotWidth="16rem" [items]="headers" [itemLabel]="headerLabel">
-                    <ng-template let-item>
-                        <rt-card [header]="item.header">Договор №2024-118 от 14 марта</rt-card>
+                <app-story-presets caption="Заголовок в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="16rem" [items]="headers" [itemLabel]="headerLabel">
+                            <ng-template let-item>
+                                <rt-card [header]="item.header">Договор №2024-118 от 14 марта</rt-card>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('slots') {
-                <app-story-row caption="Наполнение" slotWidth="16rem" [items]="slots">
-                    <ng-template let-slot>
-                        @switch (slot) {
-                            @case ('только содержимое') {
-                                <rt-card>Договор №2024-118 от 14 марта</rt-card>
-                            }
-                            @case ('заголовок входом') {
-                                <rt-card header="Договор">Подписан 14 марта</rt-card>
-                            }
-                            @case ('шапка проекцией') {
-                                <rt-card>
-                                    <span rtCardHeader>Договор №2024-118</span>
-                                    Подписан 14 марта
-                                </rt-card>
-                            }
-                            @case ('с подвалом') {
-                                <rt-card header="Договор">
-                                    Подписан 14 марта
-                                    <span rtCardFooter>Действует до 14 марта 2027</span>
-                                </rt-card>
-                            }
-                        }
+                <app-story-presets caption="Наполнение в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="16rem" [items]="slots">
+                            <ng-template let-slot>
+                                @switch (slot) {
+                                    @case ('только содержимое') {
+                                        <rt-card>Договор №2024-118 от 14 марта</rt-card>
+                                    }
+                                    @case ('заголовок входом') {
+                                        <rt-card header="Договор">Подписан 14 марта</rt-card>
+                                    }
+                                    @case ('шапка проекцией') {
+                                        <rt-card>
+                                            <span rtCardHeader>Договор №2024-118</span>
+                                            Подписан 14 марта
+                                        </rt-card>
+                                    }
+                                    @case ('с подвалом') {
+                                        <rt-card header="Договор">
+                                            Подписан 14 марта
+                                            <span rtCardFooter>Действует до 14 марта 2027</span>
+                                        </rt-card>
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('clickable') {
-                <app-story-row caption="Нажимаемость" slotWidth="16rem" [items]="clickables" [itemLabel]="clickableLabel">
-                    <ng-template let-value>
-                        <rt-card header="Договор" ariaLabel="Открыть договор" [clickable]="value">Подписан 14 марта</rt-card>
+                <app-story-presets caption="Нажимаемость в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="16rem" [items]="clickables" [itemLabel]="clickableLabel">
+                            <ng-template let-value>
+                                <rt-card header="Договор" ariaLabel="Открыть договор" [clickable]="value">Подписан 14 марта</rt-card>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Взаимодействие — только у нажимаемой" slotWidth="16rem" [items]="states" [itemLabel]="stateLabel">
-                    <ng-template let-state>
-                        <rt-card clickable header="Договор" ariaLabel="Открыть договор" [attr.data-story-state]="state.state">
-                            Подписан 14 марта
-                        </rt-card>
+                <app-story-presets caption="Взаимодействие — только у нажимаемой в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="16rem" [items]="states" [itemLabel]="stateLabel">
+                            <ng-template let-state>
+                                <rt-card clickable header="Договор" ariaLabel="Открыть договор" [attr.data-story-state]="state.state">
+                                    Подписан 14 марта
+                                </rt-card>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -98,16 +114,20 @@ interface ICardHeaderCase {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Карточка в обеих темах">
+                <app-story-presets caption="Карточка в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 16rem">
-                            <rt-card header="Договор">
-                                Подписан 14 марта
-                                <span rtCardFooter>Действует до 14 марта 2027</span>
-                            </rt-card>
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 16rem">
+                                    <rt-card header="Договор">
+                                        Подписан 14 марта
+                                        <span rtCardFooter>Действует до 14 марта 2027</span>
+                                    </rt-card>
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

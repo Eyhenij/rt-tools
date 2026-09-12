@@ -35,39 +35,51 @@ const LONG_CODE: string = '```\ndocker compose -f docker-compose.prod.yml --env-
     template: `
         @switch (part) {
             @case ('blocks') {
-                <app-story-row caption="Блоки разметки" slotWidth="20rem" [items]="blocks" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-markdown-text [text]="item.text" />
+                <app-story-presets caption="Блоки разметки в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="blocks" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-markdown-text [text]="item.text" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('inline') {
-                <app-story-row caption="Разметка внутри строки" slotWidth="20rem" [items]="inlines" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-markdown-text [text]="item.text" />
+                <app-story-presets caption="Разметка внутри строки в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="inlines" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-markdown-text [text]="item.text" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('outside') {
-                <app-story-row
-                    caption="Того, чего в перечне нет, видно текстом"
-                    slotWidth="20rem"
-                    [items]="outside"
-                    [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-markdown-text [text]="item.text" />
+                <app-story-presets caption="Того, чего в перечне нет, видно текстом в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="outside" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-markdown-text [text]="item.text" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('edges') {
-                <app-story-row caption="Края" slotWidth="20rem" [items]="edges" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-markdown-text [text]="item.text" />
+                <app-story-presets caption="Края в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="edges" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-markdown-text [text]="item.text" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -81,13 +93,17 @@ const LONG_CODE: string = '```\ndocker compose -f docker-compose.prod.yml --env-
             }
 
             @case ('themes') {
-                <app-story-themes caption="Разметка в обеих темах">
+                <app-story-presets caption="Разметка в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 20rem">
-                            <rt-markdown-text [text]="wholeText" />
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 20rem">
+                                    <rt-markdown-text [text]="wholeText" />
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,
