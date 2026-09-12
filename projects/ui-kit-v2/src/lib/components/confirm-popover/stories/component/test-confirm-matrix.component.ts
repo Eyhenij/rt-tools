@@ -41,28 +41,36 @@ interface IConfirmContentCase {
     template: `
         @switch (part) {
             @case ('tone') {
-                <app-story-row caption="Тон подтверждения" [items]="toneCases" [itemLabel]="caseLabel" [slotWidth]="panelWidth">
-                    <ng-template let-toneCase>
-                        <rt-confirm-popover
-                            title="Удаление"
-                            message="Удалить запись? Действие необратимо."
-                            confirmLabel="Удалить"
-                            cancelLabel="Отмена"
-                            [tone]="toneCase.tone" />
+                <app-story-presets caption="Тон подтверждения в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="toneCases" [itemLabel]="caseLabel" [slotWidth]="panelWidth">
+                            <ng-template let-toneCase>
+                                <rt-confirm-popover
+                                    title="Удаление"
+                                    message="Удалить запись? Действие необратимо."
+                                    confirmLabel="Удалить"
+                                    cancelLabel="Отмена"
+                                    [tone]="toneCase.tone" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('content') {
-                <app-story-row caption="Наполнение панели" [items]="contentCases" [itemLabel]="caseLabel" [slotWidth]="panelWidth">
-                    <ng-template let-contentCase>
-                        <rt-confirm-popover
-                            confirmLabel="Удалить"
-                            cancelLabel="Отмена"
-                            [title]="contentCase.title"
-                            [message]="contentCase.message" />
+                <app-story-presets caption="Наполнение панели в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="contentCases" [itemLabel]="caseLabel" [slotWidth]="panelWidth">
+                            <ng-template let-contentCase>
+                                <rt-confirm-popover
+                                    confirmLabel="Удалить"
+                                    cancelLabel="Отмена"
+                                    [title]="contentCase.title"
+                                    [message]="contentCase.message" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -78,15 +86,19 @@ interface IConfirmContentCase {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Панель в обеих темах">
+                <app-story-presets caption="Панель в обеих темах в обоих наборах">
                     <ng-template>
-                        <rt-confirm-popover
-                            title="Удаление"
-                            message="Удалить запись? Действие необратимо."
-                            confirmLabel="Удалить"
-                            cancelLabel="Отмена" />
+                        <app-story-themes>
+                            <ng-template>
+                                <rt-confirm-popover
+                                    title="Удаление"
+                                    message="Удалить запись? Действие необратимо."
+                                    confirmLabel="Удалить"
+                                    cancelLabel="Отмена" />
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
 
             @case ('panel') {
