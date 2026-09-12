@@ -70,6 +70,13 @@ as an attachment.
   area of the frame: in a page where a grid takes a small share, a cell that went wrong passes silently.
   The area of the frame decides that more surely than a picking of a number.
 
+- **The frame takes the span of what is drawn, not the box of the root of the show.** A shot by the node
+  cuts exactly the border box, so a cell standing out of the grid leaves the frame in silence — alike in
+  both halves of a pair, which reads as intended. The span is measured to the edges of what is drawn and
+  cut by every ancestor that scrolls or hides its overflow: what the browser itself does not draw has no
+  business in the frame either. A width the story named as a threshold is never widened for the span —
+  there the widening replaces the very side of the threshold the story asked to check.
+
 - **Any frame beyond the bounds of the window is shot by a window widened to it, not by a shooting past
   those bounds.** A shooting past the bounds of the window not only shoots the page but touches it: the
   browser substitutes the window for the time of the frame, the page gets a `resize`, and what is counted

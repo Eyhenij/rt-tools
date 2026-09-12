@@ -86,17 +86,14 @@ Four checks do not replace one another, and the choice between them is not a mat
   itself; an indirect sign is taken only when there is no direct one, and then it is named together
   with what it does not cover.
 - **An arrived resource and the component that noticed it are not the same, and both are waited
-  for.** The font came up, while the icon component learns of it by its own signal and keeps itself
-  invisible until the redraw: between the two lies a whole race, and the frame lands in it. A wait
-  that knows only the cause lets the shot go into that gap; a wait that knows only the consequence
-  stays silent where there was no cause at all. Both are waited for, and each with its own refusal —
-  by it one sees at once where the breakage is: in the serving of the resource or in the component
-  that did not notice it.
+  for.** The font came up, while the icon component learns of it by its own signal and stays
+  invisible until the redraw: between the two lies a race, and the frame lands in it. A wait knowing
+  only the cause shoots into that gap; one knowing only the consequence stays silent where there was
+  no cause. Each gets its own refusal, and it names which half broke.
 - **A settled layout is not yet a drawn page, and the frame is taken after two in a row match.** The
-  harness can wait for the sizes, the fonts, the network's silence and finished animations, and the
-  frame still diverges by sub-pixel halos on the labels at the same geometry to the hundredth: the
-  rasterisation differs there, and the browser gives no "the page is drawn" event at all. Two
-  identical frames in a row say the same thing and are checked directly.
+  harness can wait for sizes, fonts, silence and finished animations, and the frame still diverges by
+  sub-pixel halos at the same geometry: the rasterisation differs, and the browser gives no "the page
+  is drawn" event at all.
 - **A settled page and a drawn page are different, and the frame waits for the second.** An
   animation frame's handler runs **before** the drawing, so a wait spinning such a cycle lets the
   shot go into the gap between "the layout settled" and "the frame was drawn". A frame taken in that
@@ -178,6 +175,9 @@ Four checks do not replace one another, and the choice between them is not a mat
 - **A reference is taken from the same showcase the gate raises.** The tree assembles two, and at
   one markup their raster differs by a point or two. From the wrong one a reference comes out green
   here and red at the gate.
+- **A frame is taken by the drawn span, not by the node's box.** A node shot clips the border box:
+  a cell sticking out of the grid is cut in silence, alike in both halves of a pair. The span is
+  clipped by whatever scrolls, and the window grows to its edges — never to a pinned width.
 - **A one-off check script does not travel into the repository.** It lives in a temporary directory:
   it is the proof of one edit, not a check of the tree. A check that will be called on the next wave
   too is no one-off script: its place is next to the snapshot runner, as a separate command.
