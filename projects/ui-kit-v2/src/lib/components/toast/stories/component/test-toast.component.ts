@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtToastComponent } from '../../rt-toast.component';
 import { IRtToaster } from '../../rt-toaster.model';
 
@@ -11,22 +12,29 @@ import { IRtToaster } from '../../rt-toaster.model';
 @Component({
     selector: 'app-toast',
     template: `
-        <rt-toast
-            [toast]="toast"
-            [index]="index"
-            [totalToasts]="totalToasts"
-            [heights]="heights"
-            [expanded]="expanded"
-            [expandByDefault]="expandByDefault"
-            [interacting]="interacting"
-            [position]="position"
-            [visibleToasts]="visibleToasts"
-            [duration]="duration" />
+        <app-story-presets caption="Всплывающее сообщение в обоих наборах">
+            <ng-template>
+                <rt-toast
+                    [toast]="toast"
+                    [index]="index"
+                    [totalToasts]="totalToasts"
+                    [heights]="heights"
+                    [expanded]="expanded"
+                    [expandByDefault]="expandByDefault"
+                    [interacting]="interacting"
+                    [position]="position"
+                    [visibleToasts]="visibleToasts"
+                    [duration]="duration" />
+            </ng-template>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtToastComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtToastComponent {

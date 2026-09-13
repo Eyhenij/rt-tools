@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { STORY_DRAG_ATTRIBUTE } from '../../../../../showcase/story-drag';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtFileDropComponent } from '../../rt-file-drop.component';
 import { IRtFileDrop } from '../../rt-file-drop.model';
 
@@ -19,14 +20,18 @@ import { IRtFileDrop } from '../../rt-file-drop.model';
 @Component({
     selector: 'app-file-drop',
     template: `
-        <rt-file-drop
-            [disabled]="disabled"
-            [overlayLabel]="overlayLabel"
-            [zones]="zones"
-            [accept]="accept"
-            [attr.data-story-drag]="dragAttribute">
-            <div class="app-file-drop__content">Перетащите сюда файл</div>
-        </rt-file-drop>
+        <app-story-presets fill caption="Приём файлов в обоих наборах">
+            <ng-template>
+                <rt-file-drop
+                    [disabled]="disabled"
+                    [overlayLabel]="overlayLabel"
+                    [zones]="zones"
+                    [accept]="accept"
+                    [attr.data-story-drag]="dragAttribute">
+                    <div class="app-file-drop__content">Перетащите сюда файл</div>
+                </rt-file-drop>
+            </ng-template>
+        </app-story-presets>
     `,
     styles: `
         /* Содержимое области — демонстрационное: сама область его только оборачивает. */
@@ -45,6 +50,9 @@ import { IRtFileDrop } from '../../rt-file-drop.model';
     imports: [
         // components
         RtFileDropComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtFileDropComponent {

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtChatComponent } from '../../rt-chat.component';
 import { IRtChat } from '../../rt-chat.model';
 import { TRtRichEditorToolbar } from '../../../rich-editor/rt-rich-editor.component';
@@ -12,30 +13,37 @@ import { TRtRichEditorToolbar } from '../../../rich-editor/rt-rich-editor.compon
 @Component({
     selector: 'app-chat',
     template: `
-        <rt-chat
-            [messages]="messages"
-            [loading]="loading"
-            [fetching]="fetching"
-            [canReply]="canReply"
-            [replyBlockReason]="replyBlockReason"
-            [sending]="sending"
-            [placeholder]="placeholder"
-            [title]="title"
-            [emptyHint]="emptyHint"
-            [hasThread]="hasThread"
-            [attachments]="attachments"
-            [accept]="accept"
-            [richComposer]="richComposer"
-            [formatting]="formatting"
-            [formattingToolbar]="formattingToolbar"
-            [fill]="fill"
-            [showRefresh]="showRefresh"
-            [showExpand]="showExpand" />
+        <app-story-presets fill caption="Переписка в обоих наборах">
+            <ng-template>
+                <rt-chat
+                    [messages]="messages"
+                    [loading]="loading"
+                    [fetching]="fetching"
+                    [canReply]="canReply"
+                    [replyBlockReason]="replyBlockReason"
+                    [sending]="sending"
+                    [placeholder]="placeholder"
+                    [title]="title"
+                    [emptyHint]="emptyHint"
+                    [hasThread]="hasThread"
+                    [attachments]="attachments"
+                    [accept]="accept"
+                    [richComposer]="richComposer"
+                    [formatting]="formatting"
+                    [formattingToolbar]="formattingToolbar"
+                    [fill]="fill"
+                    [showRefresh]="showRefresh"
+                    [showExpand]="showExpand" />
+            </ng-template>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtChatComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtChatComponent {

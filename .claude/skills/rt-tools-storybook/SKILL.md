@@ -51,6 +51,12 @@ A rule under the "Law on verifiability", the section about showing a visible sta
   lies outside its own box reports nothing to shrink by: the cells keep their place, the content
   slides onto the neighbour, and the frame is whole and green. The cure is the row's own cell width,
   not a threshold on the pair.
+- **A showing of one instance asks the pair for the width of its half.** Standing alone, such a
+  showing took the width of the page, and the half shrinks its content to its own width: the
+  pagination host measured eight points and drew the collapsed form instead of the numbers, the
+  header drew a stub of a hundred and sixty instead of a bar. It is asked by name, because the half
+  shrinks deliberately — a bare button stretched across it would look unlike the same button in the
+  matrix next door.
 - **A showing that gets no pair says why, in the markup next to it.** Two reasons are lawful: the
   second half doubles a listing and adds no sighting, or the showing carries the frame root itself
   and the pair would take it away. Left silent, such a showing is indistinguishable from one the

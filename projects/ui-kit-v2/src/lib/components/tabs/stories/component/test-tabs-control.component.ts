@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { RtTabDirective } from '../../rt-tab.directive';
 import { RtTabsControlDirective } from '../../rt-tabs-control.directive';
@@ -19,14 +20,18 @@ import { IRtTabs } from '../../rt-tabs.model';
 @Component({
     selector: 'app-tabs-control',
     template: `
-        <rt-tabs activeId="first">
-            <ng-template rtTab="first" label="Первая">Содержимое первой вкладки</ng-template>
-            <ng-template rtTab="second" label="Вторая">Содержимое второй вкладки</ng-template>
+        <app-story-presets fill caption="Полоса вкладок в обоих наборах">
+            <ng-template>
+                <rt-tabs activeId="first">
+                    <ng-template rtTab="first" label="Первая">Содержимое первой вкладки</ng-template>
+                    <ng-template rtTab="second" label="Вторая">Содержимое второй вкладки</ng-template>
 
-            <ng-template [rtTabsControl]="side">
-                <button rtButton type="button" theme="secondary" size="sm">Добавить</button>
+                    <ng-template [rtTabsControl]="side">
+                        <button rtButton type="button" theme="secondary" size="sm">Добавить</button>
+                    </ng-template>
+                </rt-tabs>
             </ng-template>
-        </rt-tabs>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -35,6 +40,9 @@ import { IRtTabs } from '../../rt-tabs.model';
         RtTabDirective,
         RtTabsControlDirective,
         RtButtonDirective,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtTabsControlComponent {
