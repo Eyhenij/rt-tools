@@ -57,10 +57,12 @@ A rule under the "Law on verifiability", the section about showing a visible sta
   header drew a stub of a hundred and sixty instead of a bar. It is asked by name, because the half
   shrinks deliberately — a bare button stretched across it would look unlike the same button in the
   matrix next door.
-- **A showing that gets no pair says why, in the markup next to it.** Two reasons are lawful: the
-  second half doubles a listing and adds no sighting, or the showing carries the frame root itself
-  and the pair would take it away. Left silent, such a showing is indistinguishable from one the
-  wave forgot.
+- **A showing that gets no pair says why, in the markup next to it.** Three reasons are lawful: the
+  second half doubles a listing and adds no sighting, the showing carries the frame root itself and
+  the pair would take it away, or the component is pinned to the window and leaves the half whole.
+  The last one costs both halves at once: they stay empty, and the two instances lie one over the
+  other outside the frame. Left silent, such a showing is indistinguishable from one the wave
+  forgot.
 - **A component whose height comes from the window is shown inside a box that clips.** The shot
   widens the window to what is drawn, and such a component grows with it: one frame came out seven
   thousand points tall under a box of two hundred and ninety. The box is the screen of the showing,
