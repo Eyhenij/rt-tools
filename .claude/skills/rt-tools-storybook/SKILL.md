@@ -63,6 +63,13 @@ A rule under the "Law on verifiability", the section about showing a visible sta
   The last one costs both halves at once: they stay empty, and the two instances lie one over the
   other outside the frame. Left silent, such a showing is indistinguishable from one the wave
   forgot.
+- **A component pinned to the window needs a box that is its containing block, and a relative box
+  is not one.** Such a component counts its place from the window whatever stands above it in the
+  markup: the sheet drew itself across the whole window and put its panel a point below the bottom
+  edge, while the box it was written into kept two points of width and one dashed line in the frame.
+  The box becomes a containing block by a property of its own, and the one chosen also clips — so it
+  replaces the box's clipping rather than standing next to it. Raising the node into a layer of its
+  own does the same and costs the rasterisation of every label in the frame.
 - **A component whose height comes from the window is shown inside a box that clips.** The shot
   widens the window to what is drawn, and such a component grows with it: one frame came out seven
   thousand points tall under a box of two hundred and ninety. The box is the screen of the showing,
