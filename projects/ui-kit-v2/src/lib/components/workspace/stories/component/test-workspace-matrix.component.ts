@@ -33,7 +33,7 @@ export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'presets' | '
                     <ng-template>
                         <app-story-row [items]="slotCases">
                             <ng-template let-slot>
-                                <div style="height: 18rem; border: 1px dashed var(--rt-color-border-subtle)">
+                                <div style="height: 18rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
                                     @switch (slot) {
                                         @case ('список и центр') {
                                             <rt-workspace>
@@ -78,7 +78,7 @@ export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'presets' | '
                     <ng-template>
                         <app-story-row [items]="activeCases" [itemLabel]="activeLabel">
                             <ng-template let-value>
-                                <div style="height: 18rem; border: 1px dashed var(--rt-color-border-subtle)">
+                                <div style="height: 18rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
                                     <rt-workspace [hasActive]="value">
                                         <ng-template rtWorkspaceList>
                                             <div style="padding: 0.5rem">Список переписок</div>
@@ -102,7 +102,7 @@ export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'presets' | '
                     <ng-template>
                         <app-story-row [items]="widthCases" [itemLabel]="widthLabel">
                             <ng-template let-item>
-                                <div style="height: 18rem; border: 1px dashed var(--rt-color-border-subtle)">
+                                <div style="height: 18rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
                                     <rt-workspace
                                         hasActive
                                         [listDefaultWidth]="item.list"
@@ -128,7 +128,7 @@ export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'presets' | '
             @case ('presets') {
                 <app-story-presets caption="Рабочий стол в обоих наборах">
                     <ng-template>
-                        <div style="height: 16rem; width: 30rem; border: 1px dashed var(--rt-color-border-subtle)">
+                        <div style="height: 16rem; width: 30rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
                             <rt-workspace hasActive>
                                 <ng-template rtWorkspaceList>
                                     <div style="padding: 0.5rem">Список</div>
@@ -150,7 +150,8 @@ export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'presets' | '
                     <ng-template>
                         <app-story-themes>
                             <ng-template>
-                                <div style="height: 16rem; width: 30rem; border: 1px dashed var(--rt-color-border-subtle)">
+                                <div
+                                    style="height: 16rem; width: 30rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
                                     <rt-workspace hasActive>
                                         <ng-template rtWorkspaceList>
                                             <div style="padding: 0.5rem">Список</div>

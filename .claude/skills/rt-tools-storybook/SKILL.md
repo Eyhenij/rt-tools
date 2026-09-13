@@ -55,6 +55,11 @@ A rule under the "Law on verifiability", the section about showing a visible sta
   second half doubles a listing and adds no sighting, or the showing carries the frame root itself
   and the pair would take it away. Left silent, such a showing is indistinguishable from one the
   wave forgot.
+- **A component whose height comes from the window is shown inside a box that clips.** The shot
+  widens the window to what is drawn, and such a component grows with it: one frame came out seven
+  thousand points tall under a box of two hundred and ninety. The box is the screen of the showing,
+  and its clipping is what makes it one; the component's own rule is not overridden — for an
+  application it is right.
 - **The grid is drawn by the shared showing harness, not by the markup of every story.**
   Otherwise the same thing is shown in seventy ways and diverges at the first edit.
 - **A provider without which the component does not come up stands in `preview.ts`, not as one
