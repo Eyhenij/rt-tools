@@ -4,6 +4,7 @@ import { ObservationRetentionService } from './observation-retention.service';
 import { ObservationsIntakeController } from './observations-intake.controller';
 import { SummariesReadController } from './summaries-read.controller';
 import { SummaryIntakeController } from './summary-intake.controller';
+import { UsageReadController } from './usage-read.controller';
 
 /**
  * Наблюдения дерева: сводка последнего прогона с записью месяца, которую она заводит, и строки
@@ -17,7 +18,7 @@ import { SummaryIntakeController } from './summary-intake.controller';
  * читались бы как одна поверхность с двумя дверьми.
  */
 @Module({
-    controllers: [SummaryIntakeController, ObservationsIntakeController, SummariesReadController],
+    controllers: [SummaryIntakeController, ObservationsIntakeController, SummariesReadController, UsageReadController],
     providers: [ObservationRetentionService],
 })
 export class ObservationsModule {}
