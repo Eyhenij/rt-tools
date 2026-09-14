@@ -82,6 +82,14 @@ A rule under the "Law on verifiability", the section about showing a visible sta
 - **The surface under such a component is the box too, when the component takes its background
   from the consumer.** Drawn on the page ground, it reads as loose parts rather than a component
   with a boundary, and no frame says where it ends. In the showing the consumer is the box.
+- **The width of a cell is measured again the day the component learns to shrink into it.** Until
+  then the component kept the width of its content and the number on the cell only fenced the
+  neighbours; with a declared fate for what does not fit it takes exactly that number, and one
+  chosen for the former behaviour leaves the text gone. In a cell of 272 the large card of a file
+  with three buttons drew the icon and the badge and no name at all — the frame is whole and green,
+  and the showing says nothing about what the component is for. The number comes from a measurement
+  of the widest cell of that matrix, not from one width for the whole family: a row of one button
+  and a row of three need different ones.
 - **A component whose height comes from the window is shown inside a box that clips.** The shot
   widens the window to what is drawn, and such a component grows with it: one frame came out seven
   thousand points tall under a box of two hundred and ninety. The box is the screen of the showing,

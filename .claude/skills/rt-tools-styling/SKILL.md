@@ -112,6 +112,22 @@ The sections below are this tree's articles: the law's technique is named by the
       declaration lives on the block itself and beats everything that came by inheritance from
       above.
 
+- **A query about the size of a box is asked of a box whose size does not come from its content.**
+  The sign that opens such a query also contains the element in both directions: an element whose
+  height comes from what the consumer put inside it collapses to nothing under it, and the frame
+  comes out empty rather than red. The host of a component that wraps the consumer's content is
+  therefore never the container; a part of the component sized by its own placement is — an overlay
+  pinned to the host by all four edges measures by the host whatever stands inside it.
+    - **A query does not reach the box of its own container, so the room around the inner part is
+      given to that part.** Written as a padding of the container, it stays at its full value while
+      everything the query reassigns has already shrunk — and on a low box the padding alone eats
+      all the room there was. The room moves onto the inner part as its own offset from the
+      container's edges, and then the query reaches it.
+    - **What the query reassigns is the component's own properties, not the rules themselves.** The
+      default of each is the step that stood in that place, so the look does not move by a pixel
+      where the query does not fire, and a diverged frame means the query fired where it should not
+      have.
+
 - **State outweighs styling.**
     - **The state block stands below every styling variant and palette of the same block.** Being
       disabled, loading and read-only cancel the fill, the outline and the label colour; the

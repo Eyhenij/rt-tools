@@ -1,6 +1,6 @@
 # Text that does not fit its place
 
-**Status:** proposed · **Revision:** 14 September 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 14 September 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** none
 **Laws:** `frontend-application`, `verifiability`
 **Procedures:** none
@@ -110,13 +110,20 @@ Not applicable.
   — the card is a row, and a grown line pushes the size badge onto the text. The title of the card
   already ends with an ellipsis.
 - **The hint over the area of dropping shrinks rather than clips.** Rejected: clipping at the box
-  border — a hint cut midword reads as a defect of the application.
+  border — a hint cut midword reads as a defect of the application. The clipping stays as a
+  backstop under the shrinking: without it the promise about the own box would hold by arithmetic
+  alone.
+- **The compact form is chosen by a query about the size of the box, and the container sign stands
+  on the overlay.** Rejected: the sign on the host of the component — its height comes from what
+  the consumer projected into it, and containment on both axes would collapse it to nothing.
+  Rejected: a measurement of the box in code — a second answer to a question the browser already
+  answers. The price of the chosen option is that the room between the frame and the edge of the
+  overlay had to move from a padding of the overlay onto the frame itself: a query does not reach
+  the box of its own container.
 
 ## Open questions
 
-- `Q-1` — by what the compact form of the hint is chosen. The work goes with the assumption that
-  the component reads the size of its own box; the technique is picked by a measurement at the
-  stage, and the answer lands here.
+None: `Q-1` closed with the third decision above.
 
 ## History of changes
 
