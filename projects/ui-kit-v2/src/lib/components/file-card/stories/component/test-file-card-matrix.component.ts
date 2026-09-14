@@ -37,7 +37,7 @@ interface IFileNameCase {
             @case ('size') {
                 <app-story-presets caption="Размер × набор действий в обоих наборах">
                     <ng-template>
-                        <app-story-grid slotWidth="17rem" [rows]="sizes" [columns]="actionSets">
+                        <app-story-grid slotWidth="24rem" [rows]="sizes" [columns]="actionSets">
                             <ng-template let-size let-actions="col">
                                 <rt-file-card
                                     name="договор-2024-118.pdf"
@@ -96,7 +96,7 @@ interface IFileNameCase {
             @case ('states') {
                 <app-story-presets caption="Взаимодействие в обоих наборах">
                     <ng-template>
-                        <app-story-row slotWidth="17rem" [items]="states" [itemLabel]="stateLabel">
+                        <app-story-row slotWidth="22rem" [items]="states" [itemLabel]="stateLabel">
                             <ng-template let-state>
                                 <rt-file-card
                                     showDownload
@@ -113,7 +113,7 @@ interface IFileNameCase {
             @case ('disabled') {
                 <app-story-presets caption="Отключение в обоих наборах">
                     <ng-template>
-                        <app-story-row slotWidth="17rem" [items]="disabledCases" [itemLabel]="disabledLabel">
+                        <app-story-row slotWidth="24rem" [items]="disabledCases" [itemLabel]="disabledLabel">
                             <ng-template let-value>
                                 <rt-file-card
                                     showDownload
@@ -131,7 +131,7 @@ interface IFileNameCase {
             @case ('presets') {
                 <app-story-presets caption="Карточка в обоих наборах">
                     <ng-template>
-                        <div style="width: 17rem">
+                        <div style="width: 22rem">
                             <rt-file-card showDownload showRemove name="договор-2024-118.pdf" [sizeBytes]="248000" />
                         </div>
                     </ng-template>
@@ -143,7 +143,7 @@ interface IFileNameCase {
                     <ng-template>
                         <app-story-themes>
                             <ng-template>
-                                <div style="width: 17rem">
+                                <div style="width: 22rem">
                                     <rt-file-card showDownload showRemove name="договор-2024-118.pdf" [sizeBytes]="248000" />
                                 </div>
                             </ng-template>

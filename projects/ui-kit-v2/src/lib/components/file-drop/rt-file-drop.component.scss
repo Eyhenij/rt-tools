@@ -9,6 +9,13 @@
         --rt-file-drop-border-width: var(--rt-border-width-thin);
         --rt-file-drop-transition-duration: var(--rt-duration-fast);
 
+        /* Отступы рамки-приглашения и кегль подписи: на низкой области их перебивает запрос
+           о размере коробки, написанный ниже. Значения по умолчанию — те, что стояли тут
+           прямыми шагами, так что вид не сдвинулся. */
+        --rt-file-drop-frame-inset: var(--rt-space-lg);
+        --rt-file-drop-frame-padding: var(--rt-space-md);
+        --rt-file-drop-label-size: var(--rt-text-lg);
+
         position: relative;
         display: block;
         height: 100%;
@@ -16,15 +23,26 @@
         &__overlay {
             position: absolute;
             z-index: 50;
+
+            /* Оверлей — единица измерения для запроса о размере коробки. Признак стоит на нём,
+               а не на host'е: у host'а высота приходит от содержимого, и containment по обеим
+               осям схлопнул бы её в ноль. Оверлей же всегда меряется по host'у — размер у него
+               определён независимо от того, что внутри. Своих отступов у него поэтому нет:
+               запрос не достаёт до собственной коробки контейнера, и зазор рамки задан ей
+               самой. */
             display: flex;
+
+            /* Кит не рисует за пределами своей коробки: подпись, которой не хватило места даже
+               в сжатом виде, обрезается здесь, а не ложится на соседа потребителя. */
+            overflow: hidden;
             align-items: center;
             justify-content: center;
-            padding: var(--rt-space-lg);
             border-radius: var(--rt-file-drop-radius);
             /* stylelint-disable-next-line property-no-vendor-prefix -- Safari < 18 */
             -webkit-backdrop-filter: blur(4px);
             backdrop-filter: blur(4px);
             background: rgb(0 0 0 / 45%);
+            container-type: size;
 
             /* Отступ от краёв host'а — рамка-приглашение не прижата к границе зоны. */
             inset: var(--rt-space-sm);
@@ -40,20 +58,22 @@
         }
 
         &__frame {
+            position: absolute;
             display: flex;
-            width: 100%;
-            height: 100%;
 
-            /* border-box: иначе height:100% + padding переполняет контейнер по
-               вертикали (flex-shrink ужимает только ширину) — зазор рамки сверху/снизу
-               выходит меньше, чем слева/справа. */
+            /* border-box: иначе отступ рамки прибавлялся бы к её коробке и зазор сверху и
+               снизу выходил бы меньше, чем слева и справа. */
             box-sizing: border-box;
             align-items: center;
             justify-content: center;
-            padding: var(--rt-space-md);
+            padding: var(--rt-file-drop-frame-padding);
             border: var(--rt-file-drop-border-width) dashed var(--rt-color-action-on-primary);
             border-radius: var(--rt-file-drop-radius);
             gap: var(--rt-space-sm);
+
+            /* Зазор от краёв оверлея задан рамке, а не отступом оверлея: оверлей — контейнер
+               запроса, и до его собственной коробки запрос не достаёт, а до рамки достаёт. */
+            inset: var(--rt-file-drop-frame-inset);
             text-align: center;
         }
 
@@ -84,7 +104,7 @@
 
         &__label {
             color: var(--rt-color-action-on-primary);
-            font-size: var(--rt-text-lg);
+            font-size: var(--rt-file-drop-label-size);
             font-weight: var(--rt-font-weight-semibold);
         }
 
@@ -92,6 +112,22 @@
             color: var(--rt-color-action-on-primary);
             font-size: var(--rt-text-sm);
             opacity: 0.8;
+        }
+    }
+
+    /* Сжатый вид подсказки. Слова подсказки пишет сам кит, и на низкой области они не
+       помещаются в полный размер: подпись мерилась 84 при коробке 66 и торчала за верхнюю и
+       нижнюю границы разом. Обрезать её посередине слова нельзя — читатель не узнает, что
+       слово унесли, — поэтому уменьшаются отступы и кегль.
+
+       Запрос обращён к оверлею: признак `container-type: size` стоит на нём. Порог выбран по
+       измерению — при 66 подпись в полный размер не помещается, при 130 помещается вместе с
+       подписью зоны. */
+    @container (max-height: 6rem) {
+        .rt-file-drop__frame {
+            --rt-file-drop-frame-inset: var(--rt-space-2xs);
+            --rt-file-drop-frame-padding: var(--rt-space-2xs);
+            --rt-file-drop-label-size: var(--rt-text-xs);
         }
     }
 }

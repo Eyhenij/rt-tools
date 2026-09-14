@@ -25,6 +25,7 @@ a token and a theme's contrast it does not.
 - **The narrow screen.** — Not checked by a machine: held by reading the rule and by a measurement in the browser
 - **Styling is taken as a token.** — Not checked by a machine: held by reading the rule and by a measurement in the browser
 - **Between a step and a place stands the component's own property.** — Not checked by a machine: held by reading the rule and by a measurement in the browser
+- **A query about the size of a box is asked of a box whose size does not come from its content.** — `projects/ui-kit-v2/src/lib/components/file-drop/rt-file-drop.component.scss:__overlay` carries the container sign, and `projects/ui-kit-v2/src/lib/components/file-drop/rt-file-drop.component.scss:__frame` carries the offsets the query reassigns; the agreement is `docs/specs/ui-kit-v2/overflowing-text/`
 - **State outweighs styling.** — Not checked by a machine: held by reading the rule and by a measurement in the browser
 - **The block class and the block directive.** — Not checked by a machine: held by reading the rule and by a measurement in the browser
 - **A styling preset is a second layer of assignments, not a second scale and not a theme.** — `tools/build-tokens-v2.mjs:lightByName` — the build refuses a preset name absent from the base assignments and a scale step the preset rewrites
