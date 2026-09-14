@@ -36,7 +36,16 @@ case "$args" in
     "issue list"*) printf '%s' "$STUB_ISSUES" ;;
     "pr list"*) printf '%s' "$STUB_PULLS" ;;
     "pr view"*files*) printf '%s' "${STUB_FILES}" ;;
-    *sub_issues*) printf '%s\n' "${STUB_SUB_ISSUES:-[]}" ;;
+    # Хостинг отдаёт подзадачи страницами, и вызов без пролистывания получает только первую.
+    # Помощник различает их поэтому: с одним списком на оба вида вызова сценарий был бы зелёным
+    # и на коде, который читает одну страницу из двух. Признак ищется по всей строке вызова: он
+    # стоит перед путём, а не после него.
+    *sub_issues*)
+        case "$args" in
+            *--paginate*) printf '%s\n' "${STUB_SUB_ISSUES:-[]}" ;;
+            *) printf '%s\n' "${STUB_SUB_ISSUES_PAGE:-${STUB_SUB_ISSUES:-[]}}" ;;
+        esac
+        ;;
     *contents*) printf 'Not Found\n' >&2; exit 1 ;;
     *actions/workflows/*runs*) printf '%s\n' "$STUB_DEPLOY" ;;
     *actions/runs/*/jobs*) printf '%s\n' "${STUB_JOBS:-0}" ;;
