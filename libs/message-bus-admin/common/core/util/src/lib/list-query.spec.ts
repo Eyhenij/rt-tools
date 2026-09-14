@@ -15,6 +15,8 @@ describe('listQueryOf', () => {
             tree: '',
             state: '',
             version: '',
+            from: '',
+            to: '',
         });
     });
 
@@ -37,7 +39,16 @@ describe('listQueryOf', () => {
             tree: 'a1b2',
             state: 'in_work',
             version: '0.10.0',
+            from: '',
+            to: '',
         });
+    });
+
+    it('SC-MB-349 — период читается двумя днями сразу; один день из двух или чужая форма — период не назван', () => {
+        expect(listQueryOf({ from: '2026-08-01', to: '2026-08-31' }, SORTABLE)).toMatchObject({ from: '2026-08-01', to: '2026-08-31' });
+        expect(listQueryOf({ from: '2026-08-01' }, SORTABLE)).toMatchObject({ from: '', to: '' });
+        expect(listQueryOf({ from: '01.08.2026', to: '2026-08-31' }, SORTABLE)).toMatchObject({ from: '', to: '' });
+        expect(listQueryOf({ from: ['2026-08-01'], to: '2026-08-31' }, SORTABLE)).toMatchObject({ from: '', to: '' });
     });
 
     it('SC-MB-247 — версия читается как есть: набора версий заранее не существует', () => {
@@ -116,6 +127,8 @@ describe('listQueryParams', () => {
             tree: null,
             state: null,
             version: null,
+            from: null,
+            to: null,
         });
     });
 
@@ -130,7 +143,16 @@ describe('listQueryParams', () => {
             tree: 'a1b2',
             state: null,
             version: null,
+            from: null,
+            to: null,
         });
+    });
+
+    it('SC-MB-349 — период встаёт в адрес двумя днями и снимается двумя пустотами', () => {
+        const query: IAdminListQuery = listQueryOf({ from: '2026-08-01', to: '2026-08-31' }, SORTABLE);
+
+        expect(listQueryParams(query, SORTABLE)).toMatchObject({ from: '2026-08-01', to: '2026-08-31' });
+        expect(listQueryParams({ ...query, from: '', to: '' }, SORTABLE)).toMatchObject({ from: null, to: null });
     });
 
     it('SC-MB-224 — снятый отбор по состоянию уходит из адреса пустотой', () => {
@@ -168,6 +190,8 @@ describe('listQueryParams', () => {
             tree: 'a1b2',
             state: 'new',
             version: '0.10.0',
+            from: '2026-08-01',
+            to: '2026-08-31',
         };
         const query: IAdminListQuery = listQueryOf(asked, SORTABLE);
 
@@ -184,5 +208,6 @@ describe('sameListQuery', () => {
         expect(sameListQuery(listQueryOf({}, SORTABLE), listQueryOf({ tree: 'a1b2' }, SORTABLE))).toBe(false);
         expect(sameListQuery(listQueryOf({}, SORTABLE), listQueryOf({ state: 'fixed' }, SORTABLE))).toBe(false);
         expect(sameListQuery(listQueryOf({}, SORTABLE), listQueryOf({ version: '0.9.0' }, SORTABLE))).toBe(false);
+        expect(sameListQuery(listQueryOf({}, SORTABLE), listQueryOf({ from: '2026-08-01', to: '2026-08-31' }, SORTABLE))).toBe(false);
     });
 });

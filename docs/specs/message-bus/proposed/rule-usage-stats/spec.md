@@ -89,8 +89,13 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
   the gate.** The sessions are distinct session signs among the loads of the skill; the refusals are
   the rows of the gate event whose resource is the skill. A skill with refusals and no load has a row
   too: that is the rule nobody loads.
-- **The rows go in descending order of loads, and at equal loads by name.** The most used stands
-  first; the order is the reading's, not the screen's.
+- **The usage answers a page, and the order is one of the sortable fields, loads descending by
+  default.** The section stands on the common list base, and the base reads a page by page, size,
+  sort and dir; at equal values the rows go by name. The sortable fields are declared once in the
+  common lib, and a field outside them is refused.
+- **A period the request did not name is the last thirty days of the receiver, and the answer names
+  it.** The clock is the receiver's, not the screen's; the section shows in its filter the period
+  that was counted. One day of the two is refused, not read as an open edge.
 - **The period is at most four hundred days, and a longer one is refused.** The rows live a year;
   a period past that counts nothing more and costs a scan of the whole table.
 - **The sessions of a skill are read by a request of their own: the day, the session sign and how
@@ -98,7 +103,7 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
   of the table is one skill, and its sessions are a list of their own.
 - **The reading is closed by the right `usage:read`.** A right of its own, not the right of the
   digests: the section is its own, and the closed set of rights names every section by name.
-- **An empty period answers with an empty list, not a refusal.** A tree that sent nothing over the
+- **An empty period answers with an empty page, not a refusal.** A tree that sent nothing over the
   period has no usage, and that is an answer.
 
 **The section.**
@@ -142,19 +147,20 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
 
 ## Contract
 
-| Operation                        | What it does                                                                                |
-| -------------------------------- | ------------------------------------------------------------------------------------------- |
-| `POST /api/intake/observations`  | takes the observation cargo in by the tree token: a day of a copy is replaced whole         |
-| `GET /api/usage`                 | the usage of the skills of a tree over a period: `tree`, `from`, `to` — days, both included |
-| `GET /api/usage/:skill/sessions` | the sessions of one skill of a tree over the period: `tree`, `from`, `to`; newest day first |
+| Operation                        | What it does                                                                                     |
+| -------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `POST /api/intake/observations`  | takes the observation cargo in by the tree token: a day of a copy is replaced whole              |
+| `GET /api/usage`                 | a page of the usage of the skills of a tree: `tree`, `from`, `to`, `page`, `size`, `sort`, `dir` |
+| `GET /api/usage/:skill/sessions` | the sessions of one skill of a tree over the period: `tree`, `from`, `to`; newest day first      |
 
 The body of the intake operation is the observation cargo as the sending side declares it: `{ schema,
 tree, origin, days: [{ day, lines: [{ t, ev, res, kind?, sid, v, skill? }] }] }`. The form is declared
 once, in the cargo module of the package, and the intake reads it from the same declaration.
 
 The answer of the intake names the tree, how many days were replaced and how many rows landed. The
-answer of the usage is a list of rows `{ skill, kind, loads, sessions, denials }`; the answer of the
-sessions is a list of rows `{ day, sid, count }`. Both readings are closed by `usage:read`.
+answer of the usage is a page `{ rows, total, page, size, from, to }` of rows `{ skill, kind, loads,
+sessions, denials }`, and `from`, `to` name the period counted; the answer of the sessions is a list
+of rows `{ day, sid, count }`. Both readings are closed by `usage:read`.
 
 ### Refusal codes
 

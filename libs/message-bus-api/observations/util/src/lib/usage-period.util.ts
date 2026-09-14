@@ -3,11 +3,19 @@
  *
  * Разбор чистый и отказа не бросает: код отказа знает операция. Предел — четыреста дней: строки
  * живут год, и период длиннее не считает ничего сверх того, а хранилище читает всю таблицу.
+ *
+ * Период, которого запрос не назвал вовсе, — последние тридцать дней по часам приёмника: часы
+ * приёма у него, а не у экрана, и ответ называет тот период, который считал. Назван один день из
+ * двух — отказ: полупериод не читается ни как умолчание, ни как открытый край.
  */
+import { dayOf } from './observation-retention.util';
 import { OBSERVATION_DAY } from './observation.const';
 
 /** Самый длинный период чтения в днях. */
 export const USAGE_PERIOD_MAX_DAYS: number = 400;
+
+/** Сколько дней в периоде, когда запрос его не назвал: сегодняшний день включительно. */
+export const USAGE_PERIOD_DEFAULT_DAYS: number = 30;
 
 const MS_PER_DAY: number = 24 * 60 * 60 * 1000;
 
@@ -27,8 +35,16 @@ export function periodDays(period: IUsagePeriod): number {
     return Math.round((new Date(period.to).getTime() - new Date(period.from).getTime()) / MS_PER_DAY) + 1;
 }
 
-/** Чем период не сошёлся. Пусто — период годен. */
+/** Назван ли период хоть одним днём. Пустой параметр считается неназванным: так его снимает адрес. */
+function periodNamed(query: Record<string, unknown>): boolean {
+    return [query['from'], query['to']].some((value: unknown): boolean => value !== undefined && value !== '');
+}
+
+/** Чем период не сошёлся. Пусто — период годен или не назван вовсе, и его место займёт умолчание. */
 export function usagePeriodFault(query: Record<string, unknown>): string | null {
+    if (!periodNamed(query)) {
+        return null;
+    }
     const from: string | null = dayParam(query, 'from');
     const to: string | null = dayParam(query, 'to');
 
@@ -45,9 +61,18 @@ export function usagePeriodFault(query: Record<string, unknown>): string | null 
     return null;
 }
 
-/** Период из запроса. Зовётся после проверки: негодный запрос сюда не доходит. */
-export function usagePeriodOf(query: Record<string, unknown>): IUsagePeriod {
-    return { from: String(query['from']), to: String(query['to']) };
+/** Последние тридцать дней по названному моменту, сегодняшний день включительно. */
+export function defaultUsagePeriod(now: Date): IUsagePeriod {
+    return { from: dayOf(new Date(now.getTime() - (USAGE_PERIOD_DEFAULT_DAYS - 1) * MS_PER_DAY)), to: dayOf(now) };
+}
+
+/**
+ * Период из запроса. Зовётся после проверки: негодный запрос сюда не доходит.
+ *
+ * Момент — параметр, а не часы машины: умолчание проверяется вызовом, а часы подставляет операция.
+ */
+export function usagePeriodOf(query: Record<string, unknown>, now: Date): IUsagePeriod {
+    return periodNamed(query) ? { from: String(query['from']), to: String(query['to']) } : defaultUsagePeriod(now);
 }
 
 /** Признак дерева из запроса: пусто — дерево не названо. */

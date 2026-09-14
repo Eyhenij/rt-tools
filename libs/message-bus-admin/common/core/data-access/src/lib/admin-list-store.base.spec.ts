@@ -75,6 +75,18 @@ describe('AdminListStoreBase', () => {
         const request: TestRequest = http.expectOne(onPath);
 
         expect(request.request.params.has('tree')).toBe(false);
+        expect(request.request.params.has('from')).toBe(false);
+        expect(request.request.params.has('to')).toBe(false);
+        request.flush(pageOf([], 0));
+    });
+
+    it('SC-MB-349 — названный период уходит в запрос двумя днями', () => {
+        store.read(listQueryOf({ from: '2026-08-01', to: '2026-08-31' }, SORTABLE));
+
+        const request: TestRequest = http.expectOne(onPath);
+
+        expect(request.request.params.get('from')).toBe('2026-08-01');
+        expect(request.request.params.get('to')).toBe('2026-08-31');
         request.flush(pageOf([], 0));
     });
 

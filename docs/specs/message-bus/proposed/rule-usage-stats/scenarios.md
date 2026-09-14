@@ -94,11 +94,11 @@ Then the reading refuses with `403`
 
 Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`.
 
-### SC-MB-347 — an empty period answers with an empty list
+### SC-MB-347 — an empty period answers with an empty page
 
 Given a tree with no rows over the period
 When the usage is read
-Then an empty list comes back with `200`
+Then an empty page with a zero total comes back with `200`
 
 Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`.
 
@@ -118,7 +118,8 @@ When the person narrows the period to one day
 Then the table shows the rows of that day only, and while the reading went the former rows stood
 dimmed under the sign of reading
 
-Not covered: task RT-2101.
+Coverage: partial — the period in the address, in the request and on the list base is checked by
+calls in the specs of the core libs; the end-to-end path of the section is task RT-2101.
 
 ### SC-MB-350 — a row opens the panel of the sessions of its skill
 
@@ -145,3 +146,22 @@ When the person chooses a period with no rows
 Then the table shows the empty state of the base and no message of the bus
 
 Not covered: task RT-2101.
+
+### SC-MB-353 — a period the request did not name is the last thirty days of the receiver
+
+Given a request with a tree and no `from` and `to`
+When the usage is read
+Then the receiver counts the last thirty days by its own clock, today inclusive. The answer names
+both days. One day of the two is refused with `400`
+
+Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`,
+`libs/message-bus-api/observations/util/src/lib/usage-period.util.spec.ts`.
+
+### SC-MB-354 — the usage answers a page in the order asked
+
+Given the rows of a tree over a period
+When the usage is read with `page`, `size`, `sort` and `dir`
+Then the page comes back with the total of skills, in the order of the named field, equal ones by
+name. A field outside `loads`, `skill`, `sessions`, `denials` is refused with `400`
+
+Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`.

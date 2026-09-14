@@ -5,8 +5,10 @@
  * набор прав называет каждый раздел по имени. Вошедший видит любое дерево — учётная запись
  * принадлежит службе, а не дереву, и выбор дерева сужает показанное, а не доступ.
  *
- * Считает хранилище; здесь — разбор запроса, дерево по признаку и отказы: период не двумя днями
- * или длиннее предела — `400`, дерево не названо или не найдено — `404`.
+ * Считает хранилище; здесь — разбор запроса, дерево по признаку и отказы: страница или порядок
+ * не разобрались — `400`, период не двумя днями или длиннее предела — `400`, дерево не названо
+ * или не найдено — `404`. Период, которого запрос не назвал, подставляет приёмник по своим часам,
+ * и ответ его называет.
  */
 import { BadRequestException, Controller, Get, NotFoundException, Param, Query } from '@nestjs/common';
 
@@ -14,13 +16,14 @@ import { RequiresRight } from '@rt/message-bus-api/access/util';
 import {
     findTreeIdBySlug,
     IUsageAsked,
-    IUsageRow,
+    IUsagePage,
     IUsageSessionRow,
     readUsage,
     readUsageSessions,
 } from '@rt/message-bus-api/observations/data-access';
 import { IUsagePeriod, usagePeriodFault, usagePeriodOf, usageTreeOf } from '@rt/message-bus-api/observations/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
+import { IPageAsked, pageAsked, pageFault, USAGE_SORTABLE } from '@rt/message-bus-common';
 
 @Controller('usage')
 export class UsageReadController {
@@ -30,11 +33,18 @@ export class UsageReadController {
         this.#prisma = prisma;
     }
 
-    /** Строка на скил за период. Пустой период — пустой список, а не отказ. */
+    /** Страница таблицы скилов за период. Пустой период — пустая страница, а не отказ. */
     @Get()
     @RequiresRight('usage:read')
-    public async usage(@Query() query: Record<string, unknown>): Promise<readonly IUsageRow[]> {
-        return readUsage(this.#prisma, await this.#asked(query));
+    public async usage(@Query() query: Record<string, unknown>): Promise<IUsagePage> {
+        const fault: string | null = pageFault(query, USAGE_SORTABLE);
+
+        if (fault) {
+            throw new BadRequestException(fault);
+        }
+        const page: IPageAsked = pageAsked(query, USAGE_SORTABLE);
+
+        return readUsage(this.#prisma, { ...page, ...(await this.#asked(query)) });
     }
 
     /** Сессии одного скила за период, свежий день первым. */
@@ -45,7 +55,7 @@ export class UsageReadController {
     }
 
     /** Дерево и период из запроса. Отказы — по порядку чтения: сначала период, потом дерево. */
-    async #asked(query: Record<string, unknown>): Promise<IUsageAsked> {
+    async #asked(query: Record<string, unknown>, now: Date = new Date()): Promise<IUsageAsked> {
         const fault: string | null = usagePeriodFault(query);
 
         if (fault) {
@@ -57,7 +67,7 @@ export class UsageReadController {
         if (!treeId) {
             throw new NotFoundException('дерево с таким признаком не известно приёмнику');
         }
-        const period: IUsagePeriod = usagePeriodOf(query);
+        const period: IUsagePeriod = usagePeriodOf(query, now);
 
         return { treeId, from: period.from, to: period.to };
     }
