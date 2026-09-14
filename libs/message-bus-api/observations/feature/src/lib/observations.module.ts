@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { ObservationRetentionService } from './observation-retention.service';
 import { ObservationsIntakeController } from './observations-intake.controller';
 import { SummariesReadController } from './summaries-read.controller';
 import { SummaryIntakeController } from './summary-intake.controller';
@@ -17,5 +18,6 @@ import { SummaryIntakeController } from './summary-intake.controller';
  */
 @Module({
     controllers: [SummaryIntakeController, ObservationsIntakeController, SummariesReadController],
+    providers: [ObservationRetentionService],
 })
 export class ObservationsModule {}

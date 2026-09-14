@@ -10,6 +10,7 @@
  * потому что журнал называет число снятого по каждому — по нему видно, какое дерево шлёт.
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
+import { Prisma } from '@rt/message-bus-api/persistence/util';
 
 /** Строка наблюдения, как ложится в хранилище: без своего id, его выдаёт хранилище. */
 export interface IObservationRowInput {
@@ -45,12 +46,6 @@ export interface IObservationsSwept {
     readonly count: number;
 }
 
-/** Строка ответа группировки: дерево и число его строк. */
-interface IGroupedByTree {
-    readonly treeId: string;
-    readonly _count: { readonly _all: number };
-}
-
 /**
  * Дни груза ложатся на место прежних — все дни одной сделкой.
  *
@@ -58,12 +53,13 @@ interface IGroupedByTree {
  * не принят — половина дней, легшая при обрыве, читалась бы как полный прогон.
  */
 export async function replaceObservationDays(prisma: PrismaService, days: readonly IObservationDayInput[]): Promise<IObservationsWritten> {
-    await prisma.$transaction(
-        days.flatMap((day: IObservationDayInput): unknown[] => [
+    const operations: Prisma.PrismaPromise<Prisma.BatchPayload>[] = days.flatMap(
+        (day: IObservationDayInput): Prisma.PrismaPromise<Prisma.BatchPayload>[] => [
             prisma.observation.deleteMany({ where: { treeId: day.treeId, origin: day.origin, day: day.day } }),
             prisma.observation.createMany({ data: [...day.rows] }),
-        ]) as Parameters<PrismaService['$transaction']>[0]
+        ]
     );
+    await prisma.$transaction(operations);
 
     return {
         days: days.length,
@@ -75,20 +71,21 @@ export async function replaceObservationDays(prisma: PrismaService, days: readon
  * Снятие строк старше названного дня, по деревьям.
  *
  * Граница — день строки, не время приёма: дерево шлёт день по имени файла, и год считается от
- * него. Дни записаны `ГГГГ-ММ-ДД`, и сравнение строк у них хронологическое.
+ * него. Дни записаны `ГГГГ-ММ-ДД`, и сравнение строк у них хронологическое. Снимается по одному
+ * дереву за вызов: число снятого приходит из самого снятия, а не из счёта до него.
  */
 export async function sweepObservationsBefore(prisma: PrismaService, day: string): Promise<readonly IObservationsSwept[]> {
-    const grouped: readonly IGroupedByTree[] = await prisma.observation.groupBy({
-        by: ['treeId'],
+    const trees: readonly { treeId: string }[] = await prisma.observation.findMany({
         where: { day: { lt: day } },
-        _count: { _all: true },
+        select: { treeId: true },
+        distinct: ['treeId'],
     });
+    const swept: IObservationsSwept[] = [];
 
-    if (grouped.length === 0) {
-        return [];
+    for (const tree of trees) {
+        const gone: Prisma.BatchPayload = await prisma.observation.deleteMany({ where: { treeId: tree.treeId, day: { lt: day } } });
+        swept.push({ treeId: tree.treeId, count: gone.count });
     }
 
-    await prisma.observation.deleteMany({ where: { day: { lt: day } } });
-
-    return grouped.map((one: IGroupedByTree): IObservationsSwept => ({ treeId: one.treeId, count: one._count._all }));
+    return swept;
 }

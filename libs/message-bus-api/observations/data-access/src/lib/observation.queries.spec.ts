@@ -33,7 +33,7 @@ class PrismaDouble {
         return {
             deleteMany: async (args: Record<string, unknown>): Promise<{ count: number }> => this.#deleteMany(args),
             createMany: async (args: Record<string, unknown>): Promise<{ count: number }> => this.#createMany(args),
-            groupBy: async (args: Record<string, unknown>): Promise<unknown[]> => this.#groupBy(args),
+            findMany: async (args: Record<string, unknown>): Promise<unknown[]> => this.#findMany(args),
         };
     }
 
@@ -45,7 +45,10 @@ class PrismaDouble {
         const day: unknown = where['day'];
 
         if (typeof day === 'object' && day !== null && 'lt' in day) {
-            return row.day.localeCompare(String((day as { lt: string }).lt)) < 0;
+            return (
+                row.day.localeCompare(String((day as { lt: string }).lt)) < 0 &&
+                (where['treeId'] === undefined || row.treeId === where['treeId'])
+            );
         }
 
         return ['treeId', 'origin', 'day'].every(
@@ -72,15 +75,17 @@ class PrismaDouble {
         return { count: data.length };
     }
 
-    #groupBy(args: Record<string, unknown>): unknown[] {
+    #findMany(args: Record<string, unknown>): unknown[] {
         const where: Record<string, unknown> = args['where'] as Record<string, unknown>;
-        const counts: Map<string, number> = new Map<string, number>();
+        const trees: string[] = [];
 
         for (const row of this.rows.filter((one: TStoredRow): boolean => this.#matches(one, where))) {
-            counts.set(row.treeId, (counts.get(row.treeId) ?? 0) + 1);
+            if (!trees.includes(row.treeId)) {
+                trees.push(row.treeId);
+            }
         }
 
-        return [...counts.entries()].map(([treeId, count]: [string, number]): unknown => ({ treeId, _count: { _all: count } }));
+        return trees.map((treeId: string): unknown => ({ treeId }));
     }
 }
 
@@ -157,7 +162,7 @@ describe('строки наблюдений в хранилище', () => {
         expect(double.rows.map((one: TStoredRow): string => one.res)).toEqual(['d']);
     });
 
-    it('SC-MB-342 — нечего снимать — ответ пуст, и снятие не зовётся', async () => {
+    it('SC-MB-342 — нечего снимать — ответ пуст, строки на месте', async () => {
         const double: PrismaDouble = new PrismaDouble();
         await replaceObservationDays(prismaOf(double), [dayOf(TREE, COPY_A, DAY, ['a'])]);
 
