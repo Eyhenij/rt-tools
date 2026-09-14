@@ -15,7 +15,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { AccountCommandsService, IAccountCommandReport } from '@rt/message-bus-api/accounts/feature';
 import { isAccountCommand } from '@rt/message-bus-api/accounts/util';
 import { AppLoggerService } from '@rt/message-bus-api/observability/feature';
-import { observationLinesCap } from '@rt/message-bus-api/observations/feature';
+import { observationLinesCap } from '@rt/message-bus-api/observations/util';
 import { TreeCommandsService } from '@rt/message-bus-api/trees/feature';
 import { ITreeCommandReport } from '@rt/message-bus-api/trees/util';
 
