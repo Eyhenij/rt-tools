@@ -3,10 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 4 — входы берут превращение
-- **Done:** этап 1 закрыт счётом: без превращения стоят 11 входов из 107
-- **Next step:** этап 2 — задать превращение одиннадцати входам, отделив те, что логические только
-  по типу
+- **Stage:** 3 of 4 — проверка держит требование
+- **Done:** этап 2 закрыт: все одиннадцать входов берут превращение, спеки и снимки зелёные
+- **Next step:** этап 3 — завести проверку дерева, которая отбивает логический вход без превращения
 - **Uncommitted:** нет
 - **Waiting for the owner:** нет
 - **PR:** ещё не открыт
@@ -26,6 +25,13 @@
   дереву не требует. Своё превращение разошлось бы с фреймворком на значении «false», и разница
   жила бы там, где её никто не ищет. Affected stage of the plan: 2.
 
+- **Вид кита сдвинулся, и это не поломка, а тот же изъян ещё в двух семействах.** Замысел ждал, что
+  съёмка снимков останется зелёной. Она покраснела на восьми кадрах: разметка показов шапки и
+  рабочего стола писала голый атрибут, и до превращения он читался ложью. Эталоны были сняты с этой
+  лжи. После превращения в кадре появились кнопка «назад» и кнопка подробностей — то самое, что
+  разметка и просила. Двенадцать эталонов сняты заново после осмотра кадров.
+  Affected stage of the plan: 2.
+
 ## Sessions
 
 ### 2026-09-14
@@ -44,3 +50,67 @@
   `toast:interacting`, `bottom-sheet:open`, `header:canGoBack`
 - Два из одиннадцати объявлены обязательными — `toast:expanded` и `bottom-sheet:open`. Обязательный
   вход потребитель написать вынужден, и форму он берёт привычную: эти два и опаснее прочих
+- Одиннадцати входам задано превращение `booleanAttribute` из фреймворка: семь файлов кита
+- На лист написаны три сценария — `SC-UKV-133`, `SC-UKV-134`, `SC-UKV-135`: голый атрибут, голый
+  атрибут у обязательного входа, строка «false»
+- Спеки кита: 122 набора, 1530 тестов, зелено. Было 1527 — прибавились эти три
+- Съёмка снимков покраснела на восьми кадрах: четыре у шапки, четыре у рабочего стола на пороге 1080. Кадры осмотрены поодиночке — в каждом появилось то, что просила разметка показа
+- Двенадцать эталонов сняты заново двумя точными вызовами. Полная съёмка после этого: 168 наборов,
+  546 тестов, 568 снимков, лишних эталонов нет
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-2082-bottom-sheet-open-attribute
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 2 of 4 — входы берут превращение
+- **Next step:** этап 2 — задать превращение одиннадцати входам, отделив те, что логические только
+- **PR:** ещё не открыт
+
+The progress in full — `docs/tasks/RT-2082-bottom-sheet-open-attribute/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.spec.ts
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.ts
+ M projects/ui-kit-v2/src/lib/components/calendar/rt-calendar.component.ts
+ M projects/ui-kit-v2/src/lib/components/header/rt-header.component.ts
+ M projects/ui-kit-v2/src/lib/components/input-number/rt-input-number.component.ts
+ M projects/ui-kit-v2/src/lib/components/toast/rt-toast.component.ts
+ M projects/ui-kit-v2/src/lib/components/workspace-details/rt-workspace-details.component.ts
+ M projects/ui-kit-v2/src/lib/components/workspace/rt-workspace.component.ts
+```
+
+### Commits over the main branch
+
+```
+5d0357075 docs(rt:ui-kit-v2): логические входы кита сосчитаны, открытый вопрос закрыт
+157104a8a docs(rt:ui-kit-v2): договорённость о логическом входе и голом атрибуте написана
+5a60bc765 docs(rt:ui-kit-v2): разбор RT-1956 лёг в описание прошлого
+495b8c903 docs(rt:ui-kit-v2): папка задачи RT-1956 разобрана
+827a3bb7d fix(rt:ui-kit-v2): нижний лист виден в кадре своих показов
+d0712bf34 docs(rt:ui-kit-v2): разбор и замысел задачи RT-1956 записаны
+1568937c9 Merge branch RT-2074-workspace-details-narrow into RT-2075-default-stories-presets
+06ff13282 Merge branch RT-2057-presets-across-families into RT-2074-workspace-details-narrow
+0fdf31455 Merge branch RT-2058-frame-clipped-by-node-box into RT-2057-presets-across-families
+cfcbc23ef Merge branch RT-1870-one-kit into RT-2058-frame-clipped-by-node-box
+287bc4f37 docs(rt:ui-kit-v2): папка задачи RT-2075 разобрана
+07f27e3d7 docs(rt:ui-kit-v2): положение эпика переписано по сделанному
+a319ef6e8 test(rt:ui-kit-v2): эталоны обёрнутых показов сняты после осмотра
+bcfaf20cc feat(rt:ui-kit-v2): девятнадцать показов одного экземпляра стоят в обоих наборах
+f07bd141b docs(rt:ui-kit-v2): показы вне матриц разобраны по роду, счёт сделан
+cc7347b76 docs(rt:ui-kit-v2): заведена папка задачи RT-2075
+725bdfae4 docs(rt:ui-kit-v2): папка задачи RT-2074 разобрана
+b0afd0fa2 fix(rt:ui-kit-v2): кадр рабочего места кончается вместе с ящиком показа
+b04278d9d docs(rt:ui-kit-v2): заведена папка задачи RT-2074
+fd290c7f7 test(rt:ui-kit-v2): эталоны сняты на дереве, где сошлись съёмка по нарисованному и пара наборов
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

@@ -1,23 +1,25 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
-    computed,
-    contentChild,
-    effect,
-    inject,
-    input,
-    numberAttribute,
-    output,
-    signal,
-    untracked,
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
+    contentChild,
     DestroyRef,
+    effect,
     ElementRef,
+    inject,
+    input,
     InputSignal,
     InputSignalWithTransform,
+    numberAttribute,
+    output,
     OutputEmitterRef,
     Renderer2,
+    signal,
     Signal,
+    untracked,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
@@ -104,7 +106,9 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
 
     public readonly storageKey: InputSignal<string | null> = input<string | null>(null);
 
-    public readonly hasActive: InputSignal<boolean> = input<boolean>(false);
+    public readonly hasActive: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
     public readonly listMinWidth: InputSignalWithTransform<number, number | string> = input<number, number | string>(240, {
         transform: numberAttribute,

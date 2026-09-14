@@ -1,16 +1,19 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import {
+    booleanAttribute,
+    ChangeDetectionStrategy,
+    Component,
     computed,
+    ElementRef,
     forwardRef,
     inject,
     input,
-    signal,
-    viewChild,
-    ChangeDetectionStrategy,
-    Component,
-    ElementRef,
     InputSignal,
+    InputSignalWithTransform,
     LOCALE_ID,
+    signal,
     Signal,
+    viewChild,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
@@ -178,7 +181,9 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
      * Группировать ли разряды. Снимается у чисел, которые разрядами не читаются:
      * год, номер дома, код. У года разделитель превращает `2026` в `2 026`.
      */
-    public readonly grouped: InputSignal<boolean> = input<boolean>(true);
+    public readonly grouped: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
 
     public override writeValue(value: number | null): void {
         super.writeValue(value);

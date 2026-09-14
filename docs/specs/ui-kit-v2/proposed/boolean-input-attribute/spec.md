@@ -105,18 +105,18 @@ Not applicable: the subdomain owns no objects.
   own and needs no code of the tree's. Rejected: a transform of the kit's own — it would differ from
   the framework's on the value `"false"`, and that difference would live where nobody looks for it.
 
+- **The whole kit is brought to the form, not the one component the defect was found on.** The count
+  named 107 boolean inputs, of which 96 already carried coercion and 11 did not. Eleven inputs
+  standing apart from the set are not eleven separate misses but one requirement nothing holds.
+  Rejected: coercing the sheet alone — the next input added would stand apart the same way.
+
 ## Open questions
 
-- `Q-1` — how many boolean inputs of the kit stand without coercion today. The work goes with the
-  assumption that there are more than one: the sheet was found by accident, and nothing looked for
-  the rest. The count is the first stage, and by it is decided whether the answer is one input or a
-  check over the whole kit.
-
-- `Q-2` — whether an input that already carries coercion answers the string `"false"` the way the
-  tree expects. The framework reads it as false and every other non-empty string as true. The work
-  goes with the assumption that this suits: it is the framework's own behaviour, and the kit has no
-  reason to argue with it.
+Not applicable: both questions of the agreement are closed by the work. `Q-1` was closed by the
+count, `Q-2` by the scenario about the string `false`.
 
 ## History of changes
 
 - 14 September 2026 — written before the code of the work that brings it.
+- 14 September 2026 — the count closed `Q-1`: eleven inputs of a hundred and seven stood without
+  coercion, and all eleven took it. `Q-2` closed by the scenario `SC-UKV-135`.

@@ -5,6 +5,38 @@ import { createRtFixture, hostClasses, qa, renderedText, setInputs } from '../..
 import { DRAG_DISMISS_THRESHOLD_PX } from './rt-bottom-sheet.logic';
 import { RtBottomSheetComponent } from './rt-bottom-sheet.component';
 
+/**
+ * Открытость, написанная голым атрибутом: именно так её пишут у соседей по киту, и именно так
+ * она приходила входу пустой строкой.
+ */
+@Component({
+    selector: 'rt-bottom-sheet-bare-host',
+    template: `
+        <rt-bottom-sheet open />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtBottomSheetComponent],
+})
+class BottomSheetBareHostComponent {}
+
+/** Строка «false» в атрибуте — единственная непустая строка, которую превращение считает ложью. */
+@Component({
+    selector: 'rt-bottom-sheet-false-host',
+    template: `
+        <rt-bottom-sheet open="false" />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtBottomSheetComponent],
+})
+class BottomSheetFalseHostComponent {}
+
+/** Классы самого листа внутри host-обёртки: `hostClasses` берёт корень фикстуры, а он здесь чужой. */
+function sheetClasses<T>(fixture: ComponentFixture<T>): string[] {
+    const sheet: HTMLElement | null = (fixture.nativeElement as HTMLElement).querySelector('rt-bottom-sheet');
+
+    return sheet === null ? [] : Array.from(sheet.classList);
+}
+
 /** Заголовок и содержимое приходят проекцией — нужна host-обёртка. */
 @Component({
     selector: 'rt-bottom-sheet-host',
@@ -169,6 +201,29 @@ describe('RtBottomSheetComponent', (): void => {
             const fixture: ComponentFixture<BottomSheetHostComponent> = createRtFixture(BottomSheetHostComponent);
 
             expect(renderedText(fixture)).toContain('Содержимое листа');
+        });
+    });
+
+    describe('форма записи открытости — SC-UKV-133, SC-UKV-134, SC-UKV-135', (): void => {
+        it('SC-UKV-133 — голый атрибут ставит логическому входу истину', (): void => {
+            const fixture: ComponentFixture<BottomSheetBareHostComponent> = createRtFixture(BottomSheetBareHostComponent);
+
+            expect(sheetClasses(fixture)).toContain('rt-bottom-sheet--open');
+        });
+
+        it('SC-UKV-134 — обязательный вход берёт голый атрибут так же', (): void => {
+            // Вход объявлен обязательным: без атрибута Angular отказал бы на подъёме компонента.
+            // С голым атрибутом он поднимается и получает истину, а не пустую строку.
+            const fixture: ComponentFixture<BottomSheetBareHostComponent> = createRtFixture(BottomSheetBareHostComponent);
+
+            expect(sheetClasses(fixture)).toContain('rt-bottom-sheet--open');
+            expect(sheetClasses(fixture)).not.toContain('rt-bottom-sheet--closed');
+        });
+
+        it('SC-UKV-135 — строка «false» в атрибуте остаётся ложью', (): void => {
+            const fixture: ComponentFixture<BottomSheetFalseHostComponent> = createRtFixture(BottomSheetFalseHostComponent);
+
+            expect(sheetClasses(fixture)).not.toContain('rt-bottom-sheet--open');
         });
     });
 
