@@ -39,7 +39,7 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                     <ng-template>
                         <app-story-row slotWidth="24rem" [items]="threadCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
-                                <div style="height: 22rem">
+                                <div class="app-chat-matrix__box" style="height: 22rem; width: 100%">
                                     <rt-chat
                                         canReply
                                         title="Договор №2024-118"
@@ -57,7 +57,7 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
             @case ('messageKind') {
                 <app-story-presets caption="Вид реплики в обоих наборах">
                     <ng-template>
-                        <div style="width: 26rem; height: 24rem">
+                        <div class="app-chat-matrix__box" style="width: 26rem; height: 24rem">
                             <rt-chat hasThread canReply title="Договор №2024-118" placeholder="Написать сообщение" [messages]="messages" />
                         </div>
                     </ng-template>
@@ -67,7 +67,7 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
             @case ('status') {
                 <app-story-presets caption="Состояние своей реплики в обоих наборах">
                     <ng-template>
-                        <div style="width: 26rem; height: 24rem">
+                        <div class="app-chat-matrix__box" style="width: 26rem; height: 24rem">
                             <rt-chat
                                 hasThread
                                 canReply
@@ -87,7 +87,7 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                                 <!-- Ширина названа явно: слот ряда — flex-контейнер, и переписка без
                                      собственной ширины сжимается в нём до нуля. Кнопки у реплики
                                      проявляются наведением, поэтому на ячейке стоит признак состояния. -->
-                                <div style="height: 22rem; width: 100%" [attr.data-story-state]="'hover'">
+                                <div class="app-chat-matrix__box" style="height: 22rem; width: 100%" [attr.data-story-state]="'hover'">
                                     <rt-chat
                                         hasThread
                                         title="Договор №2024-118"
@@ -112,7 +112,7 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                     <ng-template>
                         <app-story-row slotWidth="24rem" [items]="replyCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
-                                <div style="height: 22rem">
+                                <div class="app-chat-matrix__box" style="height: 22rem; width: 100%">
                                     <rt-chat
                                         hasThread
                                         title="Договор №2024-118"
@@ -133,7 +133,7 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                     <ng-template>
                         <app-story-row slotWidth="24rem" [items]="headerCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
-                                <div style="height: 22rem">
+                                <div class="app-chat-matrix__box" style="height: 22rem; width: 100%">
                                     <rt-chat
                                         hasThread
                                         canReply
@@ -154,7 +154,7 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                     <ng-template>
                         <app-story-row slotWidth="24rem" [items]="loadingCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
-                                <div style="height: 22rem">
+                                <div class="app-chat-matrix__box" style="height: 22rem; width: 100%">
                                     <rt-chat
                                         hasThread
                                         canReply
@@ -173,7 +173,7 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
             @case ('presets') {
                 <app-story-presets caption="Переписка в обоих наборах">
                     <ng-template>
-                        <div style="width: 24rem; height: 22rem">
+                        <div class="app-chat-matrix__box" style="width: 24rem; height: 22rem">
                             <rt-chat hasThread canReply title="Договор №2024-118" placeholder="Написать сообщение" [messages]="messages" />
                         </div>
                     </ng-template>
@@ -185,7 +185,7 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                     <ng-template>
                         <app-story-themes>
                             <ng-template>
-                                <div style="width: 24rem; height: 22rem">
+                                <div class="app-chat-matrix__box" style="width: 24rem; height: 22rem">
                                     <rt-chat
                                         hasThread
                                         canReply
@@ -198,6 +198,32 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                     </ng-template>
                 </app-story-presets>
             }
+        }
+    `,
+    styles: `
+        /* Чат заполняет свой ящик по высоте. Хост чата — колоночная гибкая коробка без
+           собственной высоты: размер ему даёт потребитель, и для приложения это верно. В показе
+           потребитель — ящик, и без этой строки чат мерился по содержимому: 37 точек в ящике
+           высотой 352. В кадре от него оставались отдельные куски — плашка пустого состояния,
+           поле ввода и пузыри, — а рамки чата не было вовсе.
+
+           Ширина ящика на всю ячейку нужна затем, что половина набора ужимает ребёнка без ширины
+           по содержимому: чат мерился 217 точками при ячейке в 384.
+
+           Фон и рамка — тоже у ящика, и это не украшение показа. Свой фон чат рисует только в
+           полноэкранном виде: в обычном его даёт потребитель. Без фона в кадре висели отдельные
+           куски на фоне страницы — плашка пустого состояния, поле ввода, пузыри, — и по кадру
+           нельзя было сказать, где кончается чат. Ящик здесь и есть потребитель. */
+        .app-chat-matrix__box {
+            box-sizing: border-box;
+            padding: var(--rt-space-md);
+            border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-radius-lg);
+            background-color: var(--rt-color-bg-surface);
+        }
+
+        .app-chat-matrix__box .rt-chat {
+            block-size: 100%;
         }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,

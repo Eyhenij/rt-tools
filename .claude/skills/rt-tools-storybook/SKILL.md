@@ -70,6 +70,18 @@ A rule under the "Law on verifiability", the section about showing a visible sta
   The box becomes a containing block by a property of its own, and the one chosen also clips — so it
   replaces the box's clipping rather than standing next to it. Raising the node into a layer of its
   own does the same and costs the rasterisation of every label in the frame.
+- **A component that takes its size from its parent is given one by a box of the showing, not by a
+  rule on its block class.** Such a component measures by its content where nothing sizes it: the
+  chat came out 37 points tall in a cell of 352 and left loose pieces in the frame — an empty-state
+  pill, an input field, two bubbles — with no frame of a chat anywhere. Where the host is declared
+  `display: contents`, the rule does not even reach: the height lands on a host that is no box, it
+  measures 0 by 0, and the content spills into the cell and is cut by its edge. The box takes the
+  height instead, because the host between them is not a box; the frame then takes its full height
+  from the box. Its width goes to the whole cell for the same reason a single instance asks the
+  pair for the width of its half.
+- **The surface under such a component is the box too, when the component takes its background
+  from the consumer.** Drawn on the page ground, it reads as loose parts rather than a component
+  with a boundary, and no frame says where it ends. In the showing the consumer is the box.
 - **A component whose height comes from the window is shown inside a box that clips.** The shot
   widens the window to what is drawn, and such a component grows with it: one frame came out seven
   thousand points tall under a box of two hundred and ninety. The box is the screen of the showing,
