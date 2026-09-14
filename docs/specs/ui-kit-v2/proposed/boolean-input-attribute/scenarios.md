@@ -31,4 +31,4 @@ And the input stands in no list of what is named apart
 When the check of the kit's declarations is called
 Then it refuses and names the component and the input
 
-Not covered: the check itself is written by the third stage of the work that brings this agreement.
+Covered: `tools/tests/check-boolean-inputs.test.sh` — the scenarios of the check on a one-off tree.
