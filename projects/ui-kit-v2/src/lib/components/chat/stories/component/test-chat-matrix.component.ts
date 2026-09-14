@@ -18,6 +18,21 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
 /**
  * Матрицы состояний `rt-chat` для витрины.
  *
+ * Каждый чат стоит в ящике с заданными размерами и поверхностью, и это не украшение показа.
+ *
+ * Высота: хост чата — колоночная гибкая коробка без своей высоты, размер ему даёт потребитель, и
+ * для приложения это верно. В показе потребитель — ящик. Без `height: 100%` на самом чате он
+ * мерился по содержимому: 37 точек в ящике высотой 352, а в кадре висели отдельные куски.
+ *
+ * Ширина: половина набора ужимает ребёнка без ширины по содержимому — чат мерился 217 точками при
+ * ячейке в 384.
+ *
+ * Фон и рамка: свой фон чат рисует только в полноэкранном виде, в обычном его даёт потребитель.
+ * Без фона по кадру нельзя было сказать, где чат кончается.
+ *
+ * Размеры написаны прямо в разметке, а не собраны в `styles`: проверка однообразия называет такой
+ * блок стилями не в своём файле, и у обёрток показа этого дерева они пишутся так.
+ *
  * Показывать надо не перечисление входов, а состояния экрана, которые между собой не сводятся:
  *
  * - **Без `hasThread` чат рисует только подсказку выбора** — ни ленты, ни поля ответа. Это
@@ -39,8 +54,10 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                     <ng-template>
                         <app-story-row slotWidth="24rem" [items]="threadCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
-                                <div class="app-chat-matrix__box" style="height: 22rem; width: 100%">
+                                <div
+                                    style="box-sizing: border-box; inline-size: 100%; block-size: 22rem; padding: 1rem; border: 1px solid var(--rt-color-border-subtle); border-radius: var(--rt-radius-lg); background-color: var(--rt-color-bg-surface)">
                                     <rt-chat
+                                        style="height: 100%"
                                         canReply
                                         title="Договор №2024-118"
                                         emptyHint="Выберите переписку слева"
@@ -57,8 +74,15 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
             @case ('messageKind') {
                 <app-story-presets caption="Вид реплики в обоих наборах">
                     <ng-template>
-                        <div class="app-chat-matrix__box" style="width: 26rem; height: 24rem">
-                            <rt-chat hasThread canReply title="Договор №2024-118" placeholder="Написать сообщение" [messages]="messages" />
+                        <div
+                            style="box-sizing: border-box; inline-size: 26rem; block-size: 24rem; padding: 1rem; border: 1px solid var(--rt-color-border-subtle); border-radius: var(--rt-radius-lg); background-color: var(--rt-color-bg-surface)">
+                            <rt-chat
+                                style="height: 100%"
+                                hasThread
+                                canReply
+                                title="Договор №2024-118"
+                                placeholder="Написать сообщение"
+                                [messages]="messages" />
                         </div>
                     </ng-template>
                 </app-story-presets>
@@ -67,8 +91,10 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
             @case ('status') {
                 <app-story-presets caption="Состояние своей реплики в обоих наборах">
                     <ng-template>
-                        <div class="app-chat-matrix__box" style="width: 26rem; height: 24rem">
+                        <div
+                            style="box-sizing: border-box; inline-size: 26rem; block-size: 24rem; padding: 1rem; border: 1px solid var(--rt-color-border-subtle); border-radius: var(--rt-radius-lg); background-color: var(--rt-color-bg-surface)">
                             <rt-chat
+                                style="height: 100%"
                                 hasThread
                                 canReply
                                 title="Свои сообщения"
@@ -87,8 +113,11 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                                 <!-- Ширина названа явно: слот ряда — flex-контейнер, и переписка без
                                      собственной ширины сжимается в нём до нуля. Кнопки у реплики
                                      проявляются наведением, поэтому на ячейке стоит признак состояния. -->
-                                <div class="app-chat-matrix__box" style="height: 22rem; width: 100%" [attr.data-story-state]="'hover'">
+                                <div
+                                    style="box-sizing: border-box; inline-size: 100%; block-size: 22rem; padding: 1rem; border: 1px solid var(--rt-color-border-subtle); border-radius: var(--rt-radius-lg); background-color: var(--rt-color-bg-surface)"
+                                    [attr.data-story-state]="'hover'">
                                     <rt-chat
+                                        style="height: 100%"
                                         hasThread
                                         title="Договор №2024-118"
                                         placeholder="Написать сообщение"
@@ -112,8 +141,10 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                     <ng-template>
                         <app-story-row slotWidth="24rem" [items]="replyCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
-                                <div class="app-chat-matrix__box" style="height: 22rem; width: 100%">
+                                <div
+                                    style="box-sizing: border-box; inline-size: 100%; block-size: 22rem; padding: 1rem; border: 1px solid var(--rt-color-border-subtle); border-radius: var(--rt-radius-lg); background-color: var(--rt-color-bg-surface)">
                                     <rt-chat
+                                        style="height: 100%"
                                         hasThread
                                         title="Договор №2024-118"
                                         placeholder="Написать сообщение"
@@ -133,8 +164,10 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                     <ng-template>
                         <app-story-row slotWidth="24rem" [items]="headerCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
-                                <div class="app-chat-matrix__box" style="height: 22rem; width: 100%">
+                                <div
+                                    style="box-sizing: border-box; inline-size: 100%; block-size: 22rem; padding: 1rem; border: 1px solid var(--rt-color-border-subtle); border-radius: var(--rt-radius-lg); background-color: var(--rt-color-bg-surface)">
                                     <rt-chat
+                                        style="height: 100%"
                                         hasThread
                                         canReply
                                         placeholder="Написать сообщение"
@@ -154,8 +187,10 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                     <ng-template>
                         <app-story-row slotWidth="24rem" [items]="loadingCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
-                                <div class="app-chat-matrix__box" style="height: 22rem; width: 100%">
+                                <div
+                                    style="box-sizing: border-box; inline-size: 100%; block-size: 22rem; padding: 1rem; border: 1px solid var(--rt-color-border-subtle); border-radius: var(--rt-radius-lg); background-color: var(--rt-color-bg-surface)">
                                     <rt-chat
+                                        style="height: 100%"
                                         hasThread
                                         canReply
                                         title="Договор №2024-118"
@@ -173,8 +208,15 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
             @case ('presets') {
                 <app-story-presets caption="Переписка в обоих наборах">
                     <ng-template>
-                        <div class="app-chat-matrix__box" style="width: 24rem; height: 22rem">
-                            <rt-chat hasThread canReply title="Договор №2024-118" placeholder="Написать сообщение" [messages]="messages" />
+                        <div
+                            style="box-sizing: border-box; inline-size: 24rem; block-size: 22rem; padding: 1rem; border: 1px solid var(--rt-color-border-subtle); border-radius: var(--rt-radius-lg); background-color: var(--rt-color-bg-surface)">
+                            <rt-chat
+                                style="height: 100%"
+                                hasThread
+                                canReply
+                                title="Договор №2024-118"
+                                placeholder="Написать сообщение"
+                                [messages]="messages" />
                         </div>
                     </ng-template>
                 </app-story-presets>
@@ -185,8 +227,10 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                     <ng-template>
                         <app-story-themes>
                             <ng-template>
-                                <div class="app-chat-matrix__box" style="width: 24rem; height: 22rem">
+                                <div
+                                    style="box-sizing: border-box; inline-size: 24rem; block-size: 22rem; padding: 1rem; border: 1px solid var(--rt-color-border-subtle); border-radius: var(--rt-radius-lg); background-color: var(--rt-color-bg-surface)">
                                     <rt-chat
+                                        style="height: 100%"
                                         hasThread
                                         canReply
                                         title="Договор №2024-118"
@@ -198,32 +242,6 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                     </ng-template>
                 </app-story-presets>
             }
-        }
-    `,
-    styles: `
-        /* Чат заполняет свой ящик по высоте. Хост чата — колоночная гибкая коробка без
-           собственной высоты: размер ему даёт потребитель, и для приложения это верно. В показе
-           потребитель — ящик, и без этой строки чат мерился по содержимому: 37 точек в ящике
-           высотой 352. В кадре от него оставались отдельные куски — плашка пустого состояния,
-           поле ввода и пузыри, — а рамки чата не было вовсе.
-
-           Ширина ящика на всю ячейку нужна затем, что половина набора ужимает ребёнка без ширины
-           по содержимому: чат мерился 217 точками при ячейке в 384.
-
-           Фон и рамка — тоже у ящика, и это не украшение показа. Свой фон чат рисует только в
-           полноэкранном виде: в обычном его даёт потребитель. Без фона в кадре висели отдельные
-           куски на фоне страницы — плашка пустого состояния, поле ввода, пузыри, — и по кадру
-           нельзя было сказать, где кончается чат. Ящик здесь и есть потребитель. */
-        .app-chat-matrix__box {
-            box-sizing: border-box;
-            padding: var(--rt-space-md);
-            border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-            border-radius: var(--rt-radius-lg);
-            background-color: var(--rt-color-bg-surface);
-        }
-
-        .app-chat-matrix__box .rt-chat {
-            block-size: 100%;
         }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
