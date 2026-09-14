@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtMessageComposerComponent } from '../../rt-message-composer.component';
 import { TRtRichEditorToolbar } from '../../../rich-editor/rt-rich-editor.component';
 
@@ -11,22 +12,29 @@ import { TRtRichEditorToolbar } from '../../../rich-editor/rt-rich-editor.compon
 @Component({
     selector: 'app-message-composer',
     template: `
-        <rt-message-composer
-            [placeholder]="placeholder"
-            [accept]="accept"
-            [attachments]="attachments"
-            [sending]="sending"
-            [disabled]="disabled"
-            [formatting]="formatting"
-            [toolbar]="toolbar"
-            [minRows]="minRows"
-            [maxRows]="maxRows"
-            [droppedFiles]="droppedFiles" />
+        <app-story-presets fill caption="Поле сообщения в обоих наборах">
+            <ng-template>
+                <rt-message-composer
+                    [placeholder]="placeholder"
+                    [accept]="accept"
+                    [attachments]="attachments"
+                    [sending]="sending"
+                    [disabled]="disabled"
+                    [formatting]="formatting"
+                    [toolbar]="toolbar"
+                    [minRows]="minRows"
+                    [maxRows]="maxRows"
+                    [droppedFiles]="droppedFiles" />
+            </ng-template>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtMessageComposerComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtMessageComposerComponent {
