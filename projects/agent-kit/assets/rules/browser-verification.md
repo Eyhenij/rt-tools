@@ -152,6 +152,14 @@ flowchart TD
   advance are checked against the implementation the same way: work done by retelling the reference
   in words diverges from it unnoticed.
 
+- **Work that carries a look over from a sample is accepted by a frame of one's own screen next to
+  the sample's frame.** Names carried into the markup are the technique, not the result: a green
+  build, linters and tests say nothing about a field clipped mid-line. Every remade screen is
+  looked at by the executor and shown to the owner; a screen not opened since the edit counts as
+  unchecked. A measurement set assembled by the author under their own edit confirms nothing
+  either — it holds what was fixed in that hour; the set is taken from what the work is accepted
+  by and is written before the edit.
+
 A conclusion about layout is backed by a number: "looks fine" is never a check result. Nothing
 guards this — how to measure is covered in pattern `browser-verification-measure`.
 

@@ -2,15 +2,17 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
-- **Stage:** 1 of 3 — Статья о приёмке вида
-- **Done:** задача заведена, ветка от `origin/main`, разбор и план записаны
-- **Next step:** написать статью в `browser-verification.md`
-- **Uncommitted:** папка задачи
+- **State:** `этапы-кончились`
+- **Stage:** 3 of 3 — Сборка и установка копий
+- **Done:** все три этапа: статья о приёмке вида, две статьи в вариантах Azure и GitLab, копии установлены, `agent-kit:check` без расхождений
+- **Next step:** разобрать папку задачи последним коммитом; PR утром — ночью наружу не уходит
+- **Uncommitted:** нет
 - **Waiting for the owner:** no
 - **PR:** not open yet — ночная сессия, наружу ничего не уходит
 
 ## Decisions along the way
+
+- **Признак этапа 1 читается по `the sample's frame`, а не по `next to the sample`** — статья переносится на новую строку посреди фразы, и `grep` по образцу с переносом даёт 0 на написанной статье. Affected stage of the plan: 1.
 
 ## Sessions
 

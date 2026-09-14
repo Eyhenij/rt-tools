@@ -99,6 +99,13 @@ flowchart TD
   draft; the question is asked in the PR itself. The check pipeline does not run on a draft by
   default — until the draft is lifted it stays silent, and that silence is not taken for a green
   run.
+- **The working tree is emptied before the PR opens, not after.** `git status --porcelain` is asked
+  in the same turn as the opening: what is uncommitted goes to the host by a commit before it, or
+  is named. A push after the opening moves the tip past the green run the body names, and for that
+  stretch the PR invites merging a tip nothing has checked.
+- **A push into a branch that has an open PR is followed by rereading its body.** The statement
+  about a green run names the tip by its sha, and moving the tip makes it false in silence: no check
+  reads a PR body.
 - **The draft is lifted by a separate call — `az repos pr update --id <номер> --draft false`.** With
   it the executor answers for readiness: checks passed, no rework left, the work matches the work
   item. Lifting the draft and asking to merge are one turn, not two days.
