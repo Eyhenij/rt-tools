@@ -236,3 +236,18 @@ Covered by `tools/tests/showcase-probe.test.sh` — ten outcomes over a substitu
 the set is not seen by the gatherer of the coverage. Checked on the spot: a page holding the sign of
 preparing and one refused request got out of both probes of the second showcase the same named refusal and
 the code one, in place of the former bare failure of the wait.
+
+### SC-UKV-142 — a consumer brings back a story index the showcase lost
+
+Given a raised showcase whose indexer kept a failed parse of a story file, so that `/index.json` answers
+with a refusal naming that file, while the file itself lies in the tree whole
+When the sweep over the stories or the snapshot run reads the index of that showcase
+Then every file the refusal names is poked so that the showcase's watcher fires over it. The index is
+waited for up to half a minute, and the run goes on over the one that came back, saying aloud that it did.
+An index that did not come back leaves the run with a refusal naming those files. A refusal naming no file
+at all refuses at once rather than waiting
+
+Covered by `tools/tests/showcase-probe.test.sh` — eleven outcomes over a substituted index, without a
+showcase; the set is not seen by the gatherer of the coverage. Checked on the spot: a story file spoilt
+under a raised showcase dropped `/index.json` to a refusal, and the return of the file brought the index
+back to 200 — that is the very event the poke stands in place of.

@@ -2,7 +2,7 @@
 # The scenarios of opening a story in the showcase probes: what a probe says when the showcase it
 # was pointed at serves no stories, and what it does not swallow.
 #
-# Covers SC-UKV-132 of the spec `docs/specs/ui-kit-v2/snapshots`.
+# Covers SC-UKV-132 and SC-UKV-142 of the spec `docs/specs/ui-kit-v2/snapshots`.
 #
 # There is no browser here on purpose. The module is judged by what it says and by the code it
 # leaves with, and a real browser would add half a minute of waiting to every scenario.
@@ -101,5 +101,77 @@ says "a page not at preparing is not called stuck" "Roots on the page: 0." timed
 # Only a wait that ran out speaks of the showcase. Everything else is someone else's failure, and
 # turned into a complaint about a stale showcase it would send the reader looking in the wrong place.
 says "a failure that is not a timeout goes on untouched" "ERR_CONNECTION_REFUSED" goto-fails '' '200 http://localhost:6099/main.js'
+
+# --- the showcase serves no index ---------------------------------------------------------------
+# The second half of the module: a showcase that lost its story index. There is no showcase here
+# either — what is judged is the poke of the files the refusal names and what is said afterwards.
+cat > "$WORK/tools/drive-index.mjs" <<'JS'
+import { ensureIndex } from './showcase-probe.mjs';
+
+const [script] = process.argv.slice(2);
+
+const REFUSAL = [
+    'Unable to index ./projects/ui-kit-v2/src/a.stories.ts:',
+    '  Error: Could not parse expression with acorn',
+    'Unable to index ./projects/ui-kit-v2/src/b.stories.ts:',
+    '  Error: Could not parse import/exports with acorn',
+].join('\n');
+
+const poked = [];
+let reads = 0;
+
+const read = async () => {
+    reads += 1;
+    if (script === 'served') return { ok: true, body: '' };
+    if (script === 'unnamed') return { ok: false, body: 'the indexer fell over and named nothing' };
+    if (script === 'broken-forever') return { ok: false, body: REFUSAL };
+    return { ok: reads > 1, body: reads > 1 ? '' : REFUSAL };
+};
+
+const result = await ensureIndex('http://localhost:6099', {
+    read,
+    poke: (path) => poked.push(path),
+    wait: async () => {},
+    timeoutMs: 3_000,
+});
+
+console.log(`healed ${result.healed}, poked ${poked.join(' ') || 'nothing'}`);
+JS
+
+run_index() {
+    (cd "$WORK/tools" && node drive-index.mjs "$@" 2>&1)
+}
+
+verdict_index() {
+    local label="$1" want="$2" got
+    shift 2
+    if (cd "$WORK/tools" && node drive-index.mjs "$@" >/dev/null 2>&1); then got="green"; else got="red"; fi
+    report "$label" "$got" "$want"
+}
+
+says_index() {
+    local label="$1" pattern="$2" got
+    shift 2
+    if run_index "$@" | grep -qF -- "$pattern"; then got="yes"; else got="no"; fi
+    report "$label" "$got" "yes"
+}
+
+verdict_index "the index is served — the run goes on" green served
+says_index "a served index is poked by nobody" "healed false, poked nothing" served
+
+verdict_index "the index came back after the poke — the run goes on" green broken-then-ok
+says_index "the poke goes over every file the refusal names" "poked ./projects/ui-kit-v2/src/a.stories.ts ./projects/ui-kit-v2/src/b.stories.ts" broken-then-ok
+says_index "the coming back is said aloud" "served no index" broken-then-ok
+
+verdict_index "the index did not come back — the run refuses" red broken-forever
+says_index "the refusal names the files the indexer choked on" "./projects/ui-kit-v2/src/a.stories.ts" broken-forever
+says_index "the refusal says it is not about the harness" "says nothing about the snapshot harness" broken-forever
+says_index "the refusal sends to raise the showcase anew" "raise the showcase anew" broken-forever
+
+# A refusal naming no file is not poked by guesswork: there is nothing to poke, and a wait for an
+# index nobody asked to be rebuilt would only put half a minute between the run and its verdict.
+verdict_index "a refusal naming no file refuses at once" red unnamed
+says_index "such a refusal says the indexer named none" "it named none" unnamed
+
 
 suite_result "opening a story in the showcase probes"

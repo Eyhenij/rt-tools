@@ -27,6 +27,8 @@ import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSy
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
+import { ensureIndex } from './showcase-probe.mjs';
+
 /** The address of an already raised showcase: the run raises none of its own. */
 const URL = process.env.STORYBOOK_URL ?? 'http://localhost:6007';
 
@@ -52,6 +54,10 @@ function fail(message) {
  */
 async function requireOwnShowcase() {
     let index;
+
+    // The same as in the sweep: an index the showcase lost is brought back before the run reads
+    // it, so that a red run means a divergence of the frames and nothing else.
+    await ensureIndex(URL);
 
     try {
         const response = await fetch(`${URL}/index.json`);

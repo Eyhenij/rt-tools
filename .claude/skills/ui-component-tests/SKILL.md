@@ -163,6 +163,13 @@ Four checks do not replace one another, and the choice between them is not a mat
   own code, so the gate refuses a push for a reason that is not true. The wait is wrapped, and its
   refusal names the address, the count of the showing roots, whether the story is still preparing
   and which requests the showcase refused.
+- **A consumer of the showcase brings back an index the showcase lost, and refuses by the index
+  rather than by the frames.** The indexer keeps a failed parse of one story file as that file's
+  entry, and from that second the whole index is refused: not the file's stories are gone but every
+  one of them, and a run over such a showcase goes red with what reads as a divergence of the work.
+  The entry is dropped by a watcher event over that same file, so the files the refusal names are
+  poked and the index is waited for.
+
 - **A probe reading the harness as text separates the code from the explanations.** A word search
   over the whole file finds them in a commented-out line too: a call taken out by one slash reads as
   live, and the probe stays green on exactly the rollback it stands for.

@@ -30,6 +30,8 @@
  */
 import { join } from 'node:path';
 
+import { ensureIndex } from './showcase-probe.mjs';
+
 /** The address of an already raised showcase: the sweep raises none of its own — like the snapshot run next to it. */
 const URL = process.env.STORYBOOK_URL ?? 'http://localhost:6007';
 
@@ -93,6 +95,10 @@ async function loadChromium() {
  */
 async function ownShowings() {
     let index;
+
+    // A showcase serving a broken index is brought back before it is judged: its refusal is not
+    // about the stories, and a red sweep over it reads as a divergence of the work.
+    await ensureIndex(URL);
 
     try {
         const response = await fetch(`${URL}/index.json`);
