@@ -11,24 +11,7 @@
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { Prisma } from '@rt/message-bus-api/persistence/util';
-import { IPage, IPageAsked, pageSkip, USAGE_SORTABLE } from '@rt/message-bus-common';
-
-/** Строка использования одного скила: загрузки, сессии с загрузкой, отказы гейта правил. */
-export interface IUsageRow {
-    readonly skill: string;
-    /** Род скила: правило, паттерн, скил пакета, свой скил дерева. */
-    readonly kind: string;
-    readonly loads: number;
-    readonly sessions: number;
-    readonly denials: number;
-}
-
-/** Одна сессия одного скила: день, признак сессии и сколько раз она его загрузила. */
-export interface IUsageSessionRow {
-    readonly day: string;
-    readonly sid: string;
-    readonly count: number;
-}
+import { IPageAsked, IUsagePage, IUsageRow, IUsageSessionRow, pageSkip, USAGE_SORTABLE } from '@rt/message-bus-common';
 
 /** Период, оба края включительно, дни `ГГГГ-ММ-ДД`. */
 export interface IUsageAsked {
@@ -45,17 +28,6 @@ export interface IUsageAsked {
  * выборка его несёт, а выкидывать поле из общего типа ради одного списка незачем.
  */
 export interface IUsagePageAsked extends IUsageAsked, IPageAsked {}
-
-/**
- * Страница таблицы скилов вместе с периодом, за который считана.
- *
- * Период едет в ответе, потому что запрос мог его не назвать: тогда его подставил приёмник, и
- * экран показывает в отборе тот период, который считан, а не пустоту.
- */
-export interface IUsagePage extends IPage<IUsageRow> {
-    readonly from: string;
-    readonly to: string;
-}
 
 /** Строка хранилища до приведения рода: у отказа гейта рода нет, а отказ всегда о правиле. */
 interface IUsageRawRow {

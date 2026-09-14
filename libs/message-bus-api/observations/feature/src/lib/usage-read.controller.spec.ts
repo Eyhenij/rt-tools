@@ -2,8 +2,8 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { describe, expect, it } from 'vitest';
 
 import { OPERATION_ACCESS, OPERATION_RIGHT } from '@rt/message-bus-api/access/util';
-import { IUsagePage, IUsageRow, IUsageSessionRow } from '@rt/message-bus-api/observations/data-access';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
+import { IUsagePage, IUsageRow, IUsageSessionRow } from '@rt/message-bus-common';
 
 import { UsageReadController } from './usage-read.controller';
 

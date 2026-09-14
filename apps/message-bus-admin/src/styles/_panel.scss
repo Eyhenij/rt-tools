@@ -40,4 +40,11 @@
         color: var(--rt-color-text-muted);
         font-size: var(--rt-text-sm);
     }
+
+    /** Счёт рядом со значением строки: приглушён, чтобы значение читалось первым. */
+    &__count {
+        margin-left: var(--rt-space-2);
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+    }
 }
