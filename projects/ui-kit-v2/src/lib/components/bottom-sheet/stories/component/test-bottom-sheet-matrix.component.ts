@@ -19,6 +19,20 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'presets' | 'themes';
  * Лист занимает всю ширину и высоту показа, поэтому каждая ячейка — своя область с
  * `position: relative`: иначе панели легли бы поверх страницы и накрыли подписи соседей.
  *
+ * Одного `position: relative` области мало. Лист прибит к окну — `position: fixed`, — и такому
+ * потомку относительное положение предка не указ: он считает своё место от окна. Ящик становится
+ * ему блоком-контейнером свойством `contain: paint`, и оно же режет по ящику — прежнее
+ * `overflow: hidden` в нём больше не нужно. Сдвиг слоя и светофильтр дают то же самое, но поднимают
+ * узел в отдельный слой отрисовки, а это меняет растеризацию подписей.
+ *
+ * Своя ширина ящику нужна затем, что ячейка ряда объявлена гибкой строкой: ящик без ширины
+ * ужимается по содержимому, а содержимого в нём нет — лист ушёл к окну. Ящик мерился двумя точками
+ * при ячейке в 288, и в кадре от него оставалась одна пунктирная линия.
+ *
+ * Открытость задаётся привязкой `[open]="true"`, а не голым атрибутом: вход листа объявлен
+ * логическим и строку в истину не превращает. Голый атрибут даёт ему пустую строку, и лист
+ * остаётся закрытым — разметка при этом выглядит верной.
+ *
  * В пакет не уезжает: `tsconfig.lib.json` исключает папки историй.
  */
 @Component({
@@ -31,7 +45,7 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'presets' | 'themes';
                         <app-story-row slotWidth="18rem" [items]="opens" [itemLabel]="openLabel">
                             <ng-template let-value>
                                 <div
-                                    style="position: relative; height: 16rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
+                                    style="position: relative; contain: paint; inline-size: 100%; height: 16rem; border: 1px dashed var(--rt-color-border-subtle)">
                                     <rt-bottom-sheet [open]="value">
                                         <span sheetHeader>Действия с договором</span>
                                         <button rtButton label="Скачать" aria-label="Скачать" appearance="text"></button>
@@ -50,21 +64,21 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'presets' | 'themes';
                         <app-story-row slotWidth="18rem" [items]="contents">
                             <ng-template let-content>
                                 <div
-                                    style="position: relative; height: 16rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
+                                    style="position: relative; contain: paint; inline-size: 100%; height: 16rem; border: 1px dashed var(--rt-color-border-subtle)">
                                     @switch (content) {
                                         @case ('без шапки') {
-                                            <rt-bottom-sheet open>
+                                            <rt-bottom-sheet [open]="true">
                                                 <button rtButton label="Скачать" aria-label="Скачать" appearance="text"></button>
                                             </rt-bottom-sheet>
                                         }
                                         @case ('с шапкой') {
-                                            <rt-bottom-sheet open>
+                                            <rt-bottom-sheet [open]="true">
                                                 <span sheetHeader>Действия с договором</span>
                                                 <button rtButton label="Скачать" aria-label="Скачать" appearance="text"></button>
                                             </rt-bottom-sheet>
                                         }
                                         @case ('длинное содержимое') {
-                                            <rt-bottom-sheet open>
+                                            <rt-bottom-sheet [open]="true">
                                                 <span sheetHeader>Действия с договором</span>
                                                 @for (action of manyActions; track action) {
                                                     <button rtButton appearance="text" [label]="action" [attr.aria-label]="action"></button>
@@ -72,7 +86,7 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'presets' | 'themes';
                                             </rt-bottom-sheet>
                                         }
                                         @case ('пусто') {
-                                            <rt-bottom-sheet open />
+                                            <rt-bottom-sheet [open]="true" />
                                         }
                                     }
                                 </div>
@@ -86,8 +100,8 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'presets' | 'themes';
                 <app-story-presets caption="Лист в обоих наборах">
                     <ng-template>
                         <div
-                            style="position: relative; height: 16rem; width: 18rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
-                            <rt-bottom-sheet open>
+                            style="position: relative; contain: paint; height: 16rem; width: 18rem; border: 1px dashed var(--rt-color-border-subtle)">
+                            <rt-bottom-sheet [open]="true">
                                 <span sheetHeader>Действия с договором</span>
                                 <button rtButton label="Скачать" aria-label="Скачать" appearance="text"></button>
                             </rt-bottom-sheet>
@@ -102,8 +116,8 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'presets' | 'themes';
                         <app-story-themes>
                             <ng-template>
                                 <div
-                                    style="position: relative; height: 16rem; width: 18rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
-                                    <rt-bottom-sheet open>
+                                    style="position: relative; contain: paint; height: 16rem; width: 18rem; border: 1px dashed var(--rt-color-border-subtle)">
+                                    <rt-bottom-sheet [open]="true">
                                         <span sheetHeader>Действия с договором</span>
                                         <button rtButton label="Скачать" aria-label="Скачать" appearance="text"></button>
                                     </rt-bottom-sheet>
