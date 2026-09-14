@@ -1,4 +1,4 @@
-// rt-kit v0.27.0 · checks/board-epics.github.mjs · 12be88ecc735 · правится надстройкой, не здесь
+// rt-kit v0.27.0 · checks/board-epics.github.mjs · 9082d43630a5 · правится надстройкой, не здесь
 /**
  * The link between a task and an epic. Lives in a file of its own: the work queue audit stands at
  * the length limit even without it, and these two checks are read separately.
@@ -181,7 +181,13 @@ export function checkEpicSubIssues(open, report, options) {
 
         let linked;
         try {
-            linked = new Set(ghJson(['api', `repos/${OWNER}/${REPO}/issues/${epic.number}/sub_issues`, '--jq', '[.[].number]'], options));
+            // The list comes in pages, and an epic outgrows one page long before it is closed.
+            // Read by the first page alone, the audit calls a linked task unlinked: the line
+            // then stands in every run, the eye stops reading it, and a real divergence rides
+            // past together with it.
+            linked = new Set(
+                ghJson(['api', '--paginate', `repos/${OWNER}/${REPO}/issues/${epic.number}/sub_issues`, '--jq', '[.[].number]'], options)
+            );
         } catch (error) {
             if (error instanceof OfflineError) {
                 throw error;
