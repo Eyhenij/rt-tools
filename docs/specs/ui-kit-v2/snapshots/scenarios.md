@@ -251,3 +251,16 @@ Covered by `tools/tests/showcase-probe.test.sh` — eleven outcomes over a subst
 showcase; the set is not seen by the gatherer of the coverage. Checked on the spot: a story file spoilt
 under a raised showcase dropped `/index.json` to a refusal, and the return of the file brought the index
 back to 200 — that is the very event the poke stands in place of.
+
+### SC-UKV-143 — the showcase starts over a cache without hot update leftovers
+
+Given a showcase build cache holding files of past hot updates next to the compiled bundles
+When the showcase is raised by the tree's command
+Then the leftovers are removed before the start and the bundles stay, and how many were removed is
+said aloud. A cache that is not there at all is not a refusal: the call goes before every raising
+
+Covered by `tools/tests/showcase-cache-clean.test.sh` — four outcomes over a substituted cache,
+without a showcase. Checked on the spot: over a cache with 5860 leftovers every story hung at
+preparing with a 404 on `runtime_main.<hash>.hot-update.json`, and neither a page reload nor a
+restart of the showcase cured it; after the removal the same story drew three showing roots with
+no refused requests.
