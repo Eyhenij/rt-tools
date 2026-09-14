@@ -180,7 +180,13 @@ export function checkEpicSubIssues(open, report, options) {
 
         let linked;
         try {
-            linked = new Set(ghJson(['api', `repos/${OWNER}/${REPO}/issues/${epic.number}/sub_issues`, '--jq', '[.[].number]'], options));
+            // The list comes in pages, and an epic outgrows one page long before it is closed.
+            // Read by the first page alone, the audit calls a linked task unlinked: the line
+            // then stands in every run, the eye stops reading it, and a real divergence rides
+            // past together with it.
+            linked = new Set(
+                ghJson(['api', '--paginate', `repos/${OWNER}/${REPO}/issues/${epic.number}/sub_issues`, '--jq', '[.[].number]'], options)
+            );
         } catch (error) {
             if (error instanceof OfflineError) {
                 throw error;
