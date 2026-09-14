@@ -4,11 +4,11 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `этапы-кончились`
+- **State:** `разбор-кончился`
 - **Stage:** 2 of 2 done — the cargo leaves with the rest
 - **Done:** stage 1 — `cargo.ts` types, `observations-cargo.ts`, spec SC-AK-1094…1098 green; stage 2 — `shipmentsOf`, leak check, `describe`, the dry run prints `observations — строк 62 за 2 дн.`; the whole package suite green (447 tests); the binding of the agreement written.
-- **Next step:** commit; take the folder apart into the archive by the last commit.
-- **Uncommitted:** everything of both stages.
+- **Next step:** take the folder apart into the archive by the last commit.
+- **Uncommitted:** the merge of the agreement and the rewritten receiving-side agreement.
 - **Waiting for the owner:** no — autonomous session.
 - **PR:** not open; nothing leaves during the night.
 
@@ -23,4 +23,5 @@ Rewritten by every session, not appended to.
 ### 2026-09-14
 
 - Grill moved from the draft; agreements rewritten; plan written.
+- The sending-side agreement merged into the subdomain "Cargo outward"; the receiving-side agreement rewritten to the owner's design (SC-MB-337…352, the roles' 327…336 left empty).
 - Both stages done: `observations-cargo.ts`, `tree-mark.ts` (helpers moved out of `shipment.ts` for its length), `shipment.ts` ships the fourth cargo; spec green; dry run prints the line.

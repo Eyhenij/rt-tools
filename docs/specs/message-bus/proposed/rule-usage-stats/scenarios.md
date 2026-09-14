@@ -1,86 +1,145 @@
-# Scenarios — usage of the rules over a month, the receiving side
+# Scenarios — usage of the rules in the sessions of the trees
 
-The numbers continue the numbering of the domain of the intake and do not change after the merge.
-The next free number was asked of the tree command across all branches: `SC-MB-327`.
+The largest number issued in the domain is 336; the numbers continue it and do not change after the
+merge. The numbers `SC-MB-327`…`SC-MB-336` were issued by a discarded version of this agreement and
+stay empty.
 
-### SC-MB-327 — a digest without the month block is taken in as before
+### SC-MB-337 — a line lands as a row of its own
 
-Given a tree with a valid token sends a digest of the former edition, without the block
-When the intake checks the form of the digest
-Then the record of a month is created or updated, and the answer names the month, as before
+Given the observation cargo of two days with four lines
+When the intake takes it in by the tree token
+Then four rows lie in the storage with the tree, the working copy sign, the day, the event, the
+resource, the kind of the skill and the session sign of each line, and the answer names two days and
+four rows
 
-Not covered: the block does not exist yet; the test is written with the intake.
+Not covered: task RT-2099.
 
-### SC-MB-328 — the block lands in the record as it arrived
+### SC-MB-338 — a day of one working copy is replaced whole
 
-Given a digest with a block of three lines and a line of the own
-When the intake writes the record of a month
-Then the record carries the block whole, and the reading of the record gives it back unchanged
+Given three rows of a day of a copy lie in the storage
+When the same copy sends the same day with two lines
+Then two rows of that day lie in the storage and none of the former three
 
-Not covered: the block does not exist yet.
+Not covered: task RT-2099.
 
-### SC-MB-329 — the panel draws the table of usage from the record
+### SC-MB-339 — a day of another working copy is not touched
 
-Given a record of a month whose digest carries a block of three lines
-When a person who has entered opens the record from the list of the digests
-Then the panel shows the section of usage with three rows — the resource, the kind, the loads, the
-sessions and the refusals of each — in the order the block carries
+Given rows of a day of copy A lie in the storage
+When copy B of the same tree sends the same day
+Then the rows of copy A lie as they were, and the rows of copy B lie next to them
 
-Not covered: the table does not exist yet; closed by the end-to-end suite of the admin application.
+Not covered: task RT-2099.
 
-### SC-MB-330 — a record without the block draws no table
+### SC-MB-340 — an unknown event kind refuses the cargo whole
 
-Given a record of a month whose digest has no block
-When the panel of the record is opened
-Then there is no section of usage, and the digest stands as a block of code as before
+Given the cargo of one day with a load and a line of the event `unknown`
+When the intake takes it in
+Then the intake refuses with `400` naming the day and the place of the line, and no row of the cargo
+lands
 
-Not covered: the table does not exist yet.
+Not covered: task RT-2099.
 
-### SC-MB-331 — an empty block draws one line about no loads
+### SC-MB-341 — more lines than the cap refuses the cargo without a row
 
-Given a record of a month whose block has the month and the day and no lines
-When the panel of the record is opened
-Then the section of usage shows one line saying nothing was loaded over the month, and no rows
+Given the cap of lines is ten and the cargo carries eleven
+When the intake takes it in
+Then the intake refuses with `413` naming the cap and eleven, and no row lands
 
-Not covered: the table does not exist yet.
+Not covered: task RT-2099.
 
-### SC-MB-332 — the line of the own stands last with the number of names
+### SC-MB-342 — the nightly cleaning removes rows older than a year and writes a line per tree
 
-Given a block whose line of the own has more loads than any resource, and two names behind it
-When the panel of the record is opened
-Then the row of the own skills stands last, names two names in brackets and no name itself
+Given rows of two trees older than a year and rows of today
+When the cleaning of the keeping term runs
+Then the old rows are gone, the rows of today stay, and the journal holds one line per tree with
+the count of the removed
 
-Not covered: the table does not exist yet.
+Not covered: task RT-2099.
 
-### SC-MB-333 — the kind is shown by a word of the domain
+### SC-MB-343 — the usage of a tree over a period counts loads, sessions and refusals per skill
 
-Given a block with a rule, a pattern and a skill of the package
-When the panel of the record is opened
-Then the column of the kind reads "правило", "паттерн" and "скил пакета", and no cell reads the word of
-the cargo
+Given the rows of a tree: the rule `testing` loaded three times by two sessions and refused by the
+gate once, the pattern `git-workflow-commit` loaded once, and a load of another tree
+When the usage is read for the tree over the period of the rows
+Then two rows come back: `testing` — rule, three loads, two sessions, one refusal — first, and
+`git-workflow-commit` — pattern, one load, one session, no refusal — second; the other tree's load is
+absent
 
-Not covered: the table does not exist yet.
+Not covered: task RT-2100.
 
-### SC-MB-334 — the month of the block is shown when it differs from the month of the record
+### SC-MB-344 — a period longer than four hundred days is refused
 
-Given a record of the month `2026-10` whose block names the month `2026-09`
-When the panel of the record is opened
-Then the heading of the section of usage names `2026-09` next to it
+Given a period of four hundred and one days
+When the usage is read
+Then the reading refuses with `400` naming the limit
 
-Not covered: the table does not exist yet.
+Not covered: task RT-2100.
 
-### SC-MB-335 — the day counted through stands under the heading
+### SC-MB-345 — the sessions of a skill come by day, newest first
 
-Given a block counted through the fourteenth day of its month
-When the panel of the record is opened
-Then a line under the heading of the section names the first day and the fourteenth
+Given the rule `testing` loaded by session `1` twice on the twelfth and by session `2` once on the
+thirteenth
+When the sessions of `testing` are read over the period
+Then two rows come back: the thirteenth, `2`, one — first; the twelfth, `1`, two — second
 
-Not covered: the table does not exist yet.
+Not covered: task RT-2100.
 
-### SC-MB-336 — the table stands under the right of the digests
+### SC-MB-346 — the reading is closed by the right of the usage
 
-Given an account without the right to read the digests
-When it asks for the record of a month
-Then the reading refuses as before, and there is no second operation that would give the block out
+Given an account with the right of the digests and without `usage:read`
+When it reads the usage
+Then the reading refuses with `403`
 
-Not covered: the table does not exist yet.
+Not covered: task RT-2100.
+
+### SC-MB-347 — an empty period answers with an empty list
+
+Given a tree with no rows over the period
+When the usage is read
+Then an empty list comes back with `200`
+
+Not covered: task RT-2100.
+
+### SC-MB-348 — the section shows a row per skill for the chosen tree and period
+
+Given a person with `usage:read` and the rows of the stand
+When they open the section «Использование» and choose the tree
+Then the table shows a row per skill with the kind by a word of the domain, the loads, the sessions
+and the refusals, the most loaded first
+
+Not covered: task RT-2101.
+
+### SC-MB-349 — a change of the period re-reads the table, and the former rows stay dimmed meanwhile
+
+Given the table of a tree is shown
+When the person narrows the period to one day
+Then the table shows the rows of that day only, and while the reading went the former rows stood
+dimmed under the sign of reading
+
+Not covered: task RT-2101.
+
+### SC-MB-350 — a row opens the panel of the sessions of its skill
+
+Given the table of a tree is shown
+When the person opens the row of `testing`
+Then the panel «Сессии» opens with `testing` in its heading and a row per day and session with how
+many times
+
+Not covered: task RT-2101.
+
+### SC-MB-351 — a person without the right sees no section
+
+Given a person with the right of the digests and without `usage:read`
+When they open the admin application
+Then the row of the sections holds no «Использование», and the address of the section answers with
+the refusal of the shell
+
+Not covered: task RT-2101.
+
+### SC-MB-352 — an empty period draws the empty state of the base
+
+Given the table of a tree is shown
+When the person chooses a period with no rows
+Then the table shows the empty state of the base and no message of the bus
+
+Not covered: task RT-2101.
