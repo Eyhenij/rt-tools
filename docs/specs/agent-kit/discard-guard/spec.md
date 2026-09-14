@@ -9,7 +9,7 @@
 
 `git reset --hard` erased the uncommitted edits of a neighbouring session in seven files, and
 there was nothing to restore them from: git keeps no object of an uncommitted edit. The command
-was taken to drop a commit — a job `--soft` does without touching the working tree. No guard
+was taken to drop a commit — what `--soft` does without touching the working tree. No guard
 judged the call: the delivery guards read the branch, the base and the signature, and the
 working tree is invisible to them.
 
