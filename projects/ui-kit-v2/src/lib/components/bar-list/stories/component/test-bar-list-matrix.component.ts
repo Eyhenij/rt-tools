@@ -36,42 +36,61 @@ function withoutMeta(row: IRtBarList.Row): IRtBarList.Row {
     template: `
         @switch (part) {
             @case ('share') {
-                <app-story-row caption="Доля полосы" slotWidth="20rem" [items]="shares" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-bar-list title="Заявки по городам" [rows]="item.rows" />
+                <app-story-presets caption="Доля полосы в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="shares" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-bar-list title="Заявки по городам" [rows]="item.rows" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('meta') {
-                <app-story-row caption="Приписка и вид значения" slotWidth="20rem" [items]="metas" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-bar-list title="Заявки по городам" [rows]="item.rows" />
+                <app-story-presets caption="Приписка и вид значения в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="metas" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-bar-list title="Заявки по городам" [rows]="item.rows" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('length') {
-                <app-story-row caption="Длина набора" slotWidth="20rem" [items]="lengths" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-bar-list title="Заявки по городам" [rows]="item.rows" />
+                <app-story-presets caption="Длина набора в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="lengths" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-bar-list title="Заявки по городам" [rows]="item.rows" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('empty') {
-                <app-story-row caption="Пустой набор" slotWidth="20rem" [items]="empties">
-                    <ng-template let-empty>
-                        @switch (empty) {
-                            @case ('переведённый текст') {
-                                <rt-bar-list title="Заявки по городам" [rows]="none" />
-                            }
-                            @case ('свой текст') {
-                                <rt-bar-list title="Заявки по городам" emptyText="За выбранный период заявок не было" [rows]="none" />
-                            }
-                        }
+                <app-story-presets caption="Пустой набор в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="empties">
+                            <ng-template let-empty>
+                                @switch (empty) {
+                                    @case ('переведённый текст') {
+                                        <rt-bar-list title="Заявки по городам" [rows]="none" />
+                                    }
+                                    @case ('свой текст') {
+                                        <rt-bar-list
+                                            title="Заявки по городам"
+                                            emptyText="За выбранный период заявок не было"
+                                            [rows]="none" />
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -85,13 +104,17 @@ function withoutMeta(row: IRtBarList.Row): IRtBarList.Row {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Список в обеих темах">
+                <app-story-presets caption="Список в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 20rem">
-                            <rt-bar-list title="Заявки по городам" [rows]="rows" />
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 20rem">
+                                    <rt-bar-list title="Заявки по городам" [rows]="rows" />
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

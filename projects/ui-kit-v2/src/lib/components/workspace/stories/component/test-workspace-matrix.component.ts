@@ -29,22 +29,57 @@ export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'presets' | '
     template: `
         @switch (part) {
             @case ('slots') {
-                <app-story-row caption="Какие слоты объявлены" [items]="slotCases">
-                    <ng-template let-slot>
-                        <div style="height: 18rem; border: 1px dashed var(--rt-color-border-subtle)">
-                            @switch (slot) {
-                                @case ('список и центр') {
-                                    <rt-workspace>
-                                        <ng-template rtWorkspaceList>
-                                            <div style="padding: 0.5rem">Список переписок</div>
-                                        </ng-template>
-                                        <ng-template rtWorkspaceCenter>
-                                            <div style="padding: 0.5rem">Содержимое переписки</div>
-                                        </ng-template>
-                                    </rt-workspace>
-                                }
-                                @case ('все три') {
-                                    <rt-workspace hasActive>
+                <app-story-presets caption="Какие слоты объявлены в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="slotCases">
+                            <ng-template let-slot>
+                                <div style="height: 18rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
+                                    @switch (slot) {
+                                        @case ('список и центр') {
+                                            <rt-workspace>
+                                                <ng-template rtWorkspaceList>
+                                                    <div style="padding: 0.5rem">Список переписок</div>
+                                                </ng-template>
+                                                <ng-template rtWorkspaceCenter>
+                                                    <div style="padding: 0.5rem">Содержимое переписки</div>
+                                                </ng-template>
+                                            </rt-workspace>
+                                        }
+                                        @case ('все три') {
+                                            <rt-workspace hasActive>
+                                                <ng-template rtWorkspaceList>
+                                                    <div style="padding: 0.5rem">Список переписок</div>
+                                                </ng-template>
+                                                <ng-template rtWorkspaceCenter>
+                                                    <div style="padding: 0.5rem">Содержимое переписки</div>
+                                                </ng-template>
+                                                <ng-template rtWorkspaceAside>
+                                                    <div style="padding: 0.5rem">Подробности</div>
+                                                </ng-template>
+                                            </rt-workspace>
+                                        }
+                                        @case ('только центр') {
+                                            <rt-workspace>
+                                                <ng-template rtWorkspaceCenter>
+                                                    <div style="padding: 0.5rem">Содержимое во всю ширину</div>
+                                                </ng-template>
+                                            </rt-workspace>
+                                        }
+                                    }
+                                </div>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('active') {
+                <app-story-presets caption="Выбрана ли запись в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="activeCases" [itemLabel]="activeLabel">
+                            <ng-template let-value>
+                                <div style="height: 18rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
+                                    <rt-workspace [hasActive]="value">
                                         <ng-template rtWorkspaceList>
                                             <div style="padding: 0.5rem">Список переписок</div>
                                         </ng-template>
@@ -55,64 +90,45 @@ export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'presets' | '
                                             <div style="padding: 0.5rem">Подробности</div>
                                         </ng-template>
                                     </rt-workspace>
-                                }
-                                @case ('только центр') {
-                                    <rt-workspace>
-                                        <ng-template rtWorkspaceCenter>
-                                            <div style="padding: 0.5rem">Содержимое во всю ширину</div>
-                                        </ng-template>
-                                    </rt-workspace>
-                                }
-                            }
-                        </div>
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
-            }
-
-            @case ('active') {
-                <app-story-row caption="Выбрана ли запись" [items]="activeCases" [itemLabel]="activeLabel">
-                    <ng-template let-value>
-                        <div style="height: 18rem; border: 1px dashed var(--rt-color-border-subtle)">
-                            <rt-workspace [hasActive]="value">
-                                <ng-template rtWorkspaceList>
-                                    <div style="padding: 0.5rem">Список переписок</div>
-                                </ng-template>
-                                <ng-template rtWorkspaceCenter>
-                                    <div style="padding: 0.5rem">Содержимое переписки</div>
-                                </ng-template>
-                                <ng-template rtWorkspaceAside>
-                                    <div style="padding: 0.5rem">Подробности</div>
-                                </ng-template>
-                            </rt-workspace>
-                        </div>
-                    </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('widths') {
-                <app-story-row caption="Начальные ширины панелей" [items]="widthCases" [itemLabel]="widthLabel">
-                    <ng-template let-item>
-                        <div style="height: 18rem; border: 1px dashed var(--rt-color-border-subtle)">
-                            <rt-workspace hasActive [listDefaultWidth]="item.list" [asideDefaultWidth]="item.aside" [centerMinWidth]="240">
-                                <ng-template rtWorkspaceList>
-                                    <div style="padding: 0.5rem">Список</div>
-                                </ng-template>
-                                <ng-template rtWorkspaceCenter>
-                                    <div style="padding: 0.5rem">Содержимое</div>
-                                </ng-template>
-                                <ng-template rtWorkspaceAside>
-                                    <div style="padding: 0.5rem">Подробности</div>
-                                </ng-template>
-                            </rt-workspace>
-                        </div>
+                <app-story-presets caption="Начальные ширины панелей в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="widthCases" [itemLabel]="widthLabel">
+                            <ng-template let-item>
+                                <div style="height: 18rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
+                                    <rt-workspace
+                                        hasActive
+                                        [listDefaultWidth]="item.list"
+                                        [asideDefaultWidth]="item.aside"
+                                        [centerMinWidth]="240">
+                                        <ng-template rtWorkspaceList>
+                                            <div style="padding: 0.5rem">Список</div>
+                                        </ng-template>
+                                        <ng-template rtWorkspaceCenter>
+                                            <div style="padding: 0.5rem">Содержимое</div>
+                                        </ng-template>
+                                        <ng-template rtWorkspaceAside>
+                                            <div style="padding: 0.5rem">Подробности</div>
+                                        </ng-template>
+                                    </rt-workspace>
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
                 <app-story-presets caption="Рабочий стол в обоих наборах">
                     <ng-template>
-                        <div style="height: 16rem; width: 30rem; border: 1px dashed var(--rt-color-border-subtle)">
+                        <div style="height: 16rem; width: 30rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
                             <rt-workspace hasActive>
                                 <ng-template rtWorkspaceList>
                                     <div style="padding: 0.5rem">Список</div>
@@ -130,23 +146,28 @@ export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'presets' | '
             }
 
             @case ('themes') {
-                <app-story-themes caption="Рабочий стол в обеих темах">
+                <app-story-presets caption="Рабочий стол в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="height: 16rem; width: 30rem; border: 1px dashed var(--rt-color-border-subtle)">
-                            <rt-workspace hasActive>
-                                <ng-template rtWorkspaceList>
-                                    <div style="padding: 0.5rem">Список</div>
-                                </ng-template>
-                                <ng-template rtWorkspaceCenter>
-                                    <div style="padding: 0.5rem">Содержимое</div>
-                                </ng-template>
-                                <ng-template rtWorkspaceAside>
-                                    <div style="padding: 0.5rem">Подробности</div>
-                                </ng-template>
-                            </rt-workspace>
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div
+                                    style="height: 16rem; width: 30rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
+                                    <rt-workspace hasActive>
+                                        <ng-template rtWorkspaceList>
+                                            <div style="padding: 0.5rem">Список</div>
+                                        </ng-template>
+                                        <ng-template rtWorkspaceCenter>
+                                            <div style="padding: 0.5rem">Содержимое</div>
+                                        </ng-template>
+                                        <ng-template rtWorkspaceAside>
+                                            <div style="padding: 0.5rem">Подробности</div>
+                                        </ng-template>
+                                    </rt-workspace>
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtMessageComponent } from '../../rt-message.component';
 import { IRtTag } from '../../../tag/rt-tag.model';
 import { IRtIcon } from '../../../icon/rt-icon.model';
@@ -12,12 +13,19 @@ import { IRtIcon } from '../../../icon/rt-icon.model';
 @Component({
     selector: 'app-message',
     template: `
-        <rt-message [severity]="severity" [icon]="icon" [hideIcon]="hideIcon" [closable]="closable" />
+        <app-story-presets fill caption="Сообщение в обоих наборах">
+            <ng-template>
+                <rt-message [severity]="severity" [icon]="icon" [hideIcon]="hideIcon" [closable]="closable" />
+            </ng-template>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtMessageComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtMessageComponent {

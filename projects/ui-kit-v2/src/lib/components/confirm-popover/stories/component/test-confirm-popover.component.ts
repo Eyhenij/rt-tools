@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtConfirmPopoverComponent } from '../../rt-confirm-popover.component';
 import { IRtConfirmPopover } from '../../rt-confirm-popover.model';
 
@@ -11,12 +12,24 @@ import { IRtConfirmPopover } from '../../rt-confirm-popover.model';
 @Component({
     selector: 'app-confirm-popover',
     template: `
-        <rt-confirm-popover [message]="message" [title]="title" [confirmLabel]="confirmLabel" [cancelLabel]="cancelLabel" [tone]="tone" />
+        <app-story-presets caption="Подтверждение в обоих наборах">
+            <ng-template>
+                <rt-confirm-popover
+                    [message]="message"
+                    [title]="title"
+                    [confirmLabel]="confirmLabel"
+                    [cancelLabel]="cancelLabel"
+                    [tone]="tone" />
+            </ng-template>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtConfirmPopoverComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtConfirmPopoverComponent {

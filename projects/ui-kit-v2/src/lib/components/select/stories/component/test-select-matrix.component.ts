@@ -81,75 +81,95 @@ function invalid(): FormControl<string | null> {
     template: `
         @switch (part) {
             @case ('size') {
-                <app-story-row caption="Размер" [items]="sizes" [slotWidth]="fieldWidth">
-                    <ng-template let-size>
-                        <rt-select ariaLabel="Размер" placeholder="Выберите" [size]="size" [options]="options" />
+                <app-story-presets caption="Размер в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="sizes" [slotWidth]="fieldWidth">
+                            <ng-template let-size>
+                                <rt-select ariaLabel="Размер" placeholder="Выберите" [size]="size" [options]="options" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('filling') {
-                <app-story-row caption="Наполненность и очистка" [items]="fillingCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-fillingCase>
-                        <rt-select
-                            placeholder="Выберите город"
-                            [ariaLabel]="fillingCase.name"
-                            [clearable]="fillingCase.clearable"
-                            [options]="options"
-                            [formControl]="fillingCase.control" />
-                    </ng-template>
-                </app-story-row>
+                <app-story-presets caption="Наполненность и очистка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="fillingCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-fillingCase>
+                                <rt-select
+                                    placeholder="Выберите город"
+                                    [ariaLabel]="fillingCase.name"
+                                    [clearable]="fillingCase.clearable"
+                                    [options]="options"
+                                    [formControl]="fillingCase.control" />
+                            </ng-template>
+                        </app-story-row>
 
-                <app-story-row caption="Иконка слева" [items]="iconCases" [itemLabel]="iconLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-withIcon>
-                        <rt-select
-                            ariaLabel="Иконка слева"
-                            placeholder="Выберите город"
-                            [iconLeft]="withIcon ? 'ico-search' : null"
-                            [options]="options" />
+                        <app-story-row caption="Иконка слева" [items]="iconCases" [itemLabel]="iconLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-withIcon>
+                                <rt-select
+                                    ariaLabel="Иконка слева"
+                                    placeholder="Выберите город"
+                                    [iconLeft]="withIcon ? 'ico-search' : null"
+                                    [options]="options" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('bordered') {
-                <app-story-row caption="Рамка" [items]="borderedCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-borderedCase>
-                        <rt-select
-                            [ariaLabel]="borderedCase.name"
-                            [bordered]="borderedCase.bordered"
-                            [options]="options"
-                            [formControl]="borderedCase.control" />
+                <app-story-presets caption="Рамка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="borderedCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-borderedCase>
+                                <rt-select
+                                    [ariaLabel]="borderedCase.name"
+                                    [bordered]="borderedCase.bordered"
+                                    [options]="options"
+                                    [formControl]="borderedCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Взаимодействие" [items]="states" [itemLabel]="stateLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-state>
-                        <rt-select
-                            ariaLabel="Состояние"
-                            placeholder="Выберите город"
-                            [options]="options"
-                            [attr.data-story-state]="state.state" />
-                    </ng-template>
-                </app-story-row>
+                <app-story-presets caption="Взаимодействие в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="states" [itemLabel]="stateLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-state>
+                                <rt-select
+                                    ariaLabel="Состояние"
+                                    placeholder="Выберите город"
+                                    [options]="options"
+                                    [attr.data-story-state]="state.state" />
+                            </ng-template>
+                        </app-story-row>
 
-                <app-story-row caption="Значение, форма и обёртка" [items]="stateCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-stateCase>
-                        @if (stateCase.flat) {
-                            <rt-field [readonly]="true">
-                                <rt-select [ariaLabel]="stateCase.name" [options]="options" [formControl]="stateCase.control" />
-                            </rt-field>
-                        } @else {
-                            <rt-select
-                                placeholder="Выберите город"
-                                [ariaLabel]="stateCase.name"
-                                [disabled]="stateCase.disabled"
-                                [options]="options"
-                                [formControl]="stateCase.control" />
-                        }
+                        <app-story-row
+                            caption="Значение, форма и обёртка"
+                            [items]="stateCases"
+                            [itemLabel]="caseLabel"
+                            [slotWidth]="fieldWidth">
+                            <ng-template let-stateCase>
+                                @if (stateCase.flat) {
+                                    <rt-field [readonly]="true">
+                                        <rt-select [ariaLabel]="stateCase.name" [options]="options" [formControl]="stateCase.control" />
+                                    </rt-field>
+                                } @else {
+                                    <rt-select
+                                        placeholder="Выберите город"
+                                        [ariaLabel]="stateCase.name"
+                                        [disabled]="stateCase.disabled"
+                                        [options]="options"
+                                        [formControl]="stateCase.control" />
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -168,18 +188,22 @@ function invalid(): FormControl<string | null> {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Триггер в обеих темах">
+                <app-story-presets caption="Триггер в обеих темах в обоих наборах">
                     <ng-template>
-                        @for (themeCase of themeCases; track themeCase.name) {
-                            <rt-select
-                                placeholder="Выберите город"
-                                [ariaLabel]="themeCase.name"
-                                [disabled]="themeCase.disabled"
-                                [options]="options"
-                                [formControl]="themeCase.control" />
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (themeCase of themeCases; track themeCase.name) {
+                                    <rt-select
+                                        placeholder="Выберите город"
+                                        [ariaLabel]="themeCase.name"
+                                        [disabled]="themeCase.disabled"
+                                        [options]="options"
+                                        [formControl]="themeCase.control" />
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
 
             @case ('panel') {

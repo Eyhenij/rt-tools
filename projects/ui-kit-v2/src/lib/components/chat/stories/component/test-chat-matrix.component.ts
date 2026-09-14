@@ -35,106 +35,139 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
     template: `
         @switch (part) {
             @case ('thread') {
-                <app-story-row caption="Выбрана ли переписка" slotWidth="24rem" [items]="threadCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <div style="height: 22rem">
-                            <rt-chat
-                                canReply
-                                title="Договор №2024-118"
-                                emptyHint="Выберите переписку слева"
-                                placeholder="Написать сообщение"
-                                [hasThread]="item.hasThread"
-                                [messages]="item.messages" />
-                        </div>
+                <app-story-presets caption="Выбрана ли переписка в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="threadCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <div style="height: 22rem">
+                                    <rt-chat
+                                        canReply
+                                        title="Договор №2024-118"
+                                        emptyHint="Выберите переписку слева"
+                                        placeholder="Написать сообщение"
+                                        [hasThread]="item.hasThread"
+                                        [messages]="item.messages" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('messageKind') {
-                <div style="width: 26rem; height: 24rem">
-                    <rt-chat hasThread canReply title="Договор №2024-118" placeholder="Написать сообщение" [messages]="messages" />
-                </div>
+                <app-story-presets caption="Вид реплики в обоих наборах">
+                    <ng-template>
+                        <div style="width: 26rem; height: 24rem">
+                            <rt-chat hasThread canReply title="Договор №2024-118" placeholder="Написать сообщение" [messages]="messages" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
             }
 
             @case ('status') {
-                <div style="width: 26rem; height: 24rem">
-                    <rt-chat hasThread canReply title="Свои сообщения" placeholder="Написать сообщение" [messages]="statusMessages" />
-                </div>
+                <app-story-presets caption="Состояние своей реплики в обоих наборах">
+                    <ng-template>
+                        <div style="width: 26rem; height: 24rem">
+                            <rt-chat
+                                hasThread
+                                canReply
+                                title="Свои сообщения"
+                                placeholder="Написать сообщение"
+                                [messages]="statusMessages" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
             }
 
             @case ('messageActions') {
-                <app-story-row caption="Действия у реплики" slotWidth="24rem" [items]="actionCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <!-- Ширина названа явно: слот ряда — flex-контейнер, и переписка без
-                             собственной ширины сжимается в нём до нуля. Кнопки у реплики
-                             проявляются наведением, поэтому на ячейке стоит признак состояния. -->
-                        <div style="height: 22rem; width: 100%" [attr.data-story-state]="'hover'">
-                            <rt-chat
-                                hasThread
-                                title="Договор №2024-118"
-                                placeholder="Написать сообщение"
-                                [messages]="actionMessages"
-                                [messageHasActions]="item.predicate">
-                                @if (item.declared) {
-                                    <ng-template rtChatMessageActions let-message>
-                                        <rt-menu-item icon="link" [label]="'Ссылка на ' + message.text" />
-                                    </ng-template>
-                                }
-                            </rt-chat>
-                        </div>
+                <app-story-presets caption="Действия у реплики в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="actionCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <!-- Ширина названа явно: слот ряда — flex-контейнер, и переписка без
+                                     собственной ширины сжимается в нём до нуля. Кнопки у реплики
+                                     проявляются наведением, поэтому на ячейке стоит признак состояния. -->
+                                <div style="height: 22rem; width: 100%" [attr.data-story-state]="'hover'">
+                                    <rt-chat
+                                        hasThread
+                                        title="Договор №2024-118"
+                                        placeholder="Написать сообщение"
+                                        [messages]="actionMessages"
+                                        [messageHasActions]="item.predicate">
+                                        @if (item.declared) {
+                                            <ng-template rtChatMessageActions let-message>
+                                                <rt-menu-item icon="link" [label]="'Ссылка на ' + message.text" />
+                                            </ng-template>
+                                        }
+                                    </rt-chat>
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('reply') {
-                <app-story-row caption="Можно ли отвечать" slotWidth="24rem" [items]="replyCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <div style="height: 22rem">
-                            <rt-chat
-                                hasThread
-                                title="Договор №2024-118"
-                                placeholder="Написать сообщение"
-                                [messages]="messages"
-                                [canReply]="item.canReply"
-                                [replyBlockReason]="item.reason"
-                                [sending]="item.sending" />
-                        </div>
+                <app-story-presets caption="Можно ли отвечать в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="replyCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <div style="height: 22rem">
+                                    <rt-chat
+                                        hasThread
+                                        title="Договор №2024-118"
+                                        placeholder="Написать сообщение"
+                                        [messages]="messages"
+                                        [canReply]="item.canReply"
+                                        [replyBlockReason]="item.reason"
+                                        [sending]="item.sending" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('header') {
-                <app-story-row caption="Когда появляется шапка" slotWidth="24rem" [items]="headerCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <div style="height: 22rem">
-                            <rt-chat
-                                hasThread
-                                canReply
-                                placeholder="Написать сообщение"
-                                title="Договор №2024-118"
-                                [messages]="messages"
-                                [showRefresh]="item.refresh"
-                                [showExpand]="item.expand" />
-                        </div>
+                <app-story-presets caption="Когда появляется шапка в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="headerCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <div style="height: 22rem">
+                                    <rt-chat
+                                        hasThread
+                                        canReply
+                                        placeholder="Написать сообщение"
+                                        title="Договор №2024-118"
+                                        [messages]="messages"
+                                        [showRefresh]="item.refresh"
+                                        [showExpand]="item.expand" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('loading') {
-                <app-story-row caption="Загрузка и догрузка" slotWidth="24rem" [items]="loadingCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <div style="height: 22rem">
-                            <rt-chat
-                                hasThread
-                                canReply
-                                title="Договор №2024-118"
-                                placeholder="Написать сообщение"
-                                [messages]="item.empty ? none : messages"
-                                [loading]="item.loading"
-                                [fetching]="item.fetching" />
-                        </div>
+                <app-story-presets caption="Загрузка и догрузка в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="loadingCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <div style="height: 22rem">
+                                    <rt-chat
+                                        hasThread
+                                        canReply
+                                        title="Договор №2024-118"
+                                        placeholder="Написать сообщение"
+                                        [messages]="item.empty ? none : messages"
+                                        [loading]="item.loading"
+                                        [fetching]="item.fetching" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -148,13 +181,22 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
             }
 
             @case ('themes') {
-                <app-story-themes caption="Переписка в обеих темах">
+                <app-story-presets caption="Переписка в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 24rem; height: 22rem">
-                            <rt-chat hasThread canReply title="Договор №2024-118" placeholder="Написать сообщение" [messages]="messages" />
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 24rem; height: 22rem">
+                                    <rt-chat
+                                        hasThread
+                                        canReply
+                                        title="Договор №2024-118"
+                                        placeholder="Написать сообщение"
+                                        [messages]="messages" />
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

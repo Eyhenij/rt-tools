@@ -56,23 +56,27 @@ function confirmData(patch: Partial<IRtMenu.ConfirmData>): IRtMenu.ConfirmData {
     template: `
         @switch (part) {
             @case ('tone') {
-                <app-story-row caption="Тон подтверждающей кнопки" [items]="toneCases" [itemLabel]="caseLabel" [slotWidth]="dialogWidth">
-                    <ng-template let-toneCase>
-                        <ng-container *ngComponentOutlet="dialog; injector: injectorFor(toneCase)" />
+                <app-story-presets caption="Тон подтверждающей кнопки в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="toneCases" [itemLabel]="caseLabel" [slotWidth]="dialogWidth">
+                            <ng-template let-toneCase>
+                                <ng-container *ngComponentOutlet="dialog; injector: injectorFor(toneCase)" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('heading') {
-                <app-story-row
-                    caption="Заголовок и длина сообщения"
-                    [items]="headingCases"
-                    [itemLabel]="caseLabel"
-                    [slotWidth]="dialogWidth">
-                    <ng-template let-headingCase>
-                        <ng-container *ngComponentOutlet="dialog; injector: injectorFor(headingCase)" />
+                <app-story-presets caption="Заголовок и длина сообщения в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="headingCases" [itemLabel]="caseLabel" [slotWidth]="dialogWidth">
+                            <ng-template let-headingCase>
+                                <ng-container *ngComponentOutlet="dialog; injector: injectorFor(headingCase)" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -84,11 +88,15 @@ function confirmData(patch: Partial<IRtMenu.ConfirmData>): IRtMenu.ConfirmData {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Окно подтверждения в обеих темах">
+                <app-story-presets caption="Окно подтверждения в обеих темах в обоих наборах">
                     <ng-template>
-                        <ng-container *ngComponentOutlet="dialog; injector: injectorFor(toneCases[0])" />
+                        <app-story-themes>
+                            <ng-template>
+                                <ng-container *ngComponentOutlet="dialog; injector: injectorFor(toneCases[0])" />
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

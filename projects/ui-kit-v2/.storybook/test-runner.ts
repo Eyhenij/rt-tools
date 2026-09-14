@@ -181,38 +181,111 @@ async function fitViewportToPage(page: Page, identifier: string): Promise<void> 
 }
 
 /**
- * Раздвигает окно до снимаемого узла, чтобы кадр по узлу снимался обычной съёмкой.
+ * Охват нарисованного: рамка узла вместе со всем, что вышло за неё.
  *
- * То же, что делает подгонка под страницу, и по той же причине: узел выше окна браузер снимает,
- * подменяя окно на время кадра, — страница получает `resize` и уезжает прямо под затвором. Замер
- * поймал это на семи историях сразу: узел терял два пикселя высоты между замером до кадра и
- * замером после него (812 → 810, 1072 → 1070), а страница уползала на 16 пикселей прокрутки.
- * Соседняя история после такого кадра снималась уже сдвинутой, поэтому расхождение приходило не
- * туда, где стоял высокий показ, а к следующей за ним истории — и выглядело её поломкой.
+ * Рамку узел получает от окна, и содержимое, вышедшее за рамку, в ней не видно вовсе. Съёмка по
+ * узлу режет ровно рамку, поэтому вынос не попадает в кадр и об этом не сообщает: обрез
+ * приходится одинаково на обе половины пары и читается как задуманный. Обход витрины при базовом
+ * окне: показов 545, без корня показа 113, нарисованное выходит за рамку у 35 — просмотрщик фото
+ * терял 753 точки справа, заголовок страницы 586 снизу.
  *
- * Раздвигается окно под **узел**, а не под страницу: страница бывает выше снимаемого узла, и
- * лишний рост окна менял бы всё, что от окна считается, у историй, которым это не нужно. Окно
- * только растёт — сужение проверило бы ту сторону порога ширины, о которой история не просила.
+ * Координаты возвращаются в системе страницы, а не окна: по ним же берётся обрезка кадра.
  */
-async function fitViewportToNode(page: Page, identifier: string, selector: string): Promise<void> {
+async function spanOfNode(page: Page, selector: string): Promise<{ x: number; y: number; width: number; height: number } | null> {
+    return page.evaluate((target: string): { x: number; y: number; width: number; height: number } | null => {
+        const root: Element | null = document.querySelector(target);
+        if (root === null) {
+            return null;
+        }
+
+        const box: DOMRect = root.getBoundingClientRect();
+        let left: number = box.left;
+        let top: number = box.top;
+        let right: number = box.right;
+        let bottom: number = box.bottom;
+
+        // Обход идёт вглубь с рамкой отсечения: узел, у которого своя прокрутка или скрытый
+        // выход, рисует детей только внутри себя, и рамка такого узла становится границей для
+        // всего, что под ним. Без этого охват брал бы и то, чего на странице не видно вовсе:
+        // лента внутри окна высотой в экран давала охват в три с лишним тысячи точек.
+        const walk: (node: Element, clip: { l: number; t: number; r: number; b: number }) => void = (
+            node: Element,
+            clip: { l: number; t: number; r: number; b: number }
+        ): void => {
+            for (const child of Array.from(node.children)) {
+                const rect: DOMRect = child.getBoundingClientRect();
+                if (rect.width === 0 && rect.height === 0) {
+                    continue;
+                }
+
+                const l: number = Math.max(rect.left, clip.l);
+                const t: number = Math.max(rect.top, clip.t);
+                const r: number = Math.min(rect.right, clip.r);
+                const b: number = Math.min(rect.bottom, clip.b);
+                if (r <= l || b <= t) {
+                    continue;
+                }
+
+                left = Math.min(left, l);
+                top = Math.min(top, t);
+                right = Math.max(right, r);
+                bottom = Math.max(bottom, b);
+
+                const style: CSSStyleDeclaration = getComputedStyle(child);
+                const hides: boolean = style.overflowX !== 'visible' || style.overflowY !== 'visible';
+                walk(child, hides ? { l, t, r, b } : clip);
+            }
+        };
+
+        const rootStyle: CSSStyleDeclaration = getComputedStyle(root);
+        const rootHides: boolean = rootStyle.overflowX !== 'visible' || rootStyle.overflowY !== 'visible';
+        walk(
+            root,
+            rootHides ? { l: box.left, t: box.top, r: box.right, b: box.bottom } : { l: -Infinity, t: -Infinity, r: Infinity, b: Infinity }
+        );
+
+        return { x: left + window.scrollX, y: top + window.scrollY, width: right - left, height: bottom - top };
+    }, selector);
+}
+
+/**
+ * Раздвигает окно до охвата нарисованного, чтобы кадр брался обрезкой внутри окна.
+ *
+ * Раздвигание по рамке узла выноса не видело: рамку узел получает от окна. Раздвигание по охвату
+ * видит, и кадр после него берётся обычной съёмкой с обрезкой — то есть без выхода за пределы
+ * окна. Выход за пределы окна пробовался и отвергнут числом: кадр страницы с обрезкой по охвату
+ * двигал показ прямо под затвором — высота узла уходила с 514 на 512, охват с 912 на 910.
+ *
+ * Ширина, названная историей порогом, не раздвигается вовсе. Там раздвигание подменяло ту самую
+ * сторону порога, которую история просила проверить: кадр порога 768 у боковой панели снимался
+ * при окне 1233 и показывал широкий вид вместо узкого. Высота при этом растёт и у таких историй:
+ * порог назван по ширине, и высота о нём ничего не говорит.
+ *
+ * Окно только растёт по той же причине: сужение проверило бы ту сторону порога, о которой
+ * история не просила.
+ */
+async function fitViewportToSpan(page: Page, identifier: string, selector: string, pinnedWidth: number | undefined): Promise<void> {
     for (let attempt: number = 0; attempt < FIT_ATTEMPTS; attempt++) {
         const view: { width: number; height: number } | null = page.viewportSize();
         if (view === null) {
             return;
         }
 
-        const box: { width: number; height: number } | null = await page.locator(selector).first().boundingBox();
-        if (box === null) {
+        const span: { x: number; y: number; width: number; height: number } | null = await spanOfNode(page, selector);
+        if (span === null) {
             return;
         }
 
-        const width: number = Math.ceil(box.width);
-        const height: number = Math.ceil(box.height);
-        if (width <= view.width && height <= view.height) {
+        // Считается правый и нижний край охвата, а не его размеры: показ стоит с отступом от
+        // края страницы, и окна ростом ровно в охват не хватает на этот отступ — обрезка тогда
+        // подрезается окном и кадр выходит короче прежнего на величину отступа.
+        const width: number = pinnedWidth ?? Math.max(view.width, Math.ceil(span.x + span.width));
+        const height: number = Math.max(view.height, Math.ceil(span.y + span.height));
+        if (width === view.width && height === view.height) {
             return;
         }
 
-        await page.setViewportSize({ width: Math.max(view.width, width), height: Math.max(view.height, height) });
+        await page.setViewportSize({ width, height });
         await quiet(page, identifier);
     }
 }
@@ -223,7 +296,7 @@ async function fitViewportToNode(page: Page, identifier: string, selector: strin
  * Кадр берётся по корню, а не по всей странице: порог считается от площади кадра, и в странице,
  * где сетка занимает малую долю, поехавшая ячейка проходит молча.
  */
-async function shoot(page: Page, identifier: string, fullPage: boolean): Promise<void> {
+async function shoot(page: Page, identifier: string, fullPage: boolean, pinnedWidth?: number): Promise<void> {
     let image: Buffer;
 
     if (fullPage) {
@@ -236,8 +309,32 @@ async function shoot(page: Page, identifier: string, fullPage: boolean): Promise
                     `Объяви кадр целой страницы параметром snapshot.fullPage либо покажи компонент сеткой из src/showcase.`
             );
         }
-        await fitViewportToNode(page, identifier, ROOT_SELECTOR);
-        image = await page.locator(ROOT_SELECTOR).first().screenshot();
+
+        await fitViewportToSpan(page, identifier, ROOT_SELECTOR, pinnedWidth);
+
+        const span: { x: number; y: number; width: number; height: number } | null = await spanOfNode(page, ROOT_SELECTOR);
+        const view: { width: number; height: number } | null = page.viewportSize();
+        if (span === null || view === null) {
+            throw new Error(`${identifier}: охват показа не измеряется, кадр не снимается.`);
+        }
+
+        // Обрезка подрезается окном: у истории с названной шириной окно не раздвигалось, и
+        // обрезка шире него увела бы съёмку за пределы окна — то самое, от чего этот порядок и
+        // уходит. Такая история остаётся с обрезом по окну, и это осознанно: порог проверяет
+        // узкую раскладку, а вынос за окно — вопрос самой раскладки, не кадра.
+        // Округление берётся то же, каким его брала съёмка по узлу: край наружу, начало внутрь.
+        // Иначе кадр выходит на точку короче прежнего у каждого показа с дробной высотой, и
+        // сверка краснеет на двухстах кадрах, ни один из которых не менялся.
+        const x: number = Math.max(0, Math.floor(span.x));
+        const y: number = Math.max(0, Math.floor(span.y));
+        const clip: { x: number; y: number; width: number; height: number } = {
+            x,
+            y,
+            width: Math.max(1, Math.min(Math.ceil(span.x + span.width), view.width) - x),
+            height: Math.max(1, Math.min(Math.ceil(span.y + span.height), view.height) - y),
+        };
+
+        image = await page.screenshot({ clip });
     }
 
     remember(identifier);
@@ -304,7 +401,10 @@ const config: TestRunnerConfig = {
         for (const width of snapshot.widths ?? []) {
             await page.setViewportSize({ width, height: VIEWPORT.height });
             await quiet(page, `${context.id}--w${width}`);
-            await shoot(page, `${context.id}--w${width}`, snapshot.fullPage === true);
+
+            // Ширина отдаётся съёмке как названная: раздвигать её нельзя — история просила
+            // проверить именно эту сторону порога.
+            await shoot(page, `${context.id}--w${width}`, snapshot.fullPage === true, width);
         }
     },
 };

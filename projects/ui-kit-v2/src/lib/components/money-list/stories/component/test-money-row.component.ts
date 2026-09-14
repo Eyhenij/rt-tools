@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtMoneyRowComponent } from '../../rt-money-row.component';
 
 /**
@@ -10,12 +11,19 @@ import { RtMoneyRowComponent } from '../../rt-money-row.component';
 @Component({
     selector: 'app-money-row',
     template: `
-        <rt-money-row [label]="label" [total]="total" [loading]="loading" />
+        <app-story-presets fill caption="Строка суммы в обоих наборах">
+            <ng-template>
+                <rt-money-row [label]="label" [total]="total" [loading]="loading" />
+            </ng-template>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtMoneyRowComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtMoneyRowComponent {

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtFileCardComponent } from '../../../file-card/rt-file-card.component';
@@ -35,64 +36,80 @@ const FILES: readonly IStoryFile[] = [
     template: `
         @switch (part) {
             @case ('count') {
-                <app-story-row caption="Сколько карточек в столбце" slotWidth="22rem" [items]="counts" [itemLabel]="countLabel">
-                    <ng-template let-item>
-                        <rt-file-list>
-                            @for (file of item.files; track file.name) {
-                                <rt-file-card [name]="file.name" [sizeBytes]="file.sizeBytes" />
-                            }
-                        </rt-file-list>
+                <app-story-presets caption="Сколько карточек в столбце в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="22rem" [items]="counts" [itemLabel]="countLabel">
+                            <ng-template let-item>
+                                <rt-file-list>
+                                    @for (file of item.files; track file.name) {
+                                        <rt-file-card [name]="file.name" [sizeBytes]="file.sizeBytes" />
+                                    }
+                                </rt-file-list>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('cards') {
-                <app-story-row caption="Какие карточки внутри" slotWidth="22rem" [items]="cardCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-file-list>
-                            <rt-file-card
-                                [name]="files[0].name"
-                                [sizeBytes]="files[0].sizeBytes"
-                                [size]="item.size"
-                                [showDownload]="item.actions"
-                                [showRemove]="item.actions"
-                                [disabled]="item.disabled" />
-                            <rt-file-card
-                                [name]="files[1].name"
-                                [sizeBytes]="files[1].sizeBytes"
-                                [size]="item.size"
-                                [showDownload]="item.actions"
-                                [showRemove]="item.actions"
-                                [disabled]="item.disabled" />
-                        </rt-file-list>
+                <app-story-presets caption="Какие карточки внутри в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="22rem" [items]="cardCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-file-list>
+                                    <rt-file-card
+                                        [name]="files[0].name"
+                                        [sizeBytes]="files[0].sizeBytes"
+                                        [size]="item.size"
+                                        [showDownload]="item.actions"
+                                        [showRemove]="item.actions"
+                                        [disabled]="item.disabled" />
+                                    <rt-file-card
+                                        [name]="files[1].name"
+                                        [sizeBytes]="files[1].sizeBytes"
+                                        [size]="item.size"
+                                        [showDownload]="item.actions"
+                                        [showRemove]="item.actions"
+                                        [disabled]="item.disabled" />
+                                </rt-file-list>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('edges') {
-                <app-story-row caption="Края" slotWidth="22rem" [items]="edgeCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-file-list>
-                            @for (file of item.files; track file.name) {
-                                <rt-file-card [name]="file.name" [sizeBytes]="file.sizeBytes" />
-                            }
-                        </rt-file-list>
+                <app-story-presets caption="Края в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="22rem" [items]="edgeCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-file-list>
+                                    @for (file of item.files; track file.name) {
+                                        <rt-file-card [name]="file.name" [sizeBytes]="file.sizeBytes" />
+                                    }
+                                </rt-file-list>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('themes') {
-                <app-story-themes caption="Столбец файлов в обеих темах">
+                <app-story-presets caption="Столбец файлов в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 20rem">
-                            <rt-file-list>
-                                @for (file of files; track file.name) {
-                                    <rt-file-card showDownload showRemove [name]="file.name" [sizeBytes]="file.sizeBytes" />
-                                }
-                            </rt-file-list>
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 20rem">
+                                    <rt-file-list>
+                                        @for (file of files; track file.name) {
+                                            <rt-file-card showDownload showRemove [name]="file.name" [sizeBytes]="file.sizeBytes" />
+                                        }
+                                    </rt-file-list>
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,
@@ -103,6 +120,7 @@ const FILES: readonly IStoryFile[] = [
         RtFileCardComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

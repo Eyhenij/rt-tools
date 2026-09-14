@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtMarkdownTextComponent } from '../../rt-markdown-text.component';
 
 /**
@@ -10,12 +11,19 @@ import { RtMarkdownTextComponent } from '../../rt-markdown-text.component';
 @Component({
     selector: 'app-markdown-text',
     template: `
-        <rt-markdown-text [text]="text" />
+        <app-story-presets fill caption="Размеченный текст в обоих наборах">
+            <ng-template>
+                <rt-markdown-text [text]="text" />
+            </ng-template>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtMarkdownTextComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtMarkdownTextComponent {

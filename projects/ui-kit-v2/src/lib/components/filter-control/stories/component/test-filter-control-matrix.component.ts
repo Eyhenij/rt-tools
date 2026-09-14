@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { STORY_FIELD_WIDTH_WIDE } from '../../../../../showcase/story-metrics';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { IRtFilterControl } from '../../rt-filter-control.model';
@@ -48,61 +49,96 @@ const VIEW: ReadonlyArray<IRtFilterControl.Option> = [
     template: `
         @switch (part) {
             @case ('size') {
-                <app-story-row caption="Размер" [items]="sizes">
-                    <ng-template let-size>
-                        <rt-filter-control ariaLabel="Статус" value="work" [options]="status" [size]="size" />
+                <app-story-presets caption="Размер в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="sizes">
+                            <ng-template let-size>
+                                <rt-filter-control ariaLabel="Статус" value="work" [options]="status" [size]="size" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('options') {
-                <app-story-row caption="Наполнение вариантов" [items]="optionCases" [itemLabel]="caseLabel">
-                    <ng-template let-optionCase>
-                        <rt-filter-control [ariaLabel]="optionCase.name" [options]="optionCase.options" [value]="optionCase.value" />
+                <app-story-presets caption="Наполнение вариантов в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="optionCases" [itemLabel]="caseLabel">
+                            <ng-template let-optionCase>
+                                <rt-filter-control
+                                    [ariaLabel]="optionCase.name"
+                                    [options]="optionCase.options"
+                                    [value]="optionCase.value" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('value') {
-                <app-story-row caption="Выбранный вариант" [items]="valueCases" [itemLabel]="caseLabel">
-                    <ng-template let-valueCase>
-                        <rt-filter-control [ariaLabel]="valueCase.name" [options]="status" [value]="valueCase.value" />
+                <app-story-presets caption="Выбранный вариант в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="valueCases" [itemLabel]="caseLabel">
+                            <ng-template let-valueCase>
+                                <rt-filter-control [ariaLabel]="valueCase.name" [options]="status" [value]="valueCase.value" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('fullWidth') {
-                <app-story-row caption="Ширина" [items]="widthNames" [slotWidth]="controlWidth">
-                    <ng-template let-widthName>
-                        <rt-filter-control ariaLabel="Статус" value="work" [options]="status" [fullWidth]="widthName === 'fullWidth'" />
+                <app-story-presets caption="Ширина в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="widthNames" [slotWidth]="controlWidth">
+                            <ng-template let-widthName>
+                                <rt-filter-control
+                                    ariaLabel="Статус"
+                                    value="work"
+                                    [options]="status"
+                                    [fullWidth]="widthName === 'fullWidth'" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('narrow') {
-                <app-story-row caption="Узкий экран: тот же набор списком" [items]="narrowNames" [slotWidth]="controlWidth">
+                <app-story-presets caption="Узкий экран: тот же набор списком в обоих наборах">
                     <ng-template>
-                        <rt-filter-control ariaLabel="Статус" value="work" placeholder="Статус" [options]="status" />
+                        <app-story-row [items]="narrowNames" [slotWidth]="controlWidth">
+                            <ng-template>
+                                <rt-filter-control ariaLabel="Статус" value="work" placeholder="Статус" [options]="status" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Отключение" [items]="valueCases" [itemLabel]="caseLabel">
-                    <ng-template let-valueCase>
-                        <rt-filter-control disabled [ariaLabel]="valueCase.name" [options]="status" [value]="valueCase.value" />
+                <app-story-presets caption="Отключение в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="valueCases" [itemLabel]="caseLabel">
+                            <ng-template let-valueCase>
+                                <rt-filter-control disabled [ariaLabel]="valueCase.name" [options]="status" [value]="valueCase.value" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('themes') {
-                <app-story-themes caption="Фильтр в обеих темах">
+                <app-story-presets caption="Фильтр в обеих темах в обоих наборах">
                     <ng-template>
-                        <rt-filter-control ariaLabel="Статус" value="work" [options]="status" />
-                        <rt-filter-control ariaLabel="Вид" value="grid" [options]="view" />
-                        <rt-filter-control disabled ariaLabel="Отключён" value="work" [options]="status" />
+                        <app-story-themes>
+                            <ng-template>
+                                <rt-filter-control ariaLabel="Статус" value="work" [options]="status" />
+                                <rt-filter-control ariaLabel="Вид" value="grid" [options]="view" />
+                                <rt-filter-control disabled ariaLabel="Отключён" value="work" [options]="status" />
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,
@@ -112,6 +148,7 @@ const VIEW: ReadonlyArray<IRtFilterControl.Option> = [
         RtFilterControlComponent,
 
         // showcase
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

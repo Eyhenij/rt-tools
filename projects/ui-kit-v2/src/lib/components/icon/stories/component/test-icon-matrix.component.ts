@@ -43,6 +43,9 @@ interface IIconCategoryGroup {
     template: `
         @switch (part) {
             @case ('catalog') {
+                <!-- Пары здесь нет нарочно: это перечень всех значков набора, и вторая половина
+                     удвоила бы его на две с лишним тысячи пикселей, не показав ничего нового.
+                     Что набор оформления меняет у значка — цвет — показывает матрица цвета. -->
                 @for (group of catalog; track group.category) {
                     <app-story-row [caption]="group.category" [items]="group.names">
                         <ng-template let-name>
@@ -53,19 +56,27 @@ interface IIconCategoryGroup {
             }
 
             @case ('size') {
-                <app-story-row caption="Размер" [items]="sizes">
-                    <ng-template let-size>
-                        <rt-icon name="alarm-clock" [size]="size" />
+                <app-story-presets caption="Размер в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="sizes">
+                            <ng-template let-size>
+                                <rt-icon name="alarm-clock" [size]="size" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('color') {
-                <app-story-row caption="Цвет" [items]="colors">
-                    <ng-template let-color>
-                        <rt-icon name="alarm-clock" size="lg" [color]="color" />
+                <app-story-presets caption="Цвет в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="colors">
+                            <ng-template let-color>
+                                <rt-icon name="alarm-clock" size="lg" [color]="color" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
 
                 <p class="app-icon-matrix__note">
                     <code>inverse</code>
@@ -74,21 +85,29 @@ interface IIconCategoryGroup {
             }
 
             @case ('rotate') {
-                <app-story-row caption="Поворот" [items]="rotations" [itemLabel]="rotateLabel">
-                    <ng-template let-value>
-                        <rt-icon name="arrow-right" size="lg" [rotate]="value" />
+                <app-story-presets caption="Поворот в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="rotations" [itemLabel]="rotateLabel">
+                            <ng-template let-value>
+                                <rt-icon name="arrow-right" size="lg" [rotate]="value" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('social') {
-                <app-story-themes caption="Знаки соцсетей в обеих темах: цвет задан в файле, тема его не трогает">
+                <app-story-presets caption="Знаки соцсетей в обеих темах: цвет задан в файле, тема его не трогает в обоих наборах">
                     <ng-template>
-                        @for (name of socialNames; track name) {
-                            <rt-icon size="lg" [name]="name" />
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (name of socialNames; track name) {
+                                    <rt-icon size="lg" [name]="name" />
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -140,13 +159,17 @@ interface IIconCategoryGroup {
             }
 
             @case ('material-set') {
-                <div data-preset="material">
-                    <app-story-row caption="Материальный набор целиком" [items]="materialDrawn">
-                        <ng-template let-name>
-                            <rt-icon size="lg" [name]="name" />
-                        </ng-template>
-                    </app-story-row>
-                </div>
+                <app-story-presets caption="Материальный набор целиком в обоих наборах">
+                    <ng-template>
+                        <div data-preset="material">
+                            <app-story-row [items]="materialDrawn">
+                                <ng-template let-name>
+                                    <rt-icon size="lg" [name]="name" />
+                                </ng-template>
+                            </app-story-row>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
 
                 <p class="app-icon-matrix__note">
                     Двадцать восемь имён — всё, что закрыто рисунком Material. Остальные три с лишним сотни имён кита набор не трогает: он
@@ -155,15 +178,19 @@ interface IIconCategoryGroup {
             }
 
             @case ('material-themes') {
-                <app-story-themes caption="Материальный набор в обеих темах">
+                <app-story-presets caption="Материальный набор в обеих темах в обоих наборах">
                     <ng-template>
-                        <div data-preset="material">
-                            @for (name of materialDrawn; track name) {
-                                <rt-icon size="lg" [name]="name" />
-                            }
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div data-preset="material">
+                                    @for (name of materialDrawn; track name) {
+                                        <rt-icon size="lg" [name]="name" />
+                                    }
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
 
                 <p class="app-icon-matrix__note">
                     Рисунок красится
@@ -174,22 +201,26 @@ interface IIconCategoryGroup {
             }
 
             @case ('migration-map') {
-                <app-story-themes caption="Чем закрывается значок первого кита: имя оттуда — рисунок отсюда">
+                <app-story-presets caption="Чем закрывается значок первого кита: имя оттуда — рисунок отсюда в обоих наборах">
                     <ng-template>
-                        <div class="app-icon-matrix__map">
-                            @for (entry of materialMap; track entry.from) {
-                                <div class="app-icon-matrix__pair">
-                                    @if (entry.to) {
-                                        <rt-icon size="lg" [name]="entry.to" />
-                                    } @else {
-                                        <span class="app-icon-matrix__gap">—</span>
+                        <app-story-themes>
+                            <ng-template>
+                                <div class="app-icon-matrix__map">
+                                    @for (entry of materialMap; track entry.from) {
+                                        <div class="app-icon-matrix__pair">
+                                            @if (entry.to) {
+                                                <rt-icon size="lg" [name]="entry.to" />
+                                            } @else {
+                                                <span class="app-icon-matrix__gap">—</span>
+                                            }
+                                            <code>{{ entry.from }}</code>
+                                        </div>
                                     }
-                                    <code>{{ entry.from }}</code>
                                 </div>
-                            }
-                        </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
 
                 <p class="app-icon-matrix__note">
                     Прочерк — имя, которому рисунка в наборе нет вовсе: его дорисовывают. Пара выбрана по смыслу, и смотреть её надо
@@ -198,13 +229,17 @@ interface IIconCategoryGroup {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Цвет в обеих темах">
+                <app-story-presets caption="Цвет в обеих темах в обоих наборах">
                     <ng-template>
-                        @for (color of colors; track color) {
-                            <rt-icon name="alarm-clock" size="lg" [color]="color" />
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (color of colors; track color) {
+                                    <rt-icon name="alarm-clock" size="lg" [color]="color" />
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

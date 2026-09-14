@@ -21,66 +21,78 @@ export type TNoteMatrixPart = 'content' | 'width' | 'edges' | 'presets' | 'theme
     template: `
         @switch (part) {
             @case ('content') {
-                <app-story-row caption="Чем наполнена" slotWidth="24rem" [items]="contents" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        @switch (item.kind) {
-                            @case ('plain') {
-                                <rt-note>Тариф меняется со следующего месяца.</rt-note>
-                            }
-                            @case ('multiline') {
-                                <rt-note>
-                                    Тариф меняется со следующего месяца. Пересчёт пройдёт первого числа, и в счёте появится отдельная строка
-                                    с разницей.
-                                </rt-note>
-                            }
-                            @case ('markup') {
-                                <rt-note>
-                                    Договор действует до
-                                    <strong>14 марта 2027</strong>
-                                    года.
-                                </rt-note>
-                            }
-                            @case ('link') {
-                                <rt-note>
-                                    Условия описаны в
-                                    <a href="https://example.org/terms" target="_blank" rel="noopener">регламенте</a>
-                                    .
-                                </rt-note>
-                            }
-                        }
+                <app-story-presets caption="Чем наполнена в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="contents" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                @switch (item.kind) {
+                                    @case ('plain') {
+                                        <rt-note>Тариф меняется со следующего месяца.</rt-note>
+                                    }
+                                    @case ('multiline') {
+                                        <rt-note>
+                                            Тариф меняется со следующего месяца. Пересчёт пройдёт первого числа, и в счёте появится
+                                            отдельная строка с разницей.
+                                        </rt-note>
+                                    }
+                                    @case ('markup') {
+                                        <rt-note>
+                                            Договор действует до
+                                            <strong>14 марта 2027</strong>
+                                            года.
+                                        </rt-note>
+                                    }
+                                    @case ('link') {
+                                        <rt-note>
+                                            Условия описаны в
+                                            <a href="https://example.org/terms" target="_blank" rel="noopener">регламенте</a>
+                                            .
+                                        </rt-note>
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('width') {
-                <app-story-row caption="Ширина места" [items]="widths" [itemLabel]="widthLabel">
-                    <ng-template let-width>
-                        <div [style.inline-size]="width">
-                            <rt-note>Пересчёт пройдёт первого числа следующего месяца.</rt-note>
-                        </div>
+                <app-story-presets caption="Ширина места в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="widths" [itemLabel]="widthLabel">
+                            <ng-template let-width>
+                                <div [style.inline-size]="width">
+                                    <rt-note>Пересчёт пройдёт первого числа следующего месяца.</rt-note>
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('edges') {
-                <app-story-row caption="Края" slotWidth="18rem" [items]="edges" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        @switch (item.kind) {
-                            @case ('empty') {
-                                <rt-note />
-                            }
-                            @case ('long-word') {
-                                <rt-note>Реквизиты: 40702810900000012345678901234567890</rt-note>
-                            }
-                            @case ('long-text') {
-                                <rt-note>
-                                    Дополнительное соглашение номер четыре к договору от 14 марта 2024 года вступает в силу с момента
-                                    подписания обеими сторонами и действует до конца календарного года.
-                                </rt-note>
-                            }
-                        }
+                <app-story-presets caption="Края в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="18rem" [items]="edges" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                @switch (item.kind) {
+                                    @case ('empty') {
+                                        <rt-note />
+                                    }
+                                    @case ('long-word') {
+                                        <rt-note>Реквизиты: 40702810900000012345678901234567890</rt-note>
+                                    }
+                                    @case ('long-text') {
+                                        <rt-note>
+                                            Дополнительное соглашение номер четыре к договору от 14 марта 2024 года вступает в силу с
+                                            момента подписания обеими сторонами и действует до конца календарного года.
+                                        </rt-note>
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -98,17 +110,21 @@ export type TNoteMatrixPart = 'content' | 'width' | 'edges' | 'presets' | 'theme
             }
 
             @case ('themes') {
-                <app-story-themes caption="Заметка в обеих темах">
+                <app-story-presets caption="Заметка в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 20rem">
-                            <rt-note>
-                                Договор действует до
-                                <strong>14 марта 2027</strong>
-                                года.
-                            </rt-note>
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 20rem">
+                                    <rt-note>
+                                        Договор действует до
+                                        <strong>14 марта 2027</strong>
+                                        года.
+                                    </rt-note>
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

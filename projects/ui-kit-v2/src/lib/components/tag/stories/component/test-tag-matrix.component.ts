@@ -32,43 +32,63 @@ interface ITagIconCase {
     template: `
         @switch (part) {
             @case ('severity') {
-                <app-story-grid caption="Палитра × внешний вид" [rows]="severities" [columns]="appearances">
-                    <ng-template let-severity let-appearance="col">
-                        <rt-tag [value]="severity" [severity]="severity" [appearance]="appearance" />
+                <app-story-presets caption="Палитра × внешний вид в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="severities" [columns]="appearances">
+                            <ng-template let-severity let-appearance="col">
+                                <rt-tag [value]="severity" [severity]="severity" [appearance]="appearance" />
+                            </ng-template>
+                        </app-story-grid>
                     </ng-template>
-                </app-story-grid>
+                </app-story-presets>
             }
 
             @case ('shape') {
-                <app-story-row caption="Форма" [items]="shapes">
-                    <ng-template let-shape>
-                        <rt-tag value="Активен" severity="success" [shape]="shape" />
+                <app-story-presets caption="Форма в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="shapes">
+                            <ng-template let-shape>
+                                <rt-tag value="Активен" severity="success" [shape]="shape" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('radius') {
-                <app-story-grid caption="Форма × скругление" [rows]="shapes" [columns]="radii" [columnLabel]="radiusLabel">
-                    <ng-template let-shape let-radius="col">
-                        <rt-tag value="Активен" severity="info" [shape]="shape" [radius]="radius" />
+                <app-story-presets caption="Форма × скругление в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="shapes" [columns]="radii" [columnLabel]="radiusLabel">
+                            <ng-template let-shape let-radius="col">
+                                <rt-tag value="Активен" severity="info" [shape]="shape" [radius]="radius" />
+                            </ng-template>
+                        </app-story-grid>
                     </ng-template>
-                </app-story-grid>
+                </app-story-presets>
             }
 
             @case ('icon') {
-                <app-story-row caption="Иконки" [items]="iconCases" [itemLabel]="iconCaseLabel">
-                    <ng-template let-iconCase>
-                        <rt-tag value="Активен" severity="success" [icon]="iconCase.icon" [iconEnd]="iconCase.iconEnd" />
+                <app-story-presets caption="Иконки в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="iconCases" [itemLabel]="iconCaseLabel">
+                            <ng-template let-iconCase>
+                                <rt-tag value="Активен" severity="success" [icon]="iconCase.icon" [iconEnd]="iconCase.iconEnd" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('closable') {
-                <app-story-grid caption="Крестик × палитра" [rows]="closables" [columns]="severities" [rowLabel]="closableLabel">
-                    <ng-template let-closable let-severity="col">
-                        <rt-tag [value]="severity" [severity]="severity" [closable]="closable" />
+                <app-story-presets caption="Крестик × палитра в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="closables" [columns]="severities" [rowLabel]="closableLabel">
+                            <ng-template let-closable let-severity="col">
+                                <rt-tag [value]="severity" [severity]="severity" [closable]="closable" />
+                            </ng-template>
+                        </app-story-grid>
                     </ng-template>
-                </app-story-grid>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -82,13 +102,17 @@ interface ITagIconCase {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Палитра в обеих темах">
+                <app-story-presets caption="Палитра в обеих темах в обоих наборах">
                     <ng-template>
-                        @for (severity of severities; track severity) {
-                            <rt-tag [value]="severity" [severity]="severity" />
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (severity of severities; track severity) {
+                                    <rt-tag [value]="severity" [severity]="severity" />
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

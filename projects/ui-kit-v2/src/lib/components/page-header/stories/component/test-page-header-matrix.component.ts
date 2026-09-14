@@ -47,19 +47,31 @@ interface IPageHeaderUserCase {
     template: `
         @switch (part) {
             @case ('items') {
-                <app-story-row caption="Виды пунктов" [items]="itemsCases" [itemLabel]="caseLabel" [slotWidth]="headerWidth">
-                    <ng-template let-itemsCase>
-                        <rt-page-header ariaLabel="Разделы" [items]="itemsCase.items" />
+                <app-story-presets caption="Виды пунктов в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="itemsCases" [itemLabel]="caseLabel" [slotWidth]="headerWidth">
+                            <ng-template let-itemsCase>
+                                <rt-page-header ariaLabel="Разделы" [items]="itemsCase.items" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('user') {
-                <app-story-row caption="Блок пользователя" [items]="userCases" [itemLabel]="caseLabel" [slotWidth]="headerWidth">
-                    <ng-template let-userCase>
-                        <rt-page-header ariaLabel="Разделы" [items]="flatItems" [user]="userCase.user" [userTitle]="userCase.userTitle" />
+                <app-story-presets caption="Блок пользователя в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="userCases" [itemLabel]="caseLabel" [slotWidth]="headerWidth">
+                            <ng-template let-userCase>
+                                <rt-page-header
+                                    ariaLabel="Разделы"
+                                    [items]="flatItems"
+                                    [user]="userCase.user"
+                                    [userTitle]="userCase.userTitle" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -71,11 +83,15 @@ interface IPageHeaderUserCase {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Полоса разделов в обеих темах">
+                <app-story-presets caption="Полоса разделов в обеих темах в обоих наборах">
                     <ng-template>
-                        <rt-page-header ariaLabel="Разделы" [items]="mixedItems" [user]="user" />
+                        <app-story-themes>
+                            <ng-template>
+                                <rt-page-header ariaLabel="Разделы" [items]="mixedItems" [user]="user" />
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
 
             @case ('panel') {
@@ -85,6 +101,9 @@ interface IPageHeaderUserCase {
             }
 
             @case ('compact') {
+                <!-- Пары здесь нет нарочно: сжатая полоса показывается прокруткой, и корень показа
+                     несёт сам ящик прокрутки. Пара забрала бы корень себе, и кадр встал бы до
+                     прокрутки — то есть показал бы обычную полосу вместо сжатой. -->
                 <div class="app-page-header-matrix__scroll" data-story-root [attr.data-story-scroll]="scrollAttribute">
                     <rt-page-header ariaLabel="Разделы" stickyCompact [items]="compactItems" [user]="user">
                         <span rtCompactLeft class="app-page-header-matrix__crumbs">Туры / Лето 2026 / Италия</span>

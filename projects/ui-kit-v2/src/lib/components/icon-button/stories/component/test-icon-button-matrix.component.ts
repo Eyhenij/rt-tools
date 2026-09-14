@@ -65,11 +65,15 @@ interface IIconButtonFlagCase {
                  которой матрица и заведена. Значок в материальном наборе виден на соседней
                  истории «Размер». -->
             @case ('iconSize') {
-                <app-story-grid caption="Размер кнопки × размер иконки" [rows]="sizes" [columns]="iconSizes" [columnLabel]="iconSizeLabel">
-                    <ng-template let-size let-iconSize="col">
-                        <rt-icon-button icon="pencil" ariaLabel="Править" variant="secondary" [size]="size" [iconSize]="iconSize" />
+                <app-story-presets caption="Размер кнопки × размер иконки в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="sizes" [columns]="iconSizes" [columnLabel]="iconSizeLabel">
+                            <ng-template let-size let-iconSize="col">
+                                <rt-icon-button icon="pencil" ariaLabel="Править" variant="secondary" [size]="size" [iconSize]="iconSize" />
+                            </ng-template>
+                        </app-story-grid>
                     </ng-template>
-                </app-story-grid>
+                </app-story-presets>
             }
 
             @case ('shape') {

@@ -23,47 +23,59 @@ export type TInfoItemMatrixPart = 'loading' | 'grow' | 'content' | 'presets' | '
     template: `
         @switch (part) {
             @case ('loading') {
-                <app-story-row caption="Загрузка" [items]="loadingStates" [itemLabel]="loadingLabel">
-                    <ng-template let-loading>
-                        <rt-info-item label="Тариф" [loading]="loading">Годовой</rt-info-item>
+                <app-story-presets caption="Загрузка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="loadingStates" [itemLabel]="loadingLabel">
+                            <ng-template let-loading>
+                                <rt-info-item label="Тариф" [loading]="loading">Годовой</rt-info-item>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('grow') {
+                <app-story-presets caption="Растяжение в обоих наборах">
+                    <ng-template>
+                        @for (grow of growStates; track grow) {
+                            <div class="app-info-item-matrix__strip">
+                                <span class="app-info-item-matrix__strip-label">{{ grow ? 'grow' : 'по содержимому' }}</span>
+                                <rt-info-item label="Тариф" [grow]="grow">Годовой</rt-info-item>
+                                <rt-info-item label="Статус" [grow]="grow">Активен</rt-info-item>
+                                <rt-info-item label="Оплачен до" [grow]="grow">12.09.2026</rt-info-item>
+                            </div>
+                        }
+                    </ng-template>
+                </app-story-presets>
+
                 <p class="app-info-item-matrix__note">
                     Строка одной ширины, а элементы в ней — с растяжением и без. Разница видна только в ряду: сам по себе элемент занимает
                     своё место в обоих случаях.
                 </p>
-
-                @for (grow of growStates; track grow) {
-                    <div class="app-info-item-matrix__strip">
-                        <span class="app-info-item-matrix__strip-label">{{ grow ? 'grow' : 'по содержимому' }}</span>
-                        <rt-info-item label="Тариф" [grow]="grow">Годовой</rt-info-item>
-                        <rt-info-item label="Статус" [grow]="grow">Активен</rt-info-item>
-                        <rt-info-item label="Оплачен до" [grow]="grow">12.09.2026</rt-info-item>
-                    </div>
-                }
             }
 
             @case ('content') {
-                <app-story-row caption="Что положено внутрь" [items]="contentCases">
-                    <ng-template let-contentCase>
-                        @switch (contentCase) {
-                            @case ('текст') {
-                                <rt-info-item label="Тариф">Годовой</rt-info-item>
-                            }
-                            @case ('пилюля') {
-                                <rt-info-item label="Статус">
-                                    <rt-tag value="Активен" severity="success" />
-                                </rt-info-item>
-                            }
-                            @case ('пусто') {
-                                <rt-info-item label="Комментарий" />
-                            }
-                        }
+                <app-story-presets caption="Что положено внутрь в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="contentCases">
+                            <ng-template let-contentCase>
+                                @switch (contentCase) {
+                                    @case ('текст') {
+                                        <rt-info-item label="Тариф">Годовой</rt-info-item>
+                                    }
+                                    @case ('пилюля') {
+                                        <rt-info-item label="Статус">
+                                            <rt-tag value="Активен" severity="success" />
+                                        </rt-info-item>
+                                    }
+                                    @case ('пусто') {
+                                        <rt-info-item label="Комментарий" />
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -77,13 +89,17 @@ export type TInfoItemMatrixPart = 'loading' | 'grow' | 'content' | 'presets' | '
             }
 
             @case ('themes') {
-                <app-story-themes caption="Загрузка и значение в обеих темах">
+                <app-story-presets caption="Загрузка и значение в обеих темах в обоих наборах">
                     <ng-template>
-                        @for (loading of loadingStates; track loading) {
-                            <rt-info-item label="Тариф" [loading]="loading">Годовой</rt-info-item>
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (loading of loadingStates; track loading) {
+                                    <rt-info-item label="Тариф" [loading]="loading">Годовой</rt-info-item>
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

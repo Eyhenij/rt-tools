@@ -29,24 +29,27 @@ interface ILiveBadgeLabelCase {
     template: `
         @switch (part) {
             @case ('active') {
-                <app-story-grid
-                    caption="Живость × счётчик"
-                    [rows]="activeStates"
-                    [columns]="counts"
-                    [rowLabel]="activeLabel"
-                    [columnLabel]="countLabel">
-                    <ng-template let-active let-count="col">
-                        <rt-live-badge label="Смотрят сейчас" [active]="active" [count]="count" />
+                <app-story-presets caption="Живость × счётчик в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="activeStates" [columns]="counts" [rowLabel]="activeLabel" [columnLabel]="countLabel">
+                            <ng-template let-active let-count="col">
+                                <rt-live-badge label="Смотрят сейчас" [active]="active" [count]="count" />
+                            </ng-template>
+                        </app-story-grid>
                     </ng-template>
-                </app-story-grid>
+                </app-story-presets>
             }
 
             @case ('label') {
-                <app-story-row caption="Подпись" [items]="labelCases" [itemLabel]="labelCaseLabel">
-                    <ng-template let-labelCase>
-                        <rt-live-badge [label]="labelCase.label" [count]="128" [active]="true" />
+                <app-story-presets caption="Подпись в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="labelCases" [itemLabel]="labelCaseLabel">
+                            <ng-template let-labelCase>
+                                <rt-live-badge [label]="labelCase.label" [count]="128" [active]="true" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -60,13 +63,17 @@ interface ILiveBadgeLabelCase {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Живость в обеих темах">
+                <app-story-presets caption="Живость в обеих темах в обоих наборах">
                     <ng-template>
-                        @for (active of activeStates; track active) {
-                            <rt-live-badge label="Смотрят сейчас" [count]="128" [active]="active" />
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (active of activeStates; track active) {
+                                    <rt-live-badge label="Смотрят сейчас" [count]="128" [active]="active" />
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

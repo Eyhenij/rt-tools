@@ -46,6 +46,35 @@ A rule under the "Law on verifiability", the section about showing a visible sta
 - **The halves wrap by the width of their own content, not by a threshold in a length unit.** A
   grid of fixed columns cuts a wide matrix at the same column in both halves at once, and a
   clipping equal on both sides reads as intended rather than as a defect.
+- **A component that does not give its width to its host collapses in a half, and the row cell is
+  then given a width by name.** The half is twice as narrow as the page, and a host whose content
+  lies outside its own box reports nothing to shrink by: the cells keep their place, the content
+  slides onto the neighbour, and the frame is whole and green. The cure is the row's own cell width,
+  not a threshold on the pair.
+- **A showing of one instance asks the pair for the width of its half.** Standing alone, such a
+  showing took the width of the page, and the half shrinks its content to its own width: the
+  pagination host measured eight points and drew the collapsed form instead of the numbers, the
+  header drew a stub of a hundred and sixty instead of a bar. It is asked by name, because the half
+  shrinks deliberately — a bare button stretched across it would look unlike the same button in the
+  matrix next door.
+- **A showing that gets no pair says why, in the markup next to it.** Three reasons are lawful: the
+  second half doubles a listing and adds no sighting, the showing carries the frame root itself and
+  the pair would take it away, or the component is pinned to the window and leaves the half whole.
+  The last one costs both halves at once: they stay empty, and the two instances lie one over the
+  other outside the frame. Left silent, such a showing is indistinguishable from one the wave
+  forgot.
+- **A component pinned to the window needs a box that is its containing block, and a relative box
+  is not one.** Such a component counts its place from the window whatever stands above it in the
+  markup: the sheet drew itself across the whole window and put its panel a point below the bottom
+  edge, while the box it was written into kept two points of width and one dashed line in the frame.
+  The box becomes a containing block by a property of its own, and the one chosen also clips — so it
+  replaces the box's clipping rather than standing next to it. Raising the node into a layer of its
+  own does the same and costs the rasterisation of every label in the frame.
+- **A component whose height comes from the window is shown inside a box that clips.** The shot
+  widens the window to what is drawn, and such a component grows with it: one frame came out seven
+  thousand points tall under a box of two hundred and ninety. The box is the screen of the showing,
+  and its clipping is what makes it one; the component's own rule is not overridden — for an
+  application it is right.
 - **The grid is drawn by the shared showing harness, not by the markup of every story.**
   Otherwise the same thing is shown in seventy ways and diverges at the first edit.
 - **A provider without which the component does not come up stands in `preview.ts`, not as one

@@ -81,7 +81,7 @@ async function loadChromium() {
 /**
  * It removes the explanations from the source, leaving the code alone.
  *
- * Otherwise a call commented out by one slash reads as live: the line `// await fitViewportToNode(…)`
+ * Otherwise a call commented out by one slash reads as live: the line `// await fitViewportToSpan(…)`
  * holds the sought words whole, and a search by text finds it.
  */
 function codeOnly(source) {
@@ -101,21 +101,22 @@ function codeOnly(source) {
 function harnessWidensTheWindow() {
     const runner = codeOnly(readFileSync(join(process.cwd(), RUNNER), 'utf8'));
 
-    const widened = runner.indexOf('await fitViewportToNode(page');
+    const widened = runner.indexOf('await fitViewportToSpan(page');
     if (widened < 0) {
-        return `the harness «${RUNNER}» has no call of the widening to the node being shot`;
+        return `the harness «${RUNNER}» has no call of the widening to the span being shot`;
     }
 
-    const shot = runner.indexOf('.screenshot()', widened);
+    const shot = runner.indexOf('page.screenshot({ clip })', widened);
     if (shot < 0) {
-        return `the harness «${RUNNER}» has no element frame after the widening: the probe no longer knows what to judge`;
+        return `the harness «${RUNNER}» has no clipped frame after the widening: the probe no longer knows what to judge`;
     }
 
     // The widening to the whole page cures another frame and is no substitute here: the page happens
     // to be higher than the node, and everything counted from the window would move at stories that
-    // did not ask for it.
-    if (!runner.includes('fitViewportToNode(page, identifier, ROOT_SELECTOR)')) {
-        return `the widening in «${RUNNER}» goes not by the root of the showing — a node higher than the window will go past the shutter again`;
+    // did not ask for it. The widening goes by the span of what is drawn rather than by the node's
+    // box: the box comes from the window, and an overflow past it is invisible in the box.
+    if (!runner.includes('fitViewportToSpan(page, identifier, ROOT_SELECTOR, pinnedWidth)')) {
+        return `the widening in «${RUNNER}» goes not by the span of the root of the showing — what left the node's box will be cut again`;
     }
 
     return null;
