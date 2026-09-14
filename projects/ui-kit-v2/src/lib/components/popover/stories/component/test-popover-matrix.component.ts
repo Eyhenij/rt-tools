@@ -1,6 +1,7 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, Signal, viewChildren } from '@angular/core';
 
 import { RtButtonDirective } from '../../../button/rt-button.directive';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { RtPopoverDirective } from '../../rt-popover.directive';
 import { IRtPopover } from '../../rt-popover.model';
@@ -54,52 +55,64 @@ interface IPopoverOffsetCase {
         <div class="app-popover-matrix__room">
             @switch (part) {
                 @case ('align') {
-                    <app-story-row caption="Выравнивание" [items]="alignCases" [itemLabel]="caseLabel">
-                        <ng-template let-alignCase>
-                            <button
-                                rtButton
-                                type="button"
-                                theme="secondary"
-                                rtPopoverTrigger="manual"
-                                [label]="alignCase.name"
-                                [attr.aria-label]="alignCase.name"
-                                [rtPopover]="widePanelTpl"
-                                [rtPopoverAlign]="alignCase.align"></button>
+                    <app-story-presets caption="Выравнивание в обоих наборах">
+                        <ng-template>
+                            <app-story-row [items]="alignCases" [itemLabel]="caseLabel">
+                                <ng-template let-alignCase>
+                                    <button
+                                        rtButton
+                                        type="button"
+                                        theme="secondary"
+                                        rtPopoverTrigger="manual"
+                                        [label]="alignCase.name"
+                                        [attr.aria-label]="alignCase.name"
+                                        [rtPopover]="widePanelTpl"
+                                        [rtPopoverAlign]="alignCase.align"></button>
+                                </ng-template>
+                            </app-story-row>
                         </ng-template>
-                    </app-story-row>
+                    </app-story-presets>
                 }
 
                 @case ('width') {
-                    <app-story-row caption="Ширина панели" [items]="widthCases" [itemLabel]="caseLabel">
-                        <ng-template let-widthCase>
-                            <button
-                                rtButton
-                                type="button"
-                                theme="secondary"
-                                rtPopoverTrigger="manual"
-                                label="Триггер пошире"
-                                aria-label="Триггер пошире"
-                                [rtPopover]="panelTpl"
-                                [rtPopoverWidth]="widthCase.width"></button>
+                    <app-story-presets caption="Ширина панели в обоих наборах">
+                        <ng-template>
+                            <app-story-row [items]="widthCases" [itemLabel]="caseLabel">
+                                <ng-template let-widthCase>
+                                    <button
+                                        rtButton
+                                        type="button"
+                                        theme="secondary"
+                                        rtPopoverTrigger="manual"
+                                        label="Триггер пошире"
+                                        aria-label="Триггер пошире"
+                                        [rtPopover]="panelTpl"
+                                        [rtPopoverWidth]="widthCase.width"></button>
+                                </ng-template>
+                            </app-story-row>
                         </ng-template>
-                    </app-story-row>
+                    </app-story-presets>
                 }
 
                 @case ('offset') {
-                    <app-story-row caption="Отступ от триггера" [items]="offsetCases" [itemLabel]="caseLabel">
-                        <ng-template let-offsetCase>
-                            <button
-                                rtButton
-                                type="button"
-                                theme="secondary"
-                                rtPopoverTrigger="manual"
-                                [label]="offsetCase.name"
-                                [attr.aria-label]="offsetCase.name"
-                                [rtPopover]="panelTpl"
-                                [rtPopoverOffsetY]="offsetCase.offsetY"
-                                [rtPopoverOffsetX]="offsetCase.offsetX"></button>
+                    <app-story-presets caption="Отступ от триггера в обоих наборах">
+                        <ng-template>
+                            <app-story-row [items]="offsetCases" [itemLabel]="caseLabel">
+                                <ng-template let-offsetCase>
+                                    <button
+                                        rtButton
+                                        type="button"
+                                        theme="secondary"
+                                        rtPopoverTrigger="manual"
+                                        [label]="offsetCase.name"
+                                        [attr.aria-label]="offsetCase.name"
+                                        [rtPopover]="panelTpl"
+                                        [rtPopoverOffsetY]="offsetCase.offsetY"
+                                        [rtPopoverOffsetX]="offsetCase.offsetX"></button>
+                                </ng-template>
+                            </app-story-row>
                         </ng-template>
-                    </app-story-row>
+                    </app-story-presets>
                 }
             }
         </div>
@@ -128,6 +141,8 @@ interface IPopoverOffsetCase {
         RtPopoverDirective,
 
         // showcase
+
+        StoryPresetsComponent,
         StoryRowComponent,
     ],
 })

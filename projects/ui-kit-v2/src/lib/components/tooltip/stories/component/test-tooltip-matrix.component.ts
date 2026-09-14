@@ -48,77 +48,89 @@ interface ITooltipTextCase {
     template: `
         @switch (part) {
             @case ('placement') {
-                <div class="app-tooltip-matrix__room">
-                    <app-story-row caption="Сторона" [items]="placementCases" [itemLabel]="caseLabel">
-                        <ng-template let-placementCase>
-                            <button
-                                rtButton
-                                type="button"
-                                theme="secondary"
-                                [label]="placementCase.name"
-                                [attr.aria-label]="placementCase.name"
-                                [attr.data-story-trigger]="triggerAttribute"
-                                [rtTooltip]="'Подсказка ' + placementCase.name"
-                                [rtTooltipPlacement]="placementCase.placement"></button>
-                        </ng-template>
-                    </app-story-row>
-                </div>
-            }
-
-            @case ('text') {
-                <div class="app-tooltip-matrix__room">
-                    <app-story-row caption="Длина текста" [items]="textCases" [itemLabel]="caseLabel">
-                        <ng-template let-textCase>
-                            <button
-                                rtButton
-                                type="button"
-                                theme="secondary"
-                                rtTooltipPlacement="bottom"
-                                [label]="textCase.name"
-                                [attr.aria-label]="textCase.name"
-                                [attr.data-story-trigger]="triggerAttribute"
-                                [rtTooltip]="textCase.text"></button>
-                        </ng-template>
-                    </app-story-row>
-                </div>
-            }
-
-            @case ('hosts') {
-                <div class="app-tooltip-matrix__room">
-                    <app-story-row caption="На чём висит" [items]="hostCases">
-                        <ng-template let-hostCase>
-                            @switch (hostCase) {
-                                @case ('кнопка') {
-                                    <button
-                                        rtButton
-                                        type="button"
-                                        label="Кнопка"
-                                        aria-label="Кнопка"
-                                        rtTooltip="Подсказка на кнопке"
-                                        rtTooltipPlacement="bottom"
-                                        [attr.data-story-trigger]="triggerAttribute"></button>
-                                }
-                                @case ('иконочная кнопка') {
-                                    <rt-icon-button
-                                        icon="ico-trash"
-                                        ariaLabel="Удалить"
-                                        tooltip="Удалить строку"
-                                        [attr.data-story-trigger]="triggerAttribute" />
-                                }
-                                @case ('пустой текст') {
+                <app-story-presets caption="Сторона в обоих наборах">
+                    <ng-template>
+                        <div class="app-tooltip-matrix__room">
+                            <app-story-row [items]="placementCases" [itemLabel]="caseLabel">
+                                <ng-template let-placementCase>
                                     <button
                                         rtButton
                                         type="button"
                                         theme="secondary"
-                                        label="Без подсказки"
-                                        aria-label="Без подсказки"
-                                        rtTooltip=""
-                                        [attr.data-story-trigger]="triggerAttribute"></button>
-                                }
-                            }
-                        </ng-template>
-                    </app-story-row>
-                </div>
+                                        [label]="placementCase.name"
+                                        [attr.aria-label]="placementCase.name"
+                                        [attr.data-story-trigger]="triggerAttribute"
+                                        [rtTooltip]="'Подсказка ' + placementCase.name"
+                                        [rtTooltipPlacement]="placementCase.placement"></button>
+                                </ng-template>
+                            </app-story-row>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('text') {
+                <app-story-presets caption="Длина текста в обоих наборах">
+                    <ng-template>
+                        <div class="app-tooltip-matrix__room">
+                            <app-story-row [items]="textCases" [itemLabel]="caseLabel">
+                                <ng-template let-textCase>
+                                    <button
+                                        rtButton
+                                        type="button"
+                                        theme="secondary"
+                                        rtTooltipPlacement="bottom"
+                                        [label]="textCase.name"
+                                        [attr.aria-label]="textCase.name"
+                                        [attr.data-story-trigger]="triggerAttribute"
+                                        [rtTooltip]="textCase.text"></button>
+                                </ng-template>
+                            </app-story-row>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('hosts') {
+                <app-story-presets caption="На чём висит в обоих наборах">
+                    <ng-template>
+                        <div class="app-tooltip-matrix__room">
+                            <app-story-row [items]="hostCases">
+                                <ng-template let-hostCase>
+                                    @switch (hostCase) {
+                                        @case ('кнопка') {
+                                            <button
+                                                rtButton
+                                                type="button"
+                                                label="Кнопка"
+                                                aria-label="Кнопка"
+                                                rtTooltip="Подсказка на кнопке"
+                                                rtTooltipPlacement="bottom"
+                                                [attr.data-story-trigger]="triggerAttribute"></button>
+                                        }
+                                        @case ('иконочная кнопка') {
+                                            <rt-icon-button
+                                                icon="ico-trash"
+                                                ariaLabel="Удалить"
+                                                tooltip="Удалить строку"
+                                                [attr.data-story-trigger]="triggerAttribute" />
+                                        }
+                                        @case ('пустой текст') {
+                                            <button
+                                                rtButton
+                                                type="button"
+                                                theme="secondary"
+                                                label="Без подсказки"
+                                                aria-label="Без подсказки"
+                                                rtTooltip=""
+                                                [attr.data-story-trigger]="triggerAttribute"></button>
+                                        }
+                                    }
+                                </ng-template>
+                            </app-story-row>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -130,11 +142,15 @@ interface ITooltipTextCase {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Панель подсказки в обеих темах">
+                <app-story-presets caption="Панель подсказки в обеих темах в обоих наборах">
                     <ng-template>
-                        <rt-tooltip />
+                        <app-story-themes>
+                            <ng-template>
+                                <rt-tooltip />
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

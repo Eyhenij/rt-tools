@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RtButtonDirective } from '../../../button/rt-button.directive';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtToolbarCenterDirective, RtToolbarComponent, RtToolbarLeftDirective, RtToolbarRightDirective } from '../../rt-toolbar.component';
@@ -27,30 +28,126 @@ export type TToolbarMatrixPart = 'slots' | 'fill' | 'dense' | 'themes';
     template: `
         @switch (part) {
             @case ('slots') {
-                <app-story-row caption="Какие слоты заданы" [items]="slotCases">
-                    <ng-template let-slot>
-                        @switch (slot) {
-                            @case ('ни одного — панели нет') {
-                                <rt-toolbar />
-                            }
-                            @case ('только левый') {
-                                <rt-toolbar>
+                <app-story-presets caption="Какие слоты заданы в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="slotCases">
+                            <ng-template let-slot>
+                                @switch (slot) {
+                                    @case ('ни одного — панели нет') {
+                                        <rt-toolbar />
+                                    }
+                                    @case ('только левый') {
+                                        <rt-toolbar>
+                                            <ng-template rtToolbarLeft>
+                                                <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                            </ng-template>
+                                        </rt-toolbar>
+                                    }
+                                    @case ('левый и правый') {
+                                        <rt-toolbar>
+                                            <ng-template rtToolbarLeft>
+                                                <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                            </ng-template>
+                                            <ng-template rtToolbarRight>
+                                                <button rtButton label="Сохранить" aria-label="Сохранить"></button>
+                                            </ng-template>
+                                        </rt-toolbar>
+                                    }
+                                    @case ('все три') {
+                                        <rt-toolbar>
+                                            <ng-template rtToolbarLeft>
+                                                <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                            </ng-template>
+                                            <ng-template rtToolbarCenter>
+                                                <span>Договор №2024-118</span>
+                                            </ng-template>
+                                            <ng-template rtToolbarRight>
+                                                <button rtButton label="Сохранить" aria-label="Сохранить"></button>
+                                            </ng-template>
+                                        </rt-toolbar>
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('fill') {
+                <app-story-presets caption="Чем наполнены слоты в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="fillCases">
+                            <ng-template let-fill>
+                                @switch (fill) {
+                                    @case ('по кнопке') {
+                                        <rt-toolbar>
+                                            <ng-template rtToolbarLeft>
+                                                <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                            </ng-template>
+                                            <ng-template rtToolbarRight>
+                                                <button rtButton label="Сохранить" aria-label="Сохранить"></button>
+                                            </ng-template>
+                                        </rt-toolbar>
+                                    }
+                                    @case ('несколько кнопок') {
+                                        <rt-toolbar>
+                                            <ng-template rtToolbarLeft>
+                                                <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                            </ng-template>
+                                            <ng-template rtToolbarRight>
+                                                <button rtButton label="Отменить" aria-label="Отменить" appearance="outlined"></button>
+                                                <button rtButton label="Сохранить" aria-label="Сохранить"></button>
+                                                <button rtButton label="Удалить" aria-label="Удалить" theme="danger"></button>
+                                            </ng-template>
+                                        </rt-toolbar>
+                                    }
+                                    @case ('длинный текст в центре') {
+                                        <rt-toolbar>
+                                            <ng-template rtToolbarLeft>
+                                                <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                            </ng-template>
+                                            <ng-template rtToolbarCenter>
+                                                <span>Дополнительное соглашение №4 к договору от 14 марта 2024 года</span>
+                                            </ng-template>
+                                            <ng-template rtToolbarRight>
+                                                <button rtButton label="Сохранить" aria-label="Сохранить"></button>
+                                            </ng-template>
+                                        </rt-toolbar>
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('dense') {
+                <app-story-presets caption="Плотная панель — видно только на узком кадре в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="denseCases" [itemLabel]="denseLabel">
+                            <ng-template let-value>
+                                <rt-toolbar [dense]="value">
                                     <ng-template rtToolbarLeft>
                                         <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
                                     </ng-template>
-                                </rt-toolbar>
-                            }
-                            @case ('левый и правый') {
-                                <rt-toolbar>
-                                    <ng-template rtToolbarLeft>
-                                        <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                    <ng-template rtToolbarCenter>
+                                        <span>Договор №2024-118</span>
                                     </ng-template>
                                     <ng-template rtToolbarRight>
                                         <button rtButton label="Сохранить" aria-label="Сохранить"></button>
                                     </ng-template>
                                 </rt-toolbar>
-                            }
-                            @case ('все три') {
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('themes') {
+                <app-story-presets caption="Панель в обеих темах в обоих наборах">
+                    <ng-template>
+                        <app-story-themes>
+                            <ng-template>
                                 <rt-toolbar>
                                     <ng-template rtToolbarLeft>
                                         <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
@@ -62,90 +159,10 @@ export type TToolbarMatrixPart = 'slots' | 'fill' | 'dense' | 'themes';
                                         <button rtButton label="Сохранить" aria-label="Сохранить"></button>
                                     </ng-template>
                                 </rt-toolbar>
-                            }
-                        }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-row>
-            }
-
-            @case ('fill') {
-                <app-story-row caption="Чем наполнены слоты" [items]="fillCases">
-                    <ng-template let-fill>
-                        @switch (fill) {
-                            @case ('по кнопке') {
-                                <rt-toolbar>
-                                    <ng-template rtToolbarLeft>
-                                        <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
-                                    </ng-template>
-                                    <ng-template rtToolbarRight>
-                                        <button rtButton label="Сохранить" aria-label="Сохранить"></button>
-                                    </ng-template>
-                                </rt-toolbar>
-                            }
-                            @case ('несколько кнопок') {
-                                <rt-toolbar>
-                                    <ng-template rtToolbarLeft>
-                                        <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
-                                    </ng-template>
-                                    <ng-template rtToolbarRight>
-                                        <button rtButton label="Отменить" aria-label="Отменить" appearance="outlined"></button>
-                                        <button rtButton label="Сохранить" aria-label="Сохранить"></button>
-                                        <button rtButton label="Удалить" aria-label="Удалить" theme="danger"></button>
-                                    </ng-template>
-                                </rt-toolbar>
-                            }
-                            @case ('длинный текст в центре') {
-                                <rt-toolbar>
-                                    <ng-template rtToolbarLeft>
-                                        <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
-                                    </ng-template>
-                                    <ng-template rtToolbarCenter>
-                                        <span>Дополнительное соглашение №4 к договору от 14 марта 2024 года</span>
-                                    </ng-template>
-                                    <ng-template rtToolbarRight>
-                                        <button rtButton label="Сохранить" aria-label="Сохранить"></button>
-                                    </ng-template>
-                                </rt-toolbar>
-                            }
-                        }
-                    </ng-template>
-                </app-story-row>
-            }
-
-            @case ('dense') {
-                <app-story-row caption="Плотная панель — видно только на узком кадре" [items]="denseCases" [itemLabel]="denseLabel">
-                    <ng-template let-value>
-                        <rt-toolbar [dense]="value">
-                            <ng-template rtToolbarLeft>
-                                <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
-                            </ng-template>
-                            <ng-template rtToolbarCenter>
-                                <span>Договор №2024-118</span>
-                            </ng-template>
-                            <ng-template rtToolbarRight>
-                                <button rtButton label="Сохранить" aria-label="Сохранить"></button>
-                            </ng-template>
-                        </rt-toolbar>
-                    </ng-template>
-                </app-story-row>
-            }
-
-            @case ('themes') {
-                <app-story-themes caption="Панель в обеих темах">
-                    <ng-template>
-                        <rt-toolbar>
-                            <ng-template rtToolbarLeft>
-                                <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
-                            </ng-template>
-                            <ng-template rtToolbarCenter>
-                                <span>Договор №2024-118</span>
-                            </ng-template>
-                            <ng-template rtToolbarRight>
-                                <button rtButton label="Сохранить" aria-label="Сохранить"></button>
-                            </ng-template>
-                        </rt-toolbar>
-                    </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,
@@ -161,6 +178,8 @@ export type TToolbarMatrixPart = 'slots' | 'fill' | 'dense' | 'themes';
         RtToolbarRightDirective,
 
         // showcase
+
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],

@@ -46,6 +46,15 @@ A rule under the "Law on verifiability", the section about showing a visible sta
 - **The halves wrap by the width of their own content, not by a threshold in a length unit.** A
   grid of fixed columns cuts a wide matrix at the same column in both halves at once, and a
   clipping equal on both sides reads as intended rather than as a defect.
+- **A component that does not give its width to its host collapses in a half, and the row cell is
+  then given a width by name.** The half is twice as narrow as the page, and a host whose content
+  lies outside its own box reports nothing to shrink by: the cells keep their place, the content
+  slides onto the neighbour, and the frame is whole and green. The cure is the row's own cell width,
+  not a threshold on the pair.
+- **A showing that gets no pair says why, in the markup next to it.** Two reasons are lawful: the
+  second half doubles a listing and adds no sighting, or the showing carries the frame root itself
+  and the pair would take it away. Left silent, such a showing is indistinguishable from one the
+  wave forgot.
 - **The grid is drawn by the shared showing harness, not by the markup of every story.**
   Otherwise the same thing is shown in seventy ways and diverges at the first edit.
 - **A provider without which the component does not come up stands in `preview.ts`, not as one

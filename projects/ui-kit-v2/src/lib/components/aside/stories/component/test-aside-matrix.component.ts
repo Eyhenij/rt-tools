@@ -39,48 +39,60 @@ interface IAsideLayoutCase {
         <div class="app-aside-matrix__room">
             @switch (part) {
                 @case ('size') {
-                    <app-story-row caption="Размер" [items]="sizes">
-                        <ng-template let-size>
-                            <rt-aside [size]="size" [ariaLabel]="'Панель ' + size">
-                                <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
-                                <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
-                                <rt-aside-footer>
-                                    <button
-                                        rtButton
-                                        asideDismiss
-                                        type="button"
-                                        theme="secondary"
-                                        appearance="text"
-                                        label="Закрыть"
-                                        aria-label="Закрыть"></button>
-                                    <button rtButton asidePrimary type="button" label="Сохранить" aria-label="Сохранить"></button>
-                                </rt-aside-footer>
-                            </rt-aside>
+                    <app-story-presets caption="Размер в обоих наборах">
+                        <ng-template>
+                            <app-story-row [items]="sizes">
+                                <ng-template let-size>
+                                    <rt-aside [size]="size" [ariaLabel]="'Панель ' + size">
+                                        <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
+                                        <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                        <rt-aside-footer>
+                                            <button
+                                                rtButton
+                                                asideDismiss
+                                                type="button"
+                                                theme="secondary"
+                                                appearance="text"
+                                                label="Закрыть"
+                                                aria-label="Закрыть"></button>
+                                            <button rtButton asidePrimary type="button" label="Сохранить" aria-label="Сохранить"></button>
+                                        </rt-aside-footer>
+                                    </rt-aside>
+                                </ng-template>
+                            </app-story-row>
                         </ng-template>
-                    </app-story-row>
+                    </app-story-presets>
                 }
 
                 @case ('width') {
-                    <app-story-row caption="Своя ширина поверх размера" [items]="widths">
-                        <ng-template let-width>
-                            <rt-aside size="md" ariaLabel="Панель своей ширины" [width]="width">
-                                <rt-aside-header title="Тур в Сочи" />
-                                <rt-aside-section heading="Клиент">Ширина задана входом и перекрывает размер.</rt-aside-section>
-                            </rt-aside>
+                    <app-story-presets caption="Своя ширина поверх размера в обоих наборах">
+                        <ng-template>
+                            <app-story-row [items]="widths">
+                                <ng-template let-width>
+                                    <rt-aside size="md" ariaLabel="Панель своей ширины" [width]="width">
+                                        <rt-aside-header title="Тур в Сочи" />
+                                        <rt-aside-section heading="Клиент">Ширина задана входом и перекрывает размер.</rt-aside-section>
+                                    </rt-aside>
+                                </ng-template>
+                            </app-story-row>
                         </ng-template>
-                    </app-story-row>
+                    </app-story-presets>
                 }
 
                 @case ('layout') {
-                    <app-story-row caption="Раскладка содержимого" [items]="layoutCases" [itemLabel]="caseLabel">
-                        <ng-template let-layoutCase>
-                            <rt-aside size="sm" [contentLayout]="layoutCase.layout" [ariaLabel]="layoutCase.name">
-                                <rt-aside-header title="Тур в Сочи" />
-                                <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
-                                <rt-aside-section heading="Даты">12.05.2026 — 26.05.2026</rt-aside-section>
-                            </rt-aside>
+                    <app-story-presets caption="Раскладка содержимого в обоих наборах">
+                        <ng-template>
+                            <app-story-row [items]="layoutCases" [itemLabel]="caseLabel">
+                                <ng-template let-layoutCase>
+                                    <rt-aside size="sm" [contentLayout]="layoutCase.layout" [ariaLabel]="layoutCase.name">
+                                        <rt-aside-header title="Тур в Сочи" />
+                                        <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                        <rt-aside-section heading="Даты">12.05.2026 — 26.05.2026</rt-aside-section>
+                                    </rt-aside>
+                                </ng-template>
+                            </app-story-row>
                         </ng-template>
-                    </app-story-row>
+                    </app-story-presets>
                 }
 
                 @case ('presets') {
@@ -106,25 +118,29 @@ interface IAsideLayoutCase {
                 }
 
                 @case ('themes') {
-                    <app-story-themes caption="Панель в обеих темах">
+                    <app-story-presets caption="Панель в обеих темах в обоих наборах">
                         <ng-template>
-                            <rt-aside size="sm" ariaLabel="Карточка тура">
-                                <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
-                                <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
-                                <rt-aside-footer>
-                                    <button
-                                        rtButton
-                                        asideDismiss
-                                        type="button"
-                                        theme="secondary"
-                                        appearance="text"
-                                        label="Закрыть"
-                                        aria-label="Закрыть"></button>
-                                    <button rtButton asidePrimary type="button" label="Сохранить" aria-label="Сохранить"></button>
-                                </rt-aside-footer>
-                            </rt-aside>
+                            <app-story-themes>
+                                <ng-template>
+                                    <rt-aside size="sm" ariaLabel="Карточка тура">
+                                        <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
+                                        <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                        <rt-aside-footer>
+                                            <button
+                                                rtButton
+                                                asideDismiss
+                                                type="button"
+                                                theme="secondary"
+                                                appearance="text"
+                                                label="Закрыть"
+                                                aria-label="Закрыть"></button>
+                                            <button rtButton asidePrimary type="button" label="Сохранить" aria-label="Сохранить"></button>
+                                        </rt-aside-footer>
+                                    </rt-aside>
+                                </ng-template>
+                            </app-story-themes>
                         </ng-template>
-                    </app-story-themes>
+                    </app-story-presets>
                 }
             }
         </div>

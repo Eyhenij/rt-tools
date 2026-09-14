@@ -34,34 +34,42 @@ interface IEmptyStatePartsCase {
     template: `
         @switch (part) {
             @case ('parts') {
-                <app-story-row caption="Состав" [items]="partsCases" [itemLabel]="partsCaseLabel">
-                    <ng-template let-partsCase>
-                        <rt-empty-state [icon]="partsCase.icon" [title]="partsCase.title" [description]="partsCase.description" />
+                <app-story-presets caption="Состав в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="partsCases" [itemLabel]="partsCaseLabel">
+                            <ng-template let-partsCase>
+                                <rt-empty-state [icon]="partsCase.icon" [title]="partsCase.title" [description]="partsCase.description" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('slots') {
-                <app-story-row caption="Слоты проекции" [items]="slotCases">
-                    <ng-template let-slotCase>
-                        @switch (slotCase) {
-                            @case ('без проекции') {
-                                <rt-empty-state icon="folder" title="Файлов нет" description="Прикрепите первый документ" />
-                            }
-                            @case ('действие') {
-                                <rt-empty-state icon="folder" title="Файлов нет" description="Прикрепите первый документ">
-                                    <button rtButton label="Прикрепить" aria-label="Прикрепить"></button>
-                                </rt-empty-state>
-                            }
-                            @case ('картинка и действие') {
-                                <rt-empty-state title="Файлов нет" description="Прикрепите первый документ">
-                                    <img rtEmptyIllustration alt="" width="96" height="72" [src]="illustration" />
-                                    <button rtButton label="Прикрепить" aria-label="Прикрепить"></button>
-                                </rt-empty-state>
-                            }
-                        }
+                <app-story-presets caption="Слоты проекции в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="slotCases">
+                            <ng-template let-slotCase>
+                                @switch (slotCase) {
+                                    @case ('без проекции') {
+                                        <rt-empty-state icon="folder" title="Файлов нет" description="Прикрепите первый документ" />
+                                    }
+                                    @case ('действие') {
+                                        <rt-empty-state icon="folder" title="Файлов нет" description="Прикрепите первый документ">
+                                            <button rtButton label="Прикрепить" aria-label="Прикрепить"></button>
+                                        </rt-empty-state>
+                                    }
+                                    @case ('картинка и действие') {
+                                        <rt-empty-state title="Файлов нет" description="Прикрепите первый документ">
+                                            <img rtEmptyIllustration alt="" width="96" height="72" [src]="illustration" />
+                                            <button rtButton label="Прикрепить" aria-label="Прикрепить"></button>
+                                        </rt-empty-state>
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -73,11 +81,15 @@ interface IEmptyStatePartsCase {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Заглушка в обеих темах">
+                <app-story-presets caption="Заглушка в обеих темах в обоих наборах">
                     <ng-template>
-                        <rt-empty-state icon="folder" title="Файлов нет" description="Прикрепите первый документ" />
+                        <app-story-themes>
+                            <ng-template>
+                                <rt-empty-state icon="folder" title="Файлов нет" description="Прикрепите первый документ" />
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

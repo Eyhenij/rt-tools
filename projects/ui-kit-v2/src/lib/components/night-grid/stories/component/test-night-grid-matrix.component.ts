@@ -51,35 +51,51 @@ function month(count: number, pick: (index: number) => IRtNightGrid.State): read
     template: `
         @switch (part) {
             @case ('state') {
-                <app-story-row caption="Состояние клетки" slotWidth="16rem" [items]="stateCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-night-grid ariaLabel="Март" [cells]="item.cells" />
+                <app-story-presets caption="Состояние клетки в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="16rem" [items]="stateCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-night-grid ariaLabel="Март" [cells]="item.cells" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('length') {
-                <app-story-row caption="Длина месяца" slotWidth="16rem" [items]="lengths" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-night-grid ariaLabel="Месяц" [cells]="item.cells" />
+                <app-story-presets caption="Длина месяца в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="16rem" [items]="lengths" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-night-grid ariaLabel="Месяц" [cells]="item.cells" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Взаимодействие" slotWidth="16rem" [items]="states" [itemLabel]="stateLabel">
-                    <ng-template let-state>
-                        <rt-night-grid ariaLabel="Март" [cells]="mixed" [attr.data-story-state]="state.state" />
+                <app-story-presets caption="Взаимодействие в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="16rem" [items]="states" [itemLabel]="stateLabel">
+                            <ng-template let-state>
+                                <rt-night-grid ariaLabel="Март" [cells]="mixed" [attr.data-story-state]="state.state" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('edges') {
-                <app-story-row caption="Края" slotWidth="16rem" [items]="edges" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-night-grid ariaLabel="Март" [cells]="item.cells" />
+                <app-story-presets caption="Края в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="16rem" [items]="edges" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-night-grid ariaLabel="Март" [cells]="item.cells" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -93,13 +109,17 @@ function month(count: number, pick: (index: number) => IRtNightGrid.State): read
             }
 
             @case ('themes') {
-                <app-story-themes caption="Сетка в обеих темах">
+                <app-story-presets caption="Сетка в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 16rem">
-                            <rt-night-grid ariaLabel="Март" [cells]="mixed" />
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 16rem">
+                                    <rt-night-grid ariaLabel="Март" [cells]="mixed" />
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

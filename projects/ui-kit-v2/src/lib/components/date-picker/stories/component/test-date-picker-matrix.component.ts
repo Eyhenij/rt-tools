@@ -74,61 +74,85 @@ function invalid(): FormControl<string> {
     template: `
         @switch (part) {
             @case ('size') {
-                <app-story-row caption="Размер" [items]="sizes" [slotWidth]="fieldWidth">
-                    <ng-template let-size>
-                        <rt-date-picker ariaLabel="Размер" [size]="size" [formControl]="sizeValue" />
+                <app-story-presets caption="Размер в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="sizes" [slotWidth]="fieldWidth">
+                            <ng-template let-size>
+                                <rt-date-picker ariaLabel="Размер" [size]="size" [formControl]="sizeValue" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('type') {
-                <app-story-row caption="Тип" [items]="typeCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-typeCase>
-                        <rt-date-picker [type]="typeCase.type" [ariaLabel]="typeCase.name" [formControl]="typeCase.control" />
+                <app-story-presets caption="Тип в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="typeCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-typeCase>
+                                <rt-date-picker [type]="typeCase.type" [ariaLabel]="typeCase.name" [formControl]="typeCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('filling') {
-                <app-story-row caption="Наполненность и очистка" [items]="fillingCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-fillingCase>
-                        <rt-date-picker [ariaLabel]="fillingCase.name" [formControl]="fillingCase.control" />
+                <app-story-presets caption="Наполненность и очистка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="fillingCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-fillingCase>
+                                <rt-date-picker [ariaLabel]="fillingCase.name" [formControl]="fillingCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('bordered') {
-                <app-story-row caption="Рамка" [items]="borderedCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-borderedCase>
-                        <rt-date-picker
-                            [bordered]="borderedCase.bordered"
-                            [ariaLabel]="borderedCase.name"
-                            [formControl]="borderedCase.control" />
+                <app-story-presets caption="Рамка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="borderedCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-borderedCase>
+                                <rt-date-picker
+                                    [bordered]="borderedCase.bordered"
+                                    [ariaLabel]="borderedCase.name"
+                                    [formControl]="borderedCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Взаимодействие" [items]="states" [itemLabel]="stateLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-state>
-                        <rt-date-picker ariaLabel="Состояние" [attr.data-story-state]="state.state" [formControl]="stateValue" />
-                    </ng-template>
-                </app-story-row>
+                <app-story-presets caption="Взаимодействие в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="states" [itemLabel]="stateLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-state>
+                                <rt-date-picker ariaLabel="Состояние" [attr.data-story-state]="state.state" [formControl]="stateValue" />
+                            </ng-template>
+                        </app-story-row>
 
-                <app-story-row caption="Значение, форма и обёртка" [items]="stateCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-stateCase>
-                        @if (stateCase.flat) {
-                            <rt-field [readonly]="true">
-                                <rt-date-picker [ariaLabel]="stateCase.name" [formControl]="stateCase.control" />
-                            </rt-field>
-                        } @else {
-                            <rt-date-picker
-                                [disabled]="stateCase.disabled"
-                                [ariaLabel]="stateCase.name"
-                                [formControl]="stateCase.control" />
-                        }
+                        <app-story-row
+                            caption="Значение, форма и обёртка"
+                            [items]="stateCases"
+                            [itemLabel]="caseLabel"
+                            [slotWidth]="fieldWidth">
+                            <ng-template let-stateCase>
+                                @if (stateCase.flat) {
+                                    <rt-field [readonly]="true">
+                                        <rt-date-picker [ariaLabel]="stateCase.name" [formControl]="stateCase.control" />
+                                    </rt-field>
+                                } @else {
+                                    <rt-date-picker
+                                        [disabled]="stateCase.disabled"
+                                        [ariaLabel]="stateCase.name"
+                                        [formControl]="stateCase.control" />
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -145,16 +169,20 @@ function invalid(): FormControl<string> {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Поле в обеих темах">
+                <app-story-presets caption="Поле в обеих темах в обоих наборах">
                     <ng-template>
-                        @for (themeCase of themeCases; track themeCase.name) {
-                            <rt-date-picker
-                                [disabled]="themeCase.disabled"
-                                [ariaLabel]="themeCase.name"
-                                [formControl]="themeCase.control" />
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (themeCase of themeCases; track themeCase.name) {
+                                    <rt-date-picker
+                                        [disabled]="themeCase.disabled"
+                                        [ariaLabel]="themeCase.name"
+                                        [formControl]="themeCase.control" />
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

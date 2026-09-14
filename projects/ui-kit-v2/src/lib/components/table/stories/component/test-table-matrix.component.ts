@@ -69,184 +69,218 @@ const COLUMNS_CONFIG: readonly IRtTable.ColumnConfig[] = [
     template: `
         @switch (part) {
             @case ('density') {
-                <app-story-row caption="Плотность строк" [items]="densities" [itemLabel]="densityLabel">
-                    <ng-template let-density>
-                        <table rt-table ariaLabel="Договоры" [dataSource]="rows" [columns]="columns" [density]="density">
-                            <ng-container cdkColumnDef="title">
-                                <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
-                            </ng-container>
-                            <ng-container cdkColumnDef="city">
-                                <th *cdkHeaderCellDef cdk-header-cell>Город</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
-                            </ng-container>
-                            <ng-container cdkColumnDef="sum">
-                                <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
-                            </ng-container>
-                            <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
-                            <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
-                        </table>
+                <app-story-presets caption="Плотность строк в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="densities" [itemLabel]="densityLabel">
+                            <ng-template let-density>
+                                <table rt-table ariaLabel="Договоры" [dataSource]="rows" [columns]="columns" [density]="density">
+                                    <ng-container cdkColumnDef="title">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+                                    </ng-container>
+                                    <ng-container cdkColumnDef="city">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Город</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
+                                    </ng-container>
+                                    <ng-container cdkColumnDef="sum">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
+                                    </ng-container>
+                                    <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+                                    <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+                                </table>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('loading') {
-                <app-story-row caption="Загрузка и догрузка" [items]="loadingCases" [itemLabel]="loadingLabel">
-                    <ng-template let-item>
-                        <table
-                            rt-table
-                            ariaLabel="Договоры"
-                            [dataSource]="item.first ? [] : rows"
-                            [columns]="columns"
-                            [loading]="item.loading"
-                            [fetching]="item.fetching"
-                            [skeletonRows]="3">
-                            <ng-container cdkColumnDef="title">
-                                <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
-                            </ng-container>
-                            <ng-container cdkColumnDef="city">
-                                <th *cdkHeaderCellDef cdk-header-cell>Город</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
-                            </ng-container>
-                            <ng-container cdkColumnDef="sum">
-                                <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
-                            </ng-container>
-                            <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
-                            <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
-                        </table>
+                <app-story-presets caption="Загрузка и догрузка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="loadingCases" [itemLabel]="loadingLabel">
+                            <ng-template let-item>
+                                <table
+                                    rt-table
+                                    ariaLabel="Договоры"
+                                    [dataSource]="item.first ? [] : rows"
+                                    [columns]="columns"
+                                    [loading]="item.loading"
+                                    [fetching]="item.fetching"
+                                    [skeletonRows]="3">
+                                    <ng-container cdkColumnDef="title">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+                                    </ng-container>
+                                    <ng-container cdkColumnDef="city">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Город</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
+                                    </ng-container>
+                                    <ng-container cdkColumnDef="sum">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
+                                    </ng-container>
+                                    <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+                                    <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+                                </table>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('sort') {
-                <app-story-row caption="Порядок строк" [items]="sorts" [itemLabel]="sortLabel">
-                    <ng-template let-item>
-                        <table
-                            rt-table
-                            ariaLabel="Договоры"
-                            [dataSource]="rows"
-                            [columns]="columns"
-                            [columnsConfig]="columnsConfig"
-                            [sort]="item.sort">
-                            <ng-container cdkColumnDef="title">
-                                <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
-                            </ng-container>
-                            <ng-container cdkColumnDef="city">
-                                <th *cdkHeaderCellDef cdk-header-cell>Город</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
-                            </ng-container>
-                            <ng-container cdkColumnDef="sum">
-                                <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
-                            </ng-container>
-                            <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
-                            <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
-                        </table>
+                <app-story-presets caption="Порядок строк в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="sorts" [itemLabel]="sortLabel">
+                            <ng-template let-item>
+                                <table
+                                    rt-table
+                                    ariaLabel="Договоры"
+                                    [dataSource]="rows"
+                                    [columns]="columns"
+                                    [columnsConfig]="columnsConfig"
+                                    [sort]="item.sort">
+                                    <ng-container cdkColumnDef="title">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+                                    </ng-container>
+                                    <ng-container cdkColumnDef="city">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Город</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
+                                    </ng-container>
+                                    <ng-container cdkColumnDef="sum">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
+                                    </ng-container>
+                                    <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+                                    <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+                                </table>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('empty') {
-                <app-story-row caption="Пустая таблица" [items]="empties" [itemLabel]="emptyLabel">
-                    <ng-template let-item>
-                        <table
-                            rt-table
-                            ariaLabel="Договоры"
-                            [dataSource]="noRows"
-                            [columns]="columns"
-                            [emptyMessage]="item.message"
-                            [emptyIcon]="item.icon"
-                            [emptyDescription]="item.description">
-                            <ng-container cdkColumnDef="title">
-                                <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
-                            </ng-container>
-                            <ng-container cdkColumnDef="city">
-                                <th *cdkHeaderCellDef cdk-header-cell>Город</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
-                            </ng-container>
-                            <ng-container cdkColumnDef="sum">
-                                <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
-                            </ng-container>
-                            <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
-                            <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
-                        </table>
+                <app-story-presets caption="Пустая таблица в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="empties" [itemLabel]="emptyLabel">
+                            <ng-template let-item>
+                                <table
+                                    rt-table
+                                    ariaLabel="Договоры"
+                                    [dataSource]="noRows"
+                                    [columns]="columns"
+                                    [emptyMessage]="item.message"
+                                    [emptyIcon]="item.icon"
+                                    [emptyDescription]="item.description">
+                                    <ng-container cdkColumnDef="title">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+                                    </ng-container>
+                                    <ng-container cdkColumnDef="city">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Город</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
+                                    </ng-container>
+                                    <ng-container cdkColumnDef="sum">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
+                                    </ng-container>
+                                    <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+                                    <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+                                </table>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('clickable') {
-                <app-story-row caption="Нажимаемые строки" [items]="clickables" [itemLabel]="clickableLabel">
-                    <ng-template let-value>
-                        <table rt-table ariaLabel="Договоры" [dataSource]="rows" [columns]="columns" [clickable]="value">
-                            <ng-container cdkColumnDef="title">
-                                <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
-                            </ng-container>
-                            <ng-container cdkColumnDef="city">
-                                <th *cdkHeaderCellDef cdk-header-cell>Город</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
-                            </ng-container>
-                            <ng-container cdkColumnDef="sum">
-                                <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
-                            </ng-container>
-                            <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
-                            <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
-                        </table>
+                <app-story-presets caption="Нажимаемые строки в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="clickables" [itemLabel]="clickableLabel">
+                            <ng-template let-value>
+                                <table rt-table ariaLabel="Договоры" [dataSource]="rows" [columns]="columns" [clickable]="value">
+                                    <ng-container cdkColumnDef="title">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+                                    </ng-container>
+                                    <ng-container cdkColumnDef="city">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Город</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
+                                    </ng-container>
+                                    <ng-container cdkColumnDef="sum">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
+                                    </ng-container>
+                                    <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+                                    <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+                                </table>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('cards') {
-                <app-story-row caption="Карточка узкого показа — видно только на узком кадре" [items]="cardCases" [itemLabel]="cardLabel">
-                    <ng-template let-item>
-                        @if (item.own) {
-                            <table rt-table ariaLabel="Договоры" [dataSource]="rows" [columns]="columns" [columnsConfig]="columnsConfig">
-                                <ng-container cdkColumnDef="title">
-                                    <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
-                                    <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
-                                </ng-container>
-                                <ng-container cdkColumnDef="city">
-                                    <th *cdkHeaderCellDef cdk-header-cell>Город</th>
-                                    <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
-                                </ng-container>
-                                <ng-container cdkColumnDef="sum">
-                                    <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
-                                    <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
-                                </ng-container>
-                                <ng-template rtTableCard let-row [rtTableCardRowType]="rows">
-                                    <strong>{{ row.title }}</strong>
-                                    <div>{{ row.city }} · {{ row.sum }}</div>
-                                </ng-template>
-                                <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
-                                <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
-                            </table>
-                        } @else {
-                            <table rt-table ariaLabel="Договоры" [dataSource]="rows" [columns]="columns" [columnsConfig]="columnsConfig">
-                                <ng-container cdkColumnDef="title">
-                                    <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
-                                    <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
-                                </ng-container>
-                                <ng-container cdkColumnDef="city">
-                                    <th *cdkHeaderCellDef cdk-header-cell>Город</th>
-                                    <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
-                                </ng-container>
-                                <ng-container cdkColumnDef="sum">
-                                    <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
-                                    <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
-                                </ng-container>
-                                <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
-                                <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
-                            </table>
-                        }
+                <app-story-presets caption="Карточка узкого показа — видно только на узком кадре в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="cardCases" [itemLabel]="cardLabel">
+                            <ng-template let-item>
+                                @if (item.own) {
+                                    <table
+                                        rt-table
+                                        ariaLabel="Договоры"
+                                        [dataSource]="rows"
+                                        [columns]="columns"
+                                        [columnsConfig]="columnsConfig">
+                                        <ng-container cdkColumnDef="title">
+                                            <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
+                                            <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+                                        </ng-container>
+                                        <ng-container cdkColumnDef="city">
+                                            <th *cdkHeaderCellDef cdk-header-cell>Город</th>
+                                            <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
+                                        </ng-container>
+                                        <ng-container cdkColumnDef="sum">
+                                            <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
+                                            <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
+                                        </ng-container>
+                                        <ng-template rtTableCard let-row [rtTableCardRowType]="rows">
+                                            <strong>{{ row.title }}</strong>
+                                            <div>{{ row.city }} · {{ row.sum }}</div>
+                                        </ng-template>
+                                        <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+                                        <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+                                    </table>
+                                } @else {
+                                    <table
+                                        rt-table
+                                        ariaLabel="Договоры"
+                                        [dataSource]="rows"
+                                        [columns]="columns"
+                                        [columnsConfig]="columnsConfig">
+                                        <ng-container cdkColumnDef="title">
+                                            <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
+                                            <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+                                        </ng-container>
+                                        <ng-container cdkColumnDef="city">
+                                            <th *cdkHeaderCellDef cdk-header-cell>Город</th>
+                                            <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
+                                        </ng-container>
+                                        <ng-container cdkColumnDef="sum">
+                                            <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
+                                            <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
+                                        </ng-container>
+                                        <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+                                        <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+                                    </table>
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -273,26 +307,35 @@ const COLUMNS_CONFIG: readonly IRtTable.ColumnConfig[] = [
             }
 
             @case ('themes') {
-                <app-story-themes caption="Таблица в обеих темах">
+                <app-story-presets caption="Таблица в обеих темах в обоих наборах">
                     <ng-template>
-                        <table rt-table ariaLabel="Договоры" [dataSource]="rows" [columns]="columns" [columnsConfig]="columnsConfig">
-                            <ng-container cdkColumnDef="title">
-                                <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
-                            </ng-container>
-                            <ng-container cdkColumnDef="city">
-                                <th *cdkHeaderCellDef cdk-header-cell>Город</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
-                            </ng-container>
-                            <ng-container cdkColumnDef="sum">
-                                <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
-                                <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
-                            </ng-container>
-                            <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
-                            <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
-                        </table>
+                        <app-story-themes>
+                            <ng-template>
+                                <table
+                                    rt-table
+                                    ariaLabel="Договоры"
+                                    [dataSource]="rows"
+                                    [columns]="columns"
+                                    [columnsConfig]="columnsConfig">
+                                    <ng-container cdkColumnDef="title">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+                                    </ng-container>
+                                    <ng-container cdkColumnDef="city">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Город</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
+                                    </ng-container>
+                                    <ng-container cdkColumnDef="sum">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
+                                    </ng-container>
+                                    <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+                                    <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+                                </table>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

@@ -51,35 +51,51 @@ const STEPS_MIXED: readonly IRtTimeline.Step[] = [
     template: `
         @switch (part) {
             @case ('status') {
-                <app-story-row caption="Состояние шага" slotWidth="20rem" [items]="statuses" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-timeline [steps]="item.steps" />
+                <app-story-presets caption="Состояние шага в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="statuses" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-timeline [steps]="item.steps" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('fields') {
-                <app-story-row caption="Необязательные поля" slotWidth="20rem" [items]="fields" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-timeline [steps]="item.steps" />
+                <app-story-presets caption="Необязательные поля в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="fields" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-timeline [steps]="item.steps" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('length') {
-                <app-story-row caption="Длина ленты" slotWidth="20rem" [items]="lengths" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-timeline [steps]="item.steps" />
+                <app-story-presets caption="Длина ленты в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="lengths" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-timeline [steps]="item.steps" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('edges') {
-                <app-story-row caption="Края" slotWidth="20rem" [items]="edges" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-timeline [steps]="item.steps" />
+                <app-story-presets caption="Края в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="edges" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-timeline [steps]="item.steps" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -93,13 +109,17 @@ const STEPS_MIXED: readonly IRtTimeline.Step[] = [
             }
 
             @case ('themes') {
-                <app-story-themes caption="Лента в обеих темах">
+                <app-story-presets caption="Лента в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 20rem">
-                            <rt-timeline [steps]="stepsMixed" />
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 20rem">
+                                    <rt-timeline [steps]="stepsMixed" />
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

@@ -69,40 +69,52 @@ function invalid(): FormControl<File[]> {
     template: `
         @switch (part) {
             @case ('filling') {
-                <app-story-row caption="Что выбрано" [items]="fillingCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-fillingCase>
-                        <rt-file-input [multiple]="true" [ariaLabel]="fillingCase.name" [formControl]="fillingCase.control" />
+                <app-story-presets caption="Что выбрано в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="fillingCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-fillingCase>
+                                <rt-file-input [multiple]="true" [ariaLabel]="fillingCase.name" [formControl]="fillingCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('button') {
-                <app-story-row caption="Подпись кнопки" [items]="buttonCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-buttonCase>
-                        <rt-file-input
-                            [buttonLabel]="buttonCase.buttonLabel"
-                            [ariaLabel]="buttonCase.name"
-                            [formControl]="buttonCase.control" />
+                <app-story-presets caption="Подпись кнопки в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="buttonCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-buttonCase>
+                                <rt-file-input
+                                    [buttonLabel]="buttonCase.buttonLabel"
+                                    [ariaLabel]="buttonCase.name"
+                                    [formControl]="buttonCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Состояния" [items]="stateCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-stateCase>
-                        @if (stateCase.flat) {
-                            <rt-field [readonly]="true">
-                                <rt-file-input [ariaLabel]="stateCase.name" [formControl]="stateCase.control" />
-                            </rt-field>
-                        } @else {
-                            <rt-file-input
-                                [multiple]="true"
-                                [disabled]="stateCase.disabled"
-                                [ariaLabel]="stateCase.name"
-                                [formControl]="stateCase.control" />
-                        }
+                <app-story-presets caption="Состояния в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="stateCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-stateCase>
+                                @if (stateCase.flat) {
+                                    <rt-field [readonly]="true">
+                                        <rt-file-input [ariaLabel]="stateCase.name" [formControl]="stateCase.control" />
+                                    </rt-field>
+                                } @else {
+                                    <rt-file-input
+                                        [multiple]="true"
+                                        [disabled]="stateCase.disabled"
+                                        [ariaLabel]="stateCase.name"
+                                        [formControl]="stateCase.control" />
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -120,17 +132,21 @@ function invalid(): FormControl<File[]> {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Поле в обеих темах">
+                <app-story-presets caption="Поле в обеих темах в обоих наборах">
                     <ng-template>
-                        @for (themeCase of themeCases; track themeCase.name) {
-                            <rt-file-input
-                                [multiple]="true"
-                                [disabled]="themeCase.disabled"
-                                [ariaLabel]="themeCase.name"
-                                [formControl]="themeCase.control" />
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (themeCase of themeCases; track themeCase.name) {
+                                    <rt-file-input
+                                        [multiple]="true"
+                                        [disabled]="themeCase.disabled"
+                                        [ariaLabel]="themeCase.name"
+                                        [formControl]="themeCase.control" />
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

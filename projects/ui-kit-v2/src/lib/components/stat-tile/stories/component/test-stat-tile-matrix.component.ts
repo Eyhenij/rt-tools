@@ -40,33 +40,45 @@ interface IStatTilePartsCase {
     template: `
         @switch (part) {
             @case ('delta') {
-                <app-story-row caption="Изменение" [items]="deltaCases" [itemLabel]="deltaCaseLabel">
-                    <ng-template let-deltaCase>
-                        <rt-stat-tile label="Визиты" value="1 240" [deltaPrimary]="deltaCase.delta" />
+                <app-story-presets caption="Изменение в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="deltaCases" [itemLabel]="deltaCaseLabel">
+                            <ng-template let-deltaCase>
+                                <rt-stat-tile label="Визиты" value="1 240" [deltaPrimary]="deltaCase.delta" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('baseline') {
-                <app-story-row caption="База сравнения" [items]="baselineCases" [itemLabel]="deltaCaseLabel">
-                    <ng-template let-deltaCase>
-                        <rt-stat-tile label="Визиты" value="1 240" [deltaPrimary]="deltaCase.delta" />
+                <app-story-presets caption="База сравнения в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="baselineCases" [itemLabel]="deltaCaseLabel">
+                            <ng-template let-deltaCase>
+                                <rt-stat-tile label="Визиты" value="1 240" [deltaPrimary]="deltaCase.delta" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('parts') {
-                <app-story-row caption="Необязательные части" [items]="partsCases" [itemLabel]="partsCaseLabel">
-                    <ng-template let-partsCase>
-                        <rt-stat-tile
-                            label="Визиты"
-                            value="1 240"
-                            [secondary]="partsCase.secondary"
-                            [hint]="partsCase.hint"
-                            [deltaPrimary]="growth"
-                            [deltaSecondary]="partsCase.deltaSecondary" />
+                <app-story-presets caption="Необязательные части в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="partsCases" [itemLabel]="partsCaseLabel">
+                            <ng-template let-partsCase>
+                                <rt-stat-tile
+                                    label="Визиты"
+                                    value="1 240"
+                                    [secondary]="partsCase.secondary"
+                                    [hint]="partsCase.hint"
+                                    [deltaPrimary]="growth"
+                                    [deltaSecondary]="partsCase.deltaSecondary" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -80,13 +92,17 @@ interface IStatTilePartsCase {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Знак изменения в обеих темах">
+                <app-story-presets caption="Знак изменения в обеих темах в обоих наборах">
                     <ng-template>
-                        @for (deltaCase of deltaCases; track deltaCase.name) {
-                            <rt-stat-tile label="Визиты" value="1 240" [deltaPrimary]="deltaCase.delta" />
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (deltaCase of deltaCases; track deltaCase.name) {
+                                    <rt-stat-tile label="Визиты" value="1 240" [deltaPrimary]="deltaCase.delta" />
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

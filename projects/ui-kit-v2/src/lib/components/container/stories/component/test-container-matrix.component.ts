@@ -41,35 +41,39 @@ interface IContainerZonesCase {
     template: `
         @switch (part) {
             @case ('zones') {
-                <app-story-row caption="Объявленные зоны" [items]="zoneCases" [itemLabel]="caseLabel" [slotWidth]="frameWidth">
-                    <ng-template let-zonesCase>
-                        <div class="app-container-matrix__frame">
-                            <rt-container height="auto">
-                                @if (zonesCase.header) {
-                                    <ng-template rtContainerHeader>
-                                        <div class="app-container-matrix__band">шапка</div>
-                                    </ng-template>
-                                }
-                                @if (zonesCase.leftSidenav) {
-                                    <ng-template rtContainerLeftSidenav>
-                                        <div class="app-container-matrix__band app-container-matrix__band--tall">меню</div>
-                                    </ng-template>
-                                }
-                                @if (zonesCase.toolbar) {
-                                    <ng-template rtContainerToolbarLeft>
-                                        <div class="app-container-matrix__band">фильтр</div>
-                                    </ng-template>
-                                    <ng-template rtContainerToolbarRight>
-                                        <div class="app-container-matrix__band">действия</div>
-                                    </ng-template>
-                                }
-                                <ng-template rtContainerContent>
-                                    <div class="app-container-matrix__band app-container-matrix__band--tall">содержимое</div>
-                                </ng-template>
-                            </rt-container>
-                        </div>
+                <app-story-presets caption="Объявленные зоны в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="zoneCases" [itemLabel]="caseLabel" [slotWidth]="frameWidth">
+                            <ng-template let-zonesCase>
+                                <div class="app-container-matrix__frame">
+                                    <rt-container height="auto">
+                                        @if (zonesCase.header) {
+                                            <ng-template rtContainerHeader>
+                                                <div class="app-container-matrix__band">шапка</div>
+                                            </ng-template>
+                                        }
+                                        @if (zonesCase.leftSidenav) {
+                                            <ng-template rtContainerLeftSidenav>
+                                                <div class="app-container-matrix__band app-container-matrix__band--tall">меню</div>
+                                            </ng-template>
+                                        }
+                                        @if (zonesCase.toolbar) {
+                                            <ng-template rtContainerToolbarLeft>
+                                                <div class="app-container-matrix__band">фильтр</div>
+                                            </ng-template>
+                                            <ng-template rtContainerToolbarRight>
+                                                <div class="app-container-matrix__band">действия</div>
+                                            </ng-template>
+                                        }
+                                        <ng-template rtContainerContent>
+                                            <div class="app-container-matrix__band app-container-matrix__band--tall">содержимое</div>
+                                        </ng-template>
+                                    </rt-container>
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -96,26 +100,30 @@ interface IContainerZonesCase {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Каркас в обеих темах">
+                <app-story-presets caption="Каркас в обеих темах в обоих наборах">
                     <ng-template>
-                        <div class="app-container-matrix__frame">
-                            <rt-container height="auto">
-                                <ng-template rtContainerHeader>
-                                    <div class="app-container-matrix__band">шапка</div>
-                                </ng-template>
-                                <ng-template rtContainerLeftSidenav>
-                                    <div class="app-container-matrix__band app-container-matrix__band--tall">меню</div>
-                                </ng-template>
-                                <ng-template rtContainerToolbarLeft>
-                                    <div class="app-container-matrix__band">фильтр</div>
-                                </ng-template>
-                                <ng-template rtContainerContent>
-                                    <div class="app-container-matrix__band app-container-matrix__band--tall">содержимое</div>
-                                </ng-template>
-                            </rt-container>
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div class="app-container-matrix__frame">
+                                    <rt-container height="auto">
+                                        <ng-template rtContainerHeader>
+                                            <div class="app-container-matrix__band">шапка</div>
+                                        </ng-template>
+                                        <ng-template rtContainerLeftSidenav>
+                                            <div class="app-container-matrix__band app-container-matrix__band--tall">меню</div>
+                                        </ng-template>
+                                        <ng-template rtContainerToolbarLeft>
+                                            <div class="app-container-matrix__band">фильтр</div>
+                                        </ng-template>
+                                        <ng-template rtContainerContent>
+                                            <div class="app-container-matrix__band app-container-matrix__band--tall">содержимое</div>
+                                        </ng-template>
+                                    </rt-container>
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,
