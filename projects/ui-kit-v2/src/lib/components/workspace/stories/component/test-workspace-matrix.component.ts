@@ -31,9 +31,10 @@ export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'presets' | '
             @case ('slots') {
                 <app-story-presets caption="Какие слоты объявлены в обоих наборах">
                     <ng-template>
-                        <app-story-row [items]="slotCases">
+                        <app-story-row slotWidth="56rem" [items]="slotCases">
                             <ng-template let-slot>
-                                <div style="height: 18rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
+                                <div
+                                    style="inline-size: 100%; height: 18rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
                                     @switch (slot) {
                                         @case ('список и центр') {
                                             <rt-workspace>
@@ -76,9 +77,10 @@ export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'presets' | '
             @case ('active') {
                 <app-story-presets caption="Выбрана ли запись в обоих наборах">
                     <ng-template>
-                        <app-story-row [items]="activeCases" [itemLabel]="activeLabel">
+                        <app-story-row slotWidth="56rem" [items]="activeCases" [itemLabel]="activeLabel">
                             <ng-template let-value>
-                                <div style="height: 18rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
+                                <div
+                                    style="inline-size: 100%; height: 18rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
                                     <rt-workspace [hasActive]="value">
                                         <ng-template rtWorkspaceList>
                                             <div style="padding: 0.5rem">Список переписок</div>
@@ -100,9 +102,10 @@ export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'presets' | '
             @case ('widths') {
                 <app-story-presets caption="Начальные ширины панелей в обоих наборах">
                     <ng-template>
-                        <app-story-row [items]="widthCases" [itemLabel]="widthLabel">
+                        <app-story-row slotWidth="56rem" [items]="widthCases" [itemLabel]="widthLabel">
                             <ng-template let-item>
-                                <div style="height: 18rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
+                                <div
+                                    style="inline-size: 100%; height: 18rem; overflow: hidden; border: 1px dashed var(--rt-color-border-subtle)">
                                     <rt-workspace
                                         hasActive
                                         [listDefaultWidth]="item.list"
