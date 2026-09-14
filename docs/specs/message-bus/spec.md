@@ -34,12 +34,12 @@ cargo.
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | The intake                             | A closed service taking the cargo in by a request. One's own work queue, not a foreign one                                            |
 | Cargo                                  | What goes away by a run of the sending: a digest with a snapshot of the overrides, proposals, incident analyses                       |
-| A kind of cargo                        | One of three: a digest, a proposal, an incident analysis. Each has its own operation of the intake                                    |
+| A kind of cargo                        | One of four: a digest, the observation lines, a proposal, an incident analysis. Each has its own operation                            |
 | A tree                                 | A record about a repository the cargo arrives from. Trees are told apart by a sign, not by an address                                 |
 | A token of a tree                      | What a tree introduces itself to the intake by. The intake holds only a hash; the token itself is printed once                        |
 | A revocation of a token                | A mark that the token is no longer accepted. The token is not deleted: the former cargo is read by it                                 |
 | A record of a month                    | The digest of one tree over one calendar month. One per pair "tree — month"                                                           |
-| A run                                  | One sending from a tree: up to three requests in a row, one per kind of cargo                                                         |
+| A run                                  | One sending from a tree: up to four requests in a row, one per kind of cargo                                                          |
 | A snapshot of the overrides            | The state of the tree at the minute of the run: which sections of which resources of the package it edits and what it did not lay out |
 | The version of the schema of the cargo | The number of the format of the request of the intake. It changes when the composition of the fields of the cargo itself changes      |
 | The version of the schema of the rows  | The number of the format of a row of an observation at a tree. Several of them meet in one digest                                     |

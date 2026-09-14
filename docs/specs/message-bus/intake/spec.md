@@ -26,11 +26,11 @@ The vocabulary of the domain whole is in the spec next to it. Here only what liv
 | Term                                   | What it is                                                                                                                       |
 | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | Cargo                                  | What goes away by a run of the sending: a digest with a snapshot of the overrides, proposals, incident analyses                  |
-| A kind of cargo                        | One of three: a digest, a proposal, an incident analysis. Each has its own operation of the intake                               |
+| A kind of cargo                        | One of four: a digest, the observation lines, a proposal, an incident analysis. Each has its own operation                       |
 | A tree                                 | A record about a repository the cargo arrives from. Trees are told apart by a sign, not by an address                            |
 | A token of a tree                      | What a tree introduces itself to the intake by. The intake holds only a hash; the token itself is printed once                   |
 | A record of a month                    | The digest of one tree over one calendar month. One per pair "tree — month"                                                      |
-| A run                                  | One sending from a tree: up to three requests in a row, one per kind of cargo                                                    |
+| A run                                  | One sending from a tree: up to four requests in a row, one per kind of cargo                                                     |
 | The version of the schema of the cargo | The number of the format of the request of the intake. It changes when the composition of the fields of the cargo itself changes |
 | A record of the cargo                  | An incident analysis or a proposal. A digest of a month is never a record of the cargo in this sense                             |
 | The state of a record                  | The step an incident analysis or a proposal stands at: new, in progress, ready, released                                         |
@@ -287,13 +287,14 @@ was taken in.
 A tree introduces itself by the header `X-Tree-Token`. Without a token any operation of the intake,
 apart from the probe of liveness, refuses.
 
-| Operation                    | What it does                                                                     |
-| ---------------------------- | -------------------------------------------------------------------------------- |
-| POST /api/intake/summary     | creates or updates the record of a month by the digest of the last run           |
-| POST /api/intake/proposals   | puts to the record of a month the proposals the tree did not have yet            |
-| POST /api/intake/postmortems | creates or updates the incident analyses of the tree by the names of their files |
-| POST /api/intake/enroll      | creates a tree by a valid invitation and gives back its first token              |
-| GET /api/health              | answers that the service is raised and the storage answers                       |
+| Operation                     | What it does                                                                                                  |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| POST /api/intake/summary      | creates or updates the record of a month by the digest of the last run                                        |
+| POST /api/intake/observations | replaces the days of one working copy by the observation lines of the run; the subdomain "Usage of the rules" |
+| POST /api/intake/proposals    | puts to the record of a month the proposals the tree did not have yet                                         |
+| POST /api/intake/postmortems  | creates or updates the incident analyses of the tree by the names of their files                              |
+| POST /api/intake/enroll       | creates a tree by a valid invitation and gives back its first token                                           |
+| GET /api/health               | answers that the service is raised and the storage answers                                                    |
 
 The request for a token is the only operation of the intake without a token of a tree: the tree does
 not have one yet. It is closed by the invitation and by a limiter of the frequency, and it carries the

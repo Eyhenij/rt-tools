@@ -12,7 +12,7 @@ Then four rows lie in the storage with the tree, the working copy sign, the day,
 resource, the kind of the skill and the session sign of each line, and the answer names two days and
 four rows
 
-Not covered: task RT-2099.
+Covered: `libs/message-bus-api/observations/feature/src/lib/observations-intake.controller.spec.ts`, `libs/message-bus-api/observations/data-access/src/lib/observation.queries.spec.ts`, `libs/message-bus-api/observations/util/src/lib/observation-cargo.util.spec.ts`.
 
 ### SC-MB-338 — a day of one working copy is replaced whole
 
@@ -20,7 +20,7 @@ Given three rows of a day of a copy lie in the storage
 When the same copy sends the same day with two lines
 Then two rows of that day lie in the storage and none of the former three
 
-Not covered: task RT-2099.
+Covered: `libs/message-bus-api/observations/feature/src/lib/observations-intake.controller.spec.ts`, `libs/message-bus-api/observations/data-access/src/lib/observation.queries.spec.ts`.
 
 ### SC-MB-339 — a day of another working copy is not touched
 
@@ -28,7 +28,7 @@ Given rows of a day of copy A lie in the storage
 When copy B of the same tree sends the same day
 Then the rows of copy A lie as they were, and the rows of copy B lie next to them
 
-Not covered: task RT-2099.
+Covered: `libs/message-bus-api/observations/feature/src/lib/observations-intake.controller.spec.ts`, `libs/message-bus-api/observations/data-access/src/lib/observation.queries.spec.ts`.
 
 ### SC-MB-340 — an unknown event kind refuses the cargo whole
 
@@ -37,7 +37,7 @@ When the intake takes it in
 Then the intake refuses with `400` naming the day and the place of the line, and no row of the cargo
 lands
 
-Not covered: task RT-2099.
+Covered: `libs/message-bus-api/observations/feature/src/lib/observations-intake.controller.spec.ts`, `libs/message-bus-api/observations/util/src/lib/observation-cargo.util.spec.ts`.
 
 ### SC-MB-341 — more lines than the cap refuses the cargo without a row
 
@@ -45,7 +45,7 @@ Given the cap of lines is ten and the cargo carries eleven
 When the intake takes it in
 Then the intake refuses with `413` naming the cap and eleven, and no row lands
 
-Not covered: task RT-2099.
+Covered: `libs/message-bus-api/observations/feature/src/lib/observations-intake.controller.spec.ts`, `libs/message-bus-api/observations/util/src/lib/observation-cargo.util.spec.ts`.
 
 ### SC-MB-342 — the nightly cleaning removes rows older than a year and writes a line per tree
 
@@ -54,7 +54,7 @@ When the cleaning of the keeping term runs
 Then the old rows are gone, the rows of today stay, and the journal holds one line per tree with
 the count of the removed
 
-Not covered: task RT-2099.
+Covered: `libs/message-bus-api/observations/feature/src/lib/observation-retention.service.spec.ts`, `libs/message-bus-api/observations/data-access/src/lib/observation.queries.spec.ts`, `libs/message-bus-api/observations/util/src/lib/observation-retention.util.spec.ts`.
 
 ### SC-MB-343 — the usage of a tree over a period counts loads, sessions and refusals per skill
 
