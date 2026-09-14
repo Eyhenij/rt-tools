@@ -43,21 +43,28 @@ interface IAsideLayoutCase {
                         <ng-template>
                             <app-story-row [items]="sizes">
                                 <ng-template let-size>
-                                    <rt-aside [size]="size" [ariaLabel]="'Панель ' + size">
-                                        <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
-                                        <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
-                                        <rt-aside-footer>
-                                            <button
-                                                rtButton
-                                                asideDismiss
-                                                type="button"
-                                                theme="secondary"
-                                                appearance="text"
-                                                label="Закрыть"
-                                                aria-label="Закрыть"></button>
-                                            <button rtButton asidePrimary type="button" label="Сохранить" aria-label="Сохранить"></button>
-                                        </rt-aside-footer>
-                                    </rt-aside>
+                                    <div class="app-aside-matrix__box">
+                                        <rt-aside [size]="size" [ariaLabel]="'Панель ' + size">
+                                            <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
+                                            <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            <rt-aside-footer>
+                                                <button
+                                                    rtButton
+                                                    asideDismiss
+                                                    type="button"
+                                                    theme="secondary"
+                                                    appearance="text"
+                                                    label="Закрыть"
+                                                    aria-label="Закрыть"></button>
+                                                <button
+                                                    rtButton
+                                                    asidePrimary
+                                                    type="button"
+                                                    label="Сохранить"
+                                                    aria-label="Сохранить"></button>
+                                            </rt-aside-footer>
+                                        </rt-aside>
+                                    </div>
                                 </ng-template>
                             </app-story-row>
                         </ng-template>
@@ -69,10 +76,12 @@ interface IAsideLayoutCase {
                         <ng-template>
                             <app-story-row [items]="widths">
                                 <ng-template let-width>
-                                    <rt-aside size="md" ariaLabel="Панель своей ширины" [width]="width">
-                                        <rt-aside-header title="Тур в Сочи" />
-                                        <rt-aside-section heading="Клиент">Ширина задана входом и перекрывает размер.</rt-aside-section>
-                                    </rt-aside>
+                                    <div class="app-aside-matrix__box">
+                                        <rt-aside size="md" ariaLabel="Панель своей ширины" [width]="width">
+                                            <rt-aside-header title="Тур в Сочи" />
+                                            <rt-aside-section heading="Клиент">Ширина задана входом и перекрывает размер.</rt-aside-section>
+                                        </rt-aside>
+                                    </div>
                                 </ng-template>
                             </app-story-row>
                         </ng-template>
@@ -84,11 +93,13 @@ interface IAsideLayoutCase {
                         <ng-template>
                             <app-story-row [items]="layoutCases" [itemLabel]="caseLabel">
                                 <ng-template let-layoutCase>
-                                    <rt-aside size="sm" [contentLayout]="layoutCase.layout" [ariaLabel]="layoutCase.name">
-                                        <rt-aside-header title="Тур в Сочи" />
-                                        <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
-                                        <rt-aside-section heading="Даты">12.05.2026 — 26.05.2026</rt-aside-section>
-                                    </rt-aside>
+                                    <div class="app-aside-matrix__box">
+                                        <rt-aside size="sm" [contentLayout]="layoutCase.layout" [ariaLabel]="layoutCase.name">
+                                            <rt-aside-header title="Тур в Сочи" />
+                                            <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            <rt-aside-section heading="Даты">12.05.2026 — 26.05.2026</rt-aside-section>
+                                        </rt-aside>
+                                    </div>
                                 </ng-template>
                             </app-story-row>
                         </ng-template>
@@ -98,21 +109,23 @@ interface IAsideLayoutCase {
                 @case ('presets') {
                     <app-story-presets caption="Панель в обоих наборах">
                         <ng-template>
-                            <rt-aside size="sm" ariaLabel="Карточка тура">
-                                <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
-                                <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
-                                <rt-aside-footer>
-                                    <button
-                                        rtButton
-                                        asideDismiss
-                                        type="button"
-                                        theme="secondary"
-                                        appearance="text"
-                                        label="Закрыть"
-                                        aria-label="Закрыть"></button>
-                                    <button rtButton asidePrimary type="button" label="Сохранить" aria-label="Сохранить"></button>
-                                </rt-aside-footer>
-                            </rt-aside>
+                            <div class="app-aside-matrix__box">
+                                <rt-aside size="sm" ariaLabel="Карточка тура">
+                                    <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
+                                    <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                    <rt-aside-footer>
+                                        <button
+                                            rtButton
+                                            asideDismiss
+                                            type="button"
+                                            theme="secondary"
+                                            appearance="text"
+                                            label="Закрыть"
+                                            aria-label="Закрыть"></button>
+                                        <button rtButton asidePrimary type="button" label="Сохранить" aria-label="Сохранить"></button>
+                                    </rt-aside-footer>
+                                </rt-aside>
+                            </div>
                         </ng-template>
                     </app-story-presets>
                 }
@@ -122,21 +135,28 @@ interface IAsideLayoutCase {
                         <ng-template>
                             <app-story-themes>
                                 <ng-template>
-                                    <rt-aside size="sm" ariaLabel="Карточка тура">
-                                        <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
-                                        <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
-                                        <rt-aside-footer>
-                                            <button
-                                                rtButton
-                                                asideDismiss
-                                                type="button"
-                                                theme="secondary"
-                                                appearance="text"
-                                                label="Закрыть"
-                                                aria-label="Закрыть"></button>
-                                            <button rtButton asidePrimary type="button" label="Сохранить" aria-label="Сохранить"></button>
-                                        </rt-aside-footer>
-                                    </rt-aside>
+                                    <div class="app-aside-matrix__box">
+                                        <rt-aside size="sm" ariaLabel="Карточка тура">
+                                            <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
+                                            <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            <rt-aside-footer>
+                                                <button
+                                                    rtButton
+                                                    asideDismiss
+                                                    type="button"
+                                                    theme="secondary"
+                                                    appearance="text"
+                                                    label="Закрыть"
+                                                    aria-label="Закрыть"></button>
+                                                <button
+                                                    rtButton
+                                                    asidePrimary
+                                                    type="button"
+                                                    label="Сохранить"
+                                                    aria-label="Сохранить"></button>
+                                            </rt-aside-footer>
+                                        </rt-aside>
+                                    </div>
                                 </ng-template>
                             </app-story-themes>
                         </ng-template>
@@ -146,10 +166,20 @@ interface IAsideLayoutCase {
         </div>
     `,
     styles: `
-        /* Панель тянется на всю высоту родителя: без заданной высоты она схлопнулась бы по
-           содержимому, и раскладка с вкладками не отличалась бы от обычной. */
-        .app-aside-matrix__room .rt-aside {
-            height: 20rem;
+        /* Высота задаётся ящику вокруг панели, а не самой панели.
+
+           Хост панели объявлен \`display: contents\` нарочно: рамка должна быть прямым ребёнком
+           панели оверлея, и боксом хост не становится. Высота, заданная по классу блока, ложилась
+           на хост и пропадала — он мерился 0 на 0 при объявленных 320 точках, а содержимое
+           вываливалось в ячейку показа и резалось её краем. До рамки внутри хоста правило обёртки
+           не достаёт вовсе: у рамки нет признака области действия обёртки.
+
+           Ящик решает оба: он и есть блок-контейнер рамки, потому что хост между ними боксом не
+           стоит, и рамка берёт от него свои 100% высоты. Ширина на всю ячейку нужна затем, что
+           половина набора ужимает ребёнка без ширины по содержимому. */
+        .app-aside-matrix__box {
+            inline-size: 100%;
+            block-size: 20rem;
         }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
