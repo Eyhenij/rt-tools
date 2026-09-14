@@ -142,3 +142,11 @@ is read from that same document: read by its own way, the command wrote the law 
 the epic while both sides answered as usual
 
 Covered: `projects/agent-kit/tests/task-new-epic.test.sh`.
+
+### SC-AK-1093 — a list given in pages is read whole
+
+Given an epic whose linked tasks do not fit one page of the hosting's answer
+When the audit of the work queue runs
+Then a task lying past the first page is not named unlinked
+
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.

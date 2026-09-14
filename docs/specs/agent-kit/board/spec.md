@@ -85,6 +85,10 @@ through the executor.
   ordinary work, and that nothing stands behind it shows nowhere.
 - **The cargo of the trees is not judged by this line.** Those records are not tasks at all — no
   title with a number, no executor, no place on the board.
+- **A list the hosting gives in pages is read whole, not by its first page.** An epic outgrows one
+  page long before it is closed, and the tail then reads as missing: the audit names a linked task
+  unlinked. The cost is not the false line but the habit — it stands in every run, the eye stops
+  reading it, and a real divergence rides past together with it.
 
 ## What is out of scope
 
