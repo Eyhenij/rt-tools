@@ -137,13 +137,15 @@ the limit is split further by the same technique.
 | [The shell of the admin application](admin-shell/spec.md)               | the top row of the sections, the popup of the profile, the theme and the language, the screen of the entry |
 | [What the intake writes about itself](journal/spec.md)                  | the row of the journal, the taken-apart reason, the cleaning of the fields                                 |
 | [A right, a role and the check that reads them](access-rights/spec.md)  | what a person may do after the entry: the closed set of rights, the role, the pointed edits over it        |
+| [The usage of the rules in the sessions](usage/spec.md)                 | the observation lines: the intake of a day whole, the counting by skill over a period, the section         |
 
 ## What is out of scope
 
 The boundaries of the subjects are named in the subdomains. What is shared across the domain:
 
 - **A digest over several trees and charts.** The word of the owner: the lists are shown, and a
-  digest is appointed when there are three trees.
+  digest is appointed when there are three trees. The usage of one tree over a period is a section
+  of its own — the subdomain of the usage; a digest over trees stays out.
 - **The edit of the taken-in cargo by a person.** The text, the address and the resource of a record
   are carried by the intake of the cargo, and there is no second way to them. The state of a record
   is edited by the tree with its token — the subdomain of the edit of a state; a person in the admin

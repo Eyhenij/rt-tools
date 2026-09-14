@@ -109,7 +109,7 @@ When they open the section «Использование» and choose the tree
 Then the table shows a row per skill with the kind by a word of the domain, the loads, the sessions
 and the refusals, the most loaded first
 
-Not covered: task RT-2101.
+Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`.
 
 ### SC-MB-349 — a change of the period re-reads the table, and the former rows stay dimmed meanwhile
 
@@ -118,8 +118,7 @@ When the person narrows the period to one day
 Then the table shows the rows of that day only, and while the reading went the former rows stood
 dimmed under the sign of reading
 
-Coverage: partial — the period in the address, in the request and on the list base is checked by
-calls in the specs of the core libs; the end-to-end path of the section is task RT-2101.
+Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`.
 
 ### SC-MB-350 — a row opens the panel of the sessions of its skill
 
@@ -128,7 +127,7 @@ When the person opens the row of `testing`
 Then the panel «Сессии» opens with `testing` in its heading and a row per day and session with how
 many times
 
-Not covered: task RT-2101.
+Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`.
 
 ### SC-MB-351 — a person without the right sees no section
 
@@ -137,7 +136,7 @@ When they open the admin application
 Then the row of the sections holds no «Использование», and the address of the section answers with
 the refusal of the shell
 
-Not covered: task RT-2101.
+Coverage: partial — the right closes the section and the route by calls in `libs/message-bus-admin/auth/shell/src/lib/section-access.spec.ts` and `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.spec.ts`; the stand has one account, with every right.
 
 ### SC-MB-352 — an empty period draws the empty state of the base
 
@@ -145,7 +144,7 @@ Given the table of a tree is shown
 When the person chooses a period with no rows
 Then the table shows the empty state of the base and no message of the bus
 
-Not covered: task RT-2101.
+Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`.
 
 ### SC-MB-353 — a period the request did not name is the last thirty days of the receiver
 

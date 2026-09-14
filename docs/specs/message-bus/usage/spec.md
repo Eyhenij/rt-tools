@@ -1,14 +1,14 @@
 # Usage of the rules in the sessions of the trees — the intake, the reading and the section
 
-**Status:** proposed · **Revision:** 2026-09-14 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 2026-09-14 · **Scenario prefix:** `SC-MB`
 **Depends on:** `agent-kit` (the observation lines are read from the tree and sent by it)
 **Laws:** `verifiability`, `entity-models`, `lists`, `reuse-first`, `frontend-application`, `lib-imports`, `observability`
 **Procedures:** none — the operations are declared by the controllers of the intake
 
-The product agreement of the receiving side. It merges into a subdomain of its own, "Usage of the
-rules": the intake subdomain and the admin subdomain both stand at the length limit, and the subject
-is one from the storage to the screen. The sending side — what a line carries and how it leaves —
-is merged into the subdomain "Cargo outward" of the package domain.
+A subdomain of the domain "the intake of the cargo": the observation lines from the storage to the
+screen. It stands apart from the intake subdomain and the admin subdomain because both are at the
+length limit and the subject is one from the storage to the screen. The sending side — what a line
+carries and how it leaves — is the subdomain "Cargo outward" of the package domain.
 
 ## Why
 
@@ -122,8 +122,8 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
   empties on every change of the period blinks; the numbers are replaced when the new ones arrive.
 - **An empty period draws the empty state of the base, not a text of its own.** The sections share
   one wording for "nothing here".
-- **A failure of the reading is one message of the shared bus for the section.** Not a paragraph in
-  the table and not a message per row.
+- **A failure of the reading is one message of the shared list page for the section.** Not a
+  paragraph in the table and not a message per row.
 - **The labels of the section, the columns, the kinds and the panel lie in the dictionary of the
   application.** Not in the markup, as the labels of the neighbouring sections.
 - **The numbers of the section are checked against the print of the digest at the tree.** The
@@ -133,9 +133,8 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
 
 ## What is out of scope
 
-- **Charts and a digest over several trees.** The section shows one tree over one period. The line
-  of the domain spec about a digest over several trees is reworded at the merge: the usage of one
-  tree over a period is in scope, the digest over trees is not.
+- **Charts and a digest over several trees.** The section shows one tree over one period; the
+  digest over trees stays out of scope by the word of the owner, as the domain spec says.
 - **The session time and the token cost.** Named by the owner outright.
 - **Editing or deleting the lines from the admin application.** The lines are what the tree sent;
   the only removal is by age.
@@ -147,11 +146,11 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
 
 ## Contract
 
-| Operation                        | What it does                                                                                     |
-| -------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `POST /api/intake/observations`  | takes the observation cargo in by the tree token: a day of a copy is replaced whole              |
-| `GET /api/usage`                 | a page of the usage of the skills of a tree: `tree`, `from`, `to`, `page`, `size`, `sort`, `dir` |
-| `GET /api/usage/:skill/sessions` | the sessions of one skill of a tree over the period: `tree`, `from`, `to`; newest day first      |
+| Operation                      | What it does                                                                                     |
+| ------------------------------ | ------------------------------------------------------------------------------------------------ |
+| POST /api/intake/observations  | takes the observation cargo in by the tree token: a day of a copy is replaced whole              |
+| GET /api/usage                 | a page of the usage of the skills of a tree: `tree`, `from`, `to`, `page`, `size`, `sort`, `dir` |
+| GET /api/usage/:skill/sessions | the sessions of one skill of a tree over the period: `tree`, `from`, `to`; newest day first      |
 
 The body of the intake operation is the observation cargo as the sending side declares it: `{ schema,
 tree, origin, days: [{ day, lines: [{ t, ev, res, kind?, sid, v, skill? }] }] }`. The form is declared
