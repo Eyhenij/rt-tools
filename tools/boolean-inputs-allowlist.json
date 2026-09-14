@@ -1,0 +1,10 @@
+{
+  "check": "check-boolean-inputs",
+  "what": "Inputs of the second kit that are boolean by declared type alone. What stands here does not count as a refusal: coercion would collapse the third value of such an input into false.",
+  "accepted": {
+    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.ts:pressed": {
+      "reason": "a tri-state: pressed, not pressed, not said. The third value is what the button is in until the answer arrives, and it is not the same as «not pressed» — coercion would turn it into one.",
+      "task": "RT-2082"
+    }
+  }
+}

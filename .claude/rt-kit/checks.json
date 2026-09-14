@@ -90,6 +90,7 @@
             "Showcase links": "node tools/check-showcase-links.mjs",
             "Kit shot pairs": "node tools/check-kit-shot-pairs.mjs",
             "Kit two coverage": "node tools/check-kit-coverage.mjs",
+            "Boolean inputs of kit two": "node tools/check-boolean-inputs.mjs",
             "Test, Lint, Typecheck, Build": "pnpm exec nx affected -t lint typecheck test build --parallel",
             "Hook suites": "pnpm exec nx affected -t test-hooks",
             "Stylelint": "pnpm run lint:styles",
