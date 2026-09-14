@@ -1,6 +1,6 @@
 # A boolean input of the kit and the bare attribute
 
-**Status:** proposed · **Revision:** 14 September 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 14 September 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** none
 **Laws:** `frontend-application`, `reuse-first`
 **Procedures:** none
@@ -120,3 +120,5 @@ count, `Q-2` by the scenario about the string `false`.
 - 14 September 2026 — written before the code of the work that brings it.
 - 14 September 2026 — the count closed `Q-1`: eleven inputs of a hundred and seven stood without
   coercion, and all eleven took it. `Q-2` closed by the scenario `SC-UKV-135`.
+- 14 September 2026 — brought into force and moved into the domain spec: the code is written, the
+  check stands in the gate set, every scenario is closed by a test.
