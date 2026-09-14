@@ -99,6 +99,11 @@ flowchart TD
   draft; the question is asked in the PR itself. The check pipeline does not run on a draft by
   default — until the draft is lifted it stays silent, and that silence is not taken for a green
   run.
+- **`--hard` is not taken to drop a commit — that is `--soft`, and the working tree stays as it
+  is.** `reset --hard`, `checkout -- <path>`, `restore <path>` and `clean -f` erase what is not
+  committed, and git keeps no object of it; in one working copy the erased edit is as often a
+  neighbour's as one's own. The guard refuses such a call on a dirty tree and names the files; the
+  lawful bypass is the comment `# discard: <reason>` in the same command, the files named in it.
 - **The working tree is emptied before the PR opens, not after.** `git status --porcelain` is asked
   in the same turn as the opening: what is uncommitted goes to the host by a commit before it, or
   is named. A push after the opening moves the tip past the green run the body names, and for that

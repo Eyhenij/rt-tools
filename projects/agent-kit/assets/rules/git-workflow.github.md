@@ -102,6 +102,11 @@ flowchart TD
   turns red at this: the PR looks merged and the task closes.
 - **A chain is merged bottom-up, and the order stands in every PR body.** Branch kinship is
   invisible in the list, and the line "stands on #<number>" is the only place it is read.
+- **`--hard` is not taken to drop a commit — that is `--soft`, and the working tree stays as it
+  is.** `reset --hard`, `checkout -- <path>`, `restore <path>` and `clean -f` erase what is not
+  committed, and git keeps no object of it; in one working copy the erased edit is as often a
+  neighbour's as one's own. The guard refuses such a call on a dirty tree and names the files; the
+  lawful bypass is the comment `# discard: <reason>` in the same command, the files named in it.
 - **The lower branch of a chain does not rewrite history — neither `rebase` nor a force push.** The
   host closes the upper PR as merged once its diff goes empty. A lagging branch is fixed by merging
   main in.
