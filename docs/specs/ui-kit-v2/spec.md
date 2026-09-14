@@ -43,16 +43,17 @@ agreement about their own subject and describe the surface of a component, not a
   scenario to the title of its test, and a numbering of its own at every subdomain would mean
   recounting all the numbers at once.
 
-| Subdomain                                                 | About what                                                                                                                      |
-| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| [The snapshots of the showcase](snapshots/spec.md)        | what is shot, what a frame is held between runs by, where the run is obliged to refuse                                          |
-| [The leaving of a route panel](aside/spec.md)             | whom the guard asks about the edits, the permission to leave, a cancel instead of a loss                                        |
-| [The design of the kit](tokens/spec.md)                   | the brand and the palettes, the graph of the tokens, the completeness of the dark theme, the contrast, the layer of the cascade |
-| [The field of input](input/spec.md)                       | what the field declares the kind of the value to the browser by and where the promise of the kit ends                           |
-| [The actions at a reply](chat-actions/spec.md)            | what a consumer declares its own action at a reply of a correspondence by and where the boundary is                             |
-| [The field and a signal form](signal-forms/spec.md)       | where a field of the set takes the state of the form from and what happens to both bindings                                     |
-| [The form dictionary of a panel](form-dictionary/spec.md) | the hierarchy of the form of a panel, where the gap comes from, what the consumer does not write                                |
-| [The digits of a number field](number-grouping/spec.md)   | what a field separates the digits of a number by and where a consumer says a number is solid                                    |
+| Subdomain                                                                 | About what                                                                                                                      |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| [The snapshots of the showcase](snapshots/spec.md)                        | what is shot, what a frame is held between runs by, where the run is obliged to refuse                                          |
+| [The leaving of a route panel](aside/spec.md)                             | whom the guard asks about the edits, the permission to leave, a cancel instead of a loss                                        |
+| [The design of the kit](tokens/spec.md)                                   | the brand and the palettes, the graph of the tokens, the completeness of the dark theme, the contrast, the layer of the cascade |
+| [The field of input](input/spec.md)                                       | what the field declares the kind of the value to the browser by and where the promise of the kit ends                           |
+| [The actions at a reply](chat-actions/spec.md)                            | what a consumer declares its own action at a reply of a correspondence by and where the boundary is                             |
+| [The field and a signal form](signal-forms/spec.md)                       | where a field of the set takes the state of the form from and what happens to both bindings                                     |
+| [The form dictionary of a panel](form-dictionary/spec.md)                 | the hierarchy of the form of a panel, where the gap comes from, what the consumer does not write                                |
+| [The digits of a number field](number-grouping/spec.md)                   | what a field separates the digits of a number by and where a consumer says a number is solid                                    |
+| [A boolean input and the bare attribute](boolean-input-attribute/spec.md) | what a boolean input of the kit accepts, and which input is boolean by declared type alone                                      |
 
 ## What is out of scope
 

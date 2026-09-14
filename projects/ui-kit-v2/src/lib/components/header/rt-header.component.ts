@@ -1,12 +1,12 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
-    inject,
-    input,
-    output,
     ChangeDetectionStrategy,
     Component,
-    InputSignal,
+    inject,
+    input,
     InputSignalWithTransform,
+    output,
     OutputEmitterRef,
     Signal,
     ViewEncapsulation,
@@ -60,7 +60,9 @@ const BEM_BLOCK: string = 'rt-header';
 export class RtHeaderComponent {
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
-    public readonly canGoBack: InputSignal<boolean> = input<boolean>(false);
+    public readonly canGoBack: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
     /** Показывать action-иконку «Пригласить пользователя» слева от колокола. */
     public readonly showInvite: InputSignalWithTransform<boolean, boolean | string> = input<boolean, boolean | string>(false, {
