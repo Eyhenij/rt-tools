@@ -10,8 +10,55 @@
  * — а всё остальное в пакете написано под запуск из строки запуска.
  */
 
-/** Версия формата запроса приёма. Меняется, когда меняется состав полей самого груза. */
-export const CARGO_SCHEMA_VERSION: string = '1';
+/**
+ * Версия формата запроса приёма. Меняется, когда меняется состав полей самого груза.
+ *
+ * `2` — четвёртый род груза, строки наблюдений: дерево прежней редакции шлёт три рода под `1`,
+ * и приём берёт их как прежде.
+ */
+export const CARGO_SCHEMA_VERSION: string = '2';
+
+/** Род загруженного скила: чей он — пакета или самого дерева. Считает отправитель по раскладке. */
+export type TSkillKind = 'rule' | 'pattern' | 'skill' | 'own';
+
+/** Роды событий, которые пишут гарды дерева. Приём чужой род не принимает. */
+export const OBSERVATION_EVENTS: readonly string[] = ['skill-load', 'gate-deny', 'guard-deny', 'push-gate'];
+
+/**
+ * Одна строка наблюдения — как лежит в файле дня, плюс род скила у загрузки.
+ *
+ * Имена полей повторяют файл: `t` время, `ev` событие, `res` ресурс, `kind` род правки у отказа
+ * гейта, `sid` признак сессии, `v` версия пакета. Пути в строке нет, признак сессии — контрольная
+ * сумма: груз не говорит о дереве больше, чем сводка.
+ */
+export interface IObservationLine {
+    readonly t: string;
+    readonly ev: string;
+    readonly res: string;
+    readonly kind?: string;
+    readonly sid: string;
+    readonly v: string;
+    readonly skill?: TSkillKind;
+}
+
+/** Строки одного дня. День уезжает целиком: приём замещает день целиком. */
+export interface IObservationDay {
+    /** День вида `2026-09-14`, по всемирному времени — как назван файл. */
+    readonly day: string;
+    readonly lines: readonly IObservationLine[];
+}
+
+/**
+ * Строки наблюдений за отрезок отправки, по дням.
+ *
+ * `origin` — признак рабочей копии: у одного дерева их несколько, признак дерева у них общий, а
+ * файлы наблюдений у каждой свои. Приём замещает день по паре «копия — день», иначе последняя
+ * отправившая копия стирала бы строки соседней. Контрольная сумма пути, самого пути в грузе нет.
+ */
+export interface IObservationsCargo extends ICargoHead {
+    readonly origin: string;
+    readonly days: readonly IObservationDay[];
+}
 
 /** Заголовок, которым дерево представляется приёму. */
 export const TREE_TOKEN_HEADER: string = 'x-tree-token';

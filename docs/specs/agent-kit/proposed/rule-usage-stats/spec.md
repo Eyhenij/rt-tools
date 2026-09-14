@@ -24,13 +24,13 @@ that shape.
 
 ## Terminology
 
-| Term                  | What it is                                                                                                        |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| An observation line   | One row of the day file: the time, the event, the resource, the kind of edit, the session sign, the version       |
-| The observation cargo | The fourth kind of cargo: the lines of the window of the run, grouped by day, plus the kind of every loaded skill |
-| The kind of a skill   | One of three: a rule of the package, a pattern of the package, a skill of the tree's own                          |
-| The session sign      | The checksum of the session id, as the line carries it: it counts sessions and names none                         |
-| The window of the run | The days the run reads, the same as the digest's: the last three by default                                       |
+| Term                  | What it is                                                                                                            |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| An observation line   | One row of the day file: the time, the event, the resource, the kind of edit, the session sign, the version           |
+| The observation cargo | The fourth kind of cargo: the lines of the window of the run, grouped by day, plus the kind of every loaded skill     |
+| The kind of a skill   | One of four: a rule of the package, a pattern of the package, another skill of the package, a skill of the tree's own |
+| The session sign      | The checksum of the session id, as the line carries it: it counts sessions and names none                             |
+| The window of the run | The days the run reads, the same as the digest's: the last three by default                                           |
 
 ### What it is called in the interface
 
@@ -46,9 +46,12 @@ that shape.
   edition of the cargo for the refusals would cost a second edition of the storage.
 - **The lines leave grouped by day, and a day leaves whole.** The intake replaces a day whole; a day
   sent by halves would be replaced by its second half.
-- **A load names the kind of its skill.** A rule of the package, a pattern of the package, a skill of
-  the tree's own: the kind is read from the layout of the package at the minute of sending — a name
-  the package laid out under `rules/` or `patterns/` is its own kind, anything else the tree's own.
+- **The cargo names the working copy it left from, by a checksum of its root.** One tree has several
+  working copies with one tree sign and separate observation files; a day replaced by the tree alone
+  would keep whichever copy sent last and drop the other. The path itself does not leave.
+- **A load names the kind of its skill.** A rule of the package, a pattern of the package, another
+  skill of the package, a skill of the tree's own: the kind is read from the layout of the package
+  at the minute of sending — a name the package laid out is its kind, anything else the tree's own.
   The tree's own skills leave by name: the owner asked for what the trees wrote for themselves.
 - **A line leaves as it lies, and nothing is added to it but the kind.** The session sign stays a
   checksum, the path is absent as before; the cargo carries no more about the tree than the digest.
@@ -79,7 +82,7 @@ the observation cargo. The form is declared once, in the cargo module of the pac
 reads it from the same declaration:
 
 ```
-{ schema, tree, days: [{ day: 'YYYY-MM-DD', lines: [{ t, ev, res, kind?, sid, v, skill?: 'rule'|'pattern'|'own' }] }] }
+{ schema, tree, origin, days: [{ day: 'YYYY-MM-DD', lines: [{ t, ev, res, kind?, sid, v, skill?: 'rule'|'pattern'|'skill'|'own' }] }] }
 ```
 
 ### Refusal codes
@@ -97,7 +100,23 @@ The launch line only: the line of the cargo in the print of `propose` and of `pr
 
 ## Cross-cutting requirements
 
-Not applicable: no screen, no locale.
+### Locales
+
+Not applicable: the output of the launch line is single-language.
+
+### SEO
+
+Not applicable.
+
+### Mobile layout
+
+Not applicable.
+
+### Several objects
+
+Several working copies of one tree carry one tree sign and separate day files; the cargo tells
+them apart by the checksum of the copy root, and the intake replaces a day per copy. Several
+machines of one tree are the same case: every machine is a copy of its own.
 
 ## Decisions
 
@@ -105,6 +124,8 @@ Not applicable: no screen, no locale.
   keep the counts without the sessions and the days. Rejected: a month block, counted by the tree.
 - **The kind is counted by the sender, not by the intake.** Only the tree knows its layout; the
   intake knows no package. Rejected: a list of package names at the intake.
+- **The tree's own skills leave by name.** The owner's answer; the line of the observations cargo
+  spec that only package names leave is reworded at the merge. Rejected: one line "own" with a count.
 - **A day is the unit of replacement.** The day file is the unit on the disk, and the windows of
   runs overlap by days; the intake needs no sign of a run. Rejected: a run id and dedup by line.
 
