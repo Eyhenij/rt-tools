@@ -167,6 +167,13 @@ export interface IIntakeAccepted {
     readonly known?: number;
 }
 
+/** Ответ приёма на груз наблюдений: сколько дней замещено и сколько строк легло. */
+export interface IObservationsAccepted {
+    readonly tree: string;
+    readonly days: number;
+    readonly rows: number;
+}
+
 /** Род записи груза, у которой есть состояние. Набор закрыт: сводка месяца состояния не несёт. */
 export type TCargoStateKind = 'postmortem' | 'proposal';
 

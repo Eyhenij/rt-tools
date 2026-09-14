@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 
+import { ObservationsIntakeController } from './observations-intake.controller';
 import { SummariesReadController } from './summaries-read.controller';
 import { SummaryIntakeController } from './summary-intake.controller';
 
 /**
- * Наблюдения дерева: сводка последнего прогона и запись месяца, которую она заводит.
+ * Наблюдения дерева: сводка последнего прогона с записью месяца, которую она заводит, и строки
+ * наблюдений по дням.
  *
  * Клиент хранилища домен не объявляет — он виден всем доменам приёмника, потому что соединение
  * одно на приложение. Наружу модуль ничего не отдаёт.
@@ -14,6 +16,6 @@ import { SummaryIntakeController } from './summary-intake.controller';
  * читались бы как одна поверхность с двумя дверьми.
  */
 @Module({
-    controllers: [SummaryIntakeController, SummariesReadController],
+    controllers: [SummaryIntakeController, ObservationsIntakeController, SummariesReadController],
 })
 export class ObservationsModule {}

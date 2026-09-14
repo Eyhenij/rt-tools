@@ -15,6 +15,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { AccountCommandsService, IAccountCommandReport } from '@rt/message-bus-api/accounts/feature';
 import { isAccountCommand } from '@rt/message-bus-api/accounts/util';
 import { AppLoggerService } from '@rt/message-bus-api/observability/feature';
+import { observationLinesCap } from '@rt/message-bus-api/observations/feature';
 import { TreeCommandsService } from '@rt/message-bus-api/trees/feature';
 import { ITreeCommandReport } from '@rt/message-bus-api/trees/util';
 
@@ -48,7 +49,7 @@ async function serve(): Promise<void> {
 
     // Сводка подъёма полями, а не текстом: по ней видно, с чем служба поднялась, и отобрать её
     // из вывода можно по имени строки, а не поиском по подстроке
-    Logger.log('приёмник поднят', { port, cargoLimit: limit }, 'Bootstrap');
+    Logger.log('приёмник поднят', { port, cargoLimit: limit, observationLinesCap: observationLinesCap() }, 'Bootstrap');
 }
 
 /**
