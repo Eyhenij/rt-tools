@@ -65,7 +65,8 @@ Then two rows come back: `testing` — rule, three loads, two sessions, one refu
 `git-workflow-commit` — pattern, one load, one session, no refusal — second; the other tree's load is
 absent
 
-Not covered: task RT-2100.
+Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`, `libs/message-bus-api/observations/util/src/lib/usage-period.util.spec.ts`.
+Покрытие: частичное — the text of the grouped query is probed on a one-off database by hand. The end-to-end spec of the section reads it over seeded rows.
 
 ### SC-MB-344 — a period longer than four hundred days is refused
 
@@ -73,7 +74,7 @@ Given a period of four hundred and one days
 When the usage is read
 Then the reading refuses with `400` naming the limit
 
-Not covered: task RT-2100.
+Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`, `libs/message-bus-api/observations/util/src/lib/usage-period.util.spec.ts`.
 
 ### SC-MB-345 — the sessions of a skill come by day, newest first
 
@@ -82,7 +83,8 @@ thirteenth
 When the sessions of `testing` are read over the period
 Then two rows come back: the thirteenth, `2`, one — first; the twelfth, `1`, two — second
 
-Not covered: task RT-2100.
+Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`.
+Покрытие: частичное — the text of the grouped query is probed on a one-off database by hand. The end-to-end spec of the section reads it over seeded rows.
 
 ### SC-MB-346 — the reading is closed by the right of the usage
 
@@ -90,7 +92,7 @@ Given an account with the right of the digests and without `usage:read`
 When it reads the usage
 Then the reading refuses with `403`
 
-Not covered: task RT-2100.
+Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`.
 
 ### SC-MB-347 — an empty period answers with an empty list
 
@@ -98,7 +100,7 @@ Given a tree with no rows over the period
 When the usage is read
 Then an empty list comes back with `200`
 
-Not covered: task RT-2100.
+Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`.
 
 ### SC-MB-348 — the section shows a row per skill for the chosen tree and period
 
