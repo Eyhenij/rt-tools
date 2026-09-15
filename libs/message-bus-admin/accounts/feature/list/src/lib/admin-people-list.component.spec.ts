@@ -6,6 +6,7 @@ import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { IPerson, PEOPLE_PATH } from '@rt/message-bus-admin/accounts/util';
+import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { IPage } from '@rt/message-bus-common';
 import { IDBStorageService, provideRtStorage, provideRtUtils } from '@rt-tools/core';
 import { Observable, of } from 'rxjs';
@@ -70,6 +71,20 @@ describe('AdminPeopleListComponent', () => {
         answerList(rows);
         await harness.fixture.whenStable();
         harness.detectChanges();
+    }
+
+    /**
+     * Ответ о вошедшем: права и имя, как их прислал бы приёмник. Тем же путём, что и у экрана:
+     * подставленное состояние проверяло бы то, чего в дереве нет.
+     */
+    function signedInWith(rights: readonly string[], name: string = 'Набор'): void {
+        TestBed.inject(AuthStore).restore().subscribe();
+        http.expectOne('/api/auth/session').flush({ name, rights });
+        harness.detectChanges();
+    }
+
+    function found(selector: string): DebugElement | null {
+        return harness.fixture.debugElement.query(By.css(selector));
     }
 
     function cells(qaId: string): readonly string[] {
@@ -138,15 +153,13 @@ describe('AdminPeopleListComponent', () => {
         expect(cells('people-cell-last-login')).toEqual(['Не входили']);
     });
 
-    it('SC-MB-360 — пустой список называет, чем заводятся записи, а кнопки заведения не обещает', async () => {
+    it('SC-MB-360 — пустой список называет, чем заводятся записи, и кнопка над ним стоит', async () => {
         await openSection([]);
 
         const text: string = harness.fixture.nativeElement.textContent;
 
-        // сперва положительное: пустое состояние показано и называет, откуда берутся записи
-        expect(text).toContain('Заводятся командой строки запуска');
-        // и только потом отрицательное: кнопки заведения раздел не показывает — её нет вовсе
-        expect(text).not.toContain('Завести');
+        expect(text).toContain('кнопкой «Завести пользователя»');
+        expect(found('[qa-dataid="people-create"]')).not.toBeNull();
     });
 
     it('SC-MB-360 — порядок по состоянию просится полем времени отключения, а не ключом столбца', async () => {
@@ -161,11 +174,55 @@ describe('AdminPeopleListComponent', () => {
         expect(list.request.params.get('sort')).toBe('disabledAt');
     });
 
-    it('SC-MB-360 — ни строка, ни меню строки не нажимаются: правок над записью из веба нет', async () => {
+    it('SC-MB-368 — без права на правку нет ни кнопки над списком, ни меню строки', async () => {
+        await openSection([rowOf(), rowOf({ name: 'Андрей' })]);
+
+        // Сперва положительное: с правом кнопка и меню на месте — иначе утверждение об отсутствии
+        // зеленело бы и на экране, потерявшем их целиком.
+        signedInWith(['accounts:read', 'accounts:manage']);
+
+        expect(found('[qa-dataid="people-create"]')).not.toBeNull();
+        expect(found('[qa-dataid="menu-trigger"]')).not.toBeNull();
+
+        signedInWith(['accounts:read']);
+
+        expect(found('[qa-dataid="people-row"]')).not.toBeNull();
+        expect(found('[qa-dataid="people-create"]')).toBeNull();
+        expect(found('[qa-dataid="menu-trigger"]')).toBeNull();
+    });
+
+    it('SC-MB-368 — пока ответ о вошедшем не приехал, кнопка и меню не прячутся', async () => {
         await openSection();
 
-        // Сперва положительное: строка на экране есть — иначе проверка зеленела бы на пустом списке.
-        expect(harness.fixture.debugElement.query(By.css('[qa-dataid="people-row"]'))).not.toBeNull();
-        expect(harness.fixture.debugElement.query(By.css('[qa-dataid="menu-trigger"]'))).toBeNull();
+        expect(found('[qa-dataid="people-create"]')).not.toBeNull();
+        expect(found('[qa-dataid="menu-trigger"]')).not.toBeNull();
+    });
+
+    it('SC-MB-365 — у отключённой записи меню нет: отключать второй раз и менять пароль нечему', async () => {
+        await openSection([rowOf(), rowOf({ name: 'Андрей', disabledAt: '2026-08-18T10:00:00.000Z' })]);
+        signedInWith(['accounts:manage']);
+
+        expect(harness.fixture.debugElement.queryAll(By.css('[qa-dataid="menu-trigger"]'))).toHaveLength(1);
+    });
+
+    it('SC-MB-366 — своя строка отключения не получает, а чужая получает', async () => {
+        await openSection([rowOf({ name: 'Набор' }), rowOf({ name: 'Андрей' })]);
+        signedInWith(['accounts:manage'], 'Набор');
+
+        const triggers: DebugElement[] = harness.fixture.debugElement.queryAll(By.css('[qa-dataid="menu-trigger"] button'));
+
+        // Своя строка первой: меню, открытое раз, остаётся в слое поверх страницы, и второе
+        // открытое рядом с ним не сказало бы, чей пункт нашёлся. Сперва положительное — пункт
+        // пароля у своей строки есть, — и только потом отсутствие отключения.
+        triggers[0].nativeElement.click();
+        harness.detectChanges();
+
+        expect(document.querySelectorAll('[qa-dataid="people-password"]')).toHaveLength(1);
+        expect(document.querySelectorAll('[qa-dataid="people-disable"]')).toHaveLength(0);
+
+        triggers[1].nativeElement.click();
+        harness.detectChanges();
+
+        expect(document.querySelectorAll('[qa-dataid="people-disable"]')).toHaveLength(1);
     });
 });

@@ -10,39 +10,22 @@
  * файла не встречается, и проверка раскладки видела бы либу неописанной.
  */
 
+import {
+    AUTH_DATA_ACCESS,
+    CONTRACT,
+    CORE_API,
+    CORE_DATA_ACCESS,
+    CORE_FEATURE,
+    CORE_UI,
+    CORE_UTIL,
+    PACKAGE,
+} from './message-bus-admin.tags.mjs';
+
 /** Слой утилит домена входа: род отказа и модели читают все, кто про вход говорит. */
 const AUTH_UTIL = 'scope:message-bus-admin-auth-util';
 
-/** Состояние входа. Живёт в одном экземпляре: второй ответил бы на вопрос «вошёл ли» иначе. */
-const AUTH_DATA_ACCESS = 'scope:message-bus-admin-auth-data-access';
-
 /** Меню объявлением: его читает оболочка, а заводится оно вместе со своим экраном. */
 const CONTAINER_UTIL = 'scope:message-bus-admin-common-container-util';
-
-/**
- * Публикуемые пакеты дерева: киты, основание и утилиты. Стоят в списке у каждой либы админки —
- * из них она и собрана целиком. Метка нужна именно как имя цели: без неё либа с объявленным
- * списком не видит пакет вовсе, потому что первое подходящее правило выигрывает и до общего
- * разрешения дело не доходит.
- */
-const PACKAGE = 'scope:package';
-
-/**
- * Общий слой админки: словарь, обращение к операциям чтения, выборка в адресе, основа
- * списочного стора и общий вид страницы списка. Механика, а не предмет: разделы груза зовут её
- * все три, и разложенная по ним заново она расходилась бы молча.
- */
-const CORE_UTIL = 'scope:message-bus-admin-common-core-util';
-const CORE_API = 'scope:message-bus-admin-common-core-api';
-const CORE_DATA_ACCESS = 'scope:message-bus-admin-common-core-data-access';
-const CORE_UI = 'scope:message-bus-admin-common-core-ui';
-const CORE_FEATURE = 'scope:message-bus-admin-common-core-feature';
-
-/**
- * Форма того, что отдаёт приёмник: страница, выборка и дерево. Её знают обе стороны, и админка
- * читает её у источника, а не заводит свою копию — копия разошлась бы с контрактом молча.
- */
-const CONTRACT = 'scope:message-bus-common';
 
 /**
  * Раздел разборов происшествий: модели и маппер, обращение к своим операциям, сторы списка и
@@ -90,17 +73,6 @@ const USAGE_UI = 'scope:message-bus-admin-usage-ui';
 const INVITES_UTIL = 'scope:message-bus-admin-invites-util';
 const INVITES_API = 'scope:message-bus-admin-invites-api';
 const INVITES_DATA_ACCESS = 'scope:message-bus-admin-invites-data-access';
-
-/**
- * Раздел людей: модели и решения раздела, стор списка, экран и маршрут.
- *
- * Слоёв меньше, чем у соседей: своего вида у него нет — ячейки строки показывают готовые поля, — и
- * своего обращения к приёмнику нет тоже: список читает общая основа стора, а правок над записями у
- * раздела не бывает вовсе. Заводит, отключает и меняет пароль команда строки запуска на узле
- * приёмника.
- */
-const PEOPLE_UTIL = 'scope:message-bus-admin-accounts-util';
-const PEOPLE_DATA_ACCESS = 'scope:message-bus-admin-accounts-data-access';
 
 export const messageBusAdminBoundaries = [
     // Приложение видит маршруты домена входа и оболочку. Экраны оно не знает ни одного: их
@@ -465,34 +437,5 @@ export const messageBusAdminBoundaries = [
             CORE_UTIL,
             PACKAGE,
         ],
-    },
-
-    // Раздел людей. Лесенка короче остальных: ни своего слоя вида, ни своего обращения к
-    // приёмнику — список читает общая основа стора, а правок над записями у раздела нет ни одной
-    {
-        sourceTag: 'scope:message-bus-admin-accounts-util',
-        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
-    },
-    // Слои обращения и вида у раздела пусты, но теги их выписаны наравне с остальными: молчание
-    // про либу проверка слоёв читает как «прав ей не давали», а не как «прав ей не нужно»
-    {
-        sourceTag: 'scope:message-bus-admin-accounts-api',
-        onlyDependOnLibsWithTags: [PEOPLE_UTIL, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
-    },
-    {
-        sourceTag: 'scope:message-bus-admin-accounts-ui',
-        onlyDependOnLibsWithTags: [PEOPLE_UTIL, CORE_UI, CORE_UTIL, CONTRACT, PACKAGE],
-    },
-    {
-        sourceTag: 'scope:message-bus-admin-accounts-data-access',
-        onlyDependOnLibsWithTags: [PEOPLE_UTIL, CORE_DATA_ACCESS, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
-    },
-    {
-        sourceTag: 'scope:message-bus-admin-accounts-feature-list',
-        onlyDependOnLibsWithTags: [PEOPLE_DATA_ACCESS, PEOPLE_UTIL, CORE_FEATURE, CORE_UI, CORE_DATA_ACCESS, CORE_UTIL, CONTRACT, PACKAGE],
-    },
-    {
-        sourceTag: 'scope:message-bus-admin-accounts-shell',
-        onlyDependOnLibsWithTags: ['scope:message-bus-admin-accounts-feature-list', PEOPLE_UTIL, CORE_UTIL, PACKAGE],
     },
 ];
