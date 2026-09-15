@@ -67,7 +67,10 @@ Given a scroll area with the strip drawn
 When the computed styles of the strip and of the icon are read
 Then the strip does not catch the pointer and the icon does
 
-Covered by the component spec of the area.
+Не покрыто: the spec environment applies no styles of the component at all — the styles of a kit
+component are stripped by the spec transform, and `getComputedStyle` there answers about a node
+with no rules. The pair is confirmed by a measurement of the computed values on the raised
+showcase, and the numbers are written into the state of the task that takes the family over.
 
 ### SC-UKV-156 — the label of the icon comes from the label set
 
