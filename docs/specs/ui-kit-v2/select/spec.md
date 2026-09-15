@@ -60,6 +60,20 @@ a list: a field, a badge, an icon, a pill with a name.
   field stays visible around the consumer's markup. The whole point of the input is then lost: the
   consumer gets their badge inside somebody else's field. What stays is the behaviour, not the look.
 
+- **The width of the field goes away with the look, and a list of removed properties does not cover
+  it.** The field takes the whole width of its host, and the consumer's markup is narrower: the
+  button stays wide under a badge measured a third of it. At rest nothing shows that — the ground
+  and the border are already off, and a wide button on a transparent ground looks like a narrow one.
+
+- **The states of the field go away too — the ring of focus and the border of the open list.** They
+  are the same field look, arriving later: at rest the button is clean, and on a press a frame
+  lights up around a box the consumer never drew. Measured: the frame 240 points against a badge of 134. That the list is open is told by the consumer's markup — the context of the template carries
+  that state to it.
+
+- **The move by keys stays visible, and its outline follows the content of the button.** Taking the
+  field's ring off takes the only sign of focus with it, and a person moving by the keyboard is left
+  with nothing.
+
 ## What is out of scope
 
 - The look of the consumer's trigger: the kit gives no badge, no pill and no icon trigger of its own.

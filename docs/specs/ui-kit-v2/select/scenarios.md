@@ -66,3 +66,32 @@ When it is drawn
 Then the button carries the mark of the consumer's trigger, by which its field look is taken off
 
 Covered by the component spec of the select family.
+
+### SC-UKV-175 — the button of a declared trigger is measured by the consumer's markup
+
+Given a choice from a list with a trigger template narrower than the host
+When it is drawn
+Then the button is as wide as the consumer's markup, not as wide as the host
+
+Not covered: it cannot be closed by a test with an identifier — the width comes from a style rule,
+and the markup is the same whether the rule applied or not. Closed by the showing of the trigger
+and its reference frame.
+
+### SC-UKV-176 — the field's ring does not light up on a declared trigger
+
+Given a choice from a list with a trigger template declared
+When the button takes focus and the panel opens
+Then neither the border of the field nor its ring is drawn around the button
+
+Not covered: it cannot be closed by a test with an identifier — a style that applied is told from
+one that was only written by the drawn frame, and the markup is the same either way. Closed by the
+showing of the trigger and its reference frame.
+
+### SC-UKV-177 — the move by keys is visible on a declared trigger
+
+Given a choice from a list with a trigger template declared
+When the button is reached by the keyboard
+Then an outline is drawn around the button, and it fits the consumer's markup
+
+Not covered: the same reason as the scenario above — the sign of the state is the drawn frame.
+Closed by the showing of the trigger and its reference frame.

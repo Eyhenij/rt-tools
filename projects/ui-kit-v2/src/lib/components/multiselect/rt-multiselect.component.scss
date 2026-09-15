@@ -1,6 +1,7 @@
 @layer rt-kit.components {
     .rt-multiselect {
         --rt-multiselect-caret-transition-duration: var(--rt-duration-fast);
+        --rt-multiselect-own-outline-width: var(--rt-border-width-medium);
 
         position: relative;
         display: block;
@@ -51,16 +52,44 @@
 
         /* Свой указатель потребителя: полевой вид кнопки снимается — ground, рамка, высота и
            отступы. Останется он — значок или метка потребителя окажутся внутри чужого поля, и
-           вход теряет смысл. Поведение при этом на кнопке, снимается только вид. */
+           вход теряет смысл. Поведение при этом на кнопке, снимается только вид.
+
+           Ширина входит в полевой вид наравне с рамкой: поле берёт всю ширину хозяина, а разметка
+           потребителя уже. В покое этого не видно — фон и рамка сняты, — а на нажатии полевое
+           кольцо обводит кнопку, и она оказывается шире нарисованного. Поэтому кнопка меряется
+           своим содержимым, а полевые состояния — кольцо на фокусе и рамка открытого списка — на
+           своём указателе не рисуются вовсе. Открытость потребитель рисует сам: обстановка шаблона
+           несёт её признаком. */
         &__trigger--own {
+            width: auto;
             min-height: 0;
             padding: 0;
             border-color: transparent;
             background-color: transparent;
+
+            &:focus {
+                border-color: transparent;
+                box-shadow: none;
+            }
+
+            /* Ход клавишами остаётся видимым: снять полевое кольцо значит снять единственную
+               примету фокуса. Обводка идёт по содержимому кнопки — кнопка теперь по нему и
+               меряется. :focus-visible, а не :focus: щелчку мышью примета не нужна, её даёт
+               разметка потребителя. */
+            &:focus-visible {
+                outline: var(--rt-multiselect-own-outline-width) solid var(--rt-input-color-border-focus);
+                outline-offset: var(--rt-input-focus-outline-offset);
+            }
         }
 
         &--open &__trigger {
             border-color: var(--rt-input-color-border-focus);
+        }
+
+        /* Рамка открытого списка — тот же полевой вид, только приходит позже. Правило выше бьёт
+           объявление у --own по силе, поэтому снимается отдельной строкой. */
+        &--open &__trigger--own {
+            border-color: transparent;
         }
 
         &--invalid &__trigger {
@@ -68,6 +97,16 @@
 
             &:focus {
                 box-shadow: var(--rt-input-focus-shadow-error);
+            }
+        }
+
+        /* Рамка ошибки — тоже полевой вид. Неверность своего указателя потребитель показывает
+           своей разметкой: чужая красная рамка легла бы вокруг его метки. */
+        &--invalid &__trigger--own {
+            border-color: transparent;
+
+            &:focus {
+                box-shadow: none;
             }
         }
 
