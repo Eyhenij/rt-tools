@@ -130,8 +130,9 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
   period does; the toggle lights when the address holds exactly that pair.
 - **The digest stands above the table in a grid of cards: a wide card with the chart of the loads
   by day, and three bar lists — the top skills, the loads by kind, the refusals.** The chart is bars
-  scaled to the largest day, one bar per day, with the numbers in the hint of the bar; the lists
-  are the kit's bar list with the share counted from the leader. A change of the tree or the period
+  scaled to the largest day, one bar per day, with the numbers in the hint of the bar, and under
+  the bars an axis of two labels — the first and the last day of the period; the lists are the
+  kit's bar list with the share counted from the leader. A change of the tree or the period
   re-reads the digest together with the table; a change of the sort or the page does not.
 - **A row of the table shows the skill, its kind, the loads, the sessions and the refusals.** The
   kind is shown by a word of the domain, not by the word of the cargo: the person behind the screen

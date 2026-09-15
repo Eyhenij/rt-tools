@@ -14,6 +14,10 @@
                             [style.height.%]="bar.heightPercent"></div>
                     }
                 </div>
+                <div rtElem="axis" qa-dataid="usage-digest-axis">
+                    <span rtElem="axis-label">{{ view().bars[0].label }}</span>
+                    <span rtElem="axis-label">{{ view().bars[view().bars.length - 1].label }}</span>
+                </div>
             } @else {
                 <p rtElem="empty" qa-dataid="usage-digest-empty">{{ empty }}</p>
             }

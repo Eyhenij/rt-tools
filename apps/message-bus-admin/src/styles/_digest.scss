@@ -66,6 +66,17 @@
         background: var(--rt-color-action-primary);
     }
 
+    /** Ось дней: первый день слева, последний справа; точный день столбика — в его подсказке. */
+    &__axis {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__axis-label {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-xs);
+    }
+
     /** Период без загрузок: сказано словами и приглушено. */
     &__empty {
         margin: 0;
