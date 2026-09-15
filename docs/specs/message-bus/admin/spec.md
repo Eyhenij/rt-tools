@@ -466,19 +466,12 @@ its own:
   by was merged: the slots of the toolbar and of the place above the table, the host of a list page, the
   hint of the heading and the anchors from the prefix of the section. The scenarios `SC-MB-110`…`SC-MB-116`
   moved with their former numbers.
-- 2026-08-17 — the agreement of the task RT-781 about the single language of the lists was merged: the
-  table is declared by an element of the kit, the anchors of the table and of the rows are put together
-  from the prefix of the section, an empty list shows an empty state and names where the records come
-  from. The scenarios `SC-MB-129`…`SC-MB-136` moved with their former numbers. Two rules — about the
-  filter in a slot and about an unoccupied slot — did not move: they already stand here since RT-780.
-  The number of the sections in the explanations of the rules was fixed to four.
-- 2026-08-19 — the agreement of the task RT-878 about the issuing of an invitation from the admin
-  application was merged, and by the same movement the section of the invitations was split into the
-  subdomain `docs/specs/message-bus/invites/`: with it the spec outgrew the length limit. The rules of the
-  section, the scenarios `SC-MB-128` and `SC-MB-154`…`SC-MB-162` and their bindings went there with their
-  former numbers; the empty state there now names the button, not the command of the node. The labels of
-  the screens were translated from the word of the vocabulary to the word of a person — the analysis of
-  the miss is the record "2026-08-19-tree-word-shown-to-users" in the intake.
+- 2026-08-17 — the agreement of the task RT-781 about the single language of the lists was merged; the
+  scenarios `SC-MB-129`…`SC-MB-136` moved with their former numbers.
+- 2026-08-19 — the agreement of the task RT-878 about the issuing of an invitation was merged, and the
+  section of the invitations was split into the subdomain `docs/specs/message-bus/invites/` with the
+  scenarios `SC-MB-128` and `SC-MB-154`…`SC-MB-162`; the labels of the screens were translated from
+  the word of the vocabulary to the word of a person.
 - 2026-08-20 — the agreement of the task RT-944 about the look of the page of a list was merged: the page
   grows under the content and scrolls whole, the header of a section is folded as a row with the place of
   the actions on the right, the margins are taken from the sample. The scenarios `SC-MB-163`…`SC-MB-166`
@@ -489,15 +482,13 @@ its own:
 - 2026-08-21 — two rules of the agreement of the task RT-911 were merged: the version of the release is
   visible in the panel and not in the list, and at a record without a version there is no row at all. The
   scenarios `SC-MB-205` and `SC-MB-206` moved with their former numbers; the rest went to the neighbours.
-- 2026-08-21 — the agreement of the task RT-913 about the filter and the order by the state of a record was
-  merged: the filter stands in the toolbar to the right of the filter by tree, lives in the address, adds
-  up with the filter by tree, and the state became a sortable field with the order by the steps of the
-  sorting out. The scenarios `SC-MB-222`…`SC-MB-236` moved with their former numbers. Three rules of the
-  agreement did not move: about a filter outliving a transition to another page and a return from the
-  panel, about the second key of the order and about the unchanged order by default — all three already
-  stand here. The line about the filter by state left "What is out of scope": it became in scope.
+- 2026-08-21 — the agreement of the task RT-913 about the filter and the order by the state was merged;
+  the scenarios `SC-MB-222`…`SC-MB-236` moved with their former numbers, and the filter by state left
+  "What is out of scope".
 - 2026-08-21 — the entry, the account and its commands were split into the subdomain
   `docs/specs/message-bus/admin-auth/`: with the merged agreement about the filter by state the spec
   outgrew the length limit. The rules of the entry, the scenarios `SC-MB-33`…`SC-MB-45`,
   `SC-MB-56`…`SC-MB-61`, `SC-MB-79` and `SC-MB-80`, their bindings, the operations of the entry, the codes
   of its refusals and both entities of its own went there with their former numbers.
+- 2026-09-15 — the rule about the width of the filter by tree was added by the task RT-2130, with the
+  scenario `SC-MB-359`.
