@@ -144,6 +144,10 @@
             "done": {
                 "id": "a8204467",
                 "name": "✅ Done"
+            },
+            "deployed": {
+                "id": "52116eb1",
+                "name": "Deployed"
             }
         },
         "taskKey": "RT",
