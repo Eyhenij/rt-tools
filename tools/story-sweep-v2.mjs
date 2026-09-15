@@ -30,7 +30,7 @@
  */
 import { join } from 'node:path';
 
-import { ensureIndex } from './showcase-probe.mjs';
+import { ensureIndex, openStory } from './showcase-probe.mjs';
 
 /** The address of an already raised showcase: the sweep raises none of its own — like the snapshot run next to it. */
 const URL = process.env.STORYBOOK_URL ?? 'http://localhost:6007';
@@ -46,6 +46,22 @@ const OWN_IMPORT_MARKER = 'projects/ui-kit-v2/';
  * 100×1, below which not one kit component draws.
  */
 const MIN_AREA = 100;
+
+/** How long one showing is waited for before it counts as one that did not open. */
+const OPEN_TIMEOUT_MS = 20_000;
+
+/** How long the drawing is waited for after the page came up, and how often it is asked about. */
+const DRAW_TIMEOUT_MS = 3_000;
+const DRAW_POLL_MS = 200;
+
+/**
+ * What is waited for on a page: the same nodes the measurement below takes the area from.
+ *
+ * A wait for one node and a measurement of another would let a page through that drew nothing the
+ * measurement can see — and the sweep would report the emptiness of a page it never waited for.
+ */
+const ROOT_SELECTOR = '[data-story-root], #storybook-root';
+const DOCS_SELECTOR = '#storybook-docs';
 
 /**
  * The showcase's own errors, having nothing to do with the showing.
@@ -201,12 +217,48 @@ for (const showing of showings) {
     // gives an empty root and reads as a page that drew nothing.
     const mode = showing.type === 'docs' ? 'docs' : 'story';
 
-    await page.goto(`${URL}/iframe.html?id=${showing.id}&viewMode=${mode}`, { waitUntil: 'networkidle' });
+    // The wait is the shared one of the probes: the load event and the appearance of the showing
+    // root. Silence of the network is no good here — the showcase in development mode holds the hot
+    // reload stream open, and a showcase gone stale keeps dozens of refused requests in flight.
+    const opening = await openStory(page, {
+        url: URL,
+        story: showing.id,
+        mode,
+        selector: mode === 'docs' ? DOCS_SELECTOR : ROOT_SELECTOR,
+        timeoutMs: OPEN_TIMEOUT_MS,
+        // The node is waited for as attached rather than as visible: a story drawing into an
+        // overlay leaves its own root empty, and by visibility such a page reads as one that never
+        // opened. Whether anything was drawn is answered below by the measurement, which knows the
+        // overlay; the wait answers only whether the page came up at all.
+        state: 'attached',
+        fatal: false,
+    });
+
+    if (!opening.opened) {
+        const { roots, preparing, failed } = opening.state;
+        broken.push({
+            id: showing.id,
+            area: null,
+            error: `the page did not open: showing roots ${roots}${preparing ? ', the story is at preparing' : ''}${
+                failed.length > 0 ? `, refused requests ${failed.join(', ')}` : ''
+            }`,
+        });
+        continue;
+    }
+
     // The error arrives in the console later than the page's readiness: without this pause `NG0950`
     // goes not to the story it happened on but to the next one.
     await page.waitForTimeout(150);
 
-    const area = await page.evaluate(measureShownArea, mode);
+    // The drawing is waited for by the measurement itself rather than by a countdown: a node
+    // attached to the page is not yet a drawn one, and a story whose content arrives a moment later
+    // would be called empty. The wait ends at the first measurement that has something in it.
+    let area = await page.evaluate(measureShownArea, mode);
+
+    for (let waited = 0; area < MIN_AREA && waited < DRAW_TIMEOUT_MS; waited += DRAW_POLL_MS) {
+        await page.waitForTimeout(DRAW_POLL_MS);
+        area = await page.evaluate(measureShownArea, mode);
+    }
 
     if (area < MIN_AREA || errors.length > 0) {
         broken.push({ id: showing.id, area, error: errors[0] });

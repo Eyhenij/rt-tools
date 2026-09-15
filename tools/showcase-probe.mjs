@@ -63,7 +63,7 @@ function complaintAbout(state, address, selector, timeoutMs) {
  * The wait is the very place both probes used to die at, and its bare refusal speaks of a locator
  * — that is, of the probe's own code — while the cause lies in the showcase it was pointed at.
  */
-export async function openStory(page, { url, story, selector, timeoutMs }) {
+export async function openStory(page, { url, story, selector, timeoutMs, mode = 'story', state = 'visible', fatal = true }) {
     const failed = [];
     const watch = (response) => {
         if (response.status() >= 400) {
@@ -73,24 +73,34 @@ export async function openStory(page, { url, story, selector, timeoutMs }) {
 
     // The address is kept as it was asked for, not read off the page: a page that never arrived
     // answers with a blank address, and the refusal would then name nothing at all.
-    const address = `${url}/iframe.html?id=${story}&viewMode=story`;
+    const address = `${url}/iframe.html?id=${story}&viewMode=${mode}`;
 
     page.on('response', watch);
 
     try {
         await page.goto(address, { waitUntil: 'load' });
-        await page.waitForSelector(selector, { timeout: timeoutMs });
+        await page.waitForSelector(selector, { timeout: timeoutMs, state });
     } catch (failure) {
         if (failure.name !== 'TimeoutError') {
             throw failure;
         }
 
         const state = await pageState(page, selector, failed);
+
+        // The sweep over all the stories asks for the state instead of the exit: one story that
+        // did not open must not carry away the other five hundred, and what it did show is the
+        // very material of the report about it.
+        if (!fatal) {
+            return { opened: false, state };
+        }
+
         console.error(`\n${complaintAbout(state, address, selector, timeoutMs)}\n`);
         process.exit(1);
     } finally {
         page.off('response', watch);
     }
+
+    return { opened: true };
 }
 
 /**
