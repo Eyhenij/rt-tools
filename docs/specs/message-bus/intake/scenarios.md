@@ -247,6 +247,21 @@ Given the analysis stands in progress
 When the tree sent the same one with the same text
 Then the state of the analysis is still in progress
 
+### SC-MB-323 — a repeated arrival does not bring a record closed by the publisher back into "new"
+
+Given the analysis is closed by the publisher and stands in "fixed"
+When the tree sent the same one with another text
+Then the text is the one that was sent, and the state is still "fixed"
+
+### SC-MB-324 — a pair "sign set, state new" is put back into the closed state by the migration
+
+Given a record carries the sign of the publisher's closing and stands in "new"
+When the migration runs
+Then the record with a release version stands in "released", the one without it in "fixed"
+
+Не покрыто: a migration has no test harness in this tree; it was run over four trial rows in a
+rolled-back transaction on the local database, and the rows answered as promised.
+
 ## A tree creates itself by an invitation
 
 ### SC-MB-117 — a request with a valid invitation creates the tree and gives back the token
