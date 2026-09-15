@@ -63,6 +63,7 @@ export abstract class AdminListStoreBase<TRow, TApi = TRow> extends BaseAsyncSto
                             const rows: readonly TRow[] = page.rows.map((raw: TApi): TRow => this.rowOf(raw));
 
                             this.patchState((state: IAdminListState<TRow>) => ({ ...state, rows, total: page.total }));
+                            this.pageRead(page);
                             this.setLoadingSuccess();
                             this.dispatch({ type: 'page-read' });
                         }),
@@ -101,6 +102,17 @@ export abstract class AdminListStoreBase<TRow, TApi = TRow> extends BaseAsyncSto
             this.#readSource.next(asked);
         }
     }
+
+    /**
+     * Страница прочитана — для раздела, чей ответ несёт сверх строк и общего числа что-то своё.
+     *
+     * Разделу использования приёмник называет период, который считал, и экран показывает его в
+     * отборе; остальным разделам ответ ничего сверх строк не приносит, и они не переопределяют
+     * ничего. Зовётся до сообщения о прочитанной странице: тот, кто ждёт сообщения, видит уже
+     * положенное.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, sonarjs/no-unused-function-argument -- параметр объявлен ради наследника: основа сама из страницы не читает ничего
+    protected pageRead(page: IPage<TApi>): void {}
 
     /**
      * Перевод строки ответа в строку экрана.

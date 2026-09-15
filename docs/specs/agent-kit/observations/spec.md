@@ -117,8 +117,9 @@ network.
 ## What is out of scope
 
 - Network telemetry and background sending: only what was sent by a command goes outward.
-- Gathering observations from several machines into one place: observations live in the tree of the
-  machine they worked on; the sending collects them, not a shared storage.
+- Gathering observations from several machines into one place on the tree: observations live in
+  the tree of the machine they worked on. The sending carries the lines of every machine to the
+  intake, and it is the intake that counts across them — the subdomain "Cargo outward".
 - **Measuring the session time and the token cost.** Named by the owner outright.
 - **New kinds of events and guards created for the sake of observation.** Observations are given off
   by the guards that already catch their own business.

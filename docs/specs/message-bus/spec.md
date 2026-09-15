@@ -34,12 +34,12 @@ cargo.
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | The intake                             | A closed service taking the cargo in by a request. One's own work queue, not a foreign one                                            |
 | Cargo                                  | What goes away by a run of the sending: a digest with a snapshot of the overrides, proposals, incident analyses                       |
-| A kind of cargo                        | One of three: a digest, a proposal, an incident analysis. Each has its own operation of the intake                                    |
+| A kind of cargo                        | One of four: a digest, the observation lines, a proposal, an incident analysis. Each has its own operation                            |
 | A tree                                 | A record about a repository the cargo arrives from. Trees are told apart by a sign, not by an address                                 |
 | A token of a tree                      | What a tree introduces itself to the intake by. The intake holds only a hash; the token itself is printed once                        |
 | A revocation of a token                | A mark that the token is no longer accepted. The token is not deleted: the former cargo is read by it                                 |
 | A record of a month                    | The digest of one tree over one calendar month. One per pair "tree — month"                                                           |
-| A run                                  | One sending from a tree: up to three requests in a row, one per kind of cargo                                                         |
+| A run                                  | One sending from a tree: up to four requests in a row, one per kind of cargo                                                          |
 | A snapshot of the overrides            | The state of the tree at the minute of the run: which sections of which resources of the package it edits and what it did not lay out |
 | The version of the schema of the cargo | The number of the format of the request of the intake. It changes when the composition of the fields of the cargo itself changes      |
 | The version of the schema of the rows  | The number of the format of a row of an observation at a tree. Several of them meet in one digest                                     |
@@ -137,13 +137,15 @@ the limit is split further by the same technique.
 | [The shell of the admin application](admin-shell/spec.md)               | the top row of the sections, the popup of the profile, the theme and the language, the screen of the entry |
 | [What the intake writes about itself](journal/spec.md)                  | the row of the journal, the taken-apart reason, the cleaning of the fields                                 |
 | [A right, a role and the check that reads them](access-rights/spec.md)  | what a person may do after the entry: the closed set of rights, the role, the pointed edits over it        |
+| [The usage of the rules in the sessions](usage/spec.md)                 | the observation lines: the intake of a day whole, the counting by skill over a period, the section         |
 
 ## What is out of scope
 
 The boundaries of the subjects are named in the subdomains. What is shared across the domain:
 
 - **A digest over several trees and charts.** The word of the owner: the lists are shown, and a
-  digest is appointed when there are three trees.
+  digest is appointed when there are three trees. The usage of one tree over a period is a section
+  of its own — the subdomain of the usage; a digest over trees stays out.
 - **The edit of the taken-in cargo by a person.** The text, the address and the resource of a record
   are carried by the intake of the cargo, and there is no second way to them. The state of a record
   is edited by the tree with its token — the subdomain of the edit of a state; a person in the admin

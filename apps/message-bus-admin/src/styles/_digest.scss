@@ -1,0 +1,109 @@
+/**
+ * Сводка периода над таблицей раздела: сетка карточек — широкая с графиком по дням и три со
+ * списками кита.
+ *
+ * Раскладка объявлена здесь, а не в стилях вида: сетка карточек — раскладка экрана, а экран
+ * вне кита своих стилей не держит. График — столбики по дням: высота столбика приходит из
+ * кода долей от самого высокого дня, здесь только его цвет, ширина и низ.
+ *
+ * Высота графика — число, не шаг шкалы: шкалы промежутков и высот управляющих элементов ей не
+ * подходят, а своей шкалы графиков у кита нет.
+ */
+
+@use '../../../../projects/ui-kit-v2/src/styles/breakpoints' as bp;
+
+.admin-digest {
+    display: block;
+
+    &__grid {
+        position: relative;
+        display: grid;
+        gap: var(--rt-space-md);
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        transition: opacity var(--rt-duration-base);
+
+        /** Прежние карточки на время перечитывания притушены: пустая сетка мигала бы. */
+        &--reading {
+            opacity: var(--rt-opacity-disabled);
+        }
+    }
+
+    &__card {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        padding: var(--rt-space-md);
+        border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-radius-lg);
+        background: var(--rt-color-bg-surface);
+        gap: var(--rt-space-sm);
+
+        /** Карточка графика — во всю ширину сетки. */
+        &--wide {
+            grid-column: 1 / -1;
+        }
+    }
+
+    &__card-title {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-md);
+        font-weight: var(--rt-font-weight-semibold);
+    }
+
+    /** Столбики стоят на общем низу и растут вверх до самого высокого дня. */
+    &__chart {
+        display: flex;
+        height: 160px;
+        align-items: flex-end;
+        gap: var(--rt-space-0-5);
+    }
+
+    &__chart-bar {
+        min-height: 2px;
+        flex: 1 1 0;
+        border-radius: var(--rt-radius-sm) var(--rt-radius-sm) 0 0;
+        background: var(--rt-color-action-primary);
+    }
+
+    /** Ось дней: первый день слева, последний справа; точный день столбика — в его подсказке. */
+    &__axis {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__axis-label {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-xs);
+    }
+
+    /** Период без загрузок: сказано словами и приглушено. */
+    &__empty {
+        margin: 0;
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+    }
+
+    /** Признак чтения поверх сетки, по центру: карточки под ним остаются на месте. */
+    &__reading {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        inset: 0;
+    }
+
+    @media (max-width: bp.$rt-bp-md) {
+        &__chart {
+            height: 120px;
+        }
+    }
+}
+
+/**
+ * Быстрый период стоит в тулбаре наравне с отборами: узел сам места не занимает, и промежуток
+ * задаёт тулбар — как у отбора по периоду рядом.
+ */
+.admin-quick-period {
+    display: contents;
+}

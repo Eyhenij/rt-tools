@@ -1,5 +1,7 @@
 import { expect, Page, test } from '@playwright/test';
 
+import { SECTIONS } from '../stand/stand.mjs';
+
 import { openSection, qa, SECTION } from './support/admin';
 import { expectScreen } from './support/shot';
 
@@ -20,7 +22,7 @@ test.describe('разделы на узком экране', () => {
 
         const items: ReturnType<Page['locator']> = qa(page, 'header-nav-mobile-item');
 
-        await expect(items).toHaveCount(4);
+        await expect(items).toHaveCount(Object.keys(SECTIONS).length);
 
         await expectScreen(page, 'shell-narrow-nav');
 

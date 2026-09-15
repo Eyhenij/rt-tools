@@ -1,0 +1,44 @@
+<ng-container rtBlock="admin-digest">
+    <div rtElem="grid" qa-dataid="usage-digest" [rtMod]="{ reading: reading() }">
+        <article rtElem="card" [rtMod]="{ wide: true }">
+            <h2 rtElem="card-title" qa-dataid="usage-digest-chart-title">{{ chartTitle }} · {{ loadsLabel }}: {{ view().loads }}</h2>
+            @if (view().bars.length > 0) {
+                <div rtElem="chart" role="img" qa-dataid="usage-digest-chart" [attr.aria-label]="chartTitle">
+                    @for (bar of view().bars; track bar.day) {
+                        <div
+                            rtElem="chart-bar"
+                            qa-dataid="usage-digest-bar"
+                            [attr.data-day]="bar.day"
+                            [attr.data-loads]="bar.loads"
+                            [attr.title]="bar.hint"
+                            [style.height.%]="bar.heightPercent"></div>
+                    }
+                </div>
+                <div rtElem="axis" qa-dataid="usage-digest-axis">
+                    <span rtElem="axis-label">{{ view().bars[0].label }}</span>
+                    <span rtElem="axis-label">{{ view().bars[view().bars.length - 1].label }}</span>
+                </div>
+            } @else {
+                <p rtElem="empty" qa-dataid="usage-digest-empty">{{ empty }}</p>
+            }
+        </article>
+
+        <article rtElem="card">
+            <rt-bar-list qa-dataid="usage-digest-top" [rows]="view().top" [title]="topTitle" [emptyText]="empty" />
+        </article>
+
+        <article rtElem="card">
+            <rt-bar-list qa-dataid="usage-digest-kinds" [rows]="view().kinds" [title]="kindsTitle" [emptyText]="empty" />
+        </article>
+
+        <article rtElem="card">
+            <rt-bar-list qa-dataid="usage-digest-denied" [rows]="view().denied" [title]="deniedTitle" [emptyText]="noDenials" />
+        </article>
+
+        @if (reading()) {
+            <div rtElem="reading" qa-dataid="usage-digest-reading">
+                <rt-spinner />
+            </div>
+        }
+    </div>
+</ng-container>

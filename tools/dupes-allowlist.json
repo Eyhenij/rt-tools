@@ -60,7 +60,7 @@
       "reason": "the kits have showcase harnesses of their own: an edit for the sake of one kit would shift the moment of the shot at the other and drop its reference images",
       "task": "RT-764"
     },
-    "value admin-panel @ BEM_BLOCK @ libs/message-bus-admin/postmortems/ui ~ BEM_BLOCK @ libs/message-bus-admin/proposals/ui ~ BEM_BLOCK @ libs/message-bus-admin/summaries/ui": {
+    "value admin-panel @ BEM_BLOCK @ libs/message-bus-admin/postmortems/ui ~ BEM_BLOCK @ libs/message-bus-admin/proposals/ui ~ BEM_BLOCK @ libs/message-bus-admin/summaries/ui ~ BEM_BLOCK @ libs/message-bus-admin/usage/ui": {
       "reason": "the tree's linter demands a local constant of the block name in every component and refuses a shared declaration",
       "task": "RT-841"
     }

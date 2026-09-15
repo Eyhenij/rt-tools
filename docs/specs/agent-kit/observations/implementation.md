@@ -20,9 +20,9 @@ whole.
 - **The snapshot of the overrides names the resource, the section and the kind of the edit, not the content of the edit.** — `projects/agent-kit/src/lib/snapshot.ts:overridesOf`
 - **The heading of a section of one's own does not go outward.** — `projects/agent-kit/src/lib/cargo.ts:TOverrideKind`
 - **The snapshot names the unchosen on a par with the overridden.** — `projects/agent-kit/src/lib/snapshot.ts:unpickedOf`
-- **An observation carries a tree sign, and the tree address is not recovered from it.** — `projects/agent-kit/src/lib/shipment.ts:treeSlugOf`
-- **The tree sign is the same for everyone working with one repository.** — `projects/agent-kit/src/lib/shipment.ts:remoteMarkOf`
-- **A tree without a remote repository names its sign by a setting.** — `projects/agent-kit/src/lib/shipment.ts:treeSlugOf`
+- **An observation carries a tree sign, and the tree address is not recovered from it.** — `projects/agent-kit/src/lib/tree-mark.ts:treeSlugOf`
+- **The tree sign is the same for everyone working with one repository.** — `projects/agent-kit/src/lib/tree-mark.ts:remoteMarkOf`
+- **A tree without a remote repository names its sign by a setting.** — `projects/agent-kit/src/lib/tree-mark.ts:treeSlugOf`
 - **An observation line carries the version of the record schema.** — `projects/agent-kit/src/lib/cargo.ts:CARGO_SCHEMA_VERSION`
 - **Lines of an unknown schema version are counted apart and named by a number.** — `projects/agent-kit/src/lib/observations.ts:parseObservation`
 - **A guard that did not refuse once over the stretch stands in the digest as a line of its own.** — `projects/agent-kit/src/lib/observations.ts:summarize` — the field `silentGuards`; scenario `SC-AK-809`

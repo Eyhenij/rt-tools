@@ -73,7 +73,7 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
      * зависимости от того, какой отбор человек тронул последним.
      */
     protected readonly narrowed: Signal<boolean> = computed(
-        () => this.query().tree !== '' || this.query().state !== '' || this.query().version !== ''
+        () => this.query().tree !== '' || this.query().state !== '' || this.query().version !== '' || this.query().from !== ''
     );
 
     /**
@@ -235,6 +235,19 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
      */
     protected changeVersion(version: string): void {
         this.#apply({ version, page: 1 });
+    }
+
+    /**
+     * Период — оба дня сразу. Страница сбрасывается тем же доводом, что и у отборов рядом.
+     *
+     * Один день из двух в адрес не встаёт: приёмник на полупериод отвечает отказом, а человек с
+     * одним выбранным днём ещё не сказал, чего хочет. Снятый период — две пустоты: тогда период
+     * подставляет приёмник и называет его в ответе.
+     */
+    protected changePeriod(from: string, to: string): void {
+        const named: boolean = from !== '' && to !== '';
+
+        this.#apply({ from: named ? from : '', to: named ? to : '', page: 1 });
     }
 
     /**
