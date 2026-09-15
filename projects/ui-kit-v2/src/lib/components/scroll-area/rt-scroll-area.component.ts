@@ -1,6 +1,8 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
     afterRenderEffect,
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     contentChild,
@@ -8,7 +10,7 @@ import {
     ElementRef,
     inject,
     input,
-    InputSignal,
+    InputSignalWithTransform,
     signal,
     Signal,
     viewChild,
@@ -90,7 +92,9 @@ export class RtScrollAreaComponent {
      * Признак того, что снизу осталось непоказанное. Выключен по умолчанию: область рисуют
      * десятки экранов, и признак, поставленный безусловно, сдвинул бы вид каждому из них.
      */
-    public readonly isScrollHintShown: InputSignal<boolean> = input<boolean>(false);
+    public readonly isScrollHintShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
