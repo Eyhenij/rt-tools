@@ -68,4 +68,6 @@ or the code holds what the spec is silent about.
 - **The records that arrived before the creating of the field are read as new.** — `prisma/migrations/20260820103518_cargo_record_state/migration.sql:CargoState`
 - **An arrival that changed the text of an analysis brings it back into "new".** — `libs/message-bus-api/postmortems/util/src/lib/postmortem-arrival.util.ts:postmortemArrivalUpdate`
 - **An arrival that did not change the text does not touch the state.** — `libs/message-bus-api/postmortems/util/src/lib/postmortem-arrival.util.ts:postmortemArrivalUpdate`
+- **A repeated arrival does not bring a record closed by the publisher back into "new".** — `libs/message-bus-api/postmortems/util/src/lib/postmortem-arrival.util.ts:postmortemArrivalUpdate`
+- **A record found with the sign set and the state "new" is put back into the closed state by a migration.** — `prisma/migrations/20260915120000_closed_record_state_repair/migration.sql:closedByPublisher`
 - **The intake of the cargo does not accept a state.** — `libs/message-bus-api/postmortems/util/src/lib/postmortem.const.ts:POSTMORTEM_ITEM_FIELDS`
