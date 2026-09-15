@@ -140,6 +140,7 @@ the limit is split further by the same technique.
 | [The usage of the rules in the sessions](usage/spec.md)                 | the observation lines: the intake of a day whole, the counting by skill over a period, the section         |
 | [The list of people](people-list/spec.md)                               | who reaches the cargo: the name, the role, the state of the record and the last sign-in                    |
 | [Creating, disabling and a new password](people-editing/spec.md)        | the three edits of a record from the section of people: two panels and a row menu under one right          |
+| [Roles and rights on a screen](roles-page/spec.md)                      | the section of roles, the panel of a role and the panel of a person's access, all under `roles:manage`     |
 
 ## What is out of scope
 
@@ -423,3 +424,6 @@ not to a tree, and a filter by tree narrows what is shown, not the access.
   length limit.
 - 2026-09-15 — the task RT-1900 created the subdomain about the editing of people: creating a
   record, a new password and disabling from the section of people under `accounts:manage`.
+- 2026-09-15 — the task RT-1901 created the subdomain about roles on a screen: the section of
+  roles, the panel of a role and the panel of a person's access under `roles:manage`. The open
+  question of the rights about where roles come from is closed by it.
