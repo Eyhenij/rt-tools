@@ -8,6 +8,7 @@
         qa-dataid="select-trigger"
         type="button"
         rtPopoverWidth="trigger"
+        [rtMod]="{ own: !!triggerTpl() }"
         [rtPopover]="panelTpl"
         [rtPopoverDisabled]="isDisabled()"
         [attr.id]="effectiveControlId()"

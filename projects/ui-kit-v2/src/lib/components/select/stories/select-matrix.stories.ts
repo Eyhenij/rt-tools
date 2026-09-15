@@ -54,6 +54,12 @@ export const Panel: TStory = {
     },
 };
 
+/**
+ * Пара указателей в одном кадре: зашитый китом и свой, объявленный шаблоном. Порознь ни одна
+ * половина не показывает, чем она отличается от другой.
+ */
+export const Trigger: TStory = { args: { part: 'trigger' } };
+
 /** Тот же список со строкой фильтра: она занимает первую строку панели и сужает набор. */
 export const PanelWithFilter: TStory = {
     parameters: { snapshot: { fullPage: true } },

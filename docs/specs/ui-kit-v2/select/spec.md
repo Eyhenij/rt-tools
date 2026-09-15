@@ -55,6 +55,11 @@ a list: a field, a badge, an icon, a pill with a name.
 - **The consumer's markup goes inside the button, not instead of it.** A consumer's own button inside
   it would be a button inside a button: no browser draws that and no screen reader announces it.
 
+- **The kit's own look of the trigger goes away together with its markup.** The button is shaped like
+  an input field — a ground, a border, a height, paddings — and under a badge or a bare icon that
+  field stays visible around the consumer's markup. The whole point of the input is then lost: the
+  consumer gets their badge inside somebody else's field. What stays is the behaviour, not the look.
+
 ## What is out of scope
 
 - The look of the consumer's trigger: the kit gives no badge, no pill and no icon trigger of its own.

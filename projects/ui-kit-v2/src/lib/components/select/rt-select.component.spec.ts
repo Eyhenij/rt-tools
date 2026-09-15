@@ -403,6 +403,14 @@ describe('RtSelectComponent', (): void => {
             expect(textOf(ownTrigger(fixture))).toBe('Москва');
         });
 
+        it('SC-UKV-164 — с объявленным указателем полевой вид кнопки снят', (): void => {
+            const own: ComponentFixture<SelectTriggerHostComponent> = createRtFixture(SelectTriggerHostComponent);
+            const plain: ComponentFixture<RtSelectComponent<string>> = setup();
+
+            expect(hostButton(own).classList).toContain('rt-select__trigger--own');
+            expect(qa(plain, 'select-trigger')?.nativeElement.classList).not.toContain('rt-select__trigger--own');
+        });
+
         it('SC-UKV-162 — обстановка говорит разметке, что выбор отключён', (): void => {
             const fixture: ComponentFixture<SelectTriggerHostComponent> = createRtFixture(SelectTriggerHostComponent);
 

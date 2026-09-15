@@ -58,3 +58,11 @@ When it is drawn and a value is chosen
 Then the consumer's markup stands inside the button, and the context carries every chosen value
 
 Covered by the component spec of the multiselect family.
+
+### SC-UKV-164 — the kit's own look of the trigger goes away with a declared trigger
+
+Given a choice from a list with a trigger template declared
+When it is drawn
+Then the button carries the mark of the consumer's trigger, by which its field look is taken off
+
+Covered by the component spec of the select family.
