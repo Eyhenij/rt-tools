@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of work from the owner's request to the merge. Load at the start of any work, when editing task folders and product agreements, and when returning to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. End of a turn — turn-conduct.
 ---
-<!-- rt-kit v0.28.0 · rules/task-flow.md · 5d1ed29cc59b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · rules/task-flow.md · a85bc81f6e95 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -52,7 +52,7 @@ The state is declared in the "Where we stand" section of the progress by the mac
 | State | Entry | Mandatory action | Pattern |
 | --- | --- | --- | --- |
 | `просьба-не-разобрана` | the owner's message about new work | exploration over the tree, then questions | `task-flow-start` |
-| `эпик-заведён` | the epic card, all its tasks and its plan lie in the queue | take the epic branch from the main branch | `task-flow-start` |
+| `эпик-заведён` | the epic card, all its tasks and its plan lie in the queue | take the epic branch from the main branch; with the first task the epic card moves to in progress | `task-flow-start` |
 | `разбор-закрыт` | the owner's answers lie on disk | a product agreement, or the reason there is none | `task-flow-start` |
 | `договорённость-записана` | the draft lies, or the reason is named | create the task, the branch from the epic branch, and the folder | `task-flow-start` |
 | `задача-взята` | task in the work column, branch by number, folder | write the plan | `task-flow-start` |
@@ -73,8 +73,7 @@ output, not by the executor's memory. A filled session window is no state either
 with a handover, and the work stays where it stood. **An open card says nothing about whether the
 work is taken.** A card is closed by the merge, and in a session that opens no PRs the list of open
 ones does not shrink. A task is untaken when the tree holds no trace of it: open numbers are checked
-against the archive — closed work has a record there with its number. The audit costs one command
-and answers for both sides; the open list answers for neither.
+against the archive — closed work has a record there with its number.
 
 What a turn ends with — rule `turn-conduct` under the same law.
 
@@ -99,7 +98,7 @@ flowchart TD
     E --> Z{The epic of this work exists}
     F --> Z
     Z -->|No| Y[The epic is declared: a card, all its tasks and a plan — then its branch from the main branch]
-    Z -->|Yes| G[Task, branch from the epic branch, task folder by branch name]
+    Z -->|Yes| G[Task, branch from the epic branch, task folder by branch name; the epic card moves with its first task]
     Y --> G
     G --> H[A plan with stages; not edited after it is written]
     H --> I{Stage done}
@@ -152,9 +151,8 @@ flowchart TD
   the handover, the state from the startup hook and an assigned epic say what to do, not whether to
   work. The form of the message is judged: an empty message, one word or one path order no work.
 - **A refusal by an external limiter removes the way, not the task.** It is not the tree's guard and
-  names no exit: read as the end of the road, it stops the work whole. The way is taken from the
-  guard that already described this fix — a bypass with the reason in the commit body, a mark in the
-  observations, a word to the owner — and the task stays the same.
+  names no exit. The way is taken from the guard that already described this fix — a bypass with
+  the reason in the commit body, a word to the owner — and the task stays the same.
 - **An instruction to work by the progress covers all its steps, including those that change
   history.** Questions are asked about what the progress lacks.
 - **A question written by a past session does not become a question to the owner.** It is addressed
@@ -214,8 +212,7 @@ flowchart TD
   part, the tree appends the subject part by an override; the glossary goes into the context whole
   at session start, so "did not read it" is never a ground.
 - **The task folder is created as a draft and gets its number by a command.** Until the grill ends,
-  how many tasks come out is unknown, so the number never comes first. The command renames the
-  draft, fills the plan header and strips the layout header from the copies.
+  how many tasks come out is unknown, so the number never comes first.
 - **An abandoned grill is visible.** A draft older than a week is listed by the work queue audit.
 - **Work ordered in words becomes a task in the queue in the same turn.** Even if it will not be
   done now. A draft folder is not the queue: it has no number, and one session knows of it.
@@ -226,6 +223,10 @@ flowchart TD
 - **The epic branch is taken before the first task of the epic, not with it.** Taken later, it
   leaves the first task standing on the main branch, and the epic starts as half of itself already
   merged.
+- **The epic card moves to in progress by the same turn that takes its first task.** The owner
+  follows the epic by one card, and one left where the epic was declared reads as never started.
+  The same move command, on the epic number; the PR of the epic opened — to review the same way.
+  Nothing checks this yet: the rule `git-workflow` names the gap.
 - **The next task is taken from the epic plan, and the queue list is asked only where there is no
   epic.** By a list of numbers someone else's epic cannot be told from one's own.
 - **An epic is not closed by a sign confirmed by reading alone.** What is checkable by eye is
@@ -244,19 +245,16 @@ flowchart TD
   for good. Until then the epic branch is not offered to a person at all — the merge button on it
   means the whole epic.
 - **The epic plan lies where it is found without the network and after the merge.** The card does
-  not hold the task order, and the task folder would hold it only until the first merge; the
-  directory — in the rule's companion. What the owner names along the way is appended there by the
-  turn that accepted it.
-- **Building by a sample begins with reading the sample itself.** The repeated part is opened whole,
-  by walking the directories.
+  not hold the task order, and the task folder dies with the merge; the directory — in the rule's
+  companion. What the owner names along the way is appended there by the turn that accepted it.
+- **Building by a sample begins with reading the sample itself, whole, by walking the directories.**
 - **What acts on the tree, not on the edit, lies outside the index.** The path to the sample and the
   permission to work outside the epic do not belong to the branch and live next to the handover. A
   number in the permitted list repeats the owner's word, not replaces it.
 - **Closed work is reviewed by the rules as a closing step, not as a separate request.** What was
   loaded and what was missing is seen only by the session that led the work.
 - **The review of closed work goes to the background, and the executor takes the next task.** The
-  role works in a turn of its own; the digest is gathered before the launch, the findings are
-  accepted in one turn.
+  digest is gathered before the launch, the findings are accepted in one turn.
 - **The review's findings wait for the owner, and only the digest of observations leaves for the
   package.** A proposal sent unreviewed becomes the work of someone who did not order it. The digest
   is always sent: it says what was used and is never an opinion.
