@@ -192,7 +192,8 @@ When they open the section and choose the tree and the period of the rows
 Then above the table stand a bar per day of the period, the list of the top skills with the most
 loaded first, the list of the kinds and the list of the refusals
 
-Not covered: the end-to-end spec of the section is written by stage 3 of RT-2115.
+Covered: `libs/message-bus-admin/usage/util/src/lib/usage-digest.logic.spec.ts`.
+Покрытие: частичное — the bars and the lists are checked by calls; the end-to-end spec of the section over seeded rows is written by stage 3 of RT-2115.
 
 ### SC-MB-358 — the quick period puts the pair of days into the address
 
@@ -201,4 +202,5 @@ When the person presses «7 дней»
 Then the address holds the last seven days ending today, the day pickers show them, and the table
 and the digest re-read
 
-Not covered: the end-to-end spec of the section is written by stage 3 of RT-2115.
+Covered: `libs/message-bus-admin/usage/util/src/lib/usage-digest.logic.spec.ts`.
+Покрытие: частичное — the pair of days is checked by a call; the address and the re-read are checked by the end-to-end spec written by stage 3 of RT-2115.

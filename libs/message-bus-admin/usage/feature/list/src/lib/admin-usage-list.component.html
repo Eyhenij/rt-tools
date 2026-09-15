@@ -2,6 +2,15 @@
     <ng-template adminListToolbarLeft>
         <admin-tree-filter [choices]="choices()" [tree]="query().tree" (treeChange)="changeTree($event)" />
         <admin-period-filter [from]="shownPeriod().from" [to]="shownPeriod().to" (periodChange)="pickPeriod($event)" />
+        <admin-usage-quick-period [days]="quickDays()" (daysChange)="pickQuick($event)" />
+    </ng-template>
+
+    <ng-template adminListAboveTable>
+        @if (digestFailed()) {
+            <rt-empty-state qa-dataid="usage-digest-failed" icon="ico-warning" [title]="digestFailedText" />
+        } @else if (query().tree !== '') {
+            <admin-usage-digest [digest]="digest()" [reading]="digestReading()" />
+        }
     </ng-template>
 
     <rt-table

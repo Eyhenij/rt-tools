@@ -8,6 +8,8 @@
  * приёма у него, а не у экрана, и ответ называет тот период, который считал. Назван один день из
  * двух — отказ: полупериод не читается ни как умолчание, ни как открытый край.
  */
+import { DAY_MS } from '@rt/message-bus-common';
+
 import { dayOf } from './observation-retention.util';
 import { OBSERVATION_DAY } from './observation.const';
 
@@ -16,8 +18,6 @@ export const USAGE_PERIOD_MAX_DAYS: number = 400;
 
 /** Сколько дней в периоде, когда запрос его не назвал: сегодняшний день включительно. */
 export const USAGE_PERIOD_DEFAULT_DAYS: number = 30;
-
-const MS_PER_DAY: number = 24 * 60 * 60 * 1000;
 
 export interface IUsagePeriod {
     readonly from: string;
@@ -32,7 +32,7 @@ function dayParam(query: Record<string, unknown>, name: string): string | null {
 
 /** Сколько дней в периоде, оба края включительно. */
 export function periodDays(period: IUsagePeriod): number {
-    return Math.round((new Date(period.to).getTime() - new Date(period.from).getTime()) / MS_PER_DAY) + 1;
+    return Math.round((new Date(period.to).getTime() - new Date(period.from).getTime()) / DAY_MS) + 1;
 }
 
 /** Назван ли период хоть одним днём. Пустой параметр считается неназванным: так его снимает адрес. */
@@ -63,7 +63,7 @@ export function usagePeriodFault(query: Record<string, unknown>): string | null 
 
 /** Последние тридцать дней по названному моменту, сегодняшний день включительно. */
 export function defaultUsagePeriod(now: Date): IUsagePeriod {
-    return { from: dayOf(new Date(now.getTime() - (USAGE_PERIOD_DEFAULT_DAYS - 1) * MS_PER_DAY)), to: dayOf(now) };
+    return { from: dayOf(new Date(now.getTime() - (USAGE_PERIOD_DEFAULT_DAYS - 1) * DAY_MS)), to: dayOf(now) };
 }
 
 /**

@@ -7,6 +7,9 @@
  */
 import { IPage } from './page';
 
+/** Сутки в миллисекундах: ими обе стороны ходят по дням периода. */
+export const DAY_MS: number = 24 * 60 * 60 * 1000;
+
 /** Строка использования одного скила за период: загрузки, сессии с загрузкой, отказы гейта правил. */
 export interface IUsageRow {
     readonly skill: string;
