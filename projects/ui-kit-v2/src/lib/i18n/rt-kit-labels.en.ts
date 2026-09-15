@@ -124,6 +124,7 @@ export const RT_KIT_LABELS_EN = {
     uiRevert: 'Revert',
     uiSave: 'Save',
     uiSaveNewAgent: 'Save the new agent',
+    uiScrollDown: 'Scroll down',
     uiSearch: 'Search',
     uiSectionInProgress: '{{label}} — section under development',
     uiSelectValues: 'Select values',

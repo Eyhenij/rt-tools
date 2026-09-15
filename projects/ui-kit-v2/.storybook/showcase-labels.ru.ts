@@ -120,6 +120,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     uiRevert: 'Отменить',
     uiSave: 'Сохранить',
     uiSaveNewAgent: 'Сохранить нового агента',
+    uiScrollDown: 'Прокрутить вниз',
     uiSearch: 'Поиск',
     uiSectionInProgress: '{{label}} — раздел в разработке',
     uiSelectValues: 'Выберите значения',
