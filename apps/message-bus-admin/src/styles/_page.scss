@@ -134,3 +134,40 @@
 .admin-period-filter {
     display: contents;
 }
+
+/**
+ * Отбор по дереву шириной с самую длинную подпись. Выбор кита и размерник с подписями всех
+ * опций лежат в одной ячейке сетки: хост берёт ширину размерника, а панель опций — она шириной
+ * с триггер — показывает каждую подпись одной строкой. Числом ширину не задать: имена деревьев
+ * приходят из приёмника, и первое длинное имя перенеслось бы.
+ *
+ * Строка размерника носит отступы триггера, а не опции: у триггера справа стоят ещё зазор и
+ * шеврон, и это шире, чем отступ опции с той же стороны. Размер шеврона у кита — число в коде
+ * значка, не токен; здесь он назван своим свойством, чтобы не лежать голым числом в правиле.
+ */
+.admin-tree-filter {
+    --admin-tree-filter-chevron: 1rem;
+
+    display: inline-grid;
+
+    > .rt-select,
+    &__sizer {
+        grid-area: 1 / 1;
+    }
+
+    &__sizer {
+        display: flex;
+        flex-direction: column;
+        pointer-events: none;
+        visibility: hidden;
+    }
+
+    /* Начертание — как у выбранной опции: она полужирная и потому шире соседей. */
+    &__sizer-row {
+        font-size: var(--rt-input-font-size);
+        font-weight: var(--rt-font-weight-semibold);
+        line-height: 0;
+        padding-inline: var(--rt-input-padding-x) calc(var(--rt-input-padding-x) + var(--rt-space-sm) + var(--admin-tree-filter-chevron));
+        white-space: nowrap;
+    }
+}
