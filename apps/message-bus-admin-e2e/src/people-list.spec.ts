@@ -90,6 +90,9 @@ test.describe('раздел людей', () => {
         await page.goto(SECTIONS.people);
         await signIn(page);
         await expect(qa(page, SECTION.people.table)).toBeVisible();
+        // Строки ждутся счётом, а не видимостью таблицы: таблица видна и с остовом, пока ответ
+        // ещё едет, и столбец, прочитанный в эту секунду, пуст
+        await expect(rowsOf(page, 'people')).toHaveCount(4);
 
         const byLogin: string[] = await columnTexts(page, 'people-cell-name');
 
