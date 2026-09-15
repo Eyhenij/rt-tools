@@ -276,15 +276,15 @@ issuing and revocation — `docs/specs/message-bus/invites/`; the entry — `doc
 A person introduces themselves by the entry; a token of a tree does not open the operations of the
 reading. Without an entry not a single operation gives the cargo.
 
-| Operation                | What it does                                                                  |
-| ------------------------ | ----------------------------------------------------------------------------- |
-| GET /api/trees           | gives back the trees by names and signs — for the filter                      |
-| GET /api/postmortems     | a page of the analyses without the text whole, with the state of every record |
-| GET /api/postmortems/:id | one analysis with the text whole and its state                                |
-| GET /api/proposals       | a page of the proposals with the state of every record                        |
-| GET /api/proposals/:id   | one proposal whole and its state                                              |
-| GET /api/summaries       | a page of the records of the months without the digest whole                  |
-| GET /api/summaries/:id   | a record of a month with the digest whole                                     |
+| Operation                      | What it does                                                                         |
+| ------------------------------ | ------------------------------------------------------------------------------------ |
+| GET /api/trees                 | gives back the trees by names and signs — for the filter                             |
+| GET /api/postmortems           | a page of the analyses without the text whole, with the state of every record        |
+| GET /api/postmortems/:id       | one analysis with the text whole and its state                                       |
+| GET /api/proposals             | a page of the proposals with the state of every record                               |
+| GET /api/proposals/:id         | one proposal whole and its state                                                     |
+| GET /api/summaries             | a page of the records of the months without the digest whole                         |
+| GET /api/summaries/:id         | a record of a month with the digest whole                                            |
 
 A page of a list is requested by the number, the size, the order and the filter — by tree, and at the
 analyses and the proposals also by state. The answer carries the rows and the total number of the
@@ -296,7 +296,7 @@ the selection by both conditions. The state also stands in the set of the sortab
 operations.
 
 The operations of the section of the invitations — the reading of a page, the issuing and the revocation
-— stand in the subdomain next to it.
+— stand in the subdomain next to it; the two operations of the usage — in the subdomain of the usage.
 
 The common page of a list creates no operations of its own — it does not go to the intake at all. Its
 contract is what it has the right to ask of the host:
