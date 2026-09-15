@@ -44,6 +44,16 @@ describe('AdminTreeFilterComponent', () => {
         ]);
     });
 
+    it('размерник несёт подписи всех опций по одной в строке и скрыт от чтения', () => {
+        const sizer: HTMLElement = fixture.nativeElement.querySelector('[qa-dataid="list-tree-filter-sizer"]');
+        const rows: string[] = [...sizer.querySelectorAll('.admin-tree-filter__sizer-row')].map((row: Element): string =>
+            (row.textContent ?? '').trim()
+        );
+
+        expect(sizer.getAttribute('aria-hidden')).toBe('true');
+        expect(rows).toEqual(['Все проекты', 'Приёмник', 'Витрина']);
+    });
+
     it('снятие отбора поднимается наверх пустым признаком, а не пустотой', () => {
         const picked: string[] = [];
 
