@@ -157,7 +157,7 @@ function folderInBranch(branch, options) {
     }
 }
 
-let checked = { issues: 0, pulls: 0, cargo: 0 };
+let checked = { issues: 0, pulls: 0, cargo: 0, offBase: 0 };
 
 // Drafts are judged by the disk and so are checked always: no connection is needed for that.
 checkDrafts();
@@ -175,7 +175,7 @@ try {
     // such a record, whatever labels it wears.
     const open = CARGO_LABELS.size === 0 ? allOpen : allOpen.filter((issue) => !isCargo(issue));
     const pulls = fetchOpenPulls(options);
-    checked = { issues: issues.length, pulls: pulls.length, cargo: allOpen.length - open.length };
+    checked = { issues: issues.length, pulls: pulls.length, cargo: allOpen.length - open.length, offBase: 0 };
 
     for (const item of board.foreign) {
         report(`the board: ${item} — the board holds tasks, not PRs about them`);
@@ -229,6 +229,9 @@ try {
         // PR: the work has moved on, and a second task is created for the clean-up.
         if (HAS_PIPELINE && pull.headRefOid) {
             checkHeadRun(pull, report, MAIN_BRANCH, options);
+        }
+        if (pull.baseRefName && pull.baseRefName !== MAIN_BRANCH) {
+            checked.offBase += 1;
         }
 
         checkConflicting(pull, report);
@@ -361,6 +364,18 @@ if (!offline && HAS_PIPELINE) {
 // What was not checked is named out loud: silence about runs would read as "the runs are there".
 if (!offline && !DEPLOY_WORKFLOW) {
     console.log('check-board: production was not checked against the main branch — the rollout workflow is not named in the tree config');
+}
+
+// A base other than the main branch has two consequences, and they are read from one line: the
+// pipeline wakes for no such PR, and the host closes no task on its merge. Named apart, the
+// second was read by nobody — the executor took the line about the run as the whole of it, and
+// the tasks of a chain stayed open after their merges. Per PR the audit is silent: that is the
+// order of handing in of every task of an epic, and a line on each would teach to skip the audit.
+if (!offline && checked.offBase > 0) {
+    console.log(
+        `check-board: open PRs with a base other than «${MAIN_BRANCH}» — ${checked.offBase}: the pipeline gives them no run, ` +
+            `and the host closes no task on their merge — the tree closes those by a pipeline of its own or by the hand after the merge`
+    );
 }
 
 // What was filtered out is named by number: silent filtering is indistinguishable from a broken

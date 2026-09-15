@@ -50,12 +50,12 @@ tasks go into it. The tasks touch different resources and do not stand on one an
 
 ## The makeup
 
-| #   | Task                                                                          | State |
-| --- | ----------------------------------------------------------------------------- | ----- |
-| 1   | RT-2147 — the audit reads the last main run: red and cancelled are findings   | ahead |
-| 2   | RT-2148 — the session reads the last main run first; the start hook prints it | ahead |
-| 3   | RT-2149 — the PR body with a base other than main says how the task closes    | ahead |
-| 4   | RT-2150 — the audit's finding about such a base names both consequences       | ahead |
+| #   | Task                                                                          | State               |
+| --- | ----------------------------------------------------------------------------- | ------------------- |
+| 1   | RT-2147 — the audit reads the last main run: red and cancelled are findings   | handed in, PR #2151 |
+| 2   | RT-2148 — the session reads the last main run first; the start hook prints it | handed in, PR #2155 |
+| 3   | RT-2149 — the PR body with a base other than main says how the task closes    | handed in, PR #2156 |
+| 4   | RT-2150 — the audit's finding about such a base names both consequences       | handed in, PR #2158 |
 
 ## What the epic does not do
 

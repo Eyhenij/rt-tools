@@ -319,11 +319,19 @@ report "SC-AK-845 — о заявке с чужой базой аудит мол
     "$(board_says '702')" 0
 report "SC-AK-845 — совета перенести основание больше нет" "$(board_says 'move the base')" 0
 
+# SC-AK-1107 — одна строка на все заявки с такой базой называет оба следствия сразу: запуска не
+# будет, и задачу слиянием хостинг не закроет. Названное порознь второе никто не прочитал.
+report "SC-AK-1107 — строка считает заявки с чужой базой" "$(board_says 'open PRs with a base other than «main» — 1:')" 1
+report "SC-AK-1107 — названо первое следствие" "$(board_says 'the pipeline gives them no run')" 1
+report "SC-AK-1107 — названо второе следствие" "$(board_says 'the host closes no task on their merge')" 1
+report "SC-AK-1107 — расхождением это не считается" "$(board_code)" 0
+
 # База — главная ветка: строка о событии прежняя. Проба положительная: без неё зелёным было бы и
 # молчание обо всех заявках сразу.
 export STUB_PULLS="$(based_json main)"
 report "SC-AK-845 — заявка в главную проверяется как прежде" \
     "$(board_says 'the pipeline received no event')" 1
+report "SC-AK-1107 — без заявок с чужой базой строки нет" "$(board_says 'open PRs with a base other than')" 0
 
 export STUB_RUNS=1
 export STUB_PULLS="$(pulls_json false)"
