@@ -49,6 +49,16 @@ PIPE_EOF
     # The exception acts PER SEGMENT. While it was checked over the whole command, one mention of
     # `pg_dump` anywhere in the chain was enough for `-f` to stop counting as a write in all the
     # other calls: `pg_dump … > /dev/null && psql -d app -f /tmp/x.sql` passed silently.
+    sql_delivers_file && is_write="yes"
+}
+
+# A file poured into the client names not a single SQL verb, and its content the guard does not see
+# — so this is a write by definition. It stands in a function of its own because the answer is
+# needed by two places: the common detection of a write above, and the early exit on a local
+# migration below. While the loop stood in the first alone, the chain `prisma migrate deploy &&
+# psql -d app -f fix.sql` passed silently: the exit counted a second write only by SQL verbs and by
+# the commands that feed the pipe.
+sql_delivers_file() {
     while IFS= read -r seg; do
         [ -z "$seg" ] && continue
         # The word boundary is mandatory: `-f /tmp/pg_dump-restore.sql` is loading a dump, not
@@ -62,12 +72,13 @@ PIPE_EOF
         seg_tail="$(printf '%s' "$seg" | perl -0pe 's{^.*?(?<![[:alnum:]_./-])(psql|pg_restore|prisma)(?=\s|$)}{$1}s' 2>/dev/null)"
         [ -z "$seg_tail" ] && seg_tail="$seg"
         if printf '%s' "$seg_tail" | grep -qE '(^|[[:space:]])(-f|--file)([[:space:]]|=)|<[[:space:]]*[^[:space:]|<]+\.(sql|dump)'; then
-            is_write="yes"
-            break
+            return 0
         fi
     done <<EOF
 $segments
 EOF
+
+    return 1
 }
 
 # --- destructive for certain ------------------------------------------------------------
@@ -178,6 +189,11 @@ sql_check_migrations() {
                 done <<MIGRATE_PIPE_EOF
 $(client_segments)
 MIGRATE_PIPE_EOF
+                # A file poured into the client is judged by the same sign as everywhere else. Its
+                # own set of signs here was narrower than the common one by exactly this, and the
+                # second link of `prisma migrate deploy && psql -d app -f fix.sql` fell out of the
+                # check whole: the guard sees neither the file nor its content.
+                sql_delivers_file && other_write="yes"
                 [ -z "$other_write" ] && exit 0
                 ;;
             '')

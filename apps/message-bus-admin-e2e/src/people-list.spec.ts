@@ -31,7 +31,7 @@ test.describe('раздел людей', () => {
         return personRow(page, name).locator(`[qa-dataid="people-cell-${cell}"]`);
     }
 
-    test('SC-MB-324 — список называет имя, роль, состояние и последний вход', async ({ page }: { page: Page }) => {
+    test('SC-MB-360 — список называет имя, роль, состояние и последний вход', async ({ page }: { page: Page }) => {
         await page.goto(SECTIONS.people);
         await signIn(page);
 
@@ -53,7 +53,7 @@ test.describe('раздел людей', () => {
         await expect(personCell(page, PEOPLE.disabled.name, 'last-login')).toHaveText(/^\s*\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}\s*$/);
     });
 
-    test('SC-MB-324 — отключённая запись и запись без роли отдают свои пустоты словами, а не пропадают', async ({
+    test('SC-MB-360 — отключённая запись и запись без роли отдают свои пустоты словами, а не пропадают', async ({
         page,
     }: {
         page: Page;
@@ -70,7 +70,7 @@ test.describe('раздел людей', () => {
         await expect(personCell(page, PEOPLE.roleless.name, 'state')).toHaveText('Действует');
     });
 
-    test('SC-MB-324 — ни строка, ни её меню не нажимаются: раздел только читает', async ({ page }: { page: Page }) => {
+    test('SC-MB-360 — ни строка, ни её меню не нажимаются: раздел только читает', async ({ page }: { page: Page }) => {
         await page.goto(SECTIONS.people);
         await signIn(page);
         await expect(qa(page, SECTION.people.table)).toBeVisible();
@@ -86,7 +86,7 @@ test.describe('раздел людей', () => {
         await expect(page).toHaveURL(new RegExp(`${SECTIONS.people}$`));
     });
 
-    test('SC-MB-324 — порядок по умолчанию идёт последним входом, а невходившие уезжают в конец', async ({ page }: { page: Page }) => {
+    test('SC-MB-360 — порядок по умолчанию идёт последним входом, а невходившие уезжают в конец', async ({ page }: { page: Page }) => {
         await page.goto(SECTIONS.people);
         await signIn(page);
         await expect(qa(page, SECTION.people.table)).toBeVisible();

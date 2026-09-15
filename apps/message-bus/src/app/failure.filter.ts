@@ -28,7 +28,7 @@ import { cargoLimit } from './cargo-limit';
 import { incidentNumber } from './incident';
 
 /** Роды груза, которые приёмник принимает. Названы дереву, когда оно постучалось не в тот род. */
-const CARGO_KINDS: readonly string[] = ['summary', 'proposals', 'postmortems'];
+const CARGO_KINDS: readonly string[] = ['summary', 'observations', 'proposals', 'postmortems'];
 
 /** Путь, по которому приезжает груз: по нему видно, что незнакомая операция — это род, а не опечатка. */
 const INTAKE_PATH: string = '/api/intake';

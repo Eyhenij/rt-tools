@@ -4,7 +4,7 @@ kind: rule
 law: lib-imports
 description: Rule under the lib-imports law. Load when editing project manifests, build paths, linter boundaries, any barrel and the layout checks, and when deciding where a shared symbol lives. Patterns lib-layers-new, lib-layers-move.
 ---
-<!-- rt-kit v0.27.0 · rules/lib-layers.md · 0084978b8ae1 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · rules/lib-layers.md · 23ea15913437 · правится надстройкой, не здесь -->
 
 # Imports between libs — how it works here
 
@@ -78,6 +78,10 @@ flowchart TD
 - **A domain is started for a subject, not for mechanics.** Mechanics shared by several domains ride
   into the lib that already sees them. On the frontend that is the family base, on the backend the
   `util` layer listed with every domain.
+- **The name of a lib is what its manifest declares, and the path only suggests it.** The tag and
+  the import alias are derived from that name, and the audit reads all three from the manifest and
+  the list of paths instead of assembling them from the directory. Where the manifest declares no
+  name, the path says what the name must become.
 - **A domain with exactly one non-empty layer is listed as a line with a reason.** Otherwise it
   cannot be told from a slot: both have empty layers, and a barrel lies in both.
 
@@ -101,6 +105,13 @@ layer; such a domain is usually one, and it stands in the exceptions list with a
   its contract with the consumer: a lost field in `*.State` is not an error while there is no
   calling code. The first importer is the first check — the models layer is accepted after `nx
   build` and a live run of the scenario, not by a green `lint test`.
+- **A configuration a target does not declare is a default, not a refusal.** The builder drops an
+  unknown name silently: the exit code is zero, the artefact is built by the default, and only the
+  line of the build output, where the target is named without a configuration, tells this from a
+  real build. Hence the reading rule: what is built with is said by the build output, not by the
+  list of configurations in the target manifest — that one says what may be called, not what is
+  called. A rollout pipeline called a server build with a production setting the target did not
+  have, and for half a year the line promised what it did not do.
 - **A check is accepted on a violation, not on a green run.** The violation is introduced by hand,
   the run turns red, the edit is reverted. The checks in `tools/` have no tests, and this is the
   only acceptance.

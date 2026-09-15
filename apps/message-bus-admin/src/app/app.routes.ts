@@ -6,6 +6,7 @@ import { INVITES_ROUTE, invitesRoutes } from '@rt/message-bus-admin/invites/shel
 import { POSTMORTEMS_ROUTE, postmortemsRoutes } from '@rt/message-bus-admin/postmortems/shell';
 import { PROPOSALS_ROUTE, proposalsRoutes } from '@rt/message-bus-admin/proposals/shell';
 import { SUMMARIES_ROUTE, summariesRoutes } from '@rt/message-bus-admin/summaries/shell';
+import { USAGE_ROUTE, usageRoutes } from '@rt/message-bus-admin/usage/shell';
 
 /**
  * Панель настройки столбцов — своя у каждого раздела, и адрес её называет раздел.
@@ -61,11 +62,13 @@ export const appRoutes: Route[] = [
             columnsRoute(POSTMORTEMS_ROUTE),
             columnsRoute(PROPOSALS_ROUTE),
             columnsRoute(SUMMARIES_ROUTE),
+            columnsRoute(USAGE_ROUTE),
             columnsRoute(INVITES_ROUTE),
             columnsRoute(PEOPLE_ROUTE),
             ...postmortemsRoutes,
             ...proposalsRoutes,
             ...summariesRoutes,
+            ...usageRoutes,
             ...invitesRoutes,
             ...peopleRoutes,
             { path: '', pathMatch: 'full', redirectTo: (): string => firstOpenSectionPath() },

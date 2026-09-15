@@ -134,7 +134,7 @@ Given the stand of the end-to-end suite is seeded
 When a person signs in on it
 Then all four sections are open to them: the suite checks the sections rather than the rights
 
-### SC-MB-323 — the rights model arriving keeps the access of those who already had it
+### SC-MB-359 — the rights model arriving keeps the access of those who already had it
 
 Given accounts created before the rights, each of which saw every section, and among them the
 service account of the cargo triage

@@ -8,7 +8,6 @@
  * Собирается груз здесь, а уезжает в `ship.ts`: сборка проверяется вызовом, а сеть в спеке
  * подменяется двойником.
  */
-import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -21,18 +20,33 @@ import {
     IProposalItem,
     IProposalsCargo,
     ISummaryCargo,
+    IObservationsCargo,
 } from './cargo.js';
 import { IEnvironment, IOutcomeOfCommand } from './commands.js';
 import { CONFIG_PATH, IConfig, readConfig } from './config.js';
 import { IReadResult, ISummary, readObservations, summarize } from './observations.js';
 import { IRefusedAnalysis, proseCheckOf, proseWhy, refusedAnalysesOf, TProseCheck } from './cargo-prose.js';
-import { ILeak, IProposal, leaksIn, markSent, marksOf, nearestMissing, readProposals, TO_PACKAGE } from './proposals.js';
+import {
+    ILeak,
+    IProposal,
+    leaksIn,
+    markProposals,
+    markSent,
+    marksOf,
+    nearestMissing,
+    ownMark,
+    readProposals,
+    skippedAsSentLines,
+    TO_PACKAGE,
+} from './proposals.js';
 import { IShipment, IShipped, readToken, TShip } from './ship.js';
+import { collectAssets } from './assets.js';
+import { linesTotal, observationsCargo, readObservationDays } from './observations-cargo.js';
+import { treeSlugOf } from './tree-mark.js';
 import { laidOutSkills, packagedNames, treeSnapshot, unpickedOf } from './snapshot.js';
 import { byText } from './order.js';
 
 /** Длина признака дерева. Двенадцати знаков хватает, чтобы деревья не сталкивались числом. */
-const SLUG_LENGTH: number = 12;
 
 /** Отказ команды: именованных кодов у пакета нет — есть код возврата и текст. */
 const REFUSED: number = 1;
@@ -52,42 +66,6 @@ export interface IShipOptions {
     /** Сегодняшний день: своих часов у команды нет — иначе сводку за отрезок не проверить спекой. */
     readonly today: string;
     readonly days: number;
-}
-
-/**
- * Адрес удалённого репозитория, приведённый к одному виду.
- *
- * Форм у него несколько — `git@host:владелец/имя.git`, `https://host/владелец/имя`, — и все они
- * ведут к одному дереву. Две рабочие копии одного репозитория обязаны дать один признак, а
- * непривёденные формы дали бы два.
- */
-export function remoteMarkOf(remote: string): string {
-    const named: string = remote
-        .trim()
-        .replace(/\.git$/, '')
-        .replace(/^[a-z+]+:\/\//i, '')
-        .replace(/^[^@/]+@/, '')
-        .replace(/:/g, '/');
-    let end: number = named.length;
-
-    while (end > 0 && named[end - 1] === '/') {
-        end -= 1;
-    }
-
-    return named.slice(0, end).toLowerCase();
-}
-
-/**
- * Признак дерева: короткое значение, различающее деревья и не выдающее их адреса.
- *
- * Считается хешем от адреса репозитория: по нему адрес не восстанавливается, а у двух рабочих
- * копий одного репозитория он один. Репозитория нет — берётся то, что назвала настройка: иначе
- * все такие деревья слились бы в одно, и число деревьев в сводке стало бы неправдой молча.
- */
-export function treeSlugOf(remote: string, spoken: string): string {
-    const mark: string = remoteMarkOf(remote);
-
-    return mark ? createHash('sha256').update(mark, 'utf8').digest('hex').slice(0, SLUG_LENGTH) : spoken;
 }
 
 /**
@@ -178,10 +156,20 @@ function sentAnalyses(analyses: readonly IPostmortemItem[], refused: readonly IR
     return analyses.filter((one: IPostmortemItem): boolean => !refused.some((bad: IRefusedAnalysis): boolean => bad.file === one.file));
 }
 
-/** Что уезжает и в каком порядке: сводка первой — ею заводится запись месяца. */
-export function shipmentsOf(summary: ISummaryCargo, proposals: IProposalsCargo, postmortems: IPostmortemsCargo): readonly IShipment[] {
+/**
+ * Что уезжает и в каком порядке: сводка первой — ею заводится запись месяца. Строки наблюдений
+ * идут за ней: приём не заводит ими запись месяца и считает их сам, а пустой груз не уезжает —
+ * замещать день нечем.
+ */
+export function shipmentsOf(
+    summary: ISummaryCargo,
+    proposals: IProposalsCargo,
+    postmortems: IPostmortemsCargo,
+    observations: IObservationsCargo
+): readonly IShipment[] {
     return [
         { kind: 'сводка', operation: 'summary', body: summary },
+        ...(observations.days.length ? [{ kind: 'наблюдения', operation: 'observations', body: observations }] : []),
         ...(proposals.items.length ? [{ kind: 'предложения', operation: 'proposals', body: proposals }] : []),
         ...(postmortems.items.length ? [{ kind: 'разборы', operation: 'postmortems', body: postmortems }] : []),
     ];
@@ -194,17 +182,27 @@ export function shipmentsOf(summary: ISummaryCargo, proposals: IProposalsCargo, 
  * называет файлы дерева, где промах случился, и накрытая проверка отбивала бы каждую его
  * отправку.
  */
-export function leaksOfCargo(summary: ISummaryCargo, proposals: readonly IProposal[], marks: readonly string[]): string[] {
+export function leaksOfCargo(
+    summary: ISummaryCargo,
+    proposals: readonly IProposal[],
+    marks: readonly string[],
+    observations?: IObservationsCargo
+): string[] {
     const inSummary: string[] = leaksIn(JSON.stringify(summary, null, 1), marks).map(
         (leak: ILeak): string => `  сводка: ${leak.why}\n      ${leak.text}`
     );
+    const inObservations: string[] = observations
+        ? leaksIn(JSON.stringify(observations, null, 1), marks).map(
+              (leak: ILeak): string => `  наблюдения: ${leak.why}\n      ${leak.text}`
+          )
+        : [];
     const inProposals: string[] = proposals.flatMap((entry: IProposal): string[] =>
         leaksIn(entry.body, marks).map(
             (leak: ILeak): string => `  ${entry.file}:${entry.line + leak.line} — ${leak.why}\n      ${leak.text}`
         )
     );
 
-    return [...inSummary, ...inProposals];
+    return [...inSummary, ...inObservations, ...inProposals];
 }
 
 /** Отказ строками. */
@@ -214,6 +212,11 @@ function refusal(...lines: readonly string[]): IOutcomeOfCommand {
 
 /** Что в отправляемом запросе, одной строкой: её читает человек перед тем, как отправить. */
 function describe(shipment: IShipment, summary: ISummaryCargo, proposals: IProposalsCargo, postmortems: IPostmortemsCargo): string {
+    if (shipment.operation === 'observations') {
+        const observations: IObservationsCargo = shipment.body as IObservationsCargo;
+
+        return `строк ${linesTotal(observations)} за ${observations.days.length} дн.`;
+    }
     if (shipment.operation === 'proposals') {
         return `предложений ${proposals.items.length}`;
     }
@@ -258,16 +261,6 @@ function manifest(
     postmortems: IPostmortemsCargo
 ): readonly string[] {
     return going.map((shipment: IShipment): string => `  ${shipment.operation} — ${describe(shipment, summary, proposals, postmortems)}`);
-}
-
-/** Пометка об отправке: по ней предложение второй раз не уезжает. */
-function markProposals(root: string, proposals: readonly IProposal[], shipped: IShipped): void {
-    const mark: string = `приём:${shipped.accepted?.month ?? 'принято'}`;
-
-    for (const proposal of proposals) {
-        const path: string = join(root, proposal.file);
-        writeFileSync(path, markSent(readFileSync(path, 'utf8'), proposal, mark), 'utf8');
-    }
 }
 
 /**
@@ -348,7 +341,7 @@ async function send(
         done.push(`  ${shipment.kind} → ${accepted(shipped)}`);
 
         if (shipment.operation === 'proposals') {
-            markProposals(root, proposals, shipped);
+            markProposals(root, proposals, ownMark(shipped.accepted?.month ?? 'принято'));
         }
     }
 
@@ -409,9 +402,9 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
         packagedNames(config, assetsDir)
     );
 
-    const ready: readonly IProposal[] = readProposals(root).filter(
-        (entry: IProposal): boolean => entry.address === TO_PACKAGE && !entry.sent
-    );
+    const addressed: readonly IProposal[] = readProposals(root).filter((entry: IProposal): boolean => entry.address === TO_PACKAGE);
+    const ready: readonly IProposal[] = addressed.filter((entry: IProposal): boolean => !entry.sent);
+    const skipped: readonly IProposal[] = addressed.filter((entry: IProposal): boolean => Boolean(entry.sent));
     // Блок, не назвавший ближайшего утверждения ресурса, не уезжает: разбор, кончившийся ещё
     // одной статьёй о том, о чём статья уже стоит, снаружи неотличим от разбора, кончившегося
     // исправлением. Отбивается он поимённо, а остальные едут: один непрочитанный ресурс не
@@ -441,7 +434,13 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
     // Проверка на адрес дерева судит все готовые блоки, а не одни уезжающие: отбитый по цитате
     // лежит на диске и уедет, как только его починят, — а найденная в нём утечка отбивает
     // отправку целиком и должна называться сразу.
-    const leaked: readonly string[] = leaksOfCargo(cargo, ready, marksOf(root, options.remote));
+    const observations: IObservationsCargo = observationsCargo(
+        tree,
+        CARGO_SCHEMA_VERSION,
+        root,
+        readObservationDays(root, options.today, options.days, collectAssets(config, assetsDir))
+    );
+    const leaked: readonly string[] = leaksOfCargo(cargo, ready, marksOf(root, options.remote), observations);
     if (leaked.length) {
         return refusal(
             `отправка не начата: в грузе назван адрес этого дерева — ${leaked.length}`,
@@ -450,9 +449,10 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
         );
     }
 
-    const going: readonly IShipment[] = shipmentsOf(cargo, proposals, postmortems);
+    const going: readonly IShipment[] = shipmentsOf(cargo, proposals, postmortems, observations);
 
     const listed: readonly string[] = manifest(going, cargo, proposals, postmortems);
+    const skippedLines: readonly string[] = skippedAsSentLines(skipped);
     // Отбитое называется обоими прогонами: сухой показывает, что уехало бы, — и отбитое к этому
     // относится наравне с уезжающим.
     const refusedLines: readonly string[] = refusalLines(refused, refusedAnalyses, prose, config.postmortems);
@@ -465,6 +465,7 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
                 `уехало бы в ${config.intake}, дерево ${tree}:`,
                 ...listed,
                 ...refusedLines,
+                ...skippedLines,
                 ...(read.silent ? ['наблюдений не велось ни разу — сводка уезжает снимком надстроек'] : []),
                 // Токен сухой прогон не проверяет: приём отвечает о нём только на настоящем
                 // вызове. Молчание об этом читалось как «отправка пройдёт», и заход узнавал об
@@ -482,6 +483,7 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
     const outcome: IOutcomeOfCommand = await send(root, config.intake, tree, token, options.ship, going, mine, [
         ...listed,
         ...refusedLines,
+        ...skippedLines,
     ]);
 
     return outcome;

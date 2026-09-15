@@ -51,6 +51,7 @@ export async function checkNothingDrifts(sql, own) {
             '        UNION ALL SELECT "expiresAt" FROM "tree_invite"',
             `        UNION ALL SELECT "lastLoginAt" FROM "account" WHERE "name" <> '${own}'`,
             `        UNION ALL SELECT "disabledAt" FROM "account" WHERE "name" <> '${own}'`,
+            '        UNION ALL SELECT "t" FROM "observation"',
             '    ) AS shown',
             `    WHERE shown.at >= CURRENT_DATE AND shown.at < TIMESTAMP '${FAR_FUTURE}';`,
             '    IF drifted > 0 THEN',

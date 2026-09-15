@@ -83,3 +83,16 @@ Then the exit code is zero, and the hole is named by a block of its own — with
 key and a word saying that until the value the resource is not laid out
 
 Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
+
+### SC-AK-1082 — the snapshot of the former edition names what was added into a replaced section
+
+Given a section of a resource is replaced by an override, and the new edition added an article into
+that section
+When the state report runs with the path of a snapshot of the former edition
+Then the resource, the heading and the opening of the added article are named: a replaced section
+loses what the package added silently, and the loss has no other witnesses
+
+Given the state report runs without the snapshot
+Then it says nothing about this: there is nothing to compare with
+
+Covered: `projects/agent-kit/src/lib/commands.spec.ts`.

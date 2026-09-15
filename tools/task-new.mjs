@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.27.0 · checks/task-new.github.mjs · bd2acfac1001 · правится надстройкой, не здесь
+// rt-kit v0.28.0 · checks/task-new.github.mjs · a8b1e67d04c5 · правится надстройкой, не здесь
 /**
  * Creating the task an edit starts with.
  *
@@ -39,6 +39,7 @@ import { cpSync, existsSync, mkdirSync, readFileSync, renameSync, writeFileSync 
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { planPathOf } from './board-epic-plan.mjs';
 import {
     BACKLOG_OPTION_ID,
     BOT,
@@ -222,10 +223,15 @@ function epicOfCard(epicNumber) {
     if (!labelled) {
         fail(`#${epicNumber} is not an epic: the card carries no label «${EPIC_LABEL}». A task hangs on an epic, and an epic is what the audit reads by that label`);
     }
-    const named = String(card.body ?? '').match(/(?:^|[\s(`])([\w.-]+(?:\/[\w.-]+)+\.md)/);
-    const plan = named ? named[1] : null;
+    // Which of the paths in the body is the plan is decided by the shared reading, the same one the
+    // queue audit calls. Read here by its own way — the first path in the body — the command wrote a
+    // law into every task of the epic as its plan, and the branch of the epic was then read from
+    // that law and came back empty. Both sides answered as usual, and the miss showed only by
+    // reading a created task.
+    const found = planPathOf(card.body, { makeupRequired: false });
+    const plan = found.path;
     if (plan === null) {
-        fail(`the card of the epic #${epicNumber} names no path to its plan — there is nowhere to read what the epic holds, and the branch of the epic is named there too`);
+        fail(`the card of the epic #${epicNumber}: ${found.why}. The branch of the epic is named in the plan too`);
     }
     return { plan, branch: epicBranchOf(plan, epicNumber) };
 }

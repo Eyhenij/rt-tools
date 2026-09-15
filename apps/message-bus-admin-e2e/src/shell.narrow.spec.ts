@@ -1,6 +1,7 @@
 import { expect, Page, test } from '@playwright/test';
 
 import { SECTIONS } from '../stand/stand.mjs';
+
 import { openSection, qa, SECTION } from './support/admin';
 import { expectScreen } from './support/shot';
 

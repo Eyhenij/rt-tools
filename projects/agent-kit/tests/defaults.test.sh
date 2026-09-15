@@ -168,9 +168,16 @@ report "карта: сверка спеков" "$(skill_for edit /r/tools/check-
 report "карта: сверка длины файла" "$(skill_for edit /r/tools/check-file-size.mjs '')" doc-style
 report "карта: сверка оформления" "$(skill_for edit /r/tools/check-styles.mjs '')" styling-bem
 report "карта: своё правило линтера кода" "$(skill_for edit /r/tools/eslint-rules/no-x.mjs '')" typescript-conventions
-# Поставка судит и то, что приезжает на прод, и то, чем оно туда едет.
-report "карта: файл конвейера" "$(skill_for edit /r/.github/workflows/deploy.yml '')" git-workflow
-report "карта: состав образа" "$(skill_for edit /r/deploy/api.Dockerfile '')" git-workflow
+# У конвейера предмета два сразу: какие проверки идут до слияния и что попадает на прод после.
+# Карта называет оба имени, правило о выкатке первым, и гейт требует первое незагруженное.
+report "карта: файл конвейера" "$(skill_for edit /r/.github/workflows/deploy.yml '' | head -1)" deploy-flow
+report "карта: конвейер зовёт и правило о задачах" \
+    "$(skill_for edit /r/.github/workflows/deploy.yml '' | sed -n 2p)" git-workflow
+# Описание образа, конфиг прокси и образец окружения прода — предмет правила о выкатке: о сервере,
+# портах и переменных, с которыми образ поднимают, правило о задачах и ветках молчит.
+report "карта: состав образа" "$(skill_for edit /r/deploy/api.Dockerfile '')" deploy-flow
+report "карта: конфиг прокси" "$(skill_for edit /r/deploy/Caddyfile '')" deploy-flow
+report "карта: образец окружения прода" "$(skill_for edit /r/.env.prod.example '')" deploy-flow
 report "карта: миграция хранилища" "$(skill_for edit /r/prisma/migrations/20260101_x/migration.sql '')" git-workflow
 report "карта: настройка клиента хранилища" "$(skill_for edit /r/prisma.config.ts '')" git-workflow
 # Сквозная спека по имени файла от обычного модуля не отличается.

@@ -32,11 +32,12 @@ export interface ISectionMarks {
 export type TPageMark = 'hint' | 'columns' | 'refresh' | 'fault' | 'retry';
 
 /**
- * Имя раздела. Три раздела груза собраны одним и тем же списочным экраном; четвёртый — тем же,
- * но без отбора по дереву и без панели: приглашение ждёт дерева, которого ещё нет. Пятый, люди,
- * не имеет ни отбора, ни панели, ни единого нажатия в строке: он только читает.
+ * Имя раздела. Три раздела груза собраны одним и тем же списочным экраном; раздел использования
+ * — тем же, с отбором по периоду и панелью сессий вместо панели подробностей; приглашения — тем
+ * же, но без отбора по дереву и без панели: приглашение ждёт дерева, которого ещё нет. Люди не
+ * имеют ни отбора, ни панели, ни единого нажатия в строке: раздел только читает.
  */
-export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'invites' | 'people';
+export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'usage' | 'invites' | 'people';
 
 /** Разделы админки: адрес, заголовок экрана и `qa-dataid` его таблицы и строк. */
 export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.freeze({
@@ -63,6 +64,14 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
         table: 'summaries-table',
         row: 'summaries-row',
         details: 'month-record-details-close',
+    }),
+    usage: Object.freeze({
+        path: SECTIONS.usage,
+        title: 'Использование',
+        prefix: 'usage',
+        table: 'usage-table',
+        row: 'usage-row',
+        details: 'usage-sessions-close',
     }),
     invites: Object.freeze({
         path: SECTIONS.invites,
@@ -174,6 +183,16 @@ export async function pickState(page: Page, name: string): Promise<void> {
 export async function pickVersion(page: Page, name: string): Promise<void> {
     await qa(page, 'list-version-filter').click();
     await page.getByRole('option', { name, exact: true }).click();
+}
+
+/**
+ * Назвать день в одном из двух полей отбора по периоду.
+ *
+ * Поле — нативный выбор дня, и значение в него кладётся строкой той же формы, какой день читает
+ * приёмник: нажимать по календарю браузера набор не умеет, а строка приходит тем же событием.
+ */
+export async function pickDay(page: Page, field: 'from' | 'to', day: string): Promise<void> {
+    await qa(page, `list-period-${field}`).locator('input').fill(day);
 }
 
 /** Нажать заголовок сортируемого столбца: нажатие по самому `th` порядка не меняет. */

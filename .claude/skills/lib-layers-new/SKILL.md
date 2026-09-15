@@ -4,7 +4,7 @@ kind: pattern
 rule: lib-layers
 description: Pattern of rule lib-layers. Load when creating, renaming or removing a lib — the generator instead of bare nx g, the tag, the alias, the barrel, the README, and how to finish a removal. Moving code between existing libs — pattern lib-layers-move.
 ---
-<!-- rt-kit v0.27.0 · patterns/lib-layers-new.md · 4a93fc6eb6e6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · patterns/lib-layers-new.md · 4a93fc6eb6e6 · правится надстройкой, не здесь -->
 
 # Creating or removing a lib
 

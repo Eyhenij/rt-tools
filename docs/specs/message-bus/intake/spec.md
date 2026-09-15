@@ -26,11 +26,11 @@ The vocabulary of the domain whole is in the spec next to it. Here only what liv
 | Term                                   | What it is                                                                                                                       |
 | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | Cargo                                  | What goes away by a run of the sending: a digest with a snapshot of the overrides, proposals, incident analyses                  |
-| A kind of cargo                        | One of three: a digest, a proposal, an incident analysis. Each has its own operation of the intake                               |
+| A kind of cargo                        | One of four: a digest, the observation lines, a proposal, an incident analysis. Each has its own operation                       |
 | A tree                                 | A record about a repository the cargo arrives from. Trees are told apart by a sign, not by an address                            |
 | A token of a tree                      | What a tree introduces itself to the intake by. The intake holds only a hash; the token itself is printed once                   |
 | A record of a month                    | The digest of one tree over one calendar month. One per pair "tree — month"                                                      |
-| A run                                  | One sending from a tree: up to three requests in a row, one per kind of cargo                                                    |
+| A run                                  | One sending from a tree: up to four requests in a row, one per kind of cargo                                                     |
 | The version of the schema of the cargo | The number of the format of the request of the intake. It changes when the composition of the fields of the cargo itself changes |
 | A record of the cargo                  | An incident analysis or a proposal. A digest of a month is never a record of the cargo in this sense                             |
 | The state of a record                  | The step an incident analysis or a proposal stands at: new, in progress, ready, released                                         |
@@ -252,6 +252,12 @@ was taken in.
 - **An arrival that did not change the text does not touch the state.** The run of the sending carries
   the analyses whole and repeats by a schedule: a reset at every arrival would put out all the states by
   the very first run.
+- **A repeated arrival does not bring a record closed by the publisher back into "new".** The text
+  is updated, the state stays: the fix lies in an edition of the package, and another text of the
+  analysis does not undo the edition — the same as the closing itself goes only forward.
+- **A record found with the sign set and the state "new" is put back into the closed state by a
+  migration.** With a release version — "released", without one — "fixed": both values the closing
+  wrote, and the state is restored from them, not guessed.
 - **The intake of the cargo does not accept a state.** A tree sends a text, not a judgement about
   whether it was sorted out.
 
@@ -287,13 +293,14 @@ was taken in.
 A tree introduces itself by the header `X-Tree-Token`. Without a token any operation of the intake,
 apart from the probe of liveness, refuses.
 
-| Operation                    | What it does                                                                     |
-| ---------------------------- | -------------------------------------------------------------------------------- |
-| POST /api/intake/summary     | creates or updates the record of a month by the digest of the last run           |
-| POST /api/intake/proposals   | puts to the record of a month the proposals the tree did not have yet            |
-| POST /api/intake/postmortems | creates or updates the incident analyses of the tree by the names of their files |
-| POST /api/intake/enroll      | creates a tree by a valid invitation and gives back its first token              |
-| GET /api/health              | answers that the service is raised and the storage answers                       |
+| Operation                     | What it does                                                                                                  |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| POST /api/intake/summary      | creates or updates the record of a month by the digest of the last run                                        |
+| POST /api/intake/observations | replaces the days of one working copy by the observation lines of the run; the subdomain "Usage of the rules" |
+| POST /api/intake/proposals    | puts to the record of a month the proposals the tree did not have yet                                         |
+| POST /api/intake/postmortems  | creates or updates the incident analyses of the tree by the names of their files                              |
+| POST /api/intake/enroll       | creates a tree by a valid invitation and gives back its first token                                           |
+| GET /api/health               | answers that the service is raised and the storage answers                                                    |
 
 The request for a token is the only operation of the intake without a token of a tree: the tree does
 not have one yet. It is closed by the invitation and by a limiter of the frequency, and it carries the
@@ -424,6 +431,11 @@ the token, and a divergence refuses the intake.
   Rejected: an initial seeding of the storage.
 - **The sign of a tree is named as an argument of the command of the creating.** Otherwise the intake
   learns the sign from the cargo and takes what was sent for its own.
+- **A record closed by the publisher keeps its state on a repeated arrival, and the sign is not
+  taken off.** Taking the sign off would leave the publisher no trace of their closing and would put
+  the record on the sender's list a second time; sixty-two records of one tree stood as "new (closed
+  by the publisher)" — a pair that is on no map of states. Rejected: a reset with the sign taken off;
+  a repeated closing instead of a migration — the fix text and the version already lie at the records.
 
 ## Open questions
 
@@ -438,3 +450,6 @@ The open questions of the domain are shared, and they live in the spec next to i
   is issued by two ways by one decision, a taken name refuses the issuing and names what it is taken by.
   The scenarios of the issuing stand in the subdomain of the reading: their "Then" names a person and
   what they get on the screen.
+- 2026-09-15 — the agreement of the task RT-2116 was merged: a repeated arrival does not bring a
+  record closed by the publisher back into "new", and the records that had already diverged are put
+  back by a migration. Scenarios SC-MB-323 and SC-MB-324.

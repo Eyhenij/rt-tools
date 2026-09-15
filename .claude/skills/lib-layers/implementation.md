@@ -47,6 +47,7 @@ silent about.
 - **The family base sees only `util`.** — `tools/lib-boundaries.mjs:checkBoundaries` — the base's rights are judged by tags; here the base is answered by `projects/core/package.json` with the single dependency `@rt-tools/utils`.
 - **Behaviour the family base cannot see comes to it by a token.** — **Not applicable.** There are no lib families with a base here: the tree holds packages, not an application with families
 - **A domain is started for a subject, not for mechanics.** — **Not checked by anything.** A subject is indistinguishable from mechanics to a machine: the directory name is lawful in both cases. The kit folders are named by a subject, and on the receiver all five domains are named by a subject; held by reading.
+- **The name of a lib is what its manifest declares, and the path only suggests it.** — `tools/lib-common.mjs:libName` — `tools/lib-common.mjs:declaredAlias` — the audit reads the name from the manifest and the alias by what it points at. The formula over the path is kept for a lib that declared nothing.
 - **A domain with exactly one non-empty layer is listed as a line with a reason.** — `tools/lib-domains.mjs:checkDomainIsFilled` — a domain with one non-empty layer is named by a line. The trees domain holds three layers out of four non-empty: `api` is empty because it goes nowhere outward.
 
 ## What else is worth knowing when reading the code

@@ -228,8 +228,9 @@ rm -f "$DISPATCH_DIR/aaa_denies.sh" "$DISPATCH_DIR/zzz_says.sh"
 # склеивает. Чего он не судит — что настоящий страж объявлен тем событием, что диспетчер его
 # находит и что его отказ доходит как есть. Гард, чей отказ теряется по дороге, защитой не
 # считается, а молчание его читается как согласие.
-# Образцы стража лежат в соседнем файле, и без него страж молчит — отказом в пользу работы.
-cp "$ASSETS/hooks/turn-exit-guard.sh" "$ASSETS/hooks/turn-exit-patterns.sh" "$DISPATCH_DIR/" 2>/dev/null
+# Образцы стража и разбор записи хода лежат в соседних файлах: без них страж молчит.
+cp "$ASSETS/hooks/turn-exit-guard.sh" "$ASSETS/hooks/turn-exit-patterns.sh" \
+    "$ASSETS/hooks/turn-exit-verdict.sh" "$DISPATCH_DIR/" 2>/dev/null
 
 REAL_REPO="$(fixture_repo RT-9-real)"
 mkdir -p "$REAL_REPO/docs/tasks/RT-9-real"
@@ -266,7 +267,8 @@ WORK_OUT="$(printf '%s' "$(real_input "$WORK_TURN")" | bash "$DISPATCH_DIR/dispa
 report "SC-AK-701 — ход с работой отбоя не получает" \
     "$(printf '%s' "$WORK_OUT" | grep -c '"decision":"block"')" 0
 
-rm -f "$DISPATCH_DIR/turn-exit-guard.sh" "$DISPATCH_DIR/turn-exit-patterns.sh" "$REAL_TURN" "$WORK_TURN"
+rm -f "$DISPATCH_DIR/turn-exit-guard.sh" "$DISPATCH_DIR/turn-exit-patterns.sh" \
+    "$DISPATCH_DIR/turn-exit-verdict.sh" "$REAL_TURN" "$WORK_TURN"
 rm -rf "$REAL_REPO"
 
 rm -rf "$DISPATCH_DIR"

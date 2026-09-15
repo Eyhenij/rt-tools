@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.27.0 · rules/turn-conduct.md · 66e9427fc420 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · rules/turn-conduct.md · b411b972f6a9 · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -28,9 +28,17 @@ demand, not with the rule.
 
 ## Turn exits
 
-A turn ends in four ways and no others: a question to the owner the rules do not answer; a guard's
-refusal; a filled window where there is no compaction; work handed in, with the next begun. What
-confirms each, the turn map lists where the tree laid it out.
+A turn ends in four ways and no others: a question to the owner the rules do not answer **and no
+task in the work queue that can be taken without waiting for the answer**; a guard's refusal; a
+filled window where there is no compaction; work handed in, with the next begun. What confirms
+each, the turn map lists where the tree laid it out.
+
+The queue is asked by a command in the same turn, and its output stands in the turn itself: "there
+are no tasks" is a statement about the tree, and the executor's memory does not confirm it. A turn
+where the owner's answer holds one piece of work while an independent one lies next to it ends
+with the work taken, and the question goes in a line beside it. The price is measured not in turns
+but in days: a session stood a night and a morning naming the owner one and the same step while
+three independent tasks lay untaken.
 
 Everything else is the turn going on, not its end. A milestone does not end a turn: not a commit,
 not a read agreement, not the boundary "read — now editing", not a green check.
@@ -76,6 +84,18 @@ flowchart TD
 
 ## How the law applies here
 
+- **A promise to do the work in the next turn is an announcement of intent.** It differs from a
+  command named and not run only in that it sounds politer and is therefore recognised as
+  a stop less often. An offer to the owner to object to the announced intent is part of the
+  promise, not a question: a turn ends with a question when the work does not go without the
+  answer, and here it went.
+- **An order named by a number or by the word "all" is counted aloud before the turn ends.** The reply carries the count — how many out of how many. A turn where the count did
+  not add up does not end: it goes on with the next item of the order. How many items the order
+  holds is written nowhere in the tree — only whoever read the order knows it.
+- **The owner's word to work without stops holds until they cancel it themselves.** A turn ending
+  with waiting for that same word invents the cancellation. A new fact against the instruction is a
+  line about the price in the reply, not waiting; a decision the tree does not hold is asked as a
+  question by the tool.
 - **A summary of someone else's step.** A run, the owner's review and a merge go on without the
   executor and are not sped up by watching. Such a summary the owner reads as work: full, with
   numbers and states, the emptiness behind it unseen. Someone else's step is named with one's own

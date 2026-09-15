@@ -36,7 +36,8 @@ import {
     TOKEN_REFUSED,
     treeRoot,
 } from './shipment.fixture.js';
-import { leaksOfCargo, readPostmortems, remoteMarkOf, treeSlugOf } from './shipment.js';
+import { leaksOfCargo, readPostmortems } from './shipment.js';
+import { remoteMarkOf, treeSlugOf } from './tree-mark.js';
 import { overridesOf } from './snapshot.js';
 
 /** Тело сводки, как оно уехало: сводка всегда первая — ею заводится запись месяца. */

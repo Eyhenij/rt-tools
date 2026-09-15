@@ -62,6 +62,16 @@ describe('sectionRightGuard', (): void => {
         expect(verdictOf('/postmortems/1c2d')).not.toBe(true);
     });
 
+    it('SC-MB-351 — раздел использования закрыт своим правом: право сводок его не открывает', (): void => {
+        signedInWith(['summaries:read']);
+
+        expect(verdictOf('/usage')).not.toBe(true);
+
+        signedInWith(['usage:read']);
+
+        expect(verdictOf('/usage')).toBe(true);
+    });
+
     it('SC-MB-325 — раздел людей без права `accounts:read` не открывается прямой ссылкой', (): void => {
         // Сперва положительное: с правом раздел открывается — иначе проверка зеленела бы и на
         // адресе, которого в объявлении меню нет вовсе.

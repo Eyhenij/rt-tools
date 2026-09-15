@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing specs, laws and any skill. Names the three layers — law, rule, pattern — the mandatory sections, the binding to code and the link between scenarios and tests. Patterns spec-driven-domain, spec-driven-rule.
 ---
-<!-- rt-kit v0.27.0 · rules/spec-driven.md · 197b5d373058 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · rules/spec-driven.md · 22cbf6d13bd0 · правится надстройкой, не здесь -->
 
 # Project documentation — how it works here
 
@@ -96,7 +96,16 @@ flowchart TD
 - **The first column of the companion is the article text copied, not retold.** The key of the link
   is the text itself: a line written by meaning breaks the link while looking filled in. The check
   counts articles without an address and knows nothing of an article with a wrong address.
-- **A binding does not lead into code nobody calls:** a symbol called nowhere is not a place.
+- **A binding does not lead into code nobody calls, and a test is not a call.** A function written
+  test-first, before the first call from the application, is an intention: the test calls it
+  itself, and by that call a live symbol cannot be told from a forgotten one. The exception is a
+  symbol declared in the suite harness itself or published outward by a package — there the caller
+  is the test or the consumer by the very purpose of the file.
+- **A verdict is put by substance, not by the form of the address.** To the check these two look
+  alike, and to the reader of the companion
+  they do not: the first says "nothing here holds the requirement", the second "it holds, but there
+  is nothing to write it with". The second verdict names the form itself as the reason and lives
+  until the form is fixed; the article under it stays carried out and is not removed.
 - **A "not carried out" binding moves together with its article.** Otherwise the companion line
   keeps in the hot part an article with nothing behind it: removed alone, it leaves the binding
   without an item, and the audit turns red. Both sides move at once.

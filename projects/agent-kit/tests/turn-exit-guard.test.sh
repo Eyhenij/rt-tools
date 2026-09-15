@@ -33,6 +33,7 @@ transcript() {
 
 say() { jq -c -n --arg t "$1" '{type:"user",message:{content:[{type:"text",text:$t}]}}'; }
 reply() { jq -c -n --arg t "$1" '{type:"assistant",message:{content:[{type:"tool_use",name:"Read",input:{file_path:"a.md"}}]}}'; }
+said() { jq -c -n --arg t "$1" '{type:"assistant",message:{content:[{type:"text",text:$t}]}}'; }
 ran() {
     jq -c -n --arg c "$1" \
         '{type:"assistant",message:{content:[{type:"tool_use",name:"Bash",input:{command:$c}}]}}'
@@ -305,9 +306,9 @@ expect_stop "SC-AK-652 — работа была, а последним дейс
 expect_stop "SC-AK-653 — ход, кончившийся правкой файла, отпускается" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git log --oneline -5')" "$(edited)")")" PASS
 expect_stop "SC-AK-654 — заведение ветки разведкой не считается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git checkout -b RT-3-next origin/main')")")" PASS
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git checkout -b RT-3-next origin/main')" "$(edited)")")" PASS
 expect_stop "SC-AK-872 — заведение ветки с флагом перед -b — та же работа" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git checkout -q -b RT-3-next origin/main')")")" PASS
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git checkout -q -b RT-3-next origin/main')" "$(edited)")")" PASS
 expect_stop "SC-AK-655 — переключение на ветку разведкой остаётся" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git commit -q -m fix')" "$(ran 'git checkout main')")")" BLOCK
 
@@ -368,7 +369,7 @@ expect_stop "SC-AK-627 — слово владельца об остановке
 mkdir -p "$TAKEN/docs/tasks/RT-7-taken"
 printf '# Замысел\n' > "$TAKEN/docs/tasks/RT-7-taken/plan.md"
 expect_stop "SC-AK-628 — собранная папка задачи ярус снимает" \
-    "$(input_taken "$(transcript "$(say 'работай дальше')" "$(ran 'npm run task:move -- 7 in-progress')")")" PASS
+    "$(input_taken "$(transcript "$(say 'работай дальше')" "$(ran 'npm run task:move -- 7 in-progress')" "$(edited)")")" PASS
 
 rm -rf "$TAKEN"
 
@@ -402,5 +403,31 @@ exit_code_of() {
 exit_code_of "пустой вход пропускается" ''
 exit_code_of "неразбираемый вход пропускается" 'не json'
 exit_code_of "запись хода, которой нет, пропускается" "$(input_stop "$TURNS/нет-такой.jsonl")"
+
+# SC-AK-1066 … SC-AK-1070 — новые роды последнего действия хода: фоновый запуск проверок, чтение
+# лога фоновой задачи, обещание сделать следующим ходом, взятие задачи и ожидание слова владельца
+# при его же указании работать без остановок.
+state_is 'этап-идёт'
+
+expect_stop "SC-AK-1066 — фоновый запуск проверок последним действием ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'npm run test -- --watch=false &')")")" BLOCK
+
+expect_stop "SC-AK-1066 — тот же запуск в середине хода ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'npm run test -- --watch=false &')" "$(edited)")")" PASS
+
+expect_stop "SC-AK-1067 — чтение лога фоновой задачи ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'tail -20 /tmp/tasks/b1.output')")")" BLOCK
+
+expect_stop "SC-AK-1068 — обещание сделать следующим ходом ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(said 'Правку внёс. Остальные девятнадцать допишу следующим ходом.')")")" BLOCK
+
+expect_stop "SC-AK-1069 — взятие задачи последним действием ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'npm run task:move -- 2030 in-progress')")")" BLOCK
+
+expect_stop "SC-AK-1069 — взятие задачи после отданной работы ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft')" "$(ran 'npm run task:move -- 2030 in-progress')")")" PASS
+
+expect_stop "SC-AK-1070 — ожидание слова владельца при его указании работать ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'работай без остановок')" "$(edited)" "$(said 'Жду вашего слова.')")")" BLOCK
 
 suite_result "страж выходов хода"

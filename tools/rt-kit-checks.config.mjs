@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.27.0 · checks/rt-kit-checks.config.mjs · 1fe0312f4c05 · правится надстройкой, не здесь
+// rt-kit v0.28.0 · checks/rt-kit-checks.config.mjs · 66411c9ebe01 · правится надстройкой, не здесь
 /**
  * Check settings: what counts as sources, where not to go and where the debt lists lie.
  *
@@ -75,6 +75,12 @@ const DEFAULTS = {
      * those it installs: a sign about ready-made code from a package the tree does not have
      * answers falsely. Empty — there are no signs at all, and the guard and the check say so
      * rather than stay silent.
+     *
+     * A bundle is named either by the name alone or by a pair of the name and the area of the tree
+     * it holds over: `{ "name": "ui-kit-v2", "roots": ["apps/admin"] }`. A tree with two sources of
+     * look judges each application by its own bundle; without an area it would have a single move —
+     * not to declare the bundle at all, and then nothing catches a bypass of the ready-made where
+     * the bundle does hold.
      */
     reuse: { bundles: [], signals: '' },
     /** Where the domain specs lie; empty — the tree has none, and the spec audit is not run. */

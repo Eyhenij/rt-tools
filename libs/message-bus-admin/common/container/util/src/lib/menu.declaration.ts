@@ -37,6 +37,7 @@ export const ADMIN_MENU: readonly IAdminMenuItem[] = Object.freeze([
     { title: adminLabel('sectionPostmortems'), path: '/postmortems', icon: 'list', right: 'postmortems:read' } as const,
     { title: adminLabel('sectionProposals'), path: '/proposals', icon: 'comments', right: 'proposals:read' } as const,
     { title: adminLabel('sectionSummaries'), path: '/summaries', icon: 'chart-bar', right: 'summaries:read' } as const,
+    { title: adminLabel('sectionUsage'), path: '/usage', icon: 'chart-line', right: 'usage:read' } as const,
     { title: adminLabel('sectionInvites'), path: '/invites', icon: 'ico-invite', right: 'invites:read' } as const,
     { title: adminLabel('sectionPeople'), path: '/people', icon: 'users', right: 'accounts:read' } as const,
 ]);

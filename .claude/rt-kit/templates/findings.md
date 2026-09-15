@@ -1,4 +1,4 @@
-<!-- rt-kit v0.27.0 · templates/findings.md · 4214037b72f4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · templates/findings.md · 4214037b72f4 · правится надстройкой, не здесь -->
 # Findings of the epic <what it is about>
 
 <They accumulate here, next to the epic plan: the task folder dies with the merge, and the owner

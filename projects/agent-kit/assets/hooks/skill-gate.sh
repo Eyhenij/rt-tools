@@ -8,6 +8,13 @@
 # and after the rule is loaded the same area passes silently — there are no repeats, and it costs
 # almost nothing.
 #
+# One thing does cancel the mark, and on purpose: compaction or clearing of the session window.
+# `hooks/skill-gate-rearm.sh` removes the record then, and every area asks for its rule once more.
+# The mark says "the rule is in the window", not "the rule was once read": after the compaction the
+# text is gone from the window, and a gate that kept letting through would be letting the session
+# work from a retelling. The re-arming is told to the session in words, so that it is not read as
+# breakage.
+#
 # The "file — rule" map lives not here but in two files next door, and that is not duplication.
 # The default — `.claude/rt-kit/defaults/gate-map.sh` — is carried by the package: the trees of
 # this workshop are built alike, and rewriting one and the same map in each of them anew would

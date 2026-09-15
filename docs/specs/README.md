@@ -33,8 +33,8 @@ it means to take a report into work, when a record gets an answer to "what it is
 to "where to look for the fix".
 
 `message-bus` — the receiver of the cargo and the reading of what is taken in: what the receiver takes
-in by three operations, what a tree presents itself by, what lies in the record of the month, what a
-person presents themselves by and what they see after the entry — four sections of the admin
+in by four operations, what a tree presents itself by, what lies in the record of the month, what a
+person presents themselves by and what they see after the entry — five sections of the admin
 application with a list, a selection by the tree and a panel of the details. Next to it is a subdomain
 about the shell: the sections in the top row, the popup of the profile, the choice of the theme and of
 the language, the screen of the entry and one stack of the toasts. There too is where the receiver
@@ -47,7 +47,10 @@ package, and leaves into the journal of the receiver. The entry of a person stan
 its own: the name and the password, a cookie unavailable to the scripts, the term of the entry and the
 commands of the node an account is created by. Next to it is a subdomain about the version of the
 release in the lists: the column "В какой версии", a third filter in the strip and an order by the
-numbers of the parts, not by the letters of the string.
+numbers of the parts, not by the letters of the string. Next to it is a subdomain about the usage of
+the rules: the observation lines a tree sends by the day, the counting of loads, sessions and gate
+refusals by skill over a period, and the fifth section of the admin application with a table of
+skills and a panel of the sessions behind one skill.
 
 `ui-kit` — five subjects of the surface of the first kit, put together from the agreements written
 before the code: the button of the copying at an empty cell of a table, the delay of the showing of a

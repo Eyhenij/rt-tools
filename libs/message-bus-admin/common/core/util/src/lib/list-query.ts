@@ -40,18 +40,34 @@ export interface IAdminListQuery {
      * означало бы, что в адресе законна пара «версия и без версии сразу», а такого списка нет.
      */
     readonly version: string;
+    /**
+     * Первый и последний день периода, `ГГГГ-ММ-ДД`, оба включительно. Пусто — период не назван,
+     * и его подставляет приёмник.
+     *
+     * Период есть у одного раздела — использования; остальным он не приезжает и в запрос от них
+     * не уходит. Лежит в общей выборке по тому же доводу, что и состояние: у выборки одна форма
+     * на все разделы, и второй основы списка ради двух полей не бывает.
+     */
+    readonly from: string;
+    readonly to: string;
 }
 
 /** Имена параметров адреса. Названы здесь, чтобы разбор и сборка не расходились строками. */
-export const LIST_QUERY_PARAMS: Readonly<Record<'page' | 'size' | 'sort' | 'dir' | 'tree' | 'state' | 'version', string>> = Object.freeze({
-    page: 'page',
-    size: 'size',
-    sort: 'sort',
-    dir: 'dir',
-    tree: 'tree',
-    state: 'state',
-    version: 'version',
-});
+export const LIST_QUERY_PARAMS: Readonly<Record<'page' | 'size' | 'sort' | 'dir' | 'tree' | 'state' | 'version' | 'from' | 'to', string>> =
+    Object.freeze({
+        page: 'page',
+        size: 'size',
+        sort: 'sort',
+        dir: 'dir',
+        tree: 'tree',
+        state: 'state',
+        version: 'version',
+        from: 'from',
+        to: 'to',
+    });
+
+/** Форма дня в адресе. Та же, какой день читает приёмник. */
+const DAY_FORM: RegExp = /^\d{4}-\d{2}-\d{2}$/;
 
 /** Порядок по умолчанию: свежие сверху. Поле называет сам раздел — оно у всех своё. */
 export const DEFAULT_DIRECTION: TPageDirection = 'desc';
@@ -119,6 +135,29 @@ function version(raw: unknown): string {
 }
 
 /**
+ * День периода из адреса. Слово не в форме дня читается как несказанное: приёмник отбивает
+ * полупериод отказом, а адрес правит человек руками, и опечатка в нём дала бы отказ вместо списка.
+ */
+function day(raw: unknown): string {
+    const asked: string = plain(raw);
+
+    return DAY_FORM.test(asked) ? asked : '';
+}
+
+/**
+ * Период из адреса: оба дня или ни одного.
+ *
+ * Один день из двух читается как период не названный: приёмник на полупериод отвечает отказом,
+ * а экран с одним выбранным днём ещё не сказал, чего хочет.
+ */
+function period(params: Readonly<Record<string, unknown>>): { from: string; to: string } {
+    const from: string = day(params[LIST_QUERY_PARAMS.from]);
+    const to: string = day(params[LIST_QUERY_PARAMS.to]);
+
+    return from && to ? { from, to } : { from: '', to: '' };
+}
+
+/**
  * Выборка из параметров адреса.
  *
  * @param params Параметры адреса, как их отдаёт роутер.
@@ -137,7 +176,13 @@ export function listQueryOf(params: Readonly<Record<string, unknown>>, sortable:
         tree: plain(params[LIST_QUERY_PARAMS.tree]),
         state: state(params[LIST_QUERY_PARAMS.state]),
         version: version(params[LIST_QUERY_PARAMS.version]),
+        ...period(params),
     };
+}
+
+/** Отбор в параметр адреса: пустой снимается пустотой, названный едет как есть. */
+function named(value: string): string | null {
+    return value === '' ? null : value;
 }
 
 /**
@@ -153,9 +198,11 @@ export function listQueryParams(query: IAdminListQuery, sortable: readonly strin
         [LIST_QUERY_PARAMS.size]: query.size === PAGE_SIZE_DEFAULT ? null : String(query.size),
         [LIST_QUERY_PARAMS.sort]: query.sort === (sortable[0] ?? '') ? null : query.sort,
         [LIST_QUERY_PARAMS.dir]: query.dir === DEFAULT_DIRECTION ? null : query.dir,
-        [LIST_QUERY_PARAMS.tree]: query.tree === '' ? null : query.tree,
-        [LIST_QUERY_PARAMS.state]: query.state === '' ? null : query.state,
-        [LIST_QUERY_PARAMS.version]: query.version === '' ? null : query.version,
+        [LIST_QUERY_PARAMS.tree]: named(query.tree),
+        [LIST_QUERY_PARAMS.state]: named(query.state),
+        [LIST_QUERY_PARAMS.version]: named(query.version),
+        [LIST_QUERY_PARAMS.from]: named(query.from),
+        [LIST_QUERY_PARAMS.to]: named(query.to),
     };
 }
 
@@ -164,6 +211,7 @@ export function sameListQuery(one: IAdminListQuery, other: IAdminListQuery): boo
     const samePlace: boolean = one.page === other.page && one.size === other.size;
     const sameOrder: boolean = one.sort === other.sort && one.dir === other.dir;
     const sameFilters: boolean = one.tree === other.tree && one.state === other.state && one.version === other.version;
+    const samePeriod: boolean = one.from === other.from && one.to === other.to;
 
-    return samePlace && sameOrder && sameFilters;
+    return samePlace && sameOrder && sameFilters && samePeriod;
 }

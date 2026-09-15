@@ -74,6 +74,16 @@ const SUMMARIES_DATA_ACCESS = 'scope:message-bus-admin-summaries-data-access';
 const SUMMARIES_UI = 'scope:message-bus-admin-summaries-ui';
 
 /**
+ * Раздел использования правил. Устроен теми же семью слоями и теми же рёбрами, что и разделы
+ * груза: своего у него только модели, столбцы, отбор по периоду и панель сессий вместо панели
+ * подробностей.
+ */
+const USAGE_UTIL = 'scope:message-bus-admin-usage-util';
+const USAGE_API = 'scope:message-bus-admin-usage-api';
+const USAGE_DATA_ACCESS = 'scope:message-bus-admin-usage-data-access';
+const USAGE_UI = 'scope:message-bus-admin-usage-ui';
+
+/**
  * Раздел приглашений: модели и решения раздела, отзыв приглашения, стор списка, экран и маршрут.
  * Слоя вида у него нет — ячейки строки показывают готовые поля, и своего вида разделу не нужно.
  */
@@ -107,6 +117,7 @@ export const messageBusAdminBoundaries = [
             'scope:message-bus-admin-postmortems-shell',
             'scope:message-bus-admin-proposals-shell',
             'scope:message-bus-admin-summaries-shell',
+            'scope:message-bus-admin-usage-shell',
             'scope:message-bus-admin-invites-shell',
             'scope:message-bus-admin-accounts-shell',
             CORE_UTIL,
@@ -355,6 +366,52 @@ export const messageBusAdminBoundaries = [
             'scope:message-bus-admin-summaries-feature-list',
             'scope:message-bus-admin-summaries-feature-details-aside',
             SUMMARIES_UTIL,
+            CORE_UTIL,
+            PACKAGE,
+        ],
+    },
+
+    // Раздел использования правил. Лесенка та же и тем же перечислением, что у разделов груза
+    {
+        sourceTag: 'scope:message-bus-admin-usage-util',
+        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-usage-api',
+        onlyDependOnLibsWithTags: [USAGE_UTIL, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-usage-data-access',
+        onlyDependOnLibsWithTags: [USAGE_API, USAGE_UTIL, CORE_DATA_ACCESS, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-usage-ui',
+        onlyDependOnLibsWithTags: [USAGE_UTIL, CORE_UI, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-usage-feature-list',
+        onlyDependOnLibsWithTags: [
+            USAGE_DATA_ACCESS,
+            USAGE_UI,
+            USAGE_UTIL,
+            CORE_FEATURE,
+            CORE_UI,
+            CORE_DATA_ACCESS,
+            CORE_UTIL,
+            CONTRACT,
+            PACKAGE,
+        ],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-usage-feature-sessions-aside',
+        onlyDependOnLibsWithTags: [USAGE_DATA_ACCESS, USAGE_UI, USAGE_UTIL, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-usage-shell',
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-admin-usage-feature-list',
+            'scope:message-bus-admin-usage-feature-sessions-aside',
+            USAGE_UTIL,
             CORE_UTIL,
             PACKAGE,
         ],

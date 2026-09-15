@@ -8,6 +8,9 @@
     "testRoots": [
         "tools"
     ],
+    "harnessDirs": [
+        "projects/ui-kit-v2/src/showcase/story-snapshot.ts"
+    ],
     "indexedDirs": [],
     "plansDir": "docs/plans",
     "portableDirs": [
@@ -115,27 +118,31 @@
         "statusFieldId": "PVTSSF_lAHOBE82K84AjroZzgcAY0U",
         "statusOptions": {
             "new": {
-                "id": "e9c5e93d",
+                "id": "84ccf78a",
                 "name": "🆕 New"
             },
             "backlog": {
-                "id": "bb429887",
+                "id": "ed6ec61b",
                 "name": "📋 Backlog"
             },
             "ready": {
-                "id": "69a42c4a",
+                "id": "185ba621",
                 "name": "🔖 Ready"
             },
             "in-progress": {
-                "id": "9f0e17a7",
+                "id": "6684637d",
                 "name": "🏗 In progress"
             },
             "in-review": {
-                "id": "965595e4",
+                "id": "7a09deec",
                 "name": "👀 In review"
             },
+            "to-test": {
+                "id": "0b7a9e0d",
+                "name": "🧪 To test"
+            },
             "done": {
-                "id": "9194bf24",
+                "id": "a8204467",
                 "name": "✅ Done"
             }
         },

@@ -4,7 +4,7 @@ kind: rule
 law: navigation
 description: Rule under the navigation law. Load when editing the menu declaration, libs/admin/common/container/**, apps/admin/src/app/app.routes.ts and any libs/admin/**/*.routes.ts. Names the menu declaration, panel columns and groups, gating and address nesting. Ready-made code is in pattern admin-nav-item.
 ---
-<!-- rt-kit v0.27.0 · rules/navigation.md · 32771b399546 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · rules/navigation.md · 32771b399546 · правится надстройкой, не здесь -->
 
 # Admin navigation — how it works here
 

@@ -1,4 +1,4 @@
-// rt-kit v0.27.0 · checks/spec-anchors.mjs · d0882748aa8d · правится надстройкой, не здесь
+// rt-kit v0.28.0 · checks/spec-anchors.mjs · 5d7242ff9205 · правится надстройкой, не здесь
 /**
  * The binding of a rule to code and the laws a spec applies.
  *
@@ -14,7 +14,9 @@ import {
     VERDICT,
     VERDICT_MIN,
     bulletsOf,
+    codeOf,
     exists,
+    isTestFile,
     read,
     report,
     sectionOf,
@@ -204,7 +206,6 @@ function checkRuleImplementation(specFile, text, mapFile, heading = ['## Rules',
  * Code without comments. A symbol named in an explanation is called by nobody, and dead code
  * usually has more explanations than live code does.
  */
-const codeOf = (text) => text.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:`'"])\/\/.*$/gm, '$1');
 
 const DECLARATION_MODIFIERS = '(?:export|declare|abstract|public|private|protected|static|readonly|override|async|accessor)';
 
@@ -259,6 +260,36 @@ function symbolOwners() {
 }
 
 /**
+ * The files a package publishes outward: everything a `public-api.ts` or an `index.ts` re-exports,
+ * and everything those files re-export in turn. A symbol of a published file is called by whoever
+ * installed the package, and that caller is not in this tree at all: judged by the calls visible
+ * here, the whole public API of a kit reads as dead code.
+ */
+function publishedFiles() {
+    const published = new Set();
+    const entries = SOURCE_ROOTS.flatMap((root) => walk(root, (name) => name === 'public-api.ts' || name === 'index.ts'));
+    const queue = [...entries];
+    while (queue.length) {
+        const file = queue.pop();
+        const dir = file.slice(0, file.lastIndexOf('/'));
+        for (const [, relative] of read(file).matchAll(/(?:export|import)[^'"]*from\s+['"](\.[^'"]*)['"]/g)) {
+            for (const suffix of ['.ts', '/index.ts', '']) {
+                const path = `${dir}/${relative.replace(/^\.\//, '')}${suffix}`.replace(/\/\.\//g, '/');
+                if (exists(path) && !published.has(path)) {
+                    published.add(path);
+                    if (path.endsWith('/index.ts')) {
+                        queue.push(path);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    return published;
+}
+
+/**
  * A symbol declared in its own file and met nowhere else carries nothing out: a rule bound
  * to it describes an intention.
  */
@@ -278,6 +309,7 @@ function checkTracedAnchors() {
     }
 
     const owners = symbolOwners();
+    const published = publishedFiles();
     for (const { mapFile, path, symbol } of declared) {
         // A word boundary is placed only where one exists: there is none before a hash, and a
         // pattern with it would give zero occurrences for every private name.
@@ -285,12 +317,24 @@ function checkTracedAnchors() {
             ? `${escapeForRegExp(symbol)}\\b`
             : `\\b${escapeForRegExp(symbol)}\\b`;
         const here = (codeAt(path).match(new RegExp(bound, 'g')) || []).length;
-        const elsewhere = [...(owners.get(symbol) || [])].filter((file) => file !== path).length;
+        // A test is not a call. A function written test-first and never called from the
+        // application is an intention: the test calls it itself, and by that call a live symbol
+        // cannot be told from a forgotten one. Counted together, the declaration and the test file
+        // next to it made two — the threshold — and the audit went green exactly when the binding
+        // lied hardest.
+        // The exclusion works only for a symbol declared in the code of the application. A helper
+        // declared in the suite harness itself is called by tests by its very purpose: judged by
+        // the same measure, the articles of the testing rule would all turn red at once.
+        const others = [...(owners.get(symbol) || [])].filter((file) => file !== path);
+        const elsewhere = isTestFile(path) || published.has(path) ? others.length : others.filter((file) => !isTestFile(file)).length;
         if (here + elsewhere < 2) {
             report(
                 mapFile,
-                `the binding leads into dead code: \`${symbol}\` is declared in \`${path}\` and met nowhere else — ` +
-                    'either the statement is carried out elsewhere, or its place is in «Open questions» of the law as Q-<letter>-<number>'
+                others.length > elsewhere
+                    ? `the binding leads into code called by a test alone: \`${symbol}\` is declared in \`${path}\` and outside tests is met nowhere — ` +
+                          'a test is not a call from the application; either the statement is carried out elsewhere, or its place is in «Open questions» of the law as Q-<letter>-<number>'
+                    : `the binding leads into dead code: \`${symbol}\` is declared in \`${path}\` and met nowhere else — ` +
+                          'either the statement is carried out elsewhere, or its place is in «Open questions» of the law as Q-<letter>-<number>'
             );
         }
     }

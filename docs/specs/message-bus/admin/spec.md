@@ -296,7 +296,7 @@ the selection by both conditions. The state also stands in the set of the sortab
 operations.
 
 The operations of the section of the invitations — the reading of a page, the issuing and the revocation
-— stand in the subdomain next to it.
+— stand in the subdomain next to it; the two operations of the usage — in the subdomain of the usage.
 
 The common page of a list creates no operations of its own — it does not go to the intake at all. Its
 contract is what it has the right to ask of the host:

@@ -227,3 +227,16 @@ When the shared parse takes the write targets out of the command text
 Then the muted stream names nothing, while a real write standing next to it is still named
 
 Covered: `projects/agent-kit/tests/shell-write-paths.test.sh`.
+
+### SC-AK-1081 — the promise of merging by sections is given only where there are sections
+
+Given the edit falls on a laid-out text — a law, a rule, a pattern, a skill
+When the guard refuses
+Then it names the override and promises merging by the section «## »
+
+Given the edit falls on a laid-out shell script or check file
+When the guard refuses
+Then it does not promise merging by sections and says outright that a resource of this kind has no
+override by sections: a promise true of a third of the cases sends people to work by it
+
+Covered: `projects/agent-kit/tests/rule-source-guard.test.sh`.

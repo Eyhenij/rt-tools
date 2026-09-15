@@ -97,7 +97,7 @@ describe('AdminPeopleListComponent', () => {
         TestBed.resetTestingModule();
     });
 
-    it('SC-MB-324 — раздел, открытый без выборки, читает людей входившими позже сверху', async () => {
+    it('SC-MB-360 — раздел, открытый без выборки, читает людей входившими позже сверху', async () => {
         harness = await RouterTestingHarness.create('/people');
 
         const list: TestRequest = answerList([rowOf()]);
@@ -107,7 +107,7 @@ describe('AdminPeopleListComponent', () => {
         expect(list.request.params.get('dir')).toBe('desc');
     });
 
-    it('SC-MB-324 — строка называет имя, роль, состояние и время последнего входа', async () => {
+    it('SC-MB-360 — строка называет имя, роль, состояние и время последнего входа', async () => {
         await openSection();
 
         expect(cells('people-cell-name')).toEqual(['Ольга']);
@@ -116,7 +116,7 @@ describe('AdminPeopleListComponent', () => {
         expect(cells('people-cell-last-login')[0]).toMatch(/^\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}$/);
     });
 
-    it('SC-MB-324 — у записи без роли на месте роли стоит слово об этом, а не пустая ячейка', async () => {
+    it('SC-MB-360 — у записи без роли на месте роли стоит слово об этом, а не пустая ячейка', async () => {
         // Сперва положительное: у соседней записи роль на месте — иначе проверка зеленела бы и на
         // экране, потерявшем этот столбец целиком.
         await openSection([rowOf(), rowOf({ name: 'Андрей', role: null })]);
@@ -125,20 +125,20 @@ describe('AdminPeopleListComponent', () => {
         expect(cells('people-cell-role')[1]).toBe('Роли нет');
     });
 
-    it('SC-MB-324 — отключённая запись называет своё состояние и из списка не пропадает', async () => {
+    it('SC-MB-360 — отключённая запись называет своё состояние и из списка не пропадает', async () => {
         await openSection([rowOf({ name: 'Андрей', disabledAt: '2026-08-18T10:00:00.000Z' })]);
 
         expect(cells('people-cell-name')).toEqual(['Андрей']);
         expect(cells('people-cell-state')).toEqual(['Отключена']);
     });
 
-    it('SC-MB-324 — запись без входов говорит об этом словом, а не пустым местом', async () => {
+    it('SC-MB-360 — запись без входов говорит об этом словом, а не пустым местом', async () => {
         await openSection([rowOf({ lastLoginAt: null })]);
 
         expect(cells('people-cell-last-login')).toEqual(['Не входили']);
     });
 
-    it('SC-MB-324 — пустой список называет, чем заводятся записи, а кнопки заведения не обещает', async () => {
+    it('SC-MB-360 — пустой список называет, чем заводятся записи, а кнопки заведения не обещает', async () => {
         await openSection([]);
 
         const text: string = harness.fixture.nativeElement.textContent;
@@ -149,7 +149,7 @@ describe('AdminPeopleListComponent', () => {
         expect(text).not.toContain('Завести');
     });
 
-    it('SC-MB-324 — порядок по состоянию просится полем времени отключения, а не ключом столбца', async () => {
+    it('SC-MB-360 — порядок по состоянию просится полем времени отключения, а не ключом столбца', async () => {
         await openSection();
         harness.fixture.debugElement.queryAll(By.css('[cdk-header-cell] button'))[1].nativeElement.click();
         await harness.fixture.whenStable();
@@ -161,7 +161,7 @@ describe('AdminPeopleListComponent', () => {
         expect(list.request.params.get('sort')).toBe('disabledAt');
     });
 
-    it('SC-MB-324 — ни строка, ни меню строки не нажимаются: правок над записью из веба нет', async () => {
+    it('SC-MB-360 — ни строка, ни меню строки не нажимаются: правок над записью из веба нет', async () => {
         await openSection();
 
         // Сперва положительное: строка на экране есть — иначе проверка зеленела бы на пустом списке.

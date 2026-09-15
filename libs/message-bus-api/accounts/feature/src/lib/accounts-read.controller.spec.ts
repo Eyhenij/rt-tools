@@ -90,7 +90,7 @@ function prismaDouble(rows: IStoredAccount[] = STORED): PrismaService {
 }
 
 describe('AccountsReadController', (): void => {
-    it('SC-MB-324 — список отдаёт имя, роль, состояние и время последнего входа', async (): Promise<void> => {
+    it('SC-MB-360 — список отдаёт имя, роль, состояние и время последнего входа', async (): Promise<void> => {
         const page: IPage<IPersonView> = await new AccountsReadController(prismaDouble()).page({});
 
         // Умолчание порядка — последний вход, свежие сверху; не входившая запись уезжает в конец.
@@ -103,7 +103,7 @@ describe('AccountsReadController', (): void => {
         });
     });
 
-    it('SC-MB-324 — у записи без роли роль пуста, а словами её называет экран', async (): Promise<void> => {
+    it('SC-MB-360 — у записи без роли роль пуста, а словами её называет экран', async (): Promise<void> => {
         // Утверждение о пустоте идёт в паре с положительным: у соседней записи роль на месте.
         const page: IPage<IPersonView> = await new AccountsReadController(prismaDouble()).page({});
 
@@ -111,7 +111,7 @@ describe('AccountsReadController', (): void => {
         expect(page.rows[2].role).toBeNull();
     });
 
-    it('SC-MB-324 — отключённая запись и запись без входов отдают свои пустоты, а не пропадают', async (): Promise<void> => {
+    it('SC-MB-360 — отключённая запись и запись без входов отдают свои пустоты, а не пропадают', async (): Promise<void> => {
         const page: IPage<IPersonView> = await new AccountsReadController(prismaDouble()).page({});
 
         expect(page.rows[2]).toEqual({
@@ -122,14 +122,14 @@ describe('AccountsReadController', (): void => {
         });
     });
 
-    it('SC-MB-324 — список приезжает страницей: строки, их общее число и сама выборка', async (): Promise<void> => {
+    it('SC-MB-360 — список приезжает страницей: строки, их общее число и сама выборка', async (): Promise<void> => {
         const page: IPage<IPersonView> = await new AccountsReadController(prismaDouble()).page({ size: '20', sort: 'name', dir: 'asc' });
 
         expect(page.rows.map((row: IPersonView): string => row.name)).toEqual(['Андрей', 'Борис', 'Ольга']);
         expect(page).toMatchObject({ total: 3, page: 1, size: 20 });
     });
 
-    it('SC-MB-324 — вторая страница отдаёт своё окно, а общее число остаётся числом всех', async (): Promise<void> => {
+    it('SC-MB-360 — вторая страница отдаёт своё окно, а общее число остаётся числом всех', async (): Promise<void> => {
         const page: IPage<IPersonView> = await new AccountsReadController(prismaDouble()).page({
             page: '2',
             size: '20',
@@ -143,13 +143,13 @@ describe('AccountsReadController', (): void => {
         expect(page.page).toBe(2);
     });
 
-    it('SC-MB-324 — поле порядка вне набора отбивается отказом с именем параметра', async (): Promise<void> => {
+    it('SC-MB-360 — поле порядка вне набора отбивается отказом с именем параметра', async (): Promise<void> => {
         // Утверждение об отказе идёт в паре с положительным: поле из набора запрос принимает.
         await expect(new AccountsReadController(prismaDouble()).page({ sort: 'passwordHash' })).rejects.toBeInstanceOf(BadRequestException);
         await expect(new AccountsReadController(prismaDouble()).page({ sort: 'name' })).resolves.toBeDefined();
     });
 
-    it('SC-MB-324 — записей нет: страница пуста, а не отказ', async (): Promise<void> => {
+    it('SC-MB-360 — записей нет: страница пуста, а не отказ', async (): Promise<void> => {
         // Пустое хранилище — законное состояние свежей службы, и отказ на него читался бы поломкой.
         const page: IPage<IPersonView> = await new AccountsReadController(prismaDouble([])).page({});
 

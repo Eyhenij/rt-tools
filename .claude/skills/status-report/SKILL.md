@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law. Load when the owner asked where the work stands — "what is the status", "which epic", "what are you doing now". Names the shape of the reply — a paragraph about the epic and a table of its tasks — and what backs a cell about the tree. Pattern status-report-table.
 ---
-<!-- rt-kit v0.27.0 · rules/status-report.md · e8e0bcc528e0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · rules/status-report.md · e8e0bcc528e0 · правится надстройкой, не здесь -->
 
 # Status report — how it works here
 

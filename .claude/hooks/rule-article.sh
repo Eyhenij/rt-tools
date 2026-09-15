@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/rule-article.sh · 7d6519c66cc6 · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/rule-article.sh · 7d6519c66cc6 · правится надстройкой, не здесь
 # Parsing the applicability sign of a rule article. A helper: it declares no event of its own, and
 # is sourced by whoever needs the text of an article — the rules gate in its refusal.
 #

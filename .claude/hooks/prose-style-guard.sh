@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/prose-style-guard.sh · dfd0f69c4188 · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/prose-style-guard.sh · dfd0f69c4188 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: checks/check-prose-style.mjs, hooks/deny-tail.sh, hooks/write-targets.sh
 # Prose guard: officialese and words that are not written in this tree do not reach the file.

@@ -4,7 +4,7 @@ The identifier stands at the start of the test title, followed by a dash. While 
 covered, it carries the mark "Не покрыто: <причина>" with a reason. The prefix is shared by the
 domain.
 
-### SC-MB-324 — the section shows the name, the role, the state and the last sign-in
+### SC-MB-360 — the section shows the name, the role, the state and the last sign-in
 
 Given accounts of the receiver, among them a disabled one, one without a role and one that never
 signed in

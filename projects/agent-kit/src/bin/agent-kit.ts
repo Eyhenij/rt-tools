@@ -19,7 +19,8 @@ import { costLines, costOf, CostUnavailableError, ICost } from '../lib/cost.js';
 import { enroll, httpEnroll } from '../lib/enroll.js';
 import { httpReadOwn, httpShip } from '../lib/ship.js';
 import { fate } from '../lib/fate.js';
-import { propose, treeSlugOf } from '../lib/shipment.js';
+import { propose } from '../lib/shipment.js';
+import { treeSlugOf } from '../lib/tree-mark.js';
 import { DEFAULT_DAYS } from '../lib/observations.js';
 import { staleBuild } from '../lib/freshness.js';
 import { packageRootFrom } from '../lib/package-root.js';
@@ -372,7 +373,7 @@ const COMMANDS: Readonly<Record<string, TCommandRun>> = {
     propose: runPropose,
     fate: runFate,
     enroll: runEnroll,
-    doctor: (env: IEnvironment): IOutcomeOfCommand => doctor(env),
+    doctor: (env: IEnvironment, argv: readonly string[]): IOutcomeOfCommand => doctor(env, optionOf(argv, '--since', '')),
     adopt: (env: IEnvironment, argv: readonly string[]): IOutcomeOfCommand =>
         adopt(
             env,

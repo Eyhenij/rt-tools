@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load for any check through the browser and for requests to the dev server. Names where the tree's applications run, what on the dev server cannot be trusted and what to measure instead of looking. Patterns browser-verification-stand, -measure.
 ---
-<!-- rt-kit v0.27.0 · rules/browser-verification.md · e48bfea9302a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · rules/browser-verification.md · 7017b99bedee · правится надстройкой, не здесь -->
 
 # Checking the running application — how it works here
 
@@ -152,6 +152,14 @@ flowchart TD
   Each such defect is visible by one measurement command. Numbers taken from the reference in
   advance are checked against the implementation the same way: work done by retelling the reference
   in words diverges from it unnoticed.
+
+- **Work that carries a look over from a sample is accepted by a frame of one's own screen next to
+  the sample's frame.** Names carried into the markup are the technique, not the result: a green
+  build, linters and tests say nothing about a field clipped mid-line. Every remade screen is
+  looked at by the executor and shown to the owner; a screen not opened since the edit counts as
+  unchecked. A measurement set assembled by the author under their own edit confirms nothing
+  either — it holds what was fixed in that hour; the set is taken from what the work is accepted
+  by and is written before the edit.
 
 A conclusion about layout is backed by a number: "looks fine" is never a check result. Nothing
 guards this — how to measure is covered in pattern `browser-verification-measure`.

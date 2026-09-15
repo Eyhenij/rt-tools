@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.27.0 · checks/check-hook-scope.mjs · c84fab0f7b6d · правится надстройкой, не здесь
+// rt-kit v0.28.0 · checks/check-hook-scope.mjs · c84fab0f7b6d · правится надстройкой, не здесь
 /**
  * The audit of a guard declaration against what its body branches on.
  *
