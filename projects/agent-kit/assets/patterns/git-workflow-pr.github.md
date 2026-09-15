@@ -2,7 +2,7 @@
 name: git-workflow-pr
 kind: pattern
 rule: git-workflow
-description: Pattern of rule git-workflow. Load for opening a PR and everything around it — title format, draft and leaving it, the link to the task, reviewer and labels, a body sample, reading the PR state, the checklist. Creating the task and committing — pattern git-workflow-commit.
+description: Pattern of rule git-workflow. Load for opening a PR and everything around it — title format, draft and leaving it, reading the PR state, the checklist. The link to the task, reviewer, labels and the body sample — pattern git-workflow-pr-body; creating the task and committing — git-workflow-commit.
 ---
 
 # The PR
@@ -96,100 +96,11 @@ Lifting the draft and asking to merge go in one turn: a lifted draft nobody told
 waits for review just like one not lifted. A PR opened without the draft key needs no such call,
 and the request to merge goes in the turn that opened it.
 
-## The PR is attached to the task
+## The link to the task and the body
 
-The body starts with the link line — by it the board fills the linked PRs field. Reviewer,
-assignee and labels are set by the same command, and a PR does not open without them:
-
-```bash
-GH_TOKEN="$TOKEN" gh pr create --base <ветка эпика> --title '[<КЛЮЧ>-86] Письмо владельцу с незаполненным адресом попадает в логи' \
-    --reviewer <владелец> --assignee <бот> --label bug --label area:api \
-    --body 'Closes #86
-
-…'
-```
-
-The reviewer is always the owner: without a review request the PR does not show in their queue.
-The assignee is the same account the machine work goes from. Labels are taken from the task
-whole — both the kind of edit and all its areas; they are read from the task, not picked from
-memory:
-
-```bash
-/opt/homebrew/bin/gh issue view 86 --json labels --jq '.labels | map(.name) | join(",")'
-```
-
-The line `Closes #<номер>` is mandatory: without it the PR is not attached to the task, and the
-queue audit finds this. It also means the task closes whole — half a task is not rolled out by
-one PR: work that does not fit one branch is split into tasks before the branch is created.
-
-A refusal about an exceeded query-language quota (`API rate limit already exceeded`) creates no
-PR at all; the opening then goes by a REST call — `$GH api -X POST "repos/$REPO/pulls" -f head=… -f
-base=… -f title=… -F body=@<файл>` — and labels and reviewer are set after it. The text of such
-a refusal reads as temporary, but the account's quota is not exhausted — it equals zero: there
-is nothing to wait for.
-
-On an already open PR the same is set by three REST calls. `gh pr edit` will not do here: it
-queries Projects (classic) cards, gets a refusal about a removed API and never reaches the edit.
-
-```bash
-GH=/opt/homebrew/bin/gh
-REPO=<владелец>/<репозиторий>
-
-$GH api -X POST "repos/$REPO/issues/205/labels" -f 'labels[]=bug' -f 'labels[]=area:api'
-$GH api -X POST "repos/$REPO/issues/205/assignees" -f 'assignees[]=<бот>'
-$GH api -X POST "repos/$REPO/pulls/205/requested_reviewers" -f 'reviewers[]=<владелец>'
-```
-
-The same call edits the body itself: `-f body=` rewrites it whole, so the line
-`Closes #<номер>` is written anew together with the rest of the text.
-
-```bash
-$GH api -X PATCH "repos/$REPO/pulls/205" -f body="$(cat тело.md)"
-```
-
-The body is reread whenever something merged into the branch after publishing: the PR states
-things about the tree, and the tree has changed since.
-
-## PR body sample
-
-Four sections, and one order between them: the link line, what was done, what confirms it, the
-remaining step. A section with nothing to say says so in words — an empty heading and a removed
-heading read alike and mean different things.
-
-```markdown
-Closes #86
-
-## Что сделано
-
-- <правка, названная тем, что она меняет для читателя, а не тем, какие файлы задела>
-
-## Чем подтверждено
-
-- <проверка>: <её вывод одной строкой>
-- Не гонялось: <что в набор не вошло и почему>
-
-## Оставшийся шаг
-
-Папка задачи разобрана коммитом `<sha>` — за работой убрано. Осталось дождаться прогона и снять
-черновик; до этого кнопка слияния заблокирована хостингом.
-```
-
-The "Remaining step" section stands last and is rewritten by the same call as the rest of the
-body — in the turn that lifts the draft:
-
-```markdown
-## Оставшийся шаг
-
-Не осталось: прогон зелёный, черновик снят. Можно вливать.
-```
-
-It stands there because the merge decision is made on that page, not in the conversation: what
-was said to the owner aloud lives until the next reply, and the body lies right by the button.
-One does not cancel the other — the order of both messages to the owner is described by the
-pattern for closing work.
-
-There is nothing to check the body by machine: no audit reads it, and the host asks only about
-the title. The sample is held by whoever writes the body — like the words said aloud.
+The `Closes #<номер>` line, the reviewer, the assignee and the labels set by the opening call,
+the four sections of the body and how the task closes when the base is not the main branch —
+pattern `git-workflow-pr-body`. The pattern was split out of this one by the length limit.
 
 ## The PR state is read, not guessed
 
@@ -313,16 +224,7 @@ is trust in the section: once read as complete, from then on it is rechecked who
 ## Common misses
 
 Misses about creating the task, the branch and the commit — pattern
-`git-workflow-commit`.
+`git-workflow-commit`; about the link line, the labels and the body — `git-workflow-pr-body`.
 
-- A second `Closes` line in one PR no longer closes a task: two tasks in one branch roll back
-  only together. Either it is one task — and the second is absorbed — or two branches.
-- Half a task that left by its own PR is a miss too: the body of such a PR starts with the words
-  `Часть #<номер>` instead of `Closes`, and the task stays open. Work that does not fit one
-  branch is split into tasks before the branch is created.
 - A PR opened without a reviewer: it never reaches the owner's inbox at all, and the queue stands
   while looking as if it works. That is how sixteen PRs waited for a review nobody had requested.
-- Labels set by the PR title, not read from the task: the area is lost, and the board does not
-  show that the edit touched the site too.
-- The task closed not in full, but the labels carried over whole: the task stays open, and the
-  PR body says so instead of implying it by a `Closes` line.
