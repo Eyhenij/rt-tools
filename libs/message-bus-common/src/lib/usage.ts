@@ -34,3 +34,35 @@ export interface IUsagePage extends IPage<IUsageRow> {
     readonly from: string;
     readonly to: string;
 }
+
+/** Один день периода: загрузки, отдельные сессии с загрузкой, отказы гейта. День без строк — нули. */
+export interface IUsageDayRow {
+    readonly day: string;
+    readonly loads: number;
+    readonly sessions: number;
+    readonly denials: number;
+}
+
+/** Загрузки одного рода скила за период. */
+export interface IUsageKindRow {
+    readonly kind: string;
+    readonly loads: number;
+}
+
+/**
+ * Сводка периода: то, чем раздел рисует график и списки над таблицей.
+ *
+ * Своя операция, а не поля страницы: страница меняется с порядком и номером, сводка — только с
+ * периодом, и внутри страницы она перечитывалась бы на каждую сортировку. Дни — все дни периода
+ * подряд, с нулями: график рисует столбик на день, и дыра в днях читалась бы как день без строки.
+ */
+export interface IUsageDigest {
+    readonly from: string;
+    readonly to: string;
+    readonly days: readonly IUsageDayRow[];
+    readonly kinds: readonly IUsageKindRow[];
+    /** Пять самых загружаемых скилов. */
+    readonly top: readonly IUsageRow[];
+    /** Пять скилов с наибольшим числом отказов гейта; без отказов — пусто. */
+    readonly denied: readonly IUsageRow[];
+}

@@ -1,6 +1,6 @@
 # Usage of the rules in the sessions of the trees — the intake, the reading and the section
 
-**Status:** in force · **Revision:** 2026-09-14 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 2026-09-15 · **Scenario prefix:** `SC-MB`
 **Depends on:** `agent-kit` (the observation lines are read from the tree and sent by it)
 **Laws:** `verifiability`, `entity-models`, `lists`, `reuse-first`, `frontend-application`, `lib-imports`, `observability`
 **Procedures:** none — the operations are declared by the controllers of the intake
@@ -19,25 +19,27 @@ summing.
 
 The trees now send their observation lines as they lie, grouped by day, with the kind of every
 loaded skill. This agreement names what the intake does with the lines, how they are counted and
-what the section of the admin application shows: a table of skills over a tree and a period, and
-the sessions behind one skill.
+what the section of the admin application shows: a digest of the period above the table — a chart
+of the loads by day and the lists of the top skills, the kinds and the refusals — a table of skills
+over a tree and a period, and the sessions behind one skill.
 
 ## Terminology
 
 The vocabulary of the domain whole is in the spec next to it. Here only what the lines bring:
 
-| Term                  | What it is                                                                                                                                                |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| An observation        | One row of the storage: a tree, the sign of its working copy, the day, the time, the event, the resource, the kind, the session sign, the package version |
-| The observation cargo | The lines of the window of a run of the sending, grouped by day, with the sign of the working copy — the fourth kind of cargo                             |
-| The working copy sign | The checksum of the root of the working copy that sent the lines; one tree has several copies with one tree sign                                          |
-| The kind of a skill   | One of four: a rule of the package, a pattern of the package, another skill of the package, a skill of the tree's own                                     |
-| A load                | An observation of the event "a skill was loaded"                                                                                                          |
-| A refusal of the gate | An observation of the event "the rules gate refused an edit"; the resource names the rule that was not loaded                                             |
-| The session sign      | The checksum of the session id, as the tree wrote it; sessions are counted by it and named by nothing                                                     |
-| The usage of a skill  | One row of the table: the skill, its kind, the loads, the sessions that loaded it, the refusals of the gate about it                                      |
-| The period            | The days the usage is counted over, both ends included, in universal time                                                                                 |
-| The keeping term      | How long an observation lies in the storage: a year from the day of the line                                                                              |
+| Term                   | What it is                                                                                                                                                 |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| An observation         | One row of the storage: a tree, the sign of its working copy, the day, the time, the event, the resource, the kind, the session sign, the package version  |
+| The observation cargo  | The lines of the window of a run of the sending, grouped by day, with the sign of the working copy — the fourth kind of cargo                              |
+| The working copy sign  | The checksum of the root of the working copy that sent the lines; one tree has several copies with one tree sign                                           |
+| The kind of a skill    | One of four: a rule of the package, a pattern of the package, another skill of the package, a skill of the tree's own                                      |
+| A load                 | An observation of the event "a skill was loaded"                                                                                                           |
+| A refusal of the gate  | An observation of the event "the rules gate refused an edit"; the resource names the rule that was not loaded                                              |
+| The session sign       | The checksum of the session id, as the tree wrote it; sessions are counted by it and named by nothing                                                      |
+| The usage of a skill   | One row of the table: the skill, its kind, the loads, the sessions that loaded it, the refusals of the gate about it                                       |
+| The period             | The days the usage is counted over, both ends included, in universal time                                                                                  |
+| The digest of a period | What stands above the table: the loads, sessions and refusals of every day of the period, the loads by kind, five top skills by loads and five by refusals |
+| The keeping term       | How long an observation lies in the storage: a year from the day of the line                                                                               |
 
 ### What it is called in the interface
 
@@ -47,6 +49,8 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
 | the usage of a skill    | a row of the table; the columns «Скил», «Род», «Загрузок», «Сессий», «Отказов»                       |
 | the kind of a skill     | «правило», «паттерн», «скил пакета», «свой скил дерева»                                              |
 | the filters             | the tree and the period above the table; the period is two days, the default is the last thirty days |
+| the quick period        | a toggle «7 дней», «30 дней», «90 дней» next to the day pickers                                      |
+| the digest of a period  | the cards above the table: «Загрузки по дням», «Топ скилов», «По роду», «Отказы»                     |
 | the sessions of a skill | the panel «Сессии» opened by a row: a list of day, session sign and how many times                   |
 | the right               | `usage:read` — a person with it sees the section and reads the usage                                 |
 
@@ -105,6 +109,13 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
   digests: the section is its own, and the closed set of rights names every section by name.
 - **An empty period answers with an empty page, not a refusal.** A tree that sent nothing over the
   period has no usage, and that is an answer.
+- **The digest of a period is read by an operation of its own, and it carries every day of the
+  period.** The page changes with the sort and the page number, the digest only with the period; a
+  digest inside the page would be read anew on every sort. A day without rows is a row of zeros:
+  the chart draws a bar per day, and a hole between days would read as a day without a bar.
+- **The digest carries the loads by kind and two lists of five skills — by loads and by refusals.**
+  The lists are rows of the table counted by the same grouped query with a page of five; a skill
+  without refusals does not enter the list of refusals.
 
 **The section.**
 
@@ -113,6 +124,14 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
   itself by one declaration, as the neighbouring sections do.
 - **The filters are the tree and the period, and a change of either re-reads the table.** The tree
   is chosen from the list of the created trees; the period is two days, the last thirty by default.
+- **The quick period is a toggle of 7, 30 and 90 days next to the day pickers.** A press counts the
+  pair from the screen's today by a pure function and puts it into the address as any pick of the
+  period does; the toggle lights when the address holds exactly that pair.
+- **The digest stands above the table in a grid of cards: a wide card with the chart of the loads
+  by day, and three bar lists — the top skills, the loads by kind, the refusals.** The chart is bars
+  scaled to the largest day, one bar per day, with the numbers in the hint of the bar; the lists
+  are the kit's bar list with the share counted from the leader. A change of the tree or the period
+  re-reads the digest together with the table; a change of the sort or the page does not.
 - **A row of the table shows the skill, its kind, the loads, the sessions and the refusals.** The
   kind is shown by a word of the domain, not by the word of the cargo: the person behind the screen
   has read no rule of the layer.
@@ -133,8 +152,8 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
 
 ## What is out of scope
 
-- **Charts and a digest over several trees.** The section shows one tree over one period; the
-  digest over trees stays out of scope by the word of the owner, as the domain spec says.
+- **A digest over several trees.** The section shows one tree over one period; the digest over
+  trees stays out of scope by the word of the owner, as the domain spec says.
 - **The session time and the token cost.** Named by the owner outright.
 - **Editing or deleting the lines from the admin application.** The lines are what the tree sent;
   the only removal is by age.
@@ -151,6 +170,7 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
 | POST /api/intake/observations  | takes the observation cargo in by the tree token: a day of a copy is replaced whole              |
 | GET /api/usage                 | a page of the usage of the skills of a tree: `tree`, `from`, `to`, `page`, `size`, `sort`, `dir` |
 | GET /api/usage/:skill/sessions | the sessions of one skill of a tree over the period: `tree`, `from`, `to`; newest day first      |
+| GET /api/usage/digest          | the digest of the period of a tree: `tree`, `from`, `to`; the days, the kinds, the two tops      |
 
 The body of the intake operation is the observation cargo as the sending side declares it: `{ schema,
 tree, origin, days: [{ day, lines: [{ t, ev, res, kind?, sid, v, skill? }] }] }`. The form is declared
@@ -159,7 +179,10 @@ once, in the cargo module of the package, and the intake reads it from the same 
 The answer of the intake names the tree, how many days were replaced and how many rows landed. The
 answer of the usage is a page `{ rows, total, page, size, from, to }` of rows `{ skill, kind, loads,
 sessions, denials }`, and `from`, `to` name the period counted; the answer of the sessions is a list
-of rows `{ day, sid, count }`. Both readings are closed by `usage:read`.
+of rows `{ day, sid, count }`; the answer of the digest is `{ from, to, days, kinds, top, denied }`
+with `days` of `{ day, loads, sessions, denials }` for every day of the period, `kinds` of `{ kind,
+loads }`, and `top`, `denied` of the rows of the table. All three readings are closed by
+`usage:read`.
 
 ### Refusal codes
 
@@ -202,11 +225,12 @@ the character, and the tree sends what it wrote.
 
 ## Screens and states
 
-| Screen                      | States                                                                                                                           |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| The section «Использование» | reading: the former rows dimmed under the sign of reading · rows · empty state of the base · one message of the bus at a failure |
-| The filters                 | the tree not chosen: the table is empty and asks for a tree · the tree chosen and the period default · the period edited         |
-| The panel «Сессии»          | opening: the sign of reading · rows of day, sign and count · empty: the skill had no load over the period                        |
+| Screen                      | States                                                                                                                               |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| The section «Использование» | reading: the former rows dimmed under the sign of reading · rows · empty state of the base · one message of the bus at a failure     |
+| The digest                  | reading: the cards under the sign of reading · the chart and the lists · an empty period: zero bars and the empty state of the lists |
+| The filters                 | the tree not chosen: the table is empty and asks for a tree · the tree chosen and the period default · the period edited             |
+| The panel «Сессии»          | opening: the sign of reading · rows of day, sign and count · empty: the skill had no load over the period                            |
 
 ## Cross-cutting requirements
 
@@ -260,6 +284,9 @@ the intake and summed together at the reading: the owner asks about the tree, no
 
 ## History of changes
 
+- 2026-09-15 — the digest of the period: the operation, the cards above the table, the quick
+  period. The owner named the sample screen and its charts; the line about charts in "out of
+  scope" had misread the owner's word about a digest over several trees.
 - 2026-09-14 — created from the grill of the owner's request about the statistics of rule usage in
   the sessions of consumer trees. Rewritten the same day: the roles had replaced the raw lines by a
   month block inside the digest and the section by a table in the panel of a record, against three

@@ -164,3 +164,41 @@ Then the page comes back with the total of skills, in the order of the named fie
 name. A field outside `loads`, `skill`, `sessions`, `denials` is refused with `400`
 
 Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`.
+
+### SC-MB-355 — the digest carries every day of the period, zeros where no row lies
+
+Given a period of four days with rows on the second only
+When the digest is read
+Then four day rows come back in the order of the days, the second with its numbers and the rest
+with zeros
+
+Covered: `libs/message-bus-api/observations/util/src/lib/usage-digest.util.spec.ts`.
+
+### SC-MB-356 — the digest of a tree over a period: the days, the kinds, the two tops
+
+Given the rows of a tree over a period
+When the digest is read
+Then the answer names the period, the days with zeros filled, the loads by kind, five skills by
+loads descending and five by refusals descending without those with none; the reading is closed by
+`usage:read`
+
+Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`.
+Покрытие: частичное — the text of the grouped queries is probed by the end-to-end spec of the section over seeded rows.
+
+### SC-MB-357 — the section shows the digest of the period above the table
+
+Given a person with `usage:read` and the rows of the stand
+When they open the section and choose the tree and the period of the rows
+Then above the table stand a bar per day of the period, the list of the top skills with the most
+loaded first, the list of the kinds and the list of the refusals
+
+Not covered: the end-to-end spec of the section is written by stage 3 of RT-2115.
+
+### SC-MB-358 — the quick period puts the pair of days into the address
+
+Given the table of a tree is shown
+When the person presses «7 дней»
+Then the address holds the last seven days ending today, the day pickers show them, and the table
+and the digest re-read
+
+Not covered: the end-to-end spec of the section is written by stage 3 of RT-2115.

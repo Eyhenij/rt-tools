@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { OPERATION_ACCESS, OPERATION_RIGHT } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { IUsagePage, IUsageRow, IUsageSessionRow } from '@rt/message-bus-common';
+import { IUsageDigest, IUsagePage, IUsageRow, IUsageSessionRow } from '@rt/message-bus-common';
 
 import { UsageReadController } from './usage-read.controller';
 
@@ -25,9 +25,12 @@ class PrismaDouble {
     public readonly asked: IAskedQuery[] = [];
 
     readonly #rows: readonly unknown[];
+    readonly #byText: ReadonlyMap<string, readonly unknown[]>;
 
-    constructor(rows: readonly unknown[] = []) {
+    /** Строки на любой запрос; вторым доводом — строки на запрос, чей текст несёт названный кусок. */
+    constructor(rows: readonly unknown[] = [], byText: ReadonlyMap<string, readonly unknown[]> = new Map()) {
         this.#rows = rows;
+        this.#byText = byText;
     }
 
     public get tree(): { findUnique: (args: { where: { slug: string } }) => Promise<{ id: string } | null> } {
@@ -39,6 +42,11 @@ class PrismaDouble {
 
     public async $queryRaw(query: IAskedQuery): Promise<unknown[]> {
         this.asked.push(query);
+        for (const [text, rows] of this.#byText) {
+            if (query.sql.includes(text)) {
+                return [...rows];
+            }
+        }
 
         return [...this.#rows];
     }
@@ -130,8 +138,41 @@ describe('UsageReadController', () => {
         expect(page).toEqual({ rows: [], total: 0, page: 1, size: 20, from: PERIOD.from, to: PERIOD.to });
     });
 
-    it('SC-MB-346 — обе операции закрыты правом чтения использования', () => {
-        for (const method of [UsageReadController.prototype.usage, UsageReadController.prototype.sessions]) {
+    it('SC-MB-356 — сводка периода: дни с нулями, роды, пять по загрузкам и пять по отказам без нулевых', async () => {
+        const double: PrismaDouble = new PrismaDouble(
+            [
+                { skill: 'testing', kind: 'rule', loads: 3, sessions: 2, denials: 1, total: 2 },
+                { skill: 'lists', kind: null, loads: 0, sessions: 0, denials: 0, total: 2 },
+            ],
+            new Map<string, readonly unknown[]>([
+                ['GROUP BY "day"', [{ day: '2026-08-02', loads: 3, sessions: 2, denials: 1 }]],
+                ['GROUP BY "skill"', [{ kind: 'rule', loads: 3 }]],
+            ])
+        );
+
+        const digest: IUsageDigest = await controllerOf(double).digest({ tree: OWN.slug, from: '2026-08-01', to: '2026-08-03' });
+
+        expect(digest.days).toEqual([
+            { day: '2026-08-01', loads: 0, sessions: 0, denials: 0 },
+            { day: '2026-08-02', loads: 3, sessions: 2, denials: 1 },
+            { day: '2026-08-03', loads: 0, sessions: 0, denials: 0 },
+        ]);
+        expect(digest.kinds).toEqual([{ kind: 'rule', loads: 3 }]);
+        expect(digest.top.map((row: IUsageRow): string => row.skill)).toEqual(['testing', 'lists']);
+        expect(digest.denied.map((row: IUsageRow): string => row.skill)).toEqual(['testing']);
+        expect(digest).toMatchObject({ from: '2026-08-01', to: '2026-08-03' });
+        expect(double.asked).toHaveLength(4);
+        expect(double.asked[2].sql).toContain('ORDER BY "loads" DESC');
+        expect(double.asked[2].values.slice(3)).toEqual([5, 0]);
+        expect(double.asked[3].sql).toContain('ORDER BY "denials" DESC');
+    });
+
+    it('SC-MB-346 — все три операции закрыты правом чтения использования', () => {
+        for (const method of [
+            UsageReadController.prototype.usage,
+            UsageReadController.prototype.sessions,
+            UsageReadController.prototype.digest,
+        ]) {
             expect(Reflect.getMetadata(OPERATION_ACCESS, method)).toBe('permission');
             expect(Reflect.getMetadata(OPERATION_RIGHT, method)).toBe('usage:read');
         }
