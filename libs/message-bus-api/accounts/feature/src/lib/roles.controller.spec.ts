@@ -7,7 +7,7 @@ import { OPERATION_ACCESS, OPERATION_RIGHT } from '@rt/message-bus-api/access/ut
 import { IPage, IRoleView } from '@rt/message-bus-common';
 
 import { RolesController } from './roles.controller';
-import { IRolesStorage, IStoredRole, requestOf, rolesStorage } from './roles-storage.harness';
+import { IRolesStorage, IStoredRole, signedInAs, rolesStorage } from './roles-storage.harness';
 
 describe('RolesController', (): void => {
     it('SC-MB-382 — все операции над ролями закрыты правом на роли, а не правом на правку людей', (): void => {
@@ -48,7 +48,7 @@ describe('RolesController', (): void => {
         const controller: RolesController = new RolesController(prisma);
 
         await expect(controller.create({ name: 'ВЛАДЕЛЕЦ', rights: [] })).rejects.toThrow(ConflictException);
-        await expect(controller.replace('watcher', { name: 'владелец', rights: [] }, requestOf('a1', 'Ольга'))).rejects.toThrow(
+        await expect(controller.replace('watcher', { name: 'владелец', rights: [] }, signedInAs('a1', 'Ольга'))).rejects.toThrow(
             ConflictException
         );
         expect(roles).toHaveLength(2);
@@ -61,7 +61,7 @@ describe('RolesController', (): void => {
         const role: IRoleView = await new RolesController(prisma).replace(
             'watcher',
             { name: 'Наблюдатель', rights: ['usage:read'] },
-            requestOf('a1', 'Ольга')
+            signedInAs('a1', 'Ольга')
         );
 
         expect(role).toEqual({ key: 'watcher', name: 'Наблюдатель', rights: ['usage:read'], people: 1 });
@@ -74,7 +74,7 @@ describe('RolesController', (): void => {
 
         await expect(controller.create({ name: '', rights: [] })).rejects.toThrow(BadRequestException);
         await expect(controller.create({ name: 'Чтец', rights: ['cargo:fly'] })).rejects.toThrow(/cargo:fly/);
-        await expect(controller.replace('owner', { name: 'Владелец', rights: ['x'] }, requestOf('a1', 'Ольга'))).rejects.toThrow(
+        await expect(controller.replace('owner', { name: 'Владелец', rights: ['x'] }, signedInAs('a1', 'Ольга'))).rejects.toThrow(
             BadRequestException
         );
         expect(roles).toHaveLength(2);
@@ -86,12 +86,12 @@ describe('RolesController', (): void => {
         const controller: RolesController = new RolesController(prisma);
 
         await expect(
-            controller.replace('owner', { name: 'Владелец', rights: ['accounts:read'] }, requestOf('a1', 'Ольга'))
+            controller.replace('owner', { name: 'Владелец', rights: ['accounts:read'] }, signedInAs('a1', 'Ольга'))
         ).rejects.toThrow(/без права на роли/);
         expect(roles[0].rights).toContain('roles:manage');
 
         // Та же правка от Бориса, который владельцем не является, проходит: запирается не он
-        await controller.replace('owner', { name: 'Владелец', rights: ['accounts:read'] }, requestOf('a2', 'Борис'));
+        await controller.replace('owner', { name: 'Владелец', rights: ['accounts:read'] }, signedInAs('a2', 'Борис'));
         expect(roles[0].rights).toEqual(['accounts:read']);
     });
 
@@ -112,7 +112,7 @@ describe('RolesController', (): void => {
         const controller: RolesController = new RolesController(prisma);
 
         await expect(controller.one('nobody')).rejects.toThrow(NotFoundException);
-        await expect(controller.replace('nobody', { name: 'Кто-то', rights: [] }, requestOf('a1', 'Ольга'))).rejects.toThrow(
+        await expect(controller.replace('nobody', { name: 'Кто-то', rights: [] }, signedInAs('a1', 'Ольга'))).rejects.toThrow(
             NotFoundException
         );
         await expect(controller.remove('nobody')).rejects.toThrow(NotFoundException);

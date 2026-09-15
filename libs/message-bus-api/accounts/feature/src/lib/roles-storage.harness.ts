@@ -149,6 +149,6 @@ export function rolesStorage(): IRolesStorage {
 }
 
 /** Запрос, в который проверка входа положила вошедшего. */
-export function requestOf(id: string, name: string): IAccountBearingRequest {
+export function signedInAs(id: string, name: string): IAccountBearingRequest {
     return { [ACCOUNT_OF_REQUEST]: { id, name, sessionId: 's1' } };
 }

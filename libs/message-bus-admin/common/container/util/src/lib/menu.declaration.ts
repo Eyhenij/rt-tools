@@ -26,9 +26,9 @@ export interface IAdminMenuItem {
  * маршрутами молча — пункт остаётся, экран уезжает, и человек попадает в пустоту.
  *
  * Разделов груза три, и приходят они по одному со своими задачами: пункта без экрана здесь не
- * бывает. Два последних пункта груза не показывают вовсе — приглашения заводят сами деревья, а
- * люди входят в приёмник, — и стоят они в конце по той же причине: человек ходит в них реже
- * остальных.
+ * бывает. Три последних пункта груза не показывают вовсе — приглашения заводят сами деревья,
+ * люди входят в приёмник, роли говорят, кому что открыто, — и стоят они в конце по той же
+ * причине: человек ходит в них реже остальных.
  *
  * Подпись пункта идёт из словаря, а не литералом: тем же ключом называет себя заголовок экрана
  * и заголовок вкладки браузера, и написанная здесь заново она расходится с ними молча.
@@ -40,4 +40,5 @@ export const ADMIN_MENU: readonly IAdminMenuItem[] = Object.freeze([
     { title: adminLabel('sectionUsage'), path: '/usage', icon: 'chart-line', right: 'usage:read' } as const,
     { title: adminLabel('sectionInvites'), path: '/invites', icon: 'ico-invite', right: 'invites:read' } as const,
     { title: adminLabel('sectionPeople'), path: '/people', icon: 'users', right: 'accounts:read' } as const,
+    { title: adminLabel('sectionRoles'), path: '/roles', icon: 'shield', right: 'roles:manage' } as const,
 ]);

@@ -3,12 +3,13 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 4 — the admin panel: the section of roles and the panel of access
-- **Done:** stage 1 — the receiver: `IRoleView`, `IPersonAccessView` in the common lib; the role
-  queries; the parse and the lock-out decision; `RolesController` and `AccountsAccessController`
-  under `roles:manage`; build green, 69 + 38 tests green
-- **Next step:** the dictionary words and right labels, the admin models and stores, the three
-  screens, the routes, the menu item, the boundaries
+- **Stage:** 3 of 4 — the end-to-end suite
+- **Done:** stage 1 — the receiver (build green, 69 + 38 tests); stage 2 — the admin panel: the
+  dictionary, right labels by section, `RolesStore`, the access calls of `PeopleStore`, the
+  screens `roles-list`, `role-aside`, `access-aside`, the routes, the item "Роли", the item
+  "Права" of the people row, the boundaries; build, layers, dupes and lint green, 6 + 4 + 12 tests
+- **Next step:** the section `roles` in the suite support, `roles.spec.ts` with SC-MB-371…378,
+  the frames
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet

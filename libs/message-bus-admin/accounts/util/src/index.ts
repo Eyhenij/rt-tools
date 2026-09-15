@@ -2,3 +2,8 @@ export * from './lib/person.columns';
 export * from './lib/person.logic';
 export * from './lib/person.mapper';
 export * from './lib/person.model';
+export * from './lib/right.labels';
+export * from './lib/role.columns';
+export * from './lib/role.logic';
+export * from './lib/role.mapper';
+export * from './lib/role.model';

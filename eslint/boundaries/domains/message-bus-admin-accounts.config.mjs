@@ -17,8 +17,10 @@ import {
 } from './message-bus-admin.tags.mjs';
 
 /**
- * Раздел людей: модели и решения раздела, обращение к правкам, стор списка, экран, две панели и
- * маршруты. Своего вида у него нет — ячейки строки показывают готовые поля.
+ * Раздел людей и раздел ролей: модели и решения обоих, обращение к правкам, сторы списков, два
+ * экрана, четыре панели и маршруты. Своего вида у домена нет — ячейки строк показывают готовые
+ * поля. Роли живут в том же домене намеренно: роль — сторона доступа записи, и приёмник читает
+ * её в том же домене; свой домен на два экрана и стор стоял бы шестью либами.
  */
 const PEOPLE_UTIL = 'scope:message-bus-admin-accounts-util';
 const PEOPLE_API = 'scope:message-bus-admin-accounts-api';
@@ -69,12 +71,39 @@ export const messageBusAdminAccountsBoundaries = [
         sourceTag: 'scope:message-bus-admin-accounts-feature-password-aside',
         onlyDependOnLibsWithTags: [PEOPLE_DATA_ACCESS, PEOPLE_UTIL, CORE_UTIL, CONTRACT, PACKAGE],
     },
+    // Список ролей читает права вошедшего так же, как список людей: кнопку и меню он рисует
+    // только с правом на роли
+    {
+        sourceTag: 'scope:message-bus-admin-accounts-feature-roles-list',
+        onlyDependOnLibsWithTags: [
+            PEOPLE_DATA_ACCESS,
+            PEOPLE_UTIL,
+            AUTH_DATA_ACCESS,
+            CORE_FEATURE,
+            CORE_UI,
+            CORE_DATA_ACCESS,
+            CORE_UTIL,
+            CONTRACT,
+            PACKAGE,
+        ],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-accounts-feature-role-aside',
+        onlyDependOnLibsWithTags: [PEOPLE_DATA_ACCESS, PEOPLE_UTIL, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-accounts-feature-access-aside',
+        onlyDependOnLibsWithTags: [PEOPLE_DATA_ACCESS, PEOPLE_UTIL, CORE_UTIL, CONTRACT, PACKAGE],
+    },
     {
         sourceTag: 'scope:message-bus-admin-accounts-shell',
         onlyDependOnLibsWithTags: [
             'scope:message-bus-admin-accounts-feature-list',
             'scope:message-bus-admin-accounts-feature-create-aside',
             'scope:message-bus-admin-accounts-feature-password-aside',
+            'scope:message-bus-admin-accounts-feature-roles-list',
+            'scope:message-bus-admin-accounts-feature-role-aside',
+            'scope:message-bus-admin-accounts-feature-access-aside',
             PEOPLE_UTIL,
             CORE_UTIL,
             PACKAGE,

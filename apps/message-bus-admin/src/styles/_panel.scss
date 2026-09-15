@@ -47,4 +47,41 @@
         color: var(--rt-color-text-muted);
         font-size: var(--rt-text-sm);
     }
+
+    /** Столбик выборов раздела: чекбоксы роли или строки прав человека, с общим шагом. */
+    &__choices {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-2);
+    }
+
+    /**
+     * Строка права у человека: действие, слово о праве и исход в одну линию. Слово занимает
+     * середину, действие и исход держат свою ширину, чтобы строки стояли столбцами.
+     */
+    &__right {
+        display: grid;
+        align-items: center;
+        gap: var(--rt-space-3);
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+
+    /** Действие словом. Длинное переносится: места ему отдана треть строки, и обрезать нечего. */
+    &__right-label {
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-sm);
+        overflow-wrap: anywhere;
+    }
+
+    /** Слово о праве: выбор берёт ширину по самой длинной подписи, как отбор над списком. */
+    &__right-word {
+        min-width: 0;
+    }
+
+    /** Исход приглушён: он следствие выбора, а не сам выбор. */
+    &__right-outcome {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+        text-align: end;
+    }
 }

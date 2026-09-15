@@ -225,4 +225,16 @@ describe('AdminPeopleListComponent', () => {
 
         expect(document.querySelectorAll('[qa-dataid="people-disable"]')).toHaveLength(1);
     });
+
+    it('SC-MB-377 — пункт «Права» есть с правом на роли и без права на правку людей, и наоборот его нет', async () => {
+        await openSection([rowOf({ name: 'Андрей' })]);
+        signedInWith(['roles:manage']);
+
+        harness.fixture.debugElement.query(By.css('[qa-dataid="menu-trigger"] button')).nativeElement.click();
+        harness.detectChanges();
+
+        expect(document.querySelectorAll('[qa-dataid="people-access"]')).toHaveLength(1);
+        expect(document.querySelectorAll('[qa-dataid="people-password"]')).toHaveLength(0);
+        expect(document.querySelectorAll('[qa-dataid="people-disable"]')).toHaveLength(0);
+    });
 });

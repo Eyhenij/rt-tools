@@ -22,7 +22,7 @@
         [emptyMessage]="emptyMessage()"
         [loading]="loading()"
         [rowHasActions]="hasRowActions"
-        [showRowActions]="canManage()"
+        [showRowActions]="showRowActions()"
         [sort]="sortModel()"
         [tableId]="tableId"
         (sortChange)="changeSort($event)">
@@ -57,18 +57,29 @@
             </td>
         </ng-container>
 
-        <!-- Меню объявляется только с правом: без него у строки нет ни одного действия, и
-             объявленный пустым шаблон рисовал бы кнопку меню без пунктов. Своя запись
-             отключения не получает — обрыв коснулся бы и того входа, которым пришли -->
-        @if (canManage()) {
+        <!-- Меню объявляется только с правом: без обоих у строки нет ни одного действия, и
+             объявленный пустым шаблон рисовал бы кнопку меню без пунктов. Правки записи — по праву
+             на правку людей, права записи — по праву на роли. Своя запись отключения не получает —
+             обрыв коснулся бы и того входа, которым пришли -->
+        @if (showRowActions()) {
             <ng-template rtTableRowActions let-row [rtTableRowActionsRowType]="rows()">
-                <rt-menu-item
-                    icon="lock"
-                    [label]="passwordLabel"
-                    [attr.qa-dataid]="qaPrefix + '-password'"
-                    (selected)="openPassword(row.name)" />
+                @if (canGrant()) {
+                    <rt-menu-item
+                        icon="shield"
+                        [label]="accessLabel"
+                        [attr.qa-dataid]="qaPrefix + '-access'"
+                        (selected)="openAccess(row.name)" />
+                }
 
-                @if (row.name !== selfName()) {
+                @if (canManage()) {
+                    <rt-menu-item
+                        icon="lock"
+                        [label]="passwordLabel"
+                        [attr.qa-dataid]="qaPrefix + '-password'"
+                        (selected)="openPassword(row.name)" />
+                }
+
+                @if (canManage() && row.name !== selfName()) {
                     <rt-menu-item
                         danger
                         icon="user-minus"

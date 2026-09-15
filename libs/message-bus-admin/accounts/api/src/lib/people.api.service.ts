@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { PEOPLE_PATH, PERSON_PASSWORD_ROUTE } from '@rt/message-bus-admin/accounts/util';
+import { PEOPLE_PATH, PERSON_ACCESS_ROUTE, PERSON_PASSWORD_ROUTE } from '@rt/message-bus-admin/accounts/util';
 import { asSpokenFault, READ_TIMEOUT_MS } from '@rt/message-bus-admin/common/core/api';
-import { IPersonView } from '@rt/message-bus-common';
+import { IPersonAccessInput, IPersonAccessView, IPersonView } from '@rt/message-bus-common';
 import { catchError, Observable, timeout } from 'rxjs';
 
 /** Последний сегмент адреса отключения: `accounts/<имя>/disable`. */
@@ -12,8 +12,8 @@ const DISABLE_SEGMENT: string = 'disable';
  * Обращение к правкам над людьми.
  *
  * Списком заведует общая основа стора — она знает адрес и просит страницу сама. Здесь остаются
- * три правки, которые админка делает над записями приёмника: заведение, новый пароль и
- * отключение.
+ * три правки, которые админка делает над записями приёмника, — заведение, новый пароль и
+ * отключение, — и доступ записи: чтение для панели прав и замена роли с правками целиком.
  *
  * Все три отвечают строкой списка после правки и все три отбрасывают отказ со словом приёмника:
  * занятое имя, пустой пароль и своя запись — про действие человека, и панель показывает их как
@@ -47,6 +47,20 @@ export class PeopleApiService {
     public disable(name: string): Observable<IPersonView> {
         return this.#http
             .post<IPersonView>(`${PEOPLE_PATH}/${encodeURIComponent(name)}/${DISABLE_SEGMENT}`, null, { withCredentials: true })
+            .pipe(timeout(READ_TIMEOUT_MS), catchError(asSpokenFault));
+    }
+
+    /** Доступ записи по имени: роль, правки и права, которые из них выходят. */
+    public access(name: string): Observable<IPersonAccessView> {
+        return this.#http
+            .get<IPersonAccessView>(`${PEOPLE_PATH}/${encodeURIComponent(name)}/${PERSON_ACCESS_ROUTE}`, { withCredentials: true })
+            .pipe(timeout(READ_TIMEOUT_MS), catchError(asSpokenFault));
+    }
+
+    /** Заменить доступ записи целиком: роль и все правки. */
+    public replaceAccess(name: string, input: IPersonAccessInput): Observable<IPersonAccessView> {
+        return this.#http
+            .put<IPersonAccessView>(`${PEOPLE_PATH}/${encodeURIComponent(name)}/${PERSON_ACCESS_ROUTE}`, input, { withCredentials: true })
             .pipe(timeout(READ_TIMEOUT_MS), catchError(asSpokenFault));
     }
 }

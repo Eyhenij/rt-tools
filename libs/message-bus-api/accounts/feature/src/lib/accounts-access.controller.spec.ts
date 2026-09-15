@@ -7,7 +7,7 @@ import { OPERATION_ACCESS, OPERATION_RIGHT } from '@rt/message-bus-api/access/ut
 import { IPersonAccessView } from '@rt/message-bus-common';
 
 import { AccountsAccessController } from './accounts-access.controller';
-import { IRolesStorage, IStoredEdit, requestOf, rolesStorage } from './roles-storage.harness';
+import { IRolesStorage, IStoredEdit, signedInAs, rolesStorage } from './roles-storage.harness';
 
 describe('AccountsAccessController', (): void => {
     it('SC-MB-382 — чтение и замена доступа закрыты правом на роли', (): void => {
@@ -42,7 +42,7 @@ describe('AccountsAccessController', (): void => {
         const view: IPersonAccessView = await new AccountsAccessController(prisma).replace(
             'Борис',
             { role: 'owner', edits: [{ right: 'accounts:manage', granted: false }] },
-            requestOf('a1', 'Ольга')
+            signedInAs('a1', 'Ольга')
         );
 
         expect(accounts[1].roleId).toBe('r-owner');
@@ -58,7 +58,7 @@ describe('AccountsAccessController', (): void => {
         const view: IPersonAccessView = await new AccountsAccessController(prisma).replace(
             'Борис',
             { role: null, edits: [{ right: 'usage:read', granted: true }] },
-            requestOf('a1', 'Ольга')
+            signedInAs('a1', 'Ольга')
         );
 
         expect(accounts[1].roleId).toBeNull();
@@ -69,17 +69,21 @@ describe('AccountsAccessController', (): void => {
         const { prisma, accounts, edits }: IRolesStorage = rolesStorage();
         const controller: AccountsAccessController = new AccountsAccessController(prisma);
 
-        await expect(controller.replace('Ольга', { role: 'watcher', edits: [] }, requestOf('a1', 'Ольга'))).rejects.toThrow(
+        await expect(controller.replace('Ольга', { role: 'watcher', edits: [] }, signedInAs('a1', 'Ольга'))).rejects.toThrow(
             /без права на роли/
         );
         await expect(
-            controller.replace('Ольга', { role: 'owner', edits: [{ right: 'roles:manage', granted: false }] }, requestOf('a1', 'Ольга'))
+            controller.replace('Ольга', { role: 'owner', edits: [{ right: 'roles:manage', granted: false }] }, signedInAs('a1', 'Ольга'))
         ).rejects.toThrow(ConflictException);
         expect(accounts[0].roleId).toBe('r-owner');
         expect(edits.filter((edit: IStoredEdit): boolean => edit.accountId === 'a1')).toHaveLength(0);
 
         // Своя запись с правом, данным правкой поверх роли без него, — проходит
-        await controller.replace('Ольга', { role: 'watcher', edits: [{ right: 'roles:manage', granted: true }] }, requestOf('a1', 'Ольга'));
+        await controller.replace(
+            'Ольга',
+            { role: 'watcher', edits: [{ right: 'roles:manage', granted: true }] },
+            signedInAs('a1', 'Ольга')
+        );
         expect(accounts[0].roleId).toBe('r-watcher');
     });
 
@@ -88,10 +92,10 @@ describe('AccountsAccessController', (): void => {
         const controller: AccountsAccessController = new AccountsAccessController(prisma);
 
         await expect(
-            controller.replace('Борис', { role: null, edits: [{ right: 'x', granted: true }] }, requestOf('a1', 'Ольга'))
+            controller.replace('Борис', { role: null, edits: [{ right: 'x', granted: true }] }, signedInAs('a1', 'Ольга'))
         ).rejects.toThrow(BadRequestException);
         await expect(
-            controller.replace('Борис', { role: null, edits: [{ right: 'usage:read' }] }, requestOf('a1', 'Ольга'))
+            controller.replace('Борис', { role: null, edits: [{ right: 'usage:read' }] }, signedInAs('a1', 'Ольга'))
         ).rejects.toThrow(BadRequestException);
         expect(edits).toHaveLength(2);
     });
@@ -101,7 +105,7 @@ describe('AccountsAccessController', (): void => {
         const controller: AccountsAccessController = new AccountsAccessController(prisma);
 
         await expect(controller.read('Никто')).rejects.toThrow(NotFoundException);
-        await expect(controller.replace('Борис', { role: 'nobody', edits: [] }, requestOf('a1', 'Ольга'))).rejects.toThrow(
+        await expect(controller.replace('Борис', { role: 'nobody', edits: [] }, signedInAs('a1', 'Ольга'))).rejects.toThrow(
             NotFoundException
         );
     });
