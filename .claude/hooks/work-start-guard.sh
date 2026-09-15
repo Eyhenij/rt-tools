@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/work-start-guard.sh · 6364e25f539a · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/work-start-guard.sh · 6364e25f539a · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/profile-check.sh
 # Work-start guard: a turn that edited application code does not end unless the owner asked for

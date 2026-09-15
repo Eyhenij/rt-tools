@@ -4,7 +4,7 @@ kind: pattern
 rule: styling-bem
 description: Pattern of rule styling-bem. Load when assembling a section screen, a form, a panel or a dialog. Blocks of the shared layer, markup through rtBlock and rtElem, your own element in a foreign subtree, the sign that an edit goes to the wrong place. Kit component styles — pattern styling-bem-component.
 ---
-<!-- rt-kit v0.27.0 · patterns/styling-bem-layout.md · 9ca221e21688 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · patterns/styling-bem-layout.md · 9ca221e21688 · правится надстройкой, не здесь -->
 
 # A screen on the shared layout layer
 

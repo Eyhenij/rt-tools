@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/turn-exit-verdict.sh · f24b17d30906 · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/turn-exit-verdict.sh · f24b17d30906 · правится надстройкой, не здесь
 # The parsing of the turn record for the turn-exit guard. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The guard sources it right after the patterns —
 # it was moved out when the guard crossed the file length limit, and the parsing reads apart

@@ -4,7 +4,7 @@ kind: pattern
 rule: doc-style
 description: Pattern of rule doc-style. Load when the completeness of texts is checked from the side of the work — a reverse pass over closed tasks, the machine selection sign, what it does not see, three outcomes per task. Sorting one document — pattern doc-style-sweep.
 ---
-<!-- rt-kit v0.27.0 · patterns/doc-style-trace.md · 066a49f1c769 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · patterns/doc-style-trace.md · 066a49f1c769 · правится надстройкой, не здесь -->
 
 # The reverse pass: closed tasks against texts
 

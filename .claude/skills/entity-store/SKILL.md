@@ -4,7 +4,7 @@ kind: pattern
 rule: entity-conventions
 description: Pattern of rule entity-conventions. Load when creating or editing an admin store — the ready-made heir of the shared list store base, the mutate harness, method names from the action, an action with its own busy flag. Not for the panel — that is pattern entity-aside.
 ---
-<!-- rt-kit v0.27.0 · patterns/entity-store.md · 2da27b552d92 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · patterns/entity-store.md · 2da27b552d92 · правится надстройкой, не здесь -->
 
 # The entity store
 

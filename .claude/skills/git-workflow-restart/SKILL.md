@@ -4,7 +4,7 @@ kind: pattern
 rule: deploy-flow
 description: Pattern of rule deploy-flow. Load for a manual production restart — after editing .env.prod, when investigating a rollout, when starting a container on the server. Ready-made commands with the image tag by sha and what to check the result against. Migrations — pattern git-workflow-migration.
 ---
-<!-- rt-kit v0.27.0 · patterns/git-workflow-restart.md · 5d54f9ea612d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · patterns/git-workflow-restart.md · 5d54f9ea612d · правится надстройкой, не здесь -->
 
 # A manual production restart
 
