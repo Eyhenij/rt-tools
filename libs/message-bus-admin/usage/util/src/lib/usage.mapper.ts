@@ -43,3 +43,45 @@ export class UsageSessionMapper extends BaseMapper<IUsage.Session.State> {
         };
     }
 }
+
+/** День сводки. */
+export class UsageDayMapper extends BaseMapper<IUsage.Day.State> {
+    public override mapFrom(data: IUsage.Day.Api): IUsage.Day.State {
+        return {
+            day: this.typeCast.getAsString(data.day),
+            loads: this.typeCast.getAsNumber(data.loads, 0),
+            sessions: this.typeCast.getAsNumber(data.sessions, 0),
+            denials: this.typeCast.getAsNumber(data.denials, 0),
+        };
+    }
+}
+
+/** Загрузки одного рода. */
+export class UsageKindMapper extends BaseMapper<IUsage.Kind.State> {
+    public override mapFrom(data: IUsage.Kind.Api): IUsage.Kind.State {
+        return { kind: usageKindOf(this.typeCast.getAsString(data.kind)), loads: this.typeCast.getAsNumber(data.loads, 0) };
+    }
+}
+
+/** Сводка периода целиком: четыре списка переводятся своими мапперами, период — строками. */
+export class UsageDigestMapper extends BaseMapper<IUsage.Digest.State> {
+    readonly #row: UsageRowMapper = new UsageRowMapper();
+    readonly #day: UsageDayMapper = new UsageDayMapper();
+    readonly #kind: UsageKindMapper = new UsageKindMapper();
+
+    public override mapFrom(data: IUsage.Digest.Api): IUsage.Digest.State {
+        return {
+            from: this.typeCast.getAsString(data.from),
+            to: this.typeCast.getAsString(data.to),
+            days: this.#list(data.days).map((row: IUsage.Day.Api): IUsage.Day.State => this.#day.mapFrom(row)),
+            kinds: this.#list(data.kinds).map((row: IUsage.Kind.Api): IUsage.Kind.State => this.#kind.mapFrom(row)),
+            top: this.#list(data.top).map((row: IUsage.Row.Api): IUsage.Row.State => this.#row.mapFrom(row)),
+            denied: this.#list(data.denied).map((row: IUsage.Row.Api): IUsage.Row.State => this.#row.mapFrom(row)),
+        };
+    }
+
+    /** Список ответа: не список — пустой, а не падение экрана. */
+    #list<T>(value: readonly T[] | undefined): readonly T[] {
+        return Array.isArray(value) ? value : [];
+    }
+}

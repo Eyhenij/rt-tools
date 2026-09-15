@@ -11,7 +11,16 @@
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { Prisma } from '@rt/message-bus-api/persistence/util';
-import { IPageAsked, IUsagePage, IUsageRow, IUsageSessionRow, pageSkip, USAGE_SORTABLE } from '@rt/message-bus-common';
+import {
+    IPageAsked,
+    IUsageDayRow,
+    IUsageKindRow,
+    IUsagePage,
+    IUsageRow,
+    IUsageSessionRow,
+    pageSkip,
+    USAGE_SORTABLE,
+} from '@rt/message-bus-common';
 
 /** Период, оба края включительно, дни `ГГГГ-ММ-ДД`. */
 export interface IUsageAsked {
@@ -111,5 +120,40 @@ export async function readUsageSessions(prisma: PrismaService, asked: IUsageAske
           AND "day" <= ${asked.to}
         GROUP BY "day", "sid"
         ORDER BY "day" DESC, "count" DESC, "sid" ASC
+    `);
+}
+
+/**
+ * Загрузки, отдельные сессии и отказы по дням периода — только дни, у которых есть строки.
+ * Дни без строк дописывает чистая функция сводки: хранилище про них ничего не знает.
+ */
+export async function readUsageDays(prisma: PrismaService, asked: IUsageAsked): Promise<readonly IUsageDayRow[]> {
+    return prisma.$queryRaw<IUsageDayRow[]>(Prisma.sql`
+        SELECT "day",
+               COUNT(*) FILTER (WHERE "ev" = 'skill-load')::int AS "loads",
+               COUNT(DISTINCT "sid") FILTER (WHERE "ev" = 'skill-load')::int AS "sessions",
+               COUNT(*) FILTER (WHERE "ev" = 'gate-deny')::int AS "denials"
+        FROM "observation"
+        WHERE "treeId" = ${asked.treeId}
+          AND "day" >= ${asked.from}
+          AND "day" <= ${asked.to}
+          AND "ev" IN ('skill-load', 'gate-deny')
+        GROUP BY "day"
+        ORDER BY "day" ASC
+    `);
+}
+
+/** Загрузки по роду скила за период, самый загружаемый род первым. Отказы гейта рода не несут и сюда не входят. */
+export async function readUsageKinds(prisma: PrismaService, asked: IUsageAsked): Promise<readonly IUsageKindRow[]> {
+    return prisma.$queryRaw<IUsageKindRow[]>(Prisma.sql`
+        SELECT "skill" AS "kind", COUNT(*)::int AS "loads"
+        FROM "observation"
+        WHERE "treeId" = ${asked.treeId}
+          AND "day" >= ${asked.from}
+          AND "day" <= ${asked.to}
+          AND "ev" = 'skill-load'
+          AND "skill" IS NOT NULL
+        GROUP BY "skill"
+        ORDER BY "loads" DESC, "kind" ASC
     `);
 }

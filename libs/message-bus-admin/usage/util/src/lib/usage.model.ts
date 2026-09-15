@@ -9,7 +9,7 @@
  * Сессия одного скила — день, признак сессии и сколько раз она его загрузила. Признак показывается
  * как есть: сессию человек по нему и узнаёт — другого имени у неё нет.
  */
-import { IUsageRow, IUsageSessionRow } from '@rt/message-bus-common';
+import { IUsageDayRow, IUsageDigest, IUsageKindRow, IUsageRow, IUsageSessionRow } from '@rt/message-bus-common';
 
 /** Род скила закрытым набором: так его называет отправляющая сторона. */
 export enum ESkillKind {
@@ -51,6 +51,49 @@ export namespace IUsage {
             readonly sid: string;
             /** Сколько раз сессия загрузила скил. */
             readonly count: number;
+        }
+    }
+
+    /** Один день периода: то, из чего график строит столбик. */
+    export namespace Day {
+        /** Сторона контракта. */
+        export type Api = IUsageDayRow;
+
+        /** Сторона экрана. */
+        export interface State {
+            /** День вида `2026-08-13`. */
+            readonly day: string;
+            readonly loads: number;
+            readonly sessions: number;
+            readonly denials: number;
+        }
+    }
+
+    /** Загрузки одного рода за период. */
+    export namespace Kind {
+        /** Сторона контракта. */
+        export type Api = IUsageKindRow;
+
+        /** Сторона экрана. */
+        export interface State {
+            readonly kind: ESkillKind;
+            readonly loads: number;
+        }
+    }
+
+    /** Сводка периода: то, что стоит над таблицей. */
+    export namespace Digest {
+        /** Сторона контракта. */
+        export type Api = IUsageDigest;
+
+        /** Сторона экрана. */
+        export interface State {
+            readonly from: string;
+            readonly to: string;
+            readonly days: readonly Day.State[];
+            readonly kinds: readonly Kind.State[];
+            readonly top: readonly Row.State[];
+            readonly denied: readonly Row.State[];
         }
     }
 }

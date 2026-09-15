@@ -15,6 +15,9 @@ export const USAGE_PATH: string = '/api/usage';
 /** Последний сегмент адреса сессий одного скила. */
 export const USAGE_SESSIONS_SEGMENT: string = 'sessions';
 
+/** Сегмент адреса сводки периода: `/api/usage/digest`. */
+export const USAGE_DIGEST_SEGMENT: string = 'digest';
+
 /**
  * Ключ, под которым хранится выбор столбцов.
  *

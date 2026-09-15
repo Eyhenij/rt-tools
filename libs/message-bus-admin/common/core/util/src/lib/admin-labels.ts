@@ -78,6 +78,16 @@ export const ADMIN_LABELS = {
     kindPattern: 'паттерн',
     kindSkill: 'скил пакета',
     kindOwn: 'свой скил проекта',
+    digestLoadsByDay: 'Загрузки по дням',
+    digestTopSkills: 'Топ скилов',
+    digestKinds: 'По роду',
+    digestDenials: 'Отказы гейта',
+    digestEmpty: 'За период загрузок не было',
+    digestFailed: 'Прочитать сводку периода не удалось',
+    quickPeriodAria: 'Быстрый выбор периода',
+    quickPeriod7: '7 дней',
+    quickPeriod30: '30 дней',
+    quickPeriod90: '90 дней',
     // Один ключ на все показы версии: столбец списка, отбор над ним и строка панели. Второе
     // объявление разошлось бы с первым молча, и человек читал бы одно и то же поле двумя словами.
     releaseVersion: 'В какой версии',
