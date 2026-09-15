@@ -182,6 +182,10 @@ miss is the record "2026-08-19-tree-word-shown-to-users" in the intake.
   and a second kind creates it neither an input nor an event.
 - **The filter by state stands to the right of the filter by tree, in the same slot of the toolbar.** Set
   apart at different edges of the strip, they read as a filter and an action, not as two conditions.
+- **The filter by tree is as wide as its longest option, and no option wraps onto a second line.** The
+  names of the trees come from the intake and are not known in advance. So the width is taken from
+  a hidden sizer carrying all the labels rather than written as a number: a number would go stale
+  with the first long name, and a wrapped option reads as two.
 - **The filter by state is at the sections of the analyses and of the proposals and only at them.** A
   record of a month has no state, and a filter by it would narrow by a condition it does not carry.
 - **The first item of the filter is "all the states".** A lifted filter is chosen by the same movement as
@@ -276,15 +280,15 @@ issuing and revocation — `docs/specs/message-bus/invites/`; the entry — `doc
 A person introduces themselves by the entry; a token of a tree does not open the operations of the
 reading. Without an entry not a single operation gives the cargo.
 
-| Operation                      | What it does                                                                         |
-| ------------------------------ | ------------------------------------------------------------------------------------ |
-| GET /api/trees                 | gives back the trees by names and signs — for the filter                             |
-| GET /api/postmortems           | a page of the analyses without the text whole, with the state of every record        |
-| GET /api/postmortems/:id       | one analysis with the text whole and its state                                       |
-| GET /api/proposals             | a page of the proposals with the state of every record                               |
-| GET /api/proposals/:id         | one proposal whole and its state                                                     |
-| GET /api/summaries             | a page of the records of the months without the digest whole                         |
-| GET /api/summaries/:id         | a record of a month with the digest whole                                            |
+| Operation                | What it does                                                                  |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| GET /api/trees           | gives back the trees by names and signs — for the filter                      |
+| GET /api/postmortems     | a page of the analyses without the text whole, with the state of every record |
+| GET /api/postmortems/:id | one analysis with the text whole and its state                                |
+| GET /api/proposals       | a page of the proposals with the state of every record                        |
+| GET /api/proposals/:id   | one proposal whole and its state                                              |
+| GET /api/summaries       | a page of the records of the months without the digest whole                  |
+| GET /api/summaries/:id   | a record of a month with the digest whole                                     |
 
 A page of a list is requested by the number, the size, the order and the filter — by tree, and at the
 analyses and the proposals also by state. The answer carries the rows and the total number of the

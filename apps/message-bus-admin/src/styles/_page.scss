@@ -162,8 +162,10 @@
         visibility: hidden;
     }
 
+    /* Начертание — как у выбранной опции: она полужирная и потому шире соседей. */
     &__sizer-row {
         font-size: var(--rt-input-font-size);
+        font-weight: var(--rt-font-weight-semibold);
         line-height: 0;
         padding-inline: var(--rt-input-padding-x) calc(var(--rt-input-padding-x) + var(--rt-space-sm) + var(--admin-tree-filter-chevron));
         white-space: nowrap;
