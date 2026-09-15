@@ -1,0 +1,94 @@
+@use '../../../styles/breakpoints' as bp;
+
+@layer rt-kit.components {
+    .rt-dynamic-list {
+        --rt-dynamic-list-gap: var(--rt-space-4);
+        --rt-dynamic-list-search-width: var(--rt-size-64);
+        --rt-dynamic-list-veil-bg: var(--rt-color-bg-surface);
+
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        block-size: 100%;
+        gap: var(--rt-dynamic-list-gap);
+        inline-size: 100%;
+        min-block-size: 0;
+
+        &__loader {
+            display: flex;
+            flex: 1 1 auto;
+            align-items: center;
+            justify-content: center;
+            padding: var(--rt-space-8);
+        }
+
+        // Вертушка подгрузки стоит над нарисованным: записи остаются на месте, и человек видит,
+        // что список тот же самый, а не подменённый.
+        &__veil {
+            position: absolute;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: color-mix(in srgb, var(--rt-dynamic-list-veil-bg) 60%, transparent);
+            inset: 0;
+        }
+
+        &__selectors {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-2);
+        }
+
+        &__counter {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+
+        &__right {
+            display: flex;
+            flex: 1 1 auto;
+            align-items: center;
+            justify-content: flex-end;
+            gap: var(--rt-space-2);
+        }
+
+        &__actions {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-1);
+        }
+
+        &__search {
+            inline-size: var(--rt-dynamic-list-search-width);
+        }
+
+        &__content {
+            display: flex;
+            overflow: auto;
+            flex: 1 1 auto;
+            flex-direction: column;
+            min-block-size: 0;
+        }
+
+        &__empty {
+            flex: 1 1 auto;
+        }
+
+        &__pagination {
+            flex: 0 0 auto;
+        }
+
+        // Узкий экран объявлен запросом, а не условием в разметке. Порог тот же, о котором
+        // отвечает служба порогов кита, и берётся он из общего файла порогов.
+        @media (width <= #{bp.$rt-bp-lg}) {
+            &__right {
+                flex-wrap: wrap;
+            }
+
+            &__search {
+                inline-size: 100%;
+            }
+        }
+    }
+}

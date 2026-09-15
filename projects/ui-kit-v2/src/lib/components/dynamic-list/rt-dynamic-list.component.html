@@ -1,0 +1,127 @@
+<ng-container rtBlock="rt-dynamic-list">
+    @if (loading()) {
+        <div rtElem="loader" qa-dataid="dynamic-list-loader">
+            <rt-spinner />
+        </div>
+    } @else {
+        @if (fetching()) {
+            <div rtElem="veil" qa-dataid="dynamic-list-veil">
+                <rt-spinner />
+            </div>
+        }
+
+        @if (isToolbarShown()) {
+            <rt-toolbar rtElem="toolbar">
+                @if (selectable() || selectorsTpl()) {
+                    <ng-container *rtToolbarLeft>
+                        <div rtElem="selectors">
+                            @if (selectable()) {
+                                @if (selectedCount()) {
+                                    <span rtElem="counter" qa-dataid="dynamic-list-selected-count">
+                                        {{ selectedLabel() }}
+                                    </span>
+                                } @else {
+                                    <rt-checkbox
+                                        qa-dataid="dynamic-list-select-all"
+                                        [ariaLabel]="t().uiSelectAll"
+                                        [ngModel]="allSelected()"
+                                        [indeterminate]="!allSelected() && someSelected()"
+                                        [disabled]="selectAllDisabled()"
+                                        (ngModelChange)="onSelectAll($event)" />
+                                }
+                            }
+
+                            @if (selectorsTpl(); as tpl) {
+                                <ng-container [ngTemplateOutlet]="tpl.templateRef" />
+                            }
+                        </div>
+                    </ng-container>
+                }
+
+                <ng-container *rtToolbarRight>
+                    <div rtElem="right">
+                        <div rtElem="actions">
+                            @if (actionsTpl(); as tpl) {
+                                <ng-container [ngTemplateOutlet]="tpl.templateRef" />
+                            }
+
+                            @if (showClearFilters()) {
+                                <rt-icon-button
+                                    qa-dataid="dynamic-list-clear-filters"
+                                    icon="filter-slash"
+                                    size="sm"
+                                    [ariaLabel]="t().uiClearFilters"
+                                    [tooltip]="t().uiClearFilters"
+                                    [disabled]="!filtered()"
+                                    (clicked)="filtersCleared.emit()" />
+                            }
+
+                            @if (showRefresh()) {
+                                <rt-icon-button
+                                    qa-dataid="dynamic-list-refresh"
+                                    icon="refresh"
+                                    size="sm"
+                                    [ariaLabel]="t().uiRefresh"
+                                    [tooltip]="t().uiRefresh"
+                                    (clicked)="refreshed.emit()" />
+                            }
+
+                            @if (showColumnSettings()) {
+                                <rt-icon-button
+                                    qa-dataid="dynamic-list-column-settings"
+                                    icon="sliders-v"
+                                    size="sm"
+                                    [ariaLabel]="t().uiColumnSettings"
+                                    [tooltip]="t().uiColumnSettings"
+                                    (clicked)="columnSettingsOpened.emit()" />
+                            }
+                        </div>
+
+                        @if (showSearch()) {
+                            <div rtElem="search">
+                                <rt-input
+                                    qa-dataid="dynamic-list-search"
+                                    iconLeft="search"
+                                    [placeholder]="t().uiSearch"
+                                    [formControl]="searchControl" />
+                            </div>
+                        }
+                    </div>
+                </ng-container>
+            </rt-toolbar>
+        }
+
+        @if (empty()) {
+            <rt-empty-state
+                rtElem="empty"
+                qa-dataid="dynamic-list-empty"
+                [icon]="emptyIcon()"
+                [title]="emptyTitleText()"
+                [description]="emptyDescription()">
+                @if (emptyReason() === 'filter') {
+                    <rt-icon-button
+                        qa-dataid="dynamic-list-empty-clear"
+                        icon="filter-slash"
+                        size="sm"
+                        [ariaLabel]="t().uiClearFilters"
+                        [tooltip]="t().uiClearFilters"
+                        (clicked)="filtersCleared.emit()" />
+                }
+            </rt-empty-state>
+        } @else {
+            <div rtElem="content" qa-dataid="dynamic-list-content">
+                <ng-content />
+            </div>
+
+            @if (isPaginationShown()) {
+                <rt-pagination
+                    rtElem="pagination"
+                    qa-dataid="dynamic-list-pagination"
+                    [pageModel]="pageModel()!"
+                    [loading]="fetching()"
+                    (pageChange)="pageChange.emit($event)"
+                    (perPageChange)="perPageChange.emit($event)" />
+            }
+        }
+    }
+</ng-container>
