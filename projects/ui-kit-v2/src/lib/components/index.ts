@@ -60,6 +60,7 @@ export * from './pagination/rt-pagination.model';
 export * from './popover';
 export * from './ripple';
 export * from './section-nav';
+export * from './scroll-area';
 export * from './select';
 export * from './skeleton';
 export * from './skeleton-wrapper';
