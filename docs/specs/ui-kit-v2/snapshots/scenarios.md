@@ -264,3 +264,18 @@ without a showcase. Checked on the spot: over a cache with 5860 leftovers every 
 preparing with a 404 on `runtime_main.<hash>.hot-update.json`, and neither a page reload nor a
 restart of the showcase cured it; after the removal the same story drew three showing roots with
 no refused requests.
+
+### SC-UKV-144 — the sweep over the stories survives a showing that did not open
+
+Given a raised showcase and a showing that does not open — its page hangs, or the root of the showing
+never appears
+When the sweep over all the stories reaches that showing
+Then the sweep records it as a finding naming how many showing roots the page held, whether the story
+is at preparing and which requests the showcase refused, and goes on to the rest. The wait for the
+showing is the load event and the appearance of the root rather than silence of the network: the
+showcase in development mode holds the hot reload stream open. The drawing is waited for by the
+measurement itself, so a story whose content arrives a moment later is not called empty
+
+Covered by `tools/tests/showcase-probe.test.sh` — four outcomes of the shared wait with the exit
+switched off, over a substituted page. Checked on the spot: the sweep over the raised showcase walked
+546 stories and 79 overview pages whole, with no empty showings.

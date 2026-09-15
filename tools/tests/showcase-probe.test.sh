@@ -2,7 +2,7 @@
 # The scenarios of opening a story in the showcase probes: what a probe says when the showcase it
 # was pointed at serves no stories, and what it does not swallow.
 #
-# Covers SC-UKV-132 and SC-UKV-142 of the spec `docs/specs/ui-kit-v2/snapshots`.
+# Covers SC-UKV-132, SC-UKV-142 and SC-UKV-144 of the spec `docs/specs/ui-kit-v2/snapshots`.
 #
 # There is no browser here on purpose. The module is judged by what it says and by the code it
 # leaves with, and a real browser would add half a minute of waiting to every scenario.
@@ -22,7 +22,7 @@ cp "$TOOLS/showcase-probe.mjs" "$WORK/tools/"
 cat > "$WORK/tools/drive.mjs" <<'JS'
 import { openStory } from './showcase-probe.mjs';
 
-const [ending, body, refused] = process.argv.slice(2);
+const [ending, body, refused, keepGoing] = process.argv.slice(2);
 
 const timeout = () => {
     const failure = new Error('Timeout 30000ms exceeded.');
@@ -57,9 +57,15 @@ const page = {
 
 globalThis.document = { body: { innerHTML: body } };
 
-await openStory(page, { url: 'http://localhost:6099', story: 'atoms-icon--social', selector: '[data-story-root]', timeoutMs: 30_000 });
+const opening = await openStory(page, {
+    url: 'http://localhost:6099',
+    story: 'atoms-icon--social',
+    selector: '[data-story-root]',
+    timeoutMs: 30_000,
+    fatal: keepGoing !== 'fatal-false',
+});
 
-console.log(`opened, listeners left ${page.handlers.length}`);
+console.log(`opened ${opening.opened}, roots ${opening.state?.roots ?? '—'}, listeners left ${page.handlers.length}`);
 JS
 
 run() {
@@ -101,6 +107,14 @@ says "a page not at preparing is not called stuck" "Roots on the page: 0." timed
 # Only a wait that ran out speaks of the showcase. Everything else is someone else's failure, and
 # turned into a complaint about a stale showcase it would send the reader looking in the wrong place.
 says "a failure that is not a timeout goes on untouched" "ERR_CONNECTION_REFUSED" goto-fails '' '200 http://localhost:6099/main.js'
+
+# --- the sweep asks for the state instead of the exit ---------------------------------------------
+# The sweep over all the stories cannot die on one of them: five hundred others stay unasked. So the
+# wait gives it the state back, and the refusal text is the sweep's own to write.
+verdict "a wait that ran out with «keep going» does not fell the call" green timed-out "$STUCK" '404 http://localhost:6099/hot-update.json' fatal-false
+says "the state comes back instead of the exit" "opened false, roots 0" timed-out "$STUCK" '404 http://localhost:6099/hot-update.json' fatal-false
+says "a page that opened answers that it opened" "opened true" root-appears '' '200 http://localhost:6099/main.js' fatal-false
+says "the listener of the requests is taken off there too" "listeners left 0" timed-out "$STUCK" '404 http://localhost:6099/hot-update.json' fatal-false
 
 # --- the showcase serves no index ---------------------------------------------------------------
 # The second half of the module: a showcase that lost its story index. There is no showcase here

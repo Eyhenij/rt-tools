@@ -197,6 +197,11 @@ as an attachment.
   The entry is dropped by one thing only — a watcher event over that same file — so the consumer pokes the
   files the refusal names. A showcase beyond bringing back refuses the run by the index, not by the frames.
 
+- **The sweep over the stories survives a showing that did not open.** One showing out of six
+  hundred carries away the whole sweep, and about the rest it says nothing — neither how many passed
+  nor where the frame is empty. What it waits for is the appearance of the root, not silence of the
+  network: the showcase in development mode holds the hot reload stream open.
+
 - **The showcase starts over a cache without hot update leftovers.** They pile up unremoved, and a
   showcase started over them serves a runtime asking for an update of a hash that is gone: every story
   hangs at preparing while the story index is whole. Neither a page reload nor a restart cures it.
