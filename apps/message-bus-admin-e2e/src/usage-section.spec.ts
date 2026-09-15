@@ -134,6 +134,8 @@ test.describe('раздел использования', () => {
         await expect(qa(page, 'usage-digest-bar').nth(11)).toHaveAttribute('data-loads', '4');
         await expect(qa(page, 'usage-digest-bar').nth(12)).toHaveAttribute('data-loads', '2');
         await expect(qa(page, 'usage-digest-bar').first()).toHaveAttribute('data-loads', '0');
+        // ось дней: первый и последний день периода
+        await expect(qa(page, 'usage-digest-axis')).toHaveText('01.0831.08');
 
         // самый загружаемый первым; правило с одними отказами в топ не попадает
         expect(await barListTexts(page, 'usage-digest-top', 'title')).toEqual([
