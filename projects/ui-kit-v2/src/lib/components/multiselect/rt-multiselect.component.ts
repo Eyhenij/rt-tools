@@ -1,5 +1,7 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
     computed,
+    contentChild,
     forwardRef,
     inject,
     input,
@@ -21,6 +23,7 @@ import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
+import { RtSelectTriggerDirective } from '../select/rt-select-trigger.directive';
 import { IRtSelect } from '../select/rt-select.model';
 import { RtTagComponent } from '../tag/rt-tag.component';
 import { RtMultiselectLabelPipe } from './rt-multiselect-label.pipe';
@@ -57,6 +60,9 @@ function nextPanelId(): number {
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
+        // Angular
+        NgTemplateOutlet,
+
         // standalone components / directives
         RtIconButtonComponent,
         RtIconComponent,
@@ -101,6 +107,13 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
 
+    /**
+     * Своя разметка указателя, если потребитель её объявил. Маркер тот же, что у выбора одного
+     * значения: семьи отличаются только разметкой внутри кнопки.
+     */
+    protected readonly triggerTpl: Signal<RtSelectTriggerDirective<ReadonlyArray<TValue>> | undefined> =
+        contentChild(RtSelectTriggerDirective);
+
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value().length > 0);
 
     protected readonly visibleChips: Signal<ReadonlyArray<TValue>> = computed((): ReadonlyArray<TValue> =>
@@ -108,6 +121,16 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     );
 
     protected readonly extraChipsCount: Signal<number> = computed((): number => Math.max(0, this.value().length - this.maxChips()));
+
+    /** Три значения, которые кит отдаёт своей разметке указателя, и не больше. */
+    protected readonly triggerState: Signal<IRtSelect.TriggerState<ReadonlyArray<TValue>>> = computed(
+        (): IRtSelect.TriggerState<ReadonlyArray<TValue>> => ({
+            isOpen: this.isOpen(),
+            value: this.value(),
+            label: this.displayText(),
+            isDisabled: this.isDisabled(),
+        })
+    );
 
     public readonly displayText: Signal<string> = computed((): string =>
         this.value()

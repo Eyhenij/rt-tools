@@ -8,6 +8,7 @@
         qa-dataid="multiselect-trigger"
         type="button"
         rtPopoverWidth="trigger"
+        [rtMod]="{ own: !!triggerTpl() }"
         [rtPopover]="panelTpl"
         [rtPopoverDisabled]="isDisabled()"
         [attr.id]="effectiveControlId()"
@@ -20,37 +21,46 @@
         [disabled]="isDisabled()"
         (keydown)="onTriggerKeydown($event)"
         (rtPopoverClosed)="onClosed()">
-        @if (value().length === 0) {
-            <span rtElem="placeholder" qa-dataid="multiselect-placeholder">{{ placeholderText() }}</span>
+        <!--
+            Разметка указателя: своя, если потребитель её объявил, иначе зашитая китом. Она встаёт
+            внутрь кнопки, а не вместо неё: поведение — открытие панели, приметы доступности,
+            отключённость, клавиши и закрытие — остаётся на кнопке кита.
+        -->
+        @if (triggerTpl(); as tpl) {
+            <ng-container [ngTemplateOutlet]="tpl.templateRef" [ngTemplateOutletContext]="{ $implicit: triggerState() }" />
         } @else {
-            <span rtElem="chips">
-                @for (val of visibleChips(); track val) {
-                    <span rtElem="chip" qa-dataid="multiselect-chip" [attr.data-value]="val">
-                        <rt-tag
-                            severity="info"
-                            [value]="val | rtMultiselectLabel: options()"
-                            [closable]="true"
-                            (closed)="removeChip(val, $event)" />
-                    </span>
-                }
-                @if (extraChipsCount() > 0) {
-                    <span rtElem="chip-more" qa-dataid="multiselect-chip-more">+{{ extraChipsCount() }}</span>
-                }
-            </span>
+            @if (value().length === 0) {
+                <span rtElem="placeholder" qa-dataid="multiselect-placeholder">{{ placeholderText() }}</span>
+            } @else {
+                <span rtElem="chips">
+                    @for (val of visibleChips(); track val) {
+                        <span rtElem="chip" qa-dataid="multiselect-chip" [attr.data-value]="val">
+                            <rt-tag
+                                severity="info"
+                                [value]="val | rtMultiselectLabel: options()"
+                                [closable]="true"
+                                (closed)="removeChip(val, $event)" />
+                        </span>
+                    }
+                    @if (extraChipsCount() > 0) {
+                        <span rtElem="chip-more" qa-dataid="multiselect-chip-more">+{{ extraChipsCount() }}</span>
+                    }
+                </span>
+            }
+            @if (showClearButton()) {
+                <rt-icon-button
+                    rtElem="clear"
+                    qa-dataid="multiselect-clear"
+                    icon="ico-close"
+                    size="sm"
+                    variant="ghost"
+                    iconColor="muted"
+                    [ariaLabel]="t().uiClear"
+                    [tabIndex]="-1"
+                    (clicked)="clear($event)" />
+            }
+            <rt-icon rtElem="chevron" name="chevron-down" size="sm" color="muted" />
         }
-        @if (showClearButton()) {
-            <rt-icon-button
-                rtElem="clear"
-                qa-dataid="multiselect-clear"
-                icon="ico-close"
-                size="sm"
-                variant="ghost"
-                iconColor="muted"
-                [ariaLabel]="t().uiClear"
-                [tabIndex]="-1"
-                (clicked)="clear($event)" />
-        }
-        <rt-icon rtElem="chevron" name="chevron-down" size="sm" color="muted" />
     </button>
 
     <ng-template #panelTpl>

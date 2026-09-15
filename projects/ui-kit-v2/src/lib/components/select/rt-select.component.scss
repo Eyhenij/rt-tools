@@ -49,6 +49,16 @@
             }
         }
 
+        /* Свой указатель потребителя: полевой вид кнопки снимается — ground, рамка, высота и
+           отступы. Останется он — значок или метка потребителя окажутся внутри чужого поля, и
+           вход теряет смысл. Поведение при этом на кнопке, снимается только вид. */
+        &__trigger--own {
+            min-height: 0;
+            padding: 0;
+            border-color: transparent;
+            background-color: transparent;
+        }
+
         &--open &__trigger {
             border-color: var(--rt-input-color-border-focus);
         }
