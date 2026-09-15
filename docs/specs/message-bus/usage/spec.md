@@ -115,7 +115,8 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
   the chart draws a bar per day, and a hole between days would read as a day without a bar.
 - **The digest carries the loads by kind and two lists of five skills — by loads and by refusals.**
   The lists are rows of the table counted by the same grouped query with a page of five; a skill
-  without refusals does not enter the list of refusals.
+  without loads does not enter the list by loads, and one without refusals — the list of refusals:
+  a zero in a top reads as a place nobody took.
 
 **The section.**
 

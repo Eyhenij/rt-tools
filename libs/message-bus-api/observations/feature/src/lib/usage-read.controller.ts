@@ -88,7 +88,7 @@ export class UsageReadController {
             from: asked.from,
             to: asked.to,
             days: usageDaysOf(asked, days),
-            top: loaded.rows,
+            top: loaded.rows.filter((row: IUsageRow): boolean => row.loads > 0),
             denied: denied.rows.filter((row: IUsageRow): boolean => row.denials > 0),
         };
     }

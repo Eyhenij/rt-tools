@@ -138,7 +138,7 @@ describe('UsageReadController', () => {
         expect(page).toEqual({ rows: [], total: 0, page: 1, size: 20, from: PERIOD.from, to: PERIOD.to });
     });
 
-    it('SC-MB-356 — сводка периода: дни с нулями, роды, пять по загрузкам и пять по отказам без нулевых', async () => {
+    it('SC-MB-356 — сводка периода: дни с нулями, роды, пять по загрузкам и пять по отказам — оба списка без нулевых', async () => {
         const double: PrismaDouble = new PrismaDouble(
             [
                 { skill: 'testing', kind: 'rule', loads: 3, sessions: 2, denials: 1, total: 2 },
@@ -158,7 +158,7 @@ describe('UsageReadController', () => {
             { day: '2026-08-03', loads: 0, sessions: 0, denials: 0 },
         ]);
         expect(digest.kinds).toEqual([{ kind: 'rule', loads: 3 }]);
-        expect(digest.top.map((row: IUsageRow): string => row.skill)).toEqual(['testing', 'lists']);
+        expect(digest.top.map((row: IUsageRow): string => row.skill)).toEqual(['testing']);
         expect(digest.denied.map((row: IUsageRow): string => row.skill)).toEqual(['testing']);
         expect(digest).toMatchObject({ from: '2026-08-01', to: '2026-08-03' });
         expect(double.asked).toHaveLength(4);

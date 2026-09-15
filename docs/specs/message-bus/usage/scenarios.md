@@ -179,8 +179,8 @@ Covered: `libs/message-bus-api/observations/util/src/lib/usage-digest.util.spec.
 Given the rows of a tree over a period
 When the digest is read
 Then the answer names the period, the days with zeros filled, the loads by kind, five skills by
-loads descending and five by refusals descending without those with none; the reading is closed by
-`usage:read`
+loads descending and five by refusals descending — each list without those with none; the reading
+is closed by `usage:read`
 
 Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`.
 Покрытие: частичное — the text of the grouped queries is probed by the end-to-end spec of the section over seeded rows.
@@ -192,8 +192,7 @@ When they open the section and choose the tree and the period of the rows
 Then above the table stand a bar per day of the period, the list of the top skills with the most
 loaded first, the list of the kinds and the list of the refusals
 
-Covered: `libs/message-bus-admin/usage/util/src/lib/usage-digest.logic.spec.ts`.
-Покрытие: частичное — the bars and the lists are checked by calls; the end-to-end spec of the section over seeded rows is written by stage 3 of RT-2115.
+Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`, `libs/message-bus-admin/usage/util/src/lib/usage-digest.logic.spec.ts`.
 
 ### SC-MB-358 — the quick period puts the pair of days into the address
 
@@ -202,5 +201,4 @@ When the person presses «7 дней»
 Then the address holds the last seven days ending today, the day pickers show them, and the table
 and the digest re-read
 
-Covered: `libs/message-bus-admin/usage/util/src/lib/usage-digest.logic.spec.ts`.
-Покрытие: частичное — the pair of days is checked by a call; the address and the re-read are checked by the end-to-end spec written by stage 3 of RT-2115.
+Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`, `libs/message-bus-admin/usage/util/src/lib/usage-digest.logic.spec.ts`.
