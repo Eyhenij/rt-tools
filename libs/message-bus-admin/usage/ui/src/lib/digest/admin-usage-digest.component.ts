@@ -50,6 +50,7 @@ export class AdminUsageDigestComponent {
     protected readonly kindsTitle: string = adminLabel('digestKinds');
     protected readonly deniedTitle: string = adminLabel('digestDenials');
     protected readonly empty: string = adminLabel('digestEmpty');
+    protected readonly noDenials: string = adminLabel('digestNoDenials');
     protected readonly loadsLabel: string = adminLabel('columnLoads');
 
     protected readonly view: Signal<IDigestView> = computed((): IDigestView => {
