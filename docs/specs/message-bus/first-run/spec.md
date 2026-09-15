@@ -1,6 +1,6 @@
 # The first record and the end of the account commands
 
-**Status:** proposed · **Revision:** 15 September 2026 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 15 September 2026 · **Scenario prefix:** `SC-MB`
 **Depends on:** `admin-auth`, `people-editing`, `roles-page`
 **Laws:** `access`, `navigation`
 **Procedures:** none
@@ -64,7 +64,9 @@ exactly while the storage holds not one account and closed forever after the fir
 
 - **The sign-in screen asks whether the first record is still to be created, and sends to the
   first-run screen while it is.** The person opens the address of the admin panel and lands on
-  the screen the node needs; the sign-in form is not drawn while there is nobody to sign in.
+  the screen the node needs. The sign-in form is drawn at once, and the person is sent as soon as
+  the answer arrives. A node with records is the usual case, and an empty card on every sign-in
+  would cost every person every time.
 - **The first-run screen sends to the sign-in when the first record is already created.** A
   bookmark of the first-run address stays harmless.
 - **The first-run screen asks the name and the password once and says the person will sign in
@@ -152,9 +154,11 @@ One receiver, one first record.
   and see nothing, and nobody could give it a role.
 - **Created and signed in by one operation.** Rejected: creation followed by the sign-in screen —
   a second screen for the pair typed a moment ago.
-- **The scenarios about the commands are reworded, not renumbered.** SC-MB-42, 43 and 59 speak of
-  the screen now and are carried by the tests that stay; the command tests leave with the
-  commands.
+- **The scenarios about the commands are reworded, not renumbered.** SC-MB-42, 43, 58 and 59
+  speak of the people section now and are carried by the tests that stay; the command tests
+  leave with the commands.
+- **The sign-in screen draws its form before the answer about the first run.** Rejected: an empty
+  card until the answer — paid by everyone on every sign-in for the one first run of the node.
 
 ## Open questions
 
@@ -163,3 +167,5 @@ One receiver, one first record.
 ## History of changes
 
 - 2026-09-15 — the agreement was written before the code.
+- 2026-09-15 — merged into the domain by the task RT-1902. The receiver, the screen, the stand and
+  the texts are done; the rule about the sign-in form names the form drawn at once.

@@ -75,6 +75,10 @@ of them may do a thing the owner sets from a screen rather than from a database 
 - **A role is given after the creation, not at it.** Task #1900 created the panel without a role,
   and task #1901 gave the item "Права" of the same row: the role and the pointed edits are set a
   move later. The question of the plan closed by what was on disk.
+- **The first record is created by a first-run screen, and it signs the person in at once.** Task
+  #1902: one public operation creates the owner and issues the sign-in, and it closes forever
+  with the first record. The sign-in screen sends there while the storage is empty and draws its
+  form at once for the usual case. The question of the plan closed by the task.
 
 The order holds to the end of the epic. A reconsideration is the owner's decision, not the
 executor's.
@@ -94,9 +98,6 @@ executor's.
 
 ## Open questions
 
-- **How the first record is created once the commands are gone.** The proposal is a first-run
-  screen open exactly while the storage holds no account and closed forever after the first one.
-  Decided in task #1902, not before: until then the commands hold this.
 - **What a person without a single right sees after the sign-in.** Today they stay on the sign-in
   screen: no section is open to them, and the "no sections" screen does not stand on that path.
   Found by task #1900, confirmed by task #1901 — a role is given after the creation, so every new

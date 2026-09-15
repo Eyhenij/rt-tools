@@ -8,7 +8,7 @@ While a scenario is not covered, it carries the mark "Not covered" with a reason
 
 ### SC-MB-33 — an entry by a fit pair opens the admin application
 
-Given an account is created by a command of the launch line
+Given an account is created from the screens
 When the owner names its name and password on the screen of the entry
 Then the entry is created, and the owner sees the section of the incident analyses
 
@@ -62,16 +62,16 @@ Given a wrong pair is named on the screen of the entry
 When the attempt is refused
 Then a row with the name of the account stands in the journal, and there is no password in it
 
-### SC-MB-42 — the command creates an account, and the storage holds the hash
+### SC-MB-42 — the creating stores the hash, not the password
 
 Given there is no account with such a name
-When the owner calls the command of the creating and names a password
+When the owner creates the record from the people section and names a password
 Then the record is created, and the hash lies in the storage, not the password itself
 
-### SC-MB-43 — a taken name of an account refuses the command
+### SC-MB-43 — a taken name of an account refuses the creating
 
 Given a record with such a name is already created
-When the command of the creating is called with the same name
+When the creating is called with the same name
 Then it refuses and creates no second record
 
 ### SC-MB-80 — unsuccessful attempts in a row lengthen the answer
@@ -109,12 +109,12 @@ Then the second entry goes on being accepted
 ### SC-MB-58 — a record that is switched off does not enter, and its former entries are refused
 
 Given an account has a live entry
-When it is switched off by a command of the launch line
+When it is switched off from the people section
 Then the former entry stops being accepted, and a new one by its pair is not created
 
 ### SC-MB-59 — a change of the password refuses the former one
 
-Given the password of an account is changed by a command
+Given the password of an account is changed from the people section
 When the owner names the former pair
 Then the entry is not created, and by the new pair it is created
 
@@ -128,7 +128,7 @@ Then it refuses, and the entry by the pair `Admin` is accepted the same as by `a
 
 Given there is not a single account in the storage
 When the intake goes up
-Then it leaves in the journal a row saying that there are no records and what they are created by
+Then it leaves in the journal a row saying that there are no records and that the first is created by the first-run screen
 
 ### SC-MB-79 — an operation without a declared access does not open outward
 
