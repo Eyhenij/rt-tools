@@ -98,6 +98,9 @@ flowchart TD
   looking alike. Everything waiting for a pipeline run, a rework or an answer goes as a draft; the
   question is asked in the MR itself. The draft sign here is the `Draft:` prefix in the title, and
   it is edited together with it.
+- **`--hard` is not taken to drop a commit — that is `--soft`.** `reset --hard`, `checkout --
+  <path>`, `restore <path>` and `clean -f` erase what is not committed. On a dirty tree the guard
+  refuses and names the files; the bypass is `# discard: <reason>` in the command.
 - **The working tree is emptied before the PR opens, not after.** `git status --porcelain` is asked
   in the same turn as the opening: what is uncommitted goes to the host by a commit before it, or
   is named. A push after the opening moves the tip past the green run the body names, and for that
