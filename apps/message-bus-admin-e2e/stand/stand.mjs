@@ -102,6 +102,26 @@ export const INVITES = Object.freeze({
 /** Признак дерева, которое заводит себя погашением приглашения стенда. */
 export const ENROLLED_SLUG = 'stand-enrolled';
 
+/**
+ * Люди стенда, кроме учётной записи самого набора.
+ *
+ * Трое и с разной судьбой: у первого роль не владельца — ею набор входит, проверяя раздел без
+ * права; второй отключён; третьему роли не назначено, и он ни разу не входил. Одной записью
+ * список людей не проверяется: у неё все четыре значения заполнены, и ни слова вместо пустой
+ * роли, ни слова вместо несостоявшегося входа на экране не показались бы.
+ *
+ * Пара входа наблюдателя тайной не является — по той же причине, по какой ею не является пара
+ * набора: запись живёт в базе стенда, которую прогон заводит и вычищает сам.
+ */
+export const PEOPLE = Object.freeze({
+    watcher: Object.freeze({ name: 'Стенд наблюдатель', password: 'nabor-e2e-watcher' }),
+    disabled: Object.freeze({ name: 'Стенд отключённый', password: 'nabor-e2e-disabled' }),
+    roleless: Object.freeze({ name: 'Стенд без роли', password: 'nabor-e2e-roleless' }),
+});
+
+/** Роль наблюдателя: права на разделы груза и ни одного права на людей. */
+export const WATCHER_ROLE = 'Наблюдатель';
+
 /** Адреса разделов админки. Те же, что объявляют маршруты разделов. */
 export const SECTIONS = Object.freeze({
     postmortems: '/postmortems',
@@ -109,4 +129,6 @@ export const SECTIONS = Object.freeze({
     summaries: '/summaries',
     usage: '/usage',
     invites: '/invites',
+    people: '/people',
+    roles: '/roles',
 });

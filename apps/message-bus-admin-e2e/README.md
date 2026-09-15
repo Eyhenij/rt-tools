@@ -37,6 +37,8 @@ docker compose up -d db
 | предложения, сводки, подписи кита        | `apps/message-bus-admin-e2e/src/sections.spec.ts`            |
 | настройка столбцов                       | `apps/message-bus-admin-e2e/src/columns.spec.ts`             |
 | узкий экран                              | `apps/message-bus-admin-e2e/src/list.narrow.spec.ts`         |
+| роли и права пользователя                | `apps/message-bus-admin-e2e/src/roles.spec.ts`               |
+| первая запись на узле с записями         | `apps/message-bus-admin-e2e/src/first-run.spec.ts`           |
 
 ## Стенд
 

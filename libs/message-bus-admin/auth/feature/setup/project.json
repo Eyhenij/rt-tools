@@ -1,0 +1,13 @@
+{
+  "name": "message-bus-admin-auth-feature-setup",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/message-bus-admin/auth/feature/setup/src",
+  "prefix": "admin",
+  "projectType": "library",
+  "tags": ["scope:message-bus-admin-auth-feature-setup"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

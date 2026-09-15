@@ -22,6 +22,8 @@ test.describe('разделы на узком экране', () => {
 
         const items: ReturnType<Page['locator']> = qa(page, 'header-nav-mobile-item');
 
+        // Разделы те же, что в широком ряду: их число берётся из объявления адресов, а не пишется
+        // числом — раздел, заведённый веткой, иначе оставил бы спеку зелёной и не показанным
         await expect(items).toHaveCount(Object.keys(SECTIONS).length);
 
         await expectScreen(page, 'shell-narrow-nav');

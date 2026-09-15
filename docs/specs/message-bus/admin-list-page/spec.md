@@ -91,6 +91,12 @@ list:
 - **There are no actions over one record in the toolbar.** The toolbar speaks about the list whole; an
   action over a record standing above the list answers the question "over which one exactly" only by a
   selection, and there is no selection in the list at all.
+- **The operation of the reading of a section answers with a page, even where the records are few.**
+  The common base of the mechanics reads only that shape: the rows, their total number, the number of
+  the page and its size. A section answering with a bare array has to be read past the base, and it
+  diverges at once from every neighbouring section. The number of the records is not the sign: it
+  grows, and the divergence is found by whoever adds the first filter.
+
 - **The page asks the host for the reading, the page, its size, the order and the setting of the
   columns, it does not give them outward by events.** An event per action grows in number with every new
   action, while the host declares them once; the connecting at that stops being the business of whoever
