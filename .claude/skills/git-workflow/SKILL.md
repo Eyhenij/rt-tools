@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for creating a task and a branch, commit, push, opening a PR and merging. Names the one-to-one pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — rule deploy-flow.
 ---
-<!-- rt-kit v0.28.0 · rules/git-workflow.github.md · 3680b1a9a8eb · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · rules/git-workflow.github.md · ccfb41caf6de · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -163,6 +163,8 @@ flowchart TD
   gate is the only check behind the work — pattern `git-workflow-stack`.
 - **A run pushed out of the pipeline queue gets a separate audit line.** It looks failed though it
   never checked the branch, and the step count tells them apart.
+- **The last run of the main branch is judged by the audit too: red and pushed out get lines of
+  their own.** The merge itself is checked by nobody; a pipeline asleep on a push to main is named.
 - **A draft with a green run on its tip is an audit discrepancy.** A green page permits nothing: the
   host locks the button.
 - **One's own drafts are judged all at once, not only the checked-out branch's.** Two signs — a
@@ -170,8 +172,8 @@ flowchart TD
 - **Opening a PR is refused while the branch carries its task folder.** Opening is the last point
   where the executor still sees the refusal.
 - **One's own open PRs are reread in three places: before a push, on taking a task and after every
-  known merge.** A PR goes stale with no action by its author: a neighbouring work merged, and the
-  rest lagged that second. Technique — `git-workflow-freshness`.
+  known merge.** A neighbouring merge stales the rest that second. Technique —
+  `git-workflow-freshness`.
 - **One's own conflicting PR is fixed by the turn's first action, and no new work is taken before
   that.** Work here means creating a task or a branch, moving the column and opening a PR.
 - **A conflicting PR of a neighbouring session is not one's own.** One's own branch is the one this
@@ -205,8 +207,7 @@ flowchart TD
 - **The main branch is taken by the remote ref — in words and in actions.** The local one is
   yesterday's snapshot and silent about it: by it a merged branch counts as unmerged.
 - **A code edit is handed to a person by an open PR, not by a pushed branch.** A branch reaches no
-  inbox and has no discussion, and the PR opens in the turn the executor says the work is handed
-  over.
+  inbox; the PR opens in the turn the work is said handed over.
 - **What is not ready to merge opens as a draft — `gh pr create --draft`.** The host locks a draft's
   merge button: everything waiting for a run, a rework or an answer goes as a draft.
 - **A PR the pipeline does not wake for opens ready, without `--draft`.** Which bases it wakes for
@@ -252,7 +253,7 @@ flowchart TD
 - **The board is edited by a GraphQL query by the board id, not by the owner's name.**
 - **The machine commit's email is copied from the companion, not typed from memory.** The address
   `<число>+<логин>@users.noreply.github.com` matches by the number: with a foreign one the commit
-  leaves signed by a stranger. The guard refuses the push over it.
+  leaves signed by a stranger.
 - **The identity of the machine account is confirmed by the host's answer:** asked with the token,
   login and number come together.
 - **Guard scenarios set the git settings themselves, not take them from the machine.** Author, email
@@ -265,7 +266,7 @@ flowchart TD
 - **The author of an open PR and whether it has a reviewer are audited by the work queue.** Before the
   merge neither miss shows: a PR opened by a person never gets a reviewer.
 - **Reviewers are asked by a REST call, not by the client's selection.** Its fields come from GraphQL,
-  which the account has no rights to: "matched" is not told from "nothing to ask with".
+  where the account has no rights.
 
 - **A second working copy is for reading, and the call goes from the copy the session stands in.**
   The gate runs its set where the session was started: someone else's uncommitted work refuses the

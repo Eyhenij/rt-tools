@@ -51,7 +51,7 @@ import {
 import { checkBranchFolders } from './board-folders.mjs';
 import { checkConflicting, checkHeadRun } from './board-pull-state.mjs';
 import { checkLongWork } from './board-long-work.mjs';
-import { HAS_PIPELINE, deployLag, lastDeploy } from './board-runs.mjs';
+import { HAS_PIPELINE, deployLag, lastDeploy, lastMainRun, pipelineText, pipelineWakesOnPush } from './board-runs.mjs';
 import { checkEpicLinks, checkEpicPullBase, checkEpicState, checkEpicSubIssues } from './board-epics.mjs';
 import { similarTitles } from './board-titles.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
@@ -325,6 +325,36 @@ if (!offline && DEPLOY_WORKFLOW) {
         } else {
             throw error;
         }
+    }
+}
+
+// The main branch is audited by the last run of the pipeline on it. A PR is checked before the
+// merge, but the merge itself nobody watches: a red main run stood for a day and a half without a
+// line about it, and a run pushed out of the queue by the next merge looked like a passed one.
+if (!offline && HAS_PIPELINE) {
+    if (pipelineWakesOnPush(pipelineText(), MAIN_BRANCH)) {
+        try {
+            const run = lastMainRun(MAIN_BRANCH, { token: botToken() ?? undefined });
+            if (run.verdict === 'failure') {
+                report(
+                    `the last run of «${MAIN_BRANCH}» is red on ${String(run.sha).slice(0, 8)} of ${String(run.at).slice(0, 10)}: ` +
+                        `merges on top go out unchecked — ${run.url}`
+                );
+            } else if (run.verdict === 'evicted') {
+                report(
+                    `the run of «${MAIN_BRANCH}» on ${String(run.sha).slice(0, 8)} was pushed out of the queue and never checked the merge — ${run.url}`
+                );
+            }
+        } catch (error) {
+            if (error instanceof OfflineError) {
+                console.log(`check-board: the main branch run was not checked — ${error.message}`);
+            } else {
+                throw error;
+            }
+        }
+    } else {
+        // Silence here would read as «main is green»: the tree whose pipeline sleeps on a push is told so.
+        console.log(`check-board: the main branch run was not checked — the pipeline does not wake on a push to «${MAIN_BRANCH}»`);
     }
 }
 

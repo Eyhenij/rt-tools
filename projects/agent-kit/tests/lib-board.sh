@@ -47,6 +47,9 @@ case "$args" in
         esac
         ;;
     *contents*) printf 'Not Found\n' >&2; exit 1 ;;
+    # Последний прогон главной ветки и последняя выкатка спрашиваются одним видом вызова: их
+    # различает имя потока — прогон идёт у файла конвейера, выкатка у потока выкатки.
+    *workflows/ci.yml/runs*) printf '%s\n' "${STUB_MAIN_RUN:-}" ;;
     *actions/workflows/*runs*) printf '%s\n' "$STUB_DEPLOY" ;;
     *actions/runs/*/jobs*) printf '%s\n' "${STUB_JOBS:-0}" ;;
     *actions/runs*tojson*) printf '%s\n' "${STUB_EVICTED:-[]}" ;;
