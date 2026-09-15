@@ -3,6 +3,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { createRtFixture, el, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
+import { RtSelectTriggerDirective } from '../select/rt-select-trigger.directive';
 import { IRtSelect } from '../select/rt-select.model';
 import { RtMultiselectComponent } from './rt-multiselect.component';
 
@@ -271,5 +272,48 @@ describe('RtMultiselectComponent', (): void => {
         open(fixture);
 
         expect(document.querySelector('[qa-dataid="multiselect-empty"]')?.textContent?.trim()).toBe('No options');
+    });
+});
+
+/**
+ * Хозяин со своей разметкой указателя: маркер тот же, что у выбора одного значения — проверяется,
+ * что вход один на обе семьи.
+ */
+@Component({
+    selector: 'rt-multiselect-trigger-host',
+    template: `
+        <rt-multiselect [options]="opts">
+            <ng-template rtSelectTrigger let-state>
+                <span class="own-trigger" [attr.data-count]="state.value.length">{{ state.label || 'ничего' }}</span>
+            </ng-template>
+        </rt-multiselect>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtMultiselectComponent, RtSelectTriggerDirective],
+})
+class MultiselectTriggerHostComponent {
+    public readonly opts: ReadonlyArray<IRtSelect.Option<string>> = OPTIONS;
+}
+
+describe('RtMultiselectComponent — свой указатель', (): void => {
+    it('SC-UKV-163 — тот же вход служит выбору нескольких значений', (): void => {
+        const fixture: ComponentFixture<MultiselectTriggerHostComponent> = createRtFixture(MultiselectTriggerHostComponent);
+        const own: HTMLElement | null = fixture.nativeElement.querySelector('.own-trigger');
+        const button: HTMLButtonElement = fixture.nativeElement.querySelector('[qa-dataid="multiselect-trigger"]') as HTMLButtonElement;
+
+        expect(own).not.toBeNull();
+        expect(button.contains(own)).toBe(true);
+        expect(fixture.nativeElement.querySelector('[qa-dataid="multiselect-placeholder"]')).toBeNull();
+        expect(own?.getAttribute('data-count')).toBe('0');
+
+        button.click();
+        fixture.detectChanges();
+        options()[0].click();
+        fixture.detectChanges();
+
+        const after: HTMLElement | null = fixture.nativeElement.querySelector('.own-trigger');
+
+        expect(after?.getAttribute('data-count')).toBe('1');
+        expect(textOf(after)).toBe('Москва');
     });
 });
