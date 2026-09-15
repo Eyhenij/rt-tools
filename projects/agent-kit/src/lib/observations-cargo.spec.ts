@@ -47,7 +47,7 @@ describe('груз наблюдений', () => {
     beforeEach((): void => freshTree());
     afterEach((): void => dropTree());
 
-    it('SC-AK-1094 — уезжают все строки отрезка, по дням', () => {
+    it('SC-AK-1099 — уезжают все строки отрезка, по дням', () => {
         start();
         put(`${OBSERVATIONS_DIR}/2026-08-12.jsonl`, `${load('task-flow')}\n${deny('testing', '2026-08-12')}\n`);
         put(
@@ -74,7 +74,7 @@ describe('груз наблюдений', () => {
         });
     });
 
-    it('SC-AK-1095 — загрузка называет род скила, отказ — нет', () => {
+    it('SC-AK-1100 — загрузка называет род скила, отказ — нет', () => {
         start();
         const text: string = [load('testing'), load('git-workflow-commit'), load('agent-kit'), load('grill-me'), deny('testing')].join(
             '\n'
@@ -87,7 +87,7 @@ describe('груз наблюдений', () => {
         expect(kinds).toEqual(['rule', 'pattern', 'skill', 'own', undefined]);
     });
 
-    it('SC-AK-1096 — битая строка пропускается, остальные уезжают', () => {
+    it('SC-AK-1101 — битая строка пропускается, остальные уезжают', () => {
         start();
         const text: string = `${load('testing')}\n{"ev":"skill-load","res":"tes\n${load('task-flow')}\n${JSON.stringify({ ev: 'unknown', res: 'x', sid: '1' })}\n`;
 
@@ -96,7 +96,7 @@ describe('груз наблюдений', () => {
         expect(lines).toHaveLength(2);
     });
 
-    it('SC-AK-1097 — сухой прогон называет груз числом строк и дней', async () => {
+    it('SC-AK-1102 — сухой прогон называет груз числом строк и дней', async () => {
         start();
         put(`${OBSERVATIONS_DIR}/2026-08-13.jsonl`, `${load('testing')}\n${load('task-flow', '2')}\n`);
         put(`${OBSERVATIONS_DIR}/${TODAY}.jsonl`, `${load('testing')}\n`);
@@ -115,7 +115,7 @@ describe('груз наблюдений', () => {
         expect(cargo.days[1].lines[0].skill).toBe('rule');
     });
 
-    it('SC-AK-1098 — адрес дерева в строке отбивает отправку целиком', async () => {
+    it('SC-AK-1103 — адрес дерева в строке отбивает отправку целиком', async () => {
         start();
         put(`${OBSERVATIONS_DIR}/${TODAY}.jsonl`, `${load(`rules/${basename(treeRoot())}`)}\n`);
 

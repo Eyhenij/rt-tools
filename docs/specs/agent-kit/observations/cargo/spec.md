@@ -429,7 +429,7 @@ The open questions of the domain are shared, and they live in the spec next to i
 ## History of changes
 
 - 2026-09-14 — the agreement of task RT-2098 about the observation lines leaving for the intake was
-  merged in: ten rules, scenarios `SC-AK-1094`…`SC-AK-1098`, bindings on the reading of the days and
+  merged in: ten rules, scenarios `SC-AK-1099`…`SC-AK-1103`, bindings on the reading of the days and
   the sending. The question of the window length of the observation cargo went to the domain spec.
 - 2026-09-05 — the subdomain was split out of the observations spec, which had outgrown the length
   limit. The rules, scenarios and bindings of the proposals, the sending, the creating of a tree and

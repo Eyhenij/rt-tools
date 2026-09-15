@@ -398,7 +398,7 @@ Then the block is named among the skipped and is not called written by hand
 
 Covered: `projects/agent-kit/src/lib/shipment-skipped.spec.ts`.
 
-### SC-AK-1094 — the observation cargo carries every line of the window grouped by day
+### SC-AK-1099 — the observation cargo carries every line of the window grouped by day
 
 Given day files for three days with lines of all four event kinds
 When the send gathers the cargo
@@ -407,7 +407,7 @@ files
 
 Covered: `projects/agent-kit/src/lib/observations-cargo.spec.ts`.
 
-### SC-AK-1095 — a load names the kind of its skill
+### SC-AK-1100 — a load names the kind of its skill
 
 Given a load of a rule laid out by the package, a load of a pattern of the package, a load of
 another skill of the package and a load of a skill of the tree's own
@@ -417,7 +417,7 @@ no `skill`
 
 Covered: `projects/agent-kit/src/lib/observations-cargo.spec.ts`.
 
-### SC-AK-1096 — a broken line is skipped and the cargo goes
+### SC-AK-1101 — a broken line is skipped and the cargo goes
 
 Given a day file with a line broken mid-way
 When the send gathers the cargo
@@ -425,7 +425,7 @@ Then the cargo carries the other lines of the day, and the broken one is absent
 
 Covered: `projects/agent-kit/src/lib/observations-cargo.spec.ts`.
 
-### SC-AK-1097 — the dry run names the cargo with lines and days
+### SC-AK-1102 — the dry run names the cargo with lines and days
 
 Given three days of lines
 When `agent-kit propose --dry-run` runs
@@ -434,7 +434,7 @@ leaves
 
 Covered: `projects/agent-kit/src/lib/observations-cargo.spec.ts`.
 
-### SC-AK-1098 — a tree address in a line refuses the send
+### SC-AK-1103 — a tree address in a line refuses the send
 
 Given a line whose resource holds a segment of the tree address
 When the send checks the cargo for leaks
