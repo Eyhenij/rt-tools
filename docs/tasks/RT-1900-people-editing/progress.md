@@ -4,7 +4,7 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `замысел-записан`
+- **State:** `этап-идёт`
 - **Stage:** 1 of 4 — the agreement
 - **Done:** the folder and the plan.
 - **Next step:** the feature spec in `proposed/people-editing/`.
