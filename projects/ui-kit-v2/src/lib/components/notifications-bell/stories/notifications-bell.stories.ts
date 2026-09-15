@@ -15,7 +15,7 @@ export default {
 
 type TStory = StoryObj<TestRtNotificationsBellComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         unread: false,
         ariaLabel: '',

@@ -20,7 +20,7 @@ export default {
 
 type TStory = StoryObj<TestRtThreadListComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         rows: [],
         activeId: null,

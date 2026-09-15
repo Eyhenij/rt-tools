@@ -17,7 +17,7 @@ export default {
 
 type TStory = StoryObj<TestRtTabsControlComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         side: 'right',
     },

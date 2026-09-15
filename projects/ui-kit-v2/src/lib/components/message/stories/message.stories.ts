@@ -19,7 +19,7 @@ export default {
 
 type TStory = StoryObj<TestRtMessageComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         severity: 'info',
         icon: null,

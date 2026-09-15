@@ -37,7 +37,7 @@ export default {
 
 type TStory = StoryObj<TestRtChatComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         messages: CHAT_MESSAGES,
         loading: false,

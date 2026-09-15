@@ -25,7 +25,7 @@ export default {
 
 type TStory = StoryObj<TestRtMessageComposerComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         placeholder: 'Введите значение',
         accept: '',

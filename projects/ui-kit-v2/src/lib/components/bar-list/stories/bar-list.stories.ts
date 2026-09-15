@@ -15,7 +15,7 @@ export default {
 
 type TStory = StoryObj<TestRtBarListComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     // Показ рисует не сетка витрины: компонент занимает всю ширину сам. Отсюда кадр целой страницей.
     parameters: { snapshot: { fullPage: true } },
     args: {
