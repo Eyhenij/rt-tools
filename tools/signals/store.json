@@ -1,4 +1,4 @@
-# rt-kit v0.27.0 · checks/signals/store.json · ed39d37f21f4 · правится надстройкой, не здесь
+# rt-kit v0.28.0 · checks/signals/store.json · ed39d37f21f4 · правится надстройкой, не здесь
 {
   "about": "Признаки пакета @rt-tools/store: своё хранилище состояния вместо базового.",
   "signals": [

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/rerun-guard.sh · 5f1d1fbbfd49 · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/rerun-guard.sh · 5f1d1fbbfd49 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh
 # Guard of the rerun: a fallen run is not rerun until its log has been read.

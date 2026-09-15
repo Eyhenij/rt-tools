@@ -1,4 +1,4 @@
-// rt-kit v0.27.0 · checks/lib-domains.mjs · cd05170c467a · правится надстройкой, не здесь
+// rt-kit v0.28.0 · checks/lib-domains.mjs · cd05170c467a · правится надстройкой, не здесь
 /**
  * The domain grid: which directories count as domains, which layers each of their forms is made of
  * and which libs lie in them. From here also come the libs that ended up outside the grid and the
