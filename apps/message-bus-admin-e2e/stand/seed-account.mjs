@@ -85,7 +85,9 @@ export async function seedPeople(command, sql) {
  * ни одного раздела вообще, и пропажа пункта людей ничего не значила бы.
  */
 async function watcherRole(sql) {
-    const rights = ['postmortems:read', 'proposals:read', 'summaries:read', 'invites:read'].map((right) => `'${right}'`).join(', ');
+    const rights = ['postmortems:read', 'proposals:read', 'summaries:read', 'usage:read', 'invites:read']
+        .map((right) => `'${right}'`)
+        .join(', ');
 
     await sql(
         [
