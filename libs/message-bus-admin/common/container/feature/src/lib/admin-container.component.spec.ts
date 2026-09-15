@@ -93,7 +93,7 @@ describe('AdminContainerComponent', () => {
     it('SC-MB-325 — раздел людей стоит в шапке у того, у кого есть `accounts:read`', () => {
         signedInWith(['accounts:read']);
 
-        expect(shownSections()).toEqual(['Люди']);
+        expect(shownSections()).toEqual(['Пользователи']);
     });
 
     it('SC-MB-325 — раздела людей без этого права в шапке нет вовсе', () => {
@@ -102,7 +102,7 @@ describe('AdminContainerComponent', () => {
         // Сперва положительное: разделы вообще показываются — иначе проверка на отсутствие
         // зеленела бы и на шапке, потерявшей меню целиком.
         expect(shownSections()).toContain('Разборы происшествий');
-        expect(shownSections()).not.toContain('Люди');
+        expect(shownSections()).not.toContain('Пользователи');
     });
 
     it('SC-MB-301 — пока ответ о вошедшем не приехал, не скрывается ничего', () => {

@@ -23,7 +23,7 @@ half of the epic, and the editing screens go after it — there must be somebody
 
 ### What it is called in the interface
 
-The section is called "Люди". The column of the state says "Действует" or "Отключена"; an account
+The section is called "Пользователи". The column of the state says "Действует" or "Отключена"; an account
 that never signed in shows a dash instead of a date.
 
 ## Rules
