@@ -86,7 +86,7 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
     }),
     people: Object.freeze({
         path: SECTIONS.people,
-        title: 'Люди',
+        title: 'Пользователи',
         prefix: 'people',
         table: 'people-table',
         row: 'people-row',

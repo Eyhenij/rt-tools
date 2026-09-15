@@ -34,7 +34,7 @@ export const ADMIN_LABELS = {
     sectionProposals: 'Предложения',
     sectionSummaries: 'Сводки проектов',
     sectionInvites: 'Приглашения',
-    sectionPeople: 'Люди',
+    sectionPeople: 'Пользователи',
     sectionUsage: 'Использование',
 
     hintPostmortems: 'Что и почему сломалось в проектах — по разбору на происшествие',
