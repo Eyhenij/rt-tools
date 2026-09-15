@@ -16,7 +16,7 @@ const SKILL_KINDS: readonly ESkillKind[] = Object.values(ESkillKind);
  * Род скила из слова контракта. Слово вне набора — правило: строка без рода приезжает у скила,
  * о котором есть только отказы гейта, а гейт правил отказывает по правилу.
  */
-export function skillKindOf(raw: string): ESkillKind {
+export function usageKindOf(raw: string): ESkillKind {
     return SKILL_KINDS.find((kind: ESkillKind): boolean => kind === raw) ?? ESkillKind.Rule;
 }
 
@@ -25,7 +25,7 @@ export class UsageRowMapper extends BaseMapper<IUsage.Row.State> {
     public override mapFrom(data: IUsage.Row.Api): IUsage.Row.State {
         return {
             skill: this.typeCast.getAsString(data.skill),
-            kind: skillKindOf(this.typeCast.getAsString(data.kind)),
+            kind: usageKindOf(this.typeCast.getAsString(data.kind)),
             loads: this.typeCast.getAsNumber(data.loads, 0),
             sessions: this.typeCast.getAsNumber(data.sessions, 0),
             denials: this.typeCast.getAsNumber(data.denials, 0),

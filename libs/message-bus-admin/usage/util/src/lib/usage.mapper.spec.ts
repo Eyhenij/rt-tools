@@ -1,5 +1,5 @@
 import { skillKindLabel } from './usage.columns';
-import { skillKindOf, UsageRowMapper, UsageSessionMapper } from './usage.mapper';
+import { usageKindOf, UsageRowMapper, UsageSessionMapper } from './usage.mapper';
 import { ESkillKind, IUsage } from './usage.model';
 
 function apiRow(patch: Partial<IUsage.Row.Api> = {}): IUsage.Row.Api {
@@ -16,8 +16,8 @@ describe('UsageRowMapper', () => {
     });
 
     it('чужое слово рода читается правилом: гейт правил отказывает по правилу', () => {
-        expect(skillKindOf('')).toBe(ESkillKind.Rule);
-        expect(skillKindOf('что-то')).toBe(ESkillKind.Rule);
+        expect(usageKindOf('')).toBe(ESkillKind.Rule);
+        expect(usageKindOf('что-то')).toBe(ESkillKind.Rule);
     });
 
     it('числа приходят числами, а пустой счёт — нулём, не NaN', () => {
