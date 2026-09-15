@@ -23,11 +23,11 @@ application of the accounts at all, and that is a decision, not an unfinished pi
 
 The vocabulary of the domain whole is in the spec of the domain. Here only what lives in the entry:
 
-| Term                  | What it is                                                                                          |
-| --------------------- | --------------------------------------------------------------------------------------------------- |
-| An account            | The name and the password of one person. It is created by a command of the launch line              |
-| The entry             | The state in which the intake knows who is asking. It lives by a term and is broken off by the exit |
-| The term of the entry | The time after which the entry stops being accepted and a person introduces themselves anew         |
+| Term                  | What it is                                                                                                            |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| An account            | The name and the password of one person. The first is created by the first-run screen, the rest by the people section |
+| The entry             | The state in which the intake knows who is asking. It lives by a term and is broken off by the exit                   |
+| The term of the entry | The time after which the entry stops being accepted and a person introduces themselves anew                           |
 
 ### What it is called in the interface
 
@@ -75,29 +75,30 @@ The vocabulary of the domain whole is in the spec of the domain. Here only what 
 - **Every operation declares its way of access openly.** The default "open until it is closed" opens
   outward every new operation the author did not think about; the default here is the reverse, and
   openness is named in the operation itself.
-- **An account is created, changes its password and is switched off by a command of the launch line.**
-  Creating from the web is one more screen, the right to it and the question of who creates the first
-  record; the intake already has the commands, and a leaked password otherwise has nothing to be
-  closed by at all.
-- **The name of an account is taken by one person, and the case is not told apart in it.** The command
-  refuses at a taken name instead of creating a second record: `Иван` next to `иван` means the entry
-  stopped answering who exactly entered.
+- **An account is created, changes its password and is switched off from the screens.** The first
+  record is created by the first-run screen, the rest by the people section under the right to edit
+  people; the launch line knows no account commands — with the screens they were a second way in
+  that nobody checked.
+- **The name of an account is taken by one person, and the case is not told apart in it.** The
+  creating refuses at a taken name instead of creating a second record: `Иван` next to `иван` means
+  the entry stopped answering who exactly entered.
 - **A record that is switched off creates no entry, and its former entries stop being accepted.** A
   switching off that leaves a live entry means "one cannot enter again", not "the access is closed".
 - **The name of an account is unique by the brought-to form.** A constraint of the storage, not a
-  check by reading: two commands of creating started in a row are not told apart by a check by reading.
+  check by reading: two creations started in a row are not told apart by a check by reading.
 - **The password lies only as a hash.** There is neither a column under the password itself nor a copy
   of it in the journal on any path.
 - **The service says at the start that there is not a single account.** A fresh node otherwise looks
   like a breakage of the entry: any pair is refused by the same refusal, and there is nothing to tell
-  "you were wrong" from "there is nobody to create" by.
+  "you were wrong" from "there is nobody to create" by. The line names the first-run screen.
 - **A person sent to the entry from the address of a section lands after the entry where they were
   going.** Otherwise a link to a section works only for whoever has already entered.
 
 ## What is out of scope
 
-- **The creating of accounts from the interface and a screen of the accounts.** The records are created
-  by a command of the launch line; a person without access to the node has nothing to be created by.
+- **The creating of accounts and the first record.** The people section creates, switches off and
+  changes the password — subdomain `people-editing`; the first record of an empty node is the
+  subdomain `first-run`.
 - **The restoring of a password by mail.** The service has no mail at all.
 - **Roles and rights inside the admin application.** The word of the owner: whoever entered sees
   everything.
@@ -165,10 +166,10 @@ there are no rights inside the admin application.
 
 ## Decisions
 
-- **The entry is by a password, and the accounts are created by a command of the launch line.** The
-  service goes out into the internet — an entry is needed; creating from the web is a screen, a right
-  and the question about the first record. The price: a person without access to the node has nothing
-  to be created by.
+- **The entry is by a password, and the accounts are created from the screens.** The service goes
+  out into the internet — an entry is needed. The commands of the launch line held the creating
+  until the screens came; with the screens in place they were removed as a second way in nobody
+  checked. The first record of an empty node is created by the first-run screen.
 - **The entry is carried by a cookie unavailable to scripts.** The admin application and the intake are
   given out from one name, so the cookie has no second source. Rejected: a header with a token — it
   demands keeping the value where a script of the page reaches.
@@ -178,6 +179,11 @@ there are no rights inside the admin application.
 The open questions of the domain are shared, and they live in the spec next to it.
 
 ## History of changes
+
+- 2026-09-15 — the commands of the launch line for the accounts were removed: the first record is
+  created by the first-run screen, the rest by the people section. The scenarios of the commands
+  were reworded to the operations under the same numbers: `SC-MB-42`, `SC-MB-43`, `SC-MB-58`,
+  `SC-MB-59`.
 
 - 2026-08-21 — the subdomain was split out of the spec of the reading of what was taken in, which had
   outgrown the length limit. The rules of the entry, the scenarios `SC-MB-33`…`SC-MB-45`,
