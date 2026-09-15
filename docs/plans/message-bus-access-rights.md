@@ -56,6 +56,7 @@ of them may do a thing the owner sets from a screen rather than from a database 
 | 4   | #1900 — creating, disabling and changing a password from a screen         | The three actions of the launch line move to a panel next to the list                                                                              |
 | 5   | #1901 — the page of roles and rights                                      | The set of a role and the pointed edits over it. It goes after the list: there must be somebody to assign a role to                                |
 | 6   | #1902 — the commands are removed, the first record gets a path of its own | Last: until then the commands are the only way in when the admin panel does not come up                                                            |
+| 7   | #2134 — the section is called «Пользователи»                              | Added by the owner's word when the epic was taken up again; one word in the dictionary, done before the editing tasks so their frames carry it     |
 
 ## What was found along the way
 
