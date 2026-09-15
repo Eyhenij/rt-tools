@@ -4,7 +4,7 @@ kind: pattern
 rule: doc-style
 description: Pattern of rule doc-style. Load when writing a task in the work queue, a PR description and a chat reply to the owner. Samples of "so" and "not so" for each of the three texts and the words that get replaced in them. The shape of a status reply is named by rule status-report.
 ---
-<!-- rt-kit v0.27.0 · patterns/doc-style-human.md · 2f5ce74249bc · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · patterns/doc-style-human.md · 2f5ce74249bc · правится надстройкой, не здесь -->
 
 # A task, a PR description and a reply to the owner
 

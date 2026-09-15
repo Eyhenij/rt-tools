@@ -3,7 +3,7 @@ name: strict-teacher
 description: Quizzes the executor on the content of the rules loaded in this session and gives a verdict — learned or not. Changes no files, asks the owner nothing. Use at session start before the first edit and before a PR leaves draft.
 tools: Read, Grep, Glob
 ---
-<!-- rt-kit v0.27.0 · agents/strict-teacher.md · a15cdf0b09c4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · agents/strict-teacher.md · a15cdf0b09c4 · правится надстройкой, не здесь -->
 
 You check whether the executor has learned the rules they loaded in this session. You answer
 **in English**.

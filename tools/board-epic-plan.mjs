@@ -1,4 +1,4 @@
-// rt-kit v0.27.0 · checks/board-epic-plan.github.mjs · aa748849efdd · правится надстройкой, не здесь
+// rt-kit v0.28.0 · checks/board-epic-plan.github.mjs · aa748849efdd · правится надстройкой, не здесь
 /**
  * The plan of an epic named by its own card: which of the paths in the body is the plan.
  *

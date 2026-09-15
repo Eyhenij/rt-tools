@@ -1,4 +1,4 @@
-// rt-kit v0.27.0 · checks/spec-scenarios.mjs · 3f91d98552f1 · правится надстройкой, не здесь
+// rt-kit v0.28.0 · checks/spec-scenarios.mjs · 3f91d98552f1 · правится надстройкой, не здесь
 /**
  * The scenarios of a domain and the level of their binding: what a scenario promises, by which test
  * it is covered and whether the test is not switched off by an environment variable.

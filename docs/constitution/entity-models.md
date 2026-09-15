@@ -1,4 +1,4 @@
-<!-- rt-kit v0.27.0 · laws/entity-models.md · f32da5d87e14 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · laws/entity-models.md · f32da5d87e14 · правится надстройкой, не здесь -->
 # Law on entity models
 
 How much data the application requests and returns on every screen: a list row, an opened

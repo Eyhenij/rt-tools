@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/git-guard-delivery-conflict.sh · 2f998e969d26 · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/git-guard-delivery-conflict.sh · 2f998e969d26 · правится надстройкой, не здесь
 # A conflicting PR of one's own, for the delivery guard: while at least one handed-over piece of
 # work is marked conflicting, a new one is not taken.
 #
