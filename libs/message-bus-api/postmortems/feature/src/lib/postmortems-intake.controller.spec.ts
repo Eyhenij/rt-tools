@@ -28,6 +28,7 @@ interface IPostmortemStored {
     file: string;
     text: string;
     state: ECargoState;
+    closedByPublisher: boolean;
     updatedAt: Date;
 }
 
@@ -108,8 +109,9 @@ class PrismaDouble {
         // иначе приезд читался бы состоянием, которого у настоящей записи не бывает.
         const created: IPostmortemStored = {
             state: ECargoState.New,
+            closedByPublisher: false,
             updatedAt: new Date('2026-08-14T00:00:00Z'),
-            ...(args['create'] as Omit<IPostmortemStored, 'state' | 'updatedAt'>),
+            ...(args['create'] as Omit<IPostmortemStored, 'state' | 'closedByPublisher' | 'updatedAt'>),
         };
         this.postmortems.push(created);
 
@@ -200,6 +202,20 @@ describe('PostmortemsIntakeController', () => {
 
         expect(prisma.postmortems[0].state).toBe(ECargoState.New);
         expect(prisma.postmortems[0].text).toBe('исправленный текст');
+    });
+
+    it('SC-MB-323 — приезд с другим текстом не возвращает в «новое» разбор, закрытый издателем', async () => {
+        const prisma: PrismaDouble = new PrismaDouble();
+        const controller: PostmortemsIntakeController = controllerWith(prisma);
+        const file: string = '2026-08-14-gate-map.md';
+
+        await controller.accept(cargo([{ file, text: 'первая редакция' }]), requestOf(), new ResponseDouble());
+        prisma.postmortems[0].state = ECargoState.Fixed;
+        prisma.postmortems[0].closedByPublisher = true;
+        await controller.accept(cargo([{ file, text: 'текст с отметкой о починке' }]), requestOf(), new ResponseDouble());
+
+        expect(prisma.postmortems[0].state).toBe(ECargoState.Fixed);
+        expect(prisma.postmortems[0].text).toBe('текст с отметкой о починке');
     });
 
     it('SC-MB-170 — приезд с тем же текстом состояния не трогает', async () => {
