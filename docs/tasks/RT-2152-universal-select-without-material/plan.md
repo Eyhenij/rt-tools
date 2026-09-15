@@ -1,7 +1,7 @@
 # Plan
 
 **Task:** RT-2152 · **Branch:** RT-2152-universal-select-without-material
-**Spec:** docs/specs/ui-kit-v2/select/
+**Spec:** `docs/specs/ui-kit-v2/select/`
 
 ## Task footprint
 

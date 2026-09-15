@@ -20,24 +20,33 @@
         [disabled]="isDisabled()"
         (keydown)="onTriggerKeydown($event)"
         (rtPopoverClosed)="onClosed()">
-        @if (iconLeft(); as left) {
-            <rt-icon rtElem="icon-left" size="sm" color="muted" [name]="left" />
+        <!--
+            Разметка указателя: своя, если потребитель её объявил, иначе зашитая китом. Она встаёт
+            внутрь кнопки, а не вместо неё: поведение — открытие панели, приметы доступности,
+            отключённость, клавиши и закрытие — остаётся на кнопке кита.
+        -->
+        @if (triggerTpl(); as tpl) {
+            <ng-container [ngTemplateOutlet]="tpl.templateRef" [ngTemplateOutletContext]="{ $implicit: triggerState() }" />
+        } @else {
+            @if (iconLeft(); as left) {
+                <rt-icon rtElem="icon-left" size="sm" color="muted" [name]="left" />
+            }
+            <span rtElem="label" [rtMod]="{ placeholder: !selectedLabel() }">
+                {{ selectedLabel() || placeholder() }}
+            </span>
+            @if (showClearButton()) {
+                <rt-icon-button
+                    rtElem="clear"
+                    icon="ico-close"
+                    size="sm"
+                    variant="ghost"
+                    iconColor="muted"
+                    [ariaLabel]="t().uiClear"
+                    [tabIndex]="-1"
+                    (clicked)="clear($event)" />
+            }
+            <rt-icon rtElem="chevron" name="chevron-down" size="sm" color="muted" />
         }
-        <span rtElem="label" [rtMod]="{ placeholder: !selectedLabel() }">
-            {{ selectedLabel() || placeholder() }}
-        </span>
-        @if (showClearButton()) {
-            <rt-icon-button
-                rtElem="clear"
-                icon="ico-close"
-                size="sm"
-                variant="ghost"
-                iconColor="muted"
-                [ariaLabel]="t().uiClear"
-                [tabIndex]="-1"
-                (clicked)="clear($event)" />
-        }
-        <rt-icon rtElem="chevron" name="chevron-down" size="sm" color="muted" />
     </button>
 
     <ng-template #panelTpl>
