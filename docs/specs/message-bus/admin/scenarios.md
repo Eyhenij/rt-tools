@@ -382,6 +382,12 @@ Given the section of the incident analyses is open
 When the owner looks at the strip above the list
 Then on the left two filters stand in a row: by tree, and to the right of it by state
 
+### SC-MB-359 — the filter by tree shows every option on one line
+
+Given the section of the incident analyses is open and the stand carries several trees
+When the owner opens the filter by tree
+Then every option stands on one line and none is clipped. The trigger is no narrower than the longest label with the paddings of the trigger
+
 ### SC-MB-223 — a chosen state narrows the list and stands in the address
 
 Given the list of the section is shown whole
