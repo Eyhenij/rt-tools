@@ -83,6 +83,12 @@ async function ready(url) {
 const port = await freePort();
 const url = `http://localhost:${port}`;
 
+// The showcase is raised here by the target rather than by the tree's command, so the clearing of
+// the hot update leftovers is called by name: without it the run goes over a cache holding them,
+// and a showcase started over such a cache serves a runtime asking for an update of a hash that is
+// gone — the stories hang at preparing and the frames come out of another build.
+spawnSync('node', ['tools/showcase-cache-clean.mjs'], { stdio: 'inherit' });
+
 console.log(`visual-gate: raising the showcase ${kit} on ${url}`);
 
 const showcase = spawn('pnpm', ['exec', 'nx', 'run', KITS[kit].target, '--port', String(port), '--no-open'], {
