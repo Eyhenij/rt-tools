@@ -3,6 +3,10 @@ import { Directive, inject, TemplateRef } from '@angular/core';
 /**
  * Маркеры частей панели инструментов — своим файлом, как у соседних семей.
  *
+ * В имени класса стоит слово «Toolbar», хотя в разметке его нет: имя `RtDynamicListSelectorsDirective`
+ * в дереве уже занято первым китом, и там оно означает другое — проводку состояния списка, а не
+ * маркер стороны полосы. Два одинаковых имени в двух китах проверка дерева не пропускает.
+ *
  * Каждый маркер держит свой шаблон и о списке не знает ничего: список читает маркеры среди своего
  * содержимого и берёт у них шаблон. Часть, которую потребитель не объявил, для списка просто
  * отсутствует.
@@ -23,7 +27,7 @@ import { Directive, inject, TemplateRef } from '@angular/core';
 @Directive({
     selector: '[rtDynamicListSelectors]',
 })
-export class RtDynamicListSelectorsDirective {
+export class RtDynamicListToolbarSelectorsDirective {
     public readonly templateRef: TemplateRef<void> = inject<TemplateRef<void>>(TemplateRef);
 }
 
@@ -31,6 +35,6 @@ export class RtDynamicListSelectorsDirective {
 @Directive({
     selector: '[rtDynamicListActions]',
 })
-export class RtDynamicListActionsDirective {
+export class RtDynamicListToolbarActionsDirective {
     public readonly templateRef: TemplateRef<void> = inject<TemplateRef<void>>(TemplateRef);
 }

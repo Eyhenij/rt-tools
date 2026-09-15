@@ -7,7 +7,7 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtDynamicListComponent } from '../../rt-dynamic-list.component';
-import { RtDynamicListActionsDirective, RtDynamicListSelectorsDirective } from '../../rt-dynamic-list.directives';
+import { RtDynamicListToolbarActionsDirective, RtDynamicListToolbarSelectorsDirective } from '../../rt-dynamic-list.directives';
 
 /** Какую матрицу рисовать: у каждой оси свой показ, и выбирает его этот вход. */
 export type TDynamicListMatrixPart = 'toolbar' | 'empty' | 'narrow' | 'presets' | 'themes';
@@ -184,8 +184,8 @@ const PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 55 };
 
         // components
         RtDynamicListComponent,
-        RtDynamicListActionsDirective,
-        RtDynamicListSelectorsDirective,
+        RtDynamicListToolbarActionsDirective,
+        RtDynamicListToolbarSelectorsDirective,
 
         // showcase
         StoryPresetsComponent,

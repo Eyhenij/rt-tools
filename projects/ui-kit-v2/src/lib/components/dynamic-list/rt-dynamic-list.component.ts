@@ -36,7 +36,7 @@ import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtInputComponent } from '../input/rt-input.component';
 import { RtPaginationComponent } from '../pagination/rt-pagination.component';
 import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
-import { RtDynamicListActionsDirective, RtDynamicListSelectorsDirective } from './rt-dynamic-list.directives';
+import { RtDynamicListToolbarActionsDirective, RtDynamicListToolbarSelectorsDirective } from './rt-dynamic-list.directives';
 import { IRtDynamicList } from './rt-dynamic-list.model';
 
 const BEM_BLOCK: string = 'rt-dynamic-list';
@@ -89,9 +89,13 @@ export class RtDynamicListComponent implements OnInit {
 
     protected readonly searchControl: FormControl<string> = new FormControl<string>('', { nonNullable: true });
 
-    protected readonly selectorsTpl: Signal<TNullable<RtDynamicListSelectorsDirective>> = contentChild(RtDynamicListSelectorsDirective);
+    protected readonly selectorsTpl: Signal<TNullable<RtDynamicListToolbarSelectorsDirective>> = contentChild(
+        RtDynamicListToolbarSelectorsDirective
+    );
 
-    protected readonly actionsTpl: Signal<TNullable<RtDynamicListActionsDirective>> = contentChild(RtDynamicListActionsDirective);
+    protected readonly actionsTpl: Signal<TNullable<RtDynamicListToolbarActionsDirective>> = contentChild(
+        RtDynamicListToolbarActionsDirective
+    );
 
     /** «Выбрано: N» — подпись с подстановкой, потому её берут не из карты, а вызовом. */
     protected readonly selectedLabel: Signal<string> = rtKitLabel(

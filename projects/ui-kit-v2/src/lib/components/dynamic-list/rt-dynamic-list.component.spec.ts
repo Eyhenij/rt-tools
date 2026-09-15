@@ -6,7 +6,7 @@ import { IPageModel } from '@rt-tools/utils';
 import { provideRtKitLabels, TRtKitLabelKey, TRtKitTranslator } from '../../i18n';
 import { createRtFixture, el, qa, setInputs, textOf } from '../../../testing/rt-kit-testing';
 import { RtDynamicListComponent } from './rt-dynamic-list.component';
-import { RtDynamicListActionsDirective, RtDynamicListSelectorsDirective } from './rt-dynamic-list.directives';
+import { RtDynamicListToolbarActionsDirective, RtDynamicListToolbarSelectorsDirective } from './rt-dynamic-list.directives';
 
 /** Одна страница из трёх записей: ряда номеров под таким списком не рисуют. */
 const ONE_PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 3 };
@@ -32,7 +32,7 @@ const SEARCH_SETTLE_MS: number = 1000;
         </rt-dynamic-list>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtDynamicListComponent, RtDynamicListSelectorsDirective, RtDynamicListActionsDirective],
+    imports: [RtDynamicListComponent, RtDynamicListToolbarSelectorsDirective, RtDynamicListToolbarActionsDirective],
 })
 class DynamicListHostComponent {
     public readonly hasSelectors: WritableSignal<boolean> = signal(true);
