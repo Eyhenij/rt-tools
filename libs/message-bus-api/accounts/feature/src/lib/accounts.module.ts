@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 
+import { AccountsManageController } from './accounts-manage.controller';
 import { AccountsReadController } from './accounts-read.controller';
 import { AccountStartupService } from './account-startup.service';
 import { AuthController } from './auth.controller';
 import { LoginAttemptsService } from './login-attempts.service';
 
 /**
- * Операции входа и то, что служба говорит об учётных записях при подъёме. Хранилища модуль не
+ * Операции входа, чтение и правка людей, и то, что служба говорит об учётных записях при подъёме. Хранилища модуль не
  * подключает: клиент глобальный, и подключает его приложение — цепочка модулей его решение, а не
  * решение домена.
  *
@@ -14,7 +15,7 @@ import { LoginAttemptsService } from './login-attempts.service';
  * запуске `account:list` было бы нечем — она о них и говорит.
  */
 @Module({
-    controllers: [AuthController, AccountsReadController],
+    controllers: [AuthController, AccountsReadController, AccountsManageController],
     providers: [AccountStartupService, LoginAttemptsService],
 })
 export class AccountsModule {}
