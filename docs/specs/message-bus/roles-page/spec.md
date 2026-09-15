@@ -1,6 +1,6 @@
 # Roles and rights on a screen
 
-**Status:** proposed · **Revision:** 15 September 2026 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 15 September 2026 · **Scenario prefix:** `SC-MB`
 **Depends on:** `access-rights`, `people-list`
 **Laws:** `access`, `entity-editing`, `lists`, `navigation`
 **Procedures:** none
@@ -209,3 +209,6 @@ One receiver and one set of roles in it.
 ## History of changes
 
 - 2026-09-15 — the agreement was written before the code.
+- 2026-09-15 — merged into the domain by the task RT-1901: the receiver, the section, the two
+  panels and the end-to-end suite are in the tree; every rule is bound to code in
+  `implementation.md` next to it.

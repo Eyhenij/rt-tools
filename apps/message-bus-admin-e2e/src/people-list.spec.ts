@@ -114,8 +114,9 @@ test.describe('раздел людей', () => {
         await signIn(page, PEOPLE.watcher);
 
         // Разделы, право на которые у наблюдателя есть, на месте — иначе утверждение об
-        // отсутствии пункта было бы зелено и у вошедшего без единого права
-        await expect(qa(page, 'header-nav-item')).toHaveCount(Object.keys(SECTIONS).length - 1);
+        // отсутствии пункта было бы зелено и у вошедшего без единого права. Закрытых для него
+        // два: люди и роли
+        await expect(qa(page, 'header-nav-item')).toHaveCount(Object.keys(SECTIONS).length - 2);
         await expect(page.locator(`[qa-dataid="header-nav-item"][data-id="${SECTIONS.postmortems}"]`)).toBeVisible();
         await expect(page.locator(`[qa-dataid="header-nav-item"][data-id="${SECTIONS.people}"]`)).toHaveCount(0);
 

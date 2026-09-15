@@ -17,6 +17,7 @@ import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import { AdminListPageComponent, AdminListToolbarRightDirective } from '@rt/message-bus-admin/common/core/ui';
 import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { ROLE_SORTABLE } from '@rt/message-bus-common';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import {
     IRtTable,
     RtButtonDirective,
@@ -62,6 +63,10 @@ const BEM_BLOCK: string = 'admin-roles-list';
         CdkHeaderRowDef,
         CdkRow,
         CdkRowDef,
+
+        // directives
+        BlockDirective,
+        ElemDirective,
 
         // components
         AdminListPageComponent,

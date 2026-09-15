@@ -31,6 +31,12 @@ import { forkJoin, map, Observable } from 'rxjs';
 
 const BEM_BLOCK: string = 'admin-person-access-aside';
 
+/**
+ * Значение выбора «без роли». Пустая строка, а не `null`: выбор набора читает `null` как «ничего не
+ * выбрано» и показывает вместо подписи пустоту, а человек без роли должен прочитать это словами.
+ */
+const NO_ROLE: string = '';
+
 /** Что панель читает по адресу: доступ записи и все роли для выбора. */
 interface IAccessPanel {
     readonly access: IPersonAccess.State;
@@ -101,17 +107,15 @@ export class AdminPersonAccessAsideComponent extends RtRouteAsideComponent<IAcce
     });
 
     /** Роли для выбора: «без роли» и все роли приёмника по имени. */
-    protected readonly roleOptions: Signal<readonly IRtSelect.Option<string | null>[]> = computed(
-        (): readonly IRtSelect.Option<string | null>[] => [
-            { label: adminLabel('personAccessRoleNone'), value: null },
-            ...(this.entity()?.roles ?? []).map((role: IRole.Short.State): IRtSelect.Option<string | null> => ({
-                label: role.name,
-                value: role.key,
-            })),
-        ]
-    );
+    protected readonly roleOptions: Signal<readonly IRtSelect.Option<string>[]> = computed((): readonly IRtSelect.Option<string>[] => [
+        { label: adminLabel('personAccessRoleNone'), value: NO_ROLE },
+        ...(this.entity()?.roles ?? []).map((role: IRole.Short.State): IRtSelect.Option<string> => ({
+            label: role.name,
+            value: role.key,
+        })),
+    ]);
 
-    protected readonly role: FormControl<string | null> = new FormControl<string | null>(null);
+    protected readonly role: FormControl<string> = new FormControl<string>(NO_ROLE, { nonNullable: true });
 
     /** По полю на право набора, ключ — имя права. */
     protected readonly rightWords: FormRecord<FormControl<EAccessWord>> = new FormRecord<FormControl<EAccessWord>>(
@@ -161,7 +165,9 @@ export class AdminPersonAccessAsideComponent extends RtRouteAsideComponent<IAcce
             return;
         }
 
-        this.runMutation(this.#people.replaceAccess(name, { role: this.role.value, edits: editsOfWords(this.#wordsNow()) }), {
+        const role: string | null = this.role.value === NO_ROLE ? null : this.role.value;
+
+        this.runMutation(this.#people.replaceAccess(name, { role, edits: editsOfWords(this.#wordsNow()) }), {
             successText: adminLabel('personAccessDone', { name }),
             errorText: (error: unknown): string => spokenFaultText(error, adminLabel('personAccessFailed')),
             closeOnSuccess: true,
@@ -183,7 +189,7 @@ export class AdminPersonAccessAsideComponent extends RtRouteAsideComponent<IAcce
             return;
         }
 
-        this.role.setValue(panel.access.role);
+        this.role.setValue(panel.access.role ?? NO_ROLE);
         RIGHTS.forEach((right: TRight): void => this.rightWords.controls[right]?.setValue(panel.access.words[right]));
         this.form.markAsPristine();
     }
