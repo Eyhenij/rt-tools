@@ -1,0 +1,53 @@
+name: Close epic tasks
+
+# Задачи эпика идут в его ветку, а не в главную, и хост по строке «Closes #…» их не закрывает:
+# он читает её только при слиянии в ветку по умолчанию. Задача эпика оставалась открытой, пока
+# её правка давно стояла в ветке эпика, а карточка на доске — там, куда её двигали рукой.
+#
+# Здесь «закрыта» значит «влита в ветку эпика»: слияние PR в любую ветку, кроме главной,
+# закрывает задачи из его тела. Дальше карточку переносит встроенное правило доски «Item closed».
+# Слияние в главную ветку хост закрывает сам, и это задание в него не вмешивается.
+on:
+    pull_request:
+        types: [closed]
+
+jobs:
+    close:
+        name: Close tasks merged into an epic branch
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref != 'main'
+        runs-on: ubuntu-latest
+        permissions:
+            issues: write
+            pull-requests: read
+        steps:
+            - uses: actions/github-script@v7
+              with:
+                  script: |
+                      const pull = context.payload.pull_request;
+                      const body = pull.body ?? '';
+                      const numbers = new Set();
+                      for (const match of body.matchAll(/\b(?:closes|fixes|resolves)\s+#(\d+)/gi)) {
+                          numbers.add(Number(match[1]));
+                      }
+                      if (numbers.size === 0) {
+                          core.info(`PR #${pull.number}: в теле нет строки «Closes #…», закрывать нечего`);
+                          return;
+                      }
+                      for (const number of numbers) {
+                          const { data: issue } = await github.rest.issues.get({ ...context.repo, issue_number: number });
+                          if (issue.pull_request) {
+                              core.info(`#${number} — это PR, не задача; пропущен`);
+                              continue;
+                          }
+                          if (issue.state === 'closed') {
+                              core.info(`#${number} уже закрыта`);
+                              continue;
+                          }
+                          await github.rest.issues.createComment({
+                              ...context.repo,
+                              issue_number: number,
+                              body: `Влита в ветку эпика \`${pull.base.ref}\` — #${pull.number}. Задача закрыта этим слиянием; в главную ветку правка приедет вместе с эпиком.`,
+                          });
+                          await github.rest.issues.update({ ...context.repo, issue_number: number, state: 'closed', state_reason: 'completed' });
+                          core.info(`#${number}: закрыта слиянием #${pull.number} в ${pull.base.ref}`);
+                      }
