@@ -87,3 +87,41 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | вход                | тип       | умолчание | что делает                                                  |
 | ------------------- | --------- | --------- | ----------------------------------------------------------- |
 | `isScrollHintShown` | `boolean` | `false`   | показывать ли признак того, что снизу осталось непоказанное |
+
+## Переход с первого кита
+
+Семья заменяет `rtui-scrollable` первого кита. Киты стоят рядом, поэтому приложение переходит по
+одному экрану: непереписанный экран держит прежнюю область и работает как работал.
+
+| в первом ките                             | во втором                      |
+| ----------------------------------------- | ------------------------------ |
+| `rtui-scrollable`                         | `rt-scroll-area`               |
+| `*rtuiScrollableHeader`                   | `*rtScrollAreaHeader`          |
+| `*rtuiScrollableContent`                  | `*rtScrollAreaContent`         |
+| `*rtuiScrollableFooter`                   | `*rtScrollAreaFooter`          |
+| `RtuiScrollableContainerComponent`        | `RtScrollAreaComponent`        |
+| `RtuiScrollableContainerHeaderDirective`  | `RtScrollAreaHeaderDirective`  |
+| `RtuiScrollableContainerContentDirective` | `RtScrollAreaContentDirective` |
+| `RtuiScrollableContainerFooterDirective`  | `RtScrollAreaFooterDirective`  |
+| класс `rtui-scrollable`                   | `rt-scroll-area`               |
+| класс `rtui-scrollable__content`          | `rt-scroll-area__body`         |
+
+Вход остался один и с прежним именем — `isScrollHintShown`, умолчание тоже прежнее. Разница одна:
+во втором ките он приводит голый атрибут, и запись `<rt-scroll-area isScrollHintShown>` признак
+включает. В первом ките такая же запись давала пустую строку, то есть признак выключала.
+
+Сверх переименования приложению придётся сделать вот что.
+
+- **Подписи приходят из словаря кита.** В первом ките подпись стрелки зашита по-английски, во
+  втором её даёт ключ `uiScrollDown` от `provideRtKitLabels`. Провайдер нужен всему второму киту, а
+  не одной этой семье.
+- **Значок и подсказка свои.** Стрелку рисует `rt-icon` из набора кита — нужен `provideRtIcons` с
+  адресом набора; подсказку рисует `rtTooltip`. `@angular/material` этой семье больше не нужен
+  вовсе.
+- **Прежние правила по классам `rtui-scrollable__*` молча перестают действовать:** имена блока и
+  элементов другие, а тело зовётся `body`, а не `content`. Цвет растушёвки, её высоту и скругление
+  значка переопределяют свойствами блока — `--rt-scroll-area-hint-color`,
+  `--rt-scroll-area-hint-height`, `--rt-scroll-area-hint-radius`, — а не правилом по классу
+  элемента.
+- **Высоту области по-прежнему задаёт потребитель.** Здесь не изменилось ничего: область берёт сто
+  процентов своего хоста.

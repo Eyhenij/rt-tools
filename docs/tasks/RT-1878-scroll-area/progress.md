@@ -2,7 +2,6 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
 - **State:** `этапы-кончились`
 - **Stage:** 6 of 6 — закрыт
 - **Done:** все шесть этапов закрыты
@@ -13,6 +12,12 @@
 - **PR:** не открыта
 
 ## Decisions along the way
+
+- **У перенесённой семьи есть инструкция по переходу, и этого шага в плане эпика не было.** Слово
+  владельца 15 сентября 2026 года: при переносе каждого компонента дописывать инструкцию по
+  миграции с первого кита, которую читает приложение. Инструкция стоит последним разделом
+  страницы-обзора семьи — там её и найдёт тот, кто переписывает экран; шаг 7 дописан в ритм
+  переноса плана эпика, и семья без такой инструкции перенесённой не считается. Затронут этап: 6.
 
 - **Работа начата без согласования, и это промах исполнителя.** Владелец просил обсудить перенос
   первого кита до начала; отчёт о состоянии за обсуждение не считается, и отказ стража вопроса
@@ -74,3 +79,53 @@
   without tests 138». До работы было 1600 и 1447: девять сценариев прибавилось, восемь закрыто
   пробой, девятый несёт пометку. Расхождений ноль — привязки читаются. Весь кит:
   `pnpm exec nx test @rt-tools/ui-kit-v2` — 1543 пробы из 1543.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-1878-scroll-area
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 6 of 6 — закрыт
+- **Next step:** разобрать папку задачи и открыть заявку в ветку эпика
+- **PR:** не открыта
+
+The progress in full — `docs/tasks/RT-1878-scroll-area/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+none
+```
+
+### Commits over the main branch
+
+```
+a2513b321 fix(rt:ui-kit-v2): кегль значка прокрутки приведён к первому киту, вход берёт приведение
+17a5432df Merge branch 'RT-1870-one-kit' into RT-1878-scroll-area
+3fb8abe50 Merge remote-tracking branch 'origin/main' into RT-1870-one-kit
+5ee513967 test(rt:ui-kit-v2): эталоны семьи прокрутки сняты
+1150e9a2a feat(rt:ui-kit-v2): витрина показывает семью прокрутки
+308e4103e test(rt:ui-kit-v2): пробы семьи прокрутки, работа остановлена до согласования
+89bb3ee73 feat(rt:ui-kit-v2): семья прокрутки перенесена на примитивы второго кита
+f948f7cc0 docs(rt:ui-kit-v2): договорённость о прокрутке записана до кода
+c6382878e docs(rt:ui-kit-v2): заведена папка задачи RT-1878, разбор и план записаны
+a8f9c5309 Merge remote-tracking branch 'origin/main' into RT-1870-one-kit
+cb14c63b7 docs(rt:ui-kit-v2): в состоянии эпика записана передача сессии
+f5ef6ff36 Merge remote-tracking branch 'origin/main' into RT-1870-one-kit
+d373b433c [RT-2102] Рабочий стол не рисует панель, для которой не объявлен шаблон (#2128)
+5d4db1852 docs(rt:ui-kit-v2): папка задачи RT-2102 разобрана
+21fe46f7f docs(rt:ui-kit-v2): край без слота списка написан на странице обзора, эталоны сходятся
+701a06ec7 fix(rt:ui-kit-v2): рабочий стол не рисует панель, для которой не объявлен шаблон
+6c3d741e7 docs(rt:ui-kit-v2): папка задачи RT-2102 заведена, разбор и план записаны
+af04b5342 Merge remote-tracking branch 'origin/main' into RT-1870-one-kit
+f64ef92a7 [RT-1951] Страница с входами во всех семействах зовётся одним именем (#2126)
+87bd0b9bf Merge branch 'RT-1870-one-kit' into RT-1951-playground-one-name
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
