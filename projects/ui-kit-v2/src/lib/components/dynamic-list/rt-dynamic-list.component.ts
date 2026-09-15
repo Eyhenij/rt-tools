@@ -28,6 +28,7 @@ import { IPageModel, TNullable } from '@rt-tools/utils';
 
 import { RT_KIT_LABELS, rtKitLabel, TRtKitLabelMap, TRtKitLabelParams } from '../../i18n';
 import { searchDebounce } from '../../util';
+import { RtButtonDirective } from '../button/rt-button.directive';
 import { RtCheckboxComponent } from '../checkbox/rt-checkbox.component';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
@@ -35,7 +36,6 @@ import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtInputComponent } from '../input/rt-input.component';
 import { RtPaginationComponent } from '../pagination/rt-pagination.component';
 import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
-import { RtToolbarComponent, RtToolbarLeftDirective, RtToolbarRightDirective } from '../toolbar/rt-toolbar.component';
 import { RtDynamicListActionsDirective, RtDynamicListSelectorsDirective } from './rt-dynamic-list.directives';
 import { IRtDynamicList } from './rt-dynamic-list.model';
 
@@ -46,6 +46,10 @@ const MIN_PAGES_TO_SHOW: number = 2;
 
 /**
  * Список записей со своей панелью инструментов.
+ *
+ * Полосу панели семья раскладывает сама, а не зовёт `rt-toolbar`: у того стороны объявлены
+ * нешринкующимися, и на хозяине уже́ содержимого полоса раздаётся шире него и уезжает за край.
+ * Семья кладёт в полосу готовые части кита — поле, кнопки, флажок, — а строит её сама.
  *
  * Семья ничего не рисует сама: поиск — поле кита, действия — его кнопки со значком, пустое место —
  * его пустое состояние, страницы — его нумерация. Сами записи проецируются: таблица между панелью
@@ -66,15 +70,13 @@ const MIN_PAGES_TO_SHOW: number = 2;
         ReactiveFormsModule,
 
         // standalone components / directives
+        RtButtonDirective,
         RtCheckboxComponent,
         RtEmptyStateComponent,
         RtIconButtonComponent,
         RtInputComponent,
         RtPaginationComponent,
         RtSpinnerComponent,
-        RtToolbarComponent,
-        RtToolbarLeftDirective,
-        RtToolbarRightDirective,
         BlockDirective,
         ElemDirective,
     ],

@@ -107,8 +107,9 @@ Not applicable: the kit's showcase is closed from indexing.
 
 ### Mobile layout
 
-On a narrow screen the selectors stand above the actions rather than beside them, and the search
-field takes the whole width. The threshold is the kit's own, from the breakpoints service.
+Below the kit's threshold the search field takes the whole width of its line instead of its capped
+width; the parts of the strip wrap by their own width above and below the threshold alike. The
+threshold is the kit's own, written once in the shared file of thresholds.
 
 ### Several objects
 

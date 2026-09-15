@@ -34,10 +34,23 @@
             inset: 0;
         }
 
-        &__selectors {
+        // Полоса панели: отбор слева, действия и поиск справа. Переносится, когда не влезает —
+        // судьба непоместившегося названа здесь, у самой полосы.
+        &__toolbar {
             display: flex;
+            flex: 0 0 auto;
+            flex-wrap: wrap;
             align-items: center;
             gap: var(--rt-space-2);
+            min-inline-size: 0;
+        }
+
+        &__selectors {
+            display: flex;
+            flex: 0 1 auto;
+            align-items: center;
+            gap: var(--rt-space-2);
+            min-inline-size: 0;
         }
 
         &__counter {
@@ -45,22 +58,34 @@
             font-size: var(--rt-text-sm);
         }
 
+        // Панель переносит поиск на свою строку, когда он не влезает рядом с действиями. Судьба
+        // непоместившегося названа здесь, а не оставлена на волю потребителя: без переноса список
+        // раздаётся шире хозяина и уезжает за его край — медиазапрос этого не ловит, ширина там
+        // своя, а не оконная.
         &__right {
             display: flex;
             flex: 1 1 auto;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: flex-end;
             gap: var(--rt-space-2);
+            min-inline-size: 0;
         }
 
         &__actions {
             display: flex;
+            flex: 0 0 auto;
             align-items: center;
             gap: var(--rt-space-1);
         }
 
+        // Поле поиска ужимается вместе с панелью: ширина названа потолком, а не размером. Жёсткая
+        // ширина выталкивала бы действия за край у потребителя с узкой панелью, и никакой запрос
+        // этого не поймал бы — ширина там своя, а не оконная.
         &__search {
-            inline-size: var(--rt-dynamic-list-search-width);
+            flex: 1 1 auto;
+            max-inline-size: var(--rt-dynamic-list-search-width);
+            min-inline-size: 0;
         }
 
         &__content {
@@ -87,7 +112,7 @@
             }
 
             &__search {
-                inline-size: 100%;
+                max-inline-size: none;
             }
         }
     }

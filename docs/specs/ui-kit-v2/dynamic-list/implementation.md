@@ -7,7 +7,7 @@ covered by is said in `scenarios.md`.
 A rule without a line and a line without a rule is a divergence: the spec promises what is not in
 the tree, or the tree holds what the spec is silent about.
 
-- **The family assembles the kit's own families and draws nothing of its own.** — `projects/ui-kit-v2/src/lib/components/dynamic-list/rt-dynamic-list.component.ts:imports` — ни одной своей разметки поля, кнопки или пустого места. Сценарий `SC-UKV-172`
+- **The family assembles the kit's own families and draws nothing of its own.** — `projects/ui-kit-v2/src/lib/components/dynamic-list/rt-dynamic-list.component.ts:imports` — поле, кнопки, флажок, пустое место, вертушка и нумерация взяты готовыми; полосу панели семья раскладывает сама. Сценарий `SC-UKV-172`
 - **A hidden action of the toolbar takes no place, and a switched-off one keeps it.** — `projects/ui-kit-v2/src/lib/components/dynamic-list/rt-dynamic-list.component.html:dynamic-list-refresh` — каждое действие стоит под своим условием. Сценарий `SC-UKV-165`
 - **The button that clears the filters is switched off while there is nothing to clear.** — `projects/ui-kit-v2/src/lib/components/dynamic-list/rt-dynamic-list.component.html:dynamic-list-clear-filters` — выключенность берётся из входа `filtered`. Сценарий `SC-UKV-166`
 - **The search does not reach out on every keystroke.** — `projects/ui-kit-v2/src/lib/components/dynamic-list/rt-dynamic-list.component.ts:searchControl` — готовый оператор ожидания кита. Сценарий `SC-UKV-167`

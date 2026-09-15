@@ -34,6 +34,8 @@
     "ng-template[rtThreadListSearch]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как список бесед разложил содержимое, и это показывает история семейства `thread-list`"
   },
   "shownWithin": {
+    "[rtDynamicListActions]": "projects/ui-kit-v2/src/lib/components/dynamic-list/stories/dynamic-list-matrix.stories.ts",
+    "[rtDynamicListSelectors]": "projects/ui-kit-v2/src/lib/components/dynamic-list/stories/dynamic-list-matrix.stories.ts",
     "[rtFieldHint]": "projects/ui-kit-v2/src/lib/components/field/stories/field-matrix.stories.ts",
     "[rtSelectTrigger]": "projects/ui-kit-v2/src/lib/components/select/stories/select-matrix.stories.ts",
     "rt-table-settings-aside": "projects/ui-kit-v2/src/showcase/templates/stories/bookings-template.stories.ts"

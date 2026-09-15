@@ -76,11 +76,12 @@ Then the search placeholder and the action tooltips carry the overridden words
 
 Covered by the component spec of the dynamic list family.
 
-### SC-UKV-174 — the narrow screen puts the selectors above the actions
+### SC-UKV-174 — below the threshold the search takes the whole width of its line
 
 Given a list of records on a screen narrower than the kit's threshold
 When it is drawn
-Then the selectors stand above the actions, and the search field takes the whole width
+Then the search field is no longer capped by its width and fills the line it stands on
 
-Not covered: узкий вид объявлен запросом в стилях, и описание его не видит вовсе — закрывается
-кадром показа на узком окне, пятым этапом задачи RT-2153.
+Not covered: it cannot be closed by a test with an identifier — the narrow look is declared by a
+media query, and a spec sees the markup rather than the applied rule. It is closed by the frame of
+the story «Narrow», taken at the threshold width.

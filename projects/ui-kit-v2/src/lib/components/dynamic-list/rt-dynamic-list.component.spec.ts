@@ -128,8 +128,8 @@ describe('RtDynamicListComponent', (): void => {
     describe('разметка потребителя', (): void => {
         it('SC-UKV-171 — обе стороны панели заняты, поле поиска остаётся на месте', (): void => {
             const fixture: ComponentFixture<DynamicListHostComponent> = createRtFixture(DynamicListHostComponent);
-            const left: HTMLElement = el(fixture, '[data-slot="left"]')?.nativeElement as HTMLElement;
-            const right: HTMLElement = el(fixture, '[data-slot="right"]')?.nativeElement as HTMLElement;
+            const left: HTMLElement = qa(fixture, 'dynamic-list-selectors')?.nativeElement as HTMLElement;
+            const right: HTMLElement = qa(fixture, 'dynamic-list-right')?.nativeElement as HTMLElement;
 
             expect(left.textContent).toContain('свой отбор');
             expect(right.textContent).toContain('своё действие');
