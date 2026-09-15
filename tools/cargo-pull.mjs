@@ -313,7 +313,7 @@ export async function pull(options) {
             lines: [
                 'there is no service account pair: the sign-in did not happen',
                 'it lies outside the repository as two lines — the name and the password — and the path to it is named by the key `account` in `.claude/rt-kit.json`',
-                'the account itself is created in the receiver by the command `account:add`',
+                'the account itself is created in the people section of the receiver admin panel',
             ],
         };
     }
