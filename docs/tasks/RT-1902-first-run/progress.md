@@ -3,10 +3,13 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 4 — the receiver: the first-run operations and the end of the commands
-- **Done:** the grill, the agreement and the plan
-- **Next step:** `SetupController`, the startup line, the removal of the account commands, the
-  tests
+- **Stage:** 2 of 4 — the admin panel: the first-run screen
+- **Done:** stage 1 — the receiver: `SetupController` with `GET`/`POST /api/setup`, the first
+  record under a table lock with the owner role and the sign-in by the shared issue
+  `sign-in-issue.ts`, the startup line names the screen, the four commands and their parse and
+  report are gone from the tree; build green, 61 + 38 + 43 tests
+- **Next step:** the dictionary words, `AuthApiService`/`AuthStore` first-run calls, the lib
+  `auth/feature/setup`, the route `setup`, the redirects of both screens, the unit tests
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -22,3 +25,5 @@
 ### 2026-09-15
 
 - The task branch from the epic branch, the folder, the agreement and the plan.
+- Stage 1: the receiver. The sign-in issue moved out of the auth controller into a file of its
+  own so that the first record signs in by the same road as the sign-in.
