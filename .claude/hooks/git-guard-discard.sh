@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/git-guard-discard.sh · 250b38a99c36 · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/git-guard-discard.sh · 250b38a99c36 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, hooks/guard-note.sh
 # Guard of the working tree. PreToolUse on a git command that throws uncommitted edits away.

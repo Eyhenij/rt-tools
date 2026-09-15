@@ -1,4 +1,4 @@
-<!-- rt-kit v0.27.0 · laws/lists.md · cc836188d873 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · laws/lists.md · cc836188d873 · правится надстройкой, не здесь -->
 # Law on record lists
 
 How a user sees a list of records and what they do with them without opening any. The rules are

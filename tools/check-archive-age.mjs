@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.27.0 · checks/check-archive-age.mjs · 63cf83236d24 · правится надстройкой, не здесь
+// rt-kit v0.28.0 · checks/check-archive-age.mjs · 63cf83236d24 · правится надстройкой, не здесь
 /**
  * The audit of the retention term of the archive.
  *

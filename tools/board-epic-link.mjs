@@ -1,4 +1,4 @@
-// rt-kit v0.27.0 · checks/board-epic-link.github.mjs · c2387cf03326 · правится надстройкой, не здесь
+// rt-kit v0.28.0 · checks/board-epic-link.github.mjs · c2387cf03326 · правится надстройкой, не здесь
 /**
  * The declaration by which a task names its epic.
  *

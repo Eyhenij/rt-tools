@@ -1,4 +1,4 @@
-<!-- rt-kit v0.27.0 · templates/pitfalls.md · 55f0258d2b39 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · templates/pitfalls.md · 55f0258d2b39 · правится надстройкой, не здесь -->
 # <What the rule is about> — the cold part
 
 Pitfalls: traps already stepped on. Loaded on demand, not together with the rule — an ordinary

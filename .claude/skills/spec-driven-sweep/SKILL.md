@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Pattern of rule spec-driven. Load for a full sweep of a domain's binding — five passes, three of them done by the machine, reading through the hits and the share of false ones per layer. Not for creating a domain spec — that is pattern spec-driven-domain.
 ---
-<!-- rt-kit v0.27.0 · patterns/spec-driven-sweep.md · dae9cd38917b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · patterns/spec-driven-sweep.md · dae9cd38917b · правится надстройкой, не здесь -->
 
 # A full review of a domain's binding
 

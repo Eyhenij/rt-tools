@@ -1,4 +1,4 @@
-// rt-kit v0.27.0 · checks/lib-common.mjs · 18248f13e8ad · правится надстройкой, не здесь
+// rt-kit v0.28.0 · checks/lib-common.mjs · 18248f13e8ad · правится надстройкой, не здесь
 /**
  * Common to every subject of the lib layout audit: the layer set of each domain form, reading the
  * tree, the list of accepted debts and how a lib path yields its name, tag and alias.

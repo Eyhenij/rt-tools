@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/handoff-write.sh · 49cc53bc85cb · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/handoff-write.sh · 49cc53bc85cb · правится надстройкой, не здесь
 # rt-hook: PreCompact .*
 # Requires: hooks/profile-check.sh
 # The session handover is written before the context is compacted, not by the hand of the executor.

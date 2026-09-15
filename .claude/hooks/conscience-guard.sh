@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.27.0 · hooks/conscience-guard.sh · f1e71e6e05a1 · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/conscience-guard.sh · f1e71e6e05a1 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: agents/conscience.md, hooks/roles.sh, hooks/deny-tail.sh
 # Guard of conscience: a turn in which the conscience role found a repeat of an analysed miss does

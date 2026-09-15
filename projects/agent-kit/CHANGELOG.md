@@ -1,3 +1,34 @@
+# [0.28.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.27.0...rt-agent-kit@0.28.0) (2026-09-15)
+
+### Bug Fixes
+
+- **rt:agent-kit:** аудит описаний называет то, что не разобрал ([302d7db](https://github.com/Eyhenij/rt-tools/commit/302d7db26218d65291d5fd2bb2fef711808a9297))
+- **rt:agent-kit:** аудит очереди молчит о заявке, чью базу конвейер не будит ([f0a9d6b](https://github.com/Eyhenij/rt-tools/commit/f0a9d6b67c4ce20a414356813e2638b4a7011742))
+- **rt:agent-kit:** аудит очереди работ читает перечень подзадач эпика целиком ([8a29132](https://github.com/Eyhenij/rt-tools/commit/8a29132db05b96546cf9f4047be14742c969c841))
+- **rt:agent-kit:** аудит ярусов читает объявленное имя либы, а не выводит формулой ([e9f15d6](https://github.com/Eyhenij/rt-tools/commit/e9f15d699b239d8e9eb9f59ce785a2294193a9cb))
+- **rt:agent-kit:** живость привязки считается без тестов ([e46c849](https://github.com/Eyhenij/rt-tools/commit/e46c8499c82e526b6aa6238e328a2f7684bfabc8))
+- **rt:agent-kit:** отправка идёт из той копии, где запущена сессия ([c36ada5](https://github.com/Eyhenij/rt-tools/commit/c36ada58e9288a3ca052b80de83a9d922fac290e))
+- **rt:agent-kit:** отправка называет блоки, которые сочла уехавшими ([a0f4c2b](https://github.com/Eyhenij/rt-tools/commit/a0f4c2bc5414f8737deb983b51c08313c7c8d782))
+- **rt:agent-kit:** право процедуры читается по коду, статьи закона и правила записаны ([43369e7](https://github.com/Eyhenij/rt-tools/commit/43369e7496c713a20c45dd9aa76cc8c8b6902b72))
+- **rt:agent-kit:** проверка конца хода судит ещё четыре рода последнего действия ([42e51d9](https://github.com/Eyhenij/rt-tools/commit/42e51d953daba592b789989541fae863b305370e))
+- **rt:agent-kit:** проверки дерева судят таблицу, ключ и область ([dbc45b2](https://github.com/Eyhenij/rt-tools/commit/dbc45b2308f7d45deaa43519517d613e1f9087f0))
+- **rt:agent-kit:** путь плана эпика читают одним ходом команда и аудит ([20b5e1a](https://github.com/Eyhenij/rt-tools/commit/20b5e1abfae91bdaa0bedcc29610b91bcf84ff54))
+- **rt:agent-kit:** сверка ярусов отказывает на пустом обходе, карта знает выкатку ([b29ffb9](https://github.com/Eyhenij/rt-tools/commit/b29ffb9d820f8cc12a61f3b474cfe018e0095072))
+- **rt:agent-kit:** страж второго сервера спрашивает дерево, кто поднимает стенды ([c53be50](https://github.com/Eyhenij/rt-tools/commit/c53be50bdd84e6baf90ee7da729a04c783bd11e0))
+- **rt:agent-kit:** страж записи считает доставку файла второй записью и рядом с миграцией ([3637066](https://github.com/Eyhenij/rt-tools/commit/363706698275965a47b203b230519a4580a8e69c))
+- **rt:agent-kit:** у вынесенного файла разбора стоит бит запуска ([b7e8fac](https://github.com/Eyhenij/rt-tools/commit/b7e8facf162029db6943653a47722640ea4113e9))
+- **rt:agent-kit:** у красной проверки один ход — починить то, на что она указала ([b6a91ad](https://github.com/Eyhenij/rt-tools/commit/b6a91ad9adb8d058a56eaf06c9e1dc203811e147))
+- **rt:agent-kit:** установка файлов из пакета перестала врать о трёх вещах ([f72b0c4](https://github.com/Eyhenij/rt-tools/commit/f72b0c42e9d730d7c8299cf169d56621abaaf860))
+- **rt:agent-kit:** форма имени ветки судится деревом исполнения ([f6e2747](https://github.com/Eyhenij/rt-tools/commit/f6e274733d54bd33bb578f5572ac2c193b45e568))
+- **rt:agent-kit:** чужая конфликтующая заявка работу не запрещает ([9383b5f](https://github.com/Eyhenij/rt-tools/commit/9383b5f936876c208f2a84d8552d2dd5544f28b8))
+- **rt:agent-kit:** этапы плана покрывают признак закрытия, а команда идёт сразу ([43472da](https://github.com/Eyhenij/rt-tools/commit/43472da31751d536e9f4c6724fce96e9ca70fcb0))
+
+### Features
+
+- **rt:agent-kit:** конвейер будит только PR в main, а PR в ветку эпика открывается готовым ([1c5778f](https://github.com/Eyhenij/rt-tools/commit/1c5778fdad47c335e42c7591d35f7be672b89b7a))
+- **rt:agent-kit:** личность вызова судится против рецензента, а не против имени учётки ([64bb9c8](https://github.com/Eyhenij/rt-tools/commit/64bb9c83dda36fbbed63a5d87ccc0b62aaf0dc76))
+- **rt:agent-kit:** разрушительная команда гита при непустом дереве отбивается с перечнем файлов ([cb7a215](https://github.com/Eyhenij/rt-tools/commit/cb7a21567a2ccc9cadd7a384a1ed1da40cb7a5fc))
+
 # [0.27.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.26.0...rt-agent-kit@0.27.0) (2026-09-10)
 
 ### Bug Fixes
