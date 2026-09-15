@@ -55,3 +55,8 @@ that came from an analysis is not lifted until the analysis is found wrong.
   names them the contradiction whole — what the guard refused, what the rule says and at what
   price each side is bypassed.
   Analysis: «2026-08-15-guard-denied-shell-wrote-anyway».
+- **`task:new --slug` without a draft folder assembles a folder from the template.** The command
+  renames the draft into the numbered folder; with no draft on disk it copies the template
+  instead, and the tree gets a folder of placeholders for a task nobody is taking. A card filed
+  for later is created without `--slug`; the slug goes with the draft, when the work begins.
+  Found by the review of RT-2079: a template folder RT-2081 was removed by hand.
