@@ -48,6 +48,14 @@
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
     },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/dynamic-list/stories/component/test-dynamic-list-matrix.component.ts": {
+      "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/dynamic-list/stories/component/test-dynamic-list.component.ts": {
+      "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
+      "task": "RT-476"
+    },
     "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/file-drop/stories/component/test-file-drop-matrix.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
@@ -308,6 +316,14 @@
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
     },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/dynamic-list/stories/component/test-dynamic-list-matrix.component.ts": {
+      "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/dynamic-list/stories/component/test-dynamic-list.component.ts": {
+      "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
+      "task": "RT-476"
+    },
     "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/empty-state/stories/component/test-empty-state-matrix.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
@@ -428,6 +444,14 @@
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
     },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/markdown-text/stories/component/test-markdown-text-matrix.component.ts": {
+      "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
+      "task": "RT-912"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/markdown-text/stories/component/test-markdown-text.component.ts": {
+      "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
+      "task": "RT-912"
+    },
     "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/menu/stories/component/test-menu-item-matrix.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
@@ -515,6 +539,10 @@
     "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/pagination/stories/component/test-pagination.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/photo-viewer/stories/component/test-photo-viewer-matrix.component.ts": {
+      "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
+      "task": "RT-796"
     },
     "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/photo-viewer/stories/component/test-photo-viewer.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
@@ -780,29 +808,17 @@
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
     },
-    "inline-template ×1 @ projects/ui-kit/src/lib/ui-kit/aside/stories/open-aside-button.component.ts": {
-      "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
-      "task": "RT-476"
-    },
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/photo-viewer/stories/component/test-photo-viewer-matrix.component.ts": {
-      "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
-      "task": "RT-796"
-    },
-    "inline-template ×2 @ projects/ui-kit-v2/src/lib/components/welcome-dialog/stories/component/test-welcome-dialog-matrix.component.ts": {
-      "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
-      "task": "RT-877"
-    },
     "inline-template ×1 @ projects/ui-kit-v2/src/showcase/templates/stories/component/test-bookings-template.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-877"
     },
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/markdown-text/stories/component/test-markdown-text.component.ts": {
+    "inline-template ×1 @ projects/ui-kit/src/lib/ui-kit/aside/stories/open-aside-button.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
-      "task": "RT-912"
+      "task": "RT-476"
     },
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/markdown-text/stories/component/test-markdown-text-matrix.component.ts": {
+    "inline-template ×2 @ projects/ui-kit-v2/src/lib/components/welcome-dialog/stories/component/test-welcome-dialog-matrix.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
-      "task": "RT-912"
+      "task": "RT-877"
     }
   },
   "debt": {}
