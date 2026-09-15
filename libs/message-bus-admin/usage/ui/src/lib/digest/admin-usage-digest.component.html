@@ -24,15 +24,15 @@
         </article>
 
         <article rtElem="card">
-            <rt-bar-list qa-dataid="usage-digest-top" [rows]="view().top" [title]="topTitle" />
+            <rt-bar-list qa-dataid="usage-digest-top" [rows]="view().top" [title]="topTitle" [emptyText]="empty" />
         </article>
 
         <article rtElem="card">
-            <rt-bar-list qa-dataid="usage-digest-kinds" [rows]="view().kinds" [title]="kindsTitle" />
+            <rt-bar-list qa-dataid="usage-digest-kinds" [rows]="view().kinds" [title]="kindsTitle" [emptyText]="empty" />
         </article>
 
         <article rtElem="card">
-            <rt-bar-list qa-dataid="usage-digest-denied" [rows]="view().denied" [title]="deniedTitle" />
+            <rt-bar-list qa-dataid="usage-digest-denied" [rows]="view().denied" [title]="deniedTitle" [emptyText]="noDenials" />
         </article>
 
         @if (reading()) {

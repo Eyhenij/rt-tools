@@ -175,6 +175,7 @@ test.describe('раздел использования', () => {
         await expect(rowsOf(page, 'usage')).toHaveCount(0);
         await expect(qa(page, 'usage-digest-bar')).toHaveCount(7);
         await expect(qa(page, 'usage-digest-chart-title')).toContainText('Загрузок: 0');
-        await expect(qa(page, 'usage-digest-top').locator('[qa-dataid="bar-list-empty"]')).toBeVisible();
+        await expect(qa(page, 'usage-digest-top').locator('[qa-dataid="bar-list-empty-text"]')).toHaveText('За период загрузок не было');
+        await expect(qa(page, 'usage-digest-denied').locator('[qa-dataid="bar-list-empty-text"]')).toHaveText('За период отказов не было');
     });
 });
