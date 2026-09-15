@@ -82,6 +82,16 @@ the total.
   an epic, nor by a matching title, and a request about it got the line "the task is not among the
   open ones". A record of the cargo has no title with a number at all, so the two signs never
   argue: the title decides, the mark sifts out what is left.
+- **The last run of the main branch is judged by the check: red and pushed out are divergences.**
+  A PR is checked before the merge, and the merge itself nobody watches: a red run of the main
+  branch stood for a day and a half, and the rollout did not go. The check names two states — a
+  fallen run, after which merges on top go out unchecked, and a cancelled one with zero steps, that
+  is pushed out of the queue by the next merge and never checked its own. A green run, a running
+  one and the absence of any run are silence.
+- **A tree whose pipeline does not wake on a push to the main branch hears of it by a line of its
+  own.** Silence there would read as «the main branch is green»; the check reads the trigger from
+  the file of the pipeline, and says the run was not checked when there is no push among the
+  events, or the main branch is not among its branches.
 
 ## What is out of scope
 
@@ -143,5 +153,6 @@ Not applicable: the check judges one work queue.
 
 ## History of changes
 
+- 2026-09-15 — the last run of the main branch: rule, scenario `SC-AK-1104`, the binding.
 - 2026-08-26 — the subdomain was split off from the domain "Leading the work by commands": two dozen
   scenarios out of six dozen were about one check, and the list went past the length limit.
