@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, InputSignal, outpu
 import { FormsModule } from '@angular/forms';
 import { adminLabel } from '@rt/message-bus-admin/common/core/util';
 import { ITreeChoice } from '@rt/message-bus-common';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { IRtSelect, RtSelectComponent } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-tree-filter';
@@ -18,6 +19,9 @@ const ALL_TREES: string = '';
  * Своего состояния отбор не держит: выбранное приходит входом из адреса и уходит наверх
  * событием. Иначе отбор, показанный на экране, и отбор, которым читали, — два разных ответа на
  * один вопрос, и расходятся они на переходе по страницам.
+ *
+ * Ширину отбор берёт от самой длинной подписи: рядом с выбором лежит невидимый размерник со
+ * всеми подписями, и панель кита — она шириной с триггер — показывает каждую опцию одной строкой.
  */
 @Component({
     selector: 'admin-tree-filter',
@@ -26,6 +30,10 @@ const ALL_TREES: string = '';
     imports: [
         // angular
         FormsModule,
+
+        // directives
+        BlockDirective,
+        ElemDirective,
 
         // components
         RtSelectComponent,
