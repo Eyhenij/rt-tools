@@ -101,8 +101,8 @@ executor's.
 - **What a person without a single right sees after the sign-in.** Today they stay on the sign-in
   screen: no section is open to them, and the "no sections" screen does not stand on that path.
   Found by task #1900, confirmed by task #1901 — a role is given after the creation, so every new
-  record passes through that state. Not decided by the epic; a task of its own after it, unless
-  the owner says otherwise.
+  record passes through that state. Not decided by the epic: filed as the epic #2161 with the task
+  #2162 in the queue, taken by the owner's word.
 
 ## What the epic ends with
 
