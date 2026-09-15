@@ -86,10 +86,10 @@ report "SC-AK-1040 — отказ называет причину" "$mute_refusa
 
 # --- SC-AK-1041 — страж читает ввод от агента ---------------------------------------------------
 # Ввод приходит по стандартному вводу вызова; общее чтение лежит в помощнике рядом.
-# Семь стражей ввод не читают вовсе: одни печатают в начале захода, другие судят только дерево.
+# Восемь стражей ввод не читают вовсе: одни печатают в начале захода, другие судят только дерево.
 # Требование к ним не относится, и список назван поимённо.
 NO_INPUT='browser-guard-no-listing.sh constitution-index.sh glossary-load.sh task-context-load.sh
-task-flow-draft-guard.sh task-flow-guard.sh turn-entry-load.sh'
+main-run-context.sh task-flow-draft-guard.sh task-flow-guard.sh turn-entry-load.sh'
 own_reading=0
 for hook in "$HOOK_DIR"/*.sh; do
     is_guard "$hook" || continue
