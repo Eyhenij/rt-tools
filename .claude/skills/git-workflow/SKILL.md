@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for creating a task and a branch, commit, push, opening a PR and merging. Names the one-to-one pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — rule deploy-flow.
 ---
-<!-- rt-kit v0.27.0 · rules/git-workflow.github.md · b05cb6091072 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.27.0 · rules/git-workflow.github.md · d8a1dfffb7c6 · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -97,12 +97,13 @@ flowchart TD
   first work. A chain stands inside one epic, where the next task edits what the previous wrote.
 - **A PR in a chain has the previous branch as its base, not main.** `gh pr create --base
   <предыдущая ветка>` — otherwise the review shows the edit mixed with all under it. The host
-  retargets the base of a merged lower one only when that branch is deleted, and a branch is
-  usually left: a live base sends the upper PR into the neighbour and not into main. So the base is
-  retargeted by the same motion that merges the lower one — the call is in the pattern. Nothing
-  turns red at this: the PR looks merged and the task closes.
+  retargets a merged lower base only when its branch is deleted, so the base is retargeted by the
+  same motion that merges the lower one — the call is in the pattern.
 - **A chain is merged bottom-up, and the order stands in every PR body.** Branch kinship is
   invisible in the list, and the line "stands on #<number>" is the only place it is read.
+- **`--hard` is not taken to drop a commit — that is `--soft`.** `reset --hard`, `checkout --
+  <path>`, `restore <path>` and `clean -f` erase what is not committed. On a dirty tree the guard
+  refuses and names the files; the bypass is `# discard: <reason>` in the command.
 - **The lower branch of a chain does not rewrite history — neither `rebase` nor a force push.** The
   host closes the upper PR as merged once its diff goes empty. A lagging branch is fixed by merging
   main in.
@@ -155,9 +156,8 @@ flowchart TD
   not wake for its base.** A page without a run looks the same as with a green one; where no run
   comes at all, its absence tells nothing and the audit is silent about that PR.
 - **What checks a PR whose base is not the main branch is asked before the first PR of an epic
-  opens.** The trigger reads the base: it either wakes for such a PR as for one into main, or does
-  not wake at all, and then the push gate is the only check behind the work — pattern
-  `git-workflow-stack`.
+  opens.** The trigger either wakes for it as for one into main, or does not, and then the push
+  gate is the only check behind the work — pattern `git-workflow-stack`.
 - **A run pushed out of the pipeline queue gets a separate audit line.** It looks failed though it
   never checked the branch, and the step count tells them apart.
 - **A draft with a green run on its tip is an audit discrepancy.** A green page permits nothing: the
@@ -207,9 +207,8 @@ flowchart TD
 - **What is not ready to merge opens as a draft — `gh pr create --draft`.** The host locks a draft's
   merge button: everything waiting for a run, a rework or an answer goes as a draft.
 - **A PR the pipeline does not wake for opens ready, without `--draft`.** Which bases it wakes for
-  is read from the pipeline file, not from memory: where no run comes, the draft waits for nothing
-  and costs a locked button and a second turn. The opening carries the answer for readiness, and
-  the reviewer is set in the same turn.
+  is read from the pipeline file: where no run comes, a draft waits for nothing and costs a locked
+  button and a second turn. The reviewer is set in the same turn.
 - **The PR body is written in the turn the PR opens, and next to the sample.** A blank from the day
   before diverges from it, and nobody reads a ready-looking text twice.
 - **The draft is lifted by a separate call — `gh pr ready <номер>`.** With it the executor answers
