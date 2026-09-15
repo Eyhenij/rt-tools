@@ -62,12 +62,34 @@ const acceptedComponents = list.notShownComponents ?? {};
  */
 const shownWithin = list.shownWithin ?? {};
 
+/**
+ * Families whose stories folder carries no inputs page, with the reason for each.
+ *
+ * The coverage contract asks every family for one arg-driven page, and the showcase calls it by
+ * one name. A family that cannot have one — its content arrives as projected templates, and the
+ * showcase substitutes values rather than markup — is told from a family that simply lacks the
+ * page only by reading: both look identical to a count.
+ */
+const noPlayground = list.noPlayground ?? {};
+
+/** The name of the inputs page. One for the whole kit: a second name is looked for by guessing. */
+const PLAYGROUND = 'export const Playground:';
+
+
 const families = readdirSync(join(ROOT, FAMILIES), { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name);
 
 const problems = [];
 let shown = 0;
+let withPlayground = 0;
+
+/** Does any story file of the folder carry the inputs page. Read as text: the page is an export. */
+function hasPlayground(dir) {
+    return readdirSync(dir, { withFileTypes: true }).some(
+        (entry) => entry.isFile() && entry.name.endsWith('.stories.ts') && readFileSync(join(dir, entry.name), 'utf8').includes(PLAYGROUND)
+    );
+}
 
 for (const family of families) {
     const dir = join(ROOT, FAMILIES, family);
@@ -93,6 +115,14 @@ for (const family of families) {
         if (reason) {
             problems.push(`«${family}»: reaches the showcase, and the reason for its absence is still in the list — remove it`);
         }
+        if (hasPlayground(join(dir, STORIES))) {
+            withPlayground += 1;
+            if (noPlayground[family]) {
+                problems.push(`«${family}»: has an inputs page, and the reason for its absence is still in the list — remove it`);
+            }
+        } else if (!noPlayground[family]) {
+            problems.push(`«${family}»: no inputs page «Playground» and no reason in the list — a silent gap looks exactly like coverage`);
+        }
         continue;
     }
 
@@ -105,6 +135,15 @@ for (const family of families) {
 for (const family of Object.keys(atFoundation)) {
     if (!families.includes(family)) {
         problems.push(`«${family}»: named in the list of the foundation level, and there is no such family`);
+    }
+}
+
+for (const family of Object.keys(noPlayground)) {
+    if (!families.includes(family)) {
+        problems.push(`«${family}»: named in the inputs-page list, and there is no such family — the line outlived what it explained`);
+    }
+    if (!noPlayground[family]) {
+        problems.push(`«${family}»: the reason is empty; an empty reason is not accepted`);
     }
 }
 
@@ -170,6 +209,10 @@ console.log(
     `check-kit-coverage: families of the second kit ${families.length}, reaching the showcase ${shown}; ` +
         `shown at the foundation level ${Object.keys(atFoundation).length}, ` +
         `not reaching and named with a reason ${Object.keys(accepted).length}`
+);
+console.log(
+    `check-kit-coverage: the inputs page «Playground» — families that have one ${withPlayground}, ` +
+        `named with a reason ${Object.keys(noPlayground).length}`
 );
 console.log(
     `check-kit-coverage: components and directives ${declared.length}, the subject of a story ${declared.length - storyless.length}; ` +

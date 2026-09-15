@@ -13,7 +13,7 @@ export default {
 
 type TStory = StoryObj<TestRtAsideSectionComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         heading: 'Заголовок',
     },

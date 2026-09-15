@@ -15,7 +15,7 @@ export default {
 
 type TStory = StoryObj<TestRtCardComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         header: null,
         ariaLabel: null,

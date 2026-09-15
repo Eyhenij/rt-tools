@@ -14,7 +14,7 @@ export default {
 
 type TStory = StoryObj<TestRtDetailRowComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         label: 'Сохранить',
         loading: false,

@@ -26,6 +26,13 @@ A rule under the "Law on verifiability", the section about showing a visible sta
   coverage.
 - **A story that draws an empty collection is not coverage.** First plausible data, then the
   matrix.
+- **The arg-driven page is called `Playground` everywhere, and a family without one names its
+  reason.** Called by two names, it is found at an unfamiliar family by guessing: the kit stood
+  with twenty-two families calling it `Default` and sixty calling it `Playground`. The name is one,
+  and a family that cannot have such a page — its content arrives as projected templates, and the
+  showcase substitutes values rather than markup — is told from a family that simply lacks it only
+  by reading. So the reason is written twice: in words on the family's overview page, and in the
+  list the count reads, so that the sum is checked by a command and not from memory.
 - **A component is counted apart from its family, and a component the family shows is not
   covered by that.** A family reaches the showcase by an overview page and a stories folder.
   Everything inside it then counts as shown, including a component that is the subject of no
@@ -214,7 +221,7 @@ Required per component — a missing entry is a defect, not a preference:
 | Story / page       | What it must show                                                                                                                                                                                                                                         |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Overview` (MDX)   | Purpose, when to use / when not to use, axis tables, states table, accessibility, theming, related components, and a hand-written input/output table. `compodoc` is deliberately off — `tools/verify-ui-kit-v2-docs.cjs` is what keeps that table honest. |
-| `Playground`       | The single arg-driven story (today's `Default`, renamed).                                                                                                                                                                                                 |
+| `Playground`       | The single arg-driven story. One name for the whole kit — see the article about it below.                                                                                                                                                                  |
 | one story per axis | Every value of that axis, laid out at once and labelled.                                                                                                                                                                                                  |
 | `States`           | `default`, `hover`, `focus-visible`, `active`, `disabled`, plus `loading` / `readonly` where the component has them.                                                                                                                                      |
 | `Themes`           | Light and dark side by side.                                                                                                                                                                                                                              |

@@ -14,7 +14,7 @@ export default {
 
 type TStory = StoryObj<TestRtCollapsibleTextComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         paragraphs: ['Первый абзац.', 'Второй абзац.'],
         clampLines: 6,

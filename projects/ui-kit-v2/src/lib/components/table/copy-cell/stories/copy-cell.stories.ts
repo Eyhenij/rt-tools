@@ -18,7 +18,7 @@ export default {
 
 type TStory = StoryObj<TestRtCopyCellComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip(
         'обёртка отдаёт пустое значение, и ячейка не рисует ничего; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
     ),

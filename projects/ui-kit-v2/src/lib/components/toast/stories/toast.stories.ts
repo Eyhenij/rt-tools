@@ -25,7 +25,7 @@ export default {
 
 type TStory = StoryObj<TestRtToastComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         toast: { id: 1, severity: 'info', message: 'Сообщение' },
         index: 0,
