@@ -1,6 +1,6 @@
 # Creating, disabling and a new password from a screen
 
-**Status:** proposed · **Revision:** 15 September 2026 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 15 September 2026 · **Scenario prefix:** `SC-MB`
 **Depends on:** `people-list`, `access-rights`
 **Laws:** `entity-editing`, `access`, `navigation`
 **Procedures:** none
@@ -64,8 +64,8 @@ commands stay until task #1902 removes them.
 - **The button and the row menu are drawn only with `accounts:manage`.** The admin panel decides
   what to show by the rights it received; without the right the section is the list and nothing
   else. Until the rights arrive nothing is hidden.
-- **The panel of creating lives at `people/new` in the outlet `ro`; the panel of a password at
-  `people/<name>/password`.** A panel by an address survives a reload and is closed by the same
+- **The panel of creating lives at «people/new» in the outlet `ro`; the panel of a password at
+  «people/<name>/password».** A panel by an address survives a reload and is closed by the same
   motion as the details of the neighbouring sections.
 - **A successful creating closes the panel and the list carries the new row at once.** The
   password is shown nowhere after the success: the receiver holds a hash and has nothing to show
@@ -178,3 +178,6 @@ One receiver and one list of people in it.
 ## History of changes
 
 - 2026-09-15 — the agreement was written before the code.
+- 2026-09-15 — the agreement was merged into the domain as a subdomain of its own (RT-1900). Not
+  merged into the list subdomain next to it: that one describes the reading, and together they
+  outgrow the length limit.

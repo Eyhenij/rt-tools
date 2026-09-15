@@ -4,10 +4,10 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `этап-идёт`
-- **Stage:** 4 of 4 — the suite
-- **Done:** 1 — the agreement, nine scenarios; 2 — the manage controller, the parse util, the row query; 3 — the api service, the store, two panels, the button and the row menu by right, the spoken-fault util lifted to the shared layer, the accounts boundaries in a file of their own; units 45 + 11 + 12 green, layers and dupes silent, both applications build.
-- **Next step:** `people-panel.spec.ts` on the stand, the frame of the creating panel, the companion of the draft.
+- **State:** `разбор-кончился`
+- **Stage:** 4 of 4 — the suite, done
+- **Done:** all four stages; the suite 111 passed with the frame of the creating panel; the agreement merged into the domain as the subdomain `people-editing`, the READMEs and the domain spec brought up to date; the spec check green.
+- **Next step:** take the folder apart by the last commit and open the PR into the epic branch.
 - **Uncommitted:** nothing.
 - **Waiting for the owner:** no.
 - **PR:** not open yet.
