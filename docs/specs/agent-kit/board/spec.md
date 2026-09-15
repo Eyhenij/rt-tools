@@ -37,6 +37,12 @@ through the executor.
   silent about it. A line here would stand on every task of every epic and teach to skip the
   audit; and the advice to move the base is wrong outright: the base of a task request stays the
   epic branch to the merge.
+- **What such a base means is named once, by one line with both consequences.** No run will come
+  to those requests, and the host closes no task on their merge — the tree closes those by a
+  pipeline of its own or by the hand. Named apart, the second consequence was read by nobody: the
+  line about the run was taken as the whole of it, and the tasks of a chain stayed open after
+  their merges. The line counts the open requests with such a base, is not a divergence, and a
+  tree without such requests gets no line.
 - **The answer of the work queue helper says whose eyes the state was taken by.** The helper reads a
   task by the token of the machine record, and a request without a token, as whoever the client is
   signed in under: the parse fields need rights over the accounts of the organisation, which the
@@ -146,6 +152,7 @@ There are no open questions.
 
 ## History of changes
 
+- 2026-09-15 — one line names both consequences of a base other than the main branch: rule, scenario `SC-AK-1107`, the binding.
 - **2026-09-08** — the subdomain was split out of the checks of the tree: the scenario file had
   outgrown the length limit, and it is split by subject, not by moving the boundary. The scenario
   numbers were not recounted at the move: the number ties the scenario to its test title.
