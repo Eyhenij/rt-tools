@@ -15,6 +15,9 @@ consequence of a merge.
 - **the work queue** — the project board on GitHub; a task is an issue on it
 - **the task column** — the `Status` field: «In progress» when the branch is started, «In review» when the PR is opened
 - **the first column** — «📋 Backlog» — the creating command puts a new task there, and from there it is taken into work
+- **the closing columns** — «✅ Done» by the board rule «Item closed» when the task closes; «Deployed» by the last step of the rollout, `tools/board-deployed.mjs`, for every closed task in Done whose epic is not open
+- **closing a task of an epic** — `.github/workflows/close-epic-tasks.yml` — a PR merged into any branch but main closes the tasks from its `Closes #…` lines; into main the host closes them itself
+- **the board token in the pipeline** — the repository secret `RT_BOARD_TOKEN`, the machine account's token: the run's own token does not read a user board
 - **the label of an epic card** — `.claude/rt-kit/project.sh:RT_BOARD_EPIC_LABEL` — «epic». By it `.claude/hooks/git-guard-delivery-epic.sh:rt_epic_own_pull` tells the branch of an epic from the branch of a task. The same word stands as `board.epicLabel` in the checks settings.
 - **the column move command** — `npm run task:move <number> <short column name>`: `npm run task:move 899 in-progress`
 - **a short column name** — a key in `board.statusOptions` of the file `.claude/rt-kit/checks.json`; the full name lies there too, next to it
@@ -297,3 +300,5 @@ silent about.
 
 - `pnpm run check:affected` — the same as the send guard runs, only by hand.
 - `scripts/board.sh list` — the audit of the columns against the open PRs.
+- `bash tools/tests/board-deployed.test.sh` — the selection of the cards that move to Deployed.
+- `node tools/board-deployed.mjs --dry-run` — what would move today; the host is edited by nothing.

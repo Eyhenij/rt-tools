@@ -202,3 +202,27 @@ jobs:
               run: |
                   ssh -i ~/.ssh/deploy_key -o ServerAliveInterval=30 "${DEPLOY_USER}@${DEPLOY_HOST}" \
                       'bash /opt/message-bus/prune-images.sh'
+
+    # Доска узнаёт о выкатке от самой выкатки: слияние в главную ветку ничего не выкатывает, и
+    # карточка в «Done» значит только «влито». После удавшейся выкатки каждая карточка в «Done» с
+    # закрытой задачей уходит в «Deployed» — кроме задач ещё открытого эпика: они влиты в ветку
+    # эпика, а в главную приедут вместе с ним. Отбор — `tools/board-deployed.mjs`, тот же, что
+    # сухим запуском на машине.
+    #
+    # Токен доски — токен машинной учётной записи в секрете: доска пользователя не читается
+    # разовым токеном прогона. Шаг не роняет выкатку: карточки — не то, ради чего откатывают узел.
+    board:
+        name: Move rolled-out tasks to Deployed
+        needs: [deploy]
+        if: github.ref == 'refs/heads/main'
+        runs-on: ubuntu-latest
+        continue-on-error: true
+        permissions:
+            contents: read
+        steps:
+            - uses: actions/checkout@v7
+
+            - name: Move cards in Done with a closed task
+              env:
+                  GH_TOKEN: ${{ secrets.RT_BOARD_TOKEN }}
+              run: node tools/board-deployed.mjs
