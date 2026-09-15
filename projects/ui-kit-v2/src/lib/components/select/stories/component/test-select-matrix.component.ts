@@ -15,14 +15,7 @@ import { RtSelectComponent } from '../../rt-select.component';
 import { IRtSelect } from '../../rt-select.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TSelectMatrixPart = 'size' | 'filling' | 'bordered' | 'states' | 'presets' | 'themes' | 'panel' | 'trigger';
-
-/** Чей указатель рисуется в ячейке: зашитый китом или свой, объявленный шаблоном. */
-interface ISelectTriggerCase {
-    readonly name: string;
-    readonly own: boolean;
-    readonly control: FormControl<string | null>;
-}
+export type TSelectMatrixPart = 'size' | 'filling' | 'bordered' | 'states' | 'presets' | 'themes' | 'panel';
 
 /** Что показывает открытая панель: обычный список, список с фильтром, пустой набор. */
 export type TSelectPanelCase = 'options' | 'filter' | 'empty';
@@ -215,34 +208,6 @@ function invalid(): FormControl<string | null> {
                 </app-story-presets>
             }
 
-            @case ('trigger') {
-                <app-story-presets caption="Указатель: зашитый китом и свой, в обоих наборах">
-                    <ng-template>
-                        <app-story-row [items]="triggerCases" [itemLabel]="triggerLabel" [slotWidth]="fieldWidth">
-                            <ng-template let-triggerCase>
-                                @if (triggerCase.own) {
-                                    <rt-select
-                                        ariaLabel="Город"
-                                        placeholder="Выберите город"
-                                        [options]="options"
-                                        [formControl]="triggerCase.control">
-                                        <ng-template rtSelectTrigger let-state>
-                                            <rt-tag severity="info" [value]="state.label || 'Город'" />
-                                        </ng-template>
-                                    </rt-select>
-                                } @else {
-                                    <rt-select
-                                        ariaLabel="Город"
-                                        placeholder="Выберите город"
-                                        [options]="options"
-                                        [formControl]="triggerCase.control" />
-                                }
-                            </ng-template>
-                        </app-story-row>
-                    </ng-template>
-                </app-story-presets>
-            }
-
             @case ('panel') {
                 <div class="app-select-matrix__panel-slot">
                     <rt-select
@@ -309,15 +274,6 @@ export class TestRtSelectMatrixComponent {
         { label: 'Владивосток', value: 'vvo', disabled: true },
     ];
 
-    /**
-     * Пара указателей: зашитый китом и свой. Пара стоит в одном кадре — порознь ни одна половина
-     * не показывает, чем она отличается от другой.
-     */
-    public readonly triggerCases: readonly ISelectTriggerCase[] = [
-        { name: 'указатель кита', own: false, control: chosen('spb') },
-        { name: 'свой указатель', own: true, control: chosen('spb') },
-    ];
-
     /** Значение открытой панели: по нему видно, чем выбранная опция отличается от прочих. */
     public readonly panelControl: FormControl<string | null> = chosen('spb');
 
@@ -352,7 +308,4 @@ export class TestRtSelectMatrixComponent {
 
     /** Подпись ряда иконки. */
     public readonly iconLabel: (value: boolean) => string = (value: boolean): string => (value ? 'с иконкой' : 'без иконки');
-
-    /** Подпись случая указателя: у обоих имя лежит в одном поле. */
-    public readonly triggerLabel: (value: { readonly name: string }) => string = (value: { readonly name: string }): string => value.name;
 }

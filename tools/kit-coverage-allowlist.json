@@ -35,7 +35,6 @@
   },
   "shownWithin": {
     "[rtFieldHint]": "projects/ui-kit-v2/src/lib/components/field/stories/field-matrix.stories.ts",
-    "[rtSelectTrigger]": "projects/ui-kit-v2/src/lib/components/select/stories/select-matrix.stories.ts",
     "rt-table-settings-aside": "projects/ui-kit-v2/src/showcase/templates/stories/bookings-template.stories.ts"
   },
   "noPlayground": {
