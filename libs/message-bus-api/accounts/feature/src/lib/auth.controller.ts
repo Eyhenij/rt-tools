@@ -11,75 +11,27 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Logger, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
 
 import { PublicOperation, SessionOperation } from '@rt/message-bus-api/access/util';
-import { rightsOf } from '@rt/message-bus-common';
-import {
-    createSession,
-    findAccountByNameKey,
-    findAccountRights,
-    IAccountForLogin,
-    IAccountRights,
-    revokeSession,
-} from '@rt/message-bus-api/accounts/data-access';
+import { findAccountByNameKey, IAccountForLogin, revokeSession } from '@rt/message-bus-api/accounts/data-access';
 import {
     accountNameKey,
     accountOf,
     burnAbsentAccountTime,
     IAccountBearingRequest,
     IRequestAccount,
-    issueSessionToken,
     loginDelayMs,
     passwordMatches,
     SESSION_COOKIE,
-    sessionExpiry,
-    sessionTokenHash,
-    sessionTtlMs,
 } from '@rt/message-bus-api/accounts/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 
 import { LoginAttemptsService } from './login-attempts.service';
+import { cookieOptions, ICookieBearingResponse, ISessionAnswer, issueSignIn, rightsAnswerOf } from './sign-in-issue';
 
 /** Подождать перед ответом. Ноль ждать не заставляет: обещание разрешается тем же тактом. */
 async function hold(ms: number): Promise<void> {
     if (ms > 0) {
         await new Promise((done: (value: void) => void): unknown => setTimeout(done, ms));
     }
-}
-
-/** Ответ о том, кто вошёл. Ни пароля, ни значения входа в нём нет и быть не может. */
-export interface ISessionAnswer {
-    readonly name: string;
-    /**
-     * Права вошедшего целиком: набор его роли, сложенный с точечными правками.
-     *
-     * Ответом, а не выводом на стороне админки: складывать права второй раз значило бы завести
-     * вторую копию сложения, и разошлась бы она молча — экран показывал бы раздел, который
-     * приёмник отбивает.
-     */
-    readonly rights: readonly string[];
-}
-
-/** Куда каркас кладёт куку. Тип свой, а не привезённый: контроллеру нужны две операции из него. */
-interface ICookieBearingResponse {
-    cookie(name: string, value: string, options: Record<string, unknown>): unknown;
-    clearCookie(name: string, options: Record<string, unknown>): unknown;
-}
-
-/**
- * Как выдаётся кука входа.
- *
- * `httpOnly` — скрипт страницы её не читает. `sameSite: 'strict'` — браузер не посылает её по
- * переходу с чужой страницы, и подделывать запрос оттуда нечем. `secure` — она не уходит по
- * открытому HTTP; на своей машине приёмник поднимается без сертификата, поэтому признак
- * читается из окружения, а не зашит.
- */
-function cookieOptions(maxAgeMs: number): Record<string, unknown> {
-    return {
-        httpOnly: true,
-        sameSite: 'strict',
-        secure: process.env['SESSION_COOKIE_SECURE'] !== 'false',
-        path: '/',
-        maxAge: maxAgeMs,
-    };
 }
 
 @Controller('auth')
@@ -113,20 +65,10 @@ export class AuthController {
         const named: { name: string; password: string } = this.#credentials(body);
         const at: Date = new Date();
         const account: IAccountForLogin = await this.#accountOfPair(named.name, named.password, at);
-        const ttl: number = sessionTtlMs(process.env['SESSION_TTL_MS']);
-        const token: string = issueSessionToken();
-
-        await createSession(this.#prisma, {
-            accountId: account.id,
-            hash: sessionTokenHash(token),
-            expiresAt: sessionExpiry(at, ttl),
-            at,
-        });
 
         this.#attempts.passed(accountNameKey(named.name));
-        response.cookie(SESSION_COOKIE, token, cookieOptions(ttl));
 
-        return { name: account.name, rights: await this.#rightsOf(account.id) };
+        return issueSignIn(this.#prisma, response, account, at);
     }
 
     /**
@@ -153,21 +95,7 @@ export class AuthController {
     public async session(@Req() request: IAccountBearingRequest): Promise<ISessionAnswer> {
         const account: IRequestAccount = accountOf(request);
 
-        return { name: account.name, rights: await this.#rightsOf(account.id) };
-    }
-
-    /**
-     * Права записи одной строкой ответа.
-     *
-     * Читаются здесь же, при каждом ответе, а не запоминаются во входе: тем же приёмом их читает
-     * проверка доступа, и второй источник разошёлся бы с ней на первой же правке роли.
-     *
-     * Записи нет — прав нет: отвечать отказом здесь нечего, вход уже опознан проверкой.
-     */
-    async #rightsOf(accountId: string): Promise<readonly string[]> {
-        const rights: IAccountRights | null = await findAccountRights(this.#prisma, accountId);
-
-        return rights ? [...rightsOf(rights.roleRights, rights.edits)] : [];
+        return { name: account.name, rights: await rightsAnswerOf(this.#prisma, account.id) };
     }
 
     /**

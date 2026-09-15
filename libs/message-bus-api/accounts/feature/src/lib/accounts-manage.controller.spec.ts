@@ -129,7 +129,7 @@ describe('AccountsManageController', (): void => {
         expect(passwordMatches('тайна', stored.passwordHash)).toBe(true);
     });
 
-    it('SC-MB-362 — занятое имя отбивается словами о нём, и прежняя запись цела', async (): Promise<void> => {
+    it('SC-MB-362, SC-MB-43 — занятое имя отбивается словами о нём, и прежняя запись цела', async (): Promise<void> => {
         const { prisma, accounts } = storage();
 
         await expect(new AccountsManageController(prisma).create({ name: 'ольга', password: 'другая' })).rejects.toThrow(ConflictException);

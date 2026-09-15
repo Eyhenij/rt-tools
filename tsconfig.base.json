@@ -74,6 +74,7 @@
       "@rt/message-bus-admin/auth/ui": ["./libs/message-bus-admin/auth/ui/src/index.ts"],
       "@rt/message-bus-admin/auth/shell": ["./libs/message-bus-admin/auth/shell/src/index.ts"],
       "@rt/message-bus-admin/auth/feature/sign-in": ["./libs/message-bus-admin/auth/feature/sign-in/src/index.ts"],
+      "@rt/message-bus-admin/auth/feature/setup": ["./libs/message-bus-admin/auth/feature/setup/src/index.ts"],
       "@rt/message-bus-admin/common/core/util": ["./libs/message-bus-admin/common/core/util/src/index.ts"],
       "@rt/message-bus-admin/common/core/api": ["./libs/message-bus-admin/common/core/api/src/index.ts"],
       "@rt/message-bus-admin/common/core/data-access": ["./libs/message-bus-admin/common/core/data-access/src/index.ts"],
