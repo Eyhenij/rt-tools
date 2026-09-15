@@ -191,6 +191,16 @@ as an attachment.
   at preparing for ever, and no edit in the tree caused it. A probe that dies there with a bare failure of a
   wait speaks of its own code, and the push gate then refuses a push for a reason that is not true.
 
+- **A showcase that lost its story index is brought back by its consumer before the run reads it.**
+  A parse of one story file can fail on a file being written under the watcher, and the indexer keeps that
+  failure as the file's entry: from that second the whole index is refused rather than the file's own stories.
+  The entry is dropped by one thing only — a watcher event over that same file — so the consumer pokes the
+  files the refusal names. A showcase beyond bringing back refuses the run by the index, not by the frames.
+
+- **The showcase starts over a cache without hot update leftovers.** They pile up unremoved, and a
+  showcase started over them serves a runtime asking for an update of a hash that is gone: every story
+  hangs at preparing while the story index is whole. Neither a page reload nor a restart cures it.
+
 Below are the rules of the design of the kit: in the same list, because the binding to the code is read by a
 machine, and a heading inside a list breaks its reading off.
 
