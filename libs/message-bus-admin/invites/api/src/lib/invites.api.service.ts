@@ -1,22 +1,9 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { asReadFault, READ_TIMEOUT_MS } from '@rt/message-bus-admin/common/core/api';
-import { IInviteFault, inviteFaultOf, INVITES_PATH } from '@rt/message-bus-admin/invites/util';
+import { asReadFault, asSpokenFault, READ_TIMEOUT_MS } from '@rt/message-bus-admin/common/core/api';
+import { INVITES_PATH } from '@rt/message-bus-admin/invites/util';
 import { ITreeInviteIssued } from '@rt/message-bus-common';
-import { catchError, Observable, throwError, timeout } from 'rxjs';
-
-/**
- * Отказ выдачи в то, что покажет панель.
- *
- * Разбор кода и тела — чистая функция раздела; здесь остаётся достать из ответа каркаса код и
- * тело. Обрыв связи и вышедший срок ожидания кода не несут вовсе — им ставится ноль, тот же,
- * каким каркас отвечает на недошедший запрос.
- */
-function asIssueFault(error: unknown): Observable<never> {
-    const response: HttpErrorResponse | null = error instanceof HttpErrorResponse ? error : null;
-
-    return throwError((): IInviteFault => inviteFaultOf(response?.status ?? 0, response?.error ?? null));
-}
+import { catchError, Observable, timeout } from 'rxjs';
 
 /**
  * Обращение к операциям над приглашениями.
@@ -42,7 +29,7 @@ export class InvitesApiService {
     public issue(name: string): Observable<ITreeInviteIssued> {
         return this.#http
             .post<ITreeInviteIssued>(INVITES_PATH, { name }, { withCredentials: true })
-            .pipe(timeout(READ_TIMEOUT_MS), catchError(asIssueFault));
+            .pipe(timeout(READ_TIMEOUT_MS), catchError(asSpokenFault));
     }
 
     /**

@@ -1,0 +1,13 @@
+{
+  "name": "message-bus-admin-accounts-feature-roles-list",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/message-bus-admin/accounts/feature/roles-list/src",
+  "prefix": "admin",
+  "projectType": "library",
+  "tags": ["scope:message-bus-admin-accounts-feature-roles-list"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

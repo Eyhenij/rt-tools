@@ -107,8 +107,8 @@ report "SC-AK-561 — без пары вызов не идёт" \
     "$(HOME=/nonexistent pull_code --kind proposal)" "код:1"
 report "SC-AK-561 — отказ называет, где лежит пара" \
     "$(cd "$TREE_ROOT" && HOME=/nonexistent RT_INTAKE="$INTAKE" node "$PULL" --kind proposal 2>&1 | grep -cE '`account`')" 1
-report "SC-AK-561 — и чем заводится сама запись" \
-    "$(cd "$TREE_ROOT" && HOME=/nonexistent RT_INTAKE="$INTAKE" node "$PULL" --kind proposal 2>&1 | grep -cE 'account:add')" 1
+report "SC-AK-561 — и где заводится сама запись" \
+    "$(cd "$TREE_ROOT" && HOME=/nonexistent RT_INTAKE="$INTAKE" node "$PULL" --kind proposal 2>&1 | grep -cE 'people section')" 1
 
 report "SC-AK-562 — непринятый вход отбивает чтение" \
     "$(pull_code --kind proposal)" "код:1"

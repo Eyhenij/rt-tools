@@ -34,9 +34,11 @@ export type TPageMark = 'hint' | 'columns' | 'refresh' | 'fault' | 'retry';
 /**
  * Имя раздела. Три раздела груза собраны одним и тем же списочным экраном; раздел использования
  * — тем же, с отбором по периоду и панелью сессий вместо панели подробностей; приглашения — тем
- * же, но без отбора по дереву и без панели: приглашение ждёт дерева, которого ещё нет.
+ * же, но без отбора по дереву и без панели: приглашение ждёт дерева, которого ещё нет. Люди и
+ * роли не имеют ни отбора, ни панели подробностей: их панели правят и открываются кнопкой и
+ * меню строки, а не нажатием на строку.
  */
-export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'usage' | 'invites';
+export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'usage' | 'invites' | 'people' | 'roles';
 
 /** Разделы админки: адрес, заголовок экрана и `qa-dataid` его таблицы и строк. */
 export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.freeze({
@@ -83,6 +85,25 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
         // молча ничего не находила.
         details: '',
     }),
+    people: Object.freeze({
+        path: SECTIONS.people,
+        title: 'Пользователи',
+        prefix: 'people',
+        table: 'people-table',
+        row: 'people-row',
+        // Панели подробностей у человека нет: всё известное о нём стоит в строке, а панели
+        // заведения, пароля и прав правят и открываются кнопкой и меню строки.
+        details: '',
+    }),
+    roles: Object.freeze({
+        path: SECTIONS.roles,
+        title: 'Роли',
+        prefix: 'roles',
+        table: 'roles-table',
+        row: 'roles-row',
+        // Панели подробностей у роли нет: строка несёт её целиком, а панель роли правит.
+        details: '',
+    }),
 });
 
 /** Узел по метке проверки: ею размечены все места, за которые набор держится. */
@@ -117,14 +138,29 @@ export function rowsOf(page: Page, section: TSectionName): Locator {
 }
 
 /**
+ * Пара входа: имя записи и её пароль.
+ *
+ * Названа не так, как то же самое зовётся в домене входа админки, и намеренно: набор в либы
+ * приложения не смотрит — он говорит с ним по сети, как человек. Одно имя на два объявления
+ * прочиталось бы общим типом, которого нет, и проверка повторов отбивает его прямо на пуше.
+ */
+export interface IStandSignInPair {
+    readonly name: string;
+    readonly password: string;
+}
+
+/**
  * Вход парой стенда.
  *
  * Ждёт ухода с экрана входа: форма отвечает не мгновенно, и следующий шаг, начатый раньше,
  * читает ещё старую страницу.
+ *
+ * Пара приезжает доводом, а умолчание — запись самого набора: у неё права на все разделы, и ею
+ * идёт весь набор, кроме проверок того, что видит человек без права.
  */
-export async function signIn(page: Page): Promise<void> {
-    await qa(page, 'sign-in-name').locator('input').fill(ACCOUNT.name);
-    await qa(page, 'sign-in-password').locator('input').fill(ACCOUNT.password);
+export async function signIn(page: Page, account: IStandSignInPair = ACCOUNT): Promise<void> {
+    await qa(page, 'sign-in-name').locator('input').fill(account.name);
+    await qa(page, 'sign-in-password').locator('input').fill(account.password);
     await qa(page, 'sign-in-submit').click();
     await page.waitForURL((url: URL): boolean => !url.pathname.startsWith(SIGN_IN_PATH));
 }
