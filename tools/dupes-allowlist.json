@@ -1,9 +1,5 @@
 {
   "accepted": {
-    "export Default @ projects/ui-kit, projects/ui-kit-v2": {
-      "reason": "a showcase story heading: the kits have showcases of their own, and the story names match by the agreement of showing",
-      "task": "RT-764"
-    },
     "export Header @ projects/ui-kit, projects/ui-kit-v2": {
       "reason": "a showcase story heading: the kits have showcases of their own, and the story names match by the agreement of showing",
       "task": "RT-764"
