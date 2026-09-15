@@ -1,6 +1,6 @@
 # Cargo outward
 
-**Status:** in force · **Revision:** 2026-09-05 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-09-14 · **Scenario prefix:** `SC-AK`
 **Depends on:** `message-bus` (where the cargo goes and where the marking goes)
 **Laws:** `observability`, `work-conduct`, `delivery`, `frontend-application`, `verifiability`
 **Procedures:** none
@@ -32,6 +32,11 @@ subdomain "Observations" next to it.
 - **A sending** — carrying the cargo away into the intake: the digests of the observations, the
   proposals addressed "package" and the incident analyses.
 - **Cargo** — what goes away by a run of the sending.
+- **The observation cargo** — the fourth kind of cargo: the observation lines of the window of the
+  run, grouped by day, plus the kind of every loaded skill — a rule of the package, a pattern of the
+  package, another skill of the package, a skill of the tree's own.
+- **The working copy sign** — the checksum of the root of the working copy; one tree has several
+  copies with one tree sign, and the intake tells their days apart by this sign.
 - **The intake** — a closed service accepting the cargo by a request; one's own, not someone else's
   work queue.
 - **The intake address** — the address of the intake service; declared by a setting of the tree, not
@@ -130,10 +135,10 @@ subdomain "Observations" next to it.
 - **The cargo goes away at every run of the sending, and the proposals — when there are any.** A run
   without remarks also says what was used, what was not used once and what the tree overrode; a
   sending built around a proposal lost these data.
-- **The check for a tree address covers the digest and the proposals, but not an incident analysis.**
-  An analysis by its nature names the files of the tree where the miss happened, and a check covering
-  it would refuse every sending of it. The rest of the cargo is checked on the carrying-out side —
-  the same place as before.
+- **The check for a tree address covers the digest, the proposals and the observation lines, but not
+  an incident analysis.** An analysis by its nature names the files of the tree where the miss
+  happened, and a check covering it would refuse every sending of it. The rest of the cargo is checked
+  on the carrying-out side — the same place as before.
 - **A proposal block names the nearest statement of the resource, and the quotation is checked.** An
   incident analysis ends with a proposal to append an article to the very resource the miss already
   described: the article stands, and the block proposes a second one about the same, and from outside
@@ -208,6 +213,33 @@ subdomain "Observations" next to it.
   the output of a dry run reads as work done, and there is no trace outward at that. The first line
   says that nothing went outward, and names the call that really does it.
 
+### The observation lines
+
+- **Every line of the window leaves, of every event kind.** A load, a refusal of the rules gate, a
+  refusal of a guard, an outcome of the push gate: the intake counts loads first, and a second
+  edition of the cargo for the refusals would cost a second edition of the storage.
+- **The lines leave grouped by day, and a day leaves whole.** The intake replaces a day whole; a day
+  sent by halves would be replaced by its second half.
+- **The cargo names the working copy it left from, by a checksum of its root.** One tree has several
+  working copies with one tree sign and separate observation files; a day replaced by the tree alone
+  would keep whichever copy sent last and drop the other. The path itself does not leave.
+- **A load names the kind of its skill.** A rule of the package, a pattern of the package, another
+  skill of the package, a skill of the tree's own: the kind is read from the layout of the package
+  at the minute of sending — a name the package laid out is its kind, anything else the tree's own.
+  The tree's own skills leave by name: the owner asked for what the trees wrote for themselves.
+- **A line leaves as it lies, and nothing is added to it but the kind.** The session sign stays a
+  checksum, the path is absent as before; the cargo carries no more about the tree than the digest.
+- **A broken line does not leave and does not stop the cargo.** The reading of the day file skips it,
+  as the digest does: an observation is a side record of a guard.
+- **The cargo goes by the same request as the rest, with the tree token, and only by a command.** No
+  background sending: the line "nothing goes outward that a person did not send by a command" holds.
+- **The check for a tree address covers the observation cargo.** A resource name is a package name
+  or a skill name; a slash in a value is not written by the guard at all.
+- **The schema version of the cargo rises.** A tree on the former edition sends three kinds, and the
+  intake takes them as before; the version says which edition the lines came from.
+- **The dry run names the observation cargo with the number of lines and days.** What leaves is
+  read from the print, not remembered.
+
 ## What is out of scope
 
 - The sending and the summing-up under a second and a third hosting: they go in the same shape as the
@@ -246,8 +278,11 @@ subdomain "Observations" next to it.
 
 ## Contract
 
-The sending carries into the intake the digest, the proposals addressed "package" and the incident
-analyses, and on a dry run prints what would go away and sends nothing. It exits with zero when the
+The sending carries into the intake the digest, the observation lines of the window, the proposals
+addressed "package" and the incident analyses, and on a dry run prints what would go away and sends
+nothing. The observation lines go by a request of their own, `POST /api/intake/observations`, with
+the body `{ schema, tree, origin, days: [{ day, lines: [{ t, ev, res, kind?, sid, v, skill? }] }] }`;
+the form is declared once, in the cargo module of the package, and the intake reads it from there. It exits with zero when the
 work is done or there was nothing to do.
 
 The marking takes the intake address and the tree token from the same setting as the sending, and
@@ -356,8 +391,9 @@ month" is its own for each, and a tree can neither read nor mark someone else's 
   probing call — it demands the intake address and a network where neither is needed.
 - **The intake and its admin panel live as applications of their own in this monorepo.** The cargo
   types are shared with the package, so the format will not drift apart silently.
-- **The cargo is of three kinds: the digest, the proposals, the incident analyses.** The proposals the
-  package can already send; the analyses now go nowhere and lie only in the tree they happened in.
+- **The cargo was of three kinds: the digest, the proposals, the incident analyses.** The proposals
+  the package could already send; the analyses went nowhere and lay only in the tree they happened
+  in. The fourth kind, the observation lines, came with the usage statistics of the intake.
 - **The cargo is the digest, and a proposal is attached to it.** The former order built the sending
   around a proposal, and a run without remarks lost the data about which rules were loaded and what
   the tree overrode.
@@ -377,6 +413,14 @@ month" is its own for each, and a tree can neither read nor mark someone else's 
   before its consumer it would diverge from it.
 - **A refused record gives a non-zero exit code.** The argument: zero reads as work done, and a
   refused analysis would stay unmarked silently. Zero with a printout of the refused was rejected.
+- **Raw lines, not a month block inside the digest.** The owner chose the raw lines; a block would
+  keep the counts without the sessions and the days. Rejected: a month block, counted by the tree.
+- **The kind is counted by the sender, not by the intake.** Only the tree knows its layout; the
+  intake knows no package. Rejected: a list of package names at the intake.
+- **The tree's own skills leave by name.** The owner's answer; the line of the observations cargo
+  spec that only package names leave is reworded at the merge. Rejected: one line "own" with a count.
+- **A day is the unit of replacement.** The day file is the unit on the disk, and the windows of
+  runs overlap by days; the intake needs no sign of a run. Rejected: a run id and dedup by line.
 
 ## Open questions
 
@@ -384,6 +428,9 @@ The open questions of the domain are shared, and they live in the spec next to i
 
 ## History of changes
 
+- 2026-09-14 — the agreement of task RT-2098 about the observation lines leaving for the intake was
+  merged in: ten rules, scenarios `SC-AK-1099`…`SC-AK-1103`, bindings on the reading of the days and
+  the sending. The question of the window length of the observation cargo went to the domain spec.
 - 2026-09-05 — the subdomain was split out of the observations spec, which had outgrown the length
   limit. The rules, scenarios and bindings of the proposals, the sending, the creating of a tree and
   the marking moved here as they were: the scenario numbers were not recounted.

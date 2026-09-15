@@ -30,7 +30,8 @@ export const READ_TIMEOUT_MS: number = 15_000;
  * Пустой отбор не посылается вовсе: приёмник читает его как «все». Разделу, у которого состояния
  * и версии нет, отправлять нечего — его выборка приходит сюда с пустыми отборами и остаётся без
  * их параметров. Слово «без версии» пустотой не является: оно едет как есть, и приёмник читает
- * его условием на пустую колонку.
+ * его условием на пустую колонку. Период едет двумя днями сразу или не едет вовсе: на один день
+ * приёмник отвечает отказом.
  */
 function askedParams(query: IAdminListQuery): HttpParams {
     let params: HttpParams = new HttpParams()
@@ -49,6 +50,10 @@ function askedParams(query: IAdminListQuery): HttpParams {
 
     if (query.version !== '') {
         params = params.set('version', query.version);
+    }
+
+    if (query.from !== '' && query.to !== '') {
+        params = params.set('from', query.from).set('to', query.to);
     }
 
     return params;

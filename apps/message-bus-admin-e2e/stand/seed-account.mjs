@@ -38,6 +38,7 @@ async function role(sql) {
         'proposals:read',
         'proposals:manage',
         'summaries:read',
+        'usage:read',
         'invites:read',
         'invites:manage',
         'accounts:read',

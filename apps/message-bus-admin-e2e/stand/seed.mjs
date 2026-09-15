@@ -16,6 +16,7 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 import { seedAccount } from './seed-account.mjs';
+import { seedObservations } from './seed-observations.mjs';
 import { checkNothingDrifts } from './seed-self-check.mjs';
 import { API_ORIGIN, ENROLLED_SLUG, INVITES, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
 
@@ -468,6 +469,7 @@ export async function seed() {
     await postmortems(tokens);
     await proposals(tokens);
     await summaries(tokens);
+    await seedObservations(intake, tokens);
     await invites();
     await keys();
     await moments();

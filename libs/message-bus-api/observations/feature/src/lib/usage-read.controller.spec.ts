@@ -1,0 +1,187 @@
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { describe, expect, it } from 'vitest';
+
+import { OPERATION_ACCESS, OPERATION_RIGHT } from '@rt/message-bus-api/access/util';
+import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
+import { IUsageDigest, IUsagePage, IUsageRow, IUsageSessionRow } from '@rt/message-bus-common';
+
+import { UsageReadController } from './usage-read.controller';
+
+const OWN: { id: string; slug: string } = { id: 'tree-1', slug: 'own-tree' };
+const PERIOD: { from: string; to: string } = { from: '2026-08-01', to: '2026-08-31' };
+
+/** Запрос своим текстом, как его собирает клиент хранилища: текст и подставленные значения. */
+interface IAskedQuery {
+    readonly sql: string;
+    readonly values: readonly unknown[];
+}
+
+/**
+ * Двойник хранилища: знает одно дерево по признаку и отвечает на запрос своим текстом заранее
+ * положенными строками, запоминая, с какими значениями его позвали. Сам текст запроса сверяется
+ * стендом сквозного набора над засеянными строками, не здесь: двойник не исполняет SQL.
+ */
+class PrismaDouble {
+    public readonly asked: IAskedQuery[] = [];
+
+    readonly #rows: readonly unknown[];
+    readonly #byText: ReadonlyMap<string, readonly unknown[]>;
+
+    /** Строки на любой запрос; вторым доводом — строки на запрос, чей текст несёт названный кусок. */
+    constructor(rows: readonly unknown[] = [], byText: ReadonlyMap<string, readonly unknown[]> = new Map()) {
+        this.#rows = rows;
+        this.#byText = byText;
+    }
+
+    public get tree(): { findUnique: (args: { where: { slug: string } }) => Promise<{ id: string } | null> } {
+        return {
+            findUnique: async (args: { where: { slug: string } }): Promise<{ id: string } | null> =>
+                args.where.slug === OWN.slug ? { id: OWN.id } : null,
+        };
+    }
+
+    public async $queryRaw(query: IAskedQuery): Promise<unknown[]> {
+        this.asked.push(query);
+        for (const [text, rows] of this.#byText) {
+            if (query.sql.includes(text)) {
+                return [...rows];
+            }
+        }
+
+        return [...this.#rows];
+    }
+}
+
+function controllerOf(double: PrismaDouble): UsageReadController {
+    return new UsageReadController(double as unknown as PrismaService);
+}
+
+describe('UsageReadController', () => {
+    it('SC-MB-343 — использование читается страницей по дереву и периоду: строки хранилища как есть, отказ гейта без рода — правило', async () => {
+        const double: PrismaDouble = new PrismaDouble([
+            { skill: 'testing', kind: 'rule', loads: 3, sessions: 2, denials: 1, total: 3 },
+            { skill: 'git-workflow-commit', kind: 'pattern', loads: 1, sessions: 1, denials: 0, total: 3 },
+            { skill: 'lists', kind: null, loads: 0, sessions: 0, denials: 2, total: 3 },
+        ]);
+
+        const page: IUsagePage = await controllerOf(double).usage({ tree: OWN.slug, ...PERIOD });
+
+        expect(page.rows.map((row: IUsageRow): string => `${row.skill}:${row.kind}:${row.loads}:${row.sessions}:${row.denials}`)).toEqual([
+            'testing:rule:3:2:1',
+            'git-workflow-commit:pattern:1:1:0',
+            'lists:rule:0:0:2',
+        ]);
+        expect(page).toMatchObject({ total: 3, page: 1, size: 20, from: PERIOD.from, to: PERIOD.to });
+        expect(page.rows[0]).not.toHaveProperty('total');
+        expect(double.asked).toHaveLength(1);
+        expect(double.asked[0].values).toEqual([OWN.id, PERIOD.from, PERIOD.to, 20, 0]);
+        expect(double.asked[0].sql).toContain('COUNT(DISTINCT "sid")');
+        expect(double.asked[0].sql).toContain('ORDER BY "loads" DESC, "skill" ASC');
+    });
+
+    it('SC-MB-354 — страница и порядок из общей выборки: смещение и столбец порядка уходят в запрос', async () => {
+        const double: PrismaDouble = new PrismaDouble();
+
+        await controllerOf(double).usage({ tree: OWN.slug, ...PERIOD, page: '3', size: '50', sort: 'sessions', dir: 'asc' });
+
+        expect(double.asked[0].values).toEqual([OWN.id, PERIOD.from, PERIOD.to, 50, 100]);
+        expect(double.asked[0].sql).toContain('ORDER BY "sessions" ASC, "skill" ASC');
+    });
+
+    it('SC-MB-354 — поле порядка вне набора отбивается кодом 400 с набором', async () => {
+        const refusal: Promise<IUsagePage> = controllerOf(new PrismaDouble()).usage({ tree: OWN.slug, ...PERIOD, sort: 'kind' });
+
+        await expect(refusal).rejects.toBeInstanceOf(BadRequestException);
+        await expect(refusal).rejects.toThrow('loads, skill, sessions, denials');
+    });
+
+    it('SC-MB-353 — период, которого запрос не назвал, подставляет приёмник и называет в ответе', async () => {
+        const double: PrismaDouble = new PrismaDouble();
+
+        const page: IUsagePage = await controllerOf(double).usage({ tree: OWN.slug });
+
+        expect(page.from).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+        expect(page.to).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+        expect(page.from < page.to).toBe(true);
+        expect(double.asked[0].values.slice(0, 3)).toEqual([OWN.id, page.from, page.to]);
+    });
+
+    it('SC-MB-345 — сессии скила читаются по дереву, скилу и периоду', async () => {
+        const double: PrismaDouble = new PrismaDouble([
+            { day: '2026-08-13', sid: '2', count: 1 },
+            { day: '2026-08-12', sid: '1', count: 2 },
+        ]);
+
+        const rows: readonly IUsageSessionRow[] = await controllerOf(double).sessions('testing', { tree: OWN.slug, ...PERIOD });
+
+        expect(rows).toEqual([
+            { day: '2026-08-13', sid: '2', count: 1 },
+            { day: '2026-08-12', sid: '1', count: 2 },
+        ]);
+        expect(double.asked[0].values).toEqual([OWN.id, 'testing', PERIOD.from, PERIOD.to]);
+        expect(double.asked[0].sql).toContain('ORDER BY "day" DESC');
+    });
+
+    it('SC-MB-344 — период длиннее четырёхсот дней отбивается кодом 400 с пределом, хранилище не спрашивается', async () => {
+        const double: PrismaDouble = new PrismaDouble();
+
+        const refusal: Promise<IUsagePage> = controllerOf(double).usage({ tree: OWN.slug, from: '2025-07-01', to: '2026-08-31' });
+
+        await expect(refusal).rejects.toBeInstanceOf(BadRequestException);
+        await expect(refusal).rejects.toThrow('предела 400');
+        expect(double.asked).toHaveLength(0);
+    });
+
+    it('SC-MB-347 — пустой период отвечает пустой страницей, а не отказом', async () => {
+        const page: IUsagePage = await controllerOf(new PrismaDouble()).usage({ tree: OWN.slug, ...PERIOD });
+
+        expect(page).toEqual({ rows: [], total: 0, page: 1, size: 20, from: PERIOD.from, to: PERIOD.to });
+    });
+
+    it('SC-MB-356 — сводка периода: дни с нулями, роды, пять по загрузкам и пять по отказам — оба списка без нулевых', async () => {
+        const double: PrismaDouble = new PrismaDouble(
+            [
+                { skill: 'testing', kind: 'rule', loads: 3, sessions: 2, denials: 1, total: 2 },
+                { skill: 'lists', kind: null, loads: 0, sessions: 0, denials: 0, total: 2 },
+            ],
+            new Map<string, readonly unknown[]>([
+                ['GROUP BY "day"', [{ day: '2026-08-02', loads: 3, sessions: 2, denials: 1 }]],
+                ['GROUP BY "skill"', [{ kind: 'rule', loads: 3 }]],
+            ])
+        );
+
+        const digest: IUsageDigest = await controllerOf(double).digest({ tree: OWN.slug, from: '2026-08-01', to: '2026-08-03' });
+
+        expect(digest.days).toEqual([
+            { day: '2026-08-01', loads: 0, sessions: 0, denials: 0 },
+            { day: '2026-08-02', loads: 3, sessions: 2, denials: 1 },
+            { day: '2026-08-03', loads: 0, sessions: 0, denials: 0 },
+        ]);
+        expect(digest.kinds).toEqual([{ kind: 'rule', loads: 3 }]);
+        expect(digest.top.map((row: IUsageRow): string => row.skill)).toEqual(['testing']);
+        expect(digest.denied.map((row: IUsageRow): string => row.skill)).toEqual(['testing']);
+        expect(digest).toMatchObject({ from: '2026-08-01', to: '2026-08-03' });
+        expect(double.asked).toHaveLength(4);
+        expect(double.asked[2].sql).toContain('ORDER BY "loads" DESC');
+        expect(double.asked[2].values.slice(3)).toEqual([5, 0]);
+        expect(double.asked[3].sql).toContain('ORDER BY "denials" DESC');
+    });
+
+    it('SC-MB-346 — все три операции закрыты правом чтения использования', () => {
+        for (const method of [
+            UsageReadController.prototype.usage,
+            UsageReadController.prototype.sessions,
+            UsageReadController.prototype.digest,
+        ]) {
+            expect(Reflect.getMetadata(OPERATION_ACCESS, method)).toBe('permission');
+            expect(Reflect.getMetadata(OPERATION_RIGHT, method)).toBe('usage:read');
+        }
+    });
+
+    it('SC-MB-343 — дерево не названо или не известно — отказ 404', async () => {
+        const controller: UsageReadController = controllerOf(new PrismaDouble());
+
+        await expect(controller.usage({ ...PERIOD })).rejects.toBeInstanceOf(NotFoundException);
+        await expect(controller.usage({ tree: 'other-tree', ...PERIOD })).rejects.toThrow('не известно приёмнику');
+    });
+});

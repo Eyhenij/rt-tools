@@ -78,6 +78,9 @@ export const messageBusApiBoundaries = [
             OBSERVABILITY_UTIL,
             // Журнал приложения: его ставит приложение — вывод его решение, а не решение домена
             'scope:message-bus-api-observability-feature',
+            // Предел строк наблюдений: сводку подъёма пишет само приложение, и предел она
+            // называет из источника, а не через перевыпуск из слоя feature
+            'scope:message-bus-api-observations-util',
             PERSISTENCE_FEATURE,
             PERSISTENCE_DATA_ACCESS,
             COMMON,

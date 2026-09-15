@@ -62,6 +62,16 @@ describe('sectionRightGuard', (): void => {
         expect(verdictOf('/postmortems/1c2d')).not.toBe(true);
     });
 
+    it('SC-MB-351 — раздел использования закрыт своим правом: право сводок его не открывает', (): void => {
+        signedInWith(['summaries:read']);
+
+        expect(verdictOf('/usage')).not.toBe(true);
+
+        signedInWith(['usage:read']);
+
+        expect(verdictOf('/usage')).toBe(true);
+    });
+
     it('SC-MB-301 — пока ответ о вошедшем не приехал, не закрывается ничего', (): void => {
         // Права неизвестны, а не пусты: закрыв по пустому набору, админка увела бы с раздела
         // того, у кого право на него есть.
