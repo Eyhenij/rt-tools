@@ -13,6 +13,7 @@ export * from './lib/month';
 export * from './lib/page';
 export * from './lib/person-view';
 export * from './lib/rights';
+export * from './lib/role-view';
 export * from './lib/sortable';
 export * from './lib/tree-choice';
 export * from './lib/tree-invite-view';

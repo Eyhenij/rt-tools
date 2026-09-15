@@ -6,5 +6,6 @@ export * from './lib/login-delay.util';
 export * from './lib/password.util';
 export * from './lib/person-edit.util';
 export * from './lib/person-row.util';
+export * from './lib/role-edit.util';
 export * from './lib/session-cookie.util';
 export * from './lib/session-token.util';

@@ -1,0 +1,41 @@
+/**
+ * Чем раздел ролей отличается от остальных: столбцы, адрес операций, адреса панелей и ключ
+ * настройки столбцов.
+ *
+ * Лежит отдельно от экрана: тот же набор читают и таблица, и панель настройки столбцов, и
+ * описание — объявленный в шаблоне, он был бы известен только шаблону.
+ */
+import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { IRtTable } from '@rt-tools/ui-kit-v2';
+
+/** Адрес операций над ролями: страница, одна роль, заведение, правка и удаление. */
+export const ROLES_PATH: string = '/api/roles';
+
+/**
+ * Сегмент адреса панели заведения роли: «roles/new». На месте ключа роли стоит это слово —
+ * роли, которую панель заводит, ещё нет. Панель существующей роли стоит по её ключу.
+ */
+export const ROLE_CREATE_ROUTE: string = 'new';
+
+/**
+ * Последний сегмент адреса панели прав человека: «people/<имя>/access».
+ *
+ * Перед ним стоит имя записи — им панель узнаёт, чей доступ; тот же сегмент замыкает адрес
+ * операции доступа у приёмника.
+ */
+export const PERSON_ACCESS_ROUTE: string = 'access';
+
+/** Ключ, под которым хранится выбор столбцов. Свой у каждого раздела. */
+export const ROLES_TABLE_ID: string = 'admin-roles';
+
+/**
+ * Столбцы таблицы. Подписи идут из словаря, а порядок — тот, в котором они здесь стоят.
+ *
+ * Закреплено имя: роль зовётся им, и без него список перестаёт называть свои строки. Порядок
+ * принимает только оно: приёмник упорядочивает роли одним полем.
+ */
+export const ROLES_COLUMNS: readonly IRtTable.ColumnConfig[] = Object.freeze([
+    { key: 'name', label: adminLabel('columnRoleName'), sortable: true, locked: true },
+    { key: 'rights', label: adminLabel('columnRoleRights') },
+    { key: 'people', label: adminLabel('columnRolePeople') },
+]);

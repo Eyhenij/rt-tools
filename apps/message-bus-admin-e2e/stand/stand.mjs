@@ -130,4 +130,5 @@ export const SECTIONS = Object.freeze({
     usage: '/usage',
     invites: '/invites',
     people: '/people',
+    roles: '/roles',
 });

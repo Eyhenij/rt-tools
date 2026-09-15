@@ -15,6 +15,7 @@ import {
     IPerson,
     PEOPLE_COLUMNS,
     PEOPLE_TABLE_ID,
+    PERSON_ACCESS_ROUTE,
     PERSON_CREATE_ROUTE,
     PERSON_PASSWORD_ROUTE,
     personRowHasActions,
@@ -50,12 +51,13 @@ const BEM_BLOCK: string = 'admin-people-list';
  * своей строкой: общая говорит про отбор, которого у раздела не бывает.
  *
  * Строка не нажимается: панели подробностей у человека нет — всё, что о нём известно, стоит в
- * строке. Действия над строкой два и живут её меню: новый пароль открывает панель, отключение
- * спрашивает подтверждение, потому что отключённая запись не возвращается. Заведение — действие
- * над списком целиком — стоит в правом слоте тулбара, левее общих кнопок.
+ * строке. Действия над строкой три и живут её меню: новый пароль и права открывают панели,
+ * отключение спрашивает подтверждение, потому что отключённая запись не возвращается. Заведение —
+ * действие над списком целиком — стоит в правом слоте тулбара, левее общих кнопок.
  *
- * Кнопку и меню экран рисует только с правом на правку людей: приёмник закрывает ими же
- * закрытые операции, а экран решает, что показывать, по правам, которые прислал приёмник. Пока
+ * Кнопку и меню экран рисует только с правом: приёмник закрывает ими же закрытые операции, а
+ * экран решает, что показывать, по правам, которые прислал приёмник. Правки записи — по праву на
+ * правку людей, права записи — по праву на роли: кто раздаёт права, тот и правит доступ. Пока
  * права не приехали, не прячется ничего. Своя запись отключения не получает: обрыв касается и
  * того входа, которым пришли.
  */
@@ -100,6 +102,7 @@ export class AdminPeopleListComponent extends AdminListScreenBase<IPerson.Short.
     protected readonly passwordLabel: string = adminLabel('personPasswordMenu');
     protected readonly disableLabel: string = adminLabel('personDisable');
     protected readonly disableTitle: string = adminLabel('personDisableTitle');
+    protected readonly accessLabel: string = adminLabel('personAccessMenu');
 
     protected readonly store: PeopleStore = inject(PeopleStore);
     protected readonly sortable: readonly string[] = PERSON_SORTABLE;
@@ -114,6 +117,14 @@ export class AdminPeopleListComponent extends AdminListScreenBase<IPerson.Short.
     protected readonly canManage: Signal<boolean> = computed(
         (): boolean => !this.#auth.rightsKnown() || this.#auth.rights().includes('accounts:manage')
     );
+
+    /** Показывать ли права записи: право то же, что закрывает раздел ролей и операции доступа. */
+    protected readonly canGrant: Signal<boolean> = computed(
+        (): boolean => !this.#auth.rightsKnown() || this.#auth.rights().includes('roles:manage')
+    );
+
+    /** Меню есть, если открыто хоть одно из двух действий: без обоих прав кнопка меню не рисуется. */
+    protected readonly showRowActions: Signal<boolean> = computed((): boolean => this.canManage() || this.canGrant());
 
     /** Имя вошедшего: его строка отключения не получает. Пусто, пока ответ о вошедшем не приехал. */
     protected readonly selfName: Signal<string> = computed((): string => this.#auth.session()?.name ?? '');
@@ -149,6 +160,11 @@ export class AdminPeopleListComponent extends AdminListScreenBase<IPerson.Short.
     /** Открыть панель нового пароля записи: адрес называет имя и сторону записи. */
     protected openPassword(name: string): void {
         this.openDetails(name, PERSON_PASSWORD_ROUTE);
+    }
+
+    /** Открыть панель прав записи: роль и точечные правки. */
+    protected openAccess(name: string): void {
+        this.openDetails(name, PERSON_ACCESS_ROUTE);
     }
 
     /** Отключить запись. Список после удачи перечитывает стор, а не экран. */

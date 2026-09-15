@@ -72,6 +72,10 @@ of them may do a thing the owner sets from a screen rather than from a database 
   no rights at all, and the panel shows no section. It is fixed by a follow-up migration that
   carries the former access over. Found on production by the owner.
 
+- **A role is given after the creation, not at it.** Task #1900 created the panel without a role,
+  and task #1901 gave the item "Права" of the same row: the role and the pointed edits are set a
+  move later. The question of the plan closed by what was on disk.
+
 The order holds to the end of the epic. A reconsideration is the owner's decision, not the
 executor's.
 
@@ -93,9 +97,11 @@ executor's.
 - **How the first record is created once the commands are gone.** The proposal is a first-run
   screen open exactly while the storage holds no account and closed forever after the first one.
   Decided in task #1902, not before: until then the commands hold this.
-- **Whether a role is assigned at creation or after it.** Creating without a role gives a person
-  who signed in and sees nothing; creating with a role means the role list must be ready by task
-  #1900, that is, before #1901. Decided by task #1900 by what is on disk by then.
+- **What a person without a single right sees after the sign-in.** Today they stay on the sign-in
+  screen: no section is open to them, and the "no sections" screen does not stand on that path.
+  Found by task #1900, confirmed by task #1901 — a role is given after the creation, so every new
+  record passes through that state. Not decided by the epic; a task of its own after it, unless
+  the owner says otherwise.
 
 ## What the epic ends with
 

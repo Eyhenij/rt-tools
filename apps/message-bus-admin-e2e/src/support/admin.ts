@@ -34,10 +34,11 @@ export type TPageMark = 'hint' | 'columns' | 'refresh' | 'fault' | 'retry';
 /**
  * Имя раздела. Три раздела груза собраны одним и тем же списочным экраном; раздел использования
  * — тем же, с отбором по периоду и панелью сессий вместо панели подробностей; приглашения — тем
- * же, но без отбора по дереву и без панели: приглашение ждёт дерева, которого ещё нет. Люди не
- * имеют ни отбора, ни панели, ни единого нажатия в строке: раздел только читает.
+ * же, но без отбора по дереву и без панели: приглашение ждёт дерева, которого ещё нет. Люди и
+ * роли не имеют ни отбора, ни панели подробностей: их панели правят и открываются кнопкой и
+ * меню строки, а не нажатием на строку.
  */
-export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'usage' | 'invites' | 'people';
+export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'usage' | 'invites' | 'people' | 'roles';
 
 /** Разделы админки: адрес, заголовок экрана и `qa-dataid` его таблицы и строк. */
 export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.freeze({
@@ -90,8 +91,17 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
         prefix: 'people',
         table: 'people-table',
         row: 'people-row',
-        // Панели подробностей у человека нет: всё известное о нём стоит в строке, а заводит и
-        // отключает запись команда строки запуска на узле приёмника.
+        // Панели подробностей у человека нет: всё известное о нём стоит в строке, а панели
+        // заведения, пароля и прав правят и открываются кнопкой и меню строки.
+        details: '',
+    }),
+    roles: Object.freeze({
+        path: SECTIONS.roles,
+        title: 'Роли',
+        prefix: 'roles',
+        table: 'roles-table',
+        row: 'roles-row',
+        // Панели подробностей у роли нет: строка несёт её целиком, а панель роли правит.
         details: '',
     }),
 });

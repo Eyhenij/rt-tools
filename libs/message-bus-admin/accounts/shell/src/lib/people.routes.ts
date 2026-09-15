@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { PERSON_CREATE_ROUTE, PERSON_PASSWORD_ROUTE } from '@rt/message-bus-admin/accounts/util';
+import { PERSON_ACCESS_ROUTE, PERSON_CREATE_ROUTE, PERSON_PASSWORD_ROUTE } from '@rt/message-bus-admin/accounts/util';
 import { adminLabel } from '@rt/message-bus-admin/common/core/util';
 
 /** Адрес раздела. Назван здесь и читается пунктом меню: два объявления разошлись бы молча. */
@@ -8,9 +8,9 @@ export const PEOPLE_ROUTE: string = 'people';
 /**
  * Маршруты раздела людей.
  *
- * Маршрутов три: список, панель заведения и панель нового пароля. Панели подробностей у человека
- * нет — всё, что о нём известно, стоит в строке списка; обе панели правят, а не показывают.
- * Отключение панели не имеет: ему нечего спрашивать, и оно живёт меню строки. Настройку столбцов
+ * Маршрутов четыре: список, панель заведения, панель нового пароля и панель прав. Панели
+ * подробностей у человека нет — всё, что о нём известно, стоит в строке списка; все панели правят,
+ * а не показывают. Отключение панели не имеет: ему нечего спрашивать, и оно живёт меню строки. Настройку столбцов
  * раздел получает тем же порядком, что и соседи, — объявлением рядом с маршрутами приложения.
  *
  * Экран приезжает отложенной загрузкой: приложение не знает ни одного экрана, и раздел уезжает
@@ -39,5 +39,13 @@ export const peopleRoutes: Route[] = [
         outlet: 'ro',
         loadComponent: async () =>
             (await import('@rt/message-bus-admin/accounts/feature/password-aside')).AdminPersonPasswordAsideComponent,
+    },
+    {
+        // Права записи: роль и точечные правки. Закрыта правом на роли, а не на правку людей, —
+        // тем же, что и раздел ролей; пункт меню строки рисуется по нему же
+        path: `${PEOPLE_ROUTE}/:id/${PERSON_ACCESS_ROUTE}`,
+        pathMatch: 'full',
+        outlet: 'ro',
+        loadComponent: async () => (await import('@rt/message-bus-admin/accounts/feature/access-aside')).AdminPersonAccessAsideComponent,
     },
 ];

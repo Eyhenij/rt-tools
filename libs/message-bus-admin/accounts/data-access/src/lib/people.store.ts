@@ -1,14 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PeopleApiService } from '@rt/message-bus-admin/accounts/api';
-import { IPerson, PEOPLE_PATH, PersonShortMapper } from '@rt/message-bus-admin/accounts/util';
+import { IPerson, IPersonAccess, PEOPLE_PATH, PersonAccessMapper, PersonShortMapper } from '@rt/message-bus-admin/accounts/util';
 import { AdminListStoreBase } from '@rt/message-bus-admin/common/core/data-access';
 import { adminLabel, spokenFaultText } from '@rt/message-bus-admin/common/core/util';
+import { IPersonAccessInput } from '@rt/message-bus-common';
 import { NotificationBus } from '@rt-tools/ui-kit-v2';
 import { catchError, EMPTY, exhaustMap, map, Observable, Subject, tap } from 'rxjs';
 
 /**
- * Список людей приёмника, заведение записи, новый пароль и отключение.
+ * Список людей приёмника, заведение записи, новый пароль, отключение и доступ записи.
  *
  * От общей основы отличается адресом операции, переводом строки и тремя правками: страницу,
  * порядок, гонку ответов и отказ чтения с повтором держит она.
@@ -32,6 +33,7 @@ export class PeopleStore extends AdminListStoreBase<IPerson.Short.State, IPerson
     readonly #api: PeopleApiService = inject(PeopleApiService);
     readonly #notifications: NotificationBus = inject(NotificationBus);
     readonly #mapper: PersonShortMapper = new PersonShortMapper();
+    readonly #accessMapper: PersonAccessMapper = new PersonAccessMapper();
     readonly #disableSource: Subject<string> = new Subject<string>();
 
     protected readonly path: string = PEOPLE_PATH;
@@ -81,6 +83,19 @@ export class PeopleStore extends AdminListStoreBase<IPerson.Short.State, IPerson
     /** Отключить запись. Что делать с ещё не отвеченным запросом, решает подписка. */
     public disable(name: string): void {
         this.#disableSource.next(name);
+    }
+
+    /** Доступ записи — для панели прав, открытой по адресу. */
+    public access(name: string): Observable<IPersonAccess.State> {
+        return this.#api.access(name).pipe(map((raw: IPersonAccess.Api): IPersonAccess.State => this.#accessMapper.mapFrom(raw)));
+    }
+
+    /** Заменить доступ записи целиком. Список перечитывается: роль в строке — то, что лежит теперь. */
+    public replaceAccess(name: string, input: IPersonAccessInput): Observable<IPersonAccess.State> {
+        return this.#api.replaceAccess(name, input).pipe(
+            map((raw: IPersonAccess.Api): IPersonAccess.State => this.#accessMapper.mapFrom(raw)),
+            tap((): void => this.retry())
+        );
     }
 
     protected rowOf(raw: IPerson.Short.Api): IPerson.Short.State {
