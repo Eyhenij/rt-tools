@@ -67,6 +67,10 @@ class TestScreenComponent extends AdminListScreenBase<IRow> {
         this.changeState(state);
     }
 
+    public askPeriod(from: string, to: string): void {
+        this.changePeriod(from, to);
+    }
+
     public askSort(field: string): void {
         this.changeSort({ propertyName: field, sortDirection: EListSortOrder.ASC });
     }
@@ -168,6 +172,25 @@ describe('AdminListScreenBase', () => {
         await harness.fixture.whenStable();
 
         expect(router.url).toBe('/postmortems?tree=c3d4');
+        answerList();
+    });
+
+    it('SC-MB-349 — период встаёт в адрес двумя днями и возвращает список на первую страницу', async () => {
+        const harness: RouterTestingHarness = await RouterTestingHarness.create('/postmortems?page=4');
+        const screen: TestScreenComponent = harness.routeDebugElement?.componentInstance;
+
+        answerList();
+        http.expectOne(TREES_PATH).flush([]);
+        screen.askPeriod('2026-08-01', '2026-08-31');
+        await harness.fixture.whenStable();
+
+        expect(router.url).toBe('/postmortems?from=2026-08-01&to=2026-08-31');
+        answerList();
+
+        screen.askPeriod('2026-08-01', '');
+        await harness.fixture.whenStable();
+
+        expect(router.url).toBe('/postmortems');
         answerList();
     });
 

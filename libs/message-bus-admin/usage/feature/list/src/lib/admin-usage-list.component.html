@@ -1,0 +1,53 @@
+<admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
+    <ng-template adminListToolbarLeft>
+        <admin-tree-filter [choices]="choices()" [tree]="query().tree" (treeChange)="changeTree($event)" />
+        <admin-period-filter [from]="shownPeriod().from" [to]="shownPeriod().to" (periodChange)="pickPeriod($event)" />
+    </ng-template>
+
+    <rt-table
+        #rowsTable="rtTable"
+        clickable
+        [ariaLabel]="title"
+        [attr.qa-dataid]="qaTable()"
+        [columnsConfig]="columns"
+        [dataSource]="rows()"
+        [emptyDescription]="emptyDescription()"
+        [emptyMessage]="emptyMessage()"
+        [loading]="loading()"
+        [sort]="sortModel()"
+        [tableId]="tableId"
+        (sortChange)="changeSort($event)">
+        <ng-container cdkColumnDef="skill">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="skill">{{ columns[0].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-skill'">{{ row.skill }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="kind">
+            <th *cdkHeaderCellDef cdk-header-cell>{{ columns[1].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-kind'">{{ row.kind | skillKind }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="loads">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="loads">{{ columns[2].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-loads'">{{ row.loads }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="sessions">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="sessions">{{ columns[3].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-sessions'">{{ row.sessions }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="denials">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="denials">{{ columns[4].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-denials'">{{ row.denials }}</td>
+        </ng-container>
+
+        <tr *cdkHeaderRowDef="rowsTable.displayedColumns()" cdk-header-row></tr>
+        <tr
+            *cdkRowDef="let row; columns: rowsTable.displayedColumns()"
+            cdk-row
+            rtTableRow
+            [attr.qa-dataid]="qaRow()"
+            (activated)="openDetails(row.skill)"></tr>
+    </rt-table>
+</admin-list-page>

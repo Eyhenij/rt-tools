@@ -94,11 +94,11 @@ Then the reading refuses with `403`
 
 Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`.
 
-### SC-MB-347 — an empty period answers with an empty list
+### SC-MB-347 — an empty period answers with an empty page
 
 Given a tree with no rows over the period
 When the usage is read
-Then an empty list comes back with `200`
+Then an empty page with a zero total comes back with `200`
 
 Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`.
 
@@ -109,7 +109,7 @@ When they open the section «Использование» and choose the tree
 Then the table shows a row per skill with the kind by a word of the domain, the loads, the sessions
 and the refusals, the most loaded first
 
-Not covered: task RT-2101.
+Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`.
 
 ### SC-MB-349 — a change of the period re-reads the table, and the former rows stay dimmed meanwhile
 
@@ -118,7 +118,7 @@ When the person narrows the period to one day
 Then the table shows the rows of that day only, and while the reading went the former rows stood
 dimmed under the sign of reading
 
-Not covered: task RT-2101.
+Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`.
 
 ### SC-MB-350 — a row opens the panel of the sessions of its skill
 
@@ -127,7 +127,7 @@ When the person opens the row of `testing`
 Then the panel «Сессии» opens with `testing` in its heading and a row per day and session with how
 many times
 
-Not covered: task RT-2101.
+Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`.
 
 ### SC-MB-351 — a person without the right sees no section
 
@@ -136,7 +136,7 @@ When they open the admin application
 Then the row of the sections holds no «Использование», and the address of the section answers with
 the refusal of the shell
 
-Not covered: task RT-2101.
+Coverage: partial — the right closes the section and the route by calls in `libs/message-bus-admin/auth/shell/src/lib/section-access.spec.ts` and `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.spec.ts`; the stand has one account, with every right.
 
 ### SC-MB-352 — an empty period draws the empty state of the base
 
@@ -144,4 +144,23 @@ Given the table of a tree is shown
 When the person chooses a period with no rows
 Then the table shows the empty state of the base and no message of the bus
 
-Not covered: task RT-2101.
+Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`.
+
+### SC-MB-353 — a period the request did not name is the last thirty days of the receiver
+
+Given a request with a tree and no `from` and `to`
+When the usage is read
+Then the receiver counts the last thirty days by its own clock, today inclusive. The answer names
+both days. One day of the two is refused with `400`
+
+Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`,
+`libs/message-bus-api/observations/util/src/lib/usage-period.util.spec.ts`.
+
+### SC-MB-354 — the usage answers a page in the order asked
+
+Given the rows of a tree over a period
+When the usage is read with `page`, `size`, `sort` and `dir`
+Then the page comes back with the total of skills, in the order of the named field, equal ones by
+name. A field outside `loads`, `skill`, `sessions`, `denials` is refused with `400`
+
+Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`.

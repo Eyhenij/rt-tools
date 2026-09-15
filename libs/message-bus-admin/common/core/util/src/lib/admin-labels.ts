@@ -34,11 +34,13 @@ export const ADMIN_LABELS = {
     sectionProposals: 'Предложения',
     sectionSummaries: 'Сводки проектов',
     sectionInvites: 'Приглашения',
+    sectionUsage: 'Использование',
 
     hintPostmortems: 'Что и почему сломалось в проектах — по разбору на происшествие',
     hintProposals: 'Что проекты предлагают править в слое правил',
     hintSummaries: 'Свод одного проекта за календарный месяц — по записи на пару',
     hintInvites: 'Чем проект подключает себя сам. Выдаётся здесь же кнопкой «Пригласить проект»',
+    hintUsage: 'Какие правила, паттерны и скилы проект грузит в сессиях — по строке на скил за период',
 
     filterTree: 'Проект',
     filterTreeAll: 'Все проекты',
@@ -46,6 +48,8 @@ export const ADMIN_LABELS = {
     filterStateAll: 'Все состояния',
     filterVersionAll: 'Все версии',
     filterVersionNone: 'Без версии',
+    filterPeriodFrom: 'С',
+    filterPeriodTo: 'По',
 
     columnTree: 'Проект',
     columnFile: 'Файл',
@@ -62,6 +66,18 @@ export const ADMIN_LABELS = {
     columnExpiresAt: 'Годно до',
     columnInviteTree: 'Заведённый проект',
     columnState: 'Состояние',
+    columnSkill: 'Скил',
+    columnKind: 'Род',
+    columnLoads: 'Загрузок',
+    columnUsageSessions: 'Сессий',
+    columnDenials: 'Отказов',
+    columnDay: 'День',
+    columnSession: 'Сессия',
+    columnCount: 'Раз',
+    kindRule: 'правило',
+    kindPattern: 'паттерн',
+    kindSkill: 'скил пакета',
+    kindOwn: 'свой скил проекта',
     // Один ключ на все показы версии: столбец списка, отбор над ним и строка панели. Второе
     // объявление разошлось бы с первым молча, и человек читал бы одно и то же поле двумя словами.
     releaseVersion: 'В какой версии',
@@ -124,6 +140,9 @@ export const ADMIN_LABELS = {
     detailsMonthRecord: 'Запись месяца',
     detailsSummary: 'Сводка',
     detailsSummaryMissing: 'Сводки в этом месяце ещё не было: запись завёл другой род груза',
+    detailsUsageSessions: 'Сессии',
+    detailsSessionsMissing: 'За период этот скил не грузила ни одна сессия',
+    detailsSessionsFailed: 'Прочитать сессии не удалось',
 } as const;
 
 /** Ключ подписи админки. Опечатка в шаблоне не доживает до собранного экрана. */

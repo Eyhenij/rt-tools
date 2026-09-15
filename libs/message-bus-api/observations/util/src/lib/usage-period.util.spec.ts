@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { periodDays, usagePeriodFault, usagePeriodOf, usageTreeOf } from './usage-period.util';
+import { defaultUsagePeriod, periodDays, usagePeriodFault, usagePeriodOf, usageTreeOf } from './usage-period.util';
+
+const NOW: Date = new Date('2026-09-14T10:00:00.000Z');
 
 describe('период чтения использования', () => {
     it('SC-MB-344 — период длиннее четырёхсот дней отбивается, ровно четыреста — годен', () => {
@@ -16,8 +18,21 @@ describe('период чтения использования', () => {
         expect(usagePeriodFault({ from: '2026-09-01', to: '2026-09-01' })).toBeNull();
     });
 
+    it('SC-MB-353 — период, которого запрос не назвал, — последние тридцать дней по часам приёмника', () => {
+        expect(usagePeriodFault({})).toBeNull();
+        expect(usagePeriodFault({ from: '', to: '' })).toBeNull();
+        expect(usagePeriodOf({}, NOW)).toEqual({ from: '2026-08-16', to: '2026-09-14' });
+        expect(defaultUsagePeriod(NOW)).toEqual({ from: '2026-08-16', to: '2026-09-14' });
+        expect(periodDays(defaultUsagePeriod(NOW))).toBe(30);
+    });
+
+    it('SC-MB-353 — один день из двух — отказ, а не умолчание', () => {
+        expect(usagePeriodFault({ to: '2026-09-14' })).toContain('`from`');
+        expect(usagePeriodFault({ from: '2026-09-01', to: '' })).toContain('`to`');
+    });
+
     it('SC-MB-343 — период и дерево читаются из запроса как есть', () => {
-        expect(usagePeriodOf({ from: '2026-09-01', to: '2026-09-14' })).toEqual({ from: '2026-09-01', to: '2026-09-14' });
+        expect(usagePeriodOf({ from: '2026-09-01', to: '2026-09-14' }, NOW)).toEqual({ from: '2026-09-01', to: '2026-09-14' });
         expect(usageTreeOf({ tree: ' own-tree ' })).toBe('own-tree');
         expect(usageTreeOf({})).toBe('');
     });

@@ -107,5 +107,6 @@ export const SECTIONS = Object.freeze({
     postmortems: '/postmortems',
     proposals: '/proposals',
     summaries: '/summaries',
+    usage: '/usage',
     invites: '/invites',
 });
