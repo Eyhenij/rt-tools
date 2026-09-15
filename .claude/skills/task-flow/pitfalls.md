@@ -1,4 +1,4 @@
-<!-- rt-kit v0.28.0 · pitfalls/task-flow.md · dffc1687bff9 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · pitfalls/task-flow.md · 386d309deaf9 · правится надстройкой, не здесь -->
 # Work conduct — cold part
 
 Pitfalls and behaviour from incident analyses. Loaded not with the rule but on demand: an ordinary
@@ -179,15 +179,13 @@ that came from an analysis is not lifted until the analysis is found wrong.
   output, not an impression. The question "where is the package edited" was asked about a
   directory lying in this very tree. The sign: the turn holds a search showing there is no answer.
   Analysis: «2026-08-13-question-before-recon».
-- **The frame of a handed-over text does not carry over to the current tree.** The handover was
-  written in another tree and sets the package against whoever installs it; here both are one
-  tree. What is read in a handover is checked against the tree before a question or a conclusion
-  is built on it.
+- **The frame of a handed-over text does not carry over to the current tree.** A handover written
+  in another tree sets the package against whoever installs it; here both are one tree. What a
+  handover says is checked against the tree before a question or a conclusion is built on it.
   Analysis: «2026-08-13-question-before-recon».
 - **Empty output of a command means "the wrong thing was asked" until the opposite is shown.**
-  "There is nothing" is a statement of its own, and it demands a command that tells emptiness from
-  a miss: a suppressed error stream and a pipeline whose exit code belongs to the last link make
-  the two indistinguishable.
+  "There is nothing" demands a command that tells emptiness from a miss: a suppressed error
+  stream and a pipeline whose exit code belongs to the last link make the two indistinguishable.
   Analysis: «2026-08-13-stale-local-main-read-as-fact».
 - **"Checked" names the set whole, including what was not run.** A green push gate is not the
   completeness of the set: the set is taken from the tree's pipeline file, not from memory. A
@@ -209,9 +207,8 @@ that came from an analysis is not lifted until the analysis is found wrong.
   task.
   Analysis: «2026-08-14-opinion-instead-of-execution».
 - **No check reads the reply to the owner.** The misses in it are the same as in the tree's text:
-  an invented fact served alongside a verified one, an appraisal instead of carrying out. The gate
-  answers for a file, the author for a reply, and the price of an error in the reply is paid by
-  the owner.
+  an invented fact next to a verified one, an appraisal instead of carrying out. The author
+  answers for the reply, and the owner pays for the error.
   Analyses: both from 14 August 2026.
 - **An edit refused by a guard is not laid by another way.** The guards are subscribed to the
   file-editing tools, and the same edit can be laid by a shell command — a redirection, `sed -i`,
@@ -225,6 +222,8 @@ that came from an analysis is not lifted until the analysis is found wrong.
   names them the contradiction whole — what the guard refused, what the rule says and at what
   price each side is bypassed.
   Analysis: «2026-08-15-guard-denied-shell-wrote-anyway».
+- **`task:new --slug` without a draft folder assembles a folder from the template.** The tree
+  gets placeholders for a task nobody is taking. A card filed for later goes without `--slug`.
 
 ## What stood in the articles
 
