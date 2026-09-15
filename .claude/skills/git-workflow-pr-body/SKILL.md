@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when the PR body is written or edited — the Closes line and how the task closes when the base is not the main branch, reviewer, assignee and labels by the opening call, the four sections of the body. Opening the PR itself — pattern git-workflow-pr.
 ---
-<!-- rt-kit v0.28.0 · patterns/git-workflow-pr-body.github.md · 45a99bfff015 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · patterns/git-workflow-pr-body.github.md · 5c5713fef15f · правится надстройкой, не здесь -->
 
 # The PR body and the link to the task
 
@@ -140,6 +140,21 @@ pattern for closing work.
 
 There is nothing to check the body by machine: no audit reads it, and the host asks only about
 the title. The sample is held by whoever writes the body — like the words said aloud.
+
+## Common misses
+
+- A second `Closes` line in one PR no longer closes a task: two tasks in one branch roll back
+  only together. Either it is one task — and the second is absorbed — or two branches.
+- Half a task that left by its own PR is a miss too: the body of such a PR starts with the words
+  `Часть #<номер>` instead of `Closes`, and the task stays open. Work that does not fit one
+  branch is split into tasks before the branch is created.
+- Labels set by the PR title, not read from the task: the area is lost, and the board does not
+  show that the edit touched the site too.
+- The task closed not in full, but the labels carried over whole: the task stays open, and the
+  PR body says so instead of implying it by a `Closes` line.
+- A `Closes` line in a PR whose base is not the main branch, in a tree without a closing pipeline:
+  the task looks attached and stays open after the merge. The body names the task in words, and
+  the cleanup step closes it by hand.
 
 ## How a task of an epic closes in this tree
 

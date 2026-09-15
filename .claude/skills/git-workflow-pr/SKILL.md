@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for opening a PR and everything around it — title format, draft and leaving it, reading the PR state, the checklist. The link to the task, reviewer, labels and the body sample — pattern git-workflow-pr-body; creating the task and committing — git-workflow-commit.
 ---
-<!-- rt-kit v0.28.0 · patterns/git-workflow-pr.github.md · ab17cdc089b8 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · patterns/git-workflow-pr.github.md · 112af1edcdb7 · правится надстройкой, не здесь -->
 
 # The PR
 
@@ -225,16 +225,7 @@ is trust in the section: once read as complete, from then on it is rechecked who
 ## Common misses
 
 Misses about creating the task, the branch and the commit — pattern
-`git-workflow-commit`.
+`git-workflow-commit`; about the link line, the labels and the body — `git-workflow-pr-body`.
 
-- A second `Closes` line in one PR no longer closes a task: two tasks in one branch roll back
-  only together. Either it is one task — and the second is absorbed — or two branches.
-- Half a task that left by its own PR is a miss too: the body of such a PR starts with the words
-  `Часть #<номер>` instead of `Closes`, and the task stays open. Work that does not fit one
-  branch is split into tasks before the branch is created.
 - A PR opened without a reviewer: it never reaches the owner's inbox at all, and the queue stands
   while looking as if it works. That is how sixteen PRs waited for a review nobody had requested.
-- Labels set by the PR title, not read from the task: the area is lost, and the board does not
-  show that the edit touched the site too.
-- The task closed not in full, but the labels carried over whole: the task stays open, and the
-  PR body says so instead of implying it by a `Closes` line.
