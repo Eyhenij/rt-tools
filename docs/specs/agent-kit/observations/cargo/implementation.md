@@ -29,7 +29,7 @@ whole.
 - **The text of a block is checked for a tree address by the same thing everything else is checked by.** — `projects/agent-kit/src/lib/proposals.ts:leaksIn`
 - **The command says where the block landed and what it will go away by.** — `projects/agent-kit/assets/commands/feedback.md:dry-run`
 - **The cargo goes away at every run of the sending, and the proposals — when there are any.** — `projects/agent-kit/src/lib/shipment.ts:shipmentsOf`
-- **The check for a tree address covers the digest and the proposals, but not an incident analysis.** — `projects/agent-kit/src/lib/shipment.ts:leaksOfCargo`
+- **The check for a tree address covers the digest, the proposals and the observation lines, but not an incident analysis.** — `projects/agent-kit/src/lib/shipment.ts:leaksOfCargo`
 - **A tree address found in the cargo refuses the whole sending, not its own block.** — `projects/agent-kit/src/lib/shipment.ts:propose`
 - **The cargo goes into a closed intake, not into an open work queue.** — `projects/agent-kit/src/lib/ship.ts:intakeUrl`
 - **The intake address is declared by a setting of the tree, not nailed into the package code.** — `projects/agent-kit/src/lib/shipment.ts:IShipOptions`
@@ -54,3 +54,13 @@ whole.
 - **A real run names the list of the cargo before its results.** — `projects/agent-kit/src/lib/shipment.ts:manifest`
 - **A dry run is declared by the first line, not by the ending of a verb.** — `projects/agent-kit/src/lib/shipment.ts:propose`
 - **A refusal about a not-found intake address names whom to ask for it.** — `projects/agent-kit/src/lib/enroll.ts:intakeReady` and `projects/agent-kit/src/lib/shipment.ts:refusal` — both refusals name the owner of the intake and the pair "code and address"; scenario `SC-AK-855`
+- **Every line of the window leaves, of every event kind.** — `projects/agent-kit/src/lib/observations-cargo.ts:parseObservationLine` — the four kinds are the closed list `OBSERVATION_EVENTS` of the cargo module
+- **The lines leave grouped by day, and a day leaves whole.** — `projects/agent-kit/src/lib/observations-cargo.ts:readObservationDays` — one entry per day file of the window, the lines of the file whole
+- **The cargo names the working copy it left from, by a checksum of its root.** — `projects/agent-kit/src/lib/observations-cargo.ts:originOf`
+- **A load names the kind of its skill.** — `projects/agent-kit/src/lib/observations-cargo.ts:skillKindOf` — the kind by the layout the send reads, `own` for a name the layout does not carry
+- **A line leaves as it lies, and nothing is added to it but the kind.** — `projects/agent-kit/src/lib/observations-cargo.ts:linesOfDay` — the kind is added to a load only
+- **A broken line does not leave and does not stop the cargo.** — `projects/agent-kit/src/lib/observations-cargo.ts:parseObservationLine` — `null` for a broken or foreign line, and the reader skips it
+- **The cargo goes by the same request as the rest, with the tree token, and only by a command.** — `projects/agent-kit/src/lib/shipment.ts:shipmentsOf` — the fourth shipment next to the digest, sent by the same command
+- **The check for a tree address covers the observation cargo.** — `projects/agent-kit/src/lib/shipment.ts:leaksOfCargo` — the lines are walked on a par with the digest
+- **The schema version of the cargo rises.** — `projects/agent-kit/src/lib/cargo.ts:CARGO_SCHEMA_VERSION`
+- **The dry run names the observation cargo with the number of lines and days.** — `projects/agent-kit/src/lib/shipment.ts:describe` — the line `observations — строк N за D дн.`
