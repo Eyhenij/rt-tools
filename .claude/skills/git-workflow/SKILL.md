@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for creating a task and a branch, commit, push, opening a PR and merging. Names the one-to-one pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — rule deploy-flow.
 ---
-<!-- rt-kit v0.28.0 · rules/git-workflow.github.md · d8a1dfffb7c6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · rules/git-workflow.github.md · 3680b1a9a8eb · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -28,7 +28,7 @@ with the rule.
 | separate branch              | `<КЛЮЧ>-<номер задачи>-<короткий-slug>`, taken from the epic branch. A name without a number (`feat/…`, `fix/…`) is legitimate locally: no PR opens from it |
 | task                         | a repository issue `[<КЛЮЧ>-<номер>] <Что не так>`, assignee the machine account; attached PR: `Closes #<номер>` in its body           |
 | work queue                   | a GitHub Projects board, not bound to the repository: its `projectsV2` is empty, and a task lands on it only when added                |
-| task state in the work queue | a board column ("Status"): created, in progress, in review; names in `implementation.md`. A closed task leaves by merge, not by column |
+| task state in the work queue | a board column ("Status"): created, in progress, in review; names in `implementation.md`. A closed task leaves by merge, not by column. The epic card stands in the same columns and moves with its first task and its own PR |
 | PR about a task              | PR title `[<КЛЮЧ>-<номер>] <Что сделано>` — the task's number and title turned into the done; commit type and scope stay out           |
 | discussion of an edit        | PR review: reviewer — the repository owner, assignee — the machine account, labels — the same as on the task                           |
 | record of an edit            | `type(scope): description`, types `feat`, `fix`, `refactor`, `docs`, `style`, `test`, `chore`, `perf`; scopes: `implementation.md`     |
@@ -51,7 +51,7 @@ flowchart TD
     Z -->|No| Y[The epic is created together with its tasks, and its branch is taken from main]
     Z -->|Yes| B[A command creates the task and it enters the work queue]
     Y --> B
-    B --> C[The branch is named by the task number and taken from the epic branch; the column moves in the same motion]
+    B --> C[The branch is named by the task number and taken from the epic branch; the column moves in the same motion — the epic card too, on its first task]
     C --> D{The edit is ready}
     D -->|No| C
     D -->|Yes| E[Main is merged in, the gate set is run whole]
@@ -94,11 +94,10 @@ flowchart TD
   green on its own, and they collide on what one branch cannot show.
 - **The next work's branch is taken from the previous one while the chain is unbroken.** `git
   checkout -b <КЛЮЧ>-<номер>-<slug> <предыдущая ветка>`; from the epic branch — only the chain's
-  first work. A chain stands inside one epic, where the next task edits what the previous wrote.
+  first work.
 - **A PR in a chain has the previous branch as its base, not main.** `gh pr create --base
-  <предыдущая ветка>` — otherwise the review shows the edit mixed with all under it. The host
-  retargets a merged lower base only when its branch is deleted, so the base is retargeted by the
-  same motion that merges the lower one — the call is in the pattern.
+  <предыдущая ветка>` — otherwise the review shows the edit mixed with all under it. The base is
+  retargeted by the same motion that merges the lower one — the call is in the pattern.
 - **A chain is merged bottom-up, and the order stands in every PR body.** Branch kinship is
   invisible in the list, and the line "stands on #<number>" is the only place it is read.
 - **`--hard` is not taken to drop a commit — that is `--soft`.** `reset --hard`, `checkout --
@@ -113,9 +112,8 @@ flowchart TD
   once: everything unmet is known on the first call.
 - **A condition known at the start of work is asked at the start.** Creating a branch refuses a base
   without main's tip and a foreign signature email: at push time the fix costs more.
-- **The form of a branch name is judged by the tree the command runs in.** A session works in a
-  neighbouring tree by the owner's word, and the task key there is its own; a tree with no profile
-  is not judged at all. A refusal on a lawful name has no bypass and stops the work whole.
+- **The form of a branch name is judged by the tree the command runs in.** The task key of a
+  neighbouring tree is its own; a tree with no profile is not judged at all.
 - **The base judged is the one named by the command, not the tip of the working copy.** A branch is
   also created straight from `origin/main`, and that command takes the base fresh; a base the tree
   knows nothing of is not judged.
@@ -137,6 +135,11 @@ flowchart TD
   something to ask with.
 - **The task column moves in the same motion as the work.** Branch created — the task is in
   progress, PR opened — awaiting review; the move command does it, not GraphQL calls from memory.
+- **The epic card moves by the same command, on the epic number, at two moments.** First task
+  taken — the epic is in progress, by the same turn as the task's move; the PR of the epic into
+  `main` opens — the epic awaits review. `npm run task:move -- <номер эпика> in-progress`; the
+  merge of the epic PR closes the card by the host's rule on a closed item. Left in the first
+  column while its tasks merge, the epic reads to the owner as never started.
 - **A task left in the first column opens no PR.** By the work queue it reads as not taken, though
   the work is done and published. The tree names the first column itself; unnamed — not judged.
 - **The board holds tasks, not PRs about them.** A PR card has no column and never leaves the queue.
@@ -225,24 +228,20 @@ flowchart TD
   owner's words, not a list of leftovers.
 - **The working tree is emptied before the PR opens, not after.** `git status --porcelain` is asked
   in the same turn as the opening: what is uncommitted goes to the host by a commit before it, or
-  is named. A push after the opening moves the tip past the green run the body names, and for that
-  stretch the PR invites merging a tip nothing has checked.
+  is named. A push after the opening moves the tip past the green run the body names.
 - **A push into a branch that has an open PR is followed by rereading its body.** The statement
   about a green run names the tip by its sha, and moving the tip makes it false in silence: no check
   reads a PR body.
 - **The draft is not lifted while the PR has no review.** The guard reads the requested reviewer and
-  the review left: a lifted draft reads as "may be merged", and there is nobody to merge. A call
-  without a number is judged too — the client takes the PR of the current branch.
+  the review left: a lifted draft reads as "may be merged", and there is nobody to merge.
 - **The PR merge is pressed by a person, not by the work's executor.** Button and merge call are
-  equal: one ban covers both. The executor merges their own PR only when a person said so about this
-  PR; said about one, it does not carry to the next, and silence is never permission.
+  equal. The executor merges their own PR only when a person said so about this PR; said about
+  one, it does not carry to the next.
 - **The identity of the call opening a PR is guarded by the delivery guard, not by the executor's
-  memory.** It shows in the command text only by an explicit token substitution. Judged is the clash
-  with the reviewer, not the account name; where the author cannot be learnt, the substitution is
-  demanded outright.
+  memory.** It shows in the command text only by an explicit token substitution; judged is the
+  clash with the reviewer, not the account name.
 - **The host client's active account is chosen per machine, not per tree; the machine account is
-  substituted per call, never made active.** A login as the machine account hijacks every
-  neighbouring session on the machine. Substitution is mandatory even with an active account.
+  substituted per call, never made active.** A login as it hijacks every neighbouring session.
 
 - **The PR author cannot be its reviewer.** GitHub accepts a self review request and silently does
   not create it. Only a request and a review not from the author count.
@@ -282,7 +281,8 @@ audit never judges the branch name.
 
 The guard does not move a task to in progress: it does not edit the board at all. The move is held
 by memory and the task creation command's hint; a task left in the first column the guard names at
-PR opening, other column discrepancies the queue audit finds.
+PR opening, other column discrepancies the queue audit finds. The epic card is held by memory
+alone: no guard reads its column at branch creation, and the queue audit does not judge it.
 
 The freshness of main's tip the guard asks by the second tier — the same technique as the task
 state. The first tier works offline: the local ref answers whether the branch lags what lies in the
