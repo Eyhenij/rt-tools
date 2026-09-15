@@ -102,6 +102,12 @@ application stops responding, and the reason is found from the history.
   shown as taken, one waiting for review as waiting. Otherwise untouched, in progress and done look
   the same: the work is taken a second time, and the PR stands unreviewed. The state is moved at the
   moment the work goes to the next step: the queue is read between those moments, not after them.
+- **The state of an epic card in the work queue matches the epic's work the same way.** The epic
+  is taken into work with its first task and waits for review with its own change into the main
+  branch; its card says so at those two moments, the same as a task's card. Otherwise an epic with
+  half its tasks merged stands in the queue as never taken, and the owner watching one card per
+  epic sees no work at all. The share of tasks done the queue shows on the epic card by itself,
+  once the tasks are linked to it; the column it does not move.
 - **A change entering the main branch means a rollout.** Everything the change depends on outside
   the code — environment variables, secrets, name records — is put in place before that moment, not
   after.
