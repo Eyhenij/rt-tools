@@ -33,5 +33,8 @@
   "shownWithin": {
     "[rtFieldHint]": "projects/ui-kit-v2/src/lib/components/field/stories/field-matrix.stories.ts",
     "rt-table-settings-aside": "projects/ui-kit-v2/src/showcase/templates/stories/bookings-template.stories.ts"
+  },
+  "noPlayground": {
+    "toolbar": "Содержимое панели приходит проекцией шаблонов в три места, и страница с входами их не задаёт: витрина умеет подставлять значения, а не разметку. Единственный вход — плотность — показан своей осью."
   }
 }
