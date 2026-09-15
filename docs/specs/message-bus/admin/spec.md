@@ -285,8 +285,6 @@ reading. Without an entry not a single operation gives the cargo.
 | GET /api/proposals/:id         | one proposal whole and its state                                                     |
 | GET /api/summaries             | a page of the records of the months without the digest whole                         |
 | GET /api/summaries/:id         | a record of a month with the digest whole                                            |
-| GET /api/usage                 | the usage of the skills of a tree over a period — the subdomain "Usage of the rules" |
-| GET /api/usage/:skill/sessions | the sessions of one skill of a tree over the period                                  |
 
 A page of a list is requested by the number, the size, the order and the filter — by tree, and at the
 analyses and the proposals also by state. The answer carries the rows and the total number of the
@@ -298,7 +296,7 @@ the selection by both conditions. The state also stands in the set of the sortab
 operations.
 
 The operations of the section of the invitations — the reading of a page, the issuing and the revocation
-— stand in the subdomain next to it.
+— stand in the subdomain next to it; the two operations of the usage — in the subdomain of the usage.
 
 The common page of a list creates no operations of its own — it does not go to the intake at all. Its
 contract is what it has the right to ask of the host:
