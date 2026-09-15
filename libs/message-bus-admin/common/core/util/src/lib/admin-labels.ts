@@ -27,6 +27,12 @@ export const ADMIN_LABELS = {
     language: 'Язык',
     languageSwitch: 'Язык подписей',
     signInTitle: 'Вход в админку',
+    setupTitle: 'Первая запись',
+    setupHint: 'Записей в приёмнике ещё нет. Первая получает все права; этими именем и паролем вы войдёте сразу.',
+    setupName: 'Имя',
+    setupPassword: 'Пароль',
+    setupSubmit: 'Завести',
+    setupFailed: 'Завести первую запись не удалось',
     noSectionsTitle: 'Доступа ни к одному разделу нет',
     noSectionsFrom: 'Права выдаёт владелец приёмника — попросите его открыть нужные разделы',
 

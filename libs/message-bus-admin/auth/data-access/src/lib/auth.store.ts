@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { computed, inject, Injectable, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthApiService } from '@rt/message-bus-admin/auth/api';
-import { ESignInFault, IAdminSession, ISignInPair, signInFault } from '@rt/message-bus-admin/auth/util';
+import { ESignInFault, IAdminSession, ISetupState, ISignInPair, signInFault } from '@rt/message-bus-admin/auth/util';
 import { BASE_INITIAL_STATE, BaseAsyncStoreService, IStateBase } from '@rt-tools/store';
 import { catchError, EMPTY, exhaustMap, Observable, of, Subject, tap } from 'rxjs';
 
@@ -120,6 +120,32 @@ export class AuthStore extends BaseAsyncStoreService<IAuthState, TAuthMessage> {
      * отказ. Состояние без этого осталось бы при вошедшем: гвард пускал бы по разделам, которым
      * приёмник уже отвечает отказом.
      */
+    /**
+     * Ждёт ли узел первой записи.
+     *
+     * Ответом приёмника, а не догадкой по отказу входа: отказ входа один на «я ошибся» и «заводить
+     * некого», и экран входа по нему двух состояний не различит.
+     */
+    public setupState(): Observable<ISetupState> {
+        return this.#api.setupState();
+    }
+
+    /**
+     * Завести первую запись и войти ею.
+     *
+     * Потоком, а не источником действия: занятость и слово отказа держит экран, у которого они
+     * свои — слово приёмника над полями, а не один из трёх родов отказа входа. Удача же кладёт
+     * вход тем же способом, что и вход по паре: дальше это тот же вошедший.
+     */
+    public setUp(pair: ISignInPair): Observable<IAdminSession> {
+        return this.#api.setUp(pair).pipe(
+            tap((session: IAdminSession): void => {
+                this.patchState((state: IAuthState) => ({ ...state, session, fault: null }));
+                this.dispatch({ type: 'signed-in' });
+            })
+        );
+    }
+
     public forget(): void {
         this.patchState((state: IAuthState) => ({ ...state, session: null }));
         this.dispatch({ type: 'signed-out' });

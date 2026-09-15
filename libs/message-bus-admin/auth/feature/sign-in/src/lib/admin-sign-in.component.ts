@@ -3,12 +3,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { AdminSignInFormComponent } from '@rt/message-bus-admin/auth/ui';
-import { ESignInFault, ISignInPair } from '@rt/message-bus-admin/auth/util';
+import { ESignInFault, ISetupState, ISignInPair, SETUP_PATH } from '@rt/message-bus-admin/auth/util';
 import { AdminLocaleSwitchComponent } from '@rt/message-bus-admin/common/core/ui';
 import { adminLabel } from '@rt/message-bus-admin/common/core/util';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtThemeToggleComponent } from '@rt-tools/ui-kit-v2';
-import { filter } from 'rxjs';
+import { catchError, EMPTY, filter, Observable } from 'rxjs';
 
 /**
  * Хост экрана — внешний узел готовой раскладки входа, которую везёт кит. Своего блока у экрана
@@ -25,6 +25,11 @@ const HOME_PATH: string = '/';
  * Адрес, с которого человека увели на вход, приезжает параметром запроса и связывается со входом
  * самим роутером. После входа человек попадает туда, куда шёл, а не на первый попавшийся раздел:
  * иначе прямая ссылка теряется ровно в тот момент, когда она нужнее всего.
+ *
+ * Узел без единой записи входа не имеет, и пришедшего на него уводят на экран первой записи —
+ * по ответу приёмника, а не по отказу входа: отказ по паре один на «я ошибся» и «входить некому».
+ * Форма при этом рисуется сразу: узел с записями — обычный случай, и ждать ответа ради него
+ * значило бы показывать пустую карточку всем и каждый раз.
  */
 @Component({
     selector: 'admin-sign-in',
@@ -47,6 +52,18 @@ export class AdminSignInComponent {
     public readonly returnTo: InputSignal<string | undefined> = input<string | undefined>(undefined);
 
     constructor() {
+        this.#store
+            .setupState()
+            .pipe(
+                // Приёмник не ответил: вход остаётся входом, и отказ он скажет на самой паре
+                catchError((): Observable<never> => EMPTY),
+                filter((state: ISetupState): boolean => state.open),
+                takeUntilDestroyed()
+            )
+            .subscribe((): void => {
+                void this.#router.navigate([SETUP_PATH]);
+            });
+
         this.#store
             .onDispatch('signed-in')
             .pipe(

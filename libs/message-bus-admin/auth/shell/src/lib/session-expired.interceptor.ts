@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { catchError, Observable, throwError } from 'rxjs';
 
-import { RETURN_TO_PARAM, SIGN_IN_PATH } from './session.guard';
+import { RETURN_TO_PARAM, SIGN_IN_PATH } from '@rt/message-bus-admin/auth/util';
 
 /**
  * Обращения самого входа: их отказ — ответ экрану входа, а не конец сеанса.

@@ -107,12 +107,26 @@ export const messageBusAdminBoundaries = [
         sourceTag: 'scope:message-bus-admin-auth-feature-sign-in',
         onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-ui', AUTH_DATA_ACCESS, AUTH_UTIL, CORE_UI, CORE_UTIL, PACKAGE],
     },
+    // Экран первой записи стоит на той же раскладке входа и видит то же, что экран входа, кроме
+    // формы входа: у его формы своё слово отказа — то, что сказал приёмник, — а не род отказа
+    // по паре. Форму он держит сам, на готовых полях кита
+    {
+        sourceTag: 'scope:message-bus-admin-auth-feature-setup',
+        onlyDependOnLibsWithTags: [AUTH_DATA_ACCESS, AUTH_UTIL, CORE_UI, CORE_UTIL, PACKAGE],
+    },
     // Стражи закрытой ветки стоят здесь оба, и второй читает право раздела из объявления пункта
     // меню: свой список прав рядом с маршрутами разошёлся бы с меню молча. Оболочку он при этом
     // не видит — она грузится по требованию, и статическая ссылка на неё это потеряла бы
     {
         sourceTag: 'scope:message-bus-admin-auth-shell',
-        onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-feature-sign-in', AUTH_DATA_ACCESS, AUTH_UTIL, CONTAINER_UTIL, PACKAGE],
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-admin-auth-feature-sign-in',
+            'scope:message-bus-admin-auth-feature-setup',
+            AUTH_DATA_ACCESS,
+            AUTH_UTIL,
+            CONTAINER_UTIL,
+            PACKAGE,
+        ],
     },
     {
         sourceTag: 'scope:message-bus-admin-auth-ui',
@@ -122,9 +136,11 @@ export const messageBusAdminBoundaries = [
         sourceTag: 'scope:message-bus-admin-auth-data-access',
         onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-api', AUTH_UTIL, PACKAGE],
     },
+    // Обращение входа видит общий слой обращений ради разбора отказа правки: заведение первой
+    // записи отвечает словом приёмника, и читается оно тем же разбором, что у правок людей
     {
         sourceTag: 'scope:message-bus-admin-auth-api',
-        onlyDependOnLibsWithTags: [AUTH_UTIL, PACKAGE],
+        onlyDependOnLibsWithTags: [AUTH_UTIL, CORE_API, PACKAGE],
     },
 
     // Оболочка: она знает, кто вошёл, куда его вывести при выходе, из чего собрано меню и чем
