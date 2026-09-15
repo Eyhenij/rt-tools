@@ -7,7 +7,7 @@
  * же дерева, переставшего слать.
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { IPostmortemArrivalUpdate, postmortemArrivalUpdate } from '@rt/message-bus-api/postmortems/util';
+import { IPostmortemArrivalUpdate, IPostmortemStoredForArrival, postmortemArrivalUpdate } from '@rt/message-bus-api/postmortems/util';
 import {
     CARGO_RELEASE_VERSION_FIELD,
     cargoCloseData,
@@ -306,18 +306,28 @@ export async function readPostmortem(prisma: PrismaService, id: string): Promise
 }
 
 /**
- * Тексты разборов, которые уже лежат: по ним решается, сбрасывать ли состояние.
+ * Тексты разборов, которые уже лежат, и признак закрытия издателем: по ним решается, сбрасывать
+ * ли состояние.
  *
  * Читаются одним запросом на весь груз, а не по запросу на запись: прогон дерева везёт разборы
  * десятками, и запрос на каждый стоил бы столько же, сколько сама запись.
  */
-async function storedTexts(prisma: PrismaService, treeId: string, items: readonly IPostmortemRow[]): Promise<Map<string, string>> {
-    const rows: { file: string; text: string }[] = await prisma.postmortem.findMany({
+async function storedForArrival(
+    prisma: PrismaService,
+    treeId: string,
+    items: readonly IPostmortemRow[]
+): Promise<Map<string, IPostmortemStoredForArrival>> {
+    const rows: { file: string; text: string; closedByPublisher: boolean }[] = await prisma.postmortem.findMany({
         where: { treeId, file: { in: items.map((item: IPostmortemRow): string => item.file) } },
-        select: { file: true, text: true },
+        select: { file: true, text: true, closedByPublisher: true },
     });
 
-    return new Map(rows.map((row: { file: string; text: string }): [string, string] => [row.file, row.text]));
+    return new Map(
+        rows.map((row: { file: string; text: string; closedByPublisher: boolean }): [string, IPostmortemStoredForArrival] => [
+            row.file,
+            { text: row.text, closedByPublisher: row.closedByPublisher },
+        ])
+    );
 }
 
 /**
@@ -327,8 +337,8 @@ async function storedTexts(prisma: PrismaService, treeId: string, items: readonl
  * упавший третий разбор оставил бы дерево в состоянии, которого не было ни до, ни после.
  * Одной командой это не выразить — обновление берёт текст каждой записи свой.
  *
- * Лежащие тексты читаются до сделки, потому что решение о сбросе состояния берёт оба текста
- * сразу, а команда обновления прежнего не видит. Два прогона одного дерева, разошедшиеся между
+ * Лежащие тексты и признак закрытия читаются до сделки, потому что решение о сбросе состояния
+ * берёт оба текста и признак сразу, а команда обновления прежнего не видит. Два прогона одного дерева, разошедшиеся между
  * чтением и записью, дадут лишний сброс либо пропустят его: цена такой пары — одно состояние, а
  * не связность хранилища, и ради неё чтение с записью в одну сделку не сводятся.
  *
@@ -339,7 +349,7 @@ export async function writePostmortems(prisma: PrismaService, treeId: string, it
         return 0;
     }
 
-    const stored: Map<string, string> = await storedTexts(prisma, treeId, items);
+    const stored: Map<string, IPostmortemStoredForArrival> = await storedForArrival(prisma, treeId, items);
 
     await prisma.$transaction(
         items.map((item: IPostmortemRow) => {
