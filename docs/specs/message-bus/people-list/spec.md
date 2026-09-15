@@ -36,12 +36,11 @@ that never signed in shows a dash instead of a date.
   its data is given away by a direct request.
 - **A person without a role is shown as without a role, not as an empty cell.** An empty cell reads
   as a defect of the screen; "роли нет" is the answer.
-- **The list only reads.** Creating, disabling and changing a password come with the next task: it
-  must first be visible whom you are editing.
 
 ## What is out of scope
 
-- Creating a person, disabling them and changing a password — the task after this one.
+- Creating a person, disabling them and changing a password — the subdomain of the editing next to
+  it; this one describes the list itself.
 - The page of roles and rights — the task after that.
 - Dividing the cargo by trees: the list says who has access, not to what.
 
@@ -108,6 +107,8 @@ One receiver and one list of people in it.
 ## History of changes
 
 - 2026-09-10 — the agreement was written before the code.
+- 2026-09-15 — the rule "the list only reads" left: the editing is described by the subdomain next
+  to it (RT-1900).
 - 2026-09-10 — the agreement was merged into the domain as a subdomain of its own: the receiver
   answers with a page of people, the admin panel shows the section, and both are closed by the right
   `accounts:read` (RT-1899). It was not merged into the spec of the rights next to it: that one

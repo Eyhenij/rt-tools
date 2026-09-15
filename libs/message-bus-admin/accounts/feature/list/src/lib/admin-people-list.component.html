@@ -1,4 +1,17 @@
 <admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
+    @if (canManage()) {
+        <ng-template adminListToolbarRight>
+            <button
+                rtButton
+                icon="user-plus"
+                type="button"
+                qa-dataid="people-create"
+                [attr.aria-label]="createLabel"
+                [label]="createLabel"
+                (click)="openCreate()"></button>
+        </ng-template>
+    }
+
     <rt-table
         #rowsTable="rtTable"
         [ariaLabel]="title"
@@ -8,7 +21,10 @@
         [emptyDescription]="emptyDescription()"
         [emptyMessage]="emptyMessage()"
         [loading]="loading()"
+        [rowHasActions]="hasRowActions"
+        [showRowActions]="canManage()"
         [sort]="sortModel()"
+        [tableId]="tableId"
         (sortChange)="changeSort($event)">
         <ng-container cdkColumnDef="name">
             <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="name">{{ columns[0].label }}</th>
@@ -40,6 +56,31 @@
                 }
             </td>
         </ng-container>
+
+        <!-- Меню объявляется только с правом: без него у строки нет ни одного действия, и
+             объявленный пустым шаблон рисовал бы кнопку меню без пунктов. Своя запись
+             отключения не получает — обрыв коснулся бы и того входа, которым пришли -->
+        @if (canManage()) {
+            <ng-template rtTableRowActions let-row [rtTableRowActionsRowType]="rows()">
+                <rt-menu-item
+                    icon="lock"
+                    [label]="passwordLabel"
+                    [attr.qa-dataid]="qaPrefix + '-password'"
+                    (selected)="openPassword(row.name)" />
+
+                @if (row.name !== selfName()) {
+                    <rt-menu-item
+                        danger
+                        icon="user-minus"
+                        [confirmLabel]="disableLabel"
+                        [confirmMessage]="row.disableQuestion"
+                        [confirmTitle]="disableTitle"
+                        [label]="disableLabel"
+                        [attr.qa-dataid]="qaPrefix + '-disable'"
+                        (selected)="disable(row.name)" />
+                }
+            </ng-template>
+        }
 
         <tr *cdkHeaderRowDef="rowsTable.displayedColumns()" cdk-header-row></tr>
         <tr *cdkRowDef="let row; columns: rowsTable.displayedColumns()" cdk-row [attr.qa-dataid]="qaRow()"></tr>

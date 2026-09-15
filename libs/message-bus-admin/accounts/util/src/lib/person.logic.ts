@@ -46,3 +46,24 @@ export function personStateLabel(disabledAt: string | null): string {
 export function personLastLoginLabel(lastLoginAt: Date | null): string {
     return lastLoginAt === null ? adminLabel('personNeverLoggedIn') : '';
 }
+
+/**
+ * Вопрос перед отключением.
+ *
+ * Называет запись и последствие, а не спрашивает «вы уверены»: отключённая запись не возвращается,
+ * и человек решает по имени и по цене, а не по слову «да».
+ */
+export function personDisableQuestion(name: string): string {
+    return adminLabel('personDisableQuestion', { name });
+}
+
+/**
+ * Есть ли у строки действия в меню.
+ *
+ * Отключённая запись действий не несёт: отключить её второй раз нельзя, а новый пароль записи,
+ * которой не входят, ничего не меняет. Своя запись здесь не отличается — её отличает экран, у
+ * которого есть имя вошедшего; предикат строки его не знает.
+ */
+export function personRowHasActions(row: { readonly isLive: boolean }): boolean {
+    return row.isLive;
+}

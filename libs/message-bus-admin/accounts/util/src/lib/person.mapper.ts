@@ -7,7 +7,7 @@
  */
 import { BaseMapper } from '@rt-tools/utils';
 
-import { personIsLive, personLastLoginLabel, personRoleLabel, personStateLabel } from './person.logic';
+import { personDisableQuestion, personIsLive, personLastLoginLabel, personRoleLabel, personStateLabel } from './person.logic';
 import { IPerson } from './person.model';
 
 /** Строка списка людей. */
@@ -20,13 +20,16 @@ export class PersonShortMapper extends BaseMapper<IPerson.Short.State> {
         const enteredAt: string | null = typeof data.lastLoginAt === 'string' ? data.lastLoginAt : null;
         const lastLoginAt: Date | null = enteredAt === null ? null : new Date(enteredAt);
 
+        const name: string = this.typeCast.getAsString(data.name);
+
         return {
-            name: this.typeCast.getAsString(data.name),
+            name,
+            lastLoginAt,
             roleLabel: personRoleLabel(role),
             stateLabel: personStateLabel(disabledAt),
             lastLoginLabel: personLastLoginLabel(lastLoginAt),
             isLive: personIsLive(disabledAt),
-            lastLoginAt,
+            disableQuestion: personDisableQuestion(name),
         };
     }
 }

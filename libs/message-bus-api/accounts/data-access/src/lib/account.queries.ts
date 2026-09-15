@@ -5,7 +5,8 @@
  * индексом. Перебор со сверкой в коде стоил бы прохода по всем живым входам на каждом запросе
  * всякого раздела.
  *
- * Записи учётных записей делают команды строки запуска: заведения из веба нет вовсе.
+ * Записи учётных записей делают команды строки запуска и операции раздела людей: одни и те же
+ * правки — заведение, новый пароль, отключение — зовутся с двух сторон, и лежат поэтому здесь.
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IAccountSummaryRow, IPersonSource, IRequestAccount, personRowOf } from '@rt/message-bus-api/accounts/util';
@@ -72,6 +73,26 @@ export async function disableAccount(prisma: PrismaService, id: string, at: Date
     return sessions.count;
 }
 
+/** Поля строки раздела людей: то, из чего собирается ответ операций и страница списка. */
+const PERSON_SELECT: { name: true; disabledAt: true; lastLoginAt: true; role: { select: { name: true } } } = {
+    name: true,
+    disabledAt: true,
+    lastLoginAt: true,
+    role: { select: { name: true } },
+};
+
+/**
+ * Строка раздела людей по приведённому имени. Пусто — записи с таким именем нет.
+ *
+ * Ею отвечают операции правки: экран показывает то, что лежит в хранилище после правки, а не то,
+ * что он послал.
+ */
+export async function findPersonByNameKey(prisma: PrismaService, nameKey: string): Promise<IPersonView | null> {
+    const found: IPersonSource | null = await prisma.account.findUnique({ where: { nameKey }, select: PERSON_SELECT });
+
+    return found ? personRowOf(found) : null;
+}
+
 /** Записи для списка команд: имя, состояние и время последнего входа. */
 export async function listAccounts(prisma: PrismaService): Promise<IAccountSummaryRow[]> {
     return prisma.account.findMany({
@@ -117,7 +138,7 @@ function orderOf(asked: IPageAsked): TPersonOrder {
 export async function readPeople(prisma: PrismaService, asked: IPageAsked): Promise<IPage<IPersonView>> {
     const total: number = await prisma.account.count();
     const rows: IPersonSource[] = await prisma.account.findMany({
-        select: { name: true, disabledAt: true, lastLoginAt: true, role: { select: { name: true } } },
+        select: PERSON_SELECT,
         orderBy: [orderOf(asked), { name: 'asc' }],
         skip: pageSkip(asked),
         take: asked.size,

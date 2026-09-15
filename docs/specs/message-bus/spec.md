@@ -139,6 +139,7 @@ the limit is split further by the same technique.
 | [A right, a role and the check that reads them](access-rights/spec.md)  | what a person may do after the entry: the closed set of rights, the role, the pointed edits over it        |
 | [The usage of the rules in the sessions](usage/spec.md)                 | the observation lines: the intake of a day whole, the counting by skill over a period, the section         |
 | [The list of people](people-list/spec.md)                               | who reaches the cargo: the name, the role, the state of the record and the last sign-in                    |
+| [Creating, disabling and a new password](people-editing/spec.md)        | the three edits of a record from the section of people: two panels and a row menu under one right          |
 
 ## What is out of scope
 
@@ -420,3 +421,5 @@ not to a tree, and a filter by tree narrows what is shown, not the access.
   item is not in the row and the address does not open. The agreement was not merged into the spec of
   the rights: that one describes what a person may do after the entry, and together they outgrow the
   length limit.
+- 2026-09-15 — the task RT-1900 created the subdomain about the editing of people: creating a
+  record, a new password and disabling from the section of people under `accounts:manage`.
