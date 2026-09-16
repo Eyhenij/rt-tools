@@ -2,6 +2,7 @@
 
 **Task:** RT-2162 · **Branch:** RT-2162-no-sections-screen
 **Epic:** RT-2161 · **Epic branch:** `RT-2161-no-rights-screen` · **Plan:** `docs/plans/no-rights-screen.md`
+**Draft:** `docs/specs/message-bus/proposed/no-sections-screen/`
 
 ## Task footprint
 
