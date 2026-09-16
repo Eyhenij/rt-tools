@@ -29,8 +29,12 @@ ran() {
         '{type:"assistant",message:{content:[{type:"tool_use",name:"Bash",input:{command:$c}}]}}'
 }
 
+# Каталог хода передаётся всегда, и это каталог без репозитория: гард спрашивает «эпик кончился»
+# от каталога вызова, а без него — от дерева, в котором набор запущен. В дереве, где все задачи
+# эпика отданы, каждый ожидающий ход этим проходил, и набор краснел не от правки, а от доски.
 input_stop() {
-    jq -n --arg p "$1" --argjson a "${2:-false}" '{session_id:"tests",transcript_path:$p,stop_hook_active:$a}'
+    jq -n --arg p "$1" --arg d "$TURNS" --argjson a "${2:-false}" \
+        '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:$a}'
 }
 
 expect_stop() {

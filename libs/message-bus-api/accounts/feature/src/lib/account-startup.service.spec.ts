@@ -29,14 +29,15 @@ afterEach((): void => {
 });
 
 describe('AccountStartupService', () => {
-    it('SC-MB-61 — пустое хранилище оставляет в журнале строку о том, что записей нет и чем они заводятся', async () => {
+    it('SC-MB-61, SC-MB-389 — пустое хранилище оставляет в журнале строку о том, что записей нет и чем заводится первая', async () => {
         const written: string[] = journal();
 
         await new AccountStartupService(storage(0)).onApplicationBootstrap();
 
         expect(written).toHaveLength(1);
         expect(written[0]).toContain('учётных записей нет ни одной');
-        expect(written[0]).toContain('account:add');
+        expect(written[0]).toContain('экраном первичной настройки');
+        expect(written[0]).not.toContain('account:add');
     });
 
     it('SC-MB-61 — при заведённой записи служба о них молчит', async () => {

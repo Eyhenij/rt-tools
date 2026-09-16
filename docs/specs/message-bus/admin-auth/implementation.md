@@ -16,7 +16,7 @@ or the code holds what the spec is silent about.
 - **One record has several entries, and the exit breaks off the one that was come by.** — `libs/message-bus-api/accounts/data-access/src/lib/account.queries.ts:revokeSession`
 - **A token of a tree does not open the admin application, and the entry of a person does not open the intake of the cargo.** — `libs/message-bus-api/access/feature/src/lib/access.guard.ts:canActivate`
 - **Every operation declares its way of access openly.** — `libs/message-bus-api/access/util/src/lib/operation-access.ts:OPERATION_ACCESS`
-- **An account is created, changes its password and is switched off by a command of the launch line.** — `libs/message-bus-api/accounts/feature/src/lib/account-commands.service.ts:run`
+- **An account is created, changes its password and is switched off from the screens.** — `libs/message-bus-api/accounts/feature/src/lib/accounts-manage.controller.ts:create`
 - **The name of an account is taken by one person, and the case is not told apart in it.** — `libs/message-bus-api/accounts/util/src/lib/account-name.util.ts:accountNameKey`
 - **A record that is switched off creates no entry, and its former entries stop being accepted.** — `libs/message-bus-api/accounts/data-access/src/lib/account.queries.ts:disableAccount`
 - **The service says at the start that there is not a single account.** — `libs/message-bus-api/accounts/feature/src/lib/account-startup.service.ts:onApplicationBootstrap`

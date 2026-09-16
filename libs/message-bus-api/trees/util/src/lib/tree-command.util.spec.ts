@@ -78,4 +78,14 @@ describe('parseTreeCommand', () => {
             expect(parse.fault).toContain(line);
         });
     });
+
+    it('SC-MB-393 — команды учётных записей строке запуска незнакомы: записи заводятся с экрана', () => {
+        ['account:add', 'account:passwd', 'account:disable', 'account:list'].forEach((verb: string): void => {
+            const parse: ITreeCommandParse = parseTreeCommand([verb, 'Ольга']);
+
+            expect(parse.command).toBeNull();
+            expect(parse.fault).toContain(verb);
+        });
+        expect(TREE_COMMANDS_USAGE.join('\n')).not.toContain('account');
+    });
 });

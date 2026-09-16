@@ -72,6 +72,23 @@ describe('sectionRightGuard', (): void => {
         expect(verdictOf('/usage')).toBe(true);
     });
 
+    it('SC-MB-325 — раздел людей без права `accounts:read` не открывается прямой ссылкой', (): void => {
+        // Сперва положительное: с правом раздел открывается — иначе проверка зеленела бы и на
+        // адресе, которого в объявлении меню нет вовсе.
+        signedInWith(['accounts:read']);
+
+        expect(verdictOf('/people')).toBe(true);
+
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            providers: [provideZonelessChangeDetection(), provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+        });
+        http = TestBed.inject(HttpTestingController);
+        signedInWith(['proposals:read']);
+
+        expect(verdictOf('/people')).not.toBe(true);
+    });
+
     it('SC-MB-301 — пока ответ о вошедшем не приехал, не закрывается ничего', (): void => {
         // Права неизвестны, а не пусты: закрыв по пустому набору, админка увела бы с раздела
         // того, у кого право на него есть.

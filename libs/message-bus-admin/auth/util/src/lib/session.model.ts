@@ -15,3 +15,8 @@ export interface ISignInPair {
     readonly name: string;
     readonly password: string;
 }
+
+/** Ждёт ли узел первой записи: пока в хранилище нет ни одной, экран входа уступает место заведению. */
+export interface ISetupState {
+    readonly open: boolean;
+}

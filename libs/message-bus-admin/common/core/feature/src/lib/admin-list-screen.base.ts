@@ -259,9 +259,12 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
      *
      * Выборка при этом остаётся в адресе нетронутой: закрытая панель возвращает тот же список —
      * ту же страницу с тем же отбором и тем же порядком.
+     *
+     * Сегментов после раздела бывает больше одного: панель, которая правит одну сторону записи,
+     * называет и запись, и сторону — `<имя>/password`. Вызывающий отдаёт их по порядку.
      */
-    protected openDetails(id: string): void {
-        void this.#router.navigate([{ outlets: { ro: [...this.#section(), id] } }], {
+    protected openDetails(id: string, ...tail: readonly string[]): void {
+        void this.#router.navigate([{ outlets: { ro: [...this.#section(), id, ...tail] } }], {
             relativeTo: this.#route.parent,
             queryParamsHandling: 'preserve',
         });
