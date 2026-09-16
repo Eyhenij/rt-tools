@@ -105,6 +105,17 @@ session.
 - **The hook of the entry does not refuse the launch.** A refusal of any of its parts — an unreadable
   file, a missing resource, foreign rights — leaves the session without a part of the entry, but not
   without the session.
+- **The last run of the main branch arrives in the context at the launch, in one line.** A merge
+  reads as the end of the work, and a red main branch after it lives until the owner notices: a run
+  of the main branch is opened by nobody. The line is printed by a reading of its own, the same one
+  the work queue audit uses; the entry finds it in the checks directory the tree named and prints
+  what it said. No reading laid out, no node, an empty answer — the entry stays silent, and the
+  launch is never refused.
+- **The reading names five states of the run and says out loud when it could not read.** No run,
+  running, green, red, pushed out — each by its own line with the commit, the day and the address;
+  no pipeline file, a pipeline asleep on a push to the main branch and no network are named as
+  «not read», never as green. The exit code is non-zero on a red or a pushed-out run, so that a
+  chain after a merge stops on it.
 
 ## What is out of scope
 
@@ -192,6 +203,7 @@ from the root of the current tree.
 
 ## History of changes
 
+- 2026-09-15 — the last run of the main branch at the launch: two rules, scenarios `SC-AK-1105` and `SC-AK-1106`, the bindings.
 - 2026-08-22 — the agreement about the transition through the threshold of the window was merged in
   here: the thresholds were separated, the distance between them was declared by a number, and a
   coincidence became a divergence.
