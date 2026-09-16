@@ -176,8 +176,7 @@ flowchart TD
 - **One's own conflicting PR is fixed by the turn's first action, and no new work is taken before
   that.** Work here means creating a task or a branch, moving the column and opening a PR.
 - **A conflicting PR of a neighbouring session is not one's own.** One's own branch is the one this
-  working copy led — the machine account is shared and tells nothing apart. A neighbour's PR is
-  named to the owner, and work is taken as usual.
+  working copy led; a neighbour's PR is named to the owner, and work is taken as usual.
 - **A conflicting open PR is a work queue audit discrepancy.** The conflict arrives with someone
   else's merge, and the host shows the mark only inside the PR.
 - **A document goes in the same commit as the edit.** The bypass is the line `Docs-skip: <reason>`
@@ -268,8 +267,7 @@ flowchart TD
   where the account has no rights.
 
 - **A second working copy is for reading, and the call goes from the copy the session stands in.**
-  The gate runs its set where the session was started: someone else's uncommitted work refuses the
-  call, and its own contribution passes unchecked.
+  The gate runs its set where the session was started, and a neighbour's uncommitted work refuses it.
 - **The working tree is not emptied for a tool run.** The comparison goes on a second copy: stashing
   takes uncommitted work where neither the tree state nor the audit sees it.
 
@@ -291,7 +289,8 @@ tree, the remote one — whether the ref itself went stale.
 ## Patterns
 
 - `git-workflow-commit` — task, branch, commit and push as the machine account.
-- `git-workflow-pr` — opening a PR, the draft and lifting it, the body, reviewer, labels, state.
+- `git-workflow-pr` — opening a PR, the draft and lifting it, state, the checklist.
+- `git-workflow-pr-body` — the link to the task, the body sample, how the task closes off main.
 - `git-workflow-merge` — the base merged into the branch standing on it, the conflict resolved.
 - `git-workflow-stack` — a chain of branches: branching from the previous, the PR base, the handover
   order.
