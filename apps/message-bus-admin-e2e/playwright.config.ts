@@ -1,6 +1,20 @@
 import { defineConfig, devices } from '@playwright/test';
 
-import { ADMIN_ORIGIN } from './stand/stand.mjs';
+import { ADMIN_ORIGIN, ADMIN_PORT } from './stand/stand.mjs';
+
+/**
+ * Адрес браузера, поднятого в образе. Назван — кадры снимает образ, не названо — браузер машины.
+ *
+ * Растр знаков считает та машина, что рисует, и у двух машин он разный при одном и том же коде.
+ * Образ один на любой из них, и эталон, снятый им, годится всюду.
+ */
+const SHOT_BROWSER: string = process.env['RT_SHOT_BROWSER'] ?? '';
+
+/**
+ * Стенд остаётся на машине: он поднимает прод-сборки и базу, и вторая их сборка внутри образа
+ * стоила бы дороже переноса. Из образа машина зовётся своим именем — `localhost` там свой.
+ */
+const PAGE_ORIGIN: string = SHOT_BROWSER ? `http://host.docker.internal:${ADMIN_PORT}` : ADMIN_ORIGIN;
 
 /**
  * Сквозной набор админки.
@@ -50,7 +64,7 @@ export default defineConfig({
      * Снять эталон заново можно только там, где он судится, — платформенно независимую съёмку
      * в контейнере заводит своя работа.
      */
-    ignoreSnapshots: !process.env['CI'],
+    ignoreSnapshots: !process.env['CI'] && !SHOT_BROWSER,
     expect: {
         timeout: 10_000,
         /**
@@ -61,7 +75,8 @@ export default defineConfig({
         toHaveScreenshot: { threshold: 0, maxDiffPixelRatio: 0 },
     },
     use: {
-        baseURL: ADMIN_ORIGIN,
+        baseURL: PAGE_ORIGIN,
+        ...(SHOT_BROWSER ? { connectOptions: { wsEndpoint: SHOT_BROWSER } } : {}),
         trace: 'retain-on-failure',
         screenshot: 'only-on-failure',
         locale: 'ru-RU',
