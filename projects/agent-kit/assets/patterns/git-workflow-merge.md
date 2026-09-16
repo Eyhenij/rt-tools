@@ -131,6 +131,19 @@ repository refuses about Projects (classic) and never reaches the edit:
 /opt/homebrew/bin/gh api -X PATCH repos/<владелец>/<репозиторий>/pulls/<номер> -f body="$(cat тело.md)"
 ```
 
+## The task of a merged PR is asked, not assumed closed
+
+The host closes the task by the `Closes` line only when the base is the default branch. A PR
+merged into an epic branch or into the previous branch of a chain leaves its task open unless the
+tree closes it by a pipeline of its own — and the column of the board lags the work until then.
+After every known merge with such a base the task's state is asked by a command; one still open
+is closed by hand with a comment naming the PR — the calls are in the pattern
+`git-workflow-stack`.
+
+```bash
+gh issue view <номер> --json state --jq .state
+```
+
 ## A green run ages together with the main branch
 
 A run speaks about the base it went on. While it goes and the PR awaits review, the main branch

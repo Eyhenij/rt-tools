@@ -96,6 +96,7 @@ tools/board-runs.mjs
 tools/board-titles.mjs
 tools/board-folders.mjs
 tools/epic-table.mjs
+tools/main-run.mjs
 tools/board.mjs
 tools/check-board.mjs
 tools/check-doc-paths.mjs
