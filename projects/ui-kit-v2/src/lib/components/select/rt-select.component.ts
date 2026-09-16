@@ -1,6 +1,8 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     computed,
+    contentChild,
     forwardRef,
     inject,
     input,
@@ -27,6 +29,7 @@ import { RtIconComponent, IRtIcon } from '../icon';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtInputComponent } from '../input/rt-input.component';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
+import { RtSelectTriggerDirective } from './rt-select-trigger.directive';
 import { IRtSelect } from './rt-select.model';
 
 const BEM_BLOCK: string = 'rt-select';
@@ -64,6 +67,7 @@ function nextPanelId(): number {
     imports: [
         // Angular
         FormsModule,
+        NgTemplateOutlet,
 
         // standalone components / directives
         RtIconButtonComponent,
@@ -108,6 +112,12 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
 
+    /**
+     * Своя разметка указателя, если потребитель её объявил. Не объявил — кит рисует свою, и ни один
+     * нынешний потребитель не двигается.
+     */
+    protected readonly triggerTpl: Signal<RtSelectTriggerDirective<TValue> | undefined> = contentChild(RtSelectTriggerDirective);
+
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value() !== null);
 
     protected readonly selectedLabel: Signal<string> = computed((): string => {
@@ -129,6 +139,14 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
             return all.filter((o: IRtSelect.Option<TValue>): boolean => o.label.toLowerCase().includes(term));
         }
     );
+
+    /** Три значения, которые кит отдаёт своей разметке указателя, и не больше. */
+    protected readonly triggerState: Signal<IRtSelect.TriggerState<TValue>> = computed((): IRtSelect.TriggerState<TValue> => ({
+        isOpen: this.isOpen(),
+        value: this.value(),
+        label: this.selectedLabel(),
+        isDisabled: this.isDisabled(),
+    }));
 
     public readonly displayText: Signal<string> = computed((): string => this.selectedLabel());
 
