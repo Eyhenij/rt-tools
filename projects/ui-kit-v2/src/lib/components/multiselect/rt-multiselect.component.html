@@ -7,7 +7,7 @@
         rtElem="trigger"
         qa-dataid="multiselect-trigger"
         type="button"
-        rtPopoverWidth="trigger"
+        [rtPopoverWidth]="panelWidth()"
         [rtMod]="{ own: !!triggerTpl() }"
         [rtPopover]="panelTpl"
         [rtPopoverDisabled]="isDisabled()"
@@ -64,7 +64,12 @@
     </button>
 
     <ng-template #panelTpl>
-        <div rtElem="panel" qa-dataid="multiselect-panel" role="listbox" [attr.aria-label]="ariaLabel()">
+        <div
+            rtElem="panel"
+            qa-dataid="multiselect-panel"
+            role="listbox"
+            [style.--rt-multiselect-panel-max-height]="panelMaxHeight()"
+            [attr.aria-label]="ariaLabel()">
             <!--
                 Опции выбираются мышью через (click); keyboard-nav — на trigger'е
                 (activedescendant), опции не focusable индивидуально.

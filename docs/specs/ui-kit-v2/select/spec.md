@@ -70,6 +70,16 @@ a list: a field, a badge, an icon, a pill with a name.
   lights up around a box the consumer never drew. Measured: the frame 240 points against a badge of 134. That the list is open is told by the consumer's markup — the context of the template carries
   that state to it.
 
+- **The panel is measured by its content and never gets narrower than the trigger.** A consumer's
+  trigger is often a badge or an icon, and a panel cut to that width crushes the list into a column
+  of broken words. The trigger's width stays the lower bound, and above it the panel grows to what
+  it draws. The former behaviour stays reachable by an input: a field-shaped trigger and a panel of
+  its exact width are a pair a consumer may want kept.
+
+- **The panel opens whole, without a scroll of its own.** A list scrolled inside a box hides how
+  much there is. No height limit is set by default; a consumer who needs one sets it, and the scroll
+  appears with it — only they know what stands around the panel.
+
 - **The move by keys stays visible, and its outline follows the content of the button.** Taking the
   field's ring off takes the only sign of focus with it, and a person moving by the keyboard is left
   with nothing.
@@ -77,7 +87,8 @@ a list: a field, a badge, an icon, a pill with a name.
 ## What is out of scope
 
 - The look of the consumer's trigger: the kit gives no badge, no pill and no icon trigger of its own.
-- The panel of the list: it belongs to the families themselves and does not change here.
+- What is drawn inside the panel: the option row, the filter line and the empty state belong to
+  the families themselves and do not change here. Only the panel's size is spoken of above.
 - The row of actions of the table and the filter cell of its header: they are consumers of this
   input, and they arrive with the task that carries the dynamic list over.
 
@@ -117,8 +128,9 @@ Not applicable: the kit is not indexed.
 
 ### Mobile layout
 
-The input changes nothing at any width: the panel takes its width from the trigger as before, and
-the consumer's markup is theirs to lay out.
+The input changes nothing at any width. The panel is no narrower than the trigger and grows to its
+content, so on a narrow screen the window is what bounds it; the consumer's markup is theirs to lay
+out.
 
 ### Several objects
 

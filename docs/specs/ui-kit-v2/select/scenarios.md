@@ -95,3 +95,15 @@ Then an outline is drawn around the button, and it fits the consumer's markup
 
 Not covered: the same reason as the scenario above — the sign of the state is the drawn frame.
 Closed by the showing of the trigger and its reference frame.
+
+### SC-UKV-178 — the panel is not measured by the trigger
+
+Given a choice from a list whose trigger is narrower than the options
+When the list is opened
+Then the panel's box is given the trigger's width as its lower bound and no fixed width
+
+### SC-UKV-179 — the panel gets no scroll of its own unless a limit is set
+
+Given a choice from a list with no height limit set
+When the list is opened
+Then the panel carries no height limit, and a limit set by the consumer lands on the panel itself

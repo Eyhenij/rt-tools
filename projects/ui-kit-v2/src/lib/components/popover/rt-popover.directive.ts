@@ -5,6 +5,7 @@ import {
     Overlay,
     OverlayConfig,
     OverlayRef,
+    OverlaySizeConfig,
     ScrollStrategyOptions,
 } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
@@ -59,7 +60,8 @@ const FIT_VIEWPORT_MIN_HEIGHT_PX: number = 120;
  *
  * `open()/close()/toggle()/isOpen()` публичны во ВСЕХ режимах — `trigger` лишь
  * определяет авто-listener'ы. `width: 'trigger'` синхронизирует ширину панели с
- * host'ом (dropdown'ы), `'auto'` — content-sized (тултипы).
+ * host'ом (dropdown'ы), `'trigger-min'` не даёт панели стать уже host'а и дальше пускает
+ * её по содержимому, `'auto'` — content-sized (тултипы).
  */
 @Directive({
     selector: '[rtPopover]',
@@ -192,9 +194,13 @@ export class RtPopoverDirective implements OnDestroy {
             return;
         }
         const overlayRef: OverlayRef = this.#ensureOverlay();
-        if (this.width() === 'trigger') {
-            overlayRef.updateSize({ width: this.#elementRef.nativeElement.offsetWidth });
-        }
+        const hostWidth: number = this.#elementRef.nativeElement.offsetWidth;
+        const sizeByWidth: Record<IRtPopover.Width, OverlaySizeConfig> = {
+            trigger: { width: hostWidth },
+            'trigger-min': { minWidth: hostWidth },
+            auto: {},
+        };
+        overlayRef.updateSize(sizeByWidth[this.width()]);
         const portal: TemplatePortal<unknown> = new TemplatePortal(this.template() as TemplateRef<unknown>, this.#viewContainerRef, {
             $implicit: this.context(),
         });

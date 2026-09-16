@@ -29,6 +29,7 @@ import { RtIconComponent, IRtIcon } from '../icon';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtInputComponent } from '../input/rt-input.component';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
+import { IRtPopover } from '../popover/rt-popover.model';
 import { RtSelectTriggerDirective } from './rt-select-trigger.directive';
 import { IRtSelect } from './rt-select.model';
 
@@ -162,6 +163,22 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
 
     /** Пусто — берётся переведённая подпись по умолчанию */
     public readonly filterPlaceholder: InputSignal<string> = input<string>('');
+
+    /**
+     * Чем мерится панель. По умолчанию она не уже кнопки и дальше растёт по содержимому:
+     * со своим указателем кнопка бывает узкой, и панель по её ширине давила бы содержимое.
+     * `trigger` возвращает прежнее — ровно по кнопке, `auto` пускает панель по содержимому
+     * целиком. Предел высоты назначается своим свойством `--rt-select-panel-max-height`:
+     * без него панель открывается без прокрутки внутри.
+     */
+    public readonly panelWidth: InputSignal<IRtPopover.Width> = input<IRtPopover.Width>('trigger-min');
+
+    /**
+     * Предел высоты панели — длина как в стилях, например `20rem`. Пусто — предела нет, и панель
+     * открывается целиком, без прокрутки внутри. Назначенный предел включает прокрутку.
+     * Значение ставится на саму панель: она рисуется в наложении, вне поддерева блока.
+     */
+    public readonly panelMaxHeight: InputSignal<string | null> = input<string | null>(null);
 
     public readonly selectionChange: OutputEmitterRef<TValue | null> = output<TValue | null>();
 

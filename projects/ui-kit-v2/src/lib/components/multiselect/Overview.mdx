@@ -88,11 +88,13 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход          | тип                                          | умолчание               |
-| ------------- | -------------------------------------------- | ----------------------- |
-| `options`     | `ReadonlyArray<{ label, value, disabled? }>` | `[]`                    |
-| `placeholder` | `string`                                     | `''` → `uiSelectValues` |
-| `maxChips`    | `number`                                     | `3`                     |
+| вход             | тип                                          | умолчание               |
+| ---------------- | -------------------------------------------- | ----------------------- |
+| `options`        | `ReadonlyArray<{ label, value, disabled? }>` | `[]`                    |
+| `placeholder`    | `string`                                     | `''` → `uiSelectValues` |
+| `maxChips`       | `number`                                     | `3`                     |
+| `panelWidth`     | `'trigger' \| 'trigger-min' \| 'auto'`       | `'trigger-min'`         |
+| `panelMaxHeight` | `string \| null`                             | `null`                  |
 
 ## Входы от основы полей
 
@@ -124,6 +126,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 остаётся видимым: вместо кольца встаёт обводка по содержимому кнопки.
 
 Показы указателя стоят отдельной страницей — [`SelectTrigger`](./?path=/story/molecules-forms-selecttrigger--families).
+
+Панель при этом не мерится кнопкой: её ширина не меньше кнопки и дальше растёт по содержимому,
+а прокрутки внутри нет вовсе — содержимое помещается целиком. Прежнее поведение возвращает вход
+`panelWidth`, предел высоты назначает `panelMaxHeight`, и с ним появляется прокрутка.
 
 ## Рядом
 

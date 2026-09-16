@@ -190,8 +190,16 @@
                объявляется на ней самой — с корня блока оно бы не докатилось. */
             --rt-multiselect-panel-shadow: var(--rt-shadow-md);
 
+            /* Без предела панель открывается целиком, без прокрутки внутри: содержимое
+               должно помещаться. Предел назначает потребитель — тогда и появляется
+               прокрутка. */
+            --rt-multiselect-panel-max-height: none;
+
+            /* Ширина берётся от коробки наложения: её нижнюю границу ставит указатель,
+               а выше она растёт по содержимому. Без этой строки панель мерилась бы
+               содержимым внутри коробки и не дотягивалась до ширины поля. */
             width: 100%;
-            max-height: var(--rt-input-panel-max-height);
+            max-height: var(--rt-multiselect-panel-max-height);
             box-sizing: border-box;
             border: var(--rt-input-border-width) solid var(--rt-color-border-subtle);
             border-radius: var(--rt-input-radius);

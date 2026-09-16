@@ -7,7 +7,7 @@
         rtElem="trigger"
         qa-dataid="select-trigger"
         type="button"
-        rtPopoverWidth="trigger"
+        [rtPopoverWidth]="panelWidth()"
         [rtMod]="{ own: !!triggerTpl() }"
         [rtPopover]="panelTpl"
         [rtPopoverDisabled]="isDisabled()"
@@ -51,7 +51,7 @@
     </button>
 
     <ng-template #panelTpl>
-        <div rtElem="panel" role="listbox" [attr.aria-label]="ariaLabel()">
+        <div rtElem="panel" role="listbox" [style.--rt-select-panel-max-height]="panelMaxHeight()" [attr.aria-label]="ariaLabel()">
             @if (filter()) {
                 <div rtElem="filter">
                     <rt-input [placeholder]="filterPlaceholderText()" [ngModel]="filterTerm()" (ngModelChange)="setFilter($event)" />

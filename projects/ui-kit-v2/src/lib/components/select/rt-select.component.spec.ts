@@ -114,6 +114,22 @@ describe('RtSelectComponent', (): void => {
             expect(panel()?.getAttribute('role')).toBe('listbox');
         });
 
+        it('SC-UKV-179: без назначенного предела панель не несёт ограничения высоты', (): void => {
+            const fixture: ComponentFixture<RtSelectComponent<string>> = setup();
+
+            open(fixture);
+
+            expect(panel()?.style.getPropertyValue('--rt-select-panel-max-height')).toBe('');
+        });
+
+        it('SC-UKV-179: назначенный предел ложится на саму панель', (): void => {
+            const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ panelMaxHeight: '20rem' });
+
+            open(fixture);
+
+            expect(panel()?.style.getPropertyValue('--rt-select-panel-max-height')).toBe('20rem');
+        });
+
         it('отключённый список не раскрывается', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ disabled: true });
 
