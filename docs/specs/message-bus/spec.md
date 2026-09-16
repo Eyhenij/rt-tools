@@ -46,18 +46,18 @@ cargo.
 
 The second half of the vocabulary is about the reading of what was taken in:
 
-| Term                  | What it is                                                                                                  |
-| --------------------- | ----------------------------------------------------------------------------------------------------------- |
-| The admin application | The application a person reads the taken-in cargo by. There are no edits of the cargo in it at all          |
-| An account            | The name and the password of one person. Created by a command of the launch line                            |
-| An entry              | The state in which the intake knows who is asking. It lives by a term and is broken off by an exit          |
-| The term of an entry  | The time after which the entry stops being accepted and the person introduces themselves anew               |
-| A section             | A screen of the admin application with an address of its own. An item of the menu leads into a section      |
-| A list                | The page of a section: a row per record, a toolbar above it and a pagination below it                       |
-| A panel of details    | A panel with one record whole, sliding out at a press on a row                                              |
-| A filter              | A condition narrowing the list. It stands in the toolbar and is visible on the screen                       |
-| A page of a list      | A stretch of the list arriving by one request. The number of the page and the size are named by the request |
-| A selection           | The page, the size, the sorting and the filter together. It lives in the address of the section             |
+| Term                  | What it is                                                                                                            |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| The admin application | The application a person reads the taken-in cargo by. There are no edits of the cargo in it at all                    |
+| An account            | The name and the password of one person. The first is created by the first-run screen, the rest by the people section |
+| An entry              | The state in which the intake knows who is asking. It lives by a term and is broken off by an exit                    |
+| The term of an entry  | The time after which the entry stops being accepted and the person introduces themselves anew                         |
+| A section             | A screen of the admin application with an address of its own. An item of the menu leads into a section                |
+| A list                | The page of a section: a row per record, a toolbar above it and a pagination below it                                 |
+| A panel of details    | A panel with one record whole, sliding out at a press on a row                                                        |
+| A filter              | A condition narrowing the list. It stands in the toolbar and is visible on the screen                                 |
+| A page of a list      | A stretch of the list arriving by one request. The number of the page and the size are named by the request           |
+| A selection           | The page, the size, the sorting and the filter together. It lives in the address of the section                       |
 
 The third is about where the intake stands and what it is raised by:
 
@@ -96,20 +96,18 @@ The fifth is about what the intake is put together from:
 The surface of the intake is the operations of the request and the commands of the launch line; the
 interface belongs to the admin application.
 
-| In the agreement             | In the launch line and on the screen                     |
-| ---------------------------- | -------------------------------------------------------- |
-| creating a tree              | `message-bus tree:add <name> <sign>`                     |
-| issuing a new token          | `message-bus tree:token <name>`                          |
-| revoking the token of a tree | `message-bus tree:revoke <name>`                         |
-| the list of the trees        | `message-bus tree:list`                                  |
-| creating an account          | `message-bus account:add <name>`                         |
-| changing the password        | `message-bus account:passwd <name>`                      |
-| switching an account off     | `message-bus account:disable <name>`                     |
-| the list of the accounts     | `message-bus account:list`                               |
-| the entry                    | the screen "Вход": the name and the password             |
-| the exit                     | the item "Выйти" in the header                           |
-| the sections                 | "Разборы происшествий", "Предложения", "Сводки деревьев" |
-| the panel of details         | a panel sliding out at a press on a row                  |
+| In the agreement             | In the launch line and on the screen                             |
+| ---------------------------- | ---------------------------------------------------------------- |
+| creating a tree              | `message-bus tree:add <name> <sign>`                             |
+| issuing a new token          | `message-bus tree:token <name>`                                  |
+| revoking the token of a tree | `message-bus tree:revoke <name>`                                 |
+| the list of the trees        | `message-bus tree:list`                                          |
+| the first record             | the screen "Первая запись": the name, the password and "Завести" |
+| the people                   | the section "Пользователи": creating, disabling, a new password  |
+| the entry                    | the screen "Вход": the name and the password                     |
+| the exit                     | the item "Выйти" in the header                                   |
+| the sections                 | "Разборы происшествий", "Предложения", "Сводки деревьев"         |
+| the panel of details         | a panel sliding out at a press on a row                          |
 
 ## Rules
 
@@ -138,6 +136,10 @@ the limit is split further by the same technique.
 | [What the intake writes about itself](journal/spec.md)                  | the row of the journal, the taken-apart reason, the cleaning of the fields                                 |
 | [A right, a role and the check that reads them](access-rights/spec.md)  | what a person may do after the entry: the closed set of rights, the role, the pointed edits over it        |
 | [The usage of the rules in the sessions](usage/spec.md)                 | the observation lines: the intake of a day whole, the counting by skill over a period, the section         |
+| [The list of people](people-list/spec.md)                               | who reaches the cargo: the name, the role, the state of the record and the last sign-in                    |
+| [Creating, disabling and a new password](people-editing/spec.md)        | the three edits of a record from the section of people: two panels and a row menu under one right          |
+| [Roles and rights on a screen](roles-page/spec.md)                      | the section of roles, the panel of a role and the panel of a person's access, all under `roles:manage`     |
+| [The first record](first-run/spec.md)                                   | the first-run screen of an empty node: one public operation creates the owner and signs them in            |
 
 ## What is out of scope
 
@@ -157,7 +159,7 @@ The boundaries of the subjects are named in the subdomains. What is shared acros
 
 ## Contract
 
-The surface is the operations of HTTP and eight commands of the launch line. A tree introduces itself
+The surface is the operations of HTTP and four commands of the launch line. A tree introduces itself
 by the header `X-Tree-Token`, a person by the entry; one instead of the other is not accepted. The
 operations of the intake are listed in the subdomain of the intake, the edit of a state in the
 subdomain of the edit, the operations of the reading in the subdomain of the reading.
@@ -257,11 +259,10 @@ not to a tree, and a filter by tree narrows what is shown, not the access.
 - **The answer of the intake is widened, not created as a second one.** The sender already reads this
   answer, and a second request for the sake of the count of the repeats would add the run one more
   place where it tears.
-- **The entry is by a password, and the accounts are created by a command of the launch line.** The
-  service goes out into the internet — an entry is needed; creating from the web means a screen, a
-  right and the question about the first record. Rejected: creating records from the interface and a
-  screen of the accounts. The price: a person without access to the node cannot be created by
-  anything.
+- **The entry is by a password, and the accounts are created from the screens.** The service goes
+  out into the internet — an entry is needed. Until the people section came, the records were
+  created by commands of the launch line; with the section and the first-run screen in place the
+  commands were removed as a second way in nobody checked.
 - **Three list screens, not one.** The word of the owner on a divergence brought by an analysis: the
   analyses, the proposals and the digests by one piece of work. Rejected: one screen with the harness
   paying off on it. The price: the branch is longer, and a rollback carries away all three.
@@ -303,9 +304,10 @@ not to a tree, and a filter by tree narrows what is shown, not the access.
 - **The language is one and the theme is one — an assumption of the executor.** Within the boundaries
   of the work the owner did not name them. It is cancelled by one edit, while the labels lie in the
   dictionary.
-- **The commands of changing the password and of switching a record off are created together with the
-  creating — an assumption of the executor.** Otherwise a leaked password cannot be closed at all,
-  while they stand as a line next to the already written commands of the trees.
+- **The first record is created by a public first-run operation, and it closes for good with the
+  first record.** Without it an empty node has no way in at all: the people section needs an
+  entry, and there is nobody to enter. Rejected: keeping one command of the launch line for the
+  first record — a second way in that lives on the node and that no screen checks.
 - **The proxy is taken as a ready image, it is not installed on the node by a package.** Everything
   that lives on the node is raised by one composition: a package installed by hand outlives the
   recreating of the node only in the memory of whoever installed it.
@@ -413,3 +415,17 @@ not to a tree, and a filter by tree narrows what is shown, not the access.
   as its own mark. The agreement was not merged into the spec of the edit of a state: the operations
   have different ways of introducing themselves and a different order of the transitions, and together
   they outgrew the length limit.
+- 2026-09-10 — the task RT-1899 created the subdomain about the list of people: the receiver answers
+  with a page of accounts — the name, the role, the state and the last sign-in — and the admin panel
+  shows them as a fifth section. Both sides are closed by the right `accounts:read`: without it the
+  item is not in the row and the address does not open. The agreement was not merged into the spec of
+  the rights: that one describes what a person may do after the entry, and together they outgrow the
+  length limit.
+- 2026-09-15 — the task RT-1900 created the subdomain about the editing of people: creating a
+  record, a new password and disabling from the section of people under `accounts:manage`.
+- 2026-09-15 — the task RT-1901 created the subdomain about roles on a screen: the section of
+  roles, the panel of a role and the panel of a person's access under `roles:manage`. The open
+  question of the rights about where roles come from is closed by it.
+- 2026-09-15 — the task RT-1902 created the subdomain about the first record: the first-run screen
+  of an empty node and one public operation behind it. The four account commands of the launch
+  line were removed with it.
