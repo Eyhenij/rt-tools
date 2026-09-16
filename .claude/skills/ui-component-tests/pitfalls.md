@@ -96,3 +96,22 @@ The five refuted candidates cost about two hours.
   its hot update answers with a four hundred, and the count of the showing roots is zero. Five runs
   of the window probe against such a showcase gave five refusals, three runs against a freshly
   raised one gave three green. No edit in the tree caused either.
+
+## A re-take confirmed by one raising reached the main branch
+
+16 September 2026. Twenty-seven references were re-taken on one raising and merged into the main
+branch — 22 frames of the admin end-to-end suite, 5 of the first kit's showcase. Three hours later
+the same suite on the same machine failed on all of them: 24 failures out of 123, twice in a row,
+the same 22 names both times. The frames they replaced, taken a day earlier, reproduced
+byte-for-byte — one checksum across two runs.
+
+Four suspects were measured and all four fell out. The glyph arguments
+(`--font-render-hinting=none`, `--disable-font-subpixel-positioning`, `--disable-lcd-text`, and all
+three at once) gave one raster in five cases. Both browser builds of the tree — chromium-1234
+(151.0.7922.34) and chromium-1243 (153.0.8010.12) — gave one. Both bodies of the browser, the
+headless shell and the full Chrome, gave one. The blending of a translucent layer over text held
+across two raisings in both states.
+
+So what moved the raster was not a setting of the browser but the state of the machine in the
+minute of the re-take, and it does not reproduce. There is nothing to pin, and the second raising
+is the only sign that a reference is a reference and not a photograph of one minute.
