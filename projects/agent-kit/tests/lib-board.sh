@@ -21,6 +21,7 @@ cp "$CHECKS/board-epics.github.mjs" "$BOARD_TREE/tools/board-epics.mjs"
 cp "$CHECKS/board-folders.mjs" "$BOARD_TREE/tools/board-folders.mjs"
 cp "$CHECKS/board-long-work.github.mjs" "${BOARD_TREE}/tools/board-long-work.mjs"
 cp "$CHECKS/check-board.github.mjs" "$BOARD_TREE/tools/check-board.mjs"
+cp "$CHECKS/main-run.github.mjs" "$BOARD_TREE/tools/main-run.mjs"
 printf '%s\n' 'on: pull_request' 'jobs:' '    main:' '        steps:' '            - name: Lint' \
     > "$BOARD_TREE/.github/workflows/ci.yml"
 

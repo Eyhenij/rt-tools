@@ -46,16 +46,18 @@ both consequences. Both analyses leave the intake as fixed with this epic.
 ## How the branches stand
 
 The epic branch is taken from main, every task branch from the epic branch, and the PRs of the
-tasks go into it. The tasks touch different resources and do not stand on one another.
+tasks go into it. The tasks touch different resources and do not stand on one another — with one
+exception found at work: RT-2148 calls the run reading RT-2147 wrote, so its branch stands on
+RT-2147 as a chain, and its PR has the RT-2147 branch as its base until that one merges.
 
 ## The makeup
 
-| #   | Task                                                                          | State |
-| --- | ----------------------------------------------------------------------------- | ----- |
-| 1   | RT-2147 — the audit reads the last main run: red and cancelled are findings   | ahead |
-| 2   | RT-2148 — the session reads the last main run first; the start hook prints it | ahead |
-| 3   | RT-2149 — the PR body with a base other than main says how the task closes    | ahead |
-| 4   | RT-2150 — the audit's finding about such a base names both consequences       | ahead |
+| #   | Task                                                                          | State               |
+| --- | ----------------------------------------------------------------------------- | ------------------- |
+| 1   | RT-2147 — the audit reads the last main run: red and cancelled are findings   | handed in, PR #2151 |
+| 2   | RT-2148 — the session reads the last main run first; the start hook prints it | ahead               |
+| 3   | RT-2149 — the PR body with a base other than main says how the task closes    | ahead               |
+| 4   | RT-2150 — the audit's finding about such a base names both consequences       | ahead               |
 
 ## What the epic does not do
 
