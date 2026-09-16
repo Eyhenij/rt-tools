@@ -56,6 +56,13 @@ tasks go into it. The tasks touch different resources and do not stand on one an
 | 2   | RT-2148 — the session reads the last main run first; the start hook prints it | handed in, PR #2155 |
 | 3   | RT-2149 — the PR body with a base other than main says how the task closes    | handed in, PR #2156 |
 | 4   | RT-2150 — the audit's finding about such a base names both consequences       | handed in, PR #2158 |
+| 5   | RT-2167 — the second kit's references retaken after the macOS 27 update       | handed in           |
+
+## What the owner named along the way
+
+- 16 September: the machine got macOS 27, and every reference frame taken before it diverged by
+  glyph anti-aliasing. The admin and first-kit frames were retaken inside RT-2150; the second
+  kit's — by the fifth task, RT-2167, so that the PR of the epic passes CI.
 
 ## What the epic does not do
 
