@@ -568,6 +568,14 @@
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
     },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/select/stories/component/test-select-trigger-more.component.ts": {
+      "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/select/stories/component/test-select-trigger-more.component.ts": {
+      "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
+      "task": "RT-476"
+    },
     "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/select/stories/component/test-select-trigger.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"

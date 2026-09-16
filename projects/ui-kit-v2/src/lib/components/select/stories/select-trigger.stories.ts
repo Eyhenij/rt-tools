@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { openStoryOverlay } from '../../../../showcase/story-overlay';
 import { storyPseudoParameters } from '../../../../showcase/story-states';
 import { TestRtSelectTriggerComponent } from './component/test-select-trigger.component';
 
@@ -45,3 +46,48 @@ export const States: TStory = {
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };
+
+/**
+ * Виды кнопки. Разметку объявляет приложение, и кит её не ограничивает: значок с названием и
+ * количеством, один значок, подпись со стрелкой, метка, подпись со значением.
+ */
+export const Buttons: TStory = { args: { part: 'buttons' } };
+
+/**
+ * Длинный список в панели. Прокрутки внутри нет: панель открывается целиком — так и было
+ * заказано. Кнопка при этом узкая, и панель её шириной не мерится.
+ */
+export const PanelLong: TStory = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'long' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { key: 'ArrowDown' });
+    },
+};
+
+/** Длинные подписи: панель мерится содержимым и выходит заметно шире кнопки из одного значка. */
+export const PanelWide: TStory = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'wide' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { key: 'ArrowDown' });
+    },
+};
+
+/** Назначенный предел высоты — `panelMaxHeight`. Вместе с ним и появляется прокрутка внутри. */
+export const PanelCapped: TStory = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'capped' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { key: 'ArrowDown' });
+    },
+};
+
+/** Прежнее поведение — `panelWidth="trigger"`: панель ровно по ширине поля, как было до правки. */
+export const PanelByTrigger: TStory = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'by-trigger' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { key: 'ArrowDown' });
+    },
+};

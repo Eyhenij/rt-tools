@@ -18,9 +18,10 @@ import { RtTagComponent } from '../../../tag/rt-tag.component';
 import { RtSelectTriggerDirective } from '../../rt-select-trigger.directive';
 import { RtSelectComponent } from '../../rt-select.component';
 import { IRtSelect } from '../../rt-select.model';
+import { TestRtSelectTriggerMoreComponent, TSelectTriggerMorePart } from './test-select-trigger-more.component';
 
 /** Какую матрицу указателя рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TSelectTriggerPart = 'against' | 'families' | 'states' | 'presets' | 'themes';
+export type TSelectTriggerPart = TSelectTriggerMorePart | 'against' | 'families' | 'states' | 'presets' | 'themes';
 
 /** Чей указатель рисуется в ячейке: зашитый китом или свой, объявленный шаблоном. */
 interface ITriggerSideCase {
@@ -64,6 +65,7 @@ function chosen(value: string | null): FormControl<string | null> {
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         ReactiveFormsModule,
+        TestRtSelectTriggerMoreComponent,
         RtMultiselectComponent,
         RtSelectComponent,
         RtSelectTriggerDirective,
@@ -173,6 +175,26 @@ function chosen(value: string | null): FormControl<string | null> {
                         </app-story-row>
                     </ng-template>
                 </app-story-presets>
+            }
+
+            @case ('buttons') {
+                <app-test-select-trigger-more part="buttons" />
+            }
+
+            @case ('long') {
+                <app-test-select-trigger-more part="long" />
+            }
+
+            @case ('wide') {
+                <app-test-select-trigger-more part="wide" />
+            }
+
+            @case ('capped') {
+                <app-test-select-trigger-more part="capped" />
+            }
+
+            @case ('by-trigger') {
+                <app-test-select-trigger-more part="by-trigger" />
             }
 
             @case ('themes') {
