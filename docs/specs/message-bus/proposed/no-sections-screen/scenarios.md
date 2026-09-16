@@ -15,7 +15,7 @@ Given an account whose rights hold not one read right of a section
 When the person signs in and the admin panel comes up
 Then the address in the browser line is the address of the screen, not an empty one
 
-Not covered: the address of the screen does not exist yet — the second stage of the task creates it.
+Покрытие: частичное — the guards are checked by a call; that the person lands on the screen and reads it is closed by the end-to-end scenario of the third stage.
 
 ### SC-MB-396 — the screen survives a reload of its own address
 
@@ -23,7 +23,7 @@ Given a person to whom no section is open, standing on the screen
 When the page is reloaded at that address
 Then the same screen comes up: the reason, whom to ask, the name and the way out
 
-Not covered: the address of the screen does not exist yet — the second stage of the task creates it.
+Покрытие: частичное — the guards are checked by a call; that the person lands on the screen and reads it is closed by the end-to-end scenario of the third stage.
 
 ### SC-MB-397 — a direct link to a closed section leads to the screen when no section is open
 
@@ -31,7 +31,7 @@ Given a person to whom no section is open
 When they open the address of any section directly, on the first load of the page
 Then the screen comes up instead of a blank page, and the address becomes the address of the screen
 
-Not covered: the address of the screen does not exist yet — the second stage of the task creates it.
+Покрытие: частичное — the guards are checked by a call; that the person lands on the screen and reads it is closed by the end-to-end scenario of the third stage.
 
 ### SC-MB-398 — the address of the screen leads away whoever has a section open
 
@@ -39,15 +39,11 @@ Given a signed-in person with at least one open section
 When they open the address of the screen by hand
 Then the first section open to them opens instead
 
-Not covered: the address of the screen does not exist yet — the second stage of the task creates it.
-
 ### SC-MB-399 — a right that arrives without a reload takes the person off the screen
 
 Given a person standing on the screen, whose rights arrive anew with a section among them
 When the admin panel receives the answer about the signed-in person
 Then the item of the section is in the top row, and the screen is no longer shown
-
-Not covered: the address of the screen does not exist yet — the second stage of the task creates it.
 
 ### SC-MB-400 — the way out from the screen leads to the sign-in
 
@@ -62,5 +58,3 @@ Not covered: the end-to-end scenario of the third stage of the task closes it.
 Given the answer about the signed-in person has not arrived yet
 When the admin panel draws the page
 Then the screen is not shown: the rights are unknown rather than absent
-
-Not covered: the address of the screen does not exist yet — the second stage of the task creates it.
