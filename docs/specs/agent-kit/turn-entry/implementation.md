@@ -24,3 +24,5 @@ statement: a removed statement is removed together with its line.
 - **A tree that declared no squeeze works as before.** — `projects/agent-kit/src/lib/thresholds.ts:compactPct`
 - **The refusal names both sides by numbers.** — `projects/agent-kit/src/lib/thresholds.ts:thresholdLines`
 - **A filled window ends a turn only where there is no squeeze.** — `projects/agent-kit/assets/checks/check-turn-map.mjs:EXITS`
+- **The last run of the main branch arrives in the context at the launch, in one line.** — `projects/agent-kit/assets/hooks/main-run-context.sh:reading` — the checks directory is taken from the tree config; scenario `SC-AK-1105`
+- **The reading names five states of the run and says out loud when it could not read.** — `projects/agent-kit/assets/checks/main-run.github.mjs:mainRunLine` — the verdict comes from the run reading of the work queue audit; scenario `SC-AK-1106`

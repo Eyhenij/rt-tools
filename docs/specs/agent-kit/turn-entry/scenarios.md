@@ -215,3 +215,25 @@ When the check of the map of the turn goes
 Then it comes out even the same as at a map with Russian names of the exits
 
 Covered: `projects/agent-kit/tests/checks-turn-map.test.sh`.
+
+### SC-AK-1105 — the line about the run of the main branch arrives in the context at the launch
+
+Given a tree with a laid-out reading of the main branch run in the checks directory it named
+When the session starts
+Then the entry prints the line the reading gave, names the reading as the first action and the
+command to repeat it by hand; a red run is printed the same and does not refuse the launch; no
+reading laid out, an empty answer or a directory outside a repository — the entry stays silent
+
+Covered: `projects/agent-kit/tests/main-run-context.test.sh`.
+
+### SC-AK-1106 — the reading names the run of the main branch in one line
+
+Given a tree whose pipeline wakes on a push to the main branch, and the last run of that branch
+When the reading is called
+Then a red run is named by its commit, its day and its address with the exit code 1; a cancelled
+one with zero steps — as pushed out, with the exit code 1; a green one, a running one and no run
+at all — each by its own line with the exit code 0. A tree without a pipeline file, one whose
+pipeline sleeps on a push to the main branch, and a hosting that does not answer get the line
+«not read» and the exit code 0
+
+Covered: `projects/agent-kit/tests/checks-main-run.test.sh`.
