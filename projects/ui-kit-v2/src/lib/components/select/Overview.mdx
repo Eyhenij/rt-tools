@@ -106,6 +106,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `iconLeft`          | `IRtIcon.Name \| null`                       | `null`            |
 | `filter`            | `boolean`                                    | `false`           |
 | `filterPlaceholder` | `string`                                     | `''` → `uiSearch` |
+| `panelWidth`        | `'trigger' \| 'trigger-min' \| 'auto'`       | `'trigger-min'`   |
+| `panelMaxHeight`    | `string \| null`                             | `null`            |
 
 ## Входы от основы полей
 
@@ -130,6 +132,29 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 `selectionChange` — не дубль формы: значение и так уходит через `ControlValueAccessor`.
 Выход нужен там, где на выбор надо среагировать (перезагрузить зависимый список), не
 подписываясь на `valueChanges` всей формы.
+
+## Свой указатель
+
+Разметку кнопки потребитель объявляет шаблоном с признаком `rtSelectTrigger`. Обстановка шаблона
+несёт четыре значения: открыт ли список, что выбрано, подпись выбранного и отключён ли выбор.
+Тот же вход принимает и `rt-multiselect`.
+
+С объявленным шаблоном кнопка перестаёт выглядеть полем. Уходит не только фон с рамкой покоя, но и
+ширина: без этого кнопка держала бы ширину хозяина, а при нажатии вокруг метки зажигалось бы кольцо
+поля — шире нарисованного. Уходят и полевые состояния: кольцо фокуса, рамка открытого списка и
+рамка ошибки. Что список открыт, потребитель рисует сам — обстановка шаблона это несёт. Ход
+клавишами остаётся видимым: вместо кольца встаёт обводка по содержимому кнопки.
+
+Показы указателя стоят отдельной страницей — [`SelectTrigger`](./?path=/story/molecules-forms-selecttrigger--against).
+Там же виды кнопки — [`Buttons`](./?path=/story/molecules-forms-selecttrigger--buttons) — и панель:
+[длинный список](./?path=/story/molecules-forms-selecttrigger--panel-long),
+[длинные подписи](./?path=/story/molecules-forms-selecttrigger--panel-wide),
+[назначенный предел высоты](./?path=/story/molecules-forms-selecttrigger--panel-capped) и
+[прежняя ширина по полю](./?path=/story/molecules-forms-selecttrigger--panel-by-trigger).
+
+Панель при этом не мерится кнопкой: её ширина не меньше кнопки и дальше растёт по содержимому,
+а прокрутки внутри нет вовсе — содержимое помещается целиком. Прежнее поведение возвращает вход
+`panelWidth`, предел высоты назначает `panelMaxHeight`, и с ним появляется прокрутка.
 
 ## Рядом
 

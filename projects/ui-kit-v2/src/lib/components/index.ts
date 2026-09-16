@@ -26,6 +26,7 @@ export * from './date-picker';
 export * from './detail-list';
 export * from './dialog';
 export * from './download-link';
+export * from './dynamic-list';
 export * from './empty-state';
 export * from './field';
 export * from './file-card';

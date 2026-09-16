@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { signal, ChangeDetectionStrategy, Component, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { createRtFixture, el, hostClasses, qa, setInputs, textOf } from '../../../testing/rt-kit-testing';
+import { RtSelectTriggerDirective } from './rt-select-trigger.directive';
 import { RtSelectComponent } from './rt-select.component';
 import { IRtSelect } from './rt-select.model';
 
@@ -30,6 +31,37 @@ function panel(): HTMLElement | null {
 class SelectHostComponent {
     public readonly control: FormControl<string | null> = new FormControl<string | null>(null);
     public readonly opts: ReadonlyArray<IRtSelect.Option<string>> = OPTIONS;
+}
+
+/**
+ * Хозяин со своей разметкой указателя: проекция содержимого без хозяина не работает, а
+ * `createRtFixture` поднимает компонент напрямую.
+ */
+@Component({
+    selector: 'rt-select-trigger-host',
+    template: `
+        <rt-select [options]="opts" [disabled]="off()">
+            <ng-template rtSelectTrigger let-state>
+                <span class="own-trigger" [attr.data-open]="state.isOpen" [attr.data-off]="state.isDisabled">
+                    {{ state.label || 'ничего' }}
+                </span>
+            </ng-template>
+        </rt-select>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtSelectComponent, RtSelectTriggerDirective],
+})
+class SelectTriggerHostComponent {
+    public readonly opts: ReadonlyArray<IRtSelect.Option<string>> = OPTIONS;
+    public readonly off: WritableSignal<boolean> = signal<boolean>(false);
+}
+
+function ownTrigger(fixture: ComponentFixture<SelectTriggerHostComponent>): HTMLElement | null {
+    return fixture.nativeElement.querySelector('.own-trigger');
+}
+
+function hostButton(fixture: ComponentFixture<SelectTriggerHostComponent>): HTMLButtonElement {
+    return fixture.nativeElement.querySelector('[qa-dataid="select-trigger"]') as HTMLButtonElement;
 }
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtSelectComponent<string>> {
@@ -80,6 +112,22 @@ describe('RtSelectComponent', (): void => {
 
             expect(trigger(fixture).getAttribute('aria-expanded')).toBe('true');
             expect(panel()?.getAttribute('role')).toBe('listbox');
+        });
+
+        it('SC-UKV-179: без назначенного предела панель не несёт ограничения высоты', (): void => {
+            const fixture: ComponentFixture<RtSelectComponent<string>> = setup();
+
+            open(fixture);
+
+            expect(panel()?.style.getPropertyValue('--rt-select-panel-max-height')).toBe('');
+        });
+
+        it('SC-UKV-179: назначенный предел ложится на саму панель', (): void => {
+            const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ panelMaxHeight: '20rem' });
+
+            open(fixture);
+
+            expect(panel()?.style.getPropertyValue('--rt-select-panel-max-height')).toBe('20rem');
         });
 
         it('отключённый список не раскрывается', (): void => {
@@ -315,6 +363,78 @@ describe('RtSelectComponent', (): void => {
             fixture.detectChanges();
 
             expect(textOf(el(fixture, '.rt-select__readonly'))).toBe('—');
+        });
+    });
+
+    describe('свой указатель', (): void => {
+        it('SC-UKV-157 — без объявленного указателя рисует свой', (): void => {
+            const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ placeholder: 'Город' });
+
+            expect(el(fixture, '.rt-select__label')).not.toBeNull();
+            expect(el(fixture, '.rt-select__chevron')).not.toBeNull();
+        });
+
+        it('SC-UKV-158 — объявленный указатель рисуется вместо зашитого', (): void => {
+            const fixture: ComponentFixture<SelectTriggerHostComponent> = createRtFixture(SelectTriggerHostComponent);
+
+            expect(ownTrigger(fixture)).not.toBeNull();
+            expect(fixture.nativeElement.querySelector('.rt-select__label')).toBeNull();
+            expect(fixture.nativeElement.querySelector('.rt-select__chevron')).toBeNull();
+        });
+
+        it('SC-UKV-159 — поведение осталось на кнопке кита', (): void => {
+            const fixture: ComponentFixture<SelectTriggerHostComponent> = createRtFixture(SelectTriggerHostComponent);
+            const button: HTMLButtonElement = hostButton(fixture);
+
+            expect(button.contains(ownTrigger(fixture))).toBe(true);
+            expect(button.getAttribute('aria-haspopup')).toBe('listbox');
+
+            button.click();
+            fixture.detectChanges();
+
+            expect(options().length).toBe(3);
+        });
+
+        it('SC-UKV-160 — обстановка говорит разметке, что список раскрыт', (): void => {
+            const fixture: ComponentFixture<SelectTriggerHostComponent> = createRtFixture(SelectTriggerHostComponent);
+
+            expect(ownTrigger(fixture)?.getAttribute('data-open')).toBe('false');
+
+            hostButton(fixture).click();
+            fixture.detectChanges();
+
+            expect(ownTrigger(fixture)?.getAttribute('data-open')).toBe('true');
+        });
+
+        it('SC-UKV-161 — обстановка говорит разметке, что выбрано', (): void => {
+            const fixture: ComponentFixture<SelectTriggerHostComponent> = createRtFixture(SelectTriggerHostComponent);
+
+            expect(textOf(ownTrigger(fixture))).toBe('ничего');
+
+            hostButton(fixture).click();
+            fixture.detectChanges();
+            options()[0].click();
+            fixture.detectChanges();
+
+            expect(textOf(ownTrigger(fixture))).toBe('Москва');
+        });
+
+        it('SC-UKV-164 — с объявленным указателем полевой вид кнопки снят', (): void => {
+            const own: ComponentFixture<SelectTriggerHostComponent> = createRtFixture(SelectTriggerHostComponent);
+            const plain: ComponentFixture<RtSelectComponent<string>> = setup();
+
+            expect(hostButton(own).classList).toContain('rt-select__trigger--own');
+            expect(qa(plain, 'select-trigger')?.nativeElement.classList).not.toContain('rt-select__trigger--own');
+        });
+
+        it('SC-UKV-162 — обстановка говорит разметке, что выбор отключён', (): void => {
+            const fixture: ComponentFixture<SelectTriggerHostComponent> = createRtFixture(SelectTriggerHostComponent);
+
+            fixture.componentInstance.off.set(true);
+            fixture.detectChanges();
+
+            expect(ownTrigger(fixture)?.getAttribute('data-off')).toBe('true');
+            expect(hostButton(fixture).disabled).toBe(true);
         });
     });
 
