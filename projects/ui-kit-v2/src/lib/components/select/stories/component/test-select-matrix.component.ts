@@ -9,6 +9,8 @@ import { IStoryState, STORY_TRIGGER_STATES, storyStateLabel } from '../../../../
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtFieldComponent } from '../../../field/rt-field.component';
 import { IRtInput } from '../../../input/rt-input.model';
+import { RtTagComponent } from '../../../tag/rt-tag.component';
+import { RtSelectTriggerDirective } from '../../rt-select-trigger.directive';
 import { RtSelectComponent } from '../../rt-select.component';
 import { IRtSelect } from '../../rt-select.model';
 
@@ -237,6 +239,8 @@ function invalid(): FormControl<string | null> {
         RtSelectComponent,
 
         // showcase
+        RtSelectTriggerDirective,
+        RtTagComponent,
         StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
