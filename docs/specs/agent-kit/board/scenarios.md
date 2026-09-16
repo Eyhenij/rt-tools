@@ -111,6 +111,16 @@ Then it stays silent
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
+### SC-AK-1107 — one line names both consequences of a base other than the main branch
+
+Given open requests whose base is not the main branch
+When the work queue audit goes
+Then one line counts them and names both consequences at once — the pipeline gives them no run,
+and the host closes no task on their merge — with how the task closes then; the line is not a
+divergence, and without such requests there is no line
+
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+
 ### SC-AK-998 — an epic without a branch and an epic whose tasks are over
 
 Given a card with the label of an epic, and no open request either from its branch or into it

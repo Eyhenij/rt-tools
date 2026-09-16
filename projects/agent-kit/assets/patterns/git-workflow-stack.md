@@ -65,8 +65,25 @@ gh api repos/<владелец>/<дерево>/pulls/<номер наследн�
 ```
 
 From the browser the same is done by editing the PR heading, where the base stands as a dropdown.
-The miss turns red nowhere: the PR looks merged, the task closes by its `Closes` line, and the work
-is not where it was meant to go.
+The miss turns red nowhere: the PR looks merged, and the work is not where it was meant to go.
+
+**The `Closes` line of a chain PR is read by nobody at the host.** The host closes a task only
+on a merge into the default branch; a chain PR merges into the neighbour, and the task stays
+open with the column lagging the work. Which of the two the tree has — a pipeline of its own that
+closes the task on such a merge, or the hand — stands in the PR body by the sample of the pattern
+`git-workflow-pr-body`. The tasks of a chain are asked after every merge, not assumed closed:
+
+```bash
+# right after a merge — the task of the merged PR, then the rest of the chain
+gh issue view <номер> --json state --jq .state
+# still open — closed by hand, with a comment naming the PR that merged
+gh issue comment <номер> --body 'Влита в ветку <основание> — PR #<номер PR>.'
+gh issue close <номер> --reason completed
+```
+
+This is the cleanup step after the last merge of the chain: the branches are listed, the tasks
+of the chain are asked, and what is still open is closed with the comment. A task closed in
+silence, without the PR named, cannot be told from one closed by mistake.
 
 The merge order stands in every PR body as the line "stands on #<number>, merge after it": the
 owner merges by the list, and branch kinship is invisible in the list.
