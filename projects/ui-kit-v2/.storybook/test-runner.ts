@@ -5,6 +5,7 @@ import { appendFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Page } from 'playwright';
 
+import { conditionsOfPage, keepEvidence } from './snapshot-evidence.ts';
 import { quiet, ROOT_SELECTOR } from './snapshot-wait.ts';
 import { STORY_SNAPSHOT_VIEWPORT } from '../src/showcase/story-snapshot.ts';
 
@@ -349,12 +350,28 @@ async function shoot(page: Page, identifier: string, fullPage: boolean, pinnedWi
         );
     }
 
-    expect(image).toMatchImageSnapshot({
-        customSnapshotsDir: SNAPSHOT_DIR,
-        customSnapshotIdentifier: identifier,
-        failureThreshold: FAILURE_THRESHOLD,
-        failureThresholdType: 'percent',
-    });
+    try {
+        expect(image).toMatchImageSnapshot({
+            customSnapshotsDir: SNAPSHOT_DIR,
+            customSnapshotIdentifier: identifier,
+            failureThreshold: FAILURE_THRESHOLD,
+            failureThresholdType: 'percent',
+        });
+    } catch (failure: unknown) {
+        keepEvidence(
+            identifier,
+            {
+                история: identifier,
+                окно: page.viewportSize() === null ? 'неизвестно' : `${page.viewportSize()?.width}x${page.viewportSize()?.height}`,
+                'рабочий поток': process.env.JEST_WORKER_ID ?? 'один',
+                ...(await conditionsOfPage(page)),
+                отказ: failure instanceof Error ? failure.message.split('\n')[0] : String(failure),
+            },
+            `${SNAPSHOT_DIR}/__diff_output__/${identifier}-diff.png`
+        );
+
+        throw failure;
+    }
 }
 
 const config: TestRunnerConfig = {

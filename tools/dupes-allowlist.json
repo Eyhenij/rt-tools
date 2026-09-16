@@ -28,10 +28,6 @@
       "reason": "the end-to-end suite declares the entry address and the node search by values of its own deliberately: taken out of the lib under check, they would be green at any value",
       "task": "RT-764"
     },
-    "value login__viewport @ BEM_BLOCK @ libs/message-bus-admin/auth/feature/setup ~ BEM_BLOCK @ libs/message-bus-admin/auth/feature/sign-in": {
-      "reason": "two screens stand on one kit block of the sign-in, and each names its host class next to its own decorator: a shared constant would be a lib for one string",
-      "task": "RT-1902"
-    },
     "export pathOf @ projects/agent-kit, projects/ui-kit-v2": {
       "reason": "one name over different notions: a resource path at the rules package and an address path at the kit",
       "task": "RT-764"
@@ -60,9 +56,17 @@
       "reason": "the kits have showcase harnesses of their own: an edit for the sake of one kit would shift the moment of the shot at the other and drop its reference images",
       "task": "RT-764"
     },
+    "value ${process.cwd()}/.rt-snapshot-evidence @ EVIDENCE_DIR @ projects/ui-kit-v2/.storybook/snapshot-evidence.ts ~ EVIDENCE_DIR @ projects/ui-kit/.storybook/test-runner.ts": {
+      "reason": "two kits keep their snapshot harnesses apart deliberately, and a shared module would tie them where there is no tie: an edit for the second one's sake would fail the first one's references. The directory is one because a person looks for the evidence of both in one place",
+      "task": "RT-2165"
+    },
     "value admin-panel @ BEM_BLOCK @ libs/message-bus-admin/postmortems/ui ~ BEM_BLOCK @ libs/message-bus-admin/proposals/ui ~ BEM_BLOCK @ libs/message-bus-admin/summaries/ui ~ BEM_BLOCK @ libs/message-bus-admin/usage/ui": {
       "reason": "the tree's linter demands a local constant of the block name in every component and refuses a shared declaration",
       "task": "RT-841"
+    },
+    "value login__viewport @ BEM_BLOCK @ libs/message-bus-admin/auth/feature/setup ~ BEM_BLOCK @ libs/message-bus-admin/auth/feature/sign-in": {
+      "reason": "two screens stand on one kit block of the sign-in, and each names its host class next to its own decorator: a shared constant would be a lib for one string",
+      "task": "RT-1902"
     }
   },
   "debt": {}

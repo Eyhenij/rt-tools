@@ -138,6 +138,19 @@ in step
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
+### SC-AK-1104 — the last run of the main branch is judged by the check
+
+Given a tree whose pipeline wakes on a push to the main branch, and the last run of the main branch
+is either fallen, or cancelled with zero steps
+When the check of the work queue goes
+Then a fallen run is named by its commit, its day and its address, with the line that merges on top
+go out unchecked; a cancelled one with zero steps — as pushed out of the queue, with the line that the
+merge was never checked; a green one, a running one and the absence of a run give no line. In a tree
+whose pipeline does not wake on a push to the main branch the run is not asked about, and the check
+says so aloud
+
+Covered: `projects/agent-kit/tests/checks-board-main-run.test.sh`.
+
 ### SC-AK-584 — a pushed-out run at the tip of a request is named by a line of the check
 
 Given an open request at whose tip there is one run: cancelled and with zero jobs

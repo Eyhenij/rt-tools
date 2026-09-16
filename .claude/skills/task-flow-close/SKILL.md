@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when bringing work to readiness — merging the product agreement into the domain spec, bringing the domain texts up to date with what was done, opening the PR as a draft or ready by its base and leaving draft.
 ---
-<!-- rt-kit v0.28.0 · patterns/task-flow-close.md · de2d00505ac3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · patterns/task-flow-close.md · 5546ff6947c9 · правится надстройкой, не здесь -->
 
 # Closing the work
 
@@ -118,7 +118,7 @@ the progress and into the PR body. The law file is edited after the answer. The 
 application laws: payments, locales and access are the same agreement, only about this application.
 
 What was done at this step is written into the PR body: what was re-read, what was changed, and if
-nothing was changed — why. The form of the section — pattern `git-workflow-pr`.
+nothing was changed — why. The form of the section — pattern `git-workflow-pr-body`.
 
 **Next move:** the updated texts are committed, and in the same turn the task folder is taken apart
 — by the last commit of the branch, pattern `task-flow-archive`.

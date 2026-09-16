@@ -12,6 +12,11 @@
         background: var(--rt-color-bg-surface);
         gap: var(--rt-space-2);
 
+        /* Ширина приходит от хозяина, а не от содержимого. Без этой строки её задавала textarea
+           без объявленной ширины: такую браузер считает от средней ширины знака первого
+           доступного начертания, и величина гуляла между поднятиями витрины — 158 против 161. */
+        inline-size: 100%;
+
         &:focus-within {
             border-color: var(--rt-color-border-strong);
         }
@@ -26,6 +31,10 @@
             font-size: var(--rt-text-sm);
             inline-size: 100%;
             line-height: var(--rt-leading-snug);
+
+            /* Своего размера поле ввода хозяину не отдаёт: иначе его ширина по `cols`
+               по-прежнему участвовала бы в измерении. */
+            min-inline-size: 0;
             outline: 0;
             resize: none;
 

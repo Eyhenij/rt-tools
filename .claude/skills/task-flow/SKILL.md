@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of work from the owner's request to the merge. Load at the start of any work, when editing task folders and product agreements, and when returning to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. End of a turn — turn-conduct.
 ---
-<!-- rt-kit v0.28.0 · rules/task-flow.md · a85bc81f6e95 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · rules/task-flow.md · a6f35238f3fb · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -17,7 +17,7 @@ with a guard does.
 
 **Requires:** `hooks/task-flow-guard.sh`, `hooks/task-flow-draft-guard.sh`,
 `hooks/task-context-load.sh`, `hooks/grill-gate.sh`, `hooks/window-fill-guard.sh`,
-`hooks/turn-exit-guard.sh`, `hooks/work-start-guard.sh`
+`hooks/turn-exit-guard.sh`, `hooks/work-start-guard.sh`, `hooks/main-run-context.sh`
 
 ## What it is called here
 
@@ -147,9 +147,13 @@ flowchart TD
 - **A reply to the owner's order begins with the result, not with intent or its justification.** A
   justification under someone else's accepted decision reads as its appraisal. One exception:
   execution stopped by an obstacle — then the obstacle is named.
+- **The last run of the main branch is read first thing in a session and after every known
+  merge.** A merge reads as the end of the work, and a red main branch after it lives until the
+  owner notices. The start hook prints the line; after a merge the same command is called by hand,
+  and a red or a pushed-out run is fixed before new work is taken.
 - **A session does not start work by itself.** A start needs the owner's word in the same session:
   the handover, the state from the startup hook and an assigned epic say what to do, not whether to
-  work. The form of the message is judged: an empty message, one word or one path order no work.
+  work. An empty message, one word or one path order no work.
 - **A refusal by an external limiter removes the way, not the task.** It is not the tree's guard and
   names no exit. The way is taken from the guard that already described this fix — a bypass with
   the reason in the commit body, a word to the owner — and the task stays the same.
@@ -168,8 +172,8 @@ flowchart TD
 - **A task folder is created for any work, no exceptions.** An exception with even one lawful form
   is executed as permission. It goes in before the first edit.
 - **The task folder goes into the branch by a commit, not lives in one working tree.** Uncommitted,
-  it passes edits without refusal, and the refusal comes at the end, when the plan is already gone.
-  Outside history one draft without a number is lawful.
+  it passes edits without refusal until the plan is already gone. Outside history one draft without
+  a number is lawful.
 - **The task folder is taken apart by the last commit before the PR opens, not after approval.** A
   person merges as soon as they see green, and no room is left for a closing commit.
 - **After opening the PR, the executor tells the owner the number, what it waits for and what comes
@@ -196,27 +200,24 @@ flowchart TD
   is narrowed to what the stages give.
 - **A stage's readiness sign is taken from the output of a command run while the plan is written.**
   Written by a guess, it is checked at the stage itself — latest of everything that depended on it.
-  Some lines come not from the work but from an unconfigured tree, and no stage puts them out.
 - **A plan for work that ports a technique from outside is written by a measurement of one's own
-  code.** Reading the sample says how the sample is built; what of it is needed here is said by a
-  count over one's own files.
+  code.** Reading the sample says how it is built; what is needed here is said by a count over
+  one's own files.
 - **Waiting for one part of a stage is never a stop of the stage.** The parts independent of what is
   awaited are done in the same turn; the owner is told what is done and what is left for their step.
-  A refused command reads the same: everything else is done first.
 - **A finding made mid-stage is checked against the plan's exit conditions before the first edit.**
-  Nearness of subject proves no belonging. A finding named by no exit condition goes to the section
-  on what the work does not do, and is filed as a task.
+  A finding named by no exit condition goes to the section on what the work does not do, and is
+  filed as a task.
 - **Done work is marked only in the progress.** "Where we stand" is rewritten by every session, not
   appended: it is the first thing the next session reads.
-- **A word for a new notion is looked up in the tree's glossary.** The package carries the common
-  part, the tree appends the subject part by an override; the glossary goes into the context whole
+- **A word for a new notion is looked up in the tree's glossary.** It goes into the context whole
   at session start, so "did not read it" is never a ground.
 - **The task folder is created as a draft and gets its number by a command.** Until the grill ends,
   how many tasks come out is unknown, so the number never comes first.
 - **An abandoned grill is visible.** A draft older than a week is listed by the work queue audit.
 - **Work ordered in words becomes a task in the queue in the same turn.** Even if it will not be
-  done now. A draft folder is not the queue: it has no number, and one session knows of it.
-  Postponed work names a date; postponed silently, it reads as done.
+  done now: a draft folder has no number, and one session knows of it. Postponed work names a
+  date; postponed silently, it reads as done.
 - **Work begins with the epic, and a task outside one is not taken.** The epic names what the whole
   is, and the main branch takes that whole or does not take it. Work outside an epic exists only by
   the owner's word about that work, said about that work.
