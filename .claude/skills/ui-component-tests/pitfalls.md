@@ -114,3 +114,16 @@ The five refuted candidates cost about two hours.
   changed order of the rows is the seeding: the record key is created anew by every run, and the
   handing out by it is random.
 
+## A frame that moved with no edit
+
+- **The message field flipped between 192 and 195 points for months, and three tasks paid for it.**
+  Each re-taking of the references was green on the showcase it was taken from and red on the next
+  one. The digit advance measured 8.668 in both states, so the font was suspected and cleared twice
+  over. The cause was a size the kit never declared: the `textarea` had no width, and the browser
+  computes such a width from the number of columns and the average character width of the first
+  available family. That is a different quantity from the digit advance, which is why measuring the
+  digit saw nothing. The probe that tells the states apart is a bare `textarea cols=20` with
+  `system-ui`: 158 points in one raising, 161 in another.
+
+- **A rearrangement of the stories in a file moves frames nobody edited.** A story taller than the
+  window is shot with the page shifted, the page keeps the shift, and the next story is shot by it.

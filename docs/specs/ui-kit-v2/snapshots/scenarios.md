@@ -279,3 +279,14 @@ measurement itself, so a story whose content arrives a moment later is not calle
 Covered by `tools/tests/showcase-probe.test.sh` — four outcomes of the shared wait with the exit
 switched off, over a substituted page. Checked on the spot: the sweep over the raised showcase walked
 546 stories and 79 overview pages whole, with no empty showings.
+
+### SC-UKV-180 — the frame does not depend on a size the kit did not declare
+
+Given the message field inside a showing whose cell has a width
+When the field is measured
+Then its width equals the cell's, and the browser's default size by the number of columns does not
+reach it
+
+Not covered: a style that applied is told from one that was only written by the drawn frame, and the
+spec environment applies no styles at all. Closed by the seven reference frames of the family, taken
+at the width of the showing's cell.

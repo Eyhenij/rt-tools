@@ -206,6 +206,13 @@ as an attachment.
   showcase started over them serves a runtime asking for an update of a hash that is gone: every story
   hangs at preparing while the story index is whole. Neither a page reload nor a restart cures it.
 
+- **A frame never reads a size the kit did not declare.** A control without a declared width gets one
+  from the browser's own default, and that default is computed from the average character width of
+  the first available family — a quantity that is not the digit advance and does not hold between
+  raisings of the showcase. The message field stood so for months: 192 points against 195, four
+  frames flipping whichever way the references were taken, three tasks paying for it. The size is
+  declared by the kit, and then the frame no longer depends on what the machine resolved.
+
 Below are the rules of the design of the kit: in the same list, because the binding to the code is read by a
 machine, and a heading inside a list breaks its reading off.
 

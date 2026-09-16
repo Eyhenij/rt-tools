@@ -102,26 +102,28 @@ Four checks do not replace one another, and the choice between them is not a mat
   frames match each other no worse than two late ones. So what is waited for is the drawing itself —
   a nested pair of animation-frame calls, the second of which stands already past the drawn frame. A
   probe of its own guards the rollback, not the snapshots.
+- **A value that comes from the machine is caught by two raisings of the showcase, not by one run.**
+  Inside one raising it stands still, so a repeated run on the same showcase confirms nothing.
+
+- **A size the kit did not declare is taken from the browser's default, and that default is not a
+  constant.** A frame that moved with no edit is asked first whether the kit declared that size.
+
 - **A divergence that falls out rarely leaves evidence, otherwise there is nothing to sort out.**
   The harness puts the difference frame and the run's conditions — whether the frames matched and on
   which attempt, the window and page sizes, the point density, the worker's number — into a
   directory outside the repository, which the next run does not touch.
 - **A shot beyond the window touches the page under the shutter, and that is cured not by a cycle
-  but by the window.** The browser substitutes the window for the duration of such a frame, the page
-  gets a `resize`, and everything computed from the window sizes moves right inside the frame. A
-  cycle of matching frames pins the shift instead of curing it. The cure is the reverse order: the
-  window is widened **before** the frame, the showing is waited for settled, and an ordinary frame is
-  taken. The consequence is visible in the reference — `100vh` and `100vw` of such a story are
+  but by the window.** The browser substitutes the window for such a frame, the page gets a `resize`,
+  and a cycle of matching frames pins the shift instead of curing it. The cure is the reverse order:
+  widen the window **before** the frame, wait for the showing to settle, take an ordinary frame. The consequence is visible in the reference — `100vh` and `100vw` of such a story are
   computed from the widened window.
 - **A frame of a node beyond the window is cured the same way.** A node taller than the window goes
   past its bounds no less than a whole page. The window is widened to the node being shot, not to
   the page: a superfluous growth changes everything computed from the window at stories that did not
   ask for it.
-- **The trace of such a shot is left at the story after the tall one.** The tall one is shot by a
-  shifted page; the page keeps the shift, and the next story is shot by it too. So the divergence
-  lands on a neighbour whose content nobody touched, and a rearrangement of the stories in the file
-  moves frames nobody edited. What tells one from the other is a measurement of the node before the
-  frame and after it: a height that changed across the shutter names the shot, not the layout.
+- **The trace of such a shot is left at the story after the tall one.** The page keeps the shift, so
+  the divergence lands on a neighbour nobody touched. What tells one from the other is a measurement
+  of the node across the shutter: a height that changed names the shot, not the layout.
 - **A frame is assembled from what lies in the tree, and the harness cuts the shot off from a
   foreign network.** Everything that travels from outside brings a foreign availability into the
   frame: not having arrived, it leaves an empty place, and the snapshot diverges where nobody
@@ -130,13 +132,9 @@ Four checks do not replace one another, and the choice between them is not a mat
   removed by one line. This is cut off by the harness: a request beyond the local machine fails the
   run, and a returned external address is visible at once rather than guessed from run to run.
 - **A settled showing and a state that came about are not the same, and a story is waited for by the
-  second.** The harness judges the frame by the network's silence and the motionless size of the
-  node being shot, while a screen with skeletons has a size just as motionless as a screen with a
-  list: three references in a row pinned the skeletons and came out indistinguishable from one
-  another. The sign of a state that came about is known only to the story itself — the node that
-  exists in that state and the node that no longer does — so it is the story that waits for it by a
-  `play` step, before the shot. The shared harness has nowhere to take that sign from: every story
-  has its own.
+  second.** A screen with skeletons has a size as motionless as a screen with a list, so the shared
+  harness cannot tell them apart. The sign of the state is known only to the story — the node that
+  exists in it and the node that no longer does — and the story waits for it by a `play` step.
 - **An overlay opened by a story lives to the frame only where that is declared.** There is nothing
   to tell such a frame from a story that should have no panel at all — it is green and looks whole.
   So a story names the overlay's node as a shot parameter: the harness mutes the pointer leaving on
