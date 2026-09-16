@@ -58,7 +58,8 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 2 из 2 — Главная подтягивается в ветку эпика по мере слияний
-- **Next step:** отвести ветку задачи RT-1878 от этой ветки — прокрутка первого кита.
+- **Next step:** влить ветку эпика в RT-2165-showcase-font-from-machine и отдать её: лечение
+  ширины переписки лежит там, и без него набор кадров витрины красный на четырёх кадрах.
 
 The progress in full — `docs/tasks/RT-1870-one-kit/progress.md`; the plan lies next to it.
 
@@ -71,26 +72,26 @@ none
 ### Commits over the main branch
 
 ```
-f5ef6ff36 Merge remote-tracking branch 'origin/main' into RT-1870-one-kit
-d373b433c [RT-2102] Рабочий стол не рисует панель, для которой не объявлен шаблон (#2128)
-5d4db1852 docs(rt:ui-kit-v2): папка задачи RT-2102 разобрана
-21fe46f7f docs(rt:ui-kit-v2): край без слота списка написан на странице обзора, эталоны сходятся
-701a06ec7 fix(rt:ui-kit-v2): рабочий стол не рисует панель, для которой не объявлен шаблон
-6c3d741e7 docs(rt:ui-kit-v2): папка задачи RT-2102 заведена, разбор и план записаны
-af04b5342 Merge remote-tracking branch 'origin/main' into RT-1870-one-kit
-f64ef92a7 [RT-1951] Страница с входами во всех семействах зовётся одним именем (#2126)
-87bd0b9bf Merge branch 'RT-1870-one-kit' into RT-1951-playground-one-name
-a4e376624 Merge remote-tracking branch 'origin/main' into RT-1870-one-kit
-14c3c05a5 docs(rt:ui-kit-v2): папка задачи RT-1951 разобрана
-9c60400cf docs(rt:ui-kit-v2): этап 3 RT-1951 закрыт — панель инструментов названа причиной
-dc023923c feat(rt:ui-kit-v2): семейство без страницы входов названо причиной, а не молчанием
-5bc70e26f docs(rt:ui-kit-v2): этап 2 RT-1951 закрыт — страница входов зовётся одним именем
-553ee1053 Revert "test(rt:ui-kit-v2): четыре эталона поля ввода сняты заново по измерению"
-6668f7ade refactor(rt:ui-kit-v2): страница с входами везде зовётся Playground
-24d0f3981 Merge branch 'RT-2117-composer-refs-stale' into RT-1951-playground-one-name
-71c0b7ef5 Merge branch 'RT-1870-one-kit' into RT-1951-playground-one-name
-3b798f6b4 docs(rt:ui-kit-v2): папка задачи RT-2117 разобрана
-a9b0a4786 docs(rt:ui-kit-v2): папка задачи RT-2117 заведена, разбор и план записаны
+2f17cbfa9 [RT-2153] Список записей с панелью собран без единой строки Material (#2164)
+65a2e05c4 [RT-2152] Обе семьи выбора принимают свою разметку указателя (#2163)
+67bcc2051 feat(rt:ui-kit-v2): на странице указателя показаны виды кнопки и содержимое панели
+a21ce0e40 feat(rt:ui-kit-v2): панель выбора мерится содержимым и открывается без прокрутки
+5543462c2 docs(rt:ui-kit-v2): ссылка на страницу указателя ведёт на сторис, а не в пустоту
+8bddfe1df chore(rt:ui-kit-v2): обёртка страницы указателя внесена в принятое единообразия
+17c1571d7 Revert "test(rt:ui-kit-v2): четыре кадра переписки сняты заново — ширину задаёт шрифт машины"
+068f9760b feat(rt:ui-kit-v2): у своего указателя выбора появилась своя страница витрины
+f57a17e06 fix(rt:ui-kit-v2): свой указатель выбора перестал таскать за собой полевую рамку
+76ad7d111 chore(rt:ui-kit-v2): обёртки показа списка записей внесены в принятое единообразия
+0a913e476 docs(rt:ui-kit-v2): папка задачи RT-2153 разобрана
+f176a4902 test(rt:ui-kit-v2): четыре кадра переписки сняты заново — ширину задаёт шрифт машины
+caabdebe3 refactor(rt:ui-kit-v2): маркеры сторон панели переименованы — имя занято первым китом
+b045b58af docs(rt:ui-kit-v2): этап 6 RT-2153 закрыт — расхождение с первым китом посчитано
+4fc0ccf4a feat(rt:ui-kit-v2): витрина показывает список записей, шесть эталонов сняты после осмотра
+1eed1daa6 test(rt:ui-kit-v2): список записей закрыт описаниями, привязки проставлены
+71eb8d3b8 feat(rt:ui-kit-v2): список записей со своей панелью собран без единой строки Material
+783ad00d9 docs(rt:ui-kit-v2): договорённость о списке записей с панелью написана до кода
+ddc9f24d2 docs(rt:ui-kit-v2): этап 1 RT-2153 закрыт — во втором ките нет трёх частей из пяти тысяч строк
+12931bea9 docs(rt:ui-kit-v2): заведена папка задачи RT-2153, разбор и замысел записаны
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
