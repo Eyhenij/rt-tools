@@ -4,21 +4,27 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `<name from the state list of rule task-flow>`
-- **Stage:** <number> of <total> — <name>
-- **Done:** <briefly>
-- **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
-- **Waiting for the owner:** <what exactly, or "no">
-- **PR:** <number and state, or "not open yet">
+- **State:** `этап-идёт`
+- **Stage:** 2 of 2 — Переснять затронутые кадры и подтвердить вторым поднятием
+- **Done:** обе стороны пары в кадрах, набор второго кита 589 из 589 дважды с перезапуском витрины
+- **Next step:** разобрать папку задачи и открыть PR в ветку эпика
+- **Uncommitted:** правки обёрток показа, история и кадр
+- **Waiting for the owner:** нет
+- **PR:** not open yet
 
 ## Decisions along the way
 
-- **<decision>** — <reason>. Affected stage of the plan: <number>.
+- **Правка перенесена, а не написана заново** — она была написана и проверена в ветке
+  RT-2152, которая слита и удалена. Affected stage of the plan: 1.
 
 ## Sessions
 
-### <date>
+### 16 сентября 2026
 
-- <what was done, in numbers: files, commits, what is green>
-- <what we stumbled on and what caught it>
+- Коммит `150dbf930` перенесён на эту ветку как `03310a16c`, отпавшая ветка снесена с обеих сторон
+- Уборка архива приехала гейтом пуша: 19 записей с вышедшим сроком
+- Заведён показ `chevron` и история `ChevronOpen` с открытым списком: на кадре кнопка «Города»
+  со стрелкой вверх и панель с тремя городами
+- Закрытую сторону пары держит прежний кадр `buttons` — «Города» со стрелкой вниз; пересъёмки он
+  не потребовал
+- Набор кадров второго кита: 589 из 589 дважды подряд, между прогонами витрина поднята заново
