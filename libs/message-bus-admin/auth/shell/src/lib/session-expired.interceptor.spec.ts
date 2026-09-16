@@ -5,11 +5,10 @@ import { TestBed } from '@angular/core/testing';
 import { NavigationEnd, provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
-import { IAdminSession } from '@rt/message-bus-admin/auth/util';
+import { IAdminSession, RETURN_TO_PARAM, SIGN_IN_PATH } from '@rt/message-bus-admin/auth/util';
 import { filter, firstValueFrom, Observable, take } from 'rxjs';
 
 import { sessionExpiredInterceptor } from './session-expired.interceptor';
-import { RETURN_TO_PARAM, SIGN_IN_PATH } from './session.guard';
 
 const LIST_PATH: string = '/api/postmortems';
 const SESSION_PATH: string = '/api/auth/session';

@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { IAdminListQuery, IReadFault, readFaultOf } from '@rt/message-bus-admin/common/core/util';
+import { IAdminListQuery, IReadFault, ISpokenFault, readFaultOf, spokenFaultOf } from '@rt/message-bus-admin/common/core/util';
 import { IPage } from '@rt/message-bus-common';
 import { catchError, Observable, throwError, timeout, TimeoutError } from 'rxjs';
 
@@ -76,6 +76,19 @@ export function asReadFault(error: unknown): Observable<never> {
     }
 
     return throwError((): IReadFault => readFaultOf(0, null));
+}
+
+/**
+ * Отказ правки в то, что покажет панель: род и слово приёмника.
+ *
+ * Разбор кода и тела — чистая функция общего слоя; здесь остаётся достать из ответа каркаса код и
+ * тело. Обрыв связи и вышедший срок ожидания кода не несут вовсе — им ставится ноль, тот же,
+ * каким каркас отвечает на недошедший запрос.
+ */
+export function asSpokenFault(error: unknown): Observable<never> {
+    const response: HttpErrorResponse | null = error instanceof HttpErrorResponse ? error : null;
+
+    return throwError((): ISpokenFault => spokenFaultOf(response?.status ?? 0, response?.error ?? null));
 }
 
 /** Страница списка. Форму строки называет тот, кто зовёт: она у каждого раздела своя. */

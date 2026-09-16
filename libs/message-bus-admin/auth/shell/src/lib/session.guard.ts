@@ -1,17 +1,8 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
-import { IAdminSession } from '@rt/message-bus-admin/auth/util';
+import { IAdminSession, RETURN_TO_PARAM, SIGN_IN_PATH } from '@rt/message-bus-admin/auth/util';
 import { map, Observable, of } from 'rxjs';
-
-/** Адрес экрана входа. Один на всё приложение: сюда уводит и гвард, и выход. */
-export const SIGN_IN_PATH: string = 'sign-in';
-
-/**
- * Куда человек шёл, когда его отправили на вход. Читается экраном входа после успеха, поэтому
- * имя параметра названо здесь, а не повторено строкой в обоих местах.
- */
-export const RETURN_TO_PARAM: string = 'returnTo';
 
 /**
  * Пускает вошедшего и уводит на вход остальных.

@@ -28,9 +28,13 @@
       "reason": "two kits stand side by side in one application and share no code: their own selectors, their own styling token set, their own component list",
       "task": "RT-764"
     },
-    "export SIGN_IN_PATH @ apps/message-bus-admin-e2e, libs/message-bus-admin/auth/shell": {
+    "export SIGN_IN_PATH @ apps/message-bus-admin-e2e, libs/message-bus-admin/auth/util": {
       "reason": "the end-to-end suite declares the entry address and the node search by values of its own deliberately: taken out of the lib under check, they would be green at any value",
       "task": "RT-764"
+    },
+    "value login__viewport @ BEM_BLOCK @ libs/message-bus-admin/auth/feature/setup ~ BEM_BLOCK @ libs/message-bus-admin/auth/feature/sign-in": {
+      "reason": "two screens stand on one kit block of the sign-in, and each names its host class next to its own decorator: a shared constant would be a lib for one string",
+      "task": "RT-1902"
     },
     "export pathOf @ projects/agent-kit, projects/ui-kit-v2": {
       "reason": "one name over different notions: a resource path at the rules package and an address path at the kit",
