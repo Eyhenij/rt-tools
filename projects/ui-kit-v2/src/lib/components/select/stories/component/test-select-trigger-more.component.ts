@@ -87,7 +87,12 @@ function chosen(value: string | null): FormControl<string | null> {
                                     }
                                     @case (buttonKind.Label) {
                                         <span>Города</span>
-                                        <rt-icon name="chevron-down" size="sm" />
+                                        <!--
+                                            Стрелка смотрит по состоянию списка: обстановка шаблона
+                                            несёт признак открытости, и нарисованная намертво она
+                                            врала бы о том, открыт список или закрыт.
+                                        -->
+                                        <rt-icon size="sm" [name]="state.isOpen ? 'chevron-up' : 'chevron-down'" />
                                     }
                                     @case (buttonKind.Tag) {
                                         <rt-tag severity="info" [value]="state.label || 'Город'" />
