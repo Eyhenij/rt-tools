@@ -1,0 +1,119 @@
+@use '../../../styles/breakpoints' as bp;
+
+@layer rt-kit.components {
+    .rt-dynamic-list {
+        --rt-dynamic-list-gap: var(--rt-space-4);
+        --rt-dynamic-list-search-width: var(--rt-size-64);
+        --rt-dynamic-list-veil-bg: var(--rt-color-bg-surface);
+
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        block-size: 100%;
+        gap: var(--rt-dynamic-list-gap);
+        inline-size: 100%;
+        min-block-size: 0;
+
+        &__loader {
+            display: flex;
+            flex: 1 1 auto;
+            align-items: center;
+            justify-content: center;
+            padding: var(--rt-space-8);
+        }
+
+        // Вертушка подгрузки стоит над нарисованным: записи остаются на месте, и человек видит,
+        // что список тот же самый, а не подменённый.
+        &__veil {
+            position: absolute;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: color-mix(in srgb, var(--rt-dynamic-list-veil-bg) 60%, transparent);
+            inset: 0;
+        }
+
+        // Полоса панели: отбор слева, действия и поиск справа. Переносится, когда не влезает —
+        // судьба непоместившегося названа здесь, у самой полосы.
+        &__toolbar {
+            display: flex;
+            flex: 0 0 auto;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--rt-space-2);
+            min-inline-size: 0;
+        }
+
+        &__selectors {
+            display: flex;
+            flex: 0 1 auto;
+            align-items: center;
+            gap: var(--rt-space-2);
+            min-inline-size: 0;
+        }
+
+        &__counter {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+
+        // Панель переносит поиск на свою строку, когда он не влезает рядом с действиями. Судьба
+        // непоместившегося названа здесь, а не оставлена на волю потребителя: без переноса список
+        // раздаётся шире хозяина и уезжает за его край — медиазапрос этого не ловит, ширина там
+        // своя, а не оконная.
+        &__right {
+            display: flex;
+            flex: 1 1 auto;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: var(--rt-space-2);
+            min-inline-size: 0;
+        }
+
+        &__actions {
+            display: flex;
+            flex: 0 0 auto;
+            align-items: center;
+            gap: var(--rt-space-1);
+        }
+
+        // Поле поиска ужимается вместе с панелью: ширина названа потолком, а не размером. Жёсткая
+        // ширина выталкивала бы действия за край у потребителя с узкой панелью, и никакой запрос
+        // этого не поймал бы — ширина там своя, а не оконная.
+        &__search {
+            flex: 1 1 auto;
+            max-inline-size: var(--rt-dynamic-list-search-width);
+            min-inline-size: 0;
+        }
+
+        &__content {
+            display: flex;
+            overflow: auto;
+            flex: 1 1 auto;
+            flex-direction: column;
+            min-block-size: 0;
+        }
+
+        &__empty {
+            flex: 1 1 auto;
+        }
+
+        &__pagination {
+            flex: 0 0 auto;
+        }
+
+        // Узкий экран объявлен запросом, а не условием в разметке. Порог тот же, о котором
+        // отвечает служба порогов кита, и берётся он из общего файла порогов.
+        @media (width <= #{bp.$rt-bp-lg}) {
+            &__right {
+                flex-wrap: wrap;
+            }
+
+            &__search {
+                max-inline-size: none;
+            }
+        }
+    }
+}
