@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-epic.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
 #
 # The delivery law demands three things nothing usually checks: an edit starts from a task visible
@@ -175,6 +175,12 @@ fault() {
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/git-guard-delivery-folder.sh" ] && . "$rt_hooks_dir/git-guard-delivery-folder.sh" 2>/dev/null
 
+# The assignment of an epic to this working copy: the same technique. It is sourced before the
+# branch block — a branch of someone else's epic is refused there, at the minute the work is taken.
+# No helper — the assignment is not judged, and the copy works by whatever it finds itself.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/git-guard-tree-assignment.sh" ] && . "$rt_hooks_dir/git-guard-tree-assignment.sh" 2>/dev/null
+
 # The epic of a task: the same technique as with the folder. It is sourced before the branch block —
 # there the base of a new branch is judged, and with an epic it is judged against the branch of the
 # epic. No helper — the epic is not judged, and the base is asked against the main branch as before.
@@ -274,6 +280,12 @@ if [ -n "$branch_arg" ]; then
         # base fresh — `git checkout -b <branch> origin/<main>` — would be forbidden.
         base_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\4/p' | head -1)"
         base_ref="${base_arg:-HEAD}"
+        # The assignment of the copy: judged before the base. A branch of someone else's epic is
+        # not cured by a fresh base, and the refusal about the base would send the executor to fix
+        # what does not need fixing.
+        command -v rt_assignment_fault >/dev/null 2>&1 \
+            && rt_assignment_fault "$epic_arg" "the branch «${branch_arg}»"
+
         if [ -n "$epic_arg" ] && command -v rt_epic_base >/dev/null 2>&1; then
             rt_epic_base "$epic_arg" "$base_ref" "$branch_arg"
         elif git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \

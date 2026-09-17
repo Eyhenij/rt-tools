@@ -81,11 +81,59 @@ export function assignmentOf(root = ROOT) {
 }
 
 /**
+ * What is wrong with taking work under this epic — or an empty string where nothing is.
+ *
+ * Three answers, and they are different states, not degrees of one: the table names no such copy,
+ * the copy has no epic assigned, the epic is someone else's. The first two are cured by the owner's
+ * word and by nothing else; the third names both epics, so that the executor sees what they took
+ * and what they were given.
+ *
+ * A tree that declares no assignments is not judged: it has nothing to divide.
+ */
+export function assignmentFault(epic, root = ROOT) {
+    if (!CONFIG.assignmentsFile) {
+        return '';
+    }
+
+    const key = CONFIG.board?.taskKey ?? '';
+    const name = treeName(root);
+
+    if (name === null) {
+        return `this working copy names itself in no way — write its short name into ${CONFIG.treeNameFile}, and the assignment table will find its row`;
+    }
+
+    const row = assignmentOf(root);
+
+    if (row === null) {
+        return `the table ${CONFIG.assignmentsFile} holds no row for the copy «${name}». Ask the owner what this copy leads; work is not taken by guesswork`;
+    }
+
+    if (row.epic === null) {
+        return `no epic is assigned to the copy «${name}» — the row in ${CONFIG.assignmentsFile} holds a dash. Ask the owner what to take; an epic chosen by oneself is not an order`;
+    }
+
+    if (epic !== null && epic !== undefined && String(epic) !== '' && Number(epic) !== row.epic) {
+        return `the copy «${name}» leads the epic ${key}-${row.epic}, and this work belongs to ${key}-${epic}. Someone else's epic is not taken by one's own decision: the owner moves the assignment`;
+    }
+
+    return '';
+}
+
+/**
  * Called by hand and by the startup hook: it says what this copy answers for. The word about the
  * absence is printed just as loudly as the assignment itself — a copy without a row is exactly the
  * case in which work gets taken by guesswork.
  */
 if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href) {
+    const asked = process.argv.indexOf('--fault');
+
+    if (asked !== -1) {
+        // The refusal text alone, and an empty answer where nothing is wrong: the caller is a guard,
+        // and it prints what it got. The exit code stays zero — the refusal is the guard's to make.
+        console.log(assignmentFault(process.argv[asked + 1] ?? ''));
+        process.exit(0);
+    }
+
     const name = treeName();
     const row = assignmentOf();
 
