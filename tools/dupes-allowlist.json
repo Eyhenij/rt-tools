@@ -1,5 +1,9 @@
 {
   "accepted": {
+    "export Counter @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the kits have showcases of their own, and the story names match by the agreement of showing",
+      "task": "RT-1880"
+    },
     "export Header @ projects/ui-kit, projects/ui-kit-v2": {
       "reason": "a showcase story heading: the kits have showcases of their own, and the story names match by the agreement of showing",
       "task": "RT-764"
@@ -15,6 +19,10 @@
     "export Playground @ projects/ui-kit, projects/ui-kit-v2": {
       "reason": "a showcase story heading: the kits have showcases of their own, and the story names match by the agreement of showing",
       "task": "RT-764"
+    },
+    "export RtActionBarService @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "two kits stand side by side in one application and share no code: their own selectors, their own styling token set, their own component list — the same case as RtAsideService above",
+      "task": "RT-1880"
     },
     "export RtAsideService @ projects/ui-kit, projects/ui-kit-v2": {
       "reason": "two kits stand side by side in one application and share no code: their own selectors, their own styling token set, their own component list",
