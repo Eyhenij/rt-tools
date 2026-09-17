@@ -230,7 +230,8 @@ rm -f "$DISPATCH_DIR/aaa_denies.sh" "$DISPATCH_DIR/zzz_says.sh"
 # считается, а молчание его читается как согласие.
 # Образцы стража и разбор записи хода лежат в соседних файлах: без них страж молчит.
 cp "$ASSETS/hooks/turn-exit-guard.sh" "$ASSETS/hooks/turn-exit-patterns.sh" \
-    "$ASSETS/hooks/turn-exit-verdict.sh" "$DISPATCH_DIR/" 2>/dev/null
+    "$ASSETS/hooks/turn-exit-verdict.sh" "$ASSETS/hooks/turn-exit-epic.sh" "$ASSETS/hooks/epic-over.sh" \
+    "$DISPATCH_DIR/" 2>/dev/null
 
 REAL_REPO="$(fixture_repo RT-9-real)"
 mkdir -p "$REAL_REPO/docs/tasks/RT-9-real"
