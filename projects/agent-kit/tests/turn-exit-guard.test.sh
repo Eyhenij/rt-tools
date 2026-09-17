@@ -3,74 +3,9 @@
 #
 # Проверяется механика, а не карта дерева: запись хода и папка задачи собираются здесь же.
 # Страж судит пару — объявленное состояние работы и то, что за ход по ней сделано.
-. "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+. "$(dirname "${BASH_SOURCE[0]}")/turn-exit-lib.sh"
 
-echo "страж выходов хода"
-
-TURNS="$(mktemp -d)"
-REPO="$(fixture_repo RT-1-probe)"
-export CLAUDE_PROJECT_DIR="$REPO"
-cleanup() { rm -rf "$TURNS" "$REPO"; }
-trap cleanup EXIT
-
-TASK="$REPO/docs/tasks/RT-1-probe"
-mkdir -p "$TASK"
-
-state_is() {
-    printf '# Ход работы\n\n## Где стоим\n\n- **Состояние:** `%s`\n- **Следующий шаг:** дописать страж\n' \
-        "$1" > "$TASK/progress.md"
-}
-
-transcript() {
-    local path
-    path="$TURNS/turn-$RANDOM.jsonl"
-    : >"$path"
-    for line in "$@"; do
-        printf '%s\n' "$line" >>"$path"
-    done
-    printf '%s' "$path"
-}
-
-say() { jq -c -n --arg t "$1" '{type:"user",message:{content:[{type:"text",text:$t}]}}'; }
-reply() { jq -c -n --arg t "$1" '{type:"assistant",message:{content:[{type:"tool_use",name:"Read",input:{file_path:"a.md"}}]}}'; }
-said() { jq -c -n --arg t "$1" '{type:"assistant",message:{content:[{type:"text",text:$t}]}}'; }
-ran() {
-    jq -c -n --arg c "$1" \
-        '{type:"assistant",message:{content:[{type:"tool_use",name:"Bash",input:{command:$c}}]}}'
-}
-edited() {
-    jq -c -n '{type:"assistant",message:{content:[{type:"tool_use",name:"Edit",input:{file_path:"a.md"}}]}}'
-}
-asked() {
-    jq -c -n '{type:"assistant",message:{content:[{type:"tool_use",name:"AskUserQuestion",input:{questions:[]}}]}}'
-}
-answered() { jq -c -n --arg t "$1" '{type:"user",message:{content:[{type:"tool_result",content:$t}]}}'; }
-
-input_stop() {
-    jq -n --arg p "$1" --arg d "$REPO" --argjson a "${2:-false}" \
-        '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:$a}'
-}
-
-expect_stop() {
-    local label="$1" json="$2" want="$3" out got
-    out="$(printf '%s' "$json" | "$HOOKS/turn-exit-guard.sh" 2>/dev/null)"
-    if [ -z "$out" ]; then
-        got="PASS"
-    else
-        got="$(printf '%s' "$out" | jq -r 'if .decision == "block" then "BLOCK" else "PASS" end' 2>/dev/null)"
-    fi
-    report "$label" "$got" "$want"
-}
-
-# Отказ читается тем, кому он адресован: страж называет первый этап замысла, а не общие слова.
-expect_reason() {
-    local label="$1" json="$2" want="$3" out
-    out="$(printf '%s' "$json" | "$HOOKS/turn-exit-guard.sh" 2>/dev/null | jq -r '.reason // ""' 2>/dev/null)"
-    case "$out" in
-        *"$want"*) report "$label" "есть:$want" "есть:$want" ;;
-        *) report "$label" "нет:$want" "есть:$want" ;;
-    esac
-}
+echo "проверка выхода из хода"
 
 # --- ход, кончившийся отчётом ------------------------------------------------------------
 # Он выглядит работой лучше всякой другой: полон, называет номера и состояния, и пустоты за
@@ -470,77 +405,5 @@ expect_stop "SC-AK-1115 — «прекрати» отпускает ход" \
 expect_stop "SC-AK-1115 — «не двигайся» отпускает ход" \
     "$(input_stop "$(transcript "$(say 'не двигайся, жди')" "$(reply)")")" PASS
 
-# --- SC-AK-1116 — вопрос без работы в идущем этапе ---------------------------------------------
-# Ожидание одной части этапа не останавливает этап: части, не зависящие от ответа, делаются в том
-# же ходу, и вопрос идёт за ними. Вопрос во главе пустого хода — остановка с приложенным вопросом.
-state_is 'этап-идёт'
-expect_stop "SC-AK-1116 — вопрос без единой правки в идущем этапе ход не отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)" "$(asked)")")" BLOCK
-expect_reason "SC-AK-1116 — отказ называет части, не зависящие от ответа" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)" "$(asked)")")" "do not depend on the answer"
-expect_stop "SC-AK-1116 — вопрос после работы ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(asked)")")" PASS
-state_is 'этапы-кончились'
-expect_stop "SC-AK-1116 — вопрос без работы в другом состоянии ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)" "$(asked)")")" PASS
 
-# --- SC-AK-1117 — открытый эпик: ход с работой и второй проход ---------------------------------
-# Таблица эпика подменяется двойником: что он печатает на `--unfinished`, то и есть состояние
-# эпика в сценарии. Пустой ответ с нулевым кодом — эпик закрыт; ненулевой код — прочесть нельзя.
-state_is 'этап-идёт'
-mkdir -p "$REPO/.claude" "$REPO/tools"
-printf '%s\n' '{"layout":{"checks":"tools"}}' > "$REPO/.claude/rt-kit.json"
-cat > "$REPO/tools/epic-table.mjs" <<'STUB'
-const left = process.env.STUB_LEFT ?? '';
-const code = Number(process.env.STUB_CODE ?? '0');
-if (left !== '') {
-    process.stdout.write(`${left}\n`);
-}
-process.exit(code);
-STUB
-export STUB_LEFT='RT-2 RT-3' STUB_CODE=0
-
-expect_stop "SC-AK-1117 — ход, кончившийся правкой, при открытом эпике не отпускается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" BLOCK
-expect_reason "SC-AK-1117 — отказ называет незакрытые задачи эпика" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" "RT-2 RT-3"
-expect_stop "SC-AK-1117 — отданная работа со взятой следующей при открытом эпике не отпускается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft')" "$(ran 'npm run task:move -- 3 in-progress')" "$(edited)")")" BLOCK
-expect_stop "SC-AK-1117 — второй проход при открытом эпике судится" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(said 'Готово.')")" true)" BLOCK
-expect_stop "SC-AK-1117 — вопрос после работы отпускает и при открытом эпике" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(asked)")")" PASS
-expect_stop "SC-AK-1117 — отказ проверки последним действием отпускает и при открытом эпике" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'echo x > a.ts')" "$(answered 'BLOCKED by task-flow: нет замысла')")")" PASS
-expect_stop "SC-AK-1117 — слово владельца об остановке отпускает и при открытом эпике" \
-    "$(input_stop "$(transcript "$(say 'останови, дальше сам')" "$(edited)")")" PASS
-
-# --- SC-AK-1118 — передача рукой при открытом эпике --------------------------------------------
-# Передача при уплотнении пишется хуком, не командой в ходу; написанная рукой до порога — остановка,
-# объявленная тем, кому она удобна. Отказ проверки окна отпускает как любой отказ.
-expect_stop "SC-AK-1118 — передача рукой при открытом эпике ход не отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'npm run handoff')")")" BLOCK
-expect_reason "SC-AK-1118 — отказ называет передачу рукой" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'npm run handoff')")")" "by the hand of the executor"
-expect_stop "SC-AK-1118 — отказ проверки окна последним действием отпускает ход" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'npm run handoff')" "$(ran 'echo x > a.ts')" "$(answered 'BLOCKED by window-fill-guard: window fill 52%')")")" PASS
-
-# --- SC-AK-1119 — закрытый и нечитаемый эпик: прежнее поведение --------------------------------
-export STUB_LEFT='' STUB_CODE=0
-expect_stop "SC-AK-1119 — при закрытом эпике ход с работой отпускается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
-expect_stop "SC-AK-1119 — при закрытом эпике второй проход отпускается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(said 'Готово.')")" true)" PASS
-expect_stop "SC-AK-1119 — при закрытом эпике передача рукой отпускает ход" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'npm run handoff')")")" PASS
-export STUB_LEFT='RT-2' STUB_CODE=1
-expect_stop "SC-AK-1119 — нечитаемая таблица: ход с работой отпускается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
-expect_stop "SC-AK-1119 — нечитаемая таблица: второй проход отпускается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(said 'Готово.')")" true)" PASS
-rm -f "$REPO/tools/epic-table.mjs"
-unset STUB_LEFT STUB_CODE
-expect_stop "SC-AK-1119 — без таблицы вовсе: ход с работой отпускается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
-
-suite_result "страж выходов хода"
+suite_result "проверка выхода из хода"

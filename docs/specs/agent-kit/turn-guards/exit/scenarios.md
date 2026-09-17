@@ -411,7 +411,7 @@ When the guard of the exits judges the end of the turn
 Then the turn is given back and names the parts that do not depend on the answer; after work the
 same question releases the turn
 
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
 
 ### SC-AK-1117 — under an open epic a turn with work and a second pass are judged
 
@@ -421,7 +421,7 @@ When the guard of the exits judges the end of the turn
 Then the turn is given back, and the refusal names the unfinished tasks; a question after work, a
 refusal as the last action and the word of the owner release the turn as before
 
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
 
 ### SC-AK-1118 — a handover written by hand under an open epic
 
@@ -429,7 +429,7 @@ Given the table of the epic names unfinished tasks, and the turn ran the handove
 When the guard of the exits judges the end of the turn
 Then the turn is given back; the refusal of the window guard as the last action releases it
 
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
 
 ### SC-AK-1119 — a closed or unreadable epic keeps the former behaviour
 
@@ -437,4 +437,4 @@ Given the table of the epic prints nothing, answers with a non-zero code or is a
 When the guard of the exits judges the end of the turn
 Then a turn with work, a second pass and a handover by hand are released as before
 
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
