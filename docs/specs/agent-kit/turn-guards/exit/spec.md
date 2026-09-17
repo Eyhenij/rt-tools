@@ -65,6 +65,8 @@ not by a person.
   the last remark the owner wrote; the word «стоп» in the text of a loaded rule releases nothing.
 - **A refusal of a guard is an exit only as the last action of the turn.** A refusal in the middle
   of the turn was answered by the work that followed it, and the turn is judged by how it ended.
+- **A refusal of the closing tool is not an exit.** The refused call was a stop, not work: the guard
+  leaves that refusal out of the release sign, and the turn is judged by what stood before it.
 - **A question at the head of an empty turn in a running stage is a stop.** The parts of the stage
   that do not depend on the answer go first, and the question by the tool after them.
 - **Under an open epic a turn that ended with work does not end.** The work stands where it stood;

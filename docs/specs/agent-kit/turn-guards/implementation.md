@@ -6,6 +6,7 @@ statement: a removed statement is removed together with its line.
 - **A turn in which a question is asked of the owner does not end until the laws and the rules were read during the same turn.** — `projects/agent-kit/assets/hooks/grill-gate.sh:verdict`
 - **What counts as reading is any of the three ways, not only the loading of a rule.** — `projects/agent-kit/assets/hooks/grill-gate.sh:read_re`
 - **A second pass over the same turn is not judged.** — `projects/agent-kit/assets/hooks/grill-gate.sh:active`
+- **The tool that closes the conversation is refused always.** — `projects/agent-kit/assets/hooks/end-conversation-guard.sh:tool` — the name is read by jq, without jq by grep; scenario SC-AK-1121
 - **Under an open epic the guard of the exits judges a turn that ended with work and a second pass.** — `projects/agent-kit/assets/hooks/turn-exit-epic.sh:rt_te_epic_open` — the tiers are sourced by the exit guard; the subdomain of the exits binds each of them
 - **To a question whose answer a remark of the owner has already given, the guard of the conversation answers with a refusal.** — `projects/agent-kit/assets/hooks/grill-gate.sh:seen`
 - **A refusal by the second sign orders to go on with the work, not to ask again differently.** — `projects/agent-kit/assets/hooks/grill-gate.sh:seen`

@@ -49,6 +49,8 @@ turn.
 - **A second pass over the same turn is not judged.** The guard says its word once and lets go;
   otherwise the turn will never end. The one exception is the guard of the exits under an open epic,
   and its subdomain says so.
+- **The tool that closes the conversation is refused always.** The session is ended by the owner and
+  by nobody else; the guard has no lawful form of bypass and refuses even without a JSON parser.
 - **Under an open epic the guard of the exits judges a turn that ended with work and a second
   pass.** The tiers of that lie in a file of their own next to the guard; the epic is read once per
   turn, on the way to a refusal, by the shared reading of the end of an epic.
