@@ -85,6 +85,12 @@ through the executor.
 - **An epic whose tasks are over and whose request is not open is a divergence.** Until it opens,
   the work of the whole epic lies outside the main branch while looking finished: the board is
   empty, and only the epic card stays open.
+- **An open task whose card stands in a closing column is a divergence.** A closing column says the
+  work is merged, and a merge closes the task itself: a card left there with the task open says two
+  different things at once. By the board such work reads as finished, and nobody looks at it again.
+  Seven tasks stood so for two days after their merges, and the audit named none of them: it judged
+  the column of a task awaiting review and knew no other. The tree names its closing columns itself;
+  unnamed — the line is not printed at all.
 - **A task naming neither an epic nor the word of the owner is a divergence.** The guard refuses
   such a task at the creating command, and only there: a card made through the web goes past every
   guard, and one created before this order came in has neither line. By the queue it reads as
@@ -152,6 +158,7 @@ There are no open questions.
 
 ## History of changes
 
+- 2026-09-17 — an open task in a closing column is a divergence: rule, scenario `SC-AK-1112`, the binding.
 - 2026-09-15 — one line names both consequences of a base other than the main branch: rule, scenario `SC-AK-1107`, the binding.
 - **2026-09-08** — the subdomain was split out of the checks of the tree: the scenario file had
   outgrown the length limit, and it is split by subject, not by moving the boundary. The scenario

@@ -141,6 +141,11 @@ flowchart TD
   column while its tasks merge, the epic reads to the owner as never started.
 - **A task left in the first column opens no PR.** By the work queue it reads as not taken, though
   the work is done and published. The tree names the first column itself; unnamed — not judged.
+- **An open task standing in a closing column is a discrepancy.** A closing column says the work is
+  merged, and a merge closes the task itself: a card left there with the task open says two
+  different things at once, and by the board the work reads as finished. Seven such tasks stood
+  unclosed for two days, and no line of the audit named them. The tree names its closing columns
+  itself; unnamed — not judged.
 - **The board holds tasks, not PRs about them.** A PR card has no column and never leaves the queue.
   The queue audit finds such cards, a line each.
 - **A lagging column is found by the queue audit, not by eye.** It judges the column by the PR both
