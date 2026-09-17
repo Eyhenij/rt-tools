@@ -64,7 +64,7 @@ applies here". An article without a line and a line without an article are a div
 - **A reference is taken after the frame has been looked at, not before.** — **Not checked by anything.** `tools/visual-snapshots-v2.mjs` refuses on a missing reference and on an orphaned one, and it writes an empty frame silently. The closest machine answer is the sweep `pnpm run test:stories:v2` before the shot.
 - **A re-taken reference is confirmed by a second raising before it is committed.** — **Not checked by anything.** Neither the snapshot run nor the gate knows how many raisings stand behind a reference: a frame taken once and a frame confirmed twice are the same bytes. The closest machine answer is a repeated call of the same set after a restart of the showcase, and it is made by the hand of whoever re-took.
 - **A reference is re-taken deliberately and one at a time.** — `tools/visual-snapshots-v2.mjs:SNAPSHOT_DIR` — the re-take selects story files by path rather than stories by name: a selection by name breaks the run's environment.
-- **A reference is taken from the same showcase the gate raises.** — `tools/visual-gate.mjs:freePort` — the gate raises the showcase itself, by the target `@rt-tools/ui-kit-v2:storybook` on a free port, and points the run at it by `STORYBOOK_URL`. A re-take is made against that same target. **Not checked by anything** is which showcase the address given to the run belongs to: to the harness it is one more address that answers.
+- **A reference is taken from the same showcase the gate raises.** — `tools/visual-gate.mjs:freePort` — the gate builds the showcase itself and serves it on a free port. It points the run at that address by `STORYBOOK_URL`; both kits go that road. A re-take is made against that same target. **Not checked by anything** is which showcase the address given to the run belongs to: to the harness it is one more address that answers.
 - **A frame is taken by the drawn span, not by the node's box.** — `projects/ui-kit-v2/.storybook/test-runner.ts:spanOfNode` — the span is the union of the root and every descendant. Each rect is first clipped by the nearest ancestor that scrolls or hides its overflow. `fitViewportToSpan` grows the window to the span's right and bottom edges, and the frame is a page shot with that clip. **Not checked by anything** is whether the span matches what a person sees. The sweep over the showcase at the base window found 35 showings of 545 whose drawing went past the node's box, and that count came from a script of its own.
 - **A one-off check script does not travel into the repository.** — **Not checked by anything.** A one-off script is indistinguishable to a machine from a permanent check; the difference pictures are closed by a mask in the ignore settings.
 - **A branch the spec does not reach is named in the PR.** — **Not checked by anything.** The guards judge files and commands rather than the text of a PR description: a silent gap looks the same as coverage.
@@ -111,8 +111,9 @@ surface of a component is invisible to a machine — that is reading and the rul
 - `node tools/visual-gate.mjs ui-kit-v2` — the second showcase's frames: it builds the showcase,
   serves it as files and shoots with a browser raised in an image; `--update` re-takes them by the
   same road. `pnpm run test:visual:v2` called on its own refuses and names this command.
-- `node tools/visual-gate.mjs ui-kit` — the first showcase's frames; it shoots with the machine's
-  own browser, so they are matched in the pipeline only.
+- `node tools/visual-gate.mjs ui-kit` — the first showcase's frames. It builds the showcase, serves
+  it as files and shoots with a browser raised in an image; `--update` re-takes them by the same
+  road. `pnpm run test:visual` called on its own refuses and names this command.
 - `pnpm run build-storybook:ui-kit-v2` — the only thing that checks the showcase config.
 - `pnpm exec nx run message-bus-admin-e2e:e2e` — the admin panel's end-to-end suite together with
   the screen frames; it raises the stand for itself and the shooting browser in an image.
