@@ -428,6 +428,12 @@ work does not do
 When the same reading goes
 Then no epic comes back: a mention is not a declaration
 
+Given the same words inside a sentence — «в работу взяты семь задач эпика #1870» — and, apart, a
+declaration as an item of a list — `- Вторая задача эпика #7, идёт после первой`
+When the same reading goes
+Then the first gives no epic and the second gives its number: a declaration opens its line, and a
+list marker or an ordinal before it is allowed
+
 Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
 
 ### SC-AK-992 — the state of a task carries the number of its epic

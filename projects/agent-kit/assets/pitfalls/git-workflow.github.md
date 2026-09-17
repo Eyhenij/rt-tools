@@ -305,9 +305,15 @@ neighbour with rights to one repository reads its task as nonexistent, and from 
 the miss is invisible — the answer is an ordinary "not found". That is why the account is
 substituted per call and never made active, even when the active one is already right.
 
+- **What closes the card of an epic.** The merge of its request closes the card by the host's rule
+  on a closed item: nothing moves it to the closing column by hand. The two moves of the card that
+  the rule demands are the first one and the one at the opening of the request.
 - **Why a neighbouring runner rewrites a ready-made step's default.** On a machine with several
   runners any path from the home directory is shared, so the version a neighbouring run installs
   lands under the same path and is picked up by the next run of any project.
+- **By which tier the freshness of main's tip is asked.** By the second one — the same technique as
+  the task state. The first tier works offline: the local ref answers whether the branch lags what
+  lies in the tree, the remote one — whether the ref itself went stale.
 - **What the second tier of the delivery guard cannot ask without a network.** Task, column,
   assignee and review live at the hosting: with no network and no token that tier is skipped, and
   the skip is silent.

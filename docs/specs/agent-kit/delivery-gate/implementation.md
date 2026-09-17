@@ -50,6 +50,7 @@ whole.
 - **The freshness of the main branch moves to the branch of the epic together with the base.** — `projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh:rt_epic_base`
 - **The branch of an epic is looked for among the remote refs, and neither absence nor a second one is guessed at.** — `projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh:rt_epic_branch`
 - **The epic of a task is declared by one shape, and it is read in one place.** — `projects/agent-kit/assets/checks/board-epic-link.github.mjs:declaredEpicOf` — scenario SC-AK-991
+- **The declaration opens its line, and the same words inside a sentence are not one.** — `projects/agent-kit/assets/checks/board-epic-link.github.mjs:DECLARATION` — the expression is anchored to the start of a line; scenario SC-AK-991
 - **The state of a task carries the number of its epic.** — `projects/agent-kit/assets/checks/board.github.mjs:taskState` — scenario SC-AK-992
 - **The base of a request about a task of an epic is the branch of that epic.** — `projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh:rt_epic_pull_base` — scenario SC-AK-994
 - **The freshness asked before a request of such a task is the epic's, not the main branch's.** — `projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh:rt_epic_pull_base`

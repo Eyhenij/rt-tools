@@ -24,6 +24,18 @@ const TASK_KEY = CONFIG.board?.taskKey ?? '';
  * kinship of cards.
  */
 export function declaredEpicOf(body, number = null) {
-    const named = String(body ?? '').match(new RegExp(`задач[аи]\\s+эпика?\\s+(?:#|${TASK_KEY}-)(\\d+)`, 'i'))?.[1];
+    const named = String(body ?? '').match(DECLARATION)?.[1];
     return number === null ? named : named !== undefined && Number(named) === number;
 }
+
+/**
+ * The declaration opens its line: the creating command writes it as a line of its own, and a
+ * hand-written one carries at most an ordinal before it — «Первая задачи эпика #7». A list marker
+ * is allowed for the same reason: in a plan the declaration lies among items.
+ *
+ * Read anywhere in the line, it caught the same words inside a sentence: a task whose description
+ * said «семь задач эпика #1870» was read as belonging to that epic, and the delivery check refused
+ * its branch from the main one. The words alone cannot tell a declaration from prose about an
+ * epic — the place in the line can.
+ */
+const DECLARATION = new RegExp(`^\\s*(?:[-*]\\s+)?(?:\\S+\\s+)?задач[аи]\\s+эпика?\\s+(?:#|${TASK_KEY}-)(\\d+)`, 'im');

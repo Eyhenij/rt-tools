@@ -160,3 +160,20 @@ When the audit of the work queue runs
 Then a task lying past the first page is not named unlinked
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+
+### SC-AK-1112 — an open task in a closing column
+
+Given an open task whose card stands in a column named as a closing one
+When the work queue audit goes
+Then it names the task by a line of its own and counts it into the divergences; the line names both
+ways out — close the task, or move the card back
+
+Given the card of the same task stands in the column of review
+When the same audit goes
+Then it stays silent about the column
+
+Given the tree names no closing columns
+When the same audit goes
+Then no such line is printed
+
+Covered: `projects/agent-kit/tests/checks-board-columns.test.sh`.
