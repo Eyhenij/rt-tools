@@ -176,4 +176,4 @@ Given the tree names no closing columns
 When the same audit goes
 Then no such line is printed
 
-Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board-columns.test.sh`.
