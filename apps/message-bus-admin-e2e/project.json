@@ -9,7 +9,7 @@
     "e2e": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx playwright test",
+        "command": "node ../../tools/shot-browser.mjs npx playwright test",
         "cwd": "apps/message-bus-admin-e2e"
       }
     },
