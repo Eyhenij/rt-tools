@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.28.0 · rules/turn-conduct.md · e8e8778474a5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · rules/turn-conduct.md · 65c229417da1 · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -34,10 +34,10 @@ filled window where there is no compaction; work handed in, with the next begun.
 each, the turn map lists where the tree laid it out. While an epic has an unfinished task, a turn
 ends by these four alone.
 
-The queue is asked by a command in the same turn, and its output stands in the turn itself: "there
-are no tasks" is a statement about the tree, and the executor's memory does not confirm it. A turn
-where the owner's answer holds one piece of work while an independent one lies next to it ends
-with the work taken, and the question goes in a line beside it.
+The queue is asked by a command in the same turn: "there are no tasks" is a statement about the
+tree, and the executor's memory does not confirm it. A turn where the owner's answer holds one
+piece of work while an independent one lies next to it ends with the work taken, and the question
+goes in a line beside it.
 
 Everything else is the turn going on, not its end. A milestone does not end a turn: not a commit,
 not a read agreement, not the boundary "read — now editing", not a green check.
@@ -194,9 +194,9 @@ flowchart TD
 - **The session is ended by the owner and by nobody else.** The tool that closes the conversation is
   refused by a guard always, with no lawful form of bypass: an assignment stands until the owner
   cancels it, and a session that must close is closed by them.
-- **A refusal of a guard ends the turn only as its last action.** A refusal lifted by loading the
-  rule and answered by the next call is the middle of the turn: read as an exit, it released a turn
-  that ended with a report.
+- **A refusal of a guard ends the turn only as its last action, and only a refusal of work.** A
+  refusal answered by the next call is the middle of the turn. A refused stop — the closing tool —
+  is no exit: the refused call was itself the stop, and the exit guard leaves it out.
 - **The phrase "waiting for your word" is a stop declared by the executor, and the guard refuses it
   by name.** Without the owner's word about a stop in the turn and without a question put to them by
   the tool, waiting for their word is a report, not work; the instruction holds until they cancel

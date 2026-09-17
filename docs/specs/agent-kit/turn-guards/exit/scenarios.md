@@ -446,3 +446,12 @@ When the guard of the exits judges the end of the turn.
 Then the turn passes with work and without it. Without a quote the line releases nothing.
 
 Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
+
+### SC-AK-1122 — a refused closing call does not release the turn
+
+Given the last tool result of the turn is the refusal of the guard of the closing tool, and the
+epic is open.
+When the guard of the exits judges the end of the turn.
+Then the turn is not released; the refusal of another guard releases it as before.
+
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
