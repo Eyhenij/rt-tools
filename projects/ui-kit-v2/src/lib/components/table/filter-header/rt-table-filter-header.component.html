@@ -1,56 +1,63 @@
 <ng-container rtBlock="rt-table-filter-header">
-    <!--
+    @if (filter(); as columnFilter) {
+        <!--
         Кнопка вида сравнения открывает список тех видов, которые разрешила колонка. Список
         объявлен внутри блока намеренно: `rtElem` берёт имя блока инъекцией у ближайшего предка
         с `rtBlock`, а у шаблона, объявленного снаружи, такого предка нет вовсе.
     -->
-    <button
-        type="button"
-        rtElem="operator"
-        qa-dataid="table-filter-operator"
-        [attr.aria-label]="filtersLabel()"
-        [rtMod]="{ set: clearable() }"
-        [rtPopover]="operatorsTpl">
-        {{ operatorLabel() }}
-    </button>
+        <button
+            type="button"
+            rtElem="operator"
+            qa-dataid="table-filter-operator"
+            [attr.aria-label]="filtersLabel()"
+            [rtMod]="{ set: clearable() }"
+            [rtPopover]="operatorsTpl">
+            {{ operatorLabel() }}
+        </button>
 
-    <div rtElem="value" qa-dataid="table-filter-value">
-        @switch (filter().kind) {
-            @case ('number') {
-                <rt-input-number qa-dataid="table-filter-number" size="sm" [clearable]="false" [formControl]="control" />
-            }
+        <div rtElem="value" qa-dataid="table-filter-value">
+            @switch (columnFilter.kind) {
+                @case ('number') {
+                    <rt-input-number qa-dataid="table-filter-number" size="sm" [clearable]="false" [formControl]="control" />
+                }
 
-            @case ('select') {
-                <rt-select qa-dataid="table-filter-select" size="sm" [clearable]="false" [options]="options()" [formControl]="control" />
-            }
+                @case ('select') {
+                    <rt-select
+                        qa-dataid="table-filter-select"
+                        size="sm"
+                        [clearable]="false"
+                        [options]="options()"
+                        [formControl]="control" />
+                }
 
-            @case ('date') {
-                <rt-date-picker qa-dataid="table-filter-date" size="sm" [clearable]="false" [formControl]="control" />
-            }
+                @case ('date') {
+                    <rt-date-picker qa-dataid="table-filter-date" size="sm" [clearable]="false" [formControl]="control" />
+                }
 
-            @default {
-                <rt-input qa-dataid="table-filter-text" size="sm" [clearable]="false" [formControl]="control" />
-            }
-        }
-    </div>
-
-    <!-- Очистка стоит в разметке только там, где есть что очищать. -->
-    @if (clearable()) {
-        <rt-icon-button
-            rtElem="clear"
-            qa-dataid="table-filter-clear"
-            variant="ghost"
-            icon="close"
-            size="sm"
-            [ariaLabel]="clearLabel()"
-            (clicked)="onClear()" />
-    }
-
-    <ng-template #operatorsTpl>
-        <div rtElem="operators" qa-dataid="table-filter-operators" role="menu">
-            @for (view of operatorViews(); track view.type) {
-                <rt-menu-item qa-dataid="table-filter-operator-item" [label]="view.label" (selected)="onOperator(view.type)" />
+                @default {
+                    <rt-input qa-dataid="table-filter-text" size="sm" [clearable]="false" [formControl]="control" />
+                }
             }
         </div>
-    </ng-template>
+
+        <!-- Очистка стоит в разметке только там, где есть что очищать. -->
+        @if (clearable()) {
+            <rt-icon-button
+                rtElem="clear"
+                qa-dataid="table-filter-clear"
+                variant="ghost"
+                icon="close"
+                size="sm"
+                [ariaLabel]="clearLabel()"
+                (clicked)="onClear()" />
+        }
+
+        <ng-template #operatorsTpl>
+            <div rtElem="operators" qa-dataid="table-filter-operators" role="menu">
+                @for (view of operatorViews(); track view.type) {
+                    <rt-menu-item qa-dataid="table-filter-operator-item" [label]="view.label" (selected)="onOperator(view.type)" />
+                }
+            </div>
+        </ng-template>
+    }
 </ng-container>

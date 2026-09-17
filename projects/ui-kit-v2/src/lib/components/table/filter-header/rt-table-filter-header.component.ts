@@ -145,12 +145,12 @@ export class RtTableFilterHeaderComponent {
     protected readonly operator: Signal<TFilterOperatorType> = computed((): TFilterOperatorType => {
         const own: IFilterModel<string> | null = this.own();
 
-        return own !== null ? own.operatorType : startOperatorOf(this.filter().operators, this.filter().startOperator);
+        return own !== null ? own.operatorType : startOperatorOf(this.filter()?.operators, this.filter()?.startOperator);
     });
 
     /** Виды сравнения, которые разрешила колонка; молчит колонка — разрешены все. */
     protected readonly operators: Signal<readonly TFilterOperatorType[]> = computed((): readonly TFilterOperatorType[] => {
-        const allowed: readonly TFilterOperatorType[] | undefined = this.filter().operators;
+        const allowed: readonly TFilterOperatorType[] | undefined = this.filter()?.operators;
 
         return allowed !== undefined && allowed.length > 0 ? allowed : ALL_OPERATORS;
     });
@@ -168,7 +168,7 @@ export class RtTableFilterHeaderComponent {
 
     protected readonly options: Signal<ReadonlyArray<IRtSelect.Option<string | number>>> = computed(
         (): ReadonlyArray<IRtSelect.Option<string | number>> =>
-            (this.filter().options ?? []).map((option: IRtTable.FilterOption): IRtSelect.Option<string | number> => ({
+            (this.filter()?.options ?? []).map((option: IRtTable.FilterOption): IRtSelect.Option<string | number> => ({
                 value: option.value,
                 label: option.label,
             }))
@@ -177,8 +177,12 @@ export class RtTableFilterHeaderComponent {
     /** Ключ колонки — тот же, что в `cdkColumnDef` и в `[columnsConfig]`. */
     public readonly propertyName: InputSignal<string> = input.required<string>();
 
-    /** Чем колонка отбирает. Объявляет колонка, а не угадывает значение. */
-    public readonly filter: InputSignal<IRtTable.ColumnFilter> = input.required<IRtTable.ColumnFilter>();
+    /**
+     * Чем колонка отбирает. Объявляет колонка, а не угадывает значение; колонка, которая молчит,
+     * не отбирает вовсе — решает это сама ячейка, а не тот, кто её ставит: иначе обещание держал
+     * бы каждый потребитель по-своему.
+     */
+    public readonly filter: InputSignal<IRtTable.ColumnFilter | null> = input<IRtTable.ColumnFilter | null>(null);
 
     /** Текущий набор условий — весь, по всем колонкам сразу. */
     public readonly filters: InputSignal<readonly IFilterModel<string>[]> = input<readonly IFilterModel<string>[]>([]);
