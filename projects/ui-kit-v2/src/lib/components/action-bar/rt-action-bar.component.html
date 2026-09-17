@@ -1,0 +1,69 @@
+<ng-container rtBlock="rt-action-bar">
+    <span rtElem="counter" qa-dataid="action-bar-counter">{{ countText() }}</span>
+
+    @if (actions().length) {
+        <div rtElem="actions" qa-dataid="action-bar-actions">
+            @for (view of actions(); track view.action.label) {
+                @if (view.action.menu) {
+                    <!--
+                        Действие с вложенным списком само не срабатывает: оно заголовок группы, и
+                        нажатие раскрывает слой. Список приходит слою контекстом — одного шаблона
+                        хватает на все такие действия.
+                    -->
+                    <button
+                        type="button"
+                        rtElem="action"
+                        qa-dataid="action-bar-action"
+                        [rtMod]="view.modifiers"
+                        [rtPopover]="menuTpl"
+                        [rtPopoverContext]="view.action.menu">
+                        <ng-container *ngTemplateOutlet="actionFace; context: { $implicit: view.action }" />
+                    </button>
+                } @else {
+                    <button
+                        type="button"
+                        rtElem="action"
+                        qa-dataid="action-bar-action"
+                        [rtMod]="view.modifiers"
+                        (click)="onAction(view.action)">
+                        <ng-container *ngTemplateOutlet="actionFace; context: { $implicit: view.action }" />
+                    </button>
+                }
+            }
+        </div>
+    }
+
+    <rt-icon-button
+        rtElem="close"
+        qa-dataid="action-bar-close"
+        variant="ghost"
+        icon="close"
+        size="sm"
+        [ariaLabel]="closeLabel()"
+        (clicked)="onClose()" />
+</ng-container>
+
+<!--
+    Лицо действия: значок и подпись. Подпись стоит в разметке всегда — снимает её
+    правило стиля по грубому указателю, и только у действия, у которого значок есть.
+-->
+<ng-template #actionFace let-action>
+    @if (action.icon) {
+        <rt-icon rtElem="action-icon" size="sm" [name]="action.icon" />
+    }
+
+    <span rtElem="action-label">{{ action.label }}</span>
+</ng-template>
+
+<ng-template #menuTpl let-menu>
+    <div rtElem="menu" qa-dataid="action-bar-menu" role="menu">
+        @for (item of menu; track item.label) {
+            <rt-menu-item
+                qa-dataid="action-bar-menu-item"
+                [icon]="item.icon ?? null"
+                [label]="item.label"
+                [danger]="item.look === 'danger'"
+                (selected)="onAction(item)" />
+        }
+    </div>
+</ng-template>

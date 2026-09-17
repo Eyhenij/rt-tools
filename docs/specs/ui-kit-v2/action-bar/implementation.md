@@ -19,9 +19,8 @@ replaces it, by the same change.
 - **The cross reports a press outward and closes nothing by itself.** — **Not carried out.** The family is written by stage 2; scenario `SC-UKV-205`
 - **The bar stays in the markup for exactly as long as its leaving lasts.** — **Not carried out.** The family is written by stage 2; scenario `SC-UKV-206`
 - **The bar is pinned above the page by the holder, and the layer number comes from the scale.** — **Not carried out.** The family is written by stage 2
-- **An action with an icon drops its label where the pointer is coarse.** — **Not carried out.** The family is written by stage 2; scenarios `SC-UKV-207`, `SC-UKV-208`
+- **An action with an icon lets its label be taken away where the pointer is coarse, and the markup carries both.** — **Not carried out.** The family is written by stage 2; scenarios `SC-UKV-207`, `SC-UKV-208`
 - **Every label of the bar comes from the dictionary of the kit.** — **Not carried out.** The family is written by stage 2; scenario `SC-UKV-209`
-- **An action label that did not fit its place is cut by an ellipsis and gets a hint with the whole value.** — **Not carried out.** The family is written by stage 2; scenarios `SC-UKV-210`, `SC-UKV-211`
+- **The bar has a limit of its width, and the row of actions that did not fit it wraps.** — **Not carried out.** The styles are written by stage 2; scenario `SC-UKV-210`
 - **The limit of the width stands on the element itself as well, not on the bar alone.** — **Not carried out.** The styles are written by stage 2, and the frame that sees this by stage 4
-- **The label shrinks below its own content only with a zero lower bound of the width.** — **Not carried out.** The styles are written by stage 2, and the frame that sees this by stage 4
 - **The styles of the bar live in the cascade layer of the kit's components.** — **Not carried out.** The family is written by stage 2; scenario `SC-UKV-212`

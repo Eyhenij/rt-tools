@@ -128,6 +128,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     uiSelectAll: 'Выбрать все',
     uiSelectValues: 'Выберите значения',
     uiSelectedCount: 'Выбрано: {{count}}',
+    uiSelectedOf: 'Выбрано: {{count}} из {{total}}',
     uiShow: 'Показать',
     uiShowColumn: 'Показать колонку',
     uiShowDetails: 'Показать детали',

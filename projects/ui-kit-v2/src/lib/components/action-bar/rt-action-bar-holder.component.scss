@@ -1,0 +1,70 @@
+@layer rt-kit.components {
+    /* rt-action-bar-holder — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
+       `.rt-action-bar-holder` — сам хост (шаблон начинается с ng-container, класс ставит host). */
+
+    .rt-action-bar-holder {
+        // Номер слоя берётся шкалой: номер, написанный числом в файле компонента, ни в одну
+        // шкалу не попадает, и следующий узел над страницей возьмёт тот же, о том не узнав.
+        --rt-action-bar-holder-bottom: var(--rt-space-6);
+        --rt-action-bar-holder-inline: var(--rt-space-4);
+        --rt-action-bar-holder-enter-duration: 300ms;
+        --rt-action-bar-holder-leave-duration: 300ms;
+
+        position: fixed;
+        z-index: var(--rt-z-fixed);
+        display: flex;
+        justify-content: center;
+        inset: auto var(--rt-action-bar-holder-inline) var(--rt-action-bar-holder-bottom);
+        pointer-events: none;
+
+        // Полоса ловит нажатия, а держатель — нет: он тянется на всю ширину страницы, и без
+        // этого перекрыл бы всё, что лежит под ним по краям от полосы.
+        &__bar {
+            max-width: 100%;
+            animation: rt-action-bar-enter var(--rt-action-bar-holder-enter-duration);
+            pointer-events: auto;
+        }
+
+        // `forwards`: полоса держится за нижней кромкой до того мига, когда её снимет разметка.
+        // Без него она возвращается на место в конце ухода и успевает мигнуть на своём месте.
+        &__bar--leaving {
+            animation: rt-action-bar-leave var(--rt-action-bar-holder-leave-duration) forwards;
+        }
+    }
+
+    // Выезд полосы: снизу, с проскоком выше места и возвратом. Проскок и делает движение
+    // живым, а не равномерным; уход идёт тем же путём в обратную сторону.
+    @keyframes rt-action-bar-enter {
+        0% {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+
+        30% {
+            opacity: 1;
+            transform: translateY(calc(var(--rt-space-4) * -1));
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes rt-action-bar-leave {
+        0% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        70% {
+            opacity: 1;
+            transform: translateY(calc(var(--rt-space-4) * -1));
+        }
+
+        100% {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+    }
+}

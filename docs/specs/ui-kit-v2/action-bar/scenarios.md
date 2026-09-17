@@ -79,20 +79,20 @@ leaving lasts out
 Not covered: the family is written by stage 2 of RT-1880 and its tests by stage 3. The
 mark leaves together with the test that closes the scenario, by the same change.
 
-### SC-UKV-207 — a coarse pointer takes the label off an action with an icon
+### SC-UKV-207 — an action with an icon says so by a modifier
 
-Given a bar with an action that has both an icon and a label, on a coarse pointer
+Given a bar with an action that has both an icon and a label
 When it is drawn
-Then the icon is in the markup and the label is not
+Then the action carries the modifier the media query of the coarse pointer reaches its label by
 
 Not covered: the family is written by stage 2 of RT-1880 and its tests by stage 3. The
 mark leaves together with the test that closes the scenario, by the same change.
 
-### SC-UKV-208 — an action without an icon keeps its label on a coarse pointer
+### SC-UKV-208 — an action without an icon carries no such modifier
 
-Given a bar with an action that has a label and no icon, on a coarse pointer
+Given a bar with an action that has a label and no icon
 When it is drawn
-Then the label is in the markup
+Then the action carries no such modifier, and its label is never taken away
 
 Not covered: the family is written by stage 2 of RT-1880 and its tests by stage 3. The
 mark leaves together with the test that closes the scenario, by the same change.
@@ -107,20 +107,11 @@ in the template
 Not covered: the family is written by stage 2 of RT-1880 and its tests by stage 3. The
 mark leaves together with the test that closes the scenario, by the same change.
 
-### SC-UKV-210 — a label that did not fit is cut and gets a hint
+### SC-UKV-210 — the row of actions that did not fit the width wraps
 
-Given a bar whose place is narrower than the label of its action
+Given a bar whose actions are wider than its limit of the width
 When it is drawn
-Then the label carries a hint with the whole value
-
-Not covered: the family is written by stage 2 of RT-1880 and its tests by stage 3. The
-mark leaves together with the test that closes the scenario, by the same change.
-
-### SC-UKV-211 — a label that fits gets no hint
-
-Given a bar whose place is wider than the label of its action
-When it is drawn
-Then there is no hint on the label
+Then the row of actions wraps, and nothing of it stands outside the bar
 
 Not covered: the family is written by stage 2 of RT-1880 and its tests by stage 3. The
 mark leaves together with the test that closes the scenario, by the same change.

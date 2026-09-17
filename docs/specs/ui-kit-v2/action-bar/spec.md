@@ -57,21 +57,22 @@ next to it and a cross to let them all go.
 - **The bar is pinned above the page by the holder, and the layer number comes from the scale.** A
   number written in the component's own file lands in no scale, and the next node above the page
   takes the same one without learning of it.
-- **An action with an icon drops its label where the pointer is coarse.** The bar lives on the lower
-  edge, and a finger needs the room the labels take. Where there is no icon the label stays: an
-  action shown by nothing at all cannot be pressed on purpose.
+- **An action with an icon lets its label be taken away where the pointer is coarse, and the markup
+  carries both.** The bar lives on the lower edge, and a finger needs the room the labels take —
+  but which of the two is drawn is decided by a media query, not by a condition in the template: a
+  condition there is styling that rode into the code. The action says by a modifier that it has an
+  icon, and the rule reaches the label by that. An action with no icon keeps its label under any
+  pointer: shown by nothing at all, it cannot be pressed on purpose.
 - **Every label of the bar comes from the dictionary of the kit.** The count, the name of the cross
   for a reader who hears the screen — all of it. The first kit glued the count out of English words
   in its own template, and a consumer in another locale had no way to reach them.
-- **An action label that did not fit its place is cut by an ellipsis and gets a hint with the whole
-  value.** The bar has a width of its own, and the labels come from a consumer who cannot shorten
-  them.
+- **The bar has a limit of its width, and the row of actions that did not fit it wraps.** The labels
+  come from a consumer who cannot shorten them, and a bar without a limit grows past the window it
+  is pinned to. Wrapping rather than cutting, because the label of an action is drawn by the button
+  of the kit and there is nothing here to cut it by.
 - **The limit of the width stands on the element itself as well, not on the bar alone.** The
   containing block of the bar is the element, and without a limit there the element grows by its
-  content.
-- **The label shrinks below its own content only with a zero lower bound of the width.** A part of
-  a flexible box keeps the width of its content by default, and the ellipsis then never appears.
-  Neither of the two shows in a test: it has no layout at all.
+  content — and a hundred per cent of the bar is then counted from the grown element.
 - **The styles of the bar live in the cascade layer of the kit's components.** A consumer keeps the
   last word over them, and a rule that rode past the layer takes that away from them silently.
 
@@ -84,6 +85,10 @@ next to it and a cross to let them all go.
   numbers and it reports the presses.
 - **Confirming a destructive action.** The kit has a ready family for that, and an action that needs
   a question asks it by itself.
+- **Cutting the label of an action by an ellipsis.** The label is drawn by the button of the kit,
+  inside itself, and cutting it from here would mean writing a rule over the insides of a
+  neighbouring family. The ready-made is extended where it lives — that is a work of its own, and
+  until it is done the row of actions wraps instead of cutting.
 
 ## Contract
 
