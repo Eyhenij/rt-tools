@@ -53,6 +53,14 @@ export class RtActionBarHolderComponent {
 
     #leaveTimer: ReturnType<typeof setTimeout> | null = null;
 
+    /**
+     * Была ли полоса открыта до этой перемены. Без этого признака уходу не с чего начаться:
+     * к минуте, когда выбранное обнулилось, и «открыта», и «стоит в разметке» уже ложь, так
+     * что условие по ним не срабатывает никогда. В первом ките оно написано именно так, и
+     * уход там не заводится вовсе — образец прочитан, а не перенесён.
+     */
+    #wasOpened: boolean = false;
+
     protected readonly config: Signal<IRtActionBar.Config> = this.#service.config;
 
     /** Выбрано ли что-нибудь: этим полоса и открывается. */
@@ -71,12 +79,14 @@ export class RtActionBarHolderComponent {
                 this.#clearLeaveTimer();
 
                 if (opened) {
+                    this.#wasOpened = true;
                     this.#leaving.set(false);
 
                     return;
                 }
 
-                if (!this.#leaving() && this.shown()) {
+                if (this.#wasOpened) {
+                    this.#wasOpened = false;
                     this.#startLeaving();
                 }
             });

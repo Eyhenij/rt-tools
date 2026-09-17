@@ -41,29 +41,33 @@
         size="sm"
         [ariaLabel]="closeLabel()"
         (clicked)="onClose()" />
-</ng-container>
 
-<!--
-    Лицо действия: значок и подпись. Подпись стоит в разметке всегда — снимает её
-    правило стиля по грубому указателю, и только у действия, у которого значок есть.
--->
-<ng-template #actionFace let-action>
-    @if (action.icon) {
-        <rt-icon rtElem="action-icon" size="sm" [name]="action.icon" />
-    }
+    <!--
+        Оба шаблона объявлены внутри блока намеренно: `rtElem` берёт имя блока инъекцией у
+        ближайшего предка с `rtBlock`, а у шаблона, объявленного снаружи, такого предка нет
+        вовсе — компонент не поднимается совсем, с отказом об отсутствующем поставщике.
 
-    <span rtElem="action-label">{{ action.label }}</span>
-</ng-template>
-
-<ng-template #menuTpl let-menu>
-    <div rtElem="menu" qa-dataid="action-bar-menu" role="menu">
-        @for (item of menu; track item.label) {
-            <rt-menu-item
-                qa-dataid="action-bar-menu-item"
-                [icon]="item.icon ?? null"
-                [label]="item.label"
-                [danger]="item.look === 'danger'"
-                (selected)="onAction(item)" />
+        Лицо действия: значок и подпись. Подпись стоит в разметке всегда — снимает её правило
+        стиля по грубому указателю, и только у действия, у которого значок есть.
+    -->
+    <ng-template #actionFace let-action>
+        @if (action.icon) {
+            <rt-icon rtElem="action-icon" size="sm" [name]="action.icon" />
         }
-    </div>
-</ng-template>
+
+        <span rtElem="action-label">{{ action.label }}</span>
+    </ng-template>
+
+    <ng-template #menuTpl let-menu>
+        <div rtElem="menu" qa-dataid="action-bar-menu" role="menu">
+            @for (item of menu; track item.label) {
+                <rt-menu-item
+                    qa-dataid="action-bar-menu-item"
+                    [icon]="item.icon ?? null"
+                    [label]="item.label"
+                    [danger]="item.look === 'danger'"
+                    (selected)="onAction(item)" />
+            }
+        </div>
+    </ng-template>
+</ng-container>
