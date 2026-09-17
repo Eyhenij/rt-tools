@@ -20,6 +20,31 @@ export function installFontsStub(): void {
     }
 }
 
+/**
+ * Двойник указательного события. Среда спек знает `MouseEvent` и не знает `PointerEvent` вовсе,
+ * а ручка ширины подменю тянется только им: без подмены падает каждый сценарий тяги.
+ *
+ * Захвата указателя в этой среде тоже нет — меню это знает и вешает слушатели на ручку как есть.
+ */
+export function installPointerEventStub(): void {
+    if ('PointerEvent' in globalThis) {
+        return;
+    }
+
+    class PointerEventStub extends MouseEvent {
+        public readonly pointerId: number;
+        public readonly pointerType: string;
+
+        constructor(type: string, init: MouseEventInit & { pointerId?: number; pointerType?: string } = {}) {
+            super(type, init);
+            this.pointerId = init.pointerId ?? 0;
+            this.pointerType = init.pointerType ?? 'mouse';
+        }
+    }
+
+    Object.defineProperty(globalThis, 'PointerEvent', { configurable: true, value: PointerEventStub });
+}
+
 /** Двойник службы точек перелома: сценарий сам решает, узкий экран или нет. */
 export class BreakpointServiceStub {
     public readonly narrow: WritableSignal<boolean> = signal(false);
@@ -234,4 +259,27 @@ export function highlightedTitles(fixture: ComponentFixture<HostComponent>): str
 
         return (title?.textContent ?? '').trim();
     });
+}
+
+/** Ручка ширины закреплённого подменю. Пустая — подменю не закреплено, тянуть нечего. */
+export function resizer(fixture: ComponentFixture<HostComponent>): HTMLElement | null {
+    return fixture.nativeElement.querySelector('[qa-dataid="side-menu-resize"]') as HTMLElement | null;
+}
+
+/** Указательное событие на ручке: вид указателя задаётся отдельно — мышь, перо, палец. */
+export function pointer(handle: HTMLElement, type: string, clientX: number, pointerType: string = 'mouse'): void {
+    handle.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId: 1, clientX, pointerType }));
+}
+
+/**
+ * Тяга ручки целиком: нажатие, ведение, отпускание. События идут по самой ручке, а не по
+ * документу — захват держит их за ней, и слушателя на документе у меню больше нет.
+ */
+export function drag(fixture: ComponentFixture<HostComponent>, from: number, to: number, pointerType: string = 'mouse'): void {
+    const handle: HTMLElement = resizer(fixture) as HTMLElement;
+
+    pointer(handle, 'pointerdown', from, pointerType);
+    pointer(handle, 'pointermove', to, pointerType);
+    pointer(handle, 'pointerup', to, pointerType);
+    fixture.detectChanges();
 }

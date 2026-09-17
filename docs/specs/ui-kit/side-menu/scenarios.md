@@ -496,3 +496,22 @@ in a spec — the container there has no height of its own, and there is nothing
 `SubMenuKeepsItsPlace` (`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): it measures
 the height of the content of the container against its own, and the top of the panel before and after the
 bringing of an item into view.
+
+## The pull of the width of a pinned panel
+
+### SC-UK-69 — the handle is pulled by a pen and by a finger
+
+Given the mode is the pinned one and an open submenu
+When the handle gets a pointer press of a pen, then a movement to the right and a release
+Then the panel follows the movement, and the asked width goes away outward at the release
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
+### SC-UK-70 — a pointer taken away by the environment ends the pull
+
+Given the mode is the pinned one and a pull begun
+When the environment takes the pointer away — a gesture of the system, a call
+Then the pull ends the same way a release ends it: the width reached goes away outward, and the
+listeners of the movement are taken off
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.

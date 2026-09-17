@@ -267,3 +267,75 @@ export function stepSubMenuHighlight(
 
     return walk[next].id;
 }
+
+/** Чем вешается слушатель. У кита это `Renderer2.listen`, у проверки — своя пара функций. */
+export type TPointerListen = (target: HTMLElement, event: string, handler: (event: PointerEvent) => void) => () => void;
+
+/** Что тяга сообщает меню: новую ширину по ходу и конец — отпусканием или отнятием указателя. */
+export interface ISubMenuWidthDragHooks {
+    readonly onWidth: (width: number) => void;
+    readonly onEnd: () => void;
+}
+
+/**
+ * Тяга ширины подменю: считается здесь, а не в компоненте, и меню остаётся тонким.
+ *
+ * Идёт указательными событиями: мышиных палец и перо не дают вовсе, и ручка на нажатии мыши
+ * берётся одной мышью. Слушатели висят на самой ручке, а держит их за ней захват указателя:
+ * слушатель на документе теряет движение, как только указатель уходит на кадр чужого адреса, и
+ * панель застревает на ширине той минуты.
+ *
+ * Указатель, отнятый средой — жестом системы, звонком, — кончает тягу так же, как отпускание.
+ *
+ * Возвращает снятие слушателей. Пустое значение — тянуть нечем: ручка не элемент разметки.
+ */
+export function startSubMenuWidthDrag(
+    event: PointerEvent,
+    startWidth: number,
+    listen: TPointerListen,
+    hooks: ISubMenuWidthDragHooks
+): (() => void) | null {
+    const handle: EventTarget | null = event.currentTarget;
+
+    if (!(handle instanceof HTMLElement)) {
+        return null;
+    }
+
+    const pointerId: number = event.pointerId;
+    const startX: number = event.clientX;
+
+    // Захвата нет у среды, где идут проверки; без него слушатели остаются на ручке как есть.
+    if (typeof handle.setPointerCapture === 'function') {
+        handle.setPointerCapture(pointerId);
+    }
+
+    const stopMove: () => void = listen(handle, 'pointermove', (moveEvent: PointerEvent): void => {
+        if (moveEvent.pointerId === pointerId) {
+            hooks.onWidth(clampSubMenuWidth(startWidth + moveEvent.clientX - startX));
+        }
+    });
+    const stopUp: () => void = listen(handle, 'pointerup', (): void => hooks.onEnd());
+    const stopCancel: () => void = listen(handle, 'pointercancel', (): void => hooks.onEnd());
+
+    return (): void => {
+        stopMove();
+        stopUp();
+        stopCancel();
+
+        if (typeof handle.releasePointerCapture === 'function' && handle.hasPointerCapture(pointerId)) {
+            handle.releasePointerCapture(pointerId);
+        }
+    };
+}
+
+/**
+ * Ширина, которой панель нарисована. От неё отсчитывается тяга, когда своего выбора ещё нет.
+ *
+ * Панели нет или раскладка ещё не посчитана — берётся нижний предел: с нуля тяга уводила бы
+ * ширину в отрицательные числа с первого же движения.
+ */
+export function drawnSubMenuWidth(panel: HTMLElement | null): number {
+    const width: number = panel?.getBoundingClientRect().width ?? 0;
+
+    return width > 0 ? width : SUB_MENU_WIDTH_MIN;
+}

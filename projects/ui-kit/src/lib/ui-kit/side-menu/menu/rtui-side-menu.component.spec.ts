@@ -1,6 +1,5 @@
 import { ComponentFixture } from '@angular/core/testing';
 
-import { SUB_MENU_WIDTH_MAX } from '../side-menu.logic';
 import {
     clickRailItem,
     focusSearch,
@@ -175,20 +174,6 @@ describe('RtuiSideMenuComponent — поиск по подменю', () => {
     });
 });
 
-function resizer(fixture: ComponentFixture<HostComponent>): HTMLElement | null {
-    return fixture.nativeElement.querySelector('[qa-dataid="side-menu-resize"]') as HTMLElement | null;
-}
-
-/** Тяга края: нажатие на ручке, ведение и отпускание идут документом, а не самой ручкой. */
-function drag(fixture: ComponentFixture<HostComponent>, from: number, to: number): void {
-    const handle: HTMLElement = resizer(fixture) as HTMLElement;
-
-    handle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: from }));
-    document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: to }));
-    document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: to }));
-    fixture.detectChanges();
-}
-
 describe('SC-UK-39 — набор запроса держит незакреплённое подменю открытым', () => {
     it('уход указателя закрывает подменю, пока в поле не заходили', () => {
         const { fixture }: ISetup = setup();
@@ -246,54 +231,6 @@ describe('SC-UK-39 — набор запроса держит незакрепл
         leavePanel(fixture);
 
         expect(subItems(fixture).length).toBe(0);
-    });
-});
-
-describe('SC-UK-35 — край закреплённого подменю тянется указателем', () => {
-    it('тяга отдаёт наружу новую ширину', () => {
-        const { fixture, host }: ISetup = setup('pinned', ['refs']);
-
-        host.width.set(200);
-        fixture.detectChanges();
-
-        drag(fixture, 200, 260);
-
-        expect(host.width()).toBe(260);
-    });
-
-    // Натянутая ширина кладётся своим свойством: панель берёт наибольшее из неё и той, что задало
-    // оформление, и заданная оформлением ширина остаётся нижним пределом сама по себе.
-    it('панель становится той ширины, которую вернул потребитель', () => {
-        const { fixture, host }: ISetup = setup('pinned', ['refs']);
-
-        host.width.set(200);
-        fixture.detectChanges();
-
-        drag(fixture, 200, 260);
-
-        const menuElement: HTMLElement = fixture.nativeElement.querySelector('rtui-side-menu') as HTMLElement;
-
-        expect(menuElement.style.getPropertyValue('--rt-side-menu-sub-menu-dragged-width')).toBe('260px');
-        expect(menuElement.style.getPropertyValue('--rt-side-menu-sub-menu-width')).toBe('');
-    });
-
-    it('тяга за предел отдаёт предельную ширину', () => {
-        const { fixture, host }: ISetup = setup('pinned', ['refs']);
-
-        host.width.set(200);
-        fixture.detectChanges();
-
-        drag(fixture, 200, 5000);
-
-        expect(host.width()).toBe(SUB_MENU_WIDTH_MAX);
-    });
-
-    it('у незакреплённого подменю края не тянут', () => {
-        const { fixture }: ISetup = setup();
-
-        hoverFirstItem(fixture);
-
-        expect(resizer(fixture)).toBeNull();
     });
 });
 

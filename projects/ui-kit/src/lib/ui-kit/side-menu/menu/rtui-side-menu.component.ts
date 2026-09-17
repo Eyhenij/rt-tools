@@ -31,7 +31,7 @@ import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '
 import { TNullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
-import { clampSubMenuWidth, filterSubMenuItems, subMenuIdsToExpand, SUB_MENU_WIDTH_MIN } from '../side-menu.logic';
+import { clampSubMenuWidth, drawnSubMenuWidth, filterSubMenuItems, startSubMenuWidthDrag, subMenuIdsToExpand } from '../side-menu.logic';
 import { ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 import {
     RtuiScrollableContainerComponent,
@@ -379,11 +379,8 @@ export class RtuiSideMenuComponent {
         this.subMenuModeChange.emit(this.isPinned() ? 'hover' : 'pinned');
     }
 
-    /**
-     * Взята ручка правого края. Слушатели вешаются на документ: рука уходит с узкой полоски
-     * ручки в первое же движение, и слушатель на ней самой терял бы тягу сразу.
-     */
-    public onResizeStart(event: MouseEvent): void {
+    /** Взята ручка правого края. Механика тяги — `startSubMenuWidthDrag` в логике рядом. */
+    public onResizeStart(event: PointerEvent): void {
         if (!this.isPinned() || this.#stopDrag !== null) {
             return;
         }
@@ -391,19 +388,24 @@ export class RtuiSideMenuComponent {
         // Иначе указатель выделяет подписи пунктов, и тяга выглядит выделением текста.
         event.preventDefault();
 
-        const startX: number = event.clientX;
         const startWidth: number = this.subMenuWidth() ?? this.#measureSubMenuWidth();
+        const stop: (() => void) | null = startSubMenuWidthDrag(
+            event,
+            startWidth,
+            (target: HTMLElement, name: string, handler: (moveEvent: PointerEvent) => void): (() => void) =>
+                this.#renderer.listen(target, name, handler),
+            {
+                onWidth: (width: number): void => this.#draggedWidth.set(width),
+                onEnd: (): void => this.#finishResize(),
+            }
+        );
 
-        const stopMove: () => void = this.#renderer.listen('document', 'mousemove', (moveEvent: MouseEvent): void => {
-            this.#draggedWidth.set(clampSubMenuWidth(startWidth + moveEvent.clientX - startX));
-        });
-        const stopUp: () => void = this.#renderer.listen('document', 'mouseup', (): void => this.#finishResize());
-
-        this.#stopDrag = (): void => {
-            stopMove();
-            stopUp();
-            this.#stopDrag = null;
-        };
+        if (stop !== null) {
+            this.#stopDrag = (): void => {
+                stop();
+                this.#stopDrag = null;
+            };
+        }
     }
 
     public onSubMenuSearch(query: string): void {
@@ -484,9 +486,6 @@ export class RtuiSideMenuComponent {
 
     /** Ширина, от которой отсчитывается тяга, когда своего выбора ещё нет: та, что нарисована. */
     #measureSubMenuWidth(): number {
-        const panel: ElementRef<HTMLElement> | null = this.subMenuPanelRef() ?? null;
-        const width: number = panel?.nativeElement.getBoundingClientRect().width ?? 0;
-
-        return width > 0 ? width : SUB_MENU_WIDTH_MIN;
+        return drawnSubMenuWidth(this.subMenuPanelRef()?.nativeElement ?? null);
     }
 }
