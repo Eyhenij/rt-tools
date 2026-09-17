@@ -34,3 +34,12 @@ or the code holds what the spec is silent about.
 - **The page declares the language of the document as the one it is written in.** — **Not checked by a machine.** The sign stands as an attribute of the markup, and there is no symbol in it; it is held by the end-to-end spec SC-MB-152 and by reading `apps/message-bus-admin/src/index.html`.
 - **A header pinned at the top is opaque over the whole width.** — `apps/message-bus-admin/src/styles/_header.scss:admin-header`
 - **What stands above the page paints its own ground itself.** — `apps/message-bus-admin/src/styles/_profile-menu.scss:admin-profile-menu`
+- **The screen has an address of its own, and it stands next to the addresses of the sections.** — `libs/message-bus-admin/auth/util/src/lib/auth-paths.ts:NO_SECTIONS_PATH`
+- **The screen lives inside the shell, not beside it.** — `apps/message-bus-admin/src/app/app.routes.ts:appRoutes`
+- **The root of the admin panel leads to the screen when no section is open.** — `libs/message-bus-admin/auth/shell/src/lib/section-access.ts:landingPath`
+- **A direct link to a closed section leads to the screen, not to a cancelled move.** — `libs/message-bus-admin/auth/shell/src/lib/section-access.ts:sectionRightGuard`
+- **The screen is open to whoever has no section open, and leads away everyone else.** — `libs/message-bus-admin/auth/shell/src/lib/section-access.ts:noSectionsGuard`
+- **The screen names the reason and whom to ask, not the rights that are missing.** — `libs/message-bus-admin/common/core/util/src/lib/admin-labels.ts:ADMIN_LABELS`
+- **The way out from the screen is the same way out as everywhere.** — `libs/message-bus-admin/common/container/ui/src/lib/header/admin-header.component.ts:AdminHeaderComponent`
+- **A right that arrives without a reload takes the person off the screen.** — `libs/message-bus-admin/common/container/feature/src/lib/admin-no-sections.component.ts:AdminNoSectionsComponent`
+- **The screen is not shown while the answer about the signed-in person has not arrived.** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:rightsKnown`
