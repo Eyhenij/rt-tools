@@ -2,6 +2,7 @@ import { expect, Page, test } from '@playwright/test';
 
 import { PEOPLE, SECTIONS } from '../stand/stand.mjs';
 import { qa, signIn } from './support/admin';
+import { expectScreen } from './support/shot';
 
 /**
  * Экран того, кому не открыт ни один раздел.
@@ -31,6 +32,8 @@ test.describe('вошедший без единого права', () => {
         // Имя и выход даёт шапка оболочки: экран стоит внутри неё, а не вместо неё
         await expect(qa(page, 'header-user-menu')).toBeVisible();
         await expect(page.locator('[qa-dataid="header-nav-item"]')).toHaveCount(0);
+
+        await expectScreen(page, 'shell-no-sections');
     });
 
     test('SC-MB-396 — экран переживает перезагрузку своего адреса', async ({ page }: { page: Page }) => {
