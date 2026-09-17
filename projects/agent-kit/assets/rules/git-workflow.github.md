@@ -135,12 +135,14 @@ flowchart TD
 - **The task column moves in the same motion as the work.** Branch created — the task is in
   progress, PR opened — awaiting review; the move command does it, not GraphQL calls from memory.
 - **The epic card moves by the same command, on the epic number, at two moments.** First task
-  taken — the epic is in progress, by the same turn as the task's move; the PR of the epic into
-  `main` opens — the epic awaits review. `npm run task:move -- <номер эпика> in-progress`; the
-  merge of the epic PR closes the card by the host's rule on a closed item. Left in the first
-  column while its tasks merge, the epic reads to the owner as never started.
+  taken — the epic is in progress; the PR of the epic into `main` opens — the epic awaits review.
+  `npm run task:move -- <номер эпика> in-progress`. Left in the first column while its tasks merge,
+  the epic reads as never started.
 - **A task left in the first column opens no PR.** By the work queue it reads as not taken, though
   the work is done and published. The tree names the first column itself; unnamed — not judged.
+- **An open task standing in a closing column is a discrepancy.** That column says the work is
+  merged, and a merge closes the task itself: by the board such work reads as finished. The tree
+  names its closing columns itself; unnamed — not judged.
 - **The board holds tasks, not PRs about them.** A PR card has no column and never leaves the queue.
   The queue audit finds such cards, a line each.
 - **A lagging column is found by the queue audit, not by eye.** It judges the column by the PR both
@@ -156,7 +158,7 @@ flowchart TD
   does not split is marked.
 - **The tip of an open PR without a run is seen by the work queue audit, unless the pipeline does
   not wake for its base.** A page without a run looks the same as with a green one; where no run
-  comes at all, its absence tells nothing and the audit is silent about that PR.
+  comes at all, the audit is silent about that PR.
 - **What checks a PR whose base is not the main branch is asked before the first PR of an epic
   opens.** The trigger either wakes for it as for one into main, or does not, and then the push
   gate is the only check behind the work — pattern `git-workflow-stack`.
@@ -281,10 +283,6 @@ The guard does not move a task to in progress: it does not edit the board at all
 by memory and the task creation command's hint; a task left in the first column the guard names at
 PR opening, other column discrepancies the queue audit finds. The epic card is held by memory
 alone: no guard reads its column at branch creation, and the queue audit does not judge it.
-
-The freshness of main's tip the guard asks by the second tier — the same technique as the task
-state. The first tier works offline: the local ref answers whether the branch lags what lies in the
-tree, the remote one — whether the ref itself went stale.
 
 ## Patterns
 

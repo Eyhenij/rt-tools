@@ -197,6 +197,12 @@ refuses the push.
   it — the creating command writes the declaration, the queue audit judges the link both ways, the
   guard takes the base of a branch by it. Read in two places, one shape diverges silently: one side
   demands what the other does not see.
+- **The declaration opens its line, and the same words inside a sentence are not one.** A task whose
+  description said «семь задач эпика #1870» was read as belonging to that epic, and the opening of
+  its request from the main branch was refused. The words alone cannot tell a declaration from prose
+  about an epic; the place in the line can. Before it stands at most an ordinal or a list marker:
+  the creating command writes the declaration as a line of its own, and a hand-written one lies
+  among the items of a plan.
 - **The state of a task carries the number of its epic.** The guard has no other road to the epic:
   the work queue holds neither branches nor kinship of cards, and a second asking for the body would
   cost an extra call and diverge from the first.
