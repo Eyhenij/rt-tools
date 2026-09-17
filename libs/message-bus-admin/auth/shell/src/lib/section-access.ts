@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
+import { NO_SECTIONS_PATH } from '@rt/message-bus-admin/auth/util';
 import { ADMIN_MENU, IAdminMenuItem } from '@rt/message-bus-admin/common/container/util';
 
 /**
@@ -40,6 +41,19 @@ export function firstOpenSectionPath(): string {
 }
 
 /**
+ * Куда вести вошедшего, когда конкретного раздела он не просил или просил закрытый.
+ *
+ * Открытые разделы есть — в первый из них; нет ни одного — на экран, который говорит, что вход
+ * состоялся, а разделов не открыто. Пустой адрес, стоявший здесь прежде, разрешался в ничто:
+ * человек попадал на белую страницу и читал её как поломку админки.
+ */
+export function landingPath(): string {
+    const open: string = firstOpenSectionPath();
+
+    return open === '' ? `/${NO_SECTIONS_PATH}` : open;
+}
+
+/**
  * Пускает в раздел того, у кого есть право его читать.
  *
  * Адрес, за которым не стоит ни один пункт меню, эта проверка не судит вовсе: он закрыт стражем
@@ -55,9 +69,21 @@ export const sectionRightGuard: CanActivateFn = (_route: ActivatedRouteSnapshot,
         return true;
     }
 
+    // Открытых разделов нет ни одного — увод идёт на экран об этом, а не отказом перехода:
+    // отказ оставляет адрес там, где он стоял, а на первой загрузке страницы стоять ему негде —
+    // оболочка не создаётся вовсе, и человек видит белую страницу.
+    return router.createUrlTree([landingPath()]);
+};
+
+/**
+ * Пускает на экран «разделов нет» того, кому и правда не открыт ни один.
+ *
+ * Остальных уводит в их первый открытый раздел: иначе в админке жил бы адрес, говорящий «доступа
+ * нет» тому, у кого он есть.
+ */
+export const noSectionsGuard: CanActivateFn = (): boolean | UrlTree => {
+    const router: Router = inject(Router);
     const open: string = firstOpenSectionPath();
 
-    // Открытых разделов нет ни одного: уводить некуда, и переход просто не состоится — оболочка
-    // на его месте показывает, что доступа нет. Увод на корень здесь закрутил бы переадресацию.
-    return open === '' ? false : router.createUrlTree([open]);
+    return open === '' ? true : router.createUrlTree([open]);
 };
