@@ -40,10 +40,8 @@ with the work taken, and the question goes in a line beside it.
 
 Everything else is the turn going on, not its end. A milestone does not end a turn: not a commit,
 not a read agreement, not the boundary "read — now editing", not a green check.
-A transition from state to state — least of all: the mandatory action is done, and the next is
-done in the same turn; a state boundary looks like a finished piece better than any milestone, and
-the report lands exactly
-where the next action should have stood.
+A transition from state to state — least of all: the next mandatory action is done in the same
+turn, and a state boundary looks like a finished piece better than any milestone.
 
 Four ways to end a turn look like work and are not: a summary of someone else's step, a menu under
 an assigned order, a declaration of intent, and a command named but not run.

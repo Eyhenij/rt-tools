@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.28.0 · rules/turn-conduct.md · 0b161a05d34e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · rules/turn-conduct.md · e8e8778474a5 · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -41,10 +41,8 @@ with the work taken, and the question goes in a line beside it.
 
 Everything else is the turn going on, not its end. A milestone does not end a turn: not a commit,
 not a read agreement, not the boundary "read — now editing", not a green check.
-A transition from state to state — least of all: the mandatory action is done, and the next is
-done in the same turn; a state boundary looks like a finished piece better than any milestone, and
-the report lands exactly
-where the next action should have stood.
+A transition from state to state — least of all: the next mandatory action is done in the same
+turn, and a state boundary looks like a finished piece better than any milestone.
 
 Four ways to end a turn look like work and are not: a summary of someone else's step, a menu under
 an assigned order, a declaration of intent, and a command named but not run.
@@ -160,9 +158,7 @@ flowchart TD
   where it stood. Parts of a compound command are judged one by one: a read joined to an edit
   remains work.
 - **A reply to the owner is not an action and does not stand last in a turn.** The order inside a
-  turn is one: work, the first step of the next, then text. The reverse — work, report, end — stands
-  behind every analysed stop: a report is a form of completeness, and an appended summary reads as
-  the turn's end the more convincingly the more was done. Saying what was done is always allowed;
+  turn is one: work, the first step of the next, then text. Saying what was done is always allowed;
   its place is after the next action, not instead.
 - **The last action of a turn is only ever work.** One sign for every kind of stop: a file edit or a
   changing command — last among what the turn did. The guard's tiers — exploration, waiting, handing
@@ -195,6 +191,9 @@ flowchart TD
 - **The owner's standing word about a stop is quoted in the progress, in « », in the line «Waiting
   for the owner».** The guard reads their word, not a retelling: a line without a quote releases
   nothing, and a quote holds until the owner cancels it. A word said in this turn releases by itself.
+- **The session is ended by the owner and by nobody else.** The tool that closes the conversation is
+  refused by a guard always, with no lawful form of bypass: an assignment stands until the owner
+  cancels it, and a session that must close is closed by them.
 - **A refusal of a guard ends the turn only as its last action.** A refusal lifted by loading the
   rule and answered by the next call is the middle of the turn: read as an exit, it released a turn
   that ended with a report.
@@ -205,8 +204,7 @@ flowchart TD
 - **A statement about the tree's state is watched by the statement guard, not by the executor's
   memory.** Everything the reply says about the tree carries a command and its output; said without
   one, it is no statement — not "checked", not "cleared", not "done". The guard reads the turn's
-  text to the owner and looks for a command of the same turn; each word has its own kind of command,
-  since a general sign "there was a command" would confirm one thing by another. The previous turn
+  text to the owner and looks for a command of the same turn; each word has its own kind of command. The previous turn
   does not count: the tree's state changes, and yesterday's output says nothing of today's.
 - **The statement guard waits for the reply text rather than judging the record as it found it.**
   The text lands in the turn record no earlier than the host calls the hook. Not having waited, the
