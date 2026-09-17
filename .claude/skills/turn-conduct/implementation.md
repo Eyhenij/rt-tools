@@ -15,6 +15,15 @@ named there too.
 - **the turn exit guards** — `.claude/hooks/` — the exit guard, the waiting guard, the conversation guard, the incident guard, the window guard
 - **the tiers of the open epic** — `.claude/hooks/turn-exit-epic.sh` — sourced by the exit guard; the unfinished tasks are read by `tools/epic-table.mjs --unfinished` once per turn, on the way to a refusal
 
+## The guard of the open epic — this tree's own
+
+The articles of the section «The open epic» come by the tree's override, not by the package, and
+the spec audit reads bindings only for the package section. They are carried out here:
+
+- **Until the epic is closed a turn ends only by one of the four exits.** — `.claude/hooks/work-continues-guard.sh:unfinished` — this tree's own guard. It asks the unfinished tasks of `tools/epic-table.mjs --unfinished`. A turn without one of the four exits is returned with the next step named. A turn that ended with work is returned too. The scenarios are `tools/tests/work-continues-guard.test.sh`
+- **The owner's standing word about a stop is quoted in the progress, in « », in the line «Waiting for the owner».** — `.claude/hooks/work-continues-guard.sh:waiting` — a quote in the line releases the turn. A retelling without one does not
+- **A refusal of a guard ends the turn only as its last action.** — `.claude/hooks/work-continues-guard.sh:denied` — the last tool result of the turn is judged, not any refusal in it
+
 ## Where the articles are carried out
 
 The first column is the article verbatim, as it is written in the section «How the law applies
