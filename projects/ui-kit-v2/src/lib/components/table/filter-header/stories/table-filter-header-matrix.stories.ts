@@ -20,3 +20,10 @@ export const Presets: TStory = { args: { part: 'presets' } };
 
 /** Светлая и тёмная тема рядом. */
 export const Themes: TStory = { args: { part: 'themes' } };
+
+/**
+ * Отбор там, где он живёт: в шапке настоящей таблицы кита. Показан заданный отбор по городу —
+ * строк в таблице меньше, чем в наборе. Сужает строки потребитель: ячейка только сообщает набор
+ * условий наружу.
+ */
+export const InTable: TStory = { args: { part: 'in-table' } };

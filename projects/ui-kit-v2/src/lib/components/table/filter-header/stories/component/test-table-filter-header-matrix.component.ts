@@ -7,9 +7,10 @@ import { StoryRowComponent } from '../../../../../../showcase/story-row.componen
 import { StoryThemesComponent } from '../../../../../../showcase/story-themes.component';
 import { IRtTable } from '../../../rt-table.model';
 import { RtTableFilterHeaderComponent } from '../../rt-table-filter-header.component';
+import { TestRtTableFilterInTableComponent } from './test-table-filter-in-table.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TFilterHeaderMatrixPart = 'kinds' | 'states' | 'presets' | 'themes';
+export type TFilterHeaderMatrixPart = 'kinds' | 'states' | 'presets' | 'themes' | 'in-table';
 
 /** Один случай ряда: подпись ячейки, настройка отбора и набор условий, который ей виден. */
 interface ICase {
@@ -72,6 +73,10 @@ const SET: readonly IFilterModel<string>[] = [{ propertyName: 'title', operatorT
                 </app-story-presets>
             }
 
+            @case ('in-table') {
+                <app-table-filter-in-table />
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Светлая и тёмная тема рядом">
                     <ng-template>
@@ -82,7 +87,13 @@ const SET: readonly IFilterModel<string>[] = [{ propertyName: 'title', operatorT
         }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtTableFilterHeaderComponent, StoryPresetsComponent, StoryRowComponent, StoryThemesComponent],
+    imports: [
+        RtTableFilterHeaderComponent,
+        StoryPresetsComponent,
+        StoryRowComponent,
+        StoryThemesComponent,
+        TestRtTableFilterInTableComponent,
+    ],
 })
 export class TestRtTableFilterHeaderMatrixComponent {
     public part: TFilterHeaderMatrixPart = 'kinds';
