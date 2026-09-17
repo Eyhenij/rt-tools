@@ -1,0 +1,69 @@
+@layer rt-kit.components {
+    /* rt-table-filter-header — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
+       `.rt-table-filter-header` — сам хост (шаблон начинается с ng-container, класс ставит host). */
+
+    .rt-table-filter-header {
+        --rt-table-filter-header-radius: var(--rt-radius-sm);
+        --rt-table-filter-header-operator-color: var(--rt-color-text-muted);
+        --rt-table-filter-header-operator-color-set: var(--rt-color-text-primary);
+        --rt-table-filter-header-operator-bg-hover: var(--rt-color-bg-subtle);
+        --rt-table-filter-header-operator-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-table-filter-header-menu-radius: var(--rt-radius-md);
+        --rt-table-filter-header-menu-shadow: var(--rt-shadow-card);
+
+        display: flex;
+        min-width: 0;
+        align-items: center;
+        gap: var(--rt-space-1);
+
+        // Кнопка вида сравнения — подпись словом, а не значком: значок сравнения читается
+        // догадкой, и семь догадок подряд человек не держит в голове.
+        &__operator {
+            padding: var(--rt-space-0-5) var(--rt-space-1);
+            border: 0;
+            border-radius: var(--rt-table-filter-header-radius);
+            background: transparent;
+            color: var(--rt-table-filter-header-operator-color);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: var(--rt-text-xs);
+            white-space: nowrap;
+
+            &:hover {
+                background: var(--rt-table-filter-header-operator-bg-hover);
+            }
+
+            &:focus-visible {
+                box-shadow: var(--rt-table-filter-header-operator-focus-shadow);
+                outline: none;
+            }
+
+            // Заданный отбор виден по самой кнопке: колонка, которая сузила список, должна
+            // отличаться от той, которая не сужала, и без значения в поле тоже.
+            &--set {
+                color: var(--rt-table-filter-header-operator-color-set);
+                font-weight: var(--rt-font-weight-medium);
+            }
+        }
+
+        // Поле берёт остаток места: шапка колонки у́же любого поля, и без этого поле выдавило бы
+        // кнопку вида сравнения за край ячейки.
+        &__value {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        &__clear {
+            flex: none;
+        }
+
+        &__operators {
+            display: flex;
+            flex-direction: column;
+            padding: var(--rt-space-1);
+            border-radius: var(--rt-table-filter-header-menu-radius);
+            background: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-table-filter-header-menu-shadow);
+        }
+    }
+}
