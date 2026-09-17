@@ -13,7 +13,7 @@ import { IRtSelect } from '../../rt-select.model';
  * Какую матрицу рисовать. Виды кнопки стоят одним рядом, а каждый случай панели — своим показом:
  * панель уезжает в слой наложения поверх страницы, и две открытые разом легли бы одна на другую.
  */
-export type TSelectTriggerMorePart = 'buttons' | 'long' | 'wide' | 'capped' | 'by-trigger';
+export type TSelectTriggerMorePart = 'buttons' | 'chevron' | 'long' | 'wide' | 'capped' | 'by-trigger';
 
 /** Вид кнопки: набор закрыт, и шаблон выбирает разметку по нему. */
 enum EButtonKind {
@@ -87,7 +87,12 @@ function chosen(value: string | null): FormControl<string | null> {
                                     }
                                     @case (buttonKind.Label) {
                                         <span>Города</span>
-                                        <rt-icon name="chevron-down" size="sm" />
+                                        <!--
+                                            Стрелка смотрит по состоянию списка: обстановка шаблона
+                                            несёт признак открытости, и нарисованная намертво она
+                                            врала бы о том, открыт список или закрыт.
+                                        -->
+                                        <rt-icon size="sm" [name]="state.isOpen ? 'chevron-up' : 'chevron-down'" />
                                     }
                                     @case (buttonKind.Tag) {
                                         <rt-tag severity="info" [value]="state.label || 'Город'" />
@@ -101,6 +106,22 @@ function chosen(value: string | null): FormControl<string | null> {
                         </rt-select>
                     </ng-template>
                 </app-story-row>
+            }
+
+            @case ('chevron') {
+                <div class="app-trigger-more__slot">
+                    <rt-select
+                        ariaLabel="Город"
+                        placeholder="Выберите город"
+                        [attr.data-story-trigger]="triggerAttribute"
+                        [options]="options"
+                        [formControl]="chevronControl">
+                        <ng-template rtSelectTrigger let-state>
+                            <span>Города</span>
+                            <rt-icon size="sm" [name]="state.isOpen ? 'chevron-up' : 'chevron-down'" />
+                        </ng-template>
+                    </rt-select>
+                </div>
             }
 
             @case ('long') {
@@ -201,6 +222,7 @@ export class TestRtSelectTriggerMoreComponent {
     ];
 
     public readonly buttonControl: FormControl<string | null> = chosen('spb');
+    public readonly chevronControl: FormControl<string | null> = chosen(null);
     public readonly longControl: FormControl<string | null> = chosen(null);
     public readonly wideControl: FormControl<string | null> = chosen(null);
     public readonly cappedControl: FormControl<string | null> = chosen(null);

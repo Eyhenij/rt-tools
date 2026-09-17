@@ -181,6 +181,10 @@ function chosen(value: string | null): FormControl<string | null> {
                 <app-test-select-trigger-more part="buttons" />
             }
 
+            @case ('chevron') {
+                <app-test-select-trigger-more part="chevron" />
+            }
+
             @case ('long') {
                 <app-test-select-trigger-more part="long" />
             }

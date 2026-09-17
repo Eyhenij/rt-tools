@@ -54,6 +54,18 @@ export const Themes: TStory = { args: { part: 'themes' } };
 export const Buttons: TStory = { args: { part: 'buttons' } };
 
 /**
+ * Стрелка на кнопке при открытом списке. Закрытую сторону пары показывает ряд видов кнопки, и
+ * порознь ни одна половина не говорит, что стрелка вообще меняет направление.
+ */
+export const ChevronOpen: TStory = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'chevron' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { key: 'ArrowDown' });
+    },
+};
+
+/**
  * Длинный список в панели. Прокрутки внутри нет: панель открывается целиком — так и было
  * заказано. Кнопка при этом узкая, и панель её шириной не мерится.
  */
