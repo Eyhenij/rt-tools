@@ -77,6 +77,9 @@ not by a person.
   releases as any refusal.
 - **The epic is read once per turn and only on the way to a refusal.** The reading goes to the
   hosting by the same command that prints the table of the epic to the owner.
+- **The owner's standing word quoted in the line «Waiting for the owner» releases the turn.** The
+  guard reads their word, not a retelling: a line without a quote releases nothing, and the quote
+  holds until the owner rewrites the line.
 
 ## What is out of scope
 
@@ -144,4 +147,5 @@ Not applicable: the guard judges one turn of one session.
   forty-two scenarios of sixty-three were about one guard.
 - 2026-09-17 — the open epic: a turn with work and a second pass are judged while the epic has an
   unfinished task; a service message starts no turn; a refusal is an exit only as the last action;
-  a question without work in a running stage and a handover by hand are refused.
+  a question without work in a running stage and a handover by hand are refused; the owner's word
+  quoted in the waiting line of the progress releases the turn.

@@ -29,6 +29,18 @@ rt_te_epic_left() {
     printf '%s' "$rt_te_epic_left_cache"
 }
 
+# The standing word of the owner about a stop, quoted in « » in the line «Waiting for the owner» of
+# the progress. The guard reads their word, not a retelling: a line without a quote releases
+# nothing, and the quote holds until the owner rewrites the line. Expects `$progress` to be set.
+rt_te_owner_word_quoted() {
+    [ -n "${progress:-}" ] || return 1
+    local waiting
+    # The first waiting line of the progress is read, in either language of the heading.
+    waiting="$(sed -nE 's/^[[:space:]]*[-*][[:space:]]*\*\*(Waiting for the owner|Ждём владельца|Ждём от владельца):\*\*[[:space:]]*(.*)/\2/p' "$progress" 2>/dev/null | head -1)"
+    # Three characters and more inside « » count as a word.
+    printf '%s' "$waiting" | grep -q '«[^»]\{3,\}»' 2>/dev/null
+}
+
 # The epic is open: at least one of its tasks is left unfinished.
 rt_te_epic_open() {
     [ -n "$(rt_te_epic_left)" ]

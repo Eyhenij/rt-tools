@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/turn-exit-epic.sh · 198b9b6361d8 · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/turn-exit-epic.sh · e758e4d41168 · правится надстройкой, не здесь
 # The tiers of the open epic for the turn-exit guard. NOT a guard: it has no `rt-hook:` declaration
 # and hooks into no agent event. The guard sources it right after the root of the tree is known.
 #
@@ -28,6 +28,18 @@ rt_te_epic_left() {
         fi
     fi
     printf '%s' "$rt_te_epic_left_cache"
+}
+
+# The standing word of the owner about a stop, quoted in « » in the line «Waiting for the owner» of
+# the progress. The guard reads their word, not a retelling: a line without a quote releases
+# nothing, and the quote holds until the owner rewrites the line. Expects `$progress` to be set.
+rt_te_owner_word_quoted() {
+    [ -n "${progress:-}" ] || return 1
+    local waiting
+    # The first waiting line of the progress is read, in either language of the heading.
+    waiting="$(sed -nE 's/^[[:space:]]*[-*][[:space:]]*\*\*(Waiting for the owner|Ждём владельца|Ждём от владельца):\*\*[[:space:]]*(.*)/\2/p' "$progress" 2>/dev/null | head -1)"
+    # Three characters and more inside « » count as a word.
+    printf '%s' "$waiting" | grep -q '«[^»]\{3,\}»' 2>/dev/null
 }
 
 # The epic is open: at least one of its tasks is left unfinished.

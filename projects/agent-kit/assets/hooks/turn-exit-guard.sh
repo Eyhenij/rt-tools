@@ -25,10 +25,8 @@
 #   5. The session handover is written — the window has run out.
 #   6. The owner said to stop.
 #
-# Under an open epic the second and the fifth do not release: a turn that ended with work and a
-# handover written by hand are stops all the same, and a second pass over the turn is judged again.
-# The owner said it outright — until the epic is closed the executor does not stop on its own. The
-# tiers of that lie in `turn-exit-epic.sh`.
+# Under an open epic the second and the fifth do not release, and a second pass is judged again:
+# until the epic is closed the executor does not stop on its own. The tiers lie in `turn-exit-epic.sh`.
 #
 # Work without a branch and without a task folder is judged by the second sign. It has no state,
 # and there is nowhere to take the first sign from — but a turn without a single edit of the tree
@@ -110,6 +108,7 @@ fi
 case "$state" in
     работа-отдана | влито) exit 0 ;;
 esac
+rt_te_owner_word_quoted && exit 0 # the owner's standing word quoted in the waiting line
 
 # A written plan is never the end of a turn at all. The mandatory action of this state is to do the
 # first stage, and whoever starts it moves the state by the same edit: a turn left in the previous

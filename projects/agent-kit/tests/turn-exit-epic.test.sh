@@ -64,6 +64,22 @@ expect_reason "SC-AK-1118 — отказ называет передачу ру�
 expect_stop "SC-AK-1118 — отказ проверки окна последним действием отпускает ход" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'npm run handoff')" "$(ran 'echo x > a.ts')" "$(answered 'BLOCKED by window-fill-guard: window fill 52%')")")" PASS
 
+# --- SC-AK-1120 — стоящее слово владельца в кавычках в строке ожидания ---------------------------
+# Проверка читает слово владельца, не пересказ. Строка без кавычек не отпускает.
+waiting_is() {
+    # Отличие от state_is одно: строка ожидания.
+    printf '# Ход работы\n\n- **Состояние:** `этап-идёт`\n- **Waiting for the owner:** %s\n' "$1" > "$TASK/progress.md"
+}
+waiting_is '«эпик чата пока откладываем» — сказано вчера.'
+expect_stop "SC-AK-1120 — слово владельца в кавычках в строке ожидания отпускает ход при открытом эпике" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
+expect_stop "SC-AK-1120 — то же слово отпускает и пустой ход" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" PASS
+waiting_is 'ждём его решения по хранилищу.'
+expect_stop "SC-AK-1120 — строка ожидания без кавычек ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" BLOCK
+state_is 'этап-идёт'
+
 # --- SC-AK-1119 — закрытый и нечитаемый эпик: прежнее поведение --------------------------------
 export STUB_LEFT='' STUB_CODE=0
 expect_stop "SC-AK-1119 — при закрытом эпике ход с работой отпускается" \
