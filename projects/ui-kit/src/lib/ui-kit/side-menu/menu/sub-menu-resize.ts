@@ -1,6 +1,6 @@
-import { signal, Signal, WritableSignal } from '@angular/core';
+import { computed, signal, Signal, WritableSignal } from '@angular/core';
 
-import { reportedSubMenuWidth, startSubMenuWidthDrag, TPointerListen } from '../side-menu.logic';
+import { clampSubMenuWidth, reportedSubMenuWidth, startSubMenuWidthDrag, subMenuWidthByKey, TPointerListen } from '../side-menu.logic';
 
 /**
  * Что тяга просит у меню. Сама она ни о ширине не помнит, ни наружу говорить не умеет: ширину
@@ -14,6 +14,8 @@ export interface ISubMenuResizeHooks {
     ended: () => void;
     /** Панель подменю — по ней замеряется нарисованная ширина. Пустая, пока панели нет. */
     panel: () => HTMLElement | null;
+    /** Ширина, названная потребителем. Пустая — ширину ставит оформление, и кит её не знает. */
+    namedWidth: () => number | null;
 }
 
 /**
@@ -35,6 +37,17 @@ export class SubMenuResize {
 
     public readonly draggedWidth: Signal<number | null> = this.#draggedWidth.asReadonly();
 
+    /**
+     * Ширина для диктора. Только то, что кит знает сам: натянутое или названное потребителем. Не
+     * названо ничего и ничего не тянули — числа нет, и кит его не выдумывает: выдуманное назвало бы
+     * ширину, которой панель не нарисована.
+     */
+    public readonly valueNow: Signal<number | null> = computed((): number | null => {
+        const width: number | null = this.#draggedWidth() ?? this.#hooks.namedWidth();
+
+        return width === null ? null : clampSubMenuWidth(width);
+    });
+
     constructor(listen: TPointerListen, hooks: ISubMenuResizeHooks) {
         this.#listen = listen;
         this.#hooks = hooks;
@@ -43,6 +56,26 @@ export class SubMenuResize {
     /** Тяга идёт. Второе нажатие при начатой тяге ничего не начинает: указатель уже захвачен. */
     public get running(): boolean {
         return this.#stop !== null;
+    }
+
+    /**
+     * Нажата клавиша на ручке. Просьба о ширине уходит наружу сразу: тяга держит просьбу до конца
+     * жеста, потому что жест есть, — здесь его нет. Начала и конца тяги клавиша не рождает:
+     * потребитель накрывает чужой кадр на время, пока рука ведёт указатель, а клавиша не ведёт.
+     *
+     * Отрицательный ответ значит, что клавиша не о ширине, и умолчание у неё не отменяется: иначе
+     * ручка съела бы переход по табуляции и всё, что на ней не написано.
+     */
+    public pressKey(key: string, from: number): boolean {
+        const width: number | null = subMenuWidthByKey(key, from);
+
+        if (width === null) {
+            return false;
+        }
+
+        this.#hooks.askWidth(width);
+
+        return true;
     }
 
     public start(event: PointerEvent, startWidth: number): void {

@@ -1,9 +1,12 @@
-import { SUB_MENU_WIDTH_MAX } from '../side-menu.logic';
+import { ComponentFixture } from '@angular/core/testing';
+
+import { SUB_MENU_WIDTH_MAX, SUB_MENU_WIDTH_MIN, SUB_MENU_WIDTH_STEP } from '../side-menu.logic';
 import {
     drag,
     hoverFirstItem,
     installFontsStub,
     installPointerEventStub,
+    HostComponent,
     ISetup,
     menu,
     pointer,
@@ -199,5 +202,100 @@ describe('SC-UK-73 — наружу уходит то число, которым
         drag(fixture, 300, 400);
 
         expect(host.width()).toBe(400);
+    });
+});
+
+/** Нажатие клавиши на ручке. Возвращается само событие: у него спрашивают, съедено ли умолчание. */
+function pressOnResizer(fixture: ComponentFixture<HostComponent>, key: string): KeyboardEvent {
+    const event: KeyboardEvent = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key });
+
+    (resizer(fixture) as HTMLElement).dispatchEvent(event);
+    fixture.detectChanges();
+
+    return event;
+}
+
+describe('SC-UK-74 — стрелки двигают ширину шагом', () => {
+    it('вправо шире на шаг, влево — обратно на него же', () => {
+        const { fixture, host }: ISetup = setup('pinned', ['refs']);
+
+        host.width.set(200);
+        fixture.detectChanges();
+
+        pressOnResizer(fixture, 'ArrowRight');
+
+        expect(host.width()).toBe(200 + SUB_MENU_WIDTH_STEP);
+
+        pressOnResizer(fixture, 'ArrowLeft');
+
+        expect(host.width()).toBe(200);
+    });
+
+    it('клавиша не о ширине умолчания не отменяет', () => {
+        const { fixture }: ISetup = setup('pinned', ['refs']);
+
+        expect(pressOnResizer(fixture, 'Tab').defaultPrevented).toBe(false);
+        expect(pressOnResizer(fixture, 'ArrowRight').defaultPrevented).toBe(true);
+    });
+});
+
+describe('SC-UK-75 — Home и End ведут ширину к пределам', () => {
+    it('Home даёт нижний предел, End — верхний', () => {
+        const { fixture, host }: ISetup = setup('pinned', ['refs']);
+
+        host.width.set(200);
+        fixture.detectChanges();
+
+        pressOnResizer(fixture, 'Home');
+
+        expect(host.width()).toBe(SUB_MENU_WIDTH_MIN);
+
+        pressOnResizer(fixture, 'End');
+
+        expect(host.width()).toBe(SUB_MENU_WIDTH_MAX);
+    });
+});
+
+describe('SC-UK-76 — клавиша тяги не ведёт, и событий тяги нет', () => {
+    it('ни начало, ни конец наружу не уходят', () => {
+        const { fixture, host }: ISetup = setup('pinned', ['refs']);
+        const started: jest.Mock = jest.fn();
+        const ended: jest.Mock = jest.fn();
+
+        host.width.set(200);
+        fixture.detectChanges();
+        menu(fixture).subMenuResizeStart.subscribe(started);
+        menu(fixture).subMenuResizeEnd.subscribe(ended);
+
+        pressOnResizer(fixture, 'ArrowRight');
+
+        expect(host.width()).toBe(200 + SUB_MENU_WIDTH_STEP);
+        expect(started).not.toHaveBeenCalled();
+        expect(ended).not.toHaveBeenCalled();
+    });
+});
+
+describe('SC-UK-77 — диктор называет ширину и оба предела', () => {
+    it('ручка стоит в обходе табуляцией и несёт три числа', () => {
+        const { fixture, host }: ISetup = setup('pinned', ['refs']);
+
+        host.width.set(200);
+        fixture.detectChanges();
+
+        const handle: HTMLElement = resizer(fixture) as HTMLElement;
+
+        expect(handle.getAttribute('tabindex')).toBe('0');
+        expect(handle.getAttribute('aria-valuenow')).toBe('200');
+        expect(handle.getAttribute('aria-valuemin')).toBe(String(SUB_MENU_WIDTH_MIN));
+        expect(handle.getAttribute('aria-valuemax')).toBe(String(SUB_MENU_WIDTH_MAX));
+    });
+
+    it('потребитель ширины не назвал — числа кит не выдумывает', () => {
+        const { fixture }: ISetup = setup('pinned', ['refs']);
+        const handle: HTMLElement = resizer(fixture) as HTMLElement;
+
+        expect(handle.getAttribute('aria-valuenow')).toBeNull();
+        expect(handle.getAttribute('aria-valuemin')).toBeNull();
+        expect(handle.getAttribute('aria-valuemax')).toBeNull();
     });
 });

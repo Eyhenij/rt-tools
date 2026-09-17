@@ -124,6 +124,12 @@ export const SUB_MENU_WIDTH_KEY: string = 'rtui-side-menu-sub-menu-width';
 export const SUB_MENU_WIDTH_MIN: number = 120;
 export const SUB_MENU_WIDTH_MAX: number = 480;
 
+/**
+ * Шаг ширины с клавиатуры. Взят мелким намеренно: стрелку держат нажатой, и крупный шаг проскакивал
+ * бы подпись пункта целиком — ровно то, ради чего ширину и правят.
+ */
+export const SUB_MENU_WIDTH_STEP: number = 16;
+
 /** Приведение ширины к пределам. Тянут её мышью, и рука уходит за край экрана раньше, чем за предел. */
 export function clampSubMenuWidth(width: number): number {
     return Math.min(SUB_MENU_WIDTH_MAX, Math.max(SUB_MENU_WIDTH_MIN, width));
@@ -353,4 +359,26 @@ export function drawnSubMenuWidth(panel: HTMLElement | null): number {
  */
 export function reportedSubMenuWidth(dragged: number, panel: HTMLElement | null): number {
     return Math.max(dragged, drawnSubMenuWidth(panel));
+}
+
+/**
+ * Новая ширина по нажатой клавише. Пустое значение — клавиша не о ширине, и умолчание не отменяется:
+ * иначе ручка съедала бы переход по табуляции и всё, что на ней не написано.
+ *
+ * Стрелки ходят шагом, `Home` и `End` — к пределам кита. Влево у стрелок значит уже, и это верно
+ * при любом направлении письма: ручка стоит у правого края панели, и рука ведёт её туда же.
+ */
+export function subMenuWidthByKey(key: string, width: number): number | null {
+    switch (key) {
+        case 'ArrowRight':
+            return clampSubMenuWidth(width + SUB_MENU_WIDTH_STEP);
+        case 'ArrowLeft':
+            return clampSubMenuWidth(width - SUB_MENU_WIDTH_STEP);
+        case 'Home':
+            return SUB_MENU_WIDTH_MIN;
+        case 'End':
+            return SUB_MENU_WIDTH_MAX;
+        default:
+            return null;
+    }
 }

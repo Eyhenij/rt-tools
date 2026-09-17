@@ -31,7 +31,14 @@ import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '
 import { TNullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
-import { clampSubMenuWidth, drawnSubMenuWidth, filterSubMenuItems, subMenuIdsToExpand } from '../side-menu.logic';
+import {
+    clampSubMenuWidth,
+    drawnSubMenuWidth,
+    filterSubMenuItems,
+    subMenuIdsToExpand,
+    SUB_MENU_WIDTH_MAX,
+    SUB_MENU_WIDTH_MIN,
+} from '../side-menu.logic';
 import { ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 import {
     RtuiScrollableContainerComponent,
@@ -118,6 +125,7 @@ export class RtuiSideMenuComponent {
             started: (): void => this.subMenuResizeStart.emit(),
             ended: (): void => this.subMenuResizeEnd.emit(),
             panel: (): HTMLElement | null => this.subMenuPanelRef()?.nativeElement ?? null,
+            namedWidth: (): number | null => this.subMenuWidth(),
         }
     );
 
@@ -187,6 +195,11 @@ export class RtuiSideMenuComponent {
 
     /** Экран узкий: замер кита, и другого источника у этого признака нет. */
     protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
+
+    /** Ширина и пределы для диктора. Счёт — в `SubMenuResize`: числа знает тяга, а не разметка. */
+    protected readonly resizeValueNow: Signal<number | null> = this.#resize.valueNow;
+    protected readonly resizeValueMin: number = SUB_MENU_WIDTH_MIN;
+    protected readonly resizeValueMax: number = SUB_MENU_WIDTH_MAX;
 
     /** Подписи зашиты: словаря у кита нет, и кнопка возврата рядом названа тем же способом. */
     protected readonly searchLabel: string = 'Search';
@@ -406,6 +419,15 @@ export class RtuiSideMenuComponent {
         event.preventDefault();
 
         this.#resize.start(event, this.subMenuWidth() ?? drawnSubMenuWidth(this.subMenuPanelRef()?.nativeElement ?? null));
+    }
+
+    /** Нажата клавиша на ручке. Умолчание отменяется только у съеденной: ручка не ест табуляцию. */
+    public onResizeKeydown(event: KeyboardEvent): void {
+        const from: number = this.subMenuWidth() ?? drawnSubMenuWidth(this.subMenuPanelRef()?.nativeElement ?? null);
+
+        if (this.isPinned() && this.#resize.pressKey(event.key, from)) {
+            event.preventDefault();
+        }
     }
 
     public onSubMenuSearch(query: string): void {

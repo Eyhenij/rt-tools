@@ -540,3 +540,36 @@ When a person pulls the edge to the left past that width, and the panel stops at
 Then outward goes the width the panel is drawn by, not the one the hand pulled to
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
+### SC-UK-74 — the arrows move the width by a step
+
+Given the mode is the pinned one and a width named by the consumer
+When the handle has the focus and the arrow to the right is pressed, then the arrow to the left
+Then the width asked outward grows by a step and then comes back by the same step
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
+### SC-UK-75 — Home and End take the width to the limits
+
+Given the mode is the pinned one and a width named by the consumer
+When the handle has the focus and `Home` is pressed, then `End`
+Then outward goes the lower limit of the kit and then the upper one
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
+### SC-UK-76 — a key leads no pull, and the events of the pull do not come about
+
+Given the mode is the pinned one and a width named by the consumer
+When the width is changed by the arrows
+Then neither the event of the beginning nor the event of the end goes outward
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
+### SC-UK-77 — the reader names the width and both limits
+
+Given the mode is the pinned one and a width named by the consumer
+When the handle is looked at
+Then it stands in the walk by the tab key and carries the current width and both limits of the kit; the
+consumer named no width — there is no number, and the kit invents none
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.

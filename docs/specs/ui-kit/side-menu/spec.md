@@ -114,6 +114,22 @@ consumer, the address of the active item the kit does not count.
   the drawer of the framework, which puts it over its container rather than into the flow; a panel put into
   the flow makes the container twice as tall as the screen, and then one bringing of the active item into
   view scrolls the container together with the panel.
+- **The width is changed from the keyboard, and the handle stands in the walk by the tab key.** A
+  person who does not work with a pointer had no way to change the width at all: the handle was
+  reached neither by the walk nor by a key. The arrows move the width by a step, `Home` and `End`
+  take it to the limits of the kit. A press asks the consumer for the width at once — a pull holds
+  the ask to the end of the gesture because there is a gesture; here there is none. The events of
+  the beginning and the end of the pull do not come about from a key either: a consumer covers a
+  frame of a foreign address for the time a hand leads the pointer, and a key leads nothing.
+    <!-- rt-when: *.ts *.html -->
+
+- **The reader names the current width and both its limits.** A handle that says only "separator"
+  tells a person nothing about what the keys under their fingers will do, and nothing about where
+  the width already stands. The numbers are the kit's own count — the width the consumer named or
+  the one the hand pulled to. The consumer named none and nothing was pulled — there is no number,
+  and the kit does not invent one: a number made up would name a width the panel is not drawn by.
+    <!-- rt-when: *.ts *.html -->
+
 - **The number that goes outward is the one the panel is drawn by.** The lower limit of the width
   belongs to the design, not to the kit: a panel is never narrower than the width the consumer set
   by their own rule, and the kit does not know that number at all. So a pull to the left past it
@@ -227,4 +243,5 @@ The subdomain has no open questions.
 - 2026-09-09 — the submenu stopped drifting upwards at a walk of the strip (RT-1975).
 - 2026-09-17 — the pull of the width moved onto pointer events with a capture, and its beginning
   and end went outward as events of their own, and the number going outward stopped lying about
-  the width of the panel (RT-2142).
+  the width of the panel; the width began to change from the keyboard, and the reader began to
+  name it (RT-2142).
