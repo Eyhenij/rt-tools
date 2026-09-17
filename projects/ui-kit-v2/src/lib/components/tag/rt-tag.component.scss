@@ -12,6 +12,7 @@
             --rt-tag-border-width: var(--rt-border-width-thin);
 
             display: inline-flex;
+            max-width: 100%;
             align-items: center;
             padding: var(--rt-space-1) var(--rt-space-2);
             border-radius: var(--rt-tag-radius);
@@ -112,8 +113,14 @@
                 flex-shrink: 0;
             }
 
+            /* Пилюля берёт ширину, которую даёт ей место, и не растёт за неё: подпись приходит
+               от потребителя, укоротить её он не может. Что не влезло — многоточие, и рядом с
+               ним подсказка: усечение без неё читается как целое значение. */
             &__text {
+                overflow: hidden;
                 line-height: var(--rt-leading-none);
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
             &__close {

@@ -1,7 +1,9 @@
 import { DebugElement } from '@angular/core';
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
 import { classesOf, createRtFixture, el, hostClasses, qa, setInputs, textOf } from '../../../testing/rt-kit-testing';
+import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { RtTagComponent } from './rt-tag.component';
 import { IRtTag } from './rt-tag.model';
 
@@ -81,6 +83,38 @@ describe('RtTagComponent', (): void => {
 
                 expect((el(fixture, 'rt-icon')?.nativeElement as HTMLElement).style.width).toBe(width);
             }
+        });
+    });
+
+    describe('усечение подписи', (): void => {
+        // Раскладки в спеке нет, и ширины у узла нулевые: переполнение подменяется замером — так
+        // же, как это делает соседний `rt-collapsible-text`.
+        function overflow(fixture: ComponentFixture<RtTagComponent>, scroll: number, client: number): void {
+            const node: HTMLElement = qa(fixture, 'tag-text')?.nativeElement as HTMLElement;
+
+            Object.defineProperty(node, 'scrollWidth', { configurable: true, value: scroll });
+            Object.defineProperty(node, 'clientWidth', { configurable: true, value: client });
+            setInputs(fixture, { value: `${fixture.componentInstance.value()} ` });
+            fixture.detectChanges();
+            TestBed.tick();
+        }
+
+        it('SC-UKV-197 — подписи хватило места: подсказки нет', (): void => {
+            const fixture: ComponentFixture<RtTagComponent> = setup({ value: 'Активен' });
+
+            overflow(fixture, 80, 80);
+
+            expect(fixture.debugElement.query(By.directive(RtTooltipDirective))?.injector.get(RtTooltipDirective).text()).toBe('');
+        });
+
+        it('SC-UKV-198 — подписи не хватило места: подсказка несёт целое значение', (): void => {
+            const fixture: ComponentFixture<RtTagComponent> = setup({ value: 'Ожидает подтверждения оплаты' });
+
+            overflow(fixture, 400, 80);
+
+            expect(fixture.debugElement.query(By.directive(RtTooltipDirective))?.injector.get(RtTooltipDirective).text()).toBe(
+                fixture.componentInstance.value()
+            );
         });
     });
 

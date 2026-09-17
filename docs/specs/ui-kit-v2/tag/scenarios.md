@@ -142,3 +142,21 @@ When the step is changed to each of the three in turn
 Then the icon takes the step of the kit of icons that answers to the step of the pill
 
 Covered: `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.spec.ts`.
+
+## The label that did not fit
+
+### SC-UKV-197 — the label fits its place: there is no hint
+
+Given a tag whose label fits the place it is drawn in
+When it is drawn
+Then no hint is attached to it: a hint over a whole value says nothing
+
+Covered: `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.spec.ts`.
+
+### SC-UKV-198 — the label did not fit: the hint carries the whole value
+
+Given a tag whose label is longer than the place it is drawn in
+When it is drawn
+Then the text is cut by an ellipsis, and the hint carries the whole value rather than the cut one
+
+Covered: `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.spec.ts`.

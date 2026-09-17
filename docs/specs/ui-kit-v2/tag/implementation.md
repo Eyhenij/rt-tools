@@ -13,8 +13,8 @@ paths are given from the root of the tree.
 - **A press on the cross does not travel up.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:onClose`
 - **The label of the cross comes from the dictionary of the kit.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:RT_KIT_LABELS`
 - **The size is chosen by a step, not by a number in the place.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:size`. The steps themselves stand at `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:size--md`, and the step of the icon is led by `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:ICON_BY_SIZE`
-- **A label that did not fit its place is cut by an ellipsis and gets a hint with the whole value.** — **Not carried out yet.** The tag cuts nothing today. The cutting arrives by the third stage of RT-1879
-- **The overflow is counted by watching the size of the box, not by a countdown after the drawing.** — **Not carried out yet.** It arrives together with the cutting, by the third stage of RT-1879
+- **A label that did not fit its place is cut by an ellipsis and gets a hint with the whole value.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:text-overflow`. The hint is attached by the ready-made directive of the kit at `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.html:rtTooltip`
+- **The overflow is counted by watching the size of the box, not by a countdown after the drawing.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:observeText`. The measurement itself stands next to it, at `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:overflowing`
 - **The styles of the tag live in the cascade layer of the kit's components.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:layer`. The wrapper names the sublayer of the kit's components
 - **The rules of the block are nested inside the host.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:rt-tag`
 
