@@ -54,6 +54,24 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 не дотягивается. Осмысленные подписи даёт `columnsConfig` — без него в карточке будут видны
 `title` и `city` вместо «Договор» и «Город».
 
+## Отбор в шапке
+
+**Отбор объявляет колонка, а рисует его [`rt-table-filter-header`](./?path=/docs/organisms-table-tablefilterheader--docs).**
+В `columnsConfig` у колонки появляется `filter`: `kind` решает, какую готовую часть кита позвать —
+поле, число, список или дату, — `operators` сужает виды сравнения, `startOperator` называет
+начальный, `options` даёт набор для списка. Колонка без `filter` не отбирает вовсе и ничего в
+шапке не рисует.
+
+Строк таблица при этом не отбирает. Ячейка сообщает наружу **весь набор условий**, а сузить
+список — дело того, кто его держит: таблица получает готовые строки, а не набор правил к ним.
+
+```html
+<th *cdkHeaderCellDef cdk-header-cell>
+    Договор
+    <rt-table-filter-header propertyName="title" [filter]="config.filter" [filters]="filters()" (filtersChange)="onFilters($event)" />
+</th>
+```
+
 ## Края
 
 | край                     | что происходит                                     |
@@ -63,6 +81,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `emptyIcon` равен `null` | заглушка без иконки                                |
 | колонка без `sortable`   | её заголовок не переключает порядок                |
 | `locked` у колонки       | её нельзя скрыть и передвинуть в настройке колонок |
+| колонка без `filter`     | её шапка не отбирает и поля отбора не рисует       |
 
 ## Состояния
 
@@ -99,7 +118,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `loading`                  | `boolean`                              | `false`     | первая загрузка: строки подменяются заглушками                         |
 | `fetching`                 | `boolean`                              | `false`     | догрузка: показанные строки остаются на месте                          |
 | `columns`                  | `ReadonlyArray<string>`                | `[]`        | ключи колонок в порядке показа                                         |
-| `columnsConfig`            | `ReadonlyArray<IRtTable.ColumnConfig>` | `[]`        | подписи колонок, сортируемость, скрытие и закрепление                  |
+| `columnsConfig`            | `ReadonlyArray<IRtTable.ColumnConfig>` | `[]`        | подписи колонок, сортируемость, отбор, скрытие и закрепление           |
 | `tableId`                  | `string \| null`                       | `null`      | ключ, под которым запоминается настройка колонок                       |
 | `showRowActions`           | `boolean`                              | `false`     | колонка действий над строкой                                           |
 | `rowHasActions`            | `RowActionsPredicate \| null`          | `null`      | у каких строк действия есть                                            |
