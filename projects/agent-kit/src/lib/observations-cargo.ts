@@ -21,6 +21,24 @@ const DAY_FILE: RegExp = /^(\d{4}-\d{2}-\d{2})\.jsonl$/;
 /** Род скила по роду ресурса раскладки. Имя, которого раскладка не знает, — своё у дерева. */
 const KIND_BY_ASSET: Readonly<Record<string, TSkillKind>> = { rules: 'rule', patterns: 'pattern', skills: 'skill' };
 
+/**
+ * Чем замещается имя ресурса, которого пакет не везёт.
+ *
+ * Своё правило дерево нередко зовёт своим же именем — `rt-tools-storybook` в дереве `rt-tools`, — и
+ * тогда имя ресурса выдаёт адрес дерева. Проверка груза на утечку находила его и останавливала
+ * отправку целиком: дерево с такими именами не отправляло ничего и никогда.
+ *
+ * Пакету имя чужого правила не пригодится: он его не везёт и статьи о нём не пишет. Что загрузка
+ * была своей, приём и так читает полем рода рядом, а у отказа проверки рода нет — замещение идёт
+ * у обоих, иначе имя уезжало бы второй записью.
+ */
+export const OWN_RESOURCE: string = 'own';
+
+/** Везёт ли пакет ресурс с таким именем. Судятся все роды, а не одни скилы: имя хука тоже пакетное. */
+function packaged(name: string, assets: readonly IAsset[]): boolean {
+    return assets.some((asset: IAsset): boolean => asset.name === name);
+}
+
 /** Строка файла дня в строку груза. Битая или чужого рода — `null`: наблюдение не роняет груз. */
 export function parseObservationLine(line: string): Omit<IObservationLine, 'skill'> | null {
     if (!line.trim()) {
@@ -61,7 +79,9 @@ export function linesOfDay(text: string, assets: readonly IAsset[]): readonly IO
         const parsed: Omit<IObservationLine, 'skill'> | null = parseObservationLine(raw);
 
         if (parsed) {
-            lines.push(parsed.ev === 'skill-load' ? { ...parsed, skill: skillKindOf(parsed.res, assets) } : parsed);
+            const named: Omit<IObservationLine, 'skill'> = packaged(parsed.res, assets) ? parsed : { ...parsed, res: OWN_RESOURCE };
+
+            lines.push(named.ev === 'skill-load' ? { ...named, skill: skillKindOf(parsed.res, assets) } : named);
         }
     }
 
