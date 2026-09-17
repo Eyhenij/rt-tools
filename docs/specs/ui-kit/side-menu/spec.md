@@ -114,6 +114,16 @@ consumer, the address of the active item the kit does not count.
   the drawer of the framework, which puts it over its container rather than into the flow; a panel put into
   the flow makes the container twice as tall as the screen, and then one bringing of the active item into
   view scrolls the container together with the panel.
+- **The number that goes outward is the one the panel is drawn by.** The lower limit of the width
+  belongs to the design, not to the kit: a panel is never narrower than the width the consumer set
+  by their own rule, and the kit does not know that number at all. So a pull to the left past it
+  stops the panel and does not stop the count — outward went the pulled number while the panel
+  stood at the set one. A consumer who keeps what they were given and hands it back sees no change
+  of the panel and reads that as a breakage of the kit. What is measured is the drawn width itself,
+  and the greater of the two goes outward: the design holds the limit by a maximum, so the drawn one
+  is never below the pulled one. Where the layout is not computed at all — a spec raising the
+  component without its styles — a measurement gives nothing, and the pulled number stands.
+
 - **The beginning and the end of the pull go outward as events of their own.** A consumer does what
   the kit has no business doing for them: they put a cover over a frame of a foreign address, change
   the cursor of the whole page, hold back a re-layout of what stands to the right of the panel. The
@@ -216,4 +226,5 @@ The subdomain has no open questions.
   were: the scenario numbers were not recounted.
 - 2026-09-09 — the submenu stopped drifting upwards at a walk of the strip (RT-1975).
 - 2026-09-17 — the pull of the width moved onto pointer events with a capture, and its beginning
-  and end went outward as events of their own (RT-2142).
+  and end went outward as events of their own, and the number going outward stopped lying about
+  the width of the panel (RT-2142).

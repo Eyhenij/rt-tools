@@ -167,3 +167,37 @@ describe('SC-UK-72 — отнятая средой тяга тоже конча�
         expect(ended).toHaveBeenCalledTimes(1);
     });
 });
+
+describe('SC-UK-73 — наружу уходит то число, которым панель нарисована', () => {
+    it('тяга влево за ширину оформления отдаёт нарисованное, а не натянутое', () => {
+        const { fixture, host }: ISetup = setup('pinned', ['refs']);
+
+        host.width.set(300);
+        fixture.detectChanges();
+
+        // Стилей компонента спека не применяет, и ширина панели там нулевая: замер подменяется —
+        // оформление потребителя держит нижний предел в 300, и панель нарисована им.
+        const panel: HTMLElement = menu(fixture).subMenuPanelRef()?.nativeElement as HTMLElement;
+
+        jest.spyOn(panel, 'getBoundingClientRect').mockReturnValue({ width: 300 } as DOMRect);
+
+        drag(fixture, 300, 150);
+
+        expect(host.width()).toBe(300);
+    });
+
+    it('тяга вправо по-прежнему отдаёт натянутое', () => {
+        const { fixture, host }: ISetup = setup('pinned', ['refs']);
+
+        host.width.set(300);
+        fixture.detectChanges();
+
+        const panel: HTMLElement = menu(fixture).subMenuPanelRef()?.nativeElement as HTMLElement;
+
+        jest.spyOn(panel, 'getBoundingClientRect').mockReturnValue({ width: 300 } as DOMRect);
+
+        drag(fixture, 300, 400);
+
+        expect(host.width()).toBe(400);
+    });
+});

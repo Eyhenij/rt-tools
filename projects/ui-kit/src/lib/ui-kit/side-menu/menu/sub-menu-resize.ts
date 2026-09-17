@@ -1,6 +1,6 @@
 import { signal, Signal, WritableSignal } from '@angular/core';
 
-import { startSubMenuWidthDrag, TPointerListen } from '../side-menu.logic';
+import { reportedSubMenuWidth, startSubMenuWidthDrag, TPointerListen } from '../side-menu.logic';
 
 /**
  * Что тяга просит у меню. Сама она ни о ширине не помнит, ни наружу говорить не умеет: ширину
@@ -12,6 +12,8 @@ export interface ISubMenuResizeHooks {
     /** Начало и конец тяги для потребителя: по ним он накрывает чужие кадры и снимает накрытие. */
     started: () => void;
     ended: () => void;
+    /** Панель подменю — по ней замеряется нарисованная ширина. Пустая, пока панели нет. */
+    panel: () => HTMLElement | null;
 }
 
 /**
@@ -60,24 +62,25 @@ export class SubMenuResize {
     }
 
     /**
-     * Конец тяги. Наружу уходит натянутая ширина, а не та, что получилась на экране: нижний предел
-     * держит оформление — панель не бывает уже той ширины, какую задал потребитель, — и замерить
-     * применённое можно только там, где раскладка уже посчитана. Хранит выбор человека потребитель;
-     * вид от этого не меняется, потому что предел стоит в самом оформлении.
+     * Конец тяги. Наружу уходит то число, которым панель нарисована: нижний предел держит
+     * оформление — панель не бывает уже той ширины, какую задал потребитель, — и узнать его можно
+     * одним замером, своего числа у кита нет. Хранит выбор человека потребитель.
      */
     public finish(): void {
         if (!this.running) {
             return;
         }
 
+        // Замер идёт до сброса натянутой ширины: сбросив её, панель перерисуют, и мерить будет нечего.
         const width: number | null = this.#draggedWidth();
+        const drawn: number | null = width === null ? null : reportedSubMenuWidth(width, this.#hooks.panel());
 
         this.#stop?.();
         this.#stop = null;
         this.#draggedWidth.set(null);
 
-        if (width !== null) {
-            this.#hooks.askWidth(width);
+        if (drawn !== null) {
+            this.#hooks.askWidth(drawn);
         }
 
         this.#hooks.ended();

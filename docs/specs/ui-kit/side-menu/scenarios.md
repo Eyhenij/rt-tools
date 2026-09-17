@@ -532,3 +532,11 @@ Then the event of the end goes outward all the same: a consumer who put a cover 
 takes it down in both cases
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
+### SC-UK-73 — the number that goes outward matches the drawn width
+
+Given the consumer set the width of the submenu by their own design, wider than the lower limit of the kit
+When a person pulls the edge to the left past that width, and the panel stops at it
+Then outward goes the width the panel is drawn by, not the one the hand pulled to
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.

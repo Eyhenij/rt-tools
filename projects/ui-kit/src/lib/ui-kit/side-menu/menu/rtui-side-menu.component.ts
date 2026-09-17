@@ -117,6 +117,7 @@ export class RtuiSideMenuComponent {
             askWidth: (width: number): void => this.subMenuWidthChange.emit(width),
             started: (): void => this.subMenuResizeStart.emit(),
             ended: (): void => this.subMenuResizeEnd.emit(),
+            panel: (): HTMLElement | null => this.subMenuPanelRef()?.nativeElement ?? null,
         }
     );
 
