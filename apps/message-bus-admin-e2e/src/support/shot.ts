@@ -21,6 +21,12 @@ import { expect, Locator, Page } from '@playwright/test';
 /** Что закрывается маской на этом кадре. Пустой список — на кадре плывущего нет. */
 export interface IScreenShotOptions {
     readonly mask?: readonly Locator[];
+
+    /**
+     * Оставить указатель там, где он есть. Нужно кадру, чья панель открыта наведением: уведённый
+     * указатель закрывает её по замыслу кита, и на кадре остаётся пустой экран.
+     */
+    readonly keepPointer?: boolean;
 }
 
 /**
@@ -30,6 +36,19 @@ export interface IScreenShotOptions {
  * просто обрезается — и пропажа её половины читается как «ничего не изменилось».
  */
 export async function expectScreen(page: Page, name: string, options: IScreenShotOptions = {}): Promise<void> {
+    /*
+     * Указатель уводится в угол до кадра. Он остаётся там, где его оставило последнее нажатие, и
+     * подсказка под ним всплывает через задержку — то есть попадает в кадр или не попадает,
+     * смотря по тому, что успело: кадр панели столбцов нёс подсказку «Столбец закреплён» раз в
+     * несколько запусков, а строка под указателем выходила подсвеченной. В углу под указателем
+     * нет ничего, чему всплывать.
+     *
+     * Кадр, чья панель открыта наведением, просит указатель оставить: увод её закрывает.
+     */
+    if (!options.keepPointer) {
+        await page.mouse.move(0, 0);
+    }
+
     await expect(page).toHaveScreenshot(`${name}.png`, {
         fullPage: true,
         mask: options.mask ? [...options.mask] : undefined,
