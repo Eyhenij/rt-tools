@@ -81,10 +81,14 @@ export const messageBusAdminBoundaries = [
     // Словарь общего слоя приложение видит потому, что кит настраивается здесь: подписи кита
     // отдаются ему провайдером рядом с иконками, а лежат они там же, где подписи экранов, —
     // разложенные по двум местам, они расходятся молча
+    //
+    // Утилиты входа — ради слов адресов: маршруты собираются здесь, а объявлены адреса там,
+    // рядом друг с другом. Своё слово в маршрутах разошлось бы с тем, по которому уводят стражи
     {
         sourceTag: 'scope:admin-app',
         onlyDependOnLibsWithTags: [
             'scope:message-bus-admin-auth-shell',
+            AUTH_UTIL,
             'scope:message-bus-admin-common-container-feature',
             'scope:message-bus-admin-postmortems-shell',
             'scope:message-bus-admin-proposals-shell',

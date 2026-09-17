@@ -126,10 +126,17 @@ as an attachment.
   component takes in a matrix a share of the frame not equal to the one the first kit was measured on, and a
   carried-over number is wrong in both directions at once.
 
-- **A reference is shot and checked in one environment.** A frame depends on the fonts and the drawing of the
-  system, and the environment is neither the machine of the author nor the machine of the reviewer but the
-  run standing where the reference was shot. Otherwise the rule about determinacy is broken as a matter of
-  course, at every new component.
+- **A reference is shot and checked in one environment, and that environment is an image.** A frame depends on
+  the fonts and the drawing of the system: two machines at the same code diverge by 0,01 of the pixels across
+  every letter at once, so a reference shot on the author's machine cannot match the reviewer's. The image is
+  one on any machine, the browser is raised inside it, and the frames are therefore matched everywhere rather
+  than in the one place where they were taken. A re-take by any other road writes the raster of the machine
+  that took it, and the run refuses to start without the image's address for exactly that reason.
+
+- **The showcase that is shot is a built one, not the development server.** That server keeps a live link with
+  the page and from the image reloads it without end — 45 reloads in 12 seconds, measured — and the script the
+  run injects into the page survives no reload: not one story reaches its frame. A built showcase has no such
+  link, and it is also what a person is shown.
 
 - **A frame that diverged gives out a picture of the differences, and it does not go into the repository.** A
   red run happens both from a shift by a pixel and from a block that disappeared; by the name of the story

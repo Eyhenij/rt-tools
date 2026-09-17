@@ -42,6 +42,10 @@
       "reason": "a file of the machine, deliberately outside version control: the check reads the tree by `git ls-files` and does not see it on any machine, so the address reads as dead everywhere while the file is in place",
       "task": "RT-1871"
     },
+    ".claude/rt-kit/postmortems/2026-09-16-red-set-explained-away-into-a-bypass.md": {
+      "reason": "an incident record of the machine: the whole directory lies outside version control by design, and the address of a record inside it reads as dead on every machine. The entry of the directory itself does not cover it — the check matches the address whole",
+      "task": "RT-2162"
+    },
     ".claude/rt-kit/proposals/": {
       "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-396"

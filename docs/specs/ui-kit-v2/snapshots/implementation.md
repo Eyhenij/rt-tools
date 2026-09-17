@@ -22,9 +22,10 @@ tree, or the tree holds what the spec is silent about.
 - **A missing reference is a refusal of the run, not a silent shooting after the fact.** — `projects/ui-kit-v2/.storybook/test-runner.ts:UPDATING`; scenario `SC-UKV-05`
 - **A reference is shot from what is fixed.** — `.claude/skills/ui-component-tests-visual/SKILL.md:parameters` — a rule of the taking apart of a change; it is not checked by the run; scenario `SC-UKV-14`
 - **The threshold of the divergence is named by a measurement, not carried over from the first showcase.** — `projects/ui-kit-v2/.storybook/test-runner.ts:FAILURE_THRESHOLD`; scenario `SC-UKV-15`
-- **A reference is shot and checked in one environment.** — `tools/visual-snapshots-v2.mjs:CONFIG_DIR` — one harness for the checking and both reshootings; scenario `SC-UKV-16`
+- **A reference is shot and checked in one environment, and that environment is an image.** — `tools/shot-browser.mjs:SHOT_IMAGE` — the browser is raised in it and given out by an address; `projects/ui-kit-v2/.storybook/test-runner-jest.config.js:SHOT_BROWSER` refuses the run without that address, so a re-take by another road is impossible; scenario `SC-UKV-16`
+- **The showcase that is shot is a built one, not the development server.** — `tools/visual-gate.mjs:built` — the build and then `tools/serve-static.mjs:ROOT`, the serving as files in a process of its own
 - **A frame that diverged gives out a picture of the differences, and it does not go into the repository.** — `.github/workflows/ci.yml:visual-diffs-ui-kit-v2`, the mask of the catalogue of the differences in `.gitignore:__diff_output__`; scenario `SC-UKV-08`
-- **A red frame is not merged.** — `.github/workflows/ci.yml:STORYBOOK_URL` — the step is blocking, without `continue-on-error`; scenario `SC-UKV-10`
+- **A red frame is not merged.** — `.github/workflows/ci.yml:visual-gate` — the step is blocking, without `continue-on-error`; scenario `SC-UKV-10`
 - **A component that arrived into the showcase after this work brings its reference by the same change.** — `projects/ui-kit-v2/.storybook/test-runner.ts:shoot` — the refusal at a missing reference; scenario `SC-UKV-10`
 - **A reshooting goes by a named story.** — `tools/visual-snapshots-v2.mjs:updateOne`; the reshooting of the catalogue — `tools/visual-snapshots-v2.mjs:updateAll`; scenario `SC-UKV-20`
 - **The language of the labels in a frame is one and is appointed by the harness.** — `projects/ui-kit-v2/.storybook/preview.ts:showcaseTranslator`; scenario `SC-UKV-17`

@@ -62,6 +62,7 @@ applies here". An article without a line and a line without an article are a div
 - **A settled showing and a state that came about are not the same, and a story is waited for by the second.** — `projects/ui-kit-v2/src/showcase/templates/stories/bookings-template.stories.ts:awaitScreen` — each story waits in its `play` step for its own node. Those are a list cell, the emptiness view and a toast that left. That the sign is named rightly nothing checks: a story without the step is shot the same way, and a diverged frame is found by the reviewer.
 - **An overlay opened by a story lives to the frame only where that is declared.** — `projects/ui-kit-v2/.storybook/test-runner.ts:freezeHover` — the muting of the pointer leaving is set before the story is drawn. `requireOpenedOverlay` there refuses if the named node is gone by the shot. The first showcase has no such parameter at all: its harness does not take the pointer away.
 - **A reference is taken after the frame has been looked at, not before.** — **Not checked by anything.** `tools/visual-snapshots-v2.mjs` refuses on a missing reference and on an orphaned one, and it writes an empty frame silently. The closest machine answer is the sweep `pnpm run test:stories:v2` before the shot.
+- **A re-taken reference is confirmed by a second raising before it is committed.** — **Not checked by anything.** Neither the snapshot run nor the gate knows how many raisings stand behind a reference: a frame taken once and a frame confirmed twice are the same bytes. The closest machine answer is a repeated call of the same set after a restart of the showcase, and it is made by the hand of whoever re-took.
 - **A reference is re-taken deliberately and one at a time.** — `tools/visual-snapshots-v2.mjs:SNAPSHOT_DIR` — the re-take selects story files by path rather than stories by name: a selection by name breaks the run's environment.
 - **A reference is taken from the same showcase the gate raises.** — `tools/visual-gate.mjs:freePort` — the gate raises the showcase itself, by the target `@rt-tools/ui-kit-v2:storybook` on a free port, and points the run at it by `STORYBOOK_URL`. A re-take is made against that same target. **Not checked by anything** is which showcase the address given to the run belongs to: to the harness it is one more address that answers.
 - **A frame is taken by the drawn span, not by the node's box.** — `projects/ui-kit-v2/.storybook/test-runner.ts:spanOfNode` — the span is the union of the root and every descendant. Each rect is first clipped by the nearest ancestor that scrolls or hides its overflow. `fitViewportToSpan` grows the window to the span's right and bottom edges, and the frame is a page shot with that clip. **Not checked by anything** is whether the span matches what a person sees. The sweep over the showcase at the base window found 35 showings of 545 whose drawing went past the node's box, and that count came from a script of its own.
@@ -107,7 +108,11 @@ surface of a component is invisible to a machine — that is reading and the rul
 - `pnpm exec nx run @rt-tools/ui-kit-v2:typecheck` — the types of the specs and the stories.
 - `pnpm run test:stories:v2` — the sweep over all the second showcase's stories: an empty showing
   and drawing errors.
-- `pnpm run test:visual` and `pnpm run test:visual:v2` — the snapshots against the references.
+- `node tools/visual-gate.mjs ui-kit-v2` — the second showcase's frames: it builds the showcase,
+  serves it as files and shoots with a browser raised in an image; `--update` re-takes them by the
+  same road. `pnpm run test:visual:v2` called on its own refuses and names this command.
+- `node tools/visual-gate.mjs ui-kit` — the first showcase's frames; it shoots with the machine's
+  own browser, so they are matched in the pipeline only.
 - `pnpm run build-storybook:ui-kit-v2` — the only thing that checks the showcase config.
 - `pnpm exec nx run message-bus-admin-e2e:e2e` — the admin panel's end-to-end suite together with
-  the screen frames; it raises the stand for itself.
+  the screen frames; it raises the stand for itself and the shooting browser in an image.

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.28.0 · pitfalls/turn-conduct.md · d4cbb6af81df · правится надстройкой, не здесь -->
+<!-- rt-kit v0.28.0 · pitfalls/turn-conduct.md · 51f8a48f2f9f · правится надстройкой, не здесь -->
 # Session turn — cold part
 
 Pitfalls: cases and numbers that used to stand next to the rule's articles. Loaded not with the
@@ -104,3 +104,21 @@ The rule is `turn-conduct`; the articles that hold the law stand there.
   phrase: the guard's general refusal returned the turn, the executor made one step and ended
   the turn with the same phrase. Now the guard names it by name; the lawful exit when a decision
   is needed is a question through the tool.
+- **"Turn exits": the price of a question that holds independent work.** A session stood a night
+  and a morning naming the owner one and the same step while three independent tasks lay untaken.
+- **"A guard's refusal ends the turn": why a bypass costs more than a refusal.** A guard refuses one
+  file; a bypassed guard lifts the requirement from the whole tree and says nothing. Not memory
+  alone holds this — the guards also judge the shell command that writes the file.
+- **"The owner's answer is sought in their own messages": what the conversation guard does not
+  see.** It counts loading a rule and searching it as reading, and a message leaves no trace. A
+  question that answers itself in the owner's words devalues those asked next to it.
+- **"A taken task is not yet begun work": what the guard's tier covers.** A branch without a task
+  number is not under it; an assembled folder template lifts it.
+- **"Exploration does not end a turn": why it passes for work.** It looks like work better than
+  anything else: commands, exact numbers, checkable answers.
+- **"A reply to the owner is not an action": why the report takes the place of the work.** The
+  reverse order — work, report, end — stands behind every analysed stop: a report is a form of
+  completeness, and an appended summary reads as the turn's end the more convincingly the more was
+  done.
+- **"A statement about the tree's state is watched by the statement guard": why a word has its own
+  kind of command.** A general sign "there was a command" would confirm one thing by another.

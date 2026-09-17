@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
 import { PEOPLE_ROUTE, peopleRoutes, ROLES_ROUTE, rolesRoutes } from '@rt/message-bus-admin/accounts/shell';
-import { authRoutes, firstOpenSectionPath, sectionRightGuard, sessionGuard } from '@rt/message-bus-admin/auth/shell';
+import { authRoutes, landingPath, noSectionsGuard, sectionRightGuard, sessionGuard } from '@rt/message-bus-admin/auth/shell';
+import { NO_SECTIONS_PATH } from '@rt/message-bus-admin/auth/util';
 import { COLUMNS_ROUTE } from '@rt/message-bus-admin/common/core/util';
 import { INVITES_ROUTE, invitesRoutes } from '@rt/message-bus-admin/invites/shell';
 import { POSTMORTEMS_ROUTE, postmortemsRoutes } from '@rt/message-bus-admin/postmortems/shell';
@@ -73,7 +74,13 @@ export const appRoutes: Route[] = [
             ...invitesRoutes,
             ...peopleRoutes,
             ...rolesRoutes,
-            { path: '', pathMatch: 'full', redirectTo: (): string => firstOpenSectionPath() },
+            {
+                path: NO_SECTIONS_PATH,
+                pathMatch: 'full',
+                canActivate: [noSectionsGuard],
+                loadComponent: async () => (await import('@rt/message-bus-admin/common/container/feature')).AdminNoSectionsComponent,
+            },
+            { path: '', pathMatch: 'full', redirectTo: (): string => landingPath() },
         ],
     },
 ];
