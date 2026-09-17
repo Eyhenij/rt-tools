@@ -233,8 +233,15 @@ subdomain "Observations" next to it.
   as the digest does: an observation is a side record of a guard.
 - **The cargo goes by the same request as the rest, with the tree token, and only by a command.** No
   background sending: the line "nothing goes outward that a person did not send by a command" holds.
-- **The check for a tree address covers the observation cargo.** A resource name is a package name
-  or a skill name; a slash in a value is not written by the guard at all.
+- **The check for a tree address covers the observation cargo.** After the substitution below a
+  resource name is always a package name, so what is left to judge are the free fields of a line.
+- **A resource name the package does not ship leaves as a constant word, not as itself.** A tree
+  names its own rules after itself — `rt-tools-storybook` in the tree `rt-tools` — and such a name
+  carries the tree address into the cargo, where the leak check finds it and refuses the whole
+  send: a tree with such names could send nothing, ever. The package has no use for the name of a
+  rule it does not ship, and that a load was of the tree's own the intake reads from the kind
+  beside it. A refusal line carries no kind, so the substitution covers every event, not the load
+  alone.
 - **The schema version of the cargo rises.** A tree on the former edition sends three kinds, and the
   intake takes them as before; the version says which edition the lines came from.
 - **The dry run names the observation cargo with the number of lines and days.** What leaves is
