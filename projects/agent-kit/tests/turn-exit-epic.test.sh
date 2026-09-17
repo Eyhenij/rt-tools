@@ -64,6 +64,13 @@ expect_reason "SC-AK-1118 — отказ называет передачу ру�
 expect_stop "SC-AK-1118 — отказ проверки окна последним действием отпускает ход" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'npm run handoff')" "$(ran 'echo x > a.ts')" "$(answered 'BLOCKED by window-fill-guard: window fill 52%')")")" PASS
 
+# --- SC-AK-1122 — отказ проверки на закрытие разговора не выход -----------------------------------
+# Отклонённый вызов сам был остановкой, не работой: такой отказ не отпускает ход.
+expect_stop "SC-AK-1122 — отказ на закрытие разговора последним действием при открытом эпике ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'echo x > a.ts')" "$(answered 'BLOCKED by end-conversation-guard: the executor does not end the conversation')")")" BLOCK
+expect_stop "SC-AK-1122 — отказ другой проверки последним действием отпускает как прежде" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'echo x > a.ts')" "$(answered 'BLOCKED by task-flow: нет плана')")")" PASS
+
 # --- SC-AK-1120 — стоящее слово владельца в кавычках в строке ожидания ---------------------------
 # Проверка читает слово владельца, не пересказ. Строка без кавычек не отпускает.
 waiting_is() {

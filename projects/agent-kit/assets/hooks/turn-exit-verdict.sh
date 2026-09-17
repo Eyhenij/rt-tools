@@ -64,7 +64,8 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
             else tostring end]) as $outs
     | ($outs | join("\n")) as $out
     | ($outs | last // "") as $last_out
-    | ($last_out | test("BLOCKED by|Refused by the rules gate|Отбито гейтом")) as $denied
+    # The refusal of the closing tool is left out: the refused call was itself the stop, not work.
+    | ($last_out | test("BLOCKED by (?!end-conversation-guard)|Refused by the rules gate|Отбито гейтом")) as $denied
     | ($ran | test("handoff")) as $handed
     # The word of the owner about stopping: the reply itself is judged, not its retelling.
     | ([$turn[] | select(.type == "user") | select(is_service | not) | .message.content
