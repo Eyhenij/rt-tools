@@ -20,7 +20,7 @@
         max-width: 100%;
         box-sizing: border-box;
         align-items: center;
-        padding: var(--rt-space-3) var(--rt-space-4);
+        padding: var(--rt-space-2) var(--rt-space-4);
         border-radius: var(--rt-action-bar-radius);
         background: var(--rt-color-bg-inverse);
         box-shadow: var(--rt-action-bar-shadow);
@@ -33,8 +33,8 @@
             white-space: nowrap;
         }
 
-        // Ряд действий, не влезший в предел ширины полосы, переносится: подпись действия рисует
-        // кнопка кита внутри себя, и резать её отсюда было бы правилом по чужим внутренностям.
+        // Ряд действий, не влезший в предел ширины полосы, переносится. Одно действие, которое
+        // шире места и само по себе, переносить некуда — у него переносится подпись.
         &__actions {
             display: flex;
             min-width: 0;
@@ -45,7 +45,7 @@
         &__action {
             display: flex;
             align-items: center;
-            padding: var(--rt-space-2) var(--rt-space-3);
+            padding: var(--rt-space-1) var(--rt-space-2);
             border: 0;
             border-radius: var(--rt-action-bar-action-radius);
             background: transparent;
@@ -73,11 +73,24 @@
             flex: none;
         }
 
+        // Подпись, не влезшую в место, полоса переносит внутри кнопки, а не режет и не прячет:
+        // предел ширины назван вместе с судьбой того, что в него не вошло. Перенос идёт по
+        // границам слов, и слово рубится только тогда, когда не влезает и оно одно: `anywhere`
+        // рубил бы и там, где есть куда перенести, — кадр показал «Скачат/ь» на месте в
+        // восемнадцать рем.
         &__action-label {
-            white-space: nowrap;
+            overflow-wrap: break-word;
+            text-align: start;
         }
 
+        // Кнопка кита красит значок цветом обычного текста, а полоса стоит на обратной
+        // поверхности: в светлой теме значок вышел тёмным по тёмному, в тёмной — светлым по
+        // белому, и крестика не было видно ни в одном кадре. Своё свойство блока перебивают —
+        // так делает просмотр фотографии, где кнопка стоит на снимке.
         &__close {
+            --rt-icon-button-color: var(--rt-color-text-inverse);
+            --rt-icon-button-color-bg-hover: var(--rt-action-bar-action-bg-hover);
+
             flex: none;
             margin-left: auto;
         }

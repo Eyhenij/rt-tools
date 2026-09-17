@@ -107,6 +107,15 @@ Then the row of actions wraps, and nothing of it stands outside the bar
 Not covered: a test has no layout at all — the wrapping of the row is seen by a frame of the
 showcase, and it comes by stage 4 of the plan of RT-1880.
 
+### SC-UKV-213 — a label wider than the place wraps inside the action
+
+Given a bar holding one action whose label is wider than the whole bar
+When it is drawn
+Then the label wraps inside the action, and no part of it stands outside the bar
+
+Not covered: a test has no layout at all — the wrapping of the label is seen by a frame of the
+showcase, by the third case of the story of the width.
+
 ### SC-UKV-212 — the styles of the bar live in the cascade layer
 
 Given the styles file of the bar and of the holder

@@ -68,8 +68,11 @@ next to it and a cross to let them all go.
   in its own template, and a consumer in another locale had no way to reach them.
 - **The bar has a limit of its width, and the row of actions that did not fit it wraps.** The labels
   come from a consumer who cannot shorten them, and a bar without a limit grows past the window it
-  is pinned to. Wrapping rather than cutting, because the label of an action is drawn by the button
-  of the kit and there is nothing here to cut it by.
+  is pinned to.
+- **A single action wider than the place has its label wrapped, and the bar draws that label
+  itself.** A row of one has nowhere to wrap to: a label left as one unbreakable line runs out of
+  the bar and lies over the page beside it, and a limit of the width is named together with the fate
+  of what did not fit it. The label is the bar's own markup, so the fate is the bar's to name.
 - **The limit of the width stands on the element itself as well, not on the bar alone.** The
   containing block of the bar is the element, and without a limit there the element grows by its
   content — and a hundred per cent of the bar is then counted from the grown element.
@@ -85,10 +88,9 @@ next to it and a cross to let them all go.
   numbers and it reports the presses.
 - **Confirming a destructive action.** The kit has a ready family for that, and an action that needs
   a question asks it by itself.
-- **Cutting the label of an action by an ellipsis.** The label is drawn by the button of the kit,
-  inside itself, and cutting it from here would mean writing a rule over the insides of a
-  neighbouring family. The ready-made is extended where it lives — that is a work of its own, and
-  until it is done the row of actions wraps instead of cutting.
+- **Cutting the label of an action by an ellipsis.** A cut label reads as the whole value, so it is
+  owed the rest on hover, and a tooltip on a bar pinned to the lower edge of the window is a work of
+  its own. Until it is done the label wraps, and none of the value is lost.
 
 ## Contract
 
