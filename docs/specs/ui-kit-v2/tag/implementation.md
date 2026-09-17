@@ -15,6 +15,8 @@ paths are given from the root of the tree.
 - **The size is chosen by a step, not by a number in the place.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:size`. The steps themselves stand at `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:size--md`, and the step of the icon is led by `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:ICON_BY_SIZE`
 - **A label that did not fit its place is cut by an ellipsis and gets a hint with the whole value.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:text-overflow`. The hint is attached by the ready-made directive of the kit at `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.html:rtTooltip`
 - **The overflow is counted by watching the size of the box, not by a countdown after the drawing.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:observeText`. The measurement itself stands next to it, at `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:overflowing`
+- **The limit of the width stands on the element itself as well, not on the pill alone.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:max-width`
+- **The label shrinks below its own content only with a zero lower bound of the width.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:min-width`
 - **The styles of the tag live in the cascade layer of the kit's components.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:layer`. The wrapper names the sublayer of the kit's components
 - **The rules of the block are nested inside the host.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:rt-tag`
 

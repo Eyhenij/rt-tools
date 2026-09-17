@@ -74,6 +74,17 @@ promises, so that the next pill is asked for from it rather than written beside 
 - **The overflow is counted by watching the size of the box, not by a countdown after the drawing.**
   A countdown answers about the machine rather than about the layout: on a free one it is always
   enough, on a busy one it is not, and a label that overflowed later gets no hint at all.
+- **The limit of the width stands on the element itself as well, not on the pill alone.** The
+  containing block of the pill is the element, and without a limit on it the element grows by its
+  content: a hundred per cent of the pill is then counted from the grown element, and the tag rides
+  past the place it was given. Nothing catches this — the spec raises no styles at all and has
+  nothing to measure by, and a frame of the tag alone does not show it either: a tag nobody
+  narrowed has nothing to ride past. It is seen by a frame where the place is narrower than the
+  label.
+- **The label shrinks below its own content only with a zero lower bound of the width.** A part of
+  a flexible box keeps the width of its content by default, and an ellipsis then never appears: the
+  tag simply rides past its place, whatever the cutting rules say.
+
 - **The styles of the tag live in the cascade layer of the kit's components.** A consumer keeps the
   last word over them, and a rule that rode past the layer takes that away from them silently.
 - **The rules of the block are nested inside the host.** The class of the block hangs both on the

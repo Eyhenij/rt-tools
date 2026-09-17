@@ -9,7 +9,14 @@ import { RtTagComponent } from '../../rt-tag.component';
 import { IRtTag } from '../../rt-tag.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTagMatrixPart = 'severity' | 'shape' | 'radius' | 'icon' | 'closable' | 'presets' | 'themes';
+export type TTagMatrixPart = 'severity' | 'size' | 'overflow' | 'shape' | 'radius' | 'icon' | 'closable' | 'presets' | 'themes';
+
+/** Случай усечения — не значение оси, а пара «подпись и место, которое ей дали». */
+interface ITagOverflowCase {
+    readonly name: string;
+    readonly value: string;
+    readonly width: number;
+}
 
 /** Случай иконки — не значение оси, а различимая комбинация сторон. */
 interface ITagIconCase {
@@ -25,6 +32,12 @@ interface ITagIconCase {
  * подпись, а не в заливку, и одной строкой это не показать. Форма, скругление и иконки от
  * палитры не зависят и идут рядами.
  *
+ * Ступень размера перемножена с иконкой: значок идёт ступенью пилюли, и порознь видно только
+ * половину — что кегль сменился, а значок остался прежним, покажет одна эта пара.
+ *
+ * Усечение показано в ячейках заданной ширины: без места, которого подписи не хватает,
+ * показывать нечего — метка взяла бы ширину по подписи и ничего не урезала.
+ *
  * В пакет не уезжает: `tsconfig.lib.json` исключает папки историй.
  */
 @Component({
@@ -39,6 +52,37 @@ interface ITagIconCase {
                                 <rt-tag [value]="severity" [severity]="severity" [appearance]="appearance" />
                             </ng-template>
                         </app-story-grid>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('size') {
+                <app-story-presets caption="Ступень × иконка в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="sizes" [columns]="iconCases" [columnLabel]="iconCaseLabel">
+                            <ng-template let-size let-iconCase="col">
+                                <rt-tag
+                                    value="Активен"
+                                    severity="success"
+                                    [size]="size"
+                                    [icon]="iconCase.icon"
+                                    [iconEnd]="iconCase.iconEnd" />
+                            </ng-template>
+                        </app-story-grid>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('overflow') {
+                <app-story-presets caption="Подпись длиннее места в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="overflowCases" [itemLabel]="overflowCaseLabel">
+                            <ng-template let-overflowCase>
+                                <div [style.width.px]="overflowCase.width">
+                                    <rt-tag severity="info" [value]="overflowCase.value" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
                 </app-story-presets>
             }
@@ -135,6 +179,17 @@ export class TestRtTagMatrixComponent {
     public readonly appearances: readonly IRtTag.Appearance[] = ['solid', 'outlined'];
     public readonly shapes: readonly IRtTag.Shape[] = ['pill', 'square'];
     public readonly closables: readonly boolean[] = [false, true];
+    public readonly sizes: readonly IRtTag.Size[] = ['sm', 'md', 'lg'];
+
+    /**
+     * Случаи усечения. Ширина стоит на ячейке вокруг метки, а не на самой метке: место даёт
+     * метке тот, кто её ставит, и показать надо именно это.
+     */
+    public readonly overflowCases: readonly ITagOverflowCase[] = [
+        { name: 'подпись влезает', value: 'Активен', width: 160 },
+        { name: 'подписи не хватило места', value: 'Ожидает подтверждения оплаты', width: 160 },
+        { name: 'места совсем мало', value: 'Ожидает подтверждения оплаты', width: 80 },
+    ];
 
     /** `null` — не отсутствие значения, а «радиус по форме»: у него своя ячейка. */
     public readonly radii: readonly (IRtTag.Radius | null)[] = [null, 'none', 'sm', 'md', 'lg', 'full'];
@@ -152,4 +207,6 @@ export class TestRtTagMatrixComponent {
     public readonly closableLabel: (value: boolean) => string = (value: boolean): string => (value ? 'с крестиком' : 'без крестика');
 
     public readonly iconCaseLabel: (value: ITagIconCase) => string = (value: ITagIconCase): string => value.name;
+
+    public readonly overflowCaseLabel: (value: ITagOverflowCase) => string = (value: ITagOverflowCase): string => value.name;
 }

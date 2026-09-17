@@ -5,12 +5,14 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 5 — Матрица витрины и эталонные кадры
+- **Stage:** 5 of 5 — Переход с первого кита на странице-обзоре
 - **Done:** этап 1 закрыт — у метки есть описание домена: четырнадцать статей, тринадцать
   сценариев, привязки. Заголовки проб помечены номерами той же правкой. Этап 2 закрыт — у
-  метки три ступени размера. Этап 3 закрыт — подпись урезается и получает подсказку.
-- **Next step:** оси размера и усечения в матрицу витрины, эталонные кадры.
-- **Uncommitted:** папка задачи, описание домена метки, заголовки проб.
+  метки три ступени размера. Этап 3 закрыт — подпись урезается и получает подсказку. Этап 4
+  закрыт — обе новые оси стоят в матрице витрины, эталонные кадры сняты.
+- **Next step:** на странице-обзоре метки написать переход с первого кита — таблица старых и
+  новых имён и то, что приложению придётся сделать сверх переименования.
+- **Uncommitted:** нет.
 - **Waiting for the owner:** нет.
 - **PR:** not open yet
 
@@ -59,3 +61,71 @@ Rewritten by every session, not appended to.
   заводится и подсказка не появляется.
   Проверено: проверки метки 35 из 35 (было 33), аудит описаний зелёный, линтер чист, аудит входов
   кита сходится.
+- **Этап 4 сделан.** В матрицу витрины пришли две оси: ступени размера крест-накрест со значком и
+  три случая, где подписи не хватает места. Кадры сняты браузером образа и прочитаны глазами.
+  **Кадр нашёл то, чего не увидела проба.** Подпись не урезалась при верных правилах стиля: ей не
+  хватало нижней границы ширины в ноль, а пилюле — предела ширины на самом элементе метки. Проба
+  этого не видит вовсе — ширин у узлов в ней нет, а переполнение в ней подменяется. Обе причины
+  дописаны статьями в описание домена.
+  Три кадра потребителей разошлись намеренно: подпись внутри фишек выбора раньше переносилась на
+  вторую строку, теперь держится в одной и ничего не теряет. Пересняты точечно.
+  Проверено: `node tools/visual-gate.mjs ui-kit-v2` — 591 из 591, два поднятия подряд (было 589
+  из 589).
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-1879-badge-icon-to-second-kit
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 4 of 5 — Матрица витрины и эталонные кадры
+- **Next step:** оси размера и усечения в матрицу витрины, эталонные кадры.
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-1879-badge-icon-to-second-kit/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M docs/specs/ui-kit-v2/tag/implementation.md
+ M docs/specs/ui-kit-v2/tag/spec.md
+ M projects/ui-kit-v2/.storybook/__snapshots__/molecules-forms-multiselect--chips.png
+ M projects/ui-kit-v2/.storybook/__snapshots__/molecules-forms-multiselect--panel.png
+ M projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss
+ M projects/ui-kit-v2/src/lib/components/tag/stories/component/test-tag-matrix.component.ts
+ M projects/ui-kit-v2/src/lib/components/tag/stories/tag-matrix.stories.ts
+?? projects/ui-kit-v2/.storybook/__snapshots__/atoms-tag--overflow.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/atoms-tag--size.png
+```
+
+### Commits over the main branch
+
+```
+ed5316fb5 feat(rt:ui-kit-v2): подпись метки урезается и получает подсказку
+fc925e09c feat(rt:ui-kit-v2): у метки три ступени размера
+98934ba7e docs(rt:ui-kit-v2): у метки появилось описание домена
+9223634e4 docs(rt:ui-kit-v2): папка задачи о значке-бейдже заведена, план записан
+2e3c5cd41 docs(rt:ui-kit-v2): в плане эпика записано, за чем на деле стоит задача о значке
+f46a2d391 test(rt:ui-kit-v2): эталоны витрины эпика пересняты браузером образа
+e8f36806a Merge remote-tracking branch 'origin/main' into RT-1870-one-kit
+45bd9b771 docs(rt:ui-kit-v2): снимок хода работы обновлён хуком перед сжатием контекста
+bbb74ee2f docs(rt:ui-kit-v2): ход эпика выправлен по сегодняшним слияниям
+45b5400f2 docs(rt:ui-kit): замер потребителя о трёх дефектах закреплённой панели первого кита
+d216fd2ef [RT-2172] Стрелка на кнопке указателя смотрит по состоянию списка (#2173)
+ad19db5d3 docs(rt:ui-kit-v2): задача про стрелку внесена в план эпика строкой 7.4
+2d2cb4c04 fix(rt:ui-kit-v2): в ветку эпика приходит лечение кадров вместо ошибочного возврата
+6048674b5 docs(rt:ui-kit-v2): папка задачи про стрелку разобрана, запись в архиве
+440674b93 feat(rt:ui-kit-v2): обе стороны стрелки указателя попали в кадры витрины
+4dccd928d docs(rt:ui-kit-v2): папка задачи про стрелку заведена, замысел записан
+03310a16c fix(rt:ui-kit-v2): стрелка в показе указателя смотрит по состоянию списка
+b98da5257 [RT-2165] Кадры витрины перестали разъезжаться между её поднятиями (#2168)
+9fc35022c docs(rt:ui-kit-v2): в записи архива дописано, чем расходятся кадры главной ветки
+97f491df2 docs(rt:ui-kit-v2): задача про кадры витрины внесена в план эпика строкой 7.3
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
