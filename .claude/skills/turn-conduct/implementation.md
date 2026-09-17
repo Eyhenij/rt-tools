@@ -14,6 +14,15 @@ named there too.
 
 - **the turn exit guards** — `.claude/hooks/` — the exit guard, the waiting guard, the conversation guard, the incident guard, the window guard
 
+## The guard of the open epic — this tree's own
+
+The articles of the section «The open epic» come by the tree's override, not by the package, and
+the spec audit reads bindings only for the package section. They are carried out here:
+
+- **Until the epic is closed a turn ends only by one of the four exits.** — `.claude/hooks/work-continues-guard.sh:unfinished` — this tree's own guard. It asks the unfinished tasks of `tools/epic-table.mjs --unfinished`. A turn without one of the four exits is returned with the next step named. A turn that ended with work is returned too. The scenarios are `tools/tests/work-continues-guard.test.sh`
+- **The owner's standing word about a stop is quoted in the progress, in « », in the line «Waiting for the owner».** — `.claude/hooks/work-continues-guard.sh:waiting` — a quote in the line releases the turn. A retelling without one does not
+- **A refusal of a guard ends the turn only as its last action.** — `.claude/hooks/work-continues-guard.sh:denied` — the last tool result of the turn is judged, not any refusal in it
+
 ## Where the articles are carried out
 
 The first column is the article verbatim, as it is written in the section «How the law applies
@@ -40,9 +49,6 @@ divergence.
 - **Work left in the working tree does not end the turn.** — `.claude/hooks/turn-exit-guard.sh:rt_te_deny` — the tier reads `@{u}..HEAD` locally and stays silent where there is no remote ref
 - **Turn exits are watched by a guard, not by the executor's memory.** — `.claude/hooks/turn-exit-guard.sh:verdict` — a turn without an edit and without a command that changes the tree is returned to the executor
 - **The end of an epic is a stop, and it is the one lawful waiting for a word.** — `.claude/hooks/epic-stop-guard.sh:rt_epic_over` — taking new work after the end of an epic is refused, and the two guards of the turn end let the stop through by the same reading
-- **Until the epic is closed a turn ends only by one of the four exits.** — `.claude/hooks/work-continues-guard.sh:unfinished` — this tree's own guard. It asks the unfinished tasks of `tools/epic-table.mjs --unfinished`. A turn without one of the four exits is returned with the next step named. A turn that ended with work is returned too. The scenarios are `tools/tests/work-continues-guard.test.sh`
-- **The owner's standing word about a stop is quoted in the progress, in « », in the line «Waiting for the owner».** — `.claude/hooks/work-continues-guard.sh:waiting` — a quote in the line releases the turn. A retelling without one does not
-- **A refusal of a guard ends the turn only as its last action.** — `.claude/hooks/work-continues-guard.sh:denied` — the last tool result of the turn is judged, not any refusal in it
 - **The word about a stop the guard reads from the owner, not from the executor.** — `.claude/hooks/turn-exit-verdict.sh:told_stop` — the owner remark is judged, not the reply text
 - **The phrase "waiting for your word" is a stop declared by the executor, and the guard refuses it by name.** — `.claude/hooks/turn-exit-guard.sh:awaits_word` — the set of phrase samples is named in the parsing of the turn record; the tier stands before the lawful exits
 - **Work without a branch and without a task folder is judged by the same guard by the second sign.** — `.claude/hooks/turn-exit-guard.sh:state` — the branch, the task folder and the state line are taken while they exist; an empty state does not end the turn but moves the judgement to the sign of work
