@@ -64,7 +64,13 @@ test.describe('отбор по дереву', () => {
                     width: node.getBoundingClientRect().width,
                     paddingInline: parseFloat(style.paddingLeft) + parseFloat(style.paddingRight),
                     gap: parseFloat(style.gap),
-                    chevronWidth: node.querySelector('.rt-select__chevron')?.getBoundingClientRect().width ?? 0,
+                    /*
+                     * Ширина шеврона берётся раскладкой, а не прямоугольником на экране: открытый
+                     * список поворачивает его, и повёрнутый квадрат занимает коробку шире себя.
+                     * Замер, попавший на поворот, давал шеврону 17,51 вместо 16 и требовал от
+                     * кнопки на полтора пункта больше нужного — тест краснел через раз.
+                     */
+                    chevronWidth: node.querySelector<HTMLElement>('.rt-select__chevron')?.offsetWidth ?? 0,
                 };
             });
 

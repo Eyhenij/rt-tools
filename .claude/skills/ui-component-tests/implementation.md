@@ -102,7 +102,11 @@ surface of a component is invisible to a machine — that is reading and the rul
 - `pnpm exec nx run @rt-tools/ui-kit-v2:typecheck` — the types of the specs and the stories.
 - `pnpm run test:stories:v2` — the sweep over all the second showcase's stories: an empty showing
   and drawing errors.
-- `pnpm run test:visual` and `pnpm run test:visual:v2` — the snapshots against the references.
+- `node tools/visual-gate.mjs ui-kit-v2` — the second showcase's frames: it builds the showcase,
+  serves it as files and shoots with a browser raised in an image; `--update` re-takes them by the
+  same road. `pnpm run test:visual:v2` called on its own refuses and names this command.
+- `node tools/visual-gate.mjs ui-kit` — the first showcase's frames; it shoots with the machine's
+  own browser, so they are matched in the pipeline only.
 - `pnpm run build-storybook:ui-kit-v2` — the only thing that checks the showcase config.
 - `pnpm exec nx run message-bus-admin-e2e:e2e` — the admin panel's end-to-end suite together with
-  the screen frames; it raises the stand for itself.
+  the screen frames; it raises the stand for itself and the shooting browser in an image.

@@ -54,7 +54,8 @@ test.describe('оболочка админки', () => {
         await expect(qa(page, 'profile-name')).toBeVisible();
         await expect(page).toHaveURL(new RegExp(`${SECTION.postmortems.path}$`));
 
-        await expectScreen(page, 'shell-profile-menu');
+        // указатель остаётся на кнопке: попап профиля кит открывает наведением и от увода закрывает
+        await expectScreen(page, 'shell-profile-menu', { keepPointer: true });
     });
 
     test('SC-MB-146 — выход идёт из попапа и уводит на экран входа', async ({ page }: { page: Page }) => {
