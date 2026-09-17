@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/tree-assignment-guard.sh · 3aa2b0d37d07 · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/tree-assignment-guard.sh · 3be53fe0faeb · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, checks/tree-assignment.mjs
 # Guard of the assignment of an epic to a working copy. PreToolUse on a call that takes new work
@@ -64,20 +64,23 @@ reader="${checks}/tree-assignment.mjs"
 # What is judged, and what the epic of the work is taken from. Creating a task names its epic in the
 # call itself; a card moved into work does not name it at all, and for that the table alone answers:
 # a copy with no assignment takes no work whatever epic it belongs to.
-epic=''
-judged=no
-if printf '%s' "$cmd" | grep -qE '(task:new|task-new\.mjs)' 2>/dev/null; then
-    judged=yes
-    epic="$(printf '%s' "$cmd" | sed -nE 's/.*--epic-of[[:space:]]+([0-9]+).*/\1/p' | head -1)"
-fi
-if printf '%s' "$cmd" | grep -qE '(task:move|board\.mjs[[:space:]]+move)([^|;&]*)in-progress' 2>/dev/null; then
-    judged=yes
-fi
-[ "$judged" = yes ] || exit 0
+takes_work() {
+    printf '%s' "$cmd" | grep -qE '(task:new|task-new\.mjs)' 2>/dev/null && return 0
+    printf '%s' "$cmd" \
+        | grep -qE '(task:move|board\.mjs[[:space:]]+move)([^|;&]*)in-progress' 2>/dev/null
+}
 
 # Creating an epic is not taking work: it is the owner's order written down, and the assignment for
 # it is given after, by the owner, in the table.
-printf '%s' "$cmd" | grep -qE '(task:new|task-new\.mjs)[^|;&]*--epic([[:space:]]|$)' 2>/dev/null && exit 0
+creates_epic() {
+    printf '%s' "$cmd" \
+        | grep -qE '(task:new|task-new\.mjs)[^|;&]*--epic([[:space:]]|$)' 2>/dev/null
+}
+
+takes_work || exit 0
+creates_epic && exit 0
+
+epic="$(printf '%s' "$cmd" | sed -nE 's/.*--epic-of[[:space:]]+([0-9]+).*/\1/p' | head -1)"
 
 said="$(node "$reader" --fault "$epic" 2>/dev/null)"
 [ -n "$said" ] || exit 0

@@ -229,6 +229,14 @@ flowchart TD
   Nothing checks this yet: the rule `git-workflow` names the gap.
 - **The next task is taken from the epic plan, and the queue list is asked only where there is no
   epic.** By a list of numbers someone else's epic cannot be told from one's own.
+- **Which epic this working copy leads is read from the table of assignments, and the owner writes
+  it.** Copies of one tree share the history and nothing else, and the queue answers only what is
+  open: the freshest card is not an order. A dash in the row is the owner's answer "there is no
+  work", a missing row is their silence, and both are cured by their word alone. A guard refuses
+  every call that takes work while the row says something else.
+- **An assignment stands until the owner moves it, and a closed epic in the row is not an order.**
+  The row outlives the epic by itself, and an epic chosen instead of the closed one is chosen by the
+  executor. Found a closed one — the owner is asked, and the work waits for their answer.
 - **An epic is not closed by a sign confirmed by reading alone.** What is checkable by eye is
   called checked only with a command and its output.
 - **The tasks of an epic are created all at once, by the same turn as the epic itself.** Creating

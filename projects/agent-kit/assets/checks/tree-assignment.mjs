@@ -154,10 +154,16 @@ if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).
     } else if (name === null) {
         console.log(`tree-assignment: this working copy names itself in no way — write its short name into ${CONFIG.treeNameFile}`);
     } else if (row === null) {
-        console.log(`tree-assignment: «${name}» — the table ${CONFIG.assignmentsFile} holds no row for this copy. Ask the owner about it; work is not taken by guesswork`);
+        console.log(
+            `tree-assignment: «${name}» — the table ${CONFIG.assignmentsFile} holds no row for this copy. Ask the owner about it; work is not taken by guesswork`
+        );
     } else if (row.epic === null) {
-        console.log(`tree-assignment: «${name}» — no epic is assigned to this copy. Ask the owner about it; work is not taken by guesswork`);
+        console.log(
+            `tree-assignment: «${name}» — no epic is assigned to this copy. Ask the owner about it; work is not taken by guesswork`
+        );
     } else {
-        console.log(`tree-assignment: «${name}» — epic ${CONFIG.board?.taskKey ?? ''}-${row.epic}, the plan of works ${row.plan}, given ${row.given}`);
+        console.log(
+            `tree-assignment: «${name}» — epic ${CONFIG.board?.taskKey ?? ''}-${row.epic}, the plan of works ${row.plan}, given ${row.given}`
+        );
     }
 }
