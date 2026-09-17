@@ -8,6 +8,12 @@ export namespace IRtTag {
     /** Семантическая палитра tag'а: 6 нормализованных членов (warn/contrast объединены в warning/secondary). */
     export type Severity = 'info' | 'success' | 'warning' | 'danger' | 'secondary' | 'neutral';
 
+    /**
+     * Ступень размера: отступы, кегль и значок пилюли двигаются вместе. Умолчание `md` — тот
+     * размер, каким метка рисовалась до появления ступеней, так что вид без входа не меняется.
+     */
+    export type Size = 'sm' | 'md' | 'lg';
+
     /** Форма tag'а: pill (rounded) или square (small radius). */
     export type Shape = 'pill' | 'square';
 

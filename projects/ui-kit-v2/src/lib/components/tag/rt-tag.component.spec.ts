@@ -51,6 +51,39 @@ describe('RtTagComponent', (): void => {
         });
     });
 
+    describe('ступень размера', (): void => {
+        it('SC-UKV-194 — без входа ступень средняя: вид до появления ступеней не меняется', (): void => {
+            expect(pillClasses(setup())).toContain('rt-tag--size--md');
+        });
+
+        it('SC-UKV-195 — каждая ступень ставит свой модификатор и снимает прежний', (): void => {
+            const fixture: ComponentFixture<RtTagComponent> = setup();
+
+            for (const size of ['sm', 'md', 'lg'] as IRtTag.Size[]) {
+                setInputs(fixture, { size });
+                fixture.detectChanges();
+
+                const marks: string[] = pillClasses(fixture).filter((one: string): boolean => one.startsWith('rt-tag--size--'));
+
+                expect(marks).toEqual([`rt-tag--size--${size}`]);
+            }
+        });
+
+        // Ступень значок кладёт числом в стиль хоста, а не классом: ступени `xs`, `sm` и `md`
+        // кита значков — 12, 16 и 20 пикселей.
+        it('SC-UKV-196 — значок идёт ступенью пилюли, своего входа у него нет', (): void => {
+            const fixture: ComponentFixture<RtTagComponent> = setup({ icon: 'ico-close' });
+            const steps: Record<string, string> = { sm: '12px', md: '16px', lg: '20px' };
+
+            for (const [size, width] of Object.entries(steps)) {
+                setInputs(fixture, { size });
+                fixture.detectChanges();
+
+                expect((el(fixture, 'rt-icon')?.nativeElement as HTMLElement).style.width).toBe(width);
+            }
+        });
+    });
+
     describe('форма и заливка', (): void => {
         it('SC-UKV-185 — без входов — полностью скруглённая сплошная пилюля', (): void => {
             expect(pillClasses(setup())).toEqual(expect.arrayContaining(['rt-tag--shape--pill', 'rt-tag--appearance--solid']));

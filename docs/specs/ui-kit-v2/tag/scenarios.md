@@ -116,3 +116,29 @@ When the cross is drawn
 Then its label for the reader is the translated word rather than the key of the dictionary
 
 Covered: `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.spec.ts`.
+
+## The size
+
+### SC-UKV-194 — a tag without the input of the size takes the middle step
+
+Given a tag without the input of the size
+When it is drawn
+Then it stands at the middle step: the look it had before the steps appeared does not move
+
+Covered: `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.spec.ts`.
+
+### SC-UKV-195 — every step puts out its own modifier and takes the former one off
+
+Given a tag
+When the step is changed to each of the three in turn
+Then only the modifier of the current step stands on the pill
+
+Covered: `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.spec.ts`.
+
+### SC-UKV-196 — the icon goes by the step of the pill and has no input of its own
+
+Given a tag with an icon
+When the step is changed to each of the three in turn
+Then the icon takes the step of the kit of icons that answers to the step of the pill
+
+Covered: `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.spec.ts`.

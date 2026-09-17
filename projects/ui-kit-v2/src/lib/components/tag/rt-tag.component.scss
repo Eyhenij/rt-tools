@@ -21,6 +21,27 @@
             gap: var(--rt-space-1);
             line-height: var(--rt-leading-tight);
 
+            /* Ступени размера: отступы, кегль и просвет между частями двигаются вместе. `md`
+               повторяет то, чем метка рисовалась до появления ступеней, и вид без входа не
+               меняется ни на пиксель. */
+            &--size--sm {
+                padding: var(--rt-space-0-5) var(--rt-space-1);
+                font-size: var(--rt-text-xs);
+                gap: var(--rt-space-0-5);
+            }
+
+            &--size--md {
+                padding: var(--rt-space-1) var(--rt-space-2);
+                font-size: var(--rt-text-sm);
+                gap: var(--rt-space-1);
+            }
+
+            &--size--lg {
+                padding: var(--rt-space-2) var(--rt-space-4);
+                font-size: var(--rt-text-md);
+                gap: var(--rt-space-2);
+            }
+
             &--shape--pill {
                 --rt-tag-radius: var(--rt-radius-full);
             }
