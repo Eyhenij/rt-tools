@@ -1,4 +1,4 @@
-// rt-kit v0.28.0 · checks/tree-assignment.mjs · 83e7a4a7455b · правится надстройкой, не здесь
+// rt-kit v0.28.0 · checks/tree-assignment.mjs · 3a1003faf4d6 · правится надстройкой, не здесь
 /**
  * The epic assigned to this working copy.
  *
@@ -126,6 +126,18 @@ export function assignmentFault(epic, root = ROOT) {
  * case in which work gets taken by guesswork.
  */
 if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href) {
+    const assigned = process.argv.indexOf('--assigned');
+
+    if (assigned !== -1) {
+        // The number alone, for a caller that asks the queue about the state of that epic: the
+        // staleness of an assignment is not readable from the table — the table says what was
+        // given, the queue says whether it is still alive.
+        const row = assignmentOf();
+
+        console.log(row?.epic ?? '');
+        process.exit(0);
+    }
+
     const asked = process.argv.indexOf('--fault');
 
     if (asked !== -1) {

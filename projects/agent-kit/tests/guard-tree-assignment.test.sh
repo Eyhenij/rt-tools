@@ -60,4 +60,76 @@ report "SC-AK-1113 — работа без эпика пропущена" "$(fau
 printf '{"board":{"taskKey":"RT"}}\n' > "$TREE/.claude/rt-kit/checks.json"
 report "SC-AK-1113 — дерево без таблицы молчит" "$(fault_of 2208)" ''
 
+# --- SC-AK-1114 — вызовы, которыми берут работу мимо ветки ----------------------------------
+# Ветку судит проверка поставки, а задачу под эпиком и перенос карточки в работу — никто: оба
+# вызова идут мимо неё, и оба означают взятую работу.
+git -C "$TREE" init -q 2>/dev/null
+printf '%s\n' '{"layout":{"checks":"tools"}}' > "$TREE/.claude/rt-kit.json"
+printf '{"board":{"taskKey":"RT"},"assignmentsFile":".claude/rt-kit/assignments.md"}\n' \
+    > "$TREE/.claude/rt-kit/checks.json"
+printf 'rt-tools\n' > "$TREE/.claude/rt-kit/tree-name"
+table '| rt-tools | 1870 | docs/plans/one-kit.md | 2026-09-17 |'
+
+call() {
+    printf '{"tool_name":"Bash","tool_input":{"command":%s}}' "$(printf '%s' "$1" | jq -Rs .)"
+}
+
+decision_of() {
+    _out="$(cd "$TREE" && call "$1" | "$HOOKS/tree-assignment-guard.sh" 2>/dev/null)"
+    if [ -z "$_out" ]; then
+        printf 'PASS'
+    else
+        printf '%s' "$(printf '%s' "$_out" | jq -r '.hookSpecificOutput.permissionDecision // "deny"' 2>/dev/null)"
+    fi
+}
+
+report "SC-AK-1114 — задача под чужим эпиком отбита" \
+    "$(decision_of 'npm run task:new -- --epic-of 2208 --title t --slug s')" 'deny'
+report "SC-AK-1114 — задача под своим эпиком проходит" \
+    "$(decision_of 'npm run task:new -- --epic-of 1870 --title t --slug s')" 'PASS'
+# Заведение эпика — не взятие работы: это записанный приказ владельца, назначение под него он
+# даёт после.
+report "SC-AK-1114 — заведение эпика проходит" \
+    "$(decision_of 'npm run task:new -- --epic --title t --slug s')" 'PASS'
+# Перенос карточки в работу эпика не называет: судится сама возможность брать работу.
+table '| rt-tools | — | — | 2026-09-17 |'
+report "SC-AK-1114 — перенос карточки без назначения отбит" \
+    "$(decision_of 'npm run task:move -- 700 in-progress')" 'deny'
+table '| rt-tools | 1870 | docs/plans/one-kit.md | 2026-09-17 |'
+report "SC-AK-1114 — перенос карточки при назначении проходит" \
+    "$(decision_of 'npm run task:move -- 700 in-progress')" 'PASS'
+# Перенос в колонку обзора работой не считается: работа уже взята, и отказ тут запрещал бы её
+# закончить.
+table '| rt-tools | — | — | 2026-09-17 |'
+report "SC-AK-1114 — перенос в обзор не судится" \
+    "$(decision_of 'npm run task:move -- 700 in-review')" 'PASS'
+
+
+# --- SC-AK-1115 — назначение, пережившее свой эпик -------------------------------------------
+# Назначение стареет само: эпик кончается, а строка остаётся. Так и вышло в разборе — таблица
+# называла эпик, все задачи которого закрыты неделю назад. Состояние задачи приходит из очереди
+# работ, и здесь её заменяет двойник.
+stale_of() {
+    (
+        cd "$TREE" || exit 0
+        RT_STATE="$1" HELPER="$HOOKS/git-guard-tree-assignment.sh" bash -c '
+            fault() { printf "%s\n" "$1"; }
+            rt_task_state() { printf "%s" "$RT_STATE"; }
+            . "$HELPER"
+            rt_assignment_stale "ветка"
+        '
+    )
+}
+
+table '| rt-tools | 1870 | docs/plans/one-kit.md | 2026-09-17 |'
+report "SC-AK-1115 — закрытый эпик назначения отбит" \
+    "$(stale_of '{"exists":true,"open":false}' | grep -c 'assignment outlived it')" 1
+report "SC-AK-1115 — живой эпик назначения пропущен" "$(stale_of '{"exists":true,"open":true}')" ''
+# Очередь работ молчит — отказа нет: вызов идёт в сеть, и дерево без неё продолжает работать.
+report "SC-AK-1115 — молчание очереди пропущено" "$(stale_of '')" ''
+# Прочерк в строке судит не этот отказ: спрашивать очередь не о чем.
+table '| rt-tools | — | — | 2026-09-17 |'
+report "SC-AK-1115 — без назначения очередь не спрашивается" \
+    "$(stale_of '{"exists":true,"open":false}')" ''
+
 suite_result "назначение эпика рабочей копии"
