@@ -90,6 +90,6 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
         and (($asked or $told_stop or $handed) | not)) as $awaits_word
     | ($last_say | test($promise)) as $promised
     | (($last_name == "Bash") and ($last | test($started)) and ($handed_over | not)) as $only_took
-    | { promised: $promised, only_took: $only_took, standing_work: $standing_work, worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, asked_in_prose: $asked_in_prose, awaits_word: $awaits_word, ran: $ran }
+    | { promised: $promised, only_took: $only_took, asked: $asked, handed_by_hand: ($handed and (($asked or $denied or $told_stop) | not)), standing_work: $standing_work, worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, asked_in_prose: $asked_in_prose, awaits_word: $awaits_word, ran: $ran }
 ' 2>/dev/null)"
 }

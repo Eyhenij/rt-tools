@@ -13,6 +13,7 @@ named there too.
 ## Where it lives
 
 - **the turn exit guards** — `.claude/hooks/` — the exit guard, the waiting guard, the conversation guard, the incident guard, the window guard
+- **the tiers of the open epic** — `.claude/hooks/turn-exit-epic.sh` — sourced by the exit guard; the unfinished tasks are read by `tools/epic-table.mjs --unfinished` once per turn, on the way to a refusal
 
 ## Where the articles are carried out
 

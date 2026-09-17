@@ -47,7 +47,8 @@ turn.
   richer than it — it retells the whole session at once — so it is recognised by a sign of the record,
   not by the text.
 - **A second pass over the same turn is not judged.** The guard says its word once and lets go;
-  otherwise the turn will never end.
+  otherwise the turn will never end. The one exception is the guard of the exits under an open epic,
+  and its subdomain says so.
 - **A role switched off by the tree does not hold the guard at it.** The tree names the switched-off
   roles by a list in its setting, and the guard at such a role exits silently. What is switched off is
   the mandatory call, not the role itself: its file stays laid out, and it can be called at any
