@@ -53,6 +53,10 @@
             cursor: pointer;
             font-family: inherit;
             font-size: inherit;
+
+            // Нажатие в этом ките набрано средним начертанием — так набрана кнопка кита, и
+            // действие полосы такое же нажатие. Первый кит ставил здесь шестьсот.
+            font-weight: var(--rt-font-weight-medium);
             gap: var(--rt-space-2);
 
             &:hover {
