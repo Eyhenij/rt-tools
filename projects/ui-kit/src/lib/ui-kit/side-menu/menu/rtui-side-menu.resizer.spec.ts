@@ -1,5 +1,15 @@
 import { SUB_MENU_WIDTH_MAX } from '../side-menu.logic';
-import { drag, hoverFirstItem, installFontsStub, installPointerEventStub, ISetup, pointer, resizer, setup } from './side-menu.harness';
+import {
+    drag,
+    hoverFirstItem,
+    installFontsStub,
+    installPointerEventStub,
+    ISetup,
+    menu,
+    pointer,
+    resizer,
+    setup,
+} from './side-menu.harness';
 
 beforeAll(installFontsStub);
 beforeAll(installPointerEventStub);
@@ -107,5 +117,53 @@ describe('SC-UK-70 — отнятый средой указатель конча
         fixture.detectChanges();
 
         expect(host.width()).toBe(200);
+    });
+});
+
+describe('SC-UK-71 — начало и конец тяги уходят наружу', () => {
+    it('за одну тягу каждое событие уходит ровно по разу', () => {
+        const { fixture }: ISetup = setup('pinned', ['refs']);
+        const started: jest.Mock = jest.fn();
+        const ended: jest.Mock = jest.fn();
+
+        menu(fixture).subMenuResizeStart.subscribe(started);
+        menu(fixture).subMenuResizeEnd.subscribe(ended);
+
+        drag(fixture, 200, 260);
+
+        expect(started).toHaveBeenCalledTimes(1);
+        expect(ended).toHaveBeenCalledTimes(1);
+    });
+
+    it('без тяги наружу не уходит ничего', () => {
+        const { fixture }: ISetup = setup('pinned', ['refs']);
+        const started: jest.Mock = jest.fn();
+        const ended: jest.Mock = jest.fn();
+
+        menu(fixture).subMenuResizeStart.subscribe(started);
+        menu(fixture).subMenuResizeEnd.subscribe(ended);
+
+        pointer(resizer(fixture) as HTMLElement, 'pointermove', 400);
+        fixture.detectChanges();
+
+        expect(started).not.toHaveBeenCalled();
+        expect(ended).not.toHaveBeenCalled();
+    });
+});
+
+describe('SC-UK-72 — отнятая средой тяга тоже кончается наружу', () => {
+    it('отмена указателя отдаёт наружу конец тяги', () => {
+        const { fixture }: ISetup = setup('pinned', ['refs']);
+        const ended: jest.Mock = jest.fn();
+        const handle: HTMLElement = resizer(fixture) as HTMLElement;
+
+        menu(fixture).subMenuResizeEnd.subscribe(ended);
+
+        pointer(handle, 'pointerdown', 200);
+        pointer(handle, 'pointermove', 280);
+        pointer(handle, 'pointercancel', 280);
+        fixture.detectChanges();
+
+        expect(ended).toHaveBeenCalledTimes(1);
     });
 });

@@ -31,7 +31,7 @@ import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '
 import { TNullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
-import { clampSubMenuWidth, drawnSubMenuWidth, filterSubMenuItems, startSubMenuWidthDrag, subMenuIdsToExpand } from '../side-menu.logic';
+import { clampSubMenuWidth, drawnSubMenuWidth, filterSubMenuItems, subMenuIdsToExpand } from '../side-menu.logic';
 import { ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 import {
     RtuiScrollableContainerComponent,
@@ -42,6 +42,7 @@ import {
 import { RtuiButtonComponent } from '../../buttons/unified-button/rtui-button.component';
 import { RtuiClearButtonComponent } from '../../table/components/clear-search-button/rtui-clear-button.component';
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
+import { SubMenuResize } from './sub-menu-resize';
 import { pressSubMenuRow, SubMenuKeyboard } from './sub-menu-keyboard';
 
 @Directive({
@@ -106,12 +107,18 @@ export class RtuiSideMenuComponent {
     readonly #renderer: Renderer2 = inject(Renderer2);
 
     /**
-     * Ширина, пока край держат указателем. Наружу она уходит одной просьбой на отпускании: вход
-     * потребителя за каждым движением мыши не угнаться, а хранилище незачем писать сотней раз.
+     * Тяга ширины подменю. Наружу ширина уходит одной просьбой на отпускании: вход потребителя за
+     * каждым движением указателя не угнаться, а хранилище незачем писать сотней раз.
      */
-    readonly #draggedWidth: WritableSignal<number | null> = signal(null);
-    /** Снятие слушателей документа. Ведут и отпускают за пределами самой ручки. */
-    #stopDrag: (() => void) | null = null;
+    readonly #resize: SubMenuResize = new SubMenuResize(
+        (target: HTMLElement, name: string, handler: (event: PointerEvent) => void): (() => void) =>
+            this.#renderer.listen(target, name, handler),
+        {
+            askWidth: (width: number): void => this.subMenuWidthChange.emit(width),
+            started: (): void => this.subMenuResizeStart.emit(),
+            ended: (): void => this.subMenuResizeEnd.emit(),
+        }
+    );
 
     /** Подменю открыл указатель. У закреплённой моды открытость считается не так. */
     readonly #hoverOpened: WritableSignal<boolean> = signal(false);
@@ -172,7 +179,7 @@ export class RtuiSideMenuComponent {
      * пределом сама по себе. Числом в ките этот предел назвать нечем — ширину знает потребитель.
      */
     protected readonly subMenuWidthStyle: Signal<string | null> = computed((): string | null => {
-        const width: number | null = this.#draggedWidth() ?? this.subMenuWidth();
+        const width: number | null = this.#resize.draggedWidth() ?? this.subMenuWidth();
 
         return width === null ? null : `${clampSubMenuWidth(width)}px`;
     });
@@ -281,6 +288,15 @@ export class RtuiSideMenuComponent {
     public readonly subMenuModeChange: OutputEmitterRef<ISideMenu.SubMenuMode> = output<ISideMenu.SubMenuMode>();
     /** Просьба о ширине — по той же причине, что и просьба о моде: своего состояния меню не держит. */
     public readonly subMenuWidthChange: OutputEmitterRef<number> = output<number>();
+    /**
+     * Начало и конец тяги. Потребитель делает по ним то, чего киту делать не след: накрывает кадр
+     * чужого адреса, меняет курсор всей страницы, придерживает перекладку того, что правее панели.
+     * Без этих событий ему остаётся класс ручки — внутреннее дело кита, которое первое же
+     * переименование внутри уносит молча. Конец приходит и на отпускании, и на отнятом указателе:
+     * накрывший на начале снимает накрытие в обоих случаях.
+     */
+    public readonly subMenuResizeStart: OutputEmitterRef<void> = output<void>();
+    public readonly subMenuResizeEnd: OutputEmitterRef<void> = output<void>();
     public readonly closeMobileMenuAction: OutputEmitterRef<void> = output<void>();
     public readonly clickSubMenuAction: OutputEmitterRef<{ item: ISideMenu.Item; event: MouseEvent }> = output<{
         item: ISideMenu.Item;
@@ -379,33 +395,16 @@ export class RtuiSideMenuComponent {
         this.subMenuModeChange.emit(this.isPinned() ? 'hover' : 'pinned');
     }
 
-    /** Взята ручка правого края. Механика тяги — `startSubMenuWidthDrag` в логике рядом. */
+    /** Взята ручка правого края. Механика тяги — `SubMenuResize` и логика рядом. */
     public onResizeStart(event: PointerEvent): void {
-        if (!this.isPinned() || this.#stopDrag !== null) {
+        if (!this.isPinned() || this.#resize.running) {
             return;
         }
 
         // Иначе указатель выделяет подписи пунктов, и тяга выглядит выделением текста.
         event.preventDefault();
 
-        const startWidth: number = this.subMenuWidth() ?? this.#measureSubMenuWidth();
-        const stop: (() => void) | null = startSubMenuWidthDrag(
-            event,
-            startWidth,
-            (target: HTMLElement, name: string, handler: (moveEvent: PointerEvent) => void): (() => void) =>
-                this.#renderer.listen(target, name, handler),
-            {
-                onWidth: (width: number): void => this.#draggedWidth.set(width),
-                onEnd: (): void => this.#finishResize(),
-            }
-        );
-
-        if (stop !== null) {
-            this.#stopDrag = (): void => {
-                stop();
-                this.#stopDrag = null;
-            };
-        }
+        this.#resize.start(event, this.subMenuWidth() ?? drawnSubMenuWidth(this.subMenuPanelRef()?.nativeElement ?? null));
     }
 
     public onSubMenuSearch(query: string): void {
@@ -464,28 +463,5 @@ export class RtuiSideMenuComponent {
         } else {
             // Пункт без разделов и без своего адреса: нажимать в нём нечего, и выбор остаётся прежним.
         }
-    }
-
-    /** Отпускание: слушатели снимаются, а ширина уходит просьбой наружу. */
-    /**
-     * Конец тяги. Наружу уходит натянутая ширина, а не та, что получилась на экране: нижний
-     * предел держит оформление — панель не бывает уже той ширины, какую задал потребитель, — и
-     * замерить применённое можно только там, где раскладка уже посчитана. Хранит потребитель
-     * выбор человека; вид от этого не меняется, потому что предел стоит в самом оформлении.
-     */
-    #finishResize(): void {
-        const width: number | null = this.#draggedWidth();
-
-        this.#stopDrag?.();
-        this.#draggedWidth.set(null);
-
-        if (width !== null) {
-            this.subMenuWidthChange.emit(width);
-        }
-    }
-
-    /** Ширина, от которой отсчитывается тяга, когда своего выбора ещё нет: та, что нарисована. */
-    #measureSubMenuWidth(): number {
-        return drawnSubMenuWidth(this.subMenuPanelRef()?.nativeElement ?? null);
     }
 }

@@ -114,6 +114,14 @@ consumer, the address of the active item the kit does not count.
   the drawer of the framework, which puts it over its container rather than into the flow; a panel put into
   the flow makes the container twice as tall as the screen, and then one bringing of the active item into
   view scrolls the container together with the panel.
+- **The beginning and the end of the pull go outward as events of their own.** A consumer does what
+  the kit has no business doing for them: they put a cover over a frame of a foreign address, change
+  the cursor of the whole page, hold back a re-layout of what stands to the right of the panel. The
+  minute the pull begins and the minute it ends is the only thing they lack for that. Without those
+  events the only sign left them is the class of the handle — the kit's own matter, which the first
+  rename inside the kit takes away silently. The end comes about at a release and at a pointer taken
+  away alike: a consumer who put a cover up at the beginning must take it down in both cases.
+
 - **The pull is caught by pointer events, and the handle holds the pointer by a capture.** A finger
   and a pen give no mouse events at all, so a handle listening for a press of the mouse is workable
   by the mouse alone. The capture keeps the movement and the release on the handle itself: listeners
@@ -207,4 +215,5 @@ The subdomain has no open questions.
   limit. The rules, the scenarios and the bindings about the second level of the side menu moved as they
   were: the scenario numbers were not recounted.
 - 2026-09-09 — the submenu stopped drifting upwards at a walk of the strip (RT-1975).
-- 2026-09-17 — the pull of the width moved onto pointer events with a capture (RT-2142).
+- 2026-09-17 — the pull of the width moved onto pointer events with a capture, and its beginning
+  and end went outward as events of their own (RT-2142).

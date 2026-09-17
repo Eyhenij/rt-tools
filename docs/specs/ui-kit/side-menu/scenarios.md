@@ -515,3 +515,20 @@ Then the pull ends the same way a release ends it: the width reached goes away o
 listeners of the movement are taken off
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
+### SC-UK-71 — the beginning and the end of the pull go outward
+
+Given the mode is the pinned one and an open submenu
+When the handle is pressed, led and released
+Then the event of the beginning goes outward once and the event of the end goes outward once
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
+### SC-UK-72 — a pull taken away by the environment ends outward too
+
+Given the mode is the pinned one and a pull begun
+When the environment takes the pointer away instead of a release
+Then the event of the end goes outward all the same: a consumer who put a cover up at the beginning
+takes it down in both cases
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
