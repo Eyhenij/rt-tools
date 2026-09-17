@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 3 — проверка и её сценарии
-- **Done:** ветка отведена от ветки RT-2192, задача в колонке «в работе», разбор просьбы и план в папке
-- **Next step:** этап 1 — `projects/agent-kit/assets/hooks/end-conversation-guard.sh` и её набор `projects/agent-kit/tests/end-conversation-guard.test.sh`
+- **Stage:** 3 of 3 — сборка и установка
+- **Done:** папка в ветке; этап 1 — `end-conversation-guard.sh` отказывает всегда решением «deny», без jq читает имя grep, набор из девяти сценариев SC-AK-1121 зелёный, разбор ресурсов зелёный; этап 2 — статья «сессию заканчивает владелец» в правиле о ходе, статья, сценарий и привязка в договорённости о проверках конца хода, строка в файле привязок дерева, аудит описаний зелёный, вес правила в пределе
+- **Next step:** этап 3 — `npm run agent-kit:sync`, `npm run agent-kit:check`, `bash tools/tests/run.sh`, затем закрытие
 - **Uncommitted:** ничего после коммита папки
 - **Waiting for the owner:** no
 - **PR:** not open yet

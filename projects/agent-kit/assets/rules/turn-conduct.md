@@ -159,9 +159,7 @@ flowchart TD
   where it stood. Parts of a compound command are judged one by one: a read joined to an edit
   remains work.
 - **A reply to the owner is not an action and does not stand last in a turn.** The order inside a
-  turn is one: work, the first step of the next, then text. The reverse — work, report, end — stands
-  behind every analysed stop: a report is a form of completeness, and an appended summary reads as
-  the turn's end the more convincingly the more was done. Saying what was done is always allowed;
+  turn is one: work, the first step of the next, then text. Saying what was done is always allowed;
   its place is after the next action, not instead.
 - **The last action of a turn is only ever work.** One sign for every kind of stop: a file edit or a
   changing command — last among what the turn did. The guard's tiers — exploration, waiting, handing
@@ -194,6 +192,9 @@ flowchart TD
 - **The owner's standing word about a stop is quoted in the progress, in « », in the line «Waiting
   for the owner».** The guard reads their word, not a retelling: a line without a quote releases
   nothing, and a quote holds until the owner cancels it. A word said in this turn releases by itself.
+- **The session is ended by the owner and by nobody else.** The tool that closes the conversation is
+  refused by a guard always, with no lawful form of bypass: an assignment stands until the owner
+  cancels it, and a session that must close is closed by them.
 - **A refusal of a guard ends the turn only as its last action.** A refusal lifted by loading the
   rule and answered by the next call is the middle of the turn: read as an exit, it released a turn
   that ended with a report.
@@ -204,8 +205,7 @@ flowchart TD
 - **A statement about the tree's state is watched by the statement guard, not by the executor's
   memory.** Everything the reply says about the tree carries a command and its output; said without
   one, it is no statement — not "checked", not "cleared", not "done". The guard reads the turn's
-  text to the owner and looks for a command of the same turn; each word has its own kind of command,
-  since a general sign "there was a command" would confirm one thing by another. The previous turn
+  text to the owner and looks for a command of the same turn; each word has its own kind of command. The previous turn
   does not count: the tree's state changes, and yesterday's output says nothing of today's.
 - **The statement guard waits for the reply text rather than judging the record as it found it.**
   The text lands in the turn record no earlier than the host calls the hook. Not having waited, the
