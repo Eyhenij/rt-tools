@@ -11,7 +11,11 @@
         --rt-table-filter-header-menu-radius: var(--rt-radius-md);
         --rt-table-filter-header-menu-shadow: var(--rt-shadow-card);
 
+        // Ширина — от шапки колонки, а не от содержимого: ячейка, меряющая себя содержимым,
+        // отдаёт полю ровно столько, сколько поле попросило само, и выбор из списка с пустым
+        // значением схлопывается до одной галочки. Так же устроена та же ячейка первого кита.
         display: flex;
+        width: 100%;
         min-width: 0;
         align-items: center;
         gap: var(--rt-space-1);
