@@ -430,4 +430,43 @@ expect_stop "SC-AK-1069 — взятие задачи после отданно�
 expect_stop "SC-AK-1070 — ожидание слова владельца при его указании работать ход не отпускает" \
     "$(input_stop "$(transcript "$(say 'работай без остановок')" "$(edited)" "$(said 'Жду вашего слова.')")")" BLOCK
 
+# --- SC-AK-1071 — служебное сообщение не начинает ход и не есть слово владельца -----------------
+# Загрузка правила ложится в запись сообщением с типом владельца и признаком meta. Прочитанное как
+# начало хода, оно отрезает всё, что владелец сказал до него; прочитанное как его слово — отпускает
+# ход по слову «стоп» из текста правила. Отзыв проверки конца хода приходит тем же типом и без
+# признака: он узнаётся по первой строке.
+state_is 'этап-идёт'
+meta() { jq -c -n --arg t "$1" '{type:"user",isMeta:true,message:{content:[{type:"text",text:$t}]}}'; }
+
+expect_stop "SC-AK-1071 — слово «стоп» в служебном сообщении ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(meta 'Base directory for this skill: x. Слово владельца «стоп» кончает ход.')" "$(reply)" "$(said 'Готово.')")")" BLOCK
+
+expect_stop "SC-AK-1071 — слово владельца до служебного сообщения ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'останови, дальше сам')" "$(meta 'Base directory for this skill: x')" "$(reply)")")" PASS
+
+expect_stop "SC-AK-1071 — отзыв проверки конца хода не читается как слово владельца" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(say 'Stop hook feedback: BLOCKED by turn-exit-guard: остановка, объявленная исполнителем')" "$(reply)" "$(said 'Готово.')")")" BLOCK
+
+# --- SC-AK-1072 — отказ проверки есть выход только последним действием хода ----------------------
+# Отказ в середине хода закрыт работой, которая пошла за ним; ход, продолжившийся после отказа,
+# судится по тому, чем кончился.
+expect_stop "SC-AK-1072 — отказ в середине хода с чтением в конце ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'echo x > a.ts')" "$(answered 'BLOCKED by task-flow: нет замысла')" "$(ran 'git status')" "$(answered 'clean')" "$(said 'Готово.')")")" BLOCK
+
+expect_stop "SC-AK-1072 — отказ последним действием ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git status')" "$(answered 'clean')" "$(ran 'echo x > a.ts')" "$(answered 'Refused by the rules gate: load the rule')")")" PASS
+
+expect_stop "SC-AK-1072 — текст «BLOCKED by» в самой команде отказом не считается" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran "grep -rn 'BLOCKED by' tools/")" "$(answered 'tools/a.sh:3')" "$(said 'Нашёл три места.')")")" BLOCK
+
+# --- SC-AK-1073 — слово владельца об остановке в других формах -------------------------------
+expect_stop "SC-AK-1073 — «не продолжай» отпускает ход" \
+    "$(input_stop "$(transcript "$(say 'не продолжай, дальше скажу сам')" "$(reply)")")" PASS
+
+expect_stop "SC-AK-1073 — «прекрати» отпускает ход" \
+    "$(input_stop "$(transcript "$(say 'прекрати, я посмотрю сам')" "$(reply)")")" PASS
+
+expect_stop "SC-AK-1073 — «не двигайся» отпускает ход" \
+    "$(input_stop "$(transcript "$(say 'не двигайся, жди')" "$(reply)")")" PASS
+
 suite_result "страж выходов хода"
