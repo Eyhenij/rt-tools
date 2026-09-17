@@ -31,7 +31,7 @@ A turn ends in four ways and no others: a question to the owner the rules do not
 task in the work queue that can be taken without waiting for the answer**; a guard's refusal; a
 filled window where there is no compaction; work handed in, with the next begun. What confirms
 each, the turn map lists where the tree laid it out. While an epic has an unfinished task, a turn
-ends by these four alone: a turn that ended with work is a stop, and the exit guard returns it.
+ends by these four alone.
 
 The queue is asked by a command in the same turn, and its output stands in the turn itself: "there
 are no tasks" is a statement about the tree, and the executor's memory does not confirm it. A turn
