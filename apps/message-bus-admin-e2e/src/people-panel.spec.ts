@@ -1,6 +1,6 @@
 import { APIResponse, Browser, BrowserContext, expect, Locator, Page, Response, test } from '@playwright/test';
 
-import { ACCOUNT, ADMIN_ORIGIN, PEOPLE, SECTIONS } from '../stand/stand.mjs';
+import { ACCOUNT, PEOPLE, SECTIONS } from '../stand/stand.mjs';
 import { pageQa, qa, SECTION, signIn, SIGN_IN_PATH } from './support/admin';
 import { expectScreen } from './support/shot';
 
@@ -115,7 +115,7 @@ test.describe('правки над людьми', () => {
         await page.goto(SECTIONS.people);
         await signIn(page);
 
-        const answer: APIResponse = await page.request.post(`${ADMIN_ORIGIN}/api/accounts`, {
+        const answer: APIResponse = await page.request.post(`/api/accounts`, {
             data: { name: 'Стенд без пароля', password: '' },
         });
 
@@ -174,7 +174,7 @@ test.describe('правки над людьми', () => {
         await expect(qa(page, 'people-password')).toBeVisible();
         await expect(qa(page, 'people-disable')).toHaveCount(0);
 
-        const answer: APIResponse = await page.request.post(`${ADMIN_ORIGIN}/api/accounts/${encodeURIComponent(ACCOUNT.name)}/disable`);
+        const answer: APIResponse = await page.request.post(`/api/accounts/${encodeURIComponent(ACCOUNT.name)}/disable`);
 
         expect(answer.status()).toBe(409);
         expect(((await answer.json()) as { message: string }).message).toContain('свою');
@@ -187,7 +187,7 @@ test.describe('правки над людьми', () => {
         page: Page;
         browser: Browser;
     }) => {
-        const anonymous: APIResponse = await page.request.post(`${ADMIN_ORIGIN}/api/accounts`, { data: { name: 'x', password: 'y' } });
+        const anonymous: APIResponse = await page.request.post(`/api/accounts`, { data: { name: 'x', password: 'y' } });
 
         expect(anonymous.status()).toBe(401);
 
@@ -195,7 +195,7 @@ test.describe('правки над людьми', () => {
         // входом
         const watcher: BrowserContext = await signedInContext(browser, PEOPLE.watcher);
         const watcherPage: Page = watcher.pages()[0];
-        const refused: APIResponse = await watcherPage.request.post(`${ADMIN_ORIGIN}/api/accounts`, { data: { name: 'x', password: 'y' } });
+        const refused: APIResponse = await watcherPage.request.post(`/api/accounts`, { data: { name: 'x', password: 'y' } });
 
         expect(refused.status()).toBe(403);
         await watcher.close();
@@ -214,7 +214,7 @@ test.describe('правки над людьми', () => {
 
         // Сперва положительное: вход жив — иначе отказ после отключения зеленел бы и на входе,
         // которого не было
-        expect((await newcomerPage.request.get(`${ADMIN_ORIGIN}/api/auth/session`)).status()).toBe(200);
+        expect((await newcomerPage.request.get(`/api/auth/session`)).status()).toBe(200);
 
         await page.goto(SECTIONS.people);
         await signIn(page);
@@ -236,7 +236,7 @@ test.describe('правки над людьми', () => {
         await expect(qa(page, 'toast-message')).toContainText('отключён');
 
         // Живой вход оборван: тот же вопрос о вошедшем отвечает отказом входа
-        expect((await newcomerPage.request.get(`${ADMIN_ORIGIN}/api/auth/session`)).status()).toBe(401);
+        expect((await newcomerPage.request.get(`/api/auth/session`)).status()).toBe(401);
         await newcomerPage.goto(SECTIONS.people);
         await expect(newcomerPage).toHaveURL(new RegExp(`${SIGN_IN_PATH}\\b`));
 
@@ -247,8 +247,8 @@ test.describe('правки над людьми', () => {
         await newcomer.close();
 
         // Второе отключение и незнакомое имя — два разных отказа
-        const twice: APIResponse = await page.request.post(`${ADMIN_ORIGIN}/api/accounts/${encodeURIComponent(NEWCOMER.name)}/disable`);
-        const nobody: APIResponse = await page.request.post(`${ADMIN_ORIGIN}/api/accounts/${encodeURIComponent('Стенд никто')}/disable`);
+        const twice: APIResponse = await page.request.post(`/api/accounts/${encodeURIComponent(NEWCOMER.name)}/disable`);
+        const nobody: APIResponse = await page.request.post(`/api/accounts/${encodeURIComponent('Стенд никто')}/disable`);
 
         expect(twice.status()).toBe(409);
         expect(nobody.status()).toBe(404);

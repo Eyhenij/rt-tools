@@ -84,7 +84,19 @@ await run('npx', ['nx', 'run-many', '-t', 'build', '-p', 'message-bus', 'message
 
 await prepareDatabase();
 
-start('node', ['dist/apps/message-bus/main.js'], { DATABASE_URL: STAND_DATABASE_URL, PORT: String(API_PORT), CARGO_LIMIT: '2mb' });
+/*
+ * Признак входа помечен `secure`, а такую браузер шлёт только по защищённому соединению.
+ * Исключение у него одно — `localhost`, и пока набор ходил с машины, исключения хватало. Браузер
+ * из образа зовёт машину другим именем, исключение не работает, и признак не уходит вовсе: вход
+ * проходит, а следующий запрос отвечает отказом. Стенд поэтому снимает пометку — он стоит на
+ * своей машине и в сеть не смотрит.
+ */
+start('node', ['dist/apps/message-bus/main.js'], {
+    DATABASE_URL: STAND_DATABASE_URL,
+    PORT: String(API_PORT),
+    CARGO_LIMIT: '2mb',
+    SESSION_COOKIE_SECURE: 'false',
+});
 await awaitAnswer(`${API_ORIGIN}/api/trees`);
 
 await seed();

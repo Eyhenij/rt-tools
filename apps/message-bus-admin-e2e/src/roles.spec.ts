@@ -1,6 +1,6 @@
 import { APIResponse, Browser, BrowserContext, expect, Locator, Page, Response, test } from '@playwright/test';
 
-import { ACCOUNT, ADMIN_ORIGIN, PEOPLE, SECTIONS, WATCHER_ROLE } from '../stand/stand.mjs';
+import { ACCOUNT, PEOPLE, SECTIONS, WATCHER_ROLE } from '../stand/stand.mjs';
 import { pageQa, qa, rowsOf, SECTION, signIn } from './support/admin';
 import { expectScreen } from './support/shot';
 
@@ -137,7 +137,7 @@ test.describe('раздел ролей', () => {
         await expect(qa(page, SECTION.roles.table)).toHaveCount(0);
 
         // Прямой запрос тем же вошедшим отвечает «не для вас», а не пустой страницей
-        const refused: APIResponse = await page.request.get(`${ADMIN_ORIGIN}/api/roles`);
+        const refused: APIResponse = await page.request.get(`/api/roles`);
 
         expect(refused.status()).toBe(403);
     });
@@ -226,7 +226,7 @@ test.describe('раздел ролей', () => {
         await expect(qa(page, 'roles-edit')).toBeVisible();
         await expect(qa(page, 'roles-delete')).toHaveCount(0);
 
-        const refused: APIResponse = await page.request.delete(`${ADMIN_ORIGIN}/api/roles/owner`);
+        const refused: APIResponse = await page.request.delete(`/api/roles/owner`);
 
         expect(refused.status()).toBe(409);
         expect(((await refused.json()) as { message: string }).message).toContain('держат');
@@ -296,11 +296,11 @@ test.describe('раздел ролей', () => {
     });
 
     test('SC-MB-382 — без входа операции над ролями отвечают «не представились»', async ({ page }: { page: Page }) => {
-        const anonymous: APIResponse = await page.request.post(`${ADMIN_ORIGIN}/api/roles`, { data: { name: 'x', rights: [] } });
+        const anonymous: APIResponse = await page.request.post(`/api/roles`, { data: { name: 'x', rights: [] } });
 
         expect(anonymous.status()).toBe(401);
 
-        const access: APIResponse = await page.request.get(`${ADMIN_ORIGIN}/api/accounts/${encodeURIComponent(ACCOUNT.name)}/access`);
+        const access: APIResponse = await page.request.get(`/api/accounts/${encodeURIComponent(ACCOUNT.name)}/access`);
 
         expect(access.status()).toBe(401);
     });
