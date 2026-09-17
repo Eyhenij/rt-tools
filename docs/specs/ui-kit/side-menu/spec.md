@@ -114,52 +114,6 @@ consumer, the address of the active item the kit does not count.
   the drawer of the framework, which puts it over its container rather than into the flow; a panel put into
   the flow makes the container twice as tall as the screen, and then one bringing of the active item into
   view scrolls the container together with the panel.
-- **The width is changed from the keyboard, and the handle stands in the walk by the tab key.** A
-  person who does not work with a pointer had no way to change the width at all: the handle was
-  reached neither by the walk nor by a key. The arrows move the width by a step, `Home` and `End`
-  take it to the limits of the kit. A press asks the consumer for the width at once — a pull holds
-  the ask to the end of the gesture because there is a gesture; here there is none. The events of
-  the beginning and the end of the pull do not come about from a key either: a consumer covers a
-  frame of a foreign address for the time a hand leads the pointer, and a key leads nothing.
-    <!-- rt-when: *.ts *.html -->
-
-- **The reader names the current width and both its limits.** A handle that says only "separator"
-  tells a person nothing about what the keys under their fingers will do, and nothing about where
-  the width already stands. The numbers are the kit's own count — the width the consumer named or
-  the one the hand pulled to. The consumer named none and nothing was pulled — there is no number,
-  and the kit does not invent one: a number made up would name a width the panel is not drawn by.
-    <!-- rt-when: *.ts *.html -->
-
-- **The number that goes outward is the one the panel is drawn by.** The lower limit of the width
-  belongs to the design, not to the kit: a panel is never narrower than the width the consumer set
-  by their own rule, and the kit does not know that number at all. So a pull to the left past it
-  stops the panel and does not stop the count — outward went the pulled number while the panel
-  stood at the set one. A consumer who keeps what they were given and hands it back sees no change
-  of the panel and reads that as a breakage of the kit. What is measured is the drawn width itself,
-  and the greater of the two goes outward: the design holds the limit by a maximum, so the drawn one
-  is never below the pulled one. Where the layout is not computed at all — a spec raising the
-  component without its styles — a measurement gives nothing, and the pulled number stands.
-
-- **The beginning and the end of the pull go outward as events of their own.** A consumer does what
-  the kit has no business doing for them: they put a cover over a frame of a foreign address, change
-  the cursor of the whole page, hold back a re-layout of what stands to the right of the panel. The
-  minute the pull begins and the minute it ends is the only thing they lack for that. Without those
-  events the only sign left them is the class of the handle — the kit's own matter, which the first
-  rename inside the kit takes away silently. The end comes about at a release and at a pointer taken
-  away alike: a consumer who put a cover up at the beginning must take it down in both cases.
-
-- **The pull is caught by pointer events, and the handle holds the pointer by a capture.** A finger
-  and a pen give no mouse events at all, so a handle listening for a press of the mouse is workable
-  by the mouse alone. The capture keeps the movement and the release on the handle itself: listeners
-  put on the document lose the movement the minute the pointer goes over a frame of a foreign
-  address, and the panel stays stuck at the width of that minute. A pointer the environment takes
-  away — a gesture of the system, a call — ends the pull the same way a release does.
-
-- **The handle of the pull is caught wider than it is visible.** The zone of the catching and the visible
-  strip are two different numbers: into four pixels the cursor does not land at the first try, and a miss
-  past the handle lands into the panel, that is, instead of a pull a person presses an item. The zone is
-  three times wider and stands at the centre of the former place, and the strip inside it is painted at a
-  hovering — a zone painted whole would read as another design.
 
 ## What is out of scope
 
