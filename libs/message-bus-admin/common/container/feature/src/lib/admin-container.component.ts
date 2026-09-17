@@ -4,7 +4,6 @@ import { Router, RouterOutlet } from '@angular/router';
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { IAdminSession, SIGN_IN_PATH } from '@rt/message-bus-admin/auth/util';
 import { AdminHeaderComponent } from '@rt/message-bus-admin/common/container/ui';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
 import { ADMIN_MENU, IAdminMenuItem } from '@rt/message-bus-admin/common/container/util';
 import {
     IRtPageHeader,
@@ -12,7 +11,6 @@ import {
     RtContainerContentDirective,
     RtContainerHeaderDirective,
     RtContainerRightSidenavDirective,
-    RtEmptyStateComponent,
 } from '@rt-tools/ui-kit-v2';
 import { exhaustMap, Observable, Subject } from 'rxjs';
 
@@ -47,7 +45,6 @@ const BEM_BLOCK: string = 'admin-container';
         RtContainerContentDirective,
         RtContainerHeaderDirective,
         RtContainerRightSidenavDirective,
-        RtEmptyStateComponent,
     ],
     host: { class: BEM_BLOCK },
 })
@@ -72,12 +69,6 @@ export class AdminContainerComponent {
             route: item.path,
         }))
     );
-
-    /** Ни одного открытого раздела: человек вошёл, а работать ему не с чем. */
-    protected readonly noSections: Signal<boolean> = computed((): boolean => this.sections().length === 0);
-
-    protected readonly noSectionsTitle: string = adminLabel('noSectionsTitle');
-    protected readonly noSectionsFrom: string = adminLabel('noSectionsFrom');
 
     protected readonly session: Signal<IAdminSession | null> = this.#store.session;
 
