@@ -38,11 +38,13 @@ test.describe('раздел людей', () => {
 
         await expect(page.getByRole('heading', { name: SECTION.people.title })).toBeVisible();
         await expect(qa(page, SECTION.people.table)).toBeVisible();
-        await expect(rowsOf(page, 'people')).toHaveCount(4);
+        await expect(rowsOf(page, 'people')).toHaveCount(5);
 
         const names: string[] = await columnTexts(page, 'people-cell-name');
 
-        expect(new Set(names)).toEqual(new Set([ACCOUNT.name, PEOPLE.watcher.name, PEOPLE.disabled.name, PEOPLE.roleless.name]));
+        expect(new Set(names)).toEqual(
+            new Set([ACCOUNT.name, PEOPLE.watcher.name, PEOPLE.disabled.name, PEOPLE.roleless.name, PEOPLE.entrant.name])
+        );
 
         // Действующая запись с ролью: роль названа своим именем, состояние — словом
         await expect(personCell(page, PEOPLE.watcher.name, 'role')).toHaveText(WATCHER_ROLE);
@@ -93,20 +95,22 @@ test.describe('раздел людей', () => {
         await expect(qa(page, SECTION.people.table)).toBeVisible();
         // Строки ждутся счётом, а не видимостью таблицы: таблица видна и с остовом, пока ответ
         // ещё едет, и столбец, прочитанный в эту секунду, пуст
-        await expect(rowsOf(page, 'people')).toHaveCount(4);
+        await expect(rowsOf(page, 'people')).toHaveCount(5);
 
         const byLogin: string[] = await columnTexts(page, 'people-cell-name');
 
-        // Запись, которой не входили, стоит последней при любом порядке остальных: пустота уезжает
-        // в конец, а не притворяется самым давним входом
-        expect(byLogin[byLogin.length - 1]).toBe(PEOPLE.roleless.name);
+        // Запись, которой не входили, стоит позади всех, кем входили: пустота уезжает в конец, а
+        // не притворяется самым давним входом. Местом в списке это не судится: пятой записью
+        // входит спека экрана «разделов нет», и её вход случается то до этой спеки, то после
+        expect(byLogin.indexOf(PEOPLE.roleless.name)).toBeGreaterThan(byLogin.indexOf(PEOPLE.watcher.name));
+        expect(byLogin.indexOf(PEOPLE.roleless.name)).toBeGreaterThan(byLogin.indexOf(PEOPLE.disabled.name));
 
         await sortBy(page, 'name');
 
         // Порядок по имени детерминирован целиком: он не зависит от того, кто входил последним
         await expect
             .poll(async (): Promise<string[]> => columnTexts(page, 'people-cell-name'))
-            .toEqual([ACCOUNT.name, PEOPLE.roleless.name, PEOPLE.watcher.name, PEOPLE.disabled.name]);
+            .toEqual([ACCOUNT.name, PEOPLE.entrant.name, PEOPLE.roleless.name, PEOPLE.watcher.name, PEOPLE.disabled.name]);
     });
 
     test('SC-MB-325 — без права `accounts:read` пункта раздела нет и адрес не открывается', async ({ page }: { page: Page }) => {
