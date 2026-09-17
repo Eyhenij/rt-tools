@@ -46,6 +46,11 @@ Four checks do not replace one another, and the choice between them is not a mat
   answer whether there is anything in the frame at all. Between "the run passed" and "what was shown
   is shown" there is nothing in this tree but the sweep — `pnpm run test:stories:v2`, sorted out in
   the pattern `ui-component-tests-visual`.
+- **A check written for the wave judges the wrap, not the sighting.** It answers the question it was
+  written to ask — every showing of one instance carries the pair — and stays green where the pair
+  shows nothing: the frame root has an area, so the showing counts as drawn while both halves are
+  empty. Of nineteen showings its "no findings" one was rejected by the eye over the frames. Such a
+  check narrows what has to be looked at; it never replaces the look.
 - **A state invisible in the frame is not checked by a snapshot.** A button under hover, a panel in
   an overlay, the branch after a file is chosen — they exist in the markup and not in the snapshot.
   Such a state gets a story of its own rather than being credited with a neighbour's coverage.
@@ -87,45 +92,39 @@ Four checks do not replace one another, and the choice between them is not a mat
   that did not notice it.
 - **A settled layout is not yet a drawn page, and the frame is taken after two in a row match.** The
   harness can wait for the sizes, the fonts, the network's silence and finished animations, and the
-  frame still diverges by sub-pixel halos on the labels at the same geometry to the hundredth: the
-  rasterisation differs there, and the browser gives no "the page is drawn" event at all. Two
-  identical frames in a row say the same thing and are checked directly.
+  frame still diverges by sub-pixel halos on the labels: the rasterisation differs there, and the
+  browser gives no "the page is drawn" event at all. Two identical frames in a row say the same
+  thing and are checked directly.
 - **A settled page and a drawn page are different, and the frame waits for the second.** An
   animation frame's handler runs **before** the drawing, so a wait spinning such a cycle lets the
-  shot go into the gap between "the layout settled" and "the frame was drawn". A frame taken in that
-  gap diverges from the reference steadily — the labels are rasterised differently at the same
-  geometry to the hundredth — and the cycle of two matching frames does not help here: two early
-  frames match each other no worse than two late ones. So what is waited for is the drawing itself —
+  shot go into the gap between "the layout settled" and "the frame was drawn". A frame taken in that gap diverges from
+  the reference steadily, and a cycle of matching frames does not cure it: two early frames match
+  each other no worse than two late ones. So what is waited for is the drawing itself —
   a nested pair of animation-frame calls, the second of which stands already past the drawn frame. A
   probe of its own guards the rollback, not the snapshots.
 - **A divergence that falls out rarely leaves evidence, otherwise there is nothing to sort out.**
-  The harness puts the difference frame and the run's conditions — whether the frames matched and on
-  which attempt, the window and page sizes, the point density, the worker's number — into a
-  directory outside the repository, which the next run does not touch.
+  The harness puts the difference frame and the run's conditions — the matching attempt, the window
+  and page sizes, the point density, the worker's number — into a directory outside the repository,
+  which the next run does not touch.
 - **A shot beyond the window touches the page under the shutter, and that is cured not by a cycle
   but by the window.** A frame wider or taller than the window the browser takes by substituting the
   window for the duration of the frame: the page gets a `resize`, and everything computed from the
-  window sizes moves right inside the frame. A cycle of matching frames pins the breakage instead of
-  curing it — the shift is steady, and the cycle returns exactly the shifted frame. The cure is the
-  reverse order: the window is widened **before** the frame, the showing is waited for settled, and
-  an ordinary frame is taken. The consequence is visible in the reference — `100vh` and `100vw` of
-  such a story are computed from the widened window.
+  window sizes moves right inside the frame. A cycle of matching frames pins the breakage instead
+  of curing it: the shift is steady. The cure is the reverse order: the window is widened
+  **before** the frame, the showing is waited for settled, and an ordinary frame is taken. In the reference `100vh` and `100vw` of such a story are
+  then computed from the widened window.
 - **A frame of a node beyond the window is cured the same way.** The article above reads as being
-  about a whole page. A node taller than the window goes past its bounds no less. The cure was
-  written for one frame of the two, and the second lived on with the defect while the article did
-  not name it. The window is widened to the node being shot, not to the page: the page happens to be
-  higher than the node, and a superfluous growth changes everything computed from the window at
+  about a whole page. A node taller than the window goes past its bounds no less. The window is
+  widened to the node being shot, not to the page: the page happens to be higher than the node, and a superfluous growth changes everything computed from the window at
   stories that did not ask for it.
-- **The trace of such a shot is left at the story after the tall one.** The tall one is shot by a
-  shifted page; the page keeps the shift, and the next story is shot by it too. So the divergence
-  lands on a neighbour whose content nobody touched, and a rearrangement of the stories in the file
+- **The trace of such a shot is left at the story after the tall one.** The page keeps the shift, so
+  the divergence lands on a neighbour whose content nobody touched, and rearranging the stories
   moves frames nobody edited. What tells one from the other is a measurement of the node before the
   frame and after it: a height that changed across the shutter names the shot, not the layout.
 - **A frame is assembled from what lies in the tree, and the harness cuts the shot off from a
   foreign network.** What travels from outside brings a foreign availability into the frame, and
-  the snapshot then diverges where nobody touched the layout. An article about it is too little —
-  it is held by memory and removed by one line; the harness fails the run on a request beyond the
-  local machine instead.
+  the snapshot then diverges where nobody touched the layout. An article about it is too little: the
+  harness fails the run on a request beyond the local machine instead.
 - **A settled showing and a state that came about are not the same, and a story is waited for by the
   second.** The harness judges the frame by the network's silence and the motionless size of the
   node being shot, while a screen with skeletons has a size just as motionless as a screen with a
