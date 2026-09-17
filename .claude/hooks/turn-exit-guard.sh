@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/turn-exit-guard.sh · a7d79a4e8579 · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/turn-exit-guard.sh · f3560d25deca · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
@@ -111,6 +111,8 @@ fi
 case "$state" in
     работа-отдана | влито) exit 0 ;;
 esac
+# The owner's standing word about a stop, quoted in the waiting line, releases the turn whole.
+rt_te_owner_word_quoted && exit 0
 
 # A written plan is never the end of a turn at all. The mandatory action of this state is to do the
 # first stage, and whoever starts it moves the state by the same edit: a turn left in the previous
