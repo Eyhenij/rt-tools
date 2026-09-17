@@ -110,6 +110,8 @@ fi
 case "$state" in
     работа-отдана | влито) exit 0 ;;
 esac
+# The owner's standing word about a stop, quoted in the waiting line, releases the turn whole.
+rt_te_owner_word_quoted && exit 0
 
 # A written plan is never the end of a turn at all. The mandatory action of this state is to do the
 # first stage, and whoever starts it moves the state by the same edit: a turn left in the previous

@@ -438,3 +438,11 @@ When the guard of the exits judges the end of the turn
 Then a turn with work, a second pass and a handover by hand are released as before
 
 Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
+
+### SC-AK-1120 — the owner's standing word quoted in the waiting line
+
+Given the waiting line of the progress quotes the owner's word in « », and the epic is open.
+When the guard of the exits judges the end of the turn.
+Then the turn passes with work and without it. Without a quote the line releases nothing.
+
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
