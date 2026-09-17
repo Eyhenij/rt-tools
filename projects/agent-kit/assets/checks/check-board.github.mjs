@@ -57,6 +57,11 @@ import { similarTitles } from './board-titles.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 const IN_REVIEW = STATUS_OPTIONS[IN_REVIEW_STATUS].name;
+/**
+ * The columns a card reaches only after its task is closed: the merge closes the task, and the
+ * board's own rule moves the card. A tree that names neither gets no such audit.
+ */
+const CLOSING_STATUSES = [STATUS_OPTIONS.done?.name, STATUS_OPTIONS.deployed?.name].filter((name) => typeof name === 'string' && name !== '');
 const TASKS_DIR = join(ROOT, CONFIG.tasksDir);
 /** Age of an abandoned draft after which it stops looking like one started today. */
 const DRAFT_DAYS = 7;
@@ -270,6 +275,16 @@ try {
         }
         if (pull === undefined && status === IN_REVIEW) {
             report(`#${issue.number}: the task awaits review, and there is no open PR behind it — the column lags the work`);
+        }
+        // A closing column is reached by a card whose task the merge has closed: the board moves
+        // it by its own rule on a closed item. An open task standing there says the opposite of
+        // what the owner reads from the column — and nobody notices: the mover to the last column
+        // skips such a card in silence, and the closing of a task merged into an epic branch is
+        // done by a pipeline that any tree may lack, may add later, or may see fail.
+        if (status !== null && CLOSING_STATUSES.includes(status)) {
+            report(
+                `#${issue.number}: the task is open, and its card stands at «${status}» — a closing column means the work is merged. Close the task, or move the card back by npm run task:move -- ${issue.number} <column>`
+            );
         }
     }
 
