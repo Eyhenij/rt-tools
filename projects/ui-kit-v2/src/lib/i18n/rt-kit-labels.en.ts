@@ -141,6 +141,7 @@ export const RT_KIT_LABELS_EN = {
     uiSelectAll: 'Select all',
     uiSelectValues: 'Select values',
     uiSelectedCount: 'Selected: {{count}}',
+    uiSelectedOf: 'Selected: {{count}} of {{total}}',
     uiShow: 'Show',
     uiShowColumn: 'Show column',
     uiShowDetails: 'Show details',

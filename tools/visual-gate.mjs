@@ -12,19 +12,19 @@
  * exactly what the pipeline's task has its own ports for; a constant port at the gate would collide
  * the gate with the run.
  *
- * **The second kit's frames are shot by the browser of an image, and matched everywhere.** The
- * raster of glyphs is computed by the machine that draws, and two machines at the same code give a
- * different frame: a text-heavy page diverges by 0.01 of its pixels across every letter at once,
- * while a small component matches. The pipeline's runner is not the developer's machine, so a
+ * **Both showcases shoot with the browser of an image, and their frames are matched everywhere.**
+ * The raster of glyphs is computed by the machine that draws, and two machines at the same code
+ * give a different frame: a text-heavy page diverges by 0.01 of its pixels across every letter at
+ * once, while a small component matches. The pipeline's runner is not the developer's machine, so a
  * reference taken by either of them cannot match both. The image is one on any machine: it is
- * raised by the shooting run, which is given its address here. The first kit still shoots with the
- * machine's browser — the reason stands next to the line that gates it. The probes of the harness
- * run without the image: they judge the harness, not the raster.
+ * raised by the shooting run, which is given its address here. The probes of the harness run
+ * without the image: they judge the harness, not the raster.
  *
  * The showcase is stopped together with its process tree: the task runner starts it, and killing one
  * parent would leave a working server holding the port until the end of the session.
  *
  *   node tools/visual-gate.mjs ui-kit              # the first showcase's snapshots
+ *   node tools/visual-gate.mjs ui-kit --update     # a re-take of them, by the same road
  *   node tools/visual-gate.mjs ui-kit-v2           # the second showcase's snapshots
  *   node tools/visual-gate.mjs ui-kit-v2 --update  # a re-take of them, by the same road
  */
@@ -38,7 +38,14 @@ import { networkInterfaces } from 'node:os';
  * they share no shooting code, and an edit for one does not move the other's frames.
  */
 const KITS = {
-    'ui-kit': { target: '@rt-tools/ui-kit:storybook', snapshots: 'test:visual', probes: ['check:paint'], image: false },
+    'ui-kit': {
+        target: '@rt-tools/ui-kit:build-storybook',
+        built: 'dist/storybook/@rt-tools/ui-kit',
+        snapshots: 'test:visual',
+        update: 'test:visual:update',
+        probes: ['check:paint'],
+        image: true,
+    },
     'ui-kit-v2': {
         target: '@rt-tools/ui-kit-v2:build-storybook',
         built: 'dist/storybook/@rt-tools/ui-kit-v2',
@@ -199,13 +206,12 @@ if (!(await ready(url))) {
 }
 
 /**
- * The first kit's showcase shoots with the machine's own browser, and its frames are therefore
- * matched only in the pipeline — where they were taken.
+ * Both showcases shoot with the browser of an image, so their frames are matched everywhere.
  *
- * The image needs a settings file inside the showcase's own directory, and the epic «Один кит»
- * forbids editing the first kit at all — its showcase included. Lifting that is the owner's word,
- * not a decision to be taken here; until then this half stays as it was, and it is named rather
- * than left silent.
+ * The branch below stays for a showcase that has no image of its own: without one a frame holds
+ * the raster of the machine that took it, and matching it here would refuse a push on a tree that
+ * changed nothing. Such a showcase is judged in the pipeline alone, and that is said aloud rather
+ * than passed over in silence.
  */
 const judgesFrames = KITS[kit].image || Boolean(process.env['CI']);
 

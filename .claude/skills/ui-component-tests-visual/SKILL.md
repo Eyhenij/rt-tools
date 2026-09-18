@@ -21,21 +21,22 @@ The snapshot of every story of the first kit is matched against the reference ne
 The comparison threshold is held at zero, so that a small edit does not pass silently. What that
 costs depends on the kit, and the two are no longer alike.
 
-The second kit's frames are taken by a browser raised in an image, and the showcase is built and
-served as files: `node tools/visual-gate.mjs ui-kit-v2`, and a re-take by the same command with
-`--update`. The image is one on any machine, so its references are matched everywhere — on the
-developer's machine and in the pipeline alike. A re-take by any other road writes the raster of the
-machine that took it, and the run refuses to start without the image's address for exactly that
-reason. The development server is not shot at all: from the image it reloads the page without end,
-and the runner's injected script does not survive a single reload.
+Both kits' frames are taken by a browser raised in an image, and each showcase is built and served
+as files: `node tools/visual-gate.mjs ui-kit` and `node tools/visual-gate.mjs ui-kit-v2`, a re-take
+by the same command with `--update`. The image is one on any machine, so the references are matched
+everywhere — on the developer's machine and in the pipeline alike. A re-take by any other road
+writes the raster of the machine that took it, and the run refuses to start without the image's
+address for exactly that reason. The development server is not shot at all: from the image it
+reloads the page without end, and the runner's injected script does not survive a single reload.
 
-The first kit's frames are still taken by the machine's own browser, and they are therefore matched
-only where they were taken — in the pipeline. A change of machine or of browser version means
-re-taking all of its references rather than sorting out divergences.
+The showcase is served on the machine's own network name, not on the loopback: inside the image
+`localhost` is the image's own. A harness that cuts the shot off from a foreign network counts that
+address as its own — otherwise it severs every lazy chunk of the very showcase it is shooting, and
+the run comes back with a `ChunkLoadError` at every story.
 
-Two traits of the machine are taken out of that dependence at the second kit — the timezone and the
-browser's language. The timezone is set by the run's settings file, the language by the arguments of
-the browser in the image; the list of what is undetermined says how.
+Two traits of the machine are taken out of that dependence at both kits — the timezone and the
+browser's language. The timezone is set by the run's settings file next to the showcase, the
+language by the arguments of the browser in the image; the list of what is undetermined says how.
 
 ## A state that is not in the frame
 

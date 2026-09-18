@@ -124,6 +124,12 @@ export const SUB_MENU_WIDTH_KEY: string = 'rtui-side-menu-sub-menu-width';
 export const SUB_MENU_WIDTH_MIN: number = 120;
 export const SUB_MENU_WIDTH_MAX: number = 480;
 
+/**
+ * Шаг ширины с клавиатуры. Взят мелким намеренно: стрелку держат нажатой, и крупный шаг проскакивал
+ * бы подпись пункта целиком — ровно то, ради чего ширину и правят.
+ */
+export const SUB_MENU_WIDTH_STEP: number = 16;
+
 /** Приведение ширины к пределам. Тянут её мышью, и рука уходит за край экрана раньше, чем за предел. */
 export function clampSubMenuWidth(width: number): number {
     return Math.min(SUB_MENU_WIDTH_MAX, Math.max(SUB_MENU_WIDTH_MIN, width));
@@ -266,4 +272,113 @@ export function stepSubMenuHighlight(
     const next: number = Math.min(walk.length - 1, Math.max(0, at + step));
 
     return walk[next].id;
+}
+
+/** Чем вешается слушатель. У кита это `Renderer2.listen`, у проверки — своя пара функций. */
+export type TPointerListen = (target: HTMLElement, event: string, handler: (event: PointerEvent) => void) => () => void;
+
+/** Что тяга сообщает меню: новую ширину по ходу и конец — отпусканием или отнятием указателя. */
+export interface ISubMenuWidthDragHooks {
+    readonly onWidth: (width: number) => void;
+    readonly onEnd: () => void;
+}
+
+/**
+ * Тяга ширины подменю: считается здесь, а не в компоненте, и меню остаётся тонким.
+ *
+ * Идёт указательными событиями: мышиных палец и перо не дают вовсе, и ручка на нажатии мыши
+ * берётся одной мышью. Слушатели висят на самой ручке, а держит их за ней захват указателя:
+ * слушатель на документе теряет движение, как только указатель уходит на кадр чужого адреса, и
+ * панель застревает на ширине той минуты.
+ *
+ * Указатель, отнятый средой — жестом системы, звонком, — кончает тягу так же, как отпускание.
+ *
+ * Возвращает снятие слушателей. Пустое значение — тянуть нечем: ручка не элемент разметки.
+ */
+export function startSubMenuWidthDrag(
+    event: PointerEvent,
+    startWidth: number,
+    listen: TPointerListen,
+    hooks: ISubMenuWidthDragHooks
+): (() => void) | null {
+    const handle: EventTarget | null = event.currentTarget;
+
+    if (!(handle instanceof HTMLElement)) {
+        return null;
+    }
+
+    const pointerId: number = event.pointerId;
+    const startX: number = event.clientX;
+
+    // Захвата нет у среды, где идут проверки; без него слушатели остаются на ручке как есть.
+    if (typeof handle.setPointerCapture === 'function') {
+        handle.setPointerCapture(pointerId);
+    }
+
+    const stopMove: () => void = listen(handle, 'pointermove', (moveEvent: PointerEvent): void => {
+        if (moveEvent.pointerId === pointerId) {
+            hooks.onWidth(clampSubMenuWidth(startWidth + moveEvent.clientX - startX));
+        }
+    });
+    const stopUp: () => void = listen(handle, 'pointerup', (): void => hooks.onEnd());
+    const stopCancel: () => void = listen(handle, 'pointercancel', (): void => hooks.onEnd());
+
+    return (): void => {
+        stopMove();
+        stopUp();
+        stopCancel();
+
+        if (typeof handle.releasePointerCapture === 'function' && handle.hasPointerCapture(pointerId)) {
+            handle.releasePointerCapture(pointerId);
+        }
+    };
+}
+
+/**
+ * Ширина, которой панель нарисована. От неё отсчитывается тяга, когда своего выбора ещё нет.
+ *
+ * Панели нет или раскладка ещё не посчитана — берётся нижний предел: с нуля тяга уводила бы
+ * ширину в отрицательные числа с первого же движения.
+ */
+export function drawnSubMenuWidth(panel: HTMLElement | null): number {
+    const width: number = panel?.getBoundingClientRect().width ?? 0;
+
+    return width > 0 ? width : SUB_MENU_WIDTH_MIN;
+}
+
+/**
+ * Число, которое уходит наружу по концу тяги.
+ *
+ * Нижний предел ширины держит оформление, а не кит: панель не бывает уже той ширины, какую задал
+ * своим правилом потребитель, и этого числа кит не знает вовсе. Поэтому тяга влево за него панель
+ * останавливает, а счёт — нет: наружу уходило натянутое, пока панель стояла на заданном.
+ *
+ * Берётся большее из натянутого и нарисованного: предел оформление держит максимумом, и
+ * нарисованное никогда не меньше натянутого. Там, где раскладка не посчитана вовсе — спека,
+ * поднявшая компонент без его стилей, — замер не даёт ничего, и остаётся натянутое.
+ */
+export function reportedSubMenuWidth(dragged: number, panel: HTMLElement | null): number {
+    return Math.max(dragged, drawnSubMenuWidth(panel));
+}
+
+/**
+ * Новая ширина по нажатой клавише. Пустое значение — клавиша не о ширине, и умолчание не отменяется:
+ * иначе ручка съедала бы переход по табуляции и всё, что на ней не написано.
+ *
+ * Стрелки ходят шагом, `Home` и `End` — к пределам кита. Влево у стрелок значит уже, и это верно
+ * при любом направлении письма: ручка стоит у правого края панели, и рука ведёт её туда же.
+ */
+export function subMenuWidthByKey(key: string, width: number): number | null {
+    switch (key) {
+        case 'ArrowRight':
+            return clampSubMenuWidth(width + SUB_MENU_WIDTH_STEP);
+        case 'ArrowLeft':
+            return clampSubMenuWidth(width - SUB_MENU_WIDTH_STEP);
+        case 'Home':
+            return SUB_MENU_WIDTH_MIN;
+        case 'End':
+            return SUB_MENU_WIDTH_MAX;
+        default:
+            return null;
+    }
 }
