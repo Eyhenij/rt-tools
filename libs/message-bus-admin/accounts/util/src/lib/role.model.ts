@@ -24,14 +24,10 @@ export namespace IRole {
             readonly name: string;
             /** Права роли из закрытого набора. */
             readonly rights: readonly TRight[];
-            /** Права словами, через запятую. Роль без прав говорит об этом словами, а не пустотой. */
-            readonly rightsLabel: string;
             /** Сколько записей держат роль. */
             readonly people: number;
             /** Можно ли удалить: роль, которую держат, не удаляется, и пункт меню не рисуется. */
             readonly canDelete: boolean;
-            /** Вопрос перед удалением: называет роль и то, что вернуть её нельзя. */
-            readonly deleteQuestion: string;
         }
     }
 }

@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 import { IMonthRecord } from '@rt/message-bus-admin/summaries/util';
 
 import { AdminMonthRecordViewComponent } from './admin-month-record-view.component';
+import { provideRtStorage, provideRtUtils } from '@rt-tools/core';
 
 function entityOf(patch: Partial<IMonthRecord.State> = {}): IMonthRecord.State {
     return {
@@ -37,7 +38,9 @@ describe('AdminMonthRecordViewComponent', () => {
     }
 
     beforeEach(() => {
-        TestBed.configureTestingModule({ imports: [AdminMonthRecordViewComponent] });
+        // Подписи приходят из словаря, а он читает выбранный язык из браузерного хранилища:
+        // без хранилища компонент не собирается вовсе.
+        TestBed.configureTestingModule({ imports: [AdminMonthRecordViewComponent], providers: [provideRtUtils(), provideRtStorage()] });
 
         fixture = TestBed.createComponent(AdminMonthRecordViewComponent);
     });

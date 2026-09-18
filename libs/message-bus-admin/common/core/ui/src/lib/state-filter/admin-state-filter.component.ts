@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
+import { computed, inject, input, output, ChangeDetectionStrategy, Component, InputSignal, OutputEmitterRef, Signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { adminLabel, cargoStateLabel } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService, cargoStateKey } from '@rt/message-bus-admin/common/core/util';
 import { ECargoState } from '@rt/message-bus-common';
 import { IRtSelect, RtSelectComponent } from '@rt-tools/ui-kit-v2';
 
@@ -34,7 +34,10 @@ const ALL_STATES: string = '';
     host: { class: BEM_BLOCK },
 })
 export class AdminStateFilterComponent {
-    protected readonly label: string = adminLabel('filterState');
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    // Подпись отбора — производная: язык переключают в попапе профиля, над этим же экраном.
+    protected readonly label: Signal<string> = computed((): string => this.#text.text('filterState'));
 
     /**
      * Первым пунктом — «все состояния»: снятый отбор выбирается тем же движением, что и любое
@@ -44,9 +47,9 @@ export class AdminStateFilterComponent {
      * иначе появилось бы в столбце и не появилось бы в отборе.
      */
     protected readonly options: Signal<readonly IRtSelect.Option<string>[]> = computed(() => [
-        { label: adminLabel('filterStateAll'), value: ALL_STATES },
+        { label: this.#text.text('filterStateAll'), value: ALL_STATES },
         ...Object.values(ECargoState).map((state: ECargoState): IRtSelect.Option<string> => ({
-            label: cargoStateLabel(state),
+            label: this.#text.text(cargoStateKey(state)),
             value: state,
         })),
     ]);

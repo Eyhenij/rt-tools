@@ -113,8 +113,8 @@ creates:
   is translated, and the screen takes the neighbouring key.
 - **A key that is not in the set is visible.** It comes so that it is seen on the screen and in the
   test, not as emptiness: an empty string reads as "there is no label here" and lives until a person
-  complains. The English set is deliberately incomplete — the shell is translated, the screens of the
-  sections are translated by the tasks of the epic of the texts.
+  complains. The English set is deliberately incomplete — the keys of the screens are all in place, and
+  the set is filled by a task of the epic of the texts.
 - **The labels of the shell change without a reload.** Everything read from the dictionary is derived
   from the choice rather than taken once at the load: taken once, it stays in the language of the
   minute the file was loaded.
@@ -184,9 +184,9 @@ creates:
 
 - **Gating the sections by rights.** There are no rights inside the admin application: whoever entered
   gets everything — the word of the owner, written down in the spec of the subdomain of the reading.
-- **Translating the screens of the sections.** The shell and the screens of the entry take their
-  labels from the dictionary in both languages; the lists, the panels and the texts of the refusals of the server are translated by the
-  tasks of the epic of the texts, not here.
+- **Translating the screens of the sections.** The shell, the screens of the entry, the lists and the
+  panels take their labels from the dictionary; filling the English set and the texts of the refusals of
+  the server are done by the tasks of the epic of the texts, not here.
 - **A third language.** Two sets are kept in the code of the admin application; a third one is a
   separate work and a separate word of the owner.
 - **A check forbidding a string past the dictionary.** Nothing refuses a label written in the markup
@@ -303,10 +303,11 @@ None.
 
 ## History of changes
 
-| Date       | What                                                                                                                                    |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-08-18 | Created by the task RT-783 by the merge of the agreement about the top row                                                              |
-| 2026-08-20 | By the task RT-944 two rules about the background were added: the header and the popup of the profile                                   |
-| 2026-09-17 | By the task RT-2162 the screen of the person to whom no section is open gained an address                                               |
-| 2026-09-18 | By the task RT-2209 the agreement about the dictionary of the labels was merged in: two sets, one key, one choice for both dictionaries |
-| 2026-09-18 | By the task RT-2210 the screens of the entry took their labels from the dictionary, and the tab titles of that domain went by keys      |
+| Date       | What                                                                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2026-08-18 | Created by the task RT-783 by the merge of the agreement about the top row                                                                 |
+| 2026-08-20 | By the task RT-944 two rules about the background were added: the header and the popup of the profile                                      |
+| 2026-09-17 | By the task RT-2162 the screen of the person to whom no section is open gained an address                                                  |
+| 2026-09-18 | By the task RT-2209 the agreement about the dictionary of the labels was merged in: two sets, one key, one choice for both dictionaries    |
+| 2026-09-18 | By the task RT-2210 the screens of the entry took their labels from the dictionary, and the tab titles of that domain went by keys         |
+| 2026-09-18 | By the task RT-2211 the screens of the sections took their labels from the dictionary: a row holds the key, the word by it is the screen's |

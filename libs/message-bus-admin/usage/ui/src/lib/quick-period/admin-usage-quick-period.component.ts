@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
-import { adminLabel, TAdminLabelKey } from '@rt/message-bus-admin/common/core/util';
+import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
+import { AdminTextService, TAdminLabelKey } from '@rt/message-bus-admin/common/core/util';
 import { QUICK_PERIOD_DAYS, TQuickPeriodDays } from '@rt/message-bus-admin/usage/util';
 import { IRtToggleButtonGroup, RtToggleButtonGroupComponent } from '@rt-tools/ui-kit-v2';
 
@@ -27,9 +27,15 @@ const LABEL_KEYS: Readonly<Record<TQuickPeriodDays, TAdminLabelKey>> = Object.fr
     host: { class: BEM_BLOCK },
 })
 export class AdminUsageQuickPeriodComponent {
-    protected readonly ariaLabel: string = adminLabel('quickPeriodAria');
-    protected readonly options: readonly IRtToggleButtonGroup.Option<TQuickPeriodDays>[] = QUICK_PERIOD_DAYS.map(
-        (days: TQuickPeriodDays): IRtToggleButtonGroup.Option<TQuickPeriodDays> => ({ value: days, label: adminLabel(LABEL_KEYS[days]) })
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    protected readonly ariaLabel: Signal<string> = computed((): string => this.#text.text('quickPeriodAria'));
+    protected readonly options: Signal<readonly IRtToggleButtonGroup.Option<TQuickPeriodDays>[]> = computed(
+        (): readonly IRtToggleButtonGroup.Option<TQuickPeriodDays>[] =>
+            QUICK_PERIOD_DAYS.map((days: TQuickPeriodDays): IRtToggleButtonGroup.Option<TQuickPeriodDays> => ({
+                value: days,
+                label: this.#text.text(LABEL_KEYS[days]),
+            }))
     );
 
     /** Период из адреса, если он совпал с одним из быстрых; иначе ни один не подсвечен. */

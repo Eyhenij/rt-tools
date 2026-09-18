@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Params, Router, UrlSegment } from '@angular/router';
 import { AdminListStoreBase, CargoVersionsStore, TreesStore } from '@rt/message-bus-admin/common/core/data-access';
 import {
-    adminLabel,
+    AdminTextService,
     COLUMNS_ROUTE,
     IAdminListHost,
     IAdminListQuery,
@@ -43,6 +43,7 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
     readonly #trees: TreesStore = inject(TreesStore);
     readonly #versions: CargoVersionsStore = inject(CargoVersionsStore);
     readonly #tableSettings: RtTableSettingsRegistry = inject(RtTableSettingsRegistry);
+    readonly #text: AdminTextService = inject(AdminTextService);
 
     readonly #params: Signal<Params> = toSignal(this.#route.queryParams, { initialValue: this.#route.snapshot.queryParams });
 
@@ -82,7 +83,7 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
      * Отбор, не давший ни строки, и дерево, не приславшее ни одной записи, — разные ответы, и
      * второй означает исправную службу.
      */
-    protected readonly emptyMessage: Signal<string> = computed(() => adminLabel(this.narrowed() ? 'listEmptyByFilter' : 'listEmpty'));
+    protected readonly emptyMessage: Signal<string> = computed(() => this.#text.text(this.narrowed() ? 'listEmptyByFilter' : 'listEmpty'));
 
     /**
      * Вторая строка пустого состояния: откуда записи приходят и что человеку сделать.
@@ -92,7 +93,7 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
      * через двоеточие и читались как одна длинная подпись.
      */
     protected readonly emptyDescription: Signal<string> = computed(() =>
-        adminLabel(this.narrowed() ? 'listEmptyByFilterFrom' : 'listEmptyFrom')
+        this.#text.text(this.narrowed() ? 'listEmptyByFilterFrom' : 'listEmptyFrom')
     );
 
     /**

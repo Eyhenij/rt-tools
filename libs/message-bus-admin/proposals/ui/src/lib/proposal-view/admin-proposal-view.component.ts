@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal } from '@angular/core';
 import { AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import { IProposal } from '@rt/message-bus-admin/proposals/util';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtAsideSectionComponent, RtDetailListComponent, RtDetailRowComponent, RtMarkdownTextComponent } from '@rt-tools/ui-kit-v2';
@@ -41,14 +41,16 @@ const BEM_BLOCK: string = 'admin-panel';
     host: { class: BEM_BLOCK },
 })
 export class AdminProposalViewComponent {
-    protected readonly treeLabel: string = adminLabel('columnTree');
-    protected readonly resourceLabel: string = adminLabel('columnResource');
-    protected readonly addressLabel: string = adminLabel('columnAddress');
-    protected readonly monthLabel: string = adminLabel('columnMonth');
-    protected readonly arrivedLabel: string = adminLabel('columnArrivedAt');
-    protected readonly textLabel: string = adminLabel('detailsText');
-    protected readonly fixNoteLabel: string = adminLabel('detailsFixNote');
-    protected readonly releaseVersionLabel: string = adminLabel('releaseVersion');
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    protected readonly treeLabel: Signal<string> = computed((): string => this.#text.text('columnTree'));
+    protected readonly resourceLabel: Signal<string> = computed((): string => this.#text.text('columnResource'));
+    protected readonly addressLabel: Signal<string> = computed((): string => this.#text.text('columnAddress'));
+    protected readonly monthLabel: Signal<string> = computed((): string => this.#text.text('columnMonth'));
+    protected readonly arrivedLabel: Signal<string> = computed((): string => this.#text.text('columnArrivedAt'));
+    protected readonly textLabel: Signal<string> = computed((): string => this.#text.text('detailsText'));
+    protected readonly fixNoteLabel: Signal<string> = computed((): string => this.#text.text('detailsFixNote'));
+    protected readonly releaseVersionLabel: Signal<string> = computed((): string => this.#text.text('releaseVersion'));
 
     public readonly entity: InputSignal<IProposal.State | null> = input.required<IProposal.State | null>();
     public readonly reading: InputSignal<boolean> = input<boolean>(false);

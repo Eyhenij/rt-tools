@@ -58,7 +58,6 @@ describe('ProposalShortMapper', () => {
             'releaseVersion',
             'resource',
             'state',
-            'stateLabel',
             'tree',
         ]);
     });
@@ -74,11 +73,6 @@ describe('ProposalShortMapper', () => {
     it('SC-MB-167 — состояние приезжает строкой, а на экран уходит значением набора', () => {
         expect(mapper.mapFrom(apiShort()).state).toBe(ECargoState.InWork);
         expect(mapper.mapFrom(apiShort({ state: 'new' })).state).toBe(ECargoState.New);
-    });
-
-    it('SC-MB-171 — рядом с состоянием строка несёт его слово человека', () => {
-        expect(mapper.mapFrom(apiShort()).stateLabel).toBe('В работе');
-        expect(mapper.mapFrom(apiShort({ state: 'released' })).stateLabel).toBe('Выпущено');
     });
 
     it('состояние вне набора читается как новое, а не уходит на экран машинной строкой', () => {

@@ -1,24 +1,24 @@
 <ng-container rtContainerRightSidenavPanel #panel="rtContainerRightPanel" (cancelled)="onCancel()" (closed)="onClosed()" />
 
-<rt-aside qa-dataid="invite-create-panel" [ariaLabel]="title">
-    <rt-aside-header qa-dataid="invite-create-header" [title]="title" (dismiss)="onClose()" />
+<rt-aside qa-dataid="invite-create-panel" [ariaLabel]="title()">
+    <rt-aside-header qa-dataid="invite-create-header" [title]="title()" (dismiss)="onClose()" />
 
     @if (submitError(); as fault) {
         <rt-message severity="danger" qa-dataid="invite-create-fault">{{ fault }}</rt-message>
     }
 
-    <rt-field [hint]="nameHint" [label]="nameLabel">
-        <rt-input qa-dataid="invite-create-name" [formControl]="name" [placeholder]="nameLabel" />
+    <rt-field [hint]="nameHint()" [label]="nameLabel()">
+        <rt-input qa-dataid="invite-create-name" [formControl]="name" [placeholder]="nameLabel()" />
     </rt-field>
 
     @if (issued(); as invite) {
-        <rt-field [hint]="expiresText()" [label]="codeLabel">
+        <rt-field [hint]="expiresText()" [label]="codeLabel()">
             <rt-copy-cell qa-dataid="invite-create-code" variant="secondary" [revealOnHover]="false" [value]="invite.code">
                 {{ invite.code }}
             </rt-copy-cell>
         </rt-field>
     } @else {
-        <rt-message severity="info" qa-dataid="invite-create-warn">{{ warnText }}</rt-message>
+        <rt-message severity="info" qa-dataid="invite-create-warn">{{ warnText() }}</rt-message>
     }
 
     <!-- Кнопки футера проецируются по атрибутам, и условие вокруг них проекцию рвёт: узел
@@ -30,9 +30,9 @@
             asidePrimary
             qa-dataid="invite-create-submit"
             type="button"
-            [attr.aria-label]="submitLabel"
+            [attr.aria-label]="submitLabel()"
             [disabled]="issued() !== null"
-            [label]="submitLabel"
+            [label]="submitLabel()"
             [loading]="submitting()"
             (click)="submit()"></button>
 
@@ -42,8 +42,8 @@
             qa-dataid="invite-create-close"
             type="button"
             appearance="text"
-            [attr.aria-label]="closeLabel"
-            [label]="closeLabel"
+            [attr.aria-label]="closeLabel()"
+            [label]="closeLabel()"
             (click)="onClose()"></button>
     </rt-aside-footer>
 </rt-aside>

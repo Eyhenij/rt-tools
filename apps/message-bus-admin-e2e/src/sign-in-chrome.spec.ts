@@ -28,7 +28,11 @@ test.describe('тема и язык на экране входа', () => {
         await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     });
 
-    test('SC-MB-149 — язык, выбранный на входе, меняет подписи кита, а заголовки остаются русскими', async ({ page }: { page: Page }) => {
+    test('SC-MB-149 — выбор, сделанный на входе, держится и после него, а вид времени от него не зависит', async ({
+        page,
+    }: {
+        page: Page;
+    }) => {
         await page.goto(SIGN_IN_PATH);
         await expect(qa(page, 'sign-in-submit')).toBeVisible();
 
@@ -37,9 +41,12 @@ test.describe('тема и язык на экране входа', () => {
         await signIn(page);
         await expect(qa(page, SECTION.postmortems.table)).toBeVisible();
 
-        // Подписи кита идут на выбранном языке, а название раздела приходит из словаря админки
+        // Выбор пережил вход: подписи кита и имя раздела идут на выбранном языке
         await expect(page.locator('.rt-pagination__per-page-label')).toHaveText(/Per page/);
-        await expect(page.getByRole('heading', { name: SECTION.postmortems.title })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Incident analyses' })).toBeVisible();
+
+        // Время админка рисует сама, и вид его один на оба языка: день, месяц, год и минуты цифрами
+        await expect(page.locator('[qa-dataid="postmortems-cell-arrived"]').first()).toHaveText(/^\s*\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}\s*$/);
     });
 
     test('SC-MB-406 — на английском выборе в карточке входа нет ни одного русского слова', async ({ page }: { page: Page }) => {

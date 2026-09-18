@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
+import { computed, inject, input, output, ChangeDetectionStrategy, Component, InputSignal, OutputEmitterRef, Signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import { ITreeChoice } from '@rt/message-bus-common';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { IRtSelect, RtSelectComponent } from '@rt-tools/ui-kit-v2';
@@ -41,11 +41,14 @@ const ALL_TREES: string = '';
     host: { class: BEM_BLOCK },
 })
 export class AdminTreeFilterComponent {
-    protected readonly label: string = adminLabel('filterTree');
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    // Подпись отбора — производная: язык переключают в попапе профиля, над этим же экраном.
+    protected readonly label: Signal<string> = computed((): string => this.#text.text('filterTree'));
 
     /** Первым пунктом — «все деревья»: снятый отбор выбирается тем же способом, что и любой другой. */
     protected readonly options: Signal<readonly IRtSelect.Option<string>[]> = computed(() => [
-        { label: adminLabel('filterTreeAll'), value: ALL_TREES },
+        { label: this.#text.text('filterTreeAll'), value: ALL_TREES },
         ...this.choices().map((choice: ITreeChoice): IRtSelect.Option<string> => ({ label: choice.name, value: choice.slug })),
     ]);
 

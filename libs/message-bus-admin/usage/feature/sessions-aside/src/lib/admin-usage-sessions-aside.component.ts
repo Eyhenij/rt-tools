@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Params } from '@angular/router';
-import { adminLabel, IAdminListQuery, IReadFault, listQueryOf } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService, IAdminListQuery, IReadFault, listQueryOf } from '@rt/message-bus-admin/common/core/util';
 import { UsageSessionsStore } from '@rt/message-bus-admin/usage/data-access';
 import { AdminUsageSessionsViewComponent } from '@rt/message-bus-admin/usage/ui';
 import { IUsage } from '@rt/message-bus-admin/usage/util';
@@ -48,11 +48,13 @@ const BEM_BLOCK: string = 'admin-usage-sessions-aside';
     host: { class: BEM_BLOCK },
 })
 export class AdminUsageSessionsAsideComponent extends RtRouteAsideComponent<readonly IUsage.Session.State[]> {
+    readonly #text: AdminTextService = inject(AdminTextService);
+
     readonly #store: UsageSessionsStore = inject(UsageSessionsStore);
     readonly #params: Signal<Params> = toSignal(this.route.queryParams, { initialValue: this.route.snapshot.queryParams });
 
-    protected readonly title: string = adminLabel('detailsUsageSessions');
-    protected readonly closeLabel: string = adminLabel('detailsClose');
+    protected readonly title: Signal<string> = computed((): string => this.#text.text('detailsUsageSessions'));
+    protected readonly closeLabel: Signal<string> = computed((): string => this.#text.text('detailsClose'));
 
     /** Сегмент адреса с признаком записи — здесь это имя скила. */
     protected override readonly idParamName: string = 'skill';
@@ -67,7 +69,7 @@ export class AdminUsageSessionsAsideComponent extends RtRouteAsideComponent<read
     protected readonly failedText: Signal<string> = computed(() => {
         const fault: IReadFault | null = this.#store.fault();
 
-        return fault === null ? '' : adminLabel('detailsSessionsFailed');
+        return fault === null ? '' : this.#text.text('detailsSessionsFailed');
     });
 
     /** Скил надстрочником: заголовок называет род панели, а надстрочник — чьи сессии. */

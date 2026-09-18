@@ -17,6 +17,14 @@ import { ADMIN_LABELS, fill, TAdminLabelKey } from './admin-labels';
 import { ADMIN_LABELS_EN } from './admin-labels-en';
 import { AdminLocaleService, EAdminLocale } from './admin-locale';
 
+/**
+ * Способ взять текст по ключу.
+ *
+ * Передаётся доводом в чистые функции разделов: каркаса они не знают и словарь у инжектора
+ * спросить не могут, а текст им нужен. Зовущий их экран словарь знает — он и передаёт.
+ */
+export type TAdminText = (key: TAdminLabelKey, params?: TRtKitLabelParams) => string;
+
 /** Подпись ненайденного ключа: имя ключа в кавычках — его видно на экране и в тесте. */
 function missing(key: TAdminLabelKey): string {
     return `«${key}»`;
