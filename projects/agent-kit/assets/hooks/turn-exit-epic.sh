@@ -108,3 +108,42 @@ Do what does not depend on the answer in this same turn, then ask by the tool.
 
 The guard judges one turn: the next session is not refused." "a question without work in a running stage."
 }
+
+# The next step rewritten into the progress and not begun. The turn rewrote the progress, and after
+# that edit did nothing but commit and push it: the stage number moved, the report is full, and the
+# step the line names is untouched. Judged in a running stage alone; handed-in work has a tier of
+# its own. Expects the verdict signs and `$state` to be set.
+rt_te_next_step_deny() {
+    [ "${progress_edited:-false}" = "true" ] || return 0
+    [ "${after_progress:-false}" = "true" ] && return 0
+    [ "${state:-}" = "этап-идёт" ] || return 0
+    [ "${handed_over:-false}" = "true" ] && return 0
+    rt_te_deny "BLOCKED by turn-exit-guard: the progress was rewritten in this turn, and after that edit the turn did nothing but commit and push it — the next step it names is not begun.
+
+The volume done before the line does not replace the step: a closed stage, a full report and a moved stage number are the shape of four stops in a row. A rewritten progress is a promise about the next action, and the turn that wrote it keeps it.
+
+The next step is written in the progress: ${next_step}
+
+Begin it in this same turn: an edit outside the task folder or a command changing the tree. The owner said to stop — then write so: the guard reads their word, not a retelling.
+
+The guard judges one turn: the next session is not refused." "the next step named by the progress is not begun."
+}
+
+# A launch in the background as the last action of the turn. A role sent to review, an exploration
+# sent to a subagent, a command sent behind the turn: none of them asks anything while it runs and
+# none goes faster for being waited on. A turn that ended on the launch stands exactly as long as an
+# empty one — the owner sees the executor standing still with the role working. The tier lives here
+# next to the state tiers because the guard file is at its length limit; it is not gated by the
+# epic. Expects the verdict signs to be set.
+rt_te_launch_last_deny() {
+    [ "${launched_last:-false}" = "true" ] || return 0
+    rt_te_deny "BLOCKED by turn-exit-guard: the last action of the turn was a launch in the background — a role or a command — and the turn ended on it.
+
+A launch is an announcement of intent, not work: what was sent goes on without the executor and asks nothing on the way. While it runs, what does not depend on it is done — the epic, the tasks, the branch, the next stage — and its findings are taken when they come back.
+
+The next step is written in the progress: ${next_step}
+
+Do it in this same turn; the launch may stand anywhere in the turn but last.
+
+The guard judges one turn: the next session is not refused." "the turn ended on a launch in the background."
+}

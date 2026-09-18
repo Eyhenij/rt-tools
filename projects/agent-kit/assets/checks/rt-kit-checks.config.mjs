@@ -186,7 +186,7 @@ const DEFAULTS = {
     libsRoot: 'libs',
     /** The families of front-end libs: `<libs root>/<family>/<domain>/<layer>`. */
     families: ['site', 'admin'],
-    /** The backend family under the same root: its domains have a layer ladder of their own. */
+    /** The backend families under the same root — one name or a list of them; their domains have a layer ladder of their own. */
     apiFamily: 'api',
     /** The scope of import aliases: `@scope/<family>/<domain>/<layer>` in `tsconfig.base.json`. */
     importScope: '@app',

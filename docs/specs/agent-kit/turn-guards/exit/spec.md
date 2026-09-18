@@ -54,6 +54,10 @@ not by a person.
   the error stream do not change the tree.
 - **Waiting for someone else's step is never the end of a turn.** However much work there was before
   — the run, the review by the owner and the merge go without the executor.
+- **A launch in the background is never the last action of a turn.** A role sent to work by the
+  agent tool or a command sent behind the turn is an announcement of intent: what was sent asks
+  nothing on the way and goes no faster for being waited on. While it runs, what does not depend on
+  it is done, and the launch stands anywhere in the turn but last.
 - **Handed-in work ends a turn only together with the next one begun.** On the next one an action
   must be done, not said.
 - **A task taken without a task folder does not end the turn.** Creating a branch and moving the
@@ -62,6 +66,10 @@ not by a person.
   does not judge it.** The epic plan is written by the command that creates the epic and outlives
   the merge. A plan naming another branch releases nothing.
 - **A closed stage is confirmed by the command of the check of the same turn.**
+- **A next step rewritten into the progress is begun by the same turn.** After the last edit of the
+  progress the turn holds work other than the commit and the push of it — an edit outside the task
+  folder or a command changing the tree; otherwise the turn does not end, however much was done
+  before the line. Judged in a running stage alone; handed-in work has a tier of its own.
 - **The lawful exits are judged before all the tiers.** There are four of them: a question to the
   owner, a refusal of a guard, a written handover and a word of the owner about a stop.
 - **The parts of a compound command are judged one by one.** A reading joined with an edit stays
@@ -164,3 +172,7 @@ Not applicable: the guard judges one turn of one session.
 - 2026-09-18 — the epic branch: a branch named by the header of an epic plan is not judged by the
   tier of the taken task. The end of an epic read from the table releases the whole turn; an
   unreadable epic keeps the former judgement.
+- 2026-09-18 — the next step: a progress rewritten by the turn names what the turn owes, and the
+  turn does not end on the commit of it alone.
+- 2026-09-18 — a launch in the background as the last action: a role or a command sent behind the
+  turn is an announcement of intent, and the turn does not end on it.

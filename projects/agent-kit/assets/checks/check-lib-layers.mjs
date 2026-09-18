@@ -23,7 +23,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { checkBoundaries, checkCoreLibs, checkNoDependencyLibs } from './lib-boundaries.mjs';
-import { FAMILIES, LIBS_ROOT, LIB_ROOTS, isDir, problems, report } from './lib-common.mjs';
+import { API_FAMILIES, FAMILIES, LIBS_ROOT, LIB_ROOTS, isDir, problems, report } from './lib-common.mjs';
 import { collectAllDomainLibs, collectApiDomainLibs, collectFlatLibs, collectStrayLibs } from './lib-domains.mjs';
 import { checkAliases, checkLib } from './lib-manifests.mjs';
 import { checkReexports } from './lib-reexports.mjs';
@@ -81,6 +81,8 @@ if (problems.length > 0) {
     process.exit(1);
 }
 
+// The families of the backend are named one by one: a family the walk skipped is indistinguishable
+// from one walked without divergences, and the number alone does not say which were read.
 console.log(
-    `check-lib-layers: ${domainLibs.length} libs of the front domain grid, ${apiLibs.length} of the backend and ${flatLibs.length} flat ones, no divergences`
+    `check-lib-layers: ${domainLibs.length} libs of the front domain grid, ${apiLibs.length} of the backend (${API_FAMILIES.join(', ') || 'no family'}) and ${flatLibs.length} flat ones, no divergences`
 );
