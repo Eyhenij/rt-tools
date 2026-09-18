@@ -129,6 +129,10 @@ test.describe('оболочка админки', () => {
         // Подписи кита: своего якоря у подписи «строк на странице» он не ставит — берём её классом
         await expect(page.locator('.rt-pagination__per-page-label')).toHaveText(/Per page/);
 
+        // Признак языка документа идёт за выбором: русский текст под английским признаком
+        // синтезатор речи читает по английским правилам
+        await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+
         expect(await page.evaluate((): boolean => (window as unknown as Record<string, boolean>)['rtSameLoad'] === true)).toBe(true);
     });
 
