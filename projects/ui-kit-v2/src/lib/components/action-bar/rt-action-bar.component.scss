@@ -1,0 +1,122 @@
+@layer rt-kit.components {
+    /* rt-action-bar — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
+       `.rt-action-bar` — сам хост (шаблон начинается с ng-container, класс ставит host). */
+
+    .rt-action-bar {
+        --rt-action-bar-radius: var(--rt-radius-lg);
+        --rt-action-bar-shadow: var(--rt-shadow-card);
+        --rt-action-bar-action-radius: var(--rt-radius-md);
+        --rt-action-bar-action-bg-hover: color-mix(in srgb, var(--rt-color-text-inverse) 16%, transparent);
+        --rt-action-bar-action-color-danger: var(--rt-color-action-danger-on-surface);
+        --rt-action-bar-action-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-action-bar-menu-radius: var(--rt-radius-md);
+        --rt-action-bar-menu-shadow: var(--rt-shadow-card);
+
+        // Предел ширины стоит и на самом элементе. Содержащий блок полосы — этот элемент, и
+        // без предела он растёт по содержимому: сто процентов считались бы тогда от выросшего,
+        // и полоса выехала бы за отведённое ей место.
+        display: flex;
+        width: max-content;
+        max-width: 100%;
+        box-sizing: border-box;
+        align-items: center;
+        padding: var(--rt-space-2) var(--rt-space-4);
+        border-radius: var(--rt-action-bar-radius);
+        background: var(--rt-color-bg-inverse);
+        box-shadow: var(--rt-action-bar-shadow);
+        color: var(--rt-color-text-inverse);
+        font-size: var(--rt-text-sm);
+        gap: var(--rt-space-4);
+
+        &__counter {
+            font-weight: var(--rt-font-weight-medium);
+            white-space: nowrap;
+        }
+
+        // Ряд действий, не влезший в предел ширины полосы, переносится. Одно действие, которое
+        // шире места и само по себе, переносить некуда — у него переносится подпись.
+        &__actions {
+            display: flex;
+            min-width: 0;
+            flex-wrap: wrap;
+            gap: var(--rt-space-2);
+        }
+
+        &__action {
+            display: flex;
+            align-items: center;
+            padding: var(--rt-space-1) var(--rt-space-2);
+            border: 0;
+            border-radius: var(--rt-action-bar-action-radius);
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: inherit;
+
+            // Нажатие в этом ките набрано средним начертанием — так набрана кнопка кита, и
+            // действие полосы такое же нажатие. Первый кит ставил здесь шестьсот.
+            font-weight: var(--rt-font-weight-medium);
+            gap: var(--rt-space-2);
+
+            &:hover {
+                background: var(--rt-action-bar-action-bg-hover);
+            }
+
+            &:focus-visible {
+                box-shadow: var(--rt-action-bar-action-focus-shadow);
+                outline: none;
+            }
+
+            &--danger {
+                color: var(--rt-action-bar-action-color-danger);
+            }
+        }
+
+        &__action-icon {
+            flex: none;
+        }
+
+        // Подпись, не влезшую в место, полоса переносит внутри кнопки, а не режет и не прячет:
+        // предел ширины назван вместе с судьбой того, что в него не вошло. Перенос идёт по
+        // границам слов, и слово рубится только тогда, когда не влезает и оно одно: `anywhere`
+        // рубил бы и там, где есть куда перенести, — кадр показал «Скачат/ь» на месте в
+        // восемнадцать рем.
+        &__action-label {
+            overflow-wrap: break-word;
+            text-align: start;
+        }
+
+        // Кнопка кита красит значок цветом обычного текста, а полоса стоит на обратной
+        // поверхности: в светлой теме значок вышел тёмным по тёмному, в тёмной — светлым по
+        // белому, и крестика не было видно ни в одном кадре. Своё свойство блока перебивают —
+        // так делает просмотр фотографии, где кнопка стоит на снимке.
+        &__close {
+            --rt-icon-button-color: var(--rt-color-text-inverse);
+            --rt-icon-button-color-bg-hover: var(--rt-action-bar-action-bg-hover);
+
+            flex: none;
+            margin-left: auto;
+        }
+
+        &__menu {
+            display: flex;
+            flex-direction: column;
+            padding: var(--rt-space-2);
+            border-radius: var(--rt-action-bar-menu-radius);
+            background: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-action-bar-menu-shadow);
+            color: var(--rt-color-text-primary);
+        }
+
+        // Полоса живёт на нижней кромке, и пальцу нужно место, которое занимают подписи. Решает
+        // это правило, а не условие в шаблоне: условие было бы оформлением, уехавшим в код.
+        // Подпись снимается только у действия, у которого есть значок, — действие, показанное
+        // ничем, нажать нарочно нельзя.
+        @media (pointer: coarse) {
+            .rt-action-bar__action--with-icon .rt-action-bar__action-label {
+                display: none;
+            }
+        }
+    }
+}

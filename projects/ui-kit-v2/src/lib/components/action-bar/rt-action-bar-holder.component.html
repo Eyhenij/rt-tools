@@ -1,0 +1,10 @@
+<ng-container rtBlock="rt-action-bar-holder">
+    @if (shown()) {
+        <rt-action-bar
+            rtElem="bar"
+            qa-dataid="action-bar-holder-bar"
+            [rtMod]="{ leaving: leaving() }"
+            [config]="config()"
+            (closed)="onClosed()" />
+    }
+</ng-container>
