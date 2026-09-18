@@ -7,23 +7,23 @@
     </div>
 
     <section rtElem="card">
-        <span rtElem="brand" qa-dataid="setup-brand">{{ appTitle }}</span>
+        <span rtElem="brand" qa-dataid="setup-brand">{{ appTitle() }}</span>
 
-        <h1 rtElem="title" qa-dataid="setup-title">{{ setupTitle }}</h1>
+        <h1 rtElem="title" qa-dataid="setup-title">{{ setupTitle() }}</h1>
 
         @if (ready()) {
-            <p rtElem="hint" qa-dataid="setup-hint">{{ setupHint }}</p>
+            <p rtElem="hint" qa-dataid="setup-hint">{{ setupHint() }}</p>
 
             <form rtElem="form" [formGroup]="form" (ngSubmit)="submit()">
                 @if (faultText(); as text) {
                     <rt-message severity="danger" qa-dataid="setup-fault">{{ text }}</rt-message>
                 }
 
-                <rt-field [label]="nameLabel">
+                <rt-field [label]="nameLabel()">
                     <rt-input formControlName="name" autocomplete="username" qa-dataid="setup-name" iconLeft="user" />
                 </rt-field>
 
-                <rt-field [label]="passwordLabel">
+                <rt-field [label]="passwordLabel()">
                     <rt-input
                         formControlName="password"
                         type="password"
@@ -39,8 +39,8 @@
                     rtElem="submit"
                     type="submit"
                     qa-dataid="setup-submit"
-                    [label]="submitLabel"
-                    [attr.aria-label]="submitLabel"
+                    [label]="submitLabel()"
+                    [attr.aria-label]="submitLabel()"
                     [loading]="pending()"></button>
             </form>
         }

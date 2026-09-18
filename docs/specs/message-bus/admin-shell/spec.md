@@ -184,8 +184,8 @@ creates:
 
 - **Gating the sections by rights.** There are no rights inside the admin application: whoever entered
   gets everything — the word of the owner, written down in the spec of the subdomain of the reading.
-- **Translating the screens of the sections.** The shell takes its labels from the dictionary in both
-  languages; the lists, the panels and the texts of the refusals of the server are translated by the
+- **Translating the screens of the sections.** The shell and the screens of the entry take their
+  labels from the dictionary in both languages; the lists, the panels and the texts of the refusals of the server are translated by the
   tasks of the epic of the texts, not here.
 - **A third language.** Two sets are kept in the code of the admin application; a third one is a
   separate work and a separate word of the owner.
@@ -244,9 +244,9 @@ measurement in the browser.
 ### Locales
 
 There are two locales, Russian and English, and one choice serves both dictionaries — the labels of
-the admin application and the labels of the kit. The shell is translated whole; the screens of the
-sections still take their labels from the Russian set alone, and they are translated by the tasks of
-the epic of the texts. The admin application shows the dates in a shape of its own, and it does not
+the admin application and the labels of the kit. The shell and the screens of the entry are
+translated whole; the screens of the sections still take their labels from the Russian set alone,
+and they are translated by the tasks of the epic of the texts. The admin application shows the dates in a shape of its own, and it does not
 depend on the language.
 
 ### SEO
@@ -309,3 +309,4 @@ None.
 | 2026-08-20 | By the task RT-944 two rules about the background were added: the header and the popup of the profile                                   |
 | 2026-09-17 | By the task RT-2162 the screen of the person to whom no section is open gained an address                                               |
 | 2026-09-18 | By the task RT-2209 the agreement about the dictionary of the labels was merged in: two sets, one key, one choice for both dictionaries |
+| 2026-09-18 | By the task RT-2210 the screens of the entry took their labels from the dictionary, and the tab titles of that domain went by keys      |
