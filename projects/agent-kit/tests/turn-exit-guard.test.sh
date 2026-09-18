@@ -192,6 +192,42 @@ printf '# Ход работы\n\n## Где стоим\n\n- **Состояние:
 expect_stop "SC-AK-311 — при прежнем номере этапа команда проверки не спрашивается" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
 
+# --- SC-AK-1132 — следующий шаг, вписанный в ход работы, начат тем же ходом ------------------
+# Четыре остановки одной формы: этап закрыт и закоммичен, отчёт полон, следующий этап назван и не
+# тронут. Проверка читает порядок действий: после последней правки хода работы нужна работа, кроме
+# коммита и отправки его же. Отданная работа судится своим ярусом.
+PROGRESS="$TASK/progress.md"
+expect_stop "SC-AK-1132 — правка хода работы и один коммит после неё ход не отпускают" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(edited_file "$PROGRESS")" "$(ran 'git add -A && git commit -m x')")")" BLOCK
+expect_reason "SC-AK-1132 — отказ называет ненáчатый шаг" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(edited_file "$PROGRESS")" "$(ran 'git add -A && git commit -m x')")")" "is not begun"
+expect_stop "SC-AK-1132 — правка хода работы командой и коммит после неё ход не отпускают" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran "sed -i 's/a/b/' $PROGRESS")" "$(ran 'git commit -m x')")")" BLOCK
+expect_stop "SC-AK-1132 — правка файла после хода работы ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited_file "$PROGRESS")" "$(edited)")")" PASS
+expect_stop "SC-AK-1132 — команда, меняющая дерево, после хода работы ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited_file "$PROGRESS")" "$(ran 'npm run check:board')")")" PASS
+expect_stop "SC-AK-1132 — отданная работа после хода работы судится своим ярусом" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(edited_file "$PROGRESS")" "$(ran 'git commit -m x')" "$(ran 'gh pr create --draft')")")" PASS
+
+# --- SC-AK-1135 — запуск в фоне последним действием ход не кончает ---------------------------
+# Разбор кончился запуском ролей в фоне и отчётом «роли работают»; проверка сочла запуск работой.
+# Запуск — объявление намерения: пока роль идёт, делается то, что от неё не зависит. Судится
+# последнее действие: запуск в середине хода законен.
+launched() { jq -c -n '{type:"assistant",message:{content:[{type:"tool_use",name:"Agent",input:{subagent_type:"skill-curator",prompt:"обзор"}}]}}'; }
+ran_bg() { jq -c -n --arg c "$1" '{type:"assistant",message:{content:[{type:"tool_use",name:"Bash",input:{command:$c,run_in_background:true}}]}}'; }
+state_is 'этап-идёт'
+expect_stop "SC-AK-1135 — роль, запущенная последним действием, ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(launched)")")" BLOCK
+expect_reason "SC-AK-1135 — отказ называет запуск в фоне" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(launched)")")" "launch in the background"
+expect_stop "SC-AK-1135 — команда в фоне последним действием ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran_bg 'npm run storybook')")")" BLOCK
+expect_stop "SC-AK-1135 — запуск роли без работы до него ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'разбери просьбу')" "$(launched)")")" BLOCK
+expect_stop "SC-AK-1135 — работа после запуска ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(launched)" "$(edited)")")" PASS
+
 # --- разведка ---------------------------------------------------------------------------------
 # Читающая подкоманда `git` и клиента хостинга стоит в образце работы наравне с меняющей —
 # образец знает только первое слово. Ход, где переключились на главную ветку, прочитали историю
@@ -218,7 +254,7 @@ expect_stop "SC-AK-693 — запись во временный каталог �
 expect_stop "SC-AK-694 — отвод потока ошибок работой не считается" \
     "$(input_stop "$(transcript "$(say 'ну что там?')" "$(ran 'curl -s http://127.0.0.1:3000/health 2>/dev/null')")")" BLOCK
 expect_stop "SC-AK-695 — команда из перечня с перенаправлением ход отпускает по-прежнему" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'tee -a docs/tasks/RT-1-probe/progress.md < заметка')")")" PASS
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'tee -a docs/notes.md < заметка')")")" PASS
 
 # --- ход, кончившийся ожиданием ---------------------------------------------------------------
 # Работы в таком ходе было много — тем он и обманчив. Судится последнее действие, а не наличие

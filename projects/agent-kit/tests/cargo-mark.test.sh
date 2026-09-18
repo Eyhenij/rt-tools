@@ -80,15 +80,33 @@ report "SC-AK-430 — код возврата ненулевой" "$(mark_code -
 #
 # Своя копия счёта уже разошлась с пакетной: она брала последнее слово адреса, а отправка — адрес
 # целиком и в нижнем регистре. Сценарий сверяет напечатанный признак с тем, что даёт сам пакет.
+# Эталон берётся из модуля, где функция объявлена. Сначала положительная проверка: пустой эталон
+# совпадал с пустым признаком отметки, и тест был зелёным, пока приём отказывал каждой записи.
 PACKAGE_SLUG="$(cd "$TREE_ROOT" && node -e "
-import('./dist/agent-kit/lib/shipment.js').then((m) => {
+import('./dist/agent-kit/lib/tree-mark.js').then((m) => {
     const remote = require('node:child_process').execFileSync('git', ['remote', 'get-url', 'origin'], { encoding: 'utf8' }).trim();
     process.stdout.write(m.treeSlugOf(remote, ''));
 });
 " 2>/dev/null)"
+report "SC-AK-558 — признак дерева не пуст: двенадцать шестнадцатеричных знаков" \
+    "$(printf '%s' "$PACKAGE_SLUG" | grep -cE '^[0-9a-f]{12}$')" 1
 MARK_PATTERN="tree ${PACKAGE_SLUG}:"
 report "SC-AK-558 — отметка называет тот же признак, что отправка" \
     "$(RT_TREE_TOKEN=x mark_says --state new --postmortem x.md --dry-run)" 1
+
+# SC-AK-1130 — пустой признак дерева отклоняется до сети
+#
+# Признак считается собранным пакетом; без модуля он пуст, и отправленный пустым он возвращается
+# от приёма отказом «чужое дерево», который читается как неверный ключ. Модуль прячется на время
+# вызова, и отказ приходит до сети с названной причиной.
+TREE_MARK_MODULE="$TREE_ROOT/dist/agent-kit/lib/tree-mark.js"
+mv "$TREE_MARK_MODULE" "$TREE_MARK_MODULE.hidden"
+MARK_PATTERN="the sign of the tree could not be counted"
+report "SC-AK-1130 — пустой признак назван причиной отказа" \
+    "$(RT_TREE_TOKEN=x mark_says --state new --postmortem x.md --dry-run)" 1
+report "SC-AK-1130 — код возврата ненулевой" \
+    "$(RT_TREE_TOKEN=x mark_code --state new --postmortem x.md --dry-run)" 1
+mv "$TREE_MARK_MODULE.hidden" "$TREE_MARK_MODULE"
 
 # SC-AK-431 — вызов без записей отбивается до сети
 MARK_PATTERN='there is nothing to mark'

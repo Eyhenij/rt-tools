@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.29.0 · checks/rt-kit-checks.config.mjs · 43af079762a9 · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/rt-kit-checks.config.mjs · f424a1ff5ce6 · правится надстройкой, не здесь
 /**
  * Check settings: what counts as sources, where not to go and where the debt lists lie.
  *
@@ -187,7 +187,7 @@ const DEFAULTS = {
     libsRoot: 'libs',
     /** The families of front-end libs: `<libs root>/<family>/<domain>/<layer>`. */
     families: ['site', 'admin'],
-    /** The backend family under the same root: its domains have a layer ladder of their own. */
+    /** The backend families under the same root — one name or a list of them; their domains have a layer ladder of their own. */
     apiFamily: 'api',
     /** The scope of import aliases: `@scope/<family>/<domain>/<layer>` in `tsconfig.base.json`. */
     importScope: '@app',

@@ -141,10 +141,8 @@ flowchart TD
   returns to the executor with the next step from the progress. Handed-in and merged work the guard
   does not judge: it has already waited out someone else's step.
 - **A removed task folder lifts the state requirement and does not end the turn.** The progress
-  leaves with the folder, taken apart before the PR opens: from then to the merge there is no state
-  line. A turn is not released by this sign — a removed folder means the middle of handing in, not
-  its end. From there the turn is judged by the second sign; a turn that opened the PR passes it by
-  itself.
+  leaves with the folder, taken apart before the PR opens; a removed folder means the middle of
+  handing in, not its end. From there the turn is judged by the second sign.
 - **Work without a branch and without a task folder is judged by the same guard by the second
   sign.** It has no state, and the first sign has nowhere to come from — but a turn with no edit of
   the tree does not end here either.
@@ -153,23 +151,23 @@ flowchart TD
   not done by a single line. An epic branch, named by the header of its plan, carries no folder by
   the rule and is not judged so.
 - **Exploration does not end a turn, however much of it there is.** Switching branch, pulling,
-  browsing history and reading PRs are preparation, not work; a turn of these alone leaves the work
-  where it stood. Parts of a compound command are judged one by one: a read joined to an edit
-  remains work.
+  browsing history and reading PRs are preparation, not work. Parts of a compound command are
+  judged one by one: a read joined to an edit remains work.
 - **A reply to the owner is not an action and does not stand last in a turn.** The order inside a
-  turn is one: work, the first step of the next, then text. Saying what was done is always allowed;
-  its place is after the next action, not instead.
+  turn is one: work, the first step of the next, then text; what was done is said after the next
+  action, not instead of it.
 - **The last action of a turn is only ever work.** One sign for every kind of stop: a file edit or a
   changing command — last among what the turn did. The guard's tiers — exploration, waiting, handing
   in without starting the next — only derive a readable refusal from it.
 - **Waiting for someone else's step is never the last action of a turn.** While they are waited for,
-  the work stays where it stood. The last action is judged: waiting mid-turn is lawful, background
-  work remains work, and a turn ended by a loop until the run is ready, or by watching it, is not
-  released.
+  the work stays where it stood. The last action is judged: waiting mid-turn is lawful, and so is a
+  launch in the background mid-turn. Standing last, it is an announcement of intent: what does not depend on it is done while it runs.
 - **The handover is written even where the branch has no name.** All of it lies in the tree and is
   reachable on a detached head; one file needs a name, and a short snapshot of the head gives it.
-  The hook's silence costs more here than elsewhere: compaction comes without a handover, and the
-  next session starts from a blank.
+  Otherwise compaction comes without a handover, and the next session starts from a blank.
+- **A next step written into the progress is begun by the same turn.** The guard reads the order
+  of actions: after the last edit of the progress it wants work other than the commit and the push
+  of it. A full report and a moved stage number do not replace the step.
 - **A plan stage is declared closed only after its check command has passed.** The "Checked by"
   (`Чем проверяется`) line carries the command in backticks and what in its output means "matches".
   The guard reads the previous stage number from the branch history and holds a turn where the

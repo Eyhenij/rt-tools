@@ -101,3 +101,12 @@ a green answer without a lib read is indistinguishable from an honest zero, and 
 the push gate
 
 Covered: `projects/agent-kit/tests/checks-lib-layers.test.sh`.
+
+### SC-AK-1131 — the backend families are walked as a list
+
+Given the settings name the backend families by a list of two, and each family holds a domain
+When the check of the lib layout runs
+Then both domains are named in its answer, a single name names the domain of its own family alone,
+and the empty-walk refusal lists the root of every family of the list
+
+Covered: `projects/agent-kit/tests/checks-lib-layers.test.sh`.
