@@ -1,4 +1,4 @@
-<!-- rt-kit v0.28.0 · laws/lib-imports.md · 9e2e1f20acd1 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · laws/lib-imports.md · 9e2e1f20acd1 · правится надстройкой, не здесь -->
 # Law on imports between libs
 
 Who sees whom. The application is cut into libs, and each has a declared list of those it may

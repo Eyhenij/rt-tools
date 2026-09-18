@@ -1,4 +1,4 @@
-<!-- rt-kit v0.28.0 · docs/GLOSSARY.md · 273a520229c5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · docs/GLOSSARY.md · 273a520229c5 · правится надстройкой, не здесь -->
 # Project glossary
 
 Words that mean something definite in this tree. Read before writing a spec, a rule, a comment,

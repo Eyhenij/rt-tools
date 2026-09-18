@@ -43,4 +43,20 @@ report "упоминание в кавычках вызовом не счита�
 report "поиск по дереву вызовом не считается" "$(knows "$PR" 'grep -rn "gh pr create" docs/')" нет
 report "само присваивание вызовом не считается" "$(knows "$PR" 'GH_TOKEN=$(cat f)')" нет
 
+# --- SC-AK-1116. Запускатель перед вызовом вызова не прячет -------------------------------------
+# `timeout`, `nohup`, `env` и прочие берут команду своим доводом. Признак смотрел только на начало
+# строки и такой вызов не видел: одна отправка с `timeout` прошла мимо всего набора проверок.
+GP='git[[:space:]]+push'
+report "SC-AK-1116 — timeout перед вызовом" "$(knows "$GP" 'timeout 1800 git push')" да
+report "SC-AK-1116 — timeout с ключом" "$(knows "$GP" 'timeout -k 5 30s git push -u origin b')" да
+report "SC-AK-1116 — nohup перед вызовом" "$(knows "$GP" 'nohup git push')" да
+report "SC-AK-1116 — два запускателя подряд" "$(knows "$GP" 'nohup timeout 30 git push')" да
+report "SC-AK-1116 — env с присваиванием" "$(knows "$PR" 'env GH_TOKEN=x gh pr create')" да
+report "SC-AK-1116 — запускатель за разделителем" \
+    "$(knows "$GP" 'cd /tmp && timeout 60 git push')" да
+# Список закрытый: любое слово перед вызовом считало бы вызовом и упоминание.
+report "SC-AK-1116 — печать строки вызовом не считается" "$(knows "$GP" 'echo git push')" нет
+report "SC-AK-1116 — чужая команда перед вызовом не считается" \
+    "$(knows "$GP" 'xargs -n1 git push')" нет
+
 suite_result "признак вызова"

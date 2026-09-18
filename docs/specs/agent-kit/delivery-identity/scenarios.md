@@ -118,3 +118,12 @@ Then the guard lets the call through and names the account aloud: the review wil
 silence about a foreign account is indistinguishable from a check that did not fire
 
 Covered: `projects/agent-kit/tests/git-guards-identity.test.sh`.
+
+### SC-AK-1116 — a runner before the call does not hide the call
+
+Given the command starts with `timeout`, `nohup` or another runner of the closed list
+When a guard asks whether the call stands in the line
+Then the sign recognises it, together with the runner's own flags and arguments; a word outside the
+list — a print of the line or a foreign command — is not counted as a call
+
+Covered: `projects/agent-kit/tests/cmd-bound.test.sh`.

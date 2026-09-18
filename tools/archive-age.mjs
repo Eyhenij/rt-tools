@@ -1,4 +1,4 @@
-// rt-kit v0.28.0 · checks/archive-age.mjs · 1c96094f910e · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/archive-age.mjs · 1c96094f910e · правится надстройкой, не здесь
 /**
  * The age of archive records.
  *

@@ -10,6 +10,7 @@ statement: a removed statement is removed together with its line.
 - **A tree that named no token variable gets no demand.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:pull_token_var`
 - **A command named by a path is recognised on a par with a bare name.** — `projects/agent-kit/assets/hooks/hook-input.sh:RT_CMD_BOUND`
 - **A mention of the command name inside a string does not count as a command.** — `projects/agent-kit/assets/hooks/hook-input.sh:RT_CMD_BOUND`
+- **A runner standing before the call is the same call.** — `projects/agent-kit/assets/hooks/hook-input.sh:RT_CMD_RUNNER` — a closed list of runners with their arguments before the command; scenario SC-AK-1116
 - **The draft is not lifted from a request whose author is also its reviewer.** — `projects/agent-kit/assets/hooks/git-guard-delivery-draft.sh:reviewed` — the hosting creates no review request pointing at the author, so such a request arrives here with no review at all
 - **A draft whose author is not the machine record is lifted, and the record is named aloud.** — `projects/agent-kit/assets/hooks/git-guard-delivery-draft.sh:pull_author` — scenario SC-AK-485
 - **The refusal at lifting a request without a review names the reviewer and the request.** — `projects/agent-kit/assets/hooks/git-guard-delivery-draft.sh:reviewed`

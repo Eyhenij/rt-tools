@@ -4,7 +4,7 @@ kind: rule
 law: frontend-application
 description: Rule under the frontend-application law. Load when editing any Angular class — a component, store, service, directive, pipe, guard or interceptor. Names the signal input API, OnPush, zoneless, inject and where a subscription lives. Pattern angular-patterns-state.
 ---
-<!-- rt-kit v0.28.0 · rules/angular-patterns.md · a1dcc0814379 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/angular-patterns.md · a1dcc0814379 · правится надстройкой, не здесь -->
 
 # Screen reactivity — how it works here
 

@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for creating a task and a branch, commit, push, opening a PR and merging. Names the one-to-one pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — rule deploy-flow.
 ---
-<!-- rt-kit v0.28.0 · rules/git-workflow.github.md · c9997d393399 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/git-workflow.github.md · c9997d393399 · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 

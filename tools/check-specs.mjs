@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.28.0 · checks/check-specs.mjs · 09c0f2d840fa · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/check-specs.mjs · 09c0f2d840fa · правится надстройкой, не здесь
 /**
  * The check that a domain spec has not diverged from the code.
  *
