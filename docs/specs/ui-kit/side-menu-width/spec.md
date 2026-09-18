@@ -74,14 +74,14 @@ counts itself, and where the limits of each lie.
   the ask to the end of the gesture because there is a gesture; here there is none. The events of
   the beginning and the end of the pull do not come about from a key either: a consumer covers a
   frame of a foreign address for the time a hand leads the pointer, and a key leads nothing.
-      <!-- rt-when: *.ts *.html -->
+  <!-- rt-when: *.ts *.html -->
 
 - **The reader names the current width and both its limits.** A handle that says only "separator"
   tells a person nothing about what the keys under their fingers will do, and nothing about where
   the width already stands. The numbers are the kit's own count — the width the consumer named or
   the one the hand pulled to. The consumer named none and nothing was pulled — there is no number,
   and the kit does not invent one: a number made up would name a width the panel is not drawn by.
-      <!-- rt-when: *.ts *.html -->
+  <!-- rt-when: *.ts *.html -->
 
 ## What is out of scope
 
