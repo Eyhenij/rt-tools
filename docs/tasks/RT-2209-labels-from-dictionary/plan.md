@@ -2,6 +2,7 @@
 
 **Task:** RT-2209 · **Branch:** RT-2209-labels-from-dictionary
 **Epic:** #2208, первая задача по его плану
+**Draft:** `docs/specs/message-bus/proposed/admin-labels/`
 
 ## Task footprint
 
