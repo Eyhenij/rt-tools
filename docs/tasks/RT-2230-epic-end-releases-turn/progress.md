@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 3 — the end of an epic releases the turn inside the refusal
-- **Done:** the folder, the plan; the branch is taken from the epic branch after RT-2229 merged into it
-- **Next step:** `rt_te_epic_over` in the epic tiers by the shared cache, the release in `rt_te_deny`, tests SC-AK-1129 and SC-AK-1119
+- **Stage:** 2 of 3 — the spec names the statement, the binding and the scenario
+- **Done:** stage 1 — the release inside the refusal, SC-AK-1129 and SC-AK-1119 retitled (epic suite 32 ok, guard suite 90 ok)
+- **Next step:** the statement, the binding and the scenarios in the exit spec
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet

@@ -69,12 +69,3 @@ standing_work_re='работай[^.]{0,40}(без остановок|без па
 handover_re='gh[[:space:]]+pr[[:space:]]+create'
 started_re='task:new|task:move|board\.mjs[[:space:]]+move|git[[:space:]]+checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|git[[:space:]]+switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c'
 
-# The end of an epic: there waiting for the word of the owner is the work itself, and the guard of
-# the stop refuses taking the next task. The reading lies apart and is shared by the three guards;
-# it goes to the hosting, so the guard asks it right before a refusal, not on every turn.
-rt_te_epic_over() {
-    # shellcheck disable=SC1090
-    . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/epic-over.sh" 2>/dev/null || return 1
-    command -v rt_epic_over >/dev/null 2>&1 || return 1
-    rt_epic_over
-}
