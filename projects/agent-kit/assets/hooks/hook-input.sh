@@ -85,9 +85,16 @@ rt_hook_field() {
 # is how PRs went out opened not by the machine record. A path part does not cross a space, so it
 # stays inside one word and glues nothing extra to the call.
 #
+# A runner standing before the call is the same call. `timeout`, `nohup`, `env`, `sudo` and their
+# kin take a command and run it as their own argument: the call is there, and the sign, looking only
+# at the start of the line, did not see it. One push with `timeout` before it went past the whole
+# gate set — the branch left with two red checks, and the pipeline caught them a minute later. The
+# list is closed: any word before the call would count `echo git push` as a push.
+#
 # This is declared in a SINGLE place, not as a literal in every guard: having diverged, the copies
 # are fixed one at a time and say nothing about the rest staying blind.
-RT_CMD_BOUND='(^|[;&|(]|&&|\|\|)[[:space:]]*([A-Za-z_][A-Za-z0-9_]*=([^[:space:]]*|\$\([^)]*\)|"[^"]*"|'"'"'[^'"'"']*'"'"')[[:space:]]+)*([^[:space:]]*/)?'
+RT_CMD_RUNNER='((timeout|nohup|time|command|nice|stdbuf|sudo|env|caffeinate|setsid|ionice)([[:space:]]+(-[^[:space:]]+|[0-9]+(\.[0-9]+)?[smhd]?|[A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*))*[[:space:]]+)*'
+RT_CMD_BOUND='(^|[;&|(]|&&|\|\|)[[:space:]]*([A-Za-z_][A-Za-z0-9_]*=([^[:space:]]*|\$\([^)]*\)|"[^"]*"|'"'"'[^'"'"']*'"'"')[[:space:]]+)*'"$RT_CMD_RUNNER"'([^[:space:]]*/)?'
 
 # The fields that all guards ask for.
 rt_hook_tool() { rt_hook_field RT_HOOK_TOOL '.tool_name'; }
