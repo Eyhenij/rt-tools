@@ -242,5 +242,6 @@
                 "fix": "блокирует, не пропускает"
             }
         ]
-    }
+    },
+    "assignmentsFile": ".claude/rt-kit/assignments.md"
 }
