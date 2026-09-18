@@ -101,9 +101,8 @@ export class AdminInviteCreateAsideComponent extends RtRouteAsideComponent<null>
 
         this.runMutation(this.#store.issue(name).pipe(tap((issued: IInvite.Issued.State): void => this.#issued.set(issued))), {
             successText: this.#text.text('inviteCreateDone', { name }),
-            // Слово приёмника показывается как есть: отклонённое обращение он объясняет
-            // человеку сам — чем занято имя, чего не хватило. Поломка службы своего слова не
-            // несёт, и на неё отвечает общая строка раздела
+            // Причину приёмник называет кодом, слово по коду рисует словарь. Поломка службы
+            // кода не несёт, и на неё отвечает общая строка раздела
             errorText: this.fault.take,
             // Панель остаётся открытой: код виден один раз, и закрытие унесло бы его с
             // собой. Имя при этом запирается — приглашение на него уже выдано
