@@ -10,7 +10,7 @@
         clickable
         [ariaLabel]="title"
         [attr.qa-dataid]="qaTable()"
-        [columnsConfig]="columns"
+        [columnsConfig]="columns()"
         [dataSource]="rows()"
         [emptyDescription]="emptyDescription()"
         [emptyMessage]="emptyMessage()"
@@ -19,17 +19,17 @@
         [tableId]="tableId"
         (sortChange)="changeSort($event)">
         <ng-container cdkColumnDef="tree">
-            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="tree">{{ columns[0].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="tree">{{ columns()[0].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-tree'">{{ row.tree.name }}</td>
         </ng-container>
 
         <ng-container cdkColumnDef="file">
-            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="file">{{ columns[1].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="file">{{ columns()[1].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-file'">{{ row.file }}</td>
         </ng-container>
 
         <ng-container cdkColumnDef="state">
-            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="state">{{ columns[2].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="state">{{ columns()[2].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-state'">
                 {{ row.stateLabel }}
                 @if (row.closedByPublisher) {
@@ -39,22 +39,22 @@
         </ng-container>
 
         <ng-container cdkColumnDef="releaseVersion">
-            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="releaseVersion">{{ columns[3].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="releaseVersion">{{ columns()[3].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-version'">{{ row.releaseVersion }}</td>
         </ng-container>
 
         <ng-container cdkColumnDef="quarantineNote">
-            <th *cdkHeaderCellDef cdk-header-cell>{{ columns[4].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell>{{ columns()[4].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-quarantine-note'">{{ row.quarantineNote }}</td>
         </ng-container>
 
         <ng-container cdkColumnDef="arrivedAt">
-            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="arrivedAt">{{ columns[5].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="arrivedAt">{{ columns()[5].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-arrived'">{{ row.arrivedAt | adminMoment }}</td>
         </ng-container>
 
         <ng-container cdkColumnDef="updatedAt">
-            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="updatedAt">{{ columns[6].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="updatedAt">{{ columns()[6].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-updated'">{{ row.updatedAt | adminMoment }}</td>
         </ng-container>
 
