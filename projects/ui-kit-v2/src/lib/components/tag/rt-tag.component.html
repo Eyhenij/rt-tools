@@ -4,17 +4,23 @@
     [attr.data-severity]="severity()"
     [rtMod]="{
         severity: severity(),
+        size: size(),
         shape: shape(),
         appearance: appearance(),
         radius: radius(),
         closable: closable(),
     }">
     @if (icon(); as iconName) {
-        <rt-icon rtElem="icon" size="sm" [name]="iconName" />
+        <rt-icon rtElem="icon" [size]="iconSize()" [name]="iconName" />
     }
-    <span rtElem="text" qa-dataid="tag-text">{{ value() }}</span>
+    <!--
+        Целое значение показывает подсказка, и только когда подписи не хватило места:
+        урезанный текст без подсказки читается как целый — узнать, где он на деле кончается,
+        человеку неоткуда. Пустой текст директиву выключает.
+    -->
+    <span rtElem="text" qa-dataid="tag-text" #text [rtTooltip]="overflowing() ? value() : ''">{{ value() }}</span>
     @if (iconEnd(); as iconEndName) {
-        <rt-icon rtElem="icon-end" size="sm" [name]="iconEndName" />
+        <rt-icon rtElem="icon-end" [size]="iconSize()" [name]="iconEndName" />
     }
     @if (closable()) {
         <rt-icon-button
