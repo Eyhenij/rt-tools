@@ -33,6 +33,8 @@ done".
   the load of a rule, the summary of a compaction, the feedback of a guard of the stop.
 - **An open epic** — an epic with at least one task left unfinished, as the table of the epic
   prints them. An epic that cannot be read is not open.
+- **The epic branch** — a branch named by the header line of an epic plan in the plans directory.
+  It has the shape of a task branch and carries no task folder by the rule.
 
 ### What it is called in the interface
 
@@ -56,6 +58,9 @@ not by a person.
   must be done, not said.
 - **A task taken without a task folder does not end the turn.** Creating a branch and moving the
   column do not count as the start of the work.
+- **A branch named by the header of an epic plan is an epic branch, and the tier of the taken task
+  does not judge it.** The epic plan is written by the command that creates the epic and outlives
+  the merge. A plan naming another branch releases nothing.
 - **A closed stage is confirmed by the command of the check of the same turn.**
 - **The lawful exits are judged before all the tiers.** There are four of them: a question to the
   owner, a refusal of a guard, a written handover and a word of the owner about a stop.
@@ -151,3 +156,5 @@ Not applicable: the guard judges one turn of one session.
   unfinished task; a service message starts no turn; a refusal is an exit only as the last action;
   a question without work in a running stage and a handover by hand are refused; the owner's word
   quoted in the waiting line of the progress releases the turn.
+- 2026-09-18 — the epic branch: a branch named by the header of an epic plan is not judged by the
+  tier of the taken task.

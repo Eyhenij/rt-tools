@@ -150,8 +150,8 @@ flowchart TD
   the tree does not end here either.
 - **A taken task is not yet begun work, and the turn does not end on it.** Creating the branch,
   moving the column and naming the number are preparation: the mandatory action of `задача-взята` is
-  not done by a single line, yet the turn holds much work, and the sign "was there work" releases
-  it.
+  not done by a single line. An epic branch, named by the header of its plan, carries no folder by
+  the rule and is not judged so.
 - **Exploration does not end a turn, however much of it there is.** Switching branch, pulling,
   browsing history and reading PRs are preparation, not work; a turn of these alone leaves the work
   where it stood. Parts of a compound command are judged one by one: a read joined to an edit

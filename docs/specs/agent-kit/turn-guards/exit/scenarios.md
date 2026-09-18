@@ -455,3 +455,13 @@ When the guard of the exits judges the end of the turn.
 Then the turn is not released; the refusal of another guard releases it as before.
 
 Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
+
+### SC-AK-1128 — a branch named by an epic plan is not judged by the tier of the taken task
+
+Given the branch has the shape of a task branch, there is no task folder at it, and a plan in the
+plans directory names the branch in its header line
+When the guard of the exits judges the end of the turn
+Then the tier of the taken task is skipped. A turn with work passes, an empty turn is given back by
+the second sign. A plan naming another branch releases nothing.
+
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.

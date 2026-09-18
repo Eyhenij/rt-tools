@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/turn-exit-guard.sh · 73a97581d606 · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/turn-exit-guard.sh · 9d7ee9ec1471 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
@@ -320,7 +320,8 @@ esac
 # A folder taken apart by a branch commit does not get here: `archived` means handed-over work, and
 # the previous tier judges it. A branch without a task number is not judged at all — such ones are
 # created for a trial too.
-if [ "$archived" != "true" ] && [ -z "$progress" ] && [ -n "$branch" ] && [ ! -d "$root/$tasks_dir/$branch" ]; then
+# An epic branch is not judged either: it carries no folder by the rule, and the epic plan names it.
+if [ "$archived" != "true" ] && [ -z "$progress" ] && [ -n "$branch" ] && [ ! -d "$root/$tasks_dir/$branch" ] && ! rt_te_epic_branch; then
     task_key="${RT_TASK_KEY:-}"
     if [ -z "$task_key" ] && [ -f "$root/.claude/rt-kit/checks.json" ]; then
         task_key="$(jq -r '.board.taskKey // empty' "$root/.claude/rt-kit/checks.json" 2>/dev/null)"

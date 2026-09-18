@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/turn-exit-epic.sh · e758e4d41168 · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/turn-exit-epic.sh · 4cc7582b7f49 · правится надстройкой, не здесь
 # The tiers of the open epic for the turn-exit guard. NOT a guard: it has no `rt-hook:` declaration
 # and hooks into no agent event. The guard sources it right after the root of the tree is known.
 #
@@ -45,6 +45,21 @@ rt_te_owner_word_quoted() {
 # The epic is open: at least one of its tasks is left unfinished.
 rt_te_epic_open() {
     [ -n "$(rt_te_epic_left)" ]
+}
+
+# The epic branch: named by the header line of an epic plan in the plans directory of the tree. It
+# has the shape of a task branch and by the rule carries no task folder, so the tier of the taken
+# task would read every turn on it as work taken and not begun. The plan is written by the command
+# that creates the epic and outlives the merge; the directory is named by the settings, `docs/plans`
+# by default. Expects `$root` and `$branch` to be set. FAIL-OPEN: no directory, no plan — not an
+# epic branch.
+rt_te_epic_branch() {
+    [ -n "${root:-}" ] && [ -n "${branch:-}" ] || return 1
+    local plans
+    plans="$(jq -r ".plansDir // empty" "$root/.claude/rt-kit/checks.json" 2>/dev/null)"
+    [ -n "$plans" ] || plans="docs/plans"
+    [ -d "$root/$plans" ] || return 1
+    grep -lE "^\\*\\*[^|]*\`$branch\`" "$root/$plans"/*.md 2>/dev/null | grep -q .
 }
 
 # The refusal of a stop under an open epic. The kind names what the turn ended with.
