@@ -59,6 +59,10 @@ own turn.
 - **A mention of the command name inside a string does not count as a command.** The sign allows a
   directory before the name and allows no crossing over a space: a part of a path stays inside one
   word.
+- **A runner standing before the call is the same call.** `timeout`, `nohup`, `env` and their kin
+  take a command as their argument, and a sign that looks only at the start of the line does not see
+  it: one push with `timeout` before it went past the whole gate set. The list of runners is closed
+  — any word before the call would count a printed line as a call.
 - **The draft is not lifted from a request whose author is also its reviewer.** This is the last
   line at which the miss is still fixable by reopening: after the draft is lifted the request is
   merged, and a merged one cannot be reopened.

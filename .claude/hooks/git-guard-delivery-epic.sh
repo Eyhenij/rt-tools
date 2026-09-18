@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/git-guard-delivery-epic.sh · f25db82e2729 · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/git-guard-delivery-epic.sh · 2af3525c7bf0 · правится надстройкой, не здесь
 # Delivery conditions about the epic of a task. NOT a guard: it has no `rt-hook:` declaration and
 # it hooks into no agent event. The delivery guard sources it — the same way it sources the task
 # folder conditions and the signature.
@@ -11,6 +11,13 @@
 #
 # WHAT IS HERE. Two calls, both called from the delivery guard, where `fault`, `main_branch` and
 # the profile calls are already declared. The helper reads neither the input nor the settings.
+#
+# The assignment of an epic to this working copy is read next to this: it judges the same subject
+# one step earlier — whether this copy leads the epic at all — so its helper is sourced here. The
+# guard calls it in the branch block before the base: a fresh base does not cure a branch of
+# someone else's epic, and a refusal about the base would send the executor to fix what is in order.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/git-guard-tree-assignment.sh" ] && . "$rt_hooks_dir/git-guard-tree-assignment.sh" 2>/dev/null
 
 # The branch of an epic by its number: the same form as a task branch — the profile pulls the
 # number out of a name, and the epic branch is the one whose number is the epic's.
