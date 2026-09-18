@@ -16,12 +16,13 @@
         <admin-header [items]="sections()" [user]="user()" (signOut)="signOut()" />
     </ng-container>
 
+    <!--
+        Экран того, кому не открыт ни один раздел, стоит здесь не состоянием зоны, а своим
+        адресом: состояние, видимое только как «в зону ничего не нарисовали», не переживает
+        перезагрузку и не достаётся пришедшему прямой ссылкой в закрытый раздел.
+    -->
     <ng-container *rtContainerContent>
-        @if (noSections()) {
-            <rt-empty-state qa-dataid="container-no-sections" icon="ico-warning" [title]="noSectionsTitle" [description]="noSectionsFrom" />
-        } @else {
-            <router-outlet />
-        }
+        <router-outlet />
     </ng-container>
 
     <ng-container *rtContainerRightSidenav>

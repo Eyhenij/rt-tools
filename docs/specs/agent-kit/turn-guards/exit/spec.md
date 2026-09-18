@@ -1,6 +1,6 @@
 # The guard of the exits of a turn
 
-**Status:** in force · **Revision:** 2026-08-25 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-09-17 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`
 **Procedures:** none
@@ -29,6 +29,10 @@ done".
   runs.
 - **A tier** — a separate check of the guard naming the kind of the stop by name. The tiers are
   derived from the general sign and are needed so that the refusal is understandable.
+- **A service message** — a record entry under the role of the owner that the owner did not write:
+  the load of a rule, the summary of a compaction, the feedback of a guard of the stop.
+- **An open epic** — an epic with at least one task left unfinished, as the table of the epic
+  prints them. An epic that cannot be read is not open.
 
 ### What it is called in the interface
 
@@ -57,6 +61,27 @@ not by a person.
   owner, a refusal of a guard, a written handover and a word of the owner about a stop.
 - **The parts of a compound command are judged one by one.** A reading joined with an edit stays
   work.
+- **A service message neither starts a turn nor is a word of the owner.** The turn is counted from
+  the last remark the owner wrote; the word «стоп» in the text of a loaded rule releases nothing.
+- **A refusal of a guard is an exit only as the last action of the turn.** A refusal in the middle
+  of the turn was answered by the work that followed it, and the turn is judged by how it ended.
+- **A refusal of the closing tool is not an exit.** The refused call was a stop, not work: the guard
+  leaves that refusal out of the release sign, and the turn is judged by what stood before it.
+- **A question at the head of an empty turn in a running stage is a stop.** The parts of the stage
+  that do not depend on the answer go first, and the question by the tool after them.
+- **Under an open epic a turn that ended with work does not end.** The work stands where it stood;
+  the refusal names the unfinished tasks of the epic and the next step. Under a closed epic and
+  outside an epic the turn is released as before.
+- **Under an open epic a second pass over the turn is judged again.** The first refusal named the
+  next step, and a turn ending again without a lawful exit is the same stop.
+- **A handover written by hand releases a turn only outside an open epic.** On compaction the
+  handover is written by the hook, not by a command of the turn; the refusal of the window guard
+  releases as any refusal.
+- **The epic is read once per turn and only on the way to a refusal.** The reading goes to the
+  hosting by the same command that prints the table of the epic to the owner.
+- **The owner's standing word quoted in the line «Waiting for the owner» releases the turn.** The
+  guard reads their word, not a retelling: a line without a quote releases nothing, and the quote
+  holds until the owner rewrites the line.
 
 ## What is out of scope
 
@@ -107,6 +132,10 @@ Not applicable: the guard judges one turn of one session.
   conversation.
 - **A general sign instead of a row of tiers.** Nine incident analyses over a day described nine
   kinds of stopping; a tier for every kind is a race without end.
+- **An open epic closes the two exits the guard used to leave open.** A turn that ended with work
+  and a second pass over the turn released the executor three times in one day under the owner's
+  standing word not to stop until the epic is closed. The tiers lie in a file of their own next to
+  the guard: the guard reached the length limit.
 
 ## Open questions
 
@@ -118,3 +147,7 @@ Not applicable: the guard judges one turn of one session.
 
 - 2026-08-25 — the subdomain was split off from the domain "The guards of the end of a turn":
   forty-two scenarios of sixty-three were about one guard.
+- 2026-09-17 — the open epic: a turn with work and a second pass are judged while the epic has an
+  unfinished task; a service message starts no turn; a refusal is an exit only as the last action;
+  a question without work in a running stage and a handover by hand are refused; the owner's word
+  quoted in the waiting line of the progress releases the turn.

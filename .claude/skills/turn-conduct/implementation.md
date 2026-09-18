@@ -13,6 +13,7 @@ named there too.
 ## Where it lives
 
 - **the turn exit guards** — `.claude/hooks/` — the exit guard, the waiting guard, the conversation guard, the incident guard, the window guard
+- **the tiers of the open epic** — `.claude/hooks/turn-exit-epic.sh` — sourced by the exit guard; the unfinished tasks are read by `tools/epic-table.mjs --unfinished` once per turn, on the way to a refusal
 
 ## Where the articles are carried out
 
@@ -41,6 +42,10 @@ divergence.
 - **Turn exits are watched by a guard, not by the executor's memory.** — `.claude/hooks/turn-exit-guard.sh:verdict` — a turn without an edit and without a command that changes the tree is returned to the executor
 - **The end of an epic is a stop, and it is the one lawful waiting for a word.** — `.claude/hooks/epic-stop-guard.sh:rt_epic_over` — taking new work after the end of an epic is refused, and the two guards of the turn end let the stop through by the same reading
 - **The word about a stop the guard reads from the owner, not from the executor.** — `.claude/hooks/turn-exit-verdict.sh:told_stop` — the owner remark is judged, not the reply text
+- **Until the epic is closed a turn ends only by one of the four exits.** — `.claude/hooks/turn-exit-epic.sh:rt_te_epic_deny` — a turn with work and a second pass are returned while the epic table names an unfinished task. Scenarios: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
+- **The owner's standing word about a stop is quoted in the progress, in « », in the line «Waiting for the owner».** — `.claude/hooks/turn-exit-epic.sh:rt_te_owner_word_quoted` — the waiting line is read right after the state. « » of three characters and more releases the turn.
+- **The session is ended by the owner and by nobody else.** — `.claude/hooks/end-conversation-guard.sh:tool` — the closing tool is refused always; the scenarios are `projects/agent-kit/tests/end-conversation-guard.test.sh`
+- **A refusal of a guard ends the turn only as its last action, and only a refusal of work.** — `.claude/hooks/turn-exit-verdict.sh:last_out` — the last tool result is matched against the refusal samples; the refusal of the closing guard is left out by its name. Scenario SC-AK-1122.
 - **The phrase "waiting for your word" is a stop declared by the executor, and the guard refuses it by name.** — `.claude/hooks/turn-exit-guard.sh:awaits_word` — the set of phrase samples is named in the parsing of the turn record; the tier stands before the lawful exits
 - **Work without a branch and without a task folder is judged by the same guard by the second sign.** — `.claude/hooks/turn-exit-guard.sh:state` — the branch, the task folder and the state line are taken while they exist; an empty state does not end the turn but moves the judgement to the sign of work
 - **A taken task is not yet begun work, and the turn does not end on it.** — `.claude/hooks/turn-exit-guard.sh:task_key` — the task key is taken from `.claude/rt-kit/checks.json`, the branch is matched against the sample `<KEY>-<number>-`, and the sign is the absence of the directory `docs/tasks/<branch>`

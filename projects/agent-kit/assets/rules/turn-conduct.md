@@ -30,21 +30,18 @@ demand, not with the rule.
 A turn ends in four ways and no others: a question to the owner the rules do not answer **and no
 task in the work queue that can be taken without waiting for the answer**; a guard's refusal; a
 filled window where there is no compaction; work handed in, with the next begun. What confirms
-each, the turn map lists where the tree laid it out.
+each, the turn map lists where the tree laid it out. While an epic has an unfinished task, a turn
+ends by these four alone.
 
-The queue is asked by a command in the same turn, and its output stands in the turn itself: "there
-are no tasks" is a statement about the tree, and the executor's memory does not confirm it. A turn
-where the owner's answer holds one piece of work while an independent one lies next to it ends
-with the work taken, and the question goes in a line beside it. The price is measured not in turns
-but in days: a session stood a night and a morning naming the owner one and the same step while
-three independent tasks lay untaken.
+The queue is asked by a command in the same turn: "there are no tasks" is a statement about the
+tree, and the executor's memory does not confirm it. A turn where the owner's answer holds one
+piece of work while an independent one lies next to it ends with the work taken, and the question
+goes in a line beside it.
 
 Everything else is the turn going on, not its end. A milestone does not end a turn: not a commit,
 not a read agreement, not the boundary "read — now editing", not a green check.
-A transition from state to state — least of all: the mandatory action is done, and the next is
-done in the same turn; a state boundary looks like a finished piece better than any milestone, and
-the report lands exactly
-where the next action should have stood.
+A transition from state to state — least of all: the next mandatory action is done in the same
+turn, and a state boundary looks like a finished piece better than any milestone.
 
 Four ways to end a turn look like work and are not: a summary of someone else's step, a menu under
 an assigned order, a declaration of intent, and a command named but not run.
@@ -154,16 +151,13 @@ flowchart TD
 - **A taken task is not yet begun work, and the turn does not end on it.** Creating the branch,
   moving the column and naming the number are preparation: the mandatory action of `задача-взята` is
   not done by a single line, yet the turn holds much work, and the sign "was there work" releases
-  it. The guard has a tier for this; a branch without a task number is not under it, an assembled
-  folder template lifts it.
+  it.
 - **Exploration does not end a turn, however much of it there is.** Switching branch, pulling,
   browsing history and reading PRs are preparation, not work; a turn of these alone leaves the work
-  where it stood. It looks like work better than anything else: commands, exact numbers, checkable
-  answers. Parts of a compound command are judged one by one: a read joined to an edit remains work.
+  where it stood. Parts of a compound command are judged one by one: a read joined to an edit
+  remains work.
 - **A reply to the owner is not an action and does not stand last in a turn.** The order inside a
-  turn is one: work, the first step of the next, then text. The reverse — work, report, end — stands
-  behind every analysed stop: a report is a form of completeness, and an appended summary reads as
-  the turn's end the more convincingly the more was done. Saying what was done is always allowed;
+  turn is one: work, the first step of the next, then text. Saying what was done is always allowed;
   its place is after the next action, not instead.
 - **The last action of a turn is only ever work.** One sign for every kind of stop: a file edit or a
   changing command — last among what the turn did. The guard's tiers — exploration, waiting, handing
@@ -190,6 +184,18 @@ flowchart TD
 
 - **The word about a stop the guard reads from the owner, not from the executor.** Otherwise the
   stop is declared by whoever finds it convenient, and the ban holds until the first inconvenience.
+- **Until the epic is closed a turn ends only by one of the four exits.** A turn that ended with
+  work is a stop all the same, and so is a second pass over the same turn: the exit guard judges
+  both by the epic and returns the turn with the next step named. The end of the epic is the fifth.
+- **The owner's standing word about a stop is quoted in the progress, in « », in the line «Waiting
+  for the owner».** The guard reads their word, not a retelling: a line without a quote releases
+  nothing, and a quote holds until the owner cancels it. A word said in this turn releases by itself.
+- **The session is ended by the owner and by nobody else.** The tool that closes the conversation is
+  refused by a guard always, with no lawful form of bypass: an assignment stands until the owner
+  cancels it, and a session that must close is closed by them.
+- **A refusal of a guard ends the turn only as its last action, and only a refusal of work.** A
+  refusal answered by the next call is the middle of the turn. A refused stop — the closing tool —
+  is no exit: the refused call was itself the stop, and the exit guard leaves it out.
 - **The phrase "waiting for your word" is a stop declared by the executor, and the guard refuses it
   by name.** Without the owner's word about a stop in the turn and without a question put to them by
   the tool, waiting for their word is a report, not work; the instruction holds until they cancel
@@ -197,8 +203,7 @@ flowchart TD
 - **A statement about the tree's state is watched by the statement guard, not by the executor's
   memory.** Everything the reply says about the tree carries a command and its output; said without
   one, it is no statement — not "checked", not "cleared", not "done". The guard reads the turn's
-  text to the owner and looks for a command of the same turn; each word has its own kind of command,
-  since a general sign "there was a command" would confirm one thing by another. The previous turn
+  text to the owner and looks for a command of the same turn; each word has its own kind of command. The previous turn
   does not count: the tree's state changes, and yesterday's output says nothing of today's.
 - **The statement guard waits for the reply text rather than judging the record as it found it.**
   The text lands in the turn record no earlier than the host calls the hook. Not having waited, the
@@ -230,10 +235,7 @@ flowchart TD
   notification is for where every event is acted on; where the outcome matters — one wait.
 - **A guard's refusal ends the turn.** No other road to the refused edit is sought: not a shell
   command, not a neighbouring tool, not an edit of the guard itself. The edit is done once the
-  refusal's condition is met, or not at all — then the owner is told the refusal, not a result. A
-  bypass costs more than a refusal: a guard refuses one file, a bypassed guard lifts the requirement
-  from the whole tree and says nothing. Not memory alone holds this — the guards also judge the
-  shell command that writes the file.
+  refusal's condition is met, or not at all — then the owner is told the refusal, not a result.
 - **A command refused by a gate is repeated whole, not by its tail.** A gate refuses the call before
   it runs, so none of its links worked — those before the refused one included. A repeated tail does
   work where it was not expected:
@@ -247,10 +249,7 @@ flowchart TD
   "What the rules already say".
 - **The owner's answer is sought in their own messages before the rules.** The law says a question
   with a written answer is not put to the owner, and the most reachable record lies not in the tree
-  but in the conversation: the owner's first message and their answers to past rounds. The
-  conversation guard does not see this: it counts loading a rule and searching it as reading, and a
-  message leaves no trace. A question that answers itself in the owner's words devalues those asked
-  next to it.
+  but in the conversation: the owner's first message and their answers to past rounds.
 - **The size of work is never a reason to cut its boundaries.** The owner who named the result did
   not dispute the size: an offer to drop a part is a request to reassign the goal, served as a
   clarification. What is costly is done at cost, or called costly outright, with the price named.

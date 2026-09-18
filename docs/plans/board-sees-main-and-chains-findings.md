@@ -9,8 +9,9 @@ names of the tree** — true only here, **an override** — here it sounds diffe
 
 ## The closing of the epic on 16 September — the stack merged after a machine change
 
-The review was made after the epic PR #2166 merged. The day's incident record is
-`.claude/rt-kit/postmortems/2026-09-16-red-set-explained-away-into-a-bypass.md`.
+The review was made after the epic PR #2166 merged. The day's incident record is the one of 16
+September about a red set explained away into a bypass; it lies in the incident directory, outside
+history, and is found there by that name.
 
 - **A red check whose cause lies outside the change is still red.** The check asks one question —
   is the set green — and "whose fault" answers another. The same red on the main branch proves the

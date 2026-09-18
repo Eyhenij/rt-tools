@@ -427,3 +427,11 @@ When the guard judges the end of the turn
 Then the turn is refused whether or not there was work in it
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1121 — the tool that closes the conversation is refused
+
+Given the executor calls the tool that ends the conversation, under any name that carries it.
+When the guard of the end of the conversation judges the call.
+Then the call is refused with a reason naming the owner; other tools pass, and without jq the refusal stays.
+
+Covered: `projects/agent-kit/tests/end-conversation-guard.test.sh`.

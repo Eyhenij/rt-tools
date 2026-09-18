@@ -148,8 +148,8 @@ flowchart TD
   execution stopped by an obstacle — then the obstacle is named.
 - **The last run of the main branch is read first thing in a session and after every known
   merge.** A merge reads as the end of the work, and a red main branch after it lives until the
-  owner notices. The start hook prints the line; after a merge the same command is called by hand,
-  and a red or a pushed-out run is fixed before new work is taken.
+  owner notices. The start hook prints it; after a merge the command is called by hand, and a red
+  or pushed-out run is fixed before new work is taken.
 - **A session does not start work by itself.** A start needs the owner's word in the same session:
   the handover, the state from the startup hook and an assigned epic say what to do, not whether to
   work. An empty message, one word or one path order no work.
@@ -176,9 +176,8 @@ flowchart TD
 - **The task folder is taken apart by the last commit before the PR opens, not after approval.** A
   person merges as soon as they see green, and no room is left for a closing commit.
 - **After opening the PR, the executor tells the owner the number, what it waits for and what comes
-  next.** A draft waits for the run, and next it is lifted: a green run says nothing is broken and
-  nothing about the locked merge button. A PR opened ready waits for the owner's hand, and that is
-  said in the same words.
+  next.** A draft waits for the run and is lifted after it; a PR opened ready waits for the owner's
+  hand, and that is said in the same words.
 - **A request to merge never comes before the work is checked.** Where the pipeline wakes for this
   base: folder taken apart and pushed → PR as a draft → run green → draft lifted → the request to
   merge, naming the number. Where it does not wake, the green push gate is the check, and opening
@@ -225,10 +224,12 @@ flowchart TD
   merged.
 - **The epic card moves to in progress by the same turn that takes its first task.** The owner
   follows the epic by one card, and one left where the epic was declared reads as never started.
-  The same move command, on the epic number; the PR of the epic opened — to review the same way.
-  Nothing checks this yet: the rule `git-workflow` names the gap.
+  Nothing checks this yet: the rule `git-workflow` holds the move command and names the gap.
 - **The next task is taken from the epic plan, and the queue list is asked only where there is no
   epic.** By a list of numbers someone else's epic cannot be told from one's own.
+- **Which epic this working copy leads is read from the table of assignments, and the owner writes
+  it.** A card of the queue is not an order; a guard refuses every call that takes work until
+  their word.
 - **An epic is not closed by a sign confirmed by reading alone.** What is checkable by eye is
   called checked only with a command and its output.
 - **The tasks of an epic are created all at once, by the same turn as the epic itself.** Creating

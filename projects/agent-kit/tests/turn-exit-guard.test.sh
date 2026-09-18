@@ -3,74 +3,9 @@
 #
 # Проверяется механика, а не карта дерева: запись хода и папка задачи собираются здесь же.
 # Страж судит пару — объявленное состояние работы и то, что за ход по ней сделано.
-. "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+. "$(dirname "${BASH_SOURCE[0]}")/turn-exit-lib.sh"
 
-echo "страж выходов хода"
-
-TURNS="$(mktemp -d)"
-REPO="$(fixture_repo RT-1-probe)"
-export CLAUDE_PROJECT_DIR="$REPO"
-cleanup() { rm -rf "$TURNS" "$REPO"; }
-trap cleanup EXIT
-
-TASK="$REPO/docs/tasks/RT-1-probe"
-mkdir -p "$TASK"
-
-state_is() {
-    printf '# Ход работы\n\n## Где стоим\n\n- **Состояние:** `%s`\n- **Следующий шаг:** дописать страж\n' \
-        "$1" > "$TASK/progress.md"
-}
-
-transcript() {
-    local path
-    path="$TURNS/turn-$RANDOM.jsonl"
-    : >"$path"
-    for line in "$@"; do
-        printf '%s\n' "$line" >>"$path"
-    done
-    printf '%s' "$path"
-}
-
-say() { jq -c -n --arg t "$1" '{type:"user",message:{content:[{type:"text",text:$t}]}}'; }
-reply() { jq -c -n --arg t "$1" '{type:"assistant",message:{content:[{type:"tool_use",name:"Read",input:{file_path:"a.md"}}]}}'; }
-said() { jq -c -n --arg t "$1" '{type:"assistant",message:{content:[{type:"text",text:$t}]}}'; }
-ran() {
-    jq -c -n --arg c "$1" \
-        '{type:"assistant",message:{content:[{type:"tool_use",name:"Bash",input:{command:$c}}]}}'
-}
-edited() {
-    jq -c -n '{type:"assistant",message:{content:[{type:"tool_use",name:"Edit",input:{file_path:"a.md"}}]}}'
-}
-asked() {
-    jq -c -n '{type:"assistant",message:{content:[{type:"tool_use",name:"AskUserQuestion",input:{questions:[]}}]}}'
-}
-answered() { jq -c -n --arg t "$1" '{type:"user",message:{content:[{type:"tool_result",content:$t}]}}'; }
-
-input_stop() {
-    jq -n --arg p "$1" --arg d "$REPO" --argjson a "${2:-false}" \
-        '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:$a}'
-}
-
-expect_stop() {
-    local label="$1" json="$2" want="$3" out got
-    out="$(printf '%s' "$json" | "$HOOKS/turn-exit-guard.sh" 2>/dev/null)"
-    if [ -z "$out" ]; then
-        got="PASS"
-    else
-        got="$(printf '%s' "$out" | jq -r 'if .decision == "block" then "BLOCK" else "PASS" end' 2>/dev/null)"
-    fi
-    report "$label" "$got" "$want"
-}
-
-# Отказ читается тем, кому он адресован: страж называет первый этап замысла, а не общие слова.
-expect_reason() {
-    local label="$1" json="$2" want="$3" out
-    out="$(printf '%s' "$json" | "$HOOKS/turn-exit-guard.sh" 2>/dev/null | jq -r '.reason // ""' 2>/dev/null)"
-    case "$out" in
-        *"$want"*) report "$label" "есть:$want" "есть:$want" ;;
-        *) report "$label" "нет:$want" "есть:$want" ;;
-    esac
-}
+echo "проверка выхода из хода"
 
 # --- ход, кончившийся отчётом ------------------------------------------------------------
 # Он выглядит работой лучше всякой другой: полон, называет номера и состояния, и пустоты за
@@ -110,8 +45,9 @@ expect_stop "SC-AK-297 — правка файла ход отпускает" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
 expect_stop "SC-AK-298 — команда, меняющая дерево, ход отпускает" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git commit -m x')")")" PASS
-expect_stop "SC-AK-299 — вопрос владельцу ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(asked)")")" PASS
+# Вопрос отпускает ход после работы: вопрос во главе пустого хода в идущем этапе — SC-AK-1116.
+expect_stop "SC-AK-299 — вопрос владельцу после работы ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(asked)")")" PASS
 expect_stop "SC-AK-300 — отказ гарда кончает ход" \
     "$(input_stop "$(transcript "$(say 'правь')" "$(ran 'echo x > a.ts')" "$(answered 'BLOCKED by task-flow: нет замысла')")")" PASS
 expect_stop "SC-AK-301 — написанная передача захода кончает ход" \
@@ -430,4 +366,44 @@ expect_stop "SC-AK-1069 — взятие задачи после отданно�
 expect_stop "SC-AK-1070 — ожидание слова владельца при его указании работать ход не отпускает" \
     "$(input_stop "$(transcript "$(say 'работай без остановок')" "$(edited)" "$(said 'Жду вашего слова.')")")" BLOCK
 
-suite_result "страж выходов хода"
+# --- SC-AK-1113 — служебное сообщение не начинает ход и не есть слово владельца -----------------
+# Загрузка правила ложится в запись сообщением с типом владельца и признаком meta. Прочитанное как
+# начало хода, оно отрезает всё, что владелец сказал до него; прочитанное как его слово — отпускает
+# ход по слову «стоп» из текста правила. Отзыв проверки конца хода приходит тем же типом и без
+# признака: он узнаётся по первой строке.
+state_is 'этап-идёт'
+meta() { jq -c -n --arg t "$1" '{type:"user",isMeta:true,message:{content:[{type:"text",text:$t}]}}'; }
+
+expect_stop "SC-AK-1113 — слово «стоп» в служебном сообщении ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(meta 'Base directory for this skill: x. Слово владельца «стоп» кончает ход.')" "$(reply)" "$(said 'Готово.')")")" BLOCK
+
+expect_stop "SC-AK-1113 — слово владельца до служебного сообщения ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'останови, дальше сам')" "$(meta 'Base directory for this skill: x')" "$(reply)")")" PASS
+
+expect_stop "SC-AK-1113 — отзыв проверки конца хода не читается как слово владельца" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(say 'Stop hook feedback: BLOCKED by turn-exit-guard: остановка, объявленная исполнителем')" "$(reply)" "$(said 'Готово.')")")" BLOCK
+
+# --- SC-AK-1114 — отказ проверки есть выход только последним действием хода ----------------------
+# Отказ в середине хода закрыт работой, которая пошла за ним; ход, продолжившийся после отказа,
+# судится по тому, чем кончился.
+expect_stop "SC-AK-1114 — отказ в середине хода с чтением в конце ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'echo x > a.ts')" "$(answered 'BLOCKED by task-flow: нет замысла')" "$(ran 'git status')" "$(answered 'clean')" "$(said 'Готово.')")")" BLOCK
+
+expect_stop "SC-AK-1114 — отказ последним действием ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git status')" "$(answered 'clean')" "$(ran 'echo x > a.ts')" "$(answered 'Refused by the rules gate: load the rule')")")" PASS
+
+expect_stop "SC-AK-1114 — текст «BLOCKED by» в самой команде отказом не считается" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran "grep -rn 'BLOCKED by' tools/")" "$(answered 'tools/a.sh:3')" "$(said 'Нашёл три места.')")")" BLOCK
+
+# --- SC-AK-1115 — слово владельца об остановке в других формах -------------------------------
+expect_stop "SC-AK-1115 — «не продолжай» отпускает ход" \
+    "$(input_stop "$(transcript "$(say 'не продолжай, дальше скажу сам')" "$(reply)")")" PASS
+
+expect_stop "SC-AK-1115 — «прекрати» отпускает ход" \
+    "$(input_stop "$(transcript "$(say 'прекрати, я посмотрю сам')" "$(reply)")")" PASS
+
+expect_stop "SC-AK-1115 — «не двигайся» отпускает ход" \
+    "$(input_stop "$(transcript "$(say 'не двигайся, жди')" "$(reply)")")" PASS
+
+
+suite_result "проверка выхода из хода"
