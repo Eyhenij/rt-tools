@@ -115,6 +115,10 @@ creates:
   test, not as emptiness: an empty string reads as "there is no label here" and lives until a person
   complains. Such a key arrives from the side of the receiver — a code of a refusal newer than the
   admin application knows.
+- **A word for a person written past the dictionary is refused by a check.** A label written into
+  the markup or into a string of the code lives in one language. Neither the linter nor the build
+  sees it: for them it is an ordinary string. What cannot be taken from the dictionary is named by
+  name, with a reason, and that list only shrinks.
 - **Both sets hold the same keys, and that is proved by a call.** The English set is declared by the
   type of the Russian one whole: a key without a translation does not compile at all. A set walked by
   eye diverges at the first key added, and the divergence shows at the person, not at the check.
@@ -191,8 +195,6 @@ creates:
   labels from the dictionary, and both sets are filled whole. A third language is a separate work.
 - **A third language.** Two sets are kept in the code of the admin application; a third one is a
   separate work and a separate word of the owner.
-- **A check forbidding a string past the dictionary.** Nothing refuses a label written in the markup
-  yet; that is a task of the same epic.
 - **The bell of the unread and the counters.** There is no source of events — this is a new
   opportunity, not a finishing.
 - **Rebuilding the form of the entry.** It needs a finishing: the reactive form and a component of its
@@ -313,3 +315,4 @@ None.
 | 2026-09-18 | By the task RT-2210 the screens of the entry took their labels from the dictionary, and the tab titles of that domain went by keys         |
 | 2026-09-18 | By the task RT-2211 the screens of the sections took their labels from the dictionary: a row holds the key, the word by it is the screen's |
 | 2026-09-18 | By the task RT-2213 the English set was filled whole: both sets hold the same keys, and a key without a translation does not compile       |
+| 2026-09-18 | By the task RT-2214 a check was started: a word for a person written past the dictionary refuses the push and the pipeline                 |

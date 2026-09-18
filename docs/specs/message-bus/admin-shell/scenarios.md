@@ -167,3 +167,10 @@ When they look at the labels of the screen
 Then not one of them is Russian: the name of the section, its hint, the labels of the columns, the
 words of the states, the buttons of the toolbar and the shell come from the dictionary. The names of
 the projects and of the files in the cells are data and are not translated
+
+### SC-MB-416 — a word for a person past the dictionary refuses the check
+
+Given the markup or the code of the admin application
+When a label for a person is written into them instead of a key of the dictionary
+Then the check refuses and names the file and the word. A place that cannot be taken from the
+dictionary is let through only by name, with a reason and the number of a task
