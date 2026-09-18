@@ -1,4 +1,4 @@
-<admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
+<admin-list-page [hint]="hint()" [qaPrefix]="qaPrefix" [title]="title()">
     @if (canManage()) {
         <ng-template adminListToolbarRight>
             <button
@@ -6,8 +6,8 @@
                 icon="plus-circle"
                 type="button"
                 qa-dataid="roles-create"
-                [attr.aria-label]="createLabel"
-                [label]="createLabel"
+                [attr.aria-label]="createLabel()"
+                [label]="createLabel()"
                 (click)="openCreate()"></button>
         </ng-template>
     }
@@ -18,9 +18,9 @@
     <ng-container rtBlock="admin-page">
         <rt-table
             #rowsTable="rtTable"
-            [ariaLabel]="title"
+            [ariaLabel]="title()"
             [attr.qa-dataid]="qaTable()"
-            [columnsConfig]="columns"
+            [columnsConfig]="columns()"
             [dataSource]="rows()"
             [emptyDescription]="emptyDescription()"
             [emptyMessage]="emptyMessage()"
@@ -30,19 +30,19 @@
             [tableId]="tableId"
             (sortChange)="changeSort($event)">
             <ng-container cdkColumnDef="name">
-                <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="name">{{ columns[0].label }}</th>
+                <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="name">{{ columns()[0].label }}</th>
                 <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-name'">{{ row.name }}</td>
             </ng-container>
 
             <ng-container cdkColumnDef="rights">
-                <th *cdkHeaderCellDef cdk-header-cell>{{ columns[1].label }}</th>
+                <th *cdkHeaderCellDef cdk-header-cell>{{ columns()[1].label }}</th>
                 <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-rights'">
                     <span rtElem="cell-wrap">{{ row.rightsLabel }}</span>
                 </td>
             </ng-container>
 
             <ng-container cdkColumnDef="people">
-                <th *cdkHeaderCellDef cdk-header-cell>{{ columns[2].label }}</th>
+                <th *cdkHeaderCellDef cdk-header-cell>{{ columns()[2].label }}</th>
                 <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-people'">{{ row.people }}</td>
             </ng-container>
 
@@ -50,16 +50,20 @@
              вошедшем не прячется ничего. Удаление есть только у роли, которую никто не держит -->
             @if (canManage()) {
                 <ng-template rtTableRowActions let-row [rtTableRowActionsRowType]="rows()">
-                    <rt-menu-item icon="pencil" [label]="editLabel" [attr.qa-dataid]="qaPrefix + '-edit'" (selected)="openEdit(row.key)" />
+                    <rt-menu-item
+                        icon="pencil"
+                        [label]="editLabel()"
+                        [attr.qa-dataid]="qaPrefix + '-edit'"
+                        (selected)="openEdit(row.key)" />
 
                     @if (row.canDelete) {
                         <rt-menu-item
                             danger
                             icon="trash"
-                            [confirmLabel]="deleteLabel"
+                            [confirmLabel]="deleteLabel()"
                             [confirmMessage]="row.deleteQuestion"
-                            [confirmTitle]="deleteTitle"
-                            [label]="deleteLabel"
+                            [confirmTitle]="deleteTitle()"
+                            [label]="deleteLabel()"
                             [attr.qa-dataid]="qaPrefix + '-delete'"
                             (selected)="remove(row)" />
                     }

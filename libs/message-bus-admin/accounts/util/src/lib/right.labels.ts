@@ -6,8 +6,11 @@
  * тех же ключей словаря, что и шапка: написанные здесь заново, они разошлись бы с ней молча.
  *
  * Порядок групп — порядок разделов в шапке; внутри группы чтение стоит раньше правки.
+ *
+ * Словарь приходит доводом: функции чистые и каркаса не знают, а взятый ими текст иначе приходил
+ * бы на языке той минуты, когда файл загрузился.
  */
-import { adminLabel, TAdminLabelKey } from '@rt/message-bus-admin/common/core/util';
+import { TAdminLabelKey, TAdminText } from '@rt/message-bus-admin/common/core/util';
 import { RIGHTS, TRight } from '@rt/message-bus-common';
 
 /** Группа прав одного раздела: подпись раздела и его права по порядку. */
@@ -43,24 +46,24 @@ const ACTION_LABEL_KEY: Readonly<Record<string, TAdminLabelKey>> = {
 };
 
 /** Подпись раздела по имени права. */
-function sectionOf(right: TRight): string {
+function sectionOf(right: TRight, text: TAdminText): string {
     const [resource]: string[] = right.split(':');
 
-    return adminLabel(SECTION_LABEL_KEY[resource] ?? 'sectionRoles');
+    return text(SECTION_LABEL_KEY[resource] ?? 'sectionRoles');
 }
 
 /** Слово действия по имени права. */
-function actionOf(right: TRight): string {
+function actionOf(right: TRight, text: TAdminText): string {
     const [, action]: string[] = right.split(':');
 
-    return adminLabel(ACTION_LABEL_KEY[action] ?? 'rightRead');
+    return text(ACTION_LABEL_KEY[action] ?? 'rightRead');
 }
 
 /** Право с подписями: раздел и действие. */
-export function rightOption(right: TRight): IRightOption {
-    const action: string = actionOf(right);
+export function rightOption(right: TRight, text: TAdminText): IRightOption {
+    const action: string = actionOf(right, text);
 
-    return { right, action, label: `${sectionOf(right)} — ${action}` };
+    return { right, action, label: `${sectionOf(right, text)} — ${action}` };
 }
 
 /**
@@ -69,12 +72,12 @@ export function rightOption(right: TRight): IRightOption {
  * Считается от закрытого набора, а не перечислено здесь: право, появившееся в наборе, встаёт в
  * панель само, а перечисленное здесь заново отстало бы от набора молча.
  */
-export function rightGroups(): readonly IRightGroup[] {
+export function rightGroups(text: TAdminText): readonly IRightGroup[] {
     const groups: IRightGroup[] = [];
 
     RIGHTS.forEach((right: TRight): void => {
-        const section: string = sectionOf(right);
-        const option: IRightOption = rightOption(right);
+        const section: string = sectionOf(right, text);
+        const option: IRightOption = rightOption(right, text);
         const group: IRightGroup | undefined = groups.find((one: IRightGroup): boolean => one.section === section);
 
         if (group) {
@@ -88,6 +91,6 @@ export function rightGroups(): readonly IRightGroup[] {
 }
 
 /** Права словами через запятую. Пусто — слово об этом, а не пустая строка. */
-export function rightsLabel(rights: readonly TRight[]): string {
-    return rights.length === 0 ? adminLabel('roleRightsNone') : rights.map((right: TRight): string => rightOption(right).label).join(', ');
+export function rightsLabel(rights: readonly TRight[], text: TAdminText): string {
+    return rights.length === 0 ? text('roleRightsNone') : rights.map((right: TRight): string => rightOption(right, text).label).join(', ');
 }

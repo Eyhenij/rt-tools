@@ -7,7 +7,6 @@
  * Время приезжает строкой и становится временем здесь: дальше по экрану ходит уже `Date`, и
  * разбор строки не повторяется в каждой ячейке таблицы.
  */
-import { cargoStateLabel } from '@rt/message-bus-admin/common/core/util';
 import { cargoStateOf, ECargoState, ITreeChoice } from '@rt/message-bus-common';
 import { BaseMapper } from '@rt-tools/utils';
 
@@ -31,7 +30,6 @@ export class ProposalShortMapper extends BaseMapper<IProposal.Short.State> {
             resource: this.typeCast.getAsString(data.resource),
             address: this.typeCast.getAsString(data.address),
             state: cargoState,
-            stateLabel: cargoStateLabel(cargoState),
             releaseVersion: this.typeCast.getAsString(data.releaseVersion),
             quarantineNote: this.typeCast.getAsString(data.quarantineNote),
             closedByPublisher: this.typeCast.getAsBoolean(data.closedByPublisher),

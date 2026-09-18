@@ -1,41 +1,32 @@
 /**
- * Решения раздела приглашений, вынесенные из экрана: подпись состояния и доступность отзыва.
+ * Решения раздела приглашений, вынесенные из экрана: ключ состояния и доступность отзыва.
  *
- * Чистые функции без каркаса: их зовут маппер и спека, а проверяются они вызовом — без
+ * Чистые функции без каркаса: их зовут экран, маппер и спека, а проверяются они вызовом — без
  * `TestBed` и без подмены зависимостей.
  */
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { TAdminLabelKey } from '@rt/message-bus-admin/common/core/util';
 import { ETreeInviteView } from '@rt/message-bus-common';
 
 import { IInvite } from './invite.model';
 
 /**
- * Состояние приглашения по-русски.
+ * Каким ключом словаря названо состояние приглашения.
  *
  * Набор закрыт, и ветка на каждое его значение стоит здесь, а не в шаблоне: состояние приезжает
- * машинной строкой, и показанное как есть человек читает по-английски.
+ * машинной строкой, и показанное как есть человек читает по-английски. Отдаётся ключ, а не текст:
+ * текст, взятый здесь, приходит на языке той минуты и до перезагрузки остаётся прежним.
  */
-export function inviteStateLabel(state: ETreeInviteView): string {
+export function inviteStateKey(state: ETreeInviteView): TAdminLabelKey {
     switch (state) {
         case ETreeInviteView.Redeemed:
-            return adminLabel('inviteStateRedeemed');
+            return 'inviteStateRedeemed';
         case ETreeInviteView.Expired:
-            return adminLabel('inviteStateExpired');
+            return 'inviteStateExpired';
         case ETreeInviteView.Revoked:
-            return adminLabel('inviteStateRevoked');
+            return 'inviteStateRevoked';
         default:
-            return adminLabel('inviteStateWaiting');
+            return 'inviteStateWaiting';
     }
-}
-
-/**
- * Вопрос перед отзывом.
- *
- * Называет последствие, а не спрашивает «вы уверены»: отозванное приглашение не возвращается, и
- * дереву понадобится новое — это и решает человек, отвечая.
- */
-export function inviteRevokeQuestion(name: string): string {
-    return adminLabel('inviteRevokeQuestion', { name });
 }
 
 /**

@@ -9,7 +9,7 @@ import {
     CdkRow,
     CdkRowDef,
 } from '@angular/cdk/table';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import {
     AdminListPageComponent,
@@ -19,7 +19,13 @@ import {
     AdminTreeFilterComponent,
     AdminVersionFilterComponent,
 } from '@rt/message-bus-admin/common/core/ui';
-import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
+import {
+    adminColumns,
+    adminStatedRows,
+    AdminTextService,
+    IAdminStateWord,
+    provideAdminListHost,
+} from '@rt/message-bus-admin/common/core/util';
 import { PostmortemsStore } from '@rt/message-bus-admin/postmortems/data-access';
 import { IPostmortem, POSTMORTEMS_COLUMNS, POSTMORTEMS_TABLE_ID } from '@rt/message-bus-admin/postmortems/util';
 import { IRtTable, RtTableComponent, RtTableRowDirective, RtTableSortHeaderComponent } from '@rt-tools/ui-kit-v2';
@@ -80,17 +86,24 @@ const BEM_BLOCK: string = 'admin-postmortems-list';
     host: { class: BEM_BLOCK },
 })
 export class AdminPostmortemsListComponent extends AdminListScreenBase<IPostmortem.Short.State, IPostmortem.Short.Api> {
-    protected readonly title: string = adminLabel('sectionPostmortems');
-    protected readonly hint: string = adminLabel('hintPostmortems');
-    protected readonly columns: readonly IRtTable.ColumnConfig[] = POSTMORTEMS_COLUMNS;
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    protected readonly title: Signal<string> = computed((): string => this.#text.text('sectionPostmortems'));
+    protected readonly hint: Signal<string> = computed((): string => this.#text.text('hintPostmortems'));
+    protected readonly columns: Signal<readonly IRtTable.ColumnConfig[]> = adminColumns(POSTMORTEMS_COLUMNS);
     protected readonly tableId: string = POSTMORTEMS_TABLE_ID;
     protected readonly qaPrefix: string = 'postmortems';
     /** Приписка к состоянию: запись, закрытую не своим деревом, отправитель иначе читает как свою отметку. */
-    protected readonly closedByPublisherLabel: string = adminLabel('closedByPublisher');
+    protected readonly closedByPublisherLabel: Signal<string> = computed((): string => this.#text.text('closedByPublisher'));
     protected override readonly cargoKind: ECargoKind = ECargoKind.Postmortem;
 
     protected readonly store: PostmortemsStore = inject(PostmortemsStore);
     protected readonly sortable: readonly string[] = POSTMORTEM_SORTABLE;
+
+    /** Строки со словом состояния: маппер кладёт само состояние, а слово о нём берётся из словаря. */
+    protected override readonly rows: Signal<readonly (IPostmortem.Short.State & IAdminStateWord)[]> = adminStatedRows(
+        computed((): readonly IPostmortem.Short.State[] => this.store.rows())
+    );
 
     constructor() {
         super();

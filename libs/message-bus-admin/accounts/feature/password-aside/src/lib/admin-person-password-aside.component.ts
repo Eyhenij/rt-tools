@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PeopleStore } from '@rt/message-bus-admin/accounts/data-access';
-import { adminLabel, spokenFaultText } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService, spokenFaultText } from '@rt/message-bus-admin/common/core/util';
 import {
     RtAsideComponent,
     RtAsideFooterComponent,
@@ -52,13 +52,15 @@ const BEM_BLOCK: string = 'admin-person-password-aside';
     host: { class: BEM_BLOCK },
 })
 export class AdminPersonPasswordAsideComponent extends RtRouteAsideComponent<null> {
+    readonly #text: AdminTextService = inject(AdminTextService);
+
     readonly #store: PeopleStore = inject(PeopleStore);
 
-    protected readonly title: string = adminLabel('personPasswordTitle');
-    protected readonly passwordLabel: string = adminLabel('personPasswordField');
-    protected readonly passwordHint: string = adminLabel('personPasswordHint');
-    protected readonly submitLabel: string = adminLabel('personPasswordSubmit');
-    protected readonly closeLabel: string = adminLabel('panelClose');
+    protected readonly title: Signal<string> = computed((): string => this.#text.text('personPasswordTitle'));
+    protected readonly passwordLabel: Signal<string> = computed((): string => this.#text.text('personPasswordField'));
+    protected readonly passwordHint: Signal<string> = computed((): string => this.#text.text('personPasswordHint'));
+    protected readonly submitLabel: Signal<string> = computed((): string => this.#text.text('personPasswordSubmit'));
+    protected readonly closeLabel: Signal<string> = computed((): string => this.#text.text('panelClose'));
 
     /** Панель ничего не читает по адресу: ей нужно одно имя, и оно уже в адресе. */
     protected override readonly idOnly: boolean = true;
@@ -67,7 +69,7 @@ export class AdminPersonPasswordAsideComponent extends RtRouteAsideComponent<nul
     protected readonly forWhom: Signal<string> = computed((): string => {
         const name: string | null = this.entityId();
 
-        return name === null ? '' : adminLabel('personPasswordFor', { name });
+        return name === null ? '' : this.#text.text('personPasswordFor', { name });
     });
 
     protected readonly password: FormControl<string> = new FormControl<string>('', {
@@ -86,8 +88,8 @@ export class AdminPersonPasswordAsideComponent extends RtRouteAsideComponent<nul
         }
 
         this.runMutation(this.#store.replacePassword(name, this.password.getRawValue()), {
-            successText: adminLabel('personPasswordDone', { name }),
-            errorText: (error: unknown): string => spokenFaultText(error, adminLabel('personPasswordFailed')),
+            successText: this.#text.text('personPasswordDone', { name }),
+            errorText: (error: unknown): string => spokenFaultText(error, this.#text.text('personPasswordFailed')),
             closeOnSuccess: true,
         });
     }

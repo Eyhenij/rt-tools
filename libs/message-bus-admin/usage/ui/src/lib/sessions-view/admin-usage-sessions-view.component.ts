@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal } from '@angular/core';
+import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import { IUsage } from '@rt/message-bus-admin/usage/util';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtAsideSectionComponent, RtDetailListComponent, RtDetailRowComponent } from '@rt-tools/ui-kit-v2';
@@ -31,10 +31,12 @@ const BEM_BLOCK: string = 'admin-panel';
     host: { class: BEM_BLOCK },
 })
 export class AdminUsageSessionsViewComponent {
-    protected readonly heading: string = adminLabel('detailsUsageSessions');
-    protected readonly dayLabel: string = adminLabel('columnDay');
-    protected readonly countLabel: string = adminLabel('columnCount');
-    protected readonly missing: string = adminLabel('detailsSessionsMissing');
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    protected readonly heading: Signal<string> = computed((): string => this.#text.text('detailsUsageSessions'));
+    protected readonly dayLabel: Signal<string> = computed((): string => this.#text.text('columnDay'));
+    protected readonly countLabel: Signal<string> = computed((): string => this.#text.text('columnCount'));
+    protected readonly missing: Signal<string> = computed((): string => this.#text.text('detailsSessionsMissing'));
 
     public readonly rows: InputSignal<readonly IUsage.Session.State[]> = input.required<readonly IUsage.Session.State[]>();
     public readonly reading: InputSignal<boolean> = input<boolean>(false);

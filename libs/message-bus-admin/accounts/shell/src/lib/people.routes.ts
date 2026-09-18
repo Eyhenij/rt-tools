@@ -1,6 +1,6 @@
 import { Route } from '@angular/router';
 import { PERSON_ACCESS_ROUTE, PERSON_CREATE_ROUTE, PERSON_PASSWORD_ROUTE } from '@rt/message-bus-admin/accounts/util';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { adminTabTitle } from '@rt/message-bus-admin/common/core/util';
 
 /** Адрес раздела. Назван здесь и читается пунктом меню: два объявления разошлись бы молча. */
 export const PEOPLE_ROUTE: string = 'people';
@@ -19,7 +19,7 @@ export const PEOPLE_ROUTE: string = 'people';
 export const peopleRoutes: Route[] = [
     {
         path: PEOPLE_ROUTE,
-        title: adminLabel('sectionPeople'),
+        title: adminTabTitle('sectionPeople'),
         loadComponent: async () => (await import('@rt/message-bus-admin/accounts/feature/list')).AdminPeopleListComponent,
     },
     {

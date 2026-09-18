@@ -1,11 +1,11 @@
 <ng-container rtContainerRightSidenavPanel #panel="rtContainerRightPanel" (cancelled)="onCancel()" (closed)="onClosed()" />
 
-<rt-aside qa-dataid="proposal-details-panel" [ariaLabel]="title">
+<rt-aside qa-dataid="proposal-details-panel" [ariaLabel]="title()">
     <rt-aside-header
         qa-dataid="proposal-details-header"
         [loading]="reading()"
         [overline]="overline()"
-        [title]="title"
+        [title]="title()"
         (dismiss)="onClose()" />
 
     @if (record() !== null || reading()) {
@@ -21,8 +21,8 @@
             qa-dataid="proposal-details-close"
             type="button"
             appearance="text"
-            [attr.aria-label]="closeLabel"
-            [label]="closeLabel"
+            [attr.aria-label]="closeLabel()"
+            [label]="closeLabel()"
             (click)="onClose()"></button>
     </rt-aside-footer>
 </rt-aside>

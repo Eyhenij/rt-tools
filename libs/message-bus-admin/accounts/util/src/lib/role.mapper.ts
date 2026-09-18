@@ -7,8 +7,7 @@
 import { IPermissionEdit, isRight, TRight } from '@rt/message-bus-common';
 import { BaseMapper } from '@rt-tools/utils';
 
-import { rightsLabel } from './right.labels';
-import { accessWordsOf, roleCanDelete, roleDeleteQuestion } from './role.logic';
+import { accessWordsOf, roleCanDelete } from './role.logic';
 import { IPersonAccess, IRole } from './role.model';
 
 /** Права из ответа: строки не из набора отбрасываются, как и у приёмника. */
@@ -28,9 +27,7 @@ export class RoleShortMapper extends BaseMapper<IRole.Short.State> {
             rights,
             people,
             key: this.typeCast.getAsString(data.key),
-            rightsLabel: rightsLabel(rights),
             canDelete: roleCanDelete(people),
-            deleteQuestion: roleDeleteQuestion(name),
         };
     }
 }

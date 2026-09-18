@@ -1,13 +1,13 @@
 /**
  * Перевод человека из ответа приёмника в то, чем пользуется экран.
  *
- * Время приезжает строкой и становится временем здесь, а не в каждой перерисовке. Здесь же
- * считаются подписи роли, состояния и пустого входа: посчитанные в шаблоне, они пересчитывались бы
- * на каждой проверке.
+ * Время приезжает строкой и становится временем здесь, а не в каждой перерисовке. Состояние и
+ * пустой вход приходят ключами словаря: слово по ним берёт экран, и выбор языка меняет его без
+ * перезагрузки страницы.
  */
 import { BaseMapper } from '@rt-tools/utils';
 
-import { personDisableQuestion, personIsLive, personLastLoginLabel, personRoleLabel, personStateLabel } from './person.logic';
+import { personIsLive, personLastLoginKey, personStateKey } from './person.logic';
 import { IPerson } from './person.model';
 
 /** Строка списка людей. */
@@ -25,11 +25,10 @@ export class PersonShortMapper extends BaseMapper<IPerson.Short.State> {
         return {
             name,
             lastLoginAt,
-            roleLabel: personRoleLabel(role),
-            stateLabel: personStateLabel(disabledAt),
-            lastLoginLabel: personLastLoginLabel(lastLoginAt),
+            role,
+            stateKey: personStateKey(disabledAt),
+            lastLoginKey: personLastLoginKey(lastLoginAt),
             isLive: personIsLive(disabledAt),
-            disableQuestion: personDisableQuestion(name),
         };
     }
 }

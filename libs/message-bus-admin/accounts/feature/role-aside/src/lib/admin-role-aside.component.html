@@ -8,14 +8,14 @@
     }
 
     <ng-container rtBlock="admin-panel">
-        <rt-field [hint]="nameHint" [label]="nameLabel" [loading]="resolving()">
-            <rt-input qa-dataid="role-name" autocomplete="off" [formControl]="name" [placeholder]="nameLabel" />
+        <rt-field [hint]="nameHint()" [label]="nameLabel()" [loading]="resolving()">
+            <rt-input qa-dataid="role-name" autocomplete="off" [formControl]="name" [placeholder]="nameLabel()" />
         </rt-field>
 
         <!-- Права по разделам: заголовок раздела — слово шапки, под ним чтение и правка. Поле
              берётся по имени права из записи полей, а не вызовом метода из шаблона -->
         <ng-container [formGroup]="rights">
-            @for (group of groups; track group.section) {
+            @for (group of groups(); track group.section) {
                 <rt-aside-section [heading]="group.section">
                     <div rtElem="choices">
                         @for (option of group.rights; track option.right) {
@@ -46,8 +46,8 @@
             qa-dataid="role-close"
             type="button"
             appearance="text"
-            [attr.aria-label]="closeLabel"
-            [label]="closeLabel"
+            [attr.aria-label]="closeLabel()"
+            [label]="closeLabel()"
             (click)="onClose()"></button>
     </rt-aside-footer>
 </rt-aside>

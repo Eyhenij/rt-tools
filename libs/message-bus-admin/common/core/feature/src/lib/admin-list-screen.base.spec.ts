@@ -6,6 +6,7 @@ import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { AdminListStoreBase } from '@rt/message-bus-admin/common/core/data-access';
 import { IPage } from '@rt/message-bus-common';
+import { provideRtStorage, provideRtUtils } from '@rt-tools/core';
 import { EListSortOrder } from '@rt-tools/utils';
 
 import { AdminListScreenBase } from './admin-list-screen.base';
@@ -120,6 +121,10 @@ describe('AdminListScreenBase', () => {
     beforeEach(async () => {
         TestBed.configureTestingModule({
             providers: [
+                // Подписи пустого состояния идут из словаря, а он читает выбранный язык из
+                // браузерного хранилища: без него экран не собирается вовсе.
+                provideRtUtils(),
+                provideRtStorage(),
                 provideHttpClient(),
                 provideHttpClientTesting(),
                 provideRouter([

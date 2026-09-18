@@ -1,29 +1,27 @@
 import { ETreeInviteView } from '@rt/message-bus-common';
 import { describe, expect, it } from 'vitest';
 
-import { inviteCanRevoke, inviteRevokeQuestion, inviteRowHasActions, inviteStateLabel } from './invite.logic';
+import { inviteCanRevoke, inviteRowHasActions, inviteStateKey } from './invite.logic';
 import { IInvite } from './invite.model';
 
 function row(patch: Partial<IInvite.Short.State> = {}): IInvite.Short.State {
     return {
         name: 'Своё дерево',
         state: ETreeInviteView.Waiting,
-        stateLabel: inviteStateLabel(ETreeInviteView.Waiting),
         issuedAt: new Date('2026-08-17T10:00:00.000Z'),
         expiresAt: new Date('2026-08-19T10:00:00.000Z'),
         treeSlug: '',
         canRevoke: true,
-        revokeQuestion: inviteRevokeQuestion('Своё дерево'),
         ...patch,
     };
 }
 
-describe('inviteStateLabel', () => {
-    it('SC-MB-128 — каждое состояние названо по-русски, а не машинной строкой', () => {
-        expect(inviteStateLabel(ETreeInviteView.Waiting)).toBe('Ждёт');
-        expect(inviteStateLabel(ETreeInviteView.Redeemed)).toBe('Погашено');
-        expect(inviteStateLabel(ETreeInviteView.Expired)).toBe('Просрочено');
-        expect(inviteStateLabel(ETreeInviteView.Revoked)).toBe('Отозвано');
+describe('inviteStateKey', () => {
+    it('SC-MB-128 — у каждого состояния свой ключ словаря, а не машинная строка', () => {
+        expect(inviteStateKey(ETreeInviteView.Waiting)).toBe('inviteStateWaiting');
+        expect(inviteStateKey(ETreeInviteView.Redeemed)).toBe('inviteStateRedeemed');
+        expect(inviteStateKey(ETreeInviteView.Expired)).toBe('inviteStateExpired');
+        expect(inviteStateKey(ETreeInviteView.Revoked)).toBe('inviteStateRevoked');
     });
 });
 
@@ -36,15 +34,6 @@ describe('inviteCanRevoke', () => {
         expect(inviteCanRevoke(ETreeInviteView.Redeemed)).toBe(false);
         expect(inviteCanRevoke(ETreeInviteView.Expired)).toBe(false);
         expect(inviteCanRevoke(ETreeInviteView.Revoked)).toBe(false);
-    });
-});
-
-describe('inviteRevokeQuestion', () => {
-    it('SC-MB-120 — вопрос называет дерево и последствие, а не спрашивает «вы уверены»', () => {
-        const question: string = inviteRevokeQuestion('Своё дерево');
-
-        expect(question).toContain('Своё дерево');
-        expect(question).toContain('Вернуть его нельзя');
     });
 });
 

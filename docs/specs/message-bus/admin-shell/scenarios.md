@@ -47,12 +47,12 @@ Given the owner stands at the screen of the entry
 When they switch the theme
 Then the screen of the entry becomes dark, and after the entry the shell stays dark too
 
-### SC-MB-149 — the choice of the language changes the labels of the kit, and only them
+### SC-MB-149 — the choice made at the entry holds after it, and the shape of the dates does not depend on it
 
 Given the owner chose the second language on the screen of the entry
 When they enter and open a list
-Then the labels the kit draws go in the chosen language, and the headings of the sections and the
-shape of the dates stay the former ones
+Then the labels the kit draws and the name of the section go in the chosen language, and the shape
+of the dates stays the former one
 
 ### SC-MB-150 — the choice of the language is in the popup of the profile and outlives a reload
 
