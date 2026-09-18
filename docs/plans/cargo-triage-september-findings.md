@@ -101,3 +101,14 @@ them together with the ones above and says which of them become edits.
 - **The clean-database step is the only red one in six requests.** Five task requests and the request
   of the epic ran the same steps minutes apart; the step refused once and passed on the repeat
   without a single edit. **Address:** this tree — the step waits for an answer to a query.
+- **The table of assignments sets the working copies against each other on every change of an
+  epic.** One table holds a row per copy, and two copies rewrote their own rows the same day: the
+  merge is a conflict over the file, and the host marks the request as conflicting. Both sides are
+  right, and adding them up resolves nothing — the rows are resolved one by one. The tree's own
+  rule warns of exactly this about a list every branch appends to. **Address:** rules layer — a row
+  per copy in a file of its own, or the union of both sides declared for the table.
+- **The table has no shape for work outside an epic.** Its epic cell takes a number or a dash, and
+  a dash means «no work is assigned»: a copy working by the owner's word outside an epic can write
+  neither. The number of the work goes into the cell, and the plan cell says what it really is.
+  **Address:** rules layer — the cell takes a task key with a number and says which of the two it
+  is.
