@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@a
 import { FormControl, FormGroup, FormRecord, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RolesStore } from '@rt/message-bus-admin/accounts/data-access';
 import { IRightGroup, IRole, rightGroups } from '@rt/message-bus-admin/accounts/util';
-import { adminLabel, spokenFaultText } from '@rt/message-bus-admin/common/core/util';
+import { adminFaultText, AdminTextService, IAdminFaultText, TAdminLabelKey } from '@rt/message-bus-admin/common/core/util';
 import { RIGHTS, TRight } from '@rt/message-bus-common';
 import {
     RtAsideComponent,
@@ -16,6 +16,7 @@ import {
     RtInputComponent,
     RtMessageComponent,
     RtRouteAsideComponent,
+    TRtKitLabelParams,
 } from '@rt-tools/ui-kit-v2';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { Observable } from 'rxjs';
@@ -63,19 +64,29 @@ const BEM_BLOCK: string = 'admin-role-aside';
     host: { class: BEM_BLOCK },
 })
 export class AdminRoleAsideComponent extends RtRouteAsideComponent<IRole.Short.State> {
+    readonly #text: AdminTextService = inject(AdminTextService);
+
     readonly #store: RolesStore = inject(RolesStore);
 
-    protected readonly nameLabel: string = adminLabel('roleName');
-    protected readonly nameHint: string = adminLabel('roleNameHint');
-    protected readonly closeLabel: string = adminLabel('panelClose');
-    protected readonly groups: readonly IRightGroup[] = rightGroups();
+    /** Текст отказа: причину называет приёмник кодом, слово рисует словарь на выбранном языке. */
+    protected readonly fault: IAdminFaultText = adminFaultText((): TAdminLabelKey =>
+        this.entityId() === null ? 'roleCreateFailed' : 'roleSaveFailed'
+    );
+
+    protected readonly nameLabel: Signal<string> = computed((): string => this.#text.text('roleName'));
+    protected readonly nameHint: Signal<string> = computed((): string => this.#text.text('roleNameHint'));
+    protected readonly closeLabel: Signal<string> = computed((): string => this.#text.text('panelClose'));
+    /** Права по разделам: подписи собираются из словаря на каждой отрисовке. */
+    protected readonly groups: Signal<readonly IRightGroup[]> = computed((): readonly IRightGroup[] =>
+        rightGroups((key: TAdminLabelKey, params?: TRtKitLabelParams): string => this.#text.text(key, params))
+    );
 
     /** Заголовок и слово кнопки — по режиму: заведение и правка говорят разными словами. */
     protected readonly title: Signal<string> = computed((): string =>
-        this.isCreateMode() ? adminLabel('roleCreateTitle') : adminLabel('roleEditTitle')
+        this.isCreateMode() ? this.#text.text('roleCreateTitle') : this.#text.text('roleEditTitle')
     );
     protected readonly submitLabel: Signal<string> = computed((): string =>
-        this.isCreateMode() ? adminLabel('roleCreateSubmit') : adminLabel('roleSaveSubmit')
+        this.isCreateMode() ? this.#text.text('roleCreateSubmit') : this.#text.text('roleSaveSubmit')
     );
 
     protected readonly name: FormControl<string> = new FormControl<string>('', {
@@ -115,8 +126,8 @@ export class AdminRoleAsideComponent extends RtRouteAsideComponent<IRole.Short.S
             key === null ? this.#store.create({ name, rights }) : this.#store.replace(key, { name, rights });
 
         this.runMutation(saved, {
-            successText: adminLabel(creating ? 'roleCreateDone' : 'roleSaveDone', { name }),
-            errorText: (error: unknown): string => spokenFaultText(error, adminLabel(creating ? 'roleCreateFailed' : 'roleSaveFailed')),
+            successText: this.#text.text(creating ? 'roleCreateDone' : 'roleSaveDone', { name }),
+            errorText: this.fault.take,
             closeOnSuccess: true,
         });
     }

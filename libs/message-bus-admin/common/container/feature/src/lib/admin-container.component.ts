@@ -5,6 +5,7 @@ import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { IAdminSession, SIGN_IN_PATH } from '@rt/message-bus-admin/auth/util';
 import { AdminHeaderComponent } from '@rt/message-bus-admin/common/container/ui';
 import { ADMIN_MENU, IAdminMenuItem } from '@rt/message-bus-admin/common/container/util';
+import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import {
     IRtPageHeader,
     RtContainerComponent,
@@ -51,6 +52,7 @@ const BEM_BLOCK: string = 'admin-container';
 export class AdminContainerComponent {
     readonly #router: Router = inject(Router);
     readonly #store: AuthStore = inject(AuthStore);
+    readonly #text: AdminTextService = inject(AdminTextService);
     readonly #signOutSource: Subject<void> = new Subject<void>();
 
     /**
@@ -60,12 +62,15 @@ export class AdminContainerComponent {
      * приёмника нет разделов, которых можно попросить. Пока ответ о вошедшем не приехал, права
      * неизвестны, а не пусты, и `allows` не скрывает ничего — пустая шапка после сетевого отказа
      * выглядит поломкой и не оставляет выхода.
+     *
+     * Подпись пункта спрашивается у словаря здесь, а не берётся готовой из объявления: объявление
+     * загружается один раз, а язык меняется на ходу — и ряд остался бы на прежнем языке.
      */
     protected readonly sections: Signal<ReadonlyArray<IRtPageHeader.Item>> = computed(() =>
         ADMIN_MENU.filter((item: IAdminMenuItem): boolean => this.#store.allows(item.right)).map((item: IAdminMenuItem) => ({
             id: item.path,
             icon: item.icon,
-            label: item.title,
+            label: this.#text.text(item.title),
             route: item.path,
         }))
     );

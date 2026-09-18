@@ -10,7 +10,7 @@ or the code holds what the spec is silent about.
 - **The section has no filter by tree.** — **Not checked by a machine.** The promise is about an absence: there is no filter either in the markup of the screen or in the request of the store, and there is nothing for a machine to look for. A filter that appears is judged by the review of the change
 - **An empty list names the button an invitation is issued by.** — `libs/message-bus-admin/invites/feature/list/src/lib/admin-invites-list.component.ts:emptyDescription`
 - **The admin application has two edits over the records of the intake — the issuing of an invitation and its revocation.** — `libs/message-bus-admin/invites/util/src/lib/invite.logic.ts:inviteCanRevoke` — the revocation is available to one waiting invitation, and the issuing is given by `libs/message-bus-admin/invites/data-access/src/lib/invites.store.ts:issue`
-- **The revocation asks for agreement and names the consequence.** — `libs/message-bus-admin/invites/util/src/lib/invite.logic.ts:inviteRevokeQuestion`
+- **The revocation asks for agreement and names the consequence.** — `libs/message-bus-admin/invites/feature/list/src/lib/admin-invites-list.component.ts:rows` — the screen puts the question together from the key and the name of the tree
 - **A revocation that succeeded rereads the list whole.** — `libs/message-bus-admin/invites/data-access/src/lib/invites.store.ts:revoke`
 - **About the outcome of the revocation speaks the shared bus of the notifications.** — `libs/message-bus-admin/invites/data-access/src/lib/invites.store.ts:InvitesStore`
 - **A created tree is named in the row by the sign, not by a link.** — `libs/message-bus-admin/invites/util/src/lib/invite.mapper.ts:InviteShortMapper`

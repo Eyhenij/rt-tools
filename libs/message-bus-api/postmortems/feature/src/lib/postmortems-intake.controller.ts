@@ -25,6 +25,7 @@ import {
     cargoFault,
     cargoFaultMessage,
     cargoItemFaultMessage,
+    cargoItemsFaultMessage,
     cargoItemsOf,
     cargoSchemaOf,
     faultyCargoItems,
@@ -76,7 +77,7 @@ export class PostmortemsIntakeController {
         const items: TCargoBody[] | null = cargoItemsOf(cargo);
 
         if (!items) {
-            throw new BadRequestException(`в грузе рода «${CARGO_KIND}» поле items ожидается списком записей`);
+            throw new BadRequestException(cargoItemsFaultMessage(CARGO_KIND));
         }
 
         const faulty: { at: number; fields: string[] }[] = faultyCargoItems(items, POSTMORTEM_ITEM_FIELDS);

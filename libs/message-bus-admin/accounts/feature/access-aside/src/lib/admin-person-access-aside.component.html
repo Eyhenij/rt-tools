@@ -3,15 +3,15 @@
 <rt-aside qa-dataid="person-access-panel" [ariaLabel]="title()">
     <rt-aside-header qa-dataid="person-access-header" [title]="title()" (dismiss)="onClose()" />
 
-    @if (submitError(); as fault) {
-        <rt-message severity="danger" qa-dataid="person-access-fault">{{ fault }}</rt-message>
+    @if (submitError()) {
+        <rt-message severity="danger" qa-dataid="person-access-fault">{{ fault.text() }}</rt-message>
     }
 
     <ng-container rtBlock="admin-panel">
-        <rt-field [hint]="roleHint" [label]="roleLabel" [loading]="resolving()">
+        <rt-field [hint]="roleHint()" [label]="roleLabel()" [loading]="resolving()">
             <rt-select
                 qa-dataid="person-access-role"
-                [ariaLabel]="roleLabel"
+                [ariaLabel]="roleLabel()"
                 [clearable]="false"
                 [formControl]="role"
                 [options]="roleOptions()" />
@@ -20,7 +20,7 @@
         <!-- Слово на право берётся по имени права из записи полей; исход рядом считается от роли
              и слов вместе и меняется с каждым выбором -->
         <ng-container [formGroup]="rightWords">
-            @for (group of groups; track group.section) {
+            @for (group of groups(); track group.section) {
                 <rt-aside-section [heading]="group.section">
                     <div rtElem="choices">
                         @for (option of group.rights; track option.right) {
@@ -32,7 +32,7 @@
                                     [attr.qa-dataid]="'person-access-word-' + option.right"
                                     [clearable]="false"
                                     [formControlName]="option.right"
-                                    [options]="words" />
+                                    [options]="words()" />
                                 <span rtElem="right-outcome" [attr.qa-dataid]="'person-access-outcome-' + option.right">
                                     {{ outcome()[option.right] }}
                                 </span>
@@ -50,8 +50,8 @@
             asidePrimary
             qa-dataid="person-access-submit"
             type="button"
-            [attr.aria-label]="submitLabel"
-            [label]="submitLabel"
+            [attr.aria-label]="submitLabel()"
+            [label]="submitLabel()"
             [loading]="submitting()"
             (click)="submit()"></button>
 
@@ -61,8 +61,8 @@
             qa-dataid="person-access-close"
             type="button"
             appearance="text"
-            [attr.aria-label]="closeLabel"
-            [label]="closeLabel"
+            [attr.aria-label]="closeLabel()"
+            [label]="closeLabel()"
             (click)="onClose()"></button>
     </rt-aside-footer>
 </rt-aside>

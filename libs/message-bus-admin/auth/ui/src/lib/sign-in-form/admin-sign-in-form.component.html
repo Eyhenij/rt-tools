@@ -6,23 +6,18 @@
 
         <!-- Иконка и подсказка внутри поля: подпись сбоку на узкой ширине уходит первой, а
              спросить, что здесь пишут, человеку тогда не у кого -->
-        <rt-field label="Учётная запись">
-            <rt-input
-                formControlName="name"
-                autocomplete="username"
-                qa-dataid="sign-in-name"
-                placeholder="Имя проекта или владельца"
-                iconLeft="user" />
+        <rt-field [label]="nameLabel()">
+            <rt-input formControlName="name" autocomplete="username" qa-dataid="sign-in-name" iconLeft="user" [placeholder]="nameHint()" />
         </rt-field>
 
-        <rt-field label="Пароль">
+        <rt-field [label]="passwordLabel()">
             <rt-input
                 formControlName="password"
                 type="password"
                 autocomplete="current-password"
                 qa-dataid="sign-in-password"
-                placeholder="Пароль учётной записи"
                 iconLeft="lock"
+                [placeholder]="passwordHint()"
                 [passwordToggle]="true" />
         </rt-field>
 
@@ -31,9 +26,9 @@
             rtButton
             rtElem="submit"
             type="submit"
-            label="Войти"
-            aria-label="Войти"
             qa-dataid="sign-in-submit"
+            [label]="submitLabel()"
+            [attr.aria-label]="submitLabel()"
             [loading]="pending()"></button>
     </form>
 </ng-container>

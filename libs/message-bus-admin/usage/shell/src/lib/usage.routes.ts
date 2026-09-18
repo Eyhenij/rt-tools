@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { adminTabTitle } from '@rt/message-bus-admin/common/core/util';
 
 /** Адрес раздела. Назван здесь и читается пунктом меню: два объявления разошлись бы молча. */
 export const USAGE_ROUTE: string = 'usage';
@@ -17,7 +17,7 @@ export const USAGE_ROUTE: string = 'usage';
 export const usageRoutes: Route[] = [
     {
         path: USAGE_ROUTE,
-        title: adminLabel('sectionUsage'),
+        title: adminTabTitle('sectionUsage'),
         loadComponent: async () => (await import('@rt/message-bus-admin/usage/feature/list')).AdminUsageListComponent,
     },
     {

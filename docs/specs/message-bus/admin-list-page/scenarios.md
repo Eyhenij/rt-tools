@@ -93,3 +93,10 @@ Then the toolbar stands right under the name, and there is no empty strip betwee
 Given the section has a hint
 When a person opened the section
 Then the hint takes a line of its own under the name
+
+### SC-MB-407 — the screen of a section follows the choice of the language, the cells of the table too
+
+Given a person opened a section and the records lie in it
+When they switched the language in the popup of the profile
+Then the name of the section, the labels of the columns and the word of the state in a row become
+other, and the page is not reloaded

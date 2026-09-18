@@ -1,23 +1,12 @@
 /**
  * Решения раздела ролей и панели прав человека, вынесенные из экранов.
  *
- * Чистые функции без каркаса: их зовут переводы, панели и их тесты, а проверяются они вызовом —
- * без `TestBed` и без подмены зависимостей.
+ * Чистые функции без каркаса: их зовут экраны, панели и их тесты, а проверяются они вызовом — без
+ * `TestBed` и без подмены зависимостей.
  */
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
 import { IPermissionEdit, RIGHTS, rightsOf, TRight } from '@rt/message-bus-common';
 
 import { EAccessWord } from './role.model';
-
-/**
- * Вопрос перед удалением роли.
- *
- * Называет роль и то, что вернуть её нельзя, а не спрашивает «вы уверены»: человек решает по
- * имени и по цене, а не по слову «да».
- */
-export function roleDeleteQuestion(name: string): string {
-    return adminLabel('roleDeleteQuestion', { name });
-}
 
 /**
  * Можно ли удалить роль: только ту, которую никто не держит.

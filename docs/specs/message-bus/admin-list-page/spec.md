@@ -121,6 +121,16 @@ list:
 - **The anchors of the table and of its rows are put together from the same prefix as the anchors of the
   page.** Written as a string at every element, they diverge from the prefix silently, and a spec that
   opened the wrong section finds the same anchor and passes green.
+- **A row of the list holds the value and the key of the label, not the ready word.** The answer of the
+  receiver is translated once, and a word taken there stays in the language of that minute: a person who
+  switched the language sees the columns of the page in one language and the cells of the table in the
+  other.
+- **The word of a row is put together by the screen on every drawing.** The state, the role, the empty
+  entry and the question before an irreversible action are derived from the choice of the language, and
+  they change with it without a reload of the page.
+- **A pure pipe does not translate a cell.** It remembers its answer by its own arguments, while the key
+  of a row does not depend on the language at all: after the switch the cell keeps the former word, and
+  neither the build nor the linter says a thing about it.
 
 ## What is out of scope
 
@@ -164,7 +174,10 @@ are chosen by the person, and they are kept by the same base that answers as the
 ### Locales
 
 The labels of the page come from the dictionary of the application — the same ones as at the rest of the
-screens of the admin application.
+screens of the admin application. The words inside a row come from there too: the row holds the key, and
+the screen takes the word by it on every drawing, so the table follows the choice of the language without
+a reload. The English set is filled by a separate task of the epic of the texts: until then a section on
+the English choice shows the marks of the keys that have no translation yet.
 
 ### SEO
 
@@ -189,6 +202,8 @@ The open questions of the domain are shared, and they live in the spec of the do
 
 ## History of changes
 
+- 18 September 2026 — by the task RT-2211 the rules about the words of a row were merged in: a row holds
+  the key, the screen puts the word together on every drawing, and a pure pipe does not translate a cell.
 - 20 August 2026 — the subdomain was split out of the spec of the reading of what was taken in, which
   had outgrown the length limit. The rules of the look of the page and of the conversation of a section
   with it, their scenarios and the bindings moved here as they were: the scenario numbers were not

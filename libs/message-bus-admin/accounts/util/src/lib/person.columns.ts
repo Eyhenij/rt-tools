@@ -5,8 +5,7 @@
  * Лежит отдельно от экрана: тот же набор читают и таблица, и панель настройки столбцов, и
  * описание — объявленный в шаблоне, он был бы известен только шаблону.
  */
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
-import { IRtTable } from '@rt-tools/ui-kit-v2';
+import { IAdminColumn } from '@rt/message-bus-admin/common/core/util';
 
 /** Адрес операций над людьми: чтение списка, заведение, новый пароль и отключение. */
 export const PEOPLE_PATH: string = '/api/accounts';
@@ -42,9 +41,9 @@ export const PEOPLE_TABLE_ID: string = 'admin-people';
  * Роль порядка не принимает: у приёмника она вложенной записью, и порядок по ней означал бы
  * порядок по чужой таблице.
  */
-export const PEOPLE_COLUMNS: readonly IRtTable.ColumnConfig[] = Object.freeze([
-    { key: 'name', label: adminLabel('columnPersonName'), sortable: true, locked: true },
-    { key: 'role', label: adminLabel('columnPersonRole') },
-    { key: 'state', label: adminLabel('columnPersonState'), sortable: true },
-    { key: 'lastLoginAt', label: adminLabel('columnLastLoginAt'), sortable: true },
+export const PEOPLE_COLUMNS: readonly IAdminColumn[] = Object.freeze([
+    { key: 'name', label: 'columnPersonName', sortable: true, locked: true },
+    { key: 'role', label: 'columnPersonRole' },
+    { key: 'state', label: 'columnPersonState', sortable: true },
+    { key: 'lastLoginAt', label: 'columnLastLoginAt', sortable: true },
 ]);

@@ -35,7 +35,7 @@ import {
     sessionTokenHash,
 } from '@rt/message-bus-api/accounts/util';
 import { OPERATION_ACCESS, OPERATION_RIGHT, TOperationAccess } from '@rt/message-bus-api/access/util';
-import { hasRight, rightsOf, TRight } from '@rt/message-bus-common';
+import { ERefusal, hasRight, refusalBody, rightsOf, TRight } from '@rt/message-bus-common';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { findTreeByTokenHash } from '@rt/message-bus-api/trees/data-access';
 import { IRequestTree, ITreeBearingRequest, rememberTree, treeTokenHash } from '@rt/message-bus-api/trees/util';
@@ -87,7 +87,7 @@ export class AccessGuard implements CanActivate {
                 // Не объявлено ничего. Это дефект приложения, а не ошибка вызывающего, и
                 // отвечать ему нечем: доступ, выведенный за автора, и есть та самая открытая
                 // наружу операция, от которой умолчание защищает
-                throw new UnauthorizedException('операция доступа не объявила');
+                throw new UnauthorizedException(refusalBody(ERefusal.AccessUndeclared));
         }
     }
 
@@ -117,7 +117,7 @@ export class AccessGuard implements CanActivate {
             // Вид доступа объявлен, а право рядом не названо. Это дефект приложения, и отвечать
             // вызывающему нечем: операция, открытая по недописанному объявлению, и есть та самая
             // дыра, от которой умолчание «закрыто» защищает
-            throw new UnauthorizedException('операция доступа не объявила');
+            throw new UnauthorizedException(refusalBody(ERefusal.AccessUndeclared));
         }
 
         const session: ISessionForRequest = await this.#sessionOf(request);
@@ -127,7 +127,7 @@ export class AccessGuard implements CanActivate {
         const rights: IAccountRights | null = await findAccountRights(this.#prisma, session.account.id);
 
         if (!rights || !hasRight(rightsOf(rights.roleRights, rights.edits), right)) {
-            throw new ForbiddenException('операция требует права');
+            throw new ForbiddenException(refusalBody(ERefusal.RightRequired));
         }
 
         return true;
@@ -143,13 +143,13 @@ export class AccessGuard implements CanActivate {
         const token: string = headerValue(request.headers[TREE_TOKEN_HEADER]);
 
         if (!token) {
-            throw new UnauthorizedException('операция требует токен дерева');
+            throw new UnauthorizedException(refusalBody(ERefusal.TreeTokenRequired));
         }
 
         const tree: IRequestTree | null = await findTreeByTokenHash(this.#prisma, treeTokenHash(token));
 
         if (!tree) {
-            throw new UnauthorizedException('токен не принят');
+            throw new UnauthorizedException(refusalBody(ERefusal.TreeTokenRejected));
         }
 
         return tree;
@@ -165,13 +165,13 @@ export class AccessGuard implements CanActivate {
         const carried: string = sessionCookieOf(request.headers['cookie']);
 
         if (!carried) {
-            throw new UnauthorizedException('операция требует входа');
+            throw new UnauthorizedException(refusalBody(ERefusal.SignInRequired));
         }
 
         const session: ISessionForRequest | null = await findSessionByHash(this.#prisma, sessionTokenHash(carried));
 
         if (!session || !sessionAlive(session, new Date()) || session.account.disabledAt !== null) {
-            throw new UnauthorizedException('операция требует входа');
+            throw new UnauthorizedException(refusalBody(ERefusal.SignInRequired));
         }
 
         return session;

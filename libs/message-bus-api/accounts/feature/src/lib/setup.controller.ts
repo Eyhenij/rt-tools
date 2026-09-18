@@ -15,23 +15,14 @@ import { BadRequestException, Body, ConflictException, Controller, Get, HttpCode
 
 import { PublicOperation } from '@rt/message-bus-api/access/util';
 import { countAccounts, createFirstAccount, findRoleRef, IRoleRef } from '@rt/message-bus-api/accounts/data-access';
-import {
-    accountNameKey,
-    EPersonInputFault,
-    INewPersonParse,
-    newPersonOf,
-    passwordHash,
-    PERSON_EDIT_SAID,
-} from '@rt/message-bus-api/accounts/util';
+import { accountNameKey, INewPersonParse, newPersonOf, passwordHash } from '@rt/message-bus-api/accounts/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 
 import { ICookieBearingResponse, ISessionAnswer, issueSignIn } from './sign-in-issue';
+import { ERefusal, refusalBody } from '@rt/message-bus-common';
 
 /** Ключ роли владельца: её заводит миграция, и по этому ключу её ищет заведение. */
 export const OWNER_ROLE_KEY: string = 'owner';
-
-/** Слово отказа закрытого экрана: одно на оба пути — экран и прямой запрос. */
-export const SETUP_CLOSED_SAID: string = 'первая запись уже заведена: вход — по имени и паролю';
 
 /** Ждёт ли узел первой записи. Одно слово, и ничего больше: пустое хранилище — не тайна. */
 export interface ISetupAnswer {
@@ -65,19 +56,19 @@ export class SetupController {
     @HttpCode(HttpStatus.OK)
     public async create(@Body() body: unknown, @Res({ passthrough: true }) response: ICookieBearingResponse): Promise<ISessionAnswer> {
         if ((await countAccounts(this.#prisma)) > 0) {
-            throw new ConflictException(SETUP_CLOSED_SAID);
+            throw new ConflictException(refusalBody(ERefusal.SetupClosed));
         }
 
         const parsed: INewPersonParse = newPersonOf(body);
 
         if (parsed.fault !== null || parsed.input === null) {
-            throw new BadRequestException(PERSON_EDIT_SAID[parsed.fault ?? EPersonInputFault.NameEmpty]);
+            throw new BadRequestException(refusalBody(parsed.fault ?? ERefusal.PersonNameEmpty));
         }
 
         const owner: IRoleRef | null = await findRoleRef(this.#prisma, OWNER_ROLE_KEY);
 
         if (owner === null) {
-            throw new ConflictException(`роли владельца «${OWNER_ROLE_KEY}» нет в хранилище: миграции не применены`);
+            throw new ConflictException(refusalBody(ERefusal.OwnerRoleMissing, { key: OWNER_ROLE_KEY }));
         }
 
         const nameKey: string = accountNameKey(parsed.input.name);
@@ -89,7 +80,7 @@ export class SetupController {
 
         // Второй первый запрос: счёт внутри сделки увидел запись первого, и записано ничего не было
         if (id === null) {
-            throw new ConflictException(SETUP_CLOSED_SAID);
+            throw new ConflictException(refusalBody(ERefusal.SetupClosed));
         }
 
         // В журнал уходит имя и только оно: ни пароля, ни его хеша

@@ -11,7 +11,7 @@ import { RequiresRight } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IProposalFullRow, IProposalListRow, readProposal, readProposals } from '@rt/message-bus-api/proposals/data-access';
 
-import { IPage, PROPOSAL_SORTABLE, cargoPageAsked, cargoPageFault } from '@rt/message-bus-common';
+import { cargoPageAsked, cargoPageFault, ERefusal, IPage, PROPOSAL_SORTABLE, refusalBody } from '@rt/message-bus-common';
 
 @Controller('proposals')
 export class ProposalsReadController {
@@ -47,7 +47,7 @@ export class ProposalsReadController {
         const found: IProposalFullRow | null = await readProposal(this.#prisma, id);
 
         if (!found) {
-            throw new NotFoundException('предложения с таким признаком нет');
+            throw new NotFoundException(refusalBody(ERefusal.ProposalNotFound));
         }
 
         return found;

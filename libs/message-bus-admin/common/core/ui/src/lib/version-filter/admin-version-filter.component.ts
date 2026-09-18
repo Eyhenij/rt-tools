@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
+import { computed, inject, input, output, ChangeDetectionStrategy, Component, InputSignal, OutputEmitterRef, Signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import { CARGO_VERSION_NONE } from '@rt/message-bus-common';
 import { IRtSelect, RtSelectComponent } from '@rt-tools/ui-kit-v2';
 
@@ -37,7 +37,10 @@ const ALL_VERSIONS: string = '';
     host: { class: BEM_BLOCK },
 })
 export class AdminVersionFilterComponent {
-    protected readonly label: string = adminLabel('releaseVersion');
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    // Подпись отбора — производная: язык переключают в попапе профиля, над этим же экраном.
+    protected readonly label: Signal<string> = computed((): string => this.#text.text('releaseVersion'));
 
     /**
      * Первым пунктом — «все версии», вторым — «без версии», дальше сами версии.
@@ -46,8 +49,8 @@ export class AdminVersionFilterComponent {
      * экране не заводится.
      */
     protected readonly options: Signal<readonly IRtSelect.Option<string>[]> = computed(() => [
-        { label: adminLabel('filterVersionAll'), value: ALL_VERSIONS },
-        { label: adminLabel('filterVersionNone'), value: CARGO_VERSION_NONE },
+        { label: this.#text.text('filterVersionAll'), value: ALL_VERSIONS },
+        { label: this.#text.text('filterVersionNone'), value: CARGO_VERSION_NONE },
         ...this.versions().map((version: string): IRtSelect.Option<string> => ({ label: version, value: version })),
     ]);
 
