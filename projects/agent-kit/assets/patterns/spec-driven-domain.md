@@ -162,6 +162,10 @@ statement.
 
 ## Common misses
 
+- A second table under the contract section: the audit reads every table there as the list of
+  procedures, and a set of refusal codes standing next to them comes back as that many
+  discrepancies at once — thirty-six on a spec that was right. Under the contract stands the table
+  of procedures alone; a set of codes goes into the data section.
 - A grown domain is split into new domains instead of subdomains: a new domain has to be entered
   in the index, audited against the code separately and explained as to why it is not a subdomain
   of its neighbour — while a subdomain stays in its domain and inherits its contract. A

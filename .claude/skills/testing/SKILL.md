@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load when editing any test file and anything in the tree's end-to-end suites. Names the scenario id in the title, moving a decision into a pure function and what an end-to-end test closes. Patterns testing-unit, testing-e2e.
 ---
-<!-- rt-kit v0.29.0 · rules/testing.md · a6a5a0dc89c8 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/testing.md · c7540beaad35 · правится надстройкой, не здесь -->
 
 # Verifiability — how it works here
 
@@ -183,6 +183,10 @@ flowchart TD
   them drifts from the original silently, and both sides stay green: one writes under its value,
   the other looks under its own. This is checked by a scenario that computes the value both ways
   and compares them, not by one scenario on each side.
+- **A field of an answer the whole application shares is checked at the place of assembly, not
+  beside one operation.** A test next to an operation sees what that operation returned, while the
+  answer is built elsewhere: every such test stays green when the field reaches no answer at all.
+  The check goes where the body is assembled, or walks the whole set of operations at once.
 - **A test asserting absence is green even when it looks for the wrong thing.** There is no match
   for the right text, nor for a typo in the sample, nor for a renamed key — nothing tells them
   apart by the run's colour. So a negative assertion goes paired with a positive one: first it is

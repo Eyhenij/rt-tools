@@ -181,6 +181,10 @@ flowchart TD
   them drifts from the original silently, and both sides stay green: one writes under its value,
   the other looks under its own. This is checked by a scenario that computes the value both ways
   and compares them, not by one scenario on each side.
+- **A field of an answer the whole application shares is checked at the place of assembly, not
+  beside one operation.** A test next to an operation sees what that operation returned, while the
+  answer is built elsewhere: every such test stays green when the field reaches no answer at all.
+  The check goes where the body is assembled, or walks the whole set of operations at once.
 - **A test asserting absence is green even when it looks for the wrong thing.** There is no match
   for the right text, nor for a typo in the sample, nor for a renamed key — nothing tells them
   apart by the run's colour. So a negative assertion goes paired with a positive one: first it is

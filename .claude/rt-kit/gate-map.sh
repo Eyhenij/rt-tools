@@ -176,6 +176,20 @@ skill_for() {
                     return 0
                     ;;
 
+                # A file that is neither a component nor a store and still builds a derived
+                # value. The signal rules are about exactly that, and by path alone such a file
+                # reads as ordinary code: the derived text of a refusal was first put into a kit
+                # signal from an `effect`, and the rule forbidding that was loaded only on the fix.
+                # Judged by what is written into the file, not by its name.
+                */apps/message-bus/*.ts | */libs/message-bus*/*.ts)
+                    if printf '%s' "$written" | grep -qE '(^|[^[:alnum:]_])(effect|computed|toSignal)\('; then
+                        printf '%s\n' 'angular-patterns'
+                    else
+                        printf '%s\n' 'typescript-conventions'
+                    fi
+                    return 0
+                    ;;
+
                 */apps/message-bus/* | */libs/message-bus*/*)
                     printf '%s\n' 'typescript-conventions'
                     return 0
