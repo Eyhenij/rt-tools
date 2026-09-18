@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 3 — the spec names the statement, the binding and the scenario
-- **Done:** stage 1 — the import from `tree-mark.js`, the refusal on an empty sign, SC-AK-558 positive and SC-AK-1130 (suite 37 ok, the dry run prints `tree b101ab1c9908`)
-- **Next step:** the statement, the refusal row, the binding and the scenario in the spec of the mark
+- **Stage:** 3 of 3 — the nine closed records are marked on the live intake
+- **Done:** stages 1 and 2 — the import from `tree-mark.js`, the refusal on an empty sign, SC-AK-558 positive and SC-AK-1130 (suite 37 ok), the statement, the refusal row, the binding and the scenario in the spec (check-specs exit 0)
+- **Next step:** six marks `fixed` by fix group, one mark `released` 0.29.0, the read of the intake by `new`
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
