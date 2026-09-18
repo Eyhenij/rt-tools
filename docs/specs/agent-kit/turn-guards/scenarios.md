@@ -115,6 +115,16 @@ task was not taken by them
 
 Covered: `projects/agent-kit/tests/waiting-turn-guard.test.sh`.
 
+### SC-AK-1133 — a run started or rerun in the turn gets a wait for its end
+
+Given a run was started or rerun by a command of the turn
+When the turn ends, and no command of the turn waits for the end of the run — neither a watching
+command of the hosting client, nor a loop until the end, nor the watching tool
+Then the guard gives the turn back and names the wait; a turn with a wait passes, and the next task
+taken does not lift the refusal
+
+Covered: `projects/agent-kit/tests/waiting-turn-guard.test.sh`.
+
 ### SC-AK-248 — a turn in which nothing is said about someone else's step the guard of waiting does not judge
 
 Given there is neither a call of opening a PR nor a red run read in the turn

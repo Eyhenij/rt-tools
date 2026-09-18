@@ -125,6 +125,11 @@ turn.
   stand in the same turn the request was opened by. The sign of taking lists what taking happens to
   be, not what counts as an action: the list of the steps of closing is open and grows, and the list
   of the actions on the next task is closed.
+- **A run started or rerun in the turn gets a wait for its end in the same turn.** The outcome of a
+  run does not call by itself: its state read once is a moment, not a result, and a request left
+  without watching reaches the owner before the executor. The wait is a watching command of the
+  hosting client, a loop until the end or the watching tool, in the background or blocking; the next
+  task taken does not lift this.
 - **A stage declared closed is confirmed by the output of a command.** The mark "done" is a statement
   about the tree, and a session later what was marked from memory is indistinguishable from what was
   checked. The former number of the stage the guard reads from the history of the branch, the command
@@ -254,3 +259,5 @@ None.
 - 2026-09-06 — the guard of the exits refuses by name a turn that ended with waiting for the word of
   the owner: at a consumer tree three turns in a row ended with the phrase "waiting for your word"
   with the instruction to work without stopping not cancelled.
+- 2026-09-18 — the waiting guard refuses a turn that started or reran a run and put no wait on its
+  end: a rerun went through between other things, and the owner found the green run first.
