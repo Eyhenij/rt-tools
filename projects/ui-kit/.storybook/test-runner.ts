@@ -50,8 +50,27 @@ const STILL_FRAMES: number = 2;
 /** Размер кадра по умолчанию. Истории, которым нужен другой, называют его параметром. */
 const VIEWPORT: { width: number; height: number } = { width: 1280, height: 720 };
 
-/** Машины, с которых съёмке разрешено брать что бы то ни было: витрина отдаёт всё сама. */
-const LOCAL_HOSTS: ReadonlySet<string> = new Set<string>(['localhost', '127.0.0.1', '[::1]']);
+/**
+ * Машины, с которых съёмке разрешено брать что бы то ни было: витрина отдаёт всё сама.
+ *
+ * Своё имя витрины стоит здесь наравне с петлёй. Снимает браузер из образа, и `localhost` там —
+ * свой: витрина поэтому раздаётся по сетевому имени машины, а отсечка, знавшая одну петлю,
+ * обрывала у себя же каждый отложенный кусок. Первый запуск по этой дороге дал 88 отказов из 88,
+ * все с одним словом — `ChunkLoadError`.
+ */
+function showcaseHost(): string {
+    try {
+        return new URL(process.env.STORYBOOK_URL ?? '').hostname;
+    } catch {
+        return '';
+    }
+}
+
+const SHOWCASE_HOST: string = showcaseHost();
+
+const LOCAL_HOSTS: ReadonlySet<string> = new Set<string>(
+    ['localhost', '127.0.0.1', '[::1]', SHOWCASE_HOST].filter((one: string): boolean => one !== '')
+);
 
 /** Страницы с уже поставленным отсечением: обвязка проходит по одной странице много раз. */
 const cutOff: WeakSet<Page> = new WeakSet<Page>();
