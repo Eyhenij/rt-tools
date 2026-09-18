@@ -1,4 +1,4 @@
-import { expect, Page, test } from '@playwright/test';
+import { expect, Locator, Page, test } from '@playwright/test';
 
 import { TREES } from '../stand/stand.mjs';
 import { columnTexts, detailValue, expectOnlyTree, openSection, pageQa, pickTree, qa, queryOf, rowsOf, SECTION } from './support/admin';
@@ -109,5 +109,39 @@ test.describe('разделы груза', () => {
         await expect(qa(page, 'table-empty')).toContainText('По этому отбору записей нет');
         await expect(page.getByText('No rows', { exact: false })).toHaveCount(0);
         await expect(page.getByText('Per page', { exact: false })).toHaveCount(0);
+    });
+
+    test('SC-MB-407 — экран раздела идёт за выбором языка, и ячейки таблицы тоже', async ({ page }: { page: Page }) => {
+        await openSection(page, 'postmortems');
+
+        // Метка на окне переживает переключение и не переживает перезагрузку: ею и проверяется,
+        // что страницу никто не перезагружал.
+        await page.evaluate((): void => {
+            (window as unknown as Record<string, boolean>)['rtSameLoad'] = true;
+        });
+
+        const stateCell: Locator = rowsOf(page, 'postmortems').first().locator('[qa-dataid="postmortems-cell-state"]');
+        const treeHeader: Locator = page.locator('[qa-dataid="postmortems-table"] th').first();
+
+        // Сначала положительная половина: места, за которые держится проба, найдены и говорят
+        // по-русски. Без неё проба осталась бы зелёной и на пустой ячейке.
+        await expect(page.getByRole('heading', { name: SECTION.postmortems.title })).toBeVisible();
+        await expect(treeHeader).toHaveText('Проект');
+        const stateBefore: string = (await stateCell.innerText()).trim();
+
+        expect(stateBefore).not.toBe('');
+
+        await qa(page, 'header-user-menu').click();
+        await qa(page, 'profile-language').locator('[qa-dataid="toggle-button-group-option"][data-value="en"]').click();
+
+        // Имя раздела переведено, а подписи столбцов и слово состояния английского набора пока
+        // не знают: их наберёт RT-2213. Проверяется не перевод, а то, что и заголовок, и ячейка
+        // пересчитались — сравнение с готовым английским словом покраснело бы от той задачи.
+        await expect(page.getByRole('heading', { name: 'Incident analyses' })).toBeVisible();
+        await expect(treeHeader).not.toHaveText('Проект');
+        await expect(stateCell).not.toHaveText(stateBefore);
+        await expect(stateCell).not.toHaveText('');
+
+        expect(await page.evaluate((): boolean => (window as unknown as Record<string, boolean>)['rtSameLoad'] === true)).toBe(true);
     });
 });
