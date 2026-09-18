@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { ISetupState, ISignInPair, SIGN_IN_PATH } from '@rt/message-bus-admin/auth/util';
 import { AdminLocaleSwitchComponent } from '@rt/message-bus-admin/common/core/ui';
-import { adminLabel, spokenFaultText } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService, spokenFaultText } from '@rt/message-bus-admin/common/core/util';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtButtonDirective, RtFieldComponent, RtInputComponent, RtMessageComponent, RtThemeToggleComponent } from '@rt-tools/ui-kit-v2';
 import { catchError, exhaustMap, finalize, map, Observable, of, Subject } from 'rxjs';
@@ -48,13 +48,16 @@ export class AdminSetupComponent {
     readonly #store: AuthStore = inject(AuthStore);
     readonly #router: Router = inject(Router);
     readonly #submitSource: Subject<ISignInPair> = new Subject<ISignInPair>();
+    readonly #text: AdminTextService = inject(AdminTextService);
 
-    protected readonly appTitle: string = adminLabel('appTitle');
-    protected readonly setupTitle: string = adminLabel('setupTitle');
-    protected readonly setupHint: string = adminLabel('setupHint');
-    protected readonly nameLabel: string = adminLabel('setupName');
-    protected readonly passwordLabel: string = adminLabel('setupPassword');
-    protected readonly submitLabel: string = adminLabel('setupSubmit');
+    // Язык переключают здесь же, над карточкой: подписи производные, иначе экран остался бы на
+    // прежнем языке под тем самым переключателем, которым язык и сменили.
+    protected readonly appTitle: Signal<string> = computed((): string => this.#text.text('appTitle'));
+    protected readonly setupTitle: Signal<string> = computed((): string => this.#text.text('setupTitle'));
+    protected readonly setupHint: Signal<string> = computed((): string => this.#text.text('setupHint'));
+    protected readonly nameLabel: Signal<string> = computed((): string => this.#text.text('setupName'));
+    protected readonly passwordLabel: Signal<string> = computed((): string => this.#text.text('setupPassword'));
+    protected readonly submitLabel: Signal<string> = computed((): string => this.#text.text('setupSubmit'));
 
     protected readonly form: FormGroup<{ name: FormControl<string>; password: FormControl<string> }> = new FormGroup({
         name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -117,7 +120,7 @@ export class AdminSetupComponent {
         return this.#store.setUp(pair).pipe(
             map((): boolean => true),
             catchError((error: unknown): Observable<boolean> => {
-                this.faultText.set(spokenFaultText(error, adminLabel('setupFailed')));
+                this.faultText.set(spokenFaultText(error, this.#text.text('setupFailed')));
 
                 return of(false);
             }),

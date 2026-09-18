@@ -146,3 +146,10 @@ document goes with them, and the page is not reloaded
 Given a person chose English
 When the page is reloaded
 Then the choice stayed English, and not one request to the receiver asked about the language
+
+### SC-MB-406 — the screen of the entry holds no Russian word at the English choice
+
+Given a person stands at the screen of the entry and chooses English
+When they look at the card of the entry
+Then not one word of it is Russian: the name of the application, the heading, the labels of the
+fields, the hints inside them and the label of the button come from the dictionary

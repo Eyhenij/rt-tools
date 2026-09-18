@@ -39,6 +39,45 @@ describe('AdminTextService', () => {
         expect(text.text(key)).toContain('holds no records yet');
     });
 
+    it('SC-MB-402 — оба набора отвечают на каждый ключ экранов входа', () => {
+        const { locale, text }: { locale: AdminLocaleService; text: AdminTextService } = services();
+
+        // Ключи экрана входа и экрана первой записи: их переводит задача RT-2210, и ни один из
+        // них не должен приходить признаком ненайденного ни на одном языке.
+        const keys: readonly TAdminLabelKey[] = [
+            'signInTitle',
+            'signInTab',
+            'signInName',
+            'signInNameHint',
+            'signInPassword',
+            'signInPasswordHint',
+            'signInSubmit',
+            'signInFaultPair',
+            'signInFaultForm',
+            'signInFaultService',
+            'setupTitle',
+            'setupHint',
+            'setupName',
+            'setupPassword',
+            'setupSubmit',
+            'setupFailed',
+        ];
+
+        // Сначала положительная половина: отбор ниже узнаёт признак ненайденного — на английском
+        // выборе ключ, который в наборе ещё не переведён, приходит именно им.
+        locale.setLocale(EAdminLocale.En);
+
+        expect(text.text('columnTree')).toBe('«columnTree»');
+
+        for (const chosen of [EAdminLocale.Ru, EAdminLocale.En]) {
+            locale.setLocale(chosen);
+
+            const missing: TAdminLabelKey[] = keys.filter((key: TAdminLabelKey): boolean => text.text(key).startsWith('«'));
+
+            expect(missing).toEqual([]);
+        }
+    });
+
     it('SC-MB-403 — ненайденный ключ виден, а не пуст', () => {
         const { locale, text }: { locale: AdminLocaleService; text: AdminTextService } = services();
 

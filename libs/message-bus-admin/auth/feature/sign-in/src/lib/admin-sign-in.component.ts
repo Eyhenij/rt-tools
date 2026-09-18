@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, input, InputSignal, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { AdminSignInFormComponent } from '@rt/message-bus-admin/auth/ui';
 import { ESignInFault, ISetupState, ISignInPair, SETUP_PATH } from '@rt/message-bus-admin/auth/util';
 import { AdminLocaleSwitchComponent } from '@rt/message-bus-admin/common/core/ui';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtThemeToggleComponent } from '@rt-tools/ui-kit-v2';
 import { catchError, EMPTY, filter, Observable } from 'rxjs';
@@ -41,10 +41,13 @@ const HOME_PATH: string = '/';
 export class AdminSignInComponent {
     readonly #store: AuthStore = inject(AuthStore);
     readonly #router: Router = inject(Router);
+    readonly #text: AdminTextService = inject(AdminTextService);
 
-    protected readonly appTitle: string = adminLabel('appTitle');
+    // Язык переключают здесь же, над карточкой: подписи производные, иначе экран остался бы на
+    // прежнем языке ровно под тем переключателем, которым язык и сменили.
+    protected readonly appTitle: Signal<string> = computed((): string => this.#text.text('appTitle'));
 
-    protected readonly signInTitle: string = adminLabel('signInTitle');
+    protected readonly signInTitle: Signal<string> = computed((): string => this.#text.text('signInTitle'));
 
     protected readonly pending: Signal<boolean> = this.#store.pending;
     protected readonly fault: Signal<ESignInFault | null> = this.#store.fault;
