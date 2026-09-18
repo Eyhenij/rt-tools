@@ -7,6 +7,7 @@
  *
  * Все компоненты используют токены `--rt-*` (см. styles либы).
  */
+export * from './action-bar';
 export * from './aside';
 export * from './aside-section';
 export * from './autocomplete';

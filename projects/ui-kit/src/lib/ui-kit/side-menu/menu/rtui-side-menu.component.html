@@ -237,7 +237,12 @@
             qa-dataid="side-menu-resize"
             role="separator"
             aria-orientation="vertical"
+            tabindex="0"
             [attr.aria-label]="resizeLabel"
-            (mousedown)="onResizeStart($event)"></div>
+            [attr.aria-valuenow]="resizeValueNow()"
+            [attr.aria-valuemin]="resizeValueNow() === null ? null : resizeValueMin"
+            [attr.aria-valuemax]="resizeValueNow() === null ? null : resizeValueMax"
+            (pointerdown)="onResizeStart($event)"
+            (keydown)="onResizeKeydown($event)"></div>
     }
 }
