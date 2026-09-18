@@ -55,6 +55,10 @@ as now; only its text starts to follow the chosen language.
 - **The answer keeps the code of HTTP it carries today.** The code of the refusal names the reason,
   not the kind of the answer: the entry, the rights and the absence of a record are already told
   apart by the number of the answer, and the panels read it.
+- **An internal error of the intake is not a refusal and gets no code.** A request the intake did
+  not carry out because of its own mistake is read by whoever holds the intake, not by a person: its
+  text is written in English on a par with the rest of what a session reads, and it names no reason
+  for the person to fix.
 - **The sentence stays in the body while the trees do not know the codes.** A tree in the field
   prints the word of the intake to its owner, and this work does not roll the trees out. The
   sentence is assembled out of the same code by one table of the shared lib.
@@ -104,12 +108,21 @@ and belong to no procedure of a domain of its own. The set itself:
 | `inviteNotFound`      | there is no valid invitation for the project                        | `name`           |
 | `recordNotFound`      | there is no record with that sign                                   | `kind`           |
 | `treeUnknown`         | the tree with that sign is not known to the intake                  | `slug`           |
-| `selectionFault`      | the selection of the list names a parameter wrongly                 | `said`           |
-| `ownerRoleMissing`    | the role of the owner is not in the storage                         | —                |
+| `selectionFault`      | the selection of the list names a parameter wrongly                 | `param`          |
+| `ownerRoleMissing`    | the role of the owner is not in the storage                         | `key`            |
 | `signInEmpty`         | the request carries no name or no password                          | —                |
 | `enrollThrottled`     | there are more requests from one client than the limit              | —                |
 | `enrollMalformed`     | the request awaits the code of an invitation and the sign of a tree | —                |
 | `treeTaken`           | a tree with that sign or that name is already created               | —                |
+| `signInRequired`      | the operation demands an entry                                      | —                |
+| `rightRequired`       | the entry has no right to the operation                             | —                |
+| `treeTokenRequired`   | the operation demands a token of a tree                             | —                |
+| `treeTokenRejected`   | the token is not accepted                                           | —                |
+| `accessUndeclared`    | the operation declared no access                                    | —                |
+
+The last five never reach the screen: the admin application answers the number of such an answer by
+the entry, not by a text. They have a code all the same — a refusal of the intake is named by a code,
+and an exception of one kind for one of them would be the place where the Russian sentence stays.
 
 ## Data
 

@@ -50,5 +50,3 @@ Not covered: the check by a call is written by the fourth stage of the task.
 Given a code whose text holds a place for the name of a role
 When the intake answers this code with the name of the role beside it
 Then the name stands in the text in place of its own, and not one of the places is left empty
-
-Not covered: the set of the codes is created by the second stage of the task.
