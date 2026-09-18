@@ -47,6 +47,7 @@ technique, and different files of one merge are resolved differently.
 | a build from a description         | rebuilt from the description after the description is resolved: a generator writes the lines of such a file, and sides joined by hand give a file it would never output |
 | a spec in `docs/specs/`            | by keeping both sides, if both appended; a section removed by one side stays removed — rule `spec-driven`; after — `npm run check:specs` |
 | a rule's companion next to the rule | by keeping both sides — the same two additions to one table; after — `npm run check:specs` |
+| the table of working-copy assignments | by the base's side whole. The owner fills it in the main branch, and a session does not write it: the branch's side can only be an older copy. After — the reading the session start prints |
 | the work list (`docs/BACKLOG.md`)  | by the selection sign — pattern `doc-style-sweep`                                  |
 
 ## A commit is carried over by a cherry-pick

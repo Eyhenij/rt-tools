@@ -77,3 +77,12 @@ When the command is called
 Then it refuses with the exit code one and says that the state is unknown, and prints no table
 
 Covered: `projects/agent-kit/tests/epic-table.test.sh`.
+
+### SC-AK-1139 — on the branch of the epic the number comes from its own card
+
+Given the current branch carries the number of an epic card
+When the command is called with no argument
+Then it assembles the table of that epic, and the refusal about a task declaring no epic does not
+come
+
+Covered: `projects/agent-kit/tests/epic-table.test.sh`.
