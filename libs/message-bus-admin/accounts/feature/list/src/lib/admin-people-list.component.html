@@ -1,4 +1,4 @@
-<admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
+<admin-list-page [hint]="hint()" [qaPrefix]="qaPrefix" [title]="title()">
     @if (canManage()) {
         <ng-template adminListToolbarRight>
             <button
@@ -6,15 +6,15 @@
                 icon="user-plus"
                 type="button"
                 qa-dataid="people-create"
-                [attr.aria-label]="createLabel"
-                [label]="createLabel"
+                [attr.aria-label]="createLabel()"
+                [label]="createLabel()"
                 (click)="openCreate()"></button>
         </ng-template>
     }
 
     <rt-table
         #rowsTable="rtTable"
-        [ariaLabel]="title"
+        [ariaLabel]="title()"
         [attr.qa-dataid]="qaTable()"
         [columnsConfig]="columns()"
         [dataSource]="rows()"
@@ -66,7 +66,7 @@
                 @if (canGrant()) {
                     <rt-menu-item
                         icon="shield"
-                        [label]="accessLabel"
+                        [label]="accessLabel()"
                         [attr.qa-dataid]="qaPrefix + '-access'"
                         (selected)="openAccess(row.name)" />
                 }
@@ -74,7 +74,7 @@
                 @if (canManage()) {
                     <rt-menu-item
                         icon="lock"
-                        [label]="passwordLabel"
+                        [label]="passwordLabel()"
                         [attr.qa-dataid]="qaPrefix + '-password'"
                         (selected)="openPassword(row.name)" />
                 }
@@ -83,10 +83,10 @@
                     <rt-menu-item
                         danger
                         icon="user-minus"
-                        [confirmLabel]="disableLabel"
+                        [confirmLabel]="disableLabel()"
                         [confirmMessage]="row.disableQuestion"
-                        [confirmTitle]="disableTitle"
-                        [label]="disableLabel"
+                        [confirmTitle]="disableTitle()"
+                        [label]="disableLabel()"
                         [attr.qa-dataid]="qaPrefix + '-disable'"
                         (selected)="disable(row.name)" />
                 }

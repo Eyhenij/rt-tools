@@ -9,7 +9,7 @@ import {
     CdkRow,
     CdkRowDef,
 } from '@angular/cdk/table';
-import { inject, ChangeDetectionStrategy, Component, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import {
     AdminListPageComponent,
@@ -19,7 +19,13 @@ import {
     AdminTreeFilterComponent,
     AdminVersionFilterComponent,
 } from '@rt/message-bus-admin/common/core/ui';
-import { adminColumns, adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
+import {
+    adminColumns,
+    adminStatedRows,
+    AdminTextService,
+    IAdminStateWord,
+    provideAdminListHost,
+} from '@rt/message-bus-admin/common/core/util';
 import { ProposalsStore } from '@rt/message-bus-admin/proposals/data-access';
 import { IProposal, PROPOSALS_COLUMNS, PROPOSALS_TABLE_ID } from '@rt/message-bus-admin/proposals/util';
 import { IRtTable, RtTableComponent, RtTableRowDirective, RtTableSortHeaderComponent } from '@rt-tools/ui-kit-v2';
@@ -80,17 +86,24 @@ const BEM_BLOCK: string = 'admin-proposals-list';
     host: { class: BEM_BLOCK },
 })
 export class AdminProposalsListComponent extends AdminListScreenBase<IProposal.Short.State, IProposal.Short.Api> {
-    protected readonly title: string = adminLabel('sectionProposals');
-    protected readonly hint: string = adminLabel('hintProposals');
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    protected readonly title: Signal<string> = computed((): string => this.#text.text('sectionProposals'));
+    protected readonly hint: Signal<string> = computed((): string => this.#text.text('hintProposals'));
     protected readonly columns: Signal<readonly IRtTable.ColumnConfig[]> = adminColumns(PROPOSALS_COLUMNS);
     protected readonly tableId: string = PROPOSALS_TABLE_ID;
     protected readonly qaPrefix: string = 'proposals';
     /** Приписка к состоянию: запись, закрытую не своим деревом, отправитель иначе читает как свою отметку. */
-    protected readonly closedByPublisherLabel: string = adminLabel('closedByPublisher');
+    protected readonly closedByPublisherLabel: Signal<string> = computed((): string => this.#text.text('closedByPublisher'));
     protected override readonly cargoKind: ECargoKind = ECargoKind.Proposal;
 
     protected readonly store: ProposalsStore = inject(ProposalsStore);
     protected readonly sortable: readonly string[] = PROPOSAL_SORTABLE;
+
+    /** Строки со словом состояния: маппер кладёт само состояние, а слово о нём берётся из словаря. */
+    protected override readonly rows: Signal<readonly (IProposal.Short.State & IAdminStateWord)[]> = adminStatedRows(
+        computed((): readonly IProposal.Short.State[] => this.store.rows())
+    );
 
     constructor() {
         super();

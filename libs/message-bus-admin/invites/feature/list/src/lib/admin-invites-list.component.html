@@ -1,18 +1,18 @@
-<admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
+<admin-list-page [hint]="hint()" [qaPrefix]="qaPrefix" [title]="title()">
     <ng-template adminListToolbarRight>
         <button
             rtButton
             icon="plus-circle"
             type="button"
             qa-dataid="invites-create"
-            [attr.aria-label]="createLabel"
-            [label]="createLabel"
+            [attr.aria-label]="createLabel()"
+            [label]="createLabel()"
             (click)="openCreate()"></button>
     </ng-template>
 
     <rt-table
         #rowsTable="rtTable"
-        [ariaLabel]="title"
+        [ariaLabel]="title()"
         [attr.qa-dataid]="qaTable()"
         [columnsConfig]="columns()"
         [dataSource]="rows()"
@@ -54,10 +54,10 @@
                 <rt-menu-item
                     danger
                     icon="times-circle"
-                    [confirmLabel]="revokeLabel"
+                    [confirmLabel]="revokeLabel()"
                     [confirmMessage]="row.revokeQuestion"
-                    [confirmTitle]="revokeTitle"
-                    [label]="revokeLabel"
+                    [confirmTitle]="revokeTitle()"
+                    [label]="revokeLabel()"
                     [attr.qa-dataid]="qaPrefix + '-revoke'"
                     (selected)="revoke(row.name)" />
             }

@@ -18,12 +18,13 @@ import {
     PERSON_ACCESS_ROUTE,
     PERSON_CREATE_ROUTE,
     PERSON_PASSWORD_ROUTE,
+    PERSON_ROLE_NONE_KEY,
     personRowHasActions,
 } from '@rt/message-bus-admin/accounts/util';
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import { AdminListPageComponent, AdminListToolbarRightDirective, AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
-import { adminColumns, adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
+import { adminColumns, AdminTextService, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { PERSON_SORTABLE } from '@rt/message-bus-common';
 import {
     IRtTable,
@@ -35,6 +36,14 @@ import {
 } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-people-list';
+
+/** Строка таблицы с готовыми текстами: роль, состояние, пустой вход и вопрос перед отключением. */
+interface IPersonRowView extends IPerson.Short.State {
+    readonly roleLabel: string;
+    readonly stateLabel: string;
+    readonly lastLoginLabel: string;
+    readonly disableQuestion: string;
+}
 
 /**
  * Раздел людей.
@@ -93,16 +102,35 @@ const BEM_BLOCK: string = 'admin-people-list';
     host: { class: BEM_BLOCK },
 })
 export class AdminPeopleListComponent extends AdminListScreenBase<IPerson.Short.State, IPerson.Short.Api> {
-    protected readonly title: string = adminLabel('sectionPeople');
-    protected readonly hint: string = adminLabel('hintPeople');
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    protected readonly title: Signal<string> = computed((): string => this.#text.text('sectionPeople'));
+    protected readonly hint: Signal<string> = computed((): string => this.#text.text('hintPeople'));
     protected readonly columns: Signal<readonly IRtTable.ColumnConfig[]> = adminColumns(PEOPLE_COLUMNS);
     protected readonly tableId: string = PEOPLE_TABLE_ID;
     protected readonly qaPrefix: string = 'people';
-    protected readonly createLabel: string = adminLabel('personCreate');
-    protected readonly passwordLabel: string = adminLabel('personPasswordMenu');
-    protected readonly disableLabel: string = adminLabel('personDisable');
-    protected readonly disableTitle: string = adminLabel('personDisableTitle');
-    protected readonly accessLabel: string = adminLabel('personAccessMenu');
+    protected readonly createLabel: Signal<string> = computed((): string => this.#text.text('personCreate'));
+    protected readonly passwordLabel: Signal<string> = computed((): string => this.#text.text('personPasswordMenu'));
+    protected readonly disableLabel: Signal<string> = computed((): string => this.#text.text('personDisable'));
+    protected readonly disableTitle: Signal<string> = computed((): string => this.#text.text('personDisableTitle'));
+    protected readonly accessLabel: Signal<string> = computed((): string => this.#text.text('personAccessMenu'));
+
+    /**
+     * Строки с готовыми текстами.
+     *
+     * Роль, состояние, пустой вход и вопрос перед отключением прежде лежали полями строки: маппер
+     * брал их один раз на ответ приёмника, и смена языка их не трогала. Теперь в строке лежат
+     * имя роли и ключи, а текст по ним собирается здесь — на каждой отрисовке.
+     */
+    protected override readonly rows: Signal<readonly IPersonRowView[]> = computed((): readonly IPersonRowView[] =>
+        this.store.rows().map((row: IPerson.Short.State): IPersonRowView => ({
+            ...row,
+            roleLabel: row.role ?? this.#text.text(PERSON_ROLE_NONE_KEY),
+            stateLabel: this.#text.text(row.stateKey),
+            lastLoginLabel: row.lastLoginKey === null ? '' : this.#text.text(row.lastLoginKey),
+            disableQuestion: this.#text.text('personDisableQuestion', { name: row.name }),
+        }))
+    );
 
     protected readonly store: PeopleStore = inject(PeopleStore);
     protected readonly sortable: readonly string[] = PERSON_SORTABLE;
@@ -137,10 +165,10 @@ export class AdminPeopleListComponent extends AdminListScreenBase<IPerson.Short.
     protected readonly hasRowActions: IRtTable.RowActionsPredicate<IPerson.Short.State> = personRowHasActions;
 
     /** Пустой список объясняет себя сам: отбора у раздела нет, и объяснять пустоту им нечем. */
-    protected override readonly emptyMessage: Signal<string> = computed(() => adminLabel('listEmptyPeople'));
+    protected override readonly emptyMessage: Signal<string> = computed((): string => this.#text.text('listEmptyPeople'));
 
     /** Откуда берутся записи: кнопкой над списком, и человеку называется она сама. */
-    protected override readonly emptyDescription: Signal<string> = computed(() => adminLabel('listEmptyPeopleFrom'));
+    protected override readonly emptyDescription: Signal<string> = computed((): string => this.#text.text('listEmptyPeopleFrom'));
 
     constructor() {
         super();

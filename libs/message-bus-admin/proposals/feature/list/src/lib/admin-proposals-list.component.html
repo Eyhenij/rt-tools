@@ -1,4 +1,4 @@
-<admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
+<admin-list-page [hint]="hint()" [qaPrefix]="qaPrefix" [title]="title()">
     <ng-template adminListToolbarLeft>
         <admin-tree-filter [choices]="choices()" [tree]="query().tree" (treeChange)="changeTree($event)" />
         <admin-state-filter [state]="query().state" (stateChange)="changeState($event)" />
@@ -8,7 +8,7 @@
     <rt-table
         #rowsTable="rtTable"
         clickable
-        [ariaLabel]="title"
+        [ariaLabel]="title()"
         [attr.qa-dataid]="qaTable()"
         [columnsConfig]="columns()"
         [dataSource]="rows()"
@@ -38,7 +38,7 @@
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-state'">
                 {{ row.stateLabel }}
                 @if (row.closedByPublisher) {
-                    <span [attr.qa-dataid]="qaPrefix + '-cell-closed-by-publisher'">({{ closedByPublisherLabel }})</span>
+                    <span [attr.qa-dataid]="qaPrefix + '-cell-closed-by-publisher'">({{ closedByPublisherLabel() }})</span>
                 }
             </td>
         </ng-container>

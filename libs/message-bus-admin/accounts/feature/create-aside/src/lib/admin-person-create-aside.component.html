@@ -1,24 +1,24 @@
 <ng-container rtContainerRightSidenavPanel #panel="rtContainerRightPanel" (cancelled)="onCancel()" (closed)="onClosed()" />
 
-<rt-aside qa-dataid="person-create-panel" [ariaLabel]="title">
-    <rt-aside-header qa-dataid="person-create-header" [title]="title" (dismiss)="onClose()" />
+<rt-aside qa-dataid="person-create-panel" [ariaLabel]="title()">
+    <rt-aside-header qa-dataid="person-create-header" [title]="title()" (dismiss)="onClose()" />
 
     @if (submitError(); as fault) {
         <rt-message severity="danger" qa-dataid="person-create-fault">{{ fault }}</rt-message>
     }
 
-    <rt-field [hint]="nameHint" [label]="nameLabel">
-        <rt-input qa-dataid="person-create-name" autocomplete="off" [formControl]="name" [placeholder]="nameLabel" />
+    <rt-field [hint]="nameHint()" [label]="nameLabel()">
+        <rt-input qa-dataid="person-create-name" autocomplete="off" [formControl]="name" [placeholder]="nameLabel()" />
     </rt-field>
 
-    <rt-field [hint]="passwordHint" [label]="passwordLabel">
+    <rt-field [hint]="passwordHint()" [label]="passwordLabel()">
         <rt-input
             qa-dataid="person-create-password"
             type="password"
             autocomplete="new-password"
             [formControl]="password"
             [passwordToggle]="true"
-            [placeholder]="passwordLabel" />
+            [placeholder]="passwordLabel()" />
     </rt-field>
 
     <rt-aside-footer>
@@ -27,8 +27,8 @@
             asidePrimary
             qa-dataid="person-create-submit"
             type="button"
-            [attr.aria-label]="submitLabel"
-            [label]="submitLabel"
+            [attr.aria-label]="submitLabel()"
+            [label]="submitLabel()"
             [loading]="submitting()"
             (click)="submit()"></button>
 
@@ -38,8 +38,8 @@
             qa-dataid="person-create-close"
             type="button"
             appearance="text"
-            [attr.aria-label]="closeLabel"
-            [label]="closeLabel"
+            [attr.aria-label]="closeLabel()"
+            [label]="closeLabel()"
             (click)="onClose()"></button>
     </rt-aside-footer>
 </rt-aside>

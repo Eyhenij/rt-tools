@@ -9,7 +9,7 @@ import {
     CdkRow,
     CdkRowDef,
 } from '@angular/cdk/table';
-import { inject, ChangeDetectionStrategy, Component, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import {
     AdminListPageComponent,
@@ -17,7 +17,7 @@ import {
     AdminMomentPipe,
     AdminTreeFilterComponent,
 } from '@rt/message-bus-admin/common/core/ui';
-import { adminColumns, adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
+import { adminColumns, AdminTextService, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { MonthRecordsStore } from '@rt/message-bus-admin/summaries/data-access';
 import { IMonthRecord, SUMMARIES_COLUMNS, SUMMARIES_TABLE_ID } from '@rt/message-bus-admin/summaries/util';
 import { IRtTable, RtTableComponent, RtTableRowDirective, RtTableSortHeaderComponent } from '@rt-tools/ui-kit-v2';
@@ -74,8 +74,10 @@ const BEM_BLOCK: string = 'admin-summaries-list';
     host: { class: BEM_BLOCK },
 })
 export class AdminSummariesListComponent extends AdminListScreenBase<IMonthRecord.Short.State, IMonthRecord.Short.Api> {
-    protected readonly title: string = adminLabel('sectionSummaries');
-    protected readonly hint: string = adminLabel('hintSummaries');
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    protected readonly title: Signal<string> = computed((): string => this.#text.text('sectionSummaries'));
+    protected readonly hint: Signal<string> = computed((): string => this.#text.text('hintSummaries'));
     protected readonly columns: Signal<readonly IRtTable.ColumnConfig[]> = adminColumns(SUMMARIES_COLUMNS);
     protected readonly tableId: string = SUMMARIES_TABLE_ID;
     protected readonly qaPrefix: string = 'summaries';

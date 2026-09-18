@@ -19,16 +19,27 @@ import {
     AdminTreeFilterComponent,
     IAdminPeriod,
 } from '@rt/message-bus-admin/common/core/ui';
-import { adminColumns, adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
+import { adminColumns, AdminTextService, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { UsageDigestStore, UsageRowsStore } from '@rt/message-bus-admin/usage/data-access';
 import { AdminUsageDigestComponent, AdminUsageQuickPeriodComponent } from '@rt/message-bus-admin/usage/ui';
-import { IUsage, quickPeriod, quickPeriodOf, TQuickPeriodDays, USAGE_COLUMNS, USAGE_TABLE_ID } from '@rt/message-bus-admin/usage/util';
+import {
+    IUsage,
+    quickPeriod,
+    quickPeriodOf,
+    skillKindKey,
+    TQuickPeriodDays,
+    USAGE_COLUMNS,
+    USAGE_TABLE_ID,
+} from '@rt/message-bus-admin/usage/util';
 import { USAGE_SORTABLE } from '@rt/message-bus-common';
 import { IRtTable, RtEmptyStateComponent, RtTableComponent, RtTableRowDirective, RtTableSortHeaderComponent } from '@rt-tools/ui-kit-v2';
 
-import { SkillKindPipe } from './skill-kind.pipe';
-
 const BEM_BLOCK: string = 'admin-usage-list';
+
+/** Строка таблицы с родом скила словом: набор родов закрыт, а слово о нём приходит из словаря. */
+interface IUsageRowView extends IUsage.Row.State {
+    readonly kindLabel: string;
+}
 
 /**
  * Раздел использования правил: строка на скил за период — род, загрузки, сессии, отказы гейта.
@@ -78,16 +89,15 @@ const BEM_BLOCK: string = 'admin-usage-list';
         RtTableComponent,
         RtTableRowDirective,
         RtTableSortHeaderComponent,
-
-        // pipes
-        SkillKindPipe,
     ],
     providers: [provideAdminListHost((): typeof AdminUsageListComponent => AdminUsageListComponent)],
     host: { class: BEM_BLOCK },
 })
 export class AdminUsageListComponent extends AdminListScreenBase<IUsage.Row.State, IUsage.Row.Api> {
-    protected readonly title: string = adminLabel('sectionUsage');
-    protected readonly hint: string = adminLabel('hintUsage');
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    protected readonly title: Signal<string> = computed((): string => this.#text.text('sectionUsage'));
+    protected readonly hint: Signal<string> = computed((): string => this.#text.text('hintUsage'));
     protected readonly columns: Signal<readonly IRtTable.ColumnConfig[]> = adminColumns(USAGE_COLUMNS);
     protected readonly tableId: string = USAGE_TABLE_ID;
     protected readonly qaPrefix: string = 'usage';
@@ -99,7 +109,17 @@ export class AdminUsageListComponent extends AdminListScreenBase<IUsage.Row.Stat
     protected readonly digest: Signal<IUsage.Digest.State | null> = computed(() => this.digestStore.digest());
     protected readonly digestReading: Signal<boolean> = computed(() => this.digestStore.pending());
     protected readonly digestFailed: Signal<boolean> = computed(() => this.digestStore.fault() !== null);
-    protected readonly digestFailedText: string = adminLabel('digestFailed');
+    protected readonly digestFailedText: Signal<string> = computed((): string => this.#text.text('digestFailed'));
+
+    /**
+     * Строки с родом скила словом.
+     *
+     * Прежде род переводил чистый пайп, и на смену языка он не отзывался вовсе: чистый пайп
+     * помнит ответ по своему доводу, а род строки от языка не зависит.
+     */
+    protected override readonly rows: Signal<readonly IUsageRowView[]> = computed((): readonly IUsageRowView[] =>
+        this.store.rows().map((row: IUsage.Row.State): IUsageRowView => ({ ...row, kindLabel: this.#text.text(skillKindKey(row.kind)) }))
+    );
 
     /**
      * Чем сужена сводка — одной строкой: строка одна и та же, пока не сменились дерево или

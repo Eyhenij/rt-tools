@@ -5,14 +5,17 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 3 из 4 — разделы по одному
+- **Stage:** 4 из 4 — сквозной набор
 - **Done:** задача взята, план записан. Этап 1 сделан: заведена общая помощница, семь объявлений
-  столбцов держат ключ, семь экранов берут по нему текст производным — сборка, линт и тесты
-  шестидесяти проектов зелёные. Этап 2 сделан: общая страница списка, четыре отбора и основа
-  списочного экрана берут подписи производными; в общем слое остались два вызова старого способа
-  — сам словарь и слово состояния груза, которое зовут мапперы разделов
-- **Next step:** этап 3 — списки, панели и заголовки маршрутов шести разделов, вместе с мапперами:
-  модель строки держит ключ состояния, а текст по нему берёт экран
+  столбцов держат ключ, семь экранов берут по нему текст производным. Этап 2 сделан: общая страница
+  списка, четыре отбора и основа списочного экрана берут подписи производными. Этап 3 сделан: шесть
+  разделов переведены целиком — списки, панели, заголовки маршрутов, сторы и мапперы. Старого
+  способа в админке не осталось вовсе, и сама его функция убрана. Слова строк собирают экраны:
+  состояние груза — общей помощницей, роль, пустой вход, права роли и вопросы перед необратимым
+  действием — каждый экран у себя. Чистый пайп рода скила убран: он помнил ответ по своему доводу
+  и на смену языка не отзывался. Линт, типы, тесты и сборка шестидесяти проектов зелёные
+- **Next step:** этап 4 — сквозной тест на то, что подписи экрана раздела идут за выбором языка, и
+  весь набор целиком
 - **Uncommitted:** нет
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -30,3 +33,53 @@ Rewritten by every session, not appended to.
   пишут в те же наборы подписей, и от ветки эпика они разошлись бы на каждом ключе.
 - Измерение перед планом: русского текста в шаблонах админки ноль, а вызовов старого способа 212
   — работа вся в коде экранов, не в разметке.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools
+**Branch:** RT-2211-section-screens-from-dictionary
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 3 из 4 — разделы по одному
+- **Next step:** этап 3 — списки, панели и заголовки маршрутов шести разделов, вместе с мапперами:
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-2211-section-screens-from-dictionary/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+none
+```
+
+### Commits over the main branch
+
+```
+565464d4b feat(rt:message-bus): общий слой списка спрашивает словарь на каждой отрисовке
+59d25853f feat(rt:message-bus): столбцы всех разделов названы ключами словаря
+e612048cf feat(rt:message-bus): подпись столбца названа ключом словаря
+f7dc2cc45 docs(rt:message-bus): задача RT-2211 взята, план записан
+3604c06ba docs(rt:message-bus): папка задачи RT-2210 разобрана
+3861e3c01 feat(rt:message-bus): экраны входа берут подписи из словаря
+550c2dd4d docs(rt:message-bus): задача RT-2210 взята, план записан
+01c397dc9 Merge branch 'RT-2208-receiver-texts-keys' into RT-2209-labels-from-dictionary
+6dc74979b Merge remote-tracking branch 'origin/main' into RT-2208-receiver-texts-keys
+1ed106794 docs(rt:message-bus): папка задачи RT-2209 разобрана
+3d9c91d8a docs(rt:message-bus): соглашение о словаре подписей влито в спеку оболочки
+a343b6051 feat(rt:message-bus): оболочка админки берёт подписи из словаря
+e5ff997b0 feat(rt:message-bus): словарь подписей админки на двух языках
+ccc1383d4 docs(rt:message-bus): соглашение о словаре подписей админки
+a941a79e7 docs(rt:message-bus): задача RT-2209 взята, план записан
+2f1aa8cf5 fix(rt:agent-kit): номера сценариев проверки выхода из хода разведены с занятыми
+ecd780f39 docs(rt:agent-kit): копии rt-tools назначен эпик RT-2208
+aa5b3755d merge origin/main: таблица назначений и уборка архива
+8aa17b9a5 docs(rt:message-bus): в план эпика записано измерение на 18 сентября
+0db507176 docs(rt:message-bus): заведён эпик RT-2208 — ключи и переводы текстов приёмника
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

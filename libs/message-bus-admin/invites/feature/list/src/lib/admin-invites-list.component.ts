@@ -12,9 +12,16 @@ import {
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import { AdminListPageComponent, AdminListToolbarRightDirective, AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
-import { adminColumns, adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
+import { adminColumns, AdminTextService, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { InvitesStore } from '@rt/message-bus-admin/invites/data-access';
-import { IInvite, INVITE_CREATE_ROUTE, INVITES_COLUMNS, INVITES_TABLE_ID, inviteRowHasActions } from '@rt/message-bus-admin/invites/util';
+import {
+    IInvite,
+    INVITE_CREATE_ROUTE,
+    INVITES_COLUMNS,
+    INVITES_TABLE_ID,
+    inviteRowHasActions,
+    inviteStateKey,
+} from '@rt/message-bus-admin/invites/util';
 import { TREE_INVITE_SORTABLE } from '@rt/message-bus-common';
 import {
     IRtTable,
@@ -26,6 +33,12 @@ import {
 } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-invites-list';
+
+/** Строка таблицы с готовыми текстами: состояние словом и вопрос перед отзывом с именем дерева. */
+interface IInviteRowView extends IInvite.Short.State {
+    readonly stateLabel: string;
+    readonly revokeQuestion: string;
+}
 
 /**
  * Раздел приглашений.
@@ -81,14 +94,16 @@ const BEM_BLOCK: string = 'admin-invites-list';
     host: { class: BEM_BLOCK },
 })
 export class AdminInvitesListComponent extends AdminListScreenBase<IInvite.Short.State, IInvite.Short.Api> {
-    protected readonly title: string = adminLabel('sectionInvites');
-    protected readonly hint: string = adminLabel('hintInvites');
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    protected readonly title: Signal<string> = computed((): string => this.#text.text('sectionInvites'));
+    protected readonly hint: Signal<string> = computed((): string => this.#text.text('hintInvites'));
     protected readonly columns: Signal<readonly IRtTable.ColumnConfig[]> = adminColumns(INVITES_COLUMNS);
     protected readonly tableId: string = INVITES_TABLE_ID;
     protected readonly qaPrefix: string = 'invites';
-    protected readonly createLabel: string = adminLabel('inviteCreate');
-    protected readonly revokeLabel: string = adminLabel('inviteRevoke');
-    protected readonly revokeTitle: string = adminLabel('inviteRevokeTitle');
+    protected readonly createLabel: Signal<string> = computed((): string => this.#text.text('inviteCreate'));
+    protected readonly revokeLabel: Signal<string> = computed((): string => this.#text.text('inviteRevoke'));
+    protected readonly revokeTitle: Signal<string> = computed((): string => this.#text.text('inviteRevokeTitle'));
 
     protected readonly store: InvitesStore = inject(InvitesStore);
     protected readonly sortable: readonly string[] = TREE_INVITE_SORTABLE;
@@ -100,13 +115,28 @@ export class AdminInvitesListComponent extends AdminListScreenBase<IInvite.Short
     protected readonly hasRowActions: IRtTable.RowActionsPredicate<IInvite.Short.State> = inviteRowHasActions;
 
     /** Пустой список объясняет себя сам: отбора у раздела нет, и объяснять пустоту им нечем. */
-    protected override readonly emptyMessage: Signal<string> = computed(() => adminLabel('listEmptyInvites'));
+    protected override readonly emptyMessage: Signal<string> = computed((): string => this.#text.text('listEmptyInvites'));
 
     /**
      * Откуда берутся приглашения. У груза их приносит дерево, а здесь — команда владельца, и
      * человеку называется она сама: раздел выдачи в админке не заводит.
      */
-    protected override readonly emptyDescription: Signal<string> = computed(() => adminLabel('listEmptyInvitesFrom'));
+    protected override readonly emptyDescription: Signal<string> = computed((): string => this.#text.text('listEmptyInvitesFrom'));
+
+    /**
+     * Строки со словом состояния и с вопросом перед отзывом.
+     *
+     * Оба текста прежде лежали готовыми полями строки: маппер брал их один раз на ответ приёмника,
+     * и смена языка их не трогала. Ключ и имя дерева живут в строке, а текст по ним собирается
+     * здесь — на каждой отрисовке.
+     */
+    protected override readonly rows: Signal<readonly IInviteRowView[]> = computed((): readonly IInviteRowView[] =>
+        this.store.rows().map((row: IInvite.Short.State): IInviteRowView => ({
+            ...row,
+            stateLabel: this.#text.text(inviteStateKey(row.state)),
+            revokeQuestion: this.#text.text('inviteRevokeQuestion', { name: row.name }),
+        }))
+    );
 
     constructor() {
         super();

@@ -1,4 +1,4 @@
-<admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
+<admin-list-page [hint]="hint()" [qaPrefix]="qaPrefix" [title]="title()">
     <ng-template adminListToolbarLeft>
         <admin-tree-filter [choices]="choices()" [tree]="query().tree" (treeChange)="changeTree($event)" />
         <admin-period-filter [from]="shownPeriod().from" [to]="shownPeriod().to" (periodChange)="pickPeriod($event)" />
@@ -7,7 +7,7 @@
 
     <ng-template adminListAboveTable>
         @if (digestFailed()) {
-            <rt-empty-state qa-dataid="usage-digest-failed" icon="ico-warning" [title]="digestFailedText" />
+            <rt-empty-state qa-dataid="usage-digest-failed" icon="ico-warning" [title]="digestFailedText()" />
         } @else if (query().tree !== '') {
             <admin-usage-digest [digest]="digest()" [reading]="digestReading()" />
         }
@@ -16,7 +16,7 @@
     <rt-table
         #rowsTable="rtTable"
         clickable
-        [ariaLabel]="title"
+        [ariaLabel]="title()"
         [attr.qa-dataid]="qaTable()"
         [columnsConfig]="columns()"
         [dataSource]="rows()"
@@ -33,7 +33,7 @@
 
         <ng-container cdkColumnDef="kind">
             <th *cdkHeaderCellDef cdk-header-cell>{{ columns()[1].label }}</th>
-            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-kind'">{{ row.kind | skillKind }}</td>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-kind'">{{ row.kindLabel }}</td>
         </ng-container>
 
         <ng-container cdkColumnDef="loads">

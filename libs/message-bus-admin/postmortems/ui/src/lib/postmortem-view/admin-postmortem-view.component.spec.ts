@@ -2,6 +2,7 @@ import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { IPostmortem } from '@rt/message-bus-admin/postmortems/util';
+import { provideRtStorage, provideRtUtils } from '@rt-tools/core';
 
 import { AdminPostmortemViewComponent } from './admin-postmortem-view.component';
 
@@ -39,7 +40,9 @@ describe('AdminPostmortemViewComponent', () => {
     }
 
     beforeEach(() => {
-        TestBed.configureTestingModule({ imports: [AdminPostmortemViewComponent] });
+        // Названия свойств приходят из словаря, а он читает выбранный язык из браузерного
+        // хранилища: без хранилища панель не собирается вовсе.
+        TestBed.configureTestingModule({ imports: [AdminPostmortemViewComponent], providers: [provideRtUtils(), provideRtStorage()] });
 
         fixture = TestBed.createComponent(AdminPostmortemViewComponent);
     });

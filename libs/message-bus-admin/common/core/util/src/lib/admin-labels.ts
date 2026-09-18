@@ -330,11 +330,6 @@ export function fill(text: string, params?: TRtKitLabelParams): string {
     return text.replace(PLACEHOLDER, (match: string, name: string): string => (Object.hasOwn(params, name) ? String(params[name]) : match));
 }
 
-/** Подпись админки с подстановками. */
-export function adminLabel(key: TAdminLabelKey, params?: TRtKitLabelParams): string {
-    return fill(ADMIN_LABELS[key], params);
-}
-
 /**
  * Функция, которой кит получает подписи.
  *

@@ -1,4 +1,4 @@
-<admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
+<admin-list-page [hint]="hint()" [qaPrefix]="qaPrefix" [title]="title()">
     @if (canManage()) {
         <ng-template adminListToolbarRight>
             <button
@@ -6,8 +6,8 @@
                 icon="plus-circle"
                 type="button"
                 qa-dataid="roles-create"
-                [attr.aria-label]="createLabel"
-                [label]="createLabel"
+                [attr.aria-label]="createLabel()"
+                [label]="createLabel()"
                 (click)="openCreate()"></button>
         </ng-template>
     }
@@ -18,7 +18,7 @@
     <ng-container rtBlock="admin-page">
         <rt-table
             #rowsTable="rtTable"
-            [ariaLabel]="title"
+            [ariaLabel]="title()"
             [attr.qa-dataid]="qaTable()"
             [columnsConfig]="columns()"
             [dataSource]="rows()"
@@ -50,16 +50,20 @@
              вошедшем не прячется ничего. Удаление есть только у роли, которую никто не держит -->
             @if (canManage()) {
                 <ng-template rtTableRowActions let-row [rtTableRowActionsRowType]="rows()">
-                    <rt-menu-item icon="pencil" [label]="editLabel" [attr.qa-dataid]="qaPrefix + '-edit'" (selected)="openEdit(row.key)" />
+                    <rt-menu-item
+                        icon="pencil"
+                        [label]="editLabel()"
+                        [attr.qa-dataid]="qaPrefix + '-edit'"
+                        (selected)="openEdit(row.key)" />
 
                     @if (row.canDelete) {
                         <rt-menu-item
                             danger
                             icon="trash"
-                            [confirmLabel]="deleteLabel"
+                            [confirmLabel]="deleteLabel()"
                             [confirmMessage]="row.deleteQuestion"
-                            [confirmTitle]="deleteTitle"
-                            [label]="deleteLabel"
+                            [confirmTitle]="deleteTitle()"
+                            [label]="deleteLabel()"
                             [attr.qa-dataid]="qaPrefix + '-delete'"
                             (selected)="remove(row)" />
                     }

@@ -4,12 +4,12 @@
  * Живут в основании семейства, а не в разделе: состояние есть и у разбора происшествия, и у
  * предложения, и написанное дважды оно разошлось бы между двумя столбцами молча.
  *
- * Функция чистая и каркаса не знает: её зовут мапперы обоих разделов и спека — последней ни
- * `TestBed`, ни подмены не нужны.
+ * Функция чистая и каркаса не знает: её зовут экраны обоих разделов, отбор по состоянию и спека —
+ * последней ни `TestBed`, ни подмены не нужны.
  */
 import { ECargoState } from '@rt/message-bus-common';
 
-import { adminLabel, TAdminLabelKey } from './admin-labels';
+import { TAdminLabelKey } from './admin-labels';
 
 /**
  * Каким ключом словаря названо состояние записи груза.
@@ -31,14 +31,4 @@ export function cargoStateKey(state: ECargoState): TAdminLabelKey {
         default:
             return 'cargoStateNew';
     }
-}
-
-/**
- * Состояние записи груза словом.
- *
- * Зовут её мапперы разделов, и текст она берёт при отображении строки. Язык на ходу такая подпись
- * не меняет — мапперы переводятся задачей RT-2211 вместе с моделями строк.
- */
-export function cargoStateLabel(state: ECargoState): string {
-    return adminLabel(cargoStateKey(state));
 }

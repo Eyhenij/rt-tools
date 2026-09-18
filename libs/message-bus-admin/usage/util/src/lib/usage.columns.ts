@@ -4,7 +4,7 @@
  * Лежит отдельно от экрана: тот же набор читают и таблица, и панель настройки столбцов, и спека
  * — объявленный в шаблоне, он был бы известен только шаблону.
  */
-import { adminLabel, IAdminColumn, TAdminLabelKey } from '@rt/message-bus-admin/common/core/util';
+import { IAdminColumn, TAdminLabelKey } from '@rt/message-bus-admin/common/core/util';
 
 import { ESkillKind } from './usage.model';
 
@@ -47,7 +47,12 @@ const KIND_LABEL_KEYS: Readonly<Record<ESkillKind, TAdminLabelKey>> = Object.fre
     [ESkillKind.Own]: 'kindOwn',
 });
 
-/** Подпись рода скила. */
-export function skillKindLabel(kind: ESkillKind): string {
-    return adminLabel(KIND_LABEL_KEYS[kind]);
+/**
+ * Каким ключом словаря назван род скила.
+ *
+ * Отдаётся ключ, а не текст: текст, взятый здесь, приходит на языке той минуты, когда файл
+ * загрузился, и до перезагрузки страницы остаётся прежним.
+ */
+export function skillKindKey(kind: ESkillKind): TAdminLabelKey {
+    return KIND_LABEL_KEYS[kind];
 }
