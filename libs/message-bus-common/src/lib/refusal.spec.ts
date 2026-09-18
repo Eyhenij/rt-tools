@@ -43,9 +43,14 @@ describe('refusalOf', () => {
         expect(refusal).toEqual({ code: ERefusal.TreeUnknown, params: { slug: 'rt-tools' } });
     });
 
-    it('код вне набора отказом не считается: рисовать по нему нечего', () => {
+    it('код вне набора не отбрасывается: показывающая сторона увидит его именем', () => {
         expect(refusalOf({ code: ERefusal.RoleNameEmpty })).not.toBeNull();
-        expect(refusalOf({ code: 'выдуманный', message: 'что-то' })).toBeNull();
+        expect(refusalOf({ code: 'выдуманный', message: 'что-то' })).toEqual({ code: 'выдуманный' });
+    });
+
+    it('тело без кода отказом не считается: рисовать по нему нечего', () => {
+        expect(refusalOf({ message: 'что-то' })).toBeNull();
+        expect(refusalOf({ code: '' })).toBeNull();
         expect(refusalOf('строка')).toBeNull();
         expect(refusalOf(null)).toBeNull();
     });

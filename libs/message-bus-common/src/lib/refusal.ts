@@ -112,9 +112,6 @@ export interface IRefusal {
 /** Место подстановки в предложении. Та же форма, что у подписей админки: набор один. */
 const PLACEHOLDER: RegExp = /\{\{(\w+)\}\}/g;
 
-/** Коды набором: пришедшее вне набора отказом не считается вовсе. */
-const CODES: readonly ERefusal[] = Object.values(ERefusal);
-
 /**
  * Русское предложение по коду — одно на приёмник.
  *
@@ -166,7 +163,7 @@ const SAID: Readonly<Record<ERefusal, string>> = {
  * законченная фраза, а `{{name}}` виден и чинится.
  */
 export function refusalSaid(code: ERefusal, params?: TRefusalParams): string {
-    const text: string = SAID[code];
+    const text: string = SAID[code] ?? '';
 
     if (params === undefined) {
         return text;
@@ -196,10 +193,14 @@ function paramsOf(body: object): TRefusalParams | undefined {
 }
 
 /**
- * Отказ из тела ответа. Пусто — код не назван или не из набора.
+ * Отказ из тела ответа. Пусто — код не назван.
  *
  * Разбор лежит здесь, а не у показывающего: набор один на обе стороны, и вторая копия разбора
  * разошлась бы с первой молча.
+ *
+ * Код, которого нет в наборе читающей стороны, не отбрасывается: стороны выкатываются порознь, и
+ * отброшенный код показал бы запасную строку экрана — то есть скрыл бы расхождение. Отданный как
+ * есть, он виден признаком ненайденного ключа и чинится по имени.
  */
 export function refusalOf(body: unknown): IRefusal | null {
     if (typeof body !== 'object' || body === null) {
@@ -207,13 +208,14 @@ export function refusalOf(body: unknown): IRefusal | null {
     }
 
     const code: unknown = Reflect.get(body, 'code');
-    const known: ERefusal | undefined = CODES.find((one: ERefusal): boolean => one === code);
 
-    if (known === undefined) {
+    if (typeof code !== 'string' || code.length === 0) {
         return null;
     }
 
     const params: TRefusalParams | undefined = paramsOf(body);
+    // Приведение здесь одно на обе стороны: незнакомый код доезжает до показа именем, а не пустотой
+    const named: ERefusal = code as ERefusal;
 
-    return params === undefined ? { code: known } : { code: known, params };
+    return params === undefined ? { code: named } : { code: named, params };
 }

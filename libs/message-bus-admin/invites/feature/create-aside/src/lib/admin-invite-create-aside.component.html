@@ -3,8 +3,8 @@
 <rt-aside qa-dataid="invite-create-panel" [ariaLabel]="title()">
     <rt-aside-header qa-dataid="invite-create-header" [title]="title()" (dismiss)="onClose()" />
 
-    @if (submitError(); as fault) {
-        <rt-message severity="danger" qa-dataid="invite-create-fault">{{ fault }}</rt-message>
+    @if (submitError()) {
+        <rt-message severity="danger" qa-dataid="invite-create-fault">{{ fault.text() }}</rt-message>
     }
 
     <rt-field [hint]="nameHint()" [label]="nameLabel()">

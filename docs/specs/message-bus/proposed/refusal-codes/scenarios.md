@@ -10,8 +10,6 @@ When the intake refuses the request
 Then the body of the answer carries a code of the set and the name of the role as a substitution,
 and the code of HTTP stays the one this refusal has today
 
-Not covered: the set of the codes is created by the second stage of the task.
-
 ### SC-MB-409 — the text of a refusal follows the chosen language
 
 Given the intake answered a refusal by a code that has a text in both sets
@@ -24,10 +22,8 @@ Not covered: the screens start to read the code at the fourth stage of the task.
 
 Given the intake answered a code the sets have no text for
 When the screen shows the refusal
-Then in place of the text stands the sign of an unfound key: an empty string would read as "there
-is no refusal here" and would live until a person complains
-
-Not covered: the screens start to read the code at the fourth stage of the task.
+Then in place of the text stands the sign of an unfound key: a word of the screen in its place
+would hide that the sides have diverged, and it would live until a person complains
 
 ### SC-MB-411 — the word of the intake is not shown even when it came
 
@@ -35,15 +31,11 @@ Given the body of the answer carries both the code and the sentence of the intak
 When the screen shows the refusal
 Then a person sees the text of the dictionary, and the sentence of the intake reaches no screen
 
-Not covered: the screens start to read the code at the fourth stage of the task.
-
 ### SC-MB-412 — every code of the set has a text in both sets of the labels
 
 Given the set of the codes of the shared lib
 When every code of it is asked of the Russian set and of the English one
 Then a text is found for each: a set walked by eye diverges at the first code added
-
-Not covered: the check by a call is written by the fourth stage of the task.
 
 ### SC-MB-413 — the substitutions of a refusal stand in the text by name
 

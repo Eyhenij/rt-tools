@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@a
 import { FormControl, FormGroup, FormRecord, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RolesStore } from '@rt/message-bus-admin/accounts/data-access';
 import { IRightGroup, IRole, rightGroups } from '@rt/message-bus-admin/accounts/util';
-import { AdminTextService, spokenFaultText, TAdminLabelKey } from '@rt/message-bus-admin/common/core/util';
+import { adminFaultText, AdminTextService, IAdminFaultText, TAdminLabelKey } from '@rt/message-bus-admin/common/core/util';
 import { RIGHTS, TRight } from '@rt/message-bus-common';
 import {
     RtAsideComponent,
@@ -68,6 +68,11 @@ export class AdminRoleAsideComponent extends RtRouteAsideComponent<IRole.Short.S
 
     readonly #store: RolesStore = inject(RolesStore);
 
+    /** Текст отказа: причину называет приёмник кодом, слово рисует словарь на выбранном языке. */
+    protected readonly fault: IAdminFaultText = adminFaultText((): TAdminLabelKey =>
+        this.entityId() === null ? 'roleCreateFailed' : 'roleSaveFailed'
+    );
+
     protected readonly nameLabel: Signal<string> = computed((): string => this.#text.text('roleName'));
     protected readonly nameHint: Signal<string> = computed((): string => this.#text.text('roleNameHint'));
     protected readonly closeLabel: Signal<string> = computed((): string => this.#text.text('panelClose'));
@@ -122,8 +127,7 @@ export class AdminRoleAsideComponent extends RtRouteAsideComponent<IRole.Short.S
 
         this.runMutation(saved, {
             successText: this.#text.text(creating ? 'roleCreateDone' : 'roleSaveDone', { name }),
-            errorText: (error: unknown): string =>
-                spokenFaultText(error, this.#text.text(creating ? 'roleCreateFailed' : 'roleSaveFailed')),
+            errorText: this.fault.take,
             closeOnSuccess: true,
         });
     }
