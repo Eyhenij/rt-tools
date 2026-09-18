@@ -62,6 +62,10 @@ not by a person.
   does not judge it.** The epic plan is written by the command that creates the epic and outlives
   the merge. A plan naming another branch releases nothing.
 - **A closed stage is confirmed by the command of the check of the same turn.**
+- **A next step rewritten into the progress is begun by the same turn.** After the last edit of the
+  progress the turn holds work other than the commit and the push of it — an edit outside the task
+  folder or a command changing the tree; otherwise the turn does not end, however much was done
+  before the line. Judged in a running stage alone; handed-in work has a tier of its own.
 - **The lawful exits are judged before all the tiers.** There are four of them: a question to the
   owner, a refusal of a guard, a written handover and a word of the owner about a stop.
 - **The parts of a compound command are judged one by one.** A reading joined with an edit stays
@@ -164,3 +168,5 @@ Not applicable: the guard judges one turn of one session.
 - 2026-09-18 — the epic branch: a branch named by the header of an epic plan is not judged by the
   tier of the taken task. The end of an epic read from the table releases the whole turn; an
   unreadable epic keeps the former judgement.
+- 2026-09-18 — the next step: a progress rewritten by the turn names what the turn owes, and the
+  turn does not end on the commit of it alone.

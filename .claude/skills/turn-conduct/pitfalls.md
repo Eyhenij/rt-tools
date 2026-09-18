@@ -1,4 +1,4 @@
-<!-- rt-kit v0.29.0 · pitfalls/turn-conduct.md · 51f8a48f2f9f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · pitfalls/turn-conduct.md · 7700a0c1ba43 · правится надстройкой, не здесь -->
 # Session turn — cold part
 
 Pitfalls: cases and numbers that used to stand next to the rule's articles. Loaded not with the
@@ -122,3 +122,8 @@ The rule is `turn-conduct`; the articles that hold the law stand there.
   done.
 - **"A statement about the tree's state is watched by the statement guard": why a word has its own
   kind of command.** A general sign "there was a command" would confirm one thing by another.
+- **A next step named and not begun.** Four stops of one shape: a stage closed and committed, a
+  full report, the next stage named in the progress and untouched. The last, on 17 September, came
+  after an epic with seven tasks, an agreement and a whole first stage — the more was done, the more
+  the report read as the end. The guard now reads the order of actions after the last edit of the
+  progress, and a turn that opened the PR passes that sign by itself.

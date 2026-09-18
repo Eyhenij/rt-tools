@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.0 · hooks/turn-exit-guard.sh · 36e05248a45e · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/turn-exit-guard.sh · bb0f968dd2ab · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
@@ -380,6 +380,8 @@ The guard judges one turn: the next session is not refused."
         rt_te_deny "$reason" "a closed stage is not backed by the output of a command."
     fi
 fi
+# The next step rewritten into the progress and not begun: the tier lies next to the epic tiers.
+command -v rt_te_next_step_deny >/dev/null 2>&1 && rt_te_next_step_deny
 
 # The work is handed over and the next one is only named. There is more work in such a turn than in
 # any other — and all of it is on the task handed in: the handover finishes the previous work, not
