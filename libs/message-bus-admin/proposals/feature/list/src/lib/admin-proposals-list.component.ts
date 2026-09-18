@@ -9,7 +9,7 @@ import {
     CdkRow,
     CdkRowDef,
 } from '@angular/cdk/table';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { inject, ChangeDetectionStrategy, Component, Signal } from '@angular/core';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import {
     AdminListPageComponent,
@@ -19,7 +19,7 @@ import {
     AdminTreeFilterComponent,
     AdminVersionFilterComponent,
 } from '@rt/message-bus-admin/common/core/ui';
-import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
+import { adminColumns, adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { ProposalsStore } from '@rt/message-bus-admin/proposals/data-access';
 import { IProposal, PROPOSALS_COLUMNS, PROPOSALS_TABLE_ID } from '@rt/message-bus-admin/proposals/util';
 import { IRtTable, RtTableComponent, RtTableRowDirective, RtTableSortHeaderComponent } from '@rt-tools/ui-kit-v2';
@@ -82,7 +82,7 @@ const BEM_BLOCK: string = 'admin-proposals-list';
 export class AdminProposalsListComponent extends AdminListScreenBase<IProposal.Short.State, IProposal.Short.Api> {
     protected readonly title: string = adminLabel('sectionProposals');
     protected readonly hint: string = adminLabel('hintProposals');
-    protected readonly columns: readonly IRtTable.ColumnConfig[] = PROPOSALS_COLUMNS;
+    protected readonly columns: Signal<readonly IRtTable.ColumnConfig[]> = adminColumns(PROPOSALS_COLUMNS);
     protected readonly tableId: string = PROPOSALS_TABLE_ID;
     protected readonly qaPrefix: string = 'proposals';
     /** Приписка к состоянию: запись, закрытую не своим деревом, отправитель иначе читает как свою отметку. */

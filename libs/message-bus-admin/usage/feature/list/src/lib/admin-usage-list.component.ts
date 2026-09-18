@@ -19,7 +19,7 @@ import {
     AdminTreeFilterComponent,
     IAdminPeriod,
 } from '@rt/message-bus-admin/common/core/ui';
-import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
+import { adminColumns, adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { UsageDigestStore, UsageRowsStore } from '@rt/message-bus-admin/usage/data-access';
 import { AdminUsageDigestComponent, AdminUsageQuickPeriodComponent } from '@rt/message-bus-admin/usage/ui';
 import { IUsage, quickPeriod, quickPeriodOf, TQuickPeriodDays, USAGE_COLUMNS, USAGE_TABLE_ID } from '@rt/message-bus-admin/usage/util';
@@ -88,7 +88,7 @@ const BEM_BLOCK: string = 'admin-usage-list';
 export class AdminUsageListComponent extends AdminListScreenBase<IUsage.Row.State, IUsage.Row.Api> {
     protected readonly title: string = adminLabel('sectionUsage');
     protected readonly hint: string = adminLabel('hintUsage');
-    protected readonly columns: readonly IRtTable.ColumnConfig[] = USAGE_COLUMNS;
+    protected readonly columns: Signal<readonly IRtTable.ColumnConfig[]> = adminColumns(USAGE_COLUMNS);
     protected readonly tableId: string = USAGE_TABLE_ID;
     protected readonly qaPrefix: string = 'usage';
 

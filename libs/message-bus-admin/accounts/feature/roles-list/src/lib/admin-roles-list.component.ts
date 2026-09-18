@@ -15,7 +15,7 @@ import { IRole, ROLE_CREATE_ROUTE, ROLES_COLUMNS, ROLES_TABLE_ID } from '@rt/mes
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import { AdminListPageComponent, AdminListToolbarRightDirective } from '@rt/message-bus-admin/common/core/ui';
-import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
+import { adminColumns, adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { ROLE_SORTABLE } from '@rt/message-bus-common';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import {
@@ -83,7 +83,7 @@ const BEM_BLOCK: string = 'admin-roles-list';
 export class AdminRolesListComponent extends AdminListScreenBase<IRole.Short.State, IRole.Short.Api> {
     protected readonly title: string = adminLabel('sectionRoles');
     protected readonly hint: string = adminLabel('hintRoles');
-    protected readonly columns: readonly IRtTable.ColumnConfig[] = ROLES_COLUMNS;
+    protected readonly columns: Signal<readonly IRtTable.ColumnConfig[]> = adminColumns(ROLES_COLUMNS);
     protected readonly tableId: string = ROLES_TABLE_ID;
     protected readonly qaPrefix: string = 'roles';
     protected readonly createLabel: string = adminLabel('roleCreate');

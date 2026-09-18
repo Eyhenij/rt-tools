@@ -23,7 +23,7 @@ import {
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import { AdminListPageComponent, AdminListToolbarRightDirective, AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
-import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
+import { adminColumns, adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { PERSON_SORTABLE } from '@rt/message-bus-common';
 import {
     IRtTable,
@@ -95,7 +95,7 @@ const BEM_BLOCK: string = 'admin-people-list';
 export class AdminPeopleListComponent extends AdminListScreenBase<IPerson.Short.State, IPerson.Short.Api> {
     protected readonly title: string = adminLabel('sectionPeople');
     protected readonly hint: string = adminLabel('hintPeople');
-    protected readonly columns: readonly IRtTable.ColumnConfig[] = PEOPLE_COLUMNS;
+    protected readonly columns: Signal<readonly IRtTable.ColumnConfig[]> = adminColumns(PEOPLE_COLUMNS);
     protected readonly tableId: string = PEOPLE_TABLE_ID;
     protected readonly qaPrefix: string = 'people';
     protected readonly createLabel: string = adminLabel('personCreate');

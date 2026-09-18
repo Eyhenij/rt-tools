@@ -12,7 +12,7 @@ import {
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import { AdminListPageComponent, AdminListToolbarRightDirective, AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
-import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
+import { adminColumns, adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { InvitesStore } from '@rt/message-bus-admin/invites/data-access';
 import { IInvite, INVITE_CREATE_ROUTE, INVITES_COLUMNS, INVITES_TABLE_ID, inviteRowHasActions } from '@rt/message-bus-admin/invites/util';
 import { TREE_INVITE_SORTABLE } from '@rt/message-bus-common';
@@ -83,7 +83,7 @@ const BEM_BLOCK: string = 'admin-invites-list';
 export class AdminInvitesListComponent extends AdminListScreenBase<IInvite.Short.State, IInvite.Short.Api> {
     protected readonly title: string = adminLabel('sectionInvites');
     protected readonly hint: string = adminLabel('hintInvites');
-    protected readonly columns: readonly IRtTable.ColumnConfig[] = INVITES_COLUMNS;
+    protected readonly columns: Signal<readonly IRtTable.ColumnConfig[]> = adminColumns(INVITES_COLUMNS);
     protected readonly tableId: string = INVITES_TABLE_ID;
     protected readonly qaPrefix: string = 'invites';
     protected readonly createLabel: string = adminLabel('inviteCreate');
