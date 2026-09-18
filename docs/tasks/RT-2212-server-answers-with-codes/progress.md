@@ -4,16 +4,23 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `замысел-записан`
-- **Stage:** 1 из 5 — договорённость о кодах отказа
-- **Done:** задача взята, ветка отведена от ветки эпика, план записан
-- **Next step:** этап 1 — написать договорённость о кодах отказа в `proposed/`
-- **Uncommitted:** папка задачи
+- **State:** `этап-идёт`
+- **Stage:** 2 из 5 — набор кодов в общей либе
+- **Done:** этап 1 — договорённость о кодах отказа лежит в `proposed/refusal-codes/`, 25 кодов и
+  шесть сценариев SC-MB-408…413
+- **Next step:** этап 2 — объявить набор кодов в `message-bus-common` рядом с `ECargoFault`
+- **Uncommitted:** нет
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Decisions along the way
 
+- **Код отказа и есть ключ словаря.** Второе имя под одну причину расходится с первым молча, а
+  незнакомый код даром получает готовый признак ненайденного ключа.
+- **Русское предложение остаётся в теле ответа, пока деревья не знают кодов.** Эта работа деревья в
+  поле не выкатывает; ответ без слова оставил бы владельца дерева с одним номером ответа. Собирается
+  оно по тому же коду одной таблицей общей либы.
+- **Отказы приёма груза и правки состояния не трогаются.** Их читает средство дерева, а не человек.
 - **Ветка отведена от ветки эпика, а не от ветки RT-2211.** План эпика ставит ветки стопкой, но
   проверка выдачи запрещает базу, не несущую вершины ветки эпика: RT-2211 отстала от неё на правку
   плана эпика. Работа RT-2211 придёт сюда слиянием ветки эпика, когда её заявку вольют.
@@ -27,3 +34,55 @@ Rewritten by every session, not appended to.
 - Задача взята после того, как RT-2211 ушла в заявку #2248.
 - Измерение перед планом: бросков отказа с русским текстом в приёмнике 43, мест в админке, где это
   слово показывается человеку, девять.
+- Этап 1 закончен: договорённость написана, `node tools/check-specs.mjs` зелёный и видит все шесть
+  сценариев работы.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools
+**Branch:** RT-2212-server-answers-with-codes
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 1 из 5 — договорённость о кодах отказа
+- **Next step:** этап 1 — написать договорённость о кодах отказа в `proposed/`
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-2212-server-answers-with-codes/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+none
+```
+
+### Commits over the main branch
+
+```
+5887f6253 docs(rt:message-bus): задача RT-2212 взята, план записан
+1f78f8299 docs(rt:message-bus): в плане эпика отмечены две влитые задачи и взятая четвёртая
+5c8e7a427 Merge remote-tracking branch 'origin/main' into RT-2208-receiver-texts-keys
+98ca4723e [RT-2210] Экраны входа берут подписи из словаря (#2239)
+c3a2b4e98 [RT-2209] Подписи оболочки админки приходят из словаря на двух языках (#2236)
+3604c06ba docs(rt:message-bus): папка задачи RT-2210 разобрана
+3861e3c01 feat(rt:message-bus): экраны входа берут подписи из словаря
+550c2dd4d docs(rt:message-bus): задача RT-2210 взята, план записан
+01c397dc9 Merge branch 'RT-2208-receiver-texts-keys' into RT-2209-labels-from-dictionary
+6dc74979b Merge remote-tracking branch 'origin/main' into RT-2208-receiver-texts-keys
+1ed106794 docs(rt:message-bus): папка задачи RT-2209 разобрана
+3d9c91d8a docs(rt:message-bus): соглашение о словаре подписей влито в спеку оболочки
+a343b6051 feat(rt:message-bus): оболочка админки берёт подписи из словаря
+e5ff997b0 feat(rt:message-bus): словарь подписей админки на двух языках
+ccc1383d4 docs(rt:message-bus): соглашение о словаре подписей админки
+a941a79e7 docs(rt:message-bus): задача RT-2209 взята, план записан
+2f1aa8cf5 fix(rt:agent-kit): номера сценариев проверки выхода из хода разведены с занятыми
+ecd780f39 docs(rt:agent-kit): копии rt-tools назначен эпик RT-2208
+aa5b3755d merge origin/main: таблица назначений и уборка архива
+8aa17b9a5 docs(rt:message-bus): в план эпика записано измерение на 18 сентября
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
