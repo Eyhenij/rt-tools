@@ -119,3 +119,30 @@ Then the sign-in screen comes up, and the sign-in is over
 Given the answer about the signed-in person has not arrived yet
 When the admin panel draws the page
 Then the screen is not shown: the rights are unknown rather than absent
+
+### SC-MB-402 — a label comes from the dictionary in the chosen language
+
+Given a key that has both a Russian and an English text
+When the screen asks the dictionary by that key at the choice `ru`, and then at the choice `en`
+Then the first time the Russian text comes, the second time the English one
+
+### SC-MB-403 — a key that is not in the set is visible rather than empty
+
+Given a key the set does not hold
+When the screen asks the dictionary by that key
+Then a sign of the missing key comes instead of the label: an empty string would read as "there is no
+label here" and would live until a person complains
+
+### SC-MB-404 — the choice of the language changes both dictionaries without a reload
+
+Given a screen of the shell is open, whose labels come from the dictionary of the admin application,
+and the buttons of the kit stand next to them
+When a person changes the language in the shell
+Then the labels of the admin application and the labels of the kit change, the language sign of the
+document goes with them, and the page is not reloaded
+
+### SC-MB-405 — the choice of the language outlives a reload and does not go to the receiver
+
+Given a person chose English
+When the page is reloaded
+Then the choice stayed English, and not one request to the receiver asked about the language

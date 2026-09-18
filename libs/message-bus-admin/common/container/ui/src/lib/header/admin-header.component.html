@@ -1,7 +1,7 @@
 <ng-container rtBlock="admin-header">
-    <span rtElem="brand" qa-dataid="admin-brand">{{ appTitle }}</span>
+    <span rtElem="brand" qa-dataid="admin-brand">{{ appTitle() }}</span>
 
-    <rt-page-header rtElem="nav" [ariaLabel]="navLabel" [items]="items()" [user]="user()" [userMenu]="profileMenu() ?? null" />
+    <rt-page-header rtElem="nav" [ariaLabel]="navLabel()" [items]="items()" [user]="user()" [userMenu]="profileMenu() ?? null" />
 </ng-container>
 
 <!--
@@ -18,12 +18,12 @@
         <!-- Тема и язык стоят строками «что меняем — чем меняем»: переключатель без подписи в
              попапе читается значком неизвестно чего -->
         <div rtElem="row">
-            <span rtElem="row-label">{{ themeLabel }}</span>
+            <span rtElem="row-label">{{ themeLabel() }}</span>
             <rt-theme-toggle qa-dataid="profile-theme" />
         </div>
 
         <div rtElem="row">
-            <span rtElem="row-label">{{ languageLabel }}</span>
+            <span rtElem="row-label">{{ languageLabel() }}</span>
             <admin-locale-switch qa-dataid="profile-language" />
         </div>
 
@@ -34,8 +34,8 @@
             type="button"
             appearance="text"
             qa-dataid="profile-sign-out"
-            [label]="signOutLabel"
-            [attr.aria-label]="signOutLabel"
+            [label]="signOutLabel()"
+            [attr.aria-label]="signOutLabel()"
             (click)="signOut.emit()"></button>
     </div>
 </ng-template>

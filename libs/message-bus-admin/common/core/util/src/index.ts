@@ -1,5 +1,7 @@
 export * from './lib/admin-labels';
+export * from './lib/admin-labels-en';
 export * from './lib/admin-locale';
+export * from './lib/admin-text.service';
 export * from './lib/admin-title.strategy';
 export * from './lib/cargo-state.logic';
 export * from './lib/details-state';
