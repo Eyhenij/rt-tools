@@ -9,6 +9,7 @@ statement: a removed statement is removed together with its line.
 - **The records are named by the same keys they arrived by.** — `tools/cargo-mark.mjs:itemsOf`
 - **The sign of a proposal is counted the same way as at the intake.** — `tools/cargo-mark.mjs:itemsOf`
 - **The sign of the tree is counted by one technique on the send and on the mark.** — `tools/cargo-mark.mjs:treeSlug`
+- **An empty sign of the tree is refused before the network.** — `tools/cargo-mark.mjs:mark` — the refusal stands before the token check; the sign comes from `tools/cargo-mark.mjs:treeSlug`
 - **An unknown state is refused before the network.** — `tools/cargo-mark.mjs:mark`
 - **A call without records is refused and names what is missing.** — `tools/cargo-mark.mjs:mark`
 - **Without the token of the tree the command goes to no network.** — `tools/cargo-mark.mjs:mark`

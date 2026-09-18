@@ -55,6 +55,10 @@ interface — the executor sees it as lines of the answer.
   the address whole and in lower case, and the tree sent the cargo under one sign and marked under
   another. The intake answered that with a refusal about a foreign tree, and not one record was ever
   marked — while both sides looked as if they were working.
+- **An empty sign of the tree is refused before the network.** The sign is counted by the built
+  package from the remote of the tree; sent empty, it comes back from the intake as a refusal about
+  a foreign tree, and that reads as a wrong key rather than as a count that did not happen. The
+  refusal names where the sign comes from.
 - **An unknown state is refused before the network.** The set of states is closed, and a typo costs a
   refusal here, not a refusal of the intake after the request.
 - **A call without records is refused and names what is missing.** A mark with nothing to mark is a
@@ -92,6 +96,7 @@ with lines, and the table below says what is printed in each case.
 | -------------------------------------- | ----------- | -------------------------------------------------- |
 | an unknown state                       | code 1      | which states there are; makes no request           |
 | not a single record in the arguments   | code 1      | what is missing and what a record is named by      |
+| an empty sign of the tree              | code 1      | where the sign is counted from; makes no request   |
 | no token of the tree                   | code 1      | what the tree is created by                        |
 | the intake refused at least one record | code 1      | the key of the record and the reason, line by line |
 | everything was moved                   | code 0      | how many were moved and how many already stood     |
@@ -145,3 +150,6 @@ The open questions of the domain are shared, and they live in the spec next to i
 - 2026-08-24 — the subdomain was split off from the observations subdomain, which had outgrown the
   length limit. The rules, the scenarios and the bindings of the mark moved here unchanged: the
   scenario numbers were not recounted.
+- 2026-09-18 — an empty sign of the tree is refused before the network: the import of the count
+  had moved to another module of the package, the mark left with an empty sign, and the test of the
+  sign compared two empty strings.

@@ -108,7 +108,10 @@ export function itemsOf(argv, state, attached = { fixNote: '', releaseVersion: '
  */
 async function treeSlug(shape) {
     try {
-        const { treeSlugOf } = await import(shape.replace(/cargo\.js$/, 'shipment.js'));
+        // The function is declared in the module of the tree mark; the send only imports it from
+        // there. Imported from the send's module, it came back undefined, the error was swallowed,
+        // and the mark left with an empty sign — the intake refused every record as a foreign tree's.
+        const { treeSlugOf } = await import(shape.replace(/cargo\.js$/, 'tree-mark.js'));
         const remote = execFileSync('git', ['remote', 'get-url', 'origin'], { cwd: ROOT, encoding: 'utf8' }).trim();
 
         return treeSlugOf(remote, '');
@@ -231,6 +234,18 @@ export async function mark(options) {
             lines: [
                 `there is no file \`${options.spec}\` — the named spec is checked before the network`,
                 'a path typed from memory looks the same as a read one, and past the intake nothing checks it any more',
+            ],
+        };
+    }
+
+    // An empty sign is refused here, not by the intake: sent, it is answered with «a foreign tree»,
+    // and that reads as a wrong key rather than as a count that did not happen.
+    if (!options.tree) {
+        return {
+            code: REFUSED,
+            lines: [
+                'the sign of the tree could not be counted: the mark stayed unsent',
+                'the sign is counted by the built package, module `tree-mark.js`, from the remote `origin` of the tree — build the package (`pnpm exec nx build @rt-tools/agent-kit`) and check `git remote get-url origin`',
             ],
         };
     }
