@@ -54,12 +54,20 @@ export enum ERefusal {
     InviteAlreadyIssued = 'inviteAlreadyIssued',
     /** Годного приглашения проекту нет. */
     InviteNotFound = 'inviteNotFound',
-    /** Записи с таким признаком нет. */
-    RecordNotFound = 'recordNotFound',
+    /** Разбора происшествия с таким признаком нет. */
+    PostmortemNotFound = 'postmortemNotFound',
+    /** Предложения с таким признаком нет. */
+    ProposalNotFound = 'proposalNotFound',
+    /** Записи месяца с таким признаком нет. */
+    SummaryNotFound = 'summaryNotFound',
     /** Дерево с таким признаком приёмнику не известно. */
     TreeUnknown = 'treeUnknown',
-    /** Выборка списка называет параметр неверно. */
-    SelectionFault = 'selectionFault',
+    /** Заведение записи просит имя пользователя. */
+    PersonNameEmpty = 'personNameEmpty',
+    /** Заведение записи просит пароль. */
+    PersonPasswordEmpty = 'personPasswordEmpty',
+    /** Первая запись уже заведена, и заведение закрыто. */
+    SetupClosed = 'setupClosed',
     /** Роли владельца нет в хранилище. */
     OwnerRoleMissing = 'ownerRoleMissing',
     /** В запросе входа нет имени или пароля. */
@@ -68,6 +76,8 @@ export enum ERefusal {
     EnrollThrottled = 'enrollThrottled',
     /** Обращение о заведении дерева пришло без кода приглашения или признака. */
     EnrollMalformed = 'enrollMalformed',
+    /** Приглашение не принято: один отказ на четыре негодных состояния и на ненайденный код. */
+    InviteRejected = 'inviteRejected',
     /** Дерево с таким признаком или именем уже заведено. */
     TreeTaken = 'treeTaken',
     /** Операция требует входа. */
@@ -129,13 +139,18 @@ const SAID: Readonly<Record<ERefusal, string>> = {
     [ERefusal.InviteProjectExists]: 'проект «{{name}}» уже заведён: приглашение ему не нужно, а имя занято',
     [ERefusal.InviteAlreadyIssued]: 'годное приглашение для «{{name}}» уже выдано; отзовите его, чтобы выдать новое',
     [ERefusal.InviteNotFound]: 'годного приглашения для «{{name}}» нет',
-    [ERefusal.RecordNotFound]: 'записи рода «{{kind}}» с таким признаком нет',
+    [ERefusal.PostmortemNotFound]: 'разбора происшествия с таким признаком нет',
+    [ERefusal.ProposalNotFound]: 'предложения с таким признаком нет',
+    [ERefusal.SummaryNotFound]: 'записи месяца с таким признаком нет',
     [ERefusal.TreeUnknown]: 'дерево с признаком «{{slug}}» не известно приёмнику',
-    [ERefusal.SelectionFault]: 'запрос называет параметр «{{param}}» неверно',
+    [ERefusal.PersonNameEmpty]: 'заведение ждёт имя пользователя',
+    [ERefusal.PersonPasswordEmpty]: 'пользователю нужен пароль: пустой не принимается',
+    [ERefusal.SetupClosed]: 'первая запись уже заведена: вход — по имени и паролю',
     [ERefusal.OwnerRoleMissing]: 'роли владельца «{{key}}» нет в хранилище: миграции не применены',
     [ERefusal.SignInEmpty]: 'в запросе нет имени или пароля',
     [ERefusal.EnrollThrottled]: 'обращений с одного клиента больше предела: подождите и повторите',
     [ERefusal.EnrollMalformed]: 'обращение ожидает код приглашения и признак дерева',
+    [ERefusal.InviteRejected]: 'приглашение не принято',
     [ERefusal.TreeTaken]: 'дерево с таким признаком или именем уже заведено; приглашение осталось годным',
     [ERefusal.SignInRequired]: 'операция требует входа',
     [ERefusal.RightRequired]: 'операция требует права',

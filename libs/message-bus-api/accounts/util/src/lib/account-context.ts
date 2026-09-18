@@ -40,7 +40,7 @@ export function accountOf(request: IAccountBearingRequest): IRequestAccount {
     const account: IRequestAccount | undefined = request[ACCOUNT_OF_REQUEST];
 
     if (!account) {
-        throw new Error('вошедший не прочитан: операция не закрыта проверкой входа');
+        throw new Error('the entered one is not read: the operation is not closed by the check of the entry');
     }
 
     return account;

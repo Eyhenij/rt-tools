@@ -14,7 +14,7 @@ import { RequiresRight } from '@rt/message-bus-api/access/util';
 import { IMonthRecordFullRow, IMonthRecordListRow, readMonthRecord, readMonthRecords } from '@rt/message-bus-api/observations/data-access';
 
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { IPage, MONTH_RECORD_SORTABLE, pageAsked, pageFault } from '@rt/message-bus-common';
+import { ERefusal, IPage, MONTH_RECORD_SORTABLE, pageAsked, pageFault, refusalBody } from '@rt/message-bus-common';
 
 @Controller('summaries')
 export class SummariesReadController {
@@ -50,7 +50,7 @@ export class SummariesReadController {
         const found: IMonthRecordFullRow | null = await readMonthRecord(this.#prisma, id);
 
         if (!found) {
-            throw new NotFoundException('записи месяца с таким признаком нет');
+            throw new NotFoundException(refusalBody(ERefusal.SummaryNotFound));
         }
 
         return found;
