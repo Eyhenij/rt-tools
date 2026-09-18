@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/turn-exit-epic.sh · e758e4d41168 · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/turn-exit-epic.sh · bae4e4c91ec1 · правится надстройкой, не здесь
 # The tiers of the open epic for the turn-exit guard. NOT a guard: it has no `rt-hook:` declaration
 # and hooks into no agent event. The guard sources it right after the root of the tree is known.
 #
@@ -21,10 +21,12 @@ rt_te_epic_left() {
     if [ -z "${rt_te_epic_asked:-}" ]; then
         rt_te_epic_asked=1
         rt_te_epic_left_cache=""
+        rt_te_epic_read=""
         # shellcheck disable=SC1090
         if . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/epic-over.sh" 2>/dev/null \
             && command -v rt_epic_unfinished >/dev/null 2>&1; then
-            rt_te_epic_left_cache="$(rt_epic_unfinished 2>/dev/null | tr -s '[:space:]' ' ' | sed 's/^ //; s/ $//')"
+            rt_te_epic_raw="$(rt_epic_unfinished 2>/dev/null)" && rt_te_epic_read=1
+            rt_te_epic_left_cache="$(printf '%s' "$rt_te_epic_raw" | tr -s '[:space:]' ' ' | sed 's/^ //; s/ $//')"
         fi
     fi
     printf '%s' "$rt_te_epic_left_cache"
@@ -45,6 +47,30 @@ rt_te_owner_word_quoted() {
 # The epic is open: at least one of its tasks is left unfinished.
 rt_te_epic_open() {
     [ -n "$(rt_te_epic_left)" ]
+}
+
+# The epic is over: the table was read and printed not a single task. At that point the stop is
+# lawful — waiting for the word of the owner is the work itself — and the refusal releases the turn
+# whatever tier reached it. An epic that cannot be read — no table, the main branch, no way to ask
+# the hosting — is not over, and the turn is judged as before. Reads the same cache: one call per turn.
+rt_te_epic_over() {
+    rt_te_epic_left >/dev/null
+    [ -n "${rt_te_epic_read:-}" ] && [ -z "${rt_te_epic_left_cache:-}" ]
+}
+
+# The epic branch: named by the header line of an epic plan in the plans directory of the tree. It
+# has the shape of a task branch and by the rule carries no task folder, so the tier of the taken
+# task would read every turn on it as work taken and not begun. The plan is written by the command
+# that creates the epic and outlives the merge; the directory is named by the settings, `docs/plans`
+# by default. Expects `$root` and `$branch` to be set. FAIL-OPEN: no directory, no plan — not an
+# epic branch.
+rt_te_epic_branch() {
+    [ -n "${root:-}" ] && [ -n "${branch:-}" ] || return 1
+    local plans
+    plans="$(jq -r ".plansDir // empty" "$root/.claude/rt-kit/checks.json" 2>/dev/null)"
+    [ -n "$plans" ] || plans="docs/plans"
+    [ -d "$root/$plans" ] || return 1
+    grep -lE "^\\*\\*[^|]*\`$branch\`" "$root/$plans"/*.md 2>/dev/null | grep -q .
 }
 
 # The refusal of a stop under an open epic. The kind names what the turn ended with.

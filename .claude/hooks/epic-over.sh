@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/epic-over.sh · 2b2106ee760a · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/epic-over.sh · 2b2106ee760a · правится надстройкой, не здесь
 # The reading "the epic is over". NOT a guard: it has no `rt-hook:` declaration and hooks into no
 # agent event. The guards that judge the end of an epic source it themselves.
 #

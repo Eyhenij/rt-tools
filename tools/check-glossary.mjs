@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.28.0 · checks/check-glossary.mjs · f86dfe121701 · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/check-glossary.mjs · f86dfe121701 · правится надстройкой, не здесь
 /**
  * The words not written here: the section «Not written here» of the glossary against the tree.
  *

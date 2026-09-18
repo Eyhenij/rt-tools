@@ -4,7 +4,7 @@ kind: pattern
 rule: lists
 description: Pattern of rule lists. Load when assembling or editing an admin list screen — the ready-made order of blocks, the <prefix>-table markup, row click, row menu with an actions column and a row predicate, sortable header, toolbar slots, failure toast.
 ---
-<!-- rt-kit v0.28.0 · patterns/admin-lists-screen.md · 82c8594c752d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/admin-lists-screen.md · 82c8594c752d · правится надстройкой, не здесь -->
 
 # Assembling a list screen
 

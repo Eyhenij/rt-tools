@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/browser-device-id.sh · 79faec8487b8 · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/browser-device-id.sh · 79faec8487b8 · правится надстройкой, не здесь
 # Local value: .claude/rt-kit/browser-device-id — without it the browser guards let any profile through
 # Shared helper: prints the id of the pinned browser profile.
 #

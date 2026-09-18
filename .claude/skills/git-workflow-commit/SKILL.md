@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for creating a task and a branch, commit and push — the creation command with all four steps, moving the column, merging two tasks into one, working as the machine account, skipping the document requirement. Opening a PR — pattern git-workflow-pr.
 ---
-<!-- rt-kit v0.28.0 · patterns/git-workflow-commit.github.md · 5e12f72925ea · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/git-workflow-commit.github.md · 5e12f72925ea · правится надстройкой, не здесь -->
 
 # Task, branch and commit
 

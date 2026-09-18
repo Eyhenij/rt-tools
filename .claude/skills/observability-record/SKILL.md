@@ -4,7 +4,7 @@ kind: pattern
 rule: observability
 description: Pattern of rule observability. Load when a new log line is added in code — the ready-made logger call, choosing the level, the line name, fields as an object, an external service failure and the wait limit. Not for editing the logger itself and the request context — that is rule observability.
 ---
-<!-- rt-kit v0.28.0 · patterns/observability-record.md · 394a56cf9674 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/observability-record.md · 394a56cf9674 · правится надстройкой, не здесь -->
 
 # A new log line
 
