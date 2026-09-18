@@ -1,4 +1,4 @@
-import { expect, Page, test } from '@playwright/test';
+import { expect, Page, Request, test } from '@playwright/test';
 
 import { SECTIONS } from '../stand/stand.mjs';
 import { openSection, qa, SECTION, SIGN_IN_PATH, signIn } from './support/admin';
@@ -103,6 +103,58 @@ test.describe('оболочка админки', () => {
         );
 
         await expect(chosen).toHaveAttribute('aria-pressed', 'true');
+    });
+
+    test('SC-MB-404 — переключение языка меняет и подписи админки, и подписи кита, без перезагрузки', async ({ page }: { page: Page }) => {
+        await openSection(page, 'postmortems');
+
+        // Метка на окне переживает переключение и не переживает перезагрузку: ею и проверяется,
+        // что страницу никто не перезагружал.
+        await page.evaluate((): void => {
+            (window as unknown as Record<string, boolean>)['rtSameLoad'] = true;
+        });
+
+        // Сначала положительная половина: место, за которое держится проба, найдено и говорит
+        // по-русски. Без неё проба осталась бы зелёной и на переименованной метке.
+        await expect(qa(page, 'admin-brand')).toHaveText('Приёмник');
+        await expect(qa(page, 'header-nav-item').first()).toContainText(SECTION.postmortems.title);
+
+        await qa(page, 'header-user-menu').click();
+        await qa(page, 'profile-language').locator('[qa-dataid="toggle-button-group-option"][data-value="en"]').click();
+
+        // Подписи админки
+        await expect(qa(page, 'admin-brand')).toHaveText('Message bus');
+        await expect(qa(page, 'header-nav-item').first()).toContainText('Incident analyses');
+
+        // Подписи кита: своего якоря у подписи «строк на странице» он не ставит — берём её классом
+        await expect(page.locator('.rt-pagination__per-page-label')).toHaveText(/Per page/);
+
+        expect(await page.evaluate((): boolean => (window as unknown as Record<string, boolean>)['rtSameLoad'] === true)).toBe(true);
+    });
+
+    test('SC-MB-405 — выбор языка переживает перезагрузку и не уходит на сервер', async ({ page }: { page: Page }) => {
+        await openSection(page, 'postmortems');
+
+        await qa(page, 'header-user-menu').click();
+        await qa(page, 'profile-language').locator('[qa-dataid="toggle-button-group-option"][data-value="en"]').click();
+        await expect(qa(page, 'admin-brand')).toHaveText('Message bus');
+
+        const asked: string[] = [];
+
+        page.on('request', (request: Request): void => {
+            asked.push(`${request.url()} ${request.postData() ?? ''}`);
+        });
+
+        await page.reload();
+        await expect(qa(page, SECTION.postmortems.table)).toBeVisible();
+
+        // Выбор пережил перезагрузку: подписи остались английскими
+        await expect(qa(page, 'admin-brand')).toHaveText('Message bus');
+
+        // Сначала положительная половина: запросы к приёмнику вообще были — иначе «про язык не
+        // спрашивали» осталось бы зелёным и на странице, не сходившей в сеть ни разу.
+        expect(asked.some((call: string): boolean => call.includes('/api/'))).toBe(true);
+        expect(asked.filter((call: string): boolean => /locale|lang(uage)?=/i.test(call))).toEqual([]);
     });
 
     test('SC-MB-152 — заголовок вкладки называет приложение, а не проект сборки', async ({ page }: { page: Page }) => {

@@ -34,4 +34,5 @@ export const ADMIN_LABELS_EN: Partial<Record<TAdminLabelKey, string>> = Object.f
     sectionInvites: 'Invitations',
     sectionPeople: 'People',
     sectionUsage: 'Usage',
+    sectionRoles: 'Roles',
 });
