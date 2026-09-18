@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 3 — the mark takes the tree sign from the module where it is declared
-- **Done:** the folder, the plan; the epic RT-2240, its plan and branch, six tasks
-- **Next step:** `treeSlug` imports from `tree-mark.js`, the refusal on an empty sign, tests SC-AK-558 and SC-AK-1130
+- **Stage:** 2 of 3 — the spec names the statement, the binding and the scenario
+- **Done:** stage 1 — the import from `tree-mark.js`, the refusal on an empty sign, SC-AK-558 positive and SC-AK-1130 (suite 37 ok, the dry run prints `tree b101ab1c9908`)
+- **Next step:** the statement, the refusal row, the binding and the scenario in the spec of the mark
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
