@@ -53,6 +53,14 @@ rows where that column answers.
 - **An empty value takes the column out of the set of conditions and does not travel as an empty
   condition.** A condition with nothing in it asks the consumer to answer "everything matches", and
   a consumer who reads it literally returns no rows at all.
+- **A typed value is reported when the field is left or Enter is pressed, and a chosen one at once.**
+  A consumer asks the server by the set of conditions, and a set sent on every keystroke asks it once
+  per letter: the answers then come back out of order, and the list shows the reply to a value the
+  person has already changed. A choice from a list and a date have no half-typed state at all, so
+  waiting for them to be left would only delay the answer.
+- **An empty field says what is expected of it.** A field with neither a label nor a hint next to it
+  gives the reader nothing to go by: they see a frame and guess whether it takes a word, a number or
+  a date. The hint comes from the kit's dictionary, the same way every other word of the family does.
 - **Choosing the value that is already chosen reports nothing outward.** The same set of conditions
   sent a second time makes the consumer ask for the same rows again, and on a slow answer the list
   blinks where nobody did anything.

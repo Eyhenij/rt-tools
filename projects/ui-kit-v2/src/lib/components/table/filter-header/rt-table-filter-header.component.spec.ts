@@ -36,6 +36,14 @@ describe('RtTableFilterHeaderComponent', (): void => {
         fixture.detectChanges();
     }
 
+    /** Уход из поля: набранное уходит наружу здесь, а не по каждому знаку. */
+    function commit(): void {
+        const onCommit: () => void = Reflect.get(fixture.componentInstance, 'onCommit');
+
+        onCommit.call(fixture.componentInstance);
+        fixture.detectChanges();
+    }
+
     /** Вид сравнения меняет пункт списка; в тесте он зовётся напрямую — список живёт в слое. */
     function chooseOperator(operatorType: EFilterOperatorType): void {
         const onOperator: (next: EFilterOperatorType) => void = Reflect.get(fixture.componentInstance, 'onOperator');
@@ -90,6 +98,7 @@ describe('RtTableFilterHeaderComponent', (): void => {
         create({ filters: [OTHER] });
 
         type('Сочи');
+        commit();
 
         expect(reported).toHaveLength(1);
         expect(reported[0]).toHaveLength(2);
@@ -100,6 +109,7 @@ describe('RtTableFilterHeaderComponent', (): void => {
         create({ filters: [OTHER, filterOfTitle('Сочи')] });
 
         type('');
+        commit();
 
         expect(reported).toHaveLength(1);
         expect(reported[0]).toEqual([OTHER]);
@@ -109,6 +119,7 @@ describe('RtTableFilterHeaderComponent', (): void => {
         create({ filters: [filterOfTitle('Сочи')] });
 
         type('Сочи');
+        commit();
 
         expect(reported).toHaveLength(0);
     });
@@ -144,6 +155,7 @@ describe('RtTableFilterHeaderComponent', (): void => {
         create({ filters: [OTHER] });
 
         type('Сочи');
+        commit();
 
         expect(reported).toHaveLength(1);
         expect(fixture.componentInstance.filters()).toEqual([OTHER]);
@@ -157,5 +169,38 @@ describe('RtTableFilterHeaderComponent', (): void => {
         fixture.detectChanges();
 
         expect(qa(fixture, 'table-filter-clear')).not.toBeNull();
+    });
+    it('SC-UKV-227: набранное значение уходит наружу по уходу из поля, а не по каждому знаку', (): void => {
+        create({ filters: [OTHER] });
+
+        type('С');
+        type('Со');
+        type('Сочи');
+
+        expect(reported).toHaveLength(0);
+
+        commit();
+
+        expect(reported).toHaveLength(1);
+        expect(reported[0]).toHaveLength(2);
+    });
+
+    it('SC-UKV-228: выбранное из списка уходит наружу сразу', (): void => {
+        create({ filter: { kind: 'select', options: [{ value: 'new', label: 'Новая' }] } });
+
+        type('new');
+
+        expect(reported).toHaveLength(1);
+        expect(reported[0][0].value).toBe('new');
+    });
+
+    it('SC-UKV-229: пустое поле несёт подсказку из словаря кита', (): void => {
+        create();
+        expect(qa(fixture, 'table-filter-text')?.componentInstance.placeholder()).not.toBe('');
+
+        setInputs(fixture, { filter: { kind: 'select', options: [{ value: 'a', label: 'А' }] } });
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'table-filter-select')?.componentInstance.placeholder()).not.toBe('');
     });
 });

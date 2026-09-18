@@ -15,16 +15,29 @@
             {{ operatorLabel() }}
         </button>
 
+        <!--
+        Набранное уходит наружу по уходу из поля и по Enter, а не по каждому знаку: набор условий,
+        уходящий на букву, спрашивает сервер по букве. Выбор и дата сообщают сами — у них
+        недописанного состояния нет.
+    -->
         <div rtElem="value" qa-dataid="table-filter-value">
             @switch (columnFilter.kind) {
                 @case ('number') {
-                    <rt-input-number qa-dataid="table-filter-number" size="sm" [clearable]="false" [formControl]="control" />
+                    <rt-input-number
+                        qa-dataid="table-filter-number"
+                        size="sm"
+                        [placeholder]="valueLabel()"
+                        [clearable]="false"
+                        [formControl]="control"
+                        (focusout)="onCommit()"
+                        (keydown.enter)="onCommit()" />
                 }
 
                 @case ('select') {
                     <rt-select
                         qa-dataid="table-filter-select"
                         size="sm"
+                        [placeholder]="chooseLabel()"
                         [clearable]="false"
                         [options]="options()"
                         [formControl]="control" />
@@ -35,7 +48,14 @@
                 }
 
                 @default {
-                    <rt-input qa-dataid="table-filter-text" size="sm" [clearable]="false" [formControl]="control" />
+                    <rt-input
+                        qa-dataid="table-filter-text"
+                        size="sm"
+                        [placeholder]="valueLabel()"
+                        [clearable]="false"
+                        [formControl]="control"
+                        (focusout)="onCommit()"
+                        (keydown.enter)="onCommit()" />
                 }
             }
         </div>

@@ -54,6 +54,13 @@ const OPERATOR_LABELS: Readonly<Record<TFilterOperatorType, TRtKitLabelKey>> = O
     [EFilterOperatorType.LESS_THAN]: 'uiFilterLessThan',
 });
 
+/**
+ * Виды, у которых недописанного состояния нет вовсе: выбор и дата готовы в ту же минуту, что и
+ * сделаны, и ждать ухода из поля значило бы задержать ответ на ровном месте. Текст и число ждут:
+ * набор условий, уходящий на каждый знак, спрашивает сервер по букве.
+ */
+const INSTANT_KINDS: ReadonlySet<IRtTable.FilterKind> = new Set<IRtTable.FilterKind>(['select', 'date']);
+
 /** Один вид сравнения в списке: сам вид и его подпись из словаря. */
 interface IOperatorView {
     readonly type: TFilterOperatorType;
@@ -155,6 +162,9 @@ export class RtTableFilterHeaderComponent {
         return allowed !== undefined && allowed.length > 0 ? allowed : ALL_OPERATORS;
     });
 
+    protected readonly chooseLabel: Signal<string> = rtKitLabel('uiFilterChoose');
+    protected readonly valueLabel: Signal<string> = rtKitLabel('uiFilterValue');
+
     protected readonly clearLabel: Signal<string> = rtKitLabel('uiClear');
     protected readonly filtersLabel: Signal<string> = rtKitLabel('uiFilters');
 
@@ -165,6 +175,9 @@ export class RtTableFilterHeaderComponent {
 
     /** Подпись текущего вида сравнения — её несёт кнопка, открывающая список. */
     protected readonly operatorLabel: Signal<string> = computed((): string => this.#operatorLabels[this.operator()]());
+
+    /** Сообщает ли этот вид сразу: у выбора и даты недописанного состояния нет. */
+    protected readonly instant: Signal<boolean> = computed((): boolean => INSTANT_KINDS.has(this.filter()?.kind ?? 'text'));
 
     protected readonly options: Signal<ReadonlyArray<IRtSelect.Option<string | number>>> = computed(
         (): ReadonlyArray<IRtSelect.Option<string | number>> =>
@@ -212,10 +225,29 @@ export class RtTableFilterHeaderComponent {
     }
 
     protected onClear(): void {
+        const instant: boolean = this.instant();
+
         this.control.setValue('');
+
+        // У мгновенного вида о снятии сообщила сама перемена значения; у остальных — здесь:
+        // очистку нажали, ждать ухода из поля нечего.
+        if (!instant) {
+            this.onCommit();
+        }
+    }
+
+    /** Уход из поля и Enter: набранное значение уходит наружу разом, а не по знаку. */
+    protected onCommit(): void {
+        this.#commit(this.control.value);
     }
 
     #onValue(value: TRtTableFilterInput): void {
+        if (this.instant()) {
+            this.#commit(value);
+        }
+    }
+
+    #commit(value: TRtTableFilterInput): void {
         this.#report(filtersWithValue(this.filters(), this.propertyName(), this.operator(), filterValueOf(value)));
     }
 

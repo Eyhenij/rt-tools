@@ -12,6 +12,8 @@ tree, or the tree holds what the spec is silent about.
 - **Each kind calls the ready part of the kit for it.** — `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.html:switch` — scenario `SC-UKV-216`
 - **The comparison operator is chosen from the list the column allows, and the column names the one it starts with.** — `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.ts:operators` — scenario `SC-UKV-217`
 - **An empty value takes the column out of the set of conditions and does not travel as an empty condition.** — `projects/ui-kit-v2/src/lib/components/table/rt-table-filter.logic.ts:filtersWithValue` — scenario `SC-UKV-219`
+- **A typed value is reported when the field is left or Enter is pressed, and a chosen one at once.** — `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.ts:INSTANT_KINDS` — scenarios `SC-UKV-227`, `SC-UKV-228`
+- **An empty field says what is expected of it.** — `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.ts:valueLabel` — scenario `SC-UKV-229`
 - **Choosing the value that is already chosen reports nothing outward.** — `projects/ui-kit-v2/src/lib/components/table/rt-table-filter.logic.ts:filtersWithValue` — scenario `SC-UKV-220`
 - **Changing the operator while no value is set reports nothing outward.** — `projects/ui-kit-v2/src/lib/components/table/rt-table-filter.logic.ts:filtersWithOperator` — scenarios `SC-UKV-221`, `SC-UKV-222`
 - **A date is kept as a string and compared as a string.** — `projects/ui-kit-v2/src/lib/components/table/rt-table-filter.logic.ts:filterValueOf` — scenario `SC-UKV-223`

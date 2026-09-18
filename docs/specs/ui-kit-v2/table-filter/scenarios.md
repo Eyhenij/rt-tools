@@ -110,3 +110,28 @@ Then the file is wrapped in the sublayer of the kit's components whole
 
 Not covered: a test has nothing to look at here — the wrapper of the layer is read from the styles
 file by `npm run check:cascade-layer`, and that audit is what closes the scenario.
+
+### SC-UKV-227 — a typed value is reported when the field is left
+
+Given a column with a text filter and an empty set of conditions
+When a value is typed into the field letter by letter
+Then nothing goes outward until the field is left or Enter is pressed, and then the whole set goes
+once
+
+Covered by the component test of the header cell.
+
+### SC-UKV-228 — a chosen value is reported at once
+
+Given a column with a filter that is a choice from a list
+When an option is chosen
+Then the set of conditions goes outward without waiting for the field to be left
+
+Covered by the component test of the header cell.
+
+### SC-UKV-229 — an empty field says what is expected of it
+
+Given a column with a filter and no value set
+When the header cell is drawn
+Then the field carries the hint of its kind, taken from the kit's dictionary
+
+Covered by the component test of the header cell.
