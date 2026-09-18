@@ -1,4 +1,4 @@
-<!-- rt-kit v0.29.0 · pitfalls/git-workflow.github.md · 5c0888ea2ce6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · pitfalls/git-workflow.github.md · 036dc8ea009f · правится надстройкой, не здесь -->
 # Delivery — cold part
 
 Pitfalls: traps already stepped on in a tree on GitHub. Loaded not with the rule but on demand —
@@ -318,6 +318,11 @@ substituted per call and never made active, even when the active one is already 
 - **What the second tier of the delivery guard cannot ask without a network.** Task, column,
   assignee and review live at the hosting: with no network and no token that tier is skipped, and
   the skip is silent.
+- **A board column added by a mutation of the field erased the status of every card.** The mutation
+  with the full list of options recreated all of them under new identifiers. The tree's keys stopped
+  matching, and the closed cards left for the archive by the board rule. A column is added from the
+  interface. Before a request that changes a field whole, the list «card — column» is taken by a
+  command and kept on disk to the end of the turn.
 
 ## Traps of this machine
 

@@ -41,6 +41,7 @@ what the plan names, and nothing beyond that.
 - **removing a branch, a working tree or a task folder** — what is removed is restored only from history, and what is uncommitted by nothing
 - **changing the working tree by an edit that is not one own** — checking out a foreign version over the tree and resetting to a foreign tip erase the same
 - **editing files outside the root of the working tree** — the plan of this branch does not dispose of them
+- **a request to the hosting that changes a field of the board or its options whole** — it recreates the options and erases the column of every card. Before it the full list «card — column» is taken by a command and lies on disk until the end of the turn
 
 A commit into one own branch is not in this list: it does not leave outward and it rolls back.
 
