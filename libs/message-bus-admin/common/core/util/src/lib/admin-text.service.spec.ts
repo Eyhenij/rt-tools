@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ERefusal } from '@rt/message-bus-common';
 import { provideRtStorage, provideRtUtils } from '@rt-tools/core';
 
-import { TAdminLabelKey } from './admin-labels';
+import { ADMIN_LABELS, TAdminLabelKey } from './admin-labels';
 import { AdminLocaleService, EAdminLocale } from './admin-locale';
 import { AdminTextService } from './admin-text.service';
 
@@ -64,16 +64,36 @@ describe('AdminTextService', () => {
             'setupFailed',
         ];
 
-        // Сначала положительная половина: отбор ниже узнаёт признак ненайденного — на английском
-        // выборе ключ, который в наборе ещё не переведён, приходит именно им.
+        // Сначала положительная половина: отбор ниже узнаёт признак ненайденного — ключ, которого
+        // в наборе нет вовсе, приходит именно им.
         locale.setLocale(EAdminLocale.En);
 
-        expect(text.text('columnTree')).toBe('«columnTree»');
+        expect(text.text('ключНиОткуда' as TAdminLabelKey)).toBe('«ключНиОткуда»');
 
         for (const chosen of [EAdminLocale.Ru, EAdminLocale.En]) {
             locale.setLocale(chosen);
 
             const missing: TAdminLabelKey[] = keys.filter((key: TAdminLabelKey): boolean => text.text(key).startsWith('«'));
+
+            expect(missing).toEqual([]);
+        }
+    });
+
+    it('SC-MB-414 — у каждого ключа словаря есть текст в обоих наборах', () => {
+        const { locale, text }: { locale: AdminLocaleService; text: AdminTextService } = services();
+        const keys: readonly TAdminLabelKey[] = Object.keys(ADMIN_LABELS) as TAdminLabelKey[];
+
+        // Сначала положительная половина: ключи набора найдены, и отбор ниже узнаёт признак
+        // ненайденного. Без неё проба осталась бы зелёной и на пустом списке ключей.
+        expect(keys.length).toBeGreaterThan(200);
+        expect(text.text('ключНиОткуда' as TAdminLabelKey)).toBe('«ключНиОткуда»');
+
+        for (const chosen of [EAdminLocale.Ru, EAdminLocale.En]) {
+            locale.setLocale(chosen);
+
+            const missing: TAdminLabelKey[] = keys.filter(
+                (key: TAdminLabelKey): boolean => text.text(key).trim() === '' || text.text(key).startsWith('«')
+            );
 
             expect(missing).toEqual([]);
         }
@@ -112,7 +132,7 @@ describe('AdminTextService', () => {
 
         expect(text.text('signOut')).toBe('Sign out');
 
-        // А ключ, которого в нём ещё нет, — признаком: его переводят задачи RT-2210 и RT-2211.
-        expect(text.text('columnTree')).toBe('«columnTree»');
+        // А ключ, которого в наборе нет вовсе, — признаком.
+        expect(text.text('ключНиОткуда' as TAdminLabelKey)).toBe('«ключНиОткуда»');
     });
 });

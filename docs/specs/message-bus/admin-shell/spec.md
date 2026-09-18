@@ -113,8 +113,11 @@ creates:
   is translated, and the screen takes the neighbouring key.
 - **A key that is not in the set is visible.** It comes so that it is seen on the screen and in the
   test, not as emptiness: an empty string reads as "there is no label here" and lives until a person
-  complains. The English set is deliberately incomplete — the keys of the screens are all in place, and
-  the set is filled by a task of the epic of the texts.
+  complains. Such a key arrives from the side of the receiver — a code of a refusal newer than the
+  admin application knows.
+- **Both sets hold the same keys, and that is proved by a call.** The English set is declared by the
+  type of the Russian one whole: a key without a translation does not compile at all. A set walked by
+  eye diverges at the first key added, and the divergence shows at the person, not at the check.
 - **The labels of the shell change without a reload.** Everything read from the dictionary is derived
   from the choice rather than taken once at the load: taken once, it stays in the language of the
   minute the file was loaded.
@@ -184,9 +187,8 @@ creates:
 
 - **Gating the sections by rights.** There are no rights inside the admin application: whoever entered
   gets everything — the word of the owner, written down in the spec of the subdomain of the reading.
-- **Translating the screens of the sections.** The shell, the screens of the entry, the lists and the
-  panels take their labels from the dictionary; filling the English set and the texts of the refusals of
-  the server are done by the tasks of the epic of the texts, not here.
+- **A third set of labels.** The shell, the screens of the entry, the lists and the panels take their
+  labels from the dictionary, and both sets are filled whole. A third language is a separate work.
 - **A third language.** Two sets are kept in the code of the admin application; a third one is a
   separate work and a separate word of the owner.
 - **A check forbidding a string past the dictionary.** Nothing refuses a label written in the markup
@@ -244,10 +246,9 @@ measurement in the browser.
 ### Locales
 
 There are two locales, Russian and English, and one choice serves both dictionaries — the labels of
-the admin application and the labels of the kit. The shell and the screens of the entry are
-translated whole; the screens of the sections still take their labels from the Russian set alone,
-and they are translated by the tasks of the epic of the texts. The admin application shows the dates in a shape of its own, and it does not
-depend on the language.
+the admin application and the labels of the kit. Every screen is translated whole: the shell, the
+entry, the lists, the panels and the texts of the refusals of the receiver. The admin application
+shows the dates in a shape of its own, and it does not depend on the language.
 
 ### SEO
 
@@ -277,8 +278,8 @@ account.
   both themes are now checked by a measurement at every screen.
 - **The choice of the language stands both at the entry and in the popup of the profile.** The word of
   the owner. There are two languages, and the second is the built-in English default of the kit: the
-  application creates no second dictionary of its own. The price: the screen comes out half bilingual —
-  the labels of the admin application are Russian at any choice.
+  application creates no second dictionary of its own. The price: until both sets were filled the
+  screen came out half bilingual.
 - **The application calls itself by a word, not by a sign.** The word of the owner: the admin
   application has no drawing of a sign, and the place under it on the screen of the entry is taken by
   emptiness. Rejected: drawing the sign ourselves and leaving an empty place until the files appear.
@@ -311,3 +312,4 @@ None.
 | 2026-09-18 | By the task RT-2209 the agreement about the dictionary of the labels was merged in: two sets, one key, one choice for both dictionaries    |
 | 2026-09-18 | By the task RT-2210 the screens of the entry took their labels from the dictionary, and the tab titles of that domain went by keys         |
 | 2026-09-18 | By the task RT-2211 the screens of the sections took their labels from the dictionary: a row holds the key, the word by it is the screen's |
+| 2026-09-18 | By the task RT-2213 the English set was filled whole: both sets hold the same keys, and a key without a translation does not compile       |

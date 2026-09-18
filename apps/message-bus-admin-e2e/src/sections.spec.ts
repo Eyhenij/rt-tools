@@ -134,14 +134,60 @@ test.describe('разделы груза', () => {
         await qa(page, 'header-user-menu').click();
         await qa(page, 'profile-language').locator('[qa-dataid="toggle-button-group-option"][data-value="en"]').click();
 
-        // Имя раздела переведено, а подписи столбцов и слово состояния английского набора пока
-        // не знают: их наберёт RT-2213. Проверяется не перевод, а то, что и заголовок, и ячейка
-        // пересчитались — сравнение с готовым английским словом покраснело бы от той задачи.
+        // Оба набора полны, и на английском выборе приходят английские слова: и заголовок раздела,
+        // и подпись столбца, и слово состояния в ячейке.
         await expect(page.getByRole('heading', { name: 'Incident analyses' })).toBeVisible();
-        await expect(treeHeader).not.toHaveText('Проект');
+        await expect(treeHeader).toHaveText('Project');
         await expect(stateCell).not.toHaveText(stateBefore);
         await expect(stateCell).not.toHaveText('');
 
         expect(await page.evaluate((): boolean => (window as unknown as Record<string, boolean>)['rtSameLoad'] === true)).toBe(true);
+    });
+
+    test('SC-MB-415 — на английском выборе подписи экрана раздела без кириллицы', async ({ page }: { page: Page }) => {
+        await openSection(page, 'postmortems');
+
+        // Подписи экрана: заголовок, подсказка, столбцы, слова состояний, кнопки тулбара и
+        // оболочка. Имена деревьев и файлов в ячейках сюда не входят — они данные, а не подписи.
+        const labels: () => Promise<string[]> = async (): Promise<string[]> => {
+            const texts: string[] = [];
+
+            for (const selector of [
+                '[qa-dataid="admin-brand"]',
+                '[qa-dataid="header-nav-item"]',
+                '.admin-page__title',
+                '[qa-dataid="postmortems-hint"]',
+                '[qa-dataid="postmortems-table"] th',
+                '[qa-dataid="postmortems-cell-state"]',
+                '.rt-pagination__per-page-label',
+                '[qa-dataid="pagination-range"]',
+            ]) {
+                texts.push(...(await page.locator(selector).allInnerTexts()));
+            }
+
+            for (const selector of ['[qa-dataid="postmortems-refresh"] button', '[qa-dataid="postmortems-columns"] button']) {
+                texts.push((await page.locator(selector).getAttribute('aria-label')) ?? '');
+            }
+
+            return texts.map((one: string): string => one.trim()).filter((one: string): boolean => one !== '');
+        };
+
+        const cyrillic: RegExp = /[А-Яа-яЁё]/;
+
+        // Сначала положительная половина: по-русски те же места кириллицу несут. Без неё проба
+        // осталась бы зелёной и на пустом отборе — например, на переименованном признаке.
+        const russian: string[] = await labels();
+
+        expect(russian.length).toBeGreaterThan(10);
+        expect(russian.filter((one: string): boolean => cyrillic.test(one)).length).toBeGreaterThan(5);
+
+        await qa(page, 'header-user-menu').click();
+        await qa(page, 'profile-language').locator('[qa-dataid="toggle-button-group-option"][data-value="en"]').click();
+        await expect(page.getByRole('heading', { name: 'Incident analyses' })).toBeVisible();
+
+        const english: string[] = await labels();
+
+        expect(english).toHaveLength(russian.length);
+        expect(english.filter((one: string): boolean => cyrillic.test(one))).toEqual([]);
     });
 });

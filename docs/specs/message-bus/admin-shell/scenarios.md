@@ -153,3 +153,17 @@ Given a person stands at the screen of the entry and chooses English
 When they look at the card of the entry
 Then not one word of it is Russian: the name of the application, the heading, the labels of the
 fields, the hints inside them and the label of the button come from the dictionary
+
+### SC-MB-414 — every key of the dictionary has a text in both sets
+
+Given the set of the labels of the admin application
+When every key of it is asked in Russian and in English
+Then not one of them comes back by the sign of an unfound key or by an empty string
+
+### SC-MB-415 — the screen of a section holds no Russian word at the English choice
+
+Given a person stands at the screen of a section and chooses English
+When they look at the labels of the screen
+Then not one of them is Russian: the name of the section, its hint, the labels of the columns, the
+words of the states, the buttons of the toolbar and the shell come from the dictionary. The names of
+the projects and of the files in the cells are data and are not translated
