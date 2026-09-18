@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.28.0 · checks/check-profile-drift.mjs · 7d0890deef26 · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/check-profile-drift.mjs · 7d0890deef26 · правится надстройкой, не здесь
 /**
  * Comparing the overrides of the profile with the tables of the companions.
  *

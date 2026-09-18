@@ -4,7 +4,7 @@ kind: pattern
 rule: navigation
 description: Pattern of rule navigation. Load when creating an admin menu item, a section with a panel or a new section address — one declaration per item and route, the flag of a section without a screen, address nesting, a hint on an unavailable item. Not for the record edit panel — pattern entity-aside.
 ---
-<!-- rt-kit v0.28.0 · patterns/admin-nav-item.md · 8c8d6157d340 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/admin-nav-item.md · 8c8d6157d340 · правится надстройкой, не здесь -->
 
 # A menu item and a section address
 

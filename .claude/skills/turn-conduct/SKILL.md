@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.28.0 · rules/turn-conduct.md · 7ff3418ef9d4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/turn-conduct.md · 7ff3418ef9d4 · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 

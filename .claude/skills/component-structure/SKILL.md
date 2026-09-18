@@ -4,7 +4,7 @@ kind: rule
 law: frontend-application
 description: Rule under the frontend-application law. Load when editing any *.component.ts and its template. Names the order of decorator properties, import grouping, template conventions and the mandatory qa-dataid. Ready-made code is in pattern component-structure-new.
 ---
-<!-- rt-kit v0.28.0 · rules/component-structure.md · 9be9c19bbfd1 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/component-structure.md · 9be9c19bbfd1 · правится надстройкой, не здесь -->
 
 # Component file — how it works here
 

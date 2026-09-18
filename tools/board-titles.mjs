@@ -1,4 +1,4 @@
-// rt-kit v0.28.0 · checks/board-titles.github.mjs · d4bbb610db83 · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/board-titles.github.mjs · d4bbb610db83 · правится надстройкой, не здесь
 /**
  * Open tasks whose titles overlap heavily.
  *

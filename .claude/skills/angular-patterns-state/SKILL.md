@@ -4,7 +4,7 @@ kind: pattern
 rule: angular-patterns
 description: Pattern of rule angular-patterns. Load when declaring state and streams in an Angular class — ready-made signals, derived values, service state, a long-lived subscription with an action source. Not for the layout of a component file — that is rule component-structure.
 ---
-<!-- rt-kit v0.28.0 · patterns/angular-patterns-state.md · c3f7838aa426 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/angular-patterns-state.md · c3f7838aa426 · правится надстройкой, не здесь -->
 
 # State and streams
 

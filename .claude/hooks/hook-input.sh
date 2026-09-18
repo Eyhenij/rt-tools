@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/hook-input.sh · 24aec8980099 · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/hook-input.sh · 24aec8980099 · правится надстройкой, не здесь
 # Shared reading of the hook input. NOT a guard: it has no `rt-hook:` declaration and does not
 # subscribe to the agent events. The guards source it themselves — by the same technique they source
 # the shared refusal tail.
