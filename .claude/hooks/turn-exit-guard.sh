@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/turn-exit-guard.sh · 9d7ee9ec1471 · правится надстройкой, не здесь
+# rt-kit v0.28.0 · hooks/turn-exit-guard.sh · 36e05248a45e · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
@@ -52,6 +52,8 @@ rt_hook_read
 # fallback line in case there is no parser. These twelve lines used to stand as eight copies — the
 # file grew faster on every new tier than on the requirement itself.
 rt_te_deny() {
+    # The end of an epic releases the turn whatever tier came here: the epic is read only on this road.
+    command -v rt_te_epic_over >/dev/null 2>&1 && rt_te_epic_over && exit 0
     rt_te_reason="$1"
     rt_te_short="$2"
     # shellcheck disable=SC1090
@@ -231,9 +233,6 @@ Write the plan and begin its first stage in this same turn.
 
 The guard judges one turn: the next session is not refused." "the turn ended with taking a task."
 fi
-# At the end of an epic waiting for the word of the owner is the work itself: the reading of that
-# lies with the patterns and is shared with the guard of the stop.
-[ "$awaits_word" = "true" ] && rt_te_epic_over && awaits_word=false
 
 # The owner said to work without stops and did not cancel it. Their word holds until they cancel
 # it, and a turn ending with waiting for that same word invents the cancellation. Judged whether or

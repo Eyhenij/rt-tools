@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 3 — the rule says the main branch is judged as before, the layout matches
-- **Done:** stages 1 and 2 — the release inside the refusal, SC-AK-1129 and SC-AK-1119 (epic suite 32 ok, guard suite 90 ok), the statement, the binding and the scenarios in the exit spec (check-specs exit 0)
-- **Next step:** the article «The end of an epic is a stop…» in the rule and the companion line, then the layout
+- **Stage:** 3 of 3 — done; the folder is taken apart next
+- **Done:** stages 1–3 — the release inside the refusal, SC-AK-1129 and SC-AK-1119 (epic suite 32 ok, guard suite 90 ok), the exit spec (check-specs exit 0), the rule article and the companion line, the layout (agent-kit:check exit 0, no file over the limit)
+- **Next step:** the archive record, the folder taken apart, the PR into the epic branch
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -19,3 +19,4 @@
 ### 2026-09-18
 
 - The grill closed by exploration and by the owner's answers on the epic grill; the folder is written in the same session that merged RT-2229.
+- The article kept its length by shortening its own argument: the rule stands at 23 986 characters of 24 000.

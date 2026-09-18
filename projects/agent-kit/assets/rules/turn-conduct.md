@@ -177,9 +177,9 @@ flowchart TD
   checked.
 - **The end of an epic is a stop, and it is the one lawful waiting for a word.** Every task of the
   epic is merged or handed over, so there is no next task to take: a guard refuses taking one, and
-  the two guards that judge the end of a turn let the stop through by the same reading. The turn
-  shows the table of the epic's tasks, says what was done on each and what confirms it, and says
-  outright that the session waits for orders.
+  both guards of the turn end let the stop through by one reading of the epic table. The turn shows
+  the table of the epic's tasks, what was done on each and what confirms it, and says that the
+  session waits for orders. On the main branch the epic is not read, and the turn is judged as before.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
 - **The word about a stop the guard reads from the owner, not from the executor.** Otherwise the
