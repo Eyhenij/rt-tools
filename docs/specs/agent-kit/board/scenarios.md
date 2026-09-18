@@ -177,3 +177,27 @@ When the same audit goes
 Then no such line is printed
 
 Covered: `projects/agent-kit/tests/checks-board-columns.test.sh`.
+
+### SC-AK-1125 — a task branch that never carried its folder is named
+
+Given a task branch with a contribution of its own and no task folder in its history
+When the audit goes
+Then it names the branch by a line of its own and counts it into the divergences
+
+Covered: `projects/agent-kit/tests/checks-board-folders.test.sh`.
+
+### SC-AK-1126 — the branch of an epic is due no task folder
+
+Given a branch whose plan inside it names that same branch as the branch of an epic
+When the same audit goes
+Then it stays silent about that branch: an epic branch carries no task folder at all
+
+Covered: `projects/agent-kit/tests/checks-board-folders.test.sh`.
+
+### SC-AK-1127 — a task branch with its folder is no divergence
+
+Given the same task branch after the folder has travelled in by a commit
+When the same audit goes
+Then it stays silent about the branch
+
+Covered: `projects/agent-kit/tests/checks-board-folders.test.sh`.

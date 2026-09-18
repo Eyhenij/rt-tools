@@ -442,7 +442,7 @@ Then the send refuses and names the line, as it does for the digest
 
 Covered: `projects/agent-kit/src/lib/observations-cargo.spec.ts`.
 
-### SC-AK-1113 — the name of a rule of the tree's own leaves in neither a load nor a refusal
+### SC-AK-1123 — the name of a rule of the tree's own leaves in neither a load nor a refusal
 
 Given a load of a rule the package ships, a load of a rule of the tree's own and a gate refusal on
 that same rule of its own
@@ -452,7 +452,7 @@ place of the name, while the kind beside the load stays `own`
 
 Covered: `projects/agent-kit/src/lib/observations-cargo.spec.ts`.
 
-### SC-AK-1114 — a cargo holding a rule of the tree's own leaves: there is nothing left to leak
+### SC-AK-1124 — a cargo holding a rule of the tree's own leaves: there is nothing left to leak
 
 Given a day file with a load of a rule named after the tree itself
 When the send checks the cargo for leaks and sends it

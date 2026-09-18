@@ -78,6 +78,17 @@ through the executor.
   its epic looks like every other.
 - **The branch of an epic is recognised by its number in the name of the base.** The audit reads the
   queue and does not go to the tree; a task and its epic never share a number.
+- **A branch carrying no task folder is a divergence, and the branch of an epic is not.** The folder
+  travels in by the very first commit: an uncommitted one lets edits through for the whole of the
+  work, and the refusal arrives at the exit of a turn, when there is nothing left to fix with. An
+  epic branch has no folder by design — it carries the plan of its epic and the merges of its tasks
+  — and is named like a task branch to the letter, so by the name alone it gave such a line for
+  every epic of the tree, forever.
+- **A branch is recognised as an epic's by the plan inside that branch, not by the plan on disk.**
+  This part of the audit is the only one reading the local repository, without the network, and the
+  epic label lives at the hosting. The plan of a young epic lives only in its own branch, while the
+  working tree stands on whichever branch the session happens to be on: read off the disk, the sign
+  answers by where the session stands rather than by what the branch is.
 - **An epic with no branch in the requests is a divergence.** Its branch is taken before the first
   of its tasks, and one not taken leaves every task standing on the main branch: the epic is then
   merged piece by piece, and there is nothing left to hand in whole. The card says nothing about a
