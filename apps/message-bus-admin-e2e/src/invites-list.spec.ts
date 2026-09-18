@@ -151,6 +151,39 @@ test.describe('раздел приглашений', () => {
         await expect(qa(page, 'invite-create-code')).toHaveCount(0);
     });
 
+    test('SC-MB-409 — текст отказа приходит на выбранном языке, а не словом приёмника', async ({ page }: { page: Page }) => {
+        await openSection(page, 'invites');
+
+        // Сначала положительная половина: по-русски отказ приходит текстом словаря, а не пустотой
+        await qa(page, 'invites-create').click();
+        await qa(page, 'invite-create-name').locator('input').fill(INVITES.waiting);
+        await qa(page, 'invite-create-submit').click();
+
+        await expect(qa(page, 'invite-create-fault')).toContainText('уже выдано');
+
+        // Нажатие закрытия панель не гасит сразу: она уходит с анимацией, и пока не ушла, поле и
+        // кнопки в ней прежние. Отказ, снятый с такой панели, был бы отказом первой выдачи
+        await qa(page, 'invite-create-close').click();
+        await expect(qa(page, 'invite-create-panel')).toHaveCount(0);
+
+        await qa(page, 'header-user-menu').click();
+        await qa(page, 'profile-language').locator('[qa-dataid="toggle-button-group-option"][data-value="en"]').click();
+
+        // Попап профиля держит экран: пока он открыт, нажатие на кнопку раздела перехватывает он
+        await page.keyboard.press('Escape');
+        await expect(qa(page, 'profile-menu')).toHaveCount(0);
+
+        await qa(page, 'invites-create').click();
+        await expect(qa(page, 'invite-create-fault')).toHaveCount(0);
+
+        await qa(page, 'invite-create-name').locator('input').fill(INVITES.waiting);
+        await qa(page, 'invite-create-submit').click();
+
+        // Приёмник отвечает тем же кодом: меняется язык показа, а не ответ сервера
+        await expect(qa(page, 'invite-create-fault')).toContainText('already issued');
+        await expect(qa(page, 'invite-create-fault')).not.toContainText('уже выдано');
+    });
+
     test('SC-MB-120, SC-MB-153 — отзыв спрашивает согласия, снимает приглашение из ждущих и говорит об этом одним тостом', async ({
         page,
     }: {

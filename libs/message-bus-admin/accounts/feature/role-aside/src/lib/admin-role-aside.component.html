@@ -3,8 +3,8 @@
 <rt-aside qa-dataid="role-panel" [ariaLabel]="title()">
     <rt-aside-header qa-dataid="role-header" [title]="title()" (dismiss)="onClose()" />
 
-    @if (submitError(); as fault) {
-        <rt-message severity="danger" qa-dataid="role-fault">{{ fault }}</rt-message>
+    @if (submitError()) {
+        <rt-message severity="danger" qa-dataid="role-fault">{{ fault.text() }}</rt-message>
     }
 
     <ng-container rtBlock="admin-panel">

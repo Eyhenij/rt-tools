@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { ERefusal } from '@rt/message-bus-common';
 import { provideRtStorage, provideRtUtils } from '@rt-tools/core';
 
 import { TAdminLabelKey } from './admin-labels';
@@ -76,6 +77,31 @@ describe('AdminTextService', () => {
 
             expect(missing).toEqual([]);
         }
+    });
+
+    it('SC-MB-412 — у каждого кода отказа есть текст в обоих наборах', () => {
+        const { locale, text }: { locale: AdminLocaleService; text: AdminTextService } = services();
+        const codes: readonly ERefusal[] = Object.values(ERefusal);
+
+        expect(codes.length).toBeGreaterThan(0);
+
+        for (const chosen of [EAdminLocale.Ru, EAdminLocale.En]) {
+            locale.setLocale(chosen);
+
+            const missing: ERefusal[] = codes.filter((code: ERefusal): boolean => text.text(code).startsWith('«'));
+
+            expect(missing).toEqual([]);
+        }
+    });
+
+    it('SC-MB-410 — код, которого в наборе нет, виден признаком, а не пустотой', () => {
+        const { text }: { locale: AdminLocaleService; text: AdminTextService } = services();
+
+        // Сначала положительная половина: код набора приходит текстом.
+        expect(text.text(ERefusal.RoleNameEmpty)).toBe('Роль ждёт имя');
+
+        // Приёмник выкатывается отдельно от админки, и его новый код доезжает сюда именем.
+        expect(text.text('невиданныйКод' as TAdminLabelKey)).toBe('«невиданныйКод»');
     });
 
     it('SC-MB-403 — ненайденный ключ виден, а не пуст', () => {

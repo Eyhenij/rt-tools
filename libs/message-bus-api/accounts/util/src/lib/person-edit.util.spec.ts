@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import { EPersonInputFault, newPersonOf, passwordOf, PERSON_EDIT_SAID } from './person-edit.util';
+import { ERefusal, refusalSaid } from '@rt/message-bus-common';
+
+import { newPersonOf, passwordOf } from './person-edit.util';
 
 describe('разбор правок над учётной записью', () => {
     it('SC-MB-363 — пустой пароль отбивается словами о пароле, а не пустотой', () => {
-        expect(passwordOf({ password: '' }).fault).toBe(EPersonInputFault.PasswordEmpty);
-        expect(passwordOf({}).fault).toBe(EPersonInputFault.PasswordEmpty);
-        expect(passwordOf(null).fault).toBe(EPersonInputFault.PasswordEmpty);
-        expect(PERSON_EDIT_SAID[EPersonInputFault.PasswordEmpty]).toContain('пароль');
+        expect(passwordOf({ password: '' }).fault).toBe(ERefusal.PersonPasswordEmpty);
+        expect(passwordOf({}).fault).toBe(ERefusal.PersonPasswordEmpty);
+        expect(passwordOf(null).fault).toBe(ERefusal.PersonPasswordEmpty);
+        expect(refusalSaid(ERefusal.PersonPasswordEmpty)).toContain('пароль');
     });
 
     it('SC-MB-363 — пароль берётся как есть: пробел по краю — часть пароля', () => {
@@ -19,8 +21,8 @@ describe('разбор правок над учётной записью', () =>
     });
 
     it('SC-MB-361 — пустое имя отбивается раньше пустого пароля', () => {
-        expect(newPersonOf({ name: '   ', password: '' }).fault).toBe(EPersonInputFault.NameEmpty);
-        expect(newPersonOf({ name: 'Ольга', password: '' }).fault).toBe(EPersonInputFault.PasswordEmpty);
-        expect(newPersonOf({ name: 42, password: 'тайна' }).fault).toBe(EPersonInputFault.NameEmpty);
+        expect(newPersonOf({ name: '   ', password: '' }).fault).toBe(ERefusal.PersonNameEmpty);
+        expect(newPersonOf({ name: 'Ольга', password: '' }).fault).toBe(ERefusal.PersonPasswordEmpty);
+        expect(newPersonOf({ name: 42, password: 'тайна' }).fault).toBe(ERefusal.PersonNameEmpty);
     });
 });

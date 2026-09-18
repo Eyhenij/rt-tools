@@ -11,7 +11,7 @@ import {
     IRole,
     rightGroups,
 } from '@rt/message-bus-admin/accounts/util';
-import { AdminTextService, spokenFaultText, TAdminLabelKey } from '@rt/message-bus-admin/common/core/util';
+import { adminFaultText, AdminTextService, IAdminFaultText, TAdminLabelKey } from '@rt/message-bus-admin/common/core/util';
 import { RIGHTS, TRight } from '@rt/message-bus-common';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import {
@@ -87,6 +87,9 @@ export class AdminPersonAccessAsideComponent extends RtRouteAsideComponent<IAcce
     readonly #text: AdminTextService = inject(AdminTextService);
     readonly #people: PeopleStore = inject(PeopleStore);
     readonly #roles: RolesStore = inject(RolesStore);
+
+    /** Текст отказа: причину называет приёмник кодом, слово рисует словарь на выбранном языке. */
+    protected readonly fault: IAdminFaultText = adminFaultText('personAccessFailed');
 
     protected readonly roleLabel: Signal<string> = computed((): string => this.#text.text('personAccessRole'));
     protected readonly roleHint: Signal<string> = computed((): string => this.#text.text('personAccessRoleHint'));
@@ -174,7 +177,7 @@ export class AdminPersonAccessAsideComponent extends RtRouteAsideComponent<IAcce
 
         this.runMutation(this.#people.replaceAccess(name, { role, edits: editsOfWords(this.#wordsNow()) }), {
             successText: this.#text.text('personAccessDone', { name }),
-            errorText: (error: unknown): string => spokenFaultText(error, this.#text.text('personAccessFailed')),
+            errorText: this.fault.take,
             closeOnSuccess: true,
         });
     }

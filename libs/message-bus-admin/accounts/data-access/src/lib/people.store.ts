@@ -3,7 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PeopleApiService } from '@rt/message-bus-admin/accounts/api';
 import { IPerson, IPersonAccess, PEOPLE_PATH, PersonAccessMapper, PersonShortMapper } from '@rt/message-bus-admin/accounts/util';
 import { AdminListStoreBase } from '@rt/message-bus-admin/common/core/data-access';
-import { AdminTextService, spokenFaultText } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService, spokenFaultText, TAdminLabelKey, TAdminText } from '@rt/message-bus-admin/common/core/util';
+import { TRtKitLabelParams } from '@rt-tools/ui-kit-v2';
 import { IPersonAccessInput } from '@rt/message-bus-common';
 import { NotificationBus } from '@rt-tools/ui-kit-v2';
 import { catchError, EMPTY, exhaustMap, map, Observable, Subject, tap } from 'rxjs';
@@ -32,6 +33,9 @@ import { catchError, EMPTY, exhaustMap, map, Observable, Subject, tap } from 'rx
 export class PeopleStore extends AdminListStoreBase<IPerson.Short.State, IPerson.Short.Api> {
     readonly #api: PeopleApiService = inject(PeopleApiService);
     readonly #text: AdminTextService = inject(AdminTextService);
+
+    /** Словарь вызовом: чистая логика отказа берёт его доводом, а не службу. */
+    readonly #translate: TAdminText = (key: TAdminLabelKey, params?: TRtKitLabelParams): string => this.#text.text(key, params);
     readonly #notifications: NotificationBus = inject(NotificationBus);
     readonly #mapper: PersonShortMapper = new PersonShortMapper();
     readonly #accessMapper: PersonAccessMapper = new PersonAccessMapper();
@@ -51,10 +55,10 @@ export class PeopleStore extends AdminListStoreBase<IPerson.Short.State, IPerson
                             this.retry();
                         }),
                         catchError((fault: unknown): Observable<never> => {
-                            // Слово приёмника — своя запись, уже отключённая — уходит в тост как
-                            // есть: повторить человек может тем же пунктом меню, а причину должен
-                            // прочитать сразу
-                            this.#notifications.error(spokenFaultText(fault, this.#text.text('personDisableFailed')));
+                            // Причину приёмник называет кодом — своя запись, уже отключённая, — и
+                            // текст по нему уходит в тост словарём: повторить человек может тем же
+                            // пунктом меню, а причину должен прочитать сразу
+                            this.#notifications.error(spokenFaultText(fault, this.#text.text('personDisableFailed'), this.#translate));
 
                             return EMPTY;
                         })

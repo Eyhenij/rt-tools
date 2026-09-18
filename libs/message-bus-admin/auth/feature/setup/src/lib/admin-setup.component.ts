@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { ISetupState, ISignInPair, SIGN_IN_PATH } from '@rt/message-bus-admin/auth/util';
 import { AdminLocaleSwitchComponent } from '@rt/message-bus-admin/common/core/ui';
-import { AdminTextService, spokenFaultText } from '@rt/message-bus-admin/common/core/util';
+import { adminFaultText, AdminTextService, IAdminFaultText } from '@rt/message-bus-admin/common/core/util';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtButtonDirective, RtFieldComponent, RtInputComponent, RtMessageComponent, RtThemeToggleComponent } from '@rt-tools/ui-kit-v2';
 import { catchError, exhaustMap, finalize, map, Observable, of, Subject } from 'rxjs';
@@ -67,7 +67,11 @@ export class AdminSetupComponent {
     /** Форма рисуется по ответу приёмника, что запись ждут: до него неизвестно, чей это экран. */
     protected readonly ready: WritableSignal<boolean> = signal<boolean>(false);
     protected readonly pending: WritableSignal<boolean> = signal<boolean>(false);
-    protected readonly faultText: WritableSignal<string | null> = signal<string | null>(null);
+    /** Текст отказа: причину называет приёмник кодом, слово рисует словарь на выбранном языке. */
+    protected readonly fault: IAdminFaultText = adminFaultText('setupFailed');
+
+    /** Был ли отказ. Сам текст приходит из словаря и меняется с языком, а признак держится здесь. */
+    protected readonly failed: WritableSignal<boolean> = signal<boolean>(false);
 
     constructor() {
         this.#store
@@ -115,12 +119,13 @@ export class AdminSetupComponent {
 
     #setUp(pair: ISignInPair): Observable<boolean> {
         this.pending.set(true);
-        this.faultText.set(null);
+        this.failed.set(false);
 
         return this.#store.setUp(pair).pipe(
             map((): boolean => true),
             catchError((error: unknown): Observable<boolean> => {
-                this.faultText.set(spokenFaultText(error, this.#text.text('setupFailed')));
+                this.fault.take(error);
+                this.failed.set(true);
 
                 return of(false);
             }),

@@ -65,6 +65,11 @@ export function cargoFaultMessage(fault: ICargoFault, kind: string): string {
     }
 }
 
+/** Список записей груза пришёл не списком: род называется словом — дерево шлёт три рода. */
+export function cargoItemsFaultMessage(kind: string): string {
+    return `в грузе рода «${kind}» поле items ожидается списком записей`;
+}
+
 /** Одна запись списка не прошла проверку формы: список отбивается целиком, но место называется. */
 export function cargoItemFaultMessage(kind: string, at: number, fields: readonly string[]): string {
     return `в грузе рода «${kind}» записи ${at + 1} не хватает полей: ${fields.join(', ')}`;

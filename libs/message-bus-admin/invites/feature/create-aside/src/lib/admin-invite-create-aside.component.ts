@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AdminTextService, spokenFaultText } from '@rt/message-bus-admin/common/core/util';
+import { adminFaultText, AdminTextService, IAdminFaultText } from '@rt/message-bus-admin/common/core/util';
 import { InvitesStore } from '@rt/message-bus-admin/invites/data-access';
 import { IInvite } from '@rt/message-bus-admin/invites/util';
 import {
@@ -58,6 +58,9 @@ export class AdminInviteCreateAsideComponent extends RtRouteAsideComponent<null>
     readonly #text: AdminTextService = inject(AdminTextService);
     readonly #store: InvitesStore = inject(InvitesStore);
 
+    /** Текст отказа: причину называет приёмник кодом, слово рисует словарь на выбранном языке. */
+    protected readonly fault: IAdminFaultText = adminFaultText('inviteCreateFailed');
+
     readonly #issued: WritableSignal<IInvite.Issued.State | null> = signal<IInvite.Issued.State | null>(null);
 
     protected readonly title: Signal<string> = computed((): string => this.#text.text('inviteCreateTitle'));
@@ -98,10 +101,9 @@ export class AdminInviteCreateAsideComponent extends RtRouteAsideComponent<null>
 
         this.runMutation(this.#store.issue(name).pipe(tap((issued: IInvite.Issued.State): void => this.#issued.set(issued))), {
             successText: this.#text.text('inviteCreateDone', { name }),
-            // Слово приёмника показывается как есть: отклонённое обращение он объясняет
-            // человеку сам — чем занято имя, чего не хватило. Поломка службы своего слова не
-            // несёт, и на неё отвечает общая строка раздела
-            errorText: (error: unknown): string => spokenFaultText(error, this.#text.text('inviteCreateFailed')),
+            // Причину приёмник называет кодом, слово по коду рисует словарь. Поломка службы
+            // кода не несёт, и на неё отвечает общая строка раздела
+            errorText: this.fault.take,
             // Панель остаётся открытой: код виден один раз, и закрытие унесло бы его с
             // собой. Имя при этом запирается — приглашение на него уже выдано
             onSuccess: (): void => this.name.disable(),

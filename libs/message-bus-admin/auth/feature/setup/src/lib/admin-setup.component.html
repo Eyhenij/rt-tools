@@ -15,8 +15,8 @@
             <p rtElem="hint" qa-dataid="setup-hint">{{ setupHint() }}</p>
 
             <form rtElem="form" [formGroup]="form" (ngSubmit)="submit()">
-                @if (faultText(); as text) {
-                    <rt-message severity="danger" qa-dataid="setup-fault">{{ text }}</rt-message>
+                @if (failed()) {
+                    <rt-message severity="danger" qa-dataid="setup-fault">{{ fault.text() }}</rt-message>
                 }
 
                 <rt-field [label]="nameLabel()">

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PeopleStore } from '@rt/message-bus-admin/accounts/data-access';
-import { AdminTextService, spokenFaultText } from '@rt/message-bus-admin/common/core/util';
+import { adminFaultText, AdminTextService, IAdminFaultText } from '@rt/message-bus-admin/common/core/util';
 import {
     RtAsideComponent,
     RtAsideFooterComponent,
@@ -56,6 +56,9 @@ export class AdminPersonPasswordAsideComponent extends RtRouteAsideComponent<nul
 
     readonly #store: PeopleStore = inject(PeopleStore);
 
+    /** Текст отказа: причину называет приёмник кодом, слово рисует словарь на выбранном языке. */
+    protected readonly fault: IAdminFaultText = adminFaultText('personPasswordFailed');
+
     protected readonly title: Signal<string> = computed((): string => this.#text.text('personPasswordTitle'));
     protected readonly passwordLabel: Signal<string> = computed((): string => this.#text.text('personPasswordField'));
     protected readonly passwordHint: Signal<string> = computed((): string => this.#text.text('personPasswordHint'));
@@ -89,7 +92,7 @@ export class AdminPersonPasswordAsideComponent extends RtRouteAsideComponent<nul
 
         this.runMutation(this.#store.replacePassword(name, this.password.getRawValue()), {
             successText: this.#text.text('personPasswordDone', { name }),
-            errorText: (error: unknown): string => spokenFaultText(error, this.#text.text('personPasswordFailed')),
+            errorText: this.fault.take,
             closeOnSuccess: true,
         });
     }

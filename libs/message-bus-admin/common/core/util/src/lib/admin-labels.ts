@@ -15,6 +15,7 @@
  * умолчанием, и пустой подписи на экране не бывает никогда. Переводится то, что админка
  * показывает, — таблица, страницы, столбцы, панель.
  */
+import { ERefusal } from '@rt/message-bus-common';
 import { TRtKitLabelKey, TRtKitLabelParams } from '@rt-tools/ui-kit-v2';
 
 /** Подписи экранов админки. Ключ читается в шаблоне, значение правится здесь. */
@@ -251,6 +252,43 @@ export const ADMIN_LABELS = {
     detailsUsageSessions: 'Сессии',
     detailsSessionsMissing: 'За период этот скил не грузила ни одна сессия',
     detailsSessionsFailed: 'Прочитать сессии не удалось',
+    // Тексты отказов приёмника. Ключ — код отказа общей либы: второе имя под одну причину
+    // разошлось бы с первым молча, а незнакомый код даром получает признак ненайденного ключа.
+    [ERefusal.AccountNameTaken]: 'Пользователь «{{name}}» уже заведён: имя занято',
+    [ERefusal.AccountNotFound]: 'Пользователя с именем «{{name}}» нет',
+    [ERefusal.AccountSelfDisable]: 'Свою запись отключить нельзя: это оборвало бы и ваш вход',
+    [ERefusal.AccountAlreadyOff]: 'Пользователь «{{name}}» уже отключён',
+    [ERefusal.AccountGone]: 'Запись пропала между правкой и ответом',
+    [ERefusal.RoleNameTaken]: 'Роль «{{name}}» уже заведена: имя занято',
+    [ERefusal.RoleNotFound]: 'Роли с ключом «{{key}}» нет',
+    [ERefusal.RoleHeld]: 'Роль «{{name}}» держат записи: {{people}}. Сначала дайте им другую',
+    [ERefusal.RoleRightsLost]: 'Правка оставила бы вас без права на роли: сначала дайте его другой записи',
+    [ERefusal.RoleNameEmpty]: 'Роль ждёт имя',
+    [ERefusal.RightUnknown]: 'Права «{{right}}» нет в наборе',
+    [ERefusal.RightRepeated]: 'Право «{{right}}» названо дважды',
+    [ERefusal.EditMalformed]: 'Правка называет право и дано ли оно',
+    [ERefusal.InviteNameEmpty]: 'Выдача ждёт имя будущего проекта',
+    [ERefusal.InviteProjectExists]: 'Проект «{{name}}» уже заведён: приглашение ему не нужно, а имя занято',
+    [ERefusal.InviteAlreadyIssued]: 'Годное приглашение для «{{name}}» уже выдано. Отзовите его, чтобы выдать новое',
+    [ERefusal.InviteNotFound]: 'Годного приглашения для «{{name}}» нет',
+    [ERefusal.InviteRejected]: 'Приглашение не принято',
+    [ERefusal.PostmortemNotFound]: 'Разбора происшествия с таким признаком нет',
+    [ERefusal.ProposalNotFound]: 'Предложения с таким признаком нет',
+    [ERefusal.SummaryNotFound]: 'Записи месяца с таким признаком нет',
+    [ERefusal.TreeUnknown]: 'Проекта с признаком «{{slug}}» приёмник не знает',
+    [ERefusal.PersonNameEmpty]: 'Заведение ждёт имя пользователя',
+    [ERefusal.PersonPasswordEmpty]: 'Пользователю нужен пароль: пустой не принимается',
+    [ERefusal.SetupClosed]: 'Первая запись уже заведена: вход — по имени и паролю',
+    [ERefusal.OwnerRoleMissing]: 'Роли владельца «{{key}}» нет в хранилище: миграции не применены',
+    [ERefusal.SignInEmpty]: 'В запросе нет имени или пароля',
+    [ERefusal.EnrollThrottled]: 'Обращений с одного клиента больше предела: подождите и повторите',
+    [ERefusal.EnrollMalformed]: 'Обращение ожидает код приглашения и признак проекта',
+    [ERefusal.TreeTaken]: 'Проект с таким признаком или именем уже заведён; приглашение осталось годным',
+    [ERefusal.SignInRequired]: 'Операция требует входа',
+    [ERefusal.RightRequired]: 'На эту операцию у вас нет права',
+    [ERefusal.TreeTokenRequired]: 'Операция требует токен проекта',
+    [ERefusal.TreeTokenRejected]: 'Токен не принят',
+    [ERefusal.AccessUndeclared]: 'Операция доступа не объявила',
 } as const;
 
 /** Ключ подписи админки. Опечатка в шаблоне не доживает до собранного экрана. */

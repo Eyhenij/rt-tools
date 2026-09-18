@@ -70,9 +70,10 @@ commands stay until task #1902 removes them.
 - **A successful creating closes the panel and the list carries the new row at once.** The
   password is shown nowhere after the success: the receiver holds a hash and has nothing to show
   back.
-- **A refused request keeps the person in the panel with their input, and the word of the
-  receiver is shown as it is.** A taken name and an empty password are about what the person did;
-  a breakage of the service is not, and it is answered by the shared line of the section.
+- **A refused request keeps the person in the panel with their input, and the text of the refusal
+  is drawn out of the dictionary by its code.** A taken name and an empty password are about what
+  the person did; a breakage of the service is not, and it is answered by the shared line of the
+  section.
 - **Disabling asks a question that names the record and the consequence.** The answer is not
   returned by any action, and the question says so.
 - **The outcome of every action is said by one notification, and the list is re-read whole.** While
@@ -132,7 +133,7 @@ sign-ins.
 | the list without the right | the list as it is: no button, no row menu                                              |
 | the panel of creating      | the name and the password, "Завести" and "Закрыть"                                     |
 | the panel of a password    | the password for the named record, "Сменить" and "Закрыть"                             |
-| the request refused        | the word of the receiver above the fields; the input stays                             |
+| the request refused        | the text of the refusal above the fields; the input stays                              |
 | the request succeeded      | the panel closed, one notification, the list re-read                                   |
 | the question of disabling  | the name of the record and the consequence; "Отключить" and the way back               |
 
@@ -167,7 +168,7 @@ One receiver and one list of people in it.
   showing place, and the one creating still has to pass it on.
 - **The own record is refused by the receiver and hidden by the screen.** Rejected: hiding alone —
   a direct request would still throw the person out.
-- **The word of the receiver is shown by the shared technique of the invites section.** Rejected: a
+- **The text of the refusal is shown by the shared technique of the invites section.** Rejected: a
   copy of it next to the section — two copies of one reading diverge silently.
 
 ## Open questions

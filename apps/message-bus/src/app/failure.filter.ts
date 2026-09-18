@@ -22,6 +22,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
 
 import { describeError, isStorageFailure } from '@rt/message-bus-api/observability/util';
+import { IRefusal, refusalOf } from '@rt/message-bus-common';
 import { ITreeBearingRequest, TREE_OF_REQUEST } from '@rt/message-bus-api/trees/util';
 
 import { cargoLimit } from './cargo-limit';
@@ -79,7 +80,24 @@ export class FailureFilter implements ExceptionFilter {
 
         this.#log.warn(this.#journalName(request), this.#journalFields(error, request, status, incident));
 
-        response.status(status).json({ message: this.#messageOf(error, status, request, incident) });
+        response.status(status).json(this.#bodyOf(error, status, request, incident));
+    }
+
+    /**
+     * Тело ответа: код причины рядом с предложением, когда операция назвала код.
+     *
+     * Разбор один на всё приложение, и тело он собирал заново — с одним полем текста. Код при
+     * этом терялся молча: операция его называла, а до админки доезжало предложение, написанное
+     * по-русски, и человек, выбравший английский, читал отказ по-русски.
+     *
+     * У отказа с номером обращения кода нет: причина спрашивавшему не видна, и называть по ней
+     * нечего.
+     */
+    #bodyOf(error: unknown, status: number, request: TFailingRequest, incident: string | null): Record<string, unknown> {
+        const message: string = this.#messageOf(error, status, request, incident);
+        const named: IRefusal | null = incident === null && error instanceof HttpException ? refusalOf(error.getResponse()) : null;
+
+        return named === null ? { message } : { ...named, message };
     }
 
     #statusOf(error: unknown): number {

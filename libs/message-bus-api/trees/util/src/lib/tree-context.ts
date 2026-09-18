@@ -42,7 +42,7 @@ export function treeOf(request: ITreeBearingRequest): IRequestTree {
     const tree: IRequestTree | undefined = request[TREE_OF_REQUEST];
 
     if (!tree) {
-        throw new Error('дерево запроса не прочитано: операция не закрыта проверкой токена');
+        throw new Error('the tree of the request is not read: the operation is not closed by the check of the token');
     }
 
     return tree;
