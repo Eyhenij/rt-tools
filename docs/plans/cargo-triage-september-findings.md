@@ -42,3 +42,8 @@ right. The file lies next to the plan of the epic, `docs/plans/cargo-triage-sept
   epic tiers.** Two tiers in a row went to `turn-exit-epic.sh` for want of room, and the file name
   no longer says what lies in it. **Address:** rules layer — the state tiers move to a file of their
   own before the next one.
+- **The clean-database step of the pipeline reads the container as ready before the server is.**
+  `pg_isready` answers on the temporary server the image starts for its first setup, and the
+  schema check then gets a reset connection: `read ECONNRESET` on the request of the epic, green on
+  the five task requests minutes before. **Address:** this tree — the step waits for a real query to
+  answer, not for the readiness probe.
