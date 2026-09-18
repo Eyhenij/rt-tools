@@ -106,4 +106,24 @@ expect_stop "SC-AK-1119 — без таблицы вовсе: ход с рабо
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
 
 
+# --- SC-AK-1127 — ветка эпика не читается как задача без папки -----------------------------------
+# Ветка эпика имеет вид ветки задачи и папки при себе не несёт. Без признака ярус «взята, не
+# начата» не пропускал бы ни один ход на ней. Признак — строка заголовка плана эпика в каталоге
+# планов.
+EPIC_BR="$(fixture_repo RT-9-epic-line)"
+mkdir -p "$EPIC_BR/docs/plans"
+input_epic_branch() {
+    jq -n --arg p "$1" --arg d "$EPIC_BR" '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}'
+}
+printf '**Эпик:** RT-9 · **Ветка эпика:** `RT-9-other-line`\n' > "$EPIC_BR/docs/plans/other.md"
+expect_stop "SC-AK-1127 — план с другой веткой ход на ветке без папки не отпускает" \
+    "$(input_epic_branch "$(transcript "$(say 'продолжай')" "$(ran 'git commit -m x')")")" BLOCK
+printf '**Эпик:** RT-9 · **Ветка эпика:** `RT-9-epic-line`\n' > "$EPIC_BR/docs/plans/epic.md"
+expect_stop "SC-AK-1127 — ветка, названная планом эпика, ярусом взятой задачи не судится" \
+    "$(input_epic_branch "$(transcript "$(say 'продолжай')" "$(ran 'git commit -m x')")")" PASS
+expect_stop "SC-AK-1127 — пустой ход на ветке эпика не отпускается" \
+    "$(input_epic_branch "$(transcript "$(say 'ну что там?')" "$(reply)")")" BLOCK
+rm -rf "$EPIC_BR"
+
+
 suite_result "проверка выхода из хода: открытый эпик"

@@ -319,7 +319,8 @@ esac
 # A folder taken apart by a branch commit does not get here: `archived` means handed-over work, and
 # the previous tier judges it. A branch without a task number is not judged at all — such ones are
 # created for a trial too.
-if [ "$archived" != "true" ] && [ -z "$progress" ] && [ -n "$branch" ] && [ ! -d "$root/$tasks_dir/$branch" ]; then
+# An epic branch is not judged either: it carries no folder by the rule, and the epic plan names it.
+if [ "$archived" != "true" ] && [ -z "$progress" ] && [ -n "$branch" ] && [ ! -d "$root/$tasks_dir/$branch" ] && ! rt_te_epic_branch; then
     task_key="${RT_TASK_KEY:-}"
     if [ -z "$task_key" ] && [ -f "$root/.claude/rt-kit/checks.json" ]; then
         task_key="$(jq -r '.board.taskKey // empty' "$root/.claude/rt-kit/checks.json" 2>/dev/null)"

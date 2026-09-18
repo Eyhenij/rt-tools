@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 3 — the guard reads the epic branch from the epic plan
-- **Done:** grill, epic RT-2228 declared with tasks RT-2229 and RT-2230, epic plan committed on the epic branch
-- **Next step:** write `rt_te_epic_branch`, skip the tier, add SC-AK-1127 to the epic suite
+- **Stage:** 2 of 3 — the spec names the statement, the binding and the scenario
+- **Done:** stage 1 — `rt_te_epic_branch`, the tier skips the epic branch, SC-AK-1127: epic suite 28 ok, guard suite 90 ok
+- **Next step:** the statement, the binding and scenario SC-AK-1127 in the exit spec
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet

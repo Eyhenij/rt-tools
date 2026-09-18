@@ -46,6 +46,21 @@ rt_te_epic_open() {
     [ -n "$(rt_te_epic_left)" ]
 }
 
+# The epic branch: named by the header line of an epic plan in the plans directory of the tree. It
+# has the shape of a task branch and by the rule carries no task folder, so the tier of the taken
+# task would read every turn on it as work taken and not begun. The plan is written by the command
+# that creates the epic and outlives the merge; the directory is named by the settings, `docs/plans`
+# by default. Expects `$root` and `$branch` to be set. FAIL-OPEN: no directory, no plan — not an
+# epic branch.
+rt_te_epic_branch() {
+    [ -n "${root:-}" ] && [ -n "${branch:-}" ] || return 1
+    local plans
+    plans="$(jq -r ".plansDir // empty" "$root/.claude/rt-kit/checks.json" 2>/dev/null)"
+    [ -n "$plans" ] || plans="docs/plans"
+    [ -d "$root/$plans" ] || return 1
+    grep -lE "^\\*\\*[^|]*\`$branch\`" "$root/$plans"/*.md 2>/dev/null | grep -q .
+}
+
 # The refusal of a stop under an open epic. The kind names what the turn ended with.
 rt_te_epic_deny() {
     local kind="$1" ended short
