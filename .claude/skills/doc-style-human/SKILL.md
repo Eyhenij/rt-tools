@@ -4,7 +4,7 @@ kind: pattern
 rule: doc-style
 description: Pattern of rule doc-style. Load when writing a task in the work queue, a PR description and a chat reply to the owner. Samples of "so" and "not so" for each of the three texts and the words that get replaced in them. The shape of a status reply is named by rule status-report.
 ---
-<!-- rt-kit v0.29.0 · patterns/doc-style-human.md · 2f5ce74249bc · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/doc-style-human.md · e76eb067d913 · правится надстройкой, не здесь -->
 
 # A task, a PR description and a reply to the owner
 
@@ -86,6 +86,12 @@ not choose.
 
 ## Pitfalls
 
+- **An edit made by a shell command is judged by the whole command, the old version inside it
+  included.** The style check gets the body of the call, not the text that will end up in the
+  file: a rewrite carrying the previous wording inside a heredoc or an interpreter string is
+  refused by the words of that previous wording. The refusal repeats at the second attempt,
+  because the old text is still there. The new text is written by the edit tool — there only the
+  new text is judged — or inserted by line number, and the command is given the path.
 - **Shorter does not mean clearer.** A text in the layer's words comes out a third shorter and
   is useless to whoever decides whether the work is urgent.
 - **"Not X but Y" looks like an explanation and explains nothing.** The owner learns what was

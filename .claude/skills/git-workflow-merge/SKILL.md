@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when the base of a branch is merged into it and a conflict is resolved — the merge order, handling by file kind, checking what was appended against the work queue, re-reading the body of the open request. Branch and commit — pattern git-workflow-commit.
 ---
-<!-- rt-kit v0.29.0 · patterns/git-workflow-merge.md · ecf68dfe152a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/git-workflow-merge.md · 79ba77abe270 · правится надстройкой, не здесь -->
 
 # Merging the base of a branch into it
 
@@ -48,6 +48,7 @@ technique, and different files of one merge are resolved differently.
 | a build from a description         | rebuilt from the description after the description is resolved: a generator writes the lines of such a file, and sides joined by hand give a file it would never output |
 | a spec in `docs/specs/`            | by keeping both sides, if both appended; a section removed by one side stays removed — rule `spec-driven`; after — `npm run check:specs` |
 | a rule's companion next to the rule | by keeping both sides — the same two additions to one table; after — `npm run check:specs` |
+| the table of working-copy assignments | by the base's side whole. The owner fills it in the main branch, and a session does not write it: the branch's side can only be an older copy. After — the reading the session start prints |
 | the work list (`docs/BACKLOG.md`)  | by the selection sign — pattern `doc-style-sweep`                                  |
 
 ## A commit is carried over by a cherry-pick

@@ -25,12 +25,17 @@ The body starts with the link line — by it the board fills the linked PRs fiel
 assignee and labels are set by the same command, and a PR does not open without them:
 
 ```bash
-GH_TOKEN="$TOKEN" gh pr create --base <ветка эпика> --title '[<КЛЮЧ>-86] Письмо владельцу с незаполненным адресом попадает в логи' \
-    --reviewer <владелец> --assignee <бот> --label bug --label area:api \
-    --body 'Closes #86
-
-…'
+GH_TOKEN="$TOKEN" gh pr create --title '[<КЛЮЧ>-86] Письмо владельцу с незаполненным адресом попадает в логи' \
+    --base <ветка эпика> --body-file <файл с телом> \
+    --reviewer <владелец> --assignee <бот> --label bug --label area:api
 ```
+
+**The title stands first in the call, and the body comes in by a file.** The delivery guard reads
+the title out of the command text and takes the first match of the short key: a body passed as a
+line in the same call may itself hold a word after that key — a quoted command, a label, a run
+line — and it becomes the title in the guard's eyes. The refusal then says the title does not
+start with the task number while the real title is right, and the mistake is looked for where
+there is none. A body in a file leaves the call one title and nothing else to match.
 
 The reviewer is always the owner: without a review request the PR does not show in their queue.
 The assignee is the same account the machine work goes from. Labels are taken from the task

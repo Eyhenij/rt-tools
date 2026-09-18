@@ -57,7 +57,12 @@ skill_for() {
                 # `*.spec.ts`, which gives a spec to the component check rule: the node's code has
                 # no showcases, no snapshots and no layout measurements, and out of forty-odd
                 # kilobytes of that rule it needs one line.
-                */projects/agent-kit/*.spec.ts | */tools/*.spec.ts | */tools/*.test.ts)
+
+                # A check of the tree and the cases next to it fall here too: the verifiability
+                # rule holds everything such a check is written by — its place in the gate and in
+                # the pipeline, the shape of its accepted list, the fail-open of a guard — while
+                # the default leads neither the check nor a shell case file to any rule at all.
+                */projects/agent-kit/*.spec.ts | */tools/*.spec.ts | */tools/*.test.ts | */tools/*.test.sh | */tools/tests/* | */tools/check-*.mjs)
                     printf '%s\n' 'testing'
                     return 0
                     ;;
