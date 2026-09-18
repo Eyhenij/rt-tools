@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.0 · hooks/turn-exit-verdict.sh · 17e8fed729fe · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/turn-exit-verdict.sh · 720f1567ff28 · правится надстройкой, не здесь
 # The parsing of the turn record for the turn-exit guard. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The guard sources it right after the patterns —
 # it was moved out when the guard crossed the file length limit, and the parsing reads apart
@@ -38,6 +38,10 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
     # however much work there was before: the work stays exactly where it stood.
     | ([$uses[] | select((.name // "") == "Bash") | ((.input.command // "") + (if (.input.run_in_background // false) then " &" else "" end))] | last // "") as $last
     | ([$uses[] | (.name // "")] | last // "") as $last_name
+    # A launch in the background as the last action: a role sent to work by the agent tool, or a
+    # command sent behind the turn. The launch is an announcement of intent, and what does not
+    # depend on it is done while it runs — the turn does not end on the launch itself.
+    | (($last_name | test("^(Agent|Task)$")) or (($last_name == "Bash") and ($last | test("&[[:space:]]*$")))) as $launched_last
     | (($last_name == "Bash") and ($last | test($wait))) as $waited
     # Handing the work over: the tail of the turn after the PR was opened. Everything before it was
     # done on the task handed in and says nothing about the next one.
@@ -107,6 +111,6 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
           or (((.name // "") == "Bash") and ([(.input.command // "") | splits($part)] | map(test($work) and (test($read) | not) and (test("^[[:space:]]*([^[:space:]]*/)?git[[:space:]]+(add|commit|push)") | not)) | any))
       ) | any) as $after_progress
     | (($last_name == "Bash") and ($last | test($started)) and ($handed_over | not)) as $only_took
-    | { promised: $promised, only_took: $only_took, asked: $asked, handed_by_hand: ($handed and (($asked or $denied or $told_stop) | not)), standing_work: $standing_work, worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, asked_in_prose: $asked_in_prose, awaits_word: $awaits_word, progress_edited: $progress_edited, after_progress: $after_progress, ran: $ran }
+    | { promised: $promised, only_took: $only_took, asked: $asked, handed_by_hand: ($handed and (($asked or $denied or $told_stop) | not)), standing_work: $standing_work, worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, asked_in_prose: $asked_in_prose, awaits_word: $awaits_word, progress_edited: $progress_edited, after_progress: $after_progress, launched_last: $launched_last, ran: $ran }
 ' 2>/dev/null)"
 }

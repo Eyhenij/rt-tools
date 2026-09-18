@@ -210,6 +210,24 @@ expect_stop "SC-AK-1132 — команда, меняющая дерево, по�
 expect_stop "SC-AK-1132 — отданная работа после хода работы судится своим ярусом" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(edited_file "$PROGRESS")" "$(ran 'git commit -m x')" "$(ran 'gh pr create --draft')")")" PASS
 
+# --- SC-AK-1135 — запуск в фоне последним действием ход не кончает ---------------------------
+# Разбор кончился запуском ролей в фоне и отчётом «роли работают»; проверка сочла запуск работой.
+# Запуск — объявление намерения: пока роль идёт, делается то, что от неё не зависит. Судится
+# последнее действие: запуск в середине хода законен.
+launched() { jq -c -n '{type:"assistant",message:{content:[{type:"tool_use",name:"Agent",input:{subagent_type:"skill-curator",prompt:"обзор"}}]}}'; }
+ran_bg() { jq -c -n --arg c "$1" '{type:"assistant",message:{content:[{type:"tool_use",name:"Bash",input:{command:$c,run_in_background:true}}]}}'; }
+state_is 'этап-идёт'
+expect_stop "SC-AK-1135 — роль, запущенная последним действием, ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(launched)")")" BLOCK
+expect_reason "SC-AK-1135 — отказ называет запуск в фоне" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(launched)")")" "launch in the background"
+expect_stop "SC-AK-1135 — команда в фоне последним действием ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran_bg 'npm run storybook')")")" BLOCK
+expect_stop "SC-AK-1135 — запуск роли без работы до него ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'разбери просьбу')" "$(launched)")")" BLOCK
+expect_stop "SC-AK-1135 — работа после запуска ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(launched)" "$(edited)")")" PASS
+
 # --- разведка ---------------------------------------------------------------------------------
 # Читающая подкоманда `git` и клиента хостинга стоит в образце работы наравне с меняющей —
 # образец знает только первое слово. Ход, где переключились на главную ветку, прочитали историю

@@ -336,6 +336,19 @@ Then the call passes: the analysis of a request goes by questions about differen
 
 Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
+### SC-AK-1134 — two answers «recommended» in a row close the remaining questions by assumption
+
+Given the owner took the recommended option on the last two menus of the record
+When the executor sends the next menu
+Then the call is refused, and the refusal orders to close the remaining questions by assumption and
+name them to the owner in one line
+
+Given the owner answered the last menu with an option of their own, or only one menu was answered
+When the executor sends the next menu
+Then the call passes: the streak is broken by any other answer, and one answer is not a streak
+
+Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
+
 ### SC-AK-840 — a request to the owner to sign in or type a password does not close the turn
 
 Given a request to type a password, to sign in themselves or to fill the sign-in form stands in the
