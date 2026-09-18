@@ -112,3 +112,9 @@ them together with the ones above and says which of them become edits.
   neither. The number of the work goes into the cell, and the plan cell says what it really is.
   **Address:** rules layer — the cell takes a task key with a number and says which of the two it
   is.
+- **A staging call over a directory takes in the folders of other sessions.** One working copy holds
+  the unstarted task folders of neighbouring work, deliberately outside the index. A staging call
+  named by the directory adds them all, and the branch carries eighteen foreign files into the
+  request: the file count on the page is the only place it shows. The removal from the index leaves
+  them on disk. **Address:** this tree — the files of a commit are named one by one, and what is
+  staged is read back before the commit.
