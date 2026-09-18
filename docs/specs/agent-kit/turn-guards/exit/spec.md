@@ -54,6 +54,10 @@ not by a person.
   the error stream do not change the tree.
 - **Waiting for someone else's step is never the end of a turn.** However much work there was before
   — the run, the review by the owner and the merge go without the executor.
+- **A launch in the background is never the last action of a turn.** A role sent to work by the
+  agent tool or a command sent behind the turn is an announcement of intent: what was sent asks
+  nothing on the way and goes no faster for being waited on. While it runs, what does not depend on
+  it is done, and the launch stands anywhere in the turn but last.
 - **Handed-in work ends a turn only together with the next one begun.** On the next one an action
   must be done, not said.
 - **A task taken without a task folder does not end the turn.** Creating a branch and moving the
@@ -170,3 +174,5 @@ Not applicable: the guard judges one turn of one session.
   unreadable epic keeps the former judgement.
 - 2026-09-18 — the next step: a progress rewritten by the turn names what the turn owes, and the
   turn does not end on the commit of it alone.
+- 2026-09-18 — a launch in the background as the last action: a role or a command sent behind the
+  turn is an announcement of intent, and the turn does not end on it.

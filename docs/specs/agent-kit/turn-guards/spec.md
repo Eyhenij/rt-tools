@@ -72,6 +72,14 @@ turn.
 - **A refusal by the second sign orders to go on with the work, not to ask again differently.** The
   miss here is not in the shape of the question but in the stopping of work that is already allowed: a
   refusal named by the shape is fixed by a second question of the same stopping.
+- **Two answers «recommended» in a row close the remaining questions by assumption, and the
+  guard of the conversation refuses the next menu.** Every menu carries a recommended option, and an
+  owner who takes it twice running has shown that the decisions are not theirs: the tree answers
+  these questions, and the menu only asks to confirm it. The third sign reads the last two answers
+  of the question tool, each with every option taken marked as recommended; any other answer breaks
+  the streak. The refusal orders to write the assumptions into the grill, name them to the owner in
+  one line and look for a ready-made module of the same kind before that: a grill of five menus was
+  closed by the owner naming such a module.
 - **The guard of the conversation lets the work through at any breakage.** There is no record of the
   turn, there is no parser of the record, the reading broke — the turn is allowed. A broken guard has
   no right to jam the conversation.
@@ -261,3 +269,5 @@ None.
   with the instruction to work without stopping not cancelled.
 - 2026-09-18 — the waiting guard refuses a turn that started or reran a run and put no wait on its
   end: a rerun went through between other things, and the owner found the green run first.
+- 2026-09-18 — the third sign of the guard of the conversation: two answers «recommended» in a row
+  close the remaining questions by assumption, and the next menu is refused.

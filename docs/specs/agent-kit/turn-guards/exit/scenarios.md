@@ -484,3 +484,13 @@ command changing the tree after the edit releases it, and a turn that opened the
 by the tier of handed-in work
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1135 — a launch in the background is never the last action of a turn
+
+Given the turn sent a role to work by the agent tool, or a command to the background, and did
+nothing after it
+When the turn ends
+Then the guard gives the turn back and names the launch in the background; a launch with no work
+before it is refused the same, and work after the launch releases the turn
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.

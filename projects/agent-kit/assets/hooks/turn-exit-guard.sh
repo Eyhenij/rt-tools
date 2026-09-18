@@ -420,7 +420,7 @@ The guard judges one turn: the next session is not refused."
 
     rt_te_deny "$reason" "the turn ended with waiting for a step by someone else."
 fi
-
+command -v rt_te_launch_last_deny >/dev/null 2>&1 && rt_te_launch_last_deny
 # The shared line. There was work in the turn — but the last action was not it, it was a text to the
 # owner. The particular tiers above name the kind of stop more precisely; what reaches here is what
 # they do not know by name.

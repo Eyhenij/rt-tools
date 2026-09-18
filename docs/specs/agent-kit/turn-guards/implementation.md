@@ -10,6 +10,7 @@ statement: a removed statement is removed together with its line.
 - **Under an open epic the guard of the exits judges a turn that ended with work and a second pass.** — `projects/agent-kit/assets/hooks/turn-exit-epic.sh:rt_te_epic_open` — the tiers are sourced by the exit guard; the subdomain of the exits binds each of them
 - **To a question whose answer a remark of the owner has already given, the guard of the conversation answers with a refusal.** — `projects/agent-kit/assets/hooks/grill-gate.sh:seen`
 - **A refusal by the second sign orders to go on with the work, not to ask again differently.** — `projects/agent-kit/assets/hooks/grill-gate.sh:seen`
+- **Two answers «recommended» in a row close the remaining questions by assumption, and the guard of the conversation refuses the next menu.** — `projects/agent-kit/assets/hooks/grill-gate.sh:streak` — the last two answers of the question tool are read from the record. An answer counts as recommended when every option taken carries the mark in either language. Scenario SC-AK-1134.
 - **The guard of the conversation lets the work through at any breakage.** — `projects/agent-kit/assets/hooks/grill-gate.sh:transcript`
 - **The guard of the window reminds before it refuses.** — `projects/agent-kit/assets/hooks/window-fill-guard.sh:warn_pct`
 - **The reminder repeats by steps, not at every action.** — `projects/agent-kit/assets/hooks/window-fill-guard.sh:step`
