@@ -4,17 +4,26 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `этап-идёт`
-- **Stage:** 5 из 5 — сквозной набор и отказ на двух языках
-- **Done:** этапы 1–4 — договорённость, набор кодов, приёмник отвечает кодом, админка рисует текст
-  по коду из словаря
-- **Next step:** этап 5 — сквозной тест на язык текста отказа
-- **Uncommitted:** нет
+- **State:** `этапы-кончились`
+- **Stage:** все пять закончены
+- **Done:** этапы 1–5 — договорённость, набор кодов, приёмник отвечает кодом, админка рисует текст
+  по коду из словаря, сквозной тест на язык отказа
+- **Next step:** влить договорённость в спеку домена, свести тексты, разобрать папку задачи и
+  открыть заявку
+- **Uncommitted:** правки этапа 5 — фильтр ответа, его спека, сквозной тест, перенос договорённости
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Decisions along the way
 
+- **Тело ответа собирает разбор отказов, один на всё приложение, — и код терялся именно там.**
+  Каждая операция код называла, разбор собирал тело заново с одним полем текста, и до админки
+  доезжало русское предложение. Ни линтер, ни юниты этого не видели: нашёл сквозной набор.
+- **Панель уходит с экрана не сразу, и тест её ухода дожидается.** Нажатие закрытия панель не
+  гасит: пока она уходит, поле и кнопки в ней прежние. Тест успевал набрать имя и нажать выдачу в
+  уходящей панели, а потом она пропадала, и прогон стоял до предела времени.
+- **Попап профиля после выбора языка закрывается нажатием Esc.** Открытый, он держит экран и
+  перехватывает нажатие на кнопку раздела.
 - **Незнакомый код не отбрасывается разбором, а доезжает до показа именем.** Стороны выкатываются
   порознь; отброшенный код показал бы запасную строку экрана, то есть скрыл бы расхождение.
 - **Текст отказа в панели — производное значение, а не строка в сигнале кита.** Панель кита держит
@@ -57,6 +66,9 @@ Rewritten by every session, not appended to.
 - Этап 3 закончен: броски отказа приёмника называют код. Признак готовности взят командой —
   бросков с русским текстом в приёмнике 0 (было 43). `pnpm exec nx affected -t lint test build` —
   81 проект, провалов нет.
+- Этап 5 закончен: сквозной тест берёт отказ по-русски, переключает язык и берёт его снова —
+  приходит английский текст. `pnpm exec nx run message-bus-admin-e2e:e2e` — 132 теста, провалов
+  нет.
 - Этап 4 закончен: тексты отказов легли в оба набора подписей ключом-кодом, панели и экран первой
   записи показывают их из словаря, слово приёмника на экран больше не попадает. Ветка эпика влита
   сюда вместе с работой RT-2211. `pnpm exec nx affected -t lint typecheck test build` — 171 задача,
@@ -71,9 +83,9 @@ Put together by a hook before the compaction of the context (auto).
 
 ### Where we stand at the minute of the compaction
 
-- **State:** `этап-идёт`
-- **Stage:** 1 из 5 — договорённость о кодах отказа
-- **Next step:** этап 1 — написать договорённость о кодах отказа в `proposed/`
+- **State:** `этапы-кончились`
+- **Stage:** 5 из 5 — сквозной набор и отказ на двух языках
+- **Next step:** этап 5 — сквозной тест на язык текста отказа
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-2212-server-answers-with-codes/progress.md`; the plan lies next to it.
@@ -81,32 +93,39 @@ The progress in full — `docs/tasks/RT-2212-server-answers-with-codes/progress.
 ### Uncommitted
 
 ```
-none
+ M apps/message-bus-admin-e2e/src/invites-list.spec.ts
+ M apps/message-bus/src/app/failure.filter.spec.ts
+ M apps/message-bus/src/app/failure.filter.ts
+AM docs/specs/message-bus/refusal-codes/implementation.md
+RM docs/specs/message-bus/proposed/refusal-codes/scenarios.md -> docs/specs/message-bus/refusal-codes/scenarios.md
+RM docs/specs/message-bus/proposed/refusal-codes/spec.md -> docs/specs/message-bus/refusal-codes/spec.md
+ M docs/specs/message-bus/spec.md
+ M docs/tasks/RT-2212-server-answers-with-codes/progress.md
 ```
 
 ### Commits over the main branch
 
 ```
+ae2edb9e2 feat(rt:message-bus): админка рисует текст отказа по коду из словаря
+6066d4a4e Merge remote-tracking branch 'origin/RT-2208-receiver-texts-keys' into RT-2212-server-answers-with-codes
+88195b9dc docs(rt:message-bus): привязка отказа по пустому паролю указывает на код
+ebbd10f52 feat(rt:message-bus): приёмник отвечает на отказ кодом, а не русским предложением
+53a7ee6f3 feat(rt:message-bus): набор кодов отказа в общей либе
+06da87c86 [RT-2211] Экраны разделов берут подписи из словаря (#2248)
+4524c89a3 docs(rt:message-bus): договорённость о кодах отказа приёмника
 5887f6253 docs(rt:message-bus): задача RT-2212 взята, план записан
 1f78f8299 docs(rt:message-bus): в плане эпика отмечены две влитые задачи и взятая четвёртая
+79ccef0d0 Merge remote-tracking branch 'origin/RT-2208-receiver-texts-keys' into RT-2211-section-screens-from-dictionary
 5c8e7a427 Merge remote-tracking branch 'origin/main' into RT-2208-receiver-texts-keys
+763d87993 docs(rt:message-bus): папка задачи RT-2211 разобрана
+d7c0d1dec test(rt:message-bus): сквозной тест на язык экрана раздела
+2f30ea9a0 feat(rt:message-bus): экраны шести разделов берут подписи из словаря
+565464d4b feat(rt:message-bus): общий слой списка спрашивает словарь на каждой отрисовке
 98ca4723e [RT-2210] Экраны входа берут подписи из словаря (#2239)
 c3a2b4e98 [RT-2209] Подписи оболочки админки приходят из словаря на двух языках (#2236)
-3604c06ba docs(rt:message-bus): папка задачи RT-2210 разобрана
-3861e3c01 feat(rt:message-bus): экраны входа берут подписи из словаря
-550c2dd4d docs(rt:message-bus): задача RT-2210 взята, план записан
-01c397dc9 Merge branch 'RT-2208-receiver-texts-keys' into RT-2209-labels-from-dictionary
-6dc74979b Merge remote-tracking branch 'origin/main' into RT-2208-receiver-texts-keys
-1ed106794 docs(rt:message-bus): папка задачи RT-2209 разобрана
-3d9c91d8a docs(rt:message-bus): соглашение о словаре подписей влито в спеку оболочки
-a343b6051 feat(rt:message-bus): оболочка админки берёт подписи из словаря
-e5ff997b0 feat(rt:message-bus): словарь подписей админки на двух языках
-ccc1383d4 docs(rt:message-bus): соглашение о словаре подписей админки
-a941a79e7 docs(rt:message-bus): задача RT-2209 взята, план записан
-2f1aa8cf5 fix(rt:agent-kit): номера сценариев проверки выхода из хода разведены с занятыми
-ecd780f39 docs(rt:agent-kit): копии rt-tools назначен эпик RT-2208
-aa5b3755d merge origin/main: таблица назначений и уборка архива
-8aa17b9a5 docs(rt:message-bus): в план эпика записано измерение на 18 сентября
+59d25853f feat(rt:message-bus): столбцы всех разделов названы ключами словаря
+e612048cf feat(rt:message-bus): подпись столбца названа ключом словаря
+f7dc2cc45 docs(rt:message-bus): задача RT-2211 взята, план записан
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

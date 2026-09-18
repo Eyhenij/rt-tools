@@ -12,11 +12,10 @@ and the code of HTTP stays the one this refusal has today
 
 ### SC-MB-409 — the text of a refusal follows the chosen language
 
-Given the intake answered a refusal by a code that has a text in both sets
-When a person switches the language while the refusal is on the screen
-Then the text of the refusal changes with the labels of the screen, and the page is not reloaded
-
-Not covered: the screens start to read the code at the fourth stage of the task.
+Given a refusal of the intake was already read on the screen in Russian
+When a person switches the language and gets the same refusal again
+Then the text of the refusal comes out of the dictionary in the chosen language, and the sentence
+of the intake reaches no screen
 
 ### SC-MB-410 — an unknown code is visible by a sign, not by emptiness
 

@@ -1,6 +1,6 @@
 # The intake refuses by a code, and the word for it is drawn by the admin application
 
-**Status:** proposed · **Revision:** 2026-09-18 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 2026-09-18 · **Scenario prefix:** `SC-MB`
 **Depends on:** the subdomain of the shell — `docs/specs/message-bus/admin-shell/spec.md`
 **Laws:** `frontend-application`, `observability`
 **Procedures:** none — the operations are declared by the specs of the sections
@@ -60,6 +60,9 @@ as now; only its text starts to follow the chosen language.
   not carry out because of its own mistake is read by whoever holds the intake, not by a person: its
   text is written in English on a par with the rest of what a session reads, and it names no reason
   for the person to fix.
+- **The body of the answer is assembled in one place, and the code goes into it there.** The intake
+  has one parse of refusals for the whole application, and it builds the body anew: a code left out
+  of that place is lost while every operation goes on naming it, and no check sees that.
 - **The sentence stays in the body while the trees do not know the codes.** A tree in the field
   prints the word of the intake to its owner, and this work does not roll the trees out. The
   sentence is assembled out of the same code by one table of the shared lib.
@@ -90,53 +93,55 @@ their rights stay as they are. The body of a refusal carries three fields:
 ### Refusal codes
 
 Not applicable in the form this section is read by: the codes of this work are not named `Code.X`
-and belong to no procedure of a domain of its own. The set itself:
-
-| The code                                                                                              | When it is answered                                                 | Substitutions    |
-| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | ---------------- |
-| `accountNameTaken`                                                                                    | an account of that name is already created                          | `name`           |
-| `accountNotFound`                                                                                     | there is no account of that name                                    | `name`           |
-| `accountSelfDisable`                                                                                  | a person disables their own account                                 | —                |
-| `accountAlreadyOff`                                                                                   | the account is already disabled                                     | `name`           |
-| `accountGone`                                                                                         | the record disappeared between the edit and the answer              | —                |
-| `roleNameTaken`                                                                                       | a role of that name is already created                              | `name`           |
-| `roleNotFound`                                                                                        | there is no role with that key                                      | `key`            |
-| `roleHeld`                                                                                            | the role is held by accounts                                        | `name`, `people` |
-| `roleRightsLost`                                                                                      | the edit would leave the person without the right to the roles      | —                |
-| `roleNameEmpty`                                                                                       | the role arrived without a name                                     | —                |
-| `rightUnknown`                                                                                        | the right is not in the set                                         | `right`          |
-| `rightRepeated`                                                                                       | the right is named twice                                            | `right`          |
-| `editMalformed`                                                                                       | the edit does not name the right and whether it is given            | —                |
-| `inviteNameEmpty`                                                                                     | the issue is asked without the name of the project                  | —                |
-| `inviteProjectExists`                                                                                 | the project is already created                                      | `name`           |
-| `inviteAlreadyIssued`                                                                                 | a valid invitation for the project is already issued                | `name`           |
-| `inviteNotFound`                                                                                      | there is no valid invitation for the project                        | `name`           |
-| `inviteRejected`                                                                                      | the code of the invitation is not accepted                          | —                |
-| `postmortemNotFound`                                                                                  | there is no incident analysis with that sign                        | —                |
-| `proposalNotFound`                                                                                    | there is no proposal with that sign                                 | —                |
-| `summaryNotFound`                                                                                     | there is no record of a month with that sign                        | —                |
-| `treeUnknown`                                                                                         | the tree with that sign is not known to the intake                  | `slug`           |
-| `personNameEmpty`                                                                                     | the account arrived without a name                                  | —                |
-| `personPasswordEmpty`                                                                                 | the account arrived without a password                              | —                |
-| `setupClosed`                                                                                         | the first account is already created                                | —                |
-| `ownerRoleMissing`                                                                                    | the role of the owner is not in the storage                         | `key`            |
-| `signInEmpty`                                                                                         | the request carries no name or no password                          | —                |
-| `enrollThrottled`                                                                                     | there are more requests from one client than the limit              | —                |
-| `enrollMalformed`                                                                                     | the request awaits the code of an invitation and the sign of a tree | —                |
-| `treeTaken`                                                                                           | a tree with that sign or that name is already created               | —                |
-| `signInRequired`                                                                                      | the operation demands an entry                                      | —                |
-| `rightRequired`                                                                                       | the entry has no right to the operation                             | —                |
-| `treeTokenRequired`                                                                                   | the operation demands a token of a tree                             | —                |
-| `treeTokenRejected`                                                                                   | the token is not accepted                                           | —                |
-| `accessUndeclared`                                                                                    | the operation declared no access                                    | —                |
-| The last five never reach the screen: the admin application answers the number of such an answer by   |
-| the entry, not by a text. They have a code all the same — a refusal of the intake is named by a code, |
-| and an exception of one kind for one of them would be the place where the Russian sentence stays.     |
+and belong to no procedure of a domain of its own. The set itself stands in the section of the
+data — a table in this section the audit of the contract reads as a list of procedures.
 
 ## Data
 
 The work adds no storage and no field to one. The set of the codes lies in the code of the shared
 lib, the texts for them in the sets of the labels of the admin application.
+
+| The code              | When it is answered                                                 | Substitutions    |
+| --------------------- | ------------------------------------------------------------------- | ---------------- |
+| `accountNameTaken`    | an account of that name is already created                          | `name`           |
+| `accountNotFound`     | there is no account of that name                                    | `name`           |
+| `accountSelfDisable`  | a person disables their own account                                 | —                |
+| `accountAlreadyOff`   | the account is already disabled                                     | `name`           |
+| `accountGone`         | the record disappeared between the edit and the answer              | —                |
+| `roleNameTaken`       | a role of that name is already created                              | `name`           |
+| `roleNotFound`        | there is no role with that key                                      | `key`            |
+| `roleHeld`            | the role is held by accounts                                        | `name`, `people` |
+| `roleRightsLost`      | the edit would leave the person without the right to the roles      | —                |
+| `roleNameEmpty`       | the role arrived without a name                                     | —                |
+| `rightUnknown`        | the right is not in the set                                         | `right`          |
+| `rightRepeated`       | the right is named twice                                            | `right`          |
+| `editMalformed`       | the edit does not name the right and whether it is given            | —                |
+| `inviteNameEmpty`     | the issue is asked without the name of the project                  | —                |
+| `inviteProjectExists` | the project is already created                                      | `name`           |
+| `inviteAlreadyIssued` | a valid invitation for the project is already issued                | `name`           |
+| `inviteNotFound`      | there is no valid invitation for the project                        | `name`           |
+| `inviteRejected`      | the code of the invitation is not accepted                          | —                |
+| `postmortemNotFound`  | there is no incident analysis with that sign                        | —                |
+| `proposalNotFound`    | there is no proposal with that sign                                 | —                |
+| `summaryNotFound`     | there is no record of a month with that sign                        | —                |
+| `treeUnknown`         | the tree with that sign is not known to the intake                  | `slug`           |
+| `personNameEmpty`     | the account arrived without a name                                  | —                |
+| `personPasswordEmpty` | the account arrived without a password                              | —                |
+| `setupClosed`         | the first account is already created                                | —                |
+| `ownerRoleMissing`    | the role of the owner is not in the storage                         | `key`            |
+| `signInEmpty`         | the request carries no name or no password                          | —                |
+| `enrollThrottled`     | there are more requests from one client than the limit              | —                |
+| `enrollMalformed`     | the request awaits the code of an invitation and the sign of a tree | —                |
+| `treeTaken`           | a tree with that sign or that name is already created               | —                |
+| `signInRequired`      | the operation demands an entry                                      | —                |
+| `rightRequired`       | the entry has no right to the operation                             | —                |
+| `treeTokenRequired`   | the operation demands a token of a tree                             | —                |
+| `treeTokenRejected`   | the token is not accepted                                           | —                |
+| `accessUndeclared`    | the operation declared no access                                    | —                |
+
+The last five never reach the screen: the admin application answers the number of such an answer
+by the entry, not by a text. They have a code all the same — a refusal of the intake is named by a
+code, and an exception for one of them would be the place where the Russian sentence stays.
 
 | What         | Where                       | What it holds                       |
 | ------------ | --------------------------- | ----------------------------------- |
