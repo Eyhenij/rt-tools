@@ -30,3 +30,15 @@ right. The file lies next to the plan of the epic, `docs/plans/cargo-triage-sept
   copy holds 329 lines of the 330 allowed: one more pitfall took the push gate down, and the case of
   the board mutation stayed in the tree's companion alone. **Address:** rules layer — the cold part
   `pitfalls/git-workflow.github.md` is split before the next record.
+
+## RT-2246 — the grill closes questions by assumption, the turn does not end on a launch
+
+- **The epic-stop guard refuses the switch to the epic branch for the epic's own request.** With
+  every task merged, `git checkout <epic branch>` is read as taking new work, while the rule names
+  the request of the epic into the main branch as the mandatory action of that state. The switch went
+  through by the bypass line. **Address:** rules layer — the guard lets through a switch to the
+  branch of the finished epic and a request opened from it.
+- **The guard of the end of a turn is at its length limit, and its tiers land in the file of the
+  epic tiers.** Two tiers in a row went to `turn-exit-epic.sh` for want of room, and the file name
+  no longer says what lies in it. **Address:** rules layer — the state tiers move to a file of their
+  own before the next one.
