@@ -474,3 +474,13 @@ Then the turn is released whatever tier it reached: an empty turn, a second pass
 hand and words about waiting for the word of the owner all pass
 
 Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
+
+### SC-AK-1132 — a next step rewritten into the progress is begun by the same turn
+
+Given the work stands in a running stage, and the turn rewrote the progress
+When the turn ends, and after that edit it did nothing but commit and push
+Then the guard gives the turn back and names the next step; an edit outside the task folder or a
+command changing the tree after the edit releases it, and a turn that opened the request is judged
+by the tier of handed-in work
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.

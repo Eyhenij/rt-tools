@@ -379,6 +379,8 @@ The guard judges one turn: the next session is not refused."
         rt_te_deny "$reason" "a closed stage is not backed by the output of a command."
     fi
 fi
+# The next step rewritten into the progress and not begun: the tier lies next to the epic tiers.
+command -v rt_te_next_step_deny >/dev/null 2>&1 && rt_te_next_step_deny
 
 # The work is handed over and the next one is only named. There is more work in such a turn than in
 # any other — and all of it is on the task handed in: the handover finishes the previous work, not
