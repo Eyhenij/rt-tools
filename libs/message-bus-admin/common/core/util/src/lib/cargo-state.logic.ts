@@ -9,25 +9,36 @@
  */
 import { ECargoState } from '@rt/message-bus-common';
 
-import { adminLabel } from './admin-labels';
+import { adminLabel, TAdminLabelKey } from './admin-labels';
 
 /**
- * Состояние записи груза по-русски.
+ * Каким ключом словаря названо состояние записи груза.
  *
  * Набор закрыт, и ветка на каждое его значение стоит здесь, а не в шаблоне: состояние приезжает
- * машинной строкой, и показанное как есть человек читает по-английски.
+ * машинной строкой, и показанное как есть человек читает по-английски. Отдаётся ключ, а не текст:
+ * текст, взятый здесь, приходит на языке той минуты и до перезагрузки остаётся прежним.
  */
-export function cargoStateLabel(state: ECargoState): string {
+export function cargoStateKey(state: ECargoState): TAdminLabelKey {
     switch (state) {
         case ECargoState.InWork:
-            return adminLabel('cargoStateInWork');
+            return 'cargoStateInWork';
         case ECargoState.Fixed:
-            return adminLabel('cargoStateFixed');
+            return 'cargoStateFixed';
         case ECargoState.Released:
-            return adminLabel('cargoStateReleased');
+            return 'cargoStateReleased';
         case ECargoState.Quarantined:
-            return adminLabel('cargoStateQuarantined');
+            return 'cargoStateQuarantined';
         default:
-            return adminLabel('cargoStateNew');
+            return 'cargoStateNew';
     }
+}
+
+/**
+ * Состояние записи груза словом.
+ *
+ * Зовут её мапперы разделов, и текст она берёт при отображении строки. Язык на ходу такая подпись
+ * не меняет — мапперы переводятся задачей RT-2211 вместе с моделями строк.
+ */
+export function cargoStateLabel(state: ECargoState): string {
+    return adminLabel(cargoStateKey(state));
 }
