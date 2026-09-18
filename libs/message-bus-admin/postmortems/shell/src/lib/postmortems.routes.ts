@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { adminTabTitle } from '@rt/message-bus-admin/common/core/util';
 
 /** Адрес раздела. Назван здесь и читается пунктом меню: два объявления разошлись бы молча. */
 export const POSTMORTEMS_ROUTE: string = 'postmortems';
@@ -19,7 +19,7 @@ export const POSTMORTEMS_ROUTE: string = 'postmortems';
 export const postmortemsRoutes: Route[] = [
     {
         path: POSTMORTEMS_ROUTE,
-        title: adminLabel('sectionPostmortems'),
+        title: adminTabTitle('sectionPostmortems'),
         loadComponent: async () => (await import('@rt/message-bus-admin/postmortems/feature/list')).AdminPostmortemsListComponent,
     },
     {

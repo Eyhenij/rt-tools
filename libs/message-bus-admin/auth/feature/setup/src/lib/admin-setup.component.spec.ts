@@ -101,22 +101,23 @@ describe('AdminSetupComponent', () => {
         expect(fixture.debugElement.query(By.css('[qa-dataid="setup-fault"]'))).toBeNull();
     });
 
-    it('SC-MB-391 — отказ приёмника показывается его словом над полями, и человек остаётся на экране', () => {
+    it('SC-MB-391 — отказ приёмника показывается текстом словаря над полями, и человек остаётся на экране', () => {
         answerOpen(true);
 
         type('setup-name', 'Ольга');
         type('setup-password', 'тайный');
         press();
 
+        // Тело отказа пишется здесь как есть: набор кодов живёт в общей либе, а этот слой её не видит
         http.expectOne({ method: 'POST', url: SETUP_URL }).flush(
-            { message: 'первая запись уже заведена' },
+            { code: 'setupClosed', message: 'первая запись уже заведена: вход — по имени и паролю' },
             { status: 409, statusText: 'Conflict' }
         );
         fixture.detectChanges();
 
         const fault: HTMLElement = fixture.debugElement.query(By.css('[qa-dataid="setup-fault"]')).nativeElement as HTMLElement;
 
-        expect(fault.textContent?.trim()).toBe('первая запись уже заведена');
+        expect(fault.textContent?.trim()).toBe('Первая запись уже заведена: вход — по имени и паролю');
         expect(router.navigateByUrl).not.toHaveBeenCalled();
     });
 

@@ -1,10 +1,12 @@
 /**
  * Разбор правок над учётной записью, пришедших с экрана: заведение и новый пароль.
  *
- * Чистые функции без каркаса: контроллер зовёт их и переводит найденное в код отказа, а
- * проверяются они вызовом — без запроса и без базы. Здесь же слова отказов: они уходят человеку
- * в панель как есть, и второе место, где их писать, разошлось бы с первым.
+ * Чистые функции без каркаса: контроллер зовёт их и отвечает найденным кодом, а проверяются они
+ * вызовом — без запроса и без базы. Слова отказа здесь нет: причина названа кодом, а текст по нему
+ * рисует админка на выбранном языке.
  */
+import { ERefusal } from '@rt/message-bus-common';
+
 import { accountNameOk } from './account-name.util';
 
 /** Заведение записи, как его разобрал приёмник: имя, каким его назвали, и первый пароль. */
@@ -13,29 +15,17 @@ export interface INewPersonInput {
     readonly password: string;
 }
 
-/** Чего не хватило в правке. Набор закрыт: контроллер переводит каждое в свой код отказа. */
-export enum EPersonInputFault {
-    NameEmpty = 'name-empty',
-    PasswordEmpty = 'password-empty',
-}
-
 /** Разбор пароля: либо пароль, либо чего не хватило. Ровно одно из двух заполнено. */
 export interface IPasswordParse {
     readonly password: string;
-    readonly fault: EPersonInputFault | null;
+    readonly fault: ERefusal | null;
 }
 
 /** Разбор заведения: либо запись, либо чего не хватило. Ровно одно из двух заполнено. */
 export interface INewPersonParse {
     readonly input: INewPersonInput | null;
-    readonly fault: EPersonInputFault | null;
+    readonly fault: ERefusal | null;
 }
-
-/** Слова отказов: человеку в панель, и потому по-русски и про его же действие. */
-export const PERSON_EDIT_SAID: Readonly<Record<EPersonInputFault, string>> = {
-    [EPersonInputFault.NameEmpty]: 'заведение ждёт имя пользователя',
-    [EPersonInputFault.PasswordEmpty]: 'пользователю нужен пароль: пустой не принимается',
-};
 
 /** Поле тела запроса строкой. Не строка и пустота читаются одинаково: поля нет. */
 function fieldOf(body: unknown, key: string): string {
@@ -51,7 +41,7 @@ function fieldOf(body: unknown, key: string): string {
 export function passwordOf(body: unknown): IPasswordParse {
     const password: string = fieldOf(body, 'password');
 
-    return { password, fault: password.length > 0 ? null : EPersonInputFault.PasswordEmpty };
+    return { password, fault: password.length > 0 ? null : ERefusal.PersonPasswordEmpty };
 }
 
 /**
@@ -64,7 +54,7 @@ export function newPersonOf(body: unknown): INewPersonParse {
     const name: string = fieldOf(body, 'name');
 
     if (!accountNameOk(name)) {
-        return { input: null, fault: EPersonInputFault.NameEmpty };
+        return { input: null, fault: ERefusal.PersonNameEmpty };
     }
 
     const parsed: IPasswordParse = passwordOf(body);

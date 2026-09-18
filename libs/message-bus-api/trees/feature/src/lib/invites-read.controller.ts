@@ -30,12 +30,14 @@ import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { findLiveInviteByName, IStoredInvite, readInvites, revokeInvite } from '@rt/message-bus-api/trees/data-access';
 import { EInviteRefusal, inviteState } from '@rt/message-bus-api/trees/util';
 import {
+    ERefusal,
     ETreeInviteView,
     IPage,
     ITreeInviteIssued,
     ITreeInviteView,
     pageAsked,
     pageFault,
+    refusalBody,
     TREE_INVITE_SORTABLE,
 } from '@rt/message-bus-common';
 
@@ -96,17 +98,17 @@ export class InvitesReadController {
         const name: string = typeof raw === 'string' ? raw.trim() : '';
 
         if (!name) {
-            throw new BadRequestException('выдача ждёт имя будущего проекта');
+            throw new BadRequestException(refusalBody(ERefusal.InviteNameEmpty));
         }
 
         const outcome: IInviteOutcome = await issueInvite(this.#prisma, name, at);
 
         if (outcome.refusal === EInviteRefusal.TreeExists) {
-            throw new ConflictException(`проект «${name}» уже заведён: приглашение ему не нужно, а имя занято`);
+            throw new ConflictException(refusalBody(ERefusal.InviteProjectExists, { name }));
         }
 
         if (outcome.refusal === EInviteRefusal.InviteLive || !outcome.issued) {
-            throw new ConflictException(`годное приглашение для «${name}» уже выдано; отзовите его, чтобы выдать новое`);
+            throw new ConflictException(refusalBody(ERefusal.InviteAlreadyIssued, { name }));
         }
 
         // В журнал уходит имя дерева и только оно: ни кода, ни его хеша здесь нет — строка лога
@@ -137,7 +139,7 @@ export class InvitesReadController {
         const live: IStoredInvite | null = await findLiveInviteByName(this.#prisma, name);
 
         if (!live || inviteState(live, at) !== ETreeInviteView.Waiting) {
-            throw new NotFoundException(`годного приглашения для «${name}» нет`);
+            throw new NotFoundException(refusalBody(ERefusal.InviteNotFound, { name }));
         }
 
         await revokeInvite(this.#prisma, live.id, at);

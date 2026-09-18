@@ -10,9 +10,9 @@
     <section rtElem="card">
         <!-- Приложение называет себя словом: начертания знака у админки нет, и готовый логотип
              занимал здесь место, ничего не рисуя -->
-        <span rtElem="brand" qa-dataid="sign-in-brand">{{ appTitle }}</span>
+        <span rtElem="brand" qa-dataid="sign-in-brand">{{ appTitle() }}</span>
 
-        <h1 rtElem="title" qa-dataid="sign-in-title">{{ signInTitle }}</h1>
+        <h1 rtElem="title" qa-dataid="sign-in-title">{{ signInTitle() }}</h1>
 
         <admin-sign-in-form [pending]="pending()" [fault]="fault()" (submitted)="submit($event)" />
     </section>

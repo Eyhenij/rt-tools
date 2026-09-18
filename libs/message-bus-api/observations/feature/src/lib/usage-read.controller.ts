@@ -28,6 +28,7 @@ import {
 import { IUsagePeriod, usageDaysOf, usagePeriodFault, usagePeriodOf, usageTreeOf } from '@rt/message-bus-api/observations/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import {
+    ERefusal,
     IPageAsked,
     IUsageDayRow,
     IUsageDigest,
@@ -37,6 +38,7 @@ import {
     IUsageSessionRow,
     pageAsked,
     pageFault,
+    refusalBody,
     TRight,
     USAGE_SORTABLE,
 } from '@rt/message-bus-common';
@@ -111,7 +113,7 @@ export class UsageReadController {
         const treeId: string | null = slug ? await findTreeIdBySlug(this.#prisma, slug) : null;
 
         if (!treeId) {
-            throw new NotFoundException('дерево с таким признаком не известно приёмнику');
+            throw new NotFoundException(refusalBody(ERefusal.TreeUnknown, { slug }));
         }
         const period: IUsagePeriod = usagePeriodOf(query, now);
 

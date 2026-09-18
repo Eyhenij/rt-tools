@@ -5,8 +5,7 @@
  * Лежит отдельно от экрана: тот же набор читают и таблица, и панель настройки столбцов, и
  * описание — объявленный в шаблоне, он был бы известен только шаблону.
  */
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
-import { IRtTable } from '@rt-tools/ui-kit-v2';
+import { IAdminColumn } from '@rt/message-bus-admin/common/core/util';
 
 /** Адрес операций над ролями: страница, одна роль, заведение, правка и удаление. */
 export const ROLES_PATH: string = '/api/roles';
@@ -34,8 +33,8 @@ export const ROLES_TABLE_ID: string = 'admin-roles';
  * Закреплено имя: роль зовётся им, и без него список перестаёт называть свои строки. Порядок
  * принимает только оно: приёмник упорядочивает роли одним полем.
  */
-export const ROLES_COLUMNS: readonly IRtTable.ColumnConfig[] = Object.freeze([
-    { key: 'name', label: adminLabel('columnRoleName'), sortable: true, locked: true },
-    { key: 'rights', label: adminLabel('columnRoleRights') },
-    { key: 'people', label: adminLabel('columnRolePeople') },
+export const ROLES_COLUMNS: readonly IAdminColumn[] = Object.freeze([
+    { key: 'name', label: 'columnRoleName', sortable: true, locked: true },
+    { key: 'rights', label: 'columnRoleRights' },
+    { key: 'people', label: 'columnRolePeople' },
 ]);

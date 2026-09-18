@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
+import { computed, inject, input, output, ChangeDetectionStrategy, Component, InputSignal, OutputEmitterRef, Signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import { RtDatePickerComponent } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-period-filter';
@@ -35,8 +35,11 @@ export interface IAdminPeriod {
     host: { class: BEM_BLOCK },
 })
 export class AdminPeriodFilterComponent {
-    protected readonly fromLabel: string = adminLabel('filterPeriodFrom');
-    protected readonly toLabel: string = adminLabel('filterPeriodTo');
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    // Подписи концов периода — производные: язык переключают над этим же экраном.
+    protected readonly fromLabel: Signal<string> = computed((): string => this.#text.text('filterPeriodFrom'));
+    protected readonly toLabel: Signal<string> = computed((): string => this.#text.text('filterPeriodTo'));
 
     /** Первый день периода. Пусто — период не назван. */
     public readonly from: InputSignal<string> = input<string>('');

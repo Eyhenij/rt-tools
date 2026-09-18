@@ -28,7 +28,7 @@ function storage(rows: IStoredRow[], failing: boolean = false): PrismaService {
         observation: {
             findMany: async (args: Record<string, unknown>): Promise<unknown[]> => {
                 if (failing) {
-                    throw new Error('хранилище недоступно');
+                    throw new Error('the storage is unavailable');
                 }
                 const trees: string[] = [];
 

@@ -11,7 +11,7 @@ import {
     IRole,
     rightGroups,
 } from '@rt/message-bus-admin/accounts/util';
-import { adminLabel, spokenFaultText } from '@rt/message-bus-admin/common/core/util';
+import { adminFaultText, AdminTextService, IAdminFaultText, TAdminLabelKey } from '@rt/message-bus-admin/common/core/util';
 import { RIGHTS, TRight } from '@rt/message-bus-common';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import {
@@ -26,6 +26,7 @@ import {
     RtMessageComponent,
     RtRouteAsideComponent,
     RtSelectComponent,
+    TRtKitLabelParams,
 } from '@rt-tools/ui-kit-v2';
 import { forkJoin, map, Observable } from 'rxjs';
 
@@ -83,32 +84,39 @@ interface IAccessPanel {
     host: { class: BEM_BLOCK },
 })
 export class AdminPersonAccessAsideComponent extends RtRouteAsideComponent<IAccessPanel> {
+    readonly #text: AdminTextService = inject(AdminTextService);
     readonly #people: PeopleStore = inject(PeopleStore);
     readonly #roles: RolesStore = inject(RolesStore);
 
-    protected readonly roleLabel: string = adminLabel('personAccessRole');
-    protected readonly roleHint: string = adminLabel('personAccessRoleHint');
-    protected readonly submitLabel: string = adminLabel('personAccessSubmit');
-    protected readonly closeLabel: string = adminLabel('panelClose');
-    protected readonly groups: readonly IRightGroup[] = rightGroups();
+    /** Текст отказа: причину называет приёмник кодом, слово рисует словарь на выбранном языке. */
+    protected readonly fault: IAdminFaultText = adminFaultText('personAccessFailed');
+
+    protected readonly roleLabel: Signal<string> = computed((): string => this.#text.text('personAccessRole'));
+    protected readonly roleHint: Signal<string> = computed((): string => this.#text.text('personAccessRoleHint'));
+    protected readonly submitLabel: Signal<string> = computed((): string => this.#text.text('personAccessSubmit'));
+    protected readonly closeLabel: Signal<string> = computed((): string => this.#text.text('panelClose'));
+    /** Права по разделам: подписи собираются из словаря на каждой отрисовке. */
+    protected readonly groups: Signal<readonly IRightGroup[]> = computed((): readonly IRightGroup[] =>
+        rightGroups((key: TAdminLabelKey, params?: TRtKitLabelParams): string => this.#text.text(key, params))
+    );
 
     /** Три слова о праве — одни на все права. */
-    protected readonly words: readonly IRtSelect.Option<EAccessWord>[] = [
-        { label: adminLabel('personAccessByRole'), value: EAccessWord.ByRole },
-        { label: adminLabel('personAccessGranted'), value: EAccessWord.Granted },
-        { label: adminLabel('personAccessRevoked'), value: EAccessWord.Revoked },
-    ];
+    protected readonly words: Signal<readonly IRtSelect.Option<EAccessWord>[]> = computed((): readonly IRtSelect.Option<EAccessWord>[] => [
+        { label: this.#text.text('personAccessByRole'), value: EAccessWord.ByRole },
+        { label: this.#text.text('personAccessGranted'), value: EAccessWord.Granted },
+        { label: this.#text.text('personAccessRevoked'), value: EAccessWord.Revoked },
+    ]);
 
     /** Заголовок называет человека. Пусто, пока адрес не прочитан. */
     protected readonly title: Signal<string> = computed((): string => {
         const name: string | null = this.entityId();
 
-        return name === null ? '' : adminLabel('personAccessTitle', { name });
+        return name === null ? '' : this.#text.text('personAccessTitle', { name });
     });
 
     /** Роли для выбора: «без роли» и все роли приёмника по имени. */
     protected readonly roleOptions: Signal<readonly IRtSelect.Option<string>[]> = computed((): readonly IRtSelect.Option<string>[] => [
-        { label: adminLabel('personAccessRoleNone'), value: NO_ROLE },
+        { label: this.#text.text('personAccessRoleNone'), value: NO_ROLE },
         ...(this.entity()?.roles ?? []).map((role: IRole.Short.State): IRtSelect.Option<string> => ({
             label: role.name,
             value: role.key,
@@ -146,7 +154,7 @@ export class AdminPersonAccessAsideComponent extends RtRouteAsideComponent<IAcce
         const labels: Partial<Record<TRight, string>> = {};
 
         RIGHTS.forEach((right: TRight): void => {
-            labels[right] = given.has(right) ? adminLabel('personAccessHas') : adminLabel('personAccessHasNot');
+            labels[right] = given.has(right) ? this.#text.text('personAccessHas') : this.#text.text('personAccessHasNot');
         });
 
         return labels as Readonly<Record<TRight, string>>;
@@ -168,8 +176,8 @@ export class AdminPersonAccessAsideComponent extends RtRouteAsideComponent<IAcce
         const role: string | null = this.role.value === NO_ROLE ? null : this.role.value;
 
         this.runMutation(this.#people.replaceAccess(name, { role, edits: editsOfWords(this.#wordsNow()) }), {
-            successText: adminLabel('personAccessDone', { name }),
-            errorText: (error: unknown): string => spokenFaultText(error, adminLabel('personAccessFailed')),
+            successText: this.#text.text('personAccessDone', { name }),
+            errorText: this.fault.take,
             closeOnSuccess: true,
         });
     }

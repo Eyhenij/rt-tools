@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, Signal } from '@angular/core';
-import { adminLabel, AdminLocaleService, EAdminLocale } from '@rt/message-bus-admin/common/core/util';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
+import { AdminLocaleService, AdminTextService, EAdminLocale } from '@rt/message-bus-admin/common/core/util';
 import { IRtToggleButtonGroup, RtToggleButtonGroupComponent } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-locale-switch';
@@ -34,10 +34,13 @@ const OPTIONS: ReadonlyArray<IRtToggleButtonGroup.Option<EAdminLocale>> = Object
 })
 export class AdminLocaleSwitchComponent {
     readonly #locale: AdminLocaleService = inject(AdminLocaleService);
+    readonly #text: AdminTextService = inject(AdminTextService);
 
     protected readonly options: ReadonlyArray<IRtToggleButtonGroup.Option<EAdminLocale>> = OPTIONS;
 
-    protected readonly switchLabel: string = adminLabel('languageSwitch');
+    // Подпись ряда — производная: меняет язык он сам, и взятая один раз она осталась бы на
+    // прежнем языке ровно на том переключателе, которым язык и сменили.
+    protected readonly switchLabel: Signal<string> = computed((): string => this.#text.text('languageSwitch'));
 
     protected readonly current: Signal<EAdminLocale> = this.#locale.current;
 

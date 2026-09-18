@@ -35,8 +35,8 @@ Then the row names both rights
 
 Given a role with the name already exists, by the key rather than by the letters
 When the panel of creating is sent with that name in another letter case
-Then the panel stays open with the word of the receiver above the fields, and the list has no
-second row with that name
+Then the panel stays open with the text of the dictionary for the code of the refusal above the
+fields, and the list has no second row with that name
 
 ### SC-MB-376 — a role held by somebody is not deleted, and one nobody holds is
 
