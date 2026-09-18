@@ -23,3 +23,10 @@ right. The file lies next to the plan of the epic, `docs/plans/cargo-triage-sept
   the task folder never travelled into the branch» stands in every run while the epic goes; the
   epic branch carries no folder by the rule. **Address:** rules layer — the audit knows the epic
   branch by the plan line, the same way the exit guard does since 0.29.0.
+
+## RT-2245 — the board field mutation is named in the texts
+
+- **The cold part of the delivery rule for this hosting stands at the length limit.** Its laid-out
+  copy holds 329 lines of the 330 allowed: one more pitfall took the push gate down, and the case of
+  the board mutation stayed in the tree's companion alone. **Address:** rules layer — the cold part
+  `pitfalls/git-workflow.github.md` is split before the next record.
