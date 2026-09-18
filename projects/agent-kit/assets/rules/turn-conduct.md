@@ -154,18 +154,17 @@ flowchart TD
   browsing history and reading PRs are preparation, not work. Parts of a compound command are
   judged one by one: a read joined to an edit remains work.
 - **A reply to the owner is not an action and does not stand last in a turn.** The order inside a
-  turn is one: work, the first step of the next, then text. Saying what was done is always allowed;
-  its place is after the next action, not instead.
+  turn is one: work, the first step of the next, then text; what was done is said after the next
+  action, not instead of it.
 - **The last action of a turn is only ever work.** One sign for every kind of stop: a file edit or a
   changing command — last among what the turn did. The guard's tiers — exploration, waiting, handing
   in without starting the next — only derive a readable refusal from it.
 - **Waiting for someone else's step is never the last action of a turn.** While they are waited for,
-  the work stays where it stood. The last action is judged: waiting mid-turn is lawful, background
-  work remains work.
+  the work stays where it stood. The last action is judged: waiting mid-turn is lawful, and so is a
+  launch in the background mid-turn. Standing last, it is an announcement of intent: what does not depend on it is done while it runs.
 - **The handover is written even where the branch has no name.** All of it lies in the tree and is
   reachable on a detached head; one file needs a name, and a short snapshot of the head gives it.
-  The hook's silence costs more here than elsewhere: compaction comes without a handover, and the
-  next session starts from a blank.
+  Otherwise compaction comes without a handover, and the next session starts from a blank.
 - **A next step written into the progress is begun by the same turn.** The guard reads the order
   of actions: after the last edit of the progress it wants work other than the commit and the push
   of it. A full report and a moved stage number do not replace the step.

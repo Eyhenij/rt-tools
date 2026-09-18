@@ -1,4 +1,4 @@
-<!-- rt-kit v0.29.0 · pitfalls/turn-conduct.md · 7700a0c1ba43 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · pitfalls/turn-conduct.md · a49da7e6cbbe · правится надстройкой, не здесь -->
 # Session turn — cold part
 
 Pitfalls: cases and numbers that used to stand next to the rule's articles. Loaded not with the
@@ -127,3 +127,8 @@ The rule is `turn-conduct`; the articles that hold the law stand there.
   after an epic with seven tasks, an agreement and a whole first stage — the more was done, the more
   the report read as the end. The guard now reads the order of actions after the last edit of the
   progress, and a turn that opened the PR passes that sign by itself.
+- **A launch in the background as the last action.** A grill of five menus ended with the review
+  roles sent to the background and the line "the roles are working"; the owner read it as a stop.
+  The guard counted the launch as work — there were edits in the turn, and the last action was not
+  a wait. Now the last tool of the turn is judged: the agent tool or a command sent to the
+  background standing last gives the turn back, and work after the launch releases it.
