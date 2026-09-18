@@ -379,7 +379,7 @@ Then the turn passes: it is made work by the command itself, not by the arrow at
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-1113 — a service message neither starts a turn nor is a word of the owner
+### SC-AK-1123 — a service message neither starts a turn nor is a word of the owner
 
 Given a rule was loaded over the turn, and its text carries the word «стоп»; or the feedback of a
 stop guard stands in the record
@@ -388,7 +388,7 @@ Then the turn is counted from the remark of the owner, and the service text rele
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-1114 — a refusal of a guard is an exit only as the last action of the turn
+### SC-AK-1124 — a refusal of a guard is an exit only as the last action of the turn
 
 Given a guard refused a call in the middle of the turn, and the turn went on with reading
 When the guard of the exits judges the end of the turn
@@ -396,7 +396,7 @@ Then the turn is given back: the refusal was answered by what followed, and the 
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-1115 — the word of the owner about a stop in its other forms
+### SC-AK-1125 — the word of the owner about a stop in its other forms
 
 Given the owner said «не продолжай», «прекрати» or «не двигайся»
 When the guard of the exits judges the end of the turn
@@ -404,7 +404,7 @@ Then the turn passes: the word is the owner's
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-1116 — a question at the head of an empty turn in a running stage
+### SC-AK-1126 — a question at the head of an empty turn in a running stage
 
 Given the state is `этап-идёт`, and the turn asked the owner by the tool without a single edit
 When the guard of the exits judges the end of the turn
