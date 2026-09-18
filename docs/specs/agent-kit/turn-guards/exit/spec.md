@@ -75,8 +75,13 @@ not by a person.
 - **A question at the head of an empty turn in a running stage is a stop.** The parts of the stage
   that do not depend on the answer go first, and the question by the tool after them.
 - **Under an open epic a turn that ended with work does not end.** The work stands where it stood;
-  the refusal names the unfinished tasks of the epic and the next step. Under a closed epic and
-  outside an epic the turn is released as before.
+  the refusal names the unfinished tasks of the epic and the next step. Outside an epic the turn is
+  released as before.
+- **The end of an epic read from the table releases the whole turn on the way to a refusal.** The
+  table was read and printed not a single task: the stop is lawful there, and the refusal of any
+  tier lets the turn go — an empty turn, a second pass, a handover by hand, words about waiting for
+  a word. An epic that cannot be read — no table, no epic behind the branch, the main branch after
+  the merge — releases nothing, and the turn is judged as before.
 - **Under an open epic a second pass over the turn is judged again.** The first refusal named the
   next step, and a turn ending again without a lawful exit is the same stop.
 - **A handover written by hand releases a turn only outside an open epic.** On compaction the
@@ -157,4 +162,5 @@ Not applicable: the guard judges one turn of one session.
   a question without work in a running stage and a handover by hand are refused; the owner's word
   quoted in the waiting line of the progress releases the turn.
 - 2026-09-18 — the epic branch: a branch named by the header of an epic plan is not judged by the
-  tier of the taken task.
+  tier of the taken task. The end of an epic read from the table releases the whole turn; an
+  unreadable epic keeps the former judgement.

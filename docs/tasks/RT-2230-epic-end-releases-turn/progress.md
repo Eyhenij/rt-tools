@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 3 — the spec names the statement, the binding and the scenario
-- **Done:** stage 1 — the release inside the refusal, SC-AK-1129 and SC-AK-1119 retitled (epic suite 32 ok, guard suite 90 ok)
-- **Next step:** the statement, the binding and the scenarios in the exit spec
+- **Stage:** 3 of 3 — the rule says the main branch is judged as before, the layout matches
+- **Done:** stages 1 and 2 — the release inside the refusal, SC-AK-1129 and SC-AK-1119 (epic suite 32 ok, guard suite 90 ok), the statement, the binding and the scenarios in the exit spec (check-specs exit 0)
+- **Next step:** the article «The end of an epic is a stop…» in the rule and the companion line, then the layout
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
