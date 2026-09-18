@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when bringing work to readiness — merging the product agreement into the domain spec, bringing the domain texts up to date with what was done, opening the PR as a draft or ready by its base and leaving draft.
 ---
-<!-- rt-kit v0.28.0 · patterns/task-flow-close.md · 5546ff6947c9 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/task-flow-close.md · 5546ff6947c9 · правится надстройкой, не здесь -->
 
 # Closing the work
 

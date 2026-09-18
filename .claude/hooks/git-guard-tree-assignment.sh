@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/git-guard-tree-assignment.sh · 16d0f9f64661 · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/git-guard-tree-assignment.sh · 16d0f9f64661 · правится надстройкой, не здесь
 # The assignment of an epic to this working copy. NOT a guard: it has no `rt-hook:` declaration and
 # hooks into no agent event. The delivery guard sources it, the same way it sources the conditions
 # about the epic of a task.

@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for opening a PR and everything around it — title format, draft and leaving it, reading the PR state, the checklist. The link to the task, reviewer, labels and the body sample — pattern git-workflow-pr-body; creating the task and committing — git-workflow-commit.
 ---
-<!-- rt-kit v0.28.0 · patterns/git-workflow-pr.github.md · 112af1edcdb7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/git-workflow-pr.github.md · 112af1edcdb7 · правится надстройкой, не здесь -->
 
 # The PR
 

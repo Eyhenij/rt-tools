@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.28.0 · checks/main-run.github.mjs · 03b6b10581a0 · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/main-run.github.mjs · 03b6b10581a0 · правится надстройкой, не здесь
 /**
  * The last run of the main branch in one line.
  *

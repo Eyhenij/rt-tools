@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/tree-assignment-guard.sh · 3be53fe0faeb · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/tree-assignment-guard.sh · 3be53fe0faeb · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, checks/tree-assignment.mjs
 # Guard of the assignment of an epic to a working copy. PreToolUse on a call that takes new work

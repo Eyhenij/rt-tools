@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/main-run-context.sh · 30dbfb4ff1e0 · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/main-run-context.sh · 30dbfb4ff1e0 · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # SessionStart: the last run of the main branch goes into the context in one line, at every start.
 #

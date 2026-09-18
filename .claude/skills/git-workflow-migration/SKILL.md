@@ -4,7 +4,7 @@ kind: pattern
 rule: deploy-flow
 description: Pattern of rule deploy-flow. Load when editing prisma/schema.prisma and prisma/migrations/** — ready-made commands for a one-off container, writing the migration file through migrate diff, applying to the local database. Not for the commit — pattern git-workflow-commit; for the PR — git-workflow-pr.
 ---
-<!-- rt-kit v0.28.0 · patterns/git-workflow-migration.md · d5f7bbe50850 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/git-workflow-migration.md · d5f7bbe50850 · правится надстройкой, не здесь -->
 
 # A migration and the chain run
 
