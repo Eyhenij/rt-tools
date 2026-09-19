@@ -92,6 +92,11 @@ rows where that column answers.
 - **The table reports the whole set of conditions and narrows no rows.** The same boundary the
   header cell already draws: the table says what was asked for, the rows are fetched by whoever
   holds the list.
+- **In the card view the filter row is not drawn.** On a narrow showing the table puts cards in
+  place of its rows, and there are no columns left for a row of cells to stand over: a strip of
+  fields above a list of cards reads as a piece of the other markup. How a person narrows the list
+  on a narrow screen is a surface of its own, and it stands in the open questions rather than
+  arriving as an accident of the wide markup.
 
 - **The styles of the filter live in the cascade layer of the kit's components.** A consumer keeps
   the last word over them, and a rule that rode past the layer takes that away from them silently.
@@ -166,6 +171,9 @@ Not applicable: the family holds no data of a workspace.
 
 - Whether the filters are remembered between visits the same way the column settings already are.
   Asked of the owner when a consumer asks for it; until then the answer is "they are not".
+- How the list is narrowed on a narrow screen, where the table draws cards and the filter row is
+  not drawn at all. Asked of the owner when a consumer asks for it; until then the answer is "the
+  filter row is for the wide showing".
 
 ## History of changes
 

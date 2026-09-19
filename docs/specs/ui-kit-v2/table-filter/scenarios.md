@@ -170,3 +170,13 @@ Then the column of row actions gets a cell of its own in it, and the cells of th
 shift by one
 
 Covered by the component test of the table.
+
+### SC-UKV-234 — the filter row is not drawn in the card view
+
+Given a table told to show the filters on a narrow showing, where it puts cards in place of its rows
+When the cards are drawn
+Then the filter row is not seen at all: the card view hides it together with the rows of the table
+
+Not covered: it cannot be closed by a test with an identifier — the hiding is done by the
+component's own styles, and a component test raises the markup without them. It is checked by the
+narrow frame of the story `Organisms/Table/Table › Filters`.
