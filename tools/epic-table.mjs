@@ -1,6 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.29.0 · checks/epic-table.github.mjs · 437176851036 · правится надстройкой, не здесь
-// rt-kit v0.26.0 · checks/epic-table.github.mjs · ca65adf7e1b9 · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/epic-table.github.mjs · a0638c9038d1 · правится надстройкой, не здесь
 /**
  * The table of the epic's tasks: the order from the plan, the state from the hosting.
  *
@@ -18,8 +17,6 @@
  * empty epic.
  */
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 
 import { OfflineError, TASK_KEY, botToken, fetchBoard, fetchOpenPulls, ghJson, numberFromBranch, numberFromTitle } from './board.mjs';
 import { declaredEpicOf, planPathOf, planRows } from './board-epics.mjs';
@@ -209,12 +206,15 @@ function gathered(argv) {
         return { ok: false, why: `у хостинга нет карточки эпика #${asked.number}` };
     }
 
-    const found = planPathOf(epic.body);
+    // Текст плана берёт общее чтение: план живого эпика лежит в ветке этого эпика, а рабочая копия
+    // стоит на той ветке, на которой стоит. Читая с диска, таблица отвечала «карточка указывает в
+    // пустоту» на любой ветке, кроме ветки самого эпика.
+    const found = planPathOf(epic.body, { epicNumber: epic.number });
     if (found.path === null) {
         return { ok: false, why: `карточка эпика #${asked.number}: ${found.why}` };
     }
 
-    const plan = readFileSync(join(ROOT, found.path), 'utf8');
+    const plan = found.text;
     const rows = makeupOf(plan);
     if (rows.length === 0) {
         return { ok: false, why: `замысел «${found.path}» не несёт состава эпика: состав — таблица со столбцом задач` };
