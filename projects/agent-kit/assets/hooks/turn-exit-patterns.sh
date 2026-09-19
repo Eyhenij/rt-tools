@@ -111,3 +111,12 @@ The steps are listed in the progress and counted by «npm run check:work-steps»
 
 Do them in this same turn. Lawful exits stay as they were: a question to the owner through the tool, a refusal of another guard, a session handover, and the owner's own word about stopping — the guard reads that word from them, not from a retelling."
 }
+
+# The tier itself: the steps of the plan are not done. It lies here and not in the guard for the
+# same reason as the text above — the guard stands at its length limit. The tier judges the
+# progress of the current task and says nothing about the epic: the tier next to it does that.
+rt_te_steps_deny() {
+    _steps_left="$(rt_te_steps_left "$1" 2>/dev/null)" || return 0
+    [ "${_steps_left:-0}" -gt 0 ] 2>/dev/null || return 0
+    rt_te_deny "$(rt_te_steps_reason "$_steps_left" "$(rt_te_step_now "$1")")" "${_steps_left} steps of the plan are not done."
+}

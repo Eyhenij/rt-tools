@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.0 · hooks/turn-exit-guard.sh · 15a40fd3da00 · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/turn-exit-guard.sh · ca88b0ac3293 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
@@ -457,9 +457,7 @@ The guard judges one turn: the next session is not refused."
     fi
 fi
 
-# The steps of the plan are not done: the turn ends in the middle of the work. The tier judges the
-# progress of the current task and says nothing about the epic — the one below does that.
-_steps_left="$(rt_te_steps_left "$progress" 2>/dev/null)" && [ "${_steps_left:-0}" -gt 0 ] 2>/dev/null && rt_te_deny "$(rt_te_steps_reason "$_steps_left" "$(rt_te_step_now "$progress")")" "${_steps_left} steps of the plan are not done."
+rt_te_steps_deny "$progress"  # the steps of the plan are not done; the tier lies in the patterns
 
 # There was work in the turn, and the epic is open: the turn is released outside an epic and under a
 # closed one alone. Under an open epic the work stands where it stood, and the next step is named.

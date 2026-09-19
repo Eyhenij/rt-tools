@@ -85,11 +85,3 @@ When the turn ends
 Then the guard of the turn exit lets it through; with an unfinished task of the epic it refuses
 
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
-
-### SC-AK-1007 — an epic that goes on does not release a turn that worked and then reported
-
-Given the epic holds unfinished tasks and the owner announced no stop in the turn
-When the turn did work, ended with a changing command and then a report to the owner
-Then the guard of the turn exit refuses it and names how many tasks are left
-
-Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.

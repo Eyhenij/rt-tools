@@ -37,11 +37,6 @@ There is no interface: the guard answers with a refusal in the executor's own tu
 
 ## Rules
 
-- **An epic that goes on forbids a stop, and a turn that did work is no exception.** The reading of
-  the epic was asked in one direction only — to permit a stop once the epic was over. A turn that
-  made a commit and then reported passes every other tier by the letter, while the plan's next step
-  is busy with nothing. The refusal names how many tasks are left and by which command that is
-  counted; a tree with nothing to ask with is not refused at all.
 - **The end of an epic is judged by a guard, not by the memory of the session.** The rule of the
   turn already carried a line about the epic, and it was held exactly as the line about the table
   was: by memory, that is, sometimes.

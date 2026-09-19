@@ -43,11 +43,11 @@ Then the guard refuses and names the remainder, the current step and the command
 
 Covered: `projects/agent-kit/tests/work-steps-guard.test.sh`.
 
-### SC-AK-1013 — every step done lets the turn out
+### SC-AK-1013 — every step done keeps the tier silent
 
 Given every step of the progress is marked as done
 When the same turn ends
-Then the guard lets it through
+Then nothing in the refusal names steps that are not done
 
 Covered: `projects/agent-kit/tests/work-steps-guard.test.sh`.
 
@@ -63,6 +63,6 @@ Covered: `projects/agent-kit/tests/work-steps-guard.test.sh`.
 
 Given the progress carries no list of steps
 When a turn that did work ends with a report
-Then the tier stays silent
+Then nothing in the refusal names steps that are not done
 
 Covered: `projects/agent-kit/tests/work-steps-guard.test.sh`.

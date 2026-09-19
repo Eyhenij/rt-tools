@@ -13,10 +13,16 @@ mkdir -p "$WS_TREE/tools" "$WS_TREE/.claude" "$WS_TREE/docs/tasks/RT-1-probe"
 git -C "$WS_TREE" init -q -b RT-1-probe 2>/dev/null
 printf '%s\n' '{"layout":{"checks":"tools"}}' > "$WS_TREE/.claude/rt-kit.json"
 
-# Двойник команды эпика: всюду отвечает «незакрытых нет».
+# Двойник команды эпика: печатает то, что положил сценарий. Эпик держат открытым — при
+# кончившемся эпике страж отпускает ход целиком, и ярус о шагах до слова не доходит.
 cat > "$WS_TREE/tools/epic-table.mjs" <<'STUB'
+const left = process.env.STUB_LEFT ?? '';
+if (left !== '') {
+    process.stdout.write(`${left}\n`);
+}
 process.exit(0);
 STUB
+export STUB_LEFT='1947'
 
 WS_TURNS="$(mktemp -d)"
 
@@ -74,9 +80,12 @@ report "SC-AK-1012 — назван остаток шагов" "$(ws_says "$(ws_
 report "SC-AK-1012 — назван текущий шаг" "$(ws_says "$(ws_input "$WORKED_THEN_TOLD")" | grep -c '1.2 завести пробы')" 1
 report "SC-AK-1012 — названа команда счёта" "$(ws_says "$(ws_input "$WORKED_THEN_TOLD")" | grep -c 'check:work-steps')" 1
 
-# --- SC-AK-1013 — кончившиеся шаги ход выпускают ----------------------------------------------
+# --- SC-AK-1013 — при сделанных шагах ярус молчит ---------------------------------------------
+# Эпик открыт, и ход отбивает соседний ярус: молчание яруса о шагах видно по тексту отказа, а не
+# по приговору. При кончившемся эпике отказа нет вовсе, и такая проба не сказала бы ничего.
 ws_progress '- [x] 1.1 поставить ярус' '- [x] 1.2 завести пробы' '- [x] 2.1 записать статью'
-ws_verdict "SC-AK-1013 — при сделанных шагах ход законен" "$(ws_input "$WORKED_THEN_TOLD")" PASS
+report "SC-AK-1013 — при сделанных шагах ярус молчит" \
+    "$(ws_says "$(ws_input "$WORKED_THEN_TOLD")" | grep -c 'steps of the plan are not done')" 0
 
 # --- SC-AK-1014 — слово владельца снимает ярус ------------------------------------------------
 TOLD_STOP="$(ws_turn "$(ws_said 'остановись, дальше не надо')" "$(ws_called 'git commit -m проба')" "$(ws_spoke 'Останавливаюсь.')")"
@@ -86,7 +95,8 @@ ws_verdict "SC-AK-1014 — слово владельца снимает ярус
 # --- SC-AK-1015 — ход работы без перечня шагов ярусом не судится -------------------------------
 printf '# Progress\n\n## Where we stand\n\n- **State:** `%s`\n- **Next step:** поставить ярус\n' 'этап-идёт' \
     > "$WS_TREE/docs/tasks/RT-1-probe/progress.md"
-ws_verdict "SC-AK-1015 — без перечня шагов ярус молчит" "$(ws_input "$WORKED_THEN_TOLD")" PASS
+report "SC-AK-1015 — без перечня шагов ярус молчит" \
+    "$(ws_says "$(ws_input "$WORKED_THEN_TOLD")" | grep -c 'steps of the plan are not done')" 0
 
 rm -rf "$WS_TURNS" "$WS_TREE"
 
