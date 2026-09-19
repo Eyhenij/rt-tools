@@ -14,7 +14,7 @@ import { RequiresRight } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPostmortemFullRow, IPostmortemListRow, readPostmortem, readPostmortems } from '@rt/message-bus-api/postmortems/data-access';
 
-import { IPage, POSTMORTEM_SORTABLE, cargoPageAsked, cargoPageFault } from '@rt/message-bus-common';
+import { cargoPageAsked, cargoPageFault, ERefusal, IPage, POSTMORTEM_SORTABLE, refusalBody } from '@rt/message-bus-common';
 
 @Controller('postmortems')
 export class PostmortemsReadController {
@@ -50,7 +50,7 @@ export class PostmortemsReadController {
         const found: IPostmortemFullRow | null = await readPostmortem(this.#prisma, id);
 
         if (!found) {
-            throw new NotFoundException('разбора происшествия с таким признаком нет');
+            throw new NotFoundException(refusalBody(ERefusal.PostmortemNotFound));
         }
 
         return found;

@@ -27,17 +27,15 @@ import {
 import {
     accountNameKey,
     accountOf,
-    EPersonInputFault,
     IAccountBearingRequest,
     INewPersonParse,
     IPasswordParse,
     newPersonOf,
     passwordHash,
     passwordOf,
-    PERSON_EDIT_SAID,
 } from '@rt/message-bus-api/accounts/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { IPersonView, TRight } from '@rt/message-bus-common';
+import { ERefusal, IPersonView, refusalBody, TRight } from '@rt/message-bus-common';
 
 /** Право, которым закрыты все три правки: одно на контроллер, чтобы три объявления не разошлись. */
 const MANAGE_RIGHT: TRight = 'accounts:manage';
@@ -64,14 +62,14 @@ export class AccountsManageController {
         const parsed: INewPersonParse = newPersonOf(body);
 
         if (parsed.fault !== null || parsed.input === null) {
-            throw new BadRequestException(PERSON_EDIT_SAID[parsed.fault ?? EPersonInputFault.NameEmpty]);
+            throw new BadRequestException(refusalBody(parsed.fault ?? ERefusal.PersonNameEmpty));
         }
 
         const nameKey: string = accountNameKey(parsed.input.name);
         const taken: IAccountForLogin | null = await findAccountByNameKey(this.#prisma, nameKey);
 
         if (taken) {
-            throw new ConflictException(`пользователь «${taken.name}» уже заведён: имя занято`);
+            throw new ConflictException(refusalBody(ERefusal.AccountNameTaken, { name: taken.name }));
         }
 
         await createAccount(this.#prisma, { nameKey, name: parsed.input.name, passwordHash: passwordHash(parsed.input.password) });
@@ -95,7 +93,7 @@ export class AccountsManageController {
         const parsed: IPasswordParse = passwordOf(body);
 
         if (parsed.fault !== null) {
-            throw new BadRequestException(PERSON_EDIT_SAID[parsed.fault]);
+            throw new BadRequestException(refusalBody(parsed.fault));
         }
 
         const account: IAccountForLogin = await this.#accountNamed(name);
@@ -123,11 +121,11 @@ export class AccountsManageController {
         const account: IAccountForLogin = await this.#accountNamed(name);
 
         if (account.id === accountOf(request).id) {
-            throw new ConflictException('свою запись отключить нельзя: это оборвало бы и ваш вход');
+            throw new ConflictException(refusalBody(ERefusal.AccountSelfDisable));
         }
 
         if (account.disabledAt) {
-            throw new ConflictException(`пользователь «${account.name}» уже отключён`);
+            throw new ConflictException(refusalBody(ERefusal.AccountAlreadyOff, { name: account.name }));
         }
 
         const broken: number = await disableAccount(this.#prisma, account.id, at);
@@ -142,7 +140,7 @@ export class AccountsManageController {
         const account: IAccountForLogin | null = await findAccountByNameKey(this.#prisma, accountNameKey(name));
 
         if (!account) {
-            throw new NotFoundException(`пользователя с именем «${name}» нет`);
+            throw new NotFoundException(refusalBody(ERefusal.AccountNotFound, { name }));
         }
 
         return account;
@@ -156,7 +154,7 @@ export class AccountsManageController {
         const row: IPersonView | null = await findPersonByNameKey(this.#prisma, nameKey);
 
         if (!row) {
-            throw new NotFoundException('запись пропала между правкой и ответом');
+            throw new NotFoundException(refusalBody(ERefusal.AccountGone));
         }
 
         return row;

@@ -1,6 +1,6 @@
 # The shell of the admin application: the sections, the profile, the theme and the language
 
-**Status:** in force · **Revision:** 2026-09-17 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 2026-09-18 · **Scenario prefix:** `SC-MB`
 **Depends on:** the subdomain "the reading of what was taken in" — `docs/specs/message-bus/admin/`;
 the subdomain of the rights — `docs/specs/message-bus/access-rights/spec.md`
 **Laws:** `frontend-application`, `reuse-first`, `navigation`
@@ -29,18 +29,18 @@ language was not in the application at all, although the kit can do both.
 The vocabulary of the domain whole is in the spec of the domain. Here only what this subdomain
 creates:
 
-| Term                      | What it is                                                                                                                           |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| The top row               | The strip above the content: the name of the application, the sections, the profile. It is given by a ready component of the kit     |
-| An item of a section      | A link of the top row leading into a section. The highlighting of the current one is given by the router                             |
-| A panel of the sections   | The second level of an item: the columns and the groups. Today no section has one                                                    |
-| The popup of the profile  | The list under the name of whoever entered: the theme, the language, the exit                                                        |
-| The theme of the look     | The light or the dark look of the application. The choice lives on the device and outlives a reload                                  |
-| The language of the kit   | The language of the labels the kit draws. The labels of the admin application and its dates do not depend on it                      |
-| The shell of the entry    | The shared part of the screen of the entry: the name, the card, the switches of the theme and of the language. The form lives inside |
-| The stack of the toasts   | The place the notifications are shown at. It is drawn by the framework, and it is one per application                                |
-| A closed section          | A section whose item declares a right the signed-in person does not hold                                                             |
-| The screen of no sections | What a person to whom every section is closed sees instead of a section, at an address of its own inside the shell                   |
+| Term                       | What it is                                                                                                                                        |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The top row                | The strip above the content: the name of the application, the sections, the profile. It is given by a ready component of the kit                  |
+| An item of a section       | A link of the top row leading into a section. The highlighting of the current one is given by the router                                          |
+| A panel of the sections    | The second level of an item: the columns and the groups. Today no section has one                                                                 |
+| The popup of the profile   | The list under the name of whoever entered: the theme, the language, the exit                                                                     |
+| The theme of the look      | The light or the dark look of the application. The choice lives on the device and outlives a reload                                               |
+| The language of the labels | The language of the labels the admin application and the kit draw. One choice for both dictionaries; the shape of the dates does not depend on it |
+| The shell of the entry     | The shared part of the screen of the entry: the name, the card, the switches of the theme and of the language. The form lives inside              |
+| The stack of the toasts    | The place the notifications are shown at. It is drawn by the framework, and it is one per application                                             |
+| A closed section           | A section whose item declares a right the signed-in person does not hold                                                                          |
+| The screen of no sections  | What a person to whom every section is closed sees instead of a section, at an address of its own inside the shell                                |
 
 ### What it is called in the interface
 
@@ -103,12 +103,28 @@ creates:
   needed on it by exactly the same eyes.
 - **Both themes are checked by a measurement, not by a look.** The dark look breaks where a colour is
   written as a value instead of a token, and on a light screen that is not visible.
-- **A person chooses the language of the labels the kit draws.** There are two languages: the Russian
-  set of the application and the English default of the kit. A third one is a loader of dictionaries,
-  which the work does not create.
-- **The labels of the admin application stay Russian at any choice.** There is no multilingualism here,
-  and the dictionary of the application is one; the choice of the language changes only what the kit
-  draws.
+- **A person chooses the language of the labels, and one choice serves both dictionaries.** There are
+  two languages, Russian and English; two switches would drift apart, and the screen would end up half
+  translated. A third language is a separate work and a separate word of the owner.
+- **A label of a screen comes from the dictionary by a key, not as a string in the markup.** A string
+  in the markup lives in one language and does not take a translation: it is found neither by a search
+  for the key nor by whoever translates the set.
+- **The key is one for both languages.** Different keys under one text drift apart in silence: the set
+  is translated, and the screen takes the neighbouring key.
+- **A key that is not in the set is visible.** It comes so that it is seen on the screen and in the
+  test, not as emptiness: an empty string reads as "there is no label here" and lives until a person
+  complains. Such a key arrives from the side of the receiver — a code of a refusal newer than the
+  admin application knows.
+- **A word for a person written past the dictionary is refused by a check.** A label written into
+  the markup or into a string of the code lives in one language. Neither the linter nor the build
+  sees it: for them it is an ordinary string. What cannot be taken from the dictionary is named by
+  name, with a reason, and that list only shrinks.
+- **Both sets hold the same keys, and that is proved by a call.** The English set is declared by the
+  type of the Russian one whole: a key without a translation does not compile at all. A set walked by
+  eye diverges at the first key added, and the divergence shows at the person, not at the check.
+- **The labels of the shell change without a reload.** Everything read from the dictionary is derived
+  from the choice rather than taken once at the load: taken once, it stays in the language of the
+  minute the file was loaded.
 - **The dates in the lists are shown in one shape at any choice.** They are drawn by the admin
   application itself — by the day, the month, the year and the minutes in figures — and that shape reads
   the same in both languages; there is no locale of the kit in them at all.
@@ -175,8 +191,10 @@ creates:
 
 - **Gating the sections by rights.** There are no rights inside the admin application: whoever entered
   gets everything — the word of the owner, written down in the spec of the subdomain of the reading.
-- **Multilingualism of the labels of the admin application.** The dictionary of the application is one
-  and Russian; the choice of the language changes the labels of the kit, and only them.
+- **A third set of labels.** The shell, the screens of the entry, the lists and the panels take their
+  labels from the dictionary, and both sets are filled whole. A third language is a separate work.
+- **A third language.** Two sets are kept in the code of the admin application; a third one is a
+  separate work and a separate word of the owner.
 - **The bell of the unread and the counters.** There is no source of events — this is a new
   opportunity, not a finishing.
 - **Rebuilding the form of the entry.** It needs a finishing: the reactive form and a component of its
@@ -229,9 +247,10 @@ measurement in the browser.
 
 ### Locales
 
-The labels of the admin application are Russian at any choice of the language; the choice changes the
-labels of the kit, and only them. The admin application shows the dates in a shape of its own, and it
-does not depend on the language.
+There are two locales, Russian and English, and one choice serves both dictionaries — the labels of
+the admin application and the labels of the kit. Every screen is translated whole: the shell, the
+entry, the lists, the panels and the texts of the refusals of the receiver. The admin application
+shows the dates in a shape of its own, and it does not depend on the language.
 
 ### SEO
 
@@ -261,8 +280,8 @@ account.
   both themes are now checked by a measurement at every screen.
 - **The choice of the language stands both at the entry and in the popup of the profile.** The word of
   the owner. There are two languages, and the second is the built-in English default of the kit: the
-  application creates no second dictionary of its own. The price: the screen comes out half bilingual —
-  the labels of the admin application are Russian at any choice.
+  application creates no second dictionary of its own. The price: until both sets were filled the
+  screen came out half bilingual.
 - **The application calls itself by a word, not by a sign.** The word of the owner: the admin
   application has no drawing of a sign, and the place under it on the screen of the entry is taken by
   emptiness. Rejected: drawing the sign ourselves and leaving an empty place until the files appear.
@@ -287,8 +306,13 @@ None.
 
 ## History of changes
 
-| Date       | What                                                                                                  |
-| ---------- | ----------------------------------------------------------------------------------------------------- |
-| 2026-08-18 | Created by the task RT-783 by the merge of the agreement about the top row                            |
-| 2026-08-20 | By the task RT-944 two rules about the background were added: the header and the popup of the profile |
-| 2026-09-17 | By the task RT-2162 the screen of the person to whom no section is open gained an address             |
+| Date       | What                                                                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2026-08-18 | Created by the task RT-783 by the merge of the agreement about the top row                                                                 |
+| 2026-08-20 | By the task RT-944 two rules about the background were added: the header and the popup of the profile                                      |
+| 2026-09-17 | By the task RT-2162 the screen of the person to whom no section is open gained an address                                                  |
+| 2026-09-18 | By the task RT-2209 the agreement about the dictionary of the labels was merged in: two sets, one key, one choice for both dictionaries    |
+| 2026-09-18 | By the task RT-2210 the screens of the entry took their labels from the dictionary, and the tab titles of that domain went by keys         |
+| 2026-09-18 | By the task RT-2211 the screens of the sections took their labels from the dictionary: a row holds the key, the word by it is the screen's |
+| 2026-09-18 | By the task RT-2213 the English set was filled whole: both sets hold the same keys, and a key without a translation does not compile       |
+| 2026-09-18 | By the task RT-2214 a check was started: a word for a person written past the dictionary refuses the push and the pipeline                 |

@@ -1,21 +1,20 @@
 /**
- * Решения раздела людей, вынесенные из экрана: подписи роли, состояния и последнего входа.
+ * Решения раздела людей, вынесенные из экрана: ключи роли, состояния и последнего входа.
  *
- * Чистые функции без каркаса: их зовут перевод и его тест, а проверяются они вызовом — без
- * `TestBed` и без подмены зависимостей.
+ * Чистые функции без каркаса: их зовут экран, перевод и его тест, а проверяются они вызовом — без
+ * `TestBed` и без подмены зависимостей. Слова они не отдают: текст, взятый здесь, приходит на
+ * языке той минуты, когда файл загрузился, и до перезагрузки страницы остаётся прежним.
  */
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { TAdminLabelKey } from '@rt/message-bus-admin/common/core/util';
 
 /**
- * Роль словами.
+ * Каким ключом словаря названа пустая роль.
  *
  * Роли нет — это законное состояние записи: до раздачи прав так стояли все, и приёмник отдаёт
  * пустоту. Слово о ней говорит экран, а не приём: сказанное приёмом, оно жило бы в двух местах и
  * разошлось бы на первой правке словаря.
  */
-export function personRoleLabel(role: string | null): string {
-    return role ?? adminLabel('personRoleNone');
-}
+export const PERSON_ROLE_NONE_KEY: TAdminLabelKey = 'personRoleNone';
 
 /**
  * Действует ли запись.
@@ -28,33 +27,24 @@ export function personIsLive(disabledAt: string | null): boolean {
 }
 
 /**
- * Состояние записи по-русски: показывается им её строка.
+ * Каким ключом словаря названо состояние записи: показывается оно её строкой.
  *
  * Спрашивается о том же времени отключения, что и признак действия, а не о самом признаке: два
  * значения, посчитанные из одного, расходятся молча, если одно из них где-то посчитают иначе.
  */
-export function personStateLabel(disabledAt: string | null): string {
-    return personIsLive(disabledAt) ? adminLabel('personStateLive') : adminLabel('personStateDisabled');
+export function personStateKey(disabledAt: string | null): TAdminLabelKey {
+    return personIsLive(disabledAt) ? 'personStateLive' : 'personStateDisabled';
 }
 
 /**
- * Слово вместо времени последнего входа.
+ * Ключ слова вместо времени последнего входа.
  *
  * Пустая ячейка читается как «не дочитали», а «этой записью не входили ни разу» — законное
- * состояние: так стоит всякая запись до первого входа.
+ * состояние: так стоит всякая запись до первого входа. Входы были — ключа нет вовсе, и в ячейке
+ * стоит само время.
  */
-export function personLastLoginLabel(lastLoginAt: Date | null): string {
-    return lastLoginAt === null ? adminLabel('personNeverLoggedIn') : '';
-}
-
-/**
- * Вопрос перед отключением.
- *
- * Называет запись и последствие, а не спрашивает «вы уверены»: отключённая запись не возвращается,
- * и человек решает по имени и по цене, а не по слову «да».
- */
-export function personDisableQuestion(name: string): string {
-    return adminLabel('personDisableQuestion', { name });
+export function personLastLoginKey(lastLoginAt: Date | null): TAdminLabelKey | null {
+    return lastLoginAt === null ? 'personNeverLoggedIn' : null;
 }
 
 /**

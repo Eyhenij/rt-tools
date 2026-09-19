@@ -4,8 +4,7 @@
  * Лежит отдельно от экрана: тот же набор читают и таблица, и панель настройки столбцов, и спека
  * — объявленный в шаблоне, он был бы известен только шаблону.
  */
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
-import { IRtTable } from '@rt-tools/ui-kit-v2';
+import { IAdminColumn } from '@rt/message-bus-admin/common/core/util';
 
 /** Адрес операций над приглашениями: чтение списка, выдача нового и отзыв одного. */
 export const INVITES_PATH: string = '/api/invites';
@@ -32,10 +31,10 @@ export const INVITES_TABLE_ID: string = 'admin-invites';
  * Закреплено имя: приглашение зовётся именем будущего дерева, и без него список перестаёт
  * называть свои строки.
  */
-export const INVITES_COLUMNS: readonly IRtTable.ColumnConfig[] = Object.freeze([
-    { key: 'name', label: adminLabel('columnInviteName'), sortable: true, locked: true },
-    { key: 'state', label: adminLabel('columnInviteState') },
-    { key: 'issuedAt', label: adminLabel('columnIssuedAt'), sortable: true },
-    { key: 'expiresAt', label: adminLabel('columnExpiresAt'), sortable: true },
-    { key: 'tree', label: adminLabel('columnInviteTree') },
+export const INVITES_COLUMNS: readonly IAdminColumn[] = Object.freeze([
+    { key: 'name', label: 'columnInviteName', sortable: true, locked: true },
+    { key: 'state', label: 'columnInviteState' },
+    { key: 'issuedAt', label: 'columnIssuedAt', sortable: true },
+    { key: 'expiresAt', label: 'columnExpiresAt', sortable: true },
+    { key: 'tree', label: 'columnInviteTree' },
 ]);

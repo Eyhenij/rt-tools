@@ -169,7 +169,9 @@ describe('AdminInvitesListComponent', () => {
 
         await clickOverlay('invites-revoke');
 
+        // Вопрос собирает экран из ключа и имени дерева: он называет и запись, и последствие
         expect(overlayNode('menu-confirm-message')?.textContent).toContain('Своё дерево');
+        expect(overlayNode('menu-confirm-message')?.textContent).toContain('Вернуть его нельзя');
         http.expectNone((candidate): boolean => candidate.method === 'DELETE');
 
         await clickOverlay('menu-confirm-cancel');

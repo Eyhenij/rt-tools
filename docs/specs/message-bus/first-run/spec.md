@@ -70,7 +70,7 @@ exactly while the storage holds not one account and closed forever after the fir
 - **The first-run screen sends to the sign-in when the first record is already created.** A
   bookmark of the first-run address stays harmless.
 - **The first-run screen asks the name and the password once and says the person will sign in
-  with them.** The word of the receiver on a refusal stands above the fields, and the input stays.
+  with them.** The text of the refusal on a refusal stands above the fields, and the input stays.
 - **After the creation the person lands in the admin panel signed in.** The same road as after the
   sign-in: the first open section.
 - **The first-run screen is not a section: no item in the top row, no right over it.** It stands
@@ -121,7 +121,7 @@ record created from the people section; the sign-in is a session, as any sign-in
 | ------------------------------------- | ---------------------------------------------------------------------- |
 | the storage is empty, any address     | the first-run screen: the name, the password, "Завести"                |
 | the storage holds a record, first-run | the sign-in screen                                                     |
-| the request refused                   | the word of the receiver above the fields; the input stays             |
+| the request refused                   | the text of the refusal above the fields; the input stays              |
 | the request succeeded                 | the admin panel on the first open section, the person signed in        |
 | the receiver did not answer           | the word about the receiver above the fields, as on the sign-in screen |
 

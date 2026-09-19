@@ -1,4 +1,4 @@
-<admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
+<admin-list-page [hint]="hint()" [qaPrefix]="qaPrefix" [title]="title()">
     @if (canManage()) {
         <ng-template adminListToolbarRight>
             <button
@@ -6,17 +6,17 @@
                 icon="user-plus"
                 type="button"
                 qa-dataid="people-create"
-                [attr.aria-label]="createLabel"
-                [label]="createLabel"
+                [attr.aria-label]="createLabel()"
+                [label]="createLabel()"
                 (click)="openCreate()"></button>
         </ng-template>
     }
 
     <rt-table
         #rowsTable="rtTable"
-        [ariaLabel]="title"
+        [ariaLabel]="title()"
         [attr.qa-dataid]="qaTable()"
-        [columnsConfig]="columns"
+        [columnsConfig]="columns()"
         [dataSource]="rows()"
         [emptyDescription]="emptyDescription()"
         [emptyMessage]="emptyMessage()"
@@ -27,12 +27,12 @@
         [tableId]="tableId"
         (sortChange)="changeSort($event)">
         <ng-container cdkColumnDef="name">
-            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="name">{{ columns[0].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="name">{{ columns()[0].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-name'">{{ row.name }}</td>
         </ng-container>
 
         <ng-container cdkColumnDef="role">
-            <th *cdkHeaderCellDef cdk-header-cell>{{ columns[1].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell>{{ columns()[1].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-role'">{{ row.roleLabel }}</td>
         </ng-container>
 
@@ -42,12 +42,12 @@
             выборки на поле, которого в наборе нет.
         -->
         <ng-container cdkColumnDef="state">
-            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="disabledAt">{{ columns[2].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="disabledAt">{{ columns()[2].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-state'">{{ row.stateLabel }}</td>
         </ng-container>
 
         <ng-container cdkColumnDef="lastLoginAt">
-            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="lastLoginAt">{{ columns[3].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="lastLoginAt">{{ columns()[3].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-last-login'">
                 @if (row.lastLoginAt) {
                     {{ row.lastLoginAt | adminMoment }}
@@ -66,7 +66,7 @@
                 @if (canGrant()) {
                     <rt-menu-item
                         icon="shield"
-                        [label]="accessLabel"
+                        [label]="accessLabel()"
                         [attr.qa-dataid]="qaPrefix + '-access'"
                         (selected)="openAccess(row.name)" />
                 }
@@ -74,7 +74,7 @@
                 @if (canManage()) {
                     <rt-menu-item
                         icon="lock"
-                        [label]="passwordLabel"
+                        [label]="passwordLabel()"
                         [attr.qa-dataid]="qaPrefix + '-password'"
                         (selected)="openPassword(row.name)" />
                 }
@@ -83,10 +83,10 @@
                     <rt-menu-item
                         danger
                         icon="user-minus"
-                        [confirmLabel]="disableLabel"
+                        [confirmLabel]="disableLabel()"
                         [confirmMessage]="row.disableQuestion"
-                        [confirmTitle]="disableTitle"
-                        [label]="disableLabel"
+                        [confirmTitle]="disableTitle()"
+                        [label]="disableLabel()"
                         [attr.qa-dataid]="qaPrefix + '-disable'"
                         (selected)="disable(row.name)" />
                 }

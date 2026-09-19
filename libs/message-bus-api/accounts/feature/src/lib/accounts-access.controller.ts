@@ -29,7 +29,7 @@ import {
     ROLES_RIGHT,
 } from '@rt/message-bus-api/accounts/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { IPermissionEdit, IPersonAccessView, rightsOf } from '@rt/message-bus-common';
+import { ERefusal, IPermissionEdit, IPersonAccessView, refusalBody, rightsOf } from '@rt/message-bus-common';
 
 /** Последний сегмент адреса: `accounts/<имя>/access`. */
 const ACCESS_SEGMENT: string = ':name/access';
@@ -75,7 +75,7 @@ export class AccountsAccessController {
         const parsed: IAccessParse = accessInputOf(body);
 
         if (parsed.fault !== null || parsed.input === null) {
-            throw new BadRequestException(parsed.fault?.said ?? 'доступ не разобран');
+            throw new BadRequestException(refusalBody(parsed.fault?.code ?? ERefusal.EditMalformed, parsed.fault?.params));
         }
 
         const account: IAccountAccessRow = await this.#accessNamed(name);
@@ -92,7 +92,7 @@ export class AccountsAccessController {
         const found: IAccountAccessRow | null = await findAccountAccess(this.#prisma, { nameKey: accountNameKey(name) });
 
         if (!found) {
-            throw new NotFoundException(`пользователя с именем «${name}» нет`);
+            throw new NotFoundException(refusalBody(ERefusal.AccountNotFound, { name }));
         }
 
         return found;
@@ -107,7 +107,7 @@ export class AccountsAccessController {
         const role: IRoleRef | null = await findRoleRef(this.#prisma, key);
 
         if (!role) {
-            throw new NotFoundException(`роли с ключом «${key}» нет`);
+            throw new NotFoundException(refusalBody(ERefusal.RoleNotFound, { key }));
         }
 
         return role;
@@ -116,7 +116,7 @@ export class AccountsAccessController {
     /** Своя запись без права на роли после правки — отказ раньше записи. Чужая правится как есть. */
     #refuseLockOut(account: IAccountAccessRow, selfId: string, role: IRoleRef | null, edits: readonly IPermissionEdit[]): void {
         if (account.id === selfId && !keepsRolesRight(role?.rights ?? null, edits)) {
-            throw new ConflictException('правка оставила бы вас без права на роли: сначала дайте его другой записи');
+            throw new ConflictException(refusalBody(ERefusal.RoleRightsLost));
         }
     }
 }

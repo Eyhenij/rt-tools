@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal } 
 import { Router } from '@angular/router';
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { ADMIN_MENU, IAdminMenuItem } from '@rt/message-bus-admin/common/container/util';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-no-sections';
@@ -24,11 +24,14 @@ const BEM_BLOCK: string = 'admin-no-sections';
     host: { class: BEM_BLOCK },
 })
 export class AdminNoSectionsComponent {
-    protected readonly title: string = adminLabel('noSectionsTitle');
-    protected readonly from: string = adminLabel('noSectionsFrom');
-
     readonly #router: Router = inject(Router);
     readonly #store: AuthStore = inject(AuthStore);
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    // Язык меняют в попапе шапки, а шапка стоит над этим экраном: подписи производные, иначе
+    // экран остался бы на прежнем языке рядом с переведённой шапкой.
+    protected readonly title: Signal<string> = computed((): string => this.#text.text('noSectionsTitle'));
+    protected readonly from: Signal<string> = computed((): string => this.#text.text('noSectionsFrom'));
 
     /**
      * Первый раздел, открытый вошедшему. Пока такого нет, экран и есть его состояние.

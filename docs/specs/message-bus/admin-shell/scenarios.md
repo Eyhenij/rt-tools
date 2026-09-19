@@ -47,12 +47,12 @@ Given the owner stands at the screen of the entry
 When they switch the theme
 Then the screen of the entry becomes dark, and after the entry the shell stays dark too
 
-### SC-MB-149 — the choice of the language changes the labels of the kit, and only them
+### SC-MB-149 — the choice made at the entry holds after it, and the shape of the dates does not depend on it
 
 Given the owner chose the second language on the screen of the entry
 When they enter and open a list
-Then the labels the kit draws go in the chosen language, and the headings of the sections and the
-shape of the dates stay the former ones
+Then the labels the kit draws and the name of the section go in the chosen language, and the shape
+of the dates stays the former one
 
 ### SC-MB-150 — the choice of the language is in the popup of the profile and outlives a reload
 
@@ -119,3 +119,58 @@ Then the sign-in screen comes up, and the sign-in is over
 Given the answer about the signed-in person has not arrived yet
 When the admin panel draws the page
 Then the screen is not shown: the rights are unknown rather than absent
+
+### SC-MB-402 — a label comes from the dictionary in the chosen language
+
+Given a key that has both a Russian and an English text
+When the screen asks the dictionary by that key at the choice `ru`, and then at the choice `en`
+Then the first time the Russian text comes, the second time the English one
+
+### SC-MB-403 — a key that is not in the set is visible rather than empty
+
+Given a key the set does not hold
+When the screen asks the dictionary by that key
+Then a sign of the missing key comes instead of the label: an empty string would read as "there is no
+label here" and would live until a person complains
+
+### SC-MB-404 — the choice of the language changes both dictionaries without a reload
+
+Given a screen of the shell is open, whose labels come from the dictionary of the admin application,
+and the buttons of the kit stand next to them
+When a person changes the language in the shell
+Then the labels of the admin application and the labels of the kit change, the language sign of the
+document goes with them, and the page is not reloaded
+
+### SC-MB-405 — the choice of the language outlives a reload and does not go to the receiver
+
+Given a person chose English
+When the page is reloaded
+Then the choice stayed English, and not one request to the receiver asked about the language
+
+### SC-MB-406 — the screen of the entry holds no Russian word at the English choice
+
+Given a person stands at the screen of the entry and chooses English
+When they look at the card of the entry
+Then not one word of it is Russian: the name of the application, the heading, the labels of the
+fields, the hints inside them and the label of the button come from the dictionary
+
+### SC-MB-414 — every key of the dictionary has a text in both sets
+
+Given the set of the labels of the admin application
+When every key of it is asked in Russian and in English
+Then not one of them comes back by the sign of an unfound key or by an empty string
+
+### SC-MB-415 — the screen of a section holds no Russian word at the English choice
+
+Given a person stands at the screen of a section and chooses English
+When they look at the labels of the screen
+Then not one of them is Russian: the name of the section, its hint, the labels of the columns, the
+words of the states, the buttons of the toolbar and the shell come from the dictionary. The names of
+the projects and of the files in the cells are data and are not translated
+
+### SC-MB-416 — a word for a person past the dictionary refuses the check
+
+Given the markup or the code of the admin application
+When a label for a person is written into them instead of a key of the dictionary
+Then the check refuses and names the file and the word. A place that cannot be taken from the
+dictionary is let through only by name, with a reason and the number of a task

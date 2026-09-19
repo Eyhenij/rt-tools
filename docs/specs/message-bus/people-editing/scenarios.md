@@ -15,8 +15,8 @@ with the name, no role and no sign-in yet
 
 Given a record with the name already exists
 When the panel of creating is sent with that name
-Then the panel stays open with the word of the receiver above the fields, the name stays in the
-field, and the list has no second row with that name
+Then the panel stays open with the text of the dictionary for the code of the refusal above the
+fields, the name stays in the field, and the list has no second row with that name
 
 ### SC-MB-363 — an empty password is refused by the receiver
 

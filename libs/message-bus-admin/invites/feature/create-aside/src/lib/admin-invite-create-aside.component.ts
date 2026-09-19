@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { adminLabel, spokenFaultText } from '@rt/message-bus-admin/common/core/util';
+import { adminFaultText, AdminTextService, IAdminFaultText } from '@rt/message-bus-admin/common/core/util';
 import { InvitesStore } from '@rt/message-bus-admin/invites/data-access';
 import { IInvite } from '@rt/message-bus-admin/invites/util';
 import {
@@ -55,17 +55,21 @@ const BEM_BLOCK: string = 'admin-invite-create-aside';
     host: { class: BEM_BLOCK },
 })
 export class AdminInviteCreateAsideComponent extends RtRouteAsideComponent<null> {
+    readonly #text: AdminTextService = inject(AdminTextService);
     readonly #store: InvitesStore = inject(InvitesStore);
+
+    /** Текст отказа: причину называет приёмник кодом, слово рисует словарь на выбранном языке. */
+    protected readonly fault: IAdminFaultText = adminFaultText('inviteCreateFailed');
 
     readonly #issued: WritableSignal<IInvite.Issued.State | null> = signal<IInvite.Issued.State | null>(null);
 
-    protected readonly title: string = adminLabel('inviteCreateTitle');
-    protected readonly nameLabel: string = adminLabel('inviteCreateName');
-    protected readonly nameHint: string = adminLabel('inviteCreateNameHint');
-    protected readonly submitLabel: string = adminLabel('inviteCreateSubmit');
-    protected readonly warnText: string = adminLabel('inviteCreateWarn');
-    protected readonly codeLabel: string = adminLabel('inviteCreateCode');
-    protected readonly closeLabel: string = adminLabel('inviteCreateClose');
+    protected readonly title: Signal<string> = computed((): string => this.#text.text('inviteCreateTitle'));
+    protected readonly nameLabel: Signal<string> = computed((): string => this.#text.text('inviteCreateName'));
+    protected readonly nameHint: Signal<string> = computed((): string => this.#text.text('inviteCreateNameHint'));
+    protected readonly submitLabel: Signal<string> = computed((): string => this.#text.text('inviteCreateSubmit'));
+    protected readonly warnText: Signal<string> = computed((): string => this.#text.text('inviteCreateWarn'));
+    protected readonly codeLabel: Signal<string> = computed((): string => this.#text.text('inviteCreateCode'));
+    protected readonly closeLabel: Signal<string> = computed((): string => this.#text.text('inviteCreateClose'));
 
     /** Панель ничего не читает по адресу: записи, которую она заводит, ещё нет. */
     protected override readonly idOnly: boolean = true;
@@ -82,7 +86,7 @@ export class AdminInviteCreateAsideComponent extends RtRouteAsideComponent<null>
     protected readonly expiresText: Signal<string> = computed((): string => {
         const issued: IInvite.Issued.State | null = this.#issued();
 
-        return issued === null ? '' : adminLabel('inviteCreateExpires', { until: issued.expiresAt.toLocaleString('ru-RU') });
+        return issued === null ? '' : this.#text.text('inviteCreateExpires', { until: issued.expiresAt.toLocaleString('ru-RU') });
     });
 
     /** Выдать приглашение. Занятость и текст отказа держит основа, код кладёт сюда сам поток. */
@@ -96,11 +100,10 @@ export class AdminInviteCreateAsideComponent extends RtRouteAsideComponent<null>
         const name: string = this.name.getRawValue().trim();
 
         this.runMutation(this.#store.issue(name).pipe(tap((issued: IInvite.Issued.State): void => this.#issued.set(issued))), {
-            successText: adminLabel('inviteCreateDone', { name }),
-            // Слово приёмника показывается как есть: отклонённое обращение он объясняет
-            // человеку сам — чем занято имя, чего не хватило. Поломка службы своего слова не
-            // несёт, и на неё отвечает общая строка раздела
-            errorText: (error: unknown): string => spokenFaultText(error, adminLabel('inviteCreateFailed')),
+            successText: this.#text.text('inviteCreateDone', { name }),
+            // Причину приёмник называет кодом, слово по коду рисует словарь. Поломка службы
+            // кода не несёт, и на неё отвечает общая строка раздела
+            errorText: this.fault.take,
             // Панель остаётся открытой: код виден один раз, и закрытие унесло бы его с
             // собой. Имя при этом запирается — приглашение на него уже выдано
             onSuccess: (): void => this.name.disable(),

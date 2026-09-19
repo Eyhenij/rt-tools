@@ -2,6 +2,7 @@ import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { IProposal } from '@rt/message-bus-admin/proposals/util';
+import { provideRtStorage, provideRtUtils } from '@rt-tools/core';
 
 import { AdminProposalViewComponent } from './admin-proposal-view.component';
 
@@ -40,7 +41,9 @@ describe('AdminProposalViewComponent', () => {
     }
 
     beforeEach(() => {
-        TestBed.configureTestingModule({ imports: [AdminProposalViewComponent] });
+        // Названия свойств приходят из словаря, а он читает выбранный язык из браузерного
+        // хранилища: без хранилища панель не собирается вовсе.
+        TestBed.configureTestingModule({ imports: [AdminProposalViewComponent], providers: [provideRtUtils(), provideRtStorage()] });
 
         fixture = TestBed.createComponent(AdminProposalViewComponent);
     });

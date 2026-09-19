@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal } from '@angular/core';
 import { AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import { IMonthRecord } from '@rt/message-bus-admin/summaries/util';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtAsideSectionComponent, RtDetailListComponent, RtDetailRowComponent, RtMarkdownTextComponent } from '@rt-tools/ui-kit-v2';
@@ -42,12 +42,14 @@ const BEM_BLOCK: string = 'admin-panel';
     host: { class: BEM_BLOCK },
 })
 export class AdminMonthRecordViewComponent {
-    protected readonly treeLabel: string = adminLabel('columnTree');
-    protected readonly monthLabel: string = adminLabel('columnMonth');
-    protected readonly sessionsLabel: string = adminLabel('columnSessions');
-    protected readonly ranAtLabel: string = adminLabel('columnRanAt');
-    protected readonly summaryLabel: string = adminLabel('detailsSummary');
-    protected readonly summaryMissing: string = adminLabel('detailsSummaryMissing');
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    protected readonly treeLabel: Signal<string> = computed((): string => this.#text.text('columnTree'));
+    protected readonly monthLabel: Signal<string> = computed((): string => this.#text.text('columnMonth'));
+    protected readonly sessionsLabel: Signal<string> = computed((): string => this.#text.text('columnSessions'));
+    protected readonly ranAtLabel: Signal<string> = computed((): string => this.#text.text('columnRanAt'));
+    protected readonly summaryLabel: Signal<string> = computed((): string => this.#text.text('detailsSummary'));
+    protected readonly summaryMissing: Signal<string> = computed((): string => this.#text.text('detailsSummaryMissing'));
 
     public readonly entity: InputSignal<IMonthRecord.State | null> = input.required<IMonthRecord.State | null>();
     public readonly reading: InputSignal<boolean> = input<boolean>(false);

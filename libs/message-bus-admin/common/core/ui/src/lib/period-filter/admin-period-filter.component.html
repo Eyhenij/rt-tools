@@ -1,13 +1,13 @@
 <rt-date-picker
     qa-dataid="list-period-from"
-    [ariaLabel]="fromLabel"
+    [ariaLabel]="fromLabel()"
     [max]="to() || null"
     [ngModel]="from()"
     [ngModelOptions]="{ standalone: true }"
     (ngModelChange)="pickFrom($event)" />
 <rt-date-picker
     qa-dataid="list-period-to"
-    [ariaLabel]="toLabel"
+    [ariaLabel]="toLabel()"
     [min]="from() || null"
     [ngModel]="to()"
     [ngModelOptions]="{ standalone: true }"

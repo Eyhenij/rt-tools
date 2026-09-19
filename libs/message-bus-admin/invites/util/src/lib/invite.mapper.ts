@@ -11,7 +11,7 @@
 import { ETreeInviteView } from '@rt/message-bus-common';
 import { BaseMapper } from '@rt-tools/utils';
 
-import { inviteCanRevoke, inviteRevokeQuestion, inviteStateLabel } from './invite.logic';
+import { inviteCanRevoke } from './invite.logic';
 import { IInvite } from './invite.model';
 
 /** Состояния, объявленные набором: пришедшее не из него считается ждущим — таково умолчание. */
@@ -33,14 +33,12 @@ export class InviteShortMapper extends BaseMapper<IInvite.Short.State> {
         return {
             name,
             state,
-            stateLabel: inviteStateLabel(state),
             issuedAt: new Date(this.typeCast.getAsString(data.issuedAt)),
             expiresAt: new Date(this.typeCast.getAsString(data.expiresAt)),
             // Пустая строка вместо пустоты: у непогашенного приглашения дерева ещё нет, и ячейка
             // показывает пустое место, а не слово «null».
             treeSlug: this.typeCast.getAsString(data.treeSlug, ''),
             canRevoke: inviteCanRevoke(state),
-            revokeQuestion: inviteRevokeQuestion(name),
         };
     }
 }

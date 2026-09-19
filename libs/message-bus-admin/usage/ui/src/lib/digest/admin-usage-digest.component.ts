@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signal } from '@angular/core';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal } from '@angular/core';
+import { AdminTextService, TAdminLabelKey, TAdminText } from '@rt/message-bus-admin/common/core/util';
 import { deniedSkillRows, IUsage, IUsageChartBar, kindRows, topSkillRows, usageChartBars } from '@rt/message-bus-admin/usage/util';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { IRtBarList, RtBarListComponent, RtSpinnerComponent } from '@rt-tools/ui-kit-v2';
+import { IRtBarList, RtBarListComponent, RtSpinnerComponent, TRtKitLabelParams } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-digest';
 
@@ -45,13 +45,15 @@ const EMPTY_VIEW: IDigestView = { bars: [], top: [], kinds: [], denied: [], load
     host: { class: BEM_BLOCK },
 })
 export class AdminUsageDigestComponent {
-    protected readonly chartTitle: string = adminLabel('digestLoadsByDay');
-    protected readonly topTitle: string = adminLabel('digestTopSkills');
-    protected readonly kindsTitle: string = adminLabel('digestKinds');
-    protected readonly deniedTitle: string = adminLabel('digestDenials');
-    protected readonly empty: string = adminLabel('digestEmpty');
-    protected readonly noDenials: string = adminLabel('digestNoDenials');
-    protected readonly loadsLabel: string = adminLabel('columnLoads');
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    protected readonly chartTitle: Signal<string> = computed((): string => this.#text.text('digestLoadsByDay'));
+    protected readonly topTitle: Signal<string> = computed((): string => this.#text.text('digestTopSkills'));
+    protected readonly kindsTitle: Signal<string> = computed((): string => this.#text.text('digestKinds'));
+    protected readonly deniedTitle: Signal<string> = computed((): string => this.#text.text('digestDenials'));
+    protected readonly empty: Signal<string> = computed((): string => this.#text.text('digestEmpty'));
+    protected readonly noDenials: Signal<string> = computed((): string => this.#text.text('digestNoDenials'));
+    protected readonly loadsLabel: Signal<string> = computed((): string => this.#text.text('columnLoads'));
 
     protected readonly view: Signal<IDigestView> = computed((): IDigestView => {
         const digest: IUsage.Digest.State | null = this.digest();
@@ -60,10 +62,14 @@ export class AdminUsageDigestComponent {
             return EMPTY_VIEW;
         }
 
+        // Словарь передаётся доводом: подписи внутри строк собираются на выбранном языке, а сам
+        // вид пересобирает их вместе со сводкой — выбор языка читается этим же производным.
+        const text: TAdminText = (key: TAdminLabelKey, params?: TRtKitLabelParams): string => this.#text.text(key, params);
+
         return {
-            bars: usageChartBars(digest.days),
-            top: topSkillRows(digest.top),
-            kinds: kindRows(digest.kinds),
+            bars: usageChartBars(digest.days, text),
+            top: topSkillRows(digest.top, text),
+            kinds: kindRows(digest.kinds, text),
             denied: deniedSkillRows(digest.denied),
             loads: digest.days.reduce((sum: number, day: IUsage.Day.State): number => sum + day.loads, 0),
         };

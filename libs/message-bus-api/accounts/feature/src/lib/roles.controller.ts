@@ -49,7 +49,7 @@ import {
     ROLES_RIGHT,
 } from '@rt/message-bus-api/accounts/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { IPage, IRoleView, pageAsked, pageFault, ROLE_SORTABLE } from '@rt/message-bus-common';
+import { ERefusal, IPage, IRoleView, pageAsked, pageFault, refusalBody, ROLE_SORTABLE } from '@rt/message-bus-common';
 
 @Controller('roles')
 export class RolesController {
@@ -93,7 +93,7 @@ export class RolesController {
         const parsed: IRoleParse = roleInputOf(body);
 
         if (parsed.fault !== null || parsed.input === null) {
-            throw new BadRequestException(parsed.fault?.said ?? 'роль ждёт имя');
+            throw new BadRequestException(refusalBody(parsed.fault?.code ?? ERefusal.RoleNameEmpty, parsed.fault?.params));
         }
 
         const key: string = accountNameKey(parsed.input.name);
@@ -101,7 +101,7 @@ export class RolesController {
         await this.#refuseTakenName(parsed.input.name, null);
 
         if (await findRoleByKey(this.#prisma, key)) {
-            throw new ConflictException(`роль «${parsed.input.name}» уже заведена: имя занято`);
+            throw new ConflictException(refusalBody(ERefusal.RoleNameTaken, { name: parsed.input.name }));
         }
 
         await createRole(this.#prisma, key, parsed.input);
@@ -123,7 +123,7 @@ export class RolesController {
         const parsed: IRoleParse = roleInputOf(body);
 
         if (parsed.fault !== null || parsed.input === null) {
-            throw new BadRequestException(parsed.fault?.said ?? 'роль ждёт имя');
+            throw new BadRequestException(refusalBody(parsed.fault?.code ?? ERefusal.RoleNameEmpty, parsed.fault?.params));
         }
 
         await this.#roleNamed(key);
@@ -132,7 +132,7 @@ export class RolesController {
         const self: IAccountAccessRow | null = await findAccountAccess(this.#prisma, { id: accountOf(request).id });
 
         if (self?.role?.key === key && !keepsRolesRight(parsed.input.rights, self.permissions)) {
-            throw new ConflictException('правка оставила бы вас без права на роли: сначала дайте его другой записи');
+            throw new ConflictException(refusalBody(ERefusal.RoleRightsLost));
         }
 
         await updateRole(this.#prisma, key, parsed.input);
@@ -154,7 +154,7 @@ export class RolesController {
         const role: IRoleView = await this.#roleNamed(key);
 
         if (role.people > 0) {
-            throw new ConflictException(`роль «${role.name}» держат записи: ${role.people}; сначала дайте им другую`);
+            throw new ConflictException(refusalBody(ERefusal.RoleHeld, { name: role.name, people: role.people }));
         }
 
         await deleteRole(this.#prisma, key);
@@ -166,7 +166,7 @@ export class RolesController {
         const role: IRoleView | null = await findRoleByKey(this.#prisma, key);
 
         if (!role) {
-            throw new NotFoundException(`роли с ключом «${key}» нет`);
+            throw new NotFoundException(refusalBody(ERefusal.RoleNotFound, { key }));
         }
 
         return role;
@@ -184,7 +184,7 @@ export class RolesController {
         );
 
         if (taken) {
-            throw new ConflictException(`роль «${taken.name}» уже заведена: имя занято`);
+            throw new ConflictException(refusalBody(ERefusal.RoleNameTaken, { name: taken.name }));
         }
     }
 }

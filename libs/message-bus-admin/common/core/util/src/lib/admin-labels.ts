@@ -6,15 +6,16 @@
  * пустое состояние, настройку столбцов, — и без своего набора ставит английское умолчание рядом
  * с русскими заголовками. Видно это только на собранном экране.
  *
- * Подписи экранов русские при любом выборе языка: многоязычия админка не делает, и словарь у неё
- * один. Выбор языка меняет только то, что рисует кит, — русский набор ниже сменяется его
- * английским умолчанием, вшитым в него самого. Загрузчика словарей здесь нет: ставить его ради
- * двух наборов значит завести настройку, которую нечем наполнить.
+ * Наборов два — этот и английский рядом, — и выбор языка меняет оба: и подписи админки, и те, что
+ * рисует кит. Ключ у обоих один: тип ключа выведен из этого набора, и английский объявлен им же.
+ * Загрузчика словарей здесь нет: ставить его ради двух наборов значит завести настройку, которую
+ * нечем наполнить.
  *
  * Ключей у кита сто тридцать один, и переведены здесь не все: неназванный он берёт английским
  * умолчанием, и пустой подписи на экране не бывает никогда. Переводится то, что админка
  * показывает, — таблица, страницы, столбцы, панель.
  */
+import { ERefusal } from '@rt/message-bus-common';
 import { TRtKitLabelKey, TRtKitLabelParams } from '@rt-tools/ui-kit-v2';
 
 /** Подписи экранов админки. Ключ читается в шаблоне, значение правится здесь. */
@@ -27,6 +28,15 @@ export const ADMIN_LABELS = {
     language: 'Язык',
     languageSwitch: 'Язык подписей',
     signInTitle: 'Вход в админку',
+    signInTab: 'Вход',
+    signInName: 'Учётная запись',
+    signInNameHint: 'Имя проекта или владельца',
+    signInPassword: 'Пароль',
+    signInPasswordHint: 'Пароль учётной записи',
+    signInSubmit: 'Войти',
+    signInFaultPair: 'Имя или пароль не подошли',
+    signInFaultForm: 'Заполните имя и пароль',
+    signInFaultService: 'Приёмник не ответил. Попробуйте ещё раз',
     setupTitle: 'Первая запись',
     setupHint: 'Записей в приёмнике ещё нет. Первая получает все права; этими именем и паролем вы войдёте сразу.',
     setupName: 'Имя',
@@ -242,6 +252,43 @@ export const ADMIN_LABELS = {
     detailsUsageSessions: 'Сессии',
     detailsSessionsMissing: 'За период этот скил не грузила ни одна сессия',
     detailsSessionsFailed: 'Прочитать сессии не удалось',
+    // Тексты отказов приёмника. Ключ — код отказа общей либы: второе имя под одну причину
+    // разошлось бы с первым молча, а незнакомый код даром получает признак ненайденного ключа.
+    [ERefusal.AccountNameTaken]: 'Пользователь «{{name}}» уже заведён: имя занято',
+    [ERefusal.AccountNotFound]: 'Пользователя с именем «{{name}}» нет',
+    [ERefusal.AccountSelfDisable]: 'Свою запись отключить нельзя: это оборвало бы и ваш вход',
+    [ERefusal.AccountAlreadyOff]: 'Пользователь «{{name}}» уже отключён',
+    [ERefusal.AccountGone]: 'Запись пропала между правкой и ответом',
+    [ERefusal.RoleNameTaken]: 'Роль «{{name}}» уже заведена: имя занято',
+    [ERefusal.RoleNotFound]: 'Роли с ключом «{{key}}» нет',
+    [ERefusal.RoleHeld]: 'Роль «{{name}}» держат записи: {{people}}. Сначала дайте им другую',
+    [ERefusal.RoleRightsLost]: 'Правка оставила бы вас без права на роли: сначала дайте его другой записи',
+    [ERefusal.RoleNameEmpty]: 'Роль ждёт имя',
+    [ERefusal.RightUnknown]: 'Права «{{right}}» нет в наборе',
+    [ERefusal.RightRepeated]: 'Право «{{right}}» названо дважды',
+    [ERefusal.EditMalformed]: 'Правка называет право и дано ли оно',
+    [ERefusal.InviteNameEmpty]: 'Выдача ждёт имя будущего проекта',
+    [ERefusal.InviteProjectExists]: 'Проект «{{name}}» уже заведён: приглашение ему не нужно, а имя занято',
+    [ERefusal.InviteAlreadyIssued]: 'Годное приглашение для «{{name}}» уже выдано. Отзовите его, чтобы выдать новое',
+    [ERefusal.InviteNotFound]: 'Годного приглашения для «{{name}}» нет',
+    [ERefusal.InviteRejected]: 'Приглашение не принято',
+    [ERefusal.PostmortemNotFound]: 'Разбора происшествия с таким признаком нет',
+    [ERefusal.ProposalNotFound]: 'Предложения с таким признаком нет',
+    [ERefusal.SummaryNotFound]: 'Записи месяца с таким признаком нет',
+    [ERefusal.TreeUnknown]: 'Проекта с признаком «{{slug}}» приёмник не знает',
+    [ERefusal.PersonNameEmpty]: 'Заведение ждёт имя пользователя',
+    [ERefusal.PersonPasswordEmpty]: 'Пользователю нужен пароль: пустой не принимается',
+    [ERefusal.SetupClosed]: 'Первая запись уже заведена: вход — по имени и паролю',
+    [ERefusal.OwnerRoleMissing]: 'Роли владельца «{{key}}» нет в хранилище: миграции не применены',
+    [ERefusal.SignInEmpty]: 'В запросе нет имени или пароля',
+    [ERefusal.EnrollThrottled]: 'Обращений с одного клиента больше предела: подождите и повторите',
+    [ERefusal.EnrollMalformed]: 'Обращение ожидает код приглашения и признак проекта',
+    [ERefusal.TreeTaken]: 'Проект с таким признаком или именем уже заведён; приглашение осталось годным',
+    [ERefusal.SignInRequired]: 'Операция требует входа',
+    [ERefusal.RightRequired]: 'На эту операцию у вас нет права',
+    [ERefusal.TreeTokenRequired]: 'Операция требует токен проекта',
+    [ERefusal.TreeTokenRejected]: 'Токен не принят',
+    [ERefusal.AccessUndeclared]: 'Операция доступа не объявила',
 } as const;
 
 /** Ключ подписи админки. Опечатка в шаблоне не доживает до собранного экрана. */
@@ -319,11 +366,6 @@ export function fill(text: string, params?: TRtKitLabelParams): string {
     }
 
     return text.replace(PLACEHOLDER, (match: string, name: string): string => (Object.hasOwn(params, name) ? String(params[name]) : match));
-}
-
-/** Подпись админки с подстановками. */
-export function adminLabel(key: TAdminLabelKey, params?: TRtKitLabelParams): string {
-    return fill(ADMIN_LABELS[key], params);
 }
 
 /**

@@ -62,3 +62,12 @@ Then the named sign matches the one the send counts: two copies of the count div
 the intake answers a divergence with a refusal about a foreign tree
 
 Covered: `projects/agent-kit/tests/cargo-mark.test.sh`.
+
+### SC-AK-1130 — an empty sign of the tree is refused before the network
+
+Given the module of the package that counts the sign of the tree is missing
+When the mark is called, in a dry run as well
+Then the call is refused before the network with a non-zero code, and the refusal names where the
+sign is counted from; the sign of SC-AK-558 is checked to be non-empty before it is compared
+
+Covered: `projects/agent-kit/tests/cargo-mark.test.sh`.

@@ -37,6 +37,10 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
     # however much work there was before: the work stays exactly where it stood.
     | ([$uses[] | select((.name // "") == "Bash") | ((.input.command // "") + (if (.input.run_in_background // false) then " &" else "" end))] | last // "") as $last
     | ([$uses[] | (.name // "")] | last // "") as $last_name
+    # A launch in the background as the last action: a role sent to work by the agent tool, or a
+    # command sent behind the turn. The launch is an announcement of intent, and what does not
+    # depend on it is done while it runs — the turn does not end on the launch itself.
+    | (($last_name | test("^(Agent|Task)$")) or (($last_name == "Bash") and ($last | test("&[[:space:]]*$")))) as $launched_last
     | (($last_name == "Bash") and ($last | test($wait))) as $waited
     # Handing the work over: the tail of the turn after the PR was opened. Everything before it was
     # done on the task handed in and says nothing about the next one.
@@ -90,7 +94,22 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
     | (($last_say | test("[Жж]ду (твоего|вашего|его|её) (слова|указани|решени|ответа|команды|отмашки)|[Жж]ду слова владельца|[Жж]ду, что скаж|[Оо]стаюсь ждать|[Бб]уду ждать (твоего|вашего)"))
         and (($asked or $told_stop or $handed) | not)) as $awaits_word
     | ($last_say | test($promise)) as $promised
+    # The next step rewritten into the progress and not begun. The last edit of the progress in the
+    # turn is found — by the editing tool or by a writing command naming the file — and after it the
+    # turn must hold work other than the commit and the push of it: an edit outside the task folder
+    # or a command changing the tree. Four stops of one shape ended with a full report, a moved
+    # stage number and an untouched next step; the volume before the line is not the step.
+    | ($uses | map(
+          (((.name // "") | test("^(Edit|Write|MultiEdit|NotebookEdit)$")) and ((.input.file_path // "") | test("(^|/)progress\\.md$")))
+          or (((.name // "") == "Bash") and ((.input.command // "") | test("progress\\.md")) and ((.input.command // "") | test("sed -i|tee |>|python3|cat ")))
+      ) | rindex(true)) as $progress_at
+    | ($progress_at != null) as $progress_edited
+    | (if $progress_at == null then [] else $uses[($progress_at + 1):] end) as $after
+    | ($after | map(
+          (((.name // "") | test("^(Edit|Write|MultiEdit|NotebookEdit)$")) and ((.input.file_path // "") | test("/tasks/") | not))
+          or (((.name // "") == "Bash") and ([(.input.command // "") | splits($part)] | map(test($work) and (test($read) | not) and (test("^[[:space:]]*([^[:space:]]*/)?git[[:space:]]+(add|commit|push)") | not)) | any))
+      ) | any) as $after_progress
     | (($last_name == "Bash") and ($last | test($started)) and ($handed_over | not)) as $only_took
-    | { promised: $promised, only_took: $only_took, asked: $asked, handed_by_hand: ($handed and (($asked or $denied or $told_stop) | not)), standing_work: $standing_work, worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, asked_in_prose: $asked_in_prose, awaits_word: $awaits_word, ran: $ran }
+    | { promised: $promised, only_took: $only_took, asked: $asked, handed_by_hand: ($handed and (($asked or $denied or $told_stop) | not)), standing_work: $standing_work, worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, asked_in_prose: $asked_in_prose, awaits_word: $awaits_word, progress_edited: $progress_edited, after_progress: $after_progress, launched_last: $launched_last, ran: $ran }
 ' 2>/dev/null)"
 }

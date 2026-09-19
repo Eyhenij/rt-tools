@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import {
     ADMIN_LIST_HOST,
-    adminLabel,
+    AdminTextService,
     EReadFault,
     IAdminListHost,
     IReadFault,
@@ -117,9 +117,12 @@ export class AdminListAboveTableDirective {}
     host: { class: BEM_BLOCK },
 })
 export class AdminListPageComponent {
-    protected readonly refreshLabel: string = adminLabel('listRefresh');
-    protected readonly retryLabel: string = adminLabel('listRetry');
-    protected readonly columnsLabel: string = adminLabel('listColumns');
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    // Подписи страницы — производные: язык переключают в попапе профиля, над этой же страницей.
+    protected readonly refreshLabel: Signal<string> = computed((): string => this.#text.text('listRefresh'));
+    protected readonly retryLabel: Signal<string> = computed((): string => this.#text.text('listRetry'));
+    protected readonly columnsLabel: Signal<string> = computed((): string => this.#text.text('listColumns'));
 
     /**
      * Размеры страницы, которые предлагает переключатель.
@@ -167,7 +170,7 @@ export class AdminListPageComponent {
             return '';
         }
 
-        return adminLabel(fault.kind === EReadFault.Session ? 'listSessionEnded' : 'listFailed');
+        return this.#text.text(fault.kind === EReadFault.Session ? 'listSessionEnded' : 'listFailed');
     });
 
     /**
@@ -177,7 +180,7 @@ export class AdminListPageComponent {
     protected readonly incidentText: Signal<string> = computed(() => {
         const fault: IReadFault | null = this.host.fault();
 
-        return fault === null || fault.incident === '' ? '' : adminLabel('listIncident', { incident: fault.incident });
+        return fault === null || fault.incident === '' ? '' : this.#text.text('listIncident', { incident: fault.incident });
     });
 
     public readonly title: InputSignal<string> = input.required<string>();
