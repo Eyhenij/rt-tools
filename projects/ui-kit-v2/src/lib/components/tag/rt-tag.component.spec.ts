@@ -1,7 +1,9 @@
 import { DebugElement } from '@angular/core';
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
 import { classesOf, createRtFixture, el, hostClasses, qa, setInputs, textOf } from '../../../testing/rt-kit-testing';
+import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { RtTagComponent } from './rt-tag.component';
 import { IRtTag } from './rt-tag.model';
 
@@ -14,11 +16,11 @@ function pillClasses(fixture: ComponentFixture<RtTagComponent>): string[] {
 }
 
 describe('RtTagComponent', (): void => {
-    it('рисует переданный текст', (): void => {
+    it('SC-UKV-181 — рисует переданный текст', (): void => {
         expect(textOf(qa(setup({ value: 'В работе' }), 'tag-text'))).toBe('В работе');
     });
 
-    it('несёт свой BEM-блок и на host-е, и на пилюле', (): void => {
+    it('SC-UKV-182 — несёт свой BEM-блок и на host-е, и на пилюле', (): void => {
         const fixture: ComponentFixture<RtTagComponent> = setup();
 
         expect(hostClasses(fixture)).toContain('rt-tag');
@@ -26,7 +28,7 @@ describe('RtTagComponent', (): void => {
     });
 
     describe('палитра', (): void => {
-        it('без входа — нейтральная', (): void => {
+        it('SC-UKV-183 — без входа — нейтральная', (): void => {
             expect(pillClasses(setup())).toContain('rt-tag--severity--neutral');
         });
 
@@ -40,7 +42,7 @@ describe('RtTagComponent', (): void => {
             }
         );
 
-        it('смена палитры снимает прежний модификатор', (): void => {
+        it('SC-UKV-184 — смена палитры снимает прежний модификатор', (): void => {
             const fixture: ComponentFixture<RtTagComponent> = setup({ severity: 'info' });
 
             setInputs(fixture, { severity: 'danger' });
@@ -51,8 +53,73 @@ describe('RtTagComponent', (): void => {
         });
     });
 
+    describe('ступень размера', (): void => {
+        it('SC-UKV-194 — без входа ступень средняя: вид до появления ступеней не меняется', (): void => {
+            expect(pillClasses(setup())).toContain('rt-tag--size--md');
+        });
+
+        it('SC-UKV-195 — каждая ступень ставит свой модификатор и снимает прежний', (): void => {
+            const fixture: ComponentFixture<RtTagComponent> = setup();
+
+            for (const size of ['sm', 'md', 'lg'] as IRtTag.Size[]) {
+                setInputs(fixture, { size });
+                fixture.detectChanges();
+
+                const marks: string[] = pillClasses(fixture).filter((one: string): boolean => one.startsWith('rt-tag--size--'));
+
+                expect(marks).toEqual([`rt-tag--size--${size}`]);
+            }
+        });
+
+        // Ступень значок кладёт числом в стиль хоста, а не классом: ступени `xs`, `sm` и `md`
+        // кита значков — 12, 16 и 20 пикселей.
+        it('SC-UKV-196 — значок идёт ступенью пилюли, своего входа у него нет', (): void => {
+            const fixture: ComponentFixture<RtTagComponent> = setup({ icon: 'ico-close' });
+            const steps: Record<string, string> = { sm: '12px', md: '16px', lg: '20px' };
+
+            for (const [size, width] of Object.entries(steps)) {
+                setInputs(fixture, { size });
+                fixture.detectChanges();
+
+                expect((el(fixture, 'rt-icon')?.nativeElement as HTMLElement).style.width).toBe(width);
+            }
+        });
+    });
+
+    describe('усечение подписи', (): void => {
+        // Раскладки в спеке нет, и ширины у узла нулевые: переполнение подменяется замером — так
+        // же, как это делает соседний `rt-collapsible-text`.
+        function overflow(fixture: ComponentFixture<RtTagComponent>, scroll: number, client: number): void {
+            const node: HTMLElement = qa(fixture, 'tag-text')?.nativeElement as HTMLElement;
+
+            Object.defineProperty(node, 'scrollWidth', { configurable: true, value: scroll });
+            Object.defineProperty(node, 'clientWidth', { configurable: true, value: client });
+            setInputs(fixture, { value: `${fixture.componentInstance.value()} ` });
+            fixture.detectChanges();
+            TestBed.tick();
+        }
+
+        it('SC-UKV-197 — подписи хватило места: подсказки нет', (): void => {
+            const fixture: ComponentFixture<RtTagComponent> = setup({ value: 'Активен' });
+
+            overflow(fixture, 80, 80);
+
+            expect(fixture.debugElement.query(By.directive(RtTooltipDirective))?.injector.get(RtTooltipDirective).text()).toBe('');
+        });
+
+        it('SC-UKV-198 — подписи не хватило места: подсказка несёт целое значение', (): void => {
+            const fixture: ComponentFixture<RtTagComponent> = setup({ value: 'Ожидает подтверждения оплаты' });
+
+            overflow(fixture, 400, 80);
+
+            expect(fixture.debugElement.query(By.directive(RtTooltipDirective))?.injector.get(RtTooltipDirective).text()).toBe(
+                fixture.componentInstance.value()
+            );
+        });
+    });
+
     describe('форма и заливка', (): void => {
-        it('без входов — полностью скруглённая сплошная пилюля', (): void => {
+        it('SC-UKV-185 — без входов — полностью скруглённая сплошная пилюля', (): void => {
             expect(pillClasses(setup())).toEqual(expect.arrayContaining(['rt-tag--shape--pill', 'rt-tag--appearance--solid']));
         });
 
@@ -66,7 +133,7 @@ describe('RtTagComponent', (): void => {
     });
 
     describe('скругление', (): void => {
-        it('без входа модификатора скругления нет — радиус берётся из формы', (): void => {
+        it('SC-UKV-186 — без входа модификатора скругления нет — радиус берётся из формы', (): void => {
             expect(pillClasses(setup()).some((cls: string): boolean => cls.startsWith('rt-tag--radius'))).toBe(false);
         });
 
@@ -76,26 +143,26 @@ describe('RtTagComponent', (): void => {
     });
 
     describe('иконки', (): void => {
-        it('без входов иконок нет', (): void => {
+        it('SC-UKV-187 — без входов иконок нет', (): void => {
             const fixture: ComponentFixture<RtTagComponent> = setup();
 
             expect(el(fixture, '.rt-tag__icon')).toBeNull();
             expect(el(fixture, '.rt-tag__icon-end')).toBeNull();
         });
 
-        it('префикс-иконка рисуется перед текстом', (): void => {
+        it('SC-UKV-188 — префикс-иконка рисуется перед текстом', (): void => {
             const fixture: ComponentFixture<RtTagComponent> = setup({ icon: 'check' });
 
             expect(el(fixture, '.rt-tag__icon use')?.attributes['href']).toBe('#rt-icon-check');
         });
 
-        it('суффикс-иконка рисуется после текста', (): void => {
+        it('SC-UKV-188 — суффикс-иконка рисуется после текста', (): void => {
             const fixture: ComponentFixture<RtTagComponent> = setup({ iconEnd: 'ico-close' });
 
             expect(el(fixture, '.rt-tag__icon-end use')?.attributes['href']).toBe('#rt-icon-ico-close');
         });
 
-        it('обе иконки уживаются вместе', (): void => {
+        it('SC-UKV-188 — обе иконки уживаются вместе', (): void => {
             const fixture: ComponentFixture<RtTagComponent> = setup({ icon: 'check', iconEnd: 'ico-close' });
 
             expect(el(fixture, '.rt-tag__icon')).not.toBeNull();
@@ -104,18 +171,18 @@ describe('RtTagComponent', (): void => {
     });
 
     describe('крестик', (): void => {
-        it('без входа крестика нет', (): void => {
+        it('SC-UKV-189 — без входа крестика нет', (): void => {
             expect(qa(setup(), 'tag-close')).toBeNull();
         });
 
-        it('появляется по входу и помечает пилюлю модификатором', (): void => {
+        it('SC-UKV-190 — появляется по входу и помечает пилюлю модификатором', (): void => {
             const fixture: ComponentFixture<RtTagComponent> = setup({ closable: true });
 
             expect(qa(fixture, 'tag-close')).not.toBeNull();
             expect(pillClasses(fixture)).toContain('rt-tag--closable');
         });
 
-        it('клик по крестику поднимает событие с исходным MouseEvent', (): void => {
+        it('SC-UKV-191 — клик по крестику поднимает событие с исходным MouseEvent', (): void => {
             const fixture: ComponentFixture<RtTagComponent> = setup({ closable: true });
             const seen: MouseEvent[] = [];
             fixture.componentInstance.closed.subscribe((event: MouseEvent): void => {
@@ -130,7 +197,7 @@ describe('RtTagComponent', (): void => {
             expect(seen[0]).toBeInstanceOf(MouseEvent);
         });
 
-        it('клик по крестику не всплывает наружу — пилюля целиком часто сама кликабельна', (): void => {
+        it('SC-UKV-192 — клик по крестику не всплывает наружу — пилюля целиком часто сама кликабельна', (): void => {
             const fixture: ComponentFixture<RtTagComponent> = setup({ closable: true });
             const outer: jest.Mock = jest.fn();
             (fixture.nativeElement as HTMLElement).parentElement?.addEventListener('click', outer);
@@ -142,7 +209,7 @@ describe('RtTagComponent', (): void => {
             expect(outer).not.toHaveBeenCalled();
         });
 
-        it('крестик подписан переведённой подписью, а не ключом', (): void => {
+        it('SC-UKV-193 — крестик подписан переведённой подписью, а не ключом', (): void => {
             const fixture: ComponentFixture<RtTagComponent> = setup({ closable: true });
 
             const control: DebugElement | null = el(fixture, '[qa-dataid="tag-close"] [qa-dataid="icon-button-control"]');
