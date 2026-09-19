@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of work from the owner's request to the merge. Load at the start of any work, when editing task folders and product agreements, and when returning to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. End of a turn — turn-conduct.
 ---
-<!-- rt-kit v0.29.0 · rules/task-flow.md · dfb9ddf05fbf · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/task-flow.md · d2c2538f852e · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -123,8 +123,8 @@ flowchart TD
 - **Editing application code is refused until the work has reached a state in which code is
   edited.** The guard demands three things: a task folder by branch name, a plan in it and a
   declared state. The agreement has a guard of its own on the same events.
-- **The guard judges the declared transition, not the presence of files.** An empty plan lies the
-  same as a written one, so the refusal is lifted by the declared state — `этап-идёт`,
+- **The guard judges the declared transition, not the presence of files.** The refusal is lifted
+  by the declared state — `этап-идёт`,
   `этапы-кончились`, `разбор-кончился`. The fourth road is the branch history: a folder taken apart
   means handed-in work.
 - **A state line moved forward is the same declaration of intent, only machine-readable.** It is
@@ -148,15 +148,14 @@ flowchart TD
   justification under someone else's accepted decision reads as its appraisal. One exception:
   execution stopped by an obstacle — then the obstacle is named.
 - **The last run of the main branch is read first thing in a session and after every known
-  merge.** A merge reads as the end of the work, and a red main branch after it lives until the
-  owner notices. The start hook prints it; after a merge the command is called by hand, and a red
+  merge.** A red main branch after a merge lives until the owner notices. The start hook prints it; after a merge the command is called by hand, and a red
   or pushed-out run is fixed before new work is taken.
-- **A session does not start work by itself.** A start needs the owner's word in the same session:
-  the handover, the state from the startup hook and an assigned epic say what to do, not whether to
-  work. An empty message, one word or one path order no work.
-- **A refusal by an external limiter removes the way, not the task.** It is not the tree's guard and
-  names no exit. The way is taken from the guard that already described this fix — a bypass with
-  the reason in the commit body, a word to the owner — and the task stays the same.
+- **A session does not start work by itself.** The handover, the state from the startup hook and an
+  assigned epic say what to do, not whether to work: a start needs the owner's word in the same
+  session. An empty message, one word or one path order no work.
+- **A refusal by an external limiter removes the way, not the task.** It names no exit: the way is
+  taken from the guard that already described this fix — a bypass with the reason in the commit
+  body, a word to the owner — and the task stays the same.
 - **An instruction to work by the progress covers all its steps, including those that change
   history.** Questions are asked about what the progress lacks.
 - **A question written by a past session does not become a question to the owner.** It is addressed
@@ -167,8 +166,8 @@ flowchart TD
 - **An answer in the owner's message counts the same as an answer in a document.** A question
   already answered in the conversation is not asked again.
 - **The owner's word about the design is a task setting, not a decision.** What they named is
-  usually already in the tree under that word — a name on a screen, a spec section, a model field —
-  and is checked against them before the edit. Diverged — the owner is asked.
+  usually in the tree under that word — a name on a screen, a spec section, a model field — and is
+  checked against it before the edit. Diverged — the owner is asked.
 - **A task folder is created for any work, no exceptions.** An exception with even one lawful form
   is executed as permission. It goes in before the first edit.
 - **The task folder goes into the branch by a commit, not lives in one working tree.** Uncommitted,
@@ -183,9 +182,8 @@ flowchart TD
   base: folder taken apart and pushed → PR as a draft → run green → draft lifted → the request to
   merge, naming the number. Where it does not wake, the green push gate is the check, and opening
   the PR and asking to merge are one turn.
-- **A PR that waits for a run opens as a draft, and one that waits for nothing opens ready.** Before
-  it opens the owner sees no edits, and an open PR reads as an invitation to merge. Which of the two
-  applies is decided by the bases the pipeline wakes for, and that is read from its file.
+- **A PR that waits for a run opens as a draft, and one that waits for nothing opens ready.** An
+  open PR reads as an invitation to merge. Which of the two applies is decided by the bases the pipeline wakes for, and that is read from its file.
 - **The plan guard is the lower bound of the requirement, not its limit.** It demands a folder only
   for an edit of application code; the article above — for any work.
 - **An instruction to work by a rule is an instruction to do its steps, including those that change
@@ -193,8 +191,7 @@ flowchart TD
 - **A taken task does not end a turn.** Creating the task, the branch, the column and the folder is
   preparation: the work moves to the written-plan state, where the action is different. The
   turn-exit guard names the first stage in its refusal.
-- **The stages of a plan cover its done-sign whole.** A sign written wider than the sum of the
-  stages means a part of the order is given to no step at all: every stage closes, the run is
+- **The stages of a plan cover its done-sign whole.** Otherwise every stage closes, the run is
   green, and half the order is not done. Either the stages are written up to the sign, or the sign
   is narrowed to what the stages give.
 - **A stage's readiness sign is taken from the output of a command run while the plan is written.**
@@ -209,6 +206,13 @@ flowchart TD
   filed as a task.
 - **Done work is marked only in the progress.** "Where we stand" is rewritten by every session, not
   appended: it is the first thing the next session reads.
+- **The plan names the steps of every stage, and the progress mirrors them with a mark each.** The
+  plan is not edited after it is written, the marks change every turn; a line nobody can call done
+  is not a step.
+- **The numbers and the names of the steps are copied from the plan, not reworded.** A check matches
+  the two lists: a reworded name reads as a different step.
+- **Exactly one step carries the mark of going on right now, while any step is not done.** Marked on
+  none, the progress says the work stands; marked on two, it says nothing at all.
 - **A word for a new notion is looked up in the tree's glossary.** It goes into the context whole
   at session start, so "did not read it" is never a ground.
 - **The task folder is created as a draft and gets its number by a command.** Until the grill ends,
@@ -217,14 +221,13 @@ flowchart TD
 - **Work ordered in words becomes a task in the queue in the same turn.** Even if it will not be
   done now: a draft folder has no number, and one session knows of it. Postponed work names a
   date; postponed silently, it reads as done.
-- **Work begins with the epic, and a task outside one is not taken.** The epic names what the whole
-  is, and the main branch takes that whole or does not take it. Work outside an epic exists only by
+- **Work begins with the epic, and a task outside one is not taken.** The main branch takes the
+  whole or does not take it. Work outside an epic exists only by
   the owner's word about that work, said about that work.
 - **The epic branch is taken before the first task of the epic, not with it.** Taken later, it
-  leaves the first task standing on the main branch, and the epic starts as half of itself already
-  merged.
+  leaves the first task standing on the main branch.
 - **The epic card moves to in progress by the same turn that takes its first task.** The owner
-  follows the epic by one card, and one left where the epic was declared reads as never started.
+  follows the epic by one card: left where it was declared, the card reads as never started.
   Nothing checks this yet: the rule `git-workflow` holds the move command and names the gap.
 - **The next task is taken from the epic plan, and the queue list is asked only where there is no
   epic.** By a list of numbers someone else's epic cannot be told from one's own.
@@ -243,9 +246,8 @@ flowchart TD
   arrangements: each branch from the epic branch, or a stack — each from the previous. The
   arrangement written in the plan is the epic's decision, not that of whoever creates the branch.
 - **The PR of the epic opens when its last folder is taken apart, and not a task earlier.** A folder
-  left in the epic branch reaches the main branch with it: what one branch needed becomes the tree's
-  for good. Until then the epic branch is not offered to a person at all — the merge button on it
-  means the whole epic.
+  left in the epic branch reaches the main branch with it. Until then the epic branch is not
+  offered to a person at all — the merge button on it means the whole epic.
 - **The epic plan lies where it is found without the network and after the merge.** The card does
   not hold the task order, and the task folder dies with the merge; the directory — in the rule's
   companion. What the owner names along the way is appended there by the turn that accepted it.
@@ -260,12 +262,11 @@ flowchart TD
 - **The review's findings wait for the owner, and only the digest of observations leaves for the
   package.** A proposal sent unreviewed becomes the work of someone who did not order it. The digest
   is always sent: it says what was used and is never an opinion.
-- **The cheap closing step goes before the costly one, and the run — after the merge.** Merging the
-  agreement and bringing the texts up to date cost minutes, the run costs the session window; a run
+- **The cheap closing step goes before the costly one, and the run — after the merge.** A run
   before the merge checks what will not reach main.
 - **The agreement merges into the domain spec by one of the last commits of the branch, before the
-  PR opens.** By then the code is written, the bindings are known, and the `proposed/` directory
-  never appears in main. What is ready to merge is listed by `npm run check:specs`.
+  PR opens.** By then the bindings are known, and `proposed/` never appears in main. What is ready
+  to merge is listed by `npm run check:specs`.
 - **The folder of a closed task is taken apart, not moved whole.** What explains a decision goes to
   `docs/archive/`; the rest is deleted. One not taken apart is caught by the work queue audit.
 - **Opening the PR and lifting the draft are refused while the branch carries its task folder.** A

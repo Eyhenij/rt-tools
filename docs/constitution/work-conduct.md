@@ -1,4 +1,4 @@
-<!-- rt-kit v0.29.0 · laws/work-conduct.md · 818818732ba0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · laws/work-conduct.md · 0cdeb3ead5b5 · правится надстройкой, не здесь -->
 # Law on work conduct
 
 The law sets how work is conducted from the moment a task is set until it is closed. Work outlasts
@@ -91,6 +91,16 @@ one session and keeps its whole context and state when it passes to the next.
   check.
 - **Done work is marked in one place.** Two records of the same thing drift apart silently, and then
   neither shows what remains.
+- **The steps of the work are written out in full before it starts, and each of them can be called
+  done or not done.** A plan of prose alone cannot say how much is left: whoever reads it counts by
+  eye and counts differently every time, so the work reads as nearly finished from the first step
+  onwards.
+- **The step going on right now is marked at every minute of the work, and there is only ever one.**
+  A record that names the whole stage and not the step inside it says nothing about where the work
+  broke off, and the session that picks it up starts by guessing.
+- **Work with a step that is not done is not finished, and a report about the done does not finish
+  it either.** A report ends the account, not the work: it looks like completeness better than
+  anything else, and the emptiness behind it is invisible to whoever wrote it.
 - **A decision made along the way is written down together with its reason.** Without a reason it
   reads as accidental and is revoked by the next session, and brought back by the third.
 - **The boundary of the work is named before it starts.** A boundary not named aloud does not exist:
