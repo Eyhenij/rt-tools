@@ -7,7 +7,6 @@
  * Время приезжает строкой и становится временем здесь: дальше по экрану ходит уже `Date`, и
  * разбор строки не повторяется в каждой ячейке таблицы.
  */
-import { cargoStateLabel } from '@rt/message-bus-admin/common/core/util';
 import { cargoStateOf, ECargoState, ITreeChoice } from '@rt/message-bus-common';
 import { BaseMapper } from '@rt-tools/utils';
 
@@ -30,7 +29,6 @@ export class PostmortemShortMapper extends BaseMapper<IPostmortem.Short.State> {
             tree: treeOf(this, data.tree),
             file: this.typeCast.getAsString(data.file),
             state: cargoState,
-            stateLabel: cargoStateLabel(cargoState),
             releaseVersion: this.typeCast.getAsString(data.releaseVersion),
             quarantineNote: this.typeCast.getAsString(data.quarantineNote),
             closedByPublisher: this.typeCast.getAsBoolean(data.closedByPublisher),

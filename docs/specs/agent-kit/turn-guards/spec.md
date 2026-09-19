@@ -47,7 +47,13 @@ turn.
   richer than it — it retells the whole session at once — so it is recognised by a sign of the record,
   not by the text.
 - **A second pass over the same turn is not judged.** The guard says its word once and lets go;
-  otherwise the turn will never end.
+  otherwise the turn will never end. The one exception is the guard of the exits under an open epic,
+  and its subdomain says so.
+- **The tool that closes the conversation is refused always.** The session is ended by the owner and
+  by nobody else; the guard has no lawful form of bypass and refuses even without a JSON parser.
+- **Under an open epic the guard of the exits judges a turn that ended with work and a second
+  pass.** The tiers of that lie in a file of their own next to the guard; the epic is read once per
+  turn, on the way to a refusal, by the shared reading of the end of an epic.
 - **A role switched off by the tree does not hold the guard at it.** The tree names the switched-off
   roles by a list in its setting, and the guard at such a role exits silently. What is switched off is
   the mandatory call, not the role itself: its file stays laid out, and it can be called at any
@@ -66,6 +72,14 @@ turn.
 - **A refusal by the second sign orders to go on with the work, not to ask again differently.** The
   miss here is not in the shape of the question but in the stopping of work that is already allowed: a
   refusal named by the shape is fixed by a second question of the same stopping.
+- **Two answers «recommended» in a row close the remaining questions by assumption, and the
+  guard of the conversation refuses the next menu.** Every menu carries a recommended option, and an
+  owner who takes it twice running has shown that the decisions are not theirs: the tree answers
+  these questions, and the menu only asks to confirm it. The third sign reads the last two answers
+  of the question tool, each with every option taken marked as recommended; any other answer breaks
+  the streak. The refusal orders to write the assumptions into the grill, name them to the owner in
+  one line and look for a ready-made module of the same kind before that: a grill of five menus was
+  closed by the owner naming such a module.
 - **The guard of the conversation lets the work through at any breakage.** There is no record of the
   turn, there is no parser of the record, the reading broke — the turn is allowed. A broken guard has
   no right to jam the conversation.
@@ -119,6 +133,11 @@ turn.
   stand in the same turn the request was opened by. The sign of taking lists what taking happens to
   be, not what counts as an action: the list of the steps of closing is open and grows, and the list
   of the actions on the next task is closed.
+- **A run started or rerun in the turn gets a wait for its end in the same turn.** The outcome of a
+  run does not call by itself: its state read once is a moment, not a result, and a request left
+  without watching reaches the owner before the executor. The wait is a watching command of the
+  hosting client, a loop until the end or the watching tool, in the background or blocking; the next
+  task taken does not lift this.
 - **A stage declared closed is confirmed by the output of a command.** The mark "done" is a statement
   about the tree, and a session later what was marked from memory is indistinguishable from what was
   checked. The former number of the stage the guard reads from the history of the branch, the command
@@ -248,3 +267,7 @@ None.
 - 2026-09-06 — the guard of the exits refuses by name a turn that ended with waiting for the word of
   the owner: at a consumer tree three turns in a row ended with the phrase "waiting for your word"
   with the instruction to work without stopping not cancelled.
+- 2026-09-18 — the waiting guard refuses a turn that started or reran a run and put no wait on its
+  end: a rerun went through between other things, and the owner found the green run first.
+- 2026-09-18 — the third sign of the guard of the conversation: two answers «recommended» in a row
+  close the remaining questions by assumption, and the next menu is refused.

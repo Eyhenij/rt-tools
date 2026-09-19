@@ -1,4 +1,4 @@
-<!-- rt-kit v0.26.0 · laws/project-documentation.md · 6c6d07d256de · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · laws/project-documentation.md · 6c6d07d256de · правится надстройкой, не здесь -->
 # Law on project documentation
 
 What must be true about the texts a project writes about itself. A document that drifts from

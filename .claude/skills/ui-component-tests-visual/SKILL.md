@@ -18,13 +18,24 @@ The snapshot of every story of the first kit is matched against the reference ne
 - The snapshot run fell, and it has to be understood whether the divergence is one's own.
 - The references are taken for the first time, or re-taken.
 
-The references were taken on the same machine the pipeline runs on, so the comparison threshold is
-held at zero and a small edit does not pass silently. A change of machine or of browser version
-means re-taking all the references rather than sorting out divergences.
+The comparison threshold is held at zero, so that a small edit does not pass silently. What that
+costs depends on the kit, and the two are no longer alike.
+
+The second kit's frames are taken by a browser raised in an image, and the showcase is built and
+served as files: `node tools/visual-gate.mjs ui-kit-v2`, and a re-take by the same command with
+`--update`. The image is one on any machine, so its references are matched everywhere — on the
+developer's machine and in the pipeline alike. A re-take by any other road writes the raster of the
+machine that took it, and the run refuses to start without the image's address for exactly that
+reason. The development server is not shot at all: from the image it reloads the page without end,
+and the runner's injected script does not survive a single reload.
+
+The first kit's frames are still taken by the machine's own browser, and they are therefore matched
+only where they were taken — in the pipeline. A change of machine or of browser version means
+re-taking all of its references rather than sorting out divergences.
 
 Two traits of the machine are taken out of that dependence at the second kit — the timezone and the
-browser's language: they change by themselves, without a change of machine at all. They are set by
-the run's settings file; the list of what is undetermined says how.
+browser's language. The timezone is set by the run's settings file, the language by the arguments of
+the browser in the image; the list of what is undetermined says how.
 
 ## A state that is not in the frame
 
@@ -175,3 +186,14 @@ something else.
   taken, and its reference reads as orphaned. Eight such stood next to fifteen divergences and went
   away together with them, without a single file deleted. So the orphan list is read after the
   divergences are cured, not before: deleted on sight, those references would have to be taken anew.
+- **A divergence only in native controls after a browser raise is the browser, not the layout.**
+  A newer Playwright brings a newer Chromium, and the textarea grip, the scrollbar and the focus
+  ring are drawn a pixel differently on stories nobody edited. The sign: the difference frames
+  show only such controls, and the computed values of the nodes around them match to the
+  hundredth. The cure is the browser version held where the references were taken, or a
+  deliberate re-take of every touched reference — not a fix of the layout.
+- **A divergence only in text after a data generator raise is the data, not the layout.** A newer
+  faker gives other names and other numbers, and every frame with seeded values diverges by text
+  alone while the boxes stay where they were. The sign: the difference frames show letters and
+  digits, not edges. The cure is the generator version held in the manifest, or a re-take of the
+  references together with the raise.

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.26.0 · laws/frontend-application.md · 30cca57cee8f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · laws/frontend-application.md · 30cca57cee8f · правится надстройкой, не здесь -->
 # Law on the frontend application
 
 How the thing that draws the screen is built. The law is common to all applications at once: a

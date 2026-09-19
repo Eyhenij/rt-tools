@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/grill-gate.sh · 89092beafc10 · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/grill-gate.sh · 7d1dfa3a4c8f · правится надстройкой, не здесь
 # Requires: hooks/deny-tail.sh
 # rt-hook: Stop
 # The conversation guard: the owner is not asked a question until the laws and rules have been read
@@ -229,6 +229,57 @@ ${deny_tail_text}"
 
         jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
             || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"grill-gate: this question has already been answered."}}\n'
+        exit 0
+    fi
+fi
+
+# The third sign of the same guard: the owner answered the recommended option twice in a row.
+#
+# Every menu carries a recommended option, and an owner who takes it twice running has shown that
+# the decisions are not theirs: the questions are answered by the tree, and the menu only asks them
+# to confirm it. A grill went on to a fifth menu after four such answers, and the owner closed it
+# with the name of a ready-made module that answered all five. From the second answer on, the
+# remaining questions are closed by an assumption written into the grill, and the owner gets the
+# list in one line — not a menu.
+#
+# What is judged is the record of the question tool: the last two of its answers, each with every
+# option taken marked as recommended. Any other answer breaks the streak, and a menu after it goes
+# out as usual. The mark is the word the menu itself carries, in either language of the tree.
+#
+# FAIL-OPEN: fewer than two answers in the record, no record, no parser — the sign stays silent.
+if [ -n "$tool" ]; then
+    streak="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
+        def answer_texts: [.[] | select(.type == "user") | (.message.content // [])
+            | select(type == "array") | .[] | select(.type == "tool_result") | .content
+            | if type == "string" then . elif type == "array"
+                then (map(if type == "object" then (.text // "") else "" end) | join("\n")) else "" end
+            | select(test("^The user answered:"))];
+        def recommended: ([match("\"=\"[^\"]*\""; "g")] | length) as $all
+            | ([match("\\((Recommended|Рекомендую|Рекомендован[^)]*)\\)\"(,|\\.|[[:space:]]|$)"; "g")] | length) as $marked
+            | $all > 0 and $all == $marked;
+        (answer_texts) as $answers
+        | if ($answers | length) < 2 then "no"
+          elif ($answers[-1] | recommended) and ($answers[-2] | recommended) then "streak"
+          else "no" end
+    ' 2>/dev/null)"
+
+    if [ "$streak" = "streak" ]; then
+        reason="BLOCKED by grill-gate: the owner took the recommended option on the last two menus in a row — the remaining questions are closed by assumption, not by a menu.
+
+Two answers «recommended» running say the decisions are not the owner's: the tree answers these questions, and the menu only asks them to confirm it. Write what is taken into the grill as decisions, name the list to the owner in one line, and go on with the work. Before that, look for a ready-made module of the same kind — in this tree and in the trees recorded as samples: one grill of five menus was closed by the owner naming such a module.
+
+A menu goes out again only for a question no assumption closes, and it says so in its first line."
+
+        # shellcheck disable=SC1090
+        [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
+        command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+        deny_tail_text="$(rt_deny_tail "")"
+        [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
+        jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
+            || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"grill-gate: two recommended answers in a row close the remaining questions by assumption."}}\n'
         exit 0
     fi
 fi

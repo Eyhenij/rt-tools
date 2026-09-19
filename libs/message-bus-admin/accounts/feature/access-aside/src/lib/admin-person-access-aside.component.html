@@ -1,0 +1,68 @@
+<ng-container rtContainerRightSidenavPanel #panel="rtContainerRightPanel" (cancelled)="onCancel()" (closed)="onClosed()" />
+
+<rt-aside qa-dataid="person-access-panel" [ariaLabel]="title()">
+    <rt-aside-header qa-dataid="person-access-header" [title]="title()" (dismiss)="onClose()" />
+
+    @if (submitError()) {
+        <rt-message severity="danger" qa-dataid="person-access-fault">{{ fault.text() }}</rt-message>
+    }
+
+    <ng-container rtBlock="admin-panel">
+        <rt-field [hint]="roleHint()" [label]="roleLabel()" [loading]="resolving()">
+            <rt-select
+                qa-dataid="person-access-role"
+                [ariaLabel]="roleLabel()"
+                [clearable]="false"
+                [formControl]="role"
+                [options]="roleOptions()" />
+        </rt-field>
+
+        <!-- Слово на право берётся по имени права из записи полей; исход рядом считается от роли
+             и слов вместе и меняется с каждым выбором -->
+        <ng-container [formGroup]="rightWords">
+            @for (group of groups(); track group.section) {
+                <rt-aside-section [heading]="group.section">
+                    <div rtElem="choices">
+                        @for (option of group.rights; track option.right) {
+                            <div rtElem="right" [attr.qa-dataid]="'person-access-right-' + option.right">
+                                <span rtElem="right-label">{{ option.action }}</span>
+                                <rt-select
+                                    rtElem="right-word"
+                                    [ariaLabel]="option.label"
+                                    [attr.qa-dataid]="'person-access-word-' + option.right"
+                                    [clearable]="false"
+                                    [formControlName]="option.right"
+                                    [options]="words()" />
+                                <span rtElem="right-outcome" [attr.qa-dataid]="'person-access-outcome-' + option.right">
+                                    {{ outcome()[option.right] }}
+                                </span>
+                            </div>
+                        }
+                    </div>
+                </rt-aside-section>
+            }
+        </ng-container>
+    </ng-container>
+
+    <rt-aside-footer>
+        <button
+            rtButton
+            asidePrimary
+            qa-dataid="person-access-submit"
+            type="button"
+            [attr.aria-label]="submitLabel()"
+            [label]="submitLabel()"
+            [loading]="submitting()"
+            (click)="submit()"></button>
+
+        <button
+            rtButton
+            asideDismiss
+            qa-dataid="person-access-close"
+            type="button"
+            appearance="text"
+            [attr.aria-label]="closeLabel()"
+            [label]="closeLabel()"
+            (click)="onClose()"></button>
+    </rt-aside-footer>
+</rt-aside>

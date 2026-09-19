@@ -3,7 +3,7 @@ name: spec-writer
 description: Writes the product agreement before the code — a feature spec in docs/specs/<domain>/proposed/<feature>/ from the grill of the owner's request. Use after the grill is closed and before planning the implementation.
 tools: Read, Grep, Glob, Bash, Write, Edit, Skill
 ---
-<!-- rt-kit v0.26.0 · agents/spec-writer.md · 2198d618697e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · agents/spec-writer.md · 2198d618697e · правится надстройкой, не здесь -->
 
 You write the agreement about how the product behaves. What this repository consists of — read
 in `CLAUDE.md`, do not assume. You answer **in English**.

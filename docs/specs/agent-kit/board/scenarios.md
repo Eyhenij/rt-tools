@@ -64,13 +64,13 @@ after three
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
-### SC-AK-845 — a request on top of a neighbouring one gets no run, and the audit names the reason
+### SC-AK-845 — a request whose base is not the main branch is not counted as lacking a run
 
-Given a request is opened into the branch of a neighbouring request, not into main
+Given a request is opened into a branch other than the main one
 When the work queue audit checks its tip
-Then it names the base, reports that there will be no run and that this is fixed by moving the base
-after the lower request is merged; there is no advice to reopen the request. A request into the main
-branch is checked by the former line about a lost event
+Then it says nothing about that request: the pipeline sees no event with such a base, and having
+no run there is the order of handing in. A request into the main branch is still judged by the
+line about a lost event
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
@@ -111,6 +111,16 @@ Then it stays silent
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
+### SC-AK-1107 — one line names both consequences of a base other than the main branch
+
+Given open requests whose base is not the main branch
+When the work queue audit goes
+Then one line counts them and names both consequences at once — the pipeline gives them no run,
+and the host closes no task on their merge — with how the task closes then; the line is not a
+divergence, and without such requests there is no line
+
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+
 ### SC-AK-998 — an epic without a branch and an epic whose tasks are over
 
 Given a card with the label of an epic, and no open request either from its branch or into it
@@ -132,3 +142,38 @@ When the same audit runs
 Then it stays silent
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+
+### SC-AK-1089 — the creating command and the audit read the path to the plan alike
+
+Given the card of an epic names two documents — a law and the plan — and the law stands first
+When a task of that epic is created
+Then its body carries the document that holds the makeup, not the law, and the branch of the epic
+is read from that same document: read by its own way, the command wrote the law into every task of
+the epic while both sides answered as usual
+
+Covered: `projects/agent-kit/tests/task-new-epic.test.sh`.
+
+### SC-AK-1093 — a list given in pages is read whole
+
+Given an epic whose linked tasks do not fit one page of the hosting's answer
+When the audit of the work queue runs
+Then a task lying past the first page is not named unlinked
+
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+
+### SC-AK-1112 — an open task in a closing column
+
+Given an open task whose card stands in a column named as a closing one
+When the work queue audit goes
+Then it names the task by a line of its own and counts it into the divergences; the line names both
+ways out — close the task, or move the card back
+
+Given the card of the same task stands in the column of review
+When the same audit goes
+Then it stays silent about the column
+
+Given the tree names no closing columns
+When the same audit goes
+Then no such line is printed
+
+Covered: `projects/agent-kit/tests/checks-board-columns.test.sh`.

@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law. Load when editing the session entry hook, the turn map and the check over it, and when deciding what a session gets into its context before the first reply. The course of work itself — rule task-flow.
 ---
-<!-- rt-kit v0.26.0 · rules/turn-entry.md · 3467db6c02c0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/turn-entry.md · 3467db6c02c0 · правится надстройкой, не здесь -->
 
 # Session entry — how it works here
 

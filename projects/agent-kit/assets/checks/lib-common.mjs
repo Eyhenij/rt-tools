@@ -13,12 +13,17 @@ import { CONFIG, ROOT, parseAllowlist } from './rt-kit-checks.config.mjs';
 
 const FAMILIES = CONFIG.families;
 /**
- * The lib root and the backend family come from the tree settings, not from the code: in a tree
+ * The lib root and the backend families come from the tree settings, not from the code: in a tree
  * that keeps its libs under another name the walk went past the code and the check went green on an
  * empty directory — that is, it answered "no violations" where it had not looked at all.
  */
 const LIBS_ROOT = CONFIG.libsRoot;
-const API_FAMILY = CONFIG.apiFamily;
+/**
+ * The backend families are a list, and a single name is read as a list of one: a tree holds more
+ * than one server application under the same root, and a family the walk skipped is
+ * indistinguishable from one walked without divergences.
+ */
+const API_FAMILIES = [CONFIG.apiFamily ?? []].flat().filter(Boolean);
 /**
  * The selector prefix mandatory for frontend libs. The word belongs to the tree entirely; empty
  * means the prefix means nothing here, and the check says nothing about it.
@@ -37,7 +42,7 @@ const COMMON_DOMAIN_LAYERS = [...FLAT_LAYERS, 'feature'].sort();
 /** The backend has no `ui` and no `shell`: it renders no markup and does no routing */
 const API_DOMAIN_LAYERS = ['api', 'data-access', 'feature', 'util'];
 /** Where libs that ended up outside the domain grid are looked for */
-const LIB_ROOTS = [...FAMILIES, API_FAMILY].map((family) => `${LIBS_ROOT}/${family}`);
+const LIB_ROOTS = [...FAMILIES, ...API_FAMILIES].map((family) => `${LIBS_ROOT}/${family}`);
 const REQUIRED_FILES = ['project.json', 'tsconfig.json', 'vitest.config.mts', 'src/index.ts'];
 const BOUNDARIES_DIR = 'eslint/boundaries/domains';
 
@@ -101,9 +106,51 @@ const isSingleLayerDomain = (path) => matches(pathsOf('singleLayerDomains'), pat
 /** Paths the lib walk must skip */
 const isIgnoredLib = (path) => isNotDomain(path) || isLegacyDomain(path) || isLegacyLib(path);
 
+/**
+ * The formula: what the name, the tag and the alias of a lib must become where the tree declared
+ * nothing. It is not the name itself — the name is what the tree wrote down. A tree that names its
+ * libs otherwise used to redden on flat ground, and the only way to silence that was the exceptions
+ * list.
+ */
 const projectName = (libPath) => libPath.replace(/^libs\//, '').replaceAll('/', '-');
 const projectTag = (libPath) => `scope:${projectName(libPath)}`;
 const importAlias = (libPath) => `${CONFIG.importScope}/${libPath.slice(`${LIBS_ROOT}/`.length)}`;
+
+/** The name the lib declared in its manifest; an empty string when it declared none. */
+function declaredName(libPath) {
+    if (!existsSync(join(ROOT, libPath, 'project.json'))) {
+        return '';
+    }
+    try {
+        return String(readJson(`${libPath}/project.json`).name ?? '');
+    } catch {
+        // Unreadable JSON is the business of the manifest check, and it says so in its own words:
+        // here a refusal would take down the whole walk over the neighbouring libs as well.
+        return '';
+    }
+}
+
+/** The name of the lib: the declared one, and the formula only where nothing is declared. */
+const libName = (libPath) => declaredName(libPath) || projectName(libPath);
+/** The tag of the lib: derived from its own name, not from its path. */
+const libTag = (libPath) => `scope:${libName(libPath)}`;
+
+/**
+ * The alias `tsconfig.base.json` points at this lib by. It is looked for by what it points at, not
+ * by its spelling: a lib is reachable by an alias or it is not, and how the tree spells the alias is
+ * the tree's own business. An empty string means no alias points here.
+ */
+function declaredAlias(libPath) {
+    const target = `./${libPath}/src/index.ts`;
+    let paths = {};
+    try {
+        paths = readJson('tsconfig.base.json').compilerOptions.paths ?? {};
+    } catch {
+        return '';
+    }
+
+    return Object.keys(paths).find((alias) => paths[alias]?.[0] === target) ?? '';
+}
 
 /**
  * The files of a lib, except the barrel: an empty layer has a barrel just as a filled one does, and
@@ -131,7 +178,7 @@ function sourceCount(libPath) {
 export {
     FAMILIES,
     LIBS_ROOT,
-    API_FAMILY,
+    API_FAMILIES,
     LIB_PREFIX,
     BARREL_FILES,
     FLAT_LAYERS,
@@ -157,5 +204,9 @@ export {
     projectName,
     projectTag,
     importAlias,
+    declaredName,
+    declaredAlias,
+    libName,
+    libTag,
     sourceCount,
 };

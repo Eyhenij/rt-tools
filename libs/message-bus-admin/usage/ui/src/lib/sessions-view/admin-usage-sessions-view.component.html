@@ -1,0 +1,20 @@
+<ng-container rtBlock="admin-panel">
+    <rt-aside-section [heading]="heading()">
+        @if (reading()) {
+            <rt-detail-list>
+                <rt-detail-row qa-dataid="usage-session-reading" [label]="dayLabel()" [loading]="true" />
+            </rt-detail-list>
+        } @else if (rows().length > 0) {
+            <rt-detail-list>
+                @for (row of rows(); track row.day + row.sid) {
+                    <rt-detail-row qa-dataid="usage-session" [label]="row.day">
+                        <span qa-dataid="usage-session-sid">{{ row.sid }}</span>
+                        <span rtElem="count" qa-dataid="usage-session-count">{{ countLabel() }}: {{ row.count }}</span>
+                    </rt-detail-row>
+                }
+            </rt-detail-list>
+        } @else {
+            <p rtElem="empty" qa-dataid="usage-sessions-missing">{{ missing() }}</p>
+        }
+    </rt-aside-section>
+</ng-container>

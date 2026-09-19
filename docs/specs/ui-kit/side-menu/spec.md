@@ -70,6 +70,37 @@ consumer, the address of the active item the kit does not count.
 - **The filter goes by a substring of the label without a count of the case, and an empty query shows
   everything.** There are no coincidences — the submenu says so by a line: an empty panel cannot be told
   from a breakage.
+- **The filter goes down into the folders of the submenu, and only rows carrying the query stay.** A
+  consumer puts what a person looks for by name inside a folder, so a filter over the top level alone could
+  not match it by construction. A folder is no exception from the rule but the path to what coincided: its
+  makeup is filtered the same way, whether the label of the folder itself coincided or not. Otherwise one
+  coincidence by the name of a folder drags its whole makeup onto the screen, and a person reads as found
+  what carries no query at all. A folder whose label coincided while nothing inside it did stays a single row
+  without items: it was looked for by name and must be found. An item that has no makeup at all stays an
+  item — an empty makeup is not ascribed to it.
+- **A folder that survived the filter stands open.** The found item lies behind a closed header otherwise,
+  and the person needs one more press to see what they have already found. Openness is not the same as
+  activity: active stays the address the person stands on, and one value for both would open only the folder
+  of the current address — that is, hide exactly what was looked for. An empty query gives the former
+  openness back.
+- **The field of the search owns the focus and hands the keys to the list.** The focus never leaves the
+  field, so the typing keeps working between presses of the arrows; the focus set on the items of the list
+  would break the typing of the query at the very first arrow. Only the keys the walk goes by are eaten — the
+  rest reach the field untouched and cancel no default.
+- **The arrows walk the visible list, Enter opens the highlighted item, Escape empties the query.** The
+  highlight goes down the list the way it stands on the screen and enters a folder only while that folder is
+  open; the arrow to the right opens the highlighted folder, the one to the left closes it. Enter presses the
+  very row a pointer would press — a press assembled in code would go past everything hanging on the real one.
+  The highlight is kept by the number of the item, not by a reference to it and not by its place in the list:
+  the visible list is rebuilt at every letter of the query.
+- **The magnifier and the cross of the emptying stand at one inset from their edges.** The inset of the cross
+  comes from the geometry of the ready-made button rather than from a step of the scale, so the magnifier is
+  brought to the nearest step by a measurement on the showcase, not by a number chosen by the eye. The inset
+  is counted from the edge of the field: the wrapper of the ready-made field carries a side inset of its own,
+  and its value depends on the set the consumer took. Left as it comes, it adds itself to the inset of the
+  icon, and the same kit stands one way on the showcase and another in an application.
+- **The item under the highlight of the keyboard is marked by a ring, not by a fill.** The fill is already
+  taken by the active address, and two different meanings by one look would read as one.
 - **The query lives while the submenu is open.** It is not a preference: a submenu closed and opened anew
   shows the list whole.
 - **The labels of the field, of the switch and of the empty filter are sewn in in English.** The kit has no

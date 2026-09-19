@@ -31,10 +31,18 @@ through the executor.
 
 ## Rules
 
-- **A request opened not into the main branch is named by a line of its own.** It will have no run:
-  the pipeline listens to requests into main and does not see events with another base. A line about a
-  lost event would be wrong twice over: the event was not lost, and reopening will not bring it back.
-  This is fixed by moving the base after the lower request is merged.
+- **A request whose base is not the main branch is not counted as lacking a run.** The pipeline
+  listens to requests into the main branch and sees no event with another base, so a request into
+  an epic branch lawfully has no run at all — that is the order of handing in, and the audit is
+  silent about it. A line here would stand on every task of every epic and teach to skip the
+  audit; and the advice to move the base is wrong outright: the base of a task request stays the
+  epic branch to the merge.
+- **What such a base means is named once, by one line with both consequences.** No run will come
+  to those requests, and the host closes no task on their merge — the tree closes those by a
+  pipeline of its own or by the hand. Named apart, the second consequence was read by nobody: the
+  line about the run was taken as the whole of it, and the tasks of a chain stayed open after
+  their merges. The line counts the open requests with such a base, is not a divergence, and a
+  tree without such requests gets no line.
 - **The answer of the work queue helper says whose eyes the state was taken by.** The helper reads a
   task by the token of the machine record, and a request without a token, as whoever the client is
   signed in under: the parse fields need rights over the accounts of the organisation, which the
@@ -42,6 +50,14 @@ through the executor.
   machine record is limited by the hosting took a person's picture for a checked one. The field
   `viewer` in the answer is `machine` or `client`; the login is not printed, fetching it would take a
   second request to the network.
+- **The creating command and the audit read the path to the plan by one and the same move.** A
+  value declared by one side of an exchange is not computed anew by the other: the audit took the
+  document carrying the makeup, while the command took the first path in the card body, and a card
+  naming a law before its plan wrote that law into every task of the epic. The branch of the epic
+  was then read from the law and came back empty. Both sides answered as usual, and the miss showed
+  only by reading a created task. The makeup is demanded of the audit and not of the command: the
+  command creates the tasks, and their numbers land in the plan after — demanded at creation, the
+  requirement would refuse the very first task of every epic.
 - **The plan of an epic is the document that carries the makeup, not the first path in the card.** A
   card names its decision next to its plan, and the decision has no table of tasks: read as the
   plan, it makes the makeup empty and every open task of the epic reads as not belonging to it —
@@ -69,12 +85,22 @@ through the executor.
 - **An epic whose tasks are over and whose request is not open is a divergence.** Until it opens,
   the work of the whole epic lies outside the main branch while looking finished: the board is
   empty, and only the epic card stays open.
+- **An open task whose card stands in a closing column is a divergence.** A closing column says the
+  work is merged, and a merge closes the task itself: a card left there with the task open says two
+  different things at once. By the board such work reads as finished, and nobody looks at it again.
+  Seven tasks stood so for two days after their merges, and the audit named none of them: it judged
+  the column of a task awaiting review and knew no other. The tree names its closing columns itself;
+  unnamed — the line is not printed at all.
 - **A task naming neither an epic nor the word of the owner is a divergence.** The guard refuses
   such a task at the creating command, and only there: a card made through the web goes past every
   guard, and one created before this order came in has neither line. By the queue it reads as
   ordinary work, and that nothing stands behind it shows nowhere.
 - **The cargo of the trees is not judged by this line.** Those records are not tasks at all — no
   title with a number, no executor, no place on the board.
+- **A list the hosting gives in pages is read whole, not by its first page.** An epic outgrows one
+  page long before it is closed, and the tail then reads as missing: the audit names a linked task
+  unlinked. The cost is not the false line but the habit — it stands in every run, the eye stops
+  reading it, and a real divergence rides past together with it.
 
 ## What is out of scope
 
@@ -132,6 +158,8 @@ There are no open questions.
 
 ## History of changes
 
+- 2026-09-17 — an open task in a closing column is a divergence: rule, scenario `SC-AK-1112`, the binding.
+- 2026-09-15 — one line names both consequences of a base other than the main branch: rule, scenario `SC-AK-1107`, the binding.
 - **2026-09-08** — the subdomain was split out of the checks of the tree: the scenario file had
   outgrown the length limit, and it is split by subject, not by moving the boundary. The scenario
   numbers were not recounted at the move: the number ties the scenario to its test title.

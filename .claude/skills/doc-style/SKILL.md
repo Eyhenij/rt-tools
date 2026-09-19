@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing any .md including specs, and also code comments, commit bodies and PR descriptions. Names the path check, the pairs of an edit and its document, and what nothing checks in this tree. Ready-made wording is in pattern doc-style-write.
 ---
-<!-- rt-kit v0.26.0 · rules/doc-style.md · 2528f8240f60 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/doc-style.md · 3a783cccdc7d · правится надстройкой, не здесь -->
 
 # Project texts — how it works here
 
@@ -175,6 +175,12 @@ flowchart TD
   the run turned red for something other than the branch's change.
   <!-- rt-when: *.md -->
 
+- **The removal by expiry is not carried by whichever branch pushed first.** The check stands in the
+  gate of every branch, so the cleanup lands in the first work to reach a push and travels to the
+  reviewer inside an edit that has nothing to do with it. Either the cleanup is work of its own with
+  a task of its own, or the check refuses the run and not the push.
+  <!-- rt-when: *.md -->
+
 - **A link to a record of the past in a live text lives exactly until the record's expiry.** The
   address check does not read the archive at all, so the dead link turns red not there but in the
   text that referenced it. A live text names the decision in words, not by the record's address.
@@ -223,8 +229,9 @@ written in.
   the tree's documents are written in English: a session reads them, and English text costs it a
   fifth less with the same articles. A task in the queue, a PR description, a commit body and a
   chat reply are written in the owner's language: the owner reads them, and the rules layer does
-  not. A text written in the other side's language is a miss of the same kind as a layer word in
-  a task: its addressee will not read it.
+  not. So are an incident analysis and a record of closed work: the owner reads them as the account
+  of what happened. A text written in the other side's language is a miss of the same kind as a
+  layer word in a task: its addressee will not read it.
   <!-- rt-when: любой текст -->
 
 ## What of the law is not here

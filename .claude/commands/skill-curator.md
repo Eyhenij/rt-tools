@@ -2,7 +2,7 @@
 description: Review of a closed task through the eyes of the tree's rules — what was loaded, what helped, what was missing
 argument-hint: '[empty | <what to look at first>]'
 ---
-<!-- rt-kit v0.26.0 · commands/skill-curator.md · 37f040b442bd · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · commands/skill-curator.md · 37f040b442bd · правится надстройкой, не здесь -->
 
 Launch the `skill-curator` agent on the review of the task just closed. The user's emphasis:
 `$ARGUMENTS`

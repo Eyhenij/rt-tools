@@ -10,39 +10,22 @@
  * файла не встречается, и проверка раскладки видела бы либу неописанной.
  */
 
+import {
+    AUTH_DATA_ACCESS,
+    CONTRACT,
+    CORE_API,
+    CORE_DATA_ACCESS,
+    CORE_FEATURE,
+    CORE_UI,
+    CORE_UTIL,
+    PACKAGE,
+} from './message-bus-admin.tags.mjs';
+
 /** Слой утилит домена входа: род отказа и модели читают все, кто про вход говорит. */
 const AUTH_UTIL = 'scope:message-bus-admin-auth-util';
 
-/** Состояние входа. Живёт в одном экземпляре: второй ответил бы на вопрос «вошёл ли» иначе. */
-const AUTH_DATA_ACCESS = 'scope:message-bus-admin-auth-data-access';
-
 /** Меню объявлением: его читает оболочка, а заводится оно вместе со своим экраном. */
 const CONTAINER_UTIL = 'scope:message-bus-admin-common-container-util';
-
-/**
- * Публикуемые пакеты дерева: киты, основание и утилиты. Стоят в списке у каждой либы админки —
- * из них она и собрана целиком. Метка нужна именно как имя цели: без неё либа с объявленным
- * списком не видит пакет вовсе, потому что первое подходящее правило выигрывает и до общего
- * разрешения дело не доходит.
- */
-const PACKAGE = 'scope:package';
-
-/**
- * Общий слой админки: словарь, обращение к операциям чтения, выборка в адресе, основа
- * списочного стора и общий вид страницы списка. Механика, а не предмет: разделы груза зовут её
- * все три, и разложенная по ним заново она расходилась бы молча.
- */
-const CORE_UTIL = 'scope:message-bus-admin-common-core-util';
-const CORE_API = 'scope:message-bus-admin-common-core-api';
-const CORE_DATA_ACCESS = 'scope:message-bus-admin-common-core-data-access';
-const CORE_UI = 'scope:message-bus-admin-common-core-ui';
-const CORE_FEATURE = 'scope:message-bus-admin-common-core-feature';
-
-/**
- * Форма того, что отдаёт приёмник: страница, выборка и дерево. Её знают обе стороны, и админка
- * читает её у источника, а не заводит свою копию — копия разошлась бы с контрактом молча.
- */
-const CONTRACT = 'scope:message-bus-common';
 
 /**
  * Раздел разборов происшествий: модели и маппер, обращение к своим операциям, сторы списка и
@@ -74,6 +57,16 @@ const SUMMARIES_DATA_ACCESS = 'scope:message-bus-admin-summaries-data-access';
 const SUMMARIES_UI = 'scope:message-bus-admin-summaries-ui';
 
 /**
+ * Раздел использования правил. Устроен теми же семью слоями и теми же рёбрами, что и разделы
+ * груза: своего у него только модели, столбцы, отбор по периоду и панель сессий вместо панели
+ * подробностей.
+ */
+const USAGE_UTIL = 'scope:message-bus-admin-usage-util';
+const USAGE_API = 'scope:message-bus-admin-usage-api';
+const USAGE_DATA_ACCESS = 'scope:message-bus-admin-usage-data-access';
+const USAGE_UI = 'scope:message-bus-admin-usage-ui';
+
+/**
  * Раздел приглашений: модели и решения раздела, отзыв приглашения, стор списка, экран и маршрут.
  * Слоя вида у него нет — ячейки строки показывают готовые поля, и своего вида разделу не нужно.
  */
@@ -88,15 +81,21 @@ export const messageBusAdminBoundaries = [
     // Словарь общего слоя приложение видит потому, что кит настраивается здесь: подписи кита
     // отдаются ему провайдером рядом с иконками, а лежат они там же, где подписи экранов, —
     // разложенные по двум местам, они расходятся молча
+    //
+    // Утилиты входа — ради слов адресов: маршруты собираются здесь, а объявлены адреса там,
+    // рядом друг с другом. Своё слово в маршрутах разошлось бы с тем, по которому уводят стражи
     {
         sourceTag: 'scope:admin-app',
         onlyDependOnLibsWithTags: [
             'scope:message-bus-admin-auth-shell',
+            AUTH_UTIL,
             'scope:message-bus-admin-common-container-feature',
             'scope:message-bus-admin-postmortems-shell',
             'scope:message-bus-admin-proposals-shell',
             'scope:message-bus-admin-summaries-shell',
+            'scope:message-bus-admin-usage-shell',
             'scope:message-bus-admin-invites-shell',
+            'scope:message-bus-admin-accounts-shell',
             CORE_UTIL,
             PACKAGE,
         ],
@@ -112,24 +111,47 @@ export const messageBusAdminBoundaries = [
         sourceTag: 'scope:message-bus-admin-auth-feature-sign-in',
         onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-ui', AUTH_DATA_ACCESS, AUTH_UTIL, CORE_UI, CORE_UTIL, PACKAGE],
     },
+    // Экран первой записи стоит на той же раскладке входа и видит то же, что экран входа, кроме
+    // формы входа: у его формы своё слово отказа — то, что сказал приёмник, — а не род отказа
+    // по паре. Форму он держит сам, на готовых полях кита
+    {
+        sourceTag: 'scope:message-bus-admin-auth-feature-setup',
+        onlyDependOnLibsWithTags: [AUTH_DATA_ACCESS, AUTH_UTIL, CORE_UI, CORE_UTIL, PACKAGE],
+    },
     // Стражи закрытой ветки стоят здесь оба, и второй читает право раздела из объявления пункта
     // меню: свой список прав рядом с маршрутами разошёлся бы с меню молча. Оболочку он при этом
     // не видит — она грузится по требованию, и статическая ссылка на неё это потеряла бы
+    // Словарь маршруты входа видят по той же причине, что и меню: заголовок вкладки они называют
+    // ключом, а текст по нему спрашивают на каждом переходе — написанный здесь строкой, он остался
+    // бы на одном языке при любом выборе человека
     {
         sourceTag: 'scope:message-bus-admin-auth-shell',
-        onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-feature-sign-in', AUTH_DATA_ACCESS, AUTH_UTIL, CONTAINER_UTIL, PACKAGE],
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-admin-auth-feature-sign-in',
+            'scope:message-bus-admin-auth-feature-setup',
+            AUTH_DATA_ACCESS,
+            AUTH_UTIL,
+            CONTAINER_UTIL,
+            CORE_UTIL,
+            PACKAGE,
+        ],
     },
+    // Форма входа видит словарь по той же причине, что шапка и меню: подписи её полей, кнопки и
+    // текстов отказа лежат там, где остальные подписи админки, — написанные здесь литералом, они
+    // остались бы на одном языке при любом выборе человека
     {
         sourceTag: 'scope:message-bus-admin-auth-ui',
-        onlyDependOnLibsWithTags: [AUTH_UTIL, PACKAGE],
+        onlyDependOnLibsWithTags: [AUTH_UTIL, CORE_UTIL, PACKAGE],
     },
     {
         sourceTag: 'scope:message-bus-admin-auth-data-access',
         onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-api', AUTH_UTIL, PACKAGE],
     },
+    // Обращение входа видит общий слой обращений ради разбора отказа правки: заведение первой
+    // записи отвечает словом приёмника, и читается оно тем же разбором, что у правок людей
     {
         sourceTag: 'scope:message-bus-admin-auth-api',
-        onlyDependOnLibsWithTags: [AUTH_UTIL, PACKAGE],
+        onlyDependOnLibsWithTags: [AUTH_UTIL, CORE_API, PACKAGE],
     },
 
     // Оболочка: она знает, кто вошёл, куда его вывести при выходе, из чего собрано меню и чем
@@ -343,6 +365,52 @@ export const messageBusAdminBoundaries = [
             'scope:message-bus-admin-summaries-feature-list',
             'scope:message-bus-admin-summaries-feature-details-aside',
             SUMMARIES_UTIL,
+            CORE_UTIL,
+            PACKAGE,
+        ],
+    },
+
+    // Раздел использования правил. Лесенка та же и тем же перечислением, что у разделов груза
+    {
+        sourceTag: 'scope:message-bus-admin-usage-util',
+        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-usage-api',
+        onlyDependOnLibsWithTags: [USAGE_UTIL, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-usage-data-access',
+        onlyDependOnLibsWithTags: [USAGE_API, USAGE_UTIL, CORE_DATA_ACCESS, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-usage-ui',
+        onlyDependOnLibsWithTags: [USAGE_UTIL, CORE_UI, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-usage-feature-list',
+        onlyDependOnLibsWithTags: [
+            USAGE_DATA_ACCESS,
+            USAGE_UI,
+            USAGE_UTIL,
+            CORE_FEATURE,
+            CORE_UI,
+            CORE_DATA_ACCESS,
+            CORE_UTIL,
+            CONTRACT,
+            PACKAGE,
+        ],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-usage-feature-sessions-aside',
+        onlyDependOnLibsWithTags: [USAGE_DATA_ACCESS, USAGE_UI, USAGE_UTIL, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-usage-shell',
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-admin-usage-feature-list',
+            'scope:message-bus-admin-usage-feature-sessions-aside',
+            USAGE_UTIL,
             CORE_UTIL,
             PACKAGE,
         ],

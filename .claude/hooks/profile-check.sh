@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/profile-check.sh · b80040d09e3a · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/profile-check.sh · b80040d09e3a · правится надстройкой, не здесь
 # A missing profile function, said out loud. NOT a guard: it has no `rt-hook:` declaration and hooks
 # into no agent event. The guards source it themselves — the same way the gate sources the map and
 # the guards source the observation record.

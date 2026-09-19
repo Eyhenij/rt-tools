@@ -1,6 +1,6 @@
 # The rules gate
 
-**Status:** in force · **Revision:** 2026-08-23 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-09-10 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `verifiability`, `work-conduct`
 **Procedures:** none
@@ -36,6 +36,15 @@ The gate has no interface: only the executor sees it — as the text of a refusa
   rules about types and about styling, and the comments retell those rules by name.
 - **The check of repeats demands the rule whose signs it carries out, and only it.** Two refusals in
   a row at an edit of two lines of a comment cost a session, and the second rule read is of no use.
+- **The image, the proxy config and the sample of the production environment demand the rule of the
+  rollout.** They speak of the server, the ports and the variables the image is raised with, and the
+  rule about tasks and branches is silent about all three: it was demanded there because both live
+  next to the merge. What is written into these files nobody sees until the rollout, and by then it
+  is production that answers.
+- **The pipeline demands two rules, and the rollout one goes first.** Its subject is double: which
+  checks run before the merge, and what reaches production after it. The set before a push is
+  written by the executor every day, while the rollout steps are read once and are the ones edited
+  blindly.
 - **Creating a working tree loads the rule of delivery.** A fresh tree looks ready and runs into the
   shortage not at once but at the first guard that needs a key.
 - **The layers on top of the domain rule are declared by a file of their own, not by lines in the
@@ -87,6 +96,13 @@ The gate has no interface: only the executor sees it — as the text of a refusa
   checked the extension of the edited file and stayed silent at such a command.
 - **Two signs are judged at once: the call of the client and the body in the arguments.** One word
   about a request is not enough — it is in the line of any command that writes about it.
+- **The gate forgets the loaded rules when the text of the rules leaves the session.** The gate
+  remembers a loading by the sign of the session, and compaction and clearing leave that sign as it
+  was while carrying the rule text out: without forgetting, the gate would keep letting the area
+  through while the work goes by a retelling.
+- **The forgetting is told to the session in words.** A silent one reads as breakage: the summary
+  says the rules are loaded, the gate answers that they are not, and the session spends a turn on
+  which of the two is right.
 
 ## What is out of scope
 
@@ -162,6 +178,8 @@ The open questions of the domain are shared, and they live in the spec next to i
 
 ## History of changes
 
+- 2026-09-10 — the forgetting of loaded rules on compaction was written down. The hook stood in the
+  package with neither an article nor a probe.
 - 2026-08-23 — the subdomain was split out of the subdomain of the edit guards, which had outgrown
   the length limit. The rules, scenarios and bindings of the gate moved here as they were: the
   scenario numbers were not recounted.

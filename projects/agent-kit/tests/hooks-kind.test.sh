@@ -38,36 +38,20 @@ done
 report "SC-AK-1036 — объявление называет событие и, где надо, инструменты" "$half_declared" 0
 
 # --- SC-AK-1037 — помощник говорит о себе, что он не страж -------------------------------------
-# Долг известен и назван поимённо: тринадцать помощников из двадцати пяти о себе молчат. Список
-# только убывает — новый помощник, который о себе не сказал, роняет пробу.
-HELPERS_SILENT='browser-device-id.sh commit-msg.sh git-guard-delivery-conflict.sh
-git-guard-delivery-draft.sh git-guard-delivery-signature.sh rule-article.sh skill-gate-layers.sh
-sql-guard-parse.sh sql-guard-request.sh sql-guard-target.sh sql-guard-write.sh utf8.sh
-write-targets.sh'
 silent_helpers=0
 for hook in "$HOOK_DIR"/*.sh; do
     is_guard "$hook" && continue
-    name="$(basename "$hook")"
-    case " $(printf '%s' "$HELPERS_SILENT" | tr '\n' ' ') " in
-        *" $name "*) continue ;;
-    esac
     head -12 "$hook" | grep -qiE 'not a guard|hooks into no' || silent_helpers=$((silent_helpers + 1))
 done
-report "SC-AK-1037 — новых молчащих помощников нет" "$silent_helpers" 0
+report "SC-AK-1037 — помощники говорят о себе" "$silent_helpers" 0
 
 # --- SC-AK-1038 — страж отбивает в пользу работы ------------------------------------------------
-# Тот же долг и тот же порядок: четыре стража из тридцати об отказе в пользу работы молчат.
-FAILOPEN_SILENT='browser-guard-device-id.sh dev-server-guard.sh skill-loaded.sh stand-login-guard.sh'
 silent_failopen=0
 for hook in "$HOOK_DIR"/*.sh; do
     is_guard "$hook" || continue
-    name="$(basename "$hook")"
-    case " $FAILOPEN_SILENT " in
-        *" $name "*) continue ;;
-    esac
     grep -qiE 'FAIL-OPEN|fail-open' "$hook" || silent_failopen=$((silent_failopen + 1))
 done
-report "SC-AK-1038 — новых стражей без отказа в пользу работы нет" "$silent_failopen" 0
+report "SC-AK-1038 — отказ в пользу работы объявлен каждым стражем" "$silent_failopen" 0
 
 # --- SC-AK-1039 — отказ называет законные ходы --------------------------------------------------
 # Общий хвост отказа лежит в одном помощнике: страж, который его не зовёт и не пишет свой,
@@ -102,10 +86,10 @@ report "SC-AK-1040 — отказ называет причину" "$mute_refusa
 
 # --- SC-AK-1041 — страж читает ввод от агента ---------------------------------------------------
 # Ввод приходит по стандартному вводу вызова; общее чтение лежит в помощнике рядом.
-# Семь стражей ввод не читают вовсе: одни печатают в начале захода, другие судят только дерево.
+# Восемь стражей ввод не читают вовсе: одни печатают в начале захода, другие судят только дерево.
 # Требование к ним не относится, и список назван поимённо.
 NO_INPUT='browser-guard-no-listing.sh constitution-index.sh glossary-load.sh task-context-load.sh
-task-flow-draft-guard.sh task-flow-guard.sh turn-entry-load.sh'
+main-run-context.sh task-flow-draft-guard.sh task-flow-guard.sh turn-entry-load.sh'
 own_reading=0
 for hook in "$HOOK_DIR"/*.sh; do
     is_guard "$hook" || continue
@@ -133,18 +117,13 @@ report "SC-AK-1043 — проверки говорят вслух" "$silent_empt
 
 # --- SC-AK-1044 — у каждого стража есть набор проб ----------------------------------------------
 # Набор находится по упоминанию имени стража в любом наборе проб пакета.
-# Четыре стража проб не имеют, и это долг, а не решение. Список только убывает.
-NO_SUITE='browser-guard-no-listing.sh dev-server-guard.sh skill-gate-rearm.sh sql-guard.sh'
 unguarded=0
 for hook in "$HOOK_DIR"/*.sh; do
     is_guard "$hook" || continue
     name="$(basename "$hook")"
-    case " $NO_SUITE " in
-        *" $name "*) continue ;;
-    esac
     grep -qrF "$name" "$TESTS_DIR"/*.test.sh 2>/dev/null || unguarded=$((unguarded + 1))
 done
-report "SC-AK-1044 — новых стражей без проб нет" "$unguarded" 0
+report "SC-AK-1044 — стражей без проб не осталось" "$unguarded" 0
 
 # --- SC-AK-1045 — признаки лежат данными, а не кодом --------------------------------------------
 not_data=0

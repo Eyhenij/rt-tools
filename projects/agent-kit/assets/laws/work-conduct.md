@@ -168,6 +168,10 @@ one session and keeps its whole context and state when it passes to the next.
   looks at it. An epic with one card out of ten looks there like one step of work. The card number
   goes into the plan by the same edit: otherwise the plan answers "take the next one" with a title,
   and the card is created again under a new number.
+- **Taking the first task of an epic takes the epic itself into work, and the epic card says so.**
+  The owner follows the epic by one card, not by its tasks; a card that stays where the epic was
+  declared reads as an epic nobody started, however many of its tasks are already done. The card
+  moves by the same motion as the first task's, not by a separate step remembered later.
 - **An executor's session does not end together with the task.** The end of a task is not a sign to
   stop: only the window fill limit allows stopping. A session closed on a finished task leaves the
   owner a blank and costs a whole session to return to what was at hand.

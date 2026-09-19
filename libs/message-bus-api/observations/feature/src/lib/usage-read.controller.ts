@@ -1,0 +1,122 @@
+/**
+ * `GET /api/usage` и `GET /api/usage/:skill/sessions` — использование правил дерева за период.
+ *
+ * Обе операции закрыты правом `usage:read` — своим, не правом сводок: раздел свой, и закрытый
+ * набор прав называет каждый раздел по имени. Вошедший видит любое дерево — учётная запись
+ * принадлежит службе, а не дереву, и выбор дерева сужает показанное, а не доступ.
+ *
+ * Считает хранилище; здесь — разбор запроса, дерево по признаку и отказы: страница или порядок
+ * не разобрались — `400`, период не двумя днями или длиннее предела — `400`, дерево не названо
+ * или не найдено — `404`. Период, которого запрос не назвал, подставляет приёмник по своим часам,
+ * и ответ его называет.
+ *
+ * `GET /api/usage/digest` — сводка периода для графика и списков над таблицей: дни, роды, пять
+ * самых загружаемых скилов и пять самых отказываемых. Своя операция, а не поля страницы: страница
+ * меняется с порядком и номером, сводка — только с периодом.
+ */
+import { BadRequestException, Controller, Get, NotFoundException, Param, Query } from '@nestjs/common';
+
+import { RequiresRight } from '@rt/message-bus-api/access/util';
+import {
+    findTreeIdBySlug,
+    IUsageAsked,
+    readUsage,
+    readUsageDays,
+    readUsageKinds,
+    readUsageSessions,
+} from '@rt/message-bus-api/observations/data-access';
+import { IUsagePeriod, usageDaysOf, usagePeriodFault, usagePeriodOf, usageTreeOf } from '@rt/message-bus-api/observations/util';
+import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
+import {
+    ERefusal,
+    IPageAsked,
+    IUsageDayRow,
+    IUsageDigest,
+    IUsageKindRow,
+    IUsagePage,
+    IUsageRow,
+    IUsageSessionRow,
+    pageAsked,
+    pageFault,
+    refusalBody,
+    TRight,
+    USAGE_SORTABLE,
+} from '@rt/message-bus-common';
+
+/** Право, которым закрыты все три операции. */
+const READ_RIGHT: TRight = 'usage:read';
+
+/** Сколько скилов несёт каждый из двух списков сводки. */
+const USAGE_DIGEST_TOP: number = 5;
+
+@Controller('usage')
+export class UsageReadController {
+    readonly #prisma: PrismaService;
+
+    constructor(prisma: PrismaService) {
+        this.#prisma = prisma;
+    }
+
+    /** Страница таблицы скилов за период. Пустой период — пустая страница, а не отказ. */
+    @Get()
+    @RequiresRight(READ_RIGHT)
+    public async usage(@Query() query: Record<string, unknown>): Promise<IUsagePage> {
+        const fault: string | null = pageFault(query, USAGE_SORTABLE);
+
+        if (fault) {
+            throw new BadRequestException(fault);
+        }
+        const page: IPageAsked = pageAsked(query, USAGE_SORTABLE);
+
+        return readUsage(this.#prisma, { ...page, ...(await this.#asked(query)) });
+    }
+
+    /** Сводка периода: дни с нулями, роды, два списка по пять скилов. Пустой период — нули и пустые списки. */
+    @Get('digest')
+    @RequiresRight(READ_RIGHT)
+    public async digest(@Query() query: Record<string, unknown>): Promise<IUsageDigest> {
+        const asked: IUsageAsked = await this.#asked(query);
+        const top: IPageAsked = { tree: usageTreeOf(query), page: 1, size: USAGE_DIGEST_TOP, sort: 'loads', dir: 'desc' };
+        const [days, kinds, loaded, denied]: [readonly IUsageDayRow[], readonly IUsageKindRow[], IUsagePage, IUsagePage] =
+            await Promise.all([
+                readUsageDays(this.#prisma, asked),
+                readUsageKinds(this.#prisma, asked),
+                readUsage(this.#prisma, { ...asked, ...top }),
+                readUsage(this.#prisma, { ...asked, ...top, sort: 'denials' }),
+            ]);
+
+        return {
+            kinds,
+            from: asked.from,
+            to: asked.to,
+            days: usageDaysOf(asked, days),
+            top: loaded.rows.filter((row: IUsageRow): boolean => row.loads > 0),
+            denied: denied.rows.filter((row: IUsageRow): boolean => row.denials > 0),
+        };
+    }
+
+    /** Сессии одного скила за период, свежий день первым. */
+    @Get(':skill/sessions')
+    @RequiresRight(READ_RIGHT)
+    public async sessions(@Param('skill') skill: string, @Query() query: Record<string, unknown>): Promise<readonly IUsageSessionRow[]> {
+        return readUsageSessions(this.#prisma, await this.#asked(query), skill);
+    }
+
+    /** Дерево и период из запроса. Отказы — по порядку чтения: сначала период, потом дерево. */
+    async #asked(query: Record<string, unknown>, now: Date = new Date()): Promise<IUsageAsked> {
+        const fault: string | null = usagePeriodFault(query);
+
+        if (fault) {
+            throw new BadRequestException(fault);
+        }
+        const slug: string = usageTreeOf(query);
+        const treeId: string | null = slug ? await findTreeIdBySlug(this.#prisma, slug) : null;
+
+        if (!treeId) {
+            throw new NotFoundException(refusalBody(ERefusal.TreeUnknown, { slug }));
+        }
+        const period: IUsagePeriod = usagePeriodOf(query, now);
+
+        return { treeId, from: period.from, to: period.to };
+    }
+}

@@ -10,6 +10,7 @@ mkdir -p "$BOARD_TREE/tools" "$BOARD_TREE/.claude/rt-kit" "$BOARD_TREE/docs/task
 cp "$CHECKS/rt-kit-checks.config.mjs" "$BOARD_TREE/tools/"
 cp "$CHECKS/board.github.mjs" "$BOARD_TREE/tools/board.mjs"
 cp "$CHECKS/board-epic-link.github.mjs" "$BOARD_TREE/tools/board-epic-link.mjs"
+cp "$CHECKS/board-epic-plan.github.mjs" "$BOARD_TREE/tools/board-epic-plan.mjs"
 cp "$CHECKS/board-task-dirs.github.mjs" "$BOARD_TREE/tools/board-task-dirs.mjs"
 cp "$CHECKS/board-gh.github.mjs" "$BOARD_TREE/tools/board-gh.mjs"
 cp "$CHECKS/board-runs.github.mjs" "$BOARD_TREE/tools/board-runs.mjs"
@@ -20,6 +21,7 @@ cp "$CHECKS/board-epics.github.mjs" "$BOARD_TREE/tools/board-epics.mjs"
 cp "$CHECKS/board-folders.mjs" "$BOARD_TREE/tools/board-folders.mjs"
 cp "$CHECKS/board-long-work.github.mjs" "${BOARD_TREE}/tools/board-long-work.mjs"
 cp "$CHECKS/check-board.github.mjs" "$BOARD_TREE/tools/check-board.mjs"
+cp "$CHECKS/main-run.github.mjs" "$BOARD_TREE/tools/main-run.mjs"
 printf '%s\n' 'on: pull_request' 'jobs:' '    main:' '        steps:' '            - name: Lint' \
     > "$BOARD_TREE/.github/workflows/ci.yml"
 
@@ -35,7 +37,20 @@ case "$args" in
     "issue list"*) printf '%s' "$STUB_ISSUES" ;;
     "pr list"*) printf '%s' "$STUB_PULLS" ;;
     "pr view"*files*) printf '%s' "${STUB_FILES}" ;;
+    # Хостинг отдаёт подзадачи страницами, и вызов без пролистывания получает только первую.
+    # Помощник различает их поэтому: с одним списком на оба вида вызова сценарий был бы зелёным
+    # и на коде, который читает одну страницу из двух. Признак ищется по всей строке вызова: он
+    # стоит перед путём, а не после него.
+    *sub_issues*)
+        case "$args" in
+            *--paginate*) printf '%s\n' "${STUB_SUB_ISSUES:-[]}" ;;
+            *) printf '%s\n' "${STUB_SUB_ISSUES_PAGE:-${STUB_SUB_ISSUES:-[]}}" ;;
+        esac
+        ;;
     *contents*) printf 'Not Found\n' >&2; exit 1 ;;
+    # Последний прогон главной ветки и последняя выкатка спрашиваются одним видом вызова: их
+    # различает имя потока — прогон идёт у файла конвейера, выкатка у потока выкатки.
+    *workflows/ci.yml/runs*) printf '%s\n' "${STUB_MAIN_RUN:-}" ;;
     *actions/workflows/*runs*) printf '%s\n' "$STUB_DEPLOY" ;;
     *actions/runs/*/jobs*) printf '%s\n' "${STUB_JOBS:-0}" ;;
     *actions/runs*tojson*) printf '%s\n' "${STUB_EVICTED:-[]}" ;;

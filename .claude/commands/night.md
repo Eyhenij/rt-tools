@@ -2,7 +2,7 @@
 description: The start of an autonomous session — the time boundary, the checks before the first work, the cycle until morning and the list the owner reads
 argument-hint: '[until when: «до 8 утра» | «часов шесть» | empty — the boundary is asked]'
 ---
-<!-- rt-kit v0.26.0 · commands/night.md · 37dfd93b1198 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · commands/night.md · 37dfd93b1198 · правится надстройкой, не здесь -->
 
 Start an autonomous session: the owner is leaving, and the work goes on without them until the
 boundary they named. The boundary from the owner: `$ARGUMENTS`

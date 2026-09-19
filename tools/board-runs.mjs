@@ -1,4 +1,4 @@
-// rt-kit v0.26.0 · checks/board-runs.github.mjs · 7a1873d9ab83 · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/board-runs.github.mjs · 8e457772d545 · правится надстройкой, не здесь
 /**
  * The state of the runs and of the rollout at the hosting: what stands on the head, how it ended
  * and by how much production has fallen behind the main branch.
@@ -11,8 +11,8 @@
  * No network or no token — the calls throw `OfflineError`, like the rest of the work with the
  * hosting: an inability to ask does not count as a discrepancy.
  */
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
+import { basename, join } from 'node:path';
 
 import { OWNER, REPO, gh } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
@@ -168,6 +168,106 @@ export function evictedOnHead(sha, options) {
         .filter((run) => run.status === 'completed' && run.conclusion === 'cancelled')
         .filter((run) => jobCount(run.id, options) === 0)
         .map((run) => run.id);
+}
+
+/**
+ * Whether the pipeline wakes on a push to the main branch.
+ *
+ * A pipeline that listens to requests alone never runs on the main branch, and the absence of a
+ * run there says nothing: a tree like that gets no finding about the main run, and the audit says
+ * so out loud. The trigger is read from the pipeline file by its `on` block: a `push` key without
+ * a list of branches wakes on every branch, one with a list — on the branches named.
+ */
+export function pipelineWakesOnPush(pipelineText, mainBranch) {
+    const lines = pipelineText.split('\n');
+    const indentOf = (line) => line.length - line.trimStart().length;
+    // The lines of a block: those below its key and indented deeper than it, blank ones included.
+    const blockAfter = (index) => {
+        const depth = indentOf(lines[index]);
+        const body = [];
+        for (let i = index + 1; i < lines.length; i += 1) {
+            if (lines[i].trim() !== '' && indentOf(lines[i]) <= depth) {
+                break;
+            }
+            body.push(lines[i]);
+        }
+        return body;
+    };
+
+    const onIndex = lines.findIndex((line) => /^on:\s*(#.*)?$/.test(line));
+    if (onIndex === -1) {
+        // The short form: `on: push` or `on: [push, pull_request]` — a push without a list of
+        // branches wakes on every branch.
+        return lines.some((line) => /^on:\s*(\[.*\bpush\b.*\]|push)\s*(#.*)?$/.test(line));
+    }
+
+    const on = blockAfter(onIndex);
+    const pushIndex = on.findIndex((line) => /^\s+push:\s*(#.*)?$/.test(line));
+    if (pushIndex === -1) {
+        return on.some((line) => /^\s+push:\s*\S/.test(line));
+    }
+
+    const pushLines = on.slice(pushIndex);
+    const pushDepth = indentOf(pushLines[0]);
+    const push = pushLines.slice(1).filter((line) => line.trim() === '' || indentOf(line) > pushDepth);
+    const branchesIndex = push.findIndex((line) => /^\s+branches:/.test(line));
+    if (branchesIndex === -1) {
+        return true;
+    }
+
+    const inline = /^\s+branches:\s*\[(.*)\]/.exec(push[branchesIndex]);
+    const names = inline
+        ? inline[1].split(',')
+        : push
+              .slice(branchesIndex + 1)
+              .filter((line) => /^\s+-\s/.test(line))
+              .map((line) => line.replace(/^\s+-\s*/, ''));
+    return names.map((name) => name.trim().replace(/^['"]|['"]$/g, '')).includes(mainBranch);
+}
+
+/**
+ * How the last run of the pipeline on the main branch ended: `success`, `failure`, `running`,
+ * `evicted` if it was pushed out of the queue and never started, or `none` if there was no run.
+ *
+ * The main branch is asked about apart from the rollout and apart from the tips of open requests.
+ * A merge is read as the end of the work, and the run it starts is read by nobody: a red run of the
+ * main branch stood for a day and a half, the rollout behind it did not go, and the owner said so.
+ * A cancelled run is told from a fallen one by its step count, the same way as on a request tip:
+ * zero steps means the queue pushed it out for the next merge, and the merge was checked by nothing.
+ */
+export function lastMainRun(mainBranch, options) {
+    const runs = gh(
+        [
+            'api',
+            `repos/${OWNER}/${REPO}/actions/workflows/${encodeURIComponent(basename(PIPELINE))}/runs` +
+                `?branch=${encodeURIComponent(mainBranch)}&per_page=1`,
+            '--jq',
+            '[.workflow_runs[] | {id, status, conclusion, sha: .head_sha, at: .created_at, url: .html_url}] | first // empty',
+        ],
+        options
+    );
+    const last = String(runs).trim();
+    if (!last) {
+        return { verdict: 'none' };
+    }
+
+    const run = JSON.parse(last);
+    if (run.status !== 'completed') {
+        return { verdict: 'running', ...run };
+    }
+    if (run.conclusion === 'success') {
+        return { verdict: 'success', ...run };
+    }
+    if (run.conclusion === 'cancelled' && jobCount(run.id, options) === 0) {
+        return { verdict: 'evicted', ...run };
+    }
+
+    return { verdict: 'failure', ...run };
+}
+
+/** The text of the pipeline file; an empty string where the tree has none. */
+export function pipelineText() {
+    return HAS_PIPELINE ? readFileSync(join(ROOT, PIPELINE), 'utf8') : '';
 }
 
 /** How many steps a run has started. Zero means it never started at all. */

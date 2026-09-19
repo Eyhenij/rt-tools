@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal, untracked } from '@angular/core';
-import { adminLabel, EReadFault, IReadFault } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService, EReadFault, IReadFault } from '@rt/message-bus-admin/common/core/util';
 import { PostmortemStore } from '@rt/message-bus-admin/postmortems/data-access';
 import { AdminPostmortemViewComponent } from '@rt/message-bus-admin/postmortems/ui';
 import { IPostmortem } from '@rt/message-bus-admin/postmortems/util';
@@ -45,10 +45,11 @@ const BEM_BLOCK: string = 'admin-postmortem-details-aside';
     host: { class: BEM_BLOCK },
 })
 export class AdminPostmortemDetailsAsideComponent extends RtRouteAsideComponent<IPostmortem.State> {
+    readonly #text: AdminTextService = inject(AdminTextService);
     readonly #store: PostmortemStore = inject(PostmortemStore);
 
-    protected readonly title: string = adminLabel('detailsPostmortem');
-    protected readonly closeLabel: string = adminLabel('detailsClose');
+    protected readonly title: Signal<string> = computed((): string => this.#text.text('detailsPostmortem'));
+    protected readonly closeLabel: Signal<string> = computed((): string => this.#text.text('detailsClose'));
 
     /** Основа записи не читает: чтение ведёт сам раздел — ему нужно сказать и про её отсутствие. */
     protected override readonly idOnly: boolean = true;
@@ -64,7 +65,7 @@ export class AdminPostmortemDetailsAsideComponent extends RtRouteAsideComponent<
             return '';
         }
 
-        return adminLabel(fault.kind === EReadFault.Missing ? 'detailsMissing' : 'detailsFailed');
+        return this.#text.text(fault.kind === EReadFault.Missing ? 'detailsMissing' : 'detailsFailed');
     });
 
     /** Имя файла надстрочником: заголовок называет род записи, а надстрочник — саму запись. */

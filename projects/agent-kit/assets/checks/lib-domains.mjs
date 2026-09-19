@@ -8,7 +8,7 @@
  */
 import {
     API_DOMAIN_LAYERS,
-    API_FAMILY,
+    API_FAMILIES,
     COMMON_DOMAIN_LAYERS,
     FAMILIES,
     FEATURE_DOMAIN_LAYERS,
@@ -88,7 +88,8 @@ function collectDomainLibs(domainPath, isCommon) {
 }
 
 /**
- * The domains of the backend: `<libs root>/<backend family>/<domain>` with four layers. `feature`
+ * The domains of the backend: `<libs root>/<backend family>/<domain>` with four layers, walked for
+ * every family of the list. `feature`
  * is both a lib and a directory with a lib per proto service — by the same rule by which a
  * feature domain of the frontend has `feature/<screen>`.
  *
@@ -99,8 +100,10 @@ function collectDomainLibs(domainPath, isCommon) {
 function collectApiDomainLibs() {
     const libs = [];
 
-    for (const entry of dirsIn(`${LIBS_ROOT}/${API_FAMILY}`)) {
-        const domainPath = `${LIBS_ROOT}/${API_FAMILY}/${entry}`;
+    const domainPaths = API_FAMILIES.flatMap((family) =>
+        dirsIn(`${LIBS_ROOT}/${family}`).map((entry) => `${LIBS_ROOT}/${family}/${entry}`)
+    );
+    for (const domainPath of domainPaths) {
         if (isNotDomain(domainPath) || isLegacyDomain(domainPath)) {
             continue;
         }

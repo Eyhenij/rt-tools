@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.26.0 · checks/specs-for.mjs · 1946334e363c · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/specs-for.mjs · 1946334e363c · правится надстройкой, не здесь
 /**
  * The entry into the specs by the name of a resource: which spec speaks of this file and what
  * exactly it says about it.

@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { adminTabTitle } from '@rt/message-bus-admin/common/core/util';
 
 /** Адрес раздела. Назван здесь и читается пунктом меню: два объявления разошлись бы молча. */
 export const PROPOSALS_ROUTE: string = 'proposals';
@@ -19,7 +19,7 @@ export const PROPOSALS_ROUTE: string = 'proposals';
 export const proposalsRoutes: Route[] = [
     {
         path: PROPOSALS_ROUTE,
-        title: adminLabel('sectionProposals'),
+        title: adminTabTitle('sectionProposals'),
         loadComponent: async () => (await import('@rt/message-bus-admin/proposals/feature/list')).AdminProposalsListComponent,
     },
     {

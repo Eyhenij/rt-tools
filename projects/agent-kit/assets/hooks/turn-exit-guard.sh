@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
-# Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh
+# Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
 # handed over. Stop.
 #
@@ -25,6 +25,9 @@
 #   5. The session handover is written — the window has run out.
 #   6. The owner said to stop.
 #
+# Under an open epic the second and the fifth do not release, and a second pass is judged again:
+# until the epic is closed the executor does not stop on its own. The tiers lie in `turn-exit-epic.sh`.
+#
 # Work without a branch and without a task folder is judged by the second sign. It has no state,
 # and there is nowhere to take the first sign from — but a turn without a single edit of the tree
 # does not end here either: the owner's request "lay it out", "update it", "take a look" lives
@@ -48,6 +51,8 @@ rt_hook_read
 # fallback line in case there is no parser. These twelve lines used to stand as eight copies — the
 # file grew faster on every new tier than on the requirement itself.
 rt_te_deny() {
+    # The end of an epic releases the turn whatever tier came here: the epic is read only on this road.
+    command -v rt_te_epic_over >/dev/null 2>&1 && rt_te_epic_over && exit 0
     rt_te_reason="$1"
     rt_te_short="$2"
     # shellcheck disable=SC1090
@@ -68,9 +73,7 @@ input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
-# A second pass over the same turn is not judged: the guard has said its piece once and lets go.
 active="$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/null)"
-[ "$active" = "true" ] && exit 0
 
 transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null)"
 [ -z "$transcript" ] && exit 0
@@ -83,6 +86,12 @@ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
 root="$(git rev-parse --show-toplevel 2>/dev/null)"
 [ -z "$root" ] && exit 0
+
+# The tiers of the open epic lie in a neighbouring file. A second pass over the same turn is judged
+# only under an open epic: outside it the guard has said its piece once and lets go.
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/turn-exit-epic.sh" 2>/dev/null || exit 0
+command -v rt_te_epic_open >/dev/null 2>&1 || exit 0
+[ "$active" = "true" ] && ! rt_te_epic_open && exit 0
 
 # The branch, the task folder and the state line are taken while they are there. Empty — the turn
 # is judged by the second sign, not released: this is where it used to leave with zero, and work by
@@ -101,6 +110,7 @@ fi
 case "$state" in
     работа-отдана | влито) exit 0 ;;
 esac
+rt_te_owner_word_quoted && exit 0 # the owner's standing word quoted in the waiting line
 
 # A written plan is never the end of a turn at all. The mandatory action of this state is to do the
 # first stage, and whoever starts it moves the state by the same edit: a turn left in the previous
@@ -162,89 +172,24 @@ next_step=""
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/turn-exit-patterns.sh" 2>/dev/null || exit 0
 [ -n "${work_re:-}" ] || exit 0
 
-verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re" --arg read "$read_re" --arg part "$part_re" --arg wait "$wait_re" --arg handover "$handover_re" --arg started "$started_re" '
-    def is_input:
-        .type == "user"
-        and ((.isCompactSummary // false) | not)
-        and (((.message.content // []) | if type == "array"
-                then ([.[] | select(.type == "tool_result")] | length)
-                else 0 end) == 0);
-
-    (map(is_input) | rindex(true)) as $i
-    | (if $i == null then [] else .[$i:] end) as $turn
-    | [$turn[] | select(.type == "assistant") | (.message.content // [])[] | select(.type == "tool_use")] as $uses
-    # An edit of a file is work by definition, whatever tool it goes through.
-    | ($uses | map(.name // "") | any(test("^(Edit|Write|MultiEdit|NotebookEdit)$"))) as $edited
-    | ($uses | map(.name // "") | any(test("AskUserQuestion"))) as $asked
-    | ($uses | map((.input.command // "")) | join("\n")) as $ran
-    # Work is a part of the command that matched the work pattern and did not match the exploration
-    # pattern: switching a branch and reading history in the same turn do not become work.
-    | ([$ran | splits($part)] | map(test($work) and (test($read) | not)) | any) as $ran_work
-    # The last action of the turn. Waiting for a step by anyone else is never the end of a turn,
-    # however much work there was before: the work stays exactly where it stood.
-    | ([$uses[] | select((.name // "") == "Bash") | (.input.command // "")] | last // "") as $last
-    | ($last | test($wait)) as $waited
-    # Handing the work over: the tail of the turn after the PR was opened. Everything before it was
-    # done on the task handed in and says nothing about the next one.
-    | ([$uses[] | select((.name // "") == "Bash") | (.input.command // "")]) as $cmds
-    | (($cmds | map(test($handover)) | index(true))) as $handover_at
-    | ($handover_at != null) as $handed_over
-    | (if $handover_at == null then [] else $cmds[$handover_at:] end) as $tail
-    | (($tail | map(test($started)) | any)
-        or ($uses | map(.name // "") | any(test("^(Edit|Write|MultiEdit|NotebookEdit)$")))) as $started_next
-    # THE LAST ACTION OF THE TURN is the shared sign, and the particular tiers below only derive an
-    # understandable refusal from it. Nine incident analyses in a day describe nine different stops,
-    # and in all nine the last action of the turn was a text to the owner: a report, a summary, an
-    # announcement of intent. A tier for every kind of stop is an endless race: there are as many
-    # kinds as there are reasons to start talking. Hence one sign — the LAST action must be work.
-    | ([$uses[] | (.name // "")] | last // "") as $last_tool
-    | (($last_tool | test("^(Edit|Write|MultiEdit|NotebookEdit)$"))
-        or ([$last | splits($part)] | map(test($work) and (test($read) | not)) | any)) as $ended_working
-    # A guard refusal and a session handover — both end the turn by the rule.
-    | ([$turn[] | select(.type == "user") | .message.content // [] | select(type == "array") | .[]
-          | select(.type == "tool_result") | .content
-          | if type == "string" then .
-            elif type == "array" then (map(if type == "object" then (.text // "") else tostring end) | join("\n"))
-            else tostring end] | join("\n")) as $out
-    | (($out | test("BLOCKED by|Refused by the rules gate|Отбито гейтом")) or ($ran | test("BLOCKED by"))) as $denied
-    | ($ran | test("handoff")) as $handed
-    # The word of the owner about stopping: the reply itself is judged, not its retelling.
-    | ([$turn[] | select(.type == "user") | .message.content
-          | if type == "string" then . elif type == "array"
-            then (map(if type == "object" then (.text // "") else "" end) | join("\n")) else "" end] | join("\n")) as $said
-    | ($said | test("останов|стоп|хватит|подожди|не надо|прерв|отложи")) as $told_stop
-    # A question refused by the conversation guard, and a question appended as prose at the end of
-    # the reply. The conversation guard judges the call of the question tool and does not see prose
-    # at all: a refused question came back in the same wording one turn later and passed freely.
-    | ($out | test("BLOCKED by grill-gate")) as $ask_denied
-    | ([$turn[] | select(.type == "assistant") | (.message.content // [])[]
-          | select(.type == "text") | (.text // "")] | last // "") as $last_say
-    | (($last_say | test("\\?[[:space:]]*$")) and $ask_denied) as $asked_in_prose
-    # Waiting for the word of the owner, announced by the executor. That word is read from
-    # the owner: without his word in the turn and without a question to him through the tool, the
-    # phrase "waiting for your word" is a stop announced by the one it suits. The set of patterns is
-    # named and closed.
-    | (($last_say | test("[Жж]ду (твоего|вашего|его|её) (слова|указани|решени|ответа|команды|отмашки)|[Жж]ду слова владельца|[Жж]ду, что скаж|[Оо]стаюсь ждать|[Бб]уду ждать (твоего|вашего)"))
-        and (($asked or $told_stop or $handed) | not)) as $awaits_word
-    | { worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, asked_in_prose: $asked_in_prose, awaits_word: $awaits_word, ran: $ran }
-' 2>/dev/null)"
+# The parsing of the turn record lies in a neighbouring file: the guard crossed the file length
+# limit, and the parsing reads apart from the tiers that apply its answer. Without the file the
+# guard stays silent — fail-open, as on any breakage of its own.
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/turn-exit-verdict.sh" 2>/dev/null || exit 0
+command -v rt_te_verdict >/dev/null 2>&1 || exit 0
+rt_te_verdict
 
 [ -z "$verdict" ] && exit 0
 
-worked="$(printf '%s' "$verdict" | jq -r '.worked // false' 2>/dev/null)"
-waited="$(printf '%s' "$verdict" | jq -r '.waited // false' 2>/dev/null)"
-handed_over="$(printf '%s' "$verdict" | jq -r '.handed_over // false' 2>/dev/null)"
-started_next="$(printf '%s' "$verdict" | jq -r '.started_next // false' 2>/dev/null)"
-ended_working="$(printf '%s' "$verdict" | jq -r '.ended_working // false' 2>/dev/null)"
-released="$(printf '%s' "$verdict" | jq -r '.released // false' 2>/dev/null)"
+# Every sign of the verdict becomes a variable of its own name; the commands go apart, they are text.
+eval "$(printf '%s' "$verdict" | jq -r 'del(.ran) | to_entries[] | "\(.key)=\(.value | tostring | @sh)"' 2>/dev/null)"
 commands="$(printf '%s' "$verdict" | jq -r '.ran // ""' 2>/dev/null)"
 
 # A question refused by the conversation guard and asked as prose in the same turn. A guard refusal
 # releases the turn — it is the lawful end itself — but there is nothing to release here: the same
 # question came back a line later, and the work stalled on what the tree had already answered. The
 # tier stands before the lawful exits on purpose: a guard refusal covers exactly this case.
-asked_in_prose="$(printf '%s' "$verdict" | jq -r '.asked_in_prose // false' 2>/dev/null)"
-if [ "$asked_in_prose" = "true" ]; then
+if [ "${asked_in_prose:-false}" = "true" ]; then
     rt_te_deny "BLOCKED by turn-exit-guard: in this turn the conversation guard refused a question to the owner, and the reply ends with a question in prose — the same question, asked in another form.
 
 The refusal of the guard named the reason: the answer lies in the tree or the owner has already given it. Read the place it named and work on; what is asked is what the tree does not hold.
@@ -260,10 +205,46 @@ fi
 # named a refusal to the owner, not a turn that said "waiting".
 # Incident analysis — the record
 # "2026-09-04-hod-konchalsya-ozhidaniem-pri-deystvuyushchem-ukazanii" in the intake.
-awaits_word="$(printf '%s' "$verdict" | jq -r '.awaits_word // false' 2>/dev/null)"
-# At the end of an epic waiting for the word of the owner is the work itself: the reading of that
-# lies with the patterns and is shared with the guard of the stop.
-[ "$awaits_word" = "true" ] && rt_te_epic_over && awaits_word=false
+# A promise to do the work in the next turn. The same announcement of intent as a command named and
+# not run: the tier stands before the lawful exits, because the promise most often stands next to a
+# report about what was done, and by the fullness of the turn it is indistinguishable from a finish.
+if [ "$promised" = "true" ] && [ "$released" != "true" ]; then
+    rt_te_deny "BLOCKED by turn-exit-guard: the reply ends with a promise to do the work in the next turn.
+
+A promise is the same announcement of intent as a command named and not run, and it only sounds politer. An offer to the owner to object to the announced intent is part of the promise, not a question: a turn ends with a question when the work does not go without the answer.
+
+Do the promised in this same turn, and the account of it can come after.
+
+The next step is written in the progress: ${next_step}
+
+The guard judges one turn: the next session is not refused." "the turn ended with a promise to do the work in the next turn."
+fi
+
+# Taking a task as the last action of the turn. Creating the task, the branch and the move of the
+# column is preparation, and the work of the taken task did not begin. Taking it after handed-over
+# work is a lawful end: there the taking answers for the handed-over one.
+if [ "$only_took" = "true" ] && [ "$released" != "true" ]; then
+    rt_te_deny "BLOCKED by turn-exit-guard: the last action of the turn is taking a task, and the work of the taken task was not begun.
+
+Creating the task, the branch and moving the column is preparation for work, not work. To the owner a report about a taken task is indistinguishable from a stop: they see the executor standing still.
+
+Write the plan and begin its first stage in this same turn.
+
+The guard judges one turn: the next session is not refused." "the turn ended with taking a task."
+fi
+
+# The owner said to work without stops and did not cancel it. Their word holds until they cancel
+# it, and a turn ending with waiting for that same word invents the cancellation. Judged whether or
+# not there was work in the turn: the work stood three turns in a row, and each of them was full.
+if [ "$standing_work" = "true" ] && [ "$awaits_word" = "true" ]; then
+    rt_te_deny "BLOCKED by turn-exit-guard: the turn ended with waiting for the word of the owner, and the owner said in this session to work without stops and did not cancel it.
+
+Their word holds until they cancel it themselves, and a new fact against it is a line about the price in the reply, not waiting. A decision the tree does not hold is needed — then ask the question by the tool.
+
+The next step is written in the progress: ${next_step}
+
+The guard judges one turn: the next session is not refused." "the turn ended with waiting under the standing word of the owner to work."
+fi
 
 if [ "$awaits_word" = "true" ]; then
     rt_te_deny "BLOCKED by turn-exit-guard: the turn ended with words about waiting for the word of the owner, and the word about stopping the guard reads from the owner: in this turn they announced no stop, and no question was put to them by the tool.
@@ -273,6 +254,19 @@ The phrase «жду твоего слова» is a stop announced by the executo
 The next step is written in the progress: ${next_step}
 
 The guard judges one turn: the next session is not refused." "the turn ended with waiting for the word of the owner."
+fi
+
+# A question without a single piece of work in a running stage: the parts that do not depend on
+# the answer go first, and the question after them.
+if [ "${asked:-false}" = "true" ] && [ "$worked" != "true" ] && [ "$state" = "этап-идёт" ]; then
+    rt_te_question_without_work_deny
+fi
+
+# A handover written by the hand of the executor before the window filled is a stop announced by
+# the one it suits: under an open epic it releases nothing. The window guard's refusal releases as
+# any refusal, and the handover on compaction is written by the hook, not by a command in the turn.
+if [ "${handed_by_hand:-false}" = "true" ] && rt_te_epic_open; then
+    rt_te_epic_deny handed-by-hand
 fi
 
 [ "$released" = "true" ] && exit 0
@@ -324,7 +318,8 @@ esac
 # A folder taken apart by a branch commit does not get here: `archived` means handed-over work, and
 # the previous tier judges it. A branch without a task number is not judged at all — such ones are
 # created for a trial too.
-if [ "$archived" != "true" ] && [ -z "$progress" ] && [ -n "$branch" ] && [ ! -d "$root/$tasks_dir/$branch" ]; then
+# An epic branch is not judged either: it carries no folder by the rule, and the epic plan names it.
+if [ "$archived" != "true" ] && [ -z "$progress" ] && [ -n "$branch" ] && [ ! -d "$root/$tasks_dir/$branch" ] && ! rt_te_epic_branch; then
     task_key="${RT_TASK_KEY:-}"
     if [ -z "$task_key" ] && [ -f "$root/.claude/rt-kit/checks.json" ]; then
         task_key="$(jq -r '.board.taskKey // empty' "$root/.claude/rt-kit/checks.json" 2>/dev/null)"
@@ -384,6 +379,8 @@ The guard judges one turn: the next session is not refused."
         rt_te_deny "$reason" "a closed stage is not backed by the output of a command."
     fi
 fi
+# The next step rewritten into the progress and not begun: the tier lies next to the epic tiers.
+command -v rt_te_next_step_deny >/dev/null 2>&1 && rt_te_next_step_deny
 
 # The work is handed over and the next one is only named. There is more work in such a turn than in
 # any other — and all of it is on the task handed in: the handover finishes the previous work, not
@@ -423,7 +420,7 @@ The guard judges one turn: the next session is not refused."
 
     rt_te_deny "$reason" "the turn ended with waiting for a step by someone else."
 fi
-
+command -v rt_te_launch_last_deny >/dev/null 2>&1 && rt_te_launch_last_deny
 # The shared line. There was work in the turn — but the last action was not it, it was a text to the
 # owner. The particular tiers above name the kind of stop more precisely; what reaches here is what
 # they do not know by name.
@@ -459,8 +456,13 @@ The guard judges one turn: the next session is not refused."
     fi
 fi
 
+# The steps of the plan are not done: the turn ends in the middle of the work. The tier judges the
+# progress of the current task and says nothing about the epic — the one below does that.
 _steps_left="$(rt_te_steps_left "$progress" 2>/dev/null)" && [ "${_steps_left:-0}" -gt 0 ] 2>/dev/null && rt_te_deny "$(rt_te_steps_reason "$_steps_left" "$(rt_te_step_now "$progress")")" "${_steps_left} steps of the plan are not done."
-_epic_left="$(rt_te_epic_left 2>/dev/null)" && [ "${_epic_left:-0}" -gt 0 ] 2>/dev/null && rt_te_deny "$(rt_te_epic_reason "$_epic_left" "$next_step")" "the epic is not over: ${_epic_left} of its tasks are unfinished."
+
+# There was work in the turn, and the epic is open: the turn is released outside an epic and under a
+# closed one alone. Under an open epic the work stands where it stood, and the next step is named.
+[ "$worked" = "true" ] && rt_te_epic_open && rt_te_epic_deny worked
 [ "$worked" = "true" ] && exit 0
 
 if [ "$archived" = "true" ]; then

@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AdminListStoreBase } from '@rt/message-bus-admin/common/core/data-access';
-import { adminLabel, IReadFault } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService, IReadFault } from '@rt/message-bus-admin/common/core/util';
 import { InvitesApiService } from '@rt/message-bus-admin/invites/api';
 import { IInvite, InviteIssuedMapper, InviteShortMapper, INVITES_PATH } from '@rt/message-bus-admin/invites/util';
 import { NotificationBus } from '@rt-tools/ui-kit-v2';
@@ -31,6 +31,7 @@ import { catchError, EMPTY, exhaustMap, map, Observable, Subject, tap } from 'rx
 @Injectable({ providedIn: 'root' })
 export class InvitesStore extends AdminListStoreBase<IInvite.Short.State, IInvite.Short.Api> {
     readonly #api: InvitesApiService = inject(InvitesApiService);
+    readonly #text: AdminTextService = inject(AdminTextService);
     readonly #notifications: NotificationBus = inject(NotificationBus);
     readonly #mapper: InviteShortMapper = new InviteShortMapper();
     readonly #issuedMapper: InviteIssuedMapper = new InviteIssuedMapper();
@@ -46,14 +47,14 @@ export class InvitesStore extends AdminListStoreBase<IInvite.Short.State, IInvit
                 exhaustMap((name: string): Observable<unknown> =>
                     this.#api.revoke(name).pipe(
                         tap((): void => {
-                            this.#notifications.success(adminLabel('inviteRevokeDone', { name }));
+                            this.#notifications.success(this.#text.text('inviteRevokeDone', { name }));
                             this.retry();
                         }),
                         catchError((fault: IReadFault): Observable<never> => {
                             // Род отказа человеку ничего не прибавляет: отозвать не удалось, а
                             // повторить он может тем же пунктом меню. Номер обращения остаётся в
                             // журнале приёмника, и по нему поломка находится там.
-                            this.#notifications.error(adminLabel('inviteRevokeFailed'), fault.kind);
+                            this.#notifications.error(this.#text.text('inviteRevokeFailed'), fault.kind);
 
                             return EMPTY;
                         })

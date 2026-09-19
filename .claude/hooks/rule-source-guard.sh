@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/rule-source-guard.sh · 7b141c052a0e · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/rule-source-guard.sh · d3dc5449c0f9 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/write-targets.sh, hooks/guard-note.sh
 # Guard of the place of the edit: the rules layer is fixed where it is broken, not where it is seen.
@@ -124,12 +124,27 @@ while IFS= read -r candidate; do
         continue
     fi
 
+    # The override merges by the section «## », and that promise is true only of a text: a law, a
+    # rule, a pattern, a skill. A shell script and a check file have no sections at all, and the
+    # executor sent to write an override there finds nothing to merge — and learns it not from the
+    # guard but from the next layout, that is, latest of all. A promise true of a third of the
+    # cases is worse than none: people go and work by it.
+    case "$resource" in
+        *.md) override_way="an edit true only to this tree goes to the override .claude/rt-kit/overrides/${resource} — it merges by the section «## » and outlives the layout" ;;
+        *) override_way="there is no override by sections for a resource of this kind: it has no «## » sections at all, and the edit goes into the package itself" ;;
+    esac
+
     if [ -n "$sources" ] && [ -f "$root/$sources/$resource" ]; then
         deny "BLOCKED by rule-source-guard: «${candidate#"$root"/}» is laid out by the package, and an edit in its place is lost on the next layout — and until then the layout refuses this file whole, and the price is paid by whoever edits a neighbouring resource that day. The resource is «${resource}». Edit the source: ${sources}/${resource} — then build the package and lay it out." \
-            "an edit true only to this tree goes to the override .claude/rt-kit/overrides/${resource} — it merges by the section «## » and outlives the layout"
+            "$override_way"
     fi
 
-    deny "BLOCKED by rule-source-guard: «${candidate#"$root"/}» is laid out by the package @rt-tools/agent-kit, and an edit in its place is lost on the next layout. The resource is «${resource}». Edit the override: .claude/rt-kit/overrides/${resource} — it merges by the section «## » and outlives the layout." \
+    case "$resource" in
+        *.md) where="Edit the override: .claude/rt-kit/overrides/${resource} — it merges by the section «## » and outlives the layout." ;;
+        *) where="A resource of this kind has no override by sections — it has no «## » sections at all. The edit goes into the package itself and arrives here by a new edition." ;;
+    esac
+
+    deny "BLOCKED by rule-source-guard: «${candidate#"$root"/}» is laid out by the package @rt-tools/agent-kit, and an edit in its place is lost on the next layout. The resource is «${resource}». ${where}" \
         "what is true of any tree is edited in the package itself and arrives here by a new edition"
 done <<EOF
 $candidates

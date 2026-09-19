@@ -1,4 +1,4 @@
-<!-- rt-kit v0.26.0 · pitfalls/git-workflow.github.md · 0e7693d56761 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · pitfalls/git-workflow.github.md · 5c0888ea2ce6 · правится надстройкой, не здесь -->
 # Delivery — cold part
 
 Pitfalls: traps already stepped on in a tree on GitHub. Loaded not with the rule but on demand —
@@ -131,6 +131,37 @@ The rule is `git-workflow`; the articles that hold the law stand there.
 Here moved the cases, numbers and rejected remedies that used to stand next to the rule's
 articles. No edit decision rests on them: they are for whoever investigates a miss or argues with
 a guard.
+
+- **A PR opened by another account is lawful while its reviewer is somebody else.** The clash the
+  guard judges is that of author and reviewer, not the account name: the machine account is named
+  aloud rather than demanded.
+
+- **A chain branched from the epic branch twice diverges at the first merge.** The rest of the
+  branches then stand on a base that is gone.
+
+- **While the handed-over conflicts, a person cannot merge it.** New work adds one more branch to
+  the same queue instead of fixing that.
+
+- **A flag between the verb and `-b` is the same branch creation.** The guard used to judge only the
+  form without a flag.
+
+- **A printed task number means only that the call went through.** The board is a separate service,
+  and a task lands on it only when added.
+
+- **A temporary directory will not do for a runner's paths.** The package store lives there.
+
+- **A pipeline step printed next to the push instead of refusing it is skipped.** A warning reads as
+  permission.
+
+- **A write limit is told from exhaustion by the limits answer.** There it is zero.
+
+- **At branch creation the column is not asked.** Nothing has moved it yet.
+
+- **A fresh tip is given time before the audit counts it as running no checks.**
+
+- **A machine signature sends git to the key agent.** A locked agent brings the whole suite down.
+
+- **A run pushed out of the queue has zero steps.** That is what tells it from a failed one.
 
 - **A refusal at the merge remains the second line.** A person merges as soon as they see green,
   and the second line is simply never reached.
@@ -274,6 +305,19 @@ A client login as the machine account hijacks every neighbouring session on the 
 neighbour with rights to one repository reads its task as nonexistent, and from inside the tree
 the miss is invisible — the answer is an ordinary "not found". That is why the account is
 substituted per call and never made active, even when the active one is already right.
+
+- **What closes the card of an epic.** The merge of its request closes the card by the host's rule
+  on a closed item: nothing moves it to the closing column by hand. The two moves of the card that
+  the rule demands are the first one and the one at the opening of the request.
+- **Why a neighbouring runner rewrites a ready-made step's default.** On a machine with several
+  runners any path from the home directory is shared, so the version a neighbouring run installs
+  lands under the same path and is picked up by the next run of any project.
+- **By which tier the freshness of main's tip is asked.** By the second one — the same technique as
+  the task state. The first tier works offline: the local ref answers whether the branch lags what
+  lies in the tree, the remote one — whether the ref itself went stale.
+- **What the second tier of the delivery guard cannot ask without a network.** Task, column,
+  assignee and review live at the hosting: with no network and no token that tier is skipped, and
+  the skip is silent.
 
 ## Traps of this machine
 

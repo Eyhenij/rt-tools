@@ -8,6 +8,9 @@
     "testRoots": [
         "tools"
     ],
+    "harnessDirs": [
+        "projects/ui-kit-v2/src/showcase/story-snapshot.ts"
+    ],
     "indexedDirs": [],
     "plansDir": "docs/plans",
     "portableDirs": [
@@ -80,6 +83,7 @@
             "Laid-out files hidden from the formatter": "node tools/check-format-ignore.mjs",
             "Rule descriptions": "node tools/check-descriptions.mjs",
             "Circular imports": "node tools/check-cycles.mjs",
+            "Words past the dictionary": "node tools/check-admin-texts.mjs",
             "Archive retention": "node tools/check-archive-age.mjs",
             "Style layer": "node tools/check-cascade-layer.mjs",
             "Icon map": "node tools/check-icon-map.mjs",
@@ -115,28 +119,36 @@
         "statusFieldId": "PVTSSF_lAHOBE82K84AjroZzgcAY0U",
         "statusOptions": {
             "new": {
-                "id": "e9c5e93d",
+                "id": "84ccf78a",
                 "name": "🆕 New"
             },
             "backlog": {
-                "id": "bb429887",
+                "id": "ed6ec61b",
                 "name": "📋 Backlog"
             },
             "ready": {
-                "id": "69a42c4a",
+                "id": "185ba621",
                 "name": "🔖 Ready"
             },
             "in-progress": {
-                "id": "9f0e17a7",
+                "id": "6684637d",
                 "name": "🏗 In progress"
             },
             "in-review": {
-                "id": "965595e4",
+                "id": "7a09deec",
                 "name": "👀 In review"
             },
+            "to-test": {
+                "id": "0b7a9e0d",
+                "name": "🧪 To test"
+            },
             "done": {
-                "id": "9194bf24",
+                "id": "a8204467",
                 "name": "✅ Done"
+            },
+            "deployed": {
+                "id": "52116eb1",
+                "name": "Deployed"
             }
         },
         "taskKey": "RT",
@@ -159,5 +171,78 @@
         "projects/agent-kit/assets/patterns/",
         "projects/agent-kit/assets/pitfalls/",
         "projects/agent-kit/assets/skills/"
-    ]
+    ],
+    "prose": {
+        "glossaryBans": [
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])спек[аиуе]?(?![а-яёА-ЯЁ])",
+                "fix": "описание"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])заход[а-яё]*(?![а-яёА-ЯЁ])",
+                "fix": "сессия"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])прогон[а-яё]*(?![а-яёА-ЯЁ])",
+                "fix": "запуск тестов, CI"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])проб[аыуе](?![а-яёА-ЯЁ])",
+                "fix": "тест"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])гард[а-яё]*(?![а-яёА-ЯЁ])",
+                "fix": "блокирующая проверка, хук"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])страж[а-яё]*(?![а-яёА-ЯЁ])",
+                "fix": "блокирующая проверка, хук"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])гейт[а-яё]*(?![а-яёА-ЯЁ])",
+                "fix": "проверка перед push"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])раскладк[аиуе](?![а-яёА-ЯЁ])",
+                "fix": "установка файлов из пакета"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])надстройк[аиуе](?![а-яёА-ЯЁ])",
+                "fix": "переопределение"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])замысел(?![а-яёА-ЯЁ])",
+                "fix": "план"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])замысл[аеуо][а-яё]*(?![а-яёА-ЯЁ])",
+                "fix": "план"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])заявк[аиуе](?![а-яёА-ЯЁ])",
+                "fix": "PR"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])сверк[аиуе](?![а-яёА-ЯЁ])",
+                "fix": "аудит"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])замер[а-яё]*(?![а-яёА-ЯЁ])",
+                "fix": "измерение"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])компаньон[а-яё]*(?![а-яёА-ЯЁ])",
+                "fix": "файл привязок"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])спутник[а-яё]*(?![а-яёА-ЯЁ])",
+                "fix": "соседний файл"
+            },
+            {
+                "pattern": "(?<![а-яёА-ЯЁ])отбива(ет|ют|л|ла)(?![а-яёА-ЯЁ])",
+                "fix": "блокирует, не пропускает"
+            }
+        ]
+    },
+    "assignmentsFile": ".claude/rt-kit/assignments.md"
 }

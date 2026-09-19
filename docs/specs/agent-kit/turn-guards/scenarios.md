@@ -115,6 +115,16 @@ task was not taken by them
 
 Covered: `projects/agent-kit/tests/waiting-turn-guard.test.sh`.
 
+### SC-AK-1133 — a run started or rerun in the turn gets a wait for its end
+
+Given a run was started or rerun by a command of the turn
+When the turn ends, and no command of the turn waits for the end of the run — neither a watching
+command of the hosting client, nor a loop until the end, nor the watching tool
+Then the guard gives the turn back and names the wait; a turn with a wait passes, and the next task
+taken does not lift the refusal
+
+Covered: `projects/agent-kit/tests/waiting-turn-guard.test.sh`.
+
 ### SC-AK-248 — a turn in which nothing is said about someone else's step the guard of waiting does not judge
 
 Given there is neither a call of opening a PR nor a red run read in the turn
@@ -326,6 +336,19 @@ Then the call passes: the analysis of a request goes by questions about differen
 
 Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
+### SC-AK-1134 — two answers «recommended» in a row close the remaining questions by assumption
+
+Given the owner took the recommended option on the last two menus of the record
+When the executor sends the next menu
+Then the call is refused, and the refusal orders to close the remaining questions by assumption and
+name them to the owner in one line
+
+Given the owner answered the last menu with an option of their own, or only one menu was answered
+When the executor sends the next menu
+Then the call passes: the streak is broken by any other answer, and one answer is not a streak
+
+Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
+
 ### SC-AK-840 — a request to the owner to sign in or type a password does not close the turn
 
 Given a request to type a password, to sign in themselves or to fill the sign-in form stands in the
@@ -375,3 +398,63 @@ When the guard judges the end of the turn
 Then the turn is let go: the word about the stop came from the owner
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1066 — a turn whose last action is a background run of the checks
+
+Given a stage is going, and the last action of the turn is a run of the checks in the background
+When the guard judges the end of the turn
+Then the turn is refused: a run started in the background and left last is a declared wait
+
+Given the same run in the middle of the turn, with a step of the executor's after it
+When the guard judges the end of the turn
+Then the turn is let go
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1067 — a turn whose last action is a read of a background task's log
+
+Given a stage is going, and the last action of the turn is a read of the output file of a
+background task
+When the guard judges the end of the turn
+Then the turn is refused: nothing of the tree is changed by such a read
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1068 — a turn that ended with a promise to do the work in the next turn
+
+Given there was an edit during the turn, and the last text of the executor promises to do the rest
+in the next turn
+When the guard judges the end of the turn
+Then the turn is refused, and the refusal names the promise an announcement of intent
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1069 — a turn whose last action is taking a task
+
+Given a stage is going, and the last action of the turn is creating a task, a branch or a move of
+the column
+When the guard judges the end of the turn
+Then the turn is refused: taking a task is preparation, and the work of the taken task did not begin
+
+Given the same taking with a handed-over PR in the same turn
+When the guard judges the end of the turn
+Then the turn is let go: the taking answers for the handed-over work
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1070 — a turn that ended with waiting for the owner under their own standing word to work
+
+Given during the session the owner said to work without stops and did not cancel it, and the turn
+ends with waiting for their word
+When the guard judges the end of the turn
+Then the turn is refused whether or not there was work in it
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1121 — the tool that closes the conversation is refused
+
+Given the executor calls the tool that ends the conversation, under any name that carries it.
+When the guard of the end of the conversation judges the call.
+Then the call is refused with a reason naming the owner; other tools pass, and without jq the refusal stays.
+
+Covered: `projects/agent-kit/tests/end-conversation-guard.test.sh`.

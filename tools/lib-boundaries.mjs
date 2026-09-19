@@ -1,4 +1,4 @@
-// rt-kit v0.26.0 · checks/lib-boundaries.mjs · 0ca76a6204fb · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/lib-boundaries.mjs · f4544d295d9e · правится надстройкой, не здесь
 /**
  * Boundaries and tags: where a lib is described as a source, whose dependency list must stay empty
  * and what the family base sees. All three subjects read the same files
@@ -10,7 +10,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { BOUNDARIES_DIR, FAMILIES, isDir, projectTag, report } from './lib-common.mjs';
+import { BOUNDARIES_DIR, FAMILIES, isDir, libTag, report } from './lib-common.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 /**
@@ -30,7 +30,7 @@ function checkBoundaries(libs) {
     const sources = files.map((name) => ({ name, text: readFileSync(join(ROOT, BOUNDARIES_DIR, name), 'utf8') }));
 
     for (const libPath of libs) {
-        const tag = projectTag(libPath);
+        const tag = libTag(libPath);
         const declaration = `sourceTag: '${tag}'`;
         const owners = sources.flatMap(({ name, text }) => {
             const count = text.split(declaration).length - 1;

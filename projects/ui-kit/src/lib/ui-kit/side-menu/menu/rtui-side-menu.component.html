@@ -163,7 +163,8 @@
                                     [placeholder]="searchLabel"
                                     [value]="subMenuQuery()"
                                     (focus)="onSearchHold()"
-                                    (input)="onSubMenuSearch(subMenuSearch.value)" />
+                                    (input)="onSubMenuSearch(subMenuSearch.value)"
+                                    (keydown)="onSearchKeydown($event)" />
 
                                 <mat-icon matPrefix [rtIconOutlined]="true">search</mat-icon>
 

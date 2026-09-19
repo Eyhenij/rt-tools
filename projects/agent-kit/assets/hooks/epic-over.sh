@@ -16,7 +16,10 @@
 # work, no epic behind the branch, no way to ask the hosting — is not zero, and the caller works as
 # it did before this reading existed.
 
-rt_epic_over() {
+# The unfinished tasks of the epic as the table prints them. A non-zero code means the epic could
+# not be read — no table, no epic behind the branch, no way to ask the hosting — and the caller
+# tells that apart from an empty answer, which means the epic is over.
+rt_epic_unfinished() {
     command -v jq >/dev/null 2>&1 || return 1
     command -v node >/dev/null 2>&1 || return 1
 
@@ -43,8 +46,14 @@ rt_epic_over() {
     [ -f "$table" ] || return 1
 
     left="$(cd "$root" && node "$table" --unfinished 2>/dev/null)" || return 1
-    [ -n "$left" ] && return 1
+    printf '%s' "$left"
+    return 0
+}
 
+rt_epic_over() {
+    local left
+    left="$(rt_epic_unfinished)" || return 1
+    [ -n "$left" ] && return 1
     return 0
 }
 

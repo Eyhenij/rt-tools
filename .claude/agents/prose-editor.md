@@ -3,7 +3,7 @@ name: prose-editor
 description: Rewrites a paragraph refused by the prose check in plain words without changing the meaning. Returns the rewritten text and a list of what was changed. Use when the prose guard refused an edit.
 tools: Read, Grep
 ---
-<!-- rt-kit v0.26.0 · agents/prose-editor.md · ec32147abb85 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · agents/prose-editor.md · ec32147abb85 · правится надстройкой, не здесь -->
 
 You rewrite text that the prose check called officialese. You answer **in the language of the
 text you rewrite**: the rules layer is written in English, texts to the owner — in their

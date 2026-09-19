@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.26.0 · checks/rt-kit-checks.config.mjs · 1fe0312f4c05 · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/rt-kit-checks.config.mjs · f424a1ff5ce6 · правится надстройкой, не здесь
 /**
  * Check settings: what counts as sources, where not to go and where the debt lists lie.
  *
@@ -75,6 +75,12 @@ const DEFAULTS = {
      * those it installs: a sign about ready-made code from a package the tree does not have
      * answers falsely. Empty — there are no signs at all, and the guard and the check say so
      * rather than stay silent.
+     *
+     * A bundle is named either by the name alone or by a pair of the name and the area of the tree
+     * it holds over: `{ "name": "ui-kit-v2", "roots": ["apps/admin"] }`. A tree with two sources of
+     * look judges each application by its own bundle; without an area it would have a single move —
+     * not to declare the bundle at all, and then nothing catches a bypass of the ready-made where
+     * the bundle does hold.
      */
     reuse: { bundles: [], signals: '' },
     /** Where the domain specs lie; empty — the tree has none, and the spec audit is not run. */
@@ -92,6 +98,21 @@ const DEFAULTS = {
      * Empty — the tree has no such directory, and an epic is not created by the command.
      */
     plansDir: '',
+    /**
+     * Where the assignment of an epic to a working copy is declared, and where a copy holds its own
+     * name.
+     *
+     * Two files, and they lie apart on purpose. The assignment belongs to the working copy and is
+     * declared in the main branch: written into the branch of a task, it is in force only there,
+     * and at the first branch switch the executor works by one order while the check reads another.
+     * The name of the copy is the state of the machine — the path to it belongs in nobody's
+     * history, so the copy names itself by a short word in a file outside the index.
+     *
+     * Empty — the tree declares no assignments, and nothing about them is judged: a tree with one
+     * working copy has nothing to divide.
+     */
+    assignmentsFile: '',
+    treeNameFile: '.claude/rt-kit/tree-name',
     /** Where the lists of accepted debts are put. */
     allowlistDir: 'tools',
     /**
@@ -166,7 +187,7 @@ const DEFAULTS = {
     libsRoot: 'libs',
     /** The families of front-end libs: `<libs root>/<family>/<domain>/<layer>`. */
     families: ['site', 'admin'],
-    /** The backend family under the same root: its domains have a layer ladder of their own. */
+    /** The backend families under the same root — one name or a list of them; their domains have a layer ladder of their own. */
     apiFamily: 'api',
     /** The scope of import aliases: `@scope/<family>/<domain>/<layer>` in `tsconfig.base.json`. */
     importScope: '@app',

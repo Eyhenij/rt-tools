@@ -181,6 +181,13 @@ flowchart TD
   apart by the run's colour. So a negative assertion goes paired with a positive one: first it is
   checked that the place sought is found at all, and only then that it lacks what must not be
   there.
+- **A count taken over a run's output says nothing until the run is known to have reached the step
+  counted.** A build, an install and a suite refuse at preparation steps of their own —
+  configuration parsing, dependency resolution, path resolution — and such a refusal carries the
+  same exit code as a failure of the work itself. A pattern search for the failure's own marks comes
+  back empty there, and the emptiness reads as success of everything behind it. So the count goes
+  paired with a positive check, the same way a negative assertion does: first the output is read for
+  the sign that the counted step ran at all, and only then the marks in it are counted.
 - **A test title promises more than the body checks, and the audit does not see it.** The
   scenario number stands in the title — the scenario counts as covered, and nobody asks what
   exactly is asserted. The body is read together with the title: the promise in the title and the

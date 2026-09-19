@@ -3,8 +3,9 @@
  *
  * Груз кладётся приёмом — теми же операциями, которыми его кладут деревья: набор проверяет, что
  * админка читает то, что кладёт приём, и записи, вставленные мимо приёма, отвечали бы на другой
- * вопрос. Мимо приёма идут только те три вещи, которых приём не умеет: учётная запись и деревья
- * заводятся командами строки запуска, а время приезда правится прямым запросом — его ставит
+ * вопрос. Записи людей заводятся операциями админки под кукой первой записи — теми же, какими
+ * их заводит человек. Мимо приёма идут только те две вещи, которых приём не умеет: деревья
+ * заводятся командой строки запуска, а время приезда правится прямым запросом — его ставит
  * приёмник часами машины, а сценариям нужны и равные времена у соседних записей, и конец суток
  * по всемирному времени.
  *
@@ -15,9 +16,10 @@
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-import { seedAccount } from './seed-account.mjs';
+import { seedAccount, seedPeople } from './seed-account.mjs';
+import { seedObservations } from './seed-observations.mjs';
 import { checkNothingDrifts } from './seed-self-check.mjs';
-import { API_ORIGIN, ENROLLED_SLUG, INVITES, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
+import { ACCOUNT, API_ORIGIN, ENROLLED_SLUG, INVITES, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
 
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 
@@ -124,7 +126,7 @@ function sql(script, url = STAND_DATABASE_URL) {
     return run('npx', ['prisma', 'db', 'execute', '--stdin'], { env: { DATABASE_URL: url }, input: script });
 }
 
-/** Команда приёмника: деревья и учётные записи заводятся только ею. */
+/** Команда приёмника: деревья заводятся только ею. */
 function command(args, input = '') {
     return run('node', [API_ENTRY, ...args], { env: { DATABASE_URL: STAND_DATABASE_URL }, input });
 }
@@ -463,16 +465,18 @@ async function states() {
 /** Засев целиком. Зовётся подъёмом стенда после того, как приёмник поднят. */
 export async function seed() {
     await wipe();
-    await seedAccount(command, sql);
+    const cookie = await seedAccount(sql);
+    await seedPeople(cookie, sql);
     const tokens = await trees();
     await postmortems(tokens);
     await proposals(tokens);
     await summaries(tokens);
+    await seedObservations(intake, tokens);
     await invites();
     await keys();
     await moments();
     await states();
-    await checkNothingDrifts(sql);
+    await checkNothingDrifts(sql, ACCOUNT.name);
 }
 
 /** Подготовка хранилища: база и схема. Идёт до подъёма приёмника — он ждёт готовой схемы. */

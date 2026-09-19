@@ -1,4 +1,4 @@
-// rt-kit v0.26.0 · checks/board-long-work.github.mjs · a40e09f195a7 · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/board-long-work.github.mjs · a40e09f195a7 · правится надстройкой, не здесь
 /**
  * Work that cannot be closed in one session: the card label against the entry in the work plan.
  *

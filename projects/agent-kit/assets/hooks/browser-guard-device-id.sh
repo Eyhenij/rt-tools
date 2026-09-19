@@ -20,6 +20,10 @@
 # On an error the guard passes: the helper did not name a profile — the call is allowed. An answer
 # without signs of a connection puts down no mark; work does not stop — the next call will be
 # forbidden by the freshness guard, which will demand choosing the profile again.
+#
+# FAIL-OPEN: no pinned device declared, no answer from the tool, an unrecognised call — the call
+# goes through. A guard that jams the browser when the pin is missing is switched off on the first
+# day, and with it goes the pin itself.
 
 # The guard's name for the observations: it is written by the shared deny tail.
 RT_GUARD_NAME=browser-guard-device-id

@@ -32,6 +32,20 @@ async function waitForField(canvasElement: HTMLElement): Promise<HTMLInputElemen
  * Набор запроса в поле подменю. Ждётся сам узел поля, а не отсчёт времени: на занятой машине
  * отсчёт промахивается, и кадр уходит без набранного запроса.
  */
+/**
+ * Нажатие клавиши в поле поиска подменю: поле держит фокус и раздаёт клавиши списку, поэтому и
+ * событие идёт в него, а не в подсвеченный пункт.
+ */
+async function pressKeyInSubMenuSearch(canvasElement: HTMLElement, key: string): Promise<void> {
+    const field: HTMLInputElement | null = await waitForField(canvasElement);
+
+    if (field === null) {
+        throw new Error('Поле поиска подменю не появилось: нажимать клавишу не во что');
+    }
+
+    field.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
+}
+
 async function typeInSubMenuSearch(canvasElement: HTMLElement, query: string): Promise<void> {
     const field: HTMLInputElement | null = await waitForField(canvasElement);
 
@@ -214,6 +228,53 @@ export const SubMenuSearchMatches: TStory = {
     },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await typeInSubMenuSearch(canvasElement, 'l');
+    },
+};
+
+/**
+ * Папка совпала подписью, а внутри не совпал никто: на экране одна её строка, без состава и без
+ * шеврона. Заведена ради кадра: ни одна другая история этого состояния не показывает, и отбор,
+ * снова отдающий папку целиком, не был бы виден ничем.
+ */
+export const SubMenuFolderMatchedAlone: TStory = {
+    args: {
+        activeMenuIds: [24],
+        subMenuMode: 'pinned',
+        isSubMenuXScrollEnabled: true,
+        isMainMenuIconsOutlined: false,
+        isSubMenuIconsOutlined: false,
+        isSubMenuButtonIconsOutlined: false,
+        isSubMenuTooltipsShown: true,
+    },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await typeInSubMenuSearch(canvasElement, 'level 1');
+    },
+};
+
+/**
+ * Подсветка клавиатуры. Заведена ради кадра: подсвеченный пункт живёт только между нажатиями
+ * клавиш, и ни одна другая история его не показывает — значит, отметка не проверялась бы ничем.
+ */
+export const SubMenuKeyboardHighlight: TStory = {
+    args: {
+        activeMenuIds: [1],
+        subMenuMode: 'pinned',
+        isSubMenuXScrollEnabled: true,
+        isMainMenuIconsOutlined: false,
+        isSubMenuIconsOutlined: false,
+        isSubMenuButtonIconsOutlined: false,
+        isSubMenuTooltipsShown: true,
+    },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await pressKeyInSubMenuSearch(canvasElement, 'ArrowDown');
+
+        const marked: HTMLElement | null = await waitFor<HTMLElement>((): HTMLElement | null =>
+            canvasElement.querySelector('.rtui-side-menu-sub-item--highlighted')
+        );
+
+        if (marked === null) {
+            throw new Error('Подсвеченного пункта нет: кадр показал бы список без отметки и о ней не сказал бы ничего');
+        }
     },
 };
 

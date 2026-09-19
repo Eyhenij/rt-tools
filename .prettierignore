@@ -87,6 +87,7 @@ tools/archive-age.mjs
 tools/archive-prune.mjs
 tools/board-epics.mjs
 tools/board-epic-link.mjs
+tools/board-epic-plan.mjs
 tools/board-task-dirs.mjs
 tools/board-gh.mjs
 tools/board-paths.mjs
@@ -95,6 +96,7 @@ tools/board-runs.mjs
 tools/board-titles.mjs
 tools/board-folders.mjs
 tools/epic-table.mjs
+tools/main-run.mjs
 tools/board.mjs
 tools/check-board.mjs
 tools/check-doc-paths.mjs
@@ -123,3 +125,4 @@ tools/spec-contract.mjs
 tools/spec-scenarios.mjs
 tools/specs-for.mjs
 tools/task-new.mjs
+tools/tree-assignment.mjs

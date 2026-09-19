@@ -307,24 +307,32 @@ export STUB_PULLS="$(conflicting_json MERGEABLE)"
 report "SC-AK-672 — у сливаемой заявки строка о событии прежняя" \
     "$(board_says 'the pipeline received no event')" 1
 
-# SC-AK-845 — заявка поверх соседней прогона не получает: рабочий поток слушает заявки в главную
-# ветку и событий с другой базой не видит. Прежняя строка была неверна дважды: событие не
-# терялось, и перезакрытие его не вернёт.
+# SC-AK-845 — у заявки с базой не из главной ветки прогона нет вовсе: рабочий поток слушает
+# заявки в главную ветку и событий с другой базой не видит. Это порядок сдачи, а не расхождение —
+# так сдаётся каждая задача эпика, — и аудит о такой заявке молчит.
 based_json() {
     printf '[{"number":702,"title":"[RT-700] Правка","headRefName":"RT-700-probe","headRefOid":"%s","isDraft":false,"body":"Closes #700","mergeable":"MERGEABLE","baseRefName":"%s"}]' \
         "$HEAD_SHA" "$1"
 }
 export STUB_PULLS="$(based_json RT-699-nizhnyaya)"
-report "SC-AK-845 — чужая база названа причиной" \
-    "$(board_says 'the request is opened into the branch «RT-699-nizhnyaya»')" 1
-report "SC-AK-845 — совета перезакрыть заявку при чужой базе нет" \
-    "$(board_says 'gh pr close 702 && gh pr reopen 702')" 0
-report "SC-AK-845 — названо, чем это исправляется" "$(board_says 'move the base')" 1
+report "SC-AK-845 — о заявке с чужой базой аудит молчит" \
+    "$(board_says '702')" 0
+report "SC-AK-845 — совета перенести основание больше нет" "$(board_says 'move the base')" 0
 
-# База — главная ветка: строка о событии прежняя.
+# SC-AK-1107 — одна строка на все заявки с такой базой называет оба следствия сразу: запуска не
+# будет, и задачу слиянием хостинг не закроет. Названное порознь второе никто не прочитал.
+report "SC-AK-1107 — строка считает заявки с чужой базой" "$(board_says 'open PRs with a base other than «main» — 1:')" 1
+report "SC-AK-1107 — названо первое следствие" "$(board_says 'the pipeline gives them no run')" 1
+report "SC-AK-1107 — названо второе следствие" "$(board_says 'the host closes no task on their merge')" 1
+report "SC-AK-1107 — расхождением это не считается" "$(board_code)" 0
+
+# База — главная ветка: строка о событии прежняя. Проба положительная: без неё зелёным было бы и
+# молчание обо всех заявках сразу.
 export STUB_PULLS="$(based_json main)"
 report "SC-AK-845 — заявка в главную проверяется как прежде" \
     "$(board_says 'the pipeline received no event')" 1
+report "SC-AK-1107 — без заявок с чужой базой строки нет" "$(board_says 'open PRs with a base other than')" 0
+
 export STUB_RUNS=1
 export STUB_PULLS="$(pulls_json false)"
 
@@ -434,6 +442,44 @@ report "SC-AK-752 — ветка вровень с главной молчит" 
 export STUB_PULL_BEHIND=""
 report "SC-AK-752 — пустой ответ судится как ноль" "$(board_says 'lags «main»')" 0
 export STUB_PULL_BEHIND=0
+
+# --- SC-AK-1062 — задачи эпика привязаны к его карточке подзадачами ----------------------------
+# Замысел держит состав, а доска его не читает: на доске задача эпика выглядит как задача вне
+# эпика. Подзадача — родная связь хостинга, и она даёт карточке эпика перечень, а карточке
+# доски — полосу «сделано из всего».
+board_config "$EPIC_CONFIG"
+mkdir -p "$BOARD_TREE/docs/plans"
+printf '%s\n' '# Замысел эпика' '' '| № | Задача |' '| - | ------ |' '| 1 | RT-702 |' \
+    > "$BOARD_TREE/docs/plans/epic.md"
+export STUB_ISSUES="$(epic_issues 'Задача эпика #700, замысел — docs/plans/epic.md')"
+export STUB_PULLS="$saved_pulls_epic"
+
+export STUB_SUB_ISSUES='[]'
+report "SC-AK-1062 — непривязанная задача эпика названа" \
+    "$(board_says '#700: the plan names tasks that are not sub-issues of the epic card — #702')" 1
+report "SC-AK-1062 — расхождением это считается" "$(board_code)" 1
+
+export STUB_SUB_ISSUES='[702]'
+report "SC-AK-1062 — привязанная задача молчит" "$(board_says 'not sub-issues of the epic card')" 0
+
+# --- SC-AK-1093 — перечень подзадач читается целиком, а не первой страницей --------------------
+# Хостинг отдаёт подзадачи страницами, и у эпика их бывает больше страницы. Прочитанная первая
+# страница называет привязанную задачу непривязанной: строка висит в каждом запуске, глаз
+# перестаёт её читать, и настоящее расхождение проедет вместе с ней.
+export STUB_SUB_ISSUES='[702]'
+export STUB_SUB_ISSUES_PAGE='[]'
+report "SC-AK-1093 — задача со второй страницы не названа непривязанной" \
+    "$(board_says 'not sub-issues of the epic card')" 0
+
+# Обратная сторона того же: прочти проверка одну страницу — задача была бы названа. Без этой
+# половины сценарий зелен и на прежнем вызове: пустая первая страница ничем не отличалась бы от
+# полного перечня.
+export STUB_SUB_ISSUES='[]'
+report "SC-AK-1093 — пустой перечень целиком по-прежнему называется" \
+    "$(board_says 'not sub-issues of the epic card — #702')" 1
+
+unset STUB_SUB_ISSUES_PAGE
+export STUB_SUB_ISSUES='[]'
 
 rm -rf "$BOARD_TREE"
 

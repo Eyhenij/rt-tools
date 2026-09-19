@@ -1,8 +1,19 @@
-<rt-select
-    qa-dataid="list-tree-filter"
-    [ariaLabel]="label"
-    [clearable]="false"
-    [ngModel]="tree()"
-    [ngModelOptions]="{ standalone: true }"
-    [options]="options()"
-    (selectionChange)="pick($event)" />
+<ng-container rtBlock="admin-tree-filter">
+    <rt-select
+        qa-dataid="list-tree-filter"
+        [ariaLabel]="label()"
+        [clearable]="false"
+        [ngModel]="tree()"
+        [ngModelOptions]="{ standalone: true }"
+        [options]="options()"
+        (selectionChange)="pick($event)" />
+
+    <!-- Размерник: подписи всех опций столбиком, невидимые, в той же ячейке сетки, что и выбор.
+         Хост берёт ширину самой длинной подписи, и панель — она шириной с триггер — показывает
+         каждую опцию одной строкой. Числом это не задать: имена деревьев приходят из приёмника -->
+    <span rtElem="sizer" aria-hidden="true" qa-dataid="list-tree-filter-sizer">
+        @for (option of options(); track option.value) {
+            <span rtElem="sizer-row">{{ option.label }}</span>
+        }
+    </span>
+</ng-container>

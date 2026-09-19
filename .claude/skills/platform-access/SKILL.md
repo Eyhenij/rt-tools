@@ -4,7 +4,7 @@ kind: rule
 law: frontend-application
 description: Rule under the frontend-application law. Load when an edit touches the global object or the runtime — window, globalThis, PLATFORM_ID, localStorage. Names the DI tokens and the pitfalls of server-side page rendering. Does not apply under libs/api and apps/api. Pattern platform-access-di.
 ---
-<!-- rt-kit v0.26.0 · rules/platform-access.md · 28138749f60c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/platform-access.md · 28138749f60c · правится надстройкой, не здесь -->
 
 # Browser environment — how it works here
 

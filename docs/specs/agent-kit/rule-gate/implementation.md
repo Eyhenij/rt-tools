@@ -5,6 +5,8 @@ statement: a removed statement is removed together with its line.
 
 - **The config of the linter demands a rule under it.** — `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`
 - **The check of repeats demands the rule whose signs it carries out, and only it.** — `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`
+- **The image, the proxy config and the sample of the production environment demand the rule of the rollout.** — `projects/agent-kit/assets/defaults/gate-map.sh:deploy-flow` — the branches of the image, of the compose file, of the proxy config and of the environment sample; scenario SC-AK-1088
+- **The pipeline demands two rules, and the rollout one goes first.** — `projects/agent-kit/assets/defaults/gate-map.sh:deploy-flow` — the branch of the pipeline prints two names, and the gate demands the first unloaded one; scenario SC-AK-1088
 - **Creating a working tree loads the rule of delivery.** — `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`
 - **The layers on top of the domain rule are declared by a file of their own, not by lines in the gate.** — `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_add`
 - **A layer demands a rule in addition, not instead of the domain one.** — `projects/agent-kit/assets/hooks/skill-gate.sh:want`
@@ -20,3 +22,5 @@ statement: a removed statement is removed together with its line.
 - **A command publishing the body of a task or a request demands the rule of the wording.** — `projects/agent-kit/assets/defaults/gate-map.sh:doc-style-human` — scenario SC-AK-850
 - **Two signs are judged at once: the call of the client and the body in the arguments.** — `projects/agent-kit/assets/defaults/gate-map.sh:rt_gate_invokes` — scenario SC-AK-850
 - **An interpreter is checked by its body, not by its name.** — `projects/agent-kit/assets/defaults/shell.sh:interp` — a document at the input and code as an argument; scenario `SC-AK-857`
+- **The gate forgets the loaded rules when the text of the rules leaves the session.** — `projects/agent-kit/assets/hooks/skill-gate-rearm.sh:sid` — scenario `SC-AK-1049`
+- **The forgetting is told to the session in words.** — `projects/agent-kit/assets/hooks/skill-gate-rearm.sh:additionalContext` — scenario `SC-AK-1050`

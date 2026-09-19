@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/turn-exit-patterns.sh · d56351aed40a · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/turn-exit-patterns.sh · 230d16fccb7c · правится надстройкой, не здесь
 # The patterns of the turn-exit guard. NOT a guard: it has no `rt-hook:` declaration and hooks into
 # no agent event. The turn-exit guard sources it — the same way guards source the shared reading of
 # the input and the deny tail. It was moved out when the guard outgrew the file length limit: the
@@ -46,93 +46,27 @@ part_re='&&|\|\||;|\n'
 # resolved, a commit and a push were made, and the last action became a loop until the run was ready
 # passed it whole — there was work, and plenty. It is exactly that fullness that deceives: the
 # emptiness behind such a turn is not visible.
-wait_re='gh[[:space:]]+(run[[:space:]]+watch|pr[[:space:]]+checks[^|]*--watch)|until[[:space:]].*sleep|while[[:space:]].*sleep|^[[:space:]]*sleep[[:space:]]'
+# Two more kinds of last action were added after an analysis. The first is a run of the checks
+# started in the background: the guard is given the background sign appended to the command, and on
+# the foreground the same command stays work — it holds the turn to its own end. The second is a
+# read of a background task's log: the run was started, the log was read, a report was written, and
+# the tree did not change by a single sign; such a turn stands exactly as long as an empty one.
+wait_re='gh[[:space:]]+(run[[:space:]]+watch|pr[[:space:]]+checks[^|]*--watch)|until[[:space:]].*sleep|while[[:space:]].*sleep|^[[:space:]]*sleep[[:space:]]|(nx[[:space:]]+(affected|run-many|test|build|lint|e2e)|npm[[:space:]]+run[[:space:]]+(lint|test|check:|e2e)|pnpm[[:space:]]+run|playwright[[:space:]]+test|vitest|jest|bash[[:space:]].*tests?/)[^&]*&[[:space:]]*$|(cat|tail|head|less|grep)[^|]*\.(log|output)([[:space:]]|$)|tasks/[A-Za-z0-9]+\.output'
+
+# A promise to do the work in the next turn. The same announcement of intent as a command named and
+# not run, only it sounds politer and is therefore recognised as a stop less often. An offer to the
+# owner to object to the announced intent is part of the promise, not a question: a turn ends with a
+# question when the work does not go without the answer, and here it did go.
+promise_re='следующим ходом|в следующий раз|дальше возьму|дальше допишу|допишу остальн|доделаю остальн|доделаю в следующ|продолжу в следующ|беру[^.]{0,40}следующим|возьму[^.]{0,40}следующим'
+
+# The owner's standing word to work without stops. It holds until they cancel it, and a turn that
+# ended with waiting for their word invents that cancellation. Without this the word about a stop
+# was read out of it by the piece «останов» in «без остановок» — the instruction to work was taken
+# for its opposite.
+standing_work_re='работай[^.]{0,40}(без остановок|без пауз|сам)|не останавливайся|продолжай[^.]{0,40}(без остановок|без пауз)|работай дальше'
 
 # Handing work over and starting the next. The rule calls handed-over work a lawful end of a turn —
 # but on a condition: the next one is started, and an ACTION has been done on it, not spoken.
 handover_re='gh[[:space:]]+pr[[:space:]]+create'
 started_re='task:new|task:move|board\.mjs[[:space:]]+move|git[[:space:]]+checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|git[[:space:]]+switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c'
 
-# The end of an epic: there waiting for the word of the owner is the work itself, and the guard of
-# the stop refuses taking the next task. The reading lies apart and is shared by the three guards;
-# it goes to the hosting, so the guard asks it right before a refusal, not on every turn.
-rt_te_epic_over() {
-    # shellcheck disable=SC1090
-    . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/epic-over.sh" 2>/dev/null || return 1
-    command -v rt_epic_over >/dev/null 2>&1 || return 1
-    rt_epic_over
-}
-
-# How many tasks of the epic are left. Prints the number and answers non-zero when the reading did
-# not happen at all: a tier that refuses a turn must tell "the epic goes on" from "there is nothing
-# to ask with".
-rt_te_epic_left() {
-    # shellcheck disable=SC1090
-    . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/epic-over.sh" 2>/dev/null || return 1
-    command -v rt_epic_unfinished >/dev/null 2>&1 || return 1
-    rt_epic_unfinished
-}
-
-# The refusal about an epic that goes on. The text lies here and not in the guard: the guard stands
-# at its length limit, and a tier written there in full would push the laid-out copy over it.
-#
-# Why the tier exists. The other tiers judge the current task and the current turn: the state, the
-# folder, the last action. All of them stayed silent on a turn that did work, ended with a commit
-# and then reported — and by the letter of the rule such a turn is lawful. Yet the epic went on, the
-# next step stood written in the plan and was busy with nothing, and the owner read the turn as a
-# stop. It repeated four times in one day.
-#
-# The reading is inverted here on purpose: the state of the epic was already asked in this guard,
-# but only to PERMIT a stop at the end of an epic. Nobody asked it the other way round.
-rt_te_epic_reason() {
-    printf '%s' "BLOCKED by turn-exit-guard: the epic is not over — ${1} of its tasks are unfinished, and the turn ends without the word of the owner about stopping.
-
-Work is not finished while the epic holds tasks. A turn that did work and then reported is no exception: the report ends the account, not the work, and the next step of the plan was busy with nothing.
-
-The unfinished tasks are printed by «npm run epic:table»; the next step is written in the progress: ${2}
-
-Do it in this same turn. Lawful exits stay as they were: a question to the owner through the tool, a refusal of another guard, a session handover, and the owner's own word about stopping — the guard reads that word from them, not from a retelling."
-}
-
-# How many steps of the plan are not done yet. The progress mirrors the steps of the plan with a
-# mark each — `[x]` done, `[>]` going on right now, `[ ]` not begun — and a check keeps the two
-# lists matched. The reading is a local file, not a call to the hosting: it costs nothing and is
-# asked on every turn, unlike the state of the epic.
-#
-# Prints the number and answers non-zero when there is nothing to read: no progress, or a progress
-# with no list of steps. A tier that REFUSES a turn must tell "the work goes on" from "there is
-# nothing to ask with" — the same reason the count of the epic's tasks is printed rather than folded
-# into an exit code.
-rt_te_steps_left() {
-    [ -f "$1" ] || return 1
-    grep -qE '^-[[:space:]]+\[[x> ]\][[:space:]]+[0-9]+\.[0-9]+[[:space:]]' "$1" 2>/dev/null || return 1
-    printf '%s' "$(grep -cE '^-[[:space:]]+\[[> ]\][[:space:]]+[0-9]+\.[0-9]+[[:space:]]' "$1" 2>/dev/null || printf '0')"
-    return 0
-}
-
-# The step going on right now: its number and its name, as the progress writes them. Empty when no
-# step carries the mark — the refusal then names the count alone.
-rt_te_step_now() {
-    [ -f "$1" ] || return 0
-    sed -nE 's/^-[[:space:]]+\[>\][[:space:]]+([0-9]+\.[0-9]+[[:space:]]+.*)$/\1/p' "$1" 2>/dev/null | head -1
-}
-
-# The refusal about a step that is not done. The text lies here and not in the guard for the same
-# reason as the one about the epic: the guard stands at its length limit.
-#
-# Why the tier exists. The tier about the epic judges the whole: while the epic holds tasks, a turn
-# does not end. It says nothing about a turn inside one task — the epic may hold a single task, and
-# the work inside it breaks off in the middle all the same. The stage tier next to it reads the
-# «Verified by» command of a stage declared closed, and a stage nobody declared closed it does not
-# touch either.
-rt_te_steps_reason() {
-    printf '%s' "BLOCKED by turn-exit-guard: ${1} steps of the plan are not done, and the turn ends without the word of the owner about stopping.
-
-The step going on right now: ${2:-none is marked as going on}
-
-Work is not finished while the plan holds steps that are not done. A turn that did work and then reported is no exception: the report ends the account, not the work.
-
-The steps are listed in the progress and counted by «npm run check:work-steps»; the plan holds the same list and is not edited.
-
-Do them in this same turn. Lawful exits stay as they were: a question to the owner through the tool, a refusal of another guard, a session handover, and the owner's own word about stopping — the guard reads that word from them, not from a retelling."
-}

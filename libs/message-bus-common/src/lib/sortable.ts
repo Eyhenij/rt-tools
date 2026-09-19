@@ -18,3 +18,6 @@ export const PROPOSAL_SORTABLE: readonly string[] = ['arrivedAt', 'resource', 'a
 
 /** Месячные сводки: по чему сортируется их список. */
 export const MONTH_RECORD_SORTABLE: readonly string[] = ['ranAt', 'month', 'tree'];
+
+/** Использование правил: по чему сортируется таблица скилов. Первое — самые загружаемые сверху. */
+export const USAGE_SORTABLE: readonly string[] = ['loads', 'skill', 'sessions', 'denials'];

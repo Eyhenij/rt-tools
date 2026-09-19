@@ -32,10 +32,13 @@ export interface ISectionMarks {
 export type TPageMark = 'hint' | 'columns' | 'refresh' | 'fault' | 'retry';
 
 /**
- * Имя раздела. Три раздела груза собраны одним и тем же списочным экраном; четвёртый — тем же,
- * но без отбора по дереву и без панели: приглашение ждёт дерева, которого ещё нет.
+ * Имя раздела. Три раздела груза собраны одним и тем же списочным экраном; раздел использования
+ * — тем же, с отбором по периоду и панелью сессий вместо панели подробностей; приглашения — тем
+ * же, но без отбора по дереву и без панели: приглашение ждёт дерева, которого ещё нет. Люди и
+ * роли не имеют ни отбора, ни панели подробностей: их панели правят и открываются кнопкой и
+ * меню строки, а не нажатием на строку.
  */
-export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'invites';
+export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'usage' | 'invites' | 'people' | 'roles';
 
 /** Разделы админки: адрес, заголовок экрана и `qa-dataid` его таблицы и строк. */
 export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.freeze({
@@ -63,6 +66,14 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
         row: 'summaries-row',
         details: 'month-record-details-close',
     }),
+    usage: Object.freeze({
+        path: SECTIONS.usage,
+        title: 'Использование',
+        prefix: 'usage',
+        table: 'usage-table',
+        row: 'usage-row',
+        details: 'usage-sessions-close',
+    }),
     invites: Object.freeze({
         path: SECTIONS.invites,
         title: 'Приглашения',
@@ -72,6 +83,25 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
         // Панели подробностей у приглашения нет: всё известное о нём стоит в строке. Метка
         // объявлена пустой, а не выдуманной, — по выдуманной спека искала бы то, чего нет, и
         // молча ничего не находила.
+        details: '',
+    }),
+    people: Object.freeze({
+        path: SECTIONS.people,
+        title: 'Пользователи',
+        prefix: 'people',
+        table: 'people-table',
+        row: 'people-row',
+        // Панели подробностей у человека нет: всё известное о нём стоит в строке, а панели
+        // заведения, пароля и прав правят и открываются кнопкой и меню строки.
+        details: '',
+    }),
+    roles: Object.freeze({
+        path: SECTIONS.roles,
+        title: 'Роли',
+        prefix: 'roles',
+        table: 'roles-table',
+        row: 'roles-row',
+        // Панели подробностей у роли нет: строка несёт её целиком, а панель роли правит.
         details: '',
     }),
 });
@@ -108,14 +138,29 @@ export function rowsOf(page: Page, section: TSectionName): Locator {
 }
 
 /**
+ * Пара входа: имя записи и её пароль.
+ *
+ * Названа не так, как то же самое зовётся в домене входа админки, и намеренно: набор в либы
+ * приложения не смотрит — он говорит с ним по сети, как человек. Одно имя на два объявления
+ * прочиталось бы общим типом, которого нет, и проверка повторов отбивает его прямо на пуше.
+ */
+export interface IStandSignInPair {
+    readonly name: string;
+    readonly password: string;
+}
+
+/**
  * Вход парой стенда.
  *
  * Ждёт ухода с экрана входа: форма отвечает не мгновенно, и следующий шаг, начатый раньше,
  * читает ещё старую страницу.
+ *
+ * Пара приезжает доводом, а умолчание — запись самого набора: у неё права на все разделы, и ею
+ * идёт весь набор, кроме проверок того, что видит человек без права.
  */
-export async function signIn(page: Page): Promise<void> {
-    await qa(page, 'sign-in-name').locator('input').fill(ACCOUNT.name);
-    await qa(page, 'sign-in-password').locator('input').fill(ACCOUNT.password);
+export async function signIn(page: Page, account: IStandSignInPair = ACCOUNT): Promise<void> {
+    await qa(page, 'sign-in-name').locator('input').fill(account.name);
+    await qa(page, 'sign-in-password').locator('input').fill(account.password);
     await qa(page, 'sign-in-submit').click();
     await page.waitForURL((url: URL): boolean => !url.pathname.startsWith(SIGN_IN_PATH));
 }
@@ -148,6 +193,16 @@ export async function pickState(page: Page, name: string): Promise<void> {
 export async function pickVersion(page: Page, name: string): Promise<void> {
     await qa(page, 'list-version-filter').click();
     await page.getByRole('option', { name, exact: true }).click();
+}
+
+/**
+ * Назвать день в одном из двух полей отбора по периоду.
+ *
+ * Поле — нативный выбор дня, и значение в него кладётся строкой той же формы, какой день читает
+ * приёмник: нажимать по календарю браузера набор не умеет, а строка приходит тем же событием.
+ */
+export async function pickDay(page: Page, field: 'from' | 'to', day: string): Promise<void> {
+    await qa(page, `list-period-${field}`).locator('input').fill(day);
 }
 
 /** Нажать заголовок сортируемого столбца: нажатие по самому `th` порядка не меняет. */

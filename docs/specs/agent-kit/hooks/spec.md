@@ -61,6 +61,16 @@ command that called it.
   without a list gives nothing to fix by; a list without a code passes the push gate.
 - **A check that has nothing to read answers zero and says so.** Silence reads as "nothing found",
   and a check switched off by an empty setting stays green for as long as it lives.
+- **A check whose walk came back empty refuses; it does not answer zero.** The skip above is
+  declared before the walk and says the tree has no such subject at all. Here the subject is in
+  place, the roots are read, and the walk met nothing: a name in the settings goes past a directory
+  the tree renamed, and the line "0 read, no divergences" is indistinguishable from an honest zero.
+  The refusal names the roots walked and the settings keys they come from — it is read by whoever
+  sets the tree up, and by nobody else.
+- **The backend families are a list, and the check walks every one of them.** One name is read as
+  a list of one, so a tree with one server application changes nothing. A family the walk skipped is
+  indistinguishable from one walked without divergences, so the answer and the empty-walk refusal
+  name the families by name rather than by count alone.
 - **What a check judges by is kept apart from the code that judges.** The signs are data: a tree
   adds its own by a file, and a matching key replaces the package one.
 - **A guard and a check are described by one subdomain.** Both are executable, both are called from
@@ -137,3 +147,4 @@ task key, the board — is read from the settings of the tree, not written into 
 
 - 2026-09-10 — the subdomain was created: what a guard and a check of this package are and what each
   of them owes whoever it refuses.
+- 2026-09-18 — the backend families became a list: the check walks every one and names them.

@@ -2,12 +2,12 @@
 
 The prefix is `SC-AK`. The subdomain `delivery-identity` of the domain `agent-kit`.
 
-### SC-AK-480 — a request without the substitution of the token is refused
+### SC-AK-480 — a request whose author cannot be learned and whose command names no token is refused
 
-Given the tree named the variable the machine record token is substituted by
+Given the tree named the token variable and has no way to ask the hosting who will come
 When a request is opened, and there is no substitution in the command
-Then the opening is refused: the signed-in record will open the request from the owner, and they
-cannot be assigned as its reviewer
+Then the opening is refused: who will open it stays unknown, and it may come out from the very
+person named as its reviewer
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
@@ -54,19 +54,13 @@ Then the guard lets the call through: for such a tree the identity of a call mea
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-485 — the draft is not lifted from a request opened by other than the machine record
+### SC-AK-485 — the draft of a request opened by a foreign record is lifted, and the record is named
 
-Given the author of the request is not the record the tree named as the machine one
+Given the author of the request is not the record the tree named as the machine one, and the
+request has a review
 When the draft is lifted
-Then the lifting is refused: this is the last move where the miss is still fixable by reopening
-
-Covered: `projects/agent-kit/tests/git-guards.test.sh`.
-
-### SC-AK-486 — the refusal names both records and the reopening
-
-Given the draft is lifted from a request of a foreign author
-When the guard refuses the call
-Then the refusal holds both records and the path of the fix: close the request and open it anew
+Then the guard lets the call through and names the record aloud: the clash that breaks a review is
+caught by the condition about the review, and a foreign record by itself breaks nothing
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
@@ -78,21 +72,22 @@ Then the guard lets the call through
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-842 — the login the call will go under is checked against the machine record
+### SC-AK-842 — the login the call will go under is checked against the reviewer
 
 Given the tree can ask the hosting who will come by the token
-When a request is opened
-Then the login of the machine record lets the call through, a foreign one forbids it, and the
-refusal names both records: the substitution in the command speaks of an intent, not of a result
+When a request is opened with a reviewer named in the command
+Then a login other than the reviewer lets the call through, a login equal to the reviewer forbids
+it, and the refusal names the account and the reopening: the hosting silently drops a review
+request pointing at the author
 
 Covered: `projects/agent-kit/tests/git-guards-identity.test.sh`.
 
-### SC-AK-843 — asking did not work: the call passes, and this is said
+### SC-AK-843 — asking did not work: the demand falls back to the text of the command
 
-Given the tree named neither a machine record nor a way to ask — or the answer is empty
+Given the tree has no way to ask the hosting — or the answer is empty
 When a request is opened
-Then the check is not performed and the call passes, and the guard reports the empty answer: a
-silent pass is indistinguishable from a check that came together
+Then the author stays unknown, and the call is judged by the text alone: a command naming the token
+passes, one without it is refused
 
 Covered: `projects/agent-kit/tests/git-guards-identity.test.sh`.
 
@@ -105,3 +100,30 @@ Then an article stands next to it: the active record is picked per machine, not 
 machine record is substituted onto a call and is not made active
 
 Covered: `projects/agent-kit/tests/git-guards-identity.test.sh`.
+
+### SC-AK-1064 — a request whose author is named as its own reviewer is refused
+
+Given the hosting answers that the call will go under a certain account
+When a request is opened, and that same account stands as `--reviewer`
+Then the opening is refused: the hosting accepts such a review request and silently does not create
+it, and the author of a request cannot be changed
+
+Covered: `projects/agent-kit/tests/git-guards-identity.test.sh`.
+
+### SC-AK-1065 — a request from a record other than the machine one passes, and the record is named
+
+Given the hosting answers with an account other than the machine one, and the reviewer is a third
+When a request is opened
+Then the guard lets the call through and names the account aloud: the review will be created, and
+silence about a foreign account is indistinguishable from a check that did not fire
+
+Covered: `projects/agent-kit/tests/git-guards-identity.test.sh`.
+
+### SC-AK-1116 — a runner before the call does not hide the call
+
+Given the command starts with `timeout`, `nohup` or another runner of the closed list
+When a guard asks whether the call stands in the line
+Then the sign recognises it, together with the runner's own flags and arguments; a word outside the
+list — a print of the line or a foreign command — is not counted as a call
+
+Covered: `projects/agent-kit/tests/cmd-bound.test.sh`.

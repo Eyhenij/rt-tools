@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.26.0 · checks/check-descriptions.mjs · 451cb99f968b · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/check-descriptions.mjs · 451cb99f968b · правится надстройкой, не здесь
 /**
  * The audit of the length of rule and pattern descriptions.
  *

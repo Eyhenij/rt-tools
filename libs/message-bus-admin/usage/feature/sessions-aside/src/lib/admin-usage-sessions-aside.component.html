@@ -1,0 +1,28 @@
+<ng-container rtContainerRightSidenavPanel #panel="rtContainerRightPanel" (cancelled)="onCancel()" (closed)="onClosed()" />
+
+<rt-aside qa-dataid="usage-sessions-panel" [ariaLabel]="title()">
+    <rt-aside-header
+        qa-dataid="usage-sessions-header"
+        [loading]="reading()"
+        [overline]="overline()"
+        [title]="title()"
+        (dismiss)="onClose()" />
+
+    @if (failedText(); as reason) {
+        <rt-empty-state qa-dataid="usage-sessions-failed" icon="ico-warning" [title]="reason" />
+    } @else {
+        <admin-usage-sessions-view [reading]="reading()" [rows]="rows()" />
+    }
+
+    <rt-aside-footer>
+        <button
+            rtButton
+            asideDismiss
+            qa-dataid="usage-sessions-close"
+            type="button"
+            appearance="text"
+            [attr.aria-label]="closeLabel()"
+            [label]="closeLabel()"
+            (click)="onClose()"></button>
+    </rt-aside-footer>
+</rt-aside>

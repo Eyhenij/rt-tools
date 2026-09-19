@@ -11,11 +11,14 @@ import {
     ITEMS,
     leavePanel,
     menu,
+    NESTED_ITEMS,
     pin,
     pinButton,
     setup,
     subItems,
+    subItemTitles,
     typeInSearch,
+    expandedFolderTitles,
 } from './side-menu.harness';
 
 beforeAll(installFontsStub);
@@ -432,5 +435,53 @@ describe('SC-UK-52 — переход на страницу без раздел�
 
         expect(subItems(fixture).length).toBe(0);
         expect(fixture.nativeElement.querySelector('.rtui-sub-side-menu--opened')).toBeNull();
+    });
+});
+
+describe('RtuiSideMenuComponent — поиск внутри папок', () => {
+    it('SC-UK-61 — запрос с именем пункта внутри папки показывает и папку, и сам пункт', () => {
+        const { fixture }: ISetup = setup('hover', [], false, NESTED_ITEMS);
+
+        hoverFirstItem(fixture);
+        typeInSearch(fixture, 'круговая');
+
+        expect(subItemTitles(fixture)).toEqual(['Сохранённое', 'Круговая диаграмма']);
+    });
+
+    it('SC-UK-63 — совпавшая папка стоит раскрытой: результат виден без лишнего нажатия', () => {
+        const { fixture }: ISetup = setup('hover', [], false, NESTED_ITEMS);
+
+        hoverFirstItem(fixture);
+        typeInSearch(fixture, 'круговая');
+
+        expect(expandedFolderTitles(fixture)).toEqual(['Сохранённое']);
+    });
+
+    it('SC-UK-63 — пустой запрос возвращает прежнюю раскрытость', () => {
+        // Утверждение об отсутствии идёт в паре с положительным: сначала папка раскрыта поиском,
+        // и только потом проверяется, что стёртый запрос её закрыл.
+        const { fixture }: ISetup = setup('hover', [], false, NESTED_ITEMS);
+
+        hoverFirstItem(fixture);
+        typeInSearch(fixture, 'круговая');
+
+        expect(expandedFolderTitles(fixture)).toEqual(['Сохранённое']);
+
+        typeInSearch(fixture, '');
+
+        expect(expandedFolderTitles(fixture)).toEqual([]);
+        expect(subItemTitles(fixture)).toEqual(['Курсы валют', 'Сохранённое']);
+    });
+
+    it('SC-UK-62 — совпала подпись папки, а внутри никто: папка стоит одной строкой', () => {
+        const { fixture }: ISetup = setup('hover', [], false, NESTED_ITEMS);
+
+        hoverFirstItem(fixture);
+        typeInSearch(fixture, 'сохранён');
+
+        // «Сохранённое» нашлось по своей подписи, а ни круговая диаграмма, ни столбцы запроса не
+        // содержат: на экране остаётся путь к найденному, а не весь состав папки. Папка при пустом
+        // составе всё равно рисуется — иначе искомое по имени пропало бы с экрана вовсе.
+        expect(subItemTitles(fixture)).toEqual(['Сохранённое']);
     });
 });

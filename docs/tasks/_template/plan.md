@@ -1,4 +1,4 @@
-<!-- rt-kit v0.26.0 · samples/tasks/_template/plan.md · 19abe9619b0b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · samples/tasks/_template/plan.md · bf20f51fcde2 · правится надстройкой, не здесь -->
 # Plan
 
 **Task:** <KEY>-<number> · **Branch:** <branch>
@@ -35,19 +35,16 @@ is named here is read twice — before the work and after it.>
 
 ### 1. <name>
 
-- **Steps:**
-    1. <what is done first>
-    2. <what is done after it>
+- **What is done:** <in one phrase>
 - **Readiness sign:** <what must become true>
 - **Verified by:** `<command>` — <what in its output means "it matched">
 
-The steps are the smallest unit of the work, and they are written here in full: the progress
-mirrors this list with its marks, and a check matches the two by number and by name. A step is
-named by what is done, not by what is thought over — a line nobody can call done is not a step.
-
 The command is written in backticks: the turn exit guard reads it and does not let out a turn in
 which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything.
+cannot be confirmed by anything. The command is run right here, while the plan is written, not at
+the end of the stage: its output is what names the readiness sign. A sign written by a guess is
+sometimes impossible to meet — the line the stage must put out comes from an unconfigured tree
+rather than from the work — and that is found out latest of everything that depended on it.
 
 ## What this work does not do
 

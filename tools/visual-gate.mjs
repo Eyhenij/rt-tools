@@ -7,19 +7,30 @@
  * step: it calls a command per line and leaves no stand behind it. Here lives what the pipeline's
  * task writes as the step's lines.
  *
- * A free port is taken rather than a constant one: the pipeline's runner is the same machine as the
- * developer's, and a showcase raised by hand on 6006 would answer the run instead of its own. That
- * is exactly what the pipeline's task has its own ports for; a constant port at the gate would
- * collide the gate with the run.
+ * A free port is taken rather than a constant one: the gate shares the machine with a showcase the
+ * developer raised by hand, and one pinned to 6006 would answer the run instead of its own. That is
+ * exactly what the pipeline's task has its own ports for; a constant port at the gate would collide
+ * the gate with the run.
+ *
+ * **The second kit's frames are shot by the browser of an image, and matched everywhere.** The
+ * raster of glyphs is computed by the machine that draws, and two machines at the same code give a
+ * different frame: a text-heavy page diverges by 0.01 of its pixels across every letter at once,
+ * while a small component matches. The pipeline's runner is not the developer's machine, so a
+ * reference taken by either of them cannot match both. The image is one on any machine: it is
+ * raised by the shooting run, which is given its address here. The first kit still shoots with the
+ * machine's browser — the reason stands next to the line that gates it. The probes of the harness
+ * run without the image: they judge the harness, not the raster.
  *
  * The showcase is stopped together with its process tree: the task runner starts it, and killing one
  * parent would leave a working server holding the port until the end of the session.
  *
- *   node tools/visual-gate.mjs ui-kit       # the first showcase's snapshots
- *   node tools/visual-gate.mjs ui-kit-v2    # the second showcase's snapshots
+ *   node tools/visual-gate.mjs ui-kit              # the first showcase's snapshots
+ *   node tools/visual-gate.mjs ui-kit-v2           # the second showcase's snapshots
+ *   node tools/visual-gate.mjs ui-kit-v2 --update  # a re-take of them, by the same road
  */
 import { spawn, spawnSync } from 'node:child_process';
 import { createServer } from 'node:net';
+import { networkInterfaces } from 'node:os';
 
 /**
  * The kits are kept apart on purpose: each has its own showcase, its own snapshot runner and its
@@ -27,8 +38,15 @@ import { createServer } from 'node:net';
  * they share no shooting code, and an edit for one does not move the other's frames.
  */
 const KITS = {
-    'ui-kit': { target: '@rt-tools/ui-kit:storybook', snapshots: 'test:visual', probes: ['check:paint'] },
-    'ui-kit-v2': { target: '@rt-tools/ui-kit-v2:storybook', snapshots: 'test:visual:v2', probes: ['check:icons', 'check:window'] },
+    'ui-kit': { target: '@rt-tools/ui-kit:storybook', snapshots: 'test:visual', probes: ['check:paint'], image: false },
+    'ui-kit-v2': {
+        target: '@rt-tools/ui-kit-v2:build-storybook',
+        built: 'dist/storybook/@rt-tools/ui-kit-v2',
+        snapshots: 'test:visual:v2',
+        update: 'test:visual:v2:update-all',
+        probes: ['check:icons', 'check:window'],
+        image: true,
+    },
 };
 
 /** The waiting limit for the showcase to come up. Not a measure of readiness but a sign that it did not. */
@@ -38,6 +56,13 @@ const READY_TIMEOUT_MS = 240_000;
 const POLL_MS = 2_000;
 
 const kit = process.argv[2];
+
+/**
+ * A re-take instead of a matching. It goes the same road as the matching — the built showcase and
+ * the browser of an image — because a reference taken by any other road is wrong in silence: it
+ * holds the raster of the machine that took it, and no other machine draws that.
+ */
+const retakes = process.argv.includes('--update');
 
 if (!Object.hasOwn(KITS, kit)) {
     console.error(`\n  The kit is not named or is unknown: «${kit ?? ''}». Expected one of: ${Object.keys(KITS).join(', ')}\n`);
@@ -80,17 +105,42 @@ async function ready(url) {
     return false;
 }
 
+/**
+ * The name of the machine on its own network, so that both sides reach the showcase by one
+ * address: the shooting browser lives in an image, and `localhost` there is its own.
+ *
+ * The showcase is therefore raised on every interface rather than on the loopback alone — bound
+ * to the loopback it answers neither the image nor the machine's own network name.
+ */
+function machineAddress() {
+    for (const cards of Object.values(networkInterfaces())) {
+        for (const card of cards ?? []) {
+            if (card.family === 'IPv4' && !card.internal) {
+                return card.address;
+            }
+        }
+    }
+
+    return '';
+}
+
 const port = await freePort();
-const url = `http://localhost:${port}`;
 
-console.log(`visual-gate: raising the showcase ${kit} on ${url}`);
+/*
+ * A showcase shot by the machine's own browser stays on the loopback: it is reached from this very
+ * machine, and its own name would only widen who can reach it. The one shot in an image is reached
+ * by the machine's network name — `localhost` inside the image is the image's own.
+ */
+const host = KITS[kit].image ? machineAddress() : 'localhost';
 
-const showcase = spawn('pnpm', ['exec', 'nx', 'run', KITS[kit].target, '--port', String(port), '--no-open'], {
-    stdio: ['ignore', 'ignore', 'ignore'],
-    // A process group of its own: killing one parent would leave the server holding the port.
-    detached: true,
-});
+if (!host) {
+    console.error('\n  The machine has no network name of its own, and the image has no way to reach the showcase by one.\n');
+    process.exit(1);
+}
 
+const url = `http://${host}:${port}`;
+
+let showcase = null;
 let stopped = false;
 
 function stop() {
@@ -99,7 +149,9 @@ function stop() {
     }
     stopped = true;
     try {
-        process.kill(-showcase.pid, 'SIGTERM');
+        if (showcase) {
+            process.kill(-showcase.pid, 'SIGTERM');
+        }
     } catch {
         // The process tree has already ended by itself — there is nothing to stop.
     }
@@ -109,16 +161,73 @@ process.on('exit', stop);
 process.on('SIGINT', () => process.exit(130));
 process.on('SIGTERM', () => process.exit(143));
 
+if (KITS[kit].image) {
+    console.log(`visual-gate: building the showcase ${kit}`);
+
+    const build = spawnSync('pnpm', ['exec', 'nx', 'run', `${KITS[kit].target}`, '--configuration', 'ci'], { stdio: 'inherit' });
+
+    if ((build.status ?? 1) !== 0) {
+        console.error(`\n  The showcase ${kit} did not build — there is nothing to shoot.\n`);
+        process.exit(1);
+    }
+
+    console.log(`visual-gate: serving the built showcase ${kit} on ${url}`);
+
+    /*
+     * The serving is a process of its own, not a server inside this script: this script waits for
+     * the shooting run synchronously, and a server sharing its loop answers nothing for the whole
+     * length of that wait — the connection opens and the reply never comes.
+     */
+    showcase = spawn('node', ['tools/serve-static.mjs', KITS[kit].built, String(port)], {
+        stdio: ['ignore', 'ignore', 'inherit'],
+        detached: true,
+    });
+} else {
+    console.log(`visual-gate: raising the showcase ${kit} on ${url}`);
+
+    showcase = spawn('pnpm', ['exec', 'nx', 'run', KITS[kit].target, '--port', String(port), '--no-open'], {
+        stdio: ['ignore', 'ignore', 'ignore'],
+        // A process group of its own: killing one parent would leave the server holding the port.
+        detached: true,
+    });
+}
+
 if (!(await ready(url))) {
     stop();
     console.error(`\n  The showcase ${kit} did not come up in ${READY_TIMEOUT_MS / 1000} s — there is nothing to shoot.\n`);
     process.exit(1);
 }
 
-const run = spawnSync('pnpm', ['run', KITS[kit].snapshots], {
-    stdio: 'inherit',
-    env: { ...process.env, STORYBOOK_URL: url },
-});
+/**
+ * The first kit's showcase shoots with the machine's own browser, and its frames are therefore
+ * matched only in the pipeline — where they were taken.
+ *
+ * The image needs a settings file inside the showcase's own directory, and the epic «Один кит»
+ * forbids editing the first kit at all — its showcase included. Lifting that is the owner's word,
+ * not a decision to be taken here; until then this half stays as it was, and it is named rather
+ * than left silent.
+ */
+const judgesFrames = KITS[kit].image || Boolean(process.env['CI']);
+
+if (!judgesFrames) {
+    console.log(`\n  The frames of ${kit} are matched in the pipeline only: its showcase shoots with the machine's browser.\n`);
+}
+
+const snapshots = retakes ? KITS[kit].update : KITS[kit].snapshots;
+
+if (!snapshots) {
+    console.error(`\n  The showcase ${kit} has no re-take of its own here — it is taken where its own harness says.\n`);
+    process.exit(1);
+}
+
+const shoot = KITS[kit].image ? ['node', ['tools/shot-browser.mjs', 'pnpm', 'run', snapshots]] : ['pnpm', ['run', snapshots]];
+
+const run = judgesFrames
+    ? spawnSync(shoot[0], shoot[1], {
+          stdio: 'inherit',
+          env: { ...process.env, STORYBOOK_URL: url },
+      })
+    : { status: 0 };
 
 /**
  * The harness probes go over the same raised showcase rather than by a step of their own.

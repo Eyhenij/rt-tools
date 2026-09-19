@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Params, Router, UrlSegment } from '@angular/router';
 import { AdminListStoreBase, CargoVersionsStore, TreesStore } from '@rt/message-bus-admin/common/core/data-access';
 import {
-    adminLabel,
+    AdminTextService,
     COLUMNS_ROUTE,
     IAdminListHost,
     IAdminListQuery,
@@ -43,6 +43,7 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
     readonly #trees: TreesStore = inject(TreesStore);
     readonly #versions: CargoVersionsStore = inject(CargoVersionsStore);
     readonly #tableSettings: RtTableSettingsRegistry = inject(RtTableSettingsRegistry);
+    readonly #text: AdminTextService = inject(AdminTextService);
 
     readonly #params: Signal<Params> = toSignal(this.#route.queryParams, { initialValue: this.#route.snapshot.queryParams });
 
@@ -73,7 +74,7 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
      * зависимости от того, какой отбор человек тронул последним.
      */
     protected readonly narrowed: Signal<boolean> = computed(
-        () => this.query().tree !== '' || this.query().state !== '' || this.query().version !== ''
+        () => this.query().tree !== '' || this.query().state !== '' || this.query().version !== '' || this.query().from !== ''
     );
 
     /**
@@ -82,7 +83,7 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
      * Отбор, не давший ни строки, и дерево, не приславшее ни одной записи, — разные ответы, и
      * второй означает исправную службу.
      */
-    protected readonly emptyMessage: Signal<string> = computed(() => adminLabel(this.narrowed() ? 'listEmptyByFilter' : 'listEmpty'));
+    protected readonly emptyMessage: Signal<string> = computed(() => this.#text.text(this.narrowed() ? 'listEmptyByFilter' : 'listEmpty'));
 
     /**
      * Вторая строка пустого состояния: откуда записи приходят и что человеку сделать.
@@ -92,7 +93,7 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
      * через двоеточие и читались как одна длинная подпись.
      */
     protected readonly emptyDescription: Signal<string> = computed(() =>
-        adminLabel(this.narrowed() ? 'listEmptyByFilterFrom' : 'listEmptyFrom')
+        this.#text.text(this.narrowed() ? 'listEmptyByFilterFrom' : 'listEmptyFrom')
     );
 
     /**
@@ -238,6 +239,19 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
     }
 
     /**
+     * Период — оба дня сразу. Страница сбрасывается тем же доводом, что и у отборов рядом.
+     *
+     * Один день из двух в адрес не встаёт: приёмник на полупериод отвечает отказом, а человек с
+     * одним выбранным днём ещё не сказал, чего хочет. Снятый период — две пустоты: тогда период
+     * подставляет приёмник и называет его в ответе.
+     */
+    protected changePeriod(from: string, to: string): void {
+        const named: boolean = from !== '' && to !== '';
+
+        this.#apply({ from: named ? from : '', to: named ? to : '', page: 1 });
+    }
+
+    /**
      * Открыть запись панелью подробностей.
      *
      * Панель живёт маршрутом в аутлете `ro` рядом с экраном, а не под ним: рисует её правая
@@ -246,9 +260,12 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
      *
      * Выборка при этом остаётся в адресе нетронутой: закрытая панель возвращает тот же список —
      * ту же страницу с тем же отбором и тем же порядком.
+     *
+     * Сегментов после раздела бывает больше одного: панель, которая правит одну сторону записи,
+     * называет и запись, и сторону — `<имя>/password`. Вызывающий отдаёт их по порядку.
      */
-    protected openDetails(id: string): void {
-        void this.#router.navigate([{ outlets: { ro: [...this.#section(), id] } }], {
+    protected openDetails(id: string, ...tail: readonly string[]): void {
+        void this.#router.navigate([{ outlets: { ro: [...this.#section(), id, ...tail] } }], {
             relativeTo: this.#route.parent,
             queryParamsHandling: 'preserve',
         });

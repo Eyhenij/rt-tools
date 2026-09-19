@@ -39,10 +39,12 @@ of them may do a thing the owner sets from a screen rather than from a database 
   not there, they are the only way in; while they stand next to the screens, one action has two
   paths and they drift apart in silence. Their removal is the last task, and it also closes the
   hole they were holding: there is nobody to create the first record from the web.
-- **The branches stand each on the main branch, not in a stack.** The tasks are merged in the order
+- **The branches stand each on the epic branch, not in a stack.** The tasks are merged in the order
   of the table, and the next branch is created after the previous one is merged: everything from
   the second onward stands on the rights of the first, and a stack of six would mean six requests
-  the run stalls on at once.
+  the run stalls on at once. The epic branch is `RT-1896-access-rights`, taken from the main branch
+  after the first two tasks had already been merged straight into it: those two are not in it, and
+  it starts from a main branch that already carries them.
 
 ## The tasks
 
@@ -54,6 +56,29 @@ of them may do a thing the owner sets from a screen rather than from a database 
 | 4   | #1900 — creating, disabling and changing a password from a screen         | The three actions of the launch line move to a panel next to the list                                                                              |
 | 5   | #1901 — the page of roles and rights                                      | The set of a role and the pointed edits over it. It goes after the list: there must be somebody to assign a role to                                |
 | 6   | #1902 — the commands are removed, the first record gets a path of its own | Last: until then the commands are the only way in when the admin panel does not come up                                                            |
+| 7   | #2134 — the section is called «Пользователи»                              | Added by the owner's word when the epic was taken up again; one word in the dictionary, done before the editing tasks so their frames carry it     |
+
+## What was found along the way
+
+- **Two migrations of one backfill met at the merge of the main branch into the epic branch.** The
+  epic branch carried `20260910090000_rights_backfill`, the main branch
+  `20260910100000_grant_rights_to_existing_accounts`; the second creates a role for the cargo triage
+  besides the owner one. Applied one after the other, the first would give the triage account the
+  owner role, and the second would no longer see it: both look for an empty role. The branch's own
+  migration is removed, the tests move onto the one that is in the main branch — and gain what it
+  answers for on its own: the order of the two updates.
+- **#2018 — the rights migration took the access away from everybody.** Task 1 created the tables
+  and the column and put not a single row: every account made before it keeps an empty role, that is
+  no rights at all, and the panel shows no section. It is fixed by a follow-up migration that
+  carries the former access over. Found on production by the owner.
+
+- **A role is given after the creation, not at it.** Task #1900 created the panel without a role,
+  and task #1901 gave the item "Права" of the same row: the role and the pointed edits are set a
+  move later. The question of the plan closed by what was on disk.
+- **The first record is created by a first-run screen, and it signs the person in at once.** Task
+  #1902: one public operation creates the owner and issues the sign-in, and it closes forever
+  with the first record. The sign-in screen sends there while the storage is empty and draws its
+  form at once for the usual case. The question of the plan closed by the task.
 
 The order holds to the end of the epic. A reconsideration is the owner's decision, not the
 executor's.
@@ -73,12 +98,11 @@ executor's.
 
 ## Open questions
 
-- **How the first record is created once the commands are gone.** The proposal is a first-run
-  screen open exactly while the storage holds no account and closed forever after the first one.
-  Decided in task #1902, not before: until then the commands hold this.
-- **Whether a role is assigned at creation or after it.** Creating without a role gives a person
-  who signed in and sees nothing; creating with a role means the role list must be ready by task
-  #1900, that is, before #1901. Decided by task #1900 by what is on disk by then.
+- **What a person without a single right sees after the sign-in.** Today they stay on the sign-in
+  screen: no section is open to them, and the "no sections" screen does not stand on that path.
+  Found by task #1900, confirmed by task #1901 — a role is given after the creation, so every new
+  record passes through that state. Not decided by the epic: filed as the epic #2161 with the task
+  #2162 in the queue, taken by the owner's word.
 
 ## What the epic ends with
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.26.0 · checks/check-doc-paths.mjs · e91840ae9811 · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/check-doc-paths.mjs · e91840ae9811 · правится надстройкой, не здесь
 /**
  * The check that the addresses named in the documentation exist.
  *

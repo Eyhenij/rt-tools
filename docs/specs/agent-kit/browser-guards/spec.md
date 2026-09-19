@@ -1,6 +1,6 @@
 # The browser guards
 
-**Status:** in force · **Revision:** 2026-09-03 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-09-10 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `verifiability`, `work-conduct`
 **Procedures:** none
@@ -48,6 +48,9 @@ turn.
 - **The word "browser" in the name of a rule or of a hook does not make a question a choice
   question.** Otherwise the refusal could be bypassed only by rewriting the question without that
   word, that is by distorting it.
+- **Listing and switching browsers is refused: the profile is picked by the pinned sign alone.**
+  The names a listing returns identify nothing and change from call to call, and a pick out of them
+  lands in a profile nobody signed in to.
 - **A foreign device sign is refused before the call, and the freshness mark is set by its
   outcome.** Before the call all that is known is that the profile was requested; the session is
   marked by a connection that took place.
@@ -88,6 +91,7 @@ exit code.
 | a foreign device sign was requested         | the call refused | the pinned sign                            |
 | a question to the owner about a browser     | the call refused | that the profile is pinned, and which one  |
 | the browser raised by a driver of one's own | the call refused | the file or argument the entry point is in |
+| a listing or a switch of browsers           | the call refused | the pinned sign to select by               |
 | the profile is not named by the tree        | a pass           | once per session — what is missing         |
 | the browser choice went stale               | the call refused | the age of the choice and the pinned sign  |
 
@@ -140,6 +144,9 @@ The open questions of the domain are shared, and they live in the spec next to i
 
 ## History of changes
 
+- 2026-09-10 — the refusal of a listing and of a switch was written down. The guard stood in the
+  package from the start with neither an article nor a probe: its behaviour was held by the code
+  alone.
 - 2026-09-04 — the freshness of the choice and the channel of the refusal reason were written down:
   the freshness guard stood in the package from the very beginning, and the spec was silent about it.
 - 2026-09-03 — the subdomain was split off from the subdomain of the edit guards, which had outgrown

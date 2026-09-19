@@ -1,24 +1,43 @@
-// rt-kit v0.26.0 · checks/spec-contract.mjs · 0d42e77f0101 · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/spec-contract.mjs · bb6a80a0caa2 · правится надстройкой, не здесь
 /**
  * The spec contract against what the code declares: the procedure table against the decorators,
  * the refusal codes against the throw points.
  */
-import { BACKTICKED, PROCEDURE_ROOTS, bulletsOf, read, report, sectionOf, walk } from './spec-common.mjs';
+import { BACKTICKED, PROCEDURE_ROOTS, bulletsOf, codeOf, read, report, sectionOf, walk } from './spec-common.mjs';
 
 // ── 2. The contract against the decorators ────────────────────────────────────
 
-/** The lib roots whose procedures the domain serves; declared in the spec header. */
+/**
+ * The lib roots whose procedures the domain serves; declared in the spec header.
+ *
+ * An empty input has three states, not two, and merged into one they give a green where nothing
+ * was checked at all: there is no line — the domain says nothing about procedures; the line says
+ * «none» — a lawful answer; the line stands and names no root in backticks — the declaration was
+ * not parsed, and the whole contract went unchecked in silence. A header naming its procedures in
+ * words left three procedures with their rights and refusal codes unverified, and the run was
+ * green.
+ *
+ * The third state is answered by `UNPARSED`: the caller tells it from an empty list and names it
+ * as a discrepancy of the spec, not as the absence of a subject.
+ */
+const UNPARSED = Symbol('procedure roots are declared and not parsed');
+
 function procedureRootsOf(text) {
     const line = text.split('\n').find((candidate) => PROCEDURE_ROOTS.test(candidate));
     if (!line) {
         return null;
     }
     const value = line.match(PROCEDURE_ROOTS)[1];
-    if (/^\s*(?:none|нет)\s*$/i.test(value.replace(/[`.]/g, ''))) {
+    // The word is taken at the beginning of the line, and what follows it is an explanation: a
+    // domain that has no procedures says why, and the reason is worth more than the bare word.
+    // Demanding the word alone made fifteen lawful headers unparsed at once.
+    if (/^\s*(?:none|нет)(?![\p{L}\p{N}_])/iu.test(value.replace(/[`]/g, ''))) {
         return [];
     }
 
-    return [...value.matchAll(BACKTICKED)].map(([, path]) => path);
+    const roots = [...value.matchAll(BACKTICKED)].map(([, path]) => path);
+
+    return roots.length === 0 ? UNPARSED : roots;
 }
 
 /** What the procedures themselves declare: the contract method and the right to it. */
@@ -26,7 +45,9 @@ function declaredProcedures(roots) {
     const found = new Map();
     for (const root of roots) {
         for (const file of walk(root, (name) => name.endsWith('.procedure.ts'))) {
-            const text = read(file);
+            // Without the explanations: a sample call written next to the real mark used to substitute
+            // itself for it, and the right of a comment travelled into the audit.
+            const text = codeOf(read(file));
             const method = text.match(/\.method\.([A-Za-z_]\w*)/);
             if (!method) {
                 continue;
@@ -86,6 +107,11 @@ function checkContract(file, text, roots) {
 
         return;
     }
+    if (roots === UNPARSED) {
+        report(file, 'the line `**Процедуры:**` names no root in backticks: the roots are written as paths, and the absence of procedures is said by the word «нет». As it stands, the table of «Контракт» is checked against nothing');
+
+        return;
+    }
     const declared = declaredProcedures(roots);
     const rows = contractRows(text);
     const described = new Set();
@@ -136,7 +162,7 @@ function checkRefusalCodes(file, text, roots) {
 
         return;
     }
-    if (!roots || !roots.length) {
+    if (!roots || roots === UNPARSED || !roots.length) {
         return;
     }
     const sources = roots.flatMap((root) => walk(root, (name) => name.endsWith('.ts') && !name.endsWith('.spec.ts')));
@@ -159,4 +185,4 @@ function checkRefusalCodes(file, text, roots) {
     }
 }
 
-export { checkContract, checkRefusalCodes, procedureRootsOf };
+export { UNPARSED, checkContract, checkRefusalCodes, procedureRootsOf };

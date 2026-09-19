@@ -1,6 +1,6 @@
 # A right, a role and the check that reads them
 
-**Status:** in force · **Revision:** 8 September 2026 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 10 September 2026 · **Scenario prefix:** `SC-MB`
 **Depends on:** `docs/specs/message-bus/admin-auth/spec.md`
 **Laws:** `access`
 **Procedures:** none — the operations are declared by the controllers of the receiver
@@ -53,6 +53,11 @@ that opened or did not.
   absent right and one outright taken away mean the same.
 - **A person without a role has no rights at all.** They sign in and see the sections none of which
   their rights name; this is a lawful state, not a defect.
+- **The rights are given by the same change that closed the operations.** Closing alone leaves
+  every account that existed before it with an empty role, that is with no rights at all, and the
+  intake answers a refusal to everyone, the owner included. The state before the closing is
+  restored by the change itself, not by a query afterwards: a query is made on one machine and is
+  absent from every other copy of the storage.
 
 **The check.**
 
@@ -207,11 +212,10 @@ There is one receiver, and the roles in it are shared. Several ownerships are ou
 - **Whether a person without a single right should be told which rights exist at all.** Today the
   screen names whom to ask and nothing else. Naming the sections one has no access to would answer
   the question "what is here" — and would also give away what the receiver holds.
-- **Whether the roles are created by the owner or come with the receiver.** A set that comes with
-  the receiver is ready to work at once and goes stale as sections are added; created ones are
-  empty on a fresh node. Decided by the task of the page of roles, `#1901`.
 
 ## History of changes
 
 - 8 September 2026 — written as a draft of the task RT-1897.
 - 8 September 2026 — the sections closed by a right joined it from the draft of the task RT-1898.
+- 15 September 2026 — the question where roles come from is closed by the subdomain `roles-page`:
+  two roles come with the receiver by the migration, the rest the owner creates on the screen.

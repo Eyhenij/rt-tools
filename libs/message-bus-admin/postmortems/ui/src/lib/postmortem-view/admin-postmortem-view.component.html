@@ -1,34 +1,34 @@
 <ng-container rtBlock="admin-panel">
     <rt-aside-section>
         <rt-detail-list>
-            <rt-detail-row qa-dataid="postmortem-tree" [label]="treeLabel" [loading]="reading()">
+            <rt-detail-row qa-dataid="postmortem-tree" [label]="treeLabel()" [loading]="reading()">
                 {{ entity()?.tree?.name }}
             </rt-detail-row>
-            <rt-detail-row qa-dataid="postmortem-file" [label]="fileLabel" [loading]="reading()">
+            <rt-detail-row qa-dataid="postmortem-file" [label]="fileLabel()" [loading]="reading()">
                 {{ entity()?.file }}
             </rt-detail-row>
-            <rt-detail-row qa-dataid="postmortem-arrived" [label]="arrivedLabel" [loading]="reading()">
+            <rt-detail-row qa-dataid="postmortem-arrived" [label]="arrivedLabel()" [loading]="reading()">
                 {{ entity()?.arrivedAt ?? null | adminMoment }}
             </rt-detail-row>
             @if (entity()?.releaseVersion; as version) {
-                <rt-detail-row qa-dataid="postmortem-release-version" [label]="releaseVersionLabel" [loading]="reading()">
+                <rt-detail-row qa-dataid="postmortem-release-version" [label]="releaseVersionLabel()" [loading]="reading()">
                     {{ version }}
                 </rt-detail-row>
             }
-            <rt-detail-row qa-dataid="postmortem-updated" [label]="updatedLabel" [loading]="reading()">
+            <rt-detail-row qa-dataid="postmortem-updated" [label]="updatedLabel()" [loading]="reading()">
                 {{ entity()?.updatedAt ?? null | adminMoment }}
             </rt-detail-row>
         </rt-detail-list>
     </rt-aside-section>
 
     @if (!reading() && entity()?.fixNote; as fixNote) {
-        <rt-aside-section [heading]="fixNoteLabel">
+        <rt-aside-section [heading]="fixNoteLabel()">
             <pre rtElem="fix-note" qa-dataid="postmortem-fix-note">{{ fixNote }}</pre>
         </rt-aside-section>
     }
 
     @if (!reading() && entity()?.text?.trim(); as text) {
-        <rt-aside-section [heading]="textLabel">
+        <rt-aside-section [heading]="textLabel()">
             <rt-markdown-text qa-dataid="postmortem-text" [text]="text" />
         </rt-aside-section>
     }

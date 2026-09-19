@@ -29,8 +29,12 @@ ran() {
         '{type:"assistant",message:{content:[{type:"tool_use",name:"Bash",input:{command:$c}}]}}'
 }
 
+# Каталог хода передаётся всегда, и это каталог без репозитория: гард спрашивает «эпик кончился»
+# от каталога вызова, а без него — от дерева, в котором набор запущен. В дереве, где все задачи
+# эпика отданы, каждый ожидающий ход этим проходил, и набор краснел не от правки, а от доски.
 input_stop() {
-    jq -n --arg p "$1" --argjson a "${2:-false}" '{session_id:"tests",transcript_path:$p,stop_hook_active:$a}'
+    jq -n --arg p "$1" --arg d "$TURNS" --argjson a "${2:-false}" \
+        '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:$a}'
 }
 
 expect_stop() {
@@ -189,5 +193,30 @@ expect_stop "SC-AK-812 — чтение папки задачи взятием �
         "$(ran 'gh pr create --title x')" \
         "$(ran 'gh run list --limit 1')" \
         "$(wrote Read 'docs/tasks/RT-991-next/plan.md')")")" BLOCK
+
+# --- SC-AK-1133 — запуск или перезапуск CI без команды ожидания его конца --------------------
+#
+# Перезапуск прошёл одной строкой между делами, состояние прочитано раз — «queued», — и ход
+# кончился законным выходом; PR остался без наблюдения, черновик снял владелец сам. Ожидание —
+# наблюдение командой хостинга, цикл до конца или инструмент наблюдения; одно чтение состояния
+# ожиданием не считается, взятая следующая задача долга не снимает.
+used() {
+    jq -c -n --arg n "$1" --arg c "$2" \
+        '{type:"assistant",message:{content:[{type:"tool_use",name:$n,input:{command:$c}}]}}'
+}
+expect_stop "SC-AK-1133 — перезапуск без ожидания отбивается" \
+    "$(input_stop "$(transcript "$(say 'перезапусти CI')" "$(ran 'gh run rerun 42 --failed')" "$(ran 'gh run view 42 --json status')" "$(result '{"status":"queued"}')" "$(reply 'CI всё ещё queued.')")")" BLOCK
+expect_stop "SC-AK-1133 — запуск конвейера без ожидания отбивается" \
+    "$(input_stop "$(transcript "$(say 'выпускай')" "$(ran 'gh workflow run publish.yml -f version=1.2.3')" "$(reply 'Запущено.')")")" BLOCK
+expect_stop "SC-AK-1133 — взятая следующая задача долга по ожиданию не снимает" \
+    "$(input_stop "$(transcript "$(say 'перезапусти CI')" "$(ran 'gh run rerun 42 --failed')" "$(ran 'npm run task:new -- --title y --slug z')")")" BLOCK
+expect_stop "SC-AK-1133 — наблюдение командой хостинга снимает требование" \
+    "$(input_stop "$(transcript "$(say 'перезапусти CI')" "$(ran 'gh run rerun 42 --failed')" "$(ran 'gh run watch 42 --exit-status')")")" PASS
+expect_stop "SC-AK-1133 — цикл до конца CI снимает требование" \
+    "$(input_stop "$(transcript "$(say 'перезапусти CI')" "$(ran 'gh run rerun 42 --failed')" "$(ran 'until gh run view 42 --json status -q .status | grep -q completed; do sleep 30; done')")")" PASS
+expect_stop "SC-AK-1133 — инструмент наблюдения снимает требование" \
+    "$(input_stop "$(transcript "$(say 'перезапусти CI')" "$(ran 'gh run rerun 42 --failed')" "$(used Monitor 'gh run view 42 --json status,conclusion')")")" PASS
+expect_stop "SC-AK-1133 — ход без запуска CI этим ярусом не судится" \
+    "$(input_stop "$(transcript "$(say 'что там CI')" "$(ran 'gh run view 42 --json status')" "$(result '{"status":"queued"}')" "$(reply 'Ещё идёт.')")")" PASS
 
 suite_result "гард ожидания"

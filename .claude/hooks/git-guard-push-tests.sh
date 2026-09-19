@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/git-guard-push-tests.sh · 4b00c2dec04b · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/git-guard-push-tests.sh · 30c24d7c90ea · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh
 # The guard of the checks before a push. PreToolUse on the push call.
@@ -67,6 +67,24 @@ case "$cmd" in
     *--dry-run*) exit 0 ;;
 esac
 
+# The refusal of this gate. The shared deny tail — the two lawful moves and the lawful form of a
+# bypass — may not be laid out; then there is no tail, and the reason stays as it was.
+push_deny() {
+    reason="$1"
+    # shellcheck disable=SC1090
+    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+    deny_tail_text="$(rt_deny_tail "")"
+    [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
+    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
+        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The checks before the push did not pass."}}\n'
+    exit 0
+}
+
 # A branch switch in the same command is refused whole.
 #
 # The guard is a parse of the command BEFORE it runs: it runs the set in the tree that lies there
@@ -80,22 +98,7 @@ esac
 # does not fall here: a fresh branch has the same tree as it had.
 if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git[[:space:]]+(checkout|switch)[[:space:]]+" &&
     ! printf '%s' "$cmd" | grep -qE 'git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)([[:space:]]|$)'; then
-    reason="BLOCKED: switching the branch and pushing by one command. The gate set runs on the tree that lies there at the minute the command is parsed — that is, on the FORMER branch, not the one that leaves for the hosting. A green set then reads as a check of what left, though it checked something else. Split the calls: switch first, then push by a separate command."
-    # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has
-    # one. The file may not be laid out — then there is no tail, and the reason for the refusal
-    # stays as it was.
-    # shellcheck disable=SC1090
-    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-    deny_tail_text="$(rt_deny_tail "")"
-    [ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Switching the branch and pushing by one command."}}\n'
-    exit 0
+    push_deny "BLOCKED: switching the branch and pushing by one command. The gate set runs on the tree that lies there at the minute the command is parsed — that is, on the FORMER branch, not the one that leaves for the hosting. A green set then reads as a check of what left, though it checked something else. Split the calls: switch first, then push by a separate command."
 fi
 
 workdir="$(rt_hook_cwd)"
@@ -103,6 +106,23 @@ workdir="$(rt_hook_cwd)"
 cd "$workdir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 [ -f package.json ] || exit 0
+
+# Sending from a second working copy is refused whole.
+#
+# The second copy is taken for reading: the merge of the main branch goes on it while the session's
+# copy holds someone else's uncommitted work. A call made from there is judged by the copy the
+# session stands in — that is, by a foreign tree: its stale archive and its half-written spec refuse
+# the call, while the contribution actually leaving is never checked at all.
+moved="$(printf '%s' "$cmd" | sed -nE 's/.*(^|[;&|[:space:]])cd[[:space:]]+([^[:space:];&|]+).*/\2/p' | head -1)"
+moved="${moved%\'}"; moved="${moved#\'}"
+moved="${moved%\"}"; moved="${moved#\"}"
+if [ -n "$moved" ] && [ -d "$moved" ]; then
+    moved_root="$(git -C "$moved" rev-parse --show-toplevel 2>/dev/null)"
+    here_root="$(git rev-parse --show-toplevel 2>/dev/null)"
+    if [ -n "$moved_root" ] && [ -n "$here_root" ] && [ "$moved_root" != "$here_root" ]; then
+        push_deny "BLOCKED: the call goes from a second working copy — «${moved_root}», while the session stands in «${here_root}». The gate set runs where the session was started, not where the call was made: someone else's uncommitted work refuses it, and the contribution actually leaving passes unchecked. The second copy is for reading; bring the result of the merge back and send from the copy the session stands in."
+    fi
+fi
 
 # The tree profile: first the package default, over it the project override, if there is one. A
 # function declared in the override replaces the default whole and may call it back by the

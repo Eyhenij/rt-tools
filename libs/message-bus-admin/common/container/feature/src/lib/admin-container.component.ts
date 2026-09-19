@@ -2,18 +2,16 @@ import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@a
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterOutlet } from '@angular/router';
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
-import { SIGN_IN_PATH } from '@rt/message-bus-admin/auth/shell';
-import { IAdminSession } from '@rt/message-bus-admin/auth/util';
+import { IAdminSession, SIGN_IN_PATH } from '@rt/message-bus-admin/auth/util';
 import { AdminHeaderComponent } from '@rt/message-bus-admin/common/container/ui';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
 import { ADMIN_MENU, IAdminMenuItem } from '@rt/message-bus-admin/common/container/util';
+import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import {
     IRtPageHeader,
     RtContainerComponent,
     RtContainerContentDirective,
     RtContainerHeaderDirective,
     RtContainerRightSidenavDirective,
-    RtEmptyStateComponent,
 } from '@rt-tools/ui-kit-v2';
 import { exhaustMap, Observable, Subject } from 'rxjs';
 
@@ -48,13 +46,13 @@ const BEM_BLOCK: string = 'admin-container';
         RtContainerContentDirective,
         RtContainerHeaderDirective,
         RtContainerRightSidenavDirective,
-        RtEmptyStateComponent,
     ],
     host: { class: BEM_BLOCK },
 })
 export class AdminContainerComponent {
     readonly #router: Router = inject(Router);
     readonly #store: AuthStore = inject(AuthStore);
+    readonly #text: AdminTextService = inject(AdminTextService);
     readonly #signOutSource: Subject<void> = new Subject<void>();
 
     /**
@@ -64,21 +62,18 @@ export class AdminContainerComponent {
      * приёмника нет разделов, которых можно попросить. Пока ответ о вошедшем не приехал, права
      * неизвестны, а не пусты, и `allows` не скрывает ничего — пустая шапка после сетевого отказа
      * выглядит поломкой и не оставляет выхода.
+     *
+     * Подпись пункта спрашивается у словаря здесь, а не берётся готовой из объявления: объявление
+     * загружается один раз, а язык меняется на ходу — и ряд остался бы на прежнем языке.
      */
     protected readonly sections: Signal<ReadonlyArray<IRtPageHeader.Item>> = computed(() =>
         ADMIN_MENU.filter((item: IAdminMenuItem): boolean => this.#store.allows(item.right)).map((item: IAdminMenuItem) => ({
             id: item.path,
             icon: item.icon,
-            label: item.title,
+            label: this.#text.text(item.title),
             route: item.path,
         }))
     );
-
-    /** Ни одного открытого раздела: человек вошёл, а работать ему не с чем. */
-    protected readonly noSections: Signal<boolean> = computed((): boolean => this.sections().length === 0);
-
-    protected readonly noSectionsTitle: string = adminLabel('noSectionsTitle');
-    protected readonly noSectionsFrom: string = adminLabel('noSectionsFrom');
 
     protected readonly session: Signal<IAdminSession | null> = this.#store.session;
 

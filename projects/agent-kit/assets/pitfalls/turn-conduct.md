@@ -103,3 +103,31 @@ The rule is `turn-conduct`; the articles that hold the law stand there.
   phrase: the guard's general refusal returned the turn, the executor made one step and ended
   the turn with the same phrase. Now the guard names it by name; the lawful exit when a decision
   is needed is a question through the tool.
+- **"Turn exits": the price of a question that holds independent work.** A session stood a night
+  and a morning naming the owner one and the same step while three independent tasks lay untaken.
+- **"A guard's refusal ends the turn": why a bypass costs more than a refusal.** A guard refuses one
+  file; a bypassed guard lifts the requirement from the whole tree and says nothing. Not memory
+  alone holds this — the guards also judge the shell command that writes the file.
+- **"The owner's answer is sought in their own messages": what the conversation guard does not
+  see.** It counts loading a rule and searching it as reading, and a message leaves no trace. A
+  question that answers itself in the owner's words devalues those asked next to it.
+- **"A taken task is not yet begun work": what the guard's tier covers.** A branch without a task
+  number is not under it; an assembled folder template lifts it.
+- **"Exploration does not end a turn": why it passes for work.** It looks like work better than
+  anything else: commands, exact numbers, checkable answers.
+- **"A reply to the owner is not an action": why the report takes the place of the work.** The
+  reverse order — work, report, end — stands behind every analysed stop: a report is a form of
+  completeness, and an appended summary reads as the turn's end the more convincingly the more was
+  done.
+- **"A statement about the tree's state is watched by the statement guard": why a word has its own
+  kind of command.** A general sign "there was a command" would confirm one thing by another.
+- **A next step named and not begun.** Four stops of one shape: a stage closed and committed, a
+  full report, the next stage named in the progress and untouched. The last, on 17 September, came
+  after an epic with seven tasks, an agreement and a whole first stage — the more was done, the more
+  the report read as the end. The guard now reads the order of actions after the last edit of the
+  progress, and a turn that opened the PR passes that sign by itself.
+- **A launch in the background as the last action.** A grill of five menus ended with the review
+  roles sent to the background and the line "the roles are working"; the owner read it as a stop.
+  The guard counted the launch as work — there were edits in the turn, and the last action was not
+  a wait. Now the last tool of the turn is judged: the agent tool or a command sent to the
+  background standing last gives the turn back, and work after the launch releases it.

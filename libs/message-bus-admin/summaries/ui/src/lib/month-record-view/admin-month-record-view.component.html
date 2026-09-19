@@ -1,27 +1,27 @@
 <ng-container rtBlock="admin-panel">
     <rt-aside-section>
         <rt-detail-list>
-            <rt-detail-row qa-dataid="month-record-tree" [label]="treeLabel" [loading]="reading()">
+            <rt-detail-row qa-dataid="month-record-tree" [label]="treeLabel()" [loading]="reading()">
                 {{ entity()?.tree?.name }}
             </rt-detail-row>
-            <rt-detail-row qa-dataid="month-record-month" [label]="monthLabel" [loading]="reading()">
+            <rt-detail-row qa-dataid="month-record-month" [label]="monthLabel()" [loading]="reading()">
                 {{ entity()?.month }}
             </rt-detail-row>
-            <rt-detail-row qa-dataid="month-record-sessions" [label]="sessionsLabel" [loading]="reading()">
+            <rt-detail-row qa-dataid="month-record-sessions" [label]="sessionsLabel()" [loading]="reading()">
                 {{ entity()?.sessions }}
             </rt-detail-row>
-            <rt-detail-row qa-dataid="month-record-ran" [label]="ranAtLabel" [loading]="reading()">
+            <rt-detail-row qa-dataid="month-record-ran" [label]="ranAtLabel()" [loading]="reading()">
                 {{ entity()?.ranAt ?? null | adminMoment }}
             </rt-detail-row>
         </rt-detail-list>
     </rt-aside-section>
 
     @if (!reading() && entity(); as record) {
-        <rt-aside-section [heading]="summaryLabel">
+        <rt-aside-section [heading]="summaryLabel()">
             @if (record.summary; as summary) {
                 <rt-markdown-text qa-dataid="month-record-summary" [text]="summary" />
             } @else {
-                <p rtElem="empty" qa-dataid="month-record-summary-missing">{{ summaryMissing }}</p>
+                <p rtElem="empty" qa-dataid="month-record-summary-missing">{{ summaryMissing() }}</p>
             }
         </rt-aside-section>
     }

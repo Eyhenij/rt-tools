@@ -140,6 +140,25 @@ expect_decision "SC-AK-874 — внутри набора признак отби
 expect_decision "SC-AK-874 — папка источника готового выведена из-под признака" reuse-first-guard.sh \
     "$(write_input 'projects/kit/src/lib/ui-kit/dynamic-input/i.html' '<input>')" PASS
 
+# SC-AK-1085 — набор объявлен вместе с областью дерева. Гард и сплошная проверка читают поле
+# одинаково: прочитанное одним из двух отбивало бы ту самую правку, которую второй пропускает.
+mkdir -p "$TREE/apps/admin" "$TREE/apps/site" "$TREE/apps/administration"
+declare_bundles '{"name":"kit","roots":["apps/admin"]}' ''
+expect_decision "SC-AK-1085 — внутри области признак отбивает" reuse-first-guard.sh \
+    "$(write_input 'apps/admin/a.html' '<input>')" deny
+expect_decision "SC-AK-1085 — вне области то же приложение проходит" reuse-first-guard.sh \
+    "$(write_input 'apps/site/a.html' '<input>')" PASS
+expect_decision "SC-AK-1085 — соседний каталог с тем же началом имени не захвачен" reuse-first-guard.sh \
+    "$(write_input 'apps/administration/a.html' '<input>')" PASS
+
+declare_bundles '{"name":"kit","roots":["apps/admin","apps/site"]}' ''
+expect_decision "SC-AK-1085 — вторая область объявлена и отбивает" reuse-first-guard.sh \
+    "$(write_input 'apps/site/a.html' '<input>')" deny
+
+declare_bundles '"kit"' ''
+expect_decision "SC-AK-1085 — набор без области судит дерево целиком" reuse-first-guard.sh \
+    "$(write_input 'apps/site/a.html' '<input>')" deny
+
 # SC-AK-147 — область «файл целиком»: правка приносит строку без объявления класса, признак судит файл.
 declare_bundles '"kit"' ''
 declare_bundles '"kit"' ''

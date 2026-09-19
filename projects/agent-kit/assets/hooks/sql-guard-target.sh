@@ -2,6 +2,9 @@
 # The request's target for the storage guard: the production database, a throwaway check
 # database or something else — and what is allowed on production.
 #
+# NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The storage guard
+# sources it — one tier of its verdict, moved out when the guard reached its length limit.
+#
 # There is no `# rt-hook:` line here on purpose: the event and the call sample are declared by the
 # guard itself, and the helper next to it is not registered as a hook and decides nothing alone.
 

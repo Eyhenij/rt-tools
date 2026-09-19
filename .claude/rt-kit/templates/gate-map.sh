@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · templates/gate-map.sh · 2cfb6730a990 · правится надстройкой, не здесь
+# rt-kit v0.29.0 · templates/gate-map.sh · 2cfb6730a990 · правится надстройкой, не здесь
 # Gate map override: what the workshop's other trees do not have.
 #
 # Copy to `.claude/rt-kit/gate-map.sh` and add your own. The file is optional: without it the

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.26.0 · pitfalls/agent-kit.md · 416c4008b3af · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · pitfalls/agent-kit.md · 416c4008b3af · правится надстройкой, не здесь -->
 # The portable rules layer — cold part
 
 Pitfalls and traps already stepped on. Loaded not with the skill but on demand: an ordinary

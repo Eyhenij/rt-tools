@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/task-flow-context.sh · cd5931283b4b · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/task-flow-context.sh · cd5931283b4b · правится надстройкой, не здесь
 # Shared parsing for the work-conduct guards. NOT a guard: it has no `rt-hook:` declaration and
 # is not attached to any agent event. The guards themselves source it — the same way they source
 # the shared refusal tail.

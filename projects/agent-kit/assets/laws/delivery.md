@@ -102,6 +102,12 @@ application stops responding, and the reason is found from the history.
   shown as taken, one waiting for review as waiting. Otherwise untouched, in progress and done look
   the same: the work is taken a second time, and the PR stands unreviewed. The state is moved at the
   moment the work goes to the next step: the queue is read between those moments, not after them.
+- **The state of an epic card in the work queue matches the epic's work the same way.** The epic
+  is taken into work with its first task and waits for review with its own change into the main
+  branch; its card says so at those two moments, the same as a task's card. Otherwise an epic with
+  half its tasks merged stands in the queue as never taken, and the owner watching one card per
+  epic sees no work at all. The share of tasks done the queue shows on the epic card by itself,
+  once the tasks are linked to it; the column it does not move.
 - **A change entering the main branch means a rollout.** Everything the change depends on outside
   the code — environment variables, secrets, name records — is put in place before that moment, not
   after.
@@ -135,16 +141,24 @@ application stops responding, and the reason is found from the history.
   PR is open, the work does not count as done: there is no review of it, and the person does not
   know about it. The PR is opened in the same turn in which the executor says the work is handed
   over — not in the next session and not on a reminder.
-- **A PR not ready to merge is marked as a draft.** An open PR reads as an invitation to merge, and
-  a person presses merge without asking whether the work is finished. The draft separates two states
-  that otherwise look the same: the change is put up for viewing — and the change is ready to go to
-  the main branch. Everything that waits for a run, for rework or for an answer to a question is
-  marked with it; the question is asked in the PR itself, not kept in the executor's head.
+- **A PR that waits for something is marked as a draft, and one that waits for nothing opens
+  ready.** An open PR reads as an invitation to merge, and a person presses merge without asking
+  whether the work is finished. The draft separates two states that otherwise look the same: the
+  change is put up for viewing — and the change is ready to go to the main branch. It is set on
+  what waits for a run, for rework or for an answer to a question; the question is asked in the PR
+  itself, not kept in the executor's head. Where there is nothing to wait for, a draft costs an
+  extra turn and a locked button, and it shows the owner work in progress where the work is done.
+- **Where the run comes from is part of the order of handing in, and the tree names it.** The
+  draft holds because the run is had on the PR itself: to get it the PR must be opened, and an
+  opened one already reads as an invitation. A tree whose pipeline wakes earlier — or does not wake
+  on this kind of PR at all — has nothing for the draft to wait for there, and the PR opens ready.
+  A law that named one source of the run would promise the other tree an order it cannot carry out.
 - **Lifting the draft is a separate turn, and with it the executor answers for readiness.** The
   draft is lifted when the checks have passed, no rework remains and the work matches what the task
   was created for. While it stands, the executor's silence means "not ready yet", and the person has
   to ask nothing; after it is lifted, silence means "can be merged", and the price of a mistake here
-  is a change in the main branch.
+  is a change in the main branch. A PR opened ready carries the same answer, given at the minute of
+  opening.
 - **A PR about what was done stays true until the merge itself.** It describes the tree on the day
   it was written, and waits for review for days. In that time the main branch is merged into the
   branch, and the PR's statement about neighbouring files becomes false silently — no check reads PR

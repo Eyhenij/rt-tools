@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/git-guard-delivery-conflict.sh · 5dcf3b97e674 · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/git-guard-delivery-conflict.sh · 2f998e969d26 · правится надстройкой, не здесь
 # A conflicting PR of one's own, for the delivery guard: while at least one handed-over piece of
 # work is marked conflicting, a new one is not taken.
+#
+# NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The delivery guard
+# sources it — one tier of its verdict, moved out when the guard reached its length limit.
 #
 # There is deliberately no `# rt-hook:` line here: the event and the call pattern are declared by
 # the guard itself, while a helper next to it registers as no hook and decides nothing on its own.
@@ -28,6 +31,14 @@
 # uncertainty — and it computes it again after every edit of the main branch — and reading
 # uncertainty as a conflict would mean refusing work at every fresh tip.
 #
+# The list is split into one's own and a neighbour's. The machine account is one per tree, and
+# several sessions work over the tree at once: by the account alone one's own work is
+# indistinguishable from a neighbour's. A session credited with a neighbour's conflict cannot fix
+# it — the branch is led by somebody else, they hold their own commits on it, and a merge from the
+# side returns a red audit — so such a refusal has no lawful move at all. One's own branch is the
+# one this working copy led: the copy's own record of switches answers that, while the branch refs
+# are shared by every copy of the tree.
+#
 # FAIL-OPEN: no profile function, no network, no machine account — the tier is skipped.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -35,6 +46,31 @@
 # too, although the calling guard has already done so: an empty pattern would turn the sign into a
 # word search over the whole line.
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
+
+# Did this working copy lead the branch. The record of switches belongs to the copy, while the
+# branch refs are shared by every copy of the tree: by a ref one's own branch is indistinguishable
+# from a neighbour's. An unnamed branch counts as one's own — a list without a branch says nothing
+# to split by, and the former behaviour is the safer of the two.
+rt_delivery_led_branch() {
+    named="$1"
+    [ -z "$named" ] && return 0
+    [ "$named" = "$(git -C "$root" rev-parse --abbrev-ref HEAD 2>/dev/null)" ] && return 0
+    git -C "$root" reflog HEAD -n 400 2>/dev/null \
+        | awk -v branch="$named" '
+            /checkout: moving from /  { if ($NF == branch) { found = 1 } }
+            END                       { exit found ? 0 : 1 }
+        '
+}
+
+# The note about a neighbour's conflict, printed from the exit of the guard by whichever path it
+# leaves — but only where nothing was refused: two JSON documents in a row are read as plain text,
+# that is, as no refusal at all. A refusal carries the note inside itself.
+rt_delivery_note_out() {
+    [ -n "${rt_delivery_said:-}" ] && return 0
+    [ -z "${rt_delivery_neighbour_note:-}" ] && return 0
+    jq -n --arg c "$rt_delivery_neighbour_note" \
+        '{hookSpecificOutput:{hookEventName:"PreToolUse",additionalContext:$c}}' 2>/dev/null
+}
 
 rt_delivery_conflict() {
     # The sign of taking work is read from the text of the command and stands first: the query goes
@@ -69,13 +105,32 @@ rt_delivery_conflict() {
     [ -z "$stuck" ] && return 0
 
     listed=''
+    neighbour=''
     while IFS= read -r line; do
         [ -z "$line" ] && continue
-        listed="${listed}${listed:+
+        # The line is «#<number> <branch>»: the branch stands last, and by it the copy is asked.
+        if rt_delivery_led_branch "${line##* }"; then
+            listed="${listed}${listed:+
 }— ${line}"
+        else
+            neighbour="${neighbour}${neighbour:+
+}— ${line} — the branch is led by another session"
+        fi
     done <<EOF
 ${stuck}
 EOF
+
+    # A neighbour's conflict is said aloud and refuses nothing: this session has nothing to fix it
+    # with, and the one who leads the branch learns of it from nowhere else. The note is left for
+    # the guard to print — it has one output point, and a second JSON document next to the first
+    # would be read as plain text, that is, as no refusal at all.
+    if [ -n "$neighbour" ]; then
+        rt_delivery_neighbour_note="A conflicting request of a neighbouring session stands, and there is nothing here to fix it with:
+
+${neighbour}
+
+The branch is led by another session and holds its own commits: a merge of the main branch from the side takes that work away. Tell the owner about the request and take work as usual."
+    fi
     [ -z "$listed" ] && return 0
 
     deny "BLOCKED: ${taking} while a conflicting request of your own stands. What was handed over conflicts with the main branch, and a person cannot merge it:

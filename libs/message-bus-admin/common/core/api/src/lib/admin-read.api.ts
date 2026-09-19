@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { IAdminListQuery, IReadFault, readFaultOf } from '@rt/message-bus-admin/common/core/util';
+import { IAdminListQuery, IReadFault, ISpokenFault, readFaultOf, spokenFaultOf } from '@rt/message-bus-admin/common/core/util';
 import { IPage } from '@rt/message-bus-common';
 import { catchError, Observable, throwError, timeout, TimeoutError } from 'rxjs';
 
@@ -30,7 +30,8 @@ export const READ_TIMEOUT_MS: number = 15_000;
  * Пустой отбор не посылается вовсе: приёмник читает его как «все». Разделу, у которого состояния
  * и версии нет, отправлять нечего — его выборка приходит сюда с пустыми отборами и остаётся без
  * их параметров. Слово «без версии» пустотой не является: оно едет как есть, и приёмник читает
- * его условием на пустую колонку.
+ * его условием на пустую колонку. Период едет двумя днями сразу или не едет вовсе: на один день
+ * приёмник отвечает отказом.
  */
 function askedParams(query: IAdminListQuery): HttpParams {
     let params: HttpParams = new HttpParams()
@@ -49,6 +50,10 @@ function askedParams(query: IAdminListQuery): HttpParams {
 
     if (query.version !== '') {
         params = params.set('version', query.version);
+    }
+
+    if (query.from !== '' && query.to !== '') {
+        params = params.set('from', query.from).set('to', query.to);
     }
 
     return params;
@@ -71,6 +76,19 @@ export function asReadFault(error: unknown): Observable<never> {
     }
 
     return throwError((): IReadFault => readFaultOf(0, null));
+}
+
+/**
+ * Отказ правки в то, что покажет панель: род и слово приёмника.
+ *
+ * Разбор кода и тела — чистая функция общего слоя; здесь остаётся достать из ответа каркаса код и
+ * тело. Обрыв связи и вышедший срок ожидания кода не несут вовсе — им ставится ноль, тот же,
+ * каким каркас отвечает на недошедший запрос.
+ */
+export function asSpokenFault(error: unknown): Observable<never> {
+    const response: HttpErrorResponse | null = error instanceof HttpErrorResponse ? error : null;
+
+    return throwError((): ISpokenFault => spokenFaultOf(response?.status ?? 0, response?.error ?? null));
 }
 
 /** Страница списка. Форму строки называет тот, кто зовёт: она у каждого раздела своя. */

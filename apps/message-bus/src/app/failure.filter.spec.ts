@@ -1,7 +1,16 @@
-import { ArgumentsHost, BadRequestException, HttpStatus, Logger, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
+import {
+    ArgumentsHost,
+    BadRequestException,
+    ConflictException,
+    HttpStatus,
+    Logger,
+    NotFoundException,
+    PayloadTooLargeException,
+} from '@nestjs/common';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ITreeBearingRequest, rememberTree } from '@rt/message-bus-api/trees/util';
+import { ERefusal, refusalBody } from '@rt/message-bus-common';
 
 import { FailureFilter } from './failure.filter';
 
@@ -116,13 +125,38 @@ describe('FailureFilter', () => {
         expect(JSON.stringify(response.body)).not.toContain('db:5432');
     });
 
+    it('SC-MB-408 — код причины доезжает до спрашивавшего рядом с предложением', () => {
+        const response: ResponseDouble = new ResponseDouble();
+
+        new FailureFilter().catch(
+            new ConflictException(refusalBody(ERefusal.RoleNameTaken, { name: 'Владелец' })),
+            hostWith('/api/roles', response)
+        );
+
+        expect(response.code).toBe(HttpStatus.CONFLICT);
+        expect(response.body).toEqual({
+            code: ERefusal.RoleNameTaken,
+            params: { name: 'Владелец' },
+            message: 'роль «Владелец» уже заведена: имя занято',
+        });
+    });
+
+    it('SC-MB-408 — у отказа с номером обращения кода нет: причина спрашивавшему не видна', () => {
+        const response: ResponseDouble = new ResponseDouble();
+
+        new FailureFilter().catch(new PrismaClientKnownRequestError(), hostWith('/api/roles', response));
+
+        expect(response.body).toHaveProperty('message');
+        expect(response.body).not.toHaveProperty('code');
+    });
+
     it('SC-MB-7 — незнакомый род груза отбивается перечнем родов, которые приёмник принимает', () => {
         const response: ResponseDouble = new ResponseDouble();
 
         new FailureFilter().catch(new NotFoundException(), hostWith('/api/intake/observations', response));
 
         expect(response.code).toBe(HttpStatus.NOT_FOUND);
-        expect(response.body).toEqual({ message: 'приёмник принимает роды: summary, proposals, postmortems' });
+        expect(response.body).toEqual({ message: 'приёмник принимает роды: summary, observations, proposals, postmortems' });
     });
 
     it('SC-MB-28 — операции выдачи токена у приёмника не находится', () => {

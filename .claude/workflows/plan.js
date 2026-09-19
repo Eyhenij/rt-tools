@@ -1,4 +1,4 @@
-// rt-kit v0.26.0 · workflows/plan.js · 572883589468 · правится надстройкой, не здесь
+// rt-kit v0.29.0 · workflows/plan.js · 572883589468 · правится надстройкой, не здесь
 export const meta = {
     name: 'plan',
     description: 'After the grill with the owner: whether the work is needed, the product agreement, its adversarial review and the implementation plan',

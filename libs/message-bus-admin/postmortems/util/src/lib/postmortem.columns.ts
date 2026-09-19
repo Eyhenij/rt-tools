@@ -4,8 +4,7 @@
  * Лежит отдельно от экрана: тот же набор читают и таблица, и панель настройки столбцов, и спека
  * — объявленный в шаблоне, он был бы известен только шаблону.
  */
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
-import { IRtTable } from '@rt-tools/ui-kit-v2';
+import { IAdminColumn } from '@rt/message-bus-admin/common/core/util';
 
 /** Адрес операций чтения разборов. */
 export const POSTMORTEMS_PATH: string = '/api/postmortems';
@@ -18,13 +17,13 @@ export const POSTMORTEMS_PATH: string = '/api/postmortems';
  */
 export const POSTMORTEMS_TABLE_ID: string = 'admin-postmortems';
 
-/** Столбцы таблицы. Подписи идут из словаря, а порядок — тот, в котором они здесь стоят. */
-export const POSTMORTEMS_COLUMNS: readonly IRtTable.ColumnConfig[] = Object.freeze([
-    { key: 'tree', label: adminLabel('columnTree'), sortable: true },
-    { key: 'file', label: adminLabel('columnFile'), sortable: true, locked: true },
-    { key: 'state', label: adminLabel('columnState'), sortable: true },
-    { key: 'releaseVersion', label: adminLabel('releaseVersion'), sortable: true },
-    { key: 'quarantineNote', label: adminLabel('quarantineNote'), sortable: false },
-    { key: 'arrivedAt', label: adminLabel('columnArrivedAt'), sortable: true },
-    { key: 'updatedAt', label: adminLabel('columnUpdatedAt'), sortable: true },
+/** Столбцы таблицы. Подпись названа ключом словаря, а порядок — тот, в котором они здесь стоят. */
+export const POSTMORTEMS_COLUMNS: readonly IAdminColumn[] = Object.freeze([
+    { key: 'tree', label: 'columnTree', sortable: true },
+    { key: 'file', label: 'columnFile', sortable: true, locked: true },
+    { key: 'state', label: 'columnState', sortable: true },
+    { key: 'releaseVersion', label: 'releaseVersion', sortable: true },
+    { key: 'quarantineNote', label: 'quarantineNote', sortable: false },
+    { key: 'arrivedAt', label: 'columnArrivedAt', sortable: true },
+    { key: 'updatedAt', label: 'columnUpdatedAt', sortable: true },
 ]);

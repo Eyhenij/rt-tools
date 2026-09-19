@@ -1,4 +1,4 @@
-<!-- rt-kit v0.26.0 · laws/verifiability.md · dbc48612e558 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · laws/verifiability.md · b00c35eb2527 · правится надстройкой, не здесь -->
 # Law on verifiability
 
 What counts as confirmation that work is done. The law is needed because a retelling looks as
@@ -80,11 +80,18 @@ that "should work" and code that was checked look the same in the history.
   tool's settings, not bypassed in every place.** The bypass has to be repeated as many times as
   there are such places, and none of them says why: from outside it looks like the author's mistake,
   not a decision.
+- **A check and a guard outrank the executor's judgement of their own work.** The executor judges
+  their own code with an interest: they remember the intent and see it instead of the result, while
+  the check reads only the result. A divergence is closed by an edit of the code, and the
+  executor's argument that the check is wrong is no argument at all — neither in their own decision
+  nor in a question to the owner.
 - **A red check means wrong code, not a wrong check.** A place taken out from under the check so
   that it goes quiet fixes the reading, not what the check pointed at: the code stays the same, and
-  nobody has a signal about it any more. The known list is accumulated by the day the check is
-  created and only shrinks; disagreement with the check itself is a question to the owner, not a
-  line in the list.
+  nobody has a signal about it any more. There is one move out of a red check — fix what it pointed
+  at. Stopping the work and a question to the owner are not a move: the question names them a
+  choice that does not exist, and it costs as much as the fix. The known list is accumulated by the
+  day the check is created and only shrinks — it is not added to by the executor's decision, nor by
+  the word of the owner: a line in it silences the signal about code that stayed the same.
 - **The usefulness of a rule is confirmed by observing how it is used, not by an opinion about it.**
   A rule that was never opened and a rule half the work rests on look the same in the text — and
   what gets edited first is usually what was remembered, not what gets in the way. Observation is
@@ -100,6 +107,16 @@ that "should work" and code that was checked look the same in the history.
   the analysis — how many lines, of what kind, how their falsity is proven — and fixes the check
   itself. The known list is not used for this: it holds what was accepted, not the results of a
   broken check.
+- **A check that did not find what to compare says so and does not count as matched.** An empty
+  input is three different states — there is no subject at all, the subject is declared and not
+  found, the declaration was not parsed — and merged into one they give a green where nothing was
+  compared. The lawful answer "there is nothing to compare" is said by a word in the text being
+  checked, not derived from an empty parse.
+- **A declaration read by a check as text is written as a literal in the place of the
+  declaration.** What is moved into a constant or assembled by an expression such a check does not
+  see at all: the application works, the check is silent, and the miss shows itself by nothing.
+  Where a value has to be a literal, that is said in the same place where it is said what declares
+  it.
 - **A decision that depends on the current moment gets the moment from outside.** Otherwise it can
   be checked only by turning the clock, and a turned clock acts on everything that happens to be
   nearby: the check starts depending on what has no relation to it.
@@ -126,7 +143,8 @@ that "should work" and code that was checked look the same in the history.
   indistinguishable from one the tree never had at all: the run is green because nobody called it.
   The neighbouring article judges a place taken out from under the check — here it is not a place
   that is taken out but the whole check, and no trace remains in the code. The discrepancy is closed
-  by what the check pointed at, and disagreement with the check itself is a question to the owner.
+  by what the check pointed at: the check is returned to the set, and the discrepancy under it is
+  fixed.
 - **A change to the look is checked at every layout threshold, not at one width.** Thresholds are
   the places where the layout changes, and a slip lives exactly there: on either side of the
   threshold the layout is assembled differently, and in the middle it looks correct. A change

@@ -4,8 +4,7 @@
  * Лежит отдельно от экрана: тот же набор читают и таблица, и панель настройки столбцов, и спека
  * — объявленный в шаблоне, он был бы известен только шаблону.
  */
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
-import { IRtTable } from '@rt-tools/ui-kit-v2';
+import { IAdminColumn } from '@rt/message-bus-admin/common/core/util';
 
 /** Адрес операций чтения предложений. */
 export const PROPOSALS_PATH: string = '/api/proposals';
@@ -24,12 +23,12 @@ export const PROPOSALS_TABLE_ID: string = 'admin-proposals';
  * Закреплён ресурс: им предложение и опознаётся — ради счёта «сколько деревьев правят это место»
  * раздел и заведён, и список без этого столбца перестаёт отвечать на свой вопрос.
  */
-export const PROPOSALS_COLUMNS: readonly IRtTable.ColumnConfig[] = Object.freeze([
-    { key: 'tree', label: adminLabel('columnTree'), sortable: true },
-    { key: 'resource', label: adminLabel('columnResource'), sortable: true, locked: true },
-    { key: 'address', label: adminLabel('columnAddress'), sortable: true },
-    { key: 'state', label: adminLabel('columnState'), sortable: true },
-    { key: 'releaseVersion', label: adminLabel('releaseVersion'), sortable: true },
-    { key: 'quarantineNote', label: adminLabel('quarantineNote'), sortable: false },
-    { key: 'arrivedAt', label: adminLabel('columnArrivedAt'), sortable: true },
+export const PROPOSALS_COLUMNS: readonly IAdminColumn[] = Object.freeze([
+    { key: 'tree', label: 'columnTree', sortable: true },
+    { key: 'resource', label: 'columnResource', sortable: true, locked: true },
+    { key: 'address', label: 'columnAddress', sortable: true },
+    { key: 'state', label: 'columnState', sortable: true },
+    { key: 'releaseVersion', label: 'releaseVersion', sortable: true },
+    { key: 'quarantineNote', label: 'quarantineNote', sortable: false },
+    { key: 'arrivedAt', label: 'columnArrivedAt', sortable: true },
 ]);

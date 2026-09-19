@@ -2,6 +2,9 @@
 # The request from the input of the storage guard: what exactly will go to the server and through
 # what.
 #
+# NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The storage guard
+# sources it — one tier of its verdict, moved out when the guard reached its length limit.
+#
 # There is deliberately no `# rt-hook:` line here: the event and the call pattern are declared by the
 # guard itself, and a helper next to it is not registered as a hook and decides nothing alone.
 #

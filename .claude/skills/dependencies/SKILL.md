@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law. Load when editing package.json, the lockfile and the workspace settings, and when upgrading any package. Names the exact version number instead of a range and the waiting period for a new version. Pattern dependencies-upgrade.
 ---
-<!-- rt-kit v0.26.0 · rules/dependencies.md · 01ebf036354d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/dependencies.md · 01ebf036354d · правится надстройкой, не здесь -->
 
 # Dependencies — how it works here
 

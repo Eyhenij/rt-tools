@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
-<!-- rt-kit v0.26.0 · patterns/task-flow-start.md · bdad1d40c7f9 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/task-flow-start.md · f6c078207fd8 · правится надстройкой, не здесь -->
 
 # Starting the work
 
@@ -40,16 +40,14 @@ lives only in that session's record: a search over them by the theme's word cost
 is found is written into the tree in the same turn — into the epic plan if it links tasks, into the
 progress if it concerns one.
 
-Exploration that found nothing is no permission to ask. First, where the search went is named; then
-the places missing from the list are reached — the epic plan, the archive, the records of past
-sessions. "Not found in such a place" speaks of the place, not of the tree, and the question names
-both ways in which the search went.
+Exploration that found nothing is no permission to ask: the places not yet searched — the epic plan,
+the archive, the records of past sessions — are reached first. "Not found in such a place" speaks of
+the place, not of the tree, and the question names where the search went.
 
-Exploration ends with command output, not with a feeling. Before the first question to the owner the
-executor knows three things. How the repository is arranged (the root memo), what lies in the
-directory at hand (`ls`), and whether something is already written on the theme (a search over the
-documentation and the rules). Without a list of what counts as done, exploration runs as a mood: a
-read handover passes for it, and not one command runs over the tree.
+Exploration ends with command output, not with a feeling. Before the first question the executor
+knows three things. How the repository is arranged (the root memo), what lies in the directory at
+hand (`ls`), and whether something is written on the theme (a search over the documentation and the
+rules). Without such a list exploration runs as a mood, and a read handover passes for it.
 
 Exploration over a created task ends with a reproduced symptom, not a found file. The task body
 describes the tree on the day of creation, and exploration by the names from the body confirms only
@@ -63,9 +61,13 @@ and only then come the questions about techniques. The answer to "how is this do
 folder, and generalised into a map of the tree it lies: the neighbouring family of directories is
 left out, and the owner finds the loss.
 
-What was inferred is marked right in the list, together with what confirms it. A guess by a
-neighbouring case stands in one list with what was checked, and the owner reads the whole list as
-checked.
+What was inferred is marked right in the list, together with what confirms it: a guess by a
+neighbouring case next to what was checked reads as checked.
+
+**A ready-made module of the same kind is looked for before the first question** — in this tree and
+in the trees recorded as samples of its layout. The one found is read whole: it closes the questions
+about the structure — the source of the numbers, the rows, the screen, the storage. A grill of five
+menus about such a module was closed by the owner naming it; the search costs one listing.
 
 The six questions are asked minus those the exploration answered: instead of a question with a ready
 answer, the grill gets the line "taking such-and-such answer, here is where from". The sign is one —
@@ -97,18 +99,21 @@ included. It can be closed by an assumption too, when the answer is obvious — 
 closed by assumption: <what is taken>": a wrong assumption costs an edit, a question about the
 obvious costs a session.
 
+**Two answers «recommended» in a row close the remaining questions by assumption.** An owner who took
+the recommended option twice running has shown that the decisions are not theirs. From the second
+such answer the remaining questions go into the grill as decisions — what is taken and where from —
+and the owner gets the list in one line, not a menu. The guard of the conversation refuses the third
+menu itself; a menu goes out again only for a question no assumption closes, and says so first.
+
 The size of the work is never a ground for a question about boundaries: "this is big work" is the
-executor's judgement, "whether to do it whole" is the owner's, and they decided before the work
-began.
+executor's judgement, "whether to do it whole" the owner's, decided before the work began.
 
 The form of a question is set by the owner's settings: where a menu is required, a menu is asked,
 and a free option is added to every question — a closed set has no line "wrong question".
 
-**The framing of a handed-over text is not carried onto the current tree.** A session handover, a
-proposals file and a spec describe the tree they were written in. Only the current tree knows about
-the current one, and a statement about the layout is checked by a command here. Confirmation finds
-itself — the signs of a tree that only installs the package stand on the one that writes and
-installs it too.
+**The framing of a handed-over text is not carried onto the current tree.** A handover, a proposals
+file and a spec describe the tree they were written in; a statement about the layout is checked by a
+command here — the signs of a tree that only installs the package stand on the one that writes it too.
 
 The message with which the executor stops begins with what they wait for:
 
@@ -121,9 +126,8 @@ Under the question goes the table of the epic's position — the same as in the 
 above: the stop is named by the first line, and the epic's position is what the owner decides from.
 Work outside an epic carries no table.
 
-Measurements, role findings and the list of decisions are by then written in the progress, and in
-the message to the owner they are superfluous. A report with a question at its end looks diligent
-exactly as reliably as the question drowns in it.
+Measurements, role findings and the list of decisions are by then written in the progress and are
+superfluous in the message: a report with a question at its end drowns the question.
 
 The answers are written into `docs/tasks/_draft-<slug>/grill.md` — the folder is still a draft,
 there is no number.

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-epic.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
 #
 # The delivery law demands three things nothing usually checks: an edit starts from a task visible
@@ -145,6 +145,12 @@ deny() {
     [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
     reason="$1"
     command -v rt_deny_tail >/dev/null 2>&1 && reason="$1 $(rt_deny_tail "$2")"
+    # A neighbour's conflict travels inside the refusal: the guard says one thing per call, and a
+    # second JSON document next to the first is read as plain text — that is, as no refusal at all.
+    [ -n "${rt_delivery_neighbour_note:-}" ] && reason="${reason}
+
+${rt_delivery_neighbour_note}"
+    rt_delivery_said=1
 
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The delivery guard."}}\n'
@@ -180,7 +186,15 @@ fault() {
 # take the next one: while what was handed over conflicts, it is fixed by the first action of the
 # turn. No helper — the tier is not judged, and the work goes on.
 # shellcheck disable=SC1090
+# The tree the command runs in: the form of a branch name is judged by its profile, not by the
+# profile of the tree the session was started from. No helper — the form is judged as before.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/git-guard-delivery-tree.sh" ] && . "$rt_hooks_dir/git-guard-delivery-tree.sh" 2>/dev/null
+command -v rt_delivery_branch_form_ok >/dev/null 2>&1 \
+    || rt_delivery_branch_form_ok() { rt_task_branch_ok "$1"; }
+
 [ -f "$rt_hooks_dir/git-guard-delivery-conflict.sh" ] && . "$rt_hooks_dir/git-guard-delivery-conflict.sh" 2>/dev/null
+command -v rt_delivery_note_out >/dev/null 2>&1 && trap rt_delivery_note_out EXIT
 command -v rt_delivery_conflict >/dev/null 2>&1 && rt_delivery_conflict
 
 # The refusal on what has piled up. Empty — the calling side goes on.
@@ -243,7 +257,7 @@ if [ -n "$branch_arg" ]; then
     # number at all.
     number_arg="$(rt_task_branch_number "$branch_arg")"
     if [ -n "$number_arg" ]; then
-        rt_task_branch_ok "$branch_arg" \
+        rt_delivery_branch_form_ok "$branch_arg" \
             || deny "BLOCKED: the branch name «${branch_arg}» is not of the form accepted here. The branch number is the same as the number of the task and of the title of the merge request."
         state=''
         check_task "$number_arg" "the branch «${branch_arg}»"
@@ -260,6 +274,7 @@ if [ -n "$branch_arg" ]; then
         # base fresh — `git checkout -b <branch> origin/<main>` — would be forbidden.
         base_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\4/p' | head -1)"
         base_ref="${base_arg:-HEAD}"
+        command -v rt_assignment_fault >/dev/null 2>&1 && rt_assignment_fault "$epic_arg" "the branch «${branch_arg}»"
         if [ -n "$epic_arg" ] && command -v rt_epic_base >/dev/null 2>&1; then
             rt_epic_base "$epic_arg" "$base_ref" "$branch_arg"
         elif git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
@@ -409,30 +424,36 @@ fi
 
 # The identity of the call. The hosting client holds two accounts — the logged-in one and the one
 # whose token stands in the call environment; which of them opens the PR is visible from the command
-# only through an explicit substitution. The miss surfaces on assigning the reviewer: the author of
-# a PR is never its reviewer, and the author cannot be changed.
+# only through an explicit substitution.
 #
-# The command text is checked. A tree that named no token variable gets no requirement.
-if [ -n "$pull_token_var" ] \
-    && ! printf '%s' "$cmd" | grep -qE "(^|[;&|(]|&&|\|\||[[:space:]])${pull_token_var}="; then
-    fault "the request is opened without the token of the machine account: the command carries no substitution of «${pull_token_var}». Opened by the logged-in account, it comes out from the owner — they cannot be set as the reviewer then, and this is fixed only by reopening.${pull_token_hint:+ Substitute the token: ${pull_token_hint} …}"
-fi
+# What is judged is not the name of the account but the clash with the reviewer: the author of a PR
+# is never its reviewer, the hosting silently drops such a review request, and the author cannot be
+# changed afterwards. A PR opened by any other account is lawful while its reviewer is somebody
+# else — judging the name instead leaves a machine that holds no token with no way to deliver at all.
+# The value is taken as one word up to the next space: a login has no spaces in it, and an alphabet
+# listed by ranges would silently not recognise a neighbouring one — the value then reads as absent,
+# and the clash with the reviewer goes unnoticed.
+pull_reviewer="$(printf '%s' "$cmd" | sed -n "s/.*--reviewer[= ]\{1,\}['\"]\{0,1\}\([^[:space:]'\"]\{1,\}\).*/\1/p" | head -1)"
 
-# The second tier of the same identity: who actually arrives under this token. A substitution speaks
-# of the intent, not of the result: it read a file that is not on the machine, the client took an
-# empty string for an unset token, and the PR came out from the owner under a command that looked
-# right.
-#
-# The hosting is asked by the tree, not by the package: the hosting, the client and the path to the
-# token are each their own. An empty answer means "asking did not work out": the call is let through,
-# and this is reported — a silent skip is indistinguishable from a check that came together.
-if [ -n "$task_bot" ] && command -v rt_pull_token_login >/dev/null 2>&1; then
-    token_login="$(rt_pull_token_login 2>/dev/null)"
-    if [ -z "$token_login" ]; then
-        printf 'the delivery guard: who arrives by the token could not be asked — the check against the answer of the hosting is skipped.\n' >&2
-    elif [ "$token_login" != "$task_bot" ]; then
-        fault "by the token of the call the hosting answers with the account «${token_login}», not the machine one «${task_bot}»: the substitution is in the command, but the value is empty or foreign — that is how a request comes out from the owner. Check that the token file is in place and readable${pull_token_hint:+: ${pull_token_hint}}."
+# Who will open the PR is asked of the hosting by the tree: the hosting, the client and the path to
+# the token are each their own. The answer covers both accounts at once — the substitution reads a
+# file that may not be on the machine, and then the client answers from the logged-in one.
+token_login=''
+command -v rt_pull_token_login >/dev/null 2>&1 && token_login="$(rt_pull_token_login 2>/dev/null)"
+
+if [ -n "$token_login" ]; then
+    if [ -n "$pull_reviewer" ] && [ "$token_login" = "$pull_reviewer" ]; then
+        fault "the request would be opened by the account «${token_login}», and the same one is named as its reviewer. The hosting accepts such a review request and silently does not create it, and the author of a request cannot be changed — it is fixed only by reopening. Open it by another account${pull_token_hint:+, substituting the token: ${pull_token_hint} …}, or name another reviewer."
+    elif [ -n "$task_bot" ] && [ "$token_login" != "$task_bot" ]; then
+        # Not a refusal: the reviewer is somebody else, and the review will be created. But silence
+        # about a foreign account is indistinguishable from a check that did not fire at all.
+        printf 'the delivery guard: the request will come out from the account «%s», not the machine one «%s». The reviewer is another one, so the review will be created.\n' "$token_login" "$task_bot" >&2
     fi
+elif [ -n "$pull_token_var" ] \
+    && ! printf '%s' "$cmd" | grep -qE "(^|[;&|(]|&&|\|\||[[:space:]])${pull_token_var}="; then
+    # There is nothing to learn the author by — no helper, or an empty answer from it. Then the only
+    # lawful call is the one that names the account in its own text.
+    fault "who will open the request cannot be learned: the hosting was not asked, and the command carries no substitution of «${pull_token_var}». Opened by the logged-in account, the request may come out from the very person named as its reviewer, and that is fixed only by reopening.${pull_token_hint:+ Substitute the token: ${pull_token_hint} …}"
 fi
 
 # The PR body carries the section about the remaining step from the minute it opens: without it the

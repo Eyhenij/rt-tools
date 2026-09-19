@@ -2,7 +2,7 @@
 name: git-workflow-pr
 kind: pattern
 rule: git-workflow
-description: Pattern of rule git-workflow. Load for opening a PR and everything around it — title format, draft and leaving it, the link to the task, reviewer and labels, a body sample, reading the PR state, the checklist. Creating the task and committing — pattern git-workflow-commit.
+description: Pattern of rule git-workflow. Load for opening a PR and everything around it — title format, draft and leaving it, reading the PR state, the checklist. The link to the task, reviewer, labels and the body sample — pattern git-workflow-pr-body; creating the task and committing — git-workflow-commit.
 ---
 
 # The PR
@@ -48,24 +48,41 @@ Type and scope — `fix(site):`, `docs(common):` — do not go into the PR title
 subject format, and `commitlint` checks it there. In the PR list it takes room and adds nothing:
 the kind of edit and the area are already visible by the labels.
 
-## What is not ready to merge opens as a draft
+## A draft where a run is waited for, ready where it is not
 
 A code edit is handed to a person by an open PR: a pushed branch is shown to them nowhere. An
 open PR reads as an invitation to merge, so unfinished work opens it as a draft — the host locks
-a draft's merge button itself:
+a draft's merge button itself.
+
+**Which bases the pipeline wakes for is read from its file, not from memory.** That one line decides
+which of the two orders applies, and taking the wrong one means either waiting for a run that never
+comes or handing over unchecked work as finished:
+
+```bash
+# the bases the checks wake for; nothing printed means every base
+sed -n '/^on:/,/^[a-z]/p' .github/workflows/<файл конвейера>
+```
+
+A base the pipeline wakes for — the PR opens as a draft, and the draft is lifted on the green run:
 
 ```bash
 GH_TOKEN="$TOKEN" gh pr create --draft --base <ветка эпика> --title '[<КЛЮЧ>-86] …' --body-file тело.md
 ```
 
-**The base is the epic branch, and it is named by the command.** Without `--base` the host takes
-the default branch of the repository, that is the main branch: the request then carries the task
-past the epic, and the epic branch stays a copy nobody merges. The epic's own request is the only
-one whose base is the main branch, and it opens when the last folder of its tasks is taken apart.
+A base it does not wake for — nothing to wait for, and the PR opens without the draft key. The push
+gate is then the only blocking check behind the work, green before the branch is sent:
 
-Everything waiting for a pipeline run, a rework or an answer to a question goes as a draft. The
-question is asked in the PR itself, not kept in the executor's head: a person reads the PR, not
-the session's conversation.
+```bash
+GH_TOKEN="$TOKEN" gh pr create --base <ветка эпика> --title '[<КЛЮЧ>-86] …' --body-file тело.md
+```
+
+**The base is the epic branch, and it is named by the command.** Without `--base` the host takes
+the repository's default branch: the request then carries the task past the epic, and the epic
+branch stays a copy nobody merges. The epic's own request is the only one based on the main branch,
+and it opens when the last folder of its tasks is taken apart.
+
+Everything waiting for a pipeline run, a rework or an answer goes as a draft, and the question is
+asked in the PR itself: a person reads the PR, not the session's conversation.
 
 The draft is lifted by a separate call, and that is the very turn in which the executor says the
 solution is ready:
@@ -75,103 +92,15 @@ GH_TOKEN="$TOKEN" gh pr ready 86
 ```
 
 Before the lifting the executor's silence means "not ready yet", after — "may be merged".
-Lifting the draft and asking to merge go in one turn: a lifted draft nobody told the person
-about waits for review just like one not lifted.
+Lifting the draft and asking to merge go in one turn: a lifted draft nobody told the person about
+waits for review just like one not lifted. A PR opened without the draft key needs no such call,
+and the request to merge goes in the turn that opened it.
 
-## The PR is attached to the task
+## The link to the task and the body
 
-The body starts with the link line — by it the board fills the linked PRs field. Reviewer,
-assignee and labels are set by the same command, and a PR does not open without them:
-
-```bash
-GH_TOKEN="$TOKEN" gh pr create --base <ветка эпика> --title '[<КЛЮЧ>-86] Письмо владельцу с незаполненным адресом попадает в логи' \
-    --reviewer <владелец> --assignee <бот> --label bug --label area:api \
-    --body 'Closes #86
-
-…'
-```
-
-The reviewer is always the owner: without a review request the PR does not show in their queue.
-The assignee is the same account the machine work goes from. Labels are taken from the task
-whole — both the kind of edit and all its areas; they are read from the task, not picked from
-memory:
-
-```bash
-/opt/homebrew/bin/gh issue view 86 --json labels --jq '.labels | map(.name) | join(",")'
-```
-
-The line `Closes #<номер>` is mandatory: without it the PR is not attached to the task, and the
-queue audit finds this. It also means the task closes whole — half a task is not rolled out by
-one PR: work that does not fit one branch is split into tasks before the branch is created.
-
-A refusal about an exceeded query-language quota (`API rate limit already exceeded`) creates no
-PR at all; the opening then goes by a REST call — `$GH api -X POST "repos/$REPO/pulls" -f head=… -f
-base=… -f title=… -F body=@<файл>` — and labels and reviewer are set after it. The text of such
-a refusal reads as temporary, but the account's quota is not exhausted — it equals zero: there
-is nothing to wait for.
-
-On an already open PR the same is set by three REST calls. `gh pr edit` will not do here: it
-queries Projects (classic) cards, gets a refusal about a removed API and never reaches the edit.
-
-```bash
-GH=/opt/homebrew/bin/gh
-REPO=<владелец>/<репозиторий>
-
-$GH api -X POST "repos/$REPO/issues/205/labels" -f 'labels[]=bug' -f 'labels[]=area:api'
-$GH api -X POST "repos/$REPO/issues/205/assignees" -f 'assignees[]=<бот>'
-$GH api -X POST "repos/$REPO/pulls/205/requested_reviewers" -f 'reviewers[]=<владелец>'
-```
-
-The same call edits the body itself: `-f body=` rewrites it whole, so the line
-`Closes #<номер>` is written anew together with the rest of the text.
-
-```bash
-$GH api -X PATCH "repos/$REPO/pulls/205" -f body="$(cat тело.md)"
-```
-
-The body is reread whenever something merged into the branch after publishing: the PR states
-things about the tree, and the tree has changed since.
-
-## PR body sample
-
-Four sections, and one order between them: the link line, what was done, what confirms it, the
-remaining step. A section with nothing to say says so in words — an empty heading and a removed
-heading read alike and mean different things.
-
-```markdown
-Closes #86
-
-## Что сделано
-
-- <правка, названная тем, что она меняет для читателя, а не тем, какие файлы задела>
-
-## Чем подтверждено
-
-- <проверка>: <её вывод одной строкой>
-- Не гонялось: <что в набор не вошло и почему>
-
-## Оставшийся шаг
-
-Папка задачи разобрана коммитом `<sha>` — за работой убрано. Осталось дождаться прогона и снять
-черновик; до этого кнопка слияния заблокирована хостингом.
-```
-
-The "Remaining step" section stands last and is rewritten by the same call as the rest of the
-body — in the turn that lifts the draft:
-
-```markdown
-## Оставшийся шаг
-
-Не осталось: прогон зелёный, черновик снят. Можно вливать.
-```
-
-It stands there because the merge decision is made on that page, not in the conversation: what
-was said to the owner aloud lives until the next reply, and the body lies right by the button.
-One does not cancel the other — the order of both messages to the owner is described by the
-pattern for closing work.
-
-There is nothing to check the body by machine: no audit reads it, and the host asks only about
-the title. The sample is held by whoever writes the body — like the words said aloud.
+The `Closes #<номер>` line, the reviewer, the assignee and the labels set by the opening call,
+the four sections of the body and how the task closes when the base is not the main branch —
+pattern `git-workflow-pr-body`. The pattern was split out of this one by the length limit.
 
 ## The PR state is read, not guessed
 
@@ -272,10 +201,14 @@ push gate — below is what it does not know.
     the showcase snapshots: since the merge the pipeline runs them on its code, and the red
     comes to its PR.
 
-This list is about lifting the draft, not about opening it. The PR opens as a draft earlier:
-while work goes on, the person is shown what already exists together with what is still missing.
-Items 1–15 are passed before `gh pr ready`, and an unmet item means the draft is not lifted — not
-that the PR does not open.
+Where the pipeline wakes for this base, the list is about lifting the draft: the PR opens as a
+draft earlier, while work goes on, and the person is shown what exists together with what is
+still missing. Items 1–15 are then passed before `gh pr ready`, and an unmet item means the draft
+is not lifted — not that the PR does not open.
+
+Where it does not wake, the same list is about opening: there is no second state to hold the work
+in, so an unmet item means the PR does not open yet. Item 1 changes with it — no run is asked for,
+and its place is taken by the push gate, green before the sending.
 
 Right after publishing the task is moved to review — `npm run task:move -- <номер>
 in-review` — and `npm run check:board` is run once more: before the PR opens it does not judge
@@ -284,24 +217,14 @@ the column, after the opening it sees the discrepancy.
 What was done by reasoning and what was done by measurement are told apart plainly in the PR
 body: the unchecked named as checked, the reviewer takes as checked.
 
-**The "What confirms it" section names what was not run too.** A list of one run cannot be told
-from the full set, and by it the reviewer decides what need not be rechecked. The price of a
-mistake here is not a red pipeline but trust in the section: once read as complete, from then on
-it is rechecked whole.
+**The "What confirms it" section names what was not run too.** A list of one run cannot be told from
+the full set, and by it the reviewer decides what need not be rechecked. The price of a mistake here
+is trust in the section: once read as complete, from then on it is rechecked whole.
 
 ## Common misses
 
 Misses about creating the task, the branch and the commit — pattern
-`git-workflow-commit`.
+`git-workflow-commit`; about the link line, the labels and the body — `git-workflow-pr-body`.
 
-- A second `Closes` line in one PR no longer closes a task: two tasks in one branch roll back
-  only together. Either it is one task — and the second is absorbed — or two branches.
-- Half a task that left by its own PR is a miss too: the body of such a PR starts with the words
-  `Часть #<номер>` instead of `Closes`, and the task stays open. Work that does not fit one
-  branch is split into tasks before the branch is created.
 - A PR opened without a reviewer: it never reaches the owner's inbox at all, and the queue stands
   while looking as if it works. That is how sixteen PRs waited for a review nobody had requested.
-- Labels set by the PR title, not read from the task: the area is lost, and the board does not
-  show that the edit touched the site too.
-- The task closed not in full, but the labels carried over whole: the task stays open, and the
-  PR body says so instead of implying it by a `Closes` line.

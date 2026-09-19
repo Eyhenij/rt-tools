@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { AccountCommandsModule } from '@rt/message-bus-api/accounts/feature';
 import { PrismaModule } from '@rt/message-bus-api/persistence/feature';
 import { TreeCommandsModule } from '@rt/message-bus-api/trees/feature';
 
@@ -12,6 +11,6 @@ import { TreeCommandsModule } from '@rt/message-bus-api/trees/feature';
  * весь состав службы значило бы держать открытый порт на время печати списка.
  */
 @Module({
-    imports: [PrismaModule, TreeCommandsModule, AccountCommandsModule],
+    imports: [PrismaModule, TreeCommandsModule],
 })
 export class CommandsModule {}

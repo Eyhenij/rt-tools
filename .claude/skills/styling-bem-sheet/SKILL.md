@@ -4,7 +4,7 @@ kind: pattern
 rule: styling-bem
 description: Pattern of rule styling-bem. Load when creating or editing a sheet, a dialog or a full-screen view over the page — what opens it, what is passed inside, how it slides in from below, what checks it. Not for the record edit panel in the admin — that is pattern entity-aside.
 ---
-<!-- rt-kit v0.26.0 · patterns/styling-bem-sheet.md · 9749533b17f6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/styling-bem-sheet.md · 9749533b17f6 · правится надстройкой, не здесь -->
 
 # The sheet and the window above the page
 

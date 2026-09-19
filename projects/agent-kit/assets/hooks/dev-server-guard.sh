@@ -3,17 +3,31 @@
 # Requires: hooks/deny-tail.sh
 # Guard against a second dev server. PreToolUse.
 #
-# The applications are already raised by the owner, and every check through the browser goes there.
-# A second instance takes an extra port, serves a different build and leads the investigation
-# astray: a difference between two servers reads as a defect of the edit. On top of that, a build
-# started in passing silently kills the server already raised.
+# Who raises the stands is decided by the tree, not by the guard. The profile key
+# RT_STANDS_RAISED_BY next to the stand list holds two values, and an unset key reads as `owner`:
+# a tree that sets nothing keeps the behaviour it has today.
+#
+#   owner   — the applications are already raised by the owner, and every check through the browser
+#             goes there. Any raise is refused: a second instance takes an extra port, serves a
+#             different build and leads the investigation astray — a difference between two servers
+#             reads as a defect of the edit. On top of that, a build started in passing silently
+#             kills the server already raised.
+#   session — nobody raises the stands here but the session itself. There is left of the guard the
+#             one refusal that is right in such a tree: a raise over a port already taken. Under
+#             `owner` a tree where nobody raises anything gets the whole check through the browser
+#             refused, and the guard is dropped whole — together with the refusal that was right.
 #
 # Everything that RAISES a server is refused. Builds, tests, linters, requests to raised ports and
 # looking at listeners pass.
 #
 # Where exactly the applications are raised is known to the project profile:
 # .claude/rt-kit/project.sh, variable RT_STANDS. No profile — the refusal text stays general, the
-# guard itself works.
+# guard itself works; under `session` there are no ports to judge by, and the call passes.
+#
+# FAIL-OPEN: an unrecognised command, no way to ask the ports, a raise the tree knows nothing of —
+# the call goes through. The price of a miss here is a second server on a busy port; the price of a
+# wrong refusal is a guard nobody keeps. Under `session` the absence of the port
+# listing tool reads the same way: there is nothing to learn a taken port by, and the call passes.
 
 # Its own name in the observations: the refusal is written by the shared deny tail, not by the
 # guard itself.
@@ -26,6 +40,49 @@ rt_hook_read
 input="$RT_HOOK_INPUT"
 
 tool="$(rt_hook_tool)"
+
+# The tree profile: first the package default, and over it the project override, if there is one.
+rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
+    # shellcheck disable=SC1090
+    [ -f "$profile" ] && . "$profile" 2>/dev/null
+done
+stands="${RT_STANDS:-}"
+raiser="${RT_STANDS_RAISED_BY:-owner}"
+
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+
+# A port of the stand list somebody is listening on. Only these are judged under `session`: a port
+# the tree never named belongs to no stand of it, and a refusal over it would refuse the session's
+# own work.
+taken_stand_port() {
+    local port
+    command -v lsof >/dev/null 2>&1 || return 1
+    for port in $(printf '%s' "$stands" | grep -oE ':[0-9]{2,5}' | tr -d ':' | sort -u); do
+        lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1 && { printf '%s' "$port"; return 0; }
+    done
+    return 1
+}
+
+deny() {
+    local port
+    if [ "$raiser" = "session" ]; then
+        # Nobody raises the stands here but the session: a free port is its own business, and only
+        # a taken one is worth a refusal.
+        port="$(taken_stand_port)" || exit 0
+        echo "$1 On port ${port} somebody is already listening — a second instance answers with a build of its own and leads the investigation astray. Ask what it is: lsof -nP -iTCP:${port} -sTCP:LISTEN. $(rt_deny_tail)" >&2
+        exit 2
+    fi
+    if [ -n "$stands" ]; then
+        echo "$1 The applications are already raised by the owner: ${stands} — check those. Do not raise an instance of your own; if a port does not answer, tell the owner instead of launching a second one. $(rt_deny_tail)" >&2
+    else
+        echo "$1 The applications are already raised by the owner — check those. Do not raise an instance of your own; if a port does not answer, tell the owner instead of launching a second one. $(rt_deny_tail)" >&2
+    fi
+    exit 2
+}
 case "$tool" in
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
     # A ready run configuration does not show the command line — only its name is visible. Hence
@@ -40,16 +97,14 @@ case "$tool" in
             file="$(printf '%s' "$input" | jq -r '.tool_input.filePath // empty' 2>/dev/null)"
             case "$file" in
                 */package.json|package.json)
-                    echo "A launch of a script straight from the manifest: the guard sees only the file and the line, not the script itself, so it cannot tell raising a server from a build. The applications are already raised by the owner — if a build or a test is needed, run them by a command in the terminal." >&2
-                    exit 2 ;;
+                    deny "A launch of a script straight from the manifest: the guard sees only the file and the line, not the script itself, so it cannot tell raising a server from a build. If a build or a test is needed, run them by a command in the terminal." ;;
             esac
             exit 0
         fi
         # The word "start" without a boundary also caught "restart", which raises no server.
         case "$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]')" in
             *serve*|*dev*|start*|*\ start*|*:start*)
-                echo "The configuration «${name}» looks like raising a development server, and the applications are already raised by the owner — check those. If the configuration does something else, run it by a command: by the name alone the guard does not see the content." >&2
-                exit 2 ;;
+                deny "The configuration «${name}» looks like raising a development server. If the configuration does something else, run it by a command: by the name alone the guard does not see the content." ;;
         esac
         exit 0 ;;
     *) exit 0 ;;
@@ -76,28 +131,6 @@ case "$cmd" in
     git\ *|*/git\ *)
         printf '%s' "$cmd" | grep -qE '(^|[[:space:]])git[[:space:]]+daemon([[:space:]]|$)' || exit 0 ;;
 esac
-
-# The tree profile: first the package default, and over it the project override, if there is one.
-rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
-    # shellcheck disable=SC1090
-    [ -f "$profile" ] && . "$profile" 2>/dev/null
-done
-stands="${RT_STANDS:-}"
-
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-
-deny() {
-    if [ -n "$stands" ]; then
-        echo "$1 The applications are already raised by the owner: ${stands} — check those. Do not raise an instance of your own; if a port does not answer, tell the owner instead of launching a second one. $(rt_deny_tail)" >&2
-    else
-        echo "$1 The applications are already raised by the owner — check those. Do not raise an instance of your own; if a port does not answer, tell the owner instead of launching a second one. $(rt_deny_tail)" >&2
-    fi
-    exit 2
-}
 
 # The runners are listed outright. A group meaning "any word before the name" refused even a note
 # saying that the server is raised by the owner.

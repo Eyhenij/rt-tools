@@ -1,10 +1,13 @@
 import { Route } from '@angular/router';
-import { authRoutes, firstOpenSectionPath, sectionRightGuard, sessionGuard } from '@rt/message-bus-admin/auth/shell';
+import { PEOPLE_ROUTE, peopleRoutes, ROLES_ROUTE, rolesRoutes } from '@rt/message-bus-admin/accounts/shell';
+import { authRoutes, landingPath, noSectionsGuard, sectionRightGuard, sessionGuard } from '@rt/message-bus-admin/auth/shell';
+import { NO_SECTIONS_PATH } from '@rt/message-bus-admin/auth/util';
 import { COLUMNS_ROUTE } from '@rt/message-bus-admin/common/core/util';
 import { INVITES_ROUTE, invitesRoutes } from '@rt/message-bus-admin/invites/shell';
 import { POSTMORTEMS_ROUTE, postmortemsRoutes } from '@rt/message-bus-admin/postmortems/shell';
 import { PROPOSALS_ROUTE, proposalsRoutes } from '@rt/message-bus-admin/proposals/shell';
 import { SUMMARIES_ROUTE, summariesRoutes } from '@rt/message-bus-admin/summaries/shell';
+import { USAGE_ROUTE, usageRoutes } from '@rt/message-bus-admin/usage/shell';
 
 /**
  * Панель настройки столбцов — своя у каждого раздела, и адрес её называет раздел.
@@ -60,12 +63,24 @@ export const appRoutes: Route[] = [
             columnsRoute(POSTMORTEMS_ROUTE),
             columnsRoute(PROPOSALS_ROUTE),
             columnsRoute(SUMMARIES_ROUTE),
+            columnsRoute(USAGE_ROUTE),
             columnsRoute(INVITES_ROUTE),
+            columnsRoute(PEOPLE_ROUTE),
+            columnsRoute(ROLES_ROUTE),
             ...postmortemsRoutes,
             ...proposalsRoutes,
             ...summariesRoutes,
+            ...usageRoutes,
             ...invitesRoutes,
-            { path: '', pathMatch: 'full', redirectTo: (): string => firstOpenSectionPath() },
+            ...peopleRoutes,
+            ...rolesRoutes,
+            {
+                path: NO_SECTIONS_PATH,
+                pathMatch: 'full',
+                canActivate: [noSectionsGuard],
+                loadComponent: async () => (await import('@rt/message-bus-admin/common/container/feature')).AdminNoSectionsComponent,
+            },
+            { path: '', pathMatch: 'full', redirectTo: (): string => landingPath() },
         ],
     },
 ];

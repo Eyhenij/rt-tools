@@ -4,7 +4,7 @@ kind: pattern
 rule: styling-bem
 description: Pattern of rule styling-bem. Load when editing the styles of a kit component — the ready-made :host, modifiers, styling tokens, the styling language of the public site, overriding kit defaults. Not for screen layout — that is pattern styling-bem-layout.
 ---
-<!-- rt-kit v0.26.0 · patterns/styling-bem-component.md · 06d54bbd57cd · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/styling-bem-component.md · 06d54bbd57cd · правится надстройкой, не здесь -->
 
 # Component styles
 

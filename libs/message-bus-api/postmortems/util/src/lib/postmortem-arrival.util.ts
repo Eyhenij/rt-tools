@@ -1,8 +1,8 @@
 /**
  * Приезд разбора поверх лежащего: что правится у записи и трогается ли её состояние.
  *
- * Функция чистая и хранилища не знает: решение о сбросе принимается по двум текстам, и спека
- * зовёт её без базы. Хранилище только подставляет ответ в обновление записи.
+ * Функция чистая и хранилища не знает: решение о сбросе принимается по двум текстам и признаку
+ * закрытия, и спека зовёт её без базы. Хранилище только подставляет ответ в обновление записи.
  */
 import { ECargoState } from '@rt/message-bus-common';
 
@@ -12,6 +12,12 @@ export interface IPostmortemArrivalUpdate {
     readonly state?: ECargoState;
 }
 
+/** Лежащий разбор, каким его читает приезд: текст и признак закрытия издателем. */
+export interface IPostmortemStoredForArrival {
+    readonly text: string;
+    readonly closedByPublisher: boolean;
+}
+
 /**
  * Правка лежащего разбора приехавшим.
  *
@@ -19,12 +25,16 @@ export interface IPostmortemArrivalUpdate {
  * текст состояния не трогает: прогон отправки везёт разборы целиком и повторяется по
  * расписанию, и сброс на каждый приезд погасил бы все состояния первым же прогоном.
  *
- * Лежащего текста нет — записи в хранилище тоже нет, и правка не применится вовсе: обновление
+ * Запись, закрытую издателем, другой текст в «новое» не возвращает: починка лежит в редакции
+ * пакета, и текст разбора её не отменяет — закрытие ходит только вперёд. Без этого признак и
+ * состояние расходились: «новое (закрыто издателем)» — пара, которой нет на карте состояний.
+ *
+ * Лежащей записи нет — записи в хранилище тоже нет, и правка не применится вовсе: обновление
  * ей возвращается без состояния, потому что заведённая запись встаёт в «новое» умолчанием
  * колонки.
  */
-export function postmortemArrivalUpdate(storedText: string | undefined, arrivedText: string): IPostmortemArrivalUpdate {
-    if (storedText === undefined || storedText === arrivedText) {
+export function postmortemArrivalUpdate(stored: IPostmortemStoredForArrival | undefined, arrivedText: string): IPostmortemArrivalUpdate {
+    if (stored === undefined || stored.text === arrivedText || stored.closedByPublisher) {
         return { text: arrivedText };
     }
 

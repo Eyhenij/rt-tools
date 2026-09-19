@@ -259,6 +259,40 @@ expect_ask "SC-AK-818 — первый вопрос захода не судит
         "$(uses Skill "$LOADED")")" \
         'Сплошная проверка единообразия гоняется каждый раз?')" PASS
 
+# --- SC-AK-1134 — два ответа «рекомендованный» подряд закрывают меню -----------------------
+# Владелец отвечал рекомендованным на четыре меню подряд, пятое закрыл именем готового модуля.
+# Со второго такого ответа остальные вопросы закрываются допущением: третий признак читает два
+# последних ответа инструмента вопроса; любой иной ответ серию рывёт.
+menu_answered() { jq -c -n --arg t "The user answered: $1. Read the answers carefully." '{type:"user",message:{content:[{type:"tool_result",content:$t}]}}'; }
+REC1='"Откуда числа?"="Из приёмника (Recommended)"'
+REC2='"Какой экран?"="Раздел сводок (Рекомендую)"'
+OWN='"Какой экран?"="свой экран, не трогай сводки"'
+SAID_ASK='нужна статистика использования правил'
+
+expect_ask "SC-AK-1134 — третье меню после двух рекомендованных ответов отбито" \
+    "$(input_ask_text "$(transcript \
+        "$(say "$SAID_ASK")" \
+        "$(uses AskUserQuestion '{"questions":[]}')" "$(menu_answered "$REC1")" \
+        "$(uses AskUserQuestion '{"questions":[]}')" "$(menu_answered "$REC2")" \
+        "$(uses Skill "$LOADED")")" \
+        'Хранить помесячно или по дням?')" DENY
+out="$(input_ask_text "$(transcript "$(say "$SAID_ASK")" "$(uses AskUserQuestion '{"questions":[]}')" "$(menu_answered "$REC1")" "$(uses AskUserQuestion '{"questions":[]}')" "$(menu_answered "$REC2")" "$(uses Skill "$LOADED")")" 'Хранить помесячно или по дням?' | "$HOOKS/grill-gate.sh" 2>/dev/null | jq -r '.hookSpecificOutput.permissionDecisionReason // ""')"
+case "$out" in *"closed by assumption"*) got="есть" ;; *) got="нет" ;; esac
+report "SC-AK-1134 — отказ велит закрыть остальное допущением" "$got" "есть"
+expect_ask "SC-AK-1134 — свой ответ владельца серию рвёт" \
+    "$(input_ask_text "$(transcript \
+        "$(say "$SAID_ASK")" \
+        "$(uses AskUserQuestion '{"questions":[]}')" "$(menu_answered "$REC1")" \
+        "$(uses AskUserQuestion '{"questions":[]}')" "$(menu_answered "$OWN")" \
+        "$(uses Skill "$LOADED")")" \
+        'Хранить помесячно или по дням?')" PASS
+expect_ask "SC-AK-1134 — один рекомендованный ответ меню не закрывает" \
+    "$(input_ask_text "$(transcript \
+        "$(say "$SAID_ASK")" \
+        "$(uses AskUserQuestion '{"questions":[]}')" "$(menu_answered "$REC1")" \
+        "$(uses Skill "$LOADED")")" \
+        'Хранить помесячно или по дням?')" PASS
+
 # Отказ называет, что делать, а не как переспросить: промах здесь — остановка разрешённой работы.
 out="$(input_ask_text "$(transcript \
     "$(say "$SAID_RULE")" \

@@ -2,6 +2,9 @@
 # Parsing a command for the storage guard: bringing it to one shape, cutting it into segments and
 # answering the question whether the segment delivers SQL to the server.
 #
+# NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The storage guard
+# sources it — the parsing of the request, moved out when the guard reached its length limit.
+#
 # There is deliberately no `# rt-hook:` line here: the event and the call pattern are declared by the
 # guard itself, and a helper next to it is not registered as a hook and decides nothing alone.
 

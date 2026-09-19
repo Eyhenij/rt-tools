@@ -199,3 +199,34 @@ Then it demands the rule of the wording and its pattern about texts for a person
 body and a mention of such a command in a search demand no rule: both signs are checked at once
 
 Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
+
+### SC-AK-1049 — the record of loaded rules is removed on compaction
+
+Given the gate holds a record of the rules loaded in this session When the session reports a
+compaction or a clearing Then the record is removed and every area asks for its rule anew: the sign
+of the session stayed as it was, while the text of the rules left the context
+
+### SC-AK-1050 — the re-arming is told to the session in words
+
+Given the record is removed When the answer of the hook is read Then it carries a line about the
+re-arming: a silent one reads as breakage — the summary says the rules are loaded, and the gate
+answers that they are not
+
+Given the input carries no sign of the session, or there is no input at all When the hook judges the
+call Then it removes nothing and leaves with zero: it is a removal of a temporary file, and it
+refuses nothing
+
+Covered: `projects/agent-kit/tests/skill-gate-rearm.test.sh`.
+
+### SC-AK-1088 — the subject of the rollout rule is demanded by the rollout rule
+
+Given an edit of the image description, of the compose file, of the proxy config or of the sample of
+the production environment When the gate picks the rule Then it demands the rule of the rollout: the
+rule about tasks and branches says nothing about the server, the ports or the variables the image is
+raised with
+
+Given an edit of the pipeline When the gate picks the rule Then it demands the rule of the rollout
+first and the rule about tasks and branches after it: the pipeline says both what runs before the
+merge and what reaches production after it
+
+Covered: `projects/agent-kit/tests/skill-gate.test.sh`.

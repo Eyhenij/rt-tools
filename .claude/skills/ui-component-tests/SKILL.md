@@ -51,9 +51,8 @@ Four checks do not replace one another, and the choice between them is not a mat
   Such a state gets a story of its own rather than being credited with a neighbour's coverage.
 - **A state's sign is checked by the same thing a person sees it by: a frame or a measurement of
   the raster, not by the value of a written style.** A style set on a node proves only that it was
-  set: whether it applied depends on what the showing registered. A pair of icons differed by the
-  fill axis of a variable font, while the showcase holds a static set — the value in the markup is
-  different, the glyph is one, and in the debugger everything looks right.
+  set; whether it applied depends on what the showing registered — a pair of icons differed by the
+  fill axis of a variable font over a static set, one glyph for two values.
 - **If there is a pair of states, both must be in the frame.** A reference showing one side of a
   pair says nothing about the pair itself and stays green under any breakage of it: three taken
   frames showed the pinned mode, and the outline icon never got into a frame — neither in the right
@@ -123,12 +122,10 @@ Four checks do not replace one another, and the choice between them is not a mat
   moves frames nobody edited. What tells one from the other is a measurement of the node before the
   frame and after it: a height that changed across the shutter names the shot, not the layout.
 - **A frame is assembled from what lies in the tree, and the harness cuts the shot off from a
-  foreign network.** Everything that travels from outside brings a foreign availability into the
-  frame: not having arrived, it leaves an empty place, and the snapshot diverges where nobody
-  touched the layout. One article saying that what is not deterministic is taken as bytes next to it
-  is too little for this — it is held by the memory of whoever edits the showing's header, and it is
-  removed by one line. This is cut off by the harness: a request beyond the local machine fails the
-  run, and a returned external address is visible at once rather than guessed from run to run.
+  foreign network.** What travels from outside brings a foreign availability into the frame, and
+  the snapshot then diverges where nobody touched the layout. An article about it is too little —
+  it is held by memory and removed by one line; the harness fails the run on a request beyond the
+  local machine instead.
 - **A settled showing and a state that came about are not the same, and a story is waited for by the
   second.** The harness judges the frame by the network's silence and the motionless size of the
   node being shot, while a screen with skeletons has a size just as motionless as a screen with a
@@ -170,6 +167,11 @@ Four checks do not replace one another, and the choice between them is not a mat
   drawn: an empty frame becomes the sample, and afterwards the run is eternally green on emptiness.
   The order is one — a raised showcase, the eyes, then the reference. References are taken in a
   batch only for stories that have already been looked over.
+- **A re-taken reference is confirmed by a second raising before it is committed.** A frame taken
+  once says what the machine drew in that minute, not what it draws, and nothing in the browser's
+  configuration pins the difference. Otherwise a whole re-take reaches the main branch and turns
+  every branch that merges it red — the cold part holds the count.
+
 - **A reference is re-taken deliberately and one at a time.** Re-taking everything at once erases
   the divergence that was not expected too.
 - **A one-off check script does not travel into the repository.** It lives in a temporary directory:

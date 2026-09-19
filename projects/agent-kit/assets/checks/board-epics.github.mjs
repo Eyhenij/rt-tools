@@ -2,11 +2,12 @@
  * The link between a task and an epic. Lives in a file of its own: the work queue audit stands at
  * the length limit even without it, and these two checks are read separately.
  */
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { declaredEpicOf } from './board-epic-link.mjs';
-import { numberFromTitle, TASK_KEY } from './board.mjs';
+import { planPathOf, planRows } from './board-epic-plan.mjs';
+import { ghJson, numberFromTitle, OfflineError, OWNER, REPO, TASK_KEY } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 /**
@@ -14,76 +15,14 @@ import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
  * tell an epic card from an ordinary task by.
  */
 // Чтение объявления переехало в свой модуль, а звали его отсюда: имя оставлено на прежнем месте,
-// чтобы соседям не пришлось знать о переезде.
-export { declaredEpicOf };
+// чтобы соседям не пришлось знать о переезде. Тем же ходом переехал выбор документа замысла — его
+// читает и команда заведения задачи.
+export { declaredEpicOf, planPathOf, planRows };
 
 const EPIC_LABEL = CONFIG.board?.epicLabel ?? '';
 
 /** The labels of the cargo of the trees: those records are not tasks and are not judged as such. */
 const CARGO_LABELS = CONFIG.board?.cargoLabels ?? [];
-
-/**
- * The rows of the epic makeup — those standing in the table with the task column.
- *
- * The epic plan holds other tables too: the sources of findings, the makeup of families, the count
- * of items. Numbers taken from the whole text, and even from all the tables, would make an epic
- * task out of everything it mentioned — the previous epic its findings grew from, a review, a task
- * of a neighbouring tree.
- */
-export function planRows(plan) {
-    const rows = [];
-    let inside = false;
-    for (const line of plan.split('\n')) {
-        const isRow = line.trimStart().startsWith('|');
-        if (!isRow) {
-            inside = false;
-            continue;
-        }
-        if (!inside) {
-            // The column has two names, English and the owner's: a tree translates its plans one at
-            // a time, and one name would take the untranslated epics out of the check silently. A
-            // word boundary is no good here either: `\b` knows only Latin letters and never matches
-            // Cyrillic — the check would stay silent on any plan.
-            inside = /\|[^|]*(?:Task|Задача)/.test(line);
-            continue;
-        }
-        rows.push(line);
-    }
-    return rows.join('\n');
-}
-
-/**
- * The plan of an epic named by its own card, and the reason there is none.
- *
- * The plan is the document that carries the makeup, not the first path in the body. A card names
- * its decision next to its plan, and the decision has no table of tasks: read as the plan, it made
- * the makeup empty and every open task of the epic read as not belonging to it — fourteen false
- * lines at once, and the true ones drowned among them.
- *
- * A path counts as a spelling with a directory: a bare file name occurs in the body in prose and
- * would lead the reader to the very first mention.
- */
-export function planPathOf(body) {
-    const named = [...String(body ?? '').matchAll(/(?:^|[\s(`])([\w.-]+(?:\/[\w.-]+)+\.md)/g)].map((match) => match[1]);
-    if (named.length === 0) {
-        return { path: null, why: 'the epic card names no path to the plan — there is nowhere to read what the epic holds' };
-    }
-
-    const onDisk = named.filter((path) => existsSync(join(ROOT, path)));
-    if (onDisk.length === 0) {
-        return { path: null, why: `the epic plan «${named[0]}» is not on disk — the card points into emptiness` };
-    }
-
-    const carrying = onDisk.find((path) => planRows(readFileSync(join(ROOT, path), 'utf8')) !== '') ?? null;
-    if (carrying === null) {
-        return {
-            path: null,
-            why: `none of the documents the card names carries the makeup of the epic — «${onDisk.join('», «')}». The makeup is a table with a task column`,
-        };
-    }
-
-    return { path: carrying, why: '' };
-}
 
 /**
  * The link between a task and an epic, read in both directions.
@@ -198,6 +137,71 @@ function checkTasksOutsideEpics(open, epicNumbers, report) {
         report(
             `#${issue.number}: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»`
         );
+    }
+}
+
+/**
+ * The tasks of an epic linked to its card as sub-issues.
+ *
+ * The plan of the epic holds the makeup, and the body of a task names the epic — but both are
+ * text, and the board reads neither. On the board a task of an epic looks exactly like a task
+ * outside one: the epic card shows no list of its tasks, no count of the done ones, and whoever
+ * looks at the board assembles both by hand from the list of open cards.
+ *
+ * A sub-issue is the hosting's own link between two cards, and it fills all three at once: the
+ * epic card gets the list, the task card gets the line about its parent, and the board card gets
+ * the "done of total" bar.
+ *
+ * The list of the epic's tasks is taken from its plan, as everywhere in this audit — the plan is
+ * the makeup. Closed tasks are judged too, unlike the rest of the audit: the bar counts them, and
+ * an epic whose closed tasks are not linked shows a share lower than the true one.
+ *
+ * Arguments: the open cards, the reporting function, the call options of the hosting client.
+ */
+export function checkEpicSubIssues(open, report, options) {
+    if (!EPIC_LABEL || !OWNER || !REPO) {
+        return;
+    }
+
+    const epics = open.filter((issue) => (issue.labels ?? []).some((label) => label.name === EPIC_LABEL));
+    for (const epic of epics) {
+        const found = planPathOf(epic.body);
+        if (found.path === null) {
+            // The unread plan has already been reported by a line of its own in the link check.
+            continue;
+        }
+
+        const rows = planRows(readFileSync(join(ROOT, found.path), 'utf8'));
+        const named = new Set([...rows.matchAll(new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`, 'g'))].map((match) => Number(match[1])));
+        named.delete(epic.number);
+        if (named.size === 0) {
+            continue;
+        }
+
+        let linked;
+        try {
+            // The list comes in pages, and an epic outgrows one page long before it is closed.
+            // Read by the first page alone, the audit calls a linked task unlinked: the line
+            // then stands in every run, the eye stops reading it, and a real divergence rides
+            // past together with it.
+            linked = new Set(
+                ghJson(['api', '--paginate', `repos/${OWNER}/${REPO}/issues/${epic.number}/sub_issues`, '--jq', '[.[].number]'], options)
+            );
+        } catch (error) {
+            if (error instanceof OfflineError) {
+                throw error;
+            }
+            // The hosting has no such link at all, or the call is refused: this is not a
+            // discrepancy of the tree, and a line about it would repeat every run.
+            continue;
+        }
+
+        const missing = [...named].filter((number) => !linked.has(number)).sort((left, right) => left - right);
+        if (missing.length > 0) {
+            report(
+                `#${epic.number}: the plan names tasks that are not sub-issues of the epic card — ${missing.map((number) => `#${number}`).join(', ')}. On the board the epic then shows neither its makeup nor how much of it is done`
+            );
+        }
     }
 }
 

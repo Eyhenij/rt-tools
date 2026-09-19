@@ -46,7 +46,10 @@ named by what is done, not by what is thought over — a line nobody can call do
 
 The command is written in backticks: the turn exit guard reads it and does not let out a turn in
 which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything.
+cannot be confirmed by anything. The command is run right here, while the plan is written, not at
+the end of the stage: its output is what names the readiness sign. A sign written by a guess is
+sometimes impossible to meet — the line the stage must put out comes from an unconfigured tree
+rather than from the work — and that is found out latest of everything that depended on it.
 
 ## What this work does not do
 

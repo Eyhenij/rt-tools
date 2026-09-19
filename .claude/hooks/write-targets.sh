@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# rt-kit v0.26.0 · hooks/write-targets.sh · 688744ddce52 · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/write-targets.sh · e4ced8c3c759 · правится надстройкой, не здесь
 # Write targets named by the shell command outright: redirection, `tee`, an in-place edit, a copy
 # over the top, and for an interpreter — the paths from its body. Prints one per line.
+#
+# NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The guards that judge
+# a shell command source it: the paths a command writes to are read one way by all of them.
 #
 # There is deliberately no `# rt-hook:` line here: this is a helper, not a hook. It decides nothing
 # by itself and is called from where an edit of a file is judged — by the guard of the place of the

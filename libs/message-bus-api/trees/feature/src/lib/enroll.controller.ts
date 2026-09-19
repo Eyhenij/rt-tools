@@ -19,9 +19,7 @@ import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { findTreeClash, IStoredInvite, ITreeClash, findInviteByHash, redeemInvite } from '@rt/message-bus-api/trees/data-access';
 import { inviteCodeHash, inviteUsable, issueTreeToken, treeTokenHash } from '@rt/message-bus-api/trees/util';
 import { IEnrollGranted } from '@rt-tools/agent-kit/cargo';
-
-/** Один и тот же отказ на четыре негодных состояния приглашения и на ненайденный код. */
-const REFUSAL: string = 'приглашение не принято';
+import { ERefusal, refusalBody } from '@rt/message-bus-common';
 
 /** Запрос, каким его видит операция: тело уже разобрано каркасом, а ключ клиента берётся здесь. */
 interface IEnrollRequest {
@@ -60,7 +58,7 @@ export class EnrollController {
         if (!this.#rate.allow(key, at)) {
             this.#log.warn({ event: 'enroll-throttled', key });
 
-            throw new BadRequestException('обращений с одного клиента больше предела: подождите и повторите');
+            throw new BadRequestException(refusalBody(ERefusal.EnrollThrottled));
         }
 
         const fields: Record<string, unknown> = (body ?? {}) as Record<string, unknown>;
@@ -68,7 +66,7 @@ export class EnrollController {
         const slug: string = field(fields, 'tree');
 
         if (!code || !slug) {
-            throw new BadRequestException('обращение ожидает код приглашения и признак дерева');
+            throw new BadRequestException(refusalBody(ERefusal.EnrollMalformed));
         }
 
         return this.#grant(code, slug, at);
@@ -86,7 +84,7 @@ export class EnrollController {
         if (!invite || !inviteUsable(invite, at)) {
             this.#log.warn({ event: 'enroll-refused', slug });
 
-            throw new UnauthorizedException(REFUSAL);
+            throw new UnauthorizedException(refusalBody(ERefusal.InviteRejected));
         }
 
         const clash: ITreeClash | null = await findTreeClash(this.#prisma, invite.name, slug);
@@ -94,7 +92,7 @@ export class EnrollController {
         if (clash) {
             this.#log.warn({ event: 'enroll-clash', slug });
 
-            throw new ConflictException('дерево с таким признаком или именем уже заведено; приглашение осталось годным');
+            throw new ConflictException(refusalBody(ERefusal.TreeTaken));
         }
 
         const token: string = issueTreeToken();
@@ -107,7 +105,7 @@ export class EnrollController {
         if (!taken) {
             this.#log.warn({ event: 'enroll-taken', slug });
 
-            throw new UnauthorizedException(REFUSAL);
+            throw new UnauthorizedException(refusalBody(ERefusal.InviteRejected));
         }
 
         this.#log.log({ event: 'enroll-granted', slug });

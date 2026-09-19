@@ -9,7 +9,7 @@ Rewritten by every session, not appended to.
 - **Done:** <briefly>
 - **Next step:** <what is done first in the new session>
 - **Uncommitted:** <what lies in the tree outside the index>
-- **Waiting for the owner:** <what exactly, or "no">
+- **Waiting for the owner:** <what exactly, or "no"; the owner's standing word about a stop is quoted in « »>
 - **PR:** <number and state, or "not open yet">
 
 ## Steps
