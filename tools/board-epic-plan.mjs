@@ -1,4 +1,4 @@
-// rt-kit v0.29.0 · checks/board-epic-plan.github.mjs · 7c2a48d125d4 · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/board-epic-plan.github.mjs · f30b24f31f62 · правится надстройкой, не здесь
 /**
  * The plan of an epic named by its own card: which of the paths in the body is the plan.
  *
@@ -48,6 +48,37 @@ export function planRows(plan) {
     }
 
     return rows.join('\n');
+}
+
+/**
+ * The task column of the makeup, cell by cell: the numbers of the tasks live there and nowhere else.
+ *
+ * The state column names the request the task was merged by, and a number read from the whole row
+ * turns that request into a task of the epic: the audit then says the plan names tasks that are no
+ * sub-issues of the card, and points at requests. The column is the one by which a row counts as a
+ * makeup row at all — the one whose header carries the word for a task.
+ */
+export function planTaskCells(plan) {
+    const cells = [];
+    let column = -1;
+    for (const line of String(plan ?? '').split('\n')) {
+        const row = line.trimStart();
+        if (!row.startsWith('|')) {
+            column = -1;
+            continue;
+        }
+
+        const parts = row.split('|').slice(1, -1);
+        if (column === -1) {
+            column = parts.findIndex((part) => /(?:Task|Задача)/.test(part));
+            continue;
+        }
+        if (column >= 0 && parts.length > column) {
+            cells.push(parts[column]);
+        }
+    }
+
+    return cells;
 }
 
 /**

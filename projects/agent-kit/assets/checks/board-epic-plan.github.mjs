@@ -50,6 +50,37 @@ export function planRows(plan) {
 }
 
 /**
+ * The task column of the makeup, cell by cell: the numbers of the tasks live there and nowhere else.
+ *
+ * The state column names the request the task was merged by, and a number read from the whole row
+ * turns that request into a task of the epic: the audit then says the plan names tasks that are no
+ * sub-issues of the card, and points at requests. The column is the one by which a row counts as a
+ * makeup row at all — the one whose header carries the word for a task.
+ */
+export function planTaskCells(plan) {
+    const cells = [];
+    let column = -1;
+    for (const line of String(plan ?? '').split('\n')) {
+        const row = line.trimStart();
+        if (!row.startsWith('|')) {
+            column = -1;
+            continue;
+        }
+
+        const parts = row.split('|').slice(1, -1);
+        if (column === -1) {
+            column = parts.findIndex((part) => /(?:Task|Задача)/.test(part));
+            continue;
+        }
+        if (column >= 0 && parts.length > column) {
+            cells.push(parts[column]);
+        }
+    }
+
+    return cells;
+}
+
+/**
  * The plan of an epic named by its own card, and the reason there is none.
  *
  * The plan is the document that carries the makeup, not the first path in the body. A card names
