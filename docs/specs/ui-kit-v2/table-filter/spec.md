@@ -76,6 +76,23 @@ rows where that column answers.
   and the two would part silently.
 - **Clearing is shown only where there is something to clear.** A clearing control that is always
   there reads as a set filter on a column that narrows nothing.
+- **The table draws the row of filters itself, from the column configuration.** A consumer who
+  writes the header markup of every column by hand repeats in each table what the column
+  configuration already says, and the two drift apart silently: a column gains a filter in the
+  configuration and does not gain a cell. The first kit draws that row itself, and a consumer
+  moving over from it expects one field in the column configuration rather than markup of their own.
+- **The filter row is a row of the table, not a part of the header cell.** The header cell of a
+  column is declared by the consumer through the column markup, and there is nowhere for the table
+  to put a cell of its own inside it. So the row stands under the header, and a column that
+  declared no filter keeps an empty cell of its own place in it — otherwise the cells shift by one
+  and stand under foreign columns.
+- **The row of filters is drawn only where it is asked for.** A table that has filters in its
+  column configuration does not become a table with a row of fields above the rows: the second row
+  of the header costs the height of the screen, and whether to pay it is decided by the consumer.
+- **The table reports the whole set of conditions and narrows no rows.** The same boundary the
+  header cell already draws: the table says what was asked for, the rows are fetched by whoever
+  holds the list.
+
 - **The styles of the filter live in the cascade layer of the kit's components.** A consumer keeps
   the last word over them, and a rule that rode past the layer takes that away from them silently.
 
