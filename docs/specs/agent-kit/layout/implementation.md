@@ -13,6 +13,7 @@ whole.
 - **A resource left without its kind is a refusal of the layout, not silence.** — `projects/agent-kit/src/lib/catalog.ts:variantGaps`
 - **A layout from a stale build does not pass itself off as a fresh one.** — `projects/agent-kit/src/lib/freshness.ts:staleBuild`
 - **What is laid out is checked by content, not by the number of the edition.** — `projects/agent-kit/src/lib/plan.ts:planFile`
+- **A source of the package does not carry the layout header.** — `projects/agent-kit/tests/source-no-layout-header.test.sh:headers_in` — the second line of every source is read, and a planted header is found by the same reading; scenario `SC-AK-1158`
 - **The move of a foreign file under the package's management is made by a command, not by hand.** — `projects/agent-kit/src/lib/commands.ts:adopt`
 - **An override of the check settings merges by nested keys.** — `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:mergeDeep`
 - **The package does not know the layout of a foreign tree.** — `projects/agent-kit/assets/checks/lib-common.mjs:LIBS_ROOT`

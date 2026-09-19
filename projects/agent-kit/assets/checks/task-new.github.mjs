@@ -227,27 +227,27 @@ function epicOfCard(epicNumber) {
     // law into every task of the epic as its plan, and the branch of the epic was then read from
     // that law and came back empty. Both sides answered as usual, and the miss showed only by
     // reading a created task.
-    const found = planPathOf(card.body, { makeupRequired: false });
+    const found = planPathOf(card.body, { makeupRequired: false, epicNumber });
     const plan = found.path;
     if (plan === null) {
         fail(`the card of the epic #${epicNumber}: ${found.why}. The branch of the epic is named in the plan too`);
     }
-    return { plan, branch: epicBranchOf(plan, epicNumber) };
+    return { plan, branch: epicBranchOf(found.text, epicNumber) };
 }
 
 /**
- * The branch of the epic, read from the header of its plan.
+ * The branch of the epic, read from the header of its plan. The text comes from the shared reading:
+ * a plan of a live epic lies in the branch of that epic and not on the disk of this one.
  *
  * Three spellings are accepted: the one this command writes, the bare word about a branch and the
  * English one — the plans of a tree are translated one at a time, and a single spelling would take
  * every plan but the freshest out of the reading in silence.
  */
 function epicBranchOf(plan, epicNumber) {
-    const path = join(ROOT, plan);
-    if (!existsSync(path)) {
+    if (plan === null || plan === undefined) {
         return null;
     }
-    const named = readFileSync(path, 'utf8').match(
+    const named = plan.match(
         new RegExp(`\\*\\*(?:Ветка эпика|Ветка|Branch):\\*\\*\\s*\`?(${TASK_KEY}-${epicNumber}-[a-z0-9][a-z0-9-]*)\`?`)
     );
     return named ? named[1] : null;
