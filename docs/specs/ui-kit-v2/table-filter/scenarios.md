@@ -135,3 +135,48 @@ When the header cell is drawn
 Then the field carries the hint of its kind, taken from the kit's dictionary
 
 Covered by the component test of the header cell.
+
+### SC-UKV-230 — the table draws the filter row itself
+
+Given a table whose column configuration declares a filter on two of its three columns
+When the table is told to show the filters
+Then a row of filter cells stands under the header, a cell on each of the two columns, and the
+third column keeps an empty cell of its own place
+
+Covered by the component test of the table.
+
+### SC-UKV-231 — the filter row is hidden while it is not asked for
+
+Given a table whose column configuration declares filters
+When the table is not told to show the filters
+Then the filter row is absent from the markup altogether, not hidden by styling
+
+Covered by the component test of the table.
+
+### SC-UKV-232 — the whole set of conditions leaves the table
+
+Given a table drawing the filter row over a set of conditions that came in by an input
+When a value is set in one of the cells
+Then the table reports the whole set outward, not the one condition that changed, and narrows no
+rows itself
+
+Covered by the component test of the table.
+
+### SC-UKV-233 — the row-actions column keeps its place in the filter row
+
+Given a table with the row actions turned on and the filters shown
+When the filter row is drawn
+Then the column of row actions gets a cell of its own in it, and the cells of the columns do not
+shift by one
+
+Covered by the component test of the table.
+
+### SC-UKV-234 — the filter row is not drawn in the card view
+
+Given a table told to show the filters on a narrow showing, where it puts cards in place of its rows
+When the cards are drawn
+Then the filter row is not seen at all: the card view hides it together with the rows of the table
+
+Not covered: it cannot be closed by a test with an identifier — the hiding is done by the
+component's own styles, and a component test raises the markup without them. It is checked by the
+narrow frame of the story `Organisms/Table/Table › Filters`.

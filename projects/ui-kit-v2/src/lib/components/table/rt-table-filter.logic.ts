@@ -1,5 +1,7 @@
 import { EFilterOperatorType, IFilterModel, TFilterOperatorType } from '@rt-tools/utils';
 
+import { IRtTable } from './rt-table.model';
+
 /** Значение условия в том виде, в каком оно хранится и сверяется. */
 export type TRtTableFilterValue = string | number | boolean;
 
@@ -85,4 +87,22 @@ export function startOperatorOf(
     }
 
     return allowed !== undefined && allowed.length > 0 ? allowed[0] : EFilterOperatorType.EQUALS;
+}
+
+/**
+ * Ячейки строки отбора: по ячейке на каждую показанную колонку, в том же порядке.
+ *
+ * У колонки без объявленного отбора ячейка пустая, и место своё она держит: убрать её значило бы
+ * сдвинуть все следующие ячейки на одну колонку влево — поле города встало бы под шапкой цены.
+ * Колонка действий строки приходит сюда тем же путём, последней, и отбора у неё нет никогда.
+ */
+export function filterCellsOf(
+    columns: ReadonlyArray<string>,
+    config: ReadonlyArray<IRtTable.ColumnConfig>
+): ReadonlyArray<IRtTable.FilterCell> {
+    return columns.map((key: string): IRtTable.FilterCell => {
+        const column: IRtTable.ColumnConfig | undefined = config.find((item: IRtTable.ColumnConfig): boolean => item.key === key);
+
+        return { key, filter: column?.filter ?? null };
+    });
 }

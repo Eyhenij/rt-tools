@@ -96,14 +96,19 @@ probe 'тексты и обвязка вместе' 'docs/x.md .claude/rt-kit/pr
 probe 'проверки дерева' 'tools/probe.mjs' ''
 probe 'проверка рядом с китом' 'tools/probe.mjs projects/ui-kit/src/a.ts' 'кит1'
 probe 'первый кит' 'projects/ui-kit/src/lib/probe.ts' 'кит1'
-probe 'второй кит' 'projects/ui-kit-v2/src/lib/probe.ts' 'кит2'
-probe 'оба кита' 'projects/ui-kit/src/a.ts projects/ui-kit-v2/src/b.ts' 'кит1 кит2'
-probe 'кит и обвязка агента' 'projects/ui-kit-v2/src/a.ts .claude/hooks/probe.sh' 'кит2'
+# Второй кит рисует не только свою витрину: админка подключает его набор стилей, и её экраны
+# обязаны сличиться на правке кита. Дерево называет эту связь в своей надстройке.
+probe 'второй кит' 'projects/ui-kit-v2/src/lib/probe.ts' 'кит2 сквозной'
+probe 'оба кита' 'projects/ui-kit/src/a.ts projects/ui-kit-v2/src/b.ts' 'кит1 кит2 сквозной'
+probe 'кит и обвязка агента' 'projects/ui-kit-v2/src/a.ts .claude/hooks/probe.sh' 'кит2 сквозной'
 probe 'приёмник' 'apps/message-bus/src/probe.ts' 'образ-админки образ-приёмника сквозной'
 probe 'админка' 'apps/message-bus-admin/src/probe.ts' 'образ-админки образ-приёмника сквозной'
 probe 'выкатка' 'deploy/probe.yml' 'образ-админки образ-приёмника сквозной'
 probe 'схема базы' 'prisma/schema.prisma' 'образ-админки образ-приёмника сквозной'
 probe 'приёмник и кит' 'apps/message-bus/src/a.ts projects/ui-kit/src/b.ts' 'кит1 образ-админки образ-приёмника сквозной'
+# Сквозной набор зовут оба предмета сразу, и выйти он обязан один раз: напечатанный дважды,
+# он и прогонялся бы дважды.
+probe 'приёмник и второй кит' 'apps/message-bus/src/a.ts projects/ui-kit-v2/src/b.ts' 'кит2 образ-админки образ-приёмника сквозной'
 
 # Незнакомое и общее поднимают весь набор: делить их между предметами нельзя.
 ALL='кит1 кит2 образ-админки образ-приёмника сквозной'

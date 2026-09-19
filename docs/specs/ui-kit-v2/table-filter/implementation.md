@@ -20,4 +20,9 @@ tree, or the tree holds what the spec is silent about.
 - **The filter reports outward and narrows no rows itself.** — `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.ts:filtersChange` — scenario `SC-UKV-224`
 - **The whole set of conditions goes outward, not the one condition that changed.** — `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.ts:filters` — scenario `SC-UKV-218`
 - **Clearing is shown only where there is something to clear.** — `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.ts:clearable` — scenario `SC-UKV-225`
+- **The table draws the row of filters itself, from the column configuration.** — `projects/ui-kit-v2/src/lib/components/table/rt-table-filter.logic.ts:filterCellsOf` — scenario `SC-UKV-230`
+- **The filter row is a row of the table, not a part of the header cell.** — `projects/ui-kit-v2/src/lib/components/table/rt-table.component.html:filter-row` — scenarios `SC-UKV-230`, `SC-UKV-233`
+- **The row of filters is drawn only where it is asked for.** — `projects/ui-kit-v2/src/lib/components/table/rt-table.component.ts:showFilters` — scenario `SC-UKV-231`
+- **The table reports the whole set of conditions and narrows no rows.** — `projects/ui-kit-v2/src/lib/components/table/rt-table.component.ts:reportFilters` — scenario `SC-UKV-232`
+- **In the card view the filter row is not drawn.** — `projects/ui-kit-v2/src/lib/components/table/rt-table.component.scss:rt-table__filter-row` — scenario `SC-UKV-234`
 - **The styles of the filter live in the cascade layer of the kit's components.** — `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.scss:layer` — scenario `SC-UKV-226`

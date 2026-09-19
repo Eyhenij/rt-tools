@@ -1,12 +1,15 @@
 # `rt-table-filter-header`
 
 Отбор в шапке столбца: вид сравнения слева, поле значения рядом, очистка — там, где есть что
-очищать. Ставится в ячейку шапки, к тому же ключу колонки, что в `cdkColumnDef` и в
+очищать. Стоит в своей ячейке строки отбора, у того же ключа колонки, что в `cdkColumnDef` и в
 `[columnsConfig]`.
 
+**Зовёт его таблица, а не потребитель.** Строку отбора [`rt-table`](../CONTEXT.md) рисует сама по
+полю `filter` в настройке колонок — руками в шапку колонки его писать не нужно. Разметка ниже
+показывает, что таблица собирает в каждой ячейке той строки.
+
 ```html
-<th *cdkHeaderCellDef cdk-header-cell>
-    Название
+<th rtElem="filter-cell">
     <rt-table-filter-header propertyName="title" [filter]="config.filter" [filters]="filters()" (filtersChange)="filters.set($event)" />
 </th>
 ```
