@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.0 · hooks/epic-over.sh · 2b2106ee760a · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/epic-over.sh · 4a104cd18ab0 · правится надстройкой, не здесь
 # The reading "the epic is over". NOT a guard: it has no `rt-hook:` declaration and hooks into no
 # agent event. The guards that judge the end of an epic source it themselves.
 #
@@ -55,5 +55,43 @@ rt_epic_over() {
     local left
     left="$(rt_epic_unfinished)" || return 1
     [ -n "$left" ] && return 1
+    return 0
+}
+
+# How many tasks of the epic are left unfinished, or a refusal to answer.
+#
+# `rt_epic_over` answers one question and folds two different answers into its non-zero code: the
+# epic goes on, and the reading did not happen at all — no jq, no node, no epic behind the branch,
+# no way to ask the hosting. A tier that REFUSES a turn cannot live on such a code: it would refuse
+# every turn in a tree where the reading is unavailable, and no work would ever be handed in there.
+#
+# So the count is printed to the standard output and the code says only whether the reading
+# happened. Zero printed means the epic is over; a positive number means it goes on.
+rt_epic_unfinished() {
+    command -v jq >/dev/null 2>&1 || return 1
+    command -v node >/dev/null 2>&1 || return 1
+
+    local here root checks table left
+    here="."
+    if command -v rt_hook_cwd >/dev/null 2>&1; then
+        here="$(rt_hook_cwd 2>/dev/null)"
+        [ -z "$here" ] && here="."
+    fi
+
+    root="$(cd "$here" 2>/dev/null && git rev-parse --show-toplevel 2>/dev/null)"
+    [ -z "$root" ] && return 1
+
+    checks="$(jq -r '.layout.checks // "tools"' "$root/.claude/rt-kit.json" 2>/dev/null)"
+    if [ -z "$checks" ] || [ "$checks" = null ]; then
+        checks=tools
+    fi
+
+    table="$root/$checks/epic-table.mjs"
+    [ -f "$table" ] || return 1
+
+    left="$(cd "$root" && node "$table" --unfinished 2>/dev/null)" || return 1
+
+    printf '%s' "$(printf '%s' "$left" | grep -c '[0-9]')"
+
     return 0
 }

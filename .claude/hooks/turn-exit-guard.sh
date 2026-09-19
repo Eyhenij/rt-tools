@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.0 · hooks/turn-exit-guard.sh · 042d4aebfc97 · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/turn-exit-guard.sh · 15a40fd3da00 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
@@ -449,15 +449,17 @@ if [ "$worked" = "true" ] && [ "$handed_over" != "true" ]; then
     if [ -n "$unpushed" ] && [ "$unpushed" -gt 0 ] 2>/dev/null; then
         reason="BLOCKED by turn-exit-guard: there was work in the turn, but it stayed in the working tree — commits not handed over: ${unpushed}.
 
-The owner sees the former state and reads it as «nothing was done». Two moves from here: bring the work to the hosting — push the branch and open a request — or remove what was done if it is not needed.
-
-What is left in the tree is named with a reason — in the words of the owner, not as a list of leftovers.
+The owner sees the former state and reads it as «nothing was done». Two moves from here: bring the work to the hosting — push the branch and open a request — or remove what was done if it is not needed. What is left in the tree is named with a reason — in the words of the owner, not as a list of leftovers.
 
 The guard judges one turn: the next session is not refused."
 
         rt_te_deny "$reason" "the work stayed in the working tree."
     fi
 fi
+
+# The steps of the plan are not done: the turn ends in the middle of the work. The tier judges the
+# progress of the current task and says nothing about the epic — the one below does that.
+_steps_left="$(rt_te_steps_left "$progress" 2>/dev/null)" && [ "${_steps_left:-0}" -gt 0 ] 2>/dev/null && rt_te_deny "$(rt_te_steps_reason "$_steps_left" "$(rt_te_step_now "$progress")")" "${_steps_left} steps of the plan are not done."
 
 # There was work in the turn, and the epic is open: the turn is released outside an epic and under a
 # closed one alone. Under an open epic the work stands where it stood, and the next step is named.

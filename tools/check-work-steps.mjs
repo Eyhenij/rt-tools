@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.26.0 · checks/check-work-steps.mjs · a07adcb20cfe · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/check-work-steps.mjs · a07adcb20cfe · правится надстройкой, не здесь
 /**
  * The check that the steps of the progress match the steps of the plan.
  *

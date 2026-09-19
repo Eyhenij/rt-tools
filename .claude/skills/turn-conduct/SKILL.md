@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.29.0 · rules/turn-conduct.md · 8d0dc403eeb6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/turn-conduct.md · 10b5bcc9ba26 · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -181,6 +181,12 @@ flowchart TD
   session waits for orders. On the main branch the epic is not read, and the turn is judged as before.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
+
+- **A step of the plan that is not done forbids a stop, and a report about the done is not an
+  exception.** The tier about the epic judges the whole and says nothing about a turn inside one
+  task: an epic holds a single task as lawfully as ten, and the work inside it breaks off in the
+  middle all the same. The count is read from the progress, the same list a check matches against
+  the plan; lawful exits stay as they were.
 - **The word about a stop the guard reads from the owner, not from the executor.** Otherwise the
   stop is declared by whoever finds it convenient, and the ban holds until the first inconvenience.
 - **Until the epic is closed a turn ends only by one of the four exits.** A turn that ended with

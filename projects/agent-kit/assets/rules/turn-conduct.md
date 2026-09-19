@@ -180,13 +180,6 @@ flowchart TD
   session waits for orders. On the main branch the epic is not read, and the turn is judged as before.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
-- **An epic that goes on forbids a stop, and a turn that did work is no exception.** The reading of
-  the epic used to be asked in one direction only — to permit a stop once the epic was over — and
-  nobody asked it the other way. A turn that made a commit and then reported passes every tier by
-  the letter: there was work, and it stood last. Yet the plan's next step was busy with nothing, and
-  to the owner the turn reads as a stop; it repeated four times in one day. Lawful exits stay as
-  they were: a question through the tool, another guard's refusal, a session handover and the
-  owner's own word.
 
 - **A step of the plan that is not done forbids a stop, and a report about the done is not an
   exception.** The tier about the epic judges the whole and says nothing about a turn inside one
