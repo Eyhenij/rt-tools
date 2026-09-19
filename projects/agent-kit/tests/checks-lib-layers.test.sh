@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Сценарии имён дерева в сверке раскладки: приставка селекторов, имя бареля и теги либ без
-# зависимостей.
+# Сценарии имён дерева в сверке раскладки: приставка селекторов, имя бареля, теги либ без
+# зависимостей и список семей бэкенда.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 echo "проверки: раскладка"
@@ -106,6 +106,38 @@ report "SC-AK-1092 — алиас найден по тому, куда указ�
 printf '{"compilerOptions":{"paths":{"@своё/что-угодно":["./libs/alpha/auth/other/src/index.ts"]}}}\n' \
     > "$LAYERS_TREE/tsconfig.base.json"
 report "SC-AK-1092 — либа без единого алиаса названа" "$(layers_says 'names no alias pointing at')" 1
+
+# --- SC-AK-1131 — семьи бэкенда — список, и обход идёт по каждой ------------------------------
+#
+# В дереве завелось второе серверное приложение со своей семьёй либ, а ключ принимал одно имя:
+# двенадцать либ обход не видел, и строка вывода осталась прежней. Пропущенная семья неотличима от
+# пройденной без расхождений, поэтому список обходится весь, а корни называются поимённо. Одно имя
+# читается как список из одного.
+
+backend_domain() {
+    # Один слой без остальных: домен назван в расхождениях строкой «no layers».
+    mkdir -p "$LAYERS_TREE/libs/$1/util/src"
+    printf '{"name":"%s-util"}\n' "$(printf '%s' "$1" | tr '/' '-')" > "$LAYERS_TREE/libs/$1/util/project.json"
+}
+
+rm -rf "$LAYERS_TREE/libs/api" "$LAYERS_TREE/libs/beta-api"
+printf '{"sourceRoots":["libs"],"families":["gamma"],"apiFamily":["api","beta-api"],"libsRoot":"libs"}\n' \
+    > "$LAYERS_TREE/.claude/rt-kit/checks.json"
+report "SC-AK-1131 — отказ пустого обхода называет корень каждой семьи списка" \
+    "$(layers_says 'roots libs/gamma, libs/api, libs/beta-api$')" 1
+
+backend_domain api/orders
+backend_domain beta-api/billing
+layers_config ''
+report "SC-AK-1131 — одно имя читается как список из одного: свой домен назван" \
+    "$(layers_says '^  libs/api/orders: no layers')" 1
+report "SC-AK-1131 — одно имя: домен второй семьи не пройден" \
+    "$(layers_says 'libs/beta-api/billing')" 0
+
+printf '{"sourceRoots":["libs"],"families":["alpha"],"apiFamily":["api","beta-api"],"libsRoot":"libs"}\n' \
+    > "$LAYERS_TREE/.claude/rt-kit/checks.json"
+report "SC-AK-1131 — список: домен первой семьи назван" "$(layers_says '^  libs/api/orders: no layers')" 1
+report "SC-AK-1131 — список: домен второй семьи назван" "$(layers_says '^  libs/beta-api/billing: no layers')" 1
 
 rm -rf "$LAYERS_TREE"
 

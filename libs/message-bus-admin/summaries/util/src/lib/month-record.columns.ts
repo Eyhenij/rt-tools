@@ -4,8 +4,7 @@
  * Лежит отдельно от экрана: тот же набор читают и таблица, и панель настройки столбцов, и спека
  * — объявленный в шаблоне, он был бы известен только шаблону.
  */
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
-import { IRtTable } from '@rt-tools/ui-kit-v2';
+import { IAdminColumn } from '@rt/message-bus-admin/common/core/util';
 
 /** Адрес операций чтения записей месяца. */
 export const SUMMARIES_PATH: string = '/api/summaries';
@@ -24,9 +23,9 @@ export const SUMMARIES_TABLE_ID: string = 'admin-summaries';
  * Закреплён месяц: запись одна на пару «дерево — месяц», и без месяца список перестаёт называть
  * свои строки.
  */
-export const SUMMARIES_COLUMNS: readonly IRtTable.ColumnConfig[] = Object.freeze([
-    { key: 'tree', label: adminLabel('columnTree'), sortable: true },
-    { key: 'month', label: adminLabel('columnMonth'), sortable: true, locked: true },
-    { key: 'sessions', label: adminLabel('columnSessions') },
-    { key: 'ranAt', label: adminLabel('columnRanAt'), sortable: true },
+export const SUMMARIES_COLUMNS: readonly IAdminColumn[] = Object.freeze([
+    { key: 'tree', label: 'columnTree', sortable: true },
+    { key: 'month', label: 'columnMonth', sortable: true, locked: true },
+    { key: 'sessions', label: 'columnSessions' },
+    { key: 'ranAt', label: 'columnRanAt', sortable: true },
 ]);

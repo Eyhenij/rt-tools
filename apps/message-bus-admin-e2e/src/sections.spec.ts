@@ -1,4 +1,4 @@
-import { expect, Page, test } from '@playwright/test';
+import { expect, Locator, Page, test } from '@playwright/test';
 
 import { TREES } from '../stand/stand.mjs';
 import { columnTexts, detailValue, expectOnlyTree, openSection, pageQa, pickTree, qa, queryOf, rowsOf, SECTION } from './support/admin';
@@ -109,5 +109,85 @@ test.describe('разделы груза', () => {
         await expect(qa(page, 'table-empty')).toContainText('По этому отбору записей нет');
         await expect(page.getByText('No rows', { exact: false })).toHaveCount(0);
         await expect(page.getByText('Per page', { exact: false })).toHaveCount(0);
+    });
+
+    test('SC-MB-407 — экран раздела идёт за выбором языка, и ячейки таблицы тоже', async ({ page }: { page: Page }) => {
+        await openSection(page, 'postmortems');
+
+        // Метка на окне переживает переключение и не переживает перезагрузку: ею и проверяется,
+        // что страницу никто не перезагружал.
+        await page.evaluate((): void => {
+            (window as unknown as Record<string, boolean>)['rtSameLoad'] = true;
+        });
+
+        const stateCell: Locator = rowsOf(page, 'postmortems').first().locator('[qa-dataid="postmortems-cell-state"]');
+        const treeHeader: Locator = page.locator('[qa-dataid="postmortems-table"] th').first();
+
+        // Сначала положительная половина: места, за которые держится проба, найдены и говорят
+        // по-русски. Без неё проба осталась бы зелёной и на пустой ячейке.
+        await expect(page.getByRole('heading', { name: SECTION.postmortems.title })).toBeVisible();
+        await expect(treeHeader).toHaveText('Проект');
+        const stateBefore: string = (await stateCell.innerText()).trim();
+
+        expect(stateBefore).not.toBe('');
+
+        await qa(page, 'header-user-menu').click();
+        await qa(page, 'profile-language').locator('[qa-dataid="toggle-button-group-option"][data-value="en"]').click();
+
+        // Оба набора полны, и на английском выборе приходят английские слова: и заголовок раздела,
+        // и подпись столбца, и слово состояния в ячейке.
+        await expect(page.getByRole('heading', { name: 'Incident analyses' })).toBeVisible();
+        await expect(treeHeader).toHaveText('Project');
+        await expect(stateCell).not.toHaveText(stateBefore);
+        await expect(stateCell).not.toHaveText('');
+
+        expect(await page.evaluate((): boolean => (window as unknown as Record<string, boolean>)['rtSameLoad'] === true)).toBe(true);
+    });
+
+    test('SC-MB-415 — на английском выборе подписи экрана раздела без кириллицы', async ({ page }: { page: Page }) => {
+        await openSection(page, 'postmortems');
+
+        // Подписи экрана: заголовок, подсказка, столбцы, слова состояний, кнопки тулбара и
+        // оболочка. Имена деревьев и файлов в ячейках сюда не входят — они данные, а не подписи.
+        const labels: () => Promise<string[]> = async (): Promise<string[]> => {
+            const texts: string[] = [];
+
+            for (const selector of [
+                '[qa-dataid="admin-brand"]',
+                '[qa-dataid="header-nav-item"]',
+                '.admin-page__title',
+                '[qa-dataid="postmortems-hint"]',
+                '[qa-dataid="postmortems-table"] th',
+                '[qa-dataid="postmortems-cell-state"]',
+                '.rt-pagination__per-page-label',
+                '[qa-dataid="pagination-range"]',
+            ]) {
+                texts.push(...(await page.locator(selector).allInnerTexts()));
+            }
+
+            for (const selector of ['[qa-dataid="postmortems-refresh"] button', '[qa-dataid="postmortems-columns"] button']) {
+                texts.push((await page.locator(selector).getAttribute('aria-label')) ?? '');
+            }
+
+            return texts.map((one: string): string => one.trim()).filter((one: string): boolean => one !== '');
+        };
+
+        const cyrillic: RegExp = /[А-Яа-яЁё]/;
+
+        // Сначала положительная половина: по-русски те же места кириллицу несут. Без неё проба
+        // осталась бы зелёной и на пустом отборе — например, на переименованном признаке.
+        const russian: string[] = await labels();
+
+        expect(russian.length).toBeGreaterThan(10);
+        expect(russian.filter((one: string): boolean => cyrillic.test(one)).length).toBeGreaterThan(5);
+
+        await qa(page, 'header-user-menu').click();
+        await qa(page, 'profile-language').locator('[qa-dataid="toggle-button-group-option"][data-value="en"]').click();
+        await expect(page.getByRole('heading', { name: 'Incident analyses' })).toBeVisible();
+
+        const english: string[] = await labels();
+
+        expect(english).toHaveLength(russian.length);
+        expect(english.filter((one: string): boolean => cyrillic.test(one))).toEqual([]);
     });
 });

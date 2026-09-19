@@ -21,6 +21,7 @@ consequence of a merge.
 - **the label of an epic card** — `.claude/rt-kit/project.sh:RT_BOARD_EPIC_LABEL` — «epic». By it `.claude/hooks/git-guard-delivery-epic.sh:rt_epic_own_pull` tells the branch of an epic from the branch of a task. The same word stands as `board.epicLabel` in the checks settings.
 - **the column move command** — `npm run task:move <number> <short column name>`: `npm run task:move 899 in-progress`
 - **a short column name** — a key in `board.statusOptions` of the file `.claude/rt-kit/checks.json`; the full name lies there too, next to it
+- **adding a column of the board** — from the board interface, by the owner's hand. Never by the mutation `updateProjectV2Field` with the full list of options. The mutation recreates every option under a new identifier. The keys in `board.statusOptions` stop matching, the status of every card is erased, and the board rule auto-archive hides the closed ones. On 14 September 2026 that took 835 cards at once
 - **the task key** — `RT` — named in `.claude/rt-kit/checks.json`, by the key `board.taskKey`
 - **the task title** — `[RT-<task number>] <What is wrong>`: `[RT-88] Add select button component`
 - **the branch name** — `RT-<task number>-<short name>`: `RT-88-add-select-button`

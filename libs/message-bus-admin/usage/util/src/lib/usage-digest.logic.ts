@@ -2,13 +2,15 @@
  * Чистая логика сводки периода: столбики графика, строки списков со шкалой, быстрый период.
  *
  * Компоненты ничего не считают: столбик приходит с высотой, строка списка — с долей, период — парой
- * дней. Момент «сегодня» — довод, не часы машины: правило проверяется вызовом.
+ * дней. Момент «сегодня» — довод, не часы машины: правило проверяется вызовом. Тем же приёмом
+ * приходит и словарь: подписи внутри строк собираются на выбранном языке, а функции остаются
+ * чистыми и каркаса не знают.
  */
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { TAdminText } from '@rt/message-bus-admin/common/core/util';
 import { DAY_MS } from '@rt/message-bus-common';
 import { IRtBarList } from '@rt-tools/ui-kit-v2';
 
-import { skillKindLabel } from './usage.columns';
+import { skillKindKey } from './usage.columns';
 import { IUsage } from './usage.model';
 
 /** Столбик графика: день, числа и высота в долях от самого высокого дня. */
@@ -42,7 +44,7 @@ export function chartDayLabel(day: string): string {
 }
 
 /** Столбики графика по дням: высота — от самого высокого дня, чтобы график занимал всю высоту. */
-export function usageChartBars(days: readonly IUsage.Day.State[]): readonly IUsageChartBar[] {
+export function usageChartBars(days: readonly IUsage.Day.State[], text: TAdminText): readonly IUsageChartBar[] {
     const max: number = Math.max(1, ...days.map((row: IUsage.Day.State): number => row.loads));
 
     return days.map((row: IUsage.Day.State): IUsageChartBar => ({
@@ -52,7 +54,9 @@ export function usageChartBars(days: readonly IUsage.Day.State[]): readonly IUsa
         sessions: row.sessions,
         denials: row.denials,
         heightPercent: Math.round((row.loads / max) * 100),
-        hint: `${chartDayLabel(row.day)}: ${adminLabel('columnLoads')} ${row.loads} · ${adminLabel('columnUsageSessions')} ${row.sessions} · ${adminLabel('columnDenials')} ${row.denials}`,
+        hint:
+            `${chartDayLabel(row.day)}: ${text('columnLoads')} ${row.loads} · ` +
+            `${text('columnUsageSessions')} ${row.sessions} · ${text('columnDenials')} ${row.denials}`,
     }));
 }
 
@@ -73,9 +77,9 @@ function barRows(entries: readonly { id: string; title: string; meta?: string; c
 }
 
 /** Самые загружаемые скилы: название, род подписью, число загрузок. */
-export function topSkillRows(rows: readonly IUsage.Row.State[]): readonly IRtBarList.Row[] {
+export function topSkillRows(rows: readonly IUsage.Row.State[], text: TAdminText): readonly IRtBarList.Row[] {
     return barRows(
-        rows.map((row: IUsage.Row.State) => ({ id: row.skill, title: row.skill, meta: skillKindLabel(row.kind), count: row.loads }))
+        rows.map((row: IUsage.Row.State) => ({ id: row.skill, title: row.skill, meta: text(skillKindKey(row.kind)), count: row.loads }))
     );
 }
 
@@ -85,8 +89,8 @@ export function deniedSkillRows(rows: readonly IUsage.Row.State[]): readonly IRt
 }
 
 /** Загрузки по роду: род словом словаря. */
-export function kindRows(rows: readonly IUsage.Kind.State[]): readonly IRtBarList.Row[] {
-    return barRows(rows.map((row: IUsage.Kind.State) => ({ id: row.kind, title: skillKindLabel(row.kind), count: row.loads })));
+export function kindRows(rows: readonly IUsage.Kind.State[], text: TAdminText): readonly IRtBarList.Row[] {
+    return barRows(rows.map((row: IUsage.Kind.State) => ({ id: row.kind, title: text(skillKindKey(row.kind)), count: row.loads })));
 }
 
 /** Пара дней быстрого периода: последние `days` дней, сегодняшний включительно. */

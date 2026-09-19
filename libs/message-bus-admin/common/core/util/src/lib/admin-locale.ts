@@ -1,15 +1,19 @@
 /**
- * Язык подписей, которые рисует кит, и то, где живёт выбор человека.
+ * Язык подписей и то, где живёт выбор человека.
  *
- * Языков два: русский набор приложения и английское умолчание кита. Третьего нет намеренно —
- * это загрузчик словарей, а наполнить его нечем: подписи админки русские при любом выборе, и
- * второго словаря приложения нет.
+ * Выбор один на два словаря: подписи админки берёт по нему `AdminTextService`, подписи кита —
+ * переводчик ниже. Два переключателя разошлись бы, и экран стал бы наполовину переведённым.
+ *
+ * Языков два — русский и английский. Третьего нет намеренно: это отдельная работа и отдельное
+ * слово владельца.
  *
  * Выбор живёт на устройстве, а не у учётной записи: приёмник о языке не знает вовсе, и тема с
  * языком принадлежат тому, кто смотрит, а не тому, кем вошли.
  */
+import { DOCUMENT } from '@angular/common';
 import {
     computed,
+    effect,
     EnvironmentProviders,
     inject,
     Injectable,
@@ -23,7 +27,7 @@ import { RT_KIT_LOCALE, RT_KIT_TRANSLATOR, TRtKitTranslator } from '@rt-tools/ui
 
 import { rtKitLabelsRu } from './admin-labels';
 
-/** Язык подписей кита. Значение — то же, чем локаль называется в форматировании дат. */
+/** Выбранный язык. Значение — то же, чем локаль называется в форматировании дат. */
 export enum EAdminLocale {
     Ru = 'ru',
     En = 'en',
@@ -49,14 +53,15 @@ const DEFAULT_LOCALE: EAdminLocale = EAdminLocale.Ru;
 const noLabels: TRtKitTranslator = (): string => '';
 
 /**
- * Выбранный язык кита.
+ * Выбранный язык.
  *
  * Сигнал, а не постоянная: язык меняется без перезагрузки, и всё, что от него считано, —
- * подписи кита и его локаль — пересчитывается само.
+ * подписи админки, подписи кита и его локаль — пересчитывается само.
  */
 @Injectable({ providedIn: 'root' })
 export class AdminLocaleService {
     readonly #storage: StorageService = inject(StorageService);
+    readonly #document: Document = inject(DOCUMENT);
 
     readonly #locale: WritableSignal<EAdminLocale> = signal<EAdminLocale>(this.#readOrDefault());
 
@@ -69,6 +74,14 @@ export class AdminLocaleService {
     public readonly translator: Signal<TRtKitTranslator> = computed((): TRtKitTranslator =>
         this.#locale() === EAdminLocale.Ru ? rtKitLabelsRu : noLabels
     );
+
+    constructor() {
+        // Страница объявляет тот язык, на котором написана: русский текст под английским
+        // признаком синтезатор речи читает по английским правилам, и наоборот.
+        effect((): void => {
+            this.#document.documentElement.lang = this.#locale();
+        });
+    }
 
     public setLocale(locale: EAdminLocale): void {
         this.#locale.set(locale);

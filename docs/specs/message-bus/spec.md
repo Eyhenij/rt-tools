@@ -166,9 +166,11 @@ subdomain of the edit, the operations of the reading in the subdomain of the rea
 
 ### Refusal codes
 
-Not applicable: the intake answers with a code of the answer of HTTP, not with named codes of the
-domain. Where it is obliged to refuse instead of staying silent — the tables in the subdomains of the
-intake, of the edit of a state and of the reading.
+Not applicable in the form this section is read by: the codes of the domain are not named `Code.X`
+and belong to no procedure. The intake answers a rejected request of a person by a code of the
+reason, and the word for it is drawn by the admin application — the set and the rules are the subdomain of the codes of a refusal
+next to it. The numbers of the answers of HTTP stay as they are — the tables in the subdomains of
+the intake, of the edit of a state and of the reading.
 
 ## Data
 
@@ -186,11 +188,11 @@ subdomain of the node.
 
 ### Locales
 
-The language is one — Russian. The intake is read by the owner and the executor, and the labels of
-the admin application lie in the dictionary of the application, not in the markup. The labels of the
-kit are taken from there too: it has a dictionary of its own in eight languages, and without that the
-pagination and the empty state come out in English next to Russian headings. A second language is
-cheaper to add later.
+The languages are two — Russian and English. The labels of the admin application lie in its
+dictionary rather than in the markup, and the choice of the language lives on the device: the intake
+is not told about it. The labels of the kit follow the same choice, and the texts of the refusals
+follow it too — the intake names the reason by a code, and the word for it comes from the same
+dictionary.
 
 ### SEO
 

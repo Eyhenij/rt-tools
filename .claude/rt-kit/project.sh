@@ -168,6 +168,7 @@ node tools/check-specs.mjs
 node tools/check-dupes.mjs
 node tools/check-hooks.mjs
 node tools/check-cycles.mjs
+node tools/check-admin-texts.mjs
 node tools/check-boundary.mjs
 node tools/check-descriptions.mjs
 node tools/build-tokens-v2.mjs --check

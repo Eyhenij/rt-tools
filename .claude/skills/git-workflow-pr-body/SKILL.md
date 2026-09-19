@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when the PR body is written or edited — the Closes line and how the task closes when the base is not the main branch, reviewer, assignee and labels by the opening call, the four sections of the body. Opening the PR itself — pattern git-workflow-pr.
 ---
-<!-- rt-kit v0.28.0 · patterns/git-workflow-pr-body.github.md · 5c5713fef15f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/git-workflow-pr-body.github.md · 5c5713fef15f · правится надстройкой, не здесь -->
 
 # The PR body and the link to the task
 

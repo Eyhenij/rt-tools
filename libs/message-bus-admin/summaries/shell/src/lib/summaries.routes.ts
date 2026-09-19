@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { adminTabTitle } from '@rt/message-bus-admin/common/core/util';
 
 /** Адрес раздела. Назван здесь и читается пунктом меню: два объявления разошлись бы молча. */
 export const SUMMARIES_ROUTE: string = 'summaries';
@@ -19,7 +19,7 @@ export const SUMMARIES_ROUTE: string = 'summaries';
 export const summariesRoutes: Route[] = [
     {
         path: SUMMARIES_ROUTE,
-        title: adminLabel('sectionSummaries'),
+        title: adminTabTitle('sectionSummaries'),
         loadComponent: async () => (await import('@rt/message-bus-admin/summaries/feature/list')).AdminSummariesListComponent,
     },
     {

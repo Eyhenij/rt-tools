@@ -4,7 +4,7 @@ kind: pattern
 rule: entity-models
 description: Pattern of rule entity-models. Load when declaring a new entity model and its mapper — the ready-made I<Entity> namespace with Api, State and Draft, short and full levels, a BaseMapper heir with typeCast, what to do after editing .proto.
 ---
-<!-- rt-kit v0.28.0 · patterns/entity-models-new.md · 0fa05e84bb7c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/entity-models-new.md · 0fa05e84bb7c · правится надстройкой, не здесь -->
 
 # Declaring an entity model and its translation
 

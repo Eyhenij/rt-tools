@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.28.0 · checks/board-gh.github.mjs · 9d6f7bdaeef7 · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/board-gh.github.mjs · 9d6f7bdaeef7 · правится надстройкой, не здесь
 /**
  * The call to the hosting client: how it is found, what it is signed with and what counts as a
  * temporary refusal.

@@ -1,3 +1,5 @@
+import { ADMIN_LABELS, fill, TAdminLabelKey, TAdminText } from '@rt/message-bus-admin/common/core/util';
+import { TRtKitLabelParams } from '@rt-tools/ui-kit-v2';
 import { describe, expect, it } from 'vitest';
 
 import { rightGroups, rightsLabel } from './right.labels';
@@ -5,14 +7,20 @@ import { accessOutcome, accessWordsOf, editsOfWords, roleCanDelete } from './rol
 import { PersonAccessMapper, RoleShortMapper } from './role.mapper';
 import { EAccessWord, IPersonAccess } from './role.model';
 
+/**
+ * Словарь доводом: функции каркаса не знают, и русский набор им передаёт спека — тем же приёмом,
+ * каким на экране его передаёт экран.
+ */
+const TEXT: TAdminText = (key: TAdminLabelKey, params?: TRtKitLabelParams): string => fill(ADMIN_LABELS[key], params);
+
 describe('роли и доступ человека: решения экрана', () => {
     it('SC-MB-371 — права роли называются разделом и действием, а роль без прав — словами', () => {
-        expect(rightsLabel(['postmortems:read', 'roles:manage'])).toBe('Разборы происшествий — чтение, Роли — правка');
-        expect(rightsLabel([])).toBe('Ни одного права');
+        expect(rightsLabel(['postmortems:read', 'roles:manage'], TEXT)).toBe('Разборы происшествий — чтение, Роли — правка');
+        expect(rightsLabel([], TEXT)).toBe('Ни одного права');
     });
 
     it('SC-MB-371 — группы прав идут по разделам в порядке шапки, чтение раньше правки', () => {
-        const groups: readonly { section: string; rights: readonly { right: string }[] }[] = rightGroups();
+        const groups: readonly { section: string; rights: readonly { right: string }[] }[] = rightGroups(TEXT);
 
         expect(groups.map((group): string => group.section)).toEqual([
             'Разборы происшествий',
@@ -26,7 +34,7 @@ describe('роли и доступ человека: решения экрана
         expect(groups[0].rights.map((one): string => one.right)).toEqual(['postmortems:read', 'postmortems:manage']);
     });
 
-    it('SC-MB-376 — строка роли знает, можно ли её удалить, и вопрос называет роль', () => {
+    it('SC-MB-376 — строка роли знает, можно ли её удалить', () => {
         const mapper: RoleShortMapper = new RoleShortMapper();
 
         expect(mapper.mapFrom({ key: 'owner', name: 'Владелец', rights: ['roles:manage'], people: 2 })).toMatchObject({
@@ -35,8 +43,7 @@ describe('роли и доступ человека: решения экрана
         });
         expect(mapper.mapFrom({ key: 'spare', name: 'Лишняя', rights: [], people: 0 })).toMatchObject({
             canDelete: true,
-            rightsLabel: 'Ни одного права',
-            deleteQuestion: expect.stringContaining('«Лишняя»'),
+            rights: [],
         });
         expect(roleCanDelete(0)).toBe(true);
     });

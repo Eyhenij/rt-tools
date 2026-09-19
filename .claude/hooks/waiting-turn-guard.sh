@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/waiting-turn-guard.sh · 0aa19a4bf379 · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/waiting-turn-guard.sh · b60a0f50002c · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh
 # Waiting guard: a turn that tells the owner about someone else's step does not end until it holds
@@ -87,6 +87,16 @@ taken_path_re='/tasks/'
 # because the next task was taken instead of this, not on top of it.
 ready_re='pr[[:space:]]+ready|run[[:space:]]+(list|view|watch)|pr[[:space:]]+checks|check-runs|check:board|board\.mjs'
 
+# A run started or rerun in the turn. Its outcome does not call by itself: a rerun went through in
+# one line between other things, its state was read once — «queued» — and the turn ended by a lawful
+# exit while the request stayed without watching; the owner found the green run before the
+# executor. The sign is the pair: a starting command in the turn and no command that waits for the
+# end in the same turn. A wait is a watching command of the hosting client, a loop until the end or
+# the watching tool — in the background or blocking; a single read of the state is not a wait.
+# Incident analysis — the record "2026-09-15-turn-idle-after-green-run" in the intake.
+started_run_re='run[[:space:]]+rerun|workflow[[:space:]]+run|ci[[:space:]]+(retry|run)|pipeline[[:space:]]+(run|retry)|pipelines[[:space:]]+run'
+watched_run_re='run[[:space:]]+watch|pr[[:space:]]+checks[^|;&]*--watch|until[[:space:]][^\n]*sleep|while[[:space:]][^\n]*sleep|ci[[:space:]]+status[^|;&]*--live|pipelines[[:space:]]+runs[[:space:]]+show'
+
 # One's own named action. An empty turn that declared what it will do next gives itself away by
 # nothing: it opened no PR, read no run, and both earlier signs are silent. It is caught by form —
 # a set of future-tense patterns about one's own step — not by understanding the meaning; and no
@@ -100,7 +110,8 @@ vow_re='дальше беру|дальше возьму|дальше иду|сл
 # A 400-line tail: the turn record grows all session, and only the last turn is judged.
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
     --arg opened "$opened_re" --arg taken "$taken_re" --arg taken_path "$taken_path_re" \
-    --arg read "$read_re" --arg red "$red_re" --arg ready "$ready_re" --arg vow "$vow_re" '
+    --arg read "$read_re" --arg red "$red_re" --arg ready "$ready_re" --arg vow "$vow_re" \
+    --arg started_run "$started_run_re" --arg watched_run "$watched_run_re" '
     def is_input:
         .type == "user"
         and ((.isCompactSummary // false) | not)
@@ -128,6 +139,9 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
     | (($ran | test($read; "i")) and ($out | test($red; "i"))) as $red_run
     | (($ran | test($taken; "i")) or ($wrote | test($taken_path; "i"))) as $went_on
     | ($ran | test($ready; "i")) as $checked
+    # The run started in the turn and the wait for its end: the watching tool counts as a wait too.
+    | ($ran | test($started_run; "i")) as $reran
+    | (($ran | test($watched_run; "i")) or ($uses | map(.name // "") | any(. == "Monitor"))) as $watched_run
     | ([$turn[] | select(.type == "assistant") | (.message.content // [])[]
           | select(.type == "text") | .text] | join("\n")) as $said
     | ($said | test($vow; "i")) as $announced
@@ -135,6 +149,7 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
     | if $opened_pr and ($went_on | not) and ($checked | not) then "owe:both"
       elif $opened_pr and ($went_on | not) then "owe:pr"
       elif $opened_pr and ($checked | not) then "owe:draft"
+      elif $reran and ($watched_run | not) then "owe:watch"
       elif $went_on then "pass"
       elif $red_run then "owe:run"
       elif $announced and $tools == 0 then "owe:vow"
@@ -188,6 +203,36 @@ ${deny_tail_text}"
 
     jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
         || printf '{"decision":"block","reason":"waiting-turn-guard: the next action is named in words, and nothing was done in the turn."}\n'
+    exit 0
+fi
+
+# A run started or rerun in the turn without a wait for its end. The next task taken does not lift
+# this: the request stays without watching either way, and its outcome reaches the owner first.
+if [ "$verdict" = "owe:watch" ]; then
+    reason="BLOCKED by waiting-turn-guard: a run was started or rerun in this turn, and no command of the turn waits for its end.
+
+The outcome of a run does not call by itself: a state read once — «queued», «in_progress» — is a moment, not a result. Without a wait the request stays without watching, the draft is not lifted and the merge is not asked, and the owner finds the green run before the executor.
+
+Put the wait in this same turn, in the background or blocking:
+
+    gh run watch <id> --exit-status &        # returns the session to the request at the end
+    gh pr checks <number> --watch
+
+The end of a run is learned from the return of such a command, not from a look at the page.
+
+The guard judges one turn: the next session is not refused."
+
+    # shellcheck disable=SC1090
+    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+    deny_tail_text="$(rt_deny_tail "")"
+    [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
+    jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
+        || printf '{"decision":"block","reason":"waiting-turn-guard: a run was started in the turn, and nothing waits for its end."}\n'
     exit 0
 fi
 

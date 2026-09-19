@@ -1,7 +1,7 @@
 <ng-container rtBlock="admin-tree-filter">
     <rt-select
         qa-dataid="list-tree-filter"
-        [ariaLabel]="label"
+        [ariaLabel]="label()"
         [clearable]="false"
         [ngModel]="tree()"
         [ngModelOptions]="{ standalone: true }"

@@ -6,8 +6,11 @@ statement: a removed statement is removed together with its line.
 - **A turn in which a question is asked of the owner does not end until the laws and the rules were read during the same turn.** — `projects/agent-kit/assets/hooks/grill-gate.sh:verdict`
 - **What counts as reading is any of the three ways, not only the loading of a rule.** — `projects/agent-kit/assets/hooks/grill-gate.sh:read_re`
 - **A second pass over the same turn is not judged.** — `projects/agent-kit/assets/hooks/grill-gate.sh:active`
+- **The tool that closes the conversation is refused always.** — `projects/agent-kit/assets/hooks/end-conversation-guard.sh:tool` — the name is read by jq, without jq by grep; scenario SC-AK-1121
+- **Under an open epic the guard of the exits judges a turn that ended with work and a second pass.** — `projects/agent-kit/assets/hooks/turn-exit-epic.sh:rt_te_epic_open` — the tiers are sourced by the exit guard; the subdomain of the exits binds each of them
 - **To a question whose answer a remark of the owner has already given, the guard of the conversation answers with a refusal.** — `projects/agent-kit/assets/hooks/grill-gate.sh:seen`
 - **A refusal by the second sign orders to go on with the work, not to ask again differently.** — `projects/agent-kit/assets/hooks/grill-gate.sh:seen`
+- **Two answers «recommended» in a row close the remaining questions by assumption, and the guard of the conversation refuses the next menu.** — `projects/agent-kit/assets/hooks/grill-gate.sh:streak` — the last two answers of the question tool are read from the record. An answer counts as recommended when every option taken carries the mark in either language. Scenario SC-AK-1134.
 - **The guard of the conversation lets the work through at any breakage.** — `projects/agent-kit/assets/hooks/grill-gate.sh:transcript`
 - **The guard of the window reminds before it refuses.** — `projects/agent-kit/assets/hooks/window-fill-guard.sh:warn_pct`
 - **The reminder repeats by steps, not at every action.** — `projects/agent-kit/assets/hooks/window-fill-guard.sh:step`
@@ -26,6 +29,7 @@ statement: a removed statement is removed together with its line.
 - **A removed task folder lifts the requirement of a state and does not end the turn.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:archived` — the sign takes the judging to the second one and does not let the turn go; scenarios SC-AK-574…576
 - **A turn that opened a request does not end until the state of the handed-in work is asked by a command.** — `projects/agent-kit/assets/hooks/waiting-turn-guard.sh:ready_re` — the sign is taken from the commands of the turn; scenario SC-AK-583
 - **A step of closing the work does not count as taking the next task.** — `projects/agent-kit/assets/hooks/waiting-turn-guard.sh:taken_re` — the list of what taking happens to be; the path of the edit is judged by the sample `taken_path_re`; scenario SC-AK-812
+- **A run started or rerun in the turn gets a wait for its end in the same turn.** — `projects/agent-kit/assets/hooks/waiting-turn-guard.sh:started_run_re` — the starting command is matched against the commands of the turn, the wait against them and against the watching tool by `watched_run_re`; the verdict `owe:watch` stands before the release by the taken task; scenario SC-AK-1133
 - **A stage declared closed is confirmed by the output of a command.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:stage_was`
 - **The keys of the progress of the work and of the plan are read under two names, English and Russian.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:stage_now` — the stage; the state and the next step — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:next_step`; scenario SC-AK-911
 - **A technique written in prose the guard does not read.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:contract`

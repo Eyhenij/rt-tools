@@ -4,7 +4,7 @@ kind: rule
 law: observability
 description: Rule under the observability law. Load when editing the logger, the request context, the failures and alerts domain, when adding a new log line and when deciding what the owner learns about a failure. Pattern observability-record.
 ---
-<!-- rt-kit v0.28.0 · rules/observability.needs-app.md · e459b8046eb3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/observability.needs-app.md · e459b8046eb3 · правится надстройкой, не здесь -->
 
 # Observability — how it works here
 

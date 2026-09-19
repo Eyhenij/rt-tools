@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/git-guard-delivery.sh · 9724e113d326 · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/git-guard-delivery.sh · 114a18058c3e · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-epic.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
 #
 # The delivery law demands three things nothing usually checks: an edit starts from a task visible
@@ -275,6 +275,7 @@ if [ -n "$branch_arg" ]; then
         # base fresh — `git checkout -b <branch> origin/<main>` — would be forbidden.
         base_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\4/p' | head -1)"
         base_ref="${base_arg:-HEAD}"
+        command -v rt_assignment_fault >/dev/null 2>&1 && rt_assignment_fault "$epic_arg" "the branch «${branch_arg}»"
         if [ -n "$epic_arg" ] && command -v rt_epic_base >/dev/null 2>&1; then
             rt_epic_base "$epic_arg" "$base_ref" "$branch_arg"
         elif git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \

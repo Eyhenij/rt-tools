@@ -53,6 +53,21 @@ describe('AdminLocaleService', () => {
         expect(localeService().current()).toBe(EAdminLocale.Ru);
     });
 
+    it('SC-MB-404 — признак языка документа идёт за выбором', () => {
+        const service: AdminLocaleService = localeService();
+
+        TestBed.tick();
+
+        // Сначала положительная половина: признак вообще ставится — иначе проверка на «en»
+        // осталась бы зелёной и при неработающем следе за выбором.
+        expect(document.documentElement.lang).toBe('ru');
+
+        service.setLocale(EAdminLocale.En);
+        TestBed.tick();
+
+        expect(document.documentElement.lang).toBe('en');
+    });
+
     it('SC-MB-149 — русский выбор отвечает подписями приложения, английский не отвечает вовсе', () => {
         const service: AdminLocaleService = localeService();
 

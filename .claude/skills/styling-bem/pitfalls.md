@@ -1,4 +1,4 @@
-<!-- rt-kit v0.28.0 · pitfalls/styling-bem.md · e576a3bde799 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · pitfalls/styling-bem.md · e576a3bde799 · правится надстройкой, не здесь -->
 # Styling — cold part
 
 Pitfalls: traps already stepped on. Loaded not with the rule but on demand — an ordinary

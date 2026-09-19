@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
-# Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh
+# Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
 # handed over. Stop.
 #
@@ -25,6 +25,9 @@
 #   5. The session handover is written — the window has run out.
 #   6. The owner said to stop.
 #
+# Under an open epic the second and the fifth do not release, and a second pass is judged again:
+# until the epic is closed the executor does not stop on its own. The tiers lie in `turn-exit-epic.sh`.
+#
 # Work without a branch and without a task folder is judged by the second sign. It has no state,
 # and there is nowhere to take the first sign from — but a turn without a single edit of the tree
 # does not end here either: the owner's request "lay it out", "update it", "take a look" lives
@@ -48,6 +51,8 @@ rt_hook_read
 # fallback line in case there is no parser. These twelve lines used to stand as eight copies — the
 # file grew faster on every new tier than on the requirement itself.
 rt_te_deny() {
+    # The end of an epic releases the turn whatever tier came here: the epic is read only on this road.
+    command -v rt_te_epic_over >/dev/null 2>&1 && rt_te_epic_over && exit 0
     rt_te_reason="$1"
     rt_te_short="$2"
     # shellcheck disable=SC1090
@@ -68,9 +73,7 @@ input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
-# A second pass over the same turn is not judged: the guard has said its piece once and lets go.
 active="$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/null)"
-[ "$active" = "true" ] && exit 0
 
 transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null)"
 [ -z "$transcript" ] && exit 0
@@ -83,6 +86,12 @@ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
 root="$(git rev-parse --show-toplevel 2>/dev/null)"
 [ -z "$root" ] && exit 0
+
+# The tiers of the open epic lie in a neighbouring file. A second pass over the same turn is judged
+# only under an open epic: outside it the guard has said its piece once and lets go.
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/turn-exit-epic.sh" 2>/dev/null || exit 0
+command -v rt_te_epic_open >/dev/null 2>&1 || exit 0
+[ "$active" = "true" ] && ! rt_te_epic_open && exit 0
 
 # The branch, the task folder and the state line are taken while they are there. Empty — the turn
 # is judged by the second sign, not released: this is where it used to leave with zero, and work by
@@ -101,6 +110,7 @@ fi
 case "$state" in
     работа-отдана | влито) exit 0 ;;
 esac
+rt_te_owner_word_quoted && exit 0 # the owner's standing word quoted in the waiting line
 
 # A written plan is never the end of a turn at all. The mandatory action of this state is to do the
 # first stage, and whoever starts it moves the state by the same edit: a turn left in the previous
@@ -171,20 +181,15 @@ rt_te_verdict
 
 [ -z "$verdict" ] && exit 0
 
-worked="$(printf '%s' "$verdict" | jq -r '.worked // false' 2>/dev/null)"
-waited="$(printf '%s' "$verdict" | jq -r '.waited // false' 2>/dev/null)"
-handed_over="$(printf '%s' "$verdict" | jq -r '.handed_over // false' 2>/dev/null)"
-started_next="$(printf '%s' "$verdict" | jq -r '.started_next // false' 2>/dev/null)"
-ended_working="$(printf '%s' "$verdict" | jq -r '.ended_working // false' 2>/dev/null)"
-released="$(printf '%s' "$verdict" | jq -r '.released // false' 2>/dev/null)"
+# Every sign of the verdict becomes a variable of its own name; the commands go apart, they are text.
+eval "$(printf '%s' "$verdict" | jq -r 'del(.ran) | to_entries[] | "\(.key)=\(.value | tostring | @sh)"' 2>/dev/null)"
 commands="$(printf '%s' "$verdict" | jq -r '.ran // ""' 2>/dev/null)"
 
 # A question refused by the conversation guard and asked as prose in the same turn. A guard refusal
 # releases the turn — it is the lawful end itself — but there is nothing to release here: the same
 # question came back a line later, and the work stalled on what the tree had already answered. The
 # tier stands before the lawful exits on purpose: a guard refusal covers exactly this case.
-asked_in_prose="$(printf '%s' "$verdict" | jq -r '.asked_in_prose // false' 2>/dev/null)"
-if [ "$asked_in_prose" = "true" ]; then
+if [ "${asked_in_prose:-false}" = "true" ]; then
     rt_te_deny "BLOCKED by turn-exit-guard: in this turn the conversation guard refused a question to the owner, and the reply ends with a question in prose — the same question, asked in another form.
 
 The refusal of the guard named the reason: the answer lies in the tree or the owner has already given it. Read the place it named and work on; what is asked is what the tree does not hold.
@@ -200,11 +205,6 @@ fi
 # named a refusal to the owner, not a turn that said "waiting".
 # Incident analysis — the record
 # "2026-09-04-hod-konchalsya-ozhidaniem-pri-deystvuyushchem-ukazanii" in the intake.
-awaits_word="$(printf '%s' "$verdict" | jq -r '.awaits_word // false' 2>/dev/null)"
-standing_work="$(printf '%s' "$verdict" | jq -r '.standing_work // false' 2>/dev/null)"
-promised="$(printf '%s' "$verdict" | jq -r '.promised // false' 2>/dev/null)"
-only_took="$(printf '%s' "$verdict" | jq -r '.only_took // false' 2>/dev/null)"
-
 # A promise to do the work in the next turn. The same announcement of intent as a command named and
 # not run: the tier stands before the lawful exits, because the promise most often stands next to a
 # report about what was done, and by the fullness of the turn it is indistinguishable from a finish.
@@ -232,9 +232,6 @@ Write the plan and begin its first stage in this same turn.
 
 The guard judges one turn: the next session is not refused." "the turn ended with taking a task."
 fi
-# At the end of an epic waiting for the word of the owner is the work itself: the reading of that
-# lies with the patterns and is shared with the guard of the stop.
-[ "$awaits_word" = "true" ] && rt_te_epic_over && awaits_word=false
 
 # The owner said to work without stops and did not cancel it. Their word holds until they cancel
 # it, and a turn ending with waiting for that same word invents the cancellation. Judged whether or
@@ -257,6 +254,19 @@ The phrase «жду твоего слова» is a stop announced by the executo
 The next step is written in the progress: ${next_step}
 
 The guard judges one turn: the next session is not refused." "the turn ended with waiting for the word of the owner."
+fi
+
+# A question without a single piece of work in a running stage: the parts that do not depend on
+# the answer go first, and the question after them.
+if [ "${asked:-false}" = "true" ] && [ "$worked" != "true" ] && [ "$state" = "этап-идёт" ]; then
+    rt_te_question_without_work_deny
+fi
+
+# A handover written by the hand of the executor before the window filled is a stop announced by
+# the one it suits: under an open epic it releases nothing. The window guard's refusal releases as
+# any refusal, and the handover on compaction is written by the hook, not by a command in the turn.
+if [ "${handed_by_hand:-false}" = "true" ] && rt_te_epic_open; then
+    rt_te_epic_deny handed-by-hand
 fi
 
 [ "$released" = "true" ] && exit 0
@@ -308,7 +318,8 @@ esac
 # A folder taken apart by a branch commit does not get here: `archived` means handed-over work, and
 # the previous tier judges it. A branch without a task number is not judged at all — such ones are
 # created for a trial too.
-if [ "$archived" != "true" ] && [ -z "$progress" ] && [ -n "$branch" ] && [ ! -d "$root/$tasks_dir/$branch" ]; then
+# An epic branch is not judged either: it carries no folder by the rule, and the epic plan names it.
+if [ "$archived" != "true" ] && [ -z "$progress" ] && [ -n "$branch" ] && [ ! -d "$root/$tasks_dir/$branch" ] && ! rt_te_epic_branch; then
     task_key="${RT_TASK_KEY:-}"
     if [ -z "$task_key" ] && [ -f "$root/.claude/rt-kit/checks.json" ]; then
         task_key="$(jq -r '.board.taskKey // empty' "$root/.claude/rt-kit/checks.json" 2>/dev/null)"
@@ -368,6 +379,8 @@ The guard judges one turn: the next session is not refused."
         rt_te_deny "$reason" "a closed stage is not backed by the output of a command."
     fi
 fi
+# The next step rewritten into the progress and not begun: the tier lies next to the epic tiers.
+command -v rt_te_next_step_deny >/dev/null 2>&1 && rt_te_next_step_deny
 
 # The work is handed over and the next one is only named. There is more work in such a turn than in
 # any other — and all of it is on the task handed in: the handover finishes the previous work, not
@@ -407,7 +420,7 @@ The guard judges one turn: the next session is not refused."
 
     rt_te_deny "$reason" "the turn ended with waiting for a step by someone else."
 fi
-
+command -v rt_te_launch_last_deny >/dev/null 2>&1 && rt_te_launch_last_deny
 # The shared line. There was work in the turn — but the last action was not it, it was a text to the
 # owner. The particular tiers above name the kind of stop more precisely; what reaches here is what
 # they do not know by name.
@@ -445,6 +458,9 @@ The guard judges one turn: the next session is not refused."
     fi
 fi
 
+# There was work in the turn, and the epic is open: the turn is released outside an epic and under a
+# closed one alone. Under an open epic the work stands where it stood, and the next step is named.
+[ "$worked" = "true" ] && rt_te_epic_open && rt_te_epic_deny worked
 [ "$worked" = "true" ] && exit 0
 
 if [ "$archived" = "true" ]; then

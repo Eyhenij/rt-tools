@@ -1,41 +1,37 @@
 /**
  * Разбор правок над ролями и над доступом человека, пришедших с экрана.
  *
- * Чистые функции без каркаса: контроллер зовёт их и переводит найденное в код отказа, а
- * проверяются они вызовом — без запроса и без базы. Здесь же слова отказов: они уходят человеку
- * в панель как есть.
+ * Чистые функции без каркаса: контроллер зовёт их и отвечает найденным кодом, а проверяются они
+ * вызовом — без запроса и без базы. Слова отказа здесь нет: причина названа кодом, а текст по нему
+ * рисует админка на выбранном языке.
  *
  * Право судится по закрытому набору общей либы: строка не из набора — опечатка либо остаток
  * снятого права, и роль с ней разрешала бы ничего, выглядя разрешающей.
  */
-import { hasRight, IPermissionEdit, IPersonAccessInput, IRoleInput, isRight, rightsOf, TRight } from '@rt/message-bus-common';
+import {
+    ERefusal,
+    hasRight,
+    IPermissionEdit,
+    IPersonAccessInput,
+    IRefusal,
+    IRoleInput,
+    isRight,
+    rightsOf,
+    TRight,
+} from '@rt/message-bus-common';
 
 import { accountNameOk } from './account-name.util';
-
-/** Чего не хватило в правке. Набор закрыт: контроллер переводит каждое в свой код отказа. */
-export enum ERoleInputFault {
-    NameEmpty = 'name-empty',
-    RightUnknown = 'right-unknown',
-    RightRepeated = 'right-repeated',
-    EditsMalformed = 'edits-malformed',
-}
-
-/** Отказ разбора: какого рода и какими словами. Слово называет право, о котором речь. */
-export interface IRoleInputFault {
-    readonly kind: ERoleInputFault;
-    readonly said: string;
-}
 
 /** Разбор роли: либо роль, либо чего не хватило. Ровно одно из двух заполнено. */
 export interface IRoleParse {
     readonly input: IRoleInput | null;
-    readonly fault: IRoleInputFault | null;
+    readonly fault: IRefusal | null;
 }
 
 /** Разбор доступа: либо доступ, либо чего не хватило. Ровно одно из двух заполнено. */
 export interface IAccessParse {
     readonly input: IPersonAccessInput | null;
-    readonly fault: IRoleInputFault | null;
+    readonly fault: IRefusal | null;
 }
 
 /** Право, которым закрыт весь предмет; без него правка ролей и доступа не открывается. */
@@ -59,17 +55,17 @@ function stringOf(body: unknown, key: string): string {
  * Повтор отбивается, а не схлопывается: два одинаковых права в одной роли значат, что экран
  * прислал не то, что показывал, и молчаливая склейка спрятала бы это.
  */
-function rightsFrom(raw: unknown): { rights: TRight[]; fault: IRoleInputFault | null } {
+function rightsFrom(raw: unknown): { rights: TRight[]; fault: IRefusal | null } {
     const list: unknown[] = Array.isArray(raw) ? raw : [];
     const rights: TRight[] = [];
 
     for (const item of list) {
         if (typeof item !== 'string' || !isRight(item)) {
-            return { rights, fault: { kind: ERoleInputFault.RightUnknown, said: `права «${String(item)}» нет в наборе` } };
+            return { rights, fault: { code: ERefusal.RightUnknown, params: { right: String(item) } } };
         }
 
         if (rights.includes(item)) {
-            return { rights, fault: { kind: ERoleInputFault.RightRepeated, said: `право «${item}» названо дважды` } };
+            return { rights, fault: { code: ERefusal.RightRepeated, params: { right: item } } };
         }
 
         rights.push(item);
@@ -88,10 +84,10 @@ export function roleInputOf(body: unknown): IRoleParse {
     const name: string = stringOf(body, 'name');
 
     if (!accountNameOk(name)) {
-        return { input: null, fault: { kind: ERoleInputFault.NameEmpty, said: 'роль ждёт имя' } };
+        return { input: null, fault: { code: ERefusal.RoleNameEmpty } };
     }
 
-    const parsed: { rights: TRight[]; fault: IRoleInputFault | null } = rightsFrom(fieldOf(body, 'rights'));
+    const parsed: { rights: TRight[]; fault: IRefusal | null } = rightsFrom(fieldOf(body, 'rights'));
 
     return parsed.fault ? { input: null, fault: parsed.fault } : { input: { name: name.trim(), rights: parsed.rights }, fault: null };
 }
@@ -114,15 +110,15 @@ export function accessInputOf(body: unknown): IAccessParse {
         const granted: unknown = fieldOf(item, 'granted');
 
         if (typeof right !== 'string' || typeof granted !== 'boolean') {
-            return { input: null, fault: { kind: ERoleInputFault.EditsMalformed, said: 'правка называет право и дано ли оно' } };
+            return { input: null, fault: { code: ERefusal.EditMalformed } };
         }
 
         if (!isRight(right)) {
-            return { input: null, fault: { kind: ERoleInputFault.RightUnknown, said: `права «${right}» нет в наборе` } };
+            return { input: null, fault: { code: ERefusal.RightUnknown, params: { right } } };
         }
 
         if (edits.some((edit: IPermissionEdit): boolean => edit.right === right)) {
-            return { input: null, fault: { kind: ERoleInputFault.RightRepeated, said: `право «${right}» названо дважды` } };
+            return { input: null, fault: { code: ERefusal.RightRepeated, params: { right } } };
         }
 
         edits.push({ right, granted });

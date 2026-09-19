@@ -3,7 +3,7 @@ name: skill-curator
 description: Reviews a closed task from the side of the laws, rules and patterns — what was loaded, what helped, what was missing — and brings ready-made wording for edits. Changes no files. Use after the task is done and checked.
 tools: Read, Grep, Glob, Bash, Skill
 ---
-<!-- rt-kit v0.28.0 · agents/skill-curator.md · 69e5c8b217cb · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · agents/skill-curator.md · 69e5c8b217cb · правится надстройкой, не здесь -->
 
 You review a task just closed in this repository and decide what in the laws, rules and patterns
 needs an edit. You answer **in English**.

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal, untracked } from '@angular/core';
-import { adminLabel, EReadFault, IReadFault } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService, EReadFault, IReadFault } from '@rt/message-bus-admin/common/core/util';
 import { ProposalStore } from '@rt/message-bus-admin/proposals/data-access';
 import { AdminProposalViewComponent } from '@rt/message-bus-admin/proposals/ui';
 import { IProposal } from '@rt/message-bus-admin/proposals/util';
@@ -45,10 +45,11 @@ const BEM_BLOCK: string = 'admin-proposal-details-aside';
     host: { class: BEM_BLOCK },
 })
 export class AdminProposalDetailsAsideComponent extends RtRouteAsideComponent<IProposal.State> {
+    readonly #text: AdminTextService = inject(AdminTextService);
     readonly #store: ProposalStore = inject(ProposalStore);
 
-    protected readonly title: string = adminLabel('detailsProposal');
-    protected readonly closeLabel: string = adminLabel('detailsClose');
+    protected readonly title: Signal<string> = computed((): string => this.#text.text('detailsProposal'));
+    protected readonly closeLabel: Signal<string> = computed((): string => this.#text.text('detailsClose'));
 
     /** Основа записи не читает: чтение ведёт сам раздел — ему нужно сказать и про её отсутствие. */
     protected override readonly idOnly: boolean = true;
@@ -64,7 +65,7 @@ export class AdminProposalDetailsAsideComponent extends RtRouteAsideComponent<IP
             return '';
         }
 
-        return adminLabel(fault.kind === EReadFault.Missing ? 'detailsMissing' : 'detailsFailed');
+        return this.#text.text(fault.kind === EReadFault.Missing ? 'detailsMissing' : 'detailsFailed');
     });
 
     /** Ресурс надстрочником: заголовок называет род записи, а надстрочник — само правимое место. */

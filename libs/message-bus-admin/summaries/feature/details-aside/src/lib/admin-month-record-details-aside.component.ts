@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal, untracked } from '@angular/core';
-import { adminLabel, EReadFault, IReadFault } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService, EReadFault, IReadFault } from '@rt/message-bus-admin/common/core/util';
 import { MonthRecordStore } from '@rt/message-bus-admin/summaries/data-access';
 import { AdminMonthRecordViewComponent } from '@rt/message-bus-admin/summaries/ui';
 import { IMonthRecord } from '@rt/message-bus-admin/summaries/util';
@@ -45,10 +45,11 @@ const BEM_BLOCK: string = 'admin-month-record-details-aside';
     host: { class: BEM_BLOCK },
 })
 export class AdminMonthRecordDetailsAsideComponent extends RtRouteAsideComponent<IMonthRecord.State> {
+    readonly #text: AdminTextService = inject(AdminTextService);
     readonly #store: MonthRecordStore = inject(MonthRecordStore);
 
-    protected readonly title: string = adminLabel('detailsMonthRecord');
-    protected readonly closeLabel: string = adminLabel('detailsClose');
+    protected readonly title: Signal<string> = computed((): string => this.#text.text('detailsMonthRecord'));
+    protected readonly closeLabel: Signal<string> = computed((): string => this.#text.text('detailsClose'));
 
     /** Основа записи не читает: чтение ведёт сам раздел — ему нужно сказать и про её отсутствие. */
     protected override readonly idOnly: boolean = true;
@@ -64,7 +65,7 @@ export class AdminMonthRecordDetailsAsideComponent extends RtRouteAsideComponent
             return '';
         }
 
-        return adminLabel(fault.kind === EReadFault.Missing ? 'detailsMissing' : 'detailsFailed');
+        return this.#text.text(fault.kind === EReadFault.Missing ? 'detailsMissing' : 'detailsFailed');
     });
 
     /**

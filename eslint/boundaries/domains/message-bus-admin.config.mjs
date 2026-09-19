@@ -81,10 +81,14 @@ export const messageBusAdminBoundaries = [
     // Словарь общего слоя приложение видит потому, что кит настраивается здесь: подписи кита
     // отдаются ему провайдером рядом с иконками, а лежат они там же, где подписи экранов, —
     // разложенные по двум местам, они расходятся молча
+    //
+    // Утилиты входа — ради слов адресов: маршруты собираются здесь, а объявлены адреса там,
+    // рядом друг с другом. Своё слово в маршрутах разошлось бы с тем, по которому уводят стражи
     {
         sourceTag: 'scope:admin-app',
         onlyDependOnLibsWithTags: [
             'scope:message-bus-admin-auth-shell',
+            AUTH_UTIL,
             'scope:message-bus-admin-common-container-feature',
             'scope:message-bus-admin-postmortems-shell',
             'scope:message-bus-admin-proposals-shell',
@@ -117,6 +121,9 @@ export const messageBusAdminBoundaries = [
     // Стражи закрытой ветки стоят здесь оба, и второй читает право раздела из объявления пункта
     // меню: свой список прав рядом с маршрутами разошёлся бы с меню молча. Оболочку он при этом
     // не видит — она грузится по требованию, и статическая ссылка на неё это потеряла бы
+    // Словарь маршруты входа видят по той же причине, что и меню: заголовок вкладки они называют
+    // ключом, а текст по нему спрашивают на каждом переходе — написанный здесь строкой, он остался
+    // бы на одном языке при любом выборе человека
     {
         sourceTag: 'scope:message-bus-admin-auth-shell',
         onlyDependOnLibsWithTags: [
@@ -125,12 +132,16 @@ export const messageBusAdminBoundaries = [
             AUTH_DATA_ACCESS,
             AUTH_UTIL,
             CONTAINER_UTIL,
+            CORE_UTIL,
             PACKAGE,
         ],
     },
+    // Форма входа видит словарь по той же причине, что шапка и меню: подписи её полей, кнопки и
+    // текстов отказа лежат там, где остальные подписи админки, — написанные здесь литералом, они
+    // остались бы на одном языке при любом выборе человека
     {
         sourceTag: 'scope:message-bus-admin-auth-ui',
-        onlyDependOnLibsWithTags: [AUTH_UTIL, PACKAGE],
+        onlyDependOnLibsWithTags: [AUTH_UTIL, CORE_UTIL, PACKAGE],
     },
     {
         sourceTag: 'scope:message-bus-admin-auth-data-access',

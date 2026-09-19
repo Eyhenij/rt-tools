@@ -41,6 +41,7 @@ what the plan names, and nothing beyond that.
 - **removing a branch, a working tree or a task folder** — what is removed is restored only from history, and what is uncommitted by nothing
 - **changing the working tree by an edit that is not one own** — checking out a foreign version over the tree and resetting to a foreign tip erase the same
 - **editing files outside the root of the working tree** — the plan of this branch does not dispose of them
+- **a request to the hosting that changes a field of the board or its options whole** — it recreates the options and erases the column of every card. Before it the full list «card — column» is taken by a command and lies on disk until the end of the turn
 
 A commit into one own branch is not in this list: it does not leave outward and it rolls back.
 
@@ -143,6 +144,7 @@ articles of the rule have no bindings — that is the debt that lay here before 
 - **The review's findings wait for the owner, and only the digest of observations leaves for the package.** — `projects/agent-kit/src/lib/proposals.ts:readProposals` — what lies in `.claude/rt-kit/proposals/` leaves, and only by the call `agent-kit propose`
 - **Building by a sample begins with reading the sample itself, whole, by walking the directories.** — **Not checked.** What the session opened leaves no trace in the tree: the guards judge an edit, not a read. It is held by this article and by the analysis, the record «2026-08-16-sample-judged-by-one-file» in the intake
 - **What acts on the tree, not on the edit, lies outside the index.** — **Not checked.** The record lies in `.claude/handoff/` next to the session handover — the directory is in `.gitignore`, and the audits do not read it. It is printed by the `SessionStart` hook in `.claude/settings.local.json`, which is also outside history. This tree has no permission to work outside an epic at all: it started no epic guard
+- **Which epic this working copy leads is read from the table of assignments, and the owner writes it.** — `tools/tree-assignment.mjs:assignmentFault` — the table is `.claude/rt-kit/assignments.md` in the main branch. The name of the copy lies in `.claude/rt-kit/tree-name` outside history. The refusal comes from `.claude/hooks/tree-assignment-guard.sh` on a created task and a moved card, and from `.claude/hooks/git-guard-delivery.sh` on a branch. The same reading is printed at session start by the `SessionStart` hook in `.claude/settings.local.json`. A closed epic left in the row is refused by `.claude/hooks/git-guard-tree-assignment.sh:rt_assignment_stale`, which asks the board by `rt_task_state`
 
 ## What of the law is not here
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/roles.sh · d843db6f105c · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/roles.sh · d843db6f105c · правится надстройкой, не здесь
 # The state of a rules-layer role. NOT a guard: it has no `rt-hook:` declaration and hooks into no
 # agent event. The guards that stand at roles source it — the same way the gate sources the map and
 # the guards source the tree profile.

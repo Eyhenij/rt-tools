@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.28.0 · checks/check-lib-layers.mjs · b72b6f61df2f · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/check-lib-layers.mjs · c682805e40e1 · правится надстройкой, не здесь
 /**
  * The check of the domain grid invariant: every domain has exactly the layers due to
  * its form, and every lib has a name, tag, alias and configs matching its path.
@@ -24,7 +24,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { checkBoundaries, checkCoreLibs, checkNoDependencyLibs } from './lib-boundaries.mjs';
-import { FAMILIES, LIBS_ROOT, LIB_ROOTS, isDir, problems, report } from './lib-common.mjs';
+import { API_FAMILIES, FAMILIES, LIBS_ROOT, LIB_ROOTS, isDir, problems, report } from './lib-common.mjs';
 import { collectAllDomainLibs, collectApiDomainLibs, collectFlatLibs, collectStrayLibs } from './lib-domains.mjs';
 import { checkAliases, checkLib } from './lib-manifests.mjs';
 import { checkReexports } from './lib-reexports.mjs';
@@ -82,6 +82,8 @@ if (problems.length > 0) {
     process.exit(1);
 }
 
+// The families of the backend are named one by one: a family the walk skipped is indistinguishable
+// from one walked without divergences, and the number alone does not say which were read.
 console.log(
-    `check-lib-layers: ${domainLibs.length} libs of the front domain grid, ${apiLibs.length} of the backend and ${flatLibs.length} flat ones, no divergences`
+    `check-lib-layers: ${domainLibs.length} libs of the front domain grid, ${apiLibs.length} of the backend (${API_FAMILIES.join(', ') || 'no family'}) and ${flatLibs.length} flat ones, no divergences`
 );

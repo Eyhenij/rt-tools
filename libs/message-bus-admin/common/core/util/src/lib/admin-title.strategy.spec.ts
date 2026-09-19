@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } fr
 import { TestBed } from '@angular/core/testing';
 import { Title } from '@angular/platform-browser';
 import { provideRouter, Router, TitleStrategy } from '@angular/router';
+import { provideRtStorage, provideRtUtils } from '@rt-tools/core';
 
 import { AdminTitleStrategy } from './admin-title.strategy';
 
@@ -14,6 +15,10 @@ describe('AdminTitleStrategy', () => {
         TestBed.configureTestingModule({
             providers: [
                 provideZonelessChangeDetection(),
+                // Имя приложения приходит из словаря, а он читает выбранный язык из браузерного
+                // хранилища: без хранилища заголовок вкладки не собирается вовсе.
+                provideRtUtils(),
+                provideRtStorage(),
                 provideRouter([
                     { path: 'postmortems', title: 'Разборы происшествий', component: ProbeComponent },
                     { path: 'anonymous', component: ProbeComponent },
