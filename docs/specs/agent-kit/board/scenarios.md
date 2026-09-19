@@ -178,7 +178,7 @@ Then no such line is printed
 
 Covered: `projects/agent-kit/tests/checks-board-columns.test.sh`.
 
-### SC-AK-1125 — a task branch that never carried its folder is named
+### SC-AK-1153 — a task branch that never carried its folder is named
 
 Given a task branch with a contribution of its own and no task folder in its history
 When the audit goes
@@ -186,7 +186,7 @@ Then it names the branch by a line of its own and counts it into the divergences
 
 Covered: `projects/agent-kit/tests/checks-board-folders.test.sh`.
 
-### SC-AK-1126 — the branch of an epic is due no task folder
+### SC-AK-1154 — the branch of an epic is due no task folder
 
 Given a branch whose plan inside it names that same branch as the branch of an epic
 When the same audit goes

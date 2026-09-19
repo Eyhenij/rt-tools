@@ -115,7 +115,7 @@ describe('груз наблюдений', () => {
         expect(cargo.days[1].lines[0].skill).toBe('rule');
     });
 
-    it('SC-AK-1123 — имя своего правила дерева не уезжает ни загрузкой, ни отказом', () => {
+    it('SC-AK-1151 — имя своего правила дерева не уезжает ни загрузкой, ни отказом', () => {
         start();
         const own: string = `rules/${basename(treeRoot())}`;
         const text: string = [load('testing'), load(own), deny(own)].join('\n');
@@ -126,7 +126,7 @@ describe('груз наблюдений', () => {
         expect(lines.map((line: IObservationLine): string | undefined => line.skill)).toEqual(['rule', 'own', undefined]);
     });
 
-    it('SC-AK-1124 — груз со своим правилом дерева уезжает: течь нечему', async () => {
+    it('SC-AK-1152 — груз со своим правилом дерева уезжает: течь нечему', async () => {
         start();
         put(`${OBSERVATIONS_DIR}/${TODAY}.jsonl`, `${load(`rules/${basename(treeRoot())}`)}\n`);
 
