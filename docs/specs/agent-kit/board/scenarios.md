@@ -201,3 +201,29 @@ When the same audit goes
 Then it stays silent about the branch
 
 Covered: `projects/agent-kit/tests/checks-board-folders.test.sh`.
+
+### SC-AK-1155 — the plan of a live epic is read out of the branch of the epic
+
+Given the card of an epic names a plan the checked-out branch does not carry, while the branch of
+that epic carries it
+When the queue audit reads the makeup of the epic
+Then the plan is read out of that branch and no line about emptiness is printed
+
+Covered: `projects/agent-kit/tests/checks-board-epic-plan.test.sh`.
+
+### SC-AK-1156 — a plan neither on disk nor in a branch stays a divergence
+
+Given the card names a path that no branch of the tree carries
+When the same audit goes
+Then it says that the card points into emptiness and counts the line into the divergences
+
+Covered: `projects/agent-kit/tests/checks-board-epic-plan.test.sh`.
+
+### SC-AK-1157 — the number of a task is read from the task column of the makeup
+
+Given a makeup row naming the task in its own column and the request that merged it in the state
+column
+When the queue audit reads which tasks the plan names
+Then it takes the number of the task and not the number of the request
+
+Covered: `projects/agent-kit/tests/checks-board-epic-plan.test.sh`.
