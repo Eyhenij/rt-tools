@@ -70,14 +70,15 @@ through the executor.
   row turns that request into a task of the epic: the audit then says the plan names tasks that are
   no sub-issues of the card, and points at requests. The column read is the one by which a row
   counts as a makeup row at all — the one whose header carries the word for a task.
-- **The plan of a live epic is read out of the branch of that epic when the disk does not carry
-  it.** A plan lives in the branch of its epic until the epic is merged whole, and the working tree
-  stands on whichever branch the session happens to be on: read off the disk alone, every live epic
-  comes back as a card pointing into emptiness, and the true divergences drown among those lines.
-  The branch is looked for by the name `<КЛЮЧ>-<номер эпика>-` among the local and the remote refs,
-  and the reading stays without the network — the same move the branch folders check already makes.
-  A plan neither on disk nor in any branch stays a divergence: there the card really does point into
-  emptiness.
+- **The plan of a live epic is read out of the branch of that epic, and off the disk only where the
+  disk is no older.** A plan lives in the branch of its epic until the epic is merged whole and is
+  appended to along the way, while the disk holds whatever copy the current branch carries: read off
+  the disk first, the audit takes the older text and says the plan does not carry tasks that stand in
+  it. The disk is no older exactly when the current branch has absorbed the tip of the epic branch —
+  that is the condition, and it is asked of version control, not guessed. The branch is looked for by
+  the name `<КЛЮЧ>-<номер эпика>-` among the local and the remote refs, and the reading stays without
+  the network — the same move the branch folders check already makes. A plan neither on disk nor in
+  any branch stays a divergence: there the card really does point into emptiness.
 - **Belonging to an epic is declared by a word about the task, not by a mention of the number.** The
   number of an epic stands in a task body in the reasoning, in a quoted refusal, in the list of what
   the work does not do — read as a declaration, each of those gave a false line, and a task that
