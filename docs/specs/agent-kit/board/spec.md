@@ -65,6 +65,14 @@ through the executor.
   read, and the plan is the first of them that carries a table with a task column. None of the named
   documents on disk, and none of those on disk carrying the makeup, are two divergences of their
   own: one sends the reader to write the plan, the other to write the table.
+- **The plan of a live epic is read out of the branch of that epic when the disk does not carry
+  it.** A plan lives in the branch of its epic until the epic is merged whole, and the working tree
+  stands on whichever branch the session happens to be on: read off the disk alone, every live epic
+  comes back as a card pointing into emptiness, and the true divergences drown among those lines.
+  The branch is looked for by the name `<КЛЮЧ>-<номер эпика>-` among the local and the remote refs,
+  and the reading stays without the network — the same move the branch folders check already makes.
+  A plan neither on disk nor in any branch stays a divergence: there the card really does point into
+  emptiness.
 - **Belonging to an epic is declared by a word about the task, not by a mention of the number.** The
   number of an epic stands in a task body in the reasoning, in a quoted refusal, in the list of what
   the work does not do — read as a declaration, each of those gave a false line, and a task that
