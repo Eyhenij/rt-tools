@@ -15,6 +15,7 @@
 
         .cdk-header-cell,
         .cdk-cell,
+        &__filter-cell,
         &__skeleton-cell {
             position: relative;
             height: 50px;
@@ -65,6 +66,17 @@
            (rtElem="table-scroll", overflow-x), без border/padding. Плавающая кнопка
            не занимает места в раскладке — поэтому горизонтальный скролл не уводит её
            из вьюпорта. Компаунд с .cdk-cell держит специфичность выше базовой ячейки. */
+
+        /* Строка отбора стоит второй строкой шапки и оформляется как шапка: иначе поля
+           отбора читаются как первая строка данных. Ячейка пустой колонки держит своё
+           место и не рисует ничего — её ширину задаёт колонка выше. */
+        &__filter-cell {
+            height: auto;
+            background: var(--rt-color-bg-surface);
+            padding-block: var(--rt-space-1);
+            vertical-align: middle;
+        }
+
         &__actions-header.cdk-header-cell {
             width: 0;
             padding: 0;

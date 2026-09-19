@@ -138,10 +138,10 @@ Covered by the component test of the header cell.
 
 ### SC-UKV-230 — the table draws the filter row itself
 
-Given a table whose column configuration declares a filter on two of its five columns
+Given a table whose column configuration declares a filter on two of its three columns
 When the table is told to show the filters
 Then a row of filter cells stands under the header, a cell on each of the two columns, and the
-other three columns keep an empty cell of their own place
+third column keeps an empty cell of its own place
 
 Covered by the component test of the table.
 
