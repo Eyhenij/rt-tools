@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { AccessModule } from '@rt/message-bus-api/access/feature';
 
 import { ChatIntakeController } from './chat-intake.controller';
+import { ChatReadController } from './chat-read.controller';
 
 /**
  * Чат с посетителями сайтов: приём первой реплики и заведение переписки.
@@ -11,12 +12,12 @@ import { ChatIntakeController } from './chat-intake.controller';
  * посетитель пишет без входа, и представиться ему нечем. Учётные записи и права приёмника домен
  * не читает вовсе — у чата свои пространства и свои операторы.
  *
- * Чтение переписок оператором, поток событий и панель приходят следующими задачами эпика и
- * встанут своими контроллерами рядом: два способа представиться в одном файле читались бы как
- * одна поверхность с двумя дверьми.
+ * Операций у домена две семьи, и разведены они по контроллерам: приём реплики посетителя открыт
+ * и закрыт ключом сайта, чтение оператором закрыто входом человека. Два способа представиться в
+ * одном файле читались бы как одна поверхность с двумя дверьми.
  */
 @Module({
     imports: [AccessModule],
-    controllers: [ChatIntakeController],
+    controllers: [ChatIntakeController, ChatReadController],
 })
 export class ChatModule {}

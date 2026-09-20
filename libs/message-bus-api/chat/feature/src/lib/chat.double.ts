@@ -31,6 +31,13 @@ export interface IDoubleConversation {
     readonly siteId: string;
     readonly visitorId: string;
     lastMessageAt: Date;
+    state: string;
+}
+
+/** Оператор и сайт, за который он отвечает. */
+export interface IDoubleOperatorSite {
+    readonly accountId: string;
+    readonly siteId: string;
 }
 
 /** Сообщение в памяти спеки. */
@@ -52,6 +59,7 @@ export class ChatPrismaDouble {
     public readonly visitors: IDoubleVisitor[] = [];
     public readonly conversations: IDoubleConversation[] = [];
     public readonly messages: IDoubleMessage[] = [];
+    public readonly operatorSites: IDoubleOperatorSite[] = [];
 
     #issued: number = 0;
 
@@ -71,12 +79,23 @@ export class ChatPrismaDouble {
     public get chatMessage(): Record<string, (args: Record<string, unknown>) => Promise<unknown>> {
         return {
             create: async (args: Record<string, unknown>): Promise<unknown> => this.#append(args),
+            findMany: async (args: Record<string, unknown>): Promise<unknown> => this.#messagesPage(args),
+            count: async (args: Record<string, unknown>): Promise<number> => this.#messagesOf(args).length,
+        };
+    }
+
+    public get chatOperatorSite(): Record<string, (args: Record<string, unknown>) => Promise<unknown>> {
+        return {
+            findMany: async (args: Record<string, unknown>): Promise<unknown> => this.#operatorSites(args),
         };
     }
 
     public get chatConversation(): Record<string, (args: Record<string, unknown>) => Promise<unknown>> {
         return {
             update: async (args: Record<string, unknown>): Promise<unknown> => this.#touch(args),
+            findMany: async (args: Record<string, unknown>): Promise<unknown> => this.#conversationsPage(args),
+            count: async (args: Record<string, unknown>): Promise<number> => this.#conversationsOf(args).length,
+            findFirst: async (args: Record<string, unknown>): Promise<unknown> => this.#oneConversation(args),
         };
     }
 
@@ -133,6 +152,7 @@ export class ChatPrismaDouble {
             siteId: created.create.siteId,
             visitorId: visitor.id,
             lastMessageAt: created.create.lastMessageAt,
+            state: 'live',
         };
 
         this.visitors.push(visitor);
@@ -161,7 +181,7 @@ export class ChatPrismaDouble {
 
     #touch(args: Record<string, unknown>): IDoubleConversation | null {
         const where: { id: string } = args['where'] as { id: string };
-        const data: { lastMessageAt: Date } = args['data'] as { lastMessageAt: Date };
+        const data: { lastMessageAt?: Date; state?: string } = args['data'] as { lastMessageAt?: Date; state?: string };
         const conversation: IDoubleConversation | undefined = this.conversations.find(
             (row: IDoubleConversation): boolean => row.id === where.id
         );
@@ -170,8 +190,82 @@ export class ChatPrismaDouble {
             return null;
         }
 
-        conversation.lastMessageAt = data.lastMessageAt;
+        if (data.lastMessageAt) {
+            conversation.lastMessageAt = data.lastMessageAt;
+        }
+
+        if (data.state) {
+            conversation.state = data.state;
+        }
 
         return conversation;
+    }
+
+    /** Сайты оператора по признаку учётной записи, как их спрашивает чтение. */
+    #operatorSites(args: Record<string, unknown>): { siteId: string }[] {
+        const where: { operator: { accountId: string } } = args['where'] as { operator: { accountId: string } };
+
+        return this.operatorSites
+            .filter((row: IDoubleOperatorSite): boolean => row.accountId === where.operator.accountId)
+            .map((row: IDoubleOperatorSite): { siteId: string } => ({ siteId: row.siteId }));
+    }
+
+    /** Переписки, попадающие под отбор запроса: сайты набором и, если названо, состояние. */
+    #conversationsOf(args: Record<string, unknown>): IDoubleConversation[] {
+        const where: { siteId: { in: string[] }; state?: string } = args['where'] as { siteId: { in: string[] }; state?: string };
+
+        return this.conversations
+            .filter((row: IDoubleConversation): boolean => where.siteId.in.includes(row.siteId))
+            .filter((row: IDoubleConversation): boolean => (where.state ? row.state === where.state : true))
+            .sort(
+                (first: IDoubleConversation, second: IDoubleConversation): number =>
+                    second.lastMessageAt.getTime() - first.lastMessageAt.getTime()
+            );
+    }
+
+    /** Страница переписок вместе с последней репликой каждой из них. */
+    #conversationsPage(args: Record<string, unknown>): Record<string, unknown>[] {
+        const skip: number = (args['skip'] as number) ?? 0;
+        const take: number = (args['take'] as number) ?? this.conversations.length;
+
+        return this.#conversationsOf(args)
+            .slice(skip, skip + take)
+            .map((row: IDoubleConversation): Record<string, unknown> => ({
+                id: row.id,
+                siteId: row.siteId,
+                state: row.state,
+                lastMessageAt: row.lastMessageAt,
+                messages: this.messages
+                    .filter((message: IDoubleMessage): boolean => message.conversationId === row.id)
+                    .sort((first: IDoubleMessage, second: IDoubleMessage): number => second.takenAt.getTime() - first.takenAt.getTime())
+                    .slice(0, 1),
+            }));
+    }
+
+    /** Одна переписка из набора сайтов. Пусто — её нет или она чужая. */
+    #oneConversation(args: Record<string, unknown>): IDoubleConversation | null {
+        const where: { id: string; siteId: { in: string[] } } = args['where'] as { id: string; siteId: { in: string[] } };
+
+        return (
+            this.conversations.find((row: IDoubleConversation): boolean => row.id === where.id && where.siteId.in.includes(row.siteId)) ??
+            null
+        );
+    }
+
+    /** Сообщения одной переписки, старые первыми. */
+    #messagesOf(args: Record<string, unknown>): IDoubleMessage[] {
+        const where: { conversationId: string } = args['where'] as { conversationId: string };
+
+        return this.messages
+            .filter((row: IDoubleMessage): boolean => row.conversationId === where.conversationId)
+            .sort((first: IDoubleMessage, second: IDoubleMessage): number => first.takenAt.getTime() - second.takenAt.getTime());
+    }
+
+    /** Страница сообщений одной переписки. */
+    #messagesPage(args: Record<string, unknown>): IDoubleMessage[] {
+        const skip: number = (args['skip'] as number) ?? 0;
+        const take: number = (args['take'] as number) ?? this.messages.length;
+
+        return this.#messagesOf(args).slice(skip, skip + take);
     }
 }

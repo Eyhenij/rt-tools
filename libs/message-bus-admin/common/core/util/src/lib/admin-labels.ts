@@ -296,6 +296,7 @@ export const ADMIN_LABELS = {
     [ERefusal.ChatTextEmpty]: 'Реплика без текста не принимается',
     [ERefusal.ChatTextTooLong]: 'В реплике больше {{limit}} знаков',
     [ERefusal.ChatThrottled]: 'Реплик с одного посетителя больше {{limit}} за окно: повторите через {{after}} с',
+    [ERefusal.ChatStateUnknown]: 'Состояние переписки ожидается одним из: live, closed',
 } as const;
 
 /** Ключ подписи админки. Опечатка в шаблоне не доживает до собранного экрана. */
