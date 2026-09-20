@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { AccessModule } from '@rt/message-bus-api/access/feature';
 
+import { ChatHookService } from './chat-hook.service';
 import { ChatIntakeController } from './chat-intake.controller';
 import { ChatReadController } from './chat-read.controller';
 import { ChatSubscribersService } from './chat-subscribers.service';
@@ -20,6 +21,6 @@ import { ChatSubscribersService } from './chat-subscribers.service';
 @Module({
     imports: [AccessModule],
     controllers: [ChatIntakeController, ChatReadController],
-    providers: [ChatSubscribersService],
+    providers: [ChatSubscribersService, ChatHookService],
 })
 export class ChatModule {}

@@ -53,6 +53,19 @@ export interface IDoubleMessage {
     readonly takenAt: Date;
 }
 
+/** Вызов наружу в памяти спеки: по нему видно, что ушло и чем кончилось. */
+export interface IDoubleHookCall {
+    readonly id: string;
+    readonly siteId: string;
+    readonly conversationId: string;
+    readonly kind: string;
+    readonly body: string;
+    attempts: number;
+    lastStatus: number | null;
+    lastFault: string;
+    deliveredAt: Date | null;
+}
+
 /** Ключ пары «сайт — признак посетителя», как его шлёт запрос. */
 interface IVisitorKey {
     readonly siteId_token: { readonly siteId: string; readonly token: string };
@@ -64,6 +77,7 @@ export class ChatPrismaDouble {
     public readonly conversations: IDoubleConversation[] = [];
     public readonly messages: IDoubleMessage[] = [];
     public readonly operatorSites: IDoubleOperatorSite[] = [];
+    public readonly hookCalls: IDoubleHookCall[] = [];
 
     #issued: number = 0;
 
@@ -85,6 +99,13 @@ export class ChatPrismaDouble {
             create: async (args: Record<string, unknown>): Promise<unknown> => this.#append(args),
             findMany: async (args: Record<string, unknown>): Promise<unknown> => this.#messagesPage(args),
             count: async (args: Record<string, unknown>): Promise<number> => this.#messagesOf(args).length,
+        };
+    }
+
+    public get chatHookCall(): Record<string, (args: Record<string, unknown>) => Promise<unknown>> {
+        return {
+            create: async (args: Record<string, unknown>): Promise<unknown> => this.#recordCall(args),
+            update: async (args: Record<string, unknown>): Promise<unknown> => this.#markCall(args),
         };
     }
 
@@ -207,6 +228,50 @@ export class ChatPrismaDouble {
         }
 
         return conversation;
+    }
+
+    /** Запись отправки заводится до первой попытки: по ней видно и то, что не ушло. */
+    #recordCall(args: Record<string, unknown>): { id: string; attempts: number } {
+        const data: Record<string, unknown> = args['data'] as Record<string, unknown>;
+
+        this.#issued += 1;
+
+        const call: IDoubleHookCall = {
+            id: `hook-call-${this.#issued}`,
+            siteId: data['siteId'] as string,
+            conversationId: data['conversationId'] as string,
+            kind: data['kind'] as string,
+            body: data['body'] as string,
+            attempts: 0,
+            lastStatus: null,
+            lastFault: '',
+            deliveredAt: null,
+        };
+
+        this.hookCalls.push(call);
+
+        return { id: call.id, attempts: call.attempts };
+    }
+
+    /** Исход попытки: сколько их было, чем ответили и приняли ли вызов. */
+    #markCall(args: Record<string, unknown>): IDoubleHookCall | null {
+        const where: { id: string } = args['where'] as { id: string };
+        const data: Record<string, unknown> = args['data'] as Record<string, unknown>;
+        const call: IDoubleHookCall | undefined = this.hookCalls.find((row: IDoubleHookCall): boolean => row.id === where.id);
+
+        if (!call) {
+            return null;
+        }
+
+        call.attempts = data['attempts'] as number;
+        call.lastStatus = (data['lastStatus'] as number | null) ?? null;
+        call.lastFault = data['lastFault'] as string;
+
+        if (data['deliveredAt']) {
+            call.deliveredAt = data['deliveredAt'] as Date;
+        }
+
+        return call;
     }
 
     /** Сайты оператора по признаку учётной записи, как их спрашивает чтение. */

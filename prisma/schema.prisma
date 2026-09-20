@@ -393,9 +393,49 @@ model ChatSite {
     visitors      ChatVisitor[]
     conversations ChatConversation[]
     operators     ChatOperatorSite[]
+    hookCalls     ChatHookCall[]
 
     @@index([spaceId])
     @@map("chat_site")
+}
+
+/// Вызов наружу: что ушло в приложение площадки, когда и чем кончилось.
+///
+/// Запись обязательна: успех отправки ещё не значит, что приложение вызов приняло, а вызов,
+/// который не ушёл вовсе, и вызов, отбитый принимающей стороной, без неё выглядят одинаково.
+model ChatHookCall {
+    id             String       @id @default(uuid())
+    siteId         String
+    site           ChatSite     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+    /// Переписка, о которой вызов. Она же стоит в теле вызова.
+    conversationId String
+    /// Род события: о чём сервис говорит приложению.
+    kind           ChatHookKind
+    /// Тело вызова, как оно ушло: по нему считалась подпись.
+    body           String
+    /// Сколько попыток сделано. Предел попыток называет сервис одним местом.
+    attempts       Int          @default(0)
+    /// Код ответа последней попытки. Пусто — ответа не было вовсе.
+    lastStatus     Int?
+    /// Чем кончилась последняя попытка, когда ответа не было: причина словами.
+    lastFault      String       @default("")
+    /// Минута, которой вызов приняли. Пусто — не приняли ни разу.
+    deliveredAt    DateTime?
+    createdAt      DateTime     @default(now())
+
+    @@index([siteId, createdAt])
+    @@map("chat_hook_call")
+}
+
+/// Род события, уходящего наружу. Ответ оператора сюда не входит: приложение узнаёт о нём из
+/// той самой панели, в которой оператор его и написал.
+enum ChatHookKind {
+    /// Посетитель написал реплику.
+    remark
+    /// Оператор закрыл переписку.
+    closing
+    /// На переписку никто не ответил условленное время.
+    unanswered
 }
 
 /// Посетитель: тот, кто пишет с сайта без входа. Узнаётся признаком, который выдал сервис, —
