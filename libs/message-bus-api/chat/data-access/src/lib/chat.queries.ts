@@ -19,6 +19,8 @@ import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 export interface IChatSiteRow {
     readonly id: string;
     readonly spaceId: string;
+    /** Ключ площадки: им вызов наружу называет площадку приложению. */
+    readonly key: string;
     readonly origins: readonly string[];
     /** Приветствие площадки. Пусто — виджет открывается сразу полем набора. */
     readonly greeting: string;
@@ -27,6 +29,12 @@ export interface IChatSiteRow {
     readonly answerTo: number;
     /** Имя пояса площадки. Пусто — часы считаются по поясу узла. */
     readonly timeZone: string;
+    /** Адрес приложения площадки. Пусто — вызовы наружу по ней не уходят вовсе. */
+    readonly hookUrl: string;
+    /** Тайна подписи вызова. Пусто — подписать вызов нечем, и он не уходит. */
+    readonly hookSecret: string;
+    /** Через сколько минут без ответа переписка будит оператора. Ноль — будильник выключен. */
+    readonly answerWithin: number;
 }
 
 /** Переписка посетителя: чем на неё ссылаться и кому она принадлежит. */
@@ -48,6 +56,21 @@ export interface IChatTakenRow {
     readonly takenAt: Date;
 }
 
+/** Поля площадки, которые читают и приём реплики, и отправка вызова наружу. */
+export const SITE_FIELDS: Readonly<Record<keyof IChatSiteRow, true>> = {
+    id: true,
+    spaceId: true,
+    key: true,
+    origins: true,
+    greeting: true,
+    answerFrom: true,
+    answerTo: true,
+    timeZone: true,
+    hookUrl: true,
+    hookSecret: true,
+    answerWithin: true,
+};
+
 /**
  * Живой сайт по ключу. Пусто — ключа нет или сайт выключен: по ответу эти две причины не
  * различаются, и запрос их тоже не разводит.
@@ -55,8 +78,19 @@ export interface IChatTakenRow {
 export async function findLiveSiteByKey(prisma: PrismaService, key: string): Promise<IChatSiteRow | null> {
     return prisma.chatSite.findFirst({
         where: { key, enabled: true },
-        select: { id: true, spaceId: true, origins: true, greeting: true, answerFrom: true, answerTo: true, timeZone: true },
+        select: SITE_FIELDS,
     });
+}
+
+/**
+ * Площадка по признаку: её читает отправка вызова наружу.
+ *
+ * Выключенность здесь не спрашивается: событие о переписке выключенной площадки приложению
+ * нужно не меньше — выключенный сайт перестаёт принимать новых посетителей, а не разговоры,
+ * которые уже идут.
+ */
+export async function findSiteById(prisma: PrismaService, id: string): Promise<IChatSiteRow | null> {
+    return prisma.chatSite.findFirst({ where: { id }, select: SITE_FIELDS });
 }
 
 /** Переписка посетителя на этом сайте по его признаку. Пусто — признак чужой или не выдавался. */

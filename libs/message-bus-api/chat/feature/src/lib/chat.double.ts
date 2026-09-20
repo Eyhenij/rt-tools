@@ -19,6 +19,9 @@ export interface IDoubleSite {
     readonly answerFrom?: number;
     readonly answerTo?: number;
     readonly timeZone?: string;
+    readonly hookUrl?: string;
+    readonly hookSecret?: string;
+    readonly answerWithin?: number;
 }
 
 /** Посетитель в памяти спеки. */
@@ -36,6 +39,8 @@ export interface IDoubleConversation {
     readonly visitorId: string;
     lastMessageAt: Date;
     state: string;
+    /** Минута последнего будильника. Пусто — переписка не будила никого ни разу. */
+    wokeAt?: Date | null;
 }
 
 /** Оператор и сайт, за который он отвечает. */
@@ -118,7 +123,7 @@ export class ChatPrismaDouble {
     public get chatConversation(): Record<string, (args: Record<string, unknown>) => Promise<unknown>> {
         return {
             update: async (args: Record<string, unknown>): Promise<unknown> => this.#touch(args),
-            findMany: async (args: Record<string, unknown>): Promise<unknown> => this.#conversationsPage(args),
+            findMany: async (args: Record<string, unknown>): Promise<unknown> => this.#conversationsFound(args),
             count: async (args: Record<string, unknown>): Promise<number> => this.#conversationsOf(args).length,
             findFirst: async (args: Record<string, unknown>): Promise<unknown> => this.#oneConversation(args),
         };
@@ -137,13 +142,36 @@ export class ChatPrismaDouble {
     }
 
     #site(args: Record<string, unknown>): IDoubleSite | undefined {
-        const where: { key: string; enabled: boolean } = args['where'] as { key: string; enabled: boolean };
-        const found: IDoubleSite | undefined = this.sites.find(
-            (site: IDoubleSite): boolean => site.key === where.key && site.enabled === where.enabled
-        );
+        const where: { id?: string; key?: string; enabled?: boolean } = args['where'] as {
+            id?: string;
+            key?: string;
+            enabled?: boolean;
+        };
+        /*
+         * Площадку спрашивают двумя путями: приём — по ключу и признаку включённости, отправка
+         * вызова наружу — по признаку записи. Выключенность там не спрашивается: разговор,
+         * который уже идёт, выключение площадки не отменяет.
+         */
+        const found: IDoubleSite | undefined = where.id
+            ? this.sites.find((site: IDoubleSite): boolean => site.id === where.id)
+            : this.sites.find((site: IDoubleSite): boolean => site.key === where.key && site.enabled === where.enabled);
 
-        // Умолчания хранилища: площадка без приветствия и без названных часов — законное состояние
-        return found && { greeting: '', answerFrom: 0, answerTo: 0, timeZone: '', ...found };
+        // Умолчания хранилища: площадка без приветствия, часов и вызовов наружу — законное состояние
+        return found && this.#withSiteDefaults(found);
+    }
+
+    /** Умолчания записи площадки: то же, что подставляет хранилище на старых записях. */
+    #withSiteDefaults(site: IDoubleSite): IDoubleSite {
+        return {
+            greeting: '',
+            answerFrom: 0,
+            answerTo: 0,
+            timeZone: '',
+            hookUrl: '',
+            hookSecret: '',
+            answerWithin: 0,
+            ...site,
+        };
     }
 
     #visitor(args: Record<string, unknown>): { id: string; conversations: IDoubleConversation[] } | null {
@@ -210,7 +238,11 @@ export class ChatPrismaDouble {
 
     #touch(args: Record<string, unknown>): IDoubleConversation | null {
         const where: { id: string } = args['where'] as { id: string };
-        const data: { lastMessageAt?: Date; state?: string } = args['data'] as { lastMessageAt?: Date; state?: string };
+        const data: { lastMessageAt?: Date; state?: string; wokeAt?: Date | null } = args['data'] as {
+            lastMessageAt?: Date;
+            state?: string;
+            wokeAt?: Date | null;
+        };
         const conversation: IDoubleConversation | undefined = this.conversations.find(
             (row: IDoubleConversation): boolean => row.id === where.id
         );
@@ -225,6 +257,10 @@ export class ChatPrismaDouble {
 
         if (data.state) {
             conversation.state = data.state;
+        }
+
+        if ('wokeAt' in data) {
+            conversation.wokeAt = data.wokeAt ?? null;
         }
 
         return conversation;
@@ -281,6 +317,45 @@ export class ChatPrismaDouble {
         return this.operatorSites
             .filter((row: IDoubleOperatorSite): boolean => row.accountId === where.operator.accountId)
             .map((row: IDoubleOperatorSite): { siteId: string } => ({ siteId: row.siteId }));
+    }
+
+    /**
+     * Два чтения списка переписок разведены по отбору: панель спрашивает сайты набором, будильник
+     * — площадки с условленным временем. Отбор называет запрос, и двойник его же и читает.
+     */
+    #conversationsFound(args: Record<string, unknown>): unknown {
+        const where: Record<string, unknown> = args['where'] as Record<string, unknown>;
+
+        return where['site'] ? this.#talksToWake(args) : this.#conversationsPage(args);
+    }
+
+    /** Живые переписки площадок с включённым будильником, вместе с площадкой и последней репликой. */
+    #talksToWake(args: Record<string, unknown>): unknown[] {
+        const limit: number = (args['take'] as number) ?? this.conversations.length;
+
+        return this.conversations
+            .filter((talk: IDoubleConversation): boolean => talk.state === 'live')
+            .map((talk: IDoubleConversation): { talk: IDoubleConversation; site: IDoubleSite | undefined } => ({
+                talk,
+                site: this.sites.find((site: IDoubleSite): boolean => site.id === talk.siteId),
+            }))
+            .filter((pair: { site: IDoubleSite | undefined }): boolean => Boolean(pair.site?.answerWithin))
+            .sort(
+                (first: { talk: IDoubleConversation }, second: { talk: IDoubleConversation }): number =>
+                    first.talk.lastMessageAt.getTime() - second.talk.lastMessageAt.getTime()
+            )
+            .slice(0, limit)
+            .map((pair: { talk: IDoubleConversation; site: IDoubleSite | undefined }): unknown => ({
+                id: pair.talk.id,
+                lastMessageAt: pair.talk.lastMessageAt,
+                wokeAt: pair.talk.wokeAt ?? null,
+                site: this.#withSiteDefaults(pair.site as IDoubleSite),
+                messages: this.messages
+                    .filter((row: IDoubleMessage): boolean => row.conversationId === pair.talk.id)
+                    .sort((first: IDoubleMessage, second: IDoubleMessage): number => second.takenAt.getTime() - first.takenAt.getTime())
+                    .slice(0, 1)
+                    .map((row: IDoubleMessage): { side: string } => ({ side: row.side })),
+            }));
     }
 
     /** Переписки, попадающие под отбор запроса: сайты набором и, если названо, состояние. */

@@ -8,6 +8,7 @@ import { IChatConversationStarted } from '@rt/message-bus-api/chat/api';
 import { IChatMessageListRow } from '@rt/message-bus-api/chat/data-access';
 import { IPage } from '@rt/message-bus-common';
 
+import { ChatHookService } from './chat-hook.service';
 import { ChatIntakeController } from './chat-intake.controller';
 import { ChatReadController } from './chat-read.controller';
 import { ChatSubscribersService, IChatFrame } from './chat-subscribers.service';
@@ -77,8 +78,8 @@ describe('поток событий чата', () => {
         store.sites.push({ id: 'site-2', spaceId: 'space-1', key: 'other-key', origins: [OTHER_PAGE], enabled: true });
         store.operatorSites.push({ accountId: 'account-1', siteId: 'site-1' });
         subscribers = new ChatSubscribersService();
-        intake = new ChatIntakeController(store.asPrisma(), new RateLimitService(), subscribers);
-        reads = new ChatReadController(store.asPrisma(), subscribers);
+        intake = new ChatIntakeController(store.asPrisma(), new RateLimitService(), subscribers, new ChatHookService(store.asPrisma()));
+        reads = new ChatReadController(store.asPrisma(), subscribers, new ChatHookService(store.asPrisma()));
     });
 
     it('SC-CH-28 — реплика посетителя доходит до потока его переписки', async (): Promise<void> => {

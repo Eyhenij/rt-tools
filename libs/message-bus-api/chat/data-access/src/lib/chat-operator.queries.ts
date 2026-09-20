@@ -171,6 +171,9 @@ export async function messagesPage(
  *
  * Состояние разговора ответ не меняет: закрыл его оператор сам, и его же ответ вслед за закрытием
  * читался бы как открытие. Реплика посетителя открывает закрытое — это её дело, а не ответа.
+ *
+ * Минуту будильника ответ снимает: переписка, на которую ответили, больше не опоздавшая, а
+ * следующая реплика посетителя начнёт отсчёт заново.
  */
 export async function appendOperatorMessage(
     prisma: PrismaService,
@@ -183,7 +186,7 @@ export async function appendOperatorMessage(
             data: { conversationId, text, side: 'operator', takenAt: at },
             select: { id: true, side: true, text: true, takenAt: true },
         }),
-        prisma.chatConversation.update({ where: { id: conversationId }, data: { lastMessageAt: at } }),
+        prisma.chatConversation.update({ where: { id: conversationId }, data: { lastMessageAt: at, wokeAt: null } }),
     ]);
 
     return message;

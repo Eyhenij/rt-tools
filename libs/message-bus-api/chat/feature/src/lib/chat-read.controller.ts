@@ -22,8 +22,10 @@ import {
     appendOperatorMessage,
     conversationOfSites,
     conversationsPage,
+    findSiteById,
     IChatConversationListRow,
     IChatMessageListRow,
+    IChatSiteRow,
     messagesPage,
     operatorSites,
     setConversationState,
@@ -32,6 +34,7 @@ import { CHAT_TEXT_LIMIT, chatStateOf, chatTextFault, EChatTextFault, missedSinc
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { EChatTalkState, ERefusal, IPage, pageAsked, pageFault, refusalBody } from '@rt/message-bus-common';
 
+import { ChatHookService } from './chat-hook.service';
 import { ChatSubscribersService, IChatFrame } from './chat-subscribers.service';
 
 /** Поля порядка списка переписок. Первое — умолчание: свежие разговоры стоят первыми. */
@@ -50,10 +53,12 @@ interface IChatStateChanged {
 export class ChatReadController {
     readonly #prisma: PrismaService;
     readonly #subscribers: ChatSubscribersService;
+    readonly #hooks: ChatHookService;
 
-    constructor(prisma: PrismaService, subscribers: ChatSubscribersService) {
+    constructor(prisma: PrismaService, subscribers: ChatSubscribersService, hooks: ChatHookService) {
         this.#prisma = prisma;
         this.#subscribers = subscribers;
+        this.#hooks = hooks;
     }
 
     /**
@@ -172,10 +177,36 @@ export class ChatReadController {
     public async state(@Param('id') id: string, @Body() body: unknown, @Req() request: IAccountBearingRequest): Promise<IChatStateChanged> {
         const fields: Record<string, unknown> = (body ?? {}) as Record<string, unknown>;
         const asked: EChatTalkState = this.#state(fields['state']);
+        const talk: { id: string; siteId: string; state: string } = await this.#own(request, id);
+        const changed: IChatStateChanged = await setConversationState(this.#prisma, id, asked);
 
-        await this.#own(request, id);
+        if (asked === EChatTalkState.Closed) {
+            // вызов наружу ответа оператору не держит: приложение о закрытии узнаёт своим чередом
+            void this.#sayClosed(talk.siteId, id);
+        }
 
-        return setConversationState(this.#prisma, id, asked);
+        return changed;
+    }
+
+    /**
+     * Сказать приложению площадки, что переписку закрыли.
+     *
+     * Площадку читает отдельный запрос: список сайтов оператора несёт признаки, а не адрес
+     * вызова с тайной — второе их чтение здесь же разошлось бы с первым молча.
+     */
+    async #sayClosed(siteId: string, conversationId: string): Promise<void> {
+        const site: IChatSiteRow | null = await findSiteById(this.#prisma, siteId);
+
+        if (!site) {
+            return;
+        }
+
+        await this.#hooks.say(
+            { id: site.id, key: site.key, hookUrl: site.hookUrl, hookSecret: site.hookSecret },
+            'closing',
+            { conversationId, fields: {} },
+            new Date()
+        );
     }
 
     /** Сайты вошедшего. Пусто — он не оператор чата, и видеть ему нечего. */

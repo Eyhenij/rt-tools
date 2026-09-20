@@ -59,6 +59,7 @@ import {
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { CHAT_SIDE_VISITOR, ERefusal, IChatSiteLookRow, IPage, pageAsked, refusalBody } from '@rt/message-bus-common';
 
+import { ChatHookService } from './chat-hook.service';
 import { ChatSubscribersService, IChatFrame } from './chat-subscribers.service';
 
 /** Поля порядка ленты: он один — минута приёма, и ею же лента стоит от старых к свежим. */
@@ -97,12 +98,14 @@ export class ChatIntakeController {
     readonly #prisma: PrismaService;
     readonly #rate: RateLimitService;
     readonly #subscribers: ChatSubscribersService;
+    readonly #hooks: ChatHookService;
     readonly #log: Logger = new Logger(ChatIntakeController.name);
 
-    constructor(prisma: PrismaService, rate: RateLimitService, subscribers: ChatSubscribersService) {
+    constructor(prisma: PrismaService, rate: RateLimitService, subscribers: ChatSubscribersService, hooks: ChatHookService) {
         this.#prisma = prisma;
         this.#rate = rate;
         this.#subscribers = subscribers;
+        this.#hooks = hooks;
     }
 
     /**
@@ -205,6 +208,17 @@ export class ChatIntakeController {
         };
 
         this.#subscribers.send({ conversationId: conversation.id, siteId: site.id }, event);
+
+        /*
+         * Вызов наружу ответа посетителю не держит: чужой узел, который не отвечает, иначе
+         * останавливал бы чат на своей минуте — и на всех площадках сразу.
+         */
+        void this.#hooks.say(
+            { id: site.id, key: site.key, hookUrl: site.hookUrl, hookSecret: site.hookSecret },
+            'remark',
+            { conversationId: conversation.id, fields: { messageId: message.id, side: CHAT_SIDE_VISITOR } },
+            at
+        );
 
         return { messageId: message.id, takenAt: message.takenAt.toISOString() };
     }

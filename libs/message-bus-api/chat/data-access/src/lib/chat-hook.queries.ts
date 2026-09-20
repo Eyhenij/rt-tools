@@ -8,6 +8,17 @@
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 
+import { IChatSiteRow, SITE_FIELDS } from './chat.queries';
+
+/** Переписка, как её отдаёт хранилище будильнику: сторона последней реплики приходит списком. */
+interface IStoredWakeRow {
+    readonly id: string;
+    readonly lastMessageAt: Date;
+    readonly wokeAt: Date | null;
+    readonly site: IChatSiteRow;
+    readonly messages: readonly { readonly side: string }[];
+}
+
 /** Род события, уходящего наружу. Те же три слова, что и в хранилище. */
 export type TChatHookKind = 'remark' | 'closing' | 'unanswered';
 
@@ -57,4 +68,49 @@ export async function markHookCallFailed(
         where: { id },
         data: { attempts, lastStatus: status, lastFault: fault },
     });
+}
+
+/** Переписка, которую смотрит будильник: чем её разбудить и что о ней уже известно. */
+export interface IChatWakeRow {
+    readonly id: string;
+    readonly lastMessageAt: Date;
+    readonly wokeAt: Date | null;
+    readonly site: IChatSiteRow;
+    /** Сторона последней реплики: по ней видно, ответил ли уже оператор. */
+    readonly lastSide: string;
+}
+
+/**
+ * Живые переписки площадок, у которых будильник включён.
+ *
+ * Решение, пора ли будить, здесь не принимается: его принимает чистая проверка слоя утилит, и
+ * второй такой же ответ внутри запроса разошёлся бы с первым молча. Запрос только сужает круг —
+ * площадка без условленного времени сюда не попадает вовсе.
+ */
+export async function talksToWake(prisma: PrismaService, limit: number): Promise<IChatWakeRow[]> {
+    const rows: IStoredWakeRow[] = await prisma.chatConversation.findMany({
+        where: { state: 'live', site: { answerWithin: { gt: 0 } } },
+        orderBy: { lastMessageAt: 'asc' },
+        take: limit,
+        select: {
+            id: true,
+            lastMessageAt: true,
+            wokeAt: true,
+            site: { select: SITE_FIELDS },
+            messages: { orderBy: { takenAt: 'desc' }, take: 1, select: { side: true } },
+        },
+    });
+
+    return rows.map((row: IStoredWakeRow): IChatWakeRow => ({
+        id: row.id,
+        lastMessageAt: row.lastMessageAt,
+        wokeAt: row.wokeAt,
+        site: row.site,
+        lastSide: row.messages[0]?.side ?? '',
+    }));
+}
+
+/** Записать минуту, которой переписка разбудила оператора: второй раз по ней уже не будят. */
+export async function markTalkWoken(prisma: PrismaService, id: string, at: Date): Promise<void> {
+    await prisma.chatConversation.update({ where: { id }, data: { wokeAt: at } });
 }
