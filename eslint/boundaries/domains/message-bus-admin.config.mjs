@@ -67,6 +67,14 @@ const USAGE_DATA_ACCESS = 'scope:message-bus-admin-usage-data-access';
 const USAGE_UI = 'scope:message-bus-admin-usage-ui';
 
 /**
+ * Раздел чата: модели панели и разбор ответа приёмника, обращения к операциям, стор списка и
+ * ленты. Слой вида придёт вместе с экраном раздела — сегодня показывать нечем.
+ */
+const CHAT_UTIL = 'scope:message-bus-admin-chat-util';
+const CHAT_API = 'scope:message-bus-admin-chat-api';
+const CHAT_DATA_ACCESS = 'scope:message-bus-admin-chat-data-access';
+
+/**
  * Раздел приглашений: модели и решения раздела, отзыв приглашения, стор списка, экран и маршрут.
  * Слоя вида у него нет — ячейки строки показывают готовые поля, и своего вида разделу не нужно.
  */
@@ -371,6 +379,21 @@ export const messageBusAdminBoundaries = [
     },
 
     // Раздел использования правил. Лесенка та же и тем же перечислением, что у разделов груза
+    // Раздел чата. Слой моделей видит только словарь общего слоя и форму контракта; обращения
+    // берут предел ожидания и разбор отказа готовыми у общего слоя; стор видит обращения и
+    // общую основу стора — второй свой способ читать страницу разошёлся бы с первым.
+    {
+        sourceTag: 'scope:message-bus-admin-chat-util',
+        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-chat-api',
+        onlyDependOnLibsWithTags: [CHAT_UTIL, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-chat-data-access',
+        onlyDependOnLibsWithTags: [CHAT_API, CHAT_UTIL, CORE_DATA_ACCESS, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
     {
         sourceTag: 'scope:message-bus-admin-usage-util',
         onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
