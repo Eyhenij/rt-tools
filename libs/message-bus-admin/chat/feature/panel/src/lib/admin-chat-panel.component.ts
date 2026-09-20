@@ -13,10 +13,15 @@ import {
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ChatFeedStore, ChatTalksStore } from '@rt/message-bus-admin/chat/data-access';
-import { AdminChatMessageComponent, AdminChatStateFilterComponent, AdminChatTalkComponent } from '@rt/message-bus-admin/chat/ui';
-import { CHAT_STREAM_PATH, ChatMessageMapper, IChat } from '@rt/message-bus-admin/chat/util';
+import {
+    AdminChatMessageComponent,
+    AdminChatSiteFilterComponent,
+    AdminChatStateFilterComponent,
+    AdminChatTalkComponent,
+} from '@rt/message-bus-admin/chat/ui';
+import { CHAT_STREAM_PATH, ChatMessageMapper, EChatTalkState, IChat } from '@rt/message-bus-admin/chat/util';
 import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
-import { WINDOW } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, WINDOW } from '@rt-tools/core';
 import { IChatMessageEventRow } from '@rt/message-bus-common';
 import { RtButtonDirective, RtEmptyStateComponent, RtFieldComponent, RtInputComponent } from '@rt-tools/ui-kit-v2';
 
@@ -45,11 +50,16 @@ const PAGE_SIZE: number = 50;
     templateUrl: './admin-chat-panel.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        // rt-tools
+        BlockDirective,
+        ElemDirective,
+
         // angular
         ReactiveFormsModule,
 
         // components
         AdminChatMessageComponent,
+        AdminChatSiteFilterComponent,
         AdminChatStateFilterComponent,
         AdminChatTalkComponent,
         RtButtonDirective,
@@ -77,6 +87,17 @@ export class AdminChatPanelComponent {
     /** Состояние, которым сужен список. Пусто — оба состояния. */
     protected readonly state: WritableSignal<string> = signal<string>('');
 
+    /** Сайт, которым сужен список. Пусто — все сайты оператора. */
+    protected readonly site: WritableSignal<string> = signal<string>('');
+
+    /**
+     * Сайты оператора: их называет непросуженный список.
+     *
+     * Второго чтения той же принадлежности заводить незачем — набор сайтов уже приехал строками,
+     * и он же стоит в запросе на стороне приёмника.
+     */
+    protected readonly sites: WritableSignal<readonly string[]> = signal<readonly string[]>([]);
+
     protected readonly draft: FormControl<string> = new FormControl<string>('', { nonNullable: true });
 
     protected readonly talksEmpty: Signal<string> = computed((): string => this.#text.text('chatTalksEmpty'));
@@ -86,11 +107,34 @@ export class AdminChatPanelComponent {
     protected readonly sendLabel: Signal<string> = computed((): string => this.#text.text('chatAnswerSend'));
     protected readonly sendPlaceholder: Signal<string> = computed((): string => this.#text.text('chatAnswerPlaceholder'));
 
+    /** Выбранный разговор целиком: по нему подписывается кнопка состояния. */
+    protected readonly talk: Signal<IChat.Talk.State | null> = computed(
+        (): IChat.Talk.State | null => this.rows().find((row: IChat.Talk.State): boolean => row.id === this.chosen()) ?? null
+    );
+
+    /** Подпись кнопки состояния: закрыть живой разговор или открыть закрытый снова. */
+    protected readonly stateLabel: Signal<string> = computed((): string =>
+        this.#text.text(this.talk()?.state === EChatTalkState.Closed ? 'chatReopen' : 'chatClose')
+    );
+
     constructor() {
         effect((): void => {
             const state: string = this.state();
+            const site: string = this.site();
 
-            untracked((): void => this.#talks.read({ page: 1, size: PAGE_SIZE, site: '', state }));
+            untracked((): void => this.#talks.read({ page: 1, size: PAGE_SIZE, site, state }));
+        });
+
+        // Сайты запоминаются по непросуженному списку: просуженный называет один, и отбор,
+        // собранный по нему, потерял бы соседние сайты того же оператора
+        effect((): void => {
+            const rows: readonly IChat.Talk.State[] = this.rows();
+
+            if (this.site() !== '' || this.state() !== '') {
+                return;
+            }
+
+            untracked((): void => this.sites.set([...new Set(rows.map((row: IChat.Talk.State): string => row.siteId))]));
         });
 
         afterNextRender((): void => this.#listen());
@@ -100,6 +144,17 @@ export class AdminChatPanelComponent {
     protected choose(talkId: string): void {
         this.chosen.set(talkId);
         this.#feed.read(talkId);
+    }
+
+    /** Закрыть разговор или открыть его снова: список перечитывается ответом сервиса. */
+    protected changeState(): void {
+        const talk: IChat.Talk.State | null = this.talk();
+
+        if (!talk) {
+            return;
+        }
+
+        this.#talks.changeState(talk.id, talk.state === EChatTalkState.Closed ? EChatTalkState.Live : EChatTalkState.Closed);
     }
 
     /** Ответить посетителю. Пустая реплика не уходит: отбивать её обращением к сервису незачем. */

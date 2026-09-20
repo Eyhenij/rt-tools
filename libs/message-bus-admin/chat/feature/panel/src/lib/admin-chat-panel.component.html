@@ -1,6 +1,7 @@
 <ng-container rtBlock="admin-chat">
     <section rtElem="talks" qa-dataid="chat-talks">
         <div rtElem="filters">
+            <admin-chat-site-filter [site]="site()" [sites]="sites()" (siteChange)="site.set($event)" />
             <admin-chat-state-filter [state]="state()" (stateChange)="state.set($event)" />
         </div>
 
@@ -13,6 +14,16 @@
 
     <section rtElem="feed" qa-dataid="chat-feed">
         @if (chosen()) {
+            <button
+                rtButton
+                rtElem="state"
+                qa-dataid="chat-talk-state"
+                type="button"
+                appearance="text"
+                [attr.aria-label]="stateLabel()"
+                [label]="stateLabel()"
+                (click)="changeState()"></button>
+
             <div rtElem="messages">
                 @for (message of messages(); track message.id) {
                     <admin-chat-message [message]="message" />

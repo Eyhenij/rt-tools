@@ -1,0 +1,8 @@
+<rt-select
+    qa-dataid="chat-site-filter"
+    [ariaLabel]="label()"
+    [clearable]="false"
+    [ngModel]="site()"
+    [ngModelOptions]="{ standalone: true }"
+    [options]="options()"
+    (selectionChange)="pick($event)" />

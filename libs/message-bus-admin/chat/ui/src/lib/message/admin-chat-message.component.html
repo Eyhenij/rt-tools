@@ -1,7 +1,7 @@
 <ng-container rtBlock="admin-chat-message">
     <span rtElem="side" qa-dataid="chat-message-side">{{ sideLabel() }}</span>
     <span rtElem="text" qa-dataid="chat-message-text" [attr.data-send]="message().send">{{ message().text }}</span>
-    <span rtElem="at">{{ message().takenAt }}</span>
+    <span rtElem="at">{{ momentText() }}</span>
 
     @if (refusedLabel()) {
         <span rtElem="refused" qa-dataid="chat-message-refused">{{ refusedLabel() }}</span>

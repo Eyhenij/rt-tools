@@ -13,7 +13,7 @@
 
 .admin-chat {
     display: grid;
-    height: 100%;
+    min-height: 60vh;
     gap: var(--rt-space-md);
     grid-template-columns: minmax(260px, 1fr) 2fr;
 
@@ -60,6 +60,10 @@
         }
     }
 
+    &__state {
+        align-self: flex-start;
+    }
+
     &__messages {
         display: flex;
         min-height: 0;
@@ -78,5 +82,100 @@
     &__field {
         min-width: 0;
         flex: 1;
+    }
+}
+
+/**
+ * Строка списка переписок: сайт и состояние верхней строкой, последняя реплика — второй.
+ *
+ * Реплика обрезается многоточием: тексты посетителей любой длины, а место строки одно, и
+ * убежавший за край текст лёг бы поверх соседа. Целиком её человек видит в ленте — туда и ведёт
+ * нажатие на строку.
+ */
+.admin-chat-talk {
+    display: block;
+
+    &__button {
+        display: grid;
+        width: 100%;
+        padding: var(--rt-space-sm) var(--rt-space-md);
+        border: none;
+        background: transparent;
+        color: var(--rt-color-text-primary);
+        cursor: pointer;
+        gap: var(--rt-space-2xs);
+        grid-template-columns: 1fr auto;
+        text-align: start;
+
+        &:hover {
+            background: var(--rt-color-bg-hover);
+        }
+
+        &[aria-current='true'] {
+            background: var(--rt-color-bg-surface-subtle);
+        }
+    }
+
+    &__site {
+        overflow: hidden;
+        font-weight: var(--rt-font-weight-medium);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__state {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+    }
+
+    &__last {
+        overflow: hidden;
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+        grid-column: 1 / -1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__at {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+        grid-column: 1 / -1;
+    }
+}
+
+/**
+ * Сообщение ленты: сторона и минута мелкой строкой, текст — обычной.
+ *
+ * Текст переносится по словам и длинные слова ломает: ссылку из адресной строки посетитель
+ * присылает целиком, а лента шириной с экран.
+ */
+.admin-chat-message {
+    display: flex;
+    flex-direction: column;
+    padding: var(--rt-space-sm);
+    border-radius: var(--rt-radius-md);
+    background: var(--rt-color-bg-subtle);
+    gap: var(--rt-space-2xs);
+
+    &__side {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+        font-weight: var(--rt-font-weight-medium);
+    }
+
+    &__text {
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+    }
+
+    &__at {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+    }
+
+    &__refused {
+        color: var(--rt-color-state-danger);
+        font-size: var(--rt-text-sm);
     }
 }

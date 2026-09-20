@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
-import { EChatSide, EChatTalkState, IChat } from '@rt/message-bus-admin/chat/util';
-import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
+import { chatMomentText, EChatSide, EChatTalkState, IChat } from '@rt/message-bus-admin/chat/util';
+import { AdminLocaleService, AdminTextService } from '@rt/message-bus-admin/common/core/util';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
 const BEM_BLOCK: string = 'admin-chat-talk';
 
@@ -18,15 +19,24 @@ const BEM_BLOCK: string = 'admin-chat-talk';
     selector: 'admin-chat-talk',
     templateUrl: './admin-chat-talk.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        // rt-tools
+        BlockDirective,
+        ElemDirective,
+    ],
     host: { class: BEM_BLOCK },
 })
 export class AdminChatTalkComponent {
     readonly #text: AdminTextService = inject(AdminTextService);
+    readonly #locale: AdminLocaleService = inject(AdminLocaleService);
 
     /** Слово состояния: живой или закрытый. Оба лежат в словаре — на экране их читает человек. */
     protected readonly stateLabel: Signal<string> = computed((): string =>
         this.#text.text(this.talk().state === EChatTalkState.Closed ? 'chatStateClosed' : 'chatStateLive')
     );
+
+    /** Минута последней реплики словами языка экрана. */
+    protected readonly momentText: Signal<string> = computed((): string => chatMomentText(this.talk().lastMessageAt, this.#locale.tag()));
 
     /** Кто написал последнюю реплику: посетитель или оператор. */
     protected readonly sideLabel: Signal<string> = computed((): string =>

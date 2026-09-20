@@ -1,11 +1,11 @@
 import { computed, inject, Injectable, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ChatApiService, IChatTalksAsked } from '@rt/message-bus-admin/chat/api';
-import { IChat } from '@rt/message-bus-admin/chat/util';
+import { EChatTalkState, IChat } from '@rt/message-bus-admin/chat/util';
 import { IReadFault } from '@rt/message-bus-admin/common/core/util';
 import { IPage } from '@rt/message-bus-common';
 import { BASE_INITIAL_STATE, BaseAsyncStoreService, IStateBase } from '@rt-tools/store';
-import { catchError, EMPTY, Observable, Subject, switchMap, tap } from 'rxjs';
+import { catchError, concatMap, EMPTY, Observable, Subject, switchMap, tap } from 'rxjs';
 
 /** Что знает список переписок: строки, общий счёт, чем кончилось чтение. */
 export interface IChatTalksState extends IStateBase.Async {
@@ -16,6 +16,12 @@ export interface IChatTalksState extends IStateBase.Async {
 
 /** Сообщения шины стора: по ним экран узнаёт, что список прочитан. */
 export type TChatTalksMessage = 'talks-read';
+
+/** Смена состояния одного разговора: какой и на какое. */
+interface IStateChange {
+    readonly talkId: string;
+    readonly state: EChatTalkState;
+}
 
 const INITIAL_STATE: IChatTalksState = { ...BASE_INITIAL_STATE.ASYNC, rows: [], total: 0, fault: null };
 
@@ -33,6 +39,9 @@ const INITIAL_STATE: IChatTalksState = { ...BASE_INITIAL_STATE.ASYNC, rows: [], 
 export class ChatTalksStore extends BaseAsyncStoreService<IChatTalksState, TChatTalksMessage> {
     readonly #api: ChatApiService = inject(ChatApiService);
     readonly #readSource: Subject<IChatTalksAsked> = new Subject<IChatTalksAsked>();
+    readonly #stateSource: Subject<IStateChange> = new Subject<IStateChange>();
+
+    #asked: IChatTalksAsked | null = null;
 
     public readonly rows: Signal<readonly IChat.Talk.State[]> = computed(() => this.store().rows);
     public readonly total: Signal<number> = computed(() => this.store().total);
@@ -43,7 +52,8 @@ export class ChatTalksStore extends BaseAsyncStoreService<IChatTalksState, TChat
 
         this.#readSource
             .pipe(
-                tap((): void => {
+                tap((asked: IChatTalksAsked): void => {
+                    this.#asked = asked;
                     this.patchState((state: IChatTalksState) => ({ ...state, fault: null }));
                     this.startLoading();
                 }),
@@ -64,11 +74,37 @@ export class ChatTalksStore extends BaseAsyncStoreService<IChatTalksState, TChat
                 takeUntilDestroyed()
             )
             .subscribe();
+
+        this.#stateSource
+            .pipe(
+                concatMap((change: IStateChange): Observable<EChatTalkState> =>
+                    this.#api.state(change.talkId, change.state).pipe(
+                        tap((): void => {
+                            if (this.#asked) {
+                                this.#readSource.next(this.#asked);
+                            }
+                        }),
+                        catchError((): Observable<never> => EMPTY)
+                    )
+                ),
+                takeUntilDestroyed()
+            )
+            .subscribe();
     }
 
     /** Прочитать страницу переписок с названным сужением. */
     public read(asked: IChatTalksAsked): void {
         this.#readSource.next(asked);
+    }
+
+    /**
+     * Закрыть разговор или открыть его снова.
+     *
+     * Список перечитывается ответом сервиса, а не правится на месте: сужение по состоянию стоит в
+     * самом запросе, и закрытый разговор уходит из списка живых тем же чтением, каким он пришёл.
+     */
+    public changeState(talkId: string, state: EChatTalkState): void {
+        this.#stateSource.next({ talkId, state });
     }
 
     /**

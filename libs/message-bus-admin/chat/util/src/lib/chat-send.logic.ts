@@ -32,3 +32,17 @@ export function chatSendAnswered(
         return taken ?? { ...message, send: EChatSendState.Refused };
     });
 }
+
+/**
+ * Минута реплики словами языка экрана.
+ *
+ * Строка по проводу приезжает всемирным временем, а человек читает местное: показанная как есть,
+ * она называет другой час тому, кто сидит не в поясе сервиса. Язык приезжает доводом, а не
+ * читается здесь: набор подписей экрана переключается в попапе профиля, и второе чтение того же
+ * выбора разошлось бы с первым.
+ */
+export function chatMomentText(iso: string, locale: string): string {
+    const at: Date = new Date(iso);
+
+    return Number.isNaN(at.getTime()) ? '' : at.toLocaleString(locale);
+}
