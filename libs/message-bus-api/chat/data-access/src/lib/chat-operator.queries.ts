@@ -167,6 +167,29 @@ export async function messagesPage(
     return { rows, total, page: asked.page, size: asked.size };
 }
 
+/**
+ * Ответ оператора в переписку. Зовётся после того, как переписка признана своей.
+ *
+ * Состояние разговора ответ не меняет: закрыл его оператор сам, и его же ответ вслед за закрытием
+ * читался бы как открытие. Реплика посетителя открывает закрытое — это её дело, а не ответа.
+ */
+export async function appendOperatorMessage(
+    prisma: PrismaService,
+    conversationId: string,
+    text: string,
+    at: Date
+): Promise<IChatMessageListRow> {
+    const [message]: [IChatMessageListRow, unknown] = await prisma.$transaction([
+        prisma.chatMessage.create({
+            data: { conversationId, text, side: 'operator', takenAt: at },
+            select: { id: true, side: true, text: true, takenAt: true },
+        }),
+        prisma.chatConversation.update({ where: { id: conversationId }, data: { lastMessageAt: at } }),
+    ]);
+
+    return message;
+}
+
 /** Смена состояния переписки. Зовётся после того, как переписка признана своей. */
 export async function setConversationState(
     prisma: PrismaService,

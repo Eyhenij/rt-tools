@@ -19,6 +19,7 @@ import { Observable } from 'rxjs';
 import { SessionOperation } from '@rt/message-bus-api/access/util';
 import { accountOf, IAccountBearingRequest, IRequestAccount } from '@rt/message-bus-api/accounts/util';
 import {
+    appendOperatorMessage,
     conversationOfSites,
     conversationsPage,
     IChatConversationListRow,
@@ -27,7 +28,14 @@ import {
     operatorSites,
     setConversationState,
 } from '@rt/message-bus-api/chat/data-access';
-import { chatStateOf, EChatConversationState, missedSince } from '@rt/message-bus-api/chat/util';
+import {
+    CHAT_TEXT_LIMIT,
+    chatStateOf,
+    chatTextFault,
+    EChatConversationState,
+    EChatTextFault,
+    missedSince,
+} from '@rt/message-bus-api/chat/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { ERefusal, IPage, pageAsked, pageFault, refusalBody } from '@rt/message-bus-common';
 
@@ -118,6 +126,53 @@ export class ChatReadController {
         return this.#subscribers.stream({ conversationId: null, siteIds: await this.#sites(request) });
     }
 
+    /**
+     * Ответ оператора посетителю.
+     *
+     * Пишется операцией, а не потоком: поток только разносит событие о реплике, и вторая дорога
+     * для записи дала бы два порядка сообщений в одном разговоре. Чужая переписка отвечает как
+     * ненайденная — тем же отказом, что и чтение.
+     *
+     * Минута приёма приезжает последним доводом, а не читается часами внутри: порядок сообщений
+     * решается ею, и спека проверяет его вызовом.
+     */
+    @Post(':id/messages')
+    @SessionOperation()
+    public async answer(
+        @Param('id') id: string,
+        @Body() body: unknown,
+        @Req() request: IAccountBearingRequest,
+        at: Date = new Date()
+    ): Promise<IChatMessageListRow> {
+        const fields: Record<string, unknown> = (body ?? {}) as Record<string, unknown>;
+        const text: string = typeof fields['text'] === 'string' ? fields['text'].trim() : '';
+        const talk: { id: string; siteId: string; state: string } = await this.#own(request, id);
+        const fault: EChatTextFault | null = chatTextFault(text);
+
+        if (fault === EChatTextFault.Empty) {
+            throw new BadRequestException(refusalBody(ERefusal.ChatTextEmpty));
+        }
+
+        if (fault === EChatTextFault.TooLong) {
+            throw new BadRequestException(refusalBody(ERefusal.ChatTextTooLong, { limit: CHAT_TEXT_LIMIT }));
+        }
+
+        const message: IChatMessageListRow = await appendOperatorMessage(this.#prisma, talk.id, text, at);
+
+        this.#subscribers.send(
+            { conversationId: talk.id, siteId: talk.siteId },
+            {
+                text,
+                conversationId: talk.id,
+                messageId: message.id,
+                side: message.side,
+                takenAt: message.takenAt.toISOString(),
+            }
+        );
+
+        return message;
+    }
+
     /** Смена состояния переписки: закрыть разговор или открыть его снова. */
     @Post(':id/state')
     @SessionOperation()
@@ -138,12 +193,18 @@ export class ChatReadController {
     }
 
     /** Переписка своего сайта. Чужая и несуществующая отвечают одинаково. */
-    async #own(request: IAccountBearingRequest, id: string): Promise<void> {
-        const found: { id: string } | null = await conversationOfSites(this.#prisma, await this.#sites(request), id);
+    async #own(request: IAccountBearingRequest, id: string): Promise<{ id: string; siteId: string; state: string }> {
+        const found: { id: string; siteId: string; state: string } | null = await conversationOfSites(
+            this.#prisma,
+            await this.#sites(request),
+            id
+        );
 
         if (!found) {
             throw new NotFoundException(refusalBody(ERefusal.ChatConversationNotFound));
         }
+
+        return found;
     }
 
     /** Состояние из запроса. Слово не из набора — отказ, и набор назван в нём. */

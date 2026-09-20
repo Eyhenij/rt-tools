@@ -5,12 +5,13 @@ import { RateLimitService } from '@rt/message-bus-api/access/feature';
 import { OPERATION_ACCESS } from '@rt/message-bus-api/access/util';
 import { ACCOUNT_OF_REQUEST, IAccountBearingRequest } from '@rt/message-bus-api/accounts/util';
 import { IChatConversationListRow, IChatMessageListRow } from '@rt/message-bus-api/chat/data-access';
+import { CHAT_TEXT_LIMIT } from '@rt/message-bus-api/chat/util';
 import { IPage } from '@rt/message-bus-common';
 
 import { ChatIntakeController } from './chat-intake.controller';
 import { ChatReadController } from './chat-read.controller';
 import { ChatSubscribersService } from './chat-subscribers.service';
-import { ChatPrismaDouble, IDoubleConversation } from './chat.double';
+import { ChatPrismaDouble, IDoubleConversation, IDoubleMessage } from './chat.double';
 
 /** Минута, от которой считаются все остальные: часы машины в спеке не читаются. */
 const AT: Date = new Date('2026-09-20T10:00:00.000Z');
@@ -196,5 +197,36 @@ describe('ChatReadController', () => {
 
         expect(stored.state).toBe('live');
         expect(live.rows.map((row: IChatConversationListRow): string => row.id)).toEqual([stored.id]);
+    });
+
+    it('SC-CH-46 — ответ оператора пишется стороной оператора', async (): Promise<void> => {
+        talk('own', 'site-1', AT, 'здравствуйте');
+
+        const written: IChatMessageListRow = await reads.answer('own', { text: 'слушаю вас' }, signedIn('account-1'), AT);
+
+        expect(written.side).toBe('operator');
+        expect(written.text).toBe('слушаю вас');
+        expect(written.takenAt).toEqual(AT);
+        expect(store.messages.map((row: IDoubleMessage): string => row.side)).toEqual(['visitor', 'operator']);
+    });
+
+    it('SC-CH-47 — ответ в чужую переписку отбит, и ничего не записано', async (): Promise<void> => {
+        talk('foreign', 'site-2', AT, 'чужая');
+
+        await expect(reads.answer('foreign', { text: 'слушаю вас' }, signedIn('account-1'), AT)).rejects.toThrow(NotFoundException);
+
+        // положительная пара к утверждению об отсутствии: реплика посетителя в хранилище лежит
+        expect(store.messages).toHaveLength(1);
+        expect(store.messages.every((row: IDoubleMessage): boolean => row.side === 'visitor')).toBe(true);
+    });
+
+    it('пустой ответ и ответ длиннее предела не принимаются', async (): Promise<void> => {
+        talk('own', 'site-1', AT, 'здравствуйте');
+
+        await expect(reads.answer('own', { text: '   ' }, signedIn('account-1'), AT)).rejects.toThrow(BadRequestException);
+        await expect(reads.answer('own', { text: 'я'.repeat(CHAT_TEXT_LIMIT + 1) }, signedIn('account-1'), AT)).rejects.toThrow(
+            BadRequestException
+        );
+        expect(store.messages).toHaveLength(1);
     });
 });
