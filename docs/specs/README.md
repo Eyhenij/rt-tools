@@ -55,10 +55,12 @@ skills and a panel of the sessions behind one skill.
 `chat` — the chat with the visitors of the sites: a space per client of the service, a key per site,
 a list of the addresses the widget is called from, a sign the service issues to a visitor, one live
 conversation per visitor and the two operations the first remark arrives by. The panel of the
-operator, the stream of the events, the widget and the rollout arrive by the following tasks of the
-epic and are added to this text by them. Next to it is a subdomain about the reading by the
-operator: who the operator is, what they see of their sites and what they do not see at all, two
-states of a conversation and the reading of the lists by pages.
+operator, the widget, the notifications and the rollout arrive by the following tasks of the epic and
+are added to this text by them. Next to it are two subdomains. The reading by the operator: who the
+operator is, what they see of their sites and what they do not see at all, two states of a
+conversation and the reading of the lists by pages. The stream of the events: how a new remark
+reaches a screen that is already open — two subscriptions, the heartbeat while there are no events,
+and the reading of what was missed by the minute of the last message.
 
 `ui-kit` — five subjects of the surface of the first kit, put together from the agreements written
 before the code: the button of the copying at an empty cell of a table, the delay of the showing of a

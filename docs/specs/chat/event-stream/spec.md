@@ -1,12 +1,13 @@
 # The stream of the events
 
-**Status:** proposed · **Revision:** 2026-09-20 · **Scenario prefix:** `SC-CH`
+**Status:** in force · **Revision:** 2026-09-20 · **Scenario prefix:** `SC-CH`
 **Depends on:** `chat` (the conversation and the message), `chat/operator-reading` (the operator and their sites)
 **Laws:** `verifiability`, `observability`, `access`
 **Procedures:** none — the subscriptions are declared by the controllers of the chat
 
-The agreement of the task RT-2180 of the epic RT-2177: how a new remark reaches a screen that is
-already open. It merges into the spec of the domain by the last commit of the work.
+A subdomain of the chat: how a new remark reaches a screen that is already open. The taking in of
+a remark is described by the spec of the domain, the sites of an operator by the subdomain about
+their reading.
 
 ## Why
 
@@ -146,4 +147,6 @@ foreign event does not reach either of them.
 
 ## History of changes
 
-- 2026-09-20 — written before the code by the task RT-2180 of the epic RT-2177.
+- 2026-09-20 — written before the code by the task RT-2180 of the epic RT-2177; by the same task the
+  address of the stream of the operator became `/api/chat/conversations/stream`, among the
+  operations of their reading.
