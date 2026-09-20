@@ -1,9 +1,9 @@
 import { computed, inject, Injectable, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ChatApiService, IChatTalksAsked } from '@rt/message-bus-admin/chat/api';
-import { EChatTalkState, IChat } from '@rt/message-bus-admin/chat/util';
+import { IChat } from '@rt/message-bus-admin/chat/util';
 import { IReadFault } from '@rt/message-bus-admin/common/core/util';
-import { IPage } from '@rt/message-bus-common';
+import { EChatTalkState, IPage } from '@rt/message-bus-common';
 import { BASE_INITIAL_STATE, BaseAsyncStoreService, IStateBase } from '@rt-tools/store';
 import { catchError, concatMap, EMPTY, Observable, Subject, switchMap, tap } from 'rxjs';
 

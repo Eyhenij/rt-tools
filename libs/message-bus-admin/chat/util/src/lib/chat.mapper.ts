@@ -8,7 +8,9 @@
  */
 import { BaseMapper } from '@rt-tools/utils';
 
-import { EChatSendState, EChatSide, EChatTalkState, IChat } from './chat.model';
+import { EChatTalkState } from '@rt/message-bus-common';
+
+import { EChatSendState, EChatSide, IChat } from './chat.model';
 
 /** Набор состояний целиком: по нему судится приехавшее слово. */
 const STATES: readonly EChatTalkState[] = Object.values(EChatTalkState);

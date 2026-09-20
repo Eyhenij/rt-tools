@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
+import { EChatTalkState } from '@rt/message-bus-common';
+
 import { ChatMessageMapper, chatSideOf, ChatTalkMapper, chatTalkStateOf } from './chat.mapper';
-import { EChatSendState, EChatSide, EChatTalkState, IChat } from './chat.model';
+import { EChatSendState, EChatSide, IChat } from './chat.model';
 
 describe('перевод чата в то, чем пользуется экран', () => {
     it('строка списка переписок переводится целиком', () => {

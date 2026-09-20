@@ -8,13 +8,7 @@
  * Отправленная реплика — та же форма сообщения, и своей стороны контракта у неё нет: она живёт в
  * памяти открытого экрана, пока сервис не ответил о ней.
  */
-import { IChatMessageRow, IChatTalkRow } from '@rt/message-bus-common';
-
-/** Состояние разговора закрытым набором: так его называет приёмник. */
-export enum EChatTalkState {
-    Live = 'live',
-    Closed = 'closed',
-}
+import { EChatTalkState, IChatMessageRow, IChatTalkRow } from '@rt/message-bus-common';
 
 /** Сторона разговора закрытым набором: посетитель или оператор. */
 export enum EChatSide {

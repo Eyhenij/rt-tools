@@ -38,7 +38,7 @@ import {
     findConversationByVisitorToken,
     findLiveSiteByKey,
     IChatConversationRow,
-    IChatMessageRow,
+    IChatTakenRow,
     IChatSiteRow,
     IChatStartedRow,
     startConversation,
@@ -53,7 +53,7 @@ import {
     originAllowed,
 } from '@rt/message-bus-api/chat/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { ERefusal, refusalBody } from '@rt/message-bus-common';
+import { CHAT_SIDE_VISITOR, ERefusal, refusalBody } from '@rt/message-bus-common';
 
 import { ChatSubscribersService, IChatFrame } from './chat-subscribers.service';
 
@@ -64,8 +64,6 @@ interface IChatRequest {
 }
 
 /** Сторона разговора у реплики посетителя: событие называет её тем же словом, что и хранилище. */
-const VISITOR_SIDE: string = 'visitor';
-
 /** Через сколько секунд повторять, когда предел частоты отбил реплику. */
 const RETRY_AFTER_SECONDS: number = CHAT_RATE_WINDOW_MS / 1000;
 
@@ -158,12 +156,12 @@ export class ChatIntakeController {
             throw new BadRequestException(refusalBody(ERefusal.ChatTextTooLong, { limit: CHAT_TEXT_LIMIT }));
         }
 
-        const message: IChatMessageRow = await appendVisitorMessage(this.#prisma, conversation.id, text, at);
+        const message: IChatTakenRow = await appendVisitorMessage(this.#prisma, conversation.id, text, at);
         const event: IChatMessageEvent = {
             text,
             conversationId: conversation.id,
             messageId: message.id,
-            side: VISITOR_SIDE,
+            side: CHAT_SIDE_VISITOR,
             takenAt: message.takenAt.toISOString(),
         };
 

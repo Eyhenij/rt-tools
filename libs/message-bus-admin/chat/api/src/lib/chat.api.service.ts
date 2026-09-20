@@ -11,16 +11,16 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { asReadFault, asSpokenFault, READ_TIMEOUT_MS } from '@rt/message-bus-admin/common/core/api';
+import { ChatMessageMapper, ChatTalkMapper, IChat } from '@rt/message-bus-admin/chat/util';
 import {
     CHAT_MESSAGES_SEGMENT,
     CHAT_PATH,
     CHAT_STATE_SEGMENT,
-    ChatMessageMapper,
-    ChatTalkMapper,
     EChatTalkState,
-    IChat,
-} from '@rt/message-bus-admin/chat/util';
-import { IChatMessageRow, IChatTalkRow, IPage } from '@rt/message-bus-common';
+    IChatMessageRow,
+    IChatTalkRow,
+    IPage,
+} from '@rt/message-bus-common';
 import { catchError, map, Observable, timeout } from 'rxjs';
 
 /** Чем сужен список переписок: страница, сайт и состояние разговора. Пустое поле не сужает. */

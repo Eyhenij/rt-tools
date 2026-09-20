@@ -28,16 +28,9 @@ import {
     operatorSites,
     setConversationState,
 } from '@rt/message-bus-api/chat/data-access';
-import {
-    CHAT_TEXT_LIMIT,
-    chatStateOf,
-    chatTextFault,
-    EChatConversationState,
-    EChatTextFault,
-    missedSince,
-} from '@rt/message-bus-api/chat/util';
+import { CHAT_TEXT_LIMIT, chatStateOf, chatTextFault, EChatTextFault, missedSince } from '@rt/message-bus-api/chat/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { ERefusal, IPage, pageAsked, pageFault, refusalBody } from '@rt/message-bus-common';
+import { EChatTalkState, ERefusal, IPage, pageAsked, pageFault, refusalBody } from '@rt/message-bus-common';
 
 import { ChatSubscribersService, IChatFrame } from './chat-subscribers.service';
 
@@ -81,7 +74,7 @@ export class ChatReadController {
             throw new BadRequestException(fault);
         }
 
-        const state: EChatConversationState | null = query['state'] === undefined ? null : this.#state(query['state']);
+        const state: EChatTalkState | null = query['state'] === undefined ? null : this.#state(query['state']);
         const site: unknown = query['site'];
 
         return conversationsPage(
@@ -178,7 +171,7 @@ export class ChatReadController {
     @SessionOperation()
     public async state(@Param('id') id: string, @Body() body: unknown, @Req() request: IAccountBearingRequest): Promise<IChatStateChanged> {
         const fields: Record<string, unknown> = (body ?? {}) as Record<string, unknown>;
-        const asked: EChatConversationState = this.#state(fields['state']);
+        const asked: EChatTalkState = this.#state(fields['state']);
 
         await this.#own(request, id);
 
@@ -208,8 +201,8 @@ export class ChatReadController {
     }
 
     /** Состояние из запроса. Слово не из набора — отказ, и набор назван в нём. */
-    #state(value: unknown): EChatConversationState {
-        const state: EChatConversationState | null = chatStateOf(value);
+    #state(value: unknown): EChatTalkState {
+        const state: EChatTalkState | null = chatStateOf(value);
 
         if (!state) {
             throw new BadRequestException(refusalBody(ERefusal.ChatStateUnknown));

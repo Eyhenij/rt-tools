@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { EChatTalkState } from '@rt/message-bus-admin/chat/util';
+import { EChatTalkState } from '@rt/message-bus-common';
 import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import { IRtSelect, RtSelectComponent } from '@rt-tools/ui-kit-v2';
 

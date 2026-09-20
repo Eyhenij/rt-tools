@@ -19,16 +19,16 @@ import {
     AdminChatStateFilterComponent,
     AdminChatTalkComponent,
 } from '@rt/message-bus-admin/chat/ui';
-import { CHAT_STREAM_PATH, ChatMessageMapper, EChatTalkState, IChat } from '@rt/message-bus-admin/chat/util';
+import { ChatMessageMapper, IChat } from '@rt/message-bus-admin/chat/util';
 import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import { BlockDirective, ElemDirective, WINDOW } from '@rt-tools/core';
-import { IChatMessageEventRow } from '@rt/message-bus-common';
+import { CHAT_STREAM_PATH, EChatTalkState, IChatMessageEventRow } from '@rt/message-bus-common';
 import { RtButtonDirective, RtEmptyStateComponent, RtFieldComponent, RtInputComponent } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-chat';
 
 /** Сколько переписок читается за раз: список идёт страницей, как и в остальных разделах. */
-const PAGE_SIZE: number = 50;
+const TALKS_PAGE_SIZE: number = 50;
 
 /**
  * Раздел чата: список переписок слева, лента выбранного разговора справа, поле набора под лентой.
@@ -122,7 +122,7 @@ export class AdminChatPanelComponent {
             const state: string = this.state();
             const site: string = this.site();
 
-            untracked((): void => this.#talks.read({ page: 1, size: PAGE_SIZE, site, state }));
+            untracked((): void => this.#talks.read({ page: 1, size: TALKS_PAGE_SIZE, site, state }));
         });
 
         // Сайты запоминаются по непросуженному списку: просуженный называет один, и отбор,

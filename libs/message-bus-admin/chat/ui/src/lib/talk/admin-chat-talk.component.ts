@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
-import { chatMomentText, EChatSide, EChatTalkState, IChat } from '@rt/message-bus-admin/chat/util';
+import { chatMomentText, EChatSide, IChat } from '@rt/message-bus-admin/chat/util';
 import { AdminLocaleService, AdminTextService } from '@rt/message-bus-admin/common/core/util';
+import { EChatTalkState } from '@rt/message-bus-common';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
 const BEM_BLOCK: string = 'admin-chat-talk';
