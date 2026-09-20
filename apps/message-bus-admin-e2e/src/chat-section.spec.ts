@@ -1,6 +1,6 @@
-import { expect, Locator, Page, test } from '@playwright/test';
+import { APIRequestContext, APIResponse, expect, Locator, Page, test } from '@playwright/test';
 
-import { CHAT, PEOPLE, SECTIONS } from '../stand/stand.mjs';
+import { API_ORIGIN, CHAT, PEOPLE, SECTIONS } from '../stand/stand.mjs';
 import { openSection, qa, SECTION, signIn } from './support/admin';
 import { expectScreen } from './support/shot';
 
@@ -13,7 +13,44 @@ import { expectScreen } from './support/shot';
  *
  * Отправленная реплика проверяется на экране, а не ответом сервиса: обещано именно то, что она
  * видна до ответа, и ответом сервиса это не отличить от обычной ленты.
+ *
+ * Приход реплики посетителя в открытую ленту идёт тем же приёмом, каким её кладёт виджет: запись
+ * мимо приёма события подписчикам не рассылает и отвечала бы на другой вопрос.
  */
+
+/** Реплики посетителя, приходящие в открытую ленту: первая заводит разговор, вторая идёт потоком. */
+const ARRIVED_FIRST: string = 'Пишу из набора';
+const ARRIVED_NEXT: string = 'И вторая реплика следом';
+
+/** Признаки заведённой переписки посетителя. */
+interface ITalkSigns {
+    readonly conversation: string;
+    readonly visitor: string;
+}
+
+/** Завести переписку посетителя приёмом и вернуть её признаки. */
+async function startTalk(request: APIRequestContext): Promise<ITalkSigns> {
+    const started: APIResponse = await request.post(`${API_ORIGIN}/api/chat/conversations`, {
+        headers: { origin: CHAT.own.origin },
+        data: { site: CHAT.own.key },
+    });
+
+    expect(started.ok()).toBe(true);
+
+    const body: { conversationId: string; visitorToken: string } = await started.json();
+
+    return { conversation: body.conversationId, visitor: body.visitorToken };
+}
+
+/** Положить реплику посетителя приёмом — так же, как её кладёт виджет. */
+async function visitorSays(request: APIRequestContext, talk: ITalkSigns, text: string): Promise<void> {
+    const taken: APIResponse = await request.post(`${API_ORIGIN}/api/chat/messages`, {
+        headers: { origin: CHAT.own.origin },
+        data: { site: CHAT.own.key, visitor: talk.visitor, conversation: talk.conversation, text },
+    });
+
+    expect(taken.ok()).toBe(true);
+}
 
 /** Строки списка переписок. */
 function talks(page: Page): Locator {
@@ -116,6 +153,27 @@ test.describe('раздел чата', () => {
 
         // положительная пара к уходу из живых: закрытый разговор виден по своему отбору
         await expect(talks(page)).toHaveCount(2);
+    });
+
+    test('SC-CH-43 — реплика посетителя приходит в открытую ленту без перезагрузки страницы', async ({
+        page,
+        request,
+    }: {
+        page: Page;
+        request: APIRequestContext;
+    }) => {
+        const talk: ITalkSigns = await startTalk(request);
+
+        await visitorSays(request, talk, ARRIVED_FIRST);
+        await openSection(page, 'chat');
+
+        // самый свежий разговор стоит первым: его реплика принята только что
+        await talks(page).first().click();
+        await expect(qa(page, 'chat-message-text').first()).toHaveText(ARRIVED_FIRST);
+
+        await visitorSays(request, talk, ARRIVED_NEXT);
+
+        await expect(qa(page, 'chat-message-text').last()).toHaveText(ARRIVED_NEXT);
     });
 
     test('SC-CH-44 — вошедший с правом, но не оператор чата, видит пустой список, а не отказ', async ({ page }: { page: Page }) => {

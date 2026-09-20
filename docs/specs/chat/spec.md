@@ -37,13 +37,13 @@ infrastructure do not grow.
 | The sign of the visitor           | The secret the service gives out at the first turning to it; the widget keeps it and passes it along                        |
 | The conversation                  | The talk of one visitor on one site. A visitor has one live conversation per site                                           |
 | The message                       | One remark: from the visitor or from the operator. It carries the text and the minute of the taking in                      |
-| The operator                      | A person of the space who answers in the panel. Their entry and the panel are the following tasks of the epic               |
+| The operator                      | A person of the space who answers in the panel. The panel is described by the subdomain next to this text                   |
 
 ### What it is called in the interface
 
-The screens of this service — the panel of the operator and the widget of the visitor — arrive by
-the following tasks of the epic, and the words on them are named there. This text has no screen of
-its own.
+The panel of the operator is described by the subdomain next to this text, and the words on it are
+named there. The widget of the visitor arrives by the following task of the epic. This text has no
+screen of its own.
 
 ## Rules
 
@@ -96,9 +96,9 @@ its own.
 
 ## What is out of scope
 
-- **The panel, the widget, the notifications and the rollout** — the tasks RT-2181 … RT-2184 of the
-  same epic. This text is added to by them. The reading by the operator and the stream of the events
-  are described by the subdomains next to it.
+- **The widget, the notifications and the rollout** — the tasks RT-2182 … RT-2184 of the same epic.
+  This text is added to by them. The reading by the operator, the stream of the events and the panel
+  of the operator are described by the subdomains next to it.
 - **The entry of the operator and the rights inside the space.** The first work takes in the
   remarks of the visitor; there is nobody to answer them yet.
 - **The search over the text of the conversations, the calls, the video and the answering bots** —
@@ -154,8 +154,9 @@ its purpose, and the sign of the visitor opens one conversation of one site and 
 
 ## Screens and states
 
-Not applicable: this work has no screen. The widget of the visitor and the panel of the operator
-arrive by the tasks RT-2181 and RT-2182 and describe their states themselves.
+Not applicable: this work has no screen. The panel of the operator describes its states by the
+subdomain next to this text; the widget of the visitor arrives by the task RT-2182 and describes
+them itself.
 
 ## Cross-cutting requirements
 
@@ -203,12 +204,13 @@ both. A request that names a conversation of a foreign site is refused as a not-
 
 ## Open questions
 
-- Whether the operator sees the address of the page the visitor writes from. It is useful in the
-  talk and is a sign of the person by the letter of the law of the country of the client; decided
-  by the task of the panel, RT-2181.
+- Whether the operator sees the address of the page the visitor writes from. The panel of the
+  operator does not show it: the storage of the chat keeps no such address at all, and the side that
+  knows it is the widget — the question moves to its task, RT-2182.
 - How long the conversations are kept. The storage of the node is not infinite, and nobody has
   named a term yet.
 
 ## History of changes
 
 - 2026-09-20 — written before the code by the task RT-2178, the first of the epic RT-2177.
+- 2026-09-20 — the panel of the operator became a subdomain next to this text by the task RT-2181.

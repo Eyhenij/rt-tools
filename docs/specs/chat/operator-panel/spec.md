@@ -1,12 +1,13 @@
 # The panel of the operator
 
-**Status:** proposed · **Revision:** 2026-09-20 · **Scenario prefix:** `SC-CH`
+**Status:** in force · **Revision:** 2026-09-20 · **Scenario prefix:** `SC-CH`
 **Depends on:** `chat` (the conversation and the message), `chat/operator-reading` (the operator and their sites), `chat/event-stream` (the stream)
 **Laws:** `access`, `navigation`, `reuse-first`, `lists`, `verifiability`
 **Procedures:** none — the operations are declared by the controllers of the chat
 
-The agreement of the task RT-2181 of the epic RT-2177: the screen the operator answers a visitor
-from. It merges into the spec of the domain by the last commit of the work.
+A subdomain of the chat: the screen the operator answers a visitor from. The taking in of a remark
+is described by the spec of the domain, the sites of an operator and the reading of the lists by the
+subdomain about their reading, and the arrival of a new remark by the subdomain about the stream.
 
 ## Why
 
@@ -92,6 +93,9 @@ subdomains next to this one.
 
 ### Refusal codes
 
+Not applicable in the sense of codes of its own kind: the answer of the operation carries a code of
+the vocabulary shared with the taking in of a remark, and the panel words it by that code.
+
 | What happened                                   | Code                       | What it says                            |
 | ----------------------------------------------- | -------------------------- | --------------------------------------- |
 | the conversation is foreign or does not exist   | `chatConversationNotFound` | that there is no such conversation      |
@@ -163,3 +167,5 @@ site is named in every row, and the narrowing by site is a narrowing, not the on
 ## History of changes
 
 - 2026-09-20 — written before the code by the task RT-2181 of the epic RT-2177.
+- 2026-09-20 — merged into the spec of the domain as a subdomain together with the bindings of the
+  rules to the code.
