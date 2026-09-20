@@ -1,0 +1,8 @@
+{
+  "accepted": {
+    "apps/message-bus-admin/src/index.html «Приёмник»": {
+      "reason": "The title of the page before the application starts: at that minute there is neither a dictionary nor a chosen language in the browser, and the tab has to be named by something. Once the application is up, the title is set by the title strategy from the dictionary.",
+      "task": "RT-2214"
+    }
+  }
+}

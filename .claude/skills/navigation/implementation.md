@@ -13,7 +13,7 @@ works here: signed in or not.
 
 - **In the rule** — Here
 - **the item declaration** — `ADMIN_MENU` in `menu.declaration.ts`, the item type — `IAdminMenuItem`
-- **a menu item** — the record `{ title, path, icon }`; `icon` is `IRtIcon.Name` from the kit
+- **a menu item** — the record `{ title, path, icon }`; `title` is a dictionary key, `TAdminLabelKey`, and the shell asks the dictionary for its text on the chosen language; `icon` is `IRtIcon.Name` from the kit
 - **a section with a panel** — there is no such thing here: the menu has one level
 - **a second-level panel** — there is no such thing here: in the kit's row it is opened by an item with columns, and no item has columns
 - **the unseen sign** — there is no such thing here

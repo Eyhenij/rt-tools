@@ -1,3 +1,29 @@
+# [0.29.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.28.0...rt-agent-kit@0.29.0) (2026-09-18)
+
+### Bug Fixes
+
+- **rt:agent-kit:** ветка эпика, названная планом, не читается проверкой выхода как задача без папки ([a8f36f8](https://github.com/Eyhenij/rt-tools/commit/a8f36f893d78c4ae44250a2cf0672021936edf66))
+- **rt:agent-kit:** запускатель перед вызовом больше не прячет вызов от проверок ([3775d9f](https://github.com/Eyhenij/rt-tools/commit/3775d9f97bf091c5c405249fe0c6ebb71a915eb4))
+- **rt:agent-kit:** конец эпика, прочитанный по таблице, отпускает ход целиком внутри отказа ([04dbd31](https://github.com/Eyhenij/rt-tools/commit/04dbd3171bc582a96d4ea6723000fac0e6289794))
+- **rt:agent-kit:** отказ проверки на закрытие разговора не считается выходом из хода ([de3b8e0](https://github.com/Eyhenij/rt-tools/commit/de3b8e0e20c1657dd54ebfd290466da46aafc8ed))
+- **rt:agent-kit:** правило о ходе и проверка выхода уложены в предел с учётом заголовка установки ([a1841a1](https://github.com/Eyhenij/rt-tools/commit/a1841a151aafc4a5e9f6e653049139d7d14a9c16))
+- **rt:agent-kit:** разбор записи хода не читает служебные сообщения словом владельца и судит отказ по последнему результату ([c9862cb](https://github.com/Eyhenij/rt-tools/commit/c9862cb3919a0f2b1b9dd2b2a794055d504883d9))
+
+### Features
+
+- **rt:agent-kit:** аудит очереди одной строкой называет оба следствия базы вне главной ветки ([aee7d13](https://github.com/Eyhenij/rt-tools/commit/aee7d13149757d17e0bdb442c0795a2034b444d3))
+- **rt:agent-kit:** назначенный эпик рабочей копии читается из одного файла ([4303e1a](https://github.com/Eyhenij/rt-tools/commit/4303e1affcd5415864e50ce08da859b5ab9961df))
+- **rt:agent-kit:** последний запуск CI главной ветки читается на старте сессии одной строкой ([36855f1](https://github.com/Eyhenij/rt-tools/commit/36855f1629c297b856b183a24a060ee9ef27dde2))
+- **rt:agent-kit:** проверка выхода из хода судит второй проход и ход с работой при открытом эпике ([385e155](https://github.com/Eyhenij/rt-tools/commit/385e155c15208159d72d3d8e3e16394f3e083285))
+- **rt:agent-kit:** проверка пакета отклоняет вызов инструмента завершения разговора ([43e1bba](https://github.com/Eyhenij/rt-tools/commit/43e1bba293a9a12fdd44275a31d2aeb9190351f8))
+- **rt:agent-kit:** проверка поставки запрещает ветку чужого эпика ([e5f9e26](https://github.com/Eyhenij/rt-tools/commit/e5f9e2626f290f798257630a549b9445c8e14a1e))
+- **rt:agent-kit:** работу не берут мимо ветки без назначенного эпика ([9d2046c](https://github.com/Eyhenij/rt-tools/commit/9d2046cc3103034ca441df1fb872dc729545996c))
+- **rt:agent-kit:** сверка доски говорит об открытой задаче в закрывающей колонке ([a63fb23](https://github.com/Eyhenij/rt-tools/commit/a63fb2396fc33512f6e61030e7017393f1a8ad52))
+- **rt:agent-kit:** сверка очереди читает последний прогон главной ветки — красный и вытесненный названы строками ([14efffd](https://github.com/Eyhenij/rt-tools/commit/14efffd8d7ceb71b83eb720afb9073172104ac26))
+- **rt:agent-kit:** слово владельца в кавычках в строке ожидания читает проверка выхода из хода ([3f839fc](https://github.com/Eyhenij/rt-tools/commit/3f839fc7e011ef11d6b570fcf51ea3e309ff6b5b))
+- **rt:agent-kit:** строки наблюдений уезжают в приём четвёртым родом груза ([05689b9](https://github.com/Eyhenij/rt-tools/commit/05689b9f0436de79e23a71363680ea69e2ab2c2c))
+- **rt:message-bus:** приём строк наблюдений — операция `POST /api/intake/observations` ([2efccba](https://github.com/Eyhenij/rt-tools/commit/2efccba01823e6eac5d7ea9a7f50545cde751bb5))
+
 # [0.28.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.27.0...rt-agent-kit@0.28.0) (2026-09-15)
 
 ### Bug Fixes

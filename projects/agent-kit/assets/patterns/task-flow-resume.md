@@ -118,6 +118,14 @@ owner — exactly the retelling all of this was set up to cancel:
 - **PR:** #1396, ждёт разбора · отвечено 3 замечания из 5 · не сделано: снятие черновика
 ```
 
+The waiting line carries the owner's standing word about a stop, quoted in « », when they gave
+one. The exit guard reads their word from this line, not a retelling; a line without a quote
+releases nothing. The quote holds until the owner cancels it, and the line is rewritten then.
+
+```markdown
+- **Waiting for the owner:** «эпик чата пока откладываем» — сказано вчера, работа стоит до его слова.
+```
+
 With the PR opened the state becomes `работа-отдана`, and its mandatory action is different — the
 next task, not waiting for review. By that minute there is nothing left to declare it with on disk:
 the progress left with the folder, and the tail of the work is led by pattern `task-flow-close`.

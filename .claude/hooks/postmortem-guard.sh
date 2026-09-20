@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/postmortem-guard.sh · b30cd2330f92 · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/postmortem-guard.sh · b30cd2330f92 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh
 # Incident guard: a turn in which the executor admitted a miss does not end while there is no

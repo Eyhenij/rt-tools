@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when returning to unfinished work in a new session. What is already in the context, what not to ask the owner, how to edit "Where we stand", how to record a decision along the way and a stage revision. Not for starting work — that is pattern task-flow-start.
 ---
-<!-- rt-kit v0.28.0 · patterns/task-flow-resume.md · aa0bfcb122bf · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/task-flow-resume.md · 86eed279bd72 · правится надстройкой, не здесь -->
 
 # Returning to unfinished work
 
@@ -117,6 +117,14 @@ owner — exactly the retelling all of this was set up to cancel:
 
 ```markdown
 - **PR:** #1396, ждёт разбора · отвечено 3 замечания из 5 · не сделано: снятие черновика
+```
+
+The waiting line carries the owner's standing word about a stop, quoted in « », when they gave
+one. The exit guard reads their word from this line, not a retelling; a line without a quote
+releases nothing. The quote holds until the owner cancels it, and the line is rewritten then.
+
+```markdown
+- **Waiting for the owner:** «эпик чата пока откладываем» — сказано вчера, работа стоит до его слова.
 ```
 
 With the PR opened the state becomes `работа-отдана`, and its mandatory action is different — the

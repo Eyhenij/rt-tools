@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.28.0 · hooks/git-guard-delivery-tree.sh · 7d9cd99583d6 · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/git-guard-delivery-tree.sh · 7d9cd99583d6 · правится надстройкой, не здесь
 # The tree a command runs in, for the delivery guard: the form of a branch name is judged by the
 # profile of that tree, not of the tree the session was started from.
 #

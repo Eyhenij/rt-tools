@@ -87,7 +87,6 @@ describe('AdminContainerComponent', () => {
 
         expect(shownSections()).not.toContain('Приглашения');
         expect(shownSections()).not.toContain('Использование');
-        expect(fixture.debugElement.query(By.css('[qa-dataid="container-no-sections"]'))).toBeNull();
     });
 
     it('SC-MB-325 — раздел людей стоит в шапке у того, у кого есть `accounts:read`', () => {
@@ -112,11 +111,24 @@ describe('AdminContainerComponent', () => {
         expect(shownSections().length).toBe(7);
     });
 
-    it('SC-MB-302 — вошедшему без единого права разделов не показывают, а говорят, что доступа нет', () => {
+    it('SC-MB-302 — вошедшему без единого права разделов в шапке не показывают', () => {
+        // Сперва положительное: разделы вообще показываются — иначе проверка на пустоту зеленела
+        // бы и на шапке, потерявшей меню целиком.
+        signedInWith(['postmortems:read']);
+
+        expect(shownSections()).toContain('Разборы происшествий');
+
         signedInWith([]);
 
         expect(shownSections()).toEqual([]);
-        expect(fixture.debugElement.query(By.css('[qa-dataid="container-no-sections"]'))).not.toBeNull();
-        expect(fixture.debugElement.query(By.css('[qa-dataid="container-content"] router-outlet'))).toBeNull();
+    });
+
+    it('SC-MB-396 — зона содержимого отдана аутлету всегда: экран без разделов стоит своим адресом', () => {
+        // Прежде оболочка подменяла аутлет пустым состоянием, и то состояние не переживало
+        // перезагрузку: адреса у него не было вовсе.
+        signedInWith([]);
+
+        expect(fixture.debugElement.query(By.css('[qa-dataid="container-content"] router-outlet'))).not.toBeNull();
+        expect(fixture.debugElement.query(By.css('[qa-dataid="container-no-sections"]'))).toBeNull();
     });
 });

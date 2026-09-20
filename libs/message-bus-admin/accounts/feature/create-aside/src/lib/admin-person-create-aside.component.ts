@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PeopleStore } from '@rt/message-bus-admin/accounts/data-access';
-import { adminLabel, spokenFaultText } from '@rt/message-bus-admin/common/core/util';
+import { adminFaultText, AdminTextService, IAdminFaultText } from '@rt/message-bus-admin/common/core/util';
 import {
     RtAsideComponent,
     RtAsideFooterComponent,
@@ -53,15 +53,20 @@ const BEM_BLOCK: string = 'admin-person-create-aside';
     host: { class: BEM_BLOCK },
 })
 export class AdminPersonCreateAsideComponent extends RtRouteAsideComponent<null> {
+    readonly #text: AdminTextService = inject(AdminTextService);
+
     readonly #store: PeopleStore = inject(PeopleStore);
 
-    protected readonly title: string = adminLabel('personCreateTitle');
-    protected readonly nameLabel: string = adminLabel('personCreateName');
-    protected readonly nameHint: string = adminLabel('personCreateNameHint');
-    protected readonly passwordLabel: string = adminLabel('personCreatePassword');
-    protected readonly passwordHint: string = adminLabel('personCreatePasswordHint');
-    protected readonly submitLabel: string = adminLabel('personCreateSubmit');
-    protected readonly closeLabel: string = adminLabel('panelClose');
+    /** Текст отказа: причину называет приёмник кодом, слово рисует словарь на выбранном языке. */
+    protected readonly fault: IAdminFaultText = adminFaultText('personCreateFailed');
+
+    protected readonly title: Signal<string> = computed((): string => this.#text.text('personCreateTitle'));
+    protected readonly nameLabel: Signal<string> = computed((): string => this.#text.text('personCreateName'));
+    protected readonly nameHint: Signal<string> = computed((): string => this.#text.text('personCreateNameHint'));
+    protected readonly passwordLabel: Signal<string> = computed((): string => this.#text.text('personCreatePassword'));
+    protected readonly passwordHint: Signal<string> = computed((): string => this.#text.text('personCreatePasswordHint'));
+    protected readonly submitLabel: Signal<string> = computed((): string => this.#text.text('personCreateSubmit'));
+    protected readonly closeLabel: Signal<string> = computed((): string => this.#text.text('panelClose'));
 
     /** Панель ничего не читает по адресу: записи, которую она заводит, ещё нет. */
     protected override readonly idOnly: boolean = true;
@@ -88,8 +93,8 @@ export class AdminPersonCreateAsideComponent extends RtRouteAsideComponent<null>
         const name: string = this.name.getRawValue().trim();
 
         this.runMutation(this.#store.create(name, this.password.getRawValue()), {
-            successText: adminLabel('personCreateDone', { name }),
-            errorText: (error: unknown): string => spokenFaultText(error, adminLabel('personCreateFailed')),
+            successText: this.#text.text('personCreateDone', { name }),
+            errorText: this.fault.take,
             closeOnSuccess: true,
         });
     }

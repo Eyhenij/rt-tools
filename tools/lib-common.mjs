@@ -1,4 +1,4 @@
-// rt-kit v0.28.0 · checks/lib-common.mjs · 18248f13e8ad · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/lib-common.mjs · 6c6cbad86adc · правится надстройкой, не здесь
 /**
  * Common to every subject of the lib layout audit: the layer set of each domain form, reading the
  * tree, the list of accepted debts and how a lib path yields its name, tag and alias.
@@ -14,12 +14,17 @@ import { CONFIG, ROOT, parseAllowlist } from './rt-kit-checks.config.mjs';
 
 const FAMILIES = CONFIG.families;
 /**
- * The lib root and the backend family come from the tree settings, not from the code: in a tree
+ * The lib root and the backend families come from the tree settings, not from the code: in a tree
  * that keeps its libs under another name the walk went past the code and the check went green on an
  * empty directory — that is, it answered "no violations" where it had not looked at all.
  */
 const LIBS_ROOT = CONFIG.libsRoot;
-const API_FAMILY = CONFIG.apiFamily;
+/**
+ * The backend families are a list, and a single name is read as a list of one: a tree holds more
+ * than one server application under the same root, and a family the walk skipped is
+ * indistinguishable from one walked without divergences.
+ */
+const API_FAMILIES = [CONFIG.apiFamily ?? []].flat().filter(Boolean);
 /**
  * The selector prefix mandatory for frontend libs. The word belongs to the tree entirely; empty
  * means the prefix means nothing here, and the check says nothing about it.
@@ -38,7 +43,7 @@ const COMMON_DOMAIN_LAYERS = [...FLAT_LAYERS, 'feature'].sort();
 /** The backend has no `ui` and no `shell`: it renders no markup and does no routing */
 const API_DOMAIN_LAYERS = ['api', 'data-access', 'feature', 'util'];
 /** Where libs that ended up outside the domain grid are looked for */
-const LIB_ROOTS = [...FAMILIES, API_FAMILY].map((family) => `${LIBS_ROOT}/${family}`);
+const LIB_ROOTS = [...FAMILIES, ...API_FAMILIES].map((family) => `${LIBS_ROOT}/${family}`);
 const REQUIRED_FILES = ['project.json', 'tsconfig.json', 'vitest.config.mts', 'src/index.ts'];
 const BOUNDARIES_DIR = 'eslint/boundaries/domains';
 
@@ -174,7 +179,7 @@ function sourceCount(libPath) {
 export {
     FAMILIES,
     LIBS_ROOT,
-    API_FAMILY,
+    API_FAMILIES,
     LIB_PREFIX,
     BARREL_FILES,
     FLAT_LAYERS,

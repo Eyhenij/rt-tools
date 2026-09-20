@@ -228,8 +228,9 @@ written in.
   the tree's documents are written in English: a session reads them, and English text costs it a
   fifth less with the same articles. A task in the queue, a PR description, a commit body and a
   chat reply are written in the owner's language: the owner reads them, and the rules layer does
-  not. A text written in the other side's language is a miss of the same kind as a layer word in
-  a task: its addressee will not read it.
+  not. So are an incident analysis and a record of closed work: the owner reads them as the account
+  of what happened. A text written in the other side's language is a miss of the same kind as a
+  layer word in a task: its addressee will not read it.
   <!-- rt-when: любой текст -->
 
 ## What of the law is not here

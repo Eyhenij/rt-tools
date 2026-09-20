@@ -378,3 +378,119 @@ When the guard of the exits judges the end of the turn
 Then the turn passes: it is made work by the command itself, not by the arrow at it
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1123 — a service message neither starts a turn nor is a word of the owner
+
+Given a rule was loaded over the turn, and its text carries the word «стоп»; or the feedback of a
+stop guard stands in the record
+When the guard of the exits judges the end of the turn
+Then the turn is counted from the remark of the owner, and the service text releases nothing
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1124 — a refusal of a guard is an exit only as the last action of the turn
+
+Given a guard refused a call in the middle of the turn, and the turn went on with reading
+When the guard of the exits judges the end of the turn
+Then the turn is given back: the refusal was answered by what followed, and the turn ended with text
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1125 — the word of the owner about a stop in its other forms
+
+Given the owner said «не продолжай», «прекрати» or «не двигайся»
+When the guard of the exits judges the end of the turn
+Then the turn passes: the word is the owner's
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1126 — a question at the head of an empty turn in a running stage
+
+Given the state is `этап-идёт`, and the turn asked the owner by the tool without a single edit
+When the guard of the exits judges the end of the turn
+Then the turn is given back and names the parts that do not depend on the answer; after work the
+same question releases the turn
+
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
+
+### SC-AK-1117 — under an open epic a turn with work and a second pass are judged
+
+Given the table of the epic names unfinished tasks, and the turn ended with an edit, or the guard
+judges the same turn for the second time
+When the guard of the exits judges the end of the turn
+Then the turn is given back, and the refusal names the unfinished tasks; a question after work, a
+refusal as the last action and the word of the owner release the turn as before
+
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
+
+### SC-AK-1118 — a handover written by hand under an open epic
+
+Given the table of the epic names unfinished tasks, and the turn ran the handover command by hand
+When the guard of the exits judges the end of the turn
+Then the turn is given back; the refusal of the window guard as the last action releases it
+
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
+
+### SC-AK-1119 — an unreadable epic keeps the former behaviour
+
+Given the table of the epic answers with a non-zero code or is absent
+When the guard of the exits judges the end of the turn
+Then a turn with work and a second pass are released as before, and an empty turn is given back
+
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
+
+### SC-AK-1120 — the owner's standing word quoted in the waiting line
+
+Given the waiting line of the progress quotes the owner's word in « », and the epic is open.
+When the guard of the exits judges the end of the turn.
+Then the turn passes with work and without it. Without a quote the line releases nothing.
+
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
+
+### SC-AK-1122 — a refused closing call does not release the turn
+
+Given the last tool result of the turn is the refusal of the guard of the closing tool, and the
+epic is open.
+When the guard of the exits judges the end of the turn.
+Then the turn is not released; the refusal of another guard releases it as before.
+
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
+
+### SC-AK-1128 — a branch named by an epic plan is not judged by the tier of the taken task
+
+Given the branch has the shape of a task branch, there is no task folder at it, and a plan in the
+plans directory names the branch in its header line
+When the guard of the exits judges the end of the turn
+Then the tier of the taken task is skipped. A turn with work passes, an empty turn is given back by
+the second sign. A plan naming another branch releases nothing.
+
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
+
+### SC-AK-1129 — a closed epic releases the whole turn
+
+Given the table of the epic is read and prints not a single unfinished task
+When the guard of the exits judges the end of the turn
+Then the turn is released whatever tier it reached: an empty turn, a second pass, a handover by
+hand and words about waiting for the word of the owner all pass
+
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
+
+### SC-AK-1132 — a next step rewritten into the progress is begun by the same turn
+
+Given the work stands in a running stage, and the turn rewrote the progress
+When the turn ends, and after that edit it did nothing but commit and push
+Then the guard gives the turn back and names the next step; an edit outside the task folder or a
+command changing the tree after the edit releases it, and a turn that opened the request is judged
+by the tier of handed-in work
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1135 — a launch in the background is never the last action of a turn
+
+Given the turn sent a role to work by the agent tool, or a command to the background, and did
+nothing after it
+When the turn ends
+Then the guard gives the turn back and names the launch in the background; a launch with no work
+before it is refused the same, and work after the launch releases the turn
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.

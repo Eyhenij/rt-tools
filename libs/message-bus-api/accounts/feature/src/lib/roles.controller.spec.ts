@@ -4,7 +4,7 @@ import { BadRequestException, ConflictException, NotFoundException } from '@nest
 import { describe, expect, it } from 'vitest';
 
 import { OPERATION_ACCESS, OPERATION_RIGHT } from '@rt/message-bus-api/access/util';
-import { IPage, IRoleView } from '@rt/message-bus-common';
+import { ERefusal, IPage, IRefusalBody, IRoleView } from '@rt/message-bus-common';
 
 import { RolesController } from './roles.controller';
 import { IRolesStorage, IStoredRole, signedInAs, rolesStorage } from './roles-storage.harness';
@@ -79,6 +79,23 @@ describe('RolesController', (): void => {
         );
         expect(roles).toHaveLength(2);
         expect(roles[0].rights).toContain('roles:manage');
+    });
+
+    it('SC-MB-408 — отклонённое обращение отвечает кодом набора и прежним кодом ответа', async (): Promise<void> => {
+        const { prisma }: IRolesStorage = rolesStorage();
+        const controller: RolesController = new RolesController(prisma);
+        const refused: unknown = await controller.create({ name: 'Владелец', rights: [] }).catch((error: unknown): unknown => error);
+
+        expect(refused).toBeInstanceOf(ConflictException);
+
+        const thrown: ConflictException = refused as ConflictException;
+        const body: IRefusalBody = thrown.getResponse() as IRefusalBody;
+
+        expect(thrown.getStatus()).toBe(409);
+        expect(body.code).toBe(ERefusal.RoleNameTaken);
+        expect(body.params).toEqual({ name: 'Владелец' });
+        // Предложение для дерева тело несёт рядом с кодом, а не вместо него
+        expect(body.message).toContain('Владелец');
     });
 
     it('SC-MB-379 — своя роль без права на роли не записывается, а чужая с тем же составом правится', async (): Promise<void> => {

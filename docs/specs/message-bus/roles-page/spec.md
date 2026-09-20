@@ -158,7 +158,7 @@ of the pointed edits of that person.
 | the panel of a new role       | the name and the checkboxes by section; "Завести" and "Закрыть"                     |
 | the panel of a role           | the same, filled; "Сохранить" and "Закрыть"                                         |
 | the panel of access           | the role, three words per right and the outcome; "Сохранить" and "Закрыть"          |
-| the request refused           | the word of the receiver above the fields; the input stays                          |
+| the request refused           | the text of the refusal above the fields; the input stays                           |
 | the request succeeded         | the panel closed, one notification, the list re-read                                |
 | the question of deleting      | the name of the role; "Удалить" and the way back                                    |
 

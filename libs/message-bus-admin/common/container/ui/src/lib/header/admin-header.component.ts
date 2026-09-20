@@ -1,6 +1,8 @@
 import {
     ChangeDetectionStrategy,
     Component,
+    computed,
+    inject,
     InputSignal,
     OutputEmitterRef,
     Signal,
@@ -10,7 +12,7 @@ import {
     viewChild,
 } from '@angular/core';
 import { AdminLocaleSwitchComponent } from '@rt/message-bus-admin/common/core/ui';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { IRtPageHeader, RtButtonDirective, RtPageHeaderComponent, RtThemeToggleComponent } from '@rt-tools/ui-kit-v2';
 
@@ -57,15 +59,19 @@ const BEM_BLOCK: string = 'admin-header';
     host: { class: BEM_BLOCK },
 })
 export class AdminHeaderComponent {
-    protected readonly appTitle: string = adminLabel('appTitle');
+    readonly #text: AdminTextService = inject(AdminTextService);
 
-    protected readonly navLabel: string = adminLabel('navSections');
+    // Подписи шапки — производные, а не постоянные: язык меняется здесь же, в попапе профиля, и
+    // взятый один раз текст остался бы на прежнем языке до перезагрузки страницы.
+    protected readonly appTitle: Signal<string> = computed((): string => this.#text.text('appTitle'));
 
-    protected readonly signOutLabel: string = adminLabel('signOut');
+    protected readonly navLabel: Signal<string> = computed((): string => this.#text.text('navSections'));
 
-    protected readonly themeLabel: string = adminLabel('theme');
+    protected readonly signOutLabel: Signal<string> = computed((): string => this.#text.text('signOut'));
 
-    protected readonly languageLabel: string = adminLabel('language');
+    protected readonly themeLabel: Signal<string> = computed((): string => this.#text.text('theme'));
+
+    protected readonly languageLabel: Signal<string> = computed((): string => this.#text.text('language'));
 
     /**
      * Шаблон попапа профиля. Рисует попап кит, а его содержимое приходит отсюда: до первой

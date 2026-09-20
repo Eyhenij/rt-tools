@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { cargoStateLabel } from '@rt/message-bus-admin/common/core/util';
+import { ADMIN_LABELS, cargoStateKey } from '@rt/message-bus-admin/common/core/util';
 import { ECargoState } from '@rt/message-bus-common';
 import { provideRtIDBStorage, provideRtStorage, provideRtUtils } from '@rt-tools/core';
 import { IRtSelect, RtSelectComponent } from '@rt-tools/ui-kit-v2';
@@ -46,8 +46,8 @@ describe('AdminStateFilterComponent', () => {
         const shown: ReadonlyArray<IRtSelect.Option<string>> = optionsOf(fixture);
 
         expect(shown[0].label).toBe('Все состояния');
-        expect(shown[2].label).toBe(cargoStateLabel(ECargoState.InWork));
-        expect(shown[4].label).toBe(cargoStateLabel(ECargoState.Released));
+        expect(shown[2].label).toBe(ADMIN_LABELS[cargoStateKey(ECargoState.InWork)]);
+        expect(shown[4].label).toBe(ADMIN_LABELS[cargoStateKey(ECargoState.Released)]);
     });
 
     it('SC-MB-224 — снятие отбора поднимается наверх пустой строкой, а не пустотой', () => {

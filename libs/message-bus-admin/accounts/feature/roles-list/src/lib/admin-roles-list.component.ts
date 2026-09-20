@@ -11,11 +11,11 @@ import {
 } from '@angular/cdk/table';
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { RolesStore } from '@rt/message-bus-admin/accounts/data-access';
-import { IRole, ROLE_CREATE_ROUTE, ROLES_COLUMNS, ROLES_TABLE_ID } from '@rt/message-bus-admin/accounts/util';
+import { IRole, rightsLabel, ROLE_CREATE_ROUTE, ROLES_COLUMNS, ROLES_TABLE_ID } from '@rt/message-bus-admin/accounts/util';
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import { AdminListPageComponent, AdminListToolbarRightDirective } from '@rt/message-bus-admin/common/core/ui';
-import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
+import { adminColumns, AdminTextService, provideAdminListHost, TAdminLabelKey, TAdminText } from '@rt/message-bus-admin/common/core/util';
 import { ROLE_SORTABLE } from '@rt/message-bus-common';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import {
@@ -25,9 +25,16 @@ import {
     RtTableComponent,
     RtTableRowActionsDirective,
     RtTableSortHeaderComponent,
+    TRtKitLabelParams,
 } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-roles-list';
+
+/** Строка таблицы с готовыми текстами: права через запятую и вопрос перед удалением. */
+interface IRoleRowView extends IRole.Short.State {
+    readonly rightsLabel: string;
+    readonly deleteQuestion: string;
+}
 
 /**
  * Раздел ролей.
@@ -81,15 +88,33 @@ const BEM_BLOCK: string = 'admin-roles-list';
     host: { class: BEM_BLOCK },
 })
 export class AdminRolesListComponent extends AdminListScreenBase<IRole.Short.State, IRole.Short.Api> {
-    protected readonly title: string = adminLabel('sectionRoles');
-    protected readonly hint: string = adminLabel('hintRoles');
-    protected readonly columns: readonly IRtTable.ColumnConfig[] = ROLES_COLUMNS;
+    readonly #text: AdminTextService = inject(AdminTextService);
+
+    protected readonly title: Signal<string> = computed((): string => this.#text.text('sectionRoles'));
+    protected readonly hint: Signal<string> = computed((): string => this.#text.text('hintRoles'));
+    protected readonly columns: Signal<readonly IRtTable.ColumnConfig[]> = adminColumns(ROLES_COLUMNS);
     protected readonly tableId: string = ROLES_TABLE_ID;
     protected readonly qaPrefix: string = 'roles';
-    protected readonly createLabel: string = adminLabel('roleCreate');
-    protected readonly editLabel: string = adminLabel('roleEditMenu');
-    protected readonly deleteLabel: string = adminLabel('roleDelete');
-    protected readonly deleteTitle: string = adminLabel('roleDeleteTitle');
+    protected readonly createLabel: Signal<string> = computed((): string => this.#text.text('roleCreate'));
+    protected readonly editLabel: Signal<string> = computed((): string => this.#text.text('roleEditMenu'));
+    protected readonly deleteLabel: Signal<string> = computed((): string => this.#text.text('roleDelete'));
+    protected readonly deleteTitle: Signal<string> = computed((): string => this.#text.text('roleDeleteTitle'));
+
+    /**
+     * Строки с правами словами и с вопросом перед удалением.
+     *
+     * Оба текста прежде лежали готовыми полями строки: маппер брал их один раз на ответ приёмника.
+     * Права и имя роли живут в строке, а текст по ним собирается здесь — на каждой отрисовке.
+     */
+    protected override readonly rows: Signal<readonly IRoleRowView[]> = computed((): readonly IRoleRowView[] => {
+        const text: TAdminText = (key: TAdminLabelKey, params?: TRtKitLabelParams): string => this.#text.text(key, params);
+
+        return this.store.rows().map((row: IRole.Short.State): IRoleRowView => ({
+            ...row,
+            rightsLabel: rightsLabel(row.rights, text),
+            deleteQuestion: this.#text.text('roleDeleteQuestion', { name: row.name }),
+        }));
+    });
 
     protected readonly store: RolesStore = inject(RolesStore);
     protected readonly sortable: readonly string[] = ROLE_SORTABLE;
@@ -106,10 +131,10 @@ export class AdminRolesListComponent extends AdminListScreenBase<IRole.Short.Sta
     );
 
     /** Пустой список объясняет себя сам: отбора у раздела нет, и объяснять пустоту им нечем. */
-    protected override readonly emptyMessage: Signal<string> = computed(() => adminLabel('listEmptyRoles'));
+    protected override readonly emptyMessage: Signal<string> = computed((): string => this.#text.text('listEmptyRoles'));
 
     /** Откуда берутся записи: кнопкой над списком, и человеку называется она сама. */
-    protected override readonly emptyDescription: Signal<string> = computed(() => adminLabel('listEmptyRolesFrom'));
+    protected override readonly emptyDescription: Signal<string> = computed((): string => this.#text.text('listEmptyRolesFrom'));
 
     constructor() {
         super();

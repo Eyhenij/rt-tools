@@ -1,16 +1,18 @@
 import { describe, expect, it } from 'vitest';
 
-import { accessInputOf, ERoleInputFault, keepsRolesRight, roleInputOf } from './role-edit.util';
+import { ERefusal } from '@rt/message-bus-common';
+
+import { accessInputOf, keepsRolesRight, roleInputOf } from './role-edit.util';
 
 describe('разбор правок над ролями и доступом', () => {
-    it('SC-MB-380 — пустое имя роли отбивается раньше прав, а права не из набора и повторы — словами о праве', () => {
-        expect(roleInputOf({ name: '  ', rights: ['nope'] }).fault?.kind).toBe(ERoleInputFault.NameEmpty);
+    it('SC-MB-380 — пустое имя роли отбивается раньше прав, а права не из набора и повторы — кодом с именем права', () => {
+        expect(roleInputOf({ name: '  ', rights: ['nope'] }).fault?.code).toBe(ERefusal.RoleNameEmpty);
         expect(roleInputOf({ name: 'Чтец', rights: ['nope:read'] }).fault).toEqual({
-            kind: ERoleInputFault.RightUnknown,
-            said: 'права «nope:read» нет в наборе',
+            code: ERefusal.RightUnknown,
+            params: { right: 'nope:read' },
         });
-        expect(roleInputOf({ name: 'Чтец', rights: ['usage:read', 'usage:read'] }).fault?.kind).toBe(ERoleInputFault.RightRepeated);
-        expect(roleInputOf({ name: 'Чтец', rights: [7] }).fault?.kind).toBe(ERoleInputFault.RightUnknown);
+        expect(roleInputOf({ name: 'Чтец', rights: ['usage:read', 'usage:read'] }).fault?.code).toBe(ERefusal.RightRepeated);
+        expect(roleInputOf({ name: 'Чтец', rights: [7] }).fault?.code).toBe(ERefusal.RightUnknown);
     });
 
     it('SC-MB-380 — роль отдаёт имя с обрезанными краями и права как есть; без списка прав — пустая роль', () => {
@@ -27,8 +29,8 @@ describe('разбор правок над ролями и доступом', ()
             input: { role: 'watcher', edits: [{ right: 'usage:read', granted: false }] },
             fault: null,
         });
-        expect(accessInputOf({ role: null, edits: [{ right: 'usage:read' }] }).fault?.kind).toBe(ERoleInputFault.EditsMalformed);
-        expect(accessInputOf({ role: null, edits: [{ right: 'nope', granted: true }] }).fault?.kind).toBe(ERoleInputFault.RightUnknown);
+        expect(accessInputOf({ role: null, edits: [{ right: 'usage:read' }] }).fault?.code).toBe(ERefusal.EditMalformed);
+        expect(accessInputOf({ role: null, edits: [{ right: 'nope', granted: true }] }).fault?.code).toBe(ERefusal.RightUnknown);
         expect(
             accessInputOf({
                 role: null,
@@ -36,8 +38,8 @@ describe('разбор правок над ролями и доступом', ()
                     { right: 'usage:read', granted: true },
                     { right: 'usage:read', granted: false },
                 ],
-            }).fault?.kind
-        ).toBe(ERoleInputFault.RightRepeated);
+            }).fault?.code
+        ).toBe(ERefusal.RightRepeated);
     });
 
     it('SC-MB-379 — право на роли остаётся, если его даёт роль или правка, и уходит, если правка его сняла', () => {

@@ -1,4 +1,5 @@
-import { IRtBarList } from '@rt-tools/ui-kit-v2';
+import { ADMIN_LABELS, fill, TAdminLabelKey, TAdminText } from '@rt/message-bus-admin/common/core/util';
+import { IRtBarList, TRtKitLabelParams } from '@rt-tools/ui-kit-v2';
 
 import { deniedSkillRows, IUsageChartBar, kindRows, quickPeriod, quickPeriodOf, topSkillRows, usageChartBars } from './usage-digest.logic';
 import { UsageDigestMapper } from './usage.mapper';
@@ -6,17 +7,26 @@ import { ESkillKind, IUsage } from './usage.model';
 
 const NOW: Date = new Date('2026-09-15T10:00:00.000Z');
 
+/**
+ * Словарь доводом: функции каркаса не знают, и русский набор им передаёт спека — тем же приёмом,
+ * каким на экране его передаёт вид.
+ */
+const TEXT: TAdminText = (key: TAdminLabelKey, params?: TRtKitLabelParams): string => fill(ADMIN_LABELS[key], params);
+
 function row(patch: Partial<IUsage.Row.State> = {}): IUsage.Row.State {
     return { skill: 'testing', kind: ESkillKind.Rule, loads: 4, sessions: 2, denials: 1, ...patch };
 }
 
 describe('сводка периода', () => {
     it('SC-MB-357 — столбики графика: высота от самого высокого дня, день без загрузок — ноль, подпись число и месяц', () => {
-        const bars: readonly IUsageChartBar[] = usageChartBars([
-            { day: '2026-08-12', loads: 4, sessions: 2, denials: 1 },
-            { day: '2026-08-13', loads: 1, sessions: 1, denials: 0 },
-            { day: '2026-08-14', loads: 0, sessions: 0, denials: 0 },
-        ]);
+        const bars: readonly IUsageChartBar[] = usageChartBars(
+            [
+                { day: '2026-08-12', loads: 4, sessions: 2, denials: 1 },
+                { day: '2026-08-13', loads: 1, sessions: 1, denials: 0 },
+                { day: '2026-08-14', loads: 0, sessions: 0, denials: 0 },
+            ],
+            TEXT
+        );
 
         expect(bars.map((bar: IUsageChartBar): number => bar.heightPercent)).toEqual([100, 25, 0]);
         expect(bars[0].label).toBe('12.08');
@@ -25,8 +35,8 @@ describe('сводка периода', () => {
     });
 
     it('SC-MB-357 — строки списков: доля от лидера, род подписью словаря, значение строкой', () => {
-        const top: readonly IRtBarList.Row[] = topSkillRows([row(), row({ skill: 'lists', kind: ESkillKind.Pattern, loads: 1 })]);
-        const kinds: readonly IRtBarList.Row[] = kindRows([{ kind: ESkillKind.Own, loads: 2 }]);
+        const top: readonly IRtBarList.Row[] = topSkillRows([row(), row({ skill: 'lists', kind: ESkillKind.Pattern, loads: 1 })], TEXT);
+        const kinds: readonly IRtBarList.Row[] = kindRows([{ kind: ESkillKind.Own, loads: 2 }], TEXT);
         const denied: readonly IRtBarList.Row[] = deniedSkillRows([row({ denials: 3 })]);
 
         expect(top.map((entry: IRtBarList.Row): number => entry.sharePercent)).toEqual([100, 25]);

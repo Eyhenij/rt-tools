@@ -12,6 +12,7 @@ export * from './lib/cargo-state-move';
 export * from './lib/month';
 export * from './lib/page';
 export * from './lib/person-view';
+export * from './lib/refusal';
 export * from './lib/rights';
 export * from './lib/role-view';
 export * from './lib/sortable';

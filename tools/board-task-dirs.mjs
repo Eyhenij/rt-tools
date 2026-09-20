@@ -1,4 +1,4 @@
-// rt-kit v0.28.0 · checks/board-task-dirs.github.mjs · 46db2bbcceca · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/board-task-dirs.github.mjs · 46db2bbcceca · правится надстройкой, не здесь
 /**
  * The task folders of the tree: recognising a number in a name, walking the folders and removing
  * the layout header from a copy of the template.

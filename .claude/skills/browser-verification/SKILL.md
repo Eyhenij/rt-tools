@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load for any check through the browser and for requests to the dev server. Names where the tree's applications run, what on the dev server cannot be trusted and what to measure instead of looking. Patterns browser-verification-stand, -measure.
 ---
-<!-- rt-kit v0.28.0 · rules/browser-verification.md · 7017b99bedee · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/browser-verification.md · 7017b99bedee · правится надстройкой, не здесь -->
 
 # Checking the running application — how it works here
 

@@ -1,4 +1,4 @@
-import { skillKindLabel } from './usage.columns';
+import { skillKindKey } from './usage.columns';
 import { usageKindOf, UsageRowMapper, UsageSessionMapper } from './usage.mapper';
 import { ESkillKind, IUsage } from './usage.model';
 
@@ -28,11 +28,11 @@ describe('UsageRowMapper', () => {
         expect(row.denials).toBe(1);
     });
 
-    it('каждый род показывается своим словом словаря', () => {
-        expect(skillKindLabel(ESkillKind.Rule)).toBe('правило');
-        expect(skillKindLabel(ESkillKind.Pattern)).toBe('паттерн');
-        expect(skillKindLabel(ESkillKind.Skill)).toBe('скил пакета');
-        expect(skillKindLabel(ESkillKind.Own)).toBe('свой скил проекта');
+    it('у каждого рода свой ключ словаря, а не машинное слово набора', () => {
+        expect(skillKindKey(ESkillKind.Rule)).toBe('kindRule');
+        expect(skillKindKey(ESkillKind.Pattern)).toBe('kindPattern');
+        expect(skillKindKey(ESkillKind.Skill)).toBe('kindSkill');
+        expect(skillKindKey(ESkillKind.Own)).toBe('kindOwn');
     });
 });
 

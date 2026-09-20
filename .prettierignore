@@ -125,3 +125,4 @@ tools/spec-contract.mjs
 tools/spec-scenarios.mjs
 tools/specs-for.mjs
 tools/task-new.mjs
+tools/tree-assignment.mjs

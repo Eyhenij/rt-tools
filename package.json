@@ -31,6 +31,7 @@
     "check:glossary": "node tools/check-glossary.mjs",
     "check:dupes": "node tools/check-dupes.mjs",
     "check:cycles": "node tools/check-cycles.mjs",
+    "check:admin-texts": "node tools/check-admin-texts.mjs",
     "check:styles": "node tools/check-styles.mjs",
     "check:tokens-styles": "node tools/check-tokens-styles.mjs",
     "check:tokens-graph": "node tools/check-tokens-graph.mjs",

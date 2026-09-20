@@ -1,6 +1,6 @@
 import { Route } from '@angular/router';
 import { ROLE_CREATE_ROUTE } from '@rt/message-bus-admin/accounts/util';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { adminTabTitle } from '@rt/message-bus-admin/common/core/util';
 
 /** Адрес раздела. Назван здесь и читается пунктом меню: два объявления разошлись бы молча. */
 export const ROLES_ROUTE: string = 'roles';
@@ -19,7 +19,7 @@ export const ROLES_ROUTE: string = 'roles';
 export const rolesRoutes: Route[] = [
     {
         path: ROLES_ROUTE,
-        title: adminLabel('sectionRoles'),
+        title: adminTabTitle('sectionRoles'),
         loadComponent: async () => (await import('@rt/message-bus-admin/accounts/feature/roles-list')).AdminRolesListComponent,
     },
     {

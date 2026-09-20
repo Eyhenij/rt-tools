@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing any .md including specs, and also code comments, commit bodies and PR descriptions. Names the path check, the pairs of an edit and its document, and what nothing checks in this tree. Ready-made wording is in pattern doc-style-write.
 ---
-<!-- rt-kit v0.28.0 · rules/doc-style.md · 43df2998a05a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/doc-style.md · 3a783cccdc7d · правится надстройкой, не здесь -->
 
 # Project texts — how it works here
 
@@ -229,8 +229,9 @@ written in.
   the tree's documents are written in English: a session reads them, and English text costs it a
   fifth less with the same articles. A task in the queue, a PR description, a commit body and a
   chat reply are written in the owner's language: the owner reads them, and the rules layer does
-  not. A text written in the other side's language is a miss of the same kind as a layer word in
-  a task: its addressee will not read it.
+  not. So are an incident analysis and a record of closed work: the owner reads them as the account
+  of what happened. A text written in the other side's language is a miss of the same kind as a
+  layer word in a task: its addressee will not read it.
   <!-- rt-when: любой текст -->
 
 ## What of the law is not here

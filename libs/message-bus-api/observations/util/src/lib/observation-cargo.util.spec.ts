@@ -27,7 +27,7 @@ function faultOf(body: TCargoBody): IObservationsFault {
     const parsed: IParsedObservations | IObservationsFault = parseObservationsCargo(body, CAP);
 
     if (!isObservationsFault(parsed)) {
-        throw new Error('разбор принял груз, а ожидался отказ');
+        throw new Error('the parse accepted the cargo, and a refusal was expected');
     }
 
     return parsed;
@@ -37,7 +37,7 @@ function parsedOf(body: TCargoBody): IParsedObservations {
     const parsed: IParsedObservations | IObservationsFault = parseObservationsCargo(body, CAP);
 
     if (isObservationsFault(parsed)) {
-        throw new Error(`разбор отбил груз: ${observationsFaultMessage(parsed)}`);
+        throw new Error(`the parse refused the cargo: ${observationsFaultMessage(parsed)}`);
     }
 
     return parsed;

@@ -24,7 +24,6 @@ describe('InviteShortMapper', () => {
         expect(row.name).toBe('Своё дерево');
         expect(row.issuedAt.toISOString()).toBe('2026-08-17T10:00:00.000Z');
         expect(row.expiresAt.toISOString()).toBe('2026-08-19T10:00:00.000Z');
-        expect(row.stateLabel).toBe('Ждёт');
     });
 
     it('SC-MB-128 — непогашенное приглашение показывает пустое место, а не отсутствие поля', () => {
@@ -41,6 +40,5 @@ describe('InviteShortMapper', () => {
         const row: IInvite.Short.State = MAPPER.mapFrom(raw({ state: 'выдумано' as ETreeInviteView }));
 
         expect(row.state).toBe(ETreeInviteView.Waiting);
-        expect(row.stateLabel).toBe('Ждёт');
     });
 });

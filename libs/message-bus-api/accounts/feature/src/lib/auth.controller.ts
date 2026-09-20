@@ -26,6 +26,7 @@ import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 
 import { LoginAttemptsService } from './login-attempts.service';
 import { cookieOptions, ICookieBearingResponse, ISessionAnswer, issueSignIn, rightsAnswerOf } from './sign-in-issue';
+import { ERefusal, refusalBody } from '@rt/message-bus-common';
 
 /** Подождать перед ответом. Ноль ждать не заставляет: обещание разрешается тем же тактом. */
 async function hold(ms: number): Promise<void> {
@@ -110,7 +111,7 @@ export class AuthController {
         const password: unknown = fields['password'];
 
         if (typeof name !== 'string' || typeof password !== 'string' || !name.trim() || !password) {
-            throw new UnauthorizedException('в запросе нет имени или пароля');
+            throw new UnauthorizedException(refusalBody(ERefusal.SignInEmpty));
         }
 
         return { name, password };
