@@ -1,7 +1,7 @@
 # Замысел
 
 **Задача:** RT-2178 · **Ветка:** `RT-2178-chat-storage-intake`
-**Договорённость:** `docs/specs/chat/proposed/chat-service/spec.md`
+**Draft:** `docs/specs/chat/proposed/chat-service/spec.md`
 **Поведение:** меняется
 
 ## След задачи

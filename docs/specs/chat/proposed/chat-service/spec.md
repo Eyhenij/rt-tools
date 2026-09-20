@@ -117,10 +117,10 @@ address of the page comes in the header `Origin`, as the browser sends it.
 
 The mandatory fields:
 
-| Operation                      | What is obliged to be in the request                                           |
-| ------------------------------ | ------------------------------------------------------------------------------ |
-| the creation of a conversation | the key of the site; the sign of the visitor — when the widget already has one |
-| the taking in of a remark      | the sign of the visitor, the identifier of the conversation, the text          |
+| Operation                      | What is obliged to be in the request                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------ |
+| the creation of a conversation | the key of the site; the sign of the visitor — when the widget already has one             |
+| the taking in of a remark      | the key of the site, the sign of the visitor, the identifier of the conversation, the text |
 
 ### Refusal codes
 
