@@ -1,5 +1,5 @@
 /**
- * `POST /api/chat/conversations` и `POST /api/chat/messages` — обращения посетителя сайта.
+ * Обращения посетителя сайта: площадка, его переписка, заведение и приём реплики.
  *
  * Обе операции открыты: посетитель пишет без входа, и представиться ему нечем, кроме ключа
  * сайта. Взамен их сторожат три вещи — живой сайт по ключу, адрес страницы из списка сайта и
@@ -38,12 +38,15 @@ import {
     findConversationByVisitorToken,
     findLiveSiteByKey,
     IChatConversationRow,
-    IChatTakenRow,
+    IChatMessageListRow,
     IChatSiteRow,
     IChatStartedRow,
+    IChatTakenRow,
+    messagesPage,
     startConversation,
 } from '@rt/message-bus-api/chat/data-access';
 import {
+    chatAnswersAt,
     CHAT_RATE_LIMIT,
     CHAT_RATE_WINDOW_MS,
     CHAT_TEXT_LIMIT,
@@ -53,9 +56,12 @@ import {
     originAllowed,
 } from '@rt/message-bus-api/chat/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { CHAT_SIDE_VISITOR, ERefusal, refusalBody } from '@rt/message-bus-common';
+import { CHAT_SIDE_VISITOR, ERefusal, IChatSiteLookRow, IPage, pageAsked, refusalBody } from '@rt/message-bus-common';
 
 import { ChatSubscribersService, IChatFrame } from './chat-subscribers.service';
+
+/** Поля порядка ленты: он один — минута приёма, и ею же лента стоит от старых к свежим. */
+const MESSAGE_SORTABLE: readonly string[] = ['takenAt'];
 
 /** Запрос, каким его видит операция: тело уже разобрано каркасом, адрес страницы берётся здесь. */
 interface IChatRequest {
@@ -127,23 +133,55 @@ export class ChatIntakeController {
         return { conversationId: started.conversation.id, visitorToken: started.visitorToken };
     }
 
+    /**
+     * Площадка глазами виджета: чем поздороваться и отвечает ли оператор сейчас.
+     *
+     * Отвечает ли — решает сервис: часы названы в поясе площадки, а часы браузера посетителя
+     * показывают его собственный пояс. Неизвестный и выключенный ключ отвечают одинаково, как и
+     * в остальных операциях приёма.
+     */
+    @Get('site')
+    @PublicOperation()
+    public async look(
+        @Query() query: Record<string, unknown>,
+        @Req() request: IChatRequest,
+        at: Date = new Date()
+    ): Promise<IChatSiteLookRow> {
+        const site: IChatSiteRow = await this.#site(query, request);
+
+        return {
+            greeting: site.greeting,
+            answering: chatAnswersAt({ from: site.answerFrom, to: site.answerTo, timeZone: site.timeZone }, at),
+            answerFrom: site.answerFrom,
+            answerTo: site.answerTo,
+        };
+    }
+
+    /**
+     * Своя переписка посетителя страницами, старые реплики первыми.
+     *
+     * Закрыта признаком посетителя: чтение оператора закрыто входом человека и отвечает за его
+     * сайты, а у посетителя нет ни того, ни другого. Само чтение — то же самое, которым читает
+     * панель: второе разошлось бы с ним молча.
+     */
+    @Get('messages')
+    @PublicOperation()
+    public async mine(@Query() query: Record<string, unknown>, @Req() request: IChatRequest): Promise<IPage<IChatMessageListRow>> {
+        const site: IChatSiteRow = await this.#site(query, request);
+        const conversation: IChatConversationRow = await this.#own(site, query);
+
+        return messagesPage(this.#prisma, conversation.id, pageAsked(query, MESSAGE_SORTABLE));
+    }
+
     /** Приём реплики посетителя в его переписку. */
     @Post('messages')
     @PublicOperation()
     public async take(@Body() body: unknown, @Req() request: IChatRequest, at: Date = new Date()): Promise<IChatMessageTaken> {
         const fields: Record<string, unknown> = (body ?? {}) as Record<string, unknown>;
         const site: IChatSiteRow = await this.#site(fields, request);
-        const token: string = field(fields, 'visitor');
-        const asked: string = field(fields, 'conversation');
-        const conversation: IChatConversationRow | null = token ? await findConversationByVisitorToken(this.#prisma, site.id, token) : null;
+        const conversation: IChatConversationRow = await this.#own(site, fields);
 
-        if (!conversation || conversation.id !== asked) {
-            this.#log.warn({ event: 'chat-conversation-refused', site: site.id });
-
-            throw new NotFoundException(refusalBody(ERefusal.ChatConversationNotFound));
-        }
-
-        this.#hold(`chat-message:${token}`, at);
+        this.#hold(`chat-message:${field(fields, 'visitor')}`, at);
 
         const text: string = field(fields, 'text');
         const fault: EChatTextFault | null = chatTextFault(text);
@@ -193,6 +231,21 @@ export class ChatIntakeController {
         }
 
         return this.#subscribers.stream({ conversationId: conversation.id, siteIds: [] });
+    }
+
+    /** Переписка посетителя по его признаку. Чужая и несуществующая отвечают одинаково. */
+    async #own(site: IChatSiteRow, fields: Record<string, unknown>): Promise<IChatConversationRow> {
+        const token: string = field(fields, 'visitor');
+        const asked: string = field(fields, 'conversation');
+        const conversation: IChatConversationRow | null = token ? await findConversationByVisitorToken(this.#prisma, site.id, token) : null;
+
+        if (!conversation || (asked && conversation.id !== asked)) {
+            this.#log.warn({ event: 'chat-conversation-refused', site: site.id });
+
+            throw new NotFoundException(refusalBody(ERefusal.ChatConversationNotFound));
+        }
+
+        return conversation;
     }
 
     /** Живой сайт по ключу и позволенный адрес страницы. Не сошлось — отказ, один на две причины. */

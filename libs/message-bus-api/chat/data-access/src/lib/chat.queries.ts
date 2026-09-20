@@ -9,11 +9,24 @@
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 
-/** Сайт, каким его читает приём реплики: ключ уже сошёлся, дальше решает список адресов. */
+/**
+ * Сайт, каким его читает приём реплики: ключ уже сошёлся, дальше решает список адресов.
+ *
+ * Приветствие и часы ответа лежат здесь же, а не читаются вторым запросом: виджет спрашивает их
+ * тем же обращением, которым узнаёт, жива ли площадка, — а два чтения одного и того же
+ * разошлись бы молча.
+ */
 export interface IChatSiteRow {
     readonly id: string;
     readonly spaceId: string;
     readonly origins: readonly string[];
+    /** Приветствие площадки. Пусто — виджет открывается сразу полем набора. */
+    readonly greeting: string;
+    /** Часы ответа минутами суток; равные концы означают, что часы не названы. */
+    readonly answerFrom: number;
+    readonly answerTo: number;
+    /** Имя пояса площадки. Пусто — часы считаются по поясу узла. */
+    readonly timeZone: string;
 }
 
 /** Переписка посетителя: чем на неё ссылаться и кому она принадлежит. */
@@ -42,7 +55,7 @@ export interface IChatTakenRow {
 export async function findLiveSiteByKey(prisma: PrismaService, key: string): Promise<IChatSiteRow | null> {
     return prisma.chatSite.findFirst({
         where: { key, enabled: true },
-        select: { id: true, spaceId: true, origins: true },
+        select: { id: true, spaceId: true, origins: true, greeting: true, answerFrom: true, answerTo: true, timeZone: true },
     });
 }
 

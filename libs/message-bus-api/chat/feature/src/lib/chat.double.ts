@@ -8,13 +8,17 @@
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 
-/** Сайт в памяти спеки. */
+/** Сайт в памяти спеки. Приветствие и часы ответа читает виджет. */
 export interface IDoubleSite {
     readonly id: string;
     readonly spaceId: string;
     readonly key: string;
     readonly origins: readonly string[];
     readonly enabled: boolean;
+    readonly greeting?: string;
+    readonly answerFrom?: number;
+    readonly answerTo?: number;
+    readonly timeZone?: string;
 }
 
 /** Посетитель в памяти спеки. */
@@ -113,8 +117,12 @@ export class ChatPrismaDouble {
 
     #site(args: Record<string, unknown>): IDoubleSite | undefined {
         const where: { key: string; enabled: boolean } = args['where'] as { key: string; enabled: boolean };
+        const found: IDoubleSite | undefined = this.sites.find(
+            (site: IDoubleSite): boolean => site.key === where.key && site.enabled === where.enabled
+        );
 
-        return this.sites.find((site: IDoubleSite): boolean => site.key === where.key && site.enabled === where.enabled);
+        // Умолчания хранилища: площадка без приветствия и без названных часов — законное состояние
+        return found && { greeting: '', answerFrom: 0, answerTo: 0, timeZone: '', ...found };
     }
 
     #visitor(args: Record<string, unknown>): { id: string; conversations: IDoubleConversation[] } | null {

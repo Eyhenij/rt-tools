@@ -39,6 +39,22 @@ export const CHAT_STATE_SEGMENT: string = 'state';
 /** Адрес потока событий оператора. */
 export const CHAT_STREAM_PATH: string = '/api/chat/conversations/stream';
 
+/**
+ * Площадка, какой её видит виджет: чем поздороваться и отвечает ли оператор сейчас.
+ *
+ * Ответ про «сейчас» считает сервис: часы названы в поясе площадки, а часы браузера посетителя
+ * показывают его собственный пояс и о чужом ничего не знают.
+ */
+export interface IChatSiteLookRow {
+    /** Приветствие площадки. Пусто — виджет открывается сразу полем набора. */
+    readonly greeting: string;
+    /** Отвечает ли оператор в эту минуту. */
+    readonly answering: boolean;
+    /** Часы ответа минутами суток: ими виджет говорит, когда придёт ответ. Равные — не названы. */
+    readonly answerFrom: number;
+    readonly answerTo: number;
+}
+
 /** Строка списка переписок: то, что панель показывает одной строкой. */
 export interface IChatTalkRow {
     readonly id: string;
