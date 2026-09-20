@@ -1,5 +1,7 @@
 export * from './lib/chat-limits';
+export * from './lib/chat-missed.logic';
 export * from './lib/chat-origin.logic';
 export * from './lib/chat-state.logic';
+export * from './lib/chat-stream.logic';
 export * from './lib/chat-text.logic';
 export * from './lib/chat-visitor.util';
