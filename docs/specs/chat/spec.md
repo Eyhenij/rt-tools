@@ -95,9 +95,9 @@ this text, and the words of each are named there. This text has no screen of its
 
 ## What is out of scope
 
-- **The notifications and the rollout** — the tasks RT-2183 and RT-2184 of the same epic. This text
-  is added to by them. The reading by the operator, the stream of the events, the panel of the
-  operator and the widget of the visitor are described by the subdomains next to it.
+- **The rollout** — the task RT-2184 of the same epic. This text is added to by it. The reading by
+  the operator, the stream of the events, the panel of the operator, the widget of the visitor and
+  the notifications stand as subdomains next to it.
 - **The entry of the operator and the rights inside the space.** The first work takes in the
   remarks of the visitor; there is nobody to answer them yet.
 - **The search over the text of the conversations, the calls, the video and the answering bots** —
@@ -145,13 +145,13 @@ is obliged to refuse instead of staying silent:
 
 ## Data
 
-| Entity           | What it holds                                                                                                                                 |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| The space        | The name; the minute of the creation                                                                                                          |
-| The site         | The space, the readable name, the key, the list of the allowed addresses, the sign of being switched on, the greeting and the hours of answer |
-| The visitor      | The site, the sign the service issued, the minute of the first turning                                                                        |
-| The conversation | The site, the visitor, the minute of the creation and of the last message                                                                     |
-| The message      | The conversation, who wrote it — the visitor or the operator — the text, the minute of the taking in                                          |
+| Entity           | What it holds                                                                                                                                                                             |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The space        | The name; the minute of the creation                                                                                                                                                      |
+| The site         | The space, the name, the key, the allowed addresses, the sign of being switched on. The greeting and the hours of answer. The address of the call outward, its secret and the agreed time |
+| The visitor      | The site, the sign the service issued, the minute of the first turning                                                                                                                    |
+| The conversation | The site, the visitor, the minute of the creation and of the last message                                                                                                                 |
+| The message      | The conversation, who wrote it — the visitor or the operator — the text, the minute of the taking in                                                                                      |
 
 The key of the site and the sign of the visitor are kept as they are given out: the key is open by
 its purpose, and the sign of the visitor opens one conversation of one site and nothing besides.
@@ -220,3 +220,5 @@ both. A request that names a conversation of a foreign site is refused as a not-
 - 2026-09-21 — the widget of the visitor became a subdomain next to this text by the task RT-2182;
   the record of the site gained the greeting and the hours of answer, and two open operations were
   added to the contract.
+- 2026-09-21 — the notifications became a subdomain next to this text by the task RT-2183; the
+  record of the site gained the address of the call outward, its secret and the agreed time.

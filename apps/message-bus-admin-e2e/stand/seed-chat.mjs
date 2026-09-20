@@ -13,7 +13,7 @@
  * ложится в одну секунду — порядок «свежий разговор сверху» на таких данных не отличить от
  * любого другого.
  */
-import { ADMIN_ORIGIN, ADMIN_PAGE_ORIGIN, API_ORIGIN, CHAT } from './stand.mjs';
+import { ADMIN_ORIGIN, ADMIN_PAGE_ORIGIN, API_ORIGIN, CHAT, CHAT_HOOK_URL } from './stand.mjs';
 
 /** Минута, от которой считаются времена разговоров: она же стоит в спеках раздела. */
 const FIRST_MOMENT = '2026-09-19 09:00:00';
@@ -74,12 +74,14 @@ function recordsSql() {
         `INSERT INTO "chat_site" ("id", "spaceId", "name", "key", "origins", "enabled") VALUES`,
         `    ('${CHAT.own.id}', 'chat-space-stand', '${CHAT.own.name}', '${CHAT.own.key}', ARRAY['${CHAT.own.origin}'], true),`,
         `    ('${CHAT.foreign.id}', 'chat-space-stand', '${CHAT.foreign.name}', '${CHAT.foreign.key}', ARRAY['${CHAT.foreign.origin}'], true);`,
-        `INSERT INTO "chat_site" ("id", "spaceId", "name", "key", "origins", "enabled", "greeting", "answerFrom", "answerTo", "timeZone")`,
+        `INSERT INTO "chat_site" ("id", "spaceId", "name", "key", "origins", "enabled", "greeting", "answerFrom", "answerTo", "timeZone",`,
+        `    "hookUrl", "hookSecret", "answerWithin")`,
         `VALUES`,
         `    ('${CHAT.widget.id}', 'chat-space-stand', '${CHAT.widget.name}', '${CHAT.widget.key}', ARRAY['${ADMIN_ORIGIN}', '${ADMIN_PAGE_ORIGIN}'], true,`,
-        `        '${CHAT.widget.greeting}', 0, 1439, 'UTC'),`,
+        `        '${CHAT.widget.greeting}', 0, 1439, 'UTC', '${CHAT_HOOK_URL}', '${CHAT.hook.secret}', 0),`,
         `    ('${CHAT.widgetClosed.id}', 'chat-space-stand', '${CHAT.widgetClosed.name}', '${CHAT.widgetClosed.key}',`,
-        `        ARRAY['${ADMIN_ORIGIN}', '${ADMIN_PAGE_ORIGIN}'], true, '${CHAT.widgetClosed.greeting}', ${closed.from}, ${closed.to}, 'UTC');`,
+        `        ARRAY['${ADMIN_ORIGIN}', '${ADMIN_PAGE_ORIGIN}'], true, '${CHAT.widgetClosed.greeting}', ${closed.from}, ${closed.to}, 'UTC',`,
+        `        '', '', 0);`,
     ].join('\n');
 }
 

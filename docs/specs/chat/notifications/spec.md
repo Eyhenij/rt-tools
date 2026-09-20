@@ -1,12 +1,12 @@
 # The notifications of the chat
 
-**Status:** proposed · **Revision:** 2026-09-21 · **Scenario prefix:** `SC-CH`
+**Status:** in force · **Revision:** 2026-09-21 · **Scenario prefix:** `SC-CH`
 **Depends on:** `chat` (the site, the conversation and the taking in), `chat/operator-panel` (the answer and the closing), `chat/event-stream` (the events of an open screen)
 **Laws:** `observability`, `access`, `verifiability`, `code-structure`
 **Procedures:** none — the service calls outward; it declares no operation of its own by this work
 
-The agreement of the task RT-2183 of the epic RT-2177: what the service says outward while nobody
-is looking at the panel. It merges into the spec of the domain by the last commits of the work.
+The subdomain of the chat: what the service says outward while nobody is looking at the panel. It
+was written before the code by the task RT-2183 of the epic RT-2177.
 
 ## Why
 
@@ -187,3 +187,4 @@ site, and its events go to that site alone.
 ## History of changes
 
 - 2026-09-21 — written before the code by the task RT-2183 of the epic RT-2177.
+- 2026-09-21 — merged into the domain as a subdomain by the same task.
