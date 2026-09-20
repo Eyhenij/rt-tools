@@ -1,12 +1,13 @@
 # The widget of the visitor
 
-**Status:** proposed · **Revision:** 2026-09-20 · **Scenario prefix:** `SC-CH`
+**Status:** in force · **Revision:** 2026-09-21 · **Scenario prefix:** `SC-CH`
 **Depends on:** `chat` (the site, the visitor and the taking in), `chat/event-stream` (the stream), `chat/operator-panel` (the answer of the operator)
 **Laws:** `frontend-application`, `access`, `reuse-first`, `verifiability`
 **Procedures:** none — the operations are declared by the controller of the taking in
 
-The agreement of the task RT-2182 of the epic RT-2177: what the visitor of a public site writes
-from. It merges into the spec of the domain by the last commit of the work.
+The subdomain of the chat: what the visitor of a public site writes from. The text was written
+before the code by the task RT-2182 of the epic RT-2177 and merged into the domain by its last
+commits.
 
 ## Why
 
@@ -194,3 +195,5 @@ One page belongs to one site. A visitor writing from two sites has two signs and
 ## History of changes
 
 - 2026-09-20 — written before the code by the task RT-2182 of the epic RT-2177.
+- 2026-09-21 — merged into the domain as a subdomain by the same task; the scenario SC-CH-61 about
+  the width of a long remark was added by the work itself.
