@@ -137,17 +137,31 @@ export async function conversationOfSites(
     });
 }
 
-/** Страница сообщений одной переписки, старые первыми: разговор читается с начала. */
-export async function messagesPage(prisma: PrismaService, conversationId: string, asked: IPageAsked): Promise<IPage<IChatMessageListRow>> {
+/**
+ * Страница сообщений одной переписки, старые первыми: разговор читается с начала.
+ *
+ * Названная минута сужает чтение до того, что пришло после неё: этим же запросом экран добирает
+ * пропущенное после обрыва потока. Второе чтение ради добора разошлось бы с этим молча — одно
+ * отдавало бы сообщение, которого другое уже не видит.
+ */
+export async function messagesPage(
+    prisma: PrismaService,
+    conversationId: string,
+    asked: IPageAsked,
+    since: Date | null = null
+): Promise<IPage<IChatMessageListRow>> {
+    const where: { conversationId: string; takenAt?: { gt: Date } } = since
+        ? { conversationId, takenAt: { gt: since } }
+        : { conversationId };
     const [rows, total]: [IChatMessageListRow[], number] = await prisma.$transaction([
         prisma.chatMessage.findMany({
-            where: { conversationId },
+            where,
             orderBy: { takenAt: 'asc' },
             skip: pageSkip(asked),
             take: asked.size,
             select: { id: true, side: true, text: true, takenAt: true },
         }),
-        prisma.chatMessage.count({ where: { conversationId } }),
+        prisma.chatMessage.count({ where }),
     ]);
 
     return { rows, total, page: asked.page, size: asked.size };

@@ -6,6 +6,7 @@ import { IChatConversationStarted, IChatMessageTaken } from '@rt/message-bus-api
 import { CHAT_RATE_LIMIT, CHAT_TEXT_LIMIT } from '@rt/message-bus-api/chat/util';
 
 import { ChatIntakeController } from './chat-intake.controller';
+import { ChatSubscribersService } from './chat-subscribers.service';
 import { ChatPrismaDouble, IDoubleMessage } from './chat.double';
 
 /** Адрес страницы, с которой зовут операции: он же стоит в списке живого сайта. */
@@ -28,7 +29,7 @@ describe('ChatIntakeController', () => {
         store.sites.push({ id: 'site-1', spaceId: 'space-1', key: 'live-key', origins: [PAGE], enabled: true });
         store.sites.push({ id: 'site-2', spaceId: 'space-1', key: 'off-key', origins: [PAGE], enabled: false });
         store.sites.push({ id: 'site-3', spaceId: 'space-1', key: 'empty-origins', origins: [], enabled: true });
-        controller = new ChatIntakeController(store.asPrisma(), new RateLimitService());
+        controller = new ChatIntakeController(store.asPrisma(), new RateLimitService(), new ChatSubscribersService());
     });
 
     it('SC-CH-1 — заведение переписки по ключу сайта выдаёт признак посетителя', async (): Promise<void> => {

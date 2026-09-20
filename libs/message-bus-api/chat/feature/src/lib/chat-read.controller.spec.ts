@@ -9,6 +9,7 @@ import { IPage } from '@rt/message-bus-common';
 
 import { ChatIntakeController } from './chat-intake.controller';
 import { ChatReadController } from './chat-read.controller';
+import { ChatSubscribersService } from './chat-subscribers.service';
 import { ChatPrismaDouble, IDoubleConversation } from './chat.double';
 
 /** Минута, от которой считаются все остальные: часы машины в спеке не читаются. */
@@ -34,7 +35,7 @@ describe('ChatReadController', () => {
         store.sites.push({ id: 'site-1', spaceId: 'space-1', key: 'live-key', origins: ['https://shop.example'], enabled: true });
         store.sites.push({ id: 'site-2', spaceId: 'space-2', key: 'other-key', origins: ['https://other.example'], enabled: true });
         store.operatorSites.push({ accountId: 'account-1', siteId: 'site-1' });
-        reads = new ChatReadController(store.asPrisma());
+        reads = new ChatReadController(store.asPrisma(), new ChatSubscribersService());
     });
 
     it('SC-CH-15 — оператор видит переписки своих сайтов и не видит соседских', async (): Promise<void> => {
@@ -165,7 +166,11 @@ describe('ChatReadController', () => {
     });
 
     it('SC-CH-26 — реплика посетителя открывает закрытую переписку снова', async (): Promise<void> => {
-        const intake: ChatIntakeController = new ChatIntakeController(store.asPrisma(), new RateLimitService());
+        const intake: ChatIntakeController = new ChatIntakeController(
+            store.asPrisma(),
+            new RateLimitService(),
+            new ChatSubscribersService()
+        );
         const started: { conversationId: string; visitorToken: string } = await intake.start(
             { site: 'live-key' },
             { headers: { origin: 'https://shop.example' } },

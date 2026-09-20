@@ -76,12 +76,17 @@ themselves. This text has no screen of its own.
 
 ## Contract
 
-| Operation                     | What it does                                                                    |
-| ----------------------------- | ------------------------------------------------------------------------------- |
-| GET /api/chat/stream          | the stream of one visitor: the key of the site and their sign as the parameters |
-| GET /api/chat/operator/stream | the stream of one operator: closed by the entry of a person                     |
+| Operation                          | What it does                                                                    |
+| ---------------------------------- | ------------------------------------------------------------------------------- |
+| GET /api/chat/stream               | the stream of one visitor: the key of the site and their sign as the parameters |
+| GET /api/chat/conversations/stream | the stream of one operator: closed by the entry of a person                     |
 
 Both answer with a stream of the events sent by the server, not with a single answer.
+
+The stream of the operator stands among the operations of their reading, not apart: it is closed by
+the same entry and answers for the same sites. What was missed is asked for by the reading that
+already exists — `GET /api/chat/conversations/:id/messages` with the minute of the last message the
+screen has as the parameter `since`.
 
 ### Refusal codes
 
