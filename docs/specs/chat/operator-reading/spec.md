@@ -1,13 +1,13 @@
 # The reading by the operator
 
-**Status:** proposed · **Revision:** 2026-09-20 · **Scenario prefix:** `SC-CH`
+**Status:** in force · **Revision:** 2026-09-20 · **Scenario prefix:** `SC-CH`
 **Depends on:** `chat` (the space, the site, the visitor, the conversation and the message)
 **Laws:** `verifiability`, `lists`, `access`, `code-structure`
 **Procedures:** none — the operations are declared by the controllers of the chat
 
-The agreement of the task RT-2179 of the epic RT-2177: what the operator sees and how the talk of
-a visitor reaches a person at all. It merges into the spec of the domain by the last commit of the
-work.
+A subdomain of the chat: what the operator sees and how the talk of a visitor reaches a person at
+all. The side of the visitor — the taking in of a remark — is described by the spec of the domain
+next to it.
 
 ## Why
 
