@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { AccessModule } from '@rt/message-bus-api/access/feature';
+
 import { ChatIntakeController } from './chat-intake.controller';
 
 /**
@@ -14,6 +16,7 @@ import { ChatIntakeController } from './chat-intake.controller';
  * одна поверхность с двумя дверьми.
  */
 @Module({
+    imports: [AccessModule],
     controllers: [ChatIntakeController],
 })
 export class ChatModule {}
