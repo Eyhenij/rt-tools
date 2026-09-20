@@ -98,11 +98,11 @@ export class ChatFeedStore extends BaseAsyncStoreService<IChatFeedState, TChatFe
         this.#readSource.next(talkId);
     }
 
-    /** Ответить посетителю. Реплика видна сразу, признак у неё свой, временный. */
+    /** Ответить посетителю. Реплика видна сразу, признак у неё свой, временный: человек его не видит. */
     public send(talkId: string, text: string, at: string): void {
         this.#issued += 1;
 
-        const sentId: string = `свой-${this.#issued}`;
+        const sentId: string = `sent-${this.#issued}`;
 
         this.patchState((state: IChatFeedState) => ({ ...state, messages: [...state.messages, chatSentMessage(sentId, text, at)] }));
         this.#sendSource.next({ talkId, text, sentId });
