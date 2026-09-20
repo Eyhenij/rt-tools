@@ -52,6 +52,12 @@ the rules: the observation lines a tree sends by the day, the counting of loads,
 refusals by skill over a period, and the fifth section of the admin application with a table of
 skills and a panel of the sessions behind one skill.
 
+`chat` — the chat with the visitors of the sites: a space per client of the service, a key per site,
+a list of the addresses the widget is called from, a sign the service issues to a visitor, one live
+conversation per visitor and the two operations the first remark arrives by. The panel of the
+operator, the stream of the events, the widget and the rollout arrive by the following tasks of the
+epic and are added to this text by them.
+
 `ui-kit` — five subjects of the surface of the first kit, put together from the agreements written
 before the code: the button of the copying at an empty cell of a table, the delay of the showing of a
 spinner, what a curtain is closed by, the column of the sorting and the outcome of fast repeated

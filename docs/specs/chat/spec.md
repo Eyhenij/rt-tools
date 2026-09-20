@@ -1,12 +1,12 @@
 # The chat with the visitors
 
-**Status:** proposed · **Revision:** 2026-09-20 · **Scenario prefix:** `SC-CH`
+**Status:** in force · **Revision:** 2026-09-20 · **Scenario prefix:** `SC-CH`
 **Depends on:** `message-bus` (the node, the storage and the pipeline of the rollout are shared)
 **Laws:** `verifiability`, `code-structure`, `lib-imports`, `entity-models`, `observability`
 **Procedures:** none — the operations are declared by the controllers of the chat
 
-The agreement of the epic RT-2177. It is written before the code and describes the service whole;
-what the first work carries out is named in "What is out of scope" — the rest arrives by the
+The domain of the epic RT-2177. The text was written before the code and describes the service
+whole; what the first work carries out is named in "What is out of scope" — the rest arrives by the
 following tasks of the epic and is added to this text by them.
 
 ## Why
@@ -124,7 +124,11 @@ The mandatory fields:
 
 ### Refusal codes
 
-The service answers with a code of the answer of HTTP, without named codes of the domain.
+Not applicable in the sense of codes of its own kind: the service answers with a code of the answer
+of HTTP, and the named code of the refusal it carries in the body comes from the vocabulary shared
+with the intake — `chatSiteKeyEmpty`, `chatSiteRejected`, `chatOriginRejected`,
+`chatConversationNotFound`, `chatTextEmpty`, `chatTextTooLong`, `chatThrottled`. Where the service
+is obliged to refuse instead of staying silent:
 
 | What happened                                    | Code  | What it says                                                         |
 | ------------------------------------------------ | ----- | -------------------------------------------------------------------- |
