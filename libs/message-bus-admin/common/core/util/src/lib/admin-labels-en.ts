@@ -277,4 +277,11 @@ export const ADMIN_LABELS_EN: Record<TAdminLabelKey, string> = Object.freeze({
     [ERefusal.TreeTokenRequired]: 'The operation demands a token of a project',
     [ERefusal.TreeTokenRejected]: 'The token is not accepted',
     [ERefusal.AccessUndeclared]: 'The operation declared no access',
+    [ERefusal.ChatSiteKeyEmpty]: 'The request awaits the key of the site',
+    [ERefusal.ChatSiteRejected]: 'The key of the site is not accepted',
+    [ERefusal.ChatOriginRejected]: 'The site accepts no requests from this address',
+    [ERefusal.ChatConversationNotFound]: 'There is no conversation with that sign',
+    [ERefusal.ChatTextEmpty]: 'A remark without a text is not accepted',
+    [ERefusal.ChatTextTooLong]: 'The remark is longer than {{limit}} characters',
+    [ERefusal.ChatThrottled]: 'There are more remarks from one visitor than {{limit}} per window: repeat in {{after}} s',
 });

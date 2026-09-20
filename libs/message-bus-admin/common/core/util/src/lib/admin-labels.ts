@@ -289,6 +289,13 @@ export const ADMIN_LABELS = {
     [ERefusal.TreeTokenRequired]: 'Операция требует токен проекта',
     [ERefusal.TreeTokenRejected]: 'Токен не принят',
     [ERefusal.AccessUndeclared]: 'Операция доступа не объявила',
+    [ERefusal.ChatSiteKeyEmpty]: 'Обращение ожидает ключ сайта',
+    [ERefusal.ChatSiteRejected]: 'Ключ сайта не принят',
+    [ERefusal.ChatOriginRejected]: 'Сайт не принимает обращений с этого адреса',
+    [ERefusal.ChatConversationNotFound]: 'Переписки с таким признаком нет',
+    [ERefusal.ChatTextEmpty]: 'Реплика без текста не принимается',
+    [ERefusal.ChatTextTooLong]: 'В реплике больше {{limit}} знаков',
+    [ERefusal.ChatThrottled]: 'Реплик с одного посетителя больше {{limit}} за окно: повторите через {{after}} с',
 } as const;
 
 /** Ключ подписи админки. Опечатка в шаблоне не доживает до собранного экрана. */
