@@ -74,3 +74,9 @@ Then the widget takes the whole screen, and the field stands under the thread
 Given a page whose styles repaint every element of its kind
 When the widget is drawn on it
 Then the look of the widget stays its own
+
+### SC-CH-61 — a long remark stays within the width of the widget
+
+Given an open widget on a wide screen
+When the visitor sends a remark of one long word
+Then the remark is broken by the width of the thread and goes past no edge of the widget

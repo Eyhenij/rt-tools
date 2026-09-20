@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { originAllowed } from './chat-origin.logic';
+import { originAllowed, pageOrigin } from './chat-origin.logic';
 
 describe('originAllowed', () => {
     it('SC-CH-5 — адрес страницы вне списка сайта не проходит', () => {
@@ -18,5 +18,12 @@ describe('originAllowed', () => {
 
     it('обращение без адреса страницы не проходит даже при заполненном списке', () => {
         expect(originAllowed(['https://shop.example'], '')).toBe(false);
+    });
+
+    it('SC-CH-56 — адрес страницы берётся из «откуда пришёл», когда заголовка адреса нет', () => {
+        expect(pageOrigin('https://shop.example', 'https://foreign.example/page')).toBe('https://shop.example');
+        expect(pageOrigin('', 'https://shop.example/catalog?page=2')).toBe('https://shop.example');
+        expect(pageOrigin('', '')).toBe('');
+        expect(pageOrigin('', 'не адрес')).toBe('');
     });
 });

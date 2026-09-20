@@ -54,6 +54,7 @@ import {
     EChatTextFault,
     issueVisitorToken,
     originAllowed,
+    pageOrigin,
 } from '@rt/message-bus-api/chat/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { CHAT_SIDE_VISITOR, ERefusal, IChatSiteLookRow, IPage, pageAsked, refusalBody } from '@rt/message-bus-common';
@@ -264,7 +265,7 @@ export class ChatIntakeController {
             throw new UnauthorizedException(refusalBody(ERefusal.ChatSiteRejected));
         }
 
-        if (!originAllowed(site.origins, header(request, 'origin'))) {
+        if (!originAllowed(site.origins, pageOrigin(header(request, 'origin'), header(request, 'referer')))) {
             this.#log.warn({ event: 'chat-origin-refused', site: site.id });
 
             throw new ForbiddenException(refusalBody(ERefusal.ChatOriginRejected));

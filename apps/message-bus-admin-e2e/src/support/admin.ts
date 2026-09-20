@@ -114,6 +114,19 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
     }),
 });
 
+/**
+ * Прямоугольник узла на экране.
+ *
+ * Playwright отдаёт пустоту, когда узла на экране нет, и спека сверяет это отдельно: измерение
+ * пустоты молча читалось бы нулями и сходилось бы с любым обещанием о раскладке.
+ */
+export interface IBox {
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+}
+
 /** Узел по метке проверки: ею размечены все места, за которые набор держится. */
 export function qa(page: Page, id: string): Locator {
     return page.locator(`[qa-dataid="${id}"]`);

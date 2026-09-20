@@ -162,7 +162,7 @@ export class ChatWidgetElement extends HTMLElement {
 
             const taken: { messageId: string; takenAt: string } = await sendRemark(this.#signs, text);
 
-            this.#messages = [...this.#messages, { text, id: taken.messageId, side: CHAT_SIDE_VISITOR, takenAt: taken.takenAt }];
+            this.#put({ text, id: taken.messageId, side: CHAT_SIDE_VISITOR, takenAt: taken.takenAt });
         } catch (error: unknown) {
             this.#fault = faultWord(error);
         }
@@ -180,17 +180,26 @@ export class ChatWidgetElement extends HTMLElement {
         this.#stream.addEventListener('message', (event: MessageEvent<string>): void => this.#arrived(event.data));
     }
 
-    /** Пришедшая реплика. Своя, уже стоящая в ленте, второй раз не встаёт. */
+    /** Пришедшая потоком реплика. */
     #arrived(raw: string): void {
         const event: IChatMessageRow & { messageId?: string } = JSON.parse(raw) as IChatMessageRow & { messageId?: string };
-        const id: string = event.messageId ?? event.id;
 
-        if (this.#messages.some((message: IChatMessageRow): boolean => message.id === id)) {
+        this.#put({ id: event.messageId ?? event.id, side: event.side, text: event.text, takenAt: event.takenAt });
+        this.#draw();
+    }
+
+    /**
+     * Реплика в ленту, если её там ещё нет.
+     *
+     * Своя реплика приходит дважды: ответом операции и событием потока — сервис рассылает его
+     * раньше, чем отвечает отправителю. Обе дороги ведут сюда, и лента остаётся одна.
+     */
+    #put(message: IChatMessageRow): void {
+        if (this.#messages.some((one: IChatMessageRow): boolean => one.id === message.id)) {
             return;
         }
 
-        this.#messages = [...this.#messages, { id, side: event.side, text: event.text, takenAt: event.takenAt }];
-        this.#draw();
+        this.#messages = [...this.#messages, message];
     }
 
     /** Разметка целиком: она короткая, и собирать её кусками дороже, чем нарисовать заново. */
@@ -200,24 +209,24 @@ export class ChatWidgetElement extends HTMLElement {
     }
 
     #bubble(): string {
-        return `<button class="bubble" data-act="open" type="button">${WIDGET_WORDS.bubble}</button>`;
+        return `<button class="bubble" data-act="open" qa-dataid="widget-bubble" type="button">${WIDGET_WORDS.bubble}</button>`;
     }
 
     #panel(): string {
         if (!this.#live) {
-            return `<div class="panel"><div class="head"><span>${WIDGET_WORDS.unavailable}</span>${closeButton()}</div></div>`;
+            return `<div class="panel" qa-dataid="widget-panel"><div class="head"><span qa-dataid="widget-unavailable">${WIDGET_WORDS.unavailable}</span>${closeButton()}</div></div>`;
         }
 
-        return `<div class="panel">
+        return `<div class="panel" qa-dataid="widget-panel">
             <div class="head">
-                <span class="hours">${this.#hours()}</span>
+                <span class="hours" qa-dataid="widget-hours">${this.#hours()}</span>
                 ${closeButton()}
             </div>
-            <div class="feed" data-part="feed">${this.#feed()}</div>
-            ${this.#fault ? `<div class="fault" data-part="fault">${this.#fault}</div>` : ''}
+            <div class="feed" data-part="feed" qa-dataid="widget-feed">${this.#feed()}</div>
+            ${this.#fault ? `<div class="fault" data-part="fault" qa-dataid="widget-fault">${this.#fault}</div>` : ''}
             <form class="send" data-act="send">
-                <input aria-label="${WIDGET_WORDS.placeholder}" data-part="text" placeholder="${WIDGET_WORDS.placeholder}" />
-                <button type="submit">${WIDGET_WORDS.send}</button>
+                <input aria-label="${WIDGET_WORDS.placeholder}" data-part="text" placeholder="${WIDGET_WORDS.placeholder}" qa-dataid="widget-text" />
+                <button qa-dataid="widget-send" type="submit">${WIDGET_WORDS.send}</button>
             </form>
         </div>`;
     }
@@ -225,14 +234,14 @@ export class ChatWidgetElement extends HTMLElement {
     /** Лента или приветствие: до первой реплики показывать нечего, кроме слов площадки. */
     #feed(): string {
         if (this.#messages.length === 0) {
-            return `<p class="greeting" data-part="greeting">${escaped(this.#look?.greeting ?? '')}</p>`;
+            return `<p class="greeting" data-part="greeting" qa-dataid="widget-greeting">${escaped(this.#look?.greeting ?? '')}</p>`;
         }
 
         return this.#messages
             .map(
                 (message: IChatMessageRow): string => `<div class="message" data-side="${message.side}">
                     <span class="side">${message.side === CHAT_SIDE_VISITOR ? WIDGET_WORDS.sideVisitor : WIDGET_WORDS.sideOperator}</span>
-                    <span data-part="text">${escaped(message.text)}</span>
+                    <span data-part="text" qa-dataid="widget-message">${escaped(message.text)}</span>
                 </div>`
             )
             .join('');

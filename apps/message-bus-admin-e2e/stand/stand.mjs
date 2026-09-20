@@ -47,6 +47,15 @@ export const ADMIN_PORT = intFromEnv('E2E_ADMIN_PORT', 4310);
 export const API_ORIGIN = `http://localhost:${API_PORT}`;
 export const ADMIN_ORIGIN = `http://localhost:${ADMIN_PORT}`;
 
+/**
+ * Тем же адресом админка зовётся из браузера набора.
+ *
+ * Браузер поднимается образом, и `localhost` там свой: машину он зовёт другим именем. Отсюда же
+ * его берёт и настройка прогонщика, и засев площадок виджета — заголовок адреса страницы браузер
+ * шлёт именно таким, и площадка, у которой в списке стоит `localhost`, отказала бы ему.
+ */
+export const ADMIN_PAGE_ORIGIN = `http://host.docker.internal:${ADMIN_PORT}`;
+
 /** Имя базы стенда. Названо отдельно: `CREATE DATABASE` не принимает адреса. */
 export const STAND_DATABASE = textFromEnv('E2E_DATABASE', 'message_bus_e2e');
 
@@ -166,6 +175,25 @@ export const CHAT = Object.freeze({
     ]),
     /** Разговор соседского сайта: он в списке набора не показывается вовсе. */
     foreignTalk: 'Это чужой разговор',
+    /**
+     * Площадки виджета: страница с ним поднимается самим стендом, и её адрес стоит в их списке.
+     *
+     * Их две. Первая отвечает круглые сутки — на ней проверяется всё, что видит посетитель, и
+     * за неё же отвечает оператор набора: его ответ приходит в виджет потоком. Вторая называет
+     * часы, в которые набор не попадает никогда: их считает засев от своей минуты.
+     */
+    widget: Object.freeze({
+        id: 'chat-site-widget',
+        name: 'Стенд страница с виджетом',
+        key: 'stand-chat-widget',
+        greeting: 'Здравствуйте! Это чат набора.',
+    }),
+    widgetClosed: Object.freeze({
+        id: 'chat-site-widget-closed',
+        name: 'Стенд виджет вне часов',
+        key: 'stand-chat-widget-closed',
+        greeting: 'Сейчас нас нет на месте.',
+    }),
 });
 
 /** Адреса разделов админки. Те же, что объявляют маршруты разделов. */
