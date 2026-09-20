@@ -123,8 +123,8 @@ the taking in already uses, and the widget words them itself.
 
 | What happened                                  | Code                       | What it says                            |
 | ---------------------------------------------- | -------------------------- | --------------------------------------- |
-| the key of the site is unknown or switched off | `chatSiteUnknown`          | that there is no such site              |
-| the address of the page is not in the list     | `chatOriginNotAllowed`     | that the page is not put in             |
+| the key of the site is unknown or switched off | `chatSiteRejected`         | that there is no such site              |
+| the address of the page is not in the list     | `chatOriginRejected`       | that the page is not put in             |
 | the sign of the visitor is foreign             | `chatConversationNotFound` | that there is no such conversation      |
 | the text of the remark is empty                | `chatTextEmpty`            | that a remark without text is not taken |
 | the text is longer than the limit              | `chatTextTooLong`          | that the limit is named in the answer   |

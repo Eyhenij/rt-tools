@@ -11,6 +11,7 @@
  * Порядок значим: первое подходящее правило выигрывает, поэтому общее разрешение публикуемых
  * пакетов стоит последним.
  */
+import { chatWidgetBoundaries } from './domains/chat-widget.config.mjs';
 import { messageBusAdminAccountsBoundaries } from './domains/message-bus-admin-accounts.config.mjs';
 import { messageBusAdminChatBoundaries } from './domains/message-bus-admin-chat.config.mjs';
 import { messageBusAdminBoundaries } from './domains/message-bus-admin.config.mjs';
@@ -22,6 +23,7 @@ export const allBoundaries = [
     ...messageBusAdminBoundaries,
     ...messageBusAdminAccountsBoundaries,
     ...messageBusAdminChatBoundaries,
+    ...chatWidgetBoundaries,
     ...messageBusApiBoundaries,
     ...messageBusCommonBoundaries,
     ...packagesBoundaries,
