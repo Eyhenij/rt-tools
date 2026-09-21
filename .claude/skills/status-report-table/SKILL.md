@@ -4,7 +4,7 @@ kind: pattern
 rule: status-report
 description: Pattern of rule status-report. Load when answering the owner where the work stands. Ready-made calls for every cell: the branch and its commits, the PR state, the pipeline run checked against the head, the task on the board, the task order from the epic plan. A filled-in sample table is attached.
 ---
-<!-- rt-kit v0.29.0 · patterns/status-report-table.github.md · 650ab5aac5a8 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/status-report-table.github.md · 7d2c7290a4e0 · правится надстройкой, не здесь -->
 
 # What the state is asked with and how it lands in the table
 
@@ -71,6 +71,12 @@ The command name in the shell is sometimes taken by someone else's alias, and th
 into an interactive sign-in instead of an answer.
 
 ## Common misses
+
+- **On the epic's own branch the number is asked as an argument.** Without an argument the
+  command takes the number from the branch and looks in that card's body for the line declaring
+  an epic. On a task branch that line is there; on the epic branch the card is the epic itself
+  and declares no other. The answer — "the task declares no epic" — then reads as a broken card
+  rather than as a question asked the wrong way.
 
 - **The task on the board is read by a request, not by the view subcommand.** The subcommand
   drags in boards of the old kind, the host answers with a refusal about them, and the call turns

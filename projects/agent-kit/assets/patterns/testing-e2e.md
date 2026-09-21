@@ -108,6 +108,20 @@ This knowledge is entered in the rule, not in the shared module of the suite. Wr
 it is known to whoever wrote it — the next test repeats the miss, because it reads the rule, not the
 code.
 
+A click on closing a panel is not its disappearance either. While the panel leaves the screen it
+keeps its fields, its buttons and its anchors: a test that filled a field in a panel already going
+away stood until its time limit, and the trace showed the fill landing in a node nobody was going
+to read. So the absence of the node is awaited before the next action:
+
+```ts
+await qa(page, 'invite-create-close').click();
+await expect(qa(page, 'invite-create-panel')).toHaveCount(0);
+```
+
+The same holds for a popup that stays open after its item is chosen. It covers the screen, and the
+click aimed at a button under it goes to the popup: the screen answers as if the button had not
+been pressed at all. The popup is closed and its absence awaited by the same pair of lines.
+
 ## Common misses
 
 - **Take the rendering server port with care:** the developer's stand goes by the same name

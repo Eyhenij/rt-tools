@@ -4,9 +4,11 @@ The names of this tree, next to the rule `SKILL.md`. A separate file because the
 technique and travels between repositories whole, while everything below is true only here and
 goes stale at every renaming.
 
-Here the tree is itself the source of look: the rule looks inside the kit. "Take the ready-made"
-means leaning on a neighbouring component, on a field base or on a CDK primitive instead of
-starting a second one just like it next to it.
+The tree stands on both sides of this rule at once. It writes the look — two kits under
+`projects/` — and it consumes it. The admin panel of the receiver is assembled from the second kit,
+and its screens are an ordinary consumer. Inside a kit "take the ready-made" means leaning on a
+neighbouring component, on a field base or on a CDK primitive. On a screen it means taking the kit
+component and not drawing it again.
 
 ## What it is called here
 
@@ -22,6 +24,8 @@ starting a second one just like it next to it.
 
 - **the first kit's components** — `projects/ui-kit/src/lib/ui-kit/` — buttons, table, dialog, panel, notification, file uploaders and the rest
 - **the second kit's components** — `projects/ui-kit-v2/src/lib/components/`
+- **the screens that consume the second kit** — `libs/message-bus-admin/*/feature/*` and `apps/message-bus-admin/`
+- **the shared layout layer of the admin panel** — `apps/message-bus-admin/src/styles/`
 - **the form-field base** — `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.base.ts`
 - **the route side-panel base** — `projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts`
 - **the shared functions and types** — `projects/utils/src/lib/`
@@ -37,7 +41,7 @@ here" (the bold part of the item). An article without a line and a line without 
 divergence: the rule promises what the tree does not have, or the tree holds what the rule is
 silent about.
 
-- **The source of look is chosen by application, not by habit.** — **Not checked by anything.** There are no applications in the tree, and the choice goes between the two kits: the first has the prefix `rtui-` and a token set of its own, the second `rt-` and its own. They share no code.
+- **The source of look is chosen by application, not by habit.** — `.claude/rt-kit/checks.json:reuse` — the bundle of the second kit is declared with the area it holds over. That area is the admin panel of the receiver. There the source of look is `@rt-tools/ui-kit-v2`. The first kit has the prefix `rtui-`, the second `rt-`; they share no code, and no screen takes both.
 - **A value of an integration is taken the same way as the neighbouring value of the same integration.** — **Not checked by anything.** A value hardcoded into the code is syntactically sound: the lint, the build and the duplicate audit stay silent. The tree's closest integration is the browser profile keys in `.claude/rt-kit/browser-device-id`, and there are no hardcoded values next to them.
 - **Work starts with reading the ready-made, not with a blank file.** — **Not checked by anything.** Reading leaves no trace in the tree. The neighbouring kit folder is read whole — `projects/ui-kit/src/lib/ui-kit/` and `projects/ui-kit-v2/src/lib/components/`.
 - **A restriction invented on the spot is checked by a search over the tree before it becomes an argument.** — **Not checked by anything.** A restriction lives in reasoning, not in a file: a search that never happened leaves no trace. It is held by the argument "it may not be done this way", said to the owner, naming the command it was checked by.
@@ -48,7 +52,7 @@ silent about.
 - **The departure marker is set after reading the inventory of the ready-made, and what was read is named next to it.** — **Not checked by anything.** The uniformity guard reads the marker itself and does not judge the explanation next to it
 - **A check is not taken off the gate so that the push goes through.** — `.claude/rt-kit/project.sh:rt_push_checks` — the gate suite names the check by a line; a removed line is visible by reading the profile edit, but is refused by nothing
 - **A component is declared in three files: `.ts`, `.html`, `.scss`.** — `tools/check-reuse.mjs:SIGNALS` — a template and styles inside the decorator stand as a sign of bypassing the ready-made; the file triple is kept in every component of both kits.
-- **A screen component outside the kit has an empty styles file by default.** — Not applicable: there are no screens here. The closest is that a component's styles file holds only its own differences, while the shared part leaves for the kit's styles layer.
+- **A screen component outside the kit has an empty styles file by default.** — **Not checked by anything.** An empty styles file is counted by nothing. A screen that declared its own layout is told from one that applied the shared layer only by reading. The screens lie in `libs/message-bus-admin/*/feature/*`, the layout they apply — in `apps/message-bus-admin/src/styles/`.
 - **The ready-made is extended, not cloned next to it.** — `tools/check-dupes.mjs:known` — a sample written a second time is found by the duplicate check. Merging the button variants into one `rtui-button` is that same technique, done by hand.
 - **What accumulated before the guard is counted by the full check, and the list may only not grow.** — `tools/check-reuse.mjs:known` — the debt snapshot from `tools/reuse-allowlist.json`, and the audit goes over the whole file.
 - **Signs are declared by the tree, not hardcoded in the check.** — `tools/signals.mjs:loadSignals` — the declared bundles and the tree's own signs on top of them; what is declared stands in `.claude/rt-kit/checks.json`, key `reuse`.
@@ -64,12 +68,43 @@ silent about.
 - The tree's own signs lie in `.claude/rt-kit/signals.json`: a foreign spec runner, a relative
   path through `projects/*` instead of an alias, the input and output decorators instead of the
   reactive ones.
-- Of the package bundles this tree declares only `angular`: it writes the kits rather than
-  consuming them, and their bundles would advise calling the kit on the kit's own files.
+- Of the package bundles this tree declares two. `angular` goes over the whole tree, `ui-kit-v2`
+  over the area `apps/message-bus-admin` and `libs/message-bus-admin`. The area is not a detail
+  here. The tree writes the second kit as well, and a bundle declared without an area would advise
+  calling the kit on the kit's own files: the sign is right and pointed the wrong way. The bundles
+  of the first kit, of the core, of the storage and of the utilities are not declared for the same
+  reason — outside their own packages they have no consumer yet.
+- The signs of a bundle name a native control, an overlay and a layout of one's own. A whole piece
+  drawn by hand in place of a ready-made component is named by none of them. What was drawn instead
+  of the ready-made chat of the kit was seen neither by the guard nor by the sweeping check. That is
+  the boundary of the signs rather than a miss in them.
 - The bridge to Material is a deliberate exception, not a reinvention: it is gathered into one
   styles file so that a version bump is read in one place.
 - Moving code does not count as reinvention: a line that already lay in the tree changes its
   indent on the move while staying the same code.
+
+## How the two uncounted numbers are asked
+
+The rule names two articles no check counts, and each is a number about this tree. A number written
+down goes stale by itself, so here stands the way to ask it — and what the answer of the command is
+a measurement of.
+
+```bash
+# the fields that inherit the ready-made base of the kit
+grep -rl "extends RtFormControlBase" projects libs apps --include="*.ts" | wc -l
+# the places where a message is shown by one's own markup instead of the shared bus
+grep -rn 'role="alert"' projects libs apps --include="*.html"
+```
+
+The first command measures the half that complies: a field answering an error its own way inherits
+nothing, and this number does not see it. On the admin screens such a field is named by a sign of
+the declared set; outside them nothing names it. The second command names places, not a number, and
+each is read by eye: the role standing inside the markup of the ready-made component is not a
+divergence.
+
+On 21 September 2026 the answers were: nine components inherit the base; the alert role stands in
+one place, and that place is the markup of the ready-made component itself. A divergence between
+these lines and the answer of a command is read in favour of the command.
 
 ## What this is checked by
 

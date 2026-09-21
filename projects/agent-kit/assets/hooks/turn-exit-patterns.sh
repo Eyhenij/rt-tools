@@ -69,3 +69,54 @@ standing_work_re='работай[^.]{0,40}(без остановок|без па
 handover_re='gh[[:space:]]+pr[[:space:]]+create'
 started_re='task:new|task:move|board\.mjs[[:space:]]+move|git[[:space:]]+checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|git[[:space:]]+switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c'
 
+# How many steps of the plan are not done yet. The progress mirrors the steps of the plan with a
+# mark each — `[x]` done, `[>]` going on right now, `[ ]` not begun — and a check keeps the two
+# lists matched. The reading is a local file, not a call to the hosting: it costs nothing and is
+# asked on every turn, unlike the state of the epic.
+#
+# Prints the number and answers non-zero when there is nothing to read: no progress, or a progress
+# with no list of steps. A tier that REFUSES a turn must tell "the work goes on" from "there is
+# nothing to ask with" — the same reason the count of the epic's tasks is printed rather than folded
+# into an exit code.
+rt_te_steps_left() {
+    [ -f "$1" ] || return 1
+    grep -qE '^-[[:space:]]+\[[x> ]\][[:space:]]+[0-9]+\.[0-9]+[[:space:]]' "$1" 2>/dev/null || return 1
+    printf '%s' "$(grep -cE '^-[[:space:]]+\[[> ]\][[:space:]]+[0-9]+\.[0-9]+[[:space:]]' "$1" 2>/dev/null || printf '0')"
+    return 0
+}
+
+# The step going on right now: its number and its name, as the progress writes them. Empty when no
+# step carries the mark — the refusal then names the count alone.
+rt_te_step_now() {
+    [ -f "$1" ] || return 0
+    sed -nE 's/^-[[:space:]]+\[>\][[:space:]]+([0-9]+\.[0-9]+[[:space:]]+.*)$/\1/p' "$1" 2>/dev/null | head -1
+}
+
+# The refusal about a step that is not done. The text lies here and not in the guard for the same
+# reason as the one about the epic: the guard stands at its length limit.
+#
+# Why the tier exists. The tier about the epic judges the whole: while the epic holds tasks, a turn
+# does not end. It says nothing about a turn inside one task — the epic may hold a single task, and
+# the work inside it breaks off in the middle all the same. The stage tier next to it reads the
+# «Verified by» command of a stage declared closed, and a stage nobody declared closed it does not
+# touch either.
+rt_te_steps_reason() {
+    printf '%s' "BLOCKED by turn-exit-guard: ${1} steps of the plan are not done, and the turn ends without the word of the owner about stopping.
+
+The step going on right now: ${2:-none is marked as going on}
+
+Work is not finished while the plan holds steps that are not done. A turn that did work and then reported is no exception: the report ends the account, not the work.
+
+The steps are listed in the progress and counted by «npm run check:work-steps»; the plan holds the same list and is not edited.
+
+Do them in this same turn. Lawful exits stay as they were: a question to the owner through the tool, a refusal of another guard, a session handover, and the owner's own word about stopping — the guard reads that word from them, not from a retelling."
+}
+
+# The tier itself: the steps of the plan are not done. It lies here and not in the guard for the
+# same reason as the text above — the guard stands at its length limit. The tier judges the
+# progress of the current task and says nothing about the epic: the tier next to it does that.
+rt_te_steps_deny() {
+    _steps_left="$(rt_te_steps_left "$1" 2>/dev/null)" || return 0
+    [ "${_steps_left:-0}" -gt 0 ] 2>/dev/null || return 0
+    rt_te_deny "$(rt_te_steps_reason "$_steps_left" "$(rt_te_step_now "$1")")" "${_steps_left} steps of the plan are not done."
+}

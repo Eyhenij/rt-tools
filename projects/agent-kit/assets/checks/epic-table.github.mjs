@@ -20,7 +20,7 @@ import { execFileSync } from 'node:child_process';
 import { OfflineError, TASK_KEY, botToken, fetchBoard, fetchOpenPulls, ghJson, numberFromBranch, numberFromTitle } from './board.mjs';
 import { declaredEpicOf, planPathOf, planRows } from './board-epics.mjs';
 import { verdictOnHead } from './board-runs.mjs';
-import { ROOT } from './rt-kit-checks.config.mjs';
+import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 /** The machine mode: the numbers of the unfinished tasks instead of the table for the owner. */
 const UNFINISHED = '--unfinished';
@@ -79,6 +79,15 @@ function epicAsked(argv) {
     const issue = issueOf(number);
     if (!issue) {
         return { number: null, why: `у хостинга нет задачи #${number} — назовите эпик доводом` };
+    }
+
+    // The branch of the epic itself: its card declares no other epic, because it is the epic. It is
+    // taken by the label of an epic card — the same one the queue audit tells an epic from a task
+    // by. Without this the answer «the task declares no epic» read as a broken card rather than as
+    // a question asked the wrong way.
+    const epicLabel = CONFIG.board?.epicLabel ?? '';
+    if (epicLabel && (issue.labels ?? []).some((label) => label.name === epicLabel)) {
+        return { number, why: '' };
     }
 
     const declared = declaredEpicOf(String(issue.body ?? ''));
