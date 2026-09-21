@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Pattern of rule spec-driven. Load when creating or editing a domain spec in docs/specs — the mandatory sections, the scenario form, binding a rule to code, the order of work from spec to code. Not for creating a law, a rule or a pattern — that is pattern spec-driven-rule.
 ---
-<!-- rt-kit v0.29.0 · patterns/spec-driven-domain.md · d268a2ff7f49 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/spec-driven-domain.md · a7125e368b8a · правится надстройкой, не здесь -->
 
 # Domain spec
 
@@ -163,6 +163,10 @@ statement.
 
 ## Common misses
 
+- A second table under the contract section: the audit reads every table there as the list of
+  procedures, and a set of refusal codes standing next to them comes back as that many
+  discrepancies at once — thirty-six on a spec that was right. Under the contract stands the table
+  of procedures alone; a set of codes goes into the data section.
 - A grown domain is split into new domains instead of subdomains: a new domain has to be entered
   in the index, audited against the code separately and explained as to why it is not a subdomain
   of its neighbour — while a subdomain stays in its domain and inherits its contract. A

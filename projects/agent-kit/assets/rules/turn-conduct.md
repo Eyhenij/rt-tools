@@ -174,12 +174,15 @@ flowchart TD
   number grew and the command did not run: a session later, marked from memory cannot be told from
   checked.
 - **The end of an epic is a stop, and it is the one lawful waiting for a word.** Every task of the
-  epic is merged or handed over, so there is no next task to take: a guard refuses taking one, and
-  both guards of the turn end let the stop through by one reading of the epic table. The turn shows
+  epic is merged or handed over, so there is no next task to take, and both guards of the turn end
+  let the stop through. The turn shows
   the table of the epic's tasks, what was done on each and what confirms it, and says that the
   session waits for orders. On the main branch the epic is not read, and the turn is judged as before.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
+- **A step of the plan that is not done forbids a stop, and a report about the done is not an
+  exception.** The tier about the epic judges the whole and says nothing about a turn inside one
+  task. The count is read from the progress; lawful exits stay as they were.
 - **The word about a stop the guard reads from the owner, not from the executor.** Otherwise the
   stop is declared by whoever finds it convenient, and the ban holds until the first inconvenience.
 - **Until the epic is closed a turn ends only by one of the four exits.** A turn that ended with
@@ -201,14 +204,13 @@ flowchart TD
 - **A statement about the tree's state is watched by the statement guard, not by the executor's
   memory.** Everything the reply says about the tree carries a command and its output; said without
   one, it is no statement — not "checked", not "cleared", not "done". The guard reads the turn's
-  text to the owner and looks for a command of the same turn; each word has its own kind of command. The previous turn
-  does not count: the tree's state changes, and yesterday's output says nothing of today's.
+  text to the owner and looks for a command of the same turn; each word has its own kind of
+  command. The previous turn does not count: yesterday's output says nothing of today's.
 - **The statement guard waits for the reply text rather than judging the record as it found it.**
   The text lands in the turn record no earlier than the host calls the hook. Not having waited, the
   guard returns the turn: an empty record means not "nothing to say" but "nothing to read".
-- **The guard catches a statement word, not a wrong conclusion.** About a sample judged by one file,
-  or a path a person will not take, there is nothing to judge by: no word and no command to compare
-  with. This is the guard's known boundary; the articles below hold it, not the guard.
+- **The guard catches a statement word, not a wrong conclusion.** About a sample judged by one file
+  there is nothing to judge by: no word and no command to compare with. This is the guard's known boundary; the articles below hold it, not the guard.
 - **A turn about someone else's step is watched by the waiting guard, not by the executor's
   memory.** It refuses a turn's end where someone else's step was spoken of and nothing was done on
   the next task — no task created, no branch, no folder, no column moved. Someone else's step it
@@ -267,8 +269,7 @@ flowchart TD
   silently: from outside it looks like caution, not a skipped step. Actions outside the list the
   executor does not gate.
 - **A turn in which the executor admitted a miss does not end until the incident record exists.**
-  The incident guard refuses at the turn's end: by the time of admission the miss has already
-  happened. The records directory is named by the rule's companion, the file name is the date and
+  The incident guard refuses at the turn's end. The records directory is named by the rule's companion, the file name is the date and
   the miss, the form — the layout template. The admission is caught by a set of samples: a miss
   admitted in words outside the set the guard lets through.
 - **A session begun from a handover enters the work by the same rule as any other.** The handover
@@ -280,16 +281,14 @@ flowchart TD
   with a ready command but does not break the session.
 - **A filled window ends a turn only where there is no compaction.** Where it is declared, the
   window is the turn going on: the session compacts and works on, and the stop threshold fires only
-  when compaction did not come. A turn closed below the threshold loses the rest of the window the
-  tree paid for, and only the owner catches this.
+  when compaction did not come. A turn closed below the threshold loses the rest of the window.
 - **The session's window fill is watched by a guard, not by the executor's memory.** At the first
   threshold it reminds to pick a stopping point, at the second it refuses everything but the
   handover, delivery commands and the task folder — the folder whole: at closing, both the decision
   along the way and the stage revision are edited. The window size and both thresholds the tree sets
   itself; a tree that set no size gets no guard.
 - **The context compaction threshold the tree sets itself, and it stands BELOW the stop threshold.**
-  Equal thresholds are a race, and the guard wins it: it stands on the call, and compaction comes
-  between turns. The distance is declared as a number, not derived as a difference; whether the
+  Equal thresholds are a race, and the guard wins it. The distance is declared as a number, not derived as a difference; whether the
   thresholds stand apart the layout audit tells.
 - **A session closes with a handover, and it lies as a section of the progress.** It is committed
   and goes into the branch, so the handover survives a move to another machine, and no second record

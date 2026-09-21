@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// rt-kit v0.26.0 · checks/epic-table.github.mjs · ca65adf7e1b9 · правится надстройкой, не здесь
 /**
  * The table of the epic's tasks: the order from the plan, the state from the hosting.
  *
@@ -17,13 +16,11 @@
  * empty epic.
  */
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 
 import { OfflineError, TASK_KEY, botToken, fetchBoard, fetchOpenPulls, ghJson, numberFromBranch, numberFromTitle } from './board.mjs';
 import { declaredEpicOf, planPathOf, planRows } from './board-epics.mjs';
 import { verdictOnHead } from './board-runs.mjs';
-import { ROOT } from './rt-kit-checks.config.mjs';
+import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 /** The machine mode: the numbers of the unfinished tasks instead of the table for the owner. */
 const UNFINISHED = '--unfinished';
@@ -82,6 +79,15 @@ function epicAsked(argv) {
     const issue = issueOf(number);
     if (!issue) {
         return { number: null, why: `у хостинга нет задачи #${number} — назовите эпик доводом` };
+    }
+
+    // The branch of the epic itself: its card declares no other epic, because it is the epic. It is
+    // taken by the label of an epic card — the same one the queue audit tells an epic from a task
+    // by. Without this the answer «the task declares no epic» read as a broken card rather than as
+    // a question asked the wrong way.
+    const epicLabel = CONFIG.board?.epicLabel ?? '';
+    if (epicLabel && (issue.labels ?? []).some((label) => label.name === epicLabel)) {
+        return { number, why: '' };
     }
 
     const declared = declaredEpicOf(String(issue.body ?? ''));
@@ -208,12 +214,15 @@ function gathered(argv) {
         return { ok: false, why: `у хостинга нет карточки эпика #${asked.number}` };
     }
 
-    const found = planPathOf(epic.body);
+    // Текст плана берёт общее чтение: план живого эпика лежит в ветке этого эпика, а рабочая копия
+    // стоит на той ветке, на которой стоит. Читая с диска, таблица отвечала «карточка указывает в
+    // пустоту» на любой ветке, кроме ветки самого эпика.
+    const found = planPathOf(epic.body, { epicNumber: epic.number });
     if (found.path === null) {
         return { ok: false, why: `карточка эпика #${asked.number}: ${found.why}` };
     }
 
-    const plan = readFileSync(join(ROOT, found.path), 'utf8');
+    const plan = found.text;
     const rows = makeupOf(plan);
     if (rows.length === 0) {
         return { ok: false, why: `замысел «${found.path}» не несёт состава эпика: состав — таблица со столбцом задач` };

@@ -24,7 +24,14 @@
     ],
     "reuse": {
         "bundles": [
-            "angular"
+            "angular",
+            {
+                "name": "ui-kit-v2",
+                "roots": [
+                    "apps/message-bus-admin",
+                    "libs/message-bus-admin"
+                ]
+            }
         ],
         "signals": ".claude/rt-kit/signals.json"
     },

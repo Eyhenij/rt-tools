@@ -85,6 +85,12 @@ not choose.
 
 ## Pitfalls
 
+- **An edit made by a shell command is judged by the whole command, the old version inside it
+  included.** The style check gets the body of the call, not the text that will end up in the
+  file: a rewrite carrying the previous wording inside a heredoc or an interpreter string is
+  refused by the words of that previous wording. The refusal repeats at the second attempt,
+  because the old text is still there. The new text is written by the edit tool — there only the
+  new text is judged — or inserted by line number, and the command is given the path.
 - **Shorter does not mean clearer.** A text in the layer's words comes out a third shorter and
   is useless to whoever decides whether the work is urgent.
 - **"Not X but Y" looks like an explanation and explains nothing.** The owner learns what was

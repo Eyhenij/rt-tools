@@ -25,4 +25,5 @@ formatter is `.prettierignore`.
 
 - **The parse of write targets is declared once, and every guard that judges an edit calls it.** — `projects/agent-kit/assets/hooks/write-targets.sh:rt_write_targets` — the shared helper without a hook declaration of its own; its suite is `projects/agent-kit/tests/shell-write-paths.test.sh`, scenarios `SC-AK-924`–`SC-AK-927`
 - **The body of an interpreter without a write gives out none of its paths.** — `projects/agent-kit/assets/hooks/write-targets.sh:writes` — the sign of a write inside a body; scenario `SC-AK-858`
+- **The body of a heredoc is data of the command, and the shell parse does not read it.** — `projects/agent-kit/assets/hooks/write-targets.sh:rt_wt_shell` — the shell part reads the text with the bodies cut out; scenario `SC-AK-1140`
 - **Muted output is never a sign of a write, inside a body either.** — `projects/agent-kit/assets/hooks/write-targets.sh:rt_write_targets` — the redirection is removed before the parse; scenario `SC-AK-858`

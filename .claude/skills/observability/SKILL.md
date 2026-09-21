@@ -4,7 +4,7 @@ kind: rule
 law: observability
 description: Rule under the observability law. Load when editing the logger, the request context, the failures and alerts domain, when adding a new log line and when deciding what the owner learns about a failure. Pattern observability-record.
 ---
-<!-- rt-kit v0.29.0 · rules/observability.needs-app.md · e459b8046eb3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/observability.needs-app.md · 1e6ad0ae72b3 · правится надстройкой, не здесь -->
 
 # Observability — how it works here
 
@@ -71,6 +71,11 @@ flowchart TD
   check that fired. On one level with breakages it floods the alarm with guests' typos.
 - **The cause of a failure is parsed in one place.** Otherwise the same error arrives in the logs
   in three different shapes.
+- **A field added to the answer of a refusal is added where the answer is assembled, not where the
+  refusal is thrown.** The application parses failures in one place and builds the body there out
+  of what it knows: every throw may name the field, and the body carries none of them. Neither the
+  linter nor the tests next to the throws see it — the loss shows on the screen of whoever reads
+  the answer.
 - **The fields of a log line are always scrubbed, not at the discretion of whoever writes.**
   Deciding on every call whether the fields hold a secret means being wrong once.
 - **At startup the application writes what it came up with.** Half of the features are enabled by
