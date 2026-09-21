@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.0 · hooks/git-guard-delivery.sh · c668eeebc11b · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/git-guard-delivery.sh · e05ca4274065 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-epic.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
@@ -368,9 +368,7 @@ command -v rt_epic_own_pull >/dev/null 2>&1 && rt_epic_own_pull "$state"
 
 title=''
 if command -v perl >/dev/null 2>&1; then
-    # The long key is searched first, the short one only where no long key stands in the command.
-    # The short key is taken by neighbours: `nx affected -t lint` in the same call became the title,
-    # and the refusal said the title does not start with the number of the task while it did.
+    # Длинный ключ ищется первым: короткий занят соседями — строка запуска с ним становилась заголовком.
     title="$(printf '%s' "$cmd" | perl -0ne '
         my $v = qr/(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/;
         if (/--title(?:=|\s+)$v/s || /(?<![-\w])-t(?:=|\s+)$v/s) {
