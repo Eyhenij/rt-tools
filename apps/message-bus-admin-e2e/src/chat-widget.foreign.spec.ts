@@ -46,9 +46,11 @@ test.describe('чат с чужого адреса', () => {
     }) => {
         const answer: APIResponse = await request.get(siteUrl(CHAT.widget.key), { headers: { origin: 'https://nobody.example' } });
 
-        // положительная пара к отсутствию: ответ пришёл, и дело именно в позволении
-        expect(answer.status()).toBe(200);
+        // Позволения нет, и сама операция такой адрес тоже не принимает: список у них один. Пара
+        // к этому отсутствию — проба выше: тот же адрес операции с адресом из списка отвечает
+        // и позволением, и грузом.
         expect(permission(answer)).toBe('');
+        expect(answer.status()).toBe(403);
     });
 
     test('SC-CH-76 — предварительный запрос браузера отвечается тем же списком', async ({ request }: { request: APIRequestContext }) => {
