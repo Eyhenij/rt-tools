@@ -1,0 +1,14 @@
+<ng-container rtBlock="admin-chat-talk">
+    <button
+        rtElem="button"
+        qa-dataid="chat-talk"
+        type="button"
+        [attr.aria-current]="chosen()"
+        [attr.data-state]="talk().state"
+        (click)="choose.emit(talk().id)">
+        <span rtElem="site">{{ talk().siteId }}</span>
+        <span rtElem="state">{{ stateLabel() }}</span>
+        <span rtElem="last">{{ sideLabel() }}: {{ talk().lastMessage }}</span>
+        <span rtElem="at">{{ momentText() }}</span>
+    </button>
+</ng-container>

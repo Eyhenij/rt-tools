@@ -27,6 +27,7 @@ describe('роли и доступ человека: решения экрана
             'Предложения',
             'Сводки проектов',
             'Использование',
+            'Чат',
             'Приглашения',
             'Пользователи',
             'Роли',
@@ -57,7 +58,7 @@ describe('роли и доступ человека: решения экрана
         expect(words['usage:read']).toBe(EAccessWord.Revoked);
         expect(words['invites:read']).toBe(EAccessWord.Granted);
         expect(words['postmortems:read']).toBe(EAccessWord.ByRole);
-        expect(Object.keys(words)).toHaveLength(11);
+        expect(Object.keys(words)).toHaveLength(12);
     });
 
     it('SC-MB-378 — исход считается от роли и слов вместе, а слова «по роли» правок не дают', () => {

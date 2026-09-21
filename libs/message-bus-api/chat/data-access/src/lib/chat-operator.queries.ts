@@ -9,8 +9,7 @@
  * закрытую переписку той же минутой, которой она принята.
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { EChatConversationState } from '@rt/message-bus-api/chat/util';
-import { IPage, IPageAsked, pageSkip } from '@rt/message-bus-common';
+import { EChatTalkState, IPage, IPageAsked, pageSkip } from '@rt/message-bus-common';
 
 /** Строка списка переписок: то, что панель показывает одной строкой. */
 export interface IChatConversationListRow {
@@ -34,7 +33,7 @@ export interface IChatMessageListRow {
 /** Чем сужен список переписок: сайтом и состоянием, оба необязательны. */
 export interface IChatConversationFilter {
     readonly siteId: string | null;
-    readonly state: EChatConversationState | null;
+    readonly state: EChatTalkState | null;
 }
 
 /** Сообщение переписки, как оно лежит в хранилище. */
@@ -167,11 +166,34 @@ export async function messagesPage(
     return { rows, total, page: asked.page, size: asked.size };
 }
 
+/**
+ * Ответ оператора в переписку. Зовётся после того, как переписка признана своей.
+ *
+ * Состояние разговора ответ не меняет: закрыл его оператор сам, и его же ответ вслед за закрытием
+ * читался бы как открытие. Реплика посетителя открывает закрытое — это её дело, а не ответа.
+ */
+export async function appendOperatorMessage(
+    prisma: PrismaService,
+    conversationId: string,
+    text: string,
+    at: Date
+): Promise<IChatMessageListRow> {
+    const [message]: [IChatMessageListRow, unknown] = await prisma.$transaction([
+        prisma.chatMessage.create({
+            data: { conversationId, text, side: 'operator', takenAt: at },
+            select: { id: true, side: true, text: true, takenAt: true },
+        }),
+        prisma.chatConversation.update({ where: { id: conversationId }, data: { lastMessageAt: at } }),
+    ]);
+
+    return message;
+}
+
 /** Смена состояния переписки. Зовётся после того, как переписка признана своей. */
 export async function setConversationState(
     prisma: PrismaService,
     conversationId: string,
-    state: EChatConversationState
+    state: EChatTalkState
 ): Promise<{ id: string; state: string }> {
     return prisma.chatConversation.update({
         where: { id: conversationId },

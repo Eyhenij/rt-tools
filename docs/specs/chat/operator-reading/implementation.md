@@ -13,7 +13,7 @@ or the code holds what the spec is silent about.
 - **The list of the conversations is ordered by the minute of the last message, the freshest first.** — `libs/message-bus-api/chat/data-access/src/lib/chat-operator.queries.ts:conversationsPage`
 - **The messages of one conversation are read by pages too, oldest first.** — `libs/message-bus-api/chat/data-access/src/lib/chat-operator.queries.ts:messagesPage`
 - **The list of the conversations carries the last message itself, not only its minute.** — `libs/message-bus-api/chat/data-access/src/lib/chat-operator.queries.ts:IChatConversationListRow`
-- **A conversation has two states: live and closed.** — `libs/message-bus-api/chat/util/src/lib/chat-state.logic.ts:EChatConversationState`
+- **A conversation has two states: live and closed.** — `libs/message-bus-common/src/lib/chat.ts:EChatTalkState`
 - **A conversation is created live, and the state is changed by the operator.** — `libs/message-bus-api/chat/data-access/src/lib/chat-operator.queries.ts:setConversationState`
 - **A remark of a visitor into a closed conversation opens it again.** — `libs/message-bus-api/chat/data-access/src/lib/chat.queries.ts:appendVisitorMessage`
 - **The state is changed only by an operator of that site.** — `libs/message-bus-api/chat/data-access/src/lib/chat-operator.queries.ts:conversationOfSites`

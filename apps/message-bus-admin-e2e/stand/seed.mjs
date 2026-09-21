@@ -17,6 +17,7 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 import { seedAccount, seedPeople } from './seed-account.mjs';
+import { seedChat } from './seed-chat.mjs';
 import { seedObservations } from './seed-observations.mjs';
 import { checkNothingDrifts } from './seed-self-check.mjs';
 import { ACCOUNT, API_ORIGIN, ENROLLED_SLUG, INVITES, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
@@ -151,7 +152,7 @@ async function database() {
 /** Вычистка: набор начинает с пустого хранилища, чтобы числа на экране не зависели от прошлых прогонов. */
 async function wipe() {
     await sql(
-        'TRUNCATE TABLE "session", "account_permission", "role", "account", "postmortem", "proposal", "month_record", "tree_invite", "tree_token", "tree" CASCADE;'
+        'TRUNCATE TABLE "session", "account_permission", "role", "account", "postmortem", "proposal", "month_record", "tree_invite", "tree_token", "tree", "chat_space", "chat_message", "chat_conversation", "chat_visitor", "chat_site", "chat_operator" CASCADE;'
     );
 }
 
@@ -467,6 +468,7 @@ export async function seed() {
     await wipe();
     const cookie = await seedAccount(sql);
     await seedPeople(cookie, sql);
+    await seedChat(sql, ACCOUNT.name);
     const tokens = await trees();
     await postmortems(tokens);
     await proposals(tokens);

@@ -30,7 +30,7 @@ export interface IChatStartedRow {
 }
 
 /** Принятая реплика: чем её назвать в ответе. */
-export interface IChatMessageRow {
+export interface IChatTakenRow {
     readonly id: string;
     readonly takenAt: Date;
 }
@@ -85,13 +85,8 @@ export async function startConversation(prisma: PrismaService, siteId: string, t
  * Той же сделкой переписка становится живой: закрытую её закрыл оператор, а человек вернулся и
  * написал — оставленная закрытой, она лежала бы там, куда никто не смотрит.
  */
-export async function appendVisitorMessage(
-    prisma: PrismaService,
-    conversationId: string,
-    text: string,
-    at: Date
-): Promise<IChatMessageRow> {
-    const [message]: [IChatMessageRow, unknown] = await prisma.$transaction([
+export async function appendVisitorMessage(prisma: PrismaService, conversationId: string, text: string, at: Date): Promise<IChatTakenRow> {
+    const [message]: [IChatTakenRow, unknown] = await prisma.$transaction([
         prisma.chatMessage.create({
             data: { conversationId, text, side: 'visitor', takenAt: at },
             select: { id: true, takenAt: true },

@@ -188,4 +188,22 @@ describe('поток событий чата', () => {
         // положительная пара к утверждению об отсутствии: без минуты видны обе реплики
         expect(whole.rows.map((row: IChatMessageListRow): string => row.text)).toEqual(['до', 'после']);
     });
+    it('SC-CH-48 — ответ оператора доходит до потока посетителя', async (): Promise<void> => {
+        const started: IChatConversationStarted = await talk('live-key', PAGE);
+
+        await intake.take(
+            { site: 'live-key', visitor: started.visitorToken, conversation: started.conversationId, text: 'вопрос' },
+            from(),
+            AT
+        );
+
+        const watched: IWatched = await watchVisitor('live-key', started);
+
+        await reads.answer(started.conversationId, { text: 'слушаю вас' }, signedIn('account-1'), AT);
+
+        expect(watched.frames).toHaveLength(1);
+        expect(watched.frames[0].data).toMatchObject({ side: 'operator', text: 'слушаю вас', conversationId: started.conversationId });
+
+        watched.open.unsubscribe();
+    });
 });

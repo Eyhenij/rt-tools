@@ -21,6 +21,7 @@ export type TRight =
     | 'proposals:manage'
     | 'summaries:read'
     | 'usage:read'
+    | 'chat:read'
     | 'invites:read'
     | 'invites:manage'
     | 'accounts:read'
@@ -41,6 +42,7 @@ export const RIGHTS: readonly TRight[] = Object.freeze([
     'proposals:manage',
     'summaries:read',
     'usage:read',
+    'chat:read',
     'invites:read',
     'invites:manage',
     'accounts:read',
