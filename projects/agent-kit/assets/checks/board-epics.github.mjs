@@ -2,13 +2,10 @@
  * The link between a task and an epic. Lives in a file of its own: the work queue audit stands at
  * the length limit even without it, and these two checks are read separately.
  */
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-
 import { declaredEpicOf } from './board-epic-link.mjs';
 import { planPathOf, planRows } from './board-epic-plan.mjs';
 import { ghJson, numberFromTitle, OfflineError, OWNER, REPO, TASK_KEY } from './board.mjs';
-import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
+import { CONFIG } from './rt-kit-checks.config.mjs';
 
 /**
  * The label of an epic card. Not named — the link is not judged: there would be nothing left to
@@ -60,7 +57,7 @@ export function checkEpicLinks(open, report) {
     const unreadable = new Set();
 
     for (const epic of epics) {
-        const found = planPathOf(epic.body);
+        const found = planPathOf(epic.body, { epicNumber: epic.number });
         if (found.path === null) {
             report(`#${epic.number}: ${found.why}`);
             unreadable.add(epic.number);
@@ -68,8 +65,7 @@ export function checkEpicLinks(open, report) {
         }
 
         const planPath = found.path;
-        const plan = readFileSync(join(ROOT, planPath), 'utf8');
-        const mentions = planRows(plan).matchAll(new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`, 'g'));
+        const mentions = planRows(found.text).matchAll(new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`, 'g'));
         const numbers = new Set([...mentions].map((match) => Number(match[1])));
         for (const number of numbers) {
             if (number === epic.number || !byNumber.has(number)) {
@@ -165,13 +161,13 @@ export function checkEpicSubIssues(open, report, options) {
 
     const epics = open.filter((issue) => (issue.labels ?? []).some((label) => label.name === EPIC_LABEL));
     for (const epic of epics) {
-        const found = planPathOf(epic.body);
+        const found = planPathOf(epic.body, { epicNumber: epic.number });
         if (found.path === null) {
             // The unread plan has already been reported by a line of its own in the link check.
             continue;
         }
 
-        const rows = planRows(readFileSync(join(ROOT, found.path), 'utf8'));
+        const rows = planRows(found.text);
         const named = new Set([...rows.matchAll(new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`, 'g'))].map((match) => Number(match[1])));
         named.delete(epic.number);
         if (named.size === 0) {
