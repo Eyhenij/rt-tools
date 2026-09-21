@@ -249,3 +249,37 @@ touched. The other eight wait for the owner.
 
 The first, the fourth, the fifth, the sixth, the seventh and the eighth belong to the package; the
 second and the third are this tree's own.
+
+## RT-2293 — the list of the talks on the ready-made list of the kit, the findings of 21 September 2026
+
+1. **A usage example of a component is checked by nothing inside the kit.** The specs, the stories
+   and the showing harness are taken out of the library build, and `typecheck` reads no template at
+   all: a doc comment, a context document and an overview page are compiled by nobody. The first
+   template check such an example meets is the consumer's application build, and there the strict
+   mode is on. The projection input of the ready-made list stood in every example as a bare
+   attribute; the panel copied that form, and the build refused with a type of a string against an
+   array, pointing at the panel's own markup rather than at the example it came from. Two examples
+   are corrected; the same form stays in the component's own comment, in six places of the stories
+   and in the spec of the kit. **Address:** the names of this tree — the showcase rule and its
+   companion.
+
+2. **The audit of the tables of the inputs does not see a file named for several directives.** It
+   reads the component file and the file of one directive next to the page; the projection
+   directives of three components lie in a file with a plural name and are invisible to it. So the
+   projection input of the list is absent from the table of the inputs of its overview page, and
+   nothing noticed. **Address:** the names of this tree — the audit's own filter, and after it the
+   tables of three pages.
+
+3. **A merge that brought a change of the schema leaves the generated storage client behind.** The
+   client lies outside history and stays as the schema was on the day of the checkout. Everything
+   builds green but the server side, and its refusal names a missing property on the client class,
+   not the command that cures it. The comment in the tree's own instruction says the opposite — that
+   the refusal names the command itself. **Address:** the rules layer — the pattern about a merge;
+   and the tree's instruction, where the comment is untrue.
+
+4. **A popup with no close control of its own eats the next click.** The knowledge already lies in
+   the pattern of the end-to-end suite, and the pattern was never loaded: the line about it in the
+   rule promises only the running, the stand and the switches. **Address:** the rules layer — the
+   line about the pattern in the rule names what the pattern holds about waiting for the screen.
+
+The first and the second are this tree's own; the third and the fourth belong to the package.
