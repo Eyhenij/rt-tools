@@ -42,7 +42,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { BlockDirective, ElemDirective, IDBStorageService, ModDirective } from '@rt-tools/core';
-import { ISortModel } from '@rt-tools/utils';
+import { IFilterModel, ISortModel } from '@rt-tools/utils';
 
 import { TRtKitLabelKey, rtKitLabel } from '../../i18n';
 import { BreakpointsService } from '../../platform';
@@ -52,6 +52,7 @@ import { IRtIcon } from '../icon/rt-icon.model';
 import { RtMenuComponent } from '../menu/rt-menu.component';
 import { RtSkeletonComponent } from '../skeleton/rt-skeleton.component';
 import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
+import { RtTableFilterHeaderComponent } from './filter-header/rt-table-filter-header.component';
 import { RtTableCardDirective } from './rt-table-card.directive';
 import { cardColumnsOf, cardRowsOf, IRtTableCardColumn } from './rt-table-cards.logic';
 import { RtTableRowActionsDirective } from './rt-table-row-actions.directive';
@@ -59,6 +60,7 @@ import { RtRowHasActionsPipe } from './rt-table-row-actions.pipe';
 import { RtTableSettingsPersistence } from './rt-table-settings.persistence';
 import { RtTableSettingsRegistry, type IRtTableSettingsRegistration } from './rt-table-settings.registry';
 import { defaultColumnItems, displayedColumnKeys, resolveColumns, withoutLockedHidden } from './rt-table-columns.logic';
+import { filterCellsOf } from './rt-table-filter.logic';
 import { nextSort } from './rt-table-sort.logic';
 import { IRtTable } from './rt-table.model';
 
@@ -71,27 +73,12 @@ const DEFAULT_EMPTY_KEY: TRtKitLabelKey = 'uiNoRows';
 /**
  * Таблица — стилизованная обёртка над `cdk-table` (`@angular/cdk/table`).
  *
- * Селектор работает и как element (`<rt-table>`), и как attribute на native
- * `<table rt-table>`. Native-вариант предпочтительнее — даёт правильную
- * table-семантику для скрин-ридеров. Loading/empty/skeleton overlays
- * требуют `<rt-table>` element selector (overlay-divs не валидны как дети
- * `<table>`).
+ * Селектор работает и как element (`<rt-table>`), и как attribute на native `<table rt-table>`.
+ * Native-вариант предпочтительнее — даёт правильную table-семантику для скрин-ридеров, но
+ * наложения загрузки, пустого места и заглушек требуют element-варианта: `<div>` не валиден как
+ * ребёнок `<table>`.
  *
- * Состояния рендера (по комбинации `[loading]` + `[fetching]` + `dataSource.length`):
- *
- * - `loading && data=[]`     → header row + N skeleton `<tr>` (по `[columns]`).
- * - `fetching && data=[...]` → existing rows + sticky overlay с rt-spinner поверх.
- * - `!loading && !fetching && data=[]` → empty placeholder (ContentChild
- *   `#rtTableEmpty` template или default `<rt-empty-state>` по `emptyMessage`/`emptyIcon`).
- * - `!loading && !fetching && data=[...]` → обычный рендер CDK row-outlet'ов.
- *
- * Sticky overlay использует `position: sticky` относительно ближайшего
- * scroll-container ancestor'а (обычно page-level `rtElem="table-scroll"` wrapper).
- * Spinner внутри overlay flex-центрирован → всегда в middle viewport.
- *
- * Skeleton rows читают `[columns]` input — массив имён колонок (тот же что в
- * `*cdkRowDef="let row; columns: ..."`). Auto-detect через CDK internals не
- * используется — explicit input проще и testable.
+ * Какие состояния таблица различает и чем рисует каждое — в заметке семьи рядом, `CONTEXT.md`.
  */
 @Component({
     selector: 'rt-table, table[rt-table]',
@@ -120,6 +107,7 @@ const DEFAULT_EMPTY_KEY: TRtKitLabelKey = 'uiNoRows';
         RtMenuComponent,
         RtSkeletonComponent,
         RtSpinnerComponent,
+        RtTableFilterHeaderComponent,
         BlockDirective,
         ElemDirective,
         ModDirective,
@@ -181,24 +169,11 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
         return id !== null && this.columnsConfig().length > 0 ? id : null;
     });
 
-    /**
-     * Внутренняя «…»-колонка действий объявлена в шаблоне rt-table (view) и
-     * регистрируется в CdkTable вручную (`addColumnDef`) в `ngOnInit` — так же,
-     * как это делает CDK-шный `CdkTextColumn`. Статический `@ViewChild` нужен,
-     * чтобы колонка попала в реестр ДО первого рендера строк (signal-query
-     * резолвится слишком поздно). Не `#private`: декоратор требует ключевое
-     * слово `private`.
-     */
+    /** Колонка действий и её ячейки: регистрируются в CdkTable вручную — почему, сказано в `CONTEXT.md`. */
     // native-ok: сигнальный viewChild() резолвится после первой отрисовки строк, а колонка действий должна попасть в реестр CdkTable до неё
     @ViewChild(CdkColumnDef, { static: true })
     private readonly actionsColumnDef?: CdkColumnDef;
 
-    /**
-     * Cell/header-def'ы «…»-колонки. Присваиваем их `columnDef` вручную в
-     * `ngOnInit` (как `CdkTextColumn`), потому что собственный ContentChild
-     * `CdkColumnDef` ещё не отработал к моменту первого рендера view-колонки —
-     * без ручного присвоения CdkTable падает на `extractCellTemplate`.
-     */
     // native-ok: то же, что у объявления колонки выше: def присваивается вручную в ngOnInit, до первой отрисовки
     @ViewChild(CdkCellDef, { static: true })
     private readonly actionsCellDef?: CdkCellDef;
@@ -332,6 +307,21 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
     public readonly rowHasActions: InputSignal<IRtTable.RowActionsPredicate<TRow> | null> =
         input<IRtTable.RowActionsPredicate<TRow> | null>(null);
 
+    /**
+     * Показывать ли строку отбора под шапкой. Таблица с отбором в настройке колонок не
+     * становится таблицей с полями над строками сама: вторая строка шапки стоит высоты
+     * экрана, и платить за неё решает потребитель.
+     */
+    public readonly showFilters: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Набор условий, по которому нарисованы ячейки отбора. Держит его потребитель. */
+    public readonly filters: InputSignal<ReadonlyArray<IFilterModel<string>>> = input<ReadonlyArray<IFilterModel<string>>>([]);
+
+    /** Набор условий изменился. Строки сужает потребитель — таблица только сообщает. */
+    public readonly filtersChange: OutputEmitterRef<ReadonlyArray<IFilterModel<string>>> = output<ReadonlyArray<IFilterModel<string>>>();
+
     /** Выбранная сортировка: `null` — порядок задаёт источник данных. */
     public readonly sort: InputSignal<ISortModel<string> | null> = input<ISortModel<string> | null>(null);
 
@@ -360,6 +350,16 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
      */
     public readonly displayedColumns: Signal<ReadonlyArray<string>> = computed((): ReadonlyArray<string> =>
         displayedColumnKeys(this.resolvedColumns(), this.columns(), this.columnsConfig().length > 0, this.showRowActions())
+    );
+
+    /**
+     * Ячейки строки отбора: по ячейке на каждую показанную колонку, в том же порядке. У
+     * колонки без объявленного отбора ячейка пустая, но своё место держит — иначе ячейки
+     * съезжают на соседние колонки. Колонка действий строки попадает сюда тем же путём:
+     * `displayedColumns()` уже несёт её последней.
+     */
+    public readonly filterCells: Signal<ReadonlyArray<IRtTable.FilterCell>> = computed((): ReadonlyArray<IRtTable.FilterCell> =>
+        filterCellsOf(this.displayedColumns(), this.columnsConfig())
     );
 
     /** `true` когда таблица настраиваемая: есть и `[columnsConfig]`, и `[tableId]`. */
@@ -429,6 +429,11 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
         const selected: ISortModel<string> | null = nextSort(this.#sort(), propertyName);
         this.#sort.set(selected);
         this.sortChange.emit(selected);
+    }
+
+    /** Ячейка отбора сообщила новый набор условий — таблица отдаёт его наружу целиком. */
+    public reportFilters(filters: ReadonlyArray<IFilterModel<string>>): void {
+        this.filtersChange.emit(filters);
     }
 
     public applyColumnSettings(settings: IRtTable.ColumnSettings): void {

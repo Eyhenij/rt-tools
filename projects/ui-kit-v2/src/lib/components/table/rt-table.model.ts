@@ -37,6 +37,15 @@ export namespace IRtTable {
         filter?: IRtTable.ColumnFilter;
     }
 
+    /**
+     * Одна ячейка строки отбора: ключ колонки и её отбор. `null` в отборе значит, что колонка
+     * ничего не отбирает, — ячейка рисуется пустой и держит место колонки.
+     */
+    export interface FilterCell {
+        key: string;
+        filter: IRtTable.ColumnFilter | null;
+    }
+
     /** Каким видом колонка отбирает: вид решает, какую готовую часть кита позовёт шапка. */
     export type FilterKind = 'text' | 'number' | 'select' | 'date';
 

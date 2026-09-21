@@ -11,7 +11,7 @@ import {
 } from '@angular/cdk/table';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { ISortModel, EListSortOrder } from '@rt-tools/utils';
+import { IFilterModel, ISortModel, EFilterOperatorType, EListSortOrder } from '@rt-tools/utils';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
@@ -23,8 +23,13 @@ import { IRtTable } from '../../rt-table.model';
 /** Текст пустой таблицы — один на все ячейки матрицы. */
 const EMPTY_MESSAGE: string = 'Договоров пока нет';
 
+/** Города строк витрины: те же значения стоят и в вариантах выбора, и в заданном отборе. */
+const CITY_MOSCOW: string = 'Москва';
+const CITY_SPB: string = 'Санкт-Петербург';
+const CITY_NSK: string = 'Новосибирск';
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTableMatrixPart = 'density' | 'loading' | 'sort' | 'empty' | 'clickable' | 'cards' | 'presets' | 'themes';
+export type TTableMatrixPart = 'density' | 'loading' | 'sort' | 'filters' | 'empty' | 'clickable' | 'cards' | 'presets' | 'themes';
 
 /** Строка витрины: то, что показывают ячейки. */
 interface ITableRow {
@@ -35,9 +40,9 @@ interface ITableRow {
 }
 
 const ROWS: readonly ITableRow[] = [
-    { id: 1, title: 'Договор №2024-118', city: 'Москва', sum: '148 000 ₽' },
-    { id: 2, title: 'Договор №2024-119', city: 'Санкт-Петербург', sum: '92 400 ₽' },
-    { id: 3, title: 'Договор №2024-120', city: 'Новосибирск', sum: '61 000 ₽' },
+    { id: 1, title: 'Договор №2024-118', city: CITY_MOSCOW, sum: '148 000 ₽' },
+    { id: 2, title: 'Договор №2024-119', city: CITY_SPB, sum: '92 400 ₽' },
+    { id: 3, title: 'Договор №2024-120', city: CITY_NSK, sum: '61 000 ₽' },
 ];
 
 const COLUMNS: readonly string[] = ['title', 'city', 'sum'];
@@ -45,6 +50,29 @@ const COLUMNS: readonly string[] = ['title', 'city', 'sum'];
 const COLUMNS_CONFIG: readonly IRtTable.ColumnConfig[] = [
     { key: 'title', label: 'Договор', locked: true, sortable: true },
     { key: 'city', label: 'Город', sortable: true },
+    { key: 'sum', label: 'Сумма' },
+];
+
+/**
+ * Тот же набор колонок, но с отбором: у «Договора» — текст, у «Города» — выбор из списка, у
+ * «Суммы» отбора нет вовсе. Третья колонка здесь и нужна: без неё не видно, что колонка без
+ * отбора держит пустое место, а не пропадает из строки.
+ */
+const COLUMNS_CONFIG_FILTERED: readonly IRtTable.ColumnConfig[] = [
+    { key: 'title', label: 'Договор', locked: true, sortable: true, filter: { kind: 'text' } },
+    {
+        key: 'city',
+        label: 'Город',
+        sortable: true,
+        filter: {
+            kind: 'select',
+            options: [
+                { value: CITY_MOSCOW, label: CITY_MOSCOW },
+                { value: CITY_SPB, label: CITY_SPB },
+                { value: CITY_NSK, label: CITY_NSK },
+            ],
+        },
+    },
     { key: 'sum', label: 'Сумма' },
 ];
 
@@ -141,6 +169,40 @@ const COLUMNS_CONFIG: readonly IRtTable.ColumnConfig[] = [
                                     [columns]="columns"
                                     [columnsConfig]="columnsConfig"
                                     [sort]="item.sort">
+                                    <ng-container cdkColumnDef="title">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+                                    </ng-container>
+                                    <ng-container cdkColumnDef="city">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Город</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
+                                    </ng-container>
+                                    <ng-container cdkColumnDef="sum">
+                                        <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
+                                        <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
+                                    </ng-container>
+                                    <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+                                    <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+                                </table>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('filters') {
+                <app-story-presets caption="Строка отбора в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="filterCases" [itemLabel]="filterLabel">
+                            <ng-template let-item>
+                                <table
+                                    rt-table
+                                    ariaLabel="Договоры"
+                                    [dataSource]="rows"
+                                    [columns]="columns"
+                                    [columnsConfig]="filteredConfig"
+                                    [showFilters]="item.show"
+                                    [filters]="item.filters">
                                     <ng-container cdkColumnDef="title">
                                         <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
                                         <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
@@ -369,6 +431,7 @@ export class TestRtTableMatrixComponent {
     public readonly noRows: readonly ITableRow[] = [];
     public readonly columns: readonly string[] = COLUMNS;
     public readonly columnsConfig: readonly IRtTable.ColumnConfig[] = COLUMNS_CONFIG;
+    public readonly filteredConfig: readonly IRtTable.ColumnConfig[] = COLUMNS_CONFIG_FILTERED;
 
     public readonly densities: readonly IRtTable.Density[] = ['default', 'compact'];
     public readonly clickables: readonly boolean[] = [false, true];
@@ -378,6 +441,21 @@ export class TestRtTableMatrixComponent {
         { name: 'данные на месте', loading: false, fetching: false, first: false },
         { name: 'первая загрузка — заглушки', loading: true, fetching: false, first: true },
         { name: 'догрузка — строки остаются', loading: false, fetching: true, first: false },
+    ];
+
+    /**
+     * Строки отбора нет, строка отбора есть, отбор задан. Третья ячейка показывает главное:
+     * строк в таблице столько же, сколько в наборе, — таблица сообщает набор условий наружу и
+     * сама строки не сужает.
+     */
+    public readonly filterCases: readonly { name: string; show: boolean; filters: readonly IFilterModel<string>[] }[] = [
+        { name: 'showFilters не задан — строки отбора нет', show: false, filters: [] },
+        { name: 'строка отбора; «Сумма» без отбора держит место', show: true, filters: [] },
+        {
+            name: 'отбор задан — строк столько же, сужает потребитель',
+            show: true,
+            filters: [{ propertyName: 'city', operatorType: EFilterOperatorType.EQUALS, value: CITY_MOSCOW }],
+        },
     ];
 
     public readonly sorts: readonly { name: string; sort: ISortModel<string> | null }[] = [
@@ -407,6 +485,8 @@ export class TestRtTableMatrixComponent {
     public readonly sortLabel: (value: { name: string }) => string = (value: { name: string }): string => value.name;
 
     public readonly emptyLabel: (value: { name: string }) => string = (value: { name: string }): string => value.name;
+
+    public readonly filterLabel: (value: { name: string }) => string = (value: { name: string }): string => value.name;
 
     public readonly cardLabel: (value: { name: string }) => string = (value: { name: string }): string => value.name;
 

@@ -15,6 +15,7 @@
 
         .cdk-header-cell,
         .cdk-cell,
+        &__filter-cell,
         &__skeleton-cell {
             position: relative;
             height: 50px;
@@ -44,6 +45,7 @@
         /* Левый периметр не рисуем — первая колонка без левой грани. */
         .cdk-header-cell:first-child,
         .cdk-cell:first-child,
+        &__filter-cell:first-child,
         &__skeleton-cell:first-child {
             border-left: none;
         }
@@ -65,6 +67,23 @@
            (rtElem="table-scroll", overflow-x), без border/padding. Плавающая кнопка
            не занимает места в раскладке — поэтому горизонтальный скролл не уводит её
            из вьюпорта. Компаунд с .cdk-cell держит специфичность выше базовой ячейки. */
+
+        /* Ряд отбора — строка таблицы под шапкой. Своё правило нужно ему и затем, чтобы
+           карточный вид ниже было чем перебить: там столбцов нет вовсе. */
+        &__filter-row {
+            display: table-row;
+        }
+
+        /* Строка отбора стоит второй строкой шапки и оформляется как шапка: иначе поля
+           отбора читаются как первая строка данных. Ячейка пустой колонки держит своё
+           место и не рисует ничего — её ширину задаёт колонка выше. */
+        &__filter-cell {
+            height: auto;
+            background: var(--rt-color-bg-surface);
+            padding-block: var(--rt-space-1);
+            vertical-align: middle;
+        }
+
         &__actions-header.cdk-header-cell {
             width: 0;
             padding: 0;
@@ -233,10 +252,14 @@
             min-width: 0;
             max-width: 100%;
 
+            /* Ряд отбора скрыт здесь же, где строки таблицы: в карточном виде столбцов нет
+               вовсе, и ряд ячеек над списком карточек читается обрывком другой разметки.
+               Отбор на узком показе — работа своя, она названа открытым вопросом описания. */
             .cdk-header-row,
             .cdk-row,
             .rt-table__skeleton-row,
-            .rt-table__empty-row {
+            .rt-table__empty-row,
+            .rt-table__filter-row {
                 display: none;
             }
 

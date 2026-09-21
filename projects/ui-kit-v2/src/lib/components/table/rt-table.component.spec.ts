@@ -14,6 +14,8 @@ import { ComponentFixture } from '@angular/core/testing';
 
 import { BreakpointsService } from '../../platform';
 import { classesOf, createRtFixture, el, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
+import { EFilterOperatorType, IFilterModel } from '@rt-tools/utils';
+
 import { IRtTable } from './rt-table.model';
 import { RtTableComponent } from './rt-table.component';
 
@@ -144,6 +146,74 @@ function render(fixture: ComponentFixture<TableHostComponent>): ComponentFixture
 
 function table(fixture: ComponentFixture<TableHostComponent>): HTMLElement {
     return el(fixture, 'table')?.nativeElement as HTMLElement;
+}
+
+const FILTER_COLUMNS: ReadonlyArray<string> = ['title', 'city', 'price'];
+
+/** Настройка колонок с отбором на двух из трёх: третья держит пустую ячейку своего места. */
+const FILTER_CONFIG: ReadonlyArray<IRtTable.ColumnConfig> = [
+    { key: 'title', label: 'Название', filter: { kind: 'text' } },
+    { key: 'city', label: 'Город', filter: { kind: 'text' } },
+    { key: 'price', label: 'Цена' },
+];
+
+/** Таблица со строкой отбора: набор условий держит хост, как его держит потребитель. */
+@Component({
+    selector: 'rt-table-filter-host',
+    template: `
+        <table
+            rt-table
+            ariaLabel="Туры"
+            [dataSource]="rows"
+            [columns]="columns"
+            [columnsConfig]="config"
+            [showRowActions]="showRowActions()"
+            [showFilters]="showFilters()"
+            [filters]="filters()"
+            (filtersChange)="onFilters($event)">
+            <ng-container cdkColumnDef="title">
+                <th *cdkHeaderCellDef cdk-header-cell>Название</th>
+                <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+            </ng-container>
+            <ng-container cdkColumnDef="city">
+                <th *cdkHeaderCellDef cdk-header-cell>Город</th>
+                <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
+            </ng-container>
+            <ng-container cdkColumnDef="price">
+                <th *cdkHeaderCellDef cdk-header-cell>Цена</th>
+                <td *cdkCellDef="let row" cdk-cell>{{ row.id }}</td>
+            </ng-container>
+            <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+            <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+        </table>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        RtTableComponent,
+        CdkColumnDef,
+        CdkHeaderCellDef,
+        CdkHeaderCell,
+        CdkCellDef,
+        CdkCell,
+        CdkHeaderRowDef,
+        CdkHeaderRow,
+        CdkRowDef,
+        CdkRow,
+    ],
+})
+class TableFilterHostComponent {
+    public readonly columns: ReadonlyArray<string> = FILTER_COLUMNS;
+    public readonly config: ReadonlyArray<IRtTable.ColumnConfig> = FILTER_CONFIG;
+    public readonly rows: ReadonlyArray<ITourRow> = ROWS;
+    public readonly showFilters: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly showRowActions: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly filters: WritableSignal<ReadonlyArray<IFilterModel<string>>> = signal<ReadonlyArray<IFilterModel<string>>>([]);
+
+    public reported: ReadonlyArray<IFilterModel<string>> | null = null;
+
+    public onFilters(next: ReadonlyArray<IFilterModel<string>>): void {
+        this.reported = next;
+    }
 }
 
 describe('RtTableComponent', (): void => {
@@ -283,6 +353,59 @@ describe('RtTableComponent', (): void => {
             const instance: RtTableComponent<ITourRow> = el(fixture, 'table')?.componentInstance as RtTableComponent<ITourRow>;
 
             expect(instance.displayedColumns()).toEqual(COLUMNS);
+        });
+    });
+
+    describe('строка отбора', (): void => {
+        function renderFilters(): ComponentFixture<TableFilterHostComponent> {
+            const fixture: ComponentFixture<TableFilterHostComponent> = createRtFixture(TableFilterHostComponent);
+            fixture.detectChanges();
+
+            return fixture;
+        }
+
+        it('SC-UKV-230 — рисует строку отбора по настройке колонок: ячейка на колонку, пустая там, где отбора нет', (): void => {
+            const fixture: ComponentFixture<TableFilterHostComponent> = renderFilters();
+
+            expect(qa(fixture, 'table-filter-row')).not.toBeNull();
+            expect(qaAll(fixture, 'table-filter-cell').length).toBe(FILTER_COLUMNS.length);
+            expect(qaAll(fixture, 'table-filter-text').length).toBe(2);
+        });
+
+        it('SC-UKV-231 — без просьбы показать отбор строки нет в разметке вовсе', (): void => {
+            const fixture: ComponentFixture<TableFilterHostComponent> = renderFilters();
+
+            fixture.componentInstance.showFilters.set(false);
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'table-filter-row')).toBeNull();
+            expect(qaAll(fixture, 'table-filter-cell').length).toBe(0);
+        });
+
+        it('SC-UKV-232 — наружу уходит весь набор условий, а строки таблица не сужает', (): void => {
+            const fixture: ComponentFixture<TableFilterHostComponent> = renderFilters();
+            const rowsBefore: number = qaAll(fixture, 'table-row').length;
+            const instance: RtTableComponent<ITourRow> = el(fixture, 'table')?.componentInstance as RtTableComponent<ITourRow>;
+
+            // Сперва положительное: поле отбора на экране есть, и сообщать есть чему.
+            expect(qaAll(fixture, 'table-filter-text').length).toBe(2);
+
+            instance.reportFilters([{ propertyName: 'city', operatorType: EFilterOperatorType.CONTAINS, value: 'Сочи' }]);
+            fixture.detectChanges();
+
+            expect(fixture.componentInstance.reported?.length).toBe(1);
+            expect(fixture.componentInstance.reported?.[0]?.propertyName).toBe('city');
+            expect(qaAll(fixture, 'table-row').length).toBe(rowsBefore);
+        });
+
+        it('SC-UKV-233 — колонка действий строки держит своё место и в строке отбора', (): void => {
+            const fixture: ComponentFixture<TableFilterHostComponent> = renderFilters();
+
+            fixture.componentInstance.showRowActions.set(true);
+            fixture.detectChanges();
+
+            expect(qaAll(fixture, 'table-filter-cell').length).toBe(FILTER_COLUMNS.length + 1);
+            expect(qaAll(fixture, 'table-filter-text').length).toBe(2);
         });
     });
 
