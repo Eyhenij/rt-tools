@@ -99,8 +99,8 @@ silent about.
 ## About the showcase snapshots
 
 - **A first-kit reference is pinned to the machine that judges it, and that is the pipeline's
-  runner, not the developer's machine.** The runner stands on another machine: the run log names it
-  in "Set up job" (`Runner name`), and its work directory lies under another account. The first
+  runner, not the developer's machine.** The runner stands on another machine: the first step of
+  the run log names it (`Runner name`), and its work directory lies under another account. The first
   kit's showcase shoots with the machine's own browser, so the push gate here does not match its
   frames at all — it prints that they are matched in the pipeline only. A reference taken here
   diverges there on dense text by a few hundredths of a percent, while the layout is the same. So a
