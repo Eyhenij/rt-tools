@@ -367,8 +367,12 @@ command -v rt_epic_own_pull >/dev/null 2>&1 && rt_epic_own_pull "$state"
 
 title=''
 if command -v perl >/dev/null 2>&1; then
+    # The long key is searched first, the short one only where no long key stands in the command.
+    # The short key is taken by neighbours: `nx affected -t lint` in the same call became the title,
+    # and the refusal said the title does not start with the number of the task while it did.
     title="$(printf '%s' "$cmd" | perl -0ne '
-        if (/(?:--title|-t)(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/s) {
+        my $v = qr/(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/;
+        if (/--title(?:=|\s+)$v/s || /(?<![-\w])-t(?:=|\s+)$v/s) {
             print defined $1 ? $1 : (defined $2 ? $2 : $3);
         }
     ' 2>/dev/null)"
