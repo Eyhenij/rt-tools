@@ -20,7 +20,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatNavList } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, BreakpointService, ElemDirective, RtIconOutlinedDirective } from '@rt-tools/core';
+import { BlockDirective, BreakpointService, ElemDirective, ModDirective, RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
 import { RtuiSubMenuHoldService } from '../menu/rtui-sub-menu-hold.service';
 import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
@@ -60,6 +60,7 @@ const BEM_BLOCK: string = 'rtui-side-menu-favorites';
         // directives
         BlockDirective,
         ElemDirective,
+        ModDirective,
         RtIconOutlinedDirective,
 
         // components
@@ -133,7 +134,9 @@ export class RtuiSideMenuFavoritesComponent {
 
     /** Стрелка на ручке переставляет строку на соседнее место, и фокус едет вместе с ручкой. */
     public onHandleKey(event: Event, index: number, step: number): void {
+        // Стрелки не уходят в меню: там они ведут подсветку по списку раздела.
         event.preventDefault();
+        event.stopPropagation();
 
         const target: number = index + step;
 

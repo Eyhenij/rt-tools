@@ -21,6 +21,13 @@
                     [attr.data-id]="item.id"
                     (cdkDragStarted)="onDragStart()"
                     (cdkDragEnded)="onDragEnd()">
+                    <!--
+                        Ручка стоит внутри пункта, последней после кнопки «убрать»: подсветка пункта
+                        накрывает и её. Строку тянут только за ручку: остальная строка — ссылка, и
+                        строку, которую тянут всем телом, не нажать без дрожи. Значок — стрелка
+                        вверх-вниз: строка ходит только по вертикали. С клавиатуры строку
+                        переставляют стрелки на ручке: перетаскивание CDK клавиш не знает.
+                    -->
                     <rtui-side-menu-sub-item
                         rtElem="item"
                         [item]="item"
@@ -29,31 +36,27 @@
                         [isSubMenuButtonIconsOutlined]="isSubMenuButtonIconsOutlined()"
                         [isSubMenuTooltipsShown]="isSubMenuTooltipsShown()"
                         (clickSubMenuAction)="clickSubMenuAction.emit($event)"
-                        (clickSubMenuAdditionalAction)="clickSubMenuAdditionalAction.emit($event)" />
-
-                    <!--
-                        Строку тянут только за ручку: остальная строка — ссылка, и строку, которую
-                        тянут всем телом, не нажать без дрожи. Ручка та же, что у списка выбранного
-                        в динамическом селекторе: кнопка со значком перемещения и подсказкой. С
-                        клавиатуры строку переставляют стрелки на ручке: перетаскивание CDK клавиш не знает.
-                        Ручка стоит последней, у правого края — после кнопки «убрать» пункта.
-                    -->
-                    <button
-                        #handle
-                        cdkDragHandle
-                        mat-icon-button
-                        type="button"
-                        rtElem="handle"
-                        qa-dataid="side-menu-favorite-handle"
-                        matTooltipPosition="left"
-                        aria-keyshortcuts="ArrowUp ArrowDown"
-                        [matTooltip]="favorites.labels.drag"
-                        [matTooltipDisabled]="narrow()"
-                        [attr.aria-label]="favorites.labels.drag"
-                        (keydown.arrowup)="onHandleKey($event, $index, -1)"
-                        (keydown.arrowdown)="onHandleKey($event, $index, 1)">
-                        <mat-icon rtElem="handle-icon" [rtIconOutlined]="true">open_with</mat-icon>
-                    </button>
+                        (clickSubMenuAdditionalAction)="clickSubMenuAdditionalAction.emit($event)">
+                        <button
+                            #handle
+                            rtuiSideMenuSubItemAction
+                            cdkDragHandle
+                            mat-icon-button
+                            type="button"
+                            rtElem="handle"
+                            qa-dataid="side-menu-favorite-handle"
+                            matTooltipPosition="above"
+                            aria-keyshortcuts="ArrowUp ArrowDown"
+                            [rtMod]="{ always: narrow() }"
+                            [matTooltip]="favorites.labels.drag"
+                            [matTooltipDisabled]="narrow()"
+                            [attr.aria-label]="favorites.labels.drag"
+                            (click)="$event.stopPropagation()"
+                            (keydown.arrowup)="onHandleKey($event, $index, -1)"
+                            (keydown.arrowdown)="onHandleKey($event, $index, 1)">
+                            <mat-icon rtElem="handle-icon" [rtIconOutlined]="true">height</mat-icon>
+                        </button>
+                    </rtui-side-menu-sub-item>
                 </div>
             }
         </mat-nav-list>

@@ -12,6 +12,7 @@ given from the root of the tree.
 - **A pinned panel that has nothing to show takes no place.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.scss:.rtui-sub-side-menu--opened`, `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.html:rtui-side-menu-resizer`
 - **A pinned submenu closes neither at the leaving of the pointer nor at a transition by its own item.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:toggleSubMenu`
 - **There is no backing under a pinned submenu.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:isPinned`
+- **A pinned submenu has square corners.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.scss:rt-side-menu-sub-menu-radius`
 - **The field searches over the open submenu, not over all the sections.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:visibleSubMenuItems`
 - **The filter goes by a substring of the label without a count of the case, and an empty query shows everything.** — `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.ts:filterSubMenuItems`
 - **The filter goes down into the folders of the submenu, and only rows carrying the query stay.** — `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.ts:filterSubMenuItems`

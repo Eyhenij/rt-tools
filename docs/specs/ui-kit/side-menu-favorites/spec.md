@@ -41,7 +41,7 @@ sign-out or fill it with defaults.
 | The star, off        | a hollow star, `star_border`; the tooltip "Add to favourites"                                    |
 | The star, on         | a filled star in the theme colour; the tooltip "Remove from favourites"                          |
 | The remove button    | a minus, `remove`; the tooltip "Remove from favourites"                                          |
-| The handle           | the move button `open_with` at the right edge of a block row, the tooltip "Hold button to drag"  |
+| The handle           | the up-and-down button `height` after the remove button, the tooltip "Hold button to drag"       |
 
 ## Rules
 
@@ -86,7 +86,10 @@ sign-out or fill it with defaults.
   excluded.** A folder is
   an item without an address: it leads nowhere, and a favourite that opens nothing is a broken
   favourite. An item without a name has no title row, and the star has no place there either. The row returning to the main list on a narrow screen carries no star. The star stands
-  at the right edge of the row, after the consumer's additional button.
+  before the consumer's additional button: that button is always visible and stays last, at the
+  right edge, while the favourites buttons appear before it and do not move it.
+- **The chevron of a folder in a favourites section stands in the column of the stars.** A column
+  whose icons stand off by a few points reads as untidy, not as two kinds of buttons.
 - **A row of the block carries a remove button, not a star.** Everything in the block is a
   favourite already, and a star there tells nothing apart. A favourite is removed in place, without
   looking for its row in the list.
@@ -134,10 +137,10 @@ sign-out or fill it with defaults.
   id would take them over.
 - **A row of the block is dragged by its handle, and the new order is kept at the drop.** The rest
   of the row stays a link: a row dragged by its whole body cannot be pressed without a jitter. The
-  handle is the one of the selected list of the dynamic selector: a button with the move icon and
-  the tooltip "Hold button to drag". It stands last, at the right edge after the remove button, in
-  the column of the list's stars; the label of a block row starts where the label of a list row
-  does.
+  handle is a button with the up-and-down arrow and the tooltip "Hold button to drag": a row moves
+  only vertically. It stands inside the item after the remove button and before the consumer's button,
+  in the column of the list's stars, and shows under the hover and the focus of its row, the same as
+  the remove button. The label of a block row starts where the label of a list row does.
 - **A drop moves the dragged id next to its visible neighbour, and hidden ids keep their places.**
   The block shows only the ids found in the open section — ids of other sections and ids the menu
   lacks are hidden alike — so a place in the block is not a place in the list.
@@ -282,3 +285,9 @@ Not applicable: one list per application key.
   16 px in the same colour; the heading's label takes a colour of the application by a property.
 - 2026-09-21 — the owner: the handle moved to the right edge, after the remove button, into the
   column of the list's stars.
+- 2026-09-21 — the owner: the handle moved inside the item, took the up-and-down arrow and shows
+  under the hover like the remove button; the chevron of a folder stands in the column of the stars.
+  The showcase got the consumer's "+" buttons and a section root. Scenario SC-UK-103 added.
+- 2026-09-21 — the owner: the consumer's "+" is always visible, so it stands last; the star, the
+  remove button and the handle appear under the hover before it. In a favourites section the "+"
+  stands in the column of the stars. Scenario SC-UK-104 added.

@@ -228,3 +228,16 @@ section's favourites and its stars
 Given two flagged sections and the list `a`, `c`, `b`, where `c` lies in the second
 When in the first section the row `b` is dropped at the first place
 Then the rows are `b`, `a`, and the list is `b`, `c`, `a`
+
+### SC-UK-103 — the header of a folder in a favourites section is marked for the column of the stars
+
+Given a flagged section and a section without the flag, each holding a folder
+When the submenu of each is drawn
+Then the folder header of the flagged section carries the favourites modifier, the other does not
+
+### SC-UK-104 — the consumer's button stands last in the row
+
+Given a flagged section whose item carries the consumer's additional button and is a favourite
+When the submenu is drawn
+Then the consumer's button is the last in the list row, right after the star, and the last in the
+block row, right after the handle

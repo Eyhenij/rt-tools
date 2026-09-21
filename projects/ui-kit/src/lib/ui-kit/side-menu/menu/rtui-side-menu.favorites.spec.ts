@@ -139,7 +139,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect(document.activeElement).toBe(removes[1]);
     });
 
-    it('SC-UK-95 — ручка строки — кнопка со значком перемещения и подсказкой', () => {
+    it('SC-UK-95 — ручка — кнопка со стрелкой вверх-вниз внутри пункта, после «убрать», и никуда не ведёт', () => {
         const { fixture } = withFavorites(['rates']);
 
         hoverFirstItem(fixture);
@@ -148,9 +148,18 @@ describe('RtuiSideMenuComponent — избранное', () => {
 
         expect(handle.tagName).toBe('BUTTON');
         expect(handle.getAttribute('aria-label')).toBe('Hold button to drag');
-        expect(handle.querySelector('mat-icon')?.textContent?.trim()).toBe('open_with');
+        expect(handle.querySelector('mat-icon')?.textContent?.trim()).toBe('height');
+        expect(handle.closest('mat-list-item')).not.toBeNull();
+        expect(handle.previousElementSibling?.getAttribute('qa-dataid')).toBe('side-menu-favorite-remove');
         expect(fixture.debugElement.query(By.css(HANDLE)).injector.get(CdkDragHandle, null)).not.toBeNull();
         expect(tooltip(fixture, HANDLE).message).toBe('Hold button to drag');
+
+        const emitted: jest.SpyInstance = jest.spyOn(menu(fixture).clickSubMenuAction, 'emit');
+
+        handle.click();
+        fixture.detectChanges();
+
+        expect(emitted).not.toHaveBeenCalled();
     });
 
     it('SC-UK-100 — стрелки на ручке переставляют строку, и фокус едет вместе с ней', async () => {

@@ -15,7 +15,7 @@
             }
 
             @if (item?.name) {
-                <div rtBlock="rtui-side-menu-sub-item-title">
+                <div rtBlock="rtui-side-menu-sub-item-title" [rtMod]="{ favorites: favoritesOn() || inFavorites() }">
                     <div
                         #titleTpl
                         rtElem="text"
@@ -42,17 +42,6 @@
                             }
                         }
                     </div>
-
-                    @if (item?.iconButton?.icon) {
-                        <div rtBlock="rtui-side-menu-sub-item-title-button">
-                            <mat-icon
-                                rtElem="icon"
-                                [rtIconOutlined]="isSubMenuButtonIconsOutlined()"
-                                (click)="onClickSubMenuAdditional(item.iconButton?.data, $event); $event.stopPropagation()">
-                                {{ item.iconButton.icon }}
-                            </mat-icon>
-                        </div>
-                    }
 
                     <!--
                         Строка блока избранного несёт кнопку «убрать», а не звезду: всё в блоке уже
@@ -101,6 +90,28 @@
                             </mat-icon>
                         </button>
                     }
+
+                    <!--
+                        Действия, которые строке передаёт владелец: блок избранного кладёт сюда ручку
+                        перетаскивания. Слот один на шаблон — подпункт со ссылкой рисуется один раз.
+                    -->
+                    <ng-content select="[rtuiSideMenuSubItemAction]" />
+
+                    <!--
+                        Кнопка потребителя видна всегда и потому стоит последней, у правого края:
+                        кнопки избранного, появляющиеся под наведением, встают перед ней и не
+                        сдвигают её.
+                    -->
+                    @if (item?.iconButton?.icon) {
+                        <div rtBlock="rtui-side-menu-sub-item-title-button">
+                            <mat-icon
+                                rtElem="icon"
+                                [rtIconOutlined]="isSubMenuButtonIconsOutlined()"
+                                (click)="onClickSubMenuAdditional(item.iconButton?.data, $event); $event.stopPropagation()">
+                                {{ item.iconButton.icon }}
+                            </mat-icon>
+                        </div>
+                    }
                 </div>
             }
         </mat-list-item>
@@ -121,6 +132,7 @@
                 [rtMod]="{
                     activated: menuRef.activeMenuIds().includes(item.id),
                     highlighted: menuRef.highlightedMenuId() === item.id,
+                    favorites: favoritesOn(),
                 }">
                 @if (item?.icon) {
                     <mat-icon matListItemIcon rtElem="icon" [rtIconOutlined]="isSubMenuIconsOutlined()">{{ item.icon }}</mat-icon>

@@ -67,6 +67,8 @@ consumer, the address of the active item the kit does not count.
   Otherwise the pinning is cancelled by the very first action of the person.
 - **There is no backing under a pinned submenu.** It puts out the rest of the page and catches the presses;
   at a panel standing open permanently that makes the page unworkable.
+- **A pinned submenu has square corners.** It stands flush against the page, and a rounded corner cut
+  off the bottom scroll hint together with its button. The radius property stays the consumer's to set.
 - **The field searches over the open submenu, not over all the sections.** The result stays belonging to the
   section: a search over the whole application is another subject.
 - **The filter goes by a substring of the label without a count of the case, and an empty query shows
@@ -203,3 +205,4 @@ The subdomain has no open questions.
   limit. The rules, the scenarios and the bindings about the second level of the side menu moved as they
   were: the scenario numbers were not recounted.
 - 2026-09-09 — the submenu stopped drifting upwards at a walk of the strip (RT-1975).
+- 2026-09-21 — the pinned submenu lost its rounded corners: the corner cut the scroll hint (RT-2291).

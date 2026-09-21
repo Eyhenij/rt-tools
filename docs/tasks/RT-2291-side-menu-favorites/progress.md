@@ -87,6 +87,10 @@
 - The handle moved after the item and into the column of the list's stars by a negative margin equal to the list item's trailing space. The showcase on 6006: handle 271–303 px, list stars' right edge 303 px, the minus 239–271 px, the labels of block and list rows both at 113 px, overflow 0. 156 tests passed.
 - "Галерея" with a divider is found neither in this tree nor in the two consumers on this machine (`web-store`, `vaping360`); the question about equal spacing is asked back to the owner with the block's numbers.
 
+- The owner: «иконка драга внутри айтима + сама иконка стрелка ввех и вниз», «в запиненом режиме тень внизу свбменю с кнопкой сколл даун закруглена», «иконка минус и иконка драга должны быть прижаты к правому краю, на папке иконка шеврона имеет другой отступ», «добавь моков» с кнопкой «+», «иконка драга на фейворит видна тоже на ховер как и минус», «плюсик должен быть в конце айтима так как он всегда отображается а остальное на ховер».
+- The handle went inside the item through a projection slot, took the `height` icon and the hover visibility of the remove button; its styles left `:host`, and the drag preview keeps 32 px, a 20 px icon and the grey colour. The pinned panel is square: the rounded corner of the drawer with `overflow: auto` cut the scroll hint, radius now 0 px. The folder chevron moved by a 4 px outer margin — Material rotates the indicator with its padding, so uneven padding flipped sides on an open folder. The consumer's "+" stands last; in a favourites section it moves by 3 px into the column.
+- The showcase on 6006: the handle, the star, the chevron and the "+" all centre on 287 px; a block row with "+" reads remove 205–237, handle 234–266 under hover, "+" 274–300; overflow 0. `pnpm exec nx test @rt-tools/ui-kit --testFile=side-menu` — 158 passed with SC-UK-103 and SC-UK-104; stylelint and eslint clean; `node tools/check-specs.mjs` — the four divergences of `main`.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).
@@ -106,13 +110,23 @@ The progress in full — `docs/tasks/RT-2291-side-menu-favorites/progress.md`; t
 ### Uncommitted
 
 ```
- M favorites/favorites.logic.ts
- M side-menu.types.ts
+ M favorites/rtui-side-menu-favorites.component.html
+ M favorites/rtui-side-menu-favorites.component.scss
+ M favorites/rtui-side-menu-favorites.component.ts
+ M menu-sub-item/rtui-side-menu-sub-item.component.html
+ M menu-sub-item/rtui-side-menu-sub-item.component.scss
+ M menu/rtui-side-menu.component.scss
+ M menu/rtui-side-menu.favorites.spec.ts
 ```
 
 ### Commits over the main branch
 
 ```
+c9042b7da fix(rt:ui-kit): ручка избранного справа, после кнопки «убрать»
+2cbcecb96 fix(rt:ui-kit): звезда избранного в цвете темы Material, заголовок крупнее
+9a7342d4f fix(rt:ui-kit): избранное по ревью — раздел по показанному набору, удержание, клавиатура
+22a9abf8f fix(rt:ui-kit): значки избранного по центру кнопки, в витрине — папки
+86f46845d feat(rt:ui-kit): избранное включается у раздела, в блоке — кнопка «убрать»
 0c19e6780 docs(rt:ui-kit): отправка избранного ждёт слова владельца и слияния #2292
 57226c90b docs(rt:ui-kit): шаги избранного закрыты, набор проверок зелёный
 457e7bd03 docs(rt:ui-kit): избранное бокового меню вошло в спек кита поддоменом

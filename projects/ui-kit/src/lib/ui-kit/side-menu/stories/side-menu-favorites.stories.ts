@@ -23,9 +23,14 @@ import { MENU_ITEMS, TestSideMenuWrapperComponent } from './component/test-side-
  */
 const FAVORITE_SECTIONS: ReadonlyArray<ISideMenu.Item['id']> = [1, 24];
 
-/** «Content» с папками: разделы макетов и навигации лежат во вложенных папках. */
+/**
+ * «Content» с папками: разделы макетов и навигации лежат во вложенных папках. Первый пункт — корень
+ * раздела, как «Gallery» у потребителя; у него и у части разделов кнопка «+» создания записи, как у
+ * пунктов потребителя: видно, как «+» уживается со звездой, а в блоке — с «убрать» и ручкой.
+ */
 const CONTENT_WITH_FOLDERS: ISideMenu.Item[] = [
-    { id: 2, name: 'News', link: '/content/news' },
+    { id: 102, icon: 'photo_library', name: 'Gallery', link: '/content', iconButton: { icon: 'add', data: '/content' } },
+    { id: 2, name: 'News', link: '/content/news', iconButton: { icon: 'add', data: '/content/news' } },
     { id: 3, name: 'Learn', link: '/content/learn' },
     { id: 4, name: 'Review', link: '/content/review' },
     { id: 5, name: 'Press release', link: '/content/press-release' },
@@ -35,14 +40,14 @@ const CONTENT_WITH_FOLDERS: ISideMenu.Item[] = [
         name: 'Layouts',
         submenu: [
             { id: 6, name: 'L1', link: '/content/l1' },
-            { id: 7, name: 'L2', link: '/content/l2' },
+            { id: 7, name: 'L2', link: '/content/l2', iconButton: { icon: 'add', data: '/content/l2' } },
             { id: 8, name: 'L3', link: '/content/l3' },
             {
                 id: 101,
                 icon: 'folder',
                 name: 'Navigation',
                 submenu: [
-                    { id: 9, name: 'Sidebar', link: '/content/sidebar' },
+                    { id: 9, name: 'Sidebar', link: '/content/sidebar', iconButton: { icon: 'add', data: '/content/sidebar' } },
                     { id: 10, name: 'Mega Menu', link: '/content/mega-menu' },
                 ],
             },
