@@ -16,9 +16,17 @@
       "reason": "the name is declared by both kits: accepted when the check was created, keeping the names apart is a separate piece of work",
       "task": "RT-383"
     },
+    "a shared name with the first kit --rt-radius-2xl": {
+      "reason": "the name is declared by both kits long ago, the first kit by interpolation over a scale the check did not read before; accepted by the owner, keeping the names apart is a separate piece of work",
+      "task": "RT-2302"
+    },
     "a shared name with the first kit --rt-radius-full": {
       "reason": "the name is declared by both kits: accepted when the check was created, keeping the names apart is a separate piece of work",
       "task": "RT-383"
+    },
+    "a shared name with the first kit --rt-radius-lg": {
+      "reason": "the name is declared by both kits long ago, the first kit by interpolation over a scale the check did not read before; accepted by the owner, keeping the names apart is a separate piece of work",
+      "task": "RT-2302"
     },
     "a shared name with the first kit --rt-radius-md": {
       "reason": "the name is declared by both kits: accepted when the check was created, keeping the names apart is a separate piece of work",
@@ -35,6 +43,18 @@
     "a shared name with the first kit --rt-radius-xs": {
       "reason": "the name is declared by both kits: accepted when the check was created, keeping the names apart is a separate piece of work",
       "task": "RT-272"
+    },
+    "a shared name with the first kit --rt-shadow-lg": {
+      "reason": "the name is declared by both kits long ago, the first kit by interpolation over a scale the check did not read before; accepted by the owner, keeping the names apart is a separate piece of work",
+      "task": "RT-2302"
+    },
+    "a shared name with the first kit --rt-shadow-md": {
+      "reason": "the name is declared by both kits long ago, the first kit by interpolation over a scale the check did not read before; accepted by the owner, keeping the names apart is a separate piece of work",
+      "task": "RT-2302"
+    },
+    "a shared name with the first kit --rt-shadow-sm": {
+      "reason": "the name is declared by both kits long ago, the first kit by interpolation over a scale the check did not read before; accepted by the owner, keeping the names apart is a separate piece of work",
+      "task": "RT-2302"
     }
   }
 }

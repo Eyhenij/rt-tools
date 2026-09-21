@@ -197,3 +197,12 @@ Then a look in which they all come out one paint fells the run, and the refusal 
 look and the paint
 
 Covered: `tools/tests/check-gradient-stops.test.sh` — twenty-two cases, called by `pnpm run test:checks`.
+
+### SC-UKV-133 — a first-kit name declared by interpolation over a scale collides like a literal one
+
+Given the first kit declares a scale by `@each` over a map, with the step name interpolated into the token
+name, and the second kit declares one of those names
+When the check of the design goes
+Then the check names the shared name, and a key the map does not hold gives no collision
+
+Covered: `tools/tests/check-tokens-graph.test.sh` — three cases, called by `pnpm run test:checks`.
