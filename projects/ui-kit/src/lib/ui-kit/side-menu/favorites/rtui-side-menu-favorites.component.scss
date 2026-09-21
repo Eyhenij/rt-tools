@@ -1,0 +1,67 @@
+:host {
+    display: block;
+
+    // Блок отделён от списка раздела чертой: без неё строка избранного и строка того же пункта
+    // в списке стоят подряд и читаются как повтор.
+    &:has(.rtui-side-menu-favorites__list) {
+        padding-bottom: var(--rt-spacing-8);
+        border-bottom: 1px solid var(--rt-border-neutral-default);
+        margin-bottom: var(--rt-spacing-8);
+    }
+
+    .rtui-side-menu-favorites {
+        &__title {
+            display: flex;
+            align-items: center;
+            padding: var(--rt-spacing-8) var(--rt-spacing-16) var(--rt-spacing-4);
+            color: var(--rt-text-base-secondary);
+            font-size: var(--rt-font-size-xs);
+            font-weight: var(--rt-font-weight-semibold);
+            gap: var(--rt-spacing-4);
+        }
+
+        &__title-icon {
+            width: var(--rt-font-size-xs);
+            height: var(--rt-font-size-xs);
+            font-size: var(--rt-font-size-xs);
+        }
+
+        &__title-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__list {
+            padding: 0;
+        }
+
+        &__row {
+            display: flex;
+            align-items: center;
+        }
+
+        &__handle {
+            flex: 0 0 auto;
+            color: var(--rt-text-base-secondary);
+            cursor: grab;
+        }
+
+        &__item {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+    }
+}
+
+// Строка в руке живёт в оверлее CDK, вне блока, и правило из корня до неё не доходит.
+.rtui-side-menu-favorites__row.cdk-drag-preview {
+    display: flex;
+    align-items: center;
+    border-radius: var(--rt-radius-xl);
+    background-color: var(--rt-color-neutral-25);
+}
+
+.rtui-side-menu-favorites__row.cdk-drag-placeholder {
+    opacity: 0;
+}

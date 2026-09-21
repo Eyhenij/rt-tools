@@ -139,6 +139,9 @@ When the submenu is drawn, then the row `b` is hovered, then its star is focused
 Then the star of `a` is visible from the start, and the star of `b` only under the hover and under the
 focus
 
+Coverage: partial — the spec checks the marks the styles read, not the visibility itself: the spec
+environment applies no component styles and has no hover. The visibility is measured on the showcase.
+
 ### SC-UK-90 — the focus on a star holds a submenu opened by hover
 
 Given the service and a submenu opened by hover

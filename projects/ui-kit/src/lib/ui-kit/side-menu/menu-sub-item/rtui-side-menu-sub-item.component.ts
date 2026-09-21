@@ -20,6 +20,9 @@ import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltip } from '@angular/material/toolt
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../tooltip';
+import { RtuiButtonComponent } from '../../buttons/unified-button/rtui-button.component';
+import { RtuiFavoritesService } from '../favorites/rtui-favorites.service';
+import { RtuiSubMenuHoldService } from '../menu/rtui-sub-menu-hold.service';
 import { RtuiSubMenuTitlePartsPipe } from './sub-menu-title-parts.pipe';
 import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 
@@ -40,6 +43,7 @@ const BEM_BLOCK: string = 'rtui-side-menu-sub-item';
         MatListItemTitle,
         MatExpansionModule,
         MatTooltip,
+        RtuiButtonComponent,
 
         // directives
         BlockDirective,
@@ -64,6 +68,9 @@ const BEM_BLOCK: string = 'rtui-side-menu-sub-item';
 export class RtuiSideMenuSubItemComponent {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
+    /** Избранное включено провайдером приложения; не поставлено — звёзд нет. */
+    protected readonly favorites: RtuiFavoritesService | null = inject(RtuiFavoritesService, { optional: true });
+    protected readonly hold: RtuiSubMenuHoldService | null = inject(RtuiSubMenuHoldService, { optional: true });
     /** Экран узкий: замер кита, и другого источника у этого признака нет. */
     protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
     public readonly menuRef: IRtuiSideMenuHost = inject(RTUI_SIDE_MENU);
@@ -81,6 +88,14 @@ export class RtuiSideMenuSubItemComponent {
     public isSubMenuTooltipsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
+    /**
+     * Строка стоит в блоке избранного. У неё нет номера пункта на странице и кольца клавиатуры:
+     * доводка активного пункта в видимую часть и подсветка стрелками целятся в строку списка, а
+     * второй узел с тем же номером перехватил бы их.
+     */
+    public inFavorites: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
 
     public readonly clickSubMenuAction: OutputEmitterRef<{ item: ISideMenu.Item; event: MouseEvent }> = output<{
         item: ISideMenu.Item;
@@ -93,6 +108,12 @@ export class RtuiSideMenuSubItemComponent {
 
     public onClickSubMenu(item: ISideMenu.Item, event: MouseEvent): void {
         this.clickSubMenuAction.emit({ item, event });
+    }
+
+    /** Звезда переключает избранное и больше ничего: ни перехода, ни закрытия подменю. */
+    public onToggleFavorite(item: ISideMenu.Item, event: MouseEvent): void {
+        event.stopPropagation();
+        this.favorites?.toggle(item.id);
     }
 
     public onClickSubMenuAdditional(data: ISideMenu.ItemData, event: MouseEvent): void {

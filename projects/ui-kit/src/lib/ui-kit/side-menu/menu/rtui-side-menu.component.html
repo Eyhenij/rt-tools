@@ -32,6 +32,14 @@
                                 <rtui-clear-button matSuffix [isButtonShown]="subMenuQuery() !== ''" (clickAction)="onSubMenuSearch('')" />
                             </mat-form-field>
 
+                            <!-- Избранное — под полем поиска и над списком раздела, как и на широком экране. -->
+                            <rtui-side-menu-favorites
+                                [isSubMenuIconsOutlined]="isSubMenuIconsOutlined()"
+                                [isSubMenuButtonIconsOutlined]="isSubMenuButtonIconsOutlined()"
+                                [isSubMenuTooltipsShown]="isSubMenuTooltipsShown()"
+                                (clickSubMenuAction)="onClickSubMenu($event)"
+                                (clickSubMenuAdditionalAction)="clickSubMenuAdditional($event)" />
+
                             @if (subMenuQuery() !== '' && !visibleSubMenuItems().length) {
                                 <div rtBlock="rtui-side-menu-empty" qa-dataid="side-menu-empty">{{ nothingFoundLabel }}</div>
                             }
@@ -196,6 +204,19 @@
                 <ng-container *rtuiScrollableContent>
                     @if (subMenuOpened() && subMenuQuery() !== '' && !visibleSubMenuItems().length) {
                         <div rtElem="empty" qa-dataid="side-menu-empty">{{ nothingFoundLabel }}</div>
+                    }
+
+                    <!--
+                        Избранное стоит над списком раздела и прокручивается вместе с ним: в шапке
+                        длинный блок съел бы место списка. Блок сам решает, есть ли ему что показать.
+                    -->
+                    @if (subMenuOpened()) {
+                        <rtui-side-menu-favorites
+                            [isSubMenuIconsOutlined]="isSubMenuIconsOutlined()"
+                            [isSubMenuButtonIconsOutlined]="isSubMenuButtonIconsOutlined()"
+                            [isSubMenuTooltipsShown]="isSubMenuTooltipsShown()"
+                            (clickSubMenuAction)="onClickSubMenu($event)"
+                            (clickSubMenuAdditionalAction)="clickSubMenuAdditional($event)" />
                     }
 
                     @if (subMenuOpened() && visibleSubMenuItems().length) {

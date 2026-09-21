@@ -13,6 +13,8 @@ import { InjectionToken, Signal } from '@angular/core';
  * ровно то, что человек искал.
  */
 export interface IRtuiSideMenuHost {
+    /** Пункты полосы: блок избранного ищет в их подменю пункты, стоящие за номерами списка. */
+    readonly menuItems: Signal<ISideMenu.Item[]>;
     readonly activeMenuIds: Signal<Array<string | number>>;
     readonly expandedMenuIds: Signal<Array<string | number>>;
     readonly highlightedMenuId: Signal<string | number | null>;

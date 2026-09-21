@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Signal, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EnvironmentProviders, Provider, Signal, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
@@ -6,6 +6,7 @@ import { BreakpointService } from '@rt-tools/core';
 
 import { ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 import { RtuiSideMenuComponent } from './rtui-side-menu.component';
+import { RtuiSubMenuHoldService } from './rtui-sub-menu-hold.service';
 
 /**
  * Двойник набора шрифтов документа. Значок кита спрашивает у него, доехал ли шрифт значков, а в
@@ -96,7 +97,8 @@ export function setup(
     mode: ISideMenu.SubMenuMode = 'hover',
     active: Array<string | number> = [],
     narrow: boolean = false,
-    items: ISideMenu.Item[] = ITEMS
+    items: ISideMenu.Item[] = ITEMS,
+    extraProviders: Array<Provider | EnvironmentProviders> = []
 ): ISetup {
     const breakpoints: BreakpointServiceStub = new BreakpointServiceStub();
 
@@ -106,7 +108,7 @@ export function setup(
         imports: [HostComponent],
         // Ловящий маршрут: пункт полосы уводит по своему адресу настоящим переходом, и пустой
         // набор маршрутов роняет на нём весь прогон отказом «нечему сопоставить адрес».
-        providers: [provideRouter([{ path: '**', children: [] }]), provideNoopAnimations()],
+        providers: [provideRouter([{ path: '**', children: [] }]), provideNoopAnimations(), ...extraProviders],
     });
     // Замена набора провайдеров идёт целиком, поэтому токен меню объявляется здесь заново:
     // без него подпункт не находит хозяина и падает на подъёме.
@@ -114,6 +116,7 @@ export function setup(
         set: {
             providers: [
                 { provide: BreakpointService, useValue: breakpoints },
+                RtuiSubMenuHoldService,
                 { provide: RTUI_SIDE_MENU, useExisting: RtuiSideMenuComponent },
             ],
         },

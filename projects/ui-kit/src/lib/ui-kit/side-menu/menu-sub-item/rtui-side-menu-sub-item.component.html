@@ -6,8 +6,8 @@
     @if (item?.link) {
         <mat-list-item
             rtBlock="rtui-side-menu-sub-item"
-            [rtMod]="{ fixed: isSubMenuXScrollEnabled(), highlighted: menuRef.highlightedMenuId() === item.id }"
-            [id]="item.id"
+            [rtMod]="{ fixed: isSubMenuXScrollEnabled(), highlighted: !inFavorites() && menuRef.highlightedMenuId() === item.id }"
+            [id]="inFavorites() ? null : item.id"
             [activated]="menuRef.activeMenuIds().includes(item.id)"
             (click)="onClickSubMenu(item, $event)">
             @if (item?.icon) {
@@ -52,6 +52,31 @@
                                 {{ item.iconButton.icon }}
                             </mat-icon>
                         </div>
+                    }
+
+                    <!--
+                        Звезда избранного — у пункта со своим адресом, пока приложение поставило
+                        сервис избранного. Кнопка готовая кита, та же, что у булавки закрепления:
+                        закрашенная звезда цветом акцента — в избранном, контурная — нет. Цвет
+                        остаётся признаком и там, где у набора значков нет оси заливки.
+                    -->
+                    @if (favorites && item.link?.trim()) {
+                        @let isFavorite = favorites.ids().includes(item.id);
+                        <rtui-button
+                            rtElem="star"
+                            type="icon"
+                            icon="star"
+                            size="sm"
+                            qa-dataid="side-menu-favorite-star"
+                            matTooltipPosition="above"
+                            [rtMod]="{ on: isFavorite, always: narrow() }"
+                            [outlined]="!isFavorite"
+                            [variant]="isFavorite ? 'primary' : 'default'"
+                            [matTooltip]="isFavorite ? favorites.labels.remove : favorites.labels.add"
+                            [attr.aria-label]="isFavorite ? favorites.labels.remove : favorites.labels.add"
+                            [attr.aria-pressed]="isFavorite"
+                            (click)="onToggleFavorite(item, $event)"
+                            (focusin)="hold?.hold()" />
                     }
                 </div>
             }

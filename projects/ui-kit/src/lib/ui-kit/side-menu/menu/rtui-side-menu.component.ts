@@ -43,6 +43,8 @@ import { RtuiButtonComponent } from '../../buttons/unified-button/rtui-button.co
 import { RtuiClearButtonComponent } from '../../table/components/clear-search-button/rtui-clear-button.component';
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
 import { pressSubMenuRow, SubMenuKeyboard } from './sub-menu-keyboard';
+import { RtuiSubMenuHoldService } from './rtui-sub-menu-hold.service';
+import { RtuiSideMenuFavoritesComponent } from '../favorites/rtui-side-menu-favorites.component';
 
 @Directive({
     selector: '[rtuiSideMenuHeader]',
@@ -69,7 +71,7 @@ const BEM_BLOCK: string = 'rtui-side-menu';
     },
     templateUrl: './rtui-side-menu.component.html',
     styleUrls: ['./rtui-side-menu.component.scss'],
-    providers: [BreakpointService, { provide: RTUI_SIDE_MENU, useExisting: RtuiSideMenuComponent }],
+    providers: [BreakpointService, RtuiSubMenuHoldService, { provide: RTUI_SIDE_MENU, useExisting: RtuiSideMenuComponent }],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         NgTemplateOutlet,
@@ -99,11 +101,13 @@ const BEM_BLOCK: string = 'rtui-side-menu';
         RtuiButtonComponent,
         RtuiClearButtonComponent,
         RtuiSideMenuSubItemComponent,
+        RtuiSideMenuFavoritesComponent,
     ],
 })
 export class RtuiSideMenuComponent {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
     readonly #renderer: Renderer2 = inject(Renderer2);
+    readonly #hold: RtuiSubMenuHoldService = inject(RtuiSubMenuHoldService);
 
     /**
      * Ширина, пока край держат указателем. Наружу она уходит одной просьбой на отпускании: вход
@@ -340,8 +344,8 @@ export class RtuiSideMenuComponent {
             return;
         }
 
-        if (item === undefined && this.#searchHeld()) {
-            // Указатель ушёл с панели, а человек работает с полем: закрывать нечего.
+        if (item === undefined && (this.#searchHeld() || this.#hold.held())) {
+            // Указатель ушёл с панели, а человек работает с полем, звездой или строкой избранного.
             return;
         }
 
@@ -361,6 +365,7 @@ export class RtuiSideMenuComponent {
         this.subMenuQuery.set('');
         this.#hoverOpened.set(false);
         this.#searchHeld.set(false);
+        this.#hold.release();
         this.#keyboard.reset();
     }
 
@@ -464,7 +469,6 @@ export class RtuiSideMenuComponent {
         }
     }
 
-    /** Отпускание: слушатели снимаются, а ширина уходит просьбой наружу. */
     /**
      * Конец тяги. Наружу уходит натянутая ширина, а не та, что получилась на экране: нижний
      * предел держит оформление — панель не бывает уже той ширины, какую задал потребитель, — и
