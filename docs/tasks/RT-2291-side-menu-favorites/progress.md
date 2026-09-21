@@ -7,7 +7,7 @@
 - **Done:** all twelve steps; the agreement merged into `docs/specs/ui-kit/side-menu-favorites/`; `pnpm run check:all` green
 - **Next step:** the closing — the snapshot references of the two new stories, the task folder taken apart into the archive, the PR
 - **Uncommitted:** no
-- **Waiting for the owner:** the four duplicated scenario numbers of `main` in `docs/specs/agent-kit/roles/scenarios.md` — until they are separated the branch cannot reach the host
+- **Waiting for the owner:** their look at the work and their word to send it: «я еще не смотрел, пока не скажу не пуш»
 - **PR:** not open yet
 
 ## Steps
@@ -80,8 +80,12 @@ into the archive, open the PR with the reviewer.
 
 - Sending the branch is refused by `node tools/check-specs.mjs` on four divergences that stand in
   `main` itself: `docs/specs/agent-kit/roles/scenarios.md` reuses SC-AK-1136, 1137, 1139 and 1140,
-  taken by prose-guard, epic-table and edit-place (came with 5ea2c63e5). The owner was asked who
-  separates them; without their answer the branch stays local.
+  taken by prose-guard, epic-table and edit-place (came with 5ea2c63e5). The fix already exists:
+  e56a395a0 in the draft PR #2292 (`RT-2195-tree-tells-truth-about-itself`, another session's
+  branch) gives them 1151–1154. It is not repeated here; after #2292 merges, main is merged into
+  this branch. A trial merge of this branch with `origin/main` on 2026-09-21 had no conflicts.
+- The owner has not looked at the work yet and said: «пока не скажу не пуш». Nothing is sent before
+  their word.
 - The showcase on 6006 is the owner's, raised from this tree; do not raise a second one.
 - The menu file `rtui-side-menu.component.ts` stands at 496 lines of the 500 limit: new favourites
   logic goes into `favorites/`, not into the menu.
