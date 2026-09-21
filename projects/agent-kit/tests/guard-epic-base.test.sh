@@ -158,6 +158,25 @@ got="$(ge_silent "$(ge_decision "$GE_NO_EPIC" origin/main)")"
 report "SC-AK-993 — у задачи без эпика основание судится по главной, как прежде" "$got" "прошло"
 
 
+# --- SC-AK-1164 — основание со свежей главной снимает отказ об отставании эпика ----------
+#
+# Слияние главной доходит до удалённой копии ветки эпика только отправкой, а отправку иногда
+# отбивает проверка над кодом, который чинит задача этого же эпика. Судя по одной удалённой копии,
+# гард закрывал единственную дорогу к той правке: ветку задачи завести нельзя, пока ветка эпика не
+# отправлена, а отправить её нельзя, пока правка не сделана.
+git -C "$GE_REPO" checkout -q main
+fixture_commit "$GE_REPO" "docs/new-in-main.md" "главная ушла вперёд" "docs: главная ушла вперёд"
+git -C "$GE_REPO" update-ref refs/remotes/origin/main "$(git -C "$GE_REPO" rev-parse main)"
+git -C "$GE_REPO" checkout -q RT-1921-work-by-epics
+
+GE_OUT="$(ge_decision "$GE_WITH_EPIC" origin/RT-1921-work-by-epics)"
+if printf '%s' "$GE_OUT" | grep -q 'tip of\|вершин'; then got="отбито"; else got="прошло"; fi
+report "SC-AK-1164 — отставшая удалённая ветка эпика отбита" "$got" "отбито"
+
+git -C "$GE_REPO" -c user.name=probe -c user.email=probe@example.com merge -q --no-edit main
+got="$(ge_silent "$(ge_decision "$GE_WITH_EPIC" RT-1921-work-by-epics)")"
+report "SC-AK-1164 — местная ветка эпика со свежей главной проходит" "$got" "прошло"
+
 # --- SC-AK-994 — заявка задачи идёт в ветку эпика ---------------------------------------
 #
 # Гард пропускал любое основание и требовал только влитой главной. Заявка в главную уносит задачу

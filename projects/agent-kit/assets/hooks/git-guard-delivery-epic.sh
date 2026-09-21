@@ -76,8 +76,15 @@ rt_epic_base() {
 
     # The main branch is asked of the epic, not of the base: there it is fixed by one merge, and the
     # branches of all its tasks get it at once.
+    #
+    # The base answers for the epic when it already carries the tip. The merge of the main branch
+    # reaches the remote copy of the epic branch only through a push, and a push is sometimes
+    # refused by a check over code that a task of this epic is meant to fix — the task whose branch
+    # is being created right here. Judged by the remote copy alone, the guard closes the only road
+    # to that fix and names no other: the epic stands until a person lifts a check by hand.
     if git rev-parse --verify --quiet "origin/${main_branch}" >/dev/null 2>&1 \
-        && ! git merge-base --is-ancestor "origin/${main_branch}" "origin/${_epic_branch}" 2>/dev/null; then
+        && ! git merge-base --is-ancestor "origin/${main_branch}" "origin/${_epic_branch}" 2>/dev/null \
+        && ! git merge-base --is-ancestor "origin/${main_branch}" "$_base_ref" 2>/dev/null; then
         _behind="$(git rev-list --count "origin/${_epic_branch}..origin/${main_branch}" 2>/dev/null)"
         fault "the branch of the epic «${_epic_branch}» does not carry the tip of «${main_branch}» — it has moved ahead by ${_behind:-several} commits. The main branch is merged into the branch of the epic, not bypassed by taking the base from the main one: git checkout ${_epic_branch}, git merge origin/${main_branch}, and send the branch."
     fi
