@@ -105,6 +105,8 @@
 
 - The owner: «в сторадже храним ключ внутри по id храним один объект с настройками для меню, id может быть несколько, id задаются/чтение из апки доступно». The second level's spec keeps the submenu mode and width with the application, so the settings object holds favourites only and is open for more fields. One key `rtui-side-menu` holds `{ [menuId]: { favorites } }`; the menu takes `menuId`, `default` by default; the service takes the menu id in every method, gives `ids(menuId)` as one signal per id and `menuIds`. `SIDE_MENU_SETTINGS_KEY`, `DEFAULT_MENU_ID` exported, `FAVORITES_KEY` gone. The showcase on 6006: the key holds the menu `showcase`, the block shows 2, 7, 9, 5. 162 tests passed with SC-UK-105…SC-UK-107; `node tools/check-specs.mjs` green.
 
+- The owner: «проверь иконку скролл даун?». The scroll hint draws `keyboard_arrow_down`, absent from the first subset: in the favourites stories it would show the word. The subset is rebuilt from every icon name in the kit's templates plus the side menu stories' items, 47 KB. On 6006, a probe span with the font's class: 53 of 55 names draw a 24 px glyph, `keyboard_arrow_down` among them; `local_offer` (named `sell` in Symbols) and `more` (test data only) do not, and neither is in the favourites stories. The hint itself was not raised: the tab stayed in the background, and Angular did not redraw.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).
