@@ -462,3 +462,11 @@ of its own When the layout is called Then it goes as before: a range covers seve
 declared rightly, and without a name the package would not find itself in the dependencies of the tree
 
 Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
+
+### SC-AK-1158 — a source of the package carries no layout header
+
+Given the sources of the package
+When their second lines are read
+Then not one of them carries the layout header, while a planted one is found
+
+Covered: `projects/agent-kit/tests/source-no-layout-header.test.sh`.

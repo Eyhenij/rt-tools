@@ -83,6 +83,11 @@ The subdomain has no interface beyond the launch line.
   of the resources and of what the launch line reads the package names aloud.
 - **What is laid out is checked by content, not by the number of the edition.** A matching version in
   the header at a diverged body is a divergence, and `doctor` shows it.
+- **A source of the package does not carry the layout header.** The header belongs to the copy laid
+  out into a tree; on a source it means nothing, and the guard over sources reads it and refuses every
+  edit of that file — naming the very same path as the place to edit. Such a source cannot be edited
+  at all, and that shows only to whoever walks into it: the layout audit is green, the suites are
+  green, and one file of the package is frozen.
 - **The move of a foreign file under the package's management is made by a command, not by hand.** A
   file without a header the package does not overwrite silently; at that the consumer has a named way
   to hand a file over to the package.
