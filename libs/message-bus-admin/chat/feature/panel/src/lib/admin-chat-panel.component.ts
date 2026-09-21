@@ -11,19 +11,13 @@ import {
     untracked,
     WritableSignal,
 } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ChatFeedStore, ChatTalksStore } from '@rt/message-bus-admin/chat/data-access';
-import {
-    AdminChatMessageComponent,
-    AdminChatSiteFilterComponent,
-    AdminChatStateFilterComponent,
-    AdminChatTalkComponent,
-} from '@rt/message-bus-admin/chat/ui';
-import { ChatMessageMapper, IChat } from '@rt/message-bus-admin/chat/util';
+import { AdminChatSiteFilterComponent, AdminChatStateFilterComponent, AdminChatTalkComponent } from '@rt/message-bus-admin/chat/ui';
+import { ChatMessageMapper, chatKitThread, IChat, IChatSideLabels } from '@rt/message-bus-admin/chat/util';
 import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import { BlockDirective, ElemDirective, WINDOW } from '@rt-tools/core';
 import { CHAT_STREAM_PATH, EChatTalkState, IChatMessageEventRow } from '@rt/message-bus-common';
-import { RtButtonDirective, RtEmptyStateComponent, RtFieldComponent, RtInputComponent } from '@rt-tools/ui-kit-v2';
+import { IRtChat, RtButtonDirective, RtChatComponent, RtEmptyStateComponent } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-chat';
 
@@ -54,18 +48,13 @@ const TALKS_PAGE_SIZE: number = 50;
         BlockDirective,
         ElemDirective,
 
-        // angular
-        ReactiveFormsModule,
-
         // components
-        AdminChatMessageComponent,
         AdminChatSiteFilterComponent,
         AdminChatStateFilterComponent,
         AdminChatTalkComponent,
         RtButtonDirective,
+        RtChatComponent,
         RtEmptyStateComponent,
-        RtFieldComponent,
-        RtInputComponent,
     ],
     host: { class: BEM_BLOCK },
 })
@@ -98,14 +87,22 @@ export class AdminChatPanelComponent {
      */
     protected readonly sites: WritableSignal<readonly string[]> = signal<readonly string[]>([]);
 
-    protected readonly draft: FormControl<string> = new FormControl<string>('', { nonNullable: true });
-
     protected readonly talksEmpty: Signal<string> = computed((): string => this.#text.text('chatTalksEmpty'));
     protected readonly talksEmptyFrom: Signal<string> = computed((): string => this.#text.text('chatTalksEmptyFrom'));
     protected readonly feedUnchosen: Signal<string> = computed((): string => this.#text.text('chatFeedUnchosen'));
     protected readonly feedEmpty: Signal<string> = computed((): string => this.#text.text('chatFeedEmpty'));
-    protected readonly sendLabel: Signal<string> = computed((): string => this.#text.text('chatAnswerSend'));
     protected readonly sendPlaceholder: Signal<string> = computed((): string => this.#text.text('chatAnswerPlaceholder'));
+
+    /** Подписи сторон для треда кита: кит о сторонах этого домена не знает ничего. */
+    protected readonly sideLabels: Signal<IChatSideLabels> = computed((): IChatSideLabels => ({
+        operator: this.#text.text('chatSideOperator'),
+        visitor: this.#text.text('chatSideVisitor'),
+    }));
+
+    /** Лента разговора моделью кита: перевод лежит одним местом, в слое утилит раздела. */
+    protected readonly thread: Signal<readonly IRtChat.Message[]> = computed((): readonly IRtChat.Message[] =>
+        chatKitThread(this.messages(), this.sideLabels())
+    );
 
     /** Выбранный разговор целиком: по нему подписывается кнопка состояния. */
     protected readonly talk: Signal<IChat.Talk.State | null> = computed(
@@ -158,15 +155,23 @@ export class AdminChatPanelComponent {
     }
 
     /** Ответить посетителю. Пустая реплика не уходит: отбивать её обращением к сервису незачем. */
-    protected send(): void {
-        const text: string = this.draft.value.trim();
+    protected send(payload: IRtChat.SendPayload): void {
+        const text: string = payload.text.trim();
 
         if (!text || !this.chosen()) {
             return;
         }
 
         this.#feed.send(this.chosen(), text, new Date().toISOString());
-        this.draft.setValue('');
+    }
+
+    /** Отправить отбитую реплику заново: её текст лежит в ленте, и набирать его снова незачем. */
+    protected again(message: IRtChat.Message): void {
+        if (!this.chosen()) {
+            return;
+        }
+
+        this.#feed.resend(this.chosen(), String(message.id));
     }
 
     /**

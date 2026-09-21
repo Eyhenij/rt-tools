@@ -3,12 +3,12 @@
 ## Где стоим
 
 - **Состояние:** `этап-идёт`
-- **Этап:** 3 из 5 — лента и поле ответа на готовом чате
-- **Сделано:** ветка взята от ветки задачи RT-2184, папка заведена, разбор просьбы и план
-  записаны, карточка задачи переставлена в работу. Дерево разобрано: панель рисует ленту своими
-  видами, готовый чат кита не зовёт никто в дереве вовсе.
-- **Следующий шаг:** панель рисует переписку и поле ответа готовым чатом, свой вид сообщения
-  снимается, повтор отбитой реплики заводится на выход кита.
+- **Этап:** 4 из 5 — сквозные проверки и кадр раздела
+- **Сделано:** договорённость записана в спеку панели, перевод модели написан и проверен
+  вызовом, панель рисует ленту и поле ответа готовым чатом кита, свой вид сообщения раздела снят
+  вместе со стилями ленты, повтор отбитой реплики заведён на выход кита.
+- **Следующий шаг:** сквозные проверки раздела переводятся на метки кита, три новых сценария
+  получают свои проверки, кадр раздела снимается заново.
 - **Незакоммиченное:** нет.
 - **Ждём владельца:** нет. Слово о работе сказано: «Все доделать не доделанные, исправляй что
   нужно», «делай по порядку».
@@ -18,8 +18,8 @@
 
 - [x] 1 Договорённость о рисовании готовым чатом
 - [x] 2 Маппер модели панели в модель кита
-- [>] 3 Лента и поле ответа на готовом чате
-- [ ] 4 Сквозные пробы и кадр раздела
+- [x] 3 Лента и поле ответа на готовом чате
+- [>] 4 Сквозные пробы и кадр раздела
 - [ ] 5 Привязки, разбор папки и PR
 
 ## Решения по ходу
@@ -43,3 +43,65 @@
 - Спека панели говорит о рисовании готовым чатом; три сценария выписаны — `SC-CH-80` … `SC-CH-82`.
 - Перевод модели панели в модель кита написан и проверен вызовом: шесть проверок, среди них по
   одной на каждое из трёх состояний отправки.
+- Лента и поле ответа переведены на готовый чат кита: свой вид сообщения раздела снят вместе со
+  своими стилями, стили ленты раздела ушли, повтор отбитой реплики заведён на выход кита.
+- `pnpm exec nx build message-bus-admin` — «Successfully ran target build for project
+  message-bus-admin and 6 tasks it depends on»; своего вида сообщения в дереве не осталось.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-2284-panel-on-kit-chat
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 3 из 5 — лента и поле ответа на готовом чате
+- **Next step:** панель рисует переписку и поле ответа готовым чатом, свой вид сообщения
+- **PR:** не открыт.
+
+The progress in full — `docs/tasks/RT-2284-panel-on-kit-chat/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M apps/message-bus-admin/src/styles/_chat.scss
+ M libs/message-bus-admin/chat/data-access/src/lib/chat-feed.store.ts
+ M libs/message-bus-admin/chat/feature/panel/src/lib/admin-chat-panel.component.html
+ M libs/message-bus-admin/chat/feature/panel/src/lib/admin-chat-panel.component.ts
+ M libs/message-bus-admin/chat/ui/src/index.ts
+D  libs/message-bus-admin/chat/ui/src/lib/message/admin-chat-message.component.html
+D  libs/message-bus-admin/chat/ui/src/lib/message/admin-chat-message.component.ts
+ M libs/message-bus-admin/chat/util/src/lib/chat-send.logic.spec.ts
+ M libs/message-bus-admin/chat/util/src/lib/chat-send.logic.ts
+```
+
+### Commits over the main branch
+
+```
+5201250ab feat(rt:message-bus): реплика панели переводится в реплику чата кита
+8ac99b942 docs(rt:message-bus): спека панели говорит о рисовании готовым чатом
+50e0bf5f1 docs: папка задачи RT-2284 заведена, план записан
+873286fed docs: седьмая задача эпика чата отдана
+44b4d4cb0 docs(rt:message-bus): папка задачи RT-2184 разобрана
+2cf85150c docs: адрес из находки разбора перестал читаться путём
+c5d746da3 docs(rt:message-bus): выкатка чата стала подобластью спеки чата
+699d4271d test(rt:message-bus): страница чужого адреса проверена сквозным набором
+9e5e1a853 fix(rt:message-bus): виджет помнит, с какого адреса он приехал на страницу
+34caa8412 feat(rt:message-bus): виджет чата едет в образе дороги, у чата своё имя
+f05486bbc Предел ожидания вызова из ветки RT-2183 приезжает в ветку выкатки
+a28b41f58 fix(rt:message-bus): вызов приложения площадки уходит с пределом ожидания
+3dabc1ce8 docs: находки разбора правил по шестой задаче эпика чата
+471db0dfe feat(rt:message-bus): чат позволяет браузеру чужой страницы обращаться к открытым операциям
+c63a6dc20 docs(rt:message-bus): описание выкатки чата написано до кода
+4cff0b45b docs: папка задачи RT-2184 заведена, план записан
+e67f3554d docs(rt:message-bus): папка задачи RT-2183 разобрана
+b24c4bb86 test(rt:message-bus): стенд принимает вызовы наружу, и извещения стали подобластью спеки чата
+644cb5fbe feat(rt:message-bus): чат говорит приложению о реплике, закрытии и молчании оператора
+319e86bfe feat(rt:message-bus): сервис чата зовёт приложение площадки подписанным вызовом
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

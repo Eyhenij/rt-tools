@@ -34,6 +34,19 @@ export function chatSendAnswered(
 }
 
 /**
+ * Лента, когда отбитую реплику отправляют заново.
+ *
+ * Реплика остаётся на своём месте и своим признаком: второй такой же рядом означал бы, что
+ * посетителю написали дважды, а написали один раз. Ответ сервиса заменит её принятой — тем же
+ * путём, каким заменяет впервые отправленную.
+ */
+export function chatResending(feed: readonly IChat.Message.State[], id: string): IChat.Message.State[] {
+    return feed.map((message: IChat.Message.State): IChat.Message.State =>
+        message.id === id ? { ...message, send: EChatSendState.Sent } : message
+    );
+}
+
+/**
  * Минута реплики словами языка экрана.
  *
  * Строка по проводу приезжает всемирным временем, а человек читает местное: показанная как есть,

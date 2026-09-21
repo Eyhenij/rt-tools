@@ -24,27 +24,19 @@
                 [label]="stateLabel()"
                 (click)="changeState()"></button>
 
-            <div rtElem="messages">
-                @for (message of messages(); track message.id) {
-                    <admin-chat-message [message]="message" />
-                } @empty {
-                    <rt-empty-state qa-dataid="chat-feed-empty" [title]="feedEmpty()" />
-                }
-            </div>
-
-            <div rtElem="send">
-                <rt-field rtElem="field" [label]="sendPlaceholder()">
-                    <rt-input qa-dataid="chat-answer" [formControl]="draft" [placeholder]="sendPlaceholder()" />
-                </rt-field>
-
-                <button
-                    rtButton
-                    qa-dataid="chat-answer-send"
-                    type="button"
-                    [attr.aria-label]="sendLabel()"
-                    [label]="sendLabel()"
-                    (click)="send()"></button>
-            </div>
+            <!--
+                Лента и поле ответа — готовый чат кита: тред, состояния своей реплики и повтор
+                отбитой он уже умеет. Пустой тред он рисует сам, подсказкой из своего входа.
+            -->
+            <rt-chat
+                canReply
+                fill
+                rtElem="thread"
+                [emptyHint]="feedEmpty()"
+                [messages]="thread()"
+                [placeholder]="sendPlaceholder()"
+                (retryMessage)="again($event)"
+                (send)="send($event)" />
         } @else {
             <rt-empty-state qa-dataid="chat-feed-unchosen" [title]="feedUnchosen()" />
         }
