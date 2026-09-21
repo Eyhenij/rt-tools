@@ -90,6 +90,20 @@ export enum ERefusal {
     TreeTokenRejected = 'treeTokenRejected',
     /** Операция доступа не объявила: это промах устройства, а не человека. */
     AccessUndeclared = 'accessUndeclared',
+    /** Обращение к чату пришло без ключа сайта. */
+    ChatSiteKeyEmpty = 'chatSiteKeyEmpty',
+    /** Ключ сайта не принят: один отказ на ненайденный ключ и на выключенный сайт. */
+    ChatSiteRejected = 'chatSiteRejected',
+    /** Адреса страницы нет в списке сайта. */
+    ChatOriginRejected = 'chatOriginRejected',
+    /** Переписки с таким признаком у этого посетителя нет. */
+    ChatConversationNotFound = 'chatConversationNotFound',
+    /** Реплика пришла без текста. */
+    ChatTextEmpty = 'chatTextEmpty',
+    /** В реплике знаков больше предела. */
+    ChatTextTooLong = 'chatTextTooLong',
+    /** Реплик с одного посетителя больше предела. */
+    ChatThrottled = 'chatThrottled',
 }
 
 /** Подстановки отказа: причина названа кодом, а значения идут рядом по имени. */
@@ -154,6 +168,13 @@ const SAID: Readonly<Record<ERefusal, string>> = {
     [ERefusal.TreeTokenRequired]: 'операция требует токен дерева',
     [ERefusal.TreeTokenRejected]: 'токен не принят',
     [ERefusal.AccessUndeclared]: 'операция доступа не объявила',
+    [ERefusal.ChatSiteKeyEmpty]: 'обращение ожидает ключ сайта',
+    [ERefusal.ChatSiteRejected]: 'ключ сайта не принят',
+    [ERefusal.ChatOriginRejected]: 'сайт не принимает обращений с этого адреса',
+    [ERefusal.ChatConversationNotFound]: 'переписки с таким признаком нет',
+    [ERefusal.ChatTextEmpty]: 'реплика без текста не принимается',
+    [ERefusal.ChatTextTooLong]: 'в реплике больше {{limit}} знаков',
+    [ERefusal.ChatThrottled]: 'реплик с одного посетителя больше {{limit}} за окно: повторите через {{after}} с',
 };
 
 /**

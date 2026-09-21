@@ -63,6 +63,7 @@ export const messageBusApiBoundaries = [
             'scope:message-bus-api-postmortems-feature',
             'scope:message-bus-api-trees-feature',
             'scope:message-bus-api-cargo-state-feature',
+            'scope:message-bus-api-chat-feature',
             // Единственная проверка доступа и операции входа: обе ставит приложение — цепочка
             // проверок его решение, а не решение домена
             'scope:message-bus-api-access-feature',
@@ -144,6 +145,35 @@ export const messageBusApiBoundaries = [
         onlyDependOnLibsWithTags: ['scope:message-bus-api-proposals-util', COMMON],
     },
     { sourceTag: 'scope:message-bus-api-proposals-util', onlyDependOnLibsWithTags: [COMMON] },
+
+    // Чат с посетителями сайтов: приём первой реплики. Учётных записей и прав приёмника домен не
+    // видит вовсе — посетитель пишет без входа, а операторы у чата свои
+    {
+        sourceTag: 'scope:message-bus-api-chat-feature',
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-api-chat-data-access',
+            'scope:message-bus-api-chat-api',
+            'scope:message-bus-api-chat-util',
+            // объявление открытой операции: посетитель представиться не может, и домен говорит
+            // об этом сам
+            ACCESS_UTIL,
+            // счётчик обращений ограничителя частоты: он один на все открытые операции, и второй
+            // такой же держал бы те же отметки под своим замком
+            'scope:message-bus-api-access-feature',
+            // клиент хранилища: запросы домена берут его доводом, а контроллер — из контейнера
+            PERSISTENCE_DATA_ACCESS,
+            COMMON,
+        ],
+    },
+    {
+        sourceTag: 'scope:message-bus-api-chat-data-access',
+        onlyDependOnLibsWithTags: ['scope:message-bus-api-chat-util', PERSISTENCE_DATA_ACCESS, PERSISTENCE_UTIL, COMMON],
+    },
+    {
+        sourceTag: 'scope:message-bus-api-chat-api',
+        onlyDependOnLibsWithTags: ['scope:message-bus-api-chat-util', COMMON],
+    },
+    { sourceTag: 'scope:message-bus-api-chat-util', onlyDependOnLibsWithTags: [COMMON] },
 
     // Разборы происшествий: опознаются именем файла на дереве, к записи месяца не крепятся
     {

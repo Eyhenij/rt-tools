@@ -332,3 +332,102 @@ model Session {
     @@index([accountId])
     @@map("session")
 }
+
+/// Сторона сообщения: кто его написал. Двух слов хватает на весь эпик — отвечают посетителю
+/// операторы, а не служба: ответа машины договорённость не обещает.
+enum ChatSide {
+    /// Написал посетитель сайта.
+    visitor
+    /// Написал оператор пространства.
+    operator
+}
+
+/// Пространство чата: сайты и операторы одного клиента сервиса. Всё, что есть у чата, лежит
+/// внутри пространства — без этого клиент увидел бы переписки соседа по первой ошибке в адресе.
+model ChatSpace {
+    id        String   @id @default(uuid())
+    /// Читаемое имя: его называет владелец при заведении.
+    name      String   @unique
+    createdAt DateTime @default(now())
+
+    sites ChatSite[]
+
+    @@map("chat_space")
+}
+
+/// Сайт: площадка, на которой стоит виджет. Принадлежит одному пространству и несёт свой ключ.
+model ChatSite {
+    id      String    @id @default(uuid())
+    spaceId String
+    space   ChatSpace @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+    /// Читаемое имя площадки: по нему оператор отличает сайты в панели.
+    name    String
+    /// Ключ сайта: открытый признак, которым виджет называет сайт. Лежит в скрипте страницы и
+    /// тайной не является — прав, кроме приёма реплики, он не даёт.
+    key     String    @unique
+    /// Адреса страниц, с которых зовут операции этого сайта. Пустой список отказывает всему:
+    /// сайт, у которого он не заполнен, ещё никуда не поставлен.
+    origins String[]
+    /// Выключенный сайт отвечает как неизвестный: по ответу эти две причины не различаются.
+    enabled Boolean   @default(true)
+    createdAt DateTime @default(now())
+
+    visitors      ChatVisitor[]
+    conversations ChatConversation[]
+
+    @@index([spaceId])
+    @@map("chat_site")
+}
+
+/// Посетитель: тот, кто пишет с сайта без входа. Узнаётся признаком, который выдал сервис, —
+/// придуманный страницей опознаватель дал бы читать чужую переписку по догадке.
+model ChatVisitor {
+    id     String   @id @default(uuid())
+    siteId String
+    site   ChatSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+    /// Признак посетителя, как он выдан виджету. Открывает одну переписку одного сайта и
+    /// ничего кроме неё.
+    token  String
+    /// Минута первого обращения: по ней видно, когда посетитель пришёл впервые.
+    firstSeenAt DateTime @default(now())
+
+    conversations ChatConversation[]
+
+    @@unique([siteId, token])
+    @@map("chat_visitor")
+}
+
+/// Переписка: разговор одного посетителя на одном сайте. Живая переписка у посетителя одна —
+/// иначе перезагрузка страницы рвала бы разговор на куски, которые оператор видит как разных людей.
+model ChatConversation {
+    id        String      @id @default(uuid())
+    siteId    String
+    site      ChatSite    @relation(fields: [siteId], references: [id], onDelete: Cascade)
+    visitorId String      @unique
+    visitor   ChatVisitor @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+    createdAt DateTime    @default(now())
+    /// Минута последнего сообщения: по ней панель оператора ставит переписки по свежести.
+    lastMessageAt DateTime @default(now())
+
+    messages ChatMessage[]
+
+    @@index([siteId, lastMessageAt])
+    @@map("chat_conversation")
+}
+
+/// Сообщение: одна реплика разговора. Порядок задаёт минута приёма сервисом, а не часы
+/// отправителя: неверные часы одной страницы перемешали бы разговор всем, кто его читает.
+model ChatMessage {
+    id             String           @id @default(uuid())
+    conversationId String
+    conversation   ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+    /// Кто написал реплику.
+    side           ChatSide
+    /// Текст реплики целиком. Пустой не принимается, предел длины держит операция приёма.
+    text           String
+    /// Минута приёма сервисом.
+    takenAt        DateTime         @default(now())
+
+    @@index([conversationId, takenAt])
+    @@map("chat_message")
+}
