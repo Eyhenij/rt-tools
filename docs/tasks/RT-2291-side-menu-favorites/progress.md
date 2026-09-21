@@ -107,6 +107,8 @@
 
 - The owner: «проверь иконку скролл даун?». The scroll hint draws `keyboard_arrow_down`, absent from the first subset: in the favourites stories it would show the word. The subset is rebuilt from every icon name in the kit's templates plus the side menu stories' items, 47 KB. On 6006, a probe span with the font's class: 53 of 55 names draw a 24 px glyph, `keyboard_arrow_down` among them; `local_offer` (named `sell` in Symbols) and `more` (test data only) do not, and neither is in the favourites stories. The hint itself was not raised: the tab stayed in the background, and Angular did not redraw.
 
+- The owner's spec: all settings of one menu in one record under its `menuId` — favourites, `subMenuMode`, `subMenuWidth`. The service became `RtuiSideMenuSettingsService` (`provideRtuiSideMenuSettings`, `IRtuiSideMenuSettingsConfig`, `RTUI_SIDE_MENU_SETTINGS_CONFIG`) in `side-menu/settings/`; it adds `subMenuMode`/`setSubMenuMode`, `subMenuWidth`/`setSubMenuWidth`, `settings`, `deleteSettings`. A write reads the storage, patches one field of one menu and writes; a `storage` event refreshes the signals; a failed write keeps memory authoritative. The menu's `subMenuMode`/`subMenuWidth` inputs default to none: given — they win without touching the stored value, otherwise the stored value is used and the switch and the edge write it. The old keys are not read; `readSubMenuMode` and the rest stay exported only because Avalon imports them. Scenarios SC-UK-108…SC-UK-116. `node tools/check-specs.mjs` green, `pnpm run check:all` green.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).
@@ -126,18 +128,39 @@ The progress in full — `docs/tasks/RT-2291-side-menu-favorites/progress.md`; t
 ### Uncommitted
 
 ```
- M favorites/rtui-side-menu-favorites.component.html
- M favorites/rtui-side-menu-favorites.component.scss
- M favorites/rtui-side-menu-favorites.component.ts
- M menu-sub-item/rtui-side-menu-sub-item.component.html
- M menu-sub-item/rtui-side-menu-sub-item.component.scss
- M menu/rtui-side-menu.component.scss
- M menu/rtui-side-menu.favorites.spec.ts
+ M spec.md
+ M ../side-menu/implementation.md
+ M ../side-menu/spec.md
+ M ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/favorites/favorites.logic.spec.ts
+ M ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/favorites/favorites.logic.ts
+ M ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/favorites/rtui-side-menu-favorites.component.ts
+ M ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/menu-sub-item/rtui-side-menu-sub-item.component.ts
+ M ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts
+ M ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.favorites-sections.spec.ts
+ M ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.favorites.spec.ts
+ M ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/menu/side-menu-favorites.harness.ts
+ M ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/menu/side-menu.harness.ts
+ M ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/public-api.ts
+RM ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/favorites/rtui-side-menu-favorites.service.spec.ts -> ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/settings/rtui-side-menu-settings.service.spec.ts
+RM ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/favorites/rtui-side-menu-favorites.service.ts -> ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/settings/rtui-side-menu-settings.service.ts
+ M ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.types.ts
+ M ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/stories/component/test-side-menu-wrapper.component.ts
+ M ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu-favorites.stories.ts
+?? ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.settings.spec.ts
+?? ../../../../projects/ui-kit/src/lib/ui-kit/side-menu/settings/side-menu-settings.logic.ts
 ```
 
 ### Commits over the main branch
 
 ```
+3c101f8cf fix(rt:ui-kit): в шрифте витрины — все значки шаблонов кита
+8109cc0d7 feat(rt:ui-kit): настройки бокового меню в одном ключе, по номеру меню
+8b26507fa fix(rt:ui-kit): витрина избранного рисует значки шрифтом Material Symbols
+1ea9cbb63 refactor(rt:ui-kit): сервис избранного назван по боковому меню, ручка — arrows_outward
+83f389e7a fix(rt:ui-kit): снятая мышью звезда прячется, когда указатель ушёл
+5082845e1 fix(rt:ui-kit): цвета, размеры и отступы избранного — свойствами приложения
+23b99cbea Merge remote-tracking branch 'origin/main' into RT-2291-side-menu-favorites
+17ba8a30c fix(rt:ui-kit): ручка внутри пункта, «+» последним, шеврон в столбце звёзд
 c9042b7da fix(rt:ui-kit): ручка избранного справа, после кнопки «убрать»
 2cbcecb96 fix(rt:ui-kit): звезда избранного в цвете темы Material, заголовок крупнее
 9a7342d4f fix(rt:ui-kit): избранное по ревью — раздел по показанному набору, удержание, клавиатура
@@ -150,7 +173,6 @@ fae261a81 docs(rt:ui-kit): история изменений в описании
 f17bf8db9 feat(rt:ui-kit): витрина показывает избранное бокового меню
 df79ef432 feat(rt:ui-kit): звезда у раздела и блок избранного вверху подменю бокового меню
 f31a01afa feat(rt:ui-kit): сервис избранного бокового меню хранит список в localStorage
-a18248377 docs(rt:ui-kit): описание избранного в боковом меню и план задачи
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

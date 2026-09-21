@@ -3,7 +3,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
 import { provideRtStorage } from '@rt-tools/core';
-import { provideRtuiSideMenuFavorites, RtuiSideMenuFavoritesService } from '../favorites/rtui-side-menu-favorites.service';
+import { provideRtuiSideMenuSettings, RtuiSideMenuSettingsService } from '../settings/rtui-side-menu-settings.service';
 import { ISideMenu } from '../side-menu.types';
 import { MENU_ITEMS, TestSideMenuWrapperComponent } from './component/test-side-menu-wrapper.component';
 
@@ -76,17 +76,23 @@ export default {
         applicationConfig({
             providers: [
                 provideRtStorage(),
-                provideRtuiSideMenuFavorites({ storageKey: SHOWCASE_KEY }),
+                provideRtuiSideMenuSettings({ storageKey: SHOWCASE_KEY }),
                 // Значки — шрифтом Material Symbols, как у потребителей: в старом Material Icons нет
                 // значка ручки и оси заливки звезды.
                 provideAppInitializer((): void => {
                     inject(MatIconRegistry).setDefaultFontSetClass('material-symbols-outlined');
                 }),
+                // Пустые настройки при подъёме заполняются: избранным и закреплённой модой. Выбор,
+                // сделанный здесь, — мода, ширина, избранное — переживает перезагрузку.
                 provideAppInitializer((): void => {
-                    const favorites: RtuiSideMenuFavoritesService = inject(RtuiSideMenuFavoritesService);
+                    const settings: RtuiSideMenuSettingsService = inject(RtuiSideMenuSettingsService);
 
-                    if (!favorites.ids(SHOWCASE_MENU_ID)().length) {
-                        favorites.set(SHOWCASE_MENU_ID, SEEDED_IDS);
+                    if (!settings.ids(SHOWCASE_MENU_ID)().length) {
+                        settings.set(SHOWCASE_MENU_ID, SEEDED_IDS);
+                    }
+
+                    if (settings.settings(SHOWCASE_MENU_ID)().subMenuMode === undefined) {
+                        settings.setSubMenuMode(SHOWCASE_MENU_ID, 'pinned');
                     }
                 }),
             ],
@@ -102,7 +108,6 @@ export const SubMenuFavorites: TStory = {
         menuItems: FAVORITES_MENU,
         menuId: SHOWCASE_MENU_ID,
         activeMenuIds: [1, 100, 101, 9],
-        subMenuMode: 'pinned',
         isSubMenuXScrollEnabled: true,
         isMainMenuIconsOutlined: false,
         isSubMenuIconsOutlined: false,

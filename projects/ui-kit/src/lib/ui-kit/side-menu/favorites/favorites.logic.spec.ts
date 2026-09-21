@@ -6,8 +6,8 @@ import {
     moveFavorite,
     moveVisibleFavorite,
     normalizeFavorites,
-    parseSettings,
 } from './favorites.logic';
+import { parseSettings } from '../settings/side-menu-settings.logic';
 
 const MENU: ReadonlyArray<ISideMenu.Item> = [
     {

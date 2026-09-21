@@ -22,16 +22,16 @@ sign-out or fill it with defaults.
 
 ## Terminology
 
-| Term                   | What it is                                                                     |
-| ---------------------- | ------------------------------------------------------------------------------ |
-| A favourite            | The id of a submenu item with an address of its own, chosen by the person      |
-| The favourites list    | The ordered ids of the favourites; the order is the person's                   |
-| The favourites block   | The group at the top of the open submenu showing the favourites of its section |
-| The star               | The button on a list row that adds the item to the list or removes it          |
-| The remove button      | The button on a row of the block that removes the item from the list           |
-| The handle             | The grip of a row of the block by which the row is dragged to a new place      |
-| A favourites section   | A strip item whose `favorites` flag is on; off by default                      |
-| The favourites service | The kit service holding the list and keeping it in the browser storage         |
+| Term                 | What it is                                                                     |
+| -------------------- | ------------------------------------------------------------------------------ |
+| A favourite          | The id of a submenu item with an address of its own, chosen by the person      |
+| The favourites list  | The ordered ids of the favourites; the order is the person's                   |
+| The favourites block | The group at the top of the open submenu showing the favourites of its section |
+| The star             | The button on a list row that adds the item to the list or removes it          |
+| The remove button    | The button on a row of the block that removes the item from the list           |
+| The handle           | The grip of a row of the block by which the row is dragged to a new place      |
+| A favourites section | A strip item whose `favorites` flag is on; off by default                      |
+| The settings service | The kit service holding the settings of every menu in the browser storage      |
 
 ### What it is called in the interface
 
@@ -61,27 +61,36 @@ sign-out or fill it with defaults.
 - **The section is recognised by its items' ids as well, not only by the array.** An application
   may pass the menu again in new objects — at a language or a rights change — and the stars and the
   block stay with the new labels.
-- **The list is held by the service, and the application reads and writes it through the same
-  service.** The service gives the list of a menu by its id as a signal, the ids of the stored
-  menus, and the methods has, add, remove, toggle, move, set and clear, each taking the menu id. A
-  second holder of the same list diverges from the first at the first edit.
+- **The settings are held by the service, and the application reads and writes them through the
+  same service.** The service gives the list, the mode and the width of a menu by its id as signals,
+  the whole settings of a menu, the ids of the stored menus, and the methods has, add, remove,
+  toggle, move, set, clear, setSubMenuMode and setSubMenuWidth, each taking the menu id. A second
+  holder of the same record diverges from the first at the first edit.
 - **Each menu keeps its settings under its own id, and the application names the id.** The menu
-  takes it by the input `menuId`, `default` when none is given; two menus of an application with two
-  ids keep two lists, and an edit of one leaves the other as it was. The settings hold the list of
-  favourites; the submenu mode and width stay with the application, as the second level's spec
-  says.
+  takes it by the input `menuId`, `default` when none is given — an application passes the id of
+  the person, and the settings of several people on one machine never mix. The settings hold the
+  favourites, the submenu mode and its width; a field the kit does not know stays as it lay.
 - **The service is provided once, in the application's environment injector, and the menu reads it
-  optionally.** Two providers over one key are two holders of one list; a service provided below
+  optionally.** Two providers over one key are two holders of one record; a service provided below
   the menu is not seen by it.
-- **The list is kept in the browser storage under a key the consumer may name.** The storage is
+- **The settings are kept in the browser storage under a key the consumer may name.** The storage is
   taken through the storage tokens of `@rt-tools/core` only; without them, and outside the browser,
-  the list lives in memory, and nothing fails. Under the key lies one object: the settings of every
-  menu under its id. Two applications on one origin keep their settings by two keys.
-- **A broken record in the storage reads as an empty list, and a failed write keeps the list in
-  memory.** A record that is not an object reads as no settings; a menu whose value is not an
-  object is skipped, and its neighbours are read. A list that is not an array, an id neither a
-  string nor a number, a duplicate — dropped; `1` and `"1"` are two different ids. Neither a read nor a write throws: a full or closed storage must not take
-  the menu down.
+  the settings live in memory, and nothing fails. Under the key lies one object: the settings of
+  every menu under its id. Two applications on one origin keep their settings by two keys.
+- **A write reads the storage first and changes one field of one menu.** Another tab or other code
+  may have written after the service read the key, and a write from a copy in memory would erase it;
+  the other menus and the other fields of the same menu leave as they lay, broken ones included.
+- **A change made by another tab reaches the signals by the storage event.** The second tab shows
+  the list, the mode and the width the first one chose.
+- **The kit deletes no settings by itself.** Neither a change of the menu id nor the menu leaving the
+  page removes anything; the settings of a menu go only by the application's call.
+- **A broken record in the storage reads as no settings, and a failed write keeps them in memory.** A
+  record that is not an object reads as no settings; a menu whose value is not an object is skipped,
+  and its neighbours are read. A mode other than hover or pinned and a width that is not a number
+  read as no value, and the neighbouring fields stay; the width is brought within the submenu's
+  limits. A list that is not an array, an id neither a string nor a number, a duplicate — dropped;
+  `1` and `"1"` are two different ids. Neither a read nor a write throws: a full or closed storage
+  must not take the menu down.
 - **Only ids are kept; the row is built from the menu's own items.** The label follows the language
   of the items, and the address follows the declaration: a kept label would lie after a rename. The
   row is the first item with an address and that id found depth-first over the submenu of the
@@ -215,28 +224,35 @@ Not applicable: the service refuses nothing — a broken record reads as an empt
 
 One record of the browser storage: the key named by the provider, `rtui-side-menu` by default. The
 value is a JSON object with the settings of every menu under its id; the settings hold `favorites`,
-an array of ids, each a string or a number, in the order of the list. The whole object is written
-at every change of a list.
+an array of ids, each a string or a number, in the order of the list, `subMenuMode`, `hover` or
+`pinned`, and `subMenuWidth`, a number of pixels. A change reads the record, edits one field of one
+menu and writes the object back.
 
 ```json
-{ "main": { "favorites": [2, 7, 9] }, "admin": { "favorites": ["reports"] } }
+{
+    "user-a": { "favorites": [2, 7, 9], "subMenuMode": "pinned", "subMenuWidth": 320 },
+    "user-b": { "favorites": ["reports"] }
+}
 ```
 
 The public surface:
 
-| Name                                            | What it is                                                                                                 |
-| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `provideRtuiSideMenuFavorites(config?)`         | the providers of the service; `config.storageKey`, `config.labels` with `title`, `add`, `remove`, `drag`   |
-| `--rt-side-menu-favorites-title-color`          | the colour of the heading's label, set by the application on an ancestor of the menu                       |
-| `ISideMenu.Item.favorites`                      | the flag of a strip item switching its favourites on; off by default                                       |
-| `--rt-side-menu-favorite-color`                 | the colour of the filled star and of the heading's star, set by the application on an ancestor of the menu |
-| `menuId` of `rtui-side-menu`                    | the id the menu keeps its settings under; `default` when none is given                                     |
-| `RtuiSideMenuFavoritesService.ids(menuId)`      | the whole list of a menu as a read-only signal, ids hidden from every block included                       |
-| `menuIds`                                       | the ids of the menus whose settings are stored, as a signal                                                |
-| `has`, `add`, `remove`, `toggle` `(menuId, id)` | a check and three edits of one id; adding an id already in the list does nothing                           |
-| `move(menuId, from, to)`                        | moves an entry between two places of the list                                                              |
-| `set(menuId, ids)`, `clear(menuId)`             | replaces the list whole, empties it                                                                        |
-| `SIDE_MENU_SETTINGS_KEY`, `DEFAULT_MENU_ID`     | the storage key and the menu id by default                                                                 |
+| Name                                              | What it is                                                                                                 |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `provideRtuiSideMenuSettings(config?)`            | the providers of the service; `config.storageKey`, `config.labels` with `title`, `add`, `remove`, `drag`   |
+| `--rt-side-menu-favorites-title-color`            | the colour of the heading's label, set by the application on an ancestor of the menu                       |
+| `ISideMenu.Item.favorites`                        | the flag of a strip item switching its favourites on; off by default                                       |
+| `--rt-side-menu-favorite-color`                   | the colour of the filled star and of the heading's star, set by the application on an ancestor of the menu |
+| `menuId` of `rtui-side-menu`                      | the id the menu keeps its settings under; `default` when none is given                                     |
+| `RtuiSideMenuSettingsService.ids(menuId)`         | the whole list of a menu as a read-only signal, ids hidden from every block included                       |
+| `menuIds`                                         | the ids of the menus whose settings are stored, as a signal                                                |
+| `has`, `add`, `remove`, `toggle` `(menuId, id)`   | a check and three edits of one id; adding an id already in the list does nothing                           |
+| `move(menuId, from, to)`                          | moves an entry between two places of the list                                                              |
+| `set(menuId, ids)`, `clear(menuId)`               | replaces the list whole, empties it                                                                        |
+| `subMenuMode(menuId)`, `subMenuWidth(menuId)`     | the stored mode, `hover` when none, and the stored width, empty when none, as signals                      |
+| `setSubMenuMode`, `setSubMenuWidth` `(menuId, …)` | write the mode, write the width brought within the submenu's limits                                        |
+| `settings(menuId)`, `deleteSettings(menuId)`      | the whole settings of a menu as a signal; deletes them, called only by the application                     |
+| `SIDE_MENU_SETTINGS_KEY`, `DEFAULT_MENU_ID`       | the storage key and the menu id by default                                                                 |
 
 ## Screens and states
 
@@ -339,3 +355,7 @@ One settings object per application key, and in it one list per menu id.
   Scenarios SC-UK-105…SC-UK-107 added, SC-UK-70 and SC-UK-71 changed their record.
 - 2026-09-21 — the owner: a star removed by a click stayed visible after the pointer left. The
   focus shows the row's buttons only from the keyboard.
+- 2026-09-21 — the owner: the settings of a menu hold its favourites, the submenu mode and its
+  width; the service became `RtuiSideMenuSettingsService`, `provideRtuiSideMenuSettings()`. A write
+  reads the storage first and edits one field of one menu, a change from another tab arrives by the
+  storage event, and the kit deletes nothing itself. Scenarios SC-UK-108…SC-UK-116 added.

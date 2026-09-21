@@ -45,7 +45,8 @@ import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-su
 import { pressSubMenuRow, SubMenuKeyboard } from './sub-menu-keyboard';
 import { RtuiSubMenuHoldService } from './rtui-sub-menu-hold.service';
 import { RtuiSideMenuFavoritesComponent } from '../favorites/rtui-side-menu-favorites.component';
-import { DEFAULT_MENU_ID } from '../favorites/favorites.logic';
+import { DEFAULT_MENU_ID } from '../settings/side-menu-settings.logic';
+import { RtuiSideMenuSettingsService } from '../settings/rtui-side-menu-settings.service';
 
 @Directive({
     selector: '[rtuiSideMenuHeader]',
@@ -109,6 +110,8 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
     readonly #renderer: Renderer2 = inject(Renderer2);
     readonly #hold: RtuiSubMenuHoldService | null = inject(RtuiSubMenuHoldService, { optional: true });
+    /** Настройки меню, если приложение их включило: мода и ширина хранятся там под `menuId`. */
+    readonly #settings: RtuiSideMenuSettingsService | null = inject(RtuiSideMenuSettingsService, { optional: true });
 
     /**
      * Ширина, пока край держат указателем. Наружу она уходит одной просьбой на отпускании: вход
@@ -133,23 +136,21 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
 
     /**
      * Человек работает с полем поиска, и подменю держится открытым, пока он не уйдёт нажатием
-     * наружу.
-     *
-     * Заведено потому, что незакреплённое подменю живёт наведением: увести указатель к полю и
-     * набрать в нём запрос — движение той же руки, и на полпути список исчезал. Уход фокуса
-     * удержания не снимает: человек переходит от поля к пунктам того же подменю.
+     * наружу: иначе на полпути от полосы к полю подменю, живущее наведением, исчезало.
      */
     readonly #searchHeld: WritableSignal<boolean> = signal(false);
+    /** Мода и ширина в работе: вход приложения, иначе сохранённые под номером меню. */
+    readonly #mode: Signal<ISideMenu.SubMenuMode> = computed(
+        (): ISideMenu.SubMenuMode => this.subMenuMode() ?? this.#settings?.subMenuMode(this.menuId())() ?? 'hover'
+    );
+    readonly #width: Signal<number | null> = computed(
+        (): number | null => this.subMenuWidth() ?? this.#settings?.subMenuWidth(this.menuId())() ?? null
+    );
 
     /**
-     * Что показывает закреплённое подменю: выбранный человеком раздел, а пока выбора нет —
-     * раздел активного адреса. Само закрепление содержимого не меняет: человек закрепляет то
-     * подменю, которое перед ним, и нажатие переключателя его не отнимает.
-     *
-     * Выбор стоит впереди активности, а не позади неё, потому что иначе до соседнего раздела не
-     * добраться вовсе: пока активный пункт несёт своё подменю, оно возвращалось на любое нажатие
-     * полосы, и закреплённый человек оставался запертым в том разделе, с которого начал. Ставит и
-     * снимает выбор `#pickPinnedSubMenu`.
+     * Что показывает закреплённое подменю: выбранный человеком раздел, а пока выбора нет — раздел
+     * активного адреса. Выбор впереди активности: иначе до соседнего раздела не добраться вовсе.
+     * Ставит и снимает выбор `#pickPinnedSubMenu`.
      */
     readonly #pinnedSubMenu: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] => {
         if (!this.isPinned()) {
@@ -177,7 +178,7 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
      * пределом сама по себе. Числом в ките этот предел назвать нечем — ширину знает потребитель.
      */
     protected readonly subMenuWidthStyle: Signal<string | null> = computed((): string | null => {
-        const width: number | null = this.#draggedWidth() ?? this.subMenuWidth();
+        const width: number | null = this.#draggedWidth() ?? this.#width();
 
         return width === null ? null : `${clampSubMenuWidth(width)}px`;
     });
@@ -196,7 +197,7 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
      * Закрепление действует. На узком экране подменю занимает экран целиком, закреплять там
      * нечего — и переключателя в узкой разметке нет.
      */
-    protected readonly isPinned: Signal<boolean> = computed((): boolean => this.subMenuMode() === 'pinned' && !this.narrow());
+    protected readonly isPinned: Signal<boolean> = computed((): boolean => this.#mode() === 'pinned' && !this.narrow());
 
     /**
      * Подменю держится набором запроса: на это время оно шире и уходом указателя не закрывается.
@@ -256,10 +257,10 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     public menuItems: InputSignalWithTransform<ISideMenu.Item[], ISideMenu.Item[]> = input<ISideMenu.Item[], ISideMenu.Item[]>([], {
         transform: (value: ISideMenu.Item[]) => transformArrayInput(value),
     });
-    /** Мода подменю. Умолчание — сегодняшнее поведение: открывается наведением. */
-    public subMenuMode: InputSignal<ISideMenu.SubMenuMode> = input<ISideMenu.SubMenuMode>('hover');
-    /** Ширина закреплённого подменю в пикселях. Пустая — ширину ставит оформление; выбор хранит потребитель. */
-    public subMenuWidth: InputSignal<number | null> = input<number | null>(null);
+    /** Мода подменю от приложения. Задана — важнее сохранённой; нет ни той, ни другой — наведение. */
+    public subMenuMode: InputSignal<ISideMenu.SubMenuMode | undefined> = input<ISideMenu.SubMenuMode | undefined>(undefined);
+    /** Ширина закреплённого подменю в пикселях от приложения. Пусто — берётся сохранённая, её нет — оформление. */
+    public subMenuWidth: InputSignal<number | null | undefined> = input<number | null | undefined>(undefined);
     /** Под каким номером меню хранит свои настройки: у двух меню приложения — два номера. */
     public menuId: InputSignal<string> = input<string>(DEFAULT_MENU_ID);
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
@@ -282,12 +283,9 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         this.activeMenuIds()?.length ? this.activeMenuIds()[this.activeMenuIds()?.length - 1] : ''
     );
 
-    /**
-     * Просьба о моде, а не смена моды: предпочтение хранит потребитель кита и возвращает его
-     * входом. Своего состояния о нём меню не заводит.
-     */
+    /** Выбранная мода: меню пишет её в настройки, если они включены, и сообщает приложению. */
     public readonly subMenuModeChange: OutputEmitterRef<ISideMenu.SubMenuMode> = output<ISideMenu.SubMenuMode>();
-    /** Просьба о ширине — по той же причине, что и просьба о моде: своего состояния меню не держит. */
+    /** Натянутая ширина — так же, как мода. */
     public readonly subMenuWidthChange: OutputEmitterRef<number> = output<number>();
     public readonly closeMobileMenuAction: OutputEmitterRef<void> = output<void>();
     public readonly clickSubMenuAction: OutputEmitterRef<{ item: ISideMenu.Item; event: MouseEvent }> = output<{
@@ -383,9 +381,12 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         }
     }
 
-    /** Нажат переключатель моды: наружу уходит просьба, вход остаётся прежним. */
+    /** Нажат переключатель моды: выбор уходит в настройки меню и наружу. */
     public onSubMenuModeToggle(): void {
-        this.subMenuModeChange.emit(this.isPinned() ? 'hover' : 'pinned');
+        const mode: ISideMenu.SubMenuMode = this.isPinned() ? 'hover' : 'pinned';
+
+        this.#settings?.setSubMenuMode(this.menuId(), mode);
+        this.subMenuModeChange.emit(mode);
     }
 
     /**
@@ -401,7 +402,7 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         event.preventDefault();
 
         const startX: number = event.clientX;
-        const startWidth: number = this.subMenuWidth() ?? this.#measureSubMenuWidth();
+        const startWidth: number = this.#width() ?? this.#measureSubMenuWidth();
 
         const stopMove: () => void = this.#renderer.listen('document', 'mousemove', (moveEvent: MouseEvent): void => {
             this.#draggedWidth.set(clampSubMenuWidth(startWidth + moveEvent.clientX - startX));
@@ -474,10 +475,8 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     }
 
     /**
-     * Конец тяги. Наружу уходит натянутая ширина, а не та, что получилась на экране: нижний
-     * предел держит оформление — панель не бывает уже той ширины, какую задал потребитель, — и
-     * замерить применённое можно только там, где раскладка уже посчитана. Хранит потребитель
-     * выбор человека; вид от этого не меняется, потому что предел стоит в самом оформлении.
+     * Конец тяги. В настройки и наружу уходит натянутая ширина, а не нарисованная: нижний предел
+     * держит оформление, и замерить применённое можно только после раскладки.
      */
     #finishResize(): void {
         const width: number | null = this.#draggedWidth();
@@ -486,6 +485,7 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         this.#draggedWidth.set(null);
 
         if (width !== null) {
+            this.#settings?.setSubMenuWidth(this.menuId(), width);
             this.subMenuWidthChange.emit(width);
         }
     }

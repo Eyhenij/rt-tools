@@ -1,4 +1,4 @@
-import { DEFAULT_MENU_ID } from '../favorites/favorites.logic';
+import { DEFAULT_MENU_ID } from '../settings/side-menu-settings.logic';
 import { ChangeDetectionStrategy, Component, EnvironmentProviders, Provider, Signal, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -86,8 +86,8 @@ export const NESTED_ITEMS: ISideMenu.Item[] = [
 export class HostComponent {
     public readonly items: WritableSignal<ISideMenu.Item[]> = signal(ITEMS);
     public readonly active: WritableSignal<Array<string | number>> = signal([]);
-    public readonly mode: WritableSignal<ISideMenu.SubMenuMode> = signal('hover');
-    public readonly width: WritableSignal<number | null> = signal(null);
+    public readonly mode: WritableSignal<ISideMenu.SubMenuMode | undefined> = signal('hover');
+    public readonly width: WritableSignal<number | null | undefined> = signal(null);
     public readonly menuId: WritableSignal<string> = signal(DEFAULT_MENU_ID);
 }
 
@@ -97,7 +97,7 @@ export interface ISetup {
 }
 
 export function setup(
-    mode: ISideMenu.SubMenuMode = 'hover',
+    mode: ISideMenu.SubMenuMode | undefined = 'hover',
     active: Array<string | number> = [],
     narrow: boolean = false,
     items: ISideMenu.Item[] = ITEMS,

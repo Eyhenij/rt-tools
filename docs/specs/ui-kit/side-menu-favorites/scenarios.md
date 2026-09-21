@@ -264,3 +264,60 @@ call, and a menu never stored has an empty list
 Given the list of the default menu is `a` and the list of the menu `admin` is `b`
 When the menu takes the id `admin`, its section is opened and the star of `a` is pressed
 Then the block shows `b`, the list of `admin` becomes `b`, `a`, and the default menu keeps `a`
+
+### SC-UK-108 — a favourites write keeps the mode, the width and unknown fields of the same menu
+
+Given the settings of `user-a` hold the mode `pinned`, the width 320 and a field the kit does not know
+When `a` is added to the favourites of `user-a`
+Then the record of `user-a` holds `a`, the mode `pinned`, the width 320 and the unknown field
+
+### SC-UK-109 — a write of any field of one menu does not change another menu
+
+Given the settings of `user-a` and `user-b` are stored
+When the favourites, the mode and the width of `user-a` are written
+Then the record of `user-b` stays as it lay
+
+### SC-UK-110 — a write made by other code after the service started is not erased
+
+Given the service has read the storage
+When other code writes the settings of `user-b`, and then the service writes the favourites of
+`user-a`
+Then the record holds both: the settings of `user-b` from the other code and the list of `user-a`
+
+### SC-UK-111 — the storage event of another tab updates the list, the mode and the width
+
+Given the service is up and the storage is changed by another tab
+When the storage event arrives for the settings key
+Then the list, the mode and the width of the menu show what the other tab wrote
+
+### SC-UK-112 — an invalid mode and width read as no value, and the neighbouring fields stay
+
+Given the settings of a menu hold the mode `sideways`, the width `"wide"` and a list `a`
+When the service reads them
+Then the mode is `hover`, the width is empty, the list is `a`
+
+### SC-UK-113 — changing the menu id shows the settings of the new id, and the old ones stay
+
+Given the settings of `user-a` and `user-b` differ in the list and the mode
+When the menu changes its id from `user-a` to `user-b`
+Then the menu shows the list and the mode of `user-b`, and the record of `user-a` is not touched
+
+### SC-UK-114 — a closed or full storage does not take the write down, and the settings live in memory
+
+Given the storage throws on reading and writing, or only on writing because it is full
+When favourites, the mode and the width are written
+Then nothing throws, and the service shows what was written
+
+### SC-UK-115 — the menu takes its mode and width from its settings and writes the person's choice
+
+Given a menu with an id, no mode or width from the application, and settings holding the mode
+`pinned`
+When the person presses the switch of the mode or pulls the edge of the submenu
+Then the submenu opens pinned, and the new mode or width goes into the settings of that id; a mode
+given by the application wins over the stored one and leaves it untouched
+
+### SC-UK-116 — the settings of a menu are deleted only by the application's call, and only them
+
+Given the settings of `user-a` and `user-b` are stored
+When the application deletes the settings of `user-a`
+Then the record holds only `user-b`

@@ -1,4 +1,4 @@
-import { DEFAULT_MENU_ID } from '../favorites/favorites.logic';
+import { DEFAULT_MENU_ID } from '../settings/side-menu-settings.logic';
 import { CdkDrag, CdkDragEnd, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -6,7 +6,7 @@ import { By } from '@angular/platform-browser';
 import { BreakpointService } from '@rt-tools/core';
 
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
-import { IRtuiSideMenuFavoritesConfig } from '../favorites/rtui-side-menu-favorites.service';
+import { IRtuiSideMenuSettingsConfig } from '../settings/rtui-side-menu-settings.service';
 import {
     BreakpointServiceStub,
     hoverFirstItem,
@@ -242,7 +242,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
     });
 
     it('SC-UK-85 — подписи приходят из настроек провайдера', () => {
-        const labels: IRtuiSideMenuFavoritesConfig['labels'] = {
+        const labels: IRtuiSideMenuSettingsConfig['labels'] = {
             title: 'Избранное',
             add: 'Добавить в избранное',
             remove: 'Убрать из избранного',

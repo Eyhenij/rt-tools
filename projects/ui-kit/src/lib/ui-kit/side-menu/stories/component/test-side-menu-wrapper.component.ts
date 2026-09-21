@@ -6,8 +6,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { ISideMenu } from '../../side-menu.types';
-import { readSubMenuMode, readSubMenuWidth, writeSubMenuMode, writeSubMenuWidth } from '../../side-menu.logic';
-import { DEFAULT_MENU_ID } from '../../favorites/favorites.logic';
+import { DEFAULT_MENU_ID } from '../../settings/side-menu-settings.logic';
 import { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from '../../menu/rtui-side-menu.component';
 
 /** Длинное имя пункта: им показывают, как меню переносит текст. */
@@ -150,23 +149,14 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
     providers: [],
 })
 export class TestSideMenuWrapperComponent {
-    /**
-     * Хранилище берётся через окно документа и допускает отсутствие: в среде без браузера его нет
-     * вовсе, а в приватном окне обращение к нему падает. Обе беды разбирает кит.
-     */
-    readonly #storage: Storage | null = typeof window === 'undefined' ? null : window.localStorage;
-
     public menuItems: typeof MENU_ITEMS = [...MENU_ITEMS];
     public activeMenuIds: Array<number | string> = [];
-    /** Предпочтение человека хранит потребитель кита — здесь его роль играет обёртка. */
     /**
-     * Выбор человека, а не состояние экрана: он переживает перезагрузку. Хранит его потребитель —
-     * здесь это показ, — а ключ и разбор значения берутся у кита, чтобы у каждого приложения они
-     * не расходились.
+     * Мода и ширина от приложения. Пусто — меню берёт сохранённые в своих настройках, если история
+     * их включила; выбор человека обёртка держит до перезагрузки, как приложение без настроек.
      */
-    public subMenuMode: ISideMenu.SubMenuMode = readSubMenuMode(this.#storage);
-    /** Ширина второго уровня — такая же настройка человека, и хранится она тем же приёмом. */
-    public subMenuWidth: number | null = readSubMenuWidth(this.#storage);
+    public subMenuMode: ISideMenu.SubMenuMode | undefined = undefined;
+    public subMenuWidth: number | null | undefined = undefined;
     /** Номер меню, под которым кит хранит его настройки. */
     public menuId: string = DEFAULT_MENU_ID;
     public isSubMenuXScrollEnabled: boolean = true;
@@ -177,12 +167,10 @@ export class TestSideMenuWrapperComponent {
 
     public onSubMenuModeChange(mode: ISideMenu.SubMenuMode): void {
         this.subMenuMode = mode;
-        writeSubMenuMode(this.#storage, mode);
     }
 
     public onSubMenuWidthChange(width: number): void {
         this.subMenuWidth = width;
-        writeSubMenuWidth(this.#storage, width);
     }
 
     public closeMobileMenu(): void {

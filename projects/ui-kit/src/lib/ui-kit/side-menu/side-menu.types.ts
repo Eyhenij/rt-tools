@@ -42,9 +42,15 @@ export namespace ISideMenu {
     /** Номер пункта в списке избранного — тот же, что `id` пункта меню. */
     export type FavoriteId = Item['id'];
 
-    /** Настройки одного меню, которые кит хранит сам. Моду и ширину подменю хранит приложение. */
+    /**
+     * Настройки одного меню под его номером в хранилище. Незнакомые поля кит не удаляет: их могло
+     * положить приложение или следующая версия кита.
+     */
     export interface Settings {
         favorites?: FavoriteId[];
+        subMenuMode?: SubMenuMode;
+        subMenuWidth?: number;
+        [field: string]: unknown;
     }
 
     export interface Item {

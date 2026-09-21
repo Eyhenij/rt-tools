@@ -13,8 +13,9 @@ is visible in it at a pinning and how an item is found in it.
 The submenu opened at a hovering and closed at the leaving of the pointer. A person who works in one
 section the whole day had to open it anew at every action, and an item in a long list could be found only
 by the eye. The subdomain names what the submenu is held open by, what a pinned panel shows and when it
-takes no place, how the search filters the items and where the kit stops: the preference is kept by the
-consumer, the address of the active item the kit does not count.
+takes no place, how the search filters the items and where the kit stops: the preference is kept under
+the menu's id by the settings service when the application switches it on, the address of the active item
+the kit does not count.
 
 ## Terminology
 
@@ -22,7 +23,7 @@ consumer, the address of the active item the kit does not count.
 | ----------------------- | -------------------------------------------------------------------------------------- |
 | The strip               | The first level of the menu: a narrow column with the items of the sections            |
 | A submenu               | The second level: a panel with the sections of an item of the strip                    |
-| The mode of the submenu | The input the consumer names what the submenu is held open by by                       |
+| The mode of the submenu | What the submenu is held open by: the application's input or the saved choice          |
 | A pinned submenu        | A submenu standing open permanently while the mode is the pinned one                   |
 | The active item         | The item of the strip named active by the input of the activity                        |
 | A query                 | The text in the field of the search of the submenu; it lives while the submenu is open |
@@ -40,13 +41,14 @@ consumer, the address of the active item the kit does not count.
 
 ## Rules
 
-- **The mode of the submenu arrives by an input, and the default is today's behaviour.** A consumer who did
-  not name the mode gets a submenu that opens at a hovering and closes at the leaving of the pointer.
-- **A press of the switch does not change the mode but asks for it.** The kit gives outward the mode a
-  person asked for and waits for it back by an input: the preference is kept by the consumer, the kit
-  creates no state of its own about it and does not go into the storage of the browser.
-  The one exception is favourites, by the owner's request. Their list is kept by a service of the kit:
-  see [favourites of the side menu](../side-menu-favorites/spec.md).
+- **The mode and the width of the submenu come from the application's input, else from the menu's
+  settings, and the default is today's behaviour.** An input the application set wins over the saved
+  value and leaves it as it was: an application forces hover on a person without the right to pin. Neither
+  — the submenu opens at a hovering, and the width is the styling's.
+- **A press of the switch and a pull of the edge write the choice into the menu's settings and report it
+  outward.** The settings service keeps the mode and the width under the menu's id, next to its
+  favourites: see [favourites of the side menu](../side-menu-favorites/spec.md). Without the service the
+  kit keeps nothing and waits for the choice back by the input.
 - **A pinned submenu shows the active item.** Which item is active the kit learns by the input of the
   activity; it has no computing of its own by the address.
 - **The pinning does not change what is visible.** There is no active item — pinned stays the submenu that
@@ -145,9 +147,9 @@ Not applicable: the submenu has no refusals of its own.
 
 ## Data
 
-The submenu has no records of the storage of its own: the mode and the activity arrive by the inputs, and
-the preference is kept by the application that installs the kit. Favourites are the exception: one record
-kept by their service, the settings of each menu under its id — see the subdomain `side-menu-favorites`.
+The submenu keeps the settings of each menu under its id in one record of the storage when the application
+provides the settings service: the favourites, the mode and the width — see the subdomain
+`side-menu-favorites`. The activity arrives by the input and is not stored.
 
 ## Screens and states
 
@@ -185,10 +187,10 @@ Not applicable: the kit knows nothing either about the owner of the data or abou
 
 ## Decisions
 
-- **The preference of the mode is kept by the consumer, not by the kit.** The argument: the kit gives
-  outward the mode a person asked for and waits for it back by an input; the kit has no state of its own
-  about it. Rejected: a write of the kit into the storage of the browser — a second place of the preferences
-  next to the one of the consumer. Favourites are the owner's exception, kept by their own service.
+- **The mode and the width are kept by the kit's settings service under the menu's id.** The argument: the
+  owner's request — the settings of several people on one machine must not mix, and every application
+  was building the same record of its own. Rejected: the preference kept by the consumer through two fixed
+  keys — one value for every person of the browser.
 - **An empty pinned panel is removed from the markup, it is not drawn empty.** The argument: a width put by
   the pinning alone left an empty strip to the left of the page at every address without sections. Rejected:
   a panel with a label saying that there are no sections — it takes the same place.
@@ -206,4 +208,6 @@ The subdomain has no open questions.
   limit. The rules, the scenarios and the bindings about the second level of the side menu moved as they
   were: the scenario numbers were not recounted.
 - 2026-09-09 — the submenu stopped drifting upwards at a walk of the strip (RT-1975).
+- 2026-09-21 — the mode and the width moved into the menu's settings under its id (RT-2291); the fixed
+  keys `rtui-side-menu-sub-menu-mode` and `-width` are no longer read by the kit.
 - 2026-09-21 — the pinned submenu lost its rounded corners: the corner cut the scroll hint (RT-2291).

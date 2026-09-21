@@ -1,4 +1,4 @@
-import { DEFAULT_MENU_ID } from '../favorites/favorites.logic';
+import { DEFAULT_MENU_ID } from '../settings/side-menu-settings.logic';
 import { CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -6,10 +6,10 @@ import { By } from '@angular/platform-browser';
 
 import { RtuiSideMenuFavoritesComponent } from '../favorites/rtui-side-menu-favorites.component';
 import {
-    IRtuiSideMenuFavoritesConfig,
-    provideRtuiSideMenuFavorites,
-    RtuiSideMenuFavoritesService,
-} from '../favorites/rtui-side-menu-favorites.service';
+    IRtuiSideMenuSettingsConfig,
+    provideRtuiSideMenuSettings,
+    RtuiSideMenuSettingsService,
+} from '../settings/rtui-side-menu-settings.service';
 import { ISideMenu } from '../side-menu.types';
 import { HostComponent, ISetup, NESTED_ITEMS, setup } from './side-menu.harness';
 
@@ -54,18 +54,18 @@ export function withFavorites(
         active?: Array<string | number>;
         narrow?: boolean;
         items?: ISideMenu.Item[];
-        config?: IRtuiSideMenuFavoritesConfig;
+        config?: IRtuiSideMenuSettingsConfig;
         mode?: ISideMenu.SubMenuMode;
     } = {}
-): ISetup & { favorites: RtuiSideMenuFavoritesService } {
+): ISetup & { favorites: RtuiSideMenuSettingsService } {
     const result: ISetup = setup(
         options.mode ?? 'hover',
         options.active ?? [],
         options.narrow ?? false,
         options.items ?? enabled(NESTED_ITEMS),
-        [provideRtuiSideMenuFavorites(options.config)]
+        [provideRtuiSideMenuSettings(options.config)]
     );
-    const favorites: RtuiSideMenuFavoritesService = TestBed.inject(RtuiSideMenuFavoritesService);
+    const favorites: RtuiSideMenuSettingsService = TestBed.inject(RtuiSideMenuSettingsService);
 
     favorites.set(DEFAULT_MENU_ID, ids);
     result.fixture.detectChanges();

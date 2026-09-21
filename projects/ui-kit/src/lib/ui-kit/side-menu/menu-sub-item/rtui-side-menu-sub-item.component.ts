@@ -22,7 +22,7 @@ import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../tooltip';
 import { favoritesSection } from '../favorites/favorites.logic';
-import { RtuiSideMenuFavoritesService } from '../favorites/rtui-side-menu-favorites.service';
+import { RtuiSideMenuSettingsService } from '../settings/rtui-side-menu-settings.service';
 import { RtuiSubMenuHoldService } from '../menu/rtui-sub-menu-hold.service';
 import { RtuiSubMenuTitlePartsPipe } from './sub-menu-title-parts.pipe';
 import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
@@ -82,7 +82,7 @@ export class RtuiSideMenuSubItemComponent {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
     /** Избранное включено провайдером приложения; не поставлено — звёзд нет. */
-    protected readonly favorites: RtuiSideMenuFavoritesService | null = inject(RtuiSideMenuFavoritesService, { optional: true });
+    protected readonly favorites: RtuiSideMenuSettingsService | null = inject(RtuiSideMenuSettingsService, { optional: true });
     protected readonly hold: RtuiSubMenuHoldService | null = inject(RtuiSubMenuHoldService, { optional: true });
     /** Экран узкий: замер кита, и другого источника у этого признака нет. */
     protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());

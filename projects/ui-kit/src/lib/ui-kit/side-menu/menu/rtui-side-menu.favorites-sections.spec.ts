@@ -1,4 +1,4 @@
-import { DEFAULT_MENU_ID } from '../favorites/favorites.logic';
+import { DEFAULT_MENU_ID } from '../settings/side-menu-settings.logic';
 import { ISideMenu } from '../side-menu.types';
 import { clickRailItem, installFontsStub, menu } from './side-menu.harness';
 import {
