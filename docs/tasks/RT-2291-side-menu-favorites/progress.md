@@ -101,6 +101,8 @@
 - Found on the way: the showcase on 6006 loads the static Material Icons font, which has no `arrows_outward` — the handle there shows the word, measured glyph height 280 px. Avalon draws a Material Symbols subset from `app-icon-glyphs.const.ts`, and the list lacks `arrows_outward` and `star_border`. Both are named to the owner; the Avalon tree is not touched.
 - 158 tests passed, `node tools/check-specs.mjs` green, `pnpm run check:all` green.
 
+- The owner: «иконку новую не вижу в сторибук пересобери». A rebuild changes nothing: the showcase font Material Icons has no `arrows_outward`. The favourites stories switched to Material Symbols, the font of the consumers: a 26 KB subset with the side menu stories' icons from the Google Fonts API lies in `projects/ui-kit/.storybook/static/fonts/material-symbols-outlined.woff2`, declared in `storybook.scss`, and the stories set the default font set class. The showcase on 6006: no icon falls back to text, the handle glyph 24×20 turned, centre 287 px; star, remove and handle all at `wght 700` — the remove icon got the outline directive. Old findings in `storybook.scss` fixed on the way. 158 tests passed.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).

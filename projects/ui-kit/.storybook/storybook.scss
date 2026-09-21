@@ -5,7 +5,7 @@
 @use '../src/styles/base/variables' as vars;
 @use '../src/styles/base/mixin' as mixins;
 
-@include mat.core();
+@include mat.core;
 
 $mat-theme: mat.define-theme(
     (
@@ -30,14 +30,37 @@ $mat-theme: mat.define-theme(
 }
 
 html {
-    @include mat.all-component-themes($mat-theme);
+    font-family: var(--font-default);
 
-    & {
-        font-family: var(--font-default);
-    }
+    @include mat.all-component-themes($mat-theme);
 }
 
 // For correct displaying modal height in storybook
 .mat-mdc-dialog-container {
     max-height: 100vh;
+}
+
+// Material Symbols — шрифт значков, которым потребители кита рисуют меню (набор из README кита).
+// Истории избранного бокового меню переключаются на него: значка ручки `arrows_outward` и оси
+// заливки звезды в старом Material Icons нет. Файл — подмножество с одними значками историй
+// бокового меню, лежит в дереве: кадр не зависит от сети. Новый значок в этих историях требует
+// пересобрать подмножество с его именем.
+@font-face {
+    font-display: block;
+    font-family: 'Material Symbols Outlined';
+    font-style: normal;
+    font-weight: 100 700;
+    src: url('/fonts/material-symbols-outlined.woff2') format('woff2');
+}
+
+.material-symbols-outlined {
+    direction: ltr;
+    font-family: 'Material Symbols Outlined', sans-serif;
+    font-feature-settings: 'liga';
+    font-style: normal;
+    font-weight: normal;
+    letter-spacing: normal;
+    overflow-wrap: normal;
+    text-transform: none;
+    white-space: nowrap;
 }

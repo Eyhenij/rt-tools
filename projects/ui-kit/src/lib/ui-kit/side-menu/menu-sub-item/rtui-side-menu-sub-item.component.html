@@ -60,7 +60,7 @@
                             [attr.aria-label]="favorites.labels.remove"
                             (click)="onRemoveFavorite(item, $event)"
                             (focusin)="onFavoriteFocus($event)">
-                            <mat-icon rtElem="favorite-icon">remove</mat-icon>
+                            <mat-icon rtElem="favorite-icon" [rtIconOutlined]="true">remove</mat-icon>
                         </button>
                     } @else if (favoritesOn() && favorites && item.link?.trim()) {
                         <!--

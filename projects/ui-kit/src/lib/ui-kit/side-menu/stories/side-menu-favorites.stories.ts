@@ -1,4 +1,5 @@
 import { inject, provideAppInitializer } from '@angular/core';
+import { MatIconRegistry } from '@angular/material/icon';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
 import { provideRtStorage } from '@rt-tools/core';
@@ -74,6 +75,11 @@ export default {
             providers: [
                 provideRtStorage(),
                 provideRtuiSideMenuFavorites({ storageKey: SHOWCASE_KEY }),
+                // Значки — шрифтом Material Symbols, как у потребителей: в старом Material Icons нет
+                // значка ручки и оси заливки звезды.
+                provideAppInitializer((): void => {
+                    inject(MatIconRegistry).setDefaultFontSetClass('material-symbols-outlined');
+                }),
                 provideAppInitializer((): void => {
                     const favorites: RtuiSideMenuFavoritesService = inject(RtuiSideMenuFavoritesService);
 
