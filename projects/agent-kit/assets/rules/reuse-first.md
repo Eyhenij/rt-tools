@@ -112,13 +112,15 @@ flowchart TD
 
 ## What of the law is not here
 
-The same response of an input field to an error is held by the kit: nobody in this tree inherits
-`RtFormControlBase`, because fields are taken as its ready-made components. There is nothing here
-to bind this article of the law to.
+Three articles of the law are counted by no check, and each of them is a number about a tree.
+Whether a field of the application answers an error the way the ready-made one does; whether a
+component was left with a template or styles inside the decorator; how many places report a
+success or a failure by their own markup instead of the shared bus.
 
-An inline template stands on one component, and the same one has the only `styles:` — the admin
-header. `role="alert"` is written by hand in sixteen templates, and `rt-message` is called by one
-consumer. That is debt, not a permitted departure.
+A number like that is not written into a text at all: it goes stale by itself, with no edit in the
+tree, and a stale number reads as a current one. The companion of the rule writes the way to ask
+it — the command and what its answer is compared with — and the answer stays where it is true, in
+the tree.
 
 ## Patterns
 

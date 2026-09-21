@@ -4,7 +4,7 @@ kind: rule
 law: reuse-first
 description: Rule under the reuse-first law. Load before creating any new screen, component, field, store, service, mapper or procedure — what to build on, and by which signs it is visible that something ready-made was bypassed. Pattern reuse-first-extend.
 ---
-<!-- rt-kit v0.29.0 · rules/reuse-first.md · 20df04ff82db · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/reuse-first.md · bb33c4574725 · правится надстройкой, не здесь -->
 
 # Uniformity — how it works here
 
@@ -113,13 +113,15 @@ flowchart TD
 
 ## What of the law is not here
 
-The same response of an input field to an error is held by the kit: nobody in this tree inherits
-`RtFormControlBase`, because fields are taken as its ready-made components. There is nothing here
-to bind this article of the law to.
+Three articles of the law are counted by no check, and each of them is a number about a tree.
+Whether a field of the application answers an error the way the ready-made one does; whether a
+component was left with a template or styles inside the decorator; how many places report a
+success or a failure by their own markup instead of the shared bus.
 
-An inline template stands on one component, and the same one has the only `styles:` — the admin
-header. `role="alert"` is written by hand in sixteen templates, and `rt-message` is called by one
-consumer. That is debt, not a permitted departure.
+A number like that is not written into a text at all: it goes stale by itself, with no edit in the
+tree, and a stale number reads as a current one. The companion of the rule writes the way to ask
+it — the command and what its answer is compared with — and the answer stays where it is true, in
+the tree.
 
 ## Patterns
 
