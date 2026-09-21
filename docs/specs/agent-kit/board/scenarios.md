@@ -227,3 +227,11 @@ When the queue audit reads which tasks the plan names
 Then it takes the number of the task and not the number of the request
 
 Covered: `projects/agent-kit/tests/checks-board-epic-plan.test.sh`.
+
+### SC-AK-1159 — the plan is taken from the epic branch while the current branch lags behind it
+
+Given the disk carries an older copy of the plan and the branch of the epic a newer one
+When the queue audit reads the makeup of the epic
+Then it takes the text of the branch, and the tasks standing only in the newer copy are counted
+
+Covered: `projects/agent-kit/tests/checks-board-epic-plan.test.sh`.

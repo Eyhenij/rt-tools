@@ -1,4 +1,4 @@
-// rt-kit v0.29.0 · checks/board-epic-plan.github.mjs · f30b24f31f62 · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/board-epic-plan.github.mjs · ee3c95a4ea19 · правится надстройкой, не здесь
 /**
  * The plan of an epic named by its own card: which of the paths in the body is the plan.
  *
@@ -160,12 +160,14 @@ function epicBranches(epicNumber) {
  * reading stays without the network — the branch folders check makes the same move.
  */
 export function planTextOf(path, epicNumber = null) {
-    const onDisk = join(ROOT, path);
-    if (existsSync(onDisk)) {
-        return readFileSync(onDisk, 'utf8');
-    }
-
     for (const branch of epicBranches(epicNumber)) {
+        // The disk is no older exactly when the current branch has absorbed the tip of the epic
+        // branch. Taken the other way round, the audit reads the copy of the main branch — older by
+        // a whole epic — and says the plan does not carry tasks that stand in it.
+        if (absorbed(branch)) {
+            continue;
+        }
+
         try {
             return execFileSync('git', ['show', `${branch}:${path}`], {
                 cwd: ROOT,
@@ -177,5 +179,28 @@ export function planTextOf(path, epicNumber = null) {
         }
     }
 
-    return null;
+    const onDisk = join(ROOT, path);
+
+    return existsSync(onDisk) ? readFileSync(onDisk, 'utf8') : null;
+}
+
+/**
+ * Has the current branch absorbed the tip of that one. Asked of version control, not guessed: on the
+ * branch of the epic itself and on the branches of its tasks the disk carries the same plan or a
+ * newer one, and there is nothing to read out of the branch.
+ *
+ * FAIL-OPEN towards the branch: a repository that cannot answer reads as not absorbed, and the plan
+ * is then taken out of the branch — the answer the audit needs more often.
+ */
+function absorbed(branch) {
+    try {
+        execFileSync('git', ['merge-base', '--is-ancestor', branch, 'HEAD'], {
+            cwd: ROOT,
+            stdio: ['ignore', 'ignore', 'ignore'],
+        });
+
+        return true;
+    } catch {
+        return false;
+    }
 }
