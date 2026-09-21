@@ -124,7 +124,7 @@ without a hover
 
 Given the service with the list `a`, `gone`, `b`, and a menu with no item `gone`
 When the row `b` is dropped at the first place of the block
-Then the rows are `b`, `a`, and the list is `b`, `a`, `gone`
+Then the rows are `b`, `a`, and the list is `b`, `gone`, `a` — `gone` stays at its own place
 
 ### SC-UK-88 — the bringing into view aims at the list row, not at the block row
 

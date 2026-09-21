@@ -1,0 +1,93 @@
+import { ISideMenu } from '../side-menu.types';
+import {
+    findFavoriteItems,
+    isFavoriteCandidate,
+    moveFavorite,
+    moveVisibleFavorite,
+    normalizeFavorites,
+    parseFavorites,
+} from './favorites.logic';
+
+const MENU: ReadonlyArray<ISideMenu.Item> = [
+    {
+        id: 'cargo',
+        name: 'Груз',
+        submenu: [
+            { id: 'a', name: 'Предложения', link: '/a' },
+            { id: 'folder', name: 'Папка', submenu: [{ id: 'c', name: 'Сводки', link: '/c' }] },
+        ],
+    },
+    { id: 'trees', name: 'Деревья', submenu: [{ id: 'b', name: 'Приглашения', link: '/b' }] },
+    { id: 'home', name: 'Главная', link: '/' },
+];
+
+function idsOf(items: ReadonlyArray<ISideMenu.Item>): ISideMenu.FavoriteId[] {
+    return items.map((item: ISideMenu.Item): ISideMenu.FavoriteId => item.id);
+}
+
+describe('parseFavorites', (): void => {
+    it('SC-UK-70 — не JSON читается пустым списком', (): void => {
+        expect(parseFavorites('{not json')).toEqual([]);
+    });
+
+    it('SC-UK-70 — JSON не массив читается пустым списком', (): void => {
+        expect(parseFavorites('{"a": 1}')).toEqual([]);
+    });
+
+    it('SC-UK-70 — пустое хранилище даёт пустой список', (): void => {
+        expect(parseFavorites(null)).toEqual([]);
+    });
+
+    it('SC-UK-71 — чужие значения и повторы отбрасываются, 1 и "1" — разные номера', (): void => {
+        expect(parseFavorites('["a", 1, null, {"x": 1}, "a", "1"]')).toEqual(['a', 1, '1']);
+    });
+});
+
+describe('normalizeFavorites', (): void => {
+    it('SC-UK-74 — повтор при замене списка отбрасывается', (): void => {
+        expect(normalizeFavorites(['c', 'c', 'd'])).toEqual(['c', 'd']);
+    });
+});
+
+describe('moveFavorite', (): void => {
+    it('SC-UK-73 — запись встаёт на новое место, остальные сохраняют порядок', (): void => {
+        expect(moveFavorite(['a', 'b', 'c'], 0, 2)).toEqual(['b', 'c', 'a']);
+    });
+
+    it('SC-UK-73 — источник вне списка ничего не меняет, цель прижимается к краю', (): void => {
+        expect(moveFavorite(['a', 'b'], 5, 0)).toEqual(['a', 'b']);
+        expect(moveFavorite(['a', 'b', 'c'], 0, 99)).toEqual(['b', 'c', 'a']);
+    });
+});
+
+describe('moveVisibleFavorite', (): void => {
+    it('SC-UK-87 — скрытый номер остаётся на своём месте', (): void => {
+        expect(moveVisibleFavorite(['a', 'gone', 'b'], ['a', 'b'], 1, 0)).toEqual(['b', 'gone', 'a']);
+    });
+
+    it('SC-UK-84 — без скрытых перенос блока равен переносу списка', (): void => {
+        expect(moveVisibleFavorite(['a', 'b', 'c'], ['a', 'b', 'c'], 0, 2)).toEqual(['b', 'c', 'a']);
+    });
+});
+
+describe('findFavoriteItems', (): void => {
+    it('SC-UK-79 — пункты из разных разделов встают в порядке списка', (): void => {
+        expect(idsOf(findFavoriteItems(MENU, ['c', 'b', 'a']))).toEqual(['c', 'b', 'a']);
+    });
+
+    it('SC-UK-80 — номер, которого в меню нет, пропускается', (): void => {
+        expect(idsOf(findFavoriteItems(MENU, ['gone', 'a']))).toEqual(['a']);
+    });
+
+    it('SC-UK-76 — папка и пункт полосы в избранное не попадают', (): void => {
+        expect(findFavoriteItems(MENU, ['folder', 'home'])).toEqual([]);
+    });
+});
+
+describe('isFavoriteCandidate', (): void => {
+    it('SC-UK-76 — пункт со ссылкой может стоять в избранном, папка и строка возврата — нет', (): void => {
+        expect(isFavoriteCandidate({ id: 'a', link: '/a' })).toBe(true);
+        expect(isFavoriteCandidate({ id: 'folder', submenu: [] })).toBe(false);
+        expect(isFavoriteCandidate({ id: 0, link: ' ' })).toBe(false);
+    });
+});

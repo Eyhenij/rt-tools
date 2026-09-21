@@ -3,20 +3,20 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 3 — The service and its logic
-- **Done:** grill, agreement with its critique, task RT-2291 in progress, the plan
-- **Next step:** the pure functions of the favourites in `side-menu.logic.ts`
+- **Stage:** 2 of 3 — The stars and the block in the menu
+- **Done:** stage 1 — the service, the logic, their tests (side-menu tests: 122 passed, were 101), the public entry
+- **Next step:** the star in the sub-item
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Pure functions in `side-menu.logic.ts`: read the stored list, move by visible neighbour, find the items of the list in the menu
-- [ ] 1.2 `RtuiFavoritesService` and `provideRtuiFavorites()` over the `LOCAL_STORAGE` token, memory without it
-- [ ] 1.3 Tests of the logic and the service, SC-UK-69…SC-UK-74 and the logic part of SC-UK-87
-- [ ] 1.4 The service, the provider and the config type go out through the public entry of the side menu
-- [ ] 2.1 The star in the sub-item: filled or outlined, tooltip and accessible name, `aria-pressed`, no star on folders and on the back row
+- [x] 1.1 Pure functions in `side-menu.logic.ts`: read the stored list, move by visible neighbour, find the items of the list in the menu
+- [x] 1.2 `RtuiFavoritesService` and `provideRtuiFavorites()` over the `LOCAL_STORAGE` token, memory without it
+- [x] 1.3 Tests of the logic and the service, SC-UK-69…SC-UK-74 and the logic part of SC-UK-87
+- [x] 1.4 The service, the provider and the config type go out through the public entry of the side menu
+- [>] 2.1 The star in the sub-item: filled or outlined, tooltip and accessible name, `aria-pressed`, no star on folders and on the back row
 - [ ] 2.2 The favourites block in the wide and the narrow submenu: heading, rows in list order, hidden under a query, absent when empty
 - [ ] 2.3 The drag by the handle with the CDK, the hold of a hover submenu during a drag and on a star focus
 - [ ] 2.4 Tests of the menu, SC-UK-75…SC-UK-92
@@ -37,3 +37,4 @@
 
 - Grill in the owner's words; the owner chose the first kit and a task outside the epic («1»).
 - Agreement and 24 scenarios, SC-UK-69…SC-UK-92; the side-menu tests: 101 passed before the work.
+- Stage 1: `favorites.logic.ts`, `rtui-favorites.service.ts` and their tests; `pnpm exec nx test @rt-tools/ui-kit --testFile=side-menu` — 6 suites, 122 passed.

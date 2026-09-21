@@ -30,6 +30,9 @@ export namespace ISideMenu {
      */
     export type SubMenuMode = 'hover' | 'pinned';
 
+    /** Номер пункта в списке избранного — тот же, что `id` пункта меню. */
+    export type FavoriteId = Item['id'];
+
     export interface Item {
         id: string | number;
 
