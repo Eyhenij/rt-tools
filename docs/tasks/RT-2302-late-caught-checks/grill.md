@@ -37,6 +37,10 @@ were confirmed against the code. Taken into work by the owner's words «глян
 accepted list with the reason of RT-383?**
 Да, внести все пять.
 
+**Stage 4 ran into the snapshots taking animations at their first frame (#2303). Hand RT-2302 in
+without it, do #2303 first, or do everything in RT-2302?**
+Сделать всё в RT-2302.
+
 ## Decisions
 
 - **One task, six stages** — every finding is about a miss caught late; the owner asked for one
@@ -45,6 +49,9 @@ accepted list with the reason of RT-383?**
   is not in main yet.
 - **`SubMenuFavoritesMobile` gets its narrow frame after PR #2301 merges** — the story is not in main
   yet.
+
+- **#2303 is absorbed by RT-2302** — by the owner's answer above: the harness fix and the re-taken
+  references go into this branch, and #2303 leaves the board as absorbed.
 
 ## What is left unclear
 

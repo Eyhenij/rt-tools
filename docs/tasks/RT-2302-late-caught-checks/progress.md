@@ -2,12 +2,12 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
-- **Stage:** 4 of 6 — Narrow stories are shot narrow (held on #2303)
-- **Done:** stages 1–3, 5 and 6. Stage 4 is held: its narrow frame shows an empty menu, and the cause is task #2303
-- **Next step:** 4.1 — after #2303 is merged, the two narrow stories declare `snapshotViewport`
+- **State:** `этапы-кончились`
+- **Stage:** 6 of 6 — all stages are marked
+- **Done:** all six stages; the harness shoots animations at their last frame, and ten references are re-taken
+- **Next step:** the closing step — texts, the gate suite, the folder taken apart, the PR
 - **Uncommitted:** no
-- **Waiting for the owner:** the word on stage 4 — wait for #2303, or hand in RT-2302 without it
+- **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
@@ -20,8 +20,8 @@
 - [x] 2.3 The token pattern names the interpolation trap
 - [x] 3.1 The showcase rule says where an icon font is declared and what its class repeats
 - [x] 3.2 The gate map sends `preview-head.html` and `.storybook/*.scss` to the showcase rule
-- [>] 4.1 `Mobile` and `MobileActiveMenu` declare `snapshotViewport`
-- [ ] 4.2 Their references are re-taken, looked at and confirmed by a second raising
+- [x] 4.1 `Mobile` and `MobileActiveMenu` declare `snapshotViewport`
+- [x] 4.2 Their references are re-taken, looked at and confirmed by a second raising
 - [x] 4.3 The snapshot pattern names the narrow-story trap
 - [x] 5.1 Every text names `pnpm run storybook:ui-kit-v1`
 - [x] 5.2 The browser-verification companion says how to find who raised a showcase
@@ -50,5 +50,10 @@
 
 - Task #2302 created from the rules review of RT-2291 and taken into work; the owner allowed the
   five shared token names into the accepted list.
+- The owner answered «Сделать всё в RT-2302»: #2303 is absorbed, stage 4 goes on in this branch.
+- The harness returns the animation direction; 10 of 88 references diverged, each was looked at and
+  re-taken file by file. The second raising matched 87 of 88: `Button › Matrix`, untouched by the
+  edit, diverged by sub-pixel label glyphs and passed in both earlier full runs. The owner asked to
+  stop the showcase before a third raising; the push gate shoots again.
 - Stages 1, 2, 3, 5 and 6 are done. Stage 4 found that the showcase snapshots take animations at
   their first frame; it is filed as #2303, and the stage waits for it.

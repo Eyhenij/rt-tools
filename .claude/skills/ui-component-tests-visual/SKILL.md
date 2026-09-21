@@ -83,9 +83,12 @@ export const Mobile: TStory = {
 };
 ```
 
-A narrow frame is looked at before it becomes a reference. Storybook's test mode stops every
-animation at its first frame, so a part that fades in from transparency comes out empty — the narrow
-side menu showed its panel without a single item. Until task #2303 lands, such a frame is not taken.
+**An animation is shot at its last frame, and the harness has to say so itself.** Storybook's test
+mode inserts `animation-direction: reverse` and `animation-play-state: paused` with `!important`, so
+"finishing" an animation lands on its first frame. The first kit's harness returns the direction and
+the play state in its own stop style. Before that, a part fading in from transparency came out empty
+or half-transparent: the narrow side menu without a single item, an open sub-menu without its
+entries, table rows at half opacity — and ten references pinned exactly that.
 
 **The markup does not arrive in the same frame as the story.** A search for a node in `play` is
 wrapped in a wait:
