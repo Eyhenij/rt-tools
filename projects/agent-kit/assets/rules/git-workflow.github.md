@@ -88,7 +88,8 @@ flowchart TD
   own.** An edit made in it goes into `main` unreviewed: nobody opens a PR from that branch to it.
 - **The main branch is merged into the epic branch, and the epic branch into the branches of its
   tasks — while the work runs, not before the hand-over.** Otherwise the reviewer sees the edit mixed
-  with someone else's, checked from a base that is gone.
+  with someone else's, checked from a base that is gone. A merge not sent yet answers by the base:
+  a task branch from the merged local epic branch is let through.
 - **A wave of branches off one epic branch is checked by a trial merge, not one by one:** each is
   green on its own, and they collide on what one branch cannot show.
 - **The next work's branch is taken from the previous one while the chain is unbroken.** `git
