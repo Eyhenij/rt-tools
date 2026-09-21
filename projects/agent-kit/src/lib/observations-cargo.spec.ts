@@ -11,7 +11,7 @@ import { collectAssets, IAsset } from './assets.js';
 import { IObservationDay, IObservationLine, IObservationsCargo } from './cargo.js';
 import { IConfig, readConfig } from './config.js';
 import { OBSERVATIONS_DIR } from './observations.js';
-import { linesOfDay, linesTotal, originOf, readObservationDays } from './observations-cargo.js';
+import { linesOfDay, linesTotal, originOf, OWN_RESOURCE, readObservationDays } from './observations-cargo.js';
 import { dropTree, freshTree, put, said, sent, shipping, start, TODAY, treeEnv, treeRoot } from './shipment.fixture.js';
 import { IShipment } from './ship.js';
 
@@ -115,9 +115,37 @@ describe('груз наблюдений', () => {
         expect(cargo.days[1].lines[0].skill).toBe('rule');
     });
 
-    it('SC-AK-1103 — адрес дерева в строке отбивает отправку целиком', async () => {
+    it('SC-AK-1151 — имя своего правила дерева не уезжает ни загрузкой, ни отказом', () => {
+        start();
+        const own: string = `rules/${basename(treeRoot())}`;
+        const text: string = [load('testing'), load(own), deny(own)].join('\n');
+
+        const lines: readonly IObservationLine[] = linesOfDay(text, assets());
+
+        expect(lines.map((line: IObservationLine): string => line.res)).toEqual(['testing', OWN_RESOURCE, OWN_RESOURCE]);
+        expect(lines.map((line: IObservationLine): string | undefined => line.skill)).toEqual(['rule', 'own', undefined]);
+    });
+
+    it('SC-AK-1152 — груз со своим правилом дерева уезжает: течь нечему', async () => {
         start();
         put(`${OBSERVATIONS_DIR}/${TODAY}.jsonl`, `${load(`rules/${basename(treeRoot())}`)}\n`);
+
+        const outcome: string = said(await shipping());
+
+        expect(outcome).not.toContain('назван адрес этого дерева');
+        expect(observationsSent().days[0].lines[0].res).toBe(OWN_RESOURCE);
+    });
+
+    it('SC-AK-1103 — адрес дерева в свободном поле строки отбивает отправку целиком', async () => {
+        start();
+        const line: string = JSON.stringify({
+            t: `${TODAY}T10:00:00Z`,
+            ev: 'skill-load',
+            res: 'testing',
+            sid: `сессия в ${basename(treeRoot())}`,
+            v: '0.27.0',
+        });
+        put(`${OBSERVATIONS_DIR}/${TODAY}.jsonl`, `${line}\n`);
 
         const outcome: string = said(await shipping());
 

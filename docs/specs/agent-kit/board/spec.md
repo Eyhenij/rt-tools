@@ -65,6 +65,20 @@ through the executor.
   read, and the plan is the first of them that carries a table with a task column. None of the named
   documents on disk, and none of those on disk carrying the makeup, are two divergences of their
   own: one sends the reader to write the plan, the other to write the table.
+- **The number of a task of the makeup is read from the task column, not from the whole row.** The
+  state column of a plan names the request the task was merged by, and a number taken from the whole
+  row turns that request into a task of the epic: the audit then says the plan names tasks that are
+  no sub-issues of the card, and points at requests. The column read is the one by which a row
+  counts as a makeup row at all — the one whose header carries the word for a task.
+- **The plan of a live epic is read out of the branch of that epic, and off the disk only where the
+  disk is no older.** A plan lives in the branch of its epic until the epic is merged whole and is
+  appended to along the way, while the disk holds whatever copy the current branch carries: read off
+  the disk first, the audit takes the older text and says the plan does not carry tasks that stand in
+  it. The disk is no older exactly when the current branch has absorbed the tip of the epic branch —
+  that is the condition, and it is asked of version control, not guessed. The branch is looked for by
+  the name `<КЛЮЧ>-<номер эпика>-` among the local and the remote refs, and the reading stays without
+  the network — the same move the branch folders check already makes. A plan neither on disk nor in
+  any branch stays a divergence: there the card really does point into emptiness.
 - **Belonging to an epic is declared by a word about the task, not by a mention of the number.** The
   number of an epic stands in a task body in the reasoning, in a quoted refusal, in the list of what
   the work does not do — read as a declaration, each of those gave a false line, and a task that
@@ -78,6 +92,17 @@ through the executor.
   its epic looks like every other.
 - **The branch of an epic is recognised by its number in the name of the base.** The audit reads the
   queue and does not go to the tree; a task and its epic never share a number.
+- **A branch carrying no task folder is a divergence, and the branch of an epic is not.** The folder
+  travels in by the very first commit: an uncommitted one lets edits through for the whole of the
+  work, and the refusal arrives at the exit of a turn, when there is nothing left to fix with. An
+  epic branch has no folder by design — it carries the plan of its epic and the merges of its tasks
+  — and is named like a task branch to the letter, so by the name alone it gave such a line for
+  every epic of the tree, forever.
+- **A branch is recognised as an epic's by the plan inside that branch, not by the plan on disk.**
+  This part of the audit is the only one reading the local repository, without the network, and the
+  epic label lives at the hosting. The plan of a young epic lives only in its own branch, while the
+  working tree stands on whichever branch the session happens to be on: read off the disk, the sign
+  answers by where the session stands rather than by what the branch is.
 - **An epic with no branch in the requests is a divergence.** Its branch is taken before the first
   of its tasks, and one not taken leaves every task standing on the main branch: the epic is then
   merged piece by piece, and there is nothing left to hand in whole. The card says nothing about a

@@ -107,6 +107,15 @@ skill_for() {
                 # stand: they are edited by the shared verifiability rule together with the stand
                 # rule, not by the rule of a kit component's spec. The branch stands before the
                 # general `*.spec.ts` and before the server one: their file names are the same.
+                # The references of the suite lie inside its directory, and the branch above them
+                # used to answer for them too: the frame rule was never reached on a reference at
+                # all. A frame is judged by the component check rule — the same one that judges a
+                # story frame — so it stands before the branch of the suite, not after it.
+                */apps/message-bus-admin-e2e/__snapshots__/* | */apps/message-bus-admin-e2e/*/__snapshots__/*)
+                    printf '%s\n' 'ui-component-tests'
+                    return 0
+                    ;;
+
                 */apps/message-bus-admin-e2e/*)
                     printf '%s\n' 'testing'
                     printf '%s\n' 'browser-verification'

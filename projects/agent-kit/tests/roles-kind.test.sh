@@ -17,22 +17,22 @@ field_of() {
     sed -nE "s/^$2:[[:space:]]*(.*)/\1/p" "$1" 2>/dev/null | head -1
 }
 
-# --- SC-AK-1136 — роль объявляет имя и инструменты ---------------------------------------------
+# --- SC-AK-1160 — роль объявляет имя и инструменты ---------------------------------------------
 without_name=0
 without_tools=0
 for role in "$AGENTS"/*.md; do
     [ -n "$(field_of "$role" name)" ] || without_name=$((without_name + 1))
     [ -n "$(field_of "$role" tools)" ] || without_tools=$((without_tools + 1))
 done
-report "SC-AK-1136 — имя объявлено каждой ролью" "$without_name" 0
-report "SC-AK-1136 — инструменты объявлены каждой ролью" "$without_tools" 0
+report "SC-AK-1160 — имя объявлено каждой ролью" "$without_name" 0
+report "SC-AK-1160 — инструменты объявлены каждой ролью" "$without_tools" 0
 
-# --- SC-AK-1137 — описание роли говорит, когда её зовут ----------------------------------------
+# --- SC-AK-1161 — описание роли говорит, когда её зовут ----------------------------------------
 without_when=0
 for role in "$AGENTS"/*.md; do
     field_of "$role" description | grep -qiE 'use |use$|зов|when ' || without_when=$((without_when + 1))
 done
-report "SC-AK-1137 — описание называет случай вызова" "$without_when" 0
+report "SC-AK-1161 — описание называет случай вызова" "$without_when" 0
 
 # --- SC-AK-1138 — роль, не пишущая файлов, не объявляет пишущих инструментов --------------------
 writes_anyway=0
@@ -42,21 +42,21 @@ for role in "$AGENTS"/*.md; do
 done
 report "SC-AK-1138 — не пишущая роль пишущих инструментов не держит" "$writes_anyway" 0
 
-# --- SC-AK-1139 — навык без закона закона не объявляет ------------------------------------------
+# --- SC-AK-1162 — навык без закона закона не объявляет ------------------------------------------
 declares_law=0
 for skill in "$SKILLS"/*.md; do
     [ -n "$(field_of "$skill" law)" ] && declares_law=$((declares_law + 1))
 done
-report "SC-AK-1139 — навыки без закона его не объявляют" "$declares_law" 0
+report "SC-AK-1162 — навыки без закона его не объявляют" "$declares_law" 0
 
-# --- SC-AK-1140 — навык без закона не носит рода лестницы ---------------------------------------
+# --- SC-AK-1163 — навык без закона не носит рода лестницы ---------------------------------------
 wears_kind=0
 for skill in "$SKILLS"/*.md; do
     case "$(field_of "$skill" kind)" in
         rule | pattern) wears_kind=$((wears_kind + 1)) ;;
     esac
 done
-report "SC-AK-1140 — рода лестницы навыки не носят" "$wears_kind" 0
+report "SC-AK-1163 — рода лестницы навыки не носят" "$wears_kind" 0
 
 # --- SC-AK-1141 — команда объявляет, что делает и что берёт -------------------------------------
 half_declared=0

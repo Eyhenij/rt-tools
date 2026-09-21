@@ -3,7 +3,7 @@
 The identifier stands at the start of the test title, followed by a dash. While a scenario is not
 covered, it carries the mark "Not covered" with a reason. The prefix is shared by the domain.
 
-### SC-AK-1136 — every role declares its name and its tools
+### SC-AK-1160 — every role declares its name and its tools
 
 Given the roles of the package
 When their headers are read
@@ -11,7 +11,7 @@ Then each names itself and the tools it is allowed
 
 Covered: `projects/agent-kit/tests/roles-kind.test.sh`.
 
-### SC-AK-1137 — a role description says when it is called
+### SC-AK-1161 — a role description says when it is called
 
 Given the roles of the package
 When their descriptions are read
@@ -27,7 +27,7 @@ Then none of them writes
 
 Covered: `projects/agent-kit/tests/roles-kind.test.sh`.
 
-### SC-AK-1139 — a skill without a law declares no law
+### SC-AK-1162 — a skill without a law declares no law
 
 Given the skills of the package that stand under no law
 When their headers are read
@@ -35,7 +35,7 @@ Then none declares a law
 
 Covered: `projects/agent-kit/tests/roles-kind.test.sh`.
 
-### SC-AK-1140 — a skill without a law wears neither kind of the ladder
+### SC-AK-1163 — a skill without a law wears neither kind of the ladder
 
 Given the skills of the package that stand under no law
 When their headers are read
