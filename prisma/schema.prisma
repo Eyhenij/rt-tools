@@ -350,7 +350,8 @@ model ChatSpace {
     name      String   @unique
     createdAt DateTime @default(now())
 
-    sites ChatSite[]
+    sites     ChatSite[]
+    operators ChatOperator[]
 
     @@map("chat_space")
 }
@@ -374,6 +375,7 @@ model ChatSite {
 
     visitors      ChatVisitor[]
     conversations ChatConversation[]
+    operators     ChatOperatorSite[]
 
     @@index([spaceId])
     @@map("chat_site")
@@ -408,10 +410,13 @@ model ChatConversation {
     createdAt DateTime    @default(now())
     /// Минута последнего сообщения: по ней панель оператора ставит переписки по свежести.
     lastMessageAt DateTime @default(now())
+    /// Жива переписка или закрыта. Заводится живой: закрывает её оператор, а реплика посетителя
+    /// открывает снова — иначе вернувшийся человек писал бы туда, куда никто не смотрит.
+    state         ChatConversationState @default(live)
 
     messages ChatMessage[]
 
-    @@index([siteId, lastMessageAt])
+    @@index([siteId, state, lastMessageAt])
     @@map("chat_conversation")
 }
 
@@ -430,4 +435,48 @@ model ChatMessage {
 
     @@index([conversationId, takenAt])
     @@map("chat_message")
+}
+
+/// Состояние переписки: жива она или закрыта. Двух слов хватает на весь эпик — третье сперва
+/// пишется в договорённость, и только потом в код: набор читает экран, и значение, которого он не
+/// знает, показывается машинной строкой.
+enum ChatConversationState {
+    /// Разговор идёт: он в списке оператора и ждёт ответа.
+    live
+    /// Разговор закрыт оператором. Реплика посетителя открывает его снова.
+    closed
+}
+
+/// Оператор чата: человек пространства, который читает переписки и отвечает на них.
+///
+/// Учётную запись приёмника запись называет колонкой, а не связью: таблиц приёма чат не трогает —
+/// связь завела бы обратное поле в чужой записи. Своей двери входа у оператора нет, и эпик её не
+/// обещал: представляется он входом человека в приёмник.
+model ChatOperator {
+    id        String    @id @default(uuid())
+    spaceId   String
+    space     ChatSpace @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+    /// Признак учётной записи приёмника, входом которой представляется оператор.
+    accountId String
+    createdAt DateTime  @default(now())
+
+    sites ChatOperatorSite[]
+
+    @@unique([spaceId, accountId])
+    @@index([accountId])
+    @@map("chat_operator")
+}
+
+/// За какие сайты отвечает оператор. Чего в этом наборе нет, того он не видит вовсе: набор идёт в
+/// сам запрос чтения, а не отсеивается после него.
+model ChatOperatorSite {
+    operatorId String
+    operator   ChatOperator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
+    siteId     String
+    site       ChatSite     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+    addedAt    DateTime     @default(now())
+
+    @@id([operatorId, siteId])
+    @@index([siteId])
+    @@map("chat_operator_site")
 }

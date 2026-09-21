@@ -104,6 +104,8 @@ export enum ERefusal {
     ChatTextTooLong = 'chatTextTooLong',
     /** Реплик с одного посетителя больше предела. */
     ChatThrottled = 'chatThrottled',
+    /** Состояние переписки названо словом не из набора. */
+    ChatStateUnknown = 'chatStateUnknown',
 }
 
 /** Подстановки отказа: причина названа кодом, а значения идут рядом по имени. */
@@ -175,6 +177,7 @@ const SAID: Readonly<Record<ERefusal, string>> = {
     [ERefusal.ChatTextEmpty]: 'реплика без текста не принимается',
     [ERefusal.ChatTextTooLong]: 'в реплике больше {{limit}} знаков',
     [ERefusal.ChatThrottled]: 'реплик с одного посетителя больше {{limit}} за окно: повторите через {{after}} с',
+    [ERefusal.ChatStateUnknown]: 'состояние переписки ожидается одним из: live, closed',
 };
 
 /**

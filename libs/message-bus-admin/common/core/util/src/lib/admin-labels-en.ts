@@ -284,4 +284,5 @@ export const ADMIN_LABELS_EN: Record<TAdminLabelKey, string> = Object.freeze({
     [ERefusal.ChatTextEmpty]: 'A remark without a text is not accepted',
     [ERefusal.ChatTextTooLong]: 'The remark is longer than {{limit}} characters',
     [ERefusal.ChatThrottled]: 'There are more remarks from one visitor than {{limit}} per window: repeat in {{after}} s',
+    [ERefusal.ChatStateUnknown]: 'The state of a conversation is expected as one of: live, closed',
 });

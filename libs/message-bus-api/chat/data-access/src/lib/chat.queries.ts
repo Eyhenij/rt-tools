@@ -81,6 +81,9 @@ export async function startConversation(prisma: PrismaService, siteId: string, t
  * Сообщение и свежесть переписки пишутся одной сделкой: панель оператора ставит переписки по
  * минуте последнего сообщения, и переписка, у которой сообщение уже легло, а минута ещё нет,
  * стояла бы в конце списка ровно тогда, когда её ждут в начале.
+ *
+ * Той же сделкой переписка становится живой: закрытую её закрыл оператор, а человек вернулся и
+ * написал — оставленная закрытой, она лежала бы там, куда никто не смотрит.
  */
 export async function appendVisitorMessage(
     prisma: PrismaService,
@@ -93,7 +96,7 @@ export async function appendVisitorMessage(
             data: { conversationId, text, side: 'visitor', takenAt: at },
             select: { id: true, takenAt: true },
         }),
-        prisma.chatConversation.update({ where: { id: conversationId }, data: { lastMessageAt: at } }),
+        prisma.chatConversation.update({ where: { id: conversationId }, data: { lastMessageAt: at, state: 'live' } }),
     ]);
 
     return message;
