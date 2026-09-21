@@ -1,6 +1,6 @@
 # The panel of the operator
 
-**Status:** in force · **Revision:** 2026-09-20 · **Scenario prefix:** `SC-CH`
+**Status:** in force · **Revision:** 2026-09-21 · **Scenario prefix:** `SC-CH`
 **Depends on:** `chat` (the conversation and the message), `chat/operator-reading` (the operator and their sites), `chat/event-stream` (the stream)
 **Laws:** `access`, `navigation`, `reuse-first`, `lists`, `verifiability`
 **Procedures:** none — the operations are declared by the controllers of the chat
@@ -182,3 +182,6 @@ site is named in every row, and the narrowing by site is a narrowing, not the on
 - 2026-09-20 — written before the code by the task RT-2181 of the epic RT-2177.
 - 2026-09-20 — merged into the spec of the domain as a subdomain together with the bindings of the
   rules to the code.
+- 2026-09-21 — the thread and the field of the answer are said to be the ready-made chat of the kit
+  by the task RT-2284: four rules about the drawing, the translation of the model and the word about
+  the sending, and the scenarios `SC-CH-80` … `SC-CH-82`.

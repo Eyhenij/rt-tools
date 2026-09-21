@@ -190,3 +190,62 @@ is a package of its own, and its folders are opened by the word of the owner.
 
 Both go to the owner as one question: the kit is a package of its own, and its folders are opened by
 their word.
+
+### What the review by the rules found on this work
+
+Nine findings; the ninth is fixed inside the task — the revision line and the history of the panel
+spec did not move with the four rules this work added, and a stale revision reads as a spec nobody
+touched. The other eight wait for the owner.
+
+1. **The exact cause of the lost messages already stood in the layer — in the one rule the author of
+   an application screen never loads.** The showcase rule of this tree names the call that registers
+   the data of the language, names the failure word for word and declares its list of providers
+   complete; the gate demands that rule for the files of the showcase alone. The rule loaded when a
+   screen takes a ready-made ends its branch at "taken as is". A kit component has two injectors,
+   and only one of them has a text about what must stand in it.
+
+2. **The rule says a sign set is declared by what the tree consumes; its companion says this tree
+   consumes nothing.** The companion of the reuse rule reads "there are no applications in the tree"
+   and "there are no screens here", while the admin panel of the receiver is exactly that, and the
+   sign set of the second kit lies on disk with the very signs this work's predecessor tripped. The
+   guard was silent not because the screens are clean but because the set was never declared — which
+   is why the panel drew its own thread until a person noticed. Third occurrence of a class already
+   recorded twice here.
+
+3. **The "what of the law is not here" section of the reuse rule is false in every sentence,
+   numbers included.** It says nobody in the tree inherits the base of a form control — nine
+   components do; that the alert role is written by hand in sixteen templates — one occurrence, and
+   it is inside the ready-made itself; that the ready-made message component has one consumer —
+   eleven have it.
+
+4. **The console is mandatory reading for a showcase frame and unmentioned for a screen frame.**
+   Both halves of one rule describe the same failure — a missing piece of the injector draws
+   emptiness that looks like "nothing to show" — and only the showcase half prescribes the cheap
+   reading that names it. The frame of this section was looked at by eye, and a message row without
+   a body is what an eye accepts as a quiet chat.
+
+5. **No text says what the first consumer of a ready-made component owes.** The whole family is
+   written about the decision — take it, extend it, declare a departure — and stops at the minute of
+   taking: the providers the piece injects, the data of a language the application registers, the
+   namespace of its labels, the address of its icons. The first consumer is also the first check of
+   the piece, and that is said nowhere either.
+
+6. **Nothing names an input whose default hides a whole branch of the template of a ready-made
+   component.** The knowledge lives in the context document next to the component, and the layer
+   names that document three times — every time as something to write, never as something to read
+   before taking. A gating input left at its default gives a component that mounts, is styled,
+   passes its spec and draws a hint in place of the feature.
+
+7. **A check that asserts presence is green on one row and on two, and no article names it.** The
+   testing rule pairs an assertion of absence with a positive one and a count over output with a
+   positive check; the third case — an assertion of presence that pins no count — is in neither. The
+   remark echoed back by the stream stood in the feed twice while every presence assertion about it
+   stayed green.
+
+8. **A test body that asserts more than its scenario promises is a guard nobody knows exists.** The
+   rule names only the opposite direction. The echo of the operator's own remark is held today by
+   the body of a test whose scenario is about the repeat of a refused one; narrow that assertion to
+   what the scenario names, and the only guard of an unwritten promise goes with nothing turning red.
+
+The first, the fourth, the fifth, the sixth, the seventh and the eighth belong to the package; the
+second and the third are this tree's own.
