@@ -96,9 +96,9 @@ its own.
 
 ## What is out of scope
 
-- **The reading of the conversations by the operator, the stream of the events, the panel, the
-  widget, the notifications and the rollout** — the tasks RT-2179 … RT-2184 of the same epic. This
-  text is added to by them.
+- **The panel, the widget, the notifications and the rollout** — the tasks RT-2181 … RT-2184 of the
+  same epic. This text is added to by them. The reading by the operator and the stream of the events
+  are described by the subdomains next to it.
 - **The entry of the operator and the rights inside the space.** The first work takes in the
   remarks of the visitor; there is nobody to answer them yet.
 - **The search over the text of the conversations, the calls, the video and the answering bots** —

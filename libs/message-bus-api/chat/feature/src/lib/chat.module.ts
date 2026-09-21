@@ -4,6 +4,7 @@ import { AccessModule } from '@rt/message-bus-api/access/feature';
 
 import { ChatIntakeController } from './chat-intake.controller';
 import { ChatReadController } from './chat-read.controller';
+import { ChatSubscribersService } from './chat-subscribers.service';
 
 /**
  * Чат с посетителями сайтов: приём первой реплики и заведение переписки.
@@ -19,5 +20,6 @@ import { ChatReadController } from './chat-read.controller';
 @Module({
     imports: [AccessModule],
     controllers: [ChatIntakeController, ChatReadController],
+    providers: [ChatSubscribersService],
 })
 export class ChatModule {}

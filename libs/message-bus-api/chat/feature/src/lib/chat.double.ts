@@ -252,12 +252,17 @@ export class ChatPrismaDouble {
         );
     }
 
-    /** Сообщения одной переписки, старые первыми. */
+    /** Сообщения одной переписки, старые первыми. Названная минута оставляет пришедшее после неё. */
     #messagesOf(args: Record<string, unknown>): IDoubleMessage[] {
-        const where: { conversationId: string } = args['where'] as { conversationId: string };
+        const where: { conversationId: string; takenAt?: { gt: Date } } = args['where'] as {
+            conversationId: string;
+            takenAt?: { gt: Date };
+        };
+        const since: Date | null = where.takenAt?.gt ?? null;
 
         return this.messages
             .filter((row: IDoubleMessage): boolean => row.conversationId === where.conversationId)
+            .filter((row: IDoubleMessage): boolean => (since ? row.takenAt.getTime() > since.getTime() : true))
             .sort((first: IDoubleMessage, second: IDoubleMessage): number => first.takenAt.getTime() - second.takenAt.getTime());
     }
 

@@ -1,15 +1,20 @@
 /**
- * `GET /api/chat/conversations`, `GET /api/chat/conversations/:id/messages` и
- * `POST /api/chat/conversations/:id/state` — сторона оператора.
+ * `GET /api/chat/conversations`, `GET /api/chat/conversations/:id/messages`,
+ * `GET /api/chat/conversations/stream` и `POST /api/chat/conversations/:id/state` — сторона
+ * оператора.
  *
- * Все три закрыты входом человека, а не ключом сайта: ключ лежит в странице сайта открыто, и
+ * Все четыре закрыты входом человека, а не ключом сайта: ключ лежит в странице сайта открыто, и
  * закрытое им чтение отдавало бы разговоры посетителей всякому, кто открыл код страницы.
  *
  * Оператор видит переписки своих сайтов, и чужие в ответ не попадают вовсе: набор сайтов идёт в
  * сам запрос. Вошедший, который оператором чата не является, получает пустую страницу — его набор
  * сайтов пуст, и разницы между «нет сайтов» и «нет переписок» в ответе нет.
+ *
+ * Поток событий стоит здесь же, а не отдельной поверхностью: он закрыт тем же входом и отвечает
+ * за те же сайты, а добор пропущенного после обрыва идёт чтением сообщений с названной минутой.
  */
-import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Query, Req } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Query, Req, Sse } from '@nestjs/common';
+import { Observable } from 'rxjs';
 
 import { SessionOperation } from '@rt/message-bus-api/access/util';
 import { accountOf, IAccountBearingRequest, IRequestAccount } from '@rt/message-bus-api/accounts/util';
@@ -22,9 +27,11 @@ import {
     operatorSites,
     setConversationState,
 } from '@rt/message-bus-api/chat/data-access';
-import { chatStateOf, EChatConversationState } from '@rt/message-bus-api/chat/util';
+import { chatStateOf, EChatConversationState, missedSince } from '@rt/message-bus-api/chat/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { ERefusal, IPage, pageAsked, pageFault, refusalBody } from '@rt/message-bus-common';
+
+import { ChatSubscribersService, IChatFrame } from './chat-subscribers.service';
 
 /** Поля порядка списка переписок. Первое — умолчание: свежие разговоры стоят первыми. */
 const CONVERSATION_SORTABLE: readonly string[] = ['lastMessageAt'];
@@ -41,9 +48,11 @@ interface IChatStateChanged {
 @Controller('chat/conversations')
 export class ChatReadController {
     readonly #prisma: PrismaService;
+    readonly #subscribers: ChatSubscribersService;
 
-    constructor(prisma: PrismaService) {
+    constructor(prisma: PrismaService, subscribers: ChatSubscribersService) {
         this.#prisma = prisma;
+        this.#subscribers = subscribers;
     }
 
     /**
@@ -91,7 +100,22 @@ export class ChatReadController {
 
         await this.#own(request, id);
 
-        return messagesPage(this.#prisma, id, pageAsked(query, MESSAGE_SORTABLE));
+        return messagesPage(this.#prisma, id, pageAsked(query, MESSAGE_SORTABLE), missedSince(query['since']));
+    }
+
+    /**
+     * Поток событий оператора: его читает панель.
+     *
+     * Закрыт входом человека и несёт события тех сайтов, за которые он отвечает, — набор тот же,
+     * с которым работает чтение: второй ответ на вопрос «чей это разговор» разошёлся бы с первым.
+     * Вошедший, который оператором чата не является, получает открытый поток без событий: его
+     * набор сайтов пуст, и это не отказ — он вошёл, просто отвечать ему не за что.
+     */
+    @Get('stream')
+    @SessionOperation()
+    @Sse()
+    public async stream(@Req() request: IAccountBearingRequest): Promise<Observable<IChatFrame>> {
+        return this.#subscribers.stream({ conversationId: null, siteIds: await this.#sites(request) });
     }
 
     /** Смена состояния переписки: закрыть разговор или открыть его снова. */

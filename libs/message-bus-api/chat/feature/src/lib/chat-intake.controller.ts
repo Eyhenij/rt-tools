@@ -17,18 +17,22 @@ import {
     Body,
     Controller,
     ForbiddenException,
+    Get,
     HttpException,
     HttpStatus,
     Logger,
     NotFoundException,
     Post,
+    Query,
     Req,
+    Sse,
     UnauthorizedException,
 } from '@nestjs/common';
+import { Observable } from 'rxjs';
 
 import { PublicOperation } from '@rt/message-bus-api/access/util';
 import { RateLimitService } from '@rt/message-bus-api/access/feature';
-import { IChatConversationStarted, IChatMessageTaken } from '@rt/message-bus-api/chat/api';
+import { IChatConversationStarted, IChatMessageEvent, IChatMessageTaken } from '@rt/message-bus-api/chat/api';
 import {
     appendVisitorMessage,
     findConversationByVisitorToken,
@@ -51,11 +55,16 @@ import {
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { ERefusal, refusalBody } from '@rt/message-bus-common';
 
+import { ChatSubscribersService, IChatFrame } from './chat-subscribers.service';
+
 /** Запрос, каким его видит операция: тело уже разобрано каркасом, адрес страницы берётся здесь. */
 interface IChatRequest {
     readonly ip?: string;
     readonly headers?: Record<string, string | string[] | undefined>;
 }
+
+/** Сторона разговора у реплики посетителя: событие называет её тем же словом, что и хранилище. */
+const VISITOR_SIDE: string = 'visitor';
 
 /** Через сколько секунд повторять, когда предел частоты отбил реплику. */
 const RETRY_AFTER_SECONDS: number = CHAT_RATE_WINDOW_MS / 1000;
@@ -82,11 +91,13 @@ function header(request: IChatRequest, name: string): string {
 export class ChatIntakeController {
     readonly #prisma: PrismaService;
     readonly #rate: RateLimitService;
+    readonly #subscribers: ChatSubscribersService;
     readonly #log: Logger = new Logger(ChatIntakeController.name);
 
-    constructor(prisma: PrismaService, rate: RateLimitService) {
+    constructor(prisma: PrismaService, rate: RateLimitService, subscribers: ChatSubscribersService) {
         this.#prisma = prisma;
         this.#rate = rate;
+        this.#subscribers = subscribers;
     }
 
     /**
@@ -148,8 +159,42 @@ export class ChatIntakeController {
         }
 
         const message: IChatMessageRow = await appendVisitorMessage(this.#prisma, conversation.id, text, at);
+        const event: IChatMessageEvent = {
+            text,
+            conversationId: conversation.id,
+            messageId: message.id,
+            side: VISITOR_SIDE,
+            takenAt: message.takenAt.toISOString(),
+        };
+
+        this.#subscribers.send({ conversationId: conversation.id, siteId: site.id }, event);
 
         return { messageId: message.id, takenAt: message.takenAt.toISOString() };
+    }
+
+    /**
+     * Поток событий одной переписки: его читает виджет посетителя.
+     *
+     * Закрыт признаком посетителя — тем самым, который сервис выдал при заведении переписки:
+     * чужой и никому не выданный отвечают одинаково, как ненайденная переписка. Открытый поток
+     * ничего не пишет сам, пока в переписке не появилась реплика: пока событий нет, идёт
+     * сердцебиение, иначе простаивающее соединение закрыл бы проксировщик.
+     */
+    @Get('stream')
+    @PublicOperation()
+    @Sse()
+    public async stream(@Query() query: Record<string, unknown>, @Req() request: IChatRequest): Promise<Observable<IChatFrame>> {
+        const site: IChatSiteRow = await this.#site(query, request);
+        const token: string = field(query, 'visitor');
+        const conversation: IChatConversationRow | null = token ? await findConversationByVisitorToken(this.#prisma, site.id, token) : null;
+
+        if (!conversation) {
+            this.#log.warn({ event: 'chat-stream-refused', site: site.id });
+
+            throw new NotFoundException(refusalBody(ERefusal.ChatConversationNotFound));
+        }
+
+        return this.#subscribers.stream({ conversationId: conversation.id, siteIds: [] });
     }
 
     /** Живой сайт по ключу и позволенный адрес страницы. Не сошлось — отказ, один на две причины. */
