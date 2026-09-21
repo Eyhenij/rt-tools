@@ -1,4 +1,4 @@
-# Образ дороги: проксировщик со статикой админки внутри.
+# Образ дороги: проксировщик со статикой админки и файлом виджета чата внутри.
 #
 # Собирается из корня дерева: docker build -f deploy/message-bus-web.Dockerfile .
 #
@@ -24,16 +24,23 @@ COPY nx.json tsconfig.base.json eslint.config.mjs ./
 COPY eslint ./eslint
 COPY tools ./tools
 COPY apps/message-bus-admin ./apps/message-bus-admin
+# Виджет чата берёт браузер чужой страницы, и отдаёт его этот же проксировщик: своего процесса у
+# одного файла нет, а в образе приёмника он ехал бы через приложение, которое отвечает операции.
+COPY apps/chat-widget ./apps/chat-widget
 COPY libs ./libs
 # Админка стоит на ките этого же дерева, и берётся он исходниками, а не выпущенным пакетом:
 # выпуск — решение владельца, и ждать его ради выкатки нечего.
 COPY projects ./projects
 RUN NX_DAEMON=false npx nx build message-bus-admin
+RUN NX_DAEMON=false npx nx build chat-widget
 
 FROM caddy:2-alpine
 # Сборка кладётся туда, куда смотрит `root` конфига. Конфиг копируется в образ, а не
 # монтируется с узла: смонтированный файл живёт вне выкатки, и правка дороги перестала бы
 # ехать тем же sha, что и всё остальное.
 COPY --from=build /workspace/dist/apps/message-bus-admin/browser /srv
+# Файл виджета ложится рядом со статикой админки, одним адресом и без версии в имени: страница,
+# которая его взяла, получает новый на следующей выкатке, и старый никому не обещан.
+COPY --from=build /workspace/dist/apps/chat-widget/widget.js /srv/widget.js
 COPY deploy/Caddyfile /etc/caddy/Caddyfile
 EXPOSE 80 443
