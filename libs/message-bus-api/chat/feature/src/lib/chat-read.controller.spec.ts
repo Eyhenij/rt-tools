@@ -8,6 +8,8 @@ import { IChatConversationListRow, IChatMessageListRow } from '@rt/message-bus-a
 import { CHAT_TEXT_LIMIT } from '@rt/message-bus-api/chat/util';
 import { IPage } from '@rt/message-bus-common';
 
+import { ChatHookSpy, ISaidCall } from './chat-hook.double';
+import { ChatHookService } from './chat-hook.service';
 import { ChatIntakeController } from './chat-intake.controller';
 import { ChatReadController } from './chat-read.controller';
 import { ChatSubscribersService } from './chat-subscribers.service';
@@ -24,6 +26,7 @@ function signedIn(accountId: string): IAccountBearingRequest {
 describe('ChatReadController', () => {
     let store: ChatPrismaDouble;
     let reads: ChatReadController;
+    let hooks: ChatHookSpy;
 
     /** Переписка с последней репликой в названную минуту. */
     function talk(id: string, siteId: string, at: Date, text: string, state: string = 'live'): void {
@@ -36,7 +39,8 @@ describe('ChatReadController', () => {
         store.sites.push({ id: 'site-1', spaceId: 'space-1', key: 'live-key', origins: ['https://shop.example'], enabled: true });
         store.sites.push({ id: 'site-2', spaceId: 'space-2', key: 'other-key', origins: ['https://other.example'], enabled: true });
         store.operatorSites.push({ accountId: 'account-1', siteId: 'site-1' });
-        reads = new ChatReadController(store.asPrisma(), new ChatSubscribersService());
+        hooks = new ChatHookSpy();
+        reads = new ChatReadController(store.asPrisma(), new ChatSubscribersService(), hooks);
     });
 
     it('SC-CH-15 — оператор видит переписки своих сайтов и не видит соседских', async (): Promise<void> => {
@@ -152,6 +156,39 @@ describe('ChatReadController', () => {
         expect(live.rows).toHaveLength(0);
     });
 
+    it('SC-CH-65 — закрытие переписки уходит вызовом наружу', async (): Promise<void> => {
+        talk('own', 'site-1', AT, 'своя');
+
+        await reads.state('own', { state: 'closed' }, signedIn('account-1'));
+        // вызов уходит вслед за ответом оператору: он его не держит
+        await new Promise<void>((done: () => void): void => {
+            setTimeout(done, 0);
+        });
+
+        const said: ISaidCall[] = hooks.said;
+
+        expect(said).toHaveLength(1);
+        expect(said[0]).toEqual({ kind: 'closing', site: 'live-key', conversationId: 'own' });
+    });
+
+    it('SC-CH-66 — открытие переписки обратно наружу не уходит', async (): Promise<void> => {
+        talk('own', 'site-1', AT, 'своя', 'closed');
+
+        await reads.state('own', { state: 'live' }, signedIn('account-1'));
+        await new Promise<void>((done: () => void): void => {
+            setTimeout(done, 0);
+        });
+
+        expect(hooks.said).toHaveLength(0);
+        // положительная пара: тот же двойник записывает закрытие
+        await reads.state('own', { state: 'closed' }, signedIn('account-1'));
+        await new Promise<void>((done: () => void): void => {
+            setTimeout(done, 0);
+        });
+
+        expect(hooks.said).toHaveLength(1);
+    });
+
     it('SC-CH-25 — состояние вне набора отбивается, и переписка не меняется', async (): Promise<void> => {
         talk('own', 'site-1', AT, 'своя');
 
@@ -170,7 +207,8 @@ describe('ChatReadController', () => {
         const intake: ChatIntakeController = new ChatIntakeController(
             store.asPrisma(),
             new RateLimitService(),
-            new ChatSubscribersService()
+            new ChatSubscribersService(),
+            new ChatHookService(store.asPrisma())
         );
         const started: { conversationId: string; visitorToken: string } = await intake.start(
             { site: 'live-key' },

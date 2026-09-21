@@ -7,6 +7,8 @@ import { IChatMessageListRow } from '@rt/message-bus-api/chat/data-access';
 import { CHAT_RATE_LIMIT, CHAT_TEXT_LIMIT } from '@rt/message-bus-api/chat/util';
 import { IChatSiteLookRow, IPage } from '@rt/message-bus-common';
 
+import { ChatHookSpy } from './chat-hook.double';
+import { ChatHookService } from './chat-hook.service';
 import { ChatIntakeController } from './chat-intake.controller';
 import { ChatSubscribersService } from './chat-subscribers.service';
 import { ChatPrismaDouble, IDoubleMessage } from './chat.double';
@@ -42,7 +44,12 @@ describe('ChatIntakeController', () => {
             answerTo: 18 * 60,
             timeZone: 'UTC',
         });
-        controller = new ChatIntakeController(store.asPrisma(), new RateLimitService(), new ChatSubscribersService());
+        controller = new ChatIntakeController(
+            store.asPrisma(),
+            new RateLimitService(),
+            new ChatSubscribersService(),
+            new ChatHookService(store.asPrisma())
+        );
     });
 
     it('SC-CH-1 — заведение переписки по ключу сайта выдаёт признак посетителя', async (): Promise<void> => {
@@ -222,5 +229,49 @@ describe('ChatIntakeController', () => {
         const order: Date[] = store.messages.map((message: IDoubleMessage): Date => message.takenAt);
 
         expect(order).toEqual([first, second]);
+    });
+    it('SC-CH-62 — принятая реплика уходит вызовом наружу', async (): Promise<void> => {
+        const hooks: ChatHookSpy = new ChatHookSpy();
+        const intake: ChatIntakeController = new ChatIntakeController(
+            store.asPrisma(),
+            new RateLimitService(),
+            new ChatSubscribersService(),
+            hooks
+        );
+        const talk: IChatConversationStarted = await intake.start({ site: 'live-key' }, from(), AT);
+
+        await intake.take(
+            { site: 'live-key', visitor: talk.visitorToken, conversation: talk.conversationId, text: 'Здравствуйте' },
+            from(),
+            AT
+        );
+        await new Promise<void>((done: () => void): void => {
+            setTimeout(done, 0);
+        });
+
+        expect(hooks.said).toEqual([{ kind: 'remark', site: 'live-key', conversationId: talk.conversationId }]);
+    });
+
+    it('SC-CH-67 — зависшая отправка наружу ответ посетителю не держит', async (): Promise<void> => {
+        const hooks: ChatHookSpy = new ChatHookSpy();
+        const intake: ChatIntakeController = new ChatIntakeController(
+            store.asPrisma(),
+            new RateLimitService(),
+            new ChatSubscribersService(),
+            hooks
+        );
+        const talk: IChatConversationStarted = await intake.start({ site: 'live-key' }, from(), AT);
+
+        hooks.hang();
+
+        const taken: IChatMessageTaken = await intake.take(
+            { site: 'live-key', visitor: talk.visitorToken, conversation: talk.conversationId, text: 'Пишу, пока узел молчит' },
+            from(),
+            AT
+        );
+
+        // ответ посетителю пришёл, хотя отправка наружу не кончилась ничем
+        expect(taken.messageId).toBeTruthy();
+        expect(hooks.said).toHaveLength(1);
     });
 });

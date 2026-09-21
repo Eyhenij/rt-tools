@@ -15,7 +15,7 @@ import { createServer, request as httpRequest } from 'node:http';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { ADMIN_PORT, API_PORT } from './stand.mjs';
+import { ADMIN_PORT, API_PORT, CHAT } from './stand.mjs';
 
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 
@@ -32,6 +32,36 @@ const BROWSER_DIR = join(ROOT, 'dist/apps/message-bus-admin/browser');
  */
 const WIDGET_FILE = join(ROOT, 'dist/apps/chat-widget/widget.js');
 const WIDGET_PAGE = fileURLToPath(new URL('./widget-page.html', import.meta.url));
+
+/**
+ * Приложение площадки на стенде: сюда приёмник шлёт вызовы наружу, и отсюда их читает набор.
+ *
+ * Своё, а не чужой узел: набор проверяет, о чём говорит сервис, а не сеть между машинами. Вызовы
+ * копятся списком, и прогон читает его тем же адресом обычным чтением.
+ */
+const HOOK_CALLS = [];
+
+/** Заголовок, которым едет подпись вызова. Тот же, что называет слой утилит чата. */
+const SIGNATURE_HEADER = 'x-rt-chat-signature';
+
+/** Принять вызов наружу: тело и подпись кладутся списком, отвечается принятием. */
+function takeHookCall(request, response) {
+    let body = '';
+
+    request.on('data', (chunk) => {
+        body += chunk;
+    });
+    request.on('end', () => {
+        HOOK_CALLS.push({ body, signature: request.headers[SIGNATURE_HEADER] ?? '' });
+        response.writeHead(204).end();
+    });
+}
+
+/** Отдать то, что приложению площадки уже сказали. */
+function sendHookCalls(response) {
+    response.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
+    response.end(JSON.stringify(HOOK_CALLS));
+}
 
 /** Чем назваться в заголовке ответа: браузер не показывает шрифты и стили без верного рода. */
 const MEDIA = Object.freeze({
@@ -95,6 +125,16 @@ createServer((request, response) => {
 
     if (url.startsWith('/api')) {
         proxy(request, response);
+
+        return;
+    }
+
+    if (url.startsWith(CHAT.hook.path)) {
+        if (request.method === 'POST') {
+            takeHookCall(request, response);
+        } else {
+            sendHookCalls(response);
+        }
 
         return;
     }
