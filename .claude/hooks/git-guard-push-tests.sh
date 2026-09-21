@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.0 · hooks/git-guard-push-tests.sh · 30c24d7c90ea · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/git-guard-push-tests.sh · 1bcf7a91cf75 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh
 # The guard of the checks before a push. PreToolUse on the push call.
@@ -177,12 +177,24 @@ fi
 # breakage.
 rt_skip_code="${RT_SKIP_CODE:-7}"
 
+# Every red among the light checks is named by one refusal. The gate used to leave on the first red
+# one, and each fix opened the next reason by a push of its own: three pushes in a row went so on one
+# branch — a repeated function, a name shared by two kits, a paint probe. After the first red a
+# heavy check is not started: the push is refused anyway, and its minutes buy nothing.
+command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return 1; }
+
 failed=""
 output=""
 skipped=""
+held=""
 ran=0
 while IFS= read -r check; do
     [ -z "$check" ] && continue
+    if [ -n "$failed" ] && rt_push_check_heavy "$check"; then
+        held="${held}${held:+
+}${check}"
+        continue
+    fi
     ran=$((ran + 1))
     out="$(eval "$check" 2>&1)"
     status=$?
@@ -192,9 +204,12 @@ while IFS= read -r check; do
 }${check}"
         continue
     fi
-    failed="$check"
-    output="$out"
-    break
+    failed="${failed}${failed:+
+}${check}"
+    output="${output}${output:+
+
+}── ${check}
+$(printf '%s' "$out" | tail -n 25)"
 done <<EOF
 $(rt_push_checks "$base")
 EOF
@@ -246,19 +261,27 @@ fi
 
 rt_push_gate_note red
 
-# The tail of the output, not all of it: the runner prints a long one, and what is needed is the
-# reason for the refusal.
-tail_out="$(printf '%s' "$output" | tail -n 40 | tr -d '\000')"
+# The tail of every red output, not all of it: the runner prints a long one, and what is needed is
+# the reason for the refusal.
+tail_out="$(printf '%s' "$output" | tr -d '\000')"
+red_count="$(printf '%s\n' "$failed" | grep -c .)"
+held_line=""
+[ -n "$held" ] && held_line="
+
+Not started after the red ones — heavy, and the push is refused anyway:
+${held}"
 # Red comes in two kinds, and the guard does not tell them apart: it checks only the return code.
 # When a check of the code fails, "fix it and push again" is right. When the check itself is wrong,
 # the same text orders fixing code nobody touched: a refusal once taken apart lay wholly in
 # documents untouched by any commit of the branch. The verifiability law says a broken check does
 # not stop the work, and until this line there was no such option in the refusal.
-reason="BLOCKED: a push without a green local run. «${failed}» failed — fix it and push again, the guard must not be bypassed. A push is the entry into the pipeline, and red from here is checked already in production.
+reason="BLOCKED: a push without a green local run. Red checks: ${red_count} — fix them and push again, the guard must not be bypassed. A push is the entry into the pipeline, and red from here is checked already in production.
+
+${failed}${held_line}
 
 Three moves from here: fix what is named and repeat the call; fix the check itself, if it is the one that is wrong — take the refusals apart one by one, show the analysis to the owner and correct the check; or bring the owner the price of a bypass and wait for their word. What is in dispute is not added to the known list: it holds what was accepted, not the results of a broken check.
 
-The tail of the output:
+The tail of every red output:
 
 ${tail_out}"
 

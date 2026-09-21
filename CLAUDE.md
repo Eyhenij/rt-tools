@@ -33,7 +33,9 @@ pnpm run lint
 # Format code
 pnpm run prettier
 
-# Run all checks (lint, test, build)
+# Lint, types, tests, build and verify over every project, then the styles linter. It is not the
+# push gate: the tree checks, the hook scenarios and the showcase snapshots run only before a push,
+# and that set is printed by `rt_push_checks` in `.claude/rt-kit/project.sh`
 pnpm run check:all
 
 # Raise the applications on one's own machine. The database is needed only by the receiver;
