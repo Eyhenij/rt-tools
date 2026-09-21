@@ -22,6 +22,8 @@
 `filtersActive`. Выходы: `selectRow`, `openInNewTab`, `searchChange`, `loadMore`.
 
 Строка обязана иметь `id`, `hasUnread` и (необязательно) `overdue` — это всё, что список о ней знает.
+Номер строки — число или строка: у записей домена ключ не всегда числовой. Тем же типом приходит
+`activeId` и уходят `selectRow` и `openInNewTab`.
 
 ## Главное, что нужно знать
 

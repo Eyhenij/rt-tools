@@ -2,6 +2,9 @@
  * Модель `<rt-thread-list>`: один корневой неймспейс с префиксом `I`.
  */
 export namespace IRtThreadList {
+    /** Номер строки: список ведёт записи и с числовым ключом, и со строковым. */
+    export type TRowId = number | string;
+
     /**
      * Минимальный контракт строки списка. Shell читает `id` (трек + активный
      * сегмент + клик) и модификаторы отображения; всё остальное — забота
@@ -11,7 +14,7 @@ export namespace IRtThreadList {
      * - `overdue` — просрочка (акцент в meta); необязателен, дефолт — нет.
      */
     export interface Row {
-        id: number;
+        id: TRowId;
         hasUnread: boolean;
         overdue?: boolean;
     }
