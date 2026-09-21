@@ -109,13 +109,14 @@
     margin-bottom: var(--rt-spacing-8);
 }
 
-// Строка в руке живёт в оверлее CDK, вне блока, и правило из корня до неё не доходит.
+// Строка в руке живёт в оверлее CDK, вне блока, и правило из корня до неё не доходит. Тень — та же,
+// что у строки в руке динамического селектора: имена шкалы теней кита совпадают со вторым китом.
 .rtui-side-menu-favorites__row.cdk-drag-preview {
     display: flex;
     align-items: center;
     border-radius: var(--rt-radius-xl);
     background-color: var(--rt-side-menu-favorites-drag-background, var(--rt-bg-base-base));
-    box-shadow: var(--rt-side-menu-favorites-drag-shadow, var(--rt-shadow-md));
+    box-shadow: var(--rt-side-menu-favorites-drag-shadow, 0 0.5rem 1rem 0 var(--rt-shadow-color));
 }
 
 .rtui-side-menu-favorites__row.cdk-drag-placeholder {
