@@ -57,8 +57,8 @@ names as right: written out beforehand, they read as edits already agreed.
 Loaded over the task: `task-flow`, `spec-driven`, `doc-style`, `doc-style-human`, `testing`,
 `browser-verification`, `ui-component-tests`, `typescript-conventions`, `lib-layers`, `reuse-first`,
 `git-workflow`. Never loaded, and it cost code: `observability` — the tree map sends the files of
-this family to `typescript-conventions` alone, and the layer that calls `observability` fires on
-`process.env`, which the sending service reads nowhere.
+this family to `typescript-conventions` alone, and the layer that calls `observability` fires on a
+reading of the environment, which the sending service does nowhere.
 
 1. **The gate does not demand `observability` for a call outward** — the sign of such a call lives
    in the text of the edit (`fetch`, `axios`, `HttpService`), not in the path, and the domain rule
