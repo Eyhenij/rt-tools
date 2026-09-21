@@ -185,6 +185,14 @@ Rules that decide what goes in a matrix:
   `process.env.RT_SNAPSHOT_RUN` instead of `process.env['RT_SNAPSHOT_RUN']` passed `check:all`
   whole and was refused only by `pnpm run build-storybook:ui-kit-v2`. An edit in `.storybook/` is
   confirmed by a showcase build, not by a sweeping run of the checks.
+- **An icon font of the first showcase is declared in `.storybook/preview-head.html`, not in a
+  showcase stylesheet.** The font file lies in the tree and is served by the showcase itself. A
+  `@font-face` in `storybook.scss` arrives later than the page head, and the paint probe catches the
+  frame before the font. The class rule next to the family repeats the whole set the other families
+  carry there: `font-size: 24px`, `line-height: 1`, `letter-spacing`, `text-transform`, `display`,
+  `white-space`, the ligatures and smoothing. A class with the family alone takes the host's font
+  size and line height, and the icons shift inside their buttons. No frame catches the shift while
+  the references are taken with it; the owner found it by eye.
 - `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/` uses a misspelled
   `strories/` folder. It is matched by the `../src/**` glob and works; leave it
   unless you are deliberately renaming it (both the stylelint ignore and any
