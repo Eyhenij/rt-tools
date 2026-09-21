@@ -1,13 +1,13 @@
 # The rollout of the chat
 
-**Status:** proposed · **Revision:** 2026-09-21 · **Scenario prefix:** `SC-CH`
+**Status:** in force · **Revision:** 2026-09-21 · **Scenario prefix:** `SC-CH`
 **Depends on:** `chat` (the operations of the visitor), `chat/widget` (what stands on a foreign page), `message-bus` (the node, the images and the pipeline)
 **Laws:** `delivery`, `access`, `verifiability`
 **Procedures:** none — this work declares no operation; it takes what exists to the node
 
-The agreement of the task RT-2184 of the epic RT-2177: how the chat reaches the node and how a page
-of a foreign application starts talking to it. It merges into the spec of the domain by the last
-commits of the work.
+A subdomain of the domain "the chat with the visitors": how the chat reaches the node and how a page
+of a foreign application starts talking to it. What is shared — the terminology of the domain, the
+cross-cutting requirements and the decisions — lies in the spec of the domain next to it.
 
 ## Why
 

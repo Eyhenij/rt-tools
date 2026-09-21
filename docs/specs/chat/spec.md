@@ -95,9 +95,10 @@ this text, and the words of each are named there. This text has no screen of its
 
 ## What is out of scope
 
-- **The rollout** — the task RT-2184 of the same epic. This text is added to by it. The reading by
-  the operator, the stream of the events, the panel of the operator, the widget of the visitor and
-  the notifications stand as subdomains next to it.
+- **The rollout** — it stands as a subdomain next to this text: how the chat reaches the node and
+  what lets a page of a foreign application in. The reading by the operator, the stream of the
+  events, the panel of the operator, the widget of the visitor and the notifications stand there
+  too.
 - **The entry of the operator and the rights inside the space.** The first work takes in the
   remarks of the visitor; there is nobody to answer them yet.
 - **The search over the text of the conversations, the calls, the video and the answering bots** —

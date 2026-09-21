@@ -54,8 +54,7 @@ skills and a panel of the sessions behind one skill.
 
 `chat` — the chat with the visitors of the sites: a space per client of the service, a key per site,
 a list of the addresses the widget is called from, a sign the service issues to a visitor, one live
-conversation per visitor and the four operations the widget calls. The rollout
-arrives by the last task of the epic and is added to this text by it. Next to it are five
+conversation per visitor and the four operations the widget calls. Next to it are six
 subdomains. The reading by the operator: who the operator is, what they
 see of their sites and what they do not see at all, two states of a conversation and the reading of
 the lists by pages. The stream of the events: how a new remark reaches a screen that is already
@@ -68,6 +67,10 @@ key of the site, its own shadow tree, the greeting and the hours of answer of th
 a returning visitor and the whole screen on a phone. The notifications: what the service says to the
 application of a site while nobody looks at the panel — a remark, a closing and a talk nobody
 answered, one signed call outward, the repetition of a refused one and the record of every sending.
+The rollout: how the chat reaches the node and how a page of a foreign application starts talking to
+it — the chat inside the receiver, the file of the widget in the image of the road, a name of its
+own on the same node, and the permission for the browser of a foreign page answered by the list of
+the addresses of the site.
 
 `ui-kit` — five subjects of the surface of the first kit, put together from the agreements written
 before the code: the button of the copying at an empty cell of a table, the delay of the showing of a
