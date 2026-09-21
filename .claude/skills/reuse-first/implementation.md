@@ -83,24 +83,28 @@ silent about.
 - Moving code does not count as reinvention: a line that already lay in the tree changes its
   indent on the move while staying the same code.
 
-## How the three uncounted numbers are asked
+## How the two uncounted numbers are asked
 
-The rule names three articles no check counts, and each is a number about this tree. A number
-written down goes stale by itself, so here stands the way to ask it — and what today's answer is.
+The rule names two articles no check counts, and each is a number about this tree. A number written
+down goes stale by itself, so here stands the way to ask it — and what the answer of the command is
+a measurement of.
 
 ```bash
-# fields of the application against the ready-made base of the kit
+# the fields that inherit the ready-made base of the kit
 grep -rl "extends RtFormControlBase" projects libs apps --include="*.ts" | wc -l
-# a message shown by one's own markup instead of the ready-made component and the bus
+# the places where a message is shown by one's own markup instead of the shared bus
 grep -rn 'role="alert"' projects libs apps --include="*.html"
-# consumers of the ready-made message component
-grep -rl "<rt-message" libs apps --include="*.html" | wc -l
 ```
 
+The first command measures the half that complies: a field answering an error its own way inherits
+nothing, and this number does not see it. On the admin screens such a field is named by a sign of
+the declared set; outside them nothing names it. The second command names places, not a number, and
+each is read by eye: the role standing inside the markup of the ready-made component is not a
+divergence.
+
 On 21 September 2026 the answers were: nine components inherit the base; the alert role stands in
-one place, and that place is the markup of the ready-made component itself; eight screens of the
-admin panel call the ready-made message. A divergence between these lines and the answer of a
-command is read in favour of the command.
+one place, and that place is the markup of the ready-made component itself. A divergence between
+these lines and the answer of a command is read in favour of the command.
 
 ## What this is checked by
 
