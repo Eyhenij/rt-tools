@@ -45,7 +45,8 @@ import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-su
 import { pressSubMenuRow, SubMenuKeyboard } from './sub-menu-keyboard';
 import { RtuiSubMenuHoldService } from './rtui-sub-menu-hold.service';
 import { RtuiSideMenuFavoritesComponent } from '../favorites/rtui-side-menu-favorites.component';
-import { DEFAULT_MENU_ID } from '../settings/side-menu-settings.logic';
+import { DEFAULT_MENU_ID, normalizeMenuId } from '../settings/side-menu-settings.logic';
+import { SubMenuResize } from './sub-menu-resize';
 import { RtuiSideMenuSettingsService } from '../settings/rtui-side-menu-settings.service';
 
 @Directive({
@@ -113,13 +114,15 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     /** Настройки меню, если приложение их включило: мода и ширина хранятся там под `menuId`. */
     readonly #settings: RtuiSideMenuSettingsService | null = inject(RtuiSideMenuSettingsService, { optional: true });
 
-    /**
-     * Ширина, пока край держат указателем. Наружу она уходит одной просьбой на отпускании: вход
-     * потребителя за каждым движением мыши не угнаться, а хранилище незачем писать сотней раз.
-     */
-    readonly #draggedWidth: WritableSignal<number | null> = signal(null);
-    /** Снятие слушателей документа. Ведут и отпускают за пределами самой ручки. */
-    #stopDrag: (() => void) | null = null;
+    /** Тяга правого края: натянутая ширина уходит в настройки меню и наружу. */
+    readonly #resize: SubMenuResize = new SubMenuResize({
+        listen: (event: 'mousemove' | 'mouseup', handler: (event: MouseEvent) => void): (() => void) =>
+            this.#renderer.listen('document', event, handler),
+        finish: (width: number): void => {
+            this.#settings?.setSubMenuWidth(this.menuId(), width);
+            this.subMenuWidthChange.emit(width);
+        },
+    });
 
     /** Подменю открыл указатель. У закреплённой моды открытость считается не так. */
     readonly #hoverOpened: WritableSignal<boolean> = signal(false);
@@ -178,7 +181,7 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
      * пределом сама по себе. Числом в ките этот предел назвать нечем — ширину знает потребитель.
      */
     protected readonly subMenuWidthStyle: Signal<string | null> = computed((): string | null => {
-        const width: number | null = this.#draggedWidth() ?? this.#width();
+        const width: number | null = this.#resize.width() ?? this.#width();
 
         return width === null ? null : `${clampSubMenuWidth(width)}px`;
     });
@@ -262,7 +265,9 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     /** Ширина закреплённого подменю в пикселях от приложения. Пусто — берётся сохранённая, её нет — оформление. */
     public subMenuWidth: InputSignal<number | null | undefined> = input<number | null | undefined>(undefined);
     /** Под каким номером меню хранит свои настройки: у двух меню приложения — два номера. */
-    public menuId: InputSignal<string> = input<string>(DEFAULT_MENU_ID);
+    public menuId: InputSignalWithTransform<string, string | null | undefined> = input<string, string | null | undefined>(DEFAULT_MENU_ID, {
+        transform: normalizeMenuId,
+    });
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
@@ -389,31 +394,15 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         this.subMenuModeChange.emit(mode);
     }
 
-    /**
-     * Взята ручка правого края. Слушатели вешаются на документ: рука уходит с узкой полоски
-     * ручки в первое же движение, и слушатель на ней самой терял бы тягу сразу.
-     */
+    /** Взята ручка правого края закреплённого подменю. */
     public onResizeStart(event: MouseEvent): void {
-        if (!this.isPinned() || this.#stopDrag !== null) {
+        if (!this.isPinned() || this.#resize.isActive()) {
             return;
         }
 
         // Иначе указатель выделяет подписи пунктов, и тяга выглядит выделением текста.
         event.preventDefault();
-
-        const startX: number = event.clientX;
-        const startWidth: number = this.#width() ?? this.#measureSubMenuWidth();
-
-        const stopMove: () => void = this.#renderer.listen('document', 'mousemove', (moveEvent: MouseEvent): void => {
-            this.#draggedWidth.set(clampSubMenuWidth(startWidth + moveEvent.clientX - startX));
-        });
-        const stopUp: () => void = this.#renderer.listen('document', 'mouseup', (): void => this.#finishResize());
-
-        this.#stopDrag = (): void => {
-            stopMove();
-            stopUp();
-            this.#stopDrag = null;
-        };
+        this.#resize.start(event.clientX, this.#width() ?? this.#measureSubMenuWidth());
     }
 
     public onSubMenuSearch(query: string): void {
@@ -471,22 +460,6 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
             this.subMenuQuery.set('');
         } else {
             // Пункт без разделов и без своего адреса: нажимать в нём нечего, и выбор остаётся прежним.
-        }
-    }
-
-    /**
-     * Конец тяги. В настройки и наружу уходит натянутая ширина, а не нарисованная: нижний предел
-     * держит оформление, и замерить применённое можно только после раскладки.
-     */
-    #finishResize(): void {
-        const width: number | null = this.#draggedWidth();
-
-        this.#stopDrag?.();
-        this.#draggedWidth.set(null);
-
-        if (width !== null) {
-            this.#settings?.setSubMenuWidth(this.menuId(), width);
-            this.subMenuWidthChange.emit(width);
         }
     }
 

@@ -13,6 +13,14 @@ export const SIDE_MENU_SETTINGS_KEY: string = 'rtui-side-menu';
 /** Номер меню, которому приложение своего не задало. */
 export const DEFAULT_MENU_ID: string = 'default';
 
+/**
+ * Номер меню, под которым лежат его настройки. Пустой — тот же, что не заданный: атрибут без значения
+ * даёт пустую строку, и настройки легли бы под ключ, которого никто не называл.
+ */
+export function normalizeMenuId(menuId: string | null | undefined): string {
+    return menuId?.trim() || DEFAULT_MENU_ID;
+}
+
 /** Запись хранилища как есть: номер меню — и что под ним лежит, в том числе сломанное. */
 export type TSideMenuSettingsRecord = Record<string, unknown>;
 

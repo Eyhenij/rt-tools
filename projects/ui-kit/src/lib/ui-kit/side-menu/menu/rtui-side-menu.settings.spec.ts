@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LOCAL_STORAGE } from '@rt-tools/core';
 import { provideRtuiSideMenuSettings, RtuiSideMenuSettingsService } from '../settings/rtui-side-menu-settings.service';
-import { SIDE_MENU_SETTINGS_KEY } from '../settings/side-menu-settings.logic';
+import { DEFAULT_MENU_ID, SIDE_MENU_SETTINGS_KEY } from '../settings/side-menu-settings.logic';
 import { MemoryStorage } from '../settings/storage.harness';
 import { HostComponent, installFontsStub, ISetup, pin, setup } from './side-menu.harness';
 
@@ -94,5 +94,17 @@ describe('RtuiSideMenuComponent — настройки меню', () => {
 
         expect(isPinned(fixture)).toBe(false);
         expect(stored(storage)).toEqual({ 'user-a': { subMenuMode: 'pinned' }, 'user-b': { subMenuMode: 'hover' } });
+    });
+
+    it('SC-UK-117 — меню с пустым номером берёт и пишет настройки номера по умолчанию', () => {
+        const storage: MemoryStorage = new MemoryStorage();
+        storage.setItem(SIDE_MENU_SETTINGS_KEY, `{"${DEFAULT_MENU_ID}": {"subMenuMode": "pinned"}}`);
+        const { fixture } = withSettings(storage, '');
+
+        expect(isPinned(fixture)).toBe(true);
+
+        pressPin(fixture);
+
+        expect(stored(storage)).toEqual({ [DEFAULT_MENU_ID]: { subMenuMode: 'hover' } });
     });
 });

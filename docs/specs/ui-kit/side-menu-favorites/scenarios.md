@@ -321,3 +321,16 @@ given by the application wins over the stored one and leaves it untouched
 Given the settings of `user-a` and `user-b` are stored
 When the application deletes the settings of `user-a`
 Then the record holds only `user-b`
+
+### SC-UK-117 — an empty menu id reads and writes as the default one
+
+Given the settings of the default menu hold the mode `pinned`
+When the menu gets an empty id, or the application calls the service with an empty or blank id
+Then the menu opens pinned, the switch writes into the default menu, and the service reads and
+writes the default menu's settings
+
+### SC-UK-118 — the application moves among the shown ids, and the hidden ones keep their places
+
+Given the list `a`, `x`, `b`, `c`, where `x` is not shown, and another tab has just added `d`
+When the application moves the first shown id of `a`, `b`, `c` to the last place
+Then the list is `b`, `x`, `c`, `a`, `d`; an id the list does not hold is ignored among the shown

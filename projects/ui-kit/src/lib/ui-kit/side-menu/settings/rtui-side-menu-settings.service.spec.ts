@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { LOCAL_STORAGE } from '@rt-tools/core';
 import { ClosedStorage, FullStorage, MemoryStorage } from './storage.harness';
-import { SIDE_MENU_SETTINGS_KEY } from './side-menu-settings.logic';
+import { DEFAULT_MENU_ID, SIDE_MENU_SETTINGS_KEY } from './side-menu-settings.logic';
 import { IRtuiSideMenuSettingsConfig, provideRtuiSideMenuSettings, RtuiSideMenuSettingsService } from './rtui-side-menu-settings.service';
 
 function createService(storage: Storage | null, config?: IRtuiSideMenuSettingsConfig): RtuiSideMenuSettingsService {
@@ -224,6 +224,33 @@ describe('RtuiSideMenuSettingsService', (): void => {
             expect(service.subMenuWidth('user-a')()).toBe(250);
             expect(service.ids('user-a')()).toEqual(['r1']);
         }
+    });
+
+    it('SC-UK-117 — пустой номер меню читается и пишется как номер по умолчанию', (): void => {
+        const storage: MemoryStorage = new MemoryStorage();
+        const service: RtuiSideMenuSettingsService = createService(storage);
+
+        service.add('', 'r1');
+        service.setSubMenuMode('  ', 'pinned');
+
+        expect(stored(storage)).toEqual({ [DEFAULT_MENU_ID]: { favorites: ['r1'], subMenuMode: 'pinned' } });
+        expect(service.ids(DEFAULT_MENU_ID)()).toEqual(['r1']);
+        expect(service.ids('')).toBe(service.ids(DEFAULT_MENU_ID));
+    });
+
+    it('SC-UK-118 — перенос по видимым номерам оставляет скрытые на местах и не затирает чужую запись', (): void => {
+        const storage: MemoryStorage = new MemoryStorage();
+        const service: RtuiSideMenuSettingsService = createService(storage);
+        service.set('user-a', ['a', 'x', 'b', 'c']);
+        storage.setItem(SIDE_MENU_SETTINGS_KEY, JSON.stringify({ 'user-a': { favorites: ['a', 'x', 'b', 'c', 'd'] } }));
+
+        service.moveVisible('user-a', ['a', 'b', 'c'], 0, 2);
+
+        expect(service.ids('user-a')()).toEqual(['b', 'x', 'c', 'a', 'd']);
+
+        service.moveVisible('user-a', ['b', 'gone', 'c'], 0, 2);
+
+        expect(service.ids('user-a')()).toEqual(['c', 'x', 'b', 'a', 'd']);
     });
 
     it('SC-UK-116 — настройки меню удаляет только вызов приложения, и только их', (): void => {

@@ -109,6 +109,8 @@
 
 - The owner's spec: all settings of one menu in one record under its `menuId` — favourites, `subMenuMode`, `subMenuWidth`. The service became `RtuiSideMenuSettingsService` (`provideRtuiSideMenuSettings`, `IRtuiSideMenuSettingsConfig`, `RTUI_SIDE_MENU_SETTINGS_CONFIG`) in `side-menu/settings/`; it adds `subMenuMode`/`setSubMenuMode`, `subMenuWidth`/`setSubMenuWidth`, `settings`, `deleteSettings`. A write reads the storage, patches one field of one menu and writes; a `storage` event refreshes the signals; a failed write keeps memory authoritative. The menu's `subMenuMode`/`subMenuWidth` inputs default to none: given — they win without touching the stored value, otherwise the stored value is used and the switch and the edge write it. The old keys are not read; `readSubMenuMode` and the rest stay exported only because Avalon imports them. Scenarios SC-UK-108…SC-UK-116. `node tools/check-specs.mjs` green, `pnpm run check:all` green.
 
+- The branch review, and the owner: «поправь реальные проблемы». An empty `menuId` — a bare attribute included — now reads and writes as `default` in the menu (input transform) and in the service (`normalizeMenuId`), SC-UK-117. The edge pull moved out of the menu into `menu/sub-menu-resize.ts`, next to the keyboard walk: the menu file stood at the 500-line limit, now 473. From the consuming application: `RtuiSideMenuSettingsService.moveVisible(menuId, visibleIds, from, to)`; the block's drop goes through it, so it reads the storage before writing, and a shown id the list lacks is skipped, SC-UK-118. 260 side-menu tests, `check:specs` and `check:all` green.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).

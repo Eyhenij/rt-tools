@@ -67,7 +67,7 @@ sign-out or fill it with defaults.
   toggle, move, set, clear, setSubMenuMode and setSubMenuWidth, each taking the menu id. A second
   holder of the same record diverges from the first at the first edit.
 - **Each menu keeps its settings under its own id, and the application names the id.** The menu
-  takes it by the input `menuId`, `default` when none is given — an application passes the id of
+  takes it by the input `menuId`, `default` when none or an empty one is given — an application passes the id of
   the person, and the settings of several people on one machine never mix. The settings hold the
   favourites, the submenu mode and its width; a field the kit does not know stays as it lay.
 - **The service is provided once, in the application's environment injector, and the menu reads it
@@ -237,22 +237,23 @@ menu and writes the object back.
 
 The public surface:
 
-| Name                                              | What it is                                                                                                 |
-| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `provideRtuiSideMenuSettings(config?)`            | the providers of the service; `config.storageKey`, `config.labels` with `title`, `add`, `remove`, `drag`   |
-| `--rt-side-menu-favorites-title-color`            | the colour of the heading's label, set by the application on an ancestor of the menu                       |
-| `ISideMenu.Item.favorites`                        | the flag of a strip item switching its favourites on; off by default                                       |
-| `--rt-side-menu-favorite-color`                   | the colour of the filled star and of the heading's star, set by the application on an ancestor of the menu |
-| `menuId` of `rtui-side-menu`                      | the id the menu keeps its settings under; `default` when none is given                                     |
-| `RtuiSideMenuSettingsService.ids(menuId)`         | the whole list of a menu as a read-only signal, ids hidden from every block included                       |
-| `menuIds`                                         | the ids of the menus whose settings are stored, as a signal                                                |
-| `has`, `add`, `remove`, `toggle` `(menuId, id)`   | a check and three edits of one id; adding an id already in the list does nothing                           |
-| `move(menuId, from, to)`                          | moves an entry between two places of the list                                                              |
-| `set(menuId, ids)`, `clear(menuId)`               | replaces the list whole, empties it                                                                        |
-| `subMenuMode(menuId)`, `subMenuWidth(menuId)`     | the stored mode, `hover` when none, and the stored width, empty when none, as signals                      |
-| `setSubMenuMode`, `setSubMenuWidth` `(menuId, …)` | write the mode, write the width brought within the submenu's limits                                        |
-| `settings(menuId)`, `deleteSettings(menuId)`      | the whole settings of a menu as a signal; deletes them, called only by the application                     |
-| `SIDE_MENU_SETTINGS_KEY`, `DEFAULT_MENU_ID`       | the storage key and the menu id by default                                                                 |
+| Name                                              | What it is                                                                                                              |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `provideRtuiSideMenuSettings(config?)`            | the providers of the service; `config.storageKey`, `config.labels` with `title`, `add`, `remove`, `drag`                |
+| `--rt-side-menu-favorites-title-color`            | the colour of the heading's label, set by the application on an ancestor of the menu                                    |
+| `ISideMenu.Item.favorites`                        | the flag of a strip item switching its favourites on; off by default                                                    |
+| `--rt-side-menu-favorite-color`                   | the colour of the filled star and of the heading's star, set by the application on an ancestor of the menu              |
+| `menuId` of `rtui-side-menu`                      | the id the menu keeps its settings under; `default` when none or an empty one is given                                  |
+| `RtuiSideMenuSettingsService.ids(menuId)`         | the whole list of a menu as a read-only signal, ids hidden from every block included                                    |
+| `menuIds`                                         | the ids of the menus whose settings are stored, as a signal                                                             |
+| `has`, `add`, `remove`, `toggle` `(menuId, id)`   | a check and three edits of one id; adding an id already in the list does nothing                                        |
+| `move(menuId, from, to)`                          | moves an entry between two places of the list                                                                           |
+| `moveVisible(menuId, visibleIds, from, to)`       | moves between places of the shown ids only: the shown ones swap among themselves, the hidden ones stay where they stood |
+| `set(menuId, ids)`, `clear(menuId)`               | replaces the list whole, empties it                                                                                     |
+| `subMenuMode(menuId)`, `subMenuWidth(menuId)`     | the stored mode, `hover` when none, and the stored width, empty when none, as signals                                   |
+| `setSubMenuMode`, `setSubMenuWidth` `(menuId, …)` | write the mode, write the width brought within the submenu's limits                                                     |
+| `settings(menuId)`, `deleteSettings(menuId)`      | the whole settings of a menu as a signal; deletes them, called only by the application                                  |
+| `SIDE_MENU_SETTINGS_KEY`, `DEFAULT_MENU_ID`       | the storage key and the menu id by default                                                                              |
 
 ## Screens and states
 
@@ -359,3 +360,7 @@ One settings object per application key, and in it one list per menu id.
   width; the service became `RtuiSideMenuSettingsService`, `provideRtuiSideMenuSettings()`. A write
   reads the storage first and edits one field of one menu, a change from another tab arrives by the
   storage event, and the kit deletes nothing itself. Scenarios SC-UK-108…SC-UK-116 added.
+- 2026-09-21 — the review of the branch: an empty menu id, a bare attribute included, reads and
+  writes as `default` in the menu and in the service. Scenario SC-UK-117 added.
+- 2026-09-21 — the owner: the service moves among the shown ids by `moveVisible`, the way the
+  block does, and the block's drop reads the storage before it writes. Scenario SC-UK-118 added.

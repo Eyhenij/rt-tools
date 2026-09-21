@@ -24,7 +24,7 @@ import { BlockDirective, BreakpointService, ElemDirective, ModDirective, RtIconO
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
 import { RtuiSubMenuHoldService } from '../menu/rtui-sub-menu-hold.service';
 import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
-import { favoritesSection, findFavoriteItems, moveVisibleFavorite } from './favorites.logic';
+import { favoritesSection, findFavoriteItems } from './favorites.logic';
 import { RtuiSideMenuSettingsService } from '../settings/rtui-side-menu-settings.service';
 
 const BEM_BLOCK: string = 'rtui-side-menu-favorites';
@@ -148,14 +148,13 @@ export class RtuiSideMenuFavoritesComponent {
         afterNextRender(() => this.handles()[target]?.nativeElement.focus(), { injector: this.#injector });
     }
 
-    /** Место в блоке переводится в место списка: скрытые номера остаются на своих. */
+    /** Место в блоке переводится в место списка по свежей записи хранилища: скрытые номера остаются на своих. */
     #move(from: number, to: number): void {
         if (!this.favorites || from === to) {
             return;
         }
 
         const visible: ISideMenu.FavoriteId[] = this.rows().map((item: ISideMenu.Item): ISideMenu.FavoriteId => item.id);
-        const menuId: string = this.#menu.menuId();
-        this.favorites.set(menuId, moveVisibleFavorite(this.favorites.ids(menuId)(), visible, from, to));
+        this.favorites.moveVisible(this.#menu.menuId(), visible, from, to);
     }
 }

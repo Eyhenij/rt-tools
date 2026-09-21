@@ -4,7 +4,7 @@ The rule of the subdomain is on the left, the place where it is carried out is o
 given from the root of the tree.
 
 - **The mode and the width of the submenu come from the application's input, else from the menu's settings, and the default is today's behaviour.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:#mode`, `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:#width`
-- **A press of the switch and a pull of the edge write the choice into the menu's settings and report it outward.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:onSubMenuModeToggle`, `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:#finishResize`
+- **A press of the switch and a pull of the edge write the choice into the menu's settings and report it outward.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:onSubMenuModeToggle`, `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:#resize`, the pull itself — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-resize.ts:SubMenuResize`
 - **A pinned submenu shows the active item.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:#pinnedSubMenu`
 - **The pinning does not change what is visible.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:#pinnedSubMenu`
 - **A press of an item of the strip moves the pinned submenu onto its section.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:#pickPinnedSubMenu`

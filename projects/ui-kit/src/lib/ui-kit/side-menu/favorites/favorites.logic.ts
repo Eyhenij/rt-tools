@@ -37,7 +37,8 @@ export function moveFavorite(ids: ReadonlyArray<ISideMenu.FavoriteId>, from: num
  * Блок показывает только те номера, пункты которых в меню есть, поэтому место в блоке — не место в
  * списке. Видимые номера переставляются между собой и встают в те же ячейки списка, которые
  * занимали; скрытые остаются на своих местах: их пункт вернётся вместе с правом, и человек найдёт
- * его там, куда ставил.
+ * его там, куда ставил. Видимый номер, которого в списке нет, пропускается: список могла поменять
+ * другая вкладка, а место номера, которого нет, занять нечем.
  */
 export function moveVisibleFavorite(
     ids: ReadonlyArray<ISideMenu.FavoriteId>,
@@ -45,8 +46,11 @@ export function moveVisibleFavorite(
     from: number,
     to: number
 ): ISideMenu.FavoriteId[] {
-    const reordered: ISideMenu.FavoriteId[] = moveFavorite(visible, from, to);
-    const slots: Set<ISideMenu.FavoriteId> = new Set(visible);
+    const listed: Set<ISideMenu.FavoriteId> = new Set(ids);
+    const reordered: ISideMenu.FavoriteId[] = moveFavorite(normalizeFavorites(visible), from, to).filter(
+        (id: ISideMenu.FavoriteId): boolean => listed.has(id)
+    );
+    const slots: Set<ISideMenu.FavoriteId> = new Set(reordered);
     let next: number = 0;
 
     return ids.map((id: ISideMenu.FavoriteId): ISideMenu.FavoriteId => {

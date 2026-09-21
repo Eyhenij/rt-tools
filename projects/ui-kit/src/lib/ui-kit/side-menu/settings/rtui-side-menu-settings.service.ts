@@ -14,8 +14,9 @@ import {
 import { LOCAL_STORAGE, PlatformService, WINDOW } from '@rt-tools/core';
 import { ISideMenu } from '../side-menu.types';
 import { clampSubMenuWidth } from '../side-menu.logic';
-import { moveFavorite, normalizeFavorites } from '../favorites/favorites.logic';
+import { moveFavorite, moveVisibleFavorite, normalizeFavorites } from '../favorites/favorites.logic';
 import {
+    normalizeMenuId,
     normalizeSettings,
     omitSettings,
     parseSettingsRecord,
@@ -51,12 +52,13 @@ export const RTUI_SIDE_MENU_SETTINGS_CONFIG: InjectionToken<IRtuiSideMenuSetting
 );
 
 /** Один сигнал на номер меню: меню и приложение читают одно и то же, не плодя вычислений. */
-function cached<T>(cache: Map<string, Signal<T>>, menuId: string, read: () => T): Signal<T> {
-    let value: Signal<T> | undefined = cache.get(menuId);
+function cached<T>(cache: Map<string, Signal<T>>, menuId: string, read: (menuId: string) => T): Signal<T> {
+    const id: string = normalizeMenuId(menuId);
+    let value: Signal<T> | undefined = cache.get(id);
 
     if (!value) {
-        value = computed(read);
-        cache.set(menuId, value);
+        value = computed((): T => read(id));
+        cache.set(id, value);
     }
 
     return value;
@@ -67,7 +69,8 @@ function cached<T>(cache: Map<string, Signal<T>>, menuId: string, read: () => T)
  *
  * В хранилище под одним ключом лежит объект: у каждого меню — свои настройки под его номером.
  * Номер задаёт приложение входом `menuId` меню — например, номером пользователя, — меню без номера
- * хранится под `default`. Приложение читает и пишет настройки любого меню по его номеру.
+ * или с пустым номером хранится под `default`. Приложение читает и пишет настройки любого меню по
+ * его номеру.
  *
  * Запись начинается с чтения хранилища, а не копии в памяти: другая вкладка или другой код могли
  * записать своё после того, как сервис прочитал ключ, и запись из копии затёрла бы их. Правится одно
@@ -120,22 +123,22 @@ export class RtuiSideMenuSettingsService {
 
     /** Настройки одного меню целиком, с незнакомыми полями; не сохранены — пустой объект. */
     public settings(menuId: string): Signal<ISideMenu.Settings> {
-        return cached(this.#menus, menuId, (): ISideMenu.Settings => this.#settings()[menuId] ?? {});
+        return cached(this.#menus, menuId, (id: string): ISideMenu.Settings => this.#settings()[id] ?? {});
     }
 
     /** Список избранного одного меню. Сигнал на номер один: повторный вызов отдаёт тот же. */
     public ids(menuId: string): Signal<ReadonlyArray<ISideMenu.FavoriteId>> {
-        return cached(this.#favorites, menuId, (): ReadonlyArray<ISideMenu.FavoriteId> => this.#settings()[menuId]?.favorites ?? []);
+        return cached(this.#favorites, menuId, (id: string): ReadonlyArray<ISideMenu.FavoriteId> => this.#settings()[id]?.favorites ?? []);
     }
 
     /** Мода подменю, которую выбрал человек; ничего не выбрано — открытие наведением. */
     public subMenuMode(menuId: string): Signal<ISideMenu.SubMenuMode> {
-        return cached(this.#modes, menuId, (): ISideMenu.SubMenuMode => this.#settings()[menuId]?.subMenuMode ?? 'hover');
+        return cached(this.#modes, menuId, (id: string): ISideMenu.SubMenuMode => this.#settings()[id]?.subMenuMode ?? 'hover');
     }
 
     /** Ширина закреплённого подменю; ничего не выбрано — пусто, и ширину ставит оформление. */
     public subMenuWidth(menuId: string): Signal<number | null> {
-        return cached(this.#widths, menuId, (): number | null => this.#settings()[menuId]?.subMenuWidth ?? null);
+        return cached(this.#widths, menuId, (id: string): number | null => this.#settings()[id]?.subMenuWidth ?? null);
     }
 
     public setSubMenuMode(menuId: string, mode: ISideMenu.SubMenuMode): void {
@@ -174,6 +177,16 @@ export class RtuiSideMenuSettingsService {
         this.#updateFavorites(menuId, (ids: ISideMenu.FavoriteId[]): ISideMenu.FavoriteId[] => moveFavorite(ids, from, to));
     }
 
+    /**
+     * Перенос по местам видимых номеров, как в блоке меню: видимые меняются местами между собой,
+     * скрытые — пункт которых меню сейчас не показывает — остаются на своих.
+     */
+    public moveVisible(menuId: string, visibleIds: ReadonlyArray<ISideMenu.FavoriteId>, from: number, to: number): void {
+        this.#updateFavorites(menuId, (ids: ISideMenu.FavoriteId[]): ISideMenu.FavoriteId[] =>
+            moveVisibleFavorite(ids, visibleIds, from, to)
+        );
+    }
+
     /** Замена списка целиком — чужие значения и повторы отбрасываются так же, как при чтении. */
     public set(menuId: string, ids: ReadonlyArray<ISideMenu.FavoriteId>): void {
         this.#updateFavorites(menuId, (): ISideMenu.FavoriteId[] => normalizeFavorites(ids));
@@ -185,7 +198,7 @@ export class RtuiSideMenuSettingsService {
 
     /** Удаление всех настроек одного меню. Сам кит его не вызывает: удаляет только приложение. */
     public deleteSettings(menuId: string): void {
-        this.#commit(omitSettings(this.#fresh(), menuId));
+        this.#commit(omitSettings(this.#fresh(), normalizeMenuId(menuId)));
     }
 
     #updateFavorites(menuId: string, next: (ids: ISideMenu.FavoriteId[]) => ISideMenu.FavoriteId[]): void {
@@ -195,8 +208,9 @@ export class RtuiSideMenuSettingsService {
     /** Прочитать хранилище → поправить поля одного меню → записать. */
     #update(menuId: string, patch: (current: ISideMenu.Settings) => Partial<ISideMenu.Settings>): void {
         const record: TSideMenuSettingsRecord = this.#fresh();
+        const id: string = normalizeMenuId(menuId);
 
-        this.#commit(patchSettings(record, menuId, patch(normalizeSettings(record[menuId]))));
+        this.#commit(patchSettings(record, id, patch(normalizeSettings(record[id]))));
     }
 
     #commit(record: TSideMenuSettingsRecord): void {
