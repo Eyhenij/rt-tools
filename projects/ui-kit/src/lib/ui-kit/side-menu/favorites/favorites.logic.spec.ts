@@ -72,8 +72,8 @@ describe('moveVisibleFavorite', (): void => {
 });
 
 describe('findFavoriteItems', (): void => {
-    it('SC-UK-79 — пункты из разных разделов встают в порядке списка', (): void => {
-        expect(idsOf(findFavoriteItems(MENU, ['c', 'b', 'a']))).toEqual(['c', 'b', 'a']);
+    it('SC-UK-79 — раздел отдаёт только свои пункты, в том числе из папок, в порядке списка', (): void => {
+        expect(idsOf(findFavoriteItems([MENU[0]], ['c', 'b', 'a']))).toEqual(['c', 'a']);
     });
 
     it('SC-UK-80 — номер, которого в меню нет, пропускается', (): void => {
@@ -92,14 +92,26 @@ describe('isFavoriteCandidate', (): void => {
         expect(isFavoriteCandidate({ id: 0, link: ' ' })).toBe(false);
     });
 
-    it('SC-UK-93 — раздел открытого подменю отдаётся, только если избранное у него включено', (): void => {
+    it('SC-UK-93 — раздел показанного подменю отдаётся, только если избранное у него включено', (): void => {
         const on: ISideMenu.Item = { ...MENU[0], favorites: true };
         const menu: ISideMenu.Item[] = [on, MENU[1]];
 
-        expect(favoritesSection(menu, on.submenu ?? null, [])).toBe(on);
-        expect(favoritesSection(menu, MENU[1].submenu ?? null, [])).toBeNull();
-        expect(favoritesSection(menu, null, ['cargo', 'a'])).toBe(on);
-        expect(favoritesSection(menu, null, ['trees'])).toBeNull();
-        expect(favoritesSection(menu, null, [])).toBeNull();
+        expect(favoritesSection(menu, on.submenu ?? [])).toBe(on);
+        expect(favoritesSection(menu, MENU[1].submenu ?? [])).toBeNull();
+    });
+
+    it('SC-UK-96 — пустой показанный набор не принадлежит ни одному разделу', (): void => {
+        expect(favoritesSection([{ ...MENU[0], favorites: true }], [])).toBeNull();
+    });
+
+    it('SC-UK-97 — раздел узнаётся и по номерам, когда меню передали заново новыми объектами', (): void => {
+        const shown: ISideMenu.Item[] = MENU[0].submenu ?? [];
+        const rebuilt: ISideMenu.Item[] = MENU.map((item: ISideMenu.Item): ISideMenu.Item => ({
+            ...item,
+            favorites: true,
+            submenu: [...(item.submenu ?? [])],
+        }));
+
+        expect(favoritesSection(rebuilt, shown)?.id).toBe('cargo');
     });
 });

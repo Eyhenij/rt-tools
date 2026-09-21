@@ -143,7 +143,8 @@ Not applicable: the submenu has no refusals of its own.
 ## Data
 
 The submenu has no records of the storage of its own: the mode and the activity arrive by the inputs, and
-the preference is kept by the application that installs the kit.
+the preference is kept by the application that installs the kit. Favourites are the exception: one record
+kept by their service — see the subdomain `side-menu-favorites`.
 
 ## Screens and states
 
@@ -184,7 +185,7 @@ Not applicable: the kit knows nothing either about the owner of the data or abou
 - **The preference of the mode is kept by the consumer, not by the kit.** The argument: the kit gives
   outward the mode a person asked for and waits for it back by an input; the kit has no state of its own
   about it. Rejected: a write of the kit into the storage of the browser — a second place of the preferences
-  next to the one of the consumer.
+  next to the one of the consumer. Favourites are the owner's exception, kept by their own service.
 - **An empty pinned panel is removed from the markup, it is not drawn empty.** The argument: a width put by
   the pinning alone left an empty strip to the left of the page at every address without sections. Rejected:
   a panel with a label saying that there are no sections — it takes the same place.

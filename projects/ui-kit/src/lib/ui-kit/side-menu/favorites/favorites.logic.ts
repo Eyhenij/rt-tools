@@ -131,20 +131,27 @@ export function findFavoriteItems(menu: ReadonlyArray<ISideMenu.Item>, ids: Read
 }
 
 /**
- * Пункт полосы, чьё подменю сейчас открыто, если избранное у него включено.
+ * Пункт полосы, чьё подменю сейчас показано, если избранное у него включено.
  *
  * Избранное у каждого пункта своё и по умолчанию выключено: включает его потребитель флагом
- * `favorites` пункта полосы. Открытое подменю узнаётся по набору: выбранный человеком, а пока
- * выбора нет — набор активного пункта, как у закреплённого подменю.
+ * `favorites` пункта полосы. Показанный набор даёт меню — закреплённый или открытый наведением, —
+ * и пустой набор не принадлежит никому: подменю без списка не показывает ничьё избранное.
+ *
+ * Раздел узнаётся сначала по самому набору, затем по номеру его первого пункта: приложение вправе
+ * передать меню заново теми же пунктами в новых объектах — при смене языка или прав, — и набор,
+ * который подменю ещё держит, перестаёт совпадать с пунктами полосы по ссылке. Номера пунктов
+ * подменю единственны на всё меню — это обязанность потребителя.
  */
-export function favoritesSection(
-    menu: ReadonlyArray<ISideMenu.Item>,
-    selectedSubMenu: ISideMenu.Item[] | null,
-    active: ReadonlyArray<string | number>
-): ISideMenu.Item | null {
-    const section: ISideMenu.Item | undefined = selectedSubMenu?.length
-        ? menu.find((item: ISideMenu.Item): boolean => item.submenu === selectedSubMenu)
-        : menu.find((item: ISideMenu.Item): boolean => active.includes(item.id) && Boolean(item.submenu?.length));
+export function favoritesSection(menu: ReadonlyArray<ISideMenu.Item>, shown: ISideMenu.Item[]): ISideMenu.Item | null {
+    const first: ISideMenu.Item | undefined = shown[0];
+
+    if (!first) {
+        return null;
+    }
+
+    const section: ISideMenu.Item | undefined =
+        menu.find((item: ISideMenu.Item): boolean => item.submenu === shown) ??
+        menu.find((item: ISideMenu.Item): boolean => !!item.submenu?.some((child: ISideMenu.Item): boolean => child.id === first.id));
 
     return section?.favorites ? section : null;
 }

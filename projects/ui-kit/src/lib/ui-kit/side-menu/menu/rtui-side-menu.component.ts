@@ -32,7 +32,7 @@ import { TNullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
 import { clampSubMenuWidth, filterSubMenuItems, subMenuIdsToExpand, SUB_MENU_WIDTH_MIN } from '../side-menu.logic';
-import { ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
+import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 import {
     RtuiScrollableContainerComponent,
     RtuiScrollableContainerContentDirective,
@@ -104,10 +104,10 @@ const BEM_BLOCK: string = 'rtui-side-menu';
         RtuiSideMenuFavoritesComponent,
     ],
 })
-export class RtuiSideMenuComponent {
+export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
     readonly #renderer: Renderer2 = inject(Renderer2);
-    readonly #hold: RtuiSubMenuHoldService = inject(RtuiSubMenuHoldService);
+    readonly #hold: RtuiSubMenuHoldService | null = inject(RtuiSubMenuHoldService, { optional: true });
 
     /**
      * Ширина, пока край держат указателем. Наружу она уходит одной просьбой на отпускании: вход
@@ -210,7 +210,7 @@ export class RtuiSideMenuComponent {
 
     /** Что видно в подменю: отобранные пункты того набора, который его сейчас наполняет. */
     protected readonly visibleSubMenuItems: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] =>
-        filterSubMenuItems(this.isPinned() ? this.#pinnedSubMenu() : (this.selectedSubMenu() ?? []), this.subMenuQuery())
+        filterSubMenuItems(this.shownSubMenu(), this.subMenuQuery())
     );
 
     /**
@@ -246,6 +246,10 @@ export class RtuiSideMenuComponent {
     public readonly backToMainMenuButton: Signal<ISideMenu.Item> = signal({ id: 0, icon: 'arrow_back', name: 'Main Menu', link: ' ' });
     public readonly selectedItem: WritableSignal<TNullable<ISideMenu.Item>> = signal(null);
     public readonly selectedSubMenu: WritableSignal<TNullable<ISideMenu.Item[]>> = signal(null);
+    /** Набор, который подменю наполняет сейчас, до отбора поиском; по нему избранное узнаёт свой раздел. */
+    public readonly shownSubMenu: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] =>
+        this.isPinned() ? this.#pinnedSubMenu() : (this.selectedSubMenu() ?? [])
+    );
 
     public activeMenuIds: InputSignal<Array<string | number>> = input.required();
     public menuItems: InputSignalWithTransform<ISideMenu.Item[], ISideMenu.Item[]> = input<ISideMenu.Item[], ISideMenu.Item[]>([], {
@@ -344,7 +348,7 @@ export class RtuiSideMenuComponent {
             return;
         }
 
-        if (item === undefined && (this.#searchHeld() || this.#hold.held())) {
+        if (item === undefined && (this.#searchHeld() || this.#hold?.held())) {
             // Указатель ушёл с панели, а человек работает с полем, звездой или строкой избранного.
             return;
         }
@@ -365,7 +369,7 @@ export class RtuiSideMenuComponent {
         this.subMenuQuery.set('');
         this.#hoverOpened.set(false);
         this.#searchHeld.set(false);
-        this.#hold.release();
+        this.#hold?.release();
         this.#keyboard.reset();
     }
 

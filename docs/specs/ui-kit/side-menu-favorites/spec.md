@@ -22,16 +22,16 @@ sign-out or fill it with defaults.
 
 ## Terminology
 
-| Term                   | What it is                                                                        |
-| ---------------------- | --------------------------------------------------------------------------------- |
-| A favourite            | The id of a submenu item with an address of its own, chosen by the person         |
-| The favourites list    | The ordered ids of the favourites; the order is the person's                      |
-| The favourites block   | The group at the top of the open submenu showing the favourites that the menu has |
-| The star               | The button on a list row that adds the item to the list or removes it             |
-| The remove button      | The button on a row of the block that removes the item from the list              |
-| The handle             | The grip of a row of the block by which the row is dragged to a new place         |
-| A favourites section   | A strip item whose `favorites` flag is on; off by default                         |
-| The favourites service | The kit service holding the list and keeping it in the browser storage            |
+| Term                   | What it is                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------ |
+| A favourite            | The id of a submenu item with an address of its own, chosen by the person      |
+| The favourites list    | The ordered ids of the favourites; the order is the person's                   |
+| The favourites block   | The group at the top of the open submenu showing the favourites of its section |
+| The star               | The button on a list row that adds the item to the list or removes it          |
+| The remove button      | The button on a row of the block that removes the item from the list           |
+| The handle             | The grip of a row of the block by which the row is dragged to a new place      |
+| A favourites section   | A strip item whose `favorites` flag is on; off by default                      |
+| The favourites service | The kit service holding the list and keeping it in the browser storage         |
 
 ### What it is called in the interface
 
@@ -50,10 +50,17 @@ sign-out or fill it with defaults.
   that never asked for favourites.
 - **Favourites are switched on per strip item by its `favorites` flag, and it is off by default.**
   The submenu of an item without the flag shows neither stars nor the block, whatever the list
-  holds. The owner asked for this: not every section of a menu is worth choosing from.
+  holds. Turning the flag off hides the section's favourites and removes none: they come back with
+  the flag. The owner asked for this: not every section of a menu is worth choosing from.
 - **The block of a section shows only the favourites of that section.** The list is one for the
   whole menu and one record in the storage. The block of a section takes from it the ids found in
-  its own submenu, in the order of the list.
+  its own submenu, folders included, in the order of the list.
+- **The section is the one whose submenu the panel shows, and an empty panel has none.** The
+  pinned submenu shows the picked section or, without a pick, the active one; the hover submenu
+  shows the hovered one. A strip item with an empty submenu shows no one's favourites.
+- **The section is recognised by its items' ids as well, not only by the array.** An application
+  may pass the menu again in new objects — at a language or a rights change — and the stars and the
+  block stay with the new labels.
 - **The list is held by the service, and the application reads and writes it through the same
   service.** The service gives the list as a signal and the methods has, add, remove, toggle, move,
   set and clear. A second holder of the same list diverges from the first at the first edit.
@@ -78,27 +85,34 @@ sign-out or fill it with defaults.
 - **A star stands on every item with an address of its own in a favourites section, folders
   excluded.** A folder is
   an item without an address: it leads nowhere, and a favourite that opens nothing is a broken
-  favourite. The row returning to the main list on a narrow screen carries no star. The star stands
+  favourite. An item without a name has no title row, and the star has no place there either. The row returning to the main list on a narrow screen carries no star. The star stands
   at the right edge of the row, after the consumer's additional button.
 - **A row of the block carries a remove button, not a star.** Everything in the block is a
   favourite already, and a star there tells nothing apart. A favourite is removed in place, without
   looking for its row in the list.
-- **An item in the list carries a filled star, the rest a hollow one.** The glyph is the first sign:
-  `star` against `star_border`. The theme colour of the filled star is the second.
+- **An item in the list carries a filled star, the rest a hollow one.** The fill is given twice:
+  by the glyph, `star` against `star_border`, for a static icon set, and by the fill axis for a
+  variable one, where `star` without the axis is drawn hollow. The theme colour of the filled star
+  is the third sign.
 - **The colour of the filled star is the theme's, and the application sets any other.** The kit
   takes the primary icon accent. The application names its own colour by the property
   `--rt-side-menu-favorite-color` on any ancestor of the menu.
-- **The hollow star and the remove button show on hover and on keyboard focus of their row; the
+- **The hollow star and the remove button show on hover and on focus inside their row; the
   filled star always shows.** Stars on every row of a long list read as noise; the chosen ones must be visible at a
   glance. Where the pointer cannot hover — a narrow screen, a touch screen by `(hover: none)` — the
-  hollow star shows always.
+  hollow star and the remove button show always.
 - **The star carries a tooltip and an accessible name: "Add to favourites" or "Remove from
-  favourites".** The press state is given by `aria-pressed`. The label says what the press will do,
-  not what the state is.
+  favourites".** The label says what the press will do, not what the state is, and the button
+  carries no `aria-pressed`: a pressed button named "Remove" would read twice. On a narrow screen
+  the tooltips of the star and the remove button are off, the same as the handle's.
 - **A press of the star switches the favourite and does nothing else.** It neither opens the item
-  nor closes the submenu nor moves the keyboard highlight: the person was choosing, not going. A
-  submenu opened by hover stays held while the focus is on a star, the same as while it is on the
-  search field.
+  nor closes the submenu nor moves the keyboard highlight: the person was choosing, not going.
+- **A keyboard focus on a star or a remove button holds a submenu opened by hover until it closes;
+  a mouse press does not.** The person walks it by keys, and the pointer leaving the panel must not
+  close it — the same as the search field. A focus from a mouse press would hold it after every
+  press, and the submenu would stop closing when the pointer leaves.
+- **After a remove, the focus stands on the remove button of the neighbouring row.** Otherwise it
+  falls to the page, and a keyboard user loses their place.
 - **The block stands at the top of the submenu of a favourites section, under the search field and
   above the list.**
 - **The block shows the favourites in the order of the list.** The order is the person's, not the
@@ -119,9 +133,13 @@ sign-out or fill it with defaults.
   handle is the one of the selected list of the dynamic selector: a button with the move icon and
   the tooltip "Hold button to drag".
 - **A drop moves the dragged id next to its visible neighbour, and hidden ids keep their places.**
-  The block shows only the ids the menu has, so a place in the block is not a place in the list.
-- **While a row is dragged, the submenu stays open in either mode.** A drag leaving the panel would
-  close a hover submenu in the middle of the drop.
+  The block shows only the ids found in the open section — ids of other sections and ids the menu
+  lacks are hidden alike — so a place in the block is not a place in the list.
+- **While a row is dragged, the submenu stays open in either mode, and the drop releases it.** A
+  drag leaving the panel would close a hover submenu in the middle of the drop.
+- **The arrows on a handle move its row to the neighbouring place, and the focus goes with it.**
+  The drag knows no keys; without the arrows the handle would be a control a keyboard user reaches
+  and cannot use.
 - **A dropped row outside the block changes nothing.** The list is not removed by a drag; removal is
   the remove button or the star.
 - **The block does not keep open a pinned panel that has nothing else to show.** The rule of the
@@ -136,10 +154,11 @@ sign-out or fill it with defaults.
 - **The favourites of the second kit.** `rt-page-header` is not touched: the owner named the first
   kit.
 - **The keyboard walk over the block.** The arrows walk the section list as before; the rows of
-  the block, their stars and handles are reached by Tab. A reorder from the keyboard is not given.
+  the block, their remove buttons and handles are reached by Tab. A reorder from the keyboard is
+  given only by the arrows on a handle.
 - **Favourites of the strip items and of folders.** Only items with an address of their own.
-- **A block showing the favourites of other sections.** Each section shows its own; the owner did
-  not ask for a shared block.
+- **A block showing the favourites of other sections.** Each section shows its own — see the
+  decision and `Q-3`.
 - **Synchronising the list between tabs and devices.** A tab reads the storage when the service is
   created.
 - **The admin application.** Its menu is `rt-page-header` of the second kit, flat, with no submenu.
@@ -166,21 +185,21 @@ The public surface:
 | `provideRtuiFavorites(config?)`                  | the providers of the service; `config.storageKey`, `config.labels` with `title`, `add`, `remove`, `drag` |
 | `ISideMenu.Item.favorites`                       | the flag of a strip item switching its favourites on; off by default                                     |
 | `--rt-side-menu-favorite-color`                  | the colour of the filled star, set by the application on an ancestor of the menu                         |
-| `RtuiFavoritesService.ids`                       | the list as a read-only signal                                                                           |
+| `RtuiFavoritesService.ids`                       | the whole list as a read-only signal, ids hidden from every block included                               |
 | `has(id)`, `add(id)`, `remove(id)`, `toggle(id)` | a check and three edits of one id; adding an id already in the list does nothing                         |
 | `move(from, to)`                                 | moves an entry between two places of the list                                                            |
 | `set(ids)`, `clear()`                            | replaces the list whole, empties it                                                                      |
 
 ## Screens and states
 
-| State                                      | What the submenu shows                                |
-| ------------------------------------------ | ----------------------------------------------------- |
-| no service                                 | the submenu as before: no stars, no block             |
-| service, a section without the flag        | the submenu as before: no stars, no block             |
-| service, empty list                        | hollow stars on hover, no block                       |
-| service, favourites the menu has           | the block with their rows over the list               |
-| service, favourites the menu does not have | no rows for them; the block is absent if none is left |
-| a query in the search                      | the block is hidden, the stars stay on the found rows |
+| State                                     | What the submenu shows                                |
+| ----------------------------------------- | ----------------------------------------------------- |
+| no service                                | the submenu as before: no stars, no block             |
+| service, a section without the flag       | the submenu as before: no stars, no block             |
+| service, a flagged section, empty list    | hollow stars on hover, no block                       |
+| service, favourites of the open section   | the block with their rows over the list               |
+| service, none of them in the open section | no block                                              |
+| a query in the search                     | the block is hidden, the stars stay on the found rows |
 
 ## Cross-cutting requirements
 
@@ -221,14 +240,21 @@ Not applicable: one list per application key.
   by the same PR.
 - **The drag through the CDK, as in the selected list of the dynamic selector of the same kit** —
   law `reuse-first`.
+- **The block of a section shows only that section's favourites, and the list stays one** — the
+  executor's reading of the owner's remark «фейворит включается для каждого отдельного раздела»,
+  which speaks of the switch, not of what the block shows. Rejected: one shared block in every
+  flagged section. The owner is asked by `Q-3`.
 
 ## Open questions
 
 - `Q-1` — whether an application needs the list emptied at sign-out by the kit itself. The work goes
   with the assumption: no, the application calls `clear()`.
-- `Q-2` — a page rendered on the server has no block, and it appears after the start in the browser.
+- `Q-2` — a page rendered on the server has neither the block nor the filled stars, and they appear
+  after the start in the browser.
   The work goes with the assumption: the first kit is drawn in the browser by its consumers, and
   the jump is accepted.
+- `Q-3` — whether the block of a flagged section shows only its own favourites or those of every
+  flagged section. The work goes with the assumption: only its own.
 
 ## History of changes
 
@@ -239,3 +265,8 @@ Not applicable: one list per application key.
   a remove button instead of a star. The star is hollow or filled, in the theme colour or the
   application's. The handle is the one of the dynamic selector. Scenarios SC-UK-93…SC-UK-95 added,
   SC-UK-79 changed its meaning.
+- 2026-09-21 — the review by three independent roles. The section is taken from the submenu the
+  panel shows and recognised by ids too; an empty panel shows no one's favourites. The hold comes
+  from a keyboard focus only and is released by the drop. The star lost `aria-pressed` and got the
+  fill axis. The focus survives a remove; the arrows on a handle reorder. Scenarios SC-UK-96…SC-UK-102
+  added.

@@ -16,8 +16,11 @@ export interface IRtuiSideMenuHost {
     /** Пункты полосы: блок избранного ищет в их подменю пункты, стоящие за номерами списка. */
     readonly menuItems: Signal<ISideMenu.Item[]>;
     readonly activeMenuIds: Signal<Array<string | number>>;
-    /** Набор открытого подменю, выбранный человеком: по нему блок и звёзды узнают свой пункт полосы. */
-    readonly selectedSubMenu: Signal<ISideMenu.Item[] | null>;
+    /**
+     * Набор, который подменю показывает сейчас, до отбора поиском: пустой, пока подменю нечего
+     * показать. По нему блок избранного и звёзды узнают свой пункт полосы.
+     */
+    readonly shownSubMenu: Signal<ISideMenu.Item[]>;
     readonly expandedMenuIds: Signal<Array<string | number>>;
     readonly highlightedMenuId: Signal<string | number | null>;
     readonly subMenuQuery: Signal<string>;

@@ -74,7 +74,8 @@
     display: flex;
     align-items: center;
     border-radius: var(--rt-radius-xl);
-    background-color: var(--rt-color-neutral-25);
+    background-color: var(--rt-bg-base-base);
+    box-shadow: var(--rt-shadow-md);
 }
 
 .rtui-side-menu-favorites__row.cdk-drag-placeholder {

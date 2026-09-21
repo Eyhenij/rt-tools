@@ -28,6 +28,18 @@ import { RtuiSubMenuTitlePartsPipe } from './sub-menu-title-parts.pipe';
 import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 
 const BEM_BLOCK: string = 'rtui-side-menu-sub-item';
+/** Строка блока избранного и кнопка избранного в ней — по ним фокус уходит на соседа после «убрать». */
+const FAVORITE_ROW: string = '.rtui-side-menu-favorites__row';
+const FAVORITE_BUTTON: string = '.rtui-side-menu-sub-item-title__favorite';
+
+/** Фокус пришёл с клавиатуры. Движок без `:focus-visible` отвечает «нет»: удержание — не обязанность. */
+function isKeyboardFocus(target: EventTarget | null): boolean {
+    try {
+        return target instanceof Element && target.matches(':focus-visible');
+    } catch {
+        return false;
+    }
+}
 
 @Component({
     selector: 'rtui-side-menu-sub-item',
@@ -76,9 +88,7 @@ export class RtuiSideMenuSubItemComponent {
     protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
     /** Раздел открытого подменю включил избранное: только тогда у пунктов есть звёзды. */
     protected readonly favoritesOn: Signal<boolean> = computed(
-        (): boolean =>
-            !!this.favorites &&
-            favoritesSection(this.menuRef.menuItems(), this.menuRef.selectedSubMenu(), this.menuRef.activeMenuIds()) !== null
+        (): boolean => !!this.favorites && favoritesSection(this.menuRef.menuItems(), this.menuRef.shownSubMenu()) !== null
     );
     public readonly menuRef: IRtuiSideMenuHost = inject(RTUI_SIDE_MENU);
 
@@ -117,15 +127,35 @@ export class RtuiSideMenuSubItemComponent {
         this.clickSubMenuAction.emit({ item, event });
     }
 
+    /**
+     * Фокус клавиатуры на кнопке избранного держит подменю, открытое наведением: человек идёт по
+     * нему клавишами, и уход указателя за панель его не закрывает. Фокус от нажатия мышью не держит —
+     * иначе после одного нажатия подменю перестало бы закрываться уходом указателя.
+     */
+    public onFavoriteFocus(event: FocusEvent): void {
+        if (isKeyboardFocus(event.target)) {
+            this.hold?.hold();
+        }
+    }
+
     /** Звезда переключает избранное и больше ничего: ни перехода, ни закрытия подменю. */
     public onToggleFavorite(item: ISideMenu.Item, event: MouseEvent): void {
         event.stopPropagation();
         this.favorites?.toggle(item.id);
     }
 
-    /** Кнопка строки избранного убирает пункт из списка, не открывая его. */
+    /**
+     * Кнопка строки избранного убирает пункт из списка, не открывая его. Фокус уходит на такую же
+     * кнопку соседней строки до того, как строка исчезнет: иначе он падал бы на страницу, и человек
+     * с клавиатуры терял бы место. Соседняя строка переживает удаление — строки ведутся по номеру.
+     */
     public onRemoveFavorite(item: ISideMenu.Item, event: MouseEvent): void {
         event.stopPropagation();
+
+        const row: Element | null = event.currentTarget instanceof Element ? event.currentTarget.closest(FAVORITE_ROW) : null;
+        const neighbour: Element | null | undefined = row?.nextElementSibling ?? row?.previousElementSibling;
+
+        neighbour?.querySelector<HTMLElement>(FAVORITE_BUTTON)?.focus();
         this.favorites?.remove(item.id);
     }
 

@@ -1,17 +1,14 @@
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CdkDrag, CdkDragEnd, CdkDragHandle } from '@angular/cdk/drag-drop';
+import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import { BreakpointService } from '@rt-tools/core';
 
-import { RtuiSideMenuFavoritesComponent } from '../favorites/rtui-side-menu-favorites.component';
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
-import { IRtuiFavoritesConfig, provideRtuiFavorites, RtuiFavoritesService } from '../favorites/rtui-favorites.service';
-import { ISideMenu } from '../side-menu.types';
+import { IRtuiFavoritesConfig } from '../favorites/rtui-favorites.service';
 import {
     BreakpointServiceStub,
     hoverFirstItem,
-    HostComponent,
     installFontsStub,
     ISetup,
     leavePanel,
@@ -20,77 +17,26 @@ import {
     setup,
     typeInSearch,
 } from './side-menu.harness';
-
-const STAR: string = '[qa-dataid="side-menu-favorite-star"]';
-const BLOCK: string = '[qa-dataid="side-menu-favorites"]';
-const BLOCK_TITLE: string = '[qa-dataid="side-menu-favorites-title"]';
-const BLOCK_ROW: string = '[qa-dataid="side-menu-favorite-row"]';
-const REMOVE: string = '[qa-dataid="side-menu-favorite-remove"]';
-const HANDLE: string = '[qa-dataid="side-menu-favorite-handle"]';
-const ON: string = 'rtui-side-menu-sub-item-title__favorite--on';
-const ALWAYS: string = 'rtui-side-menu-sub-item-title__favorite--always';
-
-/** Три раздела полосы с подменю: избранное включено у двух первых, у третьего оно выключено. */
-const SECTIONS: ISideMenu.Item[] = [
-    {
-        id: 'cargo',
-        name: 'Груз',
-        icon: 'inventory',
-        favorites: true,
-        submenu: [
-            { id: 'a', name: 'Предложения', link: '/a' },
-            { id: 'b', name: 'Отчёты', link: '/b' },
-        ],
-    },
-    { id: 'trees', name: 'Деревья', icon: 'park', favorites: true, submenu: [{ id: 'c', name: 'Приглашения', link: '/c' }] },
-    { id: 'misc', name: 'Прочее', icon: 'more', submenu: [{ id: 'x', name: 'Настройки', link: '/x' }] },
-];
-
-/** Пункты полосы с включённым избранным: без флага раздел звёзд и блока не показывает. */
-function enabled(items: ISideMenu.Item[]): ISideMenu.Item[] {
-    return items.map((item: ISideMenu.Item): ISideMenu.Item => (item.submenu ? { ...item, favorites: true } : item));
-}
+import {
+    ALWAYS,
+    block,
+    BLOCK,
+    BLOCK_ROW,
+    BLOCK_TITLE,
+    blockRowIds,
+    drop,
+    enabled,
+    HANDLE,
+    keyboardFocus,
+    listRow,
+    ON,
+    REMOVE,
+    STAR,
+    tooltip,
+    withFavorites,
+} from './side-menu-favorites.harness';
 
 beforeAll(installFontsStub);
-
-function withFavorites(
-    ids: ISideMenu.FavoriteId[],
-    options: { active?: Array<string | number>; narrow?: boolean; items?: ISideMenu.Item[]; config?: IRtuiFavoritesConfig } = {}
-): ISetup & { favorites: RtuiFavoritesService } {
-    const result: ISetup = setup('hover', options.active ?? [], options.narrow ?? false, options.items ?? enabled(NESTED_ITEMS), [
-        provideRtuiFavorites(options.config),
-    ]);
-    const favorites: RtuiFavoritesService = TestBed.inject(RtuiFavoritesService);
-
-    favorites.set(ids);
-    result.fixture.detectChanges();
-
-    return { ...result, favorites };
-}
-
-function hoverItem(fixture: ComponentFixture<HostComponent>, index: number): void {
-    const items: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('.rtui-side-menu-item'));
-
-    items[index].dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-    fixture.detectChanges();
-}
-
-function listRow(fixture: ComponentFixture<HostComponent>, id: string): HTMLElement {
-    return fixture.nativeElement.querySelector(`.rtui-sub-side-menu-content__list [id="${id}"]`) as HTMLElement;
-}
-
-function blockRowIds(fixture: ComponentFixture<HostComponent>): string[] {
-    return Array.from(fixture.nativeElement.querySelectorAll(BLOCK_ROW)).map((row: Element): string => row.getAttribute('data-id') ?? '');
-}
-
-function block(fixture: ComponentFixture<HostComponent>): RtuiSideMenuFavoritesComponent {
-    return fixture.debugElement.query(By.directive(RtuiSideMenuFavoritesComponent)).componentInstance as RtuiSideMenuFavoritesComponent;
-}
-
-function drop(fixture: ComponentFixture<HostComponent>, previousIndex: number, currentIndex: number, over: boolean = true): void {
-    block(fixture).onDrop({ previousIndex, currentIndex, isPointerOverContainer: over } as CdkDragDrop<ISideMenu.Item[]>);
-    fixture.detectChanges();
-}
 
 describe('RtuiSideMenuComponent — избранное', () => {
     it('SC-UK-75 — без сервиса в подменю нет ни звёзд, ни блока', () => {
@@ -121,20 +67,18 @@ describe('RtuiSideMenuComponent — избранное', () => {
 
         const onStar: HTMLElement = listRow(fixture, 'rates').querySelector(STAR) as HTMLElement;
 
-        expect(onStar.getAttribute('aria-pressed')).toBe('true');
         expect(onStar.getAttribute('aria-label')).toBe('Remove from favourites');
         expect(onStar.classList).toContain(ON);
         expect(onStar.querySelector('mat-icon')?.textContent?.trim()).toBe('star');
     });
 
-    it('SC-UK-77 — звезда пункта вне списка не нажата, контурная и зовёт добавить', () => {
+    it('SC-UK-77 — звезда пункта вне списка полая и зовёт добавить', () => {
         const { fixture } = withFavorites([], { items: enabled([NESTED_ITEMS[0]]) });
 
         hoverFirstItem(fixture);
 
         const star: HTMLElement = listRow(fixture, 'rates').querySelector(STAR) as HTMLElement;
 
-        expect(star.getAttribute('aria-pressed')).toBe('false');
         expect(star.getAttribute('aria-label')).toBe('Add to favourites');
         expect(star.classList).not.toContain(ON);
         expect(star.querySelector('mat-icon')?.textContent?.trim()).toBe('star_border');
@@ -151,26 +95,12 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect(favorites.ids()).toEqual(['rates']);
         expect(emitted).not.toHaveBeenCalled();
         expect(menu(fixture).selectedSubMenu()).not.toBeNull();
-    });
 
-    it('SC-UK-79 — блок показывает только избранное открытого раздела, в порядке списка', () => {
-        const { fixture } = withFavorites(['c', 'b', 'a'], { items: SECTIONS });
+        const star: HTMLElement = listRow(fixture, 'rates').querySelector(STAR) as HTMLElement;
 
-        hoverItem(fixture, 0);
-        expect(blockRowIds(fixture)).toEqual(['b', 'a']);
-
-        hoverItem(fixture, 1);
-        expect(blockRowIds(fixture)).toEqual(['c']);
-    });
-
-    it('SC-UK-93 — раздел без флага не показывает ни звёзд, ни блока, хотя список не пуст', () => {
-        const { fixture } = withFavorites(['a', 'x'], { items: SECTIONS });
-
-        hoverItem(fixture, 2);
-
-        expect(listRow(fixture, 'x')).not.toBeNull();
-        expect(fixture.nativeElement.querySelector(STAR)).toBeNull();
-        expect(fixture.nativeElement.querySelector(BLOCK)).toBeNull();
+        expect(star.classList).toContain(ON);
+        expect(star.querySelector('mat-icon')?.textContent?.trim()).toBe('star');
+        expect(star.getAttribute('aria-label')).toBe('Remove from favourites');
     });
 
     it('SC-UK-94 — строка блока несёт кнопку «убрать», а не звезду, и кнопка убирает пункт', () => {
@@ -194,6 +124,21 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect(emitted).not.toHaveBeenCalled();
     });
 
+    it('SC-UK-99 — после «убрать» фокус стоит на кнопке соседней строки, а не падает на страницу', () => {
+        const { fixture } = withFavorites(['rates', 'pie']);
+
+        hoverFirstItem(fixture);
+
+        const removes: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll(REMOVE));
+
+        removes[0].focus();
+        removes[0].click();
+        fixture.detectChanges();
+
+        expect(blockRowIds(fixture)).toEqual(['pie']);
+        expect(document.activeElement).toBe(removes[1]);
+    });
+
     it('SC-UK-95 — ручка строки — кнопка со значком перемещения и подсказкой', () => {
         const { fixture } = withFavorites(['rates']);
 
@@ -204,6 +149,32 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect(handle.tagName).toBe('BUTTON');
         expect(handle.getAttribute('aria-label')).toBe('Hold button to drag');
         expect(handle.querySelector('mat-icon')?.textContent?.trim()).toBe('open_with');
+        expect(fixture.debugElement.query(By.css(HANDLE)).injector.get(CdkDragHandle, null)).not.toBeNull();
+        expect(tooltip(fixture, HANDLE).message).toBe('Hold button to drag');
+    });
+
+    it('SC-UK-100 — стрелки на ручке переставляют строку, и фокус едет вместе с ней', async () => {
+        const { fixture, favorites } = withFavorites(['rates', 'pie', 'bars']);
+
+        hoverFirstItem(fixture);
+
+        const first: HTMLElement = fixture.nativeElement.querySelector(HANDLE) as HTMLElement;
+
+        first.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(favorites.ids()).toEqual(['pie', 'rates', 'bars']);
+        expect((document.activeElement as HTMLElement | null)?.closest(BLOCK_ROW)?.getAttribute('data-id')).toBe('rates');
+
+        // Ручка едет со своей строкой: вверх она возвращает строку на место, а с первого места — никуда.
+        first.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
+        fixture.detectChanges();
+        expect(favorites.ids()).toEqual(['rates', 'pie', 'bars']);
+
+        first.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
+        fixture.detectChanges();
+        expect(favorites.ids()).toEqual(['rates', 'pie', 'bars']);
     });
 
     it('SC-UK-80 — номера, которого в меню нет, в блоке нет, а в списке он остаётся', () => {
@@ -267,7 +238,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
             remove: 'Убрать из избранного',
             drag: 'Потяните за кнопку',
         };
-        const { fixture } = withFavorites(['rates'], { items: enabled([NESTED_ITEMS[0]]), config: { labels } });
+        const { fixture } = withFavorites(['rates'], { items: enabled([NESTED_ITEMS[0]]), config: { labels }, active: ['refs', 'saved'] });
 
         hoverFirstItem(fixture);
 
@@ -277,6 +248,10 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect(listRow(fixture, 'rates').querySelector(STAR)?.getAttribute('aria-label')).toBe('Убрать из избранного');
         expect(fixture.nativeElement.querySelector(REMOVE)?.getAttribute('aria-label')).toBe('Убрать из избранного');
         expect(fixture.nativeElement.querySelector(HANDLE)?.getAttribute('aria-label')).toBe('Потяните за кнопку');
+        expect(listRow(fixture, 'pie').querySelector(STAR)?.getAttribute('aria-label')).toBe('Добавить в избранное');
+        expect(tooltip(fixture, `.rtui-sub-side-menu-content__list [id="pie"] ${STAR}`).message).toBe('Добавить в избранное');
+        expect(tooltip(fixture, REMOVE).message).toBe('Убрать из избранного');
+        expect(tooltip(fixture, HANDLE).message).toBe('Потяните за кнопку');
     });
 
     it('SC-UK-86 — на узком экране блок стоит под полем поиска, звёзды видны без наведения', () => {
@@ -294,8 +269,18 @@ describe('RtuiSideMenuComponent — избранное', () => {
         const favoritesBlock: HTMLElement = fixture.nativeElement.querySelector(BLOCK) as HTMLElement;
 
         expect(favoritesBlock).not.toBeNull();
+        expect(blockRowIds(fixture)).toEqual(['rates']);
         expect(search.compareDocumentPosition(favoritesBlock)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
         expect(fixture.nativeElement.querySelector(`${STAR}.${ALWAYS}`)).not.toBeNull();
+        expect(fixture.nativeElement.querySelector(`${REMOVE}.${ALWAYS}`)).not.toBeNull();
+        expect(tooltip(fixture, STAR).disabled).toBe(true);
+
+        const back: Element | undefined = Array.from(fixture.nativeElement.querySelectorAll('rtui-side-menu-sub-item')).find(
+            (node: unknown): boolean => ((node as Element).textContent ?? '').includes('Main Menu')
+        ) as Element | undefined;
+
+        expect(back).toBeDefined();
+        expect(back?.querySelector(STAR)).toBeNull();
     });
 
     it('SC-UK-87 — брошенная строка не сдвигает номера, которых в меню нет', () => {
@@ -320,7 +305,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect(carriers[0].closest(BLOCK)).toBeNull();
     });
 
-    it('SC-UK-89 — закрашенная звезда помечена всегда, контурная отдана наведению и фокусу', () => {
+    it('SC-UK-89 — закрашенная звезда помечена всегда, полая отдана наведению и фокусу', () => {
         const { fixture } = withFavorites(['rates'], { items: enabled([NESTED_ITEMS[0]]), active: ['refs', 'saved'] });
 
         hoverFirstItem(fixture);
@@ -334,10 +319,38 @@ describe('RtuiSideMenuComponent — избранное', () => {
         const { fixture } = withFavorites([]);
 
         hoverFirstItem(fixture);
-        (listRow(fixture, 'rates').querySelector(STAR) as HTMLElement).dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+        keyboardFocus(listRow(fixture, 'rates').querySelector(STAR) as HTMLElement);
         leavePanel(fixture);
 
         expect(menu(fixture).selectedSubMenu()).not.toBeNull();
+    });
+
+    it('SC-UK-90 — фокус клавиатуры на кнопке «убрать» держит подменю, открытое наведением', () => {
+        const { fixture } = withFavorites(['rates']);
+
+        hoverFirstItem(fixture);
+        keyboardFocus(fixture.nativeElement.querySelector(REMOVE) as HTMLElement);
+        leavePanel(fixture);
+
+        expect(menu(fixture).selectedSubMenu()).not.toBeNull();
+    });
+
+    it('SC-UK-98 — фокус от нажатия мышью подменю не держит, брошенная строка отпускает его', () => {
+        const { fixture } = withFavorites(['rates']);
+
+        hoverFirstItem(fixture);
+        keyboardFocus(listRow(fixture, 'rates').querySelector(STAR) as HTMLElement, false);
+        leavePanel(fixture);
+        expect(menu(fixture).selectedSubMenu()).toBeNull();
+
+        hoverFirstItem(fixture);
+        block(fixture).onDragStart();
+        fixture.debugElement
+            .query(By.directive(CdkDrag))
+            .injector.get(CdkDrag)
+            .ended.emit({} as CdkDragEnd);
+        leavePanel(fixture);
+        expect(menu(fixture).selectedSubMenu()).toBeNull();
     });
 
     it('SC-UK-90 — строка в руке держит подменю, открытое наведением', () => {
@@ -355,6 +368,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
 
         hoverFirstItem(fixture);
         drop(fixture, 0, 1, false);
+        drop(fixture, 1, 1);
 
         expect(favorites.ids()).toEqual(['rates', 'pie']);
     });

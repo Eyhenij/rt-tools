@@ -1,15 +1,19 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
 import {
+    afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
+    ElementRef,
     inject,
+    Injector,
     input,
     InputSignalWithTransform,
     output,
     OutputEmitterRef,
     Signal,
+    viewChildren,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -66,9 +70,9 @@ export class RtuiSideMenuFavoritesComponent {
     readonly #menu: IRtuiSideMenuHost = inject(RTUI_SIDE_MENU);
     readonly #hold: RtuiSubMenuHoldService | null = inject(RtuiSubMenuHoldService, { optional: true });
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
+    readonly #injector: Injector = inject(Injector);
     readonly #section: Signal<ISideMenu.Item | null> = computed(
-        (): ISideMenu.Item | null =>
-            this.favorites && favoritesSection(this.#menu.menuItems(), this.#menu.selectedSubMenu(), this.#menu.activeMenuIds())
+        (): ISideMenu.Item | null => this.favorites && favoritesSection(this.#menu.menuItems(), this.#menu.shownSubMenu())
     );
 
     protected readonly favorites: RtuiFavoritesService | null = inject(RtuiFavoritesService, { optional: true });
@@ -80,6 +84,10 @@ export class RtuiSideMenuFavoritesComponent {
         }
 
         return findFavoriteItems([section], this.favorites.ids());
+    });
+    /** Ручки строк по порядку: стрелка возвращает фокус на ручку переставленной строки. */
+    protected readonly handles: Signal<ReadonlyArray<ElementRef<HTMLElement>>> = viewChildren<string, ElementRef<HTMLElement>>('handle', {
+        read: ElementRef,
     });
     /** Узкий экран: подсказка у ручки не показывается — наводиться там нечем. */
     protected readonly narrow: Signal<boolean> = computed((): boolean => !!this.#breakpoints.isMobile());
@@ -108,16 +116,42 @@ export class RtuiSideMenuFavoritesComponent {
         this.#hold?.hold();
     }
 
+    /** Строка брошена: удержание снимается, подменю снова закрывается уходом указателя. */
+    public onDragEnd(): void {
+        this.#hold?.release();
+    }
+
     /**
-     * Строка брошена. Брошенная вне блока ничего не меняет — убирает из избранного звезда, а не
-     * перетаскивание. Место в блоке переводится в место списка: скрытые номера остаются на своих.
+     * Строка брошена. Брошенная вне блока ничего не меняет — убирает из избранного кнопка, а не
+     * перетаскивание.
      */
     public onDrop(event: CdkDragDrop<ISideMenu.Item[]>): void {
-        if (!this.favorites || !event.isPointerOverContainer || event.previousIndex === event.currentIndex) {
+        if (event.isPointerOverContainer) {
+            this.#move(event.previousIndex, event.currentIndex);
+        }
+    }
+
+    /** Стрелка на ручке переставляет строку на соседнее место, и фокус едет вместе с ручкой. */
+    public onHandleKey(event: Event, index: number, step: number): void {
+        event.preventDefault();
+
+        const target: number = index + step;
+
+        if (target < 0 || target >= this.rows().length) {
+            return;
+        }
+
+        this.#move(index, target);
+        afterNextRender(() => this.handles()[target]?.nativeElement.focus(), { injector: this.#injector });
+    }
+
+    /** Место в блоке переводится в место списка: скрытые номера остаются на своих. */
+    #move(from: number, to: number): void {
+        if (!this.favorites || from === to) {
             return;
         }
 
         const visible: ISideMenu.FavoriteId[] = this.rows().map((item: ISideMenu.Item): ISideMenu.FavoriteId => item.id);
-        this.favorites.set(moveVisibleFavorite(this.favorites.ids(), visible, event.previousIndex, event.currentIndex));
+        this.favorites.set(moveVisibleFavorite(this.favorites.ids(), visible, from, to));
     }
 }

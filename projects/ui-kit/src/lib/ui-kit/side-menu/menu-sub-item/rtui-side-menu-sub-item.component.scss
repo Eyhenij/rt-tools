@@ -129,6 +129,11 @@
                 @media (hover: none) {
                     opacity: 1;
                 }
+
+                // Зона касания Material шире кнопки и заходит на соседние строки; мыши она не нужна.
+                @media (pointer: fine) {
+                    --mat-icon-button-touch-target-display: none;
+                }
             }
 
             // Значок берёт размер кнопки. Сам по себе он остаётся в 24 px, а отступ кнопки

@@ -72,7 +72,11 @@ describe('RtuiFavoritesService', (): void => {
 
         expect(createService(storage).ids()).toEqual([]);
 
+        storage.setItem(FAVORITES_KEY, '{"a": 1}');
+        expect(createService(storage).ids()).toEqual([]);
+
         const closed: RtuiFavoritesService = createService(new ClosedStorage());
+        expect(closed.ids()).toEqual([]);
         expect((): void => closed.add('a')).not.toThrow();
         expect(closed.ids()).toEqual(['a']);
     });
@@ -105,6 +109,9 @@ describe('RtuiFavoritesService', (): void => {
         expect(stored(storage)).toEqual(['a', 'b']);
 
         service.remove('a');
+        expect(service.ids()).toEqual(['b']);
+        expect(stored(storage)).toEqual(['b']);
+
         service.toggle('b');
         expect(service.ids()).toEqual([]);
         expect(stored(storage)).toEqual([]);

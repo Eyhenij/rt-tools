@@ -97,7 +97,7 @@ export const SubMenuFavorites: TStory = {
     },
 };
 
-/** Узкий экран: тот же блок под полем поиска, контурные звёзды видны без наведения. */
+/** Узкий экран: тот же блок под полем поиска, полые звёзды и кнопки «убрать» видны без наведения. */
 export const SubMenuFavoritesMobile: TStory = {
     globals: { viewport: { value: 'narrow' } },
     args: {

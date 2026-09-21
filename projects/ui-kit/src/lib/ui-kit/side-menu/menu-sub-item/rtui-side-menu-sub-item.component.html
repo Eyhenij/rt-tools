@@ -67,15 +67,21 @@
                             matTooltipPosition="above"
                             [rtMod]="{ always: narrow() }"
                             [matTooltip]="favorites.labels.remove"
+                            [matTooltipDisabled]="narrow()"
                             [attr.aria-label]="favorites.labels.remove"
                             (click)="onRemoveFavorite(item, $event)"
-                            (focusin)="hold?.hold()">
+                            (focusin)="onFavoriteFocus($event)">
                             <mat-icon rtElem="favorite-icon">remove</mat-icon>
                         </button>
                     } @else if (favoritesOn() && favorites && item.link?.trim()) {
                         <!--
                             Звезда — у пункта со своим адресом в разделе, где приложение включило
-                            избранное. Контурная — не в избранном, закрашенная цветом темы — в нём.
+                            избранное. Полая — не в избранном, закрашенная цветом темы — в нём.
+                            Заливку дают и глиф, и ось заливки: статичный набор значков оси не знает,
+                            а у переменного `star` без оси рисуется полым.
+
+                            Имя кнопки называет следующее нажатие, и `aria-pressed` у неё нет:
+                            нажатая кнопка с именем «убрать» читалась бы вдвое.
                         -->
                         @let isFavorite = favorites.ids().includes(item.id);
                         <button
@@ -86,11 +92,13 @@
                             matTooltipPosition="above"
                             [rtMod]="{ on: isFavorite, always: narrow() }"
                             [matTooltip]="isFavorite ? favorites.labels.remove : favorites.labels.add"
+                            [matTooltipDisabled]="narrow()"
                             [attr.aria-label]="isFavorite ? favorites.labels.remove : favorites.labels.add"
-                            [attr.aria-pressed]="isFavorite"
                             (click)="onToggleFavorite(item, $event)"
-                            (focusin)="hold?.hold()">
-                            <mat-icon rtElem="favorite-icon">{{ isFavorite ? 'star' : 'star_border' }}</mat-icon>
+                            (focusin)="onFavoriteFocus($event)">
+                            <mat-icon rtElem="favorite-icon" [rtIconOutlined]="!isFavorite">
+                                {{ isFavorite ? 'star' : 'star_border' }}
+                            </mat-icon>
                         </button>
                     }
                 </div>

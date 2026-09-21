@@ -41,6 +41,14 @@
   default; the handle of the dynamic selector. The executor's reading: the block of a section shows
   only that section's favourites, the list in storage stays one. Affected stage of the plan: 2, 3.
 
+- **The review by three independent roles was taken whole, not by choice** — code, tests and the
+  agreement read by `general-purpose`, `qa-engineer` and `spec-critic`. Confirmed and fixed: the
+  section is taken from the submenu the panel shows (`shownSubMenu`) and by ids too; the hold comes
+  from a keyboard focus only and the drop releases it; no `aria-pressed` on the star, the fill axis
+  added; focus after a remove; arrows on a handle; the drag preview on a semantic token. Left as
+  named, not done: the jump of the list at the first star, `cdkScrollable` of the drawer, the sync
+  between tabs, one computed per row. Affected stage of the plan: 2, 3.
+
 ## Sessions
 
 ### 2026-09-21
@@ -65,6 +73,11 @@
 - Done by them: `favoritesSection` in the logic, the block and the stars read it; `ISideMenu.Item.favorites`; the remove button `side-menu-favorite-remove`; the star and the handle became `mat-icon-button` of 32 px; the `drag` label. Scenarios SC-UK-93…95 added, SC-UK-79 changed its meaning; the agreement revised.
 - `pnpm exec nx test @rt-tools/ui-kit --testFile=side-menu` — 7 suites, 146 passed; `node tools/check-specs.mjs` — only the four divergences of `main`; `pnpm run check:all` — green for 110 projects.
 - The showcase on 6006 (the owner's), `SubMenuFavorites`: heading "Favourites"; the filled star `star` rgb(66, 132, 215), the value of `--rt-icon-accent-primary`, opacity 1; the hollow `star_border` rgb(116, 116, 116), opacity 0 without hover; `--rt-side-menu-favorite-color` on `body` gave rgb(200, 30, 90); the handle a `BUTTON` of 32 px with `open_with`; Collections — one row `20`, 4 stars; Test — no rows, 0 stars; the minus of the hovered block row opacity 1, of the rest 0; document overflow 0. The list in the showcase storage is the owner's own clicking, `5, 6, 3, 2, 4`, left as is.
+
+- The owner: «иконки кривые новые, проверь внимательно, в моках в саб меню нет папок, ревью изменений независимыми агентами».
+- The icons: a `mat-icon` of 24 px inside a 32 px button whose padding counts a 20 px icon — offsets 6, 2, 6, 2 px; after the icon took the button's size — 6 px on every side for the star, the remove button and the handle. The story got two nested folders in "Content" and the flag on "Test long name"; stars stand on items inside folders and not on folder headers.
+- Three reviews in parallel; findings above. `pnpm exec nx test @rt-tools/ui-kit --testFile=side-menu` — 8 suites, 156 passed; the favourites spec split into two files with a shared harness `side-menu-favorites.harness.ts`; `pnpm run check:all` — green for 110 projects; `node tools/check-specs.mjs` — only the four divergences of `main`.
+- The showcase on 6006: offsets 6 px on every side; the filled star `FILL 1`, the hollow `FILL 0`; the Material touch target `none` under a mouse; the drag preview rgb(255, 255, 255) with `--rt-shadow-md`, rgb(28, 27, 30) under the dark theme; the filled star rgb(109, 150, 232) under the dark theme; the one `aria-pressed` left belongs to the pin of the submenu.
 
 ## Handover of the session
 

@@ -14,22 +14,33 @@
             [attr.aria-label]="favorites.labels.title"
             (cdkDropListDropped)="onDrop($event)">
             @for (item of rows(); track item.id) {
-                <div rtElem="row" qa-dataid="side-menu-favorite-row" cdkDrag [attr.data-id]="item.id" (cdkDragStarted)="onDragStart()">
+                <div
+                    rtElem="row"
+                    qa-dataid="side-menu-favorite-row"
+                    cdkDrag
+                    [attr.data-id]="item.id"
+                    (cdkDragStarted)="onDragStart()"
+                    (cdkDragEnded)="onDragEnd()">
                     <!--
                         Строку тянут только за ручку: остальная строка — ссылка, и строку, которую
                         тянут всем телом, не нажать без дрожи. Ручка та же, что у списка выбранного
-                        в динамическом селекторе: кнопка со значком перемещения и подсказкой.
+                        в динамическом селекторе: кнопка со значком перемещения и подсказкой. С
+                        клавиатуры строку переставляют стрелки на ручке: перетаскивание CDK клавиш не знает.
                     -->
                     <button
+                        #handle
                         cdkDragHandle
                         mat-icon-button
                         type="button"
                         rtElem="handle"
                         qa-dataid="side-menu-favorite-handle"
                         matTooltipPosition="right"
+                        aria-keyshortcuts="ArrowUp ArrowDown"
                         [matTooltip]="favorites.labels.drag"
                         [matTooltipDisabled]="narrow()"
-                        [attr.aria-label]="favorites.labels.drag">
+                        [attr.aria-label]="favorites.labels.drag"
+                        (keydown.arrowup)="onHandleKey($event, $index, -1)"
+                        (keydown.arrowdown)="onHandleKey($event, $index, 1)">
                         <mat-icon rtElem="handle-icon" [rtIconOutlined]="true">open_with</mat-icon>
                     </button>
 

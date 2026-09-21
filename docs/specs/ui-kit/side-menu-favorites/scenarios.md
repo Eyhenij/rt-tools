@@ -60,14 +60,15 @@ Then both items carry a star and the folder header does not
 
 Given the service with `a` in the list and an open submenu with the items `a` and `b`
 When the submenu is drawn
-Then the star of `a` is pressed, filled — `star` — and named "Remove from favourites", and the star
-of `b` is not pressed, hollow — `star_border` — and named "Add to favourites"
+Then the star of `a` is filled — `star` — and named "Remove from favourites", and the star of `b`
+is hollow — `star_border` — and named "Add to favourites"
 
 ### SC-UK-78 — a press of the star switches the favourite and opens nothing
 
 Given the service, an empty list and an open submenu with the item `a`
 When the star of `a` is pressed
-Then the list is `a`, the item output did not fire, and the submenu stays open
+Then the list is `a`, the item output did not fire, the submenu stays open, and the star of `a` is
+filled and named "Remove from favourites"
 
 ### SC-UK-79 — the block shows only the favourites of the open section, in the order of the list
 
@@ -112,14 +113,16 @@ Then the rows and the list are `b`, `c`, `a`
 Given the service provided with the labels "Избранное", "Добавить в избранное", "Убрать из
 избранного", "Потяните за кнопку"
 When the submenu is drawn with `a` in the list and `b` out of it
-Then the heading, the name of the star of `a`, the remove button and the handle carry these labels
+Then the heading, the names and tooltips of the star of `b`, the remove button and the handle
+carry these labels
 
 ### SC-UK-86 — on a narrow screen the block and the stars stand the same
 
 Given a narrow screen, the service with `a` in the list and an open submenu
 When the submenu is drawn
-Then the block with the row `a` stands under the search field, and the hollow stars are shown
-without a hover
+Then the block with the row `a` stands under the search field, the hollow stars and the remove
+buttons are shown without a hover, their tooltips are off, and the row back to the main list carries
+no star
 
 ### SC-UK-87 — a drop keeps the places of the ids the menu does not have
 
@@ -143,10 +146,11 @@ focus
 Coverage: partial — the spec checks the marks the styles read, not the visibility itself: the spec
 environment applies no component styles and has no hover. The visibility is measured on the showcase.
 
-### SC-UK-90 — the focus on a star holds a submenu opened by hover
+### SC-UK-90 — the keyboard focus on a star or a remove button holds a submenu opened by hover
 
 Given the service and a submenu opened by hover
-When a star is focused and the pointer leaves the panel
+When a star or a remove button is focused from the keyboard, or a row is taken by its handle, and
+the pointer leaves the panel
 Then the submenu stays open
 
 ### SC-UK-91 — a drop outside the block changes nothing
@@ -179,3 +183,48 @@ are `b`, and the item output did not fire
 Given the service with `a` in the list and the block drawn
 When the row `a` is looked at
 Then its handle is a button with the icon `open_with` named "Hold button to drag"
+
+### SC-UK-96 — an empty panel shows no one's favourites
+
+Given a flagged section active with favourites, and a strip item whose submenu is empty
+When the empty strip item is hovered
+Then there is no favourites block, though the active section has favourites
+
+### SC-UK-97 — the menu passed again in new objects keeps the block and the stars
+
+Given the service with the list `b`, `a` and the open submenu of their section
+When the application passes the same menu again in new objects
+Then the block is still `b`, `a`, and the stars stay
+
+### SC-UK-98 — a mouse focus does not hold the submenu, and a drop releases it
+
+Given the service and a submenu opened by hover
+When a star is focused by a mouse press and the pointer leaves the panel; then, reopened, a row is
+dragged, dropped and the pointer leaves
+Then the submenu closes both times
+
+### SC-UK-99 — after a remove the focus stands on the neighbouring row
+
+Given the service with the list `a`, `b`, the block drawn and the focus on the remove button of `a`
+When that button is pressed
+Then the block is `b`, and the focus stands on the remove button of `b`
+
+### SC-UK-100 — the arrows on a handle reorder the rows
+
+Given the service with the list `a`, `b`, `c` and the block drawn
+When ArrowDown is pressed on the handle of `a`, then ArrowUp twice on the same handle
+Then the list is `b`, `a`, `c` with the focus on the handle of `a`, then `a`, `b`, `c`, and the
+second ArrowUp at the first place changes nothing
+
+### SC-UK-101 — a pinned submenu takes the section of the picked item, or of the active one
+
+Given the pinned mode, two flagged sections and one without the flag, the first section active
+When the submenu is drawn, then the section without the flag is picked, then the second flagged one
+Then the block shows the first section's favourites, then nothing and no stars, then the second
+section's favourites and its stars
+
+### SC-UK-102 — a drop keeps the places of the ids of other sections
+
+Given two flagged sections and the list `a`, `c`, `b`, where `c` lies in the second
+When in the first section the row `b` is dropped at the first place
+Then the rows are `b`, `a`, and the list is `b`, `c`, `a`
