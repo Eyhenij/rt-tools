@@ -115,7 +115,7 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
 
     public readonly rows: InputSignal<readonly TRow[]> = input<readonly TRow[]>([]);
 
-    public readonly activeId: InputSignal<number | null> = input<number | null>(null);
+    public readonly activeId: InputSignal<IRtThreadList.TRowId | null> = input<IRtThreadList.TRowId | null>(null);
 
     /** Пусто — берётся переведённая подпись по умолчанию */
     public readonly searchPlaceholder: InputSignal<string> = input<string>('');
@@ -140,11 +140,11 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
 
     // Имя `select` зарезервировано под нативное DOM-событие
     // (@angular-eslint/no-output-native), поэтому output переименован.
-    public readonly selectRow: OutputEmitterRef<number> = output<number>();
+    public readonly selectRow: OutputEmitterRef<IRtThreadList.TRowId> = output<IRtThreadList.TRowId>();
 
     // Ctrl/⌘+клик по строке: потребитель открывает строку в новой вкладке.
     // Обычный клик остаётся на `selectRow`.
-    public readonly openInNewTab: OutputEmitterRef<number> = output<number>();
+    public readonly openInNewTab: OutputEmitterRef<IRtThreadList.TRowId> = output<IRtThreadList.TRowId>();
 
     public readonly searchChange: OutputEmitterRef<string> = output<string>();
 
@@ -162,7 +162,7 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
             .subscribe((value: string): void => this.searchChange.emit(value));
     }
 
-    protected onSelect(id: number, event: MouseEvent): void {
+    protected onSelect(id: IRtThreadList.TRowId, event: MouseEvent): void {
         // Ctrl (Win/Linux) или ⌘ (macOS) — «открыть в новой вкладке», как у
         // нативных ссылок. Иначе — обычный выбор строки в текущей вкладке.
         if (event.ctrlKey || event.metaKey) {
