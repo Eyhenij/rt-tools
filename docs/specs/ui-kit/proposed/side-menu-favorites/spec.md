@@ -211,3 +211,8 @@ Not applicable: one list per application key.
 - `Q-2` — a page rendered on the server has no block, and it appears after the start in the browser.
   The work goes with the assumption: the first kit is drawn in the browser by its consumers, and
   the jump is accepted.
+
+## History of changes
+
+- 2026-09-21 — the agreement was written before the code under RT-2291 and revised by its critique
+  before the plan.

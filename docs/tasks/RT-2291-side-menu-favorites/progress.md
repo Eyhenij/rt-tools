@@ -8,7 +8,7 @@
 - **Next step:** step 3.2 on the narrow screen — measure the story `SubMenuFavoritesMobile` in a narrow frame
 - **Uncommitted:** no
 - **Waiting for the owner:** no
-- **PR:** not open yet
+- **PR:** not open yet; the branch is not on the host — its gate refuses on four duplicated scenario numbers that stand in `main` itself
 
 ## Steps
 
@@ -80,6 +80,11 @@ Next step: 3.2 on the narrow screen, then 3.3 — merge the agreement into
 - The showcase on 6006 is the owner's, raised from this tree; do not raise a second one.
 - The menu file `rtui-side-menu.component.ts` stands at 496 lines of the 500 limit: new favourites
   logic goes into `favorites/`, not into the menu.
+- Sending the branch to the host is refused by `node tools/check-specs.mjs`:
+  `docs/specs/agent-kit/roles/scenarios.md` reuses SC-AK-1136, 1137, 1139 and 1140, taken by
+  prose-guard, epic-table and edit-place. It came with `main` (5ea2c63e5), not with this branch; the
+  owner was told and decides who separates them. The branch's own finding — a missing
+  `## History of changes` in the agreement — is fixed.
 - The chat branch `RT-2177-chat-service` (the copy's assigned epic 2177) was left untouched; its
   task folder is still missing there.
 - A snapshot reference for the two new stories is not taken: the first kit shoots every story, so
