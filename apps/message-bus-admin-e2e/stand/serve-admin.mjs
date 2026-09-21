@@ -10,12 +10,12 @@
  * прямой ссылкой, и раздача, ответившая на него отказом, показала бы приёмник неповинным в
  * поломке, которой нет.
  */
-import { createReadStream, existsSync, statSync } from 'node:fs';
+import { createReadStream, existsSync, readFile, statSync } from 'node:fs';
 import { createServer, request as httpRequest } from 'node:http';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { ADMIN_PORT, API_PORT, CHAT } from './stand.mjs';
+import { ADMIN_PAGE_ORIGIN, ADMIN_PORT, API_PORT, CHAT, FOREIGN_PORT } from './stand.mjs';
 
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 
@@ -32,6 +32,15 @@ const BROWSER_DIR = join(ROOT, 'dist/apps/message-bus-admin/browser');
  */
 const WIDGET_FILE = join(ROOT, 'dist/apps/chat-widget/widget.js');
 const WIDGET_PAGE = fileURLToPath(new URL('./widget-page.html', import.meta.url));
+
+/**
+ * Страница чужого адреса: она поднимается своим портом, и для браузера это другой адрес.
+ *
+ * Так проверяется то, ради чего работа затеяна: страница потребителя стоит не там, где сервис, и
+ * без позволения браузер её обращений к нему не доносит. Адрес сервиса подставляется при отдаче —
+ * порт стенда задаётся окружением, и записанный в файл он разошёлся бы с ним молча.
+ */
+const FOREIGN_PAGE = fileURLToPath(new URL('./foreign-page.html', import.meta.url));
 
 /**
  * Приложение площадки на стенде: сюда приёмник шлёт вызовы наружу, и отсюда их читает набор.
@@ -156,4 +165,35 @@ createServer((request, response) => {
     sendFile(response, file || join(BROWSER_DIR, 'index.html'));
 }).listen(ADMIN_PORT, () => {
     process.stdout.write(`админка стенда поднята: порт ${ADMIN_PORT}\n`);
+});
+
+/**
+ * Страница чужого адреса: свой сервер, свой порт и ничего, кроме одной страницы.
+ *
+ * Скрипт виджета она берёт у админки стенда, а не отсюда: виджет считает адресом сервиса тот, с
+ * которого приехал сам скрипт, — и обращения уйдут на тот адрес, на который они и должны уйти.
+ */
+createServer((request, response) => {
+    // Кроме самой страницы, по этому адресу нет ничего: обращение виджета, ушедшее сюда вместо
+    // сервиса, иначе получило бы страницу вместо ответа и выглядело бы не отказом, а пустотой.
+    if ((request.url ?? '/').split('?')[0] !== '/') {
+        response.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' });
+        response.end('на этом адресе стоит одна страница');
+
+        return;
+    }
+
+    readFile(FOREIGN_PAGE, 'utf8', (fault, page) => {
+        if (fault) {
+            response.writeHead(500, { 'content-type': 'text/plain; charset=utf-8' });
+            response.end('страницы чужого адреса нет на месте');
+
+            return;
+        }
+
+        response.writeHead(200, { 'content-type': MEDIA['.html'] });
+        response.end(page.replaceAll('__SERVICE__', ADMIN_PAGE_ORIGIN));
+    });
+}).listen(FOREIGN_PORT, () => {
+    process.stdout.write(`страница чужого адреса поднята: порт ${FOREIGN_PORT}\n`);
 });

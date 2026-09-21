@@ -89,6 +89,7 @@ export class ChatPrismaDouble {
     public get chatSite(): Record<string, (args: Record<string, unknown>) => Promise<unknown>> {
         return {
             findFirst: async (args: Record<string, unknown>): Promise<unknown> => this.#site(args) ?? null,
+            findMany: async (args: Record<string, unknown>): Promise<unknown> => this.#liveSites(args),
         };
     }
 
@@ -158,6 +159,15 @@ export class ChatPrismaDouble {
 
         // Умолчания хранилища: площадка без приветствия, часов и вызовов наружу — законное состояние
         return found && this.#withSiteDefaults(found);
+    }
+
+    /** Живые площадки: их адреса читает позволение браузеру обращаться с чужой страницы. */
+    #liveSites(args: Record<string, unknown>): IDoubleSite[] {
+        const where: { enabled?: boolean } = (args['where'] as { enabled?: boolean } | undefined) ?? {};
+
+        return this.sites
+            .filter((site: IDoubleSite): boolean => where.enabled === undefined || site.enabled === where.enabled)
+            .map((site: IDoubleSite): IDoubleSite => this.#withSiteDefaults(site));
     }
 
     /** Умолчания записи площадки: то же, что подставляет хранилище на старых записях. */

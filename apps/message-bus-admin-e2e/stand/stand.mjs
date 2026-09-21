@@ -56,6 +56,18 @@ export const ADMIN_ORIGIN = `http://localhost:${ADMIN_PORT}`;
  */
 export const ADMIN_PAGE_ORIGIN = `http://host.docker.internal:${ADMIN_PORT}`;
 
+/**
+ * Порт страницы чужого адреса: на нём стенд поднимает страницу потребителя, и только её.
+ *
+ * Другой порт — для браузера другой адрес, и обращение с такой страницы к сервису он без
+ * позволения не доносит. Своего имени под это в наборе не завести: браузер поднимается образом и
+ * знает машину одним именем, а порт разводит адреса не хуже имени.
+ */
+export const FOREIGN_PORT = intFromEnv('E2E_FOREIGN_PORT', 4311);
+
+/** Тем же адресом страница чужого адреса зовётся из браузера набора. */
+export const FOREIGN_PAGE_ORIGIN = `http://host.docker.internal:${FOREIGN_PORT}`;
+
 /** Имя базы стенда. Названо отдельно: `CREATE DATABASE` не принимает адреса. */
 export const STAND_DATABASE = textFromEnv('E2E_DATABASE', 'message_bus_e2e');
 

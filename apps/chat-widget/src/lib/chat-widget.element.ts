@@ -56,10 +56,22 @@ function escaped(text: string): string {
 function scriptSource(): string {
     const current: HTMLOrSVGScriptElement | null = document.currentScript;
 
-    return current instanceof HTMLScriptElement
-        ? current.src
-        : (document.querySelector<HTMLScriptElement>('script[src*="widget"]')?.src ?? '');
+    if (current instanceof HTMLScriptElement && current.src) {
+        return current.src;
+    }
+
+    return document.querySelector<HTMLScriptElement>('script[src*="widget"]')?.src ?? '';
 }
+
+/**
+ * Адрес скрипта запоминается на выполнении файла, а не при встрече тега.
+ *
+ * `document.currentScript` называет скрипт виджета только в эту минуту. Когда тег ставит своим
+ * скриптом сама страница — а так его и ставят, — тот же вопрос называет уже её скрипт, у
+ * которого адреса нет вовсе: адрес сервиса свёлся бы к адресу страницы, и обращения ушли бы в
+ * страницу. Пока сервис и страница стоят на одном адресе, разницы не видно.
+ */
+const SCRIPT_SOURCE: string = scriptSource();
 
 /** Чтение хранилища браузера: закрытое хранилище — не отказ, а посетитель без признака. */
 function read(key: string): string {
@@ -92,7 +104,7 @@ export class ChatWidgetElement extends HTMLElement {
 
     public connectedCallback(): void {
         this.#signs = {
-            service: widgetServiceOrigin(this.getAttribute(SERVICE_ATTRIBUTE) ?? '', scriptSource()),
+            service: widgetServiceOrigin(this.getAttribute(SERVICE_ATTRIBUTE) ?? '', SCRIPT_SOURCE),
             site: this.getAttribute(SITE_ATTRIBUTE) ?? '',
             visitor: read(widgetStorageKey(this.getAttribute(SITE_ATTRIBUTE) ?? '')),
             conversation: '',
