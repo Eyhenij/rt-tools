@@ -130,6 +130,16 @@ RT_TASK_TITLE_RE="$OWN_FORM" \
     expect_reason "SC-AK-763 — и отказ называет оба номера" git-guard-delivery.sh \
     "$(input_cmd 'gh pr create --title "RT-8 fix: сделано" --body x' Bash "$REPO_WORK")" 'number 8.*the branch'
 
+# SC-AK-1165. Заголовок читается по длинному ключу, короткий берётся только там, где длинного нет.
+# Короткий ключ занят соседями: строка запуска `nx affected -t lint` в том же вызове становилась
+# заголовком, и отказ говорил, что заголовок не начинается с номера задачи, когда он верный.
+expect_decision "SC-AK-1165 — строка запуска перед заголовком заголовком не становится" git-guard-delivery.sh \
+    "$(input_cmd 'nx affected -t lint && gh pr create --title "[RT-7] Сделано" --body x' Bash "$REPO_WORK")" PASS
+expect_decision "SC-AK-1165 — короткий ключ читается, когда длинного нет" git-guard-delivery.sh \
+    "$(input_cmd 'gh pr create -t "[RT-7] Сделано" --body x' Bash "$REPO_WORK")" PASS
+expect_decision "SC-AK-1165 — чужой номер в коротком ключе отбивается" git-guard-delivery.sh \
+    "$(input_cmd 'gh pr create -t "[RT-8] Сделано" --body x' Bash "$REPO_WORK")" deny
+
 # --- свежесть локальной ссылки на главную ветку ------------------------------------------------
 #
 # Первый ярус читает локальную ссылку и молчит, пока она не старше ветки; второй спрашивает

@@ -322,6 +322,20 @@ and the check was silently not performed at all, looking as if it came together
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
+### SC-AK-1165 — the title is read by the long key, and the short one only in its absence
+
+Given a command where a run line with the short key stands before the opening of the request, and
+the title stands after it
+When the delivery guard reads the title
+Then it takes the title of the request: the short key is taken by neighbours, and the refusal used
+to say the title does not start with the number of the task while it did
+
+Given a command where the title is named by the short key alone
+When the guard reads it
+Then it takes that title and judges its number as before
+
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
+
 ### SC-AK-820 — what the gate set is narrower than the pipeline set by
 
 Given the tree has a green set before the push and this is the first push of the session
