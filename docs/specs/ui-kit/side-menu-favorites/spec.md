@@ -35,13 +35,13 @@ sign-out or fill it with defaults.
 
 ### What it is called in the interface
 
-| In the agreement     | On the screen                                                           |
-| -------------------- | ----------------------------------------------------------------------- |
-| The favourites block | the heading "Favourites" with a filled star, rows under it              |
-| The star, off        | a hollow star, `star_border`; the tooltip "Add to favourites"           |
-| The star, on         | a filled star in the theme colour; the tooltip "Remove from favourites" |
-| The remove button    | a minus, `remove`; the tooltip "Remove from favourites"                 |
-| The handle           | the move button `open_with`, the tooltip "Hold button to drag"          |
+| In the agreement     | On the screen                                                                                    |
+| -------------------- | ------------------------------------------------------------------------------------------------ |
+| The favourites block | the heading "Favourites" of 14 px with a filled star of 16 px in the theme colour, rows under it |
+| The star, off        | a hollow star, `star_border`; the tooltip "Add to favourites"                                    |
+| The star, on         | a filled star in the theme colour; the tooltip "Remove from favourites"                          |
+| The remove button    | a minus, `remove`; the tooltip "Remove from favourites"                                          |
+| The handle           | the move button `open_with`, the tooltip "Hold button to drag"                                   |
 
 ## Rules
 
@@ -95,8 +95,12 @@ sign-out or fill it with defaults.
   variable one, where `star` without the axis is drawn hollow. The theme colour of the filled star
   is the third sign.
 - **The colour of the filled star is the theme's, and the application sets any other.** The kit
-  takes the primary icon accent. The application names its own colour by the property
-  `--rt-side-menu-favorite-color` on any ancestor of the menu.
+  takes the primary colour of the application's Material theme: `--mat-sys-primary` of a theme built
+  by `mat.theme()`, else the fill of the theme's button, which carries the same colour in a theme
+  from `define-theme`, and without a Material theme the kit's own accent. The star of the heading
+  takes the same colour. The application names its own by the property
+  `--rt-side-menu-favorite-color` on any ancestor of the menu, and the colour of the heading's label
+  by `--rt-side-menu-favorites-title-color`.
 - **The hollow star and the remove button show on hover and on focus inside their row; the
   filled star always shows.** Stars on every row of a long list read as noise; the chosen ones must be visible at a
   glance. Where the pointer cannot hover — a narrow screen, a touch screen by `(hover: none)` — the
@@ -180,15 +184,16 @@ Written at every change of the list.
 
 The public surface:
 
-| Name                                             | What it is                                                                                               |
-| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| `provideRtuiFavorites(config?)`                  | the providers of the service; `config.storageKey`, `config.labels` with `title`, `add`, `remove`, `drag` |
-| `ISideMenu.Item.favorites`                       | the flag of a strip item switching its favourites on; off by default                                     |
-| `--rt-side-menu-favorite-color`                  | the colour of the filled star, set by the application on an ancestor of the menu                         |
-| `RtuiFavoritesService.ids`                       | the whole list as a read-only signal, ids hidden from every block included                               |
-| `has(id)`, `add(id)`, `remove(id)`, `toggle(id)` | a check and three edits of one id; adding an id already in the list does nothing                         |
-| `move(from, to)`                                 | moves an entry between two places of the list                                                            |
-| `set(ids)`, `clear()`                            | replaces the list whole, empties it                                                                      |
+| Name                                             | What it is                                                                                                 |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `provideRtuiFavorites(config?)`                  | the providers of the service; `config.storageKey`, `config.labels` with `title`, `add`, `remove`, `drag`   |
+| `--rt-side-menu-favorites-title-color`           | the colour of the heading's label, set by the application on an ancestor of the menu                       |
+| `ISideMenu.Item.favorites`                       | the flag of a strip item switching its favourites on; off by default                                       |
+| `--rt-side-menu-favorite-color`                  | the colour of the filled star and of the heading's star, set by the application on an ancestor of the menu |
+| `RtuiFavoritesService.ids`                       | the whole list as a read-only signal, ids hidden from every block included                                 |
+| `has(id)`, `add(id)`, `remove(id)`, `toggle(id)` | a check and three edits of one id; adding an id already in the list does nothing                           |
+| `move(from, to)`                                 | moves an entry between two places of the list                                                              |
+| `set(ids)`, `clear()`                            | replaces the list whole, empties it                                                                        |
 
 ## Screens and states
 
@@ -270,3 +275,6 @@ Not applicable: one list per application key.
   from a keyboard focus only and is released by the drop. The star lost `aria-pressed` and got the
   fill axis. The focus survives a remove; the arrows on a handle reorder. Scenarios SC-UK-96…SC-UK-102
   added.
+- 2026-09-21 — the owner: the star was blue, the kit's own accent, not the theme's. The colour now
+  follows the primary colour of the application's Material theme; the heading is 14 px with a star of
+  16 px in the same colour; the heading's label takes a colour of the application by a property.

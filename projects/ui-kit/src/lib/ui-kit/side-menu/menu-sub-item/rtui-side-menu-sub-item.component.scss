@@ -101,9 +101,13 @@
             // читались бы шумом. Прячется прозрачностью, а не снятием с раскладки: кнопка остаётся
             // на своём месте и достижима клавишей Tab.
 
-            // Цвет закрашенной звезды — цвет темы; приложение задаёт свой свойством
-            // `--rt-side-menu-favorite-color` на любом предке меню. Свойство не объявлено здесь
-            // нарочно: объявленное на кнопке, оно перебило бы значение, пришедшее от предка.
+            // Цвет закрашенной звезды — основной цвет темы Material приложения; приложение задаёт
+            // любой свой свойством `--rt-side-menu-favorite-color` на любом предке меню. Свойство не
+            // объявлено здесь нарочно: объявленное на кнопке, оно перебило бы значение от предка.
+
+            // Основной цвет темы берётся по цепочке: `--mat-sys-primary` даёт тема, собранная
+            // `mat.theme()`; тема из `define-theme` его не объявляет, и тот же цвет несёт заливка
+            // её кнопки. Без темы Material остаётся акцент набора токенов кита.
             &__favorite {
                 --mat-icon-button-state-layer-size: calc(var(--rt-spacing-16) * 2);
                 --mat-icon-button-icon-size: var(--rt-font-size-lg);
@@ -122,7 +126,10 @@
                 }
 
                 &--on {
-                    --mat-icon-button-icon-color: var(--rt-side-menu-favorite-color, var(--rt-icon-accent-primary));
+                    --mat-icon-button-icon-color: var(
+                        --rt-side-menu-favorite-color,
+                        var(--mat-sys-primary, var(--mat-button-filled-container-color, var(--rt-icon-accent-primary)))
+                    );
                 }
 
                 // Где указатель не умеет наводиться, кнопке ждать нечего.

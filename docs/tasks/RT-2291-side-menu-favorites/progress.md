@@ -79,6 +79,10 @@
 - Three reviews in parallel; findings above. `pnpm exec nx test @rt-tools/ui-kit --testFile=side-menu` — 8 suites, 156 passed; the favourites spec split into two files with a shared harness `side-menu-favorites.harness.ts`; `pnpm run check:all` — green for 110 projects; `node tools/check-specs.mjs` — only the four divergences of `main`.
 - The showcase on 6006: offsets 6 px on every side; the filled star `FILL 1`, the hollow `FILL 0`; the Material touch target `none` under a mouse; the drag preview rgb(255, 255, 255) with `--rt-shadow-md`, rgb(28, 27, 30) under the dark theme; the filled star rgb(109, 150, 232) under the dark theme; the one `aria-pressed` left belongs to the pin of the submenu.
 
+- The owner: «лейбл Favourites и иконку крупнее чутка и возможность задать цвет любой, почему иконка звезды синяя я просил цвет темы или кастомный задать переопределив css переменную».
+- The cause: the star took `--rt-icon-accent-primary`, the kit's own blue palette (#4284d7), while the showcase's Material theme is violet (`mat.$violet-palette`, #7d00fa). The showcase theme is built by `define-theme` and declares no `--mat-sys-*`; the primary colour lives in the component tokens, `--mat-button-filled-container-color` among them. The chain now: `--rt-side-menu-favorite-color` → `--mat-sys-primary` → `--mat-button-filled-container-color` → `--rt-icon-accent-primary`.
+- The showcase on 6006: the filled star and the heading's star rgb(125, 0, 250); `--rt-side-menu-favorite-color` on the menu gave rgb(230, 120, 0) to both, `--rt-side-menu-favorites-title-color` gave rgb(0, 128, 90) to the label; the heading 14 px, its star 16 px with `FILL 1`, centres matched. `pnpm exec nx test @rt-tools/ui-kit --testFile=side-menu` — 156 passed; `node tools/check-specs.mjs` — the four divergences of `main`.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).

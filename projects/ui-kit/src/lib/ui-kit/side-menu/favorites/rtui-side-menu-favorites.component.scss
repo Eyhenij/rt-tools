@@ -10,20 +10,26 @@
     }
 
     .rtui-side-menu-favorites {
+        // Заголовок: подпись и звезда. Звезда красится тем же цветом, что и закрашенные звёзды
+        // списка, подпись — свойством `--rt-side-menu-favorites-title-color` с предка меню.
         &__title {
             display: flex;
             align-items: center;
             padding: var(--rt-spacing-8) var(--rt-spacing-16) var(--rt-spacing-4);
-            color: var(--rt-text-base-secondary);
-            font-size: var(--rt-font-size-xs);
+            color: var(--rt-side-menu-favorites-title-color, var(--rt-text-base-secondary));
+            font-size: var(--rt-font-size-sm);
             font-weight: var(--rt-font-weight-semibold);
-            gap: var(--rt-spacing-4);
+            gap: var(--rt-spacing-6);
         }
 
         &__title-icon {
-            width: var(--rt-font-size-xs);
-            height: var(--rt-font-size-xs);
-            font-size: var(--rt-font-size-xs);
+            width: var(--rt-icon-size-sm);
+            height: var(--rt-icon-size-sm);
+            color: var(
+                --rt-side-menu-favorite-color,
+                var(--mat-sys-primary, var(--mat-button-filled-container-color, var(--rt-icon-accent-primary)))
+            );
+            font-size: var(--rt-icon-size-sm);
         }
 
         &__title-text {
