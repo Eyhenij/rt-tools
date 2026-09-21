@@ -24,6 +24,12 @@ export function chatSendAnswered(
     sentId: string,
     taken: IChat.Message.State | null
 ): IChat.Message.State[] {
+    // Принятая уже стоит в ленте, если её успел принести поток: тогда своя временная просто
+    // уходит — заменённая, она встала бы рядом со своей же копией
+    if (taken && feed.some((message: IChat.Message.State): boolean => message.id === taken.id)) {
+        return feed.filter((message: IChat.Message.State): boolean => message.id !== sentId);
+    }
+
     return feed.map((message: IChat.Message.State): IChat.Message.State => {
         if (message.id !== sentId) {
             return message;
@@ -31,6 +37,30 @@ export function chatSendAnswered(
 
         return taken ?? { ...message, send: EChatSendState.Refused };
     });
+}
+
+/**
+ * Лента, когда отбитую реплику отправляют заново.
+ *
+ * Реплика остаётся на своём месте и своим признаком: второй такой же рядом означал бы, что
+ * посетителю написали дважды, а написали один раз. Ответ сервиса заменит её принятой — тем же
+ * путём, каким заменяет впервые отправленную.
+ */
+export function chatResending(feed: readonly IChat.Message.State[], id: string): IChat.Message.State[] {
+    return feed.map((message: IChat.Message.State): IChat.Message.State =>
+        message.id === id ? { ...message, send: EChatSendState.Sent } : message
+    );
+}
+
+/**
+ * Лента после пришедшей потоком реплики.
+ *
+ * Сервис рассылает реплику всем, кто слушает сайт, — и тому, кто её написал. Своя же, вставшая в
+ * ленту вторым разом, читается как написанная посетителю дважды, поэтому уже стоящую в ленте
+ * реплику поток не добавляет.
+ */
+export function chatArrived(feed: readonly IChat.Message.State[], message: IChat.Message.State): IChat.Message.State[] {
+    return feed.some((stands: IChat.Message.State): boolean => stands.id === message.id) ? [...feed] : [...feed, message];
 }
 
 /**

@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ChatApiService } from '@rt/message-bus-admin/chat/api';
-import { chatSendAnswered, chatSentMessage, IChat } from '@rt/message-bus-admin/chat/util';
+import { chatArrived, chatResending, chatSendAnswered, chatSentMessage, EChatSendState, IChat } from '@rt/message-bus-admin/chat/util';
 import { IReadFault } from '@rt/message-bus-admin/common/core/util';
 import { IPage } from '@rt/message-bus-common';
 import { BASE_INITIAL_STATE, BaseAsyncStoreService, IStateBase } from '@rt-tools/store';
@@ -108,9 +108,28 @@ export class ChatFeedStore extends BaseAsyncStoreService<IChatFeedState, TChatFe
         this.#sendSource.next({ talkId, text, sentId });
     }
 
-    /** Пришедшая из потока реплика: она встаёт в ленту открытого разговора и больше ничего. */
+    /**
+     * Отправить отбитую реплику заново.
+     *
+     * Своим же признаком: вторая такая же рядом означала бы, что посетителю написали дважды. Ответ
+     * сервиса заменит её принятой тем же путём, каким заменяет впервые отправленную.
+     */
+    public resend(talkId: string, messageId: string): void {
+        const refused: IChat.Message.State | undefined = this.messages().find(
+            (message: IChat.Message.State): boolean => message.id === messageId && message.send === EChatSendState.Refused
+        );
+
+        if (!refused) {
+            return;
+        }
+
+        this.patchState((state: IChatFeedState) => ({ ...state, messages: chatResending(state.messages, messageId) }));
+        this.#sendSource.next({ talkId, text: refused.text, sentId: messageId });
+    }
+
+    /** Пришедшая из потока реплика: она встаёт в ленту открытого разговора, если её там ещё нет. */
     public arrived(message: IChat.Message.State): void {
-        this.patchState((state: IChatFeedState) => ({ ...state, messages: [...state.messages, message] }));
+        this.patchState((state: IChatFeedState) => ({ ...state, messages: chatArrived(state.messages, message) }));
     }
 
     /** Ответ сервиса об отправленной реплике: принята или отбита. */

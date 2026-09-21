@@ -95,8 +95,8 @@ test.describe('виджет посетителя', () => {
 
         await openSection(panel, 'chat');
         await qa(panel, 'chat-talk').first().click();
-        await qa(panel, 'chat-answer').locator('input').fill('Отвечаю посетителю');
-        await qa(panel, 'chat-answer-send').click();
+        await qa(panel, 'chat-composer-input').fill('Отвечаю посетителю');
+        await qa(panel, 'chat-composer-send').click();
         await expect(qa(panel, 'chat-message-text').last()).toHaveText('Отвечаю посетителю');
         await panel.close();
 

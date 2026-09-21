@@ -11,9 +11,13 @@ or the code holds what the spec is silent about.
 - **The list is narrowed by the site and by the state of a talk.** — `libs/message-bus-admin/chat/api/src/lib/chat.api.service.ts:talks`
 - **The feed of one conversation is read by pages, oldest first, and both sides stand in one thread.** — `libs/message-bus-admin/chat/data-access/src/lib/chat-feed.store.ts:read`
 - **The screen is assembled from the ready-made of the kit.** — `libs/message-bus-admin/chat/feature/panel/src/lib/admin-chat-panel.component.ts:AdminChatPanelComponent`
+- **The thread and the field of the answer are the ready-made chat of the kit, not views of their own.** — `libs/message-bus-admin/chat/feature/panel/src/lib/admin-chat-panel.component.ts:RtChatComponent`
+- **The model of the panel is translated into the model of the kit by one place.** — `libs/message-bus-admin/chat/util/src/lib/chat-kit.mapper.ts:chatKitThread`
+- **The word about the sending is translated by its meaning, not by its name.** — `libs/message-bus-admin/chat/util/src/lib/chat-kit.mapper.ts:statusOf`
 - **The answer of the operator is written by an operation of its own, closed by the entry of a person.** — `libs/message-bus-api/chat/feature/src/lib/chat-read.controller.ts:answer`
 - **A sent remark is shown in the feed at once, before the service has answered about it.** — `libs/message-bus-admin/chat/data-access/src/lib/chat-feed.store.ts:send`
 - **A remark the service refused is marked in the feed and is not taken out of it.** — `libs/message-bus-admin/chat/util/src/lib/chat-send.logic.ts:chatSendAnswered`
+- **A refused remark is sent again from the feed itself.** — `libs/message-bus-admin/chat/data-access/src/lib/chat-feed.store.ts:resend`
 - **An answer into a conversation of a foreign site is refused as a not-found conversation.** — `libs/message-bus-api/chat/data-access/src/lib/chat-operator.queries.ts:conversationOfSites`
 - **A remark of the visitor arrives into the open feed without a reload.** — `libs/message-bus-admin/chat/feature/panel/src/lib/admin-chat-panel.component.ts:#listen`
 
@@ -23,9 +27,12 @@ the pure logic, `api` for the calls of the operations, `data-access` for the two
 row of the list, the message of the feed and the two narrowings, `feature/panel` for the screen and
 `shell` for its route.
 
-The row of the list is `AdminChatTalkComponent`, the message of the feed `AdminChatMessageComponent`,
-and the sent remark lives in the state of `ChatFeedStore` until the answer of the service: its three
-states are `EChatSendState` in the `util` layer. The answer of the operator goes by
+The row of the list is `AdminChatTalkComponent`; the thread and the field of the answer are the
+`rt-chat` of the kit, and the section keeps no message view of its own. The translation into the
+model of the kit lies in one place — `chatKitThread` of the `util` layer — and the sent remark lives
+in the state of `ChatFeedStore` until the answer of the service: its three states are
+`EChatSendState` in the same layer. The minute of a message the kit shows by the locale it is given,
+and the data of that locale are registered by the application in `provideAdminKitLabels`. The answer of the operator goes by
 `POST /api/chat/conversations/:id/messages` and is written by `appendOperatorMessage`; the event
 about it leaves by `ChatSubscribersService` of the receiver, and the open screen takes it from
 `GET /api/chat/conversations/stream`.

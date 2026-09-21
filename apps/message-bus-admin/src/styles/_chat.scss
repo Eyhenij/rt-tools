@@ -64,23 +64,9 @@
         align-self: flex-start;
     }
 
-    &__messages {
-        display: flex;
+    &__thread {
+        display: block;
         min-height: 0;
-        flex: 1;
-        flex-direction: column;
-        gap: var(--rt-space-sm);
-        overflow-y: auto;
-    }
-
-    &__send {
-        display: flex;
-        align-items: flex-end;
-        gap: var(--rt-space-sm);
-    }
-
-    &__field {
-        min-width: 0;
         flex: 1;
     }
 }
@@ -141,41 +127,5 @@
         color: var(--rt-color-text-muted);
         font-size: var(--rt-text-sm);
         grid-column: 1 / -1;
-    }
-}
-
-/**
- * Сообщение ленты: сторона и минута мелкой строкой, текст — обычной.
- *
- * Текст переносится по словам и длинные слова ломает: ссылку из адресной строки посетитель
- * присылает целиком, а лента шириной с экран.
- */
-.admin-chat-message {
-    display: flex;
-    flex-direction: column;
-    padding: var(--rt-space-sm);
-    border-radius: var(--rt-radius-md);
-    background: var(--rt-color-bg-subtle);
-    gap: var(--rt-space-2xs);
-
-    &__side {
-        color: var(--rt-color-text-muted);
-        font-size: var(--rt-text-sm);
-        font-weight: var(--rt-font-weight-medium);
-    }
-
-    &__text {
-        overflow-wrap: anywhere;
-        white-space: pre-wrap;
-    }
-
-    &__at {
-        color: var(--rt-color-text-muted);
-        font-size: var(--rt-text-sm);
-    }
-
-    &__refused {
-        color: var(--rt-color-state-danger);
-        font-size: var(--rt-text-sm);
     }
 }
