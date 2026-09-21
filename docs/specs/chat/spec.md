@@ -1,6 +1,6 @@
 # The chat with the visitors
 
-**Status:** in force · **Revision:** 2026-09-20 · **Scenario prefix:** `SC-CH`
+**Status:** in force · **Revision:** 2026-09-21 · **Scenario prefix:** `SC-CH`
 **Depends on:** `message-bus` (the node, the storage and the pipeline of the rollout are shared)
 **Laws:** `verifiability`, `code-structure`, `lib-imports`, `entity-models`, `observability`
 **Procedures:** none — the operations are declared by the controllers of the chat
@@ -41,9 +41,8 @@ infrastructure do not grow.
 
 ### What it is called in the interface
 
-The panel of the operator is described by the subdomain next to this text, and the words on it are
-named there. The widget of the visitor arrives by the following task of the epic. This text has no
-screen of its own.
+The panel of the operator and the widget of the visitor are described by the subdomains next to
+this text, and the words of each are named there. This text has no screen of its own.
 
 ## Rules
 
@@ -96,9 +95,9 @@ screen of its own.
 
 ## What is out of scope
 
-- **The widget, the notifications and the rollout** — the tasks RT-2182 … RT-2184 of the same epic.
-  This text is added to by them. The reading by the operator, the stream of the events and the panel
-  of the operator are described by the subdomains next to it.
+- **The notifications and the rollout** — the tasks RT-2183 and RT-2184 of the same epic. This text
+  is added to by them. The reading by the operator, the stream of the events, the panel of the
+  operator and the widget of the visitor are described by the subdomains next to it.
 - **The entry of the operator and the rights inside the space.** The first work takes in the
   remarks of the visitor; there is nobody to answer them yet.
 - **The search over the text of the conversations, the calls, the video and the answering bots** —
@@ -107,13 +106,18 @@ screen of its own.
 
 ## Contract
 
-The visitor turns to the service without an entry. Two operations, both by the key of the site; the
+The visitor turns to the service without an entry. Four operations, all by the key of the site; the
 address of the page comes in the header `Origin`, as the browser sends it.
 
 | Operation                    | What it does                                                                                                                   |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | POST /api/chat/conversations | creates the conversation of the visitor on the site by the key, or gives back the live one, and issues the sign of the visitor |
 | POST /api/chat/messages      | takes in a remark of the visitor into their conversation                                                                       |
+| GET /api/chat/site           | the greeting of the site, the hours of answer and whether the site is on                                                       |
+| GET /api/chat/messages       | the messages of the own conversation of the visitor, by their sign                                                             |
+
+The last two are described by the subdomain of the widget; the address of the page they take from
+the header `Origin`, and where the browser sends none — from the address of the referring page.
 
 The mandatory fields:
 
@@ -141,22 +145,21 @@ is obliged to refuse instead of staying silent:
 
 ## Data
 
-| Entity           | What it holds                                                                                           |
-| ---------------- | ------------------------------------------------------------------------------------------------------- |
-| The space        | The name; the minute of the creation                                                                    |
-| The site         | The space, the readable name, the key, the list of the allowed addresses, the sign of being switched on |
-| The visitor      | The site, the sign the service issued, the minute of the first turning                                  |
-| The conversation | The site, the visitor, the minute of the creation and of the last message                               |
-| The message      | The conversation, who wrote it — the visitor or the operator — the text, the minute of the taking in    |
+| Entity           | What it holds                                                                                                                                 |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| The space        | The name; the minute of the creation                                                                                                          |
+| The site         | The space, the readable name, the key, the list of the allowed addresses, the sign of being switched on, the greeting and the hours of answer |
+| The visitor      | The site, the sign the service issued, the minute of the first turning                                                                        |
+| The conversation | The site, the visitor, the minute of the creation and of the last message                                                                     |
+| The message      | The conversation, who wrote it — the visitor or the operator — the text, the minute of the taking in                                          |
 
 The key of the site and the sign of the visitor are kept as they are given out: the key is open by
 its purpose, and the sign of the visitor opens one conversation of one site and nothing besides.
 
 ## Screens and states
 
-Not applicable: this work has no screen. The panel of the operator describes its states by the
-subdomain next to this text; the widget of the visitor arrives by the task RT-2182 and describes
-them itself.
+Not applicable: this work has no screen. The panel of the operator and the widget of the visitor
+describe their states by the subdomains next to this text.
 
 ## Cross-cutting requirements
 
@@ -171,8 +174,8 @@ Not applicable: the widget is drawn after the page is loaded, and the talk is cl
 
 ### Mobile layout
 
-Not applicable: this work has no screen. The widget is drawn on a phone as well, and that is
-described by the task RT-2182.
+Not applicable: this work has no screen. The widget is drawn on a phone as well — it takes the
+whole screen there, and the subdomain of the widget describes that.
 
 ### Several objects
 
@@ -201,12 +204,12 @@ both. A request that names a conversation of a foreign site is refused as a not-
   not touched.
 - **The visitor is not asked for a name or mail.** The first remark must cost the visitor one
   press; whoever needs the mail asks for it in the talk.
+- **The address of the page the visitor writes from is not kept.** The service reads it to check
+  the list of the addresses of the site and stores nothing: a kept address would be a field of the
+  storage nobody asked for, and the operator has never asked to see it.
 
 ## Open questions
 
-- Whether the operator sees the address of the page the visitor writes from. The panel of the
-  operator does not show it: the storage of the chat keeps no such address at all, and the side that
-  knows it is the widget — the question moves to its task, RT-2182.
 - How long the conversations are kept. The storage of the node is not infinite, and nobody has
   named a term yet.
 
@@ -214,3 +217,6 @@ both. A request that names a conversation of a foreign site is refused as a not-
 
 - 2026-09-20 — written before the code by the task RT-2178, the first of the epic RT-2177.
 - 2026-09-20 — the panel of the operator became a subdomain next to this text by the task RT-2181.
+- 2026-09-21 — the widget of the visitor became a subdomain next to this text by the task RT-2182;
+  the record of the site gained the greeting and the hours of answer, and two open operations were
+  added to the contract.

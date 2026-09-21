@@ -30,6 +30,29 @@ function normalized(address: string): string {
     return trimmed.slice(0, end);
 }
 
+/**
+ * Адрес страницы по двум заголовкам запроса.
+ *
+ * `Origin` браузер шлёт не всегда: на чтение со своего же адреса он его опускает вовсе — а
+ * потребитель вправе держать сервис на том же адресе, что и страницу. Тогда адрес берётся из
+ * `Referer`, у которого отрезается путь: список сайта хранит адреса, а не страницы.
+ *
+ * Ни тот, ни другой заголовок тайной не являются и подделываются кем угодно вне браузера —
+ * список адресов говорит, куда сайт поставлен, а не запирает дверь; запирает её ключ сайта и
+ * признак посетителя.
+ */
+export function pageOrigin(origin: string, referer: string): string {
+    if (origin.trim()) {
+        return origin;
+    }
+
+    try {
+        return new URL(referer).origin;
+    } catch {
+        return '';
+    }
+}
+
 /** Позволено ли звать операции сайта с этого адреса. */
 export function originAllowed(origins: readonly string[], origin: string): boolean {
     const asked: string = normalized(origin);

@@ -78,9 +78,13 @@ process.on('SIGINT', () => {
     process.exit(0);
 });
 
-await run('npx', ['nx', 'run-many', '-t', 'build', '-p', 'message-bus', 'message-bus-admin', '--configuration', 'production'], {
-    NX_SKIP_NX_INSTALL_CHECK: 'true',
-});
+await run(
+    'npx',
+    ['nx', 'run-many', '-t', 'build', '-p', 'message-bus', 'message-bus-admin', 'chat-widget', '--configuration', 'production'],
+    {
+        NX_SKIP_NX_INSTALL_CHECK: 'true',
+    }
+);
 
 await prepareDatabase();
 

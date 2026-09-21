@@ -13,7 +13,7 @@
  * ложится в одну секунду — порядок «свежий разговор сверху» на таких данных не отличить от
  * любого другого.
  */
-import { API_ORIGIN, CHAT } from './stand.mjs';
+import { ADMIN_ORIGIN, ADMIN_PAGE_ORIGIN, API_ORIGIN, CHAT } from './stand.mjs';
 
 /** Минута, от которой считаются времена разговоров: она же стоит в спеках раздела. */
 const FIRST_MOMENT = '2026-09-19 09:00:00';
@@ -53,13 +53,33 @@ function answerSql(conversationId, text, shift) {
     ].join('\n');
 }
 
+/**
+ * Часы площадки, в которые набор не попадает никогда: час вперёд от минуты засева.
+ *
+ * Считаются от минуты засева, а не записаны числами: записанные, они однажды накрыли бы собой
+ * минуту прогона, и проверка «вне часов» стала бы зелёной на любом поведении виджета.
+ */
+function closedHours(at = new Date()) {
+    const minute = at.getUTCHours() * 60 + at.getUTCMinutes();
+
+    return { from: (minute + 60) % 1440, to: (minute + 120) % 1440 };
+}
+
 /** Пространство, сайты и оператор: у них операций нет, и заводит их засев. */
 function recordsSql() {
+    const closed = closedHours();
+
     return [
         `INSERT INTO "chat_space" ("id", "name") VALUES ('chat-space-stand', '${CHAT.space}');`,
         `INSERT INTO "chat_site" ("id", "spaceId", "name", "key", "origins", "enabled") VALUES`,
         `    ('${CHAT.own.id}', 'chat-space-stand', '${CHAT.own.name}', '${CHAT.own.key}', ARRAY['${CHAT.own.origin}'], true),`,
         `    ('${CHAT.foreign.id}', 'chat-space-stand', '${CHAT.foreign.name}', '${CHAT.foreign.key}', ARRAY['${CHAT.foreign.origin}'], true);`,
+        `INSERT INTO "chat_site" ("id", "spaceId", "name", "key", "origins", "enabled", "greeting", "answerFrom", "answerTo", "timeZone")`,
+        `VALUES`,
+        `    ('${CHAT.widget.id}', 'chat-space-stand', '${CHAT.widget.name}', '${CHAT.widget.key}', ARRAY['${ADMIN_ORIGIN}', '${ADMIN_PAGE_ORIGIN}'], true,`,
+        `        '${CHAT.widget.greeting}', 0, 1439, 'UTC'),`,
+        `    ('${CHAT.widgetClosed.id}', 'chat-space-stand', '${CHAT.widgetClosed.name}', '${CHAT.widgetClosed.key}',`,
+        `        ARRAY['${ADMIN_ORIGIN}', '${ADMIN_PAGE_ORIGIN}'], true, '${CHAT.widgetClosed.greeting}', ${closed.from}, ${closed.to}, 'UTC');`,
     ].join('\n');
 }
 
@@ -68,7 +88,9 @@ function operatorSql(accountName) {
     return [
         `INSERT INTO "chat_operator" ("id", "spaceId", "accountId")`,
         `SELECT 'chat-operator-stand', 'chat-space-stand', "id" FROM "account" WHERE "name" = '${accountName}';`,
-        `INSERT INTO "chat_operator_site" ("operatorId", "siteId") VALUES ('chat-operator-stand', '${CHAT.own.id}');`,
+        `INSERT INTO "chat_operator_site" ("operatorId", "siteId") VALUES`,
+        `    ('chat-operator-stand', '${CHAT.own.id}'),`,
+        `    ('chat-operator-stand', '${CHAT.widget.id}');`,
     ].join('\n');
 }
 

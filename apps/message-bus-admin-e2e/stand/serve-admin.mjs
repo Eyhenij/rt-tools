@@ -22,6 +22,17 @@ const ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 /** Где лежит прод-сборка админки. */
 const BROWSER_DIR = join(ROOT, 'dist/apps/message-bus-admin/browser');
 
+/**
+ * Виджет посетителя и страница, на которой он стоит.
+ *
+ * Страница отдаётся отсюда же, а не с чужого адреса: сайт чата принимает обращения только с
+ * адресов своего списка, и страница, поднятая где-то ещё, получила бы отказ — то есть проверяла
+ * бы не то. Ключ площадки приезжает в адресе страницы: сайтов у набора несколько, и проверяются
+ * они одной страницей.
+ */
+const WIDGET_FILE = join(ROOT, 'dist/apps/chat-widget/widget.js');
+const WIDGET_PAGE = fileURLToPath(new URL('./widget-page.html', import.meta.url));
+
 /** Чем назваться в заголовке ответа: браузер не показывает шрифты и стили без верного рода. */
 const MEDIA = Object.freeze({
     '.css': 'text/css; charset=utf-8',
@@ -80,13 +91,27 @@ function proxy(request, response) {
 }
 
 createServer((request, response) => {
-    if ((request.url ?? '').startsWith('/api')) {
+    const url = request.url ?? '/';
+
+    if (url.startsWith('/api')) {
         proxy(request, response);
 
         return;
     }
 
-    const file = fileOf(request.url ?? '/');
+    if (url === '/widget.js') {
+        sendFile(response, WIDGET_FILE);
+
+        return;
+    }
+
+    if (url.startsWith('/widget-page')) {
+        sendFile(response, WIDGET_PAGE);
+
+        return;
+    }
+
+    const file = fileOf(url);
 
     sendFile(response, file || join(BROWSER_DIR, 'index.html'));
 }).listen(ADMIN_PORT, () => {

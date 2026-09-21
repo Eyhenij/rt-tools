@@ -3,7 +3,9 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { RateLimitService } from '@rt/message-bus-api/access/feature';
 import { IChatConversationStarted, IChatMessageTaken } from '@rt/message-bus-api/chat/api';
+import { IChatMessageListRow } from '@rt/message-bus-api/chat/data-access';
 import { CHAT_RATE_LIMIT, CHAT_TEXT_LIMIT } from '@rt/message-bus-api/chat/util';
+import { IChatSiteLookRow, IPage } from '@rt/message-bus-common';
 
 import { ChatIntakeController } from './chat-intake.controller';
 import { ChatSubscribersService } from './chat-subscribers.service';
@@ -29,6 +31,17 @@ describe('ChatIntakeController', () => {
         store.sites.push({ id: 'site-1', spaceId: 'space-1', key: 'live-key', origins: [PAGE], enabled: true });
         store.sites.push({ id: 'site-2', spaceId: 'space-1', key: 'off-key', origins: [PAGE], enabled: false });
         store.sites.push({ id: 'site-3', spaceId: 'space-1', key: 'empty-origins', origins: [], enabled: true });
+        store.sites.push({
+            id: 'site-4',
+            spaceId: 'space-1',
+            key: 'hours-key',
+            origins: [PAGE],
+            enabled: true,
+            greeting: 'Здравствуйте! Чем помочь?',
+            answerFrom: 9 * 60,
+            answerTo: 18 * 60,
+            timeZone: 'UTC',
+        });
         controller = new ChatIntakeController(store.asPrisma(), new RateLimitService(), new ChatSubscribersService());
     });
 
@@ -144,6 +157,50 @@ describe('ChatIntakeController', () => {
 
         expect(refusal.getStatus()).toBe(429);
         expect(store.messages).toHaveLength(CHAT_RATE_LIMIT);
+    });
+
+    it('SC-CH-50 — площадка отдаёт приветствие и говорит, отвечает ли оператор сейчас', async (): Promise<void> => {
+        const inHours: IChatSiteLookRow = await controller.look({ site: 'hours-key' }, from(), AT);
+        const atNight: IChatSiteLookRow = await controller.look({ site: 'hours-key' }, from(), new Date('2026-09-20T02:00:00.000Z'));
+
+        expect(inHours.greeting).toBe('Здравствуйте! Чем помочь?');
+        expect(inHours.answering).toBe(true);
+        expect(inHours.answerFrom).toBe(9 * 60);
+        expect(atNight.answering).toBe(false);
+    });
+
+    it('SC-CH-57 — площадка по неизвестному и выключенному ключу отвечает одинаково', async (): Promise<void> => {
+        await expect(controller.look({ site: 'no-such-key' }, from(), AT)).rejects.toThrow(UnauthorizedException);
+        await expect(controller.look({ site: 'off-key' }, from(), AT)).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('SC-CH-52 — вернувшийся посетитель читает свою переписку, старые реплики первыми', async (): Promise<void> => {
+        const started: IChatConversationStarted = await controller.start({ site: 'live-key' }, from(), AT);
+        const body: (text: string) => Record<string, string> = (text: string): Record<string, string> => ({
+            site: 'live-key',
+            visitor: started.visitorToken,
+            conversation: started.conversationId,
+            text,
+        });
+
+        await controller.take(body('первая'), from(), new Date(AT.getTime() + 1_000));
+        await controller.take(body('вторая'), from(), new Date(AT.getTime() + 2_000));
+
+        const mine: IPage<IChatMessageListRow> = await controller.mine(
+            { site: 'live-key', visitor: started.visitorToken, conversation: started.conversationId },
+            from()
+        );
+
+        expect(mine.rows.map((row: IChatMessageListRow): string => row.text)).toEqual(['первая', 'вторая']);
+        expect(mine.total).toBe(2);
+    });
+
+    it('SC-CH-52 — чужой признак посетителя до чужой переписки не доходит', async (): Promise<void> => {
+        const started: IChatConversationStarted = await controller.start({ site: 'live-key' }, from(), AT);
+
+        await expect(
+            controller.mine({ site: 'live-key', visitor: 'чужой-признак', conversation: started.conversationId }, from())
+        ).rejects.toThrow(NotFoundException);
     });
 
     it('SC-CH-12 — порядок сообщений задаёт минута приёма, а не часы отправителя', async (): Promise<void> => {
