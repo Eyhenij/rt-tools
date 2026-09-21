@@ -167,3 +167,26 @@ The widget asked for the address of the service at the minute the tag was met, a
 tag by its own script: at that minute the question names the script of the page, which has no
 address at all. Every call went into the page itself. Fixed inside the task by the probe that found
 it — the address of the script is remembered at the execution of the file.
+
+## RT-2284 — the panel on the ready-made chat of the kit, the findings of 21 September 2026
+
+The panel became the first consumer of the kit's chat in this tree, and the first consumer is the
+first check of the piece. Two findings are the kit's, and neither is fixed inside this task: the kit
+is a package of its own, and its folders are opened by the word of the owner.
+
+1. **The minute of a message takes the body of the message with it.** The chat formats the minute
+   by the locale of the application, and the data of that locale is registered by the application
+   itself. Without them the pipe throws, and the throw carries away everything the row had not drawn
+   yet: the author stayed, the text and the minute were gone. On the screen that reads as a chat
+   that lost the messages, not as a missing setting, and neither the build, nor the linter, nor a
+   test sees it. The application side is fixed inside this task — the data of the Russian locale is
+   registered next to the token the kit takes the locale from.
+
+2. **The word about the state of a message reaches the screen reader as a key.** The pipe of the
+   state label answers with a key of the shape another library reads, and the template puts that
+   answer into the label for the reader as it is. A tree that translates by the labels of the kit
+   itself gets `rtKit.chatStatusSent` read out loud, while the kit has its own label map right there
+   in the same component.
+
+Both go to the owner as one question: the kit is a package of its own, and its folders are opened by
+their word.

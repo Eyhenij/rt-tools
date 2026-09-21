@@ -70,6 +70,9 @@ export class AdminChatPanelComponent {
     protected readonly rows: Signal<readonly IChat.Talk.State[]> = this.#talks.rows;
     protected readonly messages: Signal<readonly IChat.Message.State[]> = this.#feed.messages;
 
+    /** Идёт ли чтение ленты: на её месте кит рисует своё ожидание. */
+    protected readonly feedReading: Signal<boolean> = this.#feed.loading;
+
     /** Выбранный разговор. Пусто — не выбран ни один, и лента просит выбрать. */
     protected readonly chosen: WritableSignal<string> = signal<string>('');
 
@@ -90,7 +93,6 @@ export class AdminChatPanelComponent {
     protected readonly talksEmpty: Signal<string> = computed((): string => this.#text.text('chatTalksEmpty'));
     protected readonly talksEmptyFrom: Signal<string> = computed((): string => this.#text.text('chatTalksEmptyFrom'));
     protected readonly feedUnchosen: Signal<string> = computed((): string => this.#text.text('chatFeedUnchosen'));
-    protected readonly feedEmpty: Signal<string> = computed((): string => this.#text.text('chatFeedEmpty'));
     protected readonly sendPlaceholder: Signal<string> = computed((): string => this.#text.text('chatAnswerPlaceholder'));
 
     /** Подписи сторон для треда кита: кит о сторонах этого домена не знает ничего. */

@@ -51,7 +51,6 @@ export const ADMIN_LABELS_EN: Record<TAdminLabelKey, string> = Object.freeze({
     chatTalksEmpty: 'There are no talks',
     chatTalksEmptyFrom: 'The talks of the sites you answer for will appear here',
     chatFeedUnchosen: 'Choose a talk on the left',
-    chatFeedEmpty: 'There are no messages in the talk',
     chatAnswerPlaceholder: 'An answer to the visitor',
     chatAnswerSend: 'Send',
     chatAnswerRefused: 'The remark did not go',

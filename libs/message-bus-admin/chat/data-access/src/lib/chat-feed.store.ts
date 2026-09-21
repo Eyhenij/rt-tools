@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ChatApiService } from '@rt/message-bus-admin/chat/api';
-import { chatResending, chatSendAnswered, chatSentMessage, EChatSendState, IChat } from '@rt/message-bus-admin/chat/util';
+import { chatArrived, chatResending, chatSendAnswered, chatSentMessage, EChatSendState, IChat } from '@rt/message-bus-admin/chat/util';
 import { IReadFault } from '@rt/message-bus-admin/common/core/util';
 import { IPage } from '@rt/message-bus-common';
 import { BASE_INITIAL_STATE, BaseAsyncStoreService, IStateBase } from '@rt-tools/store';
@@ -127,9 +127,9 @@ export class ChatFeedStore extends BaseAsyncStoreService<IChatFeedState, TChatFe
         this.#sendSource.next({ talkId, text: refused.text, sentId: messageId });
     }
 
-    /** Пришедшая из потока реплика: она встаёт в ленту открытого разговора и больше ничего. */
+    /** Пришедшая из потока реплика: она встаёт в ленту открытого разговора, если её там ещё нет. */
     public arrived(message: IChat.Message.State): void {
-        this.patchState((state: IChatFeedState) => ({ ...state, messages: [...state.messages, message] }));
+        this.patchState((state: IChatFeedState) => ({ ...state, messages: chatArrived(state.messages, message) }));
     }
 
     /** Ответ сервиса об отправленной реплике: принята или отбита. */

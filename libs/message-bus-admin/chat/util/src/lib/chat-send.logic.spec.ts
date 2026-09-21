@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { chatResending, chatSendAnswered, chatSentMessage } from './chat-send.logic';
+import { chatArrived, chatResending, chatSendAnswered, chatSentMessage } from './chat-send.logic';
 import { EChatSendState, EChatSide, IChat } from './chat.model';
 
 /** Минута, от которой считаются все остальные: часы машины в спеке не читаются. */
@@ -55,5 +55,43 @@ describe('отправленная реплика на экране', () => {
         const feed: IChat.Message.State[] = [chatSentMessage('свой-1', 'первая', AT), chatSentMessage('свой-2', 'вторая', AT)];
 
         expect(chatResending(feed, 'свой-1')[1].text).toBe('вторая');
+    });
+
+    it('SC-CH-82 — своя реплика, пришедшая потоком, вторым разом в ленту не встаёт', () => {
+        const taken: IChat.Message.State = {
+            id: 'message-1',
+            side: EChatSide.Operator,
+            text: 'слушаю вас',
+            takenAt: AT,
+            send: EChatSendState.Taken,
+        };
+
+        expect(chatArrived([taken], taken)).toEqual([taken]);
+    });
+
+    it('чужая реплика потока встаёт в конец ленты', () => {
+        const stands: IChat.Message.State = {
+            id: 'message-1',
+            side: EChatSide.Operator,
+            text: 'слушаю вас',
+            takenAt: AT,
+            send: EChatSendState.Taken,
+        };
+        const came: IChat.Message.State = { ...stands, id: 'message-2', side: EChatSide.Visitor, text: 'спасибо' };
+
+        expect(chatArrived([stands], came)).toEqual([stands, came]);
+    });
+
+    it('SC-CH-82 — принятая, уже принесённая потоком, своей временной рядом не удваивается', () => {
+        const taken: IChat.Message.State = {
+            id: 'message-1',
+            side: EChatSide.Operator,
+            text: 'слушаю вас',
+            takenAt: AT,
+            send: EChatSendState.Taken,
+        };
+        const feed: IChat.Message.State[] = [chatSentMessage('свой-1', 'слушаю вас', AT), taken];
+
+        expect(chatSendAnswered(feed, 'свой-1', taken)).toEqual([taken]);
     });
 });

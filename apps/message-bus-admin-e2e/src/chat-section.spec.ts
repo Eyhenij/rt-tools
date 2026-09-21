@@ -104,14 +104,18 @@ test.describe('раздел чата', () => {
         await expect(qa(page, 'chat-message-text').first()).toBeVisible();
 
         const shown: string[] = await feedTexts(page);
-        const sides: string[] = await qa(page, 'chat-message-side').allTextContents();
+        const sides: string[] = await qa(page, 'chat-message-author').allTextContents();
 
         // свежий разговор стоит первым: у третьего разговора стенда время позже остальных
         expect(shown[0]).toBe(CHAT.talks[2].text);
         expect(sides[0]).toBe('Посетитель');
     });
 
-    test('SC-CH-41 — отправленная реплика видна в ленте до ответа сервиса', async ({ page }: { page: Page }) => {
+    test('SC-CH-41, SC-CH-81 — отправленная реплика видна в ленте до ответа сервиса, и стоит уходящей', async ({
+        page,
+    }: {
+        page: Page;
+    }) => {
         await openSection(page, 'chat');
 
         await talks(page).first().click();
@@ -126,11 +130,58 @@ test.describe('раздел чата', () => {
             await route.continue();
         });
 
-        await qa(page, 'chat-answer').locator('input').fill('Ответ набора');
-        await qa(page, 'chat-answer-send').click();
+        await qa(page, 'chat-composer-input').fill('Ответ набора');
+        await qa(page, 'chat-composer-send').click();
 
         await expect(qa(page, 'chat-message-text').last()).toHaveText('Ответ набора');
-        await expect(qa(page, 'chat-message-text').last()).toHaveAttribute('data-send', 'sent');
+        await expect(qa(page, 'chat-message-status').last()).toHaveAttribute('data-status', 'sending');
+    });
+
+    test('SC-CH-80 — лента и поле ответа раздела нарисованы готовым чатом кита', async ({ page }: { page: Page }) => {
+        await openSection(page, 'chat');
+
+        await talks(page).first().click();
+
+        await expect(qa(page, 'chat-thread')).toBeVisible();
+        await expect(qa(page, 'chat-composer-input')).toBeVisible();
+
+        // положительная пара к отсутствию: реплики в ленте есть, и нарисованы они метками кита
+        await expect(qa(page, 'chat-message').first()).toBeVisible();
+        await expect(qa(page, 'chat-message-side')).toHaveCount(0);
+    });
+
+    test('SC-CH-82 — отбитая реплика уходит заново из ленты, и второй рядом не встаёт', async ({ page }: { page: Page }) => {
+        await openSection(page, 'chat');
+
+        await talks(page).first().click();
+        await expect(qa(page, 'chat-message-text').first()).toBeVisible();
+
+        const before: number = await qa(page, 'chat-message').count();
+        let refuse: boolean = true;
+
+        // первая отправка отбита сетью, вторая доходит: обещан уход той же реплики
+        await page.route('**/api/chat/conversations/*/messages', async (route): Promise<void> => {
+            if (refuse) {
+                refuse = false;
+
+                await route.abort();
+
+                return;
+            }
+
+            await route.continue();
+        });
+
+        await qa(page, 'chat-composer-input').fill('Реплика со второго захода');
+        await qa(page, 'chat-composer-send').click();
+
+        await expect(qa(page, 'chat-message-status').last()).toHaveAttribute('data-status', 'failed');
+        await expect(qa(page, 'chat-message')).toHaveCount(before + 1);
+
+        await qa(page, 'chat-message-retry').click();
+
+        await expect(qa(page, 'chat-message-status').last()).toHaveAttribute('data-status', 'sent');
+        await expect(qa(page, 'chat-message')).toHaveCount(before + 1);
     });
 
     test('SC-CH-39, SC-CH-45 — отбор по сайту и состоянию, закрытый разговор уходит из живых', async ({ page }: { page: Page }) => {
