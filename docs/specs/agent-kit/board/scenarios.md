@@ -218,3 +218,12 @@ When the same audit goes
 Then it says that the card points into emptiness and counts the line into the divergences
 
 Covered: `projects/agent-kit/tests/checks-board-epic-plan.test.sh`.
+
+### SC-AK-1157 — the number of a task is read from the task column of the makeup
+
+Given a makeup row naming the task in its own column and the request that merged it in the state
+column
+When the queue audit reads which tasks the plan names
+Then it takes the number of the task and not the number of the request
+
+Covered: `projects/agent-kit/tests/checks-board-epic-plan.test.sh`.

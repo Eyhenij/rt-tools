@@ -1,10 +1,10 @@
-// rt-kit v0.29.0 · checks/board-epics.github.mjs · 16be87e6de4d · правится надстройкой, не здесь
+// rt-kit v0.29.0 · checks/board-epics.github.mjs · 3c4b5c9b0ae1 · правится надстройкой, не здесь
 /**
  * The link between a task and an epic. Lives in a file of its own: the work queue audit stands at
  * the length limit even without it, and these two checks are read separately.
  */
 import { declaredEpicOf } from './board-epic-link.mjs';
-import { planPathOf, planRows } from './board-epic-plan.mjs';
+import { planPathOf, planRows, planTaskCells } from './board-epic-plan.mjs';
 import { ghJson, numberFromTitle, OfflineError, OWNER, REPO, TASK_KEY } from './board.mjs';
 import { CONFIG } from './rt-kit-checks.config.mjs';
 
@@ -66,7 +66,7 @@ export function checkEpicLinks(open, report) {
         }
 
         const planPath = found.path;
-        const mentions = planRows(found.text).matchAll(new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`, 'g'));
+        const mentions = planTaskCells(found.text).join('\n').matchAll(new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`, 'g'));
         const numbers = new Set([...mentions].map((match) => Number(match[1])));
         for (const number of numbers) {
             if (number === epic.number || !byNumber.has(number)) {
@@ -168,7 +168,7 @@ export function checkEpicSubIssues(open, report, options) {
             continue;
         }
 
-        const rows = planRows(found.text);
+        const rows = planTaskCells(found.text).join('\n');
         const named = new Set([...rows.matchAll(new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`, 'g'))].map((match) => Number(match[1])));
         named.delete(epic.number);
         if (named.size === 0) {
