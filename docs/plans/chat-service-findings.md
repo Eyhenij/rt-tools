@@ -103,3 +103,67 @@ application accepts the connection and then goes silent holds one pass of the al
 the environment default allows, three attempts in a row, and the pass goes over the batch one talk
 after another: one dead site delays the waking of every other. Fixed in the branch of RT-2183
 itself, while its change still waits for the reviewer.
+
+## RT-2184 — the rollout of the chat, the review of 21 September 2026
+
+Loaded over the task: `task-flow`, `git-workflow`, `doc-style`, `doc-style-human`, `spec-driven`,
+`spec-driven-rule`, `testing`, `browser-verification`, `typescript-conventions`, `reuse-first`,
+`observability`, `deploy-flow`. The rollout rule carried the work: it pulled the description of
+production alongside the config of the road, it put the build of the widget into the image rather
+than onto the node, and the name record set by hand before the rollout comes from it. The rule about
+the ready-made gave the argued rejection of the framework's own permission. Nothing loaded was dead
+weight.
+
+Never loaded, and it cost: `permissions`. The map of this tree binds it to the family of the entry
+alone, and the permission for the browser lives next to the operations it guards. Every access
+decision of the task was derived from scratch, and all four stand in the record of the closed work
+as decisions along the way.
+
+1. **The access law says nothing about a caller the browser judges** — the declaration of access on
+   an operation decides nothing there: the call reaches the service and the answer leaves it, and the
+   answer is stopped by the browser, already at the page. Nor is it said that the permission names
+   one address and never "any".
+
+2. **The rule of the permissions does not reach the browser permission, and the gate does not demand
+   it there** — three articles are missing: the permission stands on the paths of the surface it was
+   asked for and not on the whole application; the key of the caller takes no part in it and cannot;
+   an answer that depends on the address of the asker declares that to the intermediaries. A branch
+   of the map of this tree is written out for the middleware of that family.
+
+3. **A probe standing at the address of its own service checks everything except the addressing** —
+   the page and the service at one address make any wrong address right. This is the finding that
+   cost a real defect, and it was found within minutes of raising a second port. Its near neighbour
+   is the third finding of RT-2182: these two want to be one article.
+
+4. **A file a foreign page takes by our address is a promise, and the rollout rule has no word for
+   it** — the depth of the rollback guards the node, not the consumer: their page holds the address
+   and takes the new file at the minute of the rollout. Either the address carries an edition, or
+   one address is chosen on purpose and the price of that is written next to it.
+
+5. **The companion of the rollout rule gives the wrong verdict about the name records** — it opens
+   with "not carried out" and then says itself that the boundary here is the manual start. This is
+   the second occurrence of one class: a verdict of a companion ages with the tree, and the audit of
+   the descriptions reads it for existence, not for truth.
+
+6. **Second occurrence of the fifth finding of RT-2182** — the runtime layer of the gate still
+   misses a bare `document.`, and the commit that fixed the defect of the widget is exactly an edit
+   of two such calls.
+
+The first, the third and the fourth belong to the package; the second and the fifth are this tree's
+own.
+
+### What wants to be one rule and is now four findings
+
+The second finding of RT-2182, its fifth, the third of this review and the fourth of it circle one
+absent subject: code of ours that runs inside a foreign page. It may not assume when it is loaded,
+may not assume the tag was put by the author of the page, brings no framework, has no injector, and
+is replaced under its consumer by every rollout. Four patches into four rules will not add up to
+that, and one rule will. This goes to the owner as a single question before any of the four is
+written.
+
+### The defect this review names, and where it is fixed
+
+The widget asked for the address of the service at the minute the tag was met, and the page puts the
+tag by its own script: at that minute the question names the script of the page, which has no
+address at all. Every call went into the page itself. Fixed inside the task by the probe that found
+it — the address of the script is remembered at the execution of the file.
