@@ -45,6 +45,8 @@ consumer, the address of the active item the kit does not count.
 - **A press of the switch does not change the mode but asks for it.** The kit gives outward the mode a
   person asked for and waits for it back by an input: the preference is kept by the consumer, the kit
   creates no state of its own about it and does not go into the storage of the browser.
+  The one exception is favourites, by the owner's request. Their list is kept by a service of the kit:
+  see [favourites of the side menu](../side-menu-favorites/spec.md).
 - **A pinned submenu shows the active item.** Which item is active the kit learns by the input of the
   activity; it has no computing of its own by the address.
 - **The pinning does not change what is visible.** There is no active item — pinned stays the submenu that

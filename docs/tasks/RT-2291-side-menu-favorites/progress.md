@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — The showcase, the texts and the gate
 - **Done:** stages 1–2; step 3.1 — the stories `SubMenuFavorites` and `SubMenuFavoritesMobile`; step 3.2 on the wide screen — measured
-- **Next step:** step 3.2 on the narrow screen — measure the story `SubMenuFavoritesMobile` in a narrow frame
+- **Next step:** step 3.4 — `pnpm run check:all`
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet; the branch is not on the host — its gate refuses on four duplicated scenario numbers that stand in `main` itself
@@ -21,9 +21,9 @@
 - [x] 2.3 The drag by the handle with the CDK, the hold of a hover submenu during a drag and on a star focus
 - [x] 2.4 Tests of the menu, SC-UK-75…SC-UK-92
 - [x] 3.1 A story of the side menu with favourites switched on, labels in Russian
-- [>] 3.2 The favourites checked on the showcase by measurement: star, block, drag, reload
-- [ ] 3.3 The agreement merged into `docs/specs/ui-kit/side-menu-favorites/` with `implementation.md`, the storage article of the second level edited
-- [ ] 3.4 Lint, build and the spec check run whole
+- [x] 3.2 The favourites checked on the showcase by measurement: star, block, drag, reload
+- [x] 3.3 The agreement merged into `docs/specs/ui-kit/side-menu-favorites/` with `implementation.md`, the storage article of the second level edited
+- [>] 3.4 Lint, build and the spec check run whole
 
 ## Decisions along the way
 
@@ -89,3 +89,5 @@ Next step: 3.2 on the narrow screen, then 3.3 — merge the agreement into
   task folder is still missing there.
 - A snapshot reference for the two new stories is not taken: the first kit shoots every story, so
   `pnpm run test:visual` will name them missing until `pnpm run test:visual:update side-menu-favorites`.
+- Step 3.2 on the narrow screen: the story `SubMenuFavoritesMobile` in an iframe of 375 px — the narrow layout, rows `20, 2, 5` under the search, the outlined star opacity 1 without a hover, document overflow 0.
+- Step 3.3: the agreement moved to `docs/specs/ui-kit/side-menu-favorites/` with `implementation.md`; the storage article of the second level names favourites as the exception; `node tools/check-specs.mjs` — only the four divergences of `main` are left.

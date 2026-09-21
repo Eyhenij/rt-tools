@@ -1,14 +1,12 @@
 # Favourites of the side menu
 
-**Status:** proposed · **Revision:** 2026-09-21 · **Scenario prefix:** `SC-UK`
+**Status:** in force · **Revision:** 2026-09-21 · **Scenario prefix:** `SC-UK`
 **Depends on:** the second level of the side menu — the favourites block stands in its submenu
 **Laws:** `frontend-application`, `reuse-first`, `navigation`
 **Procedures:** none
 
-The product agreement written before the code. It merges into `docs/specs/ui-kit/` as the
-subdomain `side-menu-favorites` by the last commit of the PR, with the scenario numbers unchanged.
-A subdomain of its own, not a section of the second level: that spec is already two hundred lines
-long.
+A subdomain of the first kit about favourites of the side menu. It is a subdomain of its own: the
+spec of the second level is already two hundred lines long.
 
 ## Why
 
@@ -214,5 +212,5 @@ Not applicable: one list per application key.
 
 ## History of changes
 
-- 2026-09-21 — the agreement was written before the code under RT-2291 and revised by its critique
-  before the plan.
+- 2026-09-21 — started under RT-2291. The agreement was written before the code and revised by its
+  critique; the scenario numbers stayed the same.
