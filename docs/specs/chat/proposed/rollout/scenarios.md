@@ -33,6 +33,10 @@ Given the image of the road built from this tree
 When the file of the widget is asked of it
 Then the file lies at the named address inside the image
 
+Не покрыто: the subject is the image, and the end-to-end suite raises the stand from the builds
+themselves, never from the image. It is checked by building the image and one command inside it,
+and both stand in the stage of the plan of RT-2184 that put the file there.
+
 ### SC-CH-79 — a foreign page talks to the service across the names
 
 Given a page raised at an address of its own and a site whose list holds that address

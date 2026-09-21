@@ -13,7 +13,7 @@
  * ложится в одну секунду — порядок «свежий разговор сверху» на таких данных не отличить от
  * любого другого.
  */
-import { ADMIN_ORIGIN, ADMIN_PAGE_ORIGIN, API_ORIGIN, CHAT, CHAT_HOOK_URL } from './stand.mjs';
+import { ADMIN_ORIGIN, ADMIN_PAGE_ORIGIN, API_ORIGIN, CHAT, CHAT_HOOK_URL, FOREIGN_PAGE_ORIGIN } from './stand.mjs';
 
 /** Минута, от которой считаются времена разговоров: она же стоит в спеках раздела. */
 const FIRST_MOMENT = '2026-09-19 09:00:00';
@@ -77,7 +77,11 @@ function recordsSql() {
         `INSERT INTO "chat_site" ("id", "spaceId", "name", "key", "origins", "enabled", "greeting", "answerFrom", "answerTo", "timeZone",`,
         `    "hookUrl", "hookSecret", "answerWithin")`,
         `VALUES`,
-        `    ('${CHAT.widget.id}', 'chat-space-stand', '${CHAT.widget.name}', '${CHAT.widget.key}', ARRAY['${ADMIN_ORIGIN}', '${ADMIN_PAGE_ORIGIN}'], true,`,
+        // Адрес страницы чужого порта стоит в списке только у этой площадки: ею и проверяется,
+        // что страница чужого адреса разговаривает с сервисом, а её соседка — что чужой не
+        // разговаривает.
+        `    ('${CHAT.widget.id}', 'chat-space-stand', '${CHAT.widget.name}', '${CHAT.widget.key}',`,
+        `        ARRAY['${ADMIN_ORIGIN}', '${ADMIN_PAGE_ORIGIN}', '${FOREIGN_PAGE_ORIGIN}'], true,`,
         `        '${CHAT.widget.greeting}', 0, 1439, 'UTC', '${CHAT_HOOK_URL}', '${CHAT.hook.secret}', 0),`,
         `    ('${CHAT.widgetClosed.id}', 'chat-space-stand', '${CHAT.widgetClosed.name}', '${CHAT.widgetClosed.key}',`,
         `        ARRAY['${ADMIN_ORIGIN}', '${ADMIN_PAGE_ORIGIN}'], true, '${CHAT.widgetClosed.greeting}', ${closed.from}, ${closed.to}, 'UTC',`,
