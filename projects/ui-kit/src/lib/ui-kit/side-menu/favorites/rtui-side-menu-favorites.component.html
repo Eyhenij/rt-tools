@@ -19,8 +19,8 @@
                     qa-dataid="side-menu-favorite-row"
                     cdkDrag
                     [attr.data-id]="item.id"
-                    (cdkDragStarted)="onDragStart()"
-                    (cdkDragEnded)="onDragEnd()">
+                    (cdkDragStarted)="onDragStart(item.id)"
+                    (cdkDragEnded)="onDragEnd($event)">
                     <!--
                         Ручка стоит внутри пункта, последней после кнопки «убрать»: подсветка пункта
                         накрывает и её. Строку тянут только за ручку: остальная строка — ссылка, и

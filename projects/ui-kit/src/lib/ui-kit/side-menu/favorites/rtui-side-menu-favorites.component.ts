@@ -1,10 +1,12 @@
-import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
 import {
     afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
+    DestroyRef,
+    effect,
     ElementRef,
     inject,
     Injector,
@@ -13,7 +15,9 @@ import {
     output,
     OutputEmitterRef,
     Signal,
+    signal,
     viewChildren,
+    WritableSignal,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -24,10 +28,12 @@ import { BlockDirective, BreakpointService, ElemDirective, ModDirective, RtIconO
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
 import { RtuiSubMenuHoldService } from '../menu/rtui-sub-menu-hold.service';
 import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
-import { favoritesSection, findFavoriteItems } from './favorites.logic';
+import { favoritesSection, findFavoriteItems, isDroppedOutside } from './favorites.logic';
 import { RtuiSideMenuSettingsService } from '../settings/rtui-side-menu-settings.service';
 
 const BEM_BLOCK: string = 'rtui-side-menu-favorites';
+/** Панель подменю: уход указателя с неё закрывает подменю, открытое наведением. */
+const SUB_MENU_PANEL: string = '.rtui-sub-side-menu-content';
 
 /**
  * Блок избранного вверху подменю: выбранные человеком разделы в порядке его списка.
@@ -72,6 +78,9 @@ export class RtuiSideMenuFavoritesComponent {
     readonly #hold: RtuiSubMenuHoldService | null = inject(RtuiSubMenuHoldService, { optional: true });
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
     readonly #injector: Injector = inject(Injector);
+    readonly #host: ElementRef<HTMLElement> = inject(ElementRef);
+    /** Номер строки в руке; пусто, пока ничего не тянут. */
+    readonly #dragged: WritableSignal<ISideMenu.FavoriteId | null> = signal(null);
     readonly #section: Signal<ISideMenu.Item | null> = computed(
         (): ISideMenu.Item | null => this.favorites && favoritesSection(this.#menu.menuItems(), this.#menu.shownSubMenu())
     );
@@ -112,14 +121,37 @@ export class RtuiSideMenuFavoritesComponent {
         event: MouseEvent;
     }>();
 
+    constructor() {
+        // Строку в руке уничтожили — указатель увёл подменю на другой раздел. CDK закрывает тягу
+        // без события конца, и удержание осталось бы навсегда: подменю перестало бы закрываться.
+        effect((): void => {
+            const dragged: ISideMenu.FavoriteId | null = this.#dragged();
+
+            if (dragged !== null && !this.rows().some((item: ISideMenu.Item): boolean => item.id === dragged)) {
+                this.#release();
+            }
+        });
+        inject(DestroyRef).onDestroy((): void => this.#release());
+    }
+
     /** Строка в руке: подменю, открытое наведением, не закрывается, когда рука выходит за панель. */
-    public onDragStart(): void {
+    public onDragStart(id: ISideMenu.FavoriteId): void {
+        this.#dragged.set(id);
         this.#hold?.hold();
     }
 
-    /** Строка брошена: удержание снимается, подменю снова закрывается уходом указателя. */
-    public onDragEnd(): void {
-        this.#hold?.release();
+    /**
+     * Строка брошена: удержание снимается. Брошенная за панелью закрывает подменю, открытое
+     * наведением, — уход указателя, пропущенный за время тяги, срабатывает сейчас.
+     */
+    public onDragEnd(event: CdkDragEnd): void {
+        this.#release();
+
+        const panel: Element | null = this.#host.nativeElement.closest(SUB_MENU_PANEL);
+
+        if (panel && event.dropPoint && isDroppedOutside(panel.getBoundingClientRect(), event.dropPoint)) {
+            this.#menu.toggleSubMenu();
+        }
     }
 
     /**
@@ -146,6 +178,16 @@ export class RtuiSideMenuFavoritesComponent {
 
         this.#move(index, target);
         afterNextRender(() => this.handles()[target]?.nativeElement.focus(), { injector: this.#injector });
+    }
+
+    /** Снимает удержание, если строку тянули; без тяги удержание не трогает — его мог поставить фокус. */
+    #release(): void {
+        if (this.#dragged() === null) {
+            return;
+        }
+
+        this.#dragged.set(null);
+        this.#hold?.release();
     }
 
     /** Место в блоке переводится в место списка по свежей записи хранилища: скрытые номера остаются на своих. */

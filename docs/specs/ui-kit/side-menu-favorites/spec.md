@@ -184,7 +184,9 @@ sign-out or fill it with defaults.
   The block shows only the ids found in the open section — ids of other sections and ids the menu
   lacks are hidden alike — so a place in the block is not a place in the list.
 - **While a row is dragged, the submenu stays open in either mode, and the drop releases it.** A
-  drag leaving the panel would close a hover submenu in the middle of the drop.
+  drag leaving the panel would close a hover submenu in the middle of the drop. A row dropped
+  outside the panel closes a hover submenu, as the pointer leaving it would have; a dragged row that
+  disappears — the pointer took the submenu to another section — releases the hold too.
 - **The arrows on a handle move its row to the neighbouring place, and the focus goes with it.**
   The drag knows no keys; without the arrows the handle would be a control a keyboard user reaches
   and cannot use.
@@ -364,3 +366,7 @@ One settings object per application key, and in it one list per menu id.
   writes as `default` in the menu and in the service. Scenario SC-UK-117 added.
 - 2026-09-21 — the owner: the service moves among the shown ids by `moveVisible`, the way the
   block does, and the block's drop reads the storage before it writes. Scenario SC-UK-118 added.
+- 2026-09-21 — the review of the change: a row dropped outside the panel closes a hover submenu, and
+  a dragged row that disappears releases the hold. Scenarios SC-UK-119 and SC-UK-120 added.
+- 2026-09-21 — the review of the change: a row dropped outside the panel closes a hover submenu, and
+  a dragged row that disappears releases the hold. Scenarios SC-UK-119 and SC-UK-120 added.

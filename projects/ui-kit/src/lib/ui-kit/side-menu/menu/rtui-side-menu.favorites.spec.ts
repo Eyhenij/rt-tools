@@ -28,6 +28,7 @@ import {
     drop,
     enabled,
     HANDLE,
+    hoverItem,
     keyboardFocus,
     listRow,
     ON,
@@ -35,6 +36,7 @@ import {
     STAR,
     tooltip,
     withFavorites,
+    SECTIONS,
 } from './side-menu-favorites.harness';
 
 beforeAll(installFontsStub);
@@ -354,7 +356,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect(menu(fixture).selectedSubMenu()).toBeNull();
 
         hoverFirstItem(fixture);
-        block(fixture).onDragStart();
+        block(fixture).onDragStart('rates');
         fixture.debugElement
             .query(By.directive(CdkDrag))
             .injector.get(CdkDrag)
@@ -367,10 +369,42 @@ describe('RtuiSideMenuComponent — избранное', () => {
         const { fixture } = withFavorites(['rates']);
 
         hoverFirstItem(fixture);
-        block(fixture).onDragStart();
+        block(fixture).onDragStart('rates');
         leavePanel(fixture);
 
         expect(menu(fixture).selectedSubMenu()).not.toBeNull();
+    });
+
+    it('SC-UK-119 — строка в руке пропала вместе с разделом — удержание снимается', () => {
+        const { fixture } = withFavorites(['a', 'c'], { items: SECTIONS });
+
+        hoverItem(fixture, 0);
+        block(fixture).onDragStart('a');
+        hoverItem(fixture, 1);
+        leavePanel(fixture);
+
+        expect(menu(fixture).selectedSubMenu()).toBeNull();
+    });
+
+    it('SC-UK-120 — строка, брошенная за панелью, закрывает подменю, открытое наведением', () => {
+        const { fixture } = withFavorites(['rates']);
+        const panel: HTMLElement = fixture.nativeElement.querySelector('mat-drawer') as HTMLElement;
+        jest.spyOn(panel, 'getBoundingClientRect').mockReturnValue({ left: 0, right: 300, top: 0, bottom: 600 } as DOMRect);
+        const dragEnded: (x: number) => void = (x: number): void => {
+            block(fixture).onDragStart('rates');
+            fixture.debugElement
+                .query(By.directive(CdkDrag))
+                .injector.get(CdkDrag)
+                .ended.emit({ dropPoint: { x, y: 100 } } as CdkDragEnd);
+            fixture.detectChanges();
+        };
+
+        hoverFirstItem(fixture);
+        dragEnded(150);
+        expect(menu(fixture).selectedSubMenu()).not.toBeNull();
+
+        dragEnded(450);
+        expect(menu(fixture).selectedSubMenu()).toBeNull();
     });
 
     it('SC-UK-91 — строка, брошенная вне блока, ничего не меняет', () => {

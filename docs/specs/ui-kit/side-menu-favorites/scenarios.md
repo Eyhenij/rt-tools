@@ -334,3 +334,16 @@ writes the default menu's settings
 Given the list `a`, `x`, `b`, `c`, where `x` is not shown, and another tab has just added `d`
 When the application moves the first shown id of `a`, `b`, `c` to the last place
 Then the list is `b`, `x`, `c`, `a`, `d`; an id the list does not hold is ignored among the shown
+
+### SC-UK-119 — a dragged row that disappears releases the hold
+
+Given the service and a hover submenu with favourites in two sections
+When a row of the first section is taken by its handle, the pointer opens the second section, and
+then leaves the panel
+Then the submenu closes
+
+### SC-UK-120 — a row dropped outside the panel closes a hover submenu
+
+Given the service and a submenu opened by hover
+When a row is dropped inside the panel, and then another drop lands outside it
+Then the submenu stays open after the first drop and closes after the second

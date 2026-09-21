@@ -130,3 +130,17 @@ export function favoritesSection(menu: ReadonlyArray<ISideMenu.Item>, shown: ISi
 
     return section?.favorites ? section : null;
 }
+
+/** Место на экране, где строку отпустили, и прямоугольник панели подменю. */
+export interface IDropPoint {
+    x: number;
+    y: number;
+}
+
+/**
+ * Строку отпустили за пределами панели. Пока её тянули, уход указателя с панели не закрывал
+ * подменю, открытое наведением, — после броска он должен сработать так, будто случился сейчас.
+ */
+export function isDroppedOutside(panel: Pick<DOMRect, 'left' | 'right' | 'top' | 'bottom'>, point: IDropPoint): boolean {
+    return point.x < panel.left || point.x > panel.right || point.y < panel.top || point.y > panel.bottom;
+}

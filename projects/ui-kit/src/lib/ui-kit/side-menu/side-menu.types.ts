@@ -26,6 +26,8 @@ export interface IRtuiSideMenuHost {
     readonly subMenuQuery: Signal<string>;
     /** Номер меню, под которым лежат его настройки: избранное читается и пишется по нему. */
     readonly menuId: Signal<string>;
+    /** Указатель ушёл с панели; без пункта — то же, что уход мышью. */
+    toggleSubMenu(item?: ISideMenu.Item): void;
 }
 
 export const RTUI_SIDE_MENU: InjectionToken<IRtuiSideMenuHost> = new InjectionToken<IRtuiSideMenuHost>('RTUI_SIDE_MENU');
