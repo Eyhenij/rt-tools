@@ -192,3 +192,22 @@ body of the command. A read, a write to a file that is not a document, and a wri
 of the past pass as before
 
 Covered: `projects/agent-kit/tests/prose-style-guard.test.sh`.
+
+### SC-AK-1136 — the text of a shell write is taken from the heredoc bodies
+
+Given a command writes a document by a heredoc, and the previous wording of that document stands in
+the same command outside the heredoc
+When the guard of the wording checks the call
+Then it judges the bodies of the heredocs alone and lets the call through; a command without a
+heredoc is judged whole, as before
+
+Covered: `projects/agent-kit/tests/prose-style-guard.test.sh`.
+
+### SC-AK-1137 — a document outside the root of the tree is not judged
+
+Given a document lies outside the declared root of the tree, and its text carries officialese
+When the guard of the wording checks the write
+Then it lets it through: the agreements of this tree do not act outside it; with no root declared
+the judgement goes as before
+
+Covered: `projects/agent-kit/tests/prose-style-guard.test.sh`.

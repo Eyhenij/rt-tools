@@ -49,6 +49,10 @@ owner as it is.
 - **The epic is taken from the current branch, and the argument names another one.** The branch gives
   the task, the body of the task declares the epic, the body of the epic names the plan. Standing on
   a foreign branch, one asks about the epic by its number.
+- **On the branch of the epic itself the number is taken from its own card.** The card of an epic
+  declares no other epic, because it is the epic: it is recognised by the label of an epic card. The
+  answer «the task declares no epic» read there as a broken card rather than as a question asked the
+  wrong way.
 - **What the task is about is taken from the plan, and its name from the card.** The plan says in one
   phrase what the task does, the card carries the wording agreed with the owner: neither replaces the
   other.

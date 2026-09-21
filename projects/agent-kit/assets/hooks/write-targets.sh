@@ -42,8 +42,30 @@ rt_write_targets() {
     rt_wt_text="$(printf '%s' "$rt_wt_text" \
         | sed -E 's#(&|[0-9]*)>>?[[:space:]]*/dev/(null|stderr)##g; s#[0-9]*>&[0-9-]##g')"
 
+    # The bodies of the heredocs are cut out of the shell parse: they are data of the command, not
+    # the command. A markdown quote line inside a body — a caret and a path — read as a redirection,
+    # and an edit that wrote nothing into the tree was refused by the path standing in that quote.
+    # The bodies are parsed separately, by the interpreter branch below.
+    rt_wt_shell="$(printf '%s' "$rt_wt_text" | awk -v q="'" '
+        function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }
+        tag != "" { if (trim($0) == tag) { tag = "" } ; next }
+        {
+            print
+            s = $0
+            re = "<<-?[ \t]*(\"[^\"]+\"|" q "[^" q "]+" q "|[A-Za-z_][A-Za-z0-9_]*)"
+            while (match(s, re)) {
+                t = substr(s, RSTART, RLENGTH)
+                s = substr(s, RSTART + RLENGTH)
+                sub(/^<<-?[ \t]*/, "", t)
+                gsub(/\"/, "", t)
+                gsub(q, "", t)
+                tag = t
+            }
+        }
+    ')"
+
     {
-        printf '%s' "$rt_wt_text" \
+        printf '%s' "$rt_wt_shell" \
             | tr "\"'\`" '   ' \
             | sed -E 's/>>?/\n>/g' \
             | sed -nE '

@@ -71,6 +71,12 @@ into an interactive sign-in instead of an answer.
 
 ## Common misses
 
+- **On the epic's own branch the number is asked as an argument.** Without an argument the
+  command takes the number from the branch and looks in that card's body for the line declaring
+  an epic. On a task branch that line is there; on the epic branch the card is the epic itself
+  and declares no other. The answer — "the task declares no epic" — then reads as a broken card
+  rather than as a question asked the wrong way.
+
 - **The task on the board is read by a request, not by the view subcommand.** The subcommand
   drags in boards of the old kind, the host answers with a refusal about them, and the call turns
   red whole, showing nothing. A direct request is taken.

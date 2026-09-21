@@ -156,6 +156,11 @@ flowchart TD
   silently allows what the tree does not have, and the next reader takes it for a current
   explanation. Not every list has a dead-entry check, so it is removed by the same change that
   removes the place that caused it.
+- **A new check's list is written together with the check for a dead entry in it.** The article
+  above leaves the removal to whoever removes the place, and it is kept by memory: an entry whose
+  place is gone silently allows what the tree no longer has. A check that reads its own list also
+  compares it with what it found and refuses on an entry nothing answers to — then a dead line
+  costs the same as a new violation and does not wait for a reader.
 - **Red has an assigned action, and a second rerun is not part of it.** Red comes in two kinds,
   and in the list of runs they look the same: a hosting refusal on the preparation step is cured
   by a rerun, a defect of the branch is not cured by it at all. The assigned action is one: first
@@ -176,11 +181,21 @@ flowchart TD
   them drifts from the original silently, and both sides stay green: one writes under its value,
   the other looks under its own. This is checked by a scenario that computes the value both ways
   and compares them, not by one scenario on each side.
+- **A field of an answer the whole application shares is checked at the place of assembly, not
+  beside one operation.** A test next to an operation sees what that operation returned, while the
+  answer is built elsewhere: every such test stays green when the field reaches no answer at all.
+  The check goes where the body is assembled, or walks the whole set of operations at once.
 - **A test asserting absence is green even when it looks for the wrong thing.** There is no match
   for the right text, nor for a typo in the sample, nor for a renamed key — nothing tells them
   apart by the run's colour. So a negative assertion goes paired with a positive one: first it is
   checked that the place sought is found at all, and only then that it lacks what must not be
   there.
+- **A test about a value's absence is built on a value that cannot exist, not on one that is
+  merely not filled in yet.** A test that took a real dictionary key as "the untranslated one" is
+  green only while nobody translates it: filling the dictionary turns the fallback assertion red,
+  and the red points at the fill, not at the test. The value for such a test is made up on the
+  spot and by shape cannot enter the set. It is cast into the key type at the call site: a full
+  record stays full, and the case keeps its meaning after any fill.
 - **A count taken over a run's output says nothing until the run is known to have reached the step
   counted.** A build, an install and a suite refuse at preparation steps of their own —
   configuration parsing, dependency resolution, path resolution — and such a refusal carries the

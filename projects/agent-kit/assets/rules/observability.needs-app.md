@@ -70,6 +70,11 @@ flowchart TD
   check that fired. On one level with breakages it floods the alarm with guests' typos.
 - **The cause of a failure is parsed in one place.** Otherwise the same error arrives in the logs
   in three different shapes.
+- **A field added to the answer of a refusal is added where the answer is assembled, not where the
+  refusal is thrown.** The application parses failures in one place and builds the body there out
+  of what it knows: every throw may name the field, and the body carries none of them. Neither the
+  linter nor the tests next to the throws see it — the loss shows on the screen of whoever reads
+  the answer.
 - **The fields of a log line are always scrubbed, not at the discretion of whoever writes.**
   Deciding on every call whether the fields hold a secret means being wrong once.
 - **At startup the application writes what it came up with.** Half of the features are enabled by
