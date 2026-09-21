@@ -367,7 +367,6 @@ command -v rt_epic_own_pull >/dev/null 2>&1 && rt_epic_own_pull "$state"
 
 title=''
 if command -v perl >/dev/null 2>&1; then
-    # Длинный ключ ищется первым: короткий занят соседями — строка запуска с ним становилась заголовком.
     title="$(printf '%s' "$cmd" | perl -0ne '
         my $v = qr/(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/;
         if (/--title(?:=|\s+)$v/s || /(?<![-\w])-t(?:=|\s+)$v/s) {
