@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { originAllowed, pageOrigin } from './chat-origin.logic';
+import { CHAT_CORS_HEADERS, CHAT_CORS_METHODS, chatCorsHeaders, originAllowed, pageOrigin } from './chat-origin.logic';
 
 describe('originAllowed', () => {
     it('SC-CH-5 — адрес страницы вне списка сайта не проходит', () => {
@@ -25,5 +25,46 @@ describe('originAllowed', () => {
         expect(pageOrigin('', 'https://shop.example/catalog?page=2')).toBe('https://shop.example');
         expect(pageOrigin('', '')).toBe('');
         expect(pageOrigin('', 'не адрес')).toBe('');
+    });
+});
+
+describe('chatCorsHeaders', () => {
+    it('SC-CH-74 — адрес из списка площадки получает позволение на обращение', () => {
+        const given: Readonly<Record<string, string>> | null = chatCorsHeaders(['https://shop.example'], 'https://shop.example', false);
+
+        expect(given).toEqual({ 'access-control-allow-origin': 'https://shop.example' });
+    });
+
+    it('SC-CH-75 — адрес вне списка не получает ни одного заголовка позволения', () => {
+        expect(chatCorsHeaders(['https://shop.example'], 'https://foreign.example', false)).toBeNull();
+        expect(chatCorsHeaders(['https://shop.example'], 'https://foreign.example', true)).toBeNull();
+    });
+
+    it('SC-CH-76 — предварительный запрос отвечается тем же списком и называет способы обращения', () => {
+        const given: Readonly<Record<string, string>> | null = chatCorsHeaders(['https://shop.example'], 'https://shop.example', true);
+
+        expect(given).toEqual({
+            'access-control-allow-origin': 'https://shop.example',
+            'access-control-allow-methods': CHAT_CORS_METHODS,
+            'access-control-allow-headers': CHAT_CORS_HEADERS,
+            'access-control-max-age': '600',
+        });
+    });
+
+    it('SC-CH-77 — позволение называет один адрес, а не любой', () => {
+        const first: Readonly<Record<string, string>> | null = chatCorsHeaders(
+            ['https://shop.example', 'https://blog.example'],
+            'https://shop.example',
+            false
+        );
+        const second: Readonly<Record<string, string>> | null = chatCorsHeaders(
+            ['https://shop.example', 'https://blog.example'],
+            'https://blog.example',
+            false
+        );
+
+        expect(first?.['access-control-allow-origin']).toBe('https://shop.example');
+        expect(second?.['access-control-allow-origin']).toBe('https://blog.example');
+        expect(Object.values(first ?? {})).not.toContain('*');
     });
 });

@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 
 import { AccessModule } from '@rt/message-bus-api/access/feature';
 
+import { ChatCorsMiddleware } from './chat-cors.middleware';
 import { ChatHookService } from './chat-hook.service';
 import { ChatIntakeController } from './chat-intake.controller';
 import { ChatReadController } from './chat-read.controller';
@@ -19,9 +20,21 @@ import { ChatWakeService } from './chat-wake.service';
  * и закрыт ключом сайта, чтение оператором закрыто входом человека. Два способа представиться в
  * одном файле читались бы как одна поверхность с двумя дверьми.
  */
+/**
+ * Пути открытых операций: на них браузер чужой страницы получает позволение обращаться.
+ *
+ * Пути названы поимённо, а не образцом: позволение даётся ровно открытым операциям, и чтение
+ * оператором, закрытое входом человека, к этому списку отношения не имеет.
+ */
+const OPEN_PATHS: readonly string[] = ['chat/conversations', 'chat/site', 'chat/messages', 'chat/stream'];
+
 @Module({
     imports: [AccessModule],
     controllers: [ChatIntakeController, ChatReadController],
     providers: [ChatSubscribersService, ChatHookService, ChatWakeService],
 })
-export class ChatModule {}
+export class ChatModule implements NestModule {
+    public configure(consumer: MiddlewareConsumer): void {
+        consumer.apply(ChatCorsMiddleware).forRoutes(...OPEN_PATHS);
+    }
+}

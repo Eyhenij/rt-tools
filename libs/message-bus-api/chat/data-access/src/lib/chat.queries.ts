@@ -93,6 +93,23 @@ export async function findSiteById(prisma: PrismaService, id: string): Promise<I
     return prisma.chatSite.findFirst({ where: { id }, select: SITE_FIELDS });
 }
 
+/**
+ * Адреса всех живых площадок одним списком: по нему отвечается позволение браузеру.
+ *
+ * Ключ площадки в этом ответе не участвует, и участвовать не может: предварительный запрос
+ * браузер шлёт без тела, а ключ приём реплики берёт как раз из тела. Позволение поэтому даётся
+ * адресу, который стоит в списке хоть одной живой площадки, а пару «ключ и адрес» сводит сама
+ * операция — чужая пара получает отказ, и страница его читает.
+ */
+export async function liveSiteOrigins(prisma: PrismaService): Promise<string[]> {
+    const sites: { origins: string[] }[] = await prisma.chatSite.findMany({
+        where: { enabled: true },
+        select: { origins: true },
+    });
+
+    return sites.flatMap((site: { origins: string[] }): string[] => site.origins);
+}
+
 /** Переписка посетителя на этом сайте по его признаку. Пусто — признак чужой или не выдавался. */
 export async function findConversationByVisitorToken(
     prisma: PrismaService,

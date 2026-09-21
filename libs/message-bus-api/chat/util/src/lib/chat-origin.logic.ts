@@ -63,3 +63,42 @@ export function originAllowed(origins: readonly string[], origin: string): boole
 
     return origins.some((allowed: string): boolean => normalized(allowed) === asked);
 }
+
+/** Способы обращения, на которые браузер получает позволение: чат открытых операций иных не знает. */
+export const CHAT_CORS_METHODS: string = 'GET, POST, OPTIONS';
+
+/** Заголовки, которые виджету позволено слать: тело он шлёт разобранным, и хватает одного. */
+export const CHAT_CORS_HEADERS: string = 'content-type';
+
+/** Сколько секунд браузер вправе помнить позволение и не спрашивать заново. */
+export const CHAT_CORS_MAX_AGE: string = '600';
+
+/**
+ * Заголовки позволения для страницы чужого адреса.
+ *
+ * Браузер такую страницу к ответу не пускает, пока сервис не назвал её адрес. Называется именно
+ * он, а не «любой»: позволение «любому» открыло бы операции площадки всякой странице сети, и
+ * список адресов перестал бы значить что-либо.
+ *
+ * Адрес не из списков живых площадок не получает ни одного заголовка — и отказа тоже: ответ
+ * уходит обычный, а до страницы его не доносит сам браузер.
+ *
+ * Предварительный запрос браузера отвечается тем же списком и добавляет к позволению способы
+ * обращения и заголовки: позволенный заранее и отвергнутый потом выглядит для страницы поломкой
+ * сервиса.
+ */
+export function chatCorsHeaders(origins: readonly string[], origin: string, beforehand: boolean): Readonly<Record<string, string>> | null {
+    if (!originAllowed(origins, origin)) {
+        return null;
+    }
+
+    const headers: Record<string, string> = { 'access-control-allow-origin': origin };
+
+    if (beforehand) {
+        headers['access-control-allow-methods'] = CHAT_CORS_METHODS;
+        headers['access-control-allow-headers'] = CHAT_CORS_HEADERS;
+        headers['access-control-max-age'] = CHAT_CORS_MAX_AGE;
+    }
+
+    return headers;
+}
