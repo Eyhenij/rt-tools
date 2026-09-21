@@ -83,6 +83,10 @@
 - The cause: the star took `--rt-icon-accent-primary`, the kit's own blue palette (#4284d7), while the showcase's Material theme is violet (`mat.$violet-palette`, #7d00fa). The showcase theme is built by `define-theme` and declares no `--mat-sys-*`; the primary colour lives in the component tokens, `--mat-button-filled-container-color` among them. The chain now: `--rt-side-menu-favorite-color` → `--mat-sys-primary` → `--mat-button-filled-container-color` → `--rt-icon-accent-primary`.
 - The showcase on 6006: the filled star and the heading's star rgb(125, 0, 250); `--rt-side-menu-favorite-color` on the menu gave rgb(230, 120, 0) to both, `--rt-side-menu-favorites-title-color` gave rgb(0, 128, 90) to the label; the heading 14 px, its star 16 px with `FILL 1`, centres matched. `pnpm exec nx test @rt-tools/ui-kit --testFile=side-menu` — 156 passed; `node tools/check-specs.mjs` — the four divergences of `main`.
 
+- The owner: «иконка драга справа после минуса, тут еще есть кастомный пугкт меню Галерея с разделителем, фейворит будет перед ним и тоже с разделителем отступы будут одинаковые?».
+- The handle moved after the item and into the column of the list's stars by a negative margin equal to the list item's trailing space. The showcase on 6006: handle 271–303 px, list stars' right edge 303 px, the minus 239–271 px, the labels of block and list rows both at 113 px, overflow 0. 156 tests passed.
+- "Галерея" with a divider is found neither in this tree nor in the two consumers on this machine (`web-store`, `vaping360`); the question about equal spacing is asked back to the owner with the block's numbers.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).

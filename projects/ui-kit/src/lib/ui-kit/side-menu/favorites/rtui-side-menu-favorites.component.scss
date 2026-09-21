@@ -53,6 +53,11 @@
             --mat-icon-button-icon-color: var(--rt-text-base-secondary);
 
             flex: 0 0 auto;
+
+            // Ручка встаёт в колонку звёзд списка: заходит в правый отступ строки пункта на его
+            // ширину и возвращает её справа. Иначе она торчала бы правее звёзд на тот же отступ.
+            margin-right: var(--mat-list-list-item-trailing-space, var(--rt-spacing-16));
+            margin-left: calc(-1 * var(--mat-list-list-item-trailing-space, var(--rt-spacing-16)));
             cursor: grab;
 
             &:active {

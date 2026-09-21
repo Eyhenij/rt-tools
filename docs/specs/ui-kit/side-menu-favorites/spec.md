@@ -41,7 +41,7 @@ sign-out or fill it with defaults.
 | The star, off        | a hollow star, `star_border`; the tooltip "Add to favourites"                                    |
 | The star, on         | a filled star in the theme colour; the tooltip "Remove from favourites"                          |
 | The remove button    | a minus, `remove`; the tooltip "Remove from favourites"                                          |
-| The handle           | the move button `open_with`, the tooltip "Hold button to drag"                                   |
+| The handle           | the move button `open_with` at the right edge of a block row, the tooltip "Hold button to drag"  |
 
 ## Rules
 
@@ -135,7 +135,9 @@ sign-out or fill it with defaults.
 - **A row of the block is dragged by its handle, and the new order is kept at the drop.** The rest
   of the row stays a link: a row dragged by its whole body cannot be pressed without a jitter. The
   handle is the one of the selected list of the dynamic selector: a button with the move icon and
-  the tooltip "Hold button to drag".
+  the tooltip "Hold button to drag". It stands last, at the right edge after the remove button, in
+  the column of the list's stars; the label of a block row starts where the label of a list row
+  does.
 - **A drop moves the dragged id next to its visible neighbour, and hidden ids keep their places.**
   The block shows only the ids found in the open section — ids of other sections and ids the menu
   lacks are hidden alike — so a place in the block is not a place in the list.
@@ -278,3 +280,5 @@ Not applicable: one list per application key.
 - 2026-09-21 — the owner: the star was blue, the kit's own accent, not the theme's. The colour now
   follows the primary colour of the application's Material theme; the heading is 14 px with a star of
   16 px in the same colour; the heading's label takes a colour of the application by a property.
+- 2026-09-21 — the owner: the handle moved to the right edge, after the remove button, into the
+  column of the list's stars.
