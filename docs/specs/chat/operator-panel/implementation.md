@@ -27,9 +27,12 @@ the pure logic, `api` for the calls of the operations, `data-access` for the two
 row of the list, the message of the feed and the two narrowings, `feature/panel` for the screen and
 `shell` for its route.
 
-The row of the list is `AdminChatTalkComponent`; the thread and the field of the answer are the
-`rt-chat` of the kit, and the section keeps no message view of its own. The translation into the
-model of the kit lies in one place — `chatKitThread` of the `util` layer — and the sent remark lives
+The list of the talks is the `rt-thread-list` of the kit: the choice of a row, the waiting and the
+empty state are its own business, and the two narrowings stand in its slots.
+`AdminChatTalkComponent` is only what one row holds inside, and it carries no control of its own.
+The thread and the field of the answer are the `rt-chat` of the kit, and the section keeps no
+message view of its own. The translation into the model of the kit lies in one place —
+`chatKitThread` and `chatKitTalks` of the `util` layer — and the sent remark lives
 in the state of `ChatFeedStore` until the answer of the service: its three states are
 `EChatSendState` in the same layer. The minute of a message the kit shows by the locale it is given,
 and the data of that locale are registered by the application in `provideAdminKitLabels`. The answer of the operator goes by
