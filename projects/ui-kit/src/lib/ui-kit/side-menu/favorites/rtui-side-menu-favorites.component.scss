@@ -54,6 +54,14 @@
             }
         }
 
+        // Значок берёт размер кнопки: иначе он остаётся в 24 px и съезжает от центра.
+        &__handle-icon {
+            width: var(--mat-icon-button-icon-size);
+            height: var(--mat-icon-button-icon-size);
+            font-size: var(--mat-icon-button-icon-size);
+            line-height: 1;
+        }
+
         &__item {
             min-width: 0;
             flex: 1 1 auto;

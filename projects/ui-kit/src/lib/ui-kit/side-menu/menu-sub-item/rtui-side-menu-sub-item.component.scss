@@ -130,6 +130,15 @@
                     opacity: 1;
                 }
             }
+
+            // Значок берёт размер кнопки. Сам по себе он остаётся в 24 px, а отступ кнопки
+            // считается от её размера значка — и глиф съезжает влево вверх на разницу.
+            &__favorite-icon {
+                width: var(--mat-icon-button-icon-size);
+                height: var(--mat-icon-button-icon-size);
+                font-size: var(--mat-icon-button-icon-size);
+                line-height: 1;
+            }
         }
 
         &:hover .rtui-side-menu-sub-item-title__favorite,

@@ -70,7 +70,7 @@
                             [attr.aria-label]="favorites.labels.remove"
                             (click)="onRemoveFavorite(item, $event)"
                             (focusin)="hold?.hold()">
-                            <mat-icon>remove</mat-icon>
+                            <mat-icon rtElem="favorite-icon">remove</mat-icon>
                         </button>
                     } @else if (favoritesOn() && favorites && item.link?.trim()) {
                         <!--
@@ -90,7 +90,7 @@
                             [attr.aria-pressed]="isFavorite"
                             (click)="onToggleFavorite(item, $event)"
                             (focusin)="hold?.hold()">
-                            <mat-icon>{{ isFavorite ? 'star' : 'star_border' }}</mat-icon>
+                            <mat-icon rtElem="favorite-icon">{{ isFavorite ? 'star' : 'star_border' }}</mat-icon>
                         </button>
                     }
                 </div>
