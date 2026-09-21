@@ -56,6 +56,17 @@ send — "Реплика не ушла".
   thread.** Two threads would make the operator read the talk twice to see its order.
 - **The screen is assembled from the ready-made of the kit.** The list, the field and the messages
   of the thread are the kit's; one's own primitive is created only by the word of the owner.
+- **The thread and the field of the answer are the ready-made chat of the kit, not views of their
+  own.** The same thing drawn twice in one tree diverges silently: an edit of the kit does not
+  reach a view of one's own, and the two answer differently to one story about a remark.
+- **The model of the panel is translated into the model of the kit by one place.** The kit knows
+  nothing of the sides, the minutes of the taking in and the states of the sending of this domain:
+  a second translation written at the place of drawing diverges from the first, and the divergence
+  shows as a remark standing in the thread the wrong way round.
+- **The word about the sending is translated by its meaning, not by its name.** A remark that has
+  left and has had no answer of the service is "sending" for the kit, while the panel calls that
+  state by the word the kit gives to a remark the service has written down: a translation by the
+  name would show a confirmed remark in place of an unconfirmed one.
 
 **The answer.**
 
@@ -67,6 +78,8 @@ send — "Реплика не ушла".
   remark.
 - **A remark the service refused is marked in the feed and is not taken out of it.** Taken out, it
   would leave the operator with nothing to send again from, and the text they wrote would be gone.
+- **A refused remark is sent again from the feed itself.** The mark alone leaves the operator to
+  retype what they have already written, and the text of it stands right there on the screen.
 - **An answer into a conversation of a foreign site is refused as a not-found conversation.** The
   same refusal the reading gives: a different one would say that such a talk exists.
 - **A remark of the visitor arrives into the open feed without a reload.** That is what the stream

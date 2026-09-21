@@ -80,3 +80,22 @@ Then the answer is a refusal about a not-found conversation, and nothing is writ
 Given an open stream of a visitor
 When the operator answers their talk
 Then the event with that message arrives in the stream
+
+### SC-CH-80 — the thread of the panel is drawn by the ready-made chat of the kit
+
+Given an operator of a site and a talk with messages of both sides on it
+When they open that talk
+Then the thread and the field of the answer are the nodes of the ready-made chat, and the section
+has no message view of its own
+
+### SC-CH-81 — a remark that has left without an answer of the service stands as sending
+
+Given an open talk and an answer typed into the field
+When the operator sends it and the service has not answered yet
+Then the remark stands in the thread with the state of a sending one, not of a written one
+
+### SC-CH-82 — a refused remark is sent again from the feed
+
+Given a remark the service refused, standing in the thread with its mark
+When the operator asks to send it again
+Then it goes to the service a second time, and no second remark is created next to it

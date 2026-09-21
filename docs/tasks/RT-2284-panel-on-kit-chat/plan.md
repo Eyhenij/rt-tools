@@ -1,7 +1,7 @@
 # Замысел
 
 **Задача:** RT-2284 · **Ветка:** `RT-2284-panel-on-kit-chat`
-**Спека:** `docs/specs/chat/operator-panel/spec.md`
+**Spec:** `docs/specs/chat/operator-panel/spec.md`
 **Поведение:** меняется
 
 Договорённость пишется прямо в спеку подобласти: панель оператора описана ею с пятой задачи
