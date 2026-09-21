@@ -91,6 +91,10 @@
 - The handle went inside the item through a projection slot, took the `height` icon and the hover visibility of the remove button; its styles left `:host`, and the drag preview keeps 32 px, a 20 px icon and the grey colour. The pinned panel is square: the rounded corner of the drawer with `overflow: auto` cut the scroll hint, radius now 0 px. The folder chevron moved by a 4 px outer margin — Material rotates the indicator with its padding, so uneven padding flipped sides on an open folder. The consumer's "+" stands last; in a favourites section it moves by 3 px into the column.
 - The showcase on 6006: the handle, the star, the chevron and the "+" all centre on 287 px; a block row with "+" reads remove 205–237, handle 234–266 under hover, "+" 274–300; overflow 0. `pnpm exec nx test @rt-tools/ui-kit --testFile=side-menu` — 158 passed with SC-UK-103 and SC-UK-104; stylelint and eslint clean; `node tools/check-specs.mjs` — the four divergences of `main`.
 
+- The owner: «новые стили через переменные с возможностью изменять в приложении в котором будет использоваться?», «мейн подтяни».
+- `origin/main` merged in, 57 commits, none in the kit; the layout check matches package v0.29.0. Eleven properties `--rt-side-menu-favorite-*` and `--rt-side-menu-favorites-*` plus `--rt-side-menu-sub-menu-pinned-radius`, none declared in the kit, each read with its default as the fallback; a shared SCSS partial was refused by the kit's token lint, so each use carries the property inline. The chevron and the "+" offsets are derived from the button size.
+- The showcase on 6006: defaults unchanged — column 287 px, star rgb(125, 0, 250), heading 14 px, divider rgb(232, 232, 232) 8 px, pinned radius 0 px. Set on `:root`: button 40 px with the column still shared at 283 px by stars, "+" and chevron, colours, heading 18 px, divider 12 px and pinned radius 12 px all took. `node tools/check-specs.mjs` — green, the `main` divergences are gone.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).

@@ -104,6 +104,27 @@ sign-out or fill it with defaults.
   takes the same colour. The application names its own by the property
   `--rt-side-menu-favorite-color` on any ancestor of the menu, and the colour of the heading's label
   by `--rt-side-menu-favorites-title-color`.
+- **Every colour, size and spacing of favourites is a property the application overrides.** The kit
+  declares none of them and reads each with its default as the fallback: a property declared on the
+  block would beat the value the application set on an ancestor. The row being dragged lives in an
+  overlay under the page body, so a property meant for it too is set on the page root. Where the
+  button size changes, the chevron of a folder and the consumer's button follow it and stay in the
+  column of the stars.
+
+    | Property                                   | Default                                  |
+    | ------------------------------------------ | ---------------------------------------- |
+    | `--rt-side-menu-favorite-color`            | the primary colour of the Material theme |
+    | `--rt-side-menu-favorite-action-color`     | `--rt-text-base-secondary`               |
+    | `--rt-side-menu-favorite-action-size`      | 32 px, twice `--rt-spacing-16`           |
+    | `--rt-side-menu-favorite-action-icon-size` | `--rt-font-size-lg`                      |
+    | `--rt-side-menu-favorites-title-color`     | `--rt-text-base-secondary`               |
+    | `--rt-side-menu-favorites-title-font-size` | `--rt-font-size-sm`                      |
+    | `--rt-side-menu-favorites-title-icon-size` | `--rt-icon-size-sm`                      |
+    | `--rt-side-menu-favorites-divider-color`   | `--rt-border-neutral-subtle`             |
+    | `--rt-side-menu-favorites-divider-gap`     | `--rt-spacing-8`                         |
+    | `--rt-side-menu-favorites-drag-background` | `--rt-bg-base-base`                      |
+    | `--rt-side-menu-favorites-drag-shadow`     | `--rt-shadow-md`                         |
+
 - **The hollow star and the remove button show on hover and on focus inside their row; the
   filled star always shows.** Stars on every row of a long list read as noise; the chosen ones must be visible at a
   glance. Where the pointer cannot hover — a narrow screen, a touch screen by `(hover: none)` — the
@@ -291,3 +312,5 @@ Not applicable: one list per application key.
 - 2026-09-21 — the owner: the consumer's "+" is always visible, so it stands last; the star, the
   remove button and the handle appear under the hover before it. In a favourites section the "+"
   stands in the column of the stars. Scenario SC-UK-104 added.
+- 2026-09-21 — the owner: every new colour, size and spacing of favourites became a property the
+  application overrides, and so did the radius of the pinned submenu.

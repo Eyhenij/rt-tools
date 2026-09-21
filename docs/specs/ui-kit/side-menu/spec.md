@@ -68,7 +68,8 @@ consumer, the address of the active item the kit does not count.
 - **There is no backing under a pinned submenu.** It puts out the rest of the page and catches the presses;
   at a panel standing open permanently that makes the page unworkable.
 - **A pinned submenu has square corners.** It stands flush against the page, and a rounded corner cut
-  off the bottom scroll hint together with its button. The radius property stays the consumer's to set.
+  off the bottom scroll hint together with its button. The application rounds it by the property
+  `--rt-side-menu-sub-menu-pinned-radius` on any ancestor of the menu.
 - **The field searches over the open submenu, not over all the sections.** The result stays belonging to the
   section: a search over the whole application is another subject.
 - **The filter goes by a substring of the label without a count of the case, and an empty query shows

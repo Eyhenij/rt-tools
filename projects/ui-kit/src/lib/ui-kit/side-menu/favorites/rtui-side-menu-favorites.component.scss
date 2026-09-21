@@ -6,31 +6,31 @@
     // списка, 8 px: свой отступ здесь удвоил бы его. Черта и отступы — те же, что у разделителей
     // пунктов подменю у потребителей: 8 px, приглушённая черта, 8 px.
     &:has(.rtui-side-menu-favorites__list) {
-        padding-bottom: var(--rt-spacing-8);
-        border-bottom: 1px solid var(--rt-border-neutral-subtle);
+        padding-bottom: var(--rt-side-menu-favorites-divider-gap, var(--rt-spacing-8));
+        border-bottom: 1px solid var(--rt-side-menu-favorites-divider-color, var(--rt-border-neutral-subtle));
     }
 
     .rtui-side-menu-favorites {
         // Заголовок: подпись и звезда. Звезда красится тем же цветом, что и закрашенные звёзды
-        // списка, подпись — свойством `--rt-side-menu-favorites-title-color` с предка меню.
+        // списка; цвет и размер подписи и звезды приложение задаёт своими свойствами.
         &__title {
             display: flex;
             align-items: center;
             padding: var(--rt-spacing-8) var(--rt-spacing-16) var(--rt-spacing-4);
             color: var(--rt-side-menu-favorites-title-color, var(--rt-text-base-secondary));
-            font-size: var(--rt-font-size-sm);
+            font-size: var(--rt-side-menu-favorites-title-font-size, var(--rt-font-size-sm));
             font-weight: var(--rt-font-weight-semibold);
             gap: var(--rt-spacing-6);
         }
 
         &__title-icon {
-            width: var(--rt-icon-size-sm);
-            height: var(--rt-icon-size-sm);
+            width: var(--rt-side-menu-favorites-title-icon-size, var(--rt-icon-size-sm));
+            height: var(--rt-side-menu-favorites-title-icon-size, var(--rt-icon-size-sm));
             color: var(
                 --rt-side-menu-favorite-color,
                 var(--mat-sys-primary, var(--mat-button-filled-container-color, var(--rt-icon-accent-primary)))
             );
-            font-size: var(--rt-icon-size-sm);
+            font-size: var(--rt-side-menu-favorites-title-icon-size, var(--rt-icon-size-sm));
         }
 
         &__title-text {
@@ -55,9 +55,9 @@
     }
 
     &__handle {
-        --mat-icon-button-state-layer-size: calc(var(--rt-spacing-16) * 2);
-        --mat-icon-button-icon-size: var(--rt-font-size-lg);
-        --mat-icon-button-icon-color: var(--rt-text-base-secondary);
+        --mat-icon-button-state-layer-size: var(--rt-side-menu-favorite-action-size, calc(var(--rt-spacing-16) * 2));
+        --mat-icon-button-icon-size: var(--rt-side-menu-favorite-action-icon-size, var(--rt-font-size-lg));
+        --mat-icon-button-icon-color: var(--rt-side-menu-favorite-action-color, var(--rt-text-base-secondary));
 
         flex: 0 0 auto;
         cursor: grab;
@@ -110,8 +110,8 @@
     display: flex;
     align-items: center;
     border-radius: var(--rt-radius-xl);
-    background-color: var(--rt-bg-base-base);
-    box-shadow: var(--rt-shadow-md);
+    background-color: var(--rt-side-menu-favorites-drag-background, var(--rt-bg-base-base));
+    box-shadow: var(--rt-side-menu-favorites-drag-shadow, var(--rt-shadow-md));
 }
 
 .rtui-side-menu-favorites__row.cdk-drag-placeholder {
