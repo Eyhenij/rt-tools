@@ -61,7 +61,7 @@ A rule under the "Law on verifiability", the section about showing a visible sta
 | ---------------- | ----------------------------- | -------------------------------------------------------- |
 | Config           | `projects/ui-kit/.storybook/` | `projects/ui-kit-v2/.storybook/`                         |
 | Port             | 6006                          | 6007                                                     |
-| Command          | `pnpm run storybook`          | `pnpm run storybook:ui-kit-v2`                           |
+| Command          | `pnpm run storybook:ui-kit-v1` | `pnpm run storybook:ui-kit-v2`                           |
 | Wrapper prefix   | `Test*Component`              | `TestRt*Component`                                       |
 | Global providers | per-story `applicationConfig` | `preview.ts` (zoneless, storage, icons, labels, theme toolbar) |
 | Story set        | `Default` + ad-hoc variants   | fixed set — see the coverage contract below              |
@@ -73,8 +73,8 @@ Storybook 10 with `@storybook/angular`. Config lives in
 `../src/**/*.stories.@(js|jsx|mjs|ts|tsx)` and docs from `../docs/**/*.mdx`.
 
 ```bash
-pnpm run storybook          # nx run @rt-tools/ui-kit:storybook — port 6006
-pnpm run build-storybook    # dist/storybook/@rt-tools/ui-kit
+pnpm run storybook:ui-kit-v1        # nx run @rt-tools/ui-kit:storybook — port 6006
+pnpm run build-storybook:ui-kit-v1  # dist/storybook/@rt-tools/ui-kit
 ```
 
 ## What `preview.ts` already gives

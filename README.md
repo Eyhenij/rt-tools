@@ -184,7 +184,7 @@ pnpm test                 # run all unit tests (Jest)
 pnpm run lint              # lint all projects
 pnpm run check:all         # lint + test + build everything
 
-pnpm run storybook        # run Storybook locally
+pnpm run storybook:ui-kit-v1   # run the first kit Storybook locally
 pnpm run graph            # view the Nx project graph
 ```
 

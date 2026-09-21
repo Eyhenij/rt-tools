@@ -180,7 +180,7 @@ Design-aware controls render in one of two modes:
 
 ## Documentation
 
-Full API references and live examples are available in **Storybook** (`pnpm run storybook` in the
+Full API references and live examples are available in **Storybook** (`pnpm run storybook:ui-kit-v1` in the
 [repository](https://github.com/Eyhenij/rt-tools)).
 
 ## License

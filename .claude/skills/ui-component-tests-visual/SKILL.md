@@ -72,6 +72,21 @@ export const SelectorPopup: Story = {
 };
 ```
 
+**A narrow screen** — set by the same parameter, not by the showcase's viewport global. The first
+kit's harness reads only `snapshotViewport` and shoots at 1280×720 otherwise: a story that sets
+`globals.viewport` alone looks narrow in the showcase and lands in the reference wide.
+
+```typescript
+export const Mobile: TStory = {
+    globals: { viewport: { value: 'narrow' } },
+    parameters: { snapshotViewport: { width: 360, height: 780 } },
+};
+```
+
+A narrow frame is looked at before it becomes a reference. Storybook's test mode stops every
+animation at its first frame, so a part that fades in from transparency comes out empty — the narrow
+side menu showed its panel without a single item. Until task #2303 lands, such a frame is not taken.
+
 **The markup does not arrive in the same frame as the story.** A search for a node in `play` is
 wrapped in a wait:
 

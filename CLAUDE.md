@@ -50,7 +50,8 @@ pnpm run serve:admin   # the admin panel, port 4200
 pnpm run serve:stand
 
 # Run Storybook
-pnpm run storybook
+pnpm run storybook:ui-kit-v1   # the first kit, port 6006
+pnpm run storybook:ui-kit-v2   # the second kit, port 6007
 
 # View dependency graph
 pnpm run graph
