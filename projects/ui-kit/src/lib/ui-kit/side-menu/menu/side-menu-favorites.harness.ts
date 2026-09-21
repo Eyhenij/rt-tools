@@ -4,7 +4,11 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 
 import { RtuiSideMenuFavoritesComponent } from '../favorites/rtui-side-menu-favorites.component';
-import { IRtuiFavoritesConfig, provideRtuiFavorites, RtuiFavoritesService } from '../favorites/rtui-favorites.service';
+import {
+    IRtuiSideMenuFavoritesConfig,
+    provideRtuiSideMenuFavorites,
+    RtuiSideMenuFavoritesService,
+} from '../favorites/rtui-side-menu-favorites.service';
 import { ISideMenu } from '../side-menu.types';
 import { HostComponent, ISetup, NESTED_ITEMS, setup } from './side-menu.harness';
 
@@ -49,18 +53,18 @@ export function withFavorites(
         active?: Array<string | number>;
         narrow?: boolean;
         items?: ISideMenu.Item[];
-        config?: IRtuiFavoritesConfig;
+        config?: IRtuiSideMenuFavoritesConfig;
         mode?: ISideMenu.SubMenuMode;
     } = {}
-): ISetup & { favorites: RtuiFavoritesService } {
+): ISetup & { favorites: RtuiSideMenuFavoritesService } {
     const result: ISetup = setup(
         options.mode ?? 'hover',
         options.active ?? [],
         options.narrow ?? false,
         options.items ?? enabled(NESTED_ITEMS),
-        [provideRtuiFavorites(options.config)]
+        [provideRtuiSideMenuFavorites(options.config)]
     );
-    const favorites: RtuiFavoritesService = TestBed.inject(RtuiFavoritesService);
+    const favorites: RtuiSideMenuFavoritesService = TestBed.inject(RtuiSideMenuFavoritesService);
 
     favorites.set(ids);
     result.fixture.detectChanges();

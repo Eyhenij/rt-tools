@@ -87,12 +87,14 @@
         opacity: 1;
     }
 
-    // Значок берёт размер кнопки: иначе он остаётся в 24 px и съезжает от центра.
+    // Значок берёт размер кнопки: иначе он остаётся в 24 px и съезжает от центра. Глиф
+    // `arrows_outward` повёрнут на четверть оборота — так его выбрал владелец.
     &__handle-icon {
         width: var(--mat-icon-button-icon-size);
         height: var(--mat-icon-button-icon-size);
         font-size: var(--mat-icon-button-icon-size);
         line-height: 1;
+        transform: rotate(90deg);
     }
 
     &__item {

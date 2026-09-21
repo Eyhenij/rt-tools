@@ -24,8 +24,8 @@
                     <!--
                         Ручка стоит внутри пункта, последней после кнопки «убрать»: подсветка пункта
                         накрывает и её. Строку тянут только за ручку: остальная строка — ссылка, и
-                        строку, которую тянут всем телом, не нажать без дрожи. Значок — стрелка
-                        вверх-вниз: строка ходит только по вертикали. С клавиатуры строку
+                        строку, которую тянут всем телом, не нажать без дрожи. Значок — две стрелки
+                        наружу, повёрнутые стилями на четверть оборота. С клавиатуры строку
                         переставляют стрелки на ручке: перетаскивание CDK клавиш не знает.
                     -->
                     <rtui-side-menu-sub-item
@@ -54,7 +54,7 @@
                             (click)="$event.stopPropagation()"
                             (keydown.arrowup)="onHandleKey($event, $index, -1)"
                             (keydown.arrowdown)="onHandleKey($event, $index, 1)">
-                            <mat-icon rtElem="handle-icon" [rtIconOutlined]="true">height</mat-icon>
+                            <mat-icon rtElem="handle-icon" [rtIconOutlined]="true">arrows_outward</mat-icon>
                         </button>
                     </rtui-side-menu-sub-item>
                 </div>

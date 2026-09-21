@@ -35,13 +35,13 @@ sign-out or fill it with defaults.
 
 ### What it is called in the interface
 
-| In the agreement     | On the screen                                                                                    |
-| -------------------- | ------------------------------------------------------------------------------------------------ |
-| The favourites block | the heading "Favourites" of 14 px with a filled star of 16 px in the theme colour, rows under it |
-| The star, off        | a hollow star, `star_border`; the tooltip "Add to favourites"                                    |
-| The star, on         | a filled star in the theme colour; the tooltip "Remove from favourites"                          |
-| The remove button    | a minus, `remove`; the tooltip "Remove from favourites"                                          |
-| The handle           | the up-and-down button `height` after the remove button, the tooltip "Hold button to drag"       |
+| In the agreement     | On the screen                                                                                        |
+| -------------------- | ---------------------------------------------------------------------------------------------------- |
+| The favourites block | the heading "Favourites" of 14 px with a filled star of 16 px in the theme colour, rows under it     |
+| The star, off        | a hollow star, `star_border`; the tooltip "Add to favourites"                                        |
+| The star, on         | a filled star in the theme colour; the tooltip "Remove from favourites"                              |
+| The remove button    | a minus, `remove`; the tooltip "Remove from favourites"                                              |
+| The handle           | the button `arrows_outward` turned by 90° after the remove button, the tooltip "Hold button to drag" |
 
 ## Rules
 
@@ -160,8 +160,8 @@ sign-out or fill it with defaults.
   id would take them over.
 - **A row of the block is dragged by its handle, and the new order is kept at the drop.** The rest
   of the row stays a link: a row dragged by its whole body cannot be pressed without a jitter. The
-  handle is a button with the up-and-down arrow and the tooltip "Hold button to drag": a row moves
-  only vertically. It stands inside the item after the remove button and before the consumer's button,
+  handle is a button with the icon `arrows_outward` turned by a quarter and the tooltip "Hold button
+  to drag". It stands inside the item after the remove button and before the consumer's button,
   in the column of the list's stars, and shows under the hover and the focus of its row, the same as
   the remove button. The label of a block row starts where the label of a list row does.
 - **A drop moves the dragged id next to its visible neighbour, and hidden ids keep their places.**
@@ -214,11 +214,11 @@ The public surface:
 
 | Name                                             | What it is                                                                                                 |
 | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
-| `provideRtuiFavorites(config?)`                  | the providers of the service; `config.storageKey`, `config.labels` with `title`, `add`, `remove`, `drag`   |
+| `provideRtuiSideMenuFavorites(config?)`          | the providers of the service; `config.storageKey`, `config.labels` with `title`, `add`, `remove`, `drag`   |
 | `--rt-side-menu-favorites-title-color`           | the colour of the heading's label, set by the application on an ancestor of the menu                       |
 | `ISideMenu.Item.favorites`                       | the flag of a strip item switching its favourites on; off by default                                       |
 | `--rt-side-menu-favorite-color`                  | the colour of the filled star and of the heading's star, set by the application on an ancestor of the menu |
-| `RtuiFavoritesService.ids`                       | the whole list as a read-only signal, ids hidden from every block included                                 |
+| `RtuiSideMenuFavoritesService.ids`               | the whole list as a read-only signal, ids hidden from every block included                                 |
 | `has(id)`, `add(id)`, `remove(id)`, `toggle(id)` | a check and three edits of one id; adding an id already in the list does nothing                           |
 | `move(from, to)`                                 | moves an entry between two places of the list                                                              |
 | `set(ids)`, `clear()`                            | replaces the list whole, empties it                                                                        |
@@ -316,5 +316,8 @@ Not applicable: one list per application key.
   stands in the column of the stars. Scenario SC-UK-104 added.
 - 2026-09-21 — the owner: every new colour, size and spacing of favourites became a property the
   application overrides, and so did the radius of the pinned submenu.
+- 2026-09-21 — the owner: the service and its provider are named after the side menu —
+  `RtuiSideMenuFavoritesService`, `provideRtuiSideMenuFavorites()`; the handle took `arrows_outward`
+  turned by 90°.
 - 2026-09-21 — the owner: a star removed by a click stayed visible after the pointer left. The
   focus shows the row's buttons only from the keyboard.

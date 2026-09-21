@@ -2,7 +2,11 @@ import { TestBed } from '@angular/core/testing';
 
 import { LOCAL_STORAGE } from '@rt-tools/core';
 import { FAVORITES_KEY } from './favorites.logic';
-import { IRtuiFavoritesConfig, provideRtuiFavorites, RtuiFavoritesService } from './rtui-favorites.service';
+import {
+    IRtuiSideMenuFavoritesConfig,
+    provideRtuiSideMenuFavorites,
+    RtuiSideMenuFavoritesService,
+} from './rtui-side-menu-favorites.service';
 
 class MemoryStorage implements Storage {
     readonly #values: Map<string, string> = new Map();
@@ -42,23 +46,23 @@ class ClosedStorage extends MemoryStorage {
     }
 }
 
-function createService(storage: Storage | null, config?: IRtuiFavoritesConfig): RtuiFavoritesService {
+function createService(storage: Storage | null, config?: IRtuiSideMenuFavoritesConfig): RtuiSideMenuFavoritesService {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-        providers: [provideRtuiFavorites(config), ...(storage ? [{ provide: LOCAL_STORAGE, useValue: storage }] : [])],
+        providers: [provideRtuiSideMenuFavorites(config), ...(storage ? [{ provide: LOCAL_STORAGE, useValue: storage }] : [])],
     });
 
-    return TestBed.inject(RtuiFavoritesService);
+    return TestBed.inject(RtuiSideMenuFavoritesService);
 }
 
 function stored(storage: Storage): unknown {
     return JSON.parse(storage.getItem(FAVORITES_KEY) ?? 'null');
 }
 
-describe('RtuiFavoritesService', (): void => {
+describe('RtuiSideMenuFavoritesService', (): void => {
     it('SC-UK-69 — список переживает новый сервис над тем же хранилищем и ключом', (): void => {
         const storage: MemoryStorage = new MemoryStorage();
-        const first: RtuiFavoritesService = createService(storage, { storageKey: 'app' });
+        const first: RtuiSideMenuFavoritesService = createService(storage, { storageKey: 'app' });
         first.add('a');
         first.add('b');
 
@@ -75,14 +79,14 @@ describe('RtuiFavoritesService', (): void => {
         storage.setItem(FAVORITES_KEY, '{"a": 1}');
         expect(createService(storage).ids()).toEqual([]);
 
-        const closed: RtuiFavoritesService = createService(new ClosedStorage());
+        const closed: RtuiSideMenuFavoritesService = createService(new ClosedStorage());
         expect(closed.ids()).toEqual([]);
         expect((): void => closed.add('a')).not.toThrow();
         expect(closed.ids()).toEqual(['a']);
     });
 
     it('SC-UK-70 — без хранилища список живёт в памяти', (): void => {
-        const service: RtuiFavoritesService = createService(null);
+        const service: RtuiSideMenuFavoritesService = createService(null);
         service.add('a');
 
         expect(service.ids()).toEqual(['a']);
@@ -97,7 +101,7 @@ describe('RtuiFavoritesService', (): void => {
 
     it('SC-UK-72 — добавление, удаление и переключение правят список и хранилище вместе', (): void => {
         const storage: MemoryStorage = new MemoryStorage();
-        const service: RtuiFavoritesService = createService(storage);
+        const service: RtuiSideMenuFavoritesService = createService(storage);
 
         service.add('a');
         service.add('a');
@@ -119,7 +123,7 @@ describe('RtuiFavoritesService', (): void => {
 
     it('SC-UK-73 — перенос ставит запись на новое место и пишет его в хранилище', (): void => {
         const storage: MemoryStorage = new MemoryStorage();
-        const service: RtuiFavoritesService = createService(storage);
+        const service: RtuiSideMenuFavoritesService = createService(storage);
         service.set(['a', 'b', 'c']);
         service.move(0, 2);
 
@@ -129,7 +133,7 @@ describe('RtuiFavoritesService', (): void => {
 
     it('SC-UK-74 — замена и очистка меняют список целиком', (): void => {
         const storage: MemoryStorage = new MemoryStorage();
-        const service: RtuiFavoritesService = createService(storage);
+        const service: RtuiSideMenuFavoritesService = createService(storage);
         service.set(['a', 'b']);
         service.set(['c', 'c', 'd']);
 
@@ -142,7 +146,7 @@ describe('RtuiFavoritesService', (): void => {
     });
 
     it('SC-UK-85 — подписи настроек заменяют английские, пустая подпись равна отсутствию', (): void => {
-        const service: RtuiFavoritesService = createService(null, { labels: { title: 'Избранное', add: '  ' } });
+        const service: RtuiSideMenuFavoritesService = createService(null, { labels: { title: 'Избранное', add: '  ' } });
 
         expect(service.labels).toEqual({
             title: 'Избранное',

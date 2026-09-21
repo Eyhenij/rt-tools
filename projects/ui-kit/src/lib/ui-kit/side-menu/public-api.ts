@@ -14,5 +14,9 @@ export {
 export type { ISubMenuTitlePart } from './side-menu.logic';
 export { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from './menu/rtui-side-menu.component';
 export { FAVORITES_KEY } from './favorites/favorites.logic';
-export { provideRtuiFavorites, RTUI_FAVORITES_CONFIG, RtuiFavoritesService } from './favorites/rtui-favorites.service';
-export type { IRtuiFavoritesConfig, IRtuiFavoritesLabels } from './favorites/rtui-favorites.service';
+export {
+    provideRtuiSideMenuFavorites,
+    RTUI_SIDE_MENU_FAVORITES_CONFIG,
+    RtuiSideMenuFavoritesService,
+} from './favorites/rtui-side-menu-favorites.service';
+export type { IRtuiSideMenuFavoritesConfig, IRtuiSideMenuFavoritesLabels } from './favorites/rtui-side-menu-favorites.service';

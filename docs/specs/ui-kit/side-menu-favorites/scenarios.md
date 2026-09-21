@@ -178,11 +178,11 @@ When the remove button of the row `a` is pressed
 Then the row carries no star, the button is named "Remove from favourites", the list and the rows
 are `b`, and the item output did not fire
 
-### SC-UK-95 — the handle is the move button of the dynamic selector
+### SC-UK-95 — the handle is a button with the outward arrows inside the item
 
 Given the service with `a` in the list and the block drawn
 When the row `a` is looked at
-Then its handle is a button with the icon `open_with` named "Hold button to drag"
+Then its handle is a button with the icon `arrows_outward` named "Hold button to drag"
 
 ### SC-UK-96 — an empty panel shows no one's favourites
 

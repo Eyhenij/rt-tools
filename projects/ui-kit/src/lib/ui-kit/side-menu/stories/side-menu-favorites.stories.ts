@@ -2,7 +2,7 @@ import { inject, provideAppInitializer } from '@angular/core';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
 import { provideRtStorage } from '@rt-tools/core';
-import { provideRtuiFavorites, RtuiFavoritesService } from '../favorites/rtui-favorites.service';
+import { provideRtuiSideMenuFavorites, RtuiSideMenuFavoritesService } from '../favorites/rtui-side-menu-favorites.service';
 import { ISideMenu } from '../side-menu.types';
 import { MENU_ITEMS, TestSideMenuWrapperComponent } from './component/test-side-menu-wrapper.component';
 
@@ -73,9 +73,9 @@ export default {
         applicationConfig({
             providers: [
                 provideRtStorage(),
-                provideRtuiFavorites({ storageKey: SHOWCASE_KEY }),
+                provideRtuiSideMenuFavorites({ storageKey: SHOWCASE_KEY }),
                 provideAppInitializer((): void => {
-                    const favorites: RtuiFavoritesService = inject(RtuiFavoritesService);
+                    const favorites: RtuiSideMenuFavoritesService = inject(RtuiSideMenuFavoritesService);
 
                     if (!favorites.ids().length) {
                         favorites.set(SEEDED_IDS);

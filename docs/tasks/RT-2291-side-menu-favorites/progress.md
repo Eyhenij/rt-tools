@@ -97,6 +97,10 @@
 
 - The owner: «при снятии фейворита икнонка звезды остается даже при снятии ховера». The cause: a button pressed by the mouse keeps the focus, and the row showed its buttons under `:focus-within`. Now under `:has(:focus-visible)` — the keyboard focus only — for the star, the remove button and the handle. Not confirmed in the browser: the driver's clicks did not reach the page in this session (the star stayed unfocused and unchanged after three real clicks), so the owner's look confirms it. 158 tests passed, `node tools/check-specs.mjs` green.
 
+- The owner: «название сервиса должно отсылать к сайд меню», «иконка драга используй arrows_outward только поверни на 90 градусов». Renamed: `RtuiSideMenuFavoritesService`, `provideRtuiSideMenuFavorites()`, `RTUI_SIDE_MENU_FAVORITES_CONFIG`, `IRtuiSideMenuFavoritesConfig`, `IRtuiSideMenuFavoritesLabels`, files `rtui-side-menu-favorites.service(.spec).ts`; the storage key stays `rtui-side-menu-favorites`. The handle icon is `arrows_outward` with `rotate(90deg)`.
+- Found on the way: the showcase on 6006 loads the static Material Icons font, which has no `arrows_outward` — the handle there shows the word, measured glyph height 280 px. Avalon draws a Material Symbols subset from `app-icon-glyphs.const.ts`, and the list lacks `arrows_outward` and `star_border`. Both are named to the owner; the Avalon tree is not touched.
+- 158 tests passed, `node tools/check-specs.mjs` green, `pnpm run check:all` green.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).

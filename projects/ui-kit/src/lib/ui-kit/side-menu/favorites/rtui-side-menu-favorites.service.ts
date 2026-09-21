@@ -14,49 +14,48 @@ import { ISideMenu } from '../side-menu.types';
 import { FAVORITES_KEY, moveFavorite, normalizeFavorites, parseFavorites } from './favorites.logic';
 
 /** Подписи избранного. У первого кита нет словаря, и приложение на другом языке называет их само. */
-export interface IRtuiFavoritesLabels {
+export interface IRtuiSideMenuFavoritesLabels {
     readonly title: string;
     readonly add: string;
     readonly remove: string;
     readonly drag: string;
 }
 
-export interface IRtuiFavoritesConfig {
+export interface IRtuiSideMenuFavoritesConfig {
     /** Ключ записи в хранилище; два приложения на одном адресе держат два списка двумя ключами. */
     readonly storageKey?: string;
-    readonly labels?: Partial<IRtuiFavoritesLabels>;
+    readonly labels?: Partial<IRtuiSideMenuFavoritesLabels>;
 }
 
-const DEFAULT_LABELS: IRtuiFavoritesLabels = {
+const DEFAULT_LABELS: IRtuiSideMenuFavoritesLabels = {
     title: 'Favourites',
     add: 'Add to favourites',
     remove: 'Remove from favourites',
     drag: 'Hold button to drag',
 };
 
-export const RTUI_FAVORITES_CONFIG: InjectionToken<IRtuiFavoritesConfig> = new InjectionToken<IRtuiFavoritesConfig>(
-    'RTUI_FAVORITES_CONFIG'
-);
+export const RTUI_SIDE_MENU_FAVORITES_CONFIG: InjectionToken<IRtuiSideMenuFavoritesConfig> =
+    new InjectionToken<IRtuiSideMenuFavoritesConfig>('RTUI_SIDE_MENU_FAVORITES_CONFIG');
 
 /**
  * Список избранного бокового меню.
  *
  * Держатель один: меню и приложение читают и пишут через этот же сервис, второй держатель того же
  * списка разошёлся бы с первым на первой правке. Поэтому сервис ставится только провайдером
- * окружения — `provideRtuiFavorites()`, — а меню берёт его необязательно: не поставлен — звёзд нет.
+ * окружения — `provideRtuiSideMenuFavorites()`, — а меню берёт его необязательно: не поставлен — звёзд нет.
  *
  * Хранилище берётся токеном `@rt-tools/core`. Без него — и вне браузера — список живёт в памяти.
  * Ни чтение, ни запись не бросают: закрытое или полное хранилище не должно ронять меню.
  */
 @Injectable()
-export class RtuiFavoritesService {
-    readonly #config: IRtuiFavoritesConfig = inject(RTUI_FAVORITES_CONFIG, { optional: true }) ?? {};
+export class RtuiSideMenuFavoritesService {
+    readonly #config: IRtuiSideMenuFavoritesConfig = inject(RTUI_SIDE_MENU_FAVORITES_CONFIG, { optional: true }) ?? {};
     readonly #storage: Storage | null = inject(LOCAL_STORAGE, { optional: true }) ?? null;
     readonly #key: string = this.#config.storageKey?.trim() || FAVORITES_KEY;
     readonly #ids: WritableSignal<ReadonlyArray<ISideMenu.FavoriteId>> = signal(this.#read());
 
     public readonly ids: Signal<ReadonlyArray<ISideMenu.FavoriteId>> = this.#ids.asReadonly();
-    public readonly labels: IRtuiFavoritesLabels = { ...DEFAULT_LABELS, ...this.#definedLabels() };
+    public readonly labels: IRtuiSideMenuFavoritesLabels = { ...DEFAULT_LABELS, ...this.#definedLabels() };
 
     public has(id: ISideMenu.FavoriteId): boolean {
         return this.#ids().includes(id);
@@ -116,7 +115,7 @@ export class RtuiFavoritesService {
     }
 
     /** Пустая подпись равна отсутствию: иначе звезда осталась бы без имени. */
-    #definedLabels(): Partial<IRtuiFavoritesLabels> {
+    #definedLabels(): Partial<IRtuiSideMenuFavoritesLabels> {
         return Object.fromEntries(
             Object.entries(this.#config.labels ?? {}).filter(([, value]: [string, string | undefined]): boolean => Boolean(value?.trim()))
         );
@@ -127,9 +126,9 @@ export class RtuiFavoritesService {
  * Включение избранного: сервис и его настройки в инжектор окружения приложения.
  *
  * ```ts
- * bootstrapApplication(App, { providers: [provideRtStorage(), provideRtuiFavorites({ storageKey: 'my-app-favorites' })] });
+ * bootstrapApplication(App, { providers: [provideRtStorage(), provideRtuiSideMenuFavorites({ storageKey: 'my-app-favorites' })] });
  * ```
  */
-export function provideRtuiFavorites(config: IRtuiFavoritesConfig = {}): EnvironmentProviders {
-    return makeEnvironmentProviders([{ provide: RTUI_FAVORITES_CONFIG, useValue: config }, RtuiFavoritesService]);
+export function provideRtuiSideMenuFavorites(config: IRtuiSideMenuFavoritesConfig = {}): EnvironmentProviders {
+    return makeEnvironmentProviders([{ provide: RTUI_SIDE_MENU_FAVORITES_CONFIG, useValue: config }, RtuiSideMenuFavoritesService]);
 }

@@ -5,7 +5,7 @@ import { By } from '@angular/platform-browser';
 import { BreakpointService } from '@rt-tools/core';
 
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
-import { IRtuiFavoritesConfig } from '../favorites/rtui-favorites.service';
+import { IRtuiSideMenuFavoritesConfig } from '../favorites/rtui-side-menu-favorites.service';
 import {
     BreakpointServiceStub,
     hoverFirstItem,
@@ -139,7 +139,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect(document.activeElement).toBe(removes[1]);
     });
 
-    it('SC-UK-95 — ручка — кнопка со стрелкой вверх-вниз внутри пункта, после «убрать», и никуда не ведёт', () => {
+    it('SC-UK-95 — ручка — кнопка с двумя стрелками наружу внутри пункта, после «убрать», и никуда не ведёт', () => {
         const { fixture } = withFavorites(['rates']);
 
         hoverFirstItem(fixture);
@@ -148,7 +148,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
 
         expect(handle.tagName).toBe('BUTTON');
         expect(handle.getAttribute('aria-label')).toBe('Hold button to drag');
-        expect(handle.querySelector('mat-icon')?.textContent?.trim()).toBe('height');
+        expect(handle.querySelector('mat-icon')?.textContent?.trim()).toBe('arrows_outward');
         expect(handle.closest('mat-list-item')).not.toBeNull();
         expect(handle.previousElementSibling?.getAttribute('qa-dataid')).toBe('side-menu-favorite-remove');
         expect(fixture.debugElement.query(By.css(HANDLE)).injector.get(CdkDragHandle, null)).not.toBeNull();
@@ -241,7 +241,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
     });
 
     it('SC-UK-85 — подписи приходят из настроек провайдера', () => {
-        const labels: IRtuiFavoritesConfig['labels'] = {
+        const labels: IRtuiSideMenuFavoritesConfig['labels'] = {
             title: 'Избранное',
             add: 'Добавить в избранное',
             remove: 'Убрать из избранного',

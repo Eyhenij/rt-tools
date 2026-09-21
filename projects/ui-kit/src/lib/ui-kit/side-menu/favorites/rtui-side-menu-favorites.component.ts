@@ -25,7 +25,7 @@ import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-su
 import { RtuiSubMenuHoldService } from '../menu/rtui-sub-menu-hold.service';
 import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 import { favoritesSection, findFavoriteItems, moveVisibleFavorite } from './favorites.logic';
-import { RtuiFavoritesService } from './rtui-favorites.service';
+import { RtuiSideMenuFavoritesService } from './rtui-side-menu-favorites.service';
 
 const BEM_BLOCK: string = 'rtui-side-menu-favorites';
 
@@ -76,7 +76,7 @@ export class RtuiSideMenuFavoritesComponent {
         (): ISideMenu.Item | null => this.favorites && favoritesSection(this.#menu.menuItems(), this.#menu.shownSubMenu())
     );
 
-    protected readonly favorites: RtuiFavoritesService | null = inject(RtuiFavoritesService, { optional: true });
+    protected readonly favorites: RtuiSideMenuFavoritesService | null = inject(RtuiSideMenuFavoritesService, { optional: true });
     protected readonly rows: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] => {
         const section: ISideMenu.Item | null = this.#section();
 
