@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.0 · hooks/git-guard-delivery.sh · 114a18058c3e · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/git-guard-delivery.sh · af7476c3eb16 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-epic.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
@@ -369,7 +369,8 @@ command -v rt_epic_own_pull >/dev/null 2>&1 && rt_epic_own_pull "$state"
 title=''
 if command -v perl >/dev/null 2>&1; then
     title="$(printf '%s' "$cmd" | perl -0ne '
-        if (/(?:--title|-t)(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/s) {
+        my $v = qr/(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/;
+        if (/--title(?:=|\s+)$v/s || /(?<![-\w])-t(?:=|\s+)$v/s) {
             print defined $1 ? $1 : (defined $2 ? $2 : $3);
         }
     ' 2>/dev/null)"
