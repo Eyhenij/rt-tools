@@ -39,28 +39,3 @@ html {
 .mat-mdc-dialog-container {
     max-height: 100vh;
 }
-
-// Material Symbols — шрифт значков, которым потребители кита рисуют меню (набор из README кита).
-// Истории избранного бокового меню переключаются на него: значка ручки `arrows_outward` и оси
-// заливки звезды в старом Material Icons нет. Файл — подмножество со значками всех шаблонов кита
-// и пунктов историй бокового меню, лежит в дереве: кадр не зависит от сети. Значок, которого в
-// подмножестве нет, рисуется словом — новый значок требует пересобрать подмножество с его именем.
-@font-face {
-    font-display: block;
-    font-family: 'Material Symbols Outlined';
-    font-style: normal;
-    font-weight: 100 700;
-    src: url('/fonts/material-symbols-outlined.woff2') format('woff2');
-}
-
-.material-symbols-outlined {
-    direction: ltr;
-    font-family: 'Material Symbols Outlined', sans-serif;
-    font-feature-settings: 'liga';
-    font-style: normal;
-    font-weight: normal;
-    letter-spacing: normal;
-    overflow-wrap: normal;
-    text-transform: none;
-    white-space: nowrap;
-}
