@@ -95,6 +95,8 @@
 - `origin/main` merged in, 57 commits, none in the kit; the layout check matches package v0.29.0. Eleven properties `--rt-side-menu-favorite-*` and `--rt-side-menu-favorites-*` plus `--rt-side-menu-sub-menu-pinned-radius`, none declared in the kit, each read with its default as the fallback; a shared SCSS partial was refused by the kit's token lint, so each use carries the property inline. The chevron and the "+" offsets are derived from the button size.
 - The showcase on 6006: defaults unchanged — column 287 px, star rgb(125, 0, 250), heading 14 px, divider rgb(232, 232, 232) 8 px, pinned radius 0 px. Set on `:root`: button 40 px with the column still shared at 283 px by stars, "+" and chevron, colours, heading 18 px, divider 12 px and pinned radius 12 px all took. `node tools/check-specs.mjs` — green, the `main` divergences are gone.
 
+- The owner: «при снятии фейворита икнонка звезды остается даже при снятии ховера». The cause: a button pressed by the mouse keeps the focus, and the row showed its buttons under `:focus-within`. Now under `:has(:focus-visible)` — the keyboard focus only — for the star, the remove button and the handle. Not confirmed in the browser: the driver's clicks did not reach the page in this session (the star stayed unfocused and unchanged after three real clicks), so the owner's look confirms it. 158 tests passed, `node tools/check-specs.mjs` green.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).

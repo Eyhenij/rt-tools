@@ -128,7 +128,9 @@ sign-out or fill it with defaults.
 - **The hollow star and the remove button show on hover and on focus inside their row; the
   filled star always shows.** Stars on every row of a long list read as noise; the chosen ones must be visible at a
   glance. Where the pointer cannot hover — a narrow screen, a touch screen by `(hover: none)` — the
-  hollow star and the remove button show always.
+  hollow star and the remove button show always. The focus shows them only from the keyboard: a
+  button pressed by the mouse keeps the focus, and a star removed by a click would stay visible
+  after the pointer left.
 - **The star carries a tooltip and an accessible name: "Add to favourites" or "Remove from
   favourites".** The label says what the press will do, not what the state is, and the button
   carries no `aria-pressed`: a pressed button named "Remove" would read twice. On a narrow screen
@@ -314,3 +316,5 @@ Not applicable: one list per application key.
   stands in the column of the stars. Scenario SC-UK-104 added.
 - 2026-09-21 — the owner: every new colour, size and spacing of favourites became a property the
   application overrides, and so did the radius of the pinned submenu.
+- 2026-09-21 — the owner: a star removed by a click stayed visible after the pointer left. The
+  focus shows the row's buttons only from the keyboard.

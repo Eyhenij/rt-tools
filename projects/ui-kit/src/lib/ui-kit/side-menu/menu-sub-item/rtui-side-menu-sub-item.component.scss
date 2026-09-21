@@ -163,8 +163,10 @@
             }
         }
 
+        // Фокус показывает кнопки только с клавиатуры: снятая мышью звезда держит фокус, и правило
+        // по любому фокусу оставляло бы полую звезду видимой, когда указатель уже ушёл.
         &:hover .rtui-side-menu-sub-item-title__favorite,
-        &:focus-within .rtui-side-menu-sub-item-title__favorite {
+        &:has(:focus-visible) .rtui-side-menu-sub-item-title__favorite {
             opacity: 1;
         }
     }

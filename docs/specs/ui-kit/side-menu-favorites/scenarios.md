@@ -141,7 +141,7 @@ Then exactly one node of the page carries the id of `a`, and it lies in the list
 Given the service with `a` in the list and a wide screen with a hovering pointer
 When the submenu is drawn, then the row `b` is hovered, then its star is focused from the keyboard
 Then the star of `a` is visible from the start, and the star of `b` only under the hover and under the
-focus
+keyboard focus; a star pressed by the mouse hides when the pointer leaves
 
 Coverage: partial — the spec checks the marks the styles read, not the visibility itself: the spec
 environment applies no component styles and has no hover. The visibility is measured on the showcase.
