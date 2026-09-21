@@ -1,3 +1,4 @@
+import { isRecord } from '@rt-tools/utils';
 import { ISideMenu } from '../side-menu.types';
 import { clampSubMenuWidth } from '../side-menu.logic';
 import { normalizeFavorites } from '../favorites/favorites.logic';
@@ -23,10 +24,6 @@ export function normalizeMenuId(menuId: string | null | undefined): string {
 
 /** Запись хранилища как есть: номер меню — и что под ним лежит, в том числе сломанное. */
 export type TSideMenuSettingsRecord = Record<string, unknown>;
-
-export function isRecord(value: unknown): value is Record<string, unknown> {
-    return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
 
 function isSubMenuMode(value: unknown): value is ISideMenu.SubMenuMode {
     return value === 'hover' || value === 'pinned';
