@@ -6,7 +6,7 @@ import {
     moveFavorite,
     moveVisibleFavorite,
     normalizeFavorites,
-    parseFavorites,
+    parseSettings,
 } from './favorites.logic';
 
 const MENU: ReadonlyArray<ISideMenu.Item> = [
@@ -26,21 +26,31 @@ function idsOf(items: ReadonlyArray<ISideMenu.Item>): ISideMenu.FavoriteId[] {
     return items.map((item: ISideMenu.Item): ISideMenu.FavoriteId => item.id);
 }
 
-describe('parseFavorites', (): void => {
-    it('SC-UK-70 — не JSON читается пустым списком', (): void => {
-        expect(parseFavorites('{not json')).toEqual([]);
+describe('parseSettings', (): void => {
+    it('SC-UK-70 — не JSON читается пустыми настройками', (): void => {
+        expect(parseSettings('{not json')).toEqual({});
     });
 
-    it('SC-UK-70 — JSON не массив читается пустым списком', (): void => {
-        expect(parseFavorites('{"a": 1}')).toEqual([]);
+    it('SC-UK-70 — JSON не объект читается пустыми настройками', (): void => {
+        expect(parseSettings('["a", 1]')).toEqual({});
+        expect(parseSettings('7')).toEqual({});
     });
 
-    it('SC-UK-70 — пустое хранилище даёт пустой список', (): void => {
-        expect(parseFavorites(null)).toEqual([]);
+    it('SC-UK-70 — пустое хранилище даёт пустые настройки', (): void => {
+        expect(parseSettings(null)).toEqual({});
     });
 
     it('SC-UK-71 — чужие значения и повторы отбрасываются, 1 и "1" — разные номера', (): void => {
-        expect(parseFavorites('["a", 1, null, {"x": 1}, "a", "1"]')).toEqual(['a', 1, '1']);
+        expect(parseSettings('{"main": {"favorites": ["a", 1, null, {"x": 1}, "a", "1"]}}')).toEqual({
+            main: { favorites: ['a', 1, '1'] },
+        });
+    });
+
+    it('SC-UK-71 — меню со сломанным значением пропускается, соседнее читается', (): void => {
+        expect(parseSettings('{"main": {"favorites": ["a"]}, "broken": [1], "bare": {"favorites": "a"}}')).toEqual({
+            main: { favorites: ['a'] },
+            bare: {},
+        });
     });
 });
 

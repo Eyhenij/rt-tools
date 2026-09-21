@@ -1,3 +1,4 @@
+import { DEFAULT_MENU_ID } from '../favorites/favorites.logic';
 import { ISideMenu } from '../side-menu.types';
 import { clickRailItem, installFontsStub, menu } from './side-menu.harness';
 import {
@@ -93,7 +94,7 @@ describe('RtuiSideMenuComponent — избранное: раздел', () => {
         drop(fixture, 1, 0);
 
         expect(blockRowIds(fixture)).toEqual(['b', 'a']);
-        expect(favorites.ids()).toEqual(['b', 'c', 'a']);
+        expect(favorites.ids(DEFAULT_MENU_ID)()).toEqual(['b', 'c', 'a']);
     });
 
     it('SC-UK-103 — заголовок папки в разделе с избранным отмечен для столбца звёзд, в разделе без флага — нет', () => {
@@ -116,6 +117,22 @@ describe('RtuiSideMenuComponent — избранное: раздел', () => {
 
         hoverItem(fixture, 1);
         expect(header()?.classList).not.toContain('rtui-side-menu-expand-sub-item-header--favorites');
+    });
+
+    it('SC-UK-107 — меню со своим номером показывает и правит свой список, а не список другого меню', () => {
+        const { fixture, host, favorites } = withFavorites(['a'], { items: SECTIONS });
+        favorites.set('admin', ['b']);
+        host.menuId.set('admin');
+        fixture.detectChanges();
+
+        hoverItem(fixture, 0);
+        expect(blockRowIds(fixture)).toEqual(['b']);
+
+        listRow(fixture, 'a').querySelector<HTMLElement>(STAR)?.click();
+        fixture.detectChanges();
+
+        expect(favorites.ids('admin')()).toEqual(['b', 'a']);
+        expect(favorites.ids(DEFAULT_MENU_ID)()).toEqual(['a']);
     });
 
     it('SC-UK-104 — кнопка потребителя стоит последней в строке: после звезды в разделе и после ручки в блоке', () => {

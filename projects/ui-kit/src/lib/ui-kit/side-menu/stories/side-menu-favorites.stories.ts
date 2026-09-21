@@ -18,8 +18,8 @@ import { MENU_ITEMS, TestSideMenuWrapperComponent } from './component/test-side-
  * стоит у самих папок. В «Test long name» — три уровня папок, длинные подписи и кнопки пунктов: там
  * видно, как звезда уживается с дополнительной кнопкой и с переносом подписи.
  *
- * Список живёт в настоящем хранилище браузера под своим ключом витрины: отмеченное, переставленное и
- * перезагруженное здесь же проверяется глазами. Пустой список при подъёме заполняется разделами из
+ * Список живёт в настоящем хранилище браузера под своим ключом витрины, в объекте настроек под
+ * номером меню `showcase`: отмеченное, переставленное и перезагруженное здесь же проверяется глазами. Пустой список при подъёме заполняется разделами из
  * обоих пунктов, в том числе лежащими в папках, — иначе кадр показывал бы подменю без блока.
  */
 const FAVORITE_SECTIONS: ReadonlyArray<ISideMenu.Item['id']> = [1, 24];
@@ -64,7 +64,9 @@ const FAVORITES_MENU: ISideMenu.Item[] = MENU_ITEMS.map((item: ISideMenu.Item): 
 
     return item.id === 1 ? { ...item, favorites: true, submenu: CONTENT_WITH_FOLDERS } : { ...item, favorites: true };
 });
-const SHOWCASE_KEY: string = 'rtui-showcase-side-menu-favorites';
+const SHOWCASE_KEY: string = 'rtui-showcase-side-menu';
+/** Номер меню витрины: под ним в объекте настроек лежит его избранное. */
+const SHOWCASE_MENU_ID: string = 'showcase';
 const SEEDED_IDS: number[] = [2, 7, 9, 27, 31, 5];
 
 export default {
@@ -83,8 +85,8 @@ export default {
                 provideAppInitializer((): void => {
                     const favorites: RtuiSideMenuFavoritesService = inject(RtuiSideMenuFavoritesService);
 
-                    if (!favorites.ids().length) {
-                        favorites.set(SEEDED_IDS);
+                    if (!favorites.ids(SHOWCASE_MENU_ID)().length) {
+                        favorites.set(SHOWCASE_MENU_ID, SEEDED_IDS);
                     }
                 }),
             ],
@@ -98,6 +100,7 @@ type TStory = StoryObj<TestSideMenuWrapperComponent>;
 export const SubMenuFavorites: TStory = {
     args: {
         menuItems: FAVORITES_MENU,
+        menuId: SHOWCASE_MENU_ID,
         activeMenuIds: [1, 100, 101, 9],
         subMenuMode: 'pinned',
         isSubMenuXScrollEnabled: true,
@@ -113,6 +116,7 @@ export const SubMenuFavoritesMobile: TStory = {
     globals: { viewport: { value: 'narrow' } },
     args: {
         menuItems: FAVORITES_MENU,
+        menuId: SHOWCASE_MENU_ID,
         activeMenuIds: [1, 100, 101, 9],
         isSubMenuXScrollEnabled: true,
         isMainMenuIconsOutlined: false,

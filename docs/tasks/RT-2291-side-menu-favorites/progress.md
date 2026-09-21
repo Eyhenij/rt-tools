@@ -103,6 +103,8 @@
 
 - The owner: «иконку новую не вижу в сторибук пересобери». A rebuild changes nothing: the showcase font Material Icons has no `arrows_outward`. The favourites stories switched to Material Symbols, the font of the consumers: a 26 KB subset with the side menu stories' icons from the Google Fonts API lies in `projects/ui-kit/.storybook/static/fonts/material-symbols-outlined.woff2`, declared in `storybook.scss`, and the stories set the default font set class. The showcase on 6006: no icon falls back to text, the handle glyph 24×20 turned, centre 287 px; star, remove and handle all at `wght 700` — the remove icon got the outline directive. Old findings in `storybook.scss` fixed on the way. 158 tests passed.
 
+- The owner: «в сторадже храним ключ внутри по id храним один объект с настройками для меню, id может быть несколько, id задаются/чтение из апки доступно». The second level's spec keeps the submenu mode and width with the application, so the settings object holds favourites only and is open for more fields. One key `rtui-side-menu` holds `{ [menuId]: { favorites } }`; the menu takes `menuId`, `default` by default; the service takes the menu id in every method, gives `ids(menuId)` as one signal per id and `menuIds`. `SIDE_MENU_SETTINGS_KEY`, `DEFAULT_MENU_ID` exported, `FAVORITES_KEY` gone. The showcase on 6006: the key holds the menu `showcase`, the block shows 2, 7, 9, 5. 162 tests passed with SC-UK-105…SC-UK-107; `node tools/check-specs.mjs` green.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).

@@ -13,15 +13,17 @@ Then its list is `a`, `b`
 
 ### SC-UK-70 — a broken record reads as an empty list
 
-Given the storage holds under the key a value that is not JSON, or JSON that is not an array
+Given the storage holds under the key a value that is not JSON, or JSON that is not an object
 When the service is created
 Then its list is empty and nothing is thrown
 
 ### SC-UK-71 — foreign values and duplicates are dropped at the read
 
-Given the storage holds `["a", 1, null, {"x": 1}, "a"]` under the key
+Given the storage holds under the key the menu `main` with `["a", 1, null, {"x": 1}, "a"]`, the
+menu `broken` whose value is a number and the menu `empty` whose list is not an array
 When the service is created
-Then its list is `a`, `1`
+Then the list of `main` is `a`, `1`, the list of `empty` is empty, and the stored menus are `main`
+and `empty`
 
 ### SC-UK-72 — add, remove and toggle edit the list and the storage together
 
@@ -241,3 +243,24 @@ Given a flagged section whose item carries the consumer's additional button and 
 When the submenu is drawn
 Then the consumer's button is the last in the list row, right after the star, and the last in the
 block row, right after the handle
+
+### SC-UK-105 — two menus keep their lists under their ids in one key
+
+Given an empty storage
+When the menu `main` gets `a`, `b`, the menu `admin` gets `x`, `a` is removed from `admin` and the
+first entry of `main` is moved to the second place
+Then `main` holds `b`, `a`, `admin` holds `x`, the storage holds both under their ids, and a new
+service reads `admin` back
+
+### SC-UK-106 — the application sees the stored menu ids and reads any menu's list
+
+Given the storage holds the menu `main`
+When the service is created, then `x` is added to the menu `admin`
+Then the stored ids are `main`, then `main` and `admin`; the list of a menu is one signal for every
+call, and a menu never stored has an empty list
+
+### SC-UK-107 — a menu with its own id shows and edits its own list
+
+Given the list of the default menu is `a` and the list of the menu `admin` is `b`
+When the menu takes the id `admin`, its section is opened and the star of `a` is pressed
+Then the block shows `b`, the list of `admin` becomes `b`, `a`, and the default menu keeps `a`

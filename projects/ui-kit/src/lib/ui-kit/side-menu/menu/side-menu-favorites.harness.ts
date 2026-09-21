@@ -1,3 +1,4 @@
+import { DEFAULT_MENU_ID } from '../favorites/favorites.logic';
 import { CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -66,7 +67,7 @@ export function withFavorites(
     );
     const favorites: RtuiSideMenuFavoritesService = TestBed.inject(RtuiSideMenuFavoritesService);
 
-    favorites.set(ids);
+    favorites.set(DEFAULT_MENU_ID, ids);
     result.fixture.detectChanges();
 
     return { ...result, favorites };

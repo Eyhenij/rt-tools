@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { LOCAL_STORAGE } from '@rt-tools/core';
-import { FAVORITES_KEY } from './favorites.logic';
+import { SIDE_MENU_SETTINGS_KEY } from './favorites.logic';
 import {
     IRtuiSideMenuFavoritesConfig,
     provideRtuiSideMenuFavorites,
@@ -55,94 +55,132 @@ function createService(storage: Storage | null, config?: IRtuiSideMenuFavoritesC
     return TestBed.inject(RtuiSideMenuFavoritesService);
 }
 
+const MENU: string = 'main';
+
 function stored(storage: Storage): unknown {
-    return JSON.parse(storage.getItem(FAVORITES_KEY) ?? 'null');
+    return JSON.parse(storage.getItem(SIDE_MENU_SETTINGS_KEY) ?? 'null');
 }
 
 describe('RtuiSideMenuFavoritesService', (): void => {
     it('SC-UK-69 — список переживает новый сервис над тем же хранилищем и ключом', (): void => {
         const storage: MemoryStorage = new MemoryStorage();
         const first: RtuiSideMenuFavoritesService = createService(storage, { storageKey: 'app' });
-        first.add('a');
-        first.add('b');
+        first.add(MENU, 'a');
+        first.add(MENU, 'b');
 
-        expect(createService(storage, { storageKey: 'app' }).ids()).toEqual(['a', 'b']);
-        expect(createService(storage).ids()).toEqual([]);
+        expect(createService(storage, { storageKey: 'app' }).ids(MENU)()).toEqual(['a', 'b']);
+        expect(createService(storage).ids(MENU)()).toEqual([]);
     });
 
-    it('SC-UK-70 — сломанная запись читается пустым списком, закрытое хранилище не бросает', (): void => {
+    it('SC-UK-70 — сломанная запись читается пустой, закрытое хранилище не бросает', (): void => {
         const storage: MemoryStorage = new MemoryStorage();
-        storage.setItem(FAVORITES_KEY, '{not json');
+        storage.setItem(SIDE_MENU_SETTINGS_KEY, '{not json');
 
-        expect(createService(storage).ids()).toEqual([]);
+        expect(createService(storage).ids(MENU)()).toEqual([]);
 
-        storage.setItem(FAVORITES_KEY, '{"a": 1}');
-        expect(createService(storage).ids()).toEqual([]);
+        storage.setItem(SIDE_MENU_SETTINGS_KEY, '["a", "b"]');
+        expect(createService(storage).ids(MENU)()).toEqual([]);
+        expect(createService(storage).menuIds()).toEqual([]);
 
         const closed: RtuiSideMenuFavoritesService = createService(new ClosedStorage());
-        expect(closed.ids()).toEqual([]);
-        expect((): void => closed.add('a')).not.toThrow();
-        expect(closed.ids()).toEqual(['a']);
+        expect(closed.ids(MENU)()).toEqual([]);
+        expect((): void => closed.add(MENU, 'a')).not.toThrow();
+        expect(closed.ids(MENU)()).toEqual(['a']);
     });
 
     it('SC-UK-70 — без хранилища список живёт в памяти', (): void => {
         const service: RtuiSideMenuFavoritesService = createService(null);
-        service.add('a');
+        service.add(MENU, 'a');
 
-        expect(service.ids()).toEqual(['a']);
+        expect(service.ids(MENU)()).toEqual(['a']);
     });
 
-    it('SC-UK-71 — чужие значения и повторы отбрасываются при чтении', (): void => {
+    it('SC-UK-71 — чужие значения и повторы отбрасываются при чтении, сломанное меню не стирает соседнее', (): void => {
         const storage: MemoryStorage = new MemoryStorage();
-        storage.setItem(FAVORITES_KEY, '["a", 1, null, {"x": 1}, "a"]');
+        storage.setItem(
+            SIDE_MENU_SETTINGS_KEY,
+            '{"main": {"favorites": ["a", 1, null, {"x": 1}, "a"]}, "broken": 7, "empty": {"favorites": 3}}'
+        );
+        const service: RtuiSideMenuFavoritesService = createService(storage);
 
-        expect(createService(storage).ids()).toEqual(['a', 1]);
+        expect(service.ids(MENU)()).toEqual(['a', 1]);
+        expect(service.ids('empty')()).toEqual([]);
+        expect(service.menuIds()).toEqual(['main', 'empty']);
     });
 
     it('SC-UK-72 — добавление, удаление и переключение правят список и хранилище вместе', (): void => {
         const storage: MemoryStorage = new MemoryStorage();
         const service: RtuiSideMenuFavoritesService = createService(storage);
 
-        service.add('a');
-        service.add('a');
-        expect(service.ids()).toEqual(['a']);
-        expect(stored(storage)).toEqual(['a']);
+        service.add(MENU, 'a');
+        service.add(MENU, 'a');
+        expect(service.ids(MENU)()).toEqual(['a']);
+        expect(stored(storage)).toEqual({ main: { favorites: ['a'] } });
 
-        service.toggle('b');
-        expect(service.has('b')).toBe(true);
-        expect(stored(storage)).toEqual(['a', 'b']);
+        service.toggle(MENU, 'b');
+        expect(service.has(MENU, 'b')).toBe(true);
+        expect(stored(storage)).toEqual({ main: { favorites: ['a', 'b'] } });
 
-        service.remove('a');
-        expect(service.ids()).toEqual(['b']);
-        expect(stored(storage)).toEqual(['b']);
+        service.remove(MENU, 'a');
+        expect(service.ids(MENU)()).toEqual(['b']);
+        expect(stored(storage)).toEqual({ main: { favorites: ['b'] } });
 
-        service.toggle('b');
-        expect(service.ids()).toEqual([]);
-        expect(stored(storage)).toEqual([]);
+        service.toggle(MENU, 'b');
+        expect(service.ids(MENU)()).toEqual([]);
+        expect(stored(storage)).toEqual({ main: { favorites: [] } });
     });
 
     it('SC-UK-73 — перенос ставит запись на новое место и пишет его в хранилище', (): void => {
         const storage: MemoryStorage = new MemoryStorage();
         const service: RtuiSideMenuFavoritesService = createService(storage);
-        service.set(['a', 'b', 'c']);
-        service.move(0, 2);
+        service.set(MENU, ['a', 'b', 'c']);
+        service.move(MENU, 0, 2);
 
-        expect(service.ids()).toEqual(['b', 'c', 'a']);
-        expect(stored(storage)).toEqual(['b', 'c', 'a']);
+        expect(service.ids(MENU)()).toEqual(['b', 'c', 'a']);
+        expect(stored(storage)).toEqual({ main: { favorites: ['b', 'c', 'a'] } });
     });
 
     it('SC-UK-74 — замена и очистка меняют список целиком', (): void => {
         const storage: MemoryStorage = new MemoryStorage();
         const service: RtuiSideMenuFavoritesService = createService(storage);
-        service.set(['a', 'b']);
-        service.set(['c', 'c', 'd']);
+        service.set(MENU, ['a', 'b']);
+        service.set(MENU, ['c', 'c', 'd']);
 
-        expect(service.ids()).toEqual(['c', 'd']);
-        expect(stored(storage)).toEqual(['c', 'd']);
+        expect(service.ids(MENU)()).toEqual(['c', 'd']);
+        expect(stored(storage)).toEqual({ main: { favorites: ['c', 'd'] } });
 
-        service.clear();
-        expect(service.ids()).toEqual([]);
-        expect(stored(storage)).toEqual([]);
+        service.clear(MENU);
+        expect(service.ids(MENU)()).toEqual([]);
+        expect(stored(storage)).toEqual({ main: { favorites: [] } });
+    });
+
+    it('SC-UK-105 — два меню держат свои списки под своими номерами в одном ключе', (): void => {
+        const storage: MemoryStorage = new MemoryStorage();
+        const service: RtuiSideMenuFavoritesService = createService(storage);
+        const main: ReturnType<RtuiSideMenuFavoritesService['ids']> = service.ids(MENU);
+
+        service.set(MENU, ['a', 'b']);
+        service.set('admin', ['x']);
+        service.remove('admin', 'a');
+        service.move(MENU, 0, 1);
+
+        expect(main()).toEqual(['b', 'a']);
+        expect(service.ids('admin')()).toEqual(['x']);
+        expect(stored(storage)).toEqual({ main: { favorites: ['b', 'a'] }, admin: { favorites: ['x'] } });
+        expect(createService(storage).ids('admin')()).toEqual(['x']);
+    });
+
+    it('SC-UK-106 — приложение видит номера хранимых меню и читает список любого', (): void => {
+        const storage: MemoryStorage = new MemoryStorage();
+        storage.setItem(SIDE_MENU_SETTINGS_KEY, '{"main": {"favorites": ["a"]}}');
+        const service: RtuiSideMenuFavoritesService = createService(storage);
+
+        expect(service.menuIds()).toEqual(['main']);
+        expect(service.ids(MENU)).toBe(service.ids(MENU));
+
+        service.add('admin', 'x');
+        expect(service.menuIds()).toEqual(['main', 'admin']);
+        expect(service.ids('absent')()).toEqual([]);
     });
 
     it('SC-UK-85 — подписи настроек заменяют английские, пустая подпись равна отсутствию', (): void => {

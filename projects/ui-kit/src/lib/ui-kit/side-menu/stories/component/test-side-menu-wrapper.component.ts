@@ -7,6 +7,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { ISideMenu } from '../../side-menu.types';
 import { readSubMenuMode, readSubMenuWidth, writeSubMenuMode, writeSubMenuWidth } from '../../side-menu.logic';
+import { DEFAULT_MENU_ID } from '../../favorites/favorites.logic';
 import { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from '../../menu/rtui-side-menu.component';
 
 /** Длинное имя пункта: им показывают, как меню переносит текст. */
@@ -166,6 +167,8 @@ export class TestSideMenuWrapperComponent {
     public subMenuMode: ISideMenu.SubMenuMode = readSubMenuMode(this.#storage);
     /** Ширина второго уровня — такая же настройка человека, и хранится она тем же приёмом. */
     public subMenuWidth: number | null = readSubMenuWidth(this.#storage);
+    /** Номер меню, под которым кит хранит его настройки. */
+    public menuId: string = DEFAULT_MENU_ID;
     public isSubMenuXScrollEnabled: boolean = true;
     public isMainMenuIconsOutlined: boolean = false;
     public isSubMenuIconsOutlined: boolean = false;

@@ -45,6 +45,7 @@ import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-su
 import { pressSubMenuRow, SubMenuKeyboard } from './sub-menu-keyboard';
 import { RtuiSubMenuHoldService } from './rtui-sub-menu-hold.service';
 import { RtuiSideMenuFavoritesComponent } from '../favorites/rtui-side-menu-favorites.component';
+import { DEFAULT_MENU_ID } from '../favorites/favorites.logic';
 
 @Directive({
     selector: '[rtuiSideMenuHeader]',
@@ -257,11 +258,10 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     });
     /** Мода подменю. Умолчание — сегодняшнее поведение: открывается наведением. */
     public subMenuMode: InputSignal<ISideMenu.SubMenuMode> = input<ISideMenu.SubMenuMode>('hover');
-    /**
-     * Ширина закреплённого подменю в пикселях. Пустая — ширину ставит оформление; хранит выбор
-     * потребитель, как и моду.
-     */
+    /** Ширина закреплённого подменю в пикселях. Пустая — ширину ставит оформление; выбор хранит потребитель. */
     public subMenuWidth: InputSignal<number | null> = input<number | null>(null);
+    /** Под каким номером меню хранит свои настройки: у двух меню приложения — два номера. */
+    public menuId: InputSignal<string> = input<string>(DEFAULT_MENU_ID);
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });

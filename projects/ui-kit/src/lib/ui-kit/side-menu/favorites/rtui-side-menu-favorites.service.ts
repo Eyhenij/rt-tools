@@ -1,4 +1,5 @@
 import {
+    computed,
     EnvironmentProviders,
     inject,
     Injectable,
@@ -11,7 +12,7 @@ import {
 
 import { LOCAL_STORAGE } from '@rt-tools/core';
 import { ISideMenu } from '../side-menu.types';
-import { FAVORITES_KEY, moveFavorite, normalizeFavorites, parseFavorites } from './favorites.logic';
+import { moveFavorite, normalizeFavorites, parseSettings, SIDE_MENU_SETTINGS_KEY } from './favorites.logic';
 
 /** Подписи избранного. У первого кита нет словаря, и приложение на другом языке называет их само. */
 export interface IRtuiSideMenuFavoritesLabels {
@@ -22,7 +23,7 @@ export interface IRtuiSideMenuFavoritesLabels {
 }
 
 export interface IRtuiSideMenuFavoritesConfig {
-    /** Ключ записи в хранилище; два приложения на одном адресе держат два списка двумя ключами. */
+    /** Ключ записи в хранилище; два приложения на одном адресе держат свои настройки двумя ключами. */
     readonly storageKey?: string;
     readonly labels?: Partial<IRtuiSideMenuFavoritesLabels>;
 }
@@ -38,79 +39,107 @@ export const RTUI_SIDE_MENU_FAVORITES_CONFIG: InjectionToken<IRtuiSideMenuFavori
     new InjectionToken<IRtuiSideMenuFavoritesConfig>('RTUI_SIDE_MENU_FAVORITES_CONFIG');
 
 /**
- * Список избранного бокового меню.
+ * Избранное боковых меню приложения.
+ *
+ * В хранилище под одним ключом лежит объект: у каждого меню — свои настройки под его номером, в них
+ * список избранного. Номер меню задаёт приложение входом `menuId` меню; меню без номера — `default`.
+ * Приложение читает и пишет список любого меню по его номеру и видит, какие номера уже хранятся.
  *
  * Держатель один: меню и приложение читают и пишут через этот же сервис, второй держатель того же
- * списка разошёлся бы с первым на первой правке. Поэтому сервис ставится только провайдером
- * окружения — `provideRtuiSideMenuFavorites()`, — а меню берёт его необязательно: не поставлен — звёзд нет.
+ * ключа разошёлся бы с первым на первой правке. Поэтому сервис ставится только провайдером
+ * окружения — `provideRtuiSideMenuFavorites()`, — а меню берёт его необязательно: не поставлен —
+ * звёзд нет.
  *
- * Хранилище берётся токеном `@rt-tools/core`. Без него — и вне браузера — список живёт в памяти.
+ * Хранилище берётся токеном `@rt-tools/core`. Без него — и вне браузера — настройки живут в памяти.
  * Ни чтение, ни запись не бросают: закрытое или полное хранилище не должно ронять меню.
  */
 @Injectable()
 export class RtuiSideMenuFavoritesService {
     readonly #config: IRtuiSideMenuFavoritesConfig = inject(RTUI_SIDE_MENU_FAVORITES_CONFIG, { optional: true }) ?? {};
     readonly #storage: Storage | null = inject(LOCAL_STORAGE, { optional: true }) ?? null;
-    readonly #key: string = this.#config.storageKey?.trim() || FAVORITES_KEY;
-    readonly #ids: WritableSignal<ReadonlyArray<ISideMenu.FavoriteId>> = signal(this.#read());
+    readonly #key: string = this.#config.storageKey?.trim() || SIDE_MENU_SETTINGS_KEY;
+    readonly #settings: WritableSignal<Readonly<Record<string, ISideMenu.Settings>>> = signal(this.#read());
+    readonly #lists: Map<string, Signal<ReadonlyArray<ISideMenu.FavoriteId>>> = new Map();
 
-    public readonly ids: Signal<ReadonlyArray<ISideMenu.FavoriteId>> = this.#ids.asReadonly();
+    /** Номера меню, чьи настройки лежат в хранилище. */
+    public readonly menuIds: Signal<string[]> = computed((): string[] => Object.keys(this.#settings()));
     public readonly labels: IRtuiSideMenuFavoritesLabels = { ...DEFAULT_LABELS, ...this.#definedLabels() };
 
-    public has(id: ISideMenu.FavoriteId): boolean {
-        return this.#ids().includes(id);
+    /** Список избранного одного меню. Сигнал на номер один: повторный вызов отдаёт тот же. */
+    public ids(menuId: string): Signal<ReadonlyArray<ISideMenu.FavoriteId>> {
+        let list: Signal<ReadonlyArray<ISideMenu.FavoriteId>> | undefined = this.#lists.get(menuId);
+
+        if (!list) {
+            list = computed((): ReadonlyArray<ISideMenu.FavoriteId> => this.#settings()[menuId]?.favorites ?? []);
+            this.#lists.set(menuId, list);
+        }
+
+        return list;
+    }
+
+    public has(menuId: string, id: ISideMenu.FavoriteId): boolean {
+        return this.ids(menuId)().includes(id);
     }
 
     /** Номер, уже стоящий в списке, остаётся на своём месте. */
-    public add(id: ISideMenu.FavoriteId): void {
-        if (!this.has(id)) {
-            this.#write([...this.#ids(), id]);
+    public add(menuId: string, id: ISideMenu.FavoriteId): void {
+        if (!this.has(menuId, id)) {
+            this.#write(menuId, [...this.ids(menuId)(), id]);
         }
     }
 
-    public remove(id: ISideMenu.FavoriteId): void {
-        if (this.has(id)) {
-            this.#write(this.#ids().filter((kept: ISideMenu.FavoriteId): boolean => kept !== id));
+    public remove(menuId: string, id: ISideMenu.FavoriteId): void {
+        if (this.has(menuId, id)) {
+            this.#write(
+                menuId,
+                this.ids(menuId)().filter((kept: ISideMenu.FavoriteId): boolean => kept !== id)
+            );
         }
     }
 
-    public toggle(id: ISideMenu.FavoriteId): void {
-        if (this.has(id)) {
-            this.remove(id);
+    public toggle(menuId: string, id: ISideMenu.FavoriteId): void {
+        if (this.has(menuId, id)) {
+            this.remove(menuId, id);
         } else {
-            this.add(id);
+            this.add(menuId, id);
         }
     }
 
     /** Перенос по местам списка, не блока: место вне списка у источника ничего не меняет. */
-    public move(from: number, to: number): void {
-        this.#write(moveFavorite(this.#ids(), from, to));
+    public move(menuId: string, from: number, to: number): void {
+        this.#write(menuId, moveFavorite(this.ids(menuId)(), from, to));
     }
 
     /** Замена списка целиком — чужие значения и повторы отбрасываются так же, как при чтении. */
-    public set(ids: ReadonlyArray<ISideMenu.FavoriteId>): void {
-        this.#write(normalizeFavorites(ids));
+    public set(menuId: string, ids: ReadonlyArray<ISideMenu.FavoriteId>): void {
+        this.#write(menuId, normalizeFavorites(ids));
     }
 
-    public clear(): void {
-        this.#write([]);
+    public clear(menuId: string): void {
+        this.#write(menuId, []);
     }
 
-    #read(): ISideMenu.FavoriteId[] {
+    #read(): Record<string, ISideMenu.Settings> {
         try {
-            return parseFavorites(this.#storage?.getItem(this.#key) ?? null);
+            return parseSettings(this.#storage?.getItem(this.#key) ?? null);
         } catch {
-            return [];
+            return {};
         }
     }
 
-    #write(ids: ReadonlyArray<ISideMenu.FavoriteId>): void {
-        this.#ids.set(ids);
+    /** Пишется весь объект: настройки остальных меню уходят в хранилище такими, какими были. */
+    #write(menuId: string, ids: ReadonlyArray<ISideMenu.FavoriteId>): void {
+        const settings: Readonly<Record<string, ISideMenu.Settings>> = {
+            ...this.#settings(),
+            [menuId]: { ...this.#settings()[menuId], favorites: [...ids] },
+        };
+
+        this.#settings.set(settings);
 
         try {
-            this.#storage?.setItem(this.#key, JSON.stringify(ids));
+            this.#storage?.setItem(this.#key, JSON.stringify(settings));
         } catch {
-            // хранилище закрыто или полно — список живёт в памяти до перезагрузки
+            // хранилище закрыто или полно — настройки живут в памяти до перезагрузки
         }
     }
 
@@ -126,7 +155,7 @@ export class RtuiSideMenuFavoritesService {
  * Включение избранного: сервис и его настройки в инжектор окружения приложения.
  *
  * ```ts
- * bootstrapApplication(App, { providers: [provideRtStorage(), provideRtuiSideMenuFavorites({ storageKey: 'my-app-favorites' })] });
+ * bootstrapApplication(App, { providers: [provideRtStorage(), provideRtuiSideMenuFavorites({ storageKey: 'my-app-side-menu' })] });
  * ```
  */
 export function provideRtuiSideMenuFavorites(config: IRtuiSideMenuFavoritesConfig = {}): EnvironmentProviders {

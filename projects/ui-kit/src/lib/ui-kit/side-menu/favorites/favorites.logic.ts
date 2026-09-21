@@ -1,12 +1,15 @@
 import { ISideMenu } from '../side-menu.types';
 
 /**
- * Ключ списка избранного по умолчанию.
+ * Ключ настроек бокового меню в хранилище.
  *
- * Назван приставкой кита, как ключи моды и ширины подменю: хранилище браузера общее на весь адрес,
- * и короткое имя столкнулось бы с ключом потребителя молча.
+ * Назван приставкой кита: хранилище браузера общее на весь адрес, и короткое имя столкнулось бы с
+ * ключом потребителя молча. Под ключом — один объект, в нём настройки каждого меню под его номером.
  */
-export const FAVORITES_KEY: string = 'rtui-side-menu-favorites';
+export const SIDE_MENU_SETTINGS_KEY: string = 'rtui-side-menu';
+
+/** Номер меню, которому приложение своего не задало. */
+export const DEFAULT_MENU_ID: string = 'default';
 
 /** Только строки и числа, без повторов, в прежнем порядке. */
 export function normalizeFavorites(values: ReadonlyArray<unknown>): ISideMenu.FavoriteId[] {
@@ -19,24 +22,50 @@ export function normalizeFavorites(values: ReadonlyArray<unknown>): ISideMenu.Fa
     }, []);
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 /**
- * Список из того, что лежит в хранилище.
+ * Настройки одного меню из того, что лежит под его номером.
  *
- * Сломанная запись читается пустым списком: не JSON, не массив — одинаково. Из массива остаются
- * только строки и числа, повтор отбрасывается — первое место побеждает. `1` и `'1'` — разные
- * номера: пункт меню может носить любой из двух, и сведение их в один подменило бы чужой пункт.
+ * Список избранного очищается так же, как при записи: из массива остаются строки и числа, повтор
+ * отбрасывается — первое место побеждает. `1` и `'1'` — разные номера: пункт меню может носить
+ * любой из двух, и сведение их в один подменило бы чужой пункт. Не массив — списка нет.
  */
-export function parseFavorites(raw: string | null): ISideMenu.FavoriteId[] {
+export function normalizeSettings(value: unknown): ISideMenu.Settings {
+    if (!isRecord(value) || !Array.isArray(value['favorites'])) {
+        return {};
+    }
+
+    return { favorites: normalizeFavorites(value['favorites']) };
+}
+
+/**
+ * Настройки всех меню из того, что лежит в хранилище.
+ *
+ * Сломанная запись читается пустой: не JSON, не объект — одинаково. Меню с номером, чьё значение
+ * не объект, пропускается, остальные читаются: сломанный угол одного меню не стирает соседние.
+ */
+export function parseSettings(raw: string | null): Record<string, ISideMenu.Settings> {
     if (raw === null) {
-        return [];
+        return {};
     }
 
     try {
         const value: unknown = JSON.parse(raw);
 
-        return Array.isArray(value) ? normalizeFavorites(value) : [];
+        if (!isRecord(value)) {
+            return {};
+        }
+
+        return Object.fromEntries(
+            Object.entries(value)
+                .filter(([, settings]: [string, unknown]): boolean => isRecord(settings))
+                .map(([menuId, settings]: [string, unknown]): [string, ISideMenu.Settings] => [menuId, normalizeSettings(settings)])
+        );
     } catch {
-        return [];
+        return {};
     }
 }
 

@@ -1,3 +1,4 @@
+import { DEFAULT_MENU_ID } from '../favorites/favorites.logic';
 import { CdkDrag, CdkDragEnd, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -92,7 +93,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
         (listRow(fixture, 'rates').querySelector(STAR) as HTMLElement).click();
         fixture.detectChanges();
 
-        expect(favorites.ids()).toEqual(['rates']);
+        expect(favorites.ids(DEFAULT_MENU_ID)()).toEqual(['rates']);
         expect(emitted).not.toHaveBeenCalled();
         expect(menu(fixture).selectedSubMenu()).not.toBeNull();
 
@@ -119,7 +120,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
         remove.click();
         fixture.detectChanges();
 
-        expect(favorites.ids()).toEqual(['pie']);
+        expect(favorites.ids(DEFAULT_MENU_ID)()).toEqual(['pie']);
         expect(blockRowIds(fixture)).toEqual(['pie']);
         expect(emitted).not.toHaveBeenCalled();
     });
@@ -173,17 +174,17 @@ describe('RtuiSideMenuComponent — избранное', () => {
         fixture.detectChanges();
         await fixture.whenStable();
 
-        expect(favorites.ids()).toEqual(['pie', 'rates', 'bars']);
+        expect(favorites.ids(DEFAULT_MENU_ID)()).toEqual(['pie', 'rates', 'bars']);
         expect((document.activeElement as HTMLElement | null)?.closest(BLOCK_ROW)?.getAttribute('data-id')).toBe('rates');
 
         // Ручка едет со своей строкой: вверх она возвращает строку на место, а с первого места — никуда.
         first.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
         fixture.detectChanges();
-        expect(favorites.ids()).toEqual(['rates', 'pie', 'bars']);
+        expect(favorites.ids(DEFAULT_MENU_ID)()).toEqual(['rates', 'pie', 'bars']);
 
         first.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
         fixture.detectChanges();
-        expect(favorites.ids()).toEqual(['rates', 'pie', 'bars']);
+        expect(favorites.ids(DEFAULT_MENU_ID)()).toEqual(['rates', 'pie', 'bars']);
     });
 
     it('SC-UK-80 — номера, которого в меню нет, в блоке нет, а в списке он остаётся', () => {
@@ -192,7 +193,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
         hoverFirstItem(fixture);
 
         expect(blockRowIds(fixture)).toEqual(['rates']);
-        expect(favorites.ids()).toEqual(['rates', 'gone']);
+        expect(favorites.ids(DEFAULT_MENU_ID)()).toEqual(['rates', 'gone']);
     });
 
     it('SC-UK-81 — блоку нечего показать — он места не занимает', () => {
@@ -237,7 +238,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
         drop(fixture, 0, 2);
 
         expect(blockRowIds(fixture)).toEqual(['pie', 'bars', 'rates']);
-        expect(favorites.ids()).toEqual(['pie', 'bars', 'rates']);
+        expect(favorites.ids(DEFAULT_MENU_ID)()).toEqual(['pie', 'bars', 'rates']);
     });
 
     it('SC-UK-85 — подписи приходят из настроек провайдера', () => {
@@ -299,7 +300,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
         drop(fixture, 1, 0);
 
         expect(blockRowIds(fixture)).toEqual(['pie', 'rates']);
-        expect(favorites.ids()).toEqual(['pie', 'gone', 'rates']);
+        expect(favorites.ids(DEFAULT_MENU_ID)()).toEqual(['pie', 'gone', 'rates']);
     });
 
     it('SC-UK-88 — доводка в видимую часть целится в строку списка, а не в строку блока', () => {
@@ -379,7 +380,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
         drop(fixture, 0, 1, false);
         drop(fixture, 1, 1);
 
-        expect(favorites.ids()).toEqual(['rates', 'pie']);
+        expect(favorites.ids(DEFAULT_MENU_ID)()).toEqual(['rates', 'pie']);
     });
 
     it('SC-UK-92 — строка блока отмечена активной, как и строка списка', () => {

@@ -1,3 +1,4 @@
+import { DEFAULT_MENU_ID } from '../favorites/favorites.logic';
 import { ChangeDetectionStrategy, Component, EnvironmentProviders, Provider, Signal, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -76,6 +77,7 @@ export const NESTED_ITEMS: ISideMenu.Item[] = [
             [activeMenuIds]="active()"
             [subMenuMode]="mode()"
             [subMenuWidth]="width()"
+            [menuId]="menuId()"
             (subMenuWidthChange)="width.set($event)" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -86,6 +88,7 @@ export class HostComponent {
     public readonly active: WritableSignal<Array<string | number>> = signal([]);
     public readonly mode: WritableSignal<ISideMenu.SubMenuMode> = signal('hover');
     public readonly width: WritableSignal<number | null> = signal(null);
+    public readonly menuId: WritableSignal<string> = signal(DEFAULT_MENU_ID);
 }
 
 export interface ISetup {

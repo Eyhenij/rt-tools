@@ -90,6 +90,10 @@ export class RtuiSideMenuSubItemComponent {
     protected readonly favoritesOn: Signal<boolean> = computed(
         (): boolean => !!this.favorites && favoritesSection(this.menuRef.menuItems(), this.menuRef.shownSubMenu()) !== null
     );
+    /** Список избранного своего меню — по номеру, который меню получило от приложения. */
+    protected readonly favoriteIds: Signal<ReadonlyArray<ISideMenu.FavoriteId>> = computed(
+        (): ReadonlyArray<ISideMenu.FavoriteId> => this.favorites?.ids(this.menuRef.menuId())() ?? []
+    );
     public readonly menuRef: IRtuiSideMenuHost = inject(RTUI_SIDE_MENU);
 
     public item: InputSignal<ISideMenu.Item> = input.required<ISideMenu.Item>();
@@ -141,7 +145,7 @@ export class RtuiSideMenuSubItemComponent {
     /** Звезда переключает избранное и больше ничего: ни перехода, ни закрытия подменю. */
     public onToggleFavorite(item: ISideMenu.Item, event: MouseEvent): void {
         event.stopPropagation();
-        this.favorites?.toggle(item.id);
+        this.favorites?.toggle(this.menuRef.menuId(), item.id);
     }
 
     /**
@@ -156,7 +160,7 @@ export class RtuiSideMenuSubItemComponent {
         const neighbour: Element | null | undefined = row?.nextElementSibling ?? row?.previousElementSibling;
 
         neighbour?.querySelector<HTMLElement>(FAVORITE_BUTTON)?.focus();
-        this.favorites?.remove(item.id);
+        this.favorites?.remove(this.menuRef.menuId(), item.id);
     }
 
     public onClickSubMenuAdditional(data: ISideMenu.ItemData, event: MouseEvent): void {

@@ -24,6 +24,8 @@ export interface IRtuiSideMenuHost {
     readonly expandedMenuIds: Signal<Array<string | number>>;
     readonly highlightedMenuId: Signal<string | number | null>;
     readonly subMenuQuery: Signal<string>;
+    /** Номер меню, под которым лежат его настройки: избранное читается и пишется по нему. */
+    readonly menuId: Signal<string>;
 }
 
 export const RTUI_SIDE_MENU: InjectionToken<IRtuiSideMenuHost> = new InjectionToken<IRtuiSideMenuHost>('RTUI_SIDE_MENU');
@@ -39,6 +41,11 @@ export namespace ISideMenu {
 
     /** Номер пункта в списке избранного — тот же, что `id` пункта меню. */
     export type FavoriteId = Item['id'];
+
+    /** Настройки одного меню, которые кит хранит сам. Моду и ширину подменю хранит приложение. */
+    export interface Settings {
+        favorites?: FavoriteId[];
+    }
 
     export interface Item {
         id: string | number;

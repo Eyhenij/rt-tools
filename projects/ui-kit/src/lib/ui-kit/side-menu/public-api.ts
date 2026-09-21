@@ -13,7 +13,7 @@ export {
 } from './side-menu.logic';
 export type { ISubMenuTitlePart } from './side-menu.logic';
 export { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from './menu/rtui-side-menu.component';
-export { FAVORITES_KEY } from './favorites/favorites.logic';
+export { DEFAULT_MENU_ID, SIDE_MENU_SETTINGS_KEY } from './favorites/favorites.logic';
 export {
     provideRtuiSideMenuFavorites,
     RTUI_SIDE_MENU_FAVORITES_CONFIG,

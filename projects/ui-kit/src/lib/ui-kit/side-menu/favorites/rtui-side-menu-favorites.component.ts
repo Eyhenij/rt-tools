@@ -84,7 +84,7 @@ export class RtuiSideMenuFavoritesComponent {
             return [];
         }
 
-        return findFavoriteItems([section], this.favorites.ids());
+        return findFavoriteItems([section], this.favorites.ids(this.#menu.menuId())());
     });
     /** Ручки строк по порядку: стрелка возвращает фокус на ручку переставленной строки. */
     protected readonly handles: Signal<ReadonlyArray<ElementRef<HTMLElement>>> = viewChildren<string, ElementRef<HTMLElement>>('handle', {
@@ -155,6 +155,7 @@ export class RtuiSideMenuFavoritesComponent {
         }
 
         const visible: ISideMenu.FavoriteId[] = this.rows().map((item: ISideMenu.Item): ISideMenu.FavoriteId => item.id);
-        this.favorites.set(moveVisibleFavorite(this.favorites.ids(), visible, from, to));
+        const menuId: string = this.#menu.menuId();
+        this.favorites.set(menuId, moveVisibleFavorite(this.favorites.ids(menuId)(), visible, from, to));
     }
 }

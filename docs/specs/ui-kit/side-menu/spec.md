@@ -147,7 +147,7 @@ Not applicable: the submenu has no refusals of its own.
 
 The submenu has no records of the storage of its own: the mode and the activity arrive by the inputs, and
 the preference is kept by the application that installs the kit. Favourites are the exception: one record
-kept by their service — see the subdomain `side-menu-favorites`.
+kept by their service, the settings of each menu under its id — see the subdomain `side-menu-favorites`.
 
 ## Screens and states
 

@@ -72,7 +72,7 @@
                             Имя кнопки называет следующее нажатие, и `aria-pressed` у неё нет:
                             нажатая кнопка с именем «убрать» читалась бы вдвое.
                         -->
-                        @let isFavorite = favorites.ids().includes(item.id);
+                        @let isFavorite = favoriteIds().includes(item.id);
                         <button
                             mat-icon-button
                             type="button"
