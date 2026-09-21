@@ -12,6 +12,7 @@ import {
     OutputEmitterRef,
     Signal,
 } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon, MatListItemTitle, MatNavList } from '@angular/material/list';
@@ -20,7 +21,7 @@ import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltip } from '@angular/material/toolt
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../tooltip';
-import { RtuiButtonComponent } from '../../buttons/unified-button/rtui-button.component';
+import { favoritesSection } from '../favorites/favorites.logic';
 import { RtuiFavoritesService } from '../favorites/rtui-favorites.service';
 import { RtuiSubMenuHoldService } from '../menu/rtui-sub-menu-hold.service';
 import { RtuiSubMenuTitlePartsPipe } from './sub-menu-title-parts.pipe';
@@ -43,7 +44,7 @@ const BEM_BLOCK: string = 'rtui-side-menu-sub-item';
         MatListItemTitle,
         MatExpansionModule,
         MatTooltip,
-        RtuiButtonComponent,
+        MatIconButton,
 
         // directives
         BlockDirective,
@@ -73,6 +74,12 @@ export class RtuiSideMenuSubItemComponent {
     protected readonly hold: RtuiSubMenuHoldService | null = inject(RtuiSubMenuHoldService, { optional: true });
     /** Экран узкий: замер кита, и другого источника у этого признака нет. */
     protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
+    /** Раздел открытого подменю включил избранное: только тогда у пунктов есть звёзды. */
+    protected readonly favoritesOn: Signal<boolean> = computed(
+        (): boolean =>
+            !!this.favorites &&
+            favoritesSection(this.menuRef.menuItems(), this.menuRef.selectedSubMenu(), this.menuRef.activeMenuIds()) !== null
+    );
     public readonly menuRef: IRtuiSideMenuHost = inject(RTUI_SIDE_MENU);
 
     public item: InputSignal<ISideMenu.Item> = input.required<ISideMenu.Item>();
@@ -114,6 +121,12 @@ export class RtuiSideMenuSubItemComponent {
     public onToggleFavorite(item: ISideMenu.Item, event: MouseEvent): void {
         event.stopPropagation();
         this.favorites?.toggle(item.id);
+    }
+
+    /** Кнопка строки избранного убирает пункт из списка, не открывая его. */
+    public onRemoveFavorite(item: ISideMenu.Item, event: MouseEvent): void {
+        event.stopPropagation();
+        this.favorites?.remove(item.id);
     }
 
     public onClickSubMenuAdditional(data: ISideMenu.ItemData, event: MouseEvent): void {

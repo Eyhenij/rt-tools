@@ -51,7 +51,8 @@ Then there is no star on any row and no favourites block
 
 ### SC-UK-76 — a star stands on items with an address and not on folders
 
-Given the service and an open submenu with an item, a folder and an item inside the folder
+Given the service and an open submenu of a favourites section with an item, a folder and an item
+inside the folder
 When the folder is open
 Then both items carry a star and the folder header does not
 
@@ -59,8 +60,8 @@ Then both items carry a star and the folder header does not
 
 Given the service with `a` in the list and an open submenu with the items `a` and `b`
 When the submenu is drawn
-Then the star of `a` is pressed, filled and named "Remove from favourites", and the star of `b` is
-not pressed, outlined and named "Add to favourites"
+Then the star of `a` is pressed, filled — `star` — and named "Remove from favourites", and the star
+of `b` is not pressed, hollow — `star_border` — and named "Add to favourites"
 
 ### SC-UK-78 — a press of the star switches the favourite and opens nothing
 
@@ -68,12 +69,12 @@ Given the service, an empty list and an open submenu with the item `a`
 When the star of `a` is pressed
 Then the list is `a`, the item output did not fire, and the submenu stays open
 
-### SC-UK-79 — the block shows the favourites in the order of the list, from any section
+### SC-UK-79 — the block shows only the favourites of the open section, in the order of the list
 
-Given the service with the list `c`, `a`, where `a` lies in the submenu of one strip item and `c` in
-another
-When the submenu of a third strip item is open
-Then the block stands above the list with the rows `c`, `a` in that order
+Given two favourites sections and the list `c`, `b`, `a`, where `a` and `b` lie in the submenu of the
+first section and `c` in the second
+When the submenu of the first section is open, then the submenu of the second
+Then the block shows the rows `b`, `a` first, then the one row `c`
 
 ### SC-UK-80 — an id the menu does not have is not shown and stays in the list
 
@@ -109,15 +110,15 @@ Then the rows and the list are `b`, `c`, `a`
 ### SC-UK-85 — the labels are replaced by the provider settings
 
 Given the service provided with the labels "Избранное", "Добавить в избранное", "Убрать из
-избранного"
+избранного", "Потяните за кнопку"
 When the submenu is drawn with `a` in the list and `b` out of it
-Then the heading, the name of the star of `b` and of the star of `a` carry these labels
+Then the heading, the name of the star of `a`, the remove button and the handle carry these labels
 
 ### SC-UK-86 — on a narrow screen the block and the stars stand the same
 
 Given a narrow screen, the service with `a` in the list and an open submenu
 When the submenu is drawn
-Then the block with the row `a` stands under the search field, and the outlined stars are shown
+Then the block with the row `a` stands under the search field, and the hollow stars are shown
 without a hover
 
 ### SC-UK-87 — a drop keeps the places of the ids the menu does not have
@@ -132,7 +133,7 @@ Given the service with `a` in the list, `a` active, and an open submenu with the
 When the submenu is drawn
 Then exactly one node of the page carries the id of `a`, and it lies in the list, not in the block
 
-### SC-UK-89 — the outlined star shows on hover and on focus, the filled one always
+### SC-UK-89 — the hollow star shows on hover and on focus, the filled one always
 
 Given the service with `a` in the list and a wide screen with a hovering pointer
 When the submenu is drawn, then the row `b` is hovered, then its star is focused from the keyboard
@@ -159,3 +160,22 @@ Then the list is `a`, `b`
 Given the service with `a` in the list and `a` named active
 When the submenu is drawn
 Then the row `a` of the block is marked active
+
+### SC-UK-93 — a section without the flag shows neither stars nor the block
+
+Given the service with a list that is not empty and a strip item without the `favorites` flag
+When the submenu of that item is open
+Then there is no star on any row and no favourites block
+
+### SC-UK-94 — a row of the block carries a remove button, and it removes the item
+
+Given the service with the list `a`, `b` and the block drawn
+When the remove button of the row `a` is pressed
+Then the row carries no star, the button is named "Remove from favourites", the list and the rows
+are `b`, and the item output did not fire
+
+### SC-UK-95 — the handle is the move button of the dynamic selector
+
+Given the service with `a` in the list and the block drawn
+When the row `a` is looked at
+Then its handle is a button with the icon `open_with` named "Hold button to drag"

@@ -129,3 +129,22 @@ export function findFavoriteItems(menu: ReadonlyArray<ISideMenu.Item>, ids: Read
         return found;
     }, []);
 }
+
+/**
+ * Пункт полосы, чьё подменю сейчас открыто, если избранное у него включено.
+ *
+ * Избранное у каждого пункта своё и по умолчанию выключено: включает его потребитель флагом
+ * `favorites` пункта полосы. Открытое подменю узнаётся по набору: выбранный человеком, а пока
+ * выбора нет — набор активного пункта, как у закреплённого подменю.
+ */
+export function favoritesSection(
+    menu: ReadonlyArray<ISideMenu.Item>,
+    selectedSubMenu: ISideMenu.Item[] | null,
+    active: ReadonlyArray<string | number>
+): ISideMenu.Item | null {
+    const section: ISideMenu.Item | undefined = selectedSubMenu?.length
+        ? menu.find((item: ISideMenu.Item): boolean => item.submenu === selectedSubMenu)
+        : menu.find((item: ISideMenu.Item): boolean => active.includes(item.id) && Boolean(item.submenu?.length));
+
+    return section?.favorites ? section : null;
+}

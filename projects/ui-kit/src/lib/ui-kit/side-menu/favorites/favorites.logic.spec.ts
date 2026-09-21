@@ -1,5 +1,6 @@
 import { ISideMenu } from '../side-menu.types';
 import {
+    favoritesSection,
     findFavoriteItems,
     isFavoriteCandidate,
     moveFavorite,
@@ -89,5 +90,16 @@ describe('isFavoriteCandidate', (): void => {
         expect(isFavoriteCandidate({ id: 'a', link: '/a' })).toBe(true);
         expect(isFavoriteCandidate({ id: 'folder', submenu: [] })).toBe(false);
         expect(isFavoriteCandidate({ id: 0, link: ' ' })).toBe(false);
+    });
+
+    it('SC-UK-93 — раздел открытого подменю отдаётся, только если избранное у него включено', (): void => {
+        const on: ISideMenu.Item = { ...MENU[0], favorites: true };
+        const menu: ISideMenu.Item[] = [on, MENU[1]];
+
+        expect(favoritesSection(menu, on.submenu ?? null, [])).toBe(on);
+        expect(favoritesSection(menu, MENU[1].submenu ?? null, [])).toBeNull();
+        expect(favoritesSection(menu, null, ['cargo', 'a'])).toBe(on);
+        expect(favoritesSection(menu, null, ['trees'])).toBeNull();
+        expect(favoritesSection(menu, null, [])).toBeNull();
     });
 });

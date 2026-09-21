@@ -42,9 +42,16 @@
         }
 
         &__handle {
+            --mat-icon-button-state-layer-size: calc(var(--rt-spacing-16) * 2);
+            --mat-icon-button-icon-size: var(--rt-font-size-lg);
+            --mat-icon-button-icon-color: var(--rt-text-base-secondary);
+
             flex: 0 0 auto;
-            color: var(--rt-text-base-secondary);
             cursor: grab;
+
+            &:active {
+                cursor: grabbing;
+            }
         }
 
         &__item {

@@ -55,28 +55,43 @@
                     }
 
                     <!--
-                        Звезда избранного — у пункта со своим адресом, пока приложение поставило
-                        сервис избранного. Кнопка готовая кита, та же, что у булавки закрепления:
-                        закрашенная звезда цветом акцента — в избранном, контурная — нет. Цвет
-                        остаётся признаком и там, где у набора значков нет оси заливки.
+                        Строка блока избранного несёт кнопку «убрать», а не звезду: всё в блоке уже
+                        в избранном, и звезда там ничего не различала бы.
                     -->
-                    @if (favorites && item.link?.trim()) {
+                    @if (inFavorites() && favorites) {
+                        <button
+                            mat-icon-button
+                            type="button"
+                            rtElem="favorite"
+                            qa-dataid="side-menu-favorite-remove"
+                            matTooltipPosition="above"
+                            [rtMod]="{ always: narrow() }"
+                            [matTooltip]="favorites.labels.remove"
+                            [attr.aria-label]="favorites.labels.remove"
+                            (click)="onRemoveFavorite(item, $event)"
+                            (focusin)="hold?.hold()">
+                            <mat-icon>remove</mat-icon>
+                        </button>
+                    } @else if (favoritesOn() && favorites && item.link?.trim()) {
+                        <!--
+                            Звезда — у пункта со своим адресом в разделе, где приложение включило
+                            избранное. Контурная — не в избранном, закрашенная цветом темы — в нём.
+                        -->
                         @let isFavorite = favorites.ids().includes(item.id);
-                        <rtui-button
-                            rtElem="star"
-                            type="icon"
-                            icon="star"
-                            size="sm"
+                        <button
+                            mat-icon-button
+                            type="button"
+                            rtElem="favorite"
                             qa-dataid="side-menu-favorite-star"
                             matTooltipPosition="above"
                             [rtMod]="{ on: isFavorite, always: narrow() }"
-                            [outlined]="!isFavorite"
-                            [variant]="isFavorite ? 'primary' : 'default'"
                             [matTooltip]="isFavorite ? favorites.labels.remove : favorites.labels.add"
                             [attr.aria-label]="isFavorite ? favorites.labels.remove : favorites.labels.add"
                             [attr.aria-pressed]="isFavorite"
                             (click)="onToggleFavorite(item, $event)"
-                            (focusin)="hold?.hold()" />
+                            (focusin)="hold?.hold()">
+                            <mat-icon>{{ isFavorite ? 'star' : 'star_border' }}</mat-icon>
+                        </button>
                     }
                 </div>
             }

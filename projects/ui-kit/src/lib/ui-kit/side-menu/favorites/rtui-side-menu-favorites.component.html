@@ -17,11 +17,21 @@
                 <div rtElem="row" qa-dataid="side-menu-favorite-row" cdkDrag [attr.data-id]="item.id" (cdkDragStarted)="onDragStart()">
                     <!--
                         Строку тянут только за ручку: остальная строка — ссылка, и строку, которую
-                        тянут всем телом, не нажать без дрожи.
+                        тянут всем телом, не нажать без дрожи. Ручка та же, что у списка выбранного
+                        в динамическом селекторе: кнопка со значком перемещения и подсказкой.
                     -->
-                    <mat-icon rtElem="handle" qa-dataid="side-menu-favorite-handle" aria-hidden="true" cdkDragHandle>
-                        drag_indicator
-                    </mat-icon>
+                    <button
+                        cdkDragHandle
+                        mat-icon-button
+                        type="button"
+                        rtElem="handle"
+                        qa-dataid="side-menu-favorite-handle"
+                        matTooltipPosition="right"
+                        [matTooltip]="favorites.labels.drag"
+                        [matTooltipDisabled]="narrow()"
+                        [attr.aria-label]="favorites.labels.drag">
+                        <mat-icon [rtIconOutlined]="true">open_with</mat-icon>
+                    </button>
 
                     <rtui-side-menu-sub-item
                         rtElem="item"

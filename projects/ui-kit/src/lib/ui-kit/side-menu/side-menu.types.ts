@@ -16,6 +16,8 @@ export interface IRtuiSideMenuHost {
     /** Пункты полосы: блок избранного ищет в их подменю пункты, стоящие за номерами списка. */
     readonly menuItems: Signal<ISideMenu.Item[]>;
     readonly activeMenuIds: Signal<Array<string | number>>;
+    /** Набор открытого подменю, выбранный человеком: по нему блок и звёзды узнают свой пункт полосы. */
+    readonly selectedSubMenu: Signal<ISideMenu.Item[] | null>;
     readonly expandedMenuIds: Signal<Array<string | number>>;
     readonly highlightedMenuId: Signal<string | number | null>;
     readonly subMenuQuery: Signal<string>;
@@ -42,6 +44,8 @@ export namespace ISideMenu {
         name?: string;
         link?: string;
         submenu?: Item[];
+        /** Избранное в подменю этого пункта полосы. По умолчанию выключено. */
+        favorites?: boolean;
         iconButton?: {
             icon: string;
             data?: ItemData;

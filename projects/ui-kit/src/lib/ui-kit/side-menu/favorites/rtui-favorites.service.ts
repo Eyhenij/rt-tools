@@ -18,6 +18,7 @@ export interface IRtuiFavoritesLabels {
     readonly title: string;
     readonly add: string;
     readonly remove: string;
+    readonly drag: string;
 }
 
 export interface IRtuiFavoritesConfig {
@@ -30,6 +31,7 @@ const DEFAULT_LABELS: IRtuiFavoritesLabels = {
     title: 'Favourites',
     add: 'Add to favourites',
     remove: 'Remove from favourites',
+    drag: 'Hold button to drag',
 };
 
 export const RTUI_FAVORITES_CONFIG: InjectionToken<IRtuiFavoritesConfig> = new InjectionToken<IRtuiFavoritesConfig>(

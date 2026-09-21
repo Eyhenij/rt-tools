@@ -137,6 +137,11 @@ describe('RtuiFavoritesService', (): void => {
     it('SC-UK-85 — подписи настроек заменяют английские, пустая подпись равна отсутствию', (): void => {
         const service: RtuiFavoritesService = createService(null, { labels: { title: 'Избранное', add: '  ' } });
 
-        expect(service.labels).toEqual({ title: 'Избранное', add: 'Add to favourites', remove: 'Remove from favourites' });
+        expect(service.labels).toEqual({
+            title: 'Избранное',
+            add: 'Add to favourites',
+            remove: 'Remove from favourites',
+            drag: 'Hold button to drag',
+        });
     });
 });

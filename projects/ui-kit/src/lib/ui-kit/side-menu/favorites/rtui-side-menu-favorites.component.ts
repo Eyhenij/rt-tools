@@ -11,14 +11,16 @@ import {
     OutputEmitterRef,
     Signal,
 } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatNavList } from '@angular/material/list';
+import { MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, BreakpointService, ElemDirective, RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
 import { RtuiSubMenuHoldService } from '../menu/rtui-sub-menu-hold.service';
 import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
-import { findFavoriteItems, moveVisibleFavorite } from './favorites.logic';
+import { favoritesSection, findFavoriteItems, moveVisibleFavorite } from './favorites.logic';
 import { RtuiFavoritesService } from './rtui-favorites.service';
 
 const BEM_BLOCK: string = 'rtui-side-menu-favorites';
@@ -29,6 +31,9 @@ const BEM_BLOCK: string = 'rtui-side-menu-favorites';
  * Строки собираются из пунктов самого меню, а не из хранилища: подпись следует языку пунктов, адрес
  * — объявлению. Номер без пункта в меню не показывается, но из списка не уходит. Строку рисует тот
  * же подпункт, что и в списке, — строка избранного выглядит и открывается так же, как её пункт.
+ *
+ * Избранное у каждого пункта полосы своё и по умолчанию выключено: блок стоит только в подменю пункта
+ * с флагом `favorites` и показывает только его разделы. Список в хранилище один на все пункты.
  *
  * Пока в поиске что-то набрано, блока нет: поиск принадлежит разделу. Показать нечего — блок места
  * не занимает.
@@ -44,11 +49,14 @@ const BEM_BLOCK: string = 'rtui-side-menu-favorites';
         CdkDrag,
         CdkDragHandle,
         MatIcon,
+        MatIconButton,
         MatNavList,
+        MatTooltip,
 
         // directives
         BlockDirective,
         ElemDirective,
+        RtIconOutlinedDirective,
 
         // components
         RtuiSideMenuSubItemComponent,
@@ -57,15 +65,24 @@ const BEM_BLOCK: string = 'rtui-side-menu-favorites';
 export class RtuiSideMenuFavoritesComponent {
     readonly #menu: IRtuiSideMenuHost = inject(RTUI_SIDE_MENU);
     readonly #hold: RtuiSubMenuHoldService | null = inject(RtuiSubMenuHoldService, { optional: true });
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
+    readonly #section: Signal<ISideMenu.Item | null> = computed(
+        (): ISideMenu.Item | null =>
+            this.favorites && favoritesSection(this.#menu.menuItems(), this.#menu.selectedSubMenu(), this.#menu.activeMenuIds())
+    );
 
     protected readonly favorites: RtuiFavoritesService | null = inject(RtuiFavoritesService, { optional: true });
     protected readonly rows: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] => {
-        if (!this.favorites || this.#menu.subMenuQuery().trim() !== '') {
+        const section: ISideMenu.Item | null = this.#section();
+
+        if (!this.favorites || !section || this.#menu.subMenuQuery().trim() !== '') {
             return [];
         }
 
-        return findFavoriteItems(this.#menu.menuItems(), this.favorites.ids());
+        return findFavoriteItems([section], this.favorites.ids());
     });
+    /** Узкий экран: подсказка у ручки не показывается — наводиться там нечем. */
+    protected readonly narrow: Signal<boolean> = computed((): boolean => !!this.#breakpoints.isMobile());
 
     public isSubMenuIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
