@@ -20,6 +20,7 @@ import {
     CHAT_HOOK_ATTEMPTS,
     CHAT_HOOK_RETRY_MS,
     CHAT_HOOK_SIGNATURE_HEADER,
+    CHAT_HOOK_TIMEOUT_MS,
     chatHookReady,
     chatHookSignature,
     IChatHookSite,
@@ -58,12 +59,18 @@ function taken(status: number): boolean {
     return status >= 200 && status < 300;
 }
 
-/** Отправка чужому узлу запросом. Его же подменяет спека: сети в ней нет. */
+/**
+ * Отправка чужому узлу запросом. Его же подменяет спека: сети в ней нет.
+ *
+ * Предел ожидания назван здесь числом: молчащее приложение площадки иначе держит соединение
+ * столько, сколько позволит среда, и обход переписок стоит на нём.
+ */
 async function overNetwork(url: string, body: string, signature: string): Promise<number> {
     const answer: Response = await fetch(url, {
+        body,
         method: 'POST',
         headers: { 'content-type': 'application/json', [CHAT_HOOK_SIGNATURE_HEADER]: signature },
-        body,
+        signal: AbortSignal.timeout(CHAT_HOOK_TIMEOUT_MS),
     });
 
     return answer.status;
