@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@ang
 import { ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
-import { ISortModel, TNullable } from '@rt-tools/utils';
+import { EListSortOrder, ISortModel, TNullable } from '@rt-tools/utils';
 
 import { createRtFixture, qa, qaAll, textOf } from '../../../../testing/rt-kit-testing';
 import { RtIconComponent } from '../../icon/rt-icon.component';
@@ -22,7 +22,7 @@ function columnOf(header: Partial<IRtDataTable.Header>): IRtDataTable.Column<IEn
         type: ERtDataTableColumnType.TEXT,
         copyable: false,
         header: { align: 'left', label: 'Название', ...header },
-        sorting: { propertyName: 'title', sortDirection: 'asc' },
+        sorting: { propertyName: 'title', sortDirection: EListSortOrder.ASC },
     };
 }
 
