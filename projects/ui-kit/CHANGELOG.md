@@ -1,3 +1,16 @@
+# [0.9.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.8.0...rt-tools@0.9.0) (2026-09-22)
+
+### Bug Fixes
+
+- **rt:ui-kit:** два узких эталона избранного взяты с кадра раннера ([49f2bc1](https://github.com/Eyhenij/rt-tools/commit/49f2bc18877a4cf8a1cfafb018b04802cd6c96fc))
+- **rt:ui-kit:** корзина не краснеет от касания на сенсорном экране ([10004d0](https://github.com/Eyhenij/rt-tools/commit/10004d00257e86659cd412c08712489a49ba7aa7))
+
+### Features
+
+- **rt:ui-kit:** кнопки избранного рисуют значки из настроек ([26f72ed](https://github.com/Eyhenij/rt-tools/commit/26f72ed440b62f38f34b0ec775b9a10d2e8a4fda))
+- **rt:ui-kit:** корзина избранного краснеет под указателем ([fca13b0](https://github.com/Eyhenij/rt-tools/commit/fca13b03ae0189f74a87463ec48a1f39f9c04391))
+- **rt:ui-kit:** настройки меню отдают значки избранного ([491ecee](https://github.com/Eyhenij/rt-tools/commit/491eceed0deee184441e4cdc96cd171ca19cd717))
+
 # [0.8.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.7.1...rt-tools@0.8.0) (2026-09-22)
 
 ### Bug Fixes
