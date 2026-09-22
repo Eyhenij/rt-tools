@@ -219,4 +219,30 @@ expect_stop "SC-AK-1133 — инструмент наблюдения снима
 expect_stop "SC-AK-1133 — ход без запуска CI этим ярусом не судится" \
     "$(input_stop "$(transcript "$(say 'что там CI')" "$(ran 'gh run view 42 --json status')" "$(result '{"status":"queued"}')" "$(reply 'Ещё идёт.')")")" PASS
 
+# --- SC-AK-1167 — CI, начатый открытием PR, тоже требует ожидания конца -----------------------
+#
+# Конвейер просыпается у PR сам: команды запуска в ходе нет вовсе, и ярус про запуск руками молчит.
+# Одного чтения состояния хватало, чтобы ход отпустили, — PR оставался черновиком с зелёным CI,
+# пока владелец не спрашивал сам. Признак тот же, что у перезапуска: открытие PR считается началом
+# CI, а снимает требование ожидание конца или вывод, в котором CI уже кончился.
+IN_PROGRESS_LIST='in_progress\t\t[RT-9] Готово\tCI\tRT-9-probe\tpull_request\t31987106774\t12s'
+expect_stop "SC-AK-1167 — PR открыт, CI идёт, ожидания нет" \
+    "$(input_stop "$(transcript "$(say 'открывай PR')" \
+        "$(ran 'gh pr create --draft --title x')" \
+        "$(ran 'npm run task:move -- 991 in-progress')" \
+        "$(ran 'gh run list --limit 1')" \
+        "$(result "$IN_PROGRESS_LIST")" \
+        "$(reply 'PR #10 открыт, CI не жду.')")")" BLOCK
+expect_stop "SC-AK-1167 — ожидание конца CI требование снимает" \
+    "$(input_stop "$(transcript "$(say 'открывай PR')" \
+        "$(ran 'gh pr create --draft --title x')" \
+        "$(ran 'npm run task:move -- 991 in-progress')" \
+        "$(ran 'gh run watch 31987106774 --exit-status')")")" PASS
+expect_stop "SC-AK-1167 — кончившийся CI ожидания не требует" \
+    "$(input_stop "$(transcript "$(say 'открывай PR')" \
+        "$(ran 'gh pr create --title x')" \
+        "$(ran 'npm run task:move -- 991 in-progress')" \
+        "$(ran 'gh run list --limit 1')" \
+        "$(result "$GREEN_LIST")")")" PASS
+
 suite_result "гард ожидания"
