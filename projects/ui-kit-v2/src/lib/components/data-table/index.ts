@@ -6,3 +6,5 @@ export * from './rt-data-table-row-click.directive';
 export * from './cell/rt-data-table-cell.component';
 export * from './rt-data-table-sort.logic';
 export * from './header-cell/rt-data-table-header-cell.component';
+export * from './rt-data-table-filter.logic';
+export * from './filter-cell/rt-data-table-filter-cell.component';

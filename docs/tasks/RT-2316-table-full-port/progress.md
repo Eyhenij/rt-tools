@@ -16,7 +16,11 @@ Rewritten by every session, not appended to.
   сценарии SC-UKV-236…275 и 300…322. Главная влита по цепочке: эпик, радиокнопка, эта ветка.
   Этап 1 закрыт: модель колонок и настроек поле в поле с первым китом, хранение настроек под
   ключом и в форме первого кита, директивы нажатия строки — 9 из 9 тестов, линтер и типы чистые.
-- **Next step:** этап 2 — ячейка отбора с меню сравнения на поле, списке и выборе даты кита.
+  Этап 2: готовая ячейка, ячейка шапки и ячейка отбора сделаны — 31 из 31 теста семейства; в
+  набор значков кита дорисован знак «равно» по слову владельца. Отметки покрытия в договорённости
+  сняты у 19 сценариев, у которых тест уже есть: проверка покрытия отказывала на них.
+- **Next step:** этап 2 — сама таблица: строки, область действий, выбор строки радиокнопкой и
+  флажком.
 - **Uncommitted:** ничего.
 - **Waiting for the owner:** нет.
 - **PR:** not open yet
@@ -28,8 +32,8 @@ Rewritten by every session, not appended to.
 - [x] 1.3 Row press and "ignore row press" directives with their spec
 - [x] 2.1 Ready cell by column type, the copy button and the icons through the kit's map
 - [x] 2.2 Header cell with sorting and the header icon
-- [>] 2.3 Filter cell with the operator menu on the kit's input, select and date picker
-- [ ] 2.4 The table: rows, actions area, single choice by `rt-radio-button`, multiple by `rt-checkbox`
+- [x] 2.3 Filter cell with the operator menu on the kit's input, select and date picker
+- [>] 2.4 The table: rows, actions area, single choice by `rt-radio-button`, multiple by `rt-checkbox`
 - [ ] 2.5 Spec of the table on its scenarios
 - [ ] 3.1 Toolbar with search, clear-filters and refresh, and the application's selectors
 - [ ] 3.2 Own pagination bar ported from the first kit
@@ -55,6 +59,13 @@ Rewritten by every session, not appended to.
   влита в ветку эпика; запрос этой ветки откроется в ветку RT-2317. Affected stage of the plan: все.
 - **Переносятся все восемь пунктов сверки** — слово владельца «весь функционал». Affected stage of
   the plan: все.
+- **Значки из описания колонок рисует набор кита по перечню соответствий; своё приложение даёт
+  шаблоном значка или пользовательской ячейкой.** Слово владельца. Для сравнения «равно» в наборе
+  не было рисунка — дорисован знак `equals`, тоже по слову владельца. Affected stage of the plan: 2.
+- **Ячейка отбора отдаёт приложению то же, что первый кит:** число — строкой, дату — моментом ISO
+  полуночи дня по местному времени. Подсказки «1/1/2025» у поля даты нет: поле кита рисует
+  браузер, и формат дня он показывает сам. Надпись пустого списка — общая надпись кита.
+  Affected stage of the plan: 2, 3.5.
 
 ## Sessions
 

@@ -155,14 +155,16 @@ Not covered: the family has no code yet.
 Given a data table with clickable rows
 When a person double-clicks the third row
 Then the table reports a double click with the third record
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-row-click.directive.spec.ts`.
 
 ### SC-UKV-258 — a double click inside an opt-out node is not reported
 
 Given a clickable row with a picture marked as an opt-out node
 When a person double-clicks the picture
 Then the table reports neither a double click nor a row press
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-row-click.directive.spec.ts`.
 
 ### SC-UKV-259 — inline actions stand before the row menu button
 
@@ -190,42 +192,48 @@ Not covered: the family has no code yet.
 Given a ready cell whose value is absent, and one whose value is zero
 When the table is drawn
 Then the first cell shows a dash and the second shows 0
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
 
 ### SC-UKV-263 — only a cut value gets a hint with the full value
 
 Given two ready cells of one narrow column, one value fitting and one longer than the column
 When a person hovers each
 Then only the longer one shows a hint with its full value
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
 
 ### SC-UKV-264 — the column shapes the shown value, and the shown value is copied
 
 Given a copyable column whose shaping function turns 0.25 into "25 %"
 When a person presses its copy button
 Then the cell shows "25 %" and the clipboard holds "25 %"
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
 
 ### SC-UKV-265 — the icon stands on the declared side with its style computed from the row
 
 Given a column with an icon after the value and a style function by the value
 When two rows with different values are drawn
 Then each icon stands after its value and carries the style its row's value gave
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
 
 ### SC-UKV-266 — a copyable ready cell with an empty value has no copy button
 
 Given a copyable column and a row whose value is absent
 When a person hovers the cell
 Then the cell shows a dash and no copy button
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
 
 ### SC-UKV-267 — a column type other than custom draws the raw value by the ready cell
 
 Given columns of the types date, percent, currency, yes-no and list without shaping functions
 When the table is drawn
 Then each cell shows its value as it came, and a column of the type custom shows the application's template
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
 
 ### SC-UKV-268 — the settings panel carries the two scrollbar switches
 
@@ -260,7 +268,8 @@ Not covered: the family has no code yet.
 Given settings saved for four columns and a declaration of five
 When the table is opened
 Then the table draws the five declared columns in the declared order
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.spec.ts`.
 
 ### SC-UKV-273 — the scrollbar choice saved by one list applies to every list on the page
 
@@ -274,7 +283,8 @@ Not covered: the family has no code yet.
 Given a clickable row with a block of text marked as an opt-out node
 When a person presses inside the block
 Then the table reports no row press
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-row-click.directive.spec.ts`.
 
 ### SC-UKV-275 — every story of the family shows both halves of the styling preset
 
@@ -302,21 +312,24 @@ Not covered: the family has no code yet.
 Given a column with a sort and no current sort
 When a person presses its header twice, the application answering each time
 Then the first press asks for the ascending order and the second for the descending one
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/header-cell/rt-data-table-header-cell.component.spec.ts`.
 
 ### SC-UKV-303 — a text filter commits by Enter, and an empty value removes the condition
 
 Given the filter row shown and a text filter on the name column
 When a person types "ann" and presses Enter, then clears the field
 Then the application gets a set with the name condition, and then a set without it
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/filter-cell/rt-data-table-filter-cell.component.spec.ts`.
 
 ### SC-UKV-304 — an operator change without a value asks nothing
 
 Given a column with operators, no condition and an empty filter field
 When a person chooses "Contains" in its operator menu
 Then the application gets no new set of conditions and the operator button shows "Contains"
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/filter-cell/rt-data-table-filter-cell.component.spec.ts`.
 
 ### SC-UKV-305 — a hidden column draws neither its cell nor its filter cell
 
@@ -344,7 +357,8 @@ Not covered: the family has no code yet.
 Given a clickable row with a copyable cell
 When a person presses the copy button
 Then the button shows the check icon and "Copied!", goes back after two seconds, and no row press is reported
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
 
 ### SC-UKV-309 — the placeholder is shown only without rows and without conditions
 
@@ -407,35 +421,40 @@ Not covered: the family has no code yet.
 Given settings the first kit's table saved under the key "orders", with one column hidden
 When a data list with the storage key "orders" and the same columns is opened
 Then the column is drawn hidden and the saved order and scrollbar flags are applied
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.spec.ts`.
 
 ### SC-UKV-318 — a first-kit icon name in a column declaration is drawn by the kit's own set
 
 Given a header icon and a cell icon declared by first-kit names that have pairs in the kit's map
 When the data table is drawn
 Then both are the kit's icons of the paired names, and no icon font is asked for
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
 
 ### SC-UKV-319 — an icon name without a pair in the map draws no icon
 
 Given a cell icon declared by a first-kit name that has no pair in the kit's map, and no icon template
 When the data table is drawn
 Then the cell shows its value with no icon beside it
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
 
 ### SC-UKV-320 — an icon template draws the icon of a cell
 
 Given a column declaring a cell icon and an icon template given by `rtDataTableIcon`
 When the data table is drawn
 Then every cell of the column shows the template's drawing, which received the icon name, the column and the row
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
 
 ### SC-UKV-321 — an icon template draws the icon of a header
 
 Given a column declaring a header icon and an icon template given by `rtDataTableIcon`
 When the data table is drawn
 Then the header shows the template's drawing, which received the icon name and the column
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/header-cell/rt-data-table-header-cell.component.spec.ts`.
 
 ### SC-UKV-322 — an icon template takes precedence over the kit's map
 
