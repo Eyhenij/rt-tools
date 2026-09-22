@@ -2,22 +2,22 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
-- **Stage:** 1 of 3 — the case is pinned by a test before the guard is edited
-- **Done:** the branch is taken from the fresh main, the plan is written
-- **Next step:** write the two cases and see them red on the guard as it stands
+- **State:** `этапы-кончились`
+- **Stage:** the stages are over
+- **Done:** the guard, the rule, its cold part, the companion and the scenario; the suite is 44 ok, 0 failures
+- **Next step:** run the whole set and take the folder apart
 - **Uncommitted:** the row of the assignment table, the folder of this task
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Write the case: a request is opened, the run is read as going, no wait — the turn is refused.
-- [ ] 1.2 Write the case: the same turn holds a background wait — the turn is let go.
-- [ ] 2.1 Count a request opened in the turn as a start of a run, on a par with a rerun.
-- [ ] 2.2 Close the demand by a wait or by a run already ended, not by a bare read of the state.
-- [ ] 3.1 Write the article into the rule and move the account of the miss to its cold part.
-- [ ] 3.2 Write the scenario in the specs of the turn exit and bind the article in the companion.
+- [x] 1.1 Write the case: a request is opened, the run is read as going, no wait — the turn is refused.
+- [x] 1.2 Write the case: the same turn holds a background wait — the turn is let go.
+- [x] 2.1 Count a request opened in the turn as a start of a run, on a par with a rerun.
+- [x] 2.2 Close the demand by a wait or by a run already ended, not by a bare read of the state.
+- [x] 3.1 Write the article into the rule and move the account of the miss to its cold part.
+- [x] 3.2 Write the scenario in the specs of the turn exit and bind the article in the companion.
 
 ## Decisions along the way
 
