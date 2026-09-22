@@ -93,27 +93,24 @@ flowchart TD
   line about the price in the reply, not waiting; a decision the tree does not hold is asked as a
   question by the tool.
 - **A summary of someone else's step.** A run, the owner's review and a merge go on without the
-  executor and are not sped up by watching. Such a summary the owner reads as work: full, with
-  numbers and states, the emptiness behind it unseen. Someone else's step is named with one's own
-  begun step, not instead of it.
+  executor and are not sped up by watching; the owner reads such a summary as work. Someone else's
+  step is named with one's own begun step, not instead of it.
 - **Someone else's step is of two kinds, and the second never ends by itself.** A run and a review
   end without the executor; a refused permission never ends — it is waited for. Work that hit a
   permission is finished without the part it opens; what was not passed is named in the PR body,
   where the reviewer reads it: a message lives until the next one, the PR body until the merge.
 - **One's own unclosed step is not handed to the owner.** A neat list of leftovers reads as an
-  account of work, and the owner sorts out what the executor could have finished. A question's form
-  does not fix this: a question is lawful only where neither the rules nor the tree answer it. The
-  list is written after everything the executor could close is struck out.
+  account of work, and the owner sorts out what the executor could have finished. A question is
+  lawful only where neither the rules nor the tree answer it; the list is written after all the
+  executor could close is struck out.
 - **A menu under an assigned order.** A choice offered to the owner before the epic is over asks to
   assign the order anew. No work left in the epic — say so: the epic is over — not "what next".
 - **A declaration of intent.** "Taking the next task" is not taking it: the phrase lives to the end
   of the turn, and the work does not move. Only the done is named: the created task's number, the
   branch's name, the moved column.
 - **Work named as a command is run in the turn that names it.** The line "running it now" does not
-  end a turn: either the run happened, or the turn is not over. A named command looks like begun
-  work better than any promise — exact, visible, and done cannot be told from composed. The reply is
-  written after the call, not instead of it: a message mid-turn is answered along with the begun
-  action.
+  end a turn: either the run happened, or the turn is not over. The reply is written after the
+  call, not instead of it: a message mid-turn is answered along with the begun action.
 - **A word about one's own work is judged by what the same turn did.** "Not stopping — going on" is
   confirmed by the turn's end with work, not intent: otherwise the owner reads "promised — did not"
   as a lie. It is the requirement on a word about the tree, turned on oneself.
@@ -136,10 +133,9 @@ flowchart TD
 - **A stop is named in a message of its own.** Not in a line at the end of a report: there it drowns
   — the owner reads a report as an account of the done. Three things are named: what stands, what it
   waits for and what the owner can decide.
-- **Turn exits are watched by a guard, not by the executor's memory.** It reads the declared work
-  state and what the turn did on it: a file edit or a tree-changing command. A turn with neither
-  returns to the executor with the next step from the progress. Handed-in and merged work the guard
-  does not judge: it has already waited out someone else's step.
+- **Turn exits are watched by a guard, not by the executor's memory.** It reads the declared work state and what
+  the turn did on it: a file edit or a tree-changing command. A turn with neither returns to the
+  executor with the next step from the progress.
 - **A removed task folder lifts the state requirement and does not end the turn.** The progress
   leaves with the folder, taken apart before the PR opens; a removed folder means the middle of
   handing in, not its end. From there the turn is judged by the second sign.
@@ -218,8 +214,8 @@ flowchart TD
   are not an action: they are said instead of one.
 - **A turn that handed work in carries it to a lifted draft.** A draft's merge button is locked by
   the host, and in the PR list ready cannot be told from unfinished. The next task is taken on top
-  of that, not instead. The waiting guard watches this: a turn that opened a PR does not end until a
-  command of the same turn asked the state of the handed-in work.
+  of that, not instead. The waiting guard demands a command of the same turn about the state of the
+  handed-in work.
 - **The waiting guard's refusal is lifted by both actions at once.** The taken next task carries the
   open-PR sign away, and the demand to ask the handed-in work's state never sounds after it.
 - **Work left in the working tree does not end the turn.** A branch ahead of the remote ref with no
@@ -231,6 +227,13 @@ flowchart TD
 - **The end of a run is learned from the return of a background command, not from a look at the
   page.** A background wait brings the executor back to the PR by itself; a look at the page is
   repeated idly or not at all — the work does not move.
+- **A run nobody started by hand is watched the same as a rerun, and the opened PR starts it.** The
+  pipeline wakes by itself: the turn holds no starting command, and one read of the state closes
+  nothing. Read as going, the run goes under a wait in the same turn — the waiting guard watches
+  the pair "the request opened here, its run read as going".
+- **A green run is carried to a lifted draft by the one who handed the work over, a red one is
+  fixed in the same branch.** The owner sees a locked button and reads it as work still going. The
+  wait runs in the background, next to the next work.
 - **Waiting for one's own measurement is done with one wait, not a notification on every step.** A
   notification is for where every event is acted on; where the outcome matters — one wait.
 - **A guard's refusal ends the turn.** No other road to the refused edit is sought: not a shell
@@ -260,9 +263,7 @@ flowchart TD
   list: whoever finds it convenient this minute assigns it, and it drifts.
 - **A refusal of an irreversible action has a safe part, and it is done.** The demand to ask the
   owner applies to the action, not the turn: work with a separable harmless part is split, not
-  postponed whole. A list of options instead of work reads as work — the more neatly drawn up, the
-  more fully: numbered, with figures, the emptiness of the turn behind it unseen. The owner is told
-  what is done and what remained for their word.
+  postponed whole. The owner is told what is done and what remained for their word.
 - **The sign of irreversibility is taken from the list, not derived by argument.** The list was
   drawn up by someone who already weighed reversibility. The argument "it goes outside and cannot be
   rolled back" always comes, the list only when read, and an argument on top of the list cancels it

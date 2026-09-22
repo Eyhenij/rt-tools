@@ -125,6 +125,16 @@ taken does not lift the refusal
 
 Covered: `projects/agent-kit/tests/waiting-turn-guard.test.sh`.
 
+### SC-AK-1167 — the run of the request opened in the turn gets a wait for its end
+
+Given a request was opened by a command of the turn, and its run was read as going — queued or in
+progress
+When the turn ends, and no command of the turn waits for the end of that run
+Then the guard gives the turn back and names the wait; a turn with a wait passes, and a run already
+ended demands nothing
+
+Covered: `projects/agent-kit/tests/waiting-turn-guard.test.sh`.
+
 ### SC-AK-248 — a turn in which nothing is said about someone else's step the guard of waiting does not judge
 
 Given there is neither a call of opening a PR nor a red run read in the turn

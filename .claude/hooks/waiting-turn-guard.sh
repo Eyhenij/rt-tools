@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.0 · hooks/waiting-turn-guard.sh · b60a0f50002c · правится надстройкой, не здесь
+# rt-kit v0.29.0 · hooks/waiting-turn-guard.sh · b2ebb819e432 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh
 # Waiting guard: a turn that tells the owner about someone else's step does not end until it holds
@@ -95,6 +95,13 @@ ready_re='pr[[:space:]]+ready|run[[:space:]]+(list|view|watch)|pr[[:space:]]+che
 # the watching tool — in the background or blocking; a single read of the state is not a wait.
 # Incident analysis — the record "2026-09-15-turn-idle-after-green-run" in the intake.
 started_run_re='run[[:space:]]+rerun|workflow[[:space:]]+run|ci[[:space:]]+(retry|run)|pipeline[[:space:]]+(run|retry)|pipelines[[:space:]]+run'
+
+# A run nobody started by hand: the pipeline wakes on an opened request by itself, and the tier
+# above stays silent — there is no starting command in the turn at all. The sign is taken from the
+# output rather than from the base of the request: which bases wake the pipeline the guard cannot
+# know, and a demand by the bare fact of opening would refuse every request into an epic branch.
+# So the pair is "the request is opened in the turn" and "its run is read as going".
+going_run_re='queued|in_progress|"status"[[:space:]]*:[[:space:]]*"(queued|in_progress)"|status:[[:space:]]*(queued|in_progress)'
 watched_run_re='run[[:space:]]+watch|pr[[:space:]]+checks[^|;&]*--watch|until[[:space:]][^\n]*sleep|while[[:space:]][^\n]*sleep|ci[[:space:]]+status[^|;&]*--live|pipelines[[:space:]]+runs[[:space:]]+show'
 
 # One's own named action. An empty turn that declared what it will do next gives itself away by
@@ -111,7 +118,8 @@ vow_re='дальше беру|дальше возьму|дальше иду|сл
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
     --arg opened "$opened_re" --arg taken "$taken_re" --arg taken_path "$taken_path_re" \
     --arg read "$read_re" --arg red "$red_re" --arg ready "$ready_re" --arg vow "$vow_re" \
-    --arg started_run "$started_run_re" --arg watched_run "$watched_run_re" '
+    --arg started_run "$started_run_re" --arg watched_run "$watched_run_re" \
+    --arg going_run "$going_run_re" '
     def is_input:
         .type == "user"
         and ((.isCompactSummary // false) | not)
@@ -141,6 +149,8 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
     | ($ran | test($ready; "i")) as $checked
     # The run started in the turn and the wait for its end: the watching tool counts as a wait too.
     | ($ran | test($started_run; "i")) as $reran
+    # The run of the request opened in this turn: read as going and left without a wait.
+    | ($opened_pr and ($out | test($going_run; "i"))) as $own_run_going
     | (($ran | test($watched_run; "i")) or ($uses | map(.name // "") | any(. == "Monitor"))) as $watched_run
     | ([$turn[] | select(.type == "assistant") | (.message.content // [])[]
           | select(.type == "text") | .text] | join("\n")) as $said
@@ -149,7 +159,7 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
     | if $opened_pr and ($went_on | not) and ($checked | not) then "owe:both"
       elif $opened_pr and ($went_on | not) then "owe:pr"
       elif $opened_pr and ($checked | not) then "owe:draft"
-      elif $reran and ($watched_run | not) then "owe:watch"
+      elif ($reran or $own_run_going) and ($watched_run | not) then "owe:watch"
       elif $went_on then "pass"
       elif $red_run then "owe:run"
       elif $announced and $tools == 0 then "owe:vow"
@@ -209,7 +219,7 @@ fi
 # A run started or rerun in the turn without a wait for its end. The next task taken does not lift
 # this: the request stays without watching either way, and its outcome reaches the owner first.
 if [ "$verdict" = "owe:watch" ]; then
-    reason="BLOCKED by waiting-turn-guard: a run was started or rerun in this turn, and no command of the turn waits for its end.
+    reason="BLOCKED by waiting-turn-guard: a run of this turn was left without a wait for its end — started by hand, or started by the request opened here and read as going.
 
 The outcome of a run does not call by itself: a state read once — «queued», «in_progress» — is a moment, not a result. Without a wait the request stays without watching, the draft is not lifted and the merge is not asked, and the owner finds the green run before the executor.
 
