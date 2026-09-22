@@ -9,17 +9,7 @@ import { RtRadioButtonComponent } from '../../rt-radio-button.component';
  */
 @Component({
     selector: 'app-radio-button',
-    template: `
-        <rt-radio-button
-            [value]="1"
-            [checked]="checked"
-            [disabled]="disabled"
-            [card]="card"
-            [label]="label"
-            [description]="description"
-            [ariaLabel]="ariaLabel"
-            (checkedChange)="checked = $event" />
-    `,
+    templateUrl: './test-radio-button.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
