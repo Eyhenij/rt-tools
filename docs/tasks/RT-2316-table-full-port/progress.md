@@ -29,8 +29,12 @@ Rewritten by every session, not appended to.
   прокрутки, перетаскивание, глаз, сохранение только после изменения — 69 из 69 тестов.
   Этап 3.4 закрыт: список собран целиком — полоса действий, таблица, полоса страниц, заглушка
   пустого списка и два вида загрузки; выбор записей по страницам с исключениями ведёт директива
-  `rtDataListSelectors`. Семейный документ списка написан. Весь второй кит — 1711 из 1711 тестов.
-- **Next step:** этап 3 — слова обеих семей в восьмиязычном словаре кита.
+  `rtDataListSelectors`. Семейный документ списка написан.
+  Этап 3.5 закрыт: русский словарь витрины получил 27 слов обеих семей — без них витрина показала
+  бы английские умолчания вперемешку с русским. Словарь админки ничего не получил: он неполный по
+  замыслу и отвечает только на те ключи, что нужны её экранам, а этих семей там нет.
+  Весь второй кит — 1712 из 1712 тестов.
+- **Next step:** этап 3 — проверка списка по его сценариям.
 - **Uncommitted:** ничего.
 - **Waiting for the owner:** нет.
 - **PR:** not open yet
@@ -49,8 +53,8 @@ Rewritten by every session, not appended to.
 - [x] 3.2 Own pagination bar ported from the first kit
 - [x] 3.3 Own column settings panel ported from the first kit
 - [x] 3.4 Selection across pages, the empty placeholder and the loading look
-- [>] 3.5 Words of both families in the kit's eight-language dictionary
-- [ ] 3.6 Spec of the list on its scenarios
+- [x] 3.5 Words of both families in the kit's eight-language dictionary
+- [>] 3.6 Spec of the list on its scenarios
 - [ ] 4.1 Stories and `Overview` of `rt-data-table` by the coverage contract
 - [ ] 4.2 Stories and `Overview` of `rt-data-list` by the coverage contract
 - [ ] 4.3 Sweep over the stories and a look at the frames by eye
@@ -92,6 +96,17 @@ Rewritten by every session, not appended to.
 - **Список колонок в панели настроек — готовый редактор кита `rt-table-settings-panel`.** Он не
   знает модели колонок ни одной из таблиц: принимает пункты «ключ, подпись, скрыта» и отдаёт их
   обратно. Своего перетаскивания семейство не писало. Affected stage of the plan: 3.
+
+- **Слова семей ушли в русский словарь витрины, а в словарь админки — нет.** Набор витрины полон
+  по типу: ключ без ответа не собирается вовсе. Набор админки неполный по замыслу и отвечает
+  только на ключи её экранов, а ни таблицы, ни списка там нет — выдуманные слова для
+  несуществующих экранов состарились бы молча. Правка витрины подтверждена её сборкой: ни линтер,
+  ни проверка типов пакета в `.storybook` не заглядывают. Affected stage of the plan: 3.
+
+- **Промах: проверка типов была красной при фиксации этапа 3.4.** Её вывод читался хвостом в пять
+  строк, а блок длительности nx печатает и при отказе — отказ оказался выше среза, и коммит ушёл с
+  двумя расхождениями типов. Найдено на следующем шаге, починено там же: вывод nx читается по
+  словам «error TS» и «Successfully», а не по хвосту. Affected stage of the plan: 3.
 
 ## Sessions
 

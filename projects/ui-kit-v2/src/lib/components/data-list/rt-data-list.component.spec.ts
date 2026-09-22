@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, signal, Signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EnvironmentProviders, signal, Signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
 import { EFilterOperatorType, IFilterModel, IPageModel } from '@rt-tools/utils';
 
-import { createRtFixture, qa, textOf } from '../../../testing/rt-kit-testing';
+import { provideRtKitLabels, TRtKitLabelKey, TRtKitLabelParams } from '../../i18n';
+import { createRtFixture, el, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtDataTableConfigService } from '../data-table/rt-data-table-config.service';
 import { ERtDataTableColumnType, IRtDataTable } from '../data-table/rt-data-table.model';
 import { RtDataListComponent } from './rt-data-list.component';
@@ -59,12 +60,13 @@ class DataListHostComponent {
 }
 
 async function setup(
-    patch: (host: DataListHostComponent) => void = (): void => undefined
+    patch: (host: DataListHostComponent) => void = (): void => undefined,
+    extra: EnvironmentProviders[] = []
 ): Promise<ComponentFixture<DataListHostComponent>> {
     const fixture: ComponentFixture<DataListHostComponent> = createRtFixture(
         DataListHostComponent,
         {},
-        { providers: [{ provide: RtDataTableConfigService, useValue: CONFIG_STUB }], skipInitialDetect: true }
+        { providers: [{ provide: RtDataTableConfigService, useValue: CONFIG_STUB }, ...extra], skipInitialDetect: true }
     );
 
     patch(fixture.componentInstance);
@@ -82,7 +84,7 @@ describe('RtDataListComponent', () => {
         expect(textOf(qa(fixture, 'data-list-placeholder'))).toContain('No Data Found');
         expect(qa(fixture, 'data-table-filter-row')).toBeNull();
 
-        fixture.componentInstance.filters.set([{ propName: 'title', value: 'Анна', operatorType: EFilterOperatorType.CONTAINS }]);
+        fixture.componentInstance.filters.set([{ propertyName: 'title', value: 'Анна', operatorType: EFilterOperatorType.CONTAINS }]);
         fixture.detectChanges();
         await fixture.whenStable();
         fixture.detectChanges();
@@ -107,5 +109,32 @@ describe('RtDataListComponent', () => {
         expect(qa(fixture, 'data-list-loading')).toBeNull();
         expect(qa(fixture, 'data-list-fetching')).not.toBeNull();
         expect(qa(fixture, 'data-table-row')).not.toBeNull();
+    });
+
+    it('SC-UKV-315 — слова семьи идут за языком страницы', async (): Promise<void> => {
+        /* Немецкий словарь приложения: кит своего языка не знает, и каждое слово идёт через него. */
+        const german: Readonly<Partial<Record<TRtKitLabelKey, string>>> = {
+            dataListPlaceholder: 'Keine Daten gefunden',
+            dataListRefresh: 'Aktualisieren',
+            dataListSearchPlaceholder: 'Suchen...',
+            dataTableFilterValuePlaceholder: 'Wert eingeben',
+        };
+        const translator: Signal<(key: TRtKitLabelKey, params?: TRtKitLabelParams) => string> = signal(
+            (key: TRtKitLabelKey): string => german[key] ?? key
+        );
+        const fixture: ComponentFixture<DataListHostComponent> = await setup(
+            (host: DataListHostComponent) => host.rows.set(ROWS),
+            [provideRtKitLabels({ translator })]
+        );
+
+        expect(el(fixture, '[qa-dataid="data-list-search"] input')?.nativeElement.placeholder).toBe('Suchen...');
+        expect(el(fixture, '[qa-dataid="data-list-refresh"] button')?.nativeElement.getAttribute('aria-label')).toBe('Aktualisieren');
+
+        fixture.componentInstance.rows.set([]);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        expect(textOf(qa(fixture, 'data-list-placeholder'))).toContain('Keine Daten gefunden');
     });
 });

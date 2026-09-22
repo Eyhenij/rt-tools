@@ -440,7 +440,8 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-list/toolbar/rt-data-list-t
 Given the page in German
 When the data list with the filter row, the toolbar and the pagination bar is drawn
 Then every word of the family comes from the German dictionary entries
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.spec.ts`.
 
 ### SC-UKV-316 — the first loading and a later fetching look different
 

@@ -193,17 +193,19 @@ export class RtDataListComponent<
     /** Панель действий и таблица: их состояние ставит директива выбора списка. */
     public readonly toolbarRef: Signal<TNullable<RtDataListToolbarComponent>> = viewChild(RtDataListToolbarComponent);
 
-    public readonly tableRef: Signal<TNullable<RtDataTableComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>> = viewChild(RtDataTableComponent);
+    public readonly tableRef: Signal<TNullable<RtDataTableComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>> =
+        viewChild<RtDataTableComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>(RtDataTableComponent);
 
     constructor() {
         this.#openSettingsSource
             .pipe(
                 exhaustMap((): Observable<IRtDataTable.Config.Data<ENTITY_TYPE> | undefined> =>
                     this.#asideService
-                        .open<RtDataListSettingsAsideComponent<ENTITY_TYPE>, IRtDataTable.Config.Data<ENTITY_TYPE>>(
-                            RtDataListSettingsAsideComponent,
-                            { data: this.#configService.tableConfig(), position: 'right' }
-                        )
+                        .open<
+                            RtDataListSettingsAsideComponent<ENTITY_TYPE>,
+                            IRtDataTable.Config.Data<ENTITY_TYPE>,
+                            IRtDataTable.Config.Data<ENTITY_TYPE> | undefined
+                        >(RtDataListSettingsAsideComponent, { data: this.#configService.tableConfig(), position: 'right' })
                         .afterClosed()
                 ),
                 filter(Boolean),
